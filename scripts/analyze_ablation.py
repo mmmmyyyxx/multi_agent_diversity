@@ -53,6 +53,7 @@ def _find_recent_trace_snapshots(run_dir: Path, limit: int = 10) -> List[List[Di
     candidates = [
         run_dir / "train_trace_history.jsonl",
         run_dir / "test_trace_history.jsonl",
+        run_dir / "reasoning_summary_history.jsonl",
     ]
     records: List[Dict[str, Any]] = []
     for path in candidates:
@@ -117,6 +118,8 @@ def _extract_final_trace_strings(trace_agents: List[Dict[str, Any]]) -> List[str
     traces: List[str] = []
     for a in trace_agents:
         trace = str(a.get("trace", "")).strip()
+        if not trace:
+            trace = str(a.get("reasoning_summary", "")).strip()
         if trace:
             traces.append(trace)
     return traces

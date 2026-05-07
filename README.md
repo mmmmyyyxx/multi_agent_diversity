@@ -177,6 +177,7 @@ python -m multi_dataset_diverse_rl.cli `
 - `train_step_logs.jsonl`：每个训练 step 的 family 指标、reward 摘要和 update 摘要。
 - `train_trace_history.jsonl`：训练阶段完整推理轨迹。
 - `test_trace_history.jsonl`：测试阶段完整推理轨迹。
+- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、family 分布、`reasoning_summary`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
 - `family_taxonomy.json`：动态 family taxonomy（默认写入，路径可由 `--family_taxonomy_path` 指定）。
 - `test_epoch*_predictions.jsonl`：每个测试样本的答案、投票结果和 family 指标。
 - `last_state.json` / `best_state.json`：agent 状态、bandit 参数和 prompt 历史快照。
@@ -309,6 +310,7 @@ python scripts/plot_ablation_results.py --csv runs_abcd/ablation_summary.csv --o
 - 运行前必须设置 `OPENAI_API_KEY`。
 - `update_every` 会同步决定 homogeneity window 的实际长度。
 - `train_trace_history.jsonl` / `test_trace_history.jsonl` 会保存完整模型输出，文件可能较大，也可能包含题面相关内容。
+- `reasoning_summary_history.jsonl` 不保存完整 trace，只保存策略摘要和 hash，适合快速回溯推理路径分类；原文仍以 trace history 为准。
 - Reward 不直接使用准确率；准确率主要用于观察多样性训练是否破坏任务表现。
 - Skeleton 相关代码和日志已移除，如果旧实验目录中还存在旧 `skeleton_history.jsonl`，那是历史产物，不代表当前实现。
 

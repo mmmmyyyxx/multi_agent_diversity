@@ -70,6 +70,7 @@ async def main_async():
         system.flush_train_step_logs()
         system.flush_train_trace_history_logs()
         system.flush_test_trace_history_logs()
+        system.flush_reasoning_summary_history_logs()
         system.flush_prompt_history()
         return
 
@@ -146,6 +147,7 @@ async def main_async():
         system.flush_train_step_logs()
         system.flush_train_trace_history_logs()
         system.flush_test_trace_history_logs()
+        system.flush_reasoning_summary_history_logs()
         system.flush_prompt_history()
         with open(os.path.join(cfg.out_dir, "history.json"), "w", encoding="utf-8") as f:
             json.dump(system.history, f, ensure_ascii=False, indent=2)
@@ -158,6 +160,7 @@ async def main_async():
     system.flush_train_step_logs()
     system.flush_train_trace_history_logs()
     system.flush_test_trace_history_logs()
+    system.flush_reasoning_summary_history_logs()
     system.flush_prompt_history()
 
 

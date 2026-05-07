@@ -111,6 +111,7 @@ class TextualGradientRLSystem:
         self.train_step_logs: List[Dict[str, Any]] = []
         self.train_trace_history_logs: List[Dict[str, Any]] = []
         self.test_trace_history_logs: List[Dict[str, Any]] = []
+        self.reasoning_summary_history_logs: List[Dict[str, Any]] = []
         self.recent_window_records: List[Dict[str, Any]] = []
         self.prompt_history = self._init_prompt_history()
         self.write_run_meta()
@@ -983,6 +984,62 @@ class TextualGradientRLSystem:
                 "updated_agent_ids": list(update_summary.get("updated_agent_ids", [])),
                 "skipped_reason": update_summary.get("skipped_reason", ""),
             },
+        }
+
+    def _build_reasoning_summary_history_record(
+        self,
+        split: str,
+        epoch_id: int,
+        step_id: int,
+        question: str,
+        family_metrics: Dict[str, Any],
+        traces: List[str],
+    ) -> Dict[str, Any]:
+        primary_families = list(family_metrics.get("primary_families", []))
+        secondary_families = list(family_metrics.get("secondary_families", primary_families))
+        family_distributions = list(family_metrics.get("agent_family_distributions", []))
+        reasoning_summaries = list(family_metrics.get("reasoning_summaries", []))
+        family_judgments = family_metrics.get("family_judgments", [])
+        if not isinstance(family_judgments, list):
+            family_judgments = []
+
+        agents: List[Dict[str, Any]] = []
+        for i, trace in enumerate(traces):
+            cleaned_trace = normalize_spaces(trace)
+            judgment = family_judgments[i] if i < len(family_judgments) and isinstance(family_judgments[i], dict) else {}
+            primary_family = primary_families[i] if i < len(primary_families) else str(judgment.get("primary_family", ""))
+            secondary_family = secondary_families[i] if i < len(secondary_families) else str(judgment.get("secondary_family", primary_family))
+            reasoning_summary = reasoning_summaries[i] if i < len(reasoning_summaries) else str(judgment.get("reasoning_summary", ""))
+            if not reasoning_summary:
+                reasoning_summary = self._fallback_reasoning_summary(trace)
+            agents.append(
+                {
+                    "agent_id": i,
+                    "primary_family": primary_family,
+                    "secondary_family": secondary_family or primary_family,
+                    "family_distribution": family_distributions[i] if i < len(family_distributions) else {},
+                    "reasoning_summary": reasoning_summary,
+                    "trace_hash": self._prompt_hash(cleaned_trace) if cleaned_trace else "",
+                    "trace_length": len(cleaned_trace),
+                }
+            )
+
+        compact_question = normalize_spaces(question)
+        return {
+            "split": str(split),
+            "epoch": int(epoch_id),
+            "step": int(step_id),
+            "question_hash": self._prompt_hash(compact_question) if compact_question else "",
+            "question_excerpt": compact_question[:300],
+            "family_judge_metric": family_metrics.get("family_judge_metric", "unknown"),
+            "primary_family_counts": family_metrics.get("primary_family_counts", {}),
+            "weighted_family_distribution": family_metrics.get("weighted_family_distribution", {}),
+            "major_family_distribution": family_metrics.get("major_family_distribution", {}),
+            "team_family_homogeneity_rate": family_metrics.get("team_family_homogeneity_rate", 0.0),
+            "team_family_diversity": family_metrics.get("team_family_diversity", 0.0),
+            "team_major_family_diversity": family_metrics.get("team_major_family_diversity", 0.0),
+            "team_intra_family_diversity": family_metrics.get("team_intra_family_diversity", 0.0),
+            "agents": agents,
         }
 
     def _is_transient_llm_error(self, err: Exception) -> bool:
@@ -2247,6 +2304,7 @@ class TextualGradientRLSystem:
         trace_log = {
             "epoch": epoch_id,
             "step": step_id,
+            "question_hash": self._prompt_hash(normalize_spaces(question)) if question else "",
             "agents": [
                 {
                     "agent_id": i,
@@ -2261,10 +2319,22 @@ class TextualGradientRLSystem:
         }
         trace_log["split"] = "train"
         self.train_trace_history_logs.append(trace_log)
+        self.reasoning_summary_history_logs.append(
+            self._build_reasoning_summary_history_record(
+                split="train",
+                epoch_id=epoch_id,
+                step_id=step_id,
+                question=question,
+                family_metrics=family_metrics,
+                traces=traces,
+            )
+        )
         if len(self.train_step_logs) >= 100:
             self.flush_train_step_logs()
         if len(self.train_trace_history_logs) >= 20:
             self.flush_train_trace_history_logs()
+        if len(self.reasoning_summary_history_logs) >= 20:
+            self.flush_reasoning_summary_history_logs()
         return {
             "traces": traces,
             "answers": answers,
@@ -2307,10 +2377,15 @@ class TextualGradientRLSystem:
         self._flush_trace_history_records("test_trace_history.jsonl", self.test_trace_history_logs)
         self.test_trace_history_logs = []
 
+    def flush_reasoning_summary_history_logs(self):
+        self._flush_trace_history_records("reasoning_summary_history.jsonl", self.reasoning_summary_history_logs)
+        self.reasoning_summary_history_logs = []
+
     def flush_trace_history_logs(self):
         # Backward-compatibility shim for old call sites.
         self.flush_train_trace_history_logs()
         self.flush_test_trace_history_logs()
+        self.flush_reasoning_summary_history_logs()
 
     def agent_to_dict(self, a: AgentState) -> Dict[str, Any]:
         return {
@@ -2398,6 +2473,7 @@ class TextualGradientRLSystem:
                         "epoch": 0,
                         "step": step_id,
                         "split": "test",
+                        "question_hash": self._prompt_hash(normalize_spaces(q)) if q else "",
                         "agents": [
                             {
                                 "agent_id": i,
@@ -2411,9 +2487,21 @@ class TextualGradientRLSystem:
                         ],
                     }
                 )
+                self.reasoning_summary_history_logs.append(
+                    self._build_reasoning_summary_history_record(
+                        split=split_name,
+                        epoch_id=0,
+                        step_id=step_id,
+                        question=q,
+                        family_metrics=family_metrics,
+                        traces=traces,
+                    )
+                )
 
                 if len(self.test_trace_history_logs) >= 20:
                     self.flush_test_trace_history_logs()
+                if len(self.reasoning_summary_history_logs) >= 20:
+                    self.flush_reasoning_summary_history_logs()
 
         vote_acc = float(np.mean(vote_correct_list)) if vote_correct_list else 0.0
         metrics = {
