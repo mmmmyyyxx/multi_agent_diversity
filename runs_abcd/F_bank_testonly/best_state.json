@@ -1,0 +1,331 @@
+{
+  "config": {
+    "task_type": "mmlu",
+    "model": "gpt-4o-mini",
+    "critic_model": "gpt-4o-mini",
+    "rewriter_model": "gpt-4o-mini",
+    "family_expansion_model": "deepseek-v4-pro",
+    "family_expansion_enabled": true,
+    "family_taxonomy_path": "family_taxonomy.json",
+    "use_dual_family_labels": true,
+    "primary_family_weight": 0.7,
+    "secondary_family_weight": 0.3,
+    "same_major_family_weight": 0.5,
+    "macro_diversity_weight": 0.5,
+    "train_path": "train.jsonl",
+    "test_path": "mmlu_test.jsonl",
+    "train_size": 200,
+    "test_size": 100,
+    "agents": 5,
+    "init_mode": "bank",
+    "shared_prompt": "You are a helpful reasoning assistant. Think step by step.",
+    "epochs": 2,
+    "update_every": 5,
+    "candidate_eval_batch_size": 3,
+    "baseline_only": true,
+    "max_tokens": 1000,
+    "critic_max_tokens": 8000,
+    "rewriter_max_tokens": 1000,
+    "temperature": 0.2,
+    "critic_temperature": 0.3,
+    "rewriter_temperature": 0.5,
+    "out_dir": "D:\\games waiting for me\\grade_one\\experiments\\multi_agent_diversity\\runs_abcd\\F_bank_testonly",
+    "seed": 42,
+    "max_retries": 5,
+    "retry_sleep": 2.0,
+    "transient_retry_forever": true,
+    "max_transient_retries": 0,
+    "max_retry_backoff": 30.0,
+    "llm_call_logging": true,
+    "llm_call_timeout": 120.0,
+    "bandit_lr": 0.2,
+    "baseline_momentum": 0.9,
+    "homogeneity_window": 5,
+    "lambda_diversity": 0.5,
+    "lambda_homogeneity": 0.35,
+    "lambda_invalid_trace": 0.3
+  },
+  "agents": [
+    {
+      "initial_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+      "initial_prompt_hash": "778c13cee5f3",
+      "current_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+      "current_prompt_hash": "778c13cee5f3",
+      "history": [
+        "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide."
+      ],
+      "gradient_history": [],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 0,
+      "reject_count": 0,
+      "last_update_record": {}
+    },
+    {
+      "initial_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+      "initial_prompt_hash": "e0a63d3695f1",
+      "current_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+      "current_prompt_hash": "e0a63d3695f1",
+      "history": [
+        "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices."
+      ],
+      "gradient_history": [],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 0,
+      "reject_count": 0,
+      "last_update_record": {}
+    },
+    {
+      "initial_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+      "initial_prompt_hash": "0622aa52b194",
+      "current_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+      "current_prompt_hash": "0622aa52b194",
+      "history": [
+        "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option."
+      ],
+      "gradient_history": [],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 0,
+      "reject_count": 0,
+      "last_update_record": {}
+    },
+    {
+      "initial_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+      "initial_prompt_hash": "ffcfc7bdf955",
+      "current_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+      "current_prompt_hash": "ffcfc7bdf955",
+      "history": [
+        "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization."
+      ],
+      "gradient_history": [],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 0,
+      "reject_count": 0,
+      "last_update_record": {}
+    },
+    {
+      "initial_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+      "initial_prompt_hash": "ee84e52f2578",
+      "current_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+      "current_prompt_hash": "ee84e52f2578",
+      "history": [
+        "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting."
+      ],
+      "gradient_history": [],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 0,
+      "reject_count": 0,
+      "last_update_record": {}
+    }
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "mean_family_homogeneity_rate": 0.0,
+        "mean_family_diversity": 0.0,
+        "mean_llm_direct_diversity_score": 0.0,
+        "vote_acc": 0.0
+      },
+      "test": {
+        "mean_family_homogeneity_rate": 0.6845599999999998,
+        "mean_family_diversity": 0.4420645795525911,
+        "mean_llm_direct_diversity_score": 0.0,
+        "vote_acc": 0.74,
+        "size": 100
+      }
+    }
+  ],
+  "prompt_history": {
+    "agent0": {
+      "agent_id": 0,
+      "initial_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+      "initial_prompt_hash": "778c13cee5f3",
+      "current_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+      "current_prompt_hash": "778c13cee5f3",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+          "current_prompt_hash": "778c13cee5f3"
+        }
+      ]
+    },
+    "agent1": {
+      "agent_id": 1,
+      "initial_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+      "initial_prompt_hash": "e0a63d3695f1",
+      "current_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+      "current_prompt_hash": "e0a63d3695f1",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+          "current_prompt_hash": "e0a63d3695f1"
+        }
+      ]
+    },
+    "agent2": {
+      "agent_id": 2,
+      "initial_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+      "initial_prompt_hash": "0622aa52b194",
+      "current_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+      "current_prompt_hash": "0622aa52b194",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+          "current_prompt_hash": "0622aa52b194"
+        }
+      ]
+    },
+    "agent3": {
+      "agent_id": 3,
+      "initial_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+      "initial_prompt_hash": "ffcfc7bdf955",
+      "current_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+      "current_prompt_hash": "ffcfc7bdf955",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+          "current_prompt_hash": "ffcfc7bdf955"
+        }
+      ]
+    },
+    "agent4": {
+      "agent_id": 4,
+      "initial_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+      "initial_prompt_hash": "ee84e52f2578",
+      "current_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+      "current_prompt_hash": "ee84e52f2578",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+          "current_prompt_hash": "ee84e52f2578"
+        }
+      ]
+    }
+  },
+  "extra": {
+    "epoch": 1,
+    "train": {
+      "mean_family_homogeneity_rate": 0.0,
+      "mean_family_diversity": 0.0,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.0
+    },
+    "test": {
+      "mean_family_homogeneity_rate": 0.6845599999999998,
+      "mean_family_diversity": 0.4420645795525911,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.74,
+      "size": 100
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "agent0": {
+    "agent_id": 0,
+    "initial_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+    "initial_prompt_hash": "778c13cee5f3",
+    "current_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+    "current_prompt_hash": "778c13cee5f3",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a concept-first multiple-choice reasoner. Identify the tested concept, eliminate distractors, then decide.",
+        "current_prompt_hash": "778c13cee5f3"
+      }
+    ]
+  },
+  "agent1": {
+    "agent_id": 1,
+    "initial_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+    "initial_prompt_hash": "e0a63d3695f1",
+    "current_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+    "current_prompt_hash": "e0a63d3695f1",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a contradiction-checking verifier. Test each option against the question and remove inconsistent choices.",
+        "current_prompt_hash": "e0a63d3695f1"
+      }
+    ]
+  },
+  "agent2": {
+    "agent_id": 2,
+    "initial_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+    "initial_prompt_hash": "0622aa52b194",
+    "current_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+    "current_prompt_hash": "0622aa52b194",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a definition-and-principle solver. Ground reasoning in core definitions before choosing an option.",
+        "current_prompt_hash": "0622aa52b194"
+      }
+    ]
+  },
+  "agent3": {
+    "agent_id": 3,
+    "initial_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+    "initial_prompt_hash": "ffcfc7bdf955",
+    "current_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+    "current_prompt_hash": "ffcfc7bdf955",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a skeptical critic-solver. Look for subtle wording traps, scope mismatches, and overgeneralization.",
+        "current_prompt_hash": "ffcfc7bdf955"
+      }
+    ]
+  },
+  "agent4": {
+    "agent_id": 4,
+    "initial_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+    "initial_prompt_hash": "ee84e52f2578",
+    "current_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+    "current_prompt_hash": "ee84e52f2578",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting.",
+        "current_prompt_hash": "ee84e52f2578"
+      }
+    ]
+  }
+}

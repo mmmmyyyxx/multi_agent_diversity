@@ -1,0 +1,34 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_family_homogeneity_rate": 0.68218,
+      "mean_family_diversity": 0.39109767625115355,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.855
+    },
+    "test": {
+      "mean_family_homogeneity_rate": 0.70783,
+      "mean_family_diversity": 0.36071272123772047,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.85,
+      "size": 100
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_family_homogeneity_rate": 0.64922,
+      "mean_family_diversity": 0.42051323132750257,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.835
+    },
+    "test": {
+      "mean_family_homogeneity_rate": 0.7243400000000001,
+      "mean_family_diversity": 0.4176223378124408,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.75,
+      "size": 100
+    }
+  }
+]
