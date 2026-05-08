@@ -17,7 +17,7 @@ class AblationSetting:
 
 
 SETTINGS: List[AblationSetting] = [
-    AblationSetting("A_shared_no_div", "shared", False),
+    #AblationSetting("A_shared_no_div", "shared", False),
     AblationSetting("B_shared_div", "shared", True),
     # Optional full matrix:
     AblationSetting("C_bank_no_div", "bank", False),
@@ -147,6 +147,10 @@ def _build_command(
         str(args.max_transient_retries),
         "--max_retry_backoff",
         str(args.max_retry_backoff),
+        "--llm_call_logging",
+        str(int(args.llm_call_logging)),
+        "--llm_call_timeout",
+        str(args.llm_call_timeout),
         "--model",
         args.model,
         "--critic_model",
@@ -301,6 +305,8 @@ def main():
     parser.add_argument("--transient_retry_forever", type=int, default=1, choices=[0, 1])
     parser.add_argument("--max_transient_retries", type=int, default=0)
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
+    parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--llm_call_timeout", type=float, default=120.0)
 
     parser.add_argument("--baseline_only", type=int, default=0, choices=[0, 1])
 
@@ -309,6 +315,7 @@ def main():
     args.baseline_only = bool(int(args.baseline_only))
     args.family_expansion_enabled = bool(int(args.family_expansion_enabled))
     args.use_dual_family_labels = bool(int(args.use_dual_family_labels))
+    args.llm_call_logging = bool(int(args.llm_call_logging))
 
     workspace = Path(args.workspace).resolve()
     args.workspace = str(workspace)

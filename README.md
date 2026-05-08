@@ -177,7 +177,7 @@ python -m multi_dataset_diverse_rl.cli `
 - `train_step_logs.jsonl`：每个训练 step 的 family 指标、reward 摘要和 update 摘要。
 - `train_trace_history.jsonl`：训练阶段完整推理轨迹。
 - `test_trace_history.jsonl`：测试阶段完整推理轨迹。
-- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、family 分布、`reasoning_summary`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
+- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、`family_resolution`、`secondary_family_resolution`、family 分布、`reasoning_summary`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
 - `family_taxonomy.json`：动态 family taxonomy（默认写入，路径可由 `--family_taxonomy_path` 指定）。
 - `test_epoch*_predictions.jsonl`：每个测试样本的答案、投票结果和 family 指标。
 - `last_state.json` / `best_state.json`：agent 状态、bandit 参数和 prompt 历史快照。
@@ -234,9 +234,10 @@ python scripts/run_testonly_baselines.py --workspace . --out_root runs_abcd --ta
 - `baseline_runs.jsonl` / `baseline_runs.csv`
 - `abcd_plus_baselines.jsonl` / `abcd_plus_baselines.csv`
 - `ablation_summary_with_baselines.csv` / `ablation_summary_with_baselines.md`
-- `ablation_with_baselines_diversity.png`
-- `ablation_with_baselines_homogeneity_rate.png`
-- `ablation_with_baselines_vote_acc.png`
+- `ablation_with_baselines_diversity_panel.png`
+- `ablation_with_baselines_homogeneity_panel.png`
+- `ablation_with_baselines_behavior_panel.png`
+- `ablation_with_baselines_trace_summary_panel.png`：在同一张图中并排比较完整 trace 与 `reasoning_summary` 的 cosine diversity/similarity。
 
 ## 结果分析与绘图
 
@@ -279,6 +280,8 @@ python scripts/plot_ablation_results.py --csv runs_abcd/ablation_summary.csv --o
 - `--family_expansion_enabled`：是否允许训练过程中接纳新 family。关闭后未知标签会映射到已有策略。
 - `--family_taxonomy_path`：动态 family taxonomy 保存路径。
 
+动态扩展审核只查看触发新标签的单个 agent 完整 trace，不使用其他 agents 或组级分布；审核上下文会以 `family_resolution.review_context="single_agent_trace"`、`trace_hash`、`trace_length` 等字段写入 `reasoning_summary_history.jsonl`，便于回溯。
+
 **Reward**
 
 - `--lambda_diversity`：多样性奖励强度。越大，越鼓励团队覆盖不同策略。
@@ -304,6 +307,8 @@ python scripts/plot_ablation_results.py --csv runs_abcd/ablation_summary.csv --o
 - `--transient_retry_forever`：是否对临时 API 错误持续重试。
 - `--max_transient_retries`：临时错误最大重试次数，`0` 表示不设上限。
 - `--max_retry_backoff`：重试等待时间上限。
+- `--llm_call_logging`：是否在控制台打印每次 LLM 调用的 start/ok/retry/failed 日志，默认开启，便于定位卡住阶段。
+- `--llm_call_timeout`：单次 LLM 请求超时时间（秒），默认 `120`；超时后会打印 retry 日志并按重试策略继续。
 
 ## 注意事项
 

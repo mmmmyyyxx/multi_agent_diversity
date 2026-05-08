@@ -147,6 +147,10 @@ def _build_command(args: argparse.Namespace, setting: BaselineSetting, out_dir: 
         str(args.max_transient_retries),
         "--max_retry_backoff",
         str(args.max_retry_backoff),
+        "--llm_call_logging",
+        str(int(args.llm_call_logging)),
+        "--llm_call_timeout",
+        str(args.llm_call_timeout),
         "--transient_retry_forever",
         str(int(args.transient_retry_forever)),
         "--test_path",
@@ -334,6 +338,8 @@ def main():
     parser.add_argument("--transient_retry_forever", type=int, default=1, choices=[0, 1])
     parser.add_argument("--max_transient_retries", type=int, default=0)
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
+    parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--llm_call_timeout", type=float, default=120.0)
 
     parser.add_argument("--agents", type=int, default=5)
     parser.add_argument("--test_size", type=int, default=100)
@@ -353,6 +359,7 @@ def main():
     args.transient_retry_forever = bool(int(args.transient_retry_forever))
     args.family_expansion_enabled = bool(int(args.family_expansion_enabled))
     args.use_dual_family_labels = bool(int(args.use_dual_family_labels))
+    args.llm_call_logging = bool(int(args.llm_call_logging))
 
     workspace = Path(args.workspace).resolve()
     args.workspace = str(workspace)

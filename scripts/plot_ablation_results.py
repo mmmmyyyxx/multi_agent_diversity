@@ -36,6 +36,9 @@ def plot_ablation(rows: List[Dict[str, str]], out_dir: Path):
     prompt_div = [to_float(r.get("final_prompt_diversity_rate", "0")) for r in rows]
     prompt_cos_div = [to_float(r.get("final_prompt_cosine_diversity", "0")) for r in rows]
     trace_cos_div = [to_float(r.get("final_trace_cosine_diversity", "0")) for r in rows]
+    summary_cos_div = [to_float(r.get("final_reasoning_summary_cosine_diversity", "0")) for r in rows]
+    trace_cos_sim = [to_float(r.get("final_trace_cosine_similarity", "0")) for r in rows]
+    summary_cos_sim = [to_float(r.get("final_reasoning_summary_cosine_similarity", "0")) for r in rows]
     train_div = [to_float(r.get("final_train_mean_family_diversity", "0")) for r in rows]
     test_div = [to_float(r.get("final_test_mean_family_diversity", "0")) for r in rows]
     train_homo = [to_float(r.get("final_train_mean_family_homogeneity_rate", "0")) for r in rows]
@@ -66,21 +69,42 @@ def plot_ablation(rows: List[Dict[str, str]], out_dir: Path):
     fig0b.savefig(fig0b_path, dpi=160)
     plt.close(fig0b)
 
-    # 图0c：最后轨迹余弦多样性
+    # 图0c：最后轨迹与 reasoning summary 余弦多样性
     fig0c, ax0c = plt.subplots(figsize=(10, 5))
-    ax0c.bar(settings, trace_cos_div, color="#e15759")
+    x = list(range(len(settings)))
+    width = 0.36
+    ax0c.bar([i - width / 2 for i in x], trace_cos_div, width=width, color="#e15759", label="Full trace")
+    ax0c.bar([i + width / 2 for i in x], summary_cos_div, width=width, color="#59a14f", label="Reasoning summary")
+    ax0c.set_xticks(x)
+    ax0c.set_xticklabels(settings, rotation=20)
     ax0c.set_ylim(0.0, 1.0)
-    ax0c.set_ylabel("Trace Cosine Diversity")
-    ax0c.set_title("Ablation: Final Trace Cosine Diversity by Setting")
+    ax0c.set_ylabel("Cosine Diversity")
+    ax0c.set_title("Ablation: Final Trace and Summary Cosine Diversity by Setting")
+    ax0c.legend()
     ax0c.grid(axis="y", linestyle="--", alpha=0.3)
     fig0c.tight_layout()
-    fig0c_path = out_dir / "ablation_trace_cosine_diversity.png"
+    fig0c_path = out_dir / "ablation_trace_summary_cosine_diversity.png"
     fig0c.savefig(fig0c_path, dpi=160)
     plt.close(fig0c)
 
+    # 图0d：最后轨迹与 reasoning summary 余弦相似度
+    fig0d, ax0d = plt.subplots(figsize=(10, 5))
+    ax0d.bar([i - width / 2 for i in x], trace_cos_sim, width=width, color="#e15759", label="Full trace")
+    ax0d.bar([i + width / 2 for i in x], summary_cos_sim, width=width, color="#59a14f", label="Reasoning summary")
+    ax0d.set_xticks(x)
+    ax0d.set_xticklabels(settings, rotation=20)
+    ax0d.set_ylim(0.0, 1.0)
+    ax0d.set_ylabel("Cosine Similarity")
+    ax0d.set_title("Ablation: Final Trace and Summary Cosine Similarity by Setting")
+    ax0d.legend()
+    ax0d.grid(axis="y", linestyle="--", alpha=0.3)
+    fig0d.tight_layout()
+    fig0d_path = out_dir / "ablation_trace_summary_cosine_similarity.png"
+    fig0d.savefig(fig0d_path, dpi=160)
+    plt.close(fig0d)
+
     # 图1：轨迹多样性
     fig1, ax1 = plt.subplots(figsize=(10, 5))
-    x = list(range(len(settings)))
     width = 0.36
     ax1.bar([i - width / 2 for i in x], train_div, width=width, label="Train Diversity")
     ax1.bar([i + width / 2 for i in x], test_div, width=width, label="Test Diversity")
@@ -125,6 +149,7 @@ def plot_ablation(rows: List[Dict[str, str]], out_dir: Path):
     print(f"Saved: {fig0_path}")
     print(f"Saved: {fig0b_path}")
     print(f"Saved: {fig0c_path}")
+    print(f"Saved: {fig0d_path}")
     print(f"Saved: {fig1_path}")
     print(f"Saved: {fig2_path}")
     print(f"Saved: {fig3_path}")

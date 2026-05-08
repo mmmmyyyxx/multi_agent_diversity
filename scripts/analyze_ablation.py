@@ -74,6 +74,22 @@ def _find_recent_trace_snapshots(run_dir: Path, limit: int = 10) -> List[List[Di
     return out
 
 
+def _find_recent_summary_snapshots(run_dir: Path, limit: int = 10) -> List[List[Dict[str, Any]]]:
+    records = _read_jsonl(run_dir / "reasoning_summary_history.jsonl")
+    if not records:
+        return []
+
+    out: List[List[Dict[str, Any]]] = []
+    for rec in records[-max(1, limit):]:
+        if not isinstance(rec, dict):
+            continue
+        agents = rec.get("agents", [])
+        if not isinstance(agents, list):
+            continue
+        out.append([x for x in agents if isinstance(x, dict)])
+    return out
+
+
 def _extract_final_prompt_strings(prompt_history: Any) -> List[str]:
     prompts: List[str] = []
     if not isinstance(prompt_history, dict):
@@ -123,6 +139,15 @@ def _extract_final_trace_strings(trace_agents: List[Dict[str, Any]]) -> List[str
         if trace:
             traces.append(trace)
     return traces
+
+
+def _extract_final_reasoning_summary_strings(trace_agents: List[Dict[str, Any]]) -> List[str]:
+    summaries: List[str] = []
+    for a in trace_agents:
+        summary = str(a.get("reasoning_summary", "")).strip()
+        if summary:
+            summaries.append(summary)
+    return summaries
 
 
 def _tokenize_for_cosine(text: str) -> List[str]:
@@ -262,6 +287,7 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
     last_state = _read_json(run_dir / "last_state.json") or {}
     step_logs = _read_jsonl(run_dir / "train_step_logs.jsonl")
     trace_snapshots = _find_recent_trace_snapshots(run_dir, limit=10)
+    summary_snapshots = _find_recent_summary_snapshots(run_dir, limit=10)
     pred_path = _find_latest_test_predictions(run_dir)
     pred_records = _read_jsonl(pred_path) if pred_path else []
     prompt_history = _read_json(run_dir / "prompt_history.json") or {}
@@ -315,6 +341,20 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
 
     trace_cos_div = _safe_mean(trace_cos_div_all)
     trace_cos_sim = _safe_mean(trace_cos_sim_all)
+
+    summary_cos_div_all: List[float] = []
+    summary_cos_sim_all: List[float] = []
+    final_summary_strings: List[str] = []
+    for i, snapshot_agents in enumerate(summary_snapshots):
+        summary_strings = _extract_final_reasoning_summary_strings(snapshot_agents)
+        div_i, sim_i = _pairwise_cosine_diversity(summary_strings)
+        summary_cos_div_all.append(div_i)
+        summary_cos_sim_all.append(sim_i)
+        if i == len(summary_snapshots) - 1:
+            final_summary_strings = summary_strings
+
+    summary_cos_div = _safe_mean(summary_cos_div_all)
+    summary_cos_sim = _safe_mean(summary_cos_sim_all)
 
     setting = run_dir.name
     cfg_baseline_only = bool(cfg.get("baseline_only", False))
@@ -383,6 +423,10 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
     out["final_trace_cosine_diversity"] = trace_cos_div
     out["final_trace_cosine_similarity"] = trace_cos_sim
     out["trace_cosine_window_used"] = len(trace_snapshots)
+    out["final_reasoning_summary_count"] = len(final_summary_strings)
+    out["final_reasoning_summary_cosine_diversity"] = summary_cos_div
+    out["final_reasoning_summary_cosine_similarity"] = summary_cos_sim
+    out["reasoning_summary_cosine_window_used"] = len(summary_snapshots)
     return out
 
 
@@ -405,6 +449,7 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "diversity_reward_enabled",
         "final_prompt_cosine_diversity",
         "final_trace_cosine_diversity",
+        "final_reasoning_summary_cosine_diversity",
         "final_test_mean_family_diversity",
         "final_test_mean_family_homogeneity_rate",
         "final_train_mean_llm_direct_diversity_score",

@@ -26,6 +26,7 @@ async def main_async():
     cfg.baseline_only = bool(int(cfg.baseline_only))
     cfg.family_expansion_enabled = bool(int(cfg.family_expansion_enabled))
     cfg.use_dual_family_labels = bool(int(cfg.use_dual_family_labels))
+    cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
 
     ensure_dir(cfg.out_dir)
     set_seed(cfg.seed)

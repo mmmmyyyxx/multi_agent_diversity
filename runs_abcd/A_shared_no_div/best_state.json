@@ -1,0 +1,1697 @@
+{
+  "config": {
+    "task_type": "mmlu",
+    "model": "gpt-4o-mini",
+    "critic_model": "gpt-4o-mini",
+    "rewriter_model": "gpt-4o-mini",
+    "family_expansion_model": "deepseek-v4-pro",
+    "family_expansion_enabled": true,
+    "family_taxonomy_path": "family_taxonomy.json",
+    "use_dual_family_labels": true,
+    "primary_family_weight": 0.7,
+    "secondary_family_weight": 0.3,
+    "same_major_family_weight": 0.5,
+    "macro_diversity_weight": 0.5,
+    "train_path": "mmlu_train.jsonl",
+    "test_path": "mmlu_test.jsonl",
+    "train_size": 200,
+    "test_size": 100,
+    "agents": 5,
+    "init_mode": "shared",
+    "shared_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+    "epochs": 2,
+    "update_every": 5,
+    "candidate_eval_batch_size": 3,
+    "baseline_only": false,
+    "max_tokens": 1000,
+    "critic_max_tokens": 8000,
+    "rewriter_max_tokens": 1000,
+    "temperature": 0.2,
+    "critic_temperature": 0.3,
+    "rewriter_temperature": 0.5,
+    "out_dir": "D:\\games waiting for me\\grade_one\\experiments\\multi_agent_diversity\\runs_abcd\\A_shared_no_div",
+    "seed": 42,
+    "max_retries": 5,
+    "retry_sleep": 2.0,
+    "transient_retry_forever": true,
+    "max_transient_retries": 0,
+    "max_retry_backoff": 30.0,
+    "bandit_lr": 0.2,
+    "baseline_momentum": 0.9,
+    "homogeneity_window": 5,
+    "lambda_diversity": 0.0,
+    "lambda_homogeneity": 0.0,
+    "lambda_invalid_trace": 0.0
+  },
+  "agents": [
+    {
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Engage in reasoning that prioritizes symbolic and formal methods while minimizing repetitive decomposition approaches. Focus on innovative algebraic techniques and diverse reasoning strategies, ensuring that each step taken adds unique value to the analysis. Strive to clarify problems through novel symbolic expressions and verify solutions using varied methods to foster distinct reasoning trajectories.",
+      "current_prompt_hash": "dba139baf216",
+      "history": [
+        "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "In your reasoning, emphasize adopting numerical and intuitive approaches that complement algebraic and decomposition methods. Focus on integrating diverse reasoning styles by considering approximate, realistic, or scenario-based examples to broaden the reasoning landscape. Prioritize verifying the coherence of your logic with multiple reasoning modes, and avoid over-relying solely on symbolic derivations. Maintain clarity in role separation by explicitly diversifying your methodology without diminishing the depth of your reasoning.",
+        "In your reasoning, avoid relying solely on comparative methods or proof by contradiction. Instead, focus on generating counterexamples and alternative strategies to enhance the diversity of your problem-solving techniques. Ensure that your analysis remains clear and distinct from others by prioritizing unique reasoning trajectories.",
+        "Aim to broaden the scope of your reasoning by intentionally incorporating alternative inference methods, such as inductive, heuristic, or probabilistic strategies, even if they diverge from your usual decomposition approach. Prioritize expanding diverse reasoning trajectories to explore implications beyond immediate comparisons, ensuring your contributions address potential gaps in reasoning coverage.",
+        "Avoid repetitive decomposition strategies by integrating symbolic reasoning and logical proof into your analysis. Challenge yourself to explore alternative reasoning pathways that reduce overlap with other agents, ensuring your contributions are distinct and innovative. Focus on unique insights drawn from these different reasoning methods.",
+        "Expand your analytical framework by actively exploring generative, heuristic, and other reasoning families. Challenge yourself to develop insights from these diverse approaches, ensuring that your contributions fill the gaps left by traditional decomposition methods. Strive to enrich the team's overall reasoning landscape.",
+        "Prioritize your designated role by focusing on specific reasoning methods aligned with your expertise while maintaining clarity in your structured analysis. Emphasize your specialized approach to contribute depth, but ensure to incorporate alternative reasoning styles—such as probabilistic assessments or heuristic shortcuts—only to complement your core framework. Avoid excessive diversification that could dilute your primary analytical focus, and aim to provide insights that reinforce cohesive team reasoning without overwhelming the decomposition strategy.",
+        "Broaden your reasoning approach by actively incorporating multiple analytical perspectives, such as heuristic, intuitive, and symbolic methods, to achieve a more comprehensive analysis. Seek connections across different reasoning modes, and be attentive to gaps in your current focus to promote a more holistic understanding. Avoid adhering strictly to a single reasoning style, and instead, integrate diverse methods to enhance coverage.",
+        "Approach your reasoning by actively seeking to incorporate a broad range of factors and perspectives, ensuring that your analysis covers diverse dimensions relevant to the problem. Strive to identify and connect different viewpoints and methodologies, emphasizing breadth over the detailed decomposition of individual components. Use comparative analyses to highlight similarities and differences, thereby broadening the scope of your reasoning.",
+        "Assume the role of a specialist who prioritizes incorporating advanced symbolic formulation and algebraic methods into reasoning. Focus on applying formal mathematical transformations and explicit symbolic manipulations to explore the problem. Avoid relying primarily on step-by-step decomposition strategies or repetitive procedural reasoning, and ensure your approach emphasizes concise, targeted mathematical reasoning. Strive to clarify the problem through algebraic expressions, and verify your solutions via symbolic equivalence or structural consistency.",
+        "Engage in reasoning that prioritizes symbolic and formal methods while minimizing repetitive decomposition approaches. Focus on innovative algebraic techniques and diverse reasoning strategies, ensuring that each step taken adds unique value to the analysis. Strive to clarify problems through novel symbolic expressions and verify solutions using varied methods to foster distinct reasoning trajectories."
+      ],
+      "gradient_history": [
+        "Diagnosis: The agent exhibits a strong reliance on decomposition and symbolic reasoning, resulting in limited diversity in reasoning approaches. This pattern is consistent with peers, indicating a team-wide tendency to favor algebraic derivation over other reasoning methods.\nBehavior Shift: To enhance reasoning diversity, the agent should adopt numerical reasoning and intuitive approaches, moving away from the predominant focus on algebraic methods.\nPrompt Edit Instruction: Incorporate numerical examples or intuitive scenarios in the prompt to encourage a broader range of reasoning strategies, ensuring a more holistic approach to problem-solving.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning and case analysis, consistently focusing on direct comparison within a narrow family of reasoning approaches, which limits reasoning diversity and may hinder inductive insight generation.\nBehavior Shift: Encourage the agent to actively incorporate inductive reasoning strategies, such as deriving general principles and making broader inferences from specific evidence, rather than solely comparing and analyzing predefined options.\nPrompt Edit Instruction: Shift the prompt to emphasize uncovering overarching patterns or principles from the given information, prompting the agent to generate insights through inductive jumps rather than primarily contrasting options or analyzing cases.",
+        "Diagnosis: The agent heavily relies on backward reasoning and definition application, resulting in homogenous reasoning patterns with limited diversity, which constrains creative and heuristic approaches necessary for broader reasoning strategies.\nBehavior Shift: Encourage the agent to incorporate heuristic, analogical, and model-based reasoning modes, reducing overdependence on existing families to foster diverse problem-solving techniques.\nPrompt Edit Instruction: Modify the prompt to explicitly request the agent to explore reasoning strategies beyond definitions, such as heuristic or analogical approaches, while maintaining logical rigor. Emphasize the importance of diverse reasoning methods and discourage overreliance on backward and definition-based reasoning.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning within a narrow family of techniques, leading to insufficient exploration of alternative reasoning modes such as counterexample search, which are underutilized among peers. This results in a lack of diverse problem-solving strategies essential for tackling varied problem types.\nBehavior Shift: Encourage diversification by shifting focus from comparative reasoning to counterexample search, emphasizing the importance of exploring multiple reasoning modes to enhance problem-solving robustness.\nPrompt Edit Instruction: Reframe the task prompt to explicitly prompt the agent to consider and generate counterexamples or alternative solutions, avoiding solely analytical or comparative approaches. Emphasize the value of hypothesis testing through counterexamples to improve reasoning diversity and effectiveness.",
+        "Diagnosis: The agent's current reasoning predominantly relies on comparative analysis and option elimination, which limits exploration of diverse reasoning strategies like creative hypothesis generation, multidisciplinary reasoning, and counterfactual analysis. This constrains the ability to generate novel insights and reduces reasoning diversity needed for complex problem-solving.\nBehavior Shift: Encourage shifting from exclusive reliance on familiar comparative methods to integrating creative and multidisciplinary reasoning approaches, fostering hypothesis expansion and counterfactual exploration within the prompt structure.\nPrompt Edit Instruction: Reframe the prompt to explicitly prompt for hypothesis generation and counterfactual considerations, emphasizing the importance of exploring diverse reasoning strategies beyond comparison and elimination to enhance reasoning depth and creativity.",
+        "Diagnosis: The agent exhibits a high reliance on algebraic derivation and backward reasoning, leading to a lack of diversity in reasoning approaches. This homogeneity is evident in the team's collective focus on similar reasoning families, which limits the exploration of alternative methods.\nBehavior Shift: To enhance reasoning diversity, the agent should shift focus towards definition application, which can provide new insights and approaches to problem-solving, while avoiding decomposition strategies that reinforce existing patterns.\nPrompt Edit Instruction: In future prompts, incorporate requests for definitions or applications of concepts to encourage the use of definition application as a reasoning mode, thereby fostering a broader range of analytical perspectives.",
+        "Diagnosis: The agent demonstrates an overreliance on decomposition and comparative reasoning, leading to limited reasoning diversity and insufficient exploration of alternative inference strategies, particularly inductive reasoning.\nBehavior Shift: Encourage shifting focus from only decomposition and comparative evaluation towards incorporating inductive reasoning to generate broader, more creative hypotheses and explore implications beyond immediate comparisons.\nPrompt Edit Instruction: Instruct the agent to intentionally diversify reasoning approaches by integrating inductive, heuristic, probabilistic, and causal strategies, and explicitly avoid excessive reliance on decomposition. Emphasize the importance of broadening perspective and exploring wider implications within the prompt.",
+        "Diagnosis: The agent heavily relies on decompositional and formal reasoning strategies, with limited exploration of symbolic formulation and conceptual reasoning, resulting in a narrow reasoning scope that hampers divergence and comprehensive insight.\nBehavior Shift: Encourage the agent to diversify reasoning approaches by integrating more symbolic formulation and conceptual reasoning methods, reducing overdependence on structural analysis, to foster innovative and divergent insights.\nPrompt Edit Instruction: Modify the prompt to emphasize exploring symbolic and conceptual reasoning strategies, prompt the agent to consider alternative forms of representation and higher-level conceptual analysis, and explicitly discourage exclusive reliance on decomposition techniques.",
+        "Diagnosis: The agent predominantly utilizes a decomposition reasoning approach, which is highly homogeneous among the team. This results in a lack of diversity in reasoning strategies, particularly in symbolic reasoning and logical proof.\nBehavior Shift: To enhance reasoning diversity, the agent should incorporate symbolic reasoning techniques into its approach, moving away from a strict focus on decomposition.\nPrompt Edit Instruction: In future prompts, explicitly request the application of symbolic reasoning methods to analyze the problem, rather than relying solely on decomposition strategies.",
+        "Diagnosis: The agent's reasoning relies heavily on decomposition and direct computation, leading to limited reasoning diversity. This overreliance diminishes the exploration of alternative problem-solving strategies, such as generative or heuristic reasoning, which are necessary to address the group's pattern gap.\nBehavior Shift: Shift focus from solely decomposing and directly computing to incorporating broader reasoning families, encouraging the exploration of diverse approaches and cross-family strategies.\nPrompt Edit Instruction: Instruct the agent to actively diversify its reasoning strategies by emphasizing the importance of exploring alternative reasoning families, avoiding overreliance on decomposition, and integrating generative or heuristic methods to enrich problem-solving approaches.",
+        "Diagnosis: The agent heavily relies on decomposition and symbolic formulation, leading to limited reasoning diversity and redundancy with peers.\nBehavior Shift: Shift focus towards causal reasoning to enhance the diversity of thought and reduce overlap with other agents.\nPrompt Edit Instruction: Incorporate causal reasoning prompts that encourage exploration of relationships and implications, while minimizing reliance on decomposition.",
+        "Diagnosis: The agent heavily relies on systematic decomposition and structured analysis, which limits diversity in reasoning modes. This overreliance results in homogeneity with peers and neglects probabilistic and heuristic strategies that could enrich reasoning and improve adaptability.\nBehavior Shift: Shift from purely structured decomposition towards integrating probabilistic, heuristic, and intuitive reasoning methods. Emphasize exploring multiple reasoning approaches and reducing overdependence on family-specific methods to foster diversified thinking.\nPrompt Edit Instruction: Instruct the agent to explicitly incorporate a variety of reasoning styles—such as probabilistic assessments, heuristic shortcuts, and intuitive insights—while maintaining structured analysis. Clarify that balancing these modes enhances reasoning diversity and team robustness, and that decomposition should be complemented rather than dominated by other methods.",
+        "Diagnosis: The agent demonstrates a strong reliance on decomposition and symbolic formulation, leading to repetitive reasoning patterns with limited diversity. This constrains the exploration of alternative reasoning modes such as heuristic or intuitive insights, which are underrepresented in the team to address the identified gap.\nBehavior Shift: Encourage the agent to incorporate diverse reasoning strategies beyond pure decomposition, emphasizing heuristic and intuitive approaches that can provide more multifaceted analysis and reduce overdependence on symbolic decomposition.\nPrompt Edit Instruction: Guide the agent to actively integrate heuristic and intuitive reasoning prompts, explicitly asking for alternative reasoning methods and cross-checking with different analytical angles, while minimizing repetitive decomposition focus.",
+        "Diagnosis: The agent consistently employs a decomposition approach, mirroring the team's predominant reasoning style, which lacks diversity in reasoning modes. This results in a narrow focus on breaking down factors without integrating or comparing them effectively.\nBehavior Shift: Adopt a synthesis-focused reasoning strategy that integrates various factors to provide a holistic view, while also incorporating comparative analysis to enhance depth and breadth of understanding.\nPrompt Edit Instruction: Incorporate prompts that explicitly request the integration of multiple factors and encourage comparisons between them, steering away from purely decomposing elements.",
+        "Diagnosis: The agent predominantly relies on decomposition strategies, resulting in limited reasoning diversity and an overlap with peers, which constrains the analytical depth and breadth of responses.\nBehavior Shift: Incorporate more symbolic and conceptual reasoning approaches to enhance the richness of analysis and differentiate from peers.\nPrompt Edit Instruction: Integrate prompts that encourage exploration of analogies, heuristic evaluations, and symbolic reasoning to foster a broader analytical perspective.",
+        "Diagnosis: The agent predominantly relies on decomposition and symbolic formulation, leading to a lack of diversity in reasoning approaches compared to peers. This results in a narrow perspective that limits the exploration of alternative reasoning strategies.\nBehavior Shift: Emphasize analytical reasoning to enhance the depth and breadth of analysis, moving away from a purely sequential decomposition approach.\nPrompt Edit Instruction: Incorporate prompts that encourage exploration of analytical reasoning techniques, such as evaluating relationships and implications, while avoiding strictly sequential breakdowns of the content.",
+        "Diagnosis: The agent heavily relies on decomposition strategies, leading to a lack of diversity in reasoning approaches, which is mirrored by all peers. This results in limited exploration of symbolic formulation and algebraic computation methods.\nBehavior Shift: Focus on incorporating symbolic formulation techniques to enhance reasoning diversity and reduce redundancy with peers.\nPrompt Edit Instruction: Integrate prompts that encourage the use of symbolic reasoning and algebraic manipulation, while minimizing stepwise decomposition methods.",
+        "Diagnosis: The agent relies predominantly on decomposition and direct computation strategies, leading to repetitive reasoning patterns and limited analytical variety, which hampers innovative symbolic or heuristic reasoning approaches.\nBehavior Shift: Introduce diverse reasoning modes, especially symbolic and procedural strategies, to break the over-reliance on decomposition-based methods, thereby fostering broader analytical approaches.\nPrompt Edit Instruction: Shift the prompt focus towards encouraging the application of symbolic formal reasoning, heuristic insights, or procedural steps, ensuring the agent explores alternative reasoning pathways beyond decomposition."
+      ],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 10,
+      "reject_count": 8,
+      "last_update_record": {
+        "init_mode": "shared",
+        "all_agents_shared_origin": true,
+        "initial_agent_prompt_hashes": [
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84"
+        ],
+        "epoch": 1,
+        "step": 180,
+        "agent_id": 0,
+        "selected_agent_ids": [
+          0,
+          2
+        ],
+        "question_hash": "f4135304fcb7",
+        "gold_hash": "50c9e8d5fc98",
+        "group_diagnosis": {
+          "group_summary": "PATTERN=Overuse of decomposition-family reasoning indicates an insufficient variety in analytical approaches, agents should diversify with symbolic, procedural, or heuristic strategies to ;GAP=symbolic_formulation, heuristic, procedural;ACTION=Reduce overlap of agents 0,1,2,3,4 while preserving distinct roles of agents none.",
+          "missing_modes": [
+            "symbolic_formulation",
+            "heuristic",
+            "procedural",
+            "background_knowledge"
+          ],
+          "redundant_agents": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "critical_agents": [],
+          "target_role_hint": "ROLE=diversifier;FOCUS=shift towards symbolic/formal reasoning;AVOID=overlap with solely decomposition"
+        },
+        "agent_initial_prompt_hash": "1eb68419ee84",
+        "current_prompt_hash": "740fe26948ac",
+        "candidates": [
+          {
+            "name": "conservative_specialization",
+            "prompt_hash": "cf345c8533ee"
+          },
+          {
+            "name": "coverage_gap_shift",
+            "prompt_hash": "e65fa3ef78e5"
+          },
+          {
+            "name": "anti_redundancy_shift",
+            "prompt_hash": "dba139baf216"
+          }
+        ],
+        "bandit_probs": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "selected_action_id": 3,
+        "selected_action_name": "anti_redundancy_shift",
+        "selected_prompt_hash": "dba139baf216",
+        "current_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "selected_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "decision": "accept",
+        "textual_gradient_hash": "cdcc44ae5a02",
+        "textual_gradient_excerpt": "Diagnosis: The agent relies predominantly on decomposition and direct computation strategies, leading to repetitive reasoning patterns and limited analytical variety, which hampers innovative symbolic or heuristic reason"
+      }
+    },
+    {
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+      "current_prompt_hash": "3d85b82e7ea9",
+      "history": [
+        "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "As an interdisciplinary integrator, prioritize your core role of synthesizing information across multiple domains. Focus on detailed, specialized reasoning within your assigned area to deepen understanding. Minimize exploration of unfamiliar methods unless directly relevant, and avoid redundant approaches already utilized by others. Emphasize precise, evidence-based validation of your conclusions, ensuring clarity and accuracy in your reasoning trajectory.",
+        "Maintain your core role of synthesizing multidisciplinary information, but prioritize deepening your expertise within your assigned domain. Center your reasoning on detailed, domain-specific validation and evidence, minimizing the inclusion of techniques outside your specialty. When evaluating scenarios, focus on specialized reasoning and precise confirmation, avoiding broad or cross-domain approaches unless explicitly relevant. Remain consistent with your specialized perspective, ensuring your contributions reinforce the group's depth without unnecessary diversification.",
+        "As a <role>, aim to encompass a wide spectrum of reasoning approaches by integrating both your specialized domain knowledge and complementary inductive or heuristic strategies. When analyzing scenarios, deliberately include methods outside strict decomposition, such as pattern recognition or experiential insights, to broaden reasoning diversity. Prioritize expansion of reasoning modes to fill gaps identified in the group's collective approach, ensuring your contributions help address which reasoning styles are underrepresented.",
+        "As a <role>, prioritize your specialized analytical strengths in your reasoning process, emphasizing the depth of your domain knowledge. While engaging in diverse reasoning strategies, maintain a clear focus on your core expertise to deepen insights. Avoid overly broad or unfocused approaches that may dilute your specialized contribution. Ensure your reasoning involves precise, domain-centered analysis that complements other agents' broader strategies, reinforcing the role's core identity while contributing to team diversity.",
+        "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective."
+      ],
+      "gradient_history": [
+        "Diagnosis: The agent's reasoning heavily relies on decomposition and symbolic interpretation, which limits reasoning diversity and integration of intuitive and numerical methods necessary for complex problem-solving.\nBehavior Shift: Encourage the agent to incorporate intuitive insights and numerical reasoning alongside decomposition, fostering a more integrated and flexible approach to reasoning tasks.\nPrompt Edit Instruction: Frame the prompt to explicitly prompt the agent to synthesize reasoning modes, combining decomposition with intuition and quantitative analysis, and to avoid isolated symbolic or decompositional reasoning.",
+        "Diagnosis: The agent exhibits a strong reliance on backward reasoning and definition application, leading to limited diversity in reasoning strategies. This overlap with peers indicates a lack of exploration into heuristic and analogical methods, which are critical for enhancing problem-solving capabilities.\nBehavior Shift: Incorporate a broader range of reasoning strategies, particularly focusing on heuristic and analogical approaches to diversify thought processes and solutions.\nPrompt Edit Instruction: Encourage the exploration of analogies and heuristics by framing questions that prompt comparisons to familiar concepts or scenarios, while minimizing reliance on strict definitions and backward reasoning.",
+        "Diagnosis: Agent 1's predominant use of decomposition and systematic breakdowns limits its reasoning diversity and prevents engagement with comparative reasoning, leading to a narrow approach within the homogeneous team.\nBehavior Shift: Encourage the agent to proactively incorporate comparative evaluation and option elimination strategies into its reasoning, moving beyond purely decompositional analysis.\nPrompt Edit Instruction: Modify prompts to explicitly focus on comparing options and assessing their relative merits, avoiding decomposition-centric phrasing to foster diverse reasoning styles.",
+        "Diagnosis: The agent's reasoning predominantly relies on comparative and option elimination strategies within a narrow reasoning family, limiting the diversity needed for interdisciplinary integration. This results in redundancy and insufficient incorporation of creative, multidisciplinary, and counterfactual reasoning approaches.\nBehavior Shift: Encourage shifting from a solely comparative and elimination-based reasoning style to more innovative and multidisciplinary reasoning modes, reducing over-reliance on familiar methods and fostering novel hypothesis generation.\nPrompt Edit Instruction: Instruct the model to actively incorporate diverse reasoning strategies beyond comparison and elimination, emphasizing the importance of creative, multidisciplinary, and counterfactual approaches to broaden perspective and reduce redundancy in responses.",
+        "Diagnosis: The agent predominantly utilizes comparative reasoning, leading to a lack of diversity in reasoning approaches. This results in redundancy with peers who exhibit similar reasoning patterns.\nBehavior Shift: To enhance reasoning diversity, the agent should incorporate case analysis more prominently in its approach, moving away from a heavy reliance on comparative reasoning.\nPrompt Edit Instruction: Focus on integrating specific case examples and scenarios that challenge the comparative reasoning framework, encouraging exploration of unique situations and outcomes.",
+        "Diagnosis: The agent exhibits a high reliance on case analysis and comparative reasoning, leading to a lack of diversity in reasoning approaches. This results in significant intra-family similarity with peers, limiting the exploration of alternative reasoning styles.\nBehavior Shift: To enhance the overall reasoning capability, the agent should incorporate inductive reasoning, heuristic approaches, and experiential reasoning into its analysis, moving away from strict decomposition.\nPrompt Edit Instruction: Incorporate prompts that encourage the exploration of broader reasoning styles, focusing on inductive patterns and heuristic insights while minimizing strict decomposition.",
+        "Diagnosis: The agent predominantly relies on causal reasoning, which is shared with multiple peers, leading to a lack of strategic diversity in responses.\nBehavior Shift: Expand the reasoning modes to include symbolic and formal reasoning, as well as induction patterns, to enhance the overall diversity of approaches within the team.\nPrompt Edit Instruction: Incorporate prompts that encourage the exploration of symbolic representations and formal structures, while minimizing reliance on causal frameworks.",
+        "Diagnosis: The agent's current focus on decompositional reasoning leads to redundancy and limits exploration of alternative reasoning strategies, such as symbolic formulation and formal representation, which are underutilized by the team.\nBehavior Shift: Encourage shifting from a predominantly decompositional approach towards more engaging formal symbolic reasoning and formal representation techniques to diversify reasoning strategies and address team gaps.\nPrompt Edit Instruction: Guidance should emphasize promoting the use of symbolic formulation and formal representations, discourage repetitive decompositional methods, and suggest exploring multiple reasoning strategies to enhance conceptual diversity and robustness.",
+        "Diagnosis: The agent predominantly relies on symbolic and decomposition reasoning, resulting in a narrow reasoning approach that limits reasoning modality diversity. This homogeneity reduces the potential for abductive, heuristic, and analogical strategies necessary to explore broader reasoning avenues and enhances critical thinking capabilities.\nBehavior Shift: Encourage the agent to intentionally incorporate diverse reasoning families such as abductive, heuristic, and analogical approaches into the prompt, moving beyond symbolic decomposition. This shift will promote reasoning modality exploration and help avoid overdependence on a single reasoning pattern.\nPrompt Edit Instruction: Modify the prompt to explicitly prompt the agent to use multiple reasoning strategies, including abductive, heuristic, and analogical methods, while de-emphasizing reliance solely on symbolic decomposition. Frame the task to value diverse reasoning families and cross-strategy exploration to enhance reasoning diversity.",
+        "Diagnosis: The agent primarily relies on attribute-based decomposition within the symbolic reasoning family, leading to limited conceptual and heuristic diversity, which hampers deep analysis and analogy-based reasoning.\nBehavior Shift: Broaden reasoning approaches by integrating more conceptual, analogy, and heuristic evaluation techniques to enhance diversity and richer understanding.\nPrompt Edit Instruction: Instruct the agent to incorporate higher-level reasoning modes like conceptual evaluation and analogy, and to avoid repetitive attribute-based decomposition, ensuring a more diverse and conceptual reasoning process.",
+        "Diagnosis: The agent is heavily reliant on algebraic derivation and option elimination, which is consistent with the rest of the team. This uniformity in reasoning limits the diversity of approaches and insights.\nBehavior Shift: Focus on incorporating heuristic reasoning to diversify the problem-solving approach, distinguishing your contributions from those of peers.\nPrompt Edit Instruction: Integrate heuristic strategies into your reasoning process, emphasizing intuitive insights and analogies to enhance the breadth of your responses.",
+        "Diagnosis: The agent predominantly relies on decomposition strategies, causing insufficient use of algebraic and symbolic formulation reasoning needed to solve quantitative problems effectively. This overreliance leads to reduced reasoning diversity and potential redundancy with peer agents who share similar approaches.\nBehavior Shift: Diversify problem-solving tactics by emphasizing algebraic computation and symbolic formulation, reducing repeated decomposition approaches, and encouraging the agent to directly engage with algebraic and equation-based reasoning tasks.\nPrompt Edit Instruction: Shift the prompt emphasis toward algebraic manipulation and symbolic reasoning tasks, explicitly instructing the agent to prioritize algebraic and formula-based methods over purely decomposition strategies, in order to enhance reasoning diversity and mitigate overlaps.",
+        "Diagnosis: The agent predominantly relies on symbolic formulation and decomposition reasoning, leading to repetitive reasoning patterns that limit reasoning diversity and hinder engagement with spatial visualization modes.\nBehavior Shift: Shift from symbolic and decompositional strategies towards integrating spatial visualization approaches to promote reasoning diversification and better align with team efforts.\nPrompt Edit Instruction: Encourage the agent to incorporate spatial visualization techniques into their reasoning process by prompting explicit representation of relationships and structures through visual or diagrammatic elements, while avoiding a focus on symbolic decomposition.",
+        "Diagnosis: The agent's current reasoning approach relies heavily on similar, narrow families such as case analysis and comparative reasoning, resulting in limited diversity and a tendency toward redundancy. This homogeneous reasoning pattern hampers introducing varied and formal methods like proof and induction, which are crucial for broadening the analytical scope.\nBehavior Shift: Encourage the agent to actively incorporate distinct reasoning strategies outside the dominant families, prioritizing formal proof, induction, and decomposition to diversify analytical approaches and prevent overdependence on existing patterns.\nPrompt Edit Instruction: Prompt the agent to explicitly integrate at least one new reasoning family or method (e.g., formal proof, induction) in each analysis, emphasizing the importance of diversity and novelty to fill the current reasoning gap, while maintaining its core evaluative focus.",
+        "Diagnosis: The agent predominantly relies on decomposition reasoning, leading to limited diversity and insufficient adoption of symbolic reasoning or alternative perspectives, causing a gap in reasoning approaches.\nBehavior Shift: Encourage the agent to diversify its reasoning strategies by emphasizing the use of symbolic formulation and alternative perspectives, reducing over-reliance on decomposition.\nPrompt Edit Instruction: Modify the prompt to explicitly ask the agent to incorporate symbolic reasoning and consider multiple perspectives, avoiding decomposition-focused approaches, to enhance reasoning diversity and address the team gap."
+      ],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 5,
+      "reject_count": 10,
+      "last_update_record": {
+        "init_mode": "shared",
+        "all_agents_shared_origin": true,
+        "initial_agent_prompt_hashes": [
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84"
+        ],
+        "epoch": 1,
+        "step": 175,
+        "agent_id": 1,
+        "selected_agent_ids": [
+          1,
+          4
+        ],
+        "question_hash": "0a02fbb80e59",
+        "gold_hash": "ae4f281df5a5",
+        "group_diagnosis": {
+          "group_summary": "PATTERN=High homogeneity in decomposition reasoning;GAP=Symbolic reasoning, alternative perspectives;ACTION=Encourage diversification in reasoning families.",
+          "missing_modes": [
+            "symbolic reasoning",
+            "alternative perspectives"
+          ],
+          "redundant_agents": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "critical_agents": [],
+          "target_role_hint": "ROLE=Analyst;FOCUS=Shift to symbolic reasoning;AVOID=Decomposition."
+        },
+        "agent_initial_prompt_hash": "1eb68419ee84",
+        "current_prompt_hash": "3d85b82e7ea9",
+        "candidates": [
+          {
+            "name": "conservative_specialization",
+            "prompt_hash": "25797cbe0c49"
+          },
+          {
+            "name": "coverage_gap_shift",
+            "prompt_hash": "00cc07d44c76"
+          },
+          {
+            "name": "anti_redundancy_shift",
+            "prompt_hash": "258068b37ac2"
+          }
+        ],
+        "bandit_probs": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "selected_action_id": 0,
+        "selected_action_name": "keep_current",
+        "selected_prompt_hash": "3d85b82e7ea9",
+        "current_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "decision": "keep",
+        "selected_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "textual_gradient_hash": "edfb8952e691",
+        "textual_gradient_excerpt": "Diagnosis: The agent predominantly relies on decomposition reasoning, leading to limited diversity and insufficient adoption of symbolic reasoning or alternative perspectives, causing a gap in reasoning approaches. Behav"
+      }
+    },
+    {
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Emphasize the use of formalization and constraint propagation techniques in your reasoning approach. Concentrate on developing structured representations that can enhance your analysis. Prioritize unique methods that distinctly showcase your perspective, while ensuring that your contributions remain complementary to those of your peers. Aim to deepen your understanding of the problem through formalized frameworks, thereby minimizing overlap with the reasoning styles of others.",
+      "current_prompt_hash": "94aae150defa",
+      "history": [
+        "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "As a meta-analyst, your task is to explore various representations of problems and identify the best decomposition strategies. Emphasize clarity in your reasoning and ensure that you analyze problems from multiple perspectives to enhance overall understanding.",
+        "As a meta-analyst, your task is to explore a variety of reasoning strategies, including case analysis and inductive reasoning, to enhance your problem-solving capabilities. Aim to integrate these diverse approaches into your analysis, broadening your perspective and understanding of the issues at hand.",
+        "As a meta-analyst, your task is to broaden your analytical repertoire by actively engaging with a diverse range of reasoning strategies, particularly focusing on case analysis, inductive reasoning, and logical proof. Aim to explore these various methods to enrich your understanding and problem-solving skills, ensuring a well-rounded approach to analysis.",
+        "As a meta-analyst, focus on integrating intuitive insight and heuristic reasoning into your analysis, while avoiding excessive reliance on formal decomposition. Emphasize diverse reasoning modes to enhance your understanding and problem-solving skills, ensuring that your approach remains flexible and adaptive.",
+        "Approach your reasoning by actively integrating diverse modes of analysis beyond invariant reasoning, especially emphasizing symbolic and logical proof methods to fill existing gaps. Broaden your scope by deliberately exploring formal reasoning frameworks and alternative heuristic pathways, ensuring your reasoning trajectory diversifies to cover areas where team performance is weaker. Focus on extending your reasoning patterns to encompass underrepresented modes while maintaining clarity.",
+        "Adopt a focused reasoning approach that prioritizes the application of inductive and heuristic methods. Ensure that your analysis diverges from standardized calculation techniques, emphasizing nuanced insights derived from diverse reasoning frameworks. Concentrate on refining your reasoning patterns to enhance clarity while integrating these specialized methods.",
+        "Assuming your primary role is decomposing complex problems, adapt your reasoning by integrating the specific focus element designated for your role, emphasizing your expertise. Prioritize detailed symbolic analysis aligned with your specialized skillset while subtly acknowledging the importance of diverse reasoning modes. Avoid diverging into generalized approaches outside your core specialization. Reinforce clarity within your reasoning pattern by honing in on your domain expertise to provide precise, focused insights.",
+        "Focus on avoiding repetitive reasoning patterns that may limit the diversity of insights. When analyzing problems, intentionally break away from habitual decomposition and constraint propagation. Instead, actively incorporate varied reasoning strategies such as case analysis, inductive patterns, or logical proofs to diversify your approach. Seek novelty in your reasoning style, and ensure your analytical process does not rely solely on familiar methods. This will promote richer, less redundant thinking within your contributions.",
+        "Design your reasoning approach to minimize redundancy by actively differentiating your analytical methods from those of your peers. Avoid reusing similar reasoning patterns and focus on generating unique, non-overlapping perspectives. When building upon existing ideas, ensure your reasoning trajectory introduces novel angles, methods, or logical flows. Strive to produce insights that complement rather than replicate what others have contributed, thus fostering a diverse and non-redundant collective reasoning process.",
+        "Emphasize the use of formalization and constraint propagation techniques in your reasoning approach. Concentrate on developing structured representations that can enhance your analysis. Prioritize unique methods that distinctly showcase your perspective, while ensuring that your contributions remain complementary to those of your peers. Aim to deepen your understanding of the problem through formalized frameworks, thereby minimizing overlap with the reasoning styles of others."
+      ],
+      "gradient_history": [
+        "Diagnosis: The agent exhibits a strong reliance on algebraic derivation, resulting in a lack of diversity in reasoning approaches. This mirrors the behavior of other agents, contributing to a homogeneous output across the team.\nBehavior Shift: To enhance problem-solving capabilities, the agent should diversify its reasoning strategies by incorporating decomposition and formalization techniques, focusing on clearer problem representation.\nPrompt Edit Instruction: Incorporate prompts that encourage exploration of different problem representations and emphasize the importance of breaking down complex problems into simpler components.",
+        "Diagnosis: The agent predominantly employs decomposition reasoning, which is overrepresented in the team. This leads to a lack of comparative reasoning and option elimination, resulting in a narrow analytical perspective.\nBehavior Shift: Focus on integrating comparative reasoning and option elimination into the analysis process to enhance diversity in reasoning approaches.\nPrompt Edit Instruction: Incorporate prompts that specifically ask for comparisons between different options and encourage the evaluation of alternatives, rather than solely breaking down components.",
+        "Diagnosis: The agent predominantly relies on comparison-based reasoning, exhibiting limited diversity in reasoning modes and insufficient exploration of alternative approaches such as case analysis and inductive reasoning, which the team identifies as underused and necessary for improving reasoning breadth.\nBehavior Shift: Encourage the agent to diversify its reasoning strategies by integrating case analysis and inductive reasoning methods, moving away from exclusive comparison-based reasoning to explore a wider reasoning family spectrum.\nPrompt Edit Instruction: Modify the prompt to explicitly request the agent to incorporate diverse reasoning approaches, such as case analysis and inductive reasoning, while minimizing over-reliance on comparative rationale. Emphasize the value of varied cognitive strategies in tackling the problem.",
+        "Diagnosis: The agent predominantly employs comparative reasoning with limited exploration of alternative reasoning approaches, leading to a lack of diverse problem-solving strategies.\nBehavior Shift: Encourage the agent to diversify reasoning modes by emphasizing the importance of integrating different analytical perspectives, especially case analysis, to enrich their approach.\nPrompt Edit Instruction: Instruct the agent to incorporate and prioritize different reasoning families such as case analysis, explicitly suggesting exploring alternative methods beyond comparison, and avoid solely relying on comparative definitions to foster reasoning diversity.",
+        "Diagnosis: The agent relies heavily on formal decomposition and structured analysis, leading to limited reasoning diversity and insufficient use of intuitive insight and heuristic inference. This over-decomposition constrains flexibility and hinders the integration of more heuristic or analogical reasoning modes that are crucial for nuanced understanding.\nBehavior Shift: Encourage the agent to incorporate heuristic inference, analogical reasoning, and intuitive insight into their approach, reducing overemphasis on formal breakdowns to enhance reasoning diversity and adaptiveness.\nPrompt Edit Instruction: Guidance should explicitly prompt the agent to integrate intuitive and heuristic reasoning strategies, minimize excessive formal decomposition, and focus on alternative reasoning modes to enrich the cognitive process and align with team diversity.",
+        "Diagnosis: The agent predominantly relies on invariant reasoning, which limits its ability to engage in symbolic reasoning and logical proof, areas where the team shows a gap in performance.\nBehavior Shift: Focus on incorporating symbolic reasoning techniques to diversify the reasoning approach, moving away from a strict invariant reasoning pattern.\nPrompt Edit Instruction: Integrate prompts that explicitly encourage the exploration of symbolic reasoning frameworks, while minimizing reliance on decomposition strategies.",
+        "Diagnosis: The agent exhibits a heavy reliance on algebraic derivation and option elimination, mirroring the patterns of its peers. This results in a lack of diversity in reasoning approaches, particularly missing heuristic, probabilistic, and analogical reasoning modes.\nBehavior Shift: To enhance reasoning diversity, the agent should incorporate inductive reasoning strategies that leverage heuristic and probabilistic insights, moving away from redundant deduction methods.\nPrompt Edit Instruction: Integrate prompts that encourage exploration of alternative reasoning methods, such as heuristics and analogies, while minimizing repetitive algebraic deductions.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning and case analysis, which is consistent with the rest of the team. This results in a lack of diversity in reasoning strategies, limiting the potential for broader insights.\nBehavior Shift: To enhance performance, the agent should incorporate inductive and heuristic reasoning methods, moving away from over-reliance on comparative approaches.\nPrompt Edit Instruction: Integrate prompts that encourage exploration of inductive and heuristic reasoning techniques, while minimizing the focus on comparative analysis.",
+        "Diagnosis: The agent predominantly relies on symbolic and decompositional reasoning, which leads to limited reasoning mode diversity and potential difficulty in handling questions requiring spatial visualization or alternative approaches.\nBehavior Shift: Encourage the agent to incorporate spatial visualization and creative reasoning modes into its approach, reducing over-reliance on symbolic decomposition.\nPrompt Edit Instruction: Focus on prompting the agent to visualize problem elements spatially and explore alternative reasoning strategies beyond symbolic decomposition, fostering diversified and flexible problem-solving.",
+        "Diagnosis: The agent exhibits a strong reliance on case analysis and comparative reasoning, mirroring the patterns of peers, which limits the diversity of reasoning strategies employed.\nBehavior Shift: To enhance reasoning diversity, the agent should incorporate formal proof techniques, induction, and decomposition into its approach, moving away from an overemphasis on case analysis.\nPrompt Edit Instruction: Integrate prompts that encourage exploration of formal reasoning methods and alternative approaches, ensuring a balanced use of diverse reasoning strategies.",
+        "Diagnosis: The agent predominantly relies on a decomposition-style reasoning pattern focused on direct computation, leading to limited reasoning diversity and over-grouping with peers using similar methods. This hinders the integration of background knowledge and alternative strategies such as heuristic or symbolic reasoning, which are necessary for full reasoning variety.\nBehavior Shift: Encourage the agent to diversify its approach by reducing dependence on decomposition and calculation sequences, and instead incorporate background knowledge and symbolic strategies to enrich reasoning and align with the team's goal of integrating varied analytical methods.\nPrompt Edit Instruction: Modify prompts to prompt the agent to explicitly consider background information and alternative reasoning methods beyond decomposition. Emphasize the importance of integrating background knowledge and heuristic or symbolic strategies, while de-emphasizing a solely procedural or calculation-heavy approach.",
+        "Diagnosis: Current reasoning heavily relies on similarity-based definitions and direct comparisons, which limits exploration of diverse logical strategies and cross-family heuristics, leading to potential overdependence on a narrow reasoning pattern.\nBehavior Shift: Encourage shifting from solely applying domain-specific definitions towards integrating cross-family heuristics and generating candidate solutions for broader problem exploration.\nPrompt Edit Instruction: Reframe the prompt to explicitly request the agent to incorporate cross-family reasoning strategies, generate multiple candidate approaches, and evaluate their potential, moving away from straightforward similarity comparisons.",
+        "Diagnosis: The agent's current reasoning primarily relies on decomposition and constraint propagation, leading to homogeneous thinking patterns that limit reasoning diversity and fail to explore alternative analytical modes.\nBehavior Shift: Encourage the agent to diversify its reasoning approach by actively exploring different methods such as inductive reasoning, logical proof, or case analysis, thereby reducing over-reliance on decomposition and constraints.\nPrompt Edit Instruction: Instruct the agent to incorporate prompts that explicitly ask for reasoning modes beyond decomposition, such as requesting it to consider inductive patterns or to perform case-based analysis, emphasizing the value of diverse reasoning strategies.",
+        "Diagnosis: The agent's current reasoning heavily relies on case analysis and comparative reasoning within a narrow family, leading to limited diversity and potential overconcentration on specific reasoning modes.\nBehavior Shift: Encourage diversification of reasoning strategies by incorporating heuristic, analogy-based, and strategic reasoning approaches, reducing overreliance on existing families.\nPrompt Edit Instruction: Adjust the prompt to explicitly request the exploration of alternative reasoning techniques beyond case analysis and comparison, emphasizing the need for diverse methodologies to improve reasoning robustness and coverage.",
+        "Diagnosis: The agent exhibits an overreliance on a single reasoning mode focused on decomposition, mirroring the behavior of multiple peers, leading to a lack of diversity in problem-solving approaches.\nBehavior Shift: Incorporate formalization and constraint propagation techniques to enhance reasoning diversity and reduce redundancy with peers.\nPrompt Edit Instruction: Integrate prompts that encourage the exploration of constraints and formal representations, moving beyond mere decomposition to foster varied analytical perspectives."
+      ],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 10,
+      "reject_count": 5,
+      "last_update_record": {
+        "init_mode": "shared",
+        "all_agents_shared_origin": true,
+        "initial_agent_prompt_hashes": [
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84"
+        ],
+        "epoch": 1,
+        "step": 200,
+        "agent_id": 2,
+        "selected_agent_ids": [
+          2,
+          3
+        ],
+        "question_hash": "512460341377",
+        "gold_hash": "ae4f281df5a5",
+        "group_diagnosis": {
+          "group_summary": "PATTERN=Overreliance on decomposition family with lacking diversity in reasoning modes, team should incorporate constraint propagation and formalization strategies to diversify approaches.;GAP=constraint_propagation, representation_formalization;ACTION=Reduce overlap of agents 0,1,2,3,4 while preserving distinct roles of agents none.",
+          "missing_modes": [
+            "constraint_propagation",
+            "representation_formalization"
+          ],
+          "redundant_agents": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "critical_agents": [],
+          "target_role_hint": "ROLE=decomposer;FOCUS=adopt_representation_formalization;AVOID=primary family overlap"
+        },
+        "agent_initial_prompt_hash": "1eb68419ee84",
+        "current_prompt_hash": "5115c54e3b61",
+        "candidates": [
+          {
+            "name": "conservative_specialization",
+            "prompt_hash": "94aae150defa"
+          },
+          {
+            "name": "coverage_gap_shift",
+            "prompt_hash": "9ad352d240ee"
+          },
+          {
+            "name": "anti_redundancy_shift",
+            "prompt_hash": "7fba598377fb"
+          }
+        ],
+        "bandit_probs": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "selected_action_id": 1,
+        "selected_action_name": "conservative_specialization",
+        "selected_prompt_hash": "94aae150defa",
+        "current_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "selected_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "decision": "accept",
+        "textual_gradient_hash": "2c54ff7a90a4",
+        "textual_gradient_excerpt": "Diagnosis: The agent exhibits an overreliance on a single reasoning mode focused on decomposition, mirroring the behavior of multiple peers, leading to a lack of diversity in problem-solving approaches. Behavior Shift: I"
+      }
+    },
+    {
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Diversify your reasoning strategies by integrating inductive reasoning and case analysis into your analytical process. Focus on exploring unique patterns and insights, ensuring that your reasoning steps are distinct and do not overlap with existing methods. Avoid reliance on algebraic derivation to mitigate redundancy and enhance the uniqueness of your contributions.",
+      "current_prompt_hash": "35afa3fb9ce0",
+      "history": [
+        "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "As a reasoning agent, focus on minimizing repetitive reasoning patterns by consciously diversifying your approach beyond comparative analysis. When tackling the problem, intentionally incorporate methods such as counterexample generation and logical proof, ensuring your reasoning path is distinct from other team members. Maintain awareness of your reasoning style to avoid redundancy and promote varied problem-solving strategies, thereby supporting a more robust and complementary team dynamic.",
+        "As an explorer, prioritize the use of inductive reasoning techniques to identify patterns and generalize insights from specific cases. Focus on developing unique approaches that contrast with the predominant algebraic methods used by your peers. Ensure your reasoning remains distinct and contributes to a varied problem-solving landscape.",
+        "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+        "As a Symbolic Specialist, deepen your expertise by focusing intricately on symbolic analysis, ensuring precision and depth in this area. When reasoning, prioritize expanding your symbolic formulation, applying domain-specific heuristics, and leveraging analogy cues within this domain. Be cautious about overly diversifying your focus; maintain alignment with symbolic reasoning to avoid diluting your specialization. Emphasize thorough, accurate symbolic elaboration and avoid complex detours into non-symbolic or peripheral reasoning modes. Clearly compartmentalize your symbolic analysis role while resisting shifts toward broader design or contextual reasoning.",
+        "As an integrative thinker tasked with combining multiple reasoning modes, focus on minimizing redundant reasoning patterns that overlap with other agents' approaches. Aim to use your unique perspective to incorporate complementary methods—such as formal analysis, creative synthesis, and simulation—without repeating methods emphasized by your peers. When reasoning, explicitly differentiate your approach from others, avoiding repetitive decomposition or classifications, and seek to generate insights through varied strategies. Prioritize efficiency and distinctiveness in your reasoning trajectory to enhance team diversity and avoid unnecessary redundancy.",
+        "As an analyst focused on integrating diverse reasoning families, prioritize the use of symbolic, heuristic, and inductive reasoning methods. Strive to minimize reliance on comparative reasoning and case analysis, which have been overutilized by the team. Emphasize the distinctiveness of your analytical approach, ensuring that your reasoning does not overlap with the methodologies employed by your peers. Aim for clarity in your reasoning trajectory by explicitly delineating your unique contributions and insights.",
+        "Expand your reasoning approach to encompass a broader range of inference styles beyond decomposition alone. Integrate abductive and probabilistic reasoning systematically into your analytical process, aiming to generate diverse hypotheses and account for uncertainty. While doing so, ensure your reasoning trajectory remains inclusive and considers alternative methodologies, avoiding narrow focus on repetition. Explicitly delineate your reasoning steps to cover multiple analytical angles and provide a comprehensive perspective that complements your team’s collective diversity.",
+        "Diversify your reasoning strategies by integrating inductive reasoning and case analysis into your analytical process. Focus on exploring unique patterns and insights, ensuring that your reasoning steps are distinct and do not overlap with existing methods. Avoid reliance on algebraic derivation to mitigate redundancy and enhance the uniqueness of your contributions."
+      ],
+      "gradient_history": [
+        "Diagnosis: The agent predominantly relies on comparative reasoning and case analysis, which is consistent with the rest of the team. This results in a lack of diversity in reasoning approaches, particularly missing inductive reasoning and case analysis.\nBehavior Shift: To enhance reasoning diversity, the agent should incorporate inductive reasoning techniques, allowing for broader insights and conclusions that are not strictly comparative.\nPrompt Edit Instruction: Focus on generating insights based on patterns and generalizations rather than solely comparing specific cases or options.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning within a narrow family, demonstrating low reasoning diversity and insufficient engagement with alternative problem-solving approaches like counterexample search or logical proof, which are underrepresented in the team.\nBehavior Shift: Encourage the agent to diversify reasoning modes by shifting focus from comparative analysis toward counterexample search, thereby broadening reasoning strategies and reducing homogeneity.\nPrompt Edit Instruction: Instruct the agent to incorporate explicit prompts that target counterexample generation or logical proof steps, emphasizing the importance of considering alternative problem-solving methods beyond comparison, to enhance reasoning diversity and team robustness.",
+        "Diagnosis: The agent excessively relies on decomposition reasoning, leading to a narrow focus that hinders the adoption of evaluation and synthesis approaches needed to diversify reasoning strategies.\nBehavior Shift: Shift from solely decomposition towards integrating evaluative and synthesizing reasoning modes to enhance strategic diversity and address reasoning gaps.\nPrompt Edit Instruction: Instruct the agent to explicitly incorporate evaluation and synthesis steps into its reasoning process, encouraging it to consider alternative perspectives, compare options critically, and synthesize wider implications beyond decomposition analysis.",
+        "Diagnosis: The agent primarily relies on comparative reasoning and case analysis, mirroring the majority of the team, which limits the exploration of diverse reasoning strategies.\nBehavior Shift: To enhance reasoning diversity, the agent should focus on incorporating inductive reasoning into its approach, moving away from the over-reliance on comparative methods.\nPrompt Edit Instruction: Encourage the exploration of inductive reasoning by framing prompts that require identifying patterns or generalizing from specific instances, while minimizing algebraic derivation.",
+        "Diagnosis: The agent predominantly relies on formal symbolic reasoning and systematic decomposition, lacking engagement with alternative reasoning strategies such as heuristic or analogical approaches that could enhance diversity and adaptability.\nBehavior Shift: Encourage the agent to intentionally incorporate heuristic and analogy-based reasoning methods into its process, balancing structured formalism with adaptable reasoning modes to better align with team diversity goals.\nPrompt Edit Instruction: Prompt the agent to explicitly explore alternative reasoning strategies beyond formal decomposition, such as heuristics or analogies, while maintaining core symbolic analysis. Frame the instruction to prioritize strategy diversification, emphasizing the benefit of flexible reasoning modes for complex problem solving.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning and symbolic decomposition, leading to limited reasoning diversity and overconcentration within the same family. This impedes incorporation of inductive and probabilistic patterns essential for comprehensive problem solving.\nBehavior Shift: Shift from overemphasizing symbolic, comparative, and decomposition strategies towards actively integrating inductive reasoning and heuristic exploration, diversifying reasoning approaches.\nPrompt Edit Instruction: Encourage the agent to explicitly incorporate induction and heuristic exploration into its reasoning process, while avoiding repetitive use of family-specific decomposition techniques. Emphasize exploring alternative reasoning families to enhance reasoning diversity.",
+        "Diagnosis: The agent's reasoning predominantly relies on decomposition and comparative reasoning, leading to homogeneous strategies that limit exploration of causal and inductive approaches necessary for diverse problem-solving.\nBehavior Shift: Shift from repetitive decomposition-focused reasoning towards integrating causal and probabilistic approaches, encouraging exploration of implications and root causes beyond primary family patterns.\nPrompt Edit Instruction: Instruct the agent to incorporate causal, inductive, and heuristic reasoning strategies into its analysis, explicitly encouraging it to explore beyond the current decomposition framework and diversify its reasoning methods to reduce family fixation and enhance overall reasoning robustness.",
+        "Diagnosis: The agent heavily relies on structured symbolic decomposition, limiting reasoning diversity and neglecting probabilistic inference, which restricts flexibility needed for more nuanced, heuristic, or intuitive reasoning modes.\nBehavior Shift: Shift focus from decomposing options through symbolic analysis toward integrating probabilistic judgment, encouraging the agent to consider uncertainty and heuristic cues instead of solely functional decompositions.\nPrompt Edit Instruction: Modify the prompt to emphasize probabilistic reasoning and heuristic inference, explicitly instructing the agent to prioritize probabilistic judgment over symbolic decomposition, avoiding exclusive focus on structural analysis.",
+        "Diagnosis: The agent predominantly relies on symbolic and decomposition strategies, which limits reasoning diversity and contributes to overreliance within the same family. This reduces the exploration of alternative reasoning modalities necessary for comprehensive problem solving.\nBehavior Shift: Encourage the agent to intentionally diversify reasoning approaches by integrating heuristic and abductive strategies, reducing dependence on symbolic and decomposition methods.\nPrompt Edit Instruction: Modify the prompt to explicitly request the agent to incorporate alternative reasoning families such as heuristic and abductive methods, emphasizing the importance of reasoning diversity while maintaining the role focus on heuristic strategies and the avoidance of familial overlap with other agents.",
+        "Diagnosis: The agent heavily relies on the decomposition family, which limits reasoning diversity and overlaps with peer strategies, reducing overall team robustness in exploring alternative reasoning modes.\nBehavior Shift: Shift focus from decompositional methods toward generative and heuristic reasoning approaches that explore different problem-solving strategies beyond systematic breakdowns.\nPrompt Edit Instruction: Instruct the agent to incorporate alternative reasoning styles such as generative or heuristic approaches in their prompts, explicitly encouraging exploration of different conceptual families away from decomposition to enhance reasoning diversity and team performance.",
+        "Diagnosis: The agent primarily relies on decomposition and symbolic formulation, leading to repetitive reasoning patterns that limit exploration of causal, analogical, and narrative modes essential for diverse reasoning.\nBehavior Shift: Encourage shifting from solely structural decomposition to incorporating causal, analogical, and narrative reasoning to diversify approach modes and reduce overlap with peers.\nPrompt Edit Instruction: Instruct the agent to explicitly include causal, analogical, or narrative reasoning prompts alongside decomposition steps, emphasizing testing cause-effect links and avoiding repetitive symbolic patterns, to enhance reasoning diversity and team complementarity.",
+        "Diagnosis: The agent predominantly relies on decomposition with symbolic formulation, resulting in low reasoning diversity and limited contextual or heuristic insights. This pattern leads to homogeneity in reasoning modes and constrains the scope of analysis, missing opportunities to incorporate design, contextual, or heuristic perspectives.\nBehavior Shift: Shift the agent's reasoning approach toward integrating diverse reasoning modes, especially emphasizing design and contextual insights, while reducing overreliance on symbolic decomposition. Encourage multi-faceted analysis beyond family homogeneity to foster adaptable and richer reasoning.\nPrompt Edit Instruction: Instruct the agent to deliberately incorporate reasoning strategies beyond decomposition and symbolic understanding, such as considering design implications, contextual factors, and heuristics. Promote explicit diversification of reasoning modes and contextual awareness to enhance reasoning richness and team heterogeneity.",
+        "Diagnosis: The agent's current approach overly relies on hierarchical decomposition and rule-based classification, limiting reasoning diversity and missing integrative, creative, and simulation-based reasoning modes essential for broader problem-solving.\nBehavior Shift: Shift from exclusive decomposition towards integrating multiple reasoning strategies, including creative synthesis and simulation, to foster diverse and flexible reasoning patterns.\nPrompt Edit Instruction: Encourage the agent to incorporate prompts that explicitly ask for combining different reasoning modes, such as creative or simulation-based thinking, while de-emphasizing purely rule-based decomposition, to promote a more balanced and diverse reasoning process.",
+        "Diagnosis: The agent predominantly relies on structured decomposition, reflecting a narrow reasoning modality that limits exploration of alternative approaches, such as analytical or heuristic reasoning.\nBehavior Shift: Encourage the agent to diversify reasoning strategies by integrating analytical, creative, or heuristic approaches, thereby broadening the reasoning scope beyond mere decomposition.\nPrompt Edit Instruction: Modify prompts to explicitly prompt the agent to consider multiple reasoning methods, emphasize exploration of alternative strategies, and discourage exclusive reliance on deconstructive decomposition.",
+        "Diagnosis: The agent predominantly relies on comparative reasoning and case analysis, leading to a lack of diversity in reasoning strategies. This is consistent with the team's overall pattern of overusing homogeneous reasoning families, which limits the breadth of insights generated.\nBehavior Shift: Incorporate a wider range of reasoning strategies, such as symbolic, heuristic, and inductive reasoning, to enhance analytical depth and coverage.\nPrompt Edit Instruction: Encourage exploration of diverse reasoning methods by explicitly requesting the integration of various analytical perspectives in the evaluation process.",
+        "Diagnosis: The agent relies heavily on decomposition, with limited reasoning diversity, and lacks emphasis on abductive and probabilistic inference, which are critical for exploring alternative explanations and handling uncertainty.\nBehavior Shift: Encourage the agent to incorporate abductive reasoning and probabilistic considerations into its analysis, reducing redundant decomposition to foster diverse reasoning strategies.\nPrompt Edit Instruction: Adjust the prompt to specify adding abductive inference and probabilistic reasoning as additional reasoning methods, while explicitly instructing to avoid repetitive decomposition and to focus on expanding reasoning diversity.",
+        "Diagnosis: The agent relies heavily on definition-based and comparative reasoning, which limits exploration of diverse, heuristic, or probabilistic strategies essential for broader reasoning coverage.\nBehavior Shift: Shift focus from solely applying definitions to incorporating heuristic evaluation and counterexample testing, encouraging more varied reasoning approaches beyond family-specific patterns.\nPrompt Edit Instruction: Adjust the prompt to emphasize exploring alternative reasoning frameworks such as heuristics and probabilistic methods, and explicitly discourage exclusive reliance on definition and comparative reasoning to promote diverse problem-solving strategies.",
+        "Diagnosis: The agent predominantly utilizes decomposition and constraint propagation reasoning, mirroring the majority of peers, resulting in a lack of diversity in reasoning approaches.\nBehavior Shift: Adopt inductive reasoning strategies to explore broader perspectives and enhance the diversity of thought within the team.\nPrompt Edit Instruction: Incorporate prompts that encourage the exploration of patterns and generalizations from specific cases, while steering clear of algebraic derivation methods.",
+        "Diagnosis: The agent exhibits a strong reliance on decomposition reasoning, leading to a lack of diversity in approach compared to peers. This homogeneity limits the exploration of alternative reasoning modes that could enhance problem-solving capabilities.\nBehavior Shift: Incorporate constraint propagation and representation formalization techniques to diversify reasoning strategies, moving beyond a sole focus on decomposition.\nPrompt Edit Instruction: Integrate constraints and formal representations into your analysis to broaden the reasoning framework and enhance the depth of insights."
+      ],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 8,
+      "reject_count": 11,
+      "last_update_record": {
+        "init_mode": "shared",
+        "all_agents_shared_origin": true,
+        "initial_agent_prompt_hashes": [
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84"
+        ],
+        "epoch": 1,
+        "step": 200,
+        "agent_id": 3,
+        "selected_agent_ids": [
+          2,
+          3
+        ],
+        "question_hash": "512460341377",
+        "gold_hash": "ae4f281df5a5",
+        "group_diagnosis": {
+          "group_summary": "PATTERN=Overreliance on decomposition family with lacking diversity in reasoning modes, team should incorporate constraint propagation and formalization strategies to diversify approaches.;GAP=constraint_propagation, representation_formalization;ACTION=Reduce overlap of agents 0,1,2,3,4 while preserving distinct roles of agents none.",
+          "missing_modes": [
+            "constraint_propagation",
+            "representation_formalization"
+          ],
+          "redundant_agents": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "critical_agents": [],
+          "target_role_hint": "ROLE=decomposer;FOCUS=integrate_constraints;AVOID=homogeneity in decomposition"
+        },
+        "agent_initial_prompt_hash": "1eb68419ee84",
+        "current_prompt_hash": "35afa3fb9ce0",
+        "candidates": [
+          {
+            "name": "conservative_specialization",
+            "prompt_hash": "bae41e3a9fa3"
+          },
+          {
+            "name": "coverage_gap_shift",
+            "prompt_hash": "265e5486a277"
+          },
+          {
+            "name": "anti_redundancy_shift",
+            "prompt_hash": "4ddb25d89893"
+          }
+        ],
+        "bandit_probs": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "selected_action_id": 0,
+        "selected_action_name": "keep_current",
+        "selected_prompt_hash": "35afa3fb9ce0",
+        "current_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "decision": "keep",
+        "selected_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "textual_gradient_hash": "8720df4e0af6",
+        "textual_gradient_excerpt": "Diagnosis: The agent exhibits a strong reliance on decomposition reasoning, leading to a lack of diversity in approach compared to peers. This homogeneity limits the exploration of alternative reasoning modes that could "
+      }
+    },
+    {
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization.",
+      "current_prompt_hash": "f420f5269834",
+      "history": [
+        "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "You are a strategic innovator. Avoid overlapping reasoning with peers by prioritizing unique strategies in problem-solving. Focus on distinct decomposition and formalization methods that enhance your individual contribution to the team's overall reasoning process.",
+        "You are a strategic innovator dedicated to enhancing your unique reasoning style. Focus on applying definitions and concepts directly to the problems at hand, steering clear of decomposition strategies that may lead to redundant reasoning with your peers. Strive for clarity and distinctiveness in your contributions.",
+        "Maintain a focus on your core expertise in symbolic reasoning, but prioritize integrating targeted heuristic or analogy-based considerations that complement your formal analysis. Emphasize clear delineation between reasoning modes, ensuring your symbolic approach remains distinct. Aim for precise, specialized contributions that deepen existing analysis without overextending into overlapping strategies.",
+        "Design your reasoning process to explicitly identify and mitigate redundancy across your reasoning approaches. Strive to generate distinct, non-overlapping reasoning trajectories, clearly separating symbolic analysis from inductive and heuristic strategies. Focus on minimizing overlap in the analytical paths, ensuring each reasoning style contributes unique insights, and regularly verify whether your current approach is redundant or repetitive. Prioritize producing complementary reasoning outputs that diversify overall team contributions.",
+        "Expand your reasoning to actively incorporate diverse strategies beyond algebraic derivation, such as heuristic and inductive approaches. Prioritize broadening the scope of your analytical methods to cover underexplored reasoning families, ensuring that your problem-solving approach complements teammates' strategies. While verifying your reasoning, avoid over-reliance on any single path, and aim for a holistic, multifaceted exploration that enhances overall reasoning diversity.",
+        "Design your reasoning process to minimize redundancy by explicitly differentiating each reasoning mode you employ. When leveraging multiple strategies—such as algebraic, probabilistic, or heuristic—clearly delineate their roles and avoid overlapping logic paths. Prioritize independent exploration of different conceptions, and verify each reasoning path separately before integrating insights. Be mindful to prevent repeated reasoning patterns, promoting diverse and non-overlapping methods that collectively enrich the analysis.",
+        "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization."
+      ],
+      "gradient_history": [
+        "Diagnosis: Your current reasoning style is insufficiently differentiated from peers.\nBehavior Shift: Shift toward a more complementary reasoning mode relative to peers.\nPrompt Edit Instruction: Edit the prompt to emphasize a distinct, non-overlapping problem-solving strategy.",
+        "Diagnosis: The agent predominantly relies on decomposition reasoning, focusing on detailed analysis of individual implications, which limits its ability to synthesize and evaluate broader conceptual connections.\nBehavior Shift: Encourage movement from detailed decomposition toward higher-level synthesis and evaluative reasoning to foster more integrated and versatile problem-solving strategies.\nPrompt Edit Instruction: Instruct the agent to incorporate prompts that emphasize synthesizing multiple reasoning pathways and evaluating the collective implications, promoting diversification into higher-level reasoning modes.",
+        "Diagnosis: The agent primarily relies on algebraic derivation and backward reasoning, resulting in a narrow reasoning approach similar to peers, leading to insufficient diversity in reasoning modes.\nBehavior Shift: Shift focus towards applying definitions in problem-solving, which can enhance the reasoning diversity and complement existing approaches.\nPrompt Edit Instruction: Incorporate prompts that explicitly request the application of definitions or concepts to the problem at hand, while minimizing reliance on decomposition strategies.",
+        "Diagnosis: The agent relies solely on symbolic formulation and decomposition, limiting reasoning diversity and missing opportunities to incorporate heuristic or analogical strategies that could enhance problem-solving flexibility.\nBehavior Shift: Encourage the agent to incorporate alternative reasoning modes, such as heuristics or analogy, alongside symbolic formalization, to foster more diverse and adaptable solutions.\nPrompt Edit Instruction: Guide the agent to explicitly consider and apply diverse reasoning strategies beyond symbolic formalization, emphasizing exploration of heuristics and analogies in the reasoning process, while maintaining systematic analysis.",
+        "Diagnosis: The agent predominantly employs symbolic case analysis and comparison reasoning, leading to high similarity with peers and a lack of diverse reasoning approaches, especially inductive and heuristic strategies.\nBehavior Shift: Encourage the agent to incorporate inductive reasoning and heuristic methods to foster reasoning diversity and reduce over-reliance on symbolic analysis.\nPrompt Edit Instruction: Reframe the prompt to explicitly prompt for multiple reasoning styles, including inductive and heuristic approaches, alongside symbolic analysis, to enhance reasoning diversity and align with the team's broader strategy.",
+        "Diagnosis: The agent exhibits overreliance on comparative reasoning and detailed decomposition, leading to limited reasoning diversity and redundant cycles within the same reasoning family. This constrains exploration of alternative heuristic methods and impairs adaptability to diverse problem structures.\nBehavior Shift: Shift towards integrating heuristic exploration and diverse reasoning strategies, reducing dependence on repetitive comparative approaches while maintaining core direct computation capabilities.\nPrompt Edit Instruction: Encourage the agent to incorporate heuristic reasoning methods and alternative reasoning families, such as probabilistic or inductive approaches, while minimizing repetitive comparative patterns. Emphasize diversified problem-solving strategies to enhance reasoning diversity and circumvent redundant algebraic reasoning cycles.",
+        "Diagnosis: The agent predominantly relies on causal and comparative reasoning, limiting exposure to diverse reasoning modes necessary for strategic flexibility in decomposition tasks.\nBehavior Shift: Encourage the agent to incorporate symbolic, formal, and induction-based reasoning modes alongside its existing causal and comparative approaches to enhance reasoning diversity.\nPrompt Edit Instruction: Instruct the agent to intentionally integrate different reasoning styles, such as symbolic formulations and inductive patterns, into its decomposition process, emphasizing the importance of reasoning variety to improve strategic generalization and avoid overreliance on a narrow family of reasoning.",
+        "Diagnosis: The agent predominantly relies on decomposition-based reasoning, which leads to family homogeneity and limits reasoning diversity, especially missing probabilistic and intuitive approaches.\nBehavior Shift: Encourage the agent to incorporate diverse reasoning modes, such as probabilistic inference and heuristic intuition, to reduce family overlap and enhance reasoning flexibility.\nPrompt Edit Instruction: Modify the prompt to explicitly request the agent to integrate multiple reasoning strategies, including probabilistic and heuristic approaches, and to consider alternative conceptions beyond decomposition, ensuring cross-family reasoning and conceptual diversity.",
+        "Diagnosis: The agent exhibits a narrow focus on decomposition strategies, leading to a lack of reasoning diversity and limiting its ability to synthesize or compare different approaches, which hampers comprehensive problem-solving.\nBehavior Shift: Encourage the agent to incorporate synthesis and comparative analysis reasoning modes to diversify problem-solving strategies and reduce overlap with decomposition-only approaches.\nPrompt Edit Instruction: Modify the prompt to explicitly request the exploration of multiple reasoning approaches, including synthesis and comparison, while avoiding exclusive reliance on decomposition. This can be achieved by prompting the agent to consider, generate, and evaluate different angles of reasoning beyond decomposing factors.",
+        "Diagnosis: The agent predominantly relies on rule-based classification and decomposition, leading to a narrow reasoning approach that lacks diversity. This is consistent with the team, which also exhibits similar patterns, resulting in a collective deficiency in formal reasoning, creative reasoning, and simulation modes.\nBehavior Shift: Focus on integrating formal reasoning and creative reasoning strategies while reducing reliance on decomposition methods. This will enhance the agent's ability to approach problems from varied perspectives, contributing to a more robust team output.\nPrompt Edit Instruction: Incorporate prompts that encourage exploration of multiple reasoning frameworks and creative problem-solving techniques, ensuring a balanced approach that avoids overemphasis on any single reasoning mode.",
+        "Diagnosis: The agent exhibits strong reliance on a decomposition-based reasoning pattern similar to peers, with limited use of abductive and probabilistic reasoning modes. This leads to repetitive, overformalized analyses that lack the diversity needed to explore alternative explanations, especially in probabilistic contexts.\nBehavior Shift: Encourage diversification of reasoning styles by reducing over-concentration on formal decomposition and actively integrating probabilistic and abductive reasoning strategies. Promote the adoption of less formal, more heuristic or probabilistic approaches to broaden reasoning repertoire.\nPrompt Edit Instruction: Reframe prompts to emphasize encouraging cross-family reasoning strategies, particularly probabilistic and abductive methods. Guide the model to consider alternative explanations and less formal reasoning pathways, fostering reasoning diversity to mitigate overreliance on formal decomposition.",
+        "Diagnosis: The agent predominantly relies on decomposition reasoning, leading to a lack of diversity in analytical approaches. This mirrors the team's overall tendency, which limits the exploration of symbolic reasoning and alternative perspectives.\nBehavior Shift: Focus on integrating symbolic reasoning into analyses to enhance the depth and variety of insights, moving away from a strict decomposition approach.\nPrompt Edit Instruction: Incorporate prompts that explicitly ask for symbolic interpretations or alternative viewpoints, encouraging a broader analytical framework.",
+        "Diagnosis: The agent demonstrates overreliance on a single primary reasoning family ('case_analysis') and limited reasoning diversity, increasing the risk of missing alternative methods such as heuristic, analogy-based, or strategic reasoning approaches.\nBehavior Shift: Encourage integration of diverse reasoning strategies and reduce repetitive family patterns, fostering methodical variety to improve robustness and coverage.\nPrompt Edit Instruction: Guide the agent to explicitly consider alternative reasoning methods beyond the current family's scope, emphasizing the importance of methodological diversity and strategic exploration in multi-faceted problem-solving."
+      ],
+      "bandit": {
+        "num_actions": 5,
+        "lr": 0.2,
+        "baseline_momentum": 0.9,
+        "preferences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseline": 0.0
+      },
+      "homogeneity_window": 5,
+      "recent_homogeneity_flags": [],
+      "homogeneity_count": 0,
+      "accept_count": 7,
+      "reject_count": 6,
+      "last_update_record": {
+        "init_mode": "shared",
+        "all_agents_shared_origin": true,
+        "initial_agent_prompt_hashes": [
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84",
+          "1eb68419ee84"
+        ],
+        "epoch": 1,
+        "step": 195,
+        "agent_id": 4,
+        "selected_agent_ids": [
+          2,
+          4
+        ],
+        "question_hash": "0c1ebc2b8657",
+        "gold_hash": "32096c2e0eff",
+        "group_diagnosis": {
+          "group_summary": "PATTERN=Overreliance on specific reasoning families indicating limited diversity, missing modes like heuristic or analogy-based reasoning, team should diversify methods and balance family ;GAP=heuristic_reasoning, analogy_reasoning, strategic_reasoning;ACTION=Reduce overlap of agents 0,1,2,3,4 while preserving distinct roles of agents none.",
+          "missing_modes": [
+            "heuristic_reasoning",
+            "analogy_reasoning",
+            "strategic_reasoning"
+          ],
+          "redundant_agents": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "critical_agents": [],
+          "target_role_hint": "ROLE=analyst;FOCUS=expand_methodology;AVOID=family overconcentration"
+        },
+        "agent_initial_prompt_hash": "1eb68419ee84",
+        "current_prompt_hash": "f420f5269834",
+        "candidates": [
+          {
+            "name": "conservative_specialization",
+            "prompt_hash": "aa05464f699b"
+          },
+          {
+            "name": "coverage_gap_shift",
+            "prompt_hash": "dcb37d688bac"
+          },
+          {
+            "name": "anti_redundancy_shift",
+            "prompt_hash": "fb9ec1272ffa"
+          }
+        ],
+        "bandit_probs": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "selected_action_id": 0,
+        "selected_action_name": "keep_current",
+        "selected_prompt_hash": "f420f5269834",
+        "current_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "decision": "keep",
+        "selected_batch_metrics": {
+          "mean_reward": 0.0,
+          "batch_size": 3
+        },
+        "textual_gradient_hash": "10b43416df96",
+        "textual_gradient_excerpt": "Diagnosis: The agent demonstrates overreliance on a single primary reasoning family ('case_analysis') and limited reasoning diversity, increasing the risk of missing alternative methods such as heuristic, analogy-based, "
+      }
+    }
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "mean_family_homogeneity_rate": 0.6719725,
+        "mean_family_diversity": 0.42820689316207977,
+        "mean_llm_direct_diversity_score": 0.0,
+        "vote_acc": 0.855
+      },
+      "test": {
+        "mean_family_homogeneity_rate": 0.674045,
+        "mean_family_diversity": 0.4604241749283128,
+        "mean_llm_direct_diversity_score": 0.0,
+        "vote_acc": 0.84,
+        "size": 100
+      }
+    }
+  ],
+  "prompt_history": {
+    "agent0": {
+      "agent_id": 0,
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Engage in reasoning that prioritizes symbolic and formal methods while minimizing repetitive decomposition approaches. Focus on innovative algebraic techniques and diverse reasoning strategies, ensuring that each step taken adds unique value to the analysis. Strive to clarify problems through novel symbolic expressions and verify solutions using varied methods to foster distinct reasoning trajectories.",
+      "current_prompt_hash": "dba139baf216",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 5,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "In your reasoning, emphasize adopting numerical and intuitive approaches that complement algebraic and decomposition methods. Focus on integrating diverse reasoning styles by considering approximate, realistic, or scenario-based examples to broaden the reasoning landscape. Prioritize verifying the coherence of your logic with multiple reasoning modes, and avoid over-relying solely on symbolic derivations. Maintain clarity in role separation by explicitly diversifying your methodology without diminishing the depth of your reasoning.",
+          "current_prompt_hash": "7b4c248b86cb"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 15,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "In your reasoning, emphasize adopting numerical and intuitive approaches that complement algebraic and decomposition methods. Focus on integrating diverse reasoning styles by considering approximate, realistic, or scenario-based examples to broaden the reasoning landscape. Prioritize verifying the coherence of your logic with multiple reasoning modes, and avoid over-relying solely on symbolic derivations. Maintain clarity in role separation by explicitly diversifying your methodology without diminishing the depth of your reasoning.",
+          "current_prompt_hash": "7b4c248b86cb"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 20,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "In your reasoning, emphasize adopting numerical and intuitive approaches that complement algebraic and decomposition methods. Focus on integrating diverse reasoning styles by considering approximate, realistic, or scenario-based examples to broaden the reasoning landscape. Prioritize verifying the coherence of your logic with multiple reasoning modes, and avoid over-relying solely on symbolic derivations. Maintain clarity in role separation by explicitly diversifying your methodology without diminishing the depth of your reasoning.",
+          "current_prompt_hash": "7b4c248b86cb"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 25,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "In your reasoning, avoid relying solely on comparative methods or proof by contradiction. Instead, focus on generating counterexamples and alternative strategies to enhance the diversity of your problem-solving techniques. Ensure that your analysis remains clear and distinct from others by prioritizing unique reasoning trajectories.",
+          "current_prompt_hash": "a2e587c4462d"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 35,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "In your reasoning, avoid relying solely on comparative methods or proof by contradiction. Instead, focus on generating counterexamples and alternative strategies to enhance the diversity of your problem-solving techniques. Ensure that your analysis remains clear and distinct from others by prioritizing unique reasoning trajectories.",
+          "current_prompt_hash": "a2e587c4462d"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 55,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "In your reasoning, avoid relying solely on comparative methods or proof by contradiction. Instead, focus on generating counterexamples and alternative strategies to enhance the diversity of your problem-solving techniques. Ensure that your analysis remains clear and distinct from others by prioritizing unique reasoning trajectories.",
+          "current_prompt_hash": "a2e587c4462d"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 75,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Aim to broaden the scope of your reasoning by intentionally incorporating alternative inference methods, such as inductive, heuristic, or probabilistic strategies, even if they diverge from your usual decomposition approach. Prioritize expanding diverse reasoning trajectories to explore implications beyond immediate comparisons, ensuring your contributions address potential gaps in reasoning coverage.",
+          "current_prompt_hash": "608b1a667553"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 90,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Aim to broaden the scope of your reasoning by intentionally incorporating alternative inference methods, such as inductive, heuristic, or probabilistic strategies, even if they diverge from your usual decomposition approach. Prioritize expanding diverse reasoning trajectories to explore implications beyond immediate comparisons, ensuring your contributions address potential gaps in reasoning coverage.",
+          "current_prompt_hash": "608b1a667553"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 100,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Avoid repetitive decomposition strategies by integrating symbolic reasoning and logical proof into your analysis. Challenge yourself to explore alternative reasoning pathways that reduce overlap with other agents, ensuring your contributions are distinct and innovative. Focus on unique insights drawn from these different reasoning methods.",
+          "current_prompt_hash": "4b29c5e9a892"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 105,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Expand your analytical framework by actively exploring generative, heuristic, and other reasoning families. Challenge yourself to develop insights from these diverse approaches, ensuring that your contributions fill the gaps left by traditional decomposition methods. Strive to enrich the team's overall reasoning landscape.",
+          "current_prompt_hash": "00b303ece147"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 110,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Expand your analytical framework by actively exploring generative, heuristic, and other reasoning families. Challenge yourself to develop insights from these diverse approaches, ensuring that your contributions fill the gaps left by traditional decomposition methods. Strive to enrich the team's overall reasoning landscape.",
+          "current_prompt_hash": "00b303ece147"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 115,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Prioritize your designated role by focusing on specific reasoning methods aligned with your expertise while maintaining clarity in your structured analysis. Emphasize your specialized approach to contribute depth, but ensure to incorporate alternative reasoning styles—such as probabilistic assessments or heuristic shortcuts—only to complement your core framework. Avoid excessive diversification that could dilute your primary analytical focus, and aim to provide insights that reinforce cohesive team reasoning without overwhelming the decomposition strategy.",
+          "current_prompt_hash": "fa62a65177c4"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 120,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Broaden your reasoning approach by actively incorporating multiple analytical perspectives, such as heuristic, intuitive, and symbolic methods, to achieve a more comprehensive analysis. Seek connections across different reasoning modes, and be attentive to gaps in your current focus to promote a more holistic understanding. Avoid adhering strictly to a single reasoning style, and instead, integrate diverse methods to enhance coverage.",
+          "current_prompt_hash": "b13ff50fca9d"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 125,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Approach your reasoning by actively seeking to incorporate a broad range of factors and perspectives, ensuring that your analysis covers diverse dimensions relevant to the problem. Strive to identify and connect different viewpoints and methodologies, emphasizing breadth over the detailed decomposition of individual components. Use comparative analyses to highlight similarities and differences, thereby broadening the scope of your reasoning.",
+          "current_prompt_hash": "0bc2aba4288a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 135,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Approach your reasoning by actively seeking to incorporate a broad range of factors and perspectives, ensuring that your analysis covers diverse dimensions relevant to the problem. Strive to identify and connect different viewpoints and methodologies, emphasizing breadth over the detailed decomposition of individual components. Use comparative analyses to highlight similarities and differences, thereby broadening the scope of your reasoning.",
+          "current_prompt_hash": "0bc2aba4288a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 145,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Approach your reasoning by actively seeking to incorporate a broad range of factors and perspectives, ensuring that your analysis covers diverse dimensions relevant to the problem. Strive to identify and connect different viewpoints and methodologies, emphasizing breadth over the detailed decomposition of individual components. Use comparative analyses to highlight similarities and differences, thereby broadening the scope of your reasoning.",
+          "current_prompt_hash": "0bc2aba4288a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 150,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Assume the role of a specialist who prioritizes incorporating advanced symbolic formulation and algebraic methods into reasoning. Focus on applying formal mathematical transformations and explicit symbolic manipulations to explore the problem. Avoid relying primarily on step-by-step decomposition strategies or repetitive procedural reasoning, and ensure your approach emphasizes concise, targeted mathematical reasoning. Strive to clarify the problem through algebraic expressions, and verify your solutions via symbolic equivalence or structural consistency.",
+          "current_prompt_hash": "740fe26948ac"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 180,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Engage in reasoning that prioritizes symbolic and formal methods while minimizing repetitive decomposition approaches. Focus on innovative algebraic techniques and diverse reasoning strategies, ensuring that each step taken adds unique value to the analysis. Strive to clarify problems through novel symbolic expressions and verify solutions using varied methods to foster distinct reasoning trajectories.",
+          "current_prompt_hash": "dba139baf216"
+        }
+      ]
+    },
+    "agent1": {
+      "agent_id": 1,
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+      "current_prompt_hash": "3d85b82e7ea9",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 5,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 20,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 30,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 35,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As an interdisciplinary integrator, prioritize your core role of synthesizing information across multiple domains. Focus on detailed, specialized reasoning within your assigned area to deepen understanding. Minimize exploration of unfamiliar methods unless directly relevant, and avoid redundant approaches already utilized by others. Emphasize precise, evidence-based validation of your conclusions, ensuring clarity and accuracy in your reasoning trajectory.",
+          "current_prompt_hash": "c7c399a534ba"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 45,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Maintain your core role of synthesizing multidisciplinary information, but prioritize deepening your expertise within your assigned domain. Center your reasoning on detailed, domain-specific validation and evidence, minimizing the inclusion of techniques outside your specialty. When evaluating scenarios, focus on specialized reasoning and precise confirmation, avoiding broad or cross-domain approaches unless explicitly relevant. Remain consistent with your specialized perspective, ensuring your contributions reinforce the group's depth without unnecessary diversification.",
+          "current_prompt_hash": "3bd58909d985"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 65,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "As a <role>, aim to encompass a wide spectrum of reasoning approaches by integrating both your specialized domain knowledge and complementary inductive or heuristic strategies. When analyzing scenarios, deliberately include methods outside strict decomposition, such as pattern recognition or experiential insights, to broaden reasoning diversity. Prioritize expansion of reasoning modes to fill gaps identified in the group's collective approach, ensuring your contributions help address which reasoning styles are underrepresented.",
+          "current_prompt_hash": "2822130be2e7"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 85,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a <role>, aim to encompass a wide spectrum of reasoning approaches by integrating both your specialized domain knowledge and complementary inductive or heuristic strategies. When analyzing scenarios, deliberately include methods outside strict decomposition, such as pattern recognition or experiential insights, to broaden reasoning diversity. Prioritize expansion of reasoning modes to fill gaps identified in the group's collective approach, ensuring your contributions help address which reasoning styles are underrepresented.",
+          "current_prompt_hash": "2822130be2e7"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 90,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a <role>, aim to encompass a wide spectrum of reasoning approaches by integrating both your specialized domain knowledge and complementary inductive or heuristic strategies. When analyzing scenarios, deliberately include methods outside strict decomposition, such as pattern recognition or experiential insights, to broaden reasoning diversity. Prioritize expansion of reasoning modes to fill gaps identified in the group's collective approach, ensuring your contributions help address which reasoning styles are underrepresented.",
+          "current_prompt_hash": "2822130be2e7"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 95,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As a <role>, prioritize your specialized analytical strengths in your reasoning process, emphasizing the depth of your domain knowledge. While engaging in diverse reasoning strategies, maintain a clear focus on your core expertise to deepen insights. Avoid overly broad or unfocused approaches that may dilute your specialized contribution. Ensure your reasoning involves precise, domain-centered analysis that complements other agents' broader strategies, reinforcing the role's core identity while contributing to team diversity.",
+          "current_prompt_hash": "9f5ad643245b"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 135,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a <role>, prioritize your specialized analytical strengths in your reasoning process, emphasizing the depth of your domain knowledge. While engaging in diverse reasoning strategies, maintain a clear focus on your core expertise to deepen insights. Avoid overly broad or unfocused approaches that may dilute your specialized contribution. Ensure your reasoning involves precise, domain-centered analysis that complements other agents' broader strategies, reinforcing the role's core identity while contributing to team diversity.",
+          "current_prompt_hash": "9f5ad643245b"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 140,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+          "current_prompt_hash": "3d85b82e7ea9"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 150,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+          "current_prompt_hash": "3d85b82e7ea9"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 160,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+          "current_prompt_hash": "3d85b82e7ea9"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 170,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+          "current_prompt_hash": "3d85b82e7ea9"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 175,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a diversifier, broaden your reasoning approach by incorporating heuristic, probabilistic, and analogical methods. Emphasize intuitive insights and diverse strategies that can enhance the team's overall problem-solving capacity. While maintaining your core expertise, strive to fill the gaps in reasoning styles present within the team, ensuring a more comprehensive analytical perspective.",
+          "current_prompt_hash": "3d85b82e7ea9"
+        }
+      ]
+    },
+    "agent2": {
+      "agent_id": 2,
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Emphasize the use of formalization and constraint propagation techniques in your reasoning approach. Concentrate on developing structured representations that can enhance your analysis. Prioritize unique methods that distinctly showcase your perspective, while ensuring that your contributions remain complementary to those of your peers. Aim to deepen your understanding of the problem through formalized frameworks, thereby minimizing overlap with the reasoning styles of others.",
+      "current_prompt_hash": "94aae150defa",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 10,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "As a meta-analyst, your task is to explore various representations of problems and identify the best decomposition strategies. Emphasize clarity in your reasoning and ensure that you analyze problems from multiple perspectives to enhance overall understanding.",
+          "current_prompt_hash": "63b8ee9d56d8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 30,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a meta-analyst, your task is to explore various representations of problems and identify the best decomposition strategies. Emphasize clarity in your reasoning and ensure that you analyze problems from multiple perspectives to enhance overall understanding.",
+          "current_prompt_hash": "63b8ee9d56d8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 45,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "As a meta-analyst, your task is to explore a variety of reasoning strategies, including case analysis and inductive reasoning, to enhance your problem-solving capabilities. Aim to integrate these diverse approaches into your analysis, broadening your perspective and understanding of the issues at hand.",
+          "current_prompt_hash": "e2e6ddaaaa77"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 50,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "As a meta-analyst, your task is to broaden your analytical repertoire by actively engaging with a diverse range of reasoning strategies, particularly focusing on case analysis, inductive reasoning, and logical proof. Aim to explore these various methods to enrich your understanding and problem-solving skills, ensuring a well-rounded approach to analysis.",
+          "current_prompt_hash": "917fe0b1276f"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 80,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "As a meta-analyst, focus on integrating intuitive insight and heuristic reasoning into your analysis, while avoiding excessive reliance on formal decomposition. Emphasize diverse reasoning modes to enhance your understanding and problem-solving skills, ensuring that your approach remains flexible and adaptive.",
+          "current_prompt_hash": "4ce61d19a2bc"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 100,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Approach your reasoning by actively integrating diverse modes of analysis beyond invariant reasoning, especially emphasizing symbolic and logical proof methods to fill existing gaps. Broaden your scope by deliberately exploring formal reasoning frameworks and alternative heuristic pathways, ensuring your reasoning trajectory diversifies to cover areas where team performance is weaker. Focus on extending your reasoning patterns to encompass underrepresented modes while maintaining clarity.",
+          "current_prompt_hash": "725bda8e0b1a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 140,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Approach your reasoning by actively integrating diverse modes of analysis beyond invariant reasoning, especially emphasizing symbolic and logical proof methods to fill existing gaps. Broaden your scope by deliberately exploring formal reasoning frameworks and alternative heuristic pathways, ensuring your reasoning trajectory diversifies to cover areas where team performance is weaker. Focus on extending your reasoning patterns to encompass underrepresented modes while maintaining clarity.",
+          "current_prompt_hash": "725bda8e0b1a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 155,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Adopt a focused reasoning approach that prioritizes the application of inductive and heuristic methods. Ensure that your analysis diverges from standardized calculation techniques, emphasizing nuanced insights derived from diverse reasoning frameworks. Concentrate on refining your reasoning patterns to enhance clarity while integrating these specialized methods.",
+          "current_prompt_hash": "432382561e7c"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 160,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Assuming your primary role is decomposing complex problems, adapt your reasoning by integrating the specific focus element designated for your role, emphasizing your expertise. Prioritize detailed symbolic analysis aligned with your specialized skillset while subtly acknowledging the importance of diverse reasoning modes. Avoid diverging into generalized approaches outside your core specialization. Reinforce clarity within your reasoning pattern by honing in on your domain expertise to provide precise, focused insights.",
+          "current_prompt_hash": "6b6d686e22b8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 170,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Assuming your primary role is decomposing complex problems, adapt your reasoning by integrating the specific focus element designated for your role, emphasizing your expertise. Prioritize detailed symbolic analysis aligned with your specialized skillset while subtly acknowledging the importance of diverse reasoning modes. Avoid diverging into generalized approaches outside your core specialization. Reinforce clarity within your reasoning pattern by honing in on your domain expertise to provide precise, focused insights.",
+          "current_prompt_hash": "6b6d686e22b8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 180,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Assuming your primary role is decomposing complex problems, adapt your reasoning by integrating the specific focus element designated for your role, emphasizing your expertise. Prioritize detailed symbolic analysis aligned with your specialized skillset while subtly acknowledging the importance of diverse reasoning modes. Avoid diverging into generalized approaches outside your core specialization. Reinforce clarity within your reasoning pattern by honing in on your domain expertise to provide precise, focused insights.",
+          "current_prompt_hash": "6b6d686e22b8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 185,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Assuming your primary role is decomposing complex problems, adapt your reasoning by integrating the specific focus element designated for your role, emphasizing your expertise. Prioritize detailed symbolic analysis aligned with your specialized skillset while subtly acknowledging the importance of diverse reasoning modes. Avoid diverging into generalized approaches outside your core specialization. Reinforce clarity within your reasoning pattern by honing in on your domain expertise to provide precise, focused insights.",
+          "current_prompt_hash": "6b6d686e22b8"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 190,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Focus on avoiding repetitive reasoning patterns that may limit the diversity of insights. When analyzing problems, intentionally break away from habitual decomposition and constraint propagation. Instead, actively incorporate varied reasoning strategies such as case analysis, inductive patterns, or logical proofs to diversify your approach. Seek novelty in your reasoning style, and ensure your analytical process does not rely solely on familiar methods. This will promote richer, less redundant thinking within your contributions.",
+          "current_prompt_hash": "23eaaa1158ba"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 195,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Design your reasoning approach to minimize redundancy by actively differentiating your analytical methods from those of your peers. Avoid reusing similar reasoning patterns and focus on generating unique, non-overlapping perspectives. When building upon existing ideas, ensure your reasoning trajectory introduces novel angles, methods, or logical flows. Strive to produce insights that complement rather than replicate what others have contributed, thus fostering a diverse and non-redundant collective reasoning process.",
+          "current_prompt_hash": "5115c54e3b61"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 200,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Emphasize the use of formalization and constraint propagation techniques in your reasoning approach. Concentrate on developing structured representations that can enhance your analysis. Prioritize unique methods that distinctly showcase your perspective, while ensuring that your contributions remain complementary to those of your peers. Aim to deepen your understanding of the problem through formalized frameworks, thereby minimizing overlap with the reasoning styles of others.",
+          "current_prompt_hash": "94aae150defa"
+        }
+      ]
+    },
+    "agent3": {
+      "agent_id": 3,
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Diversify your reasoning strategies by integrating inductive reasoning and case analysis into your analytical process. Focus on exploring unique patterns and insights, ensuring that your reasoning steps are distinct and do not overlap with existing methods. Avoid reliance on algebraic derivation to mitigate redundancy and enhance the uniqueness of your contributions.",
+      "current_prompt_hash": "35afa3fb9ce0",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 15,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 25,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "As a reasoning agent, focus on minimizing repetitive reasoning patterns by consciously diversifying your approach beyond comparative analysis. When tackling the problem, intentionally incorporate methods such as counterexample generation and logical proof, ensuring your reasoning path is distinct from other team members. Maintain awareness of your reasoning style to avoid redundancy and promote varied problem-solving strategies, thereby supporting a more robust and complementary team dynamic.",
+          "current_prompt_hash": "d9a26a637ee0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 40,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a reasoning agent, focus on minimizing repetitive reasoning patterns by consciously diversifying your approach beyond comparative analysis. When tackling the problem, intentionally incorporate methods such as counterexample generation and logical proof, ensuring your reasoning path is distinct from other team members. Maintain awareness of your reasoning style to avoid redundancy and promote varied problem-solving strategies, thereby supporting a more robust and complementary team dynamic.",
+          "current_prompt_hash": "d9a26a637ee0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 50,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As an explorer, prioritize the use of inductive reasoning techniques to identify patterns and generalize insights from specific cases. Focus on developing unique approaches that contrast with the predominant algebraic methods used by your peers. Ensure your reasoning remains distinct and contributes to a varied problem-solving landscape.",
+          "current_prompt_hash": "38f83d15a78a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 60,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 70,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 75,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 80,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 95,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 105,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 110,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As a Symbolic Specialist, deepen your focus on formal symbolic analysis by systematically elaborating your reasoning steps. While maintaining core decomposition methods, explicitly integrate domain-specific heuristics or analogy cues that can complement your primary strategy. Prioritize clarity and accuracy in your symbolic reasoning, and ensure your approach offers a refined perspective within your specialization. Avoid diverging into generic reasoning modes; instead, aim to enhance your expertise within your designated focus area.",
+          "current_prompt_hash": "f483ac07e4e0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 120,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As a Symbolic Specialist, deepen your expertise by focusing intricately on symbolic analysis, ensuring precision and depth in this area. When reasoning, prioritize expanding your symbolic formulation, applying domain-specific heuristics, and leveraging analogy cues within this domain. Be cautious about overly diversifying your focus; maintain alignment with symbolic reasoning to avoid diluting your specialization. Emphasize thorough, accurate symbolic elaboration and avoid complex detours into non-symbolic or peripheral reasoning modes. Clearly compartmentalize your symbolic analysis role while resisting shifts toward broader design or contextual reasoning.",
+          "current_prompt_hash": "3b824c710aec"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 130,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "As an integrative thinker tasked with combining multiple reasoning modes, focus on minimizing redundant reasoning patterns that overlap with other agents' approaches. Aim to use your unique perspective to incorporate complementary methods—such as formal analysis, creative synthesis, and simulation—without repeating methods emphasized by your peers. When reasoning, explicitly differentiate your approach from others, avoiding repetitive decomposition or classifications, and seek to generate insights through varied strategies. Prioritize efficiency and distinctiveness in your reasoning trajectory to enhance team diversity and avoid unnecessary redundancy.",
+          "current_prompt_hash": "74c65b0fff3b"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 145,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "As an integrative thinker tasked with combining multiple reasoning modes, focus on minimizing redundant reasoning patterns that overlap with other agents' approaches. Aim to use your unique perspective to incorporate complementary methods—such as formal analysis, creative synthesis, and simulation—without repeating methods emphasized by your peers. When reasoning, explicitly differentiate your approach from others, avoiding repetitive decomposition or classifications, and seek to generate insights through varied strategies. Prioritize efficiency and distinctiveness in your reasoning trajectory to enhance team diversity and avoid unnecessary redundancy.",
+          "current_prompt_hash": "74c65b0fff3b"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 155,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "As an analyst focused on integrating diverse reasoning families, prioritize the use of symbolic, heuristic, and inductive reasoning methods. Strive to minimize reliance on comparative reasoning and case analysis, which have been overutilized by the team. Emphasize the distinctiveness of your analytical approach, ensuring that your reasoning does not overlap with the methodologies employed by your peers. Aim for clarity in your reasoning trajectory by explicitly delineating your unique contributions and insights.",
+          "current_prompt_hash": "7195e8ca6c0f"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 165,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Expand your reasoning approach to encompass a broader range of inference styles beyond decomposition alone. Integrate abductive and probabilistic reasoning systematically into your analytical process, aiming to generate diverse hypotheses and account for uncertainty. While doing so, ensure your reasoning trajectory remains inclusive and considers alternative methodologies, avoiding narrow focus on repetition. Explicitly delineate your reasoning steps to cover multiple analytical angles and provide a comprehensive perspective that complements your team’s collective diversity.",
+          "current_prompt_hash": "ec59c2fedd69"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 185,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Expand your reasoning approach to encompass a broader range of inference styles beyond decomposition alone. Integrate abductive and probabilistic reasoning systematically into your analytical process, aiming to generate diverse hypotheses and account for uncertainty. While doing so, ensure your reasoning trajectory remains inclusive and considers alternative methodologies, avoiding narrow focus on repetition. Explicitly delineate your reasoning steps to cover multiple analytical angles and provide a comprehensive perspective that complements your team’s collective diversity.",
+          "current_prompt_hash": "ec59c2fedd69"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 190,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Diversify your reasoning strategies by integrating inductive reasoning and case analysis into your analytical process. Focus on exploring unique patterns and insights, ensuring that your reasoning steps are distinct and do not overlap with existing methods. Avoid reliance on algebraic derivation to mitigate redundancy and enhance the uniqueness of your contributions.",
+          "current_prompt_hash": "35afa3fb9ce0"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 200,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Diversify your reasoning strategies by integrating inductive reasoning and case analysis into your analytical process. Focus on exploring unique patterns and insights, ensuring that your reasoning steps are distinct and do not overlap with existing methods. Avoid reliance on algebraic derivation to mitigate redundancy and enhance the uniqueness of your contributions.",
+          "current_prompt_hash": "35afa3fb9ce0"
+        }
+      ]
+    },
+    "agent4": {
+      "agent_id": 4,
+      "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+      "initial_prompt_hash": "1eb68419ee84",
+      "current_prompt": "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization.",
+      "current_prompt_hash": "f420f5269834",
+      "events": [
+        {
+          "event": "init",
+          "epoch": 0,
+          "step": 0,
+          "decision": "init",
+          "selected_action_id": null,
+          "selected_action_name": "init",
+          "changed": 0,
+          "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+          "current_prompt_hash": "1eb68419ee84"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 10,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "You are a strategic innovator. Avoid overlapping reasoning with peers by prioritizing unique strategies in problem-solving. Focus on distinct decomposition and formalization methods that enhance your individual contribution to the team's overall reasoning process.",
+          "current_prompt_hash": "58d9270c4cb2"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 40,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "You are a strategic innovator. Avoid overlapping reasoning with peers by prioritizing unique strategies in problem-solving. Focus on distinct decomposition and formalization methods that enhance your individual contribution to the team's overall reasoning process.",
+          "current_prompt_hash": "58d9270c4cb2"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 55,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "You are a strategic innovator dedicated to enhancing your unique reasoning style. Focus on applying definitions and concepts directly to the problems at hand, steering clear of decomposition strategies that may lead to redundant reasoning with your peers. Strive for clarity and distinctiveness in your contributions.",
+          "current_prompt_hash": "b81da76b4512"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 60,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Maintain a focus on your core expertise in symbolic reasoning, but prioritize integrating targeted heuristic or analogy-based considerations that complement your formal analysis. Emphasize clear delineation between reasoning modes, ensuring your symbolic approach remains distinct. Aim for precise, specialized contributions that deepen existing analysis without overextending into overlapping strategies.",
+          "current_prompt_hash": "8beee84be806"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 65,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Design your reasoning process to explicitly identify and mitigate redundancy across your reasoning approaches. Strive to generate distinct, non-overlapping reasoning trajectories, clearly separating symbolic analysis from inductive and heuristic strategies. Focus on minimizing overlap in the analytical paths, ensuring each reasoning style contributes unique insights, and regularly verify whether your current approach is redundant or repetitive. Prioritize producing complementary reasoning outputs that diversify overall team contributions.",
+          "current_prompt_hash": "e7b0371957b2"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 70,
+          "decision": "accept",
+          "selected_action_id": 2,
+          "selected_action_name": "coverage_gap_shift",
+          "changed": 1,
+          "current_prompt": "Expand your reasoning to actively incorporate diverse strategies beyond algebraic derivation, such as heuristic and inductive approaches. Prioritize broadening the scope of your analytical methods to cover underexplored reasoning families, ensuring that your problem-solving approach complements teammates' strategies. While verifying your reasoning, avoid over-reliance on any single path, and aim for a holistic, multifaceted exploration that enhances overall reasoning diversity.",
+          "current_prompt_hash": "792307e145df"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 85,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Expand your reasoning to actively incorporate diverse strategies beyond algebraic derivation, such as heuristic and inductive approaches. Prioritize broadening the scope of your analytical methods to cover underexplored reasoning families, ensuring that your problem-solving approach complements teammates' strategies. While verifying your reasoning, avoid over-reliance on any single path, and aim for a holistic, multifaceted exploration that enhances overall reasoning diversity.",
+          "current_prompt_hash": "792307e145df"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 115,
+          "decision": "accept",
+          "selected_action_id": 3,
+          "selected_action_name": "anti_redundancy_shift",
+          "changed": 1,
+          "current_prompt": "Design your reasoning process to minimize redundancy by explicitly differentiating each reasoning mode you employ. When leveraging multiple strategies—such as algebraic, probabilistic, or heuristic—clearly delineate their roles and avoid overlapping logic paths. Prioritize independent exploration of different conceptions, and verify each reasoning path separately before integrating insights. Be mindful to prevent repeated reasoning patterns, promoting diverse and non-overlapping methods that collectively enrich the analysis.",
+          "current_prompt_hash": "3be3679c0f8a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 125,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Design your reasoning process to minimize redundancy by explicitly differentiating each reasoning mode you employ. When leveraging multiple strategies—such as algebraic, probabilistic, or heuristic—clearly delineate their roles and avoid overlapping logic paths. Prioritize independent exploration of different conceptions, and verify each reasoning path separately before integrating insights. Be mindful to prevent repeated reasoning patterns, promoting diverse and non-overlapping methods that collectively enrich the analysis.",
+          "current_prompt_hash": "3be3679c0f8a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 130,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Design your reasoning process to minimize redundancy by explicitly differentiating each reasoning mode you employ. When leveraging multiple strategies—such as algebraic, probabilistic, or heuristic—clearly delineate their roles and avoid overlapping logic paths. Prioritize independent exploration of different conceptions, and verify each reasoning path separately before integrating insights. Be mindful to prevent repeated reasoning patterns, promoting diverse and non-overlapping methods that collectively enrich the analysis.",
+          "current_prompt_hash": "3be3679c0f8a"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 165,
+          "decision": "accept",
+          "selected_action_id": 1,
+          "selected_action_name": "conservative_specialization",
+          "changed": 1,
+          "current_prompt": "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization.",
+          "current_prompt_hash": "f420f5269834"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 175,
+          "decision": "keep",
+          "selected_action_id": 4,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization.",
+          "current_prompt_hash": "f420f5269834"
+        },
+        {
+          "event": "update",
+          "epoch": 1,
+          "step": 195,
+          "decision": "keep",
+          "selected_action_id": 0,
+          "selected_action_name": "keep_current",
+          "changed": 0,
+          "current_prompt": "Approach the reasoning process by distinctly focusing on a specialized mode aligned with your role, such as probabilistic or abductive reasoning. Prioritize your assigned reasoning style, ensuring clear separation from other modes. Concentrate on strengthening your specific approach—be it exploring statistical nuances or generating plausible explanations—while avoiding blending with alternative methods. Verify your reasoning within this focused style before integrating with others, and refrain from generalizing your role beyond its specialization.",
+          "current_prompt_hash": "f420f5269834"
+        }
+      ]
+    }
+  },
+  "extra": {
+    "epoch": 1,
+    "train": {
+      "mean_family_homogeneity_rate": 0.6719725,
+      "mean_family_diversity": 0.42820689316207977,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.855
+    },
+    "test": {
+      "mean_family_homogeneity_rate": 0.674045,
+      "mean_family_diversity": 0.4604241749283128,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.84,
+      "size": 100
+    }
+  }
+}

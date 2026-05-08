@@ -317,6 +317,9 @@ class TextualGradientRLSystem:
     async def _review_new_family_label(
         self,
         raw_label: str,
+        agent_trace: str,
+        agent_id: Optional[int],
+        trace_hash: str,
         reasoning_summary: str,
         judge_reason: str,
         judge_confidence: Optional[float],
@@ -325,12 +328,14 @@ class TextualGradientRLSystem:
         existing_labels = list(self.strategy_family_labels)
         definitions = self._strategy_family_definitions()
         definition_lines = "\n".join([f"- {k}: {v}" for k, v in definitions.items()])
+        agent_trace = normalize_spaces(agent_trace)
         reasoning_summary = normalize_spaces(reasoning_summary)
         expand_note = "Expansion is ENABLED." if allow_expand else "Expansion is DISABLED; you MUST map to an existing family."
 
         system_prompt = (
             "You are a taxonomy gatekeeper for reasoning strategy families.\n"
-            "Decide whether to accept a proposed new family label or map it to an existing family.\n"
+            "Review exactly one agent trace and decide whether to accept a proposed new family label or map it to an existing family.\n"
+            "Use the single agent trace as the authoritative evidence. Do not use other agents or group-level behavior.\n"
             "Return strict JSON only."
         )
         user_prompt = (
@@ -340,10 +345,17 @@ class TextualGradientRLSystem:
             "Family definitions (base set):\n"
             f"{definition_lines}\n\n"
             "Context:\n"
-            f"- reasoning_summary: {reasoning_summary}\n"
+            f"- agent_id: {agent_id}\n"
+            f"- trace_hash: {trace_hash}\n"
+            f"- trace_length: {len(agent_trace)}\n"
+            f"- reasoning_summary_from_judge: {reasoning_summary}\n"
             f"- judge_reason: {judge_reason}\n"
             f"- judge_confidence: {judge_confidence}\n\n"
+            "Single agent trace:\n"
+            f"{agent_trace}\n\n"
             "Rules:\n"
+            "- Judge only whether the proposed label describes a reusable reasoning strategy shown in this single trace.\n"
+            "- Do not infer from other agents, family distribution, group diagnosis, or answer correctness.\n"
             "- Accept a new family only if it is clearly distinct and not a synonym of existing families.\n"
             "- If accepted, use a concise snake_case label (2-4 words).\n"
             "- If rejected, map to exactly one existing family.\n\n"
@@ -361,6 +373,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=0.0,
             max_tokens=700,
+            stage="family_expansion_review",
         )
         obj = extract_json_obj(text) or {}
         obj["_raw_response"] = text
@@ -369,6 +382,9 @@ class TextualGradientRLSystem:
     async def _resolve_strategy_family_label(
         self,
         raw_label: str,
+        agent_trace: str,
+        agent_id: Optional[int],
+        trace_hash: str,
         reasoning_summary: str,
         judge_reason: str,
         judge_confidence: Optional[float],
@@ -382,12 +398,15 @@ class TextualGradientRLSystem:
             return candidate, {"action": "known", "resolved": candidate}
 
         cached = self.strategy_family_label_resolution_cache.get(candidate)
-        if isinstance(cached, dict) and cached.get("resolved"):
+        if isinstance(cached, dict) and cached.get("resolved") and cached.get("accepted_new"):
             return str(cached["resolved"]), dict(cached)
 
         allow_expand = bool(getattr(self.cfg, "family_expansion_enabled", True))
         decision = await self._review_new_family_label(
             raw_label=raw_label,
+            agent_trace=agent_trace,
+            agent_id=agent_id,
+            trace_hash=trace_hash,
             reasoning_summary=reasoning_summary,
             judge_reason=judge_reason,
             judge_confidence=judge_confidence,
@@ -402,6 +421,11 @@ class TextualGradientRLSystem:
             "candidate": candidate,
             "model": self.cfg.family_expansion_model,
             "reason": str(decision.get("reason", "")),
+            "review_context": "single_agent_trace",
+            "agent_id": agent_id,
+            "trace_hash": trace_hash,
+            "trace_length": len(normalize_spaces(agent_trace)),
+            "used_reasoning_summary": bool(reasoning_summary),
         }
 
         existing_labels = list(self.strategy_family_labels)
@@ -427,7 +451,8 @@ class TextualGradientRLSystem:
             resolution_info["accepted_new"] = False
             resolution_info["resolved"] = resolved
 
-        self.strategy_family_label_resolution_cache[candidate] = dict(resolution_info)
+        if resolution_info.get("accepted_new"):
+            self.strategy_family_label_resolution_cache[candidate] = dict(resolution_info)
         return resolved, resolution_info
 
     def _build_initial_prompts(self) -> List[str]:
@@ -670,6 +695,7 @@ class TextualGradientRLSystem:
             "You judge reasoning strategy families for multi-agent traces.\n"
             "Ignore answer correctness. Judge only the reasoning trajectory.\n"
             "Choose the most specific existing family that captures the dominant reasoning strategy.\n"
+            "Do not output major/coarse category labels; output leaf family labels only.\n"
             "Use broad labels such as decomposition or direct_computation only when no more specific label applies.\n"
             "Propose a new concise snake_case label only for a reusable strategy missing from the list.\n"
             "Never use an 'other' family.\n"
@@ -682,6 +708,8 @@ class TextualGradientRLSystem:
                 "If the trace uses only one clear strategy, set secondary_family equal to primary_family.\n"
                 "Also write reasoning_summary in one or two concise sentences describing the reasoning approach and method, not answer correctness.\n"
                 f"Existing leaf families: {', '.join(labels_for_prompt)}.\n"
+                "You must output only labels from Existing leaf families, or a genuinely new leaf family label.\n"
+                "Do NOT output major/coarse category labels such as representation_formalization, algebra_computation, logical_proof, probability_statistics, induction_pattern, process_structure_simulation, or optimization_boundary_meta.\n"
                 "Major-family tree:\n"
                 f"{major_lines}\n\n"
                 "Prefer the most specific existing reusable strategy. If none fits, propose a NEW concise snake_case label.\n"
@@ -704,6 +732,8 @@ class TextualGradientRLSystem:
                 "Assign one reasoning family to each trace.\n"
                 "Also write reasoning_summary in one or two concise sentences describing the reasoning approach and method, not answer correctness.\n"
                 f"Existing families: {', '.join(labels_for_prompt)}.\n"
+                "You must output only labels from Existing families, or a genuinely new leaf family label.\n"
+                "Do NOT output major/coarse category labels such as representation_formalization, algebra_computation, logical_proof, probability_statistics, induction_pattern, process_structure_simulation, or optimization_boundary_meta.\n"
                 "Prefer the most specific existing reusable strategy. If none fits, propose a NEW concise snake_case label.\n"
                 "Family definitions (base set):\n"
                 f"{definition_lines}\n\n"
@@ -725,6 +755,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=0.0,
             max_tokens=max(1800, int(self.cfg.critic_max_tokens)),
+            stage="family_judge",
         )
         obj = extract_json_obj(text) or {}
         direct_score = obj.get("direct_diversity_score")
@@ -748,6 +779,9 @@ class TextualGradientRLSystem:
                 reasoning_summary = self._compact_reasoning_summary(item.get("reasoning_summary", ""), traces[agent_id])
                 resolved_family, resolution_info = await self._resolve_strategy_family_label(
                     raw_family,
+                    agent_trace=traces[agent_id],
+                    agent_id=agent_id,
+                    trace_hash=cache_keys[agent_id],
                     reasoning_summary=reasoning_summary,
                     judge_reason=str(item.get("reason", "")),
                     judge_confidence=item.get("confidence", None),
@@ -758,6 +792,9 @@ class TextualGradientRLSystem:
                 if use_dual:
                     resolved_secondary_family, secondary_resolution_info = await self._resolve_strategy_family_label(
                         raw_secondary_family,
+                        agent_trace=traces[agent_id],
+                        agent_id=agent_id,
+                        trace_hash=cache_keys[agent_id],
                         reasoning_summary=reasoning_summary,
                         judge_reason=str(item.get("reason", "")),
                         judge_confidence=item.get("confidence", None),
@@ -1017,6 +1054,8 @@ class TextualGradientRLSystem:
                     "agent_id": i,
                     "primary_family": primary_family,
                     "secondary_family": secondary_family or primary_family,
+                    "family_resolution": judgment.get("family_resolution", {}) if isinstance(judgment, dict) else {},
+                    "secondary_family_resolution": judgment.get("secondary_family_resolution", {}) if isinstance(judgment, dict) else {},
                     "family_distribution": family_distributions[i] if i < len(family_distributions) else {},
                     "reasoning_summary": reasoning_summary,
                     "trace_hash": self._prompt_hash(cleaned_trace) if cleaned_trace else "",
@@ -1043,6 +1082,8 @@ class TextualGradientRLSystem:
         }
 
     def _is_transient_llm_error(self, err: Exception) -> bool:
+        if isinstance(err, TimeoutError):
+            return True
         msg = str(err).lower()
         transient_markers = [
             "502",
@@ -1105,13 +1146,32 @@ class TextualGradientRLSystem:
             return self._fallback_general_prompt(agent_id), True
         return prompt, False
 
-    async def _chat(self, model: str, system_prompt: str, user_prompt: str, temperature: float, max_tokens: int) -> str:
+    async def _chat(
+        self,
+        model: str,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float,
+        max_tokens: int,
+        stage: str = "unknown",
+    ) -> str:
         last_err = None
         attempt = 0
         transient_failures = 0
+        call_id = self._prompt_hash(f"{stage}|{model}|{time.time()}|{random.random()}")
+        prompt_chars = len(str(system_prompt)) + len(str(user_prompt))
+        timeout_sec = float(getattr(self.cfg, "llm_call_timeout", 120.0) or 0.0)
+        log_enabled = bool(getattr(self.cfg, "llm_call_logging", True))
         while True:
+            started = time.time()
             try:
-                resp = await self.client.chat.completions.create(
+                if log_enabled:
+                    print(
+                        f"[LLM][start] id={call_id} stage={stage} model={model} "
+                        f"attempt={attempt + 1} prompt_chars={prompt_chars} max_tokens={max_tokens} timeout={timeout_sec}",
+                        flush=True,
+                    )
+                request = self.client.chat.completions.create(
                     model=model,
                     messages=[
                         {"role": "system", "content": system_prompt},
@@ -1120,10 +1180,23 @@ class TextualGradientRLSystem:
                     temperature=temperature,
                     max_tokens=max_tokens,
                 )
-                return resp.choices[0].message.content or ""
+                if timeout_sec > 0:
+                    resp = await asyncio.wait_for(request, timeout=timeout_sec)
+                else:
+                    resp = await request
+                content = resp.choices[0].message.content or ""
+                if log_enabled:
+                    elapsed = time.time() - started
+                    print(
+                        f"[LLM][ok] id={call_id} stage={stage} model={model} "
+                        f"attempt={attempt + 1} elapsed={elapsed:.2f}s response_chars={len(content)}",
+                        flush=True,
+                    )
+                return content
             except Exception as e:
                 last_err = e
                 is_transient = self._is_transient_llm_error(e)
+                elapsed = time.time() - started
                 if is_transient:
                     transient_failures += 1
                     if (not self.cfg.transient_retry_forever) and self.cfg.max_transient_retries > 0:
@@ -1136,8 +1209,22 @@ class TextualGradientRLSystem:
                 backoff = self.cfg.retry_sleep * (2 ** attempt)
                 backoff = min(backoff, float(self.cfg.max_retry_backoff))
                 jitter = 1.0 + random.uniform(0.0, 0.3)
-                await asyncio.sleep(backoff * jitter)
+                sleep_sec = backoff * jitter
+                if log_enabled:
+                    print(
+                        f"[LLM][retry] id={call_id} stage={stage} model={model} "
+                        f"attempt={attempt + 1} elapsed={elapsed:.2f}s transient={int(is_transient)} "
+                        f"sleep={sleep_sec:.2f}s error={normalize_spaces(str(e))[:300]}",
+                        flush=True,
+                    )
+                await asyncio.sleep(sleep_sec)
                 attempt += 1
+        if log_enabled:
+            print(
+                f"[LLM][failed] id={call_id} stage={stage} model={model} "
+                f"attempts={attempt + 1} error={normalize_spaces(str(last_err))[:500]}",
+                flush=True,
+            )
         raise RuntimeError(f"LLM call failed after retries: {last_err}")
 
     async def solve_once(self, question: str, agent_id: int, prompt_text: str) -> Tuple[str, str]:
@@ -1165,6 +1252,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=self.cfg.temperature,
             max_tokens=self.cfg.max_tokens,
+            stage=f"solver_agent_{agent_id}",
         )
         answer = extract_pred_answer_by_task(text, task_type=self.cfg.task_type, question=question)
         return text, answer
@@ -1705,6 +1793,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=self.cfg.critic_temperature,
             max_tokens=self.cfg.critic_max_tokens,
+            stage="group_diagnosis",
         )
         obj = extract_json_obj(text) or {}
         if not isinstance(obj, dict):
@@ -1804,6 +1893,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=self.cfg.critic_temperature,
             max_tokens=self.cfg.critic_max_tokens,
+            stage=f"textual_gradient_agent_{agent_id}",
         )
         obj = extract_json_obj(text) or {}
         diagnosis = obj.get("diagnosis", "Your current reasoning style is insufficiently differentiated from peers.")
@@ -1870,6 +1960,7 @@ class TextualGradientRLSystem:
             user_prompt=user_prompt,
             temperature=self.cfg.rewriter_temperature,
             max_tokens=self.cfg.rewriter_max_tokens,
+            stage=f"rewriter_agent_{agent_id}",
         )
         obj = extract_json_obj(text) or {}
         candidates = obj.get("candidates", [])

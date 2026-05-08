@@ -124,6 +124,26 @@ def _plot_panel_bar(ax, x, values, colors, hatches, labels, title, ylabel, ylim:
     ax.grid(axis="y", linestyle="--", alpha=0.3)
 
 
+def _plot_grouped_trace_summary_bar(ax, x, trace_values, summary_values, hatches, labels, title, ylabel, ylim: Optional[tuple] = None):
+    width = 0.36
+    trace_x = [i - width / 2 for i in x]
+    summary_x = [i + width / 2 for i in x]
+    trace_bars = ax.bar(trace_x, trace_values, width=width, color="#e15759", label="Full trace")
+    summary_bars = ax.bar(summary_x, summary_values, width=width, color="#59a14f", label="Reasoning summary")
+    for bars in (trace_bars, summary_bars):
+        for b, h in zip(bars, hatches):
+            b.set_hatch(h)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    resolved_ylim = _resolve_ylim(trace_values + summary_values, ylim)
+    if resolved_ylim is not None:
+        ax.set_ylim(*resolved_ylim)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    ax.legend()
+
+
 def _save_panel_figure(rows: List[Dict[str, str]], out_dir: Path, file_name: str, title: str, specs: List[Dict[str, str]]):
     rows = _sort_rows(rows)
     settings = [str(r.get("setting", "")) for r in rows]
@@ -149,6 +169,44 @@ def _save_panel_figure(rows: List[Dict[str, str]], out_dir: Path, file_name: str
     print(f"Saved: {path}")
 
 
+def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
+    rows = _sort_rows(rows)
+    settings = [str(r.get("setting", "")) for r in rows]
+    labels = [_short_label(x) for x in settings]
+    x = list(range(len(rows)))
+    hatches = [_setting_hatch(r) for r in rows]
+
+    fig, axes = plt.subplots(1, 2, figsize=(16, 5.6))
+    _plot_grouped_trace_summary_bar(
+        axes[0],
+        x,
+        _metric_values(rows, "final_trace_cosine_diversity"),
+        _metric_values(rows, "final_reasoning_summary_cosine_diversity"),
+        hatches,
+        labels,
+        "Trace vs Summary Cosine Diversity",
+        "Cosine Diversity",
+        (0.0, 0.35),
+    )
+    _plot_grouped_trace_summary_bar(
+        axes[1],
+        x,
+        _metric_values(rows, "final_trace_cosine_similarity"),
+        _metric_values(rows, "final_reasoning_summary_cosine_similarity"),
+        hatches,
+        labels,
+        "Trace vs Summary Cosine Similarity",
+        "Cosine Similarity",
+        (0.65, 1.0),
+    )
+    fig.suptitle("Unified Comparison: Trace and Reasoning Summary Metrics", fontsize=15)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    path = out_dir / "ablation_with_baselines_trace_summary_panel.png"
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+    print(f"Saved: {path}")
+
+
 def plot(rows: List[Dict[str, str]], out_dir: Path):
     # Remove stale structure figure to avoid confusion with the new metric set.
     structure_path = out_dir / "ablation_with_baselines_structure_panel.png"
@@ -162,7 +220,8 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
         "Unified Comparison: Diversity Metrics",
         [
             {"key": "final_prompt_cosine_diversity", "title": "Final Prompt Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.35, 0.85)},
-            {"key": "final_trace_cosine_diversity", "title": "Final Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.2)},
+            {"key": "final_trace_cosine_diversity", "title": "Final Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
+            {"key": "final_reasoning_summary_cosine_diversity", "title": "Reasoning Summary Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
             {"key": "final_test_mean_family_diversity", "title": "Final Test Family Diversity", "ylabel": "Family Diversity", "ylim": (0.25, 0.45)},
         ],
     )
@@ -176,8 +235,11 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
             {"key": "final_test_mean_family_homogeneity_rate", "title": "Final Test Family Homogeneity", "ylabel": "Family Homogeneity", "ylim": (0.7, 1.0)},
             {"key": "final_prompt_cosine_similarity", "title": "Final Prompt Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.15, 1.0)},
             {"key": "final_trace_cosine_similarity", "title": "Final Trace Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.8, 1.0)},
+            {"key": "final_reasoning_summary_cosine_similarity", "title": "Reasoning Summary Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
         ],
     )
+
+    _save_trace_summary_panel(rows, out_dir)
 
     _save_panel_figure(
         rows,
