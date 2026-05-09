@@ -199,6 +199,14 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
             "mean_family_homogeneity_rate_from_preds": 0.0,
             "mean_llm_direct_diversity_score_from_preds": 0.0,
             "mean_vote_acc_from_preds": 0.0,
+            "all_same_primary_rate_from_preds": 0.0,
+            "all_same_pair_rate_from_preds": 0.0,
+            "mean_family_confidence_from_preds": 0.0,
+            "low_confidence_share_from_preds": 0.0,
+            "mean_rejudge_count_from_preds": 0.0,
+            "mean_summary_words_from_preds": 0.0,
+            "mean_summary_tokens_from_preds": 0.0,
+            "mean_evidence_spans_from_preds": 0.0,
         }
 
     disagreement = []
@@ -206,6 +214,14 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
     family_homo_all = []
     direct_div_all = []
     vote_acc_all = []
+    all_same_primary_all = []
+    all_same_pair_all = []
+    confidence_all = []
+    low_conf_all = []
+    rejudge_all = []
+    summary_words_all = []
+    summary_tokens_all = []
+    evidence_spans_all = []
 
     for r in pred_records:
         answers = r.get("answers", [])
@@ -222,6 +238,14 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
         if direct_div is not None:
             direct_div_all.append(float(direct_div))
         vote_acc_all.append(vote_correct)
+        all_same_primary_all.append(int(bool(r.get("all_same_primary", False))))
+        all_same_pair_all.append(int(bool(r.get("all_same_pair", False))))
+        confidence_all.append(float(r.get("mean_family_confidence", 0.0) or 0.0))
+        low_conf_all.append(float(r.get("low_confidence_share", 0.0) or 0.0))
+        rejudge_all.append(float(r.get("rejudge_count", 0.0) or 0.0))
+        summary_words_all.append(float(r.get("mean_summary_words", 0.0) or 0.0))
+        summary_tokens_all.append(float(r.get("mean_summary_tokens", 0.0) or 0.0))
+        evidence_spans_all.append(float(r.get("mean_evidence_spans", 0.0) or 0.0))
 
     return {
         "eval_size": n,
@@ -230,6 +254,14 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
         "mean_family_homogeneity_rate_from_preds": _safe_mean(family_homo_all),
         "mean_llm_direct_diversity_score_from_preds": _safe_mean(direct_div_all),
         "mean_vote_acc_from_preds": _safe_mean(vote_acc_all),
+        "all_same_primary_rate_from_preds": _safe_mean(all_same_primary_all),
+        "all_same_pair_rate_from_preds": _safe_mean(all_same_pair_all),
+        "mean_family_confidence_from_preds": _safe_mean(confidence_all),
+        "low_confidence_share_from_preds": _safe_mean(low_conf_all),
+        "mean_rejudge_count_from_preds": _safe_mean(rejudge_all),
+        "mean_summary_words_from_preds": _safe_mean(summary_words_all),
+        "mean_summary_tokens_from_preds": _safe_mean(summary_tokens_all),
+        "mean_evidence_spans_from_preds": _safe_mean(evidence_spans_all),
     }
 
 
@@ -243,6 +275,9 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
             "update_applied_rate": 0.0,
             "mean_selected_agents": 0.0,
             "mean_updated_agents": 0.0,
+            "mean_generic_prompt_candidate_rate": 0.0,
+            "mean_family_shift_rate_during_candidate_eval": 0.0,
+            "mean_summary_embedding_shift_during_candidate_eval": 0.0,
         }
 
     update_requested = []
@@ -251,6 +286,9 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
     update_applied = []
     num_selected = []
     num_updated = []
+    generic_rates = []
+    family_shift_rates = []
+    summary_shifts = []
 
     for r in step_records:
         u = r.get("update", {}) if isinstance(r.get("update", {}), dict) else {}
@@ -269,6 +307,11 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
         update_applied.append(int(len(updated_ids) > 0))
         num_selected.append(float(len(selected_ids)))
         num_updated.append(float(len(updated_ids)))
+        generic_rates.append(float(r.get("generic_prompt_candidate_rate", 0.0) or 0.0))
+        diag = r.get("candidate_behavior_diagnostics", {})
+        if isinstance(diag, dict):
+            family_shift_rates.append(float(diag.get("family_shift_rate", 0.0) or 0.0))
+            summary_shifts.append(float(diag.get("summary_embedding_shift", 0.0) or 0.0))
 
     return {
         "train_steps": len(step_records),
@@ -278,6 +321,9 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
         "update_applied_rate": _safe_mean(update_applied),
         "mean_selected_agents": _safe_mean(num_selected),
         "mean_updated_agents": _safe_mean(num_updated),
+        "mean_generic_prompt_candidate_rate": _safe_mean(generic_rates),
+        "mean_family_shift_rate_during_candidate_eval": _safe_mean(family_shift_rates),
+        "mean_summary_embedding_shift_during_candidate_eval": _safe_mean(summary_shifts),
     }
 
 
@@ -394,6 +440,14 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         "final_test_mean_llm_direct_diversity_score": final_test_mean_llm_direct_diversity_score,
         "final_train_vote_acc": float(latest_train_metrics.get("vote_acc", 0.0) or 0.0) if latest_train_metrics else None,
         "final_test_vote_acc": final_test_vote_acc,
+        "all_same_primary_rate": eval_metrics.get("all_same_primary_rate_from_preds", 0.0),
+        "all_same_pair_rate": eval_metrics.get("all_same_pair_rate_from_preds", 0.0),
+        "mean_family_confidence": eval_metrics.get("mean_family_confidence_from_preds", 0.0),
+        "low_confidence_share": eval_metrics.get("low_confidence_share_from_preds", 0.0),
+        "mean_rejudge_count": eval_metrics.get("mean_rejudge_count_from_preds", 0.0),
+        "mean_summary_words": eval_metrics.get("mean_summary_words_from_preds", 0.0),
+        "mean_summary_tokens": eval_metrics.get("mean_summary_tokens_from_preds", 0.0),
+        "mean_evidence_spans": eval_metrics.get("mean_evidence_spans_from_preds", 0.0),
         "prompt_drift_rate": _safe_mean(prompt_drift_flags),
         "prompt_drift_cosine_distance": _safe_mean(prompt_drift_cos_distances),
     }
@@ -456,9 +510,18 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "final_test_mean_llm_direct_diversity_score",
         "final_train_vote_acc",
         "final_test_vote_acc",
+        "all_same_primary_rate",
+        "all_same_pair_rate",
+        "mean_family_confidence",
+        "low_confidence_share",
+        "mean_summary_words",
+        "mean_evidence_spans",
         "disagreement_rate",
         "prompt_drift_cosine_distance",
         "update_applied_rate",
+        "mean_generic_prompt_candidate_rate",
+        "mean_family_shift_rate_during_candidate_eval",
+        "mean_summary_embedding_shift_during_candidate_eval",
     ]
     lines = ["# Ablation Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for r in rows:

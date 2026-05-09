@@ -139,6 +139,20 @@ def _build_command(args: argparse.Namespace, setting: BaselineSetting, out_dir: 
         str(args.same_major_family_weight),
         "--macro_diversity_weight",
         str(args.macro_diversity_weight),
+        "--family_confidence_threshold",
+        str(args.family_confidence_threshold),
+        "--family_rejudge_on_low_confidence",
+        str(int(args.family_rejudge_on_low_confidence)),
+        "--min_summary_words",
+        str(args.min_summary_words),
+        "--max_summary_tokens",
+        str(args.max_summary_tokens),
+        "--min_evidence_spans",
+        str(args.min_evidence_spans),
+        "--reward_tie_eps",
+        str(args.reward_tie_eps),
+        "--invalid_tolerance",
+        str(args.invalid_tolerance),
         "--max_retries",
         str(args.max_retries),
         "--retry_sleep",
@@ -213,6 +227,13 @@ def _run_one(args: argparse.Namespace, setting: BaselineSetting, summary_jsonl: 
         "secondary_family_weight": args.secondary_family_weight,
         "same_major_family_weight": args.same_major_family_weight,
         "macro_diversity_weight": args.macro_diversity_weight,
+        "family_confidence_threshold": args.family_confidence_threshold,
+        "family_rejudge_on_low_confidence": int(args.family_rejudge_on_low_confidence),
+        "min_summary_words": args.min_summary_words,
+        "max_summary_tokens": args.max_summary_tokens,
+        "min_evidence_spans": args.min_evidence_spans,
+        "reward_tie_eps": args.reward_tie_eps,
+        "invalid_tolerance": args.invalid_tolerance,
         "lambda_diversity": 0.0,
         "lambda_homogeneity": 0.0,
         "lambda_invalid_trace": 0.0,
@@ -332,6 +353,13 @@ def main():
     parser.add_argument("--secondary_family_weight", type=float, default=0.3)
     parser.add_argument("--same_major_family_weight", type=float, default=0.5)
     parser.add_argument("--macro_diversity_weight", type=float, default=0.5)
+    parser.add_argument("--family_confidence_threshold", type=float, default=0.4)
+    parser.add_argument("--family_rejudge_on_low_confidence", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--min_summary_words", type=int, default=60)
+    parser.add_argument("--max_summary_tokens", type=int, default=512)
+    parser.add_argument("--min_evidence_spans", type=int, default=1)
+    parser.add_argument("--reward_tie_eps", type=float, default=0.03)
+    parser.add_argument("--invalid_tolerance", type=float, default=0.1)
 
     parser.add_argument("--max_retries", type=int, default=5)
     parser.add_argument("--retry_sleep", type=float, default=2.0)
@@ -359,6 +387,7 @@ def main():
     args.transient_retry_forever = bool(int(args.transient_retry_forever))
     args.family_expansion_enabled = bool(int(args.family_expansion_enabled))
     args.use_dual_family_labels = bool(int(args.use_dual_family_labels))
+    args.family_rejudge_on_low_confidence = bool(int(args.family_rejudge_on_low_confidence))
     args.llm_call_logging = bool(int(args.llm_call_logging))
 
     workspace = Path(args.workspace).resolve()

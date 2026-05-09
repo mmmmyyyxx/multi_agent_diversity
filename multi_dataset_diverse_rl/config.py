@@ -16,6 +16,13 @@ class Config:
     secondary_family_weight: float = 0.3
     same_major_family_weight: float = 0.5
     macro_diversity_weight: float = 0.5
+    family_confidence_threshold: float = 0.4
+    family_rejudge_on_low_confidence: bool = True
+    min_summary_words: int = 60
+    max_summary_tokens: int = 512
+    min_evidence_spans: int = 1
+    reward_tie_eps: float = 0.03
+    invalid_tolerance: float = 0.1
 
     train_path: str = "train.jsonl"
     test_path: str = "test.jsonl"
@@ -71,6 +78,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--secondary_family_weight", type=float, default=0.3)
     parser.add_argument("--same_major_family_weight", type=float, default=0.5)
     parser.add_argument("--macro_diversity_weight", type=float, default=0.5)
+    parser.add_argument("--family_confidence_threshold", type=float, default=0.4)
+    parser.add_argument("--family_rejudge_on_low_confidence", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--min_summary_words", type=int, default=60)
+    parser.add_argument("--max_summary_tokens", type=int, default=512)
+    parser.add_argument("--min_evidence_spans", type=int, default=1)
+    parser.add_argument("--reward_tie_eps", type=float, default=0.03)
+    parser.add_argument("--invalid_tolerance", type=float, default=0.1)
 
     parser.add_argument("--train_path", type=str, default="train.jsonl")
     parser.add_argument("--test_path", type=str, default="test.jsonl")

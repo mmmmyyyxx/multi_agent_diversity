@@ -157,7 +157,7 @@ python -m multi_dataset_diverse_rl.cli `
 每个训练样本大致执行以下步骤：
 
 1. 所有 agents 用各自当前 prompt 解题，输出完整 trace 与 `FINAL_ANSWER:`。
-2. 系统调用 LLM judge 批量查看多条完整 trace，默认输出 `primary_family`、`secondary_family` 和 `reasoning_summary`。`reasoning_summary` 用一到两句话概括推理思路，后续 group critic、rewriter 和新标签审核都使用该摘要。若出现新标签则由审核模型决定接纳或映射，并持久化 taxonomy。
+2. 系统对每个 agent 的完整 trace 并发调用 single-trace LLM judge，分别输出 `primary_family`、`secondary_family`、详细自然语言 `reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans` 和 `confidence`。`reasoning_summary` 会尽量覆盖问题理解、关注信息、推理组织方式、不确定性处理和收敛方式，并作为后续 embedding 的唯一文本来源。低置信或证据不足的判别会交给审核模型复判；若出现新标签则由审核模型决定接纳或映射，并持久化 taxonomy。
 3. 根据主/子策略加权分布计算 team diversity、family homogeneity 与每个 agent 的 reward。
 4. 将当前样本加入窗口；当 `step % update_every == 0` 且窗口填满时尝试更新。
 5. Group critic 基于窗口级摘要生成 `group_summary` 与 `target_role_hints`。
@@ -165,6 +165,8 @@ python -m multi_dataset_diverse_rl.cli `
 7. Bandit 在 `keep_current + candidates` 中采样动作。
 8. 系统用小批样本比较当前 prompt 与候选 prompt 的 mean reward，决定 `keep`、`accept` 或 `reject`。
 9. 写入 step 日志、update 日志、trace 日志和 prompt 历史。
+
+Group critic、textual gradient 和 rewriter 的输入只包含策略摘要、family 分布、同质化统计、trace hash 与 agent 角色信息；不传入 gold answer、各 agent 的预测答案、vote answer 或 vote correctness。答案和投票结果只用于 reward 计算、评估指标与 trace/prediction 回溯日志。
 
 ## 输出文件
 
@@ -177,7 +179,7 @@ python -m multi_dataset_diverse_rl.cli `
 - `train_step_logs.jsonl`：每个训练 step 的 family 指标、reward 摘要和 update 摘要。
 - `train_trace_history.jsonl`：训练阶段完整推理轨迹。
 - `test_trace_history.jsonl`：测试阶段完整推理轨迹。
-- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、`family_resolution`、`secondary_family_resolution`、family 分布、`reasoning_summary`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
+- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、`family_resolution`、`secondary_family_resolution`、family 分布、详细 `reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans`、`confidence`、`summary_embedding_text`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
 - `family_taxonomy.json`：动态 family taxonomy（默认写入，路径可由 `--family_taxonomy_path` 指定）。
 - `test_epoch*_predictions.jsonl`：每个测试样本的答案、投票结果和 family 指标。
 - `last_state.json` / `best_state.json`：agent 状态、bandit 参数和 prompt 历史快照。
@@ -192,7 +194,7 @@ python -m multi_dataset_diverse_rl.cli `
 - `mean_invalid_trace_penalty`：训练 step 日志中的无效轨迹惩罚均值。
 - `mean_llm_direct_diversity_score`：LLM 直接给出的组级多样性评分（仅记录，不参与 reward）。
 
-日志会记录 `primary_family_labels`、`secondary_family_labels`、`reasoning_summaries`、`agent_family_distributions`、`primary_family_counts`、`weighted_family_distribution`、`major_family_distribution`、`team_major_family_diversity` 和 `team_intra_family_diversity`。
+日志会记录 `primary_family_labels`、`secondary_family_labels`、`reasoning_summaries`、`strategy_steps`、`distinctive_features`、`evidence_spans`、`family_confidences`、`agent_family_distributions`、`primary_family_counts`、`weighted_family_distribution`、`major_family_distribution`、`all_same_primary`、`all_same_pair`、`mean_family_confidence`、`low_confidence_share`、`rejudge_count`、`mean_summary_words`、`mean_evidence_spans`、`team_major_family_diversity` 和 `team_intra_family_diversity`。
 
 ## 消融实验
 
@@ -277,6 +279,12 @@ python scripts/plot_ablation_results.py --csv runs_abcd/ablation_summary.csv --o
 - `--secondary_family_weight`：子策略权重，默认 `0.3`，越大越强调混合推理轨迹中的辅助策略。
 - `--same_major_family_weight`：同主类不同子方法的相似度，默认 `0.5`。越大，系统越认为“同一大类内部的方法仍然相似”。
 - `--macro_diversity_weight`：跨主类多样性在 `D_family` 中的权重，默认 `0.5`。越大越鼓励 agents 分散到不同主类；越小越鼓励同一主类内部的细粒度分化。
+- `--family_confidence_threshold`：family judge 置信度低于该值时触发复判，默认 `0.4`。
+- `--family_rejudge_on_low_confidence`：是否启用低置信或弱证据 family 复判，默认 `1`。
+- `--min_summary_words` / `--max_summary_tokens`：详细 reasoning summary 的最小词数和最大长度。
+- `--min_evidence_spans`：summary 至少需要多少条 trace 证据片段支持。
+- `--reward_tie_eps`：候选 prompt reward 接近时启用行为诊断 tie-break 的阈值。
+- `--invalid_tolerance`：候选 prompt 可接受的 invalid trace penalty 增量上限。
 - `--family_expansion_enabled`：是否允许训练过程中接纳新 family。关闭后未知标签会映射到已有策略。
 - `--family_taxonomy_path`：动态 family taxonomy 保存路径。
 
