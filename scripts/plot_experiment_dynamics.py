@@ -7,10 +7,8 @@ import matplotlib.pyplot as plt
 
 
 SETTING_ORDER = [
-    "A_shared_no_div",
-    "B_shared_div",
-    "C_bank_no_div",
-    "D_bank_div",
+    "shared_div",
+    "bank_div",
 ]
 
 
@@ -277,18 +275,19 @@ def plot_test_epoch_curves(base_dir: Path, out_dir: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot training/test dynamics for four MMLU ablation settings.")
+    parser = argparse.ArgumentParser(description="Plot training/test dynamics for shared_div and bank_div settings.")
     parser.add_argument(
         "--runs_root",
         type=str,
-        default="runs_ablation_mmlu_only/mmlu",
-        help="Directory containing A/B/C/D run folders.",
+        default="runs_experiments",
+        help="Directory containing shared_div and bank_div run folders.",
     )
-    parser.add_argument("--out_dir", type=str, default="runs_ablation_mmlu_only")
+    parser.add_argument("--base_dir", type=str, default="", help="Alias for --runs_root.")
+    parser.add_argument("--out_dir", type=str, default="runs_experiments/figures")
     parser.add_argument("--smooth_window", type=int, default=10)
     args = parser.parse_args()
 
-    base_dir = Path(args.runs_root)
+    base_dir = Path(args.base_dir or args.runs_root)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 

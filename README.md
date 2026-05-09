@@ -1,8 +1,8 @@
 # 多智能体推理策略多样化 Prompt RL
 
-这个项目实现了一个基于 textual gradient 与轻量 bandit/RL 更新的多智能体 Prompt 训练框架。它的目标不是直接最大化准确率，而是让一组同构 LLM agents 在推理策略族上形成更分散、更互补的角色。
+这个项目实现了一个基于 textual gradient 与轻量 bandit/RL 更新的多智能体 Prompt 训练框架。目标不是直接最大化准确率，而是让一组同构 LLM agents 在推理策略族上形成更分散、更互补的角色。
 
-当前版本使用 LLM judge 给每条推理轨迹判定 reasoning family，并基于 family 分布计算 reward。此前的 skeleton / 骨架相似度链路已移除，不再参与 reward、更新选择或日志记录；完整推理文本分开保存在 `train_trace_history.jsonl` 与 `test_trace_history.jsonl`，用于人工分析。
+当前版本使用 LLM judge 为每条推理轨迹判定 reasoning family，并基于 family 分布计算 reward。完整推理文本保存在 `train_trace_history.jsonl` 与 `test_trace_history.jsonl`，策略摘要保存在 `reasoning_summary_history.jsonl`，用于回溯和分析。
 
 ## 目录结构
 
@@ -14,16 +14,16 @@ multi_dataset_diverse_rl/
   system.py      # 训练主逻辑、诊断、rewriter、日志与评估
   cli.py         # python -m multi_dataset_diverse_rl.cli 入口
 scripts/
-  prepare_mmlu_jsonl.py       # MMLU 数据转换
-  run_ablation_matrix.py      # 消融实验批量运行
-  run_testonly_baselines.py   # 仅测试不训练的 shared/bank baseline 运行与汇总
-  analyze_ablation.py         # 汇总消融结果
-  plot_training_dynamics.py   # 绘制训练动态
-  plot_ablation_results.py    # 绘制消融对比图
-  plot_ablation_with_baselines.py  # A/B/C/D + test-only baseline 统一对比图
-run.ps1 / run.sh              # 训练快捷脚本
-baseline_run.ps1 / .sh        # baseline 评估快捷脚本
-method.md                     # 方法定义与公式说明
+  prepare_mmlu_data.py          # MMLU 数据转换
+  run_experiments.py            # 顺序运行四个实验设置
+  analyze_experiments.py        # 读取已有 run，统一计算指标并画图
+  compute_experiment_metrics.py # 汇总实验指标
+  plot_experiment_results.py    # 四个实验设置统一结果图
+  plot_experiment_dynamics.py   # 训练和测试动态曲线
+  plot_training_comparison.py   # 训练组对比图
+run.ps1 / run.sh                # 训练快捷脚本
+baseline_run.ps1 / .sh          # 只测试不训练的快捷脚本
+method.md                       # 方法定义与公式说明
 ```
 
 ## 环境准备
@@ -34,16 +34,11 @@ method.md                     # 方法定义与公式说明
 pip install -r requirements.txt
 ```
 
-设置 OpenAI API Key：
+设置 API：
 
 ```powershell
 $env:OPENAI_API_KEY = "your_key"
-```
-
-如果使用兼容 OpenAI API 的代理服务，可额外设置：
-
-```powershell
-$env:OPENAI_BASE_URL = "your_base_url"
+$env:OPENAI_BASE_URL = "your_base_url"  # 可选，兼容 OpenAI API 的中转服务
 ```
 
 ## 数据格式
@@ -68,18 +63,12 @@ $env:OPENAI_BASE_URL = "your_base_url"
 MMLU 数据转换示例：
 
 ```bash
-python scripts/prepare_mmlu_jsonl.py --dataset_name cais/mmlu --dataset_config all --train_split dev --test_split test --out_train mmlu_train.jsonl --out_test mmlu_test.jsonl
+python scripts/prepare_mmlu_data.py --dataset_name cais/mmlu --dataset_config all --train_split dev --test_split test --out_train mmlu_train.jsonl --out_test mmlu_test.jsonl
 ```
 
 ## 快速运行
 
-PowerShell 快捷训练：
-
-```powershell
-.\run.ps1 auto train.jsonl test.jsonl
-```
-
-等价核心命令：
+核心训练命令：
 
 ```powershell
 python -m multi_dataset_diverse_rl.cli `
@@ -95,13 +84,7 @@ python -m multi_dataset_diverse_rl.cli `
   --test_size 100
 ```
 
-Baseline 只评估不训练：
-
-```powershell
-.\baseline_run.ps1 shared auto test.jsonl
-```
-
-或直接运行：
+只测试不训练：
 
 ```powershell
 python -m multi_dataset_diverse_rl.cli `
@@ -117,25 +100,24 @@ python -m multi_dataset_diverse_rl.cli `
 **模型参数**
 
 - `--model`：solver agents 使用的模型，默认 `gpt-4o-mini`。
-- `--critic_model`：group diagnosis / family judge 使用的模型。
+- `--critic_model`：family judge、group diagnosis 使用的模型。
 - `--rewriter_model`：prompt rewriter 使用的模型。
-- `--max_tokens`、`--critic_max_tokens`、`--rewriter_max_tokens`：各阶段最大输出长度。
-- `--temperature`、`--critic_temperature`、`--rewriter_temperature`：各阶段采样温度。
+- `--family_expansion_model`：新 family 审核模型，默认 `deepseek-v4-pro`。
+- `--max_tokens` / `--critic_max_tokens` / `--rewriter_max_tokens`：各阶段最大输出长度。
 
-**动态分类参数**
+**分类与摘要参数**
 
-- `--family_expansion_model`：审核模型，用于判断新 family 是否应被接纳，默认 `deepseek-v4-pro`。
-- `--family_expansion_enabled`：是否允许扩充 family 集合（1/0）。关闭时会强制映射回已有 family。
-- `--family_taxonomy_path`：动态 taxonomy JSON 路径，新 family 被接纳后会写入该文件。
-- `--use_dual_family_labels`：是否启用主策略 + 子策略判别，默认 `1`。设为 `0` 时退回旧的单策略映射。
-- `--primary_family_weight`：主策略在单条轨迹策略分布中的权重，默认 `0.7`。
-- `--secondary_family_weight`：子策略在单条轨迹策略分布中的权重，默认 `0.3`。
-- `--same_major_family_weight`：两个策略属于同一主类但具体方法不同时的相似度，默认 `0.5`。
-- `--macro_diversity_weight`：团队多样性中跨主类分化的权重，默认 `0.5`，其余权重给主类内子方法分化。
+- `--family_taxonomy_path`：动态 family taxonomy 文件路径。
+- `--family_expansion_enabled`：是否允许训练中接纳新 family。
+- `--use_dual_family_labels`：是否启用主策略 + 子策略判别，默认 `1`。
+- `--primary_family_weight`：主策略权重，默认 `0.7`。
+- `--secondary_family_weight`：子策略权重，默认 `0.3`。
+- `--same_major_family_weight`：同一主类不同子策略的相似度，默认 `0.5`。
+- `--macro_diversity_weight`：跨主类多样性在 `D_family` 中的权重，默认 `0.5`。
+- `--min_summary_words`：reasoning summary 的最小词数要求。
+- `--max_summary_tokens`：reasoning summary 的最大 token 数。项目优先使用 `tiktoken` 计数和截断，若不可用则退回单词数近似。
 
-当前内置基础 reasoning family 按 `分类.md` 组织为 7 个主类和 36 个具体方法。系统不再使用 `other` 分类；空输出、异常输出或未知标签会被映射到最接近的有效策略。旧标签如 `contradiction_proof`、`elimination_comparison`、`backward_verification`、`invariant_symmetry` 会自动映射到新的规范标签。
-
-**训练参数**
+**训练与 reward 参数**
 
 - `--agents`：agent 数量。
 - `--init_mode shared|bank`：共享初始 prompt 或从内置 prompt bank 初始化。
@@ -143,30 +125,22 @@ python -m multi_dataset_diverse_rl.cli `
 - `--train_size` / `--test_size`：读取的数据量上限。
 - `--update_every`：每多少个 step 尝试一次 prompt 更新。
 - `--candidate_eval_batch_size`：候选 prompt 小批评估样本数。
-
-**Reward 参数**
-
-- `--lambda_diversity`：鼓励 family 多样性和个体 family 新颖性。
-- `--lambda_homogeneity`：惩罚同 family 重叠。
+- `--lambda_diversity`：鼓励 family 多样性和个体策略新颖性。
+- `--lambda_homogeneity`：惩罚策略同质化。
 - `--lambda_invalid_trace`：惩罚空输出、过短输出、格式缺失、重复严重等无效轨迹。
-
-当前 reward 只使用 family-level 信号与基础无效输出防护，不使用 skeleton/文本相似度。
 
 ## 训练流程
 
-每个训练样本大致执行以下步骤：
-
 1. 所有 agents 用各自当前 prompt 解题，输出完整 trace 与 `FINAL_ANSWER:`。
-2. 系统对每个 agent 的完整 trace 并发调用 single-trace LLM judge，分别输出 `primary_family`、`secondary_family`、详细自然语言 `reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans` 和 `confidence`。`reasoning_summary` 会尽量覆盖问题理解、关注信息、推理组织方式、不确定性处理和收敛方式，并作为后续 embedding 的唯一文本来源。低置信或证据不足的判别会交给审核模型复判；若出现新标签则由审核模型决定接纳或映射，并持久化 taxonomy。
-3. 根据主/子策略加权分布计算 team diversity、family homogeneity 与每个 agent 的 reward。
-4. 将当前样本加入窗口；当 `step % update_every == 0` 且窗口填满时尝试更新。
-5. Group critic 基于窗口级摘要生成 `group_summary` 与 `target_role_hints`。
-6. Rewriter 为被选中的 agent 生成候选 prompt。
-7. Bandit 在 `keep_current + candidates` 中采样动作。
-8. 系统用小批样本比较当前 prompt 与候选 prompt 的 mean reward，决定 `keep`、`accept` 或 `reject`。
-9. 写入 step 日志、update 日志、trace 日志和 prompt 历史。
+2. 系统对每个 agent 的完整 trace 并发调用 single-trace LLM judge，输出 `primary_family`、`secondary_family`、`reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans` 和 `confidence`。
+3. `reasoning_summary` 是详细自然语言 reasoning profile，只描述推理路径和方法，不评价质量，不使用答案正确性、投票结果或其他 agents 信息。
+4. 根据主/子策略加权分布计算 team diversity、family homogeneity、个体重复度和 reward。
+5. 窗口达到 `update_every` 后，group critic 基于策略摘要和 family 分布生成诊断。
+6. rewriter 为高压力 agents 生成候选 prompt。
+7. bandit 在 `keep_current + candidates` 中采样动作，并用小批样本比较 reward 后决定采纳或拒绝。
+8. 写入 step 日志、update 日志、trace 日志、reasoning summary 日志和 prompt 历史。
 
-Group critic、textual gradient 和 rewriter 的输入只包含策略摘要、family 分布、同质化统计、trace hash 与 agent 角色信息；不传入 gold answer、各 agent 的预测答案、vote answer 或 vote correctness。答案和投票结果只用于 reward 计算、评估指标与 trace/prediction 回溯日志。
+Group critic、textual gradient 和 rewriter 的输入只包含策略摘要、family 分布、同质化统计、trace hash 与 agent 角色信息；不传入 gold answer、各 agent 的预测答案、vote answer 或 vote correctness。答案和投票结果只用于 reward 计算、评估指标与回溯日志。
 
 ## 输出文件
 
@@ -175,156 +149,45 @@ Group critic、textual gradient 和 rewriter 的输入只包含策略摘要、fa
 - `run_meta.json`：配置、初始化方式、初始 prompt hash、模型参数。
 - `history.json`：每个 epoch 的 train/test 汇总指标。
 - `prompt_history.json`：每个 agent 的 prompt 初始化、更新、采纳、拒绝和 sanitize 事件。
-- `update_logs.jsonl`：prompt 更新尝试的压缩日志，包括诊断摘要、候选 hash、动作、决策、错误信息。
+- `update_logs.jsonl`：prompt 更新尝试日志。
 - `train_step_logs.jsonl`：每个训练 step 的 family 指标、reward 摘要和 update 摘要。
 - `train_trace_history.jsonl`：训练阶段完整推理轨迹。
 - `test_trace_history.jsonl`：测试阶段完整推理轨迹。
-- `reasoning_summary_history.jsonl`：轻量回溯索引，按样本保存每个 agent 的 `primary_family`、`secondary_family`、`family_resolution`、`secondary_family_resolution`、family 分布、详细 `reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans`、`confidence`、`summary_embedding_text`、`trace_hash` 和题目短摘；需要查看完整原文时可用 `trace_hash` 回到 trace history 中定位。
-- `family_taxonomy.json`：动态 family taxonomy（默认写入，路径可由 `--family_taxonomy_path` 指定）。
-- `test_epoch*_predictions.jsonl`：每个测试样本的答案、投票结果和 family 指标。
+- `reasoning_summary_history.jsonl`：按样本保存每个 agent 的 family、family resolution、详细 `reasoning_summary`、`summary_embedding_text`、证据片段、confidence 和 trace hash。
+- `family_taxonomy.json`：动态 family taxonomy。
+- `test_epoch*_predictions.jsonl`：测试样本的答案、投票结果和 family 指标。
 - `last_state.json` / `best_state.json`：agent 状态、bandit 参数和 prompt 历史快照。
 
-不会再生成 `skeleton_history.jsonl`。
+## 实验脚本
 
-## 指标说明
+默认四个设置：
 
-- `mean_family_diversity`：平均 family 分布多样性；双策略模式下同时考虑跨主类分化和主类内子方法分化。
-- `mean_family_homogeneity_rate`：平均 family 同质率；双策略模式下是 pairwise 加权策略重叠度。
-- `vote_acc`：多数投票答案准确率，仅用于评估，不直接作为 diversity reward。
-- `mean_invalid_trace_penalty`：训练 step 日志中的无效轨迹惩罚均值。
-- `mean_llm_direct_diversity_score`：LLM 直接给出的组级多样性评分（仅记录，不参与 reward）。
+- `shared_div`：shared 初始化，训练并开启 diversity reward。
+- `bank_div`：bank 初始化，训练并开启 diversity reward。
+- `shared_baseline`：shared 初始化，只测试不训练。
+- `bank_baseline`：bank 初始化，只测试不训练。
 
-日志会记录 `primary_family_labels`、`secondary_family_labels`、`reasoning_summaries`、`strategy_steps`、`distinctive_features`、`evidence_spans`、`family_confidences`、`agent_family_distributions`、`primary_family_counts`、`weighted_family_distribution`、`major_family_distribution`、`all_same_primary`、`all_same_pair`、`mean_family_confidence`、`low_confidence_share`、`rejudge_count`、`mean_summary_words`、`mean_evidence_spans`、`team_major_family_diversity` 和 `team_intra_family_diversity`。
-
-## 消融实验
-
-运行：
+运行实验：
 
 ```powershell
-python scripts/run_ablation_matrix.py --workspace . --out_root runs_abcd --task_type auto --train_path mmlu_train.jsonl --test_path mmlu_test.jsonl --epochs 2 --agents 5
+python scripts/run_experiments.py --workspace . --out_root runs_experiments --task_type auto --train_path mmlu_train.jsonl --test_path mmlu_test.jsonl --epochs 2 --agents 5
 ```
 
-当前脚本默认启用两组设置：
-
-- `A_shared_no_div`：shared 初始化，`lambda_diversity/lambda_homogeneity/lambda_invalid_trace` 全为 0。
-- `B_shared_div`：shared 初始化，开启 family diversity reward。
-
-`scripts/run_ablation_matrix.py` 中保留了 `bank` 初始化设置的注释行，如需 A/B/C/D 四组完整矩阵，可取消 `C_bank_no_div` 与 `D_bank_div` 两行注释。
-
-运行后会生成：
-
-- `runs_abcd/abcd_runs.jsonl`
-- `runs_abcd/abcd_runs.csv`
-- `runs_abcd/ablation_summary.csv`
-- `runs_abcd/ablation_summary.md`
-
-### 新增：测试集直评 baseline（不训练）
-
-在已有 A/B/C/D 结果基础上，增加两组 baseline：
-
-- `E_shared_testonly`：`init_mode=shared`，`baseline_only=1`
-- `F_bank_testonly`：`init_mode=bank`，`baseline_only=1`
-
-运行：
+读取已有结果并画图：
 
 ```powershell
-python scripts/run_testonly_baselines.py --workspace . --out_root runs_abcd --task_type auto --test_path test.jsonl --test_size 100 --agents 5
+python scripts/analyze_experiments.py --workspace . --out_root runs_experiments
 ```
 
-该脚本会在 `runs_abcd/` 下生成：
-
-- `baseline_runs.jsonl` / `baseline_runs.csv`
-- `abcd_plus_baselines.jsonl` / `abcd_plus_baselines.csv`
-- `ablation_summary_with_baselines.csv` / `ablation_summary_with_baselines.md`
-- `ablation_with_baselines_diversity_panel.png`
-- `ablation_with_baselines_homogeneity_panel.png`
-- `ablation_with_baselines_behavior_panel.png`
-- `ablation_with_baselines_trace_summary_panel.png`：在同一张图中并排比较完整 trace 与 `reasoning_summary` 的 cosine diversity/similarity。
-
-## 结果分析与绘图
-
-汇总已有 runs：
+也可以拆开执行：
 
 ```powershell
-python scripts/analyze_ablation.py --runs_root runs_abcd --out_csv runs_abcd/ablation_summary.csv --out_md runs_abcd/ablation_summary.md
+python scripts/compute_experiment_metrics.py --runs_root runs_experiments --out_csv runs_experiments/experiment_metrics.csv --out_md runs_experiments/experiment_metrics.md
+python scripts/plot_experiment_results.py --csv runs_experiments/experiment_metrics.csv --out_dir runs_experiments/figures
+python scripts/plot_experiment_dynamics.py --base_dir runs_experiments --out_dir runs_experiments/figures
+python scripts/plot_training_comparison.py --csv runs_experiments/experiment_metrics.csv --out_dir runs_experiments/figures
 ```
 
-绘制训练动态：
-
-```powershell
-python scripts/plot_training_dynamics.py --base_dir runs_abcd --out_dir runs_abcd/figures
-```
-
-绘制消融结果：
-
-```powershell
-python scripts/plot_ablation_results.py --csv runs_abcd/ablation_summary.csv --out_dir runs_abcd/figures
-```
-
-## 可修改超参数及物理意义
-
-**模型与生成**
-
-- `--model`：solver agent 的模型，决定解题轨迹本身的能力和风格。
-- `--critic_model`：family judge、group diagnosis 使用的模型，决定策略分类和诊断质量。
-- `--rewriter_model`：prompt 改写模型，决定候选 prompt 的质量。
-- `--family_expansion_model`：新 family 审核模型，只在 judge 提出未见标签时调用。
-- `--max_tokens` / `--critic_max_tokens` / `--rewriter_max_tokens`：分别限制 solver、critic、rewriter 输出长度。
-- `--temperature` / `--critic_temperature` / `--rewriter_temperature`：分别控制 solver、critic、rewriter 采样随机性。
-
-**分类与多样性统计**
-
-- `--use_dual_family_labels`：是否使用主策略 + 子策略。`1` 表示每条轨迹保留 top-2 策略；`0` 表示退回单策略。
-- `--primary_family_weight`：主策略权重，默认 `0.7`，越大越强调轨迹的 dominant strategy。
-- `--secondary_family_weight`：子策略权重，默认 `0.3`，越大越强调混合推理轨迹中的辅助策略。
-- `--same_major_family_weight`：同主类不同子方法的相似度，默认 `0.5`。越大，系统越认为“同一大类内部的方法仍然相似”。
-- `--macro_diversity_weight`：跨主类多样性在 `D_family` 中的权重，默认 `0.5`。越大越鼓励 agents 分散到不同主类；越小越鼓励同一主类内部的细粒度分化。
-- `--family_confidence_threshold`：family judge 置信度低于该值时触发复判，默认 `0.4`。
-- `--family_rejudge_on_low_confidence`：是否启用低置信或弱证据 family 复判，默认 `1`。
-- `--min_summary_words` / `--max_summary_tokens`：详细 reasoning summary 的最小词数和最大长度。
-- `--min_evidence_spans`：summary 至少需要多少条 trace 证据片段支持。
-- `--reward_tie_eps`：候选 prompt reward 接近时启用行为诊断 tie-break 的阈值。
-- `--invalid_tolerance`：候选 prompt 可接受的 invalid trace penalty 增量上限。
-- `--family_expansion_enabled`：是否允许训练过程中接纳新 family。关闭后未知标签会映射到已有策略。
-- `--family_taxonomy_path`：动态 family taxonomy 保存路径。
-
-动态扩展审核只查看触发新标签的单个 agent 完整 trace，不使用其他 agents 或组级分布；审核上下文会以 `family_resolution.review_context="single_agent_trace"`、`trace_hash`、`trace_length` 等字段写入 `reasoning_summary_history.jsonl`，便于回溯。
-
-**Reward**
-
-- `--lambda_diversity`：多样性奖励强度。越大，越鼓励团队覆盖不同策略。
-- `--lambda_homogeneity`：同质性惩罚强度。越大，越惩罚策略重叠。
-- `--lambda_invalid_trace`：无效轨迹惩罚强度。越大，越压制空输出、过短输出、格式缺失或重复严重的轨迹。
-
-**训练与更新**
-
-- `--agents`：参与协作的 agent 数量。
-- `--init_mode`：初始 prompt 方式，`shared` 表示共享初始 prompt，`bank` 表示从内置 prompt bank 初始化。
-- `--epochs`：训练轮数。
-- `--train_size` / `--test_size`：训练集/测试集读取上限。
-- `--update_every`：每多少个训练 step 尝试一次 prompt 更新；同时决定 homogeneity window 的实际长度。
-- `--candidate_eval_batch_size`：评估候选 prompt 时使用的小批样本数。
-- `--bandit_lr`：bandit 更新步长。越大，采纳/拒绝反馈对动作偏好的影响越快。
-- `--baseline_momentum`：bandit baseline 的动量。越大，历史 reward 影响越长。
-- `--seed`：随机种子。
-
-**稳定性与重试**
-
-- `--max_retries`：普通 LLM 调用最大重试次数。
-- `--retry_sleep`：重试基础等待时间。
-- `--transient_retry_forever`：是否对临时 API 错误持续重试。
-- `--max_transient_retries`：临时错误最大重试次数，`0` 表示不设上限。
-- `--max_retry_backoff`：重试等待时间上限。
-- `--llm_call_logging`：是否在控制台打印每次 LLM 调用的 start/ok/retry/failed 日志，默认开启，便于定位卡住阶段。
-- `--llm_call_timeout`：单次 LLM 请求超时时间（秒），默认 `120`；超时后会打印 retry 日志并按重试策略继续。
-
-## 注意事项
-
-- 运行前必须设置 `OPENAI_API_KEY`。
-- `update_every` 会同步决定 homogeneity window 的实际长度。
-- `train_trace_history.jsonl` / `test_trace_history.jsonl` 会保存完整模型输出，文件可能较大，也可能包含题面相关内容。
-- `reasoning_summary_history.jsonl` 不保存完整 trace，只保存策略摘要和 hash，适合快速回溯推理路径分类；原文仍以 trace history 为准。
-- Reward 不直接使用准确率；准确率主要用于观察多样性训练是否破坏任务表现。
-- Skeleton 相关代码和日志已移除，如果旧实验目录中还存在旧 `skeleton_history.jsonl`，那是历史产物，不代表当前实现。
+结果分析默认使用 `BAAI/bge-small-en-v1.5` 计算 `summary_embedding_text` 的 embedding cosine similarity/diversity；如需跳过可加 `--disable_summary_embedding`。
 
 方法公式与抽象流程见 [method.md](method.md)。

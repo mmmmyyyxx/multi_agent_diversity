@@ -664,11 +664,12 @@ class TextualGradientRLSystem:
         if not cleaned:
             return "The trace is empty, so only a heuristic strategy label could be assigned."
         head = self._truncate_words(cleaned, max(80, int(getattr(self.cfg, "min_summary_words", 60))))
-        return (
+        summary = (
             "The trace is summarized heuristically because the judge output was unavailable or incomplete. "
             "It appears to begin by organizing the available information, then follows the visible reasoning "
             f"steps in the trace before converging to a final answer. Trace excerpt: {head}"
         )
+        return self._truncate_profile_text(summary)
 
     def _truncate_words(self, text: Any, max_words: int) -> str:
         words = re.findall(r"\S+", normalize_spaces(str(text or "")))
@@ -678,10 +679,52 @@ class TextualGradientRLSystem:
 
     def _truncate_profile_text(self, text: Any, max_tokens: Optional[int] = None) -> str:
         max_tokens = int(max_tokens or getattr(self.cfg, "max_summary_tokens", 512))
-        return self._truncate_words(text, max(1, max_tokens))
+        cleaned = normalize_spaces(str(text or ""))
+        if not cleaned:
+            return ""
+        limit = max(1, max_tokens)
+        encoder = self._summary_token_encoder()
+        if encoder is None:
+            return self._truncate_words(cleaned, limit)
+        try:
+            token_ids = encoder.encode(cleaned)
+            if len(token_ids) <= limit:
+                return cleaned
+            return normalize_spaces(encoder.decode(token_ids[:limit]))
+        except Exception:
+            return self._truncate_words(cleaned, limit)
 
     def _word_count(self, text: Any) -> int:
         return len(re.findall(r"\S+", normalize_spaces(str(text or ""))))
+
+    def _summary_token_encoder(self):
+        if hasattr(self, "_cached_summary_token_encoder"):
+            return getattr(self, "_cached_summary_token_encoder")
+        encoder = None
+        try:
+            import tiktoken
+
+            model_name = str(getattr(self.cfg, "critic_model", "") or getattr(self.cfg, "model", ""))
+            try:
+                encoder = tiktoken.encoding_for_model(model_name)
+            except Exception:
+                encoder = tiktoken.get_encoding("cl100k_base")
+        except Exception:
+            encoder = None
+        setattr(self, "_cached_summary_token_encoder", encoder)
+        return encoder
+
+    def _summary_token_count(self, text: Any) -> int:
+        cleaned = normalize_spaces(str(text or ""))
+        if not cleaned:
+            return 0
+        encoder = self._summary_token_encoder()
+        if encoder is None:
+            return self._word_count(cleaned)
+        try:
+            return int(len(encoder.encode(cleaned)))
+        except Exception:
+            return self._word_count(cleaned)
 
     def _compact_reasoning_summary(self, summary: Any, trace: str) -> str:
         cleaned = normalize_spaces(str(summary or ""))
@@ -750,6 +793,7 @@ class TextualGradientRLSystem:
             "ok": not issues,
             "issues": issues,
             "summary_word_count": word_count,
+            "summary_token_count": self._summary_token_count(summary),
             "evidence_span_count": len(evidence_spans),
             "valid_evidence_span_count": len(valid_spans),
         }
@@ -762,13 +806,14 @@ class TextualGradientRLSystem:
         min_words = int(getattr(self.cfg, "min_summary_words", 60))
         return (
             "Reasoning summary requirements:\n"
-            f"- Write a detailed natural-language paragraph of about {min_words}-{max_tokens} words when the trace contains enough information.\n"
+            f"- Write a detailed natural-language paragraph with at least about {min_words} words when the trace contains enough information.\n"
             f"- Maximum length: {max_tokens} tokens.\n"
             "- Preserve the semantic structure of the trace as much as possible.\n"
             "- Describe how the agent understands the problem, what information it prioritizes, how it organizes intermediate reasoning, "
             "whether it compares options, reasons backward, constructs constraints, derives equations, estimates, verifies, or handles uncertainty, "
             "and how it converges to a final answer.\n"
             "- Focus on reasoning trajectory and method, not answer correctness.\n"
+            "- Do not include evaluative judgments about quality, such as saying the reasoning is thorough, careful, robust, weak, effective, or well-structured.\n"
             "- Do not mention gold answers, vote results, other agents, or group behavior.\n"
             "- Use continuous natural language suitable for embedding-based comparison; do not make this field a bullet list.\n"
         )
@@ -889,7 +934,7 @@ class TextualGradientRLSystem:
                 "raw_secondary_family": raw_secondary,
                 "reason": str(obj.get("reason", "")),
                 "summary_support": support,
-                "summary_token_count": self._word_count(summary),
+                "summary_token_count": self._summary_token_count(summary),
                 "summary_embedding_text": self.build_summary_embedding_text(data),
             }
         )
@@ -1158,7 +1203,7 @@ class TextualGradientRLSystem:
                     "distinctive_features": [],
                     "evidence_spans": [self._truncate_words(traces[i], 36)] if traces[i] else [],
                     "summary_support": self.check_summary_support(reasoning_summary, [self._truncate_words(traces[i], 36)] if traces[i] else [], traces[i]),
-                    "summary_token_count": self._word_count(reasoning_summary),
+                    "summary_token_count": self._summary_token_count(reasoning_summary),
                     "confidence": 0.2,
                     "reason": "heuristic fallback",
                     "source": "heuristic",
@@ -1420,7 +1465,7 @@ class TextualGradientRLSystem:
                     "secondary_family_resolution": judgment.get("secondary_family_resolution", {}) if isinstance(judgment, dict) else {},
                     "family_distribution": family_distributions[i] if i < len(family_distributions) else {},
                     "reasoning_summary": reasoning_summary,
-                    "summary_token_count": self._word_count(reasoning_summary),
+                    "summary_token_count": self._summary_token_count(reasoning_summary),
                     "strategy_steps": strategy_steps,
                     "distinctive_features": distinctive_features,
                     "evidence_spans": evidence_spans,
@@ -1785,7 +1830,7 @@ class TextualGradientRLSystem:
         family_metrics["low_confidence_share"] = float(np.mean([1.0 if c < threshold else 0.0 for c in confidence_list])) if confidence_list else 0.0
         family_metrics["rejudge_count"] = int(rejudge_count)
         family_metrics["mean_summary_words"] = float(np.mean([self._word_count(s) for s in reasoning_summaries])) if reasoning_summaries else 0.0
-        family_metrics["mean_summary_tokens"] = family_metrics["mean_summary_words"]
+        family_metrics["mean_summary_tokens"] = float(np.mean([self._summary_token_count(s) for s in reasoning_summaries])) if reasoning_summaries else 0.0
         family_metrics["mean_evidence_spans"] = float(np.mean([len(x) for x in evidence_spans_list])) if evidence_spans_list else 0.0
         normalized_pairs = list(zip(family_metrics.get("primary_families", []), family_metrics.get("secondary_families", [])))
         primary_counts = family_metrics.get("primary_family_counts", {})

@@ -507,11 +507,17 @@ def extract_json_obj(text: str) -> Optional[Dict[str, Any]]:
     if brace_match:
         candidates.append(brace_match.group(1))
 
+    def _escape_invalid_json_backslashes(value: str) -> str:
+        return re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", value)
+
     for cand in candidates:
         try:
             return json.loads(cand)
         except Exception:
-            continue
+            try:
+                return json.loads(_escape_invalid_json_backslashes(cand))
+            except Exception:
+                continue
     return None
 
 

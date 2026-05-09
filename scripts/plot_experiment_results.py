@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import csv
 import math
 from pathlib import Path
@@ -35,12 +35,10 @@ def _to_float_or_nan(x: str) -> float:
 
 def _setting_order(name: str) -> int:
     order = {
-        "A_shared_no_div": 0,
-        "B_shared_div": 1,
-        "C_bank_no_div": 2,
-        "D_bank_div": 3,
-        "E_shared_testonly": 4,
-        "F_bank_testonly": 5,
+        "shared_div": 0,
+        "bank_div": 1,
+        "shared_baseline": 2,
+        "bank_baseline": 3,
     }
     return order.get(name, 99)
 
@@ -61,12 +59,10 @@ def _setting_hatch(row: Dict[str, str]) -> str:
 
 def _short_label(name: str) -> str:
     mapping = {
-        "A_shared_no_div": "A\nshared\nno-div",
-        "B_shared_div": "B\nshared\ndiv",
-        "C_bank_no_div": "C\nbank\nno-div",
-        "D_bank_div": "D\nbank\ndiv",
-        "E_shared_testonly": "E\nshared\ntest-only",
-        "F_bank_testonly": "F\nbank\ntest-only",
+        "shared_div": "shared\ndiv",
+        "bank_div": "bank\ndiv",
+        "shared_baseline": "shared\ntest-only",
+        "bank_baseline": "bank\ntest-only",
     }
     return mapping.get(name, name)
 
@@ -152,8 +148,11 @@ def _save_panel_figure(rows: List[Dict[str, str]], out_dir: Path, file_name: str
     colors = [_setting_color(r) for r in rows]
     hatches = [_setting_hatch(r) for r in rows]
 
-    fig, axes = plt.subplots(2, 2, figsize=(16, 10))
-    axes_list = list(axes.flat)
+    n = max(1, len(specs))
+    cols = 2
+    rows_n = int(math.ceil(n / cols))
+    fig, axes = plt.subplots(rows_n, cols, figsize=(16, 5 * rows_n))
+    axes_list = list(axes.flat) if hasattr(axes, "flat") else [axes]
     for ax, spec in zip(axes_list, specs):
         values = _metric_values(rows, spec["key"])
         _plot_panel_bar(ax, x, values, colors, hatches, labels, spec["title"], spec["ylabel"], spec.get("ylim"))
@@ -175,33 +174,39 @@ def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
     labels = [_short_label(x) for x in settings]
     x = list(range(len(rows)))
     hatches = [_setting_hatch(r) for r in rows]
+    summary_embedding_div = _metric_values(rows, "latest_summary_embedding_cosine_diversity")
+    summary_embedding_sim = _metric_values(rows, "latest_summary_embedding_cosine_similarity")
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 5.6))
     _plot_grouped_trace_summary_bar(
         axes[0],
         x,
-        _metric_values(rows, "final_trace_cosine_diversity"),
-        _metric_values(rows, "final_reasoning_summary_cosine_diversity"),
+        _metric_values(rows, "latest_trace_cosine_diversity"),
+        _metric_values(rows, "latest_reasoning_summary_cosine_diversity"),
         hatches,
         labels,
         "Trace vs Summary Cosine Diversity",
         "Cosine Diversity",
         (0.0, 0.35),
     )
+    axes[0].plot(x, summary_embedding_div, color="#edc948", marker="o", linestyle="--", label="Summary embedding")
+    axes[0].legend()
     _plot_grouped_trace_summary_bar(
         axes[1],
         x,
-        _metric_values(rows, "final_trace_cosine_similarity"),
-        _metric_values(rows, "final_reasoning_summary_cosine_similarity"),
+        _metric_values(rows, "latest_trace_cosine_similarity"),
+        _metric_values(rows, "latest_reasoning_summary_cosine_similarity"),
         hatches,
         labels,
         "Trace vs Summary Cosine Similarity",
         "Cosine Similarity",
         (0.65, 1.0),
     )
+    axes[1].plot(x, summary_embedding_sim, color="#edc948", marker="o", linestyle="--", label="Summary embedding")
+    axes[1].legend()
     fig.suptitle("Unified Comparison: Trace and Reasoning Summary Metrics", fontsize=15)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
-    path = out_dir / "ablation_with_baselines_trace_summary_panel.png"
+    path = out_dir / "experiment_trace_summary_panel.png"
     fig.savefig(path, dpi=160)
     plt.close(fig)
     print(f"Saved: {path}")
@@ -209,33 +214,34 @@ def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
 
 def plot(rows: List[Dict[str, str]], out_dir: Path):
     # Remove stale structure figure to avoid confusion with the new metric set.
-    structure_path = out_dir / "ablation_with_baselines_structure_panel.png"
+    structure_path = out_dir / "experiment_structure_panel.png"
     if structure_path.exists():
         structure_path.unlink()
 
     _save_panel_figure(
         rows,
         out_dir,
-        "ablation_with_baselines_diversity_panel.png",
+        "experiment_diversity_panel.png",
         "Unified Comparison: Diversity Metrics",
         [
-            {"key": "final_prompt_cosine_diversity", "title": "Final Prompt Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.35, 0.85)},
-            {"key": "final_trace_cosine_diversity", "title": "Final Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
-            {"key": "final_reasoning_summary_cosine_diversity", "title": "Reasoning Summary Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
-            {"key": "final_test_mean_family_diversity", "title": "Final Test Family Diversity", "ylabel": "Family Diversity", "ylim": (0.25, 0.45)},
+            {"key": "latest_prompt_cosine_diversity", "title": "Prompt Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.35, 0.85)},
+            {"key": "latest_trace_cosine_diversity", "title": "Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
+            {"key": "latest_reasoning_summary_cosine_diversity", "title": "Reasoning Summary Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
+            {"key": "latest_summary_embedding_cosine_diversity", "title": "Summary Embedding Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
         ],
     )
 
     _save_panel_figure(
         rows,
         out_dir,
-        "ablation_with_baselines_homogeneity_panel.png",
+        "experiment_similarity_panel.png",
         "Unified Comparison: Homogeneity Metrics",
         [
-            {"key": "final_test_mean_family_homogeneity_rate", "title": "Final Test Family Homogeneity", "ylabel": "Family Homogeneity", "ylim": (0.7, 1.0)},
-            {"key": "final_prompt_cosine_similarity", "title": "Final Prompt Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.15, 1.0)},
-            {"key": "final_trace_cosine_similarity", "title": "Final Trace Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.8, 1.0)},
-            {"key": "final_reasoning_summary_cosine_similarity", "title": "Reasoning Summary Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
+            {"key": "latest_test_mean_family_homogeneity_rate", "title": "Test Family Homogeneity", "ylabel": "Family Homogeneity", "ylim": (0.7, 1.0)},
+            {"key": "latest_prompt_cosine_similarity", "title": "Prompt Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.15, 1.0)},
+            {"key": "latest_trace_cosine_similarity", "title": "Trace Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.8, 1.0)},
+            {"key": "latest_reasoning_summary_cosine_similarity", "title": "Reasoning Summary Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
+            {"key": "latest_summary_embedding_cosine_similarity", "title": "Summary Embedding Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
         ],
     )
 
@@ -244,10 +250,10 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
     _save_panel_figure(
         rows,
         out_dir,
-        "ablation_with_baselines_behavior_panel.png",
+        "experiment_behavior_panel.png",
         "Unified Comparison: Behavior and Optimization Metrics",
         [
-            {"key": "final_test_vote_acc", "title": "Final Test Vote Accuracy", "ylabel": "Vote Accuracy", "ylim": (0.7, 0.8)},
+            {"key": "latest_test_vote_acc", "title": "Test Vote Accuracy", "ylabel": "Vote Accuracy", "ylim": (0.7, 0.8)},
             {"key": "disagreement_rate", "title": "Disagreement Rate", "ylabel": "Rate", "ylim": (0.2, 0.35)},
             {"key": "prompt_drift_cosine_distance", "title": "Prompt Drift Cosine Distance", "ylabel": "Distance", "ylim": (0.0, 0.9)},
             {"key": "update_applied_rate", "title": "Update Applied Rate", "ylabel": "Rate", "ylim": (0.05, 0.2)},
@@ -256,8 +262,8 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot unified A/B/C/D + test-only baseline comparisons.")
-    parser.add_argument("--csv", type=str, required=True, help="Path to merged CSV (e.g. runs_abcd/abcd_plus_baselines.csv)")
+    parser = argparse.ArgumentParser(description="Plot unified comparisons for the four experiment settings.")
+    parser.add_argument("--csv", type=str, required=True, help="Path to analyzed CSV (e.g. runs_experiments/experiment_analysis.csv)")
     parser.add_argument("--out_dir", type=str, default="", help="Output directory for figures")
     args = parser.parse_args()
 
@@ -273,3 +279,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

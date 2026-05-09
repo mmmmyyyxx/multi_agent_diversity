@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import csv
 import json
 import math
@@ -7,6 +7,9 @@ import statistics
 from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+
+DEFAULT_SUMMARY_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 
 def _safe_mean(xs: List[float]) -> float:
@@ -90,7 +93,7 @@ def _find_recent_summary_snapshots(run_dir: Path, limit: int = 10) -> List[List[
     return out
 
 
-def _extract_final_prompt_strings(prompt_history: Any) -> List[str]:
+def _extract_latest_prompt_strings(prompt_history: Any) -> List[str]:
     prompts: List[str] = []
     if not isinstance(prompt_history, dict):
         return prompts
@@ -130,7 +133,7 @@ def _pairwise_mismatch_rate(items: List[str]) -> float:
     return float(mismatched_pairs / total_pairs)
 
 
-def _extract_final_trace_strings(trace_agents: List[Dict[str, Any]]) -> List[str]:
+def _extract_latest_trace_strings(trace_agents: List[Dict[str, Any]]) -> List[str]:
     traces: List[str] = []
     for a in trace_agents:
         trace = str(a.get("trace", "")).strip()
@@ -141,7 +144,7 @@ def _extract_final_trace_strings(trace_agents: List[Dict[str, Any]]) -> List[str
     return traces
 
 
-def _extract_final_reasoning_summary_strings(trace_agents: List[Dict[str, Any]]) -> List[str]:
+def _extract_latest_reasoning_summary_strings(trace_agents: List[Dict[str, Any]]) -> List[str]:
     summaries: List[str] = []
     for a in trace_agents:
         summary = str(a.get("reasoning_summary", "")).strip()
@@ -150,8 +153,19 @@ def _extract_final_reasoning_summary_strings(trace_agents: List[Dict[str, Any]])
     return summaries
 
 
+def _extract_latest_summary_embedding_texts(trace_agents: List[Dict[str, Any]]) -> List[str]:
+    texts: List[str] = []
+    for a in trace_agents:
+        text = str(a.get("summary_embedding_text", "")).strip()
+        if not text:
+            text = str(a.get("reasoning_summary", "")).strip()
+        if text:
+            texts.append(text)
+    return texts
+
+
 def _tokenize_for_cosine(text: str) -> List[str]:
-    # 使用轻量 bag-of-words，避免额外依赖。
+    # 浣跨敤杞婚噺 bag-of-words锛岄伩鍏嶉澶栦緷璧栥€?
     return re.findall(r"[a-zA-Z0-9_]+", text.lower())
 
 
@@ -187,6 +201,104 @@ def _pairwise_cosine_diversity(texts: List[str]) -> Tuple[float, float]:
     mean_sim = _safe_mean(sims)
     mean_sim = float(max(0.0, min(1.0, mean_sim)))
     return float(max(0.0, min(1.0, 1.0 - mean_sim))), mean_sim
+
+
+class SummaryEmbeddingEncoder:
+    def __init__(self, model_name: str, enabled: bool = True):
+        self.model_name = model_name
+        self.enabled = enabled
+        self.model: Any = None
+        self.load_error = ""
+        self.cache: Dict[str, List[float]] = {}
+
+    @property
+    def status(self) -> str:
+        if not self.enabled:
+            return "disabled"
+        if self.load_error:
+            return "unavailable"
+        if self.model is not None:
+            return "ok"
+        return "not_loaded"
+
+    def _load(self) -> bool:
+        if not self.enabled:
+            return False
+        if self.model is not None:
+            return True
+        if self.load_error:
+            return False
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            self.model = SentenceTransformer(self.model_name)
+            return True
+        except Exception as e:
+            self.load_error = f"{type(e).__name__}: {e}"
+            print(
+                f"[WARN] Summary embedding disabled: failed to load {self.model_name}. "
+                f"Install sentence-transformers and ensure the model is available. Error: {self.load_error}"
+            )
+            return False
+
+    def encode(self, texts: List[str]) -> List[List[float]]:
+        normalized = [_normalize_spaces(t) for t in texts if _normalize_spaces(t)]
+        if not normalized or not self._load():
+            return []
+
+        missing = [t for t in dict.fromkeys(normalized) if t not in self.cache]
+        if missing:
+            vectors = self.model.encode(
+                missing,
+                batch_size=32,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+            for text, vec in zip(missing, vectors):
+                self.cache[text] = [float(x) for x in vec]
+        return [self.cache[t] for t in normalized if t in self.cache]
+
+
+def _cosine_sim_from_vectors(xs: List[float], ys: List[float]) -> float:
+    if not xs and not ys:
+        return 1.0
+    if not xs or not ys or len(xs) != len(ys):
+        return 0.0
+    dot = sum(float(a * b) for a, b in zip(xs, ys))
+    nx = math.sqrt(sum(float(a * a) for a in xs))
+    ny = math.sqrt(sum(float(b * b) for b in ys))
+    if nx <= 0.0 or ny <= 0.0:
+        return 0.0
+    sim = float(dot / (nx * ny))
+    return float(max(-1.0, min(1.0, sim)))
+
+
+def _pairwise_embedding_cosine_diversity(texts: List[str], encoder: Optional[SummaryEmbeddingEncoder]) -> Tuple[Optional[float], Optional[float]]:
+    n = len(texts)
+    if n < 2:
+        return 0.0, 1.0
+    if encoder is None or not encoder.enabled:
+        return None, None
+
+    embeddings = encoder.encode(texts)
+    if len(embeddings) < 2:
+        return None, None
+
+    sims: List[float] = []
+    for i in range(len(embeddings)):
+        for j in range(i + 1, len(embeddings)):
+            sims.append(_cosine_sim_from_vectors(embeddings[i], embeddings[j]))
+
+    mean_sim = _safe_mean(sims)
+    mean_sim = float(max(-1.0, min(1.0, mean_sim)))
+    return float(max(0.0, min(2.0, 1.0 - mean_sim))), mean_sim
+
+
+def _safe_mean_optional(xs: List[Optional[float]]) -> Optional[float]:
+    vals = [float(x) for x in xs if isinstance(x, (int, float))]
+    if not vals:
+        return None
+    return _safe_mean(vals)
 
 
 def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float]:
@@ -327,7 +439,7 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
     }
 
 
-def analyze_run(run_dir: Path) -> Dict[str, Any]:
+def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder] = None) -> Dict[str, Any]:
     run_meta = _read_json(run_dir / "run_meta.json") or {}
     history = _read_json(run_dir / "history.json") or []
     last_state = _read_json(run_dir / "last_state.json") or {}
@@ -370,54 +482,64 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         cur_h = str(a.get("current_prompt_hash", ""))
         prompt_drift_flags.append(int(init_h != "" and cur_h != "" and init_h != cur_h))
 
-    final_prompt_strings = _extract_final_prompt_strings(prompt_history)
-    prompt_diversity_rate = _pairwise_mismatch_rate(final_prompt_strings)
-    prompt_cos_div, prompt_cos_sim = _pairwise_cosine_diversity(final_prompt_strings)
+    latest_prompt_strings = _extract_latest_prompt_strings(prompt_history)
+    prompt_diversity_rate = _pairwise_mismatch_rate(latest_prompt_strings)
+    prompt_cos_div, prompt_cos_sim = _pairwise_cosine_diversity(latest_prompt_strings)
 
     trace_cos_div_all: List[float] = []
     trace_cos_sim_all: List[float] = []
-    final_trace_strings: List[str] = []
+    latest_trace_strings: List[str] = []
     for i, snapshot_agents in enumerate(trace_snapshots):
-        trace_strings = _extract_final_trace_strings(snapshot_agents)
+        trace_strings = _extract_latest_trace_strings(snapshot_agents)
         div_i, sim_i = _pairwise_cosine_diversity(trace_strings)
         trace_cos_div_all.append(div_i)
         trace_cos_sim_all.append(sim_i)
         if i == len(trace_snapshots) - 1:
-            final_trace_strings = trace_strings
+            latest_trace_strings = trace_strings
 
     trace_cos_div = _safe_mean(trace_cos_div_all)
     trace_cos_sim = _safe_mean(trace_cos_sim_all)
 
     summary_cos_div_all: List[float] = []
     summary_cos_sim_all: List[float] = []
-    final_summary_strings: List[str] = []
+    summary_emb_cos_div_all: List[Optional[float]] = []
+    summary_emb_cos_sim_all: List[Optional[float]] = []
+    latest_summary_strings: List[str] = []
+    latest_summary_embedding_texts: List[str] = []
     for i, snapshot_agents in enumerate(summary_snapshots):
-        summary_strings = _extract_final_reasoning_summary_strings(snapshot_agents)
+        summary_strings = _extract_latest_reasoning_summary_strings(snapshot_agents)
         div_i, sim_i = _pairwise_cosine_diversity(summary_strings)
         summary_cos_div_all.append(div_i)
         summary_cos_sim_all.append(sim_i)
+        summary_embedding_texts = _extract_latest_summary_embedding_texts(snapshot_agents)
+        emb_div_i, emb_sim_i = _pairwise_embedding_cosine_diversity(summary_embedding_texts, summary_encoder)
+        summary_emb_cos_div_all.append(emb_div_i)
+        summary_emb_cos_sim_all.append(emb_sim_i)
         if i == len(summary_snapshots) - 1:
-            final_summary_strings = summary_strings
+            latest_summary_strings = summary_strings
+            latest_summary_embedding_texts = summary_embedding_texts
 
     summary_cos_div = _safe_mean(summary_cos_div_all)
     summary_cos_sim = _safe_mean(summary_cos_sim_all)
+    summary_emb_cos_div = _safe_mean_optional(summary_emb_cos_div_all)
+    summary_emb_cos_sim = _safe_mean_optional(summary_emb_cos_sim_all)
 
     setting = run_dir.name
     cfg_baseline_only = bool(cfg.get("baseline_only", False))
     baseline_only = int(setting.endswith("_testonly") or cfg_baseline_only)
 
     eval_metrics = _collect_eval_metrics(pred_records)
-    final_test_mean_family_diversity = float(
+    latest_test_mean_family_diversity = float(
         latest_test_metrics.get("mean_family_diversity", eval_metrics["mean_family_diversity_from_preds"]) or 0.0
     )
-    final_test_mean_family_homogeneity_rate = float(
+    latest_test_mean_family_homogeneity_rate = float(
         latest_test_metrics.get("mean_family_homogeneity_rate", eval_metrics["mean_family_homogeneity_rate_from_preds"]) or 0.0
     )
-    final_test_mean_llm_direct_diversity_score = float(
+    latest_test_mean_llm_direct_diversity_score = float(
         latest_test_metrics.get("mean_llm_direct_diversity_score", eval_metrics["mean_llm_direct_diversity_score_from_preds"]) or 0.0
     )
-    final_train_mean_llm_direct_diversity_score = float(latest_train_metrics.get("mean_llm_direct_diversity_score", 0.0) or 0.0) if latest_train_metrics else 0.0
-    final_test_vote_acc = float(
+    latest_train_mean_llm_direct_diversity_score = float(latest_train_metrics.get("mean_llm_direct_diversity_score", 0.0) or 0.0) if latest_train_metrics else 0.0
+    latest_test_vote_acc = float(
         latest_test_metrics.get("vote_acc", eval_metrics["mean_vote_acc_from_preds"]) or 0.0
     )
 
@@ -434,12 +556,12 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         "test_size": int(cfg.get("test_size", 0) or 0),
         "lambda_diversity": lam_div,
         "diversity_reward_enabled": diversity_reward_enabled,
-        "final_test_mean_family_diversity": final_test_mean_family_diversity,
-        "final_test_mean_family_homogeneity_rate": final_test_mean_family_homogeneity_rate,
-        "final_train_mean_llm_direct_diversity_score": final_train_mean_llm_direct_diversity_score,
-        "final_test_mean_llm_direct_diversity_score": final_test_mean_llm_direct_diversity_score,
-        "final_train_vote_acc": float(latest_train_metrics.get("vote_acc", 0.0) or 0.0) if latest_train_metrics else None,
-        "final_test_vote_acc": final_test_vote_acc,
+        "latest_test_mean_family_diversity": latest_test_mean_family_diversity,
+        "latest_test_mean_family_homogeneity_rate": latest_test_mean_family_homogeneity_rate,
+        "latest_train_mean_llm_direct_diversity_score": latest_train_mean_llm_direct_diversity_score,
+        "latest_test_mean_llm_direct_diversity_score": latest_test_mean_llm_direct_diversity_score,
+        "latest_train_vote_acc": float(latest_train_metrics.get("vote_acc", 0.0) or 0.0) if latest_train_metrics else None,
+        "latest_test_vote_acc": latest_test_vote_acc,
         "all_same_primary_rate": eval_metrics.get("all_same_primary_rate_from_preds", 0.0),
         "all_same_pair_rate": eval_metrics.get("all_same_pair_rate_from_preds", 0.0),
         "mean_family_confidence": eval_metrics.get("mean_family_confidence_from_preds", 0.0),
@@ -468,19 +590,25 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         out["eval_size"] = int(latest_test_metrics.get("size", 0) or 0)
 
     out["latest_test_prediction_file"] = str(pred_path) if pred_path else ""
-    out["final_prompt_diversity_rate"] = prompt_diversity_rate
-    out["final_prompt_exact_diversity_rate"] = prompt_diversity_rate
-    out["final_prompt_count"] = len(final_prompt_strings)
-    out["final_prompt_cosine_diversity"] = prompt_cos_div
-    out["final_prompt_cosine_similarity"] = prompt_cos_sim
-    out["final_trace_count"] = len(final_trace_strings)
-    out["final_trace_cosine_diversity"] = trace_cos_div
-    out["final_trace_cosine_similarity"] = trace_cos_sim
+    out["latest_prompt_diversity_rate"] = prompt_diversity_rate
+    out["latest_prompt_exact_diversity_rate"] = prompt_diversity_rate
+    out["latest_prompt_count"] = len(latest_prompt_strings)
+    out["latest_prompt_cosine_diversity"] = prompt_cos_div
+    out["latest_prompt_cosine_similarity"] = prompt_cos_sim
+    out["latest_trace_count"] = len(latest_trace_strings)
+    out["latest_trace_cosine_diversity"] = trace_cos_div
+    out["latest_trace_cosine_similarity"] = trace_cos_sim
     out["trace_cosine_window_used"] = len(trace_snapshots)
-    out["final_reasoning_summary_count"] = len(final_summary_strings)
-    out["final_reasoning_summary_cosine_diversity"] = summary_cos_div
-    out["final_reasoning_summary_cosine_similarity"] = summary_cos_sim
+    out["latest_reasoning_summary_count"] = len(latest_summary_strings)
+    out["latest_reasoning_summary_cosine_diversity"] = summary_cos_div
+    out["latest_reasoning_summary_cosine_similarity"] = summary_cos_sim
     out["reasoning_summary_cosine_window_used"] = len(summary_snapshots)
+    out["latest_summary_embedding_text_count"] = len(latest_summary_embedding_texts)
+    out["latest_summary_embedding_cosine_diversity"] = summary_emb_cos_div
+    out["latest_summary_embedding_cosine_similarity"] = summary_emb_cos_sim
+    out["summary_embedding_cosine_window_used"] = len(summary_snapshots) if summary_encoder and summary_encoder.enabled else 0
+    out["summary_embedding_model"] = summary_encoder.model_name if summary_encoder else ""
+    out["summary_embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
     return out
 
 
@@ -492,7 +620,7 @@ def _to_float_str(v: Any) -> str:
 
 def write_markdown(rows: List[Dict[str, Any]], path: Path):
     if not rows:
-        path.write_text("# Ablation Summary\n\nNo valid runs found.\n", encoding="utf-8")
+        path.write_text("# Experiment Summary\n\nNo valid runs found.\n", encoding="utf-8")
         return
 
     columns = [
@@ -501,15 +629,16 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "baseline_only",
         "init_mode",
         "diversity_reward_enabled",
-        "final_prompt_cosine_diversity",
-        "final_trace_cosine_diversity",
-        "final_reasoning_summary_cosine_diversity",
-        "final_test_mean_family_diversity",
-        "final_test_mean_family_homogeneity_rate",
-        "final_train_mean_llm_direct_diversity_score",
-        "final_test_mean_llm_direct_diversity_score",
-        "final_train_vote_acc",
-        "final_test_vote_acc",
+        "latest_prompt_cosine_diversity",
+        "latest_trace_cosine_diversity",
+        "latest_reasoning_summary_cosine_diversity",
+        "latest_summary_embedding_cosine_diversity",
+        "latest_test_mean_family_diversity",
+        "latest_test_mean_family_homogeneity_rate",
+        "latest_train_mean_llm_direct_diversity_score",
+        "latest_test_mean_llm_direct_diversity_score",
+        "latest_train_vote_acc",
+        "latest_test_vote_acc",
         "all_same_primary_rate",
         "all_same_pair_rate",
         "mean_family_confidence",
@@ -522,19 +651,23 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "mean_generic_prompt_candidate_rate",
         "mean_family_shift_rate_during_candidate_eval",
         "mean_summary_embedding_shift_during_candidate_eval",
+        "summary_embedding_model",
+        "summary_embedding_status",
     ]
-    lines = ["# Ablation Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
+    lines = ["# Experiment Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for r in rows:
         lines.append("| " + " | ".join(_to_float_str(r.get(c, "")) for c in columns) + " |")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Aggregate ablation experiment outputs.")
+    parser = argparse.ArgumentParser(description="Aggregate experiment outputs.")
     parser.add_argument("--runs", nargs="*", default=[], help="Explicit run directories to analyze.")
     parser.add_argument("--runs_root", type=str, default="", help="Root directory containing run sub-directories.")
     parser.add_argument("--out_csv", type=str, default="", help="Output CSV path.")
     parser.add_argument("--out_md", type=str, default="", help="Output Markdown summary path.")
+    parser.add_argument("--summary_embedding_model", type=str, default=DEFAULT_SUMMARY_EMBEDDING_MODEL)
+    parser.add_argument("--disable_summary_embedding", action="store_true")
     args = parser.parse_args()
 
     run_dirs: List[Path] = []
@@ -558,22 +691,23 @@ def main():
             dedup.append(p)
     run_dirs = dedup
 
-    rows = [analyze_run(p) for p in run_dirs]
+    summary_encoder = SummaryEmbeddingEncoder(args.summary_embedding_model, enabled=not args.disable_summary_embedding)
+    rows = [analyze_run(p, summary_encoder=summary_encoder) for p in run_dirs]
     rows = sorted(rows, key=lambda r: (r.get("init_mode", ""), int(r.get("diversity_reward_enabled", 0)), r.get("run_dir", "")))
 
     if args.out_csv:
         out_csv = Path(args.out_csv)
     elif args.runs_root:
-        out_csv = Path(args.runs_root) / "ablation_summary.csv"
+        out_csv = Path(args.runs_root) / "experiment_metrics.csv"
     else:
-        out_csv = Path("ablation_summary.csv")
+        out_csv = Path("experiment_metrics.csv")
 
     if args.out_md:
         out_md = Path(args.out_md)
     elif args.runs_root:
-        out_md = Path(args.runs_root) / "ablation_summary.md"
+        out_md = Path(args.runs_root) / "experiment_metrics.md"
     else:
-        out_md = Path("ablation_summary.md")
+        out_md = Path("experiment_metrics.md")
 
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     out_md.parent.mkdir(parents=True, exist_ok=True)
@@ -598,3 +732,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
