@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 DEFAULT_SUMMARY_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+DEFAULT_TRACE_EMBEDDING_CHUNK_WORDS = 320
+DEFAULT_TRACE_EMBEDDING_CHUNK_OVERLAP = 40
 
 
 def _safe_mean(xs: List[float]) -> float:
@@ -54,8 +56,8 @@ def _normalize_spaces(s: str) -> str:
 
 def _find_recent_trace_snapshots(run_dir: Path, limit: int = 10) -> List[List[Dict[str, Any]]]:
     candidates = [
-        run_dir / "train_trace_history.jsonl",
         run_dir / "test_trace_history.jsonl",
+        run_dir / "train_trace_history.jsonl",
         run_dir / "reasoning_summary_history.jsonl",
     ]
     records: List[Dict[str, Any]] = []
@@ -236,7 +238,7 @@ class SummaryEmbeddingEncoder:
         except Exception as e:
             self.load_error = f"{type(e).__name__}: {e}"
             print(
-                f"[WARN] Summary embedding disabled: failed to load {self.model_name}. "
+                f"[WARN] Embedding disabled: failed to load {self.model_name}. "
                 f"Install sentence-transformers and ensure the model is available. Error: {self.load_error}"
             )
             return False
@@ -258,6 +260,29 @@ class SummaryEmbeddingEncoder:
                 self.cache[text] = [float(x) for x in vec]
         return [self.cache[t] for t in normalized if t in self.cache]
 
+    def encode_documents(
+        self,
+        texts: List[str],
+        chunk_words: int = 0,
+        chunk_overlap: int = 0,
+    ) -> Tuple[List[List[float]], List[int]]:
+        normalized = [_normalize_spaces(t) for t in texts if _normalize_spaces(t)]
+        if not normalized or not self._load():
+            return [], []
+
+        vectors: List[List[float]] = []
+        chunk_counts: List[int] = []
+        for text in normalized:
+            chunks = _split_text_for_embedding(text, chunk_words=chunk_words, chunk_overlap=chunk_overlap)
+            if not chunks:
+                continue
+            chunk_vectors = self.encode(chunks)
+            if not chunk_vectors:
+                continue
+            vectors.append(_mean_pool_vectors(chunk_vectors))
+            chunk_counts.append(len(chunks))
+        return vectors, chunk_counts
+
 
 def _cosine_sim_from_vectors(xs: List[float], ys: List[float]) -> float:
     if not xs and not ys:
@@ -271,6 +296,43 @@ def _cosine_sim_from_vectors(xs: List[float], ys: List[float]) -> float:
         return 0.0
     sim = float(dot / (nx * ny))
     return float(max(-1.0, min(1.0, sim)))
+
+
+def _split_text_for_embedding(text: str, chunk_words: int = 0, chunk_overlap: int = 0) -> List[str]:
+    text = _normalize_spaces(text)
+    if not text:
+        return []
+    if chunk_words <= 0:
+        return [text]
+
+    words = text.split()
+    if len(words) <= chunk_words:
+        return [text]
+
+    overlap = max(0, min(int(chunk_overlap), int(chunk_words) - 1))
+    step = max(1, int(chunk_words) - overlap)
+    chunks: List[str] = []
+    for start in range(0, len(words), step):
+        chunk = " ".join(words[start : start + int(chunk_words)]).strip()
+        if chunk:
+            chunks.append(chunk)
+        if start + int(chunk_words) >= len(words):
+            break
+    return chunks
+
+
+def _mean_pool_vectors(vectors: List[List[float]]) -> List[float]:
+    if not vectors:
+        return []
+    dim = len(vectors[0])
+    usable = [v for v in vectors if len(v) == dim]
+    if not usable:
+        return []
+    pooled = [sum(float(v[i]) for v in usable) / float(len(usable)) for i in range(dim)]
+    norm = math.sqrt(sum(float(x * x) for x in pooled))
+    if norm <= 0.0:
+        return pooled
+    return [float(x / norm) for x in pooled]
 
 
 def _pairwise_embedding_cosine_diversity(texts: List[str], encoder: Optional[SummaryEmbeddingEncoder]) -> Tuple[Optional[float], Optional[float]]:
@@ -292,6 +354,41 @@ def _pairwise_embedding_cosine_diversity(texts: List[str], encoder: Optional[Sum
     mean_sim = _safe_mean(sims)
     mean_sim = float(max(-1.0, min(1.0, mean_sim)))
     return float(max(0.0, min(2.0, 1.0 - mean_sim))), mean_sim
+
+
+def _pairwise_document_embedding_cosine_diversity(
+    texts: List[str],
+    encoder: Optional[SummaryEmbeddingEncoder],
+    chunk_words: int,
+    chunk_overlap: int,
+) -> Tuple[Optional[float], Optional[float], int, float]:
+    n = len(texts)
+    if n < 2:
+        return 0.0, 1.0, n, 1.0 if n else 0.0
+    if encoder is None or not encoder.enabled:
+        return None, None, 0, 0.0
+
+    embeddings, chunk_counts = encoder.encode_documents(
+        texts,
+        chunk_words=chunk_words,
+        chunk_overlap=chunk_overlap,
+    )
+    if len(embeddings) < 2:
+        return None, None, len(embeddings), _safe_mean([float(x) for x in chunk_counts])
+
+    sims: List[float] = []
+    for i in range(len(embeddings)):
+        for j in range(i + 1, len(embeddings)):
+            sims.append(_cosine_sim_from_vectors(embeddings[i], embeddings[j]))
+
+    mean_sim = _safe_mean(sims)
+    mean_sim = float(max(-1.0, min(1.0, mean_sim)))
+    return (
+        float(max(0.0, min(2.0, 1.0 - mean_sim))),
+        mean_sim,
+        len(embeddings),
+        _safe_mean([float(x) for x in chunk_counts]),
+    )
 
 
 def _safe_mean_optional(xs: List[Optional[float]]) -> Optional[float]:
@@ -485,20 +582,39 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     latest_prompt_strings = _extract_latest_prompt_strings(prompt_history)
     prompt_diversity_rate = _pairwise_mismatch_rate(latest_prompt_strings)
     prompt_cos_div, prompt_cos_sim = _pairwise_cosine_diversity(latest_prompt_strings)
+    prompt_emb_cos_div, prompt_emb_cos_sim = _pairwise_embedding_cosine_diversity(latest_prompt_strings, summary_encoder)
 
     trace_cos_div_all: List[float] = []
     trace_cos_sim_all: List[float] = []
+    trace_emb_cos_div_all: List[Optional[float]] = []
+    trace_emb_cos_sim_all: List[Optional[float]] = []
+    trace_emb_counts_all: List[float] = []
+    trace_emb_chunks_all: List[float] = []
     latest_trace_strings: List[str] = []
+    latest_trace_embedding_count = 0
     for i, snapshot_agents in enumerate(trace_snapshots):
         trace_strings = _extract_latest_trace_strings(snapshot_agents)
         div_i, sim_i = _pairwise_cosine_diversity(trace_strings)
         trace_cos_div_all.append(div_i)
         trace_cos_sim_all.append(sim_i)
+        emb_div_i, emb_sim_i, emb_count_i, emb_chunks_i = _pairwise_document_embedding_cosine_diversity(
+            trace_strings,
+            summary_encoder,
+            chunk_words=DEFAULT_TRACE_EMBEDDING_CHUNK_WORDS,
+            chunk_overlap=DEFAULT_TRACE_EMBEDDING_CHUNK_OVERLAP,
+        )
+        trace_emb_cos_div_all.append(emb_div_i)
+        trace_emb_cos_sim_all.append(emb_sim_i)
+        trace_emb_counts_all.append(float(emb_count_i))
+        trace_emb_chunks_all.append(float(emb_chunks_i))
         if i == len(trace_snapshots) - 1:
             latest_trace_strings = trace_strings
+            latest_trace_embedding_count = emb_count_i
 
     trace_cos_div = _safe_mean(trace_cos_div_all)
     trace_cos_sim = _safe_mean(trace_cos_sim_all)
+    trace_emb_cos_div = _safe_mean_optional(trace_emb_cos_div_all)
+    trace_emb_cos_sim = _safe_mean_optional(trace_emb_cos_sim_all)
 
     summary_cos_div_all: List[float] = []
     summary_cos_sim_all: List[float] = []
@@ -595,10 +711,21 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     out["latest_prompt_count"] = len(latest_prompt_strings)
     out["latest_prompt_cosine_diversity"] = prompt_cos_div
     out["latest_prompt_cosine_similarity"] = prompt_cos_sim
+    out["latest_prompt_embedding_text_count"] = len(latest_prompt_strings)
+    out["latest_prompt_embedding_cosine_diversity"] = prompt_emb_cos_div
+    out["latest_prompt_embedding_cosine_similarity"] = prompt_emb_cos_sim
+    out["prompt_embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
     out["latest_trace_count"] = len(latest_trace_strings)
     out["latest_trace_cosine_diversity"] = trace_cos_div
     out["latest_trace_cosine_similarity"] = trace_cos_sim
     out["trace_cosine_window_used"] = len(trace_snapshots)
+    out["latest_trace_embedding_text_count"] = latest_trace_embedding_count
+    out["latest_trace_embedding_cosine_diversity"] = trace_emb_cos_div
+    out["latest_trace_embedding_cosine_similarity"] = trace_emb_cos_sim
+    out["trace_embedding_cosine_window_used"] = len(trace_snapshots) if summary_encoder and summary_encoder.enabled else 0
+    out["trace_embedding_chunk_words"] = DEFAULT_TRACE_EMBEDDING_CHUNK_WORDS
+    out["trace_embedding_chunk_overlap"] = DEFAULT_TRACE_EMBEDDING_CHUNK_OVERLAP
+    out["mean_trace_embedding_chunks"] = _safe_mean(trace_emb_chunks_all)
     out["latest_reasoning_summary_count"] = len(latest_summary_strings)
     out["latest_reasoning_summary_cosine_diversity"] = summary_cos_div
     out["latest_reasoning_summary_cosine_similarity"] = summary_cos_sim
@@ -607,8 +734,12 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     out["latest_summary_embedding_cosine_diversity"] = summary_emb_cos_div
     out["latest_summary_embedding_cosine_similarity"] = summary_emb_cos_sim
     out["summary_embedding_cosine_window_used"] = len(summary_snapshots) if summary_encoder and summary_encoder.enabled else 0
+    out["embedding_model"] = summary_encoder.model_name if summary_encoder else ""
+    out["embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
     out["summary_embedding_model"] = summary_encoder.model_name if summary_encoder else ""
     out["summary_embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
+    out["trace_embedding_model"] = summary_encoder.model_name if summary_encoder else ""
+    out["trace_embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
     return out
 
 
@@ -630,7 +761,9 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "init_mode",
         "diversity_reward_enabled",
         "latest_prompt_cosine_diversity",
+        "latest_prompt_embedding_cosine_diversity",
         "latest_trace_cosine_diversity",
+        "latest_trace_embedding_cosine_diversity",
         "latest_reasoning_summary_cosine_diversity",
         "latest_summary_embedding_cosine_diversity",
         "latest_test_mean_family_diversity",
@@ -651,8 +784,9 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         "mean_generic_prompt_candidate_rate",
         "mean_family_shift_rate_during_candidate_eval",
         "mean_summary_embedding_shift_during_candidate_eval",
-        "summary_embedding_model",
-        "summary_embedding_status",
+        "mean_trace_embedding_chunks",
+        "embedding_model",
+        "embedding_status",
     ]
     lines = ["# Experiment Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for r in rows:

@@ -16,7 +16,7 @@ class Config:
     secondary_family_weight: float = 0.3
     same_major_family_weight: float = 0.5
     macro_diversity_weight: float = 0.5
-    family_confidence_threshold: float = 0.4
+    family_confidence_threshold: float = 0.3
     family_rejudge_on_low_confidence: bool = True
     min_summary_words: int = 60
     max_summary_tokens: int = 512
@@ -78,7 +78,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--secondary_family_weight", type=float, default=0.3)
     parser.add_argument("--same_major_family_weight", type=float, default=0.5)
     parser.add_argument("--macro_diversity_weight", type=float, default=0.5)
-    parser.add_argument("--family_confidence_threshold", type=float, default=0.4)
+    parser.add_argument("--family_confidence_threshold", type=float, default=0.3)
     parser.add_argument("--family_rejudge_on_low_confidence", type=int, default=1, choices=[0, 1])
     parser.add_argument("--min_summary_words", type=int, default=60)
     parser.add_argument("--max_summary_tokens", type=int, default=512)

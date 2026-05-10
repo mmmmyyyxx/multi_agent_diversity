@@ -206,4 +206,4 @@ $$
 
 `scripts/run_experiments.py` 负责运行四个设置并生成 run 目录；`scripts/analyze_experiments.py` 读取已有结果，统一调用指标计算和画图脚本。
 
-结果分析会额外使用 `BAAI/bge-small-en-v1.5` 对 `summary_embedding_text` 计算 embedding cosine similarity/diversity，用于观察不同 agents 的 reasoning summary 在语义空间中的相似程度。
+结果分析会额外使用 `BAAI/bge-small-en-v1.5` 计算 embedding cosine similarity/diversity。prompt embedding 使用最终 agent prompt；summary embedding 直接使用 `summary_embedding_text`；trace embedding 使用完整 trace，若 trace 较长则按固定词数切分为多个 chunk，分别编码后进行平均池化，得到单条 trace 的向量表示。所有 embedding 指标统一放入 embedding 可视化图，文本级 trace/summary cosine、family、prompt 和行为指标按语义分别展示。

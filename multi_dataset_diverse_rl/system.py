@@ -370,9 +370,12 @@ class TextualGradientRLSystem:
             "Rules:\n"
             "- Judge only whether the proposed label describes a reusable reasoning strategy shown in this single trace.\n"
             "- Do not infer from other agents, family distribution, group diagnosis, or answer correctness.\n"
+            "- action meaning: accept_new means the label is a reusable reasoning strategy that cannot be represented by any existing family.\n"
+            "- action meaning: map_existing means the label is a synonym, narrower variant, wording variant, task-domain label, or otherwise representable by an existing family.\n"
             "- Accept a new family only if it is clearly distinct and not a synonym of existing families.\n"
             "- If accepted, use a concise snake_case label (2-4 words).\n"
-            "- If rejected, map to exactly one existing family.\n\n"
+            "- If rejected, map_to must be exactly one label from Existing families.\n"
+            "- reason should explain only the taxonomy decision, not answer correctness or trace quality.\n\n"
             "Return JSON:\n"
             "{\n"
             '  "action": "accept_new" | "map_existing",\n'
@@ -978,6 +981,18 @@ class TextualGradientRLSystem:
             f"{secondary_line}"
             f"{self._reasoning_summary_prompt_requirements()}\n"
             "Also provide strategy_steps, distinctive_features, and evidence_spans copied as short spans from the trace.\n\n"
+            "Confidence meaning:\n"
+            "- confidence is your confidence that the assigned reasoning-family labels are accurate.\n"
+            "- It is not a score for answer correctness, reasoning quality, or trace quality.\n"
+            "- Use high confidence, usually 0.70-0.95, when the trace clearly matches existing leaf families.\n"
+            "- If the trace can be mapped to an existing leaf family, give at least 0.60 confidence even when the trace is incomplete, messy, low quality, or answer-incorrect.\n"
+            "- Do not lower confidence because the reasoning is weak, verbose, terse, or mathematically wrong; only lower it when the family mapping itself is uncertain.\n"
+            "- Use low confidence below 0.40 only when you are genuinely unsure about the family assignment, "
+            "or when no existing leaf family appears to fit the trace.\n"
+            "- Before assigning confidence below 0.40, first try to choose the closest existing leaf family; use low confidence only if that closest mapping would be unreliable.\n\n"
+            "Evidence span requirements:\n"
+            "- evidence_spans must be exact contiguous substrings copied from the trace.\n"
+            "- Do not paraphrase, shorten by rewriting, or invent evidence spans.\n\n"
             f"Existing leaf families: {', '.join(labels_for_prompt)}.\n"
             "You must output only labels from Existing leaf families, or a genuinely new reusable leaf family label.\n"
             "Do NOT output major/coarse category labels such as representation_formalization, algebra_computation, logical_proof, probability_statistics, induction_pattern, process_structure_simulation, or optimization_boundary_meta.\n"
@@ -1003,7 +1018,7 @@ class TextualGradientRLSystem:
             '  "strategy_steps": ["...", "..."],\n'
             '  "distinctive_features": ["...", "..."],\n'
             '  "evidence_spans": ["short exact span from trace", "..."],\n'
-            '  "confidence": 0.0,\n'
+            '  "confidence": 0.85,\n'
             '  "reason": "..."\n'
             "}"
         )
@@ -1030,18 +1045,34 @@ class TextualGradientRLSystem:
         answer: str,
         question: str,
         original_judgment: Dict[str, Any],
+        model: Optional[str] = None,
+        rejudge_reason: str = "low_confidence",
     ) -> Dict[str, Any]:
         agent_id = int(original_judgment.get("agent_id", -1))
+        rejudge_model = str(model or self.cfg.family_expansion_model)
         cleaned_trace = normalize_spaces(trace)
         definitions = self._strategy_family_definitions()
         definition_lines = "\n".join([f"- {k}: {v}." for k, v in definitions.items()])
         system_prompt = (
-            "You are an audit model rejudging one low-confidence reasoning-family label.\n"
+            "You are an audit model rejudging one reasoning-family label or reasoning summary.\n"
             "Use only the single trace and the taxonomy. Ignore answer correctness and do not use group context.\n"
             "Return strict JSON only."
         )
         user_prompt = (
-            "The previous family judgment had low confidence. Rejudge the same single trace and return legal leaf family labels.\n"
+            f"The previous family judgment needs review because: {rejudge_reason}.\n"
+            "Rejudge the same single trace and return legal leaf family labels plus an improved reasoning summary.\n"
+            "Confidence meaning:\n"
+            "- confidence is your confidence that the assigned reasoning-family labels are accurate.\n"
+            "- It is not a score for answer correctness, reasoning quality, or trace quality.\n"
+            "- Use high confidence, usually 0.70-0.95, when the trace clearly matches existing leaf families.\n"
+            "- If the trace can be mapped to an existing leaf family, give at least 0.60 confidence even when the trace is incomplete, messy, low quality, or answer-incorrect.\n"
+            "- Do not lower confidence because the reasoning is weak, verbose, terse, or mathematically wrong; only lower it when the family mapping itself is uncertain.\n"
+            "- Use low confidence below 0.40 only when you are genuinely unsure about the family assignment, "
+            "or when no existing leaf family appears to fit the trace.\n"
+            "- Before assigning confidence below 0.40, first try to choose the closest existing leaf family; use low confidence only if that closest mapping would be unreliable.\n\n"
+            "Evidence span requirements:\n"
+            "- evidence_spans must be exact contiguous substrings copied from the trace.\n"
+            "- Do not paraphrase, shorten by rewriting, or invent evidence spans.\n\n"
             f"Existing leaf families: {', '.join(self.strategy_family_labels)}.\n"
             "Prefer existing labels. If none fits and expansion is enabled, you may propose a concise reusable snake_case leaf label.\n\n"
             f"{self._reasoning_summary_prompt_requirements()}\n"
@@ -1061,17 +1092,17 @@ class TextualGradientRLSystem:
             '  "strategy_steps": ["...", "..."],\n'
             '  "distinctive_features": ["...", "..."],\n'
             '  "evidence_spans": ["short exact span from trace", "..."],\n'
-            '  "confidence": 0.0,\n'
+            '  "confidence": 0.85,\n'
             '  "reason": "..."\n'
             "}"
         )
         text = await self._chat(
-            model=self.cfg.family_expansion_model,
+            model=rejudge_model,
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=0.0,
             max_tokens=max(1600, int(self.cfg.critic_max_tokens)),
-            stage=f"family_low_confidence_rejudge_agent_{agent_id}",
+            stage=f"family_rejudge_{rejudge_reason}_agent_{agent_id}",
         )
         obj = extract_json_obj(text) or {}
         if not isinstance(obj, dict):
@@ -1079,6 +1110,8 @@ class TextualGradientRLSystem:
         obj["agent_id"] = agent_id
         profile = self._build_single_trace_profile_from_obj(obj, agent_id, trace, source="review_model_rejudge")
         profile["low_confidence_before_rejudge"] = True
+        profile["rejudge_reason"] = rejudge_reason
+        profile["rejudge_model"] = rejudge_model
         profile["original_confidence"] = float(original_judgment.get("confidence", 0.0) or 0.0)
         profile["rejudged_confidence"] = float(profile.get("confidence", 0.0))
         profile["original_judgment"] = {
@@ -1099,13 +1132,26 @@ class TextualGradientRLSystem:
         question: str = "",
     ) -> Dict[str, Any]:
         agent_id = int(judgment.get("agent_id", -1))
-        threshold = float(getattr(self.cfg, "family_confidence_threshold", 0.4))
+        threshold = float(getattr(self.cfg, "family_confidence_threshold", 0.3))
         support = judgment.get("summary_support", {}) if isinstance(judgment.get("summary_support", {}), dict) else {}
         low_conf = float(judgment.get("confidence", 0.0) or 0.0) < threshold
         weak_summary = not bool(support.get("ok", True))
         if bool(getattr(self.cfg, "family_rejudge_on_low_confidence", True)) and (low_conf or weak_summary):
             try:
-                judgment = await self._rejudge_low_confidence_family(trace, answer, question, judgment)
+                if low_conf:
+                    rejudge_model = self.cfg.family_expansion_model
+                    rejudge_reason = "low_confidence"
+                else:
+                    rejudge_model = self.cfg.critic_model
+                    rejudge_reason = "weak_summary"
+                judgment = await self._rejudge_low_confidence_family(
+                    trace,
+                    answer,
+                    question,
+                    judgment,
+                    model=rejudge_model,
+                    rejudge_reason=rejudge_reason,
+                )
             except Exception as e:
                 judgment["rejudge_error"] = normalize_spaces(str(e))[:300]
 
@@ -1826,7 +1872,7 @@ class TextualGradientRLSystem:
         family_metrics["family_confidences"] = confidence_list
         family_metrics["family_sources"] = source_list
         family_metrics["mean_family_confidence"] = float(np.mean(confidence_list)) if confidence_list else 0.0
-        threshold = float(getattr(self.cfg, "family_confidence_threshold", 0.4))
+        threshold = float(getattr(self.cfg, "family_confidence_threshold", 0.3))
         family_metrics["low_confidence_share"] = float(np.mean([1.0 if c < threshold else 0.0 for c in confidence_list])) if confidence_list else 0.0
         family_metrics["rejudge_count"] = int(rejudge_count)
         family_metrics["mean_summary_words"] = float(np.mean([self._word_count(s) for s in reasoning_summaries])) if reasoning_summaries else 0.0
@@ -2292,6 +2338,15 @@ class TextualGradientRLSystem:
             "- Each target_role_hints value must use exactly:\n"
             "  ROLE=<role_label>;FOCUS=<agent-specific shift>;AVOID=<anti-overlap rule>.\n"
             "- Keep each field concise and strategy-level only.\n\n"
+            "Field definitions:\n"
+            "- group_summary.PATTERN must describe repeated reasoning-family overlap or shared reasoning trajectory.\n"
+            "- group_summary.GAP must describe missing reusable reasoning strategies.\n"
+            "- group_summary.ACTION must describe a strategy-diversification adjustment, not an accuracy improvement.\n"
+            "- missing_modes must contain reusable reasoning strategies only, not domain knowledge, task facts, answer correctness, or dataset-specific skills.\n"
+            "- redundant_agents are agents whose current reasoning profiles overlap strongly with peers.\n"
+            "- critical_agents are the top-priority agents to rewrite for diversity pressure, not agents with wrong answers.\n"
+            "- target_role_hints must specify task-agnostic role shifts that reduce overlap or cover missing strategies.\n"
+            "- Do not select or describe agents based on answer correctness.\n\n"
             "Return JSON with keys:\n"
             "{\n"
             '  "group_summary": str,\n'
@@ -2410,6 +2465,12 @@ class TextualGradientRLSystem:
             '  "desired_shift": str,\n'
             '  "prompt_edit_instruction": str\n'
             "}\n\n"
+            "Field definitions:\n"
+            "- diagnosis must describe strategy overlap or missing strategy coverage, not answer correctness.\n"
+            "- redundant_pattern must name the repeated reasoning trajectory or family overlap to move away from.\n"
+            "- desired_shift must name a concrete reasoning trajectory change.\n"
+            "- prompt_edit_instruction must be directly usable as a prompt-edit instruction and must not be a vague slogan.\n"
+            "- All fields must remain task-agnostic and focused on diversity.\n\n"
             f"Group diagnosis:\n{json.dumps(compact_group_diagnosis, ensure_ascii=False, indent=2)}\n\n"
             f"Target structured profile:\n{json.dumps(target_profile, ensure_ascii=False, indent=2)}\n\n"
             f"Target role hint fields:\n{json.dumps(agent_info['target_role_hint_structured'], ensure_ascii=False, indent=2)}\n\n"
@@ -2472,6 +2533,14 @@ class TextualGradientRLSystem:
             "- Use the compact group diagnosis object as the only team-level input.\n"
             "- Treat target_role_hint_structured as the canonical per-agent role specification.\n"
             "- Do not depend on any other free-form fields in the full diagnosis object.\n\n"
+            "Candidate field definitions:\n"
+            "- name must be exactly one of: conservative_specialization, coverage_gap_shift, anti_redundancy_shift.\n"
+            "- reasoning_bias is the general reasoning preference the prompt should induce.\n"
+            "- trajectory_shift explains how the agent's reasoning path should differ from its current or peer path.\n"
+            "- applicability_condition gives task-agnostic conditions for when to use the strategy.\n"
+            "- fallback_strategy gives the reasoning behavior to use when the bias does not fit.\n"
+            "- task_agnostic_prompt is the actual reusable prompt text to install for the agent.\n"
+            "- rationale should explain the expected diversity effect only, not answer accuracy.\n\n"
             "Return JSON:\n"
             "{\n"
             '  "candidates": [\n'

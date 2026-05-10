@@ -188,6 +188,6 @@ python scripts/plot_experiment_dynamics.py --base_dir runs_experiments --out_dir
 python scripts/plot_training_comparison.py --csv runs_experiments/experiment_metrics.csv --out_dir runs_experiments/figures
 ```
 
-结果分析默认使用 `BAAI/bge-small-en-v1.5` 计算 `summary_embedding_text` 的 embedding cosine similarity/diversity；如需跳过可加 `--disable_summary_embedding`。
+结果分析默认使用 `BAAI/bge-small-en-v1.5` 同时计算三类 embedding 指标：最终 prompt、`summary_embedding_text` 和完整 trace。短 trace 直接编码，长 trace 会按固定词数切块后对 chunk embedding 做平均池化，再计算 agent 间 cosine similarity/diversity；如需跳过可加 `--disable_summary_embedding`。可视化中所有 embedding 指标集中在 `experiment_embedding_panel.png`，文本级 trace/summary cosine 指标保留在 `experiment_trace_summary_panel.png`。
 
 方法公式与抽象流程见 [method.md](method.md)。

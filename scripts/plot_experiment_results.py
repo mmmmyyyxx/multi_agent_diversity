@@ -79,13 +79,44 @@ def _finite_values(values: List[float]) -> List[float]:
     return [v for v in values if isinstance(v, float) and not math.isnan(v)]
 
 
-def _resolve_ylim(values: List[float], preset: Optional[tuple], pad_ratio: float = 0.05) -> Optional[tuple]:
+def _resolve_ylim(
+    values: List[float],
+    preset: Optional[tuple],
+    pad_ratio: float = 0.08,
+    tight: bool = True,
+    include_zero: bool = False,
+) -> Optional[tuple]:
     finite = _finite_values(values)
     if not finite:
         return preset
 
     data_min = min(finite)
     data_max = max(finite)
+
+    if tight or preset is None:
+        if abs(data_max - data_min) < 1e-9:
+            center = data_min
+            base = max(abs(center), 0.05)
+            pad = max(0.01, 0.08 * base)
+            lo = center - pad
+            hi = center + pad
+        else:
+            span = data_max - data_min
+            pad = max(1e-4, span * pad_ratio)
+            lo = data_min - pad
+            hi = data_max + pad
+        if include_zero:
+            lo = min(0.0, lo)
+        if data_min >= 0.0:
+            lo = max(0.0, lo)
+        if data_max <= 1.0 and hi <= 1.08:
+            hi = min(1.0, hi)
+        if preset is not None:
+            lo = max(float(preset[0]), lo)
+            hi = min(float(preset[1]), hi)
+            if hi <= lo:
+                lo, hi = float(preset[0]), float(preset[1])
+        return (lo, hi)
 
     if preset is None:
         if abs(data_max - data_min) < 1e-9:
@@ -106,13 +137,25 @@ def _resolve_ylim(values: List[float], preset: Optional[tuple], pad_ratio: float
     return (lo2, hi2)
 
 
-def _plot_panel_bar(ax, x, values, colors, hatches, labels, title, ylabel, ylim: Optional[tuple] = None):
+def _plot_panel_bar(
+    ax,
+    x,
+    values,
+    colors,
+    hatches,
+    labels,
+    title,
+    ylabel,
+    ylim: Optional[tuple] = None,
+    tight_ylim: bool = True,
+    include_zero: bool = False,
+):
     bars = ax.bar(x, values, color=colors)
     for b, h in zip(bars, hatches):
         b.set_hatch(h)
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
-    resolved_ylim = _resolve_ylim(values, ylim)
+    resolved_ylim = _resolve_ylim(values, ylim, tight=tight_ylim, include_zero=include_zero)
     if resolved_ylim is not None:
         ax.set_ylim(*resolved_ylim)
     ax.set_ylabel(ylabel)
@@ -120,7 +163,19 @@ def _plot_panel_bar(ax, x, values, colors, hatches, labels, title, ylabel, ylim:
     ax.grid(axis="y", linestyle="--", alpha=0.3)
 
 
-def _plot_grouped_trace_summary_bar(ax, x, trace_values, summary_values, hatches, labels, title, ylabel, ylim: Optional[tuple] = None):
+def _plot_grouped_trace_summary_bar(
+    ax,
+    x,
+    trace_values,
+    summary_values,
+    hatches,
+    labels,
+    title,
+    ylabel,
+    ylim: Optional[tuple] = None,
+    tight_ylim: bool = True,
+    include_zero: bool = False,
+):
     width = 0.36
     trace_x = [i - width / 2 for i in x]
     summary_x = [i + width / 2 for i in x]
@@ -131,7 +186,7 @@ def _plot_grouped_trace_summary_bar(ax, x, trace_values, summary_values, hatches
             b.set_hatch(h)
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
-    resolved_ylim = _resolve_ylim(trace_values + summary_values, ylim)
+    resolved_ylim = _resolve_ylim(trace_values + summary_values, ylim, tight=tight_ylim, include_zero=include_zero)
     if resolved_ylim is not None:
         ax.set_ylim(*resolved_ylim)
     ax.set_ylabel(ylabel)
@@ -155,7 +210,19 @@ def _save_panel_figure(rows: List[Dict[str, str]], out_dir: Path, file_name: str
     axes_list = list(axes.flat) if hasattr(axes, "flat") else [axes]
     for ax, spec in zip(axes_list, specs):
         values = _metric_values(rows, spec["key"])
-        _plot_panel_bar(ax, x, values, colors, hatches, labels, spec["title"], spec["ylabel"], spec.get("ylim"))
+        _plot_panel_bar(
+            ax,
+            x,
+            values,
+            colors,
+            hatches,
+            labels,
+            spec["title"],
+            spec["ylabel"],
+            spec.get("ylim"),
+            bool(spec.get("tight_ylim", True)),
+            bool(spec.get("include_zero", False)),
+        )
 
     for ax in axes_list[len(specs):]:
         ax.axis("off")
@@ -174,9 +241,6 @@ def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
     labels = [_short_label(x) for x in settings]
     x = list(range(len(rows)))
     hatches = [_setting_hatch(r) for r in rows]
-    summary_embedding_div = _metric_values(rows, "latest_summary_embedding_cosine_diversity")
-    summary_embedding_sim = _metric_values(rows, "latest_summary_embedding_cosine_similarity")
-
     fig, axes = plt.subplots(1, 2, figsize=(16, 5.6))
     _plot_grouped_trace_summary_bar(
         axes[0],
@@ -188,9 +252,9 @@ def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
         "Trace vs Summary Cosine Diversity",
         "Cosine Diversity",
         (0.0, 0.35),
+        True,
+        False,
     )
-    axes[0].plot(x, summary_embedding_div, color="#edc948", marker="o", linestyle="--", label="Summary embedding")
-    axes[0].legend()
     _plot_grouped_trace_summary_bar(
         axes[1],
         x,
@@ -201,12 +265,91 @@ def _save_trace_summary_panel(rows: List[Dict[str, str]], out_dir: Path):
         "Trace vs Summary Cosine Similarity",
         "Cosine Similarity",
         (0.65, 1.0),
+        True,
+        False,
     )
-    axes[1].plot(x, summary_embedding_sim, color="#edc948", marker="o", linestyle="--", label="Summary embedding")
-    axes[1].legend()
-    fig.suptitle("Unified Comparison: Trace and Reasoning Summary Metrics", fontsize=15)
+    fig.suptitle("Unified Comparison: Text-Level Trace and Summary Metrics", fontsize=15)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
     path = out_dir / "experiment_trace_summary_panel.png"
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+    print(f"Saved: {path}")
+
+
+def _plot_grouped_embedding_bar(
+    ax,
+    x,
+    prompt_values,
+    trace_values,
+    summary_values,
+    hatches,
+    labels,
+    title,
+    ylabel,
+    ylim: Optional[tuple] = None,
+    tight_ylim: bool = True,
+    include_zero: bool = False,
+):
+    width = 0.24
+    prompt_x = [i - width for i in x]
+    trace_x = list(x)
+    summary_x = [i + width for i in x]
+    prompt_bars = ax.bar(prompt_x, prompt_values, width=width, color="#4e79a7", label="Prompt embedding")
+    trace_bars = ax.bar(trace_x, trace_values, width=width, color="#e15759", label="Trace embedding")
+    summary_bars = ax.bar(summary_x, summary_values, width=width, color="#edc948", label="Summary embedding")
+    for bars in (prompt_bars, trace_bars, summary_bars):
+        for b, h in zip(bars, hatches):
+            b.set_hatch(h)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    resolved_ylim = _resolve_ylim(prompt_values + trace_values + summary_values, ylim, tight=tight_ylim, include_zero=include_zero)
+    if resolved_ylim is not None:
+        ax.set_ylim(*resolved_ylim)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    ax.legend()
+
+
+def _save_embedding_panel(rows: List[Dict[str, str]], out_dir: Path):
+    rows = _sort_rows(rows)
+    settings = [str(r.get("setting", "")) for r in rows]
+    labels = [_short_label(x) for x in settings]
+    x = list(range(len(rows)))
+    hatches = [_setting_hatch(r) for r in rows]
+
+    fig, axes = plt.subplots(1, 2, figsize=(16, 5.6))
+    _plot_grouped_embedding_bar(
+        axes[0],
+        x,
+        _metric_values(rows, "latest_prompt_embedding_cosine_diversity"),
+        _metric_values(rows, "latest_trace_embedding_cosine_diversity"),
+        _metric_values(rows, "latest_summary_embedding_cosine_diversity"),
+        hatches,
+        labels,
+        "Embedding Cosine Diversity",
+        "Cosine Diversity",
+        (0.0, 0.35),
+        True,
+        False,
+    )
+    _plot_grouped_embedding_bar(
+        axes[1],
+        x,
+        _metric_values(rows, "latest_prompt_embedding_cosine_similarity"),
+        _metric_values(rows, "latest_trace_embedding_cosine_similarity"),
+        _metric_values(rows, "latest_summary_embedding_cosine_similarity"),
+        hatches,
+        labels,
+        "Embedding Cosine Similarity",
+        "Cosine Similarity",
+        (0.65, 1.0),
+        True,
+        False,
+    )
+    fig.suptitle("Unified Comparison: Embedding Metrics", fontsize=15)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    path = out_dir / "experiment_embedding_panel.png"
     fig.savefig(path, dpi=160)
     plt.close(fig)
     print(f"Saved: {path}")
@@ -224,10 +367,10 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
         "experiment_diversity_panel.png",
         "Unified Comparison: Diversity Metrics",
         [
-            {"key": "latest_prompt_cosine_diversity", "title": "Prompt Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.35, 0.85)},
-            {"key": "latest_trace_cosine_diversity", "title": "Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
-            {"key": "latest_reasoning_summary_cosine_diversity", "title": "Reasoning Summary Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
-            {"key": "latest_summary_embedding_cosine_diversity", "title": "Summary Embedding Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.35)},
+            {"key": "latest_prompt_cosine_diversity", "title": "Prompt Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 1.0)},
+            {"key": "latest_trace_cosine_diversity", "title": "Trace Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.4)},
+            {"key": "latest_reasoning_summary_cosine_diversity", "title": "Reasoning Summary Cosine Diversity", "ylabel": "Cosine Diversity", "ylim": (0.0, 0.4)},
+            {"key": "latest_test_mean_family_diversity", "title": "Test Family Diversity", "ylabel": "Family Diversity", "ylim": (0.0, 1.0)},
         ],
     )
 
@@ -237,15 +380,16 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
         "experiment_similarity_panel.png",
         "Unified Comparison: Homogeneity Metrics",
         [
-            {"key": "latest_test_mean_family_homogeneity_rate", "title": "Test Family Homogeneity", "ylabel": "Family Homogeneity", "ylim": (0.7, 1.0)},
-            {"key": "latest_prompt_cosine_similarity", "title": "Prompt Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.15, 1.0)},
-            {"key": "latest_trace_cosine_similarity", "title": "Trace Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.8, 1.0)},
-            {"key": "latest_reasoning_summary_cosine_similarity", "title": "Reasoning Summary Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
-            {"key": "latest_summary_embedding_cosine_similarity", "title": "Summary Embedding Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.65, 1.0)},
+            {"key": "latest_test_mean_family_homogeneity_rate", "title": "Test Family Homogeneity", "ylabel": "Family Homogeneity", "ylim": (0.0, 1.0)},
+            {"key": "latest_prompt_cosine_similarity", "title": "Prompt Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.0, 1.0)},
+            {"key": "latest_trace_cosine_similarity", "title": "Trace Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.0, 1.0)},
+            {"key": "latest_reasoning_summary_cosine_similarity", "title": "Reasoning Summary Cosine Similarity", "ylabel": "Cosine Similarity", "ylim": (0.0, 1.0)},
+            {"key": "all_same_pair_rate", "title": "All-Same Family Pair Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
         ],
     )
 
     _save_trace_summary_panel(rows, out_dir)
+    _save_embedding_panel(rows, out_dir)
 
     _save_panel_figure(
         rows,
@@ -253,10 +397,10 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
         "experiment_behavior_panel.png",
         "Unified Comparison: Behavior and Optimization Metrics",
         [
-            {"key": "latest_test_vote_acc", "title": "Test Vote Accuracy", "ylabel": "Vote Accuracy", "ylim": (0.7, 0.8)},
-            {"key": "disagreement_rate", "title": "Disagreement Rate", "ylabel": "Rate", "ylim": (0.2, 0.35)},
-            {"key": "prompt_drift_cosine_distance", "title": "Prompt Drift Cosine Distance", "ylabel": "Distance", "ylim": (0.0, 0.9)},
-            {"key": "update_applied_rate", "title": "Update Applied Rate", "ylabel": "Rate", "ylim": (0.05, 0.2)},
+            {"key": "latest_test_vote_acc", "title": "Test Vote Accuracy", "ylabel": "Vote Accuracy", "ylim": (0.0, 1.0)},
+            {"key": "disagreement_rate", "title": "Disagreement Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
+            {"key": "prompt_drift_cosine_distance", "title": "Prompt Drift Cosine Distance", "ylabel": "Distance", "ylim": (0.0, 1.0)},
+            {"key": "update_applied_rate", "title": "Update Applied Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
         ],
     )
 
