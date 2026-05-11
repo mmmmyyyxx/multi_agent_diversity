@@ -82,6 +82,26 @@ def _string_similarity(s1: str, s2: str) -> float:
 
 def strategy_family_major_categories() -> Dict[str, List[str]]:
     return {
+        "mmlu_option_semantics": [
+            "concept_definition_match",
+            "option_contrast",
+            "distractor_elimination",
+            "option_contradiction_check",
+            "answer_to_stem_backward_check",
+            "stem_evidence_alignment",
+            "scope_qualifier_analysis",
+            "negation_exception_handling",
+        ],
+        "mmlu_domain_reasoning": [
+            "rule_or_principle_application",
+            "causal_mechanism_reasoning",
+            "historical_context_reasoning",
+            "scientific_model_reasoning",
+            "quantitative_formula_application",
+            "classification_taxonomy_reasoning",
+            "example_counterexample_reasoning",
+            "statistical_method_reasoning",
+        ],
         "representation_formalization": [
             "decomposition",
             "symbolic_formulation",
@@ -184,14 +204,9 @@ def normalize_strategy_family_label(
         "verification": "consistency_verification",
         "verify": "consistency_verification",
         "check": "consistency_verification",
-        "backward_verification": "backward_reasoning",
-        "backward_checking": "backward_reasoning",
         "computation": "direct_computation",
         "arithmetic": "direct_computation",
-        "elimination": "option_elimination",
-        "elimination_comparison": "option_elimination",
-        "option_comparison": "comparative_reasoning",
-        "comparison": "comparative_reasoning",
+        "elimination_comparison": "distractor_elimination",
         "case_split": "case_analysis",
         "enumeration": "exhaustive_enumeration",
         "constraint_reasoning": "constraint_propagation",
@@ -209,9 +224,6 @@ def normalize_strategy_family_label(
         "causal": "causal_reasoning",
         "temporal_reasoning": "temporal_sequential_reasoning",
         "spatial_reasoning": "spatial_visualization",
-        "definition_lookup": "definition_application",
-        "rule_matching": "rule_based_classification",
-        "property_application": "theorem_property_application",
         "edge_cases": "edge_case_analysis",
         "unit_analysis": "dimensional_unit_analysis",
         "extremal_reasoning": "optimization_extremal_reasoning",
@@ -220,6 +232,34 @@ def normalize_strategy_family_label(
         "abduction": "abductive_inference",
         "counterfactual": "counterfactual_reasoning",
     }
+    mmlu_aliases = {
+        "concept_recall": "concept_definition_match",
+        "concept_match": "concept_definition_match",
+        "definition_lookup": "concept_definition_match",
+        "definition_application": "concept_definition_match",
+        "terminology_match": "concept_definition_match",
+        "option_comparison": "option_contrast",
+        "comparison": "option_contrast",
+        "comparative_reasoning": "option_contrast",
+        "elimination": "distractor_elimination",
+        "option_elimination": "distractor_elimination",
+        "elimination_comparison": "distractor_elimination",
+        "contradiction_check": "option_contradiction_check",
+        "backward_verification": "answer_to_stem_backward_check",
+        "backward_checking": "answer_to_stem_backward_check",
+        "backward_reasoning": "answer_to_stem_backward_check",
+        "property_application": "rule_or_principle_application",
+        "theorem_property_application": "rule_or_principle_application",
+        "rule_matching": "rule_or_principle_application",
+        "rule_based_classification": "rule_or_principle_application",
+    }
+    if allowed_labels is not None:
+        allowed_probe = {
+            normalize_spaces(str(x)).lower().replace("-", "_").replace(" ", "_")
+            for x in allowed_labels
+        }
+        if allowed_probe.intersection(set(mmlu_aliases.values())):
+            aliases.update(mmlu_aliases)
     raw = aliases.get(raw, raw)
 
     if allowed_labels is None:

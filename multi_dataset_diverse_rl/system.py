@@ -178,6 +178,17 @@ class TextualGradientRLSystem:
         path = str(getattr(self.cfg, "family_taxonomy_path", "") or "").strip()
         if not path:
             return os.path.join(self.cfg.out_dir, "family_taxonomy.json")
+        if path.lower() == "auto":
+            task_type = str(getattr(self.cfg, "task_type", "auto")).strip().lower()
+            train_path = str(getattr(self.cfg, "train_path", "") or "").lower()
+            test_path = str(getattr(self.cfg, "test_path", "") or "").lower()
+            looks_like_mmlu = task_type == "mmlu" or (task_type == "auto" and ("mmlu" in train_path or "mmlu" in test_path))
+            if looks_like_mmlu:
+                root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+                mmlu_taxonomy = os.path.join(root, "taxonomies", "mmlu_reasoning_family_taxonomy.json")
+                if os.path.exists(mmlu_taxonomy):
+                    return mmlu_taxonomy
+            return os.path.join(self.cfg.out_dir, "family_taxonomy.json")
         return path
 
     def _canonicalize_family_label(self, label: str) -> str:
@@ -192,20 +203,10 @@ class TextualGradientRLSystem:
             "algebraic_reasoning": "algebraic_derivation",
             "symbolic_reasoning": "symbolic_formulation",
             "equation_reasoning": "equation_solving",
-            "contradiction": "proof_by_contradiction",
             "contradiction_proof": "proof_by_contradiction",
             "proof_by_contradiction_proof": "proof_by_contradiction",
-            "verification": "consistency_verification",
-            "verify": "consistency_verification",
-            "check": "consistency_verification",
-            "backward_verification": "backward_reasoning",
-            "backward_checking": "backward_reasoning",
             "computation": "direct_computation",
             "arithmetic": "direct_computation",
-            "elimination": "option_elimination",
-            "elimination_comparison": "option_elimination",
-            "option_comparison": "comparative_reasoning",
-            "comparison": "comparative_reasoning",
             "case_split": "case_analysis",
             "enumeration": "exhaustive_enumeration",
             "constraint_reasoning": "constraint_propagation",
@@ -223,9 +224,6 @@ class TextualGradientRLSystem:
             "causal": "causal_reasoning",
             "temporal_reasoning": "temporal_sequential_reasoning",
             "spatial_reasoning": "spatial_visualization",
-            "definition_lookup": "definition_application",
-            "rule_matching": "rule_based_classification",
-            "property_application": "theorem_property_application",
             "edge_cases": "edge_case_analysis",
             "unit_analysis": "dimensional_unit_analysis",
             "extremal_reasoning": "optimization_extremal_reasoning",
@@ -234,6 +232,34 @@ class TextualGradientRLSystem:
             "abduction": "abductive_inference",
             "counterfactual": "counterfactual_reasoning",
         }
+        mmlu_aliases = {
+            "concept_recall": "concept_definition_match",
+            "concept_match": "concept_definition_match",
+            "definition_lookup": "concept_definition_match",
+            "definition_application": "concept_definition_match",
+            "terminology_match": "concept_definition_match",
+            "option_comparison": "option_contrast",
+            "comparison": "option_contrast",
+            "comparative_reasoning": "option_contrast",
+            "elimination": "distractor_elimination",
+            "option_elimination": "distractor_elimination",
+            "distractor_elimination": "distractor_elimination",
+            "contradiction_check": "option_contradiction_check",
+            "contradiction": "option_contradiction_check",
+            "verification": "consistency_cross_check",
+            "verify": "consistency_cross_check",
+            "check": "consistency_cross_check",
+            "backward_verification": "answer_to_stem_backward_check",
+            "backward_checking": "answer_to_stem_backward_check",
+            "backward_reasoning": "answer_to_stem_backward_check",
+            "rule_matching": "rule_or_principle_application",
+            "rule_based_classification": "rule_or_principle_application",
+            "property_application": "rule_or_principle_application",
+            "theorem_property_application": "rule_or_principle_application",
+            "elimination_comparison": "distractor_elimination",
+        }
+        if str(getattr(self.cfg, "task_type", "")).lower() == "mmlu":
+            aliases.update(mmlu_aliases)
         raw = aliases.get(raw, raw)
         return raw
 
@@ -314,6 +340,22 @@ class TextualGradientRLSystem:
             "recursive_reasoning": "uses recurrence, self-similar structure, dynamic programming, or reduction to smaller instances",
             "abductive_inference": "selects the best explanation for observed facts among plausible hypotheses",
             "counterfactual_reasoning": "changes an assumption or condition to test what would follow",
+            "concept_definition_match": "matches the stem or options to a concept, term, definition, or canonical description",
+            "option_contrast": "compares answer choices against each other to decide which best fits the stem",
+            "distractor_elimination": "identifies and removes distractor choices based on specific flaws, mismatches, or impossibilities",
+            "option_contradiction_check": "tests options for direct contradiction with the stem, known facts, or stated constraints",
+            "answer_to_stem_backward_check": "starts from a candidate answer and reasons backward to see whether it explains or satisfies the stem",
+            "stem_evidence_alignment": "anchors the decision in explicit clues, quoted wording, data, or evidence from the question stem",
+            "scope_qualifier_analysis": "focuses on qualifiers such as all, most, except, always, never, best, least, or not to control the answer scope",
+            "negation_exception_handling": "handles negative or exception-seeking stems such as NOT, EXCEPT, false, incorrect, or least likely",
+            "rule_or_principle_application": "applies a named rule, law, theorem, framework, or domain principle to select the answer",
+            "causal_mechanism_reasoning": "explains mechanisms, cause-effect chains, interventions, or process drivers before choosing",
+            "historical_context_reasoning": "uses historical period, actor, event, institution, or context to disambiguate options",
+            "scientific_model_reasoning": "uses a scientific model, theory, mechanism, or experimental setup to reason through options",
+            "quantitative_formula_application": "selects or applies a quantitative formula, numerical relationship, or measurement rule",
+            "classification_taxonomy_reasoning": "classifies the case into a category, type, school, syndrome, structure, or taxonomy",
+            "example_counterexample_reasoning": "uses examples or counterexamples to support or reject candidate options",
+            "statistical_method_reasoning": "uses statistical design, inference, validation, variable, or error-metric reasoning",
         }
 
     def _strategy_family_major_categories(self) -> Dict[str, List[str]]:

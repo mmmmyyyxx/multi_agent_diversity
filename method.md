@@ -216,4 +216,8 @@ $$
 
 `scripts/run_experiments.py` 负责运行四个设置并生成 run 目录；`scripts/analyze_experiments.py` 读取已有结果，统一调用指标计算和画图脚本。
 
-结果分析会额外使用 `BAAI/bge-small-en-v1.5` 计算 embedding cosine similarity/diversity。prompt embedding 使用最终 agent prompt；summary embedding 直接使用 `summary_embedding_text`；trace embedding 使用完整 trace，若 trace 较长则按固定词数切分为多个 chunk，分别编码后进行平均池化，得到单条 trace 的向量表示。所有 embedding 指标统一放入 embedding 可视化图，文本级 trace/summary cosine、family、prompt 和行为指标按语义分别展示。
+当前实验脚本默认使用多 seed 和多 epoch：训练设置默认 `--seeds 42,43,44`、`--epochs 3`、`--candidate_eval_batch_size 10`。基线默认只跑第一个 seed；如需基线也多 seed，可加 `--seed_baselines 1`。多 seed 输出目录形如 `shared_div_seed42`，分析脚本会自动识别并聚合。
+
+当任务为 MMLU 且 `family_taxonomy_path=auto` 时，系统优先使用 `taxonomies/mmlu_reasoning_family_taxonomy.json`，在通用 family 之外加入更适合多选题的叶子标签，例如 `concept_definition_match`、`option_contrast`、`distractor_elimination`、`answer_to_stem_backward_check`、`scope_qualifier_analysis` 和 `rule_or_principle_application`。如果目标是观察更自然的多思路分化，GSM8K、StrategyQA、BBH、ARC-Challenge 和 AQuA-RAT 通常比 MMLU 更容易产生不同解题路径。
+
+结果分析会额外使用 `BAAI/bge-small-en-v1.5` 计算 embedding cosine similarity/diversity。prompt embedding 使用最终 agent prompt；summary embedding 直接使用 `summary_embedding_text`；trace embedding 使用完整 trace，若 trace 较长则按固定词数切分为多个 chunk，分别编码后进行平均池化，得到单条 trace 的向量表示。分析脚本会优先查找本地已下载模型，包括仓库 `models/`、`SENTENCE_TRANSFORMERS_HOME`、`HF_HOME`、`HUGGINGFACE_HUB_CACHE` 和本机 HuggingFace cache。所有 embedding 指标统一放入 embedding 可视化图，文本级 trace/summary cosine、family、prompt 和行为指标按语义分别展示。

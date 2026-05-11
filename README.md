@@ -77,9 +77,9 @@ python -m multi_dataset_diverse_rl.cli `
   --test_path test.jsonl `
   --agents 4 `
   --init_mode shared `
-  --epochs 2 `
+  --epochs 3 `
   --update_every 5 `
-  --candidate_eval_batch_size 3 `
+  --candidate_eval_batch_size 10 `
   --train_size 200 `
   --test_size 100
 ```
@@ -102,12 +102,12 @@ python -m multi_dataset_diverse_rl.cli `
 - `--model`：solver agents 使用的模型，默认 `gpt-4o-mini`。
 - `--critic_model`：family judge、group diagnosis 使用的模型。
 - `--rewriter_model`：prompt rewriter 使用的模型。
-- `--family_expansion_model`：新 family 审核模型，默认 `deepseek-v4-pro`。
+- `--family_expansion_model`：新 family 审核与低置信度 rejudge 模型，默认 `gpt-4o-mini`。
 - `--max_tokens` / `--critic_max_tokens` / `--rewriter_max_tokens`：各阶段最大输出长度。
 
 **分类与摘要参数**
 
-- `--family_taxonomy_path`：动态 family taxonomy 文件路径。
+- `--family_taxonomy_path`：动态 family taxonomy 文件路径；默认 `auto`，当 `--task_type mmlu` 时优先使用 `taxonomies/mmlu_reasoning_family_taxonomy.json`。
 - `--family_expansion_enabled`：是否允许训练中接纳新 family。
 - `--use_dual_family_labels`：是否启用主策略 + 子策略判别，默认 `1`。
 - `--primary_family_weight`：主策略权重，默认 `0.7`。
@@ -170,7 +170,7 @@ Group critic、textual gradient 和 rewriter 的输入只包含策略摘要、fa
 运行实验：
 
 ```powershell
-python scripts/run_experiments.py --workspace . --out_root runs_experiments --task_type auto --train_path mmlu_train.jsonl --test_path mmlu_test.jsonl --epochs 2 --agents 5
+python scripts/run_experiments.py --workspace . --out_root runs_experiments --task_type mmlu --train_path mmlu_train.jsonl --test_path mmlu_test.jsonl --epochs 3 --agents 5 --seeds 42,43,44
 ```
 
 读取已有结果并画图：
@@ -188,6 +188,8 @@ python scripts/plot_experiment_dynamics.py --base_dir runs_experiments --out_dir
 python scripts/plot_training_comparison.py --csv runs_experiments/experiment_metrics.csv --out_dir runs_experiments/figures
 ```
 
-结果分析默认使用 `BAAI/bge-small-en-v1.5` 同时计算三类 embedding 指标：最终 prompt、`summary_embedding_text` 和完整 trace。短 trace 直接编码，长 trace 会按固定词数切块后对 chunk embedding 做平均池化，再计算 agent 间 cosine similarity/diversity；如需跳过可加 `--disable_summary_embedding`。可视化中所有 embedding 指标集中在 `experiment_embedding_panel.png`，文本级 trace/summary cosine 指标保留在 `experiment_trace_summary_panel.png`。
+结果分析默认使用 `BAAI/bge-small-en-v1.5` 同时计算三类 embedding 指标：最终 prompt、`summary_embedding_text` 和完整 trace。分析脚本会先尝试直接加载模型名，再尝试仓库 `models/`、`SENTENCE_TRANSFORMERS_HOME`、`HF_HOME`、`HUGGINGFACE_HUB_CACHE` 和本机 HuggingFace cache 中已下载的模型快照。短 trace 直接编码，长 trace 会按固定词数切块后对 chunk embedding 做平均池化，再计算 agent 间 cosine similarity/diversity；如需跳过可加 `--disable_summary_embedding`。可视化中所有 embedding 指标集中在 `experiment_embedding_panel.png`，文本级 trace/summary cosine 指标保留在 `experiment_trace_summary_panel.png`。
+
+MMLU 默认启用 `taxonomies/mmlu_reasoning_family_taxonomy.json`，将常见多选题行为细分为概念定义匹配、选项对照、干扰项排除、反向检查、限定词/否定处理、领域规则应用等标签。若要观察更自然的多思路分化，也可以优先尝试 GSM8K、StrategyQA、BBH、ARC-Challenge 或 AQuA-RAT。
 
 方法公式与抽象流程见 [method.md](method.md)。

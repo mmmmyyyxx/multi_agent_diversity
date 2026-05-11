@@ -8,9 +8,9 @@ class Config:
     model: str = "gpt-4o-mini"
     critic_model: str = "gpt-4o-mini"
     rewriter_model: str = "gpt-4o-mini"
-    family_expansion_model: str = "deepseek-v4-pro"
+    family_expansion_model: str = "gpt-4o-mini"
     family_expansion_enabled: bool = True
-    family_taxonomy_path: str = "family_taxonomy.json"
+    family_taxonomy_path: str = "auto"
     use_dual_family_labels: bool = True
     primary_family_weight: float = 0.7
     secondary_family_weight: float = 0.3
@@ -25,16 +25,23 @@ class Config:
     invalid_tolerance: float = 0.1
 
     train_path: str = "train.jsonl"
+    val_path: str = ""
     test_path: str = "test.jsonl"
-    train_size: int = 200
-    test_size: int = 100
+    train_size: int = 500
+    val_size: int = 150
+    val_split_ratio: float = 0.2
+    test_size: int = 200
+    eval_test_each_epoch: bool = False
+    early_stopping_patience: int = 2
+    early_stopping_min_delta: float = 0.005
+    early_stopping_metric: str = "val_mean_family_diversity"
 
     agents: int = 4
     init_mode: str = "shared"
     shared_prompt: str = "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format."
     epochs: int = 2
     update_every: int = 5
-    candidate_eval_batch_size: int = 3
+    candidate_eval_batch_size: int = 10
     baseline_only: bool = False
 
     max_tokens: int = 1000
@@ -70,9 +77,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--model", type=str, default="gpt-4o-mini")
     parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--rewriter_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_model", type=str, default="deepseek-v4-pro")
+    parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--family_expansion_enabled", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--family_taxonomy_path", type=str, default="family_taxonomy.json")
+    parser.add_argument("--family_taxonomy_path", type=str, default="auto")
     parser.add_argument("--use_dual_family_labels", type=int, default=1, choices=[0, 1])
     parser.add_argument("--primary_family_weight", type=float, default=0.7)
     parser.add_argument("--secondary_family_weight", type=float, default=0.3)
@@ -87,9 +94,24 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--invalid_tolerance", type=float, default=0.1)
 
     parser.add_argument("--train_path", type=str, default="train.jsonl")
+    parser.add_argument("--val_path", type=str, default="")
     parser.add_argument("--test_path", type=str, default="test.jsonl")
-    parser.add_argument("--train_size", type=int, default=200)
-    parser.add_argument("--test_size", type=int, default=100)
+    parser.add_argument("--train_size", type=int, default=500)
+    parser.add_argument("--val_size", type=int, default=150)
+    parser.add_argument("--val_split_ratio", type=float, default=0.2)
+    parser.add_argument("--test_size", type=int, default=200)
+    parser.add_argument("--eval_test_each_epoch", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--early_stopping_patience", type=int, default=2)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=0.005)
+    parser.add_argument(
+        "--early_stopping_metric",
+        type=str,
+        default="val_mean_family_diversity",
+        choices=[
+            "val_mean_family_diversity",
+            "val_mean_family_homogeneity_rate",
+        ],
+    )
 
     parser.add_argument("--agents", type=int, default=4)
     parser.add_argument("--init_mode", type=str, default="shared", choices=["shared", "bank"])
@@ -100,7 +122,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--update_every", type=int, default=5)
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=3)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=10)
     parser.add_argument("--baseline_only", type=int, default=0, choices=[0, 1])
 
     parser.add_argument("--max_tokens", type=int, default=1000)

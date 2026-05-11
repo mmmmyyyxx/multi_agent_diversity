@@ -162,6 +162,14 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace):
             str(args.agents),
             "--test_size",
             str(args.test_size),
+            "--eval_test_each_epoch",
+            str(int(args.eval_test_each_epoch)),
+            "--early_stopping_patience",
+            str(args.early_stopping_patience),
+            "--early_stopping_min_delta",
+            str(args.early_stopping_min_delta),
+            "--early_stopping_metric",
+            args.early_stopping_metric,
             "--init_mode",
             args.current_init_mode,
             "--shared_prompt",
@@ -173,7 +181,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace):
             "--rewriter_max_tokens",
             str(args.rewriter_max_tokens),
             "--seed",
-            str(args.seed),
+            str(args.current_seed),
         ]
     )
 
@@ -204,8 +212,14 @@ def _build_command(args: argparse.Namespace, setting: ExperimentSetting, out_dir
             [
                 "--train_path",
                 args.train_path,
+                "--val_path",
+                args.val_path,
                 "--train_size",
                 str(args.train_size),
+                "--val_size",
+                str(args.val_size),
+                "--val_split_ratio",
+                str(args.val_split_ratio),
                 "--epochs",
                 str(args.epochs),
                 "--update_every",
@@ -234,14 +248,15 @@ def _run_one(args: argparse.Namespace, setting: ExperimentSetting, summary_jsonl
         }
 
     reward = _reward_params(setting.baseline_only)
-    out_dir = Path(args.out_root) / setting.name
+    out_name = setting.name if setting.baseline_only and not args.seed_baselines else f"{setting.name}_seed{args.current_seed}"
+    out_dir = Path(args.out_root) / out_name
     out_dir.mkdir(parents=True, exist_ok=True)
     cmd = _build_command(args, setting, out_dir)
 
     print("=" * 120)
     print(
         f"[RUN] setting={setting.name} init_mode={setting.init_mode} "
-        f"baseline_only={int(setting.baseline_only)}"
+        f"baseline_only={int(setting.baseline_only)} seed={args.current_seed}"
     )
     print("Command:", " ".join(cmd))
 
@@ -252,6 +267,8 @@ def _run_one(args: argparse.Namespace, setting: ExperimentSetting, summary_jsonl
     metrics = _load_history_metrics(out_dir / "history.json")
     rec = {
         "setting": setting.name,
+        "run_name": out_name,
+        "seed": args.current_seed,
         "init_mode": setting.init_mode,
         "baseline_only": int(setting.baseline_only),
         "enable_diversification_reward": int(not setting.baseline_only),
@@ -264,11 +281,17 @@ def _run_one(args: argparse.Namespace, setting: ExperimentSetting, summary_jsonl
         "out_dir": str(out_dir),
         "task_type": args.task_type,
         "train_path": "" if setting.baseline_only else args.train_path,
+        "val_path": "" if setting.baseline_only else (args.val_path or f"{args.train_path}:split"),
         "test_path": args.test_path,
         "agents": args.agents,
         "train_size": 0 if setting.baseline_only else args.train_size,
+        "val_size": 0 if setting.baseline_only else args.val_size,
+        "val_split_ratio": 0.0 if setting.baseline_only else args.val_split_ratio,
         "test_size": args.test_size,
         "epochs_target": 0 if setting.baseline_only else args.epochs,
+        "early_stopping_patience": args.early_stopping_patience,
+        "early_stopping_min_delta": args.early_stopping_min_delta,
+        "early_stopping_metric": args.early_stopping_metric,
         "update_every": 0 if setting.baseline_only else args.update_every,
         "candidate_eval_batch_size": 0 if setting.baseline_only else args.candidate_eval_batch_size,
         "family_expansion_model": args.family_expansion_model,
@@ -294,22 +317,23 @@ def _run_one(args: argparse.Namespace, setting: ExperimentSetting, summary_jsonl
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run experiment settings: shared_div, bank_div, shared_baseline, bank_baseline."
+        description="Run experiment settings with optional multi-seed training runs."
     )
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--out_root", type=str, default="runs_experiments")
 
-    parser.add_argument("--task_type", type=str, default="auto", choices=["auto", "gsm8k", "mmlu"])
+    parser.add_argument("--task_type", type=str, default="mmlu", choices=["auto", "gsm8k", "mmlu"])
     parser.add_argument("--train_path", type=str, default="mmlu_train.jsonl")
+    parser.add_argument("--val_path", type=str, default="")
     parser.add_argument("--test_path", type=str, default="mmlu_test.jsonl")
 
     parser.add_argument("--model", type=str, default="gpt-4o-mini")
     parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--rewriter_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_model", type=str, default="deepseek-v4-pro")
+    parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--family_expansion_enabled", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--family_taxonomy_path", type=str, default="family_taxonomy.json")
+    parser.add_argument("--family_taxonomy_path", type=str, default="auto")
     parser.add_argument("--use_dual_family_labels", type=int, default=1, choices=[0, 1])
     parser.add_argument("--primary_family_weight", type=float, default=0.7)
     parser.add_argument("--secondary_family_weight", type=float, default=0.3)
@@ -332,11 +356,25 @@ def main():
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
 
     parser.add_argument("--agents", type=int, default=5)
-    parser.add_argument("--train_size", type=int, default=200)
-    parser.add_argument("--test_size", type=int, default=100)
-    parser.add_argument("--epochs", type=int, default=1)
+    parser.add_argument("--train_size", type=int, default=500)
+    parser.add_argument("--val_size", type=int, default=150)
+    parser.add_argument("--val_split_ratio", type=float, default=0.2)
+    parser.add_argument("--test_size", type=int, default=200)
+    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--eval_test_each_epoch", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--early_stopping_patience", type=int, default=2)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=0.005)
+    parser.add_argument(
+        "--early_stopping_metric",
+        type=str,
+        default="val_mean_family_diversity",
+        choices=[
+            "val_mean_family_diversity",
+            "val_mean_family_homogeneity_rate",
+        ],
+    )
     parser.add_argument("--update_every", type=int, default=5)
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=3)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=10)
 
     parser.add_argument("--max_tokens", type=int, default=1000)
     parser.add_argument("--critic_max_tokens", type=int, default=8000)
@@ -347,13 +385,23 @@ def main():
         default="You are a helpful reasoning assistant. Think step by step.",
     )
 
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seeds", type=str, default="42,43,44")
+    parser.add_argument("--seed_baselines", type=int, default=0, choices=[0, 1])
     args = parser.parse_args()
     args.transient_retry_forever = bool(int(args.transient_retry_forever))
     args.family_expansion_enabled = bool(int(args.family_expansion_enabled))
     args.use_dual_family_labels = bool(int(args.use_dual_family_labels))
     args.family_rejudge_on_low_confidence = bool(int(args.family_rejudge_on_low_confidence))
     args.llm_call_logging = bool(int(args.llm_call_logging))
+    args.eval_test_each_epoch = bool(int(args.eval_test_each_epoch))
+    args.seed_baselines = bool(int(args.seed_baselines))
+    seeds = []
+    for raw_seed in str(args.seeds).split(","):
+        raw_seed = raw_seed.strip()
+        if raw_seed:
+            seeds.append(int(raw_seed))
+    if not seeds:
+        seeds = [42]
 
     workspace = Path(args.workspace).resolve()
     args.workspace = str(workspace)
@@ -367,9 +415,12 @@ def main():
 
     rows: List[Dict[str, Any]] = []
     for setting in SETTINGS:
-        rec = _run_one(args, setting, summary_jsonl)
-        rows.append(rec)
-        _write_csv(summary_csv, rows)
+        setting_seeds = seeds if (not setting.baseline_only or args.seed_baselines) else [seeds[0]]
+        for seed in setting_seeds:
+            args.current_seed = int(seed)
+            rec = _run_one(args, setting, summary_jsonl)
+            rows.append(rec)
+            _write_csv(summary_csv, rows)
 
     ok = sum(1 for r in rows if r.get("status") == "ok")
     fail = sum(1 for r in rows if r.get("status") != "ok")
@@ -383,4 +434,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

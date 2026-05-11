@@ -15,6 +15,13 @@ SETTINGS = [
 ]
 
 
+def _setting_from_run_name(name: str) -> str:
+    for setting in SETTINGS:
+        if name == setting or name.startswith(f"{setting}_seed"):
+            return setting
+    return ""
+
+
 def _read_csv_rows(path: Path) -> List[Dict[str, Any]]:
     if not path.exists():
         return []
@@ -45,9 +52,10 @@ def _write_jsonl(path: Path, rows: List[Dict[str, Any]]):
 
 def _collect_run_dirs(out_root: Path) -> List[Path]:
     run_dirs: List[Path] = []
-    for name in SETTINGS:
-        p = out_root / name
-        if p.is_dir() and (p / "run_meta.json").exists():
+    for p in sorted(out_root.iterdir()) if out_root.exists() else []:
+        if not p.is_dir() or not (p / "run_meta.json").exists():
+            continue
+        if _setting_from_run_name(p.name):
             run_dirs.append(p)
     return run_dirs
 
@@ -136,7 +144,8 @@ def main():
 
     run_dirs = _collect_run_dirs(out_root)
     found = [p.name for p in run_dirs]
-    missing = [name for name in SETTINGS if name not in found]
+    found_settings = {_setting_from_run_name(p.name) for p in run_dirs}
+    missing = [name for name in SETTINGS if name not in found_settings]
     print(f"Found runs: {found}")
     if missing:
         print(f"[WARN] Missing expected runs: {missing}")

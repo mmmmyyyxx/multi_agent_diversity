@@ -1,0 +1,65 @@
+{
+  "description": "MMLU-oriented reasoning-family taxonomy. It keeps the generic families available, but adds leaf labels that split common multiple-choice behavior into more diagnostic strategies.",
+  "labels": [
+    "concept_definition_match",
+    "option_contrast",
+    "distractor_elimination",
+    "option_contradiction_check",
+    "answer_to_stem_backward_check",
+    "stem_evidence_alignment",
+    "scope_qualifier_analysis",
+    "negation_exception_handling",
+    "rule_or_principle_application",
+    "causal_mechanism_reasoning",
+    "historical_context_reasoning",
+    "scientific_model_reasoning",
+    "quantitative_formula_application",
+    "classification_taxonomy_reasoning",
+    "example_counterexample_reasoning",
+    "statistical_method_reasoning"
+  ],
+  "major_categories": {
+    "mmlu_option_semantics": [
+      "concept_definition_match",
+      "option_contrast",
+      "distractor_elimination",
+      "option_contradiction_check",
+      "answer_to_stem_backward_check",
+      "stem_evidence_alignment",
+      "scope_qualifier_analysis",
+      "negation_exception_handling"
+    ],
+    "mmlu_domain_reasoning": [
+      "rule_or_principle_application",
+      "causal_mechanism_reasoning",
+      "historical_context_reasoning",
+      "scientific_model_reasoning",
+      "quantitative_formula_application",
+      "classification_taxonomy_reasoning",
+      "example_counterexample_reasoning",
+      "statistical_method_reasoning"
+    ]
+  },
+  "recommended_alternative_datasets": [
+    {
+      "name": "GSM8K",
+      "why": "Multi-step arithmetic word problems allow algebraic setup, decomposition, backward checking, unit reasoning, and direct computation to separate more naturally than MMLU option comparison."
+    },
+    {
+      "name": "StrategyQA",
+      "why": "Yes/no questions often admit causal, abductive, counterexample, and evidence-composition strategies."
+    },
+    {
+      "name": "BBH",
+      "why": "Big-Bench Hard contains tasks with algorithmic, symbolic, logical, and simulation-style reasoning, useful for stress-testing strategy diversity."
+    },
+    {
+      "name": "ARC-Challenge",
+      "why": "Science questions support mechanism reasoning, rule application, counterexample checks, and option elimination."
+    },
+    {
+      "name": "AQuA-RAT",
+      "why": "Multiple-choice quantitative problems retain options but usually require richer mathematical solution paths."
+    }
+  ]
+}

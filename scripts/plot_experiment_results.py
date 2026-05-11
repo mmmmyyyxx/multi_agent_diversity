@@ -395,12 +395,12 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
         rows,
         out_dir,
         "experiment_behavior_panel.png",
-        "Unified Comparison: Behavior and Optimization Metrics",
+        "Unified Comparison: Selected Behavior and Optimization Metrics",
         [
-            {"key": "latest_test_vote_acc", "title": "Test Vote Accuracy", "ylabel": "Vote Accuracy", "ylim": (0.0, 1.0)},
             {"key": "disagreement_rate", "title": "Disagreement Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
             {"key": "prompt_drift_cosine_distance", "title": "Prompt Drift Cosine Distance", "ylabel": "Distance", "ylim": (0.0, 1.0)},
             {"key": "update_applied_rate", "title": "Update Applied Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
+            {"key": "all_same_pair_rate", "title": "All-Same Family Pair Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
         ],
     )
 

@@ -2,6 +2,7 @@
 import csv
 import json
 import math
+import os
 import re
 import statistics
 from collections import Counter
@@ -12,10 +13,55 @@ from typing import Any, Dict, List, Optional, Tuple
 DEFAULT_SUMMARY_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 DEFAULT_TRACE_EMBEDDING_CHUNK_WORDS = 320
 DEFAULT_TRACE_EMBEDDING_CHUNK_OVERLAP = 40
+KNOWN_EXPERIMENT_SETTINGS = ["shared_div", "bank_div", "shared_baseline", "bank_baseline"]
+PUBLIC_METRIC_COLUMNS = [
+    "run_dir",
+    "run_name",
+    "setting",
+    "seed",
+    "baseline_only",
+    "init_mode",
+    "diversity_reward_enabled",
+    "agents",
+    "epochs",
+    "train_size",
+    "test_size",
+    "lambda_diversity",
+    "latest_prompt_cosine_diversity",
+    "latest_prompt_embedding_cosine_diversity",
+    "latest_trace_cosine_diversity",
+    "latest_trace_embedding_cosine_diversity",
+    "latest_reasoning_summary_cosine_diversity",
+    "latest_summary_embedding_cosine_diversity",
+    "latest_test_mean_family_diversity",
+    "latest_test_mean_family_homogeneity_rate",
+    "latest_test_mean_llm_direct_diversity_score",
+    "latest_test_vote_acc",
+    "disagreement_rate",
+    "prompt_drift_cosine_distance",
+    "update_applied_rate",
+    "all_same_pair_rate",
+    "embedding_model",
+    "embedding_status",
+]
 
 
 def _safe_mean(xs: List[float]) -> float:
     return float(statistics.mean(xs)) if xs else 0.0
+
+
+def _parse_run_name(run_name: str) -> Tuple[str, Optional[int]]:
+    for setting in KNOWN_EXPERIMENT_SETTINGS:
+        if run_name == setting:
+            return setting, None
+        prefix = f"{setting}_seed"
+        if run_name.startswith(prefix):
+            raw_seed = run_name[len(prefix) :]
+            try:
+                return setting, int(raw_seed)
+            except ValueError:
+                return setting, None
+    return run_name, None
 
 
 def _read_json(path: Path) -> Optional[Dict[str, Any]]:
@@ -219,7 +265,7 @@ class SummaryEmbeddingEncoder:
         try:
             from sentence_transformers import SentenceTransformer
 
-            self.model = SentenceTransformer(self.model_name)
+            self.model = SentenceTransformer(self._resolve_model_name())
             return True
         except Exception as e:
             self.load_error = f"{type(e).__name__}: {e}"
@@ -228,6 +274,45 @@ class SummaryEmbeddingEncoder:
                 f"Install sentence-transformers and ensure the model is available. Error: {self.load_error}"
             )
             return False
+
+    def _resolve_model_name(self) -> str:
+        model_name = str(self.model_name or "").strip()
+        if not model_name:
+            return model_name
+        direct = Path(model_name)
+        if direct.exists():
+            return str(direct)
+
+        candidates = [
+            Path.cwd() / model_name,
+            Path.cwd() / "models" / model_name,
+            Path.cwd() / "models" / model_name.replace("/", "--"),
+        ]
+        for env_name in ["SENTENCE_TRANSFORMERS_HOME", "HF_HOME", "HUGGINGFACE_HUB_CACHE"]:
+            root = os.getenv(env_name)
+            if not root:
+                continue
+            candidates.extend(
+                [
+                    Path(root) / model_name,
+                    Path(root) / model_name.replace("/", "--"),
+                    Path(root) / "hub" / f"models--{model_name.replace('/', '--')}",
+                ]
+            )
+        userprofile = os.getenv("USERPROFILE")
+        if userprofile:
+            candidates.append(Path(userprofile) / ".cache" / "huggingface" / "hub" / f"models--{model_name.replace('/', '--')}")
+
+        for candidate in candidates:
+            if not candidate.exists():
+                continue
+            snapshots = candidate / "snapshots"
+            if snapshots.is_dir():
+                snapshot_dirs = sorted([p for p in snapshots.iterdir() if p.is_dir()])
+                if snapshot_dirs:
+                    return str(snapshot_dirs[-1])
+            return str(candidate)
+        return model_name
 
     def encode(self, texts: List[str]) -> List[List[float]]:
         normalized = [_normalize_spaces(t) for t in texts if _normalize_spaces(t)]
@@ -394,14 +479,7 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
             "mean_family_homogeneity_rate_from_preds": 0.0,
             "mean_llm_direct_diversity_score_from_preds": 0.0,
             "mean_vote_acc_from_preds": 0.0,
-            "all_same_primary_rate_from_preds": 0.0,
             "all_same_pair_rate_from_preds": 0.0,
-            "mean_family_confidence_from_preds": 0.0,
-            "low_confidence_share_from_preds": 0.0,
-            "mean_rejudge_count_from_preds": 0.0,
-            "mean_summary_words_from_preds": 0.0,
-            "mean_summary_tokens_from_preds": 0.0,
-            "mean_evidence_spans_from_preds": 0.0,
         }
 
     disagreement = []
@@ -409,14 +487,7 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
     family_homo_all = []
     direct_div_all = []
     vote_acc_all = []
-    all_same_primary_all = []
     all_same_pair_all = []
-    confidence_all = []
-    low_conf_all = []
-    rejudge_all = []
-    summary_words_all = []
-    summary_tokens_all = []
-    evidence_spans_all = []
 
     for r in pred_records:
         answers = r.get("answers", [])
@@ -426,21 +497,13 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
         family_homo_rate = float(r.get("team_family_homogeneity_rate", 0.0))
         direct_div = r.get("llm_direct_diversity_score", None)
         vote_correct = float(r.get("vote_correct", 0.0))
-        dg = int(len(set(map(str, answers))) > 1) if answers else 0
-        disagreement.append(dg)
+        disagreement.append(int(len(set(map(str, answers))) > 1) if answers else 0)
         family_div_all.append(div)
         family_homo_all.append(family_homo_rate)
         if direct_div is not None:
             direct_div_all.append(float(direct_div))
         vote_acc_all.append(vote_correct)
-        all_same_primary_all.append(int(bool(r.get("all_same_primary", False))))
         all_same_pair_all.append(int(bool(r.get("all_same_pair", False))))
-        confidence_all.append(float(r.get("mean_family_confidence", 0.0) or 0.0))
-        low_conf_all.append(float(r.get("low_confidence_share", 0.0) or 0.0))
-        rejudge_all.append(float(r.get("rejudge_count", 0.0) or 0.0))
-        summary_words_all.append(float(r.get("mean_summary_words", 0.0) or 0.0))
-        summary_tokens_all.append(float(r.get("mean_summary_tokens", 0.0) or 0.0))
-        evidence_spans_all.append(float(r.get("mean_evidence_spans", 0.0) or 0.0))
 
     return {
         "eval_size": n,
@@ -449,14 +512,7 @@ def _collect_eval_metrics(pred_records: List[Dict[str, Any]]) -> Dict[str, float
         "mean_family_homogeneity_rate_from_preds": _safe_mean(family_homo_all),
         "mean_llm_direct_diversity_score_from_preds": _safe_mean(direct_div_all),
         "mean_vote_acc_from_preds": _safe_mean(vote_acc_all),
-        "all_same_primary_rate_from_preds": _safe_mean(all_same_primary_all),
         "all_same_pair_rate_from_preds": _safe_mean(all_same_pair_all),
-        "mean_family_confidence_from_preds": _safe_mean(confidence_all),
-        "low_confidence_share_from_preds": _safe_mean(low_conf_all),
-        "mean_rejudge_count_from_preds": _safe_mean(rejudge_all),
-        "mean_summary_words_from_preds": _safe_mean(summary_words_all),
-        "mean_summary_tokens_from_preds": _safe_mean(summary_tokens_all),
-        "mean_evidence_spans_from_preds": _safe_mean(evidence_spans_all),
     }
 
 
@@ -470,9 +526,6 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
             "update_applied_rate": 0.0,
             "mean_selected_agents": 0.0,
             "mean_updated_agents": 0.0,
-            "mean_generic_prompt_candidate_rate": 0.0,
-            "mean_family_shift_rate_during_candidate_eval": 0.0,
-            "mean_summary_embedding_shift_during_candidate_eval": 0.0,
         }
 
     update_requested = []
@@ -481,9 +534,6 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
     update_applied = []
     num_selected = []
     num_updated = []
-    generic_rates = []
-    family_shift_rates = []
-    summary_shifts = []
 
     for r in step_records:
         u = r.get("update", {}) if isinstance(r.get("update", {}), dict) else {}
@@ -502,11 +552,6 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
         update_applied.append(int(len(updated_ids) > 0))
         num_selected.append(float(len(selected_ids)))
         num_updated.append(float(len(updated_ids)))
-        generic_rates.append(float(r.get("generic_prompt_candidate_rate", 0.0) or 0.0))
-        diag = r.get("candidate_behavior_diagnostics", {})
-        if isinstance(diag, dict):
-            family_shift_rates.append(float(diag.get("family_shift_rate", 0.0) or 0.0))
-            summary_shifts.append(float(diag.get("summary_embedding_shift", 0.0) or 0.0))
 
     return {
         "train_steps": len(step_records),
@@ -516,9 +561,6 @@ def _collect_update_metrics(step_records: List[Dict[str, Any]]) -> Dict[str, flo
         "update_applied_rate": _safe_mean(update_applied),
         "mean_selected_agents": _safe_mean(num_selected),
         "mean_updated_agents": _safe_mean(num_updated),
-        "mean_generic_prompt_candidate_rate": _safe_mean(generic_rates),
-        "mean_family_shift_rate_during_candidate_eval": _safe_mean(family_shift_rates),
-        "mean_summary_embedding_shift_during_candidate_eval": _safe_mean(summary_shifts),
     }
 
 
@@ -547,24 +589,6 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     diversity_reward_enabled = int(lam_div > 0.0)
 
     agents = last_state.get("agents", []) if isinstance(last_state.get("agents", []), list) else []
-    prompt_drift_flags = []
-    prompt_drift_cos_distances = []
-    for a in agents:
-        if not isinstance(a, dict):
-            continue
-
-        init_prompt = _normalize_spaces(str(a.get("initial_prompt", "")))
-        cur_prompt = _normalize_spaces(str(a.get("current_prompt", "")))
-        if init_prompt and cur_prompt:
-            prompt_drift_flags.append(int(init_prompt != cur_prompt))
-            sim = _cosine_sim_from_tokens(_tokenize_for_cosine(init_prompt), _tokenize_for_cosine(cur_prompt))
-            prompt_drift_cos_distances.append(float(max(0.0, min(1.0, 1.0 - sim))))
-            continue
-
-        init_h = str(a.get("initial_prompt_hash", ""))
-        cur_h = str(a.get("current_prompt_hash", ""))
-        prompt_drift_flags.append(int(init_h != "" and cur_h != "" and init_h != cur_h))
-
     latest_prompt_strings = _extract_latest_prompt_strings(prompt_history)
     prompt_diversity_rate = _pairwise_mismatch_rate(latest_prompt_strings)
     prompt_cos_div, prompt_cos_sim = _pairwise_cosine_diversity(latest_prompt_strings)
@@ -626,7 +650,8 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     summary_emb_cos_div = _safe_mean_optional(summary_emb_cos_div_all)
     summary_emb_cos_sim = _safe_mean_optional(summary_emb_cos_sim_all)
 
-    setting = run_dir.name
+    run_name = run_dir.name
+    setting, seed_from_name = _parse_run_name(run_name)
     cfg_baseline_only = bool(cfg.get("baseline_only", False))
     baseline_only = int(setting.endswith("_testonly") or cfg_baseline_only)
 
@@ -645,9 +670,27 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
         latest_test_metrics.get("vote_acc", eval_metrics["mean_vote_acc_from_preds"]) or 0.0
     )
 
+    prompt_drift_flags = []
+    prompt_drift_cos_distances = []
+    for a in agents:
+        if not isinstance(a, dict):
+            continue
+        init_prompt = _normalize_spaces(str(a.get("initial_prompt", "")))
+        cur_prompt = _normalize_spaces(str(a.get("current_prompt", "")))
+        if init_prompt and cur_prompt:
+            prompt_drift_flags.append(int(init_prompt != cur_prompt))
+            sim = _cosine_sim_from_tokens(_tokenize_for_cosine(init_prompt), _tokenize_for_cosine(cur_prompt))
+            prompt_drift_cos_distances.append(float(max(0.0, min(1.0, 1.0 - sim))))
+            continue
+        init_h = str(a.get("initial_prompt_hash", ""))
+        cur_h = str(a.get("current_prompt_hash", ""))
+        prompt_drift_flags.append(int(init_h != "" and cur_h != "" and init_h != cur_h))
+
     out = {
         "run_dir": str(run_dir),
+        "run_name": run_name,
         "setting": setting,
+        "seed": cfg.get("seed", seed_from_name),
         "baseline_only": baseline_only,
         "init_mode": str(run_meta.get("init_mode", "unknown")),
         "all_agents_shared_origin": int(bool(run_meta.get("all_agents_shared_origin", False))),
@@ -664,16 +707,9 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
         "latest_test_mean_llm_direct_diversity_score": latest_test_mean_llm_direct_diversity_score,
         "latest_train_vote_acc": float(latest_train_metrics.get("vote_acc", 0.0) or 0.0) if latest_train_metrics else None,
         "latest_test_vote_acc": latest_test_vote_acc,
-        "all_same_primary_rate": eval_metrics.get("all_same_primary_rate_from_preds", 0.0),
-        "all_same_pair_rate": eval_metrics.get("all_same_pair_rate_from_preds", 0.0),
-        "mean_family_confidence": eval_metrics.get("mean_family_confidence_from_preds", 0.0),
-        "low_confidence_share": eval_metrics.get("low_confidence_share_from_preds", 0.0),
-        "mean_rejudge_count": eval_metrics.get("mean_rejudge_count_from_preds", 0.0),
-        "mean_summary_words": eval_metrics.get("mean_summary_words_from_preds", 0.0),
-        "mean_summary_tokens": eval_metrics.get("mean_summary_tokens_from_preds", 0.0),
-        "mean_evidence_spans": eval_metrics.get("mean_evidence_spans_from_preds", 0.0),
-        "prompt_drift_rate": _safe_mean(prompt_drift_flags),
+        "disagreement_rate": eval_metrics.get("disagreement_rate", 0.0),
         "prompt_drift_cosine_distance": _safe_mean(prompt_drift_cos_distances),
+        "all_same_pair_rate": eval_metrics.get("all_same_pair_rate_from_preds", 0.0),
     }
     out.update(eval_metrics)
     out.update(_collect_update_metrics(step_logs))
@@ -745,38 +781,7 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
         return
 
     columns = [
-        "run_dir",
-        "setting",
-        "baseline_only",
-        "init_mode",
-        "diversity_reward_enabled",
-        "latest_prompt_cosine_diversity",
-        "latest_prompt_embedding_cosine_diversity",
-        "latest_trace_cosine_diversity",
-        "latest_trace_embedding_cosine_diversity",
-        "latest_reasoning_summary_cosine_diversity",
-        "latest_summary_embedding_cosine_diversity",
-        "latest_test_mean_family_diversity",
-        "latest_test_mean_family_homogeneity_rate",
-        "latest_train_mean_llm_direct_diversity_score",
-        "latest_test_mean_llm_direct_diversity_score",
-        "latest_train_vote_acc",
-        "latest_test_vote_acc",
-        "all_same_primary_rate",
-        "all_same_pair_rate",
-        "mean_family_confidence",
-        "low_confidence_share",
-        "mean_summary_words",
-        "mean_evidence_spans",
-        "disagreement_rate",
-        "prompt_drift_cosine_distance",
-        "update_applied_rate",
-        "mean_generic_prompt_candidate_rate",
-        "mean_family_shift_rate_during_candidate_eval",
-        "mean_summary_embedding_shift_during_candidate_eval",
-        "mean_trace_embedding_chunks",
-        "embedding_model",
-        "embedding_status",
+        *PUBLIC_METRIC_COLUMNS,
     ]
     lines = ["# Experiment Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for r in rows:
@@ -837,7 +842,7 @@ def main():
     out_md.parent.mkdir(parents=True, exist_ok=True)
 
     if rows:
-        fieldnames = sorted({k for r in rows for k in r.keys()})
+        fieldnames = [c for c in PUBLIC_METRIC_COLUMNS if any(c in r for r in rows)]
         with out_csv.open("w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fieldnames)
             w.writeheader()
