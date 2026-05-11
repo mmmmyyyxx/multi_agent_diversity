@@ -54,23 +54,13 @@ def _normalize_spaces(s: str) -> str:
     return re.sub(r"\s+", " ", str(s).strip())
 
 
-def _find_recent_trace_snapshots(run_dir: Path, limit: int = 10) -> List[List[Dict[str, Any]]]:
-    candidates = [
-        run_dir / "test_trace_history.jsonl",
-        run_dir / "train_trace_history.jsonl",
-        run_dir / "reasoning_summary_history.jsonl",
-    ]
-    records: List[Dict[str, Any]] = []
-    for path in candidates:
-        records = _read_jsonl(path)
-        if records:
-            break
-    if not records:
-        return []
-
+def _extract_agent_snapshots(records: List[Dict[str, Any]], split: str = "") -> List[List[Dict[str, Any]]]:
     out: List[List[Dict[str, Any]]] = []
-    for rec in records[-max(1, limit):]:
+    wanted_split = str(split or "").lower()
+    for rec in records:
         if not isinstance(rec, dict):
+            continue
+        if wanted_split and str(rec.get("split", "")).lower() != wanted_split:
             continue
         agents = rec.get("agents", [])
         if not isinstance(agents, list):
@@ -79,20 +69,16 @@ def _find_recent_trace_snapshots(run_dir: Path, limit: int = 10) -> List[List[Di
     return out
 
 
-def _find_recent_summary_snapshots(run_dir: Path, limit: int = 10) -> List[List[Dict[str, Any]]]:
+def _find_test_trace_snapshots(run_dir: Path) -> List[List[Dict[str, Any]]]:
+    # Visualization-facing trace metrics should reflect the full test set, not a
+    # small recent window that can be sensitive to sample order.
+    records = _read_jsonl(run_dir / "test_trace_history.jsonl")
+    return _extract_agent_snapshots(records, split="test")
+
+
+def _find_test_summary_snapshots(run_dir: Path) -> List[List[Dict[str, Any]]]:
     records = _read_jsonl(run_dir / "reasoning_summary_history.jsonl")
-    if not records:
-        return []
-
-    out: List[List[Dict[str, Any]]] = []
-    for rec in records[-max(1, limit):]:
-        if not isinstance(rec, dict):
-            continue
-        agents = rec.get("agents", [])
-        if not isinstance(agents, list):
-            continue
-        out.append([x for x in agents if isinstance(x, dict)])
-    return out
+    return _extract_agent_snapshots(records, split="test")
 
 
 def _extract_latest_prompt_strings(prompt_history: Any) -> List[str]:
@@ -541,8 +527,8 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     history = _read_json(run_dir / "history.json") or []
     last_state = _read_json(run_dir / "last_state.json") or {}
     step_logs = _read_jsonl(run_dir / "train_step_logs.jsonl")
-    trace_snapshots = _find_recent_trace_snapshots(run_dir, limit=10)
-    summary_snapshots = _find_recent_summary_snapshots(run_dir, limit=10)
+    trace_snapshots = _find_test_trace_snapshots(run_dir)
+    summary_snapshots = _find_test_summary_snapshots(run_dir)
     pred_path = _find_latest_test_predictions(run_dir)
     pred_records = _read_jsonl(pred_path) if pred_path else []
     prompt_history = _read_json(run_dir / "prompt_history.json") or {}
@@ -719,10 +705,12 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     out["latest_trace_cosine_diversity"] = trace_cos_div
     out["latest_trace_cosine_similarity"] = trace_cos_sim
     out["trace_cosine_window_used"] = len(trace_snapshots)
+    out["test_trace_snapshot_count"] = len(trace_snapshots)
     out["latest_trace_embedding_text_count"] = latest_trace_embedding_count
     out["latest_trace_embedding_cosine_diversity"] = trace_emb_cos_div
     out["latest_trace_embedding_cosine_similarity"] = trace_emb_cos_sim
     out["trace_embedding_cosine_window_used"] = len(trace_snapshots) if summary_encoder and summary_encoder.enabled else 0
+    out["test_trace_embedding_snapshot_count"] = len(trace_snapshots) if summary_encoder and summary_encoder.enabled else 0
     out["trace_embedding_chunk_words"] = DEFAULT_TRACE_EMBEDDING_CHUNK_WORDS
     out["trace_embedding_chunk_overlap"] = DEFAULT_TRACE_EMBEDDING_CHUNK_OVERLAP
     out["mean_trace_embedding_chunks"] = _safe_mean(trace_emb_chunks_all)
@@ -730,10 +718,12 @@ def analyze_run(run_dir: Path, summary_encoder: Optional[SummaryEmbeddingEncoder
     out["latest_reasoning_summary_cosine_diversity"] = summary_cos_div
     out["latest_reasoning_summary_cosine_similarity"] = summary_cos_sim
     out["reasoning_summary_cosine_window_used"] = len(summary_snapshots)
+    out["test_reasoning_summary_snapshot_count"] = len(summary_snapshots)
     out["latest_summary_embedding_text_count"] = len(latest_summary_embedding_texts)
     out["latest_summary_embedding_cosine_diversity"] = summary_emb_cos_div
     out["latest_summary_embedding_cosine_similarity"] = summary_emb_cos_sim
     out["summary_embedding_cosine_window_used"] = len(summary_snapshots) if summary_encoder and summary_encoder.enabled else 0
+    out["test_summary_embedding_snapshot_count"] = len(summary_snapshots) if summary_encoder and summary_encoder.enabled else 0
     out["embedding_model"] = summary_encoder.model_name if summary_encoder else ""
     out["embedding_status"] = summary_encoder.status if summary_encoder else "disabled"
     out["summary_embedding_model"] = summary_encoder.model_name if summary_encoder else ""

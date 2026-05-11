@@ -2,13 +2,13 @@
   {
     "epoch": 1,
     "train": {
-      "mean_family_homogeneity_rate": 0.6231475000000001,
+      "mean_family_homogeneity_rate": 0.7033345232437267,
       "mean_family_diversity": 0.356604413770821,
       "mean_llm_direct_diversity_score": 0.0,
       "vote_acc": 0.81
     },
     "test": {
-      "mean_family_homogeneity_rate": 0.6052399999999999,
+      "mean_family_homogeneity_rate": 0.7070332180524891,
       "mean_family_diversity": 0.4596892421805236,
       "mean_llm_direct_diversity_score": 0.0,
       "vote_acc": 0.75,

@@ -8,7 +8,7 @@
       "vote_acc": 0.0
     },
     "test": {
-      "mean_family_homogeneity_rate": 0.6073850000000001,
+      "mean_family_homogeneity_rate": 0.7081034100829975,
       "mean_family_diversity": 0.48299680735882977,
       "mean_llm_direct_diversity_score": 0.0,
       "vote_acc": 0.77,

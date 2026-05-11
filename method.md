@@ -83,13 +83,23 @@ $$
 
 其中 `macro_diversity_weight` 对应 $\alpha$。$D_{\text{macro}}$ 是主类分布的归一化熵，$D_{\text{intra}}$ 是各主类内部叶子策略熵的加权平均。
 
-同质率使用层级相似度。两个叶子策略完全相同相似度为 1；属于同一主类但不同叶子策略相似度为 `same_major_family_weight`；属于不同主类相似度为 0。两个 agent 的期望相似度为：
+同质率使用层级相似度。两个叶子策略完全相同相似度为 1；属于同一主类但不同叶子策略相似度为 `same_major_family_weight`；属于不同主类相似度为 0。先定义两个 agent 的未归一化策略 overlap：
+
+$$
+K_{ij}
+=
+\sum_k\sum_l v_i(k)v_j(l)sim(k,l)
+$$
+
+为了避免“两个 agent 拥有完全相同的主/子混合策略，但因为主策略和子策略不同而自相似小于 1”的问题，最终 agent 间相似度使用 kernel 归一化：
 
 $$
 sim_{ij}
 =
-\sum_k\sum_l v_i(k)v_j(l)sim(k,l)
+\frac{K_{ij}}{\sqrt{K_{ii}K_{jj}}}
 $$
+
+因此，当两个 agent 的主策略和子策略 pair 完全一致时，$sim_{ij}=1$；当 pair 不一致时，再由叶子策略相同、同主类或跨主类关系决定相似度。
 
 团队同质率和个体重叠比例为：
 

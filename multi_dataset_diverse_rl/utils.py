@@ -330,15 +330,25 @@ def _distribution_similarity(
     major_map: Dict[str, str],
     same_major_weight: float,
 ) -> float:
-    score = 0.0
-    for family_a, weight_a in dist_a.items():
-        for family_b, weight_b in dist_b.items():
-            score += float(weight_a) * float(weight_b) * _family_pair_similarity(
-                family_a,
-                family_b,
-                major_map,
-                same_major_weight,
-            )
+    def kernel_score(left: Dict[str, float], right: Dict[str, float]) -> float:
+        score = 0.0
+        for family_a, weight_a in left.items():
+            for family_b, weight_b in right.items():
+                score += float(weight_a) * float(weight_b) * _family_pair_similarity(
+                    family_a,
+                    family_b,
+                    major_map,
+                    same_major_weight,
+                )
+        return float(max(0.0, score))
+
+    cross_score = kernel_score(dist_a, dist_b)
+    self_a = kernel_score(dist_a, dist_a)
+    self_b = kernel_score(dist_b, dist_b)
+    denom = math.sqrt(self_a * self_b) if self_a > 0.0 and self_b > 0.0 else 0.0
+    if denom <= 0.0:
+        return 0.0
+    score = cross_score / denom
     return float(max(0.0, min(1.0, score)))
 
 
