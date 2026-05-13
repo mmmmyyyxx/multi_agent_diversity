@@ -97,13 +97,13 @@
 - 每个 agent 的 instructed-family hit rate。
 - pairwise strategy-tree diversity。
 - pairwise full-trace embedding diversity。
-- 人工盲评：完整 trace 是否真的表现出不同方法。
+- GPT-5.5 盲评代理：完整 trace 是否真的表现出不同方法。
 
 通过标准：
 
 - instructed family 或 same-major hit rate 每个 agent 不低于 0.60。
 - mixed-strategy team diversity 明显高于同策略负对照。
-- 人工标注的 method diversity 与指标在至少 70% 抽样样例上方向一致。
+- GPT-5.5 盲评分数的 method diversity 与指标在至少 70% 抽样样例上方向一致。
 
 失败解释：
 
@@ -118,10 +118,22 @@
 
 设计：
 
-- 至少在两个 solver model 上重复 P2 和 P3。
-- 低成本组合建议：`gpt-4o-mini` 加一个 API 环境里可用的不同模型。
-- 主分析固定 critic model。
+- 在四个低成本、同级别 solver model 上重复 P2 和 P3。
+- 推荐组合：`gpt-4o-mini`、Gemini Flash-Lite、Llama 3.1/3.2 8B Instruct、Qwen2.5 7B Instruct。
+- 不使用太大、太新的模型，避免把模型能力提升误当成策略迁移，也控制 API 成本。
+- 主分析固定 critic/judge model 为 `gpt-4o-mini`。
 - 可选：用第二个 critic model 对子集做 audit。
+
+推荐模型表：
+
+| alias | 推荐模型 | 目的 |
+|---|---|---|
+| `gpt4omini` | `gpt-4o-mini` | OpenAI 低成本基准 |
+| `gemini_flash_lite` | `gemini-2.5-flash-lite` | Google 低成本轻量模型 |
+| `llama31_8b` | `Meta-Llama-3.1-8B-Instruct` 或网关同级 8B instruct id | 开源 Llama 系列 |
+| `qwen25_7b` | `Qwen2.5-7B-Instruct` 或网关同级 7B instruct id | 开源 Qwen 系列 |
+
+不同网关的模型 id 可能不同；实际运行时以 `prove_experiments/p4_low_cost_models.json` 为准。
 
 条件：
 
@@ -210,7 +222,7 @@
 
 通过标准：
 
-- 当前 weighted tree 与人工 method-diversity 判断的相关性优于或接近其他粒度。
+- 当前 weighted tree 与 GPT-5.5 盲评 method-diversity 判断的相关性优于或接近其他粒度。
 - 当前 weighted tree 比 strict leaf-only 有更好的优化信号。
 
 失败解释：
@@ -218,10 +230,10 @@
 - 如果 major-only 最好，说明当前 leaf taxonomy 对 reward 过细。
 - 如果 strict leaf-only 最好且稳定，说明当前 same-major smoothing 可能太强。
 
-## P7. 人工盲评验证
+## P7. GPT-5.5 盲评验证
 
 问题：
-人类只看完整 trace 时，是否也认为高指标多样性的组使用了不同方法？
+独立 GPT-5.5 评估器只看匿名完整 trace 时，是否也认为高指标多样性的组使用了不同方法？
 
 设计：
 
@@ -231,16 +243,18 @@
   - 20 个高 embedding diversity 但低 strategy diversity。
   - 20 个低 embedding diversity 但高 strategy diversity，如存在。
 - 隐藏 run setting、prompt、model、label 和答案。
-- 要求标注者给 1 到 5 的 method diversity 分数，并可选标 coarse method tag。
+- 要求 GPT-5.5 给 1 到 5 的 method diversity 分数、confidence、distinct method count 和可选 coarse method tag。
+- 评估 prompt 明确要求忽略措辞、长度、流畅度和答案正确性，只判断推理方法差异。
 
 通过标准：
 
-- strategy-tree diversity 与人工 method-diversity score 有正 Spearman 相关。
-- strategy-tree diversity 比 raw trace embedding 更好地区分人工高/低多样性组。
+- strategy-tree diversity 与 GPT-5.5 method-diversity score 有正 Spearman 相关。
+- strategy-tree diversity 比 raw trace embedding 更好地区分 GPT-5.5 高/低多样性组。
 
 失败解释：
 
-- 如果人工判断与指标在常见 case 上系统不一致，应先检查 taxonomy 定义和 judge prompt，再继续训练。
+- 如果 GPT-5.5 盲评判断与指标在常见 case 上系统不一致，应先检查 taxonomy 定义和 judge prompt，再继续训练。
+- 如果 GPT-5.5 判断本身不稳定，可增加第二评估模型或重复评估做一致性审计。
 
 ## P8. 任务依赖检查
 

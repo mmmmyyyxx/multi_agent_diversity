@@ -1,0 +1,24 @@
+{
+  "matched_count": 80,
+  "mean_gpt_method_diversity_score": 1.5125,
+  "strategy_tree_vs_gpt_spearman": {
+    "n": 80,
+    "rho": 0.007524885396454644
+  },
+  "major_tree_vs_gpt_spearman": {
+    "n": 80,
+    "rho": -0.05918618202233607
+  },
+  "trace_text_vs_gpt_spearman": {
+    "n": 80,
+    "rho": 0.6828601421715488
+  },
+  "high_strategy_minus_low_strategy_gpt_score_ci": {
+    "n": 40,
+    "mean": -0.025,
+    "ci_low": -0.3,
+    "ci_high": 0.275
+  },
+  "mean_high_strategy_gpt_score": 1.5,
+  "mean_low_strategy_gpt_score": 1.525
+}

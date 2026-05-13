@@ -152,6 +152,10 @@ async def main_async():
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
+    parser.add_argument("--solver_api_key_env", type=str, default="")
+    parser.add_argument("--solver_base_url_env", type=str, default="")
+    parser.add_argument("--critic_api_key_env", type=str, default="")
+    parser.add_argument("--critic_base_url_env", type=str, default="")
     args = parser.parse_args()
 
     spec = _load_prompt_spec(args.prompts_json)
@@ -196,6 +200,10 @@ async def main_async():
         max_retry_backoff=args.max_retry_backoff,
         llm_call_logging=bool(int(args.llm_call_logging)),
         llm_call_timeout=args.llm_call_timeout,
+        solver_api_key_env=args.solver_api_key_env,
+        solver_base_url_env=args.solver_base_url_env,
+        critic_api_key_env=args.critic_api_key_env,
+        critic_base_url_env=args.critic_base_url_env,
         lambda_diversity=0.0,
         lambda_homogeneity=0.0,
         lambda_invalid_trace=0.30,

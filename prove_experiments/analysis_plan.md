@@ -7,12 +7,12 @@
 Trace 级：
 
 - 一个 agent 在一道题上的完整推理轨迹。
-- 用于标签稳定性、instructed-family hit rate 和人工标签一致性。
+- 用于标签稳定性、instructed-family hit rate 和 GPT-5.5 盲评一致性。
 
 Question-level team 级：
 
 - 同一道题上 5 个 agent 的 trace 组。
-- 用于 team family diversity、homogeneity、all-same pair rate 和人工 method-diversity 评分。
+- 用于 team family diversity、homogeneity、all-same pair rate 和 GPT-5.5 method-diversity 评分。
 
 Run 级：
 
@@ -89,11 +89,20 @@ Run 级：
 
 在 candidate prompt 评估中：
 
-`signal_rate = count(candidate_diversity_delta > reward_tie_eps and invalid_delta <= invalid_tolerance) / total_candidates`
+`signal_rate = count((family_shift_rate > 0 or rho_reduction > 0) and invalid_delta <= invalid_tolerance) / total_candidates_or_updates`
 
 物理意义：
 
 衡量 reward landscape 中是否存在足够多“多样性提升且无效轨迹不恶化”的候选。如果 signal rate 很低，说明指标或 rewriter/search 可能过严。
+
+当前日志中 candidate 诊断位于 `train_step_logs.jsonl` 的顶层 `candidate_behavior_diagnostics` 字段。`scripts/analyze_prove_experiments.py` 会读取：
+
+- `family_shift_rate`
+- `rho_reduction`
+- `invalid_delta`
+- `summary_embedding_shift`
+
+并输出 `optimization_signal_rate`。
 
 ## 统计检验
 
@@ -101,7 +110,7 @@ Run 级：
 
 - 对 question-level diversity delta 做 paired bootstrap confidence interval。
 - 对 paired question-level 指标差异做 Wilcoxon signed-rank test。
-- 计算人工 method-diversity 分数与策略树 diversity 的 Spearman correlation。
+- 计算 GPT-5.5 method-diversity 分数与策略树 diversity 的 Spearman correlation。
 - 如果有多个标注者，计算 Cohen's kappa 或 Krippendorff's alpha。
 - 报告 effect size 和置信区间，不只报告 p-value。
 
@@ -112,6 +121,13 @@ Run 级：
 - 取 2.5% 和 97.5% 分位数作为 95% CI。
 - 如果 CI 不跨 0，则方向上较稳健。
 
+已实现位置：
+
+- `scripts/analyze_prove_experiments.py`：P2/P3 的 question-level paired bootstrap CI、Wilcoxon 近似检验，以及 P4 model identity check。
+- `scripts/analyze_taxonomy_granularity.py`：P6 各粒度指标的 bootstrap CI，以及可选 GPT-5.5/人工分数 Spearman。
+- `scripts/run_gpt_blind_validation.py`：P7 GPT-5.5 盲评分数与策略树/文本多样性的 Spearman。
+- `scripts/analyze_task_dependence.py`：P8 subject-level intervention effect bootstrap CI。
+
 ## 通过标准汇总
 
 | 主张 | 主要证据 | 通过阈值 |
@@ -120,7 +136,7 @@ Run 级：
 | 不等于表面措辞 | same-strategy paraphrase control | family diversity 低或中等，same-major 高 |
 | 对策略干预敏感 | explicit mixed strategies | diversity > 同策略对照，hit rate >= 0.60 |
 | 不等于模型身份 | cross-LLM comparison | strategy effect > model identity effect |
-| 人工有效性 | blind human ratings | Spearman 正相关，高低组可分 |
+| 独立盲评有效性 | GPT-5.5 blind ratings | Spearman 正相关，高低组可分 |
 | 可优化 | reward sweep | 至少一个非零 reward 设置提升验证集 diversity |
 | 不过度约束 | candidate signal 与 early stopping | signal rate 非零，中等设置不应立即停滞 |
 
@@ -142,7 +158,7 @@ Run 级：
 
 judge/taxonomy 问题：
 
-- P1 失败，或 P7 人工判断与指标明显不一致。
+- P1 失败，或 P7 GPT-5.5 盲评判断与指标明显不一致。
 - 先修 judge prompt、taxonomy 粒度或 label 定义，再训练。
 
 任务限制多样性：

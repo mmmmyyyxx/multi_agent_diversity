@@ -45,7 +45,7 @@
       "instructed_family_hit_rate",
       "team_family_diversity",
       "team_family_homogeneity_rate",
-      "human_method_diversity_score"
+      "gpt55_method_diversity_score"
     ],
     "pass_criteria": {
       "instructed_family_or_major_hit_rate_min": 0.60,
@@ -58,7 +58,13 @@
     "claim": "策略 prompt 效应应大于模型身份效应",
     "type": "test_only_probe",
     "requires_training": false,
-    "primary_controls": ["不同模型使用同一策略", "同一模型使用不同策略"],
+    "primary_controls": ["四个低成本同级模型", "不同模型使用同一策略", "同一模型使用不同策略", "固定 critic/judge model"],
+    "recommended_solver_models": [
+      {"alias": "gpt4omini", "model": "gpt-4o-mini"},
+      {"alias": "gemini_flash_lite", "model": "gemini-2.5-flash-lite"},
+      {"alias": "llama31_8b", "model": "Meta-Llama-3.1-8B-Instruct 或网关同级 8B instruct id"},
+      {"alias": "qwen25_7b", "model": "Qwen2.5-7B-Instruct 或网关同级 7B instruct id"}
+    ],
     "primary_outcomes": [
       "strategy_prompt_effect",
       "model_identity_effect",
@@ -104,7 +110,7 @@
     "requires_training": false,
     "primary_controls": ["同一批 trace records", "不同粒度映射"],
     "primary_outcomes": [
-      "与人工 method diversity 的相关性",
+      "与 GPT-5.5 method diversity 盲评分数的相关性",
       "optimization_signal_rate",
       "label_stability"
     ],
@@ -114,13 +120,13 @@
     "answers_objection": "taxonomy 太粗或太细"
   },
   {
-    "id": "P7_human_blind_validation",
-    "claim": "人类应认为策略树高多样性样本的方法更多样",
-    "type": "human_annotation",
+    "id": "P7_gpt55_blind_validation",
+    "claim": "GPT-5.5 盲评代理应认为策略树高多样性样本的方法更多样",
+    "type": "gpt_blind_evaluation",
     "requires_training": false,
     "primary_controls": ["blind setting", "只看完整 trace", "不展示 prompt/model/label/gold"],
     "primary_outcomes": [
-      "spearman_metric_vs_human_score",
+      "spearman_metric_vs_gpt55_score",
       "high_low_group_separation",
       "coarse_tag_agreement"
     ],
@@ -128,7 +134,7 @@
       "spearman_positive": true,
       "high_low_group_separation_positive": true
     },
-    "answers_objection": "指标缺乏人工构念有效性"
+    "answers_objection": "指标缺乏独立构念有效性"
   },
   {
     "id": "P8_task_dependence_check",

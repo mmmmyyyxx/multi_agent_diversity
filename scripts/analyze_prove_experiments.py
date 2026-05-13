@@ -1,10 +1,9 @@
 import argparse
 import csv
 import json
-import math
 import statistics
 import sys
-from collections import Counter, defaultdict
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -14,30 +13,17 @@ if str(ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.utils import infer_strategy_family_major
 
-
-def _read_json(path: Path) -> Optional[Any]:
-    if not path.exists():
-        return None
-    with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
-    rows = []
-    if not path.exists():
-        return rows
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(obj, dict):
-                rows.append(obj)
-    return rows
+from prove_experiment_utils import (
+    bootstrap_mean_ci,
+    find_prediction_file,
+    infer_probe_kind,
+    read_json,
+    read_jsonl,
+    safe_float,
+    safe_mean,
+    spearman_corr,
+    wilcoxon_signed_rank,
+)
 
 
 def _safe_mean(xs: Iterable[float]) -> float:
@@ -45,16 +31,8 @@ def _safe_mean(xs: Iterable[float]) -> float:
     return float(statistics.mean(vals)) if vals else 0.0
 
 
-def _find_pred_file(run_dir: Path) -> Optional[Path]:
-    files = sorted(run_dir.glob("test*_predictions.jsonl"))
-    if not files:
-        return None
-    final_files = [p for p in files if "final" in p.name]
-    return final_files[-1] if final_files else files[-1]
-
-
 def _load_probe_targets(run_dir: Path) -> Dict[int, List[str]]:
-    probe = _read_json(run_dir / "probe_prompts.json")
+    probe = read_json(run_dir / "probe_prompts.json")
     targets: Dict[int, List[str]] = {}
     if not isinstance(probe, dict):
         return targets
@@ -116,6 +94,10 @@ def _prediction_metrics(preds: List[Dict[str, Any]], targets: Dict[int, List[str
         "eval_size": len(preds),
         "mean_family_diversity": _safe_mean(float(r.get("team_family_diversity", 0.0) or 0.0) for r in preds),
         "mean_family_homogeneity_rate": _safe_mean(float(r.get("team_family_homogeneity_rate", 0.0) or 0.0) for r in preds),
+        "mean_major_family_diversity": _safe_mean(float(r.get("team_major_family_diversity", 0.0) or 0.0) for r in preds),
+        "mean_intra_family_diversity": _safe_mean(float(r.get("team_intra_family_diversity", 0.0) or 0.0) for r in preds),
+        "mean_family_confidence": _safe_mean(float(r.get("mean_family_confidence", 0.0) or 0.0) for r in preds),
+        "low_confidence_share": _safe_mean(float(r.get("low_confidence_share", 0.0) or 0.0) for r in preds),
         "all_same_pair_rate": _safe_mean(int(bool(r.get("all_same_pair", False))) for r in preds),
         "disagreement_rate": _safe_mean(disagreements),
         "vote_acc": _safe_mean(float(r.get("vote_correct", 0.0) or 0.0) for r in preds),
@@ -125,7 +107,7 @@ def _prediction_metrics(preds: List[Dict[str, Any]], targets: Dict[int, List[str
 
 
 def _latest_history_metrics(run_dir: Path) -> Dict[str, Any]:
-    hist = _read_json(run_dir / "history.json")
+    hist = read_json(run_dir / "history.json")
     if not isinstance(hist, list) or not hist:
         return {}
     latest = hist[-1] if isinstance(hist[-1], dict) else {}
@@ -141,7 +123,7 @@ def _latest_history_metrics(run_dir: Path) -> Dict[str, Any]:
 
 
 def _update_metrics(run_dir: Path) -> Dict[str, Any]:
-    rows = _read_jsonl(run_dir / "train_step_logs.jsonl")
+    rows = read_jsonl(run_dir / "train_step_logs.jsonl")
     if not rows:
         return {
             "train_steps": 0,
@@ -150,12 +132,16 @@ def _update_metrics(run_dir: Path) -> Dict[str, Any]:
             "candidate_family_shift_rate": None,
             "candidate_rho_reduction": None,
             "candidate_invalid_delta": None,
+            "candidate_summary_embedding_shift": None,
+            "optimization_signal_rate": None,
         }
     applied = []
     updated_counts = []
     family_shift = []
     rho_reduction = []
     invalid_delta = []
+    summary_shift = []
+    signal_flags = []
     for row in rows:
         upd = row.get("update", {}) if isinstance(row.get("update", {}), dict) else {}
         updated = upd.get("updated_agent_ids", [])
@@ -163,7 +149,19 @@ def _update_metrics(run_dir: Path) -> Dict[str, Any]:
             updated = []
         applied.append(int(len(updated) > 0))
         updated_counts.append(len(updated))
-        for record in upd.get("candidate_behavior_records", []) if isinstance(upd.get("candidate_behavior_records", []), list) else []:
+
+        records = []
+        legacy = upd.get("candidate_behavior_records", [])
+        if isinstance(legacy, list):
+            records.extend([x for x in legacy if isinstance(x, dict)])
+        top = row.get("candidate_behavior_diagnostics", {})
+        if isinstance(top, dict) and top:
+            records.append(top)
+        nested = upd.get("candidate_behavior_diagnostics", {})
+        if isinstance(nested, dict) and nested:
+            records.append(nested)
+
+        for record in records:
             if not isinstance(record, dict):
                 continue
             if record.get("family_shift_rate") is not None:
@@ -172,12 +170,12 @@ def _update_metrics(run_dir: Path) -> Dict[str, Any]:
                 rho_reduction.append(float(record.get("rho_reduction", 0.0) or 0.0))
             if record.get("invalid_delta") is not None:
                 invalid_delta.append(float(record.get("invalid_delta", 0.0) or 0.0))
-        if upd.get("family_shift_rate") is not None:
-            family_shift.append(float(upd.get("family_shift_rate", 0.0) or 0.0))
-        if upd.get("rho_reduction") is not None:
-            rho_reduction.append(float(upd.get("rho_reduction", 0.0) or 0.0))
-        if upd.get("invalid_delta") is not None:
-            invalid_delta.append(float(upd.get("invalid_delta", 0.0) or 0.0))
+            if record.get("summary_embedding_shift") is not None:
+                summary_shift.append(float(record.get("summary_embedding_shift", 0.0) or 0.0))
+            shift_ok = float(record.get("family_shift_rate", 0.0) or 0.0) > 0.0
+            rho_ok = float(record.get("rho_reduction", 0.0) or 0.0) > 0.0
+            invalid_ok = float(record.get("invalid_delta", 0.0) or 0.0) <= 0.1
+            signal_flags.append(int((shift_ok or rho_ok) and invalid_ok))
     return {
         "train_steps": len(rows),
         "update_applied_rate": _safe_mean(applied),
@@ -185,20 +183,68 @@ def _update_metrics(run_dir: Path) -> Dict[str, Any]:
         "candidate_family_shift_rate": _safe_mean(family_shift) if family_shift else None,
         "candidate_rho_reduction": _safe_mean(rho_reduction) if rho_reduction else None,
         "candidate_invalid_delta": _safe_mean(invalid_delta) if invalid_delta else None,
+        "candidate_summary_embedding_shift": _safe_mean(summary_shift) if summary_shift else None,
+        "optimization_signal_rate": _safe_mean(signal_flags) if signal_flags else None,
     }
 
 
+def _major_labels(rec: Dict[str, Any]) -> List[str]:
+    labels = rec.get("primary_family_labels", [])
+    if not isinstance(labels, list):
+        return []
+    return [infer_strategy_family_major(str(x)) for x in labels]
+
+
+def _pairwise_major_disagreement(preds: List[Dict[str, Any]]) -> float:
+    vals = []
+    for rec in preds:
+        majors = _major_labels(rec)
+        n = len(majors)
+        if n < 2:
+            continue
+        total = 0
+        diff = 0
+        for i in range(n):
+            for j in range(i + 1, n):
+                total += 1
+                diff += int(majors[i] != majors[j])
+        if total:
+            vals.append(diff / total)
+    return _safe_mean(vals)
+
+
+def _question_values(run_dir: Path) -> Dict[str, Dict[str, Any]]:
+    pred_file = find_prediction_file(run_dir)
+    preds = read_jsonl(pred_file) if pred_file else []
+    out: Dict[str, Dict[str, Any]] = {}
+    for rec in preds:
+        qh = str(rec.get("question_hash", ""))
+        if not qh:
+            continue
+        out[qh] = {
+            "team_family_diversity": safe_float(rec.get("team_family_diversity")),
+            "team_family_homogeneity_rate": safe_float(rec.get("team_family_homogeneity_rate")),
+            "team_major_family_diversity": safe_float(rec.get("team_major_family_diversity")),
+            "team_intra_family_diversity": safe_float(rec.get("team_intra_family_diversity")),
+            "mean_family_confidence": safe_float(rec.get("mean_family_confidence")),
+            "major_disagreement": _pairwise_major_disagreement([rec]),
+        }
+    return out
+
+
 def analyze_run(run_dir: Path) -> Dict[str, Any]:
-    meta = _read_json(run_dir / "run_meta.json") or {}
+    meta = read_json(run_dir / "run_meta.json") or {}
     cfg = meta.get("config", {}) if isinstance(meta.get("config", {}), dict) else {}
-    pred_file = _find_pred_file(run_dir)
-    preds = _read_jsonl(pred_file) if pred_file else []
+    pred_file = find_prediction_file(run_dir)
+    preds = read_jsonl(pred_file) if pred_file else []
     targets = _load_probe_targets(run_dir)
     probe = meta.get("probe", {}) if isinstance(meta.get("probe", {}), dict) else {}
+    probe_name = probe.get("probe_name", "")
     out = {
         "run_name": run_dir.name,
         "run_dir": str(run_dir),
-        "probe_name": probe.get("probe_name", ""),
+        "probe_name": probe_name,
+        "probe_kind": infer_probe_kind(probe_name, run_dir.name),
         "has_probe_targets": int(bool(targets)),
         "model": cfg.get("model", ""),
         "critic_model": cfg.get("critic_model", ""),
@@ -208,12 +254,90 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         "lambda_diversity": cfg.get("lambda_diversity", ""),
         "lambda_homogeneity": cfg.get("lambda_homogeneity", ""),
         "same_major_family_weight": cfg.get("same_major_family_weight", ""),
+        "macro_diversity_weight": cfg.get("macro_diversity_weight", ""),
         "prediction_file": str(pred_file) if pred_file else "",
+        "major_disagreement_rate": _pairwise_major_disagreement(preds),
     }
     out.update(_prediction_metrics(preds, targets))
     out.update(_latest_history_metrics(run_dir))
     out.update(_update_metrics(run_dir))
     return out
+
+
+def _paired_probe_stats(rows: List[Dict[str, Any]], metric: str, iterations: int, seed: int) -> Dict[str, Any]:
+    same_rows = [r for r in rows if r.get("probe_kind") == "same"]
+    mixed_rows = [r for r in rows if r.get("probe_kind") == "mixed"]
+    same_by_model = defaultdict(list)
+    mixed_by_model = defaultdict(list)
+    for row in same_rows:
+        same_by_model[str(row.get("model", ""))].append(row)
+    for row in mixed_rows:
+        mixed_by_model[str(row.get("model", ""))].append(row)
+
+    deltas: List[float] = []
+    matched_models: List[str] = []
+    for model in sorted(set(same_by_model) & set(mixed_by_model)):
+        same_run = Path(str(same_by_model[model][0].get("run_dir", "")))
+        mixed_run = Path(str(mixed_by_model[model][0].get("run_dir", "")))
+        same_vals = _question_values(same_run)
+        mixed_vals = _question_values(mixed_run)
+        for qh in sorted(set(same_vals) & set(mixed_vals)):
+            deltas.append(safe_float(mixed_vals[qh].get(metric)) - safe_float(same_vals[qh].get(metric)))
+        matched_models.append(model)
+
+    ci = bootstrap_mean_ci(deltas, iterations=iterations, seed=seed)
+    wilcox = wilcoxon_signed_rank(deltas)
+    return {
+        "metric": metric,
+        "matched_models": ",".join(matched_models),
+        "paired_question_count": len(deltas),
+        "mean_delta": ci["mean"],
+        "ci_low": ci["ci_low"],
+        "ci_high": ci["ci_high"],
+        "wilcoxon_z": wilcox["z"],
+        "wilcoxon_p_approx": wilcox["p_approx"],
+    }
+
+
+def _model_identity_stats(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    same_rows = [r for r in rows if r.get("probe_kind") == "same"]
+    mixed_rows = [r for r in rows if r.get("probe_kind") == "mixed"]
+    strategy_effects = []
+    for model in sorted({str(r.get("model", "")) for r in rows}):
+        same = [r for r in same_rows if str(r.get("model", "")) == model]
+        mixed = [r for r in mixed_rows if str(r.get("model", "")) == model]
+        if same and mixed:
+            strategy_effects.append(safe_float(mixed[0].get("major_disagreement_rate")) - safe_float(same[0].get("major_disagreement_rate")))
+
+    model_effects = []
+    for group in [same_rows, mixed_rows]:
+        if len(group) < 2:
+            continue
+        vals = [safe_float(r.get("major_disagreement_rate")) for r in group]
+        if vals:
+            model_effects.append(max(vals) - min(vals))
+
+    return {
+        "strategy_effect_major_disagreement": safe_mean(strategy_effects),
+        "model_identity_effect_major_disagreement": safe_mean(model_effects),
+        "strategy_gt_model_identity": int(bool(strategy_effects) and safe_mean(strategy_effects) > safe_mean(model_effects)),
+    }
+
+
+def _write_stats_json(rows: List[Dict[str, Any]], path: Path, iterations: int, seed: int):
+    stats = {
+        "paired_mixed_minus_same_family_diversity": _paired_probe_stats(rows, "team_family_diversity", iterations, seed),
+        "paired_mixed_minus_same_homogeneity": _paired_probe_stats(rows, "team_family_homogeneity_rate", iterations, seed),
+        "paired_mixed_minus_same_major_diversity": _paired_probe_stats(rows, "team_major_family_diversity", iterations, seed),
+        "model_identity_check": _model_identity_stats(rows),
+        "family_vs_major_disagreement_spearman": spearman_corr(
+            [r.get("mean_family_diversity", 0.0) for r in rows],
+            [r.get("major_disagreement_rate", 0.0) for r in rows],
+        ),
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
+    return stats
 
 
 def _write_csv(rows: List[Dict[str, Any]], path: Path):
@@ -241,6 +365,8 @@ def _write_md(rows: List[Dict[str, Any]], path: Path):
         "eval_size",
         "mean_family_diversity",
         "mean_family_homogeneity_rate",
+        "mean_major_family_diversity",
+        "low_confidence_share",
         "all_same_pair_rate",
         "target_exact_hit_rate",
         "target_same_major_hit_rate",
@@ -250,6 +376,8 @@ def _write_md(rows: List[Dict[str, Any]], path: Path):
         "same_major_family_weight",
         "update_applied_rate",
         "candidate_family_shift_rate",
+        "candidate_invalid_delta",
+        "optimization_signal_rate",
     ]
     lines = ["# Prove Experiment Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for row in rows:
@@ -277,22 +405,51 @@ def _write_md(rows: List[Dict[str, Any]], path: Path):
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _append_stats_md(path: Path, stats: Dict[str, Any]):
+    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    lines.extend(["", "## 统计检验", ""])
+    for name, block in stats.items():
+        if not isinstance(block, dict):
+            continue
+        lines.append(f"### {name}")
+        if "mean_delta" in block:
+            lines.append(
+                f"- paired n={block.get('paired_question_count', 0)}, mean_delta={safe_float(block.get('mean_delta')):.4f}, "
+                f"95% bootstrap CI=[{safe_float(block.get('ci_low')):.4f}, {safe_float(block.get('ci_high')):.4f}], "
+                f"Wilcoxon p~{safe_float(block.get('wilcoxon_p_approx'), 1.0):.4f}"
+            )
+        elif "rho" in block:
+            lines.append(f"- n={block.get('n', 0)}, Spearman rho={safe_float(block.get('rho')):.4f}")
+        else:
+            for k, v in block.items():
+                lines.append(f"- {k}: {_fmt(v)}")
+        lines.append("")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Analyze prove experiment runs.")
     parser.add_argument("--runs_root", type=str, default="prove_experiments/runs")
     parser.add_argument("--out_csv", type=str, default="")
     parser.add_argument("--out_md", type=str, default="")
+    parser.add_argument("--out_stats_json", type=str, default="")
+    parser.add_argument("--bootstrap_iterations", type=int, default=2000)
+    parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     root = Path(args.runs_root)
     run_dirs = [p for p in sorted(root.iterdir()) if p.is_dir() and (p / "run_meta.json").exists()] if root.exists() else []
     rows = [analyze_run(p) for p in run_dirs]
     out_csv = Path(args.out_csv) if args.out_csv else root / "prove_summary.csv"
     out_md = Path(args.out_md) if args.out_md else root / "prove_summary.md"
+    out_stats = Path(args.out_stats_json) if args.out_stats_json else root / "prove_stats.json"
     _write_csv(rows, out_csv)
     _write_md(rows, out_md)
+    stats = _write_stats_json(rows, out_stats, args.bootstrap_iterations, args.seed)
+    _append_stats_md(out_md, stats)
     print(f"Analyzed runs: {len(rows)}")
     print(f"CSV: {out_csv}")
     print(f"Markdown: {out_md}")
+    print(f"Stats JSON: {out_stats}")
 
 
 if __name__ == "__main__":

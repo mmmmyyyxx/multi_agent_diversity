@@ -6,11 +6,11 @@
 
 - P2 同策略 paraphrase 负对照。
 - P3 显式 mixed-strategy 干预。
-- 基于完整 trace 的人工盲评。
+- 基于完整 trace 的 GPT-5.5 盲评代理。
 
 需要的回答：
 
-同策略 paraphrase 不应产生高 family diversity，而 mixed-strategy prompts 应产生更高 diversity。人工也应认为 mixed-strategy 组的方法更多样。
+同策略 paraphrase 不应产生高 family diversity，而 mixed-strategy prompts 应产生更高 diversity。GPT-5.5 盲评代理也应认为 mixed-strategy 组的方法更多样。
 
 ## 质疑 2：judge 不稳定
 
@@ -38,7 +38,7 @@ strategy prompt effect 应大于 model identity effect。指标不应主要由 t
 
 需要的实验：
 
-- 人工盲评。
+- GPT-5.5 盲评代理。
 - invalid trace penalty 监控。
 - 准确率作为安全指标记录，即使不优化准确率。
 

@@ -1,0 +1,9 @@
+{
+  "trace_count": 200,
+  "judgment_count": 600,
+  "mean_primary_agreement": 0.9533333333333333,
+  "mean_secondary_agreement": 0.8666666666666667,
+  "mean_pair_agreement": 0.8616666666666667,
+  "mean_major_agreement": 0.97,
+  "mean_confidence": 0.8433333333333333
+}

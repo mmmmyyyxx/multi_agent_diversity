@@ -1,0 +1,22 @@
+{
+  "agent0": {
+    "agent_id": 0,
+    "initial_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+    "initial_prompt_hash": "1eb68419ee84",
+    "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+    "current_prompt_hash": "1eb68419ee84",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        "current_prompt_hash": "1eb68419ee84"
+      }
+    ]
+  }
+}

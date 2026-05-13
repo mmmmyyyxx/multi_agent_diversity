@@ -1,0 +1,9 @@
+alias,condition,elapsed_sec,model,out_dir,provider,return_code,run_name,solver_api_key_env,solver_base_url_env,status
+gpt4omini,same_elimination,,gpt-4o-mini,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_elimination_gpt4omini_seed42,,,P4_same_elimination_gpt4omini_seed42,,,skipped_existing
+gpt4omini,mixed_strategy,,gpt-4o-mini,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,,,P4_mixed_strategy_gpt4omini_seed42,,,skipped_existing
+gemini_flash_lite,same_elimination,,gemini-2.5-flash-lite,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_elimination_gemini_flash_lite_seed42,,,P4_same_elimination_gemini_flash_lite_seed42,,,skipped_existing
+gemini_flash_lite,mixed_strategy,,gemini-2.5-flash-lite,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,,,P4_mixed_strategy_gemini_flash_lite_seed42,,,skipped_existing
+deepseek_chat,same_elimination,,deepseek-chat,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_elimination_deepseek_chat_seed42,,,P4_same_elimination_deepseek_chat_seed42,,,skipped_existing
+deepseek_chat,mixed_strategy,,deepseek-chat,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,,,P4_mixed_strategy_deepseek_chat_seed42,,,skipped_existing
+qwen25_7b,same_elimination,,qwen2.5-7b-instruct,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_elimination_qwen25_7b_seed42,,,P4_same_elimination_qwen25_7b_seed42,,,skipped_existing
+qwen25_7b,mixed_strategy,141.73298954963684,qwen2.5-7b-instruct,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,yunwu_openai_compatible,0,P4_mixed_strategy_qwen25_7b_seed42,OPENROUTER_API_KEY,OPENROUTER_BASE_URL,ok

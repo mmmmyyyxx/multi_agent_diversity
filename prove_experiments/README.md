@@ -5,7 +5,7 @@
 1. 策略树标签及其派生的多样性分数，是否真的测到了推理轨迹中的真实策略差异。
 2. 这个指标作为 reward 时，是否约束过强，导致训练或 prompt 搜索很难得到稳定提升。
 
-这组实验采用可证伪的证据链。单个正结果不够，需要同时通过受控干预、负对照、judge 稳定性、人工盲评和训练可优化性检查。
+这组实验采用可证伪的证据链。单个正结果不够，需要同时通过受控干预、负对照、judge 稳定性、GPT-5.5 盲评代理和训练可优化性检查。
 
 ## 核心主张
 
@@ -16,7 +16,7 @@
 期望证据：
 
 - 显式策略 prompt 会让同一批题上的 primary 或 secondary family 发生预期变化。
-- 人工盲评认为“方法不同”的 trace 组，策略树多样性也更高。
+- GPT-5.5 盲评代理认为“方法不同”的 trace 组，策略树多样性也更高。
 - 策略树多样性与 trace 语义差异有正相关，但不能被表面措辞、prompt 措辞或 trace 长度完全解释。
 
 ### C2. 区分效度
@@ -87,6 +87,8 @@ reward 必须有足够可用的优化信号。如果指标太严格，候选 pro
 4. `P4_cross_llm_strategy_transfer`
 5. `P5_reward_weight_sweep`
 6. `P6_taxonomy_granularity_sensitivity`
+7. `P7_gpt55_blind_validation`
+8. `P8_task_dependence_check`
 
 如果 P1 失败，应先停止。judge 对同一条 trace 都不稳定时，后续训练结果无法解释。
 
@@ -101,4 +103,16 @@ reward 必须有足够可用的优化信号。如果指标太严格，候选 pro
 - P1/P2/P3 通过、P5 失败：指标可能作为测量是有效的，但 reward、rewriter 或搜索过程太弱或太严格。
 - 只有 `softened_tree` 有效：当前指标可用，但训练 reward 中同 major family 的相似度应放宽。
 - 只有 `bank` 初始化有效：人工角色能产生多样性，但从 shared 初始化自动角色分化仍未解决。
+
+## 已实现脚本
+
+- `scripts/rejudge_strategy_traces.py`：P1，同 trace 多次重判，输出 judge 稳定性。
+- `scripts/run_strategy_probe.py`：P2/P3/P4，自定义 per-agent prompt 的 test-only probe，支持 solver 和 critic 使用不同 OpenAI-compatible endpoint。
+- `scripts/run_p4_cross_llm_matrix.py`：P4，低成本四模型跨 LLM 策略迁移矩阵。
+- `scripts/run_prove_reward_sweep.py`：P5，reward 权重 sweep。
+- `scripts/analyze_prove_experiments.py`：P2/P3/P4/P5 汇总，包含 P5 candidate 诊断、paired bootstrap CI、Wilcoxon 近似检验和 model identity check。
+- `scripts/analyze_taxonomy_granularity.py`：P6，离线重算 major-only、weighted tree、strict leaf-only。
+- `scripts/run_gpt_blind_validation.py`：P7，生成盲评包，并调用 GPT-5.5 做独立盲评分数与 Spearman 分析。
+- `scripts/prepare_human_blind_validation.py`：P7 备选工具，只生成盲评包或接收人工分数回填。
+- `scripts/analyze_task_dependence.py`：P8，按 subject 或数据集分析 reachable strategy diversity。
 

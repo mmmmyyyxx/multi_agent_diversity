@@ -81,6 +81,17 @@ class TextualGradientRLSystem:
             raise ValueError("OPENAI_API_KEY is not set.")
         self.client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
+        solver_key_env = str(getattr(self.cfg, "solver_api_key_env", "") or "").strip()
+        solver_base_env = str(getattr(self.cfg, "solver_base_url_env", "") or "").strip()
+        critic_key_env = str(getattr(self.cfg, "critic_api_key_env", "") or "").strip()
+        critic_base_env = str(getattr(self.cfg, "critic_base_url_env", "") or "").strip()
+        solver_key = os.getenv(solver_key_env) if solver_key_env else api_key
+        solver_base = os.getenv(solver_base_env) if solver_base_env else base_url
+        critic_key = os.getenv(critic_key_env) if critic_key_env else api_key
+        critic_base = os.getenv(critic_base_env) if critic_base_env else base_url
+        self.solver_client = AsyncOpenAI(api_key=solver_key or api_key, base_url=solver_base)
+        self.critic_client = AsyncOpenAI(api_key=critic_key or api_key, base_url=critic_base)
+
         ensure_dir(cfg.out_dir)
         set_seed(cfg.seed)
 
@@ -1667,6 +1678,7 @@ class TextualGradientRLSystem:
         temperature: float,
         max_tokens: int,
         stage: str = "unknown",
+        client_role: str = "critic",
     ) -> str:
         last_err = None
         attempt = 0
@@ -1684,7 +1696,8 @@ class TextualGradientRLSystem:
                         f"attempt={attempt + 1} prompt_chars={prompt_chars} max_tokens={max_tokens} timeout={timeout_sec}",
                         flush=True,
                     )
-                request = self.client.chat.completions.create(
+                client = self.solver_client if client_role == "solver" else self.critic_client
+                request = client.chat.completions.create(
                     model=model,
                     messages=[
                         {"role": "system", "content": system_prompt},
@@ -1766,6 +1779,7 @@ class TextualGradientRLSystem:
             temperature=self.cfg.temperature,
             max_tokens=self.cfg.max_tokens,
             stage=f"solver_agent_{agent_id}",
+            client_role="solver",
         )
         answer = extract_pred_answer_by_task(text, task_type=self.cfg.task_type, question=question)
         return text, answer

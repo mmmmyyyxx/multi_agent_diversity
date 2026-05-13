@@ -61,6 +61,10 @@ class Config:
     max_retry_backoff: float = 30.0
     llm_call_logging: bool = True
     llm_call_timeout: float = 120.0
+    solver_api_key_env: str = ""
+    solver_base_url_env: str = ""
+    critic_api_key_env: str = ""
+    critic_base_url_env: str = ""
 
     bandit_lr: float = 0.2
     baseline_momentum: float = 0.9
@@ -142,6 +146,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
+    parser.add_argument("--solver_api_key_env", type=str, default="")
+    parser.add_argument("--solver_base_url_env", type=str, default="")
+    parser.add_argument("--critic_api_key_env", type=str, default="")
+    parser.add_argument("--critic_base_url_env", type=str, default="")
 
     parser.add_argument("--bandit_lr", type=float, default=0.2)
     parser.add_argument("--baseline_momentum", type=float, default=0.9)

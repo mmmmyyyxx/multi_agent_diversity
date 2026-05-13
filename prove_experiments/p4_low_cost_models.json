@@ -1,0 +1,34 @@
+[
+  {
+    "alias": "gpt4omini",
+    "model": "gpt-4o-mini",
+    "provider": "openai",
+    "solver_api_key_env": "OPENAI_API_KEY",
+    "solver_base_url_env": "OPENAI_BASE_URL",
+    "notes": "Baseline low-cost OpenAI solver."
+  },
+  {
+    "alias": "gemini_flash_lite",
+    "model": "gemini-2.5-flash-lite",
+    "provider": "yunwu_openai_compatible",
+    "solver_api_key_env": "GEMINI_API_KEY",
+    "solver_base_url_env": "GEMINI_OPENAI_BASE_URL",
+    "notes": "Yunwu model id: gemini-2.5-flash-lite."
+  },
+  {
+    "alias": "deepseek_chat",
+    "model": "deepseek-chat",
+    "provider": "yunwu_openai_compatible",
+    "solver_api_key_env": "OPENROUTER_API_KEY",
+    "solver_base_url_env": "OPENROUTER_BASE_URL",
+    "notes": "DeepSeek general chat model used as the low-cost non-OpenAI solver "
+  },
+  {
+    "alias": "qwen25_7b",
+    "model": "qwen2.5-7b-instruct",
+    "provider": "yunwu_openai_compatible",
+    "solver_api_key_env": "OPENROUTER_API_KEY",
+    "solver_base_url_env": "OPENROUTER_BASE_URL",
+    "notes": "Yunwu model id: qwen2.5-7b-instruct."
+  }
+]
