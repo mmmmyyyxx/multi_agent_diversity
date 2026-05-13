@@ -106,7 +106,11 @@ def _extract_agent_snapshots(records: List[Dict[str, Any]], split: str = "") -> 
     for rec in records:
         if not isinstance(rec, dict):
             continue
-        if wanted_split and str(rec.get("split", "")).lower() != wanted_split:
+        rec_split = str(rec.get("split", "")).lower()
+        if wanted_split == "test":
+            if not rec_split.startswith("test"):
+                continue
+        elif wanted_split and rec_split != wanted_split:
             continue
         agents = rec.get("agents", [])
         if not isinstance(agents, list):
@@ -842,7 +846,9 @@ def main():
     out_md.parent.mkdir(parents=True, exist_ok=True)
 
     if rows:
-        fieldnames = [c for c in PUBLIC_METRIC_COLUMNS if any(c in r for r in rows)]
+        public = [c for c in PUBLIC_METRIC_COLUMNS if any(c in r for r in rows)]
+        extra = sorted({k for r in rows for k in r.keys() if k not in public})
+        fieldnames = public + extra
         with out_csv.open("w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fieldnames)
             w.writeheader()

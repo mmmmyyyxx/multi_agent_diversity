@@ -3292,7 +3292,7 @@ class TextualGradientRLSystem:
             confidences = family_metrics.get("family_confidences", [])
             record = {
                 **self._base_log_fields(),
-                "question_hash": self._prompt_hash(q) if q else "",
+                "question_hash": self._prompt_hash(normalize_spaces(q)) if q else "",
                 "answers": answers,
                 "vote_answer": reward_pack["vote_answer"],
                 "vote_correct": reward_pack["vote_correct"],

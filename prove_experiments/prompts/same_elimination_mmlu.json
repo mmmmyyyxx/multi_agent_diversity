@@ -1,0 +1,31 @@
+{
+  "name": "same_elimination_mmlu",
+  "description": "P2 negative control: all agents use the same broad option-elimination strategy with different wording.",
+  "agents": [
+    {
+      "agent_id": 0,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 1,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Compare all answer choices with the stem. Reject distractors first, then choose the remaining best-supported option. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 2,
+      "target_family": ["distractor_elimination", "option_contrast", "option_contradiction_check"],
+      "prompt": "Treat the options as hypotheses. Test each one for contradictions with the question, remove failures, and select the surviving answer. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 3,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Before answering, list why each incorrect option fails. Choose the option least contradicted by the facts in the question. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 4,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Solve by eliminating impossible choices rather than by free-form recall. Check every option and then output exactly one FINAL_ANSWER line."
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_family_homogeneity_rate": 0.6907400112195716,
+      "mean_family_diversity": 0.5169908938889667,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.832
+    },
+    "val": {
+      "mean_family_homogeneity_rate": 0.7107473597152836,
+      "mean_family_diversity": 0.49496196084514904,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.8066666666666666,
+      "size": 150
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_family_homogeneity_rate": 0.6913562058369828,
+      "mean_family_diversity": 0.5114959257811568,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.842
+    },
+    "val": {
+      "mean_family_homogeneity_rate": 0.7014767307172214,
+      "mean_family_diversity": 0.5128297567118073,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.84,
+      "size": 150
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "mean_family_homogeneity_rate": 0.6826338866806857,
+      "mean_family_diversity": 0.527157557395119,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.83
+    },
+    "val": {
+      "mean_family_homogeneity_rate": 0.6502954757590975,
+      "mean_family_diversity": 0.5488684267376548,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.82,
+      "size": 150
+    }
+  },
+  {
+    "epoch": 4,
+    "train": {
+      "mean_family_homogeneity_rate": 0.6714544534559286,
+      "mean_family_diversity": 0.5331853753624071,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.85
+    },
+    "val": {
+      "mean_family_homogeneity_rate": 0.6793616185209078,
+      "mean_family_diversity": 0.535743705846229,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.8,
+      "size": 150
+    }
+  }
+]

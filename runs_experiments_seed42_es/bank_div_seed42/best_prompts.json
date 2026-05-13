@@ -1,0 +1,32 @@
+{
+  "selected_epoch": 3,
+  "early_stopping_metric": "val_mean_family_diversity",
+  "best_validation_score": 0.5488684267376548,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "b13382d815c2",
+      "prompt": "As an evaluator, begin by defining and clarifying key concepts related to the topic, ensuring a solid foundation before analyzing broader implications."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "2af1d0fbf95e",
+      "prompt": "As an evaluator, focus on understanding the conceptual applications of key ideas in various contexts, synthesizing insights to reveal broader implications."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "d14835ad1a58",
+      "prompt": "Analyze the components of the scenario, focusing on their individual roles and how they interrelate to form a cohesive understanding."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "567d24246ea7",
+      "prompt": "As an evaluator, explore diverse reasoning strategies by synthesizing various conceptual frameworks to better understand the interconnectedness of the components involved."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "ee84e52f2578",
+      "prompt": "You are a decomposition-oriented planner. Break the question into facts, constraints, and implications before selecting."
+    }
+  ]
+}

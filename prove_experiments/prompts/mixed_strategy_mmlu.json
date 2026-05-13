@@ -1,0 +1,31 @@
+{
+  "name": "mixed_strategy_mmlu",
+  "description": "P3 intervention: each agent receives a different explicit reasoning strategy.",
+  "agents": [
+    {
+      "agent_id": 0,
+      "target_family": ["concept_definition_match"],
+      "prompt": "Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 1,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 2,
+      "target_family": ["answer_to_stem_backward_check", "option_contradiction_check"],
+      "prompt": "Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 3,
+      "target_family": ["rule_or_principle_application"],
+      "prompt": "Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 4,
+      "target_family": ["decomposition", "stem_evidence_alignment"],
+      "prompt": "Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line."
+    }
+  ]
+}
