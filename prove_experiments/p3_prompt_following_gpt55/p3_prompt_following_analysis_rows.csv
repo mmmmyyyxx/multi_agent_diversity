@@ -1,0 +1,671 @@
+﻿adherence_score,agent_id,answer,auto_primary,auto_primary_major,auto_secondary,auto_secondary_major,blinded_id,confidence,diagnosis,evaluator_model,evidence_against_following,evidence_for_following,followed,inferred_actual_method,model,parse_ok,question_excerpt,question_hash,rationale,raw_response,run_dir,run_name,strategy_instruction,target_families,target_majors,vote_correct
+5,0,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0001,0.95,judge_taxonomy_likely,gpt-5.5,[],"[""Begins by identifying the central concept: “The ethic of willfulness emphasizes the effort, determination, and will someone puts into achieving something.”"", ""Applies the concept boundary to the stem before option analysis: A relied on inherited traits, B trained harder, so B demonstrated more willfulness."", ""Considers the answer options only after establishing the conceptual match."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Defined the ethic of willfulness, applied that concept to the scenario, then checked options against the conceptual match.",deepseek-chat,1,"Question: Suppose two athletes, A and B, are equally skilled. Suppose also that A naturally inherited certain traits from her father that made playing the sport easier for her, and thus she didn't have to train as hard as B. According to the ethic of willfulness, Options: A. A is a better athlete. B",98cc20f41460,"The trace is organized around the requested strategy: it first states the relevant definition of the ethic of willfulness, then maps the facts of the scenario to that definition, and only afterward compares answer choices. The option comparison is secondary and supports the already established concept match.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Defined the ethic of willfulness, applied that concept to the scenario, then checked options against the conceptual match."",
+  ""evidence_for_following"": [
+    ""Begins by identifying the central concept: “The ethic of willfulness emphasizes the effort, determination, and will someone puts into achieving something.”"",
+    ""Applies the concept boundary to the stem before option analysis: A relied on inherited traits, B trained harder, so B demonstrated more willfulness."",
+    ""Considers the answer options only after establishing the conceptual match."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around the requested strategy: it first states the relevant definition of the ethic of willfulness, then maps the facts of the scenario to that definition, and only afterward compares answer choices. The option comparison is secondary and supports the already established concept match.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+5,2,A,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0002,0.95,judge_taxonomy_likely,gpt-5.5,[],"[""Reasons through each option A-D individually."", ""For A, verifies the stem would be true: carbon-14 is formed when cosmic rays interact with nitrogen-14 in the upper atmosphere."", ""For B, C, and D, explains why the stem would not be true or why they are not primary production sources."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Evaluated each answer option against the question stem and rejected those that did not satisfy the production-by-cosmic-radiation condition.,deepseek-chat,1,Question: Carbon-14 is primarily produced by cosmic radiation in the Options: A. atmosphere B. food we eat C. Earth’s interior D. fallout of nuclear bomb tests Select the best option and output FINAL_ANSWER: <A/B/C/D>.,f4888ae525b1,"The trace clearly works through each possible answer by checking whether it satisfies the stem's claim that carbon-14 is primarily produced by cosmic radiation in that location. It rejects options that conflict with the stem and selects the one that makes the stem true. The requested strategy organizes the reasoning, and the output format requirement is met.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Evaluated each answer option against the question stem and rejected those that did not satisfy the production-by-cosmic-radiation condition."",
+  ""evidence_for_following"": [
+    ""Reasons through each option A-D individually."",
+    ""For A, verifies the stem would be true: carbon-14 is formed when cosmic rays interact with nitrogen-14 in the upper atmosphere."",
+    ""For B, C, and D, explains why the stem would not be true or why they are not primary production sources."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly works through each possible answer by checking whether it satisfies the stem's claim that carbon-14 is primarily produced by cosmic radiation in that location. It rejects options that conflict with the stem and selects the one that makes the stem true. The requested strategy organizes the reasoning, and the output format requirement is met.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+3,3,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0003,0.82,ambiguous,gpt-5.5,"[""The trace shifts into option-by-option validation rather than using the stated principle as the organizing method."", ""It claims B and C are also Socrates' objections without explicitly deriving them from the governing rule."", ""The final choice appears based on broad option comparison rather than the identified principle.""]","[""Identifies a relevant governing principle: Socrates objects that Euthyphro gave an example rather than a general definition."", ""Applies that principle to the stem by connecting 'prosecuting a wrongdoer' to being only one holy action.""]",0,Recalled the dialogue and compared each answer option against claimed objections,deepseek-chat,1,"Question: When Euthyphro attempts to define the holy as prosecuting wrongdoers, Socrates objects that: Options: A. there are many other things that are also holy. B. prosecuting wrongdoers is not always holy. C. there is disagreement about what counts as “wrongdoing.” D. all of the above. Select the",2e76aaa7f5bf,"The trace partially follows the instruction by identifying the central Socratic principle that Euthyphro has offered an example rather than a definition, and it applies this to the stem. However, the reasoning then becomes a listwise comparison of A, B, and C, with additional claimed objections not clearly governed by that principle. The requested rule-application strategy is present but does not clearly organize the full answer choice selection.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.82,
+  ""inferred_actual_method"": ""Recalled the dialogue and compared each answer option against claimed objections"",
+  ""evidence_for_following"": [
+    ""Identifies a relevant governing principle: Socrates objects that Euthyphro gave an example rather than a general definition."",
+    ""Applies that principle to the stem by connecting 'prosecuting a wrongdoer' to being only one holy action.""
+  ],
+  ""evidence_against_following"": [
+    ""The trace shifts into option-by-option validation rather than using the stated principle as the organizing method."",
+    ""It claims B and C are also Socrates' objections without explicitly deriving them from the governing rule."",
+    ""The final choice appears based on broad option comparison rather than the identified principle.""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially follows the instruction by identifying the central Socratic principle that Euthyphro has offered an example rather than a definition, and it applies this to the stem. However, the reasoning then becomes a listwise comparison of A, B, and C, with additional claimed objections not clearly governed by that principle. The requested rule-application strategy is present but does not clearly organize the full answer choice selection.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,0
+4,4,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0004,0.9,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly label separate facts, constraints, and implications."", ""The option comparison is somewhat dominant, though it is based on the extracted facts.""]","[""Breaks the stem concept into key facts: resilience means continuing operation during/after an attack and recovering from disruptions."", ""Identifies implications: resilience is not just prevention, detection, or defense."", ""Aligns the facts with each option: A is protection, B is impossible prevention, C is irrelevant, D is closest because it concerns recovery."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Defines the key concept, derives implications, then compares each option against those facts before choosing.",deepseek-chat,1,"Question: In terms of cyber-security, what is meant by 'resilience' and why is it important? Options: A. Resilience refers to the ability of an IT system to identify and defend against a cyber-security threat. B. The only way to build a truly resilient IT system is to ensure that it can repel all ty",237cf3345f62,"The trace substantially follows the requested strategy: it extracts the meaning and implications of cybersecurity resilience, uses those extracted points to assess each answer option, and then selects the best answer with a single FINAL_ANSWER line. The only minor shortcoming is that it does not formally separate the stem into labeled facts, constraints, and implications.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.9,
+  ""inferred_actual_method"": ""Defines the key concept, derives implications, then compares each option against those facts before choosing."",
+  ""evidence_for_following"": [
+    ""Breaks the stem concept into key facts: resilience means continuing operation during/after an attack and recovering from disruptions."",
+    ""Identifies implications: resilience is not just prevention, detection, or defense."",
+    ""Aligns the facts with each option: A is protection, B is impossible prevention, C is irrelevant, D is closest because it concerns recovery."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly label separate facts, constraints, and implications."",
+    ""The option comparison is somewhat dominant, though it is based on the extracted facts.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace substantially follows the requested strategy: it extracts the meaning and implications of cybersecurity resilience, uses those extracted points to assess each answer option, and then selects the best answer with a single FINAL_ANSWER line. The only minor shortcoming is that it does not formally separate the stem into labeled facts, constraints, and implications.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+4,0,B,option_contrast,mmlu_option_semantics,answer_to_stem_backward_check,mmlu_option_semantics,P3PF0005,0.91,judge_taxonomy_likely,gpt-5.5,"[""The trace spends substantial space comparing all answer options."", ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{A}$.'""]","[""States the hypothesis proposes a causal relationship: ants' presence leads to reduced leaf damage by deterring herbivores."", ""Says the experiment should manipulate the presence of ants and observe the effect on leaf damage before analyzing options."", ""Uses that central criterion to evaluate option A as the direct test.""]",1,"Identifies the hypothesis as a causal test requiring manipulation of ant presence and observation of leaf damage, then checks options against that criterion.",gemini-2.5-flash-lite,1,Question: Aggressive ants live in the swollen thorns of a small tropical tree and feed on oil-rich bodies that the tree produces at the tips of its leaflets. Which of the following experiments best tests the hypothesis that ants defend the plant by either killing or chasing away leaf-feeding insects,1163ebe8b743,"The trace clearly identifies the central concept boundary before considering options: the hypothesis is a causal claim about ants defending plants, so the proper experiment manipulates ant presence and measures leaf damage. Option analysis follows from that organizing criterion. The main failure is formatting, since it does not provide the required exact FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.91,
+  ""inferred_actual_method"": ""Identifies the hypothesis as a causal test requiring manipulation of ant presence and observation of leaf damage, then checks options against that criterion."",
+  ""evidence_for_following"": [
+    ""States the hypothesis proposes a causal relationship: ants' presence leads to reduced leaf damage by deterring herbivores."",
+    ""Says the experiment should manipulate the presence of ants and observe the effect on leaf damage before analyzing options."",
+    ""Uses that central criterion to evaluate option A as the direct test.""
+  ],
+  ""evidence_against_following"": [
+    ""The trace spends substantial space comparing all answer options."",
+    ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{A}$.'""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly identifies the central concept boundary before considering options: the hypothesis is a causal claim about ants defending plants, so the proper experiment manipulates ant presence and measures leaf damage. Option analysis follows from that organizing criterion. The main failure is formatting, since it does not provide the required exact FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+4,2,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0006,0.86,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly phrase the analysis as substituting each answer into the blank or asking whether the stem remains true."", ""Rejects options as mismatches rather than explicitly identifying contradictions.""]","[""Examines each option A through D individually."", ""For A, B, and C, explains why the stem description would not fit that school."", ""For D, states that the Sociological School views law as a social phenomenon and tool for social engineering, aligning with the stem."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Evaluated each answer option against the stem by checking whether its jurisprudential meaning fits the described view of law.,gemini-2.5-flash-lite,1,Question: The ________ School of jurisprudence asserts that the law is a means of achieving and advancing certain sociological goals. Options: A. Historical B. Analytical C. Command D. Sociological Select the best option and output FINAL_ANSWER: <A/B/C/D>.,3a5320d3e422,"The trace is organized around checking each option against the question stem and eliminating those whose meanings do not support the stated description, which is essentially the requested backward-working strategy. Although it does not explicitly use the language of substitution or contradiction, the method is substantively followed and the final answer format is correct.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Evaluated each answer option against the stem by checking whether its jurisprudential meaning fits the described view of law."",
+  ""evidence_for_following"": [
+    ""Examines each option A through D individually."",
+    ""For A, B, and C, explains why the stem description would not fit that school."",
+    ""For D, states that the Sociological School views law as a social phenomenon and tool for social engineering, aligning with the stem."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly phrase the analysis as substituting each answer into the blank or asking whether the stem remains true."",
+    ""Rejects options as mismatches rather than explicitly identifying contradictions.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around checking each option against the question stem and eliminating those whose meanings do not support the stated description, which is essentially the requested backward-working strategy. Although it does not explicitly use the language of substitution or contradiction, the method is substantively followed and the final answer format is correct.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+3,3,A,option_contrast,mmlu_option_semantics,answer_to_stem_backward_check,mmlu_option_semantics,P3PF0007,0.78,ambiguous,gpt-5.5,"[""The trace is organized primarily as option-by-option analysis rather than first identifying a governing rule, theorem, principle, or domain law."", ""It does not clearly state a governing principle before applying it."", ""No exactly one FINAL_ANSWER line is visible in the provided trace."", ""The discussion of option D becomes speculative and repetitive rather than applying a clearly identified rule.""]","[""Applies relevant domain facts: Titan has a dense nitrogen atmosphere with methane/ethane."", ""Uses comparative planetary science facts to reject B: Io, Europa, and Enceladus also show recent geologic activity."", ""Explicitly applies atmospheric composition facts to reject C.""]",0,Option-by-option factual evaluation using planetary science facts,gemini-2.5-flash-lite,1,Question: Which of the following is/are true? Options: A. Titan is the only outer solar system moon with a thick atmosphere B. Titan is the only outer solar system moon with evidence for recent geologic activity C. Titan's atmosphere is composed mostly of hydrocarbons D. A and D Select the best opti,99b34d293fce,"The trace partially satisfies the strategy by using and applying relevant domain knowledge about Titan, its atmosphere, and other outer solar system moons. However, it does not explicitly identify a governing rule or principle as the organizing method, instead relying on standard option-by-option comparison, and the required single FINAL_ANSWER line is not present in the visible trace. Because the trace is truncated, the final-format violation cannot be confirmed with complete certainty.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.78,
+  ""inferred_actual_method"": ""Option-by-option factual evaluation using planetary science facts"",
+  ""evidence_for_following"": [
+    ""Applies relevant domain facts: Titan has a dense nitrogen atmosphere with methane/ethane."",
+    ""Uses comparative planetary science facts to reject B: Io, Europa, and Enceladus also show recent geologic activity."",
+    ""Explicitly applies atmospheric composition facts to reject C.""
+  ],
+  ""evidence_against_following"": [
+    ""The trace is organized primarily as option-by-option analysis rather than first identifying a governing rule, theorem, principle, or domain law."",
+    ""It does not clearly state a governing principle before applying it."",
+    ""No exactly one FINAL_ANSWER line is visible in the provided trace."",
+    ""The discussion of option D becomes speculative and repetitive rather than applying a clearly identified rule.""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially satisfies the strategy by using and applying relevant domain knowledge about Titan, its atmosphere, and other outer solar system moons. However, it does not explicitly identify a governing rule or principle as the organizing method, instead relying on standard option-by-option comparison, and the required single FINAL_ANSWER line is not present in the visible trace. Because the trace is truncated, the final-format violation cannot be confirmed with complete certainty.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,0
+5,4,C,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0008,0.95,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly label constraints and implications as separate categories.""]","[""Lists facts: the question asks for the country with the longest life expectancy and identifies the options."", ""Aligns options with approximate life expectancies: Japan 84-85, Sweden 83-84, U.S.A. 77-79, Saudi Arabia 75-77."", ""Draws the implication that Japan has the longest life expectancy among the options."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Broke down the question into facts, identified the options, compared relevant life expectancy data for each country, and selected the highest.",gemini-2.5-flash-lite,1,Question: Which of the following countries has the longest life expectancy? Options: A. U. S. A. B. Sweden C. Japan D. Saudi Arabia Select the best option and output FINAL_ANSWER: <A/B/C/D>.,62df9b0878f8,"The trace clearly uses the requested strategy as its organizing method: it breaks the stem into key facts, identifies the options, aligns the relevant life expectancy information with each option, and then selects the answer. Although it does not explicitly label constraints and implications, those elements are effectively addressed in the comparison and conclusion.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Broke down the question into facts, identified the options, compared relevant life expectancy data for each country, and selected the highest."",
+  ""evidence_for_following"": [
+    ""Lists facts: the question asks for the country with the longest life expectancy and identifies the options."",
+    ""Aligns options with approximate life expectancies: Japan 84-85, Sweden 83-84, U.S.A. 77-79, Saudi Arabia 75-77."",
+    ""Draws the implication that Japan has the longest life expectancy among the options."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly label constraints and implications as separate categories.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly uses the requested strategy as its organizing method: it breaks the stem into key facts, identifies the options, aligns the relevant life expectancy information with each option, and then selects the answer. Although it does not explicitly label constraints and implications, those elements are effectively addressed in the comparison and conclusion.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+5,0,A,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0009,0.97,judge_taxonomy_likely,gpt-5.5,"[""Includes a brief option-by-option comparison after identifying the concept.""]","[""States that the question is about the nature vs. nurture debate."", ""Defines nature as genetics/biological and physical traits, matching it to structural and anatomical differences."", ""Defines nurture as environment/learned behaviors/social interactions, matching it to psychological and social differences before selecting the option."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Identified the nature-versus-nurture concept, mapped each blank to the relevant conceptual category, then checked options.",gpt-4o-mini,1,"Question: Nature is more important for ______ differences, while nurture has greater influence on ______ differences. Options: A. structural and anatomical; psychological and social B. psychological and social; structural and anatomical C. structural and psychological; anatomical and social D. socia",70abc09af563,"The trace clearly follows the requested strategy: it first identifies the central concept being tested, explains the relevant definition boundary between nature and nurture, maps the stem blanks to those definitions, and only then considers the answer options. The option comparison is present but secondary to the concept-driven reasoning, and the response ends with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.97,
+  ""inferred_actual_method"": ""Identified the nature-versus-nurture concept, mapped each blank to the relevant conceptual category, then checked options."",
+  ""evidence_for_following"": [
+    ""States that the question is about the nature vs. nurture debate."",
+    ""Defines nature as genetics/biological and physical traits, matching it to structural and anatomical differences."",
+    ""Defines nurture as environment/learned behaviors/social interactions, matching it to psychological and social differences before selecting the option."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Includes a brief option-by-option comparison after identifying the concept.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly follows the requested strategy: it first identifies the central concept being tested, explains the relevant definition boundary between nature and nurture, maps the stem blanks to those definitions, and only then considers the answer options. The option comparison is present but secondary to the concept-driven reasoning, and the response ends with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+5,2,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0010,0.93,judge_taxonomy_likely,gpt-5.5,[],"[""For A, says the Historical school focuses on evolution and historical context rather than sociological goals, so it does not fit."", ""For B, says Analytical emphasizes logical structure rather than sociological implications, so it does not align."", ""For C, says Command views law as sovereign commands and does not focus on sociological goals, making it unsuitable."", ""For D, says Sociological explicitly asserts law serves sociological goals, making it fitting."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Tested each option against the question stem and rejected those that did not make the stem true.,gpt-4o-mini,1,Question: The ________ School of jurisprudence asserts that the law is a means of achieving and advancing certain sociological goals. Options: A. Historical B. Analytical C. Command D. Sociological Select the best option and output FINAL_ANSWER: <A/B/C/D>.,3a5320d3e422,"The trace is organized around checking each answer option against the stem's description and eliminating options that would contradict or fail to satisfy it. Although phrased as option analysis, this effectively works backward from each answer to see whether the stem remains true, then selects the only fitting option and ends with a single FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.93,
+  ""inferred_actual_method"": ""Tested each option against the question stem and rejected those that did not make the stem true."",
+  ""evidence_for_following"": [
+    ""For A, says the Historical school focuses on evolution and historical context rather than sociological goals, so it does not fit."",
+    ""For B, says Analytical emphasizes logical structure rather than sociological implications, so it does not align."",
+    ""For C, says Command views law as sovereign commands and does not focus on sociological goals, making it unsuitable."",
+    ""For D, says Sociological explicitly asserts law serves sociological goals, making it fitting."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around checking each answer option against the stem's description and eliminating options that would contradict or fail to satisfy it. Although phrased as option analysis, this effectively works backward from each answer to see whether the stem remains true, then selects the only fitting option and ends with a single FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+5,3,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0011,0.95,judge_taxonomy_likely,gpt-5.5,"[""Includes option-by-option comparison, but this supports rather than replaces the requested rule-application method.""]","[""Defines Fuller's inner morality of law as procedural principles such as clarity, consistency, and stability."", ""Applies that principle to the stem by explaining that law involves a moral obligation to follow fair procedures."", ""Evaluates options against the identified principle before choosing B."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Identified Fuller's governing legal-philosophy principle and applied it to each option before selecting the answer.,gpt-4o-mini,1,Question: Which of the following statements best captures the nature of Fuller's 'inner morality of law'? Options: A. A positivist view of law. B. A morality of aspiration. C. An Aquinian concept of natural law. D. A rejection of the 'harm principle'. Select the best option and output FINAL_ANSWER:,a5e382570629,"The trace clearly identifies the relevant domain principle—Fuller's inner morality of law as procedural morality tied to legality—and explicitly applies it to the answer choices before selecting the best option. Although it uses option comparison, the comparison is organized around the governing principle, so it follows the instructed strategy strongly.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Identified Fuller's governing legal-philosophy principle and applied it to each option before selecting the answer."",
+  ""evidence_for_following"": [
+    ""Defines Fuller's inner morality of law as procedural principles such as clarity, consistency, and stability."",
+    ""Applies that principle to the stem by explaining that law involves a moral obligation to follow fair procedures."",
+    ""Evaluates options against the identified principle before choosing B."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Includes option-by-option comparison, but this supports rather than replaces the requested rule-application method.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly identifies the relevant domain principle—Fuller's inner morality of law as procedural morality tied to legality—and explicitly applies it to the answer choices before selecting the best option. Although it uses option comparison, the comparison is organized around the governing principle, so it follows the instructed strategy strongly.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+5,4,B,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0012,0.98,judge_taxonomy_likely,gpt-5.5,[],"[""Explicit sections labeled Facts, Constraints, and Implications."", ""Identifies key facts such as 'sub-optimal but acceptable' and negotiation outcome."", ""Evaluates A, B, C, and D against the stated meaning and constraints."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Broke the stem into facts, constraints, and implications, then evaluated each option against those criteria before selecting the answer.",gpt-4o-mini,1,Question: What is the term for a sub-optimal but acceptable outcome of negotiations between parties? Options: A. Bargaining B. Satisficing C. Accepting D. Compromising Select the best option and output FINAL_ANSWER: <A/B/C/D>.,61575c238849,"The trace directly implements the requested strategy: it decomposes the question stem into facts, constraints, and implications, then aligns those criteria with each answer option before choosing. The option comparison is part of the instructed alignment step rather than a competing method, and the response ends with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.98,
+  ""inferred_actual_method"": ""Broke the stem into facts, constraints, and implications, then evaluated each option against those criteria before selecting the answer."",
+  ""evidence_for_following"": [
+    ""Explicit sections labeled Facts, Constraints, and Implications."",
+    ""Identifies key facts such as 'sub-optimal but acceptable' and negotiation outcome."",
+    ""Evaluates A, B, C, and D against the stated meaning and constraints."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace directly implements the requested strategy: it decomposes the question stem into facts, constraints, and implications, then aligns those criteria with each answer option before choosing. The option comparison is part of the instructed alignment step rather than a competing method, and the response ends with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+1,0,C,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0013,0.97,model_prompt_likely,gpt-5.5,"[""Does not identify the central concept or definition tested"", ""Does not match the stem to a relevant definition or concept boundary before considering options"", ""Provides only 'C' and 'FINAL_ANSWER: C', with no evidence of the requested strategy"", ""Includes an extra standalone 'C' before the FINAL_ANSWER line""]","[""Includes a FINAL_ANSWER line""]",0,direct answer with no visible reasoning,qwen2.5-7b-instruct,1,"Question: The following are methods of increasing reliability and validity in qualitative research designs, EXCEPT: Options: A. Triangulation B. Audits C. Inductive processes D. Member checking Select the best option and output FINAL_ANSWER: <A/B/C/D>.",e55445e07e9f,"The trace gives a bare answer without any reasoning showing that it identified the central concept of qualitative research reliability/validity methods or matched the stem to a definition or boundary before selecting an option. The presence of a FINAL_ANSWER line is only superficial compliance, and the extra standalone answer line further suggests the requested format was not fully followed.","{
+  ""followed"": false,
+  ""adherence_score"": 1,
+  ""confidence"": 0.97,
+  ""inferred_actual_method"": ""direct answer with no visible reasoning"",
+  ""evidence_for_following"": [
+    ""Includes a FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not identify the central concept or definition tested"",
+    ""Does not match the stem to a relevant definition or concept boundary before considering options"",
+    ""Provides only 'C' and 'FINAL_ANSWER: C', with no evidence of the requested strategy"",
+    ""Includes an extra standalone 'C' before the FINAL_ANSWER line""
+  ],
+  ""diagnosis"": ""model_prompt_likely"",
+  ""rationale"": ""The trace gives a bare answer without any reasoning showing that it identified the central concept of qualitative research reliability/validity methods or matched the stem to a definition or boundary before selecting an option. The presence of a FINAL_ANSWER line is only superficial compliance, and the extra standalone answer line further suggests the requested format was not fully followed.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+4,2,C,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0014,0.87,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly frame the reasoning as working backward from each answer by asking whether the stem would still be true if selected"", ""Some analysis is standard option comparison rather than clearly conditional contradiction testing""]","[""Analyzes each option A through D in relation to whether it defines materialism in historical materialism"", ""Rejects options by noting inconsistency or contradiction, e.g. B 'contradicts the stem' and D 'is not accurate'"", ""Selects C because it is 'consistent with historical materialism'"", ""Ends with exactly one FINAL_ANSWER line""]",1,option-by-option consistency checking against the stem and definition,qwen2.5-7b-instruct,1,"Question: In defining the term 'historical materialism', which of the following statements best defines the term 'materialism'? Options: A. Materialism refers to HM's focus on class and the productive basis of societies, as well as the ways in which social structures have the capacity to change and",bab7e93c939f,"The trace mostly follows the instructed strategy: it evaluates each answer against the stem, rejects those that create inconsistency or contradiction, and ends with a single FINAL_ANSWER line. Although it does not explicitly use the conditional 'if this answer were selected' framing, the organizing method is still option-by-option backward consistency checking rather than a different dominant approach.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.87,
+  ""inferred_actual_method"": ""option-by-option consistency checking against the stem and definition"",
+  ""evidence_for_following"": [
+    ""Analyzes each option A through D in relation to whether it defines materialism in historical materialism"",
+    ""Rejects options by noting inconsistency or contradiction, e.g. B 'contradicts the stem' and D 'is not accurate'"",
+    ""Selects C because it is 'consistent with historical materialism'"",
+    ""Ends with exactly one FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly frame the reasoning as working backward from each answer by asking whether the stem would still be true if selected"",
+    ""Some analysis is standard option comparison rather than clearly conditional contradiction testing""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace mostly follows the instructed strategy: it evaluates each answer against the stem, rejects those that create inconsistency or contradiction, and ends with a single FINAL_ANSWER line. Although it does not explicitly use the conditional 'if this answer were selected' framing, the organizing method is still option-by-option backward consistency checking rather than a different dominant approach.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,0
+2,3,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0015,0.9,model_prompt_likely,gpt-5.5,"[""Does not identify a governing rule, theorem, principle, or domain law"", ""Organizes reasoning primarily as an option-by-option comparison"", ""Applies asserted cast facts directly rather than explicitly applying a stated rule or principle""]","[""States the selection criterion: identify which listed singer appeared in the film"", ""Ends with a single FINAL_ANSWER line""]",0,Option-by-option elimination using asserted factual knowledge about the film cast,qwen2.5-7b-instruct,1,Question: What singer appeared in the 1992 baseball film 'A League of Their Own'? Options: A. Brandy B. Madonna C. Garth Brooks D. Whitney Houston Select the best option and output FINAL_ANSWER: <A/B/C/D>.,d1ea00cab364,"The trace uses a straightforward option-elimination approach based on claimed factual knowledge about who appeared in the film. Although it briefly states the task criterion and provides a final answer in the requested format, it does not identify or explicitly apply any governing rule, theorem, principle, or domain law as the strategy instruction required.","{
+  ""followed"": false,
+  ""adherence_score"": 2,
+  ""confidence"": 0.9,
+  ""inferred_actual_method"": ""Option-by-option elimination using asserted factual knowledge about the film cast"",
+  ""evidence_for_following"": [
+    ""States the selection criterion: identify which listed singer appeared in the film"",
+    ""Ends with a single FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not identify a governing rule, theorem, principle, or domain law"",
+    ""Organizes reasoning primarily as an option-by-option comparison"",
+    ""Applies asserted cast facts directly rather than explicitly applying a stated rule or principle""
+  ],
+  ""diagnosis"": ""model_prompt_likely"",
+  ""rationale"": ""The trace uses a straightforward option-elimination approach based on claimed factual knowledge about who appeared in the film. Although it briefly states the task criterion and provides a final answer in the requested format, it does not identify or explicitly apply any governing rule, theorem, principle, or domain law as the strategy instruction required.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,0
+3,4,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0016,0.86,ambiguous,gpt-5.5,"[""Does not explicitly break the stem into facts, constraints, and implications."", ""Does not separately address the 'why is it important' part beyond implying recovery matters."", ""The reasoning is organized mainly as direct option comparison rather than fact/constraint/implication alignment.""]","[""States that resilience is the ability to withstand and recover from attacks or disruptions."", ""Aligns this definition with Option D."", ""Compares Options A, B, and C against the concept."", ""Ends with exactly one FINAL_ANSWER line.""]",0,"Defined the key term, matched it to the best option, and briefly eliminated other options.",qwen2.5-7b-instruct,1,"Question: In terms of cyber-security, what is meant by 'resilience' and why is it important? Options: A. Resilience refers to the ability of an IT system to identify and defend against a cyber-security threat. B. The only way to build a truly resilient IT system is to ensure that it can repel all ty",237cf3345f62,"The trace partially follows the requested strategy by extracting the central fact about cyber-security resilience and aligning it with the options before giving a single FINAL_ANSWER line. However, it does not clearly break the stem into facts, constraints, and implications, and its organization is mainly a standard definition-plus-option-elimination approach. This makes the adherence partial rather than strong.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Defined the key term, matched it to the best option, and briefly eliminated other options."",
+  ""evidence_for_following"": [
+    ""States that resilience is the ability to withstand and recover from attacks or disruptions."",
+    ""Aligns this definition with Option D."",
+    ""Compares Options A, B, and C against the concept."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly break the stem into facts, constraints, and implications."",
+    ""Does not separately address the 'why is it important' part beyond implying recovery matters."",
+    ""The reasoning is organized mainly as direct option comparison rather than fact/constraint/implication alignment.""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially follows the requested strategy by extracting the central fact about cyber-security resilience and aligning it with the options before giving a single FINAL_ANSWER line. However, it does not clearly break the stem into facts, constraints, and implications, and its organization is mainly a standard definition-plus-option-elimination approach. This makes the adherence partial rather than strong.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+4,0,A,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0017,0.83,judge_taxonomy_likely,gpt-5.5,"[""It does not explicitly frame the task as identifying a definition or concept boundary."", ""It includes a standard option-by-option elimination section.""]","[""The trace first identifies the central theme: Morris's hatred of modern civilization and how it led him to socialism."", ""It notes the title, 'How I Became a Socialist,' and connects the passage's details to that central inference before considering options."", ""Only after establishing the passage's main idea does it evaluate A through D.""]",1,Summarized the passage's central idea before checking each answer option against it.,deepseek-chat,1,"Question: This question refers to the following information. Apart from the desire to produce beautiful things, the leading passion of my life has been and is hatred of modern civilization. What shall I say of it now, when the words are put into my mouth, my hope of its destruction—what shall I say",e668c65c8a2a,"The trace is organized around extracting the central concept from the stem and passage before considering the answer choices. Although it later compares options, that comparison is secondary to the initial passage-based inference, so it mostly follows the requested strategy.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.83,
+  ""inferred_actual_method"": ""Summarized the passage's central idea before checking each answer option against it."",
+  ""evidence_for_following"": [
+    ""The trace first identifies the central theme: Morris's hatred of modern civilization and how it led him to socialism."",
+    ""It notes the title, 'How I Became a Socialist,' and connects the passage's details to that central inference before considering options."",
+    ""Only after establishing the passage's main idea does it evaluate A through D.""
+  ],
+  ""evidence_against_following"": [
+    ""It does not explicitly frame the task as identifying a definition or concept boundary."",
+    ""It includes a standard option-by-option elimination section.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around extracting the central concept from the stem and passage before considering the answer choices. Although it later compares options, that comparison is secondary to the initial passage-based inference, so it mostly follows the requested strategy.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+3,2,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0018,0.82,ambiguous,gpt-5.5,"[""Begins by deriving the answer directly from the stem rather than working backward from each plausible answer"", ""Does not explicitly ask whether the stem would still be true if each answer were selected"", ""Option comparison is secondary to forward anatomical reasoning""]","[""Checks each option: incisive, mental, buccal, lingual nerve"", ""Rejects options by identifying contradictions with the lesion site, e.g. buccal nerve is posterior and lingual nerve supplies lingual mucosa"", ""Ends with exactly one FINAL_ANSWER line""]",1,"Forward anatomical reasoning from lesion location to innervation, followed by option-by-option elimination",deepseek-chat,1,Question: You notice a lesion on the labial alveolar mucosa of the lower right lateral incisor tooth of one of your patients and decide to take a biopsy to send for oral pathology report Which nerve would require local anaesthesia in order to carry out a pain-free biopsy? Options: A. The incisive ne,94c6b3e7fb22,"The trace partially follows the requested approach by checking all listed options and rejecting those that conflict with the anatomical location, and it ends with a single FINAL_ANSWER line. However, the main organizing method is forward reasoning from the lesion location to the relevant nerve, with option evaluation added afterward, rather than genuinely working backward from each plausible answer to test the stem.","{
+  ""followed"": true,
+  ""adherence_score"": 3,
+  ""confidence"": 0.82,
+  ""inferred_actual_method"": ""Forward anatomical reasoning from lesion location to innervation, followed by option-by-option elimination"",
+  ""evidence_for_following"": [
+    ""Checks each option: incisive, mental, buccal, lingual nerve"",
+    ""Rejects options by identifying contradictions with the lesion site, e.g. buccal nerve is posterior and lingual nerve supplies lingual mucosa"",
+    ""Ends with exactly one FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Begins by deriving the answer directly from the stem rather than working backward from each plausible answer"",
+    ""Does not explicitly ask whether the stem would still be true if each answer were selected"",
+    ""Option comparison is secondary to forward anatomical reasoning""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially follows the requested approach by checking all listed options and rejecting those that conflict with the anatomical location, and it ends with a single FINAL_ANSWER line. However, the main organizing method is forward reasoning from the lesion location to the relevant nerve, with option evaluation added afterward, rather than genuinely working backward from each plausible answer to test the stem.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+3,3,A,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0019,0.86,ambiguous,gpt-5.5,"[""Does not identify any governing rule, theorem, principle, or domain law explicitly"", ""Reasoning is organized mainly around passage paraphrase and comparing options A-D""]","[""Applies facts from the passage before choosing: hatred of modern civilization, waste, misery, and socialism as the alternative"", ""Ends with a single FINAL_ANSWER line""]",0,textual evidence summary followed by option elimination,deepseek-chat,1,"Question: This question refers to the following information. Apart from the desire to produce beautiful things, the leading passion of my life has been and is hatred of modern civilization. What shall I say of it now, when the words are put into my mouth, my hope of its destruction—what shall I say",e668c65c8a2a,"The trace uses evidence from the passage and applies it to the answer choices, and it ends with exactly one FINAL_ANSWER line. However, it never explicitly identifies a governing rule, principle, theorem, or domain law, which is a central requirement of the instructed strategy. The method is mostly textual interpretation and option elimination rather than rule-first application.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""textual evidence summary followed by option elimination"",
+  ""evidence_for_following"": [
+    ""Applies facts from the passage before choosing: hatred of modern civilization, waste, misery, and socialism as the alternative"",
+    ""Ends with a single FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not identify any governing rule, theorem, principle, or domain law explicitly"",
+    ""Reasoning is organized mainly around passage paraphrase and comparing options A-D""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace uses evidence from the passage and applies it to the answer choices, and it ends with exactly one FINAL_ANSWER line. However, it never explicitly identifies a governing rule, principle, theorem, or domain law, which is a central requirement of the instructed strategy. The method is mostly textual interpretation and option elimination rather than rule-first application.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+5,4,A,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0020,0.95,judge_taxonomy_likely,gpt-5.5,[],"[""Identifies the key fact: Euthyphro defines the pious as prosecuting a wrongdoer."", ""Draws the implication: Socrates objects that this is only an example, not a general definition."", ""Aligns the implication with each option A through D."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Broke down the stem into the key fact and implication, then matched that implication against each answer option before selecting.",deepseek-chat,1,"Question: When Euthyphro attempts to define the holy as prosecuting wrongdoers, Socrates objects that: Options: A. there are many other things that are also holy. B. prosecuting wrongdoers is not always holy. C. there is disagreement about what counts as “wrongdoing.” D. all of the above. Select the",2e76aaa7f5bf,"The trace is clearly organized around breaking down the stem's philosophical point and then evaluating each option against that point. Although it does not explicitly label facts, constraints, and implications, it substantively performs that process and aligns the important implication with all options before giving exactly one final answer line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Broke down the stem into the key fact and implication, then matched that implication against each answer option before selecting."",
+  ""evidence_for_following"": [
+    ""Identifies the key fact: Euthyphro defines the pious as prosecuting a wrongdoer."",
+    ""Draws the implication: Socrates objects that this is only an example, not a general definition."",
+    ""Aligns the implication with each option A through D."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is clearly organized around breaking down the stem's philosophical point and then evaluating each option against that point. Although it does not explicitly label facts, constraints, and implications, it substantively performs that process and aligns the important implication with all options before giving exactly one final answer line.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,0
+4,0,A,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0021,0.88,judge_taxonomy_likely,gpt-5.5,"[""It proceeds into explicit option-by-option analysis after the concept setup."", ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is boxed A.'""]","[""Identifies the question as asking about consequences of expansionary monetary policy by the Fed."", ""Defines easy money as increasing the money supply and lowering interest rates before analyzing options."", ""Uses the concept boundary of lower rates causing currency depreciation and higher net exports to select A.""]",1,"Defined expansionary monetary policy and its expected effects, then used that concept to evaluate each option.",gemini-2.5-flash-lite,1,Question: A use of easy money (expansionary) policy by the Fed could result in which of the following? Options: A. an increase in net exports B. a decrease in net exports C. an increase in the real interest rate D. an increase in the nominal interest rate Select the best option and output FINAL_ANSW,896e76701411,"The trace mostly follows the requested strategy: it first identifies and defines the central concept of expansionary monetary policy and then matches that concept to the likely outcome before selecting an option. The option comparison is present but follows from the concept-based reasoning rather than replacing it. The main failure is formatting, since it does not provide the required exact FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.88,
+  ""inferred_actual_method"": ""Defined expansionary monetary policy and its expected effects, then used that concept to evaluate each option."",
+  ""evidence_for_following"": [
+    ""Identifies the question as asking about consequences of expansionary monetary policy by the Fed."",
+    ""Defines easy money as increasing the money supply and lowering interest rates before analyzing options."",
+    ""Uses the concept boundary of lower rates causing currency depreciation and higher net exports to select A.""
+  ],
+  ""evidence_against_following"": [
+    ""It proceeds into explicit option-by-option analysis after the concept setup."",
+    ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is boxed A.'""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace mostly follows the requested strategy: it first identifies and defines the central concept of expansionary monetary policy and then matches that concept to the likely outcome before selecting an option. The option comparison is present but follows from the concept-based reasoning rather than replacing it. The main failure is formatting, since it does not provide the required exact FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,0
+4,2,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0022,0.86,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly phrase the reasoning as 'if this answer were selected, would the stem still be true?'"", ""Uses theory-category matching more than explicit contradiction testing""]","[""Analyzes each option A, B, C, and D individually against the question stem about trait theorists like Eysenck"", ""Rejects A, B, and C because they correspond to other theories rather than trait theory"", ""Accepts D because it aligns with stable individual differences and nature/nurture influences"", ""Ends with exactly one FINAL_ANSWER line""]",1,Option-by-option elimination by checking whether each answer matches trait theory and rejecting mismatches before selecting D,gemini-2.5-flash-lite,1,"Question: According to trait theorists, such as Hans Eysenck, the basis for personality is Options: A. conflicting sources of psychic energy B. the distinctive human ability to act purposefully and to shape our own destiny C. the interactions between thought and the environment, which influence beha",82e534086949,"The trace is organized around testing each answer option against the stem and rejecting those that would make the stem describe the wrong personality theory, which is substantially the requested backward-from-options approach. Although it does not explicitly use the stem-truth/contradiction wording, the method effectively checks whether each option can satisfy the stem and eliminates contradictions, then provides exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Option-by-option elimination by checking whether each answer matches trait theory and rejecting mismatches before selecting D"",
+  ""evidence_for_following"": [
+    ""Analyzes each option A, B, C, and D individually against the question stem about trait theorists like Eysenck"",
+    ""Rejects A, B, and C because they correspond to other theories rather than trait theory"",
+    ""Accepts D because it aligns with stable individual differences and nature/nurture influences"",
+    ""Ends with exactly one FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly phrase the reasoning as 'if this answer were selected, would the stem still be true?'"",
+    ""Uses theory-category matching more than explicit contradiction testing""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around testing each answer option against the stem and rejecting those that would make the stem describe the wrong personality theory, which is substantially the requested backward-from-options approach. Although it does not explicitly use the stem-truth/contradiction wording, the method effectively checks whether each option can satisfy the stem and eliminates contradictions, then provides exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+4,3,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0023,0.86,judge_taxonomy_likely,gpt-5.5,"[""Much of the trace is organized as option-by-option elimination rather than explicitly first naming a governing rule."", ""It says one needs to recall or research the case rather than clearly presenting the governing principle at the outset.""]","[""Identifies Bakke as a landmark constitutional law case."", ""States that Bakke dealt with affirmative action and racial quotas in university admissions."", ""Explains the governing legal principle: race could be considered as one factor, but rigid racial quotas were unconstitutional."", ""Applies that case issue to select option D."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Recalled the legal issue and holding of the Supreme Court case, then matched that principle to the answer choices.",gemini-2.5-flash-lite,1,Question: The Supreme Court case Regents of University of California v. Bakke concerned which of the following issues? Options: A. The rights of students to protest on a publicly funded campus B. In-class prayer at a publicly funded school C. The rights of students to carry concealed weapons on camp,e318897b7120,"The trace mostly follows the instructed strategy because it identifies the relevant legal principle/domain law from Regents v. Bakke—the constitutionality of affirmative action and racial quotas in university admissions—and applies it to the answer choices before selecting D. Although it includes substantial option comparison, the key reasoning depends on the case’s governing issue and holding, and it ends with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Recalled the legal issue and holding of the Supreme Court case, then matched that principle to the answer choices."",
+  ""evidence_for_following"": [
+    ""Identifies Bakke as a landmark constitutional law case."",
+    ""States that Bakke dealt with affirmative action and racial quotas in university admissions."",
+    ""Explains the governing legal principle: race could be considered as one factor, but rigid racial quotas were unconstitutional."",
+    ""Applies that case issue to select option D."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Much of the trace is organized as option-by-option elimination rather than explicitly first naming a governing rule."",
+    ""It says one needs to recall or research the case rather than clearly presenting the governing principle at the outset.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace mostly follows the instructed strategy because it identifies the relevant legal principle/domain law from Regents v. Bakke—the constitutionality of affirmative action and racial quotas in university admissions—and applies it to the answer choices before selecting D. Although it includes substantial option comparison, the key reasoning depends on the case’s governing issue and holding, and it ends with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+4,4,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0024,0.9,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly separate constraints and implications from facts."", ""The alignment is mostly option-by-option rather than a structured mapping of every important fact to each option.""]","[""Lists stem facts: case name, Supreme Court case, and that the question asks what issue it concerned."", ""Analyzes each option A through D against what Bakke was about."", ""States that option D aligns with the case because it involved affirmative action and racial quotas in public university admissions."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Identifies key facts from the stem, uses case-specific knowledge to compare each option, then selects the matching option with a final answer line.",gemini-2.5-flash-lite,1,Question: The Supreme Court case Regents of University of California v. Bakke concerned which of the following issues? Options: A. The rights of students to protest on a publicly funded campus B. In-class prayer at a publicly funded school C. The rights of students to carry concealed weapons on camp,e318897b7120,"The trace substantially follows the requested approach: it breaks out key facts from the stem, compares the options against the relevant case issue, and ends with a single FINAL_ANSWER line. Although it does not explicitly label constraints or implications, the option analysis uses the important case implication that Bakke concerned affirmative action and racial quotas, so the requested strategy clearly organizes the reasoning.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.9,
+  ""inferred_actual_method"": ""Identifies key facts from the stem, uses case-specific knowledge to compare each option, then selects the matching option with a final answer line."",
+  ""evidence_for_following"": [
+    ""Lists stem facts: case name, Supreme Court case, and that the question asks what issue it concerned."",
+    ""Analyzes each option A through D against what Bakke was about."",
+    ""States that option D aligns with the case because it involved affirmative action and racial quotas in public university admissions."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly separate constraints and implications from facts."",
+    ""The alignment is mostly option-by-option rather than a structured mapping of every important fact to each option.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace substantially follows the requested approach: it breaks out key facts from the stem, compares the options against the relevant case issue, and ends with a single FINAL_ANSWER line. Although it does not explicitly label constraints or implications, the option analysis uses the important case implication that Bakke concerned affirmative action and racial quotas, so the requested strategy clearly organizes the reasoning.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+3,0,B,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0025,0.85,ambiguous,gpt-5.5,"[""Begins by saying 'we need to analyze the options' rather than first identifying the central concept independently."", ""The trace is organized around comparing A, B, C, and D option by option."", ""It does not clearly match the stem to a concept boundary before considering options.""]","[""Identifies that the question is about money's role as a price."", ""Defines unit of account as a standard numerical measure of value and matches $1.25 as a price to that definition."", ""Ends with exactly one FINAL_ANSWER line.""]",0,option-by-option elimination with some definition matching,gpt-4o-mini,1,Question: Which function of money best defines $1.25 as the price of a 20-ounce bottle of pop? Options: A. Medium of exchange B. Unit of account C. Store of value D. Transfer of ownership Select the best option and output FINAL_ANSWER: <A/B/C/D>.,b52740641844,"The trace partially follows the requested strategy because it does recognize the relevant definition of 'unit of account' and connects the price in the stem to that definition. However, the reasoning is primarily structured as option-by-option analysis, and it explicitly begins with analyzing the options rather than first identifying the central concept before considering them. The final-answer formatting requirement is satisfied.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.85,
+  ""inferred_actual_method"": ""option-by-option elimination with some definition matching"",
+  ""evidence_for_following"": [
+    ""Identifies that the question is about money's role as a price."",
+    ""Defines unit of account as a standard numerical measure of value and matches $1.25 as a price to that definition."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Begins by saying 'we need to analyze the options' rather than first identifying the central concept independently."",
+    ""The trace is organized around comparing A, B, C, and D option by option."",
+    ""It does not clearly match the stem to a concept boundary before considering options.""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially follows the requested strategy because it does recognize the relevant definition of 'unit of account' and connects the price in the stem to that definition. However, the reasoning is primarily structured as option-by-option analysis, and it explicitly begins with analyzing the options rather than first identifying the central concept before considering them. The final-answer formatting requirement is satisfied.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+2,2,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0026,0.92,model_prompt_likely,gpt-5.5,"[""It does not work backward from each plausible answer option."", ""It does not test options A, B, C, and D against the stem or reject options one by one based on contradictions."", ""The organizing method is forward evaluation of the statements rather than backward validation from answer choices.""]","[""It checks whether Statement 1 is true and finds a contradiction via leading coefficient cancellation."", ""It checks whether Statement 2 is true and then selects the option matching False, True."", ""It ends with exactly one FINAL_ANSWER line.""]",0,"Directly evaluated each statement for truth, then matched the resulting truth values to an option.",gpt-4o-mini,1,"Question: Statement 1 | If R is a ring and f(x) and g(x) are in R[x], then deg (f(x)+g(x)) = maximum (deg f(x), deg g(x)). Statement 2 | If F is a field then every ideal of F[x] is principal. Options: A. True, True B. False, False C. True, False D. False, True Select the best option and output FINAL",11f7bfe474b4,"The trace correctly evaluates the statements and maps them to option D, but it does not follow the requested backward-from-options strategy. There is some incidental contradiction checking for Statement 1 and the required final answer format is satisfied, but the answer choices are not used as the organizing framework.","{
+  ""followed"": false,
+  ""adherence_score"": 2,
+  ""confidence"": 0.92,
+  ""inferred_actual_method"": ""Directly evaluated each statement for truth, then matched the resulting truth values to an option."",
+  ""evidence_for_following"": [
+    ""It checks whether Statement 1 is true and finds a contradiction via leading coefficient cancellation."",
+    ""It checks whether Statement 2 is true and then selects the option matching False, True."",
+    ""It ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""It does not work backward from each plausible answer option."",
+    ""It does not test options A, B, C, and D against the stem or reject options one by one based on contradictions."",
+    ""The organizing method is forward evaluation of the statements rather than backward validation from answer choices.""
+  ],
+  ""diagnosis"": ""model_prompt_likely"",
+  ""rationale"": ""The trace correctly evaluates the statements and maps them to option D, but it does not follow the requested backward-from-options strategy. There is some incidental contradiction checking for Statement 1 and the required final answer format is satisfied, but the answer choices are not used as the organizing framework.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+4,3,C,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0027,0.88,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly announce a governing rule or principle before evaluating the options."", ""The reasoning is organized somewhat as option-by-option comparison rather than first stating a general rule.""]","[""States that triangulation uses multiple sources or methods to cross-verify findings, increasing reliability and validity."", ""Explains that audits provide external checks on the research process and findings."", ""Explains that member checking lets participants review findings for accuracy."", ""Contrasts inductive processes as theory-generating rather than a method for increasing reliability and validity."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Uses domain knowledge about qualitative research validity/reliability methods and applies it to each option.,gpt-4o-mini,1,"Question: The following are methods of increasing reliability and validity in qualitative research designs, EXCEPT: Options: A. Triangulation B. Audits C. Inductive processes D. Member checking Select the best option and output FINAL_ANSWER: <A/B/C/D>.",e55445e07e9f,"The trace mostly follows the requested strategy by using the relevant domain principle—recognized qualitative research strategies for reliability and validity—and applying it to the facts/options before selecting the exception. Although it does not formally name a governing rule at the outset and uses option comparison, the comparison is grounded in the domain rule rather than being merely eliminative.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.88,
+  ""inferred_actual_method"": ""Uses domain knowledge about qualitative research validity/reliability methods and applies it to each option."",
+  ""evidence_for_following"": [
+    ""States that triangulation uses multiple sources or methods to cross-verify findings, increasing reliability and validity."",
+    ""Explains that audits provide external checks on the research process and findings."",
+    ""Explains that member checking lets participants review findings for accuracy."",
+    ""Contrasts inductive processes as theory-generating rather than a method for increasing reliability and validity."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly announce a governing rule or principle before evaluating the options."",
+    ""The reasoning is organized somewhat as option-by-option comparison rather than first stating a general rule.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace mostly follows the requested strategy by using the relevant domain principle—recognized qualitative research strategies for reliability and validity—and applying it to the facts/options before selecting the exception. Although it does not formally name a governing rule at the outset and uses option comparison, the comparison is grounded in the domain rule rather than being merely eliminative.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+5,4,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0028,0.98,judge_taxonomy_likely,gpt-5.5,[],"[""Lists the stem facts: fluted point on both faces and association with extinct elephants."", ""Analyzes each option against the relevant facts, explaining why Thule, Lapita, and Dorset do not fit and why Clovis does."", ""Includes a constraints and implications section connecting the clues to Clovis."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Broke the question into key facts, checked each option against those facts, stated implications, then selected the matching answer.",gpt-4o-mini,1,Question: Which of the following is the name of the stone blade exhibiting a fluted point on both faces and associated with extinct elephants? Options: A. Thule B. Lapita C. Dorset D. Clovis Select the best option and output FINAL_ANSWER: <A/B/C/D>.,1344eb3e8338,"The trace is clearly organized around the requested strategy: it separates facts, evaluates the options in light of those facts, states the implication, and provides a single final answer line. The option comparison is not a competing method but the required alignment of facts with answer choices.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.98,
+  ""inferred_actual_method"": ""Broke the question into key facts, checked each option against those facts, stated implications, then selected the matching answer."",
+  ""evidence_for_following"": [
+    ""Lists the stem facts: fluted point on both faces and association with extinct elephants."",
+    ""Analyzes each option against the relevant facts, explaining why Thule, Lapita, and Dorset do not fit and why Clovis does."",
+    ""Includes a constraints and implications section connecting the clues to Clovis."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is clearly organized around the requested strategy: it separates facts, evaluates the options in light of those facts, states the implication, and provides a single final answer line. The option comparison is not a competing method but the required alignment of facts with answer choices.""
+}",prove_experiments\runs\P4_mixed_strategy_gpt4omini_seed42,P4_mixed_strategy_gpt4omini_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+2,0,B,option_contrast,mmlu_option_semantics,option_contradiction_check,mmlu_option_semantics,P3PF0029,0.92,model_prompt_likely,gpt-5.5,"[""No identification of the central concept or definition tested"", ""No matching of the stem to Fuller's concept boundary before considering options"", ""No evidence of reasoning beyond selecting an option""]","[""Ends with exactly one FINAL_ANSWER line""]",0,provided only a final answer with no visible reasoning,qwen2.5-7b-instruct,1,Question: Which of the following statements best captures the nature of Fuller's 'inner morality of law'? Options: A. A positivist view of law. B. A morality of aspiration. C. An Aquinian concept of natural law. D. A rejection of the 'harm principle'. Select the best option and output FINAL_ANSWER:,a5e382570629,"The trace satisfies the formatting requirement by giving a single FINAL_ANSWER line, but it provides no evidence that the requested strategy of identifying the central concept and matching the stem to the relevant definition was used. The response could be a guess or direct answer without following the instructed method.","{
+  ""followed"": false,
+  ""adherence_score"": 2,
+  ""confidence"": 0.92,
+  ""inferred_actual_method"": ""provided only a final answer with no visible reasoning"",
+  ""evidence_for_following"": [
+    ""Ends with exactly one FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""No identification of the central concept or definition tested"",
+    ""No matching of the stem to Fuller's concept boundary before considering options"",
+    ""No evidence of reasoning beyond selecting an option""
+  ],
+  ""diagnosis"": ""model_prompt_likely"",
+  ""rationale"": ""The trace satisfies the formatting requirement by giving a single FINAL_ANSWER line, but it provides no evidence that the requested strategy of identifying the central concept and matching the stem to the relevant definition was used. The response could be a guess or direct answer without following the instructed method.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+5,2,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0030,0.94,judge_taxonomy_likely,gpt-5.5,[],"[""Analyzes each option A through D individually."", ""Rejects options because they do not fit stem criteria such as containing four hydroxycarbon rings or being found inside/outside cells."", ""For B, states that steroid fits all the criteria mentioned in the question."", ""Ends with exactly one FINAL_ANSWER line.""]",1,Checked each answer option against the stem criteria and rejected those that contradicted the described hormone properties.,qwen2.5-7b-instruct,1,"Question: A scientist using mouse models to determine the response of blood hormones to large levels of glucose in the body discovers a new hormone not previously described. According to his data, this hormone is found both inside and out of cells when carrying out its function, increase the amount",72ec25d9df6f,"The trace clearly works backward from the answer choices to the question stem by testing whether each option would satisfy the hormone properties described and rejecting those that create mismatches. Although it is formatted as option comparison, that comparison is the requested backward-checking method, and the response ends with a single FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.94,
+  ""inferred_actual_method"": ""Checked each answer option against the stem criteria and rejected those that contradicted the described hormone properties."",
+  ""evidence_for_following"": [
+    ""Analyzes each option A through D individually."",
+    ""Rejects options because they do not fit stem criteria such as containing four hydroxycarbon rings or being found inside/outside cells."",
+    ""For B, states that steroid fits all the criteria mentioned in the question."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly works backward from the answer choices to the question stem by testing whether each option would satisfy the hormone properties described and rejecting those that create mismatches. Although it is formatted as option comparison, that comparison is the requested backward-checking method, and the response ends with a single FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+5,3,B,option_contrast,mmlu_option_semantics,answer_to_stem_backward_check,mmlu_option_semantics,P3PF0031,0.95,judge_taxonomy_likely,gpt-5.5,"[""Includes option-by-option comparison, but it is secondary to applying the identified principle.""]","[""States the governing rule: recognition is a formal acknowledgment of state existence, not a cause or condition for it."", ""Applies the rule to the facts/options: option B says recognition is declaratory of statehood but does not create or determine it."", ""Ends with exactly one FINAL_ANSWER line: FINAL_ANSWER: B""]",1,"Defined the governing legal/international law principle of declaratory recognition, applied it to the answer choices, and selected the matching option.",qwen2.5-7b-instruct,1,Question: What is the declaratory theory of recognition? Options: A. Recognition is determinate for the existence of statehood B. Recognition is simply declaratory of statehood but not determinate C. Recognition is merely a declaration of interest D. Recognition requires a declaration by the newly-c,b6f82dae77a3,"The trace clearly identifies the governing principle behind the declaratory theory of recognition and uses that principle to evaluate the options before choosing. Although it analyzes each option, the organizing method is the explicit statement and application of the legal doctrine, and it ends with exactly one FINAL_ANSWER line.","{""followed"":true,""adherence_score"":5,""confidence"":0.95,""inferred_actual_method"":""Defined the governing legal/international law principle of declaratory recognition, applied it to the answer choices, and selected the matching option."",""evidence_for_following"":[""States the governing rule: recognition is a formal acknowledgment of state existence, not a cause or condition for it."",""Applies the rule to the facts/options: option B says recognition is declaratory of statehood but does not create or determine it."",""Ends with exactly one FINAL_ANSWER line: FINAL_ANSWER: B""],""evidence_against_following"":[""Includes option-by-option comparison, but it is secondary to applying the identified principle.""],""diagnosis"":""judge_taxonomy_likely"",""rationale"":""The trace clearly identifies the governing principle behind the declaratory theory of recognition and uses that principle to evaluate the options before choosing. Although it analyzes each option, the organizing method is the explicit statement and application of the legal doctrine, and it ends with exactly one FINAL_ANSWER line.""}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+3,4,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0032,0.86,ambiguous,gpt-5.5,"[""The trace uses the wrong key stem fact, treating the question as 'simplest alkane' rather than 'simplest alkene'."", ""It does not clearly break the actual stem into facts, constraints, and implications."", ""It does not end with exactly one line in the required format 'FINAL_ANSWER: <A/B/C/D>'; instead it says 'Thus, the correct, FINAL_ANSWER is B.'""]","[""States factual claims before evaluating options: methane is CH4, smallest alkane, only sigma bonds, lacks double or triple bonds."", ""Aligns claims with options in an option-by-option list: A incorrect, B correct, C discussed, D discussed.""]",0,"Misread the stem as asking about the simplest alkane, then performed option-by-option elimination based on methane.",qwen2.5-7b-instruct,1,Question: The simplest alkene has Options: A. at least two pi bonds B. at least four sigma bonds C. a tetrahedral configuration D. cis-trans isomers Select the best option and output FINAL_ANSWER: <A/B/C/D>.,debd1e1af07d,"The trace partially follows the requested structure by stating some facts and aligning them with the answer options, but it applies that process to the wrong compound class and fails the exact final-answer formatting requirement. The dominant method is option-by-option elimination after a stem misread, so adherence is only partial.","{
+  ""followed"": false,
+  ""adherence_score"": 3,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Misread the stem as asking about the simplest alkane, then performed option-by-option elimination based on methane."",
+  ""evidence_for_following"": [
+    ""States factual claims before evaluating options: methane is CH4, smallest alkane, only sigma bonds, lacks double or triple bonds."",
+    ""Aligns claims with options in an option-by-option list: A incorrect, B correct, C discussed, D discussed.""
+  ],
+  ""evidence_against_following"": [
+    ""The trace uses the wrong key stem fact, treating the question as 'simplest alkane' rather than 'simplest alkene'."",
+    ""It does not clearly break the actual stem into facts, constraints, and implications."",
+    ""It does not end with exactly one line in the required format 'FINAL_ANSWER: <A/B/C/D>'; instead it says 'Thus, the correct, FINAL_ANSWER is B.'""
+  ],
+  ""diagnosis"": ""ambiguous"",
+  ""rationale"": ""The trace partially follows the requested structure by stating some facts and aligning them with the answer options, but it applies that process to the wrong compound class and fails the exact final-answer formatting requirement. The dominant method is option-by-option elimination after a stem misread, so adherence is only partial.""
+}",prove_experiments\runs\P4_mixed_strategy_qwen25_7b_seed42,P4_mixed_strategy_qwen25_7b_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
+5,0,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0033,0.95,judge_taxonomy_likely,gpt-5.5,"[""Includes explicit comparison of all answer options, but this is secondary to the initial concept-definition approach.""]","[""Begins by identifying Fuller's inner morality of law as eight principles of legality."", ""Explains the concept as procedural and as a morality of aspiration before evaluating answer choices."", ""Uses the established definition to justify why B fits and why the other options do not."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Defined Fuller's inner morality of law first, then matched that concept boundary to the options.",deepseek-chat,1,Question: Which of the following statements best captures the nature of Fuller's 'inner morality of law'? Options: A. A positivist view of law. B. A morality of aspiration. C. An Aquinian concept of natural law. D. A rejection of the 'harm principle'. Select the best option and output FINAL_ANSWER:,a5e382570629,"The trace clearly follows the instructed strategy: it first identifies and defines the central concept tested by the question, establishes the relevant conceptual boundary, and only then considers the options. The option-by-option comparison does not dominate or replace the requested method; it is used to apply the prior definition. The formatting requirement is also satisfied with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.95,
+  ""inferred_actual_method"": ""Defined Fuller's inner morality of law first, then matched that concept boundary to the options."",
+  ""evidence_for_following"": [
+    ""Begins by identifying Fuller's inner morality of law as eight principles of legality."",
+    ""Explains the concept as procedural and as a morality of aspiration before evaluating answer choices."",
+    ""Uses the established definition to justify why B fits and why the other options do not."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Includes explicit comparison of all answer options, but this is secondary to the initial concept-definition approach.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly follows the instructed strategy: it first identifies and defines the central concept tested by the question, establishes the relevant conceptual boundary, and only then considers the options. The option-by-option comparison does not dominate or replace the requested method; it is used to apply the prior definition. The formatting requirement is also satisfied with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,1
+4,2,A,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0034,0.86,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly frame the reasoning as working backward from each answer to test whether the question stem would remain true."", ""Relies partly on direct definitional knowledge rather than explicitly stating contradiction tests for every option.""]","[""Considers each option individually in relation to the term materialism in historical materialism."", ""Rejects B as historically incorrect because HM is Marxist rather than postmodernist."", ""Rejects C because materialism in HM is not consumerism but mode of production."", ""Rejects D because HM does not reject class-oriented analysis."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Option-by-option validation against the meaning of materialism in historical materialism, rejecting contradictions and selecting the remaining fit.",deepseek-chat,1,"Question: In defining the term 'historical materialism', which of the following statements best defines the term 'materialism'? Options: A. Materialism refers to HM's focus on class and the productive basis of societies, as well as the ways in which social structures have the capacity to change and",bab7e93c939f,"The trace is organized around evaluating each answer option against the stem’s requested definition and rejecting options that conflict with historical materialism, which substantially matches the instructed backward-checking strategy even if it does not explicitly use that phrasing. The final response also complies with the requirement to end with a single FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Option-by-option validation against the meaning of materialism in historical materialism, rejecting contradictions and selecting the remaining fit."",
+  ""evidence_for_following"": [
+    ""Considers each option individually in relation to the term materialism in historical materialism."",
+    ""Rejects B as historically incorrect because HM is Marxist rather than postmodernist."",
+    ""Rejects C because materialism in HM is not consumerism but mode of production."",
+    ""Rejects D because HM does not reject class-oriented analysis."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly frame the reasoning as working backward from each answer to test whether the question stem would remain true."",
+    ""Relies partly on direct definitional knowledge rather than explicitly stating contradiction tests for every option.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around evaluating each answer option against the stem’s requested definition and rejecting options that conflict with historical materialism, which substantially matches the instructed backward-checking strategy even if it does not explicitly use that phrasing. The final response also complies with the requirement to end with a single FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+5,3,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0035,0.94,judge_taxonomy_likely,gpt-5.5,"[""Includes option-by-option comparison, but this is secondary to applying the definition.""]","[""Identifies the governing principle: cross-sectional design compares different groups of individuals at different ages at the same point in time."", ""Applies that principle to the stem/options by noting B matches different age groups assessed at the same time."", ""Ends with exactly one FINAL_ANSWER line: FINAL_ANSWER: B""]",1,Defined the relevant domain concept and applied it to the answer choices,deepseek-chat,1,"Question: During a Developmental Research, the variables are assessed as a function of time. How does the cross-sectional design works? Options: A. some people are studied over a long period of time B. different group divided by age are assessed at the same time C. combines longitudinal and cross-se",d448d01be0a9,"The trace clearly identifies the relevant domain rule for cross-sectional developmental research and explicitly applies it to the facts in the question before selecting the matching option. Although it compares options, the organizing method is the definition/principle of cross-sectional design, and it ends with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.94,
+  ""inferred_actual_method"": ""Defined the relevant domain concept and applied it to the answer choices"",
+  ""evidence_for_following"": [
+    ""Identifies the governing principle: cross-sectional design compares different groups of individuals at different ages at the same point in time."",
+    ""Applies that principle to the stem/options by noting B matches different age groups assessed at the same time."",
+    ""Ends with exactly one FINAL_ANSWER line: FINAL_ANSWER: B""
+  ],
+  ""evidence_against_following"": [
+    ""Includes option-by-option comparison, but this is secondary to applying the definition.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace clearly identifies the relevant domain rule for cross-sectional developmental research and explicitly applies it to the facts in the question before selecting the matching option. Although it compares options, the organizing method is the definition/principle of cross-sectional design, and it ends with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+4,4,D,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0036,0.92,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly label 'constraints' as a separate category."", ""Alignment of facts with options is present but somewhat general rather than mapping each important fact individually to each option.""]","[""Uses a 'Facts & context' section with separate bullets about Bush, Clinton, congressional control, and congressional influence."", ""States an implication/trend: 'Congress reasserting its constitutional powers in foreign policy... more influence than during the Cold War presidency-dominated era.'"", ""Provides an 'Option analysis' section evaluating A, B, C, and D against the stated context."", ""Ends with exactly one line: 'FINAL_ANSWER: D'""]",1,"Broke the question into historical facts/context, drew an implication about congressional influence, then evaluated each option against those points before giving a final answer.",deepseek-chat,1,Question: How did the relationship between President and Congress develop under George H.W. Bush and Bill Clinton? Options: A. Congress asserted its primacy in foreign policy B. US foreign policy became substantially decentralized C. The Presidency welcomed the influence of Congress D. None of the a,a5f0d2465748,"The trace is organized around the requested approach: it first breaks the stem into relevant facts and context, identifies the main implication, then compares the options against that understanding before selecting an answer. Although it does not explicitly label constraints or perform a fully systematic fact-by-option alignment, the requested strategy clearly guides the reasoning and the final formatting requirement is satisfied.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.92,
+  ""inferred_actual_method"": ""Broke the question into historical facts/context, drew an implication about congressional influence, then evaluated each option against those points before giving a final answer."",
+  ""evidence_for_following"": [
+    ""Uses a 'Facts & context' section with separate bullets about Bush, Clinton, congressional control, and congressional influence."",
+    ""States an implication/trend: 'Congress reasserting its constitutional powers in foreign policy... more influence than during the Cold War presidency-dominated era.'"",
+    ""Provides an 'Option analysis' section evaluating A, B, C, and D against the stated context."",
+    ""Ends with exactly one line: 'FINAL_ANSWER: D'""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly label 'constraints' as a separate category."",
+    ""Alignment of facts with options is present but somewhat general rather than mapping each important fact individually to each option.""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around the requested approach: it first breaks the stem into relevant facts and context, identifies the main implication, then compares the options against that understanding before selecting an answer. Although it does not explicitly label constraints or perform a fully systematic fact-by-option alignment, the requested strategy clearly guides the reasoning and the final formatting requirement is satisfied.""
+}",prove_experiments\runs\P4_mixed_strategy_deepseek_chat_seed42,P4_mixed_strategy_deepseek_chat_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,0
+4,0,A,option_contrast,mmlu_option_semantics,answer_to_stem_backward_check,mmlu_option_semantics,P3PF0037,0.86,judge_taxonomy_likely,gpt-5.5,"[""It uses explicit option-by-option elimination after the initial concept analysis."", ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{A}$.'""]","[""The trace begins by identifying the issue as Stevenson's theory of goodness and objective/a priori goodness."", ""It states that Stevenson's ethical theory is emotivism and explains moral judgments as expressions of attitudes rather than objective facts before analyzing options."", ""The later option analysis is based on whether each option fits the emotivist concept boundary.""]",1,"Identified Stevenson's emotivism as the central concept, used it to interpret the objection, then compared options.",gemini-2.5-flash-lite,1,Question: How does Stevenson respond to the objection that his theory does not account for the kind of goodness that is objective and is known a priori? Options: A. He claims to have proven that such a property does not exist. B. He claims to have offered an account of just such a property. C. He cl,3799a0c4c40e,"The trace mostly follows the requested strategy because it first identifies the central concept, Stevenson's emotivism, and uses that conceptual framing to evaluate the stem before turning to the options. The option comparison is secondary to that organizing method. However, it violates the required final formatting by not ending with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.86,
+  ""inferred_actual_method"": ""Identified Stevenson's emotivism as the central concept, used it to interpret the objection, then compared options."",
+  ""evidence_for_following"": [
+    ""The trace begins by identifying the issue as Stevenson's theory of goodness and objective/a priori goodness."",
+    ""It states that Stevenson's ethical theory is emotivism and explains moral judgments as expressions of attitudes rather than objective facts before analyzing options."",
+    ""The later option analysis is based on whether each option fits the emotivist concept boundary.""
+  ],
+  ""evidence_against_following"": [
+    ""It uses explicit option-by-option elimination after the initial concept analysis."",
+    ""It does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{A}$.'""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace mostly follows the requested strategy because it first identifies the central concept, Stevenson's emotivism, and uses that conceptual framing to evaluate the stem before turning to the options. The option comparison is secondary to that organizing method. However, it violates the required final formatting by not ending with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.,concept_definition_match,mmlu_option_semantics,0
+5,2,C,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0038,0.93,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly phrase the reasoning as 'if this answer were selected, would the stem still be true?'""]","[""Analyzes each option A through D against the stem description."", ""Rejects A because it does not necessarily aim to kill off competition and may have higher service."", ""Rejects B because it lacks the very deep assortment required by the stem."", ""Accepts C because it matches kill competition, narrow/deep assortment, low prices, and few to moderate services."", ""Rejects D because superstores have broad rather than narrow/deep assortment."", ""Ends with exactly one FINAL_ANSWER line.""]",1,"Option-by-option backward checking against the stem's defining features, rejecting mismatches and selecting the one that preserves all stem claims.",gemini-2.5-flash-lite,1,"Question: These are stores designed to kill off the competition and are characterized by narrow but very deep product assortment, low prices, and few to moderate customer services: Options: A. Speciality stores. B. Limited line retailers. C. Category-killer stores. D. Superstores. Select the best op",71a57db45dbf,"The trace is organized around checking each candidate answer against the stem's defining conditions and rejecting those that create mismatches or contradictions. Although it does not explicitly use the requested backward-question wording, the reasoning functionally follows the strategy and concludes with exactly one FINAL_ANSWER line.","{
+  ""followed"": true,
+  ""adherence_score"": 5,
+  ""confidence"": 0.93,
+  ""inferred_actual_method"": ""Option-by-option backward checking against the stem's defining features, rejecting mismatches and selecting the one that preserves all stem claims."",
+  ""evidence_for_following"": [
+    ""Analyzes each option A through D against the stem description."",
+    ""Rejects A because it does not necessarily aim to kill off competition and may have higher service."",
+    ""Rejects B because it lacks the very deep assortment required by the stem."",
+    ""Accepts C because it matches kill competition, narrow/deep assortment, low prices, and few to moderate services."",
+    ""Rejects D because superstores have broad rather than narrow/deep assortment."",
+    ""Ends with exactly one FINAL_ANSWER line.""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly phrase the reasoning as 'if this answer were selected, would the stem still be true?'""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace is organized around checking each candidate answer against the stem's defining conditions and rejecting those that create mismatches or contradictions. Although it does not explicitly use the requested backward-question wording, the reasoning functionally follows the strategy and concludes with exactly one FINAL_ANSWER line.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",answer_to_stem_backward_check|option_contradiction_check,mmlu_option_semantics,1
+2,3,B,option_contrast,mmlu_option_semantics,distractor_elimination,mmlu_option_semantics,P3PF0039,0.93,model_prompt_likely,gpt-5.5,"[""Does not identify a governing rule, theorem, principle, or domain law"", ""The reasoning is organized around considering each answer option rather than applying an explicit rule"", ""Does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{B}$.'""]","[""Identifies the task as a factual recall question about the film and its cast"", ""Applies known cast information by stating Madonna played Mae Mordabito in the film""]",0,Factual recall with option-by-option elimination,gemini-2.5-flash-lite,1,Question: What singer appeared in the 1992 baseball film 'A League of Their Own'? Options: A. Brandy B. Madonna C. Garth Brooks D. Whitney Houston Select the best option and output FINAL_ANSWER: <A/B/C/D>.,d1ea00cab364,"The trace uses factual recall and option elimination rather than the requested rule/principle-based structure. Although it does apply relevant movie-cast knowledge to the facts, it does not frame this as a governing rule or principle, and it violates the required final output format. Thus it only incidentally overlaps with the instruction.","{
+  ""followed"": false,
+  ""adherence_score"": 2,
+  ""confidence"": 0.93,
+  ""inferred_actual_method"": ""Factual recall with option-by-option elimination"",
+  ""evidence_for_following"": [
+    ""Identifies the task as a factual recall question about the film and its cast"",
+    ""Applies known cast information by stating Madonna played Mae Mordabito in the film""
+  ],
+  ""evidence_against_following"": [
+    ""Does not identify a governing rule, theorem, principle, or domain law"",
+    ""The reasoning is organized around considering each answer option rather than applying an explicit rule"",
+    ""Does not end with exactly one FINAL_ANSWER line; it ends with 'The final answer is $\\boxed{B}$.'""
+  ],
+  ""diagnosis"": ""model_prompt_likely"",
+  ""rationale"": ""The trace uses factual recall and option elimination rather than the requested rule/principle-based structure. Although it does apply relevant movie-cast knowledge to the facts, it does not frame this as a governing rule or principle, and it violates the required final output format. Thus it only incidentally overlaps with the instruction.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",rule_or_principle_application,mmlu_domain_reasoning,1
+4,4,D,option_contrast,mmlu_option_semantics,option_contrast,mmlu_option_semantics,P3PF0040,0.78,judge_taxonomy_likely,gpt-5.5,"[""Does not explicitly break the stem into labeled facts, constraints, and implications"", ""The trace is organized primarily as option-by-option elimination rather than a preliminary fact/constraint/implication breakdown""]","[""Identifies the key implication that resilience means withstanding or recovering from an attack, not merely preventing it"", ""Aligns each option A-D with that understanding before selecting D"", ""Explains why B is unrealistic because no system can repel all threats"", ""Ends with exactly one FINAL_ANSWER line""]",1,Option-by-option analysis against the inferred definition and implications of cyber-security resilience,gemini-2.5-flash-lite,1,"Question: In terms of cyber-security, what is meant by 'resilience' and why is it important? Options: A. Resilience refers to the ability of an IT system to identify and defend against a cyber-security threat. B. The only way to build a truly resilient IT system is to ensure that it can repel all ty",237cf3345f62,"The trace does not formally label facts, constraints, and implications, but it does extract the central meaning and practical implication of resilience, then evaluates every answer option against those points before choosing. The requested fact-to-option alignment is substantially present, and the final answer format is followed exactly, so the strategy is mostly followed despite being framed as option analysis.","{
+  ""followed"": true,
+  ""adherence_score"": 4,
+  ""confidence"": 0.78,
+  ""inferred_actual_method"": ""Option-by-option analysis against the inferred definition and implications of cyber-security resilience"",
+  ""evidence_for_following"": [
+    ""Identifies the key implication that resilience means withstanding or recovering from an attack, not merely preventing it"",
+    ""Aligns each option A-D with that understanding before selecting D"",
+    ""Explains why B is unrealistic because no system can repel all threats"",
+    ""Ends with exactly one FINAL_ANSWER line""
+  ],
+  ""evidence_against_following"": [
+    ""Does not explicitly break the stem into labeled facts, constraints, and implications"",
+    ""The trace is organized primarily as option-by-option elimination rather than a preliminary fact/constraint/implication breakdown""
+  ],
+  ""diagnosis"": ""judge_taxonomy_likely"",
+  ""rationale"": ""The trace does not formally label facts, constraints, and implications, but it does extract the central meaning and practical implication of resilience, then evaluates every answer option against those points before choosing. The requested fact-to-option alignment is substantially present, and the final answer format is followed exactly, so the strategy is mostly followed despite being framed as option analysis.""
+}",prove_experiments\runs\P4_mixed_strategy_gemini_flash_lite_seed42,P4_mixed_strategy_gemini_flash_lite_seed42,"Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",decomposition|stem_evidence_alignment,mmlu_option_semantics|representation_formalization,1
