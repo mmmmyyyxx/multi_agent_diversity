@@ -60,6 +60,10 @@ Run 级：
 
 衡量显式策略指令是否真的把模型推理行为推向目标方向。
 
+注意：
+
+P3 中应同时报告 exact hit 和 same-major hit，但不要把每个 leaf 的 exact hit 设为硬性通过阈值。exact hit 会受到 taxonomy 粒度、MMLU 多选题形态和 judge primary 选择规则影响；它更适合用于诊断哪些策略 prompt 难遵循、哪些标签存在吸附，而不是单独决定指标是否有效。
+
 ### Strategy Intervention Effect
 
 定义：
@@ -74,14 +78,16 @@ Run 级：
 
 定义：
 
-比较以下两类 family-label disagreement：
+比较以下四类 family-label disagreement 或 major-family distribution distance：
 
+- 相同模型，相同 prompt。
 - 同一模型，不同策略。
 - 不同模型，同一策略。
+- 不同模型，不同策略。
 
 物理意义：
 
-如果 same-strategy cross-model disagreement 更大，指标可能测到了模型风格。如果 different-strategy same-model disagreement 更大，指标更可能测到了策略。
+如果 same-strategy cross-model disagreement 更大，说明模型身份/输出风格也是多样性来源；如果 different-strategy same-model disagreement 更大，说明策略 prompt 是更强来源。P4 的目标是定量分解二者，而不是预设 prompt 效应一定大于模型效应。
 
 ### Optimization Signal Rate
 
@@ -134,8 +140,9 @@ Run 级：
 |---|---|---|
 | 同 trace 可靠 | repeated judge agreement | major >= 0.85，primary >= 0.70 |
 | 不等于表面措辞 | same-strategy paraphrase control | family diversity 低或中等，same-major 高 |
-| 对策略干预敏感 | explicit mixed strategies | diversity > 同策略对照，hit rate >= 0.60 |
-| 不等于模型身份 | cross-LLM comparison | strategy effect > model identity effect |
+| 对策略干预敏感 | explicit mixed strategies | mixed 相对 same 的 family/major diversity 配对差异为正，homogeneity 下降；有效 trace 口径方向保持 |
+| 目标策略遵循诊断 | target exact/same-major hit 与 GPT-5.5 复核 | exact hit 不作硬阈值，重点解释策略可执行性和 judge/taxonomy 吸附 |
+| 不等于模型身份 | cross-LLM comparison | 同时报告 prompt effect 与 model identity effect；若模型效应更强，作为跨模型解释风险 |
 | 独立盲评有效性 | GPT-5.5 blind ratings | Spearman 正相关，高低组可分 |
 | 可优化 | reward sweep | 至少一个非零 reward 设置提升验证集 diversity |
 | 不过度约束 | candidate signal 与 early stopping | signal rate 非零，中等设置不应立即停滞 |
@@ -147,7 +154,7 @@ Run 级：
 - P1 稳定。
 - P2 虚假多样性低。
 - P3 干预效应强。
-- P4 strategy effect 大于 model effect。
+- P4 能清楚分解 prompt effect 与 model identity effect，并说明跨模型差异的解释边界。
 - P5 中等 reward 提升验证集 diversity。
 
 指标有效但 reward 太强：

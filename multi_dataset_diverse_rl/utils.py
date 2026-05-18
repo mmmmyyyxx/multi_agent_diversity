@@ -101,12 +101,19 @@ def strategy_family_major_categories() -> Dict[str, List[str]]:
             "classification_taxonomy_reasoning",
             "example_counterexample_reasoning",
             "statistical_method_reasoning",
+            "psychodynamic_analysis",
+            "convergent_evolution_analysis",
+            "cultural_context_reasoning",
+            "buffer_capacity_analysis",
+            "ethical_reasoning",
+            "countertransference",
         ],
         "representation_formalization": [
             "decomposition",
             "symbolic_formulation",
             "spatial_visualization",
             "dimensional_unit_analysis",
+            "assumption_analysis",
         ],
         "algebra_computation": [
             "algebraic_derivation",
@@ -118,16 +125,11 @@ def strategy_family_major_categories() -> Dict[str, List[str]]:
             "case_analysis",
             "exhaustive_enumeration",
             "constraint_propagation",
-            "option_elimination",
-            "backward_reasoning",
             "consistency_verification",
             "counterexample_search",
             "proof_by_contradiction",
             "invariant_reasoning",
             "symmetry_reasoning",
-            "definition_application",
-            "rule_based_classification",
-            "theorem_property_application",
         ],
         "probability_statistics": [
             "probabilistic_reasoning",
@@ -137,7 +139,6 @@ def strategy_family_major_categories() -> Dict[str, List[str]]:
             "pattern_generalization",
             "inductive_reasoning",
             "analogy_mapping",
-            "comparative_reasoning",
         ],
         "process_structure_simulation": [
             "simulation_tracing",
@@ -163,35 +164,13 @@ def strategy_family_to_major_map() -> Dict[str, str]:
     return mapping
 
 
-def infer_strategy_family_major(family_label: str) -> str:
-    major_map = strategy_family_to_major_map()
-    label = normalize_spaces(str(family_label or "")).lower().replace("-", "_").replace(" ", "_")
-    if label in major_map:
-        return major_map[label]
-    if not label:
-        return "representation_formalization"
-    best_family = max(major_map, key=lambda cand: _string_similarity(label, cand))
-    return major_map[best_family]
-
-
-def normalize_strategy_family_label(
-    label: Optional[str],
-    allowed_labels: Optional[List[str]] = None,
-    allow_fallback: bool = True,
-) -> str:
-    """
-    Normalize a strategy family label.
-
-    - If allowed_labels is None, returns the normalized label (aliases applied).
-    - If allowed_labels is provided, normalizes to that set and optionally falls back
-      to the most similar allowed label when unknown.
-    """
+def _normalize_strategy_family_alias(label: Optional[str], *, mmlu: bool = True) -> str:
     raw = normalize_spaces(str(label or "")).lower()
     raw = raw.replace("-", "_").replace(" ", "_")
+    raw = re.sub(r"[^a-z0-9_]+", "", raw)
+    raw = re.sub(r"_+", "_", raw).strip("_")
     if not raw:
-        if allowed_labels:
-            return normalize_spaces(str(allowed_labels[0])).lower().replace("-", "_").replace(" ", "_")
-        return "decomposition"
+        return ""
 
     aliases = {
         "other": "decomposition",
@@ -232,35 +211,78 @@ def normalize_strategy_family_label(
         "abduction": "abductive_inference",
         "counterfactual": "counterfactual_reasoning",
     }
-    mmlu_aliases = {
-        "concept_recall": "concept_definition_match",
-        "concept_match": "concept_definition_match",
-        "definition_lookup": "concept_definition_match",
-        "definition_application": "concept_definition_match",
-        "terminology_match": "concept_definition_match",
-        "option_comparison": "option_contrast",
-        "comparison": "option_contrast",
-        "comparative_reasoning": "option_contrast",
-        "elimination": "distractor_elimination",
-        "option_elimination": "distractor_elimination",
-        "elimination_comparison": "distractor_elimination",
-        "contradiction_check": "option_contradiction_check",
-        "backward_verification": "answer_to_stem_backward_check",
-        "backward_checking": "answer_to_stem_backward_check",
-        "backward_reasoning": "answer_to_stem_backward_check",
-        "property_application": "rule_or_principle_application",
-        "theorem_property_application": "rule_or_principle_application",
-        "rule_matching": "rule_or_principle_application",
-        "rule_based_classification": "rule_or_principle_application",
-    }
+    if mmlu:
+        aliases.update(
+            {
+                "concept_recall": "concept_definition_match",
+                "concept_match": "concept_definition_match",
+                "definition_lookup": "concept_definition_match",
+                "definition_application": "concept_definition_match",
+                "terminology_match": "concept_definition_match",
+                "option_comparison": "option_contrast",
+                "comparison": "option_contrast",
+                "comparative_reasoning": "option_contrast",
+                "elimination": "distractor_elimination",
+                "option_elimination": "distractor_elimination",
+                "contradiction_check": "option_contradiction_check",
+                "contradiction": "option_contradiction_check",
+                "backward_verification": "answer_to_stem_backward_check",
+                "backward_checking": "answer_to_stem_backward_check",
+                "backward_reasoning": "answer_to_stem_backward_check",
+                "property_application": "rule_or_principle_application",
+                "theorem_property_application": "rule_or_principle_application",
+                "rule_matching": "rule_or_principle_application",
+                "rule_based_classification": "rule_or_principle_application",
+            }
+        )
+    return aliases.get(raw, raw)
+
+
+def infer_strategy_family_major(family_label: str) -> str:
+    major_map = strategy_family_to_major_map()
+    label = _normalize_strategy_family_alias(family_label, mmlu=True)
+    if label in major_map:
+        return major_map[label]
+    if not label:
+        return "representation_formalization"
+    best_family = max(major_map, key=lambda cand: _string_similarity(label, cand))
+    return major_map[best_family]
+
+
+def normalize_strategy_family_label(
+    label: Optional[str],
+    allowed_labels: Optional[List[str]] = None,
+    allow_fallback: bool = True,
+) -> str:
+    """
+    Normalize a strategy family label.
+
+    - If allowed_labels is None, returns the normalized label (aliases applied).
+    - If allowed_labels is provided, normalizes to that set and optionally falls back
+      to the most similar allowed label when unknown.
+    """
+    raw = _normalize_strategy_family_alias(label, mmlu=False)
+    if not raw:
+        if allowed_labels:
+            return normalize_spaces(str(allowed_labels[0])).lower().replace("-", "_").replace(" ", "_")
+        return "decomposition"
+
     if allowed_labels is not None:
         allowed_probe = {
             normalize_spaces(str(x)).lower().replace("-", "_").replace(" ", "_")
             for x in allowed_labels
         }
-        if allowed_probe.intersection(set(mmlu_aliases.values())):
-            aliases.update(mmlu_aliases)
-    raw = aliases.get(raw, raw)
+        if allowed_probe.intersection(
+            {
+                "concept_definition_match",
+                "option_contrast",
+                "distractor_elimination",
+                "option_contradiction_check",
+                "answer_to_stem_backward_check",
+                "rule_or_principle_application",
+            }
+        ):
+            raw = _normalize_strategy_family_alias(label, mmlu=True)
 
     if allowed_labels is None:
         return raw

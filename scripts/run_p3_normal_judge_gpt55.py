@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from multi_dataset_diverse_rl.utils import strategy_family_major_categories  # noqa: E402
+from multi_dataset_diverse_rl.utils import infer_strategy_family_major, strategy_family_major_categories  # noqa: E402
 from run_p3_prompt_following_validation import (  # noqa: E402
     extract_json_object,
     load_candidates,
@@ -44,7 +44,7 @@ from run_p3_prompt_following_validation import (  # noqa: E402
 )
 
 
-NORMAL_JUDGE_PROMPT_VERSION = "normal_single_trace_family_judge_equivalent_v2"
+NORMAL_JUDGE_PROMPT_VERSION = "normal_single_trace_family_judge_equivalent"
 
 
 SYSTEM_PROMPT = """You judge the reasoning strategy family for exactly one agent trace.
@@ -431,7 +431,20 @@ def join_key_eval(key_rows: list[dict[str, Any]], eval_rows: list[dict[str, Any]
     for ev in eval_rows:
         bid = str(ev.get("blinded_id", ""))
         if bid in by_id and int(ev.get("parse_ok", 0) or 0):
-            rows.append({**by_id[bid], **ev})
+            joined = {**by_id[bid], **ev}
+            targets = [x for x in str(joined.get("target_families", "")).split("|") if x]
+            target_majors = {infer_strategy_family_major(x) for x in targets}
+            gpt_primary = str(joined.get("gpt_primary_family", ""))
+            gpt_secondary = str(joined.get("gpt_secondary_family", ""))
+            exact = int(gpt_primary in targets or gpt_secondary in targets)
+            same_major = int(
+                exact
+                or infer_strategy_family_major(gpt_primary) in target_majors
+                or infer_strategy_family_major(gpt_secondary) in target_majors
+            )
+            joined["gpt_target_exact_hit"] = exact
+            joined["gpt_target_same_major_hit"] = same_major
+            rows.append(joined)
     return rows
 
 
@@ -452,6 +465,8 @@ def summarize(rows: list[dict[str, Any]], keys: list[str]) -> list[dict[str, Any
                 "n": len(vals),
                 "gpt_primary_option_contrast_rate": safe_mean([v.get("gpt_primary_is_option_contrast") for v in vals]),
                 "gpt_pair_option_contrast_rate": safe_mean([v.get("gpt_primary_or_secondary_is_option_contrast") for v in vals]),
+                "gpt_target_exact_hit_rate": safe_mean([v.get("gpt_target_exact_hit") for v in vals]),
+                "gpt_target_same_major_hit_rate": safe_mean([v.get("gpt_target_same_major_hit") for v in vals]),
                 "original_judge_supported_rate": safe_mean([int(v.get("diagnosis") == "original_judge_supported") for v in vals]),
                 "judge_taxonomy_questioned_rate": safe_mean([int(v.get("diagnosis") == "judge_taxonomy_questioned") for v in vals]),
                 "mean_confidence": safe_mean([v.get("gpt_confidence") for v in vals]),
@@ -575,6 +590,128 @@ def build_summary_md(
     return "\n".join(lines) + "\n"
 
 
+def build_summary_md_clean(
+    sampled_count: int,
+    candidate_count: int,
+    joined: list[dict[str, Any]],
+    context_path: str = "p3_normal_judge_context.json",
+) -> str:
+    lines = [
+        "# P3 GPT-5.5 Normal Taxonomy Judge 复核",
+        "",
+        "目标：抽样 `target` 不包含 `option_contrast`、但原自动 judge 的 primary 标签为 `option_contrast` 的 trace，让 GPT-5.5 在接近正常 taxonomy judge 的输入条件下重新判定策略标签。",
+        "",
+        "GPT-5.5 输入包含：完整 taxonomy leaf labels、major-family tree、family definitions、reasoning_summary 要求、confidence/evidence 规则、返回 JSON schema、agent_id、task_type、question_hash、trace_hash、trace_length、extracted_answer、single agent trace。",
+        "",
+        "GPT-5.5 输入不包含：目标策略、模型身份、run 名称、原自动 judge 标签、gold answer、group/vote 信息。",
+        "",
+        f"- normal_judge_context_file: `{context_path}`",
+        f"- candidate_count: {candidate_count}",
+        f"- sampled_count: {sampled_count}",
+        f"- evaluated_count: {len(joined)}",
+        "- 每条 `p3_normal_judge_packet.jsonl` 也内嵌 `normal_judge_equivalent_context`，方便逐样本审计。",
+        "",
+        "判读规则：",
+        "",
+        "- 如果 GPT-5.5 也把 primary 判为 `option_contrast`：原 judge 的 option_contrast 判定得到支持，更像 trace 本身确实是 option-style。",
+        "- 如果 GPT-5.5 判为非 `option_contrast`：支持原 judge/taxonomy 存在 option_contrast 吸附问题。",
+        "- 如果 GPT-5.5 把 `option_contrast` 放在 secondary：说明 trace 是混合策略，原 judge 可能把次要选项比较提升成 primary。",
+        "",
+    ]
+    if not joined:
+        lines.extend(
+            [
+                "当前只生成了待评审样本包，还没有 GPT-5.5 评审结果。",
+                "",
+                "运行评审命令：",
+                "",
+                "```powershell",
+                "python scripts\\run_p3_normal_judge_gpt55.py --runs_root prove_experiments\\p3_analysis_runs --run_gpt 1 --sample_size 40",
+                "```",
+            ]
+        )
+        return "\n".join(lines) + "\n"
+
+    overall = summarize(joined, [])
+    by_target = summarize(joined, ["agent_id", "target_families"])
+    by_model = summarize(joined, ["model", "agent_id", "target_families"])
+    lines.extend(["## 总体结果", ""])
+    lines.extend(
+        md_table(
+            [
+                "n",
+                "GPT primary option",
+                "GPT pair option",
+                "GPT target exact",
+                "GPT target same-major",
+                "original judge supported",
+                "judge/taxonomy questioned",
+                "confidence",
+            ],
+            [
+                [
+                    overall[0]["n"],
+                    overall[0]["gpt_primary_option_contrast_rate"],
+                    overall[0]["gpt_pair_option_contrast_rate"],
+                    overall[0]["gpt_target_exact_hit_rate"],
+                    overall[0]["gpt_target_same_major_hit_rate"],
+                    overall[0]["original_judge_supported_rate"],
+                    overall[0]["judge_taxonomy_questioned_rate"],
+                    overall[0]["mean_confidence"],
+                ]
+            ],
+        )
+    )
+    lines.extend(["", "## 按目标策略", ""])
+    lines.extend(
+        md_table(
+            [
+                "agent",
+                "target",
+                "n",
+                "GPT primary option",
+                "GPT pair option",
+                "GPT target exact",
+                "GPT target same-major",
+                "judge/taxonomy questioned",
+            ],
+            [
+                [
+                    r["agent_id"],
+                    r["target_families"],
+                    r["n"],
+                    r["gpt_primary_option_contrast_rate"],
+                    r["gpt_pair_option_contrast_rate"],
+                    r["gpt_target_exact_hit_rate"],
+                    r["gpt_target_same_major_hit_rate"],
+                    r["judge_taxonomy_questioned_rate"],
+                ]
+                for r in by_target
+            ],
+        )
+    )
+    lines.extend(["", "## 按模型和目标策略", ""])
+    lines.extend(
+        md_table(
+            ["model", "agent", "target", "n", "GPT primary option", "GPT target exact", "GPT target same-major", "judge/taxonomy questioned"],
+            [
+                [
+                    r["model"],
+                    r["agent_id"],
+                    r["target_families"],
+                    r["n"],
+                    r["gpt_primary_option_contrast_rate"],
+                    r["gpt_target_exact_hit_rate"],
+                    r["gpt_target_same_major_hit_rate"],
+                    r["judge_taxonomy_questioned_rate"],
+                ]
+                for r in by_model
+            ],
+        )
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs_root", default="prove_experiments/runs")
@@ -626,7 +763,7 @@ def main() -> None:
     joined = join_key_eval(key_rows, eval_rows)
     write_csv(rows_path, joined)
     summary_path.write_text(
-        build_summary_md(len(sampled), len(candidates), joined, context_path.name),
+        build_summary_md_clean(len(sampled), len(candidates), joined, context_path.name),
         encoding="utf-8-sig",
     )
     print(f"wrote {out_dir}")

@@ -65,6 +65,8 @@ def _build_cmd(args: argparse.Namespace, model_spec: Dict[str, Any], prompt_name
         str(args.critic_temperature),
         "--llm_call_timeout",
         str(args.llm_call_timeout),
+        "--eval_parallelism",
+        str(args.eval_parallelism),
         "--max_retries",
         str(args.max_retries),
         "--retry_sleep",
@@ -84,15 +86,18 @@ def _build_cmd(args: argparse.Namespace, model_spec: Dict[str, Any], prompt_name
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run P4 cross-LLM low-cost strategy-transfer matrix.")
+    parser = argparse.ArgumentParser(description="Run cross-LLM low-cost strategy-transfer matrix.")
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--models_json", type=str, default="prove_experiments/p4_low_cost_models.json")
     parser.add_argument("--out_root", type=str, default="prove_experiments/runs")
+    parser.add_argument("--run_prefix", type=str, default="P4")
+    parser.add_argument("--summary_name", type=str, default="")
     parser.add_argument("--task_type", type=str, default="mmlu", choices=["auto", "gsm8k", "mmlu"])
     parser.add_argument("--test_path", type=str, default="mmlu_test_200.jsonl")
     parser.add_argument("--test_size", type=int, default=100)
     parser.add_argument("--same_prompts_json", type=str, default="prove_experiments/prompts/same_elimination_mmlu.json")
+    parser.add_argument("--definition_prompts_json", type=str, default="prove_experiments/prompts/same_definition_mmlu.json")
     parser.add_argument("--mixed_prompts_json", type=str, default="prove_experiments/prompts/mixed_strategy_mmlu.json")
     parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
@@ -107,9 +112,15 @@ def main():
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--critic_temperature", type=float, default=0.0)
     parser.add_argument("--llm_call_timeout", type=float, default=180.0)
+    parser.add_argument("--eval_parallelism", type=int, default=100)
     parser.add_argument("--max_retries", type=int, default=5)
     parser.add_argument("--retry_sleep", type=float, default=2.0)
-    parser.add_argument("--conditions", type=str, default="same,mixed", help="Comma-separated subset: same,mixed")
+    parser.add_argument(
+        "--conditions",
+        type=str,
+        default="same,mixed",
+        help="Comma-separated subset: same,mixed,definition (same_elimination, mixed_strategy, same_definition)",
+    )
     parser.add_argument("--skip_existing", type=int, default=1, choices=[0, 1])
     parser.add_argument("--dry_run", type=int, default=0, choices=[0, 1])
     args = parser.parse_args()
@@ -122,17 +133,21 @@ def main():
     out_root.mkdir(parents=True, exist_ok=True)
     wanted = {x.strip() for x in args.conditions.split(",") if x.strip()}
     condition_specs = []
-    if "same" in wanted:
+    if "same" in wanted or "same_elimination" in wanted:
         condition_specs.append(("same_elimination", args.same_prompts_json))
-    if "mixed" in wanted:
+    if "mixed" in wanted or "mixed_strategy" in wanted:
         condition_specs.append(("mixed_strategy", args.mixed_prompts_json))
+    if "definition" in wanted or "same_definition" in wanted:
+        condition_specs.append(("same_definition", args.definition_prompts_json))
 
     rows: List[Dict[str, Any]] = []
-    summary_path = out_root / "p4_cross_llm_runs.csv"
+    run_prefix = str(args.run_prefix or "P4").strip() or "P4"
+    summary_name = str(args.summary_name or f"{run_prefix.lower()}_cross_llm_runs.csv").strip()
+    summary_path = out_root / summary_name
     for spec in models:
         alias = str(spec.get("alias", spec.get("model", "model"))).replace("/", "_").replace(" ", "_")
         for condition_name, prompts_path in condition_specs:
-            run_name = f"P4_{condition_name}_{alias}_seed{args.seed}"
+            run_name = f"{run_prefix}_{condition_name}_{alias}_seed{args.seed}"
             out_dir = out_root / run_name
             out_dir.mkdir(parents=True, exist_ok=True)
             if int(args.skip_existing) and (out_dir / "history.json").exists():
@@ -141,7 +156,7 @@ def main():
                 continue
             cmd = _build_cmd(args, spec, condition_name, prompts_path, out_dir)
             print("=" * 120)
-            print(f"[P4] {run_name}")
+            print(f"[{run_prefix}] {run_name}")
             print("Command:", " ".join(cmd))
             if int(args.dry_run):
                 status = "dry_run"
@@ -169,7 +184,7 @@ def main():
                 }
             )
             _write_csv(rows, summary_path)
-    print(f"P4 matrix finished: {summary_path}")
+    print(f"{run_prefix} matrix finished: {summary_path}")
 
 
 if __name__ == "__main__":

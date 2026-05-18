@@ -1,0 +1,18 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_family_homogeneity_rate": 0.0,
+      "mean_family_diversity": 0.0,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.0
+    },
+    "test": {
+      "mean_family_homogeneity_rate": 0.6636351827150685,
+      "mean_family_diversity": 0.45298479525738095,
+      "mean_llm_direct_diversity_score": 0.0,
+      "vote_acc": 0.93,
+      "size": 100
+    }
+  }
+]

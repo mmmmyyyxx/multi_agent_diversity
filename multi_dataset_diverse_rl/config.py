@@ -61,6 +61,7 @@ class Config:
     max_retry_backoff: float = 30.0
     llm_call_logging: bool = True
     llm_call_timeout: float = 120.0
+    eval_parallelism: int = 100
     solver_api_key_env: str = ""
     solver_base_url_env: str = ""
     critic_api_key_env: str = ""
@@ -146,6 +147,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
+    parser.add_argument("--eval_parallelism", type=int, default=100)
     parser.add_argument("--solver_api_key_env", type=str, default="")
     parser.add_argument("--solver_base_url_env", type=str, default="")
     parser.add_argument("--critic_api_key_env", type=str, default="")

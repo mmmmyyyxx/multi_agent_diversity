@@ -257,9 +257,9 @@ class TextualGradientRLSystem:
             "distractor_elimination": "distractor_elimination",
             "contradiction_check": "option_contradiction_check",
             "contradiction": "option_contradiction_check",
-            "verification": "consistency_cross_check",
-            "verify": "consistency_cross_check",
-            "check": "consistency_cross_check",
+            "verification": "consistency_verification",
+            "verify": "consistency_verification",
+            "check": "consistency_verification",
             "backward_verification": "answer_to_stem_backward_check",
             "backward_checking": "answer_to_stem_backward_check",
             "backward_reasoning": "answer_to_stem_backward_check",
@@ -3380,8 +3380,15 @@ class TextualGradientRLSystem:
                 "vote_correct": reward_pack["vote_correct"],
             }
 
+        eval_parallelism = max(1, int(getattr(self.cfg, "eval_parallelism", 100) or 100))
+        eval_sem = asyncio.Semaphore(eval_parallelism)
+
+        async def guarded_eval_one(step_id: int, ex: Dict[str, str]) -> Dict[str, Any]:
+            async with eval_sem:
+                return await eval_one(step_id, ex)
+
         results_raw = await asyncio.gather(
-            *[eval_one(step_id, ex) for step_id, ex in enumerate(data, start=1)],
+            *[guarded_eval_one(step_id, ex) for step_id, ex in enumerate(data, start=1)],
             return_exceptions=True,
         )
         results = [r for r in results_raw if isinstance(r, dict)]

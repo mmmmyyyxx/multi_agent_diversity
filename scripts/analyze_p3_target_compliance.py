@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Analyze target-strategy compliance for P2/P3/P4 probe runs."""
+"""Analyze target-strategy compliance for P3 probe runs."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from multi_dataset_diverse_rl.utils import infer_strategy_family_major
+from multi_dataset_diverse_rl.utils import infer_strategy_family_major  # noqa: E402
 
 
 def read_json(path: Path) -> Any:
@@ -38,8 +38,8 @@ def find_prediction_file(run_dir: Path) -> Path | None:
     candidates = sorted(run_dir.glob("test_epoch*_predictions.jsonl"))
     if candidates:
         return candidates[-1]
-    path = run_dir / "test_predictions.jsonl"
-    return path if path.exists() else None
+    candidates = sorted(run_dir.glob("test*_predictions.jsonl"))
+    return candidates[-1] if candidates else None
 
 
 def load_targets(run_dir: Path) -> dict[int, list[str]]:
@@ -55,9 +55,10 @@ def load_targets(run_dir: Path) -> dict[int, list[str]]:
 
 
 def infer_probe_kind(run_name: str) -> str:
-    if "mixed_strategy" in run_name:
+    text = run_name.lower()
+    if "mixed_strategy" in text:
         return "mixed"
-    if "same_elimination" in run_name:
+    if "same_elimination" in text:
         return "same"
     return "other"
 
@@ -90,7 +91,7 @@ def row_records(run_dir: Path) -> list[dict[str, Any]]:
     model = load_model(run_dir)
     run_name = run_dir.name
     probe_kind = infer_probe_kind(run_name)
-    rows = []
+    rows: list[dict[str, Any]] = []
     for rec in read_jsonl(pred_file):
         primary = rec.get("primary_family_labels", [])
         secondary = rec.get("secondary_family_labels", primary)
@@ -143,7 +144,7 @@ def summarize(rows: list[dict[str, Any]], group_keys: list[str]) -> list[dict[st
     groups: dict[tuple[Any, ...], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         groups[tuple(row[k] for k in group_keys)].append(row)
-    out = []
+    out: list[dict[str, Any]] = []
     for key, vals in sorted(groups.items()):
         rec = {k: v for k, v in zip(group_keys, key)}
         primary_counts = Counter(v["primary"] for v in vals)
@@ -205,27 +206,27 @@ def build_markdown(overall: list[dict[str, Any]], by_model: list[dict[str, Any]]
     mixed = [r for r in overall if r["probe_kind"] == "mixed"]
     same = [r for r in overall if r["probe_kind"] == "same"]
     lines = [
-        "# P3/P4 目标策略命中率拆解",
+        "# P3 目标策略命中率拆解",
         "",
-        "本分析把 `target_exact_hit_rate` 按目标策略、agent 和模型拆开。`exact_hit` 表示 primary 或 secondary leaf 标签命中 prompt 中声明的目标 leaf；`same_major_any_hit` 表示 primary 或 secondary 至少落入目标 major family。",
+        "本分析把自动 taxonomy judge 的标签按目标策略、agent 和模型拆开。`exact_hit` 表示 primary 或 secondary leaf 标签精确命中 prompt 指定的目标 leaf；`same_major_any_hit` 表示 primary 或 secondary 至少落入目标 major family。",
         "",
         "## 指标中文含义",
         "",
         "| 指标/列名 | 中文含义 | 读数方向 |",
         "|---|---|---|",
-        "| `agent` / `agent_id` | 五个 agent 中的编号，0-4 分别对应 prompt 文件里的五条策略指令。 | 用来定位是哪条策略指令。 |",
-        "| `target leaf` / `target_label` | prompt 显式要求该 agent 使用的目标细粒度策略标签。多个标签用 `\\|` 连接，表示命中任意一个都算 exact hit。 | 不是分数，是目标定义。 |",
-        "| `target major` / `target_major_label` | 目标 leaf 标签映射到的粗粒度 major family。多个 major 用 `\\|` 连接。 | 用来计算宽松命中。 |",
-        "| `n` | 该行统计的 agent-question 样本数。整体表中通常为 4 个模型 × 100 题 = 400。 | 越大越稳定。 |",
-        "| `exact` / `exact_hit_rate` | primary 或 secondary leaf 标签是否精确命中目标 leaf 的比例。 | 越高表示越严格符合指定细策略。 |",
+        "| `agent` / `agent_id` | 五个 agent 的编号，0-4 分别对应 prompt 文件中的五条策略指令。 | 用于定位是哪条策略指令。 |",
+        "| `target leaf` / `target_label` | prompt 显式要求 agent 使用的细粒度目标策略标签。多个标签用 `\\|` 连接，命中任意一个都算 exact hit。 | 这是目标定义，不是分数。 |",
+        "| `target major` / `target_major_label` | 目标 leaf 映射到的粗粒度 major family。 | 用于计算宽松命中。 |",
+        "| `n` | 该行统计的 agent-question 样本数。四模型、100 题时，每个 mixed target 通常为 400。 | 越大越稳定。 |",
+        "| `exact` / `exact_hit_rate` | primary 或 secondary leaf 是否精确命中目标 leaf 的比例。 | 越高表示越严格地符合指定细策略。 |",
         "| `same-major(any)` / `same_major_any_hit_rate` | primary 或 secondary 的 major family 是否落入目标 major family 的比例。 | 越高表示至少落入相近粗策略。 |",
         "| `top primary` | 该组样本中最常见的 primary leaf 标签。 | 用来判断模型实际最常表现出的策略。 |",
-        "| `top primary share` | 最常见 primary leaf 标签所占比例。 | 越高表示该 agent 的输出越被单一策略形态支配。 |",
+        "| `top primary share` | 最常见 primary leaf 所占比例。 | 越高表示输出越被单一策略形态支配。 |",
         "| `top secondary` | 该组样本中最常见的 secondary leaf 标签。 | 用来观察辅助策略或次要策略。 |",
         "| `agent acc` / `agent_answer_acc` | 单个 agent 自己答案的准确率，不是五 agent 投票准确率。 | 越高表示该 agent 答题越准。 |",
         "| `primary_exact_hit_rate` | 只看 primary leaf 是否精确命中目标 leaf。 | 比 `exact` 更严格。 |",
-        "| `secondary_exact_hit_rate` | 只看 secondary leaf 是否精确命中目标 leaf。 | 用来判断目标策略是否退到次策略位置。 |",
-        "| `same_major_primary_hit_rate` | 只看 primary major 是否命中目标 major。 | 用来判断主策略大类是否对齐。 |",
+        "| `secondary_exact_hit_rate` | 只看 secondary leaf 是否精确命中目标 leaf。 | 用于判断目标策略是否退到次策略位置。 |",
+        "| `same_major_primary_hit_rate` | 只看 primary major 是否命中目标 major。 | 用于判断主策略大类是否对齐。 |",
         "| `top_primary_major` | 最常见的 primary major family。 | 用来判断输出主要落在哪个粗策略大类。 |",
         "| `top_primary_major_share` | 最常见 primary major family 所占比例。 | 越高表示粗策略越集中。 |",
         "| `primary_counts_json` | primary leaf 标签的完整计数字典。 | 用于追查被哪些标签吸走。 |",
@@ -293,8 +294,8 @@ def build_markdown(overall: list[dict[str, Any]], by_model: list[dict[str, Any]]
             ],
         )
     )
-    lines.extend(["", "## Mixed 策略按模型拆解", ""])
     mixed_model = [r for r in by_model if r["probe_kind"] == "mixed"]
+    lines.extend(["", "## Mixed 策略按模型拆解", ""])
     lines.extend(
         markdown_table(
             [
@@ -325,9 +326,189 @@ def build_markdown(overall: list[dict[str, Any]], by_model: list[dict[str, Any]]
             "",
             "## 主要读法",
             "",
-            "- mixed exact 低不是单一原因。`option_contrast/distractor_elimination` 的 exact 明显较高，说明模型和 judge 对这种选项排除策略相对一致；`concept_definition_match`、`rule_or_principle_application`、`decomposition/stem_evidence_alignment` 明显较低，说明这些目标更容易被实际题型和 judge 标签边界冲淡。",
-            "- `same-major(any)` 往往高于 exact，说明不少 trace 没有命中目标 leaf，但仍落在相近的大类。这更像 taxonomy 粒度/标签边界问题，而不完全是模型不遵循。",
-            "- 对 `answer_to_stem_backward_check/option_contradiction_check`，如果 exact 和 same-major 都低，且 top primary 常落在普通 `option_contrast`，则说明 prompt 虽然要求 backward check，但模型实际常退化成普通选项比较，judge 也难以从 trace 中看到显式 backward-check 证据。",
+            "- P3 的 mixed 条件五个 target 分别来自五个不同 major，所以 `same-major(any)` 可以解释为粗粒度策略大类命中。",
+            "- mixed 的 team-level 多样性提高，不等于每个 agent 都稳定落在指定 target leaf。需要同时看总体 diversity、exact hit、same-major hit 和 top primary。",
+            "- 如果 mixed 的 top primary 大量集中在 `option_contrast`，说明 MMLU 多选题和当前 judge primary 规则仍有选项比较吸附；这更像 prompt 可执行性、题型适配和 judge evidence 标准的共同问题，不能只解释为模型完全不听指令。",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
+def build_markdown_clean(overall: list[dict[str, Any]], by_model: list[dict[str, Any]]) -> str:
+    """Build the Chinese report used by the official P3 analysis."""
+    mixed = [r for r in overall if r["probe_kind"] == "mixed"]
+    same = [r for r in overall if r["probe_kind"] == "same"]
+    mixed_model = [r for r in by_model if r["probe_kind"] == "mixed"]
+    same_model = [r for r in by_model if r["probe_kind"] == "same"]
+
+    lines = [
+        "# P3 目标策略命中分析",
+        "",
+        "本分析把自动 taxonomy judge 给出的 `primary` / `secondary` 策略标签，与 prompt 中显式指定的目标策略进行对齐。",
+        "这里的命中率衡量的是“trace 被判到目标策略标签或目标主类的比例”，不是答案正确率。",
+        "",
+        "## 指标中文含义",
+        "",
+        "| 指标 | 中文含义 | 解读方向 |",
+        "|---|---|---|",
+        "| `agent_id` | 五个 agent 的编号，0-4 对应 prompt 文件中的五条策略指令。 | 用来定位是哪条策略指令。 |",
+        "| `target_label` / `target leaf` | prompt 显式要求使用的细粒度策略标签。多个标签用 `|` 连接。 | 这是目标定义，不是分数。 |",
+        "| `target_major_label` / `target major` | 目标 leaf 所属的主策略类。 | 用于判断粗粒度策略是否对齐。 |",
+        "| `n` | 该行统计的 agent-question 样本数。 | 越大越稳定。 |",
+        "| `exact_hit_rate` / `exact` | `primary` 或 `secondary` leaf 精确命中目标 leaf 的比例。 | 越高表示越严格遵循指定细策略。 |",
+        "| `primary_exact_hit_rate` | 只看 `primary` leaf 是否精确命中目标 leaf。 | 比 `exact` 更严格。 |",
+        "| `secondary_exact_hit_rate` | 只看 `secondary` leaf 是否精确命中目标 leaf。 | 用来判断目标策略是否退到次策略位置。 |",
+        "| `same_major_primary_hit_rate` | 只看 `primary` 所属主类是否命中目标主类。 | 衡量主策略方向是否对齐。 |",
+        "| `same_major_any_hit_rate` / `same-major(any)` | `primary` 或 `secondary` 所属主类是否命中目标主类。 | 衡量较宽松的粗粒度策略遵循。 |",
+        "| `top_primary` | 该组样本中最常见的 `primary` leaf。 | 用来观察实际 trace 最常被判成哪类策略。 |",
+        "| `top_primary_share` | 最常见 `primary` leaf 的占比。 | 越高说明越被单一策略形态支配。 |",
+        "| `top_secondary` | 该组样本中最常见的 `secondary` leaf。 | 用来观察辅助或次要策略。 |",
+        "| `top_primary_major` | 最常见 `primary` 所属主类。 | 用来观察粗粒度策略落点。 |",
+        "| `agent_answer_acc` / `agent acc` | 单个 agent 自己答案的准确率。 | 与策略命中不同，衡量答题对错。 |",
+        "| `primary_counts_json` | `primary` leaf 的完整计数字典。 | 用于追查被哪些标签吸走。 |",
+        "| `secondary_counts_json` | `secondary` leaf 的完整计数字典。 | 用于追查目标策略是否作为次策略出现。 |",
+        "",
+        "## P3 目标策略设计确认",
+        "",
+        "| agent | 目标 leaf | 所属主类 | 策略含义 |",
+        "|---|---|---|---|",
+        "| 0 | `distractor_elimination` | `mmlu_option_semantics` | 逐项排除干扰项，保留最符合题干的选项。 |",
+        "| 1 | `rule_or_principle_application` | `mmlu_domain_reasoning` | 先识别领域规则、定理、原则或机制，再把规则应用到题干。 |",
+        "| 2 | `decomposition` | `representation_formalization` | 把题干拆成事实、约束和子问题，再合并得到答案。 |",
+        "| 3 | `case_analysis` | `logical_proof` | 枚举相关条件、情形或分支，逐一检验。 |",
+        "| 4 | `edge_case_analysis` | `optimization_boundary_meta` | 检查边界条件、限定词、例外或极端情形。 |",
+        "",
+        "这五个目标 leaf 分别属于五个不同主类，因此 P3 的 mixed 条件可以干净地检验“显式策略 prompt 是否能提高跨主类策略多样性”。",
+        "",
+        "## Mixed 策略目标整体情况",
+        "",
+    ]
+    lines.extend(
+        markdown_table(
+            [
+                "agent",
+                "target leaf",
+                "target major",
+                "n",
+                "exact",
+                "same-major(any)",
+                "top primary",
+                "top primary share",
+                "top secondary",
+                "agent acc",
+            ],
+            [
+                [
+                    r["agent_id"],
+                    r["target_label"],
+                    r["target_major_label"],
+                    r["n"],
+                    r["exact_hit_rate"],
+                    r["same_major_any_hit_rate"],
+                    r["top_primary"],
+                    r["top_primary_share"],
+                    r["top_secondary"],
+                    r["agent_answer_acc"],
+                ]
+                for r in mixed
+            ],
+        )
+    )
+    lines.extend(["", "## Same-elimination 对照整体情况", ""])
+    lines.extend(
+        markdown_table(
+            [
+                "agent",
+                "target leaf",
+                "n",
+                "exact",
+                "same-major(any)",
+                "top primary",
+                "top primary share",
+                "agent acc",
+            ],
+            [
+                [
+                    r["agent_id"],
+                    r["target_label"],
+                    r["n"],
+                    r["exact_hit_rate"],
+                    r["same_major_any_hit_rate"],
+                    r["top_primary"],
+                    r["top_primary_share"],
+                    r["agent_answer_acc"],
+                ]
+                for r in same
+            ],
+        )
+    )
+    lines.extend(["", "## Mixed 策略按模型拆解", ""])
+    lines.extend(
+        markdown_table(
+            [
+                "model",
+                "agent",
+                "target leaf",
+                "target major",
+                "exact",
+                "same-major(any)",
+                "top primary",
+                "top primary share",
+                "agent acc",
+            ],
+            [
+                [
+                    r["model"],
+                    r["agent_id"],
+                    r["target_label"],
+                    r["target_major_label"],
+                    r["exact_hit_rate"],
+                    r["same_major_any_hit_rate"],
+                    r["top_primary"],
+                    r["top_primary_share"],
+                    r["agent_answer_acc"],
+                ]
+                for r in mixed_model
+            ],
+        )
+    )
+    lines.extend(["", "## Same-elimination 对照按模型拆解", ""])
+    lines.extend(
+        markdown_table(
+            [
+                "model",
+                "agent",
+                "target leaf",
+                "exact",
+                "same-major(any)",
+                "top primary",
+                "top primary share",
+                "agent acc",
+            ],
+            [
+                [
+                    r["model"],
+                    r["agent_id"],
+                    r["target_label"],
+                    r["exact_hit_rate"],
+                    r["same_major_any_hit_rate"],
+                    r["top_primary"],
+                    r["top_primary_share"],
+                    r["agent_answer_acc"],
+                ]
+                for r in same_model
+            ],
+        )
+    )
+    lines.extend(
+        [
+            "",
+            "## 主要读法",
+            "",
+            "- `exact` 高，说明 trace 的细粒度 leaf 标签更接近目标策略；`same-major(any)` 高，说明至少在主类层面落到了目标策略方向。",
+            "- mixed 条件下如果 `exact` 较低但 `same-major(any)` 较高，说明模型可能没有稳定执行到指定 leaf，但已经发生了较粗粒度的策略转向。",
+            "- 如果 `top_primary` 大量集中到 `option_contrast`，说明 MMLU 多选题形式和 judge 的 primary 规则仍会把不同策略吸到选项比较形态；这需要结合 GPT-5.5 normal taxonomy judge 与 prompt-following 复核一起解释。",
+            "- P3 的关键证据不是单个 leaf 是否完全可控，而是 same 与 mixed 在 team-level diversity、major diversity 和同质性上的系统差异。",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -335,7 +516,7 @@ def build_markdown(overall: list[dict[str, Any]], by_model: list[dict[str, Any]]
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--runs_root", default="prove_experiments/runs")
+    parser.add_argument("--runs_root", default="prove_experiments/p3_analysis_runs")
     parser.add_argument("--out_dir", default="prove_experiments/p3_target_compliance")
     args = parser.parse_args()
 
@@ -351,14 +532,13 @@ def main() -> None:
             continue
         rows.extend(row_records(run_dir))
 
-    detail = rows
     overall = summarize(rows, ["probe_kind", "agent_id", "target_label", "target_major_label"])
     by_model = summarize(rows, ["probe_kind", "model", "agent_id", "target_label", "target_major_label"])
 
-    write_csv(out_dir / "p3_target_compliance_detail.csv", detail)
+    write_csv(out_dir / "p3_target_compliance_detail.csv", rows)
     write_csv(out_dir / "p3_target_compliance_overall.csv", overall)
     write_csv(out_dir / "p3_target_compliance_by_model.csv", by_model)
-    (out_dir / "p3_target_compliance.md").write_text(build_markdown(overall, by_model), encoding="utf-8-sig")
+    (out_dir / "p3_target_compliance.md").write_text(build_markdown_clean(overall, by_model), encoding="utf-8-sig")
     print(f"wrote {out_dir}")
 
 

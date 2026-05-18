@@ -395,17 +395,37 @@ async def run_gpt(packet_path: Path, out_jsonl: Path, args: argparse.Namespace) 
             rows.append(existing[blinded_id])
             continue
         print(f"[P3PF] {idx}/{len(packets)} blinded_id={blinded_id} model={args.evaluator_model}", flush=True)
-        raw = await call_openai_chat(
-            client,
-            args.evaluator_model,
-            build_user_prompt(packet, args.max_trace_chars),
-            args.temperature,
-            args.max_tokens,
-            args.llm_call_timeout,
-            args.max_retries,
-            args.retry_sleep,
-        )
-        rows.append(normalize_eval(blinded_id, args.evaluator_model, raw))
+        try:
+            raw = await call_openai_chat(
+                client,
+                args.evaluator_model,
+                build_user_prompt(packet, args.max_trace_chars),
+                args.temperature,
+                args.max_tokens,
+                args.llm_call_timeout,
+                args.max_retries,
+                args.retry_sleep,
+            )
+            rows.append(normalize_eval(blinded_id, args.evaluator_model, raw))
+        except Exception as exc:
+            print(f"[P3PF][ERROR] blinded_id={blinded_id} skipped after retries: {exc}", flush=True)
+            rows.append(
+                {
+                    "blinded_id": blinded_id,
+                    "evaluator_model": args.evaluator_model,
+                    "followed": "",
+                    "adherence_score": "",
+                    "confidence": "",
+                    "inferred_actual_method": "",
+                    "evidence_for_following": "[]",
+                    "evidence_against_following": "[]",
+                    "diagnosis": "api_error",
+                    "rationale": "",
+                    "raw_response": "",
+                    "parse_ok": 0,
+                    "error": str(exc),
+                }
+            )
         write_jsonl(out_jsonl, rows)
     return rows
 
@@ -555,6 +575,99 @@ def build_summary_md(sampled_count: int, candidate_count: int, joined: list[dict
     return "\n".join(lines) + "\n"
 
 
+def build_summary_md_clean(sampled_count: int, candidate_count: int, joined: list[dict[str, Any]]) -> str:
+    lines = [
+        "# P3 GPT-5.5 Prompt Following 复核",
+        "",
+        "目标：抽样 `target` 不包含 `option_contrast`、但自动 judge 的 primary 标签为 `option_contrast` 的 trace，让 GPT-5.5 只看原始策略指令和 trace，判断模型是否真的遵循了策略指令。",
+        "",
+        f"- candidate_count: {candidate_count}",
+        f"- sampled_count: {sampled_count}",
+        f"- evaluated_count: {len(joined)}",
+        "",
+        "判读规则：",
+        "",
+        "- GPT-5.5 认为遵循，而自动 judge 判 `option_contrast`：更像 judge/taxonomy 把选项形式过度吸附到 `option_contrast`。",
+        "- GPT-5.5 也认为没有遵循：更像模型或 prompt 没有稳定诱导目标策略。",
+        "- GPT-5.5 认为部分遵循：两种解释都可能，需要看具体 trace。",
+        "",
+    ]
+    if not joined:
+        lines.extend(
+            [
+                "当前只生成了待评审样本包，还没有 GPT-5.5 评审结果。",
+                "",
+                "运行评审命令：",
+                "",
+                "```powershell",
+                "python scripts\\run_p3_prompt_following_validation.py --runs_root prove_experiments\\p3_analysis_runs --run_gpt 1 --sample_size 40",
+                "```",
+            ]
+        )
+        return "\n".join(lines) + "\n"
+
+    overall = summarize(joined, [])
+    by_target = summarize(joined, ["agent_id", "target_families"])
+    by_model = summarize(joined, ["model", "agent_id", "target_families"])
+    lines.extend(["## 总体结果", ""])
+    lines.extend(
+        md_table(
+            ["n", "followed_rate", "mean_score", "partial_or_better", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
+            [
+                [
+                    overall[0]["n"],
+                    overall[0]["followed_rate"],
+                    overall[0]["mean_adherence_score"],
+                    overall[0]["partial_or_better_rate"],
+                    overall[0]["judge_taxonomy_likely_rate"],
+                    overall[0]["model_prompt_likely_rate"],
+                    overall[0]["ambiguous_rate"],
+                ]
+            ],
+        )
+    )
+    lines.extend(["", "## 按目标策略", ""])
+    lines.extend(
+        md_table(
+            ["agent", "target", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
+            [
+                [
+                    r["agent_id"],
+                    r["target_families"],
+                    r["n"],
+                    r["followed_rate"],
+                    r["mean_adherence_score"],
+                    r["judge_taxonomy_likely_rate"],
+                    r["model_prompt_likely_rate"],
+                    r["ambiguous_rate"],
+                ]
+                for r in by_target
+            ],
+        )
+    )
+    lines.extend(["", "## 按模型和目标策略", ""])
+    lines.extend(
+        md_table(
+            ["model", "agent", "target", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
+            [
+                [
+                    r["model"],
+                    r["agent_id"],
+                    r["target_families"],
+                    r["n"],
+                    r["followed_rate"],
+                    r["mean_adherence_score"],
+                    r["judge_taxonomy_likely_rate"],
+                    r["model_prompt_likely_rate"],
+                    r["ambiguous_rate"],
+                ]
+                for r in by_model
+            ],
+        )
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs_root", default="prove_experiments/runs")
@@ -595,7 +708,7 @@ def main() -> None:
 
     joined = join_key_eval(key_rows, eval_rows)
     write_csv(rows_path, joined)
-    summary_path.write_text(build_summary_md(len(sampled), len(candidates), joined), encoding="utf-8-sig")
+    summary_path.write_text(build_summary_md_clean(len(sampled), len(candidates), joined), encoding="utf-8-sig")
     print(f"wrote {out_dir}")
 
 

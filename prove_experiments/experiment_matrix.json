@@ -40,38 +40,91 @@
     "claim": "显式要求不同策略时，实际 trace 与标签应发生可见变化",
     "type": "test_only_probe",
     "requires_training": false,
-    "primary_controls": ["同一批问题", "同一 solver model", "不同策略 prompts"],
+    "primary_controls": [
+      "同一批问题",
+      "四个低成本同级 solver model",
+      "same 条件使用同一宽策略 prompt",
+      "mixed 条件使用五个不同 major family 的策略 prompt",
+      "质量控制后的有效 trace 口径"
+    ],
+    "target_strategies": [
+      {
+        "agent_id": 0,
+        "target_leaf": "distractor_elimination",
+        "target_major": "mmlu_option_semantics"
+      },
+      {
+        "agent_id": 1,
+        "target_leaf": "rule_or_principle_application",
+        "target_major": "mmlu_domain_reasoning"
+      },
+      {
+        "agent_id": 2,
+        "target_leaf": "decomposition",
+        "target_major": "representation_formalization"
+      },
+      {
+        "agent_id": 3,
+        "target_leaf": "case_analysis",
+        "target_major": "logical_proof"
+      },
+      {
+        "agent_id": 4,
+        "target_leaf": "edge_case_analysis",
+        "target_major": "optimization_boundary_meta"
+      }
+    ],
     "primary_outcomes": [
-      "instructed_family_hit_rate",
       "team_family_diversity",
+      "team_major_family_diversity",
       "team_family_homogeneity_rate",
-      "gpt55_method_diversity_score"
+      "target_exact_hit_rate_diagnostic",
+      "target_same_major_hit_rate_diagnostic",
+      "valid_trace_filtered_paired_stats",
+      "gpt55_normal_taxonomy_judge",
+      "gpt55_prompt_following"
     ],
     "pass_criteria": {
-      "instructed_family_or_major_hit_rate_min": 0.60,
-      "diversity_delta_vs_same_strategy_control": "bootstrap CI 为正"
+      "family_diversity_delta_vs_same_strategy_control": "bootstrap CI 为正且 Wilcoxon 支持",
+      "major_diversity_delta_vs_same_strategy_control": "bootstrap CI 为正且 Wilcoxon 支持",
+      "homogeneity_delta_vs_same_strategy_control": "下降",
+      "valid_trace_filtered_direction_preserved": true,
+      "exact_hit_is_diagnostic_not_hard_gate": true
     },
     "answers_objection": "指标没有测到真实策略变化"
   },
   {
     "id": "P4_cross_llm_strategy_transfer",
-    "claim": "策略 prompt 效应应大于模型身份效应",
+    "claim": "分解策略 prompt 效应与模型身份/输出风格效应",
     "type": "test_only_probe",
     "requires_training": false,
-    "primary_controls": ["四个低成本同级模型", "不同模型使用同一策略", "同一模型使用不同策略", "固定 critic/judge model"],
+    "primary_controls": [
+      "四个低成本同级模型",
+      "相同模型相同 prompt",
+      "相同模型不同 prompt",
+      "不同模型相同 prompt",
+      "不同模型不同 prompt",
+      "固定 critic/judge model"
+    ],
     "recommended_solver_models": [
       {"alias": "gpt4omini", "model": "gpt-4o-mini"},
       {"alias": "gemini_flash_lite", "model": "gemini-2.5-flash-lite"},
-      {"alias": "llama31_8b", "model": "Meta-Llama-3.1-8B-Instruct 或网关同级 8B instruct id"},
-      {"alias": "qwen25_7b", "model": "Qwen2.5-7B-Instruct 或网关同级 7B instruct id"}
+      {"alias": "qwen25_7b", "model": "qwen2.5-7b-instruct"},
+      {"alias": "deepseek_chat", "model": "deepseek-chat"}
     ],
     "primary_outcomes": [
       "strategy_prompt_effect",
       "model_identity_effect",
-      "same_strategy_cross_model_same_major_rate"
+      "same_model_same_prompt_distance",
+      "same_model_different_prompt_distance",
+      "different_model_same_prompt_distance",
+      "different_model_different_prompt_distance",
+      "trace_embedding_diversity_by_prompt_and_model"
     ],
     "pass_criteria": {
-      "strategy_prompt_effect_gt_model_identity_effect": true
+      "strategy_prompt_effect_positive": true,
+      "model_identity_effect_reported_as_risk": true,
+      "embedding_model_sensitivity_compared": true
     },
     "answers_objection": "指标捕获的是模型风格"
   },

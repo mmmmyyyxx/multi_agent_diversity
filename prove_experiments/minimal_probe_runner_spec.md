@@ -31,12 +31,12 @@
   "agents": [
     {
       "agent_id": 0,
-      "target_family": ["concept_definition_match"],
+      "target_family": ["distractor_elimination"],
       "prompt": "..."
     },
     {
       "agent_id": 1,
-      "target_family": ["distractor_elimination", "option_contrast"],
+      "target_family": ["rule_or_principle_application"],
       "prompt": "..."
     }
   ]
@@ -70,7 +70,7 @@
 - target family 到 judged family 的 confusion table。
 - 与同策略负对照相比的 question-level intervention effect。
 
-其中 instructed-family hit rate、same-major hit rate 和 question-level intervention effect 已由 `scripts/analyze_prove_experiments.py` 汇总；更细的 confusion table 可在 `test*_predictions.jsonl` 与 `probe_prompts.json` 上进一步展开。
+其中 instructed-family hit rate、same-major hit rate 和 question-level intervention effect 已由 `scripts/analyze_prove_experiments.py` 汇总；更细的 confusion table 可在 `test*_predictions.jsonl` 与 `probe_prompts.json` 上进一步展开。P3 的正式 mixed prompt 使用五个来自不同 major family 的 target leaf：`distractor_elimination`、`rule_or_principle_application`、`decomposition`、`case_analysis`、`edge_case_analysis`。
 
 ## 为什么需要这个 runner
 

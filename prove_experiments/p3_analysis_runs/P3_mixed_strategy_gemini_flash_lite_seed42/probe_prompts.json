@@ -1,0 +1,141 @@
+{
+  "probe_name": "mixed_strategy_mmlu",
+  "description": "P3 intervention: five agents receive explicit reasoning strategies from five distinct major strategy families.",
+  "prompts_json": "prove_experiments/prompts/mixed_strategy_mmlu.json",
+  "target_families_by_agent": {
+    "0": [
+      "distractor_elimination"
+    ],
+    "1": [
+      "rule_or_principle_application"
+    ],
+    "2": [
+      "decomposition"
+    ],
+    "3": [
+      "case_analysis"
+    ],
+    "4": [
+      "edge_case_analysis"
+    ]
+  },
+  "prompt_hashes": [
+    "2e828c0f8ac9",
+    "92fd72de89b5",
+    "3994229b31f4",
+    "90a3cfae6ed0",
+    "b26329f435f8"
+  ],
+  "config": {
+    "task_type": "mmlu",
+    "model": "gemini-2.5-flash-lite",
+    "critic_model": "gpt-4o-mini",
+    "rewriter_model": "gpt-4o-mini",
+    "family_expansion_model": "gpt-4o-mini",
+    "family_expansion_enabled": false,
+    "family_taxonomy_path": "auto",
+    "use_dual_family_labels": true,
+    "primary_family_weight": 0.7,
+    "secondary_family_weight": 0.3,
+    "same_major_family_weight": 0.5,
+    "macro_diversity_weight": 0.5,
+    "family_confidence_threshold": 0.3,
+    "family_rejudge_on_low_confidence": false,
+    "min_summary_words": 60,
+    "max_summary_tokens": 512,
+    "min_evidence_spans": 1,
+    "reward_tie_eps": 0.03,
+    "invalid_tolerance": 0.1,
+    "train_path": "train.jsonl",
+    "val_path": "",
+    "test_path": "mmlu_test_200.jsonl",
+    "train_size": 500,
+    "val_size": 150,
+    "val_split_ratio": 0.2,
+    "test_size": 100,
+    "eval_test_each_epoch": false,
+    "early_stopping_patience": 2,
+    "early_stopping_min_delta": 0.005,
+    "early_stopping_metric": "val_mean_family_diversity",
+    "agents": 5,
+    "init_mode": "shared",
+    "shared_prompt": "Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End with exactly one FINAL_ANSWER line.",
+    "epochs": 2,
+    "update_every": 5,
+    "candidate_eval_batch_size": 10,
+    "baseline_only": true,
+    "max_tokens": 1000,
+    "critic_max_tokens": 8000,
+    "rewriter_max_tokens": 1000,
+    "temperature": 0.2,
+    "critic_temperature": 0.0,
+    "rewriter_temperature": 0.5,
+    "out_dir": "prove_experiments\\p3_analysis_runs\\P3_mixed_strategy_gemini_flash_lite_seed42",
+    "seed": 42,
+    "max_retries": 5,
+    "retry_sleep": 2.0,
+    "transient_retry_forever": true,
+    "max_transient_retries": 0,
+    "max_retry_backoff": 30.0,
+    "llm_call_logging": true,
+    "llm_call_timeout": 180.0,
+    "eval_parallelism": 8,
+    "solver_api_key_env": "GEMINI_API_KEY",
+    "solver_base_url_env": "GEMINI_OPENAI_BASE_URL",
+    "critic_api_key_env": "OPENAI_API_KEY",
+    "critic_base_url_env": "OPENAI_BASE_URL",
+    "bandit_lr": 0.2,
+    "baseline_momentum": 0.9,
+    "homogeneity_window": 5,
+    "lambda_diversity": 0.0,
+    "lambda_homogeneity": 0.0,
+    "lambda_invalid_trace": 0.3
+  },
+  "agents": [
+    {
+      "agent_id": 0,
+      "target_family": [
+        "distractor_elimination"
+      ],
+      "prompt_hash": "2e828c0f8ac9",
+      "prompt": "Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 1,
+      "target_family": [
+        "rule_or_principle_application"
+      ],
+      "prompt_hash": "92fd72de89b5",
+      "prompt": "Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 2,
+      "target_family": [
+        "decomposition"
+      ],
+      "prompt_hash": "3994229b31f4",
+      "prompt": "Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 3,
+      "target_family": [
+        "case_analysis"
+      ],
+      "prompt_hash": "90a3cfae6ed0",
+      "prompt": "Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives the case split. End with exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 4,
+      "target_family": [
+        "edge_case_analysis"
+      ],
+      "prompt_hash": "b26329f435f8",
+      "prompt": "Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid under those checks. End with exactly one FINAL_ANSWER line."
+    }
+  ],
+  "probe": {
+    "config": {
+      "out_dir": "prove_experiments\\p3_analysis_runs\\P3_mixed_strategy_gemini_flash_lite_seed42"
+    }
+  }
+}

@@ -405,6 +405,71 @@ def _write_md(rows: List[Dict[str, Any]], path: Path):
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _write_md_clean(rows: List[Dict[str, Any]], path: Path):
+    columns = [
+        "run_name",
+        "probe_name",
+        "model",
+        "eval_size",
+        "mean_family_diversity",
+        "mean_family_homogeneity_rate",
+        "mean_major_family_diversity",
+        "mean_intra_family_diversity",
+        "low_confidence_share",
+        "all_same_pair_rate",
+        "target_exact_hit_rate",
+        "target_same_major_hit_rate",
+        "vote_acc",
+    ]
+    lines = [
+        "# P3 证明实验汇总",
+        "",
+        "## 指标中文含义",
+        "",
+        "| 指标 | 中文含义 |",
+        "|---|---|",
+        "| `mean_family_diversity` | 策略树 leaf 层面的平均团队多样性。越高表示五个 agent 被判到的细策略越分散。 |",
+        "| `mean_family_homogeneity_rate` | 平均同质性。越高表示 agent 之间策略越相似。 |",
+        "| `mean_major_family_diversity` | 主类层面的平均团队多样性。越高表示五个 agent 更常落到不同主策略类。 |",
+        "| `mean_intra_family_diversity` | 同一主类内部的 leaf 多样性。 |",
+        "| `low_confidence_share` | judge 对策略标签低置信的比例。越高表示标签更不稳定。 |",
+        "| `all_same_pair_rate` | 五个 agent 策略对完全相同的题目比例。越低表示策略差异更明显。 |",
+        "| `target_exact_hit_rate` | `primary` 或 `secondary` leaf 精确命中 prompt 目标 leaf 的比例。 |",
+        "| `target_same_major_hit_rate` | `primary` 所属主类命中目标主类，或 leaf 精确命中的比例。 |",
+        "| `vote_acc` | 五个 agent 多数投票答案准确率。 |",
+        "",
+        "## Run 级汇总",
+        "",
+        "| " + " | ".join(columns) + " |",
+        "|" + "|".join(["---"] * len(columns)) + "|",
+    ]
+    for row in rows:
+        lines.append("| " + " | ".join(_fmt(row.get(c, "")) for c in columns) + " |")
+
+    same = [r for r in rows if str(r.get("probe_kind", "")).lower() == "same"]
+    mixed = [r for r in rows if str(r.get("probe_kind", "")).lower() == "mixed"]
+    if same and mixed:
+        same_div = _safe_mean(r.get("mean_family_diversity", 0.0) for r in same)
+        mixed_div = _safe_mean(r.get("mean_family_diversity", 0.0) for r in mixed)
+        same_major = _safe_mean(r.get("mean_major_family_diversity", 0.0) for r in same)
+        mixed_major = _safe_mean(r.get("mean_major_family_diversity", 0.0) for r in mixed)
+        same_homo = _safe_mean(r.get("mean_family_homogeneity_rate", 0.0) for r in same)
+        mixed_homo = _safe_mean(r.get("mean_family_homogeneity_rate", 0.0) for r in mixed)
+        lines.extend(
+            [
+                "",
+                "## Same vs Mixed 总体对照",
+                "",
+                "| 对比项 | same 平均 | mixed 平均 | mixed - same |",
+                "|---|---|---|---|",
+                f"| leaf 策略多样性 | {same_div:.4f} | {mixed_div:.4f} | {mixed_div - same_div:.4f} |",
+                f"| 主类策略多样性 | {same_major:.4f} | {mixed_major:.4f} | {mixed_major - same_major:.4f} |",
+                f"| 策略同质性 | {same_homo:.4f} | {mixed_homo:.4f} | {mixed_homo - same_homo:.4f} |",
+            ]
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def _append_stats_md(path: Path, stats: Dict[str, Any]):
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     lines.extend(["", "## 统计检验", ""])
@@ -417,6 +482,35 @@ def _append_stats_md(path: Path, stats: Dict[str, Any]):
                 f"- paired n={block.get('paired_question_count', 0)}, mean_delta={safe_float(block.get('mean_delta')):.4f}, "
                 f"95% bootstrap CI=[{safe_float(block.get('ci_low')):.4f}, {safe_float(block.get('ci_high')):.4f}], "
                 f"Wilcoxon p~{safe_float(block.get('wilcoxon_p_approx'), 1.0):.4f}"
+            )
+        elif "rho" in block:
+            lines.append(f"- n={block.get('n', 0)}, Spearman rho={safe_float(block.get('rho')):.4f}")
+        else:
+            for k, v in block.items():
+                lines.append(f"- {k}: {_fmt(v)}")
+        lines.append("")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _append_stats_md_clean(path: Path, stats: Dict[str, Any]):
+    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    lines.extend(["", "## 统计检验", ""])
+    name_map = {
+        "paired_mixed_minus_same_family_diversity": "paired: mixed - same 的 leaf 策略多样性",
+        "paired_mixed_minus_same_homogeneity": "paired: mixed - same 的策略同质性",
+        "paired_mixed_minus_same_major_diversity": "paired: mixed - same 的主类策略多样性",
+        "model_identity_check": "模型身份效应检查",
+        "family_vs_major_disagreement_spearman": "leaf 多样性与主类分歧 Spearman 相关",
+    }
+    for name, block in stats.items():
+        if not isinstance(block, dict):
+            continue
+        lines.append(f"### {name_map.get(name, name)}")
+        if "mean_delta" in block:
+            lines.append(
+                f"- 配对样本数={block.get('paired_question_count', 0)}, mean_delta={safe_float(block.get('mean_delta')):.4f}, "
+                f"95% bootstrap CI=[{safe_float(block.get('ci_low')):.4f}, {safe_float(block.get('ci_high')):.4f}], "
+                f"Wilcoxon 近似 p={safe_float(block.get('wilcoxon_p_approx'), 1.0):.4f}"
             )
         elif "rho" in block:
             lines.append(f"- n={block.get('n', 0)}, Spearman rho={safe_float(block.get('rho')):.4f}")
@@ -443,9 +537,9 @@ def main():
     out_md = Path(args.out_md) if args.out_md else root / "prove_summary.md"
     out_stats = Path(args.out_stats_json) if args.out_stats_json else root / "prove_stats.json"
     _write_csv(rows, out_csv)
-    _write_md(rows, out_md)
+    _write_md_clean(rows, out_md)
     stats = _write_stats_json(rows, out_stats, args.bootstrap_iterations, args.seed)
-    _append_stats_md(out_md, stats)
+    _append_stats_md_clean(out_md, stats)
     print(f"Analyzed runs: {len(rows)}")
     print(f"CSV: {out_csv}")
     print(f"Markdown: {out_md}")

@@ -1,0 +1,13 @@
+degraded_agent_entries,degraded_questions,questions,repaired_questions,run_name,unresolved_agent_entries
+6,3,100,0,P4_mixed_strategy_deepseek_chat_seed42,0
+137,38,100,0,P4_mixed_strategy_gemini_flash_lite_seed42,0
+1,1,100,0,P4_mixed_strategy_gpt4omini_seed42,0
+202,91,100,0,P4_mixed_strategy_qwen25_7b_seed42,0
+5,3,100,0,P4_same_definition_deepseek_chat_seed42,0
+126,35,100,0,P4_same_definition_gemini_flash_lite_seed42,0
+0,0,100,0,P4_same_definition_gpt4omini_seed42,0
+190,82,100,0,P4_same_definition_qwen25_7b_seed42,0
+4,3,100,0,P4_same_elimination_deepseek_chat_seed42,0
+137,36,100,0,P4_same_elimination_gemini_flash_lite_seed42,0
+2,1,100,0,P4_same_elimination_gpt4omini_seed42,0
+229,94,100,0,P4_same_elimination_qwen25_7b_seed42,0

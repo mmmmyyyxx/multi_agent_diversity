@@ -80,49 +80,57 @@
 
 设计：
 
-- 使用相同的 100 到 200 道均衡 MMLU 题。
-- 使用 5 个 agent，每个 agent 给不同策略 prompt。
+- 使用相同的 100 道均衡 MMLU 题。
+- 使用 4 个低成本同级 solver model：`gpt-4o-mini`、`gemini-2.5-flash-lite`、`qwen2.5-7b-instruct`、`deepseek-chat`。
+- 每个模型都跑 same 条件和 mixed 条件；same 条件 5 个 agent 都使用同一宽策略，mixed 条件 5 个 agent 分别使用来自 5 个不同 major family 的策略。
 - 使用 test-only 模式，不训练。
+- 所有主结论默认基于质量控制后的有效 trace；无效或退化 trace 只进入污染风险诊断。
 
-推荐策略 prompt：
+mixed 条件的 5 个目标策略必须属于 5 个不同主类：
 
-1. 概念或定义匹配。
-2. 选项对比与干扰项排除。
-3. 从候选答案反向检查题干。
-4. 规则、定理或原则应用。
-5. 分解题干事实、约束和推论。
+| agent | target leaf | target major | 中文解释 |
+|---:|---|---|---|
+| 0 | `distractor_elimination` | `mmlu_option_semantics` | 逐项排除干扰项，保留最符合题干的选项。 |
+| 1 | `rule_or_principle_application` | `mmlu_domain_reasoning` | 先识别领域规则、定理、原则或机制，再应用到题干。 |
+| 2 | `decomposition` | `representation_formalization` | 把题干拆成事实、约束和子问题，再合并得到答案。 |
+| 3 | `case_analysis` | `logical_proof` | 枚举相关条件、情形或分支并逐一检验。 |
+| 4 | `edge_case_analysis` | `optimization_boundary_meta` | 检查边界条件、限定词、例外或极端情形。 |
 
 主要结果：
 
-- 每个 agent 的 instructed-family hit rate。
-- pairwise strategy-tree diversity。
-- pairwise full-trace embedding diversity。
-- GPT-5.5 盲评代理：完整 trace 是否真的表现出不同方法。
+- mixed 相对 same 的 `team_family_diversity`、`team_major_family_diversity`、`team_family_homogeneity_rate` 配对差异。
+- 每个 agent 的 target exact hit、target same-major hit、top primary 分布，用于诊断 prompt 遵循和 judge/taxonomy 偏差。
+- 有效 trace 数量和退化 trace 比例，确认结果不是由坏 trace 污染造成。
+- GPT-5.5 normal taxonomy judge：给出与正式 judge 尽量相同的信息，重新判断 taxonomy 标签。
+- GPT-5.5 prompt-following：只看原始策略指令和 trace，辅助判断模型是否真的遵循 prompt。
 
 通过标准：
 
-- instructed family 或 same-major hit rate 每个 agent 不低于 0.60。
-- mixed-strategy team diversity 明显高于同策略负对照。
-- GPT-5.5 盲评分数的 method diversity 与指标在至少 70% 抽样样例上方向一致。
+- mixed 条件相对 same 条件的 `team_family_diversity` 和 `team_major_family_diversity` 配对差异为正，且 bootstrap/Wilcoxon 检验支持显著提升。
+- mixed 条件相对 same 条件的 `team_family_homogeneity_rate` 下降。
+- 在只保留有效 trace 后，上述方向仍成立。
+- target exact hit 不作为硬性通过标准；它是 leaf 粒度、prompt 可执行性和 judge/taxonomy 吸附的诊断项。
+- GPT-5.5 normal taxonomy judge 若系统性不同意原 judge 的 primary label，应优先解释为 taxonomy/judge 诊断风险，而不是直接否定 team-level 多样性结果。
 
 失败解释：
 
 - 如果 prompt 没改变 trace，说明底座模型不听策略指令。
 - 如果 trace 改变但 label 不改变，说明 taxonomy 或 judge 漏检。
 - 如果 label 改变但 trace 没变，说明 judge 可能被 trace 里的提示性措辞误导。
+- 如果只有部分策略难以遵循，说明策略 prompt 可执行性不均衡，应单独重写弱策略 prompt，而不是直接否定整个指标。
 
 ## P4. 跨 LLM 策略迁移
 
 问题：
-指标测到的是策略差异，还是模型身份差异？
+指标测到的是策略 prompt 效应，还是模型身份/输出风格效应？
 
 设计：
 
-- 在四个低成本、同级别 solver model 上重复 P2 和 P3。
-- 推荐组合：`gpt-4o-mini`、Gemini Flash-Lite、Llama 3.1/3.2 8B Instruct、Qwen2.5 7B Instruct。
+- 在四个低成本、同级别 solver model 上重复 same-elimination、same-definition、mixed-strategy 三类 prompt family。
+- 推荐组合：`gpt-4o-mini`、`gemini-2.5-flash-lite`、`qwen2.5-7b-instruct`、`deepseek-chat`。
 - 不使用太大、太新的模型，避免把模型能力提升误当成策略迁移，也控制 API 成本。
 - 主分析固定 critic/judge model 为 `gpt-4o-mini`。
-- 可选：用第二个 critic model 对子集做 audit。
+- 对 P3 相关疑点用 GPT-5.5 做子集 audit。
 
 推荐模型表：
 
@@ -130,13 +138,14 @@
 |---|---|---|
 | `gpt4omini` | `gpt-4o-mini` | OpenAI 低成本基准 |
 | `gemini_flash_lite` | `gemini-2.5-flash-lite` | Google 低成本轻量模型 |
-| `llama31_8b` | `Meta-Llama-3.1-8B-Instruct` 或网关同级 8B instruct id | 开源 Llama 系列 |
-| `qwen25_7b` | `Qwen2.5-7B-Instruct` 或网关同级 7B instruct id | 开源 Qwen 系列 |
+| `qwen25_7b` | `qwen2.5-7b-instruct` | 开源 Qwen 系列低成本模型 |
+| `deepseek_chat` | `deepseek-chat` | DeepSeek 低成本通用模型 |
 
 不同网关的模型 id 可能不同；实际运行时以 `prove_experiments/p4_low_cost_models.json` 为准。
 
 条件：
 
+- 相同模型，相同 prompt：同一个 run 内 5 agent 的 team 多样性。
 - 同一模型，不同策略 prompt。
 - 不同模型，同一策略 prompt。
 - 不同模型，不同策略 prompt。
@@ -144,17 +153,20 @@
 期望：
 
 - 同一模型内，不同策略 prompt 应提高策略多样性。
-- 不同模型但同一策略 prompt，不应产生比“同模型不同策略”更高的策略多样性。
-- trace 风格和长度可能受模型影响，但策略树指标应比原始文本 embedding 更少受模型身份影响。
+- 不同模型即使使用同一 prompt，也可能因为默认推理风格不同而产生策略树差异。
+- trace 风格和长度可能受模型影响；embedding 指标预计比策略树指标更强地反映模型身份。
 
 通过标准：
 
-- strategy prompt 对 family label 的效应量大于 model identity 效应量。
-- same-strategy cross-model trace 的 same-major 比例高于 mixed-strategy same-model trace。
+- P4 不强行要求 prompt 效应大于模型身份效应；它的核心目标是定量分解二者。
+- 如果同模型不同 prompt 的距离为正，说明策略 prompt 是有效多样性来源。
+- 如果不同模型同 prompt 的距离更大，说明模型身份也会成为多样性来源，跨模型实验不能被直接解释为纯策略差异。
+- 策略树指标若比 embedding 指标更少受模型身份影响，则说明它比文本相似度更接近结构化策略差异。
 
 失败解释：
 
 - 如果标签更按模型聚类，而不是按策略聚类，说明 judge 捕获了模型风格而非推理方法。
+- 如果 embedding 对模型身份极敏感而策略树相对稳定，说明策略树指标仍有增量价值，但跨模型使用时必须报告模型身份效应。
 
 ## P5. Reward 权重 sweep
 

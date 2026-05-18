@@ -1,31 +1,31 @@
 {
   "name": "mixed_strategy_mmlu",
-  "description": "P3 intervention: each agent receives a different explicit reasoning strategy.",
+  "description": "P3 intervention: five agents receive explicit reasoning strategies from five distinct major strategy families.",
   "agents": [
     {
       "agent_id": 0,
-      "target_family": ["concept_definition_match"],
-      "prompt": "Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line."
+      "target_family": ["distractor_elimination"],
+      "prompt": "Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End with exactly one FINAL_ANSWER line."
     },
     {
       "agent_id": 1,
-      "target_family": ["distractor_elimination", "option_contrast"],
-      "prompt": "Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one FINAL_ANSWER line."
+      "target_family": ["rule_or_principle_application"],
+      "prompt": "Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End with exactly one FINAL_ANSWER line."
     },
     {
       "agent_id": 2,
-      "target_family": ["answer_to_stem_backward_check", "option_contradiction_check"],
-      "prompt": "Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line."
+      "target_family": ["decomposition"],
+      "prompt": "Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly one FINAL_ANSWER line."
     },
     {
       "agent_id": 3,
-      "target_family": ["rule_or_principle_application"],
-      "prompt": "Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line."
+      "target_family": ["case_analysis"],
+      "prompt": "Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives the case split. End with exactly one FINAL_ANSWER line."
     },
     {
       "agent_id": 4,
-      "target_family": ["decomposition", "stem_evidence_alignment"],
-      "prompt": "Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line."
+      "target_family": ["edge_case_analysis"],
+      "prompt": "Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid under those checks. End with exactly one FINAL_ANSWER line."
     }
   ]
 }

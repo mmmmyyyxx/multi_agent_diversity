@@ -152,6 +152,7 @@ async def main_async():
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
+    parser.add_argument("--eval_parallelism", type=int, default=100)
     parser.add_argument("--solver_api_key_env", type=str, default="")
     parser.add_argument("--solver_base_url_env", type=str, default="")
     parser.add_argument("--critic_api_key_env", type=str, default="")
@@ -200,6 +201,7 @@ async def main_async():
         max_retry_backoff=args.max_retry_backoff,
         llm_call_logging=bool(int(args.llm_call_logging)),
         llm_call_timeout=args.llm_call_timeout,
+        eval_parallelism=max(1, int(args.eval_parallelism)),
         solver_api_key_env=args.solver_api_key_env,
         solver_base_url_env=args.solver_base_url_env,
         critic_api_key_env=args.critic_api_key_env,

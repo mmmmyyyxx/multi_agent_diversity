@@ -1,0 +1,102 @@
+{
+  "agent0": {
+    "agent_id": 0,
+    "initial_prompt": "Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.",
+    "initial_prompt_hash": "a1d3a3482614",
+    "current_prompt": "Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.",
+    "current_prompt_hash": "a1d3a3482614",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one FINAL_ANSWER line.",
+        "current_prompt_hash": "a1d3a3482614"
+      }
+    ]
+  },
+  "agent1": {
+    "agent_id": 1,
+    "initial_prompt": "Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one FINAL_ANSWER line.",
+    "initial_prompt_hash": "ea8c927276e9",
+    "current_prompt": "Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one FINAL_ANSWER line.",
+    "current_prompt_hash": "ea8c927276e9",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one FINAL_ANSWER line.",
+        "current_prompt_hash": "ea8c927276e9"
+      }
+    ]
+  },
+  "agent2": {
+    "agent_id": 2,
+    "initial_prompt": "Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",
+    "initial_prompt_hash": "769c1b09cb61",
+    "current_prompt": "Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",
+    "current_prompt_hash": "769c1b09cb61",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one FINAL_ANSWER line.",
+        "current_prompt_hash": "769c1b09cb61"
+      }
+    ]
+  },
+  "agent3": {
+    "agent_id": 3,
+    "initial_prompt": "Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",
+    "initial_prompt_hash": "7515d52358c9",
+    "current_prompt": "Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",
+    "current_prompt_hash": "7515d52358c9",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one FINAL_ANSWER line.",
+        "current_prompt_hash": "7515d52358c9"
+      }
+    ]
+  },
+  "agent4": {
+    "agent_id": 4,
+    "initial_prompt": "Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",
+    "initial_prompt_hash": "16b074446126",
+    "current_prompt": "Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",
+    "current_prompt_hash": "16b074446126",
+    "events": [
+      {
+        "event": "init",
+        "epoch": 0,
+        "step": 0,
+        "decision": "init",
+        "selected_action_id": null,
+        "selected_action_name": "init",
+        "changed": 0,
+        "current_prompt": "Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one FINAL_ANSWER line.",
+        "current_prompt_hash": "16b074446126"
+      }
+    ]
+  }
+}

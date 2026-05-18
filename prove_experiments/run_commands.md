@@ -289,10 +289,10 @@ P4 跨 LLM：保持 judge 为 `gpt-4o-mini`，用四个低成本同级 solver mo
 
 - `gpt-4o-mini`
 - `gemini-2.5-flash-lite`
-- `Meta-Llama-3.1-8B-Instruct` 或你的网关同级 8B instruct id
-- `Qwen2.5-7B-Instruct` 或你的网关同级 7B instruct id
+- `qwen2.5-7b-instruct`
+- `deepseek-chat`
 
-如果使用统一 OpenAI-compatible 网关，把四个模型的 `solver_api_key_env` 和 `solver_base_url_env` 都改成同一组环境变量即可。如果 Gemini、Llama、Qwen 来自不同供应商，则分别设置：
+如果使用统一 OpenAI-compatible 网关，把四个模型的 `solver_api_key_env` 和 `solver_base_url_env` 都改成同一组环境变量即可。如果 Gemini、Qwen、DeepSeek 来自不同供应商，则分别设置：
 
 - `GEMINI_API_KEY`、`GEMINI_OPENAI_BASE_URL`
 - `OPENROUTER_API_KEY`、`OPENROUTER_BASE_URL` 或你自己的网关变量

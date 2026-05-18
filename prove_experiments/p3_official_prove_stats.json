@@ -1,0 +1,41 @@
+{
+  "paired_mixed_minus_same_family_diversity": {
+    "metric": "team_family_diversity",
+    "matched_models": "deepseek-chat,gemini-2.5-flash-lite,gpt-4o-mini,qwen2.5-7b-instruct",
+    "paired_question_count": 400,
+    "mean_delta": 0.10375989941351678,
+    "ci_low": 0.08197516995689663,
+    "ci_high": 0.12442672396127578,
+    "wilcoxon_z": 8.677431553814817,
+    "wilcoxon_p_approx": 4.0480668865919064e-18
+  },
+  "paired_mixed_minus_same_homogeneity": {
+    "metric": "team_family_homogeneity_rate",
+    "matched_models": "deepseek-chat,gemini-2.5-flash-lite,gpt-4o-mini,qwen2.5-7b-instruct",
+    "paired_question_count": 400,
+    "mean_delta": -0.15338924209914187,
+    "ci_low": -0.18221250521524535,
+    "ci_high": -0.1240122622420045,
+    "wilcoxon_z": -9.446414805641902,
+    "wilcoxon_p_approx": 3.5063494185593425e-21
+  },
+  "paired_mixed_minus_same_major_diversity": {
+    "metric": "team_major_family_diversity",
+    "matched_models": "deepseek-chat,gemini-2.5-flash-lite,gpt-4o-mini,qwen2.5-7b-instruct",
+    "paired_question_count": 400,
+    "mean_delta": 0.24455254570606866,
+    "ci_low": 0.20488321155603775,
+    "ci_high": 0.28483567375217606,
+    "wilcoxon_z": 9.95308212360217,
+    "wilcoxon_p_approx": 2.444914229610195e-23
+  },
+  "model_identity_check": {
+    "strategy_effect_major_disagreement": 0.17525000000000002,
+    "model_identity_effect_major_disagreement": 0.23550000000000001,
+    "strategy_gt_model_identity": 0
+  },
+  "family_vs_major_disagreement_spearman": {
+    "n": 8,
+    "rho": 0.8095238095238095
+  }
+}

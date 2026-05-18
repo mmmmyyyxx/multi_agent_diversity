@@ -25,50 +25,52 @@ prompt 措辞多样性较高，但 strategy-tree diversity 较低。
 
 Agent 0 target：
 
-- `concept_definition_match`
+- `distractor_elimination`
+- major family：`mmlu_option_semantics`
 
 Prompt：
 
-Identify the central concept or definition tested by the question. Match the stem to the relevant definition or concept boundary before considering options. End with exactly one `FINAL_ANSWER:` line.
+Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End with exactly one `FINAL_ANSWER:` line.
 
 Agent 1 target：
 
-- `distractor_elimination`
-- `option_contrast`
+- `rule_or_principle_application`
+- major family：`mmlu_domain_reasoning`
 
 Prompt：
 
-Compare the answer choices one by one. Eliminate distractors that conflict with the stem, then choose the best remaining option. End with exactly one `FINAL_ANSWER:` line.
+Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End with exactly one `FINAL_ANSWER:` line.
 
 Agent 2 target：
 
-- `answer_to_stem_backward_check`
-- `option_contradiction_check`
+- `decomposition`
+- major family：`representation_formalization`
 
 Prompt：
 
-Work backward from each plausible answer to the question stem. Ask whether the stem would still be true if that answer were selected, and reject options that create contradictions. End with exactly one `FINAL_ANSWER:` line.
+Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly one `FINAL_ANSWER:` line.
 
 Agent 3 target：
 
-- `rule_or_principle_application`
+- `case_analysis`
+- major family：`logical_proof`
 
 Prompt：
 
-Identify the governing rule, theorem, principle, or domain law. Apply that rule explicitly to the facts in the stem before choosing an option. End with exactly one `FINAL_ANSWER:` line.
+Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives the case split. End with exactly one `FINAL_ANSWER:` line.
 
 Agent 4 target：
 
-- `decomposition`
-- `stem_evidence_alignment`
+- `edge_case_analysis`
+- major family：`optimization_boundary_meta`
 
 Prompt：
 
-Break the stem into facts, constraints, and implications. Align each important fact with the options before selecting the answer. End with exactly one `FINAL_ANSWER:` line.
+Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid under those checks. End with exactly one `FINAL_ANSWER:` line.
 
 期望结果：
 
-family diversity 应高于 P2，并且完整 trace 中能看到方法差异。
+family diversity 和 major diversity 应高于 P2，同质性应降低；目标 leaf exact hit 只作为诊断项，因为它会受到 leaf 粒度、MMLU 多选题形态和 judge/taxonomy primary 判定规则影响。
 
 ## P3 混合策略：数学/定量变体
 

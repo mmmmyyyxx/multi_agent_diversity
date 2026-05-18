@@ -1,5 +1,5 @@
 ﻿{
-  "prompt_version": "normal_single_trace_family_judge_equivalent_v2",
+  "prompt_version": "normal_single_trace_family_judge_equivalent",
   "system_prompt": "You judge the reasoning strategy family for exactly one agent trace.\nIgnore answer correctness. Judge only the reasoning trajectory.\nDo not use other agents, group behavior, vote results, or gold answers.\nChoose the most specific existing leaf family that captures the trace.\nDo not output major/coarse category labels and never output an 'other' family.\nReturn strict JSON only.",
   "task_instruction": "Assign reasoning family labels for this single trace only.",
   "secondary_label_instruction": "Return primary_family and secondary_family. If only one clear strategy is present, set secondary_family equal to primary_family.",
@@ -103,13 +103,20 @@
       "quantitative_formula_application",
       "classification_taxonomy_reasoning",
       "example_counterexample_reasoning",
-      "statistical_method_reasoning"
+      "statistical_method_reasoning",
+      "psychodynamic_analysis",
+      "convergent_evolution_analysis",
+      "cultural_context_reasoning",
+      "buffer_capacity_analysis",
+      "ethical_reasoning",
+      "countertransference"
     ],
     "representation_formalization": [
       "decomposition",
       "symbolic_formulation",
       "spatial_visualization",
-      "dimensional_unit_analysis"
+      "dimensional_unit_analysis",
+      "assumption_analysis"
     ],
     "algebra_computation": [
       "algebraic_derivation",
@@ -121,16 +128,11 @@
       "case_analysis",
       "exhaustive_enumeration",
       "constraint_propagation",
-      "option_elimination",
-      "backward_reasoning",
       "consistency_verification",
       "counterexample_search",
       "proof_by_contradiction",
       "invariant_reasoning",
-      "symmetry_reasoning",
-      "definition_application",
-      "rule_based_classification",
-      "theorem_property_application"
+      "symmetry_reasoning"
     ],
     "probability_statistics": [
       "probabilistic_reasoning",
@@ -139,8 +141,7 @@
     "induction_pattern": [
       "pattern_generalization",
       "inductive_reasoning",
-      "analogy_mapping",
-      "comparative_reasoning"
+      "analogy_mapping"
     ],
     "process_structure_simulation": [
       "simulation_tracing",

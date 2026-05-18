@@ -1,0 +1,5 @@
+contrast,mean_family_diversity,mean_homogeneity,mean_major_distribution_distance,n,unit
+same_model_same_prompt,0.4735482682715947,0.702253767966787,0.4220810020072707,1200,within_team
+same_model_different_prompt,,,0.19391666666666668,1200,between_team_same_question
+different_model_same_prompt,,,0.29196666666666665,1800,between_team_same_question
+different_model_different_prompt,,,0.29977777777777775,3600,between_team_same_question

@@ -1,0 +1,34 @@
+[
+  {
+    "contrast": "same_model_same_prompt",
+    "unit": "within_team",
+    "n": 1200,
+    "mean_major_distribution_distance": 0.4220810020072707,
+    "mean_family_diversity": 0.4735482682715947,
+    "mean_homogeneity": 0.702253767966787
+  },
+  {
+    "contrast": "same_model_different_prompt",
+    "unit": "between_team_same_question",
+    "n": 1200,
+    "mean_major_distribution_distance": 0.19391666666666668,
+    "mean_family_diversity": "",
+    "mean_homogeneity": ""
+  },
+  {
+    "contrast": "different_model_same_prompt",
+    "unit": "between_team_same_question",
+    "n": 1800,
+    "mean_major_distribution_distance": 0.29196666666666665,
+    "mean_family_diversity": "",
+    "mean_homogeneity": ""
+  },
+  {
+    "contrast": "different_model_different_prompt",
+    "unit": "between_team_same_question",
+    "n": 3600,
+    "mean_major_distribution_distance": 0.29977777777777775,
+    "mean_family_diversity": "",
+    "mean_homogeneity": ""
+  }
+]
