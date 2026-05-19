@@ -2,6 +2,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 import random
 import re
 from collections import Counter
@@ -110,6 +111,230 @@ def pairwise_token_cosine_diversity(texts: Sequence[str]) -> Tuple[float, float]
     return float(max(0.0, min(1.0, 1.0 - mean_sim))), mean_sim
 
 
+DEFAULT_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+DEFAULT_EMBEDDING_CHUNK_WORDS = 320
+DEFAULT_EMBEDDING_CHUNK_OVERLAP = 40
+
+
+class SentenceEmbeddingEncoder:
+    def __init__(self, model_name: str, enabled: bool = True):
+        self.model_name = model_name
+        self.enabled = enabled
+        self.model: Any = None
+        self.load_error = ""
+        self.cache: dict[str, list[float]] = {}
+
+    @property
+    def status(self) -> str:
+        if not self.enabled:
+            return "disabled"
+        if self.load_error:
+            return "unavailable"
+        if self.model is not None:
+            return "ok"
+        return "not_loaded"
+
+    def _load(self) -> bool:
+        if not self.enabled:
+            return False
+        if self.model is not None:
+            return True
+        if self.load_error:
+            return False
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            self.model = SentenceTransformer(self._resolve_model_name())
+            return True
+        except Exception as exc:
+            self.load_error = f"{type(exc).__name__}: {exc}"
+            return False
+
+    def _resolve_model_name(self) -> str:
+        model_name = str(self.model_name or "").strip()
+        if not model_name:
+            return model_name
+        direct = Path(model_name)
+        if direct.exists():
+            return str(direct)
+
+        candidates = [
+            Path.cwd() / model_name,
+            Path.cwd() / "models" / model_name,
+            Path.cwd() / "models" / model_name.replace("/", "--"),
+        ]
+        for env_name in ["SENTENCE_TRANSFORMERS_HOME", "HF_HOME", "HUGGINGFACE_HUB_CACHE"]:
+            root = os.getenv(env_name)
+            if not root:
+                continue
+            candidates.extend(
+                [
+                    Path(root) / model_name,
+                    Path(root) / model_name.replace("/", "--"),
+                    Path(root) / "hub" / f"models--{model_name.replace('/', '--')}",
+                ]
+            )
+        userprofile = os.getenv("USERPROFILE")
+        if userprofile:
+            candidates.append(Path(userprofile) / ".cache" / "huggingface" / "hub" / f"models--{model_name.replace('/', '--')}")
+
+        for candidate in candidates:
+            if not candidate.exists():
+                continue
+            snapshots = candidate / "snapshots"
+            if snapshots.is_dir():
+                snapshot_dirs = sorted([p for p in snapshots.iterdir() if p.is_dir()])
+                if snapshot_dirs:
+                    return str(snapshot_dirs[-1])
+            return str(candidate)
+        return model_name
+
+    def encode(self, texts: Sequence[str]) -> List[List[float]]:
+        normalized = [normalize_spaces(t) for t in texts if normalize_spaces(t)]
+        if not normalized or not self._load():
+            return []
+
+        missing = [t for t in dict.fromkeys(normalized) if t not in self.cache]
+        if missing:
+            vectors = self.model.encode(
+                missing,
+                batch_size=32,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+            for text, vec in zip(missing, vectors):
+                self.cache[text] = [float(x) for x in vec]
+        return [self.cache[t] for t in normalized if t in self.cache]
+
+    def encode_documents(
+        self,
+        texts: Sequence[str],
+        chunk_words: int = 0,
+        chunk_overlap: int = 0,
+    ) -> Tuple[List[List[float]], List[int]]:
+        normalized = [normalize_spaces(t) for t in texts if normalize_spaces(t)]
+        if not normalized or not self._load():
+            return [], []
+
+        vectors: List[List[float]] = []
+        chunk_counts: List[int] = []
+        for text in normalized:
+            chunks = _split_text_for_embedding(text, chunk_words=chunk_words, chunk_overlap=chunk_overlap)
+            if not chunks:
+                continue
+            chunk_vectors = self.encode(chunks)
+            if not chunk_vectors:
+                continue
+            vectors.append(_mean_pool_vectors(chunk_vectors))
+            chunk_counts.append(len(chunks))
+        return vectors, chunk_counts
+
+
+def _split_text_for_embedding(text: str, chunk_words: int = 0, chunk_overlap: int = 0) -> List[str]:
+    text = normalize_spaces(text)
+    if not text:
+        return []
+    if chunk_words <= 0:
+        return [text]
+
+    words = text.split()
+    if len(words) <= chunk_words:
+        return [text]
+
+    overlap = max(0, min(int(chunk_overlap), int(chunk_words) - 1))
+    step = max(1, int(chunk_words) - overlap)
+    chunks: List[str] = []
+    for start in range(0, len(words), step):
+        chunk = " ".join(words[start : start + int(chunk_words)]).strip()
+        if chunk:
+            chunks.append(chunk)
+        if start + int(chunk_words) >= len(words):
+            break
+    return chunks
+
+
+def _mean_pool_vectors(vectors: Sequence[Sequence[float]]) -> List[float]:
+    if not vectors:
+        return []
+    dim = len(vectors[0])
+    usable = [v for v in vectors if len(v) == dim]
+    if not usable:
+        return []
+    pooled = [sum(float(v[i]) for v in usable) / float(len(usable)) for i in range(dim)]
+    norm = math.sqrt(sum(float(x * x) for x in pooled))
+    if norm <= 0.0:
+        return pooled
+    return [float(x / norm) for x in pooled]
+
+
+def cosine_sim_from_vectors(xs: Sequence[float], ys: Sequence[float]) -> float:
+    if not xs and not ys:
+        return 1.0
+    if not xs or not ys or len(xs) != len(ys):
+        return 0.0
+    dot = sum(float(a * b) for a, b in zip(xs, ys))
+    nx = math.sqrt(sum(float(a * a) for a in xs))
+    ny = math.sqrt(sum(float(b * b) for b in ys))
+    if nx <= 0.0 or ny <= 0.0:
+        return 0.0
+    return float(max(-1.0, min(1.0, dot / (nx * ny))))
+
+
+def pairwise_embedding_cosine_diversity(
+    texts: Sequence[str],
+    encoder: Optional[SentenceEmbeddingEncoder],
+) -> Tuple[Optional[float], Optional[float]]:
+    if len(texts) < 2:
+        return 0.0, 1.0
+    if encoder is None or not encoder.enabled:
+        return None, None
+
+    embeddings = encoder.encode(list(texts))
+    if len(embeddings) < 2:
+        return None, None
+
+    sims: List[float] = []
+    for i in range(len(embeddings)):
+        for j in range(i + 1, len(embeddings)):
+            sims.append(cosine_sim_from_vectors(embeddings[i], embeddings[j]))
+    mean_sim = safe_mean(sims)
+    mean_sim = float(max(-1.0, min(1.0, mean_sim)))
+    return float(max(0.0, min(2.0, 1.0 - mean_sim))), mean_sim
+
+
+def pairwise_document_embedding_cosine_diversity(
+    texts: Sequence[str],
+    encoder: Optional[SentenceEmbeddingEncoder],
+    chunk_words: int = DEFAULT_EMBEDDING_CHUNK_WORDS,
+    chunk_overlap: int = DEFAULT_EMBEDDING_CHUNK_OVERLAP,
+) -> Tuple[Optional[float], Optional[float], int, float]:
+    if len(texts) < 2:
+        return 0.0, 1.0, len(texts), 1.0 if texts else 0.0
+    if encoder is None or not encoder.enabled:
+        return None, None, 0, 0.0
+
+    embeddings, chunk_counts = encoder.encode_documents(
+        list(texts),
+        chunk_words=chunk_words,
+        chunk_overlap=chunk_overlap,
+    )
+    if len(embeddings) < 2:
+        return None, None, len(embeddings), safe_mean([float(x) for x in chunk_counts])
+
+    sims: List[float] = []
+    for i in range(len(embeddings)):
+        for j in range(i + 1, len(embeddings)):
+            sims.append(cosine_sim_from_vectors(embeddings[i], embeddings[j]))
+    mean_sim = safe_mean(sims)
+    mean_sim = float(max(-1.0, min(1.0, mean_sim)))
+    return (
+        float(max(0.0, min(2.0, 1.0 - mean_sim))),
+        mean_sim,
+        len(embeddings),
+        safe_mean([float(x) for x in chunk_counts]),
+    )
+
+
 def bootstrap_mean_ci(values: Sequence[float], iterations: int = 2000, seed: int = 42) -> Dict[str, Any]:
     vals = [safe_float(v) for v in values]
     if not vals:
@@ -193,4 +418,3 @@ def infer_probe_kind(*names: Any) -> str:
     if "same" in text:
         return "same"
     return "other"
-

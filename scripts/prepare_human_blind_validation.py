@@ -15,6 +15,9 @@ for p in [ROOT, SCRIPT_DIR]:
 from prove_experiment_utils import (  # noqa: E402
     bootstrap_mean_ci,
     find_prediction_file,
+    DEFAULT_EMBEDDING_MODEL,
+    SentenceEmbeddingEncoder,
+    pairwise_document_embedding_cosine_diversity,
     pairwise_token_cosine_diversity,
     read_jsonl,
     safe_float,
@@ -131,11 +134,21 @@ def _write_packet(selected: List[Tuple[str, Dict[str, Any]]], out_dir: Path, see
     packet_path = out_dir / "p7_blind_annotation_packet.jsonl"
     key_rows: List[Dict[str, Any]] = []
     rng = random.Random(seed)
+    encoder = SentenceEmbeddingEncoder(DEFAULT_EMBEDDING_MODEL, enabled=True)
     with packet_path.open("w", encoding="utf-8") as f:
         for idx, (bucket, group) in enumerate(selected, start=1):
             blinded_id = f"P7G{idx:04d}"
             agents = list(group.get("agents", []))
             rng.shuffle(agents)
+            trace_texts = [
+                str(agent.get("trace", "")).strip()
+                for agent in agents
+                if isinstance(agent, dict) and str(agent.get("trace", "")).strip()
+            ]
+            trace_emb_div, trace_emb_sim, trace_emb_count, trace_emb_chunks = pairwise_document_embedding_cosine_diversity(
+                trace_texts,
+                encoder,
+            )
             blind_agents = [
                 {
                     "agent_alias": f"A{j + 1}",
@@ -170,6 +183,14 @@ def _write_packet(selected: List[Tuple[str, Dict[str, Any]]], out_dir: Path, see
                     "team_major_family_diversity": group.get("team_major_family_diversity", 0.0),
                     "trace_token_cosine_diversity": group.get("trace_token_cosine_diversity", 0.0),
                     "trace_token_cosine_similarity": group.get("trace_token_cosine_similarity", 0.0),
+                    "trace_embedding_cosine_diversity": trace_emb_div,
+                    "trace_embedding_cosine_similarity": trace_emb_sim,
+                    "trace_embedding_text_count": trace_emb_count,
+                    "mean_trace_embedding_chunks": trace_emb_chunks,
+                    "trace_embedding_chunk_words": 320,
+                    "trace_embedding_chunk_overlap": 40,
+                    "trace_embedding_model": encoder.model_name,
+                    "trace_embedding_status": encoder.status,
                     "vote_correct": group.get("vote_correct", 0.0),
                 }
             )
@@ -210,6 +231,7 @@ def _analyze_annotations(key_rows: List[Dict[str, Any]], annotations_path: str, 
         return {"matched_count": 0}
     corr_strategy = spearman_corr([r["team_family_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
     corr_text = spearman_corr([r["trace_token_cosine_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
+    corr_embedding = spearman_corr([r["trace_embedding_cosine_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
     high = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) in {"high_strategy", "low_text_high_strategy"}]
     low = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) in {"low_strategy", "high_text_low_strategy"}]
     delta_ci = bootstrap_mean_ci([h - l for h, l in zip(high, low)], iterations=bootstrap_iterations, seed=seed) if high and low else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
@@ -217,6 +239,7 @@ def _analyze_annotations(key_rows: List[Dict[str, Any]], annotations_path: str, 
         "matched_count": len(rows),
         "strategy_tree_vs_human_spearman": corr_strategy,
         "trace_text_vs_human_spearman": corr_text,
+        "trace_embedding_vs_human_spearman": corr_embedding,
         "high_strategy_minus_low_strategy_human_score_ci": delta_ci,
         "mean_high_strategy_human_score": safe_mean(high),
         "mean_low_strategy_human_score": safe_mean(low),
@@ -252,6 +275,8 @@ def _write_md(out_dir: Path, groups: List[Dict[str, Any]], bucketed: Dict[str, L
             lines.append(f"- strategy_tree_vs_human_spearman: {safe_float(analysis['strategy_tree_vs_human_spearman'].get('rho')):.4f}")
         if isinstance(analysis.get("trace_text_vs_human_spearman"), dict):
             lines.append(f"- trace_text_vs_human_spearman: {safe_float(analysis['trace_text_vs_human_spearman'].get('rho')):.4f}")
+        if isinstance(analysis.get("trace_embedding_vs_human_spearman"), dict):
+            lines.append(f"- trace_embedding_vs_human_spearman: {safe_float(analysis['trace_embedding_vs_human_spearman'].get('rho')):.4f}")
     (out_dir / "p7_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -279,4 +304,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

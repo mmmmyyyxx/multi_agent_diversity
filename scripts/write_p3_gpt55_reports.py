@@ -32,10 +32,45 @@ def safe_mean(values: list[Any]) -> float:
     return float(statistics.mean(nums)) if nums else 0.0
 
 
+def split_pipe_values(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(v).strip() for v in value if str(v).strip()]
+    if isinstance(value, tuple):
+        return [str(v).strip() for v in value if str(v).strip()]
+    text = str(value).strip()
+    if not text:
+        return []
+    return [part.strip() for part in text.split("|") if part.strip()]
+
+
+def first_text(row: dict[str, Any], *names: str) -> str:
+    for name in names:
+        text = str(row.get(name, "")).strip()
+        if text:
+            return text
+    return ""
+
+
+def prompt_excerpt(text: str, max_chars: int = 180) -> str:
+    clean = str(text or "").strip()
+    if not clean:
+        return ""
+    if len(clean) <= max_chars:
+        return clean
+    return clean[: max(0, max_chars - 4)].rstrip() + " ..."
+
+
+def prompt_block(text: str) -> str:
+    clean = str(text or "").strip()
+    return clean
+
+
 def md_cell(value: Any) -> str:
     if isinstance(value, float):
         return f"{value:.4f}"
-    return str(value).replace("|", "\\|")
+    return str(value).replace("|", "\\|").replace("\n", "<br>")
 
 
 def md_table(headers: list[str], rows: list[list[Any]]) -> list[str]:
@@ -55,6 +90,32 @@ def group_rows(rows: list[dict[str, Any]], keys: list[str]) -> list[dict[str, An
         rec = {k: v for k, v in zip(keys, key)}
         rec["n"] = len(vals)
         first = vals[0] if vals else {}
+        if "auto_primary" in first or "target_families" in first:
+            judge_exact_flags = []
+            judge_major_flags = []
+            judge_primary_option_flags = []
+            judge_pair_option_flags = []
+            for v in vals:
+                target_families = set(split_pipe_values(v.get("target_families") or v.get("target_label")))
+                target_majors = set(split_pipe_values(v.get("target_majors") or v.get("target_major_label")))
+                auto_primary = first_text(v, "auto_primary")
+                auto_secondary = first_text(v, "auto_secondary") or auto_primary
+                auto_primary_major = first_text(v, "auto_primary_major")
+                auto_secondary_major = first_text(v, "auto_secondary_major") or auto_primary_major
+                exact = int(bool(target_families) and (auto_primary in target_families or auto_secondary in target_families))
+                same_major = int(
+                    exact
+                    or (bool(target_majors) and auto_primary_major in target_majors)
+                    or (bool(target_majors) and auto_secondary_major in target_majors)
+                )
+                judge_exact_flags.append(exact)
+                judge_major_flags.append(same_major)
+                judge_primary_option_flags.append(int(auto_primary == "option_contrast"))
+                judge_pair_option_flags.append(int(auto_primary == "option_contrast" or auto_secondary == "option_contrast"))
+            rec["judge_target_exact_hit_rate"] = safe_mean(judge_exact_flags)
+            rec["judge_target_same_major_hit_rate"] = safe_mean(judge_major_flags)
+            rec["judge_primary_option_contrast_rate"] = safe_mean(judge_primary_option_flags)
+            rec["judge_pair_option_contrast_rate"] = safe_mean(judge_pair_option_flags)
         if "gpt_primary_is_option_contrast" in first:
             rec["gpt_primary_option_contrast_rate"] = safe_mean([v.get("gpt_primary_is_option_contrast") for v in vals])
             rec["gpt_pair_option_contrast_rate"] = safe_mean([v.get("gpt_primary_or_secondary_is_option_contrast") for v in vals])
@@ -82,10 +143,9 @@ def write_text(path: Path, text: str) -> None:
 
 def normal_judge_summary(rows: list[dict[str, Any]], source: Path) -> str:
     overall = group_rows(rows, [])
-    by_target = group_rows(rows, ["agent_id", "target_families"])
-    by_model = group_rows(rows, ["model", "agent_id", "target_families"])
+    by_strategy = group_rows(rows, ["agent_id", "target_families", "strategy_instruction"])
+    by_model = group_rows(rows, ["model", "agent_id", "target_families", "strategy_instruction"])
     top = overall[0] if overall else {}
-
     lines = [
         "# P3 GPT-5.5 Normal Taxonomy Judge 复核",
         "",
@@ -99,11 +159,14 @@ def normal_judge_summary(rows: list[dict[str, Any]], source: Path) -> str:
         "",
         "| 指标 | 中文含义 |",
         "|---|---|",
+        "| `judge_primary option` | 原自动 judge 把 trace 的 primary 判为 `option_contrast` 的比例。 |",
+        "| `judge pair option` | 原自动 judge 把 primary 或 secondary 任一策略判为 `option_contrast` 的比例。 |",
+        "| `judge target exact` | 原自动 judge 的 primary 或 secondary leaf 精确命中 prompt 目标 leaf 的比例。 |",
+        "| `judge target same-major` | 原自动 judge 的 primary 或 secondary 所属主类命中目标主类的比例。 |",
         "| `GPT primary option` | GPT-5.5 把 trace 的主策略判为 `option_contrast` 的比例。 |",
-        "| `GPT pair option` | GPT-5.5 把 `primary` 或 `secondary` 任一策略判为 `option_contrast` 的比例。 |",
-        "| `GPT target exact` | GPT-5.5 的 `primary` 或 `secondary` leaf 精确命中 prompt 目标 leaf 的比例。 |",
-        "| `GPT target same-major` | GPT-5.5 的 `primary` 或 `secondary` 所属主类命中目标主类的比例。 |",
-        "| `original judge supported` | GPT-5.5 也支持原自动 judge 的 `option_contrast` 主判定的比例。 |",
+        "| `GPT pair option` | GPT-5.5 把 primary 或 secondary 任一策略判为 `option_contrast` 的比例。 |",
+        "| `GPT target exact` | GPT-5.5 的 primary 或 secondary leaf 精确命中 prompt 目标 leaf 的比例。 |",
+        "| `GPT target same-major` | GPT-5.5 的 primary 或 secondary 所属主类命中目标主类的比例。 |",
         "| `judge/taxonomy questioned` | GPT-5.5 不支持原自动 judge 的 `option_contrast` 主判定的比例。 |",
         "| `confidence` | GPT-5.5 对自己 taxonomy 标签判断的平均置信度。 |",
         "",
@@ -115,69 +178,85 @@ def normal_judge_summary(rows: list[dict[str, Any]], source: Path) -> str:
             md_table(
                 [
                     "n",
+                    "judge primary option",
+                    "judge pair option",
+                    "judge target exact",
+                    "judge target same-major",
                     "GPT primary option",
                     "GPT pair option",
                     "GPT target exact",
                     "GPT target same-major",
-                    "original judge supported",
                     "judge/taxonomy questioned",
                     "confidence",
                 ],
                 [
                     [
                         top["n"],
-                        top["gpt_primary_option_contrast_rate"],
-                        top["gpt_pair_option_contrast_rate"],
-                        top["gpt_target_exact_hit_rate"],
-                        top["gpt_target_same_major_hit_rate"],
-                        top["original_judge_supported_rate"],
-                        top["judge_taxonomy_questioned_rate"],
-                        top["mean_confidence"],
+                        top.get("judge_primary_option_contrast_rate", 0.0),
+                        top.get("judge_pair_option_contrast_rate", 0.0),
+                        top.get("judge_target_exact_hit_rate", 0.0),
+                        top.get("judge_target_same_major_hit_rate", 0.0),
+                        top.get("gpt_primary_option_contrast_rate", 0.0),
+                        top.get("gpt_pair_option_contrast_rate", 0.0),
+                        top.get("gpt_target_exact_hit_rate", 0.0),
+                        top.get("gpt_target_same_major_hit_rate", 0.0),
+                        top.get("judge_taxonomy_questioned_rate", 0.0),
+                        top.get("mean_confidence", 0.0),
                     ]
                 ],
             )
         )
 
-    lines.extend(["", "## 按目标策略", ""])
+    lines.extend(["", "## 按策略汇总", ""])
     lines.extend(
         md_table(
             [
                 "agent",
                 "target",
+                "prompt",
                 "n",
+                "judge exact",
+                "GPT exact",
+                "judge same-major",
+                "GPT same-major",
+                "judge primary option",
                 "GPT primary option",
-                "GPT pair option",
-                "GPT target exact",
-                "GPT target same-major",
                 "judge/taxonomy questioned",
             ],
             [
                 [
                     r["agent_id"],
                     r["target_families"],
+                    prompt_excerpt(first_text(r, "strategy_instruction", "prompt", "prompt_text", "instruction")),
                     r["n"],
-                    r["gpt_primary_option_contrast_rate"],
-                    r["gpt_pair_option_contrast_rate"],
-                    r["gpt_target_exact_hit_rate"],
-                    r["gpt_target_same_major_hit_rate"],
-                    r["judge_taxonomy_questioned_rate"],
+                    r.get("judge_target_exact_hit_rate", 0.0),
+                    r.get("gpt_target_exact_hit_rate", 0.0),
+                    r.get("judge_target_same_major_hit_rate", 0.0),
+                    r.get("gpt_target_same_major_hit_rate", 0.0),
+                    r.get("judge_primary_option_contrast_rate", 0.0),
+                    r.get("gpt_primary_option_contrast_rate", 0.0),
+                    r.get("judge_taxonomy_questioned_rate", 0.0),
                 ]
-                for r in by_target
+                for r in by_strategy
             ],
         )
     )
 
-    lines.extend(["", "## 按模型和目标策略", ""])
+    lines.extend(["", "## 按模型展开", ""])
     lines.extend(
         md_table(
             [
                 "model",
                 "agent",
                 "target",
+                "prompt",
                 "n",
+                "judge exact",
+                "GPT exact",
+                "judge same-major",
+                "GPT same-major",
+                "judge primary option",
                 "GPT primary option",
-                "GPT target exact",
-                "GPT target same-major",
                 "judge/taxonomy questioned",
             ],
             [
@@ -185,20 +264,38 @@ def normal_judge_summary(rows: list[dict[str, Any]], source: Path) -> str:
                     r["model"],
                     r["agent_id"],
                     r["target_families"],
+                    prompt_excerpt(first_text(r, "strategy_instruction", "prompt", "prompt_text", "instruction")),
                     r["n"],
-                    r["gpt_primary_option_contrast_rate"],
-                    r["gpt_target_exact_hit_rate"],
-                    r["gpt_target_same_major_hit_rate"],
-                    r["judge_taxonomy_questioned_rate"],
+                    r.get("judge_target_exact_hit_rate", 0.0),
+                    r.get("gpt_target_exact_hit_rate", 0.0),
+                    r.get("judge_target_same_major_hit_rate", 0.0),
+                    r.get("gpt_target_same_major_hit_rate", 0.0),
+                    r.get("judge_primary_option_contrast_rate", 0.0),
+                    r.get("gpt_primary_option_contrast_rate", 0.0),
+                    r.get("judge_taxonomy_questioned_rate", 0.0),
                 ]
                 for r in by_model
             ],
         )
     )
 
+    lines.extend(["", "## 策略指令参考", ""])
+    for row in by_strategy:
+        prompt_text = prompt_block(row.get("strategy_instruction", ""))
+        if not prompt_text:
+            continue
+        lines.extend(
+            [
+                f"- agent `{row['agent_id']}` / target `{row['target_families']}`",
+                "",
+                "```text",
+                prompt_text,
+                "```",
+                "",
+            ]
+        )
     lines.extend(
         [
-            "",
             "## 结论读法",
             "",
             "- 如果 GPT-5.5 仍大量支持 `option_contrast`，说明原自动 judge 的选项比较判定并不只是弱模型噪声，而是 trace 本身确实呈现出强选项比较结构。",
@@ -211,10 +308,9 @@ def normal_judge_summary(rows: list[dict[str, Any]], source: Path) -> str:
 
 def prompt_following_summary(rows: list[dict[str, Any]], source: Path) -> str:
     overall = group_rows(rows, [])
-    by_target = group_rows(rows, ["agent_id", "target_families"])
-    by_model = group_rows(rows, ["model", "agent_id", "target_families"])
+    by_strategy = group_rows(rows, ["agent_id", "target_families", "strategy_instruction"])
+    by_model = group_rows(rows, ["model", "agent_id", "target_families", "strategy_instruction"])
     top = overall[0] if overall else {}
-
     lines = [
         "# P3 GPT-5.5 Prompt Following 复核",
         "",
@@ -256,14 +352,15 @@ def prompt_following_summary(rows: list[dict[str, Any]], source: Path) -> str:
             )
         )
 
-    lines.extend(["", "## 按目标策略", ""])
+    lines.extend(["", "## 按策略汇总", ""])
     lines.extend(
         md_table(
-            ["agent", "target", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
+            ["agent", "target", "prompt", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
             [
                 [
                     r["agent_id"],
                     r["target_families"],
+                    prompt_excerpt(first_text(r, "strategy_instruction", "prompt", "prompt_text", "instruction")),
                     r["n"],
                     r["followed_rate"],
                     r["mean_adherence_score"],
@@ -271,20 +368,21 @@ def prompt_following_summary(rows: list[dict[str, Any]], source: Path) -> str:
                     r["model_prompt_likely_rate"],
                     r["ambiguous_rate"],
                 ]
-                for r in by_target
+                for r in by_strategy
             ],
         )
     )
 
-    lines.extend(["", "## 按模型和目标策略", ""])
+    lines.extend(["", "## 按模型展开", ""])
     lines.extend(
         md_table(
-            ["model", "agent", "target", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
+            ["model", "agent", "target", "prompt", "n", "followed", "mean_score", "judge_taxonomy_likely", "model_prompt_likely", "ambiguous"],
             [
                 [
                     r["model"],
                     r["agent_id"],
                     r["target_families"],
+                    prompt_excerpt(first_text(r, "strategy_instruction", "prompt", "prompt_text", "instruction")),
                     r["n"],
                     r["followed_rate"],
                     r["mean_adherence_score"],
@@ -297,9 +395,23 @@ def prompt_following_summary(rows: list[dict[str, Any]], source: Path) -> str:
         )
     )
 
+    lines.extend(["", "## 策略指令参考", ""])
+    for row in by_strategy:
+        prompt_text = prompt_block(row.get("strategy_instruction", ""))
+        if not prompt_text:
+            continue
+        lines.extend(
+            [
+                f"- agent `{row['agent_id']}` / target `{row['target_families']}`",
+                "",
+                "```text",
+                prompt_text,
+                "```",
+                "",
+            ]
+        )
     lines.extend(
         [
-            "",
             "## 结论读法",
             "",
             "- 如果 `followed_rate` 高，而 normal taxonomy judge 仍判 `option_contrast`，则更支持 judge/taxonomy 吸附解释。",
@@ -313,8 +425,17 @@ def prompt_following_summary(rows: list[dict[str, Any]], source: Path) -> str:
 def combined_summary(normal_rows: list[dict[str, Any]], prompt_rows: list[dict[str, Any]]) -> str:
     normal_overall = group_rows(normal_rows, [])
     prompt_overall = group_rows(prompt_rows, [])
+    normal_by_strategy = group_rows(normal_rows, ["agent_id", "target_families", "strategy_instruction"])
+    prompt_by_strategy = group_rows(prompt_rows, ["agent_id", "target_families", "strategy_instruction"])
     no = normal_overall[0] if normal_overall else {}
     po = prompt_overall[0] if prompt_overall else {}
+
+    def strategy_key(row: dict[str, Any]) -> tuple[str, str]:
+        return str(row.get("agent_id", "")), str(row.get("target_families", ""))
+
+    normal_by_key = {strategy_key(r): r for r in normal_by_strategy}
+    prompt_by_key = {strategy_key(r): r for r in prompt_by_strategy}
+    all_keys = sorted(set(normal_by_key) | set(prompt_by_key))
 
     lines = [
         "# P3 GPT-5.5 综合结论",
@@ -332,13 +453,16 @@ def combined_summary(normal_rows: list[dict[str, Any]], prompt_rows: list[dict[s
     if normal_rows:
         lines.extend(
             md_table(
-                ["normal n", "GPT primary option", "GPT target exact", "GPT target same-major", "judge/taxonomy questioned"],
+                ["normal n", "judge exact", "GPT exact", "judge same-major", "GPT same-major", "judge primary option", "GPT primary option", "judge/taxonomy questioned"],
                 [
                     [
                         len(normal_rows),
-                        no.get("gpt_primary_option_contrast_rate", 0.0),
+                        no.get("judge_target_exact_hit_rate", 0.0),
                         no.get("gpt_target_exact_hit_rate", 0.0),
+                        no.get("judge_target_same_major_hit_rate", 0.0),
                         no.get("gpt_target_same_major_hit_rate", 0.0),
+                        no.get("judge_primary_option_contrast_rate", 0.0),
+                        no.get("gpt_primary_option_contrast_rate", 0.0),
                         no.get("judge_taxonomy_questioned_rate", 0.0),
                     ]
                 ],
@@ -361,6 +485,85 @@ def combined_summary(normal_rows: list[dict[str, Any]], prompt_rows: list[dict[s
                 ],
             )
         )
+
+    if all_keys:
+        lines.extend(
+            [
+                "",
+                "## 按策略联合对照",
+                "",
+                "这一表把原自动 judge 的目标策略命中、GPT-5.5 taxonomy rejudge 的目标策略命中、以及 GPT-5.5 prompt-following 诊断放在同一处。`target exact` 是目标 leaf 精确命中，`same-major` 是目标主类命中。",
+                "",
+            ]
+        )
+        strategy_rows: list[list[Any]] = []
+        for key in all_keys:
+            normal = normal_by_key.get(key, {})
+            prompt = prompt_by_key.get(key, {})
+            ref = normal or prompt
+            prompt_text = first_text(ref, "strategy_instruction", "prompt", "prompt_text", "instruction")
+            strategy_rows.append(
+                [
+                    key[0],
+                    key[1],
+                    prompt_excerpt(prompt_text),
+                    normal.get("n", 0),
+                    normal.get("judge_target_exact_hit_rate", 0.0),
+                    normal.get("gpt_target_exact_hit_rate", 0.0),
+                    normal.get("judge_target_same_major_hit_rate", 0.0),
+                    normal.get("gpt_target_same_major_hit_rate", 0.0),
+                    normal.get("judge_primary_option_contrast_rate", 0.0),
+                    normal.get("gpt_primary_option_contrast_rate", 0.0),
+                    prompt.get("n", 0),
+                    prompt.get("followed_rate", 0.0),
+                    prompt.get("mean_adherence_score", 0.0),
+                    prompt.get("judge_taxonomy_likely_rate", 0.0),
+                    prompt.get("model_prompt_likely_rate", 0.0),
+                    prompt.get("ambiguous_rate", 0.0),
+                ]
+            )
+        lines.extend(
+            md_table(
+                [
+                    "agent",
+                    "target",
+                    "prompt excerpt",
+                    "normal n",
+                    "judge exact",
+                    "GPT exact",
+                    "judge same-major",
+                    "GPT same-major",
+                    "judge primary option",
+                    "GPT primary option",
+                    "prompt n",
+                    "GPT followed",
+                    "mean score",
+                    "judge taxonomy likely",
+                    "model prompt likely",
+                    "ambiguous",
+                ],
+                strategy_rows,
+            )
+        )
+
+        lines.extend(["", "## 策略 prompt 原文", ""])
+        seen_prompts: set[tuple[str, str]] = set()
+        for key in all_keys:
+            ref = normal_by_key.get(key, {}) or prompt_by_key.get(key, {})
+            prompt_text = prompt_block(first_text(ref, "strategy_instruction", "prompt", "prompt_text", "instruction"))
+            if not prompt_text or key in seen_prompts:
+                continue
+            seen_prompts.add(key)
+            lines.extend(
+                [
+                    f"- agent `{key[0]}` / target `{key[1]}`",
+                    "",
+                    "```text",
+                    prompt_text,
+                    "```",
+                    "",
+                ]
+            )
 
     lines.extend(
         [

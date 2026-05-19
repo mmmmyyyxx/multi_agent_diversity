@@ -17,7 +17,10 @@ for p in [ROOT, SCRIPT_DIR]:
 
 from prepare_human_blind_validation import _bucket_groups, _collect_groups, _sample, _write_packet  # noqa: E402
 from prove_experiment_utils import (  # noqa: E402
+    DEFAULT_EMBEDDING_MODEL,
+    SentenceEmbeddingEncoder,
     bootstrap_mean_ci,
+    pairwise_document_embedding_cosine_diversity,
     read_jsonl,
     safe_float,
     safe_mean,
@@ -193,14 +196,49 @@ def _key_by_id(key_rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     return {str(row.get("blinded_id", "")): row for row in key_rows}
 
 
-def _analysis_rows(key_rows: List[Dict[str, Any]], eval_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _packet_by_id(packet_rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    return {str(row.get("blinded_id", "")): row for row in packet_rows if str(row.get("blinded_id", ""))}
+
+
+def _analysis_rows(
+    key_rows: List[Dict[str, Any]],
+    eval_rows: List[Dict[str, Any]],
+    packet_rows: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     key = _key_by_id(key_rows)
+    packets = _packet_by_id(packet_rows)
     rows = []
     for ev in eval_rows:
         bid = str(ev.get("blinded_id", ""))
         if bid not in key:
             continue
-        rows.append({**key[bid], **ev})
+        row = {**key[bid], **ev}
+        packet = packets.get(bid)
+        if packet:
+            row["traces"] = packet.get("traces", [])
+            row["annotation_fields"] = packet.get("annotation_fields", {})
+        rows.append(row)
+    return rows
+
+
+def _attach_trace_embedding_metrics(rows: List[Dict[str, Any]], model_name: str) -> List[Dict[str, Any]]:
+    if not rows:
+        return rows
+    encoder = SentenceEmbeddingEncoder(model_name, enabled=True)
+    for row in rows:
+        traces = row.get("traces", row.get("agents", []))
+        if not isinstance(traces, list):
+            traces = []
+        trace_texts = [str(a.get("trace", "")).strip() for a in traces if isinstance(a, dict) and str(a.get("trace", "")).strip()]
+        emb_div, emb_sim, emb_count, emb_chunks = pairwise_document_embedding_cosine_diversity(trace_texts, encoder)
+        row["trace_embedding_cosine_diversity"] = emb_div
+        row["trace_embedding_cosine_similarity"] = emb_sim
+        row["trace_embedding_text_count"] = emb_count
+        row["mean_trace_embedding_chunks"] = emb_chunks
+    row_status = encoder.status
+    for row in rows:
+        row["trace_embedding_model"] = model_name
+        row["trace_embedding_status"] = row_status
     return rows
 
 
@@ -212,16 +250,30 @@ def _analyze(rows: List[Dict[str, Any]], bootstrap_iterations: int, seed: int) -
     corr_strategy = spearman_corr([r["team_family_diversity"] for r in parsed], scores)
     corr_major = spearman_corr([r["team_major_family_diversity"] for r in parsed], scores)
     corr_text = spearman_corr([r["trace_token_cosine_diversity"] for r in parsed], scores)
+    corr_embedding = spearman_corr([r.get("trace_embedding_cosine_diversity", 0.0) for r in parsed], scores)
     high = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) in {"high_strategy", "low_text_high_strategy"}]
     low = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) in {"low_strategy", "high_text_low_strategy"}]
     delta_vals = [h - l for h, l in zip(high, low)]
     delta_ci = bootstrap_mean_ci(delta_vals, iterations=bootstrap_iterations, seed=seed) if delta_vals else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    bucket_means: Dict[str, Dict[str, Any]] = {}
+    for bucket in sorted({str(r.get("bucket", "")) for r in parsed if str(r.get("bucket", ""))}):
+        vals = [r for r in parsed if str(r.get("bucket", "")) == bucket]
+        bucket_means[bucket] = {
+            "n": len(vals),
+            "team_family_diversity": safe_mean([r.get("team_family_diversity") for r in vals]),
+            "team_major_family_diversity": safe_mean([r.get("team_major_family_diversity") for r in vals]),
+            "trace_embedding_cosine_diversity": safe_mean([r.get("trace_embedding_cosine_diversity") for r in vals]),
+            "trace_token_cosine_diversity": safe_mean([r.get("trace_token_cosine_diversity") for r in vals]),
+            "gpt_method_diversity_score": safe_mean([r.get("gpt_method_diversity_score") for r in vals]),
+        }
     return {
         "matched_count": len(parsed),
         "mean_gpt_method_diversity_score": safe_mean(scores),
         "strategy_tree_vs_gpt_spearman": corr_strategy,
         "major_tree_vs_gpt_spearman": corr_major,
         "trace_text_vs_gpt_spearman": corr_text,
+        "trace_embedding_vs_gpt_spearman": corr_embedding,
+        "bucket_means": bucket_means,
         "high_strategy_minus_low_strategy_gpt_score_ci": delta_ci,
         "mean_high_strategy_gpt_score": safe_mean(high),
         "mean_low_strategy_gpt_score": safe_mean(low),
@@ -246,7 +298,7 @@ def _write_summary(out_dir: Path, groups: List[Dict[str, Any]], bucketed: Dict[s
     lines.extend(["", "## GPT Evaluation", ""])
     if analysis.get("matched_count", 0):
         lines.append(f"- mean_gpt_method_diversity_score: {safe_float(analysis.get('mean_gpt_method_diversity_score')):.4f}")
-        for key in ["strategy_tree_vs_gpt_spearman", "major_tree_vs_gpt_spearman", "trace_text_vs_gpt_spearman"]:
+        for key in ["strategy_tree_vs_gpt_spearman", "major_tree_vs_gpt_spearman", "trace_text_vs_gpt_spearman", "trace_embedding_vs_gpt_spearman"]:
             block = analysis.get(key, {})
             if isinstance(block, dict):
                 lines.append(f"- {key}: rho={safe_float(block.get('rho')):.4f}, n={block.get('n', 0)}")
@@ -256,12 +308,60 @@ def _write_summary(out_dir: Path, groups: List[Dict[str, Any]], bucketed: Dict[s
                 f"- high_strategy_minus_low_strategy_gpt_score: mean={safe_float(ci.get('mean')):.4f}, "
                 f"95% CI=[{safe_float(ci.get('ci_low')):.4f}, {safe_float(ci.get('ci_high')):.4f}]"
             )
+        bucket_means = analysis.get("bucket_means", {})
+        if isinstance(bucket_means, dict) and bucket_means:
+            lines.extend(
+                [
+                    "",
+                    "## Bucket Means",
+                    "",
+                    "| bucket | n | family_div | major_div | trace_embedding_div | trace_token_div | GPT-5.5 score |",
+                    "|---|---:|---:|---:|---:|---:|---:|",
+                ]
+            )
+            for bucket in ["high_strategy", "low_strategy", "high_text_low_strategy", "low_text_high_strategy"]:
+                vals = bucket_means.get(bucket, {})
+                if not isinstance(vals, dict):
+                    continue
+                lines.append(
+                    "| "
+                    + " | ".join(
+                        [
+                            bucket,
+                            str(vals.get("n", 0)),
+                            f"{safe_float(vals.get('team_family_diversity')):.4f}",
+                            f"{safe_float(vals.get('team_major_family_diversity')):.4f}",
+                            f"{safe_float(vals.get('trace_embedding_cosine_diversity')):.4f}",
+                            f"{safe_float(vals.get('trace_token_cosine_diversity')):.4f}",
+                            f"{safe_float(vals.get('gpt_method_diversity_score')):.4f}",
+                        ]
+                    )
+                    + " |"
+                )
+            lines.extend(
+                [
+                    "",
+                    "## Correlations",
+                    "",
+                    "| metric | Spearman rho vs GPT-5.5 score | n |",
+                    "|---|---:|---:|",
+                ]
+            )
+            for label, key in [
+                ("family_div", "strategy_tree_vs_gpt_spearman"),
+                ("major_div", "major_tree_vs_gpt_spearman"),
+                ("trace_embedding_div", "trace_embedding_vs_gpt_spearman"),
+                ("trace_token_div", "trace_text_vs_gpt_spearman"),
+            ]:
+                block = analysis.get(key, {})
+                if isinstance(block, dict):
+                    lines.append(f"| {label} | {safe_float(block.get('rho')):.4f} | {block.get('n', 0)} |")
     else:
         lines.append("- No parsed GPT evaluations yet.")
     lines.extend(
         [
             "",
-            "判读：如果 strategy_tree_vs_gpt_spearman 为正，且 high_strategy 组 GPT 分数高于 low_strategy 组，说明策略树多样性与独立 GPT-5.5 盲评的构念判断一致。",
+            "判读：本实验把 GPT-5.5 盲评当作人类感知参考时，trace token/embedding 多样性与 GPT-5.5 分数高度同向；family/major 策略树多样性与 GPT-5.5 分数几乎不相关。也就是说，GPT-5.5 更像是在读取完整 trace 的可见展开差异，而不是自动 taxonomy 下的 family 分布。",
             "",
         ]
     )
@@ -290,8 +390,17 @@ async def main_async():
     out_dir.mkdir(parents=True, exist_ok=True)
     groups = _collect_groups(Path(args.runs_root))
     bucketed = _bucket_groups(groups)
-    selected = _sample(bucketed, args.per_bucket, args.seed)
-    packet_path, key_rows = _write_packet(selected, out_dir, args.seed)
+    packet_path = out_dir / "p7_blind_annotation_packet.jsonl"
+    key_path = out_dir / "p7_annotation_key.csv"
+    if int(args.evaluate) == 0 and packet_path.exists() and key_path.exists():
+        key_rows = []
+        import csv
+
+        with key_path.open("r", encoding="utf-8", newline="") as f:
+            key_rows = [dict(row) for row in csv.DictReader(f)]
+    else:
+        selected = _sample(bucketed, args.per_bucket, args.seed)
+        packet_path, key_rows = _write_packet(selected, out_dir, args.seed)
     eval_path = out_dir / "p7_gpt55_evaluations.jsonl"
 
     if int(args.evaluate):
@@ -299,7 +408,9 @@ async def main_async():
     else:
         eval_rows = read_jsonl(eval_path)
 
-    rows = _analysis_rows(key_rows, eval_rows)
+    packet_rows = read_jsonl(packet_path)
+    rows = _analysis_rows(key_rows, eval_rows, packet_rows)
+    rows = _attach_trace_embedding_metrics(rows, DEFAULT_EMBEDDING_MODEL)
     write_csv(rows, out_dir / "p7_gpt55_analysis_rows.csv")
     analysis = _analyze(rows, args.bootstrap_iterations, args.seed)
     (out_dir / "p7_gpt55_analysis.json").write_text(json.dumps(analysis, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -315,4 +426,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

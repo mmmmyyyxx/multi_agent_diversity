@@ -10,54 +10,89 @@
 
 | 指标 | 中文含义 |
 |---|---|
+| `judge_primary option` | 原自动 judge 把 trace 的 primary 判为 `option_contrast` 的比例。 |
+| `judge pair option` | 原自动 judge 把 primary 或 secondary 任一策略判为 `option_contrast` 的比例。 |
+| `judge target exact` | 原自动 judge 的 primary 或 secondary leaf 精确命中 prompt 目标 leaf 的比例。 |
+| `judge target same-major` | 原自动 judge 的 primary 或 secondary 所属主类命中目标主类的比例。 |
 | `GPT primary option` | GPT-5.5 把 trace 的主策略判为 `option_contrast` 的比例。 |
-| `GPT pair option` | GPT-5.5 把 `primary` 或 `secondary` 任一策略判为 `option_contrast` 的比例。 |
-| `GPT target exact` | GPT-5.5 的 `primary` 或 `secondary` leaf 精确命中 prompt 目标 leaf 的比例。 |
-| `GPT target same-major` | GPT-5.5 的 `primary` 或 `secondary` 所属主类命中目标主类的比例。 |
-| `original judge supported` | GPT-5.5 也支持原自动 judge 的 `option_contrast` 主判定的比例。 |
+| `GPT pair option` | GPT-5.5 把 primary 或 secondary 任一策略判为 `option_contrast` 的比例。 |
+| `GPT target exact` | GPT-5.5 的 primary 或 secondary leaf 精确命中 prompt 目标 leaf 的比例。 |
+| `GPT target same-major` | GPT-5.5 的 primary 或 secondary 所属主类命中目标主类的比例。 |
 | `judge/taxonomy questioned` | GPT-5.5 不支持原自动 judge 的 `option_contrast` 主判定的比例。 |
 | `confidence` | GPT-5.5 对自己 taxonomy 标签判断的平均置信度。 |
 
 ## 总体结果
 
-| n | GPT primary option | GPT pair option | GPT target exact | GPT target same-major | original judge supported | judge/taxonomy questioned | confidence |
-|---|---|---|---|---|---|---|---|
-| 40 | 0.2750 | 0.3500 | 0.2250 | 0.3000 | 0.2750 | 0.7250 | 0.9008 |
+| n | judge primary option | judge pair option | judge target exact | judge target same-major | GPT primary option | GPT pair option | GPT target exact | GPT target same-major | judge/taxonomy questioned | confidence |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 40 | 1.0000 | 1.0000 | 0.0500 | 0.2000 | 0.2750 | 0.3500 | 0.2250 | 0.3000 | 0.7250 | 0.9008 |
 
-## 按目标策略
+## 按策略汇总
 
-| agent | target | n | GPT primary option | GPT pair option | GPT target exact | GPT target same-major | judge/taxonomy questioned |
-|---|---|---|---|---|---|---|---|
-| 0 | distractor_elimination | 8 | 0.2500 | 0.3750 | 0.7500 | 1.0000 | 0.7500 |
-| 1 | rule_or_principle_application | 8 | 0.2500 | 0.3750 | 0.2500 | 0.3750 | 0.7500 |
-| 2 | decomposition | 8 | 0.2500 | 0.3750 | 0.1250 | 0.1250 | 0.7500 |
-| 3 | case_analysis | 8 | 0.3750 | 0.3750 | 0.0000 | 0.0000 | 0.6250 |
-| 4 | edge_case_analysis | 8 | 0.2500 | 0.2500 | 0.0000 | 0.0000 | 0.7500 |
+| agent | target | prompt | n | judge exact | GPT exact | judge same-major | GPT same-major | judge primary option | GPT primary option | judge/taxonomy questioned |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 8 | 0.2500 | 0.7500 | 1.0000 | 1.0000 | 1.0000 | 0.2500 | 0.7500 |
+| 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 8 | 0.0000 | 0.2500 | 0.0000 | 0.3750 | 1.0000 | 0.2500 | 0.7500 |
+| 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 8 | 0.0000 | 0.1250 | 0.0000 | 0.1250 | 1.0000 | 0.2500 | 0.7500 |
+| 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 8 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.3750 | 0.6250 |
+| 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 8 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.2500 | 0.7500 |
 
-## 按模型和目标策略
+## 按模型展开
 
-| model | agent | target | n | GPT primary option | GPT target exact | GPT target same-major | judge/taxonomy questioned |
-|---|---|---|---|---|---|---|---|
-| deepseek-chat | 0 | distractor_elimination | 2 | 0.0000 | 1.0000 | 1.0000 | 1.0000 |
-| deepseek-chat | 1 | rule_or_principle_application | 2 | 0.0000 | 0.5000 | 1.0000 | 1.0000 |
-| deepseek-chat | 2 | decomposition | 2 | 0.5000 | 0.0000 | 0.0000 | 0.5000 |
-| deepseek-chat | 3 | case_analysis | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| deepseek-chat | 4 | edge_case_analysis | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| gemini-2.5-flash-lite | 0 | distractor_elimination | 2 | 0.5000 | 1.0000 | 1.0000 | 0.5000 |
-| gemini-2.5-flash-lite | 1 | rule_or_principle_application | 2 | 0.5000 | 0.5000 | 0.5000 | 0.5000 |
-| gemini-2.5-flash-lite | 2 | decomposition | 2 | 0.5000 | 0.5000 | 0.5000 | 0.5000 |
-| gemini-2.5-flash-lite | 3 | case_analysis | 2 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |
-| gemini-2.5-flash-lite | 4 | edge_case_analysis | 2 | 0.5000 | 0.0000 | 0.0000 | 0.5000 |
-| gpt-4o-mini | 0 | distractor_elimination | 2 | 0.0000 | 1.0000 | 1.0000 | 1.0000 |
-| gpt-4o-mini | 1 | rule_or_principle_application | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| gpt-4o-mini | 2 | decomposition | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| gpt-4o-mini | 3 | case_analysis | 2 | 0.5000 | 0.0000 | 0.0000 | 0.5000 |
-| gpt-4o-mini | 4 | edge_case_analysis | 2 | 0.5000 | 0.0000 | 0.0000 | 0.5000 |
-| qwen2.5-7b-instruct | 0 | distractor_elimination | 2 | 0.5000 | 0.0000 | 1.0000 | 0.5000 |
-| qwen2.5-7b-instruct | 1 | rule_or_principle_application | 2 | 0.5000 | 0.0000 | 0.0000 | 0.5000 |
-| qwen2.5-7b-instruct | 2 | decomposition | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| qwen2.5-7b-instruct | 3 | case_analysis | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
-| qwen2.5-7b-instruct | 4 | edge_case_analysis | 2 | 0.0000 | 0.0000 | 0.0000 | 1.0000 |
+| model | agent | target | prompt | n | judge exact | GPT exact | judge same-major | GPT same-major | judge primary option | GPT primary option | judge/taxonomy questioned |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| deepseek-chat | 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 2 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.0000 | 1.0000 |
+| deepseek-chat | 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 2 | 0.0000 | 0.5000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 | 1.0000 |
+| deepseek-chat | 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.5000 | 0.5000 |
+| deepseek-chat | 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| deepseek-chat | 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| gemini-2.5-flash-lite | 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 2 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.5000 | 0.5000 |
+| gemini-2.5-flash-lite | 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 2 | 0.0000 | 0.5000 | 0.0000 | 0.5000 | 1.0000 | 0.5000 | 0.5000 |
+| gemini-2.5-flash-lite | 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 2 | 0.0000 | 0.5000 | 0.0000 | 0.5000 | 1.0000 | 0.5000 | 0.5000 |
+| gemini-2.5-flash-lite | 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 |
+| gemini-2.5-flash-lite | 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.5000 | 0.5000 |
+| gpt-4o-mini | 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 2 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.0000 | 1.0000 |
+| gpt-4o-mini | 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| gpt-4o-mini | 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| gpt-4o-mini | 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.5000 | 0.5000 |
+| gpt-4o-mini | 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.5000 | 0.5000 |
+| qwen2.5-7b-instruct | 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 2 | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 0.5000 | 0.5000 |
+| qwen2.5-7b-instruct | 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.5000 | 0.5000 |
+| qwen2.5-7b-instruct | 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| qwen2.5-7b-instruct | 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+| qwen2.5-7b-instruct | 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 1.0000 |
+
+## 策略指令参考
+
+- agent `0` / target `distractor_elimination`
+
+```text
+Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End with exactly one FINAL_ANSWER line.
+```
+
+- agent `1` / target `rule_or_principle_application`
+
+```text
+Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End with exactly one FINAL_ANSWER line.
+```
+
+- agent `2` / target `decomposition`
+
+```text
+Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly one FINAL_ANSWER line.
+```
+
+- agent `3` / target `case_analysis`
+
+```text
+Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives the case split. End with exactly one FINAL_ANSWER line.
+```
+
+- agent `4` / target `edge_case_analysis`
+
+```text
+Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid under those checks. End with exactly one FINAL_ANSWER line.
+```
 
 ## 结论读法
 
