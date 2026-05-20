@@ -10,18 +10,20 @@
 | P3_mixed_strategy_gemini_flash_lite_seed42 | gemini-2.5-flash-lite | mixed | 99/100 | 0.9900 | 0.4546 | 0.3902 | 0.7575 | 0.8081 | 0.0687 | 0.2525 |
 | P3_mixed_strategy_gpt4omini_seed42 | gpt-4o-mini | mixed | 100/100 | 1.0000 | 0.4807 | 0.4243 | 0.7157 | 0.8600 | 0.1360 | 0.2660 |
 | P3_mixed_strategy_qwen25_7b_seed42 | qwen2.5-7b-instruct | mixed | 81/100 | 0.8100 | 0.6224 | 0.7362 | 0.4601 | 0.7654 | 0.2988 | 0.4074 |
+| P3_mixed_strategy_qwen35_plus_seed42 | qwen3.5-plus | mixed | 100/100 | 1.0000 | 0.5626 | 0.5812 | 0.6020 | 0.9400 | 0.1960 | 0.3380 |
 | P3_same_elimination_deepseek_chat_seed42 | deepseek-chat | same | 100/100 | 1.0000 | 0.4563 | 0.5023 | 0.6625 | 0.9300 | 0.5240 | 0.5720 |
 | P3_same_elimination_gemini_flash_lite_seed42 | gemini-2.5-flash-lite | same | 100/100 | 1.0000 | 0.4124 | 0.3162 | 0.8058 | 0.7900 | 0.7340 | 0.7800 |
 | P3_same_elimination_gpt4omini_seed42 | gpt-4o-mini | same | 100/100 | 1.0000 | 0.3395 | 0.2156 | 0.8566 | 0.8600 | 0.8080 | 0.8320 |
 | P3_same_elimination_qwen25_7b_seed42 | qwen2.5-7b-instruct | same | 31/100 | 0.3100 | 0.5538 | 0.5313 | 0.6095 | 0.6774 | 0.4968 | 0.5806 |
+| P3_same_elimination_qwen35_plus_seed42 | qwen3.5-plus | same | 100/100 | 1.0000 | 0.5016 | 0.3982 | 0.7426 | 0.9300 | 0.6640 | 0.7720 |
 
 ## 有效 trace 口径下的 paired 检验
 
 | metric | paired n | mixed - same | 95% CI | Wilcoxon p |
 |---|---|---|---|---|
-| team_family_diversity | 329 | 0.0900 | [0.0665, 0.1146] | 0.0000 |
-| team_family_homogeneity_rate | 329 | -0.1213 | [-0.1527, -0.0896] | 0.0000 |
-| team_major_family_diversity | 329 | 0.1755 | [0.1325, 0.2200] | 0.0000 |
+| team_family_diversity | 429 | 0.0832 | [0.0631, 0.1041] | 0.0000 |
+| team_family_homogeneity_rate | 429 | -0.1258 | [-0.1513, -0.1006] | 0.0000 |
+| team_major_family_diversity | 429 | 0.1772 | [0.1414, 0.2147] | 0.0000 |
 
 ## 读法
 

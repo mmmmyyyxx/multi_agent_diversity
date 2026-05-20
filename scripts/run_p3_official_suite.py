@@ -36,7 +36,7 @@ def main() -> None:
     parser.add_argument("--skip_repair", type=int, default=0, choices=[0, 1])
     parser.add_argument("--skip_analysis", type=int, default=0, choices=[0, 1])
     parser.add_argument("--skip_gpt55", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--sample_size", type=int, default=40)
+    parser.add_argument("--sample_size", type=int, default=776)
     parser.add_argument("--eval_parallelism", type=int, default=8)
     args = parser.parse_args()
 

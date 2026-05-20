@@ -11,12 +11,12 @@
 
 | normal n | judge exact | GPT exact | judge same-major | GPT same-major | judge primary option | GPT primary option | judge/taxonomy questioned |
 |---|---|---|---|---|---|---|---|
-| 40 | 0.0500 | 0.2250 | 0.2000 | 0.3000 | 1.0000 | 0.2750 | 0.7250 |
+| 776 | 0.0979 | 0.2088 | 0.2307 | 0.2590 | 1.0000 | 0.2178 | 0.7822 |
 
 
 | prompt n | followed rate | mean score | judge taxonomy likely | model prompt likely | ambiguous |
 |---|---|---|---|---|---|
-| 40 | 0.6000 | 3.7250 | 0.6000 | 0.2250 | 0.1750 |
+| 776 | 0.6869 | 3.8067 | 0.6843 | 0.2281 | 0.0876 |
 
 ## 按策略联合对照
 
@@ -24,11 +24,11 @@
 
 | agent | target | prompt excerpt | normal n | judge exact | GPT exact | judge same-major | GPT same-major | judge primary option | GPT primary option | prompt n | GPT followed | mean score | judge taxonomy likely | model prompt likely | ambiguous |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 8 | 0.2500 | 0.7500 | 1.0000 | 1.0000 | 1.0000 | 0.2500 | 8 | 0.8750 | 4.6250 | 0.8750 | 0.0000 | 0.1250 |
-| 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 8 | 0.0000 | 0.2500 | 0.0000 | 0.3750 | 1.0000 | 0.2500 | 8 | 0.2500 | 3.0000 | 0.2500 | 0.5000 | 0.2500 |
-| 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 8 | 0.0000 | 0.1250 | 0.0000 | 0.1250 | 1.0000 | 0.2500 | 8 | 0.8750 | 4.3750 | 0.8750 | 0.1250 | 0.0000 |
-| 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 8 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.3750 | 8 | 0.8750 | 4.1250 | 0.8750 | 0.0000 | 0.1250 |
-| 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 8 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.2500 | 8 | 0.1250 | 2.5000 | 0.1250 | 0.5000 | 0.3750 |
+| 0 | distractor_elimination | Use a distractor-elimination strategy. Treat each answer choice as a candidate, reject choices that conflict with the stem, and keep the best-supported remaining choice. End wi ... | 179 | 0.4246 | 0.7877 | 1.0000 | 0.9609 | 1.0000 | 0.2011 | 179 | 0.7598 | 4.0559 | 0.7542 | 0.1508 | 0.0950 |
+| 1 | rule_or_principle_application | Use a domain-rule strategy. First state the governing rule, theorem, principle, mechanism, or domain law, then apply that rule to the facts in the stem before choosing. End wit ... | 117 | 0.0000 | 0.1709 | 0.0000 | 0.2222 | 1.0000 | 0.2479 | 117 | 0.6239 | 3.6410 | 0.6154 | 0.2906 | 0.0940 |
+| 2 | decomposition | Use a decomposition strategy. Break the stem into key facts, constraints, and sub-questions, solve each part in order, and combine the parts into one answer. End with exactly o ... | 131 | 0.0000 | 0.0076 | 0.0000 | 0.0076 | 1.0000 | 0.2748 | 131 | 0.6870 | 3.8244 | 0.6870 | 0.2519 | 0.0611 |
+| 3 | case_analysis | Use a case-analysis strategy. Enumerate the relevant cases, conditions, or scenarios implied by the stem, test each case for consistency, and choose the answer that survives th ... | 171 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | 0.2456 | 171 | 0.7602 | 3.9240 | 0.7602 | 0.1696 | 0.0702 |
+| 4 | edge_case_analysis | Use an edge-case and exception-checking strategy. Look for boundary conditions, qualifiers, extreme cases, or exceptions in the stem, then decide which answer remains valid und ... | 178 | 0.0000 | 0.0000 | 0.0000 | 0.0112 | 1.0000 | 0.1461 | 178 | 0.5843 | 3.5393 | 0.5843 | 0.3034 | 0.1124 |
 
 ## 策略 prompt 原文
 
@@ -66,6 +66,7 @@ Use an edge-case and exception-checking strategy. Look for boundary conditions, 
 ## 综合判断
 
 - 优先看 normal taxonomy judge：GPT-5.5 并没有大规模继续支持原自动 judge 的 `option_contrast` 主判定，说明自动 judge/taxonomy 存在明显的 `option_contrast` 吸附风险。
-- 再看 prompt-following：GPT-5.5 认为 60.00% 的抽样 trace 基本遵循了原始策略指令，80.00% 至少部分遵循。这进一步说明 leaf exact hit 偏低不能直接等同于模型完全不听策略 prompt。
+- 再看 prompt-following：GPT-5.5 认为 68.69% 的 776 条抽样 trace 基本遵循了原始策略指令，80.67% 至少部分遵循。这进一步说明 leaf exact hit 偏低不能直接等同于模型完全不听策略 prompt。
 - 同时，prompt-following 也显示不同策略可执行性不均衡：`distractor_elimination`、`decomposition`、`case_analysis` 更容易被执行；`rule_or_principle_application` 和 `edge_case_analysis` 更弱。
+- 更完整的策略 prompt 原文与样本对应关系已另存于 `prove_experiments/prompt_sets.md` 和各子实验的 key/packet 文件中，因此这里不再重复展开。
 - 因此，P3 的主证据应是 team-level diversity、major diversity 和 homogeneity 的系统变化；exact target hit 更适合作为诊断指标，而不是最终有效性的唯一标准。

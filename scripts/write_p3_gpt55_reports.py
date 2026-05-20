@@ -565,17 +565,18 @@ def combined_summary(normal_rows: list[dict[str, Any]], prompt_rows: list[dict[s
                 ]
             )
 
-    lines.extend(
-        [
-            "",
-            "## 综合判断",
-            "",
-            "- 优先看 normal taxonomy judge：GPT-5.5 并没有大规模继续支持原自动 judge 的 `option_contrast` 主判定，说明自动 judge/taxonomy 存在明显的 `option_contrast` 吸附风险。",
-            "- 再看 prompt-following：GPT-5.5 认为 60.00% 的抽样 trace 基本遵循了原始策略指令，80.00% 至少部分遵循。这进一步说明 leaf exact hit 偏低不能直接等同于模型完全不听策略 prompt。",
-            "- 同时，prompt-following 也显示不同策略可执行性不均衡：`distractor_elimination`、`decomposition`、`case_analysis` 更容易被执行；`rule_or_principle_application` 和 `edge_case_analysis` 更弱。",
-            "- 因此，P3 的主证据应是 team-level diversity、major diversity 和 homogeneity 的系统变化；exact target hit 更适合作为诊断指标，而不是最终有效性的唯一标准。",
-        ]
-    )
+        lines.extend(
+            [
+                "",
+                "## 综合判断",
+                "",
+                "- 优先看 normal taxonomy judge：GPT-5.5 并没有大规模继续支持原自动 judge 的 `option_contrast` 主判定，说明自动 judge/taxonomy 存在明显的 `option_contrast` 吸附风险。",
+                f"- 再看 prompt-following：GPT-5.5 认为 {po.get('followed_rate', 0.0):.2%} 的 {int(po.get('n', len(prompt_rows)))} 条抽样 trace 基本遵循了原始策略指令，{po.get('partial_or_better_rate', 0.0):.2%} 至少部分遵循。这进一步说明 leaf exact hit 偏低不能直接等同于模型完全不听策略 prompt。",
+                "- 同时，prompt-following 也显示不同策略可执行性不均衡：`distractor_elimination`、`decomposition`、`case_analysis` 更容易被执行；`rule_or_principle_application` 和 `edge_case_analysis` 更弱。",
+                "- 更完整的策略 prompt 原文与样本对应关系已另存于 `prove_experiments/prompt_sets.md` 和各子实验的 key/packet 文件中，因此这里不再重复展开。",
+                "- 因此，P3 的主证据应是 team-level diversity、major diversity 和 homogeneity 的系统变化；exact target hit 更适合作为诊断指标，而不是最终有效性的唯一标准。",
+            ]
+        )
     return "\n".join(lines) + "\n"
 
 

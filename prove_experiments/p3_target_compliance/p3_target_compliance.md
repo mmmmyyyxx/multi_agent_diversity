@@ -40,21 +40,21 @@
 
 | agent | target leaf | target major | n | exact | same-major(any) | top primary | top primary share | top secondary | agent acc |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | distractor_elimination | mmlu_option_semantics | 400 | 0.2275 | 0.6900 | option_contrast | 0.4550 | option_contrast | 0.8000 |
-| 1 | rule_or_principle_application | mmlu_domain_reasoning | 400 | 0.1675 | 0.3400 | option_contrast | 0.2825 | option_contrast | 0.8350 |
-| 2 | decomposition | representation_formalization | 400 | 0.3725 | 0.3875 | decomposition | 0.3700 | decomposition | 0.8100 |
-| 3 | case_analysis | logical_proof | 400 | 0.1175 | 0.1375 | option_contrast | 0.4450 | option_contrast | 0.8275 |
-| 4 | edge_case_analysis | optimization_boundary_meta | 400 | 0.0525 | 0.0525 | option_contrast | 0.4625 | option_contrast | 0.8225 |
+| 0 | distractor_elimination | mmlu_option_semantics | 500 | 0.2480 | 0.7040 | option_contrast | 0.4560 | option_contrast | 0.8300 |
+| 1 | rule_or_principle_application | mmlu_domain_reasoning | 500 | 0.1780 | 0.3660 | option_contrast | 0.2520 | option_contrast | 0.8560 |
+| 2 | decomposition | representation_formalization | 500 | 0.3260 | 0.3400 | decomposition | 0.3220 | option_contrast | 0.8360 |
+| 3 | case_analysis | logical_proof | 500 | 0.1500 | 0.1700 | option_contrast | 0.4260 | option_contrast | 0.8500 |
+| 4 | edge_case_analysis | optimization_boundary_meta | 500 | 0.0440 | 0.0440 | option_contrast | 0.4340 | option_contrast | 0.8480 |
 
 ## Same-elimination 对照整体情况
 
 | agent | target leaf | n | exact | same-major(any) | top primary | top primary share | agent acc |
 |---|---|---|---|---|---|---|---|
-| 0 | distractor_elimination\|option_contrast | 400 | 0.6475 | 0.7425 | option_contrast | 0.5725 | 0.8175 |
-| 1 | distractor_elimination\|option_contrast | 400 | 0.6100 | 0.7175 | option_contrast | 0.4850 | 0.8075 |
-| 2 | distractor_elimination\|option_contrast\|option_contradiction_check | 400 | 0.6800 | 0.7600 | option_contrast | 0.5600 | 0.8300 |
-| 3 | distractor_elimination\|option_contrast | 400 | 0.7425 | 0.7900 | option_contrast | 0.6525 | 0.7850 |
-| 4 | distractor_elimination\|option_contrast | 400 | 0.6725 | 0.7725 | option_contrast | 0.6000 | 0.8100 |
+| 0 | distractor_elimination\|option_contrast | 500 | 0.6480 | 0.7460 | option_contrast | 0.5460 | 0.8440 |
+| 1 | distractor_elimination\|option_contrast | 500 | 0.6280 | 0.7360 | option_contrast | 0.4720 | 0.8280 |
+| 2 | distractor_elimination\|option_contrast\|option_contradiction_check | 500 | 0.6760 | 0.7560 | option_contrast | 0.5340 | 0.8520 |
+| 3 | distractor_elimination\|option_contrast | 500 | 0.7280 | 0.7900 | option_contrast | 0.6320 | 0.8140 |
+| 4 | distractor_elimination\|option_contrast | 500 | 0.6660 | 0.7700 | option_contrast | 0.5800 | 0.8320 |
 
 ## Mixed 策略按模型拆解
 
@@ -80,6 +80,11 @@
 | qwen2.5-7b-instruct | 2 | decomposition | representation_formalization | 0.5400 | 0.5700 | decomposition | 0.5400 | 0.8000 |
 | qwen2.5-7b-instruct | 3 | case_analysis | logical_proof | 0.0800 | 0.0900 | option_contrast | 0.4000 | 0.8000 |
 | qwen2.5-7b-instruct | 4 | edge_case_analysis | optimization_boundary_meta | 0.1300 | 0.1300 | option_contrast | 0.3300 | 0.7600 |
+| qwen3.5-plus | 0 | distractor_elimination | mmlu_option_semantics | 0.3300 | 0.7600 | option_contrast | 0.4600 | 0.9500 |
+| qwen3.5-plus | 1 | rule_or_principle_application | mmlu_domain_reasoning | 0.2200 | 0.4700 | concept_definition_match | 0.2400 | 0.9400 |
+| qwen3.5-plus | 2 | decomposition | representation_formalization | 0.1400 | 0.1500 | option_contrast | 0.3400 | 0.9400 |
+| qwen3.5-plus | 3 | case_analysis | logical_proof | 0.2800 | 0.3000 | option_contrast | 0.3500 | 0.9400 |
+| qwen3.5-plus | 4 | edge_case_analysis | optimization_boundary_meta | 0.0100 | 0.0100 | option_contrast | 0.3200 | 0.9500 |
 
 ## Same-elimination 对照按模型拆解
 
@@ -105,6 +110,11 @@
 | qwen2.5-7b-instruct | 2 | distractor_elimination\|option_contrast\|option_contradiction_check | 0.6200 | 0.8000 | option_contrast | 0.4800 | 0.7600 |
 | qwen2.5-7b-instruct | 3 | distractor_elimination\|option_contrast | 0.8900 | 0.9500 | option_contrast | 0.7700 | 0.6500 |
 | qwen2.5-7b-instruct | 4 | distractor_elimination\|option_contrast | 0.5400 | 0.8400 | option_contrast | 0.5200 | 0.7400 |
+| qwen3.5-plus | 0 | distractor_elimination\|option_contrast | 0.6500 | 0.7600 | option_contrast | 0.4400 | 0.9500 |
+| qwen3.5-plus | 1 | distractor_elimination\|option_contrast | 0.7000 | 0.8100 | option_contrast | 0.4200 | 0.9100 |
+| qwen3.5-plus | 2 | distractor_elimination\|option_contrast\|option_contradiction_check | 0.6600 | 0.7400 | option_contrast | 0.4300 | 0.9400 |
+| qwen3.5-plus | 3 | distractor_elimination\|option_contrast | 0.6700 | 0.7900 | option_contrast | 0.5500 | 0.9300 |
+| qwen3.5-plus | 4 | distractor_elimination\|option_contrast | 0.6400 | 0.7600 | option_contrast | 0.5000 | 0.9200 |
 
 ## 主要读法
 

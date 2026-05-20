@@ -388,29 +388,30 @@ async def run_gpt(packet_path: Path, out_jsonl: Path, args: argparse.Namespace) 
     client = AsyncOpenAI(api_key=api_key, base_url=os.getenv("OPENAI_BASE_URL") or os.getenv("OPENAI_API_BASE"))
     packets = read_jsonl(packet_path)
     existing = read_existing(out_jsonl) if int(args.resume) else {}
-    rows: list[dict[str, Any]] = []
-    for idx, packet in enumerate(packets, start=1):
+    rows: list[dict[str, Any] | None] = [None] * len(packets)
+    sem = asyncio.Semaphore(max(1, int(getattr(args, "eval_parallelism", 12))))
+
+    async def _eval_one(idx: int, packet: dict[str, Any]) -> tuple[int, dict[str, Any]]:
         blinded_id = str(packet.get("blinded_id", ""))
         if blinded_id in existing and int(existing[blinded_id].get("parse_ok", 0) or 0):
-            rows.append(existing[blinded_id])
-            continue
-        print(f"[P3PF] {idx}/{len(packets)} blinded_id={blinded_id} model={args.evaluator_model}", flush=True)
-        try:
-            raw = await call_openai_chat(
-                client,
-                args.evaluator_model,
-                build_user_prompt(packet, args.max_trace_chars),
-                args.temperature,
-                args.max_tokens,
-                args.llm_call_timeout,
-                args.max_retries,
-                args.retry_sleep,
-            )
-            rows.append(normalize_eval(blinded_id, args.evaluator_model, raw))
-        except Exception as exc:
-            print(f"[P3PF][ERROR] blinded_id={blinded_id} skipped after retries: {exc}", flush=True)
-            rows.append(
-                {
+            return idx, existing[blinded_id]
+        async with sem:
+            print(f"[P3PF] {idx + 1}/{len(packets)} blinded_id={blinded_id} model={args.evaluator_model}", flush=True)
+            try:
+                raw = await call_openai_chat(
+                    client,
+                    args.evaluator_model,
+                    build_user_prompt(packet, args.max_trace_chars),
+                    args.temperature,
+                    args.max_tokens,
+                    args.llm_call_timeout,
+                    args.max_retries,
+                    args.retry_sleep,
+                )
+                return idx, normalize_eval(blinded_id, args.evaluator_model, raw)
+            except Exception as exc:
+                print(f"[P3PF][ERROR] blinded_id={blinded_id} skipped after retries: {exc}", flush=True)
+                return idx, {
                     "blinded_id": blinded_id,
                     "evaluator_model": args.evaluator_model,
                     "followed": "",
@@ -425,9 +426,13 @@ async def run_gpt(packet_path: Path, out_jsonl: Path, args: argparse.Namespace) 
                     "parse_ok": 0,
                     "error": str(exc),
                 }
-            )
-        write_jsonl(out_jsonl, rows)
-    return rows
+
+    tasks = [asyncio.create_task(_eval_one(idx, packet)) for idx, packet in enumerate(packets)]
+    for fut in asyncio.as_completed(tasks):
+        idx, row = await fut
+        rows[idx] = row
+        write_jsonl(out_jsonl, [r for r in rows if r is not None])
+    return [r for r in rows if r is not None]
 
 
 def safe_mean(vals: list[Any]) -> float:
@@ -507,7 +512,7 @@ def build_summary_md(sampled_count: int, candidate_count: int, joined: list[dict
                 "运行评审命令：",
                 "",
                 "```powershell",
-                "python scripts\\run_p3_prompt_following_validation.py --run_gpt 1 --sample_size 40",
+                "python scripts\\run_p3_prompt_following_validation.py --run_gpt 1 --sample_size 776",
                 "```",
             ]
         )
@@ -600,7 +605,7 @@ def build_summary_md_clean(sampled_count: int, candidate_count: int, joined: lis
                 "运行评审命令：",
                 "",
                 "```powershell",
-                "python scripts\\run_p3_prompt_following_validation.py --runs_root prove_experiments\\p3_analysis_runs --run_gpt 1 --sample_size 40",
+                "python scripts\\run_p3_prompt_following_validation.py --runs_root prove_experiments\\p3_analysis_runs --run_gpt 1 --sample_size 776",
                 "```",
             ]
         )
@@ -672,7 +677,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs_root", default="prove_experiments/runs")
     parser.add_argument("--out_dir", default="prove_experiments/p3_prompt_following_gpt55")
-    parser.add_argument("--sample_size", type=int, default=40)
+    parser.add_argument("--sample_size", type=int, default=776)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max_trace_chars", type=int, default=3500)
     parser.add_argument("--run_gpt", type=int, default=0)
@@ -682,6 +687,7 @@ def main() -> None:
     parser.add_argument("--llm_call_timeout", type=float, default=180.0)
     parser.add_argument("--max_retries", type=int, default=5)
     parser.add_argument("--retry_sleep", type=float, default=2.0)
+    parser.add_argument("--eval_parallelism", type=int, default=4)
     parser.add_argument("--resume", type=int, default=1)
     args = parser.parse_args()
 
