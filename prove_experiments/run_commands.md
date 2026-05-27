@@ -450,33 +450,44 @@ P5 跑完后汇总：
 
 先从已有 runs 中抽样 trace group，生成盲评包，然后调用 `gpt-5.5` 做独立盲评。评估器看不到 run、model、prompt、label、gold 或自动指标，只看到匿名 agent trace。
 
+当前主口径把文本多样性定义为完整 trace embedding 的 `trace_embedding_div`，并用 `--sample_mode extreme` 从全部可用实验记录里取最典型样本：`high_text` 取 embedding diversity 最高的 traces，`low_text` 取最低的 traces；交叉 bucket 则先满足策略高/低，再按 embedding 高/低取极值。
+
 ```powershell
 & $PY scripts\run_gpt_blind_validation.py `
-  --runs_root prove_experiments\runs `
-  --out_dir prove_experiments\p7_gpt55_blind `
+  --runs_root prove_experiments\cleaned_runs `
+  --out_dir prove_experiments\p7_gpt55_blind_embedding_extreme `
   --per_bucket 20 `
   --evaluator_model gpt-5.5 `
   --evaluate 1 `
+  --text_diversity_metric embedding `
+  --include_text_only_buckets 1 `
+  --sample_mode extreme `
+  --dedupe_across_buckets 1 `
+  --resume 1 `
   --seed 42
 ```
 
 输出：
 
-- `prove_experiments\p7_gpt55_blind\p7_blind_annotation_packet.jsonl`
-- `prove_experiments\p7_gpt55_blind\p7_annotation_key.csv`
-- `prove_experiments\p7_gpt55_blind\p7_gpt55_evaluations.jsonl`
-- `prove_experiments\p7_gpt55_blind\p7_gpt55_analysis_rows.csv`
-- `prove_experiments\p7_gpt55_blind\p7_gpt55_analysis.json`
-- `prove_experiments\p7_gpt55_blind\p7_gpt55_summary.md`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_blind_annotation_packet.jsonl`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_annotation_key.csv`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_gpt55_evaluations.jsonl`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_gpt55_analysis_rows.csv`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_gpt55_analysis.json`
+- `prove_experiments\p7_gpt55_blind_embedding_extreme\p7_gpt55_summary.md`
 
 只生成盲评包、不调用 API：
 
 ```powershell
 & $PY scripts\run_gpt_blind_validation.py `
-  --runs_root prove_experiments\runs `
-  --out_dir prove_experiments\p7_gpt55_blind `
+  --runs_root prove_experiments\cleaned_runs `
+  --out_dir prove_experiments\p7_gpt55_blind_embedding_extreme `
   --per_bucket 20 `
   --evaluate 0 `
+  --text_diversity_metric embedding `
+  --include_text_only_buckets 1 `
+  --sample_mode extreme `
+  --dedupe_across_buckets 1 `
   --seed 42
 ```
 

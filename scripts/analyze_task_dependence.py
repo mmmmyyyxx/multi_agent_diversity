@@ -49,10 +49,27 @@ def _question_subject_map(path: str, limit: int = -1) -> Dict[str, str]:
     return out
 
 
-def _load_run_rows(run_dir: Path, subject_by_hash: Dict[str, str], dataset_name: str) -> List[Dict[str, Any]]:
+def _model_allowed(model: str, include_models: set[str], exclude_models: set[str]) -> bool:
+    if include_models and model not in include_models:
+        return False
+    if exclude_models and model in exclude_models:
+        return False
+    return True
+
+
+def _load_run_rows(
+    run_dir: Path,
+    subject_by_hash: Dict[str, str],
+    dataset_name: str,
+    include_models: set[str],
+    exclude_models: set[str],
+) -> List[Dict[str, Any]]:
     meta = read_json(run_dir / "run_meta.json") or {}
     cfg = meta.get("config", {}) if isinstance(meta.get("config", {}), dict) else {}
     probe = meta.get("probe", {}) if isinstance(meta.get("probe", {}), dict) else {}
+    model = str(cfg.get("model", ""))
+    if not _model_allowed(model, include_models, exclude_models):
+        return []
     pred_file = find_prediction_file(run_dir)
     if not pred_file:
         return []
@@ -68,7 +85,7 @@ def _load_run_rows(run_dir: Path, subject_by_hash: Dict[str, str], dataset_name:
                 "run_dir": str(run_dir),
                 "probe_name": probe.get("probe_name", ""),
                 "probe_kind": infer_probe_kind(probe.get("probe_name", ""), run_dir.name),
-                "model": cfg.get("model", ""),
+                "model": model,
                 "seed": cfg.get("seed", ""),
                 "question_hash": qh,
                 "subject": subject_by_hash.get(qh, "unknown"),
@@ -167,15 +184,19 @@ def main():
     parser.add_argument("--test_path", type=str, default="mmlu_test_200.jsonl")
     parser.add_argument("--test_size", type=int, default=-1)
     parser.add_argument("--out_dir", type=str, default="prove_experiments/p8_task_dependence")
+    parser.add_argument("--include_models", type=str, default="", help="Comma-separated model names to include.")
+    parser.add_argument("--exclude_models", type=str, default="", help="Comma-separated model names to exclude.")
     parser.add_argument("--bootstrap_iterations", type=int, default=2000)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     subject_by_hash = _question_subject_map(args.test_path, args.test_size)
     root = Path(args.runs_root)
+    include_models = {item.strip() for item in str(args.include_models or "").split(",") if item.strip()}
+    exclude_models = {item.strip() for item in str(args.exclude_models or "").split(",") if item.strip()}
     rows: List[Dict[str, Any]] = []
     for run_dir in sorted([p for p in root.iterdir() if p.is_dir()]) if root.exists() else []:
-        rows.extend(_load_run_rows(run_dir, subject_by_hash, args.dataset_name))
+        rows.extend(_load_run_rows(run_dir, subject_by_hash, args.dataset_name, include_models, exclude_models))
 
     subject_rows = _summarize_subjects(rows, args.bootstrap_iterations, args.seed)
     dataset_rows = _summarize_datasets(subject_rows)
@@ -192,4 +213,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -15,7 +15,13 @@ for p in [ROOT, SCRIPT_DIR]:
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from prepare_human_blind_validation import _bucket_groups, _collect_groups, _sample, _write_packet  # noqa: E402
+from prepare_human_blind_validation import (  # noqa: E402
+    _attach_group_trace_embedding_metrics,
+    _bucket_groups,
+    _collect_groups,
+    _sample,
+    _write_packet,
+)
 from prove_experiment_utils import (  # noqa: E402
     DEFAULT_EMBEDDING_MODEL,
     SentenceEmbeddingEncoder,
@@ -51,6 +57,10 @@ Return only valid JSON with these fields:
   "rationale": "one concise paragraph"
 }
 """
+
+
+def _parse_model_filter(text: str) -> set[str]:
+    return {item.strip() for item in str(text or "").split(",") if item.strip()}
 
 
 def _truncate_trace(text: str, max_chars: int) -> str:
@@ -251,10 +261,18 @@ def _analyze(rows: List[Dict[str, Any]], bootstrap_iterations: int, seed: int) -
     corr_major = spearman_corr([r["team_major_family_diversity"] for r in parsed], scores)
     corr_text = spearman_corr([r["trace_token_cosine_diversity"] for r in parsed], scores)
     corr_embedding = spearman_corr([r.get("trace_embedding_cosine_diversity", 0.0) for r in parsed], scores)
-    high = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) in {"high_strategy", "low_text_high_strategy"}]
-    low = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) in {"low_strategy", "high_text_low_strategy"}]
-    delta_vals = [h - l for h, l in zip(high, low)]
+    high_strategy = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "high_strategy"]
+    low_strategy = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "low_strategy"]
+    delta_vals = [h - l for h, l in zip(high_strategy, low_strategy)]
     delta_ci = bootstrap_mean_ci(delta_vals, iterations=bootstrap_iterations, seed=seed) if delta_vals else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    high_text = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "high_text"]
+    low_text = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "low_text"]
+    text_delta_vals = [h - l for h, l in zip(high_text, low_text)]
+    text_delta_ci = bootstrap_mean_ci(text_delta_vals, iterations=bootstrap_iterations, seed=seed) if text_delta_vals else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    high_text_low_strategy = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "high_text_low_strategy"]
+    low_text_high_strategy = [safe_float(r["gpt_method_diversity_score"]) for r in parsed if str(r.get("bucket")) == "low_text_high_strategy"]
+    cross_delta_vals = [h - l for h, l in zip(high_text_low_strategy, low_text_high_strategy)]
+    cross_delta_ci = bootstrap_mean_ci(cross_delta_vals, iterations=bootstrap_iterations, seed=seed) if cross_delta_vals else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
     bucket_means: Dict[str, Dict[str, Any]] = {}
     for bucket in sorted({str(r.get("bucket", "")) for r in parsed if str(r.get("bucket", ""))}):
         vals = [r for r in parsed if str(r.get("bucket", "")) == bucket]
@@ -275,8 +293,14 @@ def _analyze(rows: List[Dict[str, Any]], bootstrap_iterations: int, seed: int) -
         "trace_embedding_vs_gpt_spearman": corr_embedding,
         "bucket_means": bucket_means,
         "high_strategy_minus_low_strategy_gpt_score_ci": delta_ci,
-        "mean_high_strategy_gpt_score": safe_mean(high),
-        "mean_low_strategy_gpt_score": safe_mean(low),
+        "mean_high_strategy_gpt_score": safe_mean(high_strategy),
+        "mean_low_strategy_gpt_score": safe_mean(low_strategy),
+        "high_text_minus_low_text_gpt_score_ci": text_delta_ci,
+        "mean_high_text_gpt_score": safe_mean(high_text),
+        "mean_low_text_gpt_score": safe_mean(low_text),
+        "high_text_low_strategy_minus_low_text_high_strategy_gpt_score_ci": cross_delta_ci,
+        "mean_high_text_low_strategy_gpt_score": safe_mean(high_text_low_strategy),
+        "mean_low_text_high_strategy_gpt_score": safe_mean(low_text_high_strategy),
     }
 
 
@@ -308,6 +332,18 @@ def _write_summary(out_dir: Path, groups: List[Dict[str, Any]], bucketed: Dict[s
                 f"- high_strategy_minus_low_strategy_gpt_score: mean={safe_float(ci.get('mean')):.4f}, "
                 f"95% CI=[{safe_float(ci.get('ci_low')):.4f}, {safe_float(ci.get('ci_high')):.4f}]"
             )
+        text_ci = analysis.get("high_text_minus_low_text_gpt_score_ci", {})
+        if isinstance(text_ci, dict) and int(text_ci.get("n", 0) or 0) > 0:
+            lines.append(
+                f"- high_text_minus_low_text_gpt_score: mean={safe_float(text_ci.get('mean')):.4f}, "
+                f"95% CI=[{safe_float(text_ci.get('ci_low')):.4f}, {safe_float(text_ci.get('ci_high')):.4f}]"
+            )
+        cross_ci = analysis.get("high_text_low_strategy_minus_low_text_high_strategy_gpt_score_ci", {})
+        if isinstance(cross_ci, dict) and int(cross_ci.get("n", 0) or 0) > 0:
+            lines.append(
+                f"- high_text_low_strategy_minus_low_text_high_strategy_gpt_score: mean={safe_float(cross_ci.get('mean')):.4f}, "
+                f"95% CI=[{safe_float(cross_ci.get('ci_low')):.4f}, {safe_float(cross_ci.get('ci_high')):.4f}]"
+            )
         bucket_means = analysis.get("bucket_means", {})
         if isinstance(bucket_means, dict) and bucket_means:
             lines.extend(
@@ -319,7 +355,7 @@ def _write_summary(out_dir: Path, groups: List[Dict[str, Any]], bucketed: Dict[s
                     "|---|---:|---:|---:|---:|---:|---:|",
                 ]
             )
-            for bucket in ["high_strategy", "low_strategy", "high_text_low_strategy", "low_text_high_strategy"]:
+            for bucket in ["high_text", "low_text", "high_strategy", "low_strategy", "high_text_low_strategy", "low_text_high_strategy"]:
                 vals = bucket_means.get(bucket, {})
                 if not isinstance(vals, dict):
                     continue
@@ -374,6 +410,8 @@ async def main_async():
     parser.add_argument("--out_dir", type=str, default="prove_experiments/p7_gpt55_blind")
     parser.add_argument("--per_bucket", type=int, default=20)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--include_models", type=str, default="", help="Comma-separated model names to include.")
+    parser.add_argument("--exclude_models", type=str, default="", help="Comma-separated model names to exclude.")
     parser.add_argument("--evaluator_model", type=str, default="gpt-5.5")
     parser.add_argument("--evaluate", type=int, default=1, choices=[0, 1])
     parser.add_argument("--temperature", type=float, default=0.0)
@@ -384,12 +422,23 @@ async def main_async():
     parser.add_argument("--retry_sleep", type=float, default=2.0)
     parser.add_argument("--resume", type=int, default=1, choices=[0, 1])
     parser.add_argument("--bootstrap_iterations", type=int, default=2000)
+    parser.add_argument("--text_diversity_metric", type=str, default="embedding", choices=["embedding", "token"])
+    parser.add_argument("--include_text_only_buckets", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--sample_mode", type=str, default="random", choices=["random", "extreme"])
+    parser.add_argument("--dedupe_across_buckets", type=int, default=1, choices=[0, 1])
     args = parser.parse_args()
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    groups = _collect_groups(Path(args.runs_root))
-    bucketed = _bucket_groups(groups)
+    groups = _collect_groups(
+        Path(args.runs_root),
+        include_models=_parse_model_filter(args.include_models),
+        exclude_models=_parse_model_filter(args.exclude_models),
+    )
+    text_metric = "trace_embedding_cosine_diversity" if args.text_diversity_metric == "embedding" else "trace_token_cosine_diversity"
+    if args.text_diversity_metric == "embedding":
+        groups = _attach_group_trace_embedding_metrics(groups, DEFAULT_EMBEDDING_MODEL)
+    bucketed = _bucket_groups(groups, text_metric=text_metric, include_text_only_buckets=bool(args.include_text_only_buckets))
     packet_path = out_dir / "p7_blind_annotation_packet.jsonl"
     key_path = out_dir / "p7_annotation_key.csv"
     if int(args.evaluate) == 0 and packet_path.exists() and key_path.exists():
@@ -399,7 +448,14 @@ async def main_async():
         with key_path.open("r", encoding="utf-8", newline="") as f:
             key_rows = [dict(row) for row in csv.DictReader(f)]
     else:
-        selected = _sample(bucketed, args.per_bucket, args.seed)
+        selected = _sample(
+            bucketed,
+            args.per_bucket,
+            args.seed,
+            sample_mode=args.sample_mode,
+            text_metric=text_metric,
+            dedupe_across_buckets=bool(args.dedupe_across_buckets),
+        )
         packet_path, key_rows = _write_packet(selected, out_dir, args.seed)
     eval_path = out_dir / "p7_gpt55_evaluations.jsonl"
 

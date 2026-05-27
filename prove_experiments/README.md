@@ -16,8 +16,8 @@
 期望证据：
 
 - 显式策略 prompt 会让同一批题上的 primary 或 secondary family 发生预期变化。
-- GPT-5.5 盲评代理认为“方法不同”的 trace 组，策略树多样性也更高。
-- 策略树多样性与 trace 语义差异有正相关，但不能被表面措辞、prompt 措辞或 trace 长度完全解释。
+- GPT-5.5 盲评代理认为“方法不同”的 trace 组，应能帮助区分策略树多样性与完整 trace 文本展开差异。
+- 策略树多样性与 trace embedding 语义差异可以相关，但二者不能混作同一个构念；P7 默认用 `trace_embedding_div` 作为文本多样性口径。
 
 ### C2. 区分效度
 

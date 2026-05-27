@@ -27,6 +27,28 @@ from prove_experiment_utils import (  # noqa: E402
 )
 
 
+def _parse_model_filter(text: str) -> set[str]:
+    return {item.strip() for item in str(text or "").split(",") if item.strip()}
+
+
+def _run_model_name(run_dir: Path) -> str:
+    meta_path = run_dir / "run_meta.json"
+    if not meta_path.exists():
+        return ""
+    with meta_path.open("r", encoding="utf-8") as f:
+        meta = json.load(f)
+    cfg = meta.get("config", {}) if isinstance(meta, dict) and isinstance(meta.get("config", {}), dict) else {}
+    return str(cfg.get("model", ""))
+
+
+def _model_allowed(model: str, include_models: set[str], exclude_models: set[str]) -> bool:
+    if include_models and model not in include_models:
+        return False
+    if exclude_models and model in exclude_models:
+        return False
+    return True
+
+
 def _trace_records(run_dir: Path) -> Dict[str, Dict[str, Any]]:
     records = {}
     for rec in read_jsonl(run_dir / "test_trace_history.jsonl"):
@@ -37,9 +59,14 @@ def _trace_records(run_dir: Path) -> Dict[str, Dict[str, Any]]:
     return records
 
 
-def _collect_groups(runs_root: Path) -> List[Dict[str, Any]]:
+def _collect_groups(runs_root: Path, include_models: set[str] | None = None, exclude_models: set[str] | None = None) -> List[Dict[str, Any]]:
+    include_models = include_models or set()
+    exclude_models = exclude_models or set()
     groups: List[Dict[str, Any]] = []
     for run_dir in sorted([p for p in runs_root.iterdir() if p.is_dir()]) if runs_root.exists() else []:
+        model = _run_model_name(run_dir)
+        if not _model_allowed(model, include_models, exclude_models):
+            continue
         pred_file = find_prediction_file(run_dir)
         if not pred_file:
             continue
@@ -58,6 +85,7 @@ def _collect_groups(runs_root: Path) -> List[Dict[str, Any]]:
                 {
                     "run_name": run_dir.name,
                     "run_dir": str(run_dir),
+                    "model": model,
                     "question_hash": qh,
                     "team_family_diversity": safe_float(pred.get("team_family_diversity")),
                     "team_family_homogeneity_rate": safe_float(pred.get("team_family_homogeneity_rate")),
@@ -78,6 +106,37 @@ def _collect_groups(runs_root: Path) -> List[Dict[str, Any]]:
     return groups
 
 
+def _trace_texts(group: Dict[str, Any]) -> List[str]:
+    agents = group.get("agents", [])
+    if not isinstance(agents, list):
+        return []
+    return [
+        str(agent.get("trace", "")).strip()
+        for agent in agents
+        if isinstance(agent, dict) and str(agent.get("trace", "")).strip()
+    ]
+
+
+def _attach_group_trace_embedding_metrics(groups: List[Dict[str, Any]], model_name: str = DEFAULT_EMBEDDING_MODEL) -> List[Dict[str, Any]]:
+    if not groups:
+        return groups
+    encoder = SentenceEmbeddingEncoder(model_name, enabled=True)
+    for group in groups:
+        emb_div, emb_sim, emb_count, emb_chunks = pairwise_document_embedding_cosine_diversity(
+            _trace_texts(group),
+            encoder,
+        )
+        group["trace_embedding_cosine_diversity"] = emb_div
+        group["trace_embedding_cosine_similarity"] = emb_sim
+        group["trace_embedding_text_count"] = emb_count
+        group["mean_trace_embedding_chunks"] = emb_chunks
+        group["trace_embedding_chunk_words"] = 320
+        group["trace_embedding_chunk_overlap"] = 40
+        group["trace_embedding_model"] = encoder.model_name
+        group["trace_embedding_status"] = encoder.status
+    return groups
+
+
 def _quantile(values: List[float], q: float) -> float:
     if not values:
         return 0.0
@@ -86,40 +145,87 @@ def _quantile(values: List[float], q: float) -> float:
     return vals[idx]
 
 
-def _bucket_groups(groups: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+def _bucket_groups(
+    groups: List[Dict[str, Any]],
+    text_metric: str = "trace_embedding_cosine_diversity",
+    include_text_only_buckets: bool = True,
+) -> Dict[str, List[Dict[str, Any]]]:
     if not groups:
         return {}
     strategy_vals = [safe_float(g.get("team_family_diversity")) for g in groups]
-    text_vals = [safe_float(g.get("trace_token_cosine_diversity")) for g in groups]
+    text_vals = [safe_float(g.get(text_metric)) for g in groups]
     s_low = _quantile(strategy_vals, 0.30)
     s_high = _quantile(strategy_vals, 0.70)
     t_low = _quantile(text_vals, 0.30)
     t_high = _quantile(text_vals, 0.70)
-    return {
+    bucketed: Dict[str, List[Dict[str, Any]]] = {}
+    if include_text_only_buckets:
+        bucketed["high_text"] = [g for g in groups if safe_float(g.get(text_metric)) >= t_high]
+        bucketed["low_text"] = [g for g in groups if safe_float(g.get(text_metric)) <= t_low]
+    bucketed.update({
         "high_strategy": [g for g in groups if safe_float(g.get("team_family_diversity")) >= s_high],
         "low_strategy": [g for g in groups if safe_float(g.get("team_family_diversity")) <= s_low],
         "high_text_low_strategy": [
             g for g in groups
-            if safe_float(g.get("trace_token_cosine_diversity")) >= t_high and safe_float(g.get("team_family_diversity")) <= s_low
+            if safe_float(g.get(text_metric)) >= t_high and safe_float(g.get("team_family_diversity")) <= s_low
         ],
         "low_text_high_strategy": [
             g for g in groups
-            if safe_float(g.get("trace_token_cosine_diversity")) <= t_low and safe_float(g.get("team_family_diversity")) >= s_high
+            if safe_float(g.get(text_metric)) <= t_low and safe_float(g.get("team_family_diversity")) >= s_high
         ],
-    }
+    })
+    return bucketed
 
 
-def _sample(groups_by_bucket: Dict[str, List[Dict[str, Any]]], per_bucket: int, seed: int) -> List[Tuple[str, Dict[str, Any]]]:
+def _sort_bucket_candidates(bucket: str, groups: List[Dict[str, Any]], text_metric: str) -> List[Dict[str, Any]]:
+    def strategy(g: Dict[str, Any]) -> float:
+        return safe_float(g.get("team_family_diversity"))
+
+    def major(g: Dict[str, Any]) -> float:
+        return safe_float(g.get("team_major_family_diversity"))
+
+    def text(g: Dict[str, Any]) -> float:
+        return safe_float(g.get(text_metric))
+
+    def stable(g: Dict[str, Any]) -> Tuple[str, str]:
+        return str(g.get("run_name", "")), str(g.get("question_hash", ""))
+
+    if bucket == "high_text":
+        return sorted(groups, key=lambda g: (-text(g), -strategy(g), -major(g), stable(g)))
+    if bucket == "low_text":
+        return sorted(groups, key=lambda g: (text(g), strategy(g), major(g), stable(g)))
+    if bucket == "high_text_low_strategy":
+        return sorted(groups, key=lambda g: (-text(g), strategy(g), major(g), stable(g)))
+    if bucket == "low_text_high_strategy":
+        return sorted(groups, key=lambda g: (text(g), -strategy(g), -major(g), stable(g)))
+    if bucket == "high_strategy":
+        return sorted(groups, key=lambda g: (-strategy(g), -major(g), -text(g), stable(g)))
+    if bucket == "low_strategy":
+        return sorted(groups, key=lambda g: (strategy(g), major(g), text(g), stable(g)))
+    return sorted(groups, key=stable)
+
+
+def _sample(
+    groups_by_bucket: Dict[str, List[Dict[str, Any]]],
+    per_bucket: int,
+    seed: int,
+    sample_mode: str = "random",
+    text_metric: str = "trace_embedding_cosine_diversity",
+    dedupe_across_buckets: bool = True,
+) -> List[Tuple[str, Dict[str, Any]]]:
     rng = random.Random(seed)
     selected: List[Tuple[str, Dict[str, Any]]] = []
     seen = set()
     for bucket, groups in groups_by_bucket.items():
-        candidates = list(groups)
-        rng.shuffle(candidates)
+        if sample_mode == "extreme":
+            candidates = _sort_bucket_candidates(bucket, list(groups), text_metric)
+        else:
+            candidates = list(groups)
+            rng.shuffle(candidates)
         take = []
         for g in candidates:
             key = (g["run_name"], g["question_hash"])
-            if key in seen:
+            if dedupe_across_buckets and key in seen:
                 continue
             seen.add(key)
             take.append(g)
@@ -177,6 +283,7 @@ def _write_packet(selected: List[Tuple[str, Dict[str, Any]]], out_dir: Path, see
                     "bucket": bucket,
                     "run_name": group.get("run_name", ""),
                     "run_dir": group.get("run_dir", ""),
+                    "model": group.get("model", ""),
                     "question_hash": group.get("question_hash", ""),
                     "team_family_diversity": group.get("team_family_diversity", 0.0),
                     "team_family_homogeneity_rate": group.get("team_family_homogeneity_rate", 0.0),
@@ -232,17 +339,23 @@ def _analyze_annotations(key_rows: List[Dict[str, Any]], annotations_path: str, 
     corr_strategy = spearman_corr([r["team_family_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
     corr_text = spearman_corr([r["trace_token_cosine_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
     corr_embedding = spearman_corr([r["trace_embedding_cosine_diversity"] for r in rows], [r["human_method_diversity_score"] for r in rows])
-    high = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) in {"high_strategy", "low_text_high_strategy"}]
-    low = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) in {"low_strategy", "high_text_low_strategy"}]
-    delta_ci = bootstrap_mean_ci([h - l for h, l in zip(high, low)], iterations=bootstrap_iterations, seed=seed) if high and low else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    high_strategy = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) == "high_strategy"]
+    low_strategy = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) == "low_strategy"]
+    high_text = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) == "high_text"]
+    low_text = [r["human_method_diversity_score"] for r in rows if str(r.get("bucket")) == "low_text"]
+    delta_ci = bootstrap_mean_ci([h - l for h, l in zip(high_strategy, low_strategy)], iterations=bootstrap_iterations, seed=seed) if high_strategy and low_strategy else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+    text_delta_ci = bootstrap_mean_ci([h - l for h, l in zip(high_text, low_text)], iterations=bootstrap_iterations, seed=seed) if high_text and low_text else {"n": 0, "mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
     summary = {
         "matched_count": len(rows),
         "strategy_tree_vs_human_spearman": corr_strategy,
         "trace_text_vs_human_spearman": corr_text,
         "trace_embedding_vs_human_spearman": corr_embedding,
         "high_strategy_minus_low_strategy_human_score_ci": delta_ci,
-        "mean_high_strategy_human_score": safe_mean(high),
-        "mean_low_strategy_human_score": safe_mean(low),
+        "mean_high_strategy_human_score": safe_mean(high_strategy),
+        "mean_low_strategy_human_score": safe_mean(low_strategy),
+        "high_text_minus_low_text_human_score_ci": text_delta_ci,
+        "mean_high_text_human_score": safe_mean(high_text),
+        "mean_low_text_human_score": safe_mean(low_text),
     }
     (out_dir / "p7_human_annotation_analysis.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary
@@ -286,15 +399,35 @@ def main():
     parser.add_argument("--out_dir", type=str, default="prove_experiments/p7_human_blind")
     parser.add_argument("--per_bucket", type=int, default=20)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--include_models", type=str, default="", help="Comma-separated model names to include.")
+    parser.add_argument("--exclude_models", type=str, default="", help="Comma-separated model names to exclude.")
+    parser.add_argument("--text_diversity_metric", type=str, default="embedding", choices=["embedding", "token"])
+    parser.add_argument("--include_text_only_buckets", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--sample_mode", type=str, default="random", choices=["random", "extreme"])
+    parser.add_argument("--dedupe_across_buckets", type=int, default=1, choices=[0, 1])
     parser.add_argument("--annotations", type=str, default="", help="Optional completed CSV/JSONL annotations with blinded_id and score.")
     parser.add_argument("--bootstrap_iterations", type=int, default=2000)
     args = parser.parse_args()
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    groups = _collect_groups(Path(args.runs_root))
-    bucketed = _bucket_groups(groups)
-    selected = _sample(bucketed, args.per_bucket, args.seed)
+    groups = _collect_groups(
+        Path(args.runs_root),
+        include_models=_parse_model_filter(args.include_models),
+        exclude_models=_parse_model_filter(args.exclude_models),
+    )
+    text_metric = "trace_embedding_cosine_diversity" if args.text_diversity_metric == "embedding" else "trace_token_cosine_diversity"
+    if args.text_diversity_metric == "embedding":
+        groups = _attach_group_trace_embedding_metrics(groups, DEFAULT_EMBEDDING_MODEL)
+    bucketed = _bucket_groups(groups, text_metric=text_metric, include_text_only_buckets=bool(args.include_text_only_buckets))
+    selected = _sample(
+        bucketed,
+        args.per_bucket,
+        args.seed,
+        sample_mode=args.sample_mode,
+        text_metric=text_metric,
+        dedupe_across_buckets=bool(args.dedupe_across_buckets),
+    )
     packet_path, key_rows = _write_packet(selected, out_dir, args.seed)
     analysis = _analyze_annotations(key_rows, args.annotations, out_dir, args.bootstrap_iterations, args.seed)
     _write_md(out_dir, groups, bucketed, key_rows, analysis)

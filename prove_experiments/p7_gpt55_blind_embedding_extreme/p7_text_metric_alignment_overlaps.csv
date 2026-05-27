@@ -1,0 +1,13 @@
+jaccard,left_metric,left_n,overlap_n,right_metric,right_n,side
+0.5384615384615384,trace_embedding_div,20,14,trace_token_div,20,high
+0.5384615384615384,trace_embedding_div,20,14,trace_token_div,20,low
+0.0,family_div,20,0,trace_embedding_div,20,high
+0.14285714285714285,family_div,20,5,trace_embedding_div,20,low
+0.0,family_div,20,0,trace_token_div,20,high
+0.14285714285714285,family_div,20,5,trace_token_div,20,low
+0.5384615384615384,family_div,20,14,major_div,20,high
+0.25,family_div,20,8,major_div,20,low
+0.0,major_div,20,0,trace_embedding_div,20,high
+0.05263157894736842,major_div,20,2,trace_embedding_div,20,low
+0.0,major_div,20,0,trace_token_div,20,high
+0.05263157894736842,major_div,20,2,trace_token_div,20,low

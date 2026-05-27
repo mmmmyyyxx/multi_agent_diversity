@@ -30,5 +30,13 @@
     "solver_api_key_env": "OPENROUTER_API_KEY",
     "solver_base_url_env": "OPENROUTER_BASE_URL",
     "notes": "Yunwu model id: qwen2.5-7b-instruct."
+  },
+  {
+    "alias": "qwen35_plus",
+    "model": "qwen3.5-plus",
+    "provider": "openai",
+    "solver_api_key_env": "OPENAI_API_KEY",
+    "solver_base_url_env": "OPENAI_BASE_URL",
+    "notes": "Yunwu model id: qwen3.5-plus."
   }
 ]

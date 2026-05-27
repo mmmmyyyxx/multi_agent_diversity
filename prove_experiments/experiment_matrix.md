@@ -234,7 +234,7 @@ mixed 条件的 5 个目标策略必须属于 5 个不同主类：
 
 通过标准：
 
-- 当前 weighted tree 与 GPT-5.5 盲评 method-diversity 判断的相关性优于或接近其他粒度。
+- 当前 weighted tree 的相关性应与 trace embedding/token 指标分开报告；GPT-5.5 盲评更贴近哪一类指标本身就是 P7 的诊断对象。
 - 当前 weighted tree 比 strict leaf-only 有更好的优化信号。
 
 失败解释：
@@ -249,19 +249,21 @@ mixed 条件的 5 个目标策略必须属于 5 个不同主类：
 
 设计：
 
-- 抽样 80 个 question-level trace group：
+- 抽样 120 个 question-level trace group，默认从 cleaned runs 的全部可用记录中按极值筛选：
+  - 20 个高 trace embedding diversity。
+  - 20 个低 trace embedding diversity。
   - 20 个高 strategy-tree diversity。
   - 20 个低 strategy-tree diversity。
-  - 20 个高 embedding diversity 但低 strategy diversity。
-  - 20 个低 embedding diversity 但高 strategy diversity，如存在。
+  - 20 个高 trace embedding diversity 但低 strategy diversity。
+  - 20 个低 trace embedding diversity 但高 strategy diversity，如存在。
 - 隐藏 run setting、prompt、model、label 和答案。
 - 要求 GPT-5.5 给 1 到 5 的 method diversity 分数、confidence、distinct method count 和可选 coarse method tag。
 - 评估 prompt 明确要求忽略措辞、长度、流畅度和答案正确性，只判断推理方法差异。
 
 通过标准：
 
-- strategy-tree diversity 与 GPT-5.5 method-diversity score 有正 Spearman 相关。
-- strategy-tree diversity 比 raw trace embedding 更好地区分 GPT-5.5 高/低多样性组。
+- strategy-tree diversity、trace embedding diversity、trace token diversity 与 GPT-5.5 method-diversity score 的 Spearman 相关分开报告。
+- 如果 GPT-5.5 更贴近 trace embedding/token diversity，应把它解释为“可见 trace 展开差异”的证据，而不是策略树构念的直接胜利。
 
 失败解释：
 

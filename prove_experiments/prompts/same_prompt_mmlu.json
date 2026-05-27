@@ -1,0 +1,31 @@
+{
+  "name": "same_prompt_mmlu",
+  "description": "P4 exact same-prompt baseline: all agents use the same option-elimination prompt.",
+  "agents": [
+    {
+      "agent_id": 0,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 1,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 2,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 3,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    },
+    {
+      "agent_id": 4,
+      "target_family": ["distractor_elimination", "option_contrast"],
+      "prompt": "Use option-by-option elimination. Check each candidate answer against the question, discard inconsistent choices, and output exactly one FINAL_ANSWER line."
+    }
+  ]
+}

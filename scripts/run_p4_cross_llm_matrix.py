@@ -99,6 +99,7 @@ def main():
     parser.add_argument("--same_prompts_json", type=str, default="prove_experiments/prompts/same_elimination_mmlu.json")
     parser.add_argument("--definition_prompts_json", type=str, default="prove_experiments/prompts/same_definition_mmlu.json")
     parser.add_argument("--mixed_prompts_json", type=str, default="prove_experiments/prompts/mixed_strategy_mmlu.json")
+    parser.add_argument("--same_exact_prompts_json", type=str, default="prove_experiments/prompts/same_prompt_mmlu.json")
     parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
     parser.add_argument("--family_expansion_enabled", type=int, default=0, choices=[0, 1])
@@ -135,6 +136,8 @@ def main():
     condition_specs = []
     if "same" in wanted or "same_elimination" in wanted:
         condition_specs.append(("same_elimination", args.same_prompts_json))
+    if "same_prompt" in wanted or "same_exact" in wanted:
+        condition_specs.append(("same_prompt", args.same_exact_prompts_json))
     if "mixed" in wanted or "mixed_strategy" in wanted:
         condition_specs.append(("mixed_strategy", args.mixed_prompts_json))
     if "definition" in wanted or "same_definition" in wanted:
