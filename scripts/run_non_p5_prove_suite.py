@@ -365,8 +365,8 @@ def main() -> None:
     parser.add_argument("--same_prompts_json", type=str, default="prove_experiments/prompts/same_elimination_mmlu.json")
     parser.add_argument("--mixed_prompts_json", type=str, default="prove_experiments/prompts/mixed_strategy_mmlu.json")
 
-    parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
+    parser.add_argument("--critic_model", type=str, default="deepseek-chat")
+    parser.add_argument("--family_expansion_model", type=str, default="deepseek-chat")
     parser.add_argument("--family_expansion_enabled", type=int, default=0, choices=[0, 1])
     parser.add_argument("--family_rejudge_on_low_confidence", type=int, default=1, choices=[0, 1])
     parser.add_argument("--family_taxonomy_path", type=str, default="auto")

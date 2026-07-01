@@ -2,57 +2,71 @@ from dataclasses import dataclass
 import argparse
 
 
+DEFAULT_TEMPERATURE = 0.0
+DEFAULT_OPTIMIZER_TEMPERATURE = 0.5
+DEFAULT_EVALUATOR_TEMPERATURE = 0.0
+
+
 @dataclass
 class Config:
     task_type: str = "auto"
-    model: str = "gpt-4o-mini"
-    critic_model: str = "gpt-4o-mini"
-    rewriter_model: str = "gpt-4o-mini"
-    family_expansion_model: str = "gpt-4o-mini"
-    family_expansion_enabled: bool = True
-    family_taxonomy_path: str = "auto"
-    use_dual_family_labels: bool = True
-    primary_family_weight: float = 0.7
-    secondary_family_weight: float = 0.3
-    same_major_family_weight: float = 0.5
-    macro_diversity_weight: float = 0.5
-    family_confidence_threshold: float = 0.3
-    family_rejudge_on_low_confidence: bool = True
-    min_summary_words: int = 60
-    max_summary_tokens: int = 512
-    min_evidence_spans: int = 1
-    reward_tie_eps: float = 0.03
-    invalid_tolerance: float = 0.1
+
+    agent_model: str = "deepseek-chat"
+    optimizer_model: str = "deepseek-v4-flash"
+    evaluator_model: str = "deepseek-v4-flash"
 
     train_path: str = "train.jsonl"
     val_path: str = ""
     test_path: str = "test.jsonl"
-    train_size: int = 500
-    val_size: int = 150
+    train_size: int = 200
+    val_size: int = 100
     val_split_ratio: float = 0.2
     test_size: int = 200
     eval_test_each_epoch: bool = False
-    early_stopping_patience: int = 2
-    early_stopping_min_delta: float = 0.005
-    early_stopping_metric: str = "val_mean_family_diversity"
 
-    agents: int = 4
+    agents: int = 5
     init_mode: str = "shared"
-    shared_prompt: str = "You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format."
+    shared_prompt: str = "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
     epochs: int = 2
-    update_every: int = 5
+    early_stopping_patience: int = 3
+    early_stopping_min_delta: float = 0.0
+    update_every: int = 10
     candidate_eval_batch_size: int = 10
     baseline_only: bool = False
 
+    search_mode: str = "evolutionary_beam"
+    reward_mode: str = "embedding_local_acc_invalid"
+    beam_size: int = 3
+    num_candidates_per_parent: int = 2
+    beam_refresh_each_epoch: bool = True
+    homogeneity_overlap_threshold: float = 0.55
+    homogeneity_pressure_tie_eps: float = 0.03
+    max_homogeneous_cases_per_agent: int = 4
+    random_window_cases_per_agent: int = 2
+    hard_validity_cases_per_agent: int = 2
+    invalid_repair_rate_threshold: float = 0.25
+
+    reward_weight_diversity: float = 0.5
+    reward_weight_local_validity: float = 0.2
+    reward_weight_team_accuracy: float = 0.1
+    reward_weight_invalid_score: float = 0.2
+
+    diversity_metric: str = "trace_embedding"
+    use_joint_trace_diversity_evaluator: bool = False
+    local_validity_binary: bool = True
+    invalid_binary: bool = True
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    trace_embedding_chunk_words: int = 320
+    trace_embedding_chunk_overlap: int = 40
+
     max_tokens: int = 1000
-    critic_max_tokens: int = 8000
-    rewriter_max_tokens: int = 1000
+    optimizer_max_tokens: int = 1400
+    evaluator_max_tokens: int = 1200
+    temperature: float = DEFAULT_TEMPERATURE
+    optimizer_temperature: float = DEFAULT_OPTIMIZER_TEMPERATURE
+    evaluator_temperature: float = DEFAULT_EVALUATOR_TEMPERATURE
 
-    temperature: float = 0.2
-    critic_temperature: float = 0.3
-    rewriter_temperature: float = 0.5
-
-    out_dir: str = "runs_tg_rl"
+    out_dir: str = "runs_trace_beam"
     seed: int = 42
     max_retries: int = 3
     retry_sleep: float = 1.5
@@ -61,84 +75,88 @@ class Config:
     max_retry_backoff: float = 30.0
     llm_call_logging: bool = True
     llm_call_timeout: float = 120.0
-    eval_parallelism: int = 100
+    candidate_eval_concurrency: int = 0
+    candidate_reuse_recorded_rollouts: bool = True
+    train_rollout_concurrency: int = 0
+    eval_solver_call_concurrency: int = 225
+    local_evaluator_batch_size: int = 5
     solver_api_key_env: str = ""
     solver_base_url_env: str = ""
-    critic_api_key_env: str = ""
-    critic_base_url_env: str = ""
+    evaluator_api_key_env: str = ""
+    evaluator_base_url_env: str = ""
 
-    bandit_lr: float = 0.2
-    baseline_momentum: float = 0.9
-    homogeneity_window: int = 50
-
-    lambda_diversity: float = 0.5
-    lambda_homogeneity: float = 0.35
-    lambda_invalid_trace: float = 0.30
+    def __post_init__(self):
+        if not str(self.agent_model or "").strip():
+            self.agent_model = "deepseek-chat"
+        if not str(self.optimizer_model or "").strip():
+            self.optimizer_model = "deepseek-v4-flash"
+        if not str(self.evaluator_model or "").strip():
+            self.evaluator_model = "deepseek-v4-flash"
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--task_type", type=str, default="auto", choices=["auto", "gsm8k", "mmlu"])
-    parser.add_argument("--model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--rewriter_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_enabled", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--family_taxonomy_path", type=str, default="auto")
-    parser.add_argument("--use_dual_family_labels", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--primary_family_weight", type=float, default=0.7)
-    parser.add_argument("--secondary_family_weight", type=float, default=0.3)
-    parser.add_argument("--same_major_family_weight", type=float, default=0.5)
-    parser.add_argument("--macro_diversity_weight", type=float, default=0.5)
-    parser.add_argument("--family_confidence_threshold", type=float, default=0.3)
-    parser.add_argument("--family_rejudge_on_low_confidence", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--min_summary_words", type=int, default=60)
-    parser.add_argument("--max_summary_tokens", type=int, default=512)
-    parser.add_argument("--min_evidence_spans", type=int, default=1)
-    parser.add_argument("--reward_tie_eps", type=float, default=0.03)
-    parser.add_argument("--invalid_tolerance", type=float, default=0.1)
+
+    parser.add_argument("--agent_model", type=str, default="deepseek-chat")
+    parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
+    parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
 
     parser.add_argument("--train_path", type=str, default="train.jsonl")
     parser.add_argument("--val_path", type=str, default="")
     parser.add_argument("--test_path", type=str, default="test.jsonl")
-    parser.add_argument("--train_size", type=int, default=500)
+    parser.add_argument("--train_size", type=int, default=200)
     parser.add_argument("--val_size", type=int, default=150)
     parser.add_argument("--val_split_ratio", type=float, default=0.2)
     parser.add_argument("--test_size", type=int, default=200)
     parser.add_argument("--eval_test_each_epoch", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--early_stopping_patience", type=int, default=2)
-    parser.add_argument("--early_stopping_min_delta", type=float, default=0.005)
-    parser.add_argument(
-        "--early_stopping_metric",
-        type=str,
-        default="val_mean_family_diversity",
-        choices=[
-            "val_mean_family_diversity",
-            "val_mean_family_homogeneity_rate",
-        ],
-    )
 
-    parser.add_argument("--agents", type=int, default=4)
+    parser.add_argument("--agents", type=int, default=5)
     parser.add_argument("--init_mode", type=str, default="shared", choices=["shared", "bank"])
     parser.add_argument(
         "--shared_prompt",
         type=str,
-        default="You are a careful reasoning solver. Solve step by step, verify key logic, and output exactly one FINAL_ANSWER line in the required format.",
+        default="You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
     )
     parser.add_argument("--epochs", type=int, default=2)
-    parser.add_argument("--update_every", type=int, default=5)
+    parser.add_argument("--early_stopping_patience", type=int, default=3)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
+    parser.add_argument("--update_every", type=int, default=10)
     parser.add_argument("--candidate_eval_batch_size", type=int, default=10)
     parser.add_argument("--baseline_only", type=int, default=0, choices=[0, 1])
 
-    parser.add_argument("--max_tokens", type=int, default=1000)
-    parser.add_argument("--critic_max_tokens", type=int, default=8000)
-    parser.add_argument("--rewriter_max_tokens", type=int, default=1000)
+    parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
+    parser.add_argument("--reward_mode", type=str, default="embedding_local_acc_invalid", choices=["embedding_local_acc_invalid", "accuracy_only"])
+    parser.add_argument("--beam_size", type=int, default=3)
+    parser.add_argument("--num_candidates_per_parent", type=int, default=2)
+    parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--homogeneity_overlap_threshold", type=float, default=0.55)
+    parser.add_argument("--homogeneity_pressure_tie_eps", type=float, default=0.03)
+    parser.add_argument("--max_homogeneous_cases_per_agent", type=int, default=4)
+    parser.add_argument("--random_window_cases_per_agent", type=int, default=2)
+    parser.add_argument("--hard_validity_cases_per_agent", type=int, default=2)
+    parser.add_argument("--invalid_repair_rate_threshold", type=float, default=0.25)
 
-    parser.add_argument("--temperature", type=float, default=0.2)
-    parser.add_argument("--critic_temperature", type=float, default=0.3)
-    parser.add_argument("--rewriter_temperature", type=float, default=0.5)
+    parser.add_argument("--reward_weight_diversity", type=float, default=0.5)
+    parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
+    parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
+    parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
+    parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--local_validity_binary", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--invalid_binary", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--embedding_model", type=str, default="BAAI/bge-small-en-v1.5")
+    parser.add_argument("--trace_embedding_chunk_words", type=int, default=320)
+    parser.add_argument("--trace_embedding_chunk_overlap", type=int, default=40)
 
-    parser.add_argument("--out_dir", type=str, default="runs_tg_rl")
+    parser.add_argument("--max_tokens", type=int, default=3000)
+    parser.add_argument("--optimizer_max_tokens", type=int, default=6000)
+    parser.add_argument("--evaluator_max_tokens", type=int, default=6000)
+    parser.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
+    parser.add_argument("--optimizer_temperature", type=float, default=DEFAULT_OPTIMIZER_TEMPERATURE)
+    parser.add_argument("--evaluator_temperature", type=float, default=DEFAULT_EVALUATOR_TEMPERATURE)
+
+    parser.add_argument("--out_dir", type=str, default="runs_trace_beam")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max_retries", type=int, default=3)
     parser.add_argument("--retry_sleep", type=float, default=1.5)
@@ -147,17 +165,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max_retry_backoff", type=float, default=30.0)
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
-    parser.add_argument("--eval_parallelism", type=int, default=100)
+    parser.add_argument("--candidate_eval_concurrency", type=int, default=0)
+    parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--train_rollout_concurrency", type=int, default=0)
+    parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
+    parser.add_argument("--local_evaluator_batch_size", type=int, default=5)
     parser.add_argument("--solver_api_key_env", type=str, default="")
     parser.add_argument("--solver_base_url_env", type=str, default="")
-    parser.add_argument("--critic_api_key_env", type=str, default="")
-    parser.add_argument("--critic_base_url_env", type=str, default="")
-
-    parser.add_argument("--bandit_lr", type=float, default=0.2)
-    parser.add_argument("--baseline_momentum", type=float, default=0.9)
-    # homogeneity_window is auto-aligned to update_every at runtime.
-
-    parser.add_argument("--lambda_diversity", type=float, default=0.5)
-    parser.add_argument("--lambda_homogeneity", type=float, default=0.35)
-    parser.add_argument("--lambda_invalid_trace", type=float, default=0.30)
+    parser.add_argument("--evaluator_api_key_env", type=str, default="")
+    parser.add_argument("--evaluator_base_url_env", type=str, default="")
     return parser

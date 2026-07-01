@@ -1,6 +1,0 @@
-alias,condition,elapsed_sec,model,out_dir,provider,return_code,run_name,solver_api_key_env,solver_base_url_env,status
-gpt4omini,same_definition,,gpt-4o-mini,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_definition_gpt4omini_seed42,,,P4_same_definition_gpt4omini_seed42,,,skipped_existing
-gemini_flash_lite,same_definition,,gemini-2.5-flash-lite,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_definition_gemini_flash_lite_seed42,,,P4_same_definition_gemini_flash_lite_seed42,,,skipped_existing
-deepseek_chat,same_definition,,deepseek-chat,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_definition_deepseek_chat_seed42,,,P4_same_definition_deepseek_chat_seed42,,,skipped_existing
-qwen25_7b,same_definition,,qwen2.5-7b-instruct,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_definition_qwen25_7b_seed42,,,P4_same_definition_qwen25_7b_seed42,,,skipped_existing
-qwen35_plus,same_definition,485.750205039978,qwen3.5-plus,D:\myx\grade_one\experiments\multi_agent_diversity\prove_experiments\runs\P4_same_definition_qwen35_plus_seed42,openai,0,P4_same_definition_qwen35_plus_seed42,OPENAI_API_KEY,OPENAI_BASE_URL,ok

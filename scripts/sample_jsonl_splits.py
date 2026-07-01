@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument("--out_train", type=str, default="mmlu_train_small.jsonl")
     parser.add_argument("--out_val", type=str, default="mmlu_val_small.jsonl")
     parser.add_argument("--out_test", type=str, default="mmlu_test_small.jsonl")
-    parser.add_argument("--train_size", type=int, default=500)
+    parser.add_argument("--train_size", type=int, default=200)
     parser.add_argument("--val_size", type=int, default=150)
     parser.add_argument("--test_size", type=int, default=200)
     parser.add_argument("--seed", type=int, default=42)

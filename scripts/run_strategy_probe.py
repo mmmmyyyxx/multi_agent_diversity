@@ -124,9 +124,9 @@ async def main_async():
     parser.add_argument("--prompts_json", type=str, required=True)
     parser.add_argument("--out_dir", type=str, required=True)
 
-    parser.add_argument("--model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--critic_model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--family_expansion_model", type=str, default="gpt-4o-mini")
+    parser.add_argument("--model", type=str, default="deepseek-chat")
+    parser.add_argument("--critic_model", type=str, default="deepseek-chat")
+    parser.add_argument("--family_expansion_model", type=str, default="deepseek-chat")
     parser.add_argument("--family_expansion_enabled", type=int, default=0, choices=[0, 1])
     parser.add_argument("--family_taxonomy_path", type=str, default="auto")
     parser.add_argument("--use_dual_family_labels", type=int, default=1, choices=[0, 1])

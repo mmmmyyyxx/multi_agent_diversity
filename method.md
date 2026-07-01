@@ -1,223 +1,640 @@
 # Method
 
-本文档描述项目的抽象方法。代码入口、参数、日志和运行方式见 `README.md`。
+本文档描述当前代码实现的方法。项目目标是构建一个多智能体 prompt 优化系统，使多个 LLM solver 在同一任务上形成可观察的推理路径差异，并用自动评估机制约束这种差异不以准确率、输出有效性或角色执行为代价。
 
-## 1. 问题目标
+## 1. 研究目标
 
-给定任务数据集 $\mathcal{D}=\{(x,y)\}$，训练一组同构 LLM agents，使它们在解决同一问题时形成更分散、更互补的推理策略。这里的“多样性”不是表面措辞不同，而是不同 agents 倾向于使用不同 reasoning family，例如分解、代数推导、分类讨论、反例搜索、反向验证等。
+多智能体推理常见做法是给多个 agent 设置不同角色，然后用投票或聚合得到最终答案。但如果多个 agent 的完整推理过程高度相似，那么表面上的“多角色”未必带来真实的信息增益。本项目关注的是：
 
-本方法的直接优化目标是降低团队内部策略同质化，而不是直接最大化准确率。准确率仍会作为评估指标记录，用于观察多样性训练是否损害任务表现。
+- agent 之间的完整 reasoning trace 是否语义重复；
+- 重复发生在哪些题、哪些 agent pair、哪些 prompt 行为上；
+- 能否把这些重复案例自动转化为 prompt 优化信号；
+- 新 prompt 是否真的改变了 solver 的解题路径；
+- 这种改变是否仍然保持答案可靠性和输出格式有效性。
 
-## 2. 多智能体生成
+因此，系统把优化对象定义为“agent 的角色 prompt”，把观测对象定义为“完整 trace 与最终答案”，把主要多样性指标定义为“trace embedding overlap”。
 
-设团队包含 $N$ 个 agents。第 $i$ 个 agent 在训练步 $t$ 的 prompt 为 $p_i^{(t)}$。给定问题 $x$，agent 生成推理轨迹 $z_i$ 与答案 $\hat y_i$：
+## 2. 系统角色
 
-$$
-(z_i,\hat y_i)=f_\theta(x,p_i^{(t)})
-$$
+系统包含三类模型角色。
 
-所有 agents 调用同一底座模型 $f_\theta$，差异只来自各自 prompt。初始化方式有两种：
+### 2.1 Solver Agents
 
-- `shared`：所有 agents 从同一个初始 prompt 出发。
-- `bank`：从人工设计的 prompt bank 中分配不同初始角色。
+solver agents 是真正解题的模型实例。每个 agent 有自己的 active prompt。对于同一道题，系统并行调用所有 agent，要求输出：
 
-## 3. Reasoning Family 判别
+```text
+compact reasoning trace
+FINAL_ANSWER: <answer>
+```
 
-每条推理轨迹 $z_i$ 会被映射到 reasoning family。当前基础 family 是两层结构：主类描述推理功能区域，叶子策略参与判别和统计。
+MMLU 任务要求最终答案为 `A/B/C/D`；GSM8K 任务要求最终答案为数值或短答案。答案抽取逻辑位于 `multi_dataset_diverse_rl/utils.py`。
 
-| 主类 | 叶子策略 |
-| --- | --- |
-| `representation_formalization` | `decomposition`, `symbolic_formulation`, `spatial_visualization`, `dimensional_unit_analysis` |
-| `algebra_computation` | `algebraic_derivation`, `equation_solving`, `direct_computation`, `combinatorial_counting` |
-| `logical_proof` | `case_analysis`, `exhaustive_enumeration`, `constraint_propagation`, `option_elimination`, `backward_reasoning`, `consistency_verification`, `counterexample_search`, `proof_by_contradiction`, `invariant_reasoning`, `symmetry_reasoning`, `definition_application`, `rule_based_classification`, `theorem_property_application` |
-| `probability_statistics` | `probabilistic_reasoning`, `expected_value_reasoning` |
-| `induction_pattern` | `pattern_generalization`, `inductive_reasoning`, `analogy_mapping`, `comparative_reasoning` |
-| `process_structure_simulation` | `simulation_tracing`, `recursive_reasoning`, `temporal_sequential_reasoning`, `causal_reasoning` |
-| `optimization_boundary_meta` | `optimization_extremal_reasoning`, `approximation_bounding`, `edge_case_analysis`, `abductive_inference`, `counterfactual_reasoning` |
+### 2.2 Prompt Optimizer
 
-判别流程：
+optimizer model 不直接解题，也不直接决定哪个 prompt 被采纳。它只根据系统整理出的窗口统计和行为案例，给指定 agent 的某个 parent prompt 生成候选 prompt。
 
-1. **Single-trace LLM judge**：critic model 每次只查看一个 agent 的完整 trace，并输出 `primary_family`、`secondary_family`、详细 `reasoning_summary`、`strategy_steps`、`distinctive_features`、`evidence_spans`、`confidence` 和 `reason`。该阶段不接收其他 agents 的 trace、summary、answer 或 family label。
-2. **低置信复判**：当 `confidence < family_confidence_threshold`，或 summary 过短、缺少证据片段、证据片段无法在 trace 中找到时，系统调用审核模型重新判别该单条 trace。
-3. **审核与扩展**：当 judge 提出未知新标签时，审核模型判断它是否是可复用的新 family。接纳则写入 taxonomy，拒绝则映射到现有 family。
-4. **规则兜底**：当 LLM 输出缺失、格式异常或无法解析时，使用关键词启发式估计 family。
+optimizer 看到的信息包括：
 
-系统不使用 `other` 分类。空输出、异常输出或未知标签会被映射到最接近的有效策略，避免无意义类别参与 diversity reward。
+- target agent id；
+- parent prompt；
+- target role preview；
+- peer role previews；
+- 窗口级 overlap / accuracy / invalid 统计；
+- high-overlap cases；
+- validity cases；
+- random window cases；
+- prompt 生成约束。
 
-## 4. Reasoning Summary
+optimizer 不允许使用 gold answer、具体题目文本、选项文本、答案标签或样本 hash 作为 prompt 内容。
 
-`reasoning_summary` 是一个不超过 `max_summary_tokens` 的详细自然语言 reasoning profile。它应覆盖 agent 如何理解问题、优先关注哪些信息、如何组织中间推理、是否进行选项比较、反向验证、约束构造、代数推导、估计判断、如何处理不确定性，以及如何收敛到答案。
+### 2.3 Evaluator
 
-summary prompt 明确要求不包含“推理很细致/很稳健/很有效”这类质量评价句，因为这些不是推理路径本身。后续 summary embedding 只使用这段自然语言摘要；`strategy_steps`、`distinctive_features`、`evidence_spans` 作为结构化回溯和诊断字段保留。
+evaluator model 主要用于 local role execution 判断：候选 prompt 在小批量样本上运行后，evaluator 判断 target agent 的 trace 是否真的执行了候选 prompt 描述的角色程序。
 
-`max_summary_tokens` 优先通过 `tiktoken` 计算和截断。如果 tokenizer 不可用，则退回单词数近似。日志中的 `summary_token_count` 和 `mean_summary_tokens` 同样优先使用真实 token 数。
+这个判断只看单个 agent 的候选 prompt、role spec、trace 和 answer，不看 gold answer，也不比较其他 agent。这样可以避免 evaluator 把“答案正确”误当成“角色执行有效”。
 
-## 5. Family 统计量
+系统还保留可选的 joint trace diversity evaluator，但默认 reward 不依赖它。默认多样性来自本地计算的 trace embedding。
 
-默认启用主/子策略模式。每条轨迹得到两个叶子策略：
+## 3. 数据与任务抽象
 
-$$
-v_i(k)=
-\begin{cases}
-0.7, & k=\text{primary}_i\\
-0.3, & k=\text{secondary}_i\\
-0, & \text{otherwise}
-\end{cases}
-$$
+每条数据被标准化为：
 
-如果主策略和子策略一致，则该策略权重为 1.0。上述 0.7/0.3 可由 `primary_family_weight` 和 `secondary_family_weight` 调整。关闭双策略模式时，每条轨迹退化为单一策略分布。
+```python
+{
+    "question": "...",
+    "answer": "..."
+}
+```
 
-团队叶子策略分布为：
+MMLU 推荐把题干和选项一起写进 `question`：
 
-$$
-p_k=\frac{1}{N}\sum_i v_i(k)
-$$
+```text
+Question: ...
 
-团队多样性同时考虑跨主类和主类内分化：
+Options:
+A. ...
+B. ...
+C. ...
+D. ...
 
-$$
-D_{\text{family}}
-=
-\alpha D_{\text{macro}}+(1-\alpha)D_{\text{intra}}
-$$
+Select the best option and output FINAL_ANSWER: <A/B/C/D>.
+```
 
-其中 `macro_diversity_weight` 对应 $\alpha$。$D_{\text{macro}}$ 是主类分布的归一化熵，$D_{\text{intra}}$ 是各主类内部叶子策略熵的加权平均。
+系统支持：
 
-同质率使用层级相似度。两个叶子策略完全相同相似度为 1；属于同一主类但不同叶子策略相似度为 `same_major_family_weight`；属于不同主类相似度为 0。先定义两个 agent 的未归一化策略 overlap：
+- `task_type=mmlu`
+- `task_type=gsm8k`
+- `task_type=auto`
 
-$$
-K_{ij}
-=
-\sum_k\sum_l v_i(k)v_j(l)sim(k,l)
-$$
+`auto` 会根据题目和答案格式推断解析方式。
 
-为了避免“两个 agent 拥有完全相同的主/子混合策略，但因为主策略和子策略不同而自相似小于 1”的问题，最终 agent 间相似度使用 kernel 归一化：
+## 4. Agent 初始化
 
-$$
-sim_{ij}
-=
-\frac{K_{ij}}{\sqrt{K_{ii}K_{jj}}}
-$$
+每个 agent 的状态由 `AgentState` 保存：
 
-因此，当两个 agent 的主策略和子策略 pair 完全一致时，$sim_{ij}=1$；当 pair 不一致时，再由叶子策略相同、同主类或跨主类关系决定相似度。
+- `initial_prompt`
+- `current_prompt`
+- `prompt_beam`
+- `history`
+- `recent_homogeneity_flags`
+- `accept_count`
+- `reject_count`
 
-团队同质率和个体重叠比例为：
+初始化方式有两种：
 
-$$
-R_{\text{family}}
-=
-\frac{2}{N(N-1)}
-\sum_{i<j}sim_{ij}
-$$
+### 4.1 Shared Init
 
-$$
-\rho_i
-=
-\frac{1}{N-1}
-\sum_{j\ne i}sim_{ij}
-$$
+所有 agent 从同一个 prompt 开始：
 
-因此 $\rho_i$ 不再只是“同 family 数量比例”，而是平均策略重叠度。
+```text
+You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.
+```
 
-## 6. 无效轨迹惩罚
+这个设置用于检验系统是否能从同质起点中自动分化出不同角色。
 
-为了避免 agents 通过无意义输出制造伪多样性，系统定义无效轨迹惩罚 $V_i\in[0,1]$。当前检测包括：
+### 4.2 Bank Init
 
-- trace 过短；
-- 缺少 `FINAL_ANSWER:`；
-- token 数过少；
-- bigram 重复比例过高；
-- 抽取到的 answer 为空。
+每个 agent 从内置 prompt bank 中取一个不同初始角色。例如 MMLU 中包括：
 
-该项不是准确率奖励，也不判断答案是否正确；它只约束输出必须像一条有效推理轨迹。
+- concept-first procedure
+- contradiction-checking procedure
+- boundary-and-scope procedure
+- backward-validation procedure
+- evidence-alignment procedure
+- mechanism-first procedure
 
-## 7. Reward
+这个设置用于构造人工多角色 baseline。
 
-第 $i$ 个 agent 的 reward 为：
+## 5. Rollout
 
-$$
-r_i
-=
-\lambda_f
-\left(
-0.75D_{\text{family}}
-+0.25(1-\rho_i)
-\right)
--\lambda_h\rho_i
--\lambda_vV_i
-$$
+一次 rollout 处理一条题目。
 
-其中：
+输入：
 
-- $\lambda_f$ 对应 `lambda_diversity`，表示策略分化强度。
-- $\lambda_h$ 对应 `lambda_homogeneity`，表示同质化惩罚强度。
-- $\lambda_v$ 对应 `lambda_invalid_trace`，表示无效轨迹惩罚强度。
+```text
+question
+gold answer
+active prompts for all agents
+```
 
-reward 不直接使用答案正确性，也不使用 skeleton 或原始文本相似度。
+过程：
 
-## 8. 窗口级更新触发
+1. 所有 agent 并行调用 solver model。
+2. 系统记录每个 agent 的 trace 和 extracted answer。
+3. 对 extracted answers 做 majority vote。
+4. 根据 task type 解析 gold answer。
+5. 计算 individual correctness 和 vote correctness。
+6. 检查每个 trace 是否有效。
+7. 计算 trace embedding overlap 和 diversity。
+8. 生成 high-overlap homogeneous cases 和 invalid validity cases。
 
-系统不在每个样本后都更新 prompt，而是维护一个与 `update_every` 对齐的窗口。每个 agent 在当前样本上的同质化压力为：
+输出被写入 `train_trace_history.jsonl` 或 prediction 文件中。
 
-$$
-P_i=0.85\rho_i+0.15V_i
-$$
+## 6. 输出有效性检查
 
-当 $P_i>0$ 时，该 agent 在窗口内记一次同质化/压力信号。窗口未填满时只统计不更新；窗口填满且当前 step 满足 `step % update_every == 0` 时，系统选择压力最高的 1 到 2 个 agents 进入更新阶段。
+系统使用 rule-based invalid checker，避免把无效输出当成有用多样性。一个 trace 会被判为 invalid，如果出现以下情况：
 
-## 9. Group Diagnosis
+- trace 太短；
+- 缺少 `FINAL_ANSWER:`;
+- token 数太少；
+- 无法抽取答案；
+- bigram 重复比例过高。
 
-更新前，系统构造窗口级 group context。它包含：
+这一步不依赖 LLM evaluator，保证基础格式约束稳定可复现。
 
-- 当前窗口中同质化较高的样本摘要；
-- 其他样本的简短摘要；
-- 当前样本的 family 分布、同质化统计和 agent 角色信息；
-- 每个 agent 的 compact trace profile 和 family 重叠信息。
+重要设计：
 
-Group Diagnosis 是纯多样性诊断链路，不接收 gold answer、各 agent 的预测答案、vote answer 或 vote correctness。投票和答案只保留在 reward 计算、评估指标与回溯日志中，不作为 group critic、textual gradient 或 rewriter 的输入。
+> invalid trace 在 embedding overlap 计算中被视为与其他 trace 完全重叠。
 
-## 10. Prompt Rewriting
+也就是说，如果某个 agent 输出空泛、坏格式或重复文本，它不会获得 diversity bonus。这个设计阻止系统通过“破坏输出”来提高表面多样性。
 
-对被选中的 agent，rewriter 接收当前 prompt、当前 trace profile、peer agents 的压缩摘要、group diagnosis 的稳定子集和目标 role hint，生成若干候选 prompt。候选 prompt 必须包含可执行 reasoning behavior 和 fallback strategy，不能只是“be diverse / avoid redundancy”这类口号。
+## 7. Trace Embedding Diversity
 
-所有候选 prompt 都会经过 sanitize，防止泄漏具体题目、答案或样本内容。
+默认多样性指标是完整 trace 的 embedding overlap。
 
-## 11. Bandit 选择与采纳
+步骤：
 
-每个 agent 维护一个轻量 bandit policy。动作集合为：
+1. 对 trace 做空白归一化。
+2. 如果 trace 很长，按 `trace_embedding_chunk_words` 分块，并用 `trace_embedding_chunk_overlap` 保留上下文重叠。
+3. 使用 `sentence-transformers` 模型编码每个 chunk。
+4. 对 chunk embedding 平均池化。
+5. 对 pooled vector 归一化。
+6. 计算 agent pair 之间的 cosine similarity。
+7. 对 invalid pair 直接设 overlap 为 `1.0`。
+8. 计算平均 overlap。
+9. 得到 diversity：
 
-$$
-\mathcal{A}=\{\text{keep\_current}\}\cup\{\text{candidate prompts}\}
-$$
+```text
+embedding_diversity = 1 - mean_embedding_overlap
+```
 
-bandit 根据 softmax preference 采样动作。若采样到候选 prompt，系统在小批样本上比较当前 prompt 与候选 prompt 的 mean reward，并记录 `family_shift_rate`、`rho_reduction`、`invalid_delta` 和 `summary_embedding_shift`。
+默认 embedding 模型：
 
-若候选不劣于当前 prompt 且无效轨迹增量可接受，则接受更新；否则拒绝更新。bandit 根据采样动作获得的 reward 做 policy-gradient 风格更新：
+```text
+BAAI/bge-small-en-v1.5
+```
 
-$$
-\theta_a
-\leftarrow
-\theta_a
-+\eta(r-b)(\mathbb{I}[a]-\pi(a))
-$$
+核心实现位于：
 
-其中 $b$ 是移动平均 baseline，$\eta$ 是 `bandit_lr`。
+```text
+TraceBeamSearchSystem.embedding_overlap_diagnostics
+TraceBeamSearchSystem.compute_rollout_metrics
+```
 
-## 12. 实验设置
+## 8. Homogeneous Cases
 
-实验脚本包含四个设置：
+如果两个有效 trace 的 pair overlap 大于等于 `homogeneity_overlap_threshold`，系统认为它们构成一个 homogeneous case。
 
-| 设置 | 初始化 | 训练 | diversity reward |
-| --- | --- | --- | --- |
-| `shared_div` | shared | 是 | 开启 |
-| `bank_div` | bank | 是 | 开启 |
-| `shared_baseline` | shared | 否，只测试 | 关闭 |
-| `bank_baseline` | bank | 否，只测试 | 关闭 |
+默认阈值：
 
-`scripts/run_experiments.py` 负责运行四个设置并生成 run 目录；`scripts/analyze_experiments.py` 读取已有结果，统一调用指标计算和画图脚本。
+```text
+homogeneity_overlap_threshold = 0.55
+```
 
-当前实验脚本默认使用多 seed 和多 epoch：训练设置默认 `--seeds 42,43,44`、`--epochs 3`、`--candidate_eval_batch_size 10`。基线默认只跑第一个 seed；如需基线也多 seed，可加 `--seed_baselines 1`。多 seed 输出目录形如 `shared_div_seed42`，分析脚本会自动识别并聚合。
+每个 case 记录：
 
-当任务为 MMLU 且 `family_taxonomy_path=auto` 时，系统优先使用 `taxonomies/mmlu_reasoning_family_taxonomy.json`，在通用 family 之外加入更适合多选题的叶子标签，例如 `concept_definition_match`、`option_contrast`、`distractor_elimination`、`answer_to_stem_backward_check`、`scope_qualifier_analysis` 和 `rule_or_principle_application`。如果目标是观察更自然的多思路分化，GSM8K、StrategyQA、BBH、ARC-Challenge 和 AQuA-RAT 通常比 MMLU 更容易产生不同解题路径。
+- `sample_hash`
+- target / peer agent id
+- pair overlap
+- target trace preview
+- peer trace preview
+- target answer
+- peer answer
+- target prompt preview
+- peer prompt preview
+- team_correct
 
-结果分析会额外使用 `BAAI/bge-small-en-v1.5` 计算 embedding cosine similarity/diversity。prompt embedding 使用最终 agent prompt；summary embedding 直接使用 `summary_embedding_text`；trace embedding 使用完整 trace，若 trace 较长则按固定词数切分为多个 chunk，分别编码后进行平均池化，得到单条 trace 的向量表示。分析脚本会优先查找本地已下载模型，包括仓库 `models/`、`SENTENCE_TRANSFORMERS_HOME`、`HF_HOME`、`HUGGINGFACE_HUB_CACHE` 和本机 HuggingFace cache。所有 embedding 指标统一放入 embedding 可视化图，文本级 trace/summary cosine、family、prompt 和行为指标按语义分别展示。
+case 中只保留 trace preview，不把完整题目和完整答案交给 optimizer。这样做是为了让 optimizer 学习“行为模式”，而不是记忆具体样本。
+
+## 9. Validity Cases
+
+如果某个 agent 的 trace 被 rule invalid checker 判定无效，系统会构造 validity case。
+
+validity case 包含：
+
+- target agent id；
+- trace preview；
+- 是否存在可抽取答案；
+- invalid reasons；
+- target prompt preview。
+
+当某个 agent 的 invalid rate 超过 `invalid_repair_rate_threshold` 时，系统会优先生成 validity-focused prompt candidates，先修复格式和有效性，再追求多样性。
+
+## 10. 更新窗口
+
+系统不是每个样本都更新 prompt，而是积累一个窗口。
+
+窗口大小由：
+
+```text
+update_every
+```
+
+控制。默认值是 `10`。
+
+窗口中保存：
+
+- 最近样本的 traces；
+- answers；
+- prompts；
+- rollout metrics；
+- homogeneous cases；
+- validity cases。
+
+窗口满后，系统根据当前 reward mode 决定如何选择 agent。
+
+### 10.1 默认模式：Overlap-Driven Update
+
+当 `reward_mode=embedding_local_acc_invalid` 时，系统计算：
+
+- per-agent overlap pressure；
+- homogeneous case count；
+- per-agent invalid rate；
+- 最近窗口中每个 agent 的 homogeneity flags。
+
+系统优先选择：
+
+- invalid rate 超阈值的 agent；
+- overlap pressure 最高的 agent；
+- homogeneous case count 更多的 agent。
+
+每个窗口通常更新 1 到 2 个 agent。
+
+### 10.2 Accuracy-Only 模式
+
+当 `reward_mode=accuracy_only` 时，系统不计算 embedding reward，也不追求 trace 多样性。它根据窗口中的 individual correctness 和 team correctness 选择错误较多的 agent，并让 optimizer 生成 accuracy repair prompt。
+
+这个模式主要用于消融实验：对比“只优化准确率”和“同时约束 trace 多样性”的行为差异。
+
+## 11. Case-Aware Candidate Generation
+
+对每个待更新 agent，系统会把窗口诊断组织成 generation batches。
+
+默认 diversity 模式包括：
+
+```text
+high_overlap_cases
+mixed_window_cases
+validity_focused_cases
+```
+
+含义：
+
+- `high_overlap_cases`：重点处理 target agent 与 peer agent 高度相似的有效 trace pair。
+- `mixed_window_cases`：加入随机窗口样本，降低只对最高 overlap case 过拟合的风险。
+- `validity_focused_cases`：当输出无效或 fragile 时，优先修复格式和角色执行问题。
+
+accuracy-only 模式包括：
+
+```text
+accuracy_error_cases
+mixed_window_accuracy_cases
+```
+
+optimizer 对每个 beam parent 生成 `num_candidates_per_parent` 个候选 prompt。候选必须是可执行的角色程序，通常包含：
+
+- role name；
+- decision procedure；
+- when to use；
+- fallback strategy；
+- anti-overlap rule 或 accuracy checks；
+- validity checks；
+- rationale；
+- source batch type。
+
+如果 optimizer 返回的候选不足，系统会补 fallback candidate，保证 beam search 可以继续。
+
+## 12. Prompt Safety 与 Sanitize
+
+候选 prompt 会经过 sanitize。
+
+如果 prompt 中包含：
+
+- `FINAL_ANSWER:` 模板；
+- 明显复制的题目文本；
+- 过多与当前问题重叠的长词；
+
+系统会拒绝该候选或回退到 agent 初始 prompt。
+
+这样可以防止 optimizer 把具体样本内容写进 prompt，造成数据泄漏或 prompt 过拟合。
+
+## 13. Candidate Evaluation
+
+候选 prompt 不会直接采纳。系统会在 `candidate_eval_batch_size` 个样本上评估它。
+
+对某个 target agent 的候选 prompt，系统构造：
+
+```text
+eval_prompts = current peer prompts + candidate prompt for target agent
+```
+
+然后对每个 eval sample：
+
+1. 所有 agent 重新作答。
+2. 计算 team majority vote accuracy。
+3. 计算完整 trace embedding diversity。
+4. 检查 target agent trace 是否 invalid。
+5. 计算 target agent 是否仍参与 high-overlap pair。
+6. 统计解决了多少 baseline homogeneous cases。
+7. 调用 evaluator 判断 target agent 是否真的执行了候选角色。
+
+为了节省 API 成本，系统会缓存和复用已经记录过的 solver rollouts。相关指标包括：
+
+- `solver_reuse_hits`
+- `solver_reuse_misses`
+- `solver_calls`
+- `solver_reuse_hit_rate`
+
+## 14. Reward
+
+默认候选 prompt reward：
+
+```text
+reward =
+  w_diversity      * embedding_diversity
++ w_local_validity * local_validity_mean
++ w_team_accuracy  * team_accuracy
++ w_invalid_score  * invalid_score
+```
+
+默认权重：
+
+```text
+w_diversity      = 0.5
+w_local_validity = 0.2
+w_team_accuracy  = 0.1
+w_invalid_score  = 0.2
+```
+
+各项含义：
+
+- `embedding_diversity`：候选 prompt 运行后团队 trace 的平均 embedding 多样性。
+- `local_validity_mean`：target agent 是否实际执行候选 prompt 的角色程序。
+- `team_accuracy`：小批量样本上 majority vote 是否正确。
+- `invalid_score`：`1 - invalid_rate`。
+
+accuracy-only 模式下：
+
+```text
+reward = team_accuracy
+```
+
+## 15. Evolutionary Beam Search
+
+每个 agent 维护自己的 prompt beam。
+
+一次更新：
+
+1. 取当前 agent 的 beam。
+2. 对每个 parent prompt 调用 optimizer 生成候选。
+3. 把现有 beam prompt 也加入 candidate pool。
+4. 并发评估所有候选。
+5. 按 reward 降序排序。
+6. 保留 top `beam_size`。
+7. beam top-1 成为 agent 的 active prompt。
+8. 记录 accepted / rejected、rank、reward 和指标。
+
+beam item 结构：
+
+```json
+{
+  "id": "...",
+  "prompt": "...",
+  "score": 0.0,
+  "metrics": {},
+  "parent_id": "...",
+  "generation": 1
+}
+```
+
+这个设计让 prompt 搜索不是单步贪心替换，而是保留多个候选路径。
+
+## 16. Beam Refresh
+
+如果 `beam_refresh_each_epoch=1`，每个 epoch 结束时，系统会在新的 eval batch 上重新评估每个 agent 的 beam，并重新排序。
+
+这样可以缓解某次小批量 candidate evaluation 的偶然性，也让旧候选有机会在新样本上重新竞争。
+
+## 17. Validation 与 Early Stopping
+
+每个 epoch 结束后，系统评估验证集。
+
+默认 validation score：
+
+```text
+vote_acc + 0.2 * mean_embedding_diversity - 0.1 * mean_invalid_rate
+```
+
+如果 `reward_mode=accuracy_only`：
+
+```text
+validation score = vote_acc
+```
+
+当验证分数刷新，系统保存：
+
+- `best_state.json`
+- `best_prompts.json`
+
+训练结束后，系统恢复 best prompts，再跑最终 test，写出：
+
+- `selected_state.json`
+- `test_final_predictions.jsonl`
+
+因此最终测试不是简单使用最后一轮 prompt，而是使用验证集选择的 prompt。
+
+## 18. 日志与可解释性
+
+项目有意保留较多中间日志，方便分析 prompt 是如何改变的。
+
+### 18.1 run_meta.json
+
+记录：
+
+- 模型配置；
+- reward mode；
+- embedding model；
+- 初始 prompt；
+- 完整 config。
+
+### 18.2 history.json
+
+epoch 级记录：
+
+- train metrics；
+- val metrics；
+- optional test metrics；
+- final selected epoch；
+- early stopping 信息。
+
+### 18.3 prompt_history.json
+
+按 agent 记录：
+
+- initial prompt；
+- current prompt；
+- prompt hash；
+- prompt beam；
+- update / refresh event。
+
+### 18.4 update_logs.jsonl
+
+每个候选 prompt 一行，包含：
+
+- reward；
+- embedding diversity；
+- mean embedding overlap；
+- local validity；
+- team accuracy；
+- invalid rate；
+- homogeneous case count；
+- resolved case count；
+- new homogeneous case count；
+- 是否进入 beam；
+- rank；
+- generation batch type；
+- prompt preview。
+
+### 18.5 trace history
+
+`train_trace_history.jsonl` 和 `test_trace_history.jsonl` 保留每道题的 agent trace、answer、invalid 信息和 case 信息，用于离线复盘。
+
+## 19. 与普通 Self-Refine / Prompt Search 的区别
+
+本项目不是让一个模型根据分数反复改写一个 prompt。它有几个关键区别：
+
+1. 优化对象是多 agent 团队中的单个 agent prompt。
+2. 优化信号来自 agent 之间的 trace 关系，而不是单个答案分数。
+3. optimizer 只提出候选，采纳由独立 evaluation 决定。
+4. 多样性是完整 trace 的语义多样性，不是 prompt 文本差异。
+5. 输出有效性和角色执行被显式纳入 reward。
+6. 无效输出不会获得 diversity 奖励。
+7. 使用 beam 保留多个 prompt 演化分支。
+
+## 20. 当前实现边界
+
+当前主实现聚焦 `trace_embedding` diversity。
+
+保留的 taxonomy 相关脚本和 `taxonomies/mmlu_reasoning_family_taxonomy.json` 可用于离线分析策略族、证明实验或扩展 reward，但默认主训练循环不依赖 taxonomy reward。
+
+当前系统还没有解决所有问题：
+
+- optimizer 仍可能生成泛化不足或过长的 prompt；
+- embedding overlap 只能近似衡量 trace 语义相似；
+- local role execution 依赖 evaluator model，可能有判断噪声；
+- 小批量 candidate evaluation 会有采样方差；
+- 多 agent 并发调用成本较高；
+- 对不同任务，合适的 prompt bank 和 reward 权重可能需要重新调参。
+
+## 21. 推荐实验设计
+
+建议按以下顺序使用：
+
+1. 跑 `shared_baseline`：确认同 prompt 多 agent 的自然同质化程度。
+2. 跑 `bank_baseline`：确认人工多角色 prompt 能否提高 trace diversity。
+3. 跑 `shared + evolutionary_beam`：观察系统能否从同质起点自动分化。
+4. 跑 `accuracy_only` 消融：确认只优化准确率时是否会忽略 trace 差异。
+5. 调整 reward weights：检查 diversity、accuracy、invalid rate 的 trade-off。
+6. 分析 `update_logs.jsonl`：查看被采纳 prompt 是否真的降低 overlap。
+7. 抽查 `train_trace_history.jsonl` 和 `test_final_predictions.jsonl`：人工确认 trace 是否发生可解释变化。
+
+## 22. 算法概览
+
+伪代码：
+
+```text
+initialize agents with shared prompt or prompt bank
+initialize each agent beam with its initial prompt
+
+for epoch in epochs:
+    shuffle train data
+
+    for each training example:
+        run all agents on the question
+        extract answers and compute majority vote
+        check invalid traces
+        compute trace embedding overlap
+        build homogeneous and validity cases
+        append rollout to update window
+
+        if step % update_every == 0 and window is ready:
+            diagnose the window
+            select 1-2 agents to update
+
+            for each selected agent:
+                build case generation batches
+                for each parent prompt in the agent beam:
+                    ask optimizer for candidate prompts
+                add existing beam prompts to candidate pool
+                evaluate candidates on a small batch
+                score candidates with reward
+                keep top beam_size prompts
+                set top-1 as active prompt
+
+            clear update window
+
+    optionally refresh all beams
+    evaluate validation set
+    save best prompts by validation score
+    early stop if no improvement
+
+restore best prompts
+evaluate final test set
+write states, histories, predictions, and logs
+```
+
+## 23. 代码定位
+
+主要实现：
+
+```text
+multi_dataset_diverse_rl/system.py
+```
+
+关键函数：
+
+- `solve_once`：单个 agent 解题。
+- `compute_rollout_metrics`：答案、invalid、embedding diversity 等指标。
+- `embedding_overlap_diagnostics`：trace embedding overlap 诊断。
+- `_build_homogeneous_cases`：构造高重叠 case。
+- `_build_validity_cases`：构造无效输出 case。
+- `_window_overlap_diagnosis`：窗口级同质化诊断。
+- `_build_case_generation_batches`：把诊断转为 optimizer 输入批次。
+- `propose_candidates`：调用 optimizer 生成候选 prompt。
+- `evaluate_candidate_prompt`：小批量评估候选。
+- `_candidate_reward`：计算 reward。
+- `update_prompt_with_beam`：evolutionary beam 更新。
+- `refresh_all_prompt_beams`：epoch 末 beam 重新评估。
+- `evaluate_dataset`：val/test 评估与 prediction 文件写出。
+
+入口：
+
+```text
+multi_dataset_diverse_rl/cli.py
+```
+
+配置：
+
+```text
+multi_dataset_diverse_rl/config.py
+```

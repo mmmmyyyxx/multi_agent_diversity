@@ -94,7 +94,7 @@ $OUT = "prove_experiments\runs"
   --train_path $TRAIN `
   --val_path $VAL `
   --test_path $TEST `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --agents 5 `
@@ -124,7 +124,7 @@ $OUT = "prove_experiments\runs"
   --train_path $TRAIN `
   --val_path $VAL `
   --test_path $TEST `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --agents 5 `
@@ -154,7 +154,7 @@ softened-tree 条件：
   --train_path $TRAIN `
   --val_path $VAL `
   --test_path $TEST `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --agents 5 `
@@ -185,7 +185,7 @@ strict-tree 压力测试：
   --train_path $TRAIN `
   --val_path $VAL `
   --test_path $TEST `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --agents 5 `
@@ -365,7 +365,7 @@ P2/P3/P4 汇总：
   --train_path mmlu_train_500.jsonl `
   --val_path mmlu_val_150.jsonl `
   --test_path mmlu_test_200.jsonl `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --epochs 6 `
@@ -391,7 +391,7 @@ P2/P3/P4 汇总：
   --train_path mmlu_train_500.jsonl `
   --val_path mmlu_val_150.jsonl `
   --test_path mmlu_test_200.jsonl `
-  --train_size 500 `
+  --train_size 200 `
   --val_size 150 `
   --test_size 200 `
   --epochs 6 `
