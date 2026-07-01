@@ -1,12 +1,29 @@
 ﻿import json
 import math
 import os
+import csv
 import random
 import re
 from collections import Counter
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+
+from .tasks import (
+    canonical_number_str as task_canonical_number_str,
+    extract_pred_answer_bbh,
+    extract_pred_answer_gsm8k,
+    extract_pred_answer_mmlu as task_extract_pred_answer_mmlu,
+    get_task_spec,
+    infer_task_type as task_infer_task_type,
+    match_bbh_answer,
+    match_gsm8k_answer,
+    match_mmlu_answer,
+    normalize_bbh_answer,
+    parse_gold_bbh,
+    parse_gsm8k_gold as task_parse_gsm8k_gold,
+    parse_mmlu_gold as task_parse_mmlu_gold,
+)
 
 
 def ensure_dir(path: str):
@@ -19,6 +36,16 @@ def set_seed(seed: int):
 
 
 def load_jsonl(path: str, limit: int = -1) -> List[Dict[str, Any]]:
+    if os.path.splitext(str(path))[1].lower() == ".csv":
+        data = []
+        with open(path, "r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                data.append(dict(row))
+                if limit > 0 and len(data) >= limit:
+                    break
+        return data
+
     data = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -602,98 +629,31 @@ def extract_all_numbers(text: Optional[str]) -> List[str]:
 
 
 def canonical_number_str(x: str) -> str:
-    try:
-        v = float(x.replace(",", "").strip())
-        if abs(v - int(v)) < 1e-9:
-            return str(int(v))
-        return ("%f" % v).rstrip("0").rstrip(".")
-    except Exception:
-        return x.strip()
+    return task_canonical_number_str(x)
 
 
 def parse_gsm8k_gold(answer: str) -> str:
-    m = re.search(r"####\s*([-+]?\d+(?:\.\d+)?)", answer.replace(",", ""))
-    if m:
-        return canonical_number_str(m.group(1))
-    nums = extract_all_numbers(answer)
-    if nums:
-        return canonical_number_str(nums[-1])
-    return normalize_spaces(answer)
+    return task_parse_gsm8k_gold(answer)
 
 
 def parse_mmlu_gold(answer: str) -> str:
-    s = normalize_spaces(str(answer)).upper()
-    if s in {"A", "B", "C", "D"}:
-        return s
-    m = re.search(r"\b([ABCD])\b", s)
-    if m:
-        return m.group(1)
-    m = re.search(r"\b([0-3])\b", s)
-    if m:
-        return ["A", "B", "C", "D"][int(m.group(1))]
-    return s
+    return task_parse_mmlu_gold(answer)
 
 
 def infer_task_type(task_type: str = "auto", question: Optional[str] = None, answer: Optional[str] = None) -> str:
-    declared = str(task_type).strip().lower()
-    if declared in {"gsm8k", "mmlu"}:
-        return declared
-
-    q = normalize_spaces(str(question or "")).upper()
-    a = normalize_spaces(str(answer or "")).upper()
-
-    if a in {"A", "B", "C", "D"}:
-        return "mmlu"
-    if re.search(r"\bOPTIONS\b", q) and re.search(r"\bA\.|\bB\.|\bC\.|\bD\.", q):
-        return "mmlu"
-    return "gsm8k"
+    return task_infer_task_type(task_type=task_type, question=question, answer=answer)
 
 
 def parse_gold(answer: str, task_type: str = "auto", question: Optional[str] = None) -> str:
-    task = infer_task_type(task_type=task_type, question=question, answer=answer)
-    if task == "mmlu":
-        return parse_mmlu_gold(answer)
-    return parse_gsm8k_gold(answer)
+    return get_task_spec(task_type).parse_gold(answer, question)
 
 
 def extract_pred_answer(text: Optional[str]) -> str:
-    if text is None:
-        return ""
-    patterns = [
-        r"FINAL_ANSWER\s*:\s*([-+]?\d+(?:\.\d+)?)",
-        r"Answer\s*:\s*([-+]?\d+(?:\.\d+)?)",
-        r"The answer is\s*([-+]?\d+(?:\.\d+)?)",
-    ]
-    raw = text.replace(",", "")
-    for p in patterns:
-        m = re.search(p, raw, flags=re.IGNORECASE)
-        if m:
-            return canonical_number_str(m.group(1))
-    nums = extract_all_numbers(raw)
-    if nums:
-        return canonical_number_str(nums[-1])
-    return normalize_spaces(text)
+    return extract_pred_answer_gsm8k(text)
 
 
 def extract_pred_answer_mmlu(text: Optional[str]) -> str:
-    if text is None:
-        return ""
-    raw = str(text)
-    patterns = [
-        r"FINAL_ANSWER\s*:\s*([ABCD])\b",
-        r"Answer\s*:\s*([ABCD])\b",
-        r"The answer is\s*([ABCD])\b",
-        r"\boption\s*([ABCD])\b",
-    ]
-    for p in patterns:
-        m = re.search(p, raw, flags=re.IGNORECASE)
-        if m:
-            return m.group(1).upper()
-    # fallback: prefer the last standalone option token
-    toks = re.findall(r"\b([ABCD])\b", raw.upper())
-    if toks:
-        return toks[-1]
-    return normalize_spaces(raw).upper()
+    return task_extract_pred_answer_mmlu(text)
 
 
 def extract_pred_answer_by_task(
@@ -701,25 +661,55 @@ def extract_pred_answer_by_task(
     task_type: str = "auto",
     question: Optional[str] = None,
 ) -> str:
-    task = infer_task_type(task_type=task_type, question=question, answer=None)
-    if task == "mmlu":
-        return extract_pred_answer_mmlu(text)
-    return extract_pred_answer(text)
+    return get_task_spec(task_type).extract_pred(text, question)
 
 
-def majority_vote(answers: List[str]) -> str:
-    cleaned = [a for a in answers if str(a).strip() != ""]
+def match_answer_by_task(pred: str, gold: str, task_type: str = "auto") -> bool:
+    return get_task_spec(task_type).match_answer(pred, gold)
+
+
+def majority_vote_with_diagnostics(
+    answers: List[str],
+    tie_break_method: str = "first",
+    seed: int = 0,
+    question_hash: str = "",
+) -> Dict[str, Any]:
+    cleaned = [str(a) for a in answers if str(a).strip() != ""]
     if not cleaned:
-        return ""
+        return {
+            "vote_answer": "",
+            "vote_tie": False,
+            "tie_candidates": [],
+            "vote_counts": {},
+            "tie_break_method": str(tie_break_method or "first"),
+        }
     cnt = Counter(cleaned)
     best_count = max(cnt.values())
     cands = [k for k, v in cnt.items() if v == best_count]
-    if len(cands) == 1:
-        return cands[0]
-    for a in cleaned:
-        if a in cands:
-            return a
-    return cands[0]
+    vote_tie = len(cands) > 1
+    method = str(tie_break_method or "first").lower()
+    if method not in {"first", "random", "abstain"}:
+        method = "first"
+    if not vote_tie:
+        vote_answer = cands[0]
+    elif method == "abstain":
+        vote_answer = ""
+    elif method == "random":
+        rng = random.Random(f"{int(seed)}:{question_hash}:{'|'.join(sorted(cands))}")
+        vote_answer = rng.choice(sorted(cands))
+    else:
+        vote_answer = next((a for a in cleaned if a in cands), cands[0])
+    return {
+        "vote_answer": vote_answer,
+        "vote_tie": bool(vote_tie),
+        "tie_candidates": list(cands),
+        "vote_counts": dict(cnt),
+        "tie_break_method": method,
+    }
+
+
+def majority_vote(answers: List[str]) -> str:
+    return str(majority_vote_with_diagnostics(answers, tie_break_method="first").get("vote_answer", ""))
 
 
 

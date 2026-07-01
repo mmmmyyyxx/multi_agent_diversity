@@ -13,14 +13,13 @@ from openai import AsyncOpenAI
 
 from .config import Config
 from .policy import AgentState
+from .tasks import get_task_spec
 from .utils import (
     ensure_dir,
     extract_json_obj,
-    extract_pred_answer_by_task,
     infer_task_type,
-    majority_vote,
+    majority_vote_with_diagnostics,
     normalize_spaces,
-    parse_gold,
     set_seed,
 )
 
@@ -35,6 +34,8 @@ class TraceBeamSearchSystem:
         self.cfg.invalid_binary = bool(int(self.cfg.invalid_binary))
         self.cfg.use_joint_trace_diversity_evaluator = bool(int(self.cfg.use_joint_trace_diversity_evaluator))
         self.cfg.candidate_reuse_recorded_rollouts = bool(int(getattr(self.cfg, "candidate_reuse_recorded_rollouts", 1)))
+        self.cfg.use_baseline_relative_reward = bool(int(getattr(self.cfg, "use_baseline_relative_reward", 1)))
+        self.task_spec = get_task_spec(self.cfg.task_type)
 
         self.homogeneity_window = max(1, int(self.cfg.update_every))
         base_url = os.getenv("OPENAI_BASE_URL") or os.getenv("OPENAI_API_BASE")
@@ -85,6 +86,9 @@ class TraceBeamSearchSystem:
 
     def _is_accuracy_only_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "accuracy_only"
+
+    def _is_guarded_reward_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
 
     def _default_prompt_bank(self) -> List[str]:
         if str(self.cfg.task_type).lower() == "mmlu":
@@ -521,7 +525,7 @@ class TraceBeamSearchSystem:
             stage=f"solver_agent_{agent_id}",
             client_role="solver",
         )
-        return text, extract_pred_answer_by_task(text, task_type=self.cfg.task_type, question=question)
+        return text, self.task_spec.extract_pred(text, question)
 
     async def solve_with_prompts(self, question: str, prompts: List[str]) -> Tuple[List[str], List[str]]:
         return await self.solve_with_prompts_limited(question, prompts, self.solver_call_semaphore)
@@ -785,8 +789,35 @@ class TraceBeamSearchSystem:
             "roles": roles,
         }
 
-    def compute_rollout_metrics(self, traces: List[str], answers: List[str], gold: str, prompts: Optional[List[str]] = None) -> Dict[str, Any]:
-        vote_answer = majority_vote(answers)
+    def _vote_with_diagnostics(self, answers: List[str], question_hash: str = "") -> Dict[str, Any]:
+        return majority_vote_with_diagnostics(
+            answers,
+            tie_break_method=str(getattr(self.cfg, "vote_tie_break", "random")),
+            seed=int(getattr(self.cfg, "seed", 0) or 0),
+            question_hash=question_hash,
+        )
+
+    def compute_rollout_metrics(
+        self,
+        traces: List[str],
+        answers: List[str],
+        gold: str,
+        prompts: Optional[List[str]] = None,
+        question_hash: str = "",
+    ) -> Dict[str, Any]:
+        vote = self._vote_with_diagnostics(answers, question_hash=question_hash)
+        vote_answer = str(vote.get("vote_answer", ""))
+        individual_correct = [int(self.task_spec.match_answer(a, gold)) for a in answers]
+        vote_correct = int(self.task_spec.match_answer(vote_answer, gold))
+        vote_fields = {
+            "vote_answer": vote_answer,
+            "vote_correct": vote_correct,
+            "individual_correct": individual_correct,
+            "vote_tie": bool(vote.get("vote_tie", False)),
+            "tie_candidates": list(vote.get("tie_candidates", [])),
+            "vote_counts": dict(vote.get("vote_counts", {})),
+            "tie_break_method": str(vote.get("tie_break_method", "")),
+        }
         if self._is_accuracy_only_mode():
             n = len(traces)
             active_prompts = prompts or self._active_prompt_list()
@@ -801,9 +832,7 @@ class TraceBeamSearchSystem:
                 for i in range(n)
             ]
             return {
-                "vote_answer": vote_answer,
-                "vote_correct": int(vote_answer == gold),
-                "individual_correct": [int(a == gold) for a in answers],
+                **vote_fields,
                 "invalid_rate": 0.0,
                 "invalid_score": 1.0,
                 "invalid_flags": [0 for _ in traces],
@@ -821,9 +850,7 @@ class TraceBeamSearchSystem:
         invalids = [self.rule_invalid_check(traces[i], answers[i] if i < len(answers) else "").get("invalid", 1) for i in range(len(traces))]
         overlap = self.embedding_overlap_diagnostics(traces, prompts, invalids=invalids)
         return {
-            "vote_answer": vote_answer,
-            "vote_correct": int(vote_answer == gold),
-            "individual_correct": [int(a == gold) for a in answers],
+            **vote_fields,
             "invalid_rate": float(np.mean(invalids)) if invalids else 1.0,
             "invalid_score": 1.0 - (float(np.mean(invalids)) if invalids else 1.0),
             "invalid_flags": [int(x) for x in invalids],
@@ -1839,6 +1866,45 @@ class TraceBeamSearchSystem:
             + float(self.cfg.reward_weight_invalid_score) * self._clip01(invalid_score)
         )
 
+    def _candidate_reward_guarded(
+        self,
+        baseline_team_accuracy: float,
+        candidate_team_accuracy: float,
+        baseline_embedding_diversity: float,
+        candidate_embedding_diversity: float,
+        baseline_invalid_rate: float,
+        candidate_invalid_rate: float,
+        local_validity: float,
+    ) -> Dict[str, Any]:
+        baseline_team_accuracy = self._clip01(baseline_team_accuracy)
+        candidate_team_accuracy = self._clip01(candidate_team_accuracy)
+        baseline_embedding_diversity = self._clip01(baseline_embedding_diversity)
+        candidate_embedding_diversity = self._clip01(candidate_embedding_diversity)
+        baseline_invalid_rate = self._clip01(baseline_invalid_rate)
+        candidate_invalid_rate = self._clip01(candidate_invalid_rate)
+        local_validity = self._clip01(local_validity)
+
+        acc_delta = candidate_team_accuracy - baseline_team_accuracy
+        div_delta = candidate_embedding_diversity - baseline_embedding_diversity
+        invalid_delta = candidate_invalid_rate - baseline_invalid_rate
+        guard_passed = candidate_team_accuracy >= baseline_team_accuracy - float(self.cfg.accuracy_guard_epsilon)
+        if not guard_passed:
+            reward = -1.0 + acc_delta - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
+        else:
+            reward = (
+                candidate_team_accuracy
+                + float(self.cfg.reward_weight_div_delta) * div_delta
+                + float(self.cfg.reward_weight_local_validity) * local_validity
+                - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
+            )
+        return {
+            "reward": float(reward),
+            "accuracy_delta": float(acc_delta),
+            "diversity_delta": float(div_delta),
+            "invalid_delta": float(invalid_delta),
+            "accuracy_guard_passed": bool(guard_passed),
+        }
+
     async def _evaluate_candidate_prompt_accuracy_only(
         self,
         agent_id: int,
@@ -1850,7 +1916,7 @@ class TraceBeamSearchSystem:
 
         async def run_one(ex: Dict[str, str]) -> Dict[str, Any]:
             q = ex["question"]
-            gold = parse_gold(ex["answer"], self.cfg.task_type, question=q)
+            gold = self.task_spec.parse_gold(ex["answer"], q)
             eval_prompts = list(peer_prompts)
             while len(eval_prompts) < len(self.agents):
                 eval_prompts.append(self.agents[len(eval_prompts)].current_prompt)
@@ -1860,12 +1926,17 @@ class TraceBeamSearchSystem:
                 eval_prompts,
                 source=f"candidate_accuracy_agent_{agent_id}",
             )
-            vote_answer = majority_vote(answers)
+            vote = self._vote_with_diagnostics(answers, question_hash=self._hash(q))
+            vote_answer = str(vote.get("vote_answer", ""))
             target_answer = answers[agent_id] if agent_id < len(answers) else ""
             return {
-                "team_accuracy": int(vote_answer == gold),
-                "target_agent_accuracy": int(target_answer == gold),
+                "team_accuracy": int(self.task_spec.match_answer(vote_answer, gold)),
+                "target_agent_accuracy": int(self.task_spec.match_answer(target_answer, gold)),
                 "vote_answer": vote_answer,
+                "vote_tie": bool(vote.get("vote_tie", False)),
+                "tie_candidates": list(vote.get("tie_candidates", [])),
+                "vote_counts": dict(vote.get("vote_counts", {})),
+                "tie_break_method": str(vote.get("tie_break_method", "")),
                 "target_answer": target_answer,
                 "target_trace_hash": self._hash(traces[agent_id]) if agent_id < len(traces) else "",
                 **reuse_stats,
@@ -1903,6 +1974,12 @@ class TraceBeamSearchSystem:
             "solver_calls": solver_calls,
             "solver_reuse_total": solver_reuse_total,
             "solver_reuse_hit_rate": float(solver_reuse_hits / solver_reuse_total) if solver_reuse_total else 0.0,
+            "candidate_eval_strategy": str(getattr(self.cfg, "candidate_eval_strategy", "random")),
+            "candidate_eval_pool_size": int(getattr(self.cfg, "candidate_eval_pool_size", 0) or 0),
+            "candidate_eval_pool_actual_size": int(getattr(self.cfg, "candidate_eval_pool_actual_size", 0) or 0),
+            "candidate_eval_batch_size": int(getattr(self.cfg, "candidate_eval_batch_size", 0) or 0),
+            "actual_eval_batch_size": len(eval_batch),
+            "num_eval_repeats": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
         }
 
     async def evaluate_candidate_prompt(
@@ -1928,24 +2005,40 @@ class TraceBeamSearchSystem:
         async def run_one(ex: Dict[str, str]) -> Dict[str, Any]:
             q = ex["question"]
             sample_hash = self._hash(q)
-            gold = parse_gold(ex["answer"], self.cfg.task_type, question=q)
-            eval_prompts = list(peer_prompts)
-            while len(eval_prompts) < len(self.agents):
-                eval_prompts.append(self.agents[len(eval_prompts)].current_prompt)
+            gold = self.task_spec.parse_gold(ex["answer"], q)
+            baseline_prompts = list(peer_prompts)
+            while len(baseline_prompts) < len(self.agents):
+                baseline_prompts.append(self.agents[len(baseline_prompts)].current_prompt)
+            eval_prompts = list(baseline_prompts)
             eval_prompts[agent_id] = candidate_prompt
+            baseline_rollout = {}
+            baseline_reuse_stats: Dict[str, Any] = {}
+            if self._is_guarded_reward_mode():
+                baseline_traces, baseline_answers, baseline_reuse_stats = await self.solve_with_prompts_reusing_records(
+                    q,
+                    baseline_prompts,
+                    source=f"candidate_baseline_agent_{agent_id}",
+                )
+                baseline_rollout = self.compute_rollout_metrics(
+                    baseline_traces,
+                    baseline_answers,
+                    gold,
+                    prompts=baseline_prompts,
+                    question_hash=sample_hash,
+                )
             traces, answers, reuse_stats = await self.solve_with_prompts_reusing_records(
                 q,
                 eval_prompts,
                 source=f"candidate_eval_agent_{agent_id}",
             )
-            rollout = self.compute_rollout_metrics(traces, answers, gold, prompts=eval_prompts)
+            rollout = self.compute_rollout_metrics(traces, answers, gold, prompts=eval_prompts, question_hash=sample_hash)
             agent_invalid = self.rule_invalid_check(traces[agent_id], answers[agent_id] if agent_id < len(answers) else "")
             diversity = float(rollout.get("embedding_diversity", 0.0))
             joint = {}
             if self.cfg.use_joint_trace_diversity_evaluator:
                 joint = await self.evaluate_joint_trace_diversity(traces, agent_id)
             impact = self._homogeneity_impact_metrics(agent_id, rollout, baseline_case_keys, sample_hash)
-            return {
+            row = {
                 "trace": traces[agent_id] if agent_id < len(traces) else "",
                 "answer": answers[agent_id] if agent_id < len(answers) else "",
                 "embedding_diversity": self._clip01(diversity),
@@ -1958,6 +2051,24 @@ class TraceBeamSearchSystem:
                 "trace_hash": self._hash(traces[agent_id]),
                 **reuse_stats,
             }
+            if self._is_guarded_reward_mode():
+                row.update(
+                    {
+                        "baseline_team_accuracy": float(baseline_rollout.get("vote_correct", 0.0)),
+                        "baseline_embedding_diversity": float(baseline_rollout.get("embedding_diversity", 0.0)),
+                        "baseline_invalid_rate": float(baseline_rollout.get("invalid_rate", 1.0)),
+                        "baseline_mean_embedding_overlap": float(baseline_rollout.get("mean_embedding_overlap", 0.0)),
+                        "candidate_team_accuracy": float(rollout.get("vote_correct", 0.0)),
+                        "candidate_embedding_diversity": float(rollout.get("embedding_diversity", 0.0)),
+                        "candidate_invalid_rate": float(rollout.get("invalid_rate", 1.0)),
+                        "candidate_mean_embedding_overlap": float(rollout.get("mean_embedding_overlap", 0.0)),
+                        "baseline_solver_reuse_hits": int(baseline_reuse_stats.get("solver_reuse_hits", 0) or 0),
+                        "baseline_solver_reuse_misses": int(baseline_reuse_stats.get("solver_reuse_misses", 0) or 0),
+                        "baseline_solver_calls": int(baseline_reuse_stats.get("solver_calls", 0) or 0),
+                        "baseline_solver_reuse_total": int(baseline_reuse_stats.get("solver_reuse_total", 0) or 0),
+                    }
+                )
+            return row
 
         raw = await asyncio.gather(*[run_one(ex) for ex in eval_batch], return_exceptions=True)
         rows = [r for r in raw if isinstance(r, dict)]
@@ -1975,12 +2086,43 @@ class TraceBeamSearchSystem:
         team_accuracy = self._clip01(float(np.mean([float(r.get("team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
         invalid_rate = self._clip01(float(np.mean([float(r.get("invalid", 1.0)) for r in rows])) if rows else 1.0)
         invalid_score = self._clip01(1.0 - invalid_rate)
-        reward = self._candidate_reward(diversity, local_validity, team_accuracy, invalid_score)
+        guarded_metrics: Dict[str, Any] = {}
+        if self._is_guarded_reward_mode():
+            baseline_team_accuracy = self._clip01(float(np.mean([float(r.get("baseline_team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
+            candidate_team_accuracy = self._clip01(float(np.mean([float(r.get("candidate_team_accuracy", 0.0)) for r in rows])) if rows else team_accuracy)
+            baseline_embedding_diversity = self._clip01(float(np.mean([float(r.get("baseline_embedding_diversity", 0.0)) for r in rows])) if rows else 0.0)
+            candidate_embedding_diversity = self._clip01(float(np.mean([float(r.get("candidate_embedding_diversity", 0.0)) for r in rows])) if rows else diversity)
+            baseline_invalid_rate = self._clip01(float(np.mean([float(r.get("baseline_invalid_rate", 1.0)) for r in rows])) if rows else 1.0)
+            candidate_invalid_rate = self._clip01(float(np.mean([float(r.get("candidate_invalid_rate", 1.0)) for r in rows])) if rows else invalid_rate)
+            guarded_metrics = self._candidate_reward_guarded(
+                baseline_team_accuracy=baseline_team_accuracy,
+                candidate_team_accuracy=candidate_team_accuracy,
+                baseline_embedding_diversity=baseline_embedding_diversity,
+                candidate_embedding_diversity=candidate_embedding_diversity,
+                baseline_invalid_rate=baseline_invalid_rate,
+                candidate_invalid_rate=candidate_invalid_rate,
+                local_validity=local_validity,
+            )
+            guarded_metrics.update(
+                {
+                    "baseline_team_accuracy": baseline_team_accuracy,
+                    "candidate_team_accuracy": candidate_team_accuracy,
+                    "baseline_embedding_diversity": baseline_embedding_diversity,
+                    "candidate_embedding_diversity": candidate_embedding_diversity,
+                    "baseline_invalid_rate": baseline_invalid_rate,
+                    "candidate_invalid_rate": candidate_invalid_rate,
+                    "baseline_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("baseline_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
+                    "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
+                }
+            )
+            reward = float(guarded_metrics.get("reward", 0.0))
+        else:
+            reward = self._candidate_reward(diversity, local_validity, team_accuracy, invalid_score)
         solver_reuse_hits = int(sum(int(r.get("solver_reuse_hits", 0) or 0) for r in rows))
         solver_reuse_misses = int(sum(int(r.get("solver_reuse_misses", 0) or 0) for r in rows))
         solver_calls = int(sum(int(r.get("solver_calls", 0) or 0) for r in rows))
         solver_reuse_total = int(sum(int(r.get("solver_reuse_total", 0) or 0) for r in rows))
-        return {
+        result = {
             "reward": reward,
             "embedding_diversity": diversity,
             "mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
@@ -2001,7 +2143,19 @@ class TraceBeamSearchSystem:
             "solver_calls": solver_calls,
             "solver_reuse_total": solver_reuse_total,
             "solver_reuse_hit_rate": float(solver_reuse_hits / solver_reuse_total) if solver_reuse_total else 0.0,
+            "baseline_solver_calls": int(sum(int(r.get("baseline_solver_calls", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_hits": int(sum(int(r.get("baseline_solver_reuse_hits", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_misses": int(sum(int(r.get("baseline_solver_reuse_misses", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_total": int(sum(int(r.get("baseline_solver_reuse_total", 0) or 0) for r in rows)),
+            "candidate_eval_strategy": str(getattr(self.cfg, "candidate_eval_strategy", "random")),
+            "candidate_eval_pool_size": int(getattr(self.cfg, "candidate_eval_pool_size", 0) or 0),
+            "candidate_eval_pool_actual_size": int(getattr(self.cfg, "candidate_eval_pool_actual_size", 0) or 0),
+            "candidate_eval_batch_size": int(getattr(self.cfg, "candidate_eval_batch_size", 0) or 0),
+            "actual_eval_batch_size": len(eval_batch),
+            "num_eval_repeats": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
         }
+        result.update(guarded_metrics)
+        return result
 
     async def update_prompt_with_beam(
         self,
@@ -2156,6 +2310,16 @@ class TraceBeamSearchSystem:
                     "target_agent_accuracy": float(metrics.get("target_agent_accuracy", 0.0)),
                     "invalid_rate": float(metrics.get("invalid_rate", 0.0)),
                     "invalid_score": float(metrics.get("invalid_score", 0.0)),
+                    "baseline_team_accuracy": float(metrics.get("baseline_team_accuracy", 0.0)),
+                    "candidate_team_accuracy": float(metrics.get("candidate_team_accuracy", metrics.get("team_accuracy", 0.0))),
+                    "accuracy_delta": float(metrics.get("accuracy_delta", 0.0)),
+                    "baseline_embedding_diversity": float(metrics.get("baseline_embedding_diversity", 0.0)),
+                    "candidate_embedding_diversity": float(metrics.get("candidate_embedding_diversity", metrics.get("embedding_diversity", 0.0))),
+                    "diversity_delta": float(metrics.get("diversity_delta", 0.0)),
+                    "baseline_invalid_rate": float(metrics.get("baseline_invalid_rate", 0.0)),
+                    "candidate_invalid_rate": float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0))),
+                    "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
+                    "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "solver_reuse_enabled": bool(metrics.get("solver_reuse_enabled", False)),
                     "solver_reuse_hits": int(metrics.get("solver_reuse_hits", 0)),
                     "solver_reuse_misses": int(metrics.get("solver_reuse_misses", 0)),
@@ -2172,6 +2336,12 @@ class TraceBeamSearchSystem:
                     "generation_batch_type": item.get("generation_batch_type", ""),
                     "generation_case_ids": item.get("generation_case_ids", []),
                     "num_eval_samples": int(metrics.get("num_eval_samples", 0)),
+                    "candidate_eval_strategy": str(metrics.get("candidate_eval_strategy", getattr(self.cfg, "candidate_eval_strategy", "random"))),
+                    "candidate_eval_pool_size": int(metrics.get("candidate_eval_pool_size", getattr(self.cfg, "candidate_eval_pool_size", 0))),
+                    "candidate_eval_pool_actual_size": int(metrics.get("candidate_eval_pool_actual_size", getattr(self.cfg, "candidate_eval_pool_actual_size", 0))),
+                    "candidate_eval_batch_size": int(metrics.get("candidate_eval_batch_size", getattr(self.cfg, "candidate_eval_batch_size", 0))),
+                    "actual_eval_batch_size": int(metrics.get("actual_eval_batch_size", metrics.get("num_eval_samples", 0))),
+                    "num_eval_repeats": int(metrics.get("num_eval_repeats", getattr(self.cfg, "candidate_eval_repeats", 1))),
                 }
             )
         self._append_prompt_history_event(agent_id, epoch_id, step_id, "beam_accept" if changed else "beam_keep", changed)
@@ -2309,7 +2479,7 @@ class TraceBeamSearchSystem:
         traces, answers = await self.solve_with_prompts(question, prompts)
         question_hash = self._hash(question)
         self._record_solver_rollouts(question_hash, prompts, traces, answers, source="train_rollout")
-        metrics = self.compute_rollout_metrics(traces, answers, gold, prompts)
+        metrics = self.compute_rollout_metrics(traces, answers, gold, prompts, question_hash=question_hash)
         if self._is_accuracy_only_mode():
             homogeneous_cases = []
             validity_cases = []
@@ -2367,6 +2537,10 @@ class TraceBeamSearchSystem:
             "step": step_id,
             "vote_correct": int(metrics.get("vote_correct", 0)),
             "vote_answer": metrics.get("vote_answer", ""),
+            "vote_tie": bool(metrics.get("vote_tie", False)),
+            "tie_candidates": metrics.get("tie_candidates", []),
+            "vote_counts": metrics.get("vote_counts", {}),
+            "tie_break_method": metrics.get("tie_break_method", ""),
             "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
             "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
             "homogeneous_case_count": len(homogeneous_cases),
@@ -2427,11 +2601,11 @@ class TraceBeamSearchSystem:
 
         async def evaluate_one(idx: int, ex: Dict[str, str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
             q = ex["question"]
-            gold = parse_gold(ex["answer"], self.cfg.task_type, question=q)
+            gold = self.task_spec.parse_gold(ex["answer"], q)
             traces, answers = await self.solve_with_prompts(q, prompts)
             question_hash = self._hash(q)
             self._record_solver_rollouts(question_hash, prompts, traces, answers, source=f"{split_name}_rollout")
-            metrics = self.compute_rollout_metrics(traces, answers, gold, prompts)
+            metrics = self.compute_rollout_metrics(traces, answers, gold, prompts, question_hash=question_hash)
             row = {"index": idx, "question_hash": question_hash, **metrics}
             prediction = {
                 "index": idx,
@@ -2439,6 +2613,10 @@ class TraceBeamSearchSystem:
                 "vote_answer": metrics.get("vote_answer", ""),
                 "gold": gold,
                 "vote_correct": int(metrics.get("vote_correct", 0)),
+                "vote_tie": bool(metrics.get("vote_tie", False)),
+                "tie_candidates": metrics.get("tie_candidates", []),
+                "vote_counts": metrics.get("vote_counts", {}),
+                "tie_break_method": metrics.get("tie_break_method", ""),
                 "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
                 "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
                 "invalid_rate": float(metrics.get("invalid_rate", 0.0)),
@@ -2469,6 +2647,7 @@ class TraceBeamSearchSystem:
         return {
             "size": len(rows),
             "vote_acc": float(np.mean([r.get("vote_correct", 0) for r in rows])) if rows else 0.0,
+            "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
             "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
             "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
             "mean_invalid_rate": float(np.mean([r.get("invalid_rate", 0.0) for r in rows])) if rows else 0.0,

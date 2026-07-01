@@ -10,6 +10,7 @@ DEFAULT_EVALUATOR_TEMPERATURE = 0.0
 @dataclass
 class Config:
     task_type: str = "auto"
+    dataset_format: str = "legacy"
 
     agent_model: str = "deepseek-chat"
     optimizer_model: str = "deepseek-v4-flash"
@@ -31,11 +32,11 @@ class Config:
     early_stopping_patience: int = 3
     early_stopping_min_delta: float = 0.0
     update_every: int = 10
-    candidate_eval_batch_size: int = 10
+    candidate_eval_batch_size: int = 20
     baseline_only: bool = False
 
     search_mode: str = "evolutionary_beam"
-    reward_mode: str = "embedding_local_acc_invalid"
+    reward_mode: str = "guarded_diversity"
     beam_size: int = 3
     num_candidates_per_parent: int = 2
     beam_refresh_each_epoch: bool = True
@@ -50,6 +51,10 @@ class Config:
     reward_weight_local_validity: float = 0.2
     reward_weight_team_accuracy: float = 0.1
     reward_weight_invalid_score: float = 0.2
+    accuracy_guard_epsilon: float = 0.02
+    reward_weight_div_delta: float = 0.3
+    reward_weight_invalid_delta: float = 0.5
+    use_baseline_relative_reward: bool = True
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -76,6 +81,11 @@ class Config:
     llm_call_logging: bool = True
     llm_call_timeout: float = 120.0
     candidate_eval_concurrency: int = 0
+    candidate_eval_strategy: str = "random"
+    candidate_eval_pool_size: int = 100
+    candidate_eval_pool_actual_size: int = 0
+    candidate_eval_repeats: int = 1
+    candidate_eval_seed_offset: int = 1000
     candidate_reuse_recorded_rollouts: bool = True
     train_rollout_concurrency: int = 0
     eval_solver_call_concurrency: int = 225
@@ -84,6 +94,7 @@ class Config:
     solver_base_url_env: str = ""
     evaluator_api_key_env: str = ""
     evaluator_base_url_env: str = ""
+    vote_tie_break: str = "random"
 
     def __post_init__(self):
         if not str(self.agent_model or "").strip():
@@ -96,7 +107,8 @@ class Config:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task_type", type=str, default="auto", choices=["auto", "gsm8k", "mmlu"])
+    parser.add_argument("--task_type", type=str, default="auto", choices=["auto", "gsm8k", "mmlu", "bbh"])
+    parser.add_argument("--dataset_format", type=str, default="legacy", choices=["legacy", "mars"])
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
@@ -122,11 +134,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--early_stopping_patience", type=int, default=3)
     parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
     parser.add_argument("--update_every", type=int, default=10)
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=10)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=20)
     parser.add_argument("--baseline_only", type=int, default=0, choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default="embedding_local_acc_invalid", choices=["embedding_local_acc_invalid", "accuracy_only"])
+    parser.add_argument("--reward_mode", type=str, default="guarded_diversity", choices=["embedding_local_acc_invalid", "accuracy_only", "guarded_diversity"])
     parser.add_argument("--beam_size", type=int, default=3)
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
@@ -141,6 +153,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
     parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
     parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
+    parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
+    parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
+    parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
+    parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
     parser.add_argument("--local_validity_binary", type=int, default=1, choices=[0, 1])
@@ -166,6 +182,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
     parser.add_argument("--candidate_eval_concurrency", type=int, default=0)
+    parser.add_argument("--candidate_eval_strategy", type=str, default="random", choices=["random", "fixed_pool", "stratified"])
+    parser.add_argument("--candidate_eval_pool_size", type=int, default=100)
+    parser.add_argument("--candidate_eval_repeats", type=int, default=1)
+    parser.add_argument("--candidate_eval_seed_offset", type=int, default=1000)
     parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=1, choices=[0, 1])
     parser.add_argument("--train_rollout_concurrency", type=int, default=0)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
@@ -174,4 +194,5 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--solver_base_url_env", type=str, default="")
     parser.add_argument("--evaluator_api_key_env", type=str, default="")
     parser.add_argument("--evaluator_base_url_env", type=str, default="")
+    parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
     return parser

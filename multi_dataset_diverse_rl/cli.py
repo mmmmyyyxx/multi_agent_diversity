@@ -6,11 +6,58 @@ import random
 import numpy as np
 
 from .config import Config, build_parser
-from .utils import ensure_dir, extract_question_answer, load_jsonl, parse_gold, set_seed
+from .utils import ensure_dir, load_jsonl, parse_gold, set_seed
 
 
-def build_dataset(raw_records):
-    return [{"question": extract_question_answer(x)[0], "answer": extract_question_answer(x)[1]} for x in raw_records]
+LEGACY_QUESTION_KEYS = ["question", "input", "query", "problem"]
+LEGACY_ANSWER_KEYS = ["answer", "output", "target", "label", "response"]
+MARS_QUESTION_KEYS = ["question", "input", "query", "problem", "prompt"]
+MARS_ANSWER_KEYS = ["answer", "target", "gold", "gold_answer", "label", "output"]
+TASK_KEYS = ["task", "task_name", "category", "subject", "bbh_task"]
+
+
+def _first_present(record, keys):
+    for key in keys:
+        if key in record and record.get(key) is not None:
+            value = record.get(key)
+            if isinstance(value, str):
+                if value.strip():
+                    return value
+            else:
+                return value
+    return None
+
+
+def build_dataset(raw_records, dataset_format="legacy"):
+    fmt = str(dataset_format or "legacy").strip().lower()
+    if fmt == "mars":
+        q_keys = MARS_QUESTION_KEYS
+        a_keys = MARS_ANSWER_KEYS
+    else:
+        q_keys = LEGACY_QUESTION_KEYS
+        a_keys = LEGACY_ANSWER_KEYS
+
+    rows = []
+    for idx, record in enumerate(raw_records):
+        if not isinstance(record, dict):
+            raise ValueError(f"Cannot parse dataset record at index {idx}: expected object, got {type(record).__name__}")
+        question = _first_present(record, q_keys)
+        answer = _first_present(record, a_keys)
+        if question is None or answer is None:
+            available = ", ".join(sorted(str(k) for k in record.keys()))
+            raise ValueError(
+                f"Cannot find question/answer fields in record index {idx} "
+                f"for dataset_format={fmt}. available_keys=[{available}]"
+            )
+        row = {"question": str(question), "answer": answer}
+        task = _first_present(record, TASK_KEYS)
+        if task is not None:
+            row["task"] = str(task)
+        for meta_key in ["subject", "category", "task_name", "bbh_task"]:
+            if meta_key in record and record.get(meta_key) is not None:
+                row[meta_key] = str(record.get(meta_key))
+        rows.append(row)
+    return rows
 
 
 def split_train_validation(raw_train, cfg):
@@ -28,6 +75,83 @@ def split_train_validation(raw_train, cfg):
     train_records = [records[i] for i in indices[requested_val:]]
     val_records = [records[i] for i in indices[:requested_val]]
     return train_records, val_records
+
+
+def build_candidate_eval_pool(train_data, val_data, cfg):
+    source = list(val_data or train_data or [])
+    if not source:
+        return []
+    pool_size = min(max(1, int(cfg.candidate_eval_pool_size or 1)), len(source))
+    rng = random.Random(int(cfg.seed) + int(cfg.candidate_eval_seed_offset))
+    indices = list(range(len(source)))
+    rng.shuffle(indices)
+    return [source[i] for i in indices[:pool_size]]
+
+
+def _stratified_sample(records, size, rng):
+    if size <= 0 or not records:
+        return []
+    buckets = {}
+    for record in records:
+        key = (
+            record.get("subject")
+            or record.get("task")
+            or record.get("task_name")
+            or record.get("category")
+            or record.get("bbh_task")
+            or ""
+        )
+        buckets.setdefault(str(key), []).append(record)
+    for bucket in buckets.values():
+        rng.shuffle(bucket)
+    keys = sorted(buckets)
+    out = []
+    while len(out) < size and keys:
+        progressed = False
+        for key in list(keys):
+            bucket = buckets[key]
+            if not bucket:
+                keys.remove(key)
+                continue
+            out.append(bucket.pop())
+            progressed = True
+            if len(out) >= size:
+                break
+        if not progressed:
+            break
+    return out
+
+
+def select_candidate_eval_batch(train_data, candidate_eval_pool, cfg, epoch, step, anchor_idx=None):
+    batch_size = max(0, int(cfg.candidate_eval_batch_size or 0))
+    repeats = max(1, int(cfg.candidate_eval_repeats or 1))
+    if batch_size <= 0:
+        return []
+    strategy = str(cfg.candidate_eval_strategy or "random").lower()
+    batches = []
+    base_seed = int(cfg.seed) + int(cfg.candidate_eval_seed_offset) + int(epoch) * 100000 + int(step) * 97
+    for repeat in range(repeats):
+        rng = random.Random(base_seed + repeat)
+        if strategy == "random":
+            if not train_data:
+                batch = []
+            else:
+                indices = []
+                if anchor_idx is not None and 0 <= int(anchor_idx) < len(train_data):
+                    indices.append(int(anchor_idx))
+                while len(indices) < min(batch_size, len(train_data)):
+                    indices.append(rng.randrange(len(train_data)))
+                batch = [train_data[i] for i in indices[:batch_size]]
+        else:
+            source = candidate_eval_pool or train_data
+            if strategy == "stratified":
+                batch = _stratified_sample(list(source), min(batch_size, len(source)), rng)
+            else:
+                indices = list(range(len(source)))
+                rng.shuffle(indices)
+                batch = [source[i] for i in indices[: min(batch_size, len(source))]]
+        batches.extend(batch)
+    return batches
 
 
 def snapshot_agent_prompts(system):
@@ -106,6 +230,7 @@ async def main_async():
     cfg.use_joint_trace_diversity_evaluator = bool(int(cfg.use_joint_trace_diversity_evaluator))
     cfg.local_validity_binary = bool(int(cfg.local_validity_binary))
     cfg.invalid_binary = bool(int(cfg.invalid_binary))
+    cfg.use_baseline_relative_reward = bool(int(cfg.use_baseline_relative_reward))
     cfg.candidate_reuse_recorded_rollouts = bool(int(cfg.candidate_reuse_recorded_rollouts))
     cfg.transient_retry_forever = bool(int(cfg.transient_retry_forever))
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
@@ -114,24 +239,33 @@ async def main_async():
     set_seed(cfg.seed)
 
     raw_test = load_jsonl(cfg.test_path, cfg.test_size)
-    test_data = build_dataset(raw_test)
+    test_data = build_dataset(raw_test, cfg.dataset_format)
 
     if cfg.baseline_only:
         train_data = []
         val_data = []
+        candidate_eval_pool = []
+        cfg.candidate_eval_pool_actual_size = 0
         print(f"Loaded baseline test={len(test_data)}")
     else:
         raw_train = load_jsonl(cfg.train_path, cfg.train_size)
         if cfg.val_path:
-            train_data = build_dataset(raw_train)
-            val_data = build_dataset(load_jsonl(cfg.val_path, cfg.val_size))
+            train_data = build_dataset(raw_train, cfg.dataset_format)
+            val_data = build_dataset(load_jsonl(cfg.val_path, cfg.val_size), cfg.dataset_format)
             val_source = cfg.val_path
         else:
             split_train, split_val = split_train_validation(raw_train, cfg)
-            train_data = build_dataset(split_train)
-            val_data = build_dataset(split_val)
+            train_data = build_dataset(split_train, cfg.dataset_format)
+            val_data = build_dataset(split_val, cfg.dataset_format)
             val_source = f"{cfg.train_path}:split"
+        candidate_eval_pool = build_candidate_eval_pool(train_data, val_data, cfg)
+        cfg.candidate_eval_pool_actual_size = len(candidate_eval_pool)
         print(f"Loaded train={len(train_data)} val={len(val_data)} test={len(test_data)} val_source={val_source}")
+        print(
+            f"Candidate eval: strategy={cfg.candidate_eval_strategy} "
+            f"pool={len(candidate_eval_pool)} batch_size={cfg.candidate_eval_batch_size} "
+            f"repeats={cfg.candidate_eval_repeats}"
+        )
 
     from .system import TraceBeamSearchSystem
 
@@ -192,12 +326,14 @@ async def main_async():
 
             for pos, idx, solved in solved_rows:
                 step = pos
-                eval_batch = []
-                if cfg.candidate_eval_batch_size > 0:
-                    batch_indices = [idx]
-                    while len(batch_indices) < min(cfg.candidate_eval_batch_size, len(train_data)):
-                        batch_indices.append(random.choice(order))
-                    eval_batch = [train_data[b] for b in batch_indices]
+                eval_batch = select_candidate_eval_batch(
+                    train_data,
+                    candidate_eval_pool,
+                    cfg,
+                    epoch=epoch + 1,
+                    step=step + 1,
+                    anchor_idx=idx,
+                )
                 do_update = ((step + 1) % cfg.update_every == 0)
                 out = await system.record_train_rollout(
                     solved,

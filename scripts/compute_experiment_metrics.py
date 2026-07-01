@@ -3,16 +3,18 @@ import csv
 import json
 import statistics
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 
 PUBLIC_METRIC_COLUMNS = [
+    "dataset",
     "run_dir",
     "run_name",
     "setting",
     "seed",
     "baseline_only",
     "init_mode",
+    "reward_mode",
     "agents",
     "epochs",
     "train_size",
@@ -25,6 +27,7 @@ PUBLIC_METRIC_COLUMNS = [
     "latest_test_embedding_overlap",
     "latest_test_invalid_rate",
     "latest_test_vote_acc",
+    "latest_test_vote_tie_rate",
     "reward",
     "embedding_diversity",
     "mean_embedding_overlap",
@@ -44,6 +47,9 @@ PUBLIC_METRIC_COLUMNS = [
     "beam_rank",
     "beam_refresh_count",
     "active_prompt_changed_count",
+    "vote_tie_rate",
+    "vs_mars_delta_acc",
+    "vs_mars_delta_diversity",
 ]
 
 
@@ -74,13 +80,17 @@ def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
     return rows
 
 
-def _safe_mean(xs: List[float]) -> float:
-    return float(statistics.mean(xs)) if xs else 0.0
+def _safe_mean(values: List[float]) -> float:
+    return float(statistics.mean(values)) if values else 0.0
 
 
-def _float(v: Any, default: float = 0.0) -> float:
+def _safe_std(values: List[float]) -> float:
+    return float(statistics.stdev(values)) if len(values) > 1 else 0.0
+
+
+def _float(value: Any, default: float = 0.0) -> float:
     try:
-        return float(v)
+        return float(value)
     except Exception:
         return default
 
@@ -124,7 +134,14 @@ def _collect_beam_update_metrics(update_records: List[Dict[str, Any]]) -> Dict[s
     }
 
 
-def analyze_run(run_dir: Path) -> Dict[str, Any]:
+def _infer_dataset(run_dir: Path) -> str:
+    parent = run_dir.parent.name
+    if parent and parent not in {"runs_trace_beam", "."}:
+        return parent
+    return ""
+
+
+def analyze_run(run_dir: Path, mars_baselines: Dict[str, Dict[str, float]]) -> Dict[str, Any]:
     run_meta = _read_json(run_dir / "run_meta.json") or {}
     cfg = run_meta.get("config", {}) if isinstance(run_meta.get("config", {}), dict) else {}
     history = _read_json(run_dir / "history.json") or []
@@ -133,6 +150,11 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
     train = _latest_metrics(history, "train")
     test = _latest_metrics(history, "test")
     update_logs = _read_jsonl(run_dir / "update_logs.jsonl")
+    predictions = []
+    for name in ["test_final_predictions.jsonl", "test_epoch1_predictions.jsonl"]:
+        predictions = _read_jsonl(run_dir / name)
+        if predictions:
+            break
     name = run_dir.name
     setting = name.split("_seed")[0] if "_seed" in name else name
     seed = None
@@ -141,7 +163,12 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
             seed = int(name.rsplit("_seed", 1)[1])
         except Exception:
             seed = None
+    dataset = str(cfg.get("dataset", "") or _infer_dataset(run_dir))
+    vote_tie_rate = test.get("vote_tie_rate")
+    if vote_tie_rate is None and predictions:
+        vote_tie_rate = _safe_mean([1.0 if bool(row.get("vote_tie", False)) else 0.0 for row in predictions])
     out = {
+        "dataset": dataset,
         "run_dir": str(run_dir),
         "run_name": name,
         "setting": setting,
@@ -165,15 +192,21 @@ def analyze_run(run_dir: Path) -> Dict[str, Any]:
         "latest_test_embedding_overlap": test.get("mean_embedding_overlap"),
         "latest_test_invalid_rate": test.get("mean_invalid_rate"),
         "latest_test_vote_acc": test.get("vote_acc"),
+        "latest_test_vote_tie_rate": vote_tie_rate,
+        "vote_tie_rate": vote_tie_rate,
     }
     out.update(_collect_beam_update_metrics(update_logs))
+    mars = mars_baselines.get(dataset, {})
+    if mars:
+        out["vs_mars_delta_acc"] = _float(out.get("latest_test_vote_acc")) - _float(mars.get("vote_acc"))
+        out["vs_mars_delta_diversity"] = _float(out.get("latest_test_embedding_diversity")) - _float(mars.get("embedding_diversity"))
     return out
 
 
-def _to_float_str(v: Any) -> str:
-    if isinstance(v, float):
-        return f"{v:.4f}"
-    return "" if v is None else str(v)
+def _to_float_str(value: Any) -> str:
+    if isinstance(value, float):
+        return f"{value:.4f}"
+    return "" if value is None else str(value)
 
 
 def write_markdown(rows: List[Dict[str, Any]], path: Path):
@@ -183,8 +216,72 @@ def write_markdown(rows: List[Dict[str, Any]], path: Path):
     columns = PUBLIC_METRIC_COLUMNS
     lines = ["# Experiment Summary", "", "| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"]
     for row in rows:
-        lines.append("| " + " | ".join(_to_float_str(row.get(c, "")) for c in columns) + " |")
+        lines.append("| " + " | ".join(_to_float_str(row.get(column, "")) for column in columns) + " |")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _load_mars_baselines(path: str) -> Dict[str, Dict[str, float]]:
+    if not path:
+        return {}
+    p = Path(path)
+    rows = _read_jsonl(p)
+    if not rows and p.exists():
+        obj = _read_json(p)
+        if isinstance(obj, list):
+            rows = [row for row in obj if isinstance(row, dict)]
+        elif isinstance(obj, dict):
+            rows = [obj]
+    out = {}
+    for row in rows:
+        dataset = str(row.get("dataset", "")).strip()
+        if not dataset:
+            continue
+        out[dataset] = {
+            "vote_acc": _float(row.get("vote_acc", row.get("accuracy", 0.0))),
+            "embedding_diversity": _float(row.get("embedding_diversity", row.get("diversity", 0.0))),
+        }
+    return out
+
+
+def _collect_run_dirs(args: argparse.Namespace) -> List[Path]:
+    run_dirs: List[Path] = []
+    for raw in args.runs:
+        path = Path(raw)
+        if path.exists() and path.is_dir() and (path / "run_meta.json").exists():
+            run_dirs.append(path)
+    if args.runs_root:
+        root = Path(args.runs_root)
+        if root.exists():
+            run_dirs.extend([p for p in root.rglob("*") if p.is_dir() and (p / "run_meta.json").exists()])
+    seen = set()
+    dedup = []
+    for path in run_dirs:
+        key = str(path.resolve())
+        if key not in seen:
+            seen.add(key)
+            dedup.append(path)
+    return dedup
+
+
+def _write_group_summary(rows: List[Dict[str, Any]], path: Path):
+    metrics = ["latest_test_vote_acc", "latest_test_embedding_diversity", "latest_test_invalid_rate", "vote_tie_rate", "solver_calls", "solver_reuse_hit_rate"]
+    groups: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+    for row in rows:
+        groups.setdefault((str(row.get("dataset", "")), str(row.get("setting", ""))), []).append(row)
+    summary_rows = []
+    for (dataset, setting), group in sorted(groups.items()):
+        out: Dict[str, Any] = {"dataset": dataset, "setting": setting, "n": len(group)}
+        for metric in metrics:
+            values = [_float(row.get(metric)) for row in group if row.get(metric) not in (None, "")]
+            out[f"{metric}_mean"] = _safe_mean(values)
+            out[f"{metric}_std"] = _safe_std(values)
+        summary_rows.append(out)
+    fieldnames = sorted({key for row in summary_rows for key in row.keys()}) if summary_rows else ["dataset", "setting", "n"]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(summary_rows)
 
 
 def main():
@@ -193,41 +290,31 @@ def main():
     parser.add_argument("--runs_root", type=str, default="")
     parser.add_argument("--out_csv", type=str, default="")
     parser.add_argument("--out_md", type=str, default="")
+    parser.add_argument("--out_group_csv", type=str, default="")
+    parser.add_argument("--mars_result_path", type=str, default="")
     args = parser.parse_args()
 
-    run_dirs: List[Path] = []
-    for raw in args.runs:
-        p = Path(raw)
-        if p.exists() and p.is_dir():
-            run_dirs.append(p)
-    if args.runs_root:
-        root = Path(args.runs_root)
-        if root.exists():
-            run_dirs.extend([p for p in sorted(root.iterdir()) if p.is_dir() and (p / "run_meta.json").exists()])
-    seen = set()
-    dedup = []
-    for p in run_dirs:
-        key = str(p.resolve())
-        if key not in seen:
-            seen.add(key)
-            dedup.append(p)
-    rows = [analyze_run(p) for p in dedup]
-    rows.sort(key=lambda r: (str(r.get("setting", "")), str(r.get("seed", ""))))
+    run_dirs = _collect_run_dirs(args)
+    mars_baselines = _load_mars_baselines(args.mars_result_path)
+    rows = [analyze_run(path, mars_baselines) for path in run_dirs]
+    rows.sort(key=lambda row: (str(row.get("dataset", "")), str(row.get("setting", "")), str(row.get("seed", ""))))
 
     out_csv = Path(args.out_csv) if args.out_csv else (Path(args.runs_root) / "experiment_metrics.csv" if args.runs_root else Path("experiment_metrics.csv"))
     out_md = Path(args.out_md) if args.out_md else (Path(args.runs_root) / "experiment_metrics.md" if args.runs_root else Path("experiment_metrics.md"))
+    out_group_csv = Path(args.out_group_csv) if args.out_group_csv else out_csv.with_name("experiment_metrics_grouped.csv")
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     out_md.parent.mkdir(parents=True, exist_ok=True)
 
-    fieldnames = PUBLIC_METRIC_COLUMNS + sorted({k for r in rows for k in r.keys() if k not in PUBLIC_METRIC_COLUMNS})
+    fieldnames = PUBLIC_METRIC_COLUMNS + sorted({key for row in rows for key in row.keys() if key not in PUBLIC_METRIC_COLUMNS})
     with out_csv.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+        writer.writerows(rows)
     write_markdown(rows, out_md)
+    _write_group_summary(rows, out_group_csv)
     print(f"Wrote {out_csv}")
     print(f"Wrote {out_md}")
+    print(f"Wrote {out_group_csv}")
 
 
 if __name__ == "__main__":

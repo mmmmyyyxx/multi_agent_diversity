@@ -1,104 +1,48 @@
-# 多智能体 Trace 多样性 Prompt 优化框架
+# Multi-Agent Diversity Prompt Search
 
-这个项目是一个用于研究“多智能体推理是否真的形成不同解题路径”的实验框架。它让多个 solver agent 同时回答同一道题，记录每个 agent 的完整推理 trace 和最终答案，然后用 trace embedding 衡量不同 agent 之间的语义重叠。系统会把高重叠、无效输出、错误答案等行为证据反馈给一个 optimizer model，让它为指定 agent 生成新的角色 prompt。新的 prompt 不是立即采纳，而是进入 evolutionary beam search，由小批量评估决定是否保留。
+本项目是一个多智能体推理实验框架：多个 solver agent 同时回答同一道题，系统记录每个 agent 的 reasoning trace 和最终答案，用多数投票得到团队答案，并用 trace embedding overlap 衡量 agent 之间是否真的形成了不同解题路径。
 
-换句话说，本项目研究的不是简单地“让 prompt 写得更花”，而是让一个多智能体团队在保持答案可靠性的同时，产生可观察、可评估、真正不同的推理过程。
+当前方法更准确地说是 **case-aware evolutionary prompt search**，不是严格意义上的 reinforcement learning。Optimizer model 只负责根据案例证据提出候选 prompt；候选 prompt 必须经过小批量评估、reward 排序和 per-agent beam search 后才会被保留。
 
-## 项目在做什么
+## 核心能力
 
-核心问题：
+- 多 agent 并行 rollout：同题多 prompt、多 trace、多答案。
+- TaskSpec 任务抽象：统一 gold parsing、prediction extraction 和 answer matching。
+- 支持任务：`mmlu`、`gsm8k`、`bbh`、`auto`。
+- 支持数据格式：`legacy` 与 `mars`。
+- Trace embedding diversity：用完整 trace 的 embedding overlap 衡量同质化。
+- Evolutionary beam search：每个 agent 保留自己的 prompt beam。
+- Accuracy-guarded reward：优先保证团队准确率不被多样性目标带崩。
+- Candidate evaluation 稳定化：支持随机、固定评估池、分层采样和 repeated evaluation。
+- Majority vote diagnostics：记录平票、候选答案、计数和 tie-break 策略。
+- 批量实验协议：默认运行两个 baseline 和两个 guarded beam 方法。
 
-- 多个 LLM agent 使用同一个或相似 prompt 时，是否会给出高度相似的推理 trace？
-- 能不能自动发现这种同质化，并把具体案例反馈给 prompt optimizer？
-- 新 prompt 能不能让某个 agent 采用不同的解题程序，同时不牺牲多数投票准确率？
-- 多样性指标如何避免被无效输出、格式错误、空泛 trace 或重复文本“刷分”？
-
-系统把一次样本处理成以下对象：
-
-1. 同一道题由多个 agent 并行作答。
-2. 每个 agent 输出一个 compact reasoning trace，并以 `FINAL_ANSWER:` 给出最终答案。
-3. 系统抽取答案，做 majority vote，并与 gold answer 比较。
-4. 系统检查 trace 是否有效。
-5. 对有效 trace 计算 sentence-transformer embedding，并计算 agent pair 的 cosine overlap。
-6. 对高 overlap 的有效 trace pair 生成 homogeneous cases。
-7. 对无效 trace 生成 validity cases。
-8. 当窗口累计到 `update_every` 个样本后，系统选择最需要更新的 agent。
-9. optimizer 根据 parent prompt、窗口统计和案例证据生成候选 prompt。
-10. 候选 prompt 在小批量样本上评估，通过 reward 排序进入 beam。
-11. 每个 agent 的 beam top-1 成为下一轮 active prompt。
-
-默认 reward 是：
-
-```text
-reward =
-  reward_weight_diversity      * embedding_diversity
-+ reward_weight_local_validity * local_validity_mean
-+ reward_weight_team_accuracy  * team_accuracy
-+ reward_weight_invalid_score  * invalid_score
-```
-
-默认权重为 `0.5 / 0.2 / 0.1 / 0.2`。其中 `embedding_diversity = 1 - mean_pairwise_embedding_overlap`，`invalid_score = 1 - invalid_rate`。
-
-## 当前仓库内容
-
-仓库已清理掉数据集和历史实验输出。当前保留的是代码、脚本、taxonomy、prompt 模板和方法文档。
+## 目录
 
 ```text
 multi_dataset_diverse_rl/
-  cli.py       # 主运行入口，负责加载数据、训练、验证、测试和早停
-  config.py    # 所有命令行参数和默认配置
-  policy.py    # AgentState 与每个 agent 的 prompt beam 状态
-  system.py    # 多智能体 rollout、trace 评估、optimizer 调用、beam search 主逻辑
-  utils.py     # 数据读取、答案抽取、策略族工具、指标工具
+  cli.py       # 主入口：读取数据、训练、验证、测试
+  config.py    # 命令行参数和默认配置
+  policy.py    # AgentState 与 prompt beam 状态
+  system.py    # TraceBeamSearchSystem 主流程
+  tasks.py     # TaskSpec、MMLU/GSM8K/BBH/auto 答案解析与匹配
+  utils.py     # 兼容工具、投票、JSONL、指标工具
 
 scripts/
-  prepare_mmlu_data.py          # 从 HuggingFace MMLU 准备项目 JSONL 数据
-  sample_jsonl_splits.py        # 从已有数据生成小规模、去重、均衡 split
-  run_experiments.py            # 批量运行 baseline / beam 设置
-  compute_experiment_metrics.py # 汇总 run 输出为 CSV / Markdown
-  plot_*.py                     # 绘制训练和对比图
-  prove_* / analyze_*           # 策略树、多样性证明和离线分析相关脚本
+  run_experiments.py            # 批量实验：baseline + 方法 + 消融
+  compute_experiment_metrics.py # 多数据集、多 seed 汇总
+  prepare_mmlu_data.py          # MMLU JSONL 准备脚本
+  sample_jsonl_splits.py        # 数据采样与 split
 
-taxonomies/
-  mmlu_reasoning_family_taxonomy.json
-
-README.md
-method.md
-requirements.txt
+tests/
+  test_tasks_mmlu.py
+  test_tasks_bbh.py
+  test_vote.py
+  test_reward_guard.py
+  test_dataset_format.py
 ```
-
-兼容入口：
-
-```text
-multi_dataset_diverse_prompt_rl.py
-```
-
-它只是转发到 `python -m multi_dataset_diverse_rl.cli`。
-
-## 支持的数据格式
-
-主程序读取 JSONL，每行至少需要能抽取出 `question` 和 `answer`。常见字段名已经在 `utils.py` 中兼容：
-
-- 问题字段：`question`、`input`、`query`、`problem`
-- 答案字段：`answer`、`output`、`target`、`label`、`response`
-
-MMLU 示例：
-
-```json
-{"question": "Question: ...\n\nOptions:\nA. ...\nB. ...\nC. ...\nD. ...\n\nSelect the best option and output FINAL_ANSWER: <A/B/C/D>.", "answer": "B", "subject": "abstract_algebra"}
-```
-
-GSM8K 示例：
-
-```json
-{"question": "Natalia sold clips to 48 friends...", "answer": "#### 72"}
-```
-
-`--task_type auto` 会根据题目和答案格式推断任务类型；也可以显式指定 `--task_type mmlu` 或 `--task_type gsm8k`。
 
 ## 安装
-
-建议使用虚拟环境：
 
 ```bash
 python -m venv .venv
@@ -114,248 +58,334 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-项目使用 OpenAI-compatible Chat Completions 接口：
+项目使用 OpenAI-compatible Chat Completions API：
 
 ```bash
 export OPENAI_API_KEY="..."
-export OPENAI_BASE_URL="https://your-compatible-endpoint/v1"
+export OPENAI_BASE_URL="https://your-endpoint/v1"
 ```
 
 Windows PowerShell：
 
 ```powershell
 $env:OPENAI_API_KEY="..."
-$env:OPENAI_BASE_URL="https://your-compatible-endpoint/v1"
+$env:OPENAI_BASE_URL="https://your-endpoint/v1"
 ```
 
-如果 solver 和 evaluator 使用不同 endpoint，可以通过参数指定环境变量名：
+## 数据格式
+
+主程序读取 JSONL。每行会被标准化成：
+
+```json
+{"question": "...", "answer": "..."}
+```
+
+也可以直接读取 `Dataset_format/` 下这类带 `question,answer` 表头的 CSV 文件；CLI 会按扩展名自动用 CSV reader 加载。
+
+`--dataset_format legacy` 支持旧字段：
+
+- question: `question`, `input`, `query`, `problem`
+- answer: `answer`, `output`, `target`, `label`, `response`
+
+`--dataset_format mars` 支持 MARS-style 字段别名：
+
+- question: `question`, `input`, `query`, `problem`, `prompt`
+- answer: `answer`, `target`, `gold`, `gold_answer`, `label`, `output`
+- task/subtask: `task`, `task_name`, `category`, `subject`, `bbh_task`
+
+如果某条记录无法抽取 question 或 answer，`build_dataset` 会抛出包含 record index 的 `ValueError`。
+
+示例：
+
+```json
+{"prompt": "Evaluate the boolean expression: not false.", "gold": "yes", "task_name": "boolean_expressions"}
+```
+
+## 任务类型
+
+通过 `--task_type` 指定答案解析与匹配方式：
+
+- `mmlu`：解析 `A/B/C/D`、`(A)`、`option A` 等选项答案。
+- `gsm8k`：兼容 `#### 72`，数值比较时去逗号并归一化 `3.0 -> 3`。
+- `bbh`：独立 BBH 解析，不再 fallback 到 GSM8K 的“取最后一个数字”逻辑。
+- `auto`：先识别 MMLU/GSM8K，无法确定时按 BBH 风格解析。
+
+BBH 预测抽取优先级：
+
+1. 最后一处 `FINAL_ANSWER: <content>`。
+2. 最后一处 `Answer: <content>`。
+3. 没有显式标记时取最后一个非空行。
+
+BBH 会归一化 yes/no/true/false、选项 `(A)`、`A.`、`option A`、整数小数等；支持 gold aliases list，例如 `["yes", "true"]`。
+
+## Reward Modes
+
+`--reward_mode guarded_diversity` 是当前默认模式。它先在同一个 eval batch 上计算 baseline prompts 和 candidate prompts 的指标，再用准确率 guard 约束 diversity 优化：
+
+```text
+acc_delta = candidate_team_acc - baseline_team_acc
+div_delta = candidate_embedding_diversity - baseline_embedding_diversity
+invalid_delta = candidate_invalid_rate - baseline_invalid_rate
+
+if candidate_team_acc < baseline_team_acc - accuracy_guard_epsilon:
+    reward = -1.0 + acc_delta - reward_weight_invalid_delta * max(0, invalid_delta)
+else:
+    reward = (
+        candidate_team_acc
+        + reward_weight_div_delta * div_delta
+        + reward_weight_local_validity * local_validity
+        - reward_weight_invalid_delta * max(0, invalid_delta)
+    )
+```
+
+可选模式：
+
+- `guarded_diversity`：默认推荐，准确率约束下优化 trace diversity。
+- `embedding_local_acc_invalid`：保留旧模式，用 diversity、local validity、team accuracy、invalid score 加权。
+- `accuracy_only`：消融模式，只按团队准确率选择候选。
+
+`update_logs.jsonl` 会记录 guard 相关字段：
+
+- `baseline_team_accuracy`
+- `candidate_team_accuracy`
+- `accuracy_delta`
+- `baseline_embedding_diversity`
+- `candidate_embedding_diversity`
+- `diversity_delta`
+- `baseline_invalid_rate`
+- `candidate_invalid_rate`
+- `invalid_delta`
+- `accuracy_guard_passed`
+
+## Candidate Evaluation
+
+候选 prompt 不直接采纳，而是在 candidate eval batch 上评估。默认 `candidate_eval_batch_size=20`。
+
+支持策略：
+
+- `random`：从训练集随机抽样，兼容旧行为。
+- `fixed_pool`：训练开始时从 val 优先、否则 train 中构建固定评估池，再按 seed/epoch/step 确定性采样。
+- `stratified`：根据 `subject/task/category/bbh_task` 尽量均衡抽样。
+
+相关参数：
 
 ```bash
---solver_api_key_env SOLVER_API_KEY \
---solver_base_url_env SOLVER_BASE_URL \
---evaluator_api_key_env EVALUATOR_API_KEY \
---evaluator_base_url_env EVALUATOR_BASE_URL
+--candidate_eval_strategy fixed_pool
+--candidate_eval_pool_size 100
+--candidate_eval_batch_size 20
+--candidate_eval_repeats 1
+--candidate_eval_seed_offset 1000
 ```
 
-## 准备数据
+`candidate_eval_repeats > 1` 时，CLI 会构造多个 batch 并合并评估，reward 和 metrics 使用平均值。日志会记录 eval strategy、pool size、batch size 和 repeats。
 
-仓库当前不包含数据集。可以用脚本从 HuggingFace MMLU 转成项目 JSONL：
+## Majority Vote Tie-Break
 
-```bash
-python scripts/prepare_mmlu_data.py \
-  --dataset_name cais/mmlu \
-  --dataset_config all \
-  --train_split validation \
-  --val_split dev \
-  --test_split test \
-  --out_train mmlu_train.jsonl \
-  --out_val mmlu_val.jsonl \
-  --out_test mmlu_test.jsonl \
-  --train_limit 200 \
-  --val_limit 150 \
-  --test_limit 200 \
-  --balanced 1
+多数投票现在会记录诊断信息：
+
+```json
+{
+  "vote_answer": "A",
+  "vote_tie": true,
+  "tie_candidates": ["A", "B"],
+  "vote_counts": {"A": 1, "B": 1},
+  "tie_break_method": "random"
+}
 ```
 
-也可以从已有 train/val/test 源文件重新采样：
+`--vote_tie_break` 支持：
 
-```bash
-python scripts/sample_jsonl_splits.py \
-  --train_source full_train.jsonl \
-  --val_source full_val.jsonl \
-  --test_source full_test.jsonl \
-  --out_train mmlu_train.jsonl \
-  --out_val mmlu_val.jsonl \
-  --out_test mmlu_test.jsonl \
-  --train_size 200 \
-  --val_size 150 \
-  --test_size 200
-```
+- `first`：旧行为，返回最早出现的平票答案。
+- `random`：默认，用 `seed + question_hash` 做 deterministic random，避免 agent 顺序偏置。
+- `abstain`：平票时返回空答案。
 
-## 最小运行
+`evaluate_dataset` prediction 日志和 `train_step_logs.jsonl` 都会写入 tie 信息；汇总脚本会输出 `vote_tie_rate`。
 
-单次训练运行：
+## 单次运行
+
+MMLU：
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
   --task_type mmlu \
+  --dataset_format legacy \
   --train_path mmlu_train.jsonl \
   --val_path mmlu_val.jsonl \
   --test_path mmlu_test.jsonl \
-  --out_dir runs_trace_beam/shared_beam_seed42 \
+  --out_dir runs_trace_beam/mmlu/shared_guarded_seed42 \
   --agents 5 \
   --init_mode shared \
   --epochs 3 \
-  --update_every 10 \
-  --candidate_eval_batch_size 10 \
-  --beam_size 3 \
-  --num_candidates_per_parent 2 \
-  --reward_mode embedding_local_acc_invalid \
-  --embedding_model BAAI/bge-small-en-v1.5
+  --reward_mode guarded_diversity \
+  --candidate_eval_strategy fixed_pool
 ```
 
-只跑 baseline，不更新 prompt：
+BBH：
+
+```bash
+python -m multi_dataset_diverse_rl.cli \
+  --task_type bbh \
+  --dataset_format mars \
+  --train_path bbh_train.jsonl \
+  --val_path bbh_val.jsonl \
+  --test_path bbh_test.jsonl \
+  --out_dir runs_trace_beam/bbh/shared_guarded_seed42 \
+  --agents 5 \
+  --init_mode shared \
+  --epochs 3
+```
+
+只跑 baseline：
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
   --task_type mmlu \
   --test_path mmlu_test.jsonl \
-  --out_dir runs_trace_beam/shared_baseline_seed42 \
+  --out_dir runs_trace_beam/mmlu/shared_baseline_seed42 \
   --agents 5 \
   --init_mode shared \
   --baseline_only 1
 ```
 
-`init_mode` 有两种：
+## 推荐批量实验
 
-- `shared`：所有 agent 从同一个 shared prompt 开始，适合观察自动分化能力。
-- `bank`：agent 从内置 prompt bank 中取不同初始角色，适合作为人工多角色 baseline。
+推荐论文式实验命令：
 
-## 批量实验
+```bash
+python scripts/run_experiments.py --datasets mmlu,bbh --seeds 42,43,44
+```
 
-`scripts/run_experiments.py` 会调用主 CLI 并把不同设置写入同一个输出根目录。当前脚本默认启用 baseline 设置；可以按需要编辑 `SETTINGS`。
+默认 settings：
+
+- `shared_baseline`
+- `bank_baseline`
+- `shared_guarded_beam`
+- `bank_guarded_beam`
+
+默认会对所有 setting 使用 `--seeds` 中的每个 seed；如果想省成本，可以加 `--seed_baselines 0` 让 baseline 只跑第一个 seed。
+
+输出目录命名：
+
+```text
+runs_trace_beam/
+  mmlu/
+    shared_baseline_seed42/
+    shared_guarded_beam_seed42/
+    bank_guarded_beam_seed42/
+  bbh/
+    shared_baseline_seed42/
+    shared_guarded_beam_seed42/
+```
+
+默认路径：
+
+- MMLU: `mmlu_train.jsonl`, `mmlu_val.jsonl`, `mmlu_test.jsonl`
+- BBH: `bbh_train.jsonl`, `bbh_val.jsonl`, `bbh_test.jsonl`
+
+也可以覆盖：
 
 ```bash
 python scripts/run_experiments.py \
-  --out_root runs_trace_beam \
-  --task_type mmlu \
-  --train_path mmlu_train.jsonl \
-  --val_path mmlu_val.jsonl \
-  --test_path mmlu_test.jsonl \
-  --agent_model deepseek-chat \
-  --optimizer_model deepseek-v4-flash \
-  --evaluator_model deepseek-v4-flash \
-  --agents 5 \
-  --epochs 3 \
+  --datasets mmlu,bbh \
+  --seeds 42,43 \
+  --mmlu_train_path data/mmlu_train.jsonl \
+  --mmlu_val_path data/mmlu_val.jsonl \
+  --mmlu_test_path data/mmlu_test.jsonl \
+  --bbh_train_path data/bbh_train.jsonl \
+  --bbh_val_path data/bbh_val.jsonl \
+  --bbh_test_path data/bbh_test.jsonl
+```
+
+选择部分 settings：
+
+```bash
+python scripts/run_experiments.py \
+  --datasets mmlu \
+  --run_settings shared_baseline,shared_guarded_beam \
   --seeds 42
 ```
 
-## 主要参数
-
-模型：
-
-- `--agent_model`：solver agent 使用的模型。
-- `--optimizer_model`：生成候选 prompt 的模型。
-- `--evaluator_model`：判断 local role execution 和可选 joint diversity 的模型。
-
-数据：
-
-- `--train_path`、`--val_path`、`--test_path`
-- `--train_size`、`--val_size`、`--test_size`
-- `--val_split_ratio`：没有 `val_path` 时，从 train 中切出验证集。
-
-多智能体：
-
-- `--agents`：agent 数量。
-- `--init_mode shared|bank`
-- `--shared_prompt`：shared 初始化使用的基础 prompt。
-
-搜索与更新：
-
-- `--search_mode evolutionary_beam`
-- `--beam_size`：每个 agent 保留的 prompt 数。
-- `--num_candidates_per_parent`：每个 beam parent 生成几个候选。
-- `--update_every`：每多少个训练样本触发一次更新窗口。
-- `--candidate_eval_batch_size`：候选 prompt 小批量评估样本数。
-- `--beam_refresh_each_epoch`：每个 epoch 结束后是否重新评估 beam。
-
-多样性与有效性：
-
-- `--reward_mode embedding_local_acc_invalid`：默认模式，用 trace embedding 多样性、local validity、team accuracy 和 invalid score 共同打分。
-- `--reward_mode accuracy_only`：消融模式，只按团队准确率更新。
-- `--homogeneity_overlap_threshold`：高重叠 case 阈值。
-- `--embedding_model`：trace embedding 模型。
-- `--trace_embedding_chunk_words`、`--trace_embedding_chunk_overlap`：长 trace 分块参数。
-
-并发与重试：
-
-- `--eval_solver_call_concurrency`
-- `--candidate_eval_concurrency`
-- `--train_rollout_concurrency`
-- `--llm_call_timeout`
-- `--transient_retry_forever`
-- `--max_retry_backoff`
-
-## 输出文件
-
-每个 run 的 `out_dir` 会包含：
-
-```text
-run_meta.json                 # 配置、模型、初始 prompt
-history.json                  # epoch 级训练、验证、测试指标
-prompt_history.json           # 每个 agent 的 prompt beam 和更新事件
-update_logs.jsonl             # 每个候选 prompt 的 reward、rank、是否进入 beam
-train_step_logs.jsonl         # 训练 step 级指标
-train_trace_history.jsonl     # 训练题目的 agent trace、answer、case
-test_trace_history.jsonl      # val/test trace 记录
-val_epochN_predictions.jsonl  # 每轮验证集预测
-test_final_predictions.jsonl  # 最终测试集预测
-last_state.json               # 最后状态
-best_state.json               # 验证集选择的最好状态
-selected_state.json           # 最终恢复 best prompt 后的测试状态
-best_prompts.json             # early stopping 选中的 prompt
-```
-
-关键指标：
-
-- `vote_acc`：多 agent majority vote 准确率。
-- `mean_embedding_diversity`：平均 trace embedding 多样性。
-- `mean_embedding_overlap`：平均 trace embedding 重叠。
-- `mean_invalid_rate`：无效 trace 比例。
-- `reward`：候选 prompt 综合得分。
-- `local_validity_mean`：候选 prompt 是否被 solver 实际执行。
-- `homogeneous_case_count`：目标 agent 仍参与多少高重叠 case。
-- `resolved_case_count`：候选 prompt 解决了多少原高重叠 case。
-- `new_homogeneous_case_count`：候选 prompt 引入了多少新高重叠 case。
-
-## 分析实验结果
-
-汇总 run：
+## 汇总实验
 
 ```bash
 python scripts/compute_experiment_metrics.py \
   --runs_root runs_trace_beam \
   --out_csv runs_trace_beam/experiment_metrics.csv \
-  --out_md runs_trace_beam/experiment_metrics.md
+  --out_md runs_trace_beam/experiment_metrics.md \
+  --out_group_csv runs_trace_beam/experiment_metrics_grouped.csv
 ```
 
-绘图脚本可以按需要使用：
+汇总会递归读取多 dataset 子目录，并按 `dataset/setting` 输出 seed mean/std。核心列包括：
+
+- `latest_test_vote_acc`
+- `latest_test_embedding_diversity`
+- `latest_test_invalid_rate`
+- `vote_tie_rate`
+- `solver_calls`
+- `solver_reuse_hit_rate`
+
+如果提供 MARS baseline：
 
 ```bash
-python scripts/plot_current_mmlu_visuals.py --root runs_trace_beam --out_dir runs_trace_beam/figures
-python scripts/plot_experiment_results.py --csv runs_trace_beam/experiment_metrics.csv --out_dir runs_trace_beam/figures
+python scripts/compute_experiment_metrics.py \
+  --runs_root runs_trace_beam \
+  --mars_result_path mars_results.jsonl
 ```
 
-不同 plot 脚本对输入文件有不同假设，建议先看脚本头部的 argparse。
+会额外输出：
 
-## 方法设计要点
+- `vs_mars_delta_acc`
+- `vs_mars_delta_diversity`
 
-本项目最重要的设计不是“让 prompt 越不同越好”，而是把多样性放进一个受约束的优化目标：
+## 输出文件
 
-- trace 必须有效，必须能抽取最终答案。
-- agent 必须实际执行候选 prompt 描述的角色程序。
-- 多样性来自完整 trace embedding，而不是 prompt 文本差异。
-- 无效 trace 在 overlap 中按完全重叠处理，防止通过坏输出获得虚假多样性。
-- optimizer 只能提出候选，不直接决定采纳。
-- beam search 通过小批量评估保留更可靠的候选。
-- early stopping 用验证集选择最终 prompt，而不是默认使用最后一轮。
+每个 run 的 `out_dir` 主要包含：
 
-更完整的方法说明见 [method.md](method.md)。
+```text
+run_meta.json
+history.json
+prompt_history.json
+update_logs.jsonl
+train_step_logs.jsonl
+train_trace_history.jsonl
+test_trace_history.jsonl
+val_epochN_predictions.jsonl
+test_final_predictions.jsonl
+last_state.json
+best_state.json
+selected_state.json
+best_prompts.json
+```
 
-## 当前限制
+重点指标：
 
-- 项目依赖 LLM API，实验成本与并发设置强相关。
-- trace embedding 默认使用 `BAAI/bge-small-en-v1.5`，首次运行可能需要下载模型。
-- 当前核心 diversity metric 是 trace embedding；taxonomy 相关脚本保留用于离线证明和扩展分析。
-- optimizer 生成 prompt 时仍可能产生过泛、过长或不可执行的角色描述，因此系统加入了 prompt sanitize、local validity 和 invalid check。
-- `scripts/` 中包含一些针对历史证明实验的分析脚本，运行前应确认输入目录是否存在。
+- `vote_acc`：majority vote accuracy。
+- `vote_tie_rate`：平票比例，用于诊断 vote 聚合稳定性。
+- `mean_embedding_diversity`：平均 trace embedding diversity。
+- `mean_embedding_overlap`：平均 trace embedding overlap。
+- `mean_invalid_rate`：无效 trace 比例。
+- `reward`：候选 prompt 评估得分。
+- `local_validity_mean`：target agent 是否执行候选角色。
+- `solver_reuse_hit_rate`：candidate evaluation 复用历史 rollout 的比例。
 
-## 推荐工作流
+## 测试
 
-1. 准备小规模、去重、均衡的 JSONL 数据。
-2. 先跑 `shared` 和 `bank` baseline，确认模型和答案抽取正常。
-3. 跑 `shared` beam，观察是否能从同 prompt 自动分化。
-4. 汇总 `history.json`、`update_logs.jsonl` 和 prediction 文件。
-5. 对比 accuracy、embedding diversity、invalid rate 和 prompt history。
-6. 如果 invalid rate 升高，调高 invalid 权重或降低 optimizer 温度。
-7. 如果 diversity 没有变化，检查 homogeneous cases 是否被触发、candidate_eval_batch 是否过小、embedding 模型是否正常加载。
+```bash
+python -m pytest
+```
+
+当前测试覆盖：
+
+- MMLU 旧解析兼容。
+- BBH 独立解析，不走 GSM8K 数字 fallback。
+- legacy/mars dataset format。
+- majority vote tie diagnostics。
+- guarded reward accuracy penalty。
+
+## 设计边界
+
+- 本项目依赖真实 LLM API，完整实验有成本。
+- Diversity metric 当前以 trace embedding 为主，不能等同于人工定义的策略族差异。
+- Evaluator 只用于 local role execution，仍可能有判断噪声。
+- Candidate evaluation 仍是抽样估计，因此推荐使用 `fixed_pool` 或 `stratified` 并设置多个 seed。
+- 方法是 case-aware evolutionary prompt search，不是严格 RL；reward 只用于候选 prompt 排序和 beam selection。

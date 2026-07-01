@@ -14,14 +14,17 @@ class ExperimentSetting:
     name: str
     init_mode: str
     baseline_only: bool
+    reward_mode: str = "guarded_diversity"
 
 
 SETTINGS = [
-    #ExperimentSetting("shared_beam", "shared", False),
-    #ExperimentSetting("bank_beam", "bank", False),
-    ExperimentSetting("shared_baseline", "shared", True),
-    ExperimentSetting("bank_baseline", "bank", True),
+    ExperimentSetting("shared_baseline", "shared", True, "guarded_diversity"),
+    ExperimentSetting("bank_baseline", "bank", True, "guarded_diversity"),
+    ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity"),
+    ExperimentSetting("bank_guarded_beam", "bank", False, "guarded_diversity"),
 ]
+
+DEFAULT_SEED_BASELINES = 1
 
 
 def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
@@ -35,6 +38,7 @@ def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
         "latest_test_embedding_overlap": None,
         "latest_test_invalid_rate": None,
         "latest_test_vote_acc": None,
+        "latest_test_vote_tie_rate": None,
     }
     if not history_path.exists():
         return empty
@@ -54,7 +58,26 @@ def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
         "latest_test_embedding_overlap": test.get("mean_embedding_overlap"),
         "latest_test_invalid_rate": test.get("mean_invalid_rate"),
         "latest_test_vote_acc": test.get("vote_acc"),
+        "latest_test_vote_tie_rate": test.get("vote_tie_rate"),
     }
+
+
+def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
+    rows = []
+    if not path.exists():
+        return rows
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+                if isinstance(obj, dict):
+                    rows.append(obj)
+            except Exception:
+                continue
+    return rows
 
 
 def _write_jsonl_append(path: Path, record: Dict[str, Any]):
@@ -65,23 +88,74 @@ def _write_jsonl_append(path: Path, record: Dict[str, Any]):
 
 def _write_csv(path: Path, rows: List[Dict[str, Any]]):
     path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = sorted({k for r in rows for k in r.keys()}) if rows else ["setting", "status"]
+    fieldnames = sorted({k for r in rows for k in r.keys()}) if rows else ["dataset", "setting", "status"]
     with path.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames)
-        w.writeheader()
-        for r in rows:
-            w.writerow(r)
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
-def _append_common_cli_args(cmd: List[str], args: argparse.Namespace):
+def _safe_mean(values: List[float]) -> float:
+    return float(sum(values) / len(values)) if values else 0.0
+
+
+def _collect_run_log_metrics(run_dir: Path) -> Dict[str, Any]:
+    update_rows = _read_jsonl(run_dir / "update_logs.jsonl")
+    candidate_rows = [r for r in update_rows if isinstance(r, dict) and "reward" in r and r.get("event") != "beam_refresh"]
+
+    def vals(key: str) -> List[float]:
+        out = []
+        for row in candidate_rows:
+            try:
+                out.append(float(row.get(key, 0.0) or 0.0))
+            except Exception:
+                pass
+        return out
+
+    return {
+        "reward": _safe_mean(vals("reward")),
+        "candidate_embedding_diversity": _safe_mean(vals("embedding_diversity")),
+        "candidate_invalid_rate": _safe_mean(vals("invalid_rate")),
+        "solver_calls": _safe_mean(vals("solver_calls")),
+        "solver_reuse_hit_rate": _safe_mean(vals("solver_reuse_hit_rate")),
+    }
+
+
+def _dataset_paths(args: argparse.Namespace, dataset: str) -> Dict[str, str]:
+    dataset = str(dataset).strip().lower()
+    if dataset == "mmlu":
+        return {
+            "task_type": "mmlu",
+            "train": args.mmlu_train_path,
+            "val": args.mmlu_val_path,
+            "test": args.mmlu_test_path,
+        }
+    if dataset == "bbh":
+        return {
+            "task_type": "bbh",
+            "train": args.bbh_train_path,
+            "val": args.bbh_val_path,
+            "test": args.bbh_test_path,
+        }
+    return {
+        "task_type": args.task_type,
+        "train": args.train_path,
+        "val": args.val_path,
+        "test": args.test_path,
+    }
+
+
+def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: ExperimentSetting, dataset_info: Dict[str, str], seed: int):
+    reward_mode = args.force_reward_mode or setting.reward_mode
     cmd.extend(
         [
-            "--task_type", args.task_type,
+            "--task_type", dataset_info["task_type"],
+            "--dataset_format", args.dataset_format,
             "--agent_model", args.agent_model,
             "--optimizer_model", args.optimizer_model,
             "--evaluator_model", args.evaluator_model,
             "--search_mode", args.search_mode,
-            "--reward_mode", args.reward_mode,
+            "--reward_mode", reward_mode,
             "--beam_size", str(args.beam_size),
             "--num_candidates_per_parent", str(args.num_candidates_per_parent),
             "--beam_refresh_each_epoch", str(int(args.beam_refresh_each_epoch)),
@@ -95,6 +169,10 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace):
             "--reward_weight_local_validity", str(args.reward_weight_local_validity),
             "--reward_weight_team_accuracy", str(args.reward_weight_team_accuracy),
             "--reward_weight_invalid_score", str(args.reward_weight_invalid_score),
+            "--accuracy_guard_epsilon", str(args.accuracy_guard_epsilon),
+            "--reward_weight_div_delta", str(args.reward_weight_div_delta),
+            "--reward_weight_invalid_delta", str(args.reward_weight_invalid_delta),
+            "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
             "--diversity_metric", args.diversity_metric,
             "--use_joint_trace_diversity_evaluator", str(int(args.use_joint_trace_diversity_evaluator)),
             "--local_validity_binary", str(int(args.local_validity_binary)),
@@ -110,39 +188,49 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace):
             "--llm_call_logging", str(int(args.llm_call_logging)),
             "--llm_call_timeout", str(args.llm_call_timeout),
             "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
+            "--candidate_eval_strategy", args.candidate_eval_strategy,
+            "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
+            "--candidate_eval_repeats", str(args.candidate_eval_repeats),
+            "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--train_rollout_concurrency", str(args.train_rollout_concurrency),
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
             "--local_evaluator_batch_size", str(args.local_evaluator_batch_size),
+            "--vote_tie_break", args.vote_tie_break,
             "--agents", str(args.agents),
             "--test_size", str(args.test_size),
             "--eval_test_each_epoch", str(int(args.eval_test_each_epoch)),
             "--early_stopping_patience", str(args.early_stopping_patience),
             "--early_stopping_min_delta", str(args.early_stopping_min_delta),
-            "--init_mode", args.current_init_mode,
+            "--init_mode", setting.init_mode,
             "--shared_prompt", args.shared_prompt,
             "--max_tokens", str(args.max_tokens),
             "--optimizer_max_tokens", str(args.optimizer_max_tokens),
             "--evaluator_max_tokens", str(args.evaluator_max_tokens),
-            "--seed", str(args.current_seed),
+            "--seed", str(seed),
         ]
     )
 
 
-def run_one(setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+def run_one(dataset: str, setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+    dataset_info = _dataset_paths(args, dataset)
     run_name = f"{setting.name}_seed{seed}" if args.multi_seed_names else setting.name
-    run_dir = Path(args.out_root) / run_name
+    run_dir = Path(args.out_root) / dataset / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
-    args.current_init_mode = setting.init_mode
-    args.current_seed = seed
 
     cmd = [args.python, "-m", "multi_dataset_diverse_rl.cli"]
-    _append_common_cli_args(cmd, args)
-    cmd.extend(["--test_path", args.test_path, "--out_dir", str(run_dir), "--baseline_only", "1" if setting.baseline_only else "0"])
+    _append_common_cli_args(cmd, args, setting, dataset_info, seed)
+    cmd.extend(
+        [
+            "--test_path", dataset_info["test"],
+            "--out_dir", str(run_dir),
+            "--baseline_only", "1" if setting.baseline_only else "0",
+        ]
+    )
     if not setting.baseline_only:
         cmd.extend(
             [
-                "--train_path", args.train_path,
-                "--val_path", args.val_path,
+                "--train_path", dataset_info["train"],
+                "--val_path", dataset_info["val"],
                 "--train_size", str(args.train_size),
                 "--val_size", str(args.val_size),
                 "--val_split_ratio", str(args.val_split_ratio),
@@ -153,17 +241,19 @@ def run_one(setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> 
         )
 
     start = time.time()
-    print(f"\n[RUN] {run_name}: {' '.join(cmd)}", flush=True)
+    print(f"\n[RUN] dataset={dataset} setting={setting.name} seed={seed}: {' '.join(cmd)}", flush=True)
     proc = subprocess.run(cmd, cwd=args.workspace)
     elapsed = time.time() - start
-    status = "ok" if proc.returncode == 0 else "failed"
+    reward_mode = args.force_reward_mode or setting.reward_mode
     row = {
+        "dataset": dataset,
         "setting": setting.name,
         "run_name": run_name,
         "seed": seed,
+        "reward_mode": reward_mode,
         "init_mode": setting.init_mode,
         "baseline_only": int(setting.baseline_only),
-        "status": status,
+        "status": "ok" if proc.returncode == 0 else "failed",
         "returncode": proc.returncode,
         "elapsed_sec": round(elapsed, 2),
         "run_dir": str(run_dir),
@@ -171,28 +261,56 @@ def run_one(setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> 
         "optimizer_model": args.optimizer_model,
         "evaluator_model": args.evaluator_model,
         "search_mode": args.search_mode,
-        "reward_mode": args.reward_mode,
         "beam_size": args.beam_size,
     }
-    row.update(_load_history_metrics(run_dir / "history.json"))
+    history_metrics = _load_history_metrics(run_dir / "history.json")
+    row.update(history_metrics)
+    log_metrics = _collect_run_log_metrics(run_dir)
+    row.update(log_metrics)
+    row["vote_acc"] = history_metrics.get("latest_test_vote_acc")
+    row["embedding_diversity"] = history_metrics.get("latest_test_embedding_diversity")
+    row["invalid_rate"] = history_metrics.get("latest_test_invalid_rate")
+    row["vote_tie_rate"] = history_metrics.get("latest_test_vote_tie_rate")
     return row
 
 
+def _selected_settings(raw: str) -> List[ExperimentSetting]:
+    if not raw or raw == "all":
+        return list(SETTINGS)
+    wanted = {x.strip() for x in raw.split(",") if x.strip()}
+    selected = [setting for setting in SETTINGS if setting.name in wanted]
+    missing = wanted - {setting.name for setting in selected}
+    if missing:
+        raise ValueError(f"Unknown run_settings: {sorted(missing)}")
+    return selected
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Run the trace-embedding evolutionary beam experiments.")
+    parser = argparse.ArgumentParser(description="Run shared/bank baselines and shared/bank guarded beam experiments.")
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--out_root", type=str, default="runs_trace_beam")
-    parser.add_argument("--task_type", type=str, default="mmlu", choices=["auto", "gsm8k", "mmlu"])
+    parser.add_argument("--datasets", type=str, default="mmlu")
+    parser.add_argument("--run_settings", type=str, default="all")
+    parser.add_argument("--mars_result_path", type=str, default="")
+    parser.add_argument("--summary_by_dataset", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--dataset_format", type=str, default="legacy", choices=["legacy", "mars"])
+    parser.add_argument("--task_type", type=str, default="mmlu", choices=["auto", "gsm8k", "mmlu", "bbh"])
     parser.add_argument("--train_path", type=str, default="mmlu_train.jsonl")
     parser.add_argument("--val_path", type=str, default="")
     parser.add_argument("--test_path", type=str, default="mmlu_test.jsonl")
+    parser.add_argument("--mmlu_train_path", type=str, default="mmlu_train.jsonl")
+    parser.add_argument("--mmlu_val_path", type=str, default="mmlu_val.jsonl")
+    parser.add_argument("--mmlu_test_path", type=str, default="mmlu_test.jsonl")
+    parser.add_argument("--bbh_train_path", type=str, default="bbh_train.jsonl")
+    parser.add_argument("--bbh_val_path", type=str, default="bbh_val.jsonl")
+    parser.add_argument("--bbh_test_path", type=str, default="bbh_test.jsonl")
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default="embedding_local_acc_invalid", choices=["embedding_local_acc_invalid", "accuracy_only"])
+    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "embedding_local_acc_invalid", "accuracy_only", "guarded_diversity"])
     parser.add_argument("--beam_size", type=int, default=3)
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
@@ -206,6 +324,10 @@ def main():
     parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
     parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
     parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
+    parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
+    parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
+    parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
+    parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
     parser.add_argument("--local_validity_binary", type=int, default=1, choices=[0, 1])
@@ -224,7 +346,11 @@ def main():
     parser.add_argument("--early_stopping_patience", type=int, default=3)
     parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
     parser.add_argument("--update_every", type=int, default=10)
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=10)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=20)
+    parser.add_argument("--candidate_eval_strategy", type=str, default="fixed_pool", choices=["random", "fixed_pool", "stratified"])
+    parser.add_argument("--candidate_eval_pool_size", type=int, default=100)
+    parser.add_argument("--candidate_eval_repeats", type=int, default=1)
+    parser.add_argument("--candidate_eval_seed_offset", type=int, default=1000)
     parser.add_argument("--max_tokens", type=int, default=1000)
     parser.add_argument("--optimizer_max_tokens", type=int, default=1400)
     parser.add_argument("--evaluator_max_tokens", type=int, default=1200)
@@ -241,10 +367,12 @@ def main():
     parser.add_argument("--train_rollout_concurrency", type=int, default=0)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
     parser.add_argument("--local_evaluator_batch_size", type=int, default=5)
+    parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
     parser.add_argument("--seeds", type=str, default="42")
-    parser.add_argument("--seed_baselines", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--seed_baselines", type=int, default=DEFAULT_SEED_BASELINES, choices=[0, 1])
     parser.add_argument("--multi_seed_names", type=int, default=1, choices=[0, 1])
     args = parser.parse_args()
+
     for name in [
         "beam_refresh_each_epoch",
         "use_joint_trace_diversity_evaluator",
@@ -253,6 +381,8 @@ def main():
         "eval_test_each_epoch",
         "transient_retry_forever",
         "llm_call_logging",
+        "use_baseline_relative_reward",
+        "summary_by_dataset",
         "seed_baselines",
         "multi_seed_names",
     ]:
@@ -266,27 +396,39 @@ def main():
     runs_csv = out_root / "experiment_runs.csv"
     runs_jsonl.write_text("", encoding="utf-8")
 
-    seeds = [int(x.strip()) for x in str(args.seeds).split(",") if x.strip()]
-    if not seeds:
-        seeds = [42]
+    seeds = [int(x.strip()) for x in str(args.seeds).split(",") if x.strip()] or [42]
+    datasets = [x.strip().lower() for x in str(args.datasets).split(",") if x.strip()]
+    settings = _selected_settings(args.run_settings)
 
     rows = []
-    settings = list(SETTINGS)
-    if str(args.reward_mode).lower() == "accuracy_only":
-        settings = [
-            ExperimentSetting("shared_accuracy_only", "shared", False),
-        ]
-
-    for setting in settings:
-        setting_seeds = seeds if (not setting.baseline_only or args.seed_baselines) else [seeds[0]]
-        for seed in setting_seeds:
-            row = run_one(setting, seed, args)
-            rows.append(row)
-            _write_jsonl_append(runs_jsonl, row)
-            _write_csv(runs_csv, rows)
-            if row["status"] != "ok":
-                raise SystemExit(row["returncode"])
+    for dataset in datasets:
+        for setting in settings:
+            setting_seeds = seeds if (not setting.baseline_only or args.seed_baselines) else [seeds[0]]
+            for seed in setting_seeds:
+                row = run_one(dataset, setting, seed, args)
+                rows.append(row)
+                _write_jsonl_append(runs_jsonl, row)
+                _write_csv(runs_csv, rows)
+                if row["status"] != "ok":
+                    raise SystemExit(row["returncode"])
     print(f"\n[DONE] Wrote {runs_jsonl} and {runs_csv}")
+    if args.summary_by_dataset:
+        summary_cmd = [
+            args.python,
+            str(Path(args.workspace) / "scripts" / "compute_experiment_metrics.py"),
+            "--runs_root",
+            str(out_root),
+            "--out_csv",
+            str(out_root / "experiment_metrics.csv"),
+            "--out_md",
+            str(out_root / "experiment_metrics.md"),
+            "--out_group_csv",
+            str(out_root / "experiment_metrics_grouped.csv"),
+        ]
+        if args.mars_result_path:
+            summary_cmd.extend(["--mars_result_path", args.mars_result_path])
+        print(f"[SUMMARY] {' '.join(summary_cmd)}", flush=True)
+        subprocess.run(summary_cmd, cwd=args.workspace, check=False)
 
 
 if __name__ == "__main__":
