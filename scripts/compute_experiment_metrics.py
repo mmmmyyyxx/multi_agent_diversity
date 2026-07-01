@@ -1,9 +1,12 @@
 import argparse
-import csv
-import json
 import statistics
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+
+try:
+    from scripts.experiment_io import read_json, read_jsonl, write_csv
+except ModuleNotFoundError:
+    from experiment_io import read_json, read_jsonl, write_csv
 
 
 PUBLIC_METRIC_COLUMNS = [
@@ -51,33 +54,6 @@ PUBLIC_METRIC_COLUMNS = [
     "vs_mars_delta_acc",
     "vs_mars_delta_diversity",
 ]
-
-
-def _read_json(path: Path) -> Any:
-    if not path.exists():
-        return None
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return None
-
-
-def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
-    rows = []
-    if not path.exists():
-        return rows
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-                if isinstance(obj, dict):
-                    rows.append(obj)
-            except Exception:
-                continue
-    return rows
 
 
 def _safe_mean(values: List[float]) -> float:
@@ -142,17 +118,17 @@ def _infer_dataset(run_dir: Path) -> str:
 
 
 def analyze_run(run_dir: Path, mars_baselines: Dict[str, Dict[str, float]]) -> Dict[str, Any]:
-    run_meta = _read_json(run_dir / "run_meta.json") or {}
+    run_meta = read_json(run_dir / "run_meta.json") or {}
     cfg = run_meta.get("config", {}) if isinstance(run_meta.get("config", {}), dict) else {}
-    history = _read_json(run_dir / "history.json") or []
+    history = read_json(run_dir / "history.json") or []
     if not isinstance(history, list):
         history = []
     train = _latest_metrics(history, "train")
     test = _latest_metrics(history, "test")
-    update_logs = _read_jsonl(run_dir / "update_logs.jsonl")
+    update_logs = read_jsonl(run_dir / "update_logs.jsonl")
     predictions = []
     for name in ["test_final_predictions.jsonl", "test_epoch1_predictions.jsonl"]:
-        predictions = _read_jsonl(run_dir / name)
+        predictions = read_jsonl(run_dir / name)
         if predictions:
             break
     name = run_dir.name
@@ -224,9 +200,9 @@ def _load_mars_baselines(path: str) -> Dict[str, Dict[str, float]]:
     if not path:
         return {}
     p = Path(path)
-    rows = _read_jsonl(p)
+    rows = read_jsonl(p)
     if not rows and p.exists():
-        obj = _read_json(p)
+        obj = read_json(p)
         if isinstance(obj, list):
             rows = [row for row in obj if isinstance(row, dict)]
         elif isinstance(obj, dict):
@@ -277,11 +253,7 @@ def _write_group_summary(rows: List[Dict[str, Any]], path: Path):
             out[f"{metric}_std"] = _safe_std(values)
         summary_rows.append(out)
     fieldnames = sorted({key for row in summary_rows for key in row.keys()}) if summary_rows else ["dataset", "setting", "n"]
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(summary_rows)
+    write_csv(path, summary_rows, empty_fieldnames=["dataset", "setting", "n"])
 
 
 def main():
@@ -302,14 +274,10 @@ def main():
     out_csv = Path(args.out_csv) if args.out_csv else (Path(args.runs_root) / "experiment_metrics.csv" if args.runs_root else Path("experiment_metrics.csv"))
     out_md = Path(args.out_md) if args.out_md else (Path(args.runs_root) / "experiment_metrics.md" if args.runs_root else Path("experiment_metrics.md"))
     out_group_csv = Path(args.out_group_csv) if args.out_group_csv else out_csv.with_name("experiment_metrics_grouped.csv")
-    out_csv.parent.mkdir(parents=True, exist_ok=True)
     out_md.parent.mkdir(parents=True, exist_ok=True)
 
     fieldnames = PUBLIC_METRIC_COLUMNS + sorted({key for row in rows for key in row.keys() if key not in PUBLIC_METRIC_COLUMNS})
-    with out_csv.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    write_csv(out_csv, rows, fieldnames=fieldnames)
     write_markdown(rows, out_md)
     _write_group_summary(rows, out_group_csv)
     print(f"Wrote {out_csv}")

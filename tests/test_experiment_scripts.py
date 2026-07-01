@@ -2,7 +2,8 @@ import json
 from argparse import Namespace
 
 from scripts.compute_experiment_metrics import analyze_run
-from scripts.run_experiments import DEFAULT_SEED_BASELINES, SETTINGS, _dataset_paths, _selected_settings
+from scripts.experiment_config import DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, dataset_paths_from_args, select_settings, setting_names
+from scripts.run_experiments import SETTINGS, _selected_settings
 
 
 def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
@@ -15,6 +16,7 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
     ]
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["shared_guarded_beam"] == "guarded_diversity"
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["bank_guarded_beam"] == "guarded_diversity"
+    assert SETTINGS == DEFAULT_EXPERIMENT_SETTINGS
 
 
 def test_run_experiments_parser_seeds_baselines_by_default():
@@ -25,6 +27,7 @@ def test_run_experiments_parser_seeds_baselines_by_default():
 def test_selected_settings_filters_by_name():
     selected = _selected_settings("shared_baseline,bank_guarded_beam")
     assert [setting.name for setting in selected] == ["shared_baseline", "bank_guarded_beam"]
+    assert select_settings("shared_baseline,bank_guarded_beam") == selected
 
 
 def test_dataset_paths_use_dataset_specific_defaults():
@@ -40,18 +43,24 @@ def test_dataset_paths_use_dataset_specific_defaults():
         val_path="val.jsonl",
         test_path="test.jsonl",
     )
-    assert _dataset_paths(args, "mmlu") == {
+    assert dataset_paths_from_args(args, "mmlu") == {
         "task_type": "mmlu",
         "train": "mmlu_train.jsonl",
         "val": "mmlu_val.jsonl",
         "test": "mmlu_test.jsonl",
     }
-    assert _dataset_paths(args, "bbh") == {
+    assert dataset_paths_from_args(args, "bbh") == {
         "task_type": "bbh",
         "train": "bbh_train.jsonl",
         "val": "bbh_val.jsonl",
         "test": "bbh_test.jsonl",
     }
+
+
+def test_analyze_experiments_uses_shared_setting_order():
+    import scripts.analyze_experiments as analyze_experiments
+
+    assert analyze_experiments.SETTINGS == setting_names(DEFAULT_EXPERIMENT_SETTINGS)
 
 
 def test_compute_metrics_reads_vote_tie_rate_and_mars_delta(tmp_path):

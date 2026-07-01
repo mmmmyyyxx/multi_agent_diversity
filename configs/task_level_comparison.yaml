@@ -1,0 +1,48 @@
+tasks:
+  boolean_expressions:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: boolean
+    train_path: Dataset_format/BBH/boolean_expressions.csv
+    val_path: Dataset_format/BBH/boolean_expressions.csv
+    test_path: Dataset_format/BBH/boolean_expressions.csv
+
+  formal_fallacies:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: valid_invalid
+    train_path: Dataset_format/BBH/formal_fallacies.csv
+    val_path: Dataset_format/BBH/formal_fallacies.csv
+    test_path: Dataset_format/BBH/formal_fallacies.csv
+
+  geometric_shapes:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: Dataset_format/BBH/geometric_shapes.csv
+    val_path: Dataset_format/BBH/geometric_shapes.csv
+    test_path: Dataset_format/BBH/geometric_shapes.csv
+
+  sports_understanding:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: yes_no
+    train_path: Dataset_format/BBH/sports_understanding.csv
+    val_path: Dataset_format/BBH/sports_understanding.csv
+    test_path: Dataset_format/BBH/sports_understanding.csv
+
+  marketing:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/marketing_test.csv
+    val_path: Dataset_format/MMLU/marketing_test.csv
+    test_path: Dataset_format/MMLU/marketing_test.csv
+
+  college_biology:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/college_biology_test.csv
+    val_path: Dataset_format/MMLU/college_biology_test.csv
+    test_path: Dataset_format/MMLU/college_biology_test.csv

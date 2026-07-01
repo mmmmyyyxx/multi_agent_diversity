@@ -6,7 +6,7 @@ import random
 import numpy as np
 
 from .config import Config, build_parser
-from .utils import ensure_dir, load_jsonl, parse_gold, set_seed
+from .utils import ensure_dir, load_jsonl, set_seed
 
 
 LEGACY_QUESTION_KEYS = ["question", "input", "query", "problem"]
@@ -291,6 +291,8 @@ async def main_async():
         system.flush_train_trace_history_logs()
         system.flush_test_trace_history_logs()
         system.flush_prompt_history()
+        system.flush_llm_call_logs()
+        system.write_cost_summary()
         return
 
     best_score = -1e30
@@ -317,7 +319,7 @@ async def main_async():
                 idx = order[pos]
                 ex = train_data[idx]
                 q = ex["question"]
-                gold = parse_gold(ex["answer"], cfg.task_type, question=q)
+                gold = system.task_spec.parse_gold(ex["answer"], q)
                 solved = await system.solve_train_example_without_update(q, gold)
                 return pos, idx, solved
 
@@ -394,6 +396,8 @@ async def main_async():
         system.flush_train_trace_history_logs()
         system.flush_test_trace_history_logs()
         system.flush_prompt_history()
+        system.flush_llm_call_logs()
+        system.write_cost_summary()
         with open(os.path.join(cfg.out_dir, "history.json"), "w", encoding="utf-8") as f:
             json.dump(system.history, f, ensure_ascii=False, indent=2)
 
@@ -446,6 +450,8 @@ async def main_async():
     system.flush_train_trace_history_logs()
     system.flush_test_trace_history_logs()
     system.flush_prompt_history()
+    system.flush_llm_call_logs()
+    system.write_cost_summary()
 
 
 def main():

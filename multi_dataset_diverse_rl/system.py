@@ -6,14 +6,18 @@ import random
 import re
 import time
 from dataclasses import asdict
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 from openai import AsyncOpenAI
 
+from .answer_formats import canonical_answer as canonical_answer_format
+from .answer_formats import extract_prediction as extract_prediction_format
+from .answer_formats import match_answer as match_answer_format
 from .config import Config
 from .policy import AgentState
-from .tasks import get_task_spec
+from .tasks import TaskSpec, get_task_spec
 from .utils import (
     ensure_dir,
     extract_json_obj,
@@ -35,7 +39,7 @@ class TraceBeamSearchSystem:
         self.cfg.use_joint_trace_diversity_evaluator = bool(int(self.cfg.use_joint_trace_diversity_evaluator))
         self.cfg.candidate_reuse_recorded_rollouts = bool(int(getattr(self.cfg, "candidate_reuse_recorded_rollouts", 1)))
         self.cfg.use_baseline_relative_reward = bool(int(getattr(self.cfg, "use_baseline_relative_reward", 1)))
-        self.task_spec = get_task_spec(self.cfg.task_type)
+        self.task_spec = self._build_task_spec()
 
         self.homogeneity_window = max(1, int(self.cfg.update_every))
         base_url = os.getenv("OPENAI_BASE_URL") or os.getenv("OPENAI_API_BASE")
@@ -55,6 +59,7 @@ class TraceBeamSearchSystem:
         self.evaluator_client = AsyncOpenAI(api_key=evaluator_key or api_key, base_url=evaluator_base)
 
         ensure_dir(self.cfg.out_dir)
+        open(os.path.join(self.cfg.out_dir, "llm_calls.jsonl"), "a", encoding="utf-8").close()
         set_seed(int(self.cfg.seed))
 
         self.initial_prompt_bank = self._default_prompt_bank()
@@ -73,6 +78,8 @@ class TraceBeamSearchSystem:
         self.local_validity_cache: Dict[str, Dict[str, Any]] = {}
         self.joint_diversity_cache: Dict[str, Dict[str, Any]] = {}
         self.solver_rollout_cache: Dict[str, List[Dict[str, Any]]] = {}
+        self.llm_call_logs: List[Dict[str, Any]] = []
+        self.cost_summary: Dict[str, Any] = self._empty_cost_summary()
         self.embedding_model = None
         self.embedding_cache: Dict[str, List[float]] = {}
         self.solver_call_limit = max(1, int(getattr(self.cfg, "eval_solver_call_concurrency", 225) or 225))
@@ -83,12 +90,108 @@ class TraceBeamSearchSystem:
         self._load_recorded_solver_rollouts()
         self.write_run_meta()
         self.flush_prompt_history()
+        self.write_cost_summary()
+
+    def _build_task_spec(self) -> TaskSpec:
+        answer_format = str(getattr(self.cfg, "answer_format", "") or "").strip()
+        if not answer_format:
+            return get_task_spec(self.cfg.task_type)
+        return TaskSpec(
+            name=f"{self.cfg.task_type}:{answer_format}",
+            parse_gold=lambda answer, question=None: canonical_answer_format(answer, answer_format),
+            extract_pred=lambda text, question=None: extract_prediction_format(text, answer_format),
+            match_answer=lambda pred, gold: match_answer_format(pred, gold, answer_format),
+        )
 
     def _is_accuracy_only_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "accuracy_only"
 
     def _is_guarded_reward_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
+
+    def _empty_cost_summary(self) -> Dict[str, Any]:
+        return {
+            "solver_calls": 0,
+            "optimizer_calls": 0,
+            "evaluator_calls": 0,
+            "total_llm_calls": 0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "estimated_cost": 0.0,
+            "latency_seconds": 0.0,
+        }
+
+    def _client_role_from_stage(self, stage: str, client_role: str) -> str:
+        role = str(client_role or "").strip().lower()
+        if role == "solver":
+            return "solver"
+        if "optimizer" in str(stage or "").lower():
+            return "optimizer"
+        return "evaluator"
+
+    def _estimate_tokens(self, text: str) -> int:
+        text = str(text or "")
+        if not text:
+            return 0
+        words = len(re.findall(r"\S+", text))
+        chars = len(text)
+        return max(1, max(words, int(chars / 4)))
+
+    def _usage_value(self, usage: Any, key: str, default: int = 0) -> int:
+        if usage is None:
+            return int(default)
+        value = usage.get(key, default) if isinstance(usage, dict) else getattr(usage, key, default)
+        try:
+            return int(value or default)
+        except Exception:
+            return int(default)
+
+    def _record_llm_call(
+        self,
+        *,
+        stage: str,
+        client_role: str,
+        model: str,
+        temperature: float,
+        prompt_tokens: int,
+        completion_tokens: int,
+        latency_seconds: float,
+        success: bool,
+        error_type: str = "",
+    ):
+        role = self._client_role_from_stage(stage, client_role)
+        prompt_tokens = int(max(0, prompt_tokens))
+        completion_tokens = int(max(0, completion_tokens))
+        total_tokens = prompt_tokens + completion_tokens
+        latency_seconds = float(max(0.0, latency_seconds))
+        row = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "stage": str(stage or ""),
+            "client_role": role,
+            "model": str(model or ""),
+            "temperature": float(temperature),
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": total_tokens,
+            "latency_seconds": latency_seconds,
+            "success": bool(success),
+            "error_type": str(error_type or ""),
+        }
+        self.llm_call_logs.append(row)
+
+        summary = self.cost_summary
+        summary[f"{role}_calls"] = int(summary.get(f"{role}_calls", 0) or 0) + 1
+        summary["total_llm_calls"] = int(summary.get("total_llm_calls", 0) or 0) + 1
+        summary["prompt_tokens"] = int(summary.get("prompt_tokens", 0) or 0) + prompt_tokens
+        summary["completion_tokens"] = int(summary.get("completion_tokens", 0) or 0) + completion_tokens
+        summary["total_tokens"] = int(summary.get("total_tokens", 0) or 0) + total_tokens
+        summary["estimated_cost"] = float(summary.get("estimated_cost", 0.0) or 0.0)
+        summary["latency_seconds"] = float(summary.get("latency_seconds", 0.0) or 0.0) + latency_seconds
+
+        if len(self.llm_call_logs) >= 20:
+            self.flush_llm_call_logs()
+            self.write_cost_summary()
 
     def _default_prompt_bank(self) -> List[str]:
         if str(self.cfg.task_type).lower() == "mmlu":
@@ -363,6 +466,11 @@ class TraceBeamSearchSystem:
 
     def _base_log_fields(self) -> Dict[str, Any]:
         return {
+            "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
+            "benchmark": getattr(self.cfg, "benchmark", ""),
+            "answer_format": getattr(self.cfg, "answer_format", ""),
+            "task_type": self.cfg.task_type,
+            "dataset_format": getattr(self.cfg, "dataset_format", ""),
             "agent_model": self.cfg.agent_model,
             "optimizer_model": self.cfg.optimizer_model,
             "evaluator_model": self.cfg.evaluator_model,
@@ -375,6 +483,10 @@ class TraceBeamSearchSystem:
     def write_run_meta(self):
         meta = {
             **self._base_log_fields(),
+            "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
+            "benchmark": getattr(self.cfg, "benchmark", ""),
+            "answer_format": getattr(self.cfg, "answer_format", ""),
+            "dataset_format": getattr(self.cfg, "dataset_format", ""),
             "init_mode": self.cfg.init_mode,
             "agents": self.cfg.agents,
             "update_every": self.cfg.update_every,
@@ -450,7 +562,9 @@ class TraceBeamSearchSystem:
         attempt = 0
         transient_failures = 0
         timeout_sec = float(self.cfg.llm_call_timeout or 0.0)
+        prompt_estimate = self._estimate_tokens(system_prompt) + self._estimate_tokens(user_prompt)
         while True:
+            start_time = time.time()
             try:
                 kwargs = {
                     "model": model,
@@ -464,7 +578,19 @@ class TraceBeamSearchSystem:
                 if timeout_sec > 0:
                     kwargs["timeout"] = timeout_sec
                 resp = await client.chat.completions.create(**kwargs)
-                return resp.choices[0].message.content or ""
+                text = resp.choices[0].message.content or ""
+                usage = getattr(resp, "usage", None)
+                self._record_llm_call(
+                    stage=stage,
+                    client_role=client_role,
+                    model=model,
+                    temperature=temperature,
+                    prompt_tokens=self._usage_value(usage, "prompt_tokens", prompt_estimate),
+                    completion_tokens=self._usage_value(usage, "completion_tokens", self._estimate_tokens(text)),
+                    latency_seconds=time.time() - start_time,
+                    success=True,
+                )
+                return text
             except Exception as e:
                 last_err = e
                 msg = str(e).lower()
@@ -488,10 +614,32 @@ class TraceBeamSearchSystem:
                 )
                 if not transient:
                     if attempt >= max(1, int(self.cfg.max_retries)):
+                        self._record_llm_call(
+                            stage=stage,
+                            client_role=client_role,
+                            model=model,
+                            temperature=temperature,
+                            prompt_tokens=prompt_estimate,
+                            completion_tokens=0,
+                            latency_seconds=time.time() - start_time,
+                            success=False,
+                            error_type=type(e).__name__,
+                        )
                         break
                 else:
                     transient_failures += 1
                     if not self.cfg.transient_retry_forever and transient_failures > int(self.cfg.max_transient_retries or self.cfg.max_retries):
+                        self._record_llm_call(
+                            stage=stage,
+                            client_role=client_role,
+                            model=model,
+                            temperature=temperature,
+                            prompt_tokens=prompt_estimate,
+                            completion_tokens=0,
+                            latency_seconds=time.time() - start_time,
+                            success=False,
+                            error_type=type(e).__name__,
+                        )
                         break
                 sleep_sec = min(float(self.cfg.max_retry_backoff), float(self.cfg.retry_sleep) * (2 ** attempt))
                 if self.cfg.llm_call_logging:
@@ -502,18 +650,31 @@ class TraceBeamSearchSystem:
 
     async def solve_once(self, question: str, agent_id: int, prompt_text: str) -> Tuple[str, str]:
         effective_task = infer_task_type(task_type=self.cfg.task_type, question=question, answer=None)
-        if effective_task == "mmlu":
+        answer_format = str(getattr(self.cfg, "answer_format", "") or "").strip().lower()
+        if answer_format == "option_letter":
+            answer_hint = "<A/B/C/D>"
+        elif answer_format == "boolean":
+            answer_hint = "<true/false>"
+        elif answer_format == "yes_no":
+            answer_hint = "<yes/no>"
+        elif answer_format == "valid_invalid":
+            answer_hint = "<valid/invalid>"
+        elif answer_format == "numeric":
+            answer_hint = "<number>"
+        else:
+            answer_hint = "<answer>"
+        if effective_task == "mmlu" or answer_format == "option_letter":
             system_prompt = (
                 "You are solving a multiple-choice question. Follow the agent role faithfully and make the role's "
                 "decision procedure visible in a compact trace. Do not merely name the role; execute it. "
-                "Avoid filler, avoid copying the question, and end with exactly one line: FINAL_ANSWER: <A/B/C/D>.\n\n"
+                f"Avoid filler, avoid copying the question, and end with exactly one line: FINAL_ANSWER: {answer_hint}.\n\n"
                 f"Agent role:\n{prompt_text}"
             )
         else:
             system_prompt = (
                 "You are solving a reasoning problem. Follow the agent role faithfully and make the role's "
                 "decision procedure visible in a compact trace. Do not merely name the role; execute it. "
-                "Avoid filler, avoid copying the question, and end with exactly one line: FINAL_ANSWER: <answer>.\n\n"
+                f"Avoid filler, avoid copying the question, and end with exactly one line: FINAL_ANSWER: {answer_hint}.\n\n"
                 f"Agent role:\n{prompt_text}"
             )
         text = await self._chat(
@@ -2607,11 +2768,16 @@ class TraceBeamSearchSystem:
             self._record_solver_rollouts(question_hash, prompts, traces, answers, source=f"{split_name}_rollout")
             metrics = self.compute_rollout_metrics(traces, answers, gold, prompts, question_hash=question_hash)
             row = {"index": idx, "question_hash": question_hash, **metrics}
+            agent_correct = [int(x) for x in metrics.get("individual_correct", [])]
             prediction = {
                 "index": idx,
+                "sample_id": idx,
                 "question_hash": question_hash,
+                "question": q,
                 "vote_answer": metrics.get("vote_answer", ""),
                 "gold": gold,
+                "agent_answers": list(answers),
+                "agent_correct": agent_correct,
                 "vote_correct": int(metrics.get("vote_correct", 0)),
                 "vote_tie": bool(metrics.get("vote_tie", False)),
                 "tie_candidates": metrics.get("tie_candidates", []),
@@ -2626,6 +2792,7 @@ class TraceBeamSearchSystem:
                         "prompt_hash": self._hash(prompts[i]),
                         "trace": traces[i],
                         "answer": answers[i],
+                        "correct": agent_correct[i] if i < len(agent_correct) else 0,
                         "invalid": {"invalid": 0, "reasons": ["skipped_accuracy_only"]} if self._is_accuracy_only_mode() else self.rule_invalid_check(traces[i], answers[i]),
                     }
                     for i in range(len(self.agents))
@@ -2644,9 +2811,20 @@ class TraceBeamSearchSystem:
         if split_name.startswith("test") or split_name.startswith("val"):
             self.test_trace_history_logs.extend(predictions)
             self.flush_test_trace_history_logs()
+        individual_matrix = [list(r.get("individual_correct", [])) for r in rows]
+        flat_individual = [int(x) for row in individual_matrix for x in row]
+        per_agent_acc = []
+        agent_count = max((len(row) for row in individual_matrix), default=0)
+        for agent_id in range(agent_count):
+            vals = [int(row[agent_id]) for row in individual_matrix if agent_id < len(row)]
+            per_agent_acc.append(float(np.mean(vals)) if vals else 0.0)
         return {
             "size": len(rows),
+            "num_test_samples": len(rows),
             "vote_acc": float(np.mean([r.get("vote_correct", 0) for r in rows])) if rows else 0.0,
+            "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
+            "best_individual_acc": float(max(per_agent_acc)) if per_agent_acc else 0.0,
+            "per_agent_acc": per_agent_acc,
             "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
             "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
             "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
@@ -2700,6 +2878,14 @@ class TraceBeamSearchSystem:
     def flush_prompt_history(self):
         with open(os.path.join(self.cfg.out_dir, "prompt_history.json"), "w", encoding="utf-8") as f:
             json.dump(self.prompt_history, f, ensure_ascii=False, indent=2)
+
+    def flush_llm_call_logs(self):
+        self._flush_jsonl("llm_calls.jsonl", self.llm_call_logs)
+        self.llm_call_logs = []
+
+    def write_cost_summary(self):
+        with open(os.path.join(self.cfg.out_dir, "cost_summary.json"), "w", encoding="utf-8") as f:
+            json.dump(self.cost_summary, f, ensure_ascii=False, indent=2)
 
 
 TextualGradientRLSystem = TraceBeamSearchSystem

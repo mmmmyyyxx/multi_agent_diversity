@@ -1,30 +1,35 @@
 import argparse
-import csv
-import json
 import subprocess
 import sys
 import time
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List
 
+try:
+    from scripts.experiment_config import (
+        DEFAULT_DATASET_PATHS,
+        DEFAULT_EXPERIMENT_SETTINGS,
+        DEFAULT_SEED_BASELINES,
+        ExperimentSetting,
+        dataset_paths_from_args,
+        parse_csv_list,
+        select_settings,
+    )
+    from scripts.experiment_io import append_jsonl, read_json, read_jsonl, write_csv
+except ModuleNotFoundError:
+    from experiment_config import (
+        DEFAULT_DATASET_PATHS,
+        DEFAULT_EXPERIMENT_SETTINGS,
+        DEFAULT_SEED_BASELINES,
+        ExperimentSetting,
+        dataset_paths_from_args,
+        parse_csv_list,
+        select_settings,
+    )
+    from experiment_io import append_jsonl, read_json, read_jsonl, write_csv
 
-@dataclass
-class ExperimentSetting:
-    name: str
-    init_mode: str
-    baseline_only: bool
-    reward_mode: str = "guarded_diversity"
 
-
-SETTINGS = [
-    ExperimentSetting("shared_baseline", "shared", True, "guarded_diversity"),
-    ExperimentSetting("bank_baseline", "bank", True, "guarded_diversity"),
-    ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity"),
-    ExperimentSetting("bank_guarded_beam", "bank", False, "guarded_diversity"),
-]
-
-DEFAULT_SEED_BASELINES = 1
+SETTINGS = DEFAULT_EXPERIMENT_SETTINGS
 
 
 def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
@@ -42,7 +47,7 @@ def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
     }
     if not history_path.exists():
         return empty
-    hist = json.loads(history_path.read_text(encoding="utf-8"))
+    hist = read_json(history_path)
     if not isinstance(hist, list) or not hist:
         return empty
     last = hist[-1] if isinstance(hist[-1], dict) else {}
@@ -62,45 +67,12 @@ def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
     }
 
 
-def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
-    rows = []
-    if not path.exists():
-        return rows
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-                if isinstance(obj, dict):
-                    rows.append(obj)
-            except Exception:
-                continue
-    return rows
-
-
-def _write_jsonl_append(path: Path, record: Dict[str, Any]):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False) + "\n")
-
-
-def _write_csv(path: Path, rows: List[Dict[str, Any]]):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = sorted({k for r in rows for k in r.keys()}) if rows else ["dataset", "setting", "status"]
-    with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def _safe_mean(values: List[float]) -> float:
     return float(sum(values) / len(values)) if values else 0.0
 
 
 def _collect_run_log_metrics(run_dir: Path) -> Dict[str, Any]:
-    update_rows = _read_jsonl(run_dir / "update_logs.jsonl")
+    update_rows = read_jsonl(run_dir / "update_logs.jsonl")
     candidate_rows = [r for r in update_rows if isinstance(r, dict) and "reward" in r and r.get("event") != "beam_refresh"]
 
     def vals(key: str) -> List[float]:
@@ -118,30 +90,6 @@ def _collect_run_log_metrics(run_dir: Path) -> Dict[str, Any]:
         "candidate_invalid_rate": _safe_mean(vals("invalid_rate")),
         "solver_calls": _safe_mean(vals("solver_calls")),
         "solver_reuse_hit_rate": _safe_mean(vals("solver_reuse_hit_rate")),
-    }
-
-
-def _dataset_paths(args: argparse.Namespace, dataset: str) -> Dict[str, str]:
-    dataset = str(dataset).strip().lower()
-    if dataset == "mmlu":
-        return {
-            "task_type": "mmlu",
-            "train": args.mmlu_train_path,
-            "val": args.mmlu_val_path,
-            "test": args.mmlu_test_path,
-        }
-    if dataset == "bbh":
-        return {
-            "task_type": "bbh",
-            "train": args.bbh_train_path,
-            "val": args.bbh_val_path,
-            "test": args.bbh_test_path,
-        }
-    return {
-        "task_type": args.task_type,
-        "train": args.train_path,
-        "val": args.val_path,
-        "test": args.test_path,
     }
 
 
@@ -212,7 +160,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
 
 
 def run_one(dataset: str, setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
-    dataset_info = _dataset_paths(args, dataset)
+    dataset_info = dataset_paths_from_args(args, dataset)
     run_name = f"{setting.name}_seed{seed}" if args.multi_seed_names else setting.name
     run_dir = Path(args.out_root) / dataset / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -275,14 +223,7 @@ def run_one(dataset: str, setting: ExperimentSetting, seed: int, args: argparse.
 
 
 def _selected_settings(raw: str) -> List[ExperimentSetting]:
-    if not raw or raw == "all":
-        return list(SETTINGS)
-    wanted = {x.strip() for x in raw.split(",") if x.strip()}
-    selected = [setting for setting in SETTINGS if setting.name in wanted]
-    missing = wanted - {setting.name for setting in selected}
-    if missing:
-        raise ValueError(f"Unknown run_settings: {sorted(missing)}")
-    return selected
+    return select_settings(raw, SETTINGS)
 
 
 def main():
@@ -299,12 +240,12 @@ def main():
     parser.add_argument("--train_path", type=str, default="mmlu_train.jsonl")
     parser.add_argument("--val_path", type=str, default="")
     parser.add_argument("--test_path", type=str, default="mmlu_test.jsonl")
-    parser.add_argument("--mmlu_train_path", type=str, default="mmlu_train.jsonl")
-    parser.add_argument("--mmlu_val_path", type=str, default="mmlu_val.jsonl")
-    parser.add_argument("--mmlu_test_path", type=str, default="mmlu_test.jsonl")
-    parser.add_argument("--bbh_train_path", type=str, default="bbh_train.jsonl")
-    parser.add_argument("--bbh_val_path", type=str, default="bbh_val.jsonl")
-    parser.add_argument("--bbh_test_path", type=str, default="bbh_test.jsonl")
+    parser.add_argument("--mmlu_train_path", type=str, default=DEFAULT_DATASET_PATHS["mmlu"].train)
+    parser.add_argument("--mmlu_val_path", type=str, default=DEFAULT_DATASET_PATHS["mmlu"].val)
+    parser.add_argument("--mmlu_test_path", type=str, default=DEFAULT_DATASET_PATHS["mmlu"].test)
+    parser.add_argument("--bbh_train_path", type=str, default=DEFAULT_DATASET_PATHS["bbh"].train)
+    parser.add_argument("--bbh_val_path", type=str, default=DEFAULT_DATASET_PATHS["bbh"].val)
+    parser.add_argument("--bbh_test_path", type=str, default=DEFAULT_DATASET_PATHS["bbh"].test)
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
@@ -396,8 +337,8 @@ def main():
     runs_csv = out_root / "experiment_runs.csv"
     runs_jsonl.write_text("", encoding="utf-8")
 
-    seeds = [int(x.strip()) for x in str(args.seeds).split(",") if x.strip()] or [42]
-    datasets = [x.strip().lower() for x in str(args.datasets).split(",") if x.strip()]
+    seeds = [int(x) for x in parse_csv_list(args.seeds)] or [42]
+    datasets = [x.lower() for x in parse_csv_list(args.datasets)]
     settings = _selected_settings(args.run_settings)
 
     rows = []
@@ -407,8 +348,8 @@ def main():
             for seed in setting_seeds:
                 row = run_one(dataset, setting, seed, args)
                 rows.append(row)
-                _write_jsonl_append(runs_jsonl, row)
-                _write_csv(runs_csv, rows)
+                append_jsonl(runs_jsonl, row)
+                write_csv(runs_csv, rows, empty_fieldnames=["dataset", "setting", "status"])
                 if row["status"] != "ok":
                     raise SystemExit(row["returncode"])
     print(f"\n[DONE] Wrote {runs_jsonl} and {runs_csv}")

@@ -378,6 +378,8 @@ validation score = vote_acc + 0.2 * mean_embedding_diversity - 0.1 * mean_invali
 - `shared_guarded_beam`
 - `bank_guarded_beam`
 
+默认 setting、数据集默认路径和 setting 解析逻辑集中在 `scripts/experiment_config.py`，避免 runner、analyzer 和测试各自硬编码不同协议。
+
 推荐命令：
 
 ```bash
@@ -490,4 +492,57 @@ multi_dataset_diverse_rl/cli.py
 
 ```text
 multi_dataset_diverse_rl/config.py
+```
+
+## 23. Task-level accuracy export protocol
+
+The task-level comparison protocol keeps MARS and MAD fully separated. MAD does not read a MARS repository, does not import MARS code, and does not consume MARS prompts or configs. Instead, MAD owns a lightweight manifest:
+
+```text
+configs/task_level_comparison.yaml
+```
+
+The manifest maps a `task_id` to `benchmark`, `task_type`, `answer_format`, `train_path`, `val_path`, and `test_path`. The runner `scripts/run_task_level_accuracy.py` resolves task ids from that manifest, calls the existing `python -m multi_dataset_diverse_rl.cli`, and writes standardized MAD-only results under `runs_task_level_accuracy/`.
+
+The exported primary metric is:
+
+```text
+vote_acc
+```
+
+Because MAD uses multi-agent majority voting, the export also records `mean_individual_acc` and `best_individual_acc` so a later external comparison with single-prompt systems can inspect both team and per-agent accuracy.
+
+When `--answer_format` is set, MAD uses `multi_dataset_diverse_rl/answer_formats.py` instead of the default task parser. Supported formats are `option_letter`, `boolean`, `yes_no`, `valid_invalid`, `numeric`, and `free_text`. If `--answer_format` is empty, the existing `TaskSpec` parser selected by `--task_type` remains unchanged.
+
+Each run writes reporting-only LLM call statistics:
+
+```text
+llm_calls.jsonl
+cost_summary.json
+```
+
+The aggregate fields are `solver_calls`, `optimizer_calls`, `evaluator_calls`, `total_llm_calls`, `prompt_tokens`, `completion_tokens`, `total_tokens`, `estimated_cost`, and `latency_seconds`.
+
+These statistics are never used as constraints. They do not stop search, rank candidates, change reward, or normalize accuracy. The method remains accuracy-first, with cost available only for later analysis.
+
+Recommended task-level command:
+
+```bash
+python scripts/run_task_level_accuracy.py \
+  --manifest configs/task_level_comparison.yaml \
+  --benchmarks BBH,MMLU \
+  --settings shared_baseline,shared_guarded_beam,bank_guarded_beam \
+  --seeds 42 \
+  --dataset_format mars \
+  --out_root runs_task_level_accuracy
+```
+
+Later, compare externally with a separately produced MARS summary:
+
+```bash
+python scripts/compare_external_accuracy.py \
+  --mars_summary path/to/mars/summary.csv \
+  --mad_results runs_task_level_accuracy/accuracy_results.jsonl \
+  --out_csv comparison/mars_vs_mad_accuracy.csv \
+  --out_md comparison/mars_vs_mad_accuracy.md
 ```

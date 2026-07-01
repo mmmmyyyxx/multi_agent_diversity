@@ -262,6 +262,8 @@ python scripts/run_experiments.py --datasets mmlu,bbh --seeds 42,43,44
 - `shared_guarded_beam`
 - `bank_guarded_beam`
 
+这些默认实验设置集中定义在 `scripts/experiment_config.py`，`run_experiments.py`、`analyze_experiments.py` 和测试都复用同一份配置。
+
 默认会对所有 setting 使用 `--seeds` 中的每个 seed；如果想省成本，可以加 `--seed_baselines 0` 让 baseline 只跑第一个 seed。
 
 输出目录命名：
@@ -373,6 +375,55 @@ best_prompts.json
 ```bash
 python -m pytest
 ```
+
+## Task-level accuracy comparison
+
+MARS and multi_agent_diversity are run separately. This repository does not depend on the MARS codebase, MARS configs, or MARS prompts. For later comparison, MAD can run at the same `task_id` granularity and export a standardized `accuracy_results.jsonl`; an external script can then join that file with a separately produced MARS `summary.csv` using `task_id`.
+
+Task-level runs are indexed by this repository-owned manifest:
+
+```text
+configs/task_level_comparison.yaml
+```
+
+Run MAD task-level accuracy export:
+
+```bash
+python scripts/run_task_level_accuracy.py \
+  --manifest configs/task_level_comparison.yaml \
+  --benchmarks BBH,MMLU \
+  --settings shared_baseline,shared_guarded_beam,bank_guarded_beam \
+  --seeds 42 \
+  --dataset_format mars \
+  --out_root runs_task_level_accuracy
+```
+
+The main MAD comparison score is `vote_acc`, because MAD uses multi-agent majority voting. The export also includes `mean_individual_acc` and `best_individual_acc` so single-prompt methods can be compared more carefully.
+
+Each `accuracy_results.jsonl` row includes:
+
+```text
+task_id, benchmark, method_id, setting, seed, dataset_format,
+num_test_samples, vote_acc, mean_individual_acc, best_individual_acc,
+solver_calls, optimizer_calls, evaluator_calls, total_llm_calls,
+prompt_tokens, completion_tokens, total_tokens, estimated_cost, latency_seconds
+```
+
+Answer-format parsing is optional and only activates when `--answer_format` is provided. Supported formats are `option_letter`, `boolean`, `yes_no`, `valid_invalid`, `numeric`, and `free_text`. If `--answer_format` is empty, the existing `task_type` parser is used.
+
+Cost statistics are reported for transparency only. They are not used to constrain search, stop training, rank candidates, or normalize accuracy. There is no cost-matched mode and no call budget limit in this protocol.
+
+External comparison command:
+
+```bash
+python scripts/compare_external_accuracy.py \
+  --mars_summary path/to/mars/summary.csv \
+  --mad_results runs_task_level_accuracy/accuracy_results.jsonl \
+  --out_csv comparison/mars_vs_mad_accuracy.csv \
+  --out_md comparison/mars_vs_mad_accuracy.md
+```
+
+This helper reads only the two user-provided files. It does not assume a MARS repository layout.
 
 当前测试覆盖：
 

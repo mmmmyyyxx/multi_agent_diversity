@@ -11,6 +11,9 @@ DEFAULT_EVALUATOR_TEMPERATURE = 0.0
 class Config:
     task_type: str = "auto"
     dataset_format: str = "legacy"
+    comparison_task_id: str = ""
+    benchmark: str = ""
+    answer_format: str = ""
 
     agent_model: str = "deepseek-chat"
     optimizer_model: str = "deepseek-v4-flash"
@@ -109,6 +112,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--task_type", type=str, default="auto", choices=["auto", "gsm8k", "mmlu", "bbh"])
     parser.add_argument("--dataset_format", type=str, default="legacy", choices=["legacy", "mars"])
+    parser.add_argument("--comparison_task_id", type=str, default="")
+    parser.add_argument("--benchmark", type=str, default="")
+    parser.add_argument("--answer_format", type=str, default="", choices=["", "option_letter", "boolean", "yes_no", "valid_invalid", "numeric", "free_text"])
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
