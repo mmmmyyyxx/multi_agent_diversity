@@ -33,10 +33,14 @@ def test_accuracy_results_schema(tmp_path):
         setting="shared_guarded_beam",
         seed=42,
         dataset_format="mars",
+        split_protocol="paper_compatible_reused_file",
+        leakage_warning=True,
     )
     for key in ["task_id", "benchmark", "method_id", "vote_acc", "mean_individual_acc", "best_individual_acc", "num_test_samples"]:
         assert key in row
     assert row["method_id"] == "mad_shared_guarded_beam"
+    assert row["split_protocol"] == "paper_compatible_reused_file"
+    assert row["leakage_warning"] is True
     assert set(row).issuperset(set(ACCURACY_RESULT_COLUMNS))
 
 
@@ -60,3 +64,25 @@ def test_external_comparison_rows_join_on_task_id():
     assert len(rows) == 1
     assert round(rows[0]["delta_vote_acc_vs_mars"], 6) == 0.1
     assert "Cost statistics are reported only" in rows[0]["fairness_note"]
+
+
+def test_external_comparison_accepts_common_mars_aliases():
+    rows = build_comparison_rows(
+        [{"dataset": "marketing", "model": "mars_official", "acc": "0.25", "group": "MMLU"}],
+        [
+            {
+                "task_id": "marketing",
+                "benchmark": "MMLU",
+                "method_id": "mad_bank_guarded_beam",
+                "setting": "bank_guarded_beam",
+                "seed": 42,
+                "vote_acc": 0.5,
+                "mean_individual_acc": 0.4,
+                "best_individual_acc": 0.6,
+            }
+        ],
+    )
+    assert len(rows) == 1
+    assert rows[0]["mars_method_id"] == "mars_official"
+    assert rows[0]["mars_accuracy"] == 0.25
+    assert rows[0]["benchmark"] == "MMLU"

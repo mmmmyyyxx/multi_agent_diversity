@@ -31,6 +31,22 @@ tasks:
     val_path: Dataset_format/BBH/sports_understanding.csv
     test_path: Dataset_format/BBH/sports_understanding.csv
 
+  disambiguation_qa:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: Dataset_format/BBH/disambiguation_qa.csv
+    val_path: Dataset_format/BBH/disambiguation_qa.csv
+    test_path: Dataset_format/BBH/disambiguation_qa.csv
+
+  ruin_names:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: Dataset_format/BBH/ruin_names.csv
+    val_path: Dataset_format/BBH/ruin_names.csv
+    test_path: Dataset_format/BBH/ruin_names.csv
+
   marketing:
     benchmark: MMLU
     task_type: mmlu
@@ -46,3 +62,35 @@ tasks:
     train_path: Dataset_format/MMLU/college_biology_test.csv
     val_path: Dataset_format/MMLU/college_biology_test.csv
     test_path: Dataset_format/MMLU/college_biology_test.csv
+
+  college_medicine:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/college_medicine_test.csv
+    val_path: Dataset_format/MMLU/college_medicine_test.csv
+    test_path: Dataset_format/MMLU/college_medicine_test.csv
+
+  electrical_engineering:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/electrical_engineering_test.csv
+    val_path: Dataset_format/MMLU/electrical_engineering_test.csv
+    test_path: Dataset_format/MMLU/electrical_engineering_test.csv
+
+  high_school_world_history:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/high_school_world_history_test.csv
+    val_path: Dataset_format/MMLU/high_school_world_history_test.csv
+    test_path: Dataset_format/MMLU/high_school_world_history_test.csv
+
+  human_aging:
+    benchmark: MMLU
+    task_type: mmlu
+    answer_format: option_letter
+    train_path: Dataset_format/MMLU/human_aging_test.csv
+    val_path: Dataset_format/MMLU/human_aging_test.csv
+    test_path: Dataset_format/MMLU/human_aging_test.csv

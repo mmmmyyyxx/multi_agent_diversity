@@ -504,6 +504,10 @@ configs/task_level_comparison.yaml
 
 The manifest maps a `task_id` to `benchmark`, `task_type`, `answer_format`, `train_path`, `val_path`, and `test_path`. The runner `scripts/run_task_level_accuracy.py` resolves task ids from that manifest, calls the existing `python -m multi_dataset_diverse_rl.cli`, and writes standardized MAD-only results under `runs_task_level_accuracy/`.
 
+The bundled manifest covers the local comparison subset available in `Dataset_format/`: 6 BBH tasks and 6 MMLU subjects. A full MARS comparison requires the manifest to cover exactly the MARS tasks being reported; otherwise the correct claim is subset comparison.
+
+In the current manifest, each task's train/val/test paths point to the same CSV. This is a paper-compatible reused-file setting, not a strict no-leakage split. Result rows therefore carry `split_protocol=paper_compatible_reused_file` and `leakage_warning=true`.
+
 The exported primary metric is:
 
 ```text
@@ -511,6 +515,8 @@ vote_acc
 ```
 
 Because MAD uses multi-agent majority voting, the export also records `mean_individual_acc` and `best_individual_acc` so a later external comparison with single-prompt systems can inspect both team and per-agent accuracy.
+
+For formal tables, report at least four accuracy columns: MARS accuracy, MAD vote accuracy, MAD mean agent accuracy, and MAD best agent accuracy.
 
 When `--answer_format` is set, MAD uses `multi_dataset_diverse_rl/answer_formats.py` instead of the default task parser. Supported formats are `option_letter`, `boolean`, `yes_no`, `valid_invalid`, `numeric`, and `free_text`. If `--answer_format` is empty, the existing `TaskSpec` parser selected by `--task_type` remains unchanged.
 

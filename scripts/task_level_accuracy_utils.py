@@ -14,6 +14,8 @@ ACCURACY_RESULT_COLUMNS = [
     "setting",
     "seed",
     "dataset_format",
+    "split_protocol",
+    "leakage_warning",
     "num_test_samples",
     "vote_acc",
     "mean_individual_acc",
@@ -48,6 +50,8 @@ def build_accuracy_result_row(
     setting: str,
     seed: int,
     dataset_format: str,
+    split_protocol: str = "",
+    leakage_warning: bool = False,
 ) -> Dict[str, Any]:
     history = read_json(run_dir / "history.json") or []
     test = _latest_test_metrics(history)
@@ -59,6 +63,8 @@ def build_accuracy_result_row(
         "setting": setting,
         "seed": int(seed),
         "dataset_format": dataset_format,
+        "split_protocol": split_protocol,
+        "leakage_warning": bool(leakage_warning),
         "num_test_samples": int(test.get("num_test_samples", test.get("size", 0)) or 0),
         "vote_acc": float(test.get("vote_acc", 0.0) or 0.0),
         "mean_individual_acc": float(test.get("mean_individual_acc", 0.0) or 0.0),

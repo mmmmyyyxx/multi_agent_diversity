@@ -386,6 +386,10 @@ Task-level runs are indexed by this repository-owned manifest:
 configs/task_level_comparison.yaml
 ```
 
+The bundled manifest currently covers the local comparison subset available in `Dataset_format/`: 6 BBH tasks and 6 MMLU subjects. If your MARS table contains a different or larger task set, add matching entries before calling it a full comparison; otherwise report it as a subset comparison.
+
+The current manifest reuses the same CSV as `train_path`, `val_path`, and `test_path` for each task. This is a paper-compatible setting for matching task-level MARS-style runs, not a strict no-leakage split. Exported rows include `split_protocol=paper_compatible_reused_file` and `leakage_warning=true` when this is the case.
+
 Run MAD task-level accuracy export:
 
 ```bash
@@ -400,11 +404,14 @@ python scripts/run_task_level_accuracy.py \
 
 The main MAD comparison score is `vote_acc`, because MAD uses multi-agent majority voting. The export also includes `mean_individual_acc` and `best_individual_acc` so single-prompt methods can be compared more carefully.
 
+Recommended paper table columns are `MARS Acc`, `MAD Vote Acc`, `MAD Mean Agent Acc`, and `MAD Best Agent Acc`. Avoid presenting only MAD vote accuracy when comparing against a single-prompt MARS result.
+
 Each `accuracy_results.jsonl` row includes:
 
 ```text
 task_id, benchmark, method_id, setting, seed, dataset_format,
-num_test_samples, vote_acc, mean_individual_acc, best_individual_acc,
+split_protocol, leakage_warning, num_test_samples,
+vote_acc, mean_individual_acc, best_individual_acc,
 solver_calls, optimizer_calls, evaluator_calls, total_llm_calls,
 prompt_tokens, completion_tokens, total_tokens, estimated_cost, latency_seconds
 ```
@@ -424,6 +431,7 @@ python scripts/compare_external_accuracy.py \
 ```
 
 This helper reads only the two user-provided files. It does not assume a MARS repository layout.
+It accepts common MARS summary aliases such as `task_id`/`task`/`task_name`/`dataset`, `accuracy`/`acc`, and `method_id`/`method`/`model`.
 
 当前测试覆盖：
 

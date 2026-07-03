@@ -135,6 +135,13 @@ def run_one(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: a
     return row
 
 
+def _task_split_protocol(task: ComparisonTask) -> Dict[str, Any]:
+    paths = {str(task.train_path), str(task.val_path), str(task.test_path)}
+    if len(paths) == 1:
+        return {"split_protocol": "paper_compatible_reused_file", "leakage_warning": True}
+    return {"split_protocol": "task_manifest_split", "leakage_warning": False}
+
+
 def _mean(values: List[float]) -> float:
     return float(statistics.mean(values)) if values else 0.0
 
@@ -265,6 +272,7 @@ def main():
                     setting=setting.name,
                     seed=seed,
                     dataset_format=args.dataset_format,
+                    **_task_split_protocol(task),
                 )
                 accuracy_rows.append(accuracy_row)
                 append_jsonl(accuracy_jsonl, accuracy_row)
