@@ -109,6 +109,12 @@ class TraceBeamSearchSystem:
     def _is_guarded_reward_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
 
+    def _is_coverage_rescue_diversity_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "coverage_rescue_diversity"
+
+    def _uses_baseline_candidate_metrics(self) -> bool:
+        return self._is_guarded_reward_mode() or self._is_coverage_rescue_diversity_mode()
+
     def _empty_cost_summary(self) -> Dict[str, Any]:
         return {
             "solver_calls": 0,
@@ -958,6 +964,128 @@ class TraceBeamSearchSystem:
             question_hash=question_hash,
         )
 
+    def _rollout_any_correct(self, rollout: Dict[str, Any]) -> int:
+        return int(any(int(x) for x in rollout.get("individual_correct", [])))
+
+    def _safe_agent_correct(self, rollout: Dict[str, Any], agent_id: int) -> int:
+        individual = list(rollout.get("individual_correct", []))
+        return int(individual[agent_id]) if 0 <= int(agent_id) < len(individual) else 0
+
+    def _target_trace_novelty(self, traces: List[str], target_agent_id: int) -> float:
+        try:
+            target_agent_id = int(target_agent_id)
+            if target_agent_id < 0 or target_agent_id >= len(traces):
+                return 0.0
+            target = self._encode_trace_document(str(traces[target_agent_id]))
+            peers = [
+                self._encode_trace_document(str(trace))
+                for i, trace in enumerate(traces)
+                if i != target_agent_id and str(trace or "").strip()
+            ]
+            sims = [self._vector_cosine_similarity(target, peer) for peer in peers if peer]
+            if not target or not sims:
+                return 0.0
+            return self._clip01(1.0 - float(np.mean([max(0.0, sim) for sim in sims])))
+        except Exception:
+            return 0.0
+
+    def _trace_diversity_for_indices(self, traces: List[str], indices: List[int]) -> float:
+        try:
+            embeddings = [self._encode_trace_document(str(traces[i])) for i in indices if 0 <= i < len(traces)]
+            embeddings = [vec for vec in embeddings if vec]
+            if len(embeddings) < 2:
+                return 0.0
+            diversities = []
+            for i in range(len(embeddings)):
+                for j in range(i + 1, len(embeddings)):
+                    diversities.append(1.0 - max(0.0, self._vector_cosine_similarity(embeddings[i], embeddings[j])))
+            return self._clip01(float(np.mean(diversities)) if diversities else 0.0)
+        except Exception:
+            return 0.0
+
+    def _useful_trace_diversity(
+        self,
+        traces: List[str],
+        individual_correct: List[int],
+        invalid_flags: List[int],
+    ) -> float:
+        indices = [
+            i
+            for i, correct in enumerate(individual_correct)
+            if int(correct) > 0 and i < len(invalid_flags) and int(invalid_flags[i]) <= 0
+        ]
+        return self._trace_diversity_for_indices(traces, indices)
+
+    def _weighted_vote_with_diagnostics(
+        self,
+        answers: List[str],
+        invalid_flags: Optional[List[int]] = None,
+        per_agent_overlap: Optional[List[float]] = None,
+        question_hash: str = "",
+    ) -> Dict[str, Any]:
+        invalid_flags = list(invalid_flags or [0 for _ in answers])
+        per_agent_overlap = list(per_agent_overlap or [0.0 for _ in answers])
+        scores: Dict[str, float] = {}
+        agent_weights = []
+        for i, raw_answer in enumerate(answers):
+            answer = str(raw_answer or "").strip()
+            invalid = int(invalid_flags[i]) if i < len(invalid_flags) else 0
+            overlap = self._clip01(per_agent_overlap[i]) if i < len(per_agent_overlap) else 0.0
+            reliability = 1.0
+            validity = 0.0 if invalid else 1.0
+            independence = min(max(0.0, 1.0 - overlap), 0.5)
+            weight = float(reliability * validity * independence)
+            agent_weights.append(
+                {
+                    "agent_id": i,
+                    "answer": answer,
+                    "reliability": reliability,
+                    "validity": validity,
+                    "independence": independence,
+                    "weight": weight,
+                }
+            )
+            if answer and weight > 0.0:
+                scores[answer] = scores.get(answer, 0.0) + weight
+
+        fallback = False
+        if not scores:
+            fallback = True
+            majority = self._vote_with_diagnostics(answers, question_hash=question_hash)
+            return {
+                "weighted_vote_answer": str(majority.get("vote_answer", "")),
+                "weighted_vote_scores": {},
+                "weighted_vote_tie": bool(majority.get("vote_tie", False)),
+                "weighted_tie_candidates": list(majority.get("tie_candidates", [])),
+                "weighted_tie_break_method": str(majority.get("tie_break_method", "")),
+                "weighted_vote_agent_weights": agent_weights,
+                "weighted_vote_fallback": fallback,
+            }
+
+        max_score = max(scores.values())
+        tied = [answer for answer, score in scores.items() if abs(float(score) - float(max_score)) <= 1e-12]
+        tied_set = set(tied)
+        method = str(getattr(self.cfg, "vote_tie_break", "random") or "random").lower()
+        if len(tied) <= 1:
+            selected = tied[0]
+        elif method == "abstain":
+            selected = ""
+        elif method == "random":
+            seed_material = f"{int(getattr(self.cfg, 'seed', 0) or 0)}|{question_hash}|weighted_vote"
+            rng = random.Random(int(hashlib.sha1(seed_material.encode("utf-8")).hexdigest()[:12], 16))
+            selected = rng.choice(sorted(tied))
+        else:
+            selected = next((str(answer or "").strip() for answer in answers if str(answer or "").strip() in tied_set), sorted(tied)[0])
+        return {
+            "weighted_vote_answer": selected,
+            "weighted_vote_scores": {key: float(value) for key, value in scores.items()},
+            "weighted_vote_tie": len(tied) > 1,
+            "weighted_tie_candidates": sorted(tied),
+            "weighted_tie_break_method": method,
+            "weighted_vote_agent_weights": agent_weights,
+            "weighted_vote_fallback": fallback,
+        }
+
     def compute_rollout_metrics(
         self,
         traces: List[str],
@@ -966,19 +1094,10 @@ class TraceBeamSearchSystem:
         prompts: Optional[List[str]] = None,
         question_hash: str = "",
     ) -> Dict[str, Any]:
-        vote = self._vote_with_diagnostics(answers, question_hash=question_hash)
-        vote_answer = str(vote.get("vote_answer", ""))
+        majority_vote = self._vote_with_diagnostics(answers, question_hash=question_hash)
+        majority_vote_answer = str(majority_vote.get("vote_answer", ""))
         individual_correct = [int(self.task_spec.match_answer(a, gold)) for a in answers]
-        vote_correct = int(self.task_spec.match_answer(vote_answer, gold))
-        vote_fields = {
-            "vote_answer": vote_answer,
-            "vote_correct": vote_correct,
-            "individual_correct": individual_correct,
-            "vote_tie": bool(vote.get("vote_tie", False)),
-            "tie_candidates": list(vote.get("tie_candidates", [])),
-            "vote_counts": dict(vote.get("vote_counts", {})),
-            "tie_break_method": str(vote.get("tie_break_method", "")),
-        }
+        majority_vote_correct = int(self.task_spec.match_answer(majority_vote_answer, gold))
         if self._is_accuracy_only_mode():
             n = len(traces)
             active_prompts = prompts or self._active_prompt_list()
@@ -992,11 +1111,8 @@ class TraceBeamSearchSystem:
                 }
                 for i in range(n)
             ]
-            return {
-                **vote_fields,
-                "invalid_rate": 0.0,
-                "invalid_score": 1.0,
-                "invalid_flags": [0 for _ in traces],
+            invalids = [0 for _ in traces]
+            overlap = {
                 "mean_embedding_overlap": 0.0,
                 "embedding_diversity": 0.0,
                 "trace_embedding_model": "",
@@ -1008,10 +1124,61 @@ class TraceBeamSearchSystem:
                 "homogeneity_overlap_threshold": float(self.cfg.homogeneity_overlap_threshold),
                 "roles": roles,
             }
-        invalids = [self.rule_invalid_check(traces[i], answers[i] if i < len(answers) else "").get("invalid", 1) for i in range(len(traces))]
-        overlap = self.embedding_overlap_diagnostics(traces, prompts, invalids=invalids)
+        else:
+            invalids = [self.rule_invalid_check(traces[i], answers[i] if i < len(answers) else "").get("invalid", 1) for i in range(len(traces))]
+            overlap = self.embedding_overlap_diagnostics(traces, prompts, invalids=invalids)
+        weighted_vote = self._weighted_vote_with_diagnostics(
+            answers,
+            invalid_flags=[int(x) for x in invalids],
+            per_agent_overlap=list(overlap.get("per_agent_overlap", [])),
+            question_hash=question_hash,
+        )
+        weighted_vote_answer = str(weighted_vote.get("weighted_vote_answer", ""))
+        weighted_vote_correct = int(self.task_spec.match_answer(weighted_vote_answer, gold))
+        aggregation_mode = str(getattr(self.cfg, "aggregation_mode", "majority") or "majority").lower()
+        aggregation_fallback = ""
+        if aggregation_mode == "weighted_vote":
+            vote_answer = weighted_vote_answer
+            vote_correct = weighted_vote_correct
+            vote_tie = bool(weighted_vote.get("weighted_vote_tie", False))
+            tie_candidates = list(weighted_vote.get("weighted_tie_candidates", []))
+            tie_break_method = str(weighted_vote.get("weighted_tie_break_method", ""))
+        else:
+            if aggregation_mode == "verifier_select":
+                aggregation_fallback = "verifier_select_not_implemented_fallback_majority"
+            aggregation_mode = "majority" if aggregation_mode not in {"weighted_vote", "verifier_select"} else aggregation_mode
+            vote_answer = majority_vote_answer
+            vote_correct = majority_vote_correct
+            vote_tie = bool(majority_vote.get("vote_tie", False))
+            tie_candidates = list(majority_vote.get("tie_candidates", []))
+            tie_break_method = str(majority_vote.get("tie_break_method", ""))
+        any_correct = int(any(individual_correct))
+        useful_diversity = 0.0 if self._is_accuracy_only_mode() else self._useful_trace_diversity(traces, individual_correct, [int(x) for x in invalids])
         return {
-            **vote_fields,
+            "vote_answer": vote_answer,
+            "vote_correct": vote_correct,
+            "individual_correct": individual_correct,
+            "vote_tie": vote_tie,
+            "tie_candidates": tie_candidates,
+            "vote_counts": dict(majority_vote.get("vote_counts", {})),
+            "tie_break_method": tie_break_method,
+            "aggregation_mode": aggregation_mode,
+            "aggregation_fallback": aggregation_fallback,
+            "majority_vote_answer": majority_vote_answer,
+            "majority_vote_correct": majority_vote_correct,
+            "majority_vote_tie": bool(majority_vote.get("vote_tie", False)),
+            "majority_tie_candidates": list(majority_vote.get("tie_candidates", [])),
+            "majority_vote_counts": dict(majority_vote.get("vote_counts", {})),
+            "majority_tie_break_method": str(majority_vote.get("tie_break_method", "")),
+            "weighted_vote_answer": weighted_vote_answer,
+            "weighted_vote_correct": weighted_vote_correct,
+            "weighted_vote_tie": bool(weighted_vote.get("weighted_vote_tie", False)),
+            "weighted_tie_candidates": list(weighted_vote.get("weighted_tie_candidates", [])),
+            "weighted_vote_scores": dict(weighted_vote.get("weighted_vote_scores", {})),
+            "weighted_vote_agent_weights": list(weighted_vote.get("weighted_vote_agent_weights", [])),
+            "weighted_vote_fallback": bool(weighted_vote.get("weighted_vote_fallback", False)),
+            "any_correct": any_correct,
+            "useful_diversity": useful_diversity,
             "invalid_rate": float(np.mean(invalids)) if invalids else 1.0,
             "invalid_score": 1.0 - (float(np.mean(invalids)) if invalids else 1.0),
             "invalid_flags": [int(x) for x in invalids],
@@ -2066,6 +2233,65 @@ class TraceBeamSearchSystem:
             "accuracy_guard_passed": bool(guard_passed),
         }
 
+    def _candidate_reward_coverage_rescue_diversity(
+        self,
+        *,
+        baseline_team_accuracy: float,
+        candidate_team_accuracy: float,
+        baseline_target_accuracy: float,
+        candidate_target_accuracy: float,
+        baseline_invalid_rate: float,
+        candidate_invalid_rate: float,
+        rescue_rate: float,
+        coverage_delta: float,
+        useful_diversity: float,
+        local_validity: float,
+    ) -> Dict[str, Any]:
+        baseline_team_accuracy = self._clip01(baseline_team_accuracy)
+        candidate_team_accuracy = self._clip01(candidate_team_accuracy)
+        baseline_target_accuracy = self._clip01(baseline_target_accuracy)
+        candidate_target_accuracy = self._clip01(candidate_target_accuracy)
+        baseline_invalid_rate = self._clip01(baseline_invalid_rate)
+        candidate_invalid_rate = self._clip01(candidate_invalid_rate)
+        rescue_rate = self._clip01(rescue_rate)
+        useful_diversity = self._clip01(useful_diversity)
+        local_validity = self._clip01(local_validity)
+
+        vote_delta = candidate_team_accuracy - baseline_team_accuracy
+        invalid_delta = candidate_invalid_rate - baseline_invalid_rate
+        invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
+        target_guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(self.cfg.target_accuracy_guard_epsilon)
+
+        if not invalid_guard_passed:
+            reward = -1.0
+        elif not target_guard_passed:
+            reward = -0.5 + vote_delta
+        else:
+            reward = (
+                float(self.cfg.reward_weight_rescue) * rescue_rate
+                + float(self.cfg.reward_weight_coverage) * float(coverage_delta)
+                + float(self.cfg.reward_weight_useful_diversity) * useful_diversity
+                + float(self.cfg.reward_weight_vote_delta) * vote_delta
+                + float(self.cfg.reward_weight_local_validity) * local_validity
+            )
+        return {
+            "reward": float(reward),
+            "rescue_rate": float(rescue_rate),
+            "coverage_delta": float(coverage_delta),
+            "useful_diversity": float(useful_diversity),
+            "vote_delta": float(vote_delta),
+            "invalid_delta": float(invalid_delta),
+            "baseline_team_accuracy": float(baseline_team_accuracy),
+            "candidate_team_accuracy": float(candidate_team_accuracy),
+            "baseline_target_accuracy": float(baseline_target_accuracy),
+            "candidate_target_accuracy": float(candidate_target_accuracy),
+            "target_agent_accuracy": float(candidate_target_accuracy),
+            "baseline_invalid_rate": float(baseline_invalid_rate),
+            "candidate_invalid_rate": float(candidate_invalid_rate),
+            "invalid_guard_passed": bool(invalid_guard_passed),
+            "target_guard_passed": bool(target_guard_passed),
+        }
+
     async def _evaluate_candidate_prompt_accuracy_only(
         self,
         agent_id: int,
@@ -2087,17 +2313,27 @@ class TraceBeamSearchSystem:
                 eval_prompts,
                 source=f"candidate_accuracy_agent_{agent_id}",
             )
-            vote = self._vote_with_diagnostics(answers, question_hash=self._hash(q))
-            vote_answer = str(vote.get("vote_answer", ""))
+            rollout = self.compute_rollout_metrics(
+                traces,
+                answers,
+                gold,
+                prompts=eval_prompts,
+                question_hash=self._hash(q),
+            )
             target_answer = answers[agent_id] if agent_id < len(answers) else ""
             return {
-                "team_accuracy": int(self.task_spec.match_answer(vote_answer, gold)),
+                "team_accuracy": int(rollout.get("vote_correct", 0)),
                 "target_agent_accuracy": int(self.task_spec.match_answer(target_answer, gold)),
-                "vote_answer": vote_answer,
-                "vote_tie": bool(vote.get("vote_tie", False)),
-                "tie_candidates": list(vote.get("tie_candidates", [])),
-                "vote_counts": dict(vote.get("vote_counts", {})),
-                "tie_break_method": str(vote.get("tie_break_method", "")),
+                "vote_answer": str(rollout.get("vote_answer", "")),
+                "vote_tie": bool(rollout.get("vote_tie", False)),
+                "tie_candidates": list(rollout.get("tie_candidates", [])),
+                "vote_counts": dict(rollout.get("vote_counts", {})),
+                "tie_break_method": str(rollout.get("tie_break_method", "")),
+                "majority_vote_answer": str(rollout.get("majority_vote_answer", "")),
+                "weighted_vote_answer": str(rollout.get("weighted_vote_answer", "")),
+                "majority_vote_correct": int(rollout.get("majority_vote_correct", 0)),
+                "weighted_vote_correct": int(rollout.get("weighted_vote_correct", 0)),
+                "aggregation_mode": str(rollout.get("aggregation_mode", "majority")),
                 "target_answer": target_answer,
                 "target_trace_hash": self._hash(traces[agent_id]) if agent_id < len(traces) else "",
                 **reuse_stats,
@@ -2112,6 +2348,8 @@ class TraceBeamSearchSystem:
         solver_reuse_misses = int(sum(int(r.get("solver_reuse_misses", 0) or 0) for r in rows))
         solver_calls = int(sum(int(r.get("solver_calls", 0) or 0) for r in rows))
         solver_reuse_total = int(sum(int(r.get("solver_reuse_total", 0) or 0) for r in rows))
+        majority_team_accuracy = self._clip01(float(np.mean([float(r.get("majority_vote_correct", 0.0)) for r in rows])) if rows else 0.0)
+        weighted_team_accuracy = self._clip01(float(np.mean([float(r.get("weighted_vote_correct", 0.0)) for r in rows])) if rows else 0.0)
         return {
             "reward": team_accuracy,
             "embedding_diversity": 0.0,
@@ -2122,6 +2360,9 @@ class TraceBeamSearchSystem:
             "new_homogeneous_case_count": 0.0,
             "local_validity_mean": 0.0,
             "team_accuracy": team_accuracy,
+            "majority_team_accuracy": majority_team_accuracy,
+            "weighted_team_accuracy": weighted_team_accuracy,
+            "aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
             "target_agent_accuracy": target_agent_accuracy,
             "invalid_rate": 0.0,
             "invalid_score": 1.0,
@@ -2174,7 +2415,7 @@ class TraceBeamSearchSystem:
             eval_prompts[agent_id] = candidate_prompt
             baseline_rollout = {}
             baseline_reuse_stats: Dict[str, Any] = {}
-            if self._is_guarded_reward_mode():
+            if self._uses_baseline_candidate_metrics():
                 baseline_traces, baseline_answers, baseline_reuse_stats = await self.solve_with_prompts_reusing_records(
                     q,
                     baseline_prompts,
@@ -2212,14 +2453,37 @@ class TraceBeamSearchSystem:
                 "trace_hash": self._hash(traces[agent_id]),
                 **reuse_stats,
             }
-            if self._is_guarded_reward_mode():
+            if self._uses_baseline_candidate_metrics():
+                baseline_vote_correct = int(baseline_rollout.get("vote_correct", 0))
+                candidate_vote_correct = int(rollout.get("vote_correct", 0))
+                baseline_any_correct = self._rollout_any_correct(baseline_rollout)
+                candidate_any_correct = self._rollout_any_correct(rollout)
+                baseline_target_correct = self._safe_agent_correct(baseline_rollout, agent_id)
+                target_agent_correct = self._safe_agent_correct(rollout, agent_id)
+                target_trace_novelty = self._target_trace_novelty(traces, agent_id)
+                target_useful_diversity = (
+                    target_trace_novelty
+                    * float(target_agent_correct)
+                    * (1.0 - float(agent_invalid.get("invalid", 1)))
+                )
+                rescue = int((baseline_vote_correct == 0) and (target_agent_correct == 1))
                 row.update(
                     {
-                        "baseline_team_accuracy": float(baseline_rollout.get("vote_correct", 0.0)),
+                        "baseline_vote_correct": baseline_vote_correct,
+                        "candidate_vote_correct": candidate_vote_correct,
+                        "baseline_any_correct": baseline_any_correct,
+                        "candidate_any_correct": candidate_any_correct,
+                        "baseline_target_correct": baseline_target_correct,
+                        "target_agent_correct": target_agent_correct,
+                        "target_trace_novelty": target_trace_novelty,
+                        "target_useful_diversity": target_useful_diversity,
+                        "rescue": rescue,
+                        "rescue_useful_diversity": target_useful_diversity * float(rescue),
+                        "baseline_team_accuracy": float(baseline_vote_correct),
                         "baseline_embedding_diversity": float(baseline_rollout.get("embedding_diversity", 0.0)),
                         "baseline_invalid_rate": float(baseline_rollout.get("invalid_rate", 1.0)),
                         "baseline_mean_embedding_overlap": float(baseline_rollout.get("mean_embedding_overlap", 0.0)),
-                        "candidate_team_accuracy": float(rollout.get("vote_correct", 0.0)),
+                        "candidate_team_accuracy": float(candidate_vote_correct),
                         "candidate_embedding_diversity": float(rollout.get("embedding_diversity", 0.0)),
                         "candidate_invalid_rate": float(rollout.get("invalid_rate", 1.0)),
                         "candidate_mean_embedding_overlap": float(rollout.get("mean_embedding_overlap", 0.0)),
@@ -2247,27 +2511,58 @@ class TraceBeamSearchSystem:
         team_accuracy = self._clip01(float(np.mean([float(r.get("team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
         invalid_rate = self._clip01(float(np.mean([float(r.get("invalid", 1.0)) for r in rows])) if rows else 1.0)
         invalid_score = self._clip01(1.0 - invalid_rate)
-        guarded_metrics: Dict[str, Any] = {}
-        if self._is_guarded_reward_mode():
+        baseline_candidate_metrics: Dict[str, Any] = {}
+        if self._uses_baseline_candidate_metrics():
             baseline_team_accuracy = self._clip01(float(np.mean([float(r.get("baseline_team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
             candidate_team_accuracy = self._clip01(float(np.mean([float(r.get("candidate_team_accuracy", 0.0)) for r in rows])) if rows else team_accuracy)
             baseline_embedding_diversity = self._clip01(float(np.mean([float(r.get("baseline_embedding_diversity", 0.0)) for r in rows])) if rows else 0.0)
             candidate_embedding_diversity = self._clip01(float(np.mean([float(r.get("candidate_embedding_diversity", 0.0)) for r in rows])) if rows else diversity)
             baseline_invalid_rate = self._clip01(float(np.mean([float(r.get("baseline_invalid_rate", 1.0)) for r in rows])) if rows else 1.0)
             candidate_invalid_rate = self._clip01(float(np.mean([float(r.get("candidate_invalid_rate", 1.0)) for r in rows])) if rows else invalid_rate)
-            guarded_metrics = self._candidate_reward_guarded(
-                baseline_team_accuracy=baseline_team_accuracy,
-                candidate_team_accuracy=candidate_team_accuracy,
-                baseline_embedding_diversity=baseline_embedding_diversity,
-                candidate_embedding_diversity=candidate_embedding_diversity,
-                baseline_invalid_rate=baseline_invalid_rate,
-                candidate_invalid_rate=candidate_invalid_rate,
-                local_validity=local_validity,
-            )
-            guarded_metrics.update(
+            baseline_target_accuracy = self._clip01(float(np.mean([float(r.get("baseline_target_correct", 0.0)) for r in rows])) if rows else 0.0)
+            candidate_target_accuracy = self._clip01(float(np.mean([float(r.get("target_agent_correct", 0.0)) for r in rows])) if rows else 0.0)
+            baseline_oracle_acc = self._clip01(float(np.mean([float(r.get("baseline_any_correct", 0.0)) for r in rows])) if rows else 0.0)
+            candidate_oracle_acc = self._clip01(float(np.mean([float(r.get("candidate_any_correct", 0.0)) for r in rows])) if rows else 0.0)
+            coverage_delta = candidate_oracle_acc - baseline_oracle_acc
+            rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
+            useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+            rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+            if self._is_coverage_rescue_diversity_mode():
+                baseline_candidate_metrics = self._candidate_reward_coverage_rescue_diversity(
+                    baseline_team_accuracy=baseline_team_accuracy,
+                    candidate_team_accuracy=candidate_team_accuracy,
+                    baseline_target_accuracy=baseline_target_accuracy,
+                    candidate_target_accuracy=candidate_target_accuracy,
+                    baseline_invalid_rate=baseline_invalid_rate,
+                    candidate_invalid_rate=candidate_invalid_rate,
+                    rescue_rate=rescue_rate,
+                    coverage_delta=coverage_delta,
+                    useful_diversity=useful_diversity,
+                    local_validity=local_validity,
+                )
+            else:
+                baseline_candidate_metrics = self._candidate_reward_guarded(
+                    baseline_team_accuracy=baseline_team_accuracy,
+                    candidate_team_accuracy=candidate_team_accuracy,
+                    baseline_embedding_diversity=baseline_embedding_diversity,
+                    candidate_embedding_diversity=candidate_embedding_diversity,
+                    baseline_invalid_rate=baseline_invalid_rate,
+                    candidate_invalid_rate=candidate_invalid_rate,
+                    local_validity=local_validity,
+                )
+            baseline_candidate_metrics.update(
                 {
                     "baseline_team_accuracy": baseline_team_accuracy,
                     "candidate_team_accuracy": candidate_team_accuracy,
+                    "baseline_oracle_acc": baseline_oracle_acc,
+                    "candidate_oracle_acc": candidate_oracle_acc,
+                    "coverage_delta": float(coverage_delta),
+                    "baseline_target_accuracy": baseline_target_accuracy,
+                    "candidate_target_accuracy": candidate_target_accuracy,
+                    "target_agent_accuracy": candidate_target_accuracy,
+                    "rescue_rate": rescue_rate,
+                    "useful_diversity": useful_diversity,
+                    "rescue_useful_diversity": rescue_useful_diversity,
                     "baseline_embedding_diversity": baseline_embedding_diversity,
                     "candidate_embedding_diversity": candidate_embedding_diversity,
                     "baseline_invalid_rate": baseline_invalid_rate,
@@ -2276,7 +2571,7 @@ class TraceBeamSearchSystem:
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
             )
-            reward = float(guarded_metrics.get("reward", 0.0))
+            reward = float(baseline_candidate_metrics.get("reward", 0.0))
         else:
             reward = self._candidate_reward(diversity, local_validity, team_accuracy, invalid_score)
         solver_reuse_hits = int(sum(int(r.get("solver_reuse_hits", 0) or 0) for r in rows))
@@ -2315,7 +2610,7 @@ class TraceBeamSearchSystem:
             "actual_eval_batch_size": len(eval_batch),
             "num_eval_repeats": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
         }
-        result.update(guarded_metrics)
+        result.update(baseline_candidate_metrics)
         return result
 
     async def update_prompt_with_beam(
@@ -2474,6 +2769,15 @@ class TraceBeamSearchSystem:
                     "baseline_team_accuracy": float(metrics.get("baseline_team_accuracy", 0.0)),
                     "candidate_team_accuracy": float(metrics.get("candidate_team_accuracy", metrics.get("team_accuracy", 0.0))),
                     "accuracy_delta": float(metrics.get("accuracy_delta", 0.0)),
+                    "vote_delta": float(metrics.get("vote_delta", metrics.get("accuracy_delta", 0.0))),
+                    "baseline_oracle_acc": float(metrics.get("baseline_oracle_acc", 0.0)),
+                    "candidate_oracle_acc": float(metrics.get("candidate_oracle_acc", 0.0)),
+                    "coverage_delta": float(metrics.get("coverage_delta", 0.0)),
+                    "baseline_target_accuracy": float(metrics.get("baseline_target_accuracy", 0.0)),
+                    "candidate_target_accuracy": float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0))),
+                    "rescue_rate": float(metrics.get("rescue_rate", 0.0)),
+                    "useful_diversity": float(metrics.get("useful_diversity", 0.0)),
+                    "rescue_useful_diversity": float(metrics.get("rescue_useful_diversity", 0.0)),
                     "baseline_embedding_diversity": float(metrics.get("baseline_embedding_diversity", 0.0)),
                     "candidate_embedding_diversity": float(metrics.get("candidate_embedding_diversity", metrics.get("embedding_diversity", 0.0))),
                     "diversity_delta": float(metrics.get("diversity_delta", 0.0)),
@@ -2481,6 +2785,8 @@ class TraceBeamSearchSystem:
                     "candidate_invalid_rate": float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0))),
                     "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
+                    "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
+                    "target_guard_passed": bool(metrics.get("target_guard_passed", True)),
                     "solver_reuse_enabled": bool(metrics.get("solver_reuse_enabled", False)),
                     "solver_reuse_hits": int(metrics.get("solver_reuse_hits", 0)),
                     "solver_reuse_misses": int(metrics.get("solver_reuse_misses", 0)),
@@ -2615,6 +2921,15 @@ class TraceBeamSearchSystem:
             "local_validity_mean",
             "team_accuracy",
             "target_agent_accuracy",
+            "baseline_team_accuracy",
+            "candidate_team_accuracy",
+            "baseline_oracle_acc",
+            "candidate_oracle_acc",
+            "coverage_delta",
+            "rescue_rate",
+            "useful_diversity",
+            "rescue_useful_diversity",
+            "vote_delta",
             "invalid_rate",
             "invalid_score",
             "solver_reuse_hits",
@@ -2698,6 +3013,14 @@ class TraceBeamSearchSystem:
             "step": step_id,
             "vote_correct": int(metrics.get("vote_correct", 0)),
             "vote_answer": metrics.get("vote_answer", ""),
+            "majority_vote_correct": int(metrics.get("majority_vote_correct", metrics.get("vote_correct", 0))),
+            "majority_vote_answer": metrics.get("majority_vote_answer", metrics.get("vote_answer", "")),
+            "weighted_vote_correct": int(metrics.get("weighted_vote_correct", 0)),
+            "weighted_vote_answer": metrics.get("weighted_vote_answer", ""),
+            "aggregation_mode": metrics.get("aggregation_mode", "majority"),
+            "any_correct": int(metrics.get("any_correct", 0)),
+            "aggregation_gap_available": int(metrics.get("any_correct", 0)) - int(metrics.get("vote_correct", 0)),
+            "useful_diversity": float(metrics.get("useful_diversity", 0.0)),
             "vote_tie": bool(metrics.get("vote_tie", False)),
             "tie_candidates": metrics.get("tie_candidates", []),
             "vote_counts": metrics.get("vote_counts", {}),
@@ -2757,6 +3080,52 @@ class TraceBeamSearchSystem:
             epoch_id=epoch_id,
         )
 
+    def _summarize_rollout_rows(self, rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+        individual_matrix = [list(r.get("individual_correct", [])) for r in rows]
+        flat_individual = [int(x) for row in individual_matrix for x in row]
+        per_agent_acc = []
+        agent_count = max((len(row) for row in individual_matrix), default=0)
+        for agent_id in range(agent_count):
+            vals = [int(row[agent_id]) for row in individual_matrix if agent_id < len(row)]
+            per_agent_acc.append(float(np.mean(vals)) if vals else 0.0)
+        vote_acc = float(np.mean([r.get("vote_correct", 0) for r in rows])) if rows else 0.0
+        oracle_acc = float(np.mean([1 if any(int(x) for x in r.get("individual_correct", [])) else 0 for r in rows])) if rows else 0.0
+        rescue_available_rate = float(
+            np.mean([
+                1 if int(r.get("vote_correct", 0)) == 0 and any(int(x) for x in r.get("individual_correct", [])) else 0
+                for r in rows
+            ])
+        ) if rows else 0.0
+        correct_disagreement_rate = float(
+            np.mean([
+                1
+                if len({str(a).strip() for a in r.get("vote_counts", {}).keys() if str(a).strip()}) > 1
+                and any(int(x) for x in r.get("individual_correct", []))
+                else 0
+                for r in rows
+            ])
+        ) if rows else 0.0
+        return {
+            "size": len(rows),
+            "num_test_samples": len(rows),
+            "vote_acc": vote_acc,
+            "majority_vote_acc": float(np.mean([r.get("majority_vote_correct", r.get("vote_correct", 0)) for r in rows])) if rows else 0.0,
+            "weighted_vote_acc": float(np.mean([r.get("weighted_vote_correct", 0) for r in rows])) if rows else 0.0,
+            "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
+            "best_individual_acc": float(max(per_agent_acc)) if per_agent_acc else 0.0,
+            "per_agent_acc": per_agent_acc,
+            "oracle_acc": oracle_acc,
+            "aggregation_gap": float(oracle_acc - vote_acc),
+            "rescue_available_rate": rescue_available_rate,
+            "correct_disagreement_rate": correct_disagreement_rate,
+            "mean_useful_diversity": float(np.mean([r.get("useful_diversity", 0.0) for r in rows])) if rows else 0.0,
+            "aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
+            "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
+            "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
+            "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
+            "mean_invalid_rate": float(np.mean([r.get("invalid_rate", 0.0) for r in rows])) if rows else 0.0,
+        }
+
     async def evaluate_dataset(self, data: List[Dict[str, str]], split_name: str = "test") -> Dict[str, Any]:
         prompts = self._active_prompt_list()
 
@@ -2775,14 +3144,24 @@ class TraceBeamSearchSystem:
                 "question_hash": question_hash,
                 "question": q,
                 "vote_answer": metrics.get("vote_answer", ""),
+                "majority_vote_answer": metrics.get("majority_vote_answer", metrics.get("vote_answer", "")),
+                "weighted_vote_answer": metrics.get("weighted_vote_answer", ""),
                 "gold": gold,
                 "agent_answers": list(answers),
                 "agent_correct": agent_correct,
                 "vote_correct": int(metrics.get("vote_correct", 0)),
+                "majority_vote_correct": int(metrics.get("majority_vote_correct", metrics.get("vote_correct", 0))),
+                "weighted_vote_correct": int(metrics.get("weighted_vote_correct", 0)),
+                "aggregation_mode": metrics.get("aggregation_mode", "majority"),
+                "aggregation_fallback": metrics.get("aggregation_fallback", ""),
                 "vote_tie": bool(metrics.get("vote_tie", False)),
                 "tie_candidates": metrics.get("tie_candidates", []),
                 "vote_counts": metrics.get("vote_counts", {}),
                 "tie_break_method": metrics.get("tie_break_method", ""),
+                "weighted_vote_scores": metrics.get("weighted_vote_scores", {}),
+                "weighted_vote_agent_weights": metrics.get("weighted_vote_agent_weights", []),
+                "any_correct": int(metrics.get("any_correct", 0)),
+                "useful_diversity": float(metrics.get("useful_diversity", 0.0)),
                 "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
                 "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
                 "invalid_rate": float(metrics.get("invalid_rate", 0.0)),
@@ -2811,25 +3190,7 @@ class TraceBeamSearchSystem:
         if split_name.startswith("test") or split_name.startswith("val"):
             self.test_trace_history_logs.extend(predictions)
             self.flush_test_trace_history_logs()
-        individual_matrix = [list(r.get("individual_correct", [])) for r in rows]
-        flat_individual = [int(x) for row in individual_matrix for x in row]
-        per_agent_acc = []
-        agent_count = max((len(row) for row in individual_matrix), default=0)
-        for agent_id in range(agent_count):
-            vals = [int(row[agent_id]) for row in individual_matrix if agent_id < len(row)]
-            per_agent_acc.append(float(np.mean(vals)) if vals else 0.0)
-        return {
-            "size": len(rows),
-            "num_test_samples": len(rows),
-            "vote_acc": float(np.mean([r.get("vote_correct", 0) for r in rows])) if rows else 0.0,
-            "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
-            "best_individual_acc": float(max(per_agent_acc)) if per_agent_acc else 0.0,
-            "per_agent_acc": per_agent_acc,
-            "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
-            "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
-            "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
-            "mean_invalid_rate": float(np.mean([r.get("invalid_rate", 0.0) for r in rows])) if rows else 0.0,
-        }
+        return self._summarize_rollout_rows(rows)
 
     def save_state(self, name: str, extra: Optional[Dict[str, Any]] = None):
         payload = {

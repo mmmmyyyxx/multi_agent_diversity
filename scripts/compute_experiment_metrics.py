@@ -31,6 +31,11 @@ PUBLIC_METRIC_COLUMNS = [
     "latest_test_invalid_rate",
     "latest_test_vote_acc",
     "latest_test_vote_tie_rate",
+    "latest_test_oracle_acc",
+    "latest_test_aggregation_gap",
+    "latest_test_rescue_available_rate",
+    "latest_test_correct_disagreement_rate",
+    "latest_test_mean_useful_diversity",
     "reward",
     "embedding_diversity",
     "mean_embedding_overlap",
@@ -40,6 +45,12 @@ PUBLIC_METRIC_COLUMNS = [
     "new_homogeneous_case_count",
     "local_validity_mean",
     "team_accuracy",
+    "baseline_oracle_acc",
+    "candidate_oracle_acc",
+    "coverage_delta",
+    "rescue_rate",
+    "useful_diversity",
+    "rescue_useful_diversity",
     "invalid_rate",
     "invalid_score",
     "solver_reuse_hits",
@@ -97,6 +108,12 @@ def _collect_beam_update_metrics(update_records: List[Dict[str, Any]]) -> Dict[s
         "new_homogeneous_case_count": _safe_mean(vals("new_homogeneous_case_count")),
         "local_validity_mean": _safe_mean(vals("local_validity_mean")),
         "team_accuracy": _safe_mean(vals("team_accuracy")),
+        "baseline_oracle_acc": _safe_mean(vals("baseline_oracle_acc")),
+        "candidate_oracle_acc": _safe_mean(vals("candidate_oracle_acc")),
+        "coverage_delta": _safe_mean(vals("coverage_delta")),
+        "rescue_rate": _safe_mean(vals("rescue_rate")),
+        "useful_diversity": _safe_mean(vals("useful_diversity")),
+        "rescue_useful_diversity": _safe_mean(vals("rescue_useful_diversity")),
         "invalid_rate": _safe_mean(vals("invalid_rate")),
         "invalid_score": _safe_mean(vals("invalid_score")),
         "solver_reuse_hits": _safe_mean(vals("solver_reuse_hits")),
@@ -169,6 +186,11 @@ def analyze_run(run_dir: Path, mars_baselines: Dict[str, Dict[str, float]]) -> D
         "latest_test_invalid_rate": test.get("mean_invalid_rate"),
         "latest_test_vote_acc": test.get("vote_acc"),
         "latest_test_vote_tie_rate": vote_tie_rate,
+        "latest_test_oracle_acc": test.get("oracle_acc"),
+        "latest_test_aggregation_gap": test.get("aggregation_gap"),
+        "latest_test_rescue_available_rate": test.get("rescue_available_rate"),
+        "latest_test_correct_disagreement_rate": test.get("correct_disagreement_rate"),
+        "latest_test_mean_useful_diversity": test.get("mean_useful_diversity"),
         "vote_tie_rate": vote_tie_rate,
     }
     out.update(_collect_beam_update_metrics(update_logs))
@@ -240,7 +262,21 @@ def _collect_run_dirs(args: argparse.Namespace) -> List[Path]:
 
 
 def _write_group_summary(rows: List[Dict[str, Any]], path: Path):
-    metrics = ["latest_test_vote_acc", "latest_test_embedding_diversity", "latest_test_invalid_rate", "vote_tie_rate", "solver_calls", "solver_reuse_hit_rate"]
+    metrics = [
+        "latest_test_vote_acc",
+        "latest_test_oracle_acc",
+        "latest_test_aggregation_gap",
+        "latest_test_rescue_available_rate",
+        "latest_test_correct_disagreement_rate",
+        "latest_test_mean_useful_diversity",
+        "latest_test_embedding_diversity",
+        "latest_test_invalid_rate",
+        "vote_tie_rate",
+        "coverage_delta",
+        "rescue_rate",
+        "solver_calls",
+        "solver_reuse_hit_rate",
+    ]
     groups: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
     for row in rows:
         groups.setdefault((str(row.get("dataset", "")), str(row.get("setting", ""))), []).append(row)

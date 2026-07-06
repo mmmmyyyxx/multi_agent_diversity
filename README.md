@@ -433,6 +433,40 @@ python scripts/compare_external_accuracy.py \
 This helper reads only the two user-provided files. It does not assume a MARS repository layout.
 It accepts common MARS summary aliases such as `task_id`/`task`/`task_name`/`dataset`, `accuracy`/`acc`, and `method_id`/`method`/`model`.
 
+## Coverage-Rescue Diversity Reward
+
+`coverage_rescue_diversity` is an optional reward mode for making prompt evolution prefer useful diversity instead of raw disagreement. It rewards a candidate prompt when the target agent adds a valid, novel, correct reasoning path that covers a team blind spot, especially when the current team vote is wrong.
+
+Candidate evaluation compares the current active prompts against the candidate-replaced prompts on the same eval batch. It logs `baseline_oracle_acc`, `candidate_oracle_acc`, `coverage_delta`, `rescue_rate`, `useful_diversity`, `rescue_useful_diversity`, `baseline_target_accuracy`, `candidate_target_accuracy`, `invalid_guard_passed`, and `target_guard_passed`.
+
+Dataset evaluation now also reports:
+
+- `oracle_acc`: at least one agent is correct.
+- `aggregation_gap`: `oracle_acc - vote_acc`.
+- `rescue_available_rate`: vote is wrong but at least one agent is correct.
+- `correct_disagreement_rate`: agents disagree and at least one answer is correct.
+- `mean_useful_diversity`: trace diversity among valid, correct agents.
+
+Run example:
+
+```bash
+python -m multi_dataset_diverse_rl.cli \
+  --reward_mode coverage_rescue_diversity \
+  --candidate_eval_strategy fixed_pool \
+  --agents 5 \
+  --init_mode bank
+```
+
+Inference still defaults to majority voting. To try diversity-aware aggregation, use:
+
+```bash
+python -m multi_dataset_diverse_rl.cli \
+  --reward_mode coverage_rescue_diversity \
+  --aggregation_mode weighted_vote
+```
+
+`weighted_vote` keeps majority diagnostics in the logs while selecting the final `vote_answer` by validity and trace-independence weights. It is intended to expose minority correct paths; `majority_vote_acc` and `weighted_vote_acc` are both exported for comparison.
+
 当前测试覆盖：
 
 - MMLU 旧解析兼容。

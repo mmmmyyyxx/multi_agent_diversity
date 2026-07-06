@@ -552,3 +552,43 @@ python scripts/compare_external_accuracy.py \
   --out_csv comparison/mars_vs_mad_accuracy.csv \
   --out_md comparison/mars_vs_mad_accuracy.md
 ```
+
+## 24. Coverage-rescue diversity objective
+
+The optional `coverage_rescue_diversity` mode changes the prompt-search objective from raw team accuracy or raw embedding diversity to useful diversity. The target agent is rewarded when its candidate prompt creates a valid and novel reasoning trace that is correct and complements the current team.
+
+For each candidate eval sample, the system runs both:
+
+```text
+baseline_prompts = current active prompts
+candidate_prompts = current active prompts with target agent replaced by candidate prompt
+```
+
+It records whether the baseline vote is correct, whether the candidate vote is correct, whether any agent is correct, whether the target agent is correct, and how novel the target trace is relative to peer traces. A rescue case is:
+
+```text
+baseline vote wrong and target agent correct
+```
+
+The batch reward combines:
+
+```text
+rescue_rate
+coverage_delta = candidate_oracle_acc - baseline_oracle_acc
+useful_diversity = target_trace_novelty * target_correct * target_valid
+vote_delta
+local_validity
+```
+
+with guards:
+
+```text
+candidate_invalid_rate <= baseline_invalid_rate + invalid_guard_epsilon
+candidate_target_accuracy >= baseline_target_accuracy - target_accuracy_guard_epsilon
+```
+
+This means a candidate is not rewarded for being merely different. Diversity only helps when it is valid, locally executed, and tied to a correct complementary path.
+
+At dataset level, evaluation reports `oracle_acc`, `aggregation_gap`, `rescue_available_rate`, `correct_disagreement_rate`, and `mean_useful_diversity`. These metrics show whether minority correct paths exist and whether the aggregation rule is using them.
+
+The optional `--aggregation_mode weighted_vote` keeps majority-vote diagnostics but can select a final answer using validity and trace-independence weights. Majority voting remains the default for compatibility.

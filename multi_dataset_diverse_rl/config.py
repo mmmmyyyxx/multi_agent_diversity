@@ -51,12 +51,18 @@ class Config:
     invalid_repair_rate_threshold: float = 0.25
 
     reward_weight_diversity: float = 0.5
-    reward_weight_local_validity: float = 0.2
+    reward_weight_local_validity: float = 0.1
     reward_weight_team_accuracy: float = 0.1
     reward_weight_invalid_score: float = 0.2
     accuracy_guard_epsilon: float = 0.02
     reward_weight_div_delta: float = 0.3
     reward_weight_invalid_delta: float = 0.5
+    reward_weight_rescue: float = 0.4
+    reward_weight_coverage: float = 0.3
+    reward_weight_useful_diversity: float = 0.2
+    reward_weight_vote_delta: float = 0.05
+    target_accuracy_guard_epsilon: float = 0.05
+    invalid_guard_epsilon: float = 0.05
     use_baseline_relative_reward: bool = True
 
     diversity_metric: str = "trace_embedding"
@@ -98,6 +104,7 @@ class Config:
     evaluator_api_key_env: str = ""
     evaluator_base_url_env: str = ""
     vote_tie_break: str = "random"
+    aggregation_mode: str = "majority"
 
     def __post_init__(self):
         if not str(self.agent_model or "").strip():
@@ -144,7 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--baseline_only", type=int, default=0, choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default="guarded_diversity", choices=["embedding_local_acc_invalid", "accuracy_only", "guarded_diversity"])
+    parser.add_argument("--reward_mode", type=str, default="guarded_diversity", choices=["embedding_local_acc_invalid", "accuracy_only", "guarded_diversity", "coverage_rescue_diversity"])
     parser.add_argument("--beam_size", type=int, default=3)
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
@@ -156,12 +163,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--invalid_repair_rate_threshold", type=float, default=0.25)
 
     parser.add_argument("--reward_weight_diversity", type=float, default=0.5)
-    parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_local_validity", type=float, default=0.1)
     parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
     parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
     parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
     parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
+    parser.add_argument("--reward_weight_rescue", type=float, default=0.4)
+    parser.add_argument("--reward_weight_coverage", type=float, default=0.3)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_vote_delta", type=float, default=0.05)
+    parser.add_argument("--target_accuracy_guard_epsilon", type=float, default=0.05)
+    parser.add_argument("--invalid_guard_epsilon", type=float, default=0.05)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
@@ -201,4 +214,5 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--evaluator_api_key_env", type=str, default="")
     parser.add_argument("--evaluator_base_url_env", type=str, default="")
     parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
+    parser.add_argument("--aggregation_mode", type=str, default="majority", choices=["majority", "weighted_vote", "verifier_select"])
     return parser

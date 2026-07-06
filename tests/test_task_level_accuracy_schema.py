@@ -14,6 +14,11 @@ def test_accuracy_results_schema(tmp_path):
                     "test": {
                         "num_test_samples": 2,
                         "vote_acc": 0.5,
+                        "oracle_acc": 1.0,
+                        "aggregation_gap": 0.5,
+                        "rescue_available_rate": 0.5,
+                        "correct_disagreement_rate": 0.5,
+                        "mean_useful_diversity": 0.25,
                         "mean_individual_acc": 0.4,
                         "best_individual_acc": 0.6,
                     }
@@ -38,7 +43,11 @@ def test_accuracy_results_schema(tmp_path):
     )
     for key in ["task_id", "benchmark", "method_id", "vote_acc", "mean_individual_acc", "best_individual_acc", "num_test_samples"]:
         assert key in row
+    for key in ["oracle_acc", "aggregation_gap", "rescue_available_rate", "correct_disagreement_rate", "mean_useful_diversity"]:
+        assert key in row
     assert row["method_id"] == "mad_shared_guarded_beam"
+    assert row["oracle_acc"] == 1.0
+    assert row["aggregation_gap"] == 0.5
     assert row["split_protocol"] == "paper_compatible_reused_file"
     assert row["leakage_warning"] is True
     assert set(row).issuperset(set(ACCURACY_RESULT_COLUMNS))

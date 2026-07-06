@@ -195,8 +195,17 @@ def read_selected_prompts(path):
 
 def validation_score(epoch_record, reward_mode="embedding_local_acc_invalid"):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
-    if str(reward_mode).lower() == "accuracy_only":
+    mode = str(reward_mode).lower()
+    if mode == "accuracy_only":
         return float(val.get("vote_acc", 0.0) or 0.0)
+    if mode == "coverage_rescue_diversity":
+        return (
+            0.4 * float(val.get("vote_acc", 0.0) or 0.0)
+            + 0.3 * float(val.get("oracle_acc", 0.0) or 0.0)
+            + 0.2 * float(val.get("rescue_available_rate", 0.0) or 0.0)
+            + 0.1 * float(val.get("mean_useful_diversity", 0.0) or 0.0)
+            - 0.2 * float(val.get("mean_invalid_rate", 0.0) or 0.0)
+        )
     return (
         float(val.get("vote_acc", 0.0) or 0.0)
         + 0.2 * float(val.get("mean_embedding_diversity", 0.0) or 0.0)
@@ -205,8 +214,11 @@ def validation_score(epoch_record, reward_mode="embedding_local_acc_invalid"):
 
 
 def validation_metric_name(reward_mode):
-    if str(reward_mode).lower() == "accuracy_only":
+    mode = str(reward_mode).lower()
+    if mode == "accuracy_only":
         return "vote_acc"
+    if mode == "coverage_rescue_diversity":
+        return "vote+oracle+rescue+useful_div"
     return "vote_acc+embedding_div-invalid"
 
 

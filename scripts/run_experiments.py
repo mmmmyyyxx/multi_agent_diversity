@@ -120,6 +120,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--accuracy_guard_epsilon", str(args.accuracy_guard_epsilon),
             "--reward_weight_div_delta", str(args.reward_weight_div_delta),
             "--reward_weight_invalid_delta", str(args.reward_weight_invalid_delta),
+            "--reward_weight_rescue", str(args.reward_weight_rescue),
+            "--reward_weight_coverage", str(args.reward_weight_coverage),
+            "--reward_weight_useful_diversity", str(args.reward_weight_useful_diversity),
+            "--reward_weight_vote_delta", str(args.reward_weight_vote_delta),
+            "--target_accuracy_guard_epsilon", str(args.target_accuracy_guard_epsilon),
+            "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
             "--diversity_metric", args.diversity_metric,
             "--use_joint_trace_diversity_evaluator", str(int(args.use_joint_trace_diversity_evaluator)),
@@ -144,6 +150,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
             "--local_evaluator_batch_size", str(args.local_evaluator_batch_size),
             "--vote_tie_break", args.vote_tie_break,
+            "--aggregation_mode", args.aggregation_mode,
             "--agents", str(args.agents),
             "--test_size", str(args.test_size),
             "--eval_test_each_epoch", str(int(args.eval_test_each_epoch)),
@@ -251,7 +258,7 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
-    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "embedding_local_acc_invalid", "accuracy_only", "guarded_diversity"])
+    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "embedding_local_acc_invalid", "accuracy_only", "guarded_diversity", "coverage_rescue_diversity"])
     parser.add_argument("--beam_size", type=int, default=3)
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
@@ -262,12 +269,18 @@ def main():
     parser.add_argument("--hard_validity_cases_per_agent", type=int, default=2)
     parser.add_argument("--invalid_repair_rate_threshold", type=float, default=0.25)
     parser.add_argument("--reward_weight_diversity", type=float, default=0.5)
-    parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_local_validity", type=float, default=0.1)
     parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
     parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
     parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
     parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
+    parser.add_argument("--reward_weight_rescue", type=float, default=0.4)
+    parser.add_argument("--reward_weight_coverage", type=float, default=0.3)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_vote_delta", type=float, default=0.05)
+    parser.add_argument("--target_accuracy_guard_epsilon", type=float, default=0.05)
+    parser.add_argument("--invalid_guard_epsilon", type=float, default=0.05)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
@@ -309,6 +322,7 @@ def main():
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
     parser.add_argument("--local_evaluator_batch_size", type=int, default=5)
     parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
+    parser.add_argument("--aggregation_mode", type=str, default="majority", choices=["majority", "weighted_vote", "verifier_select"])
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--seed_baselines", type=int, default=DEFAULT_SEED_BASELINES, choices=[0, 1])
     parser.add_argument("--multi_seed_names", type=int, default=1, choices=[0, 1])

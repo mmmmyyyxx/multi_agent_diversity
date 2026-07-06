@@ -55,6 +55,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--accuracy_guard_epsilon", str(args.accuracy_guard_epsilon),
             "--reward_weight_div_delta", str(args.reward_weight_div_delta),
             "--reward_weight_invalid_delta", str(args.reward_weight_invalid_delta),
+            "--reward_weight_rescue", str(args.reward_weight_rescue),
+            "--reward_weight_coverage", str(args.reward_weight_coverage),
+            "--reward_weight_useful_diversity", str(args.reward_weight_useful_diversity),
+            "--reward_weight_vote_delta", str(args.reward_weight_vote_delta),
+            "--target_accuracy_guard_epsilon", str(args.target_accuracy_guard_epsilon),
+            "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
             "--candidate_eval_strategy", args.candidate_eval_strategy,
             "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
@@ -78,6 +84,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--llm_call_logging", str(args.llm_call_logging),
             "--llm_call_timeout", str(args.llm_call_timeout),
             "--vote_tie_break", args.vote_tie_break,
+            "--aggregation_mode", args.aggregation_mode,
             "--test_size", str(args.test_size),
             "--eval_test_each_epoch", str(args.eval_test_each_epoch),
             "--early_stopping_patience", str(args.early_stopping_patience),
@@ -157,7 +164,21 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
     summary_rows = []
     for (task_id, benchmark, setting), group in sorted(groups.items()):
         out: Dict[str, Any] = {"task_id": task_id, "benchmark": benchmark, "setting": setting, "n": len(group)}
-        for metric in ["vote_acc", "mean_individual_acc", "best_individual_acc", "total_llm_calls", "total_tokens", "estimated_cost"]:
+        for metric in [
+            "vote_acc",
+            "majority_vote_acc",
+            "weighted_vote_acc",
+            "mean_individual_acc",
+            "best_individual_acc",
+            "oracle_acc",
+            "aggregation_gap",
+            "rescue_available_rate",
+            "correct_disagreement_rate",
+            "mean_useful_diversity",
+            "total_llm_calls",
+            "total_tokens",
+            "estimated_cost",
+        ]:
             values = [float(row.get(metric, 0.0) or 0.0) for row in group]
             out[f"{metric}_mean"] = _mean(values)
             out[f"{metric}_std"] = _std(values)
@@ -167,7 +188,7 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
     if not summary_rows:
         lines.append("No completed runs.")
     else:
-        columns = ["task_id", "benchmark", "setting", "n", "vote_acc_mean", "vote_acc_std", "mean_individual_acc_mean", "best_individual_acc_mean"]
+        columns = ["task_id", "benchmark", "setting", "n", "vote_acc_mean", "oracle_acc_mean", "aggregation_gap_mean", "rescue_available_rate_mean", "mean_individual_acc_mean", "best_individual_acc_mean"]
         lines.extend(["| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"])
         for row in summary_rows:
             lines.append("| " + " | ".join(str(round(row.get(c, 0.0), 6)) if isinstance(row.get(c), float) else str(row.get(c, "")) for c in columns) + " |")
@@ -204,12 +225,18 @@ def main():
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
     parser.add_argument("--reward_weight_diversity", type=float, default=0.5)
-    parser.add_argument("--reward_weight_local_validity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_local_validity", type=float, default=0.1)
     parser.add_argument("--reward_weight_team_accuracy", type=float, default=0.1)
     parser.add_argument("--reward_weight_invalid_score", type=float, default=0.2)
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
     parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
     parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
+    parser.add_argument("--reward_weight_rescue", type=float, default=0.4)
+    parser.add_argument("--reward_weight_coverage", type=float, default=0.3)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=0.2)
+    parser.add_argument("--reward_weight_vote_delta", type=float, default=0.05)
+    parser.add_argument("--target_accuracy_guard_epsilon", type=float, default=0.05)
+    parser.add_argument("--invalid_guard_epsilon", type=float, default=0.05)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=20)
     parser.add_argument("--candidate_eval_strategy", type=str, default="fixed_pool", choices=["random", "fixed_pool", "stratified"])
@@ -234,6 +261,7 @@ def main():
     parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=120.0)
     parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
+    parser.add_argument("--aggregation_mode", type=str, default="majority", choices=["majority", "weighted_vote", "verifier_select"])
     args = parser.parse_args()
 
     args.workspace = str(Path(args.workspace).resolve())
