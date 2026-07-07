@@ -2244,32 +2244,34 @@ class TraceBeamSearchSystem:
                 )
                 if len(parsed) >= num_candidates:
                     break
-        while len(parsed) < num_candidates:
-            batch_idx = min(len(parsed), len(generation_batches) - 1)
-            fallback = self._structured_fallback_role(agent_id, len(parsed), mode="accuracy")
-            prompt = str(fallback["candidate_prompt"])
-            seen_signatures.add(self._prompt_signature(prompt))
-            parsed.append(
-                {
-                    "candidate_prompt": prompt,
-                    "role_name": str(fallback["role_name"]),
-                    "decision_procedure": list(fallback["decision_procedure"]),
-                    "when_to_use": str(fallback["when_to_use"]),
-                    "fallback_strategy": str(fallback["fallback_strategy"]),
-                    "accuracy_checks": list(fallback["accuracy_checks"]),
-                    "target_error_pattern": str(fallback.get("target_error_pattern", "")),
-                    "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
-                    "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
-                    "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
-                    "candidate_source": "accuracy_repair_fallback",
-                    "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
-                    "generation_case_ids": [
-                        str(c.get("case_id", ""))
-                        for c in generation_batches[batch_idx].get("cases", [])
-                        if isinstance(c, dict)
-                    ],
-                }
-            )
+        fallback_mode_cfg = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower()
+        if fallback_mode_cfg == "template":
+            while len(parsed) < num_candidates:
+                batch_idx = min(len(parsed), len(generation_batches) - 1)
+                fallback = self._structured_fallback_role(agent_id, len(parsed), mode="accuracy")
+                prompt = str(fallback["candidate_prompt"])
+                seen_signatures.add(self._prompt_signature(prompt))
+                parsed.append(
+                    {
+                        "candidate_prompt": prompt,
+                        "role_name": str(fallback["role_name"]),
+                        "decision_procedure": list(fallback["decision_procedure"]),
+                        "when_to_use": str(fallback["when_to_use"]),
+                        "fallback_strategy": str(fallback["fallback_strategy"]),
+                        "accuracy_checks": list(fallback["accuracy_checks"]),
+                        "target_error_pattern": str(fallback.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
+                        "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
+                        "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
+                        "candidate_source": "accuracy_repair_fallback",
+                        "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
+                        "generation_case_ids": [
+                            str(c.get("case_id", ""))
+                            for c in generation_batches[batch_idx].get("cases", [])
+                            if isinstance(c, dict)
+                        ],
+                    }
+                )
         return parsed[:num_candidates]
 
     async def propose_candidates(
@@ -2441,34 +2443,36 @@ class TraceBeamSearchSystem:
                 )
                 if len(parsed) >= num_candidates:
                     break
-        while len(parsed) < num_candidates:
-            batch_idx = min(len(parsed), len(generation_batches) - 1)
-            fallback_mode = "accuracy_repair" if has_target_error_batches else "diversity"
-            fallback = self._structured_fallback_role(agent_id, len(parsed), mode=fallback_mode)
-            prompt = str(fallback["candidate_prompt"])
-            seen_signatures.add(self._prompt_signature(prompt))
-            parsed.append(
-                {
-                    "candidate_prompt": prompt,
-                    "role_name": str(fallback["role_name"]),
-                    "decision_procedure": list(fallback["decision_procedure"]),
-                    "when_to_use": str(fallback["when_to_use"]),
-                    "fallback_strategy": str(fallback["fallback_strategy"]),
-                    "anti_overlap_rule": str(fallback["anti_overlap_rule"]),
-                    "validity_checks": list(fallback["validity_checks"]),
-                    "target_error_pattern": str(fallback.get("target_error_pattern", "")),
-                    "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
-                    "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
-                    "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
-                    "candidate_source": f"{fallback_mode}_fallback",
-                    "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
-                    "generation_case_ids": [
-                        str(c.get("case_id", ""))
-                        for c in generation_batches[batch_idx].get("cases", [])
-                        if isinstance(c, dict)
-                    ],
-                }
-            )
+        fallback_mode_cfg = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower()
+        if fallback_mode_cfg == "template":
+            while len(parsed) < num_candidates:
+                batch_idx = min(len(parsed), len(generation_batches) - 1)
+                fallback_mode = "accuracy_repair" if has_target_error_batches else "diversity"
+                fallback = self._structured_fallback_role(agent_id, len(parsed), mode=fallback_mode)
+                prompt = str(fallback["candidate_prompt"])
+                seen_signatures.add(self._prompt_signature(prompt))
+                parsed.append(
+                    {
+                        "candidate_prompt": prompt,
+                        "role_name": str(fallback["role_name"]),
+                        "decision_procedure": list(fallback["decision_procedure"]),
+                        "when_to_use": str(fallback["when_to_use"]),
+                        "fallback_strategy": str(fallback["fallback_strategy"]),
+                        "anti_overlap_rule": str(fallback["anti_overlap_rule"]),
+                        "validity_checks": list(fallback["validity_checks"]),
+                        "target_error_pattern": str(fallback.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
+                        "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
+                        "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
+                        "candidate_source": f"{fallback_mode}_fallback",
+                        "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
+                        "generation_case_ids": [
+                            str(c.get("case_id", ""))
+                            for c in generation_batches[batch_idx].get("cases", [])
+                            if isinstance(c, dict)
+                        ],
+                    }
+                )
         return parsed[:num_candidates]
 
     async def evaluate_joint_trace_diversity(self, traces: List[str], candidate_agent_id: int) -> Dict[str, Any]:
@@ -2530,6 +2534,98 @@ class TraceBeamSearchSystem:
             return 0.0
         return float(max(0.0, min(1.0, x)))
 
+    def _nonnegative(self, value: Any) -> float:
+        try:
+            x = float(value)
+        except Exception:
+            x = 0.0
+        if np.isnan(x):
+            return 0.0
+        return float(max(0.0, x))
+
+    def _reward_phase_state(self) -> Dict[str, float]:
+        agents = list(getattr(self, "agents", []) or [])
+        accepted_updates = sum(int(getattr(agent, "accept_count", 0) or 0) for agent in agents)
+        attempted_updates = sum(
+            int(getattr(agent, "accept_count", 0) or 0) + int(getattr(agent, "reject_count", 0) or 0)
+            for agent in agents
+        )
+        prompt_hashes = [self._hash(getattr(agent, "current_prompt", "")) for agent in agents]
+        unique_prompt_ratio = float(len(set(prompt_hashes)) / max(1, len(prompt_hashes)))
+        update_progress = min(
+            1.0,
+            float(accepted_updates) / max(1, int(getattr(self.cfg, "reward_diversity_warmup_updates", 10) or 10)),
+        )
+        phase_progress = max(unique_prompt_ratio, update_progress)
+        diversity_need = 1.0 - phase_progress
+        return {
+            "accepted_updates": float(accepted_updates),
+            "attempted_updates": float(attempted_updates),
+            "unique_prompt_ratio": float(unique_prompt_ratio),
+            "update_progress": float(update_progress),
+            "phase_progress": float(phase_progress),
+            "diversity_need": float(diversity_need),
+        }
+
+    def _effective_reward_weights(self) -> Dict[str, float]:
+        if str(getattr(self.cfg, "reward_schedule_mode", "static") or "static").lower() == "static":
+            state = self._reward_phase_state()
+            return {
+                "target_accuracy": 1.0,
+                "div_delta": self._nonnegative(getattr(self.cfg, "reward_weight_div_delta", 0.0)),
+                "coverage": self._nonnegative(getattr(self.cfg, "reward_weight_coverage", 0.0)),
+                "useful_diversity": self._nonnegative(getattr(self.cfg, "reward_weight_useful_diversity", 0.0)),
+                "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
+                "accuracy_guard_epsilon": self._nonnegative(getattr(self.cfg, "accuracy_guard_epsilon", 0.0)),
+                **state,
+            }
+
+        state = self._reward_phase_state()
+        need = float(state["diversity_need"])
+        progress = float(state["phase_progress"])
+        target_weight = (
+            float(getattr(self.cfg, "reward_weight_target_accuracy_late", 1.0)) * progress
+            + float(getattr(self.cfg, "reward_weight_target_accuracy_early", 0.9)) * need
+        )
+        div_weight = (
+            float(getattr(self.cfg, "reward_weight_div_delta_late", 0.2)) * progress
+            + float(getattr(self.cfg, "reward_weight_div_delta_early", 0.8)) * need
+        )
+        coverage_weight = (
+            float(getattr(self.cfg, "reward_weight_coverage_late", 0.3)) * progress
+            + float(getattr(self.cfg, "reward_weight_coverage_early", 0.4)) * need
+        )
+        useful_weight = (
+            float(getattr(self.cfg, "reward_weight_useful_diversity_late", 0.25)) * progress
+            + float(getattr(self.cfg, "reward_weight_useful_diversity_early", 0.5)) * need
+        )
+        guard_epsilon = (
+            float(getattr(self.cfg, "accuracy_guard_epsilon_late", 0.01)) * progress
+            + float(getattr(self.cfg, "accuracy_guard_epsilon_early", 0.03)) * need
+        )
+        return {
+            "target_accuracy": self._nonnegative(target_weight),
+            "div_delta": self._nonnegative(div_weight),
+            "coverage": self._nonnegative(coverage_weight),
+            "useful_diversity": self._nonnegative(useful_weight),
+            "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
+            "accuracy_guard_epsilon": self._nonnegative(guard_epsilon),
+            **state,
+        }
+
+    def _effective_reward_log_fields(self, weights: Dict[str, float]) -> Dict[str, float]:
+        return {
+            "effective_weight_target_accuracy": float(weights.get("target_accuracy", 0.0)),
+            "effective_weight_div_delta": float(weights.get("div_delta", 0.0)),
+            "effective_weight_coverage": float(weights.get("coverage", 0.0)),
+            "effective_weight_useful_diversity": float(weights.get("useful_diversity", 0.0)),
+            "effective_accuracy_guard_epsilon": float(weights.get("accuracy_guard_epsilon", 0.0)),
+            "reward_phase_progress": float(weights.get("phase_progress", 0.0)),
+            "reward_diversity_need": float(weights.get("diversity_need", 0.0)),
+            "reward_unique_prompt_ratio": float(weights.get("unique_prompt_ratio", 0.0)),
+            "reward_accepted_updates": float(weights.get("accepted_updates", 0.0)),
+        }
+
     def _candidate_reward_guarded(
         self,
         baseline_team_accuracy: float,
@@ -2554,16 +2650,17 @@ class TraceBeamSearchSystem:
         vote_delta = candidate_team_accuracy - baseline_team_accuracy
         div_delta = candidate_embedding_diversity - baseline_embedding_diversity
         invalid_delta = candidate_invalid_rate - baseline_invalid_rate
-        guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(self.cfg.accuracy_guard_epsilon)
+        weights = self._effective_reward_weights()
+        guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(weights["accuracy_guard_epsilon"])
         if not guard_passed:
-            reward = -1.0 + acc_delta - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
+            reward = -1.0 + acc_delta - float(weights["invalid_delta"]) * max(0.0, invalid_delta)
         else:
             reward = (
-                candidate_target_accuracy
-                + float(self.cfg.reward_weight_div_delta) * div_delta
-                - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
+                float(weights["target_accuracy"]) * candidate_target_accuracy
+                + float(weights["div_delta"]) * div_delta
+                - float(weights["invalid_delta"]) * max(0.0, invalid_delta)
             )
-        return {
+        result = {
             "reward": float(reward),
             "accuracy_delta": float(acc_delta),
             "vote_delta": float(vote_delta),
@@ -2574,6 +2671,8 @@ class TraceBeamSearchSystem:
             "candidate_target_accuracy": float(candidate_target_accuracy),
             "target_agent_accuracy": float(candidate_target_accuracy),
         }
+        result.update(self._effective_reward_log_fields(weights))
+        return result
 
     def _candidate_reward_coverage_useful_diversity(
         self,
@@ -2600,16 +2699,17 @@ class TraceBeamSearchSystem:
         vote_delta = candidate_team_accuracy - baseline_team_accuracy
         invalid_delta = candidate_invalid_rate - baseline_invalid_rate
         invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
+        weights = self._effective_reward_weights()
 
         if not invalid_guard_passed:
             reward = -1.0
         else:
             reward = (
-                candidate_target_accuracy
-                + float(self.cfg.reward_weight_coverage) * float(coverage_delta)
-                + float(self.cfg.reward_weight_useful_diversity) * useful_diversity
+                float(weights["target_accuracy"]) * candidate_target_accuracy
+                + float(weights["coverage"]) * float(coverage_delta)
+                + float(weights["useful_diversity"]) * useful_diversity
             )
-        return {
+        result = {
             "reward": float(reward),
             "rescue_rate": float(rescue_rate),
             "coverage_delta": float(coverage_delta),
@@ -2625,6 +2725,8 @@ class TraceBeamSearchSystem:
             "candidate_invalid_rate": float(candidate_invalid_rate),
             "invalid_guard_passed": bool(invalid_guard_passed),
         }
+        result.update(self._effective_reward_log_fields(weights))
+        return result
 
     def _candidate_reward_coverage_rescue_diversity(self, **kwargs) -> Dict[str, Any]:
         return self._candidate_reward_coverage_useful_diversity(**kwargs)
@@ -3036,6 +3138,11 @@ class TraceBeamSearchSystem:
             if str(c.get("generation_batch_type", "")) in {"homogeneous_overlap_repair", "high_overlap_cases", "mixed_window_cases", "random_window", "window_overlap_diagnosis"}
             and not bool(str(c.get("target_error_pattern", "")).strip())
         )
+        requested_optimizer_candidates = len(beam) * requested
+        num_optimizer_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "optimizer")
+        num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in str(c.get("candidate_source", "")))
+        fallback_enabled = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower() == "template"
+        optimizer_underfilled = num_optimizer_candidates < requested_optimizer_candidates
 
         evaluated = []
         peer_prompts = self._active_prompt_list()
@@ -3144,6 +3251,15 @@ class TraceBeamSearchSystem:
                     "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
+                    "effective_weight_target_accuracy": float(metrics.get("effective_weight_target_accuracy", 0.0)),
+                    "effective_weight_div_delta": float(metrics.get("effective_weight_div_delta", 0.0)),
+                    "effective_weight_coverage": float(metrics.get("effective_weight_coverage", 0.0)),
+                    "effective_weight_useful_diversity": float(metrics.get("effective_weight_useful_diversity", 0.0)),
+                    "effective_accuracy_guard_epsilon": float(metrics.get("effective_accuracy_guard_epsilon", 0.0)),
+                    "reward_phase_progress": float(metrics.get("reward_phase_progress", 0.0)),
+                    "reward_diversity_need": float(metrics.get("reward_diversity_need", 0.0)),
+                    "reward_unique_prompt_ratio": float(metrics.get("reward_unique_prompt_ratio", 0.0)),
+                    "reward_accepted_updates": float(metrics.get("reward_accepted_updates", 0.0)),
                     "solver_reuse_enabled": bool(metrics.get("solver_reuse_enabled", False)),
                     "solver_reuse_hits": int(metrics.get("solver_reuse_hits", 0)),
                     "solver_reuse_misses": int(metrics.get("solver_reuse_misses", 0)),
@@ -3166,6 +3282,12 @@ class TraceBeamSearchSystem:
                     "num_target_error_cases": int(num_target_error_cases),
                     "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
                     "num_diversity_candidates": int(num_diversity_candidates),
+                    "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+                    "fallback_enabled": bool(fallback_enabled),
+                    "optimizer_underfilled": bool(optimizer_underfilled),
+                    "requested_optimizer_candidates": int(requested_optimizer_candidates),
+                    "num_optimizer_candidates": int(num_optimizer_candidates),
+                    "num_fallback_candidates": int(num_fallback_candidates),
                     "num_eval_samples": int(metrics.get("num_eval_samples", 0)),
                     "candidate_eval_strategy": str(metrics.get("candidate_eval_strategy", getattr(self.cfg, "candidate_eval_strategy", "random"))),
                     "candidate_eval_pool_size": int(metrics.get("candidate_eval_pool_size", getattr(self.cfg, "candidate_eval_pool_size", 0))),
@@ -3185,6 +3307,12 @@ class TraceBeamSearchSystem:
             "num_target_error_cases": int(num_target_error_cases),
             "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
             "num_diversity_candidates": int(num_diversity_candidates),
+            "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+            "fallback_enabled": bool(fallback_enabled),
+            "optimizer_underfilled": bool(optimizer_underfilled),
+            "requested_optimizer_candidates": int(requested_optimizer_candidates),
+            "num_optimizer_candidates": int(num_optimizer_candidates),
+            "num_fallback_candidates": int(num_fallback_candidates),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
         }

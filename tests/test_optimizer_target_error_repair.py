@@ -137,7 +137,7 @@ def test_candidate_schema_keeps_accuracy_repair_fields():
 
 
 def test_accuracy_repair_fallback_used_when_optimizer_returns_too_few():
-    system = _system_without_init()
+    system = _system_without_init(Config(optimizer_fallback_mode="template"))
 
     async def fake_chat(**kwargs):
         return json.dumps({"candidates": []})

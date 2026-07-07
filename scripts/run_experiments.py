@@ -5,7 +5,12 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 try:
+    from multi_dataset_diverse_rl.config import Config
     from scripts.experiment_config import (
         DEFAULT_DATASET_PATHS,
         DEFAULT_EXPERIMENT_SETTINGS,
@@ -17,6 +22,7 @@ try:
     )
     from scripts.experiment_io import append_jsonl, read_json, read_jsonl, write_csv
 except ModuleNotFoundError:
+    from multi_dataset_diverse_rl.config import Config
     from experiment_config import (
         DEFAULT_DATASET_PATHS,
         DEFAULT_EXPERIMENT_SETTINGS,
@@ -120,6 +126,19 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_weight_useful_diversity", str(args.reward_weight_useful_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
+            "--reward_schedule_mode", args.reward_schedule_mode,
+            "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
+            "--reward_weight_div_delta_early", str(args.reward_weight_div_delta_early),
+            "--reward_weight_div_delta_late", str(args.reward_weight_div_delta_late),
+            "--reward_weight_coverage_early", str(args.reward_weight_coverage_early),
+            "--reward_weight_coverage_late", str(args.reward_weight_coverage_late),
+            "--reward_weight_useful_diversity_early", str(args.reward_weight_useful_diversity_early),
+            "--reward_weight_useful_diversity_late", str(args.reward_weight_useful_diversity_late),
+            "--reward_weight_target_accuracy_early", str(args.reward_weight_target_accuracy_early),
+            "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
+            "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
+            "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
+            "--optimizer_fallback_mode", args.optimizer_fallback_mode,
             "--diversity_metric", args.diversity_metric,
             "--use_joint_trace_diversity_evaluator", str(int(args.use_joint_trace_diversity_evaluator)),
             "--invalid_binary", str(int(args.invalid_binary)),
@@ -226,6 +245,7 @@ def _selected_settings(raw: str) -> List[ExperimentSetting]:
 
 def main():
     parser = argparse.ArgumentParser(description="Run shared/bank baselines and shared/bank guarded beam experiments.")
+    cli_defaults = Config()
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--out_root", type=str, default="runs_trace_beam")
@@ -259,13 +279,26 @@ def main():
     parser.add_argument("--random_window_cases_per_agent", type=int, default=2)
     parser.add_argument("--hard_validity_cases_per_agent", type=int, default=2)
     parser.add_argument("--invalid_repair_rate_threshold", type=float, default=0.25)
-    parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
-    parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
-    parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
-    parser.add_argument("--reward_weight_coverage", type=float, default=0.3)
-    parser.add_argument("--reward_weight_useful_diversity", type=float, default=0.2)
-    parser.add_argument("--invalid_guard_epsilon", type=float, default=0.05)
-    parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
+    parser.add_argument("--accuracy_guard_epsilon", type=float, default=cli_defaults.accuracy_guard_epsilon)
+    parser.add_argument("--reward_weight_div_delta", type=float, default=cli_defaults.reward_weight_div_delta)
+    parser.add_argument("--reward_weight_invalid_delta", type=float, default=cli_defaults.reward_weight_invalid_delta)
+    parser.add_argument("--reward_weight_coverage", type=float, default=cli_defaults.reward_weight_coverage)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=cli_defaults.reward_weight_useful_diversity)
+    parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
+    parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
+    parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
+    parser.add_argument("--reward_diversity_warmup_updates", type=int, default=cli_defaults.reward_diversity_warmup_updates)
+    parser.add_argument("--reward_weight_div_delta_early", type=float, default=cli_defaults.reward_weight_div_delta_early)
+    parser.add_argument("--reward_weight_div_delta_late", type=float, default=cli_defaults.reward_weight_div_delta_late)
+    parser.add_argument("--reward_weight_coverage_early", type=float, default=cli_defaults.reward_weight_coverage_early)
+    parser.add_argument("--reward_weight_coverage_late", type=float, default=cli_defaults.reward_weight_coverage_late)
+    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=cli_defaults.reward_weight_useful_diversity_early)
+    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=cli_defaults.reward_weight_useful_diversity_late)
+    parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=cli_defaults.reward_weight_target_accuracy_early)
+    parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=cli_defaults.reward_weight_target_accuracy_late)
+    parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
+    parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=cli_defaults.accuracy_guard_epsilon_late)
+    parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=1, choices=[0, 1])

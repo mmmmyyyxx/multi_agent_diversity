@@ -57,6 +57,19 @@ class Config:
     reward_weight_useful_diversity: float = 0.2
     invalid_guard_epsilon: float = 0.05
     use_baseline_relative_reward: bool = True
+    reward_schedule_mode: str = "phase_adaptive"
+    reward_diversity_warmup_updates: int = 10
+    reward_weight_div_delta_early: float = 0.8
+    reward_weight_div_delta_late: float = 0.2
+    reward_weight_coverage_early: float = 0.4
+    reward_weight_coverage_late: float = 0.3
+    reward_weight_useful_diversity_early: float = 0.5
+    reward_weight_useful_diversity_late: float = 0.25
+    reward_weight_target_accuracy_early: float = 0.9
+    reward_weight_target_accuracy_late: float = 1.0
+    accuracy_guard_epsilon_early: float = 0.03
+    accuracy_guard_epsilon_late: float = 0.01
+    optimizer_fallback_mode: str = "none"
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -161,6 +174,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_useful_diversity", type=float, default=defaults.reward_weight_useful_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=defaults.invalid_guard_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(defaults.use_baseline_relative_reward), choices=[0, 1])
+    parser.add_argument("--reward_schedule_mode", type=str, default=defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
+    parser.add_argument("--reward_diversity_warmup_updates", type=int, default=defaults.reward_diversity_warmup_updates)
+    parser.add_argument("--reward_weight_div_delta_early", type=float, default=defaults.reward_weight_div_delta_early)
+    parser.add_argument("--reward_weight_div_delta_late", type=float, default=defaults.reward_weight_div_delta_late)
+    parser.add_argument("--reward_weight_coverage_early", type=float, default=defaults.reward_weight_coverage_early)
+    parser.add_argument("--reward_weight_coverage_late", type=float, default=defaults.reward_weight_coverage_late)
+    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=defaults.reward_weight_useful_diversity_early)
+    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=defaults.reward_weight_useful_diversity_late)
+    parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=defaults.reward_weight_target_accuracy_early)
+    parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=defaults.reward_weight_target_accuracy_late)
+    parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=defaults.accuracy_guard_epsilon_early)
+    parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=defaults.accuracy_guard_epsilon_late)
+    parser.add_argument("--optimizer_fallback_mode", type=str, default=defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

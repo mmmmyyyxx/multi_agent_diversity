@@ -11,10 +11,12 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 try:
+    from multi_dataset_diverse_rl.config import Config
     from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from scripts.experiment_io import append_jsonl, write_csv, write_jsonl
     from scripts.task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 except ModuleNotFoundError:
+    from multi_dataset_diverse_rl.config import Config
     from experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from experiment_io import append_jsonl, write_csv, write_jsonl
     from task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
@@ -55,6 +57,19 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--reward_weight_useful_diversity", str(args.reward_weight_useful_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
+            "--reward_schedule_mode", args.reward_schedule_mode,
+            "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
+            "--reward_weight_div_delta_early", str(args.reward_weight_div_delta_early),
+            "--reward_weight_div_delta_late", str(args.reward_weight_div_delta_late),
+            "--reward_weight_coverage_early", str(args.reward_weight_coverage_early),
+            "--reward_weight_coverage_late", str(args.reward_weight_coverage_late),
+            "--reward_weight_useful_diversity_early", str(args.reward_weight_useful_diversity_early),
+            "--reward_weight_useful_diversity_late", str(args.reward_weight_useful_diversity_late),
+            "--reward_weight_target_accuracy_early", str(args.reward_weight_target_accuracy_early),
+            "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
+            "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
+            "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
+            "--optimizer_fallback_mode", args.optimizer_fallback_mode,
             "--candidate_eval_strategy", args.candidate_eval_strategy,
             "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
@@ -189,6 +204,7 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
 
 def main():
     parser = argparse.ArgumentParser(description="Run MAD at task_id granularity and export standardized accuracy results.")
+    cli_defaults = Config()
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--manifest", type=str, default="configs/task_level_comparison.yaml")
@@ -202,50 +218,63 @@ def main():
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
-    parser.add_argument("--agents", type=int, default=5)
-    parser.add_argument("--train_size", type=int, default=200)
-    parser.add_argument("--val_size", type=int, default=150)
-    parser.add_argument("--val_split_ratio", type=float, default=0.2)
-    parser.add_argument("--test_size", type=int, default=200)
-    parser.add_argument("--epochs", type=int, default=3)
-    parser.add_argument("--update_every", type=int, default=10)
-    parser.add_argument("--eval_test_each_epoch", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--early_stopping_patience", type=int, default=3)
-    parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
-    parser.add_argument("--shared_prompt", type=str, default="You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.")
-    parser.add_argument("--beam_size", type=int, default=3)
-    parser.add_argument("--num_candidates_per_parent", type=int, default=2)
-    parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--accuracy_guard_epsilon", type=float, default=0.02)
-    parser.add_argument("--reward_weight_div_delta", type=float, default=0.3)
-    parser.add_argument("--reward_weight_invalid_delta", type=float, default=0.5)
-    parser.add_argument("--reward_weight_coverage", type=float, default=0.3)
-    parser.add_argument("--reward_weight_useful_diversity", type=float, default=0.2)
-    parser.add_argument("--invalid_guard_epsilon", type=float, default=0.05)
-    parser.add_argument("--use_baseline_relative_reward", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=20)
-    parser.add_argument("--candidate_eval_strategy", type=str, default="fixed_pool", choices=["random", "fixed_pool", "stratified"])
-    parser.add_argument("--candidate_eval_pool_size", type=int, default=100)
-    parser.add_argument("--candidate_eval_repeats", type=int, default=1)
-    parser.add_argument("--candidate_eval_seed_offset", type=int, default=1000)
-    parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--train_rollout_concurrency", type=int, default=0)
-    parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
-    parser.add_argument("--max_tokens", type=int, default=1000)
-    parser.add_argument("--optimizer_max_tokens", type=int, default=1400)
-    parser.add_argument("--evaluator_max_tokens", type=int, default=1200)
-    parser.add_argument("--temperature", type=float, default=0.0)
-    parser.add_argument("--optimizer_temperature", type=float, default=0.5)
-    parser.add_argument("--evaluator_temperature", type=float, default=0.0)
-    parser.add_argument("--max_retries", type=int, default=5)
-    parser.add_argument("--retry_sleep", type=float, default=2.0)
-    parser.add_argument("--transient_retry_forever", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--max_transient_retries", type=int, default=0)
-    parser.add_argument("--max_retry_backoff", type=float, default=30.0)
-    parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--llm_call_timeout", type=float, default=120.0)
-    parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
-    parser.add_argument("--aggregation_mode", type=str, default="majority", choices=["majority", "weighted_vote", "verifier_select"])
+    parser.add_argument("--agents", type=int, default=cli_defaults.agents)
+    parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
+    parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)
+    parser.add_argument("--val_split_ratio", type=float, default=cli_defaults.val_split_ratio)
+    parser.add_argument("--test_size", type=int, default=cli_defaults.test_size)
+    parser.add_argument("--epochs", type=int, default=cli_defaults.epochs)
+    parser.add_argument("--update_every", type=int, default=cli_defaults.update_every)
+    parser.add_argument("--eval_test_each_epoch", type=int, default=int(cli_defaults.eval_test_each_epoch), choices=[0, 1])
+    parser.add_argument("--early_stopping_patience", type=int, default=cli_defaults.early_stopping_patience)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=cli_defaults.early_stopping_min_delta)
+    parser.add_argument("--shared_prompt", type=str, default=cli_defaults.shared_prompt)
+    parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
+    parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
+    parser.add_argument("--beam_refresh_each_epoch", type=int, default=int(cli_defaults.beam_refresh_each_epoch), choices=[0, 1])
+    parser.add_argument("--accuracy_guard_epsilon", type=float, default=cli_defaults.accuracy_guard_epsilon)
+    parser.add_argument("--reward_weight_div_delta", type=float, default=cli_defaults.reward_weight_div_delta)
+    parser.add_argument("--reward_weight_invalid_delta", type=float, default=cli_defaults.reward_weight_invalid_delta)
+    parser.add_argument("--reward_weight_coverage", type=float, default=cli_defaults.reward_weight_coverage)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=cli_defaults.reward_weight_useful_diversity)
+    parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
+    parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
+    parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
+    parser.add_argument("--reward_diversity_warmup_updates", type=int, default=cli_defaults.reward_diversity_warmup_updates)
+    parser.add_argument("--reward_weight_div_delta_early", type=float, default=cli_defaults.reward_weight_div_delta_early)
+    parser.add_argument("--reward_weight_div_delta_late", type=float, default=cli_defaults.reward_weight_div_delta_late)
+    parser.add_argument("--reward_weight_coverage_early", type=float, default=cli_defaults.reward_weight_coverage_early)
+    parser.add_argument("--reward_weight_coverage_late", type=float, default=cli_defaults.reward_weight_coverage_late)
+    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=cli_defaults.reward_weight_useful_diversity_early)
+    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=cli_defaults.reward_weight_useful_diversity_late)
+    parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=cli_defaults.reward_weight_target_accuracy_early)
+    parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=cli_defaults.reward_weight_target_accuracy_late)
+    parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
+    parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=cli_defaults.accuracy_guard_epsilon_late)
+    parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=cli_defaults.candidate_eval_batch_size)
+    parser.add_argument("--candidate_eval_strategy", type=str, default=cli_defaults.candidate_eval_strategy, choices=["random", "fixed_pool", "stratified"])
+    parser.add_argument("--candidate_eval_pool_size", type=int, default=cli_defaults.candidate_eval_pool_size)
+    parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
+    parser.add_argument("--candidate_eval_seed_offset", type=int, default=cli_defaults.candidate_eval_seed_offset)
+    parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(cli_defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
+    parser.add_argument("--train_rollout_concurrency", type=int, default=cli_defaults.train_rollout_concurrency)
+    parser.add_argument("--eval_solver_call_concurrency", type=int, default=cli_defaults.eval_solver_call_concurrency)
+    parser.add_argument("--max_tokens", type=int, default=cli_defaults.max_tokens)
+    parser.add_argument("--optimizer_max_tokens", type=int, default=cli_defaults.optimizer_max_tokens)
+    parser.add_argument("--evaluator_max_tokens", type=int, default=cli_defaults.evaluator_max_tokens)
+    parser.add_argument("--temperature", type=float, default=cli_defaults.temperature)
+    parser.add_argument("--optimizer_temperature", type=float, default=cli_defaults.optimizer_temperature)
+    parser.add_argument("--evaluator_temperature", type=float, default=cli_defaults.evaluator_temperature)
+    parser.add_argument("--max_retries", type=int, default=cli_defaults.max_retries)
+    parser.add_argument("--retry_sleep", type=float, default=cli_defaults.retry_sleep)
+    parser.add_argument("--transient_retry_forever", type=int, default=int(cli_defaults.transient_retry_forever), choices=[0, 1])
+    parser.add_argument("--max_transient_retries", type=int, default=cli_defaults.max_transient_retries)
+    parser.add_argument("--max_retry_backoff", type=float, default=cli_defaults.max_retry_backoff)
+    parser.add_argument("--llm_call_logging", type=int, default=int(cli_defaults.llm_call_logging), choices=[0, 1])
+    parser.add_argument("--llm_call_timeout", type=float, default=cli_defaults.llm_call_timeout)
+    parser.add_argument("--vote_tie_break", type=str, default=cli_defaults.vote_tie_break, choices=["first", "random", "abstain"])
+    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "weighted_vote", "verifier_select"])
     args = parser.parse_args()
 
     args.workspace = str(Path(args.workspace).resolve())

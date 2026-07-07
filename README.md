@@ -157,6 +157,29 @@ else:
 - `invalid_delta`
 - `accuracy_guard_passed`
 
+## Phase-Adaptive Reward Schedule
+
+The default reward schedule is `--reward_schedule_mode phase_adaptive`. When agents start from the same shared prompt, early updates use stronger diversity and useful-diversity weights so the optimizer is encouraged to create genuinely different reasoning roles. As prompts diverge, or once enough prompt updates have been accepted, the schedule shifts weight back toward target-agent accuracy and a tighter accuracy guard.
+
+Key controls:
+
+```bash
+--reward_schedule_mode phase_adaptive
+--reward_diversity_warmup_updates 10
+--reward_weight_div_delta_early 0.8
+--reward_weight_div_delta_late 0.2
+--reward_weight_useful_diversity_early 0.5
+--reward_weight_useful_diversity_late 0.25
+--reward_weight_target_accuracy_early 0.9
+--reward_weight_target_accuracy_late 1.0
+--accuracy_guard_epsilon_early 0.03
+--accuracy_guard_epsilon_late 0.01
+```
+
+`update_logs.jsonl` records the effective weights used for each candidate, including `effective_weight_target_accuracy`, `effective_weight_div_delta`, `effective_weight_coverage`, `effective_weight_useful_diversity`, `reward_phase_progress`, `reward_diversity_need`, and `reward_unique_prompt_ratio`.
+
+Optimizer fallback templates are disabled by default with `--optimizer_fallback_mode none`. If `--optimizer_fallback_mode template` is enabled, fixed fallback candidates are added when the optimizer returns too few valid candidates. Fallback candidates are useful as an engineering safety mechanism, but they can inflate prompt-update success rate and confound attribution to the optimizer. For clean experimental claims, use `--optimizer_fallback_mode none` and report `num_optimizer_candidates`, `num_fallback_candidates`, and `optimizer_underfilled`.
+
 ## Candidate Evaluation
 
 候选 prompt 不直接采纳，而是在 candidate eval batch 上评估。默认 `candidate_eval_batch_size=20`。

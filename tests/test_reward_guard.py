@@ -29,6 +29,7 @@ def test_guarded_reward_penalizes_accuracy_drop():
 def test_guarded_reward_uses_target_agent_accuracy_not_team_accuracy():
     cfg = Config(
         reward_mode="guarded_diversity",
+        reward_schedule_mode="static",
         accuracy_guard_epsilon=0.02,
         reward_weight_div_delta=0.3,
         reward_weight_invalid_delta=0.5,

@@ -11,8 +11,11 @@ def test_cli_defaults_match_config():
         "evaluator_max_tokens",
         "candidate_eval_batch_size",
         "reward_mode",
+        "reward_schedule_mode",
+        "reward_diversity_warmup_updates",
         "beam_size",
         "num_candidates_per_parent",
+        "optimizer_fallback_mode",
     ]:
         assert getattr(args, field) == getattr(defaults, field)
 

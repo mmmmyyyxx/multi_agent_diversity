@@ -16,6 +16,7 @@ def test_coverage_rescue_reward_uses_target_accuracy_coverage_and_useful_diversi
     system = _system_without_init(
         Config(
             reward_mode="coverage_rescue_diversity",
+            reward_schedule_mode="static",
             reward_weight_coverage=0.3,
             reward_weight_useful_diversity=0.2,
         )
@@ -82,7 +83,7 @@ def test_coverage_rescue_reward_penalizes_invalid_guard_failure():
 
 
 def test_coverage_rescue_reward_has_no_target_accuracy_guard():
-    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity"))
+    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity", reward_schedule_mode="static"))
     result = system._candidate_reward_coverage_rescue_diversity(
         baseline_team_accuracy=0.8,
         candidate_team_accuracy=0.7,
