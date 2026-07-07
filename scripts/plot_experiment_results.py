@@ -72,7 +72,6 @@ def plot(rows: List[Dict[str, str]], out_dir: Path):
             {"key": "homogeneous_case_count", "title": "Homogeneous Cases", "ylabel": "Count"},
             {"key": "resolved_case_count", "title": "Resolved Cases", "ylabel": "Count"},
             {"key": "new_homogeneous_case_count", "title": "New Homogeneous Cases", "ylabel": "Count"},
-            {"key": "local_validity_mean", "title": "Local Role Execution", "ylabel": "Mean", "ylim": (0.0, 1.0)},
             {"key": "team_accuracy", "title": "Team Accuracy", "ylabel": "Mean", "ylim": (0.0, 1.0)},
             {"key": "invalid_rate", "title": "Invalid Rate", "ylabel": "Rate", "ylim": (0.0, 1.0)},
             {"key": "invalid_score", "title": "Invalid Score", "ylabel": "Score", "ylim": (0.0, 1.0)},

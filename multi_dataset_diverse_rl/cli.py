@@ -193,7 +193,7 @@ def read_selected_prompts(path):
     return payload, prompts
 
 
-def validation_score(epoch_record, reward_mode="embedding_local_acc_invalid"):
+def validation_score(epoch_record, reward_mode="guarded_diversity"):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
@@ -202,8 +202,7 @@ def validation_score(epoch_record, reward_mode="embedding_local_acc_invalid"):
         return (
             0.4 * float(val.get("vote_acc", 0.0) or 0.0)
             + 0.3 * float(val.get("oracle_acc", 0.0) or 0.0)
-            + 0.2 * float(val.get("rescue_available_rate", 0.0) or 0.0)
-            + 0.1 * float(val.get("mean_useful_diversity", 0.0) or 0.0)
+            + 0.2 * float(val.get("mean_useful_diversity", 0.0) or 0.0)
             - 0.2 * float(val.get("mean_invalid_rate", 0.0) or 0.0)
         )
     return (
@@ -218,7 +217,7 @@ def validation_metric_name(reward_mode):
     if mode == "accuracy_only":
         return "vote_acc"
     if mode == "coverage_rescue_diversity":
-        return "vote+oracle+rescue+useful_div"
+        return "vote+oracle+useful_div-invalid"
     return "vote_acc+embedding_div-invalid"
 
 
@@ -240,7 +239,6 @@ async def main_async():
     cfg.eval_test_each_epoch = bool(int(cfg.eval_test_each_epoch))
     cfg.beam_refresh_each_epoch = bool(int(cfg.beam_refresh_each_epoch))
     cfg.use_joint_trace_diversity_evaluator = bool(int(cfg.use_joint_trace_diversity_evaluator))
-    cfg.local_validity_binary = bool(int(cfg.local_validity_binary))
     cfg.invalid_binary = bool(int(cfg.invalid_binary))
     cfg.use_baseline_relative_reward = bool(int(cfg.use_baseline_relative_reward))
     cfg.candidate_reuse_recorded_rollouts = bool(int(cfg.candidate_reuse_recorded_rollouts))

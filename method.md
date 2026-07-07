@@ -1,4 +1,4 @@
-# Method
+﻿# Method
 
 本文档描述当前仓库实现的方法。项目的核心方法是 **case-aware evolutionary prompt search**，不是严格意义上的 reinforcement learning：系统不训练模型参数，也不做策略梯度更新；reward 只用于候选 prompt 的排序、beam 保留和最终 prompt 选择。
 
@@ -298,8 +298,6 @@ Guard：
 invalid_guard_passed =
     candidate_invalid_rate <= baseline_invalid_rate + invalid_guard_epsilon
 
-target_guard_passed =
-    candidate_target_accuracy >= baseline_target_accuracy - target_accuracy_guard_epsilon
 ```
 
 Reward：
@@ -308,25 +306,22 @@ Reward：
 if not invalid_guard_passed:
     reward = -1.0
 
-elif not target_guard_passed:
-    reward = -0.5 + vote_delta
 
 else:
     reward =
-        reward_weight_rescue           * rescue_rate
+        candidate_target_accuracy
       + reward_weight_coverage         * coverage_delta
       + reward_weight_useful_diversity * useful_diversity
-      + reward_weight_vote_delta       * vote_delta
-      + reward_weight_local_validity   * local_validity
 ```
 
 解释：
 
-- `rescue_rate`：奖励 target agent 在团队多数投票错误时给出正确路径。
+- `candidate_target_accuracy`：直接奖励被更新 agent 的准确率。
 - `coverage_delta`：奖励 candidate 增加 oracle coverage，即使 vote 暂时没有翻转。
 - `useful_diversity`：只有 target trace 有效且正确时，新颖性才有价值。
-- `vote_delta`：避免团队聚合准确率明显下滑。
-- invalid guard 和 target guard：防止无效 diversity 或 target agent 退化被选中。
+- invalid guard：防止无效 diversity 被选中。
+- `rescue_rate` 和 `vote_delta` 只作为诊断日志保留，不进入 reward。
+- 本版本移除了 local validity evaluator；候选是否值得保留由 target-agent accuracy、coverage_delta、useful_diversity 和 invalid guard 决定。
 
 推荐运行：
 
@@ -363,7 +358,7 @@ python -m multi_dataset_diverse_rl.cli \
 - oracle coverage metrics
 - rescue metrics
 - useful diversity metrics
-- invalid guard / target guard
+- invalid guard
 - solver reuse statistics
 
 这让 prompt evolution 的每一步都可追踪。
@@ -375,15 +370,14 @@ python -m multi_dataset_diverse_rl.cli \
 ```text
 0.4 * vote_acc
 + 0.3 * oracle_acc
-+ 0.2 * rescue_available_rate
-+ 0.1 * mean_useful_diversity
++ 0.2 * mean_useful_diversity
 - 0.2 * mean_invalid_rate
 ```
 
 对应 metric name：
 
 ```text
-vote+oracle+rescue+useful_div
+vote+oracle+useful_div-invalid
 ```
 
 训练过程中，系统按 validation score 保存 best prompts。训练结束后恢复 best prompts，再做 final test。
@@ -535,3 +529,4 @@ scripts/task_level_accuracy_utils.py
 - Candidate evaluation 仍有采样方差，需要 fixed pool、stratified sampling 和多 seed。
 - `weighted_vote` 是轻量聚合规则，不是 learned verifier。
 - task-level comparison 依赖本仓库 manifest；如果 manifest 未覆盖所有目标任务，只能称为 subset comparison。
+

@@ -10,25 +10,56 @@ def _system_without_init(cfg: Config):
     return system
 
 
-def test_coverage_rescue_reward_rewards_rescue_and_coverage():
-    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity"))
+def test_coverage_rescue_reward_uses_target_accuracy_coverage_and_useful_diversity_only():
+    system = _system_without_init(
+        Config(
+            reward_mode="coverage_rescue_diversity",
+            reward_weight_coverage=0.3,
+            reward_weight_useful_diversity=0.2,
+        )
+    )
     result = system._candidate_reward_coverage_rescue_diversity(
         baseline_team_accuracy=0.0,
-        candidate_team_accuracy=0.0,
+        candidate_team_accuracy=1.0,
         baseline_target_accuracy=0.4,
         candidate_target_accuracy=0.4,
         baseline_invalid_rate=0.0,
         candidate_invalid_rate=0.0,
-        rescue_rate=0.5,
+        rescue_rate=1.0,
         coverage_delta=0.25,
         useful_diversity=0.5,
-        local_validity=1.0,
     )
     assert result["invalid_guard_passed"] is True
-    assert result["target_guard_passed"] is True
-    assert result["reward"] > 0.0
+    assert round(result["reward"], 6) == round(0.4 + 0.3 * 0.25 + 0.2 * 0.5, 6)
     assert result["coverage_delta"] == 0.25
-    assert result["rescue_rate"] == 0.5
+    assert result["rescue_rate"] == 1.0
+
+
+def test_coverage_rescue_reward_does_not_use_rescue_or_vote_delta():
+    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity"))
+    with_rescue = system._candidate_reward_coverage_rescue_diversity(
+        baseline_team_accuracy=0.0,
+        candidate_team_accuracy=1.0,
+        baseline_target_accuracy=0.4,
+        candidate_target_accuracy=0.5,
+        baseline_invalid_rate=0.0,
+        candidate_invalid_rate=0.0,
+        rescue_rate=1.0,
+        coverage_delta=0.2,
+        useful_diversity=0.3,
+    )
+    without_rescue = system._candidate_reward_coverage_rescue_diversity(
+        baseline_team_accuracy=1.0,
+        candidate_team_accuracy=0.0,
+        baseline_target_accuracy=0.4,
+        candidate_target_accuracy=0.5,
+        baseline_invalid_rate=0.0,
+        candidate_invalid_rate=0.0,
+        rescue_rate=0.0,
+        coverage_delta=0.2,
+        useful_diversity=0.3,
+    )
+    assert with_rescue["reward"] == without_rescue["reward"]
 
 
 def test_coverage_rescue_reward_penalizes_invalid_guard_failure():
@@ -43,14 +74,13 @@ def test_coverage_rescue_reward_penalizes_invalid_guard_failure():
         rescue_rate=1.0,
         coverage_delta=0.5,
         useful_diversity=1.0,
-        local_validity=1.0,
     )
     assert result["invalid_guard_passed"] is False
     assert result["reward"] == -1.0
 
 
-def test_coverage_rescue_reward_penalizes_target_accuracy_drop():
-    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity", target_accuracy_guard_epsilon=0.05))
+def test_coverage_rescue_reward_has_no_target_accuracy_guard():
+    system = _system_without_init(Config(reward_mode="coverage_rescue_diversity"))
     result = system._candidate_reward_coverage_rescue_diversity(
         baseline_team_accuracy=0.8,
         candidate_team_accuracy=0.7,
@@ -61,10 +91,9 @@ def test_coverage_rescue_reward_penalizes_target_accuracy_drop():
         rescue_rate=1.0,
         coverage_delta=0.5,
         useful_diversity=1.0,
-        local_validity=1.0,
     )
-    assert result["target_guard_passed"] is False
-    assert round(result["reward"], 6) == -0.6
+    assert "target_guard_passed" not in result
+    assert round(result["reward"], 6) == round(0.6 + 0.3 * 0.5 + 0.2 * 1.0, 6)
 
 
 def test_weighted_vote_can_select_valid_independent_minority():

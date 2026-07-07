@@ -40,7 +40,6 @@ class TraceBeamSearchSystem:
         self.cfg.beam_refresh_each_epoch = bool(int(self.cfg.beam_refresh_each_epoch))
         self.cfg.transient_retry_forever = bool(int(self.cfg.transient_retry_forever))
         self.cfg.llm_call_logging = bool(int(self.cfg.llm_call_logging))
-        self.cfg.local_validity_binary = bool(int(self.cfg.local_validity_binary))
         self.cfg.invalid_binary = bool(int(self.cfg.invalid_binary))
         self.cfg.use_joint_trace_diversity_evaluator = bool(int(self.cfg.use_joint_trace_diversity_evaluator))
         self.cfg.candidate_reuse_recorded_rollouts = bool(int(getattr(self.cfg, "candidate_reuse_recorded_rollouts", 1)))
@@ -81,7 +80,6 @@ class TraceBeamSearchSystem:
         self.test_trace_history_logs: List[Dict[str, Any]] = []
         self.recent_window_records: List[Dict[str, Any]] = []
         self.prompt_history = self._init_prompt_history()
-        self.local_validity_cache: Dict[str, Dict[str, Any]] = {}
         self.joint_diversity_cache: Dict[str, Dict[str, Any]] = {}
         self.solver_rollout_cache: Dict[str, List[Dict[str, Any]]] = {}
         self.llm_call_logs: List[Dict[str, Any]] = []
@@ -590,6 +588,92 @@ class TraceBeamSearchSystem:
         return False
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
+        accuracy_repair_roles = [
+            {
+                "role_name": "constraint_verifier",
+                "candidate_prompt": (
+                    "You are a constraint verifier. Before answering, list the explicit constraints and qualifiers in the question. "
+                    "Reject any answer that satisfies the general pattern but violates a stated constraint. "
+                    "Then give exactly one final answer after a brief consistency check."
+                ),
+                "decision_procedure": [
+                    "list explicit constraints",
+                    "compare plausible answers against constraints",
+                    "reject constraint violations",
+                    "final consistency check",
+                ],
+                "when_to_use": "Use when the target agent misses qualifiers, exceptions, or stated constraints.",
+                "fallback_strategy": "If no explicit constraints are visible, compare the two most plausible answers and verify the final choice.",
+                "target_error_pattern": "missed_constraint",
+                "accuracy_repair_rule": "force explicit constraint listing before selecting the final answer",
+                "expected_accuracy_effect": "reduces premature selections that violate stated conditions",
+            },
+            {
+                "role_name": "option_elimination_specialist",
+                "candidate_prompt": (
+                    "You are an option-elimination specialist. Compare the plausible answer choices one by one. "
+                    "For each choice, state the strongest reason it could be correct and the strongest reason it could fail. "
+                    "Choose the answer with the fewest unresolved failures, then output exactly one final answer."
+                ),
+                "decision_procedure": [
+                    "identify plausible choices",
+                    "test each choice",
+                    "eliminate unsupported choices",
+                    "select final answer",
+                ],
+                "when_to_use": "Use when the target agent jumps to a plausible answer without eliminating alternatives.",
+                "fallback_strategy": "If choices are implicit, name the plausible interpretations and eliminate them as alternatives.",
+                "target_error_pattern": "insufficient_option_elimination",
+                "accuracy_repair_rule": "require option-by-option or interpretation-by-interpretation elimination",
+                "expected_accuracy_effect": "makes the target agent compare alternatives instead of following the first plausible route",
+            },
+            {
+                "role_name": "reverse_answer_validator",
+                "candidate_prompt": (
+                    "You are a reverse-answer validator. Start from the most plausible candidate answers and ask what must be true for each to be correct. "
+                    "Reject candidates whose required assumptions conflict with the question. "
+                    "Select the answer with the strongest support and provide exactly one final answer."
+                ),
+                "decision_procedure": [
+                    "name plausible candidates",
+                    "derive required assumptions",
+                    "reject conflicting assumptions",
+                    "final answer",
+                ],
+                "when_to_use": "Use when the target agent gives weakly supported answers or fails to verify assumptions.",
+                "fallback_strategy": "If assumptions are hard to name, run a contradiction check on the selected answer before finalizing.",
+                "target_error_pattern": "weak_verification",
+                "accuracy_repair_rule": "validate the selected answer by checking the assumptions it requires",
+                "expected_accuracy_effect": "catches unsupported selections before the final answer is emitted",
+            },
+            {
+                "role_name": "format_and_answer_auditor",
+                "candidate_prompt": (
+                    "You are a format-and-answer auditor. Solve the problem normally, then audit the final answer format before responding. "
+                    "Ensure the final response contains exactly one answer in the required format and no extra alternatives."
+                ),
+                "decision_procedure": [
+                    "solve",
+                    "check answer format",
+                    "remove extra alternatives",
+                    "emit exactly one final answer",
+                ],
+                "when_to_use": "Use when the target agent omits, duplicates, or malforms the final answer.",
+                "fallback_strategy": "If the reasoning is uncertain, still emit one best-supported final answer in the required format.",
+                "target_error_pattern": "invalid_or_missing_final_answer",
+                "accuracy_repair_rule": "add a final answer audit that enforces exactly one valid answer",
+                "expected_accuracy_effect": "reduces invalid outputs and missing-answer failures",
+            },
+        ]
+        if str(mode).lower() in {"accuracy_repair", "accuracy"}:
+            role = accuracy_repair_roles[(int(agent_id) + int(index)) % len(accuracy_repair_roles)]
+            return {
+                **role,
+                "anti_overlap_rule": "Use the named repair procedure because it fixes a target-agent error pattern, not because it sounds different.",
+                "validity_checks": ["trace shows the repair procedure", "final answer is explicit", "no sample text is copied"],
+                "accuracy_checks": ["repair rule is executed", "final answer is verified before output"],
+            }
+
         roles = [
             {
                 "role_name": "boundary_condition_checker",
@@ -646,10 +730,7 @@ class TraceBeamSearchSystem:
                 "fallback_strategy": "If no ambiguity exists, use boundary-condition checking.",
             },
         ]
-        if str(mode).lower() == "accuracy":
-            order = [1, 0, 2, 4, 3]
-        else:
-            order = [0, 3, 1, 2, 4]
+        order = [0, 3, 1, 2, 4]
         role = roles[order[(int(agent_id) + int(index)) % len(order)]]
         return {
             **role,
@@ -1295,6 +1376,124 @@ class TraceBeamSearchSystem:
         text = re.sub(r"\b(answer|final answer)\b\s*[:=-]?\s*[A-Da-d0-9.+/, \\-]+", "[answer redacted]", text, flags=re.IGNORECASE)
         return normalize_spaces(text)[:max_chars]
 
+    def _redact_optimizer_text(self, text: str, max_chars: int = 420) -> str:
+        cleaned = str(text or "")
+        cleaned = re.sub(r"FINAL_ANSWER\s*:\s*.*", "FINAL_ANSWER: [redacted]", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\b(final answer|answer)\b\s*[:=-]\s*[^\n.;,]+", r"\1: [redacted]", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\b(option|choice)\s+[A-Z]\b", "option [label]", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\([A-Z]\)", "([label])", cleaned)
+        cleaned = re.sub(r"\b[A-D]\s*[\).]\s*", "[label]. ", cleaned)
+        cleaned = re.sub(r"\b(true|false|yes|no|valid|invalid)\b", "[boolean-like]", cleaned, flags=re.IGNORECASE)
+        return normalize_spaces(cleaned)[:max_chars]
+
+    def _answer_behavior_preview(self, answer: str) -> Dict[str, Any]:
+        raw = str(answer or "").strip()
+        lowered = raw.lower()
+        if not raw:
+            kind = "missing"
+        elif re.fullmatch(r"\(?[A-Za-z]\)?\.?", raw):
+            kind = "option_like"
+        elif lowered in {"true", "false", "yes", "no", "valid", "invalid"}:
+            kind = "boolean_like"
+        elif re.fullmatch(r"[-+]?\d[\d,]*(?:\.\d+)?", raw):
+            kind = "numeric_like"
+        else:
+            kind = "text_like"
+        return {
+            "present": bool(raw),
+            "length": len(raw),
+            "kind": kind,
+            "has_multiple_tokens": len(re.findall(r"\S+", raw)) > 1,
+        }
+
+    def _peer_behavior_summary(
+        self,
+        peer_traces: List[str],
+        peer_correct_flags: Optional[List[int]] = None,
+    ) -> Dict[str, Any]:
+        flags = [int(x) for x in list(peer_correct_flags or [])]
+        previews = [self._redact_optimizer_text(t, max_chars=240) for t in peer_traces[:2]]
+        word_counts = [len(re.findall(r"\w+", str(t or ""))) for t in peer_traces]
+        verification_terms = re.compile(r"\b(check|verify|therefore|because|constraint|eliminate|assumption|contradiction)\b", re.IGNORECASE)
+        return {
+            "num_peer_traces": len(peer_traces),
+            "num_peer_correct": int(sum(flags)) if flags else 0,
+            "peer_trace_previews": previews,
+            "peer_longer_than_target": False,
+            "mean_peer_trace_words": float(np.mean(word_counts)) if word_counts else 0.0,
+            "peer_uses_verification_terms": bool(any(verification_terms.search(str(t or "")) for t in peer_traces)),
+        }
+
+    def _infer_target_error_pattern(
+        self,
+        target_trace: str,
+        target_answer: str,
+        peer_traces: List[str],
+        rollout: Dict[str, Any],
+        agent_id: int,
+    ) -> Dict[str, str]:
+        invalid_flags = list(rollout.get("invalid_flags", [])) if isinstance(rollout, dict) else []
+        invalid = int(invalid_flags[agent_id]) if agent_id < len(invalid_flags) else int(self.rule_invalid_check(target_trace, target_answer).get("invalid", 0))
+        text = normalize_spaces(str(target_trace or ""))
+        lower = text.lower()
+        answer_preview = self._answer_behavior_preview(target_answer)
+        target_words = len(re.findall(r"\w+", text))
+        peer_words = [len(re.findall(r"\w+", str(t or ""))) for t in peer_traces]
+        peer_mean_words = float(np.mean(peer_words)) if peer_words else 0.0
+
+        if invalid or not answer_preview["present"]:
+            if not answer_preview["present"] or "final_answer:" not in str(target_trace or ""):
+                return {
+                    "error_pattern": "invalid_or_missing_final_answer",
+                    "repair_hint": "add a final answer audit that emits exactly one answer in the required format",
+                }
+            return {
+                "error_pattern": "format_violation",
+                "repair_hint": "check answer format and remove extra alternatives before finalizing",
+            }
+        if target_words < 35:
+            return {
+                "error_pattern": "premature_answer",
+                "repair_hint": "delay the final answer until after evidence comparison and a short verification step",
+            }
+        if re.search(r"\b(calculate|compute|equation|number|sum|difference|multiply|divide|symbol|formula)\b", lower):
+            if not re.search(r"\b(check|verify|substitut|unit|sanity)\b", lower):
+                return {
+                    "error_pattern": "calculation_or_symbolic_slip",
+                    "repair_hint": "add a numeric or symbolic sanity check before the final answer",
+                }
+        if re.search(r"\b(option|choice|alternative|candidate)\b", lower) and not re.search(r"\b(eliminate|reject|compare|fail|against)\b", lower):
+            return {
+                "error_pattern": "insufficient_option_elimination",
+                "repair_hint": "force option-by-option elimination before selecting the final answer",
+            }
+        if re.search(r"\b(constraint|except|unless|only|must|not|qualifier|condition)\b", lower) and not re.search(r"\b(list|check|satisfy|violate)\b", lower):
+            return {
+                "error_pattern": "missed_constraint",
+                "repair_hint": "force the agent to list explicit constraints before selecting an answer",
+            }
+        if not re.search(r"\b(check|verify|therefore|because|contradiction|assumption|consistent)\b", lower):
+            return {
+                "error_pattern": "weak_verification",
+                "repair_hint": "add a final consistency check against the question before output",
+            }
+        if peer_mean_words >= max(45.0, float(target_words) * 1.35):
+            return {
+                "error_pattern": "peer_has_more_specific_reasoning",
+                "repair_hint": "require grounding the answer in specific clues rather than generic reasoning",
+            }
+        generic_terms = len(re.findall(r"\b(careful|think|analyze|reason|solve|answer)\b", lower))
+        evidence_terms = len(re.findall(r"\b(because|therefore|constraint|eliminate|verify|assumption|example|case)\b", lower))
+        if generic_terms >= 4 and evidence_terms <= 1:
+            return {
+                "error_pattern": "overly_generic_reasoning",
+                "repair_hint": "replace generic reasoning with a concrete evidence-comparison procedure",
+            }
+        return {
+            "error_pattern": "unknown_error_pattern",
+            "repair_hint": "use a concrete compare-then-verify procedure before the final answer",
+        }
+
     def _case_key(self, sample_hash: str, a: int, b: int) -> str:
         left, right = sorted([int(a), int(b)])
         return f"{sample_hash}:{left}-{right}"
@@ -1456,6 +1655,7 @@ class TraceBeamSearchSystem:
         per_agent_correct = [0 for _ in range(len(self.agents))]
         per_agent_team_wrong = [0 for _ in range(len(self.agents))]
         all_error_cases: List[Dict[str, Any]] = []
+        target_error_cases: List[Dict[str, Any]] = []
         focus_cases: List[Dict[str, Any]] = []
         for idx, rec in enumerate(window_records):
             metrics = rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}
@@ -1463,6 +1663,7 @@ class TraceBeamSearchSystem:
             answers = list(rec.get("answers", []))
             prompts = list(rec.get("prompts", []))
             individual = list(metrics.get("individual_correct", []))
+            invalids = list(metrics.get("invalid_flags", []))
             team_correct = int(metrics.get("vote_correct", 0) or 0)
             vote_answer = str(metrics.get("vote_answer", ""))
             row_cases = []
@@ -1471,10 +1672,58 @@ class TraceBeamSearchSystem:
                     continue
                 per_agent_seen[agent_id] += 1
                 per_agent_correct[agent_id] += int(individual[agent_id])
-                if int(individual[agent_id]):
+                target_invalid = int(invalids[agent_id]) if agent_id < len(invalids) else 0
+                if int(individual[agent_id]) and not target_invalid:
                     continue
                 if not team_correct:
                     per_agent_team_wrong[agent_id] += 1
+                peer_correct_flags = [
+                    int(individual[i])
+                    for i in range(len(individual))
+                    if i != agent_id
+                ]
+                peer_correct_ids = [
+                    int(i)
+                    for i in range(len(individual))
+                    if i != agent_id and int(individual[i])
+                ]
+                peer_trace_candidates = [
+                    str(traces[i])
+                    for i in peer_correct_ids
+                    if i < len(traces)
+                ]
+                if not peer_trace_candidates:
+                    peer_trace_indices = [
+                        i for i in range(len(traces))
+                        if i != agent_id
+                    ][:2]
+                    peer_trace_candidates = [
+                        str(traces[i]) for i in peer_trace_indices
+                    ]
+                    selected_peer_flags = [
+                        int(individual[i]) for i in peer_trace_indices
+                        if i < len(individual)
+                    ]
+                else:
+                    selected_peer_flags = [1 for _ in peer_trace_candidates]
+                error_info = self._infer_target_error_pattern(
+                    target_trace=str(traces[agent_id]) if agent_id < len(traces) else "",
+                    target_answer=str(answers[agent_id]) if agent_id < len(answers) else "",
+                    peer_traces=peer_trace_candidates,
+                    rollout=metrics,
+                    agent_id=agent_id,
+                )
+                if not int(individual[agent_id]) and any(peer_correct_flags):
+                    target_case_type = "target_agent_wrong_and_peer_correct"
+                elif not int(individual[agent_id]) and team_correct:
+                    target_case_type = "target_agent_wrong_and_vote_correct"
+                elif not int(individual[agent_id]):
+                    target_case_type = "target_agent_wrong_and_vote_wrong"
+                else:
+                    target_case_type = "target_agent_invalid"
+                peer_summary = self._peer_behavior_summary(peer_trace_candidates, peer_correct_flags=selected_peer_flags)
+                target_words = len(re.findall(r"\w+", str(traces[agent_id]) if agent_id < len(traces) else ""))
+                peer_summary["peer_longer_than_target"] = bool(peer_summary.get("mean_peer_trace_words", 0.0) > max(0, target_words))
                 case = {
                     "case_id": self._hash(f"{rec.get('question_hash', '')}|accuracy_error|{agent_id}|{idx}"),
                     "case_type": "target_agent_answer_error",
@@ -1487,6 +1736,27 @@ class TraceBeamSearchSystem:
                     "team_correct": bool(team_correct),
                     "target_prompt_preview": normalize_spaces(prompts[agent_id])[:260] if agent_id < len(prompts) else "",
                 }
+                target_error_cases.append(
+                    {
+                        "case_id": self._hash(f"{rec.get('question_hash', '')}|target_error_repair|{agent_id}|{idx}"),
+                        "case_type": target_case_type,
+                        "window_index": idx,
+                        "question_hash": rec.get("question_hash", ""),
+                        "sample_hash": rec.get("question_hash", ""),
+                        "target_agent_id": agent_id,
+                        "target_trace_preview": self._redact_optimizer_text(traces[agent_id] if agent_id < len(traces) else ""),
+                        "target_answer_preview": self._answer_behavior_preview(answers[agent_id] if agent_id < len(answers) else ""),
+                        "peer_trace_preview": peer_summary.get("peer_trace_previews", []),
+                        "peer_behavior_summary": peer_summary,
+                        "target_invalid": bool(target_invalid),
+                        "target_correct": bool(int(individual[agent_id])),
+                        "team_correct": bool(team_correct),
+                        "peer_correct_available": bool(any(peer_correct_flags)),
+                        "error_pattern": str(error_info.get("error_pattern", "unknown_error_pattern")),
+                        "repair_hint": str(error_info.get("repair_hint", "")),
+                        "target_prompt_preview": normalize_spaces(prompts[agent_id])[:260] if agent_id < len(prompts) else "",
+                    }
+                )
                 row_cases.append(case)
                 all_error_cases.append(case)
             if row_cases:
@@ -1511,6 +1781,7 @@ class TraceBeamSearchSystem:
             "prompt_roles": current_prompts,
             "focus_cases": focus_cases[:5],
             "error_cases": all_error_cases,
+            "target_error_cases": target_error_cases,
             "per_agent_accuracy": per_agent_accuracy,
             "per_agent_error_count": [int(per_agent_seen[i] - per_agent_correct[i]) for i in range(len(self.agents))],
             "per_agent_team_wrong_error_count": per_agent_team_wrong,
@@ -1569,6 +1840,7 @@ class TraceBeamSearchSystem:
             {"agent_id": i, "prompt_preview": normalize_spaces(p)[:260], "prompt_hash": self._hash(p)}
             for i, p in enumerate(self._active_prompt_list())
         ]
+        accuracy_diagnosis = self._window_accuracy_diagnosis(window_records)
         return {
             "window_size": len(window_records),
             "focus_cases": focus_cases,
@@ -1576,6 +1848,12 @@ class TraceBeamSearchSystem:
             "mean_window_overlap": float(np.mean([x[0] for x in scored])) if scored else 0.0,
             "homogeneous_cases": sorted(all_homogeneous_cases, key=lambda c: float(c.get("pair_overlap", 0.0)), reverse=True),
             "validity_cases": all_validity_cases,
+            "error_cases": list(accuracy_diagnosis.get("error_cases", [])),
+            "target_error_cases": list(accuracy_diagnosis.get("target_error_cases", [])),
+            "per_agent_accuracy": list(accuracy_diagnosis.get("per_agent_accuracy", [])),
+            "per_agent_error_count": list(accuracy_diagnosis.get("per_agent_error_count", [])),
+            "per_agent_team_wrong_error_count": list(accuracy_diagnosis.get("per_agent_team_wrong_error_count", [])),
+            "team_accuracy": float(accuracy_diagnosis.get("team_accuracy", 0.0)),
             "homogeneous_case_counts": homogeneous_case_counts,
             "per_agent_invalid_rate": per_agent_invalid_rate,
             "per_agent_overlap_pressure": per_agent_pressure,
@@ -1599,6 +1877,20 @@ class TraceBeamSearchSystem:
             c for c in diagnosis.get("error_cases", [])
             if isinstance(c, dict) and int(c.get("target_agent_id", -1)) == int(agent_id)
         ]
+
+    def _target_error_cases_for_agent(self, diagnosis: Dict[str, Any], agent_id: int) -> List[Dict[str, Any]]:
+        priority = {
+            "target_agent_wrong_and_peer_correct": 0,
+            "target_agent_wrong_and_vote_correct": 1,
+            "target_agent_wrong_and_vote_wrong": 2,
+            "target_agent_invalid": 3,
+        }
+        cases = [
+            c for c in diagnosis.get("target_error_cases", [])
+            if isinstance(c, dict) and int(c.get("target_agent_id", -1)) == int(agent_id)
+        ]
+        cases.sort(key=lambda c: (priority.get(str(c.get("case_type", "")), 99), int(c.get("window_index", 0) or 0)))
+        return cases
 
     def _window_random_case_summaries(self, agent_id: int, limit: int) -> List[Dict[str, Any]]:
         if limit <= 0 or not self.recent_window_records:
@@ -1626,6 +1918,8 @@ class TraceBeamSearchSystem:
         return rows
 
     def _build_case_generation_batches(self, agent_id: int, diagnosis: Dict[str, Any]) -> List[Dict[str, Any]]:
+        target_error_cases = self._target_error_cases_for_agent(diagnosis, agent_id)
+        target_error_limit = max(1, int(self.cfg.max_homogeneous_cases_per_agent))
         if self._is_accuracy_only_mode():
             error_cases = self._accuracy_cases_for_agent(diagnosis, agent_id)
             random_cases = [
@@ -1633,6 +1927,12 @@ class TraceBeamSearchSystem:
                 if isinstance(c, dict)
             ]
             batches = [
+                {
+                    "batch_type": "target_error_repair",
+                    "priority": -2,
+                    "cases": target_error_cases[:target_error_limit],
+                    "purpose": "repair target-agent observed error patterns before changing diversity",
+                },
                 {
                     "batch_type": "accuracy_error_cases",
                     "priority": 0,
@@ -1646,7 +1946,7 @@ class TraceBeamSearchSystem:
                     "purpose": "keep the revised prompt robust on nearby window examples while improving accuracy",
                 },
             ]
-            return [b for b in batches if b.get("cases") or str(b.get("batch_type")) == "accuracy_error_cases"]
+            return [b for b in batches if b.get("cases") or str(b.get("batch_type")) in {"target_error_repair", "accuracy_error_cases"}]
         top_cases = self._cases_for_agent(diagnosis, agent_id)[: max(0, int(self.cfg.max_homogeneous_cases_per_agent))]
         random_cases = self._window_random_case_summaries(agent_id, max(0, int(self.cfg.random_window_cases_per_agent)))
         validity_cases = self._validity_cases_for_agent(diagnosis, agent_id)[: max(0, int(self.cfg.hard_validity_cases_per_agent))]
@@ -1656,14 +1956,26 @@ class TraceBeamSearchSystem:
             invalid_rate = float(rates[agent_id])
         batches = [
             {
-                "batch_type": "high_overlap_cases",
-                "priority": 0,
+                "batch_type": "target_error_repair",
+                "priority": -3,
+                "cases": target_error_cases[:target_error_limit],
+                "purpose": "repair target-agent wrong, invalid, or unhelpful behavior using abstract error-pattern evidence",
+            },
+            {
+                "batch_type": "target_error_repair",
+                "priority": -2,
+                "cases": target_error_cases[target_error_limit : target_error_limit * 2] or target_error_cases[:target_error_limit],
+                "purpose": "produce an alternative accuracy-repair procedure for the same target-agent blind spots",
+            },
+            {
+                "batch_type": "homogeneous_overlap_repair",
+                "priority": 1,
                 "cases": top_cases,
                 "purpose": "repair valid high-overlap reasoning pairs involving the target agent",
             },
             {
-                "batch_type": "mixed_window_cases",
-                "priority": 1,
+                "batch_type": "random_window",
+                "priority": 2,
                 "cases": random_cases,
                 "purpose": "avoid overfitting to only the highest-overlap cases",
             },
@@ -1671,22 +1983,22 @@ class TraceBeamSearchSystem:
         if validity_cases or invalid_rate >= float(self.cfg.invalid_repair_rate_threshold):
             batches.append(
                 {
-                    "batch_type": "validity_focused_cases",
-                    "priority": -1 if invalid_rate >= float(self.cfg.invalid_repair_rate_threshold) else 2,
+                    "batch_type": "hard_validity_repair",
+                    "priority": 0 if invalid_rate >= float(self.cfg.invalid_repair_rate_threshold) else 3,
                     "cases": validity_cases,
                     "purpose": "repair invalid or fragile target-agent outputs before pushing diversity",
                 }
             )
         batches.sort(key=lambda x: int(x.get("priority", 0)))
-        return batches
+        return [b for b in batches if b.get("cases") or str(b.get("batch_type")) != "target_error_repair"]
 
     def _optimizer_case_payload(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        payload: Dict[str, Any] = {}
         allowed = [
+            "case_id",
             "target_agent_id",
             "peer_agent_id",
             "pair_overlap",
-            "target_trace_preview",
-            "peer_trace_preview",
             "target_prompt_preview",
             "peer_prompt_preview",
             "target_valid",
@@ -1696,12 +2008,32 @@ class TraceBeamSearchSystem:
             "invalid_reasons",
             "answer_present",
             "purpose",
-            "target_answer",
-            "team_vote_answer",
             "team_correct",
             "window_index",
+            "target_answer_preview",
+            "peer_behavior_summary",
+            "target_invalid",
+            "target_correct",
+            "peer_correct_available",
+            "error_pattern",
+            "repair_hint",
         ]
-        return {k: case.get(k) for k in allowed if k in case}
+        for key in allowed:
+            if key in case:
+                payload[key] = case.get(key)
+        if "target_trace_preview" in case:
+            payload["target_trace_preview"] = self._redact_optimizer_text(str(case.get("target_trace_preview", "")))
+        if "trace_preview" in case and "target_trace_preview" not in payload:
+            payload["target_trace_preview"] = self._redact_optimizer_text(str(case.get("trace_preview", "")))
+        if "peer_trace_preview" in case:
+            value = case.get("peer_trace_preview")
+            if isinstance(value, list):
+                payload["peer_trace_preview"] = [self._redact_optimizer_text(str(x), max_chars=240) for x in value[:2]]
+            else:
+                payload["peer_trace_preview"] = self._redact_optimizer_text(str(value), max_chars=240)
+        if "target_answer_preview" not in payload and "target_answer" in case:
+            payload["target_answer_preview"] = self._answer_behavior_preview(str(case.get("target_answer", "")))
+        return payload
 
     def _target_case_keys(self, cases: List[Dict[str, Any]]) -> set:
         return {str(c.get("case_key", "")) for c in cases if str(c.get("case_key", ""))}
@@ -1780,18 +2112,29 @@ class TraceBeamSearchSystem:
             safe_generation_batches = [{"batch_type": "accuracy_error_cases", "cases": [], "purpose": "general accuracy repair"}]
         system_prompt = (
             "You are a prompt optimizer for a multi-agent reasoning team.\n"
-            "Your only objective in this experiment is to improve final team answer accuracy.\n"
+            "Your objective is to improve the target agent's answer accuracy on observed error patterns.\n"
             "Use the parent prompt, prompt-role previews, window accuracy statistics, and target-agent error cases.\n"
-            "Do not optimize for diversity, semantic overlap, local validity scores, invalid-rate metrics, or stylistic novelty.\n"
+            "Useful reasoning diversity is allowed only when it helps the target agent repair mistakes.\n"
+            "Do not optimize for semantic overlap, invalid-rate metrics, trace difference alone, or stylistic novelty.\n"
             "Do not use gold answers, concrete task text, options, labels, or answer-specific content.\n"
             "Treat trace previews as behavioral evidence of mistakes; do not copy their wording into the new prompt.\n"
             "Return strict JSON only."
         )
         user_prompt = (
             "Revise the target agent prompt to reduce the observed answer mistakes.\n"
+            "Priority order:\n"
+            "1. Repair the target agent's observed error patterns.\n"
+            "2. Preserve or improve target-agent answer accuracy.\n"
+            "3. Add useful reasoning diversity only when it helps correctness or error rescue.\n"
+            "4. Avoid invalid, verbose, generic, or merely paraphrased prompts.\n"
+            "5. Do not optimize for trace difference alone.\n"
             "Each candidate must describe an executable reasoning procedure that can improve correctness on similar examples. "
             "Prefer concrete checks such as concept disambiguation, option comparison, contradiction testing, qualifier inspection, "
             "or final verification when they fit the observed mistake pattern.\n"
+            "A candidate is invalid if it only paraphrases the parent prompt, appends generic caution, asks the solver to be more accurate, "
+            "or changes style without adding a concrete error-repair procedure.\n"
+            "Each candidate_prompt must contain a concrete reasoning procedure, a specific error-repair behavior, final answer discipline, "
+            "and a short verification step.\n"
             "Write a complete short role prompt, not a suffix to append to the parent prompt. "
             "Do not repeat generic instructions already present in the parent prompt. "
             "Do not use the phrase 'Use a distinct decision procedure'. "
@@ -1801,7 +2144,7 @@ class TraceBeamSearchSystem:
             "Return JSON:\n"
             "{\n"
             '  "candidates": [\n'
-            '    {"candidate_prompt": str, "role_name": str, "decision_procedure": [str, ...], "when_to_use": str, "fallback_strategy": str, "accuracy_checks": [str, ...], "rationale": str, "source_batch_type": str},\n'
+            '    {"candidate_prompt": str, "role_name": str, "decision_procedure": [str, ...], "when_to_use": str, "fallback_strategy": str, "accuracy_checks": [str, ...], "target_error_pattern": str, "accuracy_repair_rule": str, "expected_accuracy_effect": str, "rationale": str, "source_batch_type": str},\n'
             "    ...\n"
             "  ]\n"
             "}\n\n"
@@ -1847,7 +2190,11 @@ class TraceBeamSearchSystem:
                         "when_to_use": str(item.get("when_to_use", "")),
                         "fallback_strategy": str(item.get("fallback_strategy", "")),
                         "accuracy_checks": item.get("accuracy_checks", []),
+                        "target_error_pattern": str(item.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(item.get("accuracy_repair_rule", "")),
+                        "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
                         "rationale": str(item.get("rationale", "")),
+                        "candidate_source": "optimizer",
                         "generation_batch_type": str(item.get("source_batch_type", "")) or str(generation_batches[batch_idx].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -1871,7 +2218,11 @@ class TraceBeamSearchSystem:
                     "when_to_use": str(fallback["when_to_use"]),
                     "fallback_strategy": str(fallback["fallback_strategy"]),
                     "accuracy_checks": list(fallback["accuracy_checks"]),
+                    "target_error_pattern": str(fallback.get("target_error_pattern", "")),
+                    "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
+                    "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
                     "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
+                    "candidate_source": "accuracy_repair_fallback",
                     "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
                     "generation_case_ids": [
                         str(c.get("case_id", ""))
@@ -1937,36 +2288,62 @@ class TraceBeamSearchSystem:
                     ],
                 }
             )
-        system_prompt = (
-            "You are a prompt optimizer for a multi-agent reasoning team.\n"
-            "Generate executable role prompts that reduce full-trace embedding overlap while preserving answer reliability.\n"
-            "Use only the supplied parent prompt, prompt-role previews, window statistics, and generation-batch diagnoses.\n"
-            "The homogeneous cases were selected by the system, not by you. You are only a candidate prompt proposer.\n"
-            "Do not use gold answers, concrete task text, options, labels, or answer-specific content.\n"
-            "Treat trace previews as abstract behavioral evidence; do not copy their wording into the new prompt.\n"
-            "Optimize for behavior that will be visible in the solver trace and easy to evaluate for role execution.\n"
-            "Return strict JSON only."
-        )
+        has_target_error_batches = any(str(b.get("batch_type", "")) == "target_error_repair" and b.get("cases") for b in generation_batches)
+        if has_target_error_batches:
+            system_prompt = (
+                "You are a prompt optimizer for a multi-agent reasoning team.\n"
+                "Generate executable role prompts that improve the target agent's answer accuracy on its observed error patterns while preserving useful reasoning diversity.\n"
+                "Diversity is valuable only when it creates valid, answer-improving reasoning behavior, not superficial wording differences.\n"
+                "Use the supplied target-error cases, peer behavior summaries, parent prompt, role previews, and batch diagnoses.\n"
+                "Do not use gold answers, concrete task text, answer labels, or sample-specific content.\n"
+                "Treat trace previews as abstract behavioral evidence; do not copy their wording into the new prompt.\n"
+                "Optimize for behavior that will be visible in the solver trace and easy to evaluate for role execution.\n"
+                "Return strict JSON only."
+            )
+        else:
+            system_prompt = (
+                "You are a prompt optimizer for a multi-agent reasoning team.\n"
+                "Generate executable role prompts that preserve answer reliability while adding useful reasoning diversity.\n"
+                "Use only the supplied parent prompt, prompt-role previews, window statistics, and generation-batch diagnoses.\n"
+                "The homogeneous cases were selected by the system, not by you. You are only a candidate prompt proposer.\n"
+                "Do not use gold answers, concrete task text, options, labels, or answer-specific content.\n"
+                "Treat trace previews as abstract behavioral evidence; do not copy their wording into the new prompt.\n"
+                "Optimize for behavior that will be visible in the solver trace and easy to evaluate for role execution.\n"
+                "Return strict JSON only."
+            )
         user_prompt = (
             "Revise the target agent prompt using the case-aware generation batches below.\n"
+            "Priority order:\n"
+            "1. Repair the target agent's observed error patterns.\n"
+            "2. Preserve or improve target-agent answer accuracy.\n"
+            "3. Add useful reasoning diversity only when it helps correctness or error rescue.\n"
+            "4. Avoid invalid, verbose, generic, or merely paraphrased prompts.\n"
+            "5. Do not optimize for trace difference alone.\n"
             "Each candidate must primarily address one supplied generation batch; do not merge all batches into one generic prompt.\n"
             "The new prompt must address the provided cases as reasoning-pattern evidence, not as sample content to memorize.\n"
             "Write concrete reasoning behavior, not slogans such as 'be diverse' or 'avoid redundancy'.\n"
+            "A candidate is invalid if it only paraphrases the parent prompt, appends generic caution, asks the solver to be more accurate, "
+            "or changes style without adding a concrete error-repair procedure.\n"
+            "Each candidate_prompt must contain a concrete reasoning procedure, a specific error-repair behavior, final answer discipline, "
+            "and a short verification step.\n"
             "Write a complete short role prompt, not a suffix to append to the parent prompt. "
             "Do not repeat generic instructions already present in the parent prompt. "
             "Do not use the phrase 'Use a distinct decision procedure'. "
             "Prefer a short role prompt with 2-4 explicit procedure steps, a fallback strategy, and validity checks.\n"
-            "The prompt should create a different reasoning route from peer roles without making the answer less reliable.\n"
+            "The prompt should create a different reasoning route from peer roles only when that helps correctness or error rescue.\n"
             "Never include concrete question text, answer text, options, labels, sample hashes, or FINAL_ANSWER templates.\n\n"
             "Return JSON:\n"
             "{\n"
             '  "candidates": [\n'
-            '    {"candidate_prompt": str, "role_name": str, "decision_procedure": [str, ...], "when_to_use": str, "fallback_strategy": str, "anti_overlap_rule": str, "validity_checks": [str, ...], "rationale": str, "source_batch_type": str},\n'
+            '    {"candidate_prompt": str, "role_name": str, "decision_procedure": [str, ...], "when_to_use": str, "fallback_strategy": str, "anti_overlap_rule": str, "validity_checks": [str, ...], "target_error_pattern": str, "accuracy_repair_rule": str, "expected_accuracy_effect": str, "rationale": str, "source_batch_type": str},\n'
             "    ...\n"
             "  ]\n"
             "}\n\n"
             "Return exactly requested_candidates distinct candidates. "
             "Set source_batch_type to the exact batch_type that the candidate primarily addresses. "
+            "target_error_pattern names the main observed pattern repaired by the candidate. "
+            "accuracy_repair_rule is the concrete behavior enforced to improve target-agent correctness. "
+            "expected_accuracy_effect explains why this improves the target agent rather than merely changing wording. "
             "If source_batch_type repeats, the repeated candidates must use meaningfully different executable procedures. "
             "Do not include batch names, sample identifiers, or meta-evaluation language inside candidate_prompt.\n\n"
             f"target_agent_id: {agent_id}\n"
@@ -2010,7 +2387,11 @@ class TraceBeamSearchSystem:
                         "fallback_strategy": str(item.get("fallback_strategy", "")),
                         "anti_overlap_rule": str(item.get("anti_overlap_rule", "")),
                         "validity_checks": item.get("validity_checks", []),
+                        "target_error_pattern": str(item.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(item.get("accuracy_repair_rule", "")),
+                        "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
                         "rationale": str(item.get("rationale", "")),
+                        "candidate_source": "optimizer",
                         "generation_batch_type": str(item.get("source_batch_type", "")) or str(safe_generation_batches[min(len(parsed), len(safe_generation_batches) - 1)].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -2022,7 +2403,9 @@ class TraceBeamSearchSystem:
                 if len(parsed) >= num_candidates:
                     break
         while len(parsed) < num_candidates:
-            fallback = self._structured_fallback_role(agent_id, len(parsed), mode="diversity")
+            batch_idx = min(len(parsed), len(generation_batches) - 1)
+            fallback_mode = "accuracy_repair" if has_target_error_batches else "diversity"
+            fallback = self._structured_fallback_role(agent_id, len(parsed), mode=fallback_mode)
             prompt = str(fallback["candidate_prompt"])
             seen_signatures.add(self._prompt_signature(prompt))
             parsed.append(
@@ -2034,217 +2417,20 @@ class TraceBeamSearchSystem:
                     "fallback_strategy": str(fallback["fallback_strategy"]),
                     "anti_overlap_rule": str(fallback["anti_overlap_rule"]),
                     "validity_checks": list(fallback["validity_checks"]),
+                    "target_error_pattern": str(fallback.get("target_error_pattern", "")),
+                    "accuracy_repair_rule": str(fallback.get("accuracy_repair_rule", "")),
+                    "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
                     "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
-                    "generation_batch_type": str(generation_batches[min(len(parsed), len(generation_batches) - 1)].get("batch_type", "")),
+                    "candidate_source": f"{fallback_mode}_fallback",
+                    "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
                     "generation_case_ids": [
                         str(c.get("case_id", ""))
-                        for c in generation_batches[min(len(parsed), len(generation_batches) - 1)].get("cases", [])
+                        for c in generation_batches[batch_idx].get("cases", [])
                         if isinstance(c, dict)
                     ],
                 }
             )
         return parsed[:num_candidates]
-
-    async def evaluate_local_role_execution(
-        self,
-        agent_id: int,
-        candidate_prompt: str,
-        role_spec: Dict[str, Any],
-        trace: str,
-        answer: str,
-    ) -> Dict[str, Any]:
-        invalid = self.rule_invalid_check(trace, answer)
-        cache_key = self._hash("|".join([str(agent_id), candidate_prompt, json.dumps(role_spec, sort_keys=True), trace]))
-        if cache_key in self.local_validity_cache:
-            return dict(self.local_validity_cache[cache_key])
-        system_prompt = (
-            "You evaluate whether one solver trace executed the candidate prompt's role.\n"
-            "Judge role execution only. Do not judge answer correctness. Do not compare to other agents. "
-            "Be strict: a trace is locally valid only when it actually follows the specified procedure, not when it merely mentions it. "
-            "Return strict JSON only."
-        )
-        user_prompt = (
-            "Return JSON with keys:\n"
-            "{\n"
-            '  "local_validity": 0,\n'
-            '  "role_alignment": "aligned / partially_aligned / not_aligned",\n'
-            '  "evidence": ["..."],\n'
-            '  "reason": "..."\n'
-            "}\n\n"
-            "local_validity is 1 only if the trace clearly performs the executable role behavior with observable steps. "
-            "It is 0 if the trace is invalid, only mentions the role superficially, follows a generic path, or skips the role's distinctive procedure. "
-            "Use short evidence strings copied or paraphrased from the trace to justify the role-execution judgment. "
-            "Do not require the answer to be correct; judge only role execution and output validity.\n\n"
-            f"candidate_prompt:\n{candidate_prompt}\n\n"
-            f"role_spec:\n{json.dumps(role_spec, ensure_ascii=False, indent=2)}\n\n"
-            f"trace:\n{normalize_spaces(trace)}"
-        )
-        try:
-            text = await self._chat(
-                model=self.cfg.evaluator_model,
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                temperature=float(self.cfg.evaluator_temperature),
-                max_tokens=int(self.cfg.evaluator_max_tokens),
-                stage=f"local_role_eval_agent_{agent_id}",
-            )
-            obj = extract_json_obj(text) or {}
-            if not isinstance(obj, dict):
-                obj = {}
-        except Exception as e:
-            obj = {"local_validity": 0, "role_alignment": "not_aligned", "evidence": [], "reason": normalize_spaces(str(e))[:240]}
-        local_validity = 1 if int(obj.get("local_validity", 0) or 0) > 0 else 0
-        if invalid["invalid"]:
-            local_validity = 0
-        evidence = obj.get("evidence", [])
-        if not isinstance(evidence, list):
-            evidence = []
-        result = {
-            "local_validity": int(local_validity),
-            "role_alignment": str(obj.get("role_alignment", "aligned" if local_validity else "not_aligned")),
-            "evidence": evidence,
-            "reason": str(obj.get("reason", "")),
-        }
-        self.local_validity_cache[cache_key] = dict(result)
-        return result
-
-    async def evaluate_local_role_execution_batch(
-        self,
-        agent_id: int,
-        candidate_prompt: str,
-        role_spec: Dict[str, Any],
-        trace_answer_rows: List[Dict[str, str]],
-    ) -> List[Dict[str, Any]]:
-        results: List[Optional[Dict[str, Any]]] = [None for _ in trace_answer_rows]
-        pending: List[Dict[str, Any]] = []
-        role_spec = dict(role_spec or {})
-        for idx, row in enumerate(trace_answer_rows):
-            trace = str(row.get("trace", ""))
-            answer = str(row.get("answer", ""))
-            invalid = self.rule_invalid_check(trace, answer)
-            cache_key = self._hash("|".join([str(agent_id), candidate_prompt, json.dumps(role_spec, sort_keys=True), trace]))
-            if cache_key in self.local_validity_cache:
-                results[idx] = dict(self.local_validity_cache[cache_key])
-                continue
-            if int(invalid.get("invalid", 0)):
-                result = {
-                    "local_validity": 0,
-                    "role_alignment": "not_aligned",
-                    "evidence": [],
-                    "reason": "Invalid trace: " + ", ".join(str(x) for x in invalid.get("reasons", [])),
-                }
-                self.local_validity_cache[cache_key] = dict(result)
-                results[idx] = result
-                continue
-            pending.append({"idx": idx, "trace": trace, "answer": answer, "cache_key": cache_key})
-
-        batch_size = max(1, int(getattr(self.cfg, "local_evaluator_batch_size", 5) or 5))
-        for start in range(0, len(pending), batch_size):
-            chunk = pending[start : start + batch_size]
-            try:
-                chunk_results = await self._evaluate_local_role_execution_chunk(
-                    agent_id=agent_id,
-                    candidate_prompt=candidate_prompt,
-                    role_spec=role_spec,
-                    rows=chunk,
-                )
-            except Exception:
-                chunk_results = []
-                for item in chunk:
-                    chunk_results.append(
-                        await self.evaluate_local_role_execution(
-                            agent_id=agent_id,
-                            candidate_prompt=candidate_prompt,
-                            role_spec=role_spec,
-                            trace=str(item.get("trace", "")),
-                            answer=str(item.get("answer", "")),
-                        )
-                    )
-            for item, result in zip(chunk, chunk_results):
-                idx = int(item["idx"])
-                result = dict(result or {})
-                result["local_validity"] = 1 if int(result.get("local_validity", 0) or 0) > 0 else 0
-                result.setdefault("role_alignment", "aligned" if result["local_validity"] else "not_aligned")
-                evidence = result.get("evidence", [])
-                result["evidence"] = evidence if isinstance(evidence, list) else []
-                result.setdefault("reason", "")
-                self.local_validity_cache[str(item["cache_key"])] = dict(result)
-                results[idx] = result
-
-        return [
-            r
-            if isinstance(r, dict)
-            else {"local_validity": 0, "role_alignment": "not_aligned", "evidence": [], "reason": "missing batch evaluation"}
-            for r in results
-        ]
-
-    async def _evaluate_local_role_execution_chunk(
-        self,
-        agent_id: int,
-        candidate_prompt: str,
-        role_spec: Dict[str, Any],
-        rows: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
-        if not rows:
-            return []
-        system_prompt = (
-            "You evaluate whether each solver trace executed the candidate prompt's role.\n"
-            "Judge each item independently for role execution only. Do not judge answer correctness. "
-            "Do not compare items in this batch and do not compare to other agents. "
-            "Be strict: a trace is locally valid only when it actually follows the specified procedure, not when it merely mentions it. "
-            "Return strict JSON only."
-        )
-        payload = [
-            {
-                "item_id": int(row["idx"]),
-                "trace": normalize_spaces(str(row.get("trace", ""))),
-            }
-            for row in rows
-        ]
-        user_prompt = (
-            "Return JSON with keys:\n"
-            "{\n"
-            '  "evaluations": [\n'
-            '    {"item_id": 0, "local_validity": 0, "role_alignment": "aligned / partially_aligned / not_aligned", "evidence": ["..."], "reason": "..."},\n'
-            "    ...\n"
-            "  ]\n"
-            "}\n\n"
-            "Return exactly one evaluation for every item_id, preserving each item_id. "
-            "local_validity is 1 only if the trace clearly performs the executable role behavior with observable steps. "
-            "It is 0 if the trace only mentions the role superficially, follows a generic path, or skips the role's distinctive procedure. "
-            "Use at most two short evidence strings copied or paraphrased from that same trace only. "
-            "If evidence is absent or purely generic, set local_validity to 0. "
-            "Keep reason concise. Do not require the answer to be correct.\n\n"
-            f"candidate_prompt:\n{candidate_prompt}\n\n"
-            f"role_spec:\n{json.dumps(role_spec, ensure_ascii=False, indent=2)}\n\n"
-            f"items:\n{json.dumps(payload, ensure_ascii=False, indent=2)}"
-        )
-        text = await self._chat(
-            model=self.cfg.evaluator_model,
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-            temperature=float(self.cfg.evaluator_temperature),
-            max_tokens=int(self.cfg.evaluator_max_tokens),
-            stage=f"local_role_eval_batch_agent_{agent_id}",
-        )
-        obj = extract_json_obj(text) or {}
-        evaluations = obj.get("evaluations", []) if isinstance(obj, dict) else []
-        by_id = {int(x.get("item_id", -1)): x for x in evaluations if isinstance(x, dict)}
-        normalized = []
-        for row in rows:
-            item_id = int(row["idx"])
-            obj_row = dict(by_id.get(item_id, {}))
-            local_validity = 1 if int(obj_row.get("local_validity", 0) or 0) > 0 else 0
-            evidence = obj_row.get("evidence", [])
-            normalized.append(
-                {
-                    "local_validity": local_validity,
-                    "role_alignment": str(obj_row.get("role_alignment", "aligned" if local_validity else "not_aligned")),
-                    "evidence": evidence if isinstance(evidence, list) else [],
-                    "reason": str(obj_row.get("reason", "")),
-                }
-            )
-        return normalized
 
     async def evaluate_joint_trace_diversity(self, traces: List[str], candidate_agent_id: int) -> Dict[str, Any]:
         cache_key = self._hash("|".join([str(candidate_agent_id), *[self._hash(t) for t in traces]]))
@@ -2305,51 +2491,49 @@ class TraceBeamSearchSystem:
             return 0.0
         return float(max(0.0, min(1.0, x)))
 
-    def _candidate_reward(self, diversity: float, local_validity: float, team_accuracy: float, invalid_score: float) -> float:
-        return float(
-            float(self.cfg.reward_weight_diversity) * self._clip01(diversity)
-            + float(self.cfg.reward_weight_local_validity) * self._clip01(local_validity)
-            + float(self.cfg.reward_weight_team_accuracy) * self._clip01(team_accuracy)
-            + float(self.cfg.reward_weight_invalid_score) * self._clip01(invalid_score)
-        )
-
     def _candidate_reward_guarded(
         self,
         baseline_team_accuracy: float,
         candidate_team_accuracy: float,
+        baseline_target_accuracy: float,
+        candidate_target_accuracy: float,
         baseline_embedding_diversity: float,
         candidate_embedding_diversity: float,
         baseline_invalid_rate: float,
         candidate_invalid_rate: float,
-        local_validity: float,
     ) -> Dict[str, Any]:
         baseline_team_accuracy = self._clip01(baseline_team_accuracy)
         candidate_team_accuracy = self._clip01(candidate_team_accuracy)
+        baseline_target_accuracy = self._clip01(baseline_target_accuracy)
+        candidate_target_accuracy = self._clip01(candidate_target_accuracy)
         baseline_embedding_diversity = self._clip01(baseline_embedding_diversity)
         candidate_embedding_diversity = self._clip01(candidate_embedding_diversity)
         baseline_invalid_rate = self._clip01(baseline_invalid_rate)
         candidate_invalid_rate = self._clip01(candidate_invalid_rate)
-        local_validity = self._clip01(local_validity)
 
-        acc_delta = candidate_team_accuracy - baseline_team_accuracy
+        acc_delta = candidate_target_accuracy - baseline_target_accuracy
+        vote_delta = candidate_team_accuracy - baseline_team_accuracy
         div_delta = candidate_embedding_diversity - baseline_embedding_diversity
         invalid_delta = candidate_invalid_rate - baseline_invalid_rate
-        guard_passed = candidate_team_accuracy >= baseline_team_accuracy - float(self.cfg.accuracy_guard_epsilon)
+        guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(self.cfg.accuracy_guard_epsilon)
         if not guard_passed:
             reward = -1.0 + acc_delta - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
         else:
             reward = (
-                candidate_team_accuracy
+                candidate_target_accuracy
                 + float(self.cfg.reward_weight_div_delta) * div_delta
-                + float(self.cfg.reward_weight_local_validity) * local_validity
                 - float(self.cfg.reward_weight_invalid_delta) * max(0.0, invalid_delta)
             )
         return {
             "reward": float(reward),
             "accuracy_delta": float(acc_delta),
+            "vote_delta": float(vote_delta),
             "diversity_delta": float(div_delta),
             "invalid_delta": float(invalid_delta),
             "accuracy_guard_passed": bool(guard_passed),
+            "baseline_target_accuracy": float(baseline_target_accuracy),
+            "candidate_target_accuracy": float(candidate_target_accuracy),
+            "target_agent_accuracy": float(candidate_target_accuracy),
         }
 
     def _candidate_reward_coverage_rescue_diversity(
@@ -2364,7 +2548,6 @@ class TraceBeamSearchSystem:
         rescue_rate: float,
         coverage_delta: float,
         useful_diversity: float,
-        local_validity: float,
     ) -> Dict[str, Any]:
         baseline_team_accuracy = self._clip01(baseline_team_accuracy)
         candidate_team_accuracy = self._clip01(candidate_team_accuracy)
@@ -2374,24 +2557,18 @@ class TraceBeamSearchSystem:
         candidate_invalid_rate = self._clip01(candidate_invalid_rate)
         rescue_rate = self._clip01(rescue_rate)
         useful_diversity = self._clip01(useful_diversity)
-        local_validity = self._clip01(local_validity)
 
         vote_delta = candidate_team_accuracy - baseline_team_accuracy
         invalid_delta = candidate_invalid_rate - baseline_invalid_rate
         invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
-        target_guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(self.cfg.target_accuracy_guard_epsilon)
 
         if not invalid_guard_passed:
             reward = -1.0
-        elif not target_guard_passed:
-            reward = -0.5 + vote_delta
         else:
             reward = (
-                float(self.cfg.reward_weight_rescue) * rescue_rate
+                candidate_target_accuracy
                 + float(self.cfg.reward_weight_coverage) * float(coverage_delta)
                 + float(self.cfg.reward_weight_useful_diversity) * useful_diversity
-                + float(self.cfg.reward_weight_vote_delta) * vote_delta
-                + float(self.cfg.reward_weight_local_validity) * local_validity
             )
         return {
             "reward": float(reward),
@@ -2408,7 +2585,6 @@ class TraceBeamSearchSystem:
             "baseline_invalid_rate": float(baseline_invalid_rate),
             "candidate_invalid_rate": float(candidate_invalid_rate),
             "invalid_guard_passed": bool(invalid_guard_passed),
-            "target_guard_passed": bool(target_guard_passed),
         }
 
     async def _evaluate_candidate_prompt_accuracy_only(
@@ -2477,7 +2653,6 @@ class TraceBeamSearchSystem:
             "homogeneous_case_count": 0.0,
             "resolved_case_count": 0.0,
             "new_homogeneous_case_count": 0.0,
-            "local_validity_mean": 0.0,
             "team_accuracy": team_accuracy,
             "majority_team_accuracy": majority_team_accuracy,
             "weighted_team_accuracy": weighted_team_accuracy,
@@ -2617,16 +2792,7 @@ class TraceBeamSearchSystem:
         raw = await asyncio.gather(*[run_one(ex) for ex in eval_batch], return_exceptions=True)
         rows = [r for r in raw if isinstance(r, dict)]
         errors = [normalize_spaces(str(r))[:240] for r in raw if isinstance(r, Exception)]
-        local_results = await self.evaluate_local_role_execution_batch(
-            agent_id=agent_id,
-            candidate_prompt=candidate_prompt,
-            role_spec=role_spec,
-            trace_answer_rows=[{"trace": str(r.get("trace", "")), "answer": str(r.get("answer", ""))} for r in rows],
-        )
-        for row, local in zip(rows, local_results):
-            row["local_validity"] = int(local.get("local_validity", 0))
         diversity = self._clip01(float(np.mean([float(r.get("embedding_diversity", 0.0)) for r in rows])) if rows else 0.0)
-        local_validity = self._clip01(float(np.mean([float(r.get("local_validity", 0.0)) for r in rows])) if rows else 0.0)
         team_accuracy = self._clip01(float(np.mean([float(r.get("team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
         invalid_rate = self._clip01(float(np.mean([float(r.get("invalid", 1.0)) for r in rows])) if rows else 1.0)
         invalid_score = self._clip01(1.0 - invalid_rate)
@@ -2657,17 +2823,17 @@ class TraceBeamSearchSystem:
                     rescue_rate=rescue_rate,
                     coverage_delta=coverage_delta,
                     useful_diversity=useful_diversity,
-                    local_validity=local_validity,
                 )
             else:
                 baseline_candidate_metrics = self._candidate_reward_guarded(
                     baseline_team_accuracy=baseline_team_accuracy,
                     candidate_team_accuracy=candidate_team_accuracy,
+                    baseline_target_accuracy=baseline_target_accuracy,
+                    candidate_target_accuracy=candidate_target_accuracy,
                     baseline_embedding_diversity=baseline_embedding_diversity,
                     candidate_embedding_diversity=candidate_embedding_diversity,
                     baseline_invalid_rate=baseline_invalid_rate,
                     candidate_invalid_rate=candidate_invalid_rate,
-                    local_validity=local_validity,
                 )
             baseline_candidate_metrics.update(
                 {
@@ -2692,7 +2858,7 @@ class TraceBeamSearchSystem:
             )
             reward = float(baseline_candidate_metrics.get("reward", 0.0))
         else:
-            reward = self._candidate_reward(diversity, local_validity, team_accuracy, invalid_score)
+            reward = team_accuracy
         solver_reuse_hits = int(sum(int(r.get("solver_reuse_hits", 0) or 0) for r in rows))
         solver_reuse_misses = int(sum(int(r.get("solver_reuse_misses", 0) or 0) for r in rows))
         solver_calls = int(sum(int(r.get("solver_calls", 0) or 0) for r in rows))
@@ -2705,7 +2871,6 @@ class TraceBeamSearchSystem:
             "homogeneous_case_count": float(np.mean([float(r.get("homogeneous_case_count", 0.0)) for r in rows])) if rows else 0.0,
             "resolved_case_count": float(np.mean([float(r.get("resolved_case_count", 0.0)) for r in rows])) if rows else 0.0,
             "new_homogeneous_case_count": float(np.mean([float(r.get("new_homogeneous_case_count", 0.0)) for r in rows])) if rows else 0.0,
-            "local_validity_mean": local_validity,
             "team_accuracy": team_accuracy,
             "invalid_rate": invalid_rate,
             "invalid_score": invalid_score,
@@ -2775,8 +2940,12 @@ class TraceBeamSearchSystem:
                         "parent_id": parent_id,
                         "generation": generation,
                         "source": "optimizer",
+                        "candidate_source": str(proposal.get("candidate_source", "optimizer") or "optimizer"),
                         "generation_batch_type": str(proposal.get("generation_batch_type", "")) or str(batch.get("batch_type", "")),
                         "generation_case_ids": proposal.get("generation_case_ids", []),
+                        "target_error_pattern": str(proposal.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(proposal.get("accuracy_repair_rule", "")),
+                        "expected_accuracy_effect": str(proposal.get("expected_accuracy_effect", "")),
                         "proposal": proposal,
                     }
                 )
@@ -2793,9 +2962,37 @@ class TraceBeamSearchSystem:
                     "parent_id": parent.get("parent_id"),
                     "generation": int(parent.get("generation", 0) or 0),
                     "source": "existing_beam",
+                    "candidate_source": "existing_beam",
+                    "generation_batch_type": "",
+                    "generation_case_ids": [],
+                    "target_error_pattern": "",
+                    "accuracy_repair_rule": "",
+                    "expected_accuracy_effect": "",
                     "proposal": {},
                 }
             )
+
+        target_case_ids = {
+            str(c.get("case_id", ""))
+            for b in generation_batches
+            if str(b.get("batch_type", "")) == "target_error_repair"
+            for c in b.get("cases", [])
+            if isinstance(c, dict) and str(c.get("case_id", ""))
+        }
+        num_target_error_cases = len(target_case_ids)
+        num_accuracy_repair_candidates = sum(
+            1
+            for c in candidate_pool
+            if str(c.get("generation_batch_type", "")) == "target_error_repair"
+            or bool(str(c.get("target_error_pattern", "")).strip())
+            or "accuracy_repair" in str(c.get("candidate_source", ""))
+        )
+        num_diversity_candidates = sum(
+            1
+            for c in candidate_pool
+            if str(c.get("generation_batch_type", "")) in {"homogeneous_overlap_repair", "high_overlap_cases", "mixed_window_cases", "random_window", "window_overlap_diagnosis"}
+            and not bool(str(c.get("target_error_pattern", "")).strip())
+        )
 
         evaluated = []
         peer_prompts = self._active_prompt_list()
@@ -2880,7 +3077,6 @@ class TraceBeamSearchSystem:
                     "homogeneous_case_count": float(metrics.get("homogeneous_case_count", 0.0)),
                     "resolved_case_count": float(metrics.get("resolved_case_count", 0.0)),
                     "new_homogeneous_case_count": float(metrics.get("new_homogeneous_case_count", 0.0)),
-                    "local_validity_mean": float(metrics.get("local_validity_mean", 0.0)),
                     "team_accuracy": float(metrics.get("team_accuracy", 0.0)),
                     "target_agent_accuracy": float(metrics.get("target_agent_accuracy", 0.0)),
                     "invalid_rate": float(metrics.get("invalid_rate", 0.0)),
@@ -2905,7 +3101,6 @@ class TraceBeamSearchSystem:
                     "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
-                    "target_guard_passed": bool(metrics.get("target_guard_passed", True)),
                     "solver_reuse_enabled": bool(metrics.get("solver_reuse_enabled", False)),
                     "solver_reuse_hits": int(metrics.get("solver_reuse_hits", 0)),
                     "solver_reuse_misses": int(metrics.get("solver_reuse_misses", 0)),
@@ -2918,9 +3113,16 @@ class TraceBeamSearchSystem:
                     "prompt_preview": normalize_spaces(str(item.get("prompt", "")))[:220],
                     "optimizer_model": self.cfg.optimizer_model,
                     "evaluator_model": self.cfg.evaluator_model,
-                    "candidate_source": item.get("source", ""),
+                    "candidate_source": item.get("candidate_source", item.get("source", "")),
+                    "candidate_pool_source": item.get("source", ""),
                     "generation_batch_type": item.get("generation_batch_type", ""),
                     "generation_case_ids": item.get("generation_case_ids", []),
+                    "target_error_pattern": item.get("target_error_pattern", ""),
+                    "accuracy_repair_rule": item.get("accuracy_repair_rule", ""),
+                    "expected_accuracy_effect": item.get("expected_accuracy_effect", ""),
+                    "num_target_error_cases": int(num_target_error_cases),
+                    "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
+                    "num_diversity_candidates": int(num_diversity_candidates),
                     "num_eval_samples": int(metrics.get("num_eval_samples", 0)),
                     "candidate_eval_strategy": str(metrics.get("candidate_eval_strategy", getattr(self.cfg, "candidate_eval_strategy", "random"))),
                     "candidate_eval_pool_size": int(metrics.get("candidate_eval_pool_size", getattr(self.cfg, "candidate_eval_pool_size", 0))),
@@ -2937,6 +3139,9 @@ class TraceBeamSearchSystem:
             "candidate_count": len(candidate_pool),
             "generation_batches": generation_batches,
             "baseline_homogeneous_case_count": len(baseline_cases),
+            "num_target_error_cases": int(num_target_error_cases),
+            "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
+            "num_diversity_candidates": int(num_diversity_candidates),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
         }
@@ -3037,7 +3242,6 @@ class TraceBeamSearchSystem:
             "homogeneous_case_count",
             "resolved_case_count",
             "new_homogeneous_case_count",
-            "local_validity_mean",
             "team_accuracy",
             "target_agent_accuracy",
             "baseline_team_accuracy",
