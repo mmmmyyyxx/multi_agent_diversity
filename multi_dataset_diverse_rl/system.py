@@ -113,11 +113,17 @@ class TraceBeamSearchSystem:
     def _is_guarded_reward_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
 
+    def _is_coverage_useful_diversity_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() in {
+            "coverage_useful_diversity",
+            "coverage_rescue_diversity",
+        }
+
     def _is_coverage_rescue_diversity_mode(self) -> bool:
-        return str(getattr(self.cfg, "reward_mode", "")).lower() == "coverage_rescue_diversity"
+        return self._is_coverage_useful_diversity_mode()
 
     def _uses_baseline_candidate_metrics(self) -> bool:
-        return self._is_guarded_reward_mode() or self._is_coverage_rescue_diversity_mode()
+        return self._is_guarded_reward_mode() or self._is_coverage_useful_diversity_mode()
 
     def _empty_cost_summary(self) -> Dict[str, Any]:
         return {
@@ -1650,6 +1656,39 @@ class TraceBeamSearchSystem:
         ids = [i for i in ids if wrong_counts[i] > 0]
         return ids[: (2 if len(ids) >= 2 else 1)]
 
+    def select_reward_agents_for_update(self, diagnosis: Dict[str, Any], metrics: Dict[str, Any]) -> List[int]:
+        error_counts = list(diagnosis.get("per_agent_error_count", []))
+        team_wrong_counts = list(diagnosis.get("per_agent_team_wrong_error_count", []))
+        invalid_rates = list(diagnosis.get("per_agent_invalid_rate", []))
+        overlap_pressures = list(diagnosis.get("per_agent_overlap_pressure", metrics.get("per_agent_overlap", [])))
+        homogeneous_counts = list(diagnosis.get("homogeneous_case_counts", []))
+
+        ids = list(range(len(self.agents)))
+        random.shuffle(ids)
+
+        def value(rows: List[Any], idx: int, default: float = 0.0) -> float:
+            if idx >= len(rows):
+                return float(default)
+            try:
+                return float(rows[idx])
+            except Exception:
+                return float(default)
+
+        scored = []
+        for agent_id in ids:
+            score = (
+                3.0 * value(error_counts, agent_id)
+                + 2.0 * value(team_wrong_counts, agent_id)
+                + 2.0 * value(invalid_rates, agent_id)
+                + 1.0 * value(overlap_pressures, agent_id)
+                + 0.5 * value(homogeneous_counts, agent_id)
+            )
+            if score > 0.0:
+                scored.append((float(score), agent_id))
+        scored.sort(key=lambda item: item[0], reverse=True)
+        selected = [agent_id for _, agent_id in scored]
+        return selected[: (2 if len(selected) >= 2 else 1)]
+
     def _window_accuracy_diagnosis(self, window_records: List[Dict[str, Any]]) -> Dict[str, Any]:
         per_agent_seen = [0 for _ in range(len(self.agents))]
         per_agent_correct = [0 for _ in range(len(self.agents))]
@@ -2536,7 +2575,7 @@ class TraceBeamSearchSystem:
             "target_agent_accuracy": float(candidate_target_accuracy),
         }
 
-    def _candidate_reward_coverage_rescue_diversity(
+    def _candidate_reward_coverage_useful_diversity(
         self,
         *,
         baseline_team_accuracy: float,
@@ -2586,6 +2625,9 @@ class TraceBeamSearchSystem:
             "candidate_invalid_rate": float(candidate_invalid_rate),
             "invalid_guard_passed": bool(invalid_guard_passed),
         }
+
+    def _candidate_reward_coverage_rescue_diversity(self, **kwargs) -> Dict[str, Any]:
+        return self._candidate_reward_coverage_useful_diversity(**kwargs)
 
     async def _evaluate_candidate_prompt_accuracy_only(
         self,
@@ -2646,7 +2688,7 @@ class TraceBeamSearchSystem:
         majority_team_accuracy = self._clip01(float(np.mean([float(r.get("majority_vote_correct", 0.0)) for r in rows])) if rows else 0.0)
         weighted_team_accuracy = self._clip01(float(np.mean([float(r.get("weighted_vote_correct", 0.0)) for r in rows])) if rows else 0.0)
         return {
-            "reward": team_accuracy,
+            "reward": target_agent_accuracy,
             "embedding_diversity": 0.0,
             "mean_embedding_overlap": 0.0,
             "target_overlap_pressure": 0.0,
@@ -2664,6 +2706,7 @@ class TraceBeamSearchSystem:
             "candidate_prompt": candidate_prompt,
             "errors": errors,
             "accuracy_only": True,
+            "accuracy_only_reward_basis": "target_agent_accuracy",
             "solver_reuse_enabled": bool(self.cfg.candidate_reuse_recorded_rollouts),
             "solver_reuse_hits": solver_reuse_hits,
             "solver_reuse_misses": solver_reuse_misses,
@@ -2812,8 +2855,8 @@ class TraceBeamSearchSystem:
             rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
             useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
             rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
-            if self._is_coverage_rescue_diversity_mode():
-                baseline_candidate_metrics = self._candidate_reward_coverage_rescue_diversity(
+            if self._is_coverage_useful_diversity_mode():
+                baseline_candidate_metrics = self._candidate_reward_coverage_useful_diversity(
                     baseline_team_accuracy=baseline_team_accuracy,
                     candidate_team_accuracy=candidate_team_accuracy,
                     baseline_target_accuracy=baseline_target_accuracy,
@@ -3203,13 +3246,13 @@ class TraceBeamSearchSystem:
         if not self.is_update_window_ready():
             return {"update_requested": True, "update_ready": False, "selected_agent_ids": [], "updated_agent_ids": [], "skipped_reason": "window_not_ready"}
         if self._is_accuracy_only_mode():
-            selected = self.select_error_agents_for_update()
             diagnosis = self._window_accuracy_diagnosis(self.recent_window_records)
-            no_selection_reason = "no_agent_errors"
+            selected = self.select_reward_agents_for_update(diagnosis, metrics)
+            no_selection_reason = "no_reward_relevant_agent"
         else:
-            selected = self.select_agents_for_update(metrics)
             diagnosis = self._window_overlap_diagnosis(self.recent_window_records)
-            no_selection_reason = "no_overlap_pressure"
+            selected = self.select_reward_agents_for_update(diagnosis, metrics)
+            no_selection_reason = "no_reward_relevant_agent"
         if not selected:
             self.clear_homogeneity_windows()
             return {"update_requested": True, "update_ready": True, "selected_agent_ids": [], "updated_agent_ids": [], "skipped_reason": no_selection_reason}

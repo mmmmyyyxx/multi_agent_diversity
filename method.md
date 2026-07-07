@@ -269,9 +269,9 @@ Candidate eval 支持：
 --candidate_eval_pool_size 100
 ```
 
-## 11. Coverage-Rescue Diversity Reward
+## 11. Coverage Useful Diversity Reward
 
-当前主 reward 是 `coverage_rescue_diversity`。它奖励的是有用互补性，而不是裸 diversity。
+当前主 reward 是 `coverage_useful_diversity`。它奖励的是有用互补性，而不是裸 diversity。`coverage_rescue_diversity` 作为 deprecated alias 保留兼容。
 
 Batch 级聚合指标：
 
@@ -327,7 +327,7 @@ else:
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
-  --reward_mode coverage_rescue_diversity \
+  --reward_mode coverage_useful_diversity \
   --candidate_eval_strategy fixed_pool \
   --agents 5 \
   --init_mode bank
@@ -337,7 +337,7 @@ python -m multi_dataset_diverse_rl.cli \
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
-  --reward_mode coverage_rescue_diversity \
+  --reward_mode coverage_useful_diversity \
   --aggregation_mode weighted_vote \
   --candidate_eval_strategy fixed_pool \
   --agents 5 \
@@ -365,7 +365,7 @@ python -m multi_dataset_diverse_rl.cli \
 
 ## 13. Validation
 
-在 `coverage_rescue_diversity` 下，validation score 为：
+在 `coverage_useful_diversity` 下，validation score 为：
 
 ```text
 0.4 * vote_acc
@@ -515,7 +515,7 @@ scripts/task_level_accuracy_utils.py
 - `compute_rollout_metrics`
 - `_weighted_vote_with_diagnostics`
 - `_target_trace_novelty`
-- `_candidate_reward_coverage_rescue_diversity`
+- `_candidate_reward_coverage_useful_diversity`
 - `evaluate_candidate_prompt`
 - `update_prompt_with_beam`
 - `_summarize_rollout_rows`

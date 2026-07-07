@@ -198,7 +198,7 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return float(val.get("vote_acc", 0.0) or 0.0)
-    if mode == "coverage_rescue_diversity":
+    if mode in {"coverage_useful_diversity", "coverage_rescue_diversity"}:
         return (
             0.4 * float(val.get("vote_acc", 0.0) or 0.0)
             + 0.3 * float(val.get("oracle_acc", 0.0) or 0.0)
@@ -216,7 +216,7 @@ def validation_metric_name(reward_mode):
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return "vote_acc"
-    if mode == "coverage_rescue_diversity":
+    if mode in {"coverage_useful_diversity", "coverage_rescue_diversity"}:
         return "vote+oracle+useful_div-invalid"
     return "vote_acc+embedding_div-invalid"
 

@@ -141,8 +141,8 @@ else:
 可选模式：
 
 - `guarded_diversity`：默认推荐，准确率约束下优化 trace diversity。
-- `accuracy_only`：消融模式，只按团队准确率选择候选。
-- `coverage_rescue_diversity`：奖励 target agent 补足团队盲区的 useful diversity。
+- `accuracy_only`：消融模式，按被更新 target agent 自身准确率选择候选，同时记录 team vote accuracy。
+- `coverage_useful_diversity`：奖励 target-agent accuracy、oracle coverage gain 和 useful diversity；`coverage_rescue_diversity` 是兼容旧实验的 deprecated alias。
 
 `update_logs.jsonl` 会记录 guard 相关字段：
 
@@ -432,9 +432,9 @@ python scripts/compare_external_accuracy.py \
 This helper reads only the two user-provided files. It does not assume a MARS repository layout.
 It accepts common MARS summary aliases such as `task_id`/`task`/`task_name`/`dataset`, `accuracy`/`acc`, and `method_id`/`method`/`model`.
 
-## Coverage-Rescue Diversity Reward
+## Coverage Useful Diversity Reward
 
-`coverage_rescue_diversity` is an optional reward mode for making prompt evolution prefer useful diversity instead of raw disagreement. Its reward keeps only four active components: target-agent accuracy, oracle coverage gain, useful diversity, and an invalid-output guard. `rescue_rate` is still logged as a diagnostic, but it is not used in the reward.
+`coverage_useful_diversity` is an optional reward mode for making prompt evolution prefer useful diversity instead of raw disagreement. Its reward keeps only four active components: target-agent accuracy, oracle coverage gain, useful diversity, and an invalid-output guard. `rescue_rate` is still logged as a diagnostic, but it is not used in the reward. `coverage_rescue_diversity` remains as a deprecated alias.
 
 Candidate evaluation compares the current active prompts against the candidate-replaced prompts on the same eval batch. It logs `baseline_oracle_acc`, `candidate_oracle_acc`, `coverage_delta`, `rescue_rate`, `useful_diversity`, `rescue_useful_diversity`, `baseline_target_accuracy`, `candidate_target_accuracy`, and `invalid_guard_passed`.
 
@@ -450,7 +450,7 @@ Run example:
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
-  --reward_mode coverage_rescue_diversity \
+  --reward_mode coverage_useful_diversity \
   --candidate_eval_strategy fixed_pool \
   --agents 5 \
   --init_mode bank
@@ -460,7 +460,7 @@ Inference still defaults to majority voting. To try diversity-aware aggregation,
 
 ```bash
 python -m multi_dataset_diverse_rl.cli \
-  --reward_mode coverage_rescue_diversity \
+  --reward_mode coverage_useful_diversity \
   --aggregation_mode weighted_vote
 ```
 

@@ -201,7 +201,7 @@ def plot_candidate_behavior(out_dir: Path, update_rows, epoch_summary):
     colors = ["#1f77b4" if r["top_is_optimizer"] else "#7f7f7f" for r in update_rows]
     axes[0].scatter(xs, rewards, c=colors, s=22, alpha=0.8)
     axes[0].plot(xs, rewards, color="#1f77b4", alpha=0.25, linewidth=1)
-    axes[0].set_title("Top-1 candidate reward per prompt update (reward = team accuracy)")
+    axes[0].set_title("Top-1 candidate reward per prompt update (reward = target-agent accuracy)")
     axes[0].set_ylabel("Top-1 reward")
     axes[0].set_ylim(*clamp_ylim(rewards + target_acc, pad=0.04))
     axes[0].grid(alpha=0.25)

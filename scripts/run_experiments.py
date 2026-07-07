@@ -249,7 +249,7 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
-    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_rescue_diversity"])
+    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "coverage_rescue_diversity"])
     parser.add_argument("--beam_size", type=int, default=3)
     parser.add_argument("--num_candidates_per_parent", type=int, default=2)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
