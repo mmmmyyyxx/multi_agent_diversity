@@ -1,0 +1,142 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.06332202746222416,
+      "mean_embedding_overlap": 0.9366779725377757,
+      "mean_invalid_rate": 0.24375000000000002,
+      "vote_acc": 0.9895833333333334
+    },
+    "val": {
+      "size": 80,
+      "num_test_samples": 80,
+      "vote_acc": 0.9875,
+      "majority_vote_acc": 0.9875,
+      "weighted_vote_acc": 0.9875,
+      "mean_individual_acc": 0.985,
+      "best_individual_acc": 0.9875,
+      "per_agent_acc": [
+        0.9875,
+        0.9875,
+        0.9875,
+        0.9875,
+        0.975
+      ],
+      "oracle_acc": 0.9875,
+      "aggregation_gap": 0.0,
+      "rescue_available_rate": 0.0,
+      "correct_disagreement_rate": 0.0125,
+      "mean_useful_diversity": 0.08939641778667767,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.06877754203975202,
+      "mean_embedding_overlap": 0.9312224579602478,
+      "mean_invalid_rate": 0.23000000000000004
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_embedding_diversity": 0.07875234317034484,
+      "mean_embedding_overlap": 0.9212476568296551,
+      "mean_invalid_rate": 0.2354166666666667,
+      "vote_acc": 0.9791666666666666
+    },
+    "val": {
+      "size": 80,
+      "num_test_samples": 80,
+      "vote_acc": 0.9875,
+      "majority_vote_acc": 0.9875,
+      "weighted_vote_acc": 0.9875,
+      "mean_individual_acc": 0.98,
+      "best_individual_acc": 0.9875,
+      "per_agent_acc": [
+        0.975,
+        0.975,
+        0.975,
+        0.9875,
+        0.9875
+      ],
+      "oracle_acc": 1.0,
+      "aggregation_gap": 0.012499999999999956,
+      "rescue_available_rate": 0.0125,
+      "correct_disagreement_rate": 0.0625,
+      "mean_useful_diversity": 0.13028350551923115,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.08133695989847183,
+      "mean_embedding_overlap": 0.9186630401015282,
+      "mean_invalid_rate": 0.2925
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "mean_embedding_diversity": 0.08589186426252127,
+      "mean_embedding_overlap": 0.9141081357374787,
+      "mean_invalid_rate": 0.26458333333333334,
+      "vote_acc": 0.9895833333333334
+    },
+    "val": {
+      "size": 80,
+      "num_test_samples": 80,
+      "vote_acc": 0.9875,
+      "majority_vote_acc": 0.9875,
+      "weighted_vote_acc": 0.9875,
+      "mean_individual_acc": 0.985,
+      "best_individual_acc": 0.9875,
+      "per_agent_acc": [
+        0.975,
+        0.9875,
+        0.9875,
+        0.9875,
+        0.9875
+      ],
+      "oracle_acc": 1.0,
+      "aggregation_gap": 0.012499999999999956,
+      "rescue_available_rate": 0.0125,
+      "correct_disagreement_rate": 0.0375,
+      "mean_useful_diversity": 0.12332639855643115,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.07773093029856681,
+      "mean_embedding_overlap": 0.9222690697014333,
+      "mean_invalid_rate": 0.29500000000000004
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 1,
+    "best_validation_score": 0.9782555084079504,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 100,
+      "num_test_samples": 100,
+      "vote_acc": 0.99,
+      "majority_vote_acc": 0.99,
+      "weighted_vote_acc": 0.99,
+      "mean_individual_acc": 0.976,
+      "best_individual_acc": 0.98,
+      "per_agent_acc": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.96
+      ],
+      "oracle_acc": 0.99,
+      "aggregation_gap": 0.0,
+      "rescue_available_rate": 0.0,
+      "correct_disagreement_rate": 0.05,
+      "mean_useful_diversity": 0.0988174841205279,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.06959855669736863,
+      "mean_embedding_overlap": 0.9304014433026313,
+      "mean_invalid_rate": 0.24
+    }
+  }
+]

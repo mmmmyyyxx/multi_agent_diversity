@@ -1,44 +1,56 @@
 # Method
 
-本文档描述当前仓库实现的方法。核心目标是让多个 LLM solver agent 在同一任务上形成可观察、可评估的推理路径差异，同时用准确率、输出有效性和平票诊断约束这种差异。
+本文档描述当前仓库实现的方法。项目的核心方法是 **case-aware evolutionary prompt search**，不是严格意义上的 reinforcement learning：系统不训练模型参数，也不做策略梯度更新；reward 只用于候选 prompt 的排序、beam 保留和最终 prompt 选择。
 
-需要特别明确：本项目方法是 **case-aware evolutionary prompt search**，不是严格 reinforcement learning。系统没有训练模型参数，也没有策略梯度；它通过 rollout 诊断、案例驱动 prompt generation、candidate evaluation 和 per-agent beam search 来演化 prompt。
+一句话概括：
 
-## 1. 问题定义
+```text
+通过 prompt evolution 诱导多个 agent 形成互补推理路径；
+训练时奖励能补足团队盲区的 useful diversity；
+推理时默认使用 majority vote，并可选 weighted_vote 来利用少数派正确路径。
+```
 
-多 agent 推理常见做法是给多个 agent 不同角色，再用 majority vote 得到最终答案。但如果 agent 的完整 reasoning trace 高度相似，那么表面上的多角色未必带来真实互补性。
+## 1. 方法目标
 
-本项目关注：
+多 agent 推理通常会让多个 solver agent 同时回答同一道题，再用投票得到团队答案。问题是：多个 prompt 看起来不同，并不代表多个 agent 真的形成了互补推理。如果它们的 reasoning trace 高度相似，系统只是重复了同一种错误或同一种思路。
 
-- 同一题中，不同 agent 的 trace 是否语义重叠。
-- 哪些题、哪些 agent pair、哪些 prompt 行为导致重叠。
-- 能否把高重叠、无效输出、错误答案等案例转成 prompt 优化信号。
-- 新 prompt 是否真正改变 target agent 的解题程序。
-- 多样性提升是否会损害 majority vote accuracy。
+本项目要优化的不是“表面多样性”，而是 **有用的互补性**：
 
-## 2. 系统组件
+- target agent 是否形成了不同但有效的推理路径。
+- target agent 是否保持或提升自身正确率。
+- 当团队多数投票错误时，是否有 agent 提供了正确少数派路径。
+- 候选 prompt 是否增加了团队 answer coverage。
+- diversity 是否来自有效、正确的 trace，而不是空泛、无效、重复输出。
+
+## 2. 系统组成
 
 系统包含三类模型角色：
 
-- Solver agents：真正解题，输出 compact reasoning trace 和 `FINAL_ANSWER: <answer>`。
-- Prompt optimizer：根据窗口统计和案例证据提出候选 prompt。
+- Solver agents：真正解题，输出 reasoning trace 和最终答案。
+- Prompt optimizer：根据窗口案例和诊断信息生成候选 prompt。
 - Evaluator：判断 target agent 是否执行了候选 prompt 描述的角色程序。
 
-Optimizer 不直接决定采纳。候选 prompt 必须经过 evaluation 和 beam ranking。
+Optimizer 不直接改写最终系统。候选 prompt 必须先经过 candidate evaluation，再按 reward 进入 per-agent beam search。
 
-## 3. TaskSpec 任务抽象
+## 3. 任务抽象
 
-任务逻辑集中在 `multi_dataset_diverse_rl/tasks.py`：
+任务解析集中在 `multi_dataset_diverse_rl/tasks.py`：
 
 ```python
 @dataclass
 class TaskSpec:
     name: str
-    parse_gold: Callable[[str, Optional[str]], str]
+    parse_gold: Callable[[Any, Optional[str]], str]
     extract_pred: Callable[[Optional[str], Optional[str]], str]
     match_answer: Callable[[str, str], bool]
     format_question: Optional[Callable[[dict], str]] = None
 ```
+
+`TraceBeamSearchSystem` 通过 `self.task_spec` 完成：
+
+- gold parsing
+- prediction extraction
+- answer matching
 
 当前支持：
 
@@ -47,75 +59,99 @@ class TaskSpec:
 - `bbh`
 - `auto`
 
-`utils.py` 中的旧接口仍然保留，例如 `parse_gold`、`extract_pred_answer_by_task`、`infer_task_type`，但内部委托给 `TaskSpec`。`system.py` 中 gold parsing、prediction extraction 和 answer comparison 都通过 `self.task_spec` 完成。
+当运行 task-level comparison 并提供 `--answer_format` 时，系统会使用 `multi_dataset_diverse_rl/answer_formats.py`。支持格式包括：
 
-## 4. MMLU / GSM8K / BBH
+- `option_letter`
+- `boolean`
+- `yes_no`
+- `valid_invalid`
+- `numeric`
+- `free_text`
 
-MMLU：
+## 4. 数据格式
 
-- gold 归一化为 `A/B/C/D`。
-- prediction 支持 `FINAL_ANSWER: A`、`Answer: (A)`、`option A` 等。
-- matching 使用归一化后的 exact match。
+CLI 会把原始记录标准化为：
 
-GSM8K：
+```json
+{"question": "...", "answer": "..."}
+```
 
-- gold 兼容 `#### 72`。
-- prediction 优先读 `FINAL_ANSWER:`、`Answer:`、`The answer is` 后的数字。
-- 没有显式标记时才 fallback 到最后一个数字。
-- 数字会去逗号，`3.0` 归一化为 `3`。
+`--dataset_format legacy` 支持：
 
-BBH：
+- question 字段：`question`, `input`, `query`, `problem`
+- answer 字段：`answer`, `output`, `target`, `label`, `response`
 
-- 独立 parser，不 fallback 到 GSM8K。
-- prediction 优先读最后一行 `FINAL_ANSWER: <content>`，其次 `Answer: <content>`，否则取最后一个非空行。
-- 不盲目取最后一个数字，避免污染 boolean、date、logical deduction 等 BBH 任务。
-- yes/no/true/false 归一化为可比较别名。
-- `(A)`、`A.`、`option A` 归一化为 `a`。
-- 支持 gold aliases list，例如 `["yes", "true"]`。
+`--dataset_format mars` 支持：
 
-`auto` 会识别 MMLU/GSM8K；无法确定时按 BBH 风格处理，这是为了避免未知任务被 GSM8K 数字 parser 误解析。
+- question 字段：`question`, `input`, `query`, `problem`, `prompt`
+- answer 字段：`answer`, `target`, `gold`, `gold_answer`, `label`, `output`
+- task metadata：`task`, `task_name`, `category`, `subject`, `bbh_task`
 
-## 5. 数据格式
+如果某条记录无法抽取 question 或 answer，`build_dataset` 会抛出带 record index 的 `ValueError`。
 
-CLI 的 `build_dataset(raw_records, dataset_format)` 支持两类格式。
+## 5. Rollout
 
-`legacy`：
-
-- question: `question`, `input`, `query`, `problem`
-- answer: `answer`, `output`, `target`, `label`, `response`
-
-`mars`：
-
-- question: `question`, `input`, `query`, `problem`, `prompt`
-- answer: `answer`, `target`, `gold`, `gold_answer`, `label`, `output`
-- task/subtask: `task`, `task_name`, `category`, `subject`, `bbh_task`
-
-如果无法抽取 question 或 answer，系统会抛出带 record index 的错误，便于定位坏数据。
-
-## 6. Rollout
-
-一次 rollout 输入：
+一次 rollout 会让所有 active prompts 同时回答同一道题：
 
 ```text
-question
-gold answer
-active prompts for all agents
+question + active_prompt_i -> trace_i + answer_i
 ```
+
+每次 rollout 计算：
+
+- `individual_correct`：每个 agent 是否答对。
+- `vote_answer` / `vote_correct`：聚合后的团队答案和正确性。
+- `any_correct`：是否至少一个 agent 答对。
+- `invalid_flags`：trace 是否无效。
+- `embedding_diversity`：trace 级语义多样性。
+- `mean_embedding_overlap`：trace 平均重叠度。
+- vote tie diagnostics：平票、候选答案、计数、tie-break 方法。
+- weighted vote diagnostics：可选 diversity-aware aggregation 诊断。
+
+Solver trace 应包含显式最终答案，通常为：
+
+```text
+FINAL_ANSWER: <answer>
+```
+
+## 6. Trace 有效性
+
+只奖励“不同”是不够的，因为无效、空泛、重复的输出也可能看起来不同。系统使用 rule-based invalid checker 过滤明显坏 trace。
+
+常见 invalid 原因：
+
+- trace 太短。
+- 缺少 `FINAL_ANSWER:`。
+- token 数过少。
+- 无法抽取最终答案。
+- bigram 重复比例过高。
+
+无效 trace 不会获得虚假的 diversity bonus。在 embedding overlap 诊断中，涉及 invalid trace 的 pair 会按高重叠处理。
+
+## 7. Trace Diversity
+
+系统用完整 reasoning trace 衡量多样性，而不是只比较 prompt 文本。
 
 流程：
 
-1. 对所有 agent 并行调用 solver。
-2. 用 `TaskSpec.extract_pred` 抽取每个 agent 的答案。
-3. 用 majority vote 聚合团队答案。
-4. 用 `TaskSpec.parse_gold` 解析 gold。
-5. 用 `TaskSpec.match_answer` 计算 individual correctness 和 vote correctness。
-6. 检查 trace 是否 invalid。
-7. 计算 trace embedding overlap 和 diversity。
-8. 构造 homogeneous cases 和 validity cases。
+1. 归一化空白。
+2. 长 trace 按 `trace_embedding_chunk_words` 分块。
+3. 用 `sentence-transformers` 编码。
+4. 对 chunk embedding 做平均池化。
+5. 计算 agent pair 的 cosine overlap。
+6. 得到：
 
-## 7. Majority Vote Diagnostics
+```text
+embedding_diversity = 1 - mean_embedding_overlap
+```
 
-旧 majority vote 在平票时返回最早出现的答案，会偏向低编号 agent。现在系统使用 `majority_vote_with_diagnostics`：
+对 useful diversity，系统只考虑 **valid 且 correct** 的 trace。
+
+## 8. 答案聚合
+
+### 8.1 Majority Vote
+
+默认聚合方式仍然是 majority vote。系统会记录诊断信息：
 
 ```json
 {
@@ -127,136 +163,97 @@ active prompts for all agents
 }
 ```
 
-tie-break 策略：
+Tie-break 策略：
 
-- `first`：保留旧行为。
-- `random`：默认，用 `cfg.seed + question_hash` 做 deterministic random。
-- `abstain`：平票返回空答案。
+- `first`：保留旧行为，返回最早出现的平票答案。
+- `random`：用 `seed + question_hash` 做 deterministic random。
+- `abstain`：平票时返回空答案。
 
-这些字段会进入 rollout metrics、prediction 日志、`train_step_logs.jsonl` 和最终汇总。`compute_experiment_metrics.py` 会输出 `vote_tie_rate`。
+### 8.2 Weighted Vote
 
-## 8. Trace 有效性
+`--aggregation_mode weighted_vote` 是可选的 diversity-aware aggregation。它保留 majority vote 的全部诊断，同时可以用有效性和独立性权重选择最终答案。
 
-系统用 rule-based invalid checker 防止无效输出获得 diversity bonus。常见 invalid 原因：
-
-- trace 太短。
-- 缺少 `FINAL_ANSWER:`。
-- token 数过少。
-- 无法抽取最终答案。
-- bigram 重复比例过高。
-
-关键约束：
+权重形式：
 
 ```text
-invalid trace 在 embedding overlap 计算中按完全重叠处理
+weight_i = reliability_i * validity_i * independence_i
+independence_i = min(max(1 - per_agent_overlap_i, 0), 0.5)
+score(answer) = sum(weight_i for agents predicting answer)
 ```
 
-也就是说，坏格式、空泛、重复输出不会带来虚假的 diversity 提升。
+当前 reliability 使用均匀权重；validity 来自 invalid flags；independence 来自 per-agent trace overlap。这样，重复的多数派路径不会天然压过一个有效且独立的少数派正确路径。
 
-## 9. Trace Embedding Diversity
+日志会同时保留：
 
-默认 diversity metric 是完整 trace 的 embedding overlap：
+- `majority_vote_answer`
+- `majority_vote_correct`
+- `weighted_vote_answer`
+- `weighted_vote_correct`
+- `majority_vote_acc`
+- `weighted_vote_acc`
 
-1. 归一化空白。
-2. 长 trace 按 `trace_embedding_chunk_words` 分块。
-3. 使用 `sentence-transformers` embedding model 编码。
-4. 对 chunk embedding 平均池化。
-5. 计算 agent pair 的 cosine similarity。
-6. 得到 `mean_embedding_overlap`。
-7. 计算：
+## 9. Prompt Evolution
 
-```text
-embedding_diversity = 1 - mean_embedding_overlap
-```
+每个 agent 都维护自己的 prompt beam。系统不会每道题都更新 prompt，而是用 `update_every` 积累一个窗口。
 
-默认 embedding model：
+窗口中保存：
 
-```text
-BAAI/bge-small-en-v1.5
-```
-
-## 10. Homogeneous Cases
-
-如果两个有效 trace 的 pair overlap 高于 `homogeneity_overlap_threshold`，系统构造 homogeneous case。
-
-case 包含：
-
-- sample hash
-- target / peer agent id
-- pair overlap
-- trace preview
-- answer
-- prompt preview
-- team correctness
-
-case 中只保留 preview，不把完整题目、完整答案或 gold 交给 optimizer，降低数据泄漏和 prompt 过拟合风险。
-
-## 11. Validity Cases
-
-如果某个 agent 输出 invalid trace，系统构造 validity case：
-
-- target agent id
-- trace preview
-- 是否存在可抽取答案
-- invalid reasons
-- prompt preview
-
-当某个 agent invalid rate 超过 `invalid_repair_rate_threshold`，系统会优先生成 validity-focused candidates。
-
-## 12. 更新窗口
-
-系统不是每个样本都更新 prompt，而是用 `update_every` 积累窗口。
-
-窗口保存：
-
+- question hash
 - traces
-- extracted answers
+- answers
 - prompts
 - rollout metrics
 - homogeneous cases
 - validity cases
 
-窗口满后，系统选择需要更新的 agent：
+窗口满后，系统选择需要更新的 target agent，并让 optimizer 根据窗口证据生成候选 prompt。
 
-- `embedding_local_acc_invalid` 和 `guarded_diversity`：主要看 overlap pressure、homogeneous cases、invalid rate。
-- `accuracy_only`：主要看 individual/team error。
+候选 prompt 的证据来源包括：
 
-## 13. Candidate Generation
+- high-overlap trace pairs
+- mixed window cases
+- validity-focused cases
+- accuracy-error cases
+- previous beam prompts
 
-对每个待更新 agent，系统把窗口诊断组织成 generation batches：
+候选 prompt 必须是可执行的角色程序，通常包含 role name、decision procedure、fallback strategy、accuracy checks、validity checks 和 anti-overlap rule。
 
-- `high_overlap_cases`
-- `mixed_window_cases`
-- `validity_focused_cases`
-- `accuracy_error_cases`
-- `mixed_window_accuracy_cases`
+## 10. Candidate Evaluation
 
-Optimizer 为每个 beam parent 生成 `num_candidates_per_parent` 个候选 prompt。候选 prompt 应该是可执行角色程序，通常包含 role name、decision procedure、fallback strategy、accuracy checks、validity checks 和 anti-overlap rule。
-
-候选 prompt 会经过 sanitize。如果包含 `FINAL_ANSWER:` 模板、明显复制题目、或过多复用样本词汇，会被拒绝或回退。
-
-## 14. Candidate Evaluation
-
-候选 prompt 不直接采纳。对 target agent，系统构造：
+对某个 target agent，系统在同一个 eval batch 上比较：
 
 ```text
-candidate_prompts = current peer prompts + candidate prompt replacing target agent
+baseline_prompts  = current active prompts
+candidate_prompts = current active prompts with target agent replaced by candidate prompt
 ```
 
-在 `guarded_diversity` 下，还会在同一 eval batch 上构造 baseline：
+这种设计让 candidate evaluation 是 baseline-relative 的，而不是孤立评价一个 prompt。
+
+每个 eval sample 会记录：
+
+- `baseline_vote_correct`
+- `candidate_vote_correct`
+- `baseline_any_correct`
+- `candidate_any_correct`
+- `baseline_target_correct`
+- `target_agent_correct`
+- `target_trace_novelty`
+- `target_useful_diversity`
+- `rescue`
+- `rescue_useful_diversity`
+
+核心定义：
 
 ```text
-baseline_prompts = current active prompts, target agent not replaced
+target_useful_diversity =
+    target_trace_novelty
+  * target_agent_correct
+  * target_valid
+
+rescue =
+    baseline vote is wrong
+    and target agent is correct
 ```
-
-每个 eval sample 计算：
-
-- team accuracy
-- embedding diversity
-- invalid rate
-- mean embedding overlap
-- target local validity
-- solver reuse metrics
 
 Candidate eval 支持：
 
@@ -264,274 +261,177 @@ Candidate eval 支持：
 - `fixed_pool`
 - `stratified`
 
-训练开始时会构建 `candidate_eval_pool`：优先从 validation data 采样，否则从 train data 采样。`fixed_pool` 在固定 seed 下可复现。`candidate_eval_repeats > 1` 时，CLI 合并多个 batch，最终 reward 和 metrics 取平均。
-
-## 15. Reward Modes
-
-### 15.1 guarded_diversity
-
-默认 reward mode。它以 baseline-relative 的方式约束 candidate：
-
-```text
-acc_delta = candidate_team_acc - baseline_team_acc
-div_delta = candidate_embedding_diversity - baseline_embedding_diversity
-invalid_delta = candidate_invalid_rate - baseline_invalid_rate
-```
-
-如果准确率下降超过 `accuracy_guard_epsilon`：
-
-```text
-reward = -1.0 + acc_delta - reward_weight_invalid_delta * max(0, invalid_delta)
-```
-
-否则：
-
-```text
-reward =
-    candidate_team_acc
-  + reward_weight_div_delta * div_delta
-  + reward_weight_local_validity * local_validity
-  - reward_weight_invalid_delta * max(0, invalid_delta)
-```
-
-这让多样性只在准确率 guard 通过时获得奖励。
-
-### 15.2 embedding_local_acc_invalid
-
-旧 reward mode，保留用于兼容和历史实验：
-
-```text
-reward =
-  reward_weight_diversity      * embedding_diversity
-+ reward_weight_local_validity * local_validity
-+ reward_weight_team_accuracy  * team_accuracy
-+ reward_weight_invalid_score  * invalid_score
-```
-
-### 15.3 accuracy_only
-
-消融模式：
-
-```text
-reward = team_accuracy
-```
-
-该模式不加载 embedding model，也不追求 trace diversity。
-
-## 16. Evolutionary Beam Search
-
-每个 agent 维护自己的 prompt beam：
-
-```json
-{
-  "id": "...",
-  "prompt": "...",
-  "score": 0.0,
-  "metrics": {},
-  "parent_id": "...",
-  "generation": 1
-}
-```
-
-一次更新：
-
-1. 取 target agent 当前 beam。
-2. 对每个 parent prompt 生成候选。
-3. 把现有 beam prompt 也加入候选池。
-4. 并发评估候选。
-5. 按 reward 降序排序。
-6. 保留 top `beam_size`。
-7. beam top-1 成为 active prompt。
-8. 写入 update logs 和 prompt history。
-
-这保留了 TraceBeamSearchSystem / evolutionary beam search 主流程，只增强任务解析、投票、reward 和评估稳定性。
-
-## 17. Validation 和 Early Stopping
-
-每个 epoch 后评估 validation set。
-
-`accuracy_only` 使用：
-
-```text
-validation score = vote_acc
-```
-
-其他模式使用：
-
-```text
-validation score = vote_acc + 0.2 * mean_embedding_diversity - 0.1 * mean_invalid_rate
-```
-
-刷新 best score 时保存：
-
-- `best_state.json`
-- `best_prompts.json`
-
-训练结束后恢复 best prompts，再跑 final test。
-
-## 18. 实验协议
-
-`scripts/run_experiments.py` 默认运行四个 setting：
-
-- `shared_baseline`
-- `bank_baseline`
-- `shared_guarded_beam`
-- `bank_guarded_beam`
-
-默认 setting、数据集默认路径和 setting 解析逻辑集中在 `scripts/experiment_config.py`，避免 runner、analyzer 和测试各自硬编码不同协议。
-
-推荐命令：
+推荐使用：
 
 ```bash
-python scripts/run_experiments.py --datasets mmlu,bbh --seeds 42,43,44
+--candidate_eval_strategy fixed_pool
+--candidate_eval_batch_size 20
+--candidate_eval_pool_size 100
 ```
 
-目录结构：
+## 11. Coverage-Rescue Diversity Reward
+
+当前主 reward 是 `coverage_rescue_diversity`。它奖励的是有用互补性，而不是裸 diversity。
+
+Batch 级聚合指标：
 
 ```text
-runs_trace_beam/{dataset}/{setting}_seed{seed}
+baseline_team_accuracy    = mean(baseline_vote_correct)
+candidate_team_accuracy   = mean(candidate_vote_correct)
+
+baseline_oracle_acc       = mean(baseline_any_correct)
+candidate_oracle_acc      = mean(candidate_any_correct)
+coverage_delta            = candidate_oracle_acc - baseline_oracle_acc
+
+baseline_target_accuracy  = mean(baseline_target_correct)
+candidate_target_accuracy = mean(target_agent_correct)
+
+rescue_rate               = mean(rescue)
+useful_diversity          = mean(target_useful_diversity)
+rescue_useful_diversity   = mean(rescue_useful_diversity)
+vote_delta                = candidate_team_accuracy - baseline_team_accuracy
 ```
 
-每个 setting 使用自己的 reward mode；`--force_reward_mode` 可覆盖全部 setting。
+Guard：
 
-## 19. 汇总指标
+```text
+invalid_guard_passed =
+    candidate_invalid_rate <= baseline_invalid_rate + invalid_guard_epsilon
 
-`scripts/compute_experiment_metrics.py` 递归读取多 dataset 子目录，并按 `dataset/setting` 计算 mean/std。
+target_guard_passed =
+    candidate_target_accuracy >= baseline_target_accuracy - target_accuracy_guard_epsilon
+```
 
-核心输出：
+Reward：
 
-- `latest_test_vote_acc`
-- `latest_test_embedding_diversity`
-- `latest_test_invalid_rate`
-- `vote_tie_rate`
-- `solver_calls`
-- `solver_reuse_hit_rate`
+```text
+if not invalid_guard_passed:
+    reward = -1.0
 
-如果提供 `--mars_result_path`，会输出：
+elif not target_guard_passed:
+    reward = -0.5 + vote_delta
 
-- `vs_mars_delta_acc`
-- `vs_mars_delta_diversity`
+else:
+    reward =
+        reward_weight_rescue           * rescue_rate
+      + reward_weight_coverage         * coverage_delta
+      + reward_weight_useful_diversity * useful_diversity
+      + reward_weight_vote_delta       * vote_delta
+      + reward_weight_local_validity   * local_validity
+```
 
-## 20. 日志
+解释：
 
-`update_logs.jsonl` 记录每个 candidate prompt：
+- `rescue_rate`：奖励 target agent 在团队多数投票错误时给出正确路径。
+- `coverage_delta`：奖励 candidate 增加 oracle coverage，即使 vote 暂时没有翻转。
+- `useful_diversity`：只有 target trace 有效且正确时，新颖性才有价值。
+- `vote_delta`：避免团队聚合准确率明显下滑。
+- invalid guard 和 target guard：防止无效 diversity 或 target agent 退化被选中。
+
+推荐运行：
+
+```bash
+python -m multi_dataset_diverse_rl.cli \
+  --reward_mode coverage_rescue_diversity \
+  --candidate_eval_strategy fixed_pool \
+  --agents 5 \
+  --init_mode bank
+```
+
+使用 weighted vote：
+
+```bash
+python -m multi_dataset_diverse_rl.cli \
+  --reward_mode coverage_rescue_diversity \
+  --aggregation_mode weighted_vote \
+  --candidate_eval_strategy fixed_pool \
+  --agents 5 \
+  --init_mode bank
+```
+
+## 12. Beam Selection
+
+候选 prompt 评估完成后，系统按 reward 降序排序，并为该 agent 保留 top `beam_size`。beam top-1 成为新的 active prompt。
+
+`update_logs.jsonl` 会记录每个 candidate：
 
 - reward
-- embedding diversity
-- local validity
-- team accuracy
-- invalid rate
-- baseline/candidate guarded metrics
-- accuracy guard 是否通过
-- eval strategy、pool size、batch size、repeats
-- solver reuse metrics
-- beam rank / accepted
+- candidate source
+- beam rank
+- accepted / rejected
+- baseline 和 candidate accuracy
+- oracle coverage metrics
+- rescue metrics
+- useful diversity metrics
+- invalid guard / target guard
+- solver reuse statistics
 
-`train_step_logs.jsonl` 记录每个训练 step：
+这让 prompt evolution 的每一步都可追踪。
 
-- vote correctness
-- vote answer
-- vote tie diagnostics
-- embedding diversity
-- invalid rate
-- update summary
+## 13. Validation
 
-Prediction 文件记录：
-
-- vote answer
-- gold
-- vote correctness
-- vote tie diagnostics
-- each agent trace / answer / invalid status
-
-## 21. 实现边界
-
-- 系统优化的是 prompt，不训练模型参数。
-- Reward 是候选排序信号，不是严格 RL return。
-- Trace embedding diversity 是语义相似度近似，不等同于人工策略标签。
-- Candidate evaluation 仍有采样方差，需要多 seed 和固定/分层评估池。
-- BBH parser 只做规范化和 exact/numeric/alias matching，不做模糊语义匹配，避免虚高 accuracy。
-
-## 22. 代码定位
-
-主要实现：
+在 `coverage_rescue_diversity` 下，validation score 为：
 
 ```text
-multi_dataset_diverse_rl/system.py
+0.4 * vote_acc
++ 0.3 * oracle_acc
++ 0.2 * rescue_available_rate
++ 0.1 * mean_useful_diversity
+- 0.2 * mean_invalid_rate
 ```
 
-关键函数：
-
-- `solve_once`
-- `compute_rollout_metrics`
-- `embedding_overlap_diagnostics`
-- `_build_homogeneous_cases`
-- `_build_validity_cases`
-- `_window_overlap_diagnosis`
-- `_build_case_generation_batches`
-- `propose_candidates`
-- `evaluate_candidate_prompt`
-- `_candidate_reward_guarded`
-- `update_prompt_with_beam`
-- `refresh_all_prompt_beams`
-- `evaluate_dataset`
-
-任务解析：
+对应 metric name：
 
 ```text
-multi_dataset_diverse_rl/tasks.py
+vote+oracle+rescue+useful_div
 ```
 
-入口和数据格式：
+训练过程中，系统按 validation score 保存 best prompts。训练结束后恢复 best prompts，再做 final test。
 
-```text
-multi_dataset_diverse_rl/cli.py
-```
+## 14. Dataset-Level Metrics
 
-配置：
+最终评估会输出：
 
-```text
-multi_dataset_diverse_rl/config.py
-```
+- `vote_acc`：当前 aggregation mode 的准确率。
+- `majority_vote_acc`：majority vote 准确率。
+- `weighted_vote_acc`：weighted vote 准确率。
+- `mean_individual_acc`：所有 agent 预测的平均准确率。
+- `best_individual_acc`：最佳单 agent 准确率。
+- `oracle_acc`：至少一个 agent 答对的比例。
+- `aggregation_gap`：`oracle_acc - vote_acc`。
+- `rescue_available_rate`：vote 错但至少一个 agent 对的比例。
+- `correct_disagreement_rate`：agent 答案不一致且至少一个 agent 对的比例。
+- `mean_useful_diversity`：valid/correct traces 之间的平均多样性。
+- `vote_tie_rate`：投票平票比例。
+- `mean_invalid_rate`：无效 trace 比例。
 
-## 23. Task-level accuracy export protocol
+这些指标回答三个问题：
 
-The task-level comparison protocol keeps MARS and MAD fully separated. MAD does not read a MARS repository, does not import MARS code, and does not consume MARS prompts or configs. Instead, MAD owns a lightweight manifest:
+1. 团队里是否有人知道正确答案？看 `oracle_acc`。
+2. 聚合规则是否利用了这个答案？看 `vote_acc` 和 `aggregation_gap`。
+3. 多样性是否有用？看 `mean_useful_diversity` 和 `rescue_available_rate`。
+
+## 15. Task-Level Accuracy Export
+
+task-level export 让 MAD 能按 MARS-style task_id 粒度运行，但不依赖 MARS 仓库。
+
+MAD 自己维护 manifest：
 
 ```text
 configs/task_level_comparison.yaml
 ```
 
-The manifest maps a `task_id` to `benchmark`, `task_type`, `answer_format`, `train_path`, `val_path`, and `test_path`. The runner `scripts/run_task_level_accuracy.py` resolves task ids from that manifest, calls the existing `python -m multi_dataset_diverse_rl.cli`, and writes standardized MAD-only results under `runs_task_level_accuracy/`.
+每个任务条目包含：
 
-The bundled manifest covers the local comparison subset available in `Dataset_format/`: 6 BBH tasks and 6 MMLU subjects. A full MARS comparison requires the manifest to cover exactly the MARS tasks being reported; otherwise the correct claim is subset comparison.
+- `task_id`
+- `benchmark`
+- `task_type`
+- `answer_format`
+- `train_path`
+- `val_path`
+- `test_path`
 
-In the current manifest, each task's train/val/test paths point to the same CSV. This is a paper-compatible reused-file setting, not a strict no-leakage split. Result rows therefore carry `split_protocol=paper_compatible_reused_file` and `leakage_warning=true`.
-
-The exported primary metric is:
-
-```text
-vote_acc
-```
-
-Because MAD uses multi-agent majority voting, the export also records `mean_individual_acc` and `best_individual_acc` so a later external comparison with single-prompt systems can inspect both team and per-agent accuracy.
-
-For formal tables, report at least four accuracy columns: MARS accuracy, MAD vote accuracy, MAD mean agent accuracy, and MAD best agent accuracy.
-
-When `--answer_format` is set, MAD uses `multi_dataset_diverse_rl/answer_formats.py` instead of the default task parser. Supported formats are `option_letter`, `boolean`, `yes_no`, `valid_invalid`, `numeric`, and `free_text`. If `--answer_format` is empty, the existing `TaskSpec` parser selected by `--task_type` remains unchanged.
-
-Each run writes reporting-only LLM call statistics:
-
-```text
-llm_calls.jsonl
-cost_summary.json
-```
-
-The aggregate fields are `solver_calls`, `optimizer_calls`, `evaluator_calls`, `total_llm_calls`, `prompt_tokens`, `completion_tokens`, `total_tokens`, `estimated_cost`, and `latency_seconds`.
-
-These statistics are never used as constraints. They do not stop search, rank candidates, change reward, or normalize accuracy. The method remains accuracy-first, with cost available only for later analysis.
-
-Recommended task-level command:
+运行：
 
 ```bash
 python scripts/run_task_level_accuracy.py \
@@ -543,7 +443,25 @@ python scripts/run_task_level_accuracy.py \
   --out_root runs_task_level_accuracy
 ```
 
-Later, compare externally with a separately produced MARS summary:
+输出：
+
+```text
+runs_task_level_accuracy/accuracy_results.jsonl
+```
+
+每行包含：
+
+- task metadata
+- setting 和 seed
+- `vote_acc`
+- `majority_vote_acc`
+- `weighted_vote_acc`
+- `mean_individual_acc`
+- `best_individual_acc`
+- oracle / rescue metrics
+- LLM call 和 token 统计
+
+与 MARS 对比时，MAD core 不读取 MARS 仓库；外部脚本只用 `task_id` join：
 
 ```bash
 python scripts/compare_external_accuracy.py \
@@ -553,42 +471,67 @@ python scripts/compare_external_accuracy.py \
   --out_md comparison/mars_vs_mad_accuracy.md
 ```
 
-## 24. Coverage-rescue diversity objective
+对比时不要只报告 MAD `vote_acc`。因为 MAD 是多 agent 投票，MARS-style 结果通常是 single-prompt accuracy，所以表格至少应包含：
 
-The optional `coverage_rescue_diversity` mode changes the prompt-search objective from raw team accuracy or raw embedding diversity to useful diversity. The target agent is rewarded when its candidate prompt creates a valid and novel reasoning trace that is correct and complements the current team.
+- MARS Acc
+- MAD Vote Acc
+- MAD Mean Agent Acc
+- MAD Best Agent Acc
 
-For each candidate eval sample, the system runs both:
+## 16. Cost Statistics
 
-```text
-baseline_prompts = current active prompts
-candidate_prompts = current active prompts with target agent replaced by candidate prompt
-```
-
-It records whether the baseline vote is correct, whether the candidate vote is correct, whether any agent is correct, whether the target agent is correct, and how novel the target trace is relative to peer traces. A rescue case is:
+每个 run 写入：
 
 ```text
-baseline vote wrong and target agent correct
+llm_calls.jsonl
+cost_summary.json
 ```
 
-The batch reward combines:
+统计字段包括：
+
+- `solver_calls`
+- `optimizer_calls`
+- `evaluator_calls`
+- `total_llm_calls`
+- `prompt_tokens`
+- `completion_tokens`
+- `total_tokens`
+- `estimated_cost`
+- `latency_seconds`
+
+这些字段只用于报告和后续分析，不用于 early stop、搜索约束、reward 归一化或 prompt 排序。
+
+## 17. 代码定位
+
+核心文件：
 
 ```text
-rescue_rate
-coverage_delta = candidate_oracle_acc - baseline_oracle_acc
-useful_diversity = target_trace_novelty * target_correct * target_valid
-vote_delta
-local_validity
+multi_dataset_diverse_rl/config.py
+multi_dataset_diverse_rl/cli.py
+multi_dataset_diverse_rl/system.py
+multi_dataset_diverse_rl/tasks.py
+multi_dataset_diverse_rl/answer_formats.py
+scripts/run_task_level_accuracy.py
+scripts/compute_experiment_metrics.py
+scripts/task_level_accuracy_utils.py
 ```
 
-with guards:
+`TraceBeamSearchSystem` 里的关键方法：
 
-```text
-candidate_invalid_rate <= baseline_invalid_rate + invalid_guard_epsilon
-candidate_target_accuracy >= baseline_target_accuracy - target_accuracy_guard_epsilon
-```
+- `compute_rollout_metrics`
+- `_weighted_vote_with_diagnostics`
+- `_target_trace_novelty`
+- `_candidate_reward_coverage_rescue_diversity`
+- `evaluate_candidate_prompt`
+- `update_prompt_with_beam`
+- `_summarize_rollout_rows`
+- `evaluate_dataset`
 
-This means a candidate is not rewarded for being merely different. Diversity only helps when it is valid, locally executed, and tied to a correct complementary path.
+## 18. 方法边界
 
-At dataset level, evaluation reports `oracle_acc`, `aggregation_gap`, `rescue_available_rate`, `correct_disagreement_rate`, and `mean_useful_diversity`. These metrics show whether minority correct paths exist and whether the aggregation rule is using them.
-
-The optional `--aggregation_mode weighted_vote` keeps majority-vote diagnostics but can select a final answer using validity and trace-independence weights. Majority voting remains the default for compatibility.
+- 系统优化的是 prompt，不训练模型权重。
+- Reward 是 candidate ranking signal，不是严格 RL return。
+- Trace embedding 是推理相似度近似，不等价于人工策略标签。
+- Candidate evaluation 仍有采样方差，需要 fixed pool、stratified sampling 和多 seed。
+- `weighted_vote` 是轻量聚合规则，不是 learned verifier。
+- task-level comparison 依赖本仓库 manifest；如果 manifest 未覆盖所有目标任务，只能称为 subset comparison。
