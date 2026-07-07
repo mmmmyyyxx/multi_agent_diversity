@@ -29,6 +29,12 @@ from .utils import (
 
 
 class TraceBeamSearchSystem:
+    GENERIC_DISTINCT_PROCEDURE = (
+        "Use a distinct decision procedure: first state which reasoning route you will use, "
+        "then approach the problem through boundary checks, reverse validation, or an alternative representation. "
+        "If that procedure is not useful, fall back to direct reasoning with one explicit verification step."
+    )
+
     def __init__(self, cfg: Config):
         self.cfg = cfg
         self.cfg.beam_refresh_each_epoch = bool(int(self.cfg.beam_refresh_each_epoch))
@@ -552,6 +558,105 @@ class TraceBeamSearchSystem:
         if self._contains_task_specific_content(prompt, question):
             return self.agents[agent_id].initial_prompt, True
         return str(prompt).strip(), False
+
+    def _prompt_signature(self, prompt: str) -> str:
+        return normalize_spaces(str(prompt or "")).lower()
+
+    def _is_redundant_candidate_prompt(
+        self,
+        parent_prompt: str,
+        candidate_prompt: str,
+        seen_signatures: Optional[set] = None,
+    ) -> bool:
+        candidate_sig = self._prompt_signature(candidate_prompt)
+        if not candidate_sig:
+            return True
+        if seen_signatures and candidate_sig in seen_signatures:
+            return True
+
+        parent_sig = self._prompt_signature(parent_prompt)
+        stock_sig = self._prompt_signature(self.GENERIC_DISTINCT_PROCEDURE)
+        stock_count = candidate_sig.count(stock_sig)
+        parent_stock_count = parent_sig.count(stock_sig)
+
+        if candidate_sig == parent_sig:
+            return True
+        if stock_count > 1:
+            return True
+        if parent_sig and candidate_sig.startswith(parent_sig) and len(candidate_sig) > len(parent_sig) + 40:
+            return True
+        if stock_count > parent_stock_count and parent_stock_count > 0:
+            return True
+        return False
+
+    def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
+        roles = [
+            {
+                "role_name": "boundary_condition_checker",
+                "candidate_prompt": (
+                    "You are a boundary-condition checker. Before answering, list the explicit constraints, "
+                    "edge cases, and qualifiers in the question. Eliminate choices or interpretations that violate "
+                    "any constraint, then verify the final answer against each constraint."
+                ),
+                "decision_procedure": ["list constraints", "check edge cases", "eliminate violations", "verify final answer"],
+                "when_to_use": "Use when errors come from missing qualifiers, edge cases, or hidden constraints.",
+                "fallback_strategy": "If there are no clear constraints, switch to direct reasoning with one contradiction check.",
+            },
+            {
+                "role_name": "reverse_validator",
+                "candidate_prompt": (
+                    "You are a reverse validator. Start from the strongest candidate answers and ask what would need "
+                    "to be true for each one. Reject candidates whose required assumptions conflict with the question, "
+                    "then choose the answer with the fewest unsupported assumptions."
+                ),
+                "decision_procedure": ["name strongest candidates", "derive required assumptions", "reject conflicts", "choose supported answer"],
+                "when_to_use": "Use when several answers look plausible but one fails under reverse checking.",
+                "fallback_strategy": "If no candidate can be reverse-checked, compare the two most plausible answers directly.",
+            },
+            {
+                "role_name": "counterexample_tester",
+                "candidate_prompt": (
+                    "You are a counterexample tester. For each plausible answer, try to construct a minimal counterexample "
+                    "or contradiction. Prefer the answer that survives counterexample search, and perform one final consistency check."
+                ),
+                "decision_procedure": ["identify plausible answers", "search counterexamples", "compare survivors", "run consistency check"],
+                "when_to_use": "Use when the team is overconfident in a tempting but brittle answer.",
+                "fallback_strategy": "If counterexamples are not meaningful, use explicit option elimination.",
+            },
+            {
+                "role_name": "representation_converter",
+                "candidate_prompt": (
+                    "You are a representation converter. Rewrite the problem into a compact alternative form such as "
+                    "a table, symbolic relation, coordinate list, or cause-effect chain. Solve from that representation "
+                    "and verify that it preserves the original question."
+                ),
+                "decision_procedure": ["convert representation", "solve converted form", "map back to original", "verify preservation"],
+                "when_to_use": "Use when direct wording is confusing or spatial, logical, or relational structure matters.",
+                "fallback_strategy": "If conversion adds no clarity, return to concise direct reasoning.",
+            },
+            {
+                "role_name": "ambiguity_resolver",
+                "candidate_prompt": (
+                    "You are an ambiguity resolver. Identify the key ambiguous phrase, pronoun, rule, or label. "
+                    "Test each interpretation against the full context, discard interpretations that require unstated facts, "
+                    "and answer using the interpretation best supported by the text."
+                ),
+                "decision_procedure": ["find ambiguity", "test interpretations", "discard unstated assumptions", "answer supported reading"],
+                "when_to_use": "Use when mistakes come from pronoun, label, or wording ambiguity.",
+                "fallback_strategy": "If no ambiguity exists, use boundary-condition checking.",
+            },
+        ]
+        if str(mode).lower() == "accuracy":
+            order = [1, 0, 2, 4, 3]
+        else:
+            order = [0, 3, 1, 2, 4]
+        role = roles[order[(int(agent_id) + int(index)) % len(order)]]
+        return {
+            **role,
+            "anti_overlap_rule": "Use the named procedure explicitly instead of repeating the default decomposition order.",
+            "validity_checks": ["trace shows the named procedure", "final answer is explicit", "no sample text is copied"],
+            "accuracy_checks": ["compare plausible alternatives", "verify the final choice against the question"],
+        }
 
     async def _chat(
         self,
@@ -1687,6 +1792,9 @@ class TraceBeamSearchSystem:
             "Each candidate must describe an executable reasoning procedure that can improve correctness on similar examples. "
             "Prefer concrete checks such as concept disambiguation, option comparison, contradiction testing, qualifier inspection, "
             "or final verification when they fit the observed mistake pattern.\n"
+            "Write a complete short role prompt, not a suffix to append to the parent prompt. "
+            "Do not repeat generic instructions already present in the parent prompt. "
+            "Do not use the phrase 'Use a distinct decision procedure'. "
             "The prompt should remain short and usable by a solver agent. It must still end with exactly one final answer in normal solving, "
             "but do not include concrete answer labels or sample content inside candidate_prompt.\n"
             "Do not mention reward, beam search, candidates, evaluation metrics, or this optimizer instruction inside candidate_prompt.\n\n"
@@ -1718,14 +1826,18 @@ class TraceBeamSearchSystem:
         obj = extract_json_obj(text) or {}
         candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
         parsed: List[Dict[str, Any]] = []
+        seen_signatures: set = set()
         if isinstance(candidates, list):
             for item in candidates:
                 if not isinstance(item, dict):
                     continue
                 prompt = str(item.get("candidate_prompt", "")).strip()
                 prompt, _ = self._sanitize_prompt(prompt, agent_id)
+                if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                    continue
                 if not prompt:
                     continue
+                seen_signatures.add(self._prompt_signature(prompt))
                 batch_idx = min(len(parsed), len(generation_batches) - 1)
                 parsed.append(
                     {
@@ -1748,17 +1860,17 @@ class TraceBeamSearchSystem:
                     break
         while len(parsed) < num_candidates:
             batch_idx = min(len(parsed), len(generation_batches) - 1)
+            fallback = self._structured_fallback_role(agent_id, len(parsed), mode="accuracy")
+            prompt = str(fallback["candidate_prompt"])
+            seen_signatures.add(self._prompt_signature(prompt))
             parsed.append(
                 {
-                    "candidate_prompt": (
-                        parent_prompt
-                        + " Before finalizing, identify the most plausible trap in the question, compare the two strongest answer candidates against that trap, and perform one concise consistency check."
-                    ),
-                    "role_name": "fallback_accuracy_repair",
-                    "decision_procedure": ["identify likely trap", "compare strongest candidates", "run one consistency check"],
-                    "when_to_use": "Use when recent traces show answer-selection mistakes.",
-                    "fallback_strategy": "If no trap is visible, use direct concept matching with one verification step.",
-                    "accuracy_checks": ["compare plausible alternatives", "verify the final choice against the stem"],
+                    "candidate_prompt": prompt,
+                    "role_name": str(fallback["role_name"]),
+                    "decision_procedure": list(fallback["decision_procedure"]),
+                    "when_to_use": str(fallback["when_to_use"]),
+                    "fallback_strategy": str(fallback["fallback_strategy"]),
+                    "accuracy_checks": list(fallback["accuracy_checks"]),
                     "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
                     "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
                     "generation_case_ids": [
@@ -1840,6 +1952,9 @@ class TraceBeamSearchSystem:
             "Each candidate must primarily address one supplied generation batch; do not merge all batches into one generic prompt.\n"
             "The new prompt must address the provided cases as reasoning-pattern evidence, not as sample content to memorize.\n"
             "Write concrete reasoning behavior, not slogans such as 'be diverse' or 'avoid redundancy'.\n"
+            "Write a complete short role prompt, not a suffix to append to the parent prompt. "
+            "Do not repeat generic instructions already present in the parent prompt. "
+            "Do not use the phrase 'Use a distinct decision procedure'. "
             "Prefer a short role prompt with 2-4 explicit procedure steps, a fallback strategy, and validity checks.\n"
             "The prompt should create a different reasoning route from peer roles without making the answer less reliable.\n"
             "Never include concrete question text, answer text, options, labels, sample hashes, or FINAL_ANSWER templates.\n\n"
@@ -1874,14 +1989,18 @@ class TraceBeamSearchSystem:
         obj = extract_json_obj(text) or {}
         candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
         parsed: List[Dict[str, Any]] = []
+        seen_signatures: set = set()
         if isinstance(candidates, list):
             for item in candidates:
                 if not isinstance(item, dict):
                     continue
                 prompt = str(item.get("candidate_prompt", "")).strip()
                 prompt, _ = self._sanitize_prompt(prompt, agent_id)
+                if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                    continue
                 if not prompt:
                     continue
+                seen_signatures.add(self._prompt_signature(prompt))
                 parsed.append(
                     {
                         "candidate_prompt": prompt,
@@ -1903,18 +2022,18 @@ class TraceBeamSearchSystem:
                 if len(parsed) >= num_candidates:
                     break
         while len(parsed) < num_candidates:
+            fallback = self._structured_fallback_role(agent_id, len(parsed), mode="diversity")
+            prompt = str(fallback["candidate_prompt"])
+            seen_signatures.add(self._prompt_signature(prompt))
             parsed.append(
                 {
-            "candidate_prompt": (
-                parent_prompt
-                        + " Use a distinct decision procedure: first state which reasoning route you will use, then approach the problem through boundary checks, reverse validation, or an alternative representation. If that procedure is not useful, fall back to direct reasoning with one explicit verification step."
-                    ),
-                    "role_name": "fallback_overlap_reducer",
-                    "decision_procedure": ["detect likely overlap", "choose boundary/reverse/representation route", "verify"],
-                    "when_to_use": "Use when the team's traces are semantically similar.",
-                    "fallback_strategy": "Return to direct reasoning with one explicit check.",
-                    "anti_overlap_rule": "Do not repeat the same decomposition order as the default solver.",
-                    "validity_checks": ["trace shows the selected route", "answer line is present"],
+                    "candidate_prompt": prompt,
+                    "role_name": str(fallback["role_name"]),
+                    "decision_procedure": list(fallback["decision_procedure"]),
+                    "when_to_use": str(fallback["when_to_use"]),
+                    "fallback_strategy": str(fallback["fallback_strategy"]),
+                    "anti_overlap_rule": str(fallback["anti_overlap_rule"]),
+                    "validity_checks": list(fallback["validity_checks"]),
                     "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
                     "generation_batch_type": str(generation_batches[min(len(parsed), len(generation_batches) - 1)].get("batch_type", "")),
                     "generation_case_ids": [

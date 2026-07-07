@@ -1,0 +1,7 @@
+﻿task_id,prompt_hashes,accuracies,best_agent,best_acc
+boolean_expressions,"[""00bcb3ee9efb"", ""b22fd4028486"", ""00bcb3ee9efb"", ""00bcb3ee9efb"", ""4e7f4fa02b07""]","[0.98, 0.98, 0.98, 0.98, 0.96]","[0, 1, 2, 3]",0.980
+disambiguation_qa,"[""9aa56bc033b1"", ""3ed6e151874c"", ""b22fd4028486"", ""3ed6e151874c"", ""00bcb3ee9efb""]","[0.69, 0.71, 0.51, 0.67, 0.44]",1,0.710
+formal_fallacies,"[""b22fd4028486"", ""b22fd4028486"", ""4e7f4fa02b07"", ""dce5e63f71f6"", ""5ba21276572f""]","[1.0, 0.99, 0.98, 1.0, 0.98]","[0, 3]",1.000
+geometric_shapes,"[""b04748fb68db"", ""00bcb3ee9efb"", ""ffbdf3d66222"", ""dce5e63f71f6"", ""dce5e63f71f6""]","[0.76, 0.66, 0.72, 0.74, 0.71]",0,0.760
+ruin_names,"[""00bcb3ee9efb"", ""00bcb3ee9efb"", ""5ba21276572f"", ""b24374b21beb"", ""7aa15b6bcde7""]","[0.81, 0.77, 0.82, 0.81, 0.82]","[2, 4]",0.820
+sports_understanding,"[""b22fd4028486"", ""b24374b21beb"", ""dce5e63f71f6"", ""00bcb3ee9efb"", ""00bcb3ee9efb""]","[0.81, 0.82, 0.83, 0.83, 0.83]","[2, 3, 4]",0.830
