@@ -139,6 +139,9 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
             "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
             "--optimizer_fallback_mode", args.optimizer_fallback_mode,
+            "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
+            "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
+            "--no_effective_evolution_stop_enabled", str(int(args.no_effective_evolution_stop_enabled)),
             "--diversity_metric", args.diversity_metric,
             "--use_joint_trace_diversity_evaluator", str(int(args.use_joint_trace_diversity_evaluator)),
             "--invalid_binary", str(int(args.invalid_binary)),
@@ -299,6 +302,9 @@ def main():
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=cli_defaults.accuracy_guard_epsilon_late)
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
+    parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
+    parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
+    parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=1, choices=[0, 1])
@@ -351,6 +357,7 @@ def main():
         "transient_retry_forever",
         "llm_call_logging",
         "use_baseline_relative_reward",
+        "no_effective_evolution_stop_enabled",
         "summary_by_dataset",
         "seed_baselines",
         "multi_seed_names",

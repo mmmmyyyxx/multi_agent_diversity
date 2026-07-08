@@ -82,6 +82,10 @@ class TraceBeamSearchSystem:
         self.prompt_history = self._init_prompt_history()
         self.joint_diversity_cache: Dict[str, Dict[str, Any]] = {}
         self.solver_rollout_cache: Dict[str, List[Dict[str, Any]]] = {}
+        self.optimizer_generation_diagnostics: Dict[str, Dict[str, Any]] = {}
+        self.no_effective_evolution_counter = 0
+        self.no_effective_evolution_stopped = False
+        self.no_effective_evolution_reason = ""
         self.llm_call_logs: List[Dict[str, Any]] = []
         self.cost_summary: Dict[str, Any] = self._empty_cost_summary()
         self.embedding_model = None
@@ -543,6 +547,37 @@ class TraceBeamSearchSystem:
             }
         )
 
+    def sync_prompt_history_current_state(
+        self,
+        event: str = "sync_current_state",
+        epoch: Any = "final",
+        step: int = 0,
+        selected_epoch: Optional[int] = None,
+    ):
+        for agent_id, agent in enumerate(self.agents):
+            key = str(agent_id)
+            row = self.prompt_history.setdefault(
+                key,
+                {
+                    "initial_prompt": getattr(agent, "initial_prompt", ""),
+                    "initial_prompt_hash": self._hash(getattr(agent, "initial_prompt", "")),
+                    "events": [],
+                },
+            )
+            row["current_prompt"] = agent.current_prompt
+            row["current_prompt_hash"] = self._hash(agent.current_prompt)
+            row["prompt_beam"] = agent.prompt_beam
+            event_row = {
+                "epoch": epoch,
+                "step": step,
+                "decision": event,
+                "changed": self._hash(agent.current_prompt) != row.get("initial_prompt_hash", ""),
+                "current_prompt_hash": self._hash(agent.current_prompt),
+            }
+            if selected_epoch is not None:
+                event_row["selected_epoch"] = int(selected_epoch)
+            row.setdefault("events", []).append(event_row)
+
     def _contains_task_specific_content(self, prompt: str, question: Optional[str] = None) -> bool:
         text = normalize_spaces(str(prompt)).lower()
         if "final_answer:" in text:
@@ -590,6 +625,44 @@ class TraceBeamSearchSystem:
         if stock_count > parent_stock_count and parent_stock_count > 0:
             return True
         return False
+
+    def _empty_optimizer_generation_diagnostics(self) -> Dict[str, Any]:
+        return {
+            "optimizer_raw_response_empty": 0,
+            "optimizer_json_parse_failed": 0,
+            "optimizer_raw_candidate_count": 0,
+            "optimizer_empty_prompt_count": 0,
+            "optimizer_sanitized_count": 0,
+            "optimizer_redundant_filtered_count": 0,
+            "optimizer_schema_filtered_count": 0,
+            "optimizer_final_candidate_count": 0,
+            "optimizer_underfilled": False,
+        }
+
+    def _record_optimizer_generation_diagnostics(
+        self,
+        agent_id: int,
+        parent_id: str,
+        diagnostics: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        normalized = self._empty_optimizer_generation_diagnostics()
+        normalized.update(diagnostics or {})
+        normalized["optimizer_final_candidate_count"] = int(normalized.get("optimizer_final_candidate_count", 0) or 0)
+        normalized["optimizer_underfilled"] = bool(normalized.get("optimizer_underfilled", False))
+        if not hasattr(self, "optimizer_generation_diagnostics"):
+            self.optimizer_generation_diagnostics = {}
+        key = f"{int(agent_id)}:{str(parent_id)}"
+        self.optimizer_generation_diagnostics[key] = dict(normalized)
+        return normalized
+
+    def _optimizer_generation_diagnostics_for_parent(self, agent_id: int, parent_id: str) -> Dict[str, Any]:
+        if not hasattr(self, "optimizer_generation_diagnostics"):
+            self.optimizer_generation_diagnostics = {}
+        key = f"{int(agent_id)}:{str(parent_id)}"
+        return dict(self.optimizer_generation_diagnostics.get(key, self._empty_optimizer_generation_diagnostics()))
+
+    def _candidate_has_required_optimizer_fields(self, item: Dict[str, Any]) -> bool:
+        return bool(str(item.get("candidate_prompt", "")).strip())
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
         accuracy_repair_roles = [
@@ -2203,19 +2276,37 @@ class TraceBeamSearchSystem:
             max_tokens=int(self.cfg.optimizer_max_tokens),
             stage=f"accuracy_optimizer_agent_{agent_id}",
         )
-        obj = extract_json_obj(text) or {}
+        diagnostics = self._empty_optimizer_generation_diagnostics()
+        diagnostics["optimizer_raw_response_empty"] = int(not str(text or "").strip())
+        obj = extract_json_obj(text)
+        diagnostics["optimizer_json_parse_failed"] = int(bool(str(text or "").strip()) and obj is None)
+        if obj is None:
+            obj = {}
         candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
+        if isinstance(candidates, list):
+            diagnostics["optimizer_raw_candidate_count"] = len(candidates)
+        else:
+            diagnostics["optimizer_schema_filtered_count"] += 1
+            candidates = []
         parsed: List[Dict[str, Any]] = []
         seen_signatures: set = set()
         if isinstance(candidates, list):
             for item in candidates:
                 if not isinstance(item, dict):
+                    diagnostics["optimizer_schema_filtered_count"] += 1
+                    continue
+                if not self._candidate_has_required_optimizer_fields(item):
+                    diagnostics["optimizer_empty_prompt_count"] += 1
+                    diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
                 prompt = str(item.get("candidate_prompt", "")).strip()
-                prompt, _ = self._sanitize_prompt(prompt, agent_id)
+                prompt, sanitized = self._sanitize_prompt(prompt, agent_id)
+                diagnostics["optimizer_sanitized_count"] += int(bool(sanitized))
                 if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                    diagnostics["optimizer_redundant_filtered_count"] += 1
                     continue
                 if not prompt:
+                    diagnostics["optimizer_empty_prompt_count"] += 1
                     continue
                 seen_signatures.add(self._prompt_signature(prompt))
                 batch_idx = min(len(parsed), len(generation_batches) - 1)
@@ -2232,6 +2323,7 @@ class TraceBeamSearchSystem:
                         "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
                         "rationale": str(item.get("rationale", "")),
                         "candidate_source": "optimizer",
+                        "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(item.get("source_batch_type", "")) or str(generation_batches[batch_idx].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -2262,6 +2354,7 @@ class TraceBeamSearchSystem:
                         "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
                         "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
                         "candidate_source": "accuracy_repair_fallback",
+                        "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -2270,6 +2363,11 @@ class TraceBeamSearchSystem:
                         ],
                     }
                 )
+        diagnostics["optimizer_final_candidate_count"] = sum(1 for item in parsed[:num_candidates] if str(item.get("candidate_source", "")) == "optimizer")
+        diagnostics["optimizer_underfilled"] = bool(diagnostics["optimizer_final_candidate_count"] < int(num_candidates))
+        diagnostics = self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
+        for item in parsed:
+            item["optimizer_generation_diagnostics"] = dict(diagnostics)
         return parsed[:num_candidates]
 
     async def propose_candidates(
@@ -2402,19 +2500,37 @@ class TraceBeamSearchSystem:
             max_tokens=int(self.cfg.optimizer_max_tokens),
             stage=f"optimizer_agent_{agent_id}",
         )
-        obj = extract_json_obj(text) or {}
+        diagnostics = self._empty_optimizer_generation_diagnostics()
+        diagnostics["optimizer_raw_response_empty"] = int(not str(text or "").strip())
+        obj = extract_json_obj(text)
+        diagnostics["optimizer_json_parse_failed"] = int(bool(str(text or "").strip()) and obj is None)
+        if obj is None:
+            obj = {}
         candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
+        if isinstance(candidates, list):
+            diagnostics["optimizer_raw_candidate_count"] = len(candidates)
+        else:
+            diagnostics["optimizer_schema_filtered_count"] += 1
+            candidates = []
         parsed: List[Dict[str, Any]] = []
         seen_signatures: set = set()
         if isinstance(candidates, list):
             for item in candidates:
                 if not isinstance(item, dict):
+                    diagnostics["optimizer_schema_filtered_count"] += 1
+                    continue
+                if not self._candidate_has_required_optimizer_fields(item):
+                    diagnostics["optimizer_empty_prompt_count"] += 1
+                    diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
                 prompt = str(item.get("candidate_prompt", "")).strip()
-                prompt, _ = self._sanitize_prompt(prompt, agent_id)
+                prompt, sanitized = self._sanitize_prompt(prompt, agent_id)
+                diagnostics["optimizer_sanitized_count"] += int(bool(sanitized))
                 if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                    diagnostics["optimizer_redundant_filtered_count"] += 1
                     continue
                 if not prompt:
+                    diagnostics["optimizer_empty_prompt_count"] += 1
                     continue
                 seen_signatures.add(self._prompt_signature(prompt))
                 parsed.append(
@@ -2431,6 +2547,7 @@ class TraceBeamSearchSystem:
                         "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
                         "rationale": str(item.get("rationale", "")),
                         "candidate_source": "optimizer",
+                        "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(item.get("source_batch_type", "")) or str(safe_generation_batches[min(len(parsed), len(safe_generation_batches) - 1)].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -2463,6 +2580,7 @@ class TraceBeamSearchSystem:
                         "expected_accuracy_effect": str(fallback.get("expected_accuracy_effect", "")),
                         "rationale": "Fallback candidate when optimizer returns too few usable prompts.",
                         "candidate_source": f"{fallback_mode}_fallback",
+                        "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
@@ -2471,6 +2589,11 @@ class TraceBeamSearchSystem:
                         ],
                     }
                 )
+        diagnostics["optimizer_final_candidate_count"] = sum(1 for item in parsed[:num_candidates] if str(item.get("candidate_source", "")) == "optimizer")
+        diagnostics["optimizer_underfilled"] = bool(diagnostics["optimizer_final_candidate_count"] < int(num_candidates))
+        diagnostics = self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
+        for item in parsed:
+            item["optimizer_generation_diagnostics"] = dict(diagnostics)
         return parsed[:num_candidates]
 
     async def evaluate_joint_trace_diversity(self, traces: List[str], candidate_agent_id: int) -> Dict[str, Any]:
@@ -3057,6 +3180,7 @@ class TraceBeamSearchSystem:
         if not generation_batches:
             generation_batches = [{"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"}]
         requested = max(1, int(self.cfg.num_candidates_per_parent))
+        optimizer_generation_records: List[Dict[str, Any]] = []
         for parent in beam:
             parent_prompt = str(parent.get("prompt", agent.current_prompt))
             parent_id = str(parent.get("id", self._hash(parent_prompt)))
@@ -3068,6 +3192,14 @@ class TraceBeamSearchSystem:
                 num_candidates=requested,
                 generation_batches=parent_batches,
             )
+            parent_diagnostics = self._empty_optimizer_generation_diagnostics()
+            if proposals:
+                proposal_diag = proposals[0].get("optimizer_generation_diagnostics", {}) if isinstance(proposals[0], dict) else {}
+                if isinstance(proposal_diag, dict):
+                    parent_diagnostics.update(proposal_diag)
+            else:
+                parent_diagnostics.update(self._optimizer_generation_diagnostics_for_parent(agent_id, parent_prompt))
+            optimizer_generation_records.append(parent_diagnostics)
             for idx, proposal in enumerate(proposals):
                 prompt = str(proposal.get("candidate_prompt", "")).strip()
                 prompt, _ = self._sanitize_prompt(prompt, agent_id)
@@ -3089,6 +3221,7 @@ class TraceBeamSearchSystem:
                         "target_error_pattern": str(proposal.get("target_error_pattern", "")),
                         "accuracy_repair_rule": str(proposal.get("accuracy_repair_rule", "")),
                         "expected_accuracy_effect": str(proposal.get("expected_accuracy_effect", "")),
+                        "optimizer_generation_diagnostics": proposal.get("optimizer_generation_diagnostics", {}),
                         "proposal": proposal,
                     }
                 )
@@ -3111,6 +3244,7 @@ class TraceBeamSearchSystem:
                     "target_error_pattern": "",
                     "accuracy_repair_rule": "",
                     "expected_accuracy_effect": "",
+                    "optimizer_generation_diagnostics": self._empty_optimizer_generation_diagnostics(),
                     "proposal": {},
                 }
             )
@@ -3139,8 +3273,25 @@ class TraceBeamSearchSystem:
         requested_optimizer_candidates = len(beam) * requested
         num_optimizer_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "optimizer")
         num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in str(c.get("candidate_source", "")))
+        num_existing_beam_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "existing_beam")
         fallback_enabled = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower() == "template"
         optimizer_underfilled = num_optimizer_candidates < requested_optimizer_candidates
+        optimizer_generation_summary = self._empty_optimizer_generation_diagnostics()
+        for record in optimizer_generation_records:
+            if not isinstance(record, dict):
+                continue
+            for key in [
+                "optimizer_raw_response_empty",
+                "optimizer_json_parse_failed",
+                "optimizer_raw_candidate_count",
+                "optimizer_empty_prompt_count",
+                "optimizer_sanitized_count",
+                "optimizer_redundant_filtered_count",
+                "optimizer_schema_filtered_count",
+                "optimizer_final_candidate_count",
+            ]:
+                optimizer_generation_summary[key] += int(record.get(key, 0) or 0)
+        optimizer_generation_summary["optimizer_underfilled"] = bool(optimizer_underfilled)
 
         evaluated = []
         peer_prompts = self._active_prompt_list()
@@ -3182,6 +3333,8 @@ class TraceBeamSearchSystem:
             )
             evaluated.append({**candidate, "metrics": metrics, "reward": float(metrics.get("reward", 0.0))})
         evaluated.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
+        top1_candidate_source = str(evaluated[0].get("candidate_source", "")) if evaluated else ""
+        top1_candidate_pool_source = str(evaluated[0].get("source", "")) if evaluated else ""
 
         old_hash = self._hash(agent.current_prompt)
         beam_size = max(1, int(self.cfg.beam_size))
@@ -3208,6 +3361,12 @@ class TraceBeamSearchSystem:
         for rank, item in enumerate(evaluated, start=1):
             metrics = item.get("metrics", {})
             accepted = rank <= len(agent.prompt_beam)
+            in_top_beam = bool(accepted)
+            is_top1 = bool(rank == 1)
+            item_diagnostics = self._empty_optimizer_generation_diagnostics()
+            if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
+                item_diagnostics.update(item.get("optimizer_generation_diagnostics", {}))
+            item_diagnostics["optimizer_underfilled"] = bool(optimizer_underfilled)
             self.update_logs.append(
                 {
                     **self._base_log_fields(),
@@ -3265,6 +3424,11 @@ class TraceBeamSearchSystem:
                     "solver_reuse_total": int(metrics.get("solver_reuse_total", 0)),
                     "solver_reuse_hit_rate": float(metrics.get("solver_reuse_hit_rate", 0.0)),
                     "accepted": bool(accepted),
+                    "in_top_beam": bool(in_top_beam),
+                    "is_top1": bool(is_top1),
+                    "active_prompt_changed": bool(changed),
+                    "top1_candidate_source": top1_candidate_source,
+                    "top1_candidate_pool_source": top1_candidate_pool_source,
                     "rank_in_beam": rank if accepted else None,
                     "beam_rank": rank if accepted else None,
                     "prompt_preview": normalize_spaces(str(item.get("prompt", "")))[:220],
@@ -3286,6 +3450,15 @@ class TraceBeamSearchSystem:
                     "requested_optimizer_candidates": int(requested_optimizer_candidates),
                     "num_optimizer_candidates": int(num_optimizer_candidates),
                     "num_fallback_candidates": int(num_fallback_candidates),
+                    "num_existing_beam_candidates": int(num_existing_beam_candidates),
+                    "optimizer_raw_response_empty": int(item_diagnostics.get("optimizer_raw_response_empty", 0) or 0),
+                    "optimizer_json_parse_failed": int(item_diagnostics.get("optimizer_json_parse_failed", 0) or 0),
+                    "optimizer_raw_candidate_count": int(item_diagnostics.get("optimizer_raw_candidate_count", 0) or 0),
+                    "optimizer_empty_prompt_count": int(item_diagnostics.get("optimizer_empty_prompt_count", 0) or 0),
+                    "optimizer_sanitized_count": int(item_diagnostics.get("optimizer_sanitized_count", 0) or 0),
+                    "optimizer_redundant_filtered_count": int(item_diagnostics.get("optimizer_redundant_filtered_count", 0) or 0),
+                    "optimizer_schema_filtered_count": int(item_diagnostics.get("optimizer_schema_filtered_count", 0) or 0),
+                    "optimizer_final_candidate_count": int(item_diagnostics.get("optimizer_final_candidate_count", 0) or 0),
                     "num_eval_samples": int(metrics.get("num_eval_samples", 0)),
                     "candidate_eval_strategy": str(metrics.get("candidate_eval_strategy", getattr(self.cfg, "candidate_eval_strategy", "random"))),
                     "candidate_eval_pool_size": int(metrics.get("candidate_eval_pool_size", getattr(self.cfg, "candidate_eval_pool_size", 0))),
@@ -3311,6 +3484,11 @@ class TraceBeamSearchSystem:
             "requested_optimizer_candidates": int(requested_optimizer_candidates),
             "num_optimizer_candidates": int(num_optimizer_candidates),
             "num_fallback_candidates": int(num_fallback_candidates),
+            "num_existing_beam_candidates": int(num_existing_beam_candidates),
+            "top1_candidate_source": top1_candidate_source,
+            "top1_candidate_pool_source": top1_candidate_pool_source,
+            "active_prompt_changed": bool(changed),
+            **optimizer_generation_summary,
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
         }
@@ -3381,11 +3559,25 @@ class TraceBeamSearchSystem:
             no_selection_reason = "no_reward_relevant_agent"
         if not selected:
             self.clear_homogeneity_windows()
-            return {"update_requested": True, "update_ready": True, "selected_agent_ids": [], "updated_agent_ids": [], "skipped_reason": no_selection_reason}
+            return {
+                "update_requested": True,
+                "update_ready": True,
+                "selected_agent_ids": [],
+                "updated_agent_ids": [],
+                "skipped_reason": no_selection_reason,
+                "requested_optimizer_candidates": 0,
+                "num_optimizer_candidates": 0,
+                "num_fallback_candidates": 0,
+                "num_existing_beam_candidates": 0,
+                "active_prompt_changed_count": 0,
+                "optimizer_underfilled": False,
+            }
         updated = []
         top_metrics = []
+        update_summaries = []
         for agent_id in selected:
             changed, summary = await self.update_prompt_with_beam(agent_id, diagnosis, eval_batch, step_id, epoch_id)
+            update_summaries.append(summary)
             if changed:
                 updated.append(agent_id)
             if isinstance(summary.get("top_metrics", {}), dict):
@@ -3393,14 +3585,103 @@ class TraceBeamSearchSystem:
         self.clear_homogeneity_windows()
         self.flush_update_logs()
         self.flush_prompt_history()
+        requested_optimizer_candidates = int(sum(int(s.get("requested_optimizer_candidates", 0) or 0) for s in update_summaries))
+        num_optimizer_candidates = int(sum(int(s.get("num_optimizer_candidates", 0) or 0) for s in update_summaries))
+        num_fallback_candidates = int(sum(int(s.get("num_fallback_candidates", 0) or 0) for s in update_summaries))
+        num_existing_beam_candidates = int(sum(int(s.get("num_existing_beam_candidates", 0) or 0) for s in update_summaries))
+        diagnostic_keys = [
+            "optimizer_raw_response_empty",
+            "optimizer_json_parse_failed",
+            "optimizer_raw_candidate_count",
+            "optimizer_empty_prompt_count",
+            "optimizer_sanitized_count",
+            "optimizer_redundant_filtered_count",
+            "optimizer_schema_filtered_count",
+            "optimizer_final_candidate_count",
+        ]
+        optimizer_generation_diagnostics = {
+            key: int(sum(int(s.get(key, 0) or 0) for s in update_summaries))
+            for key in diagnostic_keys
+        }
         return {
             "update_requested": True,
             "update_ready": True,
             "selected_agent_ids": selected,
             "updated_agent_ids": updated,
             "skipped_reason": "none",
+            "requested_optimizer_candidates": requested_optimizer_candidates,
+            "num_optimizer_candidates": num_optimizer_candidates,
+            "num_fallback_candidates": num_fallback_candidates,
+            "num_existing_beam_candidates": num_existing_beam_candidates,
+            "active_prompt_changed_count": int(len(updated)),
+            "optimizer_underfilled": bool(num_optimizer_candidates < requested_optimizer_candidates),
+            **optimizer_generation_diagnostics,
             "candidate_behavior_diagnostics": self._mean_metric_dict(top_metrics),
         }
+
+    def _apply_no_effective_evolution_tracking(
+        self,
+        update_summary: Dict[str, Any],
+        epoch_id: int = 0,
+        step_id: int = 0,
+    ) -> Dict[str, Any]:
+        if not isinstance(update_summary, dict):
+            update_summary = {}
+        if not bool(update_summary.get("update_requested", False)) or not bool(update_summary.get("update_ready", False)):
+            update_summary["no_effective_evolution_counter"] = int(getattr(self, "no_effective_evolution_counter", 0) or 0)
+            update_summary["no_effective_evolution_stopped"] = bool(getattr(self, "no_effective_evolution_stopped", False))
+            update_summary["no_effective_evolution_reason"] = str(getattr(self, "no_effective_evolution_reason", ""))
+            return update_summary
+
+        min_optimizer_candidates = max(
+            0,
+            int(getattr(self.cfg, "no_effective_evolution_min_optimizer_candidates", 1) or 0),
+        )
+        num_optimizer_candidates = int(update_summary.get("num_optimizer_candidates", 0) or 0)
+        active_prompt_changed_count = int(
+            update_summary.get(
+                "active_prompt_changed_count",
+                len(update_summary.get("updated_agent_ids", []) or []),
+            )
+            or 0
+        )
+        ineffective = num_optimizer_candidates < min_optimizer_candidates and active_prompt_changed_count <= 0
+        if ineffective:
+            self.no_effective_evolution_counter = int(getattr(self, "no_effective_evolution_counter", 0) or 0) + 1
+        else:
+            self.no_effective_evolution_counter = 0
+            self.no_effective_evolution_stopped = False
+            self.no_effective_evolution_reason = ""
+
+        enabled = bool(int(getattr(self.cfg, "no_effective_evolution_stop_enabled", True)))
+        patience = max(1, int(getattr(self.cfg, "no_effective_evolution_patience", 10) or 10))
+        if enabled and self.no_effective_evolution_counter >= patience:
+            self.no_effective_evolution_stopped = True
+            self.no_effective_evolution_reason = (
+                f"num_optimizer_candidates<{min_optimizer_candidates} and no active prompt changed"
+            )
+
+        update_summary["no_effective_evolution_counter"] = int(self.no_effective_evolution_counter)
+        update_summary["no_effective_evolution_stopped"] = bool(self.no_effective_evolution_stopped)
+        update_summary["no_effective_evolution_reason"] = str(self.no_effective_evolution_reason)
+        self.update_logs.append(
+            {
+                **self._base_log_fields(),
+                "event": "no_effective_evolution_check",
+                "epoch": epoch_id,
+                "step": step_id,
+                "no_effective_evolution_counter": int(self.no_effective_evolution_counter),
+                "no_effective_evolution_stopped": bool(self.no_effective_evolution_stopped),
+                "no_effective_evolution_reason": str(self.no_effective_evolution_reason),
+                "requested_optimizer_candidates": int(update_summary.get("requested_optimizer_candidates", 0) or 0),
+                "num_optimizer_candidates": int(update_summary.get("num_optimizer_candidates", 0) or 0),
+                "num_fallback_candidates": int(update_summary.get("num_fallback_candidates", 0) or 0),
+                "num_existing_beam_candidates": int(update_summary.get("num_existing_beam_candidates", 0) or 0),
+                "active_prompt_changed_count": int(update_summary.get("active_prompt_changed_count", 0) or 0),
+                "optimizer_underfilled": bool(update_summary.get("optimizer_underfilled", False)),
+            }
+        )
+        return update_summary
 
     def _mean_metric_dict(self, rows: List[Dict[str, Any]]) -> Dict[str, float]:
         keys = [
@@ -3499,6 +3780,7 @@ class TraceBeamSearchSystem:
         update_summary = {"update_requested": bool(do_update), "update_ready": self.is_update_window_ready(), "selected_agent_ids": [], "updated_agent_ids": []}
         if do_update and eval_batch is not None:
             update_summary = await self.maybe_update_prompts(metrics, eval_batch, step_id, epoch_id)
+        update_summary = self._apply_no_effective_evolution_tracking(update_summary, epoch_id=epoch_id, step_id=step_id)
         record = {
             **self._base_log_fields(),
             "epoch": epoch_id,
@@ -3523,6 +3805,9 @@ class TraceBeamSearchSystem:
             "validity_case_count": len(validity_cases),
             "invalid_rate": float(metrics.get("invalid_rate", 0.0)),
             "update_summary": update_summary,
+            "no_effective_evolution_counter": int(update_summary.get("no_effective_evolution_counter", 0) or 0),
+            "no_effective_evolution_stopped": bool(update_summary.get("no_effective_evolution_stopped", False)),
+            "no_effective_evolution_reason": str(update_summary.get("no_effective_evolution_reason", "")),
         }
         self.train_step_logs.append(record)
         self.train_trace_history_logs.append(

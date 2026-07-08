@@ -158,15 +158,34 @@ def snapshot_agent_prompts(system):
     return [str(agent.current_prompt) for agent in system.agents]
 
 
-def restore_agent_prompts(system, prompts):
+def restore_agent_prompts(system, prompts, selected_epoch=None):
     if not prompts or len(prompts) != len(system.agents):
         raise ValueError(f"Cannot restore prompts: got {len(prompts) if prompts else 0}, expected {len(system.agents)}")
-    for agent, prompt in zip(system.agents, prompts):
+    for agent_id, (agent, prompt) in enumerate(zip(system.agents, prompts)):
         agent.current_prompt = str(prompt)
-        if agent.prompt_beam:
-            agent.prompt_beam[0]["prompt"] = str(prompt)
-        else:
-            agent.prompt_beam = [{"id": "", "prompt": str(prompt), "score": None, "metrics": {}, "parent_id": None, "generation": 0}]
+        prompt_hash = system._hash(prompt)
+        existing = None
+        for item in getattr(agent, "prompt_beam", []) or []:
+            if system._hash(str(item.get("prompt", ""))) == prompt_hash:
+                existing = dict(item)
+                break
+        if existing is None:
+            existing = system._make_beam_item(str(prompt), None, {}, None, 0, candidate_id=f"selected_a{agent_id}_{prompt_hash}")
+        existing["prompt"] = str(prompt)
+        existing["id"] = str(existing.get("id", "")) or f"selected_a{agent_id}_{prompt_hash}"
+        rest = [
+            dict(item)
+            for item in (getattr(agent, "prompt_beam", []) or [])
+            if system._hash(str(item.get("prompt", ""))) != prompt_hash
+        ]
+        agent.prompt_beam = [existing] + rest[: max(0, int(getattr(system.cfg, "beam_size", 1) or 1) - 1)]
+    if hasattr(system, "sync_prompt_history_current_state"):
+        system.sync_prompt_history_current_state(
+            event="restore_best_prompts",
+            epoch="final",
+            step=0,
+            selected_epoch=selected_epoch,
+        )
 
 
 def write_selected_prompts(path, system, epoch, metric_name, validation_score):
@@ -248,6 +267,7 @@ async def main_async():
     cfg.candidate_reuse_recorded_rollouts = bool(int(cfg.candidate_reuse_recorded_rollouts))
     cfg.transient_retry_forever = bool(int(cfg.transient_retry_forever))
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
+    cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))
 
     ensure_dir(cfg.out_dir)
     set_seed(cfg.seed)
@@ -323,6 +343,9 @@ async def main_async():
     best_epoch = 0
     epochs_without_improvement = 0
     stopped_early = False
+    no_effective_evolution_counter = 0
+    no_effective_evolution_stopped = False
+    no_effective_evolution_reason = ""
     best_prompts_path = os.path.join(cfg.out_dir, "best_prompts.json")
     for epoch in range(cfg.epochs):
         order = list(range(len(train_data)))
@@ -370,6 +393,16 @@ async def main_async():
                     step_id=step + 1,
                     epoch_id=epoch + 1,
                 )
+                update_summary = out.get("update_summary", {}) if isinstance(out.get("update_summary", {}), dict) else {}
+                no_effective_evolution_counter = int(update_summary.get("no_effective_evolution_counter", no_effective_evolution_counter) or 0)
+                no_effective_evolution_stopped = bool(update_summary.get("no_effective_evolution_stopped", False))
+                no_effective_evolution_reason = str(update_summary.get("no_effective_evolution_reason", ""))
+                if no_effective_evolution_stopped:
+                    print(
+                        f"No-effective-evolution stopping at epoch {epoch + 1} step {step + 1}: "
+                        f"counter={no_effective_evolution_counter}, "
+                        f"reason={no_effective_evolution_reason}"
+                    )
                 train_embedding_diversity.append(float(out.get("embedding_diversity", 0.0)))
                 train_embedding_overlap.append(float(out.get("mean_embedding_overlap", 0.0)))
                 train_invalid_rate.append(float(out.get("invalid_rate", 0.0)))
@@ -397,7 +430,11 @@ async def main_async():
                             f"train_invalid={float(np.mean(train_invalid_rate)):.4f} "
                             f"train_vote_acc={float(np.mean(train_vote_correct)):.4f}"
                         )
+                if no_effective_evolution_stopped:
+                    break
             cursor = batch_end
+            if no_effective_evolution_stopped:
+                break
 
         train_metrics = {
             "mean_embedding_diversity": float(np.mean(train_embedding_diversity)) if train_embedding_diversity else 0.0,
@@ -407,6 +444,9 @@ async def main_async():
             "oracle_acc": float(np.mean(train_any_correct)) if train_any_correct else 0.0,
             "aggregation_gap": (float(np.mean(train_any_correct)) - float(np.mean(train_vote_correct))) if train_any_correct and train_vote_correct else 0.0,
             "mean_useful_diversity": float(np.mean(train_useful_diversity)) if train_useful_diversity else 0.0,
+            "no_effective_evolution_counter": int(no_effective_evolution_counter),
+            "no_effective_evolution_stopped": bool(no_effective_evolution_stopped),
+            "no_effective_evolution_reason": no_effective_evolution_reason,
         }
         refresh_summary = None
         if cfg.beam_refresh_each_epoch:
@@ -481,11 +521,14 @@ async def main_async():
                 f"epochs_without_improvement={epochs_without_improvement}"
             )
             break
+        if no_effective_evolution_stopped:
+            stopped_early = True
+            break
 
     if os.path.exists(best_prompts_path):
         payload, prompts = read_selected_prompts(best_prompts_path)
-        restore_agent_prompts(system, prompts)
         best_epoch = int(payload.get("selected_epoch", best_epoch) or best_epoch)
+        restore_agent_prompts(system, prompts, selected_epoch=best_epoch)
 
     final_test_metrics = await system.evaluate_dataset(test_data, split_name="test_final")
     final_record = {
@@ -495,10 +538,20 @@ async def main_async():
         "early_stopped": bool(stopped_early),
         "early_stopping_patience": int(getattr(cfg, "early_stopping_patience", -1)),
         "early_stopping_min_delta": float(getattr(cfg, "early_stopping_min_delta", 0.0) or 0.0),
+        "no_effective_evolution_counter": int(no_effective_evolution_counter),
+        "no_effective_evolution_stopped": bool(no_effective_evolution_stopped),
+        "no_effective_evolution_reason": no_effective_evolution_reason,
         "test_evaluated_on": "best_state",
         "test": final_test_metrics,
     }
     system.history.append(final_record)
+    if hasattr(system, "sync_prompt_history_current_state"):
+        system.sync_prompt_history_current_state(
+            event="selected_state_evaluated",
+            epoch="final",
+            step=0,
+            selected_epoch=best_epoch,
+        )
     system.save_state("selected_state", extra=final_record)
     system.save_state("last_state", extra=final_record)
     with open(os.path.join(cfg.out_dir, "history.json"), "w", encoding="utf-8") as f:

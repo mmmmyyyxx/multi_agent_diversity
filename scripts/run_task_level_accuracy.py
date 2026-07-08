@@ -78,6 +78,9 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
             "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
             "--optimizer_fallback_mode", args.optimizer_fallback_mode,
+            "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
+            "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
+            "--no_effective_evolution_stop_enabled", str(args.no_effective_evolution_stop_enabled),
             "--candidate_eval_strategy", args.candidate_eval_strategy,
             "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
@@ -341,6 +344,9 @@ def main():
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=cli_defaults.accuracy_guard_epsilon_late)
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
+    parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
+    parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
+    parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=cli_defaults.candidate_eval_batch_size)
     parser.add_argument("--candidate_eval_strategy", type=str, default=cli_defaults.candidate_eval_strategy, choices=["random", "fixed_pool", "stratified"])
     parser.add_argument("--candidate_eval_pool_size", type=int, default=cli_defaults.candidate_eval_pool_size)

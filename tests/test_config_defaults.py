@@ -16,8 +16,11 @@ def test_cli_defaults_match_config():
         "beam_size",
         "num_candidates_per_parent",
         "optimizer_fallback_mode",
+        "no_effective_evolution_patience",
+        "no_effective_evolution_min_optimizer_candidates",
     ]:
         assert getattr(args, field) == getattr(defaults, field)
+    assert bool(args.no_effective_evolution_stop_enabled) == defaults.no_effective_evolution_stop_enabled
 
 
 def test_parser_accepts_coverage_useful_diversity_and_deprecated_alias():

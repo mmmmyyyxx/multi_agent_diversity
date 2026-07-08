@@ -70,6 +70,9 @@ class Config:
     accuracy_guard_epsilon_early: float = 0.03
     accuracy_guard_epsilon_late: float = 0.01
     optimizer_fallback_mode: str = "none"
+    no_effective_evolution_patience: int = 10
+    no_effective_evolution_min_optimizer_candidates: int = 1
+    no_effective_evolution_stop_enabled: bool = True
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -187,6 +190,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=defaults.accuracy_guard_epsilon_early)
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=defaults.accuracy_guard_epsilon_late)
     parser.add_argument("--optimizer_fallback_mode", type=str, default=defaults.optimizer_fallback_mode, choices=["none", "template"])
+    parser.add_argument("--no_effective_evolution_patience", type=int, default=defaults.no_effective_evolution_patience)
+    parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=defaults.no_effective_evolution_min_optimizer_candidates)
+    parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

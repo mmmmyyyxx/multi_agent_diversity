@@ -16,6 +16,10 @@ def _system(cfg=None, prompts=None):
     system.agents = [AgentState(prompt) for prompt in prompts]
     system.update_logs = []
     system.recent_window_records = []
+    system.optimizer_generation_diagnostics = {}
+    system.no_effective_evolution_counter = 0
+    system.no_effective_evolution_stopped = False
+    system.no_effective_evolution_reason = ""
     return system
 
 
@@ -158,3 +162,128 @@ def test_update_still_safe_when_optimizer_returns_zero_candidates():
     assert summary["optimizer_underfilled"] is True
     assert summary["num_optimizer_candidates"] == 0
     assert summary["num_fallback_candidates"] == 0
+    assert summary["num_existing_beam_candidates"] == 1
+
+
+async def _fake_blank_chat(**kwargs):
+    return ""
+
+
+async def _fake_bad_json_chat(**kwargs):
+    return "not json at all"
+
+
+def test_optimizer_generation_diagnostics_empty_response():
+    system = _system(Config(optimizer_fallback_mode="none"))
+    system._chat = _fake_blank_chat
+    candidates = asyncio.run(
+        system.propose_candidates(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis={"prompt_roles": [], "per_agent_overlap_pressure": [0.0], "per_agent_invalid_rate": [0.0]},
+            num_candidates=2,
+            generation_batches=[{"batch_type": "target_error_repair", "cases": [{"case_id": "c1"}]}],
+        )
+    )
+
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+    assert candidates == []
+    assert diagnostics["optimizer_raw_response_empty"] == 1
+    assert diagnostics["optimizer_json_parse_failed"] == 0
+    assert diagnostics["optimizer_final_candidate_count"] == 0
+    assert diagnostics["optimizer_underfilled"] is True
+
+
+def test_optimizer_generation_diagnostics_json_parse_failed():
+    system = _system(Config(optimizer_fallback_mode="none"))
+    system._chat = _fake_bad_json_chat
+    candidates = asyncio.run(
+        system.propose_candidates(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis={"prompt_roles": [], "per_agent_overlap_pressure": [0.0], "per_agent_invalid_rate": [0.0]},
+            num_candidates=1,
+            generation_batches=[{"batch_type": "target_error_repair", "cases": [{"case_id": "c1"}]}],
+        )
+    )
+
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+    assert candidates == []
+    assert diagnostics["optimizer_raw_response_empty"] == 0
+    assert diagnostics["optimizer_json_parse_failed"] == 1
+    assert diagnostics["optimizer_underfilled"] is True
+
+
+def test_update_logs_split_top_beam_from_active_change():
+    cfg = Config(optimizer_fallback_mode="none", beam_size=1, num_candidates_per_parent=1, agents=2)
+    system = _system(cfg, prompts=["p0", "p1"])
+    system.joint_diversity_cache = {}
+    system.solver_rollout_cache = {}
+    system.agents[0].prompt_beam = [system._make_beam_item("p0", None, {}, None, 0)]
+
+    async def fake_propose_candidates(**kwargs):
+        return [
+            {
+                "candidate_prompt": "new useful prompt",
+                "candidate_source": "optimizer",
+                "optimizer_generation_diagnostics": {
+                    "optimizer_raw_candidate_count": 1,
+                    "optimizer_final_candidate_count": 1,
+                    "optimizer_underfilled": False,
+                },
+            }
+        ]
+
+    async def fake_prewarm(**kwargs):
+        return {"enabled": False}
+
+    async def fake_eval(agent_id, candidate_prompt, **kwargs):
+        reward = 1.0 if candidate_prompt == "new useful prompt" else 0.1
+        return {"reward": reward, "target_agent_accuracy": reward, "num_eval_samples": 1}
+
+    system.propose_candidates = fake_propose_candidates
+    system.ensure_recorded_rollouts_for_prompts = fake_prewarm
+    system.evaluate_candidate_prompt = fake_eval
+    system._append_prompt_history_event = lambda *args, **kwargs: None
+    changed, summary = asyncio.run(
+        system.update_prompt_with_beam(
+            agent_id=0,
+            overlap_diagnosis={"homogeneous_cases": []},
+            eval_batch=[{"question": "q", "answer": "A"}],
+            step_id=1,
+            epoch_id=1,
+        )
+    )
+
+    assert changed is True
+    assert summary["active_prompt_changed"] is True
+    assert summary["top1_candidate_source"] == "optimizer"
+    top1 = next(row for row in system.update_logs if row.get("is_top1"))
+    assert top1["in_top_beam"] is True
+    assert top1["active_prompt_changed"] is True
+    assert top1["top1_candidate_source"] == "optimizer"
+
+
+def test_no_effective_evolution_tracking_stops_after_patience():
+    cfg = Config(
+        no_effective_evolution_patience=2,
+        no_effective_evolution_min_optimizer_candidates=1,
+        no_effective_evolution_stop_enabled=True,
+    )
+    system = _system(cfg)
+    summary = {
+        "update_requested": True,
+        "update_ready": True,
+        "num_optimizer_candidates": 0,
+        "active_prompt_changed_count": 0,
+        "updated_agent_ids": [],
+    }
+
+    first = system._apply_no_effective_evolution_tracking(dict(summary))
+    second = system._apply_no_effective_evolution_tracking(dict(summary))
+
+    assert first["no_effective_evolution_counter"] == 1
+    assert first["no_effective_evolution_stopped"] is False
+    assert second["no_effective_evolution_counter"] == 2
+    assert second["no_effective_evolution_stopped"] is True
+    assert "num_optimizer_candidates<1" in second["no_effective_evolution_reason"]

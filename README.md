@@ -29,8 +29,15 @@ multi_dataset_diverse_rl/
   utils.py     # 兼容工具、投票、JSONL、指标工具
 
 scripts/
-  run_experiments.py            # 批量实验：baseline + 方法 + 消融
+  run_task_level_accuracy.py    # task_id 级 accuracy 实验入口
+  run_experiments.py            # 数据集级批量实验入口
   compute_experiment_metrics.py # 多数据集、多 seed 汇总
+  compare_external_accuracy.py  # 外部 MARS summary 与 MAD 结果 join
+  analyze_experiments.py        # 对已有 run 做汇总与绘图
+  plot_experiment_results.py    # 通用实验图表
+  experiment_config.py          # 共享 setting / dataset 默认配置
+  experiment_io.py              # 共享 CSV/JSON/JSONL IO
+  task_level_accuracy_utils.py  # task-level 标准结果行与 schema
   prepare_mmlu_data.py          # MMLU JSONL 准备脚本
   sample_jsonl_splits.py        # 数据采样与 split
 
@@ -178,7 +185,13 @@ Key controls:
 
 `update_logs.jsonl` records the effective weights used for each candidate, including `effective_weight_target_accuracy`, `effective_weight_div_delta`, `effective_weight_coverage`, `effective_weight_useful_diversity`, `reward_phase_progress`, `reward_diversity_need`, and `reward_unique_prompt_ratio`.
 
-Optimizer fallback templates are disabled by default with `--optimizer_fallback_mode none`. If `--optimizer_fallback_mode template` is enabled, fixed fallback candidates are added when the optimizer returns too few valid candidates. Fallback candidates are useful as an engineering safety mechanism, but they can inflate prompt-update success rate and confound attribution to the optimizer. For clean experimental claims, use `--optimizer_fallback_mode none` and report `num_optimizer_candidates`, `num_fallback_candidates`, and `optimizer_underfilled`.
+Optimizer fallback templates are disabled by default with `--optimizer_fallback_mode none`. If `--optimizer_fallback_mode template` is enabled, fixed fallback candidates are added when the optimizer returns too few valid candidates. Fallback candidates are useful as an engineering safety mechanism, but they can inflate prompt-update success rate and confound attribution to the optimizer. For clean experimental claims, use `--optimizer_fallback_mode none` and report `num_optimizer_candidates`, `num_fallback_candidates`, `num_existing_beam_candidates`, `optimizer_underfilled`, and `top1_candidate_source`.
+
+`update_logs.jsonl` also records optimizer generation diagnostics: `optimizer_raw_response_empty`, `optimizer_json_parse_failed`, `optimizer_raw_candidate_count`, `optimizer_empty_prompt_count`, `optimizer_sanitized_count`, `optimizer_redundant_filtered_count`, `optimizer_schema_filtered_count`, and `optimizer_final_candidate_count`. These fields explain no-op runs where the optimizer produces zero usable candidates.
+
+`accepted` is kept as a deprecated compatibility field meaning "inside the retained beam." Prefer `in_top_beam`, `is_top1`, and `active_prompt_changed` when analyzing actual prompt updates.
+
+No-op evolution early stop is enabled by default. If repeated update attempts produce fewer than `--no_effective_evolution_min_optimizer_candidates` optimizer candidates and no active prompt changes for `--no_effective_evolution_patience` attempts, prompt evolution stops safely and final evaluation still runs. This avoids spending a full training budget on tasks where the optimizer is not producing usable candidates.
 
 ## Candidate Evaluation
 
@@ -389,6 +402,9 @@ best_prompts.json
 - `mean_embedding_diversity`：平均 trace embedding diversity。
 - `mean_embedding_overlap`：平均 trace embedding overlap。
 - `mean_invalid_rate`：无效 trace 比例。
+- `num_optimizer_candidates` / `num_fallback_candidates` / `num_existing_beam_candidates`：候选池来源统计。
+- `in_top_beam` / `is_top1` / `active_prompt_changed`：区分进入 beam、成为 top-1、以及 active prompt 是否真的变化。
+- `no_effective_evolution_stopped`：连续无效 prompt evolution 是否触发提前停止。
 - `reward`：候选 prompt 评估得分。
 - `solver_reuse_hit_rate`：candidate evaluation 复用历史 rollout 的比例。
 
