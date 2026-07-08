@@ -1,0 +1,912 @@
+{
+  "0": {
+    "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "initial_prompt_hash": "00bcb3ee9efb",
+    "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "current_prompt_hash": "00bcb3ee9efb",
+    "prompt_beam": [
+      {
+        "id": "g0_00bcb3ee9efb",
+        "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "score": 0.7916469804644586,
+        "metrics": {
+          "reward": 0.7916469804644586,
+          "embedding_diversity": 0.027400535643100736,
+          "mean_embedding_overlap": 0.9725994643568991,
+          "target_overlap_pressure": 0.9739937074482441,
+          "homogeneous_case_count": 4.0,
+          "resolved_case_count": 0.0,
+          "new_homogeneous_case_count": 4.0,
+          "team_accuracy": 0.85,
+          "invalid_rate": 0.0,
+          "invalid_score": 1.0,
+          "num_eval_samples": 20,
+          "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "errors": [],
+          "solver_reuse_enabled": true,
+          "solver_reuse_hits": 100,
+          "solver_reuse_misses": 0,
+          "solver_calls": 0,
+          "solver_reuse_total": 100,
+          "solver_reuse_hit_rate": 1.0,
+          "baseline_solver_calls": 0,
+          "baseline_solver_reuse_hits": 100,
+          "baseline_solver_reuse_misses": 0,
+          "baseline_solver_reuse_total": 100,
+          "candidate_eval_strategy": "fixed_pool",
+          "candidate_eval_pool_size": 100,
+          "candidate_eval_pool_actual_size": 100,
+          "candidate_eval_batch_size": 20,
+          "actual_eval_batch_size": 20,
+          "num_eval_repeats": 1,
+          "rescue_rate": 0.0,
+          "coverage_delta": 0.0,
+          "useful_diversity": 0.021437734365463257,
+          "vote_delta": 0.0,
+          "invalid_delta": 0.0,
+          "baseline_team_accuracy": 0.85,
+          "candidate_team_accuracy": 0.85,
+          "baseline_target_accuracy": 0.85,
+          "candidate_target_accuracy": 0.85,
+          "target_agent_accuracy": 0.85,
+          "baseline_invalid_rate": 0.0,
+          "candidate_invalid_rate": 0.0,
+          "invalid_guard_passed": true,
+          "effective_weight_target_accuracy": 0.9200000000000002,
+          "effective_weight_div_delta": 0.6800000000000002,
+          "effective_weight_coverage": 0.38000000000000006,
+          "effective_weight_useful_diversity": 0.45,
+          "effective_accuracy_guard_epsilon": 0.026000000000000002,
+          "reward_phase_progress": 0.2,
+          "reward_diversity_need": 0.8,
+          "reward_unique_prompt_ratio": 0.2,
+          "reward_accepted_updates": 0.0,
+          "baseline_oracle_acc": 0.95,
+          "candidate_oracle_acc": 0.95,
+          "rescue_useful_diversity": 0.0,
+          "baseline_embedding_diversity": 0.027400535643100736,
+          "candidate_embedding_diversity": 0.027400535643100736,
+          "baseline_mean_embedding_overlap": 0.9725994643568991,
+          "candidate_mean_embedding_overlap": 0.9725994643568991
+        },
+        "parent_id": null,
+        "generation": 1
+      }
+    ],
+    "events": [
+      {
+        "epoch": 1,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      }
+    ]
+  },
+  "1": {
+    "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "initial_prompt_hash": "00bcb3ee9efb",
+    "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "current_prompt_hash": "00bcb3ee9efb",
+    "prompt_beam": [
+      {
+        "id": "g0_00bcb3ee9efb",
+        "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "score": 0.7467058307528498,
+        "metrics": {
+          "reward": 0.7467058307528498,
+          "embedding_diversity": 0.027400535643100736,
+          "mean_embedding_overlap": 0.9725994643568991,
+          "target_overlap_pressure": 0.9683105394244194,
+          "homogeneous_case_count": 4.0,
+          "resolved_case_count": 0.0,
+          "new_homogeneous_case_count": 4.0,
+          "team_accuracy": 0.85,
+          "invalid_rate": 0.0,
+          "invalid_score": 1.0,
+          "num_eval_samples": 20,
+          "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "errors": [],
+          "solver_reuse_enabled": true,
+          "solver_reuse_hits": 100,
+          "solver_reuse_misses": 0,
+          "solver_calls": 0,
+          "solver_reuse_total": 100,
+          "solver_reuse_hit_rate": 1.0,
+          "baseline_solver_calls": 0,
+          "baseline_solver_reuse_hits": 100,
+          "baseline_solver_reuse_misses": 0,
+          "baseline_solver_reuse_total": 100,
+          "candidate_eval_strategy": "fixed_pool",
+          "candidate_eval_pool_size": 100,
+          "candidate_eval_pool_actual_size": 100,
+          "candidate_eval_batch_size": 20,
+          "actual_eval_batch_size": 20,
+          "num_eval_repeats": 1,
+          "rescue_rate": 0.05,
+          "coverage_delta": 0.0,
+          "useful_diversity": 0.023790735006332397,
+          "vote_delta": 0.0,
+          "invalid_delta": 0.0,
+          "baseline_team_accuracy": 0.85,
+          "candidate_team_accuracy": 0.85,
+          "baseline_target_accuracy": 0.8,
+          "candidate_target_accuracy": 0.8,
+          "target_agent_accuracy": 0.8,
+          "baseline_invalid_rate": 0.0,
+          "candidate_invalid_rate": 0.0,
+          "invalid_guard_passed": true,
+          "effective_weight_target_accuracy": 0.9200000000000002,
+          "effective_weight_div_delta": 0.6800000000000002,
+          "effective_weight_coverage": 0.38000000000000006,
+          "effective_weight_useful_diversity": 0.45,
+          "effective_accuracy_guard_epsilon": 0.026000000000000002,
+          "reward_phase_progress": 0.2,
+          "reward_diversity_need": 0.8,
+          "reward_unique_prompt_ratio": 0.2,
+          "reward_accepted_updates": 0.0,
+          "baseline_oracle_acc": 0.95,
+          "candidate_oracle_acc": 0.95,
+          "rescue_useful_diversity": 0.0020123548805713654,
+          "baseline_embedding_diversity": 0.027400535643100736,
+          "candidate_embedding_diversity": 0.027400535643100736,
+          "baseline_mean_embedding_overlap": 0.9725994643568991,
+          "candidate_mean_embedding_overlap": 0.9725994643568991
+        },
+        "parent_id": null,
+        "generation": 1
+      }
+    ],
+    "events": [
+      {
+        "epoch": 1,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      }
+    ]
+  },
+  "2": {
+    "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "initial_prompt_hash": "00bcb3ee9efb",
+    "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "current_prompt_hash": "00bcb3ee9efb",
+    "prompt_beam": [
+      {
+        "id": "g0_00bcb3ee9efb",
+        "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "score": 0.7913778999149801,
+        "metrics": {
+          "reward": 0.7913778999149801,
+          "embedding_diversity": 0.027400535643100736,
+          "mean_embedding_overlap": 0.9725994643568991,
+          "target_overlap_pressure": 0.9742865681648254,
+          "homogeneous_case_count": 4.0,
+          "resolved_case_count": 0.0,
+          "new_homogeneous_case_count": 4.0,
+          "team_accuracy": 0.85,
+          "invalid_rate": 0.0,
+          "invalid_score": 1.0,
+          "num_eval_samples": 20,
+          "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "errors": [],
+          "solver_reuse_enabled": true,
+          "solver_reuse_hits": 100,
+          "solver_reuse_misses": 0,
+          "solver_calls": 0,
+          "solver_reuse_total": 100,
+          "solver_reuse_hit_rate": 1.0,
+          "baseline_solver_calls": 0,
+          "baseline_solver_reuse_hits": 100,
+          "baseline_solver_reuse_misses": 0,
+          "baseline_solver_reuse_total": 100,
+          "candidate_eval_strategy": "fixed_pool",
+          "candidate_eval_pool_size": 100,
+          "candidate_eval_pool_actual_size": 100,
+          "candidate_eval_batch_size": 20,
+          "actual_eval_batch_size": 20,
+          "num_eval_repeats": 1,
+          "rescue_rate": 0.0,
+          "coverage_delta": 0.0,
+          "useful_diversity": 0.0208397775888443,
+          "vote_delta": 0.0,
+          "invalid_delta": 0.0,
+          "baseline_team_accuracy": 0.85,
+          "candidate_team_accuracy": 0.85,
+          "baseline_target_accuracy": 0.85,
+          "candidate_target_accuracy": 0.85,
+          "target_agent_accuracy": 0.85,
+          "baseline_invalid_rate": 0.0,
+          "candidate_invalid_rate": 0.0,
+          "invalid_guard_passed": true,
+          "effective_weight_target_accuracy": 0.9200000000000002,
+          "effective_weight_div_delta": 0.6800000000000002,
+          "effective_weight_coverage": 0.38000000000000006,
+          "effective_weight_useful_diversity": 0.45,
+          "effective_accuracy_guard_epsilon": 0.026000000000000002,
+          "reward_phase_progress": 0.2,
+          "reward_diversity_need": 0.8,
+          "reward_unique_prompt_ratio": 0.2,
+          "reward_accepted_updates": 0.0,
+          "baseline_oracle_acc": 0.95,
+          "candidate_oracle_acc": 0.95,
+          "rescue_useful_diversity": 0.0,
+          "baseline_embedding_diversity": 0.027400535643100736,
+          "candidate_embedding_diversity": 0.027400535643100736,
+          "baseline_mean_embedding_overlap": 0.9725994643568991,
+          "candidate_mean_embedding_overlap": 0.9725994643568991
+        },
+        "parent_id": null,
+        "generation": 1
+      }
+    ],
+    "events": [
+      {
+        "epoch": 1,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      }
+    ]
+  },
+  "3": {
+    "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "initial_prompt_hash": "00bcb3ee9efb",
+    "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "current_prompt_hash": "00bcb3ee9efb",
+    "prompt_beam": [
+      {
+        "id": "g0_00bcb3ee9efb",
+        "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "score": 0.7448245172798635,
+        "metrics": {
+          "reward": 0.7448245172798635,
+          "embedding_diversity": 0.027400535643100736,
+          "mean_embedding_overlap": 0.9725994643568991,
+          "target_overlap_pressure": 0.9732179187238217,
+          "homogeneous_case_count": 4.0,
+          "resolved_case_count": 0.0,
+          "new_homogeneous_case_count": 4.0,
+          "team_accuracy": 0.85,
+          "invalid_rate": 0.0,
+          "invalid_score": 1.0,
+          "num_eval_samples": 20,
+          "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "errors": [],
+          "solver_reuse_enabled": true,
+          "solver_reuse_hits": 100,
+          "solver_reuse_misses": 0,
+          "solver_calls": 0,
+          "solver_reuse_total": 100,
+          "solver_reuse_hit_rate": 1.0,
+          "baseline_solver_calls": 0,
+          "baseline_solver_reuse_hits": 100,
+          "baseline_solver_reuse_misses": 0,
+          "baseline_solver_reuse_total": 100,
+          "candidate_eval_strategy": "fixed_pool",
+          "candidate_eval_pool_size": 100,
+          "candidate_eval_pool_actual_size": 100,
+          "candidate_eval_batch_size": 20,
+          "actual_eval_batch_size": 20,
+          "num_eval_repeats": 1,
+          "rescue_rate": 0.0,
+          "coverage_delta": 0.0,
+          "useful_diversity": 0.01961003839969635,
+          "vote_delta": 0.0,
+          "invalid_delta": 0.0,
+          "baseline_team_accuracy": 0.85,
+          "candidate_team_accuracy": 0.85,
+          "baseline_target_accuracy": 0.8,
+          "candidate_target_accuracy": 0.8,
+          "target_agent_accuracy": 0.8,
+          "baseline_invalid_rate": 0.0,
+          "candidate_invalid_rate": 0.0,
+          "invalid_guard_passed": true,
+          "effective_weight_target_accuracy": 0.9200000000000002,
+          "effective_weight_div_delta": 0.6800000000000002,
+          "effective_weight_coverage": 0.38000000000000006,
+          "effective_weight_useful_diversity": 0.45,
+          "effective_accuracy_guard_epsilon": 0.026000000000000002,
+          "reward_phase_progress": 0.2,
+          "reward_diversity_need": 0.8,
+          "reward_unique_prompt_ratio": 0.2,
+          "reward_accepted_updates": 0.0,
+          "baseline_oracle_acc": 0.95,
+          "candidate_oracle_acc": 0.95,
+          "rescue_useful_diversity": 0.0,
+          "baseline_embedding_diversity": 0.027400535643100736,
+          "candidate_embedding_diversity": 0.027400535643100736,
+          "baseline_mean_embedding_overlap": 0.9725994643568991,
+          "candidate_mean_embedding_overlap": 0.9725994643568991
+        },
+        "parent_id": null,
+        "generation": 1
+      }
+    ],
+    "events": [
+      {
+        "epoch": 1,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 60,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      }
+    ]
+  },
+  "4": {
+    "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "initial_prompt_hash": "00bcb3ee9efb",
+    "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+    "current_prompt_hash": "00bcb3ee9efb",
+    "prompt_beam": [
+      {
+        "id": "g0_00bcb3ee9efb",
+        "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "score": 0.8852382348254324,
+        "metrics": {
+          "reward": 0.8852382348254324,
+          "embedding_diversity": 0.027400535643100736,
+          "mean_embedding_overlap": 0.9725994643568991,
+          "target_overlap_pressure": 0.9731885880231858,
+          "homogeneous_case_count": 4.0,
+          "resolved_case_count": 0.0,
+          "new_homogeneous_case_count": 4.0,
+          "team_accuracy": 0.85,
+          "invalid_rate": 0.0,
+          "invalid_score": 1.0,
+          "num_eval_samples": 20,
+          "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "errors": [],
+          "solver_reuse_enabled": true,
+          "solver_reuse_hits": 100,
+          "solver_reuse_misses": 0,
+          "solver_calls": 0,
+          "solver_reuse_total": 100,
+          "solver_reuse_hit_rate": 1.0,
+          "baseline_solver_calls": 0,
+          "baseline_solver_reuse_hits": 100,
+          "baseline_solver_reuse_misses": 0,
+          "baseline_solver_reuse_total": 100,
+          "candidate_eval_strategy": "fixed_pool",
+          "candidate_eval_pool_size": 100,
+          "candidate_eval_pool_actual_size": 100,
+          "candidate_eval_batch_size": 20,
+          "actual_eval_batch_size": 20,
+          "num_eval_repeats": 1,
+          "rescue_rate": 0.1,
+          "coverage_delta": 0.0,
+          "useful_diversity": 0.024973855167627335,
+          "vote_delta": 0.0,
+          "invalid_delta": 0.0,
+          "baseline_team_accuracy": 0.85,
+          "candidate_team_accuracy": 0.85,
+          "baseline_target_accuracy": 0.95,
+          "candidate_target_accuracy": 0.95,
+          "target_agent_accuracy": 0.95,
+          "baseline_invalid_rate": 0.0,
+          "candidate_invalid_rate": 0.0,
+          "invalid_guard_passed": true,
+          "effective_weight_target_accuracy": 0.9200000000000002,
+          "effective_weight_div_delta": 0.6800000000000002,
+          "effective_weight_coverage": 0.38000000000000006,
+          "effective_weight_useful_diversity": 0.45,
+          "effective_accuracy_guard_epsilon": 0.026000000000000002,
+          "reward_phase_progress": 0.2,
+          "reward_diversity_need": 0.8,
+          "reward_unique_prompt_ratio": 0.2,
+          "reward_accepted_updates": 0.0,
+          "baseline_oracle_acc": 0.95,
+          "candidate_oracle_acc": 0.95,
+          "rescue_useful_diversity": 0.003873734176158905,
+          "baseline_embedding_diversity": 0.027400535643100736,
+          "candidate_embedding_diversity": 0.027400535643100736,
+          "baseline_mean_embedding_overlap": 0.9725994643568991,
+          "candidate_mean_embedding_overlap": 0.9725994643568991
+        },
+        "parent_id": null,
+        "generation": 1
+      }
+    ],
+    "events": [
+      {
+        "epoch": 1,
+        "step": 10,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 30,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 90,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 1,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 40,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 70,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 100,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 2,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 20,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 50,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 80,
+        "decision": "beam_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      },
+      {
+        "epoch": 3,
+        "step": 0,
+        "decision": "beam_refresh_keep",
+        "changed": false,
+        "current_prompt_hash": "00bcb3ee9efb"
+      }
+    ]
+  }
+}

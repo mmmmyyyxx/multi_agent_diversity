@@ -2,8 +2,10 @@ import json
 from argparse import Namespace
 
 from scripts.compute_experiment_metrics import analyze_run
-from scripts.experiment_config import DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, dataset_paths_from_args, select_settings, setting_names
+from scripts.experiment_config import DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, dataset_paths_from_args, select_settings, setting_names
 from scripts.run_experiments import SETTINGS, _selected_settings
+from scripts.run_task_level_accuracy import _skip_row, _setting_reward_mode
+from multi_dataset_diverse_rl.task_manifest import ComparisonTask
 
 
 def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
@@ -61,6 +63,35 @@ def test_analyze_experiments_uses_shared_setting_order():
     import scripts.analyze_experiments as analyze_experiments
 
     assert analyze_experiments.SETTINGS == setting_names(DEFAULT_EXPERIMENT_SETTINGS)
+
+
+def test_task_level_reward_mode_override_only_changes_non_baseline():
+    args = Namespace(reward_mode="coverage_useful_diversity")
+    baseline = ExperimentSetting("shared_baseline", "shared", True, "guarded_diversity")
+    beam = ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity")
+
+    assert _setting_reward_mode(args, baseline) == "guarded_diversity"
+    assert _setting_reward_mode(args, beam) == "coverage_useful_diversity"
+
+
+def test_task_level_high_accuracy_skip_row_records_precheck_reason():
+    task = ComparisonTask(
+        task_id="boolean_expressions",
+        benchmark="BBH",
+        task_type="bbh",
+        answer_format="boolean",
+        train_path="train.csv",
+        val_path="val.csv",
+        test_path="test.csv",
+    )
+    setting = ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity")
+    args = Namespace(dataset_format="mars", reward_mode="coverage_useful_diversity", precheck_steps=20, precheck_acc_threshold=0.95)
+    row = _skip_row(task, setting, 42, args, {"precheck_vote_acc": 1.0})
+
+    assert row["status"] == "skipped_high_baseline_acc"
+    assert row["reward_mode"] == "coverage_useful_diversity"
+    assert row["precheck_vote_acc"] == 1.0
+    assert row["precheck_steps"] == 20
 
 
 def test_compute_metrics_reads_vote_tie_rate_and_mars_delta(tmp_path):

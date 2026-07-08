@@ -89,8 +89,6 @@ class TraceBeamSearchSystem:
         self.solver_call_limit = max(1, int(getattr(self.cfg, "eval_solver_call_concurrency", 225) or 225))
         self.solver_call_semaphore = asyncio.Semaphore(self.solver_call_limit)
 
-        if not self._is_accuracy_only_mode():
-            self._load_embedding_model()
         self._load_recorded_solver_rollouts()
         self.write_run_meta()
         self.flush_prompt_history()

@@ -13,12 +13,12 @@ if str(REPO_ROOT) not in sys.path:
 try:
     from multi_dataset_diverse_rl.config import Config
     from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
-    from scripts.experiment_io import append_jsonl, write_csv, write_jsonl
+    from scripts.experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from scripts.task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 except ModuleNotFoundError:
     from multi_dataset_diverse_rl.config import Config
     from experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
-    from experiment_io import append_jsonl, write_csv, write_jsonl
+    from experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 
 from multi_dataset_diverse_rl.task_manifest import ComparisonTask, load_task_manifest, resolve_task_ids
@@ -31,7 +31,15 @@ def _selected_settings(raw: str) -> List[ExperimentSetting]:
     return select_settings(raw, SETTINGS)
 
 
+def _setting_reward_mode(args: argparse.Namespace, setting: ExperimentSetting) -> str:
+    override = str(getattr(args, "reward_mode", "") or "").strip()
+    if override and not setting.baseline_only:
+        return override
+    return setting.reward_mode
+
+
 def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: ComparisonTask, setting: ExperimentSetting, seed: int):
+    reward_mode = _setting_reward_mode(args, setting)
     cmd.extend(
         [
             "--task_type", task.task_type,
@@ -43,7 +51,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--optimizer_model", args.optimizer_model,
             "--evaluator_model", args.evaluator_model,
             "--search_mode", "evolutionary_beam",
-            "--reward_mode", setting.reward_mode,
+            "--reward_mode", reward_mode,
             "--agents", str(args.agents),
             "--init_mode", setting.init_mode,
             "--shared_prompt", args.shared_prompt,
@@ -135,7 +143,7 @@ def run_one(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: a
         "benchmark": task.benchmark,
         "setting": setting.name,
         "seed": seed,
-        "reward_mode": setting.reward_mode,
+        "reward_mode": _setting_reward_mode(args, setting),
         "init_mode": setting.init_mode,
         "baseline_only": int(setting.baseline_only),
         "answer_format": task.answer_format,
@@ -147,6 +155,83 @@ def run_one(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: a
         "run_dir": str(run_dir),
     }
     return row
+
+
+def _latest_test_vote_acc(run_dir: Path) -> float:
+    history = read_json(run_dir / "history.json") or []
+    if not isinstance(history, list):
+        return 0.0
+    for record in reversed(history):
+        if isinstance(record, dict) and isinstance(record.get("test"), dict):
+            return float(record["test"].get("vote_acc", 0.0) or 0.0)
+    return 0.0
+
+
+def run_precheck(task: ComparisonTask, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+    precheck_setting = ExperimentSetting("precheck_baseline", "shared", True, "guarded_diversity")
+    run_dir = Path(args.out_root) / task.task_id / f"precheck_seed{seed}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    cmd = [args.python, "-m", "multi_dataset_diverse_rl.cli"]
+    _append_common_cli_args(cmd, args, task, precheck_setting, seed)
+    cmd.extend(
+        [
+            "--test_path", task.test_path,
+            "--out_dir", str(run_dir),
+            "--baseline_only", "1",
+            "--test_size", str(max(1, int(args.precheck_steps))),
+        ]
+    )
+    start = time.time()
+    print(f"\n[PRECHECK] task={task.task_id} seed={seed}: {' '.join(cmd)}", flush=True)
+    proc = subprocess.run(cmd, cwd=args.workspace)
+    elapsed = time.time() - start
+    vote_acc = _latest_test_vote_acc(run_dir) if proc.returncode == 0 else 0.0
+    threshold = float(args.precheck_acc_threshold)
+    return {
+        "task_id": task.task_id,
+        "benchmark": task.benchmark,
+        "setting": precheck_setting.name,
+        "seed": seed,
+        "reward_mode": precheck_setting.reward_mode,
+        "init_mode": precheck_setting.init_mode,
+        "baseline_only": 1,
+        "answer_format": task.answer_format,
+        "task_type": task.task_type,
+        "dataset_format": args.dataset_format,
+        "status": "ok" if proc.returncode == 0 else "failed",
+        "returncode": proc.returncode,
+        "elapsed_sec": round(elapsed, 2),
+        "run_dir": str(run_dir),
+        "precheck": 1,
+        "precheck_steps": int(args.precheck_steps),
+        "precheck_vote_acc": float(vote_acc),
+        "precheck_acc_threshold": threshold,
+        "skip_task": bool(vote_acc > threshold),
+    }
+
+
+def _skip_row(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: argparse.Namespace, precheck_row: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "task_id": task.task_id,
+        "benchmark": task.benchmark,
+        "setting": setting.name,
+        "seed": seed,
+        "reward_mode": _setting_reward_mode(args, setting),
+        "init_mode": setting.init_mode,
+        "baseline_only": int(setting.baseline_only),
+        "answer_format": task.answer_format,
+        "task_type": task.task_type,
+        "dataset_format": args.dataset_format,
+        "status": "skipped_high_baseline_acc",
+        "returncode": 0,
+        "elapsed_sec": 0.0,
+        "run_dir": "",
+        "precheck": 0,
+        "precheck_steps": int(args.precheck_steps),
+        "precheck_vote_acc": float(precheck_row.get("precheck_vote_acc", 0.0) or 0.0),
+        "precheck_acc_threshold": float(args.precheck_acc_threshold),
+        "skip_reason": f"precheck_vote_acc>{float(args.precheck_acc_threshold):.4f}",
+    }
 
 
 def _task_split_protocol(task: ComparisonTask) -> Dict[str, Any]:
@@ -214,10 +299,14 @@ def main():
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--dataset_format", type=str, default="mars", choices=["legacy", "mars"])
     parser.add_argument("--out_root", type=str, default="runs_task_level_accuracy")
+    parser.add_argument("--skip_high_baseline_acc", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--precheck_steps", type=int, default=20)
+    parser.add_argument("--precheck_acc_threshold", type=float, default=0.95)
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
     parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
     parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
+    parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "coverage_rescue_diversity"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
     parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)
@@ -298,8 +387,31 @@ def main():
     accuracy_rows: List[Dict[str, Any]] = []
     for task_id in task_ids:
         task = tasks[task_id]
+        skip_task_for_seed: Dict[int, Dict[str, Any]] = {}
+        if int(args.skip_high_baseline_acc):
+            for seed in seeds:
+                precheck_row = run_precheck(task, seed, args)
+                run_rows.append(precheck_row)
+                append_jsonl(runs_jsonl, precheck_row)
+                write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
+                if precheck_row["status"] != "ok":
+                    raise SystemExit(precheck_row["returncode"])
+                if precheck_row.get("skip_task"):
+                    skip_task_for_seed[seed] = precheck_row
+                    print(
+                        f"[SKIP] task={task.task_id} seed={seed} "
+                        f"precheck_vote_acc={float(precheck_row.get('precheck_vote_acc', 0.0)):.4f} "
+                        f"> threshold={float(args.precheck_acc_threshold):.4f}",
+                        flush=True,
+                    )
         for setting in settings:
             for seed in seeds:
+                if seed in skip_task_for_seed:
+                    run_row = _skip_row(task, setting, seed, args, skip_task_for_seed[seed])
+                    run_rows.append(run_row)
+                    append_jsonl(runs_jsonl, run_row)
+                    write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
+                    continue
                 run_row = run_one(task, setting, seed, args)
                 run_rows.append(run_row)
                 append_jsonl(runs_jsonl, run_row)

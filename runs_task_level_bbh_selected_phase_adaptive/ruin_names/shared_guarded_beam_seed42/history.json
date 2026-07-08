@@ -1,0 +1,169 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.024618617653846736,
+      "mean_embedding_overlap": 0.9753813823461531,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.8,
+      "oracle_acc": 0.86,
+      "aggregation_gap": 0.05999999999999994,
+      "mean_useful_diversity": 0.01906631441911061
+    },
+    "val": {
+      "size": 100,
+      "num_test_samples": 100,
+      "vote_acc": 0.77,
+      "majority_vote_acc": 0.77,
+      "weighted_vote_acc": 0.79,
+      "mean_individual_acc": 0.774,
+      "best_individual_acc": 0.82,
+      "per_agent_acc": [
+        0.77,
+        0.75,
+        0.82,
+        0.77,
+        0.76
+      ],
+      "oracle_acc": 0.85,
+      "aggregation_gap": 0.07999999999999996,
+      "rescue_available_rate": 0.08,
+      "correct_disagreement_rate": 0.18,
+      "mean_useful_diversity": 0.018789745231469472,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.02399251329898834,
+      "mean_embedding_overlap": 0.9760074867010117,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 0
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_embedding_diversity": 0.024816753327846525,
+      "mean_embedding_overlap": 0.9751832466721534,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.83,
+      "oracle_acc": 0.87,
+      "aggregation_gap": 0.040000000000000036,
+      "mean_useful_diversity": 0.020818550407886504
+    },
+    "val": {
+      "size": 100,
+      "num_test_samples": 100,
+      "vote_acc": 0.82,
+      "majority_vote_acc": 0.82,
+      "weighted_vote_acc": 0.82,
+      "mean_individual_acc": 0.802,
+      "best_individual_acc": 0.81,
+      "per_agent_acc": [
+        0.81,
+        0.8,
+        0.81,
+        0.79,
+        0.8
+      ],
+      "oracle_acc": 0.86,
+      "aggregation_gap": 0.040000000000000036,
+      "rescue_available_rate": 0.04,
+      "correct_disagreement_rate": 0.14,
+      "mean_useful_diversity": 0.01905876966317495,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.023659885942935936,
+      "mean_embedding_overlap": 0.9763401140570639,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 0
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "mean_embedding_diversity": 0.026760219931602477,
+      "mean_embedding_overlap": 0.9732397800683975,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.8,
+      "oracle_acc": 0.9,
+      "aggregation_gap": 0.09999999999999998,
+      "mean_useful_diversity": 0.02152148973941803
+    },
+    "val": {
+      "size": 100,
+      "num_test_samples": 100,
+      "vote_acc": 0.82,
+      "majority_vote_acc": 0.82,
+      "weighted_vote_acc": 0.83,
+      "mean_individual_acc": 0.808,
+      "best_individual_acc": 0.83,
+      "per_agent_acc": [
+        0.78,
+        0.83,
+        0.8,
+        0.83,
+        0.8
+      ],
+      "oracle_acc": 0.89,
+      "aggregation_gap": 0.07000000000000006,
+      "rescue_available_rate": 0.07,
+      "correct_disagreement_rate": 0.18,
+      "mean_useful_diversity": 0.02188788578907648,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.02,
+      "mean_embedding_diversity": 0.02582535302639008,
+      "mean_embedding_overlap": 0.9741746469736099,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 0
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 3,
+    "best_validation_score": 0.5993775771578153,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 200,
+      "num_test_samples": 200,
+      "vote_acc": 0.84,
+      "majority_vote_acc": 0.84,
+      "weighted_vote_acc": 0.84,
+      "mean_individual_acc": 0.828,
+      "best_individual_acc": 0.835,
+      "per_agent_acc": [
+        0.835,
+        0.805,
+        0.835,
+        0.83,
+        0.835
+      ],
+      "oracle_acc": 0.9,
+      "aggregation_gap": 0.06000000000000005,
+      "rescue_available_rate": 0.06,
+      "correct_disagreement_rate": 0.16,
+      "mean_useful_diversity": 0.022042778203884762,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.01,
+      "mean_embedding_diversity": 0.026229471236467364,
+      "mean_embedding_overlap": 0.9737705287635327,
+      "mean_invalid_rate": 0.001
+    }
+  }
+]
