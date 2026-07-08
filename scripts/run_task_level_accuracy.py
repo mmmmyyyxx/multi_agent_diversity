@@ -86,6 +86,15 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--teacher_max_tokens", str(args.teacher_max_tokens),
             "--critic_max_tokens", str(args.critic_max_tokens),
             "--student_max_tokens", str(args.student_max_tokens),
+            "--student_json_retry_on_parse_fail", str(int(args.student_json_retry_on_parse_fail)),
+            "--student_json_max_retries", str(args.student_json_max_retries),
+            "--student_json_repair_enabled", str(int(args.student_json_repair_enabled)),
+            "--student_json_repair_max_tokens", str(args.student_json_repair_max_tokens),
+            "--student_json_repair_temperature", str(args.student_json_repair_temperature),
+            "--student_candidate_schema_mode", args.student_candidate_schema_mode,
+            "--student_candidate_max_chars_per_field", str(args.student_candidate_max_chars_per_field),
+            "--student_candidate_prompt_max_chars", str(args.student_candidate_prompt_max_chars),
+            "--student_force_minified_json", str(int(args.student_force_minified_json)),
             "--teacher_critic_use_voting_failure", str(args.teacher_critic_use_voting_failure),
             "--optimizer_fallback_mode", args.optimizer_fallback_mode,
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
@@ -317,8 +326,8 @@ def main():
     parser.add_argument("--precheck_acc_threshold", type=float, default=0.95)
 
     parser.add_argument("--agent_model", type=str, default="deepseek-chat")
-    parser.add_argument("--optimizer_model", type=str, default="deepseek-v4-flash")
-    parser.add_argument("--evaluator_model", type=str, default="deepseek-v4-flash")
+    parser.add_argument("--optimizer_model", type=str, default="deepseek-chat")
+    parser.add_argument("--evaluator_model", type=str, default="deepseek-chat")
     parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
@@ -362,6 +371,15 @@ def main():
     parser.add_argument("--teacher_max_tokens", type=int, default=cli_defaults.teacher_max_tokens)
     parser.add_argument("--critic_max_tokens", type=int, default=cli_defaults.critic_max_tokens)
     parser.add_argument("--student_max_tokens", type=int, default=cli_defaults.student_max_tokens)
+    parser.add_argument("--student_json_retry_on_parse_fail", type=int, default=int(cli_defaults.student_json_retry_on_parse_fail), choices=[0, 1])
+    parser.add_argument("--student_json_max_retries", type=int, default=cli_defaults.student_json_max_retries)
+    parser.add_argument("--student_json_repair_enabled", type=int, default=int(cli_defaults.student_json_repair_enabled), choices=[0, 1])
+    parser.add_argument("--student_json_repair_max_tokens", type=int, default=cli_defaults.student_json_repair_max_tokens)
+    parser.add_argument("--student_json_repair_temperature", type=float, default=cli_defaults.student_json_repair_temperature)
+    parser.add_argument("--student_candidate_schema_mode", type=str, default=cli_defaults.student_candidate_schema_mode, choices=["compact", "verbose"])
+    parser.add_argument("--student_candidate_max_chars_per_field", type=int, default=cli_defaults.student_candidate_max_chars_per_field)
+    parser.add_argument("--student_candidate_prompt_max_chars", type=int, default=cli_defaults.student_candidate_prompt_max_chars)
+    parser.add_argument("--student_force_minified_json", type=int, default=int(cli_defaults.student_force_minified_json), choices=[0, 1])
     parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(cli_defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)

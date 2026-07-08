@@ -1,32 +1,32 @@
 {
   "selected_epoch": 1,
   "early_stopping_metric": "vote+oracle+useful_div-invalid",
-  "best_validation_score": 0.4989879454473654,
+  "best_validation_score": 0.7277755403518676,
   "agents": [
     {
       "agent_id": 0,
-      "prompt_hash": "d3a9b4b47c40",
-      "prompt": "Assume the role of a logical filter. Given a sentence with a pronoun, enumerate all plausible antecedents. For each, check if it satisfies every explicit constraint (gender, number, semantic role). After applying constraints, the set of possible antecedents should narrow to one. If ambiguity remains, use a tie-breaking rule: prefer the antecedent that is more contextually salient. Output only the letter of the chosen antecedent. Keep your reasoning in a bullet-style list for clarity."
+      "prompt_hash": "af839c86f5b5",
+      "prompt": "For each ambiguous element, generate candidate interpretations. Then apply a three-step verification: check grammatical agreement, semantic plausibility, and commonsense consistency. Keep only candidates passing all three. Next, for each remaining candidate, evaluate pragmatic plausibility: does the interpretation make sense given the question's context and typical real-world knowledge? Select the candidate with highest pragmatic plausibility. If tied, use most specific antecedent. Output the letter of the final candidate."
     },
     {
       "agent_id": 1,
-      "prompt_hash": "00bcb3ee9efb",
-      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      "prompt_hash": "24b03ad3634c",
+      "prompt": "Construct a table with candidates as rows and clues (gender, number, syntactic role, semantic plausibility) as columns. For each cell, mark pass/fail. Then eliminate rows with any fail. If multiple rows remain, pick the row with the most passes. Show the table and reasoning in your trace. Output final answer as a single letter."
     },
     {
       "agent_id": 2,
-      "prompt_hash": "97a25601971e",
-      "prompt": "You are a careful reasoning solver. For each candidate option, identify the specific clues in the text that support or contradict it. Then, compare the options by weighing these clues. Eliminate options with weaker support. Finally, select the option with the strongest textual support. Provide a detailed trace of your elimination and comparison process, and give exactly one final answer."
+      "prompt_hash": "3639fd98aba2",
+      "prompt": "List every possible referent for the pronoun. For each referent, check gender agreement, number agreement, syntactic role compatibility, and semantic plausibility. Document each check with a pass/fail. Select the referent that passes all four. Then verify that no other referent also passes all four; if any does, explain which constraint it fails. Finally, output the option letter of your chosen referent."
     },
     {
       "agent_id": 3,
-      "prompt_hash": "6a8d59ea0cb5",
-      "prompt": "You are a methodical solver. For each pronoun disambiguation task, first identify all nouns that could be the pronoun's antecedent. For each noun, note its gender, number, and grammatical role in the sentence. Then, compare these with the pronoun's features. Eliminate any noun that does not match. If only one remains, select it. If multiple remain, choose the one that is most recently mentioned. Output the option letter of the chosen antecedent."
+      "prompt_hash": "866fcdeef0ff",
+      "prompt": "Compare each pair of candidate antecedents. For each pair, apply constraints (gender, number, syntactic role, semantic plausibility) and select the better one. Continue pairwise until one winner remains. Output only the winner's letter."
     },
     {
       "agent_id": 4,
-      "prompt_hash": "00bcb3ee9efb",
-      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      "prompt_hash": "e2e967c19870",
+      "prompt": "Create a constraint checklist: gender, number, syntactic role, semantic plausibility. For each candidate, mark pass/fail on each constraint. Discard any candidate that fails a mandatory constraint (gender, number, syntactic role). From survivors, select the one with highest semantic plausibility; if tie, pick the one with most constraint passes overall. After selection, perform a numeric sanity check: count survivors and passes for the chosen candidate. If the chosen candidate has fewer passes than another survivor, or if any mandatory constraint was missed, reconsider and select the survivor with the most passes. Present reasoning as structured list per candidate. Final answer: single option letter."
     }
   ]
 }

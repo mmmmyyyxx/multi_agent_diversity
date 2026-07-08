@@ -26,6 +26,12 @@ def test_cli_defaults_match_config():
         "teacher_max_tokens",
         "critic_max_tokens",
         "student_max_tokens",
+        "student_json_max_retries",
+        "student_json_repair_max_tokens",
+        "student_json_repair_temperature",
+        "student_candidate_schema_mode",
+        "student_candidate_max_chars_per_field",
+        "student_candidate_prompt_max_chars",
         "optimizer_fallback_mode",
         "no_effective_evolution_patience",
         "no_effective_evolution_min_optimizer_candidates",
@@ -33,6 +39,9 @@ def test_cli_defaults_match_config():
         assert getattr(args, field) == getattr(defaults, field)
     assert bool(args.no_effective_evolution_stop_enabled) == defaults.no_effective_evolution_stop_enabled
     assert bool(args.teacher_critic_use_voting_failure) == defaults.teacher_critic_use_voting_failure
+    assert bool(args.student_json_retry_on_parse_fail) == defaults.student_json_retry_on_parse_fail
+    assert bool(args.student_json_repair_enabled) == defaults.student_json_repair_enabled
+    assert bool(args.student_force_minified_json) == defaults.student_force_minified_json
 
 
 def test_parser_accepts_coverage_useful_diversity_and_rejects_removed_alias():

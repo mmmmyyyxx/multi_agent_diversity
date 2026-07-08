@@ -388,7 +388,10 @@ def test_student_empty_response_diagnostics():
 
 
 def test_student_non_json_response_diagnostics():
-    system = _system()
+    system = _system(Config(
+        student_json_retry_on_parse_fail=False,
+        student_json_repair_enabled=False,
+    ))
 
     async def fake_chat(**kwargs):
         return "I will create better prompts, but here is an explanation first..."
@@ -548,3 +551,119 @@ def test_valid_student_candidate_has_no_failure_stage():
     assert diagnostics["student_candidate_count_raw"] == 1
     assert diagnostics["student_candidate_count_final"] == 1
     assert diagnostics["student_failure_stage"] in {"", "none"}
+
+
+def test_student_parse_failure_retry_succeeds():
+    system = _system(Config(student_json_repair_enabled=True, student_json_max_retries=1))
+    calls = []
+
+    async def fake_chat(**kwargs):
+        calls.append(kwargs.get("stage", ""))
+        if "student_json_retry" in kwargs.get("stage", ""):
+            return json.dumps({"candidates": [_valid_student_candidate()]})
+        return '{"candidates": ['
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {"approved": True}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert len(result["candidates"]) == 1
+    assert diag["student_json_retry_attempted"] is True
+    assert diag["student_json_retry_succeeded"] is True
+    assert diag["student_json_repair_attempted"] is False
+    assert diag["student_json_parse_failed"] is False
+    assert diag["student_failure_stage"] in {"", "none"}
+    assert any("student_json_retry" in stage for stage in calls)
+
+
+def test_student_parse_failure_retry_fails_then_repair_succeeds():
+    system = _system(Config(student_json_repair_enabled=True, student_json_max_retries=1))
+
+    async def fake_chat(**kwargs):
+        stage = kwargs.get("stage", "")
+        if "student_json_repair" in stage:
+            return json.dumps({"candidates": [_valid_student_candidate()]})
+        return '{"candidates": [{"candidate_prompt": "broken"'
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {"approved": True}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert len(result["candidates"]) == 1
+    assert diag["student_json_retry_attempted"] is True
+    assert diag["student_json_retry_succeeded"] is False
+    assert diag["student_json_repair_attempted"] is True
+    assert diag["student_json_repair_succeeded"] is True
+    assert diag["student_json_parse_failed"] is False
+    assert diag["student_failure_stage"] in {"", "none"}
+
+
+def test_student_parse_failure_retry_and_repair_fail():
+    system = _system(Config(student_json_repair_enabled=True, student_json_max_retries=1))
+
+    async def fake_chat(**kwargs):
+        return '{"candidates": ['
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {"approved": True}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_json_retry_attempted"] is True
+    assert diag["student_json_retry_succeeded"] is False
+    assert diag["student_json_repair_attempted"] is True
+    assert diag["student_json_repair_succeeded"] is False
+    assert diag["student_json_parse_failed"] is True
+    assert diag["student_failure_stage"] == "json_parse_failed"
+
+
+def test_student_valid_empty_candidates_does_not_trigger_repair():
+    system = _system(Config(student_json_repair_enabled=True, student_json_max_retries=1))
+
+    async def fake_chat(**kwargs):
+        return json.dumps({"candidates": []})
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {"approved": True}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_json_repair_attempted"] is False
+    assert diag["student_candidates_empty_list"] is True
+    assert diag["student_failure_stage"] == "empty_candidates_list"
+
+
+def test_compact_student_prompt_contains_minified_json_instructions():
+    system = _system(Config(student_candidate_schema_mode="compact"))
+    captured = {}
+
+    async def fake_chat(**kwargs):
+        captured["system_prompt"] = kwargs.get("system_prompt", "")
+        captured["user_prompt"] = kwargs.get("user_prompt", "")
+        return json.dumps({"candidates": []})
+
+    system._chat = fake_chat
+    asyncio.run(system.generate_student_candidates(0, "parent", {"approved": True}, {}, 1))
+    prompt = captured["system_prompt"] + "\n" + captured["user_prompt"]
+
+    assert "Return minified JSON only" in prompt
+    assert "Do not use Markdown" in prompt
+    assert "Do not wrap the JSON in code fences" in prompt
+    assert "Every other field must be <=" in prompt
+    assert "candidate_prompt must be <=" in prompt
+
+
+def test_truncate_candidate_text_fields():
+    cfg = Config(student_candidate_prompt_max_chars=12, student_candidate_max_chars_per_field=8)
+    system = _system(cfg)
+    item = {
+        "candidate_prompt": "x" * 40,
+        "rationale": "y" * 40,
+        "count": 3,
+    }
+
+    truncated = system._truncate_candidate_text_fields(item)
+
+    assert truncated["candidate_prompt"] == "x" * 12
+    assert truncated["rationale"] == "y" * 8
+    assert truncated["count"] == 3

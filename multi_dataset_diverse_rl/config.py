@@ -16,8 +16,8 @@ class Config:
     answer_format: str = ""
 
     agent_model: str = "deepseek-chat"
-    optimizer_model: str = "deepseek-v4-flash"
-    evaluator_model: str = "deepseek-v4-flash"
+    optimizer_model: str = "deepseek-chat"
+    evaluator_model: str = "deepseek-chat"
 
     train_path: str = "train.jsonl"
     val_path: str = ""
@@ -78,6 +78,15 @@ class Config:
     teacher_max_tokens: int = 1200
     critic_max_tokens: int = 1000
     student_max_tokens: int = 1800
+    student_json_retry_on_parse_fail: bool = True
+    student_json_max_retries: int = 1
+    student_json_repair_enabled: bool = True
+    student_json_repair_max_tokens: int = 1200
+    student_json_repair_temperature: float = 0.0
+    student_candidate_schema_mode: str = "compact"
+    student_candidate_max_chars_per_field: int = 320
+    student_candidate_prompt_max_chars: int = 900
+    student_force_minified_json: bool = True
     teacher_critic_use_voting_failure: bool = False
     optimizer_fallback_mode: str = "none"
     no_effective_evolution_patience: int = 10
@@ -127,9 +136,9 @@ class Config:
         if not str(self.agent_model or "").strip():
             self.agent_model = "deepseek-chat"
         if not str(self.optimizer_model or "").strip():
-            self.optimizer_model = "deepseek-v4-flash"
+            self.optimizer_model = "deepseek-chat"
         if not str(self.evaluator_model or "").strip():
-            self.evaluator_model = "deepseek-v4-flash"
+            self.evaluator_model = "deepseek-chat"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -208,6 +217,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--teacher_max_tokens", type=int, default=defaults.teacher_max_tokens)
     parser.add_argument("--critic_max_tokens", type=int, default=defaults.critic_max_tokens)
     parser.add_argument("--student_max_tokens", type=int, default=defaults.student_max_tokens)
+    parser.add_argument("--student_json_retry_on_parse_fail", type=int, default=int(defaults.student_json_retry_on_parse_fail), choices=[0, 1])
+    parser.add_argument("--student_json_max_retries", type=int, default=defaults.student_json_max_retries)
+    parser.add_argument("--student_json_repair_enabled", type=int, default=int(defaults.student_json_repair_enabled), choices=[0, 1])
+    parser.add_argument("--student_json_repair_max_tokens", type=int, default=defaults.student_json_repair_max_tokens)
+    parser.add_argument("--student_json_repair_temperature", type=float, default=defaults.student_json_repair_temperature)
+    parser.add_argument("--student_candidate_schema_mode", type=str, default=defaults.student_candidate_schema_mode, choices=["compact", "verbose"])
+    parser.add_argument("--student_candidate_max_chars_per_field", type=int, default=defaults.student_candidate_max_chars_per_field)
+    parser.add_argument("--student_candidate_prompt_max_chars", type=int, default=defaults.student_candidate_prompt_max_chars)
+    parser.add_argument("--student_force_minified_json", type=int, default=int(defaults.student_force_minified_json), choices=[0, 1])
     parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--no_effective_evolution_patience", type=int, default=defaults.no_effective_evolution_patience)

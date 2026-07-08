@@ -59,14 +59,35 @@ def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
     ]
     grouped: Dict[Tuple[Any, ...], Dict[str, Any]] = {}
     for row in target_rows:
+        retry_attempted = _safe_bool(row.get("student_json_retry_attempted", False))
+        retry_succeeded = _safe_bool(row.get("student_json_retry_succeeded", False))
+        repair_attempted = _safe_bool(row.get("student_json_repair_attempted", False))
+        repair_succeeded = _safe_bool(row.get("student_json_repair_succeeded", False))
+        parse_failed = _safe_bool(row.get("student_json_parse_failed", False))
+        if retry_succeeded:
+            recovery_status = "parse_failed_but_retry_recovered"
+        elif repair_succeeded:
+            recovery_status = "parse_failed_but_repair_recovered"
+        elif parse_failed or retry_attempted or repair_attempted:
+            recovery_status = "parse_failed_unrecovered"
+        else:
+            recovery_status = "not_parse_failure"
+        final_student_failure = not retry_succeeded and not repair_succeeded
         key = (
             str(row.get("student_failure_stage", "") or "unknown"),
             _safe_bool(row.get("student_raw_response_empty", False)),
-            _safe_bool(row.get("student_json_parse_failed", False)),
+            parse_failed,
             _safe_bool(row.get("student_json_has_candidates_key", False)),
             _safe_bool(row.get("student_candidates_is_list", False)),
             _safe_bool(row.get("student_candidates_empty_list", False)),
             _safe_bool(row.get("student_refusal_or_explanation", False)),
+            retry_attempted,
+            retry_succeeded,
+            repair_attempted,
+            repair_succeeded,
+            str(row.get("student_json_repair_failure_reason", ""))[:500],
+            recovery_status,
+            final_student_failure,
         )
         if key not in grouped:
             grouped[key] = {
@@ -82,9 +103,18 @@ def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
                 "student_candidates_is_list": key[4],
                 "student_candidates_empty_list": key[5],
                 "student_refusal_or_explanation": key[6],
+                "student_json_retry_attempted": key[7],
+                "student_json_retry_succeeded": key[8],
+                "student_json_repair_attempted": key[9],
+                "student_json_repair_succeeded": key[10],
+                "student_json_repair_failure_reason": key[11],
+                "recovery_status": key[12],
+                "final_student_failure": key[13],
                 "count": 0,
                 "rate_within_teacher_approved": 0.0,
                 "example_raw_response_preview": str(row.get("student_raw_response_preview", ""))[:1000],
+                "example_retry_raw_response_preview": str(row.get("student_json_retry_raw_response_preview", ""))[:1000],
+                "example_repair_raw_response_preview": str(row.get("student_json_repair_raw_response_preview", ""))[:1000],
                 "example_teacher_question": str(row.get("teacher_question", ""))[:500],
             }
         grouped[key]["count"] += 1
@@ -122,7 +152,16 @@ def write_csv(rows: List[Dict[str, Any]], out_path: Path) -> None:
         "student_candidates_is_list",
         "student_candidates_empty_list",
         "student_refusal_or_explanation",
+        "student_json_retry_attempted",
+        "student_json_retry_succeeded",
+        "student_json_repair_attempted",
+        "student_json_repair_succeeded",
+        "student_json_repair_failure_reason",
+        "recovery_status",
+        "final_student_failure",
         "example_raw_response_preview",
+        "example_retry_raw_response_preview",
+        "example_repair_raw_response_preview",
         "example_teacher_question",
     ]
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -148,14 +187,14 @@ def main() -> None:
 
     totals = defaultdict(int)
     for row in all_rows:
-        totals[(row.get("task_id", ""), row.get("failure_stage", ""))] += int(row.get("count", 0) or 0)
+        totals[(row.get("task_id", ""), row.get("recovery_status", ""), row.get("failure_stage", ""))] += int(row.get("count", 0) or 0)
     print(f"Found {len(logs)} update_logs.jsonl files")
     print(f"Wrote {out_path}")
     if not totals:
         print("No teacher-approved raw-zero Student failures found.")
         return
-    for (task_id, stage), count in sorted(totals.items()):
-        print(f"{task_id}\t{stage}\t{count}")
+    for (task_id, recovery_status, stage), count in sorted(totals.items()):
+        print(f"{task_id}\t{recovery_status}\t{stage}\t{count}")
 
 
 if __name__ == "__main__":

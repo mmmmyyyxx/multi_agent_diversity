@@ -136,8 +136,8 @@ class TraceBeamSearchSystem:
 
     def _client_role_from_stage(self, stage: str, client_role: str) -> str:
         role = str(client_role or "").strip().lower()
-        if role == "solver":
-            return "solver"
+        if role in {"solver", "optimizer"}:
+            return role
         if "optimizer" in str(stage or "").lower():
             return "optimizer"
         return "evaluator"
@@ -667,6 +667,13 @@ class TraceBeamSearchSystem:
             "student_raw_response_preview": "",
             "student_json_parse_failed": False,
             "student_json_parse_error": "",
+            "student_json_retry_attempted": False,
+            "student_json_retry_succeeded": False,
+            "student_json_retry_raw_response_preview": "",
+            "student_json_repair_attempted": False,
+            "student_json_repair_succeeded": False,
+            "student_json_repair_raw_response_preview": "",
+            "student_json_repair_failure_reason": "",
             "student_json_has_candidates_key": False,
             "student_candidates_is_list": False,
             "student_candidates_empty_list": False,
@@ -793,6 +800,13 @@ class TraceBeamSearchSystem:
             "student_raw_response_preview",
             "student_json_parse_failed",
             "student_json_parse_error",
+            "student_json_retry_attempted",
+            "student_json_retry_succeeded",
+            "student_json_retry_raw_response_preview",
+            "student_json_repair_attempted",
+            "student_json_repair_succeeded",
+            "student_json_repair_raw_response_preview",
+            "student_json_repair_failure_reason",
             "student_json_has_candidates_key",
             "student_candidates_is_list",
             "student_candidates_empty_list",
@@ -808,12 +822,73 @@ class TraceBeamSearchSystem:
             "student_raw_response_preview": str(diagnostics.get("student_raw_response_preview", ""))[:1000],
             "student_json_parse_failed": bool(diagnostics.get("student_json_parse_failed", False)),
             "student_json_parse_error": str(diagnostics.get("student_json_parse_error", ""))[:500],
+            "student_json_retry_attempted": bool(diagnostics.get("student_json_retry_attempted", False)),
+            "student_json_retry_succeeded": bool(diagnostics.get("student_json_retry_succeeded", False)),
+            "student_json_retry_raw_response_preview": str(diagnostics.get("student_json_retry_raw_response_preview", ""))[:1000],
+            "student_json_repair_attempted": bool(diagnostics.get("student_json_repair_attempted", False)),
+            "student_json_repair_succeeded": bool(diagnostics.get("student_json_repair_succeeded", False)),
+            "student_json_repair_raw_response_preview": str(diagnostics.get("student_json_repair_raw_response_preview", ""))[:1000],
+            "student_json_repair_failure_reason": str(diagnostics.get("student_json_repair_failure_reason", ""))[:500],
             "student_json_has_candidates_key": bool(diagnostics.get("student_json_has_candidates_key", False)),
             "student_candidates_is_list": bool(diagnostics.get("student_candidates_is_list", False)),
             "student_candidates_empty_list": bool(diagnostics.get("student_candidates_empty_list", False)),
             "student_refusal_or_explanation": bool(diagnostics.get("student_refusal_or_explanation", False)),
             "student_failure_stage": str(diagnostics.get("student_failure_stage", "")),
         }
+
+    def _student_candidate_schema_json(self) -> str:
+        schema = {
+            "candidates": [
+                {
+                    "candidate_prompt": "standalone prompt, <= 900 chars",
+                    "student_interpretation_of_question": "one short sentence",
+                    "target_error_pattern": "short phrase",
+                    "accuracy_repair_rule": "one short sentence",
+                    "diversity_contribution": "one short sentence",
+                    "error_correlation_reduction": "one short sentence",
+                    "task_alignment_rule": "one short sentence",
+                    "peer_redundancy_avoidance": "one short sentence",
+                    "expected_accuracy_effect": "one short sentence",
+                    "expected_diversity_effect": "one short sentence",
+                    "risk_control": "one short sentence",
+                    "rationale": "one short sentence",
+                }
+            ]
+        }
+        return json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+
+    def _student_refusal_or_explanation(self, text: str) -> bool:
+        lowered = normalize_spaces(text).lower()
+        refusal_markers = [
+            "i cannot",
+            "i can't",
+            "unable to",
+            "cannot comply",
+            "sorry",
+            "as an ai",
+            "instead",
+            "here is",
+            "i will",
+        ]
+        return any(marker in lowered for marker in refusal_markers)
+
+    def _truncate_candidate_text_fields(
+        self,
+        item: Dict[str, Any],
+        prompt_max_chars: Optional[int] = None,
+        field_max_chars: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        prompt_max = int(prompt_max_chars or getattr(self.cfg, "student_candidate_prompt_max_chars", 900) or 900)
+        field_max = int(field_max_chars or getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
+        out = dict(item or {})
+        for key, value in list(out.items()):
+            if isinstance(value, str):
+                value = normalize_spaces(value)
+                if key == "candidate_prompt":
+                    out[key] = value[:prompt_max]
+                else:
+                    out[key] = value[:field_max]
+        return out
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
         accuracy_repair_roles = [
@@ -2851,6 +2926,109 @@ class TraceBeamSearchSystem:
             "teacher_rewrite_count": rewrite_count,
         }
 
+    async def retry_student_candidates_json_only(
+        self,
+        previous_raw_text: str,
+        approved_teacher_question: Dict[str, Any],
+        num_candidates: int,
+        agent_id: int = 0,
+    ) -> str:
+        schema = self._student_candidate_schema_json()
+        prompt_max = int(getattr(self.cfg, "student_candidate_prompt_max_chars", 900) or 900)
+        field_max = int(getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
+        system_prompt = (
+            "Your previous response was not valid JSON.\n\n"
+            "Return only valid minified JSON matching this exact schema:\n"
+            f"{schema}\n\n"
+            "Do not add markdown.\n"
+            "Do not add explanations.\n"
+            "Do not use multiline strings.\n"
+            "Use double quotes for every key and string value.\n"
+            "Do not include trailing commas or comments.\n"
+            f"Use at most {int(num_candidates)} candidates.\n"
+            f"candidate_prompt must be <= {prompt_max} characters.\n"
+            f"Every other field must be <= {field_max} characters.\n"
+            "Each candidate_prompt must be concise.\n"
+            'If you cannot comply, return {"candidates":[]}.'
+        )
+        user_prompt = (
+            "Approved Teacher question and context for the retry:\n"
+            f"{json.dumps(approved_teacher_question, ensure_ascii=False, indent=2)}\n\n"
+            "Previous invalid JSON-like response, for reference only:\n"
+            f"{str(previous_raw_text or '')[:4000]}"
+        )
+        return await self._chat(
+            model=self.cfg.optimizer_model,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=float(getattr(self.cfg, "student_temperature", self.cfg.optimizer_temperature)),
+            max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
+            stage=f"student_json_retry_agent_{agent_id}",
+            client_role="optimizer",
+        )
+
+    async def repair_student_json_response(
+        self,
+        raw_text: str,
+        expected_num_candidates: int,
+    ) -> Dict[str, Any]:
+        schema = self._student_candidate_schema_json()
+        if not str(raw_text or "").strip():
+            return {
+                "repaired": False,
+                "repair_raw_response_preview": "",
+                "repair_json_parse_failed": True,
+                "repair_failure_reason": "empty_raw_text",
+                "obj": None,
+            }
+        system_prompt = (
+            "You are a JSON repair utility.\n\n"
+            "You will receive malformed JSON-like text that was intended to match this schema:\n"
+            f"{schema}\n\n"
+            "Your job is only to repair JSON syntax:\n"
+            "- close braces and brackets if needed\n"
+            "- escape unescaped quotes inside strings\n"
+            "- remove trailing commas\n"
+            "- keep only the candidates that are already present in the input\n"
+            "- do not invent new candidates\n"
+            "- do not change semantic content\n"
+            "- do not add explanations\n"
+            "- return minified JSON only\n\n"
+            'If the input cannot be repaired without inventing content, return {"candidates":[]}.'
+        )
+        user_prompt = (
+            f"expected_num_candidates: {int(expected_num_candidates)}\n\n"
+            "Malformed JSON-like input:\n"
+            f"{str(raw_text or '')[:6000]}"
+        )
+        try:
+            repair_text = await self._chat(
+                model=self.cfg.optimizer_model,
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=float(getattr(self.cfg, "student_json_repair_temperature", 0.0) or 0.0),
+                max_tokens=int(getattr(self.cfg, "student_json_repair_max_tokens", 1200) or 1200),
+                stage="student_json_repair",
+                client_role="optimizer",
+            )
+        except Exception as exc:
+            return {
+                "repaired": False,
+                "repair_raw_response_preview": "",
+                "repair_json_parse_failed": True,
+                "repair_failure_reason": type(exc).__name__,
+                "obj": None,
+            }
+        obj = extract_json_obj(repair_text or "")
+        parse_failed = obj is None or not isinstance(obj, dict)
+        return {
+            "repaired": not parse_failed,
+            "repair_raw_response_preview": normalize_spaces(repair_text or "")[:1000],
+            "repair_json_parse_failed": bool(parse_failed),
+            "repair_failure_reason": "" if not parse_failed else "repair_json_parse_failed",
+            "obj": obj if isinstance(obj, dict) else None,
+        }
+
     async def generate_student_candidates(
         self,
         agent_id: int,
@@ -2859,6 +3037,55 @@ class TraceBeamSearchSystem:
         teacher_context: Dict[str, Any],
         num_candidates: int,
     ) -> Dict[str, Any]:
+        schema = self._student_candidate_schema_json()
+        schema_mode = str(getattr(self.cfg, "student_candidate_schema_mode", "compact") or "compact").lower()
+        prompt_max = int(getattr(self.cfg, "student_candidate_prompt_max_chars", 900) or 900)
+        field_max = int(getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
+        compact_output_rules = (
+            "Output format requirements:\n"
+            "- Return exactly one JSON object.\n"
+            "- The first character must be `{`.\n"
+            "- The last character must be `}`.\n"
+            "- Return minified JSON only.\n"
+            "- Use double quotes for all JSON keys and string values.\n"
+            "- Do not use Markdown.\n"
+            "- Do not wrap the JSON in code fences.\n"
+            "- Do not add explanations before or after the JSON.\n"
+            "- Do not use multiline strings.\n"
+            "- Do not include newline characters inside string values.\n"
+            "- Do not include bullet lists inside string values.\n"
+            "- Escape all quotes inside strings.\n"
+            "- Do not include trailing commas.\n"
+            "- Do not include comments.\n"
+            f"- candidate_prompt must be <= {prompt_max} characters.\n"
+            f"- Every other field must be <= {field_max} characters.\n"
+            "- Each non-prompt field must be one short sentence.\n"
+            "- Each candidate_prompt should be a concise solver instruction, not a long essay.\n"
+            "- Prefer semicolon-separated steps over numbered multiline lists.\n"
+            '- If you cannot safely generate a candidate, return {"candidates":[]}.\n'
+            f"Exact schema:\n{schema}"
+        )
+        if schema_mode == "compact":
+            return_mode = (
+                "Return minified JSON only. Do not use Markdown, code fences, explanations, or multiline strings. "
+                "The JSON must match the exact compact schema."
+            )
+            item_instruction = (
+                "Each item must match the compact schema. Keep candidate_prompt concise and standalone; "
+                "all other fields must be one short sentence."
+            )
+            format_rules = compact_output_rules
+        else:
+            return_mode = "Return strict JSON only."
+            item_instruction = (
+                "Each item must include candidate_prompt, student_interpretation_of_question, target_error_pattern, "
+                "accuracy_repair_rule, diversity_contribution, error_correlation_reduction, task_alignment_rule, "
+                "peer_redundancy_avoidance, expected_accuracy_effect, expected_diversity_effect, risk_control, rationale."
+            )
+            format_rules = (
+                "Return JSON with a candidates list. Do not use Markdown or code fences. "
+                f"Exact schema:\n{schema}"
+            )
         system_prompt = (
             "You are the Student in a Teacher-Critic-Student prompt optimization system.\n\n"
             "You will receive:\n- the current parent prompt\n- an approved Socratic guiding question from the Teacher\n"
@@ -2871,13 +3098,12 @@ class TraceBeamSearchSystem:
             "- reduce redundant behavior with peer prompts\n- avoid invalid, overlong, or generic outputs\n\n"
             "Do not use gold answers.\nDo not include concrete sample text.\nDo not include answer labels from examples.\n"
             "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
-            "Do not only paraphrase the parent prompt.\n\nReturn strict JSON only."
+            f"Do not only paraphrase the parent prompt.\n\n{return_mode}"
         )
         user_prompt = (
             "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
-            "Each item must include candidate_prompt, student_interpretation_of_question, target_error_pattern, "
-            "accuracy_repair_rule, diversity_contribution, error_correlation_reduction, task_alignment_rule, "
-            "peer_redundancy_avoidance, expected_accuracy_effect, expected_diversity_effect, risk_control, rationale.\n\n"
+            f"{item_instruction}\n\n"
+            f"{format_rules}\n\n"
             f"target_agent_id: {agent_id}\nrequested_candidates: {num_candidates}\n\n"
             f"parent_prompt:\n{parent_prompt}\n\n"
             f"approved_teacher_question:\n{json.dumps(approved_teacher_question, ensure_ascii=False, indent=2)}\n\n"
@@ -2890,20 +3116,24 @@ class TraceBeamSearchSystem:
             temperature=float(getattr(self.cfg, "student_temperature", self.cfg.optimizer_temperature)),
             max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
             stage=f"student_optimizer_agent_{agent_id}",
+            client_role="optimizer",
         )
         raw_text = text or ""
         raw_preview = normalize_spaces(raw_text)[:1000]
-        diagnostics = {
-            "student_raw_response_empty": not bool(raw_text.strip()),
-            "student_raw_response_preview": raw_preview,
-            "student_json_parse_failed": False,
-            "student_json_parse_error": "",
-            "student_json_has_candidates_key": False,
-            "student_candidates_is_list": False,
-            "student_candidates_empty_list": False,
-            "student_refusal_or_explanation": False,
-            "student_failure_stage": "none",
-        }
+        diagnostics = self._empty_optimizer_generation_diagnostics()
+        diagnostics.update(
+            {
+                "student_raw_response_empty": not bool(raw_text.strip()),
+                "student_raw_response_preview": raw_preview,
+                "student_json_parse_failed": False,
+                "student_json_parse_error": "",
+                "student_json_has_candidates_key": False,
+                "student_candidates_is_list": False,
+                "student_candidates_empty_list": False,
+                "student_refusal_or_explanation": False,
+                "student_failure_stage": "none",
+            }
+        )
         if diagnostics["student_raw_response_empty"]:
             diagnostics["student_failure_stage"] = "raw_empty"
             return {"candidates": [], "diagnostics": diagnostics}
@@ -2912,22 +3142,62 @@ class TraceBeamSearchSystem:
         if obj is None or not isinstance(obj, dict):
             diagnostics["student_json_parse_failed"] = True
             diagnostics["student_failure_stage"] = "json_parse_failed"
-            lowered = raw_preview.lower()
-            refusal_markers = [
-                "i cannot",
-                "i can't",
-                "unable to",
-                "cannot comply",
-                "sorry",
-                "as an ai",
-                "instead",
-                "here is",
-                "i will",
-            ]
-            diagnostics["student_refusal_or_explanation"] = any(marker in lowered for marker in refusal_markers)
+            diagnostics["student_refusal_or_explanation"] = self._student_refusal_or_explanation(raw_preview)
             if diagnostics["student_refusal_or_explanation"]:
                 diagnostics["student_failure_stage"] = "refusal_or_explanation"
-            return {"candidates": [], "diagnostics": diagnostics}
+
+            max_retries = max(0, int(getattr(self.cfg, "student_json_max_retries", 1) or 0))
+            retry_enabled = bool(int(getattr(self.cfg, "student_json_retry_on_parse_fail", True)))
+            retry_text = ""
+            if retry_enabled and max_retries > 0:
+                diagnostics["student_json_retry_attempted"] = True
+                for _ in range(max_retries):
+                    retry_text = await self.retry_student_candidates_json_only(
+                        previous_raw_text=raw_text,
+                        approved_teacher_question=approved_teacher_question,
+                        num_candidates=num_candidates,
+                        agent_id=agent_id,
+                    )
+                    diagnostics["student_json_retry_raw_response_preview"] = normalize_spaces(retry_text or "")[:1000]
+                    retry_obj = extract_json_obj(retry_text or "")
+                    if isinstance(retry_obj, dict):
+                        obj = retry_obj
+                        diagnostics["student_json_retry_succeeded"] = True
+                        diagnostics["student_json_parse_failed"] = False
+                        diagnostics["student_json_parse_error"] = ""
+                        diagnostics["student_failure_stage"] = "none"
+                        break
+                if not diagnostics["student_json_retry_succeeded"]:
+                    diagnostics["student_json_parse_error"] = "retry_json_parse_failed"
+
+            if obj is None or not isinstance(obj, dict):
+                repair_enabled = bool(int(getattr(self.cfg, "student_json_repair_enabled", True)))
+                if repair_enabled:
+                    repair_source = retry_text or raw_text
+                    repair = await self.repair_student_json_response(
+                        raw_text=repair_source,
+                        expected_num_candidates=num_candidates,
+                    )
+                    diagnostics["student_json_repair_attempted"] = True
+                    diagnostics["student_json_repair_succeeded"] = bool(repair.get("repaired", False))
+                    diagnostics["student_json_repair_raw_response_preview"] = str(repair.get("repair_raw_response_preview", ""))[:1000]
+                    diagnostics["student_json_repair_failure_reason"] = str(repair.get("repair_failure_reason", ""))[:500]
+                    repair_obj = repair.get("obj")
+                    if isinstance(repair_obj, dict):
+                        obj = repair_obj
+                        diagnostics["student_json_parse_failed"] = False
+                        diagnostics["student_json_parse_error"] = ""
+                        diagnostics["student_failure_stage"] = "none"
+
+            if obj is None or not isinstance(obj, dict):
+                diagnostics["student_json_parse_failed"] = True
+                diagnostics["student_failure_stage"] = "json_parse_failed"
+                if not diagnostics.get("student_json_parse_error"):
+                    diagnostics["student_json_parse_error"] = (
+                        str(diagnostics.get("student_json_repair_failure_reason", ""))
+                        or "json_parse_failed"
+                    )
+                return {"candidates": [], "diagnostics": diagnostics}
 
         diagnostics["student_json_has_candidates_key"] = "candidates" in obj
         if "candidates" not in obj:
@@ -3068,6 +3338,7 @@ class TraceBeamSearchSystem:
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     filter_reasons.append("schema")
                     continue
+                item = self._truncate_candidate_text_fields(item)
                 missing_fields = self._missing_optimizer_fields(item, architecture="teacher_critic_student")
                 if missing_fields:
                     diagnostics["optimizer_schema_filtered_count"] += 1
@@ -4130,6 +4401,10 @@ class TraceBeamSearchSystem:
             for key in [
                 "student_raw_response_empty",
                 "student_json_parse_failed",
+                "student_json_retry_attempted",
+                "student_json_retry_succeeded",
+                "student_json_repair_attempted",
+                "student_json_repair_succeeded",
                 "student_json_has_candidates_key",
                 "student_candidates_is_list",
                 "student_candidates_empty_list",
@@ -4154,6 +4429,9 @@ class TraceBeamSearchSystem:
             "student_missing_required_fields",
             "student_raw_response_preview",
             "student_json_parse_error",
+            "student_json_retry_raw_response_preview",
+            "student_json_repair_raw_response_preview",
+            "student_json_repair_failure_reason",
             "student_failure_stage",
         ]:
             values = [record.get(key) for record in optimizer_generation_records if isinstance(record, dict) and record.get(key) not in (None, "", [])]

@@ -236,6 +236,12 @@ When `teacher_question_approved=true` but no optimizer candidates are produced, 
 
 Failure stages include `raw_empty`, `json_parse_failed`, `missing_candidates_key`, `candidates_not_list`, `empty_candidates_list`, `refusal_or_explanation`, `all_candidates_filtered_schema`, `all_candidates_filtered_redundant`, and `all_candidates_filtered_mixed`.
 
+#### JSON Retry and Repair
+
+Student parse failures may happen when the model outputs truncated or malformed JSON. The system first retries Student once with a stricter JSON-only instruction. If retry still fails, it can call a JSON repair utility that only repairs syntax of already generated Student content. This is not a prompt fallback and does not generate template prompts.
+
+Logs include `student_json_retry_attempted`, `student_json_retry_succeeded`, `student_json_repair_attempted`, `student_json_repair_succeeded`, and `student_json_repair_failure_reason`. Recovered parse failures are reported separately by `scripts/analyze_student_failures.py` and are not counted as final Student failures.
+
 Summarize failures with:
 
 ```bash
