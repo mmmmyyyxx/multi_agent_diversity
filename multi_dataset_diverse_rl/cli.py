@@ -268,6 +268,7 @@ async def main_async():
     cfg.transient_retry_forever = bool(int(cfg.transient_retry_forever))
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
     cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))
+    cfg.teacher_critic_use_voting_failure = bool(int(cfg.teacher_critic_use_voting_failure))
 
     ensure_dir(cfg.out_dir)
     set_seed(cfg.seed)

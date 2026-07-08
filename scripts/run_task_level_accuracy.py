@@ -77,6 +77,16 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
             "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
+            "--optimizer_architecture", args.optimizer_architecture,
+            "--teacher_critic_max_rounds", str(args.teacher_critic_max_rounds),
+            "--teacher_question_pass_threshold", str(args.teacher_question_pass_threshold),
+            "--teacher_temperature", str(args.teacher_temperature),
+            "--critic_temperature", str(args.critic_temperature),
+            "--student_temperature", str(args.student_temperature),
+            "--teacher_max_tokens", str(args.teacher_max_tokens),
+            "--critic_max_tokens", str(args.critic_max_tokens),
+            "--student_max_tokens", str(args.student_max_tokens),
+            "--teacher_critic_use_voting_failure", str(args.teacher_critic_use_voting_failure),
             "--optimizer_fallback_mode", args.optimizer_fallback_mode,
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
@@ -343,6 +353,16 @@ def main():
     parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=cli_defaults.reward_weight_target_accuracy_late)
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=cli_defaults.accuracy_guard_epsilon_late)
+    parser.add_argument("--optimizer_architecture", type=str, default=cli_defaults.optimizer_architecture, choices=["one_shot", "teacher_critic_student"])
+    parser.add_argument("--teacher_critic_max_rounds", type=int, default=cli_defaults.teacher_critic_max_rounds)
+    parser.add_argument("--teacher_question_pass_threshold", type=float, default=cli_defaults.teacher_question_pass_threshold)
+    parser.add_argument("--teacher_temperature", type=float, default=cli_defaults.teacher_temperature)
+    parser.add_argument("--critic_temperature", type=float, default=cli_defaults.critic_temperature)
+    parser.add_argument("--student_temperature", type=float, default=cli_defaults.student_temperature)
+    parser.add_argument("--teacher_max_tokens", type=int, default=cli_defaults.teacher_max_tokens)
+    parser.add_argument("--critic_max_tokens", type=int, default=cli_defaults.critic_max_tokens)
+    parser.add_argument("--student_max_tokens", type=int, default=cli_defaults.student_max_tokens)
+    parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(cli_defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)

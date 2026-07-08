@@ -215,6 +215,21 @@ No-op evolution early stop is enabled by default. If repeated update attempts pr
 
 `candidate_eval_repeats > 1` 时，CLI 会构造多个 batch 并合并评估，reward 和 metrics 使用平均值。日志会记录 eval strategy、pool size、batch size 和 repeats。
 
+## Teacher-Critic-Student Optimizer
+
+默认 optimizer 架构是 `--optimizer_architecture teacher_critic_student`。旧的一步式 optimizer 仍保留，可用 `--optimizer_architecture one_shot` 回退。
+
+Teacher-Critic-Student 的流程：
+
+- Teacher 不直接写 prompt，而是根据 problem type、answer format、target-agent error type、diversity gap、prompt redundancy、error correlation、invalid-output pattern 和 peer behavior summaries 生成 Socratic guiding question。
+- Critic 在 Student 看到问题前审核 Teacher question；如果问题泛化、没有诊断依据、泄漏样本/答案、硬编码任务角色、只追求表面多样性或可能伤害准确率，就拒绝。
+- 如果 Critic 拒绝，Teacher 会按反馈重写，Critic 再审；只有通过阈值的 question 才会交给 Student。
+- Student 根据已批准的 guiding question 生成候选 prompt。候选仍走原有 reward 和 candidate evaluation，reward 计算不变。
+
+这个 optimizer 不使用预定义任务专属角色，也不默认把 voting failure 作为 Teacher 的主要输入。Voting 是下游聚合方式之一；本步骤优化的是 prompt quality、task alignment、target-agent accuracy 和 useful diversity。
+
+相关日志字段包括 `optimizer_architecture`、`teacher_question`、`teacher_question_approved`、`teacher_question_score`、`teacher_critic_rounds`、`teacher_rewrite_count`、`student_candidate_count_raw`、`student_candidate_count_final`、`student_candidate_filtered_count`、`student_all_candidates_filtered`、`diversity_contribution`、`error_correlation_reduction`、`task_alignment_rule` 和 `peer_redundancy_avoidance`。
+
 ## Majority Vote Tie-Break
 
 多数投票现在会记录诊断信息：

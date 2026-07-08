@@ -50,7 +50,7 @@ def test_target_error_generation_batch_created():
 
 
 def test_optimizer_prompt_prioritizes_accuracy_repair():
-    system = _system_without_init()
+    system = _system_without_init(Config(optimizer_architecture="one_shot"))
     captured = {}
 
     async def fake_chat(**kwargs):
@@ -96,7 +96,7 @@ def test_optimizer_prompt_prioritizes_accuracy_repair():
 
 
 def test_candidate_schema_keeps_accuracy_repair_fields():
-    system = _system_without_init()
+    system = _system_without_init(Config(optimizer_architecture="one_shot"))
 
     async def fake_chat(**kwargs):
         return json.dumps(
@@ -137,7 +137,7 @@ def test_candidate_schema_keeps_accuracy_repair_fields():
 
 
 def test_accuracy_repair_fallback_used_when_optimizer_returns_too_few():
-    system = _system_without_init(Config(optimizer_fallback_mode="template"))
+    system = _system_without_init(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="template"))
 
     async def fake_chat(**kwargs):
         return json.dumps({"candidates": []})

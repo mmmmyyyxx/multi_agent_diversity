@@ -97,7 +97,7 @@ async def _fake_empty_chat(**kwargs):
 
 
 def test_fallback_disabled_returns_fewer_candidates():
-    system = _system(Config(optimizer_fallback_mode="none"))
+    system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
     system._chat = _fake_empty_chat
     candidates = asyncio.run(
         system.propose_candidates(
@@ -112,7 +112,7 @@ def test_fallback_disabled_returns_fewer_candidates():
 
 
 def test_fallback_template_mode_preserves_old_behavior():
-    system = _system(Config(optimizer_fallback_mode="template"))
+    system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="template"))
     system._chat = _fake_empty_chat
     candidates = asyncio.run(
         system.propose_candidates(
@@ -174,7 +174,7 @@ async def _fake_bad_json_chat(**kwargs):
 
 
 def test_optimizer_generation_diagnostics_empty_response():
-    system = _system(Config(optimizer_fallback_mode="none"))
+    system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
     system._chat = _fake_blank_chat
     candidates = asyncio.run(
         system.propose_candidates(
@@ -195,7 +195,7 @@ def test_optimizer_generation_diagnostics_empty_response():
 
 
 def test_optimizer_generation_diagnostics_json_parse_failed():
-    system = _system(Config(optimizer_fallback_mode="none"))
+    system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
     system._chat = _fake_bad_json_chat
     candidates = asyncio.run(
         system.propose_candidates(

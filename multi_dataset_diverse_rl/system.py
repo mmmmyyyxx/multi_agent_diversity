@@ -628,6 +628,7 @@ class TraceBeamSearchSystem:
 
     def _empty_optimizer_generation_diagnostics(self) -> Dict[str, Any]:
         return {
+            "optimizer_architecture": str(getattr(self.cfg, "optimizer_architecture", "one_shot") or "one_shot"),
             "optimizer_raw_response_empty": 0,
             "optimizer_json_parse_failed": 0,
             "optimizer_raw_candidate_count": 0,
@@ -637,6 +638,23 @@ class TraceBeamSearchSystem:
             "optimizer_schema_filtered_count": 0,
             "optimizer_final_candidate_count": 0,
             "optimizer_underfilled": False,
+            "teacher_question": "",
+            "teacher_question_approved": False,
+            "teacher_question_rejected": False,
+            "teacher_question_rejection_reason": "",
+            "teacher_question_score": 0.0,
+            "teacher_critic_rounds": 0,
+            "teacher_quality_critique": "",
+            "teacher_specificity_critique": "",
+            "teacher_task_alignment_critique": "",
+            "teacher_error_alignment_critique": "",
+            "teacher_diversity_critique": "",
+            "teacher_rewrite_count": 0,
+            "student_candidate_count_raw": 0,
+            "student_candidate_count_final": 0,
+            "student_candidate_filtered_count": 0,
+            "student_candidate_filter_reasons": [],
+            "student_all_candidates_filtered": False,
         }
 
     def _record_optimizer_generation_diagnostics(
@@ -663,6 +681,33 @@ class TraceBeamSearchSystem:
 
     def _candidate_has_required_optimizer_fields(self, item: Dict[str, Any]) -> bool:
         return bool(str(item.get("candidate_prompt", "")).strip())
+
+    def _is_optimizer_generated_candidate_source(self, source: Any) -> bool:
+        text = str(source or "").strip().lower()
+        return text in {"optimizer", "teacher_critic_student"}
+
+    def _teacher_metadata_from_diagnostics(self, diagnostics: Dict[str, Any]) -> Dict[str, Any]:
+        keys = [
+            "optimizer_architecture",
+            "teacher_question",
+            "teacher_question_approved",
+            "teacher_question_rejected",
+            "teacher_question_rejection_reason",
+            "teacher_question_score",
+            "teacher_critic_rounds",
+            "teacher_quality_critique",
+            "teacher_specificity_critique",
+            "teacher_task_alignment_critique",
+            "teacher_error_alignment_critique",
+            "teacher_diversity_critique",
+            "teacher_rewrite_count",
+            "student_candidate_count_raw",
+            "student_candidate_count_final",
+            "student_candidate_filtered_count",
+            "student_candidate_filter_reasons",
+            "student_all_candidates_filtered",
+        ]
+        return {key: diagnostics.get(key, self._empty_optimizer_generation_diagnostics().get(key)) for key in keys}
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
         accuracy_repair_roles = [
@@ -2370,7 +2415,485 @@ class TraceBeamSearchSystem:
             item["optimizer_generation_diagnostics"] = dict(diagnostics)
         return parsed[:num_candidates]
 
+    def _build_teacher_context(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        target_role_spec: Dict[str, Any],
+        peer_role_specs: List[Dict[str, Any]],
+        window_stats: Dict[str, Any],
+        validity_constraints: Dict[str, Any],
+        generation_batches: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        safe_generation_batches: List[Dict[str, Any]] = []
+        target_error_patterns: List[str] = []
+        invalid_output_patterns: List[str] = []
+        peer_behavior_summary: List[str] = []
+        batch_types: List[str] = []
+        for batch in generation_batches:
+            if not isinstance(batch, dict):
+                continue
+            safe_cases = []
+            batch_type = str(batch.get("batch_type", ""))
+            if batch_type:
+                batch_types.append(batch_type)
+            for case in batch.get("cases", []):
+                if not isinstance(case, dict):
+                    continue
+                case_type = str(case.get("case_type", "") or case.get("purpose", "") or batch_type)
+                if case_type:
+                    target_error_patterns.append(case_type)
+                invalids = case.get("invalid_reasons", [])
+                if isinstance(invalids, list):
+                    invalid_output_patterns.extend(str(x) for x in invalids if str(x))
+                elif invalids:
+                    invalid_output_patterns.append(str(invalids))
+                peer_summary = str(case.get("peer_behavior_summary", "") or case.get("purpose", "") or "").strip()
+                if peer_summary:
+                    peer_behavior_summary.append(normalize_spaces(peer_summary)[:180])
+                safe_cases.append(
+                    {
+                        "case_type": case_type,
+                        "target_agent_id": int(case.get("target_agent_id", agent_id) or agent_id),
+                        "target_correct": case.get("target_correct", ""),
+                        "target_invalid": case.get("target_invalid", ""),
+                        "peer_correct_available": case.get("peer_correct_available", ""),
+                        "purpose": normalize_spaces(str(case.get("purpose", "")))[:160],
+                        "repair_hint": normalize_spaces(str(case.get("repair_hint", "")))[:180],
+                        "target_overlap_pressure": case.get("target_overlap_pressure", ""),
+                    }
+                )
+            safe_generation_batches.append(
+                {
+                    "batch_type": batch_type,
+                    "purpose": normalize_spaces(str(batch.get("purpose", "")))[:200],
+                    "case_count": len(safe_cases),
+                    "cases": safe_cases,
+                }
+            )
+        answer_format = str(getattr(self.cfg, "answer_format", "") or "").strip() or str(getattr(self.cfg, "task_type", "auto"))
+        problem_type = str(getattr(self.cfg, "comparison_task_id", "") or getattr(self.cfg, "benchmark", "") or getattr(self.cfg, "task_type", "auto"))
+        target_pressure = float(window_stats.get("target_overlap_pressure", 0.0) or 0.0)
+        mean_overlap = float(window_stats.get("mean_window_overlap", 0.0) or 0.0)
+        target_invalid_rate = float(window_stats.get("target_invalid_rate", 0.0) or 0.0)
+        context = {
+            "target_agent_id": agent_id,
+            "parent_prompt_preview": normalize_spaces(parent_prompt)[:600],
+            "target_role_spec": target_role_spec,
+            "peer_role_specs": peer_role_specs,
+            "window_stats": window_stats,
+            "validity_constraints": validity_constraints,
+            "generation_batches": safe_generation_batches,
+            "diagnostic_focus": {
+                "problem_type": problem_type,
+                "answer_format": answer_format,
+                "target_error_patterns": sorted(set(target_error_patterns))[:12],
+                "invalid_output_patterns": sorted(set(invalid_output_patterns))[:12],
+                "diversity_gap_summary": (
+                    f"target_overlap_pressure={target_pressure:.3f}; mean_window_overlap={mean_overlap:.3f}; "
+                    f"batch_types={sorted(set(batch_types))[:8]}"
+                ),
+                "prompt_redundancy_summary": (
+                    f"target prompt preview is compared against {len(peer_role_specs)} peer role previews; "
+                    f"avoid duplicating peer procedures and parent wording."
+                ),
+                "error_correlation_summary": (
+                    "Use target error cases and peer-correct availability as abstract correlation signals. "
+                    "Voting failure is excluded unless explicitly enabled."
+                    if not bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False))
+                    else "Voting failure may be mentioned as a secondary diagnostic, not as the primary objective."
+                ),
+                "peer_behavior_summary": peer_behavior_summary[:8],
+                "invalid_output_summary": f"target_invalid_rate={target_invalid_rate:.3f}; invalid patterns are abstracted above.",
+            },
+        }
+        return context
+
+    async def propose_teacher_question(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        teacher_context: Dict[str, Any],
+        requested_candidates: int,
+    ) -> Dict[str, Any]:
+        system_prompt = (
+            "You are the Teacher in a Teacher-Critic-Student prompt optimization system.\n\n"
+            "Your job is not to write a prompt.\n"
+            "Your job is to formulate a high-quality Socratic guiding question that will help the Student rewrite the target agent prompt.\n\n"
+            "The guiding question must be grounded in:\n"
+            "- problem type\n- answer format\n- target-agent error patterns\n- diversity gap\n"
+            "- prompt redundancy\n- error correlation with peer agents\n- peer behavior summaries\n"
+            "- invalid-output patterns if present\n\n"
+            "Do not use gold answers.\nDo not use concrete question text.\nDo not use concrete answer labels.\n"
+            "Do not create task-specific hard-coded roles.\nDo not optimize for voting failure in this step.\n"
+            "Do not ask a generic question such as 'How can the prompt be improved?'\n\n"
+            "A good guiding question should force the Student to create a candidate prompt that:\n"
+            "- aligns with the task/problem type\n- repairs a specific observed error pattern\n"
+            "- improves target-agent accuracy\n- contributes useful reasoning diversity\n"
+            "- avoids duplicating peer prompts\n- avoids invalid or overlong outputs\n\n"
+            "Return strict JSON only."
+        )
+        user_prompt = (
+            "Create one Socratic guiding question for the Student.\n"
+            "Return JSON with keys: problem_type_analysis, answer_format_analysis, target_error_analysis, "
+            "diversity_gap_analysis, error_correlation_analysis, peer_difference_analysis, socratic_guiding_question, "
+            "question_objective, expected_prompt_change, expected_accuracy_effect, expected_diversity_effect, risk_to_avoid.\n\n"
+            f"target_agent_id: {agent_id}\nrequested_candidates: {requested_candidates}\n"
+            f"parent_prompt_preview:\n{normalize_spaces(parent_prompt)[:600]}\n\n"
+            f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+        )
+        text = await self._chat(
+            model=self.cfg.optimizer_model,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=float(getattr(self.cfg, "teacher_temperature", self.cfg.optimizer_temperature)),
+            max_tokens=int(getattr(self.cfg, "teacher_max_tokens", self.cfg.optimizer_max_tokens)),
+            stage=f"teacher_agent_{agent_id}",
+        )
+        obj = extract_json_obj(text) or {}
+        return obj if isinstance(obj, dict) else {}
+
+    async def critique_teacher_question(
+        self,
+        agent_id: int,
+        teacher_question: Dict[str, Any],
+        teacher_context: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        system_prompt = (
+            "You are the Critic in a Teacher-Critic-Student prompt optimization system.\n\n"
+            "Your job is to audit the Teacher's Socratic guiding question before the Student sees it.\n\n"
+            "Reject the question if it is:\n"
+            "- generic\n- not grounded in observed diagnostics\n- not aligned with the problem type\n"
+            "- not aligned with the target error pattern\n- only about surface-level diversity\n"
+            "- likely to duplicate peer prompts\n- likely to reduce answer accuracy\n"
+            "- using gold answers, concrete sample text, or answer labels\n"
+            "- using hard-coded task-specific roles\n"
+            "- focused on voting failure rather than prompt quality/diversity/accuracy\n\n"
+            "Return strict JSON only."
+        )
+        user_prompt = (
+            "Audit the Teacher question. Pass only if score >= threshold, the question is specific, grounded in diagnostics, "
+            "contains no leakage or hard-coded task role, and is useful for both accuracy and diversity.\n"
+            "Return JSON with keys: passed, score, quality_critique, specificity_critique, task_alignment_critique, "
+            "error_alignment_critique, diversity_critique, redundancy_critique, safety_critique, rewrite_instruction.\n\n"
+            f"target_agent_id: {agent_id}\n"
+            f"pass_threshold: {float(getattr(self.cfg, 'teacher_question_pass_threshold', 0.75))}\n"
+            f"teacher_question:\n{json.dumps(teacher_question, ensure_ascii=False, indent=2)}\n\n"
+            f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+        )
+        text = await self._chat(
+            model=self.cfg.evaluator_model,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=float(getattr(self.cfg, "critic_temperature", self.cfg.evaluator_temperature)),
+            max_tokens=int(getattr(self.cfg, "critic_max_tokens", self.cfg.evaluator_max_tokens)),
+            stage=f"teacher_critic_agent_{agent_id}",
+        )
+        obj = extract_json_obj(text) or {}
+        return obj if isinstance(obj, dict) else {}
+
+    async def rewrite_teacher_question(
+        self,
+        agent_id: int,
+        previous_question: Dict[str, Any],
+        critic_review: Dict[str, Any],
+        teacher_context: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        system_prompt = (
+            "You are the Teacher revising a Socratic guiding question after Critic feedback.\n"
+            "Revise only the guiding question and its rationale. Do not write candidate prompts.\n"
+            "Do not use gold answers, concrete sample text, answer labels, or hard-coded task-specific roles.\n"
+            "Return strict JSON only."
+        )
+        user_prompt = (
+            "Rewrite the Teacher JSON so it can pass Critic review while staying grounded in the abstract diagnostics.\n"
+            "Keep the same JSON schema as the Teacher output.\n\n"
+            f"target_agent_id: {agent_id}\n"
+            f"previous_question:\n{json.dumps(previous_question, ensure_ascii=False, indent=2)}\n\n"
+            f"critic_review:\n{json.dumps(critic_review, ensure_ascii=False, indent=2)}\n\n"
+            f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+        )
+        text = await self._chat(
+            model=self.cfg.optimizer_model,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=float(getattr(self.cfg, "teacher_temperature", self.cfg.optimizer_temperature)),
+            max_tokens=int(getattr(self.cfg, "teacher_max_tokens", self.cfg.optimizer_max_tokens)),
+            stage=f"teacher_rewrite_agent_{agent_id}",
+        )
+        obj = extract_json_obj(text) or {}
+        return obj if isinstance(obj, dict) else {}
+
+    async def generate_approved_teacher_question(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        teacher_context: Dict[str, Any],
+        requested_candidates: int,
+    ) -> Dict[str, Any]:
+        threshold = float(getattr(self.cfg, "teacher_question_pass_threshold", 0.75) or 0.75)
+        max_rounds = max(0, int(getattr(self.cfg, "teacher_critic_max_rounds", 2) or 0))
+        teacher_question = await self.propose_teacher_question(agent_id, parent_prompt, teacher_context, requested_candidates)
+        reviews: List[Dict[str, Any]] = []
+        rewrite_count = 0
+        for round_id in range(max_rounds):
+            review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
+            reviews.append(review)
+            if bool(review.get("passed")) and float(review.get("score", 0.0) or 0.0) >= threshold:
+                return {
+                    "approved": True,
+                    "teacher_question": teacher_question,
+                    "critic_reviews": reviews,
+                    "teacher_critic_rounds": round_id + 1,
+                    "teacher_rewrite_count": rewrite_count,
+                }
+            teacher_question = await self.rewrite_teacher_question(agent_id, teacher_question, review, teacher_context)
+            rewrite_count += 1
+        final_review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
+        reviews.append(final_review)
+        approved = bool(final_review.get("passed")) and float(final_review.get("score", 0.0) or 0.0) >= threshold
+        return {
+            "approved": approved,
+            "teacher_question": teacher_question,
+            "critic_reviews": reviews,
+            "teacher_critic_rounds": len(reviews),
+            "teacher_rewrite_count": rewrite_count,
+        }
+
+    async def generate_student_candidates(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        approved_teacher_question: Dict[str, Any],
+        teacher_context: Dict[str, Any],
+        num_candidates: int,
+    ) -> List[Dict[str, Any]]:
+        system_prompt = (
+            "You are the Student in a Teacher-Critic-Student prompt optimization system.\n\n"
+            "You will receive:\n- the current parent prompt\n- an approved Socratic guiding question from the Teacher\n"
+            "- Critic reviews of that question\n- abstract diagnostics about problem type, error type, diversity gap, "
+            "error correlation, and peer behavior\n\n"
+            "Your job is to generate candidate prompts for the target agent.\n\n"
+            "Each candidate prompt must:\n- directly answer the approved guiding question\n- be a complete standalone prompt\n"
+            "- align with the problem type and answer format\n- repair the target error pattern\n"
+            "- improve target-agent accuracy\n- contribute useful reasoning diversity\n"
+            "- reduce redundant behavior with peer prompts\n- avoid invalid, overlong, or generic outputs\n\n"
+            "Do not use gold answers.\nDo not include concrete sample text.\nDo not include answer labels from examples.\n"
+            "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
+            "Do not only paraphrase the parent prompt.\n\nReturn strict JSON only."
+        )
+        user_prompt = (
+            "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
+            "Each item must include candidate_prompt, student_interpretation_of_question, target_error_pattern, "
+            "accuracy_repair_rule, diversity_contribution, error_correlation_reduction, task_alignment_rule, "
+            "peer_redundancy_avoidance, expected_accuracy_effect, expected_diversity_effect, risk_control, rationale.\n\n"
+            f"target_agent_id: {agent_id}\nrequested_candidates: {num_candidates}\n\n"
+            f"parent_prompt:\n{parent_prompt}\n\n"
+            f"approved_teacher_question:\n{json.dumps(approved_teacher_question, ensure_ascii=False, indent=2)}\n\n"
+            f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+        )
+        text = await self._chat(
+            model=self.cfg.optimizer_model,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=float(getattr(self.cfg, "student_temperature", self.cfg.optimizer_temperature)),
+            max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
+            stage=f"student_optimizer_agent_{agent_id}",
+        )
+        obj = extract_json_obj(text) or {}
+        candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
+        return candidates if isinstance(candidates, list) else []
+
+    async def propose_candidates_teacher_critic_student(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        overlap_diagnosis: Dict[str, Any],
+        num_candidates: int,
+        generation_batch: Optional[Dict[str, Any]] = None,
+        generation_batches: Optional[List[Dict[str, Any]]] = None,
+    ) -> List[Dict[str, Any]]:
+        prompt_roles = [
+            r for r in overlap_diagnosis.get("prompt_roles", [])
+            if isinstance(r, dict)
+        ]
+        target_role_spec = next((r for r in prompt_roles if int(r.get("agent_id", -1)) == int(agent_id)), {})
+        peer_role_specs = [r for r in prompt_roles if int(r.get("agent_id", -1)) != int(agent_id)]
+        if generation_batches is None:
+            generation_batches = [dict(generation_batch or {"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"})]
+        generation_batches = [dict(x) for x in generation_batches if isinstance(x, dict)]
+        if not generation_batches:
+            generation_batches = [{"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"}]
+
+        agent_pressures = overlap_diagnosis.get("per_agent_overlap_pressure", [])
+        agent_invalid_rates = overlap_diagnosis.get("per_agent_invalid_rate", [])
+        window_stats = {
+            "mean_window_overlap": overlap_diagnosis.get("mean_window_overlap", 0.0),
+            "homogeneity_overlap_threshold": overlap_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
+            "target_overlap_pressure": agent_pressures[agent_id] if agent_id < len(agent_pressures) else 0.0,
+            "target_homogeneous_case_count": (overlap_diagnosis.get("homogeneous_case_counts", [0] * len(self.agents))[agent_id] if agent_id < len(overlap_diagnosis.get("homogeneous_case_counts", [])) else 0),
+            "target_invalid_rate": agent_invalid_rates[agent_id] if agent_id < len(agent_invalid_rates) else 0.0,
+        }
+        validity_constraints = {
+            "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
+            "required_final_answer_line": True,
+            "avoid_empty_or_repetitive_trace": True,
+            "do_not_copy_case_content": True,
+        }
+        teacher_context = self._build_teacher_context(
+            agent_id=agent_id,
+            parent_prompt=parent_prompt,
+            target_role_spec=target_role_spec,
+            peer_role_specs=peer_role_specs,
+            window_stats=window_stats,
+            validity_constraints=validity_constraints,
+            generation_batches=generation_batches,
+        )
+        approved = await self.generate_approved_teacher_question(
+            agent_id=agent_id,
+            parent_prompt=parent_prompt,
+            teacher_context=teacher_context,
+            requested_candidates=num_candidates,
+        )
+        diagnostics = self._empty_optimizer_generation_diagnostics()
+        diagnostics["optimizer_architecture"] = "teacher_critic_student"
+        teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
+        critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
+        last_review = critic_reviews[-1] if critic_reviews and isinstance(critic_reviews[-1], dict) else {}
+        guiding_question = str(teacher_question.get("socratic_guiding_question", "")) if isinstance(teacher_question, dict) else ""
+        diagnostics.update(
+            {
+                "teacher_question": guiding_question,
+                "teacher_question_approved": bool(approved.get("approved", False)),
+                "teacher_question_rejected": not bool(approved.get("approved", False)),
+                "teacher_question_score": float(last_review.get("score", 0.0) or 0.0),
+                "teacher_critic_rounds": int(approved.get("teacher_critic_rounds", len(critic_reviews)) or 0),
+                "teacher_quality_critique": str(last_review.get("quality_critique", "")),
+                "teacher_specificity_critique": str(last_review.get("specificity_critique", "")),
+                "teacher_task_alignment_critique": str(last_review.get("task_alignment_critique", "")),
+                "teacher_error_alignment_critique": str(last_review.get("error_alignment_critique", "")),
+                "teacher_diversity_critique": str(last_review.get("diversity_critique", "")),
+                "teacher_rewrite_count": int(approved.get("teacher_rewrite_count", 0) or 0),
+            }
+        )
+        if not bool(approved.get("approved", False)):
+            diagnostics["teacher_question_rejection_reason"] = str(
+                last_review.get("rewrite_instruction", "")
+                or last_review.get("quality_critique", "")
+                or "teacher question failed critic review"
+            )
+            diagnostics["optimizer_underfilled"] = True
+            self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
+            return []
+
+        student_candidates = await self.generate_student_candidates(
+            agent_id=agent_id,
+            parent_prompt=parent_prompt,
+            approved_teacher_question=approved,
+            teacher_context=teacher_context,
+            num_candidates=num_candidates,
+        )
+        diagnostics["student_candidate_count_raw"] = len(student_candidates) if isinstance(student_candidates, list) else 0
+        diagnostics["optimizer_raw_candidate_count"] = int(diagnostics["student_candidate_count_raw"])
+        parsed: List[Dict[str, Any]] = []
+        seen_signatures: set = set()
+        filter_reasons: List[str] = []
+        if isinstance(student_candidates, list):
+            for item in student_candidates:
+                if not isinstance(item, dict):
+                    diagnostics["optimizer_schema_filtered_count"] += 1
+                    filter_reasons.append("schema")
+                    continue
+                if not self._candidate_has_required_optimizer_fields(item):
+                    diagnostics["optimizer_empty_prompt_count"] += 1
+                    diagnostics["optimizer_schema_filtered_count"] += 1
+                    filter_reasons.append("empty_prompt")
+                    continue
+                prompt = str(item.get("candidate_prompt", "")).strip()
+                prompt, sanitized = self._sanitize_prompt(prompt, agent_id)
+                diagnostics["optimizer_sanitized_count"] += int(bool(sanitized))
+                if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                    diagnostics["optimizer_redundant_filtered_count"] += 1
+                    filter_reasons.append("redundant")
+                    continue
+                if not prompt:
+                    diagnostics["optimizer_empty_prompt_count"] += 1
+                    filter_reasons.append("empty_prompt")
+                    continue
+                seen_signatures.add(self._prompt_signature(prompt))
+                batch_idx = min(len(parsed), len(generation_batches) - 1)
+                parsed.append(
+                    {
+                        "candidate_prompt": prompt,
+                        "student_interpretation_of_question": str(item.get("student_interpretation_of_question", "")),
+                        "target_error_pattern": str(item.get("target_error_pattern", "")),
+                        "accuracy_repair_rule": str(item.get("accuracy_repair_rule", "")),
+                        "diversity_contribution": str(item.get("diversity_contribution", "")),
+                        "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
+                        "task_alignment_rule": str(item.get("task_alignment_rule", "")),
+                        "peer_redundancy_avoidance": str(item.get("peer_redundancy_avoidance", "")),
+                        "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
+                        "expected_diversity_effect": str(item.get("expected_diversity_effect", "")),
+                        "risk_control": str(item.get("risk_control", "")),
+                        "rationale": str(item.get("rationale", "")),
+                        "candidate_source": "teacher_critic_student",
+                        "teacher_question": teacher_question,
+                        "teacher_question_score": float(diagnostics["teacher_question_score"]),
+                        "teacher_question_approved": True,
+                        "teacher_critic_rounds": int(diagnostics["teacher_critic_rounds"]),
+                        "critic_reviews": critic_reviews,
+                        "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
+                        "generation_case_ids": [
+                            str(c.get("case_id", ""))
+                            for c in generation_batches[batch_idx].get("cases", [])
+                            if isinstance(c, dict)
+                        ],
+                    }
+                )
+                if len(parsed) >= num_candidates:
+                    break
+        diagnostics["student_candidate_count_final"] = len(parsed)
+        diagnostics["student_candidate_filtered_count"] = max(0, int(diagnostics["student_candidate_count_raw"]) - len(parsed))
+        diagnostics["student_candidate_filter_reasons"] = filter_reasons
+        diagnostics["student_all_candidates_filtered"] = bool(int(diagnostics["student_candidate_count_raw"]) > 0 and not parsed)
+        diagnostics["optimizer_final_candidate_count"] = len(parsed)
+        diagnostics["optimizer_underfilled"] = bool(len(parsed) < int(num_candidates))
+        diagnostics = self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
+        metadata = self._teacher_metadata_from_diagnostics(diagnostics)
+        for item in parsed:
+            item["optimizer_generation_diagnostics"] = dict(diagnostics)
+            item.update(metadata)
+        return parsed[:num_candidates]
+
     async def propose_candidates(
+        self,
+        agent_id: int,
+        parent_prompt: str,
+        overlap_diagnosis: Dict[str, Any],
+        num_candidates: int,
+        generation_batch: Optional[Dict[str, Any]] = None,
+        generation_batches: Optional[List[Dict[str, Any]]] = None,
+    ) -> List[Dict[str, Any]]:
+        architecture = str(getattr(self.cfg, "optimizer_architecture", "teacher_critic_student") or "teacher_critic_student").lower()
+        if architecture == "teacher_critic_student":
+            return await self.propose_candidates_teacher_critic_student(
+                agent_id=agent_id,
+                parent_prompt=parent_prompt,
+                overlap_diagnosis=overlap_diagnosis,
+                num_candidates=num_candidates,
+                generation_batch=generation_batch,
+                generation_batches=generation_batches,
+            )
+        return await self.propose_candidates_one_shot(
+            agent_id=agent_id,
+            parent_prompt=parent_prompt,
+            overlap_diagnosis=overlap_diagnosis,
+            num_candidates=num_candidates,
+            generation_batch=generation_batch,
+            generation_batches=generation_batches,
+        )
+
+    async def propose_candidates_one_shot(
         self,
         agent_id: int,
         parent_prompt: str,
@@ -3221,6 +3744,10 @@ class TraceBeamSearchSystem:
                         "target_error_pattern": str(proposal.get("target_error_pattern", "")),
                         "accuracy_repair_rule": str(proposal.get("accuracy_repair_rule", "")),
                         "expected_accuracy_effect": str(proposal.get("expected_accuracy_effect", "")),
+                        "diversity_contribution": str(proposal.get("diversity_contribution", "")),
+                        "error_correlation_reduction": str(proposal.get("error_correlation_reduction", "")),
+                        "task_alignment_rule": str(proposal.get("task_alignment_rule", "")),
+                        "peer_redundancy_avoidance": str(proposal.get("peer_redundancy_avoidance", "")),
                         "optimizer_generation_diagnostics": proposal.get("optimizer_generation_diagnostics", {}),
                         "proposal": proposal,
                     }
@@ -3244,6 +3771,10 @@ class TraceBeamSearchSystem:
                     "target_error_pattern": "",
                     "accuracy_repair_rule": "",
                     "expected_accuracy_effect": "",
+                    "diversity_contribution": "",
+                    "error_correlation_reduction": "",
+                    "task_alignment_rule": "",
+                    "peer_redundancy_avoidance": "",
                     "optimizer_generation_diagnostics": self._empty_optimizer_generation_diagnostics(),
                     "proposal": {},
                 }
@@ -3271,7 +3802,7 @@ class TraceBeamSearchSystem:
             and not bool(str(c.get("target_error_pattern", "")).strip())
         )
         requested_optimizer_candidates = len(beam) * requested
-        num_optimizer_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "optimizer")
+        num_optimizer_candidates = sum(1 for c in candidate_pool if self._is_optimizer_generated_candidate_source(c.get("candidate_source", "")))
         num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in str(c.get("candidate_source", "")))
         num_existing_beam_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "existing_beam")
         fallback_enabled = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower() == "template"
@@ -3289,9 +3820,32 @@ class TraceBeamSearchSystem:
                 "optimizer_redundant_filtered_count",
                 "optimizer_schema_filtered_count",
                 "optimizer_final_candidate_count",
+                "teacher_critic_rounds",
+                "teacher_rewrite_count",
+                "student_candidate_count_raw",
+                "student_candidate_count_final",
+                "student_candidate_filtered_count",
             ]:
                 optimizer_generation_summary[key] += int(record.get(key, 0) or 0)
         optimizer_generation_summary["optimizer_underfilled"] = bool(optimizer_underfilled)
+        for key in [
+            "optimizer_architecture",
+            "teacher_question",
+            "teacher_question_approved",
+            "teacher_question_rejected",
+            "teacher_question_rejection_reason",
+            "teacher_question_score",
+            "teacher_quality_critique",
+            "teacher_specificity_critique",
+            "teacher_task_alignment_critique",
+            "teacher_error_alignment_critique",
+            "teacher_diversity_critique",
+            "student_candidate_filter_reasons",
+            "student_all_candidates_filtered",
+        ]:
+            values = [record.get(key) for record in optimizer_generation_records if isinstance(record, dict) and record.get(key) not in (None, "", [])]
+            if values:
+                optimizer_generation_summary[key] = values[-1]
 
         evaluated = []
         peer_prompts = self._active_prompt_list()
@@ -3451,6 +4005,26 @@ class TraceBeamSearchSystem:
                     "num_optimizer_candidates": int(num_optimizer_candidates),
                     "num_fallback_candidates": int(num_fallback_candidates),
                     "num_existing_beam_candidates": int(num_existing_beam_candidates),
+                    "optimizer_architecture": str(item_diagnostics.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", "one_shot"))),
+                    "teacher_question": item_diagnostics.get("teacher_question", ""),
+                    "teacher_question_approved": bool(item_diagnostics.get("teacher_question_approved", False)),
+                    "teacher_question_score": float(item_diagnostics.get("teacher_question_score", 0.0) or 0.0),
+                    "teacher_critic_rounds": int(item_diagnostics.get("teacher_critic_rounds", 0) or 0),
+                    "teacher_quality_critique": str(item_diagnostics.get("teacher_quality_critique", "")),
+                    "teacher_specificity_critique": str(item_diagnostics.get("teacher_specificity_critique", "")),
+                    "teacher_task_alignment_critique": str(item_diagnostics.get("teacher_task_alignment_critique", "")),
+                    "teacher_error_alignment_critique": str(item_diagnostics.get("teacher_error_alignment_critique", "")),
+                    "teacher_diversity_critique": str(item_diagnostics.get("teacher_diversity_critique", "")),
+                    "teacher_rewrite_count": int(item_diagnostics.get("teacher_rewrite_count", 0) or 0),
+                    "student_candidate_count_raw": int(item_diagnostics.get("student_candidate_count_raw", 0) or 0),
+                    "student_candidate_count_final": int(item_diagnostics.get("student_candidate_count_final", 0) or 0),
+                    "student_candidate_filtered_count": int(item_diagnostics.get("student_candidate_filtered_count", 0) or 0),
+                    "student_candidate_filter_reasons": item_diagnostics.get("student_candidate_filter_reasons", []),
+                    "student_all_candidates_filtered": bool(item_diagnostics.get("student_all_candidates_filtered", False)),
+                    "diversity_contribution": str(item.get("diversity_contribution", "")),
+                    "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
+                    "task_alignment_rule": str(item.get("task_alignment_rule", "")),
+                    "peer_redundancy_avoidance": str(item.get("peer_redundancy_avoidance", "")),
                     "optimizer_raw_response_empty": int(item_diagnostics.get("optimizer_raw_response_empty", 0) or 0),
                     "optimizer_json_parse_failed": int(item_diagnostics.get("optimizer_json_parse_failed", 0) or 0),
                     "optimizer_raw_candidate_count": int(item_diagnostics.get("optimizer_raw_candidate_count", 0) or 0),
@@ -3492,6 +4066,29 @@ class TraceBeamSearchSystem:
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
         }
+        self.update_logs.append(
+            {
+                **self._base_log_fields(),
+                "event": "beam_update_summary",
+                "epoch": epoch_id,
+                "step": step_id,
+                "agent_id": agent_id,
+                "search_mode": "evolutionary_beam",
+                "beam_size": beam_size,
+                "active_prompt_changed": bool(changed),
+                "top1_candidate_source": top1_candidate_source,
+                "top1_candidate_pool_source": top1_candidate_pool_source,
+                "candidate_count": len(candidate_pool),
+                "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+                "fallback_enabled": bool(fallback_enabled),
+                "optimizer_underfilled": bool(optimizer_underfilled),
+                "requested_optimizer_candidates": int(requested_optimizer_candidates),
+                "num_optimizer_candidates": int(num_optimizer_candidates),
+                "num_fallback_candidates": int(num_fallback_candidates),
+                "num_existing_beam_candidates": int(num_existing_beam_candidates),
+                **optimizer_generation_summary,
+            }
+        )
         agent.last_update_record = summary
         return bool(changed), summary
 
@@ -3603,6 +4200,31 @@ class TraceBeamSearchSystem:
             key: int(sum(int(s.get(key, 0) or 0) for s in update_summaries))
             for key in diagnostic_keys
         }
+        metadata_keys = [
+            "optimizer_architecture",
+            "teacher_question",
+            "teacher_question_approved",
+            "teacher_question_rejected",
+            "teacher_question_rejection_reason",
+            "teacher_question_score",
+            "teacher_critic_rounds",
+            "teacher_quality_critique",
+            "teacher_specificity_critique",
+            "teacher_task_alignment_critique",
+            "teacher_error_alignment_critique",
+            "teacher_diversity_critique",
+            "teacher_rewrite_count",
+            "student_candidate_count_raw",
+            "student_candidate_count_final",
+            "student_candidate_filtered_count",
+            "student_candidate_filter_reasons",
+            "student_all_candidates_filtered",
+        ]
+        optimizer_generation_metadata = {}
+        for key in metadata_keys:
+            values = [s.get(key) for s in update_summaries if isinstance(s, dict) and s.get(key) not in (None, "", [])]
+            if values:
+                optimizer_generation_metadata[key] = values[-1]
         return {
             "update_requested": True,
             "update_ready": True,
@@ -3616,6 +4238,7 @@ class TraceBeamSearchSystem:
             "active_prompt_changed_count": int(len(updated)),
             "optimizer_underfilled": bool(num_optimizer_candidates < requested_optimizer_candidates),
             **optimizer_generation_diagnostics,
+            **optimizer_generation_metadata,
             "candidate_behavior_diagnostics": self._mean_metric_dict(top_metrics),
         }
 

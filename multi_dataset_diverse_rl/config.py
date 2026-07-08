@@ -69,6 +69,16 @@ class Config:
     reward_weight_target_accuracy_late: float = 1.0
     accuracy_guard_epsilon_early: float = 0.03
     accuracy_guard_epsilon_late: float = 0.01
+    optimizer_architecture: str = "teacher_critic_student"
+    teacher_critic_max_rounds: int = 2
+    teacher_question_pass_threshold: float = 0.75
+    teacher_temperature: float = 0.4
+    critic_temperature: float = 0.0
+    student_temperature: float = 0.5
+    teacher_max_tokens: int = 1200
+    critic_max_tokens: int = 1000
+    student_max_tokens: int = 1800
+    teacher_critic_use_voting_failure: bool = False
     optimizer_fallback_mode: str = "none"
     no_effective_evolution_patience: int = 10
     no_effective_evolution_min_optimizer_candidates: int = 1
@@ -189,6 +199,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=defaults.reward_weight_target_accuracy_late)
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=defaults.accuracy_guard_epsilon_early)
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=defaults.accuracy_guard_epsilon_late)
+    parser.add_argument("--optimizer_architecture", type=str, default=defaults.optimizer_architecture, choices=["one_shot", "teacher_critic_student"])
+    parser.add_argument("--teacher_critic_max_rounds", type=int, default=defaults.teacher_critic_max_rounds)
+    parser.add_argument("--teacher_question_pass_threshold", type=float, default=defaults.teacher_question_pass_threshold)
+    parser.add_argument("--teacher_temperature", type=float, default=defaults.teacher_temperature)
+    parser.add_argument("--critic_temperature", type=float, default=defaults.critic_temperature)
+    parser.add_argument("--student_temperature", type=float, default=defaults.student_temperature)
+    parser.add_argument("--teacher_max_tokens", type=int, default=defaults.teacher_max_tokens)
+    parser.add_argument("--critic_max_tokens", type=int, default=defaults.critic_max_tokens)
+    parser.add_argument("--student_max_tokens", type=int, default=defaults.student_max_tokens)
+    parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=defaults.optimizer_fallback_mode, choices=["none", "template"])
     parser.add_argument("--no_effective_evolution_patience", type=int, default=defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=defaults.no_effective_evolution_min_optimizer_candidates)
