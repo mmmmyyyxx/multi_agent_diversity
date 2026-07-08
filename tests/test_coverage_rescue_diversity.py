@@ -129,10 +129,28 @@ def test_reward_agent_selection_prefers_error_agent():
         "per_agent_team_wrong_error_count": [0, 1, 0],
         "per_agent_invalid_rate": [0.0, 0.0, 0.0],
         "per_agent_overlap_pressure": [5.0, 0.0, 0.0],
+        "per_agent_coverage_gap_count": [0, 0, 0],
+        "per_agent_useful_diversity_deficit": [0.0, 0.0, 0.0],
         "homogeneous_case_counts": [0, 0, 0],
     }
     selected = system.select_reward_agents_for_update(diagnosis, metrics={})
     assert selected[0] == 1
+
+
+def test_reward_agent_selection_ignores_overlap_without_reward_signal():
+    system = _system_without_init(Config(agents=3))
+    system.agents = [object(), object(), object()]
+    diagnosis = {
+        "per_agent_error_count": [0, 0, 0],
+        "per_agent_team_wrong_error_count": [0, 0, 0],
+        "per_agent_invalid_rate": [0.0, 0.0, 0.0],
+        "per_agent_overlap_pressure": [9.0, 0.0, 0.0],
+        "per_agent_coverage_gap_count": [0, 0, 0],
+        "per_agent_useful_diversity_deficit": [0.0, 0.0, 0.0],
+        "homogeneous_case_counts": [9, 0, 0],
+    }
+
+    assert system.select_reward_agents_for_update(diagnosis, metrics={}) == []
 
 
 def test_accuracy_only_reward_uses_target_agent_accuracy():

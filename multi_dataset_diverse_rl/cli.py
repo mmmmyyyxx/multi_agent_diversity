@@ -412,25 +412,16 @@ async def main_async():
                 train_useful_diversity.append(float(out.get("useful_diversity", 0.0)))
 
                 if (step + 1) % 10 == 0 or (step + 1) == len(order):
-                    if uses_coverage_useful_metrics(cfg.reward_mode):
-                        vote_acc = float(np.mean(train_vote_correct)) if train_vote_correct else 0.0
-                        oracle_acc = float(np.mean(train_any_correct)) if train_any_correct else 0.0
-                        print(
-                            f"Epoch {epoch + 1} Step {step + 1}/{len(order)} "
-                            f"train_vote_acc={vote_acc:.4f} "
-                            f"train_oracle_acc={oracle_acc:.4f} "
-                            f"train_gap={oracle_acc - vote_acc:.4f} "
-                            f"train_useful_div={float(np.mean(train_useful_diversity)):.4f} "
-                            f"train_invalid={float(np.mean(train_invalid_rate)):.4f}"
-                        )
-                    else:
-                        print(
-                            f"Epoch {epoch + 1} Step {step + 1}/{len(order)} "
-                            f"train_embedding_div={float(np.mean(train_embedding_diversity)):.4f} "
-                            f"train_embedding_overlap={float(np.mean(train_embedding_overlap)):.4f} "
-                            f"train_invalid={float(np.mean(train_invalid_rate)):.4f} "
-                            f"train_vote_acc={float(np.mean(train_vote_correct)):.4f}"
-                        )
+                    vote_acc = float(np.mean(train_vote_correct)) if train_vote_correct else 0.0
+                    oracle_acc = float(np.mean(train_any_correct)) if train_any_correct else 0.0
+                    print(
+                        f"Epoch {epoch + 1} Step {step + 1}/{len(order)} "
+                        f"train_vote_acc={vote_acc:.4f} "
+                        f"train_oracle_acc={oracle_acc:.4f} "
+                        f"train_gap={oracle_acc - vote_acc:.4f} "
+                        f"train_useful_div={float(np.mean(train_useful_diversity)):.4f} "
+                        f"train_invalid={float(np.mean(train_invalid_rate)):.4f}"
+                    )
                 if no_effective_evolution_stopped:
                     break
             cursor = batch_end
@@ -463,32 +454,19 @@ async def main_async():
             epoch_record["test"] = await system.evaluate_dataset(test_data, split_name=f"test_epoch{epoch + 1}")
         system.history.append(epoch_record)
 
-        if uses_coverage_useful_metrics(cfg.reward_mode):
-            print(
-                f"Epoch {epoch + 1}: "
-                f"train_vote_acc={train_metrics['vote_acc']:.4f}, "
-                f"train_oracle_acc={train_metrics['oracle_acc']:.4f}, "
-                f"train_gap={train_metrics['aggregation_gap']:.4f}, "
-                f"train_useful_div={train_metrics['mean_useful_diversity']:.4f}, "
-                f"train_invalid={train_metrics['mean_invalid_rate']:.4f}, "
-                f"val_vote_acc={val_metrics['vote_acc']:.4f}, "
-                f"val_oracle_acc={val_metrics.get('oracle_acc', 0.0):.4f}, "
-                f"val_gap={val_metrics.get('aggregation_gap', 0.0):.4f}, "
-                f"val_useful_div={val_metrics.get('mean_useful_diversity', 0.0):.4f}, "
-                f"val_invalid={val_metrics['mean_invalid_rate']:.4f}"
-            )
-        else:
-            print(
-                f"Epoch {epoch + 1}: "
-                f"train_embedding_div={train_metrics['mean_embedding_diversity']:.4f}, "
-                f"train_embedding_overlap={train_metrics['mean_embedding_overlap']:.4f}, "
-                f"train_invalid={train_metrics['mean_invalid_rate']:.4f}, "
-                f"train_vote_acc={train_metrics['vote_acc']:.4f}, "
-                f"val_embedding_div={val_metrics['mean_embedding_diversity']:.4f}, "
-                f"val_embedding_overlap={val_metrics['mean_embedding_overlap']:.4f}, "
-                f"val_invalid={val_metrics['mean_invalid_rate']:.4f}, "
-                f"val_vote_acc={val_metrics['vote_acc']:.4f}"
-            )
+        print(
+            f"Epoch {epoch + 1}: "
+            f"train_vote_acc={train_metrics['vote_acc']:.4f}, "
+            f"train_oracle_acc={train_metrics['oracle_acc']:.4f}, "
+            f"train_gap={train_metrics['aggregation_gap']:.4f}, "
+            f"train_useful_div={train_metrics['mean_useful_diversity']:.4f}, "
+            f"train_invalid={train_metrics['mean_invalid_rate']:.4f}, "
+            f"val_vote_acc={val_metrics['vote_acc']:.4f}, "
+            f"val_oracle_acc={val_metrics.get('oracle_acc', 0.0):.4f}, "
+            f"val_gap={val_metrics.get('aggregation_gap', 0.0):.4f}, "
+            f"val_useful_div={val_metrics.get('mean_useful_diversity', 0.0):.4f}, "
+            f"val_invalid={val_metrics['mean_invalid_rate']:.4f}"
+        )
 
         system.save_state("last_state", extra=epoch_record)
         system.flush_train_step_logs()

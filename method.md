@@ -353,16 +353,15 @@ python -m multi_dataset_diverse_rl.cli \
 - reward
 - candidate source
 - beam rank
-- `in_top_beam` / `is_top1`
-- `active_prompt_changed`
+- accepted / rejected
 - baseline 和 candidate accuracy
 - oracle coverage metrics
+- rescue metrics
 - useful diversity metrics
 - invalid guard
 - solver reuse statistics
-- optimizer generation diagnostics
 
-其中旧字段 `accepted` 只表示 candidate 进入保留 beam，保留用于兼容；实际 prompt 是否更新应看 `active_prompt_changed`。当 optimizer 连续产不出有效候选且 active prompt 没变化时，`no_effective_evolution_*` 字段会记录提前停止原因。
+这让 prompt evolution 的每一步都可追踪。
 
 ## 13. Validation
 

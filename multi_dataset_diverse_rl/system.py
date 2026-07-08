@@ -507,8 +507,20 @@ class TraceBeamSearchSystem:
             "dataset_format": getattr(self.cfg, "dataset_format", ""),
             "init_mode": self.cfg.init_mode,
             "agents": self.cfg.agents,
+            "epochs": self.cfg.epochs,
+            "train_size": self.cfg.train_size,
+            "val_size": self.cfg.val_size,
+            "test_size": self.cfg.test_size,
             "update_every": self.cfg.update_every,
             "beam_size": self.cfg.beam_size,
+            "candidate_eval_batch_size": self.cfg.candidate_eval_batch_size,
+            "candidate_eval_strategy": self.cfg.candidate_eval_strategy,
+            "candidate_eval_repeats": self.cfg.candidate_eval_repeats,
+            "optimizer_architecture": getattr(self.cfg, "optimizer_architecture", ""),
+            "optimizer_fallback_mode": getattr(self.cfg, "optimizer_fallback_mode", ""),
+            "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
+            "teacher_question_pass_threshold": getattr(self.cfg, "teacher_question_pass_threshold", 0.0),
+            "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
             "initial_agent_prompts": self.initial_agent_prompts,
             "initial_agent_prompt_hashes": self.initial_agent_prompt_hashes,
             "config": asdict(self.cfg),
@@ -655,6 +667,8 @@ class TraceBeamSearchSystem:
             "student_candidate_filtered_count": 0,
             "student_candidate_filter_reasons": [],
             "student_all_candidates_filtered": False,
+            "student_missing_required_field_count": 0,
+            "student_missing_required_fields": [],
         }
 
     def _record_optimizer_generation_diagnostics(
@@ -679,8 +693,72 @@ class TraceBeamSearchSystem:
         key = f"{int(agent_id)}:{str(parent_id)}"
         return dict(self.optimizer_generation_diagnostics.get(key, self._empty_optimizer_generation_diagnostics()))
 
-    def _candidate_has_required_optimizer_fields(self, item: Dict[str, Any]) -> bool:
-        return bool(str(item.get("candidate_prompt", "")).strip())
+    def _required_optimizer_fields(self, architecture: Optional[str] = None) -> List[str]:
+        arch = str(architecture or getattr(self.cfg, "optimizer_architecture", "one_shot") or "one_shot").lower()
+        if arch == "teacher_critic_student":
+            return [
+                "candidate_prompt",
+                "student_interpretation_of_question",
+                "target_error_pattern",
+                "accuracy_repair_rule",
+                "diversity_contribution",
+                "error_correlation_reduction",
+                "task_alignment_rule",
+                "peer_redundancy_avoidance",
+                "expected_accuracy_effect",
+                "expected_diversity_effect",
+                "risk_control",
+                "rationale",
+            ]
+        return ["candidate_prompt"]
+
+    def _missing_optimizer_fields(
+        self,
+        item: Dict[str, Any],
+        architecture: Optional[str] = None,
+    ) -> List[str]:
+        missing = []
+        for field in self._required_optimizer_fields(architecture):
+            value = item.get(field, None)
+            if value is None:
+                missing.append(field)
+                continue
+            if isinstance(value, str) and not value.strip():
+                missing.append(field)
+                continue
+            if isinstance(value, list) and len(value) == 0:
+                missing.append(field)
+                continue
+        return missing
+
+    def _candidate_has_required_optimizer_fields(
+        self,
+        item: Dict[str, Any],
+        architecture: Optional[str] = None,
+    ) -> bool:
+        return not self._missing_optimizer_fields(item, architecture)
+
+    def _safe_float(self, value: Any, default: float = 0.0) -> float:
+        try:
+            if value is None:
+                return float(default)
+            if isinstance(value, bool):
+                return float(value)
+            if isinstance(value, (int, float)):
+                return float(value)
+            text = str(value).strip()
+            if not text:
+                return float(default)
+            try:
+                return float(text)
+            except Exception:
+                pass
+            match = re.search(r"[-+]?\d*\.?\d+", text)
+            if match:
+                return float(match.group(0))
+            return float(default)
+        except Exception:
+            return float(default)
 
     def _is_optimizer_generated_candidate_source(self, source: Any) -> bool:
         text = str(source or "").strip().lower()
@@ -706,6 +784,8 @@ class TraceBeamSearchSystem:
             "student_candidate_filtered_count",
             "student_candidate_filter_reasons",
             "student_all_candidates_filtered",
+            "student_missing_required_field_count",
+            "student_missing_required_fields",
         ]
         return {key: diagnostics.get(key, self._empty_optimizer_generation_diagnostics().get(key)) for key in keys}
 
@@ -1696,9 +1776,7 @@ class TraceBeamSearchSystem:
         return all(len(a.recent_homogeneity_flags) >= self.homogeneity_window for a in self.agents)
 
     def is_update_window_ready(self) -> bool:
-        if self._is_accuracy_only_mode():
-            return len(self.recent_window_records) >= self.homogeneity_window
-        return self.is_homogeneity_window_warmup_done()
+        return len(self.recent_window_records) >= self.homogeneity_window
 
     def clear_homogeneity_windows(self):
         for agent in self.agents:
@@ -1709,7 +1787,7 @@ class TraceBeamSearchSystem:
     def select_agents_for_update(self, metrics: Dict[str, Any]) -> List[int]:
         if not self.is_homogeneity_window_warmup_done():
             return []
-        diagnosis = self._window_overlap_diagnosis(self.recent_window_records)
+        diagnosis = self._window_update_diagnosis(self.recent_window_records)
         pressures = list(diagnosis.get("per_agent_overlap_pressure", metrics.get("per_agent_overlap", [])))
         if not pressures or all(float(x) <= 0 for x in pressures):
             return []
@@ -1776,8 +1854,8 @@ class TraceBeamSearchSystem:
         error_counts = list(diagnosis.get("per_agent_error_count", []))
         team_wrong_counts = list(diagnosis.get("per_agent_team_wrong_error_count", []))
         invalid_rates = list(diagnosis.get("per_agent_invalid_rate", []))
-        overlap_pressures = list(diagnosis.get("per_agent_overlap_pressure", metrics.get("per_agent_overlap", [])))
-        homogeneous_counts = list(diagnosis.get("homogeneous_case_counts", []))
+        coverage_gaps = list(diagnosis.get("per_agent_coverage_gap_count", []))
+        useful_deficits = list(diagnosis.get("per_agent_useful_diversity_deficit", []))
 
         ids = list(range(len(self.agents)))
         random.shuffle(ids)
@@ -1796,8 +1874,8 @@ class TraceBeamSearchSystem:
                 3.0 * value(error_counts, agent_id)
                 + 2.0 * value(team_wrong_counts, agent_id)
                 + 2.0 * value(invalid_rates, agent_id)
-                + 1.0 * value(overlap_pressures, agent_id)
-                + 0.5 * value(homogeneous_counts, agent_id)
+                + 1.5 * value(coverage_gaps, agent_id)
+                + 1.0 * value(useful_deficits, agent_id)
             )
             if score > 0.0:
                 scored.append((float(score), agent_id))
@@ -1943,11 +2021,22 @@ class TraceBeamSearchSystem:
             "team_accuracy": float(np.mean([int((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("vote_correct", 0) or 0) for rec in window_records])) if window_records else 0.0,
         }
 
-    def _window_overlap_diagnosis(self, window_records: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _window_update_diagnosis(self, window_records: List[Dict[str, Any]]) -> Dict[str, Any]:
         scored = []
         for idx, rec in enumerate(window_records):
-            metrics = rec.get("metrics", {})
-            scored.append((float(metrics.get("mean_embedding_overlap", 0.0)), idx, rec))
+            metrics = rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}
+            individual = list(metrics.get("individual_correct", []))
+            vote_correct = int(metrics.get("vote_correct", 0) or 0)
+            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
+            invalid_rate = float(metrics.get("invalid_rate", 0.0) or 0.0)
+            useful_diversity = float(metrics.get("useful_diversity", 0.0) or 0.0)
+            reward_pressure = (
+                float(1 - vote_correct)
+                + float(max(0, any_correct - vote_correct))
+                + invalid_rate
+                + max(0.0, 1.0 - useful_diversity) * 0.25
+            )
+            scored.append((float(reward_pressure), idx, rec))
         scored.sort(key=lambda x: x[0], reverse=True)
         focus_items = scored[: min(3, max(1, len(scored)))]
         all_homogeneous_cases: List[Dict[str, Any]] = []
@@ -1955,13 +2044,29 @@ class TraceBeamSearchSystem:
         per_agent_invalid = [0 for _ in range(len(self.agents))]
         per_agent_seen = [0 for _ in range(len(self.agents))]
         per_agent_pressure_rows = [[] for _ in range(len(self.agents))]
+        per_agent_coverage_gap_count = [0 for _ in range(len(self.agents))]
+        per_agent_useful_diversity_rows = [[] for _ in range(len(self.agents))]
         focus_cases = []
         for score, idx, rec in focus_items:
             metrics = rec.get("metrics", {})
+            individual = list(metrics.get("individual_correct", []))
+            vote_correct = int(metrics.get("vote_correct", 0) or 0)
+            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
             focus_cases.append(
                 {
                     "window_index": idx,
-                    "overlap_score": round(score, 4),
+                    "reward_pressure": round(score, 4),
+                    "diagnostic_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0) or 0.0),
+                    "vote_correct": bool(vote_correct),
+                    "any_correct": bool(any_correct),
+                    "coverage_gap": bool(any_correct and not vote_correct),
+                    "wrong_agent_ids": [
+                        int(agent_id)
+                        for agent_id, correct in enumerate(individual)
+                        if not int(correct)
+                    ],
+                    "useful_diversity": float(metrics.get("useful_diversity", 0.0) or 0.0),
+                    "invalid_rate": float(metrics.get("invalid_rate", 0.0) or 0.0),
                     "high_overlap_pairs": metrics.get("high_overlap_pairs", []),
                     "roles": metrics.get("roles", []),
                 }
@@ -1972,12 +2077,22 @@ class TraceBeamSearchSystem:
             all_validity_cases.extend(list(rec.get("validity_cases", [])))
             invalids = list(metrics.get("invalid_flags", []))
             pressures = list(metrics.get("per_agent_overlap", []))
+            individual = list(metrics.get("individual_correct", []))
+            vote_correct = int(metrics.get("vote_correct", 0) or 0)
+            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
+            coverage_gap = bool(any_correct and not vote_correct)
+            useful_diversity = float(metrics.get("useful_diversity", 0.0) or 0.0)
             for agent_id in range(len(self.agents)):
                 if agent_id < len(invalids):
                     per_agent_seen[agent_id] += 1
                     per_agent_invalid[agent_id] += int(invalids[agent_id])
                 if agent_id < len(pressures):
                     per_agent_pressure_rows[agent_id].append(float(pressures[agent_id]))
+                if agent_id < len(individual):
+                    if coverage_gap and int(individual[agent_id]):
+                        per_agent_coverage_gap_count[agent_id] += 1
+                    if int(individual[agent_id]) and not (agent_id < len(invalids) and int(invalids[agent_id])):
+                        per_agent_useful_diversity_rows[agent_id].append(useful_diversity)
         homogeneous_case_counts = [0 for _ in range(len(self.agents))]
         for case in all_homogeneous_cases:
             agent_id = int(case.get("target_agent_id", -1))
@@ -1991,16 +2106,47 @@ class TraceBeamSearchSystem:
             float(np.mean(rows)) if rows else 0.0
             for rows in per_agent_pressure_rows
         ]
+        per_agent_useful_diversity = [
+            self._clip01(float(np.mean(rows))) if rows else 0.0
+            for rows in per_agent_useful_diversity_rows
+        ]
+        per_agent_useful_diversity_deficit = [
+            self._clip01(1.0 - value) if per_agent_seen[i] else 0.0
+            for i, value in enumerate(per_agent_useful_diversity)
+        ]
+        vote_values = [
+            int((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("vote_correct", 0) or 0)
+            for rec in window_records
+        ]
+        any_values = [
+            int((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("any_correct", 0) or 0)
+            for rec in window_records
+        ]
+        useful_values = [
+            float((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("useful_diversity", 0.0) or 0.0)
+            for rec in window_records
+        ]
+        embedding_overlap_values = [
+            float((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("mean_embedding_overlap", 0.0) or 0.0)
+            for rec in window_records
+        ]
         current_prompts = [
             {"agent_id": i, "prompt_preview": normalize_spaces(p)[:260], "prompt_hash": self._hash(p)}
             for i, p in enumerate(self._active_prompt_list())
         ]
         accuracy_diagnosis = self._window_accuracy_diagnosis(window_records)
         return {
+            "diagnosis_type": "reward_update",
             "window_size": len(window_records),
             "focus_cases": focus_cases,
             "prompt_roles": current_prompts,
-            "mean_window_overlap": float(np.mean([x[0] for x in scored])) if scored else 0.0,
+            "mean_window_overlap": float(np.mean(embedding_overlap_values)) if embedding_overlap_values else 0.0,
+            "mean_embedding_overlap": float(np.mean(embedding_overlap_values)) if embedding_overlap_values else 0.0,
+            "mean_reward_pressure": float(np.mean([x[0] for x in scored])) if scored else 0.0,
+            "window_vote_acc": float(np.mean(vote_values)) if vote_values else 0.0,
+            "window_oracle_acc": float(np.mean(any_values)) if any_values else 0.0,
+            "window_coverage_gap": (float(np.mean(any_values)) - float(np.mean(vote_values))) if any_values and vote_values else 0.0,
+            "window_useful_diversity": self._clip01(float(np.mean(useful_values))) if useful_values else 0.0,
             "homogeneous_cases": sorted(all_homogeneous_cases, key=lambda c: float(c.get("pair_overlap", 0.0)), reverse=True),
             "validity_cases": all_validity_cases,
             "error_cases": list(accuracy_diagnosis.get("error_cases", [])),
@@ -2009,6 +2155,9 @@ class TraceBeamSearchSystem:
             "per_agent_error_count": list(accuracy_diagnosis.get("per_agent_error_count", [])),
             "per_agent_team_wrong_error_count": list(accuracy_diagnosis.get("per_agent_team_wrong_error_count", [])),
             "team_accuracy": float(accuracy_diagnosis.get("team_accuracy", 0.0)),
+            "per_agent_coverage_gap_count": per_agent_coverage_gap_count,
+            "per_agent_useful_diversity": per_agent_useful_diversity,
+            "per_agent_useful_diversity_deficit": per_agent_useful_diversity_deficit,
             "homogeneous_case_counts": homogeneous_case_counts,
             "per_agent_invalid_rate": per_agent_invalid_rate,
             "per_agent_overlap_pressure": per_agent_pressure,
@@ -2123,10 +2272,10 @@ class TraceBeamSearchSystem:
                 "purpose": "produce an alternative accuracy-repair procedure for the same target-agent blind spots",
             },
             {
-                "batch_type": "homogeneous_overlap_repair",
+                "batch_type": "useful_diversity_repair",
                 "priority": 1,
                 "cases": top_cases,
-                "purpose": "repair valid high-overlap reasoning pairs involving the target agent",
+                "purpose": "turn redundant or correlated target-agent behavior into useful complementary reasoning",
             },
             {
                 "batch_type": "random_window",
@@ -2340,7 +2489,7 @@ class TraceBeamSearchSystem:
                 if not isinstance(item, dict):
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
-                if not self._candidate_has_required_optimizer_fields(item):
+                if not self._candidate_has_required_optimizer_fields(item, architecture="one_shot"):
                     diagnostics["optimizer_empty_prompt_count"] += 1
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
@@ -2476,6 +2625,14 @@ class TraceBeamSearchSystem:
         target_pressure = float(window_stats.get("target_overlap_pressure", 0.0) or 0.0)
         mean_overlap = float(window_stats.get("mean_window_overlap", 0.0) or 0.0)
         target_invalid_rate = float(window_stats.get("target_invalid_rate", 0.0) or 0.0)
+        target_error_count = int(window_stats.get("target_error_count", 0) or 0)
+        target_team_wrong_error_count = int(window_stats.get("target_team_wrong_error_count", 0) or 0)
+        target_coverage_gap_count = int(window_stats.get("target_coverage_gap_count", 0) or 0)
+        target_useful_deficit = float(window_stats.get("target_useful_diversity_deficit", 0.0) or 0.0)
+        window_vote_acc = float(window_stats.get("window_vote_acc", window_stats.get("team_accuracy", 0.0)) or 0.0)
+        window_oracle_acc = float(window_stats.get("window_oracle_acc", 0.0) or 0.0)
+        window_coverage_gap = float(window_stats.get("window_coverage_gap", 0.0) or 0.0)
+        window_useful_diversity = float(window_stats.get("window_useful_diversity", 0.0) or 0.0)
         context = {
             "target_agent_id": agent_id,
             "parent_prompt_preview": normalize_spaces(parent_prompt)[:600],
@@ -2490,7 +2647,10 @@ class TraceBeamSearchSystem:
                 "target_error_patterns": sorted(set(target_error_patterns))[:12],
                 "invalid_output_patterns": sorted(set(invalid_output_patterns))[:12],
                 "diversity_gap_summary": (
-                    f"target_overlap_pressure={target_pressure:.3f}; mean_window_overlap={mean_overlap:.3f}; "
+                    f"window_vote_acc={window_vote_acc:.3f}; window_oracle_acc={window_oracle_acc:.3f}; "
+                    f"window_coverage_gap={window_coverage_gap:.3f}; window_useful_diversity={window_useful_diversity:.3f}; "
+                    f"target_coverage_gap_count={target_coverage_gap_count}; target_useful_diversity_deficit={target_useful_deficit:.3f}; "
+                    f"diagnostic_embedding_overlap={mean_overlap:.3f}; target_embedding_overlap_pressure={target_pressure:.3f}; "
                     f"batch_types={sorted(set(batch_types))[:8]}"
                 ),
                 "prompt_redundancy_summary": (
@@ -2504,6 +2664,11 @@ class TraceBeamSearchSystem:
                     else "Voting failure may be mentioned as a secondary diagnostic, not as the primary objective."
                 ),
                 "peer_behavior_summary": peer_behavior_summary[:8],
+                "target_error_summary": (
+                    f"target_error_count={target_error_count}; "
+                    f"target_team_wrong_error_count={target_team_wrong_error_count}; "
+                    f"target_coverage_gap_count={target_coverage_gap_count}"
+                ),
                 "invalid_output_summary": f"target_invalid_rate={target_invalid_rate:.3f}; invalid patterns are abstracted above.",
             },
         }
@@ -2639,7 +2804,7 @@ class TraceBeamSearchSystem:
         for round_id in range(max_rounds):
             review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
             reviews.append(review)
-            if bool(review.get("passed")) and float(review.get("score", 0.0) or 0.0) >= threshold:
+            if bool(review.get("passed")) and self._safe_float(review.get("score", 0.0), 0.0) >= threshold:
                 return {
                     "approved": True,
                     "teacher_question": teacher_question,
@@ -2651,7 +2816,7 @@ class TraceBeamSearchSystem:
             rewrite_count += 1
         final_review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
         reviews.append(final_review)
-        approved = bool(final_review.get("passed")) and float(final_review.get("score", 0.0) or 0.0) >= threshold
+        approved = bool(final_review.get("passed")) and self._safe_float(final_review.get("score", 0.0), 0.0) >= threshold
         return {
             "approved": approved,
             "teacher_question": teacher_question,
@@ -2713,26 +2878,41 @@ class TraceBeamSearchSystem:
         generation_batch: Optional[Dict[str, Any]] = None,
         generation_batches: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
+        update_diagnosis = overlap_diagnosis
         prompt_roles = [
-            r for r in overlap_diagnosis.get("prompt_roles", [])
+            r for r in update_diagnosis.get("prompt_roles", [])
             if isinstance(r, dict)
         ]
         target_role_spec = next((r for r in prompt_roles if int(r.get("agent_id", -1)) == int(agent_id)), {})
         peer_role_specs = [r for r in prompt_roles if int(r.get("agent_id", -1)) != int(agent_id)]
         if generation_batches is None:
-            generation_batches = [dict(generation_batch or {"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"})]
+            generation_batches = [dict(generation_batch or {"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"})]
         generation_batches = [dict(x) for x in generation_batches if isinstance(x, dict)]
         if not generation_batches:
-            generation_batches = [{"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"}]
+            generation_batches = [{"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"}]
 
-        agent_pressures = overlap_diagnosis.get("per_agent_overlap_pressure", [])
-        agent_invalid_rates = overlap_diagnosis.get("per_agent_invalid_rate", [])
+        agent_pressures = update_diagnosis.get("per_agent_overlap_pressure", [])
+        agent_invalid_rates = update_diagnosis.get("per_agent_invalid_rate", [])
+        agent_error_counts = update_diagnosis.get("per_agent_error_count", [])
+        agent_team_wrong_counts = update_diagnosis.get("per_agent_team_wrong_error_count", [])
+        agent_coverage_gap_counts = update_diagnosis.get("per_agent_coverage_gap_count", [])
+        agent_useful_deficits = update_diagnosis.get("per_agent_useful_diversity_deficit", [])
         window_stats = {
-            "mean_window_overlap": overlap_diagnosis.get("mean_window_overlap", 0.0),
-            "homogeneity_overlap_threshold": overlap_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
+            "diagnosis_type": update_diagnosis.get("diagnosis_type", "reward_update"),
+            "window_vote_acc": update_diagnosis.get("window_vote_acc", update_diagnosis.get("team_accuracy", 0.0)),
+            "window_oracle_acc": update_diagnosis.get("window_oracle_acc", 0.0),
+            "window_coverage_gap": update_diagnosis.get("window_coverage_gap", 0.0),
+            "window_useful_diversity": update_diagnosis.get("window_useful_diversity", 0.0),
+            "mean_reward_pressure": update_diagnosis.get("mean_reward_pressure", 0.0),
+            "mean_window_overlap": update_diagnosis.get("mean_window_overlap", 0.0),
+            "homogeneity_overlap_threshold": update_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
             "target_overlap_pressure": agent_pressures[agent_id] if agent_id < len(agent_pressures) else 0.0,
-            "target_homogeneous_case_count": (overlap_diagnosis.get("homogeneous_case_counts", [0] * len(self.agents))[agent_id] if agent_id < len(overlap_diagnosis.get("homogeneous_case_counts", [])) else 0),
+            "target_homogeneous_case_count": (update_diagnosis.get("homogeneous_case_counts", [0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("homogeneous_case_counts", [])) else 0),
             "target_invalid_rate": agent_invalid_rates[agent_id] if agent_id < len(agent_invalid_rates) else 0.0,
+            "target_error_count": agent_error_counts[agent_id] if agent_id < len(agent_error_counts) else 0,
+            "target_team_wrong_error_count": agent_team_wrong_counts[agent_id] if agent_id < len(agent_team_wrong_counts) else 0,
+            "target_coverage_gap_count": agent_coverage_gap_counts[agent_id] if agent_id < len(agent_coverage_gap_counts) else 0,
+            "target_useful_diversity_deficit": agent_useful_deficits[agent_id] if agent_id < len(agent_useful_deficits) else 0.0,
         }
         validity_constraints = {
             "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
@@ -2766,7 +2946,7 @@ class TraceBeamSearchSystem:
                 "teacher_question": guiding_question,
                 "teacher_question_approved": bool(approved.get("approved", False)),
                 "teacher_question_rejected": not bool(approved.get("approved", False)),
-                "teacher_question_score": float(last_review.get("score", 0.0) or 0.0),
+                "teacher_question_score": self._safe_float(last_review.get("score", 0.0), 0.0),
                 "teacher_critic_rounds": int(approved.get("teacher_critic_rounds", len(critic_reviews)) or 0),
                 "teacher_quality_critique": str(last_review.get("quality_critique", "")),
                 "teacher_specificity_critique": str(last_review.get("specificity_critique", "")),
@@ -2804,10 +2984,17 @@ class TraceBeamSearchSystem:
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     filter_reasons.append("schema")
                     continue
-                if not self._candidate_has_required_optimizer_fields(item):
-                    diagnostics["optimizer_empty_prompt_count"] += 1
+                missing_fields = self._missing_optimizer_fields(item, architecture="teacher_critic_student")
+                if missing_fields:
                     diagnostics["optimizer_schema_filtered_count"] += 1
-                    filter_reasons.append("empty_prompt")
+                    if "candidate_prompt" in missing_fields:
+                        diagnostics["optimizer_empty_prompt_count"] += 1
+                    diagnostics["student_missing_required_field_count"] += len(missing_fields)
+                    existing = list(diagnostics.get("student_missing_required_fields", []))
+                    existing.extend(missing_fields)
+                    diagnostics["student_missing_required_fields"] = sorted(set(str(x) for x in existing))
+                    reason = "missing_required_student_fields:" + ",".join(missing_fields)
+                    filter_reasons.append(reason)
                     continue
                 prompt = str(item.get("candidate_prompt", "")).strip()
                 prompt, sanitized = self._sanitize_prompt(prompt, agent_id)
@@ -2838,7 +3025,7 @@ class TraceBeamSearchSystem:
                         "rationale": str(item.get("rationale", "")),
                         "candidate_source": "teacher_critic_student",
                         "teacher_question": teacher_question,
-                        "teacher_question_score": float(diagnostics["teacher_question_score"]),
+                        "teacher_question_score": self._safe_float(diagnostics.get("teacher_question_score", 0.0), 0.0),
                         "teacher_question_approved": True,
                         "teacher_critic_rounds": int(diagnostics["teacher_critic_rounds"]),
                         "critic_reviews": critic_reviews,
@@ -2902,33 +3089,48 @@ class TraceBeamSearchSystem:
         generation_batch: Optional[Dict[str, Any]] = None,
         generation_batches: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
+        update_diagnosis = overlap_diagnosis
         prompt_roles = [
-            r for r in overlap_diagnosis.get("prompt_roles", [])
+            r for r in update_diagnosis.get("prompt_roles", [])
             if isinstance(r, dict)
         ]
         target_role_spec = next((r for r in prompt_roles if int(r.get("agent_id", -1)) == int(agent_id)), {})
         peer_role_specs = [r for r in prompt_roles if int(r.get("agent_id", -1)) != int(agent_id)]
         if generation_batches is None:
-            generation_batches = [dict(generation_batch or {"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"})]
+            generation_batches = [dict(generation_batch or {"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"})]
         generation_batches = [dict(x) for x in generation_batches if isinstance(x, dict)]
         if not generation_batches:
-            generation_batches = [{"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"}]
+            generation_batches = [{"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"}]
         if self._is_accuracy_only_mode():
             return await self._propose_accuracy_candidates(
                 agent_id=agent_id,
                 parent_prompt=parent_prompt,
-                accuracy_diagnosis=overlap_diagnosis,
+                accuracy_diagnosis=update_diagnosis,
                 num_candidates=num_candidates,
                 generation_batches=generation_batches,
             )
-        agent_pressures = overlap_diagnosis.get("per_agent_overlap_pressure", [])
-        agent_invalid_rates = overlap_diagnosis.get("per_agent_invalid_rate", [])
+        agent_pressures = update_diagnosis.get("per_agent_overlap_pressure", [])
+        agent_invalid_rates = update_diagnosis.get("per_agent_invalid_rate", [])
+        agent_error_counts = update_diagnosis.get("per_agent_error_count", [])
+        agent_team_wrong_counts = update_diagnosis.get("per_agent_team_wrong_error_count", [])
+        agent_coverage_gap_counts = update_diagnosis.get("per_agent_coverage_gap_count", [])
+        agent_useful_deficits = update_diagnosis.get("per_agent_useful_diversity_deficit", [])
         window_stats = {
-            "mean_window_overlap": overlap_diagnosis.get("mean_window_overlap", 0.0),
-            "homogeneity_overlap_threshold": overlap_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
+            "diagnosis_type": update_diagnosis.get("diagnosis_type", "reward_update"),
+            "window_vote_acc": update_diagnosis.get("window_vote_acc", update_diagnosis.get("team_accuracy", 0.0)),
+            "window_oracle_acc": update_diagnosis.get("window_oracle_acc", 0.0),
+            "window_coverage_gap": update_diagnosis.get("window_coverage_gap", 0.0),
+            "window_useful_diversity": update_diagnosis.get("window_useful_diversity", 0.0),
+            "mean_reward_pressure": update_diagnosis.get("mean_reward_pressure", 0.0),
+            "mean_window_overlap": update_diagnosis.get("mean_window_overlap", 0.0),
+            "homogeneity_overlap_threshold": update_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
             "target_overlap_pressure": agent_pressures[agent_id] if agent_id < len(agent_pressures) else 0.0,
-            "target_homogeneous_case_count": (overlap_diagnosis.get("homogeneous_case_counts", [0] * len(self.agents))[agent_id] if agent_id < len(overlap_diagnosis.get("homogeneous_case_counts", [])) else 0),
+            "target_homogeneous_case_count": (update_diagnosis.get("homogeneous_case_counts", [0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("homogeneous_case_counts", [])) else 0),
             "target_invalid_rate": agent_invalid_rates[agent_id] if agent_id < len(agent_invalid_rates) else 0.0,
+            "target_error_count": agent_error_counts[agent_id] if agent_id < len(agent_error_counts) else 0,
+            "target_team_wrong_error_count": agent_team_wrong_counts[agent_id] if agent_id < len(agent_team_wrong_counts) else 0,
+            "target_coverage_gap_count": agent_coverage_gap_counts[agent_id] if agent_id < len(agent_coverage_gap_counts) else 0,
+            "target_useful_diversity_deficit": agent_useful_deficits[agent_id] if agent_id < len(agent_useful_deficits) else 0.0,
         }
         validity_constraints = {
             "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
@@ -3042,7 +3244,7 @@ class TraceBeamSearchSystem:
                 if not isinstance(item, dict):
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
-                if not self._candidate_has_required_optimizer_fields(item):
+                if not self._candidate_has_required_optimizer_fields(item, architecture="one_shot"):
                     diagnostics["optimizer_empty_prompt_count"] += 1
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     continue
@@ -3701,7 +3903,7 @@ class TraceBeamSearchSystem:
         seen = set()
         generation_batches = self._build_case_generation_batches(agent_id, overlap_diagnosis)
         if not generation_batches:
-            generation_batches = [{"batch_type": "window_overlap_diagnosis", "cases": [], "purpose": "general window repair"}]
+            generation_batches = [{"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"}]
         requested = max(1, int(self.cfg.num_candidates_per_parent))
         optimizer_generation_records: List[Dict[str, Any]] = []
         for parent in beam:
@@ -3798,7 +4000,7 @@ class TraceBeamSearchSystem:
         num_diversity_candidates = sum(
             1
             for c in candidate_pool
-            if str(c.get("generation_batch_type", "")) in {"homogeneous_overlap_repair", "high_overlap_cases", "mixed_window_cases", "random_window", "window_overlap_diagnosis"}
+            if str(c.get("generation_batch_type", "")) in {"useful_diversity_repair", "random_window", "window_update_diagnosis"}
             and not bool(str(c.get("target_error_pattern", "")).strip())
         )
         requested_optimizer_candidates = len(beam) * requested
@@ -3825,6 +4027,7 @@ class TraceBeamSearchSystem:
                 "student_candidate_count_raw",
                 "student_candidate_count_final",
                 "student_candidate_filtered_count",
+                "student_missing_required_field_count",
             ]:
                 optimizer_generation_summary[key] += int(record.get(key, 0) or 0)
         optimizer_generation_summary["optimizer_underfilled"] = bool(optimizer_underfilled)
@@ -3842,6 +4045,7 @@ class TraceBeamSearchSystem:
             "teacher_diversity_critique",
             "student_candidate_filter_reasons",
             "student_all_candidates_filtered",
+            "student_missing_required_fields",
         ]:
             values = [record.get(key) for record in optimizer_generation_records if isinstance(record, dict) and record.get(key) not in (None, "", [])]
             if values:
@@ -3924,6 +4128,7 @@ class TraceBeamSearchSystem:
             self.update_logs.append(
                 {
                     **self._base_log_fields(),
+                    "event": "candidate_evaluated",
                     "epoch": epoch_id,
                     "step": step_id,
                     "agent_id": agent_id,
@@ -4008,7 +4213,7 @@ class TraceBeamSearchSystem:
                     "optimizer_architecture": str(item_diagnostics.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", "one_shot"))),
                     "teacher_question": item_diagnostics.get("teacher_question", ""),
                     "teacher_question_approved": bool(item_diagnostics.get("teacher_question_approved", False)),
-                    "teacher_question_score": float(item_diagnostics.get("teacher_question_score", 0.0) or 0.0),
+                    "teacher_question_score": self._safe_float(item_diagnostics.get("teacher_question_score", 0.0), 0.0),
                     "teacher_critic_rounds": int(item_diagnostics.get("teacher_critic_rounds", 0) or 0),
                     "teacher_quality_critique": str(item_diagnostics.get("teacher_quality_critique", "")),
                     "teacher_specificity_critique": str(item_diagnostics.get("teacher_specificity_critique", "")),
@@ -4021,6 +4226,8 @@ class TraceBeamSearchSystem:
                     "student_candidate_filtered_count": int(item_diagnostics.get("student_candidate_filtered_count", 0) or 0),
                     "student_candidate_filter_reasons": item_diagnostics.get("student_candidate_filter_reasons", []),
                     "student_all_candidates_filtered": bool(item_diagnostics.get("student_all_candidates_filtered", False)),
+                    "student_missing_required_field_count": int(item_diagnostics.get("student_missing_required_field_count", 0) or 0),
+                    "student_missing_required_fields": item_diagnostics.get("student_missing_required_fields", []),
                     "diversity_contribution": str(item.get("diversity_contribution", "")),
                     "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
                     "task_alignment_rule": str(item.get("task_alignment_rule", "")),
@@ -4151,7 +4358,7 @@ class TraceBeamSearchSystem:
             selected = self.select_reward_agents_for_update(diagnosis, metrics)
             no_selection_reason = "no_reward_relevant_agent"
         else:
-            diagnosis = self._window_overlap_diagnosis(self.recent_window_records)
+            diagnosis = self._window_update_diagnosis(self.recent_window_records)
             selected = self.select_reward_agents_for_update(diagnosis, metrics)
             no_selection_reason = "no_reward_relevant_agent"
         if not selected:
@@ -4195,6 +4402,7 @@ class TraceBeamSearchSystem:
             "optimizer_redundant_filtered_count",
             "optimizer_schema_filtered_count",
             "optimizer_final_candidate_count",
+            "student_missing_required_field_count",
         ]
         optimizer_generation_diagnostics = {
             key: int(sum(int(s.get(key, 0) or 0) for s in update_summaries))
@@ -4219,6 +4427,7 @@ class TraceBeamSearchSystem:
             "student_candidate_filtered_count",
             "student_candidate_filter_reasons",
             "student_all_candidates_filtered",
+            "student_missing_required_fields",
         ]
         optimizer_generation_metadata = {}
         for key in metadata_keys:

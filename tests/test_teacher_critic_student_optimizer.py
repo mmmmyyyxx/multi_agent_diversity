@@ -260,3 +260,111 @@ def test_teacher_critic_student_no_template_fallback():
     assert candidates == []
     assert diagnostics["student_candidate_count_raw"] == 0
     assert diagnostics["optimizer_final_candidate_count"] == 0
+
+
+def test_teacher_critic_student_rejects_missing_student_fields():
+    system = _system()
+
+    incomplete = {
+        "candidate_prompt": "Check constraints and answer once.",
+        "target_error_pattern": "missed_constraint",
+    }
+
+    missing = system._missing_optimizer_fields(incomplete, architecture="teacher_critic_student")
+
+    assert "student_interpretation_of_question" in missing
+    assert "diversity_contribution" in missing
+    assert "error_correlation_reduction" in missing
+    assert "task_alignment_rule" in missing
+    assert "peer_redundancy_avoidance" in missing
+    assert "risk_control" in missing
+    assert not system._candidate_has_required_optimizer_fields(incomplete, architecture="teacher_critic_student")
+
+
+def test_one_shot_schema_remains_prompt_only():
+    system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
+
+    item = {"candidate_prompt": "Check constraints and answer once."}
+
+    assert system._candidate_has_required_optimizer_fields(item, architecture="one_shot")
+    assert system._missing_optimizer_fields(item, architecture="one_shot") == []
+
+
+def test_student_missing_fields_filtered_with_diagnostics():
+    system = _system()
+
+    async def fake_approved(**kwargs):
+        return {
+            "approved": True,
+            "teacher_question": {"socratic_guiding_question": "Which abstract verification should be enforced?"},
+            "critic_reviews": [{"passed": True, "score": 0.9}],
+            "teacher_critic_rounds": 1,
+            "teacher_rewrite_count": 0,
+        }
+
+    async def fake_student(**kwargs):
+        return [
+            {
+                "candidate_prompt": "Check constraints and answer once.",
+                "target_error_pattern": "missed_constraint",
+            }
+        ]
+
+    system.generate_approved_teacher_question = fake_approved
+    system.generate_student_candidates = fake_student
+
+    candidates = asyncio.run(
+        system.propose_candidates_teacher_critic_student(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis=_diagnosis(),
+            num_candidates=1,
+            generation_batches=_batch(),
+        )
+    )
+
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+
+    assert candidates == []
+    assert diagnostics["student_candidate_count_raw"] == 1
+    assert diagnostics["student_candidate_count_final"] == 0
+    assert diagnostics["student_all_candidates_filtered"] is True
+    assert diagnostics["optimizer_schema_filtered_count"] >= 1
+    assert "diversity_contribution" in diagnostics["student_missing_required_fields"]
+
+
+def test_safe_float_parses_critic_score_strings():
+    system = _system()
+
+    assert system._safe_float("0.82/1", 0.0) == 0.82
+    assert system._safe_float("score: 0.75", 0.0) == 0.75
+    assert system._safe_float("0.91 (pass)", 0.0) == 0.91
+    assert system._safe_float(None, 0.3) == 0.3
+    assert system._safe_float("high", 0.0) == 0.0
+
+
+def test_teacher_question_rewrite_passes_with_string_score():
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=1))
+    calls = {"critic": 0, "rewrite": 0}
+
+    async def fake_teacher(*args, **kwargs):
+        return {"socratic_guiding_question": "generic"}
+
+    async def fake_critic(*args, **kwargs):
+        calls["critic"] += 1
+        if calls["critic"] == 1:
+            return {"passed": False, "score": "0.2/1", "rewrite_instruction": "make it specific"}
+        return {"passed": True, "score": "score: 0.88", "quality_critique": "specific"}
+
+    async def fake_rewrite(*args, **kwargs):
+        calls["rewrite"] += 1
+        return {"socratic_guiding_question": "Which abstract constraint verification should the Student enforce?"}
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {"diagnostic_focus": {}}, 1))
+
+    assert approved["approved"] is True
+    assert calls["rewrite"] == 1

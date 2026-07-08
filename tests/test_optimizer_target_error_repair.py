@@ -39,7 +39,7 @@ def _window_record_with_target_error():
 
 def test_target_error_generation_batch_created():
     system = _system_without_init()
-    diagnosis = system._window_overlap_diagnosis([_window_record_with_target_error()])
+    diagnosis = system._window_update_diagnosis([_window_record_with_target_error()])
 
     batches = system._build_case_generation_batches(agent_id=0, diagnosis=diagnosis)
 
@@ -47,6 +47,29 @@ def test_target_error_generation_batch_created():
     assert target_batches
     assert target_batches[0]["cases"][0]["case_type"] == "target_agent_wrong_and_peer_correct"
     assert target_batches[0]["cases"][0]["error_pattern"]
+
+
+def test_window_update_diagnosis_exposes_reward_relevant_signals():
+    system = _system_without_init()
+    record = _window_record_with_target_error()
+    record["metrics"].update(
+        {
+            "vote_correct": 0,
+            "any_correct": 1,
+            "useful_diversity": 0.25,
+            "mean_embedding_overlap": 0.9,
+        }
+    )
+
+    diagnosis = system._window_update_diagnosis([record])
+
+    assert diagnosis["diagnosis_type"] == "reward_update"
+    assert diagnosis["window_vote_acc"] == 0.0
+    assert diagnosis["window_oracle_acc"] == 1.0
+    assert diagnosis["window_coverage_gap"] == 1.0
+    assert diagnosis["window_useful_diversity"] == 0.25
+    assert diagnosis["per_agent_coverage_gap_count"] == [0, 1, 0]
+    assert diagnosis["per_agent_useful_diversity_deficit"][1] == 0.75
 
 
 def test_optimizer_prompt_prioritizes_accuracy_repair():
@@ -169,7 +192,7 @@ def test_no_gold_leakage_in_optimizer_payload():
     record = _window_record_with_target_error()
     record["question"] = "Which private option text should never be copied?"
     record["gold"] = "B"
-    diagnosis = system._window_overlap_diagnosis([record])
+    diagnosis = system._window_update_diagnosis([record])
     batch = system._build_case_generation_batches(agent_id=0, diagnosis=diagnosis)[0]
     payloads = [system._optimizer_case_payload(c) for c in batch["cases"]]
     text = json.dumps(payloads, ensure_ascii=False)
