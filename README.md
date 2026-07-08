@@ -149,7 +149,7 @@ else:
 
 - `guarded_diversity`：默认推荐，准确率约束下优化 trace diversity。
 - `accuracy_only`：消融模式，按被更新 target agent 自身准确率选择候选，同时记录 team vote accuracy。
-- `coverage_useful_diversity`：奖励 target-agent accuracy、oracle coverage gain 和 useful diversity；`coverage_rescue_diversity` 是兼容旧实验的 deprecated alias。
+- `coverage_useful_diversity`：奖励 target-agent accuracy、oracle coverage gain 和 useful diversity。
 
 `update_logs.jsonl` 会记录 guard 相关字段：
 
@@ -229,6 +229,18 @@ Teacher-Critic-Student 的流程：
 这个 optimizer 不使用预定义任务专属角色，也不默认把 voting failure 作为 Teacher 的主要输入。Voting 是下游聚合方式之一；本步骤优化的是 prompt quality、task alignment、target-agent accuracy 和 useful diversity。
 
 相关日志字段包括 `optimizer_architecture`、`teacher_question`、`teacher_question_approved`、`teacher_question_score`、`teacher_critic_rounds`、`teacher_rewrite_count`、`student_candidate_count_raw`、`student_candidate_count_final`、`student_candidate_filtered_count`、`student_all_candidates_filtered`、`diversity_contribution`、`error_correlation_reduction`、`task_alignment_rule` 和 `peer_redundancy_avoidance`。
+
+### Student Failure Diagnostics
+
+When `teacher_question_approved=true` but no optimizer candidates are produced, `update_logs.jsonl` records `student_failure_stage` and related fields to distinguish raw empty output, JSON parse failure, missing `candidates`, wrong candidate type, empty candidate list, refusal/explanation text, schema filtering, redundant filtering, and mixed filtering.
+
+Failure stages include `raw_empty`, `json_parse_failed`, `missing_candidates_key`, `candidates_not_list`, `empty_candidates_list`, `refusal_or_explanation`, `all_candidates_filtered_schema`, `all_candidates_filtered_redundant`, and `all_candidates_filtered_mixed`.
+
+Summarize failures with:
+
+```bash
+python scripts/analyze_student_failures.py <run_dir>
+```
 
 ## Majority Vote Tie-Break
 
@@ -488,7 +500,7 @@ It accepts common MARS summary aliases such as `task_id`/`task`/`task_name`/`dat
 
 ## Coverage Useful Diversity Reward
 
-`coverage_useful_diversity` is an optional reward mode for making prompt evolution prefer useful diversity instead of raw disagreement. Its reward keeps only four active components: target-agent accuracy, oracle coverage gain, useful diversity, and an invalid-output guard. `rescue_rate` is still logged as a diagnostic, but it is not used in the reward. `coverage_rescue_diversity` remains as a deprecated alias.
+`coverage_useful_diversity` is an optional reward mode for making prompt evolution prefer useful diversity instead of raw disagreement. Its reward keeps only four active components: target-agent accuracy, oracle coverage gain, useful diversity, and an invalid-output guard. `rescue_rate` is still logged as a diagnostic, but it is not used in the reward.
 
 Candidate evaluation compares the current active prompts against the candidate-replaced prompts on the same eval batch. It logs `baseline_oracle_acc`, `candidate_oracle_acc`, `coverage_delta`, `rescue_rate`, `useful_diversity`, `rescue_useful_diversity`, `baseline_target_accuracy`, `candidate_target_accuracy`, and `invalid_guard_passed`.
 

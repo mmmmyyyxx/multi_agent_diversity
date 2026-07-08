@@ -1,3 +1,5 @@
+import pytest
+
 from multi_dataset_diverse_rl.config import Config, build_parser
 
 
@@ -33,7 +35,8 @@ def test_cli_defaults_match_config():
     assert bool(args.teacher_critic_use_voting_failure) == defaults.teacher_critic_use_voting_failure
 
 
-def test_parser_accepts_coverage_useful_diversity_and_deprecated_alias():
+def test_parser_accepts_coverage_useful_diversity_and_rejects_removed_alias():
     parser = build_parser()
     assert parser.parse_args(["--reward_mode", "coverage_useful_diversity"]).reward_mode == "coverage_useful_diversity"
-    assert parser.parse_args(["--reward_mode", "coverage_rescue_diversity"]).reward_mode == "coverage_rescue_diversity"
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--reward_mode", "coverage_rescue_diversity"])

@@ -271,7 +271,7 @@ Candidate eval 支持：
 
 ## 11. Coverage Useful Diversity Reward
 
-当前主 reward 是 `coverage_useful_diversity`。它奖励的是有用互补性，而不是裸 diversity。`coverage_rescue_diversity` 作为 deprecated alias 保留兼容。
+当前主 reward 是 `coverage_useful_diversity`。它奖励的是有用互补性，而不是裸 diversity。
 
 Batch 级聚合指标：
 
@@ -532,4 +532,3 @@ scripts/task_level_accuracy_utils.py
 - Candidate evaluation 仍有采样方差，需要 fixed pool、stratified sampling 和多 seed。
 - `weighted_vote` 是轻量聚合规则，不是 learned verifier。
 - task-level comparison 依赖本仓库 manifest；如果 manifest 未覆盖所有目标任务，只能称为 subset comparison。
-

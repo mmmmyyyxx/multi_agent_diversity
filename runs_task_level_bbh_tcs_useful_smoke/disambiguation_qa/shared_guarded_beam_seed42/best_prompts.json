@@ -1,0 +1,32 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote+oracle+useful_div-invalid",
+  "best_validation_score": 0.4989879454473654,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "d3a9b4b47c40",
+      "prompt": "Assume the role of a logical filter. Given a sentence with a pronoun, enumerate all plausible antecedents. For each, check if it satisfies every explicit constraint (gender, number, semantic role). After applying constraints, the set of possible antecedents should narrow to one. If ambiguity remains, use a tie-breaking rule: prefer the antecedent that is more contextually salient. Output only the letter of the chosen antecedent. Keep your reasoning in a bullet-style list for clarity."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "97a25601971e",
+      "prompt": "You are a careful reasoning solver. For each candidate option, identify the specific clues in the text that support or contradict it. Then, compare the options by weighing these clues. Eliminate options with weaker support. Finally, select the option with the strongest textual support. Provide a detailed trace of your elimination and comparison process, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "6a8d59ea0cb5",
+      "prompt": "You are a methodical solver. For each pronoun disambiguation task, first identify all nouns that could be the pronoun's antecedent. For each noun, note its gender, number, and grammatical role in the sentence. Then, compare these with the pronoun's features. Eliminate any noun that does not match. If only one remains, select it. If multiple remain, choose the one that is most recently mentioned. Output the option letter of the chosen antecedent."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

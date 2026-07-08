@@ -58,6 +58,23 @@ def _batch():
     ]
 
 
+def _valid_student_candidate():
+    return {
+        "candidate_prompt": "Use an abstract constraint audit, compare alternatives, then provide one final answer.",
+        "student_interpretation_of_question": "add constraint audit",
+        "target_error_pattern": "missed constraint",
+        "accuracy_repair_rule": "audit constraints before answer",
+        "diversity_contribution": "constraint-first route",
+        "error_correlation_reduction": "breaks shared omission pattern",
+        "task_alignment_rule": "respect answer format",
+        "peer_redundancy_avoidance": "avoid peer wording",
+        "expected_accuracy_effect": "fewer constraint mistakes",
+        "expected_diversity_effect": "different valid route",
+        "risk_control": "stay concise",
+        "rationale": "grounded in diagnostics",
+    }
+
+
 def test_teacher_question_rejected_no_student_call():
     system = _system()
     called = {"student": 0}
@@ -136,22 +153,7 @@ def test_student_candidates_include_teacher_metadata():
         }
 
     async def fake_student(**kwargs):
-        return [
-            {
-                "candidate_prompt": "Use an abstract constraint audit, compare alternatives, then provide one final answer.",
-                "student_interpretation_of_question": "add constraint audit",
-                "target_error_pattern": "missed constraint",
-                "accuracy_repair_rule": "audit constraints before answer",
-                "diversity_contribution": "constraint-first route",
-                "error_correlation_reduction": "breaks shared omission pattern",
-                "task_alignment_rule": "respect answer format",
-                "peer_redundancy_avoidance": "avoid peer wording",
-                "expected_accuracy_effect": "fewer constraint mistakes",
-                "expected_diversity_effect": "different valid route",
-                "risk_control": "stay concise",
-                "rationale": "grounded in diagnostics",
-            }
-        ]
+        return [_valid_student_candidate()]
 
     system.generate_approved_teacher_question = fake_approved
     system.generate_student_candidates = fake_student
@@ -368,3 +370,181 @@ def test_teacher_question_rewrite_passes_with_string_score():
 
     assert approved["approved"] is True
     assert calls["rewrite"] == 1
+
+
+def test_student_empty_response_diagnostics():
+    system = _system()
+
+    async def fake_chat(**kwargs):
+        return ""
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_raw_response_empty"] is True
+    assert diag["student_failure_stage"] == "raw_empty"
+
+
+def test_student_non_json_response_diagnostics():
+    system = _system()
+
+    async def fake_chat(**kwargs):
+        return "I will create better prompts, but here is an explanation first..."
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_json_parse_failed"] is True
+    assert diag["student_refusal_or_explanation"] is True
+    assert diag["student_failure_stage"] in {"json_parse_failed", "refusal_or_explanation"}
+
+
+def test_student_json_missing_candidates_key_diagnostics():
+    system = _system()
+
+    async def fake_chat(**kwargs):
+        return json.dumps({"notes": "no candidates here"})
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_json_has_candidates_key"] is False
+    assert diag["student_failure_stage"] == "missing_candidates_key"
+
+
+def test_student_candidates_not_list_diagnostics():
+    system = _system()
+
+    async def fake_chat(**kwargs):
+        return json.dumps({"candidates": {"candidate_prompt": "bad"}})
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_json_has_candidates_key"] is True
+    assert diag["student_candidates_is_list"] is False
+    assert diag["student_failure_stage"] == "candidates_not_list"
+
+
+def test_student_candidates_empty_list_diagnostics():
+    system = _system()
+
+    async def fake_chat(**kwargs):
+        return json.dumps({"candidates": []})
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert result["candidates"] == []
+    assert diag["student_candidates_is_list"] is True
+    assert diag["student_candidates_empty_list"] is True
+    assert diag["student_failure_stage"] == "empty_candidates_list"
+
+
+def test_student_all_candidates_filtered_by_schema_failure_stage():
+    system = _system()
+
+    async def fake_approved(**kwargs):
+        return {
+            "approved": True,
+            "teacher_question": {"socratic_guiding_question": "Which abstract verification should be enforced?"},
+            "critic_reviews": [{"passed": True, "score": 0.9}],
+            "teacher_critic_rounds": 1,
+            "teacher_rewrite_count": 0,
+        }
+
+    async def fake_student(**kwargs):
+        return {
+            "candidates": [
+                {
+                    "candidate_prompt": "Check constraints and answer once.",
+                    "target_error_pattern": "missed_constraint",
+                }
+            ],
+            "diagnostics": {
+                "student_raw_response_empty": False,
+                "student_raw_response_preview": '{"candidates": [...]}',
+                "student_json_parse_failed": False,
+                "student_json_parse_error": "",
+                "student_json_has_candidates_key": True,
+                "student_candidates_is_list": True,
+                "student_candidates_empty_list": False,
+                "student_refusal_or_explanation": False,
+                "student_failure_stage": "none",
+            },
+        }
+
+    system.generate_approved_teacher_question = fake_approved
+    system.generate_student_candidates = fake_student
+    candidates = asyncio.run(
+        system.propose_candidates_teacher_critic_student(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis=_diagnosis(),
+            num_candidates=1,
+            generation_batches=_batch(),
+        )
+    )
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+
+    assert candidates == []
+    assert diagnostics["student_candidate_count_raw"] == 1
+    assert diagnostics["student_candidate_count_final"] == 0
+    assert diagnostics["student_all_candidates_filtered"] is True
+    assert diagnostics["student_failure_stage"] == "all_candidates_filtered_schema"
+
+
+def test_valid_student_candidate_has_no_failure_stage():
+    system = _system()
+
+    async def fake_approved(**kwargs):
+        return {
+            "approved": True,
+            "teacher_question": {"socratic_guiding_question": "Which abstract verification should be enforced?"},
+            "critic_reviews": [{"passed": True, "score": 0.9}],
+            "teacher_critic_rounds": 1,
+            "teacher_rewrite_count": 0,
+        }
+
+    async def fake_student(**kwargs):
+        return {
+            "candidates": [_valid_student_candidate()],
+            "diagnostics": {
+                "student_raw_response_empty": False,
+                "student_raw_response_preview": '{"candidates": [...]}',
+                "student_json_parse_failed": False,
+                "student_json_parse_error": "",
+                "student_json_has_candidates_key": True,
+                "student_candidates_is_list": True,
+                "student_candidates_empty_list": False,
+                "student_refusal_or_explanation": False,
+                "student_failure_stage": "none",
+            },
+        }
+
+    system.generate_approved_teacher_question = fake_approved
+    system.generate_student_candidates = fake_student
+    candidates = asyncio.run(
+        system.propose_candidates_teacher_critic_student(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis=_diagnosis(),
+            num_candidates=1,
+            generation_batches=_batch(),
+        )
+    )
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+
+    assert len(candidates) == 1
+    assert diagnostics["student_candidate_count_raw"] == 1
+    assert diagnostics["student_candidate_count_final"] == 1
+    assert diagnostics["student_failure_stage"] in {"", "none"}

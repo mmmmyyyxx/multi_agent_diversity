@@ -116,13 +116,7 @@ class TraceBeamSearchSystem:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
 
     def _is_coverage_useful_diversity_mode(self) -> bool:
-        return str(getattr(self.cfg, "reward_mode", "")).lower() in {
-            "coverage_useful_diversity",
-            "coverage_rescue_diversity",
-        }
-
-    def _is_coverage_rescue_diversity_mode(self) -> bool:
-        return self._is_coverage_useful_diversity_mode()
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "coverage_useful_diversity"
 
     def _uses_baseline_candidate_metrics(self) -> bool:
         return self._is_guarded_reward_mode() or self._is_coverage_useful_diversity_mode()
@@ -669,6 +663,15 @@ class TraceBeamSearchSystem:
             "student_all_candidates_filtered": False,
             "student_missing_required_field_count": 0,
             "student_missing_required_fields": [],
+            "student_raw_response_empty": False,
+            "student_raw_response_preview": "",
+            "student_json_parse_failed": False,
+            "student_json_parse_error": "",
+            "student_json_has_candidates_key": False,
+            "student_candidates_is_list": False,
+            "student_candidates_empty_list": False,
+            "student_refusal_or_explanation": False,
+            "student_failure_stage": "",
         }
 
     def _record_optimizer_generation_diagnostics(
@@ -786,8 +789,31 @@ class TraceBeamSearchSystem:
             "student_all_candidates_filtered",
             "student_missing_required_field_count",
             "student_missing_required_fields",
+            "student_raw_response_empty",
+            "student_raw_response_preview",
+            "student_json_parse_failed",
+            "student_json_parse_error",
+            "student_json_has_candidates_key",
+            "student_candidates_is_list",
+            "student_candidates_empty_list",
+            "student_refusal_or_explanation",
+            "student_failure_stage",
         ]
         return {key: diagnostics.get(key, self._empty_optimizer_generation_diagnostics().get(key)) for key in keys}
+
+    def _student_failure_log_fields(self, diagnostics: Dict[str, Any]) -> Dict[str, Any]:
+        diagnostics = diagnostics or {}
+        return {
+            "student_raw_response_empty": bool(diagnostics.get("student_raw_response_empty", False)),
+            "student_raw_response_preview": str(diagnostics.get("student_raw_response_preview", ""))[:1000],
+            "student_json_parse_failed": bool(diagnostics.get("student_json_parse_failed", False)),
+            "student_json_parse_error": str(diagnostics.get("student_json_parse_error", ""))[:500],
+            "student_json_has_candidates_key": bool(diagnostics.get("student_json_has_candidates_key", False)),
+            "student_candidates_is_list": bool(diagnostics.get("student_candidates_is_list", False)),
+            "student_candidates_empty_list": bool(diagnostics.get("student_candidates_empty_list", False)),
+            "student_refusal_or_explanation": bool(diagnostics.get("student_refusal_or_explanation", False)),
+            "student_failure_stage": str(diagnostics.get("student_failure_stage", "")),
+        }
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
         accuracy_repair_roles = [
@@ -2832,7 +2858,7 @@ class TraceBeamSearchSystem:
         approved_teacher_question: Dict[str, Any],
         teacher_context: Dict[str, Any],
         num_candidates: int,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         system_prompt = (
             "You are the Student in a Teacher-Critic-Student prompt optimization system.\n\n"
             "You will receive:\n- the current parent prompt\n- an approved Socratic guiding question from the Teacher\n"
@@ -2865,9 +2891,60 @@ class TraceBeamSearchSystem:
             max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
             stage=f"student_optimizer_agent_{agent_id}",
         )
-        obj = extract_json_obj(text) or {}
-        candidates = obj.get("candidates", []) if isinstance(obj, dict) else []
-        return candidates if isinstance(candidates, list) else []
+        raw_text = text or ""
+        raw_preview = normalize_spaces(raw_text)[:1000]
+        diagnostics = {
+            "student_raw_response_empty": not bool(raw_text.strip()),
+            "student_raw_response_preview": raw_preview,
+            "student_json_parse_failed": False,
+            "student_json_parse_error": "",
+            "student_json_has_candidates_key": False,
+            "student_candidates_is_list": False,
+            "student_candidates_empty_list": False,
+            "student_refusal_or_explanation": False,
+            "student_failure_stage": "none",
+        }
+        if diagnostics["student_raw_response_empty"]:
+            diagnostics["student_failure_stage"] = "raw_empty"
+            return {"candidates": [], "diagnostics": diagnostics}
+
+        obj = extract_json_obj(raw_text)
+        if obj is None or not isinstance(obj, dict):
+            diagnostics["student_json_parse_failed"] = True
+            diagnostics["student_failure_stage"] = "json_parse_failed"
+            lowered = raw_preview.lower()
+            refusal_markers = [
+                "i cannot",
+                "i can't",
+                "unable to",
+                "cannot comply",
+                "sorry",
+                "as an ai",
+                "instead",
+                "here is",
+                "i will",
+            ]
+            diagnostics["student_refusal_or_explanation"] = any(marker in lowered for marker in refusal_markers)
+            if diagnostics["student_refusal_or_explanation"]:
+                diagnostics["student_failure_stage"] = "refusal_or_explanation"
+            return {"candidates": [], "diagnostics": diagnostics}
+
+        diagnostics["student_json_has_candidates_key"] = "candidates" in obj
+        if "candidates" not in obj:
+            diagnostics["student_failure_stage"] = "missing_candidates_key"
+            return {"candidates": [], "diagnostics": diagnostics}
+
+        candidates = obj.get("candidates", None)
+        if not isinstance(candidates, list):
+            diagnostics["student_candidates_is_list"] = False
+            diagnostics["student_failure_stage"] = "candidates_not_list"
+            return {"candidates": [], "diagnostics": diagnostics}
+
+        diagnostics["student_candidates_is_list"] = True
+        diagnostics["student_candidates_empty_list"] = len(candidates) == 0
+        if len(candidates) == 0:
+            diagnostics["student_failure_stage"] = "empty_candidates_list"
+        return {"candidates": candidates, "diagnostics": diagnostics}
 
     async def propose_candidates_teacher_critic_student(
         self,
@@ -2966,13 +3043,20 @@ class TraceBeamSearchSystem:
             self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
             return []
 
-        student_candidates = await self.generate_student_candidates(
+        student_result = await self.generate_student_candidates(
             agent_id=agent_id,
             parent_prompt=parent_prompt,
             approved_teacher_question=approved,
             teacher_context=teacher_context,
             num_candidates=num_candidates,
         )
+        if isinstance(student_result, dict):
+            student_candidates = student_result.get("candidates", [])
+            student_diag = student_result.get("diagnostics", {})
+            if isinstance(student_diag, dict):
+                diagnostics.update(student_diag)
+        else:
+            student_candidates = student_result
         diagnostics["student_candidate_count_raw"] = len(student_candidates) if isinstance(student_candidates, list) else 0
         diagnostics["optimizer_raw_candidate_count"] = int(diagnostics["student_candidate_count_raw"])
         parsed: List[Dict[str, Any]] = []
@@ -3043,6 +3127,22 @@ class TraceBeamSearchSystem:
         diagnostics["student_candidate_filtered_count"] = max(0, int(diagnostics["student_candidate_count_raw"]) - len(parsed))
         diagnostics["student_candidate_filter_reasons"] = filter_reasons
         diagnostics["student_all_candidates_filtered"] = bool(int(diagnostics["student_candidate_count_raw"]) > 0 and not parsed)
+        if diagnostics["student_all_candidates_filtered"]:
+            has_schema = any(
+                "missing_required" in str(reason)
+                or "schema" in str(reason)
+                or "empty_prompt" in str(reason)
+                for reason in filter_reasons
+            )
+            has_redundant = any("redundant" in str(reason) for reason in filter_reasons)
+            if has_schema and has_redundant:
+                diagnostics["student_failure_stage"] = "all_candidates_filtered_mixed"
+            elif has_schema:
+                diagnostics["student_failure_stage"] = "all_candidates_filtered_schema"
+            elif has_redundant:
+                diagnostics["student_failure_stage"] = "all_candidates_filtered_redundant"
+            else:
+                diagnostics["student_failure_stage"] = "unknown"
         diagnostics["optimizer_final_candidate_count"] = len(parsed)
         diagnostics["optimizer_underfilled"] = bool(len(parsed) < int(num_candidates))
         diagnostics = self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
@@ -3574,9 +3674,6 @@ class TraceBeamSearchSystem:
         result.update(self._effective_reward_log_fields(weights))
         return result
 
-    def _candidate_reward_coverage_rescue_diversity(self, **kwargs) -> Dict[str, Any]:
-        return self._candidate_reward_coverage_useful_diversity(**kwargs)
-
     async def _evaluate_candidate_prompt_accuracy_only(
         self,
         agent_id: int,
@@ -4030,6 +4127,15 @@ class TraceBeamSearchSystem:
                 "student_missing_required_field_count",
             ]:
                 optimizer_generation_summary[key] += int(record.get(key, 0) or 0)
+            for key in [
+                "student_raw_response_empty",
+                "student_json_parse_failed",
+                "student_json_has_candidates_key",
+                "student_candidates_is_list",
+                "student_candidates_empty_list",
+                "student_refusal_or_explanation",
+            ]:
+                optimizer_generation_summary[key] = bool(optimizer_generation_summary.get(key, False) or record.get(key, False))
         optimizer_generation_summary["optimizer_underfilled"] = bool(optimizer_underfilled)
         for key in [
             "optimizer_architecture",
@@ -4046,6 +4152,9 @@ class TraceBeamSearchSystem:
             "student_candidate_filter_reasons",
             "student_all_candidates_filtered",
             "student_missing_required_fields",
+            "student_raw_response_preview",
+            "student_json_parse_error",
+            "student_failure_stage",
         ]:
             values = [record.get(key) for record in optimizer_generation_records if isinstance(record, dict) and record.get(key) not in (None, "", [])]
             if values:
@@ -4228,6 +4337,7 @@ class TraceBeamSearchSystem:
                     "student_all_candidates_filtered": bool(item_diagnostics.get("student_all_candidates_filtered", False)),
                     "student_missing_required_field_count": int(item_diagnostics.get("student_missing_required_field_count", 0) or 0),
                     "student_missing_required_fields": item_diagnostics.get("student_missing_required_fields", []),
+                    **self._student_failure_log_fields(item_diagnostics),
                     "diversity_contribution": str(item.get("diversity_contribution", "")),
                     "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
                     "task_alignment_rule": str(item.get("task_alignment_rule", "")),
@@ -4270,6 +4380,7 @@ class TraceBeamSearchSystem:
             "top1_candidate_pool_source": top1_candidate_pool_source,
             "active_prompt_changed": bool(changed),
             **optimizer_generation_summary,
+            **self._student_failure_log_fields(optimizer_generation_summary),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
         }
@@ -4294,6 +4405,7 @@ class TraceBeamSearchSystem:
                 "num_fallback_candidates": int(num_fallback_candidates),
                 "num_existing_beam_candidates": int(num_existing_beam_candidates),
                 **optimizer_generation_summary,
+                **self._student_failure_log_fields(optimizer_generation_summary),
             }
         )
         agent.last_update_record = summary
@@ -4428,6 +4540,15 @@ class TraceBeamSearchSystem:
             "student_candidate_filter_reasons",
             "student_all_candidates_filtered",
             "student_missing_required_fields",
+            "student_raw_response_empty",
+            "student_raw_response_preview",
+            "student_json_parse_failed",
+            "student_json_parse_error",
+            "student_json_has_candidates_key",
+            "student_candidates_is_list",
+            "student_candidates_empty_list",
+            "student_refusal_or_explanation",
+            "student_failure_stage",
         ]
         optimizer_generation_metadata = {}
         for key in metadata_keys:

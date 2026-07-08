@@ -1,0 +1,146 @@
+{
+  "comparison_task_id": "disambiguation_qa",
+  "benchmark": "BBH",
+  "answer_format": "option_letter",
+  "task_type": "bbh",
+  "dataset_format": "mars",
+  "agent_model": "deepseek-chat",
+  "optimizer_model": "deepseek-v4-flash",
+  "evaluator_model": "deepseek-v4-flash",
+  "search_mode": "evolutionary_beam",
+  "reward_mode": "guarded_diversity",
+  "diversity_metric": "trace_embedding",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "agents": [
+    {
+      "agent_id": 0,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": null,
+          "metrics": {},
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0
+    },
+    {
+      "agent_id": 1,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": null,
+          "metrics": {},
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0
+    },
+    {
+      "agent_id": 2,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": null,
+          "metrics": {},
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0
+    },
+    {
+      "agent_id": 3,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": null,
+          "metrics": {},
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0
+    },
+    {
+      "agent_id": 4,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": null,
+          "metrics": {},
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0
+    }
+  ],
+  "extra": {
+    "epoch": 1,
+    "train": {},
+    "test": {
+      "size": 80,
+      "num_test_samples": 80,
+      "vote_acc": 0.4375,
+      "majority_vote_acc": 0.4375,
+      "weighted_vote_acc": 0.4375,
+      "mean_individual_acc": 0.4275,
+      "best_individual_acc": 0.4625,
+      "per_agent_acc": [
+        0.4,
+        0.425,
+        0.45,
+        0.4,
+        0.4625
+      ],
+      "oracle_acc": 0.5375,
+      "aggregation_gap": 0.09999999999999998,
+      "rescue_available_rate": 0.1,
+      "correct_disagreement_rate": 0.2375,
+      "mean_useful_diversity": 0.017263406266768776,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.033664083406329155,
+      "mean_embedding_overlap": 0.9663359165936708,
+      "mean_invalid_rate": 0.0
+    }
+  }
+}
