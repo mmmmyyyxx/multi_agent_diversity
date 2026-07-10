@@ -544,3 +544,5 @@ For task-level experiments, use both:
 ```
 
 `resume_completed` skips complete run directories and rebuilds summary files. `resume_from_checkpoint` continues incomplete run directories. The resume granularity is batch/epoch-level; an in-flight API batch can still be repeated after an interruption, and recorded solver rollouts are reused when enabled.
+
+If an existing checkpoint was written with incompatible resume-critical settings, resume fails fast and prints the mismatched fields. It does not silently restart from step 0 in the same run directory.

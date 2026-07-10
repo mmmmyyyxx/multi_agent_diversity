@@ -1,6 +1,15 @@
 import json
 
-from multi_dataset_diverse_rl.cli import build_training_checkpoint, checkpoint_compatible, restore_cost_summary, restore_system_state
+import pytest
+
+from multi_dataset_diverse_rl.cli import (
+    abort_incompatible_checkpoint,
+    build_training_checkpoint,
+    checkpoint_compatible,
+    checkpoint_incompatibility_reasons,
+    restore_cost_summary,
+    restore_system_state,
+)
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
@@ -53,6 +62,28 @@ def test_training_checkpoint_rejects_changed_config_signature(tmp_path):
     changed_cfg = Config(out_dir=str(tmp_path), agents=2, train_size=4, epochs=2, seed=123, reward_mode="accuracy_only")
 
     assert checkpoint_compatible(payload, changed_cfg, [None, None, None, None]) is False
+
+
+def test_training_checkpoint_reports_changed_config_signature(tmp_path):
+    system = _system(tmp_path)
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    changed_cfg = Config(out_dir=str(tmp_path), agents=2, train_size=4, epochs=2, seed=123, reward_mode="accuracy_only")
+
+    reasons = checkpoint_incompatibility_reasons(payload, changed_cfg, [None, None, None, None])
+
+    assert any("reward_mode" in reason for reason in reasons)
+
+
+def test_abort_incompatible_checkpoint_exits_nonzero(tmp_path, capsys):
+    cfg = Config(out_dir=str(tmp_path))
+
+    with pytest.raises(SystemExit) as exc:
+        abort_incompatible_checkpoint(cfg, ["reward_mode: checkpoint='guarded_diversity' current='accuracy_only'"])
+
+    assert exc.value.code == 2
+    captured = capsys.readouterr()
+    assert "Incompatible training_checkpoint.json" in captured.out
+    assert "reward_mode" in captured.out
 
 
 def test_training_checkpoint_compatible_for_epoch_boundary(tmp_path):

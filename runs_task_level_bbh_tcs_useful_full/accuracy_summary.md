@@ -9,3 +9,4 @@
 | ruin_names | BBH | shared_baseline | 1 | 0.81 | 0.813 | 0.825 | 0.885 | 0.075 | 0.015582 |
 | ruin_names | BBH | shared_guarded_beam | 1 | 0.845 | 0.827 | 0.835 | 0.93 | 0.085 | 0.079923 |
 | sports_understanding | BBH | shared_baseline | 1 | 0.85 | 0.842 | 0.855 | 0.89 | 0.04 | 0.020641 |
+| sports_understanding | BBH | shared_guarded_beam | 1 | 0.88 | 0.863 | 0.88 | 0.935 | 0.055 | 0.081056 |

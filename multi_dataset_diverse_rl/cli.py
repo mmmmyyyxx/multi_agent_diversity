@@ -369,34 +369,63 @@ def clear_training_checkpoint(cfg):
             pass
 
 
-def checkpoint_compatible(payload, cfg, train_data):
+def checkpoint_incompatibility_reasons(payload, cfg, train_data):
+    reasons = []
     if not isinstance(payload, dict):
-        return False
+        return ["checkpoint payload is missing or is not a JSON object"]
     if int(payload.get("version", 0) or 0) != 1:
-        return False
+        reasons.append(f"version: checkpoint={payload.get('version')!r} current=1")
     if int(payload.get("seed", -1)) != int(cfg.seed):
-        return False
+        reasons.append(f"seed: checkpoint={payload.get('seed')!r} current={cfg.seed!r}")
     if int(payload.get("epochs", -1)) != int(cfg.epochs):
-        return False
+        reasons.append(f"epochs: checkpoint={payload.get('epochs')!r} current={cfg.epochs!r}")
     if int(payload.get("train_size", -1)) != int(cfg.train_size):
-        return False
+        reasons.append(f"train_size: checkpoint={payload.get('train_size')!r} current={cfg.train_size!r}")
     saved_signature = payload.get("config_signature", {})
     if isinstance(saved_signature, dict):
         current_signature = checkpoint_config_signature(cfg)
         for key, value in saved_signature.items():
             if key in current_signature and str(current_signature[key]) != str(value):
-                return False
+                reasons.append(f"{key}: checkpoint={value!r} current={current_signature[key]!r}")
+    else:
+        reasons.append("config_signature: checkpoint value is missing or is not an object")
     epoch_index = int(payload.get("epoch_index", -1))
     if epoch_index < 0 or epoch_index > int(cfg.epochs):
-        return False
+        reasons.append(f"epoch_index: checkpoint={payload.get('epoch_index')!r} current_epochs={cfg.epochs!r}")
     stage = str(payload.get("stage", "training") or "training")
     order = payload.get("order", [])
     if stage in {"between_epochs", "epoch_evaluated"}:
-        return isinstance(order, list)
+        if not isinstance(order, list):
+            reasons.append("order: checkpoint value is not a list")
+        return reasons
     if stage != "training":
-        return False
+        reasons.append(f"stage: unsupported checkpoint stage {stage!r}")
+        return reasons
     cursor = int(payload.get("cursor", -1))
-    return isinstance(order, list) and len(order) == len(train_data) and 0 <= cursor <= len(order)
+    if not isinstance(order, list):
+        reasons.append("order: checkpoint value is not a list")
+    elif len(order) != len(train_data):
+        reasons.append(f"order length: checkpoint={len(order)} current_train={len(train_data)}")
+    if not (0 <= cursor <= len(order) if isinstance(order, list) else False):
+        reasons.append(f"cursor: checkpoint={payload.get('cursor')!r} order_length={len(order) if isinstance(order, list) else 'invalid'}")
+    return reasons
+
+
+def checkpoint_compatible(payload, cfg, train_data):
+    return not checkpoint_incompatibility_reasons(payload, cfg, train_data)
+
+
+def abort_incompatible_checkpoint(cfg, reasons):
+    print(
+        "[RESUME] ERROR: Incompatible training_checkpoint.json; refusing to start from scratch in the same run directory.",
+        flush=True,
+    )
+    print(f"[RESUME] Checkpoint path: {checkpoint_path(cfg)}", flush=True)
+    for reason in reasons[:20]:
+        print(f"[RESUME] Incompatibility: {reason}", flush=True)
+    if len(reasons) > 20:
+        print(f"[RESUME] Incompatibility: ... {len(reasons) - 20} more", flush=True)
+    raise SystemExit(2)
 
 
 def validation_score(epoch_record, reward_mode="guarded_diversity"):
@@ -490,6 +519,14 @@ async def main_async():
             f"repeats={cfg.candidate_eval_repeats}"
         )
 
+    preflight_resume_candidate = None
+    if cfg.resume_from_checkpoint and not cfg.baseline_only:
+        preflight_resume_candidate = read_json_file(checkpoint_path(cfg))
+        if preflight_resume_candidate is not None:
+            preflight_reasons = checkpoint_incompatibility_reasons(preflight_resume_candidate, cfg, train_data)
+            if preflight_reasons:
+                abort_incompatible_checkpoint(cfg, preflight_reasons)
+
     from .system import TraceBeamSearchSystem
 
     system = TraceBeamSearchSystem(cfg)
@@ -543,8 +580,9 @@ async def main_async():
     resume_stage = "training"
     resume_epoch_record = None
     if cfg.resume_from_checkpoint:
-        candidate = read_json_file(checkpoint_path(cfg))
-        if checkpoint_compatible(candidate, cfg, train_data):
+        candidate = preflight_resume_candidate if preflight_resume_candidate is not None else read_json_file(checkpoint_path(cfg))
+        incompatibility_reasons = checkpoint_incompatibility_reasons(candidate, cfg, train_data)
+        if not incompatibility_reasons:
             resume_payload = candidate
             resume_stage = str(candidate.get("stage", "training") or "training")
             restore_system_state(system, candidate.get("state", {}))
@@ -592,7 +630,7 @@ async def main_async():
                 flush=True,
             )
         elif candidate is not None:
-            print("[RESUME] Ignoring incompatible training_checkpoint.json; starting run from scratch.", flush=True)
+            abort_incompatible_checkpoint(cfg, incompatibility_reasons)
 
     if resume_epoch_record is not None:
         epoch_num = int(resume_epoch_record.get("epoch", resume_epoch_index + 1) or (resume_epoch_index + 1))
