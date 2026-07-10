@@ -1,0 +1,126 @@
+sample_id,question,answer
+65,"Is the following sentence plausible? ""Sergio Busquets got on base.""",no
+208,"Is the following sentence plausible? ""Timo Meier nutmegged the defender in the FA Cup.""",no
+215,"Is the following sentence plausible? ""Michael Thomas took the snap.""",yes
+181,"Is the following sentence plausible? ""Courtland Sutton hit a triple.""",no
+144,"Is the following sentence plausible? ""Kwadwo Asamoah was flagged on the play.""",no
+109,"Is the following sentence plausible? ""Philip Rivers launched a hail mary.""",yes
+134,"Is the following sentence plausible? ""Jakub Vrana hit a walkoff homer.""",no
+63,"Is the following sentence plausible? ""Joao Moutinho was out at third.""",no
+242,"Is the following sentence plausible? ""Edinson Cavani caught the screen pass.""",no
+193,"Is the following sentence plausible? ""Max Scherzer was safe at first.""",yes
+36,"Is the following sentence plausible? ""George Springer committed a blocking foul.""",no
+190,"Is the following sentence plausible? ""Vincent Kompany scored a bicycle kick.""",yes
+101,"Is the following sentence plausible? ""T.Y. Hilton threw a touchdown in the AFC divisional round.""",yes
+127,"Is the following sentence plausible? ""Gleyber Torres got a base hit.""",yes
+185,"Is the following sentence plausible? ""Nick Castellanos hit the wheel route.""",no
+145,"Is the following sentence plausible? ""Patrice Bergeron took a backhand shot.""",yes
+54,"Is the following sentence plausible? ""Mitchell Marner nutmegged the defender.""",no
+16,"Is the following sentence plausible? ""Luka Modric went in studs up in the FA Cup.""",yes
+161,"Is the following sentence plausible? ""Dougie Hamilton hit the buzzer beater.""",no
+102,"Is the following sentence plausible? ""John Carlson entered the attacking zone in the Stanley Cup.""",yes
+80,"Is the following sentence plausible? ""Tom Brady was safe at first.""",no
+232,"Is the following sentence plausible? ""Jamal Murray walked on ball four.""",no
+175,"Is the following sentence plausible? ""Freddie Freeman watched the pitch go by.""",yes
+14,"Is the following sentence plausible? ""Kendrick Nunn took a charge.""",yes
+83,"Is the following sentence plausible? ""Clint Capela got into the endzone.""",no
+217,"Is the following sentence plausible? ""Javier Mascherano took a left footed shot.""",yes
+142,"Is the following sentence plausible? ""Sergio Ramos hit nothing but net.""",no
+69,"Is the following sentence plausible? ""Tuukka Rask hit a double.""",no
+170,"Is the following sentence plausible? ""Igor Shesterkin launched a hail mary.""",no
+118,"Is the following sentence plausible? ""Sean Couturier passed the puck in the Stanley Cup.""",yes
+165,"Is the following sentence plausible? ""Delon Wright went for it on fourth down.""",no
+244,"Is the following sentence plausible? ""Malik Beasley  comitted a three second violation.""",yes
+136,"Is the following sentence plausible? ""Allen Robinson gained five yards.""",yes
+43,"Is the following sentence plausible? ""Evander Kane hit the slant pass in the AFC divisional round.""",no
+155,"Is the following sentence plausible? ""Mitchell Robinson airballed the shot.""",yes
+18,"Is the following sentence plausible? ""Russell Westbrook scored on the power play.""",no
+68,"Is the following sentence plausible? ""Aaron Nola converted the first down.""",no
+53,"Is the following sentence plausible? ""Mike Williams scored a bicycle kick in the FA Cup.""",no
+90,"Is the following sentence plausible? ""De'Aaron Fox scored a bicycle kick.""",no
+94,"Is the following sentence plausible? ""Malcolm Brogdon eurostepped to the basket in the NBA Championship.""",yes
+41,"Is the following sentence plausible? ""Aleksander Barkov bricked the three pointer.""",no
+93,"Is the following sentence plausible? ""Andres Iniesta performed a give and go.""",yes
+162,"Is the following sentence plausible? ""Juan Mata caught the screen pass.""",no
+116,"Is the following sentence plausible? ""Eden Hazard hit the buzzer beater.""",no
+205,"Is the following sentence plausible? ""Mark Stone hit a triple.""",no
+198,"Is the following sentence plausible? ""Jack Flaherty walked to first base in the National League Championship Series.""",yes
+25,"Is the following sentence plausible? ""Jerry Jeudy killed the powerplay.""",no
+237,"Is the following sentence plausible? ""Juan Soto shot from beyond the arc.""",no
+191,"Is the following sentence plausible? ""Petr Cech was safe at first.""",no
+74,"Is the following sentence plausible? ""Michael Porter Jr. called for the screen.""",yes
+58,"Is the following sentence plausible? ""Corbin Burnes earned an indirect kick.""",no
+169,"Is the following sentence plausible? ""Mookie Betts took a side-step three.""",no
+192,"Is the following sentence plausible? ""Caris LeVert scored a reverse dunk.""",yes
+17,"Is the following sentence plausible? ""Toni Kroos took a throw in in the Champions Leage Semifinal.""",yes
+49,"Is the following sentence plausible? ""Nazem Kadri was out at home.""",no
+147,"Is the following sentence plausible? ""Kailer Yamamoto performed a slide tackle in the European Cup.""",no
+92,"Is the following sentence plausible? ""Carlos Tevez skated backwards.""",no
+158,"Is the following sentence plausible? ""Yaya Toure scored a freekick.""",yes
+160,"Is the following sentence plausible? ""Frederik Andersen converted the first down.""",no
+75,"Is the following sentence plausible? ""Mario Balotelli took a left footed shot in the Champions League Final.""",yes
+141,"Is the following sentence plausible? ""Aleksander Barkov passed the puck.""",yes
+20,"Is the following sentence plausible? ""John Carlson scored in the third period.""",yes
+96,"Is the following sentence plausible? ""Deshaun Watson was flagged on the play.""",yes
+31,"Is the following sentence plausible? ""Caris LeVert scored a reverse layup.""",yes
+137,"Is the following sentence plausible? ""Ryan O'Reilly hit the wheel route.""",no
+117,"Is the following sentence plausible? ""Connor McDavid threw a touchdown in the NFC divisional round.""",no
+186,"Is the following sentence plausible? ""Fred VanVleet scored a freekick in the Champions League Final.""",no
+11,"Is the following sentence plausible? ""Stefon Diggs hit the slant pass.""",yes
+67,"Is the following sentence plausible? ""Stephan El Shaarawy shot with the left foot.""",yes
+226,"Is the following sentence plausible? ""Dylan Larkin walked on ball four.""",no
+88,"Is the following sentence plausible? ""Kevin Durant hit a walkoff homer.""",no
+91,"Is the following sentence plausible? ""Gabriel Landeskog launched the desperation heave.""",no
+24,"Is the following sentence plausible? ""DJ Chark caught the back shoulder fade in the NFC divisional round.""",yes
+97,"Is the following sentence plausible? ""Chris Godwin crossed the blue line in the Stanley Cup.""",no
+230,"Is the following sentence plausible? ""Mathew Barzal called for the screen.""",no
+240,"Is the following sentence plausible? ""Neal Pionk shot from the six yard line.""",no
+86,"Is the following sentence plausible? ""A.J. Green scored in the third period.""",no
+195,"Is the following sentence plausible? ""Javier Zanetti watched the pitch go by in the National League Championship Series.""",no
+229,"Is the following sentence plausible? ""Mike Williams fumbled the ball in the Superbowl.""",yes
+39,"Is the following sentence plausible? ""Anthony Davis beat the buzzer.""",yes
+214,"Is the following sentence plausible? ""Adam Thielen scored in added time.""",no
+87,"Is the following sentence plausible? ""Jonathan Marchessault scored on the power play in the Stanley Cup.""",yes
+233,"Is the following sentence plausible? ""Stephen Curry scored a reverse layup.""",yes
+178,"Is the following sentence plausible? ""Domantas Sabonis gained five yards in the AFC championship.""",no
+40,"Is the following sentence plausible? ""Norman Powell committed a blocking foul.""",yes
+206,"Is the following sentence plausible? ""Teuvo Teravainen shot the puck.""",yes
+194,"Is the following sentence plausible? ""Jordan Binnington scored in the third period.""",yes
+1,"Is the following sentence plausible? ""Dejounte Murray took a side-step three.""",yes
+207,"Is the following sentence plausible? ""Tom Brady converted the first down.""",yes
+71,"Is the following sentence plausible? ""Joe Burrow caught the back shoulder fade in the Superbowl.""",yes
+150,"Is the following sentence plausible? ""Ramires scored a header goal.""",yes
+114,"Is the following sentence plausible? ""Justin Herbert maradona'd the defender.""",no
+56,"Is the following sentence plausible? ""Petr Cech bricked the three pointer.""",no
+107,"Is the following sentence plausible? ""DeVante Parker was called for icing.""",no
+236,"Is the following sentence plausible? ""Mike Trout eurostepped to the basket.""",no
+179,"Is the following sentence plausible? ""James Harden shot from outside the eighteen.""",no
+166,"Is the following sentence plausible? ""Keenan Allen drew a flag on the play in the NFC championship.""",yes
+183,"Is the following sentence plausible? ""Cooper Kupp scored in the third period in the Stanley Cup.""",no
+50,"Is the following sentence plausible? ""David Pastrnak skated backwards.""",yes
+143,"Is the following sentence plausible? ""Wayne Rooney watched the pitch go by.""",no
+247,"Is the following sentence plausible? ""Nicklas Backstrom earned a trip to the penalty box.""",yes
+154,"Is the following sentence plausible? ""Tyler Boyd hit the screen pass in the NFC divisional round.""",yes
+129,"Is the following sentence plausible? ""Arjen Robben crossed the blue line in the Stanley Cup.""",no
+59,"Is the following sentence plausible? ""James Karinchak crossed the blue line.""",no
+55,"Is the following sentence plausible? ""Robert Woods killed the powerplay.""",no
+23,"Is the following sentence plausible? ""Sam Darnold scored on the power play in the Stanley Cup.""",no
+7,"Is the following sentence plausible? ""Tuukka Rask killed the powerplay.""",yes
+8,"Is the following sentence plausible? ""Dani Alves took the snap.""",no
+108,"Is the following sentence plausible? ""Pete Alonso hit a triple in the World Series.""",yes
+151,"Is the following sentence plausible? ""Bryce Harper fumbled the ball.""",no
+22,"Is the following sentence plausible? ""Sterling Shepard converted the first down.""",yes
+139,"Is the following sentence plausible? ""Nick Foles lost control of the puck.""",no
+228,"Is the following sentence plausible? ""Mark Stone spent time in the penalty box in the Stanley Cup.""",yes
+246,"Is the following sentence plausible? ""Pedro struck out the side.""",no
+173,"Is the following sentence plausible? ""Jaylen Brown comitted a three second violation.""",yes
+26,"Is the following sentence plausible? ""Gerrit Cole set the hard screen.""",no
+188,"Is the following sentence plausible? ""Amari Cooper scored a penalty kick.""",no
+35,"Is the following sentence plausible? ""Tristan Jarry dunked the ball.""",no
+57,"Is the following sentence plausible? ""Mario Gomez scored a reverse layup.""",no
+62,"Is the following sentence plausible? ""Marouane Fellaini scored in extra time.""",yes
+70,"Is the following sentence plausible? ""Jayson Tatum was called for the goal tend.""",yes
+189,"Is the following sentence plausible? ""Jesus Luzardo was called for slashing.""",no
+6,"Is the following sentence plausible? ""Angel Di Maria scored in extra time.""",yes
+28,"Is the following sentence plausible? ""Robin Lehner launched the desperation heave.""",no
+163,"Is the following sentence plausible? ""Michael Conforto comitted a three second violation.""",no

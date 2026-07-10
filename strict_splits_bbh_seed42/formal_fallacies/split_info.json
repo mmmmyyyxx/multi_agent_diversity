@@ -1,0 +1,21 @@
+{
+  "protocol": "strict_mode",
+  "split_seed": 42,
+  "splits": {
+    "opt": {
+      "num_samples": 75,
+      "hash": "f59e9139d98c2cd733d54059c13bfd80267bbb08fee60e2a1194d34fc675cd94"
+    },
+    "val": {
+      "num_samples": 50,
+      "hash": "c83a0e20739a2ba515ceebabf7785be8b244df3e307132b5b0d7d1162bc15b00"
+    },
+    "test": {
+      "num_samples": 125,
+      "hash": "7545b6980341cb6c8c99518c85fce9c9f4004895e32fafa3fb6951fb1caed2c4"
+    }
+  },
+  "dataset_path": "Dataset_format/BBH/formal_fallacies.csv",
+  "max_samples": null,
+  "legacy_skip_first_data_row": false
+}

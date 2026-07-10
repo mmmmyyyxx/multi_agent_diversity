@@ -1,0 +1,251 @@
+sample_id,question,answer
+249,"""Here comes a perfectly valid argument: First, not being a fan of FC Slovan Liberec is sufficient for not being a critic of Real Sociedad de Fútbol. Second, every backer of Ferencvárosi TC is a critic of Real Sociedad de Fútbol. Therefore, every backer of Ferencvárosi TC is a fan of FC Slovan Liberec.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+47,"""It is not always easy to see who is related to whom -- and in which ways. The following argument pertains to this question: First, some classmate of Sherry is not both a half-sister of Peggy and a great-grandmother of Sophie. Second, being a schoolmate of Leonor is sufficient for being a half-sister of Peggy. Third, everyone who is a schoolmate of Leonor is a great-grandmother of Sophie, too. We may conclude that there is somebody who is a classmate of Sherry and not a schoolmate of Leonor.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+211,"""Consumer research aims at understanding whether users of some products also tend to consume other ones, or not. The following argument seeks to clarify some such relations: First of all, Donald is an infrequent user of CHI shampoo. Next, every infrequent user of CHI shampoo and every loyal buyer of Lifebuoy soap is an infrequent user of Natural Bar soap. It follows that Donald is an infrequent user of Natural Bar soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+171,"""Is Titanium oxide an ingredient of my washing power? Which chemicals does my perfume contain? It is really difficult to keep track of all chemicals one is regularly exposed to. The following argument seeks to clarify some such relations: To start with, not being an ingredient of Pink Smoothie is sufficient for not being an ingredient of A.D LIPSTICK CHIC. Now, everything that is an ingredient of ILLUMINIZING POWDER is an ingredient of A.D LIPSTICK CHIC, too. All this entails that every ingredient of ILLUMINIZING POWDER is an ingredient of Pink Smoothie.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+77,"""Is Fred a cousin of Robert? Is Joe related to Bob? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First of all, some uncle of Dominic is a schoolmate of Earl. Next, everyone who is both an uncle of Reyes and an uncle of Corey is not a schoolmate of Earl. All this entails that some uncle of Dominic is not an uncle of Reyes or not an uncle of Corey.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+84,"""It is not always easy to grasp who is consuming which products. The following argument pertains to this question: First premise: Whoever is not a regular consumer of Pantene shampoo is not a rare consumer of South of France soap or not a rare consumer of Kiss My Face soap. Second premise: Being a rare consumer of South of France soap is necessary for not being a frequent consumer of Proactiv soap. Third premise: Nobody is neither a frequent consumer of Proactiv soap nor a rare consumer of Kiss My Face soap. So, necessarily, whoever is not a frequent consumer of Proactiv soap is a regular consumer of Pantene shampoo.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+38,"""Here comes a perfectly valid argument: First premise: Every schoolmate of Barton is a son of Melvin. Second premise: Every half-brother of Todd is a son of Melvin. Third premise: Whoever is neither a half-brother of Darrin nor a schoolmate of Phillip is a half-brother of Todd or a schoolmate of Barton.so, necessarily, whoever is not a son of Melvin is however a half-brother of Darrin or a schoolmate of Phillip.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+157,"""Is Siri a stepsister of Mary? Is Susan related to Kate? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: To start with, Merle is a cousin of Annie. Now, whoever is not both a classmate of Hazel and a cousin of Annie is a great-grandmother of Doria. We may conclude that it is false that Merle is a great-grandmother of Doria.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+13,"""Here comes a perfectly valid argument: To start with, everyone who is both a rare consumer of Pantene shampoo and an occasional purchaser of Herbal Essences shampoo is a frequent consumer of Tom's of Maine soap or a regular user of Mysore soap. Now, every frequent consumer of Tom's of Maine soap is neither a rare consumer of Pantene shampoo nor an occasional purchaser of Herbal Essences shampoo. We may conclude that everyone who is not both a rare consumer of Pantene shampoo and an occasional purchaser of Herbal Essences shampoo is however a regular user of Mysore soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+201,"""It is not always easy to grasp who is consuming which products. The following argument pertains to this question: First, every frequent consumer of Pears soap who is an infrequent user of Mysore soap is not a regular consumer of Purpose soap. Second, being a regular consumer of Purpose soap is necessary for not being a loyal buyer of Colgate-Palmolive soap. Therefore, every infrequent user of Mysore soap who is a frequent consumer of Pears soap is also a loyal buyer of Colgate-Palmolive soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+235,"""Here comes a perfectly valid argument: First premise: Being a friend of Kilmarnock FC is sufficient for not being an admirer of The New Saints FC. Second premise: It is false that Maximo is an admirer of The New Saints FC. We may conclude that it is false that Maximo is a friend of Kilmarnock FC.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+64,"""Here comes a perfectly valid argument: First, everything that is both an ingredient of DAGGER TATTOO LINER and an ingredient of AMANDE MILK VEIL is not an ingredient of All Wrapped Up. Second, being an ingredient of All Wrapped Up is necessary for being an ingredient of Gloss cuivre nacre. Hence, whatever is not an ingredient of DAGGER TATTOO LINER and not an ingredient of AMANDE MILK VEIL is however an ingredient of Gloss cuivre nacre.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+33,"""Here comes a perfectly valid argument: To begin with, whoever is not a nephew of Rene is a great-grandfather of Andy. Hence, no great-grandfather of Andy is a nephew of Rene.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+0,"""Here comes a perfectly valid argument: Sophie is an infrequent user of Nioxin shampoo. Every owner of a Nexxus shampoo and every infrequent user of Nioxin shampoo is a frequent consumer of Schwarzkopf shampoo. In consequence, Sophie is a frequent consumer of Schwarzkopf shampoo.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+180,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: To start with, Garry is an opponent to Sevilla FC. Now, every admirer of FC Pyunik is neither an opponent to Sevilla FC nor a supporter of RC Celta de Vigo. In consequence, Garry is not an admirer of FC Pyunik.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+168,"""Is Fred a cousin of Robert? Is Joe related to Bob? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First of all, Thomas is neither a grandson of Tony nor a stepbrother of Andy. Next, whoever is neither a grandson of Tony nor a stepbrother of Andy is a workmate of Joseph. Hence, Thomas is a workmate of Joseph.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+203,"""Some football fans admire various clubs, others love only a single team. But who is a fan of whom precisely? The following argument pertains to this question: To start with, not being a friend of Manchester United FC is sufficient for not being an ex-fan of FC Zenit. In consequence, being a friend of Manchester United FC is necessary for being an ex-fan of FC Zenit.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+37,"""Is Titanium oxide an ingredient of my washing power? Which chemicals does my perfume contain? It is really difficult to keep track of all chemicals one is regularly exposed to. The following argument seeks to clarify some such relations: Every ingredient of Hawaiian Punch is not an ingredient of Ice Queen Anyone? or not an ingredient of Exfoliating Balm. Everything that is an ingredient of Black Shadow is an ingredient of Hawaiian Punch, too. In consequence, every ingredient of Black Shadow is an ingredient of Exfoliating Balm and an ingredient of Ice Queen Anyone?.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+100,"""Is Titanium oxide an ingredient of my washing power? Which chemicals does my perfume contain? It is really difficult to keep track of all chemicals one is regularly exposed to. The following argument seeks to clarify some such relations: First, it is not the case that Coffee bean extract is an ingredient of Go 365 Shampoo. Second, everything that is an ingredient of Chickadee is an ingredient of Go 365 Shampoo, too. So, necessarily, it is not the case that Coffee bean extract is an ingredient of Chickadee.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+182,"""Here comes a perfectly valid argument: Every uncle of Harvey is not an ancestor of Adrian and not a nephew of Ward. In consequence, no nephew of Ward and no ancestor of Adrian is an uncle of Harvey.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+82,"""It is not always easy to see which chemicals are contained in our consumer products. The following argument pertains to this question: To begin with, no ingredient of Rock Star is both an ingredient of White Tea Lotion and an ingredient of VANILLA BLISS SOAP. Moreover, every ingredient of White Tea Lotion that is an ingredient of VANILLA BLISS SOAP is an ingredient of Rock Star or an ingredient of Lip Gloss (BCMK). From this follows: Every ingredient of White Tea Lotion that is an ingredient of VANILLA BLISS SOAP is also an ingredient of Lip Gloss (BCMK).""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+34,"""It is not always easy to see which chemicals are contained in our consumer products. The following argument pertains to this question: To begin with, being an ingredient of Aquablush is sufficient for being an ingredient of NARS Duo Eyeshadow. Moreover, whatever is neither an ingredient of Stop and Stare nor an ingredient of A.D LIPSTICK CHIC is an ingredient of Lash Tinsel Mascara or an ingredient of Aquablush.finally, everything that is an ingredient of Lash Tinsel Mascara is an ingredient of NARS Duo Eyeshadow, too. Therefore, whatever is not an ingredient of NARS Duo Eyeshadow is however an ingredient of Stop and Stare or an ingredient of A.D LIPSTICK CHIC.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+122,"""Is Fred a cousin of Robert? Is Joe related to Bob? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First of all, every great-grandfather of Chad is an ancestor of Douglas or a cousin of Henry. Next, every schoolmate of Trevor is neither a cousin of Henry nor an ancestor of Douglas. Hence, no great-grandfather of Chad is a schoolmate of Trevor.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+224,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: First of all, no expert of Malmö FF who is an ex-supporter of Brøndby IF is an ex-fan of F91 Dudelange. Next, whoever is not a follower of Stade Rennais FC is an ex-fan of F91 Dudelange. So, necessarily, whoever is none of this: an expert of Malmö FF or ex-supporter of Brøndby IF, is a follower of Stade Rennais FC.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+227,"""Is Fred a cousin of Robert? Is Joe related to Bob? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First premise: Whoever is an uncle of Andrew and a brother of Derrick is also a grandson of Jon.second premise: Every cousin of Chad is an uncle of Andrew. Third premise: Being a brother of Derrick is necessary for being a cousin of Chad. All this entails that every cousin of Chad is a grandson of Jon.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+119,"""Here comes a perfectly valid argument: To begin with, every ingredient of Brightening Veil is an ingredient of Clear mascara or an ingredient of Lip Gloss SPF 15. Moreover, no ingredient of Reel Him In is an ingredient of Lip Gloss SPF 15 or an ingredient of Clear mascara. Hence, whatever is an ingredient of Brightening Veil is not an ingredient of Reel Him In.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+128,"""Here comes a perfectly valid argument: It is false that Colleen is an ancestor of Cheryle. Whoever is a stepsister of Esther is not an ancestor of Cheryle. It follows that it is false that Colleen is a stepsister of Esther.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+216,"""Here comes a perfectly valid argument: First, no ex-supporter of Getafe CF is a critic of Kilmarnock FC. Second, everyone who is a friend of R. Charleroi SC is a critic of Kilmarnock FC, too. Therefore, whoever is not a friend of R. Charleroi SC is an ex-supporter of Getafe CF.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+212,"""It is not always easy to see who is related to whom -- and in which ways. The following argument pertains to this question: First, whoever is an uncle of Owen is not a nephew of Gene. Second, whoever is both a nephew of Ignacio and a brother of David is a schoolmate of Steve or an uncle of Owen.third, everyone who is a schoolmate of Steve is a nephew of Gene, too. We may conclude: Every brother of David who is a nephew of Ignacio is not a nephew of Gene.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+245,"""Here comes a perfectly valid argument: First, nobody is neither an owner of a The Body Shop soap nor a frequent consumer of Lush soap. So, necessarily, nobody is neither a frequent consumer of Lush soap nor an owner of a The Body Shop soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+32,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: To start with, no member of FK Partizan is a critic of SønderjyskE. Now, whoever is a member of FK Partizan is not an ex-fan of Borussia Dortmund. Moreover, every ex-fan of Borussia Dortmund who is a critic of SønderjyskE is also a supporter of VfL Borussia Mönchengladbach. All this entails that every member of FK Partizan is a supporter of VfL Borussia Mönchengladbach.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+131,"""Here comes a perfectly valid argument: To start with, some sister of Doreen is a daughter of Melinda. Now, whoever is not a daughter of Melinda is a cousin of Leslie. From this follows: Some cousin of Leslie is not a sister of Doreen.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+172,"""It is not always easy to see which chemicals are contained in our consumer products. The following argument pertains to this question: Being an ingredient of Peach Paint is sufficient for being an ingredient of AUTOGRAPH EYELINER. Every ingredient of AUTOGRAPH EYELINER is an ingredient of Brow Filler Blonde or an ingredient of Calming Shampoo. From this follows: Every ingredient of Peach Paint is an ingredient of Calming Shampoo or an ingredient of Brow Filler Blonde.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+112,"""Here comes a perfectly valid argument: To start with, whoever is an expert of BSC Young Boys is not an ex-fan of Real Betis Balompié. Now, whoever is a friend of FC Dynamo Kyiv is not an expert of BSC Young Boys. Hence, no friend of FC Dynamo Kyiv is an ex-fan of Real Betis Balompié.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+48,"""It is not always easy to see who is related to whom -- and in which ways. The following argument pertains to this question: To begin with, everyone who is neither a cousin of Valerie nor a classmate of Mitzi is a close friend of Kathryn or a workmate of Anita. Moreover, every close friend of Kathryn is a classmate of Mitzi or a cousin of Valerie. It follows that whoever is none of this: a cousin of Valerie or classmate of Mitzi, is a workmate of Anita.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+220,"""Here comes a perfectly valid argument: No occasional purchaser of Purpose soap is a rare consumer of Bumble and bumble shampoo or an occasional purchaser of Organic Fiji soap. Hence, no occasional purchaser of Organic Fiji soap and no rare consumer of Bumble and bumble shampoo is an occasional purchaser of Purpose soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+146,"""Is Siri a stepsister of Mary? Is Susan related to Kate? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First premise: Whoever is a great-grandmother of Dawn and a sister of Nancy is not a great-grandmother of Jaime. We may conclude that everyone who is not a great-grandmother of Jaime is however a great-grandmother of Dawn and a sister of Nancy.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+76,"""Is Fred a cousin of Robert? Is Joe related to Bob? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First, Cecil is a schoolmate of Tyler. Second, nobody is neither a schoolmate of Tyler nor a nephew of Owen. So, necessarily, Cecil is not a nephew of Owen.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+219,"""It is not always easy to grasp who is consuming which products. The following argument pertains to this question: To begin with, everyone who is an infrequent user of Proactiv soap is a frequent consumer of CHI shampoo, too. Moreover, everyone who is both a regular consumer of Neutrogena soap and an occasional purchaser of Bee & Flower soap is not a frequent consumer of CHI shampoo. In consequence, whoever is not a regular consumer of Neutrogena soap and not an occasional purchaser of Bee & Flower soap is however an infrequent user of Proactiv soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+210,"""It is not always easy to see who is related to whom -- and in which ways. The following argument pertains to this question: First premise: Being a great-grandmother of Elizabeth is sufficient for not being a sister of Gillian. Second premise: Every great-grandmother of Elizabeth is a sister of Gillian or an ancestor of Helen or a great-grandmother of Heather. Third premise: Being a great-grandmother of Elizabeth is sufficient for not being a great-grandmother of Heather. It follows that everyone who is a great-grandmother of Elizabeth is an ancestor of Helen, too.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+238,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: To begin with, no admirer of Racing Club de Strasbourg Alsace is a devotee of CS Marítimo or a fan of SK Rapid Wien. Moreover, Byron is a devotee of CS Marítimo. We may conclude: Byron is not an admirer of Racing Club de Strasbourg Alsace.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+239,"""Here comes a perfectly valid argument: First, being a rare consumer of Nubian Heritage soap is necessary for being an owner of a Lever soap. Second, being an infrequent user of American Crew shampoo is sufficient for being a rare consumer of Nubian Heritage soap. In consequence, every infrequent user of American Crew shampoo is an owner of a Lever soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+140,"""It is not always easy to see who is related to whom -- and in which ways. The following argument pertains to this question: To begin with, everyone who is a grandson of Dominic is a workmate of James, too. Moreover, whoever is neither a son of Cody nor a son of Ivan is a grandson of Dominic. We may conclude: Whoever is none of this: a son of Cody or son of Ivan, is a workmate of James.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+19,"""Here comes a perfectly valid argument: First premise: Whatever is ingredient of Concealer is at least one of these: an ingredient of HEART SHAPED BALM, an ingredient of Goth Fairy or an ingredient of Love Me Like A Wimp. Second premise: Being an ingredient of Clarifying Mask is necessary for being an ingredient of Goth Fairy. Third premise: Being an ingredient of HEART SHAPED BALM is sufficient for being an ingredient of Clarifying Mask. Fourth premise: Every ingredient of Love Me Like A Wimp is an ingredient of Clarifying Mask. So, necessarily, being an ingredient of Concealer is sufficient for being an ingredient of Clarifying Mask.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+148,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: To begin with, there is no expert of Manchester United FC who is a follower of FC Barcelona yet not a critic of Vitesse. Moreover, whoever is an expert of Manchester United FC is not a critic of Vitesse. So, necessarily, no expert of Manchester United FC is a follower of FC Barcelona.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+110,"""It is not always easy to grasp who is consuming which products. The following argument pertains to this question: First of all, being a frequent consumer of KMS shampoo is necessary for being a regular consumer of Yardley London soap. Next, whoever is a regular user of Joico shampoo is not a frequent consumer of KMS shampoo. All this entails that no regular consumer of Yardley London soap is a regular user of Joico shampoo.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+225,"""Is Fred a fan of Liverpool? Are supporters of Real Madrid devotees of PSG? In European football, it is sometimes difficult to keep track of the mutual admiration and dislike. The following argument seeks to clarify some such relations: First premise: Everyone who is a fan of FK Sūduva is a critic of HŠK Zrinjski, too. Second premise: Being a follower of Legia Warszawa is necessary for not being a critic of HŠK Zrinjski. Hence, whoever is a fan of FK Sūduva is not a follower of Legia Warszawa.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",invalid
+187,"""It is not always easy to see which chemicals are contained in our consumer products. The following argument pertains to this question: Everything that is an ingredient of La Creme- Clueless is also an ingredient of Provani Cream and an ingredient of Loose Eyeshadow. It is not the case that Cocamide is an ingredient of Provani Cream. All this entails that it is not the case that Cocamide is an ingredient of La Creme- Clueless.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+177,"""Consumer research aims at understanding whether users of some products also tend to consume other ones, or not. The following argument seeks to clarify some such relations: To begin with, some regular consumer of AXE shampoo is not an occasional purchaser of Sexy Hair shampoo. Moreover, everyone who is a regular user of Nubian Heritage soap is an occasional purchaser of Sexy Hair shampoo, too. From this follows: Somebody is a regular consumer of AXE shampoo and not a regular user of Nubian Heritage soap.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid
+132,"""Is Siri a stepsister of Mary? Is Susan related to Kate? In large families, it is sometimes difficult to keep track of all one's relatives. The following argument seeks to clarify some such relations: First of all, whoever is not a classmate of Shanika is a daughter of Candace. Therefore, being a classmate of Shanika is necessary for not being a daughter of Candace.""
+Is the argument, given the explicitly stated premises, deductively valid or invalid?
+Options:
+- valid 
+- invalid",valid

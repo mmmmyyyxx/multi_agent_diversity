@@ -1,0 +1,21 @@
+{
+  "protocol": "strict_mode",
+  "split_seed": 42,
+  "splits": {
+    "opt": {
+      "num_samples": 75,
+      "hash": "1b3b6a98c43f4a8cdaf8c838a841e7f9caadecdf20851bb16a5da8630c83bd30"
+    },
+    "val": {
+      "num_samples": 50,
+      "hash": "a052d48cfd57c4e2fa33b039c8226706ec59490d73eb80f3ebf22d937c00c399"
+    },
+    "test": {
+      "num_samples": 125,
+      "hash": "debc7efb74fde7ee9d2925330e1942f037375ffaad6e03ef3b604b6d39f42f28"
+    }
+  },
+  "dataset_path": "Dataset_format/BBH/ruin_names.csv",
+  "max_samples": null,
+  "legacy_skip_first_data_row": false
+}

@@ -95,8 +95,11 @@ class TraceBeamSearchSystem:
 
         self._load_recorded_solver_rollouts()
         self.write_run_meta()
-        self.flush_prompt_history()
-        self.write_cost_summary()
+        resume_existing = bool(int(getattr(self.cfg, "resume_from_checkpoint", False) or False))
+        if not (resume_existing and os.path.exists(os.path.join(self.cfg.out_dir, "prompt_history.json"))):
+            self.flush_prompt_history()
+        if not (resume_existing and os.path.exists(os.path.join(self.cfg.out_dir, "cost_summary.json"))):
+            self.write_cost_summary()
 
     def _build_task_spec(self) -> TaskSpec:
         answer_format = str(getattr(self.cfg, "answer_format", "") or "").strip()
@@ -515,6 +518,17 @@ class TraceBeamSearchSystem:
             "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
             "teacher_question_pass_threshold": getattr(self.cfg, "teacher_question_pass_threshold", 0.0),
             "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
+            "model_role_map": {
+                "agent_model": "solver rollouts for train/validation/test answering",
+                "optimizer_model": (
+                    "prompt-evolution generator calls: one_shot optimizer, TCS Teacher, "
+                    "Teacher rewrite, Student, Student JSON retry, and Student JSON repair"
+                ),
+                "evaluator_model": (
+                    "TCS Critic and optional joint trace diversity evaluator"
+                ),
+                "embedding_model": "local trace-embedding encoder for diversity diagnostics",
+            },
             "initial_agent_prompts": self.initial_agent_prompts,
             "initial_agent_prompt_hashes": self.initial_agent_prompt_hashes,
             "config": asdict(self.cfg),
@@ -648,6 +662,9 @@ class TraceBeamSearchSystem:
             "teacher_question_approved": False,
             "teacher_question_rejected": False,
             "teacher_question_rejection_reason": "",
+            "teacher_question_forced_best_score": False,
+            "teacher_question_forced_best_round": 0,
+            "teacher_question_forced_below_threshold": False,
             "teacher_question_score": 0.0,
             "teacher_critic_rounds": 0,
             "teacher_quality_critique": "",
@@ -781,6 +798,9 @@ class TraceBeamSearchSystem:
             "teacher_question_approved",
             "teacher_question_rejected",
             "teacher_question_rejection_reason",
+            "teacher_question_forced_best_score",
+            "teacher_question_forced_best_round",
+            "teacher_question_forced_below_threshold",
             "teacher_question_score",
             "teacher_critic_rounds",
             "teacher_quality_critique",
@@ -2898,13 +2918,16 @@ class TraceBeamSearchSystem:
         requested_candidates: int,
     ) -> Dict[str, Any]:
         threshold = float(getattr(self.cfg, "teacher_question_pass_threshold", 0.75) or 0.75)
-        max_rounds = max(0, int(getattr(self.cfg, "teacher_critic_max_rounds", 2) or 0))
+        max_rounds = max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 3) or 3))
         teacher_question = await self.propose_teacher_question(agent_id, parent_prompt, teacher_context, requested_candidates)
         reviews: List[Dict[str, Any]] = []
+        question_versions: List[Dict[str, Any]] = []
         rewrite_count = 0
         for round_id in range(max_rounds):
             review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
             reviews.append(review)
+            question_versions.append(teacher_question)
+            score = self._safe_float(review.get("score", 0.0), 0.0)
             if bool(review.get("passed")) and self._safe_float(review.get("score", 0.0), 0.0) >= threshold:
                 return {
                     "approved": True,
@@ -2912,18 +2935,32 @@ class TraceBeamSearchSystem:
                     "critic_reviews": reviews,
                     "teacher_critic_rounds": round_id + 1,
                     "teacher_rewrite_count": rewrite_count,
+                    "teacher_question_forced_best_score": False,
+                    "teacher_question_forced_best_round": 0,
+                    "teacher_question_forced_below_threshold": False,
                 }
-            teacher_question = await self.rewrite_teacher_question(agent_id, teacher_question, review, teacher_context)
-            rewrite_count += 1
-        final_review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
-        reviews.append(final_review)
-        approved = bool(final_review.get("passed")) and self._safe_float(final_review.get("score", 0.0), 0.0) >= threshold
+            if round_id < max_rounds - 1:
+                teacher_question = await self.rewrite_teacher_question(agent_id, teacher_question, review, teacher_context)
+                rewrite_count += 1
+        best_idx = 0
+        best_score = -1.0
+        for idx, review in enumerate(reviews):
+            score = self._safe_float(review.get("score", 0.0), 0.0)
+            if score > best_score:
+                best_idx = idx
+                best_score = score
+        best_review = reviews[best_idx] if reviews else {}
+        best_question = question_versions[best_idx] if question_versions else teacher_question
         return {
-            "approved": approved,
-            "teacher_question": teacher_question,
+            "approved": True,
+            "teacher_question": best_question,
             "critic_reviews": reviews,
             "teacher_critic_rounds": len(reviews),
             "teacher_rewrite_count": rewrite_count,
+            "teacher_question_forced_best_score": True,
+            "teacher_question_forced_best_round": best_idx + 1,
+            "teacher_question_forced_below_threshold": best_score < threshold,
+            "teacher_question_forced_best_review": best_review,
         }
 
     async def retry_student_candidates_json_only(
@@ -3134,14 +3171,10 @@ class TraceBeamSearchSystem:
                 "student_failure_stage": "none",
             }
         )
-        if diagnostics["student_raw_response_empty"]:
-            diagnostics["student_failure_stage"] = "raw_empty"
-            return {"candidates": [], "diagnostics": diagnostics}
-
         obj = extract_json_obj(raw_text)
-        if obj is None or not isinstance(obj, dict):
-            diagnostics["student_json_parse_failed"] = True
-            diagnostics["student_failure_stage"] = "json_parse_failed"
+        if diagnostics["student_raw_response_empty"] or obj is None or not isinstance(obj, dict):
+            diagnostics["student_failure_stage"] = "raw_empty" if diagnostics["student_raw_response_empty"] else "json_parse_failed"
+            diagnostics["student_json_parse_failed"] = not diagnostics["student_raw_response_empty"]
             diagnostics["student_refusal_or_explanation"] = self._student_refusal_or_explanation(raw_preview)
             if diagnostics["student_refusal_or_explanation"]:
                 diagnostics["student_failure_stage"] = "refusal_or_explanation"
@@ -3159,6 +3192,8 @@ class TraceBeamSearchSystem:
                         agent_id=agent_id,
                     )
                     diagnostics["student_json_retry_raw_response_preview"] = normalize_spaces(retry_text or "")[:1000]
+                    if retry_text and retry_text.strip():
+                        diagnostics["student_raw_response_empty"] = False
                     retry_obj = extract_json_obj(retry_text or "")
                     if isinstance(retry_obj, dict):
                         obj = retry_obj
@@ -3168,11 +3203,16 @@ class TraceBeamSearchSystem:
                         diagnostics["student_failure_stage"] = "none"
                         break
                 if not diagnostics["student_json_retry_succeeded"]:
-                    diagnostics["student_json_parse_error"] = "retry_json_parse_failed"
+                    diagnostics["student_json_parse_error"] = (
+                        "retry_raw_empty"
+                        if diagnostics["student_failure_stage"] == "raw_empty"
+                        else "retry_json_parse_failed"
+                    )
 
             if obj is None or not isinstance(obj, dict):
                 repair_enabled = bool(int(getattr(self.cfg, "student_json_repair_enabled", True)))
-                if repair_enabled:
+                repair_source = retry_text or raw_text
+                if repair_enabled and bool(str(repair_source or "").strip()):
                     repair_source = retry_text or raw_text
                     repair = await self.repair_student_json_response(
                         raw_text=repair_source,
@@ -3190,12 +3230,13 @@ class TraceBeamSearchSystem:
                         diagnostics["student_failure_stage"] = "none"
 
             if obj is None or not isinstance(obj, dict):
-                diagnostics["student_json_parse_failed"] = True
-                diagnostics["student_failure_stage"] = "json_parse_failed"
+                if diagnostics.get("student_failure_stage") != "raw_empty":
+                    diagnostics["student_failure_stage"] = "json_parse_failed"
+                    diagnostics["student_json_parse_failed"] = True
                 if not diagnostics.get("student_json_parse_error"):
                     diagnostics["student_json_parse_error"] = (
                         str(diagnostics.get("student_json_repair_failure_reason", ""))
-                        or "json_parse_failed"
+                        or ("raw_empty" if diagnostics["student_failure_stage"] == "raw_empty" else "json_parse_failed")
                     )
                 return {"candidates": [], "diagnostics": diagnostics}
 
@@ -3286,13 +3327,22 @@ class TraceBeamSearchSystem:
         diagnostics["optimizer_architecture"] = "teacher_critic_student"
         teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
         critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
-        last_review = critic_reviews[-1] if critic_reviews and isinstance(critic_reviews[-1], dict) else {}
+        forced_best = bool(approved.get("teacher_question_forced_best_score", False)) if isinstance(approved, dict) else False
+        forced_best_review = approved.get("teacher_question_forced_best_review", {}) if isinstance(approved, dict) else {}
+        last_review = (
+            forced_best_review
+            if forced_best and isinstance(forced_best_review, dict)
+            else (critic_reviews[-1] if critic_reviews and isinstance(critic_reviews[-1], dict) else {})
+        )
         guiding_question = str(teacher_question.get("socratic_guiding_question", "")) if isinstance(teacher_question, dict) else ""
         diagnostics.update(
             {
                 "teacher_question": guiding_question,
                 "teacher_question_approved": bool(approved.get("approved", False)),
                 "teacher_question_rejected": not bool(approved.get("approved", False)),
+                "teacher_question_forced_best_score": forced_best,
+                "teacher_question_forced_best_round": int(approved.get("teacher_question_forced_best_round", 0) or 0),
+                "teacher_question_forced_below_threshold": bool(approved.get("teacher_question_forced_below_threshold", False)),
                 "teacher_question_score": self._safe_float(last_review.get("score", 0.0), 0.0),
                 "teacher_critic_rounds": int(approved.get("teacher_critic_rounds", len(critic_reviews)) or 0),
                 "teacher_quality_critique": str(last_review.get("quality_critique", "")),
@@ -4274,17 +4324,48 @@ class TraceBeamSearchSystem:
             generation_batches = [{"batch_type": "window_update_diagnosis", "cases": [], "purpose": "general reward-relevant window repair"}]
         requested = max(1, int(self.cfg.num_candidates_per_parent))
         optimizer_generation_records: List[Dict[str, Any]] = []
-        for parent in beam:
+        parent_jobs = []
+        for parent_idx, parent in enumerate(beam):
             parent_prompt = str(parent.get("prompt", agent.current_prompt))
             parent_id = str(parent.get("id", self._hash(parent_prompt)))
             parent_batches = [generation_batches[i % len(generation_batches)] for i in range(requested)]
-            proposals = await self.propose_candidates(
-                agent_id=agent_id,
-                parent_prompt=parent_prompt,
-                overlap_diagnosis=overlap_diagnosis,
-                num_candidates=requested,
-                generation_batches=parent_batches,
+            parent_jobs.append(
+                {
+                    "parent_idx": parent_idx,
+                    "parent": parent,
+                    "parent_prompt": parent_prompt,
+                    "parent_id": parent_id,
+                    "parent_batches": parent_batches,
+                }
             )
+
+        configured_parent_concurrency = int(getattr(self.cfg, "optimizer_parent_concurrency", 1) or 1)
+        parent_concurrency = max(1, min(configured_parent_concurrency, len(parent_jobs) or 1))
+        parent_sem = asyncio.Semaphore(parent_concurrency)
+
+        async def propose_for_parent(job: Dict[str, Any]) -> Dict[str, Any]:
+            async with parent_sem:
+                proposals = await self.propose_candidates(
+                    agent_id=agent_id,
+                    parent_prompt=str(job["parent_prompt"]),
+                    overlap_diagnosis=overlap_diagnosis,
+                    num_candidates=requested,
+                    generation_batches=job["parent_batches"],
+                )
+                return {**job, "proposals": proposals}
+
+        parent_results = await asyncio.gather(*[propose_for_parent(job) for job in parent_jobs])
+        parent_results.sort(key=lambda x: int(x.get("parent_idx", 0)))
+
+        for result in parent_results:
+            parent_prompt = str(result.get("parent_prompt", agent.current_prompt))
+            parent_id = str(result.get("parent_id", self._hash(parent_prompt)))
+            parent_batches = result.get("parent_batches", [])
+            if not isinstance(parent_batches, list) or not parent_batches:
+                parent_batches = [generation_batches[0]]
+            proposals = result.get("proposals", [])
+            if not isinstance(proposals, list):
+                proposals = []
             parent_diagnostics = self._empty_optimizer_generation_diagnostics()
             if proposals:
                 proposal_diag = proposals[0].get("optimizer_generation_diagnostics", {}) if isinstance(proposals[0], dict) else {}
@@ -4418,6 +4499,9 @@ class TraceBeamSearchSystem:
             "teacher_question_approved",
             "teacher_question_rejected",
             "teacher_question_rejection_reason",
+            "teacher_question_forced_best_score",
+            "teacher_question_forced_best_round",
+            "teacher_question_forced_below_threshold",
             "teacher_question_score",
             "teacher_quality_critique",
             "teacher_specificity_critique",
@@ -4591,6 +4675,7 @@ class TraceBeamSearchSystem:
                     "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
                     "num_diversity_candidates": int(num_diversity_candidates),
                     "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+                    "optimizer_parent_concurrency": int(parent_concurrency),
                     "fallback_enabled": bool(fallback_enabled),
                     "optimizer_underfilled": bool(optimizer_underfilled),
                     "requested_optimizer_candidates": int(requested_optimizer_candidates),
@@ -4600,6 +4685,9 @@ class TraceBeamSearchSystem:
                     "optimizer_architecture": str(item_diagnostics.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", "one_shot"))),
                     "teacher_question": item_diagnostics.get("teacher_question", ""),
                     "teacher_question_approved": bool(item_diagnostics.get("teacher_question_approved", False)),
+                    "teacher_question_forced_best_score": bool(item_diagnostics.get("teacher_question_forced_best_score", False)),
+                    "teacher_question_forced_best_round": int(item_diagnostics.get("teacher_question_forced_best_round", 0) or 0),
+                    "teacher_question_forced_below_threshold": bool(item_diagnostics.get("teacher_question_forced_below_threshold", False)),
                     "teacher_question_score": self._safe_float(item_diagnostics.get("teacher_question_score", 0.0), 0.0),
                     "teacher_critic_rounds": int(item_diagnostics.get("teacher_critic_rounds", 0) or 0),
                     "teacher_quality_critique": str(item_diagnostics.get("teacher_quality_critique", "")),
@@ -4648,6 +4736,7 @@ class TraceBeamSearchSystem:
             "num_accuracy_repair_candidates": int(num_accuracy_repair_candidates),
             "num_diversity_candidates": int(num_diversity_candidates),
             "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+            "optimizer_parent_concurrency": int(parent_concurrency),
             "fallback_enabled": bool(fallback_enabled),
             "optimizer_underfilled": bool(optimizer_underfilled),
             "requested_optimizer_candidates": int(requested_optimizer_candidates),
@@ -4676,6 +4765,7 @@ class TraceBeamSearchSystem:
                 "top1_candidate_pool_source": top1_candidate_pool_source,
                 "candidate_count": len(candidate_pool),
                 "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
+                "optimizer_parent_concurrency": int(parent_concurrency),
                 "fallback_enabled": bool(fallback_enabled),
                 "optimizer_underfilled": bool(optimizer_underfilled),
                 "requested_optimizer_candidates": int(requested_optimizer_candidates),
@@ -4804,6 +4894,9 @@ class TraceBeamSearchSystem:
             "teacher_question_approved",
             "teacher_question_rejected",
             "teacher_question_rejection_reason",
+            "teacher_question_forced_best_score",
+            "teacher_question_forced_best_round",
+            "teacher_question_forced_below_threshold",
             "teacher_question_score",
             "teacher_critic_rounds",
             "teacher_quality_critique",

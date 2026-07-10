@@ -75,22 +75,31 @@ def _valid_student_candidate():
     }
 
 
-def test_teacher_question_rejected_no_student_call():
-    system = _system()
+def test_teacher_question_rejected_uses_best_scored_teacher_question():
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3))
     called = {"student": 0}
 
     async def fake_approved(**kwargs):
         return {
-            "approved": False,
-            "teacher_question": {"socratic_guiding_question": "How can the prompt be improved?"},
-            "critic_reviews": [{"score": 0.1, "passed": False, "quality_critique": "generic"}],
-            "teacher_critic_rounds": 1,
-            "teacher_rewrite_count": 0,
+            "approved": True,
+            "teacher_question": {"socratic_guiding_question": "Best available below-threshold question"},
+            "critic_reviews": [
+                {"score": 0.2, "passed": False, "quality_critique": "generic"},
+                {"score": 0.68, "passed": False, "quality_critique": "best but below threshold"},
+                {"score": 0.4, "passed": False, "quality_critique": "worse"},
+            ],
+            "teacher_critic_rounds": 3,
+            "teacher_rewrite_count": 2,
+            "teacher_question_forced_best_score": True,
+            "teacher_question_forced_best_round": 2,
+            "teacher_question_forced_below_threshold": True,
+            "teacher_question_forced_best_review": {"score": 0.68, "passed": False, "quality_critique": "best but below threshold"},
         }
 
     async def fake_student(**kwargs):
         called["student"] += 1
-        return [{"candidate_prompt": "should not happen"}]
+        assert kwargs["approved_teacher_question"]["teacher_question"]["socratic_guiding_question"] == "Best available below-threshold question"
+        return [_valid_student_candidate()]
 
     system.generate_approved_teacher_question = fake_approved
     system.generate_student_candidates = fake_student
@@ -105,10 +114,14 @@ def test_teacher_question_rejected_no_student_call():
     )
 
     diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
-    assert candidates == []
-    assert called["student"] == 0
-    assert diagnostics["teacher_question_rejected"] is True
-    assert diagnostics["teacher_question_approved"] is False
+    assert len(candidates) == 1
+    assert called["student"] == 1
+    assert diagnostics["teacher_question_rejected"] is False
+    assert diagnostics["teacher_question_approved"] is True
+    assert diagnostics["teacher_question_forced_best_score"] is True
+    assert diagnostics["teacher_question_forced_best_round"] == 2
+    assert diagnostics["teacher_question_forced_below_threshold"] is True
+    assert diagnostics["teacher_question_score"] == 0.68
 
 
 def test_teacher_question_rewrite_then_pass():
@@ -138,6 +151,39 @@ def test_teacher_question_rewrite_then_pass():
     assert approved["approved"] is True
     assert calls == {"teacher": 1, "critic": 2, "rewrite": 1}
     assert approved["teacher_rewrite_count"] == 1
+
+
+def test_teacher_question_three_rounds_fallback_to_best_score():
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3, teacher_question_pass_threshold=0.75))
+    calls = {"teacher": 0, "critic": 0, "rewrite": 0}
+
+    async def fake_teacher(*args, **kwargs):
+        calls["teacher"] += 1
+        return {"socratic_guiding_question": "q1"}
+
+    async def fake_critic(*args, **kwargs):
+        calls["critic"] += 1
+        scores = [0.2, 0.68, 0.4]
+        return {"passed": False, "score": scores[calls["critic"] - 1], "rewrite_instruction": f"rewrite {calls['critic']}"}
+
+    async def fake_rewrite(*args, **kwargs):
+        calls["rewrite"] += 1
+        return {"socratic_guiding_question": f"q{calls['rewrite'] + 1}"}
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {"diagnostic_focus": {}}, 2))
+
+    assert approved["approved"] is True
+    assert approved["teacher_question"]["socratic_guiding_question"] == "q2"
+    assert approved["teacher_question_forced_best_score"] is True
+    assert approved["teacher_question_forced_best_round"] == 2
+    assert approved["teacher_question_forced_below_threshold"] is True
+    assert approved["teacher_critic_rounds"] == 3
+    assert approved["teacher_rewrite_count"] == 2
+    assert calls == {"teacher": 1, "critic": 3, "rewrite": 2}
 
 
 def test_student_candidates_include_teacher_metadata():
@@ -346,7 +392,7 @@ def test_safe_float_parses_critic_score_strings():
 
 
 def test_teacher_question_rewrite_passes_with_string_score():
-    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=1))
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=2))
     calls = {"critic": 0, "rewrite": 0}
 
     async def fake_teacher(*args, **kwargs):
@@ -373,7 +419,7 @@ def test_teacher_question_rewrite_passes_with_string_score():
 
 
 def test_student_empty_response_diagnostics():
-    system = _system()
+    system = _system(Config(student_json_retry_on_parse_fail=False))
 
     async def fake_chat(**kwargs):
         return ""
@@ -385,6 +431,29 @@ def test_student_empty_response_diagnostics():
     assert result["candidates"] == []
     assert diag["student_raw_response_empty"] is True
     assert diag["student_failure_stage"] == "raw_empty"
+
+
+def test_student_empty_response_retries_and_succeeds():
+    system = _system(Config(student_json_retry_on_parse_fail=True, student_json_max_retries=5))
+    calls = {"count": 0}
+
+    async def fake_chat(**kwargs):
+        calls["count"] += 1
+        if "student_json_retry" in kwargs.get("stage", ""):
+            return json.dumps({"candidates": [_valid_student_candidate()]})
+        return ""
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(0, "parent", {}, {}, 1))
+    diag = result["diagnostics"]
+
+    assert len(result["candidates"]) == 1
+    assert calls["count"] == 2
+    assert diag["student_json_retry_attempted"] is True
+    assert diag["student_json_retry_succeeded"] is True
+    assert diag["student_json_repair_attempted"] is False
+    assert diag["student_raw_response_empty"] is False
+    assert diag["student_failure_stage"] in {"", "none"}
 
 
 def test_student_non_json_response_diagnostics():

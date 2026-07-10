@@ -1,0 +1,21 @@
+{
+  "protocol": "strict_mode",
+  "split_seed": 42,
+  "splits": {
+    "opt": {
+      "num_samples": 75,
+      "hash": "608b9b56cd3eaef2f57d982fd503670188459017fbff73b4e555f1d3a0820bed"
+    },
+    "val": {
+      "num_samples": 50,
+      "hash": "9ed73e02600b357a73ee03927353737d09b8017479fb0c23bc1a47b3145bda8d"
+    },
+    "test": {
+      "num_samples": 125,
+      "hash": "480a8b99041366ae8e4527da66d7d98fa3eaa16aebb2dbc70cca29e5c85e9b01"
+    }
+  },
+  "dataset_path": "Dataset_format/BBH/disambiguation_qa.csv",
+  "max_samples": null,
+  "legacy_skip_first_data_row": false
+}

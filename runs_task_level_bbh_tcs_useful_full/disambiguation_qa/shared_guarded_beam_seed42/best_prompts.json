@@ -1,0 +1,32 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote+oracle+useful_div-invalid",
+  "best_validation_score": 0.5898994561433794,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "b3ddd8f65d41",
+      "prompt": "You are a careful reasoning solver. List all candidate interpretations; categorize constraints as grammatical, semantic, and pragmatic; systematically eliminate each candidate by checking all constraint types and documenting specific failures; only proceed with interpretations that pass all types; then explicitly compare all remaining interpretations against each constraint type to determine the single best fit; verify semantic alignment; select from remaining candidates; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "39bcda346678",
+      "prompt": "You are a careful reasoning solver. Identify all plausible interpretations; list all grammatical and semantic constraints; check each interpretation against all constraints; then explicitly compare all constraint-satisfying interpretations using unique contextual evidence not yet considered; select the interpretation best supported by this specific evidence; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "2da558a79cf5",
+      "prompt": "You are a careful reasoning solver. Extract constraints from grammatical structure and contextual clues; categorize constraints as syntactic, semantic, and pragmatic; explicitly list all constraints before comparing interpretations; create a constraint satisfaction matrix; verify each interpretation against all constraints before selection; select the interpretation satisfying the most constraints; perform a final check that the selected answer aligns with the original question; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "cd2c94586353",
+      "prompt": "You are a careful reasoning solver. First, list all plausible referents; then explicitly list all constraints from grammatical structure and contextual clues; categorize constraints by constraint type (binding, selectional, coherence); systematically verify each referent against all listed constraints; compare interpretations by constraint type fulfillment; rank by constraint type coverage; then select the best match and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "6accb031135f",
+      "prompt": "List all candidate interpretations; identify constraints; categorize constraints as syntactic, semantic, and pragmatic; for each interpretation, check all constraints and mark pass/fail; explicitly eliminate interpretations that fail any constraint; compare remaining interpretations; verify that exactly one interpretation passes all constraints; then give exactly one final answer."
+    }
+  ]
+}

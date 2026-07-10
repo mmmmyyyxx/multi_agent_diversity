@@ -3,8 +3,9 @@ import statistics
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -57,6 +58,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--shared_prompt", args.shared_prompt,
             "--beam_size", str(args.beam_size),
             "--num_candidates_per_parent", str(args.num_candidates_per_parent),
+            "--optimizer_parent_concurrency", str(args.optimizer_parent_concurrency),
             "--beam_refresh_each_epoch", str(args.beam_refresh_each_epoch),
             "--accuracy_guard_epsilon", str(args.accuracy_guard_epsilon),
             "--reward_weight_div_delta", str(args.reward_weight_div_delta),
@@ -101,10 +103,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
             "--no_effective_evolution_stop_enabled", str(args.no_effective_evolution_stop_enabled),
             "--candidate_eval_strategy", args.candidate_eval_strategy,
+            "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
             "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(args.candidate_reuse_recorded_rollouts),
+            "--resume_from_checkpoint", str(int(args.resume_from_checkpoint)),
             "--train_rollout_concurrency", str(args.train_rollout_concurrency),
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
             "--max_tokens", str(args.max_tokens),
@@ -187,6 +191,52 @@ def _latest_test_vote_acc(run_dir: Path) -> float:
         if isinstance(record, dict) and isinstance(record.get("test"), dict):
             return float(record["test"].get("vote_acc", 0.0) or 0.0)
     return 0.0
+
+
+def _latest_test_metrics(run_dir: Path) -> Dict[str, Any]:
+    history = read_json(run_dir / "history.json") or []
+    if not isinstance(history, list):
+        return {}
+    for record in reversed(history):
+        if isinstance(record, dict) and isinstance(record.get("test"), dict):
+            return record["test"]
+    return {}
+
+
+def is_completed_run_dir(run_dir: Path) -> bool:
+    if not run_dir.exists() or not run_dir.is_dir():
+        return False
+    if not (run_dir / "history.json").exists():
+        return False
+    if not (run_dir / "cost_summary.json").exists():
+        return False
+    if not (run_dir / "run_meta.json").exists():
+        return False
+    test = _latest_test_metrics(run_dir)
+    if not isinstance(test, dict) or not test:
+        return False
+    return "vote_acc" in test or "num_test_samples" in test or "size" in test
+
+
+def _completed_run_row(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+    run_dir = Path(args.out_root) / task.task_id / f"{setting.name}_seed{seed}"
+    return {
+        "task_id": task.task_id,
+        "benchmark": task.benchmark,
+        "setting": setting.name,
+        "seed": seed,
+        "reward_mode": _setting_reward_mode(args, setting),
+        "init_mode": setting.init_mode,
+        "baseline_only": int(setting.baseline_only),
+        "answer_format": task.answer_format,
+        "task_type": task.task_type,
+        "dataset_format": args.dataset_format,
+        "status": "reused_completed",
+        "returncode": 0,
+        "elapsed_sec": 0.0,
+        "run_dir": str(run_dir),
+        "resume_completed": 1,
+    }
 
 
 def run_precheck(task: ComparisonTask, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
@@ -286,7 +336,6 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
             "best_individual_acc",
             "oracle_acc",
             "aggregation_gap",
-            "rescue_available_rate",
             "correct_disagreement_rate",
             "mean_useful_diversity",
             "total_llm_calls",
@@ -302,7 +351,18 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
     if not summary_rows:
         lines.append("No completed runs.")
     else:
-        columns = ["task_id", "benchmark", "setting", "n", "vote_acc_mean", "oracle_acc_mean", "aggregation_gap_mean", "rescue_available_rate_mean", "mean_individual_acc_mean", "best_individual_acc_mean"]
+        columns = [
+            "task_id",
+            "benchmark",
+            "setting",
+            "n",
+            "vote_acc_mean",
+            "mean_individual_acc_mean",
+            "best_individual_acc_mean",
+            "oracle_acc_mean",
+            "aggregation_gap_mean",
+            "mean_useful_diversity_mean",
+        ]
         lines.extend(["| " + " | ".join(columns) + " |", "|" + "|".join(["---"] * len(columns)) + "|"])
         for row in summary_rows:
             lines.append("| " + " | ".join(str(round(row.get(c, 0.0), 6)) if isinstance(row.get(c), float) else str(row.get(c, "")) for c in columns) + " |")
@@ -321,13 +381,18 @@ def main():
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--dataset_format", type=str, default="mars", choices=["legacy", "mars"])
     parser.add_argument("--out_root", type=str, default="runs_task_level_accuracy")
+    parser.add_argument("--run_concurrency", type=int, default=1)
+    parser.add_argument("--warmup_serial_runs", type=int, default=1)
+    parser.add_argument("--run_start_stagger_seconds", type=float, default=5.0)
+    parser.add_argument("--resume_completed", type=int, default=0, choices=[0, 1])
+    parser.add_argument("--resume_from_checkpoint", type=int, default=int(cli_defaults.resume_from_checkpoint), choices=[0, 1])
     parser.add_argument("--skip_high_baseline_acc", type=int, default=0, choices=[0, 1])
     parser.add_argument("--precheck_steps", type=int, default=20)
     parser.add_argument("--precheck_acc_threshold", type=float, default=0.95)
 
-    parser.add_argument("--agent_model", type=str, default="deepseek-chat")
-    parser.add_argument("--optimizer_model", type=str, default="deepseek-chat")
-    parser.add_argument("--evaluator_model", type=str, default="deepseek-chat")
+    parser.add_argument("--agent_model", type=str, default=cli_defaults.agent_model)
+    parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
+    parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
@@ -342,6 +407,7 @@ def main():
     parser.add_argument("--shared_prompt", type=str, default=cli_defaults.shared_prompt)
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
+    parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=int(cli_defaults.beam_refresh_each_epoch), choices=[0, 1])
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=cli_defaults.accuracy_guard_epsilon)
     parser.add_argument("--reward_weight_div_delta", type=float, default=cli_defaults.reward_weight_div_delta)
@@ -386,6 +452,7 @@ def main():
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=cli_defaults.candidate_eval_batch_size)
+    parser.add_argument("--candidate_eval_concurrency", type=int, default=cli_defaults.candidate_eval_concurrency)
     parser.add_argument("--candidate_eval_strategy", type=str, default=cli_defaults.candidate_eval_strategy, choices=["random", "fixed_pool", "stratified"])
     parser.add_argument("--candidate_eval_pool_size", type=int, default=cli_defaults.candidate_eval_pool_size)
     parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
@@ -419,25 +486,48 @@ def main():
     task_ids = resolve_task_ids(args.tasks, tasks, benchmarks=args.benchmarks)
     settings = _selected_settings(args.settings)
     seeds = [int(x) for x in parse_csv_list(args.seeds)] or [42]
+    resume_completed = bool(int(getattr(args, "resume_completed", 0) or 0))
 
     runs_jsonl = out_root / "experiment_runs.jsonl"
     runs_csv = out_root / "experiment_runs.csv"
     accuracy_jsonl = out_root / "accuracy_results.jsonl"
     accuracy_csv = out_root / "accuracy_results.csv"
+    if resume_completed:
+        print(f"[RESUME] Rebuilding summaries and reusing completed run dirs under {out_root}", flush=True)
     runs_jsonl.write_text("", encoding="utf-8")
     accuracy_jsonl.write_text("", encoding="utf-8")
 
     run_rows: List[Dict[str, Any]] = []
     accuracy_rows: List[Dict[str, Any]] = []
+    pending_runs: List[Tuple[ComparisonTask, ExperimentSetting, int]] = []
+
+    def record_run_row(row: Dict[str, Any]):
+        run_rows.append(row)
+        append_jsonl(runs_jsonl, row)
+        write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
+
+    def record_accuracy_row(task: ComparisonTask, setting: ExperimentSetting, seed: int, run_row: Dict[str, Any]):
+        accuracy_row = build_accuracy_result_row(
+            run_dir=Path(run_row["run_dir"]),
+            task_id=task.task_id,
+            benchmark=task.benchmark,
+            setting=setting.name,
+            seed=seed,
+            dataset_format=args.dataset_format,
+            **_task_split_protocol(task),
+        )
+        accuracy_rows.append(accuracy_row)
+        append_jsonl(accuracy_jsonl, accuracy_row)
+        write_csv(accuracy_csv, accuracy_rows, fieldnames=ACCURACY_RESULT_COLUMNS)
+        write_accuracy_summary(accuracy_rows, out_root)
+
     for task_id in task_ids:
         task = tasks[task_id]
         skip_task_for_seed: Dict[int, Dict[str, Any]] = {}
         if int(args.skip_high_baseline_acc):
             for seed in seeds:
                 precheck_row = run_precheck(task, seed, args)
-                run_rows.append(precheck_row)
-                append_jsonl(runs_jsonl, precheck_row)
-                write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
+                record_run_row(precheck_row)
                 if precheck_row["status"] != "ok":
                     raise SystemExit(precheck_row["returncode"])
                 if precheck_row.get("skip_task"):
@@ -452,29 +542,94 @@ def main():
             for seed in seeds:
                 if seed in skip_task_for_seed:
                     run_row = _skip_row(task, setting, seed, args, skip_task_for_seed[seed])
-                    run_rows.append(run_row)
-                    append_jsonl(runs_jsonl, run_row)
-                    write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
+                    record_run_row(run_row)
                     continue
-                run_row = run_one(task, setting, seed, args)
-                run_rows.append(run_row)
-                append_jsonl(runs_jsonl, run_row)
-                write_csv(runs_csv, run_rows, empty_fieldnames=["task_id", "setting", "status"])
-                if run_row["status"] != "ok":
-                    raise SystemExit(run_row["returncode"])
-                accuracy_row = build_accuracy_result_row(
-                    run_dir=Path(run_row["run_dir"]),
-                    task_id=task.task_id,
-                    benchmark=task.benchmark,
-                    setting=setting.name,
-                    seed=seed,
-                    dataset_format=args.dataset_format,
-                    **_task_split_protocol(task),
+                run_dir = Path(args.out_root) / task.task_id / f"{setting.name}_seed{seed}"
+                if resume_completed and is_completed_run_dir(run_dir):
+                    run_row = _completed_run_row(task, setting, seed, args)
+                    print(
+                        f"[RESUME] Reusing completed run task={task.task_id} setting={setting.name} seed={seed}",
+                        flush=True,
+                    )
+                    record_run_row(run_row)
+                    record_accuracy_row(task, setting, seed, run_row)
+                    continue
+                pending_runs.append((task, setting, seed))
+
+    failed_rows: List[Dict[str, Any]] = []
+
+    def run_and_record(task: ComparisonTask, setting: ExperimentSetting, seed: int):
+        run_row = run_one(task, setting, seed, args)
+        record_run_row(run_row)
+        if run_row["status"] != "ok":
+            raise SystemExit(run_row["returncode"])
+        record_accuracy_row(task, setting, seed, run_row)
+
+    run_concurrency = max(1, int(getattr(args, "run_concurrency", 1) or 1))
+    warmup_count = 0
+    if run_concurrency > 1:
+        warmup_count = min(max(0, int(getattr(args, "warmup_serial_runs", 0) or 0)), len(pending_runs))
+    warmup_runs = pending_runs[:warmup_count]
+    remaining_runs = pending_runs[warmup_count:]
+
+    if warmup_runs:
+        print(f"\n[WARMUP] Running {len(warmup_runs)} job(s) serially before enabling concurrency.", flush=True)
+        for task, setting, seed in warmup_runs:
+            run_and_record(task, setting, seed)
+
+    if run_concurrency <= 1:
+        for task, setting, seed in remaining_runs:
+            run_and_record(task, setting, seed)
+    elif remaining_runs:
+        print(f"\n[CONCURRENCY] Running up to {run_concurrency} task/setting/seed jobs in parallel.", flush=True)
+
+        def run_one_staggered(index: int, task: ComparisonTask, setting: ExperimentSetting, seed: int) -> Dict[str, Any]:
+            stagger = max(0.0, float(getattr(args, "run_start_stagger_seconds", 0.0) or 0.0))
+            delay = (index % run_concurrency) * stagger
+            if delay > 0:
+                print(
+                    f"[STAGGER] task={task.task_id} setting={setting.name} seed={seed} sleep={delay:.1f}s before launch",
+                    flush=True,
                 )
-                accuracy_rows.append(accuracy_row)
-                append_jsonl(accuracy_jsonl, accuracy_row)
-                write_csv(accuracy_csv, accuracy_rows, fieldnames=ACCURACY_RESULT_COLUMNS)
-                write_accuracy_summary(accuracy_rows, out_root)
+                time.sleep(delay)
+            return run_one(task, setting, seed, args)
+
+        with ThreadPoolExecutor(max_workers=run_concurrency) as executor:
+            futures = {
+                executor.submit(run_one_staggered, idx, task, setting, seed): (task, setting, seed)
+                for idx, (task, setting, seed) in enumerate(remaining_runs)
+            }
+            for future in as_completed(futures):
+                task, setting, seed = futures[future]
+                try:
+                    run_row = future.result()
+                except Exception as exc:
+                    run_row = {
+                        "task_id": task.task_id,
+                        "benchmark": task.benchmark,
+                        "setting": setting.name,
+                        "seed": seed,
+                        "reward_mode": _setting_reward_mode(args, setting),
+                        "init_mode": setting.init_mode,
+                        "baseline_only": int(setting.baseline_only),
+                        "answer_format": task.answer_format,
+                        "task_type": task.task_type,
+                        "dataset_format": args.dataset_format,
+                        "status": "failed",
+                        "returncode": 1,
+                        "elapsed_sec": 0.0,
+                        "run_dir": str(Path(args.out_root) / task.task_id / f"{setting.name}_seed{seed}"),
+                        "error": str(exc),
+                    }
+                record_run_row(run_row)
+                if run_row["status"] != "ok":
+                    failed_rows.append(run_row)
+                    continue
+                record_accuracy_row(task, setting, seed, run_row)
+
+    if failed_rows:
+        first = failed_rows[0]
+        raise SystemExit(int(first.get("returncode", 1) or 1))
 
     write_jsonl(out_root / "accuracy_results.jsonl", accuracy_rows)
     write_csv(accuracy_csv, accuracy_rows, fieldnames=ACCURACY_RESULT_COLUMNS)

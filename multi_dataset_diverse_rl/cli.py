@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import random
+import time
 
 import numpy as np
 
@@ -212,6 +213,192 @@ def read_selected_prompts(path):
     return payload, prompts
 
 
+def checkpoint_path(cfg):
+    return os.path.join(cfg.out_dir, "training_checkpoint.json")
+
+
+def read_json_file(path):
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def write_json_atomic(path, payload):
+    tmp_path = f"{path}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, path)
+
+
+def restore_system_state(system, state_payload):
+    agents = state_payload.get("agents", []) if isinstance(state_payload, dict) else []
+    if not isinstance(agents, list) or len(agents) != len(system.agents):
+        raise ValueError(f"Cannot restore state: got {len(agents) if isinstance(agents, list) else 0} agents, expected {len(system.agents)}")
+    for agent, saved in zip(system.agents, agents):
+        if not isinstance(saved, dict):
+            continue
+        agent.initial_prompt = str(saved.get("initial_prompt", agent.initial_prompt))
+        agent.current_prompt = str(saved.get("current_prompt", agent.current_prompt))
+        prompt_beam = saved.get("prompt_beam", [])
+        if isinstance(prompt_beam, list) and prompt_beam:
+            agent.prompt_beam = [dict(item) for item in prompt_beam if isinstance(item, dict)]
+        else:
+            agent.prompt_beam = [system._make_beam_item(agent.current_prompt, None, {}, None, 0)]
+        history = saved.get("history", [])
+        agent.history = [str(x) for x in history] if isinstance(history, list) and history else [agent.current_prompt]
+        agent.accept_count = int(saved.get("accept_count", 0) or 0)
+        agent.reject_count = int(saved.get("reject_count", 0) or 0)
+
+
+def restore_prompt_history(system):
+    path = os.path.join(system.cfg.out_dir, "prompt_history.json")
+    payload = read_json_file(path)
+    if isinstance(payload, dict):
+        system.prompt_history = payload
+    if hasattr(system, "sync_prompt_history_current_state"):
+        system.sync_prompt_history_current_state(event="checkpoint_resume", epoch="resume", step=0)
+
+
+def restore_cost_summary(system):
+    payload = read_json_file(os.path.join(system.cfg.out_dir, "cost_summary.json"))
+    if isinstance(payload, dict):
+        base = system._empty_cost_summary() if hasattr(system, "_empty_cost_summary") else {}
+        base.update(payload)
+        system.cost_summary = base
+
+
+def checkpoint_config_signature(cfg):
+    fields = [
+        "task_type",
+        "dataset_format",
+        "comparison_task_id",
+        "benchmark",
+        "answer_format",
+        "train_path",
+        "val_path",
+        "test_path",
+        "agents",
+        "init_mode",
+        "reward_mode",
+        "optimizer_architecture",
+        "beam_size",
+        "num_candidates_per_parent",
+        "update_every",
+        "candidate_eval_batch_size",
+        "candidate_eval_strategy",
+        "candidate_eval_pool_size",
+        "candidate_eval_seed_offset",
+        "agent_model",
+        "max_tokens",
+        "temperature",
+    ]
+    return {field: str(getattr(cfg, field, "")) for field in fields}
+
+
+def build_training_checkpoint(
+    cfg,
+    system,
+    *,
+    epoch_index,
+    cursor,
+    order,
+    train_accumulators,
+    best_score,
+    best_epoch,
+    epochs_without_improvement,
+    stopped_early,
+    no_effective_evolution_counter,
+    no_effective_evolution_stopped,
+    no_effective_evolution_reason,
+    stage="training",
+    epoch_record=None,
+):
+    payload = {
+        "version": 1,
+        "stage": str(stage),
+        "updated_at": time.time(),
+        "seed": int(cfg.seed),
+        "epochs": int(cfg.epochs),
+        "train_size": int(cfg.train_size),
+        "config_signature": checkpoint_config_signature(cfg),
+        "epoch_index": int(epoch_index),
+        "cursor": int(cursor),
+        "order": [int(x) for x in order],
+        "train_accumulators": train_accumulators,
+        "best_score": float(best_score),
+        "best_epoch": int(best_epoch),
+        "epochs_without_improvement": int(epochs_without_improvement),
+        "stopped_early": bool(stopped_early),
+        "no_effective_evolution_counter": int(no_effective_evolution_counter),
+        "no_effective_evolution_stopped": bool(no_effective_evolution_stopped),
+        "no_effective_evolution_reason": str(no_effective_evolution_reason),
+        "state": {
+            "agents": [
+                {
+                    "agent_id": i,
+                    "initial_prompt": a.initial_prompt,
+                    "current_prompt": a.current_prompt,
+                    "prompt_beam": a.prompt_beam,
+                    "history": a.history,
+                    "accept_count": a.accept_count,
+                    "reject_count": a.reject_count,
+                }
+                for i, a in enumerate(system.agents)
+            ],
+        },
+    }
+    if epoch_record is not None:
+        payload["epoch_record"] = epoch_record
+    return payload
+
+
+def write_training_checkpoint(cfg, system, **kwargs):
+    write_json_atomic(checkpoint_path(cfg), build_training_checkpoint(cfg, system, **kwargs))
+
+
+def clear_training_checkpoint(cfg):
+    path = checkpoint_path(cfg)
+    if os.path.exists(path):
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+
+def checkpoint_compatible(payload, cfg, train_data):
+    if not isinstance(payload, dict):
+        return False
+    if int(payload.get("version", 0) or 0) != 1:
+        return False
+    if int(payload.get("seed", -1)) != int(cfg.seed):
+        return False
+    if int(payload.get("epochs", -1)) != int(cfg.epochs):
+        return False
+    if int(payload.get("train_size", -1)) != int(cfg.train_size):
+        return False
+    saved_signature = payload.get("config_signature", {})
+    if isinstance(saved_signature, dict):
+        current_signature = checkpoint_config_signature(cfg)
+        for key, value in saved_signature.items():
+            if key in current_signature and str(current_signature[key]) != str(value):
+                return False
+    epoch_index = int(payload.get("epoch_index", -1))
+    if epoch_index < 0 or epoch_index > int(cfg.epochs):
+        return False
+    stage = str(payload.get("stage", "training") or "training")
+    order = payload.get("order", [])
+    if stage in {"between_epochs", "epoch_evaluated"}:
+        return isinstance(order, list)
+    if stage != "training":
+        return False
+    cursor = int(payload.get("cursor", -1))
+    return isinstance(order, list) and len(order) == len(train_data) and 0 <= cursor <= len(order)
+
+
 def validation_score(epoch_record, reward_mode="guarded_diversity"):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
     mode = str(reward_mode).lower()
@@ -269,6 +456,7 @@ async def main_async():
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
     cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))
     cfg.teacher_critic_use_voting_failure = bool(int(cfg.teacher_critic_use_voting_failure))
+    cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
 
     ensure_dir(cfg.out_dir)
     set_seed(cfg.seed)
@@ -348,18 +536,162 @@ async def main_async():
     no_effective_evolution_stopped = False
     no_effective_evolution_reason = ""
     best_prompts_path = os.path.join(cfg.out_dir, "best_prompts.json")
-    for epoch in range(cfg.epochs):
-        order = list(range(len(train_data)))
-        random.shuffle(order)
+    resume_payload = None
+    resume_epoch_index = 0
+    resume_cursor = 0
+    resume_accumulators = {}
+    resume_stage = "training"
+    resume_epoch_record = None
+    if cfg.resume_from_checkpoint:
+        candidate = read_json_file(checkpoint_path(cfg))
+        if checkpoint_compatible(candidate, cfg, train_data):
+            resume_payload = candidate
+            resume_stage = str(candidate.get("stage", "training") or "training")
+            restore_system_state(system, candidate.get("state", {}))
+            restore_prompt_history(system)
+            restore_cost_summary(system)
+            history = read_json_file(os.path.join(cfg.out_dir, "history.json"))
+            if isinstance(history, list):
+                system.history = history
+            best_score = float(candidate.get("best_score", best_score))
+            best_epoch = int(candidate.get("best_epoch", best_epoch) or 0)
+            epochs_without_improvement = int(candidate.get("epochs_without_improvement", epochs_without_improvement) or 0)
+            stopped_early = bool(candidate.get("stopped_early", False))
+            no_effective_evolution_counter = int(candidate.get("no_effective_evolution_counter", 0) or 0)
+            no_effective_evolution_stopped = bool(candidate.get("no_effective_evolution_stopped", False))
+            no_effective_evolution_reason = str(candidate.get("no_effective_evolution_reason", ""))
+            resume_epoch_index = int(candidate.get("epoch_index", 0) or 0)
+            if resume_stage == "training":
+                resume_cursor = int(candidate.get("cursor", 0) or 0)
+                resume_accumulators = candidate.get("train_accumulators", {}) if isinstance(candidate.get("train_accumulators", {}), dict) else {}
+                completed_epoch_num = resume_epoch_index + 1
+                epoch_already_recorded = any(
+                    isinstance(record, dict) and record.get("epoch") == completed_epoch_num
+                    for record in system.history
+                )
+                if resume_cursor >= len(train_data) and epoch_already_recorded:
+                    resume_stage = "between_epochs"
+                    resume_epoch_index = completed_epoch_num
+                    resume_payload = None
+                    resume_cursor = 0
+                    resume_accumulators = {}
+                elif no_effective_evolution_stopped:
+                    resume_cursor = len(train_data)
+            else:
+                if resume_stage == "epoch_evaluated" and isinstance(candidate.get("epoch_record"), dict):
+                    resume_epoch_record = candidate.get("epoch_record")
+                resume_payload = None
+                resume_cursor = 0
+                resume_accumulators = {}
+                if resume_stage == "between_epochs" and (stopped_early or no_effective_evolution_stopped):
+                    resume_epoch_index = int(cfg.epochs)
+            print(
+                f"[RESUME] Loaded training checkpoint stage={resume_stage} "
+                f"epoch={min(resume_epoch_index + 1, cfg.epochs)} "
+                f"cursor={resume_cursor}/{len(train_data)} best_epoch={best_epoch}",
+                flush=True,
+            )
+        elif candidate is not None:
+            print("[RESUME] Ignoring incompatible training_checkpoint.json; starting run from scratch.", flush=True)
+
+    if resume_epoch_record is not None:
+        epoch_num = int(resume_epoch_record.get("epoch", resume_epoch_index + 1) or (resume_epoch_index + 1))
+        train_metrics = resume_epoch_record.get("train", {}) if isinstance(resume_epoch_record.get("train", {}), dict) else {}
+        val_metrics = resume_epoch_record.get("val", {}) if isinstance(resume_epoch_record.get("val", {}), dict) else {}
+        if not any(isinstance(record, dict) and record.get("epoch") == epoch_num for record in system.history):
+            system.history.append(resume_epoch_record)
+        print(
+            f"[RESUME] Finalizing checkpointed epoch {epoch_num}: "
+            f"train_vote_acc={float(train_metrics.get('vote_acc', 0.0) or 0.0):.4f}, "
+            f"train_oracle_acc={float(train_metrics.get('oracle_acc', 0.0) or 0.0):.4f}, "
+            f"train_gap={float(train_metrics.get('aggregation_gap', 0.0) or 0.0):.4f}, "
+            f"train_useful_div={float(train_metrics.get('mean_useful_diversity', 0.0) or 0.0):.4f}, "
+            f"train_invalid={float(train_metrics.get('mean_invalid_rate', 0.0) or 0.0):.4f}, "
+            f"val_vote_acc={float(val_metrics.get('vote_acc', 0.0) or 0.0):.4f}, "
+            f"val_oracle_acc={float(val_metrics.get('oracle_acc', 0.0) or 0.0):.4f}, "
+            f"val_gap={float(val_metrics.get('aggregation_gap', 0.0) or 0.0):.4f}, "
+            f"val_useful_div={float(val_metrics.get('mean_useful_diversity', 0.0) or 0.0):.4f}, "
+            f"val_invalid={float(val_metrics.get('mean_invalid_rate', 0.0) or 0.0):.4f}",
+            flush=True,
+        )
+        system.save_state("last_state", extra=resume_epoch_record)
+        system.flush_train_step_logs()
+        system.flush_train_trace_history_logs()
+        system.flush_test_trace_history_logs()
+        system.flush_prompt_history()
+        system.flush_llm_call_logs()
+        system.write_cost_summary()
+        with open(os.path.join(cfg.out_dir, "history.json"), "w", encoding="utf-8") as f:
+            json.dump(system.history, f, ensure_ascii=False, indent=2)
+
+        score = validation_score(resume_epoch_record, cfg.reward_mode)
+        min_delta = float(getattr(cfg, "early_stopping_min_delta", 0.0) or 0.0)
+        if score > best_score + min_delta:
+            best_score = score
+            best_epoch = epoch_num
+            epochs_without_improvement = 0
+            system.save_state("best_state", extra=resume_epoch_record)
+            write_selected_prompts(best_prompts_path, system, best_epoch, validation_metric_name(cfg.reward_mode), best_score)
+        else:
+            epochs_without_improvement += 1
+
+        raw_patience = getattr(cfg, "early_stopping_patience", -1)
+        patience = int(raw_patience) if raw_patience is not None else -1
+        should_stop_after_epoch = False
+        if patience >= 0 and epochs_without_improvement >= patience:
+            stopped_early = True
+            should_stop_after_epoch = True
+            print(
+                f"Early stopping at epoch {epoch_num}: "
+                f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode)}, "
+                f"best_validation_score={best_score:.4f}, "
+                f"epochs_without_improvement={epochs_without_improvement}",
+                flush=True,
+            )
+        if no_effective_evolution_stopped:
+            stopped_early = True
+            should_stop_after_epoch = True
+        write_training_checkpoint(
+            cfg,
+            system,
+            epoch_index=epoch_num,
+            cursor=0,
+            order=[],
+            train_accumulators={},
+            best_score=best_score,
+            best_epoch=best_epoch,
+            epochs_without_improvement=epochs_without_improvement,
+            stopped_early=stopped_early,
+            no_effective_evolution_counter=no_effective_evolution_counter,
+            no_effective_evolution_stopped=no_effective_evolution_stopped,
+            no_effective_evolution_reason=no_effective_evolution_reason,
+            stage="between_epochs",
+        )
+        resume_epoch_index = int(cfg.epochs) if should_stop_after_epoch else epoch_num
+        resume_epoch_record = None
+
+    for epoch in range(resume_epoch_index, cfg.epochs):
+        if resume_payload is not None and epoch == resume_epoch_index:
+            order = [int(x) for x in resume_payload.get("order", [])]
+        else:
+            order = list(range(len(train_data)))
+            random.shuffle(order)
         train_embedding_diversity = []
         train_embedding_overlap = []
         train_invalid_rate = []
         train_vote_correct = []
         train_any_correct = []
         train_useful_diversity = []
+        if resume_payload is not None and epoch == resume_epoch_index:
+            train_embedding_diversity = [float(x) for x in resume_accumulators.get("train_embedding_diversity", [])]
+            train_embedding_overlap = [float(x) for x in resume_accumulators.get("train_embedding_overlap", [])]
+            train_invalid_rate = [float(x) for x in resume_accumulators.get("train_invalid_rate", [])]
+            train_vote_correct = [int(x) for x in resume_accumulators.get("train_vote_correct", [])]
+            train_any_correct = [int(x) for x in resume_accumulators.get("train_any_correct", [])]
+            train_useful_diversity = [float(x) for x in resume_accumulators.get("train_useful_diversity", [])]
         train_rollout_concurrency = max(1, auto_train_rollout_concurrency(cfg))
 
-        cursor = 0
+        cursor = min(max(0, int(resume_cursor if resume_payload is not None and epoch == resume_epoch_index else 0)), len(order))
         while cursor < len(order):
             window_end = min(len(order), ((cursor // max(1, int(cfg.update_every))) + 1) * max(1, int(cfg.update_every)))
             batch_end = min(window_end, cursor + train_rollout_concurrency)
@@ -422,9 +754,65 @@ async def main_async():
                         f"train_useful_div={float(np.mean(train_useful_diversity)):.4f} "
                         f"train_invalid={float(np.mean(train_invalid_rate)):.4f}"
                     )
+                write_training_checkpoint(
+                    cfg,
+                    system,
+                    epoch_index=epoch,
+                    cursor=step + 1,
+                    order=order,
+                    train_accumulators={
+                        "train_embedding_diversity": train_embedding_diversity,
+                        "train_embedding_overlap": train_embedding_overlap,
+                        "train_invalid_rate": train_invalid_rate,
+                        "train_vote_correct": train_vote_correct,
+                        "train_any_correct": train_any_correct,
+                        "train_useful_diversity": train_useful_diversity,
+                    },
+                    best_score=best_score,
+                    best_epoch=best_epoch,
+                    epochs_without_improvement=epochs_without_improvement,
+                    stopped_early=stopped_early,
+                    no_effective_evolution_counter=no_effective_evolution_counter,
+                    no_effective_evolution_stopped=no_effective_evolution_stopped,
+                    no_effective_evolution_reason=no_effective_evolution_reason,
+                )
+                system.flush_train_step_logs()
+                system.flush_train_trace_history_logs()
+                system.flush_update_logs()
+                system.flush_prompt_history()
+                system.flush_llm_call_logs()
+                system.write_cost_summary()
                 if no_effective_evolution_stopped:
                     break
             cursor = batch_end
+            write_training_checkpoint(
+                cfg,
+                system,
+                epoch_index=epoch,
+                cursor=cursor,
+                order=order,
+                train_accumulators={
+                    "train_embedding_diversity": train_embedding_diversity,
+                    "train_embedding_overlap": train_embedding_overlap,
+                    "train_invalid_rate": train_invalid_rate,
+                    "train_vote_correct": train_vote_correct,
+                    "train_any_correct": train_any_correct,
+                    "train_useful_diversity": train_useful_diversity,
+                },
+                best_score=best_score,
+                best_epoch=best_epoch,
+                epochs_without_improvement=epochs_without_improvement,
+                stopped_early=stopped_early,
+                no_effective_evolution_counter=no_effective_evolution_counter,
+                no_effective_evolution_stopped=no_effective_evolution_stopped,
+                no_effective_evolution_reason=no_effective_evolution_reason,
+            )
+            system.flush_train_step_logs()
+            system.flush_train_trace_history_logs()
+            system.flush_update_logs()
+            system.flush_prompt_history()
+            system.flush_llm_call_logs()
+            system.write_cost_summary()
             if no_effective_evolution_stopped:
                 break
 
@@ -452,6 +840,30 @@ async def main_async():
             epoch_record["beam_refresh"] = refresh_summary
         if cfg.eval_test_each_epoch:
             epoch_record["test"] = await system.evaluate_dataset(test_data, split_name=f"test_epoch{epoch + 1}")
+        write_training_checkpoint(
+            cfg,
+            system,
+            epoch_index=epoch,
+            cursor=len(order),
+            order=order,
+            train_accumulators={
+                "train_embedding_diversity": train_embedding_diversity,
+                "train_embedding_overlap": train_embedding_overlap,
+                "train_invalid_rate": train_invalid_rate,
+                "train_vote_correct": train_vote_correct,
+                "train_any_correct": train_any_correct,
+                "train_useful_diversity": train_useful_diversity,
+            },
+            best_score=best_score,
+            best_epoch=best_epoch,
+            epochs_without_improvement=epochs_without_improvement,
+            stopped_early=stopped_early,
+            no_effective_evolution_counter=no_effective_evolution_counter,
+            no_effective_evolution_stopped=no_effective_evolution_stopped,
+            no_effective_evolution_reason=no_effective_evolution_reason,
+            stage="epoch_evaluated",
+            epoch_record=epoch_record,
+        )
         system.history.append(epoch_record)
 
         print(
@@ -491,18 +903,40 @@ async def main_async():
 
         raw_patience = getattr(cfg, "early_stopping_patience", -1)
         patience = int(raw_patience) if raw_patience is not None else -1
+        should_stop_after_epoch = False
         if patience >= 0 and epochs_without_improvement >= patience:
             stopped_early = True
+            should_stop_after_epoch = True
             print(
                 f"Early stopping at epoch {epoch + 1}: "
                 f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode)}, "
                 f"best_validation_score={best_score:.4f}, "
                 f"epochs_without_improvement={epochs_without_improvement}"
             )
-            break
         if no_effective_evolution_stopped:
             stopped_early = True
+            should_stop_after_epoch = True
+        write_training_checkpoint(
+            cfg,
+            system,
+            epoch_index=epoch + 1,
+            cursor=0,
+            order=[],
+            train_accumulators={},
+            best_score=best_score,
+            best_epoch=best_epoch,
+            epochs_without_improvement=epochs_without_improvement,
+            stopped_early=stopped_early,
+            no_effective_evolution_counter=no_effective_evolution_counter,
+            no_effective_evolution_stopped=no_effective_evolution_stopped,
+            no_effective_evolution_reason=no_effective_evolution_reason,
+            stage="between_epochs",
+        )
+        if should_stop_after_epoch:
             break
+        resume_payload = None
+        resume_cursor = 0
+        resume_accumulators = {}
 
     if os.path.exists(best_prompts_path):
         payload, prompts = read_selected_prompts(best_prompts_path)
@@ -542,6 +976,7 @@ async def main_async():
     system.flush_prompt_history()
     system.flush_llm_call_logs()
     system.write_cost_summary()
+    clear_training_checkpoint(cfg)
 
 
 def main():

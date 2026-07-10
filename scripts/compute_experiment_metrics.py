@@ -33,25 +33,34 @@ PUBLIC_METRIC_COLUMNS = [
     "latest_test_vote_tie_rate",
     "latest_test_oracle_acc",
     "latest_test_aggregation_gap",
-    "latest_test_rescue_available_rate",
+    "latest_test_mean_individual_acc",
+    "latest_test_best_individual_acc",
     "latest_test_correct_disagreement_rate",
     "latest_test_mean_useful_diversity",
+    "latest_test_diagnostic_rescue_available_rate",
     "reward",
+    "target_agent_accuracy",
+    "baseline_target_accuracy",
+    "candidate_target_accuracy",
+    "target_accuracy_delta",
+    "coverage_delta",
+    "useful_diversity",
+    "invalid_guard_pass_rate",
+    "team_accuracy",
+    "candidate_team_accuracy",
+    "vote_delta",
     "embedding_diversity",
     "mean_embedding_overlap",
     "target_overlap_pressure",
-    "homogeneous_case_count",
-    "resolved_case_count",
-    "new_homogeneous_case_count",
-    "team_accuracy",
     "baseline_oracle_acc",
     "candidate_oracle_acc",
-    "coverage_delta",
-    "rescue_rate",
-    "useful_diversity",
-    "rescue_useful_diversity",
     "invalid_rate",
     "invalid_score",
+    "student_final_failure_rate",
+    "student_json_parse_failure_rate",
+    "student_retry_recovery_rate",
+    "student_repair_recovery_rate",
+    "optimizer_underfilled_rate",
     "solver_reuse_hits",
     "solver_reuse_misses",
     "solver_calls",
@@ -59,6 +68,7 @@ PUBLIC_METRIC_COLUMNS = [
     "solver_reuse_hit_rate",
     "beam_rank",
     "beam_refresh_count",
+    "update_summary_count",
     "active_prompt_changed_count",
     "vote_tie_rate",
     "vs_mars_delta_acc",
@@ -81,6 +91,20 @@ def _float(value: Any, default: float = 0.0) -> float:
         return default
 
 
+def _bool_float(value: Any) -> float:
+    if isinstance(value, bool):
+        return 1.0 if value else 0.0
+    if isinstance(value, (int, float)):
+        return 1.0 if value else 0.0
+    return 1.0 if str(value).strip().lower() in {"1", "true", "yes"} else 0.0
+
+
+def _is_student_summary_row(row: Dict[str, Any]) -> bool:
+    if str(row.get("optimizer_architecture", "") or "") == "teacher_critic_student":
+        return True
+    return any(str(key).startswith("student_") for key in row)
+
+
 def _latest_metrics(history: List[Dict[str, Any]], key: str) -> Dict[str, Any]:
     for row in reversed(history):
         if isinstance(row, dict) and isinstance(row.get(key), dict):
@@ -91,14 +115,42 @@ def _latest_metrics(history: List[Dict[str, Any]], key: str) -> Dict[str, Any]:
 def _collect_beam_update_metrics(update_records: List[Dict[str, Any]]) -> Dict[str, float]:
     candidate_rows = [r for r in update_records if isinstance(r, dict) and "reward" in r and r.get("event") != "beam_refresh"]
     refresh_rows = [r for r in update_records if isinstance(r, dict) and r.get("event") == "beam_refresh"]
-    accepted_rows = [r for r in candidate_rows if bool(r.get("accepted", False))]
+    summary_rows = [r for r in update_records if isinstance(r, dict) and r.get("event") == "beam_update_summary"]
+    student_summary_rows = [r for r in summary_rows if _is_student_summary_row(r)]
+    in_beam_rows = [r for r in candidate_rows if bool(r.get("in_top_beam", r.get("accepted", False)))]
+    changed_rows = summary_rows or refresh_rows
 
     def vals(key: str, rows: List[Dict[str, Any]] = candidate_rows) -> List[float]:
         return [_float(r.get(key)) for r in rows if r.get(key) not in (None, "")]
 
+    baseline_target_accuracy = _safe_mean(vals("baseline_target_accuracy"))
+    candidate_target_accuracy = _safe_mean(vals("candidate_target_accuracy"))
+    student_final_failures = [
+        1.0 if int(_float(r.get("student_candidate_count_final"), 0.0)) == 0 else 0.0
+        for r in student_summary_rows
+    ]
+    retry_recoveries = [
+        1.0
+        if _bool_float(r.get("student_json_retry_succeeded")) and int(_float(r.get("student_candidate_count_final"), 0.0)) > 0
+        else 0.0
+        for r in student_summary_rows
+    ]
+    repair_recoveries = [
+        1.0
+        if _bool_float(r.get("student_json_repair_succeeded")) and int(_float(r.get("student_candidate_count_final"), 0.0)) > 0
+        else 0.0
+        for r in student_summary_rows
+    ]
     return {
         "candidate_eval_count": float(len(candidate_rows)),
         "reward": _safe_mean(vals("reward")),
+        "target_agent_accuracy": _safe_mean(vals("target_agent_accuracy")),
+        "baseline_target_accuracy": baseline_target_accuracy,
+        "candidate_target_accuracy": candidate_target_accuracy,
+        "target_accuracy_delta": candidate_target_accuracy - baseline_target_accuracy,
+        "coverage_delta": _safe_mean(vals("coverage_delta")),
+        "useful_diversity": _safe_mean(vals("useful_diversity")),
+        "invalid_guard_pass_rate": _safe_mean([_bool_float(r.get("invalid_guard_passed")) for r in candidate_rows]),
         "embedding_diversity": _safe_mean(vals("embedding_diversity")),
         "mean_embedding_overlap": _safe_mean(vals("mean_embedding_overlap")),
         "target_overlap_pressure": _safe_mean(vals("target_overlap_pressure")),
@@ -106,22 +158,28 @@ def _collect_beam_update_metrics(update_records: List[Dict[str, Any]]) -> Dict[s
         "resolved_case_count": _safe_mean(vals("resolved_case_count")),
         "new_homogeneous_case_count": _safe_mean(vals("new_homogeneous_case_count")),
         "team_accuracy": _safe_mean(vals("team_accuracy")),
+        "candidate_team_accuracy": _safe_mean(vals("candidate_team_accuracy")),
+        "vote_delta": _safe_mean(vals("vote_delta")),
         "baseline_oracle_acc": _safe_mean(vals("baseline_oracle_acc")),
         "candidate_oracle_acc": _safe_mean(vals("candidate_oracle_acc")),
-        "coverage_delta": _safe_mean(vals("coverage_delta")),
-        "rescue_rate": _safe_mean(vals("rescue_rate")),
-        "useful_diversity": _safe_mean(vals("useful_diversity")),
-        "rescue_useful_diversity": _safe_mean(vals("rescue_useful_diversity")),
+        "diagnostic_rescue_rate": _safe_mean(vals("rescue_rate")),
+        "diagnostic_rescue_useful_diversity": _safe_mean(vals("rescue_useful_diversity")),
         "invalid_rate": _safe_mean(vals("invalid_rate")),
         "invalid_score": _safe_mean(vals("invalid_score")),
+        "student_final_failure_rate": _safe_mean(student_final_failures),
+        "student_json_parse_failure_rate": _safe_mean([_bool_float(r.get("student_json_parse_failed")) for r in student_summary_rows]),
+        "student_retry_recovery_rate": _safe_mean(retry_recoveries),
+        "student_repair_recovery_rate": _safe_mean(repair_recoveries),
+        "optimizer_underfilled_rate": _safe_mean([_bool_float(r.get("optimizer_underfilled")) for r in summary_rows]),
         "solver_reuse_hits": _safe_mean(vals("solver_reuse_hits")),
         "solver_reuse_misses": _safe_mean(vals("solver_reuse_misses")),
         "solver_calls": _safe_mean(vals("solver_calls")),
         "solver_reuse_total": _safe_mean(vals("solver_reuse_total")),
         "solver_reuse_hit_rate": _safe_mean(vals("solver_reuse_hit_rate")),
-        "beam_rank": _safe_mean(vals("rank_in_beam", accepted_rows)),
+        "beam_rank": _safe_mean(vals("rank_in_beam", in_beam_rows)),
         "beam_refresh_count": float(len(refresh_rows)),
-        "active_prompt_changed_count": float(sum(1 for r in refresh_rows if bool(r.get("active_prompt_changed", False)))),
+        "update_summary_count": float(len(summary_rows)),
+        "active_prompt_changed_count": float(sum(1 for r in changed_rows if bool(r.get("active_prompt_changed", False)))),
     }
 
 
@@ -186,9 +244,11 @@ def analyze_run(run_dir: Path, mars_baselines: Dict[str, Dict[str, float]]) -> D
         "latest_test_vote_tie_rate": vote_tie_rate,
         "latest_test_oracle_acc": test.get("oracle_acc"),
         "latest_test_aggregation_gap": test.get("aggregation_gap"),
-        "latest_test_rescue_available_rate": test.get("rescue_available_rate"),
+        "latest_test_mean_individual_acc": test.get("mean_individual_acc"),
+        "latest_test_best_individual_acc": test.get("best_individual_acc"),
         "latest_test_correct_disagreement_rate": test.get("correct_disagreement_rate"),
         "latest_test_mean_useful_diversity": test.get("mean_useful_diversity"),
+        "latest_test_diagnostic_rescue_available_rate": test.get("rescue_available_rate"),
         "vote_tie_rate": vote_tie_rate,
     }
     out.update(_collect_beam_update_metrics(update_logs))
@@ -264,14 +324,25 @@ def _write_group_summary(rows: List[Dict[str, Any]], path: Path):
         "latest_test_vote_acc",
         "latest_test_oracle_acc",
         "latest_test_aggregation_gap",
-        "latest_test_rescue_available_rate",
+        "latest_test_mean_individual_acc",
+        "latest_test_best_individual_acc",
         "latest_test_correct_disagreement_rate",
         "latest_test_mean_useful_diversity",
+        "latest_test_diagnostic_rescue_available_rate",
         "latest_test_embedding_diversity",
         "latest_test_invalid_rate",
         "vote_tie_rate",
+        "target_agent_accuracy",
+        "candidate_target_accuracy",
+        "target_accuracy_delta",
         "coverage_delta",
-        "rescue_rate",
+        "useful_diversity",
+        "invalid_guard_pass_rate",
+        "student_final_failure_rate",
+        "student_json_parse_failure_rate",
+        "student_retry_recovery_rate",
+        "student_repair_recovery_rate",
+        "optimizer_underfilled_rate",
         "solver_calls",
         "solver_reuse_hit_rate",
     ]

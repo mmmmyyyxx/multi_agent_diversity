@@ -2,8 +2,9 @@ import argparse
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -112,6 +113,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_mode", reward_mode,
             "--beam_size", str(args.beam_size),
             "--num_candidates_per_parent", str(args.num_candidates_per_parent),
+            "--optimizer_parent_concurrency", str(args.optimizer_parent_concurrency),
             "--beam_refresh_each_epoch", str(int(args.beam_refresh_each_epoch)),
             "--homogeneity_overlap_threshold", str(args.homogeneity_overlap_threshold),
             "--homogeneity_pressure_tie_eps", str(args.homogeneity_pressure_tie_eps),
@@ -179,6 +181,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
+            "--candidate_reuse_recorded_rollouts", str(int(args.candidate_reuse_recorded_rollouts)),
+            "--resume_from_checkpoint", str(int(args.resume_from_checkpoint)),
             "--train_rollout_concurrency", str(args.train_rollout_concurrency),
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
             "--vote_tie_break", args.vote_tie_break,
@@ -271,6 +275,9 @@ def main():
     parser.add_argument("--workspace", type=str, default=".")
     parser.add_argument("--python", type=str, default=sys.executable)
     parser.add_argument("--out_root", type=str, default="runs_trace_beam")
+    parser.add_argument("--run_concurrency", type=int, default=1)
+    parser.add_argument("--warmup_serial_runs", type=int, default=1)
+    parser.add_argument("--run_start_stagger_seconds", type=float, default=5.0)
     parser.add_argument("--datasets", type=str, default="mmlu")
     parser.add_argument("--run_settings", type=str, default="all")
     parser.add_argument("--mars_result_path", type=str, default="")
@@ -287,20 +294,21 @@ def main():
     parser.add_argument("--bbh_val_path", type=str, default=DEFAULT_DATASET_PATHS["bbh"].val)
     parser.add_argument("--bbh_test_path", type=str, default=DEFAULT_DATASET_PATHS["bbh"].test)
 
-    parser.add_argument("--agent_model", type=str, default="deepseek-chat")
-    parser.add_argument("--optimizer_model", type=str, default="deepseek-chat")
-    parser.add_argument("--evaluator_model", type=str, default="deepseek-chat")
-    parser.add_argument("--search_mode", type=str, default="evolutionary_beam", choices=["evolutionary_beam"])
+    parser.add_argument("--agent_model", type=str, default=cli_defaults.agent_model)
+    parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
+    parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
+    parser.add_argument("--search_mode", type=str, default=cli_defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
-    parser.add_argument("--beam_size", type=int, default=3)
-    parser.add_argument("--num_candidates_per_parent", type=int, default=2)
-    parser.add_argument("--beam_refresh_each_epoch", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--homogeneity_overlap_threshold", type=float, default=0.55)
-    parser.add_argument("--homogeneity_pressure_tie_eps", type=float, default=0.03)
-    parser.add_argument("--max_homogeneous_cases_per_agent", type=int, default=4)
-    parser.add_argument("--random_window_cases_per_agent", type=int, default=2)
-    parser.add_argument("--hard_validity_cases_per_agent", type=int, default=2)
-    parser.add_argument("--invalid_repair_rate_threshold", type=float, default=0.25)
+    parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
+    parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
+    parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)
+    parser.add_argument("--beam_refresh_each_epoch", type=int, default=int(cli_defaults.beam_refresh_each_epoch), choices=[0, 1])
+    parser.add_argument("--homogeneity_overlap_threshold", type=float, default=cli_defaults.homogeneity_overlap_threshold)
+    parser.add_argument("--homogeneity_pressure_tie_eps", type=float, default=cli_defaults.homogeneity_pressure_tie_eps)
+    parser.add_argument("--max_homogeneous_cases_per_agent", type=int, default=cli_defaults.max_homogeneous_cases_per_agent)
+    parser.add_argument("--random_window_cases_per_agent", type=int, default=cli_defaults.random_window_cases_per_agent)
+    parser.add_argument("--hard_validity_cases_per_agent", type=int, default=cli_defaults.hard_validity_cases_per_agent)
+    parser.add_argument("--invalid_repair_rate_threshold", type=float, default=cli_defaults.invalid_repair_rate_threshold)
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=cli_defaults.accuracy_guard_epsilon)
     parser.add_argument("--reward_weight_div_delta", type=float, default=cli_defaults.reward_weight_div_delta)
     parser.add_argument("--reward_weight_invalid_delta", type=float, default=cli_defaults.reward_weight_invalid_delta)
@@ -343,45 +351,47 @@ def main():
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
-    parser.add_argument("--diversity_metric", type=str, default="trace_embedding", choices=["trace_embedding"])
-    parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--invalid_binary", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--embedding_model", type=str, default="BAAI/bge-small-en-v1.5")
-    parser.add_argument("--trace_embedding_chunk_words", type=int, default=320)
-    parser.add_argument("--trace_embedding_chunk_overlap", type=int, default=40)
+    parser.add_argument("--diversity_metric", type=str, default=cli_defaults.diversity_metric, choices=["trace_embedding"])
+    parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(cli_defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
+    parser.add_argument("--invalid_binary", type=int, default=int(cli_defaults.invalid_binary), choices=[0, 1])
+    parser.add_argument("--embedding_model", type=str, default=cli_defaults.embedding_model)
+    parser.add_argument("--trace_embedding_chunk_words", type=int, default=cli_defaults.trace_embedding_chunk_words)
+    parser.add_argument("--trace_embedding_chunk_overlap", type=int, default=cli_defaults.trace_embedding_chunk_overlap)
 
-    parser.add_argument("--agents", type=int, default=5)
-    parser.add_argument("--train_size", type=int, default=200)
-    parser.add_argument("--val_size", type=int, default=150)
-    parser.add_argument("--val_split_ratio", type=float, default=0.2)
-    parser.add_argument("--test_size", type=int, default=200)
-    parser.add_argument("--epochs", type=int, default=3)
-    parser.add_argument("--eval_test_each_epoch", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--early_stopping_patience", type=int, default=3)
-    parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
-    parser.add_argument("--update_every", type=int, default=10)
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=20)
-    parser.add_argument("--candidate_eval_strategy", type=str, default="fixed_pool", choices=["random", "fixed_pool", "stratified"])
-    parser.add_argument("--candidate_eval_pool_size", type=int, default=100)
-    parser.add_argument("--candidate_eval_repeats", type=int, default=1)
-    parser.add_argument("--candidate_eval_seed_offset", type=int, default=1000)
-    parser.add_argument("--max_tokens", type=int, default=1000)
-    parser.add_argument("--optimizer_max_tokens", type=int, default=1400)
-    parser.add_argument("--evaluator_max_tokens", type=int, default=1200)
-    parser.add_argument("--shared_prompt", type=str, default="You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.")
+    parser.add_argument("--agents", type=int, default=cli_defaults.agents)
+    parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
+    parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)
+    parser.add_argument("--val_split_ratio", type=float, default=cli_defaults.val_split_ratio)
+    parser.add_argument("--test_size", type=int, default=cli_defaults.test_size)
+    parser.add_argument("--epochs", type=int, default=cli_defaults.epochs)
+    parser.add_argument("--eval_test_each_epoch", type=int, default=int(cli_defaults.eval_test_each_epoch), choices=[0, 1])
+    parser.add_argument("--early_stopping_patience", type=int, default=cli_defaults.early_stopping_patience)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=cli_defaults.early_stopping_min_delta)
+    parser.add_argument("--update_every", type=int, default=cli_defaults.update_every)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=cli_defaults.candidate_eval_batch_size)
+    parser.add_argument("--candidate_eval_strategy", type=str, default=cli_defaults.candidate_eval_strategy, choices=["random", "fixed_pool", "stratified"])
+    parser.add_argument("--candidate_eval_pool_size", type=int, default=cli_defaults.candidate_eval_pool_size)
+    parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
+    parser.add_argument("--candidate_eval_seed_offset", type=int, default=cli_defaults.candidate_eval_seed_offset)
+    parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(cli_defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
+    parser.add_argument("--resume_from_checkpoint", type=int, default=int(cli_defaults.resume_from_checkpoint), choices=[0, 1])
+    parser.add_argument("--max_tokens", type=int, default=cli_defaults.max_tokens)
+    parser.add_argument("--optimizer_max_tokens", type=int, default=cli_defaults.optimizer_max_tokens)
+    parser.add_argument("--evaluator_max_tokens", type=int, default=cli_defaults.evaluator_max_tokens)
+    parser.add_argument("--shared_prompt", type=str, default=cli_defaults.shared_prompt)
 
-    parser.add_argument("--max_retries", type=int, default=5)
-    parser.add_argument("--retry_sleep", type=float, default=2.0)
-    parser.add_argument("--transient_retry_forever", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--max_transient_retries", type=int, default=0)
-    parser.add_argument("--max_retry_backoff", type=float, default=30.0)
-    parser.add_argument("--llm_call_logging", type=int, default=1, choices=[0, 1])
-    parser.add_argument("--llm_call_timeout", type=float, default=120.0)
-    parser.add_argument("--candidate_eval_concurrency", type=int, default=0)
-    parser.add_argument("--train_rollout_concurrency", type=int, default=0)
-    parser.add_argument("--eval_solver_call_concurrency", type=int, default=225)
-    parser.add_argument("--vote_tie_break", type=str, default="random", choices=["first", "random", "abstain"])
-    parser.add_argument("--aggregation_mode", type=str, default="majority", choices=["majority", "weighted_vote", "verifier_select"])
+    parser.add_argument("--max_retries", type=int, default=cli_defaults.max_retries)
+    parser.add_argument("--retry_sleep", type=float, default=cli_defaults.retry_sleep)
+    parser.add_argument("--transient_retry_forever", type=int, default=int(cli_defaults.transient_retry_forever), choices=[0, 1])
+    parser.add_argument("--max_transient_retries", type=int, default=cli_defaults.max_transient_retries)
+    parser.add_argument("--max_retry_backoff", type=float, default=cli_defaults.max_retry_backoff)
+    parser.add_argument("--llm_call_logging", type=int, default=int(cli_defaults.llm_call_logging), choices=[0, 1])
+    parser.add_argument("--llm_call_timeout", type=float, default=cli_defaults.llm_call_timeout)
+    parser.add_argument("--candidate_eval_concurrency", type=int, default=cli_defaults.candidate_eval_concurrency)
+    parser.add_argument("--train_rollout_concurrency", type=int, default=cli_defaults.train_rollout_concurrency)
+    parser.add_argument("--eval_solver_call_concurrency", type=int, default=cli_defaults.eval_solver_call_concurrency)
+    parser.add_argument("--vote_tie_break", type=str, default=cli_defaults.vote_tie_break, choices=["first", "random", "abstain"])
+    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "weighted_vote", "verifier_select"])
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--seed_baselines", type=int, default=DEFAULT_SEED_BASELINES, choices=[0, 1])
     parser.add_argument("--multi_seed_names", type=int, default=1, choices=[0, 1])
@@ -397,6 +407,8 @@ def main():
         "use_baseline_relative_reward",
         "teacher_critic_use_voting_failure",
         "no_effective_evolution_stop_enabled",
+        "candidate_reuse_recorded_rollouts",
+        "resume_from_checkpoint",
         "summary_by_dataset",
         "seed_baselines",
         "multi_seed_names",
@@ -415,17 +427,90 @@ def main():
     datasets = [x.lower() for x in parse_csv_list(args.datasets)]
     settings = _selected_settings(args.run_settings)
 
-    rows = []
+    pending_runs: List[Tuple[str, ExperimentSetting, int]] = []
     for dataset in datasets:
         for setting in settings:
             setting_seeds = seeds if (not setting.baseline_only or args.seed_baselines) else [seeds[0]]
             for seed in setting_seeds:
-                row = run_one(dataset, setting, seed, args)
-                rows.append(row)
-                append_jsonl(runs_jsonl, row)
-                write_csv(runs_csv, rows, empty_fieldnames=["dataset", "setting", "status"])
+                pending_runs.append((dataset, setting, seed))
+
+    rows = []
+
+    def record_row(row: Dict[str, Any]):
+        rows.append(row)
+        append_jsonl(runs_jsonl, row)
+        write_csv(runs_csv, rows, empty_fieldnames=["dataset", "setting", "status"])
+
+    failed_rows: List[Dict[str, Any]] = []
+
+    def run_and_record(dataset: str, setting: ExperimentSetting, seed: int):
+        row = run_one(dataset, setting, seed, args)
+        record_row(row)
+        if row["status"] != "ok":
+            raise SystemExit(row["returncode"])
+
+    run_concurrency = max(1, int(getattr(args, "run_concurrency", 1) or 1))
+    warmup_count = 0
+    if run_concurrency > 1:
+        warmup_count = min(max(0, int(getattr(args, "warmup_serial_runs", 0) or 0)), len(pending_runs))
+    warmup_runs = pending_runs[:warmup_count]
+    remaining_runs = pending_runs[warmup_count:]
+
+    if warmup_runs:
+        print(f"\n[WARMUP] Running {len(warmup_runs)} job(s) serially before enabling concurrency.", flush=True)
+        for dataset, setting, seed in warmup_runs:
+            run_and_record(dataset, setting, seed)
+
+    if run_concurrency <= 1:
+        for dataset, setting, seed in remaining_runs:
+            run_and_record(dataset, setting, seed)
+    elif remaining_runs:
+        print(f"\n[CONCURRENCY] Running up to {run_concurrency} dataset/setting/seed jobs in parallel.", flush=True)
+
+        def run_one_staggered(index: int, dataset: str, setting: ExperimentSetting, seed: int) -> Dict[str, Any]:
+            stagger = max(0.0, float(getattr(args, "run_start_stagger_seconds", 0.0) or 0.0))
+            delay = (index % run_concurrency) * stagger
+            if delay > 0:
+                print(
+                    f"[STAGGER] dataset={dataset} setting={setting.name} seed={seed} sleep={delay:.1f}s before launch",
+                    flush=True,
+                )
+                time.sleep(delay)
+            return run_one(dataset, setting, seed, args)
+
+        with ThreadPoolExecutor(max_workers=run_concurrency) as executor:
+            futures = {
+                executor.submit(run_one_staggered, idx, dataset, setting, seed): (dataset, setting, seed)
+                for idx, (dataset, setting, seed) in enumerate(remaining_runs)
+            }
+            for future in as_completed(futures):
+                dataset, setting, seed = futures[future]
+                try:
+                    row = future.result()
+                except Exception as exc:
+                    run_name = f"{setting.name}_seed{seed}" if args.multi_seed_names else setting.name
+                    row = {
+                        "dataset": dataset,
+                        "setting": setting.name,
+                        "run_name": run_name,
+                        "seed": seed,
+                        "reward_mode": args.force_reward_mode or setting.reward_mode,
+                        "init_mode": setting.init_mode,
+                        "baseline_only": int(setting.baseline_only),
+                        "status": "failed",
+                        "returncode": 1,
+                        "elapsed_sec": 0.0,
+                        "run_dir": str(Path(args.out_root) / dataset / run_name),
+                        "error": str(exc),
+                    }
+                record_row(row)
                 if row["status"] != "ok":
-                    raise SystemExit(row["returncode"])
+                    failed_rows.append(row)
+
+    if failed_rows:
+        first = failed_rows[0]
+        raise SystemExit(int(first.get("returncode", 1) or 1))
+
     print(f"\n[DONE] Wrote {runs_jsonl} and {runs_csv}")
     if args.summary_by_dataset:
         summary_cmd = [

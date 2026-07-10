@@ -1,6 +1,6 @@
 import json
 
-from multi_dataset_diverse_rl.cli import restore_agent_prompts
+from multi_dataset_diverse_rl.cli import restore_agent_prompts, restore_prompt_history
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
@@ -28,3 +28,51 @@ def test_restore_agent_prompts_syncs_prompt_history(tmp_path):
     assert prompt_history["1"]["current_prompt"] == "best prompt B"
     assert prompt_history["0"]["events"][-1]["decision"] == "restore_best_prompts"
     assert prompt_history["0"]["events"][-1]["selected_epoch"] == 2
+
+
+def test_restore_prompt_history_keeps_existing_events(tmp_path):
+    system = _system(tmp_path)
+    (tmp_path / "prompt_history.json").write_text(
+        json.dumps(
+            {
+                "0": {
+                    "initial_prompt": "initial prompt",
+                    "initial_prompt_hash": system._hash("initial prompt"),
+                    "current_prompt": "old prompt",
+                    "current_prompt_hash": system._hash("old prompt"),
+                    "prompt_beam": [],
+                    "events": [{"decision": "beam_accept"}],
+                },
+                "1": {
+                    "initial_prompt": "initial prompt",
+                    "initial_prompt_hash": system._hash("initial prompt"),
+                    "current_prompt": "old prompt",
+                    "current_prompt_hash": system._hash("old prompt"),
+                    "prompt_beam": [],
+                    "events": [],
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    system.agents[0].current_prompt = "resumed prompt"
+
+    restore_prompt_history(system)
+
+    assert system.prompt_history["0"]["events"][0]["decision"] == "beam_accept"
+    assert system.prompt_history["0"]["events"][-1]["decision"] == "checkpoint_resume"
+    assert system.prompt_history["0"]["current_prompt"] == "resumed prompt"
+
+
+def test_system_init_does_not_overwrite_prompt_history_when_resuming(tmp_path, monkeypatch):
+    from multi_dataset_diverse_rl import system as system_module
+
+    existing = {"0": {"events": [{"decision": "old"}]}}
+    (tmp_path / "prompt_history.json").write_text(json.dumps(existing), encoding="utf-8")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(system_module.TraceBeamSearchSystem, "_load_recorded_solver_rollouts", lambda self: None)
+
+    TraceBeamSearchSystem(Config(out_dir=str(tmp_path), agents=1, resume_from_checkpoint=True))
+
+    prompt_history = json.loads((tmp_path / "prompt_history.json").read_text(encoding="utf-8"))
+    assert prompt_history == existing

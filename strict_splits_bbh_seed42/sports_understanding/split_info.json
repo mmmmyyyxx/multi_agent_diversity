@@ -1,0 +1,21 @@
+{
+  "protocol": "strict_mode",
+  "split_seed": 42,
+  "splits": {
+    "opt": {
+      "num_samples": 75,
+      "hash": "1662c5081a2a2be7892406676f7bb9a65e9a6f737256661c5364d105e8185b83"
+    },
+    "val": {
+      "num_samples": 50,
+      "hash": "9d2878eb30c806d282e5f1787bbcf03666834d86a1758ee619e19bdb4f6682d7"
+    },
+    "test": {
+      "num_samples": 125,
+      "hash": "82f2c1103ffeaa7f8c466f037a5785a5b0e54b54f67b931b915c5082b7062686"
+    }
+  },
+  "dataset_path": "Dataset_format/BBH/sports_understanding.csv",
+  "max_samples": null,
+  "legacy_skip_first_data_row": false
+}

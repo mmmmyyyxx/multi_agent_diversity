@@ -1,8 +1,26 @@
 # Multi-Agent Diversity Prompt Search
 
+## Checkpoint resume
+
+Training runs write `training_checkpoint.json` under each run directory. Pass `--resume_from_checkpoint 1` to resume an incomplete run from the last saved training batch or epoch boundary without deleting existing logs. In task-level experiments, combine it with `--resume_completed 1`: completed run directories are skipped, while incomplete run directories continue from their checkpoint.
+
+```bash
+python scripts/run_task_level_accuracy.py \
+  --manifest configs/task_level_comparison.yaml \
+  --tasks disambiguation_qa,geometric_shapes,ruin_names,sports_understanding \
+  --settings shared_baseline,shared_guarded_beam \
+  --seeds 42 \
+  --dataset_format mars \
+  --out_root runs_task_level_bbh_tcs_useful_full \
+  --resume_completed 1 \
+  --resume_from_checkpoint 1
+```
+
+Checkpoint resume is batch/epoch-level. If a process is interrupted in the middle of an in-flight API batch, that small batch may be repeated; recorded solver rollouts are reused when `--candidate_reuse_recorded_rollouts 1` is enabled.
+
 本项目是一个多智能体推理实验框架：多个 solver agent 同时回答同一道题，系统记录每个 agent 的 reasoning trace 和最终答案，用多数投票得到团队答案，并用 trace embedding overlap 衡量 agent 之间是否真的形成了不同解题路径。
 
-当前方法更准确地说是 **case-aware evolutionary prompt search**，不是严格意义上的 reinforcement learning。Optimizer model 只负责根据案例证据提出候选 prompt；候选 prompt 必须经过小批量评估、reward 排序和 per-agent beam search 后才会被保留。
+当前方法更准确地说是 **case-aware evolutionary prompt search**，不是严格意义上的 reinforcement learning。`optimizer_model` 是 prompt-evolution generator model：在默认 Teacher-Critic-Student 架构中，它负责 Teacher、Teacher rewrite、Student、Student JSON retry/repair 等生成侧调用；`evaluator_model` 负责 Critic 和可选 joint trace diversity evaluator。候选 prompt 必须经过小批量评估、reward 排序和 per-agent beam search 后才会被保留。
 
 ## 核心能力
 
@@ -213,22 +231,41 @@ No-op evolution early stop is enabled by default. If repeated update attempts pr
 --candidate_eval_seed_offset 1000
 ```
 
+Concurrency controls:
+
+```bash
+--run_concurrency 2
+--optimizer_parent_concurrency 2
+--candidate_eval_concurrency 3
+--train_rollout_concurrency 8
+--eval_solver_call_concurrency 80
+```
+
+`run_concurrency` is used by `scripts/run_task_level_accuracy.py` and `scripts/run_experiments.py` to run independent task/setting/seed subprocesses in parallel. `optimizer_parent_concurrency` controls how many beam-parent prompt-generation calls can run at once inside one agent update. `candidate_eval_concurrency`, `train_rollout_concurrency`, and `eval_solver_call_concurrency` control candidate evaluation, training rollout batching, and total solver-call pressure. Increase these gradually; if the API returns quota or transient errors, lower `run_concurrency` first, then `eval_solver_call_concurrency`.
+
 `candidate_eval_repeats > 1` 时，CLI 会构造多个 batch 并合并评估，reward 和 metrics 使用平均值。日志会记录 eval strategy、pool size、batch size 和 repeats。
 
 ## Teacher-Critic-Student Optimizer
 
 默认 optimizer 架构是 `--optimizer_architecture teacher_critic_student`。旧的一步式 optimizer 仍保留，可用 `--optimizer_architecture one_shot` 回退。
 
+模型字段含义：
+
+- `agent_model`：solver agents 的解题 rollout。
+- `optimizer_model`：prompt-evolution generator model，用于 Teacher、Teacher rewrite、Student、Student JSON retry/repair；在 `one_shot` 架构中也用于直接生成候选 prompt。
+- `evaluator_model`：用于 TCS Critic 和可选 joint trace diversity evaluator。
+
 Teacher-Critic-Student 的流程：
 
 - Teacher 不直接写 prompt，而是根据 problem type、answer format、target-agent error type、diversity gap、prompt redundancy、error correlation、invalid-output pattern 和 peer behavior summaries 生成 Socratic guiding question。
 - Critic 在 Student 看到问题前审核 Teacher question；如果问题泛化、没有诊断依据、泄漏样本/答案、硬编码任务角色、只追求表面多样性或可能伤害准确率，就拒绝。
-- 如果 Critic 拒绝，Teacher 会按反馈重写，Critic 再审；只有通过阈值的 question 才会交给 Student。
-- Student 根据已批准的 guiding question 生成候选 prompt。候选仍走原有 reward 和 candidate evaluation，reward 计算不变。
+- 如果 Critic 拒绝，Teacher 会按反馈重写，最多进行 `teacher_critic_max_rounds` 次 Critic 检测；当前默认是 `3`。
+- 如果三次都没有通过阈值，系统会选择 Critic 分数最高的 Teacher question 继续交给 Student，并记录 `teacher_question_forced_best_score=true`。
+- Student 根据已批准或最高分的 guiding question 生成候选 prompt。候选仍走原有 reward 和 candidate evaluation，reward 计算不变。
 
 这个 optimizer 不使用预定义任务专属角色，也不默认把 voting failure 作为 Teacher 的主要输入。Voting 是下游聚合方式之一；本步骤优化的是 prompt quality、task alignment、target-agent accuracy 和 useful diversity。
 
-相关日志字段包括 `optimizer_architecture`、`teacher_question`、`teacher_question_approved`、`teacher_question_score`、`teacher_critic_rounds`、`teacher_rewrite_count`、`student_candidate_count_raw`、`student_candidate_count_final`、`student_candidate_filtered_count`、`student_all_candidates_filtered`、`diversity_contribution`、`error_correlation_reduction`、`task_alignment_rule` 和 `peer_redundancy_avoidance`。
+相关日志字段包括 `optimizer_architecture`、`teacher_question`、`teacher_question_approved`、`teacher_question_score`、`teacher_question_forced_best_score`、`teacher_question_forced_best_round`、`teacher_question_forced_below_threshold`、`teacher_critic_rounds`、`teacher_rewrite_count`、`student_candidate_count_raw`、`student_candidate_count_final`、`student_candidate_filtered_count`、`student_all_candidates_filtered`、`diversity_contribution`、`error_correlation_reduction`、`task_alignment_rule` 和 `peer_redundancy_avoidance`。
 
 ### Student Failure Diagnostics
 
@@ -238,7 +275,7 @@ Failure stages include `raw_empty`, `json_parse_failed`, `missing_candidates_key
 
 #### JSON Retry and Repair
 
-Student parse failures may happen when the model outputs truncated or malformed JSON. The system first retries Student once with a stricter JSON-only instruction. If retry still fails, it can call a JSON repair utility that only repairs syntax of already generated Student content. This is not a prompt fallback and does not generate template prompts.
+Student parse failures or empty responses may happen when the model outputs truncated, malformed, or blank JSON. The system retries Student with a stricter JSON-only instruction up to `student_json_max_retries` times; the current default is `5`. If retry still fails on non-empty malformed JSON, it can call a JSON repair utility that only repairs syntax of already generated Student content. This is not a prompt fallback and does not generate template prompts.
 
 Logs include `student_json_retry_attempted`, `student_json_retry_succeeded`, `student_json_repair_attempted`, `student_json_repair_succeeded`, and `student_json_repair_failure_reason`. Recovered parse failures are reported separately by `scripts/analyze_student_failures.py` and are not counted as final Student failures.
 

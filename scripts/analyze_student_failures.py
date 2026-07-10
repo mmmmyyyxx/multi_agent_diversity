@@ -45,17 +45,79 @@ def _safe_bool(value: Any) -> bool:
     return str(value).strip().lower() in {"1", "true", "yes"}
 
 
+def _int(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except Exception:
+        return default
+
+
+def _is_tcs_student_row(row: Dict[str, Any]) -> bool:
+    if str(row.get("optimizer_architecture", "") or "") == "teacher_critic_student":
+        return True
+    return any(str(key).startswith("student_") for key in row)
+
+
+def _student_final_failure(row: Dict[str, Any]) -> bool:
+    if not _is_tcs_student_row(row):
+        return False
+    return _int(row.get("student_candidate_count_final", 0)) == 0
+
+
+def _recovery_status(row: Dict[str, Any]) -> str:
+    final_count = _int(row.get("student_candidate_count_final", 0))
+    retry_succeeded = _safe_bool(row.get("student_json_retry_succeeded", False))
+    repair_succeeded = _safe_bool(row.get("student_json_repair_succeeded", False))
+    parse_failed = _safe_bool(row.get("student_json_parse_failed", False))
+    retry_attempted = _safe_bool(row.get("student_json_retry_attempted", False))
+    repair_attempted = _safe_bool(row.get("student_json_repair_attempted", False))
+    raw_empty = _safe_bool(row.get("student_raw_response_empty", False))
+    if final_count > 0 and retry_succeeded:
+        return "retry_recovered"
+    if final_count > 0 and repair_succeeded:
+        return "repair_recovered"
+    if final_count > 0 and parse_failed:
+        return "parse_failed_recovered"
+    if final_count == 0 and raw_empty:
+        return "raw_empty_final_failure"
+    if final_count == 0 and (parse_failed or retry_attempted or repair_attempted):
+        return "parse_failed_unrecovered"
+    if final_count == 0:
+        return "final_student_failure"
+    return "ok"
+
+
 def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
     run_dir = update_log.parent
     task_id = _run_task_id(run_dir)
-    rows = [row for row in _iter_jsonl(update_log) if row.get("event") == "beam_update_summary"]
+    rows = [
+        row
+        for row in _iter_jsonl(update_log)
+        if row.get("event") == "beam_update_summary" and _is_tcs_student_row(row)
+    ]
     total = len(rows)
-    teacher_approved = [row for row in rows if _safe_bool(row.get("teacher_question_approved", False))]
-    approved_count = len(teacher_approved)
+    teacher_approved_count = sum(1 for row in rows if _safe_bool(row.get("teacher_question_approved", False)))
+    final_failure_count = sum(1 for row in rows if _student_final_failure(row))
+    parse_failure_count = sum(1 for row in rows if _safe_bool(row.get("student_json_parse_failed", False)))
+    retry_recovery_count = sum(
+        1
+        for row in rows
+        if _safe_bool(row.get("student_json_retry_succeeded", False))
+        and _int(row.get("student_candidate_count_final", 0)) > 0
+    )
+    repair_recovery_count = sum(
+        1
+        for row in rows
+        if _safe_bool(row.get("student_json_repair_succeeded", False))
+        and _int(row.get("student_candidate_count_final", 0)) > 0
+    )
     target_rows = [
         row
-        for row in teacher_approved
-        if int(row.get("student_candidate_count_raw", 0) or 0) == 0
+        for row in rows
+        if _student_final_failure(row)
+        or _safe_bool(row.get("student_json_retry_succeeded", False))
+        or _safe_bool(row.get("student_json_repair_succeeded", False))
+        or _safe_bool(row.get("student_json_parse_failed", False))
     ]
     grouped: Dict[Tuple[Any, ...], Dict[str, Any]] = {}
     for row in target_rows:
@@ -64,17 +126,12 @@ def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
         repair_attempted = _safe_bool(row.get("student_json_repair_attempted", False))
         repair_succeeded = _safe_bool(row.get("student_json_repair_succeeded", False))
         parse_failed = _safe_bool(row.get("student_json_parse_failed", False))
-        if retry_succeeded:
-            recovery_status = "parse_failed_but_retry_recovered"
-        elif repair_succeeded:
-            recovery_status = "parse_failed_but_repair_recovered"
-        elif parse_failed or retry_attempted or repair_attempted:
-            recovery_status = "parse_failed_unrecovered"
-        else:
-            recovery_status = "not_parse_failure"
-        final_student_failure = not retry_succeeded and not repair_succeeded
+        recovery_status = _recovery_status(row)
+        final_student_failure = _student_final_failure(row)
         key = (
             str(row.get("student_failure_stage", "") or "unknown"),
+            _int(row.get("student_candidate_count_raw", 0)),
+            _int(row.get("student_candidate_count_final", 0)),
             _safe_bool(row.get("student_raw_response_empty", False)),
             parse_failed,
             _safe_bool(row.get("student_json_has_candidates_key", False)),
@@ -94,24 +151,29 @@ def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
                 "run_dir": str(run_dir),
                 "task_id": task_id,
                 "total_update_summaries": total,
-                "teacher_approved_count": approved_count,
-                "teacher_approved_student_raw_zero_count": len(target_rows),
+                "teacher_approved_count": teacher_approved_count,
+                "student_final_failure_count": final_failure_count,
+                "student_json_parse_failure_count": parse_failure_count,
+                "student_retry_recovery_count": retry_recovery_count,
+                "student_repair_recovery_count": repair_recovery_count,
+                "student_candidate_count_raw": key[1],
+                "student_candidate_count_final": key[2],
                 "failure_stage": key[0],
-                "student_raw_response_empty": key[1],
-                "student_json_parse_failed": key[2],
-                "student_json_has_candidates_key": key[3],
-                "student_candidates_is_list": key[4],
-                "student_candidates_empty_list": key[5],
-                "student_refusal_or_explanation": key[6],
-                "student_json_retry_attempted": key[7],
-                "student_json_retry_succeeded": key[8],
-                "student_json_repair_attempted": key[9],
-                "student_json_repair_succeeded": key[10],
-                "student_json_repair_failure_reason": key[11],
-                "recovery_status": key[12],
-                "final_student_failure": key[13],
+                "student_raw_response_empty": key[3],
+                "student_json_parse_failed": key[4],
+                "student_json_has_candidates_key": key[5],
+                "student_candidates_is_list": key[6],
+                "student_candidates_empty_list": key[7],
+                "student_refusal_or_explanation": key[8],
+                "student_json_retry_attempted": key[9],
+                "student_json_retry_succeeded": key[10],
+                "student_json_repair_attempted": key[11],
+                "student_json_repair_succeeded": key[12],
+                "student_json_repair_failure_reason": key[13],
+                "recovery_status": key[14],
+                "final_student_failure": key[15],
                 "count": 0,
-                "rate_within_teacher_approved": 0.0,
+                "rate_within_update_summaries": 0.0,
                 "example_raw_response_preview": str(row.get("student_raw_response_preview", ""))[:1000],
                 "example_retry_raw_response_preview": str(row.get("student_json_retry_raw_response_preview", ""))[:1000],
                 "example_repair_raw_response_preview": str(row.get("student_json_repair_raw_response_preview", ""))[:1000],
@@ -119,9 +181,7 @@ def summarize_run(update_log: Path) -> List[Dict[str, Any]]:
             }
         grouped[key]["count"] += 1
     for item in grouped.values():
-        item["rate_within_teacher_approved"] = (
-            float(item["count"] / approved_count) if approved_count else 0.0
-        )
+        item["rate_within_update_summaries"] = float(item["count"] / total) if total else 0.0
     return list(grouped.values())
 
 
@@ -142,10 +202,15 @@ def write_csv(rows: List[Dict[str, Any]], out_path: Path) -> None:
         "task_id",
         "total_update_summaries",
         "teacher_approved_count",
-        "teacher_approved_student_raw_zero_count",
+        "student_final_failure_count",
+        "student_json_parse_failure_count",
+        "student_retry_recovery_count",
+        "student_repair_recovery_count",
         "failure_stage",
+        "student_candidate_count_raw",
+        "student_candidate_count_final",
         "count",
-        "rate_within_teacher_approved",
+        "rate_within_update_summaries",
         "student_raw_response_empty",
         "student_json_parse_failed",
         "student_json_has_candidates_key",
@@ -173,7 +238,7 @@ def write_csv(rows: List[Dict[str, Any]], out_path: Path) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Summarize Teacher-approved Student generation failures.")
+    parser = argparse.ArgumentParser(description="Summarize final Student generation failures and JSON retry/repair recovery.")
     parser.add_argument("run_dirs", nargs="+", help="Run directories or update_logs.jsonl files")
     parser.add_argument("--out_csv", type=str, default="student_failure_summary.csv")
     args = parser.parse_args()
@@ -191,7 +256,7 @@ def main() -> None:
     print(f"Found {len(logs)} update_logs.jsonl files")
     print(f"Wrote {out_path}")
     if not totals:
-        print("No teacher-approved raw-zero Student failures found.")
+        print("No final Student failures or JSON recovery events found.")
         return
     for (task_id, recovery_status, stage), count in sorted(totals.items()):
         print(f"{task_id}\t{recovery_status}\t{stage}\t{count}")

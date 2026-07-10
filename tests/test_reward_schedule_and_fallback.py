@@ -165,6 +165,73 @@ def test_update_still_safe_when_optimizer_returns_zero_candidates():
     assert summary["num_existing_beam_candidates"] == 1
 
 
+def test_update_limits_optimizer_parent_concurrency():
+    cfg = Config(
+        optimizer_fallback_mode="none",
+        beam_size=3,
+        num_candidates_per_parent=1,
+        optimizer_parent_concurrency=2,
+        agents=2,
+    )
+    system = _system(cfg, prompts=["p0", "p1"])
+    system.joint_diversity_cache = {}
+    system.solver_rollout_cache = {}
+    system.agents[0].prompt_beam = [
+        system._make_beam_item("p0", None, {}, None, 0),
+        system._make_beam_item("p0 parent 1", None, {}, None, 0),
+        system._make_beam_item("p0 parent 2", None, {}, None, 0),
+    ]
+    active = 0
+    max_active = 0
+    calls = []
+
+    async def fake_propose_candidates(parent_prompt, **kwargs):
+        nonlocal active, max_active
+        active += 1
+        max_active = max(max_active, active)
+        calls.append(parent_prompt)
+        await asyncio.sleep(0.01)
+        active -= 1
+        return [
+            {
+                "candidate_prompt": f"{parent_prompt} improved",
+                "candidate_source": "optimizer",
+                "optimizer_generation_diagnostics": {
+                    "optimizer_raw_candidate_count": 1,
+                    "optimizer_final_candidate_count": 1,
+                    "optimizer_underfilled": False,
+                },
+            }
+        ]
+
+    async def fake_prewarm(**kwargs):
+        return {"enabled": False}
+
+    async def fake_eval(**kwargs):
+        prompt = str(kwargs.get("candidate_prompt", ""))
+        reward = 1.0 if "improved" in prompt else 0.1
+        return {"reward": reward, "target_agent_accuracy": reward, "num_eval_samples": 1}
+
+    system.propose_candidates = fake_propose_candidates
+    system.ensure_recorded_rollouts_for_prompts = fake_prewarm
+    system.evaluate_candidate_prompt = fake_eval
+    system._append_prompt_history_event = lambda *args, **kwargs: None
+    changed, summary = asyncio.run(
+        system.update_prompt_with_beam(
+            agent_id=0,
+            overlap_diagnosis={"homogeneous_cases": []},
+            eval_batch=[{"question": "q", "answer": "A"}],
+            step_id=1,
+            epoch_id=1,
+        )
+    )
+
+    assert changed is True
+    assert len(calls) == 3
+    assert max_active == 2
+    assert summary["optimizer_parent_concurrency"] == 2
+
+
 async def _fake_blank_chat(**kwargs):
     return ""
 

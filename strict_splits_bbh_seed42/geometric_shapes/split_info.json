@@ -1,0 +1,21 @@
+{
+  "protocol": "strict_mode",
+  "split_seed": 42,
+  "splits": {
+    "opt": {
+      "num_samples": 75,
+      "hash": "e954f34eb0be52dbd979ddf8893f27ab046ce424c023a8e543fc35d4b41c0898"
+    },
+    "val": {
+      "num_samples": 50,
+      "hash": "3967c96041e1c140d43c8aad6287fc31702c05a5a8428293f019a1bcac5a8433"
+    },
+    "test": {
+      "num_samples": 125,
+      "hash": "bad5aac39243238f042244efbc75535c9fce53b0eb03b793ba15bc4d10902384"
+    }
+  },
+  "dataset_path": "Dataset_format/BBH/geometric_shapes.csv",
+  "max_samples": null,
+  "legacy_skip_first_data_row": false
+}

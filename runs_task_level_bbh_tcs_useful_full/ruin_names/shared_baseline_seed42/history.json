@@ -1,0 +1,32 @@
+[
+  {
+    "epoch": 1,
+    "train": {},
+    "test": {
+      "size": 200,
+      "num_test_samples": 200,
+      "vote_acc": 0.81,
+      "majority_vote_acc": 0.81,
+      "weighted_vote_acc": 0.8,
+      "mean_individual_acc": 0.813,
+      "best_individual_acc": 0.825,
+      "per_agent_acc": [
+        0.815,
+        0.81,
+        0.825,
+        0.805,
+        0.81
+      ],
+      "oracle_acc": 0.885,
+      "aggregation_gap": 0.07499999999999996,
+      "rescue_available_rate": 0.075,
+      "correct_disagreement_rate": 0.135,
+      "mean_useful_diversity": 0.015581736435492832,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.005,
+      "mean_embedding_diversity": 0.019637396544218064,
+      "mean_embedding_overlap": 0.980362603455782,
+      "mean_invalid_rate": 0.0
+    }
+  }
+]

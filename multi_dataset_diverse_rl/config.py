@@ -42,6 +42,7 @@ class Config:
     reward_mode: str = "guarded_diversity"
     beam_size: int = 3
     num_candidates_per_parent: int = 2
+    optimizer_parent_concurrency: int = 2
     beam_refresh_each_epoch: bool = True
     homogeneity_overlap_threshold: float = 0.55
     homogeneity_pressure_tie_eps: float = 0.03
@@ -70,7 +71,7 @@ class Config:
     accuracy_guard_epsilon_early: float = 0.03
     accuracy_guard_epsilon_late: float = 0.01
     optimizer_architecture: str = "teacher_critic_student"
-    teacher_critic_max_rounds: int = 2
+    teacher_critic_max_rounds: int = 3
     teacher_question_pass_threshold: float = 0.75
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
@@ -79,7 +80,7 @@ class Config:
     critic_max_tokens: int = 1000
     student_max_tokens: int = 1800
     student_json_retry_on_parse_fail: bool = True
-    student_json_max_retries: int = 1
+    student_json_max_retries: int = 5
     student_json_repair_enabled: bool = True
     student_json_repair_max_tokens: int = 1200
     student_json_repair_temperature: float = 0.0
@@ -109,6 +110,7 @@ class Config:
 
     out_dir: str = "runs_trace_beam"
     seed: int = 42
+    resume_from_checkpoint: bool = False
     max_retries: int = 3
     retry_sleep: float = 1.5
     transient_retry_forever: bool = True
@@ -181,6 +183,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
+    parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=int(defaults.beam_refresh_each_epoch), choices=[0, 1])
     parser.add_argument("--homogeneity_overlap_threshold", type=float, default=defaults.homogeneity_overlap_threshold)
     parser.add_argument("--homogeneity_pressure_tie_eps", type=float, default=defaults.homogeneity_pressure_tie_eps)
@@ -247,6 +250,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("--out_dir", type=str, default=defaults.out_dir)
     parser.add_argument("--seed", type=int, default=defaults.seed)
+    parser.add_argument("--resume_from_checkpoint", type=int, default=int(defaults.resume_from_checkpoint), choices=[0, 1])
     parser.add_argument("--max_retries", type=int, default=defaults.max_retries)
     parser.add_argument("--retry_sleep", type=float, default=defaults.retry_sleep)
     parser.add_argument("--transient_retry_forever", type=int, default=int(defaults.transient_retry_forever), choices=[0, 1])
