@@ -1,5 +1,7 @@
 # Multi-Agent Diversity Prompt Search
 
+当前方法、训练流程、奖励口径、日志解读和断点续跑说明见 [method.md](method.md)。README 保留安装、数据与脚本入口；需要理解实验结果时请先读 `method.md`。
+
 ## Checkpoint resume
 
 Training runs write `training_checkpoint.json` under each run directory. Pass `--resume_from_checkpoint 1` to resume an incomplete run from the last saved training batch or epoch boundary without deleting existing logs. In task-level experiments, combine it with `--resume_completed 1`: completed run directories are skipped, while incomplete run directories continue from their checkpoint.
@@ -30,7 +32,7 @@ Checkpoint resume is batch/epoch-level. If a process is interrupted in the middl
 - 支持数据格式：`legacy` 与 `mars`。
 - Trace embedding diversity：用完整 trace 的 embedding overlap 衡量同质化。
 - Evolutionary beam search：每个 agent 保留自己的 prompt beam。
-- Accuracy-guarded reward：优先保证团队准确率不被多样性目标带崩。
+- Accuracy-guarded reward：保护被更新 target agent 的自身准确率，再优化多样性；团队投票准确率保留为诊断指标。
 - Candidate evaluation 稳定化：支持随机、固定评估池、分层采样和 repeated evaluation。
 - Majority vote diagnostics：记录平票、候选答案、计数和 tie-break 策略。
 - 批量实验协议：默认运行两个 baseline 和两个 guarded beam 方法。

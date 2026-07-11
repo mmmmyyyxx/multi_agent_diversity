@@ -1,548 +1,390 @@
-# 方法
+# Method: Multi-Agent Diversity Prompt Search
 
-本项目实现了面向多智能体推理的**案例感知进化式提示搜索**。它并非严格的强化学习：不更新模型权重，不执行策略梯度步骤，奖励仅用于在每个智能体的束搜索内对候选提示进行排序。
+## 0. 先读这一页
+
+本项目训练的是 **prompt**，不是模型权重。它让多个 solver agent 用不同 prompt 解同一道题，通过候选 prompt 的小批量评估和每个 agent 自己的 beam search，逐步寻找既能保持个人正确率、又能补足团队盲区的提示词组合。
+
+这是一种 **case-aware evolutionary prompt search**，不是严格的 reinforcement learning：
+
+- 不更新 LLM 权重，也没有 policy-gradient。
+- reward 只用于给候选 prompt 排序。
+- 主要最终分数是 `vote_acc`，即多 agent 多数投票准确率。
+- 同时报告 `mean_individual_acc`、`best_individual_acc`、`oracle_acc`，避免把团队投票和单 agent 能力混为一谈。
 
 一句话目标：
 
 ```text
-利用提示进化诱导智能体形成互补的推理路径；
-在训练期间奖励能够填补团队盲点的有用多样性；
-默认使用多数投票，在推理/评估时可选地使用多样性感知的加权投票。
+用 prompt 演化诱导互补推理路径；
+训练时奖励能补足团队盲区的 useful diversity；
+评估时默认使用多数投票，并报告少数正确路径是否被浪费。
 ```
 
-## 1. 当前实现摘要
+## 1. 整体流程
 
-活跃的训练循环是 `TraceBeamSearchSystem`，采用进化束搜索：
-
-1. 多个求解智能体使用各自的当前提示回答同一问题。
-2. 系统记录答案、轨迹、有效性、投票结果、预言机覆盖率和轨迹多样性。
-3. 每 `update_every` 步，一次以奖励为导向的窗口诊断会选择一到两个智能体进行提示更新。
-4. 候选提示由配置的提示进化架构生成。
-5. 候选者在相同的候选评估批次上，与当前的活跃团队进行对比评估。
-6. 候选者按奖励排序，每个被更新的智能体保留一个大小为 `beam_size` 的提示束。
-7. 验证挑选出最佳提示；最终测试使用恢复的最佳提示。
-
-## 2. 模型角色与命名
-
-CLI 保留了历史字段名 `agent_model`、`optimizer_model` 和 `evaluator_model`，但它们目前的角色是：
-
-- `agent_model`：求解器执行轨迹模型。它为每个智能体回答训练/验证/测试问题。
-- `optimizer_model`：提示进化生成模型。它用于一次性优化器以及教师-评论家-学生生成端的调用：教师、教师重写、学生、学生 JSON 重试和学生 JSON 修复。
-- `evaluator_model`：评估者/审计者模型。它用于 TCS 评论家以及可选的联合轨迹多样性评估器。
-- `embedding_model`：本地句子转换器，用于轨迹嵌入多样性诊断。
-
-因此，`optimizer_model` 不再意味着“直接编写所有提示的单一整体优化器”。在默认架构中，它是用于结构化教师-评论家-学生提示进化管线的生成模型。
-
-`run_meta.json` 将这些映射记录在 `model_role_map` 中。
-
-## 3. 任务与数据集支持
-
-任务解析集中在 `multi_dataset_diverse_rl/tasks.py` 中，通过 `TaskSpec` 实现：
-
-```python
-@dataclass
-class TaskSpec:
-    name: str
-    parse_gold: Callable[[Any, Optional[str]], str]
-    extract_pred: Callable[[Optional[str], Optional[str]], str]
-    match_answer: Callable[[str, str], bool]
-    format_question: Optional[Callable[[dict], str]] = None
+```text
+任务数据
+  -> 多个 solver agent rollout
+  -> 窗口诊断：错误、覆盖缺口、无效输出、useful diversity
+  -> 选择 1-2 个最值得更新的 agent
+  -> 生成候选 prompt（默认 Teacher-Critic-Student）
+  -> 与当前团队做同批 candidate evaluation
+  -> 每个 agent 保留自己的 top-k prompt beam
+  -> validation 选择 best_prompts
+  -> 恢复 best_prompts 做最终 test，并导出标准结果
 ```
 
-支持的任务类型：
+核心类是 `multi_dataset_diverse_rl.system.TraceBeamSearchSystem`；单任务入口是 `python -m multi_dataset_diverse_rl.cli`；按 `task_id` 批量运行的入口是 `scripts/run_task_level_accuracy.py`。
+
+## 2. 角色与术语
+
+历史 CLI 字段名保留了 `agent_model`、`optimizer_model`、`evaluator_model`，但当前职责如下：
+
+| 字段 | 当前职责 |
+| --- | --- |
+| `agent_model` | solver rollout 模型。每个 agent 用它回答 train、validation、test 样本。 |
+| `optimizer_model` | prompt-evolution 的生成模型。默认 TCS 中用于 Teacher、Teacher rewrite、Student、Student JSON retry/repair。 |
+| `evaluator_model` | 审核模型。用于 TCS Critic，以及可选的联合 trace-diversity 评估。 |
+| `embedding_model` | 本地 sentence-transformer，用于 trace embedding 多样性诊断。 |
+
+常用术语：
+
+- **active prompt**：某个 agent 当前实际用于 rollout 的 beam top-1 prompt。
+- **prompt beam**：该 agent 保留的 top-`beam_size` 候选 prompt 集合；默认 `beam_size=3`。
+- **oracle_acc**：只要任一 agent 答对，该样本就算正确。它衡量团队是否已经产生正确路径。
+- **aggregation_gap**：`oracle_acc - vote_acc`。越高说明正确的少数派路径越多，但尚未被最终聚合充分利用。
+- **useful diversity**：来自有效且正确 reasoning trace 的新颖性；不是 prompt 文本表面不同，也不是单纯 trace 差异。
+- **invalid trace**：过短、缺少 `FINAL_ANSWER:`、无法提取答案或高度重复等规则性无效输出。
+
+`run_meta.json` 中的 `model_role_map` 会保存这些模型角色映射。
+
+## 3. 任务、数据与外部比较
+
+### 任务解析
+
+任务逻辑集中在 `multi_dataset_diverse_rl/tasks.py` 的 `TaskSpec`。支持：
 
 - `mmlu`
-- `gsm8k`
 - `bbh`
+- `gsm8k`
 - `auto`
 
-当提供 `--answer_format` 时，将使用 `multi_dataset_diverse_rl/answer_formats.py`。支持的格式：
+在 task manifest 或 CLI 中给出 `--answer_format` 时，答案解析转由 `multi_dataset_diverse_rl/answer_formats.py` 统一处理。支持 `option_letter`、`boolean`、`yes_no`、`valid_invalid`、`numeric`、`free_text`。
 
-- `option_letter`
-- `boolean`
-- `yes_no`
-- `valid_invalid`
-- `numeric`
-- `free_text`
+### 数据格式
 
-数据集格式：
+- `legacy`：兼容 `question/input/query/problem` 与 `answer/output/target/label/response` 等旧字段。
+- `mars`：兼容 MARS 风格字段别名，如 `prompt`、`gold`、`task_name`、`subject`。它只是数据字段兼容层，**不依赖本地 MARS 仓库**。
 
-- `legacy`：问题键为 `question/input/query/problem`；答案键为 `answer/output/target/label/response`。
-- `mars`：问题键为 `question/input/query/problem/prompt`；答案键为 `answer/target/gold/gold_answer/label/output`；元数据键为 `task/task_name/category/subject/bbh_task`。
+### task-level manifest
 
-任务级比较使用本仓库自己的清单文件 `configs/task_level_comparison.yaml`。它不依赖于本地的 MARS 仓库。
+`configs/task_level_comparison.yaml` 是本仓库自己的轻量实验索引。它目前覆盖 6 个 BBH 和 6 个 MMLU 子任务；按 `task_id` 输出结果，之后可由外部脚本与任意给定的 MARS `summary.csv` 进行 join。
 
-## 4. 执行轨迹与聚合
+manifest 中同一任务的 train/val/test 目前可能复用同一个 CSV。这是便于贴近 paper-mode 口径的 **paper-compatible setting**，不是严格无泄漏的 split 评测；正式报告必须如实说明。
 
-对于每个样本，所有活跃提示回答同一问题：
+## 4. 一次训练更新如何发生
+
+每个训练样本先做一次完整团队 rollout：
 
 ```text
 question + active_prompt_i -> trace_i + answer_i
 ```
 
-执行轨迹日志包括：
+系统记录每个 agent 的答案、正确性、trace 有效性、投票结果、oracle coverage、平票信息和 trace 多样性。每经过 `update_every` 个训练 step（默认 10），执行一次更新：
 
-- 每个智能体的答案及正确性
-- 投票答案和投票正确性
-- 预言机正确性，即至少有一个智能体正确
-- 无效轨迹标志
-- 轨迹嵌入多样性和重叠度
-- 投票平局诊断
-- 可选的加权投票诊断
+1. 从最近窗口生成 reward-oriented diagnosis。
+2. 选择一到两个有正向更新压力的 agent。
+3. 为每个被选中的 agent 生成候选 prompt。
+4. 在同一个 candidate-eval batch 上比较当前团队与“仅替换目标 agent prompt 后”的团队。
+5. 按 reward 排序候选和已有 beam prompt，保留 top-`beam_size`。
+6. beam top-1 成为新的 active prompt。
 
-求解器轨迹应包含：
-
-```text
-FINAL_ANSWER: <answer>
-```
-
-### 多数投票
-
-默认聚合方式是多数投票。平局被显式记录：
-
-```json
-{
-  "vote_tie": true,
-  "tie_candidates": ["A", "B"],
-  "vote_counts": {"A": 1, "B": 1},
-  "tie_break_method": "random"
-}
-```
-
-平局打破选项：
-
-- `first`：旧版的首个答案行为。
-- `random`：使用 `seed + question_hash` 的确定性随机；这是默认设置。
-- `abstain`：平局时返回空投票答案。
-
-### 加权投票
-
-`--aggregation_mode weighted_vote` 是可选的。它利用有效性和轨迹独立性来减少冗余答案的影响：
+候选评估是相对基线的：
 
 ```text
-weight_i = reliability_i * validity_i * independence_i
-independence_i = min(max(1 - per_agent_overlap_i, 0), 0.5)
-score(answer) = sum(weight_i for agents predicting answer)
+baseline_prompts  = 当前 active prompts
+candidate_prompts = 用 candidate 替换 target agent 后的 active prompts
 ```
 
-可靠性目前是均匀的；这是一种轻量级的聚合规则，而非学习得到的验证器。
+因此某个 prompt 不是独立地“好”，而是要在当前团队中能带来更高的 reward。
 
-## 5. 轨迹有效性与多样性
+## 5. 更新谁：窗口诊断与 agent 选择
 
-无效检查器基于规则。当轨迹过短、缺少 `FINAL_ANSWER:`、词元过少、无法提取答案或出现高度重复时，它会将轨迹标记为无效。
+当前默认路径不再只按 overlap pressure 选择 agent。`_window_update_diagnosis(...)` 会聚合最近窗口中的：
 
-轨迹多样性根据完整的推理轨迹计算，而非提示文本：
+- 每个 agent 自身错误数。
+- 团队投票错误时该 agent 的错误数。
+- 无效输出率。
+- oracle coverage 缺口：团队里有人正确但该 agent 没有给出正确路径。
+- useful-diversity 缺口。
+- trace overlap、同质案例等诊断信息。
+
+`select_reward_agents_for_update(...)` 对 agent 的更新压力为：
 
 ```text
-embedding_diversity = 1 - mean_embedding_overlap
+score_i =
+    3.0 * per_agent_error_count[i]
+  + 2.0 * per_agent_team_wrong_error_count[i]
+  + 2.0 * per_agent_invalid_rate[i]
+  + 1.5 * per_agent_coverage_gap_count[i]
+  + 1.0 * per_agent_useful_diversity_deficit[i]
 ```
 
-对于有用多样性，新颖性仅在目标轨迹有效且正确时才被计入。
+只选择正分 agent，随机打乱后用于处理并列，并返回排名前 1 或 2 个。Overlap 仍会被记录并提供给 prompt generation，但不再是默认选择器的主导信号。
 
-## 6. 提示进化架构
+## 6. Prompt evolution：默认 Teacher-Critic-Student
 
-默认架构是：
+默认配置：
 
 ```bash
 --optimizer_architecture teacher_critic_student
 ```
 
-旧版的一次性优化器仍然可用：
+旧的 `one_shot` 架构仍可用于消融或兼容实验。
 
-```bash
---optimizer_architecture one_shot
-```
+TCS 是审核驱动的修正闭环，而不是 Teacher 与 Critic 自由讨论：
 
-### 教师-评论家-学生
+1. **Teacher** 从抽象窗口诊断生成一个 Socratic guiding question，不直接写候选 prompt。
+2. **Critic** 在 Student 看到该问题前审核它，检查是否泛泛、无诊断依据、泄漏答案、硬编码任务角色、只追求表面差异或可能伤害准确率。
+3. 若 Critic 拒绝，Teacher 接收 feedback 重写，再审核；最多 `teacher_critic_max_rounds` 轮，默认 3。
+4. 若所有轮次都未通过阈值，系统选择 Critic 得分最高的 Teacher question 继续，并在日志标记 `teacher_question_forced_best_score=true`。
+5. **Student** 根据该 guiding question 生成候选 prompt；候选仍必须通过 schema、去重、candidate evaluation 和 beam selection。
 
-TCS 是当前结构化的提示进化路径：
+这个流程不使用预定义任务专属角色。它的目标是 prompt quality、任务对齐、目标 agent 正确率和 useful diversity；voting failure 不是 Teacher 的默认唯一目标。
 
-1. **教师**使用抽象的窗口诊断信息创建苏格拉底式指导性问题。它不直接编写候选提示。
-2. **评论家**在学生看到之前审计教师的问题。它拒绝泛泛的、无根据的、泄露信息的、硬编码的、仅表面多样性或损害准确性的问题。
-3. 如果被拒绝，**教师重写**修订问题，评论家再次审计。
-4. **学生**根据批准的教师问题生成候选提示。
-5. 学生候选仍然经过现有的模式检查、冗余检查、候选评估、奖励排序和束选择。
+### Student JSON 稳定性
 
-TCS 不使用预定义的任务特定角色。投票失败不是默认的教师目标；提示质量、任务对齐、目标智能体准确性和有用多样性才是目标。
-
-### 学生 JSON 稳定性
-
-期望学生的输出是严格的 JSON。默认模式为紧凑模式：
-
-```bash
---student_candidate_schema_mode compact
-```
-
-如果学生输出为空或格式错误：
-
-```text
-初始学生调用
--> 使用更严格的仅 JSON 指令重试学生，最多 student_json_max_retries 次
--> 如果非空的格式错误 JSON 仍然失败，则调用 JSON 修复
--> 仅当恢复出有效的 JSON 对象时才继续
-```
-
-当前默认设置：
+Student 默认输出紧凑 JSON（`--student_candidate_schema_mode compact`）。默认启用：
 
 ```text
 student_json_retry_on_parse_fail = True
 student_json_max_retries = 5
 student_json_repair_enabled = True
-student_json_repair_max_tokens = 1200
-student_json_repair_temperature = 0.0
-student_candidate_prompt_max_chars = 900
-student_candidate_max_chars_per_field = 320
 ```
 
-JSON 修复并非模板回退。它仅修复已生成的学生内容的语法，不会凭空创造提示想法。
-
-重要的诊断信息：
-
-- `student_raw_response_empty`
-- `student_json_parse_failed`
-- `student_json_retry_attempted`
-- `student_json_retry_succeeded`
-- `student_json_repair_attempted`
-- `student_json_repair_succeeded`
-- `student_failure_stage`
-- `student_candidate_count_raw`
-- `student_candidate_count_final`
-
-最终的学生失败应由 `student_candidate_count_final == 0` 来判断，而不仅仅是某个中间的部分失败阶段。
-
-## 7. 候选评估
-
-对于目标智能体，候选评估比较：
+处理顺序：
 
 ```text
-baseline_prompts  = 当前活跃提示
-candidate_prompts = 将目标智能体替换为候选提示后的当前活跃提示
+Student 初次生成
+  -> 空输出或 JSON 解析失败时，用更严格 JSON-only 指令重试
+  -> 非空但仍是坏 JSON 时，可调用 JSON repair 修复已有文本语法
+  -> 仅接收最终可解析、满足 schema 的 candidate 对象
 ```
 
-这使得候选评估是相对于基线的。
+JSON repair 不创造新的 prompt idea，也不是 template fallback。最终是否真正失败应看 `student_candidate_count_final == 0`，不要只看一个中间的 `json_parse_failed` 标记。
 
-每个样本的候选评估日志包括：
+## 7. 三种 reward mode
 
-- `baseline_vote_correct`
-- `candidate_vote_correct`
-- `baseline_any_correct`
-- `candidate_any_correct`
-- `baseline_target_correct`
-- `target_agent_correct`
-- `target_trace_novelty`
-- `target_useful_diversity`
-- `rescue`
-- `rescue_useful_diversity`
+当前只有以下三种 mode：
 
-定义：
+| mode | 用途 | reward 核心 |
+| --- | --- | --- |
+| `guarded_diversity` | 默认模式 | 保护目标 agent 准确率，再奖励 trace diversity 增量并惩罚无效输出。 |
+| `coverage_useful_diversity` | 用于验证“有用多样性”的推荐模式 | 目标 agent 准确率 + oracle coverage 增量 + useful diversity，并加 invalid guard。 |
+| `accuracy_only` | 消融 | 仅按更新后目标 agent 自身准确率排序，团队投票仅记录。 |
 
-```text
-target_useful_diversity =
-    target_trace_novelty
-  * target_agent_correct
-  * target_valid
-
-rescue =
-    基线投票错误
-    且目标智能体正确
-```
-
-在当前奖励中，`rescue` 和 `rescue_rate` 仅用于诊断。
-
-候选评估策略：
-
-- `random`
-- `fixed_pool`
-- `stratified`
-
-为获得更低的方差，推荐：
-
-```bash
---candidate_eval_strategy fixed_pool
---candidate_eval_pool_size 100
---candidate_eval_batch_size 20
-```
-
-## 8. 奖励模式
-
-代码默认设置是：
-
-```bash
---reward_mode guarded_diversity
-```
-
-对于当前的 TCS 有用多样性实验，显式运行：
-
-```bash
---reward_mode coverage_useful_diversity
-```
-
-可用模式：
-
-- `guarded_diversity`：目标智能体准确率约束加上轨迹多样性增量和无效率惩罚。
-- `coverage_useful_diversity`：目标智能体准确率加上预言机覆盖率增益和有用多样性，并带有无效约束。
-- `accuracy_only`：消融模式，按更新后目标智能体自身的准确率对候选进行排序，同时仍记录团队投票准确率。
-
-### 带约束的多样性
-
-`guarded_diversity` 使用目标智能体准确率作为约束和主要准确率信号：
+### `guarded_diversity`
 
 ```text
 acc_delta     = candidate_target_acc - baseline_target_acc
-vote_delta    = candidate_team_acc - baseline_team_acc
 div_delta     = candidate_embedding_diversity - baseline_embedding_diversity
 invalid_delta = candidate_invalid_rate - baseline_invalid_rate
 
 if candidate_target_acc < baseline_target_acc - effective_accuracy_guard_epsilon:
-    reward = -1.0 + acc_delta - weight_invalid_delta * max(0, invalid_delta)
+    reward = -1.0 + acc_delta - effective_invalid_weight * max(0, invalid_delta)
 else:
-    reward =
-        weight_target_accuracy * candidate_target_acc
-      + weight_div_delta       * div_delta
-      - weight_invalid_delta   * max(0, invalid_delta)
+    reward = effective_target_accuracy_weight * candidate_target_acc
+           + effective_div_delta_weight * div_delta
+           - effective_invalid_weight * max(0, invalid_delta)
 ```
 
-团队投票准确率被记录用于诊断，但不是奖励基础。
+`candidate_team_accuracy` 与 `vote_delta` 会记录在诊断中，但不构成该 reward 的基础。
 
-### 覆盖率有用多样性
-
-`coverage_useful_diversity` 是测试有用多样性的推荐模式：
+### `coverage_useful_diversity`
 
 ```text
-coverage_delta =
-    candidate_oracle_acc - baseline_oracle_acc
+coverage_delta = candidate_oracle_acc - baseline_oracle_acc
 
-invalid_guard_passed =
-    candidate_invalid_rate <= baseline_invalid_rate + invalid_guard_epsilon
-
-if not invalid_guard_passed:
+if candidate_invalid_rate > baseline_invalid_rate + invalid_guard_epsilon:
     reward = -1.0
 else:
-    reward =
-        effective_weight_target_accuracy * candidate_target_accuracy
-      + effective_weight_coverage        * coverage_delta
-      + effective_weight_useful_diversity * useful_diversity
+    reward = effective_target_accuracy_weight * candidate_target_accuracy
+           + effective_coverage_weight * coverage_delta
+           + effective_useful_diversity_weight * useful_diversity
 ```
 
-活跃组件：
+此模式中真正生效的组成是：`candidate_target_accuracy`、`coverage_delta`、`useful_diversity` 和 `invalid_guard`。`rescue_rate`、`rescue_useful_diversity`、`candidate_team_accuracy` 和 `vote_delta` 都只是日志诊断，不直接被优化。
 
-- `candidate_target_accuracy`
-- `coverage_delta`
-- `useful_diversity`
-- `invalid_guard`
+### `accuracy_only`
 
-以下指标被记录但不直接优化：
+`accuracy_only` 的 `reward` 是 `target_agent_accuracy`，不是 team vote accuracy。它适合作为“没有多样性奖励”时的对照。
 
-- `candidate_team_accuracy`
-- `vote_delta`
-- `rescue_rate`
-- `rescue_useful_diversity`
+### 阶段自适应调度
 
-旧的 `coverage_rescue_diversity` 模式已被移除。
+默认 `--reward_schedule_mode phase_adaptive`。在共享 prompt 的早期，较重视 diversity/useful-diversity；随着 prompt 分化和有效更新积累，权重逐步回到目标 agent 正确率并收紧 accuracy guard。每个 candidate 的有效权重会写入 `update_logs.jsonl`，包括 `effective_weight_target_accuracy`、`effective_weight_coverage`、`effective_weight_useful_diversity` 与 `effective_accuracy_guard_epsilon`。
 
-## 9. 阶段自适应奖励调度
+## 8. Beam search、validation 与最终 prompt
 
-默认调度是：
+每个 agent 维护独立 prompt beam：
 
-```bash
---reward_schedule_mode phase_adaptive
+1. 现有 beam 中的每个 prompt 都作为 parent。
+2. 每个 parent 生成 `num_candidates_per_parent` 个新候选。
+3. 现有 beam prompt 也留在候选池中，防止较差更新覆盖已有好 prompt。
+4. 所有候选都在 candidate-eval batch 上评估。
+5. reward 前 `beam_size` 名组成新 beam，top-1 变成 active prompt。
+
+这解释了两个常见现象：
+
+- 新候选被生成，不代表它一定成为 active prompt；已有 beam 项可能在该评估批次上得分更高。
+- `prompt_history.json` 是训练过程的 beam 轨迹；`best_prompts.json` 是 validation 选择并为最终测试恢复的 prompt。最终 test 以 `best_prompts.json` 为准。
+
+## 9. 聚合和主要指标
+
+默认聚合为多数投票：`--aggregation_mode majority`。平票默认使用 `--vote_tie_break random`，随机性由 `seed + question_hash` 确定，因此可复现；可改为 `first` 或 `abstain`。
+
+`weighted_vote` 是可选轻量规则，用 trace 有效性和独立性降低冗余答案的影响，不是学习得到的 verifier。
+
+`verifier_select` 目前尚未实现实际 verifier；选择它会记录 fallback 并退回 majority，不能作为独立方法报告。
+
+最终结果中最值得一起查看的字段：
+
+| 指标 | 解读 |
+| --- | --- |
+| `vote_acc` | 主 MAD 指标：最终团队多数投票是否正确。 |
+| `mean_individual_acc` | 所有 agent 自身准确率的均值。 |
+| `best_individual_acc` | 最强单 agent 的准确率。 |
+| `oracle_acc` | 团队是否至少有一个正确路径。 |
+| `aggregation_gap` | 正确少数路径尚未转化为最终投票的空间。 |
+| `mean_useful_diversity` | 多样性是否来自有效、正确的 reasoning trace。 |
+| `mean_invalid_rate` | 无效输出比例。 |
+
+对外比较时不要只报告 `vote_acc`；至少并列 MARS Acc、MAD Vote Acc、MAD Mean Agent Acc、MAD Best Agent Acc，并注明前者可能是单 prompt、后者是多 agent 投票。
+
+## 10. 输出文件：先看什么
+
+每个 run 目录通常包含：
+
+| 文件 | 用途 |
+| --- | --- |
+| `run_meta.json` | 完整配置、数据元信息与模型角色。 |
+| `history.json` | 每个 epoch 的 validation/test 汇总。 |
+| `best_prompts.json` | validation 选出的最终测试 prompt。 |
+| `prompt_history.json` | 每个 agent 的 beam/active prompt 演化轨迹。 |
+| `update_logs.jsonl` | 每次候选评估与 beam 更新：reward、来源、是否进入 beam、是否成为 top-1。 |
+| `train_step_logs.jsonl` | 逐训练 step 的 rollout 指标与诊断。 |
+| `solver_rollout_records.jsonl` | 可复用的 solver rollout 记录。 |
+| `llm_calls.jsonl` | 单次 LLM 调用、token、延迟与错误。 |
+| `cost_summary.json` | LLM 调用与 token 汇总，只用于报告。 |
+| `training_checkpoint.json` | 未完成训练的断点；正常完成时会清除。 |
+
+分析更新效果时优先看 `update_logs.jsonl`：
+
+- `active_prompt_changed`：这次 beam 更新是否真的改变了 active prompt。
+- `is_top1` / `in_top_beam`：候选是否成为当前 top-1 / 进入保留 beam。
+- `top1_candidate_source`：最终 top-1 来自 optimizer、已有 beam 还是 fallback。
+- `student_candidate_count_final`：Student 最终产生的可用候选数。
+- `teacher_question_forced_best_score`：三轮 Critic 未过阈值时是否采用最高分 Teacher question。
+
+成本字段包括 `solver_calls`、`optimizer_calls`、`evaluator_calls`、`total_llm_calls`、token、`estimated_cost` 和 `latency_seconds`。它们只用于报告，**不会**用于预算限制、早停、排序或归一化训练。
+
+## 11. 断点续跑
+
+训练会在 step、批处理和 epoch 边界写入 `training_checkpoint.json`。使用：
+
+```powershell
+python scripts/run_task_level_accuracy.py `
+  --manifest configs/task_level_comparison.yaml `
+  --tasks disambiguation_qa,geometric_shapes,ruin_names,sports_understanding `
+  --settings shared_baseline,shared_guarded_beam `
+  --seeds 42 `
+  --dataset_format mars `
+  --out_root runs_task_level_bbh_tcs_useful_full `
+  --resume_completed 1 `
+  --resume_from_checkpoint 1
 ```
 
-早期更新使用更强的多样性/有用多样性权重，特别是当智能体从共享提示开始时。随着提示的分化和已接受更新的积累，调度将权重移回目标智能体准确率，并使用更严格的准确率约束。
+语义如下：
 
-记录的有效字段包括：
+- 已完成目录被 `--resume_completed 1` 跳过；未完成目录从 checkpoint 继续。
+- `training` 阶段从最近完成的 cursor 后继续；`epoch_evaluated` 与 `between_epochs` 会先完成相应 epoch 状态转换。
+- 如果在并发 API batch 中途停止，正在飞行的小批调用可能重做；启用 `--candidate_reuse_recorded_rollouts 1` 时已记录 solver rollout 会被复用。
+- checkpoint 会校验 reward、beam、candidate-eval、模型、数据路径等关键配置。不兼容时直接报错，**不会**在原目录静默从 step 0 重启。
 
-- `effective_weight_target_accuracy`
-- `effective_weight_div_delta`
-- `effective_weight_coverage`
-- `effective_weight_useful_diversity`
-- `effective_accuracy_guard_epsilon`
-- `reward_phase_progress`
-- `reward_diversity_need`
-- `reward_unique_prompt_ratio`
+若你要开新实验配置，应使用新的 `--out_root`；不要把不同配置继续写入旧 run 目录。
 
-## 10. 束搜索
+## 12. 常用命令
 
-每个智能体拥有自己的提示束。在更新时：
+### 最小 smoke run
 
-1. 现有的束提示充当父级。
-2. 每个父级向优化器架构请求新的候选。
-3. 现有的束提示也保留在候选池中。
-4. 所有池中的项目都经过候选评估。
-5. 按奖励排名前 `beam_size` 的项目成为新的束。
-6. 束中的第一名成为活跃提示。
-
-这意味着一个新的候选可能被生成，但如果现有的束提示在评估批次上得分更高，它就不会成为活跃提示。
-
-`best_prompts.json` 存储由验证选出的提示，并为最终测试恢复。
-
-## 11. 回退与空操作进化
-
-默认情况下模板回退是禁用的：
-
-```bash
---optimizer_fallback_mode none
+```powershell
+python scripts/run_task_level_accuracy.py `
+  --manifest configs/task_level_comparison.yaml `
+  --tasks disambiguation_qa `
+  --settings shared_baseline,shared_guarded_beam `
+  --seeds 42 `
+  --dataset_format mars `
+  --out_root runs_task_level_smoke `
+  --reward_mode coverage_useful_diversity `
+  --optimizer_architecture teacher_critic_student `
+  --optimizer_fallback_mode none `
+  --epochs 1 `
+  --train_size 20 `
+  --val_size 20 `
+  --test_size 40 `
+  --update_every 10
 ```
 
-如果启用，模板回退是一种工程安全机制，应单独报告。清晰的方法声明应使用 `none`。
+### task-level 全量实验骨架
 
-空操作进化提前停止是启用的：
-
-```bash
---no_effective_evolution_stop_enabled 1
+```powershell
+python scripts/run_task_level_accuracy.py `
+  --manifest configs/task_level_comparison.yaml `
+  --benchmarks BBH,MMLU `
+  --settings shared_baseline,shared_guarded_beam,bank_guarded_beam `
+  --seeds 42 `
+  --dataset_format mars `
+  --out_root runs_task_level_accuracy `
+  --reward_mode coverage_useful_diversity `
+  --optimizer_architecture teacher_critic_student `
+  --optimizer_fallback_mode none `
+  --candidate_reuse_recorded_rollouts 1
 ```
 
-如果重复的更新尝试产生的优化器候选太少，且没有活跃提示更改，进化将停止，最终评估仍然运行。
+当前 `Config()` 的主要默认值为：`agents=5`、`epochs=2`、`train_size=200`、`val_size=100`、`test_size=200`、`update_every=10`、`beam_size=3`、`num_candidates_per_parent=2`、`candidate_eval_batch_size=20`、`candidate_eval_strategy=random`、`reward_mode=guarded_diversity`、`optimizer_architecture=teacher_critic_student`。
 
-## 12. 验证与最终指标
+候选评估若追求更低方差，可显式改为：
 
-对于 `coverage_useful_diversity`，验证分数是：
-
-```text
-0.4 * vote_acc
-+ 0.3 * oracle_acc
-+ 0.2 * mean_useful_diversity
-- 0.2 * mean_invalid_rate
+```powershell
+--candidate_eval_strategy fixed_pool `
+--candidate_eval_pool_size 100 `
+--candidate_eval_batch_size 20
 ```
 
-最终数据集指标包括：
+### 汇总与外部比较
 
-- `vote_acc`
-- `majority_vote_acc`
-- `weighted_vote_acc`
-- `mean_individual_acc`
-- `best_individual_acc`
-- `oracle_acc`
-- `aggregation_gap`
-- `rescue_available_rate`
-- `correct_disagreement_rate`
-- `mean_useful_diversity`
-- `vote_tie_rate`
-- `mean_invalid_rate`
+```powershell
+python scripts/compute_experiment_metrics.py `
+  --runs_root runs_task_level_accuracy `
+  --out_csv runs_task_level_accuracy/experiment_metrics.csv `
+  --out_md runs_task_level_accuracy/experiment_metrics.md
 
-解读：
+python scripts/analyze_student_failures.py `
+  runs_task_level_accuracy/disambiguation_qa/shared_guarded_beam_seed42
 
-- `oracle_acc`：是否有某个智能体给出了正确答案。
-- `vote_acc`：聚合是否使用了正确答案。
-- `aggregation_gap`：还有多少正确的少数信息未被使用。
-- `mean_useful_diversity`：多样性是否来自有效/正确的轨迹。
-
-## 13. 任务级准确率导出
-
-任务级运行导出标准化的行以便后续比较：
-
-```bash
-python scripts/run_task_level_accuracy.py \
-  --manifest configs/task_level_comparison.yaml \
-  --benchmarks BBH,MMLU \
-  --settings shared_baseline,shared_guarded_beam,bank_guarded_beam \
-  --seeds 42 \
-  --dataset_format mars \
-  --out_root runs_task_level_accuracy
+python scripts/compare_external_accuracy.py `
+  --mars_summary path/to/mars/summary.csv `
+  --mad_results runs_task_level_accuracy/accuracy_results.jsonl `
+  --out_csv comparison/mars_vs_mad_accuracy.csv `
+  --out_md comparison/mars_vs_mad_accuracy.md
 ```
 
-对于 TCS 有用多样性运行，添加：
+`compare_external_accuracy.py` 只读取用户提供的两个结果文件，不假设或读取 MARS 仓库目录结构。
 
-```bash
---reward_mode coverage_useful_diversity
---optimizer_architecture teacher_critic_student
-```
+## 13. 方法边界与报告注意事项
 
-输出：
-
-```text
-runs_task_level_accuracy/accuracy_results.jsonl
-```
-
-行包括任务元数据、设置、种子、准确率指标、预言机/挽救诊断以及 LLM 调用/词元统计。
-
-与 MARS 的比较应在外部进行。MAD 不读取 MARS 仓库。按 `task_id` 单独连接，并至少报告：
-
-- MARS 准确率
-- MAD 投票准确率
-- MAD 平均智能体准确率
-- MAD 最佳智能体准确率
-
-## 14. 成本统计
-
-每次运行写入：
-
-```text
-llm_calls.jsonl
-cost_summary.json
-```
-
-成本字段：
-
-- `solver_calls`
-- `optimizer_calls`
-- `evaluator_calls`
-- `total_llm_calls`
-- `prompt_tokens`
-- `completion_tokens`
-- `total_tokens`
-- `estimated_cost`
-- `latency_seconds`
-
-这些字段仅用于报告。它们不约束、停止、排序或规范化训练。
-
-## 15. 关键代码位置
-
-核心文件：
-
-```text
-multi_dataset_diverse_rl/config.py
-multi_dataset_diverse_rl/cli.py
-multi_dataset_diverse_rl/system.py
-multi_dataset_diverse_rl/tasks.py
-multi_dataset_diverse_rl/answer_formats.py
-scripts/run_task_level_accuracy.py
-scripts/analyze_student_failures.py
-scripts/compute_experiment_metrics.py
-scripts/compare_external_accuracy.py
-```
-
-`TraceBeamSearchSystem` 中的重要方法：
-
-- `compute_rollout_metrics`
-- `_window_update_diagnosis`
-- `select_reward_agents_for_update`
-- `propose_candidates_teacher_critic_student`
-- `generate_student_candidates`
-- `retry_student_candidates_json_only`
-- `repair_student_json_response`
-- `_candidate_reward_guarded`
-- `_candidate_reward_coverage_useful_diversity`
-- `evaluate_candidate_prompt`
-- `update_prompt_with_beam`
-- `_summarize_rollout_rows`
-- `evaluate_dataset`
-
-## 16. 方法边界
-
-- 系统优化的是提示，而非模型权重。
-- 奖励是一个候选排序信号，而非强化学习中的回报。
-- 轨迹嵌入多样性是对推理路径多样性的近似。
-- 候选评估存在采样方差；为得出可靠结论，应使用固定池、分层抽样和多个种子。
-- `weighted_vote` 是一种轻量级的聚合规则，而非学习得到的验证器。
-- 任务级比较的完整性取决于 `configs/task_level_comparison.yaml`；不完整的清单覆盖意味着只能进行子集比较。
-## Checkpoint Resume
-
-Each non-baseline training run writes `training_checkpoint.json` in its run directory. `--resume_from_checkpoint 1` restores agent prompts, prompt beams, accepted/rejected counts, history, prompt history, cost summary, best-validation state, and the current epoch cursor.
-
-Checkpoint stages:
-
-- `training`: resume from the saved epoch cursor and continue the remaining training examples.
-- `epoch_evaluated`: validation for the epoch has been computed; resume by finalizing best-prompt and early-stop bookkeeping.
-- `between_epochs`: the epoch is fully committed; resume from the next epoch or final test.
-
-For task-level experiments, use both:
-
-```bash
---resume_completed 1
---resume_from_checkpoint 1
-```
-
-`resume_completed` skips complete run directories and rebuilds summary files. `resume_from_checkpoint` continues incomplete run directories. The resume granularity is batch/epoch-level; an in-flight API batch can still be repeated after an interruption, and recorded solver rollouts are reused when enabled.
-
-If an existing checkpoint was written with incompatible resume-critical settings, resume fails fast and prints the mismatched fields. It does not silently restart from step 0 in the same run directory.
+- 本项目优化 prompt，不训练模型权重；reward 不是 RL return。
+- embedding diversity 是 reasoning-path diversity 的近似指标，不能单独证明真正的认知策略差异。
+- candidate evaluation 有采样方差。重要结论应使用固定评估池或分层采样、多个 seed，并报告方差。
+- `oracle_acc` 高而 `vote_acc` 低表示团队产生了正确少数路径，但当前聚合没有利用它；它不能直接证明最终团队更强。
+- `weighted_vote` 不是学习得到的 verifier，`verifier_select` 当前仅回退到 majority。
+- 成本统计仅用于报告，不参与任何训练限制或停止条件。
+- 本仓库与 MARS 分开运行。manifest 覆盖不全时只能称为 subset comparison；同文件 train/val/test 时只能称为 paper-compatible setting，不能称为 strict split。
