@@ -39,7 +39,7 @@ SHARED_ORACLE_SEARCH_BASE = {
     "optimizer_fallback_mode": "none",
     "teacher_critic_use_voting_failure": False,
     "candidate_eval_strategy": "fixed_pool",
-    "candidate_eval_pool_size": 100,
+    "candidate_eval_pool_size": 50,
     "candidate_eval_batch_size": 24,
     "candidate_eval_execution_mode": "factorized_cached",
     "solver_rollout_singleflight": True,

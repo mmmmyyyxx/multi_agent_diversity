@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.5476131996711096,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.88,
+    0.68,
+    0.0,
+    0.05806599835554759,
+    1
+  ],
+  "selected_oracle_acc": 0.88,
+  "selected_mean_individual_acc": 0.68,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.05806599835554759,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "e436bb90d90f",
+      "prompt": "You are a careful reasoning solver. First, extract specific textual clues for pronoun resolution; list all grammatical and contextual constraints; analyze possible antecedents against these constraints; verify each constraint is satisfied; check final answer consistency with question context; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "e591af737419",
+      "prompt": "You are a careful reasoning solver. Identify candidate antecedents; systematically eliminate each candidate with brief justification; verify the remaining candidate; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "079868b4b2a0",
+      "prompt": "You are a careful reasoning solver. Begin by explicitly listing all grammatical and contextual constraints; then compare each candidate against these constraints; eliminate candidates that violate constraints; verify the remaining candidate; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "e7abe8a26cff",
+      "prompt": "You are a careful reasoning solver. First, systematically identify and categorize constraints as structural (syntactic), semantic (meaning-based), or discourse (context-flow); list all explicit constraints before candidate evaluation; compare each candidate against these categorized constraints; eliminate candidates violating any constraint; verify the selection; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "e1c18a32ec55",
+      "prompt": "You are a careful reasoning solver. Systematically identify all constraints; compare candidate antecedents against each; verify consistency with question requirements; then give exactly one final answer."
+    }
+  ]
+}

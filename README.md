@@ -193,6 +193,19 @@ The audit checks TCS metadata, stage evidence, and canonical deltas: target accu
 
 The matched selection settings are `shared_scalar_tcs_oracle_first` and `shared_oracle_pareto_tcs`. Both use TCS, fixed-pool evaluation, `coverage_useful_diversity`, and `oracle_first`; only `candidate_selection_mode` differs.
 
+For formal BBH experiments, use `configs/task_level_comparison_strict_bbh_seed42.yaml`. It maps each task to separate `opt.csv`, `val.csv`, and `test.csv`; exported rows must show `split_protocol=task_manifest_split` and `leakage_warning=false`. The default comparison manifest intentionally remains paper-compatible and reuses its source CSVs.
+
+```bash
+python scripts/run_task_level_accuracy.py \
+  --manifest configs/task_level_comparison_strict_bbh_seed42.yaml \
+  --tasks disambiguation_qa \
+  --settings shared_scalar_tcs_oracle_first,shared_oracle_pareto_tcs \
+  --seeds 42 \
+  --dataset_format mars \
+  --train_size 75 --val_size 50 --test_size 125 \
+  --out_root runs_bbh_oracle_pareto_formal_pilot
+```
+
 TCS calls are correlated per beam parent with `tcs_call_group_id`. A candidate-producing group must contain successful non-empty Teacher, the declared number of Critic and rewrite calls, and a successful Student-side call. `teacher_question_approved=true` and `teacher_question_forced_best_score=false`, or the inverse forced-best pair, are the only valid states.
 
 `candidate_eval_execution_mode=legacy` preserves the previous execution path. `factorized_cached` keeps the same current-batch metric recomputation, but preloads fixed peer rollouts and each unique target prompt rollout. It never reuses aggregate candidate metrics, does not merge duplicate candidate provenance, and never reuses a rollout across agent IDs. `solver_rollout_singleflight` coalesces concurrent misses for the same rollout key. Cost fields in update summaries and `cost_summary.json` distinguish API calls, memory/persisted hits, in-flight reuse, and naive-request savings. Default batch settings remain the historical four; pass `--settings all` to include both scalar/Pareto matched settings.

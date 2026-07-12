@@ -165,6 +165,8 @@ python scripts/audit_tcs_run.py <run_dir>
 
 Candidate evaluation 有两种执行模式。`legacy` 保留历史调用路径；`factorized_cached` 先取得当前 batch 的固定 peer rollout 和每个唯一 target prompt rollout，再调用相同的 candidate 指标代码重组成当前团队指标。复用的是 `agent_id + solver settings + question hash + prompt hash` 的逐题 rollout，绝不复用旧 batch 的 accuracy、coverage、diversity 或 reward 聚合值。重复 prompt 仅共享 rollout，仍保留自己的 candidate/parent/TCS provenance。当前不支持跨 agent rollout reuse。single-flight 使同一个 cache key 的并发 miss 只触发一次 solver 调用。
 
+正式 BBH pilot 使用 `configs/task_level_comparison_strict_bbh_seed42.yaml`。该 manifest 将每个任务映射到独立的 `opt.csv`、`val.csv` 与 `test.csv`，因此 task-level export 必须标记为 `split_protocol=task_manifest_split` 与 `leakage_warning=false`。默认 manifest 保留给 paper-compatible 数据复用对照，不应用于 strict split 结论。
+
 ### Student JSON 稳定性
 
 Student 默认输出紧凑 JSON（`--student_candidate_schema_mode compact`）。默认启用：
@@ -397,7 +399,7 @@ python scripts/run_task_level_accuracy.py `
   --candidate_reuse_recorded_rollouts 1
 ```
 
-Oracle Pareto 的预设实验 setting 为 `shared_oracle_pareto_tcs`，它固定使用 shared init、`coverage_useful_diversity`、`oracle_pareto`、`oracle_first`、TCS、`fixed_pool=100` 与 candidate eval batch 24。matched scalar 对照为 `shared_scalar_tcs_oracle_first`；两者除了 `candidate_selection_mode`（`scalar_reward` vs `oracle_pareto`）以外配置完全相同，且都使用 `oracle_first` validation：
+Oracle Pareto 的预设实验 setting 为 `shared_oracle_pareto_tcs`，它固定使用 shared init、`coverage_useful_diversity`、`oracle_pareto`、`oracle_first`、TCS、`fixed_pool=50` 与 candidate eval batch 24。matched scalar 对照为 `shared_scalar_tcs_oracle_first`；两者除了 `candidate_selection_mode`（`scalar_reward` vs `oracle_pareto`）以外配置完全相同，且都使用 `oracle_first` validation：
 
 ```powershell
 python scripts/run_task_level_accuracy.py `
@@ -415,7 +417,7 @@ python scripts/run_task_level_accuracy.py `
 
 ```powershell
 --candidate_eval_strategy fixed_pool `
---candidate_eval_pool_size 100 `
+--candidate_eval_pool_size 50 `
 --candidate_eval_batch_size 20
 ```
 

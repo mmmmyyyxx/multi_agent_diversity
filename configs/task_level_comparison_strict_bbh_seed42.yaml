@@ -1,0 +1,48 @@
+tasks:
+  boolean_expressions:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: boolean
+    train_path: strict_splits_bbh_seed42/boolean_expressions/opt.csv
+    val_path: strict_splits_bbh_seed42/boolean_expressions/val.csv
+    test_path: strict_splits_bbh_seed42/boolean_expressions/test.csv
+
+  formal_fallacies:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: valid_invalid
+    train_path: strict_splits_bbh_seed42/formal_fallacies/opt.csv
+    val_path: strict_splits_bbh_seed42/formal_fallacies/val.csv
+    test_path: strict_splits_bbh_seed42/formal_fallacies/test.csv
+
+  disambiguation_qa:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: strict_splits_bbh_seed42/disambiguation_qa/opt.csv
+    val_path: strict_splits_bbh_seed42/disambiguation_qa/val.csv
+    test_path: strict_splits_bbh_seed42/disambiguation_qa/test.csv
+
+  geometric_shapes:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: strict_splits_bbh_seed42/geometric_shapes/opt.csv
+    val_path: strict_splits_bbh_seed42/geometric_shapes/val.csv
+    test_path: strict_splits_bbh_seed42/geometric_shapes/test.csv
+
+  ruin_names:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: option_letter
+    train_path: strict_splits_bbh_seed42/ruin_names/opt.csv
+    val_path: strict_splits_bbh_seed42/ruin_names/val.csv
+    test_path: strict_splits_bbh_seed42/ruin_names/test.csv
+
+  sports_understanding:
+    benchmark: BBH
+    task_type: bbh
+    answer_format: yes_no
+    train_path: strict_splits_bbh_seed42/sports_understanding/opt.csv
+    val_path: strict_splits_bbh_seed42/sports_understanding/val.csv
+    test_path: strict_splits_bbh_seed42/sports_understanding/test.csv
