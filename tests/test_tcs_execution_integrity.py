@@ -1,4 +1,5 @@
 import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -11,6 +12,7 @@ from multi_dataset_diverse_rl.system import (
     tcs_metadata_applicable,
     validate_tcs_candidate_metadata,
 )
+from scripts.audit_tcs_run import audit_run
 
 
 def _metadata(**overrides):
@@ -21,6 +23,7 @@ def _metadata(**overrides):
         "teacher_question": "Which independent verification path repairs the observed error?",
         "teacher_question_approved": True,
         "teacher_question_forced_best_score": False,
+        "tcs_call_group_id": "e1_s10_a0_pparent_hash",
         "teacher_critic_rounds": 1,
         "teacher_rewrite_count": 0,
         "student_candidate_count_raw": 2,
@@ -34,7 +37,7 @@ def test_tcs_metadata_accepts_first_round_rewrite_and_forced_best():
     assert validate_tcs_candidate_metadata(_metadata()) == []
     assert validate_tcs_candidate_metadata(_metadata(teacher_critic_rounds=2, teacher_rewrite_count=1)) == []
     assert validate_tcs_candidate_metadata(
-        _metadata(teacher_question_approved=False, teacher_question_forced_best_score=True, teacher_critic_rounds=3)
+        _metadata(teacher_question_approved=False, teacher_question_forced_best_score=True, teacher_critic_rounds=3, teacher_question_forced_best_round=2)
     ) == []
 
 
@@ -164,3 +167,36 @@ def test_invalid_tcs_candidate_fails_before_evaluation():
     system.propose_candidates = invalid_proposals
     with pytest.raises(RuntimeError, match=r"Invalid Teacher-Critic-Student candidate metadata: agent_id=0 epoch=1 step=10 parent_id=parent"):
         asyncio.run(system.update_prompt_with_beam(0, {}, [], step_id=10, epoch_id=1))
+
+
+def test_group_audit_requires_per_parent_call_evidence(tmp_path):
+    group = "e1_s10_a0_pparent_hash"
+    candidate = _metadata(
+        parent_id="parent", agent_id=0, epoch=1, step=10, tcs_call_group_id=group,
+        teacher_question_forced_best_score=False, teacher_question_approved=True,
+    )
+    candidate.update({"event": "candidate_evaluated", "candidate_id": "candidate", "accuracy_delta": 0.0, "diversity_delta": 0.0, "invalid_delta": 0.0, "vote_delta": 0.0, "coverage_delta": 0.0, "net_coverage_delta": 0.0, "candidate_target_accuracy": 0.5, "baseline_target_accuracy": 0.5, "candidate_embedding_diversity": 0.5, "baseline_embedding_diversity": 0.5, "candidate_invalid_rate": 0.0, "baseline_invalid_rate": 0.0, "candidate_team_accuracy": 0.5, "baseline_team_accuracy": 0.5, "candidate_oracle_acc": 0.5, "baseline_oracle_acc": 0.5})
+    calls = [
+        {"llm_call_stage": stage, "tcs_call_group_id": group, "parent_id": "parent", "agent_id": 0, "epoch": 1, "step": 10, "call_succeeded": True, "response_empty": False}
+        for stage in ("teacher", "critic", "student")
+    ]
+    (tmp_path / "update_logs.jsonl").write_text(json.dumps(candidate) + "\n", encoding="utf-8")
+    (tmp_path / "llm_calls.jsonl").write_text("\n".join(json.dumps(row) for row in calls) + "\n", encoding="utf-8")
+    report = audit_run(tmp_path)
+    assert report["problems"] is False
+    assert report["completed_tcs_group_count"] == 1
+
+    calls[1]["tcs_call_group_id"] = "other-group"
+    (tmp_path / "llm_calls.jsonl").write_text("\n".join(json.dumps(row) for row in calls) + "\n", encoding="utf-8")
+    report = audit_run(tmp_path)
+    assert report["problems"] is True
+    assert report["unexplained_incomplete_tcs_group_count"] == 1
+
+
+def test_audit_reports_malformed_jsonl(tmp_path):
+    (tmp_path / "update_logs.jsonl").write_text("{broken\n", encoding="utf-8")
+    (tmp_path / "llm_calls.jsonl").write_text("", encoding="utf-8")
+    report = audit_run(tmp_path)
+    assert report["problems"] is True
+    assert report["malformed_jsonl_count"] == 1
+    assert report["malformed_locations"][0]["line_number"] == 1

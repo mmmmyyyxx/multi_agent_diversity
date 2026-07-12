@@ -127,6 +127,10 @@ class Config:
     candidate_eval_repeats: int = 1
     candidate_eval_seed_offset: int = 1000
     candidate_reuse_recorded_rollouts: bool = True
+    candidate_eval_execution_mode: str = "legacy"
+    solver_rollout_singleflight: bool = True
+    candidate_eval_prompt_dedup: bool = True
+    candidate_eval_cache_logging: bool = True
     train_rollout_concurrency: int = 0
     eval_solver_call_concurrency: int = 225
     solver_api_key_env: str = ""
@@ -268,6 +272,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--candidate_eval_repeats", type=int, default=defaults.candidate_eval_repeats)
     parser.add_argument("--candidate_eval_seed_offset", type=int, default=defaults.candidate_eval_seed_offset)
     parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
+    parser.add_argument("--candidate_eval_execution_mode", type=str, default=defaults.candidate_eval_execution_mode, choices=["legacy", "factorized_cached"])
+    parser.add_argument("--solver_rollout_singleflight", type=int, default=int(defaults.solver_rollout_singleflight), choices=[0, 1])
+    parser.add_argument("--candidate_eval_prompt_dedup", type=int, default=int(defaults.candidate_eval_prompt_dedup), choices=[0, 1])
+    parser.add_argument("--candidate_eval_cache_logging", type=int, default=int(defaults.candidate_eval_cache_logging), choices=[0, 1])
     parser.add_argument("--train_rollout_concurrency", type=int, default=defaults.train_rollout_concurrency)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=defaults.eval_solver_call_concurrency)
     parser.add_argument("--solver_api_key_env", type=str, default=defaults.solver_api_key_env)

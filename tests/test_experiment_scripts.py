@@ -4,7 +4,7 @@ from argparse import Namespace
 from multi_dataset_diverse_rl.config import Config
 from scripts.analyze_student_failures import summarize_run
 from scripts.compute_experiment_metrics import analyze_run
-from scripts.experiment_config import DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, dataset_paths_from_args, select_settings, setting_names
+from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, dataset_paths_from_args, select_settings, setting_names
 from scripts.run_experiments import SETTINGS, _selected_settings
 from scripts.run_task_level_accuracy import _append_common_cli_args, _completed_run_row, _skip_row, _setting_reward_mode, is_completed_run_dir
 from multi_dataset_diverse_rl.task_manifest import ComparisonTask
@@ -38,6 +38,16 @@ def test_selected_settings_filters_by_name():
     selected = _selected_settings("shared_baseline,bank_guarded_beam")
     assert [setting.name for setting in selected] == ["shared_baseline", "bank_guarded_beam"]
     assert select_settings("shared_baseline,bank_guarded_beam") == selected
+
+
+def test_default_and_all_setting_sets_are_distinct():
+    assert DEFAULT_EXPERIMENT_SETTING_NAMES == [
+        "shared_baseline", "bank_baseline", "shared_guarded_beam", "bank_guarded_beam",
+    ]
+    assert setting_names(select_settings("all")) == [
+        "shared_baseline", "bank_baseline", "shared_guarded_beam", "bank_guarded_beam",
+        "shared_scalar_tcs_oracle_first", "shared_oracle_pareto_tcs",
+    ]
 
 
 def test_dataset_paths_use_dataset_specific_defaults():

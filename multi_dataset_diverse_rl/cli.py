@@ -330,6 +330,10 @@ def checkpoint_config_signature(cfg):
         "candidate_eval_strategy",
         "candidate_eval_pool_size",
         "candidate_eval_seed_offset",
+        "candidate_eval_execution_mode",
+        "solver_rollout_singleflight",
+        "candidate_eval_prompt_dedup",
+        "candidate_eval_cache_logging",
         "agent_model",
         "max_tokens",
         "temperature",
@@ -521,6 +525,9 @@ async def main_async():
     cfg.invalid_binary = bool(int(cfg.invalid_binary))
     cfg.use_baseline_relative_reward = bool(int(cfg.use_baseline_relative_reward))
     cfg.candidate_reuse_recorded_rollouts = bool(int(cfg.candidate_reuse_recorded_rollouts))
+    cfg.solver_rollout_singleflight = bool(int(cfg.solver_rollout_singleflight))
+    cfg.candidate_eval_prompt_dedup = bool(int(cfg.candidate_eval_prompt_dedup))
+    cfg.candidate_eval_cache_logging = bool(int(cfg.candidate_eval_cache_logging))
     cfg.transient_retry_forever = bool(int(cfg.transient_retry_forever))
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
     cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))

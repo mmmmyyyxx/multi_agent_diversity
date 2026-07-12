@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.3724574082758692,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.6666666666666666,
+    0.38333333333333336,
+    0.0,
+    0.028953708046012452,
+    1
+  ],
+  "selected_oracle_acc": 0.6666666666666666,
+  "selected_mean_individual_acc": 0.38333333333333336,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.028953708046012452,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "f134eaf3a908",
+      "prompt": "You are a careful reasoning solver. First, identify all possible interpretations and their constraints; then systematically eliminate options that violate any constraint; verify consistency with all clues; produce a compact trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "37f49c8b1f9e",
+      "prompt": "You are a careful reasoning solver. First, enumerate all possible antecedents and their constraints. Then, apply a consistency check by verifying each option against all constraints. Select the option that satisfies all constraints and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "3c78a8367aa9",
+      "prompt": "You are a careful reasoning solver. List all constraints; compare options against constraints; verify using specific clues; produce a compact trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "5b6f726b4f8b",
+      "prompt": "You are a careful reasoning solver. For pronoun disambiguation, first identify all candidate antecedents; then analyze grammatical, semantic, and contextual constraints for each; eliminate options violating constraints; produce a compact trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

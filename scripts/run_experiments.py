@@ -14,7 +14,7 @@ try:
     from multi_dataset_diverse_rl.config import Config
     from scripts.experiment_config import (
         DEFAULT_DATASET_PATHS,
-        DEFAULT_EXPERIMENT_SETTINGS,
+        ALL_EXPERIMENT_SETTINGS,
         DEFAULT_SEED_BASELINES,
         ExperimentSetting,
         dataset_paths_from_args,
@@ -26,7 +26,7 @@ except ModuleNotFoundError:
     from multi_dataset_diverse_rl.config import Config
     from experiment_config import (
         DEFAULT_DATASET_PATHS,
-        DEFAULT_EXPERIMENT_SETTINGS,
+        ALL_EXPERIMENT_SETTINGS,
         DEFAULT_SEED_BASELINES,
         ExperimentSetting,
         dataset_paths_from_args,
@@ -36,7 +36,7 @@ except ModuleNotFoundError:
     from experiment_io import append_jsonl, read_json, read_jsonl, write_csv
 
 
-SETTINGS = DEFAULT_EXPERIMENT_SETTINGS
+SETTINGS = ALL_EXPERIMENT_SETTINGS
 
 
 def _load_history_metrics(history_path: Path) -> Dict[str, Any]:
@@ -209,6 +209,10 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(int(args.candidate_reuse_recorded_rollouts)),
+            "--candidate_eval_execution_mode", str(getattr(setting, "candidate_eval_execution_mode", "") or getattr(args, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)),
+            "--solver_rollout_singleflight", str(int(getattr(args, "solver_rollout_singleflight", Config().solver_rollout_singleflight) if getattr(setting, "solver_rollout_singleflight", None) is None else setting.solver_rollout_singleflight)),
+            "--candidate_eval_prompt_dedup", str(int(getattr(args, "candidate_eval_prompt_dedup", Config().candidate_eval_prompt_dedup) if getattr(setting, "candidate_eval_prompt_dedup", None) is None else setting.candidate_eval_prompt_dedup)),
+            "--candidate_eval_cache_logging", str(int(getattr(args, "candidate_eval_cache_logging", Config().candidate_eval_cache_logging) if getattr(setting, "candidate_eval_cache_logging", None) is None else setting.candidate_eval_cache_logging)),
             "--resume_from_checkpoint", str(int(args.resume_from_checkpoint)),
             "--train_rollout_concurrency", str(args.train_rollout_concurrency),
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
@@ -409,6 +413,10 @@ def main():
     parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
     parser.add_argument("--candidate_eval_seed_offset", type=int, default=cli_defaults.candidate_eval_seed_offset)
     parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(cli_defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
+    parser.add_argument("--candidate_eval_execution_mode", type=str, default=cli_defaults.candidate_eval_execution_mode, choices=["legacy", "factorized_cached"])
+    parser.add_argument("--solver_rollout_singleflight", type=int, default=int(cli_defaults.solver_rollout_singleflight), choices=[0, 1])
+    parser.add_argument("--candidate_eval_prompt_dedup", type=int, default=int(cli_defaults.candidate_eval_prompt_dedup), choices=[0, 1])
+    parser.add_argument("--candidate_eval_cache_logging", type=int, default=int(cli_defaults.candidate_eval_cache_logging), choices=[0, 1])
     parser.add_argument("--resume_from_checkpoint", type=int, default=int(cli_defaults.resume_from_checkpoint), choices=[0, 1])
     parser.add_argument("--max_tokens", type=int, default=cli_defaults.max_tokens)
     parser.add_argument("--optimizer_max_tokens", type=int, default=cli_defaults.optimizer_max_tokens)
@@ -443,6 +451,9 @@ def main():
         "teacher_critic_use_voting_failure",
         "no_effective_evolution_stop_enabled",
         "candidate_reuse_recorded_rollouts",
+        "solver_rollout_singleflight",
+        "candidate_eval_prompt_dedup",
+        "candidate_eval_cache_logging",
         "resume_from_checkpoint",
         "summary_by_dataset",
         "seed_baselines",

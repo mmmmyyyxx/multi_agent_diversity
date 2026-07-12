@@ -13,19 +13,19 @@ if str(REPO_ROOT) not in sys.path:
 
 try:
     from multi_dataset_diverse_rl.config import Config
-    from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
+    from scripts.experiment_config import ALL_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from scripts.experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from scripts.task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 except ModuleNotFoundError:
     from multi_dataset_diverse_rl.config import Config
-    from experiment_config import DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
+    from experiment_config import ALL_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 
 from multi_dataset_diverse_rl.task_manifest import ComparisonTask, load_task_manifest, resolve_task_ids
 
 
-SETTINGS = DEFAULT_EXPERIMENT_SETTINGS
+SETTINGS = ALL_EXPERIMENT_SETTINGS
 
 
 def _selected_settings(raw: str) -> List[ExperimentSetting]:
@@ -136,6 +136,10 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(args.candidate_reuse_recorded_rollouts),
+            "--candidate_eval_execution_mode", str(getattr(setting, "candidate_eval_execution_mode", "") or getattr(args, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)),
+            "--solver_rollout_singleflight", str(int(getattr(args, "solver_rollout_singleflight", Config().solver_rollout_singleflight) if getattr(setting, "solver_rollout_singleflight", None) is None else setting.solver_rollout_singleflight)),
+            "--candidate_eval_prompt_dedup", str(int(getattr(args, "candidate_eval_prompt_dedup", Config().candidate_eval_prompt_dedup) if getattr(setting, "candidate_eval_prompt_dedup", None) is None else setting.candidate_eval_prompt_dedup)),
+            "--candidate_eval_cache_logging", str(int(getattr(args, "candidate_eval_cache_logging", Config().candidate_eval_cache_logging) if getattr(setting, "candidate_eval_cache_logging", None) is None else setting.candidate_eval_cache_logging)),
             "--resume_from_checkpoint", str(int(args.resume_from_checkpoint)),
             "--train_rollout_concurrency", str(args.train_rollout_concurrency),
             "--eval_solver_call_concurrency", str(args.eval_solver_call_concurrency),
@@ -405,7 +409,7 @@ def main():
     parser.add_argument("--manifest", type=str, default="configs/task_level_comparison.yaml")
     parser.add_argument("--tasks", type=str, default="all")
     parser.add_argument("--benchmarks", type=str, default="")
-    parser.add_argument("--settings", type=str, default="shared_baseline,shared_guarded_beam,bank_guarded_beam")
+    parser.add_argument("--settings", type=str, default="shared_baseline,bank_baseline,shared_guarded_beam,bank_guarded_beam")
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--dataset_format", type=str, default="mars", choices=["legacy", "mars"])
     parser.add_argument("--out_root", type=str, default="runs_task_level_accuracy")
@@ -488,6 +492,10 @@ def main():
     parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
     parser.add_argument("--candidate_eval_seed_offset", type=int, default=cli_defaults.candidate_eval_seed_offset)
     parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(cli_defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
+    parser.add_argument("--candidate_eval_execution_mode", type=str, default=cli_defaults.candidate_eval_execution_mode, choices=["legacy", "factorized_cached"])
+    parser.add_argument("--solver_rollout_singleflight", type=int, default=int(cli_defaults.solver_rollout_singleflight), choices=[0, 1])
+    parser.add_argument("--candidate_eval_prompt_dedup", type=int, default=int(cli_defaults.candidate_eval_prompt_dedup), choices=[0, 1])
+    parser.add_argument("--candidate_eval_cache_logging", type=int, default=int(cli_defaults.candidate_eval_cache_logging), choices=[0, 1])
     parser.add_argument("--train_rollout_concurrency", type=int, default=cli_defaults.train_rollout_concurrency)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=cli_defaults.eval_solver_call_concurrency)
     parser.add_argument("--max_tokens", type=int, default=cli_defaults.max_tokens)

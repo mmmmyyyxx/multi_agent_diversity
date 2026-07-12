@@ -128,7 +128,7 @@ def test_fallback_template_mode_preserves_old_behavior():
 
 
 def test_update_still_safe_when_optimizer_returns_zero_candidates():
-    cfg = Config(optimizer_fallback_mode="none", beam_size=1, num_candidates_per_parent=2, agents=2)
+    cfg = Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none", beam_size=1, num_candidates_per_parent=2, agents=2)
     system = _system(cfg, prompts=["p0", "p1"])
     system.joint_diversity_cache = {}
     system.solver_rollout_cache = {}
@@ -167,6 +167,7 @@ def test_update_still_safe_when_optimizer_returns_zero_candidates():
 
 def test_update_limits_optimizer_parent_concurrency():
     cfg = Config(
+        optimizer_architecture="one_shot",
         optimizer_fallback_mode="none",
         beam_size=3,
         num_candidates_per_parent=1,
@@ -282,7 +283,7 @@ def test_optimizer_generation_diagnostics_json_parse_failed():
 
 
 def test_update_logs_split_top_beam_from_active_change():
-    cfg = Config(optimizer_fallback_mode="none", beam_size=1, num_candidates_per_parent=1, agents=2)
+    cfg = Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none", beam_size=1, num_candidates_per_parent=1, agents=2)
     system = _system(cfg, prompts=["p0", "p1"])
     system.joint_diversity_cache = {}
     system.solver_rollout_cache = {}

@@ -193,6 +193,10 @@ The audit checks TCS metadata, stage evidence, and canonical deltas: target accu
 
 The matched selection settings are `shared_scalar_tcs_oracle_first` and `shared_oracle_pareto_tcs`. Both use TCS, fixed-pool evaluation, `coverage_useful_diversity`, and `oracle_first`; only `candidate_selection_mode` differs.
 
+TCS calls are correlated per beam parent with `tcs_call_group_id`. A candidate-producing group must contain successful non-empty Teacher, the declared number of Critic and rewrite calls, and a successful Student-side call. `teacher_question_approved=true` and `teacher_question_forced_best_score=false`, or the inverse forced-best pair, are the only valid states.
+
+`candidate_eval_execution_mode=legacy` preserves the previous execution path. `factorized_cached` keeps the same current-batch metric recomputation, but preloads fixed peer rollouts and each unique target prompt rollout. It never reuses aggregate candidate metrics, does not merge duplicate candidate provenance, and never reuses a rollout across agent IDs. `solver_rollout_singleflight` coalesces concurrent misses for the same rollout key. Cost fields in update summaries and `cost_summary.json` distinguish API calls, memory/persisted hits, in-flight reuse, and naive-request savings. Default batch settings remain the historical four; pass `--settings all` to include both scalar/Pareto matched settings.
+
 `update_logs.jsonl` 会记录 guard 相关字段：
 
 - `baseline_team_accuracy`

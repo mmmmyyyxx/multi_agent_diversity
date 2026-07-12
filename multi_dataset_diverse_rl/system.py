@@ -8,7 +8,7 @@ import time
 from contextvars import ContextVar
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 from openai import AsyncOpenAI
@@ -60,7 +60,6 @@ def tcs_metadata_applicable(candidate_metadata: Mapping[str, Any]) -> bool:
     return (
         str(candidate_metadata.get("optimizer_architecture", "") or "").lower() == "teacher_critic_student"
         and str(candidate_metadata.get("candidate_pool_source", "") or "") == "optimizer"
-        and str(candidate_metadata.get("candidate_source", "") or "") == "teacher_critic_student"
     )
 
 
@@ -73,8 +72,25 @@ def validate_tcs_candidate_metadata(candidate_metadata: Mapping[str, Any]) -> Li
         errors.append("missing_teacher_question")
     if int(candidate_metadata.get("teacher_critic_rounds", 0) or 0) < 1:
         errors.append("zero_teacher_critic_rounds")
+    if str(candidate_metadata.get("candidate_source", "") or "") != "teacher_critic_student":
+        errors.append("invalid_tcs_candidate_source")
+    if not str(candidate_metadata.get("tcs_call_group_id", "") or "").strip():
+        errors.append("missing_tcs_call_group_id")
     if "teacher_question_forced_best_score" not in candidate_metadata:
         errors.append("missing_forced_best_flag")
+    approved = bool(candidate_metadata.get("teacher_question_approved", False))
+    forced_best = bool(candidate_metadata.get("teacher_question_forced_best_score", False))
+    if not approved and not forced_best:
+        errors.append("unapproved_without_forced_best")
+    if approved and forced_best:
+        errors.append("approved_and_forced_best")
+    rounds = int(candidate_metadata.get("teacher_critic_rounds", 0) or 0)
+    forced_round = int(candidate_metadata.get("teacher_question_forced_best_round", 0) or 0)
+    if forced_best and not (1 <= forced_round <= rounds):
+        errors.append("invalid_forced_best_round")
+    rewrite_count = int(candidate_metadata.get("teacher_rewrite_count", 0) or 0)
+    if rewrite_count < 0 or rewrite_count > max(0, rounds - 1):
+        errors.append("rewrite_count_exceeds_critic_rounds")
     raw_count = int(candidate_metadata.get("student_candidate_count_raw", 0) or 0)
     final_count = int(candidate_metadata.get("student_candidate_count_final", 0) or 0)
     if raw_count < 1:
@@ -186,6 +202,9 @@ class TraceBeamSearchSystem:
         self.cfg.invalid_binary = bool(int(self.cfg.invalid_binary))
         self.cfg.use_joint_trace_diversity_evaluator = bool(int(self.cfg.use_joint_trace_diversity_evaluator))
         self.cfg.candidate_reuse_recorded_rollouts = bool(int(getattr(self.cfg, "candidate_reuse_recorded_rollouts", 1)))
+        self.cfg.solver_rollout_singleflight = bool(int(getattr(self.cfg, "solver_rollout_singleflight", 1)))
+        self.cfg.candidate_eval_prompt_dedup = bool(int(getattr(self.cfg, "candidate_eval_prompt_dedup", 1)))
+        self.cfg.candidate_eval_cache_logging = bool(int(getattr(self.cfg, "candidate_eval_cache_logging", 1)))
         self.cfg.use_baseline_relative_reward = bool(int(getattr(self.cfg, "use_baseline_relative_reward", 1)))
         self.task_spec = self._build_task_spec()
 
@@ -225,6 +244,8 @@ class TraceBeamSearchSystem:
         self.prompt_history = self._init_prompt_history()
         self.joint_diversity_cache: Dict[str, Dict[str, Any]] = {}
         self.solver_rollout_cache: Dict[str, List[Dict[str, Any]]] = {}
+        self.solver_rollout_inflight: Dict[str, asyncio.Future] = {}
+        self.solver_rollout_inflight_lock = asyncio.Lock()
         self.optimizer_generation_diagnostics: Dict[str, Dict[str, Any]] = {}
         self.no_effective_evolution_counter = 0
         self.no_effective_evolution_stopped = False
@@ -397,6 +418,11 @@ class TraceBeamSearchSystem:
             "total_tokens": 0,
             "estimated_cost": 0.0,
             "latency_seconds": 0.0,
+            "candidate_eval_solver_api_calls": 0,
+            "candidate_eval_cache_hits": 0,
+            "candidate_eval_inflight_reuses": 0,
+            "candidate_eval_calls_saved_vs_naive": 0,
+            "candidate_eval_prompt_dedup_savings": 0,
         }
 
     def _client_role_from_stage(self, stage: str, client_role: str) -> str:
@@ -457,6 +483,7 @@ class TraceBeamSearchSystem:
             "agent_id": context.get("agent_id"),
             "parent_id": context.get("parent_id"),
             "teacher_critic_round": context.get("teacher_critic_round"),
+            "tcs_call_group_id": str(context.get("tcs_call_group_id", "") or ""),
             "model_role": model_role,
             "model_name": str(model or ""),
             "client_role": role,
@@ -594,6 +621,7 @@ class TraceBeamSearchSystem:
             "trace": str(trace or ""),
             "answer": str(answer or ""),
             "source": str(source or ""),
+            "cache_origin": "current_run",
         }
         self._add_solver_rollout_cache_row(row)
         self._append_solver_rollout_record(row)
@@ -608,7 +636,9 @@ class TraceBeamSearchSystem:
         if aid < 0 or not qh or not ph:
             return
         key = self._solver_rollout_cache_key_from_hashes(qh, ph, aid)
-        self.solver_rollout_cache.setdefault(key, []).append(dict(row))
+        normalized = dict(row)
+        normalized.setdefault("cache_origin", "current_run")
+        self.solver_rollout_cache.setdefault(key, []).append(normalized)
 
     def _record_solver_rollouts(
         self,
@@ -712,7 +742,9 @@ class TraceBeamSearchSystem:
                         if not isinstance(row, dict):
                             continue
                         if "prompt_hash" in row and "trace" in row and "answer" in row and "agent_id" in row:
-                            self._add_solver_rollout_cache_row(row)
+                            persisted = dict(row)
+                            persisted["cache_origin"] = "persisted"
+                            self._add_solver_rollout_cache_row(persisted)
                             loaded += 1
                             continue
                         qh = str(row.get("question_hash", "")).strip()
@@ -738,6 +770,7 @@ class TraceBeamSearchSystem:
                                     "trace": str(agent.get("trace", "")),
                                     "answer": str(agent.get("answer", "")),
                                     "source": os.path.basename(path),
+                                    "cache_origin": "persisted",
                                 }
                             )
                             loaded += 1
@@ -814,6 +847,10 @@ class TraceBeamSearchSystem:
             "candidate_eval_batch_size": self.cfg.candidate_eval_batch_size,
             "candidate_eval_strategy": self.cfg.candidate_eval_strategy,
             "candidate_eval_repeats": self.cfg.candidate_eval_repeats,
+            "candidate_eval_execution_mode": getattr(self.cfg, "candidate_eval_execution_mode", "legacy"),
+            "solver_rollout_singleflight": bool(getattr(self.cfg, "solver_rollout_singleflight", True)),
+            "candidate_eval_prompt_dedup": bool(getattr(self.cfg, "candidate_eval_prompt_dedup", True)),
+            "candidate_eval_cache_logging": bool(getattr(self.cfg, "candidate_eval_cache_logging", True)),
             "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
             "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "existing"),
             "optimizer_architecture": getattr(self.cfg, "optimizer_architecture", ""),
@@ -962,6 +999,7 @@ class TraceBeamSearchSystem:
             "optimizer_final_candidate_count": 0,
             "optimizer_underfilled": False,
             "teacher_question": "",
+            "tcs_call_group_id": "",
             "teacher_question_approved": False,
             "teacher_question_rejected": False,
             "teacher_question_rejection_reason": "",
@@ -1539,6 +1577,81 @@ class TraceBeamSearchSystem:
         outs = await asyncio.gather(*[solve_agent(i) for i in range(len(self.agents))])
         return [x[0] for x in outs], [x[1] for x in outs]
 
+    async def get_or_create_solver_rollout(
+        self,
+        *,
+        cache_key: str,
+        lookup: Callable[[], Optional[Dict[str, Any]]],
+        call_factory: Callable[[], Awaitable[Dict[str, Any]]],
+    ) -> Tuple[Dict[str, Any], str]:
+        """Read a rollout cache or coalesce an identical in-flight API request."""
+        cached = lookup()
+        if isinstance(cached, dict) and "trace" in cached and "answer" in cached:
+            return cached, "persisted_cache" if cached.get("cache_origin") == "persisted" else "memory_cache"
+
+        if not bool(getattr(self.cfg, "solver_rollout_singleflight", True)):
+            return await call_factory(), "api_call"
+        if not hasattr(self, "solver_rollout_inflight"):
+            self.solver_rollout_inflight = {}
+        if not hasattr(self, "solver_rollout_inflight_lock"):
+            self.solver_rollout_inflight_lock = asyncio.Lock()
+
+        owner = False
+        async with self.solver_rollout_inflight_lock:
+            future = self.solver_rollout_inflight.get(cache_key)
+            if future is None:
+                future = asyncio.get_running_loop().create_future()
+                # Consume exceptions if an owner fails before another waiter attaches.
+                future.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+                self.solver_rollout_inflight[cache_key] = future
+                owner = True
+        if not owner:
+            return await future, "inflight_reuse"
+        try:
+            row = await call_factory()
+            future.set_result(row)
+            return row, "api_call"
+        except Exception as exc:
+            future.set_exception(exc)
+            raise
+        finally:
+            async with self.solver_rollout_inflight_lock:
+                self.solver_rollout_inflight.pop(cache_key, None)
+
+    async def _solve_agent_rollout(
+        self,
+        *,
+        question: str,
+        question_hash: str,
+        prompt: str,
+        agent_id: int,
+        source: str,
+    ) -> Tuple[str, str, str]:
+        cache_key = self._solver_rollout_cache_key(question_hash, prompt, agent_id)
+
+        async def call_factory() -> Dict[str, Any]:
+            async with self.solver_call_semaphore:
+                trace, answer = await self.solve_once(question, agent_id, prompt)
+            self._record_solver_rollout(
+                question_hash=question_hash,
+                prompt=prompt,
+                trace=trace,
+                answer=answer,
+                agent_id=agent_id,
+                source=source,
+            )
+            return {"trace": trace, "answer": answer, "cache_origin": "current_run"}
+
+        if not self.cfg.candidate_reuse_recorded_rollouts:
+            trace, answer = await self.solve_once(question, agent_id, prompt)
+            return trace, answer, "api_call"
+        row, origin = await self.get_or_create_solver_rollout(
+            cache_key=cache_key,
+            lookup=lambda: self._lookup_solver_rollout(question_hash, prompt, agent_id),
+            call_factory=call_factory,
+        )
+        return str(row.get("trace", "")), str(row.get("answer", "")), origin
+
     async def solve_with_prompts_reusing_records(
         self,
         question: str,
@@ -1550,50 +1663,28 @@ class TraceBeamSearchSystem:
             prompts.append(self.agents[len(prompts)].current_prompt)
         qh = self._hash(question)
         n = len(self.agents)
-        traces: List[Optional[str]] = [None for _ in range(n)]
-        answers: List[Optional[str]] = [None for _ in range(n)]
-        missing: List[int] = []
-        reuse_hits = 0
-
-        if self.cfg.candidate_reuse_recorded_rollouts:
-            for agent_id in range(n):
-                cached = self._lookup_solver_rollout(qh, prompts[agent_id], agent_id=agent_id)
-                if isinstance(cached, dict) and "trace" in cached and "answer" in cached:
-                    traces[agent_id] = str(cached.get("trace", ""))
-                    answers[agent_id] = str(cached.get("answer", ""))
-                    reuse_hits += 1
-                else:
-                    missing.append(agent_id)
-        else:
-            missing = list(range(n))
-
-        async def solve_agent(agent_id: int):
-            async with self.solver_call_semaphore:
-                trace, answer = await self.solve_once(question, agent_id, prompts[agent_id])
-                return agent_id, trace, answer
-
-        if missing:
-            outs = await asyncio.gather(*[solve_agent(i) for i in missing])
-            for agent_id, trace, answer in outs:
-                traces[agent_id] = trace
-                answers[agent_id] = answer
-                self._record_solver_rollout(
-                    question_hash=qh,
-                    prompt=prompts[agent_id],
-                    trace=trace,
-                    answer=answer,
-                    agent_id=agent_id,
-                    source=source,
+        outs = await asyncio.gather(
+            *[
+                self._solve_agent_rollout(
+                    question=question, question_hash=qh, prompt=prompts[agent_id], agent_id=agent_id, source=source
                 )
-
-        final_traces = [str(t or "") for t in traces]
-        final_answers = [str(a or "") for a in answers]
+                for agent_id in range(n)
+            ]
+        )
+        final_traces = [str(row[0] or "") for row in outs]
+        final_answers = [str(row[1] or "") for row in outs]
+        origins = [str(row[2]) for row in outs]
+        reuse_hits = sum(origin in {"memory_cache", "persisted_cache", "inflight_reuse"} for origin in origins)
+        api_calls = sum(origin == "api_call" for origin in origins)
         stats = {
             "solver_reuse_enabled": bool(self.cfg.candidate_reuse_recorded_rollouts),
             "solver_reuse_hits": int(reuse_hits),
-            "solver_reuse_misses": int(len(missing)),
-            "solver_calls": int(len(missing)),
+            "solver_reuse_misses": int(api_calls),
+            "solver_calls": int(api_calls),
             "solver_reuse_total": int(n),
+            "solver_memory_cache_hits": int(sum(origin == "memory_cache" for origin in origins)),
+            "solver_persisted_cache_hits": int(sum(origin == "persisted_cache" for origin in origins)),
+            "solver_inflight_reuses": int(sum(origin == "inflight_reuse" for origin in origins)),
         }
         return final_traces, final_answers, stats
 
@@ -1617,6 +1708,81 @@ class TraceBeamSearchSystem:
         totals["enabled"] = True
         totals["solver_reuse_hit_rate"] = float(totals["solver_reuse_hits"] / totals["solver_reuse_total"]) if totals["solver_reuse_total"] else 0.0
         return totals
+
+    async def _prewarm_factorized_candidate_rollouts(
+        self,
+        *,
+        agent_id: int,
+        eval_batch: List[Dict[str, str]],
+        peer_prompts: List[str],
+        candidate_pool: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """Populate per-question rollouts for fixed peers and unique target prompts.
+
+        Team metrics are deliberately *not* cached here. Every candidate later calls
+        the normal evaluator, which recomposes a team on the current batch.
+        """
+        unique_prompts: Dict[str, str] = {}
+        for candidate in candidate_pool:
+            prompt = str(candidate.get("prompt", ""))
+            if prompt:
+                unique_prompts.setdefault(self._hash(normalize_spaces(prompt)), prompt)
+        active_prompt = str(peer_prompts[agent_id]) if agent_id < len(peer_prompts) else str(self.agents[agent_id].current_prompt)
+        unique_prompts.setdefault(self._hash(normalize_spaces(active_prompt)), active_prompt)
+        requests: List[Tuple[str, int, str, str]] = []
+        for ex in eval_batch:
+            question = str(ex.get("question", ""))
+            if not question:
+                continue
+            question_hash = self._hash(question)
+            for peer_id, prompt in enumerate(peer_prompts):
+                if peer_id != agent_id:
+                    requests.append((question, peer_id, str(prompt), question_hash))
+            for prompt in unique_prompts.values():
+                requests.append((question, agent_id, prompt, question_hash))
+
+        async def prewarm(row: Tuple[str, int, str, str]):
+            question, row_agent_id, prompt, question_hash = row
+            trace, answer, origin = await self._solve_agent_rollout(
+                question=question,
+                question_hash=question_hash,
+                prompt=prompt,
+                agent_id=row_agent_id,
+                source=f"candidate_factorized_{'peer' if row_agent_id != agent_id else 'target'}_agent_{agent_id}",
+            )
+            return trace, answer, origin
+
+        results = await asyncio.gather(*[prewarm(request) for request in requests])
+        origins = [origin for _, _, origin in results]
+        candidate_count = len(candidate_pool)
+        example_count = len(eval_batch)
+        naive = candidate_count * len(self.agents) * example_count
+        factorized = (max(0, len(self.agents) - 1) + len(unique_prompts)) * example_count
+        api_calls = sum(origin == "api_call" for origin in origins)
+        memory_hits = sum(origin == "memory_cache" for origin in origins)
+        persisted_hits = sum(origin == "persisted_cache" for origin in origins)
+        inflight = sum(origin == "inflight_reuse" for origin in origins)
+        return {
+            "candidate_eval_execution_mode": "factorized_cached",
+            "candidate_eval_candidate_object_count": candidate_count,
+            "candidate_eval_unique_target_prompt_count": len(unique_prompts),
+            "candidate_eval_duplicate_target_prompt_count": max(0, candidate_count - len(unique_prompts)),
+            "candidate_eval_example_count": example_count,
+            "candidate_eval_repeat_count": 1,
+            "candidate_eval_naive_rollout_request_count": naive,
+            "candidate_eval_factorized_rollout_request_count": factorized,
+            "candidate_eval_unique_rollout_key_count": len(requests),
+            "candidate_eval_memory_cache_hit_count": memory_hits,
+            "candidate_eval_persisted_cache_hit_count": persisted_hits,
+            "candidate_eval_inflight_reuse_count": inflight,
+            "candidate_eval_solver_api_call_count": api_calls,
+            "candidate_eval_rollout_failure_count": 0,
+            "candidate_eval_calls_saved_vs_naive": naive - api_calls,
+            "candidate_eval_cache_hit_rate": float((memory_hits + persisted_hits + inflight) / len(requests)) if requests else 0.0,
+            "candidate_eval_peer_rollout_key_count": max(0, len(self.agents) - 1) * example_count,
+            "candidate_eval_target_rollout_key_count": len(unique_prompts) * example_count,
+            "candidate_eval_prompt_dedup_savings": max(0, candidate_count - len(unique_prompts)) * example_count,
+        }
 
     async def solve_with_current_prompts(self, question: str) -> Tuple[List[str], List[str]]:
         return await self.solve_with_prompts(question, self._active_prompt_list())
@@ -3656,6 +3822,7 @@ class TraceBeamSearchSystem:
         )
         # Preserve the beam parent's stable ID for call-level provenance.
         parent_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("parent_id") or self._hash(parent_prompt))
+        tcs_call_group_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("tcs_call_group_id") or "")
         call_context = dict(TCS_AUDIT_CONTEXT.get() or {})
         call_context.update(
             {
@@ -3677,6 +3844,7 @@ class TraceBeamSearchSystem:
             TCS_AUDIT_CONTEXT.reset(context_token)
         diagnostics = self._empty_optimizer_generation_diagnostics()
         diagnostics["optimizer_architecture"] = "teacher_critic_student"
+        diagnostics["tcs_call_group_id"] = tcs_call_group_id
         teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
         critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
         forced_best = bool(approved.get("teacher_question_forced_best_score", False)) if isinstance(approved, dict) else False
@@ -3801,6 +3969,7 @@ class TraceBeamSearchSystem:
                         "risk_control": str(item.get("risk_control", "")),
                         "rationale": str(item.get("rationale", "")),
                         "candidate_source": "teacher_critic_student",
+                        "tcs_call_group_id": tcs_call_group_id,
                         "teacher_question": teacher_question,
                         "teacher_question_score": self._safe_float(diagnostics.get("teacher_question_score", 0.0), 0.0),
                         "teacher_question_approved": bool(diagnostics.get("teacher_question_approved", False)),
@@ -4785,6 +4954,10 @@ class TraceBeamSearchSystem:
                         "step": int(step_id),
                         "agent_id": int(agent_id),
                         "parent_id": str(job["parent_id"]),
+                        "tcs_call_group_id": (
+                            f"e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}_"
+                            f"p{self._hash(str(job['parent_id']))}_{self._hash(str(job['parent_prompt']))}"
+                        ),
                         "teacher_critic_round": 0,
                     }
                 )
@@ -4824,7 +4997,8 @@ class TraceBeamSearchSystem:
                 prompt = str(proposal.get("candidate_prompt", "")).strip()
                 prompt, _ = self._sanitize_prompt(prompt, agent_id)
                 key = normalize_spaces(prompt).lower()
-                if not prompt or key in seen:
+                preserve_duplicate_objects = str(getattr(self.cfg, "candidate_eval_execution_mode", "legacy")) == "factorized_cached"
+                if not prompt or (key in seen and not preserve_duplicate_objects):
                     continue
                 seen.add(key)
                 batch = parent_batches[idx % len(parent_batches)]
@@ -4846,6 +5020,7 @@ class TraceBeamSearchSystem:
                         "task_alignment_rule": str(proposal.get("task_alignment_rule", "")),
                         "peer_redundancy_avoidance": str(proposal.get("peer_redundancy_avoidance", "")),
                         "optimizer_generation_diagnostics": proposal.get("optimizer_generation_diagnostics", {}),
+                        "tcs_call_group_id": str(proposal.get("tcs_call_group_id", "") or ""),
                         "proposal": proposal,
                     }
                 )
@@ -4853,6 +5028,7 @@ class TraceBeamSearchSystem:
                     "optimizer_architecture": str(proposal.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", ""))),
                     "candidate_source": str(proposal.get("candidate_source", "")),
                     "candidate_pool_source": "optimizer",
+                    "tcs_call_group_id": str(proposal.get("tcs_call_group_id", "") or ""),
                     **dict(proposal.get("optimizer_generation_diagnostics", {}) or {}),
                 }
                 metadata_errors = validate_tcs_candidate_metadata(candidate_metadata)
@@ -4861,7 +5037,8 @@ class TraceBeamSearchSystem:
                     raise RuntimeError(
                         "Invalid Teacher-Critic-Student candidate metadata: "
                         f"agent_id={agent_id} epoch={epoch_id} step={step_id} parent_id={parent_id} "
-                        f"candidate_id={candidate_id} errors={','.join(metadata_errors)}"
+                        f"candidate_id={candidate_id} tcs_call_group_id={candidate_metadata.get('tcs_call_group_id', '')} "
+                        f"metadata_errors={','.join(metadata_errors)}"
                     )
         for parent in beam:
             prompt = str(parent.get("prompt", agent.current_prompt))
@@ -5026,11 +5203,40 @@ class TraceBeamSearchSystem:
 
         evaluated = []
         peer_prompts = self._active_prompt_list()
-        await self.ensure_recorded_rollouts_for_prompts(
-            eval_batch=eval_batch,
-            prompts=peer_prompts,
-            source=f"candidate_peer_prewarm_agent_{agent_id}",
-        )
+        if str(getattr(self.cfg, "candidate_eval_execution_mode", "legacy")) == "factorized_cached":
+            candidate_eval_cache_stats = await self._prewarm_factorized_candidate_rollouts(
+                agent_id=agent_id,
+                eval_batch=eval_batch,
+                peer_prompts=peer_prompts,
+                candidate_pool=candidate_pool,
+            )
+        else:
+            prewarm = await self.ensure_recorded_rollouts_for_prompts(
+                eval_batch=eval_batch,
+                prompts=peer_prompts,
+                source=f"candidate_peer_prewarm_agent_{agent_id}",
+            )
+            candidate_eval_cache_stats = {
+                "candidate_eval_execution_mode": "legacy",
+                "candidate_eval_candidate_object_count": len(candidate_pool),
+                "candidate_eval_unique_target_prompt_count": len({self._hash(normalize_spaces(str(c.get("prompt", "")))) for c in candidate_pool}),
+                "candidate_eval_duplicate_target_prompt_count": 0,
+                "candidate_eval_example_count": len(eval_batch),
+                "candidate_eval_repeat_count": 1,
+                "candidate_eval_naive_rollout_request_count": len(candidate_pool) * len(self.agents) * len(eval_batch),
+                "candidate_eval_factorized_rollout_request_count": 0,
+                "candidate_eval_unique_rollout_key_count": 0,
+                "candidate_eval_memory_cache_hit_count": int(prewarm.get("solver_reuse_hits", 0) or 0),
+                "candidate_eval_persisted_cache_hit_count": 0,
+                "candidate_eval_inflight_reuse_count": 0,
+                "candidate_eval_solver_api_call_count": int(prewarm.get("solver_calls", 0) or 0),
+                "candidate_eval_rollout_failure_count": 0,
+                "candidate_eval_calls_saved_vs_naive": 0,
+                "candidate_eval_cache_hit_rate": float(prewarm.get("solver_reuse_hit_rate", 0.0) or 0.0),
+                "candidate_eval_peer_rollout_key_count": len(self.agents) * len(eval_batch),
+                "candidate_eval_target_rollout_key_count": 0,
+                "candidate_eval_prompt_dedup_savings": 0,
+            }
         baseline_cases = self._cases_for_agent(overlap_diagnosis, agent_id)
         configured_concurrency = int(getattr(self.cfg, "candidate_eval_concurrency", 0) or 0)
         eval_concurrency = len(candidate_pool) if configured_concurrency <= 0 else min(configured_concurrency, len(candidate_pool))
@@ -5122,6 +5328,7 @@ class TraceBeamSearchSystem:
                 "optimizer_architecture": item_diagnostics.get("optimizer_architecture", ""),
                 "candidate_source": item.get("candidate_source", item.get("source", "")),
                 "candidate_pool_source": item.get("source", ""),
+                "tcs_call_group_id": item.get("tcs_call_group_id", item_diagnostics.get("tcs_call_group_id", "")),
                 **item_diagnostics,
             }
             is_tcs_metadata_applicable = tcs_metadata_applicable(tcs_candidate_metadata)
@@ -5138,6 +5345,7 @@ class TraceBeamSearchSystem:
                     "candidate_id": item.get("candidate_id", ""),
                     "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                     "parent_id": item.get("parent_id"),
+                    "tcs_call_group_id": str(item.get("tcs_call_group_id", item_diagnostics.get("tcs_call_group_id", "")) or ""),
                     "reward": float(metrics.get("reward", 0.0)),
                     "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
                     "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
@@ -5271,6 +5479,14 @@ class TraceBeamSearchSystem:
                 }
             )
         self._append_prompt_history_event(agent_id, epoch_id, step_id, "beam_accept" if changed else "beam_keep", changed)
+        if bool(getattr(self.cfg, "candidate_eval_cache_logging", True)):
+            if not hasattr(self, "cost_summary"):
+                self.cost_summary = self._empty_cost_summary()
+            self.cost_summary["candidate_eval_solver_api_calls"] = int(self.cost_summary.get("candidate_eval_solver_api_calls", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_solver_api_call_count", 0) or 0)
+            self.cost_summary["candidate_eval_cache_hits"] = int(self.cost_summary.get("candidate_eval_cache_hits", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_memory_cache_hit_count", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_persisted_cache_hit_count", 0) or 0)
+            self.cost_summary["candidate_eval_inflight_reuses"] = int(self.cost_summary.get("candidate_eval_inflight_reuses", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_inflight_reuse_count", 0) or 0)
+            self.cost_summary["candidate_eval_calls_saved_vs_naive"] = int(self.cost_summary.get("candidate_eval_calls_saved_vs_naive", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_calls_saved_vs_naive", 0) or 0)
+            self.cost_summary["candidate_eval_prompt_dedup_savings"] = int(self.cost_summary.get("candidate_eval_prompt_dedup_savings", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_prompt_dedup_savings", 0) or 0)
         summary = {
             "agent_id": agent_id,
             "updated": bool(changed),
@@ -5292,6 +5508,7 @@ class TraceBeamSearchSystem:
             "num_tcs_metadata_valid_candidates": int(num_tcs_metadata_valid_candidates),
             "num_tcs_metadata_invalid_candidates": int(num_tcs_metadata_invalid_candidates),
             "tcs_execution_complete": tcs_execution_complete,
+            "tcs_call_group_ids": sorted({str(c.get("tcs_call_group_id", "")) for c in candidate_pool if str(c.get("tcs_call_group_id", ""))}),
             "top1_candidate_source": top1_candidate_source,
             "top1_candidate_pool_source": top1_candidate_pool_source,
             "active_prompt_changed": bool(changed),
@@ -5304,6 +5521,7 @@ class TraceBeamSearchSystem:
             **self._student_failure_log_fields(optimizer_generation_summary),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
+            **candidate_eval_cache_stats,
         }
         self.update_logs.append(
             {
@@ -5336,7 +5554,9 @@ class TraceBeamSearchSystem:
                 "num_tcs_metadata_valid_candidates": int(num_tcs_metadata_valid_candidates),
                 "num_tcs_metadata_invalid_candidates": int(num_tcs_metadata_invalid_candidates),
                 "tcs_execution_complete": tcs_execution_complete,
+                "tcs_call_group_ids": sorted({str(c.get("tcs_call_group_id", "")) for c in candidate_pool if str(c.get("tcs_call_group_id", ""))}),
                 "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
+                **candidate_eval_cache_stats,
                 **pareto_summary,
                 "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
                 "top1_coverage_gain_rate": float(selected[0].get("metrics", {}).get("coverage_gain_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
