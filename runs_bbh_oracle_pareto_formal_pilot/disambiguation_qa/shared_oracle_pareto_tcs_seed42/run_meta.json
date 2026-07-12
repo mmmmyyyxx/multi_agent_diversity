@@ -149,7 +149,7 @@
     "evaluator_temperature": 0.0,
     "out_dir": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_bbh_oracle_pareto_formal_pilot\\disambiguation_qa\\shared_oracle_pareto_tcs_seed42",
     "seed": 42,
-    "resume_from_checkpoint": false,
+    "resume_from_checkpoint": true,
     "max_retries": 3,
     "retry_sleep": 1.5,
     "transient_retry_forever": true,
