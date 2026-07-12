@@ -7,7 +7,7 @@ import re
 import time
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 from openai import AsyncOpenAI
@@ -26,6 +26,94 @@ from .utils import (
     normalize_spaces,
     set_seed,
 )
+
+
+PARETO_EPSILON = 1e-12
+
+
+def compute_oracle_coverage_transitions(
+    baseline_correctness: Sequence[Sequence[bool]],
+    candidate_correctness: Sequence[Sequence[bool]],
+) -> Dict[str, float]:
+    """Compute candidate-level oracle coverage gains and losses without new rollouts."""
+    if len(baseline_correctness) != len(candidate_correctness):
+        raise ValueError("baseline_correctness and candidate_correctness must have equal length")
+    batch_size = len(baseline_correctness)
+    baseline_covered = [any(bool(value) for value in row) for row in baseline_correctness]
+    candidate_covered = [any(bool(value) for value in row) for row in candidate_correctness]
+    gain_count = sum(int((not baseline) and candidate) for baseline, candidate in zip(baseline_covered, candidate_covered))
+    loss_count = sum(int(baseline and (not candidate)) for baseline, candidate in zip(baseline_covered, candidate_covered))
+    denominator = float(batch_size) if batch_size else 1.0
+    gain_rate = float(gain_count) / denominator if batch_size else 0.0
+    loss_rate = float(loss_count) / denominator if batch_size else 0.0
+    return {
+        "coverage_gain_count": int(gain_count),
+        "coverage_gain_rate": float(gain_rate),
+        "coverage_loss_count": int(loss_count),
+        "coverage_loss_rate": float(loss_rate),
+        "net_coverage_count": int(gain_count - loss_count),
+        "net_coverage_delta": float(gain_rate - loss_rate),
+        "baseline_oracle_accuracy": float(sum(baseline_covered) / denominator) if batch_size else 0.0,
+        "candidate_oracle_accuracy": float(sum(candidate_covered) / denominator) if batch_size else 0.0,
+    }
+
+
+def _pareto_value(candidate: Dict[str, Any], key: str) -> float:
+    metrics = candidate.get("metrics", {}) if isinstance(candidate.get("metrics", {}), dict) else {}
+    return float(candidate.get(key, metrics.get(key, 0.0)) or 0.0)
+
+
+def pareto_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PARETO_EPSILON) -> bool:
+    """Return whether candidate a dominates b on oracle gain/loss/target accuracy."""
+    a_gain, b_gain = _pareto_value(a, "coverage_gain_rate"), _pareto_value(b, "coverage_gain_rate")
+    a_loss, b_loss = _pareto_value(a, "coverage_loss_rate"), _pareto_value(b, "coverage_loss_rate")
+    a_acc, b_acc = _pareto_value(a, "candidate_target_accuracy"), _pareto_value(b, "candidate_target_accuracy")
+    no_worse = a_gain >= b_gain - eps and a_loss <= b_loss + eps and a_acc >= b_acc - eps
+    strictly_better = a_gain > b_gain + eps or a_loss < b_loss - eps or a_acc > b_acc + eps
+    return bool(no_worse and strictly_better)
+
+
+def non_dominated_sort(candidates: Sequence[Dict[str, Any]], eps: float = PARETO_EPSILON) -> List[List[int]]:
+    """Deterministic non-dominated sorting; returned indices reference the input sequence."""
+    remaining = set(range(len(candidates)))
+    fronts: List[List[int]] = []
+    while remaining:
+        front = [
+            index
+            for index in remaining
+            if not any(pareto_dominates(candidates[other], candidates[index], eps) for other in remaining if other != index)
+        ]
+        front.sort(key=lambda index: str(candidates[index].get("candidate_id", "")))
+        fronts.append(front)
+        remaining.difference_update(front)
+    return fronts
+
+
+def compute_crowding_distances(candidates: Sequence[Dict[str, Any]], front_indices: Sequence[int]) -> Dict[int, float]:
+    """Compute normalized NSGA-style crowding distances for one Pareto front."""
+    distances = {index: 0.0 for index in front_indices}
+    if len(front_indices) <= 2:
+        return {index: float("inf") for index in front_indices}
+    objectives = (
+        lambda item: _pareto_value(item, "coverage_gain_rate"),
+        lambda item: -_pareto_value(item, "coverage_loss_rate"),
+        lambda item: _pareto_value(item, "candidate_target_accuracy"),
+    )
+    for objective in objectives:
+        ordered = sorted(front_indices, key=lambda index: (objective(candidates[index]), str(candidates[index].get("candidate_id", ""))))
+        low, high = objective(candidates[ordered[0]]), objective(candidates[ordered[-1]])
+        if abs(high - low) <= PARETO_EPSILON:
+            continue
+        distances[ordered[0]] = float("inf")
+        distances[ordered[-1]] = float("inf")
+        for position in range(1, len(ordered) - 1):
+            index = ordered[position]
+            if np.isinf(distances[index]):
+                continue
+            previous_value = objective(candidates[ordered[position - 1]])
+            next_value = objective(candidates[ordered[position + 1]])
+            distances[index] += (next_value - previous_value) / (high - low)
+    return distances
 
 
 class TraceBeamSearchSystem:
@@ -123,6 +211,125 @@ class TraceBeamSearchSystem:
 
     def _uses_baseline_candidate_metrics(self) -> bool:
         return self._is_guarded_reward_mode() or self._is_coverage_useful_diversity_mode()
+
+    def _uses_oracle_pareto_selection(self) -> bool:
+        return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "oracle_pareto"
+
+    def _oracle_pareto_feasibility(self, metrics: Dict[str, Any]) -> Tuple[bool, bool, bool]:
+        weights = self._effective_reward_weights()
+        baseline_target = float(metrics.get("baseline_target_accuracy", 0.0) or 0.0)
+        candidate_target = float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0)
+        baseline_invalid = float(metrics.get("baseline_invalid_rate", 0.0) or 0.0)
+        candidate_invalid = float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0)
+        accuracy_guard_passed = candidate_target >= baseline_target - float(weights.get("accuracy_guard_epsilon", 0.0))
+        invalid_guard_passed = candidate_invalid <= baseline_invalid + float(getattr(self.cfg, "invalid_guard_epsilon", 0.0) or 0.0)
+        return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(accuracy_guard_passed and invalid_guard_passed)
+
+    @staticmethod
+    def _oracle_pareto_active_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, int, str]:
+        metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        rank = item.get("pareto_rank")
+        normalized_rank = int(rank) if isinstance(rank, int) and rank >= 0 else 10**9
+        return (
+            -float(metrics.get("net_coverage_delta", 0.0) or 0.0),
+            float(metrics.get("coverage_loss_rate", 0.0) or 0.0),
+            -float(metrics.get("coverage_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
+            -float(metrics.get("useful_diversity", 0.0) or 0.0),
+            normalized_rank,
+            str(item.get("candidate_id", "")),
+        )
+
+    @staticmethod
+    def _oracle_pareto_crowding_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, str]:
+        metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        distance = float(item.get("pareto_crowding_distance", 0.0) or 0.0)
+        return (
+            -distance,
+            -float(metrics.get("net_coverage_delta", 0.0) or 0.0),
+            float(metrics.get("coverage_loss_rate", 0.0) or 0.0),
+            -float(metrics.get("coverage_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
+            -float(metrics.get("useful_diversity", 0.0) or 0.0),
+            str(item.get("candidate_id", "")),
+        )
+
+    def _select_oracle_pareto_beam(
+        self,
+        evaluated: List[Dict[str, Any]],
+        beam_size: int,
+        current_prompt: str,
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        """Select a retained beam using feasibility, Pareto fronts, then deterministic crowding."""
+        feasible: List[Dict[str, Any]] = []
+        for item in evaluated:
+            metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+            accuracy_passed, invalid_passed, is_feasible = self._oracle_pareto_feasibility(metrics)
+            metrics.update(
+                {
+                    "accuracy_guard_passed": accuracy_passed,
+                    "invalid_guard_passed": invalid_passed,
+                }
+            )
+            item["metrics"] = metrics
+            item["pareto_feasible"] = is_feasible
+            item["pareto_rank"] = None
+            item["pareto_crowding_distance"] = None
+            item["pareto_selected"] = False
+            item["pareto_forced_fallback"] = False
+            if is_feasible:
+                feasible.append(item)
+
+        original_feasible_count = len(feasible)
+        forced_fallback = False
+        if not feasible:
+            current_hash = self._hash(current_prompt)
+            fallback = next((item for item in evaluated if self._hash(str(item.get("prompt", ""))) == current_hash), None)
+            if fallback is None:
+                raise RuntimeError("Oracle Pareto selection requires the current active prompt in the candidate pool")
+            fallback["pareto_feasible"] = True
+            fallback["pareto_forced_fallback"] = True
+            feasible = [fallback]
+            forced_fallback = True
+
+        fronts_by_item = non_dominated_sort(feasible)
+        retained: List[Dict[str, Any]] = []
+        for rank, front_indices in enumerate(fronts_by_item):
+            distances = compute_crowding_distances(feasible, front_indices)
+            front = []
+            for index in front_indices:
+                item = feasible[index]
+                item["pareto_rank"] = rank
+                item["pareto_crowding_distance"] = distances.get(index, 0.0)
+                front.append(item)
+            slots = beam_size - len(retained)
+            if slots <= 0:
+                continue
+            if len(front) <= slots:
+                retained.extend(sorted(front, key=lambda item: str(item.get("candidate_id", ""))))
+            else:
+                retained.extend(sorted(front, key=self._oracle_pareto_crowding_sort_key)[:slots])
+                break
+
+        if not retained:
+            raise RuntimeError("Oracle Pareto selection produced an empty beam")
+        retained.sort(key=self._oracle_pareto_active_sort_key)
+        for item in retained:
+            item["pareto_selected"] = True
+        for item in evaluated:
+            metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+            metrics["pareto_rank"] = item.get("pareto_rank")
+            metrics["pareto_crowding_distance"] = item.get("pareto_crowding_distance")
+            metrics["pareto_feasible"] = bool(item.get("pareto_feasible", False))
+            metrics["pareto_selected"] = bool(item.get("pareto_selected", False))
+            item["metrics"] = metrics
+        return retained, {
+            "num_pareto_feasible": int(original_feasible_count),
+            "num_pareto_infeasible": int(len(evaluated) - original_feasible_count),
+            "num_pareto_fronts": int(len(fronts_by_item)),
+            "pareto_front0_size": int(len(fronts_by_item[0])) if fronts_by_item else 0,
+            "pareto_forced_current_fallback": bool(forced_fallback),
+        }
 
     def _empty_cost_summary(self) -> Dict[str, Any]:
         return {
@@ -4176,6 +4383,8 @@ class TraceBeamSearchSystem:
                         "candidate_vote_correct": candidate_vote_correct,
                         "baseline_any_correct": baseline_any_correct,
                         "candidate_any_correct": candidate_any_correct,
+                        "baseline_individual_correct": [bool(value) for value in baseline_rollout.get("individual_correct", [])],
+                        "candidate_individual_correct": [bool(value) for value in rollout.get("individual_correct", [])],
                         "baseline_target_correct": baseline_target_correct,
                         "target_agent_correct": target_agent_correct,
                         "target_trace_novelty": target_trace_novelty,
@@ -4218,6 +4427,12 @@ class TraceBeamSearchSystem:
             baseline_oracle_acc = self._clip01(float(np.mean([float(r.get("baseline_any_correct", 0.0)) for r in rows])) if rows else 0.0)
             candidate_oracle_acc = self._clip01(float(np.mean([float(r.get("candidate_any_correct", 0.0)) for r in rows])) if rows else 0.0)
             coverage_delta = candidate_oracle_acc - baseline_oracle_acc
+            coverage_transitions = compute_oracle_coverage_transitions(
+                [list(row.get("baseline_individual_correct", [bool(row.get("baseline_any_correct", 0))])) for row in rows],
+                [list(row.get("candidate_individual_correct", [bool(row.get("candidate_any_correct", 0))])) for row in rows],
+            )
+            if abs(float(coverage_transitions["net_coverage_delta"]) - float(coverage_delta)) > PARETO_EPSILON:
+                raise RuntimeError("Oracle coverage transition delta does not match candidate evaluation coverage delta")
             rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
             useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
             rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
@@ -4251,6 +4466,7 @@ class TraceBeamSearchSystem:
                     "baseline_oracle_acc": baseline_oracle_acc,
                     "candidate_oracle_acc": candidate_oracle_acc,
                     "coverage_delta": float(coverage_delta),
+                    **coverage_transitions,
                     "baseline_target_accuracy": baseline_target_accuracy,
                     "candidate_target_accuracy": candidate_target_accuracy,
                     "target_agent_accuracy": candidate_target_accuracy,
@@ -4430,6 +4646,30 @@ class TraceBeamSearchSystem:
                     "proposal": {},
                 }
             )
+        current_key = normalize_spaces(str(agent.current_prompt)).lower()
+        if current_key not in seen:
+            current_prompt = str(agent.current_prompt)
+            candidate_pool.append(
+                {
+                    "candidate_id": f"active_{self._hash(current_prompt)}",
+                    "prompt": current_prompt,
+                    "parent_id": None,
+                    "generation": generation,
+                    "source": "current_active_fallback",
+                    "candidate_source": "current_active_fallback",
+                    "generation_batch_type": "",
+                    "generation_case_ids": [],
+                    "target_error_pattern": "",
+                    "accuracy_repair_rule": "",
+                    "expected_accuracy_effect": "",
+                    "diversity_contribution": "",
+                    "error_correlation_reduction": "",
+                    "task_alignment_rule": "",
+                    "peer_redundancy_avoidance": "",
+                    "optimizer_generation_diagnostics": self._empty_optimizer_generation_diagnostics(),
+                    "proposal": {},
+                }
+            )
 
         target_case_ids = {
             str(c.get("case_id", ""))
@@ -4561,13 +4801,30 @@ class TraceBeamSearchSystem:
                 baseline_homogeneous_cases=baseline_cases,
             )
             evaluated.append({**candidate, "metrics": metrics, "reward": float(metrics.get("reward", 0.0))})
-        evaluated.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
-        top1_candidate_source = str(evaluated[0].get("candidate_source", "")) if evaluated else ""
-        top1_candidate_pool_source = str(evaluated[0].get("source", "")) if evaluated else ""
-
         old_hash = self._hash(agent.current_prompt)
         beam_size = max(1, int(self.cfg.beam_size))
-        selected = evaluated[:beam_size]
+        pareto_summary = {
+            "num_pareto_feasible": None,
+            "num_pareto_infeasible": None,
+            "num_pareto_fronts": None,
+            "pareto_front0_size": None,
+            "pareto_forced_current_fallback": None,
+        }
+        if self._uses_oracle_pareto_selection():
+            selected, pareto_summary = self._select_oracle_pareto_beam(evaluated, beam_size, agent.current_prompt)
+        else:
+            evaluated.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
+            selected = evaluated[:beam_size]
+            for item in evaluated:
+                item["pareto_feasible"] = None
+                item["pareto_rank"] = None
+                item["pareto_crowding_distance"] = None
+                item["pareto_selected"] = None
+                item["pareto_forced_fallback"] = None
+        top1_candidate_source = str(selected[0].get("candidate_source", "")) if selected else ""
+        top1_candidate_pool_source = str(selected[0].get("source", "")) if selected else ""
+        selected_by_id = {str(item.get("candidate_id", "")): rank for rank, item in enumerate(selected, start=1)}
+        active_candidate_id = str(selected[0].get("candidate_id", "")) if selected else ""
         agent.prompt_beam = [
             self._make_beam_item(
                 prompt=str(x["prompt"]),
@@ -4587,11 +4844,14 @@ class TraceBeamSearchSystem:
         else:
             agent.reject_count += 1
 
-        for rank, item in enumerate(evaluated, start=1):
+        for item in evaluated:
             metrics = item.get("metrics", {})
-            accepted = rank <= len(agent.prompt_beam)
+            candidate_id = str(item.get("candidate_id", ""))
+            rank = selected_by_id.get(candidate_id)
+            accepted = rank is not None
             in_top_beam = bool(accepted)
-            is_top1 = bool(rank == 1)
+            is_top1 = bool(candidate_id == active_candidate_id)
+            active_selection_key = list(self._oracle_pareto_active_sort_key(item)) if self._uses_oracle_pareto_selection() and accepted else None
             item_diagnostics = self._empty_optimizer_generation_diagnostics()
             if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
                 item_diagnostics.update(item.get("optimizer_generation_diagnostics", {}))
@@ -4606,6 +4866,7 @@ class TraceBeamSearchSystem:
                     "search_mode": "evolutionary_beam",
                     "beam_size": beam_size,
                     "candidate_id": item.get("candidate_id", ""),
+                    "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                     "parent_id": item.get("parent_id"),
                     "reward": float(metrics.get("reward", 0.0)),
                     "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
@@ -4625,6 +4886,12 @@ class TraceBeamSearchSystem:
                     "baseline_oracle_acc": float(metrics.get("baseline_oracle_acc", 0.0)),
                     "candidate_oracle_acc": float(metrics.get("candidate_oracle_acc", 0.0)),
                     "coverage_delta": float(metrics.get("coverage_delta", 0.0)),
+                    "coverage_gain_count": int(metrics.get("coverage_gain_count", 0)),
+                    "coverage_gain_rate": float(metrics.get("coverage_gain_rate", 0.0)),
+                    "coverage_loss_count": int(metrics.get("coverage_loss_count", 0)),
+                    "coverage_loss_rate": float(metrics.get("coverage_loss_rate", 0.0)),
+                    "net_coverage_count": int(metrics.get("net_coverage_count", 0)),
+                    "net_coverage_delta": float(metrics.get("net_coverage_delta", 0.0)),
                     "baseline_target_accuracy": float(metrics.get("baseline_target_accuracy", 0.0)),
                     "candidate_target_accuracy": float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0))),
                     "rescue_rate": float(metrics.get("rescue_rate", 0.0)),
@@ -4638,6 +4905,11 @@ class TraceBeamSearchSystem:
                     "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
+                    "pareto_feasible": item.get("pareto_feasible"),
+                    "pareto_rank": item.get("pareto_rank"),
+                    "pareto_crowding_distance": item.get("pareto_crowding_distance"),
+                    "pareto_selected": item.get("pareto_selected"),
+                    "active_selection_key": active_selection_key,
                     "effective_weight_target_accuracy": float(metrics.get("effective_weight_target_accuracy", 0.0)),
                     "effective_weight_div_delta": float(metrics.get("effective_weight_div_delta", 0.0)),
                     "effective_weight_coverage": float(metrics.get("effective_weight_coverage", 0.0)),
@@ -4659,8 +4931,8 @@ class TraceBeamSearchSystem:
                     "active_prompt_changed": bool(changed),
                     "top1_candidate_source": top1_candidate_source,
                     "top1_candidate_pool_source": top1_candidate_pool_source,
-                    "rank_in_beam": rank if accepted else None,
-                    "beam_rank": rank if accepted else None,
+                    "rank_in_beam": rank,
+                    "beam_rank": rank,
                     "prompt_preview": normalize_spaces(str(item.get("prompt", "")))[:220],
                     "optimizer_model": self.cfg.optimizer_model,
                     "evaluator_model": self.cfg.evaluator_model,
@@ -4746,6 +5018,11 @@ class TraceBeamSearchSystem:
             "top1_candidate_source": top1_candidate_source,
             "top1_candidate_pool_source": top1_candidate_pool_source,
             "active_prompt_changed": bool(changed),
+            **pareto_summary,
+            "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
+            "top1_coverage_gain_rate": float(selected[0].get("metrics", {}).get("coverage_gain_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+            "top1_coverage_loss_rate": float(selected[0].get("metrics", {}).get("coverage_loss_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+            "top1_net_coverage_delta": float(selected[0].get("metrics", {}).get("net_coverage_delta", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
             **optimizer_generation_summary,
             **self._student_failure_log_fields(optimizer_generation_summary),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
@@ -4772,6 +5049,12 @@ class TraceBeamSearchSystem:
                 "num_optimizer_candidates": int(num_optimizer_candidates),
                 "num_fallback_candidates": int(num_fallback_candidates),
                 "num_existing_beam_candidates": int(num_existing_beam_candidates),
+                "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
+                **pareto_summary,
+                "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
+                "top1_coverage_gain_rate": float(selected[0].get("metrics", {}).get("coverage_gain_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+                "top1_coverage_loss_rate": float(selected[0].get("metrics", {}).get("coverage_loss_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+                "top1_net_coverage_delta": float(selected[0].get("metrics", {}).get("net_coverage_delta", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
                 **optimizer_generation_summary,
                 **self._student_failure_log_fields(optimizer_generation_summary),
             }
@@ -4792,17 +5075,30 @@ class TraceBeamSearchSystem:
                 prompt = str(item.get("prompt", agent.current_prompt))
                 metrics = await self.evaluate_candidate_prompt(agent_id, prompt, peer_prompts, eval_batch, role_spec=item.get("metrics", {}))
                 refreshed.append(
-                    self._make_beam_item(
-                        prompt=prompt,
-                        score=float(metrics.get("reward", 0.0)),
-                        metrics=metrics,
-                        parent_id=item.get("parent_id"),
-                        generation=int(item.get("generation", 0) or 0),
-                        candidate_id=str(item.get("id", "")) or None,
-                    )
+                    {
+                        "candidate_id": str(item.get("id", "")) or self._hash(prompt),
+                        "prompt": prompt,
+                        "parent_id": item.get("parent_id"),
+                        "generation": int(item.get("generation", 0) or 0),
+                        "metrics": metrics,
+                        "reward": float(metrics.get("reward", 0.0)),
+                    }
                 )
-            refreshed.sort(key=lambda x: float(x.get("score", 0.0) or 0.0), reverse=True)
-            agent.prompt_beam = refreshed[: max(1, int(self.cfg.beam_size))]
+            if self._uses_oracle_pareto_selection():
+                retained, _ = self._select_oracle_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
+            else:
+                retained = sorted(refreshed, key=lambda item: float(item.get("reward", 0.0)), reverse=True)[: max(1, int(self.cfg.beam_size))]
+            agent.prompt_beam = [
+                self._make_beam_item(
+                    prompt=str(item["prompt"]),
+                    score=float(item.get("reward", 0.0)),
+                    metrics=item.get("metrics", {}),
+                    parent_id=item.get("parent_id"),
+                    generation=int(item.get("generation", 0) or 0),
+                    candidate_id=str(item.get("candidate_id", "")) or None,
+                )
+                for item in retained
+            ]
             agent.current_prompt = str(agent.prompt_beam[0]["prompt"])
             changed = old_hash != self._hash(agent.current_prompt)
             if changed:

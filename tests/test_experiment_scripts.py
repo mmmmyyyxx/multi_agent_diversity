@@ -17,9 +17,14 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "bank_baseline",
         "shared_guarded_beam",
         "bank_guarded_beam",
+        "shared_oracle_pareto_tcs",
     ]
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["shared_guarded_beam"] == "guarded_diversity"
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["bank_guarded_beam"] == "guarded_diversity"
+    oracle_setting = {setting.name: setting for setting in SETTINGS}["shared_oracle_pareto_tcs"]
+    assert oracle_setting.reward_mode == "coverage_useful_diversity"
+    assert oracle_setting.candidate_selection_mode == "oracle_pareto"
+    assert oracle_setting.best_state_selection_mode == "oracle_first"
     assert SETTINGS == DEFAULT_EXPERIMENT_SETTINGS
 
 

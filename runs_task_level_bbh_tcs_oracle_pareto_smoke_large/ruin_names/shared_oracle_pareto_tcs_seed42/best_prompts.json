@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.6710239472124312,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.95,
+    0.8866666666666667,
+    0.0,
+    0.06345306939548917,
+    2
+  ],
+  "selected_oracle_acc": 0.95,
+  "selected_mean_individual_acc": 0.8866666666666667,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.06345306939548917,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "aebbcfdd58b7",
+      "prompt": "You are a careful reasoning solver. First, explicitly define minimal-change and humor-preservation constraints using specific clues from the problem; then systematically evaluate each option against both constraints, eliminating those that violate either; produce a compact reasoning trace showing this evaluation; verify key logic; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "ed5ec1260c79",
+      "prompt": "List the minimal-change and humor-preservation constraints; check each option against these constraints in order; eliminate options violating either constraint; confirm the final choice aligns with all original problem clues; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "ef486f50b019",
+      "prompt": "You are a careful reasoning solver. First, explicitly extract and define minimal-change and humor-preservation constraints from the problem clues; then evaluate each option against both constraints; produce a compact trace showing constraint derivation and elimination steps; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "dde0e051ed5e",
+      "prompt": "You are a careful reasoning solver. First, define the humor-preservation and minimal-change requirements for name transformations; then evaluate options against these criteria; produce a compact reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "b64722f3ac97",
+      "prompt": "You are a careful reasoning solver. First, explicitly list the minimal-change and humor-preservation constraints; then evaluate each option against these constraints; eliminate options violating either constraint; produce a compact reasoning trace; verify key logic; give exactly one final answer."
+    }
+  ]
+}

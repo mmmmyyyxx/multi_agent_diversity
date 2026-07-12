@@ -102,6 +102,31 @@ def _collect_run_log_metrics(run_dir: Path) -> Dict[str, Any]:
 
 def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: ExperimentSetting, dataset_info: Dict[str, str], seed: int):
     reward_mode = args.force_reward_mode or setting.reward_mode
+    def setting_value(name, fallback):
+        value = getattr(setting, name, None)
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value or fallback
+        if isinstance(value, int) and value == 0 and isinstance(fallback, int):
+            return fallback
+        return fallback if value is None else value
+
+    candidate_selection_mode = (
+        setting.candidate_selection_mode
+        if str(getattr(setting, "candidate_selection_mode", "") or "") == "oracle_pareto"
+        else args.candidate_selection_mode
+    )
+    best_state_selection_mode = (
+        setting.best_state_selection_mode
+        if str(getattr(setting, "best_state_selection_mode", "") or "") == "oracle_first"
+        else args.best_state_selection_mode
+    )
+    optimizer_architecture = setting_value("optimizer_architecture", args.optimizer_architecture)
+    optimizer_fallback_mode = setting_value("optimizer_fallback_mode", args.optimizer_fallback_mode)
+    teacher_voting_failure = setting_value("teacher_critic_use_voting_failure", args.teacher_critic_use_voting_failure)
+    candidate_eval_strategy = setting_value("candidate_eval_strategy", args.candidate_eval_strategy)
+    candidate_eval_pool_size = setting_value("candidate_eval_pool_size", args.candidate_eval_pool_size)
     cmd.extend(
         [
             "--task_type", dataset_info["task_type"],
@@ -111,6 +136,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--evaluator_model", args.evaluator_model,
             "--search_mode", args.search_mode,
             "--reward_mode", reward_mode,
+            "--candidate_selection_mode", str(candidate_selection_mode),
+            "--best_state_selection_mode", str(best_state_selection_mode),
             "--beam_size", str(args.beam_size),
             "--num_candidates_per_parent", str(args.num_candidates_per_parent),
             "--optimizer_parent_concurrency", str(args.optimizer_parent_concurrency),
@@ -140,7 +167,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
             "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
-            "--optimizer_architecture", args.optimizer_architecture,
+            "--optimizer_architecture", str(optimizer_architecture),
             "--teacher_critic_max_rounds", str(args.teacher_critic_max_rounds),
             "--teacher_question_pass_threshold", str(args.teacher_question_pass_threshold),
             "--teacher_temperature", str(args.teacher_temperature),
@@ -158,8 +185,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--student_candidate_max_chars_per_field", str(args.student_candidate_max_chars_per_field),
             "--student_candidate_prompt_max_chars", str(args.student_candidate_prompt_max_chars),
             "--student_force_minified_json", str(int(args.student_force_minified_json)),
-            "--teacher_critic_use_voting_failure", str(int(args.teacher_critic_use_voting_failure)),
-            "--optimizer_fallback_mode", args.optimizer_fallback_mode,
+            "--teacher_critic_use_voting_failure", str(int(teacher_voting_failure)),
+            "--optimizer_fallback_mode", str(optimizer_fallback_mode),
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
             "--no_effective_evolution_stop_enabled", str(int(args.no_effective_evolution_stop_enabled)),
@@ -177,8 +204,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--llm_call_logging", str(int(args.llm_call_logging)),
             "--llm_call_timeout", str(args.llm_call_timeout),
             "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
-            "--candidate_eval_strategy", args.candidate_eval_strategy,
-            "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
+            "--candidate_eval_strategy", str(candidate_eval_strategy),
+            "--candidate_eval_pool_size", str(candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(int(args.candidate_reuse_recorded_rollouts)),
@@ -227,7 +254,9 @@ def run_one(dataset: str, setting: ExperimentSetting, seed: int, args: argparse.
                 "--val_split_ratio", str(args.val_split_ratio),
                 "--epochs", str(args.epochs),
                 "--update_every", str(args.update_every),
-                "--candidate_eval_batch_size", str(args.candidate_eval_batch_size),
+                "--candidate_eval_batch_size", str(
+                    getattr(setting, "candidate_eval_batch_size", 0) or args.candidate_eval_batch_size
+                ),
             ]
         )
 
@@ -279,7 +308,11 @@ def main():
     parser.add_argument("--warmup_serial_runs", type=int, default=1)
     parser.add_argument("--run_start_stagger_seconds", type=float, default=5.0)
     parser.add_argument("--datasets", type=str, default="mmlu")
-    parser.add_argument("--run_settings", type=str, default="all")
+    parser.add_argument(
+        "--run_settings",
+        type=str,
+        default="shared_baseline,bank_baseline,shared_guarded_beam,bank_guarded_beam",
+    )
     parser.add_argument("--mars_result_path", type=str, default="")
     parser.add_argument("--summary_by_dataset", type=int, default=1, choices=[0, 1])
     parser.add_argument("--dataset_format", type=str, default="legacy", choices=["legacy", "mars"])
@@ -299,6 +332,8 @@ def main():
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--search_mode", type=str, default=cli_defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "oracle_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "oracle_first"])
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)

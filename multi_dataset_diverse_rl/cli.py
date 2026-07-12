@@ -189,12 +189,48 @@ def restore_agent_prompts(system, prompts, selected_epoch=None):
         )
 
 
-def write_selected_prompts(path, system, epoch, metric_name, validation_score):
+def oracle_first_validation_key(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    epoch = int(epoch_record.get("epoch", 0) or 0)
+    return (
+        -float(val.get("oracle_acc", 0.0) or 0.0),
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        -float(val.get("mean_useful_diversity", 0.0) or 0.0),
+        epoch,
+    )
+
+
+def oracle_first_validation_key_fields(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    return [
+        float(val.get("oracle_acc", 0.0) or 0.0),
+        float(val.get("mean_individual_acc", 0.0) or 0.0),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        float(val.get("mean_useful_diversity", 0.0) or 0.0),
+        int(epoch_record.get("epoch", 0) or 0),
+    ]
+
+
+def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
+    if str(selection_mode or "existing").lower() == "oracle_first":
+        return best_epoch_record is None or oracle_first_validation_key(epoch_record) < oracle_first_validation_key(best_epoch_record)
+    return validation_score(epoch_record, reward_mode) > float(best_score) + float(min_delta)
+
+
+def write_selected_prompts(path, system, epoch, metric_name, validation_score, best_state_selection_mode="existing", epoch_record=None):
     prompts = snapshot_agent_prompts(system)
+    val = epoch_record.get("val", {}) if isinstance(epoch_record, dict) and isinstance(epoch_record.get("val", {}), dict) else {}
     payload = {
         "selected_epoch": epoch,
         "early_stopping_metric": metric_name,
         "best_validation_score": validation_score,
+        "best_state_selection_mode": str(best_state_selection_mode or "existing"),
+        "best_state_selection_key": oracle_first_validation_key_fields(epoch_record) if str(best_state_selection_mode or "existing").lower() == "oracle_first" and isinstance(epoch_record, dict) else None,
+        "selected_oracle_acc": float(val.get("oracle_acc", 0.0) or 0.0),
+        "selected_mean_individual_acc": float(val.get("mean_individual_acc", 0.0) or 0.0),
+        "selected_mean_invalid_rate": float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        "selected_mean_useful_diversity": float(val.get("mean_useful_diversity", 0.0) or 0.0),
         "agents": [
             {"agent_id": i, "prompt_hash": system._hash(prompt), "prompt": prompt}
             for i, prompt in enumerate(prompts)
@@ -284,6 +320,8 @@ def checkpoint_config_signature(cfg):
         "agents",
         "init_mode",
         "reward_mode",
+        "candidate_selection_mode",
+        "best_state_selection_mode",
         "optimizer_architecture",
         "beam_size",
         "num_candidates_per_parent",
@@ -447,7 +485,9 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
     )
 
 
-def validation_metric_name(reward_mode):
+def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
+    if str(best_state_selection_mode or "existing").lower() == "oracle_first":
+        return "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)"
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return "vote_acc"
@@ -567,6 +607,7 @@ async def main_async():
 
     best_score = -1e30
     best_epoch = 0
+    best_epoch_record = None
     epochs_without_improvement = 0
     stopped_early = False
     no_effective_evolution_counter = 0
@@ -593,6 +634,10 @@ async def main_async():
                 system.history = history
             best_score = float(candidate.get("best_score", best_score))
             best_epoch = int(candidate.get("best_epoch", best_epoch) or 0)
+            best_epoch_record = next(
+                (record for record in system.history if isinstance(record, dict) and int(record.get("epoch", 0) or 0) == best_epoch),
+                None,
+            )
             epochs_without_improvement = int(candidate.get("epochs_without_improvement", epochs_without_improvement) or 0)
             stopped_early = bool(candidate.get("stopped_early", False))
             no_effective_evolution_counter = int(candidate.get("no_effective_evolution_counter", 0) or 0)
@@ -664,12 +709,28 @@ async def main_async():
 
         score = validation_score(resume_epoch_record, cfg.reward_mode)
         min_delta = float(getattr(cfg, "early_stopping_min_delta", 0.0) or 0.0)
-        if score > best_score + min_delta:
+        if is_better_validation_state(
+            resume_epoch_record,
+            best_epoch_record,
+            best_score,
+            cfg.reward_mode,
+            cfg.best_state_selection_mode,
+            min_delta,
+        ):
             best_score = score
             best_epoch = epoch_num
+            best_epoch_record = resume_epoch_record
             epochs_without_improvement = 0
             system.save_state("best_state", extra=resume_epoch_record)
-            write_selected_prompts(best_prompts_path, system, best_epoch, validation_metric_name(cfg.reward_mode), best_score)
+            write_selected_prompts(
+                best_prompts_path,
+                system,
+                best_epoch,
+                validation_metric_name(cfg.reward_mode, cfg.best_state_selection_mode),
+                best_score,
+                cfg.best_state_selection_mode,
+                resume_epoch_record,
+            )
         else:
             epochs_without_improvement += 1
 
@@ -681,7 +742,7 @@ async def main_async():
             should_stop_after_epoch = True
             print(
                 f"Early stopping at epoch {epoch_num}: "
-                f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode)}, "
+                f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode, cfg.best_state_selection_mode)}, "
                 f"best_validation_score={best_score:.4f}, "
                 f"epochs_without_improvement={epochs_without_improvement}",
                 flush=True,
@@ -930,12 +991,28 @@ async def main_async():
 
         score = validation_score(epoch_record, cfg.reward_mode)
         min_delta = float(getattr(cfg, "early_stopping_min_delta", 0.0) or 0.0)
-        if score > best_score + min_delta:
+        if is_better_validation_state(
+            epoch_record,
+            best_epoch_record,
+            best_score,
+            cfg.reward_mode,
+            cfg.best_state_selection_mode,
+            min_delta,
+        ):
             best_score = score
             best_epoch = epoch + 1
+            best_epoch_record = epoch_record
             epochs_without_improvement = 0
             system.save_state("best_state", extra=epoch_record)
-            write_selected_prompts(best_prompts_path, system, best_epoch, validation_metric_name(cfg.reward_mode), best_score)
+            write_selected_prompts(
+                best_prompts_path,
+                system,
+                best_epoch,
+                validation_metric_name(cfg.reward_mode, cfg.best_state_selection_mode),
+                best_score,
+                cfg.best_state_selection_mode,
+                epoch_record,
+            )
         else:
             epochs_without_improvement += 1
 
@@ -947,7 +1024,7 @@ async def main_async():
             should_stop_after_epoch = True
             print(
                 f"Early stopping at epoch {epoch + 1}: "
-                f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode)}, "
+                f"best_epoch={best_epoch}, metric={validation_metric_name(cfg.reward_mode, cfg.best_state_selection_mode)}, "
                 f"best_validation_score={best_score:.4f}, "
                 f"epochs_without_improvement={epochs_without_improvement}"
             )

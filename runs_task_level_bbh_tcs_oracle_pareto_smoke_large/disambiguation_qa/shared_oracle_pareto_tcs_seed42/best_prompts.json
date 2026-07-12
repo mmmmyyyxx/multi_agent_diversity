@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.46267876976728445,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.8666666666666667,
+    0.5433333333333333,
+    0.0,
+    0.04672718216975531,
+    1
+  ],
+  "selected_oracle_acc": 0.8666666666666667,
+  "selected_mean_individual_acc": 0.5433333333333333,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.04672718216975531,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "9ee2a46a4dbc",
+      "prompt": "You are a careful reasoning solver. First, systematically identify and list all constraints from the problem; then explicitly compare each potential referent against every constraint in a side-by-side table format; eliminate any referent that violates any constraint; produce a compact explicit reasoning trace; make your decision visible; verify logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "61f65c77116d",
+      "prompt": "You are a careful reasoning solver. Before reasoning, extract all constraints and create a verification checklist; systematically check each potential referent against every checklist item; produce a compact reasoning trace showing constraint verification steps; ensure the selected candidate passes all checklist verifications; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "b1b7f63aaa45",
+      "prompt": "You are a careful reasoning solver. Before reasoning, extract and list all constraints; resolve each pronoun against constraints; verify no constraint violations; produce a compact trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "ee8c10a79f69",
+      "prompt": "You are a careful reasoning solver. First, list all constraints and potential referents; then assign each constraint a priority based on specificity; check referents against highest-priority constraints first; eliminate violators; produce a compact trace showing prioritization; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "f9d3b3a6c9be",
+      "prompt": "You are a careful reasoning solver. First, identify all constraints and potential referents; verify no pronoun resolution violates constraints; then produce a compact explicit reasoning trace; make your decision procedure visible; give exactly one final answer."
+    }
+  ]
+}

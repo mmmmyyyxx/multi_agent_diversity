@@ -171,6 +171,14 @@ else:
 - `accuracy_only`：消融模式，按被更新 target agent 自身准确率选择候选，同时记录 team vote accuracy。
 - `coverage_useful_diversity`：奖励 target-agent accuracy、oracle coverage gain 和 useful diversity。
 
+### Oracle-oriented Pareto candidate selection
+
+`--candidate_selection_mode scalar_reward` remains the default: candidates are ranked by the existing scalar reward and the top-k beam is retained. `--candidate_selection_mode oracle_pareto` keeps that reward as a diagnostic only, then selects feasible candidates by non-dominated sorting over three objectives: maximize `coverage_gain_rate`, minimize `coverage_loss_rate`, and maximize target-agent accuracy. Feasibility requires both the existing target-accuracy guard and invalid-rate guard.
+
+`coverage_gain` means the baseline team has no correct agent but the candidate-replaced team does; `coverage_loss` is the reverse. The last partially retained front uses crowding distance. Useful diversity is only a deterministic tie-breaker. Vote accuracy, vote delta, majority flips, embedding diversity, rescue rate, and scalar reward are not Pareto objectives and do not choose the active prompt.
+
+Use `--best_state_selection_mode oracle_first` with Pareto experiments to select validation states by: oracle accuracy, mean individual accuracy, lower invalid rate, useful diversity, then earlier epoch. `best_prompts.json` records the selection mode, key, and selected validation metrics. The TCS Teacher-Critic-Student flow receives no additional review or rollout in this mode.
+
 `update_logs.jsonl` 会记录 guard 相关字段：
 
 - `baseline_team_accuracy`

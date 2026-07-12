@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional
 
 
 @dataclass(frozen=True)
@@ -8,6 +8,14 @@ class ExperimentSetting:
     init_mode: str
     baseline_only: bool
     reward_mode: str = "guarded_diversity"
+    candidate_selection_mode: str = "scalar_reward"
+    best_state_selection_mode: str = "existing"
+    optimizer_architecture: str = ""
+    optimizer_fallback_mode: str = ""
+    teacher_critic_use_voting_failure: Optional[bool] = None
+    candidate_eval_strategy: str = ""
+    candidate_eval_pool_size: int = 0
+    candidate_eval_batch_size: int = 0
 
 
 @dataclass(frozen=True)
@@ -23,6 +31,20 @@ DEFAULT_EXPERIMENT_SETTINGS = [
     ExperimentSetting("bank_baseline", "bank", True, "guarded_diversity"),
     ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity"),
     ExperimentSetting("bank_guarded_beam", "bank", False, "guarded_diversity"),
+    ExperimentSetting(
+        "shared_oracle_pareto_tcs",
+        "shared",
+        False,
+        "coverage_useful_diversity",
+        candidate_selection_mode="oracle_pareto",
+        best_state_selection_mode="oracle_first",
+        optimizer_architecture="teacher_critic_student",
+        optimizer_fallback_mode="none",
+        teacher_critic_use_voting_failure=False,
+        candidate_eval_strategy="fixed_pool",
+        candidate_eval_pool_size=100,
+        candidate_eval_batch_size=24,
+    ),
 ]
 
 

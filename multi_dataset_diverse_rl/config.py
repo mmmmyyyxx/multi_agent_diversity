@@ -40,6 +40,8 @@ class Config:
 
     search_mode: str = "evolutionary_beam"
     reward_mode: str = "guarded_diversity"
+    candidate_selection_mode: str = "scalar_reward"
+    best_state_selection_mode: str = "existing"
     beam_size: int = 3
     num_candidates_per_parent: int = 2
     optimizer_parent_concurrency: int = 2
@@ -181,6 +183,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "oracle_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "oracle_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)

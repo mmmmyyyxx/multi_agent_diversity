@@ -39,8 +39,34 @@ def _setting_reward_mode(args: argparse.Namespace, setting: ExperimentSetting) -
     return setting.reward_mode
 
 
+def _setting_value(setting: ExperimentSetting, name: str, fallback: Any) -> Any:
+    value = getattr(setting, name, None)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value or fallback
+    if isinstance(value, int) and value == 0 and isinstance(fallback, int):
+        return fallback
+    return fallback if value is None else value
+
+
 def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: ComparisonTask, setting: ExperimentSetting, seed: int):
     reward_mode = _setting_reward_mode(args, setting)
+    candidate_selection_mode = (
+        setting.candidate_selection_mode
+        if str(getattr(setting, "candidate_selection_mode", "") or "") == "oracle_pareto"
+        else getattr(args, "candidate_selection_mode", Config().candidate_selection_mode)
+    )
+    best_state_selection_mode = (
+        setting.best_state_selection_mode
+        if str(getattr(setting, "best_state_selection_mode", "") or "") == "oracle_first"
+        else getattr(args, "best_state_selection_mode", Config().best_state_selection_mode)
+    )
+    optimizer_architecture = _setting_value(setting, "optimizer_architecture", args.optimizer_architecture)
+    optimizer_fallback_mode = _setting_value(setting, "optimizer_fallback_mode", args.optimizer_fallback_mode)
+    teacher_voting_failure = _setting_value(setting, "teacher_critic_use_voting_failure", args.teacher_critic_use_voting_failure)
+    candidate_eval_strategy = _setting_value(setting, "candidate_eval_strategy", args.candidate_eval_strategy)
+    candidate_eval_pool_size = _setting_value(setting, "candidate_eval_pool_size", args.candidate_eval_pool_size)
     cmd.extend(
         [
             "--task_type", task.task_type,
@@ -53,6 +79,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--evaluator_model", args.evaluator_model,
             "--search_mode", "evolutionary_beam",
             "--reward_mode", reward_mode,
+            "--candidate_selection_mode", str(candidate_selection_mode),
+            "--best_state_selection_mode", str(best_state_selection_mode),
             "--agents", str(args.agents),
             "--init_mode", setting.init_mode,
             "--shared_prompt", args.shared_prompt,
@@ -79,7 +107,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
             "--accuracy_guard_epsilon_late", str(args.accuracy_guard_epsilon_late),
-            "--optimizer_architecture", args.optimizer_architecture,
+            "--optimizer_architecture", str(optimizer_architecture),
             "--teacher_critic_max_rounds", str(args.teacher_critic_max_rounds),
             "--teacher_question_pass_threshold", str(args.teacher_question_pass_threshold),
             "--teacher_temperature", str(args.teacher_temperature),
@@ -97,14 +125,14 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--student_candidate_max_chars_per_field", str(args.student_candidate_max_chars_per_field),
             "--student_candidate_prompt_max_chars", str(args.student_candidate_prompt_max_chars),
             "--student_force_minified_json", str(int(args.student_force_minified_json)),
-            "--teacher_critic_use_voting_failure", str(args.teacher_critic_use_voting_failure),
-            "--optimizer_fallback_mode", args.optimizer_fallback_mode,
+            "--teacher_critic_use_voting_failure", str(int(teacher_voting_failure)),
+            "--optimizer_fallback_mode", str(optimizer_fallback_mode),
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
             "--no_effective_evolution_stop_enabled", str(args.no_effective_evolution_stop_enabled),
-            "--candidate_eval_strategy", args.candidate_eval_strategy,
+            "--candidate_eval_strategy", str(candidate_eval_strategy),
             "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
-            "--candidate_eval_pool_size", str(args.candidate_eval_pool_size),
+            "--candidate_eval_pool_size", str(candidate_eval_pool_size),
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(args.candidate_reuse_recorded_rollouts),
@@ -157,7 +185,7 @@ def run_one(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: a
                 "--val_split_ratio", str(args.val_split_ratio),
                 "--epochs", str(args.epochs),
                 "--update_every", str(args.update_every),
-                "--candidate_eval_batch_size", str(args.candidate_eval_batch_size),
+                "--candidate_eval_batch_size", str(_setting_value(setting, "candidate_eval_batch_size", args.candidate_eval_batch_size)),
             ]
         )
     start = time.time()
@@ -394,6 +422,8 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "oracle_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "oracle_first"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
     parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)

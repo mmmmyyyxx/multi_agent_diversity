@@ -13,6 +13,8 @@ def test_cli_defaults_match_config():
         "evaluator_max_tokens",
         "candidate_eval_batch_size",
         "reward_mode",
+        "candidate_selection_mode",
+        "best_state_selection_mode",
         "reward_schedule_mode",
         "reward_diversity_warmup_updates",
         "beam_size",

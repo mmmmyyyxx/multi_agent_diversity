@@ -222,6 +222,22 @@ else:
 
 默认 `--reward_schedule_mode phase_adaptive`。在共享 prompt 的早期，较重视 diversity/useful-diversity；随着 prompt 分化和有效更新积累，权重逐步回到目标 agent 正确率并收紧 accuracy guard。每个 candidate 的有效权重会写入 `update_logs.jsonl`，包括 `effective_weight_target_accuracy`、`effective_weight_coverage`、`effective_weight_useful_diversity` 与 `effective_accuracy_guard_epsilon`。
 
+### Candidate selection mode：scalar 或 Oracle Pareto
+
+`--candidate_selection_mode scalar_reward` 是默认且完全保留的旧行为：所有 candidate 按现有 scalar reward 排序，取 top-`beam_size`。
+
+`--candidate_selection_mode oracle_pareto` 不改 reward 的计算，只改候选保留方式。它先对同一 candidate-eval batch 的逐样本 oracle correctness 计算：
+
+```text
+coverage_gain: baseline 未覆盖、candidate team 覆盖
+coverage_loss: baseline 已覆盖、candidate team 不再覆盖
+net_coverage_delta = coverage_gain_rate - coverage_loss_rate
+```
+
+candidate 必须同时通过 target-agent accuracy guard 和 invalid-rate guard，才可进入 Pareto front。对可行 candidate 使用三个目标：最大化 `coverage_gain_rate`、最小化 `coverage_loss_rate`、最大化 `candidate_target_accuracy`。前沿按 non-dominated sorting 填充 beam；最后放不下的 front 用 crowding distance 裁剪。`useful_diversity` 只用于确定性 tie-break。
+
+Vote accuracy、vote delta、majority flip、embedding diversity、rescue rate、Student 自述效果和 scalar reward 均不参与 Pareto objective 或 active prompt 排序。scalar reward 仍完整记录，便于和 `scalar_reward` 做消融。
+
 ## 8. Beam search、validation 与最终 prompt
 
 每个 agent 维护独立 prompt beam：
@@ -236,6 +252,10 @@ else:
 
 - 新候选被生成，不代表它一定成为 active prompt；已有 beam 项可能在该评估批次上得分更高。
 - `prompt_history.json` 是训练过程的 beam 轨迹；`best_prompts.json` 是 validation 选择并为最终测试恢复的 prompt。最终 test 以 `best_prompts.json` 为准。
+
+在 `oracle_pareto` 模式中，retained beam 先由 Pareto front 决定；然后才从 retained set 按 `net_coverage_delta`、coverage loss、coverage gain、target accuracy、useful diversity、Pareto rank、candidate id 的固定词典序排列，因此 `beam[0]` 是确定性的 active prompt。当前 active prompt 始终在候选池中作为保底项。
+
+`--best_state_selection_mode oracle_first` 可让 validation 选择 best state 时按以下顺序决胜：最大 `oracle_acc`、最大 `mean_individual_acc`、最小 `mean_invalid_rate`、最大 `mean_useful_diversity`、更早 epoch。它不使用 vote accuracy、aggregation gap 或复合 scalar validation score；默认 `existing` 保持旧选择行为。
 
 ## 9. 聚合和主要指标
 
@@ -283,6 +303,8 @@ else:
 - `top1_candidate_source`：最终 top-1 来自 optimizer、已有 beam 还是 fallback。
 - `student_candidate_count_final`：Student 最终产生的可用候选数。
 - `teacher_question_forced_best_score`：三轮 Critic 未过阈值时是否采用最高分 Teacher question。
+- `coverage_gain_count/rate`、`coverage_loss_count/rate`、`net_coverage_delta`：candidate 对 oracle coverage 的逐样本变化。
+- `pareto_feasible`、`pareto_rank`、`pareto_crowding_distance`、`pareto_selected`：Oracle Pareto 的可行性、front、裁剪和最终保留结果；scalar 模式下这些字段为 `null`。
 
 成本字段包括 `solver_calls`、`optimizer_calls`、`evaluator_calls`、`total_llm_calls`、token、`estimated_cost` 和 `latency_seconds`。它们只用于报告，**不会**用于预算限制、早停、排序或归一化训练。
 
@@ -347,6 +369,18 @@ python scripts/run_task_level_accuracy.py `
   --optimizer_architecture teacher_critic_student `
   --optimizer_fallback_mode none `
   --candidate_reuse_recorded_rollouts 1
+```
+
+Oracle Pareto 的预设实验 setting 为 `shared_oracle_pareto_tcs`，它固定使用 shared init、`coverage_useful_diversity`、`oracle_pareto`、`oracle_first`、TCS、`fixed_pool=100` 与 candidate eval batch 24：
+
+```powershell
+python scripts/run_task_level_accuracy.py `
+  --manifest configs/task_level_comparison.yaml `
+  --tasks disambiguation_qa `
+  --settings shared_oracle_pareto_tcs `
+  --seeds 42 `
+  --dataset_format mars `
+  --out_root runs_task_level_bbh_tcs_oracle_pareto
 ```
 
 当前 `Config()` 的主要默认值为：`agents=5`、`epochs=2`、`train_size=200`、`val_size=100`、`test_size=200`、`update_every=10`、`beam_size=3`、`num_candidates_per_parent=2`、`candidate_eval_batch_size=20`、`candidate_eval_strategy=random`、`reward_mode=guarded_diversity`、`optimizer_architecture=teacher_critic_student`。
