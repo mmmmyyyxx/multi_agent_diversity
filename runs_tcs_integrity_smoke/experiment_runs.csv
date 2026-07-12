@@ -1,0 +1,2 @@
+answer_format,baseline_only,benchmark,dataset_format,elapsed_sec,init_mode,returncode,reward_mode,run_dir,seed,setting,status,task_id,task_type
+option_letter,0,BBH,mars,112.95,shared,0,coverage_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_tcs_integrity_smoke\disambiguation_qa\shared_oracle_pareto_tcs_seed42,42,shared_oracle_pareto_tcs,ok,disambiguation_qa,bbh

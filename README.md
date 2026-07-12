@@ -179,6 +179,20 @@ else:
 
 Use `--best_state_selection_mode oracle_first` with Pareto experiments to select validation states by: oracle accuracy, mean individual accuracy, lower invalid rate, useful diversity, then earlier epoch. `best_prompts.json` records the selection mode, key, and selected validation metrics. The TCS Teacher-Critic-Student flow receives no additional review or rollout in this mode.
 
+## TCS provenance and audit
+
+Every optimizer-produced `teacher_critic_student` candidate must carry non-empty Teacher/Critic/Student provenance: `teacher_question`, at least one `teacher_critic_rounds`, and positive raw/final Student candidate counts. `teacher_question_forced_best_score=true` is valid when the Critic rejects all rounds but the best scored Teacher question is passed to Student; in that case `teacher_question_approved=false` remains the truthful Critic result. `existing_beam` candidates are intentionally excluded from this requirement. Invalid TCS provenance fails before candidate evaluation.
+
+`llm_calls.jsonl` records standard `llm_call_stage` values: `teacher`, `critic`, `teacher_rewrite`, `student`, `student_json_retry`, `student_json_repair`, `one_shot_optimizer`, and `solver`, together with model role and available agent/parent/round context. Audit an existing run without modifying it:
+
+```bash
+python scripts/audit_tcs_run.py path/to/run_dir
+```
+
+The audit checks TCS metadata, stage evidence, and canonical deltas: target accuracy, trace diversity, invalid rate, vote accuracy, and oracle coverage are all candidate minus baseline. `net_coverage_delta` must equal `coverage_delta` within floating-point tolerance.
+
+The matched selection settings are `shared_scalar_tcs_oracle_first` and `shared_oracle_pareto_tcs`. Both use TCS, fixed-pool evaluation, `coverage_useful_diversity`, and `oracle_first`; only `candidate_selection_mode` differs.
+
 `update_logs.jsonl` 会记录 guard 相关字段：
 
 - `baseline_team_accuracy`

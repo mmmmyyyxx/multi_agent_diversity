@@ -75,13 +75,13 @@ def _valid_student_candidate():
     }
 
 
-def test_teacher_question_rejected_uses_best_scored_teacher_question():
+def test_teacher_question_forced_best_uses_best_scored_teacher_question():
     system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3))
     called = {"student": 0}
 
     async def fake_approved(**kwargs):
         return {
-            "approved": True,
+            "approved": False,
             "teacher_question": {"socratic_guiding_question": "Best available below-threshold question"},
             "critic_reviews": [
                 {"score": 0.2, "passed": False, "quality_critique": "generic"},
@@ -117,7 +117,7 @@ def test_teacher_question_rejected_uses_best_scored_teacher_question():
     assert len(candidates) == 1
     assert called["student"] == 1
     assert diagnostics["teacher_question_rejected"] is False
-    assert diagnostics["teacher_question_approved"] is True
+    assert diagnostics["teacher_question_approved"] is False
     assert diagnostics["teacher_question_forced_best_score"] is True
     assert diagnostics["teacher_question_forced_best_round"] == 2
     assert diagnostics["teacher_question_forced_below_threshold"] is True
@@ -176,7 +176,7 @@ def test_teacher_question_three_rounds_fallback_to_best_score():
 
     approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {"diagnostic_focus": {}}, 2))
 
-    assert approved["approved"] is True
+    assert approved["approved"] is False
     assert approved["teacher_question"]["socratic_guiding_question"] == "q2"
     assert approved["teacher_question_forced_best_score"] is True
     assert approved["teacher_question_forced_best_round"] == 2

@@ -1,0 +1,87 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.04263652950525284,
+      "mean_embedding_overlap": 0.9573634704947471,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.4,
+      "oracle_acc": 0.55,
+      "aggregation_gap": 0.15000000000000002,
+      "mean_useful_diversity": 0.018779542843500772,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 12,
+      "num_test_samples": 12,
+      "vote_acc": 0.4166666666666667,
+      "majority_vote_acc": 0.4166666666666667,
+      "weighted_vote_acc": 0.4166666666666667,
+      "mean_individual_acc": 0.38333333333333336,
+      "best_individual_acc": 0.5,
+      "per_agent_acc": [
+        0.5,
+        0.3333333333333333,
+        0.4166666666666667,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "oracle_acc": 0.5,
+      "aggregation_gap": 0.08333333333333331,
+      "rescue_available_rate": 0.08333333333333333,
+      "correct_disagreement_rate": 0.3333333333333333,
+      "mean_useful_diversity": 0.021368789672851562,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.05135116974512736,
+      "mean_embedding_overlap": 0.9486488302548727,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 1
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 1,
+    "best_validation_score": 0.32094042460123695,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "no_effective_evolution_counter": 0,
+    "no_effective_evolution_stopped": false,
+    "no_effective_evolution_reason": "",
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 20,
+      "num_test_samples": 20,
+      "vote_acc": 0.5,
+      "majority_vote_acc": 0.5,
+      "weighted_vote_acc": 0.5,
+      "mean_individual_acc": 0.51,
+      "best_individual_acc": 0.6,
+      "per_agent_acc": [
+        0.6,
+        0.55,
+        0.45,
+        0.45,
+        0.5
+      ],
+      "oracle_acc": 0.65,
+      "aggregation_gap": 0.15000000000000002,
+      "rescue_available_rate": 0.15,
+      "correct_disagreement_rate": 0.3,
+      "mean_useful_diversity": 0.032089779873689016,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.05979120016098023,
+      "mean_embedding_overlap": 0.9402087998390198,
+      "mean_invalid_rate": 0.0
+    }
+  }
+]

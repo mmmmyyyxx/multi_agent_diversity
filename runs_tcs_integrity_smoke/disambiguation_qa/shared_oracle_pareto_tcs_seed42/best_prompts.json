@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.32094042460123695,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.5,
+    0.38333333333333336,
+    0.0,
+    0.021368789672851562,
+    1
+  ],
+  "selected_oracle_acc": 0.5,
+  "selected_mean_individual_acc": 0.38333333333333336,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.021368789672851562,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "2796b42f5882",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; identify candidate interpretations; derive constraints from the question; evaluate each candidate against constraints; select the most consistent interpretation; make your decision visible; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "91971d98dc10",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; derive explicit constraints from the question; compare candidate interpretations against these constraints; verify consistency before giving exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "cf21860f0d72",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; list all constraints from the question; verify each constraint against your reasoning; make your decision procedure visible; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "f569c10f72c0",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; derive explicit constraints from the question; compare candidate answers against these constraints; verify consistency before giving exactly one final answer."
+    }
+  ]
+}

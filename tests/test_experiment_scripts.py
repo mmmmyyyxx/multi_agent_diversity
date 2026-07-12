@@ -17,6 +17,7 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "bank_baseline",
         "shared_guarded_beam",
         "bank_guarded_beam",
+        "shared_scalar_tcs_oracle_first",
         "shared_oracle_pareto_tcs",
     ]
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["shared_guarded_beam"] == "guarded_diversity"

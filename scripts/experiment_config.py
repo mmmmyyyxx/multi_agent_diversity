@@ -26,24 +26,34 @@ class DatasetPaths:
     test: str
 
 
+SHARED_ORACLE_SEARCH_BASE = {
+    "init_mode": "shared",
+    "baseline_only": False,
+    "reward_mode": "coverage_useful_diversity",
+    "best_state_selection_mode": "oracle_first",
+    "optimizer_architecture": "teacher_critic_student",
+    "optimizer_fallback_mode": "none",
+    "teacher_critic_use_voting_failure": False,
+    "candidate_eval_strategy": "fixed_pool",
+    "candidate_eval_pool_size": 100,
+    "candidate_eval_batch_size": 24,
+}
+
+
 DEFAULT_EXPERIMENT_SETTINGS = [
     ExperimentSetting("shared_baseline", "shared", True, "guarded_diversity"),
     ExperimentSetting("bank_baseline", "bank", True, "guarded_diversity"),
     ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity"),
     ExperimentSetting("bank_guarded_beam", "bank", False, "guarded_diversity"),
     ExperimentSetting(
-        "shared_oracle_pareto_tcs",
-        "shared",
-        False,
-        "coverage_useful_diversity",
+        name="shared_scalar_tcs_oracle_first",
+        candidate_selection_mode="scalar_reward",
+        **SHARED_ORACLE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_oracle_pareto_tcs",
         candidate_selection_mode="oracle_pareto",
-        best_state_selection_mode="oracle_first",
-        optimizer_architecture="teacher_critic_student",
-        optimizer_fallback_mode="none",
-        teacher_critic_use_voting_failure=False,
-        candidate_eval_strategy="fixed_pool",
-        candidate_eval_pool_size=100,
-        candidate_eval_batch_size=24,
+        **SHARED_ORACLE_SEARCH_BASE,
     ),
 ]
 

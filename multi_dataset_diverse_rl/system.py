@@ -5,9 +5,10 @@ import os
 import random
 import re
 import time
+from contextvars import ContextVar
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 from openai import AsyncOpenAI
@@ -29,6 +30,60 @@ from .utils import (
 
 
 PARETO_EPSILON = 1e-12
+TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
+
+
+def compute_candidate_metric_deltas(
+    *,
+    baseline_target_accuracy: float,
+    candidate_target_accuracy: float,
+    baseline_team_accuracy: float,
+    candidate_team_accuracy: float,
+    baseline_oracle_accuracy: float,
+    candidate_oracle_accuracy: float,
+    baseline_embedding_diversity: float,
+    candidate_embedding_diversity: float,
+    baseline_invalid_rate: float,
+    candidate_invalid_rate: float,
+) -> Dict[str, float]:
+    """Build the one canonical set of baseline-relative candidate deltas."""
+    return {
+        "accuracy_delta": float(candidate_target_accuracy) - float(baseline_target_accuracy),
+        "vote_delta": float(candidate_team_accuracy) - float(baseline_team_accuracy),
+        "coverage_delta": float(candidate_oracle_accuracy) - float(baseline_oracle_accuracy),
+        "diversity_delta": float(candidate_embedding_diversity) - float(baseline_embedding_diversity),
+        "invalid_delta": float(candidate_invalid_rate) - float(baseline_invalid_rate),
+    }
+
+
+def tcs_metadata_applicable(candidate_metadata: Mapping[str, Any]) -> bool:
+    return (
+        str(candidate_metadata.get("optimizer_architecture", "") or "").lower() == "teacher_critic_student"
+        and str(candidate_metadata.get("candidate_pool_source", "") or "") == "optimizer"
+        and str(candidate_metadata.get("candidate_source", "") or "") == "teacher_critic_student"
+    )
+
+
+def validate_tcs_candidate_metadata(candidate_metadata: Mapping[str, Any]) -> List[str]:
+    """Return provenance errors for a real TCS optimizer candidate, if applicable."""
+    if not tcs_metadata_applicable(candidate_metadata):
+        return []
+    errors: List[str] = []
+    if not str(candidate_metadata.get("teacher_question", "") or "").strip():
+        errors.append("missing_teacher_question")
+    if int(candidate_metadata.get("teacher_critic_rounds", 0) or 0) < 1:
+        errors.append("zero_teacher_critic_rounds")
+    if "teacher_question_forced_best_score" not in candidate_metadata:
+        errors.append("missing_forced_best_flag")
+    raw_count = int(candidate_metadata.get("student_candidate_count_raw", 0) or 0)
+    final_count = int(candidate_metadata.get("student_candidate_count_final", 0) or 0)
+    if raw_count < 1:
+        errors.append("missing_student_raw_count")
+    if final_count < 1:
+        errors.append("missing_student_final_count")
+    if final_count > raw_count:
+        errors.append("inconsistent_student_counts")
+    return errors
 
 
 def compute_oracle_coverage_transitions(
@@ -381,15 +436,29 @@ class TraceBeamSearchSystem:
         latency_seconds: float,
         success: bool,
         error_type: str = "",
+        audit_context: Optional[Mapping[str, Any]] = None,
     ):
         role = self._client_role_from_stage(stage, client_role)
         prompt_tokens = int(max(0, prompt_tokens))
         completion_tokens = int(max(0, completion_tokens))
         total_tokens = prompt_tokens + completion_tokens
         latency_seconds = float(max(0.0, latency_seconds))
+        context = dict(TCS_AUDIT_CONTEXT.get() or {})
+        context.update(dict(audit_context or {}))
+        stage_name = str(context.get("llm_call_stage", "") or self._normalize_llm_call_stage(stage))
+        model_role = str(context.get("model_role", "") or self._model_role_for_client_role(role))
         row = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "stage": str(stage or ""),
+            "llm_call_stage": stage_name,
+            "optimizer_architecture": str(context.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", "")) or ""),
+            "epoch": context.get("epoch"),
+            "step": context.get("step"),
+            "agent_id": context.get("agent_id"),
+            "parent_id": context.get("parent_id"),
+            "teacher_critic_round": context.get("teacher_critic_round"),
+            "model_role": model_role,
+            "model_name": str(model or ""),
             "client_role": role,
             "model": str(model or ""),
             "temperature": float(temperature),
@@ -398,6 +467,8 @@ class TraceBeamSearchSystem:
             "total_tokens": total_tokens,
             "latency_seconds": latency_seconds,
             "success": bool(success),
+            "call_succeeded": bool(success),
+            "response_empty": bool(context.get("response_empty", False)),
             "error_type": str(error_type or ""),
         }
         self.llm_call_logs.append(row)
@@ -414,6 +485,29 @@ class TraceBeamSearchSystem:
         if len(self.llm_call_logs) >= 20:
             self.flush_llm_call_logs()
             self.write_cost_summary()
+
+    @staticmethod
+    def _model_role_for_client_role(client_role: str) -> str:
+        return {"optimizer": "optimizer", "evaluator": "evaluator", "solver": "agent"}.get(str(client_role), "evaluator")
+
+    @staticmethod
+    def _normalize_llm_call_stage(stage: str) -> str:
+        lowered = str(stage or "").lower()
+        if "teacher_rewrite" in lowered:
+            return "teacher_rewrite"
+        if "teacher_critic" in lowered:
+            return "critic"
+        if lowered.startswith("teacher_"):
+            return "teacher"
+        if "student_json_retry" in lowered:
+            return "student_json_retry"
+        if "student_json_repair" in lowered:
+            return "student_json_repair"
+        if "student_" in lowered:
+            return "student"
+        if "solver" in lowered:
+            return "solver"
+        return "one_shot_optimizer" if "optimizer" in lowered else lowered
 
     def _default_prompt_bank(self) -> List[str]:
         if str(self.cfg.task_type).lower() == "mmlu":
@@ -720,6 +814,8 @@ class TraceBeamSearchSystem:
             "candidate_eval_batch_size": self.cfg.candidate_eval_batch_size,
             "candidate_eval_strategy": self.cfg.candidate_eval_strategy,
             "candidate_eval_repeats": self.cfg.candidate_eval_repeats,
+            "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
+            "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "existing"),
             "optimizer_architecture": getattr(self.cfg, "optimizer_architecture", ""),
             "optimizer_fallback_mode": getattr(self.cfg, "optimizer_fallback_mode", ""),
             "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
@@ -903,6 +999,12 @@ class TraceBeamSearchSystem:
             "student_candidates_empty_list": False,
             "student_refusal_or_explanation": False,
             "student_failure_stage": "",
+            "num_teacher_calls": 0,
+            "num_critic_calls": 0,
+            "num_teacher_rewrite_calls": 0,
+            "num_student_calls": 0,
+            "num_student_retry_calls": 0,
+            "num_student_repair_calls": 0,
         }
 
     def _record_optimizer_generation_diagnostics(
@@ -1041,6 +1143,13 @@ class TraceBeamSearchSystem:
             "student_failure_stage",
         ]
         return {key: diagnostics.get(key, self._empty_optimizer_generation_diagnostics().get(key)) for key in keys}
+
+    @staticmethod
+    def _merge_student_diagnostics(diagnostics: Dict[str, Any], student_diagnostics: Mapping[str, Any]) -> None:
+        """Student defaults must not erase Teacher/Critic provenance from the same parent."""
+        for key, value in student_diagnostics.items():
+            if str(key).startswith("student_"):
+                diagnostics[key] = value
 
     def _student_failure_log_fields(self, diagnostics: Dict[str, Any]) -> Dict[str, Any]:
         diagnostics = diagnostics or {}
@@ -1278,6 +1387,7 @@ class TraceBeamSearchSystem:
         max_tokens: int,
         stage: str,
         client_role: str = "evaluator",
+        audit_context: Optional[Mapping[str, Any]] = None,
     ) -> str:
         client = self.solver_client if client_role == "solver" else self.evaluator_client
         last_err: Optional[Exception] = None
@@ -1311,6 +1421,7 @@ class TraceBeamSearchSystem:
                     completion_tokens=self._usage_value(usage, "completion_tokens", self._estimate_tokens(text)),
                     latency_seconds=time.time() - start_time,
                     success=True,
+                    audit_context={**dict(audit_context or {}), "response_empty": not bool(str(text or "").strip())},
                 )
                 return text
             except Exception as e:
@@ -1346,6 +1457,7 @@ class TraceBeamSearchSystem:
                             latency_seconds=time.time() - start_time,
                             success=False,
                             error_type=type(e).__name__,
+                            audit_context=audit_context,
                         )
                         break
                 else:
@@ -1361,6 +1473,7 @@ class TraceBeamSearchSystem:
                             latency_seconds=time.time() - start_time,
                             success=False,
                             error_type=type(e).__name__,
+                            audit_context=audit_context,
                         )
                         break
                 sleep_sec = min(float(self.cfg.max_retry_backoff), float(self.cfg.retry_sleep) * (2 ** attempt))
@@ -3042,6 +3155,7 @@ class TraceBeamSearchSystem:
             temperature=float(getattr(self.cfg, "teacher_temperature", self.cfg.optimizer_temperature)),
             max_tokens=int(getattr(self.cfg, "teacher_max_tokens", self.cfg.optimizer_max_tokens)),
             stage=f"teacher_agent_{agent_id}",
+            client_role="optimizer",
         )
         obj = extract_json_obj(text) or {}
         return obj if isinstance(obj, dict) else {}
@@ -3081,6 +3195,7 @@ class TraceBeamSearchSystem:
             temperature=float(getattr(self.cfg, "critic_temperature", self.cfg.evaluator_temperature)),
             max_tokens=int(getattr(self.cfg, "critic_max_tokens", self.cfg.evaluator_max_tokens)),
             stage=f"teacher_critic_agent_{agent_id}",
+            client_role="evaluator",
         )
         obj = extract_json_obj(text) or {}
         return obj if isinstance(obj, dict) else {}
@@ -3113,6 +3228,7 @@ class TraceBeamSearchSystem:
             temperature=float(getattr(self.cfg, "teacher_temperature", self.cfg.optimizer_temperature)),
             max_tokens=int(getattr(self.cfg, "teacher_max_tokens", self.cfg.optimizer_max_tokens)),
             stage=f"teacher_rewrite_agent_{agent_id}",
+            client_role="optimizer",
         )
         obj = extract_json_obj(text) or {}
         return obj if isinstance(obj, dict) else {}
@@ -3131,7 +3247,13 @@ class TraceBeamSearchSystem:
         question_versions: List[Dict[str, Any]] = []
         rewrite_count = 0
         for round_id in range(max_rounds):
-            review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
+            round_context = dict(TCS_AUDIT_CONTEXT.get() or {})
+            round_context["teacher_critic_round"] = round_id + 1
+            round_token = TCS_AUDIT_CONTEXT.set(round_context)
+            try:
+                review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
+            finally:
+                TCS_AUDIT_CONTEXT.reset(round_token)
             reviews.append(review)
             question_versions.append(teacher_question)
             score = self._safe_float(review.get("score", 0.0), 0.0)
@@ -3147,7 +3269,13 @@ class TraceBeamSearchSystem:
                     "teacher_question_forced_below_threshold": False,
                 }
             if round_id < max_rounds - 1:
-                teacher_question = await self.rewrite_teacher_question(agent_id, teacher_question, review, teacher_context)
+                rewrite_context = dict(TCS_AUDIT_CONTEXT.get() or {})
+                rewrite_context["teacher_critic_round"] = round_id + 1
+                rewrite_token = TCS_AUDIT_CONTEXT.set(rewrite_context)
+                try:
+                    teacher_question = await self.rewrite_teacher_question(agent_id, teacher_question, review, teacher_context)
+                finally:
+                    TCS_AUDIT_CONTEXT.reset(rewrite_token)
                 rewrite_count += 1
         best_idx = 0
         best_score = -1.0
@@ -3159,7 +3287,9 @@ class TraceBeamSearchSystem:
         best_review = reviews[best_idx] if reviews else {}
         best_question = question_versions[best_idx] if question_versions else teacher_question
         return {
-            "approved": True,
+            # The question did not pass Critic; it is nevertheless the legal
+            # best-score fallback that may be handed to Student.
+            "approved": False,
             "teacher_question": best_question,
             "critic_reviews": reviews,
             "teacher_critic_rounds": len(reviews),
@@ -3524,17 +3654,33 @@ class TraceBeamSearchSystem:
             validity_constraints=validity_constraints,
             generation_batches=generation_batches,
         )
-        approved = await self.generate_approved_teacher_question(
-            agent_id=agent_id,
-            parent_prompt=parent_prompt,
-            teacher_context=teacher_context,
-            requested_candidates=num_candidates,
+        # Preserve the beam parent's stable ID for call-level provenance.
+        parent_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("parent_id") or self._hash(parent_prompt))
+        call_context = dict(TCS_AUDIT_CONTEXT.get() or {})
+        call_context.update(
+            {
+                "optimizer_architecture": "teacher_critic_student",
+                "agent_id": int(agent_id),
+                "parent_id": parent_id,
+                "teacher_critic_round": 1,
+            }
         )
+        context_token = TCS_AUDIT_CONTEXT.set(call_context)
+        try:
+            approved = await self.generate_approved_teacher_question(
+                agent_id=agent_id,
+                parent_prompt=parent_prompt,
+                teacher_context=teacher_context,
+                requested_candidates=num_candidates,
+            )
+        finally:
+            TCS_AUDIT_CONTEXT.reset(context_token)
         diagnostics = self._empty_optimizer_generation_diagnostics()
         diagnostics["optimizer_architecture"] = "teacher_critic_student"
         teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
         critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
         forced_best = bool(approved.get("teacher_question_forced_best_score", False)) if isinstance(approved, dict) else False
+        approved_for_student = bool(approved.get("approved", False)) or forced_best
         forced_best_review = approved.get("teacher_question_forced_best_review", {}) if isinstance(approved, dict) else {}
         last_review = (
             forced_best_review
@@ -3546,7 +3692,7 @@ class TraceBeamSearchSystem:
             {
                 "teacher_question": guiding_question,
                 "teacher_question_approved": bool(approved.get("approved", False)),
-                "teacher_question_rejected": not bool(approved.get("approved", False)),
+                "teacher_question_rejected": not approved_for_student,
                 "teacher_question_forced_best_score": forced_best,
                 "teacher_question_forced_best_round": int(approved.get("teacher_question_forced_best_round", 0) or 0),
                 "teacher_question_forced_below_threshold": bool(approved.get("teacher_question_forced_below_threshold", False)),
@@ -3558,9 +3704,12 @@ class TraceBeamSearchSystem:
                 "teacher_error_alignment_critique": str(last_review.get("error_alignment_critique", "")),
                 "teacher_diversity_critique": str(last_review.get("diversity_critique", "")),
                 "teacher_rewrite_count": int(approved.get("teacher_rewrite_count", 0) or 0),
+                "num_teacher_calls": 1,
+                "num_critic_calls": int(approved.get("teacher_critic_rounds", len(critic_reviews)) or 0),
+                "num_teacher_rewrite_calls": int(approved.get("teacher_rewrite_count", 0) or 0),
             }
         )
-        if not bool(approved.get("approved", False)):
+        if not approved_for_student:
             diagnostics["teacher_question_rejection_reason"] = str(
                 last_review.get("rewrite_instruction", "")
                 or last_review.get("quality_critique", "")
@@ -3570,21 +3719,37 @@ class TraceBeamSearchSystem:
             self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
             return []
 
-        student_result = await self.generate_student_candidates(
-            agent_id=agent_id,
-            parent_prompt=parent_prompt,
-            approved_teacher_question=approved,
-            teacher_context=teacher_context,
-            num_candidates=num_candidates,
+        student_context = dict(TCS_AUDIT_CONTEXT.get() or {})
+        student_context.update(
+            {
+                "optimizer_architecture": "teacher_critic_student",
+                "agent_id": int(agent_id),
+                "parent_id": parent_id,
+                "teacher_critic_round": int(diagnostics["teacher_critic_rounds"]),
+            }
         )
+        student_context_token = TCS_AUDIT_CONTEXT.set(student_context)
+        try:
+            student_result = await self.generate_student_candidates(
+                agent_id=agent_id,
+                parent_prompt=parent_prompt,
+                approved_teacher_question=approved,
+                teacher_context=teacher_context,
+                num_candidates=num_candidates,
+            )
+        finally:
+            TCS_AUDIT_CONTEXT.reset(student_context_token)
         if isinstance(student_result, dict):
             student_candidates = student_result.get("candidates", [])
             student_diag = student_result.get("diagnostics", {})
             if isinstance(student_diag, dict):
-                diagnostics.update(student_diag)
+                self._merge_student_diagnostics(diagnostics, student_diag)
         else:
             student_candidates = student_result
         diagnostics["student_candidate_count_raw"] = len(student_candidates) if isinstance(student_candidates, list) else 0
+        diagnostics["num_student_calls"] = 1
+        diagnostics["num_student_retry_calls"] = int(bool(diagnostics.get("student_json_retry_attempted", False)))
+        diagnostics["num_student_repair_calls"] = int(bool(diagnostics.get("student_json_repair_attempted", False)))
         diagnostics["optimizer_raw_candidate_count"] = int(diagnostics["student_candidate_count_raw"])
         parsed: List[Dict[str, Any]] = []
         seen_signatures: set = set()
@@ -3638,7 +3803,7 @@ class TraceBeamSearchSystem:
                         "candidate_source": "teacher_critic_student",
                         "teacher_question": teacher_question,
                         "teacher_question_score": self._safe_float(diagnostics.get("teacher_question_score", 0.0), 0.0),
-                        "teacher_question_approved": True,
+                        "teacher_question_approved": bool(diagnostics.get("teacher_question_approved", False)),
                         "teacher_critic_rounds": int(diagnostics["teacher_critic_rounds"]),
                         "critic_reviews": critic_reviews,
                         "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
@@ -4120,10 +4285,22 @@ class TraceBeamSearchSystem:
         baseline_invalid_rate = self._clip01(baseline_invalid_rate)
         candidate_invalid_rate = self._clip01(candidate_invalid_rate)
 
-        acc_delta = candidate_target_accuracy - baseline_target_accuracy
-        vote_delta = candidate_team_accuracy - baseline_team_accuracy
-        div_delta = candidate_embedding_diversity - baseline_embedding_diversity
-        invalid_delta = candidate_invalid_rate - baseline_invalid_rate
+        deltas = compute_candidate_metric_deltas(
+            baseline_target_accuracy=baseline_target_accuracy,
+            candidate_target_accuracy=candidate_target_accuracy,
+            baseline_team_accuracy=baseline_team_accuracy,
+            candidate_team_accuracy=candidate_team_accuracy,
+            baseline_oracle_accuracy=0.0,
+            candidate_oracle_accuracy=0.0,
+            baseline_embedding_diversity=baseline_embedding_diversity,
+            candidate_embedding_diversity=candidate_embedding_diversity,
+            baseline_invalid_rate=baseline_invalid_rate,
+            candidate_invalid_rate=candidate_invalid_rate,
+        )
+        acc_delta = deltas["accuracy_delta"]
+        vote_delta = deltas["vote_delta"]
+        div_delta = deltas["diversity_delta"]
+        invalid_delta = deltas["invalid_delta"]
         weights = self._effective_reward_weights()
         guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(weights["accuracy_guard_epsilon"])
         if not guard_passed:
@@ -4136,16 +4313,23 @@ class TraceBeamSearchSystem:
             )
         result = {
             "reward": float(reward),
-            "accuracy_delta": float(acc_delta),
-            "vote_delta": float(vote_delta),
-            "diversity_delta": float(div_delta),
-            "invalid_delta": float(invalid_delta),
+            **deltas,
             "accuracy_guard_passed": bool(guard_passed),
             "baseline_target_accuracy": float(baseline_target_accuracy),
             "candidate_target_accuracy": float(candidate_target_accuracy),
             "target_agent_accuracy": float(candidate_target_accuracy),
         }
         result.update(self._effective_reward_log_fields(weights))
+        result.update(
+            {
+                "baseline_team_accuracy": float(baseline_team_accuracy),
+                "candidate_team_accuracy": float(candidate_team_accuracy),
+                "baseline_invalid_rate": float(baseline_invalid_rate),
+                "candidate_invalid_rate": float(candidate_invalid_rate),
+                "baseline_embedding_diversity": float(baseline_embedding_diversity),
+                "candidate_embedding_diversity": float(candidate_embedding_diversity),
+            }
+        )
         return result
 
     def _candidate_reward_coverage_useful_diversity(
@@ -4160,6 +4344,10 @@ class TraceBeamSearchSystem:
         rescue_rate: float,
         coverage_delta: float,
         useful_diversity: float,
+        baseline_oracle_accuracy: Optional[float] = None,
+        candidate_oracle_accuracy: Optional[float] = None,
+        baseline_embedding_diversity: float = 0.0,
+        candidate_embedding_diversity: float = 0.0,
     ) -> Dict[str, Any]:
         baseline_team_accuracy = self._clip01(baseline_team_accuracy)
         candidate_team_accuracy = self._clip01(candidate_team_accuracy)
@@ -4170,8 +4358,20 @@ class TraceBeamSearchSystem:
         rescue_rate = self._clip01(rescue_rate)
         useful_diversity = self._clip01(useful_diversity)
 
-        vote_delta = candidate_team_accuracy - baseline_team_accuracy
-        invalid_delta = candidate_invalid_rate - baseline_invalid_rate
+        deltas = compute_candidate_metric_deltas(
+            baseline_target_accuracy=baseline_target_accuracy,
+            candidate_target_accuracy=candidate_target_accuracy,
+            baseline_team_accuracy=baseline_team_accuracy,
+            candidate_team_accuracy=candidate_team_accuracy,
+            baseline_oracle_accuracy=float(baseline_oracle_accuracy or 0.0),
+            candidate_oracle_accuracy=float(candidate_oracle_accuracy or (float(baseline_oracle_accuracy or 0.0) + float(coverage_delta))),
+            baseline_embedding_diversity=baseline_embedding_diversity,
+            candidate_embedding_diversity=candidate_embedding_diversity,
+            baseline_invalid_rate=baseline_invalid_rate,
+            candidate_invalid_rate=candidate_invalid_rate,
+        )
+        vote_delta = deltas["vote_delta"]
+        invalid_delta = deltas["invalid_delta"]
         invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
         weights = self._effective_reward_weights()
 
@@ -4186,10 +4386,9 @@ class TraceBeamSearchSystem:
         result = {
             "reward": float(reward),
             "rescue_rate": float(rescue_rate),
-            "coverage_delta": float(coverage_delta),
+            "coverage_delta": float(deltas["coverage_delta"]),
             "useful_diversity": float(useful_diversity),
-            "vote_delta": float(vote_delta),
-            "invalid_delta": float(invalid_delta),
+            **deltas,
             "baseline_team_accuracy": float(baseline_team_accuracy),
             "candidate_team_accuracy": float(candidate_team_accuracy),
             "baseline_target_accuracy": float(baseline_target_accuracy),
@@ -4447,6 +4646,10 @@ class TraceBeamSearchSystem:
                     rescue_rate=rescue_rate,
                     coverage_delta=coverage_delta,
                     useful_diversity=useful_diversity,
+                    baseline_oracle_accuracy=baseline_oracle_acc,
+                    candidate_oracle_accuracy=candidate_oracle_acc,
+                    baseline_embedding_diversity=baseline_embedding_diversity,
+                    candidate_embedding_diversity=candidate_embedding_diversity,
                 )
             else:
                 baseline_candidate_metrics = self._candidate_reward_guarded(
@@ -4480,6 +4683,20 @@ class TraceBeamSearchSystem:
                     "baseline_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("baseline_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
+            )
+            baseline_candidate_metrics.update(
+                compute_candidate_metric_deltas(
+                    baseline_target_accuracy=baseline_target_accuracy,
+                    candidate_target_accuracy=candidate_target_accuracy,
+                    baseline_team_accuracy=baseline_team_accuracy,
+                    candidate_team_accuracy=candidate_team_accuracy,
+                    baseline_oracle_accuracy=baseline_oracle_acc,
+                    candidate_oracle_accuracy=candidate_oracle_acc,
+                    baseline_embedding_diversity=baseline_embedding_diversity,
+                    candidate_embedding_diversity=candidate_embedding_diversity,
+                    baseline_invalid_rate=baseline_invalid_rate,
+                    candidate_invalid_rate=candidate_invalid_rate,
+                )
             )
             reward = float(baseline_candidate_metrics.get("reward", 0.0))
         else:
@@ -4561,13 +4778,26 @@ class TraceBeamSearchSystem:
 
         async def propose_for_parent(job: Dict[str, Any]) -> Dict[str, Any]:
             async with parent_sem:
-                proposals = await self.propose_candidates(
-                    agent_id=agent_id,
-                    parent_prompt=str(job["parent_prompt"]),
-                    overlap_diagnosis=overlap_diagnosis,
-                    num_candidates=requested,
-                    generation_batches=job["parent_batches"],
+                context_token = TCS_AUDIT_CONTEXT.set(
+                    {
+                        "optimizer_architecture": str(getattr(self.cfg, "optimizer_architecture", "") or ""),
+                        "epoch": int(epoch_id),
+                        "step": int(step_id),
+                        "agent_id": int(agent_id),
+                        "parent_id": str(job["parent_id"]),
+                        "teacher_critic_round": 0,
+                    }
                 )
+                try:
+                    proposals = await self.propose_candidates(
+                        agent_id=agent_id,
+                        parent_prompt=str(job["parent_prompt"]),
+                        overlap_diagnosis=overlap_diagnosis,
+                        num_candidates=requested,
+                        generation_batches=job["parent_batches"],
+                    )
+                finally:
+                    TCS_AUDIT_CONTEXT.reset(context_token)
                 return {**job, "proposals": proposals}
 
         parent_results = await asyncio.gather(*[propose_for_parent(job) for job in parent_jobs])
@@ -4619,6 +4849,20 @@ class TraceBeamSearchSystem:
                         "proposal": proposal,
                     }
                 )
+                candidate_metadata = {
+                    "optimizer_architecture": str(proposal.get("optimizer_architecture", getattr(self.cfg, "optimizer_architecture", ""))),
+                    "candidate_source": str(proposal.get("candidate_source", "")),
+                    "candidate_pool_source": "optimizer",
+                    **dict(proposal.get("optimizer_generation_diagnostics", {}) or {}),
+                }
+                metadata_errors = validate_tcs_candidate_metadata(candidate_metadata)
+                if metadata_errors:
+                    candidate_id = str(candidate_pool[-1].get("candidate_id", ""))
+                    raise RuntimeError(
+                        "Invalid Teacher-Critic-Student candidate metadata: "
+                        f"agent_id={agent_id} epoch={epoch_id} step={step_id} parent_id={parent_id} "
+                        f"candidate_id={candidate_id} errors={','.join(metadata_errors)}"
+                    )
         for parent in beam:
             prompt = str(parent.get("prompt", agent.current_prompt))
             key = normalize_spaces(prompt).lower()
@@ -4696,6 +4940,18 @@ class TraceBeamSearchSystem:
         num_optimizer_candidates = sum(1 for c in candidate_pool if self._is_optimizer_generated_candidate_source(c.get("candidate_source", "")))
         num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in str(c.get("candidate_source", "")))
         num_existing_beam_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "existing_beam")
+        num_tcs_optimizer_candidates = sum(
+            1
+            for c in candidate_pool
+            if str(c.get("candidate_source", "")) == "teacher_critic_student" and str(c.get("source", "")) == "optimizer"
+        )
+        num_tcs_metadata_invalid_candidates = 0
+        num_tcs_metadata_valid_candidates = num_tcs_optimizer_candidates
+        tcs_execution_complete = (
+            bool(num_tcs_optimizer_candidates)
+            and num_tcs_optimizer_candidates == num_tcs_metadata_valid_candidates
+            and num_tcs_metadata_invalid_candidates == 0
+        )
         fallback_enabled = str(getattr(self.cfg, "optimizer_fallback_mode", "none") or "none").lower() == "template"
         optimizer_underfilled = num_optimizer_candidates < requested_optimizer_candidates
         optimizer_generation_summary = self._empty_optimizer_generation_diagnostics()
@@ -4717,6 +4973,12 @@ class TraceBeamSearchSystem:
                 "student_candidate_count_final",
                 "student_candidate_filtered_count",
                 "student_missing_required_field_count",
+                "num_teacher_calls",
+                "num_critic_calls",
+                "num_teacher_rewrite_calls",
+                "num_student_calls",
+                "num_student_retry_calls",
+                "num_student_repair_calls",
             ]:
                 optimizer_generation_summary[key] += int(record.get(key, 0) or 0)
             for key in [
@@ -4856,6 +5118,14 @@ class TraceBeamSearchSystem:
             if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
                 item_diagnostics.update(item.get("optimizer_generation_diagnostics", {}))
             item_diagnostics["optimizer_underfilled"] = bool(optimizer_underfilled)
+            tcs_candidate_metadata = {
+                "optimizer_architecture": item_diagnostics.get("optimizer_architecture", ""),
+                "candidate_source": item.get("candidate_source", item.get("source", "")),
+                "candidate_pool_source": item.get("source", ""),
+                **item_diagnostics,
+            }
+            is_tcs_metadata_applicable = tcs_metadata_applicable(tcs_candidate_metadata)
+            tcs_metadata_errors = validate_tcs_candidate_metadata(tcs_candidate_metadata)
             self.update_logs.append(
                 {
                     **self._base_log_fields(),
@@ -4976,6 +5246,9 @@ class TraceBeamSearchSystem:
                     "student_missing_required_field_count": int(item_diagnostics.get("student_missing_required_field_count", 0) or 0),
                     "student_missing_required_fields": item_diagnostics.get("student_missing_required_fields", []),
                     **self._student_failure_log_fields(item_diagnostics),
+                    "tcs_metadata_applicable": is_tcs_metadata_applicable,
+                    "tcs_metadata_valid": (not tcs_metadata_errors) if is_tcs_metadata_applicable else None,
+                    "tcs_metadata_errors": tcs_metadata_errors,
                     "diversity_contribution": str(item.get("diversity_contribution", "")),
                     "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
                     "task_alignment_rule": str(item.get("task_alignment_rule", "")),
@@ -5015,6 +5288,10 @@ class TraceBeamSearchSystem:
             "num_optimizer_candidates": int(num_optimizer_candidates),
             "num_fallback_candidates": int(num_fallback_candidates),
             "num_existing_beam_candidates": int(num_existing_beam_candidates),
+            "num_tcs_optimizer_candidates": int(num_tcs_optimizer_candidates),
+            "num_tcs_metadata_valid_candidates": int(num_tcs_metadata_valid_candidates),
+            "num_tcs_metadata_invalid_candidates": int(num_tcs_metadata_invalid_candidates),
+            "tcs_execution_complete": tcs_execution_complete,
             "top1_candidate_source": top1_candidate_source,
             "top1_candidate_pool_source": top1_candidate_pool_source,
             "active_prompt_changed": bool(changed),
@@ -5049,6 +5326,16 @@ class TraceBeamSearchSystem:
                 "num_optimizer_candidates": int(num_optimizer_candidates),
                 "num_fallback_candidates": int(num_fallback_candidates),
                 "num_existing_beam_candidates": int(num_existing_beam_candidates),
+                "num_teacher_calls": int(optimizer_generation_summary.get("num_teacher_calls", 0) or 0),
+                "num_critic_calls": int(optimizer_generation_summary.get("num_critic_calls", 0) or 0),
+                "num_teacher_rewrite_calls": int(optimizer_generation_summary.get("num_teacher_rewrite_calls", 0) or 0),
+                "num_student_calls": int(optimizer_generation_summary.get("num_student_calls", 0) or 0),
+                "num_student_retry_calls": int(optimizer_generation_summary.get("num_student_retry_calls", 0) or 0),
+                "num_student_repair_calls": int(optimizer_generation_summary.get("num_student_repair_calls", 0) or 0),
+                "num_tcs_optimizer_candidates": int(num_tcs_optimizer_candidates),
+                "num_tcs_metadata_valid_candidates": int(num_tcs_metadata_valid_candidates),
+                "num_tcs_metadata_invalid_candidates": int(num_tcs_metadata_invalid_candidates),
+                "tcs_execution_complete": tcs_execution_complete,
                 "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                 **pareto_summary,
                 "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
