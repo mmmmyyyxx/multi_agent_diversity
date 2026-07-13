@@ -73,6 +73,10 @@ def _successful_nonempty(rows: List[Dict[str, Any]], stage: str) -> List[Dict[st
     return [row for row in rows if normalize_stage(row) == stage and bool(row.get("call_succeeded", row.get("success", False))) and not bool(row.get("response_empty", False))]
 
 
+def _nonempty_values(rows: List[Dict[str, Any]], field: str) -> set[str]:
+    return {str(row.get(field, "") or "") for row in rows if str(row.get(field, "") or "")}
+
+
 def _group_problems(group_id: str, candidates: List[Dict[str, Any]], calls: List[Dict[str, Any]]) -> List[str]:
     errors: List[str] = []
     expected = ("parent_id", "agent_id", "epoch", "step")
@@ -83,6 +87,20 @@ def _group_problems(group_id: str, candidates: List[Dict[str, Any]], calls: List
         call_values = {str(row.get(field)) for row in calls if row.get(field) is not None}
         if call_values and values and not call_values.issubset(values):
             errors.append(f"call_{field}_mismatch")
+    candidate_sessions = _nonempty_values(candidates, "execution_session_id")
+    call_sessions = _nonempty_values(calls, "execution_session_id")
+    candidate_attempts = _nonempty_values(candidates, "update_attempt_id")
+    call_attempts = _nonempty_values(calls, "update_attempt_id")
+    is_new_provenance_group = bool(candidate_sessions or call_sessions or candidate_attempts or call_attempts)
+    if is_new_provenance_group:
+        if len(candidate_sessions) != 1:
+            errors.append("candidate_execution_session_id_mismatch")
+        if len(candidate_attempts) != 1:
+            errors.append("candidate_update_attempt_id_mismatch")
+        if len(call_sessions) != 1 or call_sessions != candidate_sessions:
+            errors.append("call_execution_session_id_mismatch")
+        if len(call_attempts) != 1 or call_attempts != candidate_attempts:
+            errors.append("call_update_attempt_id_mismatch")
     rounds = {int(row.get("teacher_critic_rounds", 0) or 0) for row in candidates}
     rewrites = {int(row.get("teacher_rewrite_count", 0) or 0) for row in candidates}
     if len(rounds) != 1 or len(rewrites) != 1:
@@ -121,6 +139,10 @@ def audit_run(run_dir: Path) -> Dict[str, Any]:
             missing_group += 1
         else:
             groups[group_id].append(row)
+    legacy_group_id_count = sum(
+        1 for rows in groups.values()
+        if not _nonempty_values(rows, "execution_session_id")
+    )
     calls_by_group: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     attempted_groups = set()
     for row in llm_rows:
@@ -153,6 +175,7 @@ def audit_run(run_dir: Path) -> Dict[str, Any]:
         "valid_tcs_metadata_count": len(applicable) - len(invalid),
         "invalid_tcs_metadata_count": len(invalid),
         "missing_tcs_call_group_id_count": missing_group,
+        "legacy_group_id_count": legacy_group_id_count,
         "attempted_tcs_group_count": len(attempted_groups),
         "candidate_producing_tcs_group_count": len(groups),
         "completed_tcs_group_count": len(groups) - len(incomplete),

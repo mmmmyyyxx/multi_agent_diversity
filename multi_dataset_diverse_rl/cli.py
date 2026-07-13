@@ -364,6 +364,7 @@ def build_training_checkpoint(
         "stage": str(stage),
         "updated_at": time.time(),
         "seed": int(cfg.seed),
+        "execution_session_id": str(getattr(system, "execution_session_id", "") or ""),
         "epochs": int(cfg.epochs),
         "train_size": int(cfg.train_size),
         "config_signature": checkpoint_config_signature(cfg),
@@ -681,6 +682,18 @@ async def main_async():
                 f"cursor={resume_cursor}/{len(train_data)} best_epoch={best_epoch}",
                 flush=True,
             )
+            system.update_logs.append(
+                {
+                    **system._base_log_fields(),
+                    "event": "run_resumed",
+                    "execution_session_id": str(getattr(system, "execution_session_id", "") or ""),
+                    "previous_execution_session_id": str(candidate.get("execution_session_id", "") or getattr(system, "previous_execution_session_id", "")),
+                    "resumed_from_epoch": int(resume_epoch_index + 1),
+                    "resumed_from_cursor": int(resume_cursor),
+                    "checkpoint_path": checkpoint_path(cfg),
+                }
+            )
+            system.flush_update_logs()
         elif candidate is not None:
             abort_incompatible_checkpoint(cfg, incompatibility_reasons)
 

@@ -63,12 +63,37 @@ def _bare_system(cfg=None):
     cfg = cfg or Config(optimizer_architecture="teacher_critic_student", optimizer_fallback_mode="none", agents=1)
     system = object.__new__(TraceBeamSearchSystem)
     system.cfg = cfg
+    system.execution_session_id = "testsession01"
     system.agents = [AgentState("parent one")]
     system.update_logs = []
     system.optimizer_generation_diagnostics = {}
     system.llm_call_logs = []
     system.cost_summary = system._empty_cost_summary()
     return system
+
+
+def _audit_candidate(metadata, candidate_id="candidate"):
+    row = _metadata(**metadata)
+    row.update({
+        "event": "candidate_evaluated", "candidate_id": candidate_id,
+        "accuracy_delta": 0.0, "diversity_delta": 0.0, "invalid_delta": 0.0,
+        "vote_delta": 0.0, "coverage_delta": 0.0, "net_coverage_delta": 0.0,
+        "candidate_target_accuracy": 0.5, "baseline_target_accuracy": 0.5,
+        "candidate_embedding_diversity": 0.5, "baseline_embedding_diversity": 0.5,
+        "candidate_invalid_rate": 0.0, "baseline_invalid_rate": 0.0,
+        "candidate_team_accuracy": 0.5, "baseline_team_accuracy": 0.5,
+        "candidate_oracle_acc": 0.5, "baseline_oracle_acc": 0.5,
+    })
+    return row
+
+
+def _audit_call(stage, group, session, attempt, *, parent_id="parent", rounds=1):
+    return {
+        "llm_call_stage": stage, "tcs_call_group_id": group,
+        "execution_session_id": session, "update_attempt_id": attempt,
+        "parent_id": parent_id, "agent_id": 0, "epoch": 1, "step": 10,
+        "call_succeeded": True, "response_empty": False,
+    }
 
 
 class _CompletionClient:
@@ -96,7 +121,11 @@ def test_tcs_llm_call_stages_recorded_in_execution_order():
     system.solver_client = client
 
     async def run_tcs():
-        token = TCS_AUDIT_CONTEXT.set({"epoch": 1, "step": 10, "agent_id": 0, "parent_id": "beam-parent"})
+        token = TCS_AUDIT_CONTEXT.set({
+            "epoch": 1, "step": 10, "agent_id": 0, "parent_id": "beam-parent",
+            "execution_session_id": "testsession01", "update_attempt_id": "testsession01_e1_s10_a0",
+            "tcs_call_group_id": "testsession01_e1_s10_a0_pbeam_parent",
+        })
         try:
             return await system.propose_candidates_teacher_critic_student(
                 agent_id=0,
@@ -117,6 +146,11 @@ def test_tcs_llm_call_stages_recorded_in_execution_order():
     assert all(row["call_succeeded"] for row in calls)
     assert all(row["optimizer_architecture"] == "teacher_critic_student" for row in calls)
     assert all(row["epoch"] == 1 and row["step"] == 10 and row["parent_id"] == "beam-parent" for row in calls)
+    assert {row["execution_session_id"] for row in calls} == {"testsession01"}
+    assert {row["update_attempt_id"] for row in calls} == {"testsession01_e1_s10_a0"}
+    assert {row["tcs_call_group_id"] for row in calls} == {"testsession01_e1_s10_a0_pbeam_parent"}
+    assert candidates[0]["execution_session_id"] == "testsession01"
+    assert candidates[0]["update_attempt_id"] == "testsession01_e1_s10_a0"
 
 
 def test_concurrent_parent_provenance_does_not_cross_contaminate():
@@ -143,6 +177,27 @@ def test_concurrent_parent_provenance_does_not_cross_contaminate():
     assert first["teacher_question"] == "question-a"
     assert second["parent_id"] == "parent-b"
     assert second["teacher_question"] == "question-b"
+
+
+def test_session_scoped_ids_share_update_but_separate_parents():
+    system = _bare_system()
+    update_id = system._update_attempt_id(epoch_id=1, step_id=10, agent_id=0)
+    first = system._tcs_call_group_id(update_id, "parent-a", "prompt-a")
+    second = system._tcs_call_group_id(update_id, "parent-b", "prompt-b")
+    assert update_id == "testsession01_e1_s10_a0"
+    assert first != second
+    assert first.startswith(update_id + "_p")
+
+
+def test_repeated_step_in_new_session_has_distinct_provenance_ids():
+    first = _bare_system()
+    second = _bare_system()
+    first.execution_session_id = "sessionaaaa"
+    second.execution_session_id = "sessionbbbb"
+    first_update = first._update_attempt_id(1, 10, 0)
+    second_update = second._update_attempt_id(1, 10, 0)
+    assert first_update != second_update
+    assert first._tcs_call_group_id(first_update, "parent", "prompt") != second._tcs_call_group_id(second_update, "parent", "prompt")
 
 
 def test_invalid_tcs_candidate_fails_before_evaluation():
@@ -185,12 +240,55 @@ def test_group_audit_requires_per_parent_call_evidence(tmp_path):
     report = audit_run(tmp_path)
     assert report["problems"] is False
     assert report["completed_tcs_group_count"] == 1
+    assert report["legacy_group_id_count"] == 1
 
     calls[1]["tcs_call_group_id"] = "other-group"
     (tmp_path / "llm_calls.jsonl").write_text("\n".join(json.dumps(row) for row in calls) + "\n", encoding="utf-8")
     report = audit_run(tmp_path)
     assert report["problems"] is True
     assert report["unexplained_incomplete_tcs_group_count"] == 1
+
+
+def test_audit_separates_replayed_step_by_execution_session(tmp_path):
+    rows = []
+    calls = []
+    for session, rounds in (("sessionaaaa", 3), ("sessionbbbb", 1)):
+        attempt = f"{session}_e1_s10_a0"
+        group = f"{attempt}_pparent_prompt"
+        rows.append(_audit_candidate({
+            "parent_id": "parent", "agent_id": 0, "epoch": 1, "step": 10,
+            "tcs_call_group_id": group, "execution_session_id": session,
+            "update_attempt_id": attempt, "teacher_critic_rounds": rounds,
+            "teacher_rewrite_count": rounds - 1,
+        }, candidate_id=session))
+        calls.append(_audit_call("teacher", group, session, attempt))
+        calls.extend(_audit_call("critic", group, session, attempt) for _ in range(rounds))
+        calls.extend(_audit_call("teacher_rewrite", group, session, attempt) for _ in range(rounds - 1))
+        calls.append(_audit_call("student", group, session, attempt))
+    (tmp_path / "update_logs.jsonl").write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+    (tmp_path / "llm_calls.jsonl").write_text("\n".join(json.dumps(row) for row in calls) + "\n", encoding="utf-8")
+    report = audit_run(tmp_path)
+    assert report["problems"] is False
+    assert report["completed_tcs_group_count"] == 2
+    assert report["legacy_group_id_count"] == 0
+
+
+def test_audit_still_detects_real_critic_round_mismatch(tmp_path):
+    session = "sessionaaaa"
+    attempt = f"{session}_e1_s10_a0"
+    group = f"{attempt}_pparent_prompt"
+    candidate = _audit_candidate({
+        "parent_id": "parent", "agent_id": 0, "epoch": 1, "step": 10,
+        "tcs_call_group_id": group, "execution_session_id": session,
+        "update_attempt_id": attempt, "teacher_critic_rounds": 2,
+        "teacher_rewrite_count": 0,
+    })
+    calls = [_audit_call(stage, group, session, attempt) for stage in ("teacher", "critic", "student")]
+    (tmp_path / "update_logs.jsonl").write_text(json.dumps(candidate) + "\n", encoding="utf-8")
+    (tmp_path / "llm_calls.jsonl").write_text("\n".join(json.dumps(row) for row in calls) + "\n", encoding="utf-8")
+    report = audit_run(tmp_path)
+    assert report["problems"] is True
+    assert "critic_round_count_mismatch" in report["incomplete_tcs_groups"][group]
 
 
 def test_audit_reports_malformed_jsonl(tmp_path):

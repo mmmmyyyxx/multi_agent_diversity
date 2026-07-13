@@ -30,6 +30,27 @@ def test_restore_agent_prompts_syncs_prompt_history(tmp_path):
     assert prompt_history["0"]["events"][-1]["selected_epoch"] == 2
 
 
+def test_prompt_history_snapshot_retries_transient_replace_failure(tmp_path, monkeypatch):
+    from multi_dataset_diverse_rl import system as system_module
+
+    system = _system(tmp_path)
+    real_replace = system_module.os.replace
+    attempts = 0
+
+    def flaky_replace(source, destination):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise OSError(22, "transient invalid argument")
+        return real_replace(source, destination)
+
+    monkeypatch.setattr(system_module.os, "replace", flaky_replace)
+    system.flush_prompt_history()
+
+    assert attempts == 2
+    assert json.loads((tmp_path / "prompt_history.json").read_text(encoding="utf-8"))["0"]["initial_prompt"] == "initial prompt"
+
+
 def test_restore_prompt_history_keeps_existing_events(tmp_path):
     system = _system(tmp_path)
     (tmp_path / "prompt_history.json").write_text(

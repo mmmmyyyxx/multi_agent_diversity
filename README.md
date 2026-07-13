@@ -18,7 +18,7 @@ python scripts/run_task_level_accuracy.py \
   --resume_from_checkpoint 1
 ```
 
-Checkpoint resume is batch/epoch-level. If a process is interrupted in the middle of an in-flight API batch, that small batch may be repeated; recorded solver rollouts are reused when `--candidate_reuse_recorded_rollouts 1` is enabled. If an existing checkpoint was created with incompatible resume-critical settings, resume now fails fast and prints the mismatched fields instead of silently restarting in the same run directory.
+Checkpoint resume is batch/epoch-level. If a process is interrupted in the middle of an in-flight API batch, that small batch may be repeated; recorded solver rollouts are reused when `--candidate_reuse_recorded_rollouts 1` is enabled. Every new process receives a fresh `execution_session_id`, so a repeated update cannot be merged with its pre-interruption TCS calls during audit. If an existing checkpoint was created with incompatible resume-critical settings, resume now fails fast and prints the mismatched fields instead of silently restarting in the same run directory.
 
 本项目是一个多智能体推理实验框架：多个 solver agent 同时回答同一道题，系统记录每个 agent 的 reasoning trace 和最终答案，用多数投票得到团队答案，并用 trace embedding overlap 衡量 agent 之间是否真的形成了不同解题路径。
 
@@ -206,7 +206,7 @@ python scripts/run_task_level_accuracy.py \
   --out_root runs_bbh_oracle_pareto_formal_pilot
 ```
 
-TCS calls are correlated per beam parent with `tcs_call_group_id`. A candidate-producing group must contain successful non-empty Teacher, the declared number of Critic and rewrite calls, and a successful Student-side call. `teacher_question_approved=true` and `teacher_question_forced_best_score=false`, or the inverse forced-best pair, are the only valid states.
+Each process has an `execution_session_id`; each agent beam update has `update_attempt_id=<session>_e<epoch>_s<step>_a<agent>`; and each parent TCS flow has a session-scoped `tcs_call_group_id`. These identifiers are written to TCS calls, candidates, and beam-update logs. A candidate-producing group must contain successful non-empty Teacher, the declared number of Critic and rewrite calls, and a successful Student-side call. The auditor keeps legacy logs readable but reports their `legacy_group_id_count`. `teacher_question_approved=true` and `teacher_question_forced_best_score=false`, or the inverse forced-best pair, are the only valid states.
 
 `candidate_eval_execution_mode=legacy` preserves the previous execution path. `factorized_cached` keeps the same current-batch metric recomputation, but preloads fixed peer rollouts and each unique target prompt rollout. It never reuses aggregate candidate metrics, does not merge duplicate candidate provenance, and never reuses a rollout across agent IDs. `solver_rollout_singleflight` coalesces concurrent misses for the same rollout key. Cost fields in update summaries and `cost_summary.json` distinguish API calls, memory/persisted hits, in-flight reuse, and naive-request savings. Default batch settings remain the historical four; pass `--settings all` to include both scalar/Pareto matched settings.
 

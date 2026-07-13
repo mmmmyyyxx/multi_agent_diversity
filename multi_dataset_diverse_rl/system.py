@@ -5,6 +5,7 @@ import os
 import random
 import re
 import time
+import uuid
 from contextvars import ContextVar
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -226,6 +227,9 @@ class TraceBeamSearchSystem:
         self.evaluator_client = AsyncOpenAI(api_key=evaluator_key or api_key, base_url=evaluator_base)
 
         ensure_dir(self.cfg.out_dir)
+        self.previous_execution_session_id = self._read_previous_execution_session_id()
+        # A resumed process is a distinct provenance session, even for a repeated step.
+        self.execution_session_id = uuid.uuid4().hex[:12]
         open(os.path.join(self.cfg.out_dir, "llm_calls.jsonl"), "a", encoding="utf-8").close()
         set_seed(int(self.cfg.seed))
 
@@ -484,6 +488,8 @@ class TraceBeamSearchSystem:
             "parent_id": context.get("parent_id"),
             "teacher_critic_round": context.get("teacher_critic_round"),
             "tcs_call_group_id": str(context.get("tcs_call_group_id", "") or ""),
+            "execution_session_id": str(context.get("execution_session_id", getattr(self, "execution_session_id", "")) or getattr(self, "execution_session_id", "")),
+            "update_attempt_id": str(context.get("update_attempt_id", "") or ""),
             "model_role": model_role,
             "model_name": str(model or ""),
             "client_role": role,
@@ -815,6 +821,7 @@ class TraceBeamSearchSystem:
 
     def _base_log_fields(self) -> Dict[str, Any]:
         return {
+            "execution_session_id": self._current_execution_session_id(),
             "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
             "benchmark": getattr(self.cfg, "benchmark", ""),
             "answer_format": getattr(self.cfg, "answer_format", ""),
@@ -828,6 +835,27 @@ class TraceBeamSearchSystem:
             "diversity_metric": self.cfg.diversity_metric,
             "embedding_model": self.cfg.embedding_model,
         }
+
+    def _read_previous_execution_session_id(self) -> str:
+        path = os.path.join(self.cfg.out_dir, "run_meta.json")
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return ""
+        return str(payload.get("execution_session_id", "") or "") if isinstance(payload, dict) else ""
+
+    def _current_execution_session_id(self) -> str:
+        return str(getattr(self, "execution_session_id", "") or "")
+
+    def _update_attempt_id(self, epoch_id: int, step_id: int, agent_id: int) -> str:
+        return f"{self._current_execution_session_id()}_e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}"
+
+    def _tcs_call_group_id(self, update_attempt_id: str, parent_id: str, parent_prompt: str) -> str:
+        return (
+            f"{update_attempt_id}_p{self._hash(str(parent_id))}_"
+            f"{self._hash(str(parent_prompt))}"
+        )
 
     def write_run_meta(self):
         meta = {
@@ -858,6 +886,8 @@ class TraceBeamSearchSystem:
             "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
             "teacher_question_pass_threshold": getattr(self.cfg, "teacher_question_pass_threshold", 0.0),
             "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
+            "execution_session_id": self.execution_session_id,
+            "previous_execution_session_id": self.previous_execution_session_id,
             "model_role_map": {
                 "agent_model": "solver rollouts for train/validation/test answering",
                 "optimizer_model": (
@@ -1000,6 +1030,8 @@ class TraceBeamSearchSystem:
             "optimizer_underfilled": False,
             "teacher_question": "",
             "tcs_call_group_id": "",
+            "execution_session_id": "",
+            "update_attempt_id": "",
             "teacher_question_approved": False,
             "teacher_question_rejected": False,
             "teacher_question_rejection_reason": "",
@@ -3823,6 +3855,8 @@ class TraceBeamSearchSystem:
         # Preserve the beam parent's stable ID for call-level provenance.
         parent_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("parent_id") or self._hash(parent_prompt))
         tcs_call_group_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("tcs_call_group_id") or "")
+        execution_session_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("execution_session_id") or getattr(self, "execution_session_id", ""))
+        update_attempt_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("update_attempt_id") or "")
         call_context = dict(TCS_AUDIT_CONTEXT.get() or {})
         call_context.update(
             {
@@ -3845,6 +3879,8 @@ class TraceBeamSearchSystem:
         diagnostics = self._empty_optimizer_generation_diagnostics()
         diagnostics["optimizer_architecture"] = "teacher_critic_student"
         diagnostics["tcs_call_group_id"] = tcs_call_group_id
+        diagnostics["execution_session_id"] = execution_session_id
+        diagnostics["update_attempt_id"] = update_attempt_id
         teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
         critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
         forced_best = bool(approved.get("teacher_question_forced_best_score", False)) if isinstance(approved, dict) else False
@@ -3970,6 +4006,8 @@ class TraceBeamSearchSystem:
                         "rationale": str(item.get("rationale", "")),
                         "candidate_source": "teacher_critic_student",
                         "tcs_call_group_id": tcs_call_group_id,
+                        "execution_session_id": execution_session_id,
+                        "update_attempt_id": update_attempt_id,
                         "teacher_question": teacher_question,
                         "teacher_question_score": self._safe_float(diagnostics.get("teacher_question_score", 0.0), 0.0),
                         "teacher_question_approved": bool(diagnostics.get("teacher_question_approved", False)),
@@ -4917,6 +4955,7 @@ class TraceBeamSearchSystem:
         epoch_id: int,
     ) -> Tuple[bool, Dict[str, Any]]:
         agent = self.agents[agent_id]
+        update_attempt_id = self._update_attempt_id(epoch_id, step_id, agent_id)
         beam = getattr(agent, "prompt_beam", []) or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
         generation = max([int(x.get("generation", 0) or 0) for x in beam] + [0]) + 1
         candidate_pool: List[Dict[str, Any]] = []
@@ -4954,9 +4993,12 @@ class TraceBeamSearchSystem:
                         "step": int(step_id),
                         "agent_id": int(agent_id),
                         "parent_id": str(job["parent_id"]),
-                        "tcs_call_group_id": (
-                            f"e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}_"
-                            f"p{self._hash(str(job['parent_id']))}_{self._hash(str(job['parent_prompt']))}"
+                        "execution_session_id": self._current_execution_session_id(),
+                        "update_attempt_id": update_attempt_id,
+                        "tcs_call_group_id": self._tcs_call_group_id(
+                            update_attempt_id,
+                            str(job["parent_id"]),
+                            str(job["parent_prompt"]),
                         ),
                         "teacher_critic_round": 0,
                     }
@@ -5021,6 +5063,8 @@ class TraceBeamSearchSystem:
                         "peer_redundancy_avoidance": str(proposal.get("peer_redundancy_avoidance", "")),
                         "optimizer_generation_diagnostics": proposal.get("optimizer_generation_diagnostics", {}),
                         "tcs_call_group_id": str(proposal.get("tcs_call_group_id", "") or ""),
+                        "execution_session_id": str(proposal.get("execution_session_id", self._current_execution_session_id()) or self._current_execution_session_id()),
+                        "update_attempt_id": str(proposal.get("update_attempt_id", update_attempt_id) or update_attempt_id),
                         "proposal": proposal,
                     }
                 )
@@ -5029,6 +5073,8 @@ class TraceBeamSearchSystem:
                     "candidate_source": str(proposal.get("candidate_source", "")),
                     "candidate_pool_source": "optimizer",
                     "tcs_call_group_id": str(proposal.get("tcs_call_group_id", "") or ""),
+                    "execution_session_id": str(proposal.get("execution_session_id", self._current_execution_session_id()) or self._current_execution_session_id()),
+                    "update_attempt_id": str(proposal.get("update_attempt_id", update_attempt_id) or update_attempt_id),
                     **dict(proposal.get("optimizer_generation_diagnostics", {}) or {}),
                 }
                 metadata_errors = validate_tcs_candidate_metadata(candidate_metadata)
@@ -5054,6 +5100,8 @@ class TraceBeamSearchSystem:
                     "generation": int(parent.get("generation", 0) or 0),
                     "source": "existing_beam",
                     "candidate_source": "existing_beam",
+                    "execution_session_id": self._current_execution_session_id(),
+                    "update_attempt_id": update_attempt_id,
                     "generation_batch_type": "",
                     "generation_case_ids": [],
                     "target_error_pattern": "",
@@ -5078,6 +5126,8 @@ class TraceBeamSearchSystem:
                     "generation": generation,
                     "source": "current_active_fallback",
                     "candidate_source": "current_active_fallback",
+                    "execution_session_id": self._current_execution_session_id(),
+                    "update_attempt_id": update_attempt_id,
                     "generation_batch_type": "",
                     "generation_case_ids": [],
                     "target_error_pattern": "",
@@ -5329,6 +5379,8 @@ class TraceBeamSearchSystem:
                 "candidate_source": item.get("candidate_source", item.get("source", "")),
                 "candidate_pool_source": item.get("source", ""),
                 "tcs_call_group_id": item.get("tcs_call_group_id", item_diagnostics.get("tcs_call_group_id", "")),
+                "execution_session_id": item.get("execution_session_id", item_diagnostics.get("execution_session_id", self._current_execution_session_id())),
+                "update_attempt_id": item.get("update_attempt_id", item_diagnostics.get("update_attempt_id", update_attempt_id)),
                 **item_diagnostics,
             }
             is_tcs_metadata_applicable = tcs_metadata_applicable(tcs_candidate_metadata)
@@ -5346,6 +5398,8 @@ class TraceBeamSearchSystem:
                     "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                     "parent_id": item.get("parent_id"),
                     "tcs_call_group_id": str(item.get("tcs_call_group_id", item_diagnostics.get("tcs_call_group_id", "")) or ""),
+                    "execution_session_id": str(item.get("execution_session_id", item_diagnostics.get("execution_session_id", self._current_execution_session_id())) or self._current_execution_session_id()),
+                    "update_attempt_id": str(item.get("update_attempt_id", item_diagnostics.get("update_attempt_id", update_attempt_id)) or update_attempt_id),
                     "reward": float(metrics.get("reward", 0.0)),
                     "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
                     "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
@@ -5489,6 +5543,8 @@ class TraceBeamSearchSystem:
             self.cost_summary["candidate_eval_prompt_dedup_savings"] = int(self.cost_summary.get("candidate_eval_prompt_dedup_savings", 0) or 0) + int(candidate_eval_cache_stats.get("candidate_eval_prompt_dedup_savings", 0) or 0)
         summary = {
             "agent_id": agent_id,
+            "execution_session_id": self._current_execution_session_id(),
+            "update_attempt_id": update_attempt_id,
             "updated": bool(changed),
             "candidate_count": len(candidate_pool),
             "generation_batches": generation_batches,
@@ -5522,6 +5578,8 @@ class TraceBeamSearchSystem:
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
             "top_metrics": agent.prompt_beam[0].get("metrics", {}),
             **candidate_eval_cache_stats,
+            "execution_session_id": self._current_execution_session_id(),
+            "update_attempt_id": update_attempt_id,
         }
         self.update_logs.append(
             {
@@ -5530,6 +5588,8 @@ class TraceBeamSearchSystem:
                 "epoch": epoch_id,
                 "step": step_id,
                 "agent_id": agent_id,
+                "execution_session_id": self._current_execution_session_id(),
+                "update_attempt_id": update_attempt_id,
                 "search_mode": "evolutionary_beam",
                 "beam_size": beam_size,
                 "active_prompt_changed": bool(changed),
@@ -5564,6 +5624,8 @@ class TraceBeamSearchSystem:
                 "top1_net_coverage_delta": float(selected[0].get("metrics", {}).get("net_coverage_delta", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
                 **optimizer_generation_summary,
                 **self._student_failure_log_fields(optimizer_generation_summary),
+                "execution_session_id": self._current_execution_session_id(),
+                "update_attempt_id": update_attempt_id,
             }
         )
         agent.last_update_record = summary
@@ -6140,17 +6202,35 @@ class TraceBeamSearchSystem:
         self._flush_jsonl("test_trace_history.jsonl", self.test_trace_history_logs)
         self.test_trace_history_logs = []
 
+    def _write_json_snapshot(self, filename: str, payload: Any):
+        """Write a replaceable snapshot so a transient Windows handle does not truncate it."""
+        path = os.path.join(self.cfg.out_dir, filename)
+        tmp_path = f"{path}.{uuid.uuid4().hex}.tmp"
+        for attempt in range(3):
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(payload, f, ensure_ascii=False, indent=2)
+                os.replace(tmp_path, path)
+                return
+            except OSError:
+                try:
+                    if os.path.exists(tmp_path):
+                        os.remove(tmp_path)
+                except OSError:
+                    pass
+                if attempt == 2:
+                    raise
+                time.sleep(0.1 * (attempt + 1))
+
     def flush_prompt_history(self):
-        with open(os.path.join(self.cfg.out_dir, "prompt_history.json"), "w", encoding="utf-8") as f:
-            json.dump(self.prompt_history, f, ensure_ascii=False, indent=2)
+        self._write_json_snapshot("prompt_history.json", self.prompt_history)
 
     def flush_llm_call_logs(self):
         self._flush_jsonl("llm_calls.jsonl", self.llm_call_logs)
         self.llm_call_logs = []
 
     def write_cost_summary(self):
-        with open(os.path.join(self.cfg.out_dir, "cost_summary.json"), "w", encoding="utf-8") as f:
-            json.dump(self.cost_summary, f, ensure_ascii=False, indent=2)
+        self._write_json_snapshot("cost_summary.json", self.cost_summary)
 
 
 TextualGradientRLSystem = TraceBeamSearchSystem

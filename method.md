@@ -161,7 +161,7 @@ python scripts/audit_tcs_run.py <run_dir>
 
 审计脚本不修改 run 文件，会检查 TCS provenance、调用阶段证据及 candidate delta 一致性；existing-beam candidate 会被排除在 TCS provenance 校验外。
 
-每个 TCS parent 都有确定性的 `tcs_call_group_id`，贯穿 Teacher、Critic、rewrite、Student、JSON retry/repair 及其候选。审计按 group 而不是按整次 run 汇总阶段：只有产生 candidate 的 group 才必须具备完整成功调用证据。`teacher_question_approved=true, forced_best=false` 与 `approved=false, forced_best=true` 是仅有的合法终态。
+每个进程启动时生成新的 `execution_session_id`。一次 agent beam update 使用 `update_attempt_id=<session>_e<epoch>_s<step>_a<agent>`；同一次 update 的不同 parent 各有一个包含该 session 的 `tcs_call_group_id`。三个 ID 会写入 Teacher、Critic、rewrite、Student、JSON retry/repair 调用以及 candidate 和 beam-update 日志。这样恢复 checkpoint 后即使重复执行同一 step，也不会与中断前的 TCS group 合并。审计按 group 而不是按整次 run 汇总阶段：只有产生 candidate 的 group 才必须具备完整成功调用证据；新格式还校验 session 和 update ID 在 candidate 与调用日志间一致。旧日志仍可读取，并报告 `legacy_group_id_count`。`teacher_question_approved=true, forced_best=false` 与 `approved=false, forced_best=true` 是仅有的合法终态。
 
 Candidate evaluation 有两种执行模式。`legacy` 保留历史调用路径；`factorized_cached` 先取得当前 batch 的固定 peer rollout 和每个唯一 target prompt rollout，再调用相同的 candidate 指标代码重组成当前团队指标。复用的是 `agent_id + solver settings + question hash + prompt hash` 的逐题 rollout，绝不复用旧 batch 的 accuracy、coverage、diversity 或 reward 聚合值。重复 prompt 仅共享 rollout，仍保留自己的 candidate/parent/TCS provenance。当前不支持跨 agent rollout reuse。single-flight 使同一个 cache key 的并发 miss 只触发一次 solver 调用。
 

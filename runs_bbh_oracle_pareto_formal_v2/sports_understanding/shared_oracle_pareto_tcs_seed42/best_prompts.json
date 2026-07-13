@@ -1,0 +1,44 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)",
+  "best_validation_score": 0.6664441156228383,
+  "best_state_selection_mode": "oracle_first",
+  "best_state_selection_key": [
+    0.98,
+    0.86,
+    0.0,
+    0.062220578114191696,
+    1
+  ],
+  "selected_oracle_acc": 0.98,
+  "selected_mean_individual_acc": 0.86,
+  "selected_mean_invalid_rate": 0.0,
+  "selected_mean_useful_diversity": 0.062220578114191696,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "d788d4157c31",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; analyze the scenario from multiple perspectives; verify each perspective's logic; systematically identify and verify critical constraint relationships that peers might overlook; synthesize the insights; and give exactly one final yes/no answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "73bdf0bea20b",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically identify two distinct interpretations of the sports scenario; explicitly list all scenario constraints; contrast each interpretation against constraints to identify which best satisfies them; select the interpretation with highest constraint alignment; then give exactly one final yes/no answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "fabdedce160e",
+      "prompt": "You are a careful reasoning solver. Produce a compact explicit reasoning trace; analyze the scenario from multiple perspectives; identify potential counterarguments; verify consistency across viewpoints; explicitly check each perspective's conclusion against specific clues from the scenario; then cross-verify all conclusions against standard sports rule applications before selecting the final answer; give exactly one final yes/no answer."
+    }
+  ]
+}

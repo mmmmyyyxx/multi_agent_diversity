@@ -1,0 +1,134 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.04270227758089701,
+      "mean_embedding_overlap": 0.9572977224191028,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.8133333333333334,
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.10666666666666669,
+      "mean_useful_diversity": 0.037034387826919556,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.86,
+      "majority_vote_acc": 0.86,
+      "weighted_vote_acc": 0.86,
+      "mean_individual_acc": 0.864,
+      "best_individual_acc": 0.9,
+      "per_agent_acc": [
+        0.88,
+        0.82,
+        0.86,
+        0.9,
+        0.86
+      ],
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.06000000000000005,
+      "rescue_available_rate": 0.06,
+      "correct_disagreement_rate": 0.14,
+      "mean_useful_diversity": 0.07811843860149384,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.0848021147251129,
+      "mean_embedding_overlap": 0.915197885274887,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 1
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_embedding_diversity": 0.07550214076042173,
+      "mean_embedding_overlap": 0.9244978592395785,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.7866666666666666,
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.13333333333333341,
+      "mean_useful_diversity": 0.06634939469231499,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.9,
+      "majority_vote_acc": 0.9,
+      "weighted_vote_acc": 0.88,
+      "mean_individual_acc": 0.852,
+      "best_individual_acc": 0.86,
+      "per_agent_acc": [
+        0.86,
+        0.84,
+        0.84,
+        0.86,
+        0.86
+      ],
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.020000000000000018,
+      "rescue_available_rate": 0.02,
+      "correct_disagreement_rate": 0.18,
+      "mean_useful_diversity": 0.0799400532245636,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.02,
+      "mean_embedding_diversity": 0.08962237429618837,
+      "mean_embedding_overlap": 0.9103776257038116,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 2
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 1,
+    "best_validation_score": 0.6356236877202989,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "no_effective_evolution_counter": 0,
+    "no_effective_evolution_stopped": false,
+    "no_effective_evolution_reason": "",
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 125,
+      "num_test_samples": 125,
+      "vote_acc": 0.864,
+      "majority_vote_acc": 0.864,
+      "weighted_vote_acc": 0.864,
+      "mean_individual_acc": 0.8496,
+      "best_individual_acc": 0.872,
+      "per_agent_acc": [
+        0.856,
+        0.84,
+        0.848,
+        0.832,
+        0.872
+      ],
+      "oracle_acc": 0.936,
+      "aggregation_gap": 0.07200000000000006,
+      "rescue_available_rate": 0.072,
+      "correct_disagreement_rate": 0.176,
+      "mean_useful_diversity": 0.07750850834846496,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.032,
+      "mean_embedding_diversity": 0.08816455097198485,
+      "mean_embedding_overlap": 0.9118354490280149,
+      "mean_invalid_rate": 0.0
+    }
+  }
+]

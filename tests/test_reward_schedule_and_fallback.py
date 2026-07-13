@@ -12,6 +12,7 @@ def _system(cfg=None, prompts=None):
     prompts = prompts or ["same prompt" for _ in range(int(cfg.agents))]
     system = object.__new__(TraceBeamSearchSystem)
     system.cfg = cfg
+    system.execution_session_id = "testsession"
     system.task_spec = get_task_spec("mmlu")
     system.agents = [AgentState(prompt) for prompt in prompts]
     system.update_logs = []
@@ -326,10 +327,15 @@ def test_update_logs_split_top_beam_from_active_change():
     assert changed is True
     assert summary["active_prompt_changed"] is True
     assert summary["top1_candidate_source"] == "optimizer"
+    assert summary["execution_session_id"] == "testsession"
+    assert summary["update_attempt_id"] == "testsession_e1_s1_a0"
     top1 = next(row for row in system.update_logs if row.get("is_top1"))
     assert top1["in_top_beam"] is True
     assert top1["active_prompt_changed"] is True
     assert top1["top1_candidate_source"] == "optimizer"
+    beam_summary = next(row for row in system.update_logs if row.get("event") == "beam_update_summary")
+    assert beam_summary["execution_session_id"] == "testsession"
+    assert beam_summary["update_attempt_id"] == "testsession_e1_s1_a0"
 
 
 def test_no_effective_evolution_tracking_stops_after_patience():
