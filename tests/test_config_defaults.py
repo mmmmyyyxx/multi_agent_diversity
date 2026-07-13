@@ -48,8 +48,8 @@ def test_cli_defaults_match_config():
     assert bool(args.student_force_minified_json) == defaults.student_force_minified_json
 
 
-def test_parser_accepts_coverage_useful_diversity_and_rejects_removed_alias():
+def test_parser_accepts_vote_useful_diversity_and_rejects_removed_mode():
     parser = build_parser()
-    assert parser.parse_args(["--reward_mode", "coverage_useful_diversity"]).reward_mode == "coverage_useful_diversity"
+    assert parser.parse_args(["--reward_mode", "vote_useful_diversity"]).reward_mode == "vote_useful_diversity"
     with pytest.raises(SystemExit):
-        parser.parse_args(["--reward_mode", "coverage_rescue_diversity"])
+        parser.parse_args(["--reward_mode", "coverage_useful_diversity"])

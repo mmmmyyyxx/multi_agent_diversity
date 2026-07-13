@@ -189,32 +189,34 @@ def restore_agent_prompts(system, prompts, selected_epoch=None):
         )
 
 
-def oracle_first_validation_key(epoch_record):
+def vote_first_validation_key(epoch_record):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
     epoch = int(epoch_record.get("epoch", 0) or 0)
     return (
-        -float(val.get("oracle_acc", 0.0) or 0.0),
+        -float(val.get("vote_acc", 0.0) or 0.0),
         -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        -float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        -float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
-        -float(val.get("mean_useful_diversity", 0.0) or 0.0),
         epoch,
     )
 
 
-def oracle_first_validation_key_fields(epoch_record):
+def vote_first_validation_key_fields(epoch_record):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
     return [
-        float(val.get("oracle_acc", 0.0) or 0.0),
+        float(val.get("vote_acc", 0.0) or 0.0),
         float(val.get("mean_individual_acc", 0.0) or 0.0),
+        float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
-        float(val.get("mean_useful_diversity", 0.0) or 0.0),
         int(epoch_record.get("epoch", 0) or 0),
     ]
 
 
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
-    if str(selection_mode or "existing").lower() == "oracle_first":
-        return best_epoch_record is None or oracle_first_validation_key(epoch_record) < oracle_first_validation_key(best_epoch_record)
+    if str(selection_mode or "existing").lower() == "vote_first":
+        return best_epoch_record is None or vote_first_validation_key(epoch_record) < vote_first_validation_key(best_epoch_record)
     return validation_score(epoch_record, reward_mode) > float(best_score) + float(min_delta)
 
 
@@ -226,11 +228,13 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         "early_stopping_metric": metric_name,
         "best_validation_score": validation_score,
         "best_state_selection_mode": str(best_state_selection_mode or "existing"),
-        "best_state_selection_key": oracle_first_validation_key_fields(epoch_record) if str(best_state_selection_mode or "existing").lower() == "oracle_first" and isinstance(epoch_record, dict) else None,
+        "best_state_selection_key": vote_first_validation_key_fields(epoch_record) if str(best_state_selection_mode or "existing").lower() == "vote_first" and isinstance(epoch_record, dict) else None,
+        "selected_vote_acc": float(val.get("vote_acc", 0.0) or 0.0),
         "selected_oracle_acc": float(val.get("oracle_acc", 0.0) or 0.0),
         "selected_mean_individual_acc": float(val.get("mean_individual_acc", 0.0) or 0.0),
+        "selected_mean_vote_margin": float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        "selected_mean_boundary_useful_diversity": float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         "selected_mean_invalid_rate": float(val.get("mean_invalid_rate", 0.0) or 0.0),
-        "selected_mean_useful_diversity": float(val.get("mean_useful_diversity", 0.0) or 0.0),
         "agents": [
             {"agent_id": i, "prompt_hash": system._hash(prompt), "prompt": prompt}
             for i, prompt in enumerate(prompts)
@@ -476,12 +480,12 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return float(val.get("vote_acc", 0.0) or 0.0)
-    if mode == "coverage_useful_diversity":
+    if mode == "vote_useful_diversity":
         return (
-            0.4 * float(val.get("vote_acc", 0.0) or 0.0)
-            + 0.3 * float(val.get("oracle_acc", 0.0) or 0.0)
-            + 0.2 * float(val.get("mean_useful_diversity", 0.0) or 0.0)
-            - 0.2 * float(val.get("mean_invalid_rate", 0.0) or 0.0)
+            0.5 * float(val.get("vote_acc", 0.0) or 0.0)
+            + 0.2 * float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0)
+            + 0.15 * float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0)
+            - 0.15 * float(val.get("mean_invalid_rate", 0.0) or 0.0)
         )
     return (
         float(val.get("vote_acc", 0.0) or 0.0)
@@ -491,18 +495,18 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
 
 
 def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
-    if str(best_state_selection_mode or "existing").lower() == "oracle_first":
-        return "oracle_first(oracle,mean_individual,-invalid,useful,earlier_epoch)"
+    if str(best_state_selection_mode or "existing").lower() == "vote_first":
+        return "vote_first(vote,mean_individual,margin,boundary_div,-invalid,earlier_epoch)"
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return "vote_acc"
-    if mode == "coverage_useful_diversity":
-        return "vote+oracle+useful_div-invalid"
+    if mode == "vote_useful_diversity":
+        return "vote+margin+boundary_div-invalid"
     return "vote_acc+embedding_div-invalid"
 
 
-def uses_coverage_useful_metrics(reward_mode):
-    return str(reward_mode).lower() == "coverage_useful_diversity"
+def uses_vote_useful_metrics(reward_mode):
+    return str(reward_mode).lower() == "vote_useful_diversity"
 
 
 def auto_train_rollout_concurrency(cfg):
@@ -583,7 +587,7 @@ async def main_async():
         test_metrics = await system.evaluate_dataset(test_data, split_name="test_epoch1")
         epoch_record = {"epoch": 1, "train": {}, "test": test_metrics}
         system.history.append(epoch_record)
-        if uses_coverage_useful_metrics(cfg.reward_mode):
+        if uses_vote_useful_metrics(cfg.reward_mode):
             print(
                 "Baseline: "
                 f"test_vote_acc={test_metrics['vote_acc']:.4f}, "

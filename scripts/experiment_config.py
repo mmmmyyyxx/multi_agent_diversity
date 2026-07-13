@@ -30,14 +30,14 @@ class DatasetPaths:
     test: str
 
 
-SHARED_ORACLE_SEARCH_BASE = {
+SHARED_VOTE_SEARCH_BASE = {
     "init_mode": "shared",
     "baseline_only": False,
-    "reward_mode": "coverage_useful_diversity",
-    "best_state_selection_mode": "oracle_first",
+    "reward_mode": "vote_useful_diversity",
+    "best_state_selection_mode": "vote_first",
     "optimizer_architecture": "teacher_critic_student",
     "optimizer_fallback_mode": "none",
-    "teacher_critic_use_voting_failure": False,
+    "teacher_critic_use_voting_failure": True,
     "candidate_eval_strategy": "fixed_pool",
     "candidate_eval_pool_size": 50,
     "candidate_eval_batch_size": 24,
@@ -54,14 +54,14 @@ ALL_EXPERIMENT_SETTINGS = [
     ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity"),
     ExperimentSetting("bank_guarded_beam", "bank", False, "guarded_diversity"),
     ExperimentSetting(
-        name="shared_scalar_tcs_oracle_first",
+        name="shared_scalar_tcs_vote_first",
         candidate_selection_mode="scalar_reward",
-        **SHARED_ORACLE_SEARCH_BASE,
+        **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(
-        name="shared_oracle_pareto_tcs",
-        candidate_selection_mode="oracle_pareto",
-        **SHARED_ORACLE_SEARCH_BASE,
+        name="shared_vote_pareto_tcs",
+        candidate_selection_mode="vote_pareto",
+        **SHARED_VOTE_SEARCH_BASE,
     ),
 ]
 

@@ -114,12 +114,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
 
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") == "oracle_pareto"
+        if str(getattr(setting, "candidate_selection_mode", "") or "") == "vote_pareto"
         else args.candidate_selection_mode
     )
     best_state_selection_mode = (
         setting.best_state_selection_mode
-        if str(getattr(setting, "best_state_selection_mode", "") or "") == "oracle_first"
+        if str(getattr(setting, "best_state_selection_mode", "") or "") == "vote_first"
         else args.best_state_selection_mode
     )
     optimizer_architecture = setting_value("optimizer_architecture", args.optimizer_architecture)
@@ -151,18 +151,21 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--accuracy_guard_epsilon", str(args.accuracy_guard_epsilon),
             "--reward_weight_div_delta", str(args.reward_weight_div_delta),
             "--reward_weight_invalid_delta", str(args.reward_weight_invalid_delta),
-            "--reward_weight_coverage", str(args.reward_weight_coverage),
-            "--reward_weight_useful_diversity", str(args.reward_weight_useful_diversity),
+            "--reward_weight_vote_delta", str(args.reward_weight_vote_delta),
+            "--reward_weight_vote_margin", str(args.reward_weight_vote_margin),
+            "--reward_weight_boundary_diversity", str(args.reward_weight_boundary_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
             "--reward_schedule_mode", args.reward_schedule_mode,
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
             "--reward_weight_div_delta_early", str(args.reward_weight_div_delta_early),
             "--reward_weight_div_delta_late", str(args.reward_weight_div_delta_late),
-            "--reward_weight_coverage_early", str(args.reward_weight_coverage_early),
-            "--reward_weight_coverage_late", str(args.reward_weight_coverage_late),
-            "--reward_weight_useful_diversity_early", str(args.reward_weight_useful_diversity_early),
-            "--reward_weight_useful_diversity_late", str(args.reward_weight_useful_diversity_late),
+            "--reward_weight_vote_delta_early", str(args.reward_weight_vote_delta_early),
+            "--reward_weight_vote_delta_late", str(args.reward_weight_vote_delta_late),
+            "--reward_weight_vote_margin_early", str(args.reward_weight_vote_margin_early),
+            "--reward_weight_vote_margin_late", str(args.reward_weight_vote_margin_late),
+            "--reward_weight_boundary_diversity_early", str(args.reward_weight_boundary_diversity_early),
+            "--reward_weight_boundary_diversity_late", str(args.reward_weight_boundary_diversity_late),
             "--reward_weight_target_accuracy_early", str(args.reward_weight_target_accuracy_early),
             "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
@@ -335,9 +338,9 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--search_mode", type=str, default=cli_defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "oracle_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "oracle_first"])
+    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "vote_useful_diversity"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first"])
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)
@@ -351,18 +354,21 @@ def main():
     parser.add_argument("--accuracy_guard_epsilon", type=float, default=cli_defaults.accuracy_guard_epsilon)
     parser.add_argument("--reward_weight_div_delta", type=float, default=cli_defaults.reward_weight_div_delta)
     parser.add_argument("--reward_weight_invalid_delta", type=float, default=cli_defaults.reward_weight_invalid_delta)
-    parser.add_argument("--reward_weight_coverage", type=float, default=cli_defaults.reward_weight_coverage)
-    parser.add_argument("--reward_weight_useful_diversity", type=float, default=cli_defaults.reward_weight_useful_diversity)
+    parser.add_argument("--reward_weight_vote_delta", type=float, default=cli_defaults.reward_weight_vote_delta)
+    parser.add_argument("--reward_weight_vote_margin", type=float, default=cli_defaults.reward_weight_vote_margin)
+    parser.add_argument("--reward_weight_boundary_diversity", type=float, default=cli_defaults.reward_weight_boundary_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
     parser.add_argument("--reward_diversity_warmup_updates", type=int, default=cli_defaults.reward_diversity_warmup_updates)
     parser.add_argument("--reward_weight_div_delta_early", type=float, default=cli_defaults.reward_weight_div_delta_early)
     parser.add_argument("--reward_weight_div_delta_late", type=float, default=cli_defaults.reward_weight_div_delta_late)
-    parser.add_argument("--reward_weight_coverage_early", type=float, default=cli_defaults.reward_weight_coverage_early)
-    parser.add_argument("--reward_weight_coverage_late", type=float, default=cli_defaults.reward_weight_coverage_late)
-    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=cli_defaults.reward_weight_useful_diversity_early)
-    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=cli_defaults.reward_weight_useful_diversity_late)
+    parser.add_argument("--reward_weight_vote_delta_early", type=float, default=cli_defaults.reward_weight_vote_delta_early)
+    parser.add_argument("--reward_weight_vote_delta_late", type=float, default=cli_defaults.reward_weight_vote_delta_late)
+    parser.add_argument("--reward_weight_vote_margin_early", type=float, default=cli_defaults.reward_weight_vote_margin_early)
+    parser.add_argument("--reward_weight_vote_margin_late", type=float, default=cli_defaults.reward_weight_vote_margin_late)
+    parser.add_argument("--reward_weight_boundary_diversity_early", type=float, default=cli_defaults.reward_weight_boundary_diversity_early)
+    parser.add_argument("--reward_weight_boundary_diversity_late", type=float, default=cli_defaults.reward_weight_boundary_diversity_late)
     parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=cli_defaults.reward_weight_target_accuracy_early)
     parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=cli_defaults.reward_weight_target_accuracy_late)
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)

@@ -13,7 +13,7 @@ def _system(tmp_path, mode):
     system = object.__new__(TraceBeamSearchSystem)
     system.cfg = Config(
         out_dir=str(tmp_path), agents=3, task_type="bbh", answer_format="option_letter",
-        reward_mode="coverage_useful_diversity", candidate_eval_execution_mode=mode,
+        reward_mode="vote_useful_diversity", candidate_selection_mode="vote_pareto", candidate_eval_execution_mode=mode,
         candidate_reuse_recorded_rollouts=True, solver_rollout_singleflight=True,
     )
     system.task_spec = get_task_spec("bbh")
@@ -70,8 +70,8 @@ def test_factorized_cache_preserves_candidate_metrics(tmp_path):
         {"candidate_id": f"c{index}", "prompt": prompt, "metrics": copy.deepcopy(metrics), "reward": metrics["reward"]}
         for index, (prompt, metrics) in enumerate(zip(prompts, factorized_metrics))
     ]
-    legacy_selected, _ = legacy._select_oracle_pareto_beam(legacy_candidates, beam_size=2, current_prompt="candidate-a")
-    factorized_selected, _ = factorized._select_oracle_pareto_beam(factorized_candidates, beam_size=2, current_prompt="candidate-a")
+    legacy_selected, _ = legacy._select_vote_pareto_beam(legacy_candidates, beam_size=2, current_prompt="candidate-a")
+    factorized_selected, _ = factorized._select_vote_pareto_beam(factorized_candidates, beam_size=2, current_prompt="candidate-a")
     assert [row["candidate_id"] for row in legacy_selected] == [row["candidate_id"] for row in factorized_selected]
     assert legacy_selected[0]["prompt"] == factorized_selected[0]["prompt"]
     assert calls["factorized"] <= calls["legacy"]

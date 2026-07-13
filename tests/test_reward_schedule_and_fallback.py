@@ -68,29 +68,32 @@ def test_guarded_reward_uses_effective_weights():
     assert "reward_diversity_need" in result
 
 
-def test_coverage_useful_reward_uses_effective_weights():
+def test_vote_useful_reward_uses_effective_weights():
     cfg = Config(
-        reward_mode="coverage_useful_diversity",
+        reward_mode="vote_useful_diversity",
         reward_schedule_mode="static",
-        reward_weight_coverage=0.3,
-        reward_weight_useful_diversity=0.2,
+        reward_weight_vote_delta=0.3,
+        reward_weight_vote_margin=0.2,
+        reward_weight_boundary_diversity=0.1,
     )
     system = _system(cfg)
-    result = system._candidate_reward_coverage_useful_diversity(
+    result = system._candidate_reward_vote_useful_diversity(
         baseline_team_accuracy=0.0,
-        candidate_team_accuracy=0.0,
+        candidate_team_accuracy=0.25,
         baseline_target_accuracy=0.0,
         candidate_target_accuracy=0.5,
         baseline_invalid_rate=0.0,
         candidate_invalid_rate=0.0,
-        rescue_rate=0.0,
-        coverage_delta=0.25,
-        useful_diversity=0.5,
+        baseline_mean_vote_margin=-0.2,
+        candidate_mean_vote_margin=0.0,
+        baseline_boundary_useful_diversity=0.0,
+        candidate_boundary_useful_diversity=0.5,
     )
 
-    assert result["effective_weight_coverage"] == 0.3
-    assert result["effective_weight_useful_diversity"] == 0.2
-    assert round(result["reward"], 6) == round(0.5 + 0.3 * 0.25 + 0.2 * 0.5, 6)
+    assert result["effective_weight_vote_delta"] == 0.3
+    assert result["effective_weight_vote_margin"] == 0.2
+    assert result["effective_weight_boundary_diversity"] == 0.1
+    assert round(result["reward"], 6) == round(0.5 + 0.3 * 0.25 + 0.2 * 0.2 + 0.1 * 0.5, 6)
 
 
 async def _fake_empty_chat(**kwargs):

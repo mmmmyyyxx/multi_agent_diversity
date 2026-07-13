@@ -28,6 +28,10 @@ def _window_record_with_target_error():
             "individual_correct": [0, 1, 0],
             "vote_correct": 1,
             "vote_answer": "B",
+            "gold_vote_count": 1,
+            "largest_wrong_vote_count": 1,
+            "normalized_vote_margin": 0.0,
+            "boundary_useful_diversity": 0.5,
             "invalid_flags": [0, 0, 0],
             "mean_embedding_overlap": 0.0,
             "per_agent_overlap": [0.0, 0.0, 0.0],
@@ -55,21 +59,18 @@ def test_window_update_diagnosis_exposes_reward_relevant_signals():
     record["metrics"].update(
         {
             "vote_correct": 0,
-            "any_correct": 1,
-            "useful_diversity": 0.25,
             "mean_embedding_overlap": 0.9,
         }
     )
 
     diagnosis = system._window_update_diagnosis([record])
 
-    assert diagnosis["diagnosis_type"] == "reward_update"
+    assert diagnosis["diagnosis_type"] == "vote_update"
     assert diagnosis["window_vote_acc"] == 0.0
-    assert diagnosis["window_oracle_acc"] == 1.0
-    assert diagnosis["window_coverage_gap"] == 1.0
-    assert diagnosis["window_useful_diversity"] == 0.25
-    assert diagnosis["per_agent_coverage_gap_count"] == [0, 1, 0]
-    assert diagnosis["per_agent_useful_diversity_deficit"][1] == 0.75
+    assert diagnosis["window_mean_vote_margin"] == 0.0
+    assert diagnosis["window_mean_boundary_useful_diversity"] == 0.5
+    assert diagnosis["per_agent_pivotal_fix_count"][0] == 1
+    assert diagnosis["per_agent_dominant_wrong_redundancy_count"] == [1, 0, 1]
 
 
 def test_optimizer_prompt_prioritizes_accuracy_repair():

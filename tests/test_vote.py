@@ -1,4 +1,4 @@
-from multi_dataset_diverse_rl.utils import majority_vote_with_diagnostics
+from multi_dataset_diverse_rl.utils import compute_gold_vote_diagnostics, majority_vote_with_diagnostics
 
 
 def test_majority_vote_no_tie():
@@ -31,3 +31,23 @@ def test_majority_vote_random_is_deterministic():
 def test_majority_vote_counts_are_correct():
     vote = majority_vote_with_diagnostics(["A", "B", "B", "", "C", "C"])
     assert vote["vote_counts"] == {"A": 1, "B": 2, "C": 2}
+
+
+def test_gold_vote_diagnostics_respects_matcher_and_boundary_condition():
+    matcher = lambda prediction, gold: prediction.lower() == gold.lower()
+    concentrated = compute_gold_vote_diagnostics(["A", "A", "B", "B", "C"], "A", matcher, 5)
+    dispersed = compute_gold_vote_diagnostics(["A", "A", "B", "C", "D"], "A", matcher, 5)
+    assert concentrated["gold_vote_count"] == 2
+    assert concentrated["largest_wrong_vote_count"] == 2
+    assert concentrated["normalized_vote_margin"] == 0.0
+    assert concentrated["boundary_useful_diversity"] < dispersed["boundary_useful_diversity"]
+
+
+def test_gold_vote_diagnostics_empty_answers_have_negative_margin():
+    metrics = compute_gold_vote_diagnostics(["", ""], "A", lambda prediction, gold: prediction == gold, 2)
+    assert metrics == {
+        "gold_vote_count": 0,
+        "largest_wrong_vote_count": 0,
+        "normalized_vote_margin": -1.0,
+        "boundary_useful_diversity": 0.0,
+    }

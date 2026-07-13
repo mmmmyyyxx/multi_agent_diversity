@@ -668,6 +668,42 @@ def match_answer_by_task(pred: str, gold: str, task_type: str = "auto") -> bool:
     return get_task_spec(task_type).match_answer(pred, gold)
 
 
+def compute_gold_vote_diagnostics(
+    answers: List[str],
+    gold: str,
+    match_answer,
+    num_agents: int,
+) -> Dict[str, float]:
+    """Compute vote-boundary diagnostics using the task's existing answer matcher."""
+    cleaned = [str(answer or "").strip() for answer in answers]
+    valid_answers = [answer for answer in cleaned if answer]
+    if not valid_answers:
+        return {
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 0,
+            "normalized_vote_margin": -1.0,
+            "boundary_useful_diversity": 0.0,
+        }
+    correct_flags = [bool(match_answer(answer, gold)) if answer else False for answer in cleaned]
+    gold_vote_count = int(sum(correct_flags))
+    wrong_answers = [answer for answer, correct in zip(cleaned, correct_flags) if answer and not correct]
+    wrong_counts = Counter(wrong_answers)
+    largest_wrong_vote_count = int(max(wrong_counts.values(), default=0))
+    wrong_valid_count = len(wrong_answers)
+    normalized_vote_margin = float(gold_vote_count - largest_wrong_vote_count) / float(max(1, int(num_agents)))
+    boundary_useful_diversity = (
+        1.0 - float(largest_wrong_vote_count) / float(wrong_valid_count)
+        if gold_vote_count > 0 and wrong_valid_count > 1 and abs(gold_vote_count - largest_wrong_vote_count) <= 1
+        else 0.0
+    )
+    return {
+        "gold_vote_count": gold_vote_count,
+        "largest_wrong_vote_count": largest_wrong_vote_count,
+        "normalized_vote_margin": normalized_vote_margin,
+        "boundary_useful_diversity": boundary_useful_diversity,
+    }
+
+
 def majority_vote_with_diagnostics(
     answers: List[str],
     tie_break_method: str = "first",

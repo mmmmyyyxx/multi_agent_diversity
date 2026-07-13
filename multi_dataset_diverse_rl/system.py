@@ -6,6 +6,7 @@ import random
 import re
 import time
 import uuid
+from collections import Counter
 from contextvars import ContextVar
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -21,6 +22,7 @@ from .config import Config
 from .policy import AgentState
 from .tasks import TaskSpec, get_task_spec
 from .utils import (
+    compute_gold_vote_diagnostics,
     ensure_dir,
     extract_json_obj,
     infer_task_type,
@@ -130,15 +132,38 @@ def compute_oracle_coverage_transitions(
     }
 
 
+def compute_vote_transitions(
+    baseline_vote_correct: Sequence[bool],
+    candidate_vote_correct: Sequence[bool],
+) -> Dict[str, float]:
+    """Compute vote flips on the already-evaluated candidate batch."""
+    if len(baseline_vote_correct) != len(candidate_vote_correct):
+        raise ValueError("baseline_vote_correct and candidate_vote_correct must have equal length")
+    batch_size = len(baseline_vote_correct)
+    gains = sum(int((not bool(base)) and bool(candidate)) for base, candidate in zip(baseline_vote_correct, candidate_vote_correct))
+    losses = sum(int(bool(base) and (not bool(candidate))) for base, candidate in zip(baseline_vote_correct, candidate_vote_correct))
+    denominator = float(batch_size) if batch_size else 1.0
+    gain_rate = float(gains) / denominator if batch_size else 0.0
+    loss_rate = float(losses) / denominator if batch_size else 0.0
+    return {
+        "vote_gain_count": int(gains),
+        "vote_gain_rate": gain_rate,
+        "vote_loss_count": int(losses),
+        "vote_loss_rate": loss_rate,
+        "net_vote_count": int(gains - losses),
+        "net_vote_delta": float(gain_rate - loss_rate),
+    }
+
+
 def _pareto_value(candidate: Dict[str, Any], key: str) -> float:
     metrics = candidate.get("metrics", {}) if isinstance(candidate.get("metrics", {}), dict) else {}
     return float(candidate.get(key, metrics.get(key, 0.0)) or 0.0)
 
 
 def pareto_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PARETO_EPSILON) -> bool:
-    """Return whether candidate a dominates b on oracle gain/loss/target accuracy."""
-    a_gain, b_gain = _pareto_value(a, "coverage_gain_rate"), _pareto_value(b, "coverage_gain_rate")
-    a_loss, b_loss = _pareto_value(a, "coverage_loss_rate"), _pareto_value(b, "coverage_loss_rate")
+    """Return whether candidate a dominates b on vote gain/loss/target accuracy."""
+    a_gain, b_gain = _pareto_value(a, "vote_gain_rate"), _pareto_value(b, "vote_gain_rate")
+    a_loss, b_loss = _pareto_value(a, "vote_loss_rate"), _pareto_value(b, "vote_loss_rate")
     a_acc, b_acc = _pareto_value(a, "candidate_target_accuracy"), _pareto_value(b, "candidate_target_accuracy")
     no_worse = a_gain >= b_gain - eps and a_loss <= b_loss + eps and a_acc >= b_acc - eps
     strictly_better = a_gain > b_gain + eps or a_loss < b_loss - eps or a_acc > b_acc + eps
@@ -167,8 +192,8 @@ def compute_crowding_distances(candidates: Sequence[Dict[str, Any]], front_indic
     if len(front_indices) <= 2:
         return {index: float("inf") for index in front_indices}
     objectives = (
-        lambda item: _pareto_value(item, "coverage_gain_rate"),
-        lambda item: -_pareto_value(item, "coverage_loss_rate"),
+        lambda item: _pareto_value(item, "vote_gain_rate"),
+        lambda item: -_pareto_value(item, "vote_loss_rate"),
         lambda item: _pareto_value(item, "candidate_target_accuracy"),
     )
     for objective in objectives:
@@ -286,16 +311,16 @@ class TraceBeamSearchSystem:
     def _is_guarded_reward_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "guarded_diversity"
 
-    def _is_coverage_useful_diversity_mode(self) -> bool:
-        return str(getattr(self.cfg, "reward_mode", "")).lower() == "coverage_useful_diversity"
+    def _is_vote_useful_diversity_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "vote_useful_diversity"
 
     def _uses_baseline_candidate_metrics(self) -> bool:
-        return self._is_guarded_reward_mode() or self._is_coverage_useful_diversity_mode()
+        return self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode()
 
-    def _uses_oracle_pareto_selection(self) -> bool:
-        return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "oracle_pareto"
+    def _uses_vote_pareto_selection(self) -> bool:
+        return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "vote_pareto"
 
-    def _oracle_pareto_feasibility(self, metrics: Dict[str, Any]) -> Tuple[bool, bool, bool]:
+    def _vote_pareto_feasibility(self, metrics: Dict[str, Any]) -> Tuple[bool, bool, bool]:
         weights = self._effective_reward_weights()
         baseline_target = float(metrics.get("baseline_target_accuracy", 0.0) or 0.0)
         candidate_target = float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0)
@@ -306,35 +331,39 @@ class TraceBeamSearchSystem:
         return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(accuracy_guard_passed and invalid_guard_passed)
 
     @staticmethod
-    def _oracle_pareto_active_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, int, str]:
+    def _vote_pareto_active_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, int, str]:
         metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
         rank = item.get("pareto_rank")
         normalized_rank = int(rank) if isinstance(rank, int) and rank >= 0 else 10**9
         return (
-            -float(metrics.get("net_coverage_delta", 0.0) or 0.0),
-            float(metrics.get("coverage_loss_rate", 0.0) or 0.0),
-            -float(metrics.get("coverage_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_delta", 0.0) or 0.0),
+            float(metrics.get("vote_loss_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_margin_delta", 0.0) or 0.0),
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
-            -float(metrics.get("useful_diversity", 0.0) or 0.0),
+            -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
+            float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
             normalized_rank,
             str(item.get("candidate_id", "")),
         )
 
     @staticmethod
-    def _oracle_pareto_crowding_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, str]:
+    def _vote_pareto_crowding_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, float, str]:
         metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
         distance = float(item.get("pareto_crowding_distance", 0.0) or 0.0)
         return (
             -distance,
-            -float(metrics.get("net_coverage_delta", 0.0) or 0.0),
-            float(metrics.get("coverage_loss_rate", 0.0) or 0.0),
-            -float(metrics.get("coverage_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_delta", 0.0) or 0.0),
+            float(metrics.get("vote_loss_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("vote_margin_delta", 0.0) or 0.0),
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
-            -float(metrics.get("useful_diversity", 0.0) or 0.0),
+            -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
+            float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
             str(item.get("candidate_id", "")),
         )
 
-    def _select_oracle_pareto_beam(
+    def _select_vote_pareto_beam(
         self,
         evaluated: List[Dict[str, Any]],
         beam_size: int,
@@ -344,7 +373,7 @@ class TraceBeamSearchSystem:
         feasible: List[Dict[str, Any]] = []
         for item in evaluated:
             metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
-            accuracy_passed, invalid_passed, is_feasible = self._oracle_pareto_feasibility(metrics)
+            accuracy_passed, invalid_passed, is_feasible = self._vote_pareto_feasibility(metrics)
             metrics.update(
                 {
                     "accuracy_guard_passed": accuracy_passed,
@@ -366,7 +395,7 @@ class TraceBeamSearchSystem:
             current_hash = self._hash(current_prompt)
             fallback = next((item for item in evaluated if self._hash(str(item.get("prompt", ""))) == current_hash), None)
             if fallback is None:
-                raise RuntimeError("Oracle Pareto selection requires the current active prompt in the candidate pool")
+                raise RuntimeError("Vote Pareto selection requires the current active prompt in the candidate pool")
             fallback["pareto_feasible"] = True
             fallback["pareto_forced_fallback"] = True
             feasible = [fallback]
@@ -388,12 +417,12 @@ class TraceBeamSearchSystem:
             if len(front) <= slots:
                 retained.extend(sorted(front, key=lambda item: str(item.get("candidate_id", ""))))
             else:
-                retained.extend(sorted(front, key=self._oracle_pareto_crowding_sort_key)[:slots])
+                retained.extend(sorted(front, key=self._vote_pareto_crowding_sort_key)[:slots])
                 break
 
         if not retained:
-            raise RuntimeError("Oracle Pareto selection produced an empty beam")
-        retained.sort(key=self._oracle_pareto_active_sort_key)
+            raise RuntimeError("Vote Pareto selection produced an empty beam")
+        retained.sort(key=self._vote_pareto_active_sort_key)
         for item in retained:
             item["pareto_selected"] = True
         for item in evaluated:
@@ -2125,6 +2154,12 @@ class TraceBeamSearchSystem:
         majority_vote_answer = str(majority_vote.get("vote_answer", ""))
         individual_correct = [int(self.task_spec.match_answer(a, gold)) for a in answers]
         majority_vote_correct = int(self.task_spec.match_answer(majority_vote_answer, gold))
+        gold_vote_diagnostics = compute_gold_vote_diagnostics(
+            answers,
+            gold,
+            self.task_spec.match_answer,
+            len(self.agents),
+        )
         if self._is_accuracy_only_mode():
             n = len(traces)
             active_prompts = prompts or self._active_prompt_list()
@@ -2205,6 +2240,7 @@ class TraceBeamSearchSystem:
             "weighted_vote_agent_weights": list(weighted_vote.get("weighted_vote_agent_weights", [])),
             "weighted_vote_fallback": bool(weighted_vote.get("weighted_vote_fallback", False)),
             "any_correct": any_correct,
+            **gold_vote_diagnostics,
             "useful_diversity": useful_diversity,
             "invalid_rate": float(np.mean(invalids)) if invalids else 1.0,
             "invalid_score": 1.0 - (float(np.mean(invalids)) if invalids else 1.0),
@@ -2493,8 +2529,8 @@ class TraceBeamSearchSystem:
         error_counts = list(diagnosis.get("per_agent_error_count", []))
         team_wrong_counts = list(diagnosis.get("per_agent_team_wrong_error_count", []))
         invalid_rates = list(diagnosis.get("per_agent_invalid_rate", []))
-        coverage_gaps = list(diagnosis.get("per_agent_coverage_gap_count", []))
-        useful_deficits = list(diagnosis.get("per_agent_useful_diversity_deficit", []))
+        pivotal_fix_counts = list(diagnosis.get("per_agent_pivotal_fix_count", []))
+        dominant_wrong_counts = list(diagnosis.get("per_agent_dominant_wrong_redundancy_count", []))
 
         ids = list(range(len(self.agents)))
         random.shuffle(ids)
@@ -2513,8 +2549,8 @@ class TraceBeamSearchSystem:
                 3.0 * value(error_counts, agent_id)
                 + 2.0 * value(team_wrong_counts, agent_id)
                 + 2.0 * value(invalid_rates, agent_id)
-                + 1.5 * value(coverage_gaps, agent_id)
-                + 1.0 * value(useful_deficits, agent_id)
+                + 2.0 * value(pivotal_fix_counts, agent_id)
+                + 1.0 * value(dominant_wrong_counts, agent_id)
             )
             if score > 0.0:
                 scored.append((float(score), agent_id))
@@ -2662,131 +2698,106 @@ class TraceBeamSearchSystem:
 
     def _window_update_diagnosis(self, window_records: List[Dict[str, Any]]) -> Dict[str, Any]:
         scored = []
-        for idx, rec in enumerate(window_records):
-            metrics = rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}
-            individual = list(metrics.get("individual_correct", []))
-            vote_correct = int(metrics.get("vote_correct", 0) or 0)
-            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
-            invalid_rate = float(metrics.get("invalid_rate", 0.0) or 0.0)
-            useful_diversity = float(metrics.get("useful_diversity", 0.0) or 0.0)
-            reward_pressure = (
-                float(1 - vote_correct)
-                + float(max(0, any_correct - vote_correct))
-                + invalid_rate
-                + max(0.0, 1.0 - useful_diversity) * 0.25
-            )
-            scored.append((float(reward_pressure), idx, rec))
-        scored.sort(key=lambda x: x[0], reverse=True)
-        focus_items = scored[: min(3, max(1, len(scored)))]
         all_homogeneous_cases: List[Dict[str, Any]] = []
         all_validity_cases: List[Dict[str, Any]] = []
-        per_agent_invalid = [0 for _ in range(len(self.agents))]
-        per_agent_seen = [0 for _ in range(len(self.agents))]
-        per_agent_pressure_rows = [[] for _ in range(len(self.agents))]
-        per_agent_coverage_gap_count = [0 for _ in range(len(self.agents))]
-        per_agent_useful_diversity_rows = [[] for _ in range(len(self.agents))]
-        focus_cases = []
-        for score, idx, rec in focus_items:
-            metrics = rec.get("metrics", {})
-            individual = list(metrics.get("individual_correct", []))
+        num_agents = len(self.agents)
+        per_agent_invalid = [0 for _ in range(num_agents)]
+        per_agent_seen = [0 for _ in range(num_agents)]
+        per_agent_pressure_rows = [[] for _ in range(num_agents)]
+        pivotal_fix_counts = [0 for _ in range(num_agents)]
+        dominant_wrong_counts = [0 for _ in range(num_agents)]
+        vote_values: List[int] = []
+        vote_margin_values: List[float] = []
+        boundary_diversity_values: List[float] = []
+        embedding_overlap_values: List[float] = []
+
+        for idx, rec in enumerate(window_records):
+            metrics = rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}
+            individual = [int(value) for value in metrics.get("individual_correct", [])]
+            invalids = [int(value) for value in metrics.get("invalid_flags", [])]
+            pressures = list(metrics.get("per_agent_overlap", []))
+            answers = [str(answer or "").strip() for answer in rec.get("answers", [])]
             vote_correct = int(metrics.get("vote_correct", 0) or 0)
-            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
+            vote_tie = bool(metrics.get("vote_tie", False))
+            gold_count = int(metrics.get("gold_vote_count", sum(individual)) or 0)
+            largest_wrong = int(metrics.get("largest_wrong_vote_count", 0) or 0)
+            margin = float(metrics.get("normalized_vote_margin", -1.0) if metrics.get("normalized_vote_margin") is not None else -1.0)
+            boundary_diversity = float(metrics.get("boundary_useful_diversity", 0.0) or 0.0)
+            invalid_rate = float(metrics.get("invalid_rate", 0.0) or 0.0)
+            reward_pressure = float(1 - vote_correct) + max(0.0, -margin) + invalid_rate
+            scored.append((reward_pressure, idx, rec))
+            vote_values.append(vote_correct)
+            vote_margin_values.append(margin)
+            boundary_diversity_values.append(boundary_diversity)
+            embedding_overlap_values.append(float(metrics.get("mean_embedding_overlap", 0.0) or 0.0))
+            all_homogeneous_cases.extend(list(rec.get("homogeneous_cases", [])))
+            all_validity_cases.extend(list(rec.get("validity_cases", [])))
+
+            wrong_counts = Counter(
+                answers[agent_id]
+                for agent_id in range(min(len(answers), len(individual)))
+                if answers[agent_id] and not individual[agent_id]
+            )
+            for agent_id in range(num_agents):
+                if agent_id < len(invalids):
+                    per_agent_seen[agent_id] += 1
+                    per_agent_invalid[agent_id] += invalids[agent_id]
+                if agent_id < len(pressures):
+                    per_agent_pressure_rows[agent_id].append(float(pressures[agent_id]))
+                if agent_id >= len(individual) or individual[agent_id]:
+                    continue
+                answer = answers[agent_id] if agent_id < len(answers) else ""
+                remaining_wrong = dict(wrong_counts)
+                if answer and answer in remaining_wrong:
+                    remaining_wrong[answer] -= 1
+                    if remaining_wrong[answer] <= 0:
+                        remaining_wrong.pop(answer, None)
+                counterfactual_largest_wrong = max(remaining_wrong.values(), default=0)
+                if (not vote_correct or vote_tie) and gold_count + 1 > counterfactual_largest_wrong:
+                    pivotal_fix_counts[agent_id] += 1
+                if answer and gold_count > 0 and wrong_counts.get(answer, 0) == largest_wrong and abs(gold_count - largest_wrong) <= 1:
+                    dominant_wrong_counts[agent_id] += 1
+
+        scored.sort(key=lambda item: item[0], reverse=True)
+        focus_cases = []
+        for score, idx, rec in scored[: min(3, max(1, len(scored)))]:
+            metrics = rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}
+            individual = list(metrics.get("individual_correct", []))
             focus_cases.append(
                 {
                     "window_index": idx,
                     "reward_pressure": round(score, 4),
-                    "diagnostic_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0) or 0.0),
-                    "vote_correct": bool(vote_correct),
-                    "any_correct": bool(any_correct),
-                    "coverage_gap": bool(any_correct and not vote_correct),
-                    "wrong_agent_ids": [
-                        int(agent_id)
-                        for agent_id, correct in enumerate(individual)
-                        if not int(correct)
-                    ],
-                    "useful_diversity": float(metrics.get("useful_diversity", 0.0) or 0.0),
+                    "vote_correct": bool(metrics.get("vote_correct", 0)),
+                    "vote_tie": bool(metrics.get("vote_tie", False)),
+                    "normalized_vote_margin": float(metrics.get("normalized_vote_margin", -1.0) if metrics.get("normalized_vote_margin") is not None else -1.0),
+                    "boundary_useful_diversity": float(metrics.get("boundary_useful_diversity", 0.0) or 0.0),
+                    "wrong_agent_ids": [agent_id for agent_id, correct in enumerate(individual) if not int(correct)],
                     "invalid_rate": float(metrics.get("invalid_rate", 0.0) or 0.0),
-                    "high_overlap_pairs": metrics.get("high_overlap_pairs", []),
-                    "roles": metrics.get("roles", []),
                 }
             )
-        for idx, rec in enumerate(window_records):
-            metrics = rec.get("metrics", {})
-            all_homogeneous_cases.extend(list(rec.get("homogeneous_cases", [])))
-            all_validity_cases.extend(list(rec.get("validity_cases", [])))
-            invalids = list(metrics.get("invalid_flags", []))
-            pressures = list(metrics.get("per_agent_overlap", []))
-            individual = list(metrics.get("individual_correct", []))
-            vote_correct = int(metrics.get("vote_correct", 0) or 0)
-            any_correct = int(metrics.get("any_correct", 0) or any(int(x) for x in individual))
-            coverage_gap = bool(any_correct and not vote_correct)
-            useful_diversity = float(metrics.get("useful_diversity", 0.0) or 0.0)
-            for agent_id in range(len(self.agents)):
-                if agent_id < len(invalids):
-                    per_agent_seen[agent_id] += 1
-                    per_agent_invalid[agent_id] += int(invalids[agent_id])
-                if agent_id < len(pressures):
-                    per_agent_pressure_rows[agent_id].append(float(pressures[agent_id]))
-                if agent_id < len(individual):
-                    if coverage_gap and int(individual[agent_id]):
-                        per_agent_coverage_gap_count[agent_id] += 1
-                    if int(individual[agent_id]) and not (agent_id < len(invalids) and int(invalids[agent_id])):
-                        per_agent_useful_diversity_rows[agent_id].append(useful_diversity)
-        homogeneous_case_counts = [0 for _ in range(len(self.agents))]
+
+        homogeneous_case_counts = [0 for _ in range(num_agents)]
         for case in all_homogeneous_cases:
             agent_id = int(case.get("target_agent_id", -1))
-            if 0 <= agent_id < len(homogeneous_case_counts):
+            if 0 <= agent_id < num_agents:
                 homogeneous_case_counts[agent_id] += 1
-        per_agent_invalid_rate = [
-            float(per_agent_invalid[i] / per_agent_seen[i]) if per_agent_seen[i] else 0.0
-            for i in range(len(self.agents))
-        ]
-        per_agent_pressure = [
-            float(np.mean(rows)) if rows else 0.0
-            for rows in per_agent_pressure_rows
-        ]
-        per_agent_useful_diversity = [
-            self._clip01(float(np.mean(rows))) if rows else 0.0
-            for rows in per_agent_useful_diversity_rows
-        ]
-        per_agent_useful_diversity_deficit = [
-            self._clip01(1.0 - value) if per_agent_seen[i] else 0.0
-            for i, value in enumerate(per_agent_useful_diversity)
-        ]
-        vote_values = [
-            int((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("vote_correct", 0) or 0)
-            for rec in window_records
-        ]
-        any_values = [
-            int((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("any_correct", 0) or 0)
-            for rec in window_records
-        ]
-        useful_values = [
-            float((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("useful_diversity", 0.0) or 0.0)
-            for rec in window_records
-        ]
-        embedding_overlap_values = [
-            float((rec.get("metrics", {}) if isinstance(rec.get("metrics", {}), dict) else {}).get("mean_embedding_overlap", 0.0) or 0.0)
-            for rec in window_records
-        ]
-        current_prompts = [
-            {"agent_id": i, "prompt_preview": normalize_spaces(p)[:260], "prompt_hash": self._hash(p)}
-            for i, p in enumerate(self._active_prompt_list())
-        ]
         accuracy_diagnosis = self._window_accuracy_diagnosis(window_records)
+        current_prompts = [
+            {"agent_id": i, "prompt_preview": normalize_spaces(prompt)[:260], "prompt_hash": self._hash(prompt)}
+            for i, prompt in enumerate(self._active_prompt_list())
+        ]
         return {
-            "diagnosis_type": "reward_update",
+            "diagnosis_type": "vote_update",
             "window_size": len(window_records),
             "focus_cases": focus_cases,
             "prompt_roles": current_prompts,
             "mean_window_overlap": float(np.mean(embedding_overlap_values)) if embedding_overlap_values else 0.0,
             "mean_embedding_overlap": float(np.mean(embedding_overlap_values)) if embedding_overlap_values else 0.0,
-            "mean_reward_pressure": float(np.mean([x[0] for x in scored])) if scored else 0.0,
+            "mean_reward_pressure": float(np.mean([item[0] for item in scored])) if scored else 0.0,
             "window_vote_acc": float(np.mean(vote_values)) if vote_values else 0.0,
-            "window_oracle_acc": float(np.mean(any_values)) if any_values else 0.0,
-            "window_coverage_gap": (float(np.mean(any_values)) - float(np.mean(vote_values))) if any_values and vote_values else 0.0,
-            "window_useful_diversity": self._clip01(float(np.mean(useful_values))) if useful_values else 0.0,
-            "homogeneous_cases": sorted(all_homogeneous_cases, key=lambda c: float(c.get("pair_overlap", 0.0)), reverse=True),
+            "window_mean_vote_margin": float(np.mean(vote_margin_values)) if vote_margin_values else -1.0,
+            "window_mean_boundary_useful_diversity": self._clip01(float(np.mean(boundary_diversity_values))) if boundary_diversity_values else 0.0,
+            "homogeneous_cases": sorted(all_homogeneous_cases, key=lambda case: float(case.get("pair_overlap", 0.0)), reverse=True),
             "validity_cases": all_validity_cases,
             "error_cases": list(accuracy_diagnosis.get("error_cases", [])),
             "target_error_cases": list(accuracy_diagnosis.get("target_error_cases", [])),
@@ -2794,12 +2805,11 @@ class TraceBeamSearchSystem:
             "per_agent_error_count": list(accuracy_diagnosis.get("per_agent_error_count", [])),
             "per_agent_team_wrong_error_count": list(accuracy_diagnosis.get("per_agent_team_wrong_error_count", [])),
             "team_accuracy": float(accuracy_diagnosis.get("team_accuracy", 0.0)),
-            "per_agent_coverage_gap_count": per_agent_coverage_gap_count,
-            "per_agent_useful_diversity": per_agent_useful_diversity,
-            "per_agent_useful_diversity_deficit": per_agent_useful_diversity_deficit,
             "homogeneous_case_counts": homogeneous_case_counts,
-            "per_agent_invalid_rate": per_agent_invalid_rate,
-            "per_agent_overlap_pressure": per_agent_pressure,
+            "per_agent_invalid_rate": [float(per_agent_invalid[i] / per_agent_seen[i]) if per_agent_seen[i] else 0.0 for i in range(num_agents)],
+            "per_agent_overlap_pressure": [float(np.mean(values)) if values else 0.0 for values in per_agent_pressure_rows],
+            "per_agent_pivotal_fix_count": pivotal_fix_counts,
+            "per_agent_dominant_wrong_redundancy_count": dominant_wrong_counts,
             "homogeneity_overlap_threshold": float(self.cfg.homogeneity_overlap_threshold),
         }
 
@@ -3266,12 +3276,11 @@ class TraceBeamSearchSystem:
         target_invalid_rate = float(window_stats.get("target_invalid_rate", 0.0) or 0.0)
         target_error_count = int(window_stats.get("target_error_count", 0) or 0)
         target_team_wrong_error_count = int(window_stats.get("target_team_wrong_error_count", 0) or 0)
-        target_coverage_gap_count = int(window_stats.get("target_coverage_gap_count", 0) or 0)
-        target_useful_deficit = float(window_stats.get("target_useful_diversity_deficit", 0.0) or 0.0)
+        target_pivotal_fix_count = int(window_stats.get("target_pivotal_fix_count", 0) or 0)
+        target_dominant_wrong_count = int(window_stats.get("target_dominant_wrong_redundancy_count", 0) or 0)
         window_vote_acc = float(window_stats.get("window_vote_acc", window_stats.get("team_accuracy", 0.0)) or 0.0)
-        window_oracle_acc = float(window_stats.get("window_oracle_acc", 0.0) or 0.0)
-        window_coverage_gap = float(window_stats.get("window_coverage_gap", 0.0) or 0.0)
-        window_useful_diversity = float(window_stats.get("window_useful_diversity", 0.0) or 0.0)
+        window_vote_margin = float(window_stats.get("window_mean_vote_margin", -1.0) if window_stats.get("window_mean_vote_margin") is not None else -1.0)
+        window_boundary_diversity = float(window_stats.get("window_mean_boundary_useful_diversity", 0.0) or 0.0)
         context = {
             "target_agent_id": agent_id,
             "parent_prompt_preview": normalize_spaces(parent_prompt)[:600],
@@ -3286,9 +3295,9 @@ class TraceBeamSearchSystem:
                 "target_error_patterns": sorted(set(target_error_patterns))[:12],
                 "invalid_output_patterns": sorted(set(invalid_output_patterns))[:12],
                 "diversity_gap_summary": (
-                    f"window_vote_acc={window_vote_acc:.3f}; window_oracle_acc={window_oracle_acc:.3f}; "
-                    f"window_coverage_gap={window_coverage_gap:.3f}; window_useful_diversity={window_useful_diversity:.3f}; "
-                    f"target_coverage_gap_count={target_coverage_gap_count}; target_useful_diversity_deficit={target_useful_deficit:.3f}; "
+                    f"window_vote_acc={window_vote_acc:.3f}; window_mean_vote_margin={window_vote_margin:.3f}; "
+                    f"window_boundary_useful_diversity={window_boundary_diversity:.3f}; "
+                    f"target_pivotal_fix_count={target_pivotal_fix_count}; target_dominant_wrong_redundancy_count={target_dominant_wrong_count}; "
                     f"diagnostic_embedding_overlap={mean_overlap:.3f}; target_embedding_overlap_pressure={target_pressure:.3f}; "
                     f"batch_types={sorted(set(batch_types))[:8]}"
                 ),
@@ -3297,16 +3306,17 @@ class TraceBeamSearchSystem:
                     f"avoid duplicating peer procedures and parent wording."
                 ),
                 "error_correlation_summary": (
-                    "Use target error cases and peer-correct availability as abstract correlation signals. "
-                    "Voting failure is excluded unless explicitly enabled."
+                    "Use target error cases and vote-boundary diagnostics as abstract repair signals. "
+                    "Voting failures are included by default."
                     if not bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False))
-                    else "Voting failure may be mentioned as a secondary diagnostic, not as the primary objective."
+                    else "Voting failures, pivotal fixes, and dominant wrong-answer redundancy are primary diagnostics."
                 ),
                 "peer_behavior_summary": peer_behavior_summary[:8],
                 "target_error_summary": (
                     f"target_error_count={target_error_count}; "
                     f"target_team_wrong_error_count={target_team_wrong_error_count}; "
-                    f"target_coverage_gap_count={target_coverage_gap_count}"
+                    f"target_pivotal_fix_count={target_pivotal_fix_count}; "
+                    f"target_dominant_wrong_redundancy_count={target_dominant_wrong_count}"
                 ),
                 "invalid_output_summary": f"target_invalid_rate={target_invalid_rate:.3f}; invalid patterns are abstracted above.",
             },
@@ -3818,14 +3828,13 @@ class TraceBeamSearchSystem:
         agent_invalid_rates = update_diagnosis.get("per_agent_invalid_rate", [])
         agent_error_counts = update_diagnosis.get("per_agent_error_count", [])
         agent_team_wrong_counts = update_diagnosis.get("per_agent_team_wrong_error_count", [])
-        agent_coverage_gap_counts = update_diagnosis.get("per_agent_coverage_gap_count", [])
-        agent_useful_deficits = update_diagnosis.get("per_agent_useful_diversity_deficit", [])
+        agent_pivotal_fix_counts = update_diagnosis.get("per_agent_pivotal_fix_count", [])
+        agent_dominant_wrong_counts = update_diagnosis.get("per_agent_dominant_wrong_redundancy_count", [])
         window_stats = {
-            "diagnosis_type": update_diagnosis.get("diagnosis_type", "reward_update"),
+            "diagnosis_type": update_diagnosis.get("diagnosis_type", "vote_update"),
             "window_vote_acc": update_diagnosis.get("window_vote_acc", update_diagnosis.get("team_accuracy", 0.0)),
-            "window_oracle_acc": update_diagnosis.get("window_oracle_acc", 0.0),
-            "window_coverage_gap": update_diagnosis.get("window_coverage_gap", 0.0),
-            "window_useful_diversity": update_diagnosis.get("window_useful_diversity", 0.0),
+            "window_mean_vote_margin": update_diagnosis.get("window_mean_vote_margin", -1.0),
+            "window_mean_boundary_useful_diversity": update_diagnosis.get("window_mean_boundary_useful_diversity", 0.0),
             "mean_reward_pressure": update_diagnosis.get("mean_reward_pressure", 0.0),
             "mean_window_overlap": update_diagnosis.get("mean_window_overlap", 0.0),
             "homogeneity_overlap_threshold": update_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
@@ -3834,8 +3843,8 @@ class TraceBeamSearchSystem:
             "target_invalid_rate": agent_invalid_rates[agent_id] if agent_id < len(agent_invalid_rates) else 0.0,
             "target_error_count": agent_error_counts[agent_id] if agent_id < len(agent_error_counts) else 0,
             "target_team_wrong_error_count": agent_team_wrong_counts[agent_id] if agent_id < len(agent_team_wrong_counts) else 0,
-            "target_coverage_gap_count": agent_coverage_gap_counts[agent_id] if agent_id < len(agent_coverage_gap_counts) else 0,
-            "target_useful_diversity_deficit": agent_useful_deficits[agent_id] if agent_id < len(agent_useful_deficits) else 0.0,
+            "target_pivotal_fix_count": agent_pivotal_fix_counts[agent_id] if agent_id < len(agent_pivotal_fix_counts) else 0,
+            "target_dominant_wrong_redundancy_count": agent_dominant_wrong_counts[agent_id] if agent_id < len(agent_dominant_wrong_counts) else 0,
         }
         validity_constraints = {
             "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
@@ -4113,14 +4122,13 @@ class TraceBeamSearchSystem:
         agent_invalid_rates = update_diagnosis.get("per_agent_invalid_rate", [])
         agent_error_counts = update_diagnosis.get("per_agent_error_count", [])
         agent_team_wrong_counts = update_diagnosis.get("per_agent_team_wrong_error_count", [])
-        agent_coverage_gap_counts = update_diagnosis.get("per_agent_coverage_gap_count", [])
-        agent_useful_deficits = update_diagnosis.get("per_agent_useful_diversity_deficit", [])
+        agent_pivotal_fix_counts = update_diagnosis.get("per_agent_pivotal_fix_count", [])
+        agent_dominant_wrong_counts = update_diagnosis.get("per_agent_dominant_wrong_redundancy_count", [])
         window_stats = {
-            "diagnosis_type": update_diagnosis.get("diagnosis_type", "reward_update"),
+            "diagnosis_type": update_diagnosis.get("diagnosis_type", "vote_update"),
             "window_vote_acc": update_diagnosis.get("window_vote_acc", update_diagnosis.get("team_accuracy", 0.0)),
-            "window_oracle_acc": update_diagnosis.get("window_oracle_acc", 0.0),
-            "window_coverage_gap": update_diagnosis.get("window_coverage_gap", 0.0),
-            "window_useful_diversity": update_diagnosis.get("window_useful_diversity", 0.0),
+            "window_mean_vote_margin": update_diagnosis.get("window_mean_vote_margin", -1.0),
+            "window_mean_boundary_useful_diversity": update_diagnosis.get("window_mean_boundary_useful_diversity", 0.0),
             "mean_reward_pressure": update_diagnosis.get("mean_reward_pressure", 0.0),
             "mean_window_overlap": update_diagnosis.get("mean_window_overlap", 0.0),
             "homogeneity_overlap_threshold": update_diagnosis.get("homogeneity_overlap_threshold", self.cfg.homogeneity_overlap_threshold),
@@ -4129,8 +4137,8 @@ class TraceBeamSearchSystem:
             "target_invalid_rate": agent_invalid_rates[agent_id] if agent_id < len(agent_invalid_rates) else 0.0,
             "target_error_count": agent_error_counts[agent_id] if agent_id < len(agent_error_counts) else 0,
             "target_team_wrong_error_count": agent_team_wrong_counts[agent_id] if agent_id < len(agent_team_wrong_counts) else 0,
-            "target_coverage_gap_count": agent_coverage_gap_counts[agent_id] if agent_id < len(agent_coverage_gap_counts) else 0,
-            "target_useful_diversity_deficit": agent_useful_deficits[agent_id] if agent_id < len(agent_useful_deficits) else 0.0,
+            "target_pivotal_fix_count": agent_pivotal_fix_counts[agent_id] if agent_id < len(agent_pivotal_fix_counts) else 0,
+            "target_dominant_wrong_redundancy_count": agent_dominant_wrong_counts[agent_id] if agent_id < len(agent_dominant_wrong_counts) else 0,
         }
         validity_constraints = {
             "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
@@ -4419,8 +4427,9 @@ class TraceBeamSearchSystem:
             return {
                 "target_accuracy": 1.0,
                 "div_delta": self._nonnegative(getattr(self.cfg, "reward_weight_div_delta", 0.0)),
-                "coverage": self._nonnegative(getattr(self.cfg, "reward_weight_coverage", 0.0)),
-                "useful_diversity": self._nonnegative(getattr(self.cfg, "reward_weight_useful_diversity", 0.0)),
+                "vote_delta": self._nonnegative(getattr(self.cfg, "reward_weight_vote_delta", 0.0)),
+                "vote_margin": self._nonnegative(getattr(self.cfg, "reward_weight_vote_margin", 0.0)),
+                "boundary_diversity": self._nonnegative(getattr(self.cfg, "reward_weight_boundary_diversity", 0.0)),
                 "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
                 "accuracy_guard_epsilon": self._nonnegative(getattr(self.cfg, "accuracy_guard_epsilon", 0.0)),
                 **state,
@@ -4437,13 +4446,17 @@ class TraceBeamSearchSystem:
             float(getattr(self.cfg, "reward_weight_div_delta_late", 0.2)) * progress
             + float(getattr(self.cfg, "reward_weight_div_delta_early", 0.8)) * need
         )
-        coverage_weight = (
-            float(getattr(self.cfg, "reward_weight_coverage_late", 0.3)) * progress
-            + float(getattr(self.cfg, "reward_weight_coverage_early", 0.4)) * need
+        vote_delta_weight = (
+            float(getattr(self.cfg, "reward_weight_vote_delta_late", 0.3)) * progress
+            + float(getattr(self.cfg, "reward_weight_vote_delta_early", 0.4)) * need
         )
-        useful_weight = (
-            float(getattr(self.cfg, "reward_weight_useful_diversity_late", 0.25)) * progress
-            + float(getattr(self.cfg, "reward_weight_useful_diversity_early", 0.5)) * need
+        vote_margin_weight = (
+            float(getattr(self.cfg, "reward_weight_vote_margin_late", 0.25)) * progress
+            + float(getattr(self.cfg, "reward_weight_vote_margin_early", 0.5)) * need
+        )
+        boundary_diversity_weight = (
+            float(getattr(self.cfg, "reward_weight_boundary_diversity_late", 0.2)) * progress
+            + float(getattr(self.cfg, "reward_weight_boundary_diversity_early", 0.3)) * need
         )
         guard_epsilon = (
             float(getattr(self.cfg, "accuracy_guard_epsilon_late", 0.01)) * progress
@@ -4452,8 +4465,9 @@ class TraceBeamSearchSystem:
         return {
             "target_accuracy": self._nonnegative(target_weight),
             "div_delta": self._nonnegative(div_weight),
-            "coverage": self._nonnegative(coverage_weight),
-            "useful_diversity": self._nonnegative(useful_weight),
+            "vote_delta": self._nonnegative(vote_delta_weight),
+            "vote_margin": self._nonnegative(vote_margin_weight),
+            "boundary_diversity": self._nonnegative(boundary_diversity_weight),
             "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
             "accuracy_guard_epsilon": self._nonnegative(guard_epsilon),
             **state,
@@ -4463,8 +4477,9 @@ class TraceBeamSearchSystem:
         return {
             "effective_weight_target_accuracy": float(weights.get("target_accuracy", 0.0)),
             "effective_weight_div_delta": float(weights.get("div_delta", 0.0)),
-            "effective_weight_coverage": float(weights.get("coverage", 0.0)),
-            "effective_weight_useful_diversity": float(weights.get("useful_diversity", 0.0)),
+            "effective_weight_vote_delta": float(weights.get("vote_delta", 0.0)),
+            "effective_weight_vote_margin": float(weights.get("vote_margin", 0.0)),
+            "effective_weight_boundary_diversity": float(weights.get("boundary_diversity", 0.0)),
             "effective_accuracy_guard_epsilon": float(weights.get("accuracy_guard_epsilon", 0.0)),
             "reward_phase_progress": float(weights.get("phase_progress", 0.0)),
             "reward_diversity_need": float(weights.get("diversity_need", 0.0)),
@@ -4539,7 +4554,7 @@ class TraceBeamSearchSystem:
         )
         return result
 
-    def _candidate_reward_coverage_useful_diversity(
+    def _candidate_reward_vote_useful_diversity(
         self,
         *,
         baseline_team_accuracy: float,
@@ -4548,9 +4563,10 @@ class TraceBeamSearchSystem:
         candidate_target_accuracy: float,
         baseline_invalid_rate: float,
         candidate_invalid_rate: float,
-        rescue_rate: float,
-        coverage_delta: float,
-        useful_diversity: float,
+        baseline_mean_vote_margin: float,
+        candidate_mean_vote_margin: float,
+        baseline_boundary_useful_diversity: float,
+        candidate_boundary_useful_diversity: float,
         baseline_oracle_accuracy: Optional[float] = None,
         candidate_oracle_accuracy: Optional[float] = None,
         baseline_embedding_diversity: float = 0.0,
@@ -4562,8 +4578,10 @@ class TraceBeamSearchSystem:
         candidate_target_accuracy = self._clip01(candidate_target_accuracy)
         baseline_invalid_rate = self._clip01(baseline_invalid_rate)
         candidate_invalid_rate = self._clip01(candidate_invalid_rate)
-        rescue_rate = self._clip01(rescue_rate)
-        useful_diversity = self._clip01(useful_diversity)
+        baseline_mean_vote_margin = float(np.clip(baseline_mean_vote_margin, -1.0, 1.0))
+        candidate_mean_vote_margin = float(np.clip(candidate_mean_vote_margin, -1.0, 1.0))
+        baseline_boundary_useful_diversity = self._clip01(baseline_boundary_useful_diversity)
+        candidate_boundary_useful_diversity = self._clip01(candidate_boundary_useful_diversity)
 
         deltas = compute_candidate_metric_deltas(
             baseline_target_accuracy=baseline_target_accuracy,
@@ -4571,7 +4589,7 @@ class TraceBeamSearchSystem:
             baseline_team_accuracy=baseline_team_accuracy,
             candidate_team_accuracy=candidate_team_accuracy,
             baseline_oracle_accuracy=float(baseline_oracle_accuracy or 0.0),
-            candidate_oracle_accuracy=float(candidate_oracle_accuracy or (float(baseline_oracle_accuracy or 0.0) + float(coverage_delta))),
+            candidate_oracle_accuracy=float(candidate_oracle_accuracy or 0.0),
             baseline_embedding_diversity=baseline_embedding_diversity,
             candidate_embedding_diversity=candidate_embedding_diversity,
             baseline_invalid_rate=baseline_invalid_rate,
@@ -4579,23 +4597,32 @@ class TraceBeamSearchSystem:
         )
         vote_delta = deltas["vote_delta"]
         invalid_delta = deltas["invalid_delta"]
-        invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
+        vote_margin_delta = candidate_mean_vote_margin - baseline_mean_vote_margin
+        boundary_diversity_delta = candidate_boundary_useful_diversity - baseline_boundary_useful_diversity
         weights = self._effective_reward_weights()
+        target_guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(weights["accuracy_guard_epsilon"])
+        invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
 
-        if not invalid_guard_passed:
+        if not target_guard_passed or not invalid_guard_passed:
             reward = -1.0
         else:
             reward = (
                 float(weights["target_accuracy"]) * candidate_target_accuracy
-                + float(weights["coverage"]) * float(coverage_delta)
-                + float(weights["useful_diversity"]) * useful_diversity
+                + float(weights["vote_delta"]) * vote_delta
+                + float(weights["vote_margin"]) * vote_margin_delta
+                + float(weights["boundary_diversity"]) * boundary_diversity_delta
+                - float(weights["invalid_delta"]) * max(0.0, invalid_delta)
             )
         result = {
             "reward": float(reward),
-            "rescue_rate": float(rescue_rate),
             "coverage_delta": float(deltas["coverage_delta"]),
-            "useful_diversity": float(useful_diversity),
             **deltas,
+            "baseline_mean_vote_margin": baseline_mean_vote_margin,
+            "candidate_mean_vote_margin": candidate_mean_vote_margin,
+            "vote_margin_delta": vote_margin_delta,
+            "baseline_boundary_useful_diversity": baseline_boundary_useful_diversity,
+            "candidate_boundary_useful_diversity": candidate_boundary_useful_diversity,
+            "boundary_useful_diversity_delta": boundary_diversity_delta,
             "baseline_team_accuracy": float(baseline_team_accuracy),
             "candidate_team_accuracy": float(candidate_team_accuracy),
             "baseline_target_accuracy": float(baseline_target_accuracy),
@@ -4603,6 +4630,7 @@ class TraceBeamSearchSystem:
             "target_agent_accuracy": float(candidate_target_accuracy),
             "baseline_invalid_rate": float(baseline_invalid_rate),
             "candidate_invalid_rate": float(candidate_invalid_rate),
+            "accuracy_guard_passed": bool(target_guard_passed),
             "invalid_guard_passed": bool(invalid_guard_passed),
         }
         result.update(self._effective_reward_log_fields(weights))
@@ -4798,10 +4826,14 @@ class TraceBeamSearchSystem:
                         "rescue": rescue,
                         "rescue_useful_diversity": target_useful_diversity * float(rescue),
                         "baseline_team_accuracy": float(baseline_vote_correct),
+                        "baseline_mean_vote_margin": float(baseline_rollout.get("normalized_vote_margin", -1.0)),
+                        "baseline_boundary_useful_diversity": float(baseline_rollout.get("boundary_useful_diversity", 0.0)),
                         "baseline_embedding_diversity": float(baseline_rollout.get("embedding_diversity", 0.0)),
                         "baseline_invalid_rate": float(baseline_rollout.get("invalid_rate", 1.0)),
                         "baseline_mean_embedding_overlap": float(baseline_rollout.get("mean_embedding_overlap", 0.0)),
                         "candidate_team_accuracy": float(candidate_vote_correct),
+                        "candidate_mean_vote_margin": float(rollout.get("normalized_vote_margin", -1.0)),
+                        "candidate_boundary_useful_diversity": float(rollout.get("boundary_useful_diversity", 0.0)),
                         "candidate_embedding_diversity": float(rollout.get("embedding_diversity", 0.0)),
                         "candidate_invalid_rate": float(rollout.get("invalid_rate", 1.0)),
                         "candidate_mean_embedding_overlap": float(rollout.get("mean_embedding_overlap", 0.0)),
@@ -4832,6 +4864,17 @@ class TraceBeamSearchSystem:
             candidate_target_accuracy = self._clip01(float(np.mean([float(r.get("target_agent_correct", 0.0)) for r in rows])) if rows else 0.0)
             baseline_oracle_acc = self._clip01(float(np.mean([float(r.get("baseline_any_correct", 0.0)) for r in rows])) if rows else 0.0)
             candidate_oracle_acc = self._clip01(float(np.mean([float(r.get("candidate_any_correct", 0.0)) for r in rows])) if rows else 0.0)
+            baseline_mean_vote_margin = float(np.mean([float(r.get("baseline_mean_vote_margin", -1.0)) for r in rows])) if rows else -1.0
+            candidate_mean_vote_margin = float(np.mean([float(r.get("candidate_mean_vote_margin", -1.0)) for r in rows])) if rows else -1.0
+            baseline_boundary_useful_diversity = self._clip01(float(np.mean([float(r.get("baseline_boundary_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+            candidate_boundary_useful_diversity = self._clip01(float(np.mean([float(r.get("candidate_boundary_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+            vote_transitions = compute_vote_transitions(
+                [bool(row.get("baseline_vote_correct", 0)) for row in rows],
+                [bool(row.get("candidate_vote_correct", 0)) for row in rows],
+            )
+            vote_delta = candidate_team_accuracy - baseline_team_accuracy
+            if abs(float(vote_transitions["net_vote_delta"]) - float(vote_delta)) > PARETO_EPSILON:
+                raise RuntimeError("Vote transition delta does not match candidate evaluation vote delta")
             coverage_delta = candidate_oracle_acc - baseline_oracle_acc
             coverage_transitions = compute_oracle_coverage_transitions(
                 [list(row.get("baseline_individual_correct", [bool(row.get("baseline_any_correct", 0))])) for row in rows],
@@ -4842,17 +4885,18 @@ class TraceBeamSearchSystem:
             rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
             useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
             rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
-            if self._is_coverage_useful_diversity_mode():
-                baseline_candidate_metrics = self._candidate_reward_coverage_useful_diversity(
+            if self._is_vote_useful_diversity_mode():
+                baseline_candidate_metrics = self._candidate_reward_vote_useful_diversity(
                     baseline_team_accuracy=baseline_team_accuracy,
                     candidate_team_accuracy=candidate_team_accuracy,
                     baseline_target_accuracy=baseline_target_accuracy,
                     candidate_target_accuracy=candidate_target_accuracy,
                     baseline_invalid_rate=baseline_invalid_rate,
                     candidate_invalid_rate=candidate_invalid_rate,
-                    rescue_rate=rescue_rate,
-                    coverage_delta=coverage_delta,
-                    useful_diversity=useful_diversity,
+                    baseline_mean_vote_margin=baseline_mean_vote_margin,
+                    candidate_mean_vote_margin=candidate_mean_vote_margin,
+                    baseline_boundary_useful_diversity=baseline_boundary_useful_diversity,
+                    candidate_boundary_useful_diversity=candidate_boundary_useful_diversity,
                     baseline_oracle_accuracy=baseline_oracle_acc,
                     candidate_oracle_accuracy=candidate_oracle_acc,
                     baseline_embedding_diversity=baseline_embedding_diversity,
@@ -4876,7 +4920,14 @@ class TraceBeamSearchSystem:
                     "baseline_oracle_acc": baseline_oracle_acc,
                     "candidate_oracle_acc": candidate_oracle_acc,
                     "coverage_delta": float(coverage_delta),
+                    **vote_transitions,
                     **coverage_transitions,
+                    "baseline_mean_vote_margin": baseline_mean_vote_margin,
+                    "candidate_mean_vote_margin": candidate_mean_vote_margin,
+                    "vote_margin_delta": candidate_mean_vote_margin - baseline_mean_vote_margin,
+                    "baseline_boundary_useful_diversity": baseline_boundary_useful_diversity,
+                    "candidate_boundary_useful_diversity": candidate_boundary_useful_diversity,
+                    "boundary_useful_diversity_delta": candidate_boundary_useful_diversity - baseline_boundary_useful_diversity,
                     "baseline_target_accuracy": baseline_target_accuracy,
                     "candidate_target_accuracy": candidate_target_accuracy,
                     "target_agent_accuracy": candidate_target_accuracy,
@@ -5328,8 +5379,8 @@ class TraceBeamSearchSystem:
             "pareto_front0_size": None,
             "pareto_forced_current_fallback": None,
         }
-        if self._uses_oracle_pareto_selection():
-            selected, pareto_summary = self._select_oracle_pareto_beam(evaluated, beam_size, agent.current_prompt)
+        if self._uses_vote_pareto_selection():
+            selected, pareto_summary = self._select_vote_pareto_beam(evaluated, beam_size, agent.current_prompt)
         else:
             evaluated.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
             selected = evaluated[:beam_size]
@@ -5369,7 +5420,7 @@ class TraceBeamSearchSystem:
             accepted = rank is not None
             in_top_beam = bool(accepted)
             is_top1 = bool(candidate_id == active_candidate_id)
-            active_selection_key = list(self._oracle_pareto_active_sort_key(item)) if self._uses_oracle_pareto_selection() and accepted else None
+            active_selection_key = list(self._vote_pareto_active_sort_key(item)) if self._uses_vote_pareto_selection() and accepted else None
             item_diagnostics = self._empty_optimizer_generation_diagnostics()
             if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
                 item_diagnostics.update(item.get("optimizer_generation_diagnostics", {}))
@@ -5415,6 +5466,18 @@ class TraceBeamSearchSystem:
                     "candidate_team_accuracy": float(metrics.get("candidate_team_accuracy", metrics.get("team_accuracy", 0.0))),
                     "accuracy_delta": float(metrics.get("accuracy_delta", 0.0)),
                     "vote_delta": float(metrics.get("vote_delta", metrics.get("accuracy_delta", 0.0))),
+                    "vote_gain_count": int(metrics.get("vote_gain_count", 0)),
+                    "vote_gain_rate": float(metrics.get("vote_gain_rate", 0.0)),
+                    "vote_loss_count": int(metrics.get("vote_loss_count", 0)),
+                    "vote_loss_rate": float(metrics.get("vote_loss_rate", 0.0)),
+                    "net_vote_count": int(metrics.get("net_vote_count", 0)),
+                    "net_vote_delta": float(metrics.get("net_vote_delta", metrics.get("vote_delta", 0.0))),
+                    "baseline_mean_vote_margin": float(metrics.get("baseline_mean_vote_margin", -1.0)),
+                    "candidate_mean_vote_margin": float(metrics.get("candidate_mean_vote_margin", -1.0)),
+                    "vote_margin_delta": float(metrics.get("vote_margin_delta", 0.0)),
+                    "baseline_boundary_useful_diversity": float(metrics.get("baseline_boundary_useful_diversity", 0.0)),
+                    "candidate_boundary_useful_diversity": float(metrics.get("candidate_boundary_useful_diversity", 0.0)),
+                    "boundary_useful_diversity_delta": float(metrics.get("boundary_useful_diversity_delta", 0.0)),
                     "baseline_oracle_acc": float(metrics.get("baseline_oracle_acc", 0.0)),
                     "candidate_oracle_acc": float(metrics.get("candidate_oracle_acc", 0.0)),
                     "coverage_delta": float(metrics.get("coverage_delta", 0.0)),
@@ -5444,8 +5507,9 @@ class TraceBeamSearchSystem:
                     "active_selection_key": active_selection_key,
                     "effective_weight_target_accuracy": float(metrics.get("effective_weight_target_accuracy", 0.0)),
                     "effective_weight_div_delta": float(metrics.get("effective_weight_div_delta", 0.0)),
-                    "effective_weight_coverage": float(metrics.get("effective_weight_coverage", 0.0)),
-                    "effective_weight_useful_diversity": float(metrics.get("effective_weight_useful_diversity", 0.0)),
+                    "effective_weight_vote_delta": float(metrics.get("effective_weight_vote_delta", 0.0)),
+                    "effective_weight_vote_margin": float(metrics.get("effective_weight_vote_margin", 0.0)),
+                    "effective_weight_boundary_diversity": float(metrics.get("effective_weight_boundary_diversity", 0.0)),
                     "effective_accuracy_guard_epsilon": float(metrics.get("effective_accuracy_guard_epsilon", 0.0)),
                     "reward_phase_progress": float(metrics.get("reward_phase_progress", 0.0)),
                     "reward_diversity_need": float(metrics.get("reward_diversity_need", 0.0)),
@@ -5569,10 +5633,10 @@ class TraceBeamSearchSystem:
             "top1_candidate_pool_source": top1_candidate_pool_source,
             "active_prompt_changed": bool(changed),
             **pareto_summary,
-            "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
-            "top1_coverage_gain_rate": float(selected[0].get("metrics", {}).get("coverage_gain_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
-            "top1_coverage_loss_rate": float(selected[0].get("metrics", {}).get("coverage_loss_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
-            "top1_net_coverage_delta": float(selected[0].get("metrics", {}).get("net_coverage_delta", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+            "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_vote_pareto_selection() and selected else None,
+            "top1_vote_gain_rate": float(selected[0].get("metrics", {}).get("vote_gain_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
+            "top1_vote_loss_rate": float(selected[0].get("metrics", {}).get("vote_loss_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
+            "top1_vote_delta": float(selected[0].get("metrics", {}).get("vote_delta", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
             **optimizer_generation_summary,
             **self._student_failure_log_fields(optimizer_generation_summary),
             "top_reward": float(agent.prompt_beam[0].get("score", 0.0) or 0.0),
@@ -5618,10 +5682,10 @@ class TraceBeamSearchSystem:
                 "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                 **candidate_eval_cache_stats,
                 **pareto_summary,
-                "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_oracle_pareto_selection() and selected else None,
-                "top1_coverage_gain_rate": float(selected[0].get("metrics", {}).get("coverage_gain_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
-                "top1_coverage_loss_rate": float(selected[0].get("metrics", {}).get("coverage_loss_rate", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
-                "top1_net_coverage_delta": float(selected[0].get("metrics", {}).get("net_coverage_delta", 0.0)) if self._uses_oracle_pareto_selection() and selected else None,
+                "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_vote_pareto_selection() and selected else None,
+                "top1_vote_gain_rate": float(selected[0].get("metrics", {}).get("vote_gain_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
+                "top1_vote_loss_rate": float(selected[0].get("metrics", {}).get("vote_loss_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
+                "top1_vote_delta": float(selected[0].get("metrics", {}).get("vote_delta", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
                 **optimizer_generation_summary,
                 **self._student_failure_log_fields(optimizer_generation_summary),
                 "execution_session_id": self._current_execution_session_id(),
@@ -5653,8 +5717,8 @@ class TraceBeamSearchSystem:
                         "reward": float(metrics.get("reward", 0.0)),
                     }
                 )
-            if self._uses_oracle_pareto_selection():
-                retained, _ = self._select_oracle_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
+            if self._uses_vote_pareto_selection():
+                retained, _ = self._select_vote_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
             else:
                 retained = sorted(refreshed, key=lambda item: float(item.get("reward", 0.0)), reverse=True)[: max(1, int(self.cfg.beam_size))]
             agent.prompt_beam = [
@@ -6085,6 +6149,8 @@ class TraceBeamSearchSystem:
             "rescue_available_rate": rescue_available_rate,
             "correct_disagreement_rate": correct_disagreement_rate,
             "mean_useful_diversity": float(np.mean([r.get("useful_diversity", 0.0) for r in rows])) if rows else 0.0,
+            "mean_vote_margin": float(np.mean([r.get("normalized_vote_margin", -1.0) for r in rows])) if rows else -1.0,
+            "mean_boundary_useful_diversity": float(np.mean([r.get("boundary_useful_diversity", 0.0) for r in rows])) if rows else 0.0,
             "aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
             "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
             "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
@@ -6123,6 +6189,10 @@ class TraceBeamSearchSystem:
                 "vote_tie": bool(metrics.get("vote_tie", False)),
                 "tie_candidates": metrics.get("tie_candidates", []),
                 "vote_counts": metrics.get("vote_counts", {}),
+                "gold_vote_count": int(metrics.get("gold_vote_count", 0)),
+                "largest_wrong_vote_count": int(metrics.get("largest_wrong_vote_count", 0)),
+                "normalized_vote_margin": float(metrics.get("normalized_vote_margin", -1.0)),
+                "boundary_useful_diversity": float(metrics.get("boundary_useful_diversity", 0.0)),
                 "tie_break_method": metrics.get("tie_break_method", ""),
                 "weighted_vote_scores": metrics.get("weighted_vote_scores", {}),
                 "weighted_vote_agent_weights": metrics.get("weighted_vote_agent_weights", []),

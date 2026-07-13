@@ -17,15 +17,15 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "bank_baseline",
         "shared_guarded_beam",
         "bank_guarded_beam",
-        "shared_scalar_tcs_oracle_first",
-        "shared_oracle_pareto_tcs",
+        "shared_scalar_tcs_vote_first",
+        "shared_vote_pareto_tcs",
     ]
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["shared_guarded_beam"] == "guarded_diversity"
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["bank_guarded_beam"] == "guarded_diversity"
-    oracle_setting = {setting.name: setting for setting in SETTINGS}["shared_oracle_pareto_tcs"]
-    assert oracle_setting.reward_mode == "coverage_useful_diversity"
-    assert oracle_setting.candidate_selection_mode == "oracle_pareto"
-    assert oracle_setting.best_state_selection_mode == "oracle_first"
+    vote_setting = {setting.name: setting for setting in SETTINGS}["shared_vote_pareto_tcs"]
+    assert vote_setting.reward_mode == "vote_useful_diversity"
+    assert vote_setting.candidate_selection_mode == "vote_pareto"
+    assert vote_setting.best_state_selection_mode == "vote_first"
     assert SETTINGS == DEFAULT_EXPERIMENT_SETTINGS
 
 
@@ -46,7 +46,7 @@ def test_default_and_all_setting_sets_are_distinct():
     ]
     assert setting_names(select_settings("all")) == [
         "shared_baseline", "bank_baseline", "shared_guarded_beam", "bank_guarded_beam",
-        "shared_scalar_tcs_oracle_first", "shared_oracle_pareto_tcs",
+        "shared_scalar_tcs_vote_first", "shared_vote_pareto_tcs",
     ]
 
 
@@ -84,12 +84,12 @@ def test_analyze_experiments_uses_shared_setting_order():
 
 
 def test_task_level_reward_mode_override_only_changes_non_baseline():
-    args = Namespace(reward_mode="coverage_useful_diversity")
+    args = Namespace(reward_mode="vote_useful_diversity")
     baseline = ExperimentSetting("shared_baseline", "shared", True, "guarded_diversity")
     beam = ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity")
 
     assert _setting_reward_mode(args, baseline) == "guarded_diversity"
-    assert _setting_reward_mode(args, beam) == "coverage_useful_diversity"
+    assert _setting_reward_mode(args, beam) == "vote_useful_diversity"
 
 
 def test_task_level_high_accuracy_skip_row_records_precheck_reason():
@@ -103,11 +103,11 @@ def test_task_level_high_accuracy_skip_row_records_precheck_reason():
         test_path="test.csv",
     )
     setting = ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity")
-    args = Namespace(dataset_format="mars", reward_mode="coverage_useful_diversity", precheck_steps=20, precheck_acc_threshold=0.95)
+    args = Namespace(dataset_format="mars", reward_mode="vote_useful_diversity", precheck_steps=20, precheck_acc_threshold=0.95)
     row = _skip_row(task, setting, 42, args, {"precheck_vote_acc": 1.0})
 
     assert row["status"] == "skipped_high_baseline_acc"
-    assert row["reward_mode"] == "coverage_useful_diversity"
+    assert row["reward_mode"] == "vote_useful_diversity"
     assert row["precheck_vote_acc"] == 1.0
     assert row["precheck_steps"] == 20
 
@@ -137,14 +137,14 @@ def test_task_level_completed_run_row_marks_resume_reuse(tmp_path):
         test_path="test.csv",
     )
     setting = ExperimentSetting("shared_guarded_beam", "shared", False, "guarded_diversity")
-    args = Namespace(out_root=str(tmp_path), dataset_format="mars", reward_mode="coverage_useful_diversity")
+    args = Namespace(out_root=str(tmp_path), dataset_format="mars", reward_mode="vote_useful_diversity")
 
     row = _completed_run_row(task, setting, 42, args)
 
     assert row["status"] == "reused_completed"
     assert row["returncode"] == 0
     assert row["resume_completed"] == 1
-    assert row["reward_mode"] == "coverage_useful_diversity"
+    assert row["reward_mode"] == "vote_useful_diversity"
     assert row["run_dir"].endswith("ruin_names\\shared_guarded_beam_seed42") or row["run_dir"].endswith("ruin_names/shared_guarded_beam_seed42")
 
 
@@ -162,7 +162,7 @@ def test_task_level_cli_args_pass_resume_checkpoint_flag():
     cfg = Config()
     args = Namespace(
         dataset_format="mars",
-        reward_mode="coverage_useful_diversity",
+        reward_mode="vote_useful_diversity",
         agent_model=cfg.agent_model,
         optimizer_model=cfg.optimizer_model,
         evaluator_model=cfg.evaluator_model,
@@ -175,18 +175,21 @@ def test_task_level_cli_args_pass_resume_checkpoint_flag():
         accuracy_guard_epsilon=cfg.accuracy_guard_epsilon,
         reward_weight_div_delta=cfg.reward_weight_div_delta,
         reward_weight_invalid_delta=cfg.reward_weight_invalid_delta,
-        reward_weight_coverage=cfg.reward_weight_coverage,
-        reward_weight_useful_diversity=cfg.reward_weight_useful_diversity,
+        reward_weight_vote_delta=cfg.reward_weight_vote_delta,
+        reward_weight_vote_margin=cfg.reward_weight_vote_margin,
+        reward_weight_boundary_diversity=cfg.reward_weight_boundary_diversity,
         invalid_guard_epsilon=cfg.invalid_guard_epsilon,
         use_baseline_relative_reward=int(cfg.use_baseline_relative_reward),
         reward_schedule_mode=cfg.reward_schedule_mode,
         reward_diversity_warmup_updates=cfg.reward_diversity_warmup_updates,
         reward_weight_div_delta_early=cfg.reward_weight_div_delta_early,
         reward_weight_div_delta_late=cfg.reward_weight_div_delta_late,
-        reward_weight_coverage_early=cfg.reward_weight_coverage_early,
-        reward_weight_coverage_late=cfg.reward_weight_coverage_late,
-        reward_weight_useful_diversity_early=cfg.reward_weight_useful_diversity_early,
-        reward_weight_useful_diversity_late=cfg.reward_weight_useful_diversity_late,
+        reward_weight_vote_delta_early=cfg.reward_weight_vote_delta_early,
+        reward_weight_vote_delta_late=cfg.reward_weight_vote_delta_late,
+        reward_weight_vote_margin_early=cfg.reward_weight_vote_margin_early,
+        reward_weight_vote_margin_late=cfg.reward_weight_vote_margin_late,
+        reward_weight_boundary_diversity_early=cfg.reward_weight_boundary_diversity_early,
+        reward_weight_boundary_diversity_late=cfg.reward_weight_boundary_diversity_late,
         reward_weight_target_accuracy_early=cfg.reward_weight_target_accuracy_early,
         reward_weight_target_accuracy_late=cfg.reward_weight_target_accuracy_late,
         accuracy_guard_epsilon_early=cfg.accuracy_guard_epsilon_early,
@@ -297,7 +300,7 @@ def test_compute_metrics_uses_current_reward_component_names(tmp_path):
     run_dir = tmp_path / "bbh" / "shared_guarded_beam_seed42"
     run_dir.mkdir(parents=True)
     (run_dir / "run_meta.json").write_text(
-        json.dumps({"config": {"reward_mode": "coverage_useful_diversity", "baseline_only": False}}),
+        json.dumps({"config": {"reward_mode": "vote_useful_diversity", "baseline_only": False}}),
         encoding="utf-8",
     )
     (run_dir / "history.json").write_text(
