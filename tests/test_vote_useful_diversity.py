@@ -40,6 +40,7 @@ def test_vote_useful_reward_uses_vote_delta_margin_and_boundary_diversity():
     assert result["vote_margin_delta"] == 0.2
     assert result["boundary_useful_diversity_delta"] == 0.4
     assert result["boundary_diversity_gain"] == 0.4
+    assert result["reward_total"] == result["reward"]
     assert result["reward_component_boundary_diversity"] == 0.1 * 0.4
     assert round(sum(value for key, value in result.items() if key.startswith("reward_component_")), 6) == round(result["reward"], 6)
     assert round(result["reward"], 6) == round(0.5 + 0.3 * 0.25 + 0.2 * 0.2 + 0.1 * 0.4, 6)

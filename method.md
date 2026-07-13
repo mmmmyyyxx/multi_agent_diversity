@@ -241,7 +241,7 @@ counts, and SHA256 file hashes into `run_meta.json`. Reused files are marked
 called strict.
 
 Each run also records the full Git commit, dirty-tree state, and protocol
-version `vote_oriented_v1`. Formal runs should start from a committed, clean
+version `vote_oriented_v2`. Formal runs should start from a committed, clean
 tree. Training checkpoints store a fingerprinted behavior configuration;
 changing reward, guard, candidate-evaluation, selection, tie-break, model, or
 TCS settings rejects resume instead of mixing optimization semantics.

@@ -35,7 +35,8 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
-EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v1"
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v2"
+CHECKPOINT_VERSION = 2
 
 
 def compute_candidate_metric_deltas(
@@ -956,6 +957,7 @@ class TraceBeamSearchSystem:
             "execution_session_id": self.execution_session_id,
             "previous_execution_session_id": self.previous_execution_session_id,
             "experiment_protocol_version": EXPERIMENT_PROTOCOL_VERSION,
+            "checkpoint_version": CHECKPOINT_VERSION,
             **provenance,
             "split_integrity": self._split_integrity_metadata(),
             "model_role_map": {
@@ -4589,6 +4591,7 @@ class TraceBeamSearchSystem:
             )
         result = {
             "reward": float(reward),
+            "reward_total": float(reward),
             **deltas,
             "accuracy_guard_passed": bool(guard_passed),
             "baseline_target_accuracy": float(baseline_target_accuracy),
@@ -4684,6 +4687,7 @@ class TraceBeamSearchSystem:
             reward = sum(reward_components.values())
         result = {
             "reward": float(reward),
+            "reward_total": float(reward),
             "coverage_delta": float(deltas["coverage_delta"]),
             **deltas,
             "baseline_mean_vote_margin": baseline_mean_vote_margin,
@@ -5525,6 +5529,7 @@ class TraceBeamSearchSystem:
                     "execution_session_id": str(item.get("execution_session_id", item_diagnostics.get("execution_session_id", self._current_execution_session_id())) or self._current_execution_session_id()),
                     "update_attempt_id": str(item.get("update_attempt_id", item_diagnostics.get("update_attempt_id", update_attempt_id)) or update_attempt_id),
                     "reward": float(metrics.get("reward", 0.0)),
+                    "reward_total": float(metrics.get("reward_total", metrics.get("reward", 0.0))),
                     "embedding_diversity": float(metrics.get("embedding_diversity", 0.0)),
                     "mean_embedding_overlap": float(metrics.get("mean_embedding_overlap", 0.0)),
                     "target_overlap_pressure": float(metrics.get("target_overlap_pressure", 0.0)),
