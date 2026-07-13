@@ -35,7 +35,7 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
-EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v3"
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v4"
 CHECKPOINT_VERSION = 2
 
 

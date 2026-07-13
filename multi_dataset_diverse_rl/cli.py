@@ -4,6 +4,7 @@ import json
 import os
 import random
 import time
+import uuid
 
 import numpy as np
 
@@ -301,10 +302,22 @@ def read_json_file(path):
 
 
 def write_json_atomic(path, payload):
-    tmp_path = f"{path}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-    os.replace(tmp_path, path)
+    tmp_path = f"{path}.{uuid.uuid4().hex}.tmp"
+    for attempt in range(3):
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            os.replace(tmp_path, path)
+            return
+        except OSError:
+            try:
+                if os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+            except OSError:
+                pass
+            if attempt == 2:
+                raise
+            time.sleep(0.1 * (attempt + 1))
 
 
 def restore_system_state(system, state_payload):

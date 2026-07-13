@@ -10,6 +10,7 @@ from multi_dataset_diverse_rl.cli import (
     checkpoint_behavior_config_fingerprint,
     restore_cost_summary,
     restore_system_state,
+    write_json_atomic,
 )
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
@@ -44,6 +45,52 @@ def _checkpoint_kwargs():
         "no_effective_evolution_stopped": False,
         "no_effective_evolution_reason": "",
     }
+
+
+def test_checkpoint_atomic_write_retries_transient_replace_failure(tmp_path, monkeypatch):
+    from multi_dataset_diverse_rl import cli as cli_module
+
+    path = tmp_path / "training_checkpoint.json"
+    real_replace = cli_module.os.replace
+    attempts = 0
+
+    def flaky_replace(source, destination):
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            raise PermissionError(5, "transient sharing violation")
+        return real_replace(source, destination)
+
+    monkeypatch.setattr(cli_module.os, "replace", flaky_replace)
+    monkeypatch.setattr(cli_module.time, "sleep", lambda _seconds: None)
+
+    write_json_atomic(str(path), {"version": 2, "cursor": 10})
+
+    assert attempts == 3
+    assert json.loads(path.read_text(encoding="utf-8")) == {"version": 2, "cursor": 10}
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_checkpoint_atomic_write_raises_after_persistent_replace_failure(tmp_path, monkeypatch):
+    from multi_dataset_diverse_rl import cli as cli_module
+
+    path = tmp_path / "training_checkpoint.json"
+    attempts = 0
+
+    def failing_replace(_source, _destination):
+        nonlocal attempts
+        attempts += 1
+        raise PermissionError(5, "persistent sharing violation")
+
+    monkeypatch.setattr(cli_module.os, "replace", failing_replace)
+    monkeypatch.setattr(cli_module.time, "sleep", lambda _seconds: None)
+
+    with pytest.raises(PermissionError):
+        write_json_atomic(str(path), {"version": 2})
+
+    assert attempts == 3
+    assert not path.exists()
+    assert list(tmp_path.glob("*.tmp")) == []
 
 
 def test_training_checkpoint_compatible_for_training_stage(tmp_path):
