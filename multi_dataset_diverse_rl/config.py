@@ -127,6 +127,9 @@ class Config:
     candidate_eval_strategy: str = "random"
     candidate_eval_pool_size: int = 100
     candidate_eval_pool_actual_size: int = 0
+    candidate_eval_data_source: str = "optimization_train"
+    candidate_eval_total_count: int = 0
+    candidate_eval_unique_question_count: int = 0
     candidate_eval_repeats: int = 1
     candidate_eval_seed_offset: int = 1000
     candidate_reuse_recorded_rollouts: bool = True
@@ -142,6 +145,7 @@ class Config:
     evaluator_base_url_env: str = ""
     vote_tie_break: str = "random"
     aggregation_mode: str = "majority"
+    split_integrity_json: str = ""
 
     def __post_init__(self):
         if not str(self.agent_model or "").strip():
@@ -282,6 +286,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--solver_rollout_singleflight", type=int, default=int(defaults.solver_rollout_singleflight), choices=[0, 1])
     parser.add_argument("--candidate_eval_prompt_dedup", type=int, default=int(defaults.candidate_eval_prompt_dedup), choices=[0, 1])
     parser.add_argument("--candidate_eval_cache_logging", type=int, default=int(defaults.candidate_eval_cache_logging), choices=[0, 1])
+    parser.add_argument("--split_integrity_json", type=str, default=defaults.split_integrity_json)
     parser.add_argument("--train_rollout_concurrency", type=int, default=defaults.train_rollout_concurrency)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=defaults.eval_solver_call_concurrency)
     parser.add_argument("--solver_api_key_env", type=str, default=defaults.solver_api_key_env)

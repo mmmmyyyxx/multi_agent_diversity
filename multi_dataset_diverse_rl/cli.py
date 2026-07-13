@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import os
 import random
@@ -79,7 +80,10 @@ def split_train_validation(raw_train, cfg):
 
 
 def build_candidate_eval_pool(train_data, val_data, cfg):
-    source = list(val_data or train_data or [])
+    # Keep validation independent: prompt candidates are optimized only on
+    # training examples. ``val_data`` remains in the signature for callers
+    # from older scripts, but is deliberately not a candidate-pool source.
+    source = list(train_data or [])
     if not source:
         return []
     pool_size = min(max(1, int(cfg.candidate_eval_pool_size or 1)), len(source))
@@ -131,26 +135,37 @@ def select_candidate_eval_batch(train_data, candidate_eval_pool, cfg, epoch, ste
     strategy = str(cfg.candidate_eval_strategy or "random").lower()
     batches = []
     base_seed = int(cfg.seed) + int(cfg.candidate_eval_seed_offset) + int(epoch) * 100000 + int(step) * 97
+    source = list(train_data if strategy == "random" else (candidate_eval_pool or train_data))
+    if not source:
+        return []
+
+    # A single deterministic permutation lets repeats cover distinct examples
+    # until the source is exhausted, instead of independently re-shuffling into
+    # heavily overlapping batches.
+    rng = random.Random(base_seed)
+    permutation = list(range(len(source)))
+    rng.shuffle(permutation)
+    remaining = list(source)
     for repeat in range(repeats):
-        rng = random.Random(base_seed + repeat)
-        if strategy == "random":
-            if not train_data:
-                batch = []
-            else:
-                indices = []
-                if anchor_idx is not None and 0 <= int(anchor_idx) < len(train_data):
-                    indices.append(int(anchor_idx))
-                while len(indices) < min(batch_size, len(train_data)):
-                    indices.append(rng.randrange(len(train_data)))
-                batch = [train_data[i] for i in indices[:batch_size]]
+        if strategy == "stratified":
+            sample_source = remaining or list(source)
+            batch = _stratified_sample(sample_source, min(batch_size, len(sample_source)), random.Random(base_seed + repeat))
+            selected_ids = {id(row) for row in batch}
+            remaining = [row for row in remaining if id(row) not in selected_ids]
         else:
-            source = candidate_eval_pool or train_data
-            if strategy == "stratified":
-                batch = _stratified_sample(list(source), min(batch_size, len(source)), rng)
-            else:
-                indices = list(range(len(source)))
-                rng.shuffle(indices)
-                batch = [source[i] for i in indices[: min(batch_size, len(source))]]
+            target_size = min(batch_size, len(source))
+            indices = []
+            if strategy == "random" and anchor_idx is not None and 0 <= int(anchor_idx) < len(train_data):
+                anchor = int(anchor_idx)
+                indices.append(anchor)
+            start = repeat * target_size
+            for offset in range(len(source)):
+                index = permutation[(start + offset) % len(source)]
+                if index not in indices:
+                    indices.append(index)
+                if len(indices) >= target_size:
+                    break
+            batch = [source[i] for i in indices[:target_size]]
         batches.extend(batch)
     return batches
 
@@ -212,9 +227,29 @@ def vote_first_validation_key_fields(epoch_record):
     ]
 
 
+def vote_first_tiebreak_key(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    return (
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        -float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        int(epoch_record.get("epoch", 0) or 0),
+    )
+
+
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
     if str(selection_mode or "existing").lower() == "vote_first":
-        return best_epoch_record is None or vote_first_validation_key(epoch_record) < vote_first_validation_key(best_epoch_record)
+        if best_epoch_record is None:
+            return True
+        current_val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+        best_val = best_epoch_record.get("val", {}) if isinstance(best_epoch_record.get("val", {}), dict) else {}
+        vote_improvement = float(current_val.get("vote_acc", 0.0) or 0.0) - float(best_val.get("vote_acc", 0.0) or 0.0)
+        threshold = max(0.0, float(min_delta or 0.0))
+        if vote_improvement > threshold:
+            return True
+        if vote_improvement < -threshold:
+            return False
+        return vote_first_tiebreak_key(epoch_record) < vote_first_tiebreak_key(best_epoch_record)
     return validation_score(epoch_record, reward_mode) > float(best_score) + float(min_delta)
 
 
@@ -309,8 +344,11 @@ def restore_cost_summary(system):
         system.cost_summary = base
 
 
-def checkpoint_config_signature(cfg):
-    fields = [
+CHECKPOINT_VERSION = 2
+
+# Fields that can change the objective, candidate distribution, optimizer
+# behavior, validation decision, or final aggregation of an interrupted run.
+BEHAVIOR_CONFIG_FIELDS = (
         "task_type",
         "dataset_format",
         "comparison_task_id",
@@ -319,28 +357,117 @@ def checkpoint_config_signature(cfg):
         "train_path",
         "val_path",
         "test_path",
+        "train_size",
+        "val_size",
+        "val_split_ratio",
+        "test_size",
         "agents",
         "init_mode",
+        "shared_prompt",
         "reward_mode",
+        "accuracy_guard_epsilon",
+        "invalid_guard_epsilon",
+        "reward_weight_div_delta",
+        "reward_weight_invalid_delta",
+        "reward_weight_vote_delta",
+        "reward_weight_vote_margin",
+        "reward_weight_boundary_diversity",
+        "use_baseline_relative_reward",
+        "reward_schedule_mode",
+        "reward_diversity_warmup_updates",
+        "reward_weight_div_delta_early",
+        "reward_weight_div_delta_late",
+        "reward_weight_vote_delta_early",
+        "reward_weight_vote_delta_late",
+        "reward_weight_vote_margin_early",
+        "reward_weight_vote_margin_late",
+        "reward_weight_boundary_diversity_early",
+        "reward_weight_boundary_diversity_late",
+        "reward_weight_target_accuracy_early",
+        "reward_weight_target_accuracy_late",
+        "accuracy_guard_epsilon_early",
+        "accuracy_guard_epsilon_late",
         "candidate_selection_mode",
         "best_state_selection_mode",
+        "vote_tie_break",
+        "aggregation_mode",
         "optimizer_architecture",
+        "optimizer_fallback_mode",
+        "teacher_critic_max_rounds",
+        "teacher_question_pass_threshold",
+        "teacher_critic_use_voting_failure",
+        "teacher_temperature",
+        "critic_temperature",
+        "student_temperature",
+        "teacher_max_tokens",
+        "critic_max_tokens",
+        "student_max_tokens",
+        "student_json_retry_on_parse_fail",
+        "student_json_max_retries",
+        "student_json_repair_enabled",
+        "student_json_repair_max_tokens",
+        "student_json_repair_temperature",
+        "student_candidate_schema_mode",
+        "student_candidate_max_chars_per_field",
+        "student_candidate_prompt_max_chars",
+        "student_force_minified_json",
         "beam_size",
         "num_candidates_per_parent",
+        "optimizer_parent_concurrency",
+        "beam_refresh_each_epoch",
         "update_every",
+        "early_stopping_patience",
+        "early_stopping_min_delta",
         "candidate_eval_batch_size",
         "candidate_eval_strategy",
         "candidate_eval_pool_size",
+        "candidate_eval_repeats",
         "candidate_eval_seed_offset",
+        "candidate_eval_data_source",
         "candidate_eval_execution_mode",
+        "candidate_reuse_recorded_rollouts",
+        "candidate_eval_concurrency",
         "solver_rollout_singleflight",
         "candidate_eval_prompt_dedup",
         "candidate_eval_cache_logging",
         "agent_model",
+        "optimizer_model",
+        "evaluator_model",
         "max_tokens",
         "temperature",
-    ]
-    return {field: str(getattr(cfg, field, "")) for field in fields}
+        "optimizer_max_tokens",
+        "optimizer_temperature",
+        "evaluator_max_tokens",
+        "evaluator_temperature",
+        "solver_base_url_env",
+        "evaluator_base_url_env",
+        "diversity_metric",
+        "use_joint_trace_diversity_evaluator",
+        "invalid_binary",
+        "embedding_model",
+        "trace_embedding_chunk_words",
+        "trace_embedding_chunk_overlap",
+        "eval_test_each_epoch",
+        "no_effective_evolution_patience",
+        "no_effective_evolution_min_optimizer_candidates",
+        "no_effective_evolution_stop_enabled",
+        "split_integrity_json",
+)
+
+
+def checkpoint_behavior_config(cfg):
+    return {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+
+
+def checkpoint_behavior_config_fingerprint(cfg):
+    payload = checkpoint_behavior_config(cfg)
+    encoded = json.dumps(payload, sort_keys=True, default=str, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def checkpoint_config_signature(cfg):
+    """Compatibility alias retained for older callers and tests."""
+    return checkpoint_behavior_config(cfg)
 
 
 def build_training_checkpoint(
@@ -362,13 +489,15 @@ def build_training_checkpoint(
     epoch_record=None,
 ):
     payload = {
-        "version": 1,
+        "version": CHECKPOINT_VERSION,
         "stage": str(stage),
         "updated_at": time.time(),
         "seed": int(cfg.seed),
         "execution_session_id": str(getattr(system, "execution_session_id", "") or ""),
         "epochs": int(cfg.epochs),
         "train_size": int(cfg.train_size),
+        "behavior_config": checkpoint_behavior_config(cfg),
+        "behavior_config_fingerprint": checkpoint_behavior_config_fingerprint(cfg),
         "config_signature": checkpoint_config_signature(cfg),
         "epoch_index": int(epoch_index),
         "cursor": int(cursor),
@@ -418,22 +547,29 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
     reasons = []
     if not isinstance(payload, dict):
         return ["checkpoint payload is missing or is not a JSON object"]
-    if int(payload.get("version", 0) or 0) != 1:
-        reasons.append(f"version: checkpoint={payload.get('version')!r} current=1")
+    if int(payload.get("version", 0) or 0) != CHECKPOINT_VERSION:
+        reasons.append(f"version: checkpoint={payload.get('version')!r} current={CHECKPOINT_VERSION}")
     if int(payload.get("seed", -1)) != int(cfg.seed):
         reasons.append(f"seed: checkpoint={payload.get('seed')!r} current={cfg.seed!r}")
     if int(payload.get("epochs", -1)) != int(cfg.epochs):
         reasons.append(f"epochs: checkpoint={payload.get('epochs')!r} current={cfg.epochs!r}")
     if int(payload.get("train_size", -1)) != int(cfg.train_size):
         reasons.append(f"train_size: checkpoint={payload.get('train_size')!r} current={cfg.train_size!r}")
-    saved_signature = payload.get("config_signature", {})
-    if isinstance(saved_signature, dict):
-        current_signature = checkpoint_config_signature(cfg)
-        for key, value in saved_signature.items():
-            if key in current_signature and str(current_signature[key]) != str(value):
-                reasons.append(f"{key}: checkpoint={value!r} current={current_signature[key]!r}")
-    else:
-        reasons.append("config_signature: checkpoint value is missing or is not an object")
+    saved_config = payload.get("behavior_config")
+    saved_fingerprint = str(payload.get("behavior_config_fingerprint", "") or "")
+    current_config = checkpoint_behavior_config(cfg)
+    current_fingerprint = checkpoint_behavior_config_fingerprint(cfg)
+    if not isinstance(saved_config, dict) or not saved_fingerprint:
+        reasons.append("behavior_config: checkpoint behavior configuration or fingerprint is missing")
+    elif saved_fingerprint != current_fingerprint:
+        reasons.append(
+            "behavior_config_fingerprint: checkpoint and current optimization behavior differ"
+        )
+        for key in BEHAVIOR_CONFIG_FIELDS:
+            if saved_config.get(key) != current_config.get(key):
+                reasons.append(
+                    f"{key}: checkpoint={saved_config.get(key)!r} current={current_config.get(key)!r}"
+                )
     epoch_index = int(payload.get("epoch_index", -1))
     if epoch_index < 0 or epoch_index > int(cfg.epochs):
         reasons.append(f"epoch_index: checkpoint={payload.get('epoch_index')!r} current_epochs={cfg.epochs!r}")

@@ -4,6 +4,7 @@ import json
 import os
 import random
 import re
+import subprocess
 import time
 import uuid
 from collections import Counter
@@ -34,6 +35,7 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v1"
 
 
 def compute_candidate_metric_deltas(
@@ -886,7 +888,42 @@ class TraceBeamSearchSystem:
             f"{self._hash(str(parent_prompt))}"
         )
 
+    @staticmethod
+    def _git_provenance() -> Dict[str, Any]:
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        try:
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=repo_root,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            status = subprocess.run(
+                # Generated run directories are often untracked. Dirty here
+                # means tracked source/configuration changes, not fresh output.
+                ["git", "status", "--porcelain", "--untracked-files=no"],
+                cwd=repo_root,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+            return {"git_commit": commit, "git_dirty": bool(status.strip())}
+        except (OSError, subprocess.SubprocessError):
+            return {"git_commit": "", "git_dirty": None}
+
+    def _split_integrity_metadata(self) -> Dict[str, Any]:
+        raw = str(getattr(self.cfg, "split_integrity_json", "") or "").strip()
+        if not raw:
+            return {}
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            return {"parse_error": "invalid_split_integrity_json"}
+        return payload if isinstance(payload, dict) else {"parse_error": "split_integrity_json_is_not_an_object"}
+
     def write_run_meta(self):
+        provenance = self._git_provenance()
         meta = {
             **self._base_log_fields(),
             "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
@@ -903,6 +940,7 @@ class TraceBeamSearchSystem:
             "beam_size": self.cfg.beam_size,
             "candidate_eval_batch_size": self.cfg.candidate_eval_batch_size,
             "candidate_eval_strategy": self.cfg.candidate_eval_strategy,
+            "candidate_eval_data_source": str(getattr(self.cfg, "candidate_eval_data_source", "optimization_train")),
             "candidate_eval_repeats": self.cfg.candidate_eval_repeats,
             "candidate_eval_execution_mode": getattr(self.cfg, "candidate_eval_execution_mode", "legacy"),
             "solver_rollout_singleflight": bool(getattr(self.cfg, "solver_rollout_singleflight", True)),
@@ -917,6 +955,9 @@ class TraceBeamSearchSystem:
             "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
             "execution_session_id": self.execution_session_id,
             "previous_execution_session_id": self.previous_execution_session_id,
+            "experiment_protocol_version": EXPERIMENT_PROTOCOL_VERSION,
+            **provenance,
+            "split_integrity": self._split_integrity_metadata(),
             "model_role_map": {
                 "agent_model": "solver rollouts for train/validation/test answering",
                 "optimizer_model": (
@@ -931,7 +972,7 @@ class TraceBeamSearchSystem:
             "initial_agent_prompts": self.initial_agent_prompts,
             "initial_agent_prompt_hashes": self.initial_agent_prompt_hashes,
             "config": asdict(self.cfg),
-            "framework": "accuracy_only_evolutionary_beam" if self._is_accuracy_only_mode() else "trace_embedding_evolutionary_beam",
+            "framework": "accuracy_only_evolutionary_beam" if self._is_accuracy_only_mode() else "vote_oriented_evolutionary_beam",
         }
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
@@ -4487,6 +4528,19 @@ class TraceBeamSearchSystem:
             "reward_accepted_updates": float(weights.get("accepted_updates", 0.0)),
         }
 
+    def _candidate_eval_audit_fields(self, eval_batch: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
+        question_hashes = {
+            hashlib.sha256(normalize_spaces(str(example.get("question", ""))).lower().encode("utf-8")).hexdigest()
+            for example in eval_batch
+            if isinstance(example, Mapping)
+        }
+        return {
+            "candidate_eval_data_source": str(getattr(self.cfg, "candidate_eval_data_source", "optimization_train")),
+            "candidate_eval_total_count": len(eval_batch),
+            "candidate_eval_unique_question_count": len(question_hashes),
+            "candidate_eval_repeat_count": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
+        }
+
     def _candidate_reward_guarded(
         self,
         baseline_team_accuracy: float,
@@ -4606,17 +4660,28 @@ class TraceBeamSearchSystem:
         weights = self._effective_reward_weights()
         target_guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(weights["accuracy_guard_epsilon"])
         invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
-
+        reward_components = {
+            "reward_component_target_accuracy": 0.0,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": 0.0,
+            "reward_component_guard_penalty": 0.0,
+        }
         if not target_guard_passed or not invalid_guard_passed:
             reward = -1.0
+            reward_components["reward_component_guard_penalty"] = -1.0
         else:
-            reward = (
-                float(weights["target_accuracy"]) * candidate_target_accuracy
-                + float(weights["vote_delta"]) * vote_delta
-                + float(weights["vote_margin"]) * vote_margin_delta
-                + float(weights["boundary_diversity"]) * boundary_diversity_gain
-                - float(weights["invalid_delta"]) * max(0.0, invalid_delta)
+            reward_components.update(
+                {
+                    "reward_component_target_accuracy": float(weights["target_accuracy"]) * candidate_target_accuracy,
+                    "reward_component_vote_delta": float(weights["vote_delta"]) * vote_delta,
+                    "reward_component_vote_margin": float(weights["vote_margin"]) * vote_margin_delta,
+                    "reward_component_boundary_diversity": float(weights["boundary_diversity"]) * boundary_diversity_gain,
+                    "reward_component_invalid_penalty": -float(weights["invalid_delta"]) * max(0.0, invalid_delta),
+                }
             )
+            reward = sum(reward_components.values())
         result = {
             "reward": float(reward),
             "coverage_delta": float(deltas["coverage_delta"]),
@@ -4637,6 +4702,7 @@ class TraceBeamSearchSystem:
             "candidate_invalid_rate": float(candidate_invalid_rate),
             "accuracy_guard_passed": bool(target_guard_passed),
             "invalid_guard_passed": bool(invalid_guard_passed),
+            **reward_components,
         }
         result.update(self._effective_reward_log_fields(weights))
         return result
@@ -4731,6 +4797,7 @@ class TraceBeamSearchSystem:
             "candidate_eval_batch_size": int(getattr(self.cfg, "candidate_eval_batch_size", 0) or 0),
             "actual_eval_batch_size": len(eval_batch),
             "num_eval_repeats": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
+            **self._candidate_eval_audit_fields(eval_batch),
         }
 
     async def evaluate_candidate_prompt(
@@ -4998,6 +5065,7 @@ class TraceBeamSearchSystem:
             "candidate_eval_batch_size": int(getattr(self.cfg, "candidate_eval_batch_size", 0) or 0),
             "actual_eval_batch_size": len(eval_batch),
             "num_eval_repeats": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
+            **self._candidate_eval_audit_fields(eval_batch),
         }
         result.update(baseline_candidate_metrics)
         return result
@@ -5484,6 +5552,12 @@ class TraceBeamSearchSystem:
                     "candidate_boundary_useful_diversity": float(metrics.get("candidate_boundary_useful_diversity", 0.0)),
                     "boundary_useful_diversity_delta": float(metrics.get("boundary_useful_diversity_delta", 0.0)),
                     "boundary_diversity_gain": float(metrics.get("boundary_diversity_gain", 0.0)),
+                    "reward_component_target_accuracy": float(metrics.get("reward_component_target_accuracy", 0.0)),
+                    "reward_component_vote_delta": float(metrics.get("reward_component_vote_delta", 0.0)),
+                    "reward_component_vote_margin": float(metrics.get("reward_component_vote_margin", 0.0)),
+                    "reward_component_boundary_diversity": float(metrics.get("reward_component_boundary_diversity", 0.0)),
+                    "reward_component_invalid_penalty": float(metrics.get("reward_component_invalid_penalty", 0.0)),
+                    "reward_component_guard_penalty": float(metrics.get("reward_component_guard_penalty", 0.0)),
                     "baseline_oracle_acc": float(metrics.get("baseline_oracle_acc", 0.0)),
                     "candidate_oracle_acc": float(metrics.get("candidate_oracle_acc", 0.0)),
                     "coverage_delta": float(metrics.get("coverage_delta", 0.0)),
@@ -5600,6 +5674,10 @@ class TraceBeamSearchSystem:
                     "candidate_eval_batch_size": int(metrics.get("candidate_eval_batch_size", getattr(self.cfg, "candidate_eval_batch_size", 0))),
                     "actual_eval_batch_size": int(metrics.get("actual_eval_batch_size", metrics.get("num_eval_samples", 0))),
                     "num_eval_repeats": int(metrics.get("num_eval_repeats", getattr(self.cfg, "candidate_eval_repeats", 1))),
+                    "candidate_eval_data_source": str(metrics.get("candidate_eval_data_source", getattr(self.cfg, "candidate_eval_data_source", "optimization_train"))),
+                    "candidate_eval_total_count": int(metrics.get("candidate_eval_total_count", metrics.get("actual_eval_batch_size", 0))),
+                    "candidate_eval_unique_question_count": int(metrics.get("candidate_eval_unique_question_count", metrics.get("actual_eval_batch_size", 0))),
+                    "candidate_eval_repeat_count": int(metrics.get("candidate_eval_repeat_count", getattr(self.cfg, "candidate_eval_repeats", 1))),
                 }
             )
         self._append_prompt_history_event(agent_id, epoch_id, step_id, "beam_accept" if changed else "beam_keep", changed)

@@ -34,6 +34,27 @@ def test_fixed_pool_candidate_eval_is_reproducible():
     assert len(pool) == 5
 
 
+def test_candidate_eval_pool_never_uses_validation_examples():
+    cfg = Config(candidate_eval_strategy="fixed_pool", candidate_eval_pool_size=5, seed=11)
+    train = [{"id": "train_1", "question": "train question", "answer": "a"}]
+    val = [{"id": "val_1", "question": "validation question", "answer": "b"}]
+
+    pool = build_candidate_eval_pool(train, val, cfg)
+
+    assert [row["id"] for row in pool] == ["train_1"]
+    assert not any(row["id"].startswith("val_") for row in pool)
+
+
+def test_candidate_eval_repeats_cover_new_examples_before_reuse():
+    cfg = Config(candidate_eval_strategy="fixed_pool", candidate_eval_batch_size=2, candidate_eval_repeats=2, seed=5)
+    train = [{"question": f"q{i}", "answer": "a"} for i in range(4)]
+
+    batch = select_candidate_eval_batch(train, train, cfg, epoch=1, step=1)
+
+    assert len(batch) == 4
+    assert len({row["question"] for row in batch}) == 4
+
+
 def test_stratified_candidate_eval_samples_multiple_tasks():
     cfg = Config(candidate_eval_strategy="stratified", candidate_eval_batch_size=4, candidate_eval_pool_size=6, candidate_eval_repeats=1, seed=3)
     train = [

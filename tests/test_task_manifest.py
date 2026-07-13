@@ -1,5 +1,7 @@
-from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
-from scripts.run_task_level_accuracy import _task_split_protocol
+import pytest
+
+from multi_dataset_diverse_rl.task_manifest import ComparisonTask, load_task_manifest, resolve_task_ids
+from scripts.run_task_level_accuracy import _task_split_integrity, _task_split_protocol
 
 
 def test_load_task_level_manifest():
@@ -33,3 +35,28 @@ def test_strict_bbh_manifest_uses_distinct_task_splits():
         assert task.train_path.endswith("/opt.csv")
         assert task.val_path.endswith("/val.csv")
         assert task.test_path.endswith("/test.csv")
+        integrity = _task_split_integrity(task, "mars", ".")
+        assert integrity["opt_val_question_overlap"] == 0
+        assert integrity["opt_test_question_overlap"] == 0
+        assert integrity["val_test_question_overlap"] == 0
+
+
+def test_strict_split_integrity_records_hashes_and_rejects_question_overlap(tmp_path):
+    train = tmp_path / "opt.csv"
+    val = tmp_path / "val.csv"
+    test = tmp_path / "test.csv"
+    train.write_text("question,answer\nTrain question,A\n", encoding="utf-8")
+    val.write_text("question,answer\nValidation question,B\n", encoding="utf-8")
+    test.write_text("question,answer\nTest question,C\n", encoding="utf-8")
+    task = ComparisonTask("toy", "BBH", "bbh", "option_letter", str(train), str(val), str(test))
+
+    integrity = _task_split_integrity(task, "mars", str(tmp_path))
+
+    assert integrity["opt_val_question_overlap"] == 0
+    assert integrity["opt_test_question_overlap"] == 0
+    assert integrity["val_test_question_overlap"] == 0
+    assert len(integrity["opt_file_sha256"]) == 64
+
+    val.write_text("question,answer\nTrain   question,A\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Strict split overlap"):
+        _task_split_integrity(task, "mars", str(tmp_path))

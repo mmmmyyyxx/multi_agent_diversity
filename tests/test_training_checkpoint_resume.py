@@ -7,6 +7,7 @@ from multi_dataset_diverse_rl.cli import (
     build_training_checkpoint,
     checkpoint_compatible,
     checkpoint_incompatibility_reasons,
+    checkpoint_behavior_config_fingerprint,
     restore_cost_summary,
     restore_system_state,
 )
@@ -72,6 +73,29 @@ def test_training_checkpoint_reports_changed_config_signature(tmp_path):
     reasons = checkpoint_incompatibility_reasons(payload, changed_cfg, [None, None, None, None])
 
     assert any("reward_mode" in reason for reason in reasons)
+
+
+def test_training_checkpoint_rejects_changed_reward_and_eval_behavior(tmp_path):
+    system = _system(tmp_path)
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    changed_cfg = Config(
+        out_dir=str(tmp_path),
+        agents=2,
+        train_size=4,
+        epochs=2,
+        seed=123,
+        candidate_eval_repeats=2,
+        reward_weight_vote_margin=0.9,
+        vote_tie_break="abstain",
+    )
+
+    reasons = checkpoint_incompatibility_reasons(payload, changed_cfg, [None, None, None, None])
+
+    assert payload["behavior_config_fingerprint"] == checkpoint_behavior_config_fingerprint(system.cfg)
+    assert any("behavior_config_fingerprint" in reason for reason in reasons)
+    assert any("candidate_eval_repeats" in reason for reason in reasons)
+    assert any("reward_weight_vote_margin" in reason for reason in reasons)
+    assert any("vote_tie_break" in reason for reason in reasons)
 
 
 def test_abort_incompatible_checkpoint_exits_nonzero(tmp_path, capsys):

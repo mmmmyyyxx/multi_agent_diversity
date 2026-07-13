@@ -1,4 +1,6 @@
 import argparse
+import hashlib
+import json
 import statistics
 import subprocess
 import sys
@@ -12,12 +14,16 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 try:
+    from multi_dataset_diverse_rl.cli import build_dataset
     from multi_dataset_diverse_rl.config import Config
+    from multi_dataset_diverse_rl.utils import load_jsonl
     from scripts.experiment_config import ALL_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from scripts.experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from scripts.task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
 except ModuleNotFoundError:
+    from multi_dataset_diverse_rl.cli import build_dataset
     from multi_dataset_diverse_rl.config import Config
+    from multi_dataset_diverse_rl.utils import load_jsonl
     from experiment_config import ALL_EXPERIMENT_SETTINGS, ExperimentSetting, parse_csv_list, select_settings
     from experiment_io import append_jsonl, read_json, write_csv, write_jsonl
     from task_level_accuracy_utils import ACCURACY_RESULT_COLUMNS, build_accuracy_result_row
@@ -50,7 +56,14 @@ def _setting_value(setting: ExperimentSetting, name: str, fallback: Any) -> Any:
     return fallback if value is None else value
 
 
-def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: ComparisonTask, setting: ExperimentSetting, seed: int):
+def _append_common_cli_args(
+    cmd: List[str],
+    args: argparse.Namespace,
+    task: ComparisonTask,
+    setting: ExperimentSetting,
+    seed: int,
+    split_integrity: Dict[str, Any] | None = None,
+):
     reward_mode = _setting_reward_mode(args, setting)
     candidate_selection_mode = (
         setting.candidate_selection_mode
@@ -74,6 +87,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
             "--comparison_task_id", task.task_id,
             "--benchmark", task.benchmark,
             "--answer_format", task.answer_format,
+            "--split_integrity_json", json.dumps(split_integrity or {}, sort_keys=True),
             "--agent_model", args.agent_model,
             "--optimizer_model", args.optimizer_model,
             "--evaluator_model", args.evaluator_model,
@@ -170,11 +184,17 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, task: Comp
     )
 
 
-def run_one(task: ComparisonTask, setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+def run_one(
+    task: ComparisonTask,
+    setting: ExperimentSetting,
+    seed: int,
+    args: argparse.Namespace,
+    split_integrity: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
     run_dir = Path(args.out_root) / task.task_id / f"{setting.name}_seed{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
     cmd = [args.python, "-m", "multi_dataset_diverse_rl.cli"]
-    _append_common_cli_args(cmd, args, task, setting, seed)
+    _append_common_cli_args(cmd, args, task, setting, seed, split_integrity)
     cmd.extend(
         [
             "--test_path", task.test_path,
@@ -274,12 +294,17 @@ def _completed_run_row(task: ComparisonTask, setting: ExperimentSetting, seed: i
     }
 
 
-def run_precheck(task: ComparisonTask, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
+def run_precheck(
+    task: ComparisonTask,
+    seed: int,
+    args: argparse.Namespace,
+    split_integrity: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
     precheck_setting = ExperimentSetting("precheck_baseline", "shared", True, "guarded_diversity")
     run_dir = Path(args.out_root) / task.task_id / f"precheck_seed{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
     cmd = [args.python, "-m", "multi_dataset_diverse_rl.cli"]
-    _append_common_cli_args(cmd, args, task, precheck_setting, seed)
+    _append_common_cli_args(cmd, args, task, precheck_setting, seed, split_integrity)
     cmd.extend(
         [
             "--test_path", task.test_path,
@@ -343,9 +368,60 @@ def _skip_row(task: ComparisonTask, setting: ExperimentSetting, seed: int, args:
 
 def _task_split_protocol(task: ComparisonTask) -> Dict[str, Any]:
     paths = {str(task.train_path), str(task.val_path), str(task.test_path)}
-    if len(paths) == 1:
+    if len(paths) < 3:
         return {"split_protocol": "paper_compatible_reused_file", "leakage_warning": True}
     return {"split_protocol": "task_manifest_split", "leakage_warning": False}
+
+
+def _normalized_question_hash(question: Any) -> str:
+    normalized = " ".join(str(question or "").split()).strip().lower()
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
+def _resolved_path(path: str, workspace: str) -> Path:
+    value = Path(path)
+    return value if value.is_absolute() else Path(workspace) / value
+
+
+def _split_rows(path: Path, dataset_format: str) -> List[Dict[str, Any]]:
+    return build_dataset(load_jsonl(str(path), -1), dataset_format)
+
+
+def _task_split_integrity(task: ComparisonTask, dataset_format: str, workspace: str) -> Dict[str, Any]:
+    split_paths = {
+        "opt": _resolved_path(task.train_path, workspace),
+        "val": _resolved_path(task.val_path, workspace),
+        "test": _resolved_path(task.test_path, workspace),
+    }
+    split_rows = {name: _split_rows(path, dataset_format) for name, path in split_paths.items()}
+    split_hashes = {
+        name: {_normalized_question_hash(row.get("question", "")) for row in rows}
+        for name, rows in split_rows.items()
+    }
+    overlaps = {
+        "opt_val_question_overlap": len(split_hashes["opt"] & split_hashes["val"]),
+        "opt_test_question_overlap": len(split_hashes["opt"] & split_hashes["test"]),
+        "val_test_question_overlap": len(split_hashes["val"] & split_hashes["test"]),
+    }
+    protocol = _task_split_protocol(task)
+    integrity = {
+        **protocol,
+        "opt_count": len(split_rows["opt"]),
+        "val_count": len(split_rows["val"]),
+        "test_count": len(split_rows["test"]),
+        **overlaps,
+        "opt_file_sha256": hashlib.sha256(split_paths["opt"].read_bytes()).hexdigest(),
+        "val_file_sha256": hashlib.sha256(split_paths["val"].read_bytes()).hexdigest(),
+        "test_file_sha256": hashlib.sha256(split_paths["test"].read_bytes()).hexdigest(),
+    }
+    if protocol["split_protocol"] == "task_manifest_split" and any(overlaps.values()):
+        raise ValueError(
+            f"Strict split overlap for task={task.task_id}: "
+            f"opt_val={overlaps['opt_val_question_overlap']} "
+            f"opt_test={overlaps['opt_test_question_overlap']} "
+            f"val_test={overlaps['val_test_question_overlap']}"
+        )
+    return integrity
 
 
 def _mean(values: List[float]) -> float:
@@ -532,6 +608,10 @@ def main():
 
     tasks = load_task_manifest(args.manifest)
     task_ids = resolve_task_ids(args.tasks, tasks, benchmarks=args.benchmarks)
+    split_integrities = {
+        task_id: _task_split_integrity(tasks[task_id], args.dataset_format, args.workspace)
+        for task_id in task_ids
+    }
     settings = _selected_settings(args.settings)
     seeds = [int(x) for x in parse_csv_list(args.seeds)] or [42]
     resume_completed = bool(int(getattr(args, "resume_completed", 0) or 0))
@@ -574,7 +654,7 @@ def main():
         skip_task_for_seed: Dict[int, Dict[str, Any]] = {}
         if int(args.skip_high_baseline_acc):
             for seed in seeds:
-                precheck_row = run_precheck(task, seed, args)
+                precheck_row = run_precheck(task, seed, args, split_integrities[task.task_id])
                 record_run_row(precheck_row)
                 if precheck_row["status"] != "ok":
                     raise SystemExit(precheck_row["returncode"])
@@ -607,7 +687,7 @@ def main():
     failed_rows: List[Dict[str, Any]] = []
 
     def run_and_record(task: ComparisonTask, setting: ExperimentSetting, seed: int):
-        run_row = run_one(task, setting, seed, args)
+        run_row = run_one(task, setting, seed, args, split_integrities[task.task_id])
         record_run_row(run_row)
         if run_row["status"] != "ok":
             raise SystemExit(run_row["returncode"])
@@ -640,7 +720,7 @@ def main():
                     flush=True,
                 )
                 time.sleep(delay)
-            return run_one(task, setting, seed, args)
+            return run_one(task, setting, seed, args, split_integrities[task.task_id])
 
         with ThreadPoolExecutor(max_workers=run_concurrency) as executor:
             futures = {

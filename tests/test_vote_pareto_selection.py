@@ -90,3 +90,10 @@ def test_vote_first_validation_key_prioritizes_vote_metrics():
     assert vote_first_validation_key(equal_earlier) < vote_first_validation_key(equal_later)
     higher_boundary_later = {"epoch": 2, "val": {**equal_earlier["val"], "mean_boundary_useful_diversity": 1.0}}
     assert vote_first_validation_key(equal_earlier) < vote_first_validation_key(higher_boundary_later)
+
+
+def test_vote_first_applies_min_delta_to_vote_before_tiebreaks():
+    best = {"epoch": 1, "val": {"vote_acc": 0.70, "mean_individual_acc": 0.1, "mean_vote_margin": 0.0, "mean_invalid_rate": 0.1}}
+    tiny_vote_gain = {"epoch": 2, "val": {"vote_acc": 0.705, "mean_individual_acc": 0.2, "mean_vote_margin": 0.1, "mean_invalid_rate": 0.0}}
+
+    assert is_better_validation_state(tiny_vote_gain, best, 0.0, "vote_useful_diversity", "vote_first", min_delta=0.01)

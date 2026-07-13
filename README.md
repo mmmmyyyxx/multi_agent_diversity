@@ -33,6 +33,11 @@ vote_pareto
 
 `vote_pareto` uses only vote gain, vote loss, and target-agent accuracy as Pareto objectives. Validation selection supports `existing` and `vote_first`; `vote_first` is the default.
 
+Candidate prompts are evaluated only on optimization/train data. Validation is
+used only for epoch and best-state selection; test is evaluated once after the
+selected prompts are restored. Candidate logs report raw and clipped boundary
+gain, reward components, and total versus unique evaluated questions.
+
 ## Teacher-Critic-Student
 
 The default optimizer architecture is Teacher-Critic-Student (TCS). Teacher receives abstract vote-oriented diagnosis, Critic audits and can request rewrites, and Student emits strict JSON prompt candidates. TCS calls, provenance, retries, and JSON repair are logged.
@@ -67,7 +72,7 @@ python scripts/compare_external_accuracy.py `
   --out_md comparison/mars_vs_mad_accuracy.md
 ```
 
-If a task manifest reuses one CSV for train, validation, and test, describe that result as a `paper-compatible setting`, not a strict no-leakage split.
+If a task manifest reuses one CSV for train, validation, and test, describe that result as a `paper-compatible setting`, not a strict no-leakage split. Strict manifests are checked before launch for normalized-question overlap across opt/validation/test and record counts plus SHA256 file hashes in `run_meta.json`.
 
 ## Vote-Pareto Smoke Run
 
@@ -132,6 +137,11 @@ python scripts/run_task_level_accuracy.py `
 ```
 
 Incompatible checkpoints fail clearly instead of silently restarting in the same output directory.
+
+`run_meta.json` records the Git commit, dirty-tree state, and protocol version.
+Formal runs should start from a clean, committed tree; checkpoints also reject
+resume when behavior-affecting reward, evaluation, selection, model, tie-break,
+or TCS configuration differs.
 
 ## Cost Reporting
 

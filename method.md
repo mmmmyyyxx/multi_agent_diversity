@@ -73,6 +73,13 @@ baseline_prompts  = current active prompts
 candidate_prompts = baseline prompts with one target prompt replaced
 ```
 
+Its data source is always `optimization_train`. `fixed_pool`, `stratified`,
+and `random` candidate evaluation never read `val_data`; validation is reserved
+for epoch and `vote_first` state selection, and test is reserved for the final
+restored-prompt evaluation. Repeats consume a deterministic permutation before
+reusing examples. Each candidate log records its total evaluated examples,
+unique question count, repeat count, and `candidate_eval_data_source`.
+
 The same batch yields:
 
 ```text
@@ -129,6 +136,10 @@ reward = (
 The raw boundary-diversity delta remains logged. Reward only consumes its
 positive part, so a candidate that improves the correct vote enough to leave a
 fragile boundary is not penalized for its boundary score becoming zero.
+
+`update_logs.jsonl` records both the raw delta and clipped gain, plus the
+weighted target-accuracy, vote-delta, vote-margin, boundary-diversity,
+invalid-penalty, and guard-penalty reward components.
 
 Phase-adaptive scheduling adjusts vote-delta, vote-margin, boundary-diversity, target-accuracy, and guard weights. Effective values are written to `update_logs.jsonl`.
 
@@ -211,9 +222,29 @@ mean_boundary_useful_diversity
 mean_embedding_diversity
 mean_useful_diversity
 mean_invalid_rate
+vote_tie_rate
 ```
 
 `oracle_acc` means at least one agent is correct. `aggregation_gap = oracle_acc - vote_acc` diagnoses correct paths that did not become the final vote.
+
+The default tie protocol is deterministic `random`: it is seeded by the run
+seed and question hash. All matched settings must use the same
+`vote_tie_break`; final exports include `vote_tie_rate`.
+
+## Split Integrity And Reproducibility
+
+`run_task_level_accuracy.py` performs a split preflight before launching a
+task. A strict manifest must have zero normalized-question overlap for
+opt/validation, opt/test, and validation/test. It writes split counts, overlap
+counts, and SHA256 file hashes into `run_meta.json`. Reused files are marked
+`paper_compatible_reused_file` and carry a leakage warning rather than being
+called strict.
+
+Each run also records the full Git commit, dirty-tree state, and protocol
+version `vote_oriented_v1`. Formal runs should start from a committed, clean
+tree. Training checkpoints store a fingerprinted behavior configuration;
+changing reward, guard, candidate-evaluation, selection, tie-break, model, or
+TCS settings rejects resume instead of mixing optimization semantics.
 
 ## Resume
 

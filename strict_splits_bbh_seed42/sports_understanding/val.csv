@@ -2,7 +2,6 @@ sample_id,question,answer
 249,"Is the following sentence plausible? ""Frederik Andersen took a three.""",no
 47,"Is the following sentence plausible? ""Calvin Ridley skated behind the net.""",no
 211,"Is the following sentence plausible? ""Leon Draisaitl grounded out to second base in the National League Championship Series.""",no
-171,"Is the following sentence plausible? ""Jonas Valanciunas beat the buzzer.""",yes
 77,"Is the following sentence plausible? ""Andrei Svechnikov took ball four.""",no
 84,"Is the following sentence plausible? ""LaMelo Ball launched the half court shot in the Western Conference Finals.""",yes
 38,"Is the following sentence plausible? ""Klaas Jan Huntelaar shot the puck.""",no

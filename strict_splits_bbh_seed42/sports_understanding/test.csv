@@ -117,7 +117,6 @@ sample_id,question,answer
 26,"Is the following sentence plausible? ""Gerrit Cole set the hard screen.""",no
 188,"Is the following sentence plausible? ""Amari Cooper scored a penalty kick.""",no
 35,"Is the following sentence plausible? ""Tristan Jarry dunked the ball.""",no
-57,"Is the following sentence plausible? ""Mario Gomez scored a reverse layup.""",no
 62,"Is the following sentence plausible? ""Marouane Fellaini scored in extra time.""",yes
 70,"Is the following sentence plausible? ""Jayson Tatum was called for the goal tend.""",yes
 189,"Is the following sentence plausible? ""Jesus Luzardo was called for slashing.""",no
