@@ -41,7 +41,7 @@ class Config:
     search_mode: str = "evolutionary_beam"
     reward_mode: str = "vote_useful_diversity"
     candidate_selection_mode: str = "scalar_reward"
-    best_state_selection_mode: str = "existing"
+    best_state_selection_mode: str = "vote_first"
     beam_size: int = 3
     num_candidates_per_parent: int = 2
     optimizer_parent_concurrency: int = 2

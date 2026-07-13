@@ -12,7 +12,7 @@ The recommended method is `vote_useful_diversity`:
 - reject candidates that worsen invalid-output rate;
 - optimize direct `vote_delta`;
 - use `vote_margin_delta` before a vote flip is available;
-- reward `boundary_useful_diversity_delta` only near a gold-vs-wrong vote boundary.
+- reward only the positive part of `boundary_useful_diversity_delta` near a gold-vs-wrong vote boundary, so a stronger correct vote is never penalized for leaving that boundary.
 
 `oracle_acc`, aggregation gap, trace embedding diversity, answer-level useful diversity, coverage, and rescue statistics are diagnostics. They are not candidate-selection objectives.
 
@@ -31,7 +31,7 @@ scalar_reward
 vote_pareto
 ```
 
-`vote_pareto` uses only vote gain, vote loss, and target-agent accuracy as Pareto objectives. Validation selection supports `existing` and `vote_first`.
+`vote_pareto` uses only vote gain, vote loss, and target-agent accuracy as Pareto objectives. Validation selection supports `existing` and `vote_first`; `vote_first` is the default.
 
 ## Teacher-Critic-Student
 

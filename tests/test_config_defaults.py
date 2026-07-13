@@ -5,6 +5,7 @@ from multi_dataset_diverse_rl.config import Config, build_parser
 
 def test_cli_defaults_match_config():
     defaults = Config()
+    assert defaults.best_state_selection_mode == "vote_first"
     args = build_parser().parse_args([])
     for field in [
         "val_size",

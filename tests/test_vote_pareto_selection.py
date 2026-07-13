@@ -88,3 +88,5 @@ def test_vote_first_validation_key_prioritizes_vote_metrics():
     equal_later = {"epoch": 2, "val": {"vote_acc": 0.8, "mean_individual_acc": 0.5, "mean_vote_margin": 0.1, "mean_boundary_useful_diversity": 0.2, "mean_invalid_rate": 0.1}}
     equal_earlier = {"epoch": 1, "val": dict(equal_later["val"])}
     assert vote_first_validation_key(equal_earlier) < vote_first_validation_key(equal_later)
+    higher_boundary_later = {"epoch": 2, "val": {**equal_earlier["val"], "mean_boundary_useful_diversity": 1.0}}
+    assert vote_first_validation_key(equal_earlier) < vote_first_validation_key(higher_boundary_later)

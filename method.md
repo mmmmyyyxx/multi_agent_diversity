@@ -83,6 +83,7 @@ vote_margin_delta
 baseline_boundary_useful_diversity
 candidate_boundary_useful_diversity
 boundary_useful_diversity_delta
+boundary_diversity_gain = max(0.0, boundary_useful_diversity_delta)
 
 vote_gain_count / vote_gain_rate
 vote_loss_count / vote_loss_rate
@@ -120,10 +121,14 @@ reward = (
     effective_weight_target_accuracy * candidate_target_accuracy
     + effective_weight_vote_delta * vote_delta
     + effective_weight_vote_margin * vote_margin_delta
-    + effective_weight_boundary_diversity * boundary_useful_diversity_delta
+    + effective_weight_boundary_diversity * boundary_diversity_gain
     - reward_weight_invalid_delta * max(0.0, invalid_delta)
 )
 ```
+
+The raw boundary-diversity delta remains logged. Reward only consumes its
+positive part, so a candidate that improves the correct vote enough to leave a
+fragile boundary is not penalized for its boundary score becoming zero.
 
 Phase-adaptive scheduling adjusts vote-delta, vote-margin, boundary-diversity, target-accuracy, and guard weights. Effective values are written to `update_logs.jsonl`.
 
@@ -179,12 +184,17 @@ Within a Pareto rank, the deterministic order is vote delta, lower vote loss, vo
 vote_acc descending
 mean_individual_acc descending
 mean_vote_margin descending
-mean_boundary_useful_diversity descending
 mean_invalid_rate ascending
 earlier epoch
 ```
 
-`best_prompts.json` stores all selection-key metrics, including diagnostic `selected_oracle_acc`.
+`vote_first` is the default best-state selection mode. `existing` remains
+available only for compatibility with earlier scalar validation runs.
+
+`mean_boundary_useful_diversity` remains a diagnostic: zero can mean either no
+useful complementarity or that the team has already left a fragile boundary.
+`best_prompts.json` stores it alongside the selection-key metrics and diagnostic
+`selected_oracle_acc`.
 
 ## Final Metrics
 

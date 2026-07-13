@@ -196,7 +196,6 @@ def vote_first_validation_key(epoch_record):
         -float(val.get("vote_acc", 0.0) or 0.0),
         -float(val.get("mean_individual_acc", 0.0) or 0.0),
         -float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
-        -float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
         epoch,
     )
@@ -208,7 +207,6 @@ def vote_first_validation_key_fields(epoch_record):
         float(val.get("vote_acc", 0.0) or 0.0),
         float(val.get("mean_individual_acc", 0.0) or 0.0),
         float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
-        float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
         int(epoch_record.get("epoch", 0) or 0),
     ]
@@ -496,7 +494,7 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
 
 def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
     if str(best_state_selection_mode or "existing").lower() == "vote_first":
-        return "vote_first(vote,mean_individual,margin,boundary_div,-invalid,earlier_epoch)"
+        return "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)"
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return "vote_acc"

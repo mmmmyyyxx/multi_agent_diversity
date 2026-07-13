@@ -39,6 +39,7 @@ def test_vote_useful_reward_uses_vote_delta_margin_and_boundary_diversity():
     assert result["vote_delta"] == 0.25
     assert result["vote_margin_delta"] == 0.2
     assert result["boundary_useful_diversity_delta"] == 0.4
+    assert result["boundary_diversity_gain"] == 0.4
     assert round(result["reward"], 6) == round(0.5 + 0.3 * 0.25 + 0.2 * 0.2 + 0.1 * 0.4, 6)
 
 
@@ -62,6 +63,33 @@ def test_vote_useful_reward_rejects_target_accuracy_or_invalid_regression():
     assert target_drop["reward"] == -1.0
     assert invalid["invalid_guard_passed"] is False
     assert invalid["reward"] == -1.0
+
+
+def test_vote_useful_reward_does_not_penalize_leaving_the_vote_boundary():
+    system = _system_without_init(
+        Config(
+            reward_mode="vote_useful_diversity",
+            reward_schedule_mode="static",
+            reward_weight_vote_delta=0.3,
+            reward_weight_vote_margin=0.2,
+            reward_weight_boundary_diversity=0.4,
+        )
+    )
+    result = system._candidate_reward_vote_useful_diversity(
+        baseline_team_accuracy=0.0,
+        candidate_team_accuracy=1.0,
+        baseline_target_accuracy=0.4,
+        candidate_target_accuracy=0.6,
+        baseline_invalid_rate=0.0,
+        candidate_invalid_rate=0.0,
+        baseline_mean_vote_margin=0.0,
+        candidate_mean_vote_margin=0.4,
+        baseline_boundary_useful_diversity=1.0 / 3.0,
+        candidate_boundary_useful_diversity=0.0,
+    )
+    assert result["boundary_useful_diversity_delta"] == -1.0 / 3.0
+    assert result["boundary_diversity_gain"] == 0.0
+    assert round(result["reward"], 6) == round(0.6 + 0.3 + 0.2 * 0.4, 6)
 
 
 def test_vote_useful_diversity_mode_detection_and_reward_agent_selection():

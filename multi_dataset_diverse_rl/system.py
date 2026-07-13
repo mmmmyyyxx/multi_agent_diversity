@@ -909,7 +909,7 @@ class TraceBeamSearchSystem:
             "candidate_eval_prompt_dedup": bool(getattr(self.cfg, "candidate_eval_prompt_dedup", True)),
             "candidate_eval_cache_logging": bool(getattr(self.cfg, "candidate_eval_cache_logging", True)),
             "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
-            "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "existing"),
+            "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "vote_first"),
             "optimizer_architecture": getattr(self.cfg, "optimizer_architecture", ""),
             "optimizer_fallback_mode": getattr(self.cfg, "optimizer_fallback_mode", ""),
             "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
@@ -4599,6 +4599,10 @@ class TraceBeamSearchSystem:
         invalid_delta = deltas["invalid_delta"]
         vote_margin_delta = candidate_mean_vote_margin - baseline_mean_vote_margin
         boundary_diversity_delta = candidate_boundary_useful_diversity - baseline_boundary_useful_diversity
+        # Boundary diversity is an auxiliary signal only while the team remains
+        # near a gold-vs-wrong vote boundary. Leaving that boundary through a
+        # stronger correct vote must not turn into a diversity penalty.
+        boundary_diversity_gain = max(0.0, boundary_diversity_delta)
         weights = self._effective_reward_weights()
         target_guard_passed = candidate_target_accuracy >= baseline_target_accuracy - float(weights["accuracy_guard_epsilon"])
         invalid_guard_passed = candidate_invalid_rate <= baseline_invalid_rate + float(self.cfg.invalid_guard_epsilon)
@@ -4610,7 +4614,7 @@ class TraceBeamSearchSystem:
                 float(weights["target_accuracy"]) * candidate_target_accuracy
                 + float(weights["vote_delta"]) * vote_delta
                 + float(weights["vote_margin"]) * vote_margin_delta
-                + float(weights["boundary_diversity"]) * boundary_diversity_delta
+                + float(weights["boundary_diversity"]) * boundary_diversity_gain
                 - float(weights["invalid_delta"]) * max(0.0, invalid_delta)
             )
         result = {
@@ -4623,6 +4627,7 @@ class TraceBeamSearchSystem:
             "baseline_boundary_useful_diversity": baseline_boundary_useful_diversity,
             "candidate_boundary_useful_diversity": candidate_boundary_useful_diversity,
             "boundary_useful_diversity_delta": boundary_diversity_delta,
+            "boundary_diversity_gain": boundary_diversity_gain,
             "baseline_team_accuracy": float(baseline_team_accuracy),
             "candidate_team_accuracy": float(candidate_team_accuracy),
             "baseline_target_accuracy": float(baseline_target_accuracy),
@@ -5478,6 +5483,7 @@ class TraceBeamSearchSystem:
                     "baseline_boundary_useful_diversity": float(metrics.get("baseline_boundary_useful_diversity", 0.0)),
                     "candidate_boundary_useful_diversity": float(metrics.get("candidate_boundary_useful_diversity", 0.0)),
                     "boundary_useful_diversity_delta": float(metrics.get("boundary_useful_diversity_delta", 0.0)),
+                    "boundary_diversity_gain": float(metrics.get("boundary_diversity_gain", 0.0)),
                     "baseline_oracle_acc": float(metrics.get("baseline_oracle_acc", 0.0)),
                     "candidate_oracle_acc": float(metrics.get("candidate_oracle_acc", 0.0)),
                     "coverage_delta": float(metrics.get("coverage_delta", 0.0)),
