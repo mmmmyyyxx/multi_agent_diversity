@@ -56,6 +56,13 @@ def _setting_value(setting: ExperimentSetting, name: str, fallback: Any) -> Any:
     return fallback if value is None else value
 
 
+def _explicit_cli_or_setting(args: argparse.Namespace, setting: ExperimentSetting, name: str, default: Any) -> Any:
+    cli_value = getattr(args, name, None)
+    if cli_value is not None:
+        return cli_value
+    return _setting_value(setting, name, default)
+
+
 def _append_common_cli_args(
     cmd: List[str],
     args: argparse.Namespace,
@@ -78,8 +85,9 @@ def _append_common_cli_args(
     optimizer_architecture = _setting_value(setting, "optimizer_architecture", args.optimizer_architecture)
     optimizer_fallback_mode = _setting_value(setting, "optimizer_fallback_mode", args.optimizer_fallback_mode)
     teacher_voting_failure = _setting_value(setting, "teacher_critic_use_voting_failure", args.teacher_critic_use_voting_failure)
-    candidate_eval_strategy = _setting_value(setting, "candidate_eval_strategy", args.candidate_eval_strategy)
-    candidate_eval_pool_size = _setting_value(setting, "candidate_eval_pool_size", args.candidate_eval_pool_size)
+    candidate_eval_strategy = _explicit_cli_or_setting(args, setting, "candidate_eval_strategy", Config().candidate_eval_strategy)
+    candidate_eval_pool_size = _explicit_cli_or_setting(args, setting, "candidate_eval_pool_size", Config().candidate_eval_pool_size)
+    candidate_eval_execution_mode = _explicit_cli_or_setting(args, setting, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)
     cmd.extend(
         [
             "--task_type", task.task_type,
@@ -153,7 +161,7 @@ def _append_common_cli_args(
             "--candidate_eval_repeats", str(args.candidate_eval_repeats),
             "--candidate_eval_seed_offset", str(args.candidate_eval_seed_offset),
             "--candidate_reuse_recorded_rollouts", str(args.candidate_reuse_recorded_rollouts),
-            "--candidate_eval_execution_mode", str(getattr(setting, "candidate_eval_execution_mode", "") or getattr(args, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)),
+            "--candidate_eval_execution_mode", str(candidate_eval_execution_mode),
             "--solver_rollout_singleflight", str(int(getattr(args, "solver_rollout_singleflight", Config().solver_rollout_singleflight) if getattr(setting, "solver_rollout_singleflight", None) is None else setting.solver_rollout_singleflight)),
             "--candidate_eval_prompt_dedup", str(int(getattr(args, "candidate_eval_prompt_dedup", Config().candidate_eval_prompt_dedup) if getattr(setting, "candidate_eval_prompt_dedup", None) is None else setting.candidate_eval_prompt_dedup)),
             "--candidate_eval_cache_logging", str(int(getattr(args, "candidate_eval_cache_logging", Config().candidate_eval_cache_logging) if getattr(setting, "candidate_eval_cache_logging", None) is None else setting.candidate_eval_cache_logging)),
@@ -212,7 +220,7 @@ def run_one(
                 "--val_split_ratio", str(args.val_split_ratio),
                 "--epochs", str(args.epochs),
                 "--update_every", str(args.update_every),
-                "--candidate_eval_batch_size", str(_setting_value(setting, "candidate_eval_batch_size", args.candidate_eval_batch_size)),
+                "--candidate_eval_batch_size", str(_explicit_cli_or_setting(args, setting, "candidate_eval_batch_size", Config().candidate_eval_batch_size)),
             ]
         )
     start = time.time()
@@ -571,14 +579,14 @@ def main():
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
-    parser.add_argument("--candidate_eval_batch_size", type=int, default=cli_defaults.candidate_eval_batch_size)
+    parser.add_argument("--candidate_eval_batch_size", type=int, default=None)
     parser.add_argument("--candidate_eval_concurrency", type=int, default=cli_defaults.candidate_eval_concurrency)
-    parser.add_argument("--candidate_eval_strategy", type=str, default=cli_defaults.candidate_eval_strategy, choices=["random", "fixed_pool", "stratified"])
-    parser.add_argument("--candidate_eval_pool_size", type=int, default=cli_defaults.candidate_eval_pool_size)
+    parser.add_argument("--candidate_eval_strategy", type=str, default=None, choices=["random", "fixed_pool", "stratified"])
+    parser.add_argument("--candidate_eval_pool_size", type=int, default=None)
     parser.add_argument("--candidate_eval_repeats", type=int, default=cli_defaults.candidate_eval_repeats)
     parser.add_argument("--candidate_eval_seed_offset", type=int, default=cli_defaults.candidate_eval_seed_offset)
     parser.add_argument("--candidate_reuse_recorded_rollouts", type=int, default=int(cli_defaults.candidate_reuse_recorded_rollouts), choices=[0, 1])
-    parser.add_argument("--candidate_eval_execution_mode", type=str, default=cli_defaults.candidate_eval_execution_mode, choices=["legacy", "factorized_cached"])
+    parser.add_argument("--candidate_eval_execution_mode", type=str, default=None, choices=["legacy", "factorized_cached"])
     parser.add_argument("--solver_rollout_singleflight", type=int, default=int(cli_defaults.solver_rollout_singleflight), choices=[0, 1])
     parser.add_argument("--candidate_eval_prompt_dedup", type=int, default=int(cli_defaults.candidate_eval_prompt_dedup), choices=[0, 1])
     parser.add_argument("--candidate_eval_cache_logging", type=int, default=int(cli_defaults.candidate_eval_cache_logging), choices=[0, 1])

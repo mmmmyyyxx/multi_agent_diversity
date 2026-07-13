@@ -6,7 +6,7 @@ from scripts.analyze_student_failures import summarize_run
 from scripts.compute_experiment_metrics import analyze_run
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, DEFAULT_SEED_BASELINES, DEFAULT_EXPERIMENT_SETTINGS, ExperimentSetting, dataset_paths_from_args, select_settings, setting_names
 from scripts.run_experiments import SETTINGS, _selected_settings
-from scripts.run_task_level_accuracy import _append_common_cli_args, _completed_run_row, _skip_row, _setting_reward_mode, is_completed_run_dir
+from scripts.run_task_level_accuracy import _append_common_cli_args, _completed_run_row, _explicit_cli_or_setting, _skip_row, _setting_reward_mode, is_completed_run_dir
 from multi_dataset_diverse_rl.task_manifest import ComparisonTask
 
 
@@ -252,6 +252,24 @@ def test_task_level_cli_args_pass_resume_checkpoint_flag():
 
     idx = cmd.index("--resume_from_checkpoint")
     assert cmd[idx + 1] == "1"
+
+
+def test_explicit_candidate_eval_budget_overrides_setting_defaults():
+    setting = next(item for item in DEFAULT_EXPERIMENT_SETTINGS if item.name == "shared_scalar_tcs_vote_first")
+    args = Namespace(
+        candidate_eval_strategy="fixed_pool",
+        candidate_eval_pool_size=20,
+        candidate_eval_batch_size=10,
+        candidate_eval_execution_mode="factorized_cached",
+    )
+
+    assert _explicit_cli_or_setting(args, setting, "candidate_eval_pool_size", 100) == 20
+    assert _explicit_cli_or_setting(args, setting, "candidate_eval_batch_size", 20) == 10
+
+    args.candidate_eval_pool_size = None
+    args.candidate_eval_batch_size = None
+    assert _explicit_cli_or_setting(args, setting, "candidate_eval_pool_size", 100) == 50
+    assert _explicit_cli_or_setting(args, setting, "candidate_eval_batch_size", 20) == 24
 
 
 def test_compute_metrics_reads_vote_tie_rate_and_mars_delta(tmp_path):

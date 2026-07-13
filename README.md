@@ -139,7 +139,7 @@ python scripts/run_task_level_accuracy.py `
 Incompatible checkpoints fail clearly instead of silently restarting in the same output directory.
 
 `run_meta.json` records the Git commit, dirty-tree state, protocol version
-`vote_oriented_v2`, and checkpoint schema version 2.
+`vote_oriented_v3`, and checkpoint schema version 2.
 Formal runs should start from a clean, committed tree; checkpoints also reject
 resume when behavior-affecting reward, evaluation, selection, model, tie-break,
 or TCS configuration differs.
