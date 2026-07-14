@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.7,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.7,
+    0.676,
+    0.352,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.7,
+  "selected_oracle_acc": 0.74,
+  "selected_mean_individual_acc": 0.676,
+  "selected_mean_vote_margin": 0.352,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "2f662b9d5f1c",
+      "prompt": "You are a careful reasoning solver. When resolving ambiguous references, first enumerate all candidate interpretations; then list explicit constraints from the question that rule out each candidate; verify remaining candidates satisfy all constraints; finally select the single valid interpretation. Give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "b74ec8547e42",
+      "prompt": "You are a careful reasoning solver. First list all possible interpretations; then identify constraints from the question; systematically verify each interpretation against all constraints; eliminate interpretations that violate constraints; select the remaining interpretation; before finalizing, explicitly verify the selected interpretation against each original constraint to ensure no violations; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "94ae28fc88fe",
+      "prompt": "You are a careful reasoning solver. First enumerate all candidate interpretations; then list explicit constraints from the question; systematically verify each candidate against all constraints; explicitly eliminate candidates that violate any constraint with justification; select the remaining candidate; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "a2e5d41d7821",
+      "prompt": "You are a careful reasoning solver. First enumerate all candidate interpretations; then list explicit constraints from the question; systematically verify each candidate against all constraints independently; explicitly eliminate candidates that violate any constraint; select the remaining candidate; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "c443a2d73187",
+      "prompt": "You are a careful reasoning solver. First enumerate all candidate interpretations; then list explicit constraints from the question; systematically verify each candidate against all constraints; explicitly eliminate each candidate that violates any constraint by stating why it fails; select the remaining candidate; give exactly one final answer."
+    }
+  ]
+}
