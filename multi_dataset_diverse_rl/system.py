@@ -35,7 +35,7 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
-EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v4"
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v5"
 CHECKPOINT_VERSION = 2
 
 
@@ -4723,10 +4723,24 @@ class TraceBeamSearchSystem:
         async def run_one(ex: Dict[str, str]) -> Dict[str, Any]:
             q = ex["question"]
             gold = self.task_spec.parse_gold(ex["answer"], q)
-            eval_prompts = list(peer_prompts)
-            while len(eval_prompts) < len(self.agents):
-                eval_prompts.append(self.agents[len(eval_prompts)].current_prompt)
+            baseline_prompts = list(peer_prompts)
+            while len(baseline_prompts) < len(self.agents):
+                baseline_prompts.append(self.agents[len(baseline_prompts)].current_prompt)
+            eval_prompts = list(baseline_prompts)
             eval_prompts[agent_id] = candidate_prompt
+            question_hash = self._hash(q)
+            baseline_traces, baseline_answers, baseline_reuse_stats = await self.solve_with_prompts_reusing_records(
+                q,
+                baseline_prompts,
+                source=f"candidate_accuracy_baseline_agent_{agent_id}",
+            )
+            baseline_rollout = self.compute_rollout_metrics(
+                baseline_traces,
+                baseline_answers,
+                gold,
+                prompts=baseline_prompts,
+                question_hash=question_hash,
+            )
             traces, answers, reuse_stats = await self.solve_with_prompts_reusing_records(
                 q,
                 eval_prompts,
@@ -4737,12 +4751,23 @@ class TraceBeamSearchSystem:
                 answers,
                 gold,
                 prompts=eval_prompts,
-                question_hash=self._hash(q),
+                question_hash=question_hash,
             )
+            baseline_target_answer = baseline_answers[agent_id] if agent_id < len(baseline_answers) else ""
             target_answer = answers[agent_id] if agent_id < len(answers) else ""
             return {
+                "baseline_team_accuracy": int(baseline_rollout.get("vote_correct", 0)),
                 "team_accuracy": int(rollout.get("vote_correct", 0)),
+                "baseline_target_accuracy": int(self.task_spec.match_answer(baseline_target_answer, gold)),
                 "target_agent_accuracy": int(self.task_spec.match_answer(target_answer, gold)),
+                "baseline_any_correct": int(baseline_rollout.get("any_correct", 0)),
+                "candidate_any_correct": int(rollout.get("any_correct", 0)),
+                "baseline_individual_correct": list(baseline_rollout.get("individual_correct", [])),
+                "candidate_individual_correct": list(rollout.get("individual_correct", [])),
+                "baseline_mean_vote_margin": float(baseline_rollout.get("normalized_vote_margin", -1.0)),
+                "candidate_mean_vote_margin": float(rollout.get("normalized_vote_margin", -1.0)),
+                "baseline_boundary_useful_diversity": float(baseline_rollout.get("boundary_useful_diversity", 0.0)),
+                "candidate_boundary_useful_diversity": float(rollout.get("boundary_useful_diversity", 0.0)),
                 "vote_answer": str(rollout.get("vote_answer", "")),
                 "vote_tie": bool(rollout.get("vote_tie", False)),
                 "tie_candidates": list(rollout.get("tie_candidates", [])),
@@ -4755,14 +4780,51 @@ class TraceBeamSearchSystem:
                 "aggregation_mode": str(rollout.get("aggregation_mode", "majority")),
                 "target_answer": target_answer,
                 "target_trace_hash": self._hash(traces[agent_id]) if agent_id < len(traces) else "",
+                "baseline_solver_reuse_hits": int(baseline_reuse_stats.get("solver_reuse_hits", 0) or 0),
+                "baseline_solver_reuse_misses": int(baseline_reuse_stats.get("solver_reuse_misses", 0) or 0),
+                "baseline_solver_calls": int(baseline_reuse_stats.get("solver_calls", 0) or 0),
+                "baseline_solver_reuse_total": int(baseline_reuse_stats.get("solver_reuse_total", 0) or 0),
                 **reuse_stats,
             }
 
         raw = await asyncio.gather(*[run_one(ex) for ex in eval_batch], return_exceptions=True)
         rows = [r for r in raw if isinstance(r, dict)]
         errors = [normalize_spaces(str(r))[:240] for r in raw if isinstance(r, Exception)]
+        baseline_team_accuracy = self._clip01(float(np.mean([float(r.get("baseline_team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
         team_accuracy = self._clip01(float(np.mean([float(r.get("team_accuracy", 0.0)) for r in rows])) if rows else 0.0)
+        baseline_target_accuracy = self._clip01(float(np.mean([float(r.get("baseline_target_accuracy", 0.0)) for r in rows])) if rows else 0.0)
         target_agent_accuracy = self._clip01(float(np.mean([float(r.get("target_agent_accuracy", 0.0)) for r in rows])) if rows else 0.0)
+        baseline_oracle_acc = self._clip01(float(np.mean([float(r.get("baseline_any_correct", 0.0)) for r in rows])) if rows else 0.0)
+        candidate_oracle_acc = self._clip01(float(np.mean([float(r.get("candidate_any_correct", 0.0)) for r in rows])) if rows else 0.0)
+        baseline_mean_vote_margin = float(np.mean([float(r.get("baseline_mean_vote_margin", -1.0)) for r in rows])) if rows else -1.0
+        candidate_mean_vote_margin = float(np.mean([float(r.get("candidate_mean_vote_margin", -1.0)) for r in rows])) if rows else -1.0
+        baseline_boundary = self._clip01(float(np.mean([float(r.get("baseline_boundary_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+        candidate_boundary = self._clip01(float(np.mean([float(r.get("candidate_boundary_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
+        vote_transitions = compute_vote_transitions(
+            [bool(row.get("baseline_team_accuracy", 0)) for row in rows],
+            [bool(row.get("team_accuracy", 0)) for row in rows],
+        )
+        coverage_transitions = compute_oracle_coverage_transitions(
+            [list(row.get("baseline_individual_correct", [])) for row in rows],
+            [list(row.get("candidate_individual_correct", [])) for row in rows],
+        )
+        deltas = compute_candidate_metric_deltas(
+            baseline_target_accuracy=baseline_target_accuracy,
+            candidate_target_accuracy=target_agent_accuracy,
+            baseline_team_accuracy=baseline_team_accuracy,
+            candidate_team_accuracy=team_accuracy,
+            baseline_oracle_accuracy=baseline_oracle_acc,
+            candidate_oracle_accuracy=candidate_oracle_acc,
+            baseline_embedding_diversity=0.0,
+            candidate_embedding_diversity=0.0,
+            baseline_invalid_rate=0.0,
+            candidate_invalid_rate=0.0,
+        )
+        if abs(float(vote_transitions["net_vote_delta"]) - float(deltas["vote_delta"])) > PARETO_EPSILON:
+            raise RuntimeError("Accuracy-only vote transition delta is inconsistent")
+        if abs(float(coverage_transitions["net_coverage_delta"]) - float(deltas["coverage_delta"])) > PARETO_EPSILON:
+            raise RuntimeError("Accuracy-only coverage transition delta is inconsistent")
+        boundary_delta = candidate_boundary - baseline_boundary
         solver_reuse_hits = int(sum(int(r.get("solver_reuse_hits", 0) or 0) for r in rows))
         solver_reuse_misses = int(sum(int(r.get("solver_reuse_misses", 0) or 0) for r in rows))
         solver_calls = int(sum(int(r.get("solver_calls", 0) or 0) for r in rows))
@@ -4771,6 +4833,13 @@ class TraceBeamSearchSystem:
         weighted_team_accuracy = self._clip01(float(np.mean([float(r.get("weighted_vote_correct", 0.0)) for r in rows])) if rows else 0.0)
         return {
             "reward": target_agent_accuracy,
+            "reward_total": target_agent_accuracy,
+            "reward_component_target_accuracy": target_agent_accuracy,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": 0.0,
+            "reward_component_guard_penalty": 0.0,
             "embedding_diversity": 0.0,
             "mean_embedding_overlap": 0.0,
             "target_overlap_pressure": 0.0,
@@ -4778,10 +4847,32 @@ class TraceBeamSearchSystem:
             "resolved_case_count": 0.0,
             "new_homogeneous_case_count": 0.0,
             "team_accuracy": team_accuracy,
+            "baseline_team_accuracy": baseline_team_accuracy,
+            "candidate_team_accuracy": team_accuracy,
             "majority_team_accuracy": majority_team_accuracy,
             "weighted_team_accuracy": weighted_team_accuracy,
             "aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
             "target_agent_accuracy": target_agent_accuracy,
+            "baseline_target_accuracy": baseline_target_accuracy,
+            "candidate_target_accuracy": target_agent_accuracy,
+            "baseline_oracle_acc": baseline_oracle_acc,
+            "candidate_oracle_acc": candidate_oracle_acc,
+            "baseline_mean_vote_margin": baseline_mean_vote_margin,
+            "candidate_mean_vote_margin": candidate_mean_vote_margin,
+            "vote_margin_delta": candidate_mean_vote_margin - baseline_mean_vote_margin,
+            "baseline_boundary_useful_diversity": baseline_boundary,
+            "candidate_boundary_useful_diversity": candidate_boundary,
+            "boundary_useful_diversity_delta": boundary_delta,
+            "boundary_diversity_gain": max(0.0, boundary_delta),
+            "baseline_embedding_diversity": 0.0,
+            "candidate_embedding_diversity": 0.0,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": True,
+            "invalid_guard_passed": True,
+            **deltas,
+            **vote_transitions,
+            **coverage_transitions,
             "invalid_rate": 0.0,
             "invalid_score": 1.0,
             "num_eval_samples": len(rows),
@@ -4795,6 +4886,10 @@ class TraceBeamSearchSystem:
             "solver_calls": solver_calls,
             "solver_reuse_total": solver_reuse_total,
             "solver_reuse_hit_rate": float(solver_reuse_hits / solver_reuse_total) if solver_reuse_total else 0.0,
+            "baseline_solver_calls": int(sum(int(r.get("baseline_solver_calls", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_hits": int(sum(int(r.get("baseline_solver_reuse_hits", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_misses": int(sum(int(r.get("baseline_solver_reuse_misses", 0) or 0) for r in rows)),
+            "baseline_solver_reuse_total": int(sum(int(r.get("baseline_solver_reuse_total", 0) or 0) for r in rows)),
             "candidate_eval_strategy": str(getattr(self.cfg, "candidate_eval_strategy", "random")),
             "candidate_eval_pool_size": int(getattr(self.cfg, "candidate_eval_pool_size", 0) or 0),
             "candidate_eval_pool_actual_size": int(getattr(self.cfg, "candidate_eval_pool_actual_size", 0) or 0),

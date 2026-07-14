@@ -115,7 +115,8 @@ def test_accuracy_only_reward_uses_target_agent_accuracy():
     system._active_prompt_list = lambda: [f"p{i}" for i in range(5)]
 
     async def fake_solve(question, prompts, source=""):
-        return ["t0", "t1", "t2", "t3", "t4"], ["A", "B", "B", "B", "B"], {"solver_reuse_hits": 0, "solver_reuse_misses": 0, "solver_calls": 0, "solver_reuse_total": 0}
+        target_answer = "A" if prompts[0] == "candidate" else "B"
+        return ["t0", "t1", "t2", "t3", "t4"], [target_answer, "B", "B", "B", "B"], {"solver_reuse_hits": 0, "solver_reuse_misses": 0, "solver_calls": 0, "solver_reuse_total": 0}
 
     system.solve_with_prompts_reusing_records = fake_solve
     system.compute_rollout_metrics = lambda *args, **kwargs: {
@@ -133,6 +134,12 @@ def test_accuracy_only_reward_uses_target_agent_accuracy():
     assert result["target_agent_accuracy"] == 1.0
     assert result["reward"] == 1.0
     assert result["accuracy_only_reward_basis"] == "target_agent_accuracy"
+    assert result["baseline_target_accuracy"] == 0.0
+    assert result["candidate_target_accuracy"] == 1.0
+    assert result["accuracy_delta"] == 1.0
+    assert result["vote_delta"] == result["candidate_team_accuracy"] - result["baseline_team_accuracy"]
+    assert result["vote_delta"] == result["vote_gain_rate"] - result["vote_loss_rate"]
+    assert result["reward_total"] == result["reward_component_target_accuracy"]
 
 
 def test_dataset_summary_includes_vote_margin_and_boundary_diversity():
