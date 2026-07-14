@@ -16,13 +16,13 @@ ROOT.mkdir(parents=True, exist_ok=True)
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-from multi_dataset_diverse_rl.system import compute_crowding_distances, non_dominated_sort
+from multi_dataset_diverse_rl.system import EXPERIMENT_PROTOCOL_VERSION, compute_crowding_distances, non_dominated_sort
 from scripts.audit_tcs_run import audit_run
 
 
 TASK = "disambiguation_qa"
 CURRENT_COMMIT = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
-CURRENT_PROTOCOL = "vote_oriented_v4"
+CURRENT_PROTOCOL = EXPERIMENT_PROTOCOL_VERSION
 STAGE1_ROOT = REPO / "runs_vote_stage1_smoke_83bcb8f" / TASK
 STAGE2_ROOT = REPO / "runs_vote_stage2_selector_pilot_v4_dcc9492" / TASK
 SETTINGS = (
