@@ -19,6 +19,10 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "bank_guarded_beam",
         "shared_scalar_tcs_vote_first",
         "shared_vote_pareto_tcs",
+        "shared_accuracy_only_tcs_vote_first",
+        "shared_guarded_diversity_tcs_vote_first",
+        "shared_vote_no_margin_tcs_vote_first",
+        "shared_vote_no_boundary_tcs_vote_first",
     ]
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["shared_guarded_beam"] == "guarded_diversity"
     assert {setting.name: setting.reward_mode for setting in SETTINGS}["bank_guarded_beam"] == "guarded_diversity"
@@ -47,6 +51,8 @@ def test_default_and_all_setting_sets_are_distinct():
     assert setting_names(select_settings("all")) == [
         "shared_baseline", "bank_baseline", "shared_guarded_beam", "bank_guarded_beam",
         "shared_scalar_tcs_vote_first", "shared_vote_pareto_tcs",
+        "shared_accuracy_only_tcs_vote_first", "shared_guarded_diversity_tcs_vote_first",
+        "shared_vote_no_margin_tcs_vote_first", "shared_vote_no_boundary_tcs_vote_first",
     ]
 
 

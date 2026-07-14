@@ -30,10 +30,9 @@ class DatasetPaths:
     test: str
 
 
-SHARED_VOTE_SEARCH_BASE = {
+SHARED_TCS_SEARCH_BASE = {
     "init_mode": "shared",
     "baseline_only": False,
-    "reward_mode": "vote_useful_diversity",
     "best_state_selection_mode": "vote_first",
     "optimizer_architecture": "teacher_critic_student",
     "optimizer_fallback_mode": "none",
@@ -45,6 +44,11 @@ SHARED_VOTE_SEARCH_BASE = {
     "solver_rollout_singleflight": True,
     "candidate_eval_prompt_dedup": True,
     "candidate_eval_cache_logging": True,
+}
+
+SHARED_VOTE_SEARCH_BASE = {
+    **SHARED_TCS_SEARCH_BASE,
+    "reward_mode": "vote_useful_diversity",
 }
 
 
@@ -61,6 +65,28 @@ ALL_EXPERIMENT_SETTINGS = [
     ExperimentSetting(
         name="shared_vote_pareto_tcs",
         candidate_selection_mode="vote_pareto",
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_accuracy_only_tcs_vote_first",
+        reward_mode="accuracy_only",
+        candidate_selection_mode="scalar_reward",
+        **SHARED_TCS_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_guarded_diversity_tcs_vote_first",
+        reward_mode="guarded_diversity",
+        candidate_selection_mode="scalar_reward",
+        **SHARED_TCS_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_no_margin_tcs_vote_first",
+        candidate_selection_mode="scalar_reward",
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_no_boundary_tcs_vote_first",
+        candidate_selection_mode="scalar_reward",
         **SHARED_VOTE_SEARCH_BASE,
     ),
 ]
