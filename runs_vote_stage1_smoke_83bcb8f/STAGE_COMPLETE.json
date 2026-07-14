@@ -1,0 +1,24 @@
+{
+  "stage": 1,
+  "status": "passed",
+  "git_commit": "83bcb8f90fd4b60344c283b050f5fe4e099a7727",
+  "protocol_version": "vote_oriented_v3",
+  "completed_runs": [
+    "disambiguation_qa/shared_baseline_seed42",
+    "disambiguation_qa/shared_scalar_tcs_vote_first_seed42",
+    "disambiguation_qa/shared_vote_pareto_tcs_seed42"
+  ],
+  "failed_runs": [],
+  "key_findings": {
+    "tests_passed": 153,
+    "tcs_groups_completed": 8,
+    "optimizer_candidates": 16,
+    "active_prompt_changes": 8,
+    "scalar_vote_delta_nonzero_rate": 0.25,
+    "scalar_margin_delta_nonzero_rate": 0.5833333333333334,
+    "pareto_vote_delta_nonzero_rate": 0.25,
+    "pareto_margin_delta_nonzero_rate": 0.6666666666666666,
+    "numeric_consistency_failures": 0
+  },
+  "next_stage_authorized": true
+}

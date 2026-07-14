@@ -1,0 +1,51 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.07616421270370484,
+      "mean_embedding_overlap": 0.9238357872962952,
+      "mean_invalid_rate": 0.11466666666666667,
+      "vote_acc": 0.7733333333333333,
+      "oracle_acc": 0.8933333333333333,
+      "aggregation_gap": 0.12,
+      "mean_useful_diversity": 0.06830276905165779,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.8,
+      "majority_vote_acc": 0.8,
+      "weighted_vote_acc": 0.74,
+      "mean_individual_acc": 0.752,
+      "best_individual_acc": 0.78,
+      "per_agent_acc": [
+        0.7,
+        0.78,
+        0.78,
+        0.78,
+        0.72
+      ],
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.12,
+      "rescue_available_rate": 0.12,
+      "correct_disagreement_rate": 0.34,
+      "mean_useful_diversity": 0.07031668929258982,
+      "mean_vote_margin": 0.54,
+      "mean_boundary_useful_diversity": 0.013333333333333334,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.0759573279619217,
+      "mean_embedding_overlap": 0.9240426720380782,
+      "mean_invalid_rate": 0.17599999999999993
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 2
+    }
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.48919999999999997,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.82,
+    0.728,
+    0.496,
+    0.14,
+    1
+  ],
+  "selected_vote_acc": 0.82,
+  "selected_oracle_acc": 0.88,
+  "selected_mean_individual_acc": 0.728,
+  "selected_mean_vote_margin": 0.496,
+  "selected_mean_boundary_useful_diversity": 0.006666666666666667,
+  "selected_mean_invalid_rate": 0.14,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "d0e33da4cdd5",
+      "prompt": "You are a careful reasoning solver. Identify key geometric properties from path coordinates; compare each option against these properties; verify all constraints are satisfied; re-check each property against the original path data for logical consistency; audit final answer format; then output exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "1ce3f9a6fbe5",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; extract specific geometric clues from path data like segment lengths and angle patterns; compare clues to shape properties; verify closure and symmetry; ensure final answer is exactly one letter; then output the answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "b087673bc3d7",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; check that path segments align with geometric constraints by verifying coordinate transitions are logically consistent; then give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "82d416dc3bbd",
+      "prompt": "You are a careful reasoning solver. Identify key geometric properties; compare each option against these properties; verify all constraints are satisfied; then select exactly one final answer."
+    }
+  ]
+}

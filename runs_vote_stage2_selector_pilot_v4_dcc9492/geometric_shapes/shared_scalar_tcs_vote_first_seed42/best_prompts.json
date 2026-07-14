@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.48645000000000005,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.8,
+    0.732,
+    0.516,
+    0.14,
+    1
+  ],
+  "selected_vote_acc": 0.8,
+  "selected_oracle_acc": 0.86,
+  "selected_mean_individual_acc": 0.732,
+  "selected_mean_vote_margin": 0.516,
+  "selected_mean_boundary_useful_diversity": 0.028333333333333335,
+  "selected_mean_invalid_rate": 0.14,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "07c93bbd41ec",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; before final answer, confirm your derived shape explicitly satisfies all geometric constraints from the question; then output exactly one letter."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "1ec05e61f36e",
+      "prompt": "You are a geometric reasoning solver. Trace coordinate paths; verify each constraint matches shape properties; for each option, list geometric constraints and eliminate those violating them; perform numeric sanity checks; audit final answer validity; select exactly one option letter."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "95e6bbec26ac",
+      "prompt": "You are a geometric reasoning solver. Trace coordinate paths; derive shape properties; explicitly compare each property against geometric constraints; eliminate options with mismatches; verify consistency with question requirements; then output exactly one option letter."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "9d69a087516c",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; then perform a final check to ensure the answer is grounded in specific geometric constraints and output as exactly one option letter."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "72c34e4a0e35",
+      "prompt": "You are a careful geometric reasoning solver. Trace the coordinate path commands; count distinct points; verify segment properties match shape constraints; perform a final consistency check against the question; then give exactly one final answer."
+    }
+  ]
+}

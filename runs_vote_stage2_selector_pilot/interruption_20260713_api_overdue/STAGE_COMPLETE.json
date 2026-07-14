@@ -1,0 +1,34 @@
+{
+  "stage": 2,
+  "status": "failed",
+  "git_commit": "83bcb8f90fd4b60344c283b050f5fe4e099a7727",
+  "protocol_version": "vote_oriented_v3",
+  "completed_runs": [
+    "disambiguation_qa/shared_baseline_seed42"
+  ],
+  "failed_runs": [
+    "disambiguation_qa/shared_scalar_tcs_vote_first_seed42",
+    "disambiguation_qa/shared_vote_pareto_tcs_seed42",
+    "geometric_shapes/shared_baseline_seed42",
+    "geometric_shapes/shared_scalar_tcs_vote_first_seed42"
+  ],
+  "not_started_runs": [
+    "geometric_shapes/shared_vote_pareto_tcs_seed42",
+    "ruin_names/shared_baseline_seed42",
+    "ruin_names/shared_scalar_tcs_vote_first_seed42",
+    "ruin_names/shared_vote_pareto_tcs_seed42",
+    "sports_understanding/shared_baseline_seed42",
+    "sports_understanding/shared_scalar_tcs_vote_first_seed42",
+    "sports_understanding/shared_vote_pareto_tcs_seed42"
+  ],
+  "key_findings": {
+    "failure_class": "external_api_account_error",
+    "api_error": "HTTP 429 Access denied: account not in good standing (overdue-payment)",
+    "completed_run_count": 1,
+    "planned_run_count": 12,
+    "durable_training_checkpoints": 2,
+    "remaining_stage_processes": 0,
+    "partial_results_excluded": true
+  },
+  "next_stage_authorized": false
+}

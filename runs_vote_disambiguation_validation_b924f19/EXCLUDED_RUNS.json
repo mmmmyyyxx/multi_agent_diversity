@@ -1,0 +1,32 @@
+[
+  {
+    "task": "geometric_shapes",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\geometric_shapes\\shared_baseline_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  },
+  {
+    "task": "geometric_shapes",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\geometric_shapes\\shared_scalar_tcs_vote_first_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  },
+  {
+    "task": "geometric_shapes",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\geometric_shapes\\shared_vote_pareto_tcs_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  },
+  {
+    "task": "ruin_names",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\ruin_names\\shared_baseline_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  },
+  {
+    "task": "ruin_names",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\ruin_names\\shared_scalar_tcs_vote_first_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  },
+  {
+    "task": "ruin_names",
+    "run_directory": "runs_vote_stage2_selector_pilot_v4_dcc9492\\ruin_names\\shared_vote_pareto_tcs_seed42",
+    "reason": "outside single-task scope; preserved and not resumed"
+  }
+]
