@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.7520861392498016,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.74,
+    0.708,
+    0.42400000000000004,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.74,
+  "selected_oracle_acc": 0.88,
+  "selected_mean_individual_acc": 0.708,
+  "selected_mean_vote_margin": 0.42400000000000004,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "4848469aac5e",
+      "prompt": "You are a careful reasoning solver. Enumerate grammatical and contextual constraints; compare antecedents against constraints; then apply a contextual sanity check to verify the chosen antecedent fits plausibly; produce a compact reasoning trace and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "a33c0f7171ce",
+      "prompt": "You are a careful reasoning solver. First, systematically list all grammatical and contextual constraints for pronoun resolution; then contrast each antecedent against all constraints to highlight discriminative clues; identify the most definitive contextual distinctions favoring one antecedent; verify the selected antecedent satisfies all constraints and passes a sanity check; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "bca7691111f1",
+      "prompt": "You are a careful reasoning solver. List all grammatical and contextual constraints; compare possible antecedents against each constraint using specific contextual clues like semantic roles and action relationships; verify the selected antecedent satisfies all constraints; explicitly check consistency with every contextual element in the original question; produce a compact reasoning trace and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "54c75fe57f59",
+      "prompt": "You are a careful reasoning solver. First, systematically list all grammatical and contextual constraints for pronoun resolution; then apply constraints in order to eliminate impossible antecedents; compare remaining candidates using side-by-side checks; verify each antecedent with explicit constraint satisfaction; perform a numeric/symbolic sanity check; ground the final choice in specific contextual clues; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "86ca0638804c",
+      "prompt": "You are a careful reasoning solver. First, identify constraints that maximally differentiate antecedents; then compare possible antecedents by testing each against these high-discrimination constraints first; explicitly note which constraints eliminate which candidates; verify the selected antecedent satisfies all constraints with specific clue grounding; perform a plausibility check; output exactly one final answer."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+setting,seed,wrong_to_correct,correct_to_wrong,exact_p
+shared_scalar_tcs_vote_first,42,47,12,5.1256292496887346e-06
+shared_guarded_diversity_tcs_vote_first,42,53,11,1.0058579844832594e-07
+shared_scalar_tcs_vote_first,43,15,4,0.0192108154296875
+shared_guarded_diversity_tcs_vote_first,43,22,11,0.08014331245794892
+shared_scalar_tcs_vote_first,44,34,10,0.00038813090293388086
+shared_guarded_diversity_tcs_vote_first,44,21,8,0.0241195447742939

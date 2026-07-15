@@ -1,0 +1,12 @@
+[
+  {"stage": 3, "task": "disambiguation_qa", "setting": "shared_accuracy_only_tcs_vote_first", "seed": 42, "status": "complete"},
+  {"stage": 3, "task": "disambiguation_qa", "setting": "shared_guarded_diversity_tcs_vote_first", "seed": 42, "status": "complete"},
+  {"stage": 3, "task": "disambiguation_qa", "setting": "shared_vote_no_margin_tcs_vote_first", "seed": 42, "status": "complete"},
+  {"stage": 3, "task": "disambiguation_qa", "setting": "shared_vote_no_boundary_tcs_vote_first", "seed": 42, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_baseline", "seed": 43, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_baseline", "seed": 44, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_scalar_tcs_vote_first", "seed": 43, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_scalar_tcs_vote_first", "seed": 44, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_guarded_diversity_tcs_vote_first", "seed": 43, "status": "complete"},
+  {"stage": 4, "task": "disambiguation_qa", "setting": "shared_guarded_diversity_tcs_vote_first", "seed": 44, "status": "complete"}
+]

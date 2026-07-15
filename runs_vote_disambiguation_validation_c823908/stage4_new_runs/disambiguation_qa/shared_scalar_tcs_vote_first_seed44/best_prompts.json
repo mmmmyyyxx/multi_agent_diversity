@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.40800000000000003,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.68,
+    0.668,
+    0.34,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.68,
+  "selected_oracle_acc": 0.84,
+  "selected_mean_individual_acc": 0.668,
+  "selected_mean_vote_margin": 0.34,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "bf183843ad9b",
+      "prompt": "You are a careful reasoning solver. First list all explicit constraints from the question; then identify contextual clues that resolve pronoun ambiguity; systematically eliminate options by checking each constraint against all options in order of clue importance; verify the remaining option satisfies all constraints; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "310773a39c7e",
+      "prompt": "You are a careful reasoning solver. First, write down all explicit constraints from the question as a separate list before any reasoning. Then identify contextual clues; systematically check each option against constraints and clues; eliminate mismatches; verify final option; select exactly one answer letter."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "f6f0d80e75ba",
+      "prompt": "You are a careful reasoning solver. First extract and list all explicit constraints from the question; then identify all possible antecedents for each pronoun; systematically check each antecedent for grammatical agreement and semantic coherence with contextual clues; eliminate options that mismatch constraints or compatibility checks; verify the remaining option aligns with all constraints; then output exactly one final answer letter."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "1463a77d5e83",
+      "prompt": "You are a careful reasoning solver. First list explicit constraints; then identify specific contextual clues that resolve pronoun ambiguity; systematically eliminate options by mapping each clue to constraints; verify the final answer is grounded in those specific clues; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "9bf67d2e08f0",
+      "prompt": "You are a careful reasoning solver. Extract explicit constraints; identify key contextual clues that resolve pronoun references; reason compactly while mapping clues to constraints; verify answer consistency with specific clues; then select exactly one answer letter."
+    }
+  ]
+}

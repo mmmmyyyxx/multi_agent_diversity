@@ -1,0 +1,7 @@
+setting,seed,mean_delta_G,mean_delta_H,mean_delta_margin,wrong_to_correct_g_only,wrong_to_correct_h_only,wrong_to_correct_g_and_h,wrong_to_correct_other
+shared_scalar_tcs_vote_first,42,1.128,-1.136,0.4528,0,0,47,0
+shared_guarded_diversity_tcs_vote_first,42,1.32,-1.32,0.528,0,0,53,0
+shared_scalar_tcs_vote_first,43,0.488,-0.496,0.1968,0,0,15,0
+shared_guarded_diversity_tcs_vote_first,43,0.512,-0.528,0.20800000000000002,0,0,22,0
+shared_scalar_tcs_vote_first,44,0.848,-0.848,0.3392,0,0,34,0
+shared_guarded_diversity_tcs_vote_first,44,0.552,-0.568,0.224,0,0,21,0

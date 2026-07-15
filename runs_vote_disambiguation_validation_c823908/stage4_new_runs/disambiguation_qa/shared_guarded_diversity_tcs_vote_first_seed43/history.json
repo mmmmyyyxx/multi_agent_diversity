@@ -1,0 +1,140 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.07161163250605265,
+      "mean_embedding_overlap": 0.9283883674939474,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.48,
+      "oracle_acc": 0.6933333333333334,
+      "aggregation_gap": 0.21333333333333337,
+      "mean_useful_diversity": 0.04174744256337484,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.7,
+      "majority_vote_acc": 0.7,
+      "weighted_vote_acc": 0.7,
+      "mean_individual_acc": 0.66,
+      "best_individual_acc": 0.7,
+      "per_agent_acc": [
+        0.7,
+        0.56,
+        0.66,
+        0.7,
+        0.68
+      ],
+      "oracle_acc": 0.88,
+      "aggregation_gap": 0.18000000000000005,
+      "rescue_available_rate": 0.18,
+      "correct_disagreement_rate": 0.48,
+      "mean_useful_diversity": 0.06280371089776357,
+      "mean_vote_margin": 0.32,
+      "mean_boundary_useful_diversity": 0.0,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.08442585682868958,
+      "mean_embedding_overlap": 0.9155741431713106,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 2
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_embedding_diversity": 0.07875134658813478,
+      "mean_embedding_overlap": 0.9212486534118651,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.7066666666666667,
+      "oracle_acc": 0.92,
+      "aggregation_gap": 0.21333333333333337,
+      "mean_useful_diversity": 0.06308497958713108,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.68,
+      "majority_vote_acc": 0.68,
+      "weighted_vote_acc": 0.66,
+      "mean_individual_acc": 0.656,
+      "best_individual_acc": 0.7,
+      "per_agent_acc": [
+        0.7,
+        0.56,
+        0.66,
+        0.68,
+        0.68
+      ],
+      "oracle_acc": 0.94,
+      "aggregation_gap": 0.2599999999999999,
+      "rescue_available_rate": 0.26,
+      "correct_disagreement_rate": 0.64,
+      "mean_useful_diversity": 0.056537674546241756,
+      "mean_vote_margin": 0.316,
+      "mean_boundary_useful_diversity": 0.0,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.0697054167985916,
+      "mean_embedding_overlap": 0.9302945832014085,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 1
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 1,
+    "best_validation_score": 0.7168851713657378,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "no_effective_evolution_counter": 0,
+    "no_effective_evolution_stopped": false,
+    "no_effective_evolution_reason": "",
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 125,
+      "num_test_samples": 125,
+      "vote_acc": 0.568,
+      "majority_vote_acc": 0.568,
+      "weighted_vote_acc": 0.568,
+      "mean_individual_acc": 0.5664,
+      "best_individual_acc": 0.664,
+      "per_agent_acc": [
+        0.608,
+        0.424,
+        0.544,
+        0.664,
+        0.592
+      ],
+      "oracle_acc": 0.84,
+      "aggregation_gap": 0.272,
+      "rescue_available_rate": 0.272,
+      "correct_disagreement_rate": 0.584,
+      "mean_useful_diversity": 0.058852305396397915,
+      "mean_vote_margin": 0.136,
+      "mean_boundary_useful_diversity": 0.002666666666666667,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.008,
+      "mean_embedding_diversity": 0.08335193920135499,
+      "mean_embedding_overlap": 0.9166480607986449,
+      "mean_invalid_rate": 0.0
+    }
+  }
+]

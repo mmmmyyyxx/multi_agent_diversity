@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.3970000000000001,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.68,
+    0.644,
+    0.28800000000000003,
+    0.004,
+    2
+  ],
+  "selected_vote_acc": 0.68,
+  "selected_oracle_acc": 0.76,
+  "selected_mean_individual_acc": 0.644,
+  "selected_mean_vote_margin": 0.28800000000000003,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.004,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "c6afdbf620d7",
+      "prompt": "You are a careful reasoning solver. List each option; compare each option against explicit textual clues; mark options that mismatch clues; eliminate mismatching options; select from remaining options; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "ea04b4b4a637",
+      "prompt": "List explicit constraints about pronoun references and logical dependencies; for each candidate interpretation, systematically check it against all constraints to identify any violations; eliminate any interpretation that violates a constraint; verify the remaining interpretation satisfies all constraints; output exactly one option letter."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "1cc2ded70e7d",
+      "prompt": "List explicit constraints; list candidate interpretations; systematically check each interpretation against all constraints; immediately eliminate any interpretation that violates a constraint; verify the remaining interpretation satisfies all constraints; then select the final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "67ae619e1158",
+      "prompt": "First, list all explicit textual constraints about pronoun references and logical dependencies in a structured format; then systematically check each option against these constraints by marking which constraints each option satisfies or violates; verify that only one option satisfies all constraints; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "dc334f5a7521",
+      "prompt": "First, list all explicit constraints from the passage; then map contextual clues to candidate interpretations; systematically verify each interpretation against all listed constraints by checking for violations; eliminate any interpretation that violates a constraint; verify the remaining interpretation satisfies all constraints; output exactly one final answer."
+    }
+  ]
+}

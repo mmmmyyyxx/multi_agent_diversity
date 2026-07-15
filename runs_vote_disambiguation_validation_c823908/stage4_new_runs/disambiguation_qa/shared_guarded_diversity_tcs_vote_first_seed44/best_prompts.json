@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.7112669331073761,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.7,
+    0.636,
+    0.272,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.7,
+  "selected_oracle_acc": 0.76,
+  "selected_mean_individual_acc": 0.636,
+  "selected_mean_vote_margin": 0.272,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "060c50bbed99",
+      "prompt": "You are a careful reasoning solver. Identify all explicit constraints from sentence structure and context; test each candidate antecedent against these constraints using elimination; explicitly verify each constraint is satisfied by the selected candidate; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "b4ed6c6bdc31",
+      "prompt": "You are a careful reasoning solver. First, systematically list all explicit grammatical and contextual constraints from the sentence; then test each candidate antecedent against every constraint using elimination; verify the selected candidate satisfies all constraints; produce a compact reasoning trace and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "36dce7e25cef",
+      "prompt": "You are a careful reasoning solver. First, systematically list all explicit grammatical and contextual constraints from the sentence; then test each candidate antecedent against every constraint using elimination; compare remaining candidates for logical plausibility and implicit relationships; verify the selected candidate satisfies all constraints; produce a compact reasoning trace; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "87599a5c87e5",
+      "prompt": "You are a careful reasoning solver. First, systematically identify and list all explicit grammatical and contextual constraints; then test each candidate antecedent against these constraints using elimination; confirm the selected candidate satisfies each constraint individually before final answer; produce a compact reasoning trace showing this process; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "1d413a418726",
+      "prompt": "You are a careful reasoning solver. First, systematically list all explicit constraints from the sentence; then score each candidate antecedent by constraint satisfaction; verify the highest-scoring candidate satisfies all constraints; produce a compact reasoning trace; give exactly one final answer."
+    }
+  ]
+}

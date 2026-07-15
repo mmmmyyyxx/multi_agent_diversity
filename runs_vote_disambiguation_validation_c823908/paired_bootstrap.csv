@@ -1,0 +1,7 @@
+setting,seed,n,difference,ci_low,ci_high,probability_positive
+shared_scalar_tcs_vote_first,42,125,0.28,0.168,0.392,1.0
+shared_guarded_diversity_tcs_vote_first,42,125,0.336,0.224,0.448,1.0
+shared_scalar_tcs_vote_first,43,125,0.088,0.024,0.152,0.9945
+shared_guarded_diversity_tcs_vote_first,43,125,0.088,0.0,0.176,0.9708
+shared_scalar_tcs_vote_first,44,125,0.192,0.096,0.296,1.0
+shared_guarded_diversity_tcs_vote_first,44,125,0.104,0.024,0.184,0.9931

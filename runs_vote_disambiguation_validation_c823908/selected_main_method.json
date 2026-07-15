@@ -1,0 +1,16 @@
+{
+  "task": "disambiguation_qa",
+  "selection_uses_test_as_primary": false,
+  "selected_main_setting": "shared_scalar_tcs_vote_first",
+  "selected_main_reward_mode": "vote_useful_diversity",
+  "selected_candidate_selection_mode": "scalar_reward",
+  "selected_matched_non_vote_control": "shared_guarded_diversity_tcs_vote_first",
+  "validation_evidence": {
+    "full_vote": {"vote_acc": 0.78, "mean_individual_acc": 0.712, "mean_vote_margin": 0.424},
+    "accuracy_only": {"vote_acc": 0.66, "mean_individual_acc": 0.68, "mean_vote_margin": 0.36},
+    "guarded_diversity": {"vote_acc": 0.74, "mean_individual_acc": 0.708, "mean_vote_margin": 0.424},
+    "no_margin": {"vote_acc": 0.74, "mean_individual_acc": 0.692, "mean_vote_margin": 0.392},
+    "no_boundary": {"vote_acc": 0.70, "mean_individual_acc": 0.716, "mean_vote_margin": 0.432}
+  },
+  "reason": "Full vote has the highest validation vote accuracy. Guarded diversity is the strongest matched non-vote control on validation vote and individual accuracy. Test was not used as the primary selection criterion."
+}

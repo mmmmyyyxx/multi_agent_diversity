@@ -1,0 +1,140 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.054318100770314535,
+      "mean_embedding_overlap": 0.9456818992296853,
+      "mean_invalid_rate": 0.002666666666666667,
+      "vote_acc": 0.48,
+      "oracle_acc": 0.6533333333333333,
+      "aggregation_gap": 0.17333333333333334,
+      "mean_useful_diversity": 0.028582010613547433,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.7,
+      "majority_vote_acc": 0.7,
+      "weighted_vote_acc": 0.7,
+      "mean_individual_acc": 0.636,
+      "best_individual_acc": 0.68,
+      "per_agent_acc": [
+        0.58,
+        0.68,
+        0.62,
+        0.62,
+        0.68
+      ],
+      "oracle_acc": 0.76,
+      "aggregation_gap": 0.06000000000000005,
+      "rescue_available_rate": 0.06,
+      "correct_disagreement_rate": 0.32,
+      "mean_useful_diversity": 0.03903339819113413,
+      "mean_vote_margin": 0.272,
+      "mean_boundary_useful_diversity": 0.0,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.0563346655368805,
+      "mean_embedding_overlap": 0.9436653344631195,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 1
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "mean_embedding_diversity": 0.05593741273880005,
+      "mean_embedding_overlap": 0.9440625872612,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.6666666666666666,
+      "oracle_acc": 0.8,
+      "aggregation_gap": 0.13333333333333341,
+      "mean_useful_diversity": 0.038287814670138885,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 50,
+      "num_test_samples": 50,
+      "vote_acc": 0.68,
+      "majority_vote_acc": 0.68,
+      "weighted_vote_acc": 0.68,
+      "mean_individual_acc": 0.672,
+      "best_individual_acc": 0.76,
+      "per_agent_acc": [
+        0.68,
+        0.66,
+        0.68,
+        0.76,
+        0.58
+      ],
+      "oracle_acc": 0.88,
+      "aggregation_gap": 0.19999999999999996,
+      "rescue_available_rate": 0.2,
+      "correct_disagreement_rate": 0.42,
+      "mean_useful_diversity": 0.04583148773511251,
+      "mean_vote_margin": 0.35200000000000004,
+      "mean_boundary_useful_diversity": 0.0,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.060565549492836,
+      "mean_embedding_overlap": 0.9394344505071642,
+      "mean_invalid_rate": 0.0
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 0
+    }
+  },
+  {
+    "epoch": "final",
+    "selected_epoch": 1,
+    "best_validation_score": 0.7112669331073761,
+    "early_stopped": false,
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0,
+    "no_effective_evolution_counter": 0,
+    "no_effective_evolution_stopped": false,
+    "no_effective_evolution_reason": "",
+    "test_evaluated_on": "best_state",
+    "test": {
+      "size": 125,
+      "num_test_samples": 125,
+      "vote_acc": 0.584,
+      "majority_vote_acc": 0.584,
+      "weighted_vote_acc": 0.592,
+      "mean_individual_acc": 0.5792,
+      "best_individual_acc": 0.648,
+      "per_agent_acc": [
+        0.536,
+        0.544,
+        0.648,
+        0.568,
+        0.6
+      ],
+      "oracle_acc": 0.776,
+      "aggregation_gap": 0.19200000000000006,
+      "rescue_available_rate": 0.192,
+      "correct_disagreement_rate": 0.4,
+      "mean_useful_diversity": 0.03689551030794779,
+      "mean_vote_margin": 0.1616,
+      "mean_boundary_useful_diversity": 0.002666666666666667,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.008,
+      "mean_embedding_diversity": 0.05819008617401124,
+      "mean_embedding_overlap": 0.9418099138259888,
+      "mean_invalid_rate": 0.0016
+    }
+  }
+]

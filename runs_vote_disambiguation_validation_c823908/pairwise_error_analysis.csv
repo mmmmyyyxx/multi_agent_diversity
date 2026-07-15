@@ -1,0 +1,10 @@
+setting,seed,pairwise_double_fault_rate,pairwise_correctness_correlation,pairwise_answer_agreement,dominant_wrong_cluster_rate
+shared_baseline,42,0.4944,0.8008249367903734,0.9008,0.568
+shared_baseline,43,0.4928,0.8290573823435813,0.9136,0.52
+shared_baseline,44,0.48719999999999997,0.8233850421398724,0.912,0.52
+shared_scalar_tcs_vote_first,42,0.216,0.5339927979725153,0.7936,0.28
+shared_scalar_tcs_vote_first,43,0.3432,0.6151557376079382,0.8088,0.432
+shared_scalar_tcs_vote_first,44,0.2544,0.546293908489175,0.7856,0.328
+shared_guarded_diversity_tcs_vote_first,42,0.1808,0.5097447033921982,0.8016,0.232
+shared_guarded_diversity_tcs_vote_first,43,0.2904,0.4347527590376963,0.7111999999999999,0.432
+shared_guarded_diversity_tcs_vote_first,44,0.3256,0.6152056965324366,0.8072,0.408

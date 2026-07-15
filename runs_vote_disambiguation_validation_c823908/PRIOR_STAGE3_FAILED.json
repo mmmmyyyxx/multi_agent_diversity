@@ -1,0 +1,16 @@
+{
+  "stage": 3,
+  "status": "failed",
+  "git_commit": "b924f1979b43eca1d7a976bbe32046b2d6a2724d",
+  "protocol_version": "vote_oriented_v4",
+  "completed_runs": [
+    "stage3_new_runs/disambiguation_qa/shared_accuracy_only_tcs_vote_first_seed42"
+  ],
+  "failed_runs": [
+    {
+      "setting": "shared_accuracy_only_tcs_vote_first",
+      "reason": "accuracy-only candidate logs omitted baseline-relative diagnostics, causing 204 accuracy_delta and vote_delta audit inconsistencies"
+    }
+  ],
+  "next_stage_authorized": false
+}
