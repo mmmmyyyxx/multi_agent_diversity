@@ -29,7 +29,13 @@ def _candidate(system, prompt="different text", count=16, source="optimizer", **
         "vote_margin_delta": 0.0,
     }
     values.update(metrics)
-    return {"prompt": prompt, "parent_prompt": "current prompt", "source": source, "metrics": values}
+    return {
+        "prompt": prompt,
+        "parent_prompt": "current prompt",
+        "candidate_pool_source": source,
+        "candidate_source": "teacher_critic_student" if source == "optimizer" else source,
+        "metrics": values,
+    }
 
 
 def test_exact_historic_prompt_cycle_rejected_but_current_fallback_allowed():
@@ -68,3 +74,15 @@ def test_behavior_archive_fifo_limit():
     for index in range(3):
         system._append_bounded_archive(archive, index)
     assert archive == [1, 2]
+
+
+def test_legacy_source_alias_remains_supported():
+    system = _system()
+    agent = system.agents[0]
+    agent.history.append("historic prompt")
+    item = _candidate(system, "historic prompt")
+    item["source"] = item.pop("candidate_pool_source")
+
+    result = system._candidate_trajectory_feasibility(agent, item)
+
+    assert result["rejection_reason"] == "exact_prompt_cycle"

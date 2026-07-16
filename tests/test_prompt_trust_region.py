@@ -22,7 +22,13 @@ def _item(**metrics):
         "vote_margin_delta": 0.0, "vote_loss_rate": 0.0,
     }
     values.update(metrics)
-    return {"prompt": "a completely different and substantially longer candidate mechanism", "parent_prompt": "short parent", "source": "optimizer", "metrics": values}
+    return {
+        "prompt": "a completely different and substantially longer candidate mechanism",
+        "parent_prompt": "short parent",
+        "candidate_pool_source": "optimizer",
+        "candidate_source": "teacher_critic_student",
+        "metrics": values,
+    }
 
 
 def test_warmup_allows_large_shift_and_post_warmup_rejects_unsupported_shift():
@@ -38,7 +44,13 @@ def test_supported_large_shift_and_small_edit_pass():
     agent = system.agents[0]
     agent.accept_count = 2
     assert system._candidate_trajectory_feasibility(agent, _item(vote_delta=0.02))["rejection_reason"] == ""
-    local = {"prompt": "short parent verify", "parent_prompt": "short parent", "source": "optimizer", "metrics": _item()["metrics"]}
+    local = {
+        "prompt": "short parent verify",
+        "parent_prompt": "short parent",
+        "candidate_pool_source": "optimizer",
+        "candidate_source": "teacher_critic_student",
+        "metrics": _item()["metrics"],
+    }
     system.cfg.prompt_max_change_ratio = 0.5
     assert system._candidate_trajectory_feasibility(agent, local)["rejection_reason"] == ""
 
@@ -48,4 +60,3 @@ def test_emergent_mode_off_preserves_legacy_behavior():
     system.agents[0].accept_count = 10
     result = system._candidate_trajectory_feasibility(system.agents[0], _item())
     assert result["rejection_reason"] == ""
-

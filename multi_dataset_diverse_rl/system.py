@@ -534,7 +534,7 @@ class TraceBeamSearchSystem:
         if not self._emergent_specialization_enabled():
             return diagnostics
 
-        source = str(item.get("source", ""))
+        source = self._candidate_pool_source(item)
         current_hash = self._normalized_prompt_hash(agent.current_prompt)
         if prompt_hash == current_hash and source in {"existing_beam", "current_active_fallback"}:
             return diagnostics
@@ -620,7 +620,8 @@ class TraceBeamSearchSystem:
             "step": int(step_id),
             "agent_id": int(agent_id),
             "candidate_id": str(item.get("candidate_id", "")),
-            "candidate_source": str(item.get("candidate_source", "")),
+            "candidate_pool_source": self._candidate_pool_source(item),
+            "candidate_source": self._candidate_generation_source(item),
             "accepted": bool(accepted),
             "behavior_context_counts": metrics.get("behavior_context_counts", {}),
             "candidate_transition_vector": metrics.get("candidate_transition_vector", {}),
@@ -1553,6 +1554,16 @@ class TraceBeamSearchSystem:
     def _is_optimizer_generated_candidate_source(self, source: Any) -> bool:
         text = str(source or "").strip().lower()
         return text in {"optimizer", "teacher_critic_student"}
+
+    @staticmethod
+    def _candidate_pool_source(item: Mapping[str, Any]) -> str:
+        """Return where a candidate entered the pool, with legacy checkpoint support."""
+        return str(item.get("candidate_pool_source") or item.get("source") or "").strip()
+
+    @staticmethod
+    def _candidate_generation_source(item: Mapping[str, Any]) -> str:
+        """Return the mechanism that generated the candidate prompt."""
+        return str(item.get("candidate_source") or "").strip()
 
     def _teacher_metadata_from_diagnostics(self, diagnostics: Dict[str, Any]) -> Dict[str, Any]:
         keys = [
@@ -5715,6 +5726,7 @@ class TraceBeamSearchSystem:
                         "parent_prompt": parent_prompt,
                         "generation": generation,
                         "source": "optimizer",
+                        "candidate_pool_source": "optimizer",
                         "candidate_source": str(proposal.get("candidate_source", "optimizer") or "optimizer"),
                         "generation_batch_type": str(proposal.get("generation_batch_type", "")) or str(batch.get("batch_type", "")),
                         "generation_case_ids": proposal.get("generation_case_ids", []),
@@ -5763,6 +5775,7 @@ class TraceBeamSearchSystem:
                     "parent_id": parent.get("parent_id"),
                     "generation": int(parent.get("generation", 0) or 0),
                     "source": "existing_beam",
+                    "candidate_pool_source": "existing_beam",
                     "candidate_source": "existing_beam",
                     "execution_session_id": self._current_execution_session_id(),
                     "update_attempt_id": update_attempt_id,
@@ -5789,6 +5802,7 @@ class TraceBeamSearchSystem:
                     "parent_id": None,
                     "generation": generation,
                     "source": "current_active_fallback",
+                    "candidate_pool_source": "current_active_fallback",
                     "candidate_source": "current_active_fallback",
                     "execution_session_id": self._current_execution_session_id(),
                     "update_attempt_id": update_attempt_id,
@@ -5828,13 +5842,13 @@ class TraceBeamSearchSystem:
             and not bool(str(c.get("target_error_pattern", "")).strip())
         )
         requested_optimizer_candidates = len(beam) * requested
-        num_optimizer_candidates = sum(1 for c in candidate_pool if self._is_optimizer_generated_candidate_source(c.get("candidate_source", "")))
-        num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in str(c.get("candidate_source", "")))
-        num_existing_beam_candidates = sum(1 for c in candidate_pool if str(c.get("candidate_source", "")) == "existing_beam")
+        num_optimizer_candidates = sum(1 for c in candidate_pool if self._is_optimizer_generated_candidate_source(self._candidate_generation_source(c)))
+        num_fallback_candidates = sum(1 for c in candidate_pool if "fallback" in self._candidate_generation_source(c))
+        num_existing_beam_candidates = sum(1 for c in candidate_pool if self._candidate_pool_source(c) == "existing_beam")
         num_tcs_optimizer_candidates = sum(
             1
             for c in candidate_pool
-            if str(c.get("candidate_source", "")) == "teacher_critic_student" and str(c.get("source", "")) == "optimizer"
+            if self._candidate_generation_source(c) == "teacher_critic_student" and self._candidate_pool_source(c) == "optimizer"
         )
         num_tcs_metadata_invalid_candidates = 0
         num_tcs_metadata_valid_candidates = num_tcs_optimizer_candidates
@@ -5990,6 +6004,12 @@ class TraceBeamSearchSystem:
                 metrics.update(self._candidate_trajectory_feasibility(agent, item))
                 item["metrics"] = metrics
                 item["trajectory_feasible"] = not bool(metrics.get("rejection_reason", ""))
+                if not item["trajectory_feasible"]:
+                    item["pareto_feasible"] = False
+                    item["pareto_rank"] = None
+                    item["pareto_crowding_distance"] = None
+                    item["pareto_selected"] = False
+                    item["pareto_forced_fallback"] = False
         else:
             for item in evaluated:
                 item["trajectory_feasible"] = True
@@ -6018,8 +6038,8 @@ class TraceBeamSearchSystem:
                 item["pareto_crowding_distance"] = None
                 item["pareto_selected"] = None
                 item["pareto_forced_fallback"] = None
-        top1_candidate_source = str(selected[0].get("candidate_source", "")) if selected else ""
-        top1_candidate_pool_source = str(selected[0].get("source", "")) if selected else ""
+        top1_candidate_source = self._candidate_generation_source(selected[0]) if selected else ""
+        top1_candidate_pool_source = self._candidate_pool_source(selected[0]) if selected else ""
         selected_by_id = {str(item.get("candidate_id", "")): rank for rank, item in enumerate(selected, start=1)}
         active_candidate_id = str(selected[0].get("candidate_id", "")) if selected else ""
         agent.prompt_beam = [
@@ -6076,7 +6096,7 @@ class TraceBeamSearchSystem:
             in_top_beam = bool(accepted)
             is_top1 = bool(candidate_id == active_candidate_id)
             active_evolution = bool(is_top1 and changed)
-            if self._emergent_specialization_enabled() and str(item.get("source", "")) == "optimizer":
+            if self._emergent_specialization_enabled() and self._candidate_pool_source(item) == "optimizer":
                 rejection_reason = str(metrics.get("rejection_reason", ""))
                 retained_inactive = bool(in_top_beam and not active_evolution)
                 if not active_evolution and not retained_inactive:
@@ -6119,8 +6139,8 @@ class TraceBeamSearchSystem:
             item_diagnostics["optimizer_underfilled"] = bool(optimizer_underfilled)
             tcs_candidate_metadata = {
                 "optimizer_architecture": item_diagnostics.get("optimizer_architecture", ""),
-                "candidate_source": item.get("candidate_source", item.get("source", "")),
-                "candidate_pool_source": item.get("source", ""),
+                "candidate_source": self._candidate_generation_source(item),
+                "candidate_pool_source": self._candidate_pool_source(item),
                 "tcs_call_group_id": item.get("tcs_call_group_id", item_diagnostics.get("tcs_call_group_id", "")),
                 "execution_session_id": item.get("execution_session_id", item_diagnostics.get("execution_session_id", self._current_execution_session_id())),
                 "update_attempt_id": item.get("update_attempt_id", item_diagnostics.get("update_attempt_id", update_attempt_id)),
@@ -6248,8 +6268,8 @@ class TraceBeamSearchSystem:
                     "prompt_preview": normalize_spaces(str(item.get("prompt", "")))[:220],
                     "optimizer_model": self.cfg.optimizer_model,
                     "evaluator_model": self.cfg.evaluator_model,
-                    "candidate_source": item.get("candidate_source", item.get("source", "")),
-                    "candidate_pool_source": item.get("source", ""),
+                    "candidate_source": self._candidate_generation_source(item),
+                    "candidate_pool_source": self._candidate_pool_source(item),
                     "generation_batch_type": item.get("generation_batch_type", ""),
                     "generation_case_ids": item.get("generation_case_ids", []),
                     "target_error_pattern": item.get("target_error_pattern", ""),
@@ -6434,6 +6454,8 @@ class TraceBeamSearchSystem:
                         "parent_prompt": agent.current_prompt,
                         "generation": int(item.get("generation", 0) or 0),
                         "source": "existing_beam",
+                        "candidate_pool_source": "existing_beam",
+                        "candidate_source": "existing_beam",
                         "metrics": metrics,
                         "reward": float(metrics.get("reward", 0.0)),
                     }

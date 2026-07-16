@@ -225,6 +225,13 @@ New TCS candidates must include Teacher/Critic/Student provenance. Existing beam
 python scripts/audit_tcs_run.py <run_dir_or_root>
 ```
 
+Candidate provenance uses two separate fields. `candidate_pool_source` says how
+the item entered evaluation (`optimizer`, `existing_beam`, or
+`current_active_fallback`), while `candidate_source` identifies the generation
+mechanism (`teacher_critic_student`, `optimizer` for one-shot generation, or a
+fallback mechanism). Trajectory guards use the pool source. The older `source`
+field is retained only as a checkpoint and log compatibility alias.
+
 ## Candidate And State Selection
 
 `scalar_reward` keeps candidates by scalar reward.
