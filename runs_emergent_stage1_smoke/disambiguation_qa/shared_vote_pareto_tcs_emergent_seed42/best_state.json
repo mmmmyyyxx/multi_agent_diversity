@@ -1,0 +1,2706 @@
+{
+  "execution_session_id": "2968b16e2c44",
+  "comparison_task_id": "disambiguation_qa",
+  "benchmark": "BBH",
+  "answer_format": "option_letter",
+  "task_type": "bbh",
+  "dataset_format": "mars",
+  "agent_model": "deepseek-chat",
+  "optimizer_model": "deepseek-chat",
+  "evaluator_model": "deepseek-chat",
+  "search_mode": "evolutionary_beam",
+  "reward_mode": "vote_useful_diversity",
+  "diversity_metric": "trace_embedding",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "agents": [
+    {
+      "agent_id": 0,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. First, list all explicit textual constraints (e.g., pronoun-antecedent relationships, entity attributes, contextual clues) in a structured format. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g1_a0_p26b37815e849_0_aaf79fba6e47",
+          "prompt": "You are a careful reasoning solver. First, list all explicit textual constraints (e.g., pronoun-antecedent relationships, entity attributes, contextual clues) in a structured format. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": 0.55,
+          "metrics": {
+            "reward": 0.55,
+            "embedding_diversity": 0.046963807344436656,
+            "mean_embedding_overlap": 0.9530361926555633,
+            "target_overlap_pressure": 0.9521454676985741,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.5,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. First, list all explicit textual constraints (e.g., pronoun-antecedent relationships, entity attributes, contextual clues) in a structured format. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.55,
+            "coverage_delta": 0.0,
+            "accuracy_delta": 0.0,
+            "vote_delta": 0.0,
+            "diversity_delta": 0.0,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.5,
+            "baseline_target_accuracy": 0.55,
+            "candidate_target_accuracy": 0.55,
+            "target_agent_accuracy": 0.55,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.55,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.55,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 0,
+            "vote_loss_rate": 0.0,
+            "net_vote_count": 0,
+            "net_vote_delta": 0.0,
+            "coverage_gain_count": 0,
+            "coverage_gain_rate": 0.0,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 0,
+            "net_coverage_delta": 0.0,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.55,
+            "rescue_rate": 0.05,
+            "useful_diversity": 0.025911784172058104,
+            "rescue_useful_diversity": 0.0018137060105800629,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046963807344436656,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.9530361926555633,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 9,
+              "team_correct_dominant_wrong_redundancy": 0,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 4,
+              "target_correct_robust": 7
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.0,
+              "team_correct_dominant_wrong_redundancy": 0.0,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": 0.0,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 9,
+              "team_correct_dominant_wrong_redundancy": 0,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 4,
+              "target_correct_robust": 7
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "cf4f33cf630c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.0,
+            "prompt_hash": "a984738e63d7f43f3ecef06a7fcc4b8a881615f9dd848f4bbadc448cdc359985",
+            "parent_prompt_hash": "a984738e63d7f43f3ecef06a7fcc4b8a881615f9dd848f4bbadc448cdc359985",
+            "prompt_change_ratio": 0.0,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 0,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": "g0_00bcb3ee9efb",
+          "generation": 1
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "You are a careful reasoning solver. First, list all explicit textual constraints (e.g., pronoun-antecedent relationships, entity attributes, contextual clues) in a structured format. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 1,
+      "reject_count": 0,
+      "specialization_profile": {
+        "invalid": 0.13167701863354037,
+        "team_wrong_pivotal_fix": 0.13167701863354037,
+        "team_wrong_nonpivotal": 0.20993788819875775,
+        "team_correct_dominant_wrong_redundancy": 0.13167701863354037,
+        "team_correct_target_wrong_other": 0.13167701863354037,
+        "target_correct_pivotal_hold": 0.13167701863354037,
+        "target_correct_robust": 0.13167701863354037
+      },
+      "specialization_update_count": 1,
+      "last_accepted_transition": {
+        "invalid": 0.0,
+        "team_wrong_pivotal_fix": 2.9,
+        "team_wrong_nonpivotal": 0.22499999999999998,
+        "team_correct_dominant_wrong_redundancy": 0.0,
+        "team_correct_target_wrong_other": 0.0,
+        "target_correct_pivotal_hold": 0.0,
+        "target_correct_robust": 0.0
+      },
+      "accepted_behavior_archive": [
+        {
+          "state_id": "e1_s20_a0_g1_a0_p26b37815e849_0_aaf79fba6e47",
+          "epoch": 1,
+          "prompt_hash": "a984738e63d7f43f3ecef06a7fcc4b8a881615f9dd848f4bbadc448cdc359985",
+          "behavior_fingerprint": {
+            "feac66147201": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "1da8b0040691": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8abc358fb87f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "23e6b4e2c39c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 2,
+              "behavior_context": "team_wrong_pivotal_fix"
+            },
+            "39add32e9a1f": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8f798fec7306": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "385ff5e8ccdf": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "cf4f33cf630c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -2,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "ff483005c9e0": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "7aa09a662f55": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -2,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "2cbe55541f1f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "6e0a09c18648": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "bf50eed77928": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "1be930b64e32": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -6,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "af3220d3858e": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "97aaa1659c5c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "b03a88a9e8f4": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "target_correct_robust"
+            },
+            "cbfb7c54078b": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "24ae41c2d9c3": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "target_correct_robust"
+            },
+            "0c065ece565d": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            }
+          },
+          "transition_vector": {
+            "invalid": 0.0,
+            "team_wrong_pivotal_fix": 2.9,
+            "team_wrong_nonpivotal": 0.22499999999999998,
+            "team_correct_dominant_wrong_redundancy": 0.0,
+            "team_correct_target_wrong_other": 0.0,
+            "target_correct_pivotal_hold": 0.0,
+            "target_correct_robust": 0.0
+          },
+          "specialization_profile": {
+            "invalid": 0.13167701863354037,
+            "team_wrong_pivotal_fix": 0.13167701863354037,
+            "team_wrong_nonpivotal": 0.20993788819875775,
+            "team_correct_dominant_wrong_redundancy": 0.13167701863354037,
+            "team_correct_target_wrong_other": 0.13167701863354037,
+            "target_correct_pivotal_hold": 0.13167701863354037,
+            "target_correct_robust": 0.13167701863354037
+          },
+          "target_accuracy": 0.55,
+          "team_vote_accuracy": 0.4,
+          "mean_vote_margin": -0.18,
+          "preserved_mechanisms": [
+            "compact explicit reasoning trace",
+            "visible decision procedure",
+            "key logic verification",
+            "single final answer"
+          ]
+        }
+      ],
+      "rejected_behavior_archive": [],
+      "cycle_reject_count": 0,
+      "large_shift_reject_count": 0,
+      "duplicate_prompt_reject_count": 0,
+      "last_accepted_prompt_hash": "a984738e63d7f43f3ecef06a7fcc4b8a881615f9dd848f4bbadc448cdc359985"
+    },
+    {
+      "agent_id": 1,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. Before finalizing, conduct a mandatory verification phase: systematically eliminate each option by comparing against explicit constraints, then perform a numeric or symbolic sanity check. Give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g1_a1_p26b37815e849_0_e77d9ab3f41c",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. Before finalizing, conduct a mandatory verification phase: systematically eliminate each option by comparing against explicit constraints, then perform a numeric or symbolic sanity check. Give exactly one final answer.",
+          "score": 0.45,
+          "metrics": {
+            "reward": 0.45,
+            "embedding_diversity": 0.046963807344436656,
+            "mean_embedding_overlap": 0.9530361926555633,
+            "target_overlap_pressure": 0.9466561317443848,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.5,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. Before finalizing, conduct a mandatory verification phase: systematically eliminate each option by comparing against explicit constraints, then perform a numeric or symbolic sanity check. Give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.45,
+            "coverage_delta": 0.0,
+            "accuracy_delta": 0.0,
+            "vote_delta": 0.0,
+            "diversity_delta": 0.0,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.5,
+            "baseline_target_accuracy": 0.45,
+            "candidate_target_accuracy": 0.45,
+            "target_agent_accuracy": 0.45,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.45,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.55,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 0,
+            "vote_loss_rate": 0.0,
+            "net_vote_count": 0,
+            "net_vote_delta": 0.0,
+            "coverage_gain_count": 0,
+            "coverage_gain_rate": 0.0,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 0,
+            "net_coverage_delta": 0.0,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.55,
+            "rescue_rate": 0.0,
+            "useful_diversity": 0.022849779576063156,
+            "rescue_useful_diversity": 0.0,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046963807344436656,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.9530361926555633,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.0,
+              "team_correct_dominant_wrong_redundancy": 0.0,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": 0.0,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "cf4f33cf630c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.0,
+            "prompt_hash": "a23a1748a6ec35fb8d700bb01680b01471d6fed57da0796b237171b4e7182d6f",
+            "parent_prompt_hash": "a23a1748a6ec35fb8d700bb01680b01471d6fed57da0796b237171b4e7182d6f",
+            "prompt_change_ratio": 0.0,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 0,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": "g0_00bcb3ee9efb",
+          "generation": 1
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. Before finalizing, conduct a mandatory verification phase: systematically eliminate each option by comparing against explicit constraints, then perform a numeric or symbolic sanity check. Give exactly one final answer."
+      ],
+      "accept_count": 1,
+      "reject_count": 0,
+      "specialization_profile": {
+        "invalid": 0.13428571428571429,
+        "team_wrong_pivotal_fix": 0.13428571428571429,
+        "team_wrong_nonpivotal": 0.19428571428571428,
+        "team_correct_dominant_wrong_redundancy": 0.13428571428571429,
+        "team_correct_target_wrong_other": 0.13428571428571429,
+        "target_correct_pivotal_hold": 0.13428571428571429,
+        "target_correct_robust": 0.13428571428571429
+      },
+      "specialization_update_count": 1,
+      "last_accepted_transition": {
+        "invalid": 0.0,
+        "team_wrong_pivotal_fix": 2.9,
+        "team_wrong_nonpivotal": 0.15,
+        "team_correct_dominant_wrong_redundancy": 0.9,
+        "team_correct_target_wrong_other": 0.0,
+        "target_correct_pivotal_hold": 0.0,
+        "target_correct_robust": -0.11666666666666665
+      },
+      "accepted_behavior_archive": [
+        {
+          "state_id": "e1_s10_a1_g1_a1_p26b37815e849_0_e77d9ab3f41c",
+          "epoch": 1,
+          "prompt_hash": "a23a1748a6ec35fb8d700bb01680b01471d6fed57da0796b237171b4e7182d6f",
+          "behavior_fingerprint": {
+            "0c065ece565d": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "39add32e9a1f": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "385ff5e8ccdf": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "af3220d3858e": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8abc358fb87f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "1da8b0040691": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "23e6b4e2c39c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -6,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "6e0a09c18648": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "2cbe55541f1f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "feac66147201": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "bf50eed77928": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "b03a88a9e8f4": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 2,
+              "behavior_context": "team_wrong_pivotal_fix"
+            },
+            "1be930b64e32": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8f798fec7306": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "24ae41c2d9c3": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "team_correct_dominant_wrong_redundancy"
+            },
+            "cf4f33cf630c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -2,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "7aa09a662f55": {
+              "target_correct": false,
+              "target_answer_hash": "3f79bb7b435b05321651daefd374cdc681dc06faa65e374e38337b88ca046dea",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 4,
+              "behavior_context": "target_correct_robust"
+            },
+            "97aaa1659c5c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "ff483005c9e0": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "cbfb7c54078b": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            }
+          },
+          "transition_vector": {
+            "invalid": 0.0,
+            "team_wrong_pivotal_fix": 2.9,
+            "team_wrong_nonpivotal": 0.15,
+            "team_correct_dominant_wrong_redundancy": 0.9,
+            "team_correct_target_wrong_other": 0.0,
+            "target_correct_pivotal_hold": 0.0,
+            "target_correct_robust": -0.11666666666666665
+          },
+          "specialization_profile": {
+            "invalid": 0.13428571428571429,
+            "team_wrong_pivotal_fix": 0.13428571428571429,
+            "team_wrong_nonpivotal": 0.19428571428571428,
+            "team_correct_dominant_wrong_redundancy": 0.13428571428571429,
+            "team_correct_target_wrong_other": 0.13428571428571429,
+            "target_correct_pivotal_hold": 0.13428571428571429,
+            "target_correct_robust": 0.13428571428571429
+          },
+          "target_accuracy": 0.45,
+          "team_vote_accuracy": 0.4,
+          "mean_vote_margin": -0.20999999999999996,
+          "preserved_mechanisms": [
+            "compact explicit reasoning trace",
+            "visible decision procedure",
+            "single final answer"
+          ]
+        }
+      ],
+      "rejected_behavior_archive": [],
+      "cycle_reject_count": 0,
+      "large_shift_reject_count": 0,
+      "duplicate_prompt_reject_count": 0,
+      "last_accepted_prompt_hash": "a23a1748a6ec35fb8d700bb01680b01471d6fed57da0796b237171b4e7182d6f"
+    },
+    {
+      "agent_id": 2,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically eliminate each option by comparing against explicit constraints from the question, ground decisions in specific clues, then give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g1_a2_p26b37815e849_1_77f6937a69b8",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically eliminate each option by comparing against explicit constraints from the question, ground decisions in specific clues, then give exactly one final answer.",
+          "score": 0.45,
+          "metrics": {
+            "reward": 0.45,
+            "embedding_diversity": 0.046963807344436656,
+            "mean_embedding_overlap": 0.9530361926555633,
+            "target_overlap_pressure": 0.9552007414400577,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.5,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically eliminate each option by comparing against explicit constraints from the question, ground decisions in specific clues, then give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.45,
+            "coverage_delta": 0.0,
+            "accuracy_delta": 0.0,
+            "vote_delta": 0.0,
+            "diversity_delta": 0.0,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.5,
+            "baseline_target_accuracy": 0.45,
+            "candidate_target_accuracy": 0.45,
+            "target_agent_accuracy": 0.45,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.45,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.55,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 0,
+            "vote_loss_rate": 0.0,
+            "net_vote_count": 0,
+            "net_vote_delta": 0.0,
+            "coverage_gain_count": 0,
+            "coverage_gain_rate": 0.0,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 0,
+            "net_coverage_delta": 0.0,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.55,
+            "rescue_rate": 0.0,
+            "useful_diversity": 0.018241319805383682,
+            "rescue_useful_diversity": 0.0,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046963807344436656,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.9530361926555633,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.0,
+              "team_correct_dominant_wrong_redundancy": 0.0,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": 0.0,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "cf4f33cf630c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.0,
+            "prompt_hash": "97df3335c970f76dd605cf14d97ab1793e877642775ba2743caca8b09918bb87",
+            "parent_prompt_hash": "97df3335c970f76dd605cf14d97ab1793e877642775ba2743caca8b09918bb87",
+            "prompt_change_ratio": 0.0,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 0,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": "g0_00bcb3ee9efb",
+          "generation": 1
+        },
+        {
+          "id": "g1_a2_p26b37815e849_0_a825e375f989",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first extract and list explicit constraints from the question, then map each option against those constraints, verify key logic, and give exactly one final answer.",
+          "score": 0.42000000000000004,
+          "metrics": {
+            "reward": 0.42000000000000004,
+            "embedding_diversity": 0.046168908178806305,
+            "mean_embedding_overlap": 0.953831091821194,
+            "target_overlap_pressure": 0.9571879893541336,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.4,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first extract and list explicit constraints from the question, then map each option against those constraints, verify key logic, and give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.42000000000000004,
+            "coverage_delta": 0.04999999999999993,
+            "accuracy_delta": 0.0,
+            "vote_delta": -0.09999999999999998,
+            "diversity_delta": -0.0007948991656303514,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.4,
+            "baseline_target_accuracy": 0.45,
+            "candidate_target_accuracy": 0.45,
+            "target_agent_accuracy": 0.45,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.45,
+            "reward_component_vote_delta": -0.029999999999999992,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.6,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 2,
+            "vote_loss_rate": 0.1,
+            "net_vote_count": -2,
+            "net_vote_delta": -0.1,
+            "coverage_gain_count": 1,
+            "coverage_gain_rate": 0.05,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 1,
+            "net_coverage_delta": 0.05,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.6,
+            "rescue_rate": 0.05,
+            "useful_diversity": 0.02018916457891464,
+            "rescue_useful_diversity": 0.0025363214313983916,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046168908178806305,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.953831091821194,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.09,
+              "team_correct_dominant_wrong_redundancy": 0.8999999999999999,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": -2.9,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 1,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 2,
+              "target_correct_robust": 7
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "cf4f33cf630c": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.2845157981200276,
+            "prompt_hash": "4bdeeab2bb0c89eed7e48e87c6ad6341352a038346a5de79ca05fc3f5dd43073",
+            "parent_prompt_hash": "97df3335c970f76dd605cf14d97ab1793e877642775ba2743caca8b09918bb87",
+            "prompt_change_ratio": 0.5303643724696356,
+            "max_behavior_cycle_similarity": 0.7999999999999999,
+            "behavior_cycle_overlap": 20,
+            "matched_behavior_state_id": "e1_s20_a2_g1_a2_p26b37815e849_1_77f6937a69b8",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 1,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": "g0_00bcb3ee9efb",
+          "generation": 1
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically eliminate each option by comparing against explicit constraints from the question, ground decisions in specific clues, then give exactly one final answer."
+      ],
+      "accept_count": 1,
+      "reject_count": 0,
+      "specialization_profile": {
+        "invalid": 0.11736263736263736,
+        "team_wrong_pivotal_fix": 0.2958241758241758,
+        "team_wrong_nonpivotal": 0.11736263736263736,
+        "team_correct_dominant_wrong_redundancy": 0.11736263736263736,
+        "team_correct_target_wrong_other": 0.11736263736263736,
+        "target_correct_pivotal_hold": 0.11736263736263736,
+        "target_correct_robust": 0.11736263736263736
+      },
+      "specialization_update_count": 1,
+      "last_accepted_transition": {
+        "invalid": 0.0,
+        "team_wrong_pivotal_fix": 2.9,
+        "team_wrong_nonpivotal": 0.0,
+        "team_correct_dominant_wrong_redundancy": 0.8999999999999999,
+        "team_correct_target_wrong_other": 0.0,
+        "target_correct_pivotal_hold": 0.0,
+        "target_correct_robust": -0.12857142857142856
+      },
+      "accepted_behavior_archive": [
+        {
+          "state_id": "e1_s20_a2_g1_a2_p26b37815e849_1_77f6937a69b8",
+          "epoch": 1,
+          "prompt_hash": "97df3335c970f76dd605cf14d97ab1793e877642775ba2743caca8b09918bb87",
+          "behavior_fingerprint": {
+            "feac66147201": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "1da8b0040691": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8abc358fb87f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "23e6b4e2c39c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "team_correct_dominant_wrong_redundancy"
+            },
+            "39add32e9a1f": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8f798fec7306": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "385ff5e8ccdf": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "cf4f33cf630c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 2,
+              "behavior_context": "team_wrong_pivotal_fix"
+            },
+            "ff483005c9e0": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "7aa09a662f55": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 2,
+              "behavior_context": "team_wrong_pivotal_fix"
+            },
+            "2cbe55541f1f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "6e0a09c18648": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "bf50eed77928": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "1be930b64e32": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -6,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "af3220d3858e": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "97aaa1659c5c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "b03a88a9e8f4": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "target_correct_robust"
+            },
+            "cbfb7c54078b": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "24ae41c2d9c3": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 2,
+              "behavior_context": "target_correct_robust"
+            },
+            "0c065ece565d": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            }
+          },
+          "transition_vector": {
+            "invalid": 0.0,
+            "team_wrong_pivotal_fix": 2.9,
+            "team_wrong_nonpivotal": 0.0,
+            "team_correct_dominant_wrong_redundancy": 0.8999999999999999,
+            "team_correct_target_wrong_other": 0.0,
+            "target_correct_pivotal_hold": 0.0,
+            "target_correct_robust": -0.12857142857142856
+          },
+          "specialization_profile": {
+            "invalid": 0.11736263736263736,
+            "team_wrong_pivotal_fix": 0.2958241758241758,
+            "team_wrong_nonpivotal": 0.11736263736263736,
+            "team_correct_dominant_wrong_redundancy": 0.11736263736263736,
+            "team_correct_target_wrong_other": 0.11736263736263736,
+            "target_correct_pivotal_hold": 0.11736263736263736,
+            "target_correct_robust": 0.11736263736263736
+          },
+          "target_accuracy": 0.45,
+          "team_vote_accuracy": 0.5,
+          "mean_vote_margin": -0.14000000000000004,
+          "preserved_mechanisms": [
+            "compact explicit reasoning trace",
+            "final answer format"
+          ]
+        }
+      ],
+      "rejected_behavior_archive": [],
+      "cycle_reject_count": 0,
+      "large_shift_reject_count": 0,
+      "duplicate_prompt_reject_count": 0,
+      "last_accepted_prompt_hash": "97df3335c970f76dd605cf14d97ab1793e877642775ba2743caca8b09918bb87"
+    },
+    {
+      "agent_id": 3,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; ground your decision in specific clues, compare options concretely, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g1_a3_p26b37815e849_1_eaa1e2b3d111",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; ground your decision in specific clues, compare options concretely, verify key logic, and give exactly one final answer.",
+          "score": 0.4,
+          "metrics": {
+            "reward": 0.4,
+            "embedding_diversity": 0.046963807344436656,
+            "mean_embedding_overlap": 0.9530361926555633,
+            "target_overlap_pressure": 0.9528966888785362,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.5,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; ground your decision in specific clues, compare options concretely, verify key logic, and give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.4,
+            "coverage_delta": 0.0,
+            "accuracy_delta": 0.0,
+            "vote_delta": 0.0,
+            "diversity_delta": 0.0,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.5,
+            "baseline_target_accuracy": 0.4,
+            "candidate_target_accuracy": 0.4,
+            "target_agent_accuracy": 0.4,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.4,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.55,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 0,
+            "vote_loss_rate": 0.0,
+            "net_vote_count": 0,
+            "net_vote_delta": 0.0,
+            "coverage_gain_count": 0,
+            "coverage_gain_rate": 0.0,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 0,
+            "net_coverage_delta": 0.0,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.55,
+            "rescue_rate": 0.0,
+            "useful_diversity": 0.01803215816617012,
+            "rescue_useful_diversity": 0.0,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046963807344436656,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.9530361926555633,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 2,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 1,
+              "target_correct_robust": 7
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.0,
+              "team_correct_dominant_wrong_redundancy": 0.0,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": 0.0,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 2,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 1,
+              "target_correct_robust": 7
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "target_correct_robust"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "cf4f33cf630c": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.0,
+            "prompt_hash": "a6e07f2745b05e1e267a0bca0016a92fc0d6ec23f1cdce80818a6fb5283b62c0",
+            "parent_prompt_hash": "a6e07f2745b05e1e267a0bca0016a92fc0d6ec23f1cdce80818a6fb5283b62c0",
+            "prompt_change_ratio": 0.0,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 0,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": "g0_00bcb3ee9efb",
+          "generation": 1
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; ground your decision in specific clues, compare options concretely, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 1,
+      "reject_count": 0,
+      "specialization_profile": {
+        "invalid": 0.1374436090225564,
+        "team_wrong_pivotal_fix": 0.1374436090225564,
+        "team_wrong_nonpivotal": 0.17533834586466163,
+        "team_correct_dominant_wrong_redundancy": 0.1374436090225564,
+        "team_correct_target_wrong_other": 0.1374436090225564,
+        "target_correct_pivotal_hold": 0.1374436090225564,
+        "target_correct_robust": 0.1374436090225564
+      },
+      "specialization_update_count": 1,
+      "last_accepted_transition": {
+        "invalid": 0.0,
+        "team_wrong_pivotal_fix": 0.0,
+        "team_wrong_nonpivotal": 0.0818181818181818,
+        "team_correct_dominant_wrong_redundancy": 0.8999999999999999,
+        "team_correct_target_wrong_other": 0.0,
+        "target_correct_pivotal_hold": 0.0,
+        "target_correct_robust": -0.1285714285714286
+      },
+      "accepted_behavior_archive": [
+        {
+          "state_id": "e1_s10_a3_g1_a3_p26b37815e849_1_eaa1e2b3d111",
+          "epoch": 1,
+          "prompt_hash": "a6e07f2745b05e1e267a0bca0016a92fc0d6ec23f1cdce80818a6fb5283b62c0",
+          "behavior_fingerprint": {
+            "0c065ece565d": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "39add32e9a1f": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "385ff5e8ccdf": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "af3220d3858e": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8abc358fb87f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "1da8b0040691": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "23e6b4e2c39c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -2,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "6e0a09c18648": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "2cbe55541f1f": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "feac66147201": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "bf50eed77928": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "b03a88a9e8f4": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "team_correct_dominant_wrong_redundancy"
+            },
+            "1be930b64e32": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "8f798fec7306": {
+              "target_correct": true,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "24ae41c2d9c3": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 6,
+              "behavior_context": "target_correct_robust"
+            },
+            "cf4f33cf630c": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -2,
+              "behavior_context": "team_wrong_pivotal_fix"
+            },
+            "7aa09a662f55": {
+              "target_correct": true,
+              "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 4,
+              "behavior_context": "target_correct_robust"
+            },
+            "97aaa1659c5c": {
+              "target_correct": true,
+              "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+              "team_vote_correct": true,
+              "vote_margin_bucket": 10,
+              "behavior_context": "target_correct_robust"
+            },
+            "ff483005c9e0": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            },
+            "cbfb7c54078b": {
+              "target_correct": false,
+              "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+              "team_vote_correct": false,
+              "vote_margin_bucket": -10,
+              "behavior_context": "team_wrong_nonpivotal"
+            }
+          },
+          "transition_vector": {
+            "invalid": 0.0,
+            "team_wrong_pivotal_fix": 0.0,
+            "team_wrong_nonpivotal": 0.0818181818181818,
+            "team_correct_dominant_wrong_redundancy": 0.8999999999999999,
+            "team_correct_target_wrong_other": 0.0,
+            "target_correct_pivotal_hold": 0.0,
+            "target_correct_robust": -0.1285714285714286
+          },
+          "specialization_profile": {
+            "invalid": 0.1374436090225564,
+            "team_wrong_pivotal_fix": 0.1374436090225564,
+            "team_wrong_nonpivotal": 0.17533834586466163,
+            "team_correct_dominant_wrong_redundancy": 0.1374436090225564,
+            "team_correct_target_wrong_other": 0.1374436090225564,
+            "target_correct_pivotal_hold": 0.1374436090225564,
+            "target_correct_robust": 0.1374436090225564
+          },
+          "target_accuracy": 0.4,
+          "team_vote_accuracy": 0.4,
+          "mean_vote_margin": -0.19,
+          "preserved_mechanisms": [
+            "compact explicit reasoning trace",
+            "verify key logic",
+            "final answer"
+          ]
+        }
+      ],
+      "rejected_behavior_archive": [
+        {
+          "state_id": "e1_s10_a3_g1_a3_p26b37815e849_0_f99584724a3a",
+          "epoch": 1,
+          "prompt_hash": "73366336ba0091c96e87422d2e2c11dc99d39910cc99b5219a20e972b2e8f9bf",
+          "parent_prompt_hash": "b5a173b7c570bcba287a93de26d72949b641367cb3a9b478125130551ac3b82a",
+          "rejection_reason": "not_selected",
+          "prompt_change_ratio": 0.19565217391304346,
+          "max_behavior_cycle_similarity": 0.0,
+          "behavior_cycle_overlap": 0,
+          "transition_vector": {
+            "invalid": 0.0,
+            "team_wrong_pivotal_fix": 0.0,
+            "team_wrong_nonpivotal": 0.0,
+            "team_correct_dominant_wrong_redundancy": 0.0,
+            "team_correct_target_wrong_other": 0.0,
+            "target_correct_pivotal_hold": 0.0,
+            "target_correct_robust": -0.1285714285714286
+          }
+        }
+      ],
+      "cycle_reject_count": 0,
+      "large_shift_reject_count": 0,
+      "duplicate_prompt_reject_count": 0,
+      "last_accepted_prompt_hash": "a6e07f2745b05e1e267a0bca0016a92fc0d6ec23f1cdce80818a6fb5283b62c0"
+    },
+    {
+      "agent_id": 4,
+      "initial_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "current_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "prompt_beam": [
+        {
+          "id": "g0_00bcb3ee9efb",
+          "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+          "score": 0.3,
+          "metrics": {
+            "reward": 0.3,
+            "embedding_diversity": 0.046963807344436656,
+            "mean_embedding_overlap": 0.9530361926555633,
+            "target_overlap_pressure": 0.958281933516264,
+            "homogeneous_case_count": 4.0,
+            "resolved_case_count": 0.0,
+            "new_homogeneous_case_count": 4.0,
+            "team_accuracy": 0.5,
+            "invalid_rate": 0.0,
+            "invalid_score": 1.0,
+            "num_eval_samples": 20,
+            "candidate_prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+            "errors": [],
+            "solver_reuse_enabled": true,
+            "solver_reuse_hits": 100,
+            "solver_reuse_misses": 0,
+            "solver_calls": 0,
+            "solver_reuse_total": 100,
+            "solver_reuse_hit_rate": 1.0,
+            "baseline_solver_calls": 0,
+            "baseline_solver_reuse_hits": 100,
+            "baseline_solver_reuse_misses": 0,
+            "baseline_solver_reuse_total": 100,
+            "candidate_eval_strategy": "fixed_pool",
+            "candidate_eval_pool_size": 50,
+            "candidate_eval_pool_actual_size": 20,
+            "candidate_eval_batch_size": 20,
+            "actual_eval_batch_size": 20,
+            "num_eval_repeats": 1,
+            "candidate_eval_data_source": "optimization_train",
+            "candidate_eval_total_count": 20,
+            "candidate_eval_unique_question_count": 20,
+            "candidate_eval_repeat_count": 1,
+            "reward_total": 0.3,
+            "coverage_delta": 0.0,
+            "accuracy_delta": 0.0,
+            "vote_delta": 0.0,
+            "diversity_delta": 0.0,
+            "invalid_delta": 0.0,
+            "baseline_mean_vote_margin": -0.13999999999999999,
+            "candidate_mean_vote_margin": -0.13999999999999999,
+            "vote_margin_delta": 0.0,
+            "baseline_boundary_useful_diversity": 0.0,
+            "candidate_boundary_useful_diversity": 0.0,
+            "boundary_useful_diversity_delta": 0.0,
+            "boundary_diversity_gain": 0.0,
+            "baseline_team_accuracy": 0.5,
+            "candidate_team_accuracy": 0.5,
+            "baseline_target_accuracy": 0.3,
+            "candidate_target_accuracy": 0.3,
+            "target_agent_accuracy": 0.3,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "accuracy_guard_passed": true,
+            "invalid_guard_passed": true,
+            "reward_component_target_accuracy": 0.3,
+            "reward_component_vote_delta": 0.0,
+            "reward_component_vote_margin": 0.0,
+            "reward_component_boundary_diversity": 0.0,
+            "reward_component_invalid_penalty": -0.0,
+            "reward_component_guard_penalty": 0.0,
+            "effective_weight_target_accuracy": 1.0,
+            "effective_weight_div_delta": 0.2,
+            "effective_weight_vote_delta": 0.3,
+            "effective_weight_vote_margin": 0.25,
+            "effective_weight_boundary_diversity": 0.2,
+            "effective_accuracy_guard_epsilon": 0.01,
+            "reward_phase_progress": 1.0,
+            "reward_diversity_need": 0.0,
+            "reward_unique_prompt_ratio": 1.0,
+            "reward_accepted_updates": 4.0,
+            "baseline_oracle_acc": 0.55,
+            "candidate_oracle_acc": 0.55,
+            "vote_gain_count": 0,
+            "vote_gain_rate": 0.0,
+            "vote_loss_count": 0,
+            "vote_loss_rate": 0.0,
+            "net_vote_count": 0,
+            "net_vote_delta": 0.0,
+            "coverage_gain_count": 0,
+            "coverage_gain_rate": 0.0,
+            "coverage_loss_count": 0,
+            "coverage_loss_rate": 0.0,
+            "net_coverage_count": 0,
+            "net_coverage_delta": 0.0,
+            "baseline_oracle_accuracy": 0.55,
+            "candidate_oracle_accuracy": 0.55,
+            "rescue_rate": 0.0,
+            "useful_diversity": 0.013208478689193726,
+            "rescue_useful_diversity": 0.0,
+            "baseline_embedding_diversity": 0.046963807344436656,
+            "candidate_embedding_diversity": 0.046963807344436656,
+            "baseline_mean_embedding_overlap": 0.9530361926555633,
+            "candidate_mean_embedding_overlap": 0.9530361926555633,
+            "behavior_context_counts": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 4,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 1,
+              "target_correct_robust": 5
+            },
+            "candidate_transition_vector": {
+              "invalid": 0.0,
+              "team_wrong_pivotal_fix": 0.0,
+              "team_wrong_nonpivotal": 0.0,
+              "team_correct_dominant_wrong_redundancy": 0.0,
+              "team_correct_target_wrong_other": 0.0,
+              "target_correct_pivotal_hold": 0.0,
+              "target_correct_robust": 0.0
+            },
+            "candidate_transition_support": {
+              "invalid": 0,
+              "team_wrong_pivotal_fix": 0,
+              "team_wrong_nonpivotal": 10,
+              "team_correct_dominant_wrong_redundancy": 4,
+              "team_correct_target_wrong_other": 0,
+              "target_correct_pivotal_hold": 1,
+              "target_correct_robust": 5
+            },
+            "behavior_fingerprint": {
+              "bf50eed77928": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "1da8b0040691": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "2cbe55541f1f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "39add32e9a1f": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "ff483005c9e0": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "97aaa1659c5c": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "24ae41c2d9c3": {
+                "target_correct": true,
+                "target_answer_hash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "target_correct_pivotal_hold"
+              },
+              "b03a88a9e8f4": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "8f798fec7306": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "23e6b4e2c39c": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 6,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "feac66147201": {
+                "target_correct": true,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "1be930b64e32": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -6,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "cf4f33cf630c": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "cbfb7c54078b": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "6e0a09c18648": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "af3220d3858e": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "385ff5e8ccdf": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              },
+              "8abc358fb87f": {
+                "target_correct": true,
+                "target_answer_hash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 10,
+                "behavior_context": "target_correct_robust"
+              },
+              "7aa09a662f55": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": true,
+                "vote_margin_bucket": 2,
+                "behavior_context": "team_correct_dominant_wrong_redundancy"
+              },
+              "0c065ece565d": {
+                "target_correct": false,
+                "target_answer_hash": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+                "team_vote_correct": false,
+                "vote_margin_bucket": -10,
+                "behavior_context": "team_wrong_nonpivotal"
+              }
+            },
+            "trajectory_alignment": 0.0,
+            "prompt_hash": "b5a173b7c570bcba287a93de26d72949b641367cb3a9b478125130551ac3b82a",
+            "parent_prompt_hash": "b5a173b7c570bcba287a93de26d72949b641367cb3a9b478125130551ac3b82a",
+            "prompt_change_ratio": 0.0,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": false,
+            "behavior_cycle_guard_passed": true,
+            "prompt_trust_region_passed": true,
+            "rejection_reason": "",
+            "pareto_rank": 0,
+            "pareto_crowding_distance": Infinity,
+            "pareto_feasible": true,
+            "pareto_selected": true
+          },
+          "parent_id": null,
+          "generation": 0
+        }
+      ],
+      "history": [
+        "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+      ],
+      "accept_count": 0,
+      "reject_count": 0,
+      "specialization_profile": {
+        "invalid": 0.14285714285714285,
+        "team_wrong_pivotal_fix": 0.14285714285714285,
+        "team_wrong_nonpivotal": 0.14285714285714285,
+        "team_correct_dominant_wrong_redundancy": 0.14285714285714285,
+        "team_correct_target_wrong_other": 0.14285714285714285,
+        "target_correct_pivotal_hold": 0.14285714285714285,
+        "target_correct_robust": 0.14285714285714285
+      },
+      "specialization_update_count": 0,
+      "last_accepted_transition": {},
+      "accepted_behavior_archive": [],
+      "rejected_behavior_archive": [],
+      "cycle_reject_count": 0,
+      "large_shift_reject_count": 0,
+      "duplicate_prompt_reject_count": 0,
+      "last_accepted_prompt_hash": null
+    }
+  ],
+  "extra": {
+    "epoch": 1,
+    "train": {
+      "mean_embedding_diversity": 0.03436394661664964,
+      "mean_embedding_overlap": 0.9656360533833503,
+      "mean_invalid_rate": 0.0,
+      "vote_acc": 0.3,
+      "oracle_acc": 0.45,
+      "aggregation_gap": 0.15000000000000002,
+      "mean_useful_diversity": 0.009538356165091197,
+      "no_effective_evolution_counter": 0,
+      "no_effective_evolution_stopped": false,
+      "no_effective_evolution_reason": ""
+    },
+    "val": {
+      "size": 20,
+      "num_test_samples": 20,
+      "vote_acc": 0.5,
+      "majority_vote_acc": 0.5,
+      "weighted_vote_acc": 0.5,
+      "mean_individual_acc": 0.45,
+      "best_individual_acc": 0.55,
+      "per_agent_acc": [
+        0.55,
+        0.45,
+        0.5,
+        0.4,
+        0.35
+      ],
+      "oracle_acc": 0.55,
+      "aggregation_gap": 0.050000000000000044,
+      "rescue_available_rate": 0.05,
+      "correct_disagreement_rate": 0.25,
+      "mean_useful_diversity": 0.02552314708630244,
+      "mean_vote_margin": -0.10000000000000002,
+      "mean_boundary_useful_diversity": 0.0,
+      "aggregation_mode": "majority",
+      "vote_tie_rate": 0.0,
+      "mean_embedding_diversity": 0.048196947574615484,
+      "mean_embedding_overlap": 0.9518030524253843,
+      "mean_invalid_rate": 0.0,
+      "mean_specialization_profile_entropy": 1.924450832506399,
+      "mean_pairwise_specialization_jsd": 0.009135282813411394,
+      "accepted_transition_alignment_mean": 0.5048647044026566,
+      "behavior_cycle_reject_count": 0,
+      "behavior_cycle_reject_rate": 0.0,
+      "exact_prompt_duplicate_reject_count": 0,
+      "large_prompt_shift_reject_count": 0,
+      "profile_update_count_per_agent": [
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "behavior_archive_size_per_agent": [
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "beam_refresh": {
+      "event": "beam_refresh",
+      "enabled": true,
+      "agent_count": 5,
+      "active_prompt_changed_count": 0
+    }
+  }
+}
