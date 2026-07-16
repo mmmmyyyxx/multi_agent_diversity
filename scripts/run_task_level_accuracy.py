@@ -88,6 +88,10 @@ def _append_common_cli_args(
     candidate_eval_strategy = _explicit_cli_or_setting(args, setting, "candidate_eval_strategy", Config().candidate_eval_strategy)
     candidate_eval_pool_size = _explicit_cli_or_setting(args, setting, "candidate_eval_pool_size", Config().candidate_eval_pool_size)
     candidate_eval_execution_mode = _explicit_cli_or_setting(args, setting, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)
+    defaults = Config()
+    emergent_enabled = _setting_value(setting, "emergent_specialization_enabled", getattr(args, "emergent_specialization_enabled", defaults.emergent_specialization_enabled))
+    affinity_weight = _setting_value(setting, "specialization_affinity_weight", getattr(args, "specialization_affinity_weight", defaults.specialization_affinity_weight))
+    trajectory_alignment = _setting_value(setting, "trajectory_alignment_enabled", getattr(args, "trajectory_alignment_enabled", defaults.trajectory_alignment_enabled))
     cmd.extend(
         [
             "--task_type", task.task_type,
@@ -155,6 +159,25 @@ def _append_common_cli_args(
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
             "--no_effective_evolution_stop_enabled", str(args.no_effective_evolution_stop_enabled),
+            "--emergent_specialization_enabled", str(int(emergent_enabled)),
+            "--specialization_ema", str(getattr(args, "specialization_ema", defaults.specialization_ema)),
+            "--specialization_smoothing", str(getattr(args, "specialization_smoothing", defaults.specialization_smoothing)),
+            "--specialization_affinity_weight", str(affinity_weight),
+            "--specialization_exploration_floor", str(getattr(args, "specialization_exploration_floor", defaults.specialization_exploration_floor)),
+            "--specialization_min_accepted_updates", str(getattr(args, "specialization_min_accepted_updates", defaults.specialization_min_accepted_updates)),
+            "--specialization_min_context_support", str(getattr(args, "specialization_min_context_support", defaults.specialization_min_context_support)),
+            "--trajectory_alignment_enabled", str(int(trajectory_alignment)),
+            "--behavior_cycle_guard_enabled", str(int(getattr(args, "behavior_cycle_guard_enabled", defaults.behavior_cycle_guard_enabled))),
+            "--behavior_archive_size", str(getattr(args, "behavior_archive_size", defaults.behavior_archive_size)),
+            "--behavior_cycle_similarity_threshold", str(getattr(args, "behavior_cycle_similarity_threshold", defaults.behavior_cycle_similarity_threshold)),
+            "--behavior_cycle_min_overlap", str(getattr(args, "behavior_cycle_min_overlap", defaults.behavior_cycle_min_overlap)),
+            "--behavior_cycle_improvement_epsilon", str(getattr(args, "behavior_cycle_improvement_epsilon", defaults.behavior_cycle_improvement_epsilon)),
+            "--behavior_cycle_margin_epsilon", str(getattr(args, "behavior_cycle_margin_epsilon", defaults.behavior_cycle_margin_epsilon)),
+            "--prompt_trust_region_enabled", str(int(getattr(args, "prompt_trust_region_enabled", defaults.prompt_trust_region_enabled))),
+            "--prompt_max_change_ratio", str(getattr(args, "prompt_max_change_ratio", defaults.prompt_max_change_ratio)),
+            "--prompt_large_shift_warmup_accepts", str(getattr(args, "prompt_large_shift_warmup_accepts", defaults.prompt_large_shift_warmup_accepts)),
+            "--prompt_large_shift_min_vote_delta", str(getattr(args, "prompt_large_shift_min_vote_delta", defaults.prompt_large_shift_min_vote_delta)),
+            "--baseline_allowed_vote_loss", str(getattr(args, "baseline_allowed_vote_loss", defaults.baseline_allowed_vote_loss)),
             "--candidate_eval_strategy", str(candidate_eval_strategy),
             "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
             "--candidate_eval_pool_size", str(candidate_eval_pool_size),
@@ -579,6 +602,25 @@ def main():
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
+    parser.add_argument("--emergent_specialization_enabled", type=int, default=int(cli_defaults.emergent_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--specialization_ema", type=float, default=cli_defaults.specialization_ema)
+    parser.add_argument("--specialization_smoothing", type=float, default=cli_defaults.specialization_smoothing)
+    parser.add_argument("--specialization_affinity_weight", type=float, default=cli_defaults.specialization_affinity_weight)
+    parser.add_argument("--specialization_exploration_floor", type=float, default=cli_defaults.specialization_exploration_floor)
+    parser.add_argument("--specialization_min_accepted_updates", type=int, default=cli_defaults.specialization_min_accepted_updates)
+    parser.add_argument("--specialization_min_context_support", type=int, default=cli_defaults.specialization_min_context_support)
+    parser.add_argument("--trajectory_alignment_enabled", type=int, default=int(cli_defaults.trajectory_alignment_enabled), choices=[0, 1])
+    parser.add_argument("--behavior_cycle_guard_enabled", type=int, default=int(cli_defaults.behavior_cycle_guard_enabled), choices=[0, 1])
+    parser.add_argument("--behavior_archive_size", type=int, default=cli_defaults.behavior_archive_size)
+    parser.add_argument("--behavior_cycle_similarity_threshold", type=float, default=cli_defaults.behavior_cycle_similarity_threshold)
+    parser.add_argument("--behavior_cycle_min_overlap", type=int, default=cli_defaults.behavior_cycle_min_overlap)
+    parser.add_argument("--behavior_cycle_improvement_epsilon", type=float, default=cli_defaults.behavior_cycle_improvement_epsilon)
+    parser.add_argument("--behavior_cycle_margin_epsilon", type=float, default=cli_defaults.behavior_cycle_margin_epsilon)
+    parser.add_argument("--prompt_trust_region_enabled", type=int, default=int(cli_defaults.prompt_trust_region_enabled), choices=[0, 1])
+    parser.add_argument("--prompt_max_change_ratio", type=float, default=cli_defaults.prompt_max_change_ratio)
+    parser.add_argument("--prompt_large_shift_warmup_accepts", type=int, default=cli_defaults.prompt_large_shift_warmup_accepts)
+    parser.add_argument("--prompt_large_shift_min_vote_delta", type=float, default=cli_defaults.prompt_large_shift_min_vote_delta)
+    parser.add_argument("--baseline_allowed_vote_loss", type=float, default=cli_defaults.baseline_allowed_vote_loss)
     parser.add_argument("--candidate_eval_batch_size", type=int, default=None)
     parser.add_argument("--candidate_eval_concurrency", type=int, default=cli_defaults.candidate_eval_concurrency)
     parser.add_argument("--candidate_eval_strategy", type=str, default=None, choices=["random", "fixed_pool", "stratified"])

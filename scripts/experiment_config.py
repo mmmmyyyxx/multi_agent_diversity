@@ -20,6 +20,9 @@ class ExperimentSetting:
     solver_rollout_singleflight: Optional[bool] = None
     candidate_eval_prompt_dedup: Optional[bool] = None
     candidate_eval_cache_logging: Optional[bool] = None
+    emergent_specialization_enabled: Optional[bool] = None
+    specialization_affinity_weight: Optional[float] = None
+    trajectory_alignment_enabled: Optional[bool] = None
 
 
 @dataclass(frozen=True)
@@ -65,6 +68,22 @@ ALL_EXPERIMENT_SETTINGS = [
     ExperimentSetting(
         name="shared_vote_pareto_tcs",
         candidate_selection_mode="vote_pareto",
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_pareto_tcs_cycle_guard",
+        candidate_selection_mode="vote_pareto",
+        emergent_specialization_enabled=True,
+        specialization_affinity_weight=0.0,
+        trajectory_alignment_enabled=False,
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_pareto_tcs_emergent",
+        candidate_selection_mode="vote_pareto",
+        emergent_specialization_enabled=True,
+        specialization_affinity_weight=0.5,
+        trajectory_alignment_enabled=True,
         **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(

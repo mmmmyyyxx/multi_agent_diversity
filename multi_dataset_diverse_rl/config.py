@@ -99,6 +99,26 @@ class Config:
     no_effective_evolution_min_optimizer_candidates: int = 1
     no_effective_evolution_stop_enabled: bool = True
 
+    emergent_specialization_enabled: bool = False
+    specialization_ema: float = 0.20
+    specialization_smoothing: float = 0.05
+    specialization_affinity_weight: float = 0.50
+    specialization_exploration_floor: float = 0.20
+    specialization_min_accepted_updates: int = 1
+    specialization_min_context_support: int = 2
+    trajectory_alignment_enabled: bool = True
+    behavior_cycle_guard_enabled: bool = True
+    behavior_archive_size: int = 16
+    behavior_cycle_similarity_threshold: float = 0.95
+    behavior_cycle_min_overlap: int = 16
+    behavior_cycle_improvement_epsilon: float = 0.01
+    behavior_cycle_margin_epsilon: float = 0.05
+    prompt_trust_region_enabled: bool = True
+    prompt_max_change_ratio: float = 0.45
+    prompt_large_shift_warmup_accepts: int = 2
+    prompt_large_shift_min_vote_delta: float = 0.02
+    baseline_allowed_vote_loss: float = 0.0
+
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
     invalid_binary: bool = True
@@ -154,6 +174,29 @@ class Config:
             self.optimizer_model = "deepseek-chat"
         if not str(self.evaluator_model or "").strip():
             self.evaluator_model = "deepseek-chat"
+        probability_fields = (
+            "specialization_ema",
+            "specialization_smoothing",
+            "specialization_exploration_floor",
+            "behavior_cycle_similarity_threshold",
+            "behavior_cycle_improvement_epsilon",
+            "behavior_cycle_margin_epsilon",
+            "prompt_max_change_ratio",
+            "prompt_large_shift_min_vote_delta",
+            "baseline_allowed_vote_loss",
+        )
+        for field in probability_fields:
+            value = float(getattr(self, field))
+            if not 0.0 <= value <= 1.0:
+                raise ValueError(f"{field} must be in [0, 1], got {value}")
+        if float(self.specialization_affinity_weight) < 0.0:
+            raise ValueError("specialization_affinity_weight must be non-negative")
+        for field in ("specialization_min_accepted_updates", "prompt_large_shift_warmup_accepts"):
+            if int(getattr(self, field)) < 0:
+                raise ValueError(f"{field} must be non-negative")
+        for field in ("specialization_min_context_support", "behavior_archive_size", "behavior_cycle_min_overlap"):
+            if int(getattr(self, field)) < 1:
+                raise ValueError(f"{field} must be at least 1")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -252,6 +295,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no_effective_evolution_patience", type=int, default=defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
+    parser.add_argument("--emergent_specialization_enabled", type=int, default=int(defaults.emergent_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--specialization_ema", type=float, default=defaults.specialization_ema)
+    parser.add_argument("--specialization_smoothing", type=float, default=defaults.specialization_smoothing)
+    parser.add_argument("--specialization_affinity_weight", type=float, default=defaults.specialization_affinity_weight)
+    parser.add_argument("--specialization_exploration_floor", type=float, default=defaults.specialization_exploration_floor)
+    parser.add_argument("--specialization_min_accepted_updates", type=int, default=defaults.specialization_min_accepted_updates)
+    parser.add_argument("--specialization_min_context_support", type=int, default=defaults.specialization_min_context_support)
+    parser.add_argument("--trajectory_alignment_enabled", type=int, default=int(defaults.trajectory_alignment_enabled), choices=[0, 1])
+    parser.add_argument("--behavior_cycle_guard_enabled", type=int, default=int(defaults.behavior_cycle_guard_enabled), choices=[0, 1])
+    parser.add_argument("--behavior_archive_size", type=int, default=defaults.behavior_archive_size)
+    parser.add_argument("--behavior_cycle_similarity_threshold", type=float, default=defaults.behavior_cycle_similarity_threshold)
+    parser.add_argument("--behavior_cycle_min_overlap", type=int, default=defaults.behavior_cycle_min_overlap)
+    parser.add_argument("--behavior_cycle_improvement_epsilon", type=float, default=defaults.behavior_cycle_improvement_epsilon)
+    parser.add_argument("--behavior_cycle_margin_epsilon", type=float, default=defaults.behavior_cycle_margin_epsilon)
+    parser.add_argument("--prompt_trust_region_enabled", type=int, default=int(defaults.prompt_trust_region_enabled), choices=[0, 1])
+    parser.add_argument("--prompt_max_change_ratio", type=float, default=defaults.prompt_max_change_ratio)
+    parser.add_argument("--prompt_large_shift_warmup_accepts", type=int, default=defaults.prompt_large_shift_warmup_accepts)
+    parser.add_argument("--prompt_large_shift_min_vote_delta", type=float, default=defaults.prompt_large_shift_min_vote_delta)
+    parser.add_argument("--baseline_allowed_vote_loss", type=float, default=defaults.baseline_allowed_vote_loss)
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

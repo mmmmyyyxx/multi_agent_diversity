@@ -48,6 +48,39 @@ Audit an existing run without changing it:
 python scripts/audit_tcs_run.py <run_dir_or_root>
 ```
 
+## Emergent Behavioral Specialization
+
+Emergent specialization is optional and disabled by default. When enabled, all
+agents still begin with the same neutral behavior profile; there are no fixed
+roles and no agent-ID-specific rules. An agent's profile is an EMA of positive,
+supported behavior transitions from prompts that actually became active.
+Rejected candidates never update it.
+Contexts below `specialization_min_context_support` are ignored as noisy evidence.
+
+The same optimization/train candidate-evaluation rows provide task-independent
+contexts, transition vectors, and compact behavior fingerprints. No extra
+solver rollout, semantic-clustering call, validation access, or test access is
+used. Profile affinity is a small agent-selection bonus and trajectory
+alignment is only a late Pareto tie-break, never a reward or Pareto objective.
+
+The behavioral cycle guard rejects exact prompt repeats and high-similarity
+historical behavior only when the candidate has no meaningful vote, target
+accuracy, or margin improvement. The prompt trust region permits local edits
+and requires stronger vote evidence for large rewrites after warmup.
+
+Matched settings are:
+
+```text
+shared_vote_pareto_tcs
+shared_vote_pareto_tcs_cycle_guard
+shared_vote_pareto_tcs_emergent
+```
+
+`trajectory_events.jsonl` records accepted/rejected transitions. Profile
+entropy, pairwise JSD, alignment, and rejection rates are diagnostics only and
+never participate in `vote_first`. JSD growth alone is not success; interpret
+it together with vote and individual accuracy.
+
 ## Task-Level Accuracy Comparison
 
 MARS and this repository run separately. MAD does not read or depend on a local MARS checkout. Run MAD at the same `task_id` granularity, export `accuracy_results.jsonl`, then join it with a separately generated MARS `summary.csv`.
@@ -139,10 +172,10 @@ python scripts/run_task_level_accuracy.py `
 Incompatible checkpoints fail clearly instead of silently restarting in the same output directory.
 
 `run_meta.json` records the Git commit, dirty-tree state, protocol version
-`vote_oriented_v3`, and checkpoint schema version 2.
+`vote_oriented_v6_emergent_specialization`, and checkpoint schema version 3.
 Formal runs should start from a clean, committed tree; checkpoints also reject
 resume when behavior-affecting reward, evaluation, selection, model, tie-break,
-or TCS configuration differs.
+TCS, or emergent-trajectory configuration differs.
 
 ## Cost Reporting
 

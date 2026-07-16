@@ -157,6 +157,56 @@ The update score is:
 
 A pivotal fix asks whether changing an incorrect agent to gold would make a wrong or tied vote clearly correct. Dominant-wrong redundancy finds incorrect agents repeating the largest wrong cluster near the boundary. Only positive-score agents are selected.
 
+## Emergent Behavioral Specialization
+
+This optional layer is enabled with `--emergent_specialization_enabled 1`.
+Every agent starts from the same uniform distribution over task-independent
+vote contexts. There is no assigned role, task label, or agent-ID rule.
+
+Candidate evaluation reuses its existing optimization/train rows to classify
+baseline states such as team-wrong pivotal fixes, dominant-wrong redundancy,
+pivotal correct holds, and robust correct states. For each context it averages:
+
+```text
+2 * vote_gain - 2 * vote_loss
++ vote_margin_delta
++ 0.5 * target_wrong_to_correct
+- 0.5 * target_correct_to_wrong
+```
+
+Only a candidate that becomes the active prompt can update the long-term
+profile. Positive, supported transition values are smoothed, normalized, and
+merged by EMA. Profile affinity contributes at most a small bonus to the
+existing update pressure. Trajectory alignment is placed after invalid rate
+and before candidate rank/ID as a deterministic Pareto tie-break; it does not
+change the three dominance objectives.
+The default minimum context support is two samples, so a one-sample change does
+not update the profile or create alignment evidence.
+
+### Behavioral Cycle Guard
+
+Each accepted state stores a bounded compact fingerprint keyed by stable
+question hash: target correctness, canonical answer SHA256, team-vote
+correctness, margin bucket, and behavior context. It stores no question text or
+reasoning trace. Exact normalized-prompt SHA256 repeats are rejected, except
+for the current active fallback. Textually different candidates are rejected
+as behavior cycles only when overlap is sufficient, correctness/answer
+similarity is above threshold, and vote, target accuracy, and margin show no
+meaningful improvement.
+
+### Prompt Trust Region
+
+Prompt change is `1 - SequenceMatcher(parent, candidate).ratio()`. During
+warmup, large changes are allowed. Afterwards, a change above the configured
+ratio must have sufficient vote gain, no target-accuracy regression, and a
+vote-loss rate within `baseline_allowed_vote_loss`. This guides local mechanism
+edits without permanently fixing an agent's direction.
+
+All trajectory mechanisms use optimization/train data only. Validation remains
+reserved for `vote_first` state selection and test runs once on restored final
+prompts. Entropy, profile JSD, trajectory alignment, archive sizes, and cycle
+rejections are diagnostics; none enter reward or best-state selection.
+
 ## Teacher-Critic-Student
 
 The default prompt-evolution architecture is:
@@ -187,7 +237,7 @@ minimize vote_loss_rate
 maximize candidate_target_accuracy
 ```
 
-Within a Pareto rank, the deterministic order is vote delta, lower vote loss, vote gain, vote-margin delta, target accuracy, boundary-diversity delta, lower invalid rate, then candidate ID.
+Within a Pareto rank, the deterministic order is vote delta, lower vote loss, vote gain, vote-margin delta, target accuracy, boundary-diversity delta, and lower invalid rate. Emergent mode optionally adds trajectory alignment after invalid rate and before rank/ID.
 
 `vote_first` chooses validation states by:
 
@@ -241,10 +291,10 @@ counts, and SHA256 file hashes into `run_meta.json`. Reused files are marked
 called strict.
 
 Each run also records the full Git commit, dirty-tree state, and protocol
-version `vote_oriented_v3`. Formal runs should start from a committed, clean
+version `vote_oriented_v6_emergent_specialization`. Formal runs should start from a committed, clean
 tree. Training checkpoints store a fingerprinted behavior configuration;
 changing reward, guard, candidate-evaluation, selection, tie-break, model, or
-TCS settings rejects resume instead of mixing optimization semantics.
+TCS, or emergent-trajectory settings rejects resume instead of mixing optimization semantics. The current checkpoint schema is version 3.
 
 ## Resume
 

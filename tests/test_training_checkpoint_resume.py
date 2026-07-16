@@ -22,6 +22,10 @@ def _system(tmp_path, agents=2):
     system = object.__new__(TraceBeamSearchSystem)
     system.cfg = cfg
     system.agents = [AgentState(f"prompt {i}") for i in range(agents)]
+    system.recent_window_records = [
+        {"question_hash": "window-1"},
+        {"question_hash": "window-2"},
+    ]
     for i, agent in enumerate(system.agents):
         agent.current_prompt = f"current {i}"
         agent.prompt_beam = [system._make_beam_item(agent.current_prompt, 0.5, {"rank": i}, None, 0)]
@@ -104,6 +108,37 @@ def test_training_checkpoint_compatible_for_training_stage(tmp_path):
     assert checkpoint_compatible(payload, system.cfg, [None, None, None, None]) is False
 
 
+def test_training_checkpoint_requires_window_state_inside_update_window(tmp_path):
+    system = _system(tmp_path)
+    system.recent_window_records = [{"question_hash": "q1"}, {"question_hash": "q2"}]
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    assert checkpoint_compatible(payload, system.cfg, [None, None, None, None]) is True
+
+    payload["state"].pop("recent_window_records")
+    reasons = checkpoint_incompatibility_reasons(payload, system.cfg, [None, None, None, None])
+
+    assert any("stopped inside an update window" in reason for reason in reasons)
+
+
+def test_training_checkpoint_rejects_skipped_update_boundary(tmp_path):
+    system = _system(tmp_path)
+    system.cfg.update_every = 2
+    system.recent_window_records = []
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    (tmp_path / "train_step_logs.jsonl").write_text(
+        json.dumps({
+            "epoch": 1,
+            "step": 2,
+            "update_summary": {"skipped_reason": "window_not_ready"},
+        }) + "\n",
+        encoding="utf-8",
+    )
+
+    reasons = checkpoint_incompatibility_reasons(payload, system.cfg, [None, None, None, None])
+
+    assert any("cannot be resumed faithfully" in reason for reason in reasons)
+
+
 def test_training_checkpoint_rejects_changed_config_signature(tmp_path):
     system = _system(tmp_path)
     payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
@@ -179,6 +214,10 @@ def test_epoch_evaluated_checkpoint_preserves_epoch_record(tmp_path):
 
 def test_restore_system_state_restores_prompts_beams_and_counts(tmp_path):
     source = _system(tmp_path / "source")
+    source.recent_window_records = [
+        {"question_hash": "q1", "answers": ["A", "B"], "gold": "A"},
+        {"question_hash": "q2", "answers": ["C", "C"], "gold": "B"},
+    ]
     payload = build_training_checkpoint(source.cfg, source, **_checkpoint_kwargs())
     target = _system(tmp_path / "target")
     for agent in target.agents:
@@ -193,6 +232,19 @@ def test_restore_system_state_restores_prompts_beams_and_counts(tmp_path):
     assert [agent.prompt_beam[0]["prompt"] for agent in target.agents] == ["current 0", "current 1"]
     assert [agent.accept_count for agent in target.agents] == [1, 2]
     assert [agent.reject_count for agent in target.agents] == [0, 1]
+    assert target.recent_window_records == source.recent_window_records
+
+
+def test_restore_legacy_checkpoint_without_window_uses_empty_window(tmp_path):
+    source = _system(tmp_path / "source")
+    payload = build_training_checkpoint(source.cfg, source, **_checkpoint_kwargs())
+    payload["state"].pop("recent_window_records")
+    target = _system(tmp_path / "target")
+    target.recent_window_records = [{"question_hash": "stale"}]
+
+    restore_system_state(target, payload["state"])
+
+    assert target.recent_window_records == []
 
 
 def test_restore_cost_summary_keeps_previous_counts(tmp_path):

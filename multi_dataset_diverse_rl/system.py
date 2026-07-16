@@ -11,6 +11,7 @@ from collections import Counter
 from contextvars import ContextVar
 from dataclasses import asdict
 from datetime import datetime, timezone
+from difflib import SequenceMatcher
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
@@ -20,7 +21,15 @@ from .answer_formats import canonical_answer as canonical_answer_format
 from .answer_formats import extract_prediction as extract_prediction_format
 from .answer_formats import match_answer as match_answer_format
 from .config import Config
-from .policy import AgentState
+from .policy import (
+    BEHAVIOR_CONTEXT_NAMES,
+    AgentState,
+    BehaviorContext,
+    BehaviorFingerprintEntry,
+    BehaviorStateSummary,
+    RejectedBehaviorSummary,
+    uniform_specialization_profile,
+)
 from .tasks import TaskSpec, get_task_spec
 from .utils import (
     compute_gold_vote_diagnostics,
@@ -35,8 +44,8 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
-EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v5"
-CHECKPOINT_VERSION = 2
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v6_emergent_specialization"
+CHECKPOINT_VERSION = 3
 
 
 def compute_candidate_metric_deltas(
@@ -235,6 +244,10 @@ class TraceBeamSearchSystem:
         self.cfg.candidate_eval_prompt_dedup = bool(int(getattr(self.cfg, "candidate_eval_prompt_dedup", 1)))
         self.cfg.candidate_eval_cache_logging = bool(int(getattr(self.cfg, "candidate_eval_cache_logging", 1)))
         self.cfg.use_baseline_relative_reward = bool(int(getattr(self.cfg, "use_baseline_relative_reward", 1)))
+        self.cfg.emergent_specialization_enabled = bool(int(getattr(self.cfg, "emergent_specialization_enabled", 0)))
+        self.cfg.trajectory_alignment_enabled = bool(int(getattr(self.cfg, "trajectory_alignment_enabled", 1)))
+        self.cfg.behavior_cycle_guard_enabled = bool(int(getattr(self.cfg, "behavior_cycle_guard_enabled", 1)))
+        self.cfg.prompt_trust_region_enabled = bool(int(getattr(self.cfg, "prompt_trust_region_enabled", 1)))
         self.task_spec = self._build_task_spec()
 
         self.homogeneity_window = max(1, int(self.cfg.update_every))
@@ -269,6 +282,7 @@ class TraceBeamSearchSystem:
 
         self.history: List[Dict[str, Any]] = []
         self.update_logs: List[Dict[str, Any]] = []
+        self.trajectory_events: List[Dict[str, Any]] = []
         self.train_step_logs: List[Dict[str, Any]] = []
         self.train_trace_history_logs: List[Dict[str, Any]] = []
         self.test_trace_history_logs: List[Dict[str, Any]] = []
@@ -323,6 +337,304 @@ class TraceBeamSearchSystem:
     def _uses_vote_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "vote_pareto"
 
+    def _emergent_specialization_enabled(self) -> bool:
+        return bool(getattr(self.cfg, "emergent_specialization_enabled", False))
+
+    def _normalized_prompt_hash(self, prompt: str) -> str:
+        return hashlib.sha256(self._prompt_signature(prompt).encode("utf-8")).hexdigest()
+
+    def prompt_change_ratio(self, parent_prompt: str, candidate_prompt: str) -> float:
+        parent = self._prompt_signature(parent_prompt)
+        candidate = self._prompt_signature(candidate_prompt)
+        return self._clip01(1.0 - SequenceMatcher(None, parent, candidate).ratio())
+
+    def _behavior_context_for_baseline(
+        self,
+        *,
+        agent_id: int,
+        answers: Sequence[str],
+        gold: str,
+        rollout: Dict[str, Any],
+        question_hash: str = "",
+    ) -> str:
+        invalids = list(rollout.get("invalid_flags", []))
+        if agent_id >= len(answers) or (agent_id < len(invalids) and int(invalids[agent_id]) > 0):
+            return BehaviorContext.INVALID.value
+        target_correct = bool(self._safe_agent_correct(rollout, agent_id))
+        team_correct = bool(rollout.get("vote_correct", 0))
+        gold_count = int(rollout.get("gold_vote_count", 0) or 0)
+        largest_wrong = int(rollout.get("largest_wrong_vote_count", 0) or 0)
+        if target_correct:
+            if gold_count - largest_wrong <= 1:
+                return BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value
+            return BehaviorContext.TARGET_CORRECT_ROBUST.value
+
+        if not team_correct:
+            counterfactual_answers = list(answers)
+            counterfactual_answers[agent_id] = str(gold)
+            counterfactual = self._vote_with_diagnostics(counterfactual_answers, question_hash=question_hash)
+            pivotal = self.task_spec.match_answer(str(counterfactual.get("vote_answer", "")), gold)
+            return (
+                BehaviorContext.TEAM_WRONG_PIVOTAL_FIX.value
+                if pivotal else BehaviorContext.TEAM_WRONG_NONPIVOTAL.value
+            )
+
+        target_answer = str(answers[agent_id] or "").strip()
+        wrong_counts = Counter(
+            str(answer or "").strip()
+            for answer in answers
+            if str(answer or "").strip() and not self.task_spec.match_answer(str(answer), gold)
+        )
+        is_dominant_wrong = bool(
+            target_answer
+            and wrong_counts.get(target_answer, 0) == max(wrong_counts.values(), default=0)
+            and (largest_wrong > 0 or gold_count - largest_wrong <= 1)
+        )
+        return (
+            BehaviorContext.TEAM_CORRECT_DOMINANT_WRONG_REDUNDANCY.value
+            if is_dominant_wrong or gold_count - largest_wrong <= 1
+            else BehaviorContext.TEAM_CORRECT_TARGET_WRONG_OTHER.value
+        )
+
+    def _candidate_behavior_metrics(self, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+        values = {context: [] for context in BEHAVIOR_CONTEXT_NAMES}
+        context_counts = {context: 0 for context in BEHAVIOR_CONTEXT_NAMES}
+        fingerprint: Dict[str, Dict[str, Any]] = {}
+        for row in rows:
+            context = str(row.get("behavior_context", BehaviorContext.INVALID.value))
+            if context not in values:
+                context = BehaviorContext.INVALID.value
+            vote_gain = int(not bool(row.get("baseline_vote_correct", 0)) and bool(row.get("candidate_vote_correct", 0)))
+            vote_loss = int(bool(row.get("baseline_vote_correct", 0)) and not bool(row.get("candidate_vote_correct", 0)))
+            margin_delta = float(row.get("candidate_mean_vote_margin", -1.0)) - float(row.get("baseline_mean_vote_margin", -1.0))
+            wrong_to_correct = int(not bool(row.get("baseline_target_correct", 0)) and bool(row.get("target_agent_correct", 0)))
+            correct_to_wrong = int(bool(row.get("baseline_target_correct", 0)) and not bool(row.get("target_agent_correct", 0)))
+            transition = 2.0 * vote_gain - 2.0 * vote_loss + max(0.0, margin_delta) - max(0.0, -margin_delta) + 0.5 * wrong_to_correct - 0.5 * correct_to_wrong
+            values[context].append(float(transition))
+            context_counts[context] += 1
+            question_hash = str(row.get("question_hash", ""))
+            if question_hash:
+                answer_signature = self._prompt_signature(str(row.get("target_answer", "")))
+                fingerprint[question_hash] = {
+                    "target_correct": bool(row.get("target_agent_correct", 0)),
+                    "target_answer_hash": hashlib.sha256(answer_signature.encode("utf-8")).hexdigest(),
+                    "team_vote_correct": bool(row.get("candidate_vote_correct", 0)),
+                    "vote_margin_bucket": int(round(10.0 * float(row.get("candidate_mean_vote_margin", -1.0)))),
+                    "behavior_context": context,
+                }
+        return {
+            "behavior_context_counts": context_counts,
+            "candidate_transition_vector": {
+                context: float(np.mean(context_values)) if context_values else 0.0
+                for context, context_values in values.items()
+            },
+            "candidate_transition_support": context_counts,
+            "behavior_fingerprint": fingerprint,
+        }
+
+    def trajectory_alignment(self, agent: AgentState, transition: Dict[str, float], support: Dict[str, int]) -> float:
+        if agent.specialization_update_count < int(getattr(self.cfg, "specialization_min_accepted_updates", 1)):
+            return 0.0
+        min_support = int(getattr(self.cfg, "specialization_min_context_support", 2))
+        positive = np.array([
+            max(0.0, float(transition.get(context, 0.0))) if int(support.get(context, 0) or 0) >= min_support else 0.0
+            for context in BEHAVIOR_CONTEXT_NAMES
+        ], dtype=float)
+        profile = np.array([max(0.0, float(agent.specialization_profile.get(context, 0.0))) for context in BEHAVIOR_CONTEXT_NAMES], dtype=float)
+        denominator = float(np.linalg.norm(positive) * np.linalg.norm(profile))
+        return self._clip01(float(np.dot(profile, positive) / denominator)) if denominator > 0.0 else 0.0
+
+    def update_specialization_profile(
+        self,
+        agent: AgentState,
+        transition: Dict[str, float],
+        support: Dict[str, int],
+    ) -> bool:
+        positive = {
+            context: max(0.0, float(transition.get(context, 0.0)))
+            if int(support.get(context, 0) or 0) >= int(getattr(self.cfg, "specialization_min_context_support", 2)) else 0.0
+            for context in BEHAVIOR_CONTEXT_NAMES
+        }
+        if not any(value > 0.0 for value in positive.values()):
+            return False
+        smoothing = float(getattr(self.cfg, "specialization_smoothing", 0.05))
+        target_values = {context: value + smoothing for context, value in positive.items()}
+        target_total = sum(target_values.values())
+        target = {context: value / target_total for context, value in target_values.items()}
+        old = dict(agent.specialization_profile or uniform_specialization_profile())
+        mu = float(getattr(self.cfg, "specialization_ema", 0.20))
+        updated = {context: (1.0 - mu) * float(old.get(context, 0.0)) + mu * target[context] for context in BEHAVIOR_CONTEXT_NAMES}
+        total = sum(updated.values())
+        agent.specialization_profile = {context: value / total for context, value in updated.items()}
+        agent.specialization_update_count += 1
+        agent.last_accepted_transition = {context: float(transition.get(context, 0.0)) for context in BEHAVIOR_CONTEXT_NAMES}
+        return True
+
+    def effective_specialization_profile(self, agent: AgentState) -> Dict[str, float]:
+        floor = float(getattr(self.cfg, "specialization_exploration_floor", 0.20))
+        uniform = uniform_specialization_profile()
+        return {
+            context: (1.0 - floor) * float(agent.specialization_profile.get(context, uniform[context])) + floor * uniform[context]
+            for context in BEHAVIOR_CONTEXT_NAMES
+        }
+
+    @staticmethod
+    def behavior_fingerprint_similarity(
+        candidate: Mapping[str, Any],
+        history: Mapping[str, Any],
+    ) -> Tuple[float, int]:
+        overlap = sorted(set(candidate).intersection(history))
+        if not overlap:
+            return 0.0, 0
+        correctness_matches = 0
+        answer_matches = 0
+        for key in overlap:
+            current = candidate[key]
+            previous = history[key]
+            current_correct = current.target_correct if isinstance(current, BehaviorFingerprintEntry) else bool(current.get("target_correct", False))
+            previous_correct = previous.target_correct if isinstance(previous, BehaviorFingerprintEntry) else bool(previous.get("target_correct", False))
+            current_answer = current.target_answer_hash if isinstance(current, BehaviorFingerprintEntry) else str(current.get("target_answer_hash", ""))
+            previous_answer = previous.target_answer_hash if isinstance(previous, BehaviorFingerprintEntry) else str(previous.get("target_answer_hash", ""))
+            correctness_matches += int(current_correct == previous_correct)
+            answer_matches += int(current_answer == previous_answer)
+        count = len(overlap)
+        return 0.7 * correctness_matches / count + 0.3 * answer_matches / count, count
+
+    def _append_bounded_archive(self, archive: List[Any], value: Any) -> None:
+        archive.append(value)
+        limit = max(0, int(getattr(self.cfg, "behavior_archive_size", 16)))
+        if limit == 0:
+            archive.clear()
+        elif len(archive) > limit:
+            del archive[:-limit]
+
+    def _candidate_trajectory_feasibility(
+        self,
+        agent: AgentState,
+        item: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        prompt = str(item.get("prompt", ""))
+        parent_prompt = str(item.get("parent_prompt", agent.current_prompt))
+        prompt_hash = self._normalized_prompt_hash(prompt)
+        parent_hash = self._normalized_prompt_hash(parent_prompt)
+        change_ratio = self.prompt_change_ratio(parent_prompt, prompt)
+        diagnostics: Dict[str, Any] = {
+            "prompt_hash": prompt_hash,
+            "parent_prompt_hash": parent_hash,
+            "prompt_change_ratio": change_ratio,
+            "max_behavior_cycle_similarity": 0.0,
+            "behavior_cycle_overlap": 0,
+            "matched_behavior_state_id": "",
+            "exact_prompt_cycle": False,
+            "behavior_cycle_guard_passed": True,
+            "prompt_trust_region_passed": True,
+            "rejection_reason": "",
+        }
+        if not self._emergent_specialization_enabled():
+            return diagnostics
+
+        source = str(item.get("source", ""))
+        current_hash = self._normalized_prompt_hash(agent.current_prompt)
+        if prompt_hash == current_hash and source in {"existing_beam", "current_active_fallback"}:
+            return diagnostics
+
+        _, _, original_guards_passed = self._vote_pareto_feasibility(metrics)
+        if not original_guards_passed:
+            return diagnostics
+
+        historic_hashes = {self._normalized_prompt_hash(value) for value in agent.history}
+        historic_hashes.update(state.prompt_hash for state in agent.accepted_behavior_archive)
+        historic_hashes.update(state.prompt_hash for state in agent.rejected_behavior_archive)
+        exact_cycle = bool(prompt_hash in historic_hashes)
+        diagnostics["exact_prompt_cycle"] = exact_cycle
+        if exact_cycle:
+            diagnostics["rejection_reason"] = "exact_prompt_cycle"
+            return diagnostics
+
+        candidate_fingerprint = metrics.get("behavior_fingerprint", {})
+        best_similarity = 0.0
+        best_overlap = 0
+        best_state_id = ""
+        if bool(getattr(self.cfg, "behavior_cycle_guard_enabled", True)) and isinstance(candidate_fingerprint, dict):
+            for state in agent.accepted_behavior_archive:
+                similarity, overlap = self.behavior_fingerprint_similarity(candidate_fingerprint, state.behavior_fingerprint)
+                if (similarity, overlap, state.state_id) > (best_similarity, best_overlap, best_state_id):
+                    best_similarity, best_overlap, best_state_id = similarity, overlap, state.state_id
+        diagnostics.update(
+            {
+                "max_behavior_cycle_similarity": float(best_similarity),
+                "behavior_cycle_overlap": int(best_overlap),
+                "matched_behavior_state_id": best_state_id,
+            }
+        )
+        meaningful_improvement = bool(
+            float(metrics.get("vote_delta", 0.0) or 0.0) > float(getattr(self.cfg, "behavior_cycle_improvement_epsilon", 0.01))
+            or float(metrics.get("accuracy_delta", 0.0) or 0.0) > float(getattr(self.cfg, "behavior_cycle_improvement_epsilon", 0.01))
+            or float(metrics.get("vote_margin_delta", 0.0) or 0.0) > float(getattr(self.cfg, "behavior_cycle_margin_epsilon", 0.05))
+        )
+        behavior_cycle = bool(
+            bool(getattr(self.cfg, "behavior_cycle_guard_enabled", True))
+            and best_overlap >= int(getattr(self.cfg, "behavior_cycle_min_overlap", 16))
+            and best_similarity >= float(getattr(self.cfg, "behavior_cycle_similarity_threshold", 0.95))
+            and not meaningful_improvement
+        )
+        diagnostics["behavior_cycle_guard_passed"] = not behavior_cycle
+        if behavior_cycle:
+            diagnostics["rejection_reason"] = "behavior_cycle"
+            return diagnostics
+
+        large_shift = bool(
+            source == "optimizer"
+            and
+            bool(getattr(self.cfg, "prompt_trust_region_enabled", True))
+            and agent.accept_count >= int(getattr(self.cfg, "prompt_large_shift_warmup_accepts", 2))
+            and change_ratio > float(getattr(self.cfg, "prompt_max_change_ratio", 0.45))
+        )
+        large_shift_supported = bool(
+            float(metrics.get("vote_delta", 0.0) or 0.0) >= float(getattr(self.cfg, "prompt_large_shift_min_vote_delta", 0.02))
+            and float(metrics.get("accuracy_delta", 0.0) or 0.0) >= 0.0
+            and float(metrics.get("vote_loss_rate", 0.0) or 0.0) <= float(getattr(self.cfg, "baseline_allowed_vote_loss", 0.0))
+        )
+        diagnostics["prompt_trust_region_passed"] = bool(not large_shift or large_shift_supported)
+        if large_shift and not large_shift_supported:
+            diagnostics["rejection_reason"] = "unsupported_large_prompt_shift"
+        return diagnostics
+
+    def _trajectory_event(
+        self,
+        *,
+        agent_id: int,
+        epoch_id: int,
+        step_id: int,
+        item: Dict[str, Any],
+        accepted: bool,
+        profile_before: Dict[str, float],
+        profile_after: Dict[str, float],
+    ) -> Dict[str, Any]:
+        metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        return {
+            **self._base_log_fields(),
+            "event": "trajectory_evolution",
+            "epoch": int(epoch_id),
+            "step": int(step_id),
+            "agent_id": int(agent_id),
+            "candidate_id": str(item.get("candidate_id", "")),
+            "candidate_source": str(item.get("candidate_source", "")),
+            "accepted": bool(accepted),
+            "behavior_context_counts": metrics.get("behavior_context_counts", {}),
+            "candidate_transition_vector": metrics.get("candidate_transition_vector", {}),
+            "candidate_transition_support": metrics.get("candidate_transition_support", {}),
+            "specialization_profile_before": profile_before,
+            "specialization_profile_after": profile_after,
+            "trajectory_alignment": float(metrics.get("trajectory_alignment", 0.0) or 0.0),
+            **{key: metrics.get(key) for key in (
+                "prompt_hash", "parent_prompt_hash", "prompt_change_ratio",
+                "max_behavior_cycle_similarity", "behavior_cycle_overlap", "matched_behavior_state_id",
+                "exact_prompt_cycle", "behavior_cycle_guard_passed", "prompt_trust_region_passed", "rejection_reason",
+            )},
+        }
+
     def _vote_pareto_feasibility(self, metrics: Dict[str, Any]) -> Tuple[bool, bool, bool]:
         weights = self._effective_reward_weights()
         baseline_target = float(metrics.get("baseline_target_accuracy", 0.0) or 0.0)
@@ -333,8 +645,7 @@ class TraceBeamSearchSystem:
         invalid_guard_passed = candidate_invalid <= baseline_invalid + float(getattr(self.cfg, "invalid_guard_epsilon", 0.0) or 0.0)
         return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(accuracy_guard_passed and invalid_guard_passed)
 
-    @staticmethod
-    def _vote_pareto_active_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, int, str]:
+    def _vote_pareto_active_sort_key(self, item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, float, int, str]:
         metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
         rank = item.get("pareto_rank")
         normalized_rank = int(rank) if isinstance(rank, int) and rank >= 0 else 10**9
@@ -346,12 +657,12 @@ class TraceBeamSearchSystem:
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
             -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
             float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
+            -float(metrics.get("trajectory_alignment", 0.0) or 0.0) if self._emergent_specialization_enabled() and bool(getattr(self.cfg, "trajectory_alignment_enabled", True)) else 0.0,
             normalized_rank,
             str(item.get("candidate_id", "")),
         )
 
-    @staticmethod
-    def _vote_pareto_crowding_sort_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, float, str]:
+    def _vote_pareto_crowding_sort_key(self, item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, float, float, str]:
         metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
         distance = float(item.get("pareto_crowding_distance", 0.0) or 0.0)
         return (
@@ -363,6 +674,7 @@ class TraceBeamSearchSystem:
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
             -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
             float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
+            -float(metrics.get("trajectory_alignment", 0.0) or 0.0) if self._emergent_specialization_enabled() and bool(getattr(self.cfg, "trajectory_alignment_enabled", True)) else 0.0,
             str(item.get("candidate_id", "")),
         )
 
@@ -1330,6 +1642,9 @@ class TraceBeamSearchSystem:
                     "expected_diversity_effect": "one short sentence",
                     "risk_control": "one short sentence",
                     "rationale": "one short sentence",
+                    "change_summary": "optional short local-edit summary",
+                    "preserved_mechanisms": ["optional preserved mechanism"],
+                    "new_or_modified_mechanism": "optional changed mechanism",
                 }
             ]
         }
@@ -2588,13 +2903,27 @@ class TraceBeamSearchSystem:
 
         scored = []
         for agent_id in ids:
-            score = (
+            base_score = (
                 3.0 * value(error_counts, agent_id)
                 + 2.0 * value(team_wrong_counts, agent_id)
                 + 2.0 * value(invalid_rates, agent_id)
                 + 2.0 * value(pivotal_fix_counts, agent_id)
                 + 1.0 * value(dominant_wrong_counts, agent_id)
             )
+            affinity = 0.0
+            context_pressures = diagnosis.get("per_agent_context_pressure", [])
+            if (
+                self._emergent_specialization_enabled()
+                and agent_id < len(context_pressures)
+                and self.agents[agent_id].specialization_update_count >= int(getattr(self.cfg, "specialization_min_accepted_updates", 1))
+                and isinstance(context_pressures[agent_id], dict)
+            ):
+                pressure = {context: max(0.0, float(context_pressures[agent_id].get(context, 0.0))) for context in BEHAVIOR_CONTEXT_NAMES}
+                total_pressure = sum(pressure.values())
+                if total_pressure > 0.0:
+                    profile = self.effective_specialization_profile(self.agents[agent_id])
+                    affinity = sum(profile[context] * pressure[context] / total_pressure for context in BEHAVIOR_CONTEXT_NAMES)
+            score = base_score + float(getattr(self.cfg, "specialization_affinity_weight", 0.50)) * affinity
             if score > 0.0:
                 scored.append((float(score), agent_id))
         scored.sort(key=lambda item: item[0], reverse=True)
@@ -2747,6 +3076,7 @@ class TraceBeamSearchSystem:
         per_agent_invalid = [0 for _ in range(num_agents)]
         per_agent_seen = [0 for _ in range(num_agents)]
         per_agent_pressure_rows = [[] for _ in range(num_agents)]
+        per_agent_context_pressure = [{context: 0.0 for context in BEHAVIOR_CONTEXT_NAMES} for _ in range(num_agents)]
         pivotal_fix_counts = [0 for _ in range(num_agents)]
         dominant_wrong_counts = [0 for _ in range(num_agents)]
         vote_values: List[int] = []
@@ -2760,6 +3090,8 @@ class TraceBeamSearchSystem:
             invalids = [int(value) for value in metrics.get("invalid_flags", [])]
             pressures = list(metrics.get("per_agent_overlap", []))
             answers = [str(answer or "").strip() for answer in rec.get("answers", [])]
+            gold = str(rec.get("gold", ""))
+            question_hash = str(rec.get("question_hash", ""))
             vote_correct = int(metrics.get("vote_correct", 0) or 0)
             vote_tie = bool(metrics.get("vote_tie", False))
             gold_count = int(metrics.get("gold_vote_count", sum(individual)) or 0)
@@ -2787,6 +3119,18 @@ class TraceBeamSearchSystem:
                     per_agent_invalid[agent_id] += invalids[agent_id]
                 if agent_id < len(pressures):
                     per_agent_pressure_rows[agent_id].append(float(pressures[agent_id]))
+                if self._emergent_specialization_enabled() and gold:
+                    context = self._behavior_context_for_baseline(
+                        agent_id=agent_id,
+                        answers=answers,
+                        gold=gold,
+                        rollout=metrics,
+                        question_hash=question_hash,
+                    )
+                    context_pressure = 1.0 if agent_id >= len(individual) or not individual[agent_id] else 0.25
+                    if agent_id < len(invalids) and invalids[agent_id]:
+                        context_pressure += 1.0
+                    per_agent_context_pressure[agent_id][context] += context_pressure
                 if agent_id >= len(individual) or individual[agent_id]:
                     continue
                 answer = answers[agent_id] if agent_id < len(answers) else ""
@@ -2853,6 +3197,7 @@ class TraceBeamSearchSystem:
             "per_agent_overlap_pressure": [float(np.mean(values)) if values else 0.0 for values in per_agent_pressure_rows],
             "per_agent_pivotal_fix_count": pivotal_fix_counts,
             "per_agent_dominant_wrong_redundancy_count": dominant_wrong_counts,
+            "per_agent_context_pressure": per_agent_context_pressure,
             "homogeneity_overlap_threshold": float(self.cfg.homogeneity_overlap_threshold),
         }
 
@@ -3364,6 +3709,36 @@ class TraceBeamSearchSystem:
                 "invalid_output_summary": f"target_invalid_rate={target_invalid_rate:.3f}; invalid patterns are abstracted above.",
             },
         }
+        if self._emergent_specialization_enabled():
+            agent = self.agents[agent_id]
+            ordered_profile = sorted(agent.specialization_profile.items(), key=lambda item: (-item[1], item[0]))
+            rejected = list(agent.rejected_behavior_archive[-3:])
+            context["observed_long_term_behavior_profile"] = {
+                "strongest_historically_successful_contexts": [key for key, _ in ordered_profile[:3]],
+                "contexts_with_recent_regression": sorted({
+                    key
+                    for state in agent.accepted_behavior_archive[-5:]
+                    for key, value in state.transition_vector.items()
+                    if float(value) < 0.0
+                }),
+                "recent_accepted_transition_directions": {
+                    key: round(float(value), 4)
+                    for key, value in sorted(agent.last_accepted_transition.items())
+                    if abs(float(value)) > 0.0
+                },
+                "recent_cycle_or_large_shift_rejections": [
+                    {"reason": item.rejection_reason, "change_ratio": round(item.prompt_change_ratio, 4)}
+                    for item in rejected
+                    if item.rejection_reason in {"exact_prompt_cycle", "behavior_cycle", "unsupported_large_prompt_shift"}
+                ],
+                "mechanisms_preserved_across_successful_prompts": sorted({
+                    mechanism
+                    for state in agent.accepted_behavior_archive[-5:]
+                    for mechanism in (state.preserved_mechanisms or [])
+                    if mechanism
+                })[:8],
+                "guidance": "Prefer a local mechanism that extends observed successful behavior while preserving robust-correct behavior. Do not force a role.",
+            }
         return context
 
     async def propose_teacher_question(
@@ -3427,6 +3802,8 @@ class TraceBeamSearchSystem:
             "- using gold answers, concrete sample text, or answer labels\n"
             "- using hard-coded task-specific roles\n"
             "- focused on voting failure rather than prompt quality/diversity/accuracy\n\n"
+            "Also reject persona-only changes, wholesale rewrites for a narrow error, deletion of repeatedly effective mechanisms, "
+            "repetition of recent failed edits, or vague non-executable reasoning steps. Prefer a concrete local mechanism edit.\n\n"
             "Return strict JSON only."
         )
         user_prompt = (
@@ -3497,6 +3874,13 @@ class TraceBeamSearchSystem:
         reviews: List[Dict[str, Any]] = []
         question_versions: List[Dict[str, Any]] = []
         rewrite_count = 0
+
+        def has_guiding_question(question: Any) -> bool:
+            return bool(
+                isinstance(question, dict)
+                and str(question.get("socratic_guiding_question", "")).strip()
+            )
+
         for round_id in range(max_rounds):
             round_context = dict(TCS_AUDIT_CONTEXT.get() or {})
             round_context["teacher_critic_round"] = round_id + 1
@@ -3508,7 +3892,11 @@ class TraceBeamSearchSystem:
             reviews.append(review)
             question_versions.append(teacher_question)
             score = self._safe_float(review.get("score", 0.0), 0.0)
-            if bool(review.get("passed")) and self._safe_float(review.get("score", 0.0), 0.0) >= threshold:
+            if (
+                has_guiding_question(teacher_question)
+                and bool(review.get("passed"))
+                and self._safe_float(review.get("score", 0.0), 0.0) >= threshold
+            ):
                 return {
                     "approved": True,
                     "teacher_question": teacher_question,
@@ -3528,9 +3916,28 @@ class TraceBeamSearchSystem:
                 finally:
                     TCS_AUDIT_CONTEXT.reset(rewrite_token)
                 rewrite_count += 1
-        best_idx = 0
+        usable_indices = [
+            idx for idx, question in enumerate(question_versions)
+            if has_guiding_question(question)
+        ]
+        if not usable_indices:
+            return {
+                "approved": False,
+                "teacher_question": {},
+                "critic_reviews": reviews,
+                "teacher_critic_rounds": len(reviews),
+                "teacher_rewrite_count": rewrite_count,
+                "teacher_question_forced_best_score": False,
+                "teacher_question_forced_best_round": 0,
+                "teacher_question_forced_below_threshold": True,
+                "teacher_question_forced_best_review": reviews[-1] if reviews else {},
+                "teacher_question_rejection_reason": "empty_teacher_question",
+            }
+
+        best_idx = usable_indices[0]
         best_score = -1.0
-        for idx, review in enumerate(reviews):
+        for idx in usable_indices:
+            review = reviews[idx]
             score = self._safe_float(review.get("score", 0.0), 0.0)
             if score > best_score:
                 best_idx = idx
@@ -3721,6 +4128,8 @@ class TraceBeamSearchSystem:
             "- align with the problem type and answer format\n- repair the target error pattern\n"
             "- improve target-agent accuracy\n- contribute useful reasoning diversity\n"
             "- reduce redundant behavior with peer prompts\n- avoid invalid, overlong, or generic outputs\n\n"
+            "Preserve effective mechanisms from the parent and make one local, executable reasoning change. "
+            "Do not create superficial diversity by changing persona or expert-role labels.\n"
             "Do not use gold answers.\nDo not include concrete sample text.\nDo not include answer labels from examples.\n"
             "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
             f"Do not only paraphrase the parent prompt.\n\n{return_mode}"
@@ -3943,11 +4352,17 @@ class TraceBeamSearchSystem:
             if forced_best and isinstance(forced_best_review, dict)
             else (critic_reviews[-1] if critic_reviews and isinstance(critic_reviews[-1], dict) else {})
         )
-        guiding_question = str(teacher_question.get("socratic_guiding_question", "")) if isinstance(teacher_question, dict) else ""
+        guiding_question = (
+            str(teacher_question.get("socratic_guiding_question", "")).strip()
+            if isinstance(teacher_question, dict)
+            else ""
+        )
+        teacher_question_usable = bool(guiding_question)
+        approved_for_student = approved_for_student and teacher_question_usable
         diagnostics.update(
             {
                 "teacher_question": guiding_question,
-                "teacher_question_approved": bool(approved.get("approved", False)),
+                "teacher_question_approved": bool(approved.get("approved", False)) and teacher_question_usable,
                 "teacher_question_rejected": not approved_for_student,
                 "teacher_question_forced_best_score": forced_best,
                 "teacher_question_forced_best_round": int(approved.get("teacher_question_forced_best_round", 0) or 0),
@@ -3966,10 +4381,15 @@ class TraceBeamSearchSystem:
             }
         )
         if not approved_for_student:
-            diagnostics["teacher_question_rejection_reason"] = str(
-                last_review.get("rewrite_instruction", "")
-                or last_review.get("quality_critique", "")
-                or "teacher question failed critic review"
+            diagnostics["teacher_question_rejection_reason"] = (
+                "empty_teacher_question"
+                if not teacher_question_usable
+                else str(
+                    approved.get("teacher_question_rejection_reason", "")
+                    or last_review.get("rewrite_instruction", "")
+                    or last_review.get("quality_critique", "")
+                    or "teacher question failed critic review"
+                )
             )
             diagnostics["optimizer_underfilled"] = True
             self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
@@ -4056,6 +4476,9 @@ class TraceBeamSearchSystem:
                         "expected_diversity_effect": str(item.get("expected_diversity_effect", "")),
                         "risk_control": str(item.get("risk_control", "")),
                         "rationale": str(item.get("rationale", "")),
+                        "change_summary": str(item.get("change_summary", "")),
+                        "preserved_mechanisms": list(item.get("preserved_mechanisms", [])) if isinstance(item.get("preserved_mechanisms", []), list) else [],
+                        "new_or_modified_mechanism": str(item.get("new_or_modified_mechanism", "")),
                         "candidate_source": "teacher_critic_student",
                         "tcs_call_group_id": tcs_call_group_id,
                         "execution_session_id": execution_session_id,
@@ -4984,6 +5407,7 @@ class TraceBeamSearchSystem:
                 rescue = int((baseline_vote_correct == 0) and (target_agent_correct == 1))
                 row.update(
                     {
+                        "question_hash": sample_hash,
                         "baseline_vote_correct": baseline_vote_correct,
                         "candidate_vote_correct": candidate_vote_correct,
                         "baseline_any_correct": baseline_any_correct,
@@ -4992,6 +5416,7 @@ class TraceBeamSearchSystem:
                         "candidate_individual_correct": [bool(value) for value in rollout.get("individual_correct", [])],
                         "baseline_target_correct": baseline_target_correct,
                         "target_agent_correct": target_agent_correct,
+                        "target_answer": answers[agent_id] if agent_id < len(answers) else "",
                         "target_trace_novelty": target_trace_novelty,
                         "target_useful_diversity": target_useful_diversity,
                         "rescue": rescue,
@@ -5014,6 +5439,14 @@ class TraceBeamSearchSystem:
                         "baseline_solver_reuse_total": int(baseline_reuse_stats.get("solver_reuse_total", 0) or 0),
                     }
                 )
+                if self._emergent_specialization_enabled():
+                    row["behavior_context"] = self._behavior_context_for_baseline(
+                        agent_id=agent_id,
+                        answers=baseline_answers,
+                        gold=gold,
+                        rollout=baseline_rollout,
+                        question_hash=sample_hash,
+                    )
             return row
 
         raw = await asyncio.gather(*[run_one(ex) for ex in eval_batch], return_exceptions=True)
@@ -5113,6 +5546,13 @@ class TraceBeamSearchSystem:
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
             )
+            if self._emergent_specialization_enabled():
+                baseline_candidate_metrics.update(self._candidate_behavior_metrics(rows))
+                baseline_candidate_metrics["trajectory_alignment"] = self.trajectory_alignment(
+                    self.agents[agent_id],
+                    baseline_candidate_metrics.get("candidate_transition_vector", {}),
+                    baseline_candidate_metrics.get("candidate_transition_support", {}),
+                )
             baseline_candidate_metrics.update(
                 compute_candidate_metric_deltas(
                     baseline_target_accuracy=baseline_target_accuracy,
@@ -5272,6 +5712,7 @@ class TraceBeamSearchSystem:
                         "candidate_id": f"g{generation}_a{agent_id}_p{self._hash(parent_id)}_{idx}_{self._hash(prompt)}",
                         "prompt": prompt,
                         "parent_id": parent_id,
+                        "parent_prompt": parent_prompt,
                         "generation": generation,
                         "source": "optimizer",
                         "candidate_source": str(proposal.get("candidate_source", "optimizer") or "optimizer"),
@@ -5543,6 +5984,21 @@ class TraceBeamSearchSystem:
             )
             evaluated.append({**candidate, "metrics": metrics, "reward": float(metrics.get("reward", 0.0))})
         old_hash = self._hash(agent.current_prompt)
+        if self._emergent_specialization_enabled():
+            for item in evaluated:
+                metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+                metrics.update(self._candidate_trajectory_feasibility(agent, item))
+                item["metrics"] = metrics
+                item["trajectory_feasible"] = not bool(metrics.get("rejection_reason", ""))
+        else:
+            for item in evaluated:
+                item["trajectory_feasible"] = True
+        selectable = (
+            [item for item in evaluated if bool(item.get("trajectory_feasible", True))]
+            if self._emergent_specialization_enabled() else evaluated
+        )
+        if not selectable:
+            raise RuntimeError("Trajectory feasibility removed the current active prompt fallback")
         beam_size = max(1, int(self.cfg.beam_size))
         pareto_summary = {
             "num_pareto_feasible": None,
@@ -5552,10 +6008,10 @@ class TraceBeamSearchSystem:
             "pareto_forced_current_fallback": None,
         }
         if self._uses_vote_pareto_selection():
-            selected, pareto_summary = self._select_vote_pareto_beam(evaluated, beam_size, agent.current_prompt)
+            selected, pareto_summary = self._select_vote_pareto_beam(selectable, beam_size, agent.current_prompt)
         else:
-            evaluated.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
-            selected = evaluated[:beam_size]
+            selectable.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
+            selected = selectable[:beam_size]
             for item in evaluated:
                 item["pareto_feasible"] = None
                 item["pareto_rank"] = None
@@ -5579,9 +6035,36 @@ class TraceBeamSearchSystem:
         ] or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
         agent.current_prompt = str(agent.prompt_beam[0]["prompt"])
         changed = old_hash != self._hash(agent.current_prompt)
+        profile_before = dict(agent.specialization_profile)
         if changed:
             agent.history.append(agent.current_prompt)
             agent.accept_count += 1
+            if self._emergent_specialization_enabled():
+                active_metrics = selected[0].get("metrics", {}) if selected else {}
+                self.update_specialization_profile(
+                    agent,
+                    active_metrics.get("candidate_transition_vector", {}),
+                    active_metrics.get("candidate_transition_support", {}),
+                )
+                agent.last_accepted_prompt_hash = self._normalized_prompt_hash(agent.current_prompt)
+                fingerprint = {
+                    str(key): BehaviorFingerprintEntry.from_dict(value)
+                    for key, value in dict(active_metrics.get("behavior_fingerprint", {})).items()
+                    if isinstance(value, dict)
+                }
+                state = BehaviorStateSummary(
+                    state_id=f"e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}_{str(selected[0].get('candidate_id', ''))}",
+                    epoch=int(epoch_id),
+                    prompt_hash=agent.last_accepted_prompt_hash,
+                    behavior_fingerprint=fingerprint,
+                    transition_vector={str(key): float(value) for key, value in dict(active_metrics.get("candidate_transition_vector", {})).items()},
+                    specialization_profile=dict(agent.specialization_profile),
+                    target_accuracy=float(active_metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+                    team_vote_accuracy=float(active_metrics.get("candidate_team_accuracy", 0.0) or 0.0),
+                    mean_vote_margin=float(active_metrics.get("candidate_mean_vote_margin", 0.0) or 0.0),
+                    preserved_mechanisms=[str(value) for value in selected[0].get("proposal", {}).get("preserved_mechanisms", [])] if isinstance(selected[0].get("proposal", {}).get("preserved_mechanisms", []), list) else [],
+                )
+                self._append_bounded_archive(agent.accepted_behavior_archive, state)
         else:
             agent.reject_count += 1
 
@@ -5592,6 +6075,43 @@ class TraceBeamSearchSystem:
             accepted = rank is not None
             in_top_beam = bool(accepted)
             is_top1 = bool(candidate_id == active_candidate_id)
+            active_evolution = bool(is_top1 and changed)
+            if self._emergent_specialization_enabled() and str(item.get("source", "")) == "optimizer":
+                rejection_reason = str(metrics.get("rejection_reason", ""))
+                retained_inactive = bool(in_top_beam and not active_evolution)
+                if not active_evolution and not retained_inactive:
+                    if not rejection_reason:
+                        rejection_reason = "not_selected"
+                        metrics["rejection_reason"] = rejection_reason
+                    rejected_state = RejectedBehaviorSummary(
+                        state_id=f"e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}_{candidate_id}",
+                        epoch=int(epoch_id),
+                        prompt_hash=str(metrics.get("prompt_hash", self._normalized_prompt_hash(str(item.get("prompt", ""))))),
+                        parent_prompt_hash=str(metrics.get("parent_prompt_hash", "")),
+                        rejection_reason=rejection_reason,
+                        prompt_change_ratio=float(metrics.get("prompt_change_ratio", 0.0) or 0.0),
+                        max_behavior_cycle_similarity=float(metrics.get("max_behavior_cycle_similarity", 0.0) or 0.0),
+                        behavior_cycle_overlap=int(metrics.get("behavior_cycle_overlap", 0) or 0),
+                        transition_vector={str(key): float(value) for key, value in dict(metrics.get("candidate_transition_vector", {})).items()},
+                    )
+                    self._append_bounded_archive(agent.rejected_behavior_archive, rejected_state)
+                    if rejection_reason == "exact_prompt_cycle":
+                        agent.duplicate_prompt_reject_count += 1
+                    elif rejection_reason == "behavior_cycle":
+                        agent.cycle_reject_count += 1
+                    elif rejection_reason == "unsupported_large_prompt_shift":
+                        agent.large_shift_reject_count += 1
+                self.trajectory_events.append(self._trajectory_event(
+                    agent_id=agent_id,
+                    epoch_id=epoch_id,
+                    step_id=step_id,
+                    item=item,
+                    accepted=active_evolution,
+                    profile_before=profile_before,
+                    profile_after=dict(agent.specialization_profile),
+                ))
+                if retained_inactive:
+                    self.trajectory_events[-1]["decision"] = "retained_beam_inactive"
             active_selection_key = list(self._vote_pareto_active_sort_key(item)) if self._uses_vote_pareto_selection() and accepted else None
             item_diagnostics = self._empty_optimizer_generation_diagnostics()
             if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
@@ -5678,6 +6198,22 @@ class TraceBeamSearchSystem:
                     "baseline_invalid_rate": float(metrics.get("baseline_invalid_rate", 0.0)),
                     "candidate_invalid_rate": float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0))),
                     "invalid_delta": float(metrics.get("invalid_delta", 0.0)),
+                    "behavior_context_counts": metrics.get("behavior_context_counts", {}),
+                    "candidate_transition_vector": metrics.get("candidate_transition_vector", {}),
+                    "candidate_transition_support": metrics.get("candidate_transition_support", {}),
+                    "specialization_profile_before": profile_before,
+                    "specialization_profile_after": dict(agent.specialization_profile),
+                    "trajectory_alignment": float(metrics.get("trajectory_alignment", 0.0) or 0.0),
+                    "prompt_hash": str(metrics.get("prompt_hash", "")),
+                    "parent_prompt_hash": str(metrics.get("parent_prompt_hash", "")),
+                    "prompt_change_ratio": float(metrics.get("prompt_change_ratio", 0.0) or 0.0),
+                    "max_behavior_cycle_similarity": float(metrics.get("max_behavior_cycle_similarity", 0.0) or 0.0),
+                    "behavior_cycle_overlap": int(metrics.get("behavior_cycle_overlap", 0) or 0),
+                    "matched_behavior_state_id": str(metrics.get("matched_behavior_state_id", "")),
+                    "exact_prompt_cycle": bool(metrics.get("exact_prompt_cycle", False)),
+                    "behavior_cycle_guard_passed": bool(metrics.get("behavior_cycle_guard_passed", True)),
+                    "prompt_trust_region_passed": bool(metrics.get("prompt_trust_region_passed", True)),
+                    "rejection_reason": str(metrics.get("rejection_reason", "")),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
                     "pareto_feasible": item.get("pareto_feasible"),
@@ -5891,16 +6427,24 @@ class TraceBeamSearchSystem:
             for item in getattr(agent, "prompt_beam", []) or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]:
                 prompt = str(item.get("prompt", agent.current_prompt))
                 metrics = await self.evaluate_candidate_prompt(agent_id, prompt, peer_prompts, eval_batch, role_spec=item.get("metrics", {}))
-                refreshed.append(
-                    {
+                refreshed_item = {
                         "candidate_id": str(item.get("id", "")) or self._hash(prompt),
                         "prompt": prompt,
                         "parent_id": item.get("parent_id"),
+                        "parent_prompt": agent.current_prompt,
                         "generation": int(item.get("generation", 0) or 0),
+                        "source": "existing_beam",
                         "metrics": metrics,
                         "reward": float(metrics.get("reward", 0.0)),
                     }
-                )
+                if self._emergent_specialization_enabled():
+                    metrics.update(self._candidate_trajectory_feasibility(agent, refreshed_item))
+                    refreshed_item["metrics"] = metrics
+                refreshed.append(refreshed_item)
+            if self._emergent_specialization_enabled():
+                refreshed = [item for item in refreshed if not str(item.get("metrics", {}).get("rejection_reason", ""))]
+                if not refreshed:
+                    raise RuntimeError("Beam refresh trajectory guard removed the current active prompt")
             if self._uses_vote_pareto_selection():
                 retained, _ = self._select_vote_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
             else:
@@ -5920,6 +6464,46 @@ class TraceBeamSearchSystem:
             changed = old_hash != self._hash(agent.current_prompt)
             if changed:
                 agent.history.append(agent.current_prompt)
+                if self._emergent_specialization_enabled():
+                    profile_before = dict(agent.specialization_profile)
+                    agent.accept_count += 1
+                    active_metrics = retained[0].get("metrics", {})
+                    self.update_specialization_profile(
+                        agent,
+                        active_metrics.get("candidate_transition_vector", {}),
+                        active_metrics.get("candidate_transition_support", {}),
+                    )
+                    agent.last_accepted_prompt_hash = self._normalized_prompt_hash(agent.current_prompt)
+                    fingerprint = {
+                        str(key): BehaviorFingerprintEntry.from_dict(value)
+                        for key, value in dict(active_metrics.get("behavior_fingerprint", {})).items()
+                        if isinstance(value, dict)
+                    }
+                    self._append_bounded_archive(
+                        agent.accepted_behavior_archive,
+                        BehaviorStateSummary(
+                            state_id=f"e{int(epoch_id)}_refresh_a{int(agent_id)}_{str(retained[0].get('candidate_id', ''))}",
+                            epoch=int(epoch_id),
+                            prompt_hash=agent.last_accepted_prompt_hash,
+                            behavior_fingerprint=fingerprint,
+                            transition_vector={str(key): float(value) for key, value in dict(active_metrics.get("candidate_transition_vector", {})).items()},
+                            specialization_profile=dict(agent.specialization_profile),
+                            target_accuracy=float(active_metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+                            team_vote_accuracy=float(active_metrics.get("candidate_team_accuracy", 0.0) or 0.0),
+                            mean_vote_margin=float(active_metrics.get("candidate_mean_vote_margin", 0.0) or 0.0),
+                            preserved_mechanisms=[],
+                        ),
+                    )
+                    self.trajectory_events.append(self._trajectory_event(
+                        agent_id=agent_id,
+                        epoch_id=epoch_id,
+                        step_id=0,
+                        item=retained[0],
+                        accepted=True,
+                        profile_before=profile_before,
+                        profile_after=dict(agent.specialization_profile),
+                    ))
+                    self.trajectory_events[-1]["decision"] = "beam_refresh_activated"
             record = {
                 **self._base_log_fields(),
                 "event": "beam_refresh",
@@ -6201,6 +6785,7 @@ class TraceBeamSearchSystem:
         self.recent_window_records.append(
             {
                 "question_hash": question_hash,
+                "gold": str(solved.get("gold", "")),
                 "traces": traces,
                 "answers": answers,
                 "prompts": prompts,
@@ -6319,7 +6904,7 @@ class TraceBeamSearchSystem:
                 for r in rows
             ])
         ) if rows else 0.0
-        return {
+        result = {
             "size": len(rows),
             "num_test_samples": len(rows),
             "vote_acc": vote_acc,
@@ -6341,6 +6926,39 @@ class TraceBeamSearchSystem:
             "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
             "mean_invalid_rate": float(np.mean([r.get("invalid_rate", 0.0) for r in rows])) if rows else 0.0,
         }
+        if self._emergent_specialization_enabled():
+            profiles = [np.array([float(agent.specialization_profile.get(context, 0.0)) for context in BEHAVIOR_CONTEXT_NAMES], dtype=float) for agent in self.agents]
+            entropies = [float(-np.sum(profile[profile > 0.0] * np.log(profile[profile > 0.0]))) for profile in profiles]
+            jsd_values = []
+            for left in range(len(profiles)):
+                for right in range(left + 1, len(profiles)):
+                    midpoint = 0.5 * (profiles[left] + profiles[right])
+                    kl_left = float(np.sum(np.where(profiles[left] > 0.0, profiles[left] * np.log(profiles[left] / np.maximum(midpoint, 1e-12)), 0.0)))
+                    kl_right = float(np.sum(np.where(profiles[right] > 0.0, profiles[right] * np.log(profiles[right] / np.maximum(midpoint, 1e-12)), 0.0)))
+                    jsd_values.append(0.5 * (kl_left + kl_right))
+            archive_alignments = []
+            for agent in self.agents:
+                for state in agent.accepted_behavior_archive:
+                    min_support = int(getattr(self.cfg, "specialization_min_context_support", 2))
+                    archive_alignments.append(self.trajectory_alignment(agent, state.transition_vector, {key: min_support for key in state.transition_vector}))
+            cycle_rejects = sum(agent.cycle_reject_count for agent in self.agents)
+            duplicate_rejects = sum(agent.duplicate_prompt_reject_count for agent in self.agents)
+            large_shift_rejects = sum(agent.large_shift_reject_count for agent in self.agents)
+            reject_total = cycle_rejects + duplicate_rejects + large_shift_rejects
+            result.update(
+                {
+                    "mean_specialization_profile_entropy": float(np.mean(entropies)) if entropies else 0.0,
+                    "mean_pairwise_specialization_jsd": float(np.mean(jsd_values)) if jsd_values else 0.0,
+                    "accepted_transition_alignment_mean": float(np.mean(archive_alignments)) if archive_alignments else 0.0,
+                    "behavior_cycle_reject_count": int(cycle_rejects),
+                    "behavior_cycle_reject_rate": float(cycle_rejects / reject_total) if reject_total else 0.0,
+                    "exact_prompt_duplicate_reject_count": int(duplicate_rejects),
+                    "large_prompt_shift_reject_count": int(large_shift_rejects),
+                    "profile_update_count_per_agent": [int(agent.specialization_update_count) for agent in self.agents],
+                    "behavior_archive_size_per_agent": [len(agent.accepted_behavior_archive) for agent in self.agents],
+                }
+            )
+        return result
 
     async def evaluate_dataset(self, data: List[Dict[str, str]], split_name: str = "test") -> Dict[str, Any]:
         prompts = self._active_prompt_list()
@@ -6424,6 +7042,7 @@ class TraceBeamSearchSystem:
                     "history": a.history,
                     "accept_count": a.accept_count,
                     "reject_count": a.reject_count,
+                    **a.trajectory_state_dict(),
                 }
                 for i, a in enumerate(self.agents)
             ],
@@ -6443,6 +7062,8 @@ class TraceBeamSearchSystem:
     def flush_update_logs(self):
         self._flush_jsonl("update_logs.jsonl", self.update_logs)
         self.update_logs = []
+        self._flush_jsonl("trajectory_events.jsonl", self.trajectory_events)
+        self.trajectory_events = []
 
     def flush_train_step_logs(self):
         self._flush_jsonl("train_step_logs.jsonl", self.train_step_logs)

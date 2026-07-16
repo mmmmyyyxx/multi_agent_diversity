@@ -186,6 +186,86 @@ def test_teacher_question_three_rounds_fallback_to_best_score():
     assert calls == {"teacher": 1, "critic": 3, "rewrite": 2}
 
 
+def test_empty_teacher_question_cannot_pass_critic_or_reach_student():
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3))
+    calls = {"critic": 0, "rewrite": 0, "student": 0}
+
+    async def fake_teacher(*args, **kwargs):
+        return {}
+
+    async def fake_critic(*args, **kwargs):
+        calls["critic"] += 1
+        return {"passed": True, "score": 0.99}
+
+    async def fake_rewrite(*args, **kwargs):
+        calls["rewrite"] += 1
+        return {"socratic_guiding_question": "   "}
+
+    async def fake_student(**kwargs):
+        calls["student"] += 1
+        return [_valid_student_candidate()]
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+    system.generate_student_candidates = fake_student
+
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {}, 1))
+    assert approved["approved"] is False
+    assert approved["teacher_question_forced_best_score"] is False
+    assert approved["teacher_question_rejection_reason"] == "empty_teacher_question"
+
+    async def fake_approved(**kwargs):
+        return approved
+
+    system.generate_approved_teacher_question = fake_approved
+    candidates = asyncio.run(
+        system.propose_candidates_teacher_critic_student(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis=_diagnosis(),
+            num_candidates=1,
+            generation_batches=_batch(),
+        )
+    )
+    diagnostics = system._optimizer_generation_diagnostics_for_parent(0, "parent")
+
+    assert candidates == []
+    assert calls == {"critic": 3, "rewrite": 2, "student": 0}
+    assert diagnostics["teacher_question_rejected"] is True
+    assert diagnostics["teacher_question_rejection_reason"] == "empty_teacher_question"
+    assert diagnostics["optimizer_underfilled"] is True
+    assert diagnostics["num_student_calls"] == 0
+
+
+def test_highest_score_teacher_fallback_ignores_empty_versions():
+    system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3))
+    questions = iter([
+        {"socratic_guiding_question": "usable first question"},
+        {},
+    ])
+    scores = iter([0.4, 0.99, 0.2])
+
+    async def fake_teacher(*args, **kwargs):
+        return {}
+
+    async def fake_critic(*args, **kwargs):
+        return {"passed": False, "score": next(scores)}
+
+    async def fake_rewrite(*args, **kwargs):
+        return next(questions)
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {}, 1))
+
+    assert approved["teacher_question"]["socratic_guiding_question"] == "usable first question"
+    assert approved["teacher_question_forced_best_round"] == 2
+    assert approved["teacher_question_forced_best_score"] is True
+
+
 def test_student_candidates_include_teacher_metadata():
     system = _system()
 

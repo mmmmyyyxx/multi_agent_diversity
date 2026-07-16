@@ -338,6 +338,14 @@ def restore_system_state(system, state_payload):
         agent.history = [str(x) for x in history] if isinstance(history, list) and history else [agent.current_prompt]
         agent.accept_count = int(saved.get("accept_count", 0) or 0)
         agent.reject_count = int(saved.get("reject_count", 0) or 0)
+        if hasattr(agent, "restore_trajectory_state"):
+            agent.restore_trajectory_state(saved)
+    recent_window_records = state_payload.get("recent_window_records", [])
+    system.recent_window_records = (
+        [dict(record) for record in recent_window_records if isinstance(record, dict)]
+        if isinstance(recent_window_records, list)
+        else []
+    )
 
 
 def restore_prompt_history(system):
@@ -357,7 +365,7 @@ def restore_cost_summary(system):
         system.cost_summary = base
 
 
-CHECKPOINT_VERSION = 2
+CHECKPOINT_VERSION = 3
 
 # Fields that can change the objective, candidate distribution, optimizer
 # behavior, validation decision, or final aggregation of an interrupted run.
@@ -464,6 +472,25 @@ BEHAVIOR_CONFIG_FIELDS = (
         "no_effective_evolution_patience",
         "no_effective_evolution_min_optimizer_candidates",
         "no_effective_evolution_stop_enabled",
+        "emergent_specialization_enabled",
+        "specialization_ema",
+        "specialization_smoothing",
+        "specialization_affinity_weight",
+        "specialization_exploration_floor",
+        "specialization_min_accepted_updates",
+        "specialization_min_context_support",
+        "trajectory_alignment_enabled",
+        "behavior_cycle_guard_enabled",
+        "behavior_archive_size",
+        "behavior_cycle_similarity_threshold",
+        "behavior_cycle_min_overlap",
+        "behavior_cycle_improvement_epsilon",
+        "behavior_cycle_margin_epsilon",
+        "prompt_trust_region_enabled",
+        "prompt_max_change_ratio",
+        "prompt_large_shift_warmup_accepts",
+        "prompt_large_shift_min_vote_delta",
+        "baseline_allowed_vote_loss",
         "split_integrity_json",
 )
 
@@ -524,6 +551,7 @@ def build_training_checkpoint(
         "no_effective_evolution_stopped": bool(no_effective_evolution_stopped),
         "no_effective_evolution_reason": str(no_effective_evolution_reason),
         "state": {
+            "recent_window_records": list(getattr(system, "recent_window_records", [])),
             "agents": [
                 {
                     "agent_id": i,
@@ -533,6 +561,7 @@ def build_training_checkpoint(
                     "history": a.history,
                     "accept_count": a.accept_count,
                     "reject_count": a.reject_count,
+                    **a.trajectory_state_dict(),
                 }
                 for i, a in enumerate(system.agents)
             ],
@@ -602,6 +631,38 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
         reasons.append(f"order length: checkpoint={len(order)} current_train={len(train_data)}")
     if not (0 <= cursor <= len(order) if isinstance(order, list) else False):
         reasons.append(f"cursor: checkpoint={payload.get('cursor')!r} order_length={len(order) if isinstance(order, list) else 'invalid'}")
+    state = payload.get("state", {})
+    saved_window = state.get("recent_window_records") if isinstance(state, dict) else None
+    expected_window_size = cursor % max(1, int(cfg.update_every))
+    if saved_window is None and expected_window_size:
+        reasons.append(
+            "recent_window_records: checkpoint stopped inside an update window but does not contain window state"
+        )
+    elif saved_window is not None and not isinstance(saved_window, list):
+        reasons.append("recent_window_records: checkpoint value is not a list")
+    elif isinstance(saved_window, list) and len(saved_window) != expected_window_size:
+        reasons.append(
+            f"recent_window_records: checkpoint={len(saved_window)} expected={expected_window_size} for cursor={cursor}"
+        )
+
+    # Old resume code could advance a boundary after silently losing its window.
+    train_step_path = os.path.join(cfg.out_dir, "train_step_logs.jsonl")
+    if cursor > 0 and cursor % max(1, int(cfg.update_every)) == 0 and os.path.exists(train_step_path):
+        try:
+            with open(train_step_path, "r", encoding="utf-8") as f:
+                last_row = next((json.loads(line) for line in reversed(f.readlines()) if line.strip()), {})
+            update_summary = last_row.get("update_summary", {}) if isinstance(last_row, dict) else {}
+            if (
+                int(last_row.get("epoch", 0) or 0) == epoch_index + 1
+                and int(last_row.get("step", 0) or 0) == cursor
+                and isinstance(update_summary, dict)
+                and str(update_summary.get("skipped_reason", "")) == "window_not_ready"
+            ):
+                reasons.append(
+                    "recent_window_records: update boundary was skipped as window_not_ready; this run cannot be resumed faithfully"
+                )
+        except (OSError, json.JSONDecodeError):
+            pass
     return reasons
 
 
@@ -684,6 +745,10 @@ async def main_async():
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
     cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))
     cfg.teacher_critic_use_voting_failure = bool(int(cfg.teacher_critic_use_voting_failure))
+    cfg.emergent_specialization_enabled = bool(int(cfg.emergent_specialization_enabled))
+    cfg.trajectory_alignment_enabled = bool(int(cfg.trajectory_alignment_enabled))
+    cfg.behavior_cycle_guard_enabled = bool(int(cfg.behavior_cycle_guard_enabled))
+    cfg.prompt_trust_region_enabled = bool(int(cfg.prompt_trust_region_enabled))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
 
     ensure_dir(cfg.out_dir)
