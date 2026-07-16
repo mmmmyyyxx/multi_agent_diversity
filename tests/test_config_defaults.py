@@ -40,6 +40,13 @@ def test_cli_defaults_match_config():
         "optimizer_fallback_mode",
         "no_effective_evolution_patience",
         "no_effective_evolution_min_optimizer_candidates",
+        "specialization_support_shrinkage",
+        "capability_loss_weight",
+        "specialization_update_period",
+        "capability_affinity_weight",
+        "capability_coverage_gap_weight",
+        "pivotal_loss_guard_epsilon",
+        "shared_error_creation_epsilon",
     ]:
         assert getattr(args, field) == getattr(defaults, field)
     assert bool(args.no_effective_evolution_stop_enabled) == defaults.no_effective_evolution_stop_enabled
@@ -47,6 +54,15 @@ def test_cli_defaults_match_config():
     assert bool(args.student_json_retry_on_parse_fail) == defaults.student_json_retry_on_parse_fail
     assert bool(args.student_json_repair_enabled) == defaults.student_json_repair_enabled
     assert bool(args.student_force_minified_json) == defaults.student_force_minified_json
+    for field in (
+        "boundary_selector_enabled", "shared_error_metrics_enabled", "residual_specialization_enabled",
+        "error_dependence_guard_enabled", "residual_cycle_guard_enabled", "mechanism_trust_region_enabled",
+    ):
+        assert bool(getattr(args, field)) == getattr(defaults, field)
+
+
+def test_parser_accepts_vote_error_pareto():
+    assert build_parser().parse_args(["--candidate_selection_mode", "vote_error_pareto"]).candidate_selection_mode == "vote_error_pareto"
 
 
 def test_parser_accepts_vote_useful_diversity_and_rejects_removed_mode():

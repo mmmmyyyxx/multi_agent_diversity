@@ -157,55 +157,61 @@ The update score is:
 
 A pivotal fix asks whether changing an incorrect agent to gold would make a wrong or tied vote clearly correct. Dominant-wrong redundancy finds incorrect agents repeating the largest wrong cluster near the boundary. Only positive-score agents are selected.
 
-## Emergent Behavioral Specialization
+## Boundary-Aware Residual Specialization (v7)
 
-This optional layer is enabled with `--emergent_specialization_enabled 1`.
-Every agent starts from the same uniform distribution over task-independent
-vote contexts. There is no assigned role, task label, or agent-ID rule.
-
-Candidate evaluation reuses its existing optimization/train rows to classify
-baseline states such as team-wrong pivotal fixes, dominant-wrong redundancy,
-pivotal correct holds, and robust correct states. For each context it averages:
+The current method keeps vote contribution context separate from capability
+evidence:
 
 ```text
-2 * vote_gain - 2 * vote_loss
-+ vote_margin_delta
-+ 0.5 * target_wrong_to_correct
-- 0.5 * target_correct_to_wrong
+vote_context_profile: where an accepted change contributed to the vote
+capability_profile: which task-independent residual error family the agent has reliably repaired
 ```
 
-Only a candidate that becomes the active prompt can update the long-term
-profile. Positive, supported transition values are smoothed, normalized, and
-merged by EMA. Profile affinity contributes at most a small bonus to the
-existing update pressure. Trajectory alignment is placed after invalid rate
-and before candidate rank/ID as a deterministic Pareto tie-break; it does not
-change the three dominance objectives.
-The default minimum context support is two samples, so a one-sample change does
-not update the profile or create alignment evidence.
+`BehaviorContext` names vote contribution contexts. It is not a capability or
+agent role.
+Capability families include entity binding, relation tracking, qualifier or
+negation handling, temporal order, option comparison, contradiction checking,
+numeric or symbolic reasoning, commonsense consistency, final verification,
+output validity, and unknown. Classification is deterministic from existing
+trace and validity diagnostics and makes no extra LLM call.
 
-### Behavioral Cycle Guard
+Candidate rows explicitly measure individual fixes and regressions, pivotal
+rescues and losses, shared-error rescue and creation, and dominant wrong-cluster
+breaks and creations. The aggregate boundary signal is:
 
-Each accepted state stores a bounded compact fingerprint keyed by stable
+```text
+4 * pivotal_rescue_rate - 4 * pivotal_loss_rate
++ shared_error_rescue_score - 1.5 * shared_error_creation_score
++ 0.5 * same_wrong_cluster_break_rate - 0.5 * same_wrong_cluster_create_rate
+```
+
+Agent selection uses rates rather than raw counts. Pivotal errors receive the
+largest weight, followed by near-boundary errors, dominant wrong clusters,
+shared errors, general errors, and invalid outputs. Capability affinity and
+team coverage gaps are small bonuses; neither assigns a permanent specialist.
+
+Accepted active prompts accumulate capability evidence. Support is shrunk by
+`support / (support + specialization_support_shrinkage)`, so one rare pivotal
+sample remains nonzero instead of being discarded. Weighted gains and losses
+are cumulative, losses use `capability_loss_weight=1.5`, and only positive
+posterior evidence enters the EMA profile. Prompt edits are fast state;
+capability profiles update after two accepted edits by default or at epoch end.
+Rejected candidates and evaluations that never become active do not update the
+profile.
+
+The full v7 guard compares candidates with both accepted states and rejected
+failure states on shared question hashes. Similar behavior is rejected only
+when paired behavior utility does not improve. Student candidates must also
+declare preserved mechanisms, exactly one modified mechanism, a change
+summary, target residual family, expected shared-error effect, and risk control.
+
+Each accepted state stores a bounded behavior fingerprint keyed by stable
 question hash: target correctness, canonical answer SHA256, team-vote
 correctness, margin bucket, and behavior context. It stores no question text or
-reasoning trace. Exact normalized-prompt SHA256 repeats are rejected, except
-for the current active fallback. Textually different candidates are rejected
-as behavior cycles only when overlap is sufficient, correctness/answer
-similarity is above threshold, and vote, target accuracy, and margin show no
-meaningful improvement.
-
-### Prompt Trust Region
-
-Prompt change is `1 - SequenceMatcher(parent, candidate).ratio()`. During
-warmup, large changes are allowed. Afterwards, a change above the configured
-ratio must have sufficient vote gain, no target-accuracy regression, and a
-vote-loss rate within `baseline_allowed_vote_loss`. This guides local mechanism
-edits without permanently fixing an agent's direction.
-
-All trajectory mechanisms use optimization/train data only. Validation remains
-reserved for `vote_first` state selection and test runs once on restored final
-prompts. Entropy, profile JSD, trajectory alignment, archive sizes, and cycle
-rejections are diagnostics; none enter reward or best-state selection.
+reasoning trace. The residual cycle guard rejects repeated accepted or rejected
+behavior only when paired utility has not improved. The mechanism trust region
+requires a declared local edit and stronger evidence for large rewrites after
+warmup.
 
 ## Teacher-Critic-Student
 
@@ -217,7 +223,7 @@ The default prompt-evolution architecture is:
 
 Teacher turns abstract vote diagnostics into a guiding question. Critic audits it; rejection feeds back to Teacher for rewrite and re-review. After `teacher_critic_max_rounds`, the highest Critic-scored question can proceed with `teacher_question_forced_best_score=true`. Student returns strict JSON candidates.
 
-Teacher sees aggregate target errors, vote failures, pivotal-fix counts, dominant wrong-answer redundancy, and invalid-output signals. It does not receive raw gold answers or sample-specific task content.
+Teacher sees aggregate target errors, vote failures, pivotal-fix counts, dominant wrong-answer redundancy, and invalid-output signals. In v7, voting failures are used only as abstract evidence of harmful shared-error mechanisms; Teacher proposes one local residual repair while preserving pivotal-correct behavior. It does not receive raw gold answers or sample-specific task content.
 
 New TCS candidates must include Teacher/Critic/Student provenance. Existing beam candidates are exempt. Audit a run with:
 
@@ -244,7 +250,20 @@ minimize vote_loss_rate
 maximize candidate_target_accuracy
 ```
 
-Within a Pareto rank, the deterministic order is vote delta, lower vote loss, vote gain, vote-margin delta, target accuracy, boundary-diversity delta, and lower invalid rate. Emergent mode optionally adds trajectory alignment after invalid rate and before rank/ID.
+Within a Pareto rank, the deterministic order is vote delta, lower vote loss,
+vote gain, vote-margin delta, target accuracy, boundary-diversity delta, and
+lower invalid rate.
+
+`vote_error_pareto` is the separate v7 selector. It preserves the old three
+objectives and adds:
+
+```text
+maximize boundary_shared_error_net_gain
+```
+
+Its optional dependence guard requires zero pivotal loss by default and does
+not permit shared-error creation to exceed rescue by more than `0.02`.
+The old `vote_pareto` dominance and crowding semantics are unchanged.
 
 `vote_first` chooses validation states by:
 
@@ -280,6 +299,20 @@ mean_embedding_diversity
 mean_useful_diversity
 mean_invalid_rate
 vote_tie_rate
+mean_pairwise_double_fault
+mean_pairwise_error_covariance
+same_wrong_pair_rate
+triple_joint_error_rate
+majority_failure_tail_rate
+coverage_depth_c1 ... coverage_depth_c5
+mean_boundary_conditional_error
+mean_pivotal_fix_rate
+mean_pivotal_hold_rate
+shared_error_rescue_rate
+shared_error_creation_rate
+boundary_shared_error_net_gain
+dominant_wrong_cluster_size
+gold_vs_largest_wrong_margin
 ```
 
 `oracle_acc` means at least one agent is correct. `aggregation_gap = oracle_acc - vote_acc` diagnoses correct paths that did not become the final vote.
@@ -298,10 +331,24 @@ counts, and SHA256 file hashes into `run_meta.json`. Reused files are marked
 called strict.
 
 Each run also records the full Git commit, dirty-tree state, and protocol
-version `vote_oriented_v6_emergent_specialization`. Formal runs should start from a committed, clean
+version `vote_oriented_v7_residual_specialization`. Formal runs should start from a committed, clean
 tree. Training checkpoints store a fingerprinted behavior configuration;
 changing reward, guard, candidate-evaluation, selection, tie-break, model, or
-TCS, or emergent-trajectory settings rejects resume instead of mixing optimization semantics. The current checkpoint schema is version 3.
+TCS, or trajectory settings rejects resume instead of mixing optimization semantics. The current checkpoint schema is version 4; schema-v3 checkpoints fail clearly rather than silently restarting.
+
+The matched v7 ablations are:
+
+```text
+shared_vote_pareto_tcs_boundary_selector
+shared_vote_error_pareto_tcs
+shared_vote_error_pareto_tcs_residual_specialization
+shared_vote_error_pareto_tcs_residual_cycle_guard
+```
+
+They retain the same shared initialization, TCS budget, fixed optimization
+pool, candidate batch, solver model, split, tie break, epochs, and beam size as
+`shared_vote_pareto_tcs`. New v7 settings use a static reward schedule so prompt
+text uniqueness cannot change reward weights.
 
 ## Resume
 

@@ -365,7 +365,7 @@ def restore_cost_summary(system):
         system.cost_summary = base
 
 
-CHECKPOINT_VERSION = 3
+CHECKPOINT_VERSION = 4
 
 # Fields that can change the objective, candidate distribution, optimizer
 # behavior, validation decision, or final aggregation of an interrupted run.
@@ -472,14 +472,20 @@ BEHAVIOR_CONFIG_FIELDS = (
         "no_effective_evolution_patience",
         "no_effective_evolution_min_optimizer_candidates",
         "no_effective_evolution_stop_enabled",
-        "emergent_specialization_enabled",
+        "boundary_selector_enabled",
+        "shared_error_metrics_enabled",
+        "residual_specialization_enabled",
+        "error_dependence_guard_enabled",
+        "residual_cycle_guard_enabled",
+        "mechanism_trust_region_enabled",
         "specialization_ema",
-        "specialization_smoothing",
-        "specialization_affinity_weight",
-        "specialization_exploration_floor",
-        "specialization_min_accepted_updates",
-        "specialization_min_context_support",
-        "trajectory_alignment_enabled",
+        "specialization_support_shrinkage",
+        "capability_loss_weight",
+        "specialization_update_period",
+        "capability_affinity_weight",
+        "capability_coverage_gap_weight",
+        "pivotal_loss_guard_epsilon",
+        "shared_error_creation_epsilon",
         "behavior_cycle_guard_enabled",
         "behavior_archive_size",
         "behavior_cycle_similarity_threshold",
@@ -745,8 +751,12 @@ async def main_async():
     cfg.llm_call_logging = bool(int(cfg.llm_call_logging))
     cfg.no_effective_evolution_stop_enabled = bool(int(cfg.no_effective_evolution_stop_enabled))
     cfg.teacher_critic_use_voting_failure = bool(int(cfg.teacher_critic_use_voting_failure))
-    cfg.emergent_specialization_enabled = bool(int(cfg.emergent_specialization_enabled))
-    cfg.trajectory_alignment_enabled = bool(int(cfg.trajectory_alignment_enabled))
+    cfg.boundary_selector_enabled = bool(int(cfg.boundary_selector_enabled))
+    cfg.shared_error_metrics_enabled = bool(int(cfg.shared_error_metrics_enabled))
+    cfg.residual_specialization_enabled = bool(int(cfg.residual_specialization_enabled))
+    cfg.error_dependence_guard_enabled = bool(int(cfg.error_dependence_guard_enabled))
+    cfg.residual_cycle_guard_enabled = bool(int(cfg.residual_cycle_guard_enabled))
+    cfg.mechanism_trust_region_enabled = bool(int(cfg.mechanism_trust_region_enabled))
     cfg.behavior_cycle_guard_enabled = bool(int(cfg.behavior_cycle_guard_enabled))
     cfg.prompt_trust_region_enabled = bool(int(cfg.prompt_trust_region_enabled))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))

@@ -20,9 +20,20 @@ class ExperimentSetting:
     solver_rollout_singleflight: Optional[bool] = None
     candidate_eval_prompt_dedup: Optional[bool] = None
     candidate_eval_cache_logging: Optional[bool] = None
-    emergent_specialization_enabled: Optional[bool] = None
-    specialization_affinity_weight: Optional[float] = None
-    trajectory_alignment_enabled: Optional[bool] = None
+    reward_schedule_mode: str = ""
+    boundary_selector_enabled: Optional[bool] = None
+    shared_error_metrics_enabled: Optional[bool] = None
+    residual_specialization_enabled: Optional[bool] = None
+    error_dependence_guard_enabled: Optional[bool] = None
+    residual_cycle_guard_enabled: Optional[bool] = None
+    mechanism_trust_region_enabled: Optional[bool] = None
+    capability_affinity_weight: Optional[float] = None
+    capability_coverage_gap_weight: Optional[float] = None
+    specialization_support_shrinkage: Optional[float] = None
+    capability_loss_weight: Optional[float] = None
+    specialization_update_period: Optional[int] = None
+    pivotal_loss_guard_epsilon: Optional[float] = None
+    shared_error_creation_epsilon: Optional[float] = None
 
 
 @dataclass(frozen=True)
@@ -71,19 +82,53 @@ ALL_EXPERIMENT_SETTINGS = [
         **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(
-        name="shared_vote_pareto_tcs_cycle_guard",
+        name="shared_vote_pareto_tcs_boundary_selector",
         candidate_selection_mode="vote_pareto",
-        emergent_specialization_enabled=True,
-        specialization_affinity_weight=0.0,
-        trajectory_alignment_enabled=False,
+        reward_schedule_mode="static",
+        boundary_selector_enabled=True,
         **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(
-        name="shared_vote_pareto_tcs_emergent",
-        candidate_selection_mode="vote_pareto",
-        emergent_specialization_enabled=True,
-        specialization_affinity_weight=0.5,
-        trajectory_alignment_enabled=True,
+        name="shared_vote_error_pareto_tcs",
+        candidate_selection_mode="vote_error_pareto",
+        reward_schedule_mode="static",
+        boundary_selector_enabled=True,
+        shared_error_metrics_enabled=True,
+        error_dependence_guard_enabled=True,
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_error_pareto_tcs_residual_specialization",
+        candidate_selection_mode="vote_error_pareto",
+        reward_schedule_mode="static",
+        boundary_selector_enabled=True,
+        shared_error_metrics_enabled=True,
+        residual_specialization_enabled=True,
+        error_dependence_guard_enabled=True,
+        capability_affinity_weight=0.25,
+        capability_coverage_gap_weight=0.25,
+        specialization_support_shrinkage=3.0,
+        capability_loss_weight=1.5,
+        specialization_update_period=2,
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_error_pareto_tcs_residual_cycle_guard",
+        candidate_selection_mode="vote_error_pareto",
+        reward_schedule_mode="static",
+        boundary_selector_enabled=True,
+        shared_error_metrics_enabled=True,
+        residual_specialization_enabled=True,
+        error_dependence_guard_enabled=True,
+        residual_cycle_guard_enabled=True,
+        mechanism_trust_region_enabled=True,
+        capability_affinity_weight=0.25,
+        capability_coverage_gap_weight=0.25,
+        specialization_support_shrinkage=3.0,
+        capability_loss_weight=1.5,
+        specialization_update_period=2,
+        pivotal_loss_guard_epsilon=0.0,
+        shared_error_creation_epsilon=0.02,
         **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(

@@ -6,7 +6,7 @@ from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
 def _system(enabled=True):
     system = object.__new__(TraceBeamSearchSystem)
     system.cfg = Config(
-        emergent_specialization_enabled=enabled,
+        residual_cycle_guard_enabled=enabled,
         prompt_max_change_ratio=0.1,
         prompt_large_shift_warmup_accepts=2,
         prompt_large_shift_min_vote_delta=0.02,
@@ -55,7 +55,7 @@ def test_supported_large_shift_and_small_edit_pass():
     assert system._candidate_trajectory_feasibility(agent, local)["rejection_reason"] == ""
 
 
-def test_emergent_mode_off_preserves_legacy_behavior():
+def test_v7_trajectory_guards_off_skip_prompt_trust_region():
     system = _system(enabled=False)
     system.agents[0].accept_count = 10
     result = system._candidate_trajectory_feasibility(system.agents[0], _item())

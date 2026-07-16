@@ -99,14 +99,20 @@ class Config:
     no_effective_evolution_min_optimizer_candidates: int = 1
     no_effective_evolution_stop_enabled: bool = True
 
-    emergent_specialization_enabled: bool = False
+    boundary_selector_enabled: bool = False
+    shared_error_metrics_enabled: bool = False
+    residual_specialization_enabled: bool = False
+    error_dependence_guard_enabled: bool = False
+    residual_cycle_guard_enabled: bool = False
+    mechanism_trust_region_enabled: bool = False
     specialization_ema: float = 0.20
-    specialization_smoothing: float = 0.05
-    specialization_affinity_weight: float = 0.50
-    specialization_exploration_floor: float = 0.20
-    specialization_min_accepted_updates: int = 1
-    specialization_min_context_support: int = 2
-    trajectory_alignment_enabled: bool = True
+    specialization_support_shrinkage: float = 3.0
+    capability_loss_weight: float = 1.5
+    specialization_update_period: int = 2
+    capability_affinity_weight: float = 0.25
+    capability_coverage_gap_weight: float = 0.25
+    pivotal_loss_guard_epsilon: float = 0.0
+    shared_error_creation_epsilon: float = 0.02
     behavior_cycle_guard_enabled: bool = True
     behavior_archive_size: int = 16
     behavior_cycle_similarity_threshold: float = 0.95
@@ -176,25 +182,31 @@ class Config:
             self.evaluator_model = "deepseek-chat"
         probability_fields = (
             "specialization_ema",
-            "specialization_smoothing",
-            "specialization_exploration_floor",
             "behavior_cycle_similarity_threshold",
             "behavior_cycle_improvement_epsilon",
             "behavior_cycle_margin_epsilon",
             "prompt_max_change_ratio",
             "prompt_large_shift_min_vote_delta",
             "baseline_allowed_vote_loss",
+            "pivotal_loss_guard_epsilon",
+            "shared_error_creation_epsilon",
         )
         for field in probability_fields:
             value = float(getattr(self, field))
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"{field} must be in [0, 1], got {value}")
-        if float(self.specialization_affinity_weight) < 0.0:
-            raise ValueError("specialization_affinity_weight must be non-negative")
-        for field in ("specialization_min_accepted_updates", "prompt_large_shift_warmup_accepts"):
+        for field in (
+            "specialization_support_shrinkage",
+            "capability_loss_weight",
+            "capability_affinity_weight",
+            "capability_coverage_gap_weight",
+        ):
+            if float(getattr(self, field)) < 0.0:
+                raise ValueError(f"{field} must be non-negative")
+        for field in ("prompt_large_shift_warmup_accepts",):
             if int(getattr(self, field)) < 0:
                 raise ValueError(f"{field} must be non-negative")
-        for field in ("specialization_min_context_support", "behavior_archive_size", "behavior_cycle_min_overlap"):
+        for field in ("specialization_update_period", "behavior_archive_size", "behavior_cycle_min_overlap"):
             if int(getattr(self, field)) < 1:
                 raise ValueError(f"{field} must be at least 1")
 
@@ -237,7 +249,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
     parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
@@ -295,14 +307,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no_effective_evolution_patience", type=int, default=defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
-    parser.add_argument("--emergent_specialization_enabled", type=int, default=int(defaults.emergent_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--boundary_selector_enabled", type=int, default=int(defaults.boundary_selector_enabled), choices=[0, 1])
+    parser.add_argument("--shared_error_metrics_enabled", type=int, default=int(defaults.shared_error_metrics_enabled), choices=[0, 1])
+    parser.add_argument("--residual_specialization_enabled", type=int, default=int(defaults.residual_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--error_dependence_guard_enabled", type=int, default=int(defaults.error_dependence_guard_enabled), choices=[0, 1])
+    parser.add_argument("--residual_cycle_guard_enabled", type=int, default=int(defaults.residual_cycle_guard_enabled), choices=[0, 1])
+    parser.add_argument("--mechanism_trust_region_enabled", type=int, default=int(defaults.mechanism_trust_region_enabled), choices=[0, 1])
     parser.add_argument("--specialization_ema", type=float, default=defaults.specialization_ema)
-    parser.add_argument("--specialization_smoothing", type=float, default=defaults.specialization_smoothing)
-    parser.add_argument("--specialization_affinity_weight", type=float, default=defaults.specialization_affinity_weight)
-    parser.add_argument("--specialization_exploration_floor", type=float, default=defaults.specialization_exploration_floor)
-    parser.add_argument("--specialization_min_accepted_updates", type=int, default=defaults.specialization_min_accepted_updates)
-    parser.add_argument("--specialization_min_context_support", type=int, default=defaults.specialization_min_context_support)
-    parser.add_argument("--trajectory_alignment_enabled", type=int, default=int(defaults.trajectory_alignment_enabled), choices=[0, 1])
+    parser.add_argument("--specialization_support_shrinkage", type=float, default=defaults.specialization_support_shrinkage)
+    parser.add_argument("--capability_loss_weight", type=float, default=defaults.capability_loss_weight)
+    parser.add_argument("--specialization_update_period", type=int, default=defaults.specialization_update_period)
+    parser.add_argument("--capability_affinity_weight", type=float, default=defaults.capability_affinity_weight)
+    parser.add_argument("--capability_coverage_gap_weight", type=float, default=defaults.capability_coverage_gap_weight)
+    parser.add_argument("--pivotal_loss_guard_epsilon", type=float, default=defaults.pivotal_loss_guard_epsilon)
+    parser.add_argument("--shared_error_creation_epsilon", type=float, default=defaults.shared_error_creation_epsilon)
     parser.add_argument("--behavior_cycle_guard_enabled", type=int, default=int(defaults.behavior_cycle_guard_enabled), choices=[0, 1])
     parser.add_argument("--behavior_archive_size", type=int, default=defaults.behavior_archive_size)
     parser.add_argument("--behavior_cycle_similarity_threshold", type=float, default=defaults.behavior_cycle_similarity_threshold)

@@ -74,7 +74,7 @@ def _append_common_cli_args(
     reward_mode = _setting_reward_mode(args, setting)
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") == "vote_pareto"
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto"}
         else getattr(args, "candidate_selection_mode", Config().candidate_selection_mode)
     )
     best_state_selection_mode = (
@@ -89,9 +89,6 @@ def _append_common_cli_args(
     candidate_eval_pool_size = _explicit_cli_or_setting(args, setting, "candidate_eval_pool_size", Config().candidate_eval_pool_size)
     candidate_eval_execution_mode = _explicit_cli_or_setting(args, setting, "candidate_eval_execution_mode", Config().candidate_eval_execution_mode)
     defaults = Config()
-    emergent_enabled = _setting_value(setting, "emergent_specialization_enabled", getattr(args, "emergent_specialization_enabled", defaults.emergent_specialization_enabled))
-    affinity_weight = _setting_value(setting, "specialization_affinity_weight", getattr(args, "specialization_affinity_weight", defaults.specialization_affinity_weight))
-    trajectory_alignment = _setting_value(setting, "trajectory_alignment_enabled", getattr(args, "trajectory_alignment_enabled", defaults.trajectory_alignment_enabled))
     cmd.extend(
         [
             "--task_type", task.task_type,
@@ -122,7 +119,7 @@ def _append_common_cli_args(
             "--reward_weight_boundary_diversity", str(args.reward_weight_boundary_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
-            "--reward_schedule_mode", args.reward_schedule_mode,
+            "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
             "--reward_weight_div_delta_early", str(args.reward_weight_div_delta_early),
             "--reward_weight_div_delta_late", str(args.reward_weight_div_delta_late),
@@ -159,14 +156,7 @@ def _append_common_cli_args(
             "--no_effective_evolution_patience", str(args.no_effective_evolution_patience),
             "--no_effective_evolution_min_optimizer_candidates", str(args.no_effective_evolution_min_optimizer_candidates),
             "--no_effective_evolution_stop_enabled", str(args.no_effective_evolution_stop_enabled),
-            "--emergent_specialization_enabled", str(int(emergent_enabled)),
             "--specialization_ema", str(getattr(args, "specialization_ema", defaults.specialization_ema)),
-            "--specialization_smoothing", str(getattr(args, "specialization_smoothing", defaults.specialization_smoothing)),
-            "--specialization_affinity_weight", str(affinity_weight),
-            "--specialization_exploration_floor", str(getattr(args, "specialization_exploration_floor", defaults.specialization_exploration_floor)),
-            "--specialization_min_accepted_updates", str(getattr(args, "specialization_min_accepted_updates", defaults.specialization_min_accepted_updates)),
-            "--specialization_min_context_support", str(getattr(args, "specialization_min_context_support", defaults.specialization_min_context_support)),
-            "--trajectory_alignment_enabled", str(int(trajectory_alignment)),
             "--behavior_cycle_guard_enabled", str(int(getattr(args, "behavior_cycle_guard_enabled", defaults.behavior_cycle_guard_enabled))),
             "--behavior_archive_size", str(getattr(args, "behavior_archive_size", defaults.behavior_archive_size)),
             "--behavior_cycle_similarity_threshold", str(getattr(args, "behavior_cycle_similarity_threshold", defaults.behavior_cycle_similarity_threshold)),
@@ -213,6 +203,17 @@ def _append_common_cli_args(
             "--seed", str(seed),
         ]
     )
+    for name in (
+        "boundary_selector_enabled", "shared_error_metrics_enabled", "residual_specialization_enabled",
+        "error_dependence_guard_enabled", "residual_cycle_guard_enabled", "mechanism_trust_region_enabled",
+        "capability_affinity_weight", "capability_coverage_gap_weight", "specialization_support_shrinkage",
+        "capability_loss_weight", "specialization_update_period", "pivotal_loss_guard_epsilon",
+        "shared_error_creation_epsilon",
+    ):
+        value = _setting_value(setting, name, getattr(args, name, getattr(defaults, name)))
+        if isinstance(getattr(defaults, name), bool):
+            value = int(bool(value))
+        cmd.extend([f"--{name}", str(value)])
 
 
 def run_one(
@@ -482,6 +483,19 @@ def write_accuracy_summary(rows: List[Dict[str, Any]], out_root: Path):
             "mean_useful_diversity",
             "mean_vote_margin",
             "mean_boundary_useful_diversity",
+            "mean_pairwise_double_fault",
+            "mean_pairwise_error_covariance",
+            "same_wrong_pair_rate",
+            "triple_joint_error_rate",
+            "majority_failure_tail_rate",
+            "mean_boundary_conditional_error",
+            "mean_pivotal_fix_rate",
+            "mean_pivotal_hold_rate",
+            "shared_error_rescue_rate",
+            "shared_error_creation_rate",
+            "boundary_shared_error_net_gain",
+            "dominant_wrong_cluster_size",
+            "gold_vs_largest_wrong_margin",
             "total_llm_calls",
             "total_tokens",
             "estimated_cost",
@@ -540,7 +554,7 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
     parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
@@ -602,14 +616,20 @@ def main():
     parser.add_argument("--no_effective_evolution_patience", type=int, default=cli_defaults.no_effective_evolution_patience)
     parser.add_argument("--no_effective_evolution_min_optimizer_candidates", type=int, default=cli_defaults.no_effective_evolution_min_optimizer_candidates)
     parser.add_argument("--no_effective_evolution_stop_enabled", type=int, default=int(cli_defaults.no_effective_evolution_stop_enabled), choices=[0, 1])
-    parser.add_argument("--emergent_specialization_enabled", type=int, default=int(cli_defaults.emergent_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--boundary_selector_enabled", type=int, default=int(cli_defaults.boundary_selector_enabled), choices=[0, 1])
+    parser.add_argument("--shared_error_metrics_enabled", type=int, default=int(cli_defaults.shared_error_metrics_enabled), choices=[0, 1])
+    parser.add_argument("--residual_specialization_enabled", type=int, default=int(cli_defaults.residual_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--error_dependence_guard_enabled", type=int, default=int(cli_defaults.error_dependence_guard_enabled), choices=[0, 1])
+    parser.add_argument("--residual_cycle_guard_enabled", type=int, default=int(cli_defaults.residual_cycle_guard_enabled), choices=[0, 1])
+    parser.add_argument("--mechanism_trust_region_enabled", type=int, default=int(cli_defaults.mechanism_trust_region_enabled), choices=[0, 1])
+    parser.add_argument("--specialization_support_shrinkage", type=float, default=cli_defaults.specialization_support_shrinkage)
+    parser.add_argument("--capability_loss_weight", type=float, default=cli_defaults.capability_loss_weight)
+    parser.add_argument("--specialization_update_period", type=int, default=cli_defaults.specialization_update_period)
+    parser.add_argument("--capability_affinity_weight", type=float, default=cli_defaults.capability_affinity_weight)
+    parser.add_argument("--capability_coverage_gap_weight", type=float, default=cli_defaults.capability_coverage_gap_weight)
+    parser.add_argument("--pivotal_loss_guard_epsilon", type=float, default=cli_defaults.pivotal_loss_guard_epsilon)
+    parser.add_argument("--shared_error_creation_epsilon", type=float, default=cli_defaults.shared_error_creation_epsilon)
     parser.add_argument("--specialization_ema", type=float, default=cli_defaults.specialization_ema)
-    parser.add_argument("--specialization_smoothing", type=float, default=cli_defaults.specialization_smoothing)
-    parser.add_argument("--specialization_affinity_weight", type=float, default=cli_defaults.specialization_affinity_weight)
-    parser.add_argument("--specialization_exploration_floor", type=float, default=cli_defaults.specialization_exploration_floor)
-    parser.add_argument("--specialization_min_accepted_updates", type=int, default=cli_defaults.specialization_min_accepted_updates)
-    parser.add_argument("--specialization_min_context_support", type=int, default=cli_defaults.specialization_min_context_support)
-    parser.add_argument("--trajectory_alignment_enabled", type=int, default=int(cli_defaults.trajectory_alignment_enabled), choices=[0, 1])
     parser.add_argument("--behavior_cycle_guard_enabled", type=int, default=int(cli_defaults.behavior_cycle_guard_enabled), choices=[0, 1])
     parser.add_argument("--behavior_archive_size", type=int, default=cli_defaults.behavior_archive_size)
     parser.add_argument("--behavior_cycle_similarity_threshold", type=float, default=cli_defaults.behavior_cycle_similarity_threshold)

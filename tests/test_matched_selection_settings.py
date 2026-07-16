@@ -38,3 +38,27 @@ def test_reward_ablation_settings_share_the_tcs_execution_contract():
         assert values.pop("name") in expected_rewards
         assert values.pop("reward_mode") == expected_rewards[setting.name]
         assert values == reference
+
+
+def test_v7_ablation_settings_keep_the_matched_search_budget():
+    names = (
+        "shared_vote_pareto_tcs,"
+        "shared_vote_pareto_tcs_boundary_selector,"
+        "shared_vote_error_pareto_tcs,"
+        "shared_vote_error_pareto_tcs_residual_specialization,"
+        "shared_vote_error_pareto_tcs_residual_cycle_guard"
+    )
+    settings = select_settings(names)
+    matched_fields = (
+        "init_mode", "baseline_only", "reward_mode", "best_state_selection_mode",
+        "optimizer_architecture", "optimizer_fallback_mode", "teacher_critic_use_voting_failure",
+        "candidate_eval_strategy", "candidate_eval_pool_size", "candidate_eval_batch_size",
+        "candidate_eval_execution_mode", "solver_rollout_singleflight",
+        "candidate_eval_prompt_dedup", "candidate_eval_cache_logging",
+    )
+    reference = asdict(settings[0])
+    for setting in settings[1:]:
+        values = asdict(setting)
+        assert {key: values[key] for key in matched_fields} == {
+            key: reference[key] for key in matched_fields
+        }

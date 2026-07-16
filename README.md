@@ -29,9 +29,12 @@ Candidate selection supports:
 ```text
 scalar_reward
 vote_pareto
+vote_error_pareto
 ```
 
 `vote_pareto` uses only vote gain, vote loss, and target-agent accuracy as Pareto objectives. Validation selection supports `existing` and `vote_first`; `vote_first` is the default.
+`vote_error_pareto` is the v7 four-objective variant that also maximizes
+`boundary_shared_error_net_gain`; it does not alter legacy `vote_pareto`.
 
 Candidate prompts are evaluated only on optimization/train data. Validation is
 used only for epoch and best-state selection; test is evaluated once after the
@@ -48,38 +51,33 @@ Audit an existing run without changing it:
 python scripts/audit_tcs_run.py <run_dir_or_root>
 ```
 
-## Emergent Behavioral Specialization
+## Boundary-Aware Residual Specialization (v7)
 
-Emergent specialization is optional and disabled by default. When enabled, all
-agents still begin with the same neutral behavior profile; there are no fixed
-roles and no agent-ID-specific rules. An agent's profile is an EMA of positive,
-supported behavior transitions from prompts that actually became active.
-Rejected candidates never update it.
-Contexts below `specialization_min_context_support` are ignored as noisy evidence.
+V7 keeps vote contribution contexts separate from capability residual
+families. All agents start from the same zero-evidence capability profile.
+Only accepted active prompts add cumulative, reliability-shrunk evidence for
+task-independent mechanisms such as relation tracking, qualifier handling,
+option comparison, contradiction checking, or final verification. A rare
+pivotal improvement is shrunk but never discarded solely because support is
+one. Profiles update every two accepted edits by default or at epoch end.
 
-The same optimization/train candidate-evaluation rows provide task-independent
-contexts, transition vectors, and compact behavior fingerprints. No extra
-solver rollout, semantic-clustering call, validation access, or test access is
-used. Profile affinity is a small agent-selection bonus and trajectory
-alignment is only a late Pareto tie-break, never a reward or Pareto objective.
+The v7 selector prioritizes pivotal and near-boundary errors over raw error
+volume. Candidate evaluation reuses the existing paired rows to log pivotal
+rescue/loss, shared-error rescue/creation, and same-wrong-cluster transitions;
+no solver calls are added. The full setting also checks accepted and rejected
+behavior archives and requires one declared local mechanism edit from Student.
 
-The behavioral cycle guard rejects exact prompt repeats and high-similarity
-historical behavior only when the candidate has no meaningful vote, target
-accuracy, or margin improvement. The prompt trust region permits local edits
-and requires stronger vote evidence for large rewrites after warmup.
-
-Matched settings are:
+Matched v7 settings are:
 
 ```text
-shared_vote_pareto_tcs
-shared_vote_pareto_tcs_cycle_guard
-shared_vote_pareto_tcs_emergent
+shared_vote_pareto_tcs_boundary_selector
+shared_vote_error_pareto_tcs
+shared_vote_error_pareto_tcs_residual_specialization
+shared_vote_error_pareto_tcs_residual_cycle_guard
 ```
 
-`trajectory_events.jsonl` records accepted/rejected transitions. Profile
-entropy, pairwise JSD, alignment, and rejection rates are diagnostics only and
-never participate in `vote_first`. JSD growth alone is not success; interpret
-it together with vote and individual accuracy.
+These use a static reward schedule. Prompt hash uniqueness remains diagnostic
+and cannot alter v7 reward weights or the accuracy guard.
 
 ## Task-Level Accuracy Comparison
 
@@ -171,11 +169,12 @@ python scripts/run_task_level_accuracy.py `
 
 Incompatible checkpoints fail clearly instead of silently restarting in the same output directory.
 
-`run_meta.json` records the Git commit, dirty-tree state, protocol version
-`vote_oriented_v6_emergent_specialization`, and checkpoint schema version 3.
+`run_meta.json` records the Git commit, dirty-tree state, and protocol version
+`vote_oriented_v7_residual_specialization`. Checkpoint schema version is 4.
 Formal runs should start from a clean, committed tree; checkpoints also reject
 resume when behavior-affecting reward, evaluation, selection, model, tie-break,
-TCS, or emergent-trajectory configuration differs.
+TCS, or trajectory configuration differs. Schema-v3 checkpoints are rejected
+clearly instead of being resumed under v7 state semantics.
 
 ## Cost Reporting
 

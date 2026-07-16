@@ -114,7 +114,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
 
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") == "vote_pareto"
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto"}
         else args.candidate_selection_mode
     )
     best_state_selection_mode = (
@@ -156,7 +156,7 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_weight_boundary_diversity", str(args.reward_weight_boundary_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
-            "--reward_schedule_mode", args.reward_schedule_mode,
+            "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
             "--reward_weight_div_delta_early", str(args.reward_weight_div_delta_early),
             "--reward_weight_div_delta_late", str(args.reward_weight_div_delta_late),
@@ -234,6 +234,18 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--seed", str(seed),
         ]
     )
+    defaults = Config()
+    for name in (
+        "boundary_selector_enabled", "shared_error_metrics_enabled", "residual_specialization_enabled",
+        "error_dependence_guard_enabled", "residual_cycle_guard_enabled", "mechanism_trust_region_enabled",
+        "capability_affinity_weight", "capability_coverage_gap_weight", "specialization_support_shrinkage",
+        "capability_loss_weight", "specialization_update_period", "pivotal_loss_guard_epsilon",
+        "shared_error_creation_epsilon",
+    ):
+        value = setting_value(name, getattr(args, name, getattr(defaults, name)))
+        if isinstance(getattr(defaults, name), bool):
+            value = int(bool(value))
+        cmd.extend([f"--{name}", str(value)])
 
 
 def run_one(dataset: str, setting: ExperimentSetting, seed: int, args: argparse.Namespace) -> Dict[str, Any]:
@@ -339,7 +351,20 @@ def main():
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--search_mode", type=str, default=cli_defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
+    parser.add_argument("--boundary_selector_enabled", type=int, default=int(cli_defaults.boundary_selector_enabled), choices=[0, 1])
+    parser.add_argument("--shared_error_metrics_enabled", type=int, default=int(cli_defaults.shared_error_metrics_enabled), choices=[0, 1])
+    parser.add_argument("--residual_specialization_enabled", type=int, default=int(cli_defaults.residual_specialization_enabled), choices=[0, 1])
+    parser.add_argument("--error_dependence_guard_enabled", type=int, default=int(cli_defaults.error_dependence_guard_enabled), choices=[0, 1])
+    parser.add_argument("--residual_cycle_guard_enabled", type=int, default=int(cli_defaults.residual_cycle_guard_enabled), choices=[0, 1])
+    parser.add_argument("--mechanism_trust_region_enabled", type=int, default=int(cli_defaults.mechanism_trust_region_enabled), choices=[0, 1])
+    parser.add_argument("--specialization_support_shrinkage", type=float, default=cli_defaults.specialization_support_shrinkage)
+    parser.add_argument("--capability_loss_weight", type=float, default=cli_defaults.capability_loss_weight)
+    parser.add_argument("--specialization_update_period", type=int, default=cli_defaults.specialization_update_period)
+    parser.add_argument("--capability_affinity_weight", type=float, default=cli_defaults.capability_affinity_weight)
+    parser.add_argument("--capability_coverage_gap_weight", type=float, default=cli_defaults.capability_coverage_gap_weight)
+    parser.add_argument("--pivotal_loss_guard_epsilon", type=float, default=cli_defaults.pivotal_loss_guard_epsilon)
+    parser.add_argument("--shared_error_creation_epsilon", type=float, default=cli_defaults.shared_error_creation_epsilon)
     parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first"])
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)

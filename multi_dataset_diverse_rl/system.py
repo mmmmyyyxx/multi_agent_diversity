@@ -23,12 +23,15 @@ from .answer_formats import match_answer as match_answer_format
 from .config import Config
 from .policy import (
     BEHAVIOR_CONTEXT_NAMES,
+    CAPABILITY_RESIDUAL_FAMILY_NAMES,
     AgentState,
     BehaviorContext,
     BehaviorFingerprintEntry,
     BehaviorStateSummary,
+    CapabilityResidualFamily,
     RejectedBehaviorSummary,
-    uniform_specialization_profile,
+    empty_capability_profile,
+    uniform_vote_context_profile,
 )
 from .tasks import TaskSpec, get_task_spec
 from .utils import (
@@ -44,8 +47,17 @@ from .utils import (
 
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
-EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v6_emergent_specialization"
-CHECKPOINT_VERSION = 3
+EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v7_residual_specialization"
+CHECKPOINT_VERSION = 4
+VOTE_CONTEXT_WEIGHTS = {
+    BehaviorContext.TEAM_WRONG_PIVOTAL_FIX.value: 4.0,
+    BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value: 4.0,
+    BehaviorContext.TEAM_CORRECT_DOMINANT_WRONG_REDUNDANCY.value: 2.0,
+    BehaviorContext.TEAM_WRONG_NONPIVOTAL.value: 1.0,
+    BehaviorContext.TEAM_CORRECT_TARGET_WRONG_OTHER.value: 0.5,
+    BehaviorContext.TARGET_CORRECT_ROBUST.value: 0.5,
+    BehaviorContext.INVALID.value: 1.0,
+}
 
 
 def compute_candidate_metric_deltas(
@@ -182,7 +194,30 @@ def pareto_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PARETO_E
     return bool(no_worse and strictly_better)
 
 
-def non_dominated_sort(candidates: Sequence[Dict[str, Any]], eps: float = PARETO_EPSILON) -> List[List[int]]:
+def error_pareto_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PARETO_EPSILON) -> bool:
+    """Four-objective v7 dominance; the legacy three-objective function stays unchanged."""
+    if not pareto_dominates(a, b, eps) and not (
+        abs(_pareto_value(a, "vote_gain_rate") - _pareto_value(b, "vote_gain_rate")) <= eps
+        and abs(_pareto_value(a, "vote_loss_rate") - _pareto_value(b, "vote_loss_rate")) <= eps
+        and abs(_pareto_value(a, "candidate_target_accuracy") - _pareto_value(b, "candidate_target_accuracy")) <= eps
+    ):
+        return False
+    a_boundary = _pareto_value(a, "boundary_shared_error_net_gain")
+    b_boundary = _pareto_value(b, "boundary_shared_error_net_gain")
+    legacy_no_worse = (
+        _pareto_value(a, "vote_gain_rate") >= _pareto_value(b, "vote_gain_rate") - eps
+        and _pareto_value(a, "vote_loss_rate") <= _pareto_value(b, "vote_loss_rate") + eps
+        and _pareto_value(a, "candidate_target_accuracy") >= _pareto_value(b, "candidate_target_accuracy") - eps
+    )
+    strictly_better = pareto_dominates(a, b, eps) or a_boundary > b_boundary + eps
+    return bool(legacy_no_worse and a_boundary >= b_boundary - eps and strictly_better)
+
+
+def non_dominated_sort(
+    candidates: Sequence[Dict[str, Any]],
+    eps: float = PARETO_EPSILON,
+    include_boundary_error: bool = False,
+) -> List[List[int]]:
     """Deterministic non-dominated sorting; returned indices reference the input sequence."""
     remaining = set(range(len(candidates)))
     fronts: List[List[int]] = []
@@ -190,7 +225,12 @@ def non_dominated_sort(candidates: Sequence[Dict[str, Any]], eps: float = PARETO
         front = [
             index
             for index in remaining
-            if not any(pareto_dominates(candidates[other], candidates[index], eps) for other in remaining if other != index)
+            if not any(
+                (error_pareto_dominates if include_boundary_error else pareto_dominates)(
+                    candidates[other], candidates[index], eps
+                )
+                for other in remaining if other != index
+            )
         ]
         front.sort(key=lambda index: str(candidates[index].get("candidate_id", "")))
         fronts.append(front)
@@ -198,16 +238,22 @@ def non_dominated_sort(candidates: Sequence[Dict[str, Any]], eps: float = PARETO
     return fronts
 
 
-def compute_crowding_distances(candidates: Sequence[Dict[str, Any]], front_indices: Sequence[int]) -> Dict[int, float]:
+def compute_crowding_distances(
+    candidates: Sequence[Dict[str, Any]],
+    front_indices: Sequence[int],
+    include_boundary_error: bool = False,
+) -> Dict[int, float]:
     """Compute normalized NSGA-style crowding distances for one Pareto front."""
     distances = {index: 0.0 for index in front_indices}
     if len(front_indices) <= 2:
         return {index: float("inf") for index in front_indices}
-    objectives = (
+    objectives = [
         lambda item: _pareto_value(item, "vote_gain_rate"),
         lambda item: -_pareto_value(item, "vote_loss_rate"),
         lambda item: _pareto_value(item, "candidate_target_accuracy"),
-    )
+    ]
+    if include_boundary_error:
+        objectives.append(lambda item: _pareto_value(item, "boundary_shared_error_net_gain"))
     for objective in objectives:
         ordered = sorted(front_indices, key=lambda index: (objective(candidates[index]), str(candidates[index].get("candidate_id", ""))))
         low, high = objective(candidates[ordered[0]]), objective(candidates[ordered[-1]])
@@ -244,8 +290,15 @@ class TraceBeamSearchSystem:
         self.cfg.candidate_eval_prompt_dedup = bool(int(getattr(self.cfg, "candidate_eval_prompt_dedup", 1)))
         self.cfg.candidate_eval_cache_logging = bool(int(getattr(self.cfg, "candidate_eval_cache_logging", 1)))
         self.cfg.use_baseline_relative_reward = bool(int(getattr(self.cfg, "use_baseline_relative_reward", 1)))
-        self.cfg.emergent_specialization_enabled = bool(int(getattr(self.cfg, "emergent_specialization_enabled", 0)))
-        self.cfg.trajectory_alignment_enabled = bool(int(getattr(self.cfg, "trajectory_alignment_enabled", 1)))
+        for name in (
+            "boundary_selector_enabled",
+            "shared_error_metrics_enabled",
+            "residual_specialization_enabled",
+            "error_dependence_guard_enabled",
+            "residual_cycle_guard_enabled",
+            "mechanism_trust_region_enabled",
+        ):
+            setattr(self.cfg, name, bool(int(getattr(self.cfg, name, 0))))
         self.cfg.behavior_cycle_guard_enabled = bool(int(getattr(self.cfg, "behavior_cycle_guard_enabled", 1)))
         self.cfg.prompt_trust_region_enabled = bool(int(getattr(self.cfg, "prompt_trust_region_enabled", 1)))
         self.task_spec = self._build_task_spec()
@@ -335,10 +388,33 @@ class TraceBeamSearchSystem:
         return self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode()
 
     def _uses_vote_pareto_selection(self) -> bool:
-        return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "vote_pareto"
+        return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() in {
+            "vote_pareto", "vote_error_pareto"
+        }
 
-    def _emergent_specialization_enabled(self) -> bool:
-        return bool(getattr(self.cfg, "emergent_specialization_enabled", False))
+    def _uses_vote_error_pareto_selection(self) -> bool:
+        cfg = getattr(self, "cfg", None)
+        return str(getattr(cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() == "vote_error_pareto"
+
+    def _residual_specialization_enabled(self) -> bool:
+        return bool(getattr(self.cfg, "residual_specialization_enabled", False))
+
+    def _v7_residual_protocol_enabled(self) -> bool:
+        cfg = getattr(self, "cfg", None)
+        return bool(
+            self._uses_vote_error_pareto_selection()
+            or any(bool(getattr(cfg, name, False)) for name in (
+                "boundary_selector_enabled",
+                "shared_error_metrics_enabled",
+                "residual_specialization_enabled",
+                "error_dependence_guard_enabled",
+                "residual_cycle_guard_enabled",
+                "mechanism_trust_region_enabled",
+            ))
+        )
+
+    def _experiment_protocol_version(self) -> str:
+        return EXPERIMENT_PROTOCOL_VERSION
 
     def _normalized_prompt_hash(self, prompt: str) -> str:
         return hashlib.sha256(self._prompt_signature(prompt).encode("utf-8")).hexdigest()
@@ -432,51 +508,229 @@ class TraceBeamSearchSystem:
             "behavior_fingerprint": fingerprint,
         }
 
-    def trajectory_alignment(self, agent: AgentState, transition: Dict[str, float], support: Dict[str, int]) -> float:
-        if agent.specialization_update_count < int(getattr(self.cfg, "specialization_min_accepted_updates", 1)):
-            return 0.0
-        min_support = int(getattr(self.cfg, "specialization_min_context_support", 2))
-        positive = np.array([
-            max(0.0, float(transition.get(context, 0.0))) if int(support.get(context, 0) or 0) >= min_support else 0.0
-            for context in BEHAVIOR_CONTEXT_NAMES
-        ], dtype=float)
-        profile = np.array([max(0.0, float(agent.specialization_profile.get(context, 0.0))) for context in BEHAVIOR_CONTEXT_NAMES], dtype=float)
-        denominator = float(np.linalg.norm(positive) * np.linalg.norm(profile))
-        return self._clip01(float(np.dot(profile, positive) / denominator)) if denominator > 0.0 else 0.0
-
-    def update_specialization_profile(
-        self,
-        agent: AgentState,
-        transition: Dict[str, float],
-        support: Dict[str, int],
-    ) -> bool:
-        positive = {
-            context: max(0.0, float(transition.get(context, 0.0)))
-            if int(support.get(context, 0) or 0) >= int(getattr(self.cfg, "specialization_min_context_support", 2)) else 0.0
-            for context in BEHAVIOR_CONTEXT_NAMES
-        }
-        if not any(value > 0.0 for value in positive.values()):
-            return False
-        smoothing = float(getattr(self.cfg, "specialization_smoothing", 0.05))
-        target_values = {context: value + smoothing for context, value in positive.items()}
-        target_total = sum(target_values.values())
-        target = {context: value / target_total for context, value in target_values.items()}
-        old = dict(agent.specialization_profile or uniform_specialization_profile())
-        mu = float(getattr(self.cfg, "specialization_ema", 0.20))
-        updated = {context: (1.0 - mu) * float(old.get(context, 0.0)) + mu * target[context] for context in BEHAVIOR_CONTEXT_NAMES}
-        total = sum(updated.values())
-        agent.specialization_profile = {context: value / total for context, value in updated.items()}
-        agent.specialization_update_count += 1
-        agent.last_accepted_transition = {context: float(transition.get(context, 0.0)) for context in BEHAVIOR_CONTEXT_NAMES}
-        return True
-
-    def effective_specialization_profile(self, agent: AgentState) -> Dict[str, float]:
-        floor = float(getattr(self.cfg, "specialization_exploration_floor", 0.20))
-        uniform = uniform_specialization_profile()
+    def _candidate_boundary_error_metrics(self, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+        count = len(rows)
+        denominator = float(count) if count else 1.0
+        individual_fix = individual_regression = 0
+        pivotal_rescue = pivotal_loss = 0
+        same_wrong_break = same_wrong_create = 0
+        shared_rescue = shared_creation = 0.0
+        for row in rows:
+            baseline_correct = bool(row.get("baseline_target_correct", False))
+            candidate_correct = bool(row.get("candidate_target_correct", row.get("target_agent_correct", False)))
+            baseline_vote = bool(row.get("baseline_vote_correct", False))
+            candidate_vote = bool(row.get("candidate_vote_correct", False))
+            fixed = not baseline_correct and candidate_correct
+            regressed = baseline_correct and not candidate_correct
+            individual_fix += int(fixed)
+            individual_regression += int(regressed)
+            pivotal_rescue += int(fixed and not baseline_vote and candidate_vote)
+            pivotal_loss += int(regressed and baseline_vote and not candidate_vote)
+            peer_wrong_count = int(row.get("peer_wrong_count", 0) or 0)
+            shared_weight = float(peer_wrong_count) / max(1, len(self.agents) - 1)
+            shared_rescue += shared_weight * int(fixed)
+            shared_creation += shared_weight * int(regressed)
+            baseline_cluster = bool(row.get("baseline_target_in_dominant_wrong_cluster", False))
+            candidate_cluster = bool(row.get("candidate_target_in_dominant_wrong_cluster", False))
+            same_wrong_break += int(baseline_cluster and not candidate_cluster)
+            same_wrong_create += int(not baseline_cluster and candidate_cluster)
+        pivotal_rescue_rate = float(pivotal_rescue) / denominator if count else 0.0
+        pivotal_loss_rate = float(pivotal_loss) / denominator if count else 0.0
+        shared_rescue_score = float(shared_rescue) / denominator if count else 0.0
+        shared_creation_score = float(shared_creation) / denominator if count else 0.0
+        same_wrong_break_rate = float(same_wrong_break) / denominator if count else 0.0
+        same_wrong_create_rate = float(same_wrong_create) / denominator if count else 0.0
+        net_gain = (
+            4.0 * pivotal_rescue_rate
+            - 4.0 * pivotal_loss_rate
+            + shared_rescue_score
+            - 1.5 * shared_creation_score
+            + 0.5 * same_wrong_break_rate
+            - 0.5 * same_wrong_create_rate
+        )
         return {
-            context: (1.0 - floor) * float(agent.specialization_profile.get(context, uniform[context])) + floor * uniform[context]
-            for context in BEHAVIOR_CONTEXT_NAMES
+            "individual_fix_count": int(individual_fix),
+            "individual_regression_count": int(individual_regression),
+            "pivotal_rescue_count": int(pivotal_rescue),
+            "pivotal_rescue_rate": pivotal_rescue_rate,
+            "pivotal_loss_count": int(pivotal_loss),
+            "pivotal_loss_rate": pivotal_loss_rate,
+            "shared_error_rescue_score": shared_rescue_score,
+            "shared_error_creation_score": shared_creation_score,
+            "same_wrong_cluster_break_count": int(same_wrong_break),
+            "same_wrong_cluster_create_count": int(same_wrong_create),
+            "same_wrong_cluster_break_rate": same_wrong_break_rate,
+            "same_wrong_cluster_create_rate": same_wrong_create_rate,
+            "boundary_shared_error_net_gain": float(net_gain),
         }
+
+    def _candidate_residual_metrics(self, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+        tau = float(getattr(self.cfg, "specialization_support_shrinkage", 3.0) or 3.0)
+        support = {family: 0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
+        weighted_gain = {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
+        weighted_loss = {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
+        weighted_sum = {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
+        for row in rows:
+            family = str(row.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value))
+            if family not in support:
+                family = CapabilityResidualFamily.UNKNOWN.value
+            vote_gain = int(not bool(row.get("baseline_vote_correct", 0)) and bool(row.get("candidate_vote_correct", 0)))
+            vote_loss = int(bool(row.get("baseline_vote_correct", 0)) and not bool(row.get("candidate_vote_correct", 0)))
+            margin_delta = float(row.get("candidate_mean_vote_margin", -1.0)) - float(row.get("baseline_mean_vote_margin", -1.0))
+            fixed = int(not bool(row.get("baseline_target_correct", 0)) and bool(row.get("candidate_target_correct", row.get("target_agent_correct", 0))))
+            regressed = int(bool(row.get("baseline_target_correct", 0)) and not bool(row.get("candidate_target_correct", row.get("target_agent_correct", 0))))
+            raw = 2.0 * vote_gain - 2.0 * vote_loss + margin_delta + 0.5 * fixed - 0.5 * regressed
+            context = str(row.get("behavior_context", BehaviorContext.INVALID.value))
+            context_weight = float(VOTE_CONTEXT_WEIGHTS.get(context, 1.0))
+            weighted = context_weight * raw
+            support[family] += 1
+            weighted_sum[family] += weighted
+            weighted_gain[family] += max(0.0, weighted)
+            weighted_loss[family] += max(0.0, -weighted)
+            row["raw_transition_value"] = float(raw)
+            row["vote_context_weight"] = context_weight
+        shrunk = {}
+        reliability = {}
+        for family in CAPABILITY_RESIDUAL_FAMILY_NAMES:
+            reliability[family] = float(support[family] / (support[family] + tau)) if support[family] else 0.0
+            shrunk[family] = float(weighted_sum[family] / (support[family] + tau)) if support[family] else 0.0
+        for row in rows:
+            family = str(row.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value))
+            if family not in support:
+                family = CapabilityResidualFamily.UNKNOWN.value
+            row["support_reliability"] = reliability[family]
+            row["shrunk_transition_value"] = shrunk[family]
+        return {
+            "capability_transition_support": support,
+            "capability_weighted_gain": weighted_gain,
+            "capability_weighted_loss": weighted_loss,
+            "capability_support_reliability": reliability,
+            "capability_shrunk_transition": shrunk,
+            "capability_evidence_rows": [
+                {
+                    "question_hash": str(row.get("question_hash", "")),
+                    "capability_residual_family": str(row.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                    "raw_transition_value": float(row.get("raw_transition_value", 0.0) or 0.0),
+                    "vote_context_weight": float(row.get("vote_context_weight", 0.0) or 0.0),
+                    "support_reliability": float(row.get("support_reliability", 0.0) or 0.0),
+                    "shrunk_transition_value": float(row.get("shrunk_transition_value", 0.0) or 0.0),
+                }
+                for row in rows
+            ],
+        }
+
+    @staticmethod
+    def _candidate_v7_log_fields(metrics: Mapping[str, Any]) -> Dict[str, Any]:
+        count_fields = (
+            "individual_fix_count",
+            "individual_regression_count",
+            "pivotal_rescue_count",
+            "pivotal_loss_count",
+            "same_wrong_cluster_break_count",
+            "same_wrong_cluster_create_count",
+        )
+        rate_fields = (
+            "pivotal_rescue_rate",
+            "pivotal_loss_rate",
+            "shared_error_rescue_score",
+            "shared_error_creation_score",
+            "same_wrong_cluster_break_rate",
+            "same_wrong_cluster_create_rate",
+            "boundary_shared_error_net_gain",
+            "capability_alignment",
+        )
+        fields: Dict[str, Any] = {
+            key: int(metrics.get(key, 0) or 0) for key in count_fields
+        }
+        fields.update({
+            key: float(metrics.get(key, 0.0) or 0.0) for key in rate_fields
+        })
+        fields.update({
+            "error_dependence_guard_passed": bool(metrics.get("error_dependence_guard_passed", True)),
+            "paired_boundary_transition_rows": metrics.get("paired_boundary_transition_rows", []),
+            "capability_transition_support": metrics.get("capability_transition_support", {}),
+            "capability_weighted_gain": metrics.get("capability_weighted_gain", {}),
+            "capability_weighted_loss": metrics.get("capability_weighted_loss", {}),
+            "capability_support_reliability": metrics.get("capability_support_reliability", {}),
+            "capability_shrunk_transition": metrics.get("capability_shrunk_transition", {}),
+            "capability_evidence_rows": metrics.get("capability_evidence_rows", []),
+        })
+        return fields
+
+    def capability_alignment(self, agent: AgentState, metrics: Dict[str, Any]) -> float:
+        positive = np.array([
+            max(0.0, float(metrics.get("capability_shrunk_transition", {}).get(family, 0.0)))
+            for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+        ], dtype=float)
+        profile = np.array([
+            max(0.0, float(agent.capability_profile.get(family, 0.0)))
+            for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+        ], dtype=float)
+        denominator = float(np.linalg.norm(positive) * np.linalg.norm(profile))
+        return self._clip01(float(np.dot(positive, profile) / denominator)) if denominator > 0.0 else 0.0
+
+    def _accumulate_capability_evidence(self, agent: AgentState, metrics: Dict[str, Any], epoch_id: int) -> None:
+        agent.pending_capability_evidence.append({
+            "epoch": int(epoch_id),
+            "support": dict(metrics.get("capability_transition_support", {})),
+            "weighted_gain": dict(metrics.get("capability_weighted_gain", {})),
+            "weighted_loss": dict(metrics.get("capability_weighted_loss", {})),
+        })
+        agent.pending_capability_update_count += 1
+
+    def _flush_capability_profile(self, agent: AgentState, epoch_id: int, force: bool = False) -> bool:
+        period = max(1, int(getattr(self.cfg, "specialization_update_period", 2) or 2))
+        if not agent.pending_capability_evidence or (not force and agent.pending_capability_update_count < period):
+            return False
+        tau = float(getattr(self.cfg, "specialization_support_shrinkage", 3.0) or 3.0)
+        loss_weight = float(getattr(self.cfg, "capability_loss_weight", 1.5) or 1.5)
+        for pending in agent.pending_capability_evidence:
+            for family in CAPABILITY_RESIDUAL_FAMILY_NAMES:
+                evidence = agent.capability_evidence[family]
+                evidence.support += int(pending.get("support", {}).get(family, 0) or 0)
+                evidence.weighted_gain += float(pending.get("weighted_gain", {}).get(family, 0.0) or 0.0)
+                evidence.weighted_loss += float(pending.get("weighted_loss", {}).get(family, 0.0) or 0.0)
+                reliability = float(evidence.support / (evidence.support + tau)) if evidence.support else 0.0
+                evidence.posterior_value = reliability * (
+                    evidence.weighted_gain - loss_weight * evidence.weighted_loss
+                )
+                evidence.last_updated_epoch = int(epoch_id)
+        positive = {
+            family: max(0.0, agent.capability_evidence[family].posterior_value)
+            for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+        }
+        total_positive = sum(positive.values())
+        changed = False
+        if total_positive > 0.0:
+            target = {family: value / total_positive for family, value in positive.items()}
+            old = dict(agent.capability_profile or empty_capability_profile())
+            mu = float(getattr(self.cfg, "specialization_ema", 0.20))
+            updated = {
+                family: (1.0 - mu) * float(old.get(family, 0.0)) + mu * target[family]
+                for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+            }
+            total = sum(updated.values())
+            agent.capability_profile = {family: value / total for family, value in updated.items()}
+            changed = True
+        agent.pending_capability_evidence.clear()
+        agent.pending_capability_update_count = 0
+        if changed:
+            agent.capability_profile_update_count += 1
+        return changed
+
+    def _update_vote_context_profile(self, agent: AgentState, metrics: Dict[str, Any]) -> bool:
+        transition = metrics.get("candidate_transition_vector", {})
+        positive = {context: max(0.0, float(transition.get(context, 0.0))) for context in BEHAVIOR_CONTEXT_NAMES}
+        total = sum(positive.values())
+        if total <= 0.0:
+            return False
+        target = {context: value / total for context, value in positive.items()}
+        mu = float(getattr(self.cfg, "specialization_ema", 0.20))
+        old = dict(agent.vote_context_profile or uniform_vote_context_profile())
+        updated = {context: (1.0 - mu) * old.get(context, 0.0) + mu * target[context] for context in BEHAVIOR_CONTEXT_NAMES}
+        norm = sum(updated.values())
+        agent.vote_context_profile = {context: value / norm for context, value in updated.items()}
+        return True
 
     @staticmethod
     def behavior_fingerprint_similarity(
@@ -499,6 +753,25 @@ class TraceBeamSearchSystem:
             answer_matches += int(current_answer == previous_answer)
         count = len(overlap)
         return 0.7 * correctness_matches / count + 0.3 * answer_matches / count, count
+
+    @staticmethod
+    def behavior_fingerprint_utility(fingerprint: Mapping[str, Any]) -> Dict[str, float]:
+        utility: Dict[str, float] = {}
+        for key, entry in fingerprint.items():
+            target_correct = entry.target_correct if isinstance(entry, BehaviorFingerprintEntry) else bool(entry.get("target_correct", False))
+            team_correct = entry.team_vote_correct if isinstance(entry, BehaviorFingerprintEntry) else bool(entry.get("team_vote_correct", False))
+            margin_bucket = entry.vote_margin_bucket if isinstance(entry, BehaviorFingerprintEntry) else int(entry.get("vote_margin_bucket", 0) or 0)
+            utility[str(key)] = 2.0 * float(team_correct) + float(target_correct) + 0.5 * float(margin_bucket) / 10.0
+        return utility
+
+    @staticmethod
+    def paired_utility_improvement(
+        candidate: Mapping[str, float], history: Mapping[str, float]
+    ) -> Tuple[float, int]:
+        overlap = sorted(set(candidate).intersection(history))
+        if not overlap:
+            return 0.0, 0
+        return float(np.mean([float(candidate[key]) - float(history[key]) for key in overlap])), len(overlap)
 
     def _append_bounded_archive(self, archive: List[Any], value: Any) -> None:
         archive.append(value)
@@ -531,7 +804,10 @@ class TraceBeamSearchSystem:
             "prompt_trust_region_passed": True,
             "rejection_reason": "",
         }
-        if not self._emergent_specialization_enabled():
+        if not (
+            bool(getattr(self.cfg, "residual_cycle_guard_enabled", False))
+            or bool(getattr(self.cfg, "mechanism_trust_region_enabled", False))
+        ):
             return diagnostics
 
         source = self._candidate_pool_source(item)
@@ -542,6 +818,24 @@ class TraceBeamSearchSystem:
         _, _, original_guards_passed = self._vote_pareto_feasibility(metrics)
         if not original_guards_passed:
             return diagnostics
+
+        proposal = item.get("proposal", {}) if isinstance(item.get("proposal", {}), dict) else {}
+        if source == "optimizer" and bool(getattr(self.cfg, "mechanism_trust_region_enabled", False)):
+            preserved = proposal.get("preserved_mechanisms", [])
+            modified = proposal.get("modified_mechanism", proposal.get("new_or_modified_mechanism", ""))
+            change_summary = str(proposal.get("change_summary", "")).strip()
+            mechanism_contract_passed = bool(
+                isinstance(preserved, list)
+                and any(str(value).strip() for value in preserved)
+                and isinstance(modified, str)
+                and bool(modified.strip())
+                and bool(change_summary)
+            )
+            diagnostics["mechanism_contract_passed"] = mechanism_contract_passed
+            if not mechanism_contract_passed:
+                diagnostics["prompt_trust_region_passed"] = False
+                diagnostics["rejection_reason"] = "mechanism_contract_missing"
+                return diagnostics
 
         historic_hashes = {self._normalized_prompt_hash(value) for value in agent.history}
         historic_hashes.update(state.prompt_hash for state in agent.accepted_behavior_archive)
@@ -556,16 +850,34 @@ class TraceBeamSearchSystem:
         best_similarity = 0.0
         best_overlap = 0
         best_state_id = ""
+        residual_cycle = bool(getattr(self.cfg, "residual_cycle_guard_enabled", False))
+        candidate_utility = self.behavior_fingerprint_utility(candidate_fingerprint) if isinstance(candidate_fingerprint, dict) else {}
+        matched_kind = ""
+        utility_improvement = 0.0
         if bool(getattr(self.cfg, "behavior_cycle_guard_enabled", True)) and isinstance(candidate_fingerprint, dict):
             for state in agent.accepted_behavior_archive:
                 similarity, overlap = self.behavior_fingerprint_similarity(candidate_fingerprint, state.behavior_fingerprint)
                 if (similarity, overlap, state.state_id) > (best_similarity, best_overlap, best_state_id):
                     best_similarity, best_overlap, best_state_id = similarity, overlap, state.state_id
+                    matched_kind = "accepted"
+                    historical_utility = state.paired_behavior_utility or self.behavior_fingerprint_utility(state.behavior_fingerprint)
+                    utility_improvement, _ = self.paired_utility_improvement(candidate_utility, historical_utility)
+            if residual_cycle:
+                for state in agent.rejected_behavior_archive:
+                    similarity, overlap = self.behavior_fingerprint_similarity(candidate_fingerprint, state.behavior_fingerprint)
+                    if (similarity, overlap, state.state_id) > (best_similarity, best_overlap, best_state_id):
+                        best_similarity, best_overlap, best_state_id = similarity, overlap, state.state_id
+                        matched_kind = "rejected"
+                        utility_improvement, _ = self.paired_utility_improvement(
+                            candidate_utility, state.paired_behavior_utility
+                        )
         diagnostics.update(
             {
                 "max_behavior_cycle_similarity": float(best_similarity),
                 "behavior_cycle_overlap": int(best_overlap),
                 "matched_behavior_state_id": best_state_id,
+                "matched_behavior_archive": matched_kind,
+                "paired_behavior_utility_improvement": float(utility_improvement),
             }
         )
         meaningful_improvement = bool(
@@ -573,6 +885,10 @@ class TraceBeamSearchSystem:
             or float(metrics.get("accuracy_delta", 0.0) or 0.0) > float(getattr(self.cfg, "behavior_cycle_improvement_epsilon", 0.01))
             or float(metrics.get("vote_margin_delta", 0.0) or 0.0) > float(getattr(self.cfg, "behavior_cycle_margin_epsilon", 0.05))
         )
+        if residual_cycle:
+            meaningful_improvement = bool(
+                utility_improvement > float(getattr(self.cfg, "behavior_cycle_improvement_epsilon", 0.01))
+            )
         behavior_cycle = bool(
             bool(getattr(self.cfg, "behavior_cycle_guard_enabled", True))
             and best_overlap >= int(getattr(self.cfg, "behavior_cycle_min_overlap", 16))
@@ -581,7 +897,11 @@ class TraceBeamSearchSystem:
         )
         diagnostics["behavior_cycle_guard_passed"] = not behavior_cycle
         if behavior_cycle:
-            diagnostics["rejection_reason"] = "behavior_cycle"
+            diagnostics["rejection_reason"] = (
+                "rejected_failure_cycle" if residual_cycle and matched_kind == "rejected"
+                else "accepted_state_cycle" if residual_cycle
+                else "behavior_cycle"
+            )
             return diagnostics
 
         large_shift = bool(
@@ -596,6 +916,13 @@ class TraceBeamSearchSystem:
             and float(metrics.get("accuracy_delta", 0.0) or 0.0) >= 0.0
             and float(metrics.get("vote_loss_rate", 0.0) or 0.0) <= float(getattr(self.cfg, "baseline_allowed_vote_loss", 0.0))
         )
+        if bool(getattr(self.cfg, "mechanism_trust_region_enabled", False)):
+            large_shift_supported = bool(
+                large_shift_supported
+                and float(metrics.get("pivotal_loss_rate", 0.0) or 0.0) <= 0.0
+                and float(metrics.get("shared_error_creation_score", 0.0) or 0.0)
+                <= float(metrics.get("shared_error_rescue_score", 0.0) or 0.0)
+            )
         diagnostics["prompt_trust_region_passed"] = bool(not large_shift or large_shift_supported)
         if large_shift and not large_shift_supported:
             diagnostics["rejection_reason"] = "unsupported_large_prompt_shift"
@@ -626,13 +953,19 @@ class TraceBeamSearchSystem:
             "behavior_context_counts": metrics.get("behavior_context_counts", {}),
             "candidate_transition_vector": metrics.get("candidate_transition_vector", {}),
             "candidate_transition_support": metrics.get("candidate_transition_support", {}),
-            "specialization_profile_before": profile_before,
-            "specialization_profile_after": profile_after,
-            "trajectory_alignment": float(metrics.get("trajectory_alignment", 0.0) or 0.0),
+            "capability_profile_before": profile_before,
+            "capability_profile_after": profile_after,
+            "vote_context_profile": dict(self.agents[agent_id].vote_context_profile),
+            "capability_profile": dict(self.agents[agent_id].capability_profile),
+            "capability_transition_support": metrics.get("capability_transition_support", {}),
+            "capability_support_reliability": metrics.get("capability_support_reliability", {}),
+            "capability_shrunk_transition": metrics.get("capability_shrunk_transition", {}),
+            "capability_alignment": float(metrics.get("capability_alignment", 0.0) or 0.0),
             **{key: metrics.get(key) for key in (
                 "prompt_hash", "parent_prompt_hash", "prompt_change_ratio",
                 "max_behavior_cycle_similarity", "behavior_cycle_overlap", "matched_behavior_state_id",
                 "exact_prompt_cycle", "behavior_cycle_guard_passed", "prompt_trust_region_passed", "rejection_reason",
+                "matched_behavior_archive", "paired_behavior_utility_improvement", "mechanism_contract_passed",
             )},
         }
 
@@ -644,7 +977,20 @@ class TraceBeamSearchSystem:
         candidate_invalid = float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0)
         accuracy_guard_passed = candidate_target >= baseline_target - float(weights.get("accuracy_guard_epsilon", 0.0))
         invalid_guard_passed = candidate_invalid <= baseline_invalid + float(getattr(self.cfg, "invalid_guard_epsilon", 0.0) or 0.0)
-        return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(accuracy_guard_passed and invalid_guard_passed)
+        dependence_guard_passed = bool(
+            not bool(getattr(self.cfg, "error_dependence_guard_enabled", False))
+            or (
+                float(metrics.get("pivotal_loss_rate", 0.0) or 0.0)
+                <= float(getattr(self.cfg, "pivotal_loss_guard_epsilon", 0.0) or 0.0)
+                and float(metrics.get("shared_error_creation_score", 0.0) or 0.0)
+                <= float(metrics.get("shared_error_rescue_score", 0.0) or 0.0)
+                + float(getattr(self.cfg, "shared_error_creation_epsilon", 0.02) or 0.0)
+            )
+        )
+        metrics["error_dependence_guard_passed"] = dependence_guard_passed
+        return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(
+            accuracy_guard_passed and invalid_guard_passed and dependence_guard_passed
+        )
 
     def _vote_pareto_active_sort_key(self, item: Dict[str, Any]) -> Tuple[float, float, float, float, float, float, float, float, int, str]:
         metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
@@ -656,9 +1002,13 @@ class TraceBeamSearchSystem:
             -float(metrics.get("vote_gain_rate", 0.0) or 0.0),
             -float(metrics.get("vote_margin_delta", 0.0) or 0.0),
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
-            -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
+            -float(
+                metrics.get("boundary_shared_error_net_gain", 0.0)
+                if self._uses_vote_error_pareto_selection()
+                else metrics.get("boundary_useful_diversity_delta", 0.0)
+                or 0.0
+            ),
             float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
-            -float(metrics.get("trajectory_alignment", 0.0) or 0.0) if self._emergent_specialization_enabled() and bool(getattr(self.cfg, "trajectory_alignment_enabled", True)) else 0.0,
             normalized_rank,
             str(item.get("candidate_id", "")),
         )
@@ -673,9 +1023,13 @@ class TraceBeamSearchSystem:
             -float(metrics.get("vote_gain_rate", 0.0) or 0.0),
             -float(metrics.get("vote_margin_delta", 0.0) or 0.0),
             -float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
-            -float(metrics.get("boundary_useful_diversity_delta", 0.0) or 0.0),
+            -float(
+                metrics.get("boundary_shared_error_net_gain", 0.0)
+                if self._uses_vote_error_pareto_selection()
+                else metrics.get("boundary_useful_diversity_delta", 0.0)
+                or 0.0
+            ),
             float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0),
-            -float(metrics.get("trajectory_alignment", 0.0) or 0.0) if self._emergent_specialization_enabled() and bool(getattr(self.cfg, "trajectory_alignment_enabled", True)) else 0.0,
             str(item.get("candidate_id", "")),
         )
 
@@ -694,6 +1048,7 @@ class TraceBeamSearchSystem:
                 {
                     "accuracy_guard_passed": accuracy_passed,
                     "invalid_guard_passed": invalid_passed,
+                    "error_dependence_guard_passed": bool(metrics.get("error_dependence_guard_passed", True)),
                 }
             )
             item["metrics"] = metrics
@@ -717,10 +1072,13 @@ class TraceBeamSearchSystem:
             feasible = [fallback]
             forced_fallback = True
 
-        fronts_by_item = non_dominated_sort(feasible)
+        include_boundary_error = self._uses_vote_error_pareto_selection()
+        fronts_by_item = non_dominated_sort(feasible, include_boundary_error=include_boundary_error)
         retained: List[Dict[str, Any]] = []
         for rank, front_indices in enumerate(fronts_by_item):
-            distances = compute_crowding_distances(feasible, front_indices)
+            distances = compute_crowding_distances(
+                feasible, front_indices, include_boundary_error=include_boundary_error
+            )
             front = []
             for index in front_indices:
                 item = feasible[index]
@@ -1269,7 +1627,7 @@ class TraceBeamSearchSystem:
             "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
             "execution_session_id": self.execution_session_id,
             "previous_execution_session_id": self.previous_execution_session_id,
-            "experiment_protocol_version": EXPERIMENT_PROTOCOL_VERSION,
+            "experiment_protocol_version": self._experiment_protocol_version(),
             "checkpoint_version": CHECKPOINT_VERSION,
             **provenance,
             "split_integrity": self._split_integrity_metadata(),
@@ -1487,7 +1845,7 @@ class TraceBeamSearchSystem:
     def _required_optimizer_fields(self, architecture: Optional[str] = None) -> List[str]:
         arch = str(architecture or getattr(self.cfg, "optimizer_architecture", "one_shot") or "one_shot").lower()
         if arch == "teacher_critic_student":
-            return [
+            required = [
                 "candidate_prompt",
                 "student_interpretation_of_question",
                 "target_error_pattern",
@@ -1501,6 +1859,15 @@ class TraceBeamSearchSystem:
                 "risk_control",
                 "rationale",
             ]
+            if self._v7_residual_protocol_enabled():
+                required.extend([
+                    "preserved_mechanisms",
+                    "modified_mechanism",
+                    "change_summary",
+                    "target_residual_family",
+                    "expected_shared_error_effect",
+                ])
+            return required
         return ["candidate_prompt"]
 
     def _missing_optimizer_fields(
@@ -1638,9 +2005,7 @@ class TraceBeamSearchSystem:
         }
 
     def _student_candidate_schema_json(self) -> str:
-        schema = {
-            "candidates": [
-                {
+        candidate_schema = {
                     "candidate_prompt": "standalone prompt, <= 900 chars",
                     "student_interpretation_of_question": "one short sentence",
                     "target_error_pattern": "short phrase",
@@ -1656,9 +2021,14 @@ class TraceBeamSearchSystem:
                     "change_summary": "optional short local-edit summary",
                     "preserved_mechanisms": ["optional preserved mechanism"],
                     "new_or_modified_mechanism": "optional changed mechanism",
-                }
-            ]
         }
+        if self._v7_residual_protocol_enabled():
+            candidate_schema.update({
+                "modified_mechanism": "one local mechanism changed in v7",
+                "target_residual_family": "task-independent residual family",
+                "expected_shared_error_effect": "one short sentence",
+            })
+        schema = {"candidates": [candidate_schema]}
         return json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
 
     def _student_refusal_or_explanation(self, text: str) -> bool:
@@ -1695,6 +2065,16 @@ class TraceBeamSearchSystem:
         return out
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
+        def finalize(row: Dict[str, Any]) -> Dict[str, Any]:
+            if not self._v7_residual_protocol_enabled():
+                return row
+            result = dict(row)
+            result["mechanism_name"] = str(result.pop("role_name", "local_reasoning_mechanism"))
+            prompt = str(result.get("candidate_prompt", ""))
+            prompt = re.sub(r"^You are (?:an?|the) [^.]+\.\s*", "", prompt, flags=re.IGNORECASE)
+            result["candidate_prompt"] = "Use this solver instruction: " + prompt
+            return result
+
         accuracy_repair_roles = [
             {
                 "role_name": "constraint_verifier",
@@ -1774,12 +2154,12 @@ class TraceBeamSearchSystem:
         ]
         if str(mode).lower() in {"accuracy_repair", "accuracy"}:
             role = accuracy_repair_roles[(int(agent_id) + int(index)) % len(accuracy_repair_roles)]
-            return {
+            return finalize({
                 **role,
                 "anti_overlap_rule": "Use the named repair procedure because it fixes a target-agent error pattern, not because it sounds different.",
                 "validity_checks": ["trace shows the repair procedure", "final answer is explicit", "no sample text is copied"],
                 "accuracy_checks": ["repair rule is executed", "final answer is verified before output"],
-            }
+            })
 
         roles = [
             {
@@ -1839,12 +2219,12 @@ class TraceBeamSearchSystem:
         ]
         order = [0, 3, 1, 2, 4]
         role = roles[order[(int(agent_id) + int(index)) % len(order)]]
-        return {
+        return finalize({
             **role,
             "anti_overlap_rule": "Use the named procedure explicitly instead of repeating the default decomposition order.",
             "validity_checks": ["trace shows the named procedure", "final answer is explicit", "no sample text is copied"],
             "accuracy_checks": ["compare plausible alternatives", "verify the final choice against the question"],
-        }
+        })
 
     async def _chat(
         self,
@@ -2677,7 +3057,7 @@ class TraceBeamSearchSystem:
         peer_traces: List[str],
         rollout: Dict[str, Any],
         agent_id: int,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Any]:
         invalid_flags = list(rollout.get("invalid_flags", [])) if isinstance(rollout, dict) else []
         invalid = int(invalid_flags[agent_id]) if agent_id < len(invalid_flags) else int(self.rule_invalid_check(target_trace, target_answer).get("invalid", 0))
         text = normalize_spaces(str(target_trace or ""))
@@ -2687,58 +3067,114 @@ class TraceBeamSearchSystem:
         peer_words = [len(re.findall(r"\w+", str(t or ""))) for t in peer_traces]
         peer_mean_words = float(np.mean(peer_words)) if peer_words else 0.0
 
+        def result(pattern: str, hint: str, family: CapabilityResidualFamily, confidence: float) -> Dict[str, Any]:
+            return {
+                "error_pattern": pattern,
+                "repair_hint": hint,
+                "capability_residual_family": family.value,
+                "confidence": self._clip01(confidence),
+            }
+
         if invalid or not answer_preview["present"]:
             if not answer_preview["present"] or "final_answer:" not in str(target_trace or ""):
-                return {
-                    "error_pattern": "invalid_or_missing_final_answer",
-                    "repair_hint": "add a final answer audit that emits exactly one answer in the required format",
-                }
-            return {
-                "error_pattern": "format_violation",
-                "repair_hint": "check answer format and remove extra alternatives before finalizing",
-            }
+                return result(
+                    "invalid_or_missing_final_answer",
+                    "add a final answer audit that emits exactly one answer in the required format",
+                    CapabilityResidualFamily.OUTPUT_VALIDITY,
+                    1.0,
+                )
+            return result(
+                "format_violation",
+                "check answer format and remove extra alternatives before finalizing",
+                CapabilityResidualFamily.OUTPUT_VALIDITY,
+                1.0,
+            )
         if target_words < 35:
-            return {
-                "error_pattern": "premature_answer",
-                "repair_hint": "delay the final answer until after evidence comparison and a short verification step",
-            }
+            return result(
+                "premature_answer",
+                "delay the final answer until after evidence comparison and a short verification step",
+                CapabilityResidualFamily.FINAL_VERIFICATION,
+                0.8,
+            )
         if re.search(r"\b(calculate|compute|equation|number|sum|difference|multiply|divide|symbol|formula)\b", lower):
             if not re.search(r"\b(check|verify|substitut|unit|sanity)\b", lower):
-                return {
-                    "error_pattern": "calculation_or_symbolic_slip",
-                    "repair_hint": "add a numeric or symbolic sanity check before the final answer",
-                }
+                return result(
+                    "calculation_or_symbolic_slip",
+                    "add a numeric or symbolic sanity check before the final answer",
+                    CapabilityResidualFamily.NUMERIC_SYMBOLIC,
+                    0.9,
+                )
         if re.search(r"\b(option|choice|alternative|candidate)\b", lower) and not re.search(r"\b(eliminate|reject|compare|fail|against)\b", lower):
-            return {
-                "error_pattern": "insufficient_option_elimination",
-                "repair_hint": "force option-by-option elimination before selecting the final answer",
-            }
+            return result(
+                "insufficient_option_elimination",
+                "force option-by-option elimination before selecting the final answer",
+                CapabilityResidualFamily.OPTION_COMPARISON,
+                0.9,
+            )
         if re.search(r"\b(constraint|except|unless|only|must|not|qualifier|condition)\b", lower) and not re.search(r"\b(list|check|satisfy|violate)\b", lower):
-            return {
-                "error_pattern": "missed_constraint",
-                "repair_hint": "force the agent to list explicit constraints before selecting an answer",
-            }
+            return result(
+                "missed_constraint",
+                "force the agent to list explicit constraints before selecting an answer",
+                CapabilityResidualFamily.QUALIFIER_NEGATION,
+                0.85,
+            )
+        if re.search(r"\b(before|after|earlier|later|first|last|sequence|order|timeline|simultaneous)\b", lower):
+            return result(
+                "temporal_order_confusion",
+                "construct and verify an explicit temporal ordering before selecting the answer",
+                CapabilityResidualFamily.TEMPORAL_ORDER,
+                0.75,
+            )
+        if re.search(r"\b(entity|person|object|name|pronoun|refer|correspond|bind)\b", lower):
+            return result(
+                "entity_binding_confusion",
+                "bind each entity and reference explicitly before propagating constraints",
+                CapabilityResidualFamily.ENTITY_BINDING,
+                0.7,
+            )
+        if re.search(r"\b(relation|left|right|above|below|inside|between|adjacent|relative)\b", lower):
+            return result(
+                "relation_tracking_slip",
+                "track each relation in a compact normalized representation and verify composition",
+                CapabilityResidualFamily.RELATION_TRACKING,
+                0.75,
+            )
         if not re.search(r"\b(check|verify|therefore|because|contradiction|assumption|consistent)\b", lower):
-            return {
-                "error_pattern": "weak_verification",
-                "repair_hint": "add a final consistency check against the question before output",
-            }
+            return result(
+                "weak_verification",
+                "add a final consistency check against the question before output",
+                CapabilityResidualFamily.FINAL_VERIFICATION,
+                0.75,
+            )
+        if re.search(r"\b(contradiction|inconsistent|assumption|counterexample|impossible)\b", lower):
+            return result(
+                "contradiction_check_failure",
+                "test the provisional conclusion for contradiction or a concrete counterexample",
+                CapabilityResidualFamily.CONTRADICTION_CHECK,
+                0.7,
+            )
         if peer_mean_words >= max(45.0, float(target_words) * 1.35):
-            return {
-                "error_pattern": "peer_has_more_specific_reasoning",
-                "repair_hint": "require grounding the answer in specific clues rather than generic reasoning",
-            }
+            return result(
+                "peer_has_more_specific_reasoning",
+                "require grounding the answer in specific clues rather than generic reasoning",
+                CapabilityResidualFamily.COMMONSENSE_CONSISTENCY,
+                0.55,
+            )
         generic_terms = len(re.findall(r"\b(careful|think|analyze|reason|solve|answer)\b", lower))
         evidence_terms = len(re.findall(r"\b(because|therefore|constraint|eliminate|verify|assumption|example|case)\b", lower))
         if generic_terms >= 4 and evidence_terms <= 1:
-            return {
-                "error_pattern": "overly_generic_reasoning",
-                "repair_hint": "replace generic reasoning with a concrete evidence-comparison procedure",
-            }
-        return {
-            "error_pattern": "unknown_error_pattern",
-            "repair_hint": "use a concrete compare-then-verify procedure before the final answer",
-        }
+            return result(
+                "overly_generic_reasoning",
+                "replace generic reasoning with a concrete evidence-comparison procedure",
+                CapabilityResidualFamily.COMMONSENSE_CONSISTENCY,
+                0.5,
+            )
+        return result(
+            "unknown_error_pattern",
+            "use a concrete compare-then-verify procedure before the final answer",
+            CapabilityResidualFamily.UNKNOWN,
+            0.0,
+        )
 
     def _case_key(self, sample_hash: str, a: int, b: int) -> str:
         left, right = sorted([int(a), int(b)])
@@ -2895,6 +3331,8 @@ class TraceBeamSearchSystem:
         return ids[: (2 if len(ids) >= 2 else 1)]
 
     def select_reward_agents_for_update(self, diagnosis: Dict[str, Any], metrics: Dict[str, Any]) -> List[int]:
+        if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
+            return self._select_boundary_reward_agents(diagnosis)
         error_counts = list(diagnosis.get("per_agent_error_count", []))
         team_wrong_counts = list(diagnosis.get("per_agent_team_wrong_error_count", []))
         invalid_rates = list(diagnosis.get("per_agent_invalid_rate", []))
@@ -2921,22 +3359,56 @@ class TraceBeamSearchSystem:
                 + 2.0 * value(pivotal_fix_counts, agent_id)
                 + 1.0 * value(dominant_wrong_counts, agent_id)
             )
-            affinity = 0.0
-            context_pressures = diagnosis.get("per_agent_context_pressure", [])
-            if (
-                self._emergent_specialization_enabled()
-                and agent_id < len(context_pressures)
-                and self.agents[agent_id].specialization_update_count >= int(getattr(self.cfg, "specialization_min_accepted_updates", 1))
-                and isinstance(context_pressures[agent_id], dict)
-            ):
-                pressure = {context: max(0.0, float(context_pressures[agent_id].get(context, 0.0))) for context in BEHAVIOR_CONTEXT_NAMES}
-                total_pressure = sum(pressure.values())
+            if base_score > 0.0:
+                scored.append((float(base_score), agent_id))
+        scored.sort(key=lambda item: item[0], reverse=True)
+        selected = [agent_id for _, agent_id in scored]
+        return selected[: (2 if len(selected) >= 2 else 1)]
+
+    def _select_boundary_reward_agents(self, diagnosis: Dict[str, Any]) -> List[int]:
+        ids = list(range(len(self.agents)))
+        random.shuffle(ids)
+
+        def rate(name: str, agent_id: int) -> float:
+            values = diagnosis.get(name, [])
+            return float(values[agent_id]) if agent_id < len(values) else 0.0
+
+        pressures = diagnosis.get("per_agent_capability_pressure", [])
+        gaps = diagnosis.get("capability_coverage_gap", {})
+        scored: List[Tuple[float, int]] = []
+        for agent_id in ids:
+            base_score = (
+                4.0 * rate("per_agent_pivotal_fix_rate", agent_id)
+                + 2.0 * rate("per_agent_near_boundary_error_rate", agent_id)
+                + 1.5 * rate("per_agent_dominant_wrong_rate", agent_id)
+                + 1.0 * rate("per_agent_shared_error_rate", agent_id)
+                + 0.5 * rate("per_agent_general_error_rate", agent_id)
+                + 1.0 * rate("per_agent_invalid_rate", agent_id)
+            )
+            affinity = coverage_bonus = 0.0
+            if agent_id < len(pressures) and isinstance(pressures[agent_id], dict):
+                family_pressure = {
+                    family: max(0.0, float(pressures[agent_id].get(family, 0.0)))
+                    for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+                }
+                total_pressure = sum(family_pressure.values())
                 if total_pressure > 0.0:
-                    profile = self.effective_specialization_profile(self.agents[agent_id])
-                    affinity = sum(profile[context] * pressure[context] / total_pressure for context in BEHAVIOR_CONTEXT_NAMES)
-            score = base_score + float(getattr(self.cfg, "specialization_affinity_weight", 0.50)) * affinity
+                    profile = self.agents[agent_id].capability_profile
+                    affinity = sum(
+                        float(profile.get(family, 0.0)) * family_pressure[family] / total_pressure
+                        for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+                    )
+                    coverage_bonus = sum(
+                        float(gaps.get(family, 0.0)) * family_pressure[family] / total_pressure
+                        for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+                    ) / max(1, (len(self.agents) // 2) + 1)
+            score = (
+                base_score
+                + float(getattr(self.cfg, "capability_affinity_weight", 0.25)) * affinity
+                + float(getattr(self.cfg, "capability_coverage_gap_weight", 0.25)) * coverage_bonus
+            )
             if score > 0.0:
-                scored.append((float(score), agent_id))
+                scored.append((score, agent_id))
         scored.sort(key=lambda item: item[0], reverse=True)
         selected = [agent_id for _, agent_id in scored]
         return selected[: (2 if len(selected) >= 2 else 1)]
@@ -2957,6 +3429,8 @@ class TraceBeamSearchSystem:
             invalids = list(metrics.get("invalid_flags", []))
             team_correct = int(metrics.get("vote_correct", 0) or 0)
             vote_answer = str(metrics.get("vote_answer", ""))
+            gold = str(rec.get("gold", ""))
+            question_hash = str(rec.get("question_hash", ""))
             row_cases = []
             for agent_id in range(len(self.agents)):
                 if agent_id >= len(individual):
@@ -2965,6 +3439,34 @@ class TraceBeamSearchSystem:
                 per_agent_correct[agent_id] += int(individual[agent_id])
                 target_invalid = int(invalids[agent_id]) if agent_id < len(invalids) else 0
                 if int(individual[agent_id]) and not target_invalid:
+                    if bool(getattr(self.cfg, "boundary_selector_enabled", False)) and gold:
+                        context = self._behavior_context_for_baseline(
+                            agent_id=agent_id,
+                            answers=answers,
+                            gold=gold,
+                            rollout=metrics,
+                            question_hash=question_hash,
+                        )
+                        if context == BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value:
+                            target_error_cases.append({
+                                "case_id": self._hash(f"{question_hash}|pivotal_correct_protection|{agent_id}|{idx}"),
+                                "case_type": "pivotal_correct_protection",
+                                "window_index": idx,
+                                "question_hash": question_hash,
+                                "sample_hash": question_hash,
+                                "target_agent_id": agent_id,
+                                "target_trace_preview": self._redact_optimizer_text(traces[agent_id] if agent_id < len(traces) else ""),
+                                "target_answer_preview": self._answer_behavior_preview(answers[agent_id] if agent_id < len(answers) else ""),
+                                "target_invalid": False,
+                                "target_correct": True,
+                                "team_correct": bool(team_correct),
+                                "peer_correct_available": True,
+                                "error_pattern": "pivotal_correct_behavior",
+                                "repair_hint": "preserve the local mechanism that keeps this answer correct near the vote boundary",
+                                "capability_residual_family": CapabilityResidualFamily.UNKNOWN.value,
+                                "confidence": 1.0,
+                                "vote_context": context,
+                            })
                     continue
                 if not team_correct:
                     per_agent_team_wrong[agent_id] += 1
@@ -3004,7 +3506,46 @@ class TraceBeamSearchSystem:
                     rollout=metrics,
                     agent_id=agent_id,
                 )
-                if not int(individual[agent_id]) and any(peer_correct_flags):
+                context = self._behavior_context_for_baseline(
+                    agent_id=agent_id,
+                    answers=answers,
+                    gold=gold,
+                    rollout=metrics,
+                    question_hash=question_hash,
+                ) if gold and (
+                    bool(getattr(self.cfg, "boundary_selector_enabled", False))
+                    or self._v7_residual_protocol_enabled()
+                ) else BehaviorContext.INVALID.value
+                peer_wrong_count = sum(1 for flag in peer_correct_flags if not flag)
+                gold_count = int(metrics.get("gold_vote_count", sum(individual)) or 0)
+                largest_wrong = int(metrics.get("largest_wrong_vote_count", 0) or 0)
+                if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
+                    target_answer = str(answers[agent_id] if agent_id < len(answers) else "")
+                    wrong_counts = Counter(
+                        str(answer or "").strip()
+                        for i, answer in enumerate(answers)
+                        if i < len(individual) and not int(individual[i]) and str(answer or "").strip()
+                    )
+                    in_dominant_wrong = bool(
+                        target_answer.strip()
+                        and wrong_counts.get(target_answer.strip(), 0) == max(wrong_counts.values(), default=0)
+                        and max(wrong_counts.values(), default=0) > 1
+                    )
+                    if target_invalid:
+                        target_case_type = "target_invalid"
+                    elif context == BehaviorContext.TEAM_WRONG_PIVOTAL_FIX.value:
+                        target_case_type = "target_wrong_pivotal_vote_fix"
+                    elif abs(gold_count - largest_wrong) <= 1:
+                        target_case_type = "target_wrong_near_vote_boundary"
+                    elif in_dominant_wrong:
+                        target_case_type = "target_wrong_dominant_wrong_cluster"
+                    elif peer_wrong_count > 0:
+                        target_case_type = "target_wrong_shared_error"
+                    elif any(peer_correct_flags) and not team_correct:
+                        target_case_type = "target_wrong_peer_correct_nonboundary"
+                    else:
+                        target_case_type = "target_wrong_vote_already_correct"
+                elif not int(individual[agent_id]) and any(peer_correct_flags):
                     target_case_type = "target_agent_wrong_and_peer_correct"
                 elif not int(individual[agent_id]) and team_correct:
                     target_case_type = "target_agent_wrong_and_vote_correct"
@@ -3045,6 +3586,10 @@ class TraceBeamSearchSystem:
                         "peer_correct_available": bool(any(peer_correct_flags)),
                         "error_pattern": str(error_info.get("error_pattern", "unknown_error_pattern")),
                         "repair_hint": str(error_info.get("repair_hint", "")),
+                        "capability_residual_family": str(error_info.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                        "confidence": float(error_info.get("confidence", 0.0) or 0.0),
+                        "peer_wrong_count": int(peer_wrong_count),
+                        "vote_context": context,
                         "target_prompt_preview": normalize_spaces(prompts[agent_id])[:260] if agent_id < len(prompts) else "",
                     }
                 )
@@ -3087,9 +3632,11 @@ class TraceBeamSearchSystem:
         per_agent_invalid = [0 for _ in range(num_agents)]
         per_agent_seen = [0 for _ in range(num_agents)]
         per_agent_pressure_rows = [[] for _ in range(num_agents)]
-        per_agent_context_pressure = [{context: 0.0 for context in BEHAVIOR_CONTEXT_NAMES} for _ in range(num_agents)]
         pivotal_fix_counts = [0 for _ in range(num_agents)]
         dominant_wrong_counts = [0 for _ in range(num_agents)]
+        near_boundary_error_counts = [0 for _ in range(num_agents)]
+        shared_error_counts = [0 for _ in range(num_agents)]
+        pivotal_hold_counts = [0 for _ in range(num_agents)]
         vote_values: List[int] = []
         vote_margin_values: List[float] = []
         boundary_diversity_values: List[float] = []
@@ -3130,20 +3677,21 @@ class TraceBeamSearchSystem:
                     per_agent_invalid[agent_id] += invalids[agent_id]
                 if agent_id < len(pressures):
                     per_agent_pressure_rows[agent_id].append(float(pressures[agent_id]))
-                if self._emergent_specialization_enabled() and gold:
-                    context = self._behavior_context_for_baseline(
-                        agent_id=agent_id,
-                        answers=answers,
-                        gold=gold,
-                        rollout=metrics,
-                        question_hash=question_hash,
-                    )
-                    context_pressure = 1.0 if agent_id >= len(individual) or not individual[agent_id] else 0.25
-                    if agent_id < len(invalids) and invalids[agent_id]:
-                        context_pressure += 1.0
-                    per_agent_context_pressure[agent_id][context] += context_pressure
-                if agent_id >= len(individual) or individual[agent_id]:
+                if agent_id >= len(individual):
                     continue
+                if individual[agent_id]:
+                    if gold_count - 1 <= largest_wrong:
+                        pivotal_hold_counts[agent_id] += 1
+                    continue
+                peer_wrong_count = sum(
+                    int(not individual[peer_id])
+                    for peer_id in range(len(individual))
+                    if peer_id != agent_id
+                )
+                if abs(gold_count - largest_wrong) <= 1:
+                    near_boundary_error_counts[agent_id] += 1
+                if peer_wrong_count > 0:
+                    shared_error_counts[agent_id] += 1
                 answer = answers[agent_id] if agent_id < len(answers) else ""
                 remaining_wrong = dict(wrong_counts)
                 if answer and answer in remaining_wrong:
@@ -3180,6 +3728,49 @@ class TraceBeamSearchSystem:
             if 0 <= agent_id < num_agents:
                 homogeneous_case_counts[agent_id] += 1
         accuracy_diagnosis = self._window_accuracy_diagnosis(window_records)
+        boundary_case_types = {
+            "pivotal": "target_wrong_pivotal_vote_fix",
+            "near": "target_wrong_near_vote_boundary",
+            "shared": "target_wrong_shared_error",
+            "dominant": "target_wrong_dominant_wrong_cluster",
+            "hold": "pivotal_correct_protection",
+        }
+        boundary_counts = {
+            key: [0 for _ in range(num_agents)] for key in boundary_case_types
+        }
+        capability_pressure = [
+            {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
+            for _ in range(num_agents)
+        ]
+        for case in accuracy_diagnosis.get("target_error_cases", []):
+            if not isinstance(case, dict):
+                continue
+            agent_id = int(case.get("target_agent_id", -1))
+            if not 0 <= agent_id < num_agents:
+                continue
+            case_type = str(case.get("case_type", ""))
+            for key, expected in boundary_case_types.items():
+                boundary_counts[key][agent_id] += int(case_type == expected)
+            family = str(case.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value))
+            if family not in capability_pressure[agent_id]:
+                family = CapabilityResidualFamily.UNKNOWN.value
+            capability_pressure[agent_id][family] += 1.0
+        seen = [max(1, int(value)) for value in per_agent_seen]
+        coverage_depth = {
+            family: sum(
+                int(
+                    agent.capability_evidence[family].support > 0
+                    and agent.capability_evidence[family].posterior_value > 0.0
+                )
+                for agent in self.agents
+            )
+            for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+        }
+        majority_threshold = (num_agents // 2) + 1
+        coverage_gap = {
+            family: max(0, majority_threshold - depth)
+            for family, depth in coverage_depth.items()
+        }
         current_prompts = [
             {"agent_id": i, "prompt_preview": normalize_spaces(prompt)[:260], "prompt_hash": self._hash(prompt)}
             for i, prompt in enumerate(self._active_prompt_list())
@@ -3208,7 +3799,18 @@ class TraceBeamSearchSystem:
             "per_agent_overlap_pressure": [float(np.mean(values)) if values else 0.0 for values in per_agent_pressure_rows],
             "per_agent_pivotal_fix_count": pivotal_fix_counts,
             "per_agent_dominant_wrong_redundancy_count": dominant_wrong_counts,
-            "per_agent_context_pressure": per_agent_context_pressure,
+            "per_agent_pivotal_fix_rate": [pivotal_fix_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_near_boundary_error_rate": [near_boundary_error_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_shared_error_rate": [shared_error_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_dominant_wrong_rate": [dominant_wrong_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_general_error_rate": [
+                float(accuracy_diagnosis.get("per_agent_error_count", [0] * num_agents)[i]) / seen[i]
+                for i in range(num_agents)
+            ],
+            "per_agent_pivotal_hold_rate": [pivotal_hold_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_capability_pressure": capability_pressure,
+            "capability_coverage_depth": coverage_depth,
+            "capability_coverage_gap": coverage_gap,
             "homogeneity_overlap_threshold": float(self.cfg.homogeneity_overlap_threshold),
         }
 
@@ -3231,12 +3833,24 @@ class TraceBeamSearchSystem:
         ]
 
     def _target_error_cases_for_agent(self, diagnosis: Dict[str, Any], agent_id: int) -> List[Dict[str, Any]]:
-        priority = {
-            "target_agent_wrong_and_peer_correct": 0,
-            "target_agent_wrong_and_vote_correct": 1,
-            "target_agent_wrong_and_vote_wrong": 2,
-            "target_agent_invalid": 3,
-        }
+        if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
+            priority = {
+                "target_wrong_pivotal_vote_fix": 0,
+                "target_wrong_near_vote_boundary": 1,
+                "target_wrong_shared_error": 2,
+                "target_wrong_dominant_wrong_cluster": 3,
+                "target_wrong_peer_correct_nonboundary": 4,
+                "target_wrong_vote_already_correct": 5,
+                "pivotal_correct_protection": 6,
+                "target_invalid": 7,
+            }
+        else:
+            priority = {
+                "target_agent_wrong_and_peer_correct": 0,
+                "target_agent_wrong_and_vote_correct": 1,
+                "target_agent_wrong_and_vote_wrong": 2,
+                "target_agent_invalid": 3,
+            }
         cases = [
             c for c in diagnosis.get("target_error_cases", [])
             if isinstance(c, dict) and int(c.get("target_agent_id", -1)) == int(agent_id)
@@ -3299,6 +3913,102 @@ class TraceBeamSearchSystem:
                 },
             ]
             return [b for b in batches if b.get("cases") or str(b.get("batch_type")) in {"target_error_repair", "accuracy_error_cases"}]
+        if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
+            limit = max(1, int(self.cfg.max_homogeneous_cases_per_agent))
+            by_type = lambda *names: [
+                case for case in target_error_cases if str(case.get("case_type", "")) in set(names)
+            ]
+            pivotal = by_type("target_wrong_pivotal_vote_fix")
+            near_shared = by_type(
+                "target_wrong_near_vote_boundary",
+                "target_wrong_shared_error",
+                "target_wrong_dominant_wrong_cluster",
+            )
+            protection = by_type("pivotal_correct_protection")
+            for state in self.agents[agent_id].accepted_behavior_archive[-5:]:
+                for question_hash, entry in state.behavior_fingerprint.items():
+                    target_correct = entry.target_correct if isinstance(entry, BehaviorFingerprintEntry) else bool(entry.get("target_correct", False))
+                    team_correct = entry.team_vote_correct if isinstance(entry, BehaviorFingerprintEntry) else bool(entry.get("team_vote_correct", False))
+                    if target_correct and not team_correct:
+                        protection.append({
+                            "case_id": self._hash(f"{question_hash}|historical_unique_correct|{agent_id}"),
+                            "case_type": "pivotal_correct_protection",
+                            "sample_hash": str(question_hash),
+                            "target_agent_id": agent_id,
+                            "target_correct": True,
+                            "team_correct": False,
+                            "historical_unique_correct": True,
+                            "repair_hint": "preserve the mechanism that supplied a historically unique correct path",
+                            "capability_residual_family": CapabilityResidualFamily.UNKNOWN.value,
+                        })
+            general = by_type(
+                "target_wrong_peer_correct_nonboundary",
+                "target_wrong_vote_already_correct",
+                "target_invalid",
+            )
+            gaps = diagnosis.get("capability_coverage_gap", {})
+            residual = [
+                case for case in target_error_cases
+                if str(case.get("case_type", "")) != "pivotal_correct_protection"
+            ]
+            residual.sort(
+                key=lambda case: (
+                    -float(gaps.get(str(case.get("capability_residual_family", "unknown")), 0.0)),
+                    -float(self.agents[agent_id].capability_profile.get(str(case.get("capability_residual_family", "unknown")), 0.0)),
+                    int(case.get("window_index", 0) or 0),
+                )
+            )
+            random_cases = self._window_random_case_summaries(
+                agent_id, max(0, int(self.cfg.random_window_cases_per_agent))
+            )
+            invalid_rate = float(diagnosis.get("per_agent_invalid_rate", [0.0] * len(self.agents))[agent_id])
+            batches = [
+                {
+                    "batch_type": "pivotal_error_repair",
+                    "priority": 0,
+                    "cases": pivotal[:limit],
+                    "purpose": "repair errors whose correction can directly recover a team vote",
+                },
+                {
+                    "batch_type": "near_boundary_shared_error_repair",
+                    "priority": 1,
+                    "cases": near_shared[:limit],
+                    "purpose": "reduce harmful shared-error mechanisms near the vote boundary",
+                },
+                {
+                    "batch_type": "residual_capability_repair",
+                    "priority": 2,
+                    "cases": residual[:limit],
+                    "purpose": "make one local executable repair for the highest-pressure residual capability family",
+                },
+                {
+                    "batch_type": "pivotal_correct_protection",
+                    "priority": 3,
+                    "cases": protection[:limit],
+                    "purpose": "preserve mechanisms that already supply pivotal correct votes",
+                },
+                {
+                    "batch_type": "general_accuracy_repair",
+                    "priority": 4,
+                    "cases": general[:limit],
+                    "purpose": "repair remaining target-agent errors without broad prompt replacement",
+                },
+                {
+                    "batch_type": "random_robustness",
+                    "priority": 5,
+                    "cases": random_cases,
+                    "purpose": "check that the local repair remains robust on nearby cases",
+                },
+            ]
+            if invalid_rate >= float(self.cfg.invalid_repair_rate_threshold):
+                invalid_cases = by_type("target_invalid") or self._validity_cases_for_agent(diagnosis, agent_id)
+                batches.insert(0, {
+                    "batch_type": "hard_validity_repair",
+                    "priority": -1,
+                    "cases": invalid_cases[:limit],
+                    "purpose": "repair elevated invalid output failures before other mechanisms",
+                })
+            return [batch for batch in batches if batch.get("cases")]
         top_cases = self._cases_for_agent(diagnosis, agent_id)[: max(0, int(self.cfg.max_homogeneous_cases_per_agent))]
         random_cases = self._window_random_case_summaries(agent_id, max(0, int(self.cfg.random_window_cases_per_agent)))
         validity_cases = self._validity_cases_for_agent(diagnosis, agent_id)[: max(0, int(self.cfg.hard_validity_cases_per_agent))]
@@ -3370,6 +4080,8 @@ class TraceBeamSearchSystem:
             "error_pattern",
             "repair_hint",
         ]
+        if self._v7_residual_protocol_enabled():
+            allowed.extend(["capability_residual_family", "confidence", "peer_wrong_count", "vote_context"])
         for key in allowed:
             if key in case:
                 payload[key] = case.get(key)
@@ -3510,6 +4222,21 @@ class TraceBeamSearchSystem:
             f"window_accuracy_statistics:\n{json.dumps(window_stats, ensure_ascii=False, indent=2)}\n\n"
             f"generation_batches:\n{json.dumps(safe_generation_batches, ensure_ascii=False, indent=2)}"
         )
+        if self._v7_residual_protocol_enabled():
+            system_prompt = (
+                system_prompt.replace("role prompts", "solver instructions")
+                .replace("prompt-role previews", "prompt summaries")
+                .replace("role previews", "prompt summaries")
+            )
+            user_prompt = (
+                user_prompt.replace("role_name", "mechanism_name")
+                .replace("target_role_spec", "target_prompt_state")
+                .replace("peer_role_specs", "peer_prompt_summaries")
+                .replace("complete short role prompt", "complete short solver instruction")
+                .replace("role prompt", "solver instruction")
+                .replace("peer roles", "peer prompts")
+                .replace("prompt-role previews", "prompt summaries")
+            )
         text = await self._chat(
             model=self.cfg.optimizer_model,
             system_prompt=system_prompt,
@@ -3556,6 +4283,7 @@ class TraceBeamSearchSystem:
                     {
                         "candidate_prompt": prompt,
                         "role_name": str(item.get("role_name", "")),
+                        "mechanism_name": str(item.get("mechanism_name", item.get("role_name", ""))),
                         "decision_procedure": item.get("decision_procedure", []),
                         "when_to_use": str(item.get("when_to_use", "")),
                         "fallback_strategy": str(item.get("fallback_strategy", "")),
@@ -3586,7 +4314,8 @@ class TraceBeamSearchSystem:
                 parsed.append(
                     {
                         "candidate_prompt": prompt,
-                        "role_name": str(fallback["role_name"]),
+                        "role_name": str(fallback.get("role_name", fallback.get("mechanism_name", ""))),
+                        "mechanism_name": str(fallback.get("mechanism_name", fallback.get("role_name", ""))),
                         "decision_procedure": list(fallback["decision_procedure"]),
                         "when_to_use": str(fallback["when_to_use"]),
                         "fallback_strategy": str(fallback["fallback_strategy"]),
@@ -3648,8 +4377,7 @@ class TraceBeamSearchSystem:
                 peer_summary = str(case.get("peer_behavior_summary", "") or case.get("purpose", "") or "").strip()
                 if peer_summary:
                     peer_behavior_summary.append(normalize_spaces(peer_summary)[:180])
-                safe_cases.append(
-                    {
+                safe_case = {
                         "case_type": case_type,
                         "target_agent_id": int(case.get("target_agent_id", agent_id) or agent_id),
                         "target_correct": case.get("target_correct", ""),
@@ -3658,8 +4386,13 @@ class TraceBeamSearchSystem:
                         "purpose": normalize_spaces(str(case.get("purpose", "")))[:160],
                         "repair_hint": normalize_spaces(str(case.get("repair_hint", "")))[:180],
                         "target_overlap_pressure": case.get("target_overlap_pressure", ""),
-                    }
-                )
+                }
+                if self._v7_residual_protocol_enabled():
+                    safe_case.update({
+                        "capability_residual_family": str(case.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                        "vote_context": str(case.get("vote_context", "")),
+                    })
+                safe_cases.append(safe_case)
             safe_generation_batches.append(
                 {
                     "batch_type": batch_type,
@@ -3680,6 +4413,11 @@ class TraceBeamSearchSystem:
         window_vote_acc = float(window_stats.get("window_vote_acc", window_stats.get("team_accuracy", 0.0)) or 0.0)
         window_vote_margin = float(window_stats.get("window_mean_vote_margin", -1.0) if window_stats.get("window_mean_vote_margin") is not None else -1.0)
         window_boundary_diversity = float(window_stats.get("window_mean_boundary_useful_diversity", 0.0) or 0.0)
+        residual_families = sorted({
+            str(case.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value))
+            for batch in generation_batches if isinstance(batch, dict)
+            for case in batch.get("cases", []) if isinstance(case, dict)
+        })
         context = {
             "target_agent_id": agent_id,
             "parent_prompt_preview": normalize_spaces(parent_prompt)[:600],
@@ -3720,35 +4458,17 @@ class TraceBeamSearchSystem:
                 "invalid_output_summary": f"target_invalid_rate={target_invalid_rate:.3f}; invalid patterns are abstracted above.",
             },
         }
-        if self._emergent_specialization_enabled():
+        if self._v7_residual_protocol_enabled():
+            context["diagnostic_focus"]["capability_residual_families"] = residual_families[:12]
+            context["target_prompt_state"] = context.pop("target_role_spec")
+            context["peer_prompt_summaries"] = context.pop("peer_role_specs")
+        if self._residual_specialization_enabled():
             agent = self.agents[agent_id]
-            ordered_profile = sorted(agent.specialization_profile.items(), key=lambda item: (-item[1], item[0]))
-            rejected = list(agent.rejected_behavior_archive[-3:])
-            context["observed_long_term_behavior_profile"] = {
-                "strongest_historically_successful_contexts": [key for key, _ in ordered_profile[:3]],
-                "contexts_with_recent_regression": sorted({
-                    key
-                    for state in agent.accepted_behavior_archive[-5:]
-                    for key, value in state.transition_vector.items()
-                    if float(value) < 0.0
-                }),
-                "recent_accepted_transition_directions": {
-                    key: round(float(value), 4)
-                    for key, value in sorted(agent.last_accepted_transition.items())
-                    if abs(float(value)) > 0.0
-                },
-                "recent_cycle_or_large_shift_rejections": [
-                    {"reason": item.rejection_reason, "change_ratio": round(item.prompt_change_ratio, 4)}
-                    for item in rejected
-                    if item.rejection_reason in {"exact_prompt_cycle", "behavior_cycle", "unsupported_large_prompt_shift"}
-                ],
-                "mechanisms_preserved_across_successful_prompts": sorted({
-                    mechanism
-                    for state in agent.accepted_behavior_archive[-5:]
-                    for mechanism in (state.preserved_mechanisms or [])
-                    if mechanism
-                })[:8],
-                "guidance": "Prefer a local mechanism that extends observed successful behavior while preserving robust-correct behavior. Do not force a role.",
+            ordered_profile = sorted(agent.capability_profile.items(), key=lambda item: (-item[1], item[0]))
+            context["observed_long_term_capability_profile"] = {
+                "strongest_supported_residual_families": [key for key, value in ordered_profile[:3] if value > 0.0],
+                "capability_coverage_gap": dict(window_stats.get("capability_coverage_gap", {})),
+                "guidance": "Use residual-family evidence as a small historical affinity, never as an assigned role.",
             }
         return context
 
@@ -3776,6 +4496,17 @@ class TraceBeamSearchSystem:
             "- avoids duplicating peer prompts\n- avoids invalid or overlong outputs\n\n"
             "Return strict JSON only."
         )
+        if self._v7_residual_protocol_enabled():
+            system_prompt = system_prompt.replace(
+                "Do not optimize for voting failure in this step.\n",
+                "Use voting failures only as abstract evidence of harmful shared-error mechanisms. "
+                "Do not game the vote directly, memorize sample answers, or optimize for disagreement by itself.\n",
+            )
+            system_prompt += (
+                "\nFocus the guiding question on one residual error mechanism, a possible pivotal correction, "
+                "and how to preserve pivotal-correct behavior. Ask which local executable reasoning mechanism "
+                "could make the target correct when several peers also fail."
+            )
         user_prompt = (
             "Create one Socratic guiding question for the Student.\n"
             "Return JSON with keys: problem_type_analysis, answer_format_analysis, target_error_analysis, "
@@ -3817,6 +4548,16 @@ class TraceBeamSearchSystem:
             "repetition of recent failed edits, or vague non-executable reasoning steps. Prefer a concrete local mechanism edit.\n\n"
             "Return strict JSON only."
         )
+        if self._v7_residual_protocol_enabled():
+            system_prompt = system_prompt.replace(
+                "- focused on voting failure rather than prompt quality/diversity/accuracy\n\n",
+                "- gaming vote outcomes, memorizing answers, or pursuing disagreement by itself\n\n",
+            )
+            system_prompt += (
+                "\nAudit whether the question targets a concrete residual error mechanism, can reduce a shared-error "
+                "mechanism through a pivotal correction, preserves pivotal-correct behavior, avoids persona-only or "
+                "wholesale rewrites, avoids repeated failed mechanisms, and specifies one executable local decision step."
+            )
         user_prompt = (
             "Audit the Teacher question. Pass only if score >= threshold, the question is specific, grounded in diagnostics, "
             "contains no leakage or hard-coded task role, and is useful for both accuracy and diversity.\n"
@@ -4145,6 +4886,15 @@ class TraceBeamSearchSystem:
             "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
             f"Do not only paraphrase the parent prompt.\n\n{return_mode}"
         )
+        if self._v7_residual_protocol_enabled():
+            item_instruction += (
+                " Include non-empty preserved_mechanisms, exactly one modified_mechanism, change_summary, "
+                "target_residual_family, expected_shared_error_effect, and risk_control."
+            )
+            system_prompt += (
+                "\nMake exactly one local mechanism change. Preserve the listed effective and pivotal-correct mechanisms. "
+                "State how the change should reduce shared error without manufacturing disagreement."
+            )
         user_prompt = (
             "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
             f"{item_instruction}\n\n"
@@ -4308,6 +5058,11 @@ class TraceBeamSearchSystem:
             "target_team_wrong_error_count": agent_team_wrong_counts[agent_id] if agent_id < len(agent_team_wrong_counts) else 0,
             "target_pivotal_fix_count": agent_pivotal_fix_counts[agent_id] if agent_id < len(agent_pivotal_fix_counts) else 0,
             "target_dominant_wrong_redundancy_count": agent_dominant_wrong_counts[agent_id] if agent_id < len(agent_dominant_wrong_counts) else 0,
+            "target_pivotal_fix_rate": (update_diagnosis.get("per_agent_pivotal_fix_rate", [0.0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("per_agent_pivotal_fix_rate", [])) else 0.0),
+            "target_near_boundary_error_rate": (update_diagnosis.get("per_agent_near_boundary_error_rate", [0.0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("per_agent_near_boundary_error_rate", [])) else 0.0),
+            "target_shared_error_rate": (update_diagnosis.get("per_agent_shared_error_rate", [0.0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("per_agent_shared_error_rate", [])) else 0.0),
+            "target_pivotal_hold_rate": (update_diagnosis.get("per_agent_pivotal_hold_rate", [0.0] * len(self.agents))[agent_id] if agent_id < len(update_diagnosis.get("per_agent_pivotal_hold_rate", [])) else 0.0),
+            "capability_coverage_gap": dict(update_diagnosis.get("capability_coverage_gap", {})),
         }
         validity_constraints = {
             "invalid_repair_priority": bool(window_stats["target_invalid_rate"] >= float(self.cfg.invalid_repair_rate_threshold)),
@@ -4448,6 +5203,15 @@ class TraceBeamSearchSystem:
                     filter_reasons.append("schema")
                     continue
                 item = self._truncate_candidate_text_fields(item)
+                if self._v7_residual_protocol_enabled():
+                    if not str(item.get("modified_mechanism", "")).strip():
+                        item["modified_mechanism"] = str(item.get("new_or_modified_mechanism", "")).strip()
+                    if not str(item.get("target_residual_family", "")).strip():
+                        item["target_residual_family"] = CapabilityResidualFamily.UNKNOWN.value
+                    if not str(item.get("expected_shared_error_effect", "")).strip():
+                        item["expected_shared_error_effect"] = str(item.get("error_correlation_reduction", "")).strip()
+                    if not str(item.get("change_summary", "")).strip():
+                        item["change_summary"] = str(item.get("modified_mechanism", "")).strip()
                 missing_fields = self._missing_optimizer_fields(item, architecture="teacher_critic_student")
                 if missing_fields:
                     diagnostics["optimizer_schema_filtered_count"] += 1
@@ -4490,6 +5254,9 @@ class TraceBeamSearchSystem:
                         "change_summary": str(item.get("change_summary", "")),
                         "preserved_mechanisms": list(item.get("preserved_mechanisms", [])) if isinstance(item.get("preserved_mechanisms", []), list) else [],
                         "new_or_modified_mechanism": str(item.get("new_or_modified_mechanism", "")),
+                        "modified_mechanism": str(item.get("modified_mechanism", item.get("new_or_modified_mechanism", ""))),
+                        "target_residual_family": str(item.get("target_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                        "expected_shared_error_effect": str(item.get("expected_shared_error_effect", "")),
                         "candidate_source": "teacher_critic_student",
                         "tcs_call_group_id": tcs_call_group_id,
                         "execution_session_id": execution_session_id,
@@ -4702,6 +5469,23 @@ class TraceBeamSearchSystem:
             f"validity_constraints:\n{json.dumps(validity_constraints, ensure_ascii=False, indent=2)}\n\n"
             f"generation_batches:\n{json.dumps(safe_generation_batches, ensure_ascii=False, indent=2)}"
         )
+        if self._v7_residual_protocol_enabled():
+            system_prompt = (
+                system_prompt.replace("role prompts", "solver instructions")
+                .replace("prompt-role previews", "prompt summaries")
+                .replace("role previews", "prompt summaries")
+                .replace("role execution", "mechanism execution")
+            )
+            user_prompt = (
+                user_prompt.replace("role_name", "mechanism_name")
+                .replace("target_role_spec", "target_prompt_state")
+                .replace("peer_role_specs", "peer_prompt_summaries")
+                .replace("complete short role prompt", "complete short solver instruction")
+                .replace("short role prompt", "short solver instruction")
+                .replace("peer roles", "peer prompts")
+                .replace("role prompts", "solver instructions")
+                .replace("prompt-role previews", "prompt summaries")
+            )
         text = await self._chat(
             model=self.cfg.optimizer_model,
             system_prompt=system_prompt,
@@ -4747,6 +5531,7 @@ class TraceBeamSearchSystem:
                     {
                         "candidate_prompt": prompt,
                         "role_name": str(item.get("role_name", "")),
+                        "mechanism_name": str(item.get("mechanism_name", item.get("role_name", ""))),
                         "decision_procedure": item.get("decision_procedure", []),
                         "when_to_use": str(item.get("when_to_use", "")),
                         "fallback_strategy": str(item.get("fallback_strategy", "")),
@@ -4779,7 +5564,8 @@ class TraceBeamSearchSystem:
                 parsed.append(
                     {
                         "candidate_prompt": prompt,
-                        "role_name": str(fallback["role_name"]),
+                        "role_name": str(fallback.get("role_name", fallback.get("mechanism_name", ""))),
+                        "mechanism_name": str(fallback.get("mechanism_name", fallback.get("role_name", ""))),
                         "decision_procedure": list(fallback["decision_procedure"]),
                         "when_to_use": str(fallback["when_to_use"]),
                         "fallback_strategy": str(fallback["fallback_strategy"]),
@@ -4887,7 +5673,7 @@ class TraceBeamSearchSystem:
             1.0,
             float(accepted_updates) / max(1, int(getattr(self.cfg, "reward_diversity_warmup_updates", 10) or 10)),
         )
-        phase_progress = max(unique_prompt_ratio, update_progress)
+        phase_progress = update_progress if self._v7_residual_protocol_enabled() else max(unique_prompt_ratio, update_progress)
         diversity_need = 1.0 - phase_progress
         return {
             "accepted_updates": float(accepted_updates),
@@ -5416,6 +6202,45 @@ class TraceBeamSearchSystem:
                     * (1.0 - float(agent_invalid.get("invalid", 1)))
                 )
                 rescue = int((baseline_vote_correct == 0) and (target_agent_correct == 1))
+                peer_wrong_count = sum(
+                    int(not self.task_spec.match_answer(answer, gold))
+                    for idx, answer in enumerate(baseline_answers)
+                    if idx != agent_id
+                )
+                counterfactual_answers = list(baseline_answers)
+                if agent_id < len(counterfactual_answers):
+                    counterfactual_answers[agent_id] = gold
+                counterfactual_vote = self._vote_with_diagnostics(
+                    counterfactual_answers, question_hash=sample_hash
+                )
+                counterfactual_gold_diagnostics = compute_gold_vote_diagnostics(
+                    counterfactual_answers,
+                    gold,
+                    self.task_spec.match_answer,
+                    len(self.agents),
+                )
+
+                def in_dominant_wrong_cluster(candidate_answers: Sequence[str], target_id: int) -> bool:
+                    target_value = str(candidate_answers[target_id] if target_id < len(candidate_answers) else "").strip()
+                    wrong_counts = Counter(
+                        str(answer or "").strip()
+                        for answer in candidate_answers
+                        if str(answer or "").strip() and not self.task_spec.match_answer(str(answer), gold)
+                    )
+                    return bool(
+                        target_value
+                        and not self.task_spec.match_answer(target_value, gold)
+                        and wrong_counts.get(target_value, 0) == max(wrong_counts.values(), default=0)
+                        and wrong_counts.get(target_value, 0) > 1
+                    )
+
+                residual_info = self._infer_target_error_pattern(
+                    target_trace=baseline_traces[agent_id] if agent_id < len(baseline_traces) else "",
+                    target_answer=baseline_answers[agent_id] if agent_id < len(baseline_answers) else "",
+                    peer_traces=[trace for idx, trace in enumerate(baseline_traces) if idx != agent_id],
+                    rollout=baseline_rollout,
+                    agent_id=agent_id,
+                )
                 row.update(
                     {
                         "question_hash": sample_hash,
@@ -5426,7 +6251,19 @@ class TraceBeamSearchSystem:
                         "baseline_individual_correct": [bool(value) for value in baseline_rollout.get("individual_correct", [])],
                         "candidate_individual_correct": [bool(value) for value in rollout.get("individual_correct", [])],
                         "baseline_target_correct": baseline_target_correct,
+                        "candidate_target_correct": target_agent_correct,
                         "target_agent_correct": target_agent_correct,
+                        "peer_wrong_count": int(peer_wrong_count),
+                        "baseline_vote_margin": float(baseline_rollout.get("normalized_vote_margin", -1.0)),
+                        "candidate_vote_margin": float(rollout.get("normalized_vote_margin", -1.0)),
+                        "counterfactual_gold_vote_correct": bool(
+                            self.task_spec.match_answer(str(counterfactual_vote.get("vote_answer", "")), gold)
+                        ),
+                        "counterfactual_gold_margin": float(counterfactual_gold_diagnostics.get("normalized_vote_margin", -1.0)),
+                        "baseline_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(baseline_answers, agent_id),
+                        "candidate_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(answers, agent_id),
+                        "capability_residual_family": str(residual_info.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                        "capability_residual_confidence": float(residual_info.get("confidence", 0.0) or 0.0),
                         "target_answer": answers[agent_id] if agent_id < len(answers) else "",
                         "target_trace_novelty": target_trace_novelty,
                         "target_useful_diversity": target_useful_diversity,
@@ -5450,7 +6287,7 @@ class TraceBeamSearchSystem:
                         "baseline_solver_reuse_total": int(baseline_reuse_stats.get("solver_reuse_total", 0) or 0),
                     }
                 )
-                if self._emergent_specialization_enabled():
+                if self._v7_residual_protocol_enabled():
                     row["behavior_context"] = self._behavior_context_for_baseline(
                         agent_id=agent_id,
                         answers=baseline_answers,
@@ -5557,13 +6394,25 @@ class TraceBeamSearchSystem:
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
             )
-            if self._emergent_specialization_enabled():
-                baseline_candidate_metrics.update(self._candidate_behavior_metrics(rows))
-                baseline_candidate_metrics["trajectory_alignment"] = self.trajectory_alignment(
-                    self.agents[agent_id],
-                    baseline_candidate_metrics.get("candidate_transition_vector", {}),
-                    baseline_candidate_metrics.get("candidate_transition_support", {}),
+            if bool(getattr(self.cfg, "shared_error_metrics_enabled", False)) or self._uses_vote_error_pareto_selection() or self._residual_specialization_enabled():
+                baseline_candidate_metrics.update(self._candidate_boundary_error_metrics(rows))
+                paired_keys = (
+                    "question_hash", "baseline_target_correct", "candidate_target_correct",
+                    "peer_wrong_count", "baseline_vote_correct", "candidate_vote_correct",
+                    "baseline_vote_margin", "candidate_vote_margin", "counterfactual_gold_vote_correct",
+                    "counterfactual_gold_margin", "baseline_target_in_dominant_wrong_cluster",
+                    "candidate_target_in_dominant_wrong_cluster", "capability_residual_family",
                 )
+                baseline_candidate_metrics["paired_boundary_transition_rows"] = [
+                    {key: row.get(key) for key in paired_keys} for row in rows
+                ]
+            if self._residual_specialization_enabled():
+                baseline_candidate_metrics.update(self._candidate_residual_metrics(rows))
+                baseline_candidate_metrics["capability_alignment"] = self.capability_alignment(
+                    self.agents[agent_id], baseline_candidate_metrics
+                )
+            if self._v7_residual_protocol_enabled():
+                baseline_candidate_metrics.update(self._candidate_behavior_metrics(rows))
             baseline_candidate_metrics.update(
                 compute_candidate_metric_deltas(
                     baseline_target_accuracy=baseline_target_accuracy,
@@ -5998,7 +6847,8 @@ class TraceBeamSearchSystem:
             )
             evaluated.append({**candidate, "metrics": metrics, "reward": float(metrics.get("reward", 0.0))})
         old_hash = self._hash(agent.current_prompt)
-        if self._emergent_specialization_enabled():
+        trajectory_guard_enabled = self._v7_residual_protocol_enabled()
+        if trajectory_guard_enabled:
             for item in evaluated:
                 metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
                 metrics.update(self._candidate_trajectory_feasibility(agent, item))
@@ -6015,7 +6865,7 @@ class TraceBeamSearchSystem:
                 item["trajectory_feasible"] = True
         selectable = (
             [item for item in evaluated if bool(item.get("trajectory_feasible", True))]
-            if self._emergent_specialization_enabled() else evaluated
+            if trajectory_guard_enabled else evaluated
         )
         if not selectable:
             raise RuntimeError("Trajectory feasibility removed the current active prompt fallback")
@@ -6055,17 +6905,16 @@ class TraceBeamSearchSystem:
         ] or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
         agent.current_prompt = str(agent.prompt_beam[0]["prompt"])
         changed = old_hash != self._hash(agent.current_prompt)
-        profile_before = dict(agent.specialization_profile)
+        profile_before = dict(agent.capability_profile)
         if changed:
             agent.history.append(agent.current_prompt)
             agent.accept_count += 1
-            if self._emergent_specialization_enabled():
+            if self._v7_residual_protocol_enabled():
                 active_metrics = selected[0].get("metrics", {}) if selected else {}
-                self.update_specialization_profile(
-                    agent,
-                    active_metrics.get("candidate_transition_vector", {}),
-                    active_metrics.get("candidate_transition_support", {}),
-                )
+                if self._residual_specialization_enabled():
+                    self._update_vote_context_profile(agent, active_metrics)
+                    self._accumulate_capability_evidence(agent, active_metrics, epoch_id)
+                    self._flush_capability_profile(agent, epoch_id, force=False)
                 agent.last_accepted_prompt_hash = self._normalized_prompt_hash(agent.current_prompt)
                 fingerprint = {
                     str(key): BehaviorFingerprintEntry.from_dict(value)
@@ -6078,11 +6927,12 @@ class TraceBeamSearchSystem:
                     prompt_hash=agent.last_accepted_prompt_hash,
                     behavior_fingerprint=fingerprint,
                     transition_vector={str(key): float(value) for key, value in dict(active_metrics.get("candidate_transition_vector", {})).items()},
-                    specialization_profile=dict(agent.specialization_profile),
                     target_accuracy=float(active_metrics.get("candidate_target_accuracy", 0.0) or 0.0),
                     team_vote_accuracy=float(active_metrics.get("candidate_team_accuracy", 0.0) or 0.0),
                     mean_vote_margin=float(active_metrics.get("candidate_mean_vote_margin", 0.0) or 0.0),
                     preserved_mechanisms=[str(value) for value in selected[0].get("proposal", {}).get("preserved_mechanisms", [])] if isinstance(selected[0].get("proposal", {}).get("preserved_mechanisms", []), list) else [],
+                    capability_profile=dict(agent.capability_profile),
+                    paired_behavior_utility=self.behavior_fingerprint_utility(fingerprint),
                 )
                 self._append_bounded_archive(agent.accepted_behavior_archive, state)
         else:
@@ -6096,7 +6946,7 @@ class TraceBeamSearchSystem:
             in_top_beam = bool(accepted)
             is_top1 = bool(candidate_id == active_candidate_id)
             active_evolution = bool(is_top1 and changed)
-            if self._emergent_specialization_enabled() and self._candidate_pool_source(item) == "optimizer":
+            if self._v7_residual_protocol_enabled() and self._candidate_pool_source(item) == "optimizer":
                 rejection_reason = str(metrics.get("rejection_reason", ""))
                 retained_inactive = bool(in_top_beam and not active_evolution)
                 if not active_evolution and not retained_inactive:
@@ -6113,11 +6963,21 @@ class TraceBeamSearchSystem:
                         max_behavior_cycle_similarity=float(metrics.get("max_behavior_cycle_similarity", 0.0) or 0.0),
                         behavior_cycle_overlap=int(metrics.get("behavior_cycle_overlap", 0) or 0),
                         transition_vector={str(key): float(value) for key, value in dict(metrics.get("candidate_transition_vector", {})).items()},
+                        behavior_fingerprint={
+                            str(key): BehaviorFingerprintEntry.from_dict(value)
+                            for key, value in dict(metrics.get("behavior_fingerprint", {})).items()
+                            if isinstance(value, dict)
+                        },
+                        paired_behavior_utility=self.behavior_fingerprint_utility(metrics.get("behavior_fingerprint", {})),
+                        failure_signature=(
+                            f"{rejection_reason}|pivotal_loss={float(metrics.get('pivotal_loss_rate', 0.0) or 0.0):.4f}"
+                            f"|shared_creation={float(metrics.get('shared_error_creation_score', 0.0) or 0.0):.4f}"
+                        ),
                     )
                     self._append_bounded_archive(agent.rejected_behavior_archive, rejected_state)
                     if rejection_reason == "exact_prompt_cycle":
                         agent.duplicate_prompt_reject_count += 1
-                    elif rejection_reason == "behavior_cycle":
+                    elif rejection_reason in {"behavior_cycle", "accepted_state_cycle", "rejected_failure_cycle"}:
                         agent.cycle_reject_count += 1
                     elif rejection_reason == "unsupported_large_prompt_shift":
                         agent.large_shift_reject_count += 1
@@ -6128,7 +6988,7 @@ class TraceBeamSearchSystem:
                     item=item,
                     accepted=active_evolution,
                     profile_before=profile_before,
-                    profile_after=dict(agent.specialization_profile),
+                    profile_after=dict(agent.capability_profile),
                 ))
                 if retained_inactive:
                     self.trajectory_events[-1]["decision"] = "retained_beam_inactive"
@@ -6221,9 +7081,9 @@ class TraceBeamSearchSystem:
                     "behavior_context_counts": metrics.get("behavior_context_counts", {}),
                     "candidate_transition_vector": metrics.get("candidate_transition_vector", {}),
                     "candidate_transition_support": metrics.get("candidate_transition_support", {}),
-                    "specialization_profile_before": profile_before,
-                    "specialization_profile_after": dict(agent.specialization_profile),
-                    "trajectory_alignment": float(metrics.get("trajectory_alignment", 0.0) or 0.0),
+                    **self._candidate_v7_log_fields(metrics),
+                    "capability_profile_before": profile_before,
+                    "capability_profile_after": dict(agent.capability_profile),
                     "prompt_hash": str(metrics.get("prompt_hash", "")),
                     "parent_prompt_hash": str(metrics.get("parent_prompt_hash", "")),
                     "prompt_change_ratio": float(metrics.get("prompt_change_ratio", 0.0) or 0.0),
@@ -6437,6 +7297,9 @@ class TraceBeamSearchSystem:
 
     async def refresh_all_prompt_beams(self, eval_batch: List[Dict[str, str]], epoch_id: int) -> Dict[str, Any]:
         if not self.cfg.beam_refresh_each_epoch or not eval_batch:
+            if self._residual_specialization_enabled():
+                for agent in self.agents:
+                    self._flush_capability_profile(agent, epoch_id, force=True)
             return {"event": "beam_refresh", "enabled": False, "agent_count": 0}
         records = []
         for agent_id, agent in enumerate(self.agents):
@@ -6459,11 +7322,11 @@ class TraceBeamSearchSystem:
                         "metrics": metrics,
                         "reward": float(metrics.get("reward", 0.0)),
                     }
-                if self._emergent_specialization_enabled():
+                if self._v7_residual_protocol_enabled():
                     metrics.update(self._candidate_trajectory_feasibility(agent, refreshed_item))
                     refreshed_item["metrics"] = metrics
                 refreshed.append(refreshed_item)
-            if self._emergent_specialization_enabled():
+            if self._v7_residual_protocol_enabled():
                 refreshed = [item for item in refreshed if not str(item.get("metrics", {}).get("rejection_reason", ""))]
                 if not refreshed:
                     raise RuntimeError("Beam refresh trajectory guard removed the current active prompt")
@@ -6486,15 +7349,14 @@ class TraceBeamSearchSystem:
             changed = old_hash != self._hash(agent.current_prompt)
             if changed:
                 agent.history.append(agent.current_prompt)
-                if self._emergent_specialization_enabled():
-                    profile_before = dict(agent.specialization_profile)
-                    agent.accept_count += 1
+                agent.accept_count += 1
+                if self._v7_residual_protocol_enabled():
+                    profile_before = dict(agent.capability_profile)
                     active_metrics = retained[0].get("metrics", {})
-                    self.update_specialization_profile(
-                        agent,
-                        active_metrics.get("candidate_transition_vector", {}),
-                        active_metrics.get("candidate_transition_support", {}),
-                    )
+                    if self._residual_specialization_enabled():
+                        self._update_vote_context_profile(agent, active_metrics)
+                        self._accumulate_capability_evidence(agent, active_metrics, epoch_id)
+                        self._flush_capability_profile(agent, epoch_id, force=False)
                     agent.last_accepted_prompt_hash = self._normalized_prompt_hash(agent.current_prompt)
                     fingerprint = {
                         str(key): BehaviorFingerprintEntry.from_dict(value)
@@ -6509,11 +7371,12 @@ class TraceBeamSearchSystem:
                             prompt_hash=agent.last_accepted_prompt_hash,
                             behavior_fingerprint=fingerprint,
                             transition_vector={str(key): float(value) for key, value in dict(active_metrics.get("candidate_transition_vector", {})).items()},
-                            specialization_profile=dict(agent.specialization_profile),
                             target_accuracy=float(active_metrics.get("candidate_target_accuracy", 0.0) or 0.0),
                             team_vote_accuracy=float(active_metrics.get("candidate_team_accuracy", 0.0) or 0.0),
                             mean_vote_margin=float(active_metrics.get("candidate_mean_vote_margin", 0.0) or 0.0),
                             preserved_mechanisms=[],
+                            capability_profile=dict(agent.capability_profile),
+                            paired_behavior_utility=self.behavior_fingerprint_utility(fingerprint),
                         ),
                     )
                     self.trajectory_events.append(self._trajectory_event(
@@ -6523,7 +7386,7 @@ class TraceBeamSearchSystem:
                         item=retained[0],
                         accepted=True,
                         profile_before=profile_before,
-                        profile_after=dict(agent.specialization_profile),
+                        profile_after=dict(agent.capability_profile),
                     ))
                     self.trajectory_events[-1]["decision"] = "beam_refresh_activated"
             record = {
@@ -6540,6 +7403,9 @@ class TraceBeamSearchSystem:
             self.update_logs.append(record)
             self._append_prompt_history_event(agent_id, epoch_id, 0, "beam_refresh_changed" if changed else "beam_refresh_keep", changed)
             records.append(record)
+        if self._residual_specialization_enabled():
+            for agent in self.agents:
+                self._flush_capability_profile(agent, epoch_id, force=True)
         self.flush_update_logs()
         self.flush_prompt_history()
         return {
@@ -6926,6 +7792,70 @@ class TraceBeamSearchSystem:
                 for r in rows
             ])
         ) if rows else 0.0
+        pair_double_fault: List[float] = []
+        pair_covariance: List[float] = []
+        if agent_count >= 2 and rows:
+            for left in range(agent_count):
+                for right in range(left + 1, agent_count):
+                    pairs = [row for row in individual_matrix if left < len(row) and right < len(row)]
+                    if not pairs:
+                        continue
+                    left_errors = np.array([1.0 - float(row[left]) for row in pairs], dtype=float)
+                    right_errors = np.array([1.0 - float(row[right]) for row in pairs], dtype=float)
+                    pair_double_fault.append(float(np.mean(left_errors * right_errors)))
+                    pair_covariance.append(float(np.mean(left_errors * right_errors) - np.mean(left_errors) * np.mean(right_errors)))
+        same_wrong_pair_values = []
+        dominant_wrong_sizes = []
+        boundary_conditional_errors = []
+        pivotal_fix_values = []
+        pivotal_hold_values = []
+        shared_rescue_values = []
+        shared_creation_values = []
+        correct_depths = []
+        for row in rows:
+            flags = [int(value) for value in row.get("individual_correct", [])]
+            n = len(flags)
+            correct_count = sum(flags)
+            wrong_count = n - correct_count
+            correct_depths.append(correct_count)
+            largest_wrong = int(row.get("largest_wrong_vote_count", 0) or 0)
+            dominant_wrong_sizes.append(largest_wrong)
+            vote_counts = row.get("vote_counts", {}) if isinstance(row.get("vote_counts", {}), dict) else {}
+            all_same_pairs = sum(int(count) * (int(count) - 1) / 2 for count in vote_counts.values())
+            gold_same_pairs = correct_count * (correct_count - 1) / 2
+            same_wrong_pair_values.append(
+                max(0.0, all_same_pairs - gold_same_pairs) / max(1.0, n * (n - 1) / 2)
+            )
+            per_row_pivotal_fix = []
+            per_row_pivotal_hold = []
+            per_row_boundary_error = []
+            per_row_shared_rescue = []
+            per_row_shared_creation = []
+            for agent_id, correct in enumerate(flags):
+                peer_wrong = wrong_count - int(not correct)
+                near_shared_boundary = peer_wrong >= max(1, (n - 1) // 2)
+                if near_shared_boundary:
+                    per_row_boundary_error.append(float(not correct))
+                    per_row_shared_rescue.append(float(correct))
+                    per_row_shared_creation.append(float(not correct))
+                if not correct:
+                    per_row_pivotal_fix.append(float(
+                        (not bool(row.get("vote_correct", 0)))
+                        and correct_count + 1 > largest_wrong
+                    ))
+                else:
+                    per_row_pivotal_hold.append(float(correct_count - 1 <= largest_wrong))
+            if per_row_pivotal_fix:
+                pivotal_fix_values.append(float(np.mean(per_row_pivotal_fix)))
+            if per_row_pivotal_hold:
+                pivotal_hold_values.append(float(np.mean(per_row_pivotal_hold)))
+            if per_row_boundary_error:
+                boundary_conditional_errors.append(float(np.mean(per_row_boundary_error)))
+                shared_rescue_values.append(float(np.mean(per_row_shared_rescue)))
+                shared_creation_values.append(float(np.mean(per_row_shared_creation)))
+        triple_joint_error_rate = float(np.mean([int((agent_count - depth) >= 3) for depth in correct_depths])) if correct_depths else 0.0
+        shared_rescue_rate = float(np.mean(shared_rescue_values)) if shared_rescue_values else 0.0
+        shared_creation_rate = float(np.mean(shared_creation_values)) if shared_creation_values else 0.0
         result = {
             "size": len(rows),
             "num_test_samples": len(rows),
@@ -6947,39 +7877,30 @@ class TraceBeamSearchSystem:
             "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
             "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
             "mean_invalid_rate": float(np.mean([r.get("invalid_rate", 0.0) for r in rows])) if rows else 0.0,
+            "mean_pairwise_double_fault": float(np.mean(pair_double_fault)) if pair_double_fault else 0.0,
+            "mean_pairwise_error_covariance": float(np.mean(pair_covariance)) if pair_covariance else 0.0,
+            "same_wrong_pair_rate": float(np.mean(same_wrong_pair_values)) if same_wrong_pair_values else 0.0,
+            "triple_joint_error_rate": triple_joint_error_rate,
+            "majority_failure_tail_rate": float(np.mean([int((agent_count - depth) >= ((agent_count // 2) + 1)) for depth in correct_depths])) if correct_depths else 0.0,
+            **{
+                f"coverage_depth_c{depth}": float(np.mean([int(value >= depth) for value in correct_depths])) if correct_depths else 0.0
+                for depth in range(1, 6)
+            },
+            "mean_boundary_conditional_error": float(np.mean(boundary_conditional_errors)) if boundary_conditional_errors else 0.0,
+            "mean_pivotal_fix_rate": float(np.mean(pivotal_fix_values)) if pivotal_fix_values else 0.0,
+            "mean_pivotal_hold_rate": float(np.mean(pivotal_hold_values)) if pivotal_hold_values else 0.0,
+            "shared_error_rescue_rate": shared_rescue_rate,
+            "shared_error_creation_rate": shared_creation_rate,
+            "boundary_shared_error_net_gain": shared_rescue_rate - 1.5 * shared_creation_rate,
+            "dominant_wrong_cluster_size": float(np.mean(dominant_wrong_sizes)) if dominant_wrong_sizes else 0.0,
+            "gold_vs_largest_wrong_margin": float(np.mean([r.get("normalized_vote_margin", -1.0) for r in rows])) if rows else -1.0,
         }
-        if self._emergent_specialization_enabled():
-            profiles = [np.array([float(agent.specialization_profile.get(context, 0.0)) for context in BEHAVIOR_CONTEXT_NAMES], dtype=float) for agent in self.agents]
-            entropies = [float(-np.sum(profile[profile > 0.0] * np.log(profile[profile > 0.0]))) for profile in profiles]
-            jsd_values = []
-            for left in range(len(profiles)):
-                for right in range(left + 1, len(profiles)):
-                    midpoint = 0.5 * (profiles[left] + profiles[right])
-                    kl_left = float(np.sum(np.where(profiles[left] > 0.0, profiles[left] * np.log(profiles[left] / np.maximum(midpoint, 1e-12)), 0.0)))
-                    kl_right = float(np.sum(np.where(profiles[right] > 0.0, profiles[right] * np.log(profiles[right] / np.maximum(midpoint, 1e-12)), 0.0)))
-                    jsd_values.append(0.5 * (kl_left + kl_right))
-            archive_alignments = []
-            for agent in self.agents:
-                for state in agent.accepted_behavior_archive:
-                    min_support = int(getattr(self.cfg, "specialization_min_context_support", 2))
-                    archive_alignments.append(self.trajectory_alignment(agent, state.transition_vector, {key: min_support for key in state.transition_vector}))
-            cycle_rejects = sum(agent.cycle_reject_count for agent in self.agents)
-            duplicate_rejects = sum(agent.duplicate_prompt_reject_count for agent in self.agents)
-            large_shift_rejects = sum(agent.large_shift_reject_count for agent in self.agents)
-            reject_total = cycle_rejects + duplicate_rejects + large_shift_rejects
-            result.update(
-                {
-                    "mean_specialization_profile_entropy": float(np.mean(entropies)) if entropies else 0.0,
-                    "mean_pairwise_specialization_jsd": float(np.mean(jsd_values)) if jsd_values else 0.0,
-                    "accepted_transition_alignment_mean": float(np.mean(archive_alignments)) if archive_alignments else 0.0,
-                    "behavior_cycle_reject_count": int(cycle_rejects),
-                    "behavior_cycle_reject_rate": float(cycle_rejects / reject_total) if reject_total else 0.0,
-                    "exact_prompt_duplicate_reject_count": int(duplicate_rejects),
-                    "large_prompt_shift_reject_count": int(large_shift_rejects),
-                    "profile_update_count_per_agent": [int(agent.specialization_update_count) for agent in self.agents],
-                    "behavior_archive_size_per_agent": [len(agent.accepted_behavior_archive) for agent in self.agents],
-                }
-            )
+        if self._residual_specialization_enabled():
+            result.update({
+                "capability_profile_per_agent": [dict(agent.capability_profile) for agent in self.agents],
+                "vote_context_profile_per_agent": [dict(agent.vote_context_profile) for agent in self.agents],
+                "capability_profile_update_count_per_agent": [int(agent.capability_profile_update_count) for agent in self.agents],
+            })
         return result
 
     async def evaluate_dataset(self, data: List[Dict[str, str]], split_name: str = "test") -> Dict[str, Any]:
