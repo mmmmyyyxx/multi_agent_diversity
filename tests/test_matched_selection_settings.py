@@ -42,7 +42,7 @@ def test_reward_ablation_settings_share_the_tcs_execution_contract():
 
 def test_v7_ablation_settings_keep_the_matched_search_budget():
     names = (
-        "shared_vote_pareto_tcs,"
+        "shared_vote_pareto_tcs_static,"
         "shared_vote_pareto_tcs_boundary_selector,"
         "shared_vote_error_pareto_tcs,"
         "shared_vote_error_pareto_tcs_residual_specialization,"
@@ -55,6 +55,7 @@ def test_v7_ablation_settings_keep_the_matched_search_budget():
         "candidate_eval_strategy", "candidate_eval_pool_size", "candidate_eval_batch_size",
         "candidate_eval_execution_mode", "solver_rollout_singleflight",
         "candidate_eval_prompt_dedup", "candidate_eval_cache_logging",
+        "reward_schedule_mode",
     )
     reference = asdict(settings[0])
     for setting in settings[1:]:
@@ -62,3 +63,16 @@ def test_v7_ablation_settings_keep_the_matched_search_budget():
         assert {key: values[key] for key in matched_fields} == {
             key: reference[key] for key in matched_fields
         }
+
+
+def test_static_vote_pareto_differs_from_historical_setting_only_by_schedule():
+    historical, static = select_settings(
+        "shared_vote_pareto_tcs,shared_vote_pareto_tcs_static"
+    )
+    historical_values = asdict(historical)
+    static_values = asdict(static)
+    historical_values.pop("name")
+    static_values.pop("name")
+    assert historical_values.pop("reward_schedule_mode") == ""
+    assert static_values.pop("reward_schedule_mode") == "static"
+    assert historical_values == static_values

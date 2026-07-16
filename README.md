@@ -70,11 +70,16 @@ behavior archives and requires one declared local mechanism edit from Student.
 Matched v7 settings are:
 
 ```text
+shared_vote_pareto_tcs_static
 shared_vote_pareto_tcs_boundary_selector
 shared_vote_error_pareto_tcs
 shared_vote_error_pareto_tcs_residual_specialization
 shared_vote_error_pareto_tcs_residual_cycle_guard
 ```
+
+`shared_vote_pareto_tcs_static` is the matched v7 baseline. The historical
+`shared_vote_pareto_tcs` setting keeps its phase-adaptive schedule and should
+not be used to isolate the boundary selector's contribution.
 
 These use a static reward schedule. Prompt hash uniqueness remains diagnostic
 and cannot alter v7 reward weights or the accuracy guard.

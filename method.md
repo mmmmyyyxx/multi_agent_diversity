@@ -339,11 +339,16 @@ TCS, or trajectory settings rejects resume instead of mixing optimization semant
 The matched v7 ablations are:
 
 ```text
+shared_vote_pareto_tcs_static
 shared_vote_pareto_tcs_boundary_selector
 shared_vote_error_pareto_tcs
 shared_vote_error_pareto_tcs_residual_specialization
 shared_vote_error_pareto_tcs_residual_cycle_guard
 ```
+
+All five use `reward_schedule_mode=static`. The historical
+`shared_vote_pareto_tcs` setting remains available for earlier phase-adaptive
+runs, but it is not part of this matched selector ablation.
 
 They retain the same shared initialization, TCS budget, fixed optimization
 pool, candidate batch, solver model, split, tie break, epochs, and beam size as

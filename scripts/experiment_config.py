@@ -82,6 +82,12 @@ ALL_EXPERIMENT_SETTINGS = [
         **SHARED_VOTE_SEARCH_BASE,
     ),
     ExperimentSetting(
+        name="shared_vote_pareto_tcs_static",
+        candidate_selection_mode="vote_pareto",
+        reward_schedule_mode="static",
+        **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
         name="shared_vote_pareto_tcs_boundary_selector",
         candidate_selection_mode="vote_pareto",
         reward_schedule_mode="static",
