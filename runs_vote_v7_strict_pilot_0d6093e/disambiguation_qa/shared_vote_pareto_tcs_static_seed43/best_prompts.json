@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.3095,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.575,
+    0.555,
+    0.11000000000000001,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.575,
+  "selected_oracle_acc": 0.725,
+  "selected_mean_individual_acc": 0.555,
+  "selected_mean_vote_margin": 0.11000000000000001,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "f8dbe7ebff5d",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first enumerate all entities and their possible reference bindings; then systematically map each entity to all possible references before listing constraints; verify temporal ordering where applicable; explicitly bind entities and list constraints before propagating them; verify impossible reference combinations are eliminated; make your decision procedure visible; and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "aacc961043dd",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first enumerate all entities and their possible reference bindings; then list all explicit constraints; verify entity bindings against constraints; make your decision procedure visible; check key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "819dc399bded",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically map each entity to all possible references; enumerate all constraints as a distinct step before considering bindings; verify each binding against constraints before elimination; explicitly eliminate options violating constraints before final selection; make your decision procedure visible; and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "065a372d12c9",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically map each entity to its possible references as a distinct binding step before listing constraints; explicitly list all constraints; verify each binding against all constraints before elimination; make your decision procedure visible; and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "cbfc666cd4db",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically identify all entities and map each to possible references; explicitly verify each potential entity-reference binding against all listed constraints before elimination; verify temporal ordering constraints explicitly; make your decision procedure visible; and give exactly one final answer."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.6000000000000001,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.9,
+    0.875,
+    0.75,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.9,
+  "selected_oracle_acc": 0.95,
+  "selected_mean_individual_acc": 0.875,
+  "selected_mean_vote_margin": 0.75,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "630036e3f8de",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. For problems involving sequences or timing, explicitly list events in chronological order, verify consistency, then use this verified timeline to decide. Before constructing any timeline, extract and list all temporal and qualifier constraints from the problem; verify each individually before proceeding. Verify key logic and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "1bcda0ee2814",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, explicitly construct a chronological sequence of events and confirm its consistency before finalizing the answer, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "1fa7df74469a",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, explicitly check that event ordering is consistent and complete before concluding, identify any conditional qualifiers (e.g., \"only if\", \"unless\", \"except\") and restate them as clear logical rules before applying them, and give exactly one final answer."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "solver_calls": 3211,
+  "optimizer_calls": 76,
+  "evaluator_calls": 47,
+  "total_llm_calls": 3334,
+  "prompt_tokens": 888188,
+  "completion_tokens": 711403,
+  "total_tokens": 1599591,
+  "estimated_cost": 0.0,
+  "latency_seconds": 23745.04883313179,
+  "candidate_eval_solver_api_calls": 1741,
+  "candidate_eval_cache_hits": 1979,
+  "candidate_eval_inflight_reuses": 0,
+  "candidate_eval_calls_saved_vs_naive": 8699,
+  "candidate_eval_prompt_dedup_savings": 0
+}

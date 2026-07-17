@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.5445,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.825,
+    0.83,
+    0.6599999999999999,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.825,
+  "selected_oracle_acc": 0.9,
+  "selected_mean_individual_acc": 0.83,
+  "selected_mean_vote_margin": 0.6599999999999999,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "40a63a9b434a",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first list all relevant constraints, rules, and role definitions; systematically identify sports-specific terminology and validity constraints; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "ce0d5efe0935",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; explicitly confirm your final answer matches the question's intent; for sports scenarios, first identify and list all domain constraints that affect sequence validity, then construct a timeline of events and validate its consistency with the outcome; ensure your timeline explicitly lists all temporal constraints and verifies their consistency; before finalizing your yes/no decision, explicitly test whether any provisional conclusion contradicts the established constraints; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "121ca4ed498d",
+      "prompt": "You are a careful reasoning solver. First explicitly list all relevant domain constraints, rules, and definitions; then produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic by checking temporal sequence validity against constraints; and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "d30fd93efb62",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; identify domain constraints as you reason; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.391,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.65,
+    0.665,
+    0.32999999999999996,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.65,
+  "selected_oracle_acc": 0.825,
+  "selected_mean_individual_acc": 0.665,
+  "selected_mean_vote_margin": 0.32999999999999996,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "04d7543450b2",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; list all candidate entities and explicitly bind each reference to its possible entities; before applying elimination criteria, verify each binding remains contextually coherent with all prior references; make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "637b640072e4",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; list all possible pronoun referents; apply elimination criteria using grammatical and contextual constraints; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "84927dba6ab4",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; systematically list each possible pronoun referent; before applying constraints, explicitly map each candidate to the specific action or description in the sentence and verify logical fit; make your decision procedure visible; verify key logic; before final selection, explicitly compare each candidate's contextual role plausibility and document which maintains coherent role relationships; explicitly confirm the chosen referent satisfies all grammatical, contextual, and qualifier constraints; and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "290bce37e8f8",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic by systematically checking for violated qualifier constraints that eliminate candidate referents, explicitly check for qualifier negation violations and temporal ordering inconsistencies as distinct reasoning steps before elimination, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "e5115126a73d",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; explicitly enumerate all possible antecedents for each pronoun or reference; then list all grammatical and contextual constraints including qualifier negation patterns; verify each candidate against all constraints, explicitly stating which constraints eliminate which candidates; make your decision procedure visible; verify key logic by systematically eliminating impossible antecedents before considering remaining candidates; and give exactly one final answer."
+    }
+  ]
+}

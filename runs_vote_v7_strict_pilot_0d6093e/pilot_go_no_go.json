@@ -1,0 +1,30 @@
+{
+  "recommendation": "GO",
+  "formal_experiment_scope": "four-task multi-seed",
+  "run_completion": "20/20",
+  "integrity": {
+    "strict_protocol_pass": true,
+    "all_tcs_audits_pass": true,
+    "candidate_field_and_hash_audit_pass": true,
+    "profile_pollution_audit_pass": true
+  },
+  "search_health": {
+    "pass": true,
+    "dependence_guard_reject_rate": 0.35490830636461707,
+    "optimizer_underfill_rate": 0.09411764705882353,
+    "forced_current_fallback_rate": 0.0,
+    "active_prompt_update_rate": 0.6431372549019608
+  },
+  "method_trend_observed": true,
+  "caveats": [
+    "The residual-only setting regressed on sports_understanding.",
+    "Cycle guard produced zero direct candidate rejections in this pilot, so activation evidence is absent.",
+    "Question-level pooled tests are exploratory because only two seeds were run."
+  ],
+  "statistical_claim": "pilot evidence only; two seeds do not establish a final significance claim",
+  "api_anomalies": [
+    "One account-status interruption required external service restoration before continuation.",
+    "One recoverable capacity-429 interruption during residual seed43 validation; resumed from checkpoint.",
+    "Transient capacity 429 and connection retries otherwise recovered."
+  ]
+}

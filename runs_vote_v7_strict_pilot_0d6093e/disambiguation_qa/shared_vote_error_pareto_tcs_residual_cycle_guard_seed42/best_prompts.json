@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.34199999999999997,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.6,
+    0.605,
+    0.21000000000000002,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.6,
+  "selected_oracle_acc": 0.775,
+  "selected_mean_individual_acc": 0.605,
+  "selected_mean_vote_margin": 0.21000000000000002,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "4e0f041b278a",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; before applying constraints, map each pronoun to its specific antecedent by listing possible referents and systematically eliminating alternatives using gender, role, and contextual constraints; bind each entity and reference explicitly before propagating constraints; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "1d2cd5d1a246",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; construct and verify a temporal sequence before applying constraints; make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "b5e03f857132",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first map every pronoun to its specific antecedent by listing possible referents and systematically eliminating alternatives using gender, role, and contextual constraints before drawing conclusions; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "153279f7dfd6",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; verify negation qualifiers like 'not', 'never', or 'no' for meaning reversal before final answer; make your decision procedure visible, verify key logic, list alternative interpretations and eliminate each using explicit contextual constraints before selecting, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "2385044a643b",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; explicitly bind each entity to its attributes before decision; establish and verify temporal event sequence by checking chronological dependencies before constraint application; make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

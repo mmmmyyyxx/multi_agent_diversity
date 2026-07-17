@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.32525000000000004,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.6,
+    0.565,
+    0.13,
+    0.005,
+    2
+  ],
+  "selected_vote_acc": 0.6,
+  "selected_oracle_acc": 0.675,
+  "selected_mean_individual_acc": 0.565,
+  "selected_mean_vote_margin": 0.13,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.005,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "9e96aea18c49",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; first systematically list all explicit constraints including negated qualifiers and entity bindings before considering any answer; map each event to its time reference and verify entity bindings remain consistent throughout the constructed timeline; verify key logic; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "23662b05ae4e",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; before selecting an answer, explicitly list all entity-property bindings and negated qualifiers; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "011f8a38d4b2",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first explicitly bind each entity to its properties and constraints; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "0536ded1b7da",
+      "prompt": "You are a careful reasoning solver. First explicitly resolve all pronoun antecedents by matching each ambiguous pronoun to its unambiguous antecedent entity before propagating constraints; produce a compact, explicit reasoning trace; make your decision procedure visible; before final answer selection, list each pronoun and confirm its antecedent satisfies gender and role constraints; then check that all quantitative relationships hold for the resolved entities; and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "38f2a5da69ec",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first explicitly bind each entity to its properties and constraints before evaluating options; make your decision procedure visible; verify key logic; and give exactly one final answer."
+    }
+  ]
+}

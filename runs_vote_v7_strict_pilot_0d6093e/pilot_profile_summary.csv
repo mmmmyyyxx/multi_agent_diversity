@@ -1,0 +1,21 @@
+﻿task,setting,seed,agents_with_capability_evidence,agents_with_nonzero_final_capability_profile,profile_update_count_per_agent,profile_update_count_total,mean_final_profile_entropy_bits,mean_pairwise_profile_jsd_bits,final_shared_prompt_agent_count,best_state_shared_prompt_agent_count,active_change_count_per_agent,accepted_refresh_count_per_agent,profile_pollution_audit_pass
+disambiguation_qa,shared_vote_pareto_tcs_static,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[2, 3, 2, 5, 3]","[0, 0, 0, 0, 0]",True
+disambiguation_qa,shared_vote_pareto_tcs_boundary_selector,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[3, 1, 4, 1, 5]","[0, 0, 2, 1, 0]",True
+disambiguation_qa,shared_vote_error_pareto_tcs,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[3, 2, 3, 4, 5]","[1, 1, 0, 0, 1]",True
+disambiguation_qa,shared_vote_error_pareto_tcs_residual_specialization,42,5,5,"[4, 1, 1, 4, 3]",13,0.6736431344991074,0.12281037462602196,0,0,"[5, 1, 1, 7, 4]","[1, 0, 0, 1, 1]",True
+disambiguation_qa,shared_vote_error_pareto_tcs_residual_cycle_guard,42,5,5,"[3, 3, 2, 2, 3]",13,1.013524527202342,0.21350466218489506,0,0,"[3, 5, 3, 2, 4]","[1, 1, 0, 0, 0]",True
+disambiguation_qa,shared_vote_pareto_tcs_static,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[5, 3, 4, 3, 2]","[0, 0, 0, 0, 0]",True
+disambiguation_qa,shared_vote_pareto_tcs_boundary_selector,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[3, 1, 3, 3, 2]","[0, 1, 0, 1, 0]",True
+disambiguation_qa,shared_vote_error_pareto_tcs,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,0,0,"[3, 3, 4, 2, 5]","[0, 2, 0, 1, 2]",True
+disambiguation_qa,shared_vote_error_pareto_tcs_residual_specialization,43,5,5,"[2, 1, 6, 2, 2]",13,0.7316169770843091,0.41510307686864883,0,0,"[3, 2, 10, 2, 2]","[0, 0, 1, 1, 1]",True
+disambiguation_qa,shared_vote_error_pareto_tcs_residual_cycle_guard,43,5,5,"[3, 4, 2, 2, 2]",13,0.8606022710991952,0.4537637306878353,0,0,"[3, 6, 2, 2, 2]","[2, 1, 1, 1, 0]",True
+sports_understanding,shared_vote_pareto_tcs_static,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,1,1,"[1, 1, 4, 1, 5]","[0, 0, 0, 0, 0]",True
+sports_understanding,shared_vote_pareto_tcs_boundary_selector,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,3,3,"[4, 3, 2, 2, 3]","[1, 0, 1, 1, 2]",True
+sports_understanding,shared_vote_error_pareto_tcs,42,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,1,1,"[3, 5, 2, 3, 2]","[1, 1, 1, 0, 2]",True
+sports_understanding,shared_vote_error_pareto_tcs_residual_specialization,42,3,3,"[0, 1, 2, 0, 3]",6,0.0,0.0,2,2,"[0, 2, 2, 0, 5]","[0, 0, 1, 0, 0]",True
+sports_understanding,shared_vote_error_pareto_tcs_residual_cycle_guard,42,4,4,"[1, 1, 2, 2, 0]",6,0.13589284724478184,0.37368457723065707,1,1,"[1, 1, 1, 3, 0]","[0, 0, 1, 0, 0]",True
+sports_understanding,shared_vote_pareto_tcs_static,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,1,1,"[1, 8, 2, 0, 1]","[0, 0, 0, 0, 0]",True
+sports_understanding,shared_vote_pareto_tcs_boundary_selector,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,1,1,"[0, 2, 1, 3, 1]","[1, 1, 1, 1, 1]",True
+sports_understanding,shared_vote_error_pareto_tcs,43,0,0,"[0, 0, 0, 0, 0]",0,0.0,0.0,2,2,"[4, 1, 2, 3, 1]","[1, 0, 0, 1, 0]",True
+sports_understanding,shared_vote_error_pareto_tcs_residual_specialization,43,3,3,"[3, 0, 0, 3, 3]",9,0.35438643966295236,0.08378782462713236,2,2,"[4, 0, 0, 5, 2]","[2, 0, 0, 0, 3]",True
+sports_understanding,shared_vote_error_pareto_tcs_residual_cycle_guard,43,5,5,"[1, 1, 1, 4, 2]",9,0.416874383132592,0.4702682204843002,0,0,"[1, 0, 1, 4, 3]","[0, 1, 0, 2, 0]",True

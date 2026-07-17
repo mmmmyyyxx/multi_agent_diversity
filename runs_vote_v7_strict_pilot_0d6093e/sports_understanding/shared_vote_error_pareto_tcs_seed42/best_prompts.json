@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.571,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.85,
+    0.865,
+    0.73,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.85,
+  "selected_oracle_acc": 0.975,
+  "selected_mean_individual_acc": 0.865,
+  "selected_mean_vote_margin": 0.73,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "1776857c14a7",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; explicitly list temporal constraints and qualifier conditions before final selection; verify each condition applies and check for exclusion cases; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "182ad75aef26",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; before constructing your chronological timeline, explicitly identify and verify all negated qualification conditions from the question; then construct the timeline and verify it matches the question's temporal sequence; give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "1bdf5a62c86c",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic by systematically identifying negation words and checking if they invert condition meaning; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "c0593e4d2dca",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; before selecting an answer, explicitly list all negative qualifiers and verify each one reverses or blocks the apparent conclusion; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

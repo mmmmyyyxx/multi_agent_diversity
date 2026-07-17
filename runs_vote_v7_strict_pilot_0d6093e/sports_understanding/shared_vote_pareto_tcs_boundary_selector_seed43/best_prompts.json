@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 2,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.551,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.85,
+    0.815,
+    0.6300000000000001,
+    0.0,
+    2
+  ],
+  "selected_vote_acc": 0.85,
+  "selected_oracle_acc": 0.875,
+  "selected_mean_individual_acc": 0.815,
+  "selected_mean_vote_margin": 0.6300000000000001,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "3969b6810bc7",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; before final answer, explicitly construct a temporal event sequence and cross-check it against negated qualifiers; verify key logic; give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "782e0dfc6a2f",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; before selecting your final answer, explicitly check each negated constraint in the problem statement by listing what conditions would satisfy or violate the negation, then verify whether the evidence satisfies or violates the negation; verify key logic; and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "4fa20a5ab411",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; explicitly verify what would happen if key qualifiers were reversed before final answer selection; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "5fd52f976896",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic; before final answer, explicitly detect negation words in qualifiers and verify those conditions are properly evaluated; give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}
