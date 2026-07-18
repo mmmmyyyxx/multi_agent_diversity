@@ -18,13 +18,13 @@ unanimous correctness. C3 is diagnostic and is not the general vote-accuracy
 metric: two correct votes can win a plurality when wrong votes are dispersed.
 Coverage-depth transitions add no solver calls.
 
-## Competence Schedule
+## V8.1 Competence Schedule
 
-Epoch 1 uses `specialization_strength = 0`. At the end of each complete optimization epoch, V8 computes the mean accuracy of the two weakest agents and sets the next epoch's strength to:
+Epoch 1 uses `specialization_strength = 0`. Before any update, V8.1 selects one fixed, seeded probe from the optimization split and evaluates the initial active prompts. After every epoch-end beam refresh, it evaluates the same questions with the current active prompts. Online train accuracy mixes multiple prompt generations and is diagnostic only; validation selects the best state and test evaluates that state, but neither controls the schedule.
 
-```text
-clip((bottom2_mean_acc - 0.55) / (0.65 - 0.55), 0, 1)
-```
+For probe size `N`, the effective gain thresholds are `max(0.01, 1/N)` and `max(0.06, 4/N, low+1e-8)`. Raw strength linearly maps the bottom-2 gain relative to the initial probe into `[0,1]`. Strength may increase only when probe mean accuracy, C1, and C2 remain within 0.01 of their initial values. The gated target is smoothed with EMA 0.5, limited to a 0.35 increase per epoch, and is monotonic by default. The schedule version is `competence_depth_v2_opt_snapshot_c1_guard`.
+
+A candidate-level C1 guard additionally requires `depth1_net_delta >= 0` on the paired candidate batch. It is a feasibility guard, not a reward component or fifth Pareto objective, and adds no solver calls.
 
 Validation and test never control this schedule. Schedule state is checkpointed and restored exactly.
 
@@ -35,6 +35,8 @@ The update selector retains v7 boundary/error pressure and adds an early compete
 `competence_depth_pareto` uses four objectives: maximize actual plurality vote gain, minimize actual plurality vote loss, maximize target-agent accuracy, and maximize `(1-s)*depth2_net_delta + s*plurality_boundary_shared_error_net_gain`.
 
 The competence reward emphasizes target accuracy, `K=1 -> K=2`, and vote gains early. It blends smoothly into the unchanged v7 vote-useful-diversity reward as `s` approaches 1. Accuracy guard tolerance is `s * configured_epsilon`.
+
+Progressive specialization is considered exercised only when a nonzero strength is actually used by a later training epoch. A nonzero strength computed after the final epoch is reported as `activation_after_final_epoch`, not as an exercised stage.
 
 ## Progressive Residual Specialization
 

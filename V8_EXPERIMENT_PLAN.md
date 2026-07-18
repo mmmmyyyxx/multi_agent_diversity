@@ -39,4 +39,6 @@ not a mandatory gate. Oracle need not increase.
 python scripts/analyze_competence_depth.py <run_root>
 ```
 
-The script writes five CSV files and `COMPETENCE_DEPTH_AUDIT.md` without API calls.
+The script writes the original summaries plus schedule, C1-guard, and mechanism summaries, and `COMPETENCE_DEPTH_AUDIT.md`, without API calls. Report aggregation-gap changes together with C1, all-wrong rate, mean accuracy, bottom-2, C2, and vote accuracy; a smaller gap alone is not evidence of improvement.
+
+For V8.2, use `shared_vote_tcs_competence_depth2_progressive_residual_hybrid`. Do not relabel results from the older full-progressive setting as V8.2, and do not treat reused-file `shared_guarded_beam` results as strict same-protocol effect estimates.

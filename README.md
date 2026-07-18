@@ -2,6 +2,10 @@
 
 See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md) and [V8_EXPERIMENT_PLAN.md](V8_EXPERIMENT_PLAN.md) for the opt-in competence-first and coverage-depth method.
 
+The latest opt-in method is [V8.2 Hybrid Progressive Prompt Optimization](V8_2_HYBRID_PROGRESSIVE_METHOD.md). It keeps early competence and C1/C2 creation pressure, progressively adds actual plurality-boundary and residual pressure, and retains controlled mechanism exploration without assigning fixed agent roles.
+
+V8.1 schedules progressive specialization from a fixed optimization-split probe evaluated before training and after each epoch-end beam refresh. Its task-adaptive schedule measures bottom-2 improvement relative to the initial prompts, gates increases on mean/C1/C2 preservation, and applies a candidate-level C1 non-degradation guard. Online train metrics remain trajectory diagnostics; validation and test never determine the training phase.
+
 This repository implements vote-oriented evolutionary prompt search for multi-agent reasoning. It evolves prompts, not model weights. A fixed team of solver agents answers each question, and the primary evaluation metric is final team `vote_acc`.
 
 The team uses plurality voting, not a strict-majority threshold: the answer with

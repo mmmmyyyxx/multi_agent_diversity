@@ -157,6 +157,49 @@ def test_training_checkpoint_reports_changed_config_signature(tmp_path):
     assert any("reward_mode" in reason for reason in reasons)
 
 
+def test_training_checkpoint_reports_changed_derived_behavior_field(tmp_path):
+    system = _system(tmp_path)
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    payload["behavior_config"]["effective_aggregation_mode"] = "weighted_vote"
+    payload["behavior_config_fingerprint"] = "changed-derived-behavior"
+
+    reasons = checkpoint_incompatibility_reasons(payload, system.cfg, [None, None, None, None])
+
+    assert any("effective_aggregation_mode" in reason for reason in reasons)
+
+
+def test_training_checkpoint_fingerprint_normalizes_integer_boolean_flags():
+    bool_cfg = Config(
+        competence_depth_enabled=True,
+        competence_depth2_aux_enabled=True,
+        competence_progressive_residual_enabled=True,
+    )
+    int_cfg = Config(
+        competence_depth_enabled=1,
+        competence_depth2_aux_enabled=1,
+        competence_progressive_residual_enabled=1,
+    )
+
+    assert checkpoint_behavior_config_fingerprint(bool_cfg) == checkpoint_behavior_config_fingerprint(int_cfg)
+
+
+def test_training_checkpoint_accepts_legacy_integer_boolean_payload(tmp_path):
+    system = _system(tmp_path)
+    system.cfg.competence_depth_enabled = True
+    system.cfg.competence_depth2_aux_enabled = True
+    system.cfg.competence_progressive_residual_enabled = True
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    for field in (
+        "competence_depth_enabled",
+        "competence_depth2_aux_enabled",
+        "competence_progressive_residual_enabled",
+    ):
+        payload["behavior_config"][field] = 1
+    payload["behavior_config_fingerprint"] = "legacy-integer-boolean-fingerprint"
+
+    assert checkpoint_compatible(payload, system.cfg, [None, None, None, None]) is True
+
+
 def test_training_checkpoint_rejects_changed_reward_and_eval_behavior(tmp_path):
     system = _system(tmp_path)
     payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())

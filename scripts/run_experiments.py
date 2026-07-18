@@ -246,6 +246,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
         "competence_depth_enabled", "competence_depth2_aux_enabled", "competence_progressive_residual_enabled",
         "competence_floor_low", "competence_floor_high", "competence_selector_weight",
         "competence_extra_support_shrinkage",
+        "competence_schedule_mode", "competence_schedule_version", "competence_probe_size",
+        "competence_probe_seed_offset", "competence_relative_low_delta", "competence_relative_high_delta",
+        "competence_schedule_ema", "competence_schedule_max_step", "competence_schedule_monotonic",
+        "competence_mean_guard_epsilon", "competence_c1_guard_epsilon", "competence_c2_guard_epsilon",
+        "competence_depth1_candidate_guard_enabled", "competence_depth1_candidate_guard_epsilon",
+        "competence_min_effective_specialization_epochs",
     ):
         value = setting_value(name, getattr(args, name, getattr(defaults, name)))
         if isinstance(getattr(defaults, name), bool):
@@ -378,6 +384,21 @@ def main():
     parser.add_argument("--competence_floor_high", type=float, default=cli_defaults.competence_floor_high)
     parser.add_argument("--competence_selector_weight", type=float, default=cli_defaults.competence_selector_weight)
     parser.add_argument("--competence_extra_support_shrinkage", type=float, default=cli_defaults.competence_extra_support_shrinkage)
+    parser.add_argument("--competence_schedule_mode", default=cli_defaults.competence_schedule_mode, choices=["absolute_legacy", "baseline_relative_opt_snapshot"])
+    parser.add_argument("--competence_schedule_version", default=cli_defaults.competence_schedule_version)
+    parser.add_argument("--competence_probe_size", type=int, default=cli_defaults.competence_probe_size)
+    parser.add_argument("--competence_probe_seed_offset", type=int, default=cli_defaults.competence_probe_seed_offset)
+    parser.add_argument("--competence_relative_low_delta", type=float, default=cli_defaults.competence_relative_low_delta)
+    parser.add_argument("--competence_relative_high_delta", type=float, default=cli_defaults.competence_relative_high_delta)
+    parser.add_argument("--competence_schedule_ema", type=float, default=cli_defaults.competence_schedule_ema)
+    parser.add_argument("--competence_schedule_max_step", type=float, default=cli_defaults.competence_schedule_max_step)
+    parser.add_argument("--competence_schedule_monotonic", type=int, default=int(cli_defaults.competence_schedule_monotonic), choices=[0, 1])
+    parser.add_argument("--competence_mean_guard_epsilon", type=float, default=cli_defaults.competence_mean_guard_epsilon)
+    parser.add_argument("--competence_c1_guard_epsilon", type=float, default=cli_defaults.competence_c1_guard_epsilon)
+    parser.add_argument("--competence_c2_guard_epsilon", type=float, default=cli_defaults.competence_c2_guard_epsilon)
+    parser.add_argument("--competence_depth1_candidate_guard_enabled", type=int, default=int(cli_defaults.competence_depth1_candidate_guard_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth1_candidate_guard_epsilon", type=float, default=cli_defaults.competence_depth1_candidate_guard_epsilon)
+    parser.add_argument("--competence_min_effective_specialization_epochs", type=int, default=cli_defaults.competence_min_effective_specialization_epochs)
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)

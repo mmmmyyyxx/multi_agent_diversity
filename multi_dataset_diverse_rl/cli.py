@@ -94,6 +94,20 @@ def build_candidate_eval_pool(train_data, val_data, cfg):
     return [source[i] for i in indices[:pool_size]]
 
 
+def select_competence_probe_indices(train_data, cfg, saved_indices=None):
+    """Select one deterministic optimization-split probe for the entire run."""
+    if saved_indices is not None:
+        indices = [int(value) for value in saved_indices]
+        if len(set(indices)) != len(indices) or any(index < 0 or index >= len(train_data) for index in indices):
+            raise ValueError("competence probe checkpoint indices are invalid for the optimization split")
+        return indices
+    size = int(getattr(cfg, "competence_probe_size", 0) or 0)
+    size = len(train_data) if size <= 0 else min(size, len(train_data))
+    indices = list(range(len(train_data)))
+    random.Random(int(cfg.seed) + int(getattr(cfg, "competence_probe_seed_offset", 7000))).shuffle(indices)
+    return indices[:size]
+
+
 def _stratified_sample(records, size, rng):
     if size <= 0 or not records:
         return []
@@ -252,7 +266,27 @@ def vote_competence_first_validation_key(epoch_record):
     )
 
 
+def vote_generalization_first_validation_key(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    return (
+        -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
+        -float(val.get("coverage_depth_c1", 0.0) or 0.0),
+        -float(val.get("coverage_depth_c2", 0.0) or 0.0),
+        -float(
+            val.get("mean_normalized_plurality_margin", val.get("mean_vote_margin", -1.0))
+            if val.get("mean_normalized_plurality_margin", val.get("mean_vote_margin")) is not None
+            else -1.0
+        ),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        int(epoch_record.get("epoch", 0) or 0),
+    )
+
+
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
+    if str(selection_mode or "existing").lower() == "vote_generalization_first":
+        return best_epoch_record is None or vote_generalization_first_validation_key(epoch_record) < vote_generalization_first_validation_key(best_epoch_record)
     if str(selection_mode or "existing").lower() == "vote_competence_first":
         return best_epoch_record is None or vote_competence_first_validation_key(epoch_record) < vote_competence_first_validation_key(best_epoch_record)
     if str(selection_mode or "existing").lower() == "vote_first":
@@ -279,7 +313,9 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         "best_validation_score": validation_score,
         "best_state_selection_mode": str(best_state_selection_mode or "existing"),
         "best_state_selection_key": (
-            list(vote_competence_first_validation_key(epoch_record))
+            list(vote_generalization_first_validation_key(epoch_record))
+            if str(best_state_selection_mode or "existing").lower() == "vote_generalization_first" and isinstance(epoch_record, dict)
+            else list(vote_competence_first_validation_key(epoch_record))
             if str(best_state_selection_mode or "existing").lower() == "vote_competence_first" and isinstance(epoch_record, dict)
             else vote_first_validation_key_fields(epoch_record)
             if str(best_state_selection_mode or "existing").lower() == "vote_first" and isinstance(epoch_record, dict)
@@ -296,6 +332,15 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
             for i, prompt in enumerate(prompts)
         ],
     }
+    if str(getattr(system.cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+        payload.update({
+            "method_version": str(system.cfg.method_version),
+            "competence_schedule_version": str(system.cfg.competence_schedule_version),
+            "target_selector_version": str(system.cfg.target_selector_version),
+            "beam_policy_version": str(system.cfg.beam_policy_version),
+            "tcs_candidate_policy_version": str(system.cfg.tcs_candidate_policy_version),
+            "mechanism_signature_version": str(system.cfg.mechanism_signature_version),
+        })
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
@@ -374,6 +419,35 @@ def restore_system_state(system, state_payload):
     system.competence_phase_epoch = int(state_payload.get("competence_phase_epoch", 1) or 1)
     system.competence_schedule_version = str(state_payload.get("competence_schedule_version", "competence_depth_v1"))
     system.specialization_strength_history = [float(x) for x in state_payload.get("specialization_strength_history", [])]
+    system.competence_probe_indices = [int(x) for x in state_payload.get("competence_probe_indices", [])]
+    system.competence_probe_question_hashes = [str(x) for x in state_payload.get("competence_probe_question_hashes", [])]
+    system.initial_competence_probe_metrics = dict(state_payload.get("initial_competence_probe_metrics", {}) or {})
+    system.latest_competence_probe_metrics = dict(state_payload.get("latest_competence_probe_metrics", {}) or {})
+    system.competence_probe_history = [dict(x) for x in state_payload.get("competence_probe_history", []) if isinstance(x, dict)]
+    system.initial_active_prompt_hashes = [str(x) for x in state_payload.get("initial_active_prompt_hashes", [])]
+    first_nonzero = state_payload.get("first_nonzero_specialization_epoch")
+    system.first_nonzero_specialization_epoch = int(first_nonzero) if first_nonzero is not None else None
+    system.effective_specialization_epoch_count = int(state_payload.get("effective_specialization_epoch_count", 0) or 0)
+    system.depth1_guard_rejection_count = int(state_payload.get("depth1_guard_rejection_count", 0) or 0)
+    for field in (
+        "catastrophic_accuracy_guard_rejection_count",
+        "soft_error_dependence_penalty_count",
+        "soft_cycle_penalty_count",
+        "soft_mechanism_shift_penalty_count",
+        "exploration_candidate_count",
+        "exploration_slot_occupancy_count",
+        "exploration_to_active_conversion_count",
+    ):
+        setattr(system, field, int(state_payload.get(field, 0) or 0))
+    system.hybrid_selector_history = [dict(x) for x in state_payload.get("hybrid_selector_history", []) if isinstance(x, dict)]
+    system.mechanism_signature_history = [dict(x) for x in state_payload.get("mechanism_signature_history", []) if isinstance(x, dict)]
+    system.mechanism_signature_by_prompt_hash = {
+        str(key): [str(value) for value in values]
+        for key, values in dict(state_payload.get("mechanism_signature_by_prompt_hash", {}) or {}).items()
+        if isinstance(values, list)
+    }
+    system.beam_slot_state = dict(state_payload.get("beam_slot_state", {}) or {})
+    system.exploration_slot_candidates = [dict(x) for x in state_payload.get("exploration_slot_candidates", []) if isinstance(x, dict)]
     system.prompt_overlength_rejection_count = int(state_payload.get("prompt_overlength_rejection_count", 0) or 0)
     system.truncated_prompt_count = int(state_payload.get("truncated_prompt_count", 0) or 0)
     python_state = state_payload.get("python_random_state")
@@ -557,12 +631,44 @@ BEHAVIOR_CONFIG_FIELDS = (
         "competence_weight_vote_gain_early",
         "competence_weight_vote_loss_early",
         "competence_schedule_version",
+        "competence_schedule_mode",
+        "competence_probe_size",
+        "competence_probe_seed_offset",
+        "competence_relative_low_delta",
+        "competence_relative_high_delta",
+        "competence_schedule_ema",
+        "competence_schedule_max_step",
+        "competence_schedule_monotonic",
+        "competence_mean_guard_epsilon",
+        "competence_c1_guard_epsilon",
+        "competence_c2_guard_epsilon",
+        "competence_depth1_candidate_guard_enabled",
+        "competence_depth1_candidate_guard_epsilon",
+        "competence_min_effective_specialization_epochs",
+        "method_version", "target_selector_mode", "target_selector_version", "beam_policy_version",
+        "tcs_candidate_policy_version", "mechanism_signature_version",
+        "competence_weight_depth1_gain", "competence_weight_depth1_loss", "competence_residual_floor",
+        "catastrophic_target_accuracy_loss_epsilon", "soft_guard_error_dependence_weight",
+        "soft_guard_cycle_weight", "soft_guard_mechanism_shift_weight",
+        "soft_guard_accuracy_regression_weight", "mechanism_novelty_bonus_weight",
         "split_integrity_json",
 )
 
 
+def _normalize_behavior_config_types(payload):
+    defaults = Config()
+    normalized = dict(payload)
+    for field, value in list(normalized.items()):
+        if isinstance(getattr(defaults, field, None), bool):
+            value = bool(value)
+        normalized[field] = value
+    return normalized
+
+
 def checkpoint_behavior_config(cfg):
-    payload = {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+    payload = _normalize_behavior_config_types(
+        {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+    )
     if bool(getattr(cfg, "competence_depth_enabled", False)):
         payload["effective_aggregation_mode"] = canonical_aggregation_mode(
             str(getattr(cfg, "aggregation_mode", "majority") or "majority")
@@ -578,6 +684,32 @@ def checkpoint_behavior_config(cfg):
             "competence_weight_depth2_gain", "competence_weight_depth2_loss",
             "competence_weight_vote_gain_early", "competence_weight_vote_loss_early",
             "competence_schedule_version",
+            "competence_schedule_mode", "competence_probe_size", "competence_probe_seed_offset",
+            "competence_relative_low_delta", "competence_relative_high_delta",
+            "competence_schedule_ema", "competence_schedule_max_step", "competence_schedule_monotonic",
+            "competence_mean_guard_epsilon", "competence_c1_guard_epsilon", "competence_c2_guard_epsilon",
+            "competence_depth1_candidate_guard_enabled", "competence_depth1_candidate_guard_epsilon",
+            "competence_min_effective_specialization_epochs",
+        ):
+            payload.pop(field, None)
+    if str(getattr(cfg, "competence_schedule_mode", "absolute_legacy")) != "baseline_relative_opt_snapshot":
+        for field in (
+            "competence_schedule_mode", "competence_probe_size", "competence_probe_seed_offset",
+            "competence_relative_low_delta", "competence_relative_high_delta", "competence_schedule_ema",
+            "competence_schedule_max_step", "competence_schedule_monotonic", "competence_mean_guard_epsilon",
+            "competence_c1_guard_epsilon", "competence_c2_guard_epsilon",
+            "competence_depth1_candidate_guard_enabled", "competence_depth1_candidate_guard_epsilon",
+            "competence_min_effective_specialization_epochs",
+        ):
+            payload.pop(field, None)
+    if str(getattr(cfg, "method_version", "legacy")) != "v8_2_hybrid_progressive":
+        for field in (
+            "method_version", "target_selector_mode", "target_selector_version", "beam_policy_version",
+            "tcs_candidate_policy_version", "mechanism_signature_version", "competence_weight_depth1_gain",
+            "competence_weight_depth1_loss", "competence_residual_floor",
+            "catastrophic_target_accuracy_loss_epsilon", "soft_guard_error_dependence_weight",
+            "soft_guard_cycle_weight", "soft_guard_mechanism_shift_weight",
+            "soft_guard_accuracy_regression_weight", "mechanism_novelty_bonus_weight",
         ):
             payload.pop(field, None)
     if str(getattr(cfg, "reward_mode", "")) != "coverage_useful_diversity":
@@ -649,6 +781,27 @@ def build_training_checkpoint(
             "competence_phase_epoch": int(getattr(system, "competence_phase_epoch", 1)),
             "competence_schedule_version": str(getattr(system, "competence_schedule_version", "competence_depth_v1")),
             "specialization_strength_history": list(getattr(system, "specialization_strength_history", [0.0])),
+            "competence_probe_indices": list(getattr(system, "competence_probe_indices", [])),
+            "competence_probe_question_hashes": list(getattr(system, "competence_probe_question_hashes", [])),
+            "initial_competence_probe_metrics": dict(getattr(system, "initial_competence_probe_metrics", {})),
+            "latest_competence_probe_metrics": dict(getattr(system, "latest_competence_probe_metrics", {})),
+            "competence_probe_history": list(getattr(system, "competence_probe_history", [])),
+            "initial_active_prompt_hashes": list(getattr(system, "initial_active_prompt_hashes", [])),
+            "first_nonzero_specialization_epoch": getattr(system, "first_nonzero_specialization_epoch", None),
+            "effective_specialization_epoch_count": int(getattr(system, "effective_specialization_epoch_count", 0)),
+            "depth1_guard_rejection_count": int(getattr(system, "depth1_guard_rejection_count", 0)),
+            "catastrophic_accuracy_guard_rejection_count": int(getattr(system, "catastrophic_accuracy_guard_rejection_count", 0)),
+            "soft_error_dependence_penalty_count": int(getattr(system, "soft_error_dependence_penalty_count", 0)),
+            "soft_cycle_penalty_count": int(getattr(system, "soft_cycle_penalty_count", 0)),
+            "soft_mechanism_shift_penalty_count": int(getattr(system, "soft_mechanism_shift_penalty_count", 0)),
+            "exploration_candidate_count": int(getattr(system, "exploration_candidate_count", 0)),
+            "exploration_slot_occupancy_count": int(getattr(system, "exploration_slot_occupancy_count", 0)),
+            "exploration_to_active_conversion_count": int(getattr(system, "exploration_to_active_conversion_count", 0)),
+            "hybrid_selector_history": list(getattr(system, "hybrid_selector_history", [])),
+            "mechanism_signature_history": list(getattr(system, "mechanism_signature_history", [])),
+            "mechanism_signature_by_prompt_hash": dict(getattr(system, "mechanism_signature_by_prompt_hash", {})),
+            "beam_slot_state": dict(getattr(system, "beam_slot_state", {})),
+            "exploration_slot_candidates": list(getattr(system, "exploration_slot_candidates", [])),
             "prompt_overlength_rejection_count": int(getattr(system, "prompt_overlength_rejection_count", 0)),
             "truncated_prompt_count": int(getattr(system, "truncated_prompt_count", 0)),
             "python_random_state": random.getstate(),
@@ -706,15 +859,18 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
     current_fingerprint = checkpoint_behavior_config_fingerprint(cfg)
     if not isinstance(saved_config, dict) or not saved_fingerprint:
         reasons.append("behavior_config: checkpoint behavior configuration or fingerprint is missing")
-    elif saved_fingerprint != current_fingerprint:
+    elif saved_fingerprint != current_fingerprint and _normalize_behavior_config_types(saved_config) != current_config:
         reasons.append(
             "behavior_config_fingerprint: checkpoint and current optimization behavior differ"
         )
-        for key in BEHAVIOR_CONFIG_FIELDS:
-            if saved_config.get(key) != current_config.get(key):
-                reasons.append(
-                    f"{key}: checkpoint={saved_config.get(key)!r} current={current_config.get(key)!r}"
-                )
+        for key in sorted(set(BEHAVIOR_CONFIG_FIELDS) | set(saved_config) | set(current_config)):
+            saved_value = saved_config.get(key)
+            current_value = current_config.get(key)
+            if json.dumps(saved_value, sort_keys=True, default=str) != json.dumps(
+                current_value, sort_keys=True, default=str
+            ):
+                label = f"{key} mismatch" if key in {"competence_schedule_version", "competence_schedule_mode"} else key
+                reasons.append(f"{label}: checkpoint={saved_value!r} current={current_value!r}")
     epoch_index = int(payload.get("epoch_index", -1))
     if epoch_index < 0 or epoch_index > int(cfg.epochs):
         reasons.append(f"epoch_index: checkpoint={payload.get('epoch_index')!r} current_epochs={cfg.epochs!r}")
@@ -867,6 +1023,8 @@ async def main_async():
     cfg.mechanism_trust_region_enabled = bool(int(cfg.mechanism_trust_region_enabled))
     cfg.behavior_cycle_guard_enabled = bool(int(cfg.behavior_cycle_guard_enabled))
     cfg.prompt_trust_region_enabled = bool(int(cfg.prompt_trust_region_enabled))
+    cfg.competence_schedule_monotonic = bool(int(cfg.competence_schedule_monotonic))
+    cfg.competence_depth1_candidate_guard_enabled = bool(int(cfg.competence_depth1_candidate_guard_enabled))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
 
     ensure_dir(cfg.out_dir)
@@ -1031,6 +1189,50 @@ async def main_async():
         elif candidate is not None:
             abort_incompatible_checkpoint(cfg, incompatibility_reasons)
 
+    adaptive_competence_schedule = bool(cfg.competence_depth_enabled) and str(cfg.competence_schedule_mode) == "baseline_relative_opt_snapshot"
+    fixed_competence_probe = []
+    if adaptive_competence_schedule:
+        has_saved_baseline = bool(system.initial_competence_probe_metrics)
+        if has_saved_baseline:
+            probe_indices = select_competence_probe_indices(train_data, cfg, system.competence_probe_indices)
+        else:
+            if cfg.resume_from_checkpoint and preflight_resume_candidate is not None:
+                raise RuntimeError("compatible competence checkpoint is missing its initial optimization probe baseline")
+            probe_indices = select_competence_probe_indices(train_data, cfg)
+        fixed_competence_probe = [train_data[index] for index in probe_indices]
+        probe_hashes = [system._hash(example["question"]) for example in fixed_competence_probe]
+        if has_saved_baseline:
+            if probe_hashes != list(system.competence_probe_question_hashes):
+                raise RuntimeError("competence probe question hashes changed while restoring checkpoint")
+        else:
+            system.competence_probe_indices = list(probe_indices)
+            system.competence_probe_question_hashes = list(probe_hashes)
+            system.initial_active_prompt_hashes = [system._hash(prompt) for prompt in system._active_prompt_list()]
+            initial_probe = await system.evaluate_competence_probe(
+                fixed_competence_probe, probe_name="initial_opt_competence", epoch=0
+            )
+            if list(initial_probe.get("question_hashes", [])) != probe_hashes:
+                raise RuntimeError("initial competence probe hashes do not match the fixed optimization probe")
+            system.initial_competence_probe_metrics = dict(initial_probe)
+            system.latest_competence_probe_metrics = dict(initial_probe)
+            write_training_checkpoint(
+                cfg,
+                system,
+                epoch_index=0,
+                cursor=0,
+                order=[],
+                train_accumulators={},
+                best_score=best_score,
+                best_epoch=best_epoch,
+                epochs_without_improvement=epochs_without_improvement,
+                stopped_early=stopped_early,
+                no_effective_evolution_counter=no_effective_evolution_counter,
+                no_effective_evolution_stopped=no_effective_evolution_stopped,
+                no_effective_evolution_reason=no_effective_evolution_reason,
+                stage="between_epochs",
+            )
+        system.write_run_meta()
+
     if resume_epoch_record is not None:
         epoch_num = int(resume_epoch_record.get("epoch", resume_epoch_index + 1) or (resume_epoch_index + 1))
         train_metrics = resume_epoch_record.get("train", {}) if isinstance(resume_epoch_record.get("train", {}), dict) else {}
@@ -1124,6 +1326,7 @@ async def main_async():
         resume_epoch_record = None
 
     for epoch in range(resume_epoch_index, cfg.epochs):
+        strength_used = float(system.specialization_strength)
         if resume_payload is not None and epoch == resume_epoch_index:
             order = [int(x) for x in resume_payload.get("order", [])]
         else:
@@ -1295,19 +1498,52 @@ async def main_async():
                 "c1_minus_c2", "c2_minus_c3",
             )},
         }
+        train_metrics.update({
+            "online_train_mean_individual_acc": float(train_metrics.get("mean_individual_acc", 0.0) or 0.0),
+            "online_train_bottom2_mean_acc": float(train_metrics.get("bottom2_mean_acc", 0.0) or 0.0),
+            "online_train_C1": float(train_metrics.get("coverage_depth_c1", 0.0) or 0.0),
+            "online_train_C2": float(train_metrics.get("coverage_depth_c2", 0.0) or 0.0),
+        })
         refresh_summary = None
         if cfg.beam_refresh_each_epoch:
             refresh_batch_size = max(1, int(cfg.candidate_eval_batch_size or 10))
             refresh_batch = [train_data[i] for i in order[: min(refresh_batch_size, len(order))]]
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
-
-        val_metrics = await system.evaluate_dataset(val_data, split_name=f"val_epoch{epoch + 1}")
-        strength_used = float(system.specialization_strength)
         system.specialization_strength_history.append(strength_used)
-        system.complete_competence_epoch(train_metrics.get("per_agent_acc", []), epoch + 1)
+        if strength_used > 0.0:
+            system.effective_specialization_epoch_count += 1
+            if system.first_nonzero_specialization_epoch is None:
+                system.first_nonzero_specialization_epoch = epoch + 1
+        competence_schedule_record = None
+        if adaptive_competence_schedule:
+            probe_metrics = await system.evaluate_competence_probe(
+                fixed_competence_probe,
+                probe_name=f"opt_competence_epoch{epoch + 1}",
+                epoch=epoch + 1,
+            )
+            if list(probe_metrics.get("question_hashes", [])) != list(system.competence_probe_question_hashes):
+                raise RuntimeError("competence probe drift detected after epoch-end beam refresh")
+            competence_schedule_record = system.complete_competence_epoch(
+                snapshot_metrics=probe_metrics, epoch=epoch + 1
+            )
+        else:
+            system.complete_competence_epoch(train_metrics.get("per_agent_acc", []), epoch + 1)
+        val_metrics = await system.evaluate_dataset(val_data, split_name=f"val_epoch{epoch + 1}")
         train_metrics["specialization_strength"] = strength_used
         train_metrics["next_epoch_specialization_strength"] = float(system.specialization_strength)
         epoch_record = {"epoch": epoch + 1, "train": train_metrics, "val": val_metrics}
+        if str(getattr(cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+            epoch_record.update({
+                "method_version": str(cfg.method_version),
+                "competence_schedule_version": str(cfg.competence_schedule_version),
+                "target_selector_version": str(cfg.target_selector_version),
+                "beam_policy_version": str(cfg.beam_policy_version),
+                "tcs_candidate_policy_version": str(cfg.tcs_candidate_policy_version),
+                "mechanism_signature_version": str(cfg.mechanism_signature_version),
+                "beam_slot_state": dict(getattr(system, "beam_slot_state", {})),
+            })
+        if competence_schedule_record is not None:
+            epoch_record["competence_schedule"] = competence_schedule_record
         if refresh_summary is not None:
             epoch_record["beam_refresh"] = refresh_summary
         if cfg.eval_test_each_epoch:
@@ -1346,6 +1582,16 @@ async def main_async():
             f"train_gap={train_metrics['aggregation_gap']:.4f}, "
             f"train_useful_div={train_metrics['mean_useful_diversity']:.4f}, "
             f"train_invalid={train_metrics['mean_invalid_rate']:.4f}, "
+            f"online_train_bottom2={train_metrics.get('online_train_bottom2_mean_acc', 0.0):.4f}, "
+            f"opt_probe_bottom2={float((competence_schedule_record or {}).get('snapshot_bottom2_mean_acc', 0.0)):.4f}, "
+            f"initial_probe_bottom2={float((competence_schedule_record or {}).get('initial_bottom2_mean_acc', 0.0)):.4f}, "
+            f"bottom2_gain={float((competence_schedule_record or {}).get('bottom2_gain', 0.0)):.4f}, "
+            f"opt_probe_mean={float((competence_schedule_record or {}).get('snapshot_mean_individual_acc', 0.0)):.4f}, "
+            f"opt_probe_C1={float((competence_schedule_record or {}).get('snapshot_c1', 0.0)):.4f}, "
+            f"opt_probe_C2={float((competence_schedule_record or {}).get('snapshot_c2', 0.0)):.4f}, "
+            f"gate={'pass' if not (competence_schedule_record or {}).get('gate_failure_reasons') else '|'.join((competence_schedule_record or {}).get('gate_failure_reasons', []))}, "
+            f"s_raw={float((competence_schedule_record or {}).get('raw_specialization_strength', 0.0)):.4f}, "
+            f"s_next={float(system.specialization_strength):.4f}, "
             f"val_vote_acc={val_metrics['vote_acc']:.4f}, "
             f"val_oracle_acc={val_metrics.get('oracle_acc', 0.0):.4f}, "
             f"val_gap={val_metrics.get('aggregation_gap', 0.0):.4f}, "
@@ -1431,6 +1677,15 @@ async def main_async():
         payload, prompts = read_selected_prompts(best_prompts_path)
         best_epoch = int(payload.get("selected_epoch", best_epoch) or best_epoch)
         restore_agent_prompts(system, prompts, selected_epoch=best_epoch)
+        selected_probe = next(
+            (
+                record for record in reversed(getattr(system, "competence_probe_history", []))
+                if isinstance(record, dict) and int(record.get("epoch", -1)) == int(best_epoch)
+            ),
+            None,
+        )
+        if selected_probe is not None:
+            system.latest_competence_probe_metrics = dict(selected_probe)
 
     final_test_metrics = await system.evaluate_dataset(test_data, split_name="test_final")
     final_record = {
@@ -1446,6 +1701,15 @@ async def main_async():
         "test_evaluated_on": "best_state",
         "test": final_test_metrics,
     }
+    if str(getattr(cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+        final_record.update({
+            "method_version": str(cfg.method_version),
+            "competence_schedule_version": str(cfg.competence_schedule_version),
+            "target_selector_version": str(cfg.target_selector_version),
+            "beam_policy_version": str(cfg.beam_policy_version),
+            "tcs_candidate_policy_version": str(cfg.tcs_candidate_policy_version),
+            "mechanism_signature_version": str(cfg.mechanism_signature_version),
+        })
     system.history.append(final_record)
     if hasattr(system, "sync_prompt_history_current_state"):
         system.sync_prompt_history_current_state(

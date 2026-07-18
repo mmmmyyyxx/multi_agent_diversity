@@ -222,6 +222,111 @@ def competence_specialization_strength(bottom2_mean_acc: float, low: float = 0.5
     return float(np.clip((float(bottom2_mean_acc) - float(low)) / (float(high) - float(low)), 0.0, 1.0))
 
 
+def normalize_mechanism_signature(steps: Sequence[Any]) -> List[str]:
+    aliases = {
+        "enumerate": "enumerate_candidates", "candidate": "enumerate_candidates",
+        "constraint": "extract_constraints", "eliminate": "hard_elimination",
+        "score": "weighted_scoring", "weight": "weighted_scoring",
+        "compare": "pairwise_comparison", "counterfactual": "counterfactual_check",
+        "timeline": "timeline_construction", "binding": "binding_resolution",
+        "semantic": "semantic_role_check", "discourse": "discourse_distance_check",
+        "contradiction": "contradiction_minimization", "verify": "final_consistency_check",
+        "consistency": "final_consistency_check",
+    }
+    signature = []
+    for step in steps or []:
+        tokens = re.findall(r"[a-z0-9_]+", str(step).lower())
+        operation = next((aliases[token] for token in tokens if token in aliases), "_".join(tokens[:5]))
+        if operation and (not signature or signature[-1] != operation):
+            signature.append(operation)
+    return signature
+
+
+def mechanism_signature_distance(left: Sequence[str], right: Sequence[str]) -> float:
+    a, b = list(left or []), list(right or [])
+    if not a and not b:
+        return 0.0
+    common = sum(x == y for x, y in zip(a, b))
+    return 1.0 - common / max(1, max(len(a), len(b)))
+
+
+def competence_relative_specialization_strength(
+    *,
+    initial_metrics: Dict[str, Any],
+    snapshot_metrics: Dict[str, Any],
+    probe_size: int,
+    current_strength: float,
+    low_delta: float = 0.01,
+    high_delta: float = 0.06,
+    ema: float = 0.50,
+    max_step: float = 0.35,
+    monotonic: bool = True,
+    mean_guard_epsilon: float = 0.01,
+    c1_guard_epsilon: float = 0.01,
+    c2_guard_epsilon: float = 0.01,
+) -> Dict[str, Any]:
+    """Compute the V8.1 schedule from paired static optimization probes."""
+    size = max(1, int(probe_size))
+    effective_low = max(float(low_delta), 1.0 / size)
+    effective_high = max(float(high_delta), 4.0 / size, effective_low + 1e-8)
+    initial_bottom2 = float(initial_metrics.get("bottom2_mean_acc", 0.0) or 0.0)
+    snapshot_bottom2 = float(snapshot_metrics.get("bottom2_mean_acc", 0.0) or 0.0)
+    initial_mean = float(initial_metrics.get("mean_individual_acc", 0.0) or 0.0)
+    snapshot_mean = float(snapshot_metrics.get("mean_individual_acc", 0.0) or 0.0)
+    initial_c1 = float(initial_metrics.get("coverage_depth_c1", 0.0) or 0.0)
+    snapshot_c1 = float(snapshot_metrics.get("coverage_depth_c1", 0.0) or 0.0)
+    initial_c2 = float(initial_metrics.get("coverage_depth_c2", 0.0) or 0.0)
+    snapshot_c2 = float(snapshot_metrics.get("coverage_depth_c2", 0.0) or 0.0)
+    bottom2_gain = snapshot_bottom2 - initial_bottom2
+    raw_strength = float(np.clip(
+        (bottom2_gain - effective_low) / (effective_high - effective_low), 0.0, 1.0
+    ))
+    mean_passed = snapshot_mean >= initial_mean - float(mean_guard_epsilon)
+    c1_passed = snapshot_c1 >= initial_c1 - float(c1_guard_epsilon)
+    c2_passed = snapshot_c2 >= initial_c2 - float(c2_guard_epsilon)
+    reasons = []
+    if not mean_passed:
+        reasons.append("mean_regression")
+    if not c1_passed:
+        reasons.append("c1_regression")
+    if not c2_passed:
+        reasons.append("c2_regression")
+    gated_raw = raw_strength if not reasons else 0.0
+    previous = float(np.clip(current_strength, 0.0, 1.0))
+    ema_target = (1.0 - float(ema)) * previous + float(ema) * gated_raw
+    step_limited = min(previous + float(max_step), ema_target)
+    next_strength = max(previous, step_limited) if bool(monotonic) else step_limited
+    next_strength = float(np.clip(next_strength, 0.0, 1.0))
+    return {
+        "source": "optimization_static_probe",
+        "probe_size": int(probe_size),
+        "initial_bottom2_mean_acc": initial_bottom2,
+        "snapshot_bottom2_mean_acc": snapshot_bottom2,
+        "bottom2_gain": bottom2_gain,
+        "initial_mean_individual_acc": initial_mean,
+        "snapshot_mean_individual_acc": snapshot_mean,
+        "initial_c1": initial_c1,
+        "snapshot_c1": snapshot_c1,
+        "initial_c2": initial_c2,
+        "snapshot_c2": snapshot_c2,
+        "effective_low_delta": effective_low,
+        "effective_high_delta": effective_high,
+        "mean_guard_passed": bool(mean_passed),
+        "c1_guard_passed": bool(c1_passed),
+        "c2_guard_passed": bool(c2_passed),
+        "gate_failure_reasons": reasons,
+        "raw_specialization_strength": raw_strength,
+        "gated_raw_specialization_strength": gated_raw,
+        "previous_specialization_strength": previous,
+        "ema_target_specialization_strength": float(ema_target),
+        "step_limited_specialization_strength": float(step_limited),
+        "next_specialization_strength": next_strength,
+        "ema": float(ema),
+        "max_step": float(max_step),
+        "monotonic": bool(monotonic),
+    }
+
+
 def _pareto_value(candidate: Dict[str, Any], key: str) -> float:
     metrics = candidate.get("metrics", {}) if isinstance(candidate.get("metrics", {}), dict) else {}
     return float(candidate.get(key, metrics.get(key, 0.0)) or 0.0)
@@ -378,6 +483,8 @@ class TraceBeamSearchSystem:
             "competence_depth_enabled",
             "competence_depth2_aux_enabled",
             "competence_progressive_residual_enabled",
+            "competence_schedule_monotonic",
+            "competence_depth1_candidate_guard_enabled",
         ):
             setattr(self.cfg, name, bool(int(getattr(self.cfg, name, 0))))
         self.cfg.behavior_cycle_guard_enabled = bool(int(getattr(self.cfg, "behavior_cycle_guard_enabled", 1)))
@@ -436,6 +543,27 @@ class TraceBeamSearchSystem:
         self.competence_phase_epoch = 1
         self.competence_schedule_version = str(getattr(self.cfg, "competence_schedule_version", "competence_depth_v1"))
         self.specialization_strength_history: List[float] = []
+        self.competence_probe_indices: List[int] = []
+        self.competence_probe_question_hashes: List[str] = []
+        self.initial_competence_probe_metrics: Dict[str, Any] = {}
+        self.latest_competence_probe_metrics: Dict[str, Any] = {}
+        self.competence_probe_history: List[Dict[str, Any]] = []
+        self.initial_active_prompt_hashes: List[str] = list(self.initial_agent_prompt_hashes)
+        self.first_nonzero_specialization_epoch: Optional[int] = None
+        self.effective_specialization_epoch_count = 0
+        self.depth1_guard_rejection_count = 0
+        self.catastrophic_accuracy_guard_rejection_count = 0
+        self.soft_error_dependence_penalty_count = 0
+        self.soft_cycle_penalty_count = 0
+        self.soft_mechanism_shift_penalty_count = 0
+        self.exploration_candidate_count = 0
+        self.exploration_slot_occupancy_count = 0
+        self.exploration_to_active_conversion_count = 0
+        self.hybrid_selector_history: List[Dict[str, Any]] = []
+        self.mechanism_signature_history: List[Dict[str, Any]] = []
+        self.mechanism_signature_by_prompt_hash: Dict[str, List[str]] = {}
+        self.beam_slot_state: Dict[str, Any] = {}
+        self.exploration_slot_candidates: List[Dict[str, Any]] = []
         self.prompt_overlength_rejection_count = 0
         self.truncated_prompt_count = 0
         self.llm_call_logs: List[Dict[str, Any]] = []
@@ -482,11 +610,60 @@ class TraceBeamSearchSystem:
     def _uses_competence_depth_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "")).lower() == "competence_depth_pareto"
 
-    def complete_competence_epoch(self, per_agent_acc: Sequence[float], epoch: int) -> float:
-        """Advance the v8 schedule using optimization-train evidence only."""
+    def _is_v82_hybrid(self) -> bool:
+        return str(getattr(self.cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive"
+
+    def _apply_competence_depth1_candidate_guard(self, metrics: Dict[str, Any]) -> bool:
+        enabled = bool(getattr(self.cfg, "competence_depth1_candidate_guard_enabled", False))
+        epsilon = float(getattr(self.cfg, "competence_depth1_candidate_guard_epsilon", 0.0) or 0.0)
+        passed = (not enabled) or float(metrics.get("depth1_net_delta", 0.0) or 0.0) >= -epsilon
+        metrics.update({
+            "competence_depth1_guard_enabled": enabled,
+            "competence_depth1_guard_epsilon": epsilon,
+            "competence_depth1_guard_passed": bool(passed),
+        })
+        if not passed and not str(metrics.get("rejection_reason", "")):
+            metrics["rejection_reason"] = "competence_depth1_guard"
+        return bool(passed)
+
+    def complete_competence_epoch(
+        self,
+        per_agent_acc: Optional[Sequence[float]] = None,
+        epoch: int = 0,
+        *,
+        snapshot_metrics: Optional[Dict[str, Any]] = None,
+    ) -> Any:
+        """Advance competence scheduling; v2 accepts only a static probe snapshot."""
         if not bool(getattr(self.cfg, "competence_depth_enabled", False)):
             return float(self.specialization_strength)
-        values = [float(value) for value in per_agent_acc]
+        mode = str(getattr(self.cfg, "competence_schedule_mode", "absolute_legacy") or "absolute_legacy")
+        if mode == "baseline_relative_opt_snapshot":
+            if not isinstance(snapshot_metrics, dict):
+                raise ValueError("baseline_relative_opt_snapshot requires snapshot_metrics from the optimization probe")
+            if not self.initial_competence_probe_metrics:
+                raise ValueError("initial_competence_probe_metrics is required before advancing the v2 schedule")
+            record = competence_relative_specialization_strength(
+                initial_metrics=self.initial_competence_probe_metrics,
+                snapshot_metrics=snapshot_metrics,
+                probe_size=int(snapshot_metrics.get("probe_size", len(self.competence_probe_indices)) or len(self.competence_probe_indices)),
+                current_strength=float(self.specialization_strength),
+                low_delta=float(getattr(self.cfg, "competence_relative_low_delta", 0.01)),
+                high_delta=float(getattr(self.cfg, "competence_relative_high_delta", 0.06)),
+                ema=float(getattr(self.cfg, "competence_schedule_ema", 0.50)),
+                max_step=float(getattr(self.cfg, "competence_schedule_max_step", 0.35)),
+                monotonic=bool(getattr(self.cfg, "competence_schedule_monotonic", True)),
+                mean_guard_epsilon=float(getattr(self.cfg, "competence_mean_guard_epsilon", 0.01)),
+                c1_guard_epsilon=float(getattr(self.cfg, "competence_c1_guard_epsilon", 0.01)),
+                c2_guard_epsilon=float(getattr(self.cfg, "competence_c2_guard_epsilon", 0.01)),
+            )
+            record.update({"epoch": int(epoch), "version": str(self.competence_schedule_version)})
+            self.previous_epoch_per_agent_acc = [float(value) for value in snapshot_metrics.get("per_agent_acc", [])]
+            self.previous_epoch_bottom2_mean_acc = float(snapshot_metrics.get("bottom2_mean_acc", 0.0) or 0.0)
+            self.latest_competence_probe_metrics = dict(snapshot_metrics)
+            self.specialization_strength = float(record["next_specialization_strength"])
+            self.competence_phase_epoch = int(epoch) + 1
+            return record
+        values = [float(value) for value in (per_agent_acc or [])]
         ordered = sorted(values)
         bottom2 = float(np.mean(ordered[: min(2, len(ordered))])) if ordered else 0.0
         self.previous_epoch_per_agent_acc = values
@@ -1140,12 +1317,14 @@ class TraceBeamSearchSystem:
         baseline_invalid = float(metrics.get("baseline_invalid_rate", 0.0) or 0.0)
         candidate_invalid = float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0)
         guard_epsilon = float(weights.get("accuracy_guard_epsilon", 0.0))
-        if self._uses_competence_depth_pareto_selection():
+        if self._is_v82_hybrid():
+            guard_epsilon = float(getattr(self.cfg, "catastrophic_target_accuracy_loss_epsilon", 0.05))
+        elif self._uses_competence_depth_pareto_selection():
             guard_epsilon = float(self.specialization_strength) * float(getattr(self.cfg, "accuracy_guard_epsilon", guard_epsilon))
         accuracy_guard_passed = candidate_target >= baseline_target - guard_epsilon
         metrics["effective_accuracy_guard_epsilon"] = guard_epsilon
         invalid_guard_passed = candidate_invalid <= baseline_invalid + float(getattr(self.cfg, "invalid_guard_epsilon", 0.0) or 0.0)
-        dependence_guard_passed = bool(
+        dependence_guard_passed = bool(self._is_v82_hybrid() or (
             not bool(getattr(self.cfg, "error_dependence_guard_enabled", False))
             or (
                 float(metrics.get("pivotal_loss_rate", 0.0) or 0.0)
@@ -1154,7 +1333,7 @@ class TraceBeamSearchSystem:
                 <= float(metrics.get("shared_error_rescue_score", 0.0) or 0.0)
                 + float(getattr(self.cfg, "shared_error_creation_epsilon", 0.02) or 0.0)
             )
-        )
+        ))
         metrics["error_dependence_guard_passed"] = dependence_guard_passed
         return bool(accuracy_guard_passed), bool(invalid_guard_passed), bool(
             accuracy_guard_passed and invalid_guard_passed and dependence_guard_passed
@@ -1307,6 +1486,142 @@ class TraceBeamSearchSystem:
             "pareto_front0_size": int(len(fronts_by_item[0])) if fronts_by_item else 0,
             "pareto_forced_current_fallback": bool(forced_fallback),
         }
+
+    def _apply_hybrid_soft_guards(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
+        raw_reward = float(metrics.get("reward", 0.0) or 0.0)
+        pivotal_excess = max(
+            0.0,
+            float(metrics.get("pivotal_loss_rate", 0.0) or 0.0)
+            - float(getattr(self.cfg, "pivotal_loss_guard_epsilon", 0.0) or 0.0),
+        )
+        shared_excess = max(
+            0.0,
+            float(metrics.get("shared_error_creation_score", 0.0) or 0.0)
+            - float(metrics.get("shared_error_rescue_score", 0.0) or 0.0)
+            - float(getattr(self.cfg, "shared_error_creation_epsilon", 0.02) or 0.0),
+        )
+        error_dependence_excess = pivotal_excess + shared_excess
+        cycle_excess = 0.0
+        if int(metrics.get("behavior_cycle_overlap", 0) or 0) >= int(getattr(self.cfg, "behavior_cycle_min_overlap", 16)):
+            cycle_excess = max(
+                0.0,
+                float(metrics.get("max_behavior_cycle_similarity", 0.0) or 0.0)
+                - float(getattr(self.cfg, "behavior_cycle_similarity_threshold", 0.95) or 0.95),
+            )
+        mechanism_shift_excess = max(
+            0.0,
+            float(metrics.get("prompt_change_ratio", 0.0) or 0.0)
+            - float(getattr(self.cfg, "prompt_max_change_ratio", 0.45) or 0.45),
+        )
+        if metrics.get("mechanism_contract_passed") is False:
+            mechanism_shift_excess = max(mechanism_shift_excess, 1.0)
+        mild_accuracy_regression = min(
+            float(getattr(self.cfg, "catastrophic_target_accuracy_loss_epsilon", 0.05) or 0.05),
+            max(0.0, -float(metrics.get("accuracy_delta", 0.0) or 0.0)),
+        )
+        components = {
+            "soft_error_dependence_penalty": float(getattr(self.cfg, "soft_guard_error_dependence_weight", 0.5)) * error_dependence_excess,
+            "soft_cycle_penalty": float(getattr(self.cfg, "soft_guard_cycle_weight", 0.2)) * cycle_excess,
+            "soft_mechanism_shift_penalty": float(getattr(self.cfg, "soft_guard_mechanism_shift_weight", 0.2)) * mechanism_shift_excess,
+            "soft_accuracy_regression_penalty": float(getattr(self.cfg, "soft_guard_accuracy_regression_weight", 0.5)) * mild_accuracy_regression,
+        }
+        penalty = sum(components.values())
+        soft_reasons = []
+        if error_dependence_excess > 0.0:
+            soft_reasons.append("error_dependence")
+        if cycle_excess > 0.0:
+            soft_reasons.append("residual_cycle")
+        if mechanism_shift_excess > 0.0:
+            soft_reasons.append("mechanism_shift")
+        if mild_accuracy_regression > 0.0:
+            soft_reasons.append("mild_accuracy_regression")
+        trajectory_reason = str(metrics.get("rejection_reason", ""))
+        if trajectory_reason in {
+            "behavior_cycle", "accepted_state_cycle", "rejected_failure_cycle",
+            "unsupported_large_prompt_shift", "mechanism_contract_missing",
+        }:
+            if trajectory_reason not in soft_reasons:
+                soft_reasons.append(trajectory_reason)
+            metrics["rejection_reason"] = ""
+        metrics.update({
+            "raw_reward": raw_reward,
+            "soft_guard_penalty": float(penalty),
+            "penalized_reward": raw_reward - penalty,
+            "soft_guard_reasons": soft_reasons,
+            "hard_guard_passed": not bool(metrics.get("rejection_reason", "")),
+            **components,
+        })
+        return metrics
+
+    def _select_hybrid_beam(
+        self,
+        evaluated: List[Dict[str, Any]],
+        beam_size: int,
+        current_prompt: str,
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        _, summary = self._select_vote_pareto_beam(evaluated, len(evaluated), current_prompt)
+        current_hash = self._normalized_prompt_hash(current_prompt)
+        safe = next(
+            (item for item in evaluated if self._normalized_prompt_hash(str(item.get("prompt", ""))) == current_hash),
+            None,
+        )
+        hard_pass = [item for item in evaluated if bool(item.get("pareto_feasible", False))]
+        exploit_pool = [item for item in hard_pass if int(item.get("pareto_rank", 999) or 0) == 0 and item is not safe]
+        exploit = max(
+            exploit_pool,
+            key=lambda item: (float(item.get("metrics", {}).get("penalized_reward", item.get("reward", 0.0)) or 0.0), str(item.get("candidate_id", ""))),
+            default=None,
+        )
+        explore_pool = []
+        for item in hard_pass:
+            if item is safe or item is exploit:
+                continue
+            if self._candidate_pool_source(item) != "optimizer" and str(item.get("metrics", {}).get("beam_slot", "")) != "explore":
+                continue
+            metrics = item.get("metrics", {})
+            evidence = float(metrics.get("accuracy_delta", 0.0) or 0.0) >= 0.0 or (
+                float(metrics.get("depth1_net_delta", 0.0) or 0.0)
+                + float(metrics.get("depth2_net_delta", 0.0) or 0.0)
+            ) >= 0.0
+            if evidence and float(metrics.get("mechanism_signature_distance", 0.0) or 0.0) > 0.0:
+                explore_pool.append(item)
+        explore = max(
+            explore_pool,
+            key=lambda item: (
+                float(item.get("metrics", {}).get("penalized_reward", item.get("reward", 0.0)) or 0.0)
+                + float(item.get("metrics", {}).get("mechanism_novelty_bonus", 0.0) or 0.0),
+                str(item.get("candidate_id", "")),
+            ),
+            default=None,
+        )
+        retained: List[Dict[str, Any]] = []
+        for item, slot in ((exploit, "exploit"), (safe, "safe"), (explore, "explore")):
+            if item is None or item in retained:
+                continue
+            item["beam_slot"] = slot
+            retained.append(item)
+        for item in sorted(
+            hard_pass,
+            key=lambda row: -float(row.get("metrics", {}).get("penalized_reward", row.get("reward", 0.0)) or 0.0),
+        ):
+            if len(retained) >= beam_size:
+                break
+            if item not in retained:
+                item["beam_slot"] = "exploit" if not retained else "safe_fill"
+                retained.append(item)
+        retained = retained[:beam_size]
+        for item in evaluated:
+            if item not in retained:
+                item["beam_slot"] = "not_retained"
+                item["pareto_selected"] = False
+            else:
+                item["pareto_selected"] = True
+        summary.update({
+            "safe_slot_occupancy": int(any(item.get("beam_slot") == "safe" for item in retained)),
+            "exploit_slot_occupancy": int(any(item.get("beam_slot") == "exploit" for item in retained)),
+            "explore_slot_occupancy": int(any(item.get("beam_slot") == "explore" for item in retained)),
+        })
+        return retained, summary
 
     def _empty_cost_summary(self) -> Dict[str, Any]:
         return {
@@ -1738,6 +2053,15 @@ class TraceBeamSearchSystem:
         }
         if bool(getattr(self.cfg, "competence_depth_enabled", False)):
             fields["plurality_boundary_version"] = PLURALITY_BOUNDARY_VERSION
+        if self._is_v82_hybrid():
+            fields.update({
+                "method_version": str(getattr(self.cfg, "method_version", "legacy")),
+                "competence_schedule_version": str(getattr(self.cfg, "competence_schedule_version", "legacy")),
+                "target_selector_version": str(getattr(self.cfg, "target_selector_version", "legacy")),
+                "beam_policy_version": str(getattr(self.cfg, "beam_policy_version", "legacy")),
+                "tcs_candidate_policy_version": str(getattr(self.cfg, "tcs_candidate_policy_version", "legacy")),
+                "mechanism_signature_version": str(getattr(self.cfg, "mechanism_signature_version", "legacy")),
+            })
         return fields
 
     def _read_previous_execution_session_id(self) -> str:
@@ -1821,11 +2145,33 @@ class TraceBeamSearchSystem:
             "candidate_eval_cache_logging": bool(getattr(self.cfg, "candidate_eval_cache_logging", True)),
             "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
             "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "vote_first"),
+            "method_version": str(getattr(self.cfg, "method_version", "legacy")),
+            "target_selector_mode": str(getattr(self.cfg, "target_selector_mode", "legacy")),
+            "target_selector_version": str(getattr(self.cfg, "target_selector_version", "legacy")),
+            "beam_policy_version": str(getattr(self.cfg, "beam_policy_version", "legacy")),
+            "tcs_candidate_policy_version": str(getattr(self.cfg, "tcs_candidate_policy_version", "legacy")),
+            "mechanism_signature_version": str(getattr(self.cfg, "mechanism_signature_version", "legacy")),
             "optimizer_architecture": getattr(self.cfg, "optimizer_architecture", ""),
             "optimizer_fallback_mode": getattr(self.cfg, "optimizer_fallback_mode", ""),
             "teacher_critic_max_rounds": getattr(self.cfg, "teacher_critic_max_rounds", 0),
             "teacher_question_pass_threshold": getattr(self.cfg, "teacher_question_pass_threshold", 0.0),
             "teacher_critic_use_voting_failure": bool(getattr(self.cfg, "teacher_critic_use_voting_failure", False)),
+            "competence_schedule_mode": str(getattr(self.cfg, "competence_schedule_mode", "absolute_legacy")),
+            "competence_schedule_version": str(getattr(self.cfg, "competence_schedule_version", "competence_depth_v1")),
+            "competence_probe_size": int(getattr(self.cfg, "competence_probe_size", 0) or 0),
+            "competence_probe_seed_offset": int(getattr(self.cfg, "competence_probe_seed_offset", 7000)),
+            "competence_probe_question_hashes": list(getattr(self, "competence_probe_question_hashes", [])),
+            "initial_competence_probe_metrics": dict(getattr(self, "initial_competence_probe_metrics", {})),
+            "competence_relative_low_delta": float(getattr(self.cfg, "competence_relative_low_delta", 0.01)),
+            "competence_relative_high_delta": float(getattr(self.cfg, "competence_relative_high_delta", 0.06)),
+            "competence_schedule_ema": float(getattr(self.cfg, "competence_schedule_ema", 0.50)),
+            "competence_schedule_max_step": float(getattr(self.cfg, "competence_schedule_max_step", 0.35)),
+            "competence_schedule_monotonic": bool(getattr(self.cfg, "competence_schedule_monotonic", True)),
+            "competence_mean_guard_epsilon": float(getattr(self.cfg, "competence_mean_guard_epsilon", 0.01)),
+            "competence_c1_guard_epsilon": float(getattr(self.cfg, "competence_c1_guard_epsilon", 0.01)),
+            "competence_c2_guard_epsilon": float(getattr(self.cfg, "competence_c2_guard_epsilon", 0.01)),
+            "competence_depth1_candidate_guard_enabled": bool(getattr(self.cfg, "competence_depth1_candidate_guard_enabled", False)),
+            "competence_depth1_candidate_guard_epsilon": float(getattr(self.cfg, "competence_depth1_candidate_guard_epsilon", 0.0)),
             "execution_session_id": self.execution_session_id,
             "previous_execution_session_id": self.previous_execution_session_id,
             "experiment_protocol_version": self._experiment_protocol_version(),
@@ -1938,6 +2284,8 @@ class TraceBeamSearchSystem:
         parent_prompt: str,
         candidate_prompt: str,
         seen_signatures: Optional[set] = None,
+        *,
+        allow_substantive_parent_extension: bool = False,
     ) -> bool:
         candidate_sig = self._prompt_signature(candidate_prompt)
         if not candidate_sig:
@@ -1954,7 +2302,12 @@ class TraceBeamSearchSystem:
             return True
         if stock_count > 1:
             return True
-        if parent_sig and candidate_sig.startswith(parent_sig) and len(candidate_sig) > len(parent_sig) + 40:
+        if (
+            parent_sig
+            and candidate_sig.startswith(parent_sig)
+            and len(candidate_sig) > len(parent_sig) + 40
+            and not allow_substantive_parent_extension
+        ):
             return True
         if stock_count > parent_stock_count and parent_stock_count > 0:
             return True
@@ -2068,6 +2421,8 @@ class TraceBeamSearchSystem:
                     "target_residual_family",
                     "expected_shared_error_effect",
                 ])
+            if self._is_v82_hybrid():
+                required.extend(["candidate_type", "mechanism_steps", "target_failure_buckets", "expected_effect"])
             return required
         return ["candidate_prompt"]
 
@@ -2234,8 +2589,24 @@ class TraceBeamSearchSystem:
                 "target_residual_family": "task-independent residual family",
                 "expected_shared_error_effect": "one short sentence",
             })
+        if self._is_v82_hybrid():
+            candidate_schema.update({
+                "candidate_type": "task_specific_repair or mechanism_alternative",
+                "mechanism_steps": ["ordered executable decision operation"],
+                "target_failure_buckets": ["general_error, c1_creation, c2_creation, boundary, or residual"],
+                "expected_effect": "one short sentence",
+            })
         schema = {"candidates": [candidate_schema]}
         return json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+
+    @staticmethod
+    def _hybrid_candidate_type_rejection_reason(candidate_type: str, seen_types: set) -> str:
+        normalized = str(candidate_type or "").strip().lower()
+        if normalized not in {"task_specific_repair", "mechanism_alternative"}:
+            return f"invalid_candidate_type:{normalized or 'missing'}"
+        if normalized in seen_types:
+            return f"duplicate_candidate_type:{normalized}"
+        return ""
 
     def _student_refusal_or_explanation(self, text: str) -> bool:
         lowered = normalize_spaces(text).lower()
@@ -3615,6 +3986,8 @@ class TraceBeamSearchSystem:
         return ids[: (2 if len(ids) >= 2 else 1)]
 
     def select_reward_agents_for_update(self, diagnosis: Dict[str, Any], metrics: Dict[str, Any]) -> List[int]:
+        if str(getattr(self.cfg, "target_selector_mode", "legacy")) == "hybrid_competence_boundary":
+            return self._select_hybrid_reward_agents(diagnosis)
         if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
             return self._select_boundary_reward_agents(diagnosis)
         error_counts = list(diagnosis.get("per_agent_error_count", []))
@@ -3648,6 +4021,71 @@ class TraceBeamSearchSystem:
         scored.sort(key=lambda item: item[0], reverse=True)
         selected = [agent_id for _, agent_id in scored]
         return selected[: (2 if len(selected) >= 2 else 1)]
+
+    def _select_hybrid_reward_agents(self, diagnosis: Dict[str, Any]) -> List[int]:
+        strength = self._clip01(float(getattr(self, "specialization_strength", 0.0)))
+        weights = {
+            "individual_error_rate": 1.0 - 0.4 * strength,
+            "weakness_score": 0.5 - 0.2 * strength,
+            "c1_creation_opportunity": 1.2 - 0.4 * strength,
+            "c2_creation_opportunity": 1.0,
+            "plurality_pivotal_fix_opportunity": 0.25 + strength,
+            "dominant_wrong_redundancy": 0.2 + 0.8 * strength,
+            "shared_error_residual": 0.8 * strength,
+            "capability_gap_affinity": 0.5 * strength,
+        }
+
+        def value(name: str, agent_id: int) -> float:
+            values = diagnosis.get(name, [])
+            return self._clip01(float(values[agent_id])) if agent_id < len(values) else 0.0
+
+        latest = dict(getattr(self, "latest_competence_probe_metrics", {}) or {})
+        probe_acc = [float(v) for v in latest.get("per_agent_acc", [])]
+        probe_mean = float(latest.get("mean_individual_acc", np.mean(probe_acc) if probe_acc else 0.0) or 0.0)
+        pressure = diagnosis.get("per_agent_capability_pressure", [])
+        gaps = diagnosis.get("capability_coverage_gap", {})
+        diagnostics: List[Dict[str, Any]] = []
+        ids = list(range(len(self.agents)))
+        random.shuffle(ids)
+        scored: List[Tuple[float, int]] = []
+        for agent_id in ids:
+            family_pressure = pressure[agent_id] if agent_id < len(pressure) and isinstance(pressure[agent_id], dict) else {}
+            pressure_total = sum(max(0.0, float(v)) for v in family_pressure.values())
+            capability_gap = 0.0
+            if pressure_total > 0.0:
+                capability_gap = sum(
+                    max(0.0, float(family_pressure.get(family, 0.0)))
+                    * max(0.0, float(gaps.get(family, 0.0)))
+                    for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
+                ) / pressure_total
+                capability_gap /= max(1.0, float(len(self.agents)))
+            components = {
+                "individual_error_rate": value("per_agent_general_error_rate", agent_id),
+                "weakness_score": self._clip01(max(0.0, probe_mean - probe_acc[agent_id])) if agent_id < len(probe_acc) else 0.0,
+                "c1_creation_opportunity": value("per_agent_c1_creation_opportunity", agent_id),
+                "c2_creation_opportunity": value("per_agent_c2_creation_opportunity", agent_id),
+                "plurality_pivotal_fix_opportunity": value("per_agent_plurality_pivotal_fix_rate", agent_id),
+                "dominant_wrong_redundancy": value("per_agent_dominant_wrong_rate", agent_id),
+                "shared_error_residual": value("per_agent_shared_error_rate", agent_id),
+                "capability_gap_affinity": self._clip01(capability_gap),
+            }
+            score = sum(weights[name] * components[name] for name in weights)
+            diagnostics.append({
+                "agent_id": agent_id,
+                "applied_specialization_strength": strength,
+                **components,
+                "hybrid_target_score": float(score),
+                "selected": False,
+            })
+            if score > 0.0:
+                scored.append((float(score), agent_id))
+        scored.sort(key=lambda row: row[0], reverse=True)
+        selected = [agent_id for _, agent_id in scored[: (2 if len(scored) >= 2 else 1)]]
+        for row in diagnostics:
+            row["selected"] = int(row["agent_id"]) in selected
+        diagnosis["hybrid_selector_weights"] = weights
+        diagnosis["hybrid_selector_diagnostics"] = sorted(diagnostics, key=lambda row: int(row["agent_id"]))
+        return selected
 
     def _select_boundary_reward_agents(self, diagnosis: Dict[str, Any]) -> List[int]:
         ids = list(range(len(self.agents)))
@@ -3902,6 +4340,7 @@ class TraceBeamSearchSystem:
                         "capability_residual_family": str(error_info.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
                         "confidence": float(error_info.get("confidence", 0.0) or 0.0),
                         "peer_wrong_count": int(peer_wrong_count),
+                        "baseline_correct_count": int(sum(int(value) for value in individual)),
                         "vote_context": context,
                         "target_prompt_preview": normalize_spaces(prompts[agent_id])[:260] if agent_id < len(prompts) else "",
                     }
@@ -3949,6 +4388,8 @@ class TraceBeamSearchSystem:
         dominant_wrong_counts = [0 for _ in range(num_agents)]
         near_boundary_error_counts = [0 for _ in range(num_agents)]
         shared_error_counts = [0 for _ in range(num_agents)]
+        c1_creation_counts = [0 for _ in range(num_agents)]
+        c2_creation_counts = [0 for _ in range(num_agents)]
         pivotal_hold_counts = [0 for _ in range(num_agents)]
         vote_values: List[int] = []
         vote_margin_values: List[float] = []
@@ -4005,6 +4446,10 @@ class TraceBeamSearchSystem:
                     elif gold_count - 1 <= largest_wrong:
                         pivotal_hold_counts[agent_id] += 1
                     continue
+                if gold_count == 0:
+                    c1_creation_counts[agent_id] += 1
+                elif gold_count == 1:
+                    c2_creation_counts[agent_id] += 1
                 peer_wrong_count = sum(
                     int(not individual[peer_id])
                     for peer_id in range(len(individual))
@@ -4144,6 +4589,8 @@ class TraceBeamSearchSystem:
             "per_agent_plurality_boundary_error_rate": [near_boundary_error_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_near_boundary_error_rate": [near_boundary_error_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_shared_error_rate": [shared_error_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_c1_creation_opportunity": [c1_creation_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_c2_creation_opportunity": [c2_creation_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_dominant_wrong_rate": [dominant_wrong_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_general_error_rate": [
                 float(accuracy_diagnosis.get("per_agent_error_count", [0] * num_agents)[i]) / seen[i]
@@ -4257,6 +4704,63 @@ class TraceBeamSearchSystem:
                 },
             ]
             return [b for b in batches if b.get("cases") or str(b.get("batch_type")) in {"target_error_repair", "accuracy_error_cases"}]
+        if self._is_v82_hybrid():
+            def take(predicate: Any, count: int, used: set) -> List[Dict[str, Any]]:
+                if count <= 0:
+                    return []
+                rows = []
+                for case in target_error_cases:
+                    case_id = str(case.get("case_id", ""))
+                    if case_id in used or not predicate(case):
+                        continue
+                    rows.append(case)
+                    used.add(case_id)
+                    if len(rows) >= count:
+                        break
+                return rows
+
+            used: set = set()
+            c1 = take(lambda case: int(case.get("baseline_correct_count", -1)) == 0, 1, used)
+            c2 = take(lambda case: int(case.get("baseline_correct_count", -1)) == 1, 1, used)
+            boundary = take(
+                lambda case: str(case.get("case_type", "")) in {
+                    "target_wrong_pivotal_vote_fix", "target_wrong_near_vote_boundary"
+                },
+                1,
+                used,
+            )
+            residual = take(
+                lambda case: str(case.get("case_type", "")) in {
+                    "target_wrong_shared_error", "target_wrong_dominant_wrong_cluster"
+                },
+                1 if float(getattr(self, "specialization_strength", 0.0)) > 0.0 else 0,
+                used,
+            )
+            general = take(lambda case: not bool(case.get("target_correct", False)), 2, used)
+            budget = max(1, int(self.cfg.max_homogeneous_cases_per_agent) + int(self.cfg.random_window_cases_per_agent))
+            chosen = general + c1 + c2 + boundary + residual
+            for case in target_error_cases:
+                if len(chosen) >= budget:
+                    break
+                case_id = str(case.get("case_id", ""))
+                if case_id not in used:
+                    chosen.append(case)
+                    used.add(case_id)
+            chosen_ids = {str(case.get("case_id", "")) for case in chosen}
+            buckets = [
+                ("general_error", general, "repair general target-agent errors and preserve competence"),
+                ("c1_c2_creation", c1 + c2, "create C1/C2 coverage even when one repair cannot yet flip plurality"),
+                ("actual_plurality_boundary", boundary, "repair cases verified by the actual plurality counterfactual"),
+                ("residual_shared_error", residual, "reduce shared residual errors after specialization activates"),
+            ]
+            batches = []
+            for priority, (batch_type, rows, purpose) in enumerate(buckets):
+                retained = [case for case in rows if str(case.get("case_id", "")) in chosen_ids]
+                if retained:
+                    batches.append({"batch_type": batch_type, "priority": priority, "cases": retained, "purpose": purpose})
+            if not batches and chosen:
+                batches.append({"batch_type": "general_error", "priority": 0, "cases": chosen, "purpose": "repair general target-agent errors"})
+            return batches
         if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
             limit = max(1, int(self.cfg.max_homogeneous_cases_per_agent))
             by_type = lambda *names: [
@@ -5254,6 +5758,16 @@ class TraceBeamSearchSystem:
                 "\nMake exactly one local mechanism change. Preserve the listed effective and pivotal-correct mechanisms. "
                 "State how the change should reduce shared error without manufacturing disagreement."
             )
+        if self._is_v82_hybrid():
+            item_instruction += (
+                " Return exactly two candidates in this order: task_specific_repair, then mechanism_alternative. "
+                "Each must include candidate_type, ordered mechanism_steps, target_failure_buckets, and expected_effect."
+            )
+            system_prompt += (
+                "\nThe first candidate must be a task-specific repair grounded in the supplied failure buckets. "
+                "The second must change at least one substantive decision operation relative to the first and parent; "
+                "persona changes, synonyms, renumbering, and extra generic verification do not count."
+            )
         user_prompt = (
             "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
             f"{item_instruction}\n\n"
@@ -5554,6 +6068,7 @@ class TraceBeamSearchSystem:
         diagnostics["optimizer_raw_candidate_count"] = int(diagnostics["student_candidate_count_raw"])
         parsed: List[Dict[str, Any]] = []
         seen_signatures: set = set()
+        seen_candidate_types: set = set()
         filter_reasons: List[str] = []
         if isinstance(student_candidates, list):
             for item in student_candidates:
@@ -5584,6 +6099,13 @@ class TraceBeamSearchSystem:
                         item["expected_shared_error_effect"] = str(item.get("error_correlation_reduction", "")).strip()
                     if not str(item.get("change_summary", "")).strip():
                         item["change_summary"] = str(item.get("modified_mechanism", "")).strip()
+                if self._is_v82_hybrid():
+                    candidate_type = str(item.get("candidate_type", "")).strip().lower()
+                    type_rejection = self._hybrid_candidate_type_rejection_reason(candidate_type, seen_candidate_types)
+                    if type_rejection:
+                        diagnostics["optimizer_schema_filtered_count"] += 1
+                        filter_reasons.append(type_rejection)
+                        continue
                 missing_fields = self._missing_optimizer_fields(item, architecture="teacher_critic_student")
                 if missing_fields:
                     diagnostics["optimizer_schema_filtered_count"] += 1
@@ -5599,7 +6121,18 @@ class TraceBeamSearchSystem:
                 prompt = str(item.get("candidate_prompt", "")).strip()
                 prompt, sanitized = self._sanitize_prompt(prompt, agent_id)
                 diagnostics["optimizer_sanitized_count"] += int(bool(sanitized))
-                if self._is_redundant_candidate_prompt(parent_prompt, prompt, seen_signatures):
+                mechanism_signature = normalize_mechanism_signature(item.get("mechanism_steps", []))
+                allow_substantive_parent_extension = bool(
+                    self._is_v82_hybrid()
+                    and mechanism_signature
+                    and self._prompt_signature(prompt) != self._prompt_signature(parent_prompt)
+                )
+                if self._is_redundant_candidate_prompt(
+                    parent_prompt,
+                    prompt,
+                    seen_signatures,
+                    allow_substantive_parent_extension=allow_substantive_parent_extension,
+                ):
                     diagnostics["optimizer_redundant_filtered_count"] += 1
                     filter_reasons.append("redundant")
                     continue
@@ -5607,7 +6140,22 @@ class TraceBeamSearchSystem:
                     diagnostics["optimizer_empty_prompt_count"] += 1
                     filter_reasons.append("empty_prompt")
                     continue
+                mechanism_alternative_invalid = bool(
+                    self._is_v82_hybrid()
+                    and str(item.get("candidate_type", "")).strip().lower() == "mechanism_alternative"
+                    and parsed
+                    and mechanism_signature == list(parsed[0].get("mechanism_signature", []))
+                )
+                if mechanism_alternative_invalid:
+                    diagnostics["mechanism_alternative_invalid"] = True
+                    diagnostics["mechanism_alternative_invalid_count"] = int(
+                        diagnostics.get("mechanism_alternative_invalid_count", 0) or 0
+                    ) + 1
+                    filter_reasons.append("mechanism_alternative_same_signature")
+                    continue
                 seen_signatures.add(self._prompt_signature(prompt))
+                if self._is_v82_hybrid():
+                    seen_candidate_types.add(str(item.get("candidate_type", "")).strip().lower())
                 batch_idx = min(len(parsed), len(generation_batches) - 1)
                 parsed.append(
                     {
@@ -5629,6 +6177,12 @@ class TraceBeamSearchSystem:
                         "modified_mechanism": str(item.get("modified_mechanism", item.get("new_or_modified_mechanism", ""))),
                         "target_residual_family": str(item.get("target_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
                         "expected_shared_error_effect": str(item.get("expected_shared_error_effect", "")),
+                        "candidate_type": str(item.get("candidate_type", "")),
+                        "mechanism_steps": [str(value) for value in item.get("mechanism_steps", [])] if isinstance(item.get("mechanism_steps", []), list) else [],
+                        "target_failure_buckets": [str(value) for value in item.get("target_failure_buckets", [])] if isinstance(item.get("target_failure_buckets", []), list) else [],
+                        "expected_effect": str(item.get("expected_effect", "")),
+                        "mechanism_signature": mechanism_signature,
+                        "mechanism_alternative_invalid": mechanism_alternative_invalid,
                         **length_audit,
                         "candidate_source": "teacher_critic_student",
                         "tcs_call_group_id": tcs_call_group_id,
@@ -5649,6 +6203,9 @@ class TraceBeamSearchSystem:
                 )
                 if len(parsed) >= num_candidates:
                     break
+        if self._is_v82_hybrid():
+            type_order = {"task_specific_repair": 0, "mechanism_alternative": 1}
+            parsed.sort(key=lambda item: type_order.get(str(item.get("candidate_type", "")), 99))
         diagnostics["student_candidate_count_final"] = len(parsed)
         diagnostics["student_candidate_filtered_count"] = max(0, int(diagnostics["student_candidate_count_raw"]) - len(parsed))
         diagnostics["student_candidate_filter_reasons"] = filter_reasons
@@ -6322,8 +6879,15 @@ class TraceBeamSearchSystem:
             + float(getattr(self.cfg, "competence_weight_vote_gain_early", 0.4)) * float(metrics.get("vote_gain_rate", 0.0) or 0.0)
             - float(getattr(self.cfg, "competence_weight_vote_loss_early", 1.0)) * float(metrics.get("vote_loss_rate", 0.0) or 0.0)
         )
+        if self._is_v82_hybrid():
+            competence_component += (
+                float(getattr(self.cfg, "competence_weight_depth1_gain", 0.8)) * float(metrics.get("depth1_gain_rate", 0.0) or 0.0)
+                - float(getattr(self.cfg, "competence_weight_depth1_loss", 1.2)) * float(metrics.get("depth1_loss_rate", 0.0) or 0.0)
+            )
         strength = float(self.specialization_strength)
-        reward = (1.0 - strength) * competence_component + strength * float(v7_reward)
+        competence_mix = max(float(getattr(self.cfg, "competence_residual_floor", 0.30)), 1.0 - strength) if self._is_v82_hybrid() else 1.0 - strength
+        specialization_mix = 1.0 - competence_mix if self._is_v82_hybrid() else strength
+        reward = competence_mix * competence_component + specialization_mix * float(v7_reward)
         depth2_component = float(metrics.get("depth2_net_delta", 0.0) or 0.0) if bool(
             getattr(self.cfg, "competence_depth2_aux_enabled", False)
         ) else 0.0
@@ -6338,9 +6902,13 @@ class TraceBeamSearchSystem:
             "competence_reward_component": float(competence_component),
             "v7_reward_component": float(v7_reward),
             "effective_reward_specialization_strength": strength,
-            "stage_aux_depth2_component": (1.0 - strength) * depth2_component,
-            "stage_aux_boundary_component": strength * boundary_component,
-            "stage_aux_objective": (1.0 - strength) * depth2_component + strength * boundary_component,
+            "competence_mix": competence_mix,
+            "specialization_mix": specialization_mix,
+            "stage_aux_depth2_component": competence_mix * depth2_component,
+            "stage_aux_boundary_component": specialization_mix * boundary_component,
+            "stage_aux_objective": competence_mix * (
+                0.5 * float(metrics.get("depth1_net_delta", 0.0) or 0.0) + 0.5 * depth2_component
+            ) + specialization_mix * boundary_component if self._is_v82_hybrid() else (1.0 - strength) * depth2_component + strength * boundary_component,
         }
 
     def _candidate_reward_coverage_useful_diversity(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
@@ -6993,7 +7561,11 @@ class TraceBeamSearchSystem:
         for parent_idx, parent in enumerate(beam):
             parent_prompt = str(parent.get("prompt", agent.current_prompt))
             parent_id = str(parent.get("id", self._hash(parent_prompt)))
-            parent_batches = [generation_batches[i % len(generation_batches)] for i in range(requested)]
+            parent_batches = (
+                list(generation_batches)
+                if self._is_v82_hybrid()
+                else [generation_batches[i % len(generation_batches)] for i in range(requested)]
+            )
             parent_jobs.append(
                 {
                     "parent_idx": parent_idx,
@@ -7354,27 +7926,51 @@ class TraceBeamSearchSystem:
             evaluated.append({**candidate, "metrics": metrics, "reward": float(metrics.get("reward", 0.0))})
         old_hash = self._hash(agent.current_prompt)
         trajectory_guard_enabled = self._v7_residual_protocol_enabled()
-        if trajectory_guard_enabled:
-            for item in evaluated:
-                metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        candidate_guard_enabled = bool(getattr(self.cfg, "competence_depth1_candidate_guard_enabled", False))
+        for item in evaluated:
+            metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+            if self._is_v82_hybrid():
+                proposal = item.get("proposal", {}) if isinstance(item.get("proposal", {}), dict) else {}
+                signature = list(proposal.get("mechanism_signature", [])) or normalize_mechanism_signature(
+                    proposal.get("mechanism_steps", [])
+                )
+                parent_item = next(
+                    (row for row in beam if str(row.get("id", "")) == str(item.get("parent_id", ""))),
+                    None,
+                )
+                parent_metrics = parent_item.get("metrics", {}) if isinstance(parent_item, dict) else {}
+                parent_signature = list(parent_metrics.get("mechanism_signature", []))
+                distance = mechanism_signature_distance(signature, parent_signature)
+                metrics.update({
+                    "candidate_type": str(proposal.get("candidate_type", "")),
+                    "mechanism_signature": signature,
+                    "parent_mechanism_signature": parent_signature,
+                    "peer_dominant_mechanism_signature": [],
+                    "mechanism_signature_distance": distance,
+                    "mechanism_novelty_bonus": float(getattr(self.cfg, "mechanism_novelty_bonus_weight", 0.2)) * distance,
+                })
+                if signature:
+                    self.mechanism_signature_by_prompt_hash[self._normalized_prompt_hash(str(item.get("prompt", "")))] = list(signature)
+            if trajectory_guard_enabled:
                 metrics.update(self._candidate_trajectory_feasibility(agent, item))
-                item["metrics"] = metrics
-                item["trajectory_feasible"] = not bool(metrics.get("rejection_reason", ""))
-                if not item["trajectory_feasible"]:
-                    item["pareto_feasible"] = False
-                    item["pareto_rank"] = None
-                    item["pareto_crowding_distance"] = None
-                    item["pareto_selected"] = False
-                    item["pareto_forced_fallback"] = False
-        else:
-            for item in evaluated:
-                item["trajectory_feasible"] = True
-        selectable = (
-            [item for item in evaluated if bool(item.get("trajectory_feasible", True))]
-            if trajectory_guard_enabled else evaluated
-        )
+            if self._is_v82_hybrid():
+                metrics = self._apply_hybrid_soft_guards(metrics)
+            depth1_guard_passed = self._apply_competence_depth1_candidate_guard(metrics)
+            if self._is_v82_hybrid():
+                _, _, hard_feasible = self._vote_pareto_feasibility(metrics)
+                metrics["hard_guard_passed"] = bool(depth1_guard_passed and hard_feasible and not metrics.get("rejection_reason"))
+                item["reward"] = float(metrics.get("penalized_reward", item.get("reward", 0.0)) or 0.0)
+            item["metrics"] = metrics
+            item["trajectory_feasible"] = bool(depth1_guard_passed) and not bool(metrics.get("rejection_reason", ""))
+            if not item["trajectory_feasible"]:
+                item["pareto_feasible"] = False
+                item["pareto_rank"] = None
+                item["pareto_crowding_distance"] = None
+                item["pareto_selected"] = False
+                item["pareto_forced_fallback"] = False
+        selectable = [item for item in evaluated if bool(item.get("trajectory_feasible", True))]
         if not selectable:
-            raise RuntimeError("Trajectory feasibility removed the current active prompt fallback")
+            raise RuntimeError("Candidate guards removed the current active prompt fallback")
         beam_size = max(1, int(self.cfg.beam_size))
         pareto_summary = {
             "num_pareto_feasible": None,
@@ -7383,7 +7979,9 @@ class TraceBeamSearchSystem:
             "pareto_front0_size": None,
             "pareto_forced_current_fallback": None,
         }
-        if self._uses_vote_pareto_selection():
+        if self._is_v82_hybrid():
+            selected, pareto_summary = self._select_hybrid_beam(selectable, beam_size, agent.current_prompt)
+        elif self._uses_vote_pareto_selection():
             selected, pareto_summary = self._select_vote_pareto_beam(selectable, beam_size, agent.current_prompt)
         else:
             selectable.sort(key=lambda x: float(x.get("reward", 0.0)), reverse=True)
@@ -7398,6 +7996,8 @@ class TraceBeamSearchSystem:
         top1_candidate_pool_source = self._candidate_pool_source(selected[0]) if selected else ""
         selected_by_id = {str(item.get("candidate_id", "")): rank for rank, item in enumerate(selected, start=1)}
         active_candidate_id = str(selected[0].get("candidate_id", "")) if selected else ""
+        for item in selected:
+            item.setdefault("metrics", {})["beam_slot"] = str(item.get("beam_slot", ""))
         agent.prompt_beam = [
             self._make_beam_item(
                 prompt=str(x["prompt"]),
@@ -7649,6 +8249,25 @@ class TraceBeamSearchSystem:
                     "rejection_reason": str(metrics.get("rejection_reason", "")),
                     "accuracy_guard_passed": bool(metrics.get("accuracy_guard_passed", True)),
                     "invalid_guard_passed": bool(metrics.get("invalid_guard_passed", True)),
+                    "competence_depth1_guard_enabled": bool(metrics.get("competence_depth1_guard_enabled", candidate_guard_enabled)),
+                    "competence_depth1_guard_epsilon": float(metrics.get("competence_depth1_guard_epsilon", 0.0) or 0.0),
+                    "competence_depth1_guard_passed": bool(metrics.get("competence_depth1_guard_passed", True)),
+                    "hard_guard_passed": bool(metrics.get("hard_guard_passed", True)),
+                    "hard_rejection_reason": str(metrics.get("rejection_reason", "")),
+                    "candidate_type": str(metrics.get("candidate_type", "")),
+                    "mechanism_signature": metrics.get("mechanism_signature", []),
+                    "parent_mechanism_signature": metrics.get("parent_mechanism_signature", []),
+                    "peer_dominant_mechanism_signature": metrics.get("peer_dominant_mechanism_signature", []),
+                    "mechanism_signature_distance": float(metrics.get("mechanism_signature_distance", 0.0) or 0.0),
+                    "raw_reward": float(metrics.get("raw_reward", metrics.get("reward", 0.0)) or 0.0),
+                    "penalized_reward": float(metrics.get("penalized_reward", metrics.get("reward", 0.0)) or 0.0),
+                    "soft_guard_penalty": float(metrics.get("soft_guard_penalty", 0.0) or 0.0),
+                    "soft_error_dependence_penalty": float(metrics.get("soft_error_dependence_penalty", 0.0) or 0.0),
+                    "soft_cycle_penalty": float(metrics.get("soft_cycle_penalty", 0.0) or 0.0),
+                    "soft_mechanism_shift_penalty": float(metrics.get("soft_mechanism_shift_penalty", 0.0) or 0.0),
+                    "soft_accuracy_regression_penalty": float(metrics.get("soft_accuracy_regression_penalty", 0.0) or 0.0),
+                    "soft_guard_reasons": metrics.get("soft_guard_reasons", []),
+                    "beam_slot": str(item.get("beam_slot", "not_retained")),
                     "pareto_feasible": item.get("pareto_feasible"),
                     "pareto_rank": item.get("pareto_rank"),
                     "pareto_crowding_distance": item.get("pareto_crowding_distance"),
@@ -7728,6 +8347,7 @@ class TraceBeamSearchSystem:
                     "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
                     "task_alignment_rule": str(item.get("task_alignment_rule", "")),
                     "peer_redundancy_avoidance": str(item.get("peer_redundancy_avoidance", "")),
+                    "declared_mechanism": str(item.get("proposal", {}).get("modified_mechanism", item.get("proposal", {}).get("new_or_modified_mechanism", item.get("proposal", {}).get("mechanism_name", "")))) if isinstance(item.get("proposal", {}), dict) else "",
                     "candidate_prompt_char_count": int(item.get("candidate_prompt_char_count", len(str(item.get("prompt", "")))) or 0),
                     "candidate_prompt_over_soft_limit": bool(item.get("candidate_prompt_over_soft_limit", False)),
                     "candidate_prompt_over_hard_limit": bool(item.get("candidate_prompt_over_hard_limit", False)),
@@ -7771,6 +8391,20 @@ class TraceBeamSearchSystem:
             **competence_log_fields,
             "updated": bool(changed),
             "candidate_count": len(candidate_pool),
+            "depth1_guard_rejection_count": sum(str(item.get("metrics", {}).get("rejection_reason", "")) == "competence_depth1_guard" for item in evaluated),
+            "accuracy_guard_rejection_count": sum(not bool(item.get("metrics", {}).get("accuracy_guard_passed", True)) for item in evaluated),
+            "invalid_guard_rejection_count": sum(not bool(item.get("metrics", {}).get("invalid_guard_passed", True)) for item in evaluated),
+            "dependence_guard_rejection_count": sum(str(item.get("metrics", {}).get("rejection_reason", "")) in {"pivotal_loss_guard", "shared_error_creation_guard"} for item in evaluated),
+            "pareto_not_retained_count": sum(not bool(item.get("pareto_selected", False)) for item in evaluated),
+            "retained_candidate_count": len(selected),
+            "active_prompt_changed_count": int(changed),
+            "catastrophic_accuracy_guard_rejection_count": sum(not bool(item.get("metrics", {}).get("accuracy_guard_passed", True)) for item in evaluated),
+            "soft_error_dependence_penalty_count": sum(float(item.get("metrics", {}).get("soft_error_dependence_penalty", 0.0) or 0.0) > 0.0 for item in evaluated),
+            "soft_cycle_penalty_count": sum(float(item.get("metrics", {}).get("soft_cycle_penalty", 0.0) or 0.0) > 0.0 for item in evaluated),
+            "soft_mechanism_shift_penalty_count": sum(float(item.get("metrics", {}).get("soft_mechanism_shift_penalty", 0.0) or 0.0) > 0.0 for item in evaluated),
+            "exploration_candidate_count": sum(self._candidate_pool_source(item) == "optimizer" and float(item.get("metrics", {}).get("mechanism_signature_distance", 0.0) or 0.0) > 0.0 for item in evaluated),
+            "exploration_slot_occupancy_count": sum(str(item.get("beam_slot", "")) == "explore" for item in selected),
+            "exploration_to_active_conversion_count": int(bool(selected and selected[0].get("beam_slot") == "explore" and changed)),
             "generation_batches": generation_batches,
             "baseline_homogeneous_case_count": len(baseline_cases),
             "num_target_error_cases": int(num_target_error_cases),
@@ -7805,6 +8439,31 @@ class TraceBeamSearchSystem:
             "execution_session_id": self._current_execution_session_id(),
             "update_attempt_id": update_attempt_id,
         }
+        self.depth1_guard_rejection_count = int(getattr(self, "depth1_guard_rejection_count", 0)) + int(
+            summary["depth1_guard_rejection_count"]
+        )
+        for field in (
+            "catastrophic_accuracy_guard_rejection_count",
+            "soft_error_dependence_penalty_count",
+            "soft_cycle_penalty_count",
+            "soft_mechanism_shift_penalty_count",
+            "exploration_candidate_count",
+            "exploration_slot_occupancy_count",
+            "exploration_to_active_conversion_count",
+        ):
+            setattr(self, field, int(getattr(self, field, 0)) + int(summary.get(field, 0) or 0))
+        if self._is_v82_hybrid():
+            self.mechanism_signature_history.append({
+                "epoch": int(epoch_id),
+                "step": int(step_id),
+                "agent_id": int(agent_id),
+                "retained": [list(item.get("metrics", {}).get("mechanism_signature", [])) for item in selected],
+            })
+            self.beam_slot_state[str(agent_id)] = [str(item.get("beam_slot", "")) for item in selected]
+            self.exploration_slot_candidates = [
+                {"agent_id": int(agent_id), "candidate_id": str(item.get("candidate_id", "")), "prompt": str(item.get("prompt", ""))}
+                for item in selected if str(item.get("beam_slot", "")) == "explore"
+            ]
         self.update_logs.append(
             {
                 **self._base_log_fields(),
@@ -7821,6 +8480,26 @@ class TraceBeamSearchSystem:
                 "top1_candidate_source": top1_candidate_source,
                 "top1_candidate_pool_source": top1_candidate_pool_source,
                 "candidate_count": len(candidate_pool),
+                "depth1_guard_rejection_count": summary["depth1_guard_rejection_count"],
+                "accuracy_guard_rejection_count": summary["accuracy_guard_rejection_count"],
+                "invalid_guard_rejection_count": summary["invalid_guard_rejection_count"],
+                "dependence_guard_rejection_count": summary["dependence_guard_rejection_count"],
+                "pareto_not_retained_count": summary["pareto_not_retained_count"],
+                "retained_candidate_count": summary["retained_candidate_count"],
+                "active_prompt_changed_count": summary["active_prompt_changed_count"],
+                "generation_batches": generation_batches,
+                "general_error_case_count": sum(len(batch.get("cases", [])) for batch in generation_batches if str(batch.get("batch_type", "")) == "general_error"),
+                "c1_creation_case_count": sum(sum(int(case.get("baseline_correct_count", -1)) == 0 for case in batch.get("cases", [])) for batch in generation_batches if str(batch.get("batch_type", "")) == "c1_c2_creation"),
+                "c2_creation_case_count": sum(sum(int(case.get("baseline_correct_count", -1)) == 1 for case in batch.get("cases", [])) for batch in generation_batches if str(batch.get("batch_type", "")) == "c1_c2_creation"),
+                "boundary_case_count": sum(len(batch.get("cases", [])) for batch in generation_batches if str(batch.get("batch_type", "")) == "actual_plurality_boundary"),
+                "residual_case_count": sum(len(batch.get("cases", [])) for batch in generation_batches if str(batch.get("batch_type", "")) == "residual_shared_error"),
+                "catastrophic_accuracy_guard_rejection_count": summary["catastrophic_accuracy_guard_rejection_count"],
+                "soft_error_dependence_penalty_count": summary["soft_error_dependence_penalty_count"],
+                "soft_cycle_penalty_count": summary["soft_cycle_penalty_count"],
+                "soft_mechanism_shift_penalty_count": summary["soft_mechanism_shift_penalty_count"],
+                "exploration_candidate_count": summary["exploration_candidate_count"],
+                "exploration_slot_occupancy_count": summary["exploration_slot_occupancy_count"],
+                "exploration_to_active_conversion_count": summary["exploration_to_active_conversion_count"],
                 "optimizer_fallback_mode": str(getattr(self.cfg, "optimizer_fallback_mode", "none")),
                 "optimizer_parent_concurrency": int(parent_concurrency),
                 "fallback_enabled": bool(fallback_enabled),
@@ -7870,7 +8549,15 @@ class TraceBeamSearchSystem:
             peer_prompts = self._active_prompt_list()
             for item in getattr(agent, "prompt_beam", []) or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]:
                 prompt = str(item.get("prompt", agent.current_prompt))
-                metrics = await self.evaluate_candidate_prompt(agent_id, prompt, peer_prompts, eval_batch, role_spec=item.get("metrics", {}))
+                prior_metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+                metrics = await self.evaluate_candidate_prompt(agent_id, prompt, peer_prompts, eval_batch, role_spec=prior_metrics)
+                if self._is_v82_hybrid():
+                    for key in (
+                        "candidate_type", "mechanism_signature", "parent_mechanism_signature",
+                        "peer_dominant_mechanism_signature", "mechanism_signature_distance", "beam_slot",
+                    ):
+                        if key in prior_metrics:
+                            metrics[key] = prior_metrics[key]
                 refreshed_item = {
                         "candidate_id": str(item.get("id", "")) or self._hash(prompt),
                         "prompt": prompt,
@@ -7886,12 +8573,19 @@ class TraceBeamSearchSystem:
                 if self._v7_residual_protocol_enabled():
                     metrics.update(self._candidate_trajectory_feasibility(agent, refreshed_item))
                     refreshed_item["metrics"] = metrics
+                if self._is_v82_hybrid():
+                    metrics = self._apply_hybrid_soft_guards(metrics)
+                    refreshed_item["metrics"] = metrics
+                    refreshed_item["reward"] = float(metrics.get("penalized_reward", metrics.get("reward", 0.0)) or 0.0)
+                self._apply_competence_depth1_candidate_guard(metrics)
                 refreshed.append(refreshed_item)
-            if self._v7_residual_protocol_enabled():
+            if self._v7_residual_protocol_enabled() or bool(getattr(self.cfg, "competence_depth1_candidate_guard_enabled", False)):
                 refreshed = [item for item in refreshed if not str(item.get("metrics", {}).get("rejection_reason", ""))]
                 if not refreshed:
                     raise RuntimeError("Beam refresh trajectory guard removed the current active prompt")
-            if self._uses_vote_pareto_selection():
+            if self._is_v82_hybrid():
+                retained, _ = self._select_hybrid_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
+            elif self._uses_vote_pareto_selection():
                 retained, _ = self._select_vote_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
             else:
                 retained = sorted(refreshed, key=lambda item: float(item.get("reward", 0.0)), reverse=True)[: max(1, int(self.cfg.beam_size))]
@@ -7987,6 +8681,16 @@ class TraceBeamSearchSystem:
             diagnosis = self._window_update_diagnosis(self.recent_window_records)
             selected = self.select_reward_agents_for_update(diagnosis, metrics)
             no_selection_reason = "no_reward_relevant_agent"
+        if self._is_v82_hybrid():
+            selector_event = {
+                "epoch": int(epoch_id),
+                "step": int(step_id),
+                "applied_specialization_strength": float(getattr(self, "specialization_strength", 0.0)),
+                "weights": dict(diagnosis.get("hybrid_selector_weights", {})),
+                "agents": list(diagnosis.get("hybrid_selector_diagnostics", [])),
+            }
+            self.hybrid_selector_history.append(selector_event)
+            self.update_logs.append({**self._base_log_fields(), "event": "hybrid_target_selection", **selector_event})
         if not selected:
             self.clear_homogeneity_windows()
             return {
@@ -8087,6 +8791,8 @@ class TraceBeamSearchSystem:
             **optimizer_generation_diagnostics,
             **optimizer_generation_metadata,
             "candidate_behavior_diagnostics": self._mean_metric_dict(top_metrics),
+            "hybrid_selector_diagnostics": list(diagnosis.get("hybrid_selector_diagnostics", [])),
+            "hybrid_selector_weights": dict(diagnosis.get("hybrid_selector_weights", {})),
         }
 
     def _apply_no_effective_evolution_tracking(
@@ -8332,6 +9038,81 @@ class TraceBeamSearchSystem:
             epoch_id=epoch_id,
         )
 
+    async def evaluate_competence_probe(
+        self,
+        probe_data: List[Dict[str, str]],
+        *,
+        probe_name: str,
+        epoch: int,
+    ) -> Dict[str, Any]:
+        """Evaluate current prompts on a fixed optimization-only probe without training side effects."""
+        prompts = list(self._active_prompt_list())
+        prompt_hashes = [self._hash(prompt) for prompt in prompts]
+
+        async def evaluate_one(index: int, example: Dict[str, str]) -> Dict[str, Any]:
+            question = example["question"]
+            gold = self.task_spec.parse_gold(example["answer"], question)
+            traces, answers = await self.solve_with_prompts(question, prompts)
+            question_hash = self._hash(question)
+            self._record_solver_rollouts(
+                question_hash, prompts, traces, answers, source=f"competence_probe_{probe_name}"
+            )
+            return {
+                "index": index,
+                "question_hash": question_hash,
+                **self.compute_rollout_metrics(traces, answers, gold, prompts, question_hash=question_hash),
+            }
+
+        rows = await asyncio.gather(*[
+            evaluate_one(index, example) for index, example in enumerate(probe_data)
+        ])
+        summary = self._summarize_rollout_rows(rows)
+        record = {
+            "probe_name": str(probe_name),
+            "probe_source": "optimization_train",
+            "epoch": int(epoch),
+            "probe_size": len(probe_data),
+            "question_hashes": [str(row["question_hash"]) for row in rows],
+            "active_prompt_hashes": prompt_hashes,
+            **{key: summary.get(key) for key in (
+                "per_agent_acc", "mean_individual_acc", "min_individual_acc",
+                "bottom2_mean_acc", "bottom3_mean_acc", "max_individual_acc",
+                "individual_acc_std", "best_minus_worst_gap", "best_minus_bottom2_gap",
+                "coverage_depth_c1", "coverage_depth_c2", "coverage_depth_c3",
+                "coverage_depth_c4", "coverage_depth_c5",
+            )},
+        }
+        self.competence_probe_history.append(dict(record))
+        with open(os.path.join(self.cfg.out_dir, "competence_probe_history.jsonl"), "a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+        return record
+
+    def _capability_specialization_diagnostics(self) -> Dict[str, Any]:
+        profiles = [dict(getattr(agent, "capability_profile", {}) or {}) for agent in self.agents]
+        families = sorted({str(key) for profile in profiles for key in profile})
+        top = []
+        for profile in profiles:
+            top.append(max(profile, key=lambda key: float(profile[key])) if profile else "")
+        nonempty_top = [value for value in top if value]
+        counts = {value: nonempty_top.count(value) for value in sorted(set(nonempty_top))}
+        total = len(nonempty_top)
+        shares = [count / total for count in counts.values()] if total else []
+        cosines = []
+        for left in range(len(profiles)):
+            for right in range(left + 1, len(profiles)):
+                a = np.array([float(profiles[left].get(key, 0.0) or 0.0) for key in families])
+                b = np.array([float(profiles[right].get(key, 0.0) or 0.0) for key in families])
+                denom = float(np.linalg.norm(a) * np.linalg.norm(b))
+                if denom > 0.0:
+                    cosines.append(float(np.dot(a, b) / denom))
+        return {
+            "top_capability_family_per_agent": top,
+            "distinct_top_capability_family_count": len(set(nonempty_top)),
+            "dominant_capability_family_share": max(shares, default=0.0),
+            "capability_family_hhi": sum(value * value for value in shares),
+            "mean_pairwise_capability_profile_cosine": float(np.mean(cosines)) if cosines else 0.0,
+        }
+
     def _summarize_rollout_rows(self, rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         individual_matrix = [list(r.get("individual_correct", [])) for r in rows]
         flat_individual = [int(x) for row in individual_matrix for x in row]
@@ -8472,6 +9253,7 @@ class TraceBeamSearchSystem:
             "max_minority_rescue_share": max(rescue_shares, default=0.0),
             "minority_rescue_hhi": sum(value * value for value in rescue_shares),
             "oracle_acc": oracle_acc,
+            "all_wrong_rate": 1.0 - oracle_acc,
             "aggregation_gap": float(oracle_acc - plurality_vote_acc),
             "oracle_minus_plurality_vote": float(oracle_acc - plurality_vote_acc),
             "rescue_available_rate": rescue_available_rate,
@@ -8510,6 +9292,23 @@ class TraceBeamSearchSystem:
             "c3_minus_plurality_vote": float(np.mean([int(value >= 3) for value in correct_depths])) - plurality_vote_acc if correct_depths else 0.0,
             "specialization_strength_final": float(getattr(self, "specialization_strength", 0.0)),
             "mean_specialization_strength": float(np.mean(getattr(self, "specialization_strength_history", [0.0]))) if getattr(self, "specialization_strength_history", None) else 0.0,
+            "first_nonzero_specialization_epoch": getattr(self, "first_nonzero_specialization_epoch", None),
+            "effective_specialization_epoch_count": int(getattr(self, "effective_specialization_epoch_count", 0)),
+            "max_specialization_strength": max(getattr(self, "specialization_strength_history", [0.0]) or [0.0]),
+            "progressive_stage_exercised": int(getattr(self, "effective_specialization_epoch_count", 0)) >= int(getattr(self.cfg, "competence_min_effective_specialization_epochs", 1)),
+            "progressive_stage_not_exercised_reason": (
+                "" if int(getattr(self, "effective_specialization_epoch_count", 0)) >= int(getattr(self.cfg, "competence_min_effective_specialization_epochs", 1))
+                else "activation_after_final_epoch" if float(getattr(self, "specialization_strength", 0.0)) > 0.0
+                else "never_activated"
+            ),
+            "depth1_guard_rejection_count": int(getattr(self, "depth1_guard_rejection_count", 0)),
+            "catastrophic_accuracy_guard_rejection_count": int(getattr(self, "catastrophic_accuracy_guard_rejection_count", 0)),
+            "soft_error_dependence_penalty_count": int(getattr(self, "soft_error_dependence_penalty_count", 0)),
+            "soft_cycle_penalty_count": int(getattr(self, "soft_cycle_penalty_count", 0)),
+            "soft_mechanism_shift_penalty_count": int(getattr(self, "soft_mechanism_shift_penalty_count", 0)),
+            "exploration_candidate_count": int(getattr(self, "exploration_candidate_count", 0)),
+            "exploration_slot_occupancy_rate": float(getattr(self, "exploration_slot_occupancy_count", 0)) / max(1, len(getattr(self, "mechanism_signature_history", []))),
+            "exploration_to_active_conversion_count": int(getattr(self, "exploration_to_active_conversion_count", 0)),
             "prompt_overlength_rejection_count": int(getattr(self, "prompt_overlength_rejection_count", 0)),
             "truncated_prompt_count": int(getattr(self, "truncated_prompt_count", 0)),
             "mean_boundary_conditional_error": float(np.mean(boundary_conditional_errors)) if boundary_conditional_errors else 0.0,
@@ -8526,6 +9325,54 @@ class TraceBeamSearchSystem:
                 "capability_profile_per_agent": [dict(agent.capability_profile) for agent in self.agents],
                 "vote_context_profile_per_agent": [dict(agent.vote_context_profile) for agent in self.agents],
                 "capability_profile_update_count_per_agent": [int(agent.capability_profile_update_count) for agent in self.agents],
+                **self._capability_specialization_diagnostics(),
+            })
+        if self._is_v82_hybrid():
+            final_signatures = []
+            for agent in self.agents:
+                metrics = agent.prompt_beam[0].get("metrics", {}) if agent.prompt_beam else {}
+                signature = list(metrics.get("mechanism_signature", []))
+                if not signature:
+                    signature = list(self.mechanism_signature_by_prompt_hash.get(
+                        self._normalized_prompt_hash(agent.current_prompt), []
+                    ))
+                final_signatures.append(signature)
+            encoded = [json.dumps(value, ensure_ascii=True, separators=(",", ":")) for value in final_signatures]
+            counts = Counter(encoded)
+            pair_distances = [
+                mechanism_signature_distance(final_signatures[left], final_signatures[right])
+                for left in range(len(final_signatures))
+                for right in range(left + 1, len(final_signatures))
+            ]
+            result.update({
+                "distinct_final_mechanism_signature_count": len(counts),
+                "dominant_final_mechanism_signature_share": max(counts.values(), default=0) / max(1, len(final_signatures)),
+                "mean_pairwise_mechanism_signature_distance": float(np.mean(pair_distances)) if pair_distances else 0.0,
+                "final_mechanism_signatures": final_signatures,
+            })
+        initial_probe = dict(getattr(self, "initial_competence_probe_metrics", {}) or {})
+        final_probe = dict(getattr(self, "latest_competence_probe_metrics", {}) or initial_probe)
+        if initial_probe:
+            for label, key in (
+                ("bottom2", "bottom2_mean_acc"), ("mean_acc", "mean_individual_acc"),
+                ("c1", "coverage_depth_c1"), ("c2", "coverage_depth_c2"),
+            ):
+                initial_value = float(initial_probe.get(key, 0.0) or 0.0)
+                final_value = float(final_probe.get(key, initial_value) or 0.0)
+                result[f"initial_competence_probe_{label}"] = initial_value
+                result[f"final_competence_probe_{label}"] = final_value
+                result[f"competence_probe_{label}_gain"] = final_value - initial_value
+            baseline_gap = float(initial_probe.get("oracle_acc", 0.0) or 0.0) - float(
+                initial_probe.get("plurality_vote_acc", initial_probe.get("vote_acc", 0.0)) or 0.0
+            )
+            initial_c1 = float(initial_probe.get("coverage_depth_c1", 0.0) or 0.0)
+            final_c1 = float(final_probe.get("coverage_depth_c1", initial_c1) or 0.0)
+            result.update({
+                "baseline_aggregation_gap": baseline_gap,
+                "oracle_preserving_gap_reduction": bool(
+                    float(result.get("aggregation_gap", 0.0)) < baseline_gap
+                    and final_c1 >= initial_c1 - float(getattr(self.cfg, "competence_c1_guard_epsilon", 0.01))
+                ),
             })
         return result
 

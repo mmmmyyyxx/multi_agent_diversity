@@ -79,7 +79,7 @@ def _append_common_cli_args(
     )
     best_state_selection_mode = (
         setting.best_state_selection_mode
-        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first"}
+        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first", "vote_generalization_first"}
         else getattr(args, "best_state_selection_mode", Config().best_state_selection_mode)
     )
     optimizer_architecture = _setting_value(setting, "optimizer_architecture", args.optimizer_architecture)
@@ -181,6 +181,36 @@ def _append_common_cli_args(
             "--competence_progressive_residual_enabled", str(int(_setting_value(setting, "competence_progressive_residual_enabled", getattr(args, "competence_progressive_residual_enabled", defaults.competence_progressive_residual_enabled)))),
             "--competence_floor_low", str(getattr(args, "competence_floor_low", defaults.competence_floor_low)),
             "--competence_floor_high", str(getattr(args, "competence_floor_high", defaults.competence_floor_high)),
+            "--competence_schedule_mode", str(_setting_value(setting, "competence_schedule_mode", getattr(args, "competence_schedule_mode", defaults.competence_schedule_mode))),
+            "--competence_schedule_version", str(_setting_value(setting, "competence_schedule_version", getattr(args, "competence_schedule_version", defaults.competence_schedule_version))),
+            "--competence_probe_size", str(_setting_value(setting, "competence_probe_size", getattr(args, "competence_probe_size", defaults.competence_probe_size))),
+            "--competence_probe_seed_offset", str(_setting_value(setting, "competence_probe_seed_offset", getattr(args, "competence_probe_seed_offset", defaults.competence_probe_seed_offset))),
+            "--competence_relative_low_delta", str(_setting_value(setting, "competence_relative_low_delta", getattr(args, "competence_relative_low_delta", defaults.competence_relative_low_delta))),
+            "--competence_relative_high_delta", str(_setting_value(setting, "competence_relative_high_delta", getattr(args, "competence_relative_high_delta", defaults.competence_relative_high_delta))),
+            "--competence_schedule_ema", str(_setting_value(setting, "competence_schedule_ema", getattr(args, "competence_schedule_ema", defaults.competence_schedule_ema))),
+            "--competence_schedule_max_step", str(_setting_value(setting, "competence_schedule_max_step", getattr(args, "competence_schedule_max_step", defaults.competence_schedule_max_step))),
+            "--competence_schedule_monotonic", str(int(_setting_value(setting, "competence_schedule_monotonic", getattr(args, "competence_schedule_monotonic", defaults.competence_schedule_monotonic)))),
+            "--competence_mean_guard_epsilon", str(_setting_value(setting, "competence_mean_guard_epsilon", getattr(args, "competence_mean_guard_epsilon", defaults.competence_mean_guard_epsilon))),
+            "--competence_c1_guard_epsilon", str(_setting_value(setting, "competence_c1_guard_epsilon", getattr(args, "competence_c1_guard_epsilon", defaults.competence_c1_guard_epsilon))),
+            "--competence_c2_guard_epsilon", str(_setting_value(setting, "competence_c2_guard_epsilon", getattr(args, "competence_c2_guard_epsilon", defaults.competence_c2_guard_epsilon))),
+            "--competence_depth1_candidate_guard_enabled", str(int(_setting_value(setting, "competence_depth1_candidate_guard_enabled", getattr(args, "competence_depth1_candidate_guard_enabled", defaults.competence_depth1_candidate_guard_enabled)))),
+            "--competence_depth1_candidate_guard_epsilon", str(_setting_value(setting, "competence_depth1_candidate_guard_epsilon", getattr(args, "competence_depth1_candidate_guard_epsilon", defaults.competence_depth1_candidate_guard_epsilon))),
+            "--competence_min_effective_specialization_epochs", str(_setting_value(setting, "competence_min_effective_specialization_epochs", getattr(args, "competence_min_effective_specialization_epochs", defaults.competence_min_effective_specialization_epochs))),
+            "--method_version", str(_setting_value(setting, "method_version", getattr(args, "method_version", defaults.method_version))),
+            "--target_selector_mode", str(_setting_value(setting, "target_selector_mode", getattr(args, "target_selector_mode", defaults.target_selector_mode))),
+            "--target_selector_version", str(_setting_value(setting, "target_selector_version", getattr(args, "target_selector_version", defaults.target_selector_version))),
+            "--beam_policy_version", str(_setting_value(setting, "beam_policy_version", getattr(args, "beam_policy_version", defaults.beam_policy_version))),
+            "--tcs_candidate_policy_version", str(_setting_value(setting, "tcs_candidate_policy_version", getattr(args, "tcs_candidate_policy_version", defaults.tcs_candidate_policy_version))),
+            "--mechanism_signature_version", str(_setting_value(setting, "mechanism_signature_version", getattr(args, "mechanism_signature_version", defaults.mechanism_signature_version))),
+            "--competence_weight_depth1_gain", str(_setting_value(setting, "competence_weight_depth1_gain", getattr(args, "competence_weight_depth1_gain", defaults.competence_weight_depth1_gain))),
+            "--competence_weight_depth1_loss", str(_setting_value(setting, "competence_weight_depth1_loss", getattr(args, "competence_weight_depth1_loss", defaults.competence_weight_depth1_loss))),
+            "--competence_residual_floor", str(_setting_value(setting, "competence_residual_floor", getattr(args, "competence_residual_floor", defaults.competence_residual_floor))),
+            "--catastrophic_target_accuracy_loss_epsilon", str(_setting_value(setting, "catastrophic_target_accuracy_loss_epsilon", getattr(args, "catastrophic_target_accuracy_loss_epsilon", defaults.catastrophic_target_accuracy_loss_epsilon))),
+            "--soft_guard_error_dependence_weight", str(_setting_value(setting, "soft_guard_error_dependence_weight", getattr(args, "soft_guard_error_dependence_weight", defaults.soft_guard_error_dependence_weight))),
+            "--soft_guard_cycle_weight", str(_setting_value(setting, "soft_guard_cycle_weight", getattr(args, "soft_guard_cycle_weight", defaults.soft_guard_cycle_weight))),
+            "--soft_guard_mechanism_shift_weight", str(_setting_value(setting, "soft_guard_mechanism_shift_weight", getattr(args, "soft_guard_mechanism_shift_weight", defaults.soft_guard_mechanism_shift_weight))),
+            "--soft_guard_accuracy_regression_weight", str(_setting_value(setting, "soft_guard_accuracy_regression_weight", getattr(args, "soft_guard_accuracy_regression_weight", defaults.soft_guard_accuracy_regression_weight))),
+            "--mechanism_novelty_bonus_weight", str(_setting_value(setting, "mechanism_novelty_bonus_weight", getattr(args, "mechanism_novelty_bonus_weight", defaults.mechanism_novelty_bonus_weight))),
             "--competence_selector_weight", str(getattr(args, "competence_selector_weight", defaults.competence_selector_weight)),
             "--competence_extra_support_shrinkage", str(getattr(args, "competence_extra_support_shrinkage", defaults.competence_extra_support_shrinkage)),
             "--candidate_eval_strategy", str(candidate_eval_strategy),
@@ -570,7 +600,7 @@ def main():
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
     parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
     parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)
@@ -650,6 +680,36 @@ def main():
     parser.add_argument("--competence_progressive_residual_enabled", type=int, default=int(cli_defaults.competence_progressive_residual_enabled), choices=[0, 1])
     parser.add_argument("--competence_floor_low", type=float, default=cli_defaults.competence_floor_low)
     parser.add_argument("--competence_floor_high", type=float, default=cli_defaults.competence_floor_high)
+    parser.add_argument("--competence_schedule_mode", default=cli_defaults.competence_schedule_mode, choices=["absolute_legacy", "baseline_relative_opt_snapshot"])
+    parser.add_argument("--competence_schedule_version", default=cli_defaults.competence_schedule_version)
+    parser.add_argument("--competence_probe_size", type=int, default=cli_defaults.competence_probe_size)
+    parser.add_argument("--competence_probe_seed_offset", type=int, default=cli_defaults.competence_probe_seed_offset)
+    parser.add_argument("--competence_relative_low_delta", type=float, default=cli_defaults.competence_relative_low_delta)
+    parser.add_argument("--competence_relative_high_delta", type=float, default=cli_defaults.competence_relative_high_delta)
+    parser.add_argument("--competence_schedule_ema", type=float, default=cli_defaults.competence_schedule_ema)
+    parser.add_argument("--competence_schedule_max_step", type=float, default=cli_defaults.competence_schedule_max_step)
+    parser.add_argument("--competence_schedule_monotonic", type=int, default=int(cli_defaults.competence_schedule_monotonic), choices=[0, 1])
+    parser.add_argument("--competence_mean_guard_epsilon", type=float, default=cli_defaults.competence_mean_guard_epsilon)
+    parser.add_argument("--competence_c1_guard_epsilon", type=float, default=cli_defaults.competence_c1_guard_epsilon)
+    parser.add_argument("--competence_c2_guard_epsilon", type=float, default=cli_defaults.competence_c2_guard_epsilon)
+    parser.add_argument("--competence_depth1_candidate_guard_enabled", type=int, default=int(cli_defaults.competence_depth1_candidate_guard_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth1_candidate_guard_epsilon", type=float, default=cli_defaults.competence_depth1_candidate_guard_epsilon)
+    parser.add_argument("--competence_min_effective_specialization_epochs", type=int, default=cli_defaults.competence_min_effective_specialization_epochs)
+    parser.add_argument("--method_version", default=cli_defaults.method_version)
+    parser.add_argument("--target_selector_mode", default=cli_defaults.target_selector_mode, choices=["legacy", "hybrid_competence_boundary"])
+    parser.add_argument("--target_selector_version", default=cli_defaults.target_selector_version)
+    parser.add_argument("--beam_policy_version", default=cli_defaults.beam_policy_version)
+    parser.add_argument("--tcs_candidate_policy_version", default=cli_defaults.tcs_candidate_policy_version)
+    parser.add_argument("--mechanism_signature_version", default=cli_defaults.mechanism_signature_version)
+    parser.add_argument("--competence_weight_depth1_gain", type=float, default=cli_defaults.competence_weight_depth1_gain)
+    parser.add_argument("--competence_weight_depth1_loss", type=float, default=cli_defaults.competence_weight_depth1_loss)
+    parser.add_argument("--competence_residual_floor", type=float, default=cli_defaults.competence_residual_floor)
+    parser.add_argument("--catastrophic_target_accuracy_loss_epsilon", type=float, default=cli_defaults.catastrophic_target_accuracy_loss_epsilon)
+    parser.add_argument("--soft_guard_error_dependence_weight", type=float, default=cli_defaults.soft_guard_error_dependence_weight)
+    parser.add_argument("--soft_guard_cycle_weight", type=float, default=cli_defaults.soft_guard_cycle_weight)
+    parser.add_argument("--soft_guard_mechanism_shift_weight", type=float, default=cli_defaults.soft_guard_mechanism_shift_weight)
+    parser.add_argument("--soft_guard_accuracy_regression_weight", type=float, default=cli_defaults.soft_guard_accuracy_regression_weight)
+    parser.add_argument("--mechanism_novelty_bonus_weight", type=float, default=cli_defaults.mechanism_novelty_bonus_weight)
     parser.add_argument("--competence_selector_weight", type=float, default=cli_defaults.competence_selector_weight)
     parser.add_argument("--competence_extra_support_shrinkage", type=float, default=cli_defaults.competence_extra_support_shrinkage)
     parser.add_argument("--specialization_support_shrinkage", type=float, default=cli_defaults.specialization_support_shrinkage)

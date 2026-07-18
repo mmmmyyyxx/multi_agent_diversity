@@ -146,7 +146,36 @@ class Config:
     competence_weight_depth2_loss: float = 1.0
     competence_weight_vote_gain_early: float = 0.4
     competence_weight_vote_loss_early: float = 1.0
+    competence_schedule_mode: str = "absolute_legacy"
     competence_schedule_version: str = "competence_depth_v1"
+    competence_probe_size: int = 0
+    competence_probe_seed_offset: int = 7000
+    competence_relative_low_delta: float = 0.01
+    competence_relative_high_delta: float = 0.06
+    competence_schedule_ema: float = 0.50
+    competence_schedule_max_step: float = 0.35
+    competence_schedule_monotonic: bool = True
+    competence_mean_guard_epsilon: float = 0.01
+    competence_c1_guard_epsilon: float = 0.01
+    competence_c2_guard_epsilon: float = 0.01
+    competence_depth1_candidate_guard_enabled: bool = False
+    competence_depth1_candidate_guard_epsilon: float = 0.0
+    competence_min_effective_specialization_epochs: int = 1
+    method_version: str = "legacy"
+    target_selector_mode: str = "legacy"
+    target_selector_version: str = "legacy"
+    beam_policy_version: str = "legacy"
+    tcs_candidate_policy_version: str = "legacy"
+    mechanism_signature_version: str = "legacy"
+    competence_weight_depth1_gain: float = 0.80
+    competence_weight_depth1_loss: float = 1.20
+    competence_residual_floor: float = 0.30
+    catastrophic_target_accuracy_loss_epsilon: float = 0.05
+    soft_guard_error_dependence_weight: float = 0.50
+    soft_guard_cycle_weight: float = 0.20
+    soft_guard_mechanism_shift_weight: float = 0.20
+    soft_guard_accuracy_regression_weight: float = 0.50
+    mechanism_novelty_bonus_weight: float = 0.20
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -215,6 +244,16 @@ class Config:
             "shared_error_creation_epsilon",
             "competence_floor_low",
             "competence_floor_high",
+            "competence_relative_low_delta",
+            "competence_relative_high_delta",
+            "competence_schedule_ema",
+            "competence_schedule_max_step",
+            "competence_mean_guard_epsilon",
+            "competence_c1_guard_epsilon",
+            "competence_c2_guard_epsilon",
+            "competence_depth1_candidate_guard_epsilon",
+            "competence_residual_floor",
+            "catastrophic_target_accuracy_loss_epsilon",
         )
         for field in probability_fields:
             value = float(getattr(self, field))
@@ -233,6 +272,13 @@ class Config:
             "competence_weight_depth2_loss",
             "competence_weight_vote_gain_early",
             "competence_weight_vote_loss_early",
+            "competence_weight_depth1_gain",
+            "competence_weight_depth1_loss",
+            "soft_guard_error_dependence_weight",
+            "soft_guard_cycle_weight",
+            "soft_guard_mechanism_shift_weight",
+            "soft_guard_accuracy_regression_weight",
+            "mechanism_novelty_bonus_weight",
         ):
             if float(getattr(self, field)) < 0.0:
                 raise ValueError(f"{field} must be non-negative")
@@ -244,6 +290,12 @@ class Config:
                 raise ValueError(f"{field} must be at least 1")
         if float(self.competence_floor_high) <= float(self.competence_floor_low):
             raise ValueError("competence_floor_high must be greater than competence_floor_low")
+        if float(self.competence_relative_high_delta) <= float(self.competence_relative_low_delta):
+            raise ValueError("competence_relative_high_delta must be greater than competence_relative_low_delta")
+        if int(self.competence_probe_size) < 0:
+            raise ValueError("competence_probe_size must be non-negative")
+        if int(self.competence_min_effective_specialization_epochs) < 1:
+            raise ValueError("competence_min_effective_specialization_epochs must be at least 1")
         if int(self.student_candidate_prompt_hard_max_chars) < int(self.student_candidate_prompt_soft_max_chars):
             raise ValueError("student_candidate_prompt_hard_max_chars must be >= soft max")
 
@@ -287,7 +339,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
     parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
     parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
@@ -390,7 +442,36 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--competence_weight_depth2_loss", type=float, default=defaults.competence_weight_depth2_loss)
     parser.add_argument("--competence_weight_vote_gain_early", type=float, default=defaults.competence_weight_vote_gain_early)
     parser.add_argument("--competence_weight_vote_loss_early", type=float, default=defaults.competence_weight_vote_loss_early)
+    parser.add_argument("--competence_schedule_mode", type=str, default=defaults.competence_schedule_mode, choices=["absolute_legacy", "baseline_relative_opt_snapshot"])
     parser.add_argument("--competence_schedule_version", type=str, default=defaults.competence_schedule_version)
+    parser.add_argument("--competence_probe_size", type=int, default=defaults.competence_probe_size)
+    parser.add_argument("--competence_probe_seed_offset", type=int, default=defaults.competence_probe_seed_offset)
+    parser.add_argument("--competence_relative_low_delta", type=float, default=defaults.competence_relative_low_delta)
+    parser.add_argument("--competence_relative_high_delta", type=float, default=defaults.competence_relative_high_delta)
+    parser.add_argument("--competence_schedule_ema", type=float, default=defaults.competence_schedule_ema)
+    parser.add_argument("--competence_schedule_max_step", type=float, default=defaults.competence_schedule_max_step)
+    parser.add_argument("--competence_schedule_monotonic", type=int, default=int(defaults.competence_schedule_monotonic), choices=[0, 1])
+    parser.add_argument("--competence_mean_guard_epsilon", type=float, default=defaults.competence_mean_guard_epsilon)
+    parser.add_argument("--competence_c1_guard_epsilon", type=float, default=defaults.competence_c1_guard_epsilon)
+    parser.add_argument("--competence_c2_guard_epsilon", type=float, default=defaults.competence_c2_guard_epsilon)
+    parser.add_argument("--competence_depth1_candidate_guard_enabled", type=int, default=int(defaults.competence_depth1_candidate_guard_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth1_candidate_guard_epsilon", type=float, default=defaults.competence_depth1_candidate_guard_epsilon)
+    parser.add_argument("--competence_min_effective_specialization_epochs", type=int, default=defaults.competence_min_effective_specialization_epochs)
+    parser.add_argument("--method_version", default=defaults.method_version)
+    parser.add_argument("--target_selector_mode", default=defaults.target_selector_mode, choices=["legacy", "hybrid_competence_boundary"])
+    parser.add_argument("--target_selector_version", default=defaults.target_selector_version)
+    parser.add_argument("--beam_policy_version", default=defaults.beam_policy_version)
+    parser.add_argument("--tcs_candidate_policy_version", default=defaults.tcs_candidate_policy_version)
+    parser.add_argument("--mechanism_signature_version", default=defaults.mechanism_signature_version)
+    parser.add_argument("--competence_weight_depth1_gain", type=float, default=defaults.competence_weight_depth1_gain)
+    parser.add_argument("--competence_weight_depth1_loss", type=float, default=defaults.competence_weight_depth1_loss)
+    parser.add_argument("--competence_residual_floor", type=float, default=defaults.competence_residual_floor)
+    parser.add_argument("--catastrophic_target_accuracy_loss_epsilon", type=float, default=defaults.catastrophic_target_accuracy_loss_epsilon)
+    parser.add_argument("--soft_guard_error_dependence_weight", type=float, default=defaults.soft_guard_error_dependence_weight)
+    parser.add_argument("--soft_guard_cycle_weight", type=float, default=defaults.soft_guard_cycle_weight)
+    parser.add_argument("--soft_guard_mechanism_shift_weight", type=float, default=defaults.soft_guard_mechanism_shift_weight)
+    parser.add_argument("--soft_guard_accuracy_regression_weight", type=float, default=defaults.soft_guard_accuracy_regression_weight)
+    parser.add_argument("--mechanism_novelty_bonus_weight", type=float, default=defaults.mechanism_novelty_bonus_weight)
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

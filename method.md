@@ -2,6 +2,10 @@
 
 The opt-in v8 competence-first extension is documented in [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md). Existing v7 settings below remain unchanged.
 
+V8.2 is documented in [V8_2_HYBRID_PROGRESSIVE_METHOD.md](V8_2_HYBRID_PROGRESSIVE_METHOD.md). It is enabled only by `shared_vote_tcs_competence_depth2_progressive_residual_hybrid`; the earlier full-progressive setting remains a reproducible legacy path.
+
+V8.1 uses a fixed optimization-split competence probe. Initial prompts establish the baseline, and current active prompts are re-evaluated after every epoch-end beam refresh. Bottom-2 gain drives a task-relative, monotonic EMA schedule only while mean accuracy, C1, and C2 are preserved. Online training averages mix prompt generations and are diagnostic only; validation is only for best-state selection, and test is only for final evaluation. Candidate C1 preservation is a feasibility guard and does not alter the reward or four Pareto objectives.
+
 ## Overview
 
 This project evolves prompts for a fixed team of solver agents. It does not update model weights and it is not policy-gradient RL. Reward only ranks candidate prompts inside a per-agent beam search.
