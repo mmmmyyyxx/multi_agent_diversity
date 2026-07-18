@@ -1,0 +1,2 @@
+answer_format,baseline_only,benchmark,dataset_format,elapsed_sec,init_mode,returncode,reward_mode,run_dir,seed,setting,status,task_id,task_type
+option_letter,0,BBH,mars,6116.32,shared,0,vote_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_disambiguation_v7_formal_3seed_0d6093e\disambiguation_qa\shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,42,shared_vote_error_pareto_tcs_residual_cycle_guard,ok,disambiguation_qa,bbh

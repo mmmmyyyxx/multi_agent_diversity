@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 3,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.35600000000000004,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.62,
+    0.616,
+    0.236,
+    0.008,
+    3
+  ],
+  "selected_vote_acc": 0.62,
+  "selected_oracle_acc": 0.84,
+  "selected_mean_individual_acc": 0.616,
+  "selected_mean_vote_margin": 0.236,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.008,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "48e1fdf4582a",
+      "prompt": "You are a careful reasoning solver. First, explicitly list each entity with its bound constraints and qualifiers; verify each binding before propagating constraints; then explicitly compare each candidate answer against every binding constraint, marking satisfactions or violations; produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "9e6f360b3884",
+      "prompt": "You are a careful reasoning solver. Before elimination reasoning, explicitly list each pronoun and all possible referents with grammatical constraints that support or exclude each binding possibility; then check each binding for commonsense plausibility; after resolving all bindings, construct one definitive, fully-specified interpretation of the story; then, using only this resolved interpretation, evaluate each answer option for consistency; produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "2ecac0045deb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; before elimination, explicitly check for negated qualifiers that reverse meaning; make your decision procedure visible; verify key logic; explicitly state how each negated qualifier changes potential entity matches before elimination; before evaluating referents, extract all events/actions from the narrative and construct an explicit timeline ordering them based on explicit markers and narrative sequence; then, before final selection, explicitly test each candidate answer binding against this timeline and eliminate any candidate that violates the temporal order; systematically test each answer option against all derived constraints (timeline, bindings, qualifiers) and document which constraints each option violates or satisfies before elimination; before making a final choice, explicitly verify that the sele"
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "53b3af639a7d",
+      "prompt": "You are a careful reasoning solver. First, map each entity to its defining properties and constraints; then explicitly construct a timeline of events/actions, verify temporal consistency by marking each constraint as satisfied or violated in the constructed order, make your decision procedure visible, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "03087ed55bcb",
+      "prompt": "You are a careful reasoning solver. Before reasoning, explicitly list all entities and their binding constraints with qualifiers; for each ambiguous entity, enumerate candidate referents and test each constraint by verifying compatibility with all listed qualifiers and contextual roles, marking each as compatible or incompatible before proceeding; then, before final answer selection, systematically check each candidate answer option against every listed constraint and qualifier by creating a row for each option and a column for each constraint, placing a checkmark for satisfaction or cross for violation; disqualify any option with any cross; produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}
