@@ -114,12 +114,12 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
 
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto"}
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto"}
         else args.candidate_selection_mode
     )
     best_state_selection_mode = (
         setting.best_state_selection_mode
-        if str(getattr(setting, "best_state_selection_mode", "") or "") == "vote_first"
+        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first"}
         else args.best_state_selection_mode
     )
     optimizer_architecture = setting_value("optimizer_architecture", args.optimizer_architecture)
@@ -187,6 +187,8 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--student_candidate_schema_mode", args.student_candidate_schema_mode,
             "--student_candidate_max_chars_per_field", str(args.student_candidate_max_chars_per_field),
             "--student_candidate_prompt_max_chars", str(args.student_candidate_prompt_max_chars),
+            "--student_candidate_prompt_soft_max_chars", str(args.student_candidate_prompt_soft_max_chars),
+            "--student_candidate_prompt_hard_max_chars", str(args.student_candidate_prompt_hard_max_chars),
             "--student_force_minified_json", str(int(args.student_force_minified_json)),
             "--teacher_critic_use_voting_failure", str(int(teacher_voting_failure)),
             "--optimizer_fallback_mode", str(optimizer_fallback_mode),
@@ -241,6 +243,9 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
         "capability_affinity_weight", "capability_coverage_gap_weight", "specialization_support_shrinkage",
         "capability_loss_weight", "specialization_update_period", "pivotal_loss_guard_epsilon",
         "shared_error_creation_epsilon",
+        "competence_depth_enabled", "competence_depth2_aux_enabled", "competence_progressive_residual_enabled",
+        "competence_floor_low", "competence_floor_high", "competence_selector_weight",
+        "competence_extra_support_shrinkage",
     ):
         value = setting_value(name, getattr(args, name, getattr(defaults, name)))
         if isinstance(getattr(defaults, name), bool):
@@ -350,8 +355,8 @@ def main():
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
     parser.add_argument("--search_mode", type=str, default=cli_defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
+    parser.add_argument("--force_reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
     parser.add_argument("--boundary_selector_enabled", type=int, default=int(cli_defaults.boundary_selector_enabled), choices=[0, 1])
     parser.add_argument("--shared_error_metrics_enabled", type=int, default=int(cli_defaults.shared_error_metrics_enabled), choices=[0, 1])
     parser.add_argument("--residual_specialization_enabled", type=int, default=int(cli_defaults.residual_specialization_enabled), choices=[0, 1])
@@ -365,7 +370,14 @@ def main():
     parser.add_argument("--capability_coverage_gap_weight", type=float, default=cli_defaults.capability_coverage_gap_weight)
     parser.add_argument("--pivotal_loss_guard_epsilon", type=float, default=cli_defaults.pivotal_loss_guard_epsilon)
     parser.add_argument("--shared_error_creation_epsilon", type=float, default=cli_defaults.shared_error_creation_epsilon)
-    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first"])
+    parser.add_argument("--competence_depth_enabled", type=int, default=int(cli_defaults.competence_depth_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth2_aux_enabled", type=int, default=int(cli_defaults.competence_depth2_aux_enabled), choices=[0, 1])
+    parser.add_argument("--competence_progressive_residual_enabled", type=int, default=int(cli_defaults.competence_progressive_residual_enabled), choices=[0, 1])
+    parser.add_argument("--competence_floor_low", type=float, default=cli_defaults.competence_floor_low)
+    parser.add_argument("--competence_floor_high", type=float, default=cli_defaults.competence_floor_high)
+    parser.add_argument("--competence_selector_weight", type=float, default=cli_defaults.competence_selector_weight)
+    parser.add_argument("--competence_extra_support_shrinkage", type=float, default=cli_defaults.competence_extra_support_shrinkage)
     parser.add_argument("--beam_size", type=int, default=cli_defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=cli_defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=cli_defaults.optimizer_parent_concurrency)
@@ -415,6 +427,8 @@ def main():
     parser.add_argument("--student_candidate_schema_mode", type=str, default=cli_defaults.student_candidate_schema_mode, choices=["compact", "verbose"])
     parser.add_argument("--student_candidate_max_chars_per_field", type=int, default=cli_defaults.student_candidate_max_chars_per_field)
     parser.add_argument("--student_candidate_prompt_max_chars", type=int, default=cli_defaults.student_candidate_prompt_max_chars)
+    parser.add_argument("--student_candidate_prompt_soft_max_chars", type=int, default=cli_defaults.student_candidate_prompt_soft_max_chars)
+    parser.add_argument("--student_candidate_prompt_hard_max_chars", type=int, default=cli_defaults.student_candidate_prompt_hard_max_chars)
     parser.add_argument("--student_force_minified_json", type=int, default=int(cli_defaults.student_force_minified_json), choices=[0, 1])
     parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(cli_defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])

@@ -179,6 +179,47 @@ def compute_vote_transitions(
     }
 
 
+def compute_coverage_depth_transitions(
+    baseline_correctness: Sequence[Sequence[bool]],
+    candidate_correctness: Sequence[Sequence[bool]],
+    max_depth: int = 5,
+) -> Dict[str, float]:
+    """Compute K>=depth gains/losses from paired, already-recorded rollouts."""
+    if len(baseline_correctness) != len(candidate_correctness):
+        raise ValueError("baseline_correctness and candidate_correctness must have equal length")
+    if int(max_depth) < 1:
+        raise ValueError("max_depth must be positive")
+    size = len(baseline_correctness)
+    denominator = float(size) if size else 1.0
+    baseline_k = [sum(bool(value) for value in row) for row in baseline_correctness]
+    candidate_k = [sum(bool(value) for value in row) for row in candidate_correctness]
+    result: Dict[str, float] = {}
+    for depth in range(1, int(max_depth) + 1):
+        baseline_met = [value >= depth for value in baseline_k]
+        candidate_met = [value >= depth for value in candidate_k]
+        gains = sum(int(not before and after) for before, after in zip(baseline_met, candidate_met))
+        losses = sum(int(before and not after) for before, after in zip(baseline_met, candidate_met))
+        result.update(
+            {
+                f"baseline_coverage_depth_c{depth}": sum(baseline_met) / denominator if size else 0.0,
+                f"candidate_coverage_depth_c{depth}": sum(candidate_met) / denominator if size else 0.0,
+                f"depth{depth}_gain_count": int(gains),
+                f"depth{depth}_gain_rate": gains / denominator if size else 0.0,
+                f"depth{depth}_loss_count": int(losses),
+                f"depth{depth}_loss_rate": losses / denominator if size else 0.0,
+                f"depth{depth}_net_count": int(gains - losses),
+                f"depth{depth}_net_delta": (gains - losses) / denominator if size else 0.0,
+            }
+        )
+    return result
+
+
+def competence_specialization_strength(bottom2_mean_acc: float, low: float = 0.55, high: float = 0.65) -> float:
+    if float(high) <= float(low):
+        raise ValueError("high must be greater than low")
+    return float(np.clip((float(bottom2_mean_acc) - float(low)) / (float(high) - float(low)), 0.0, 1.0))
+
+
 def _pareto_value(candidate: Dict[str, Any], key: str) -> float:
     metrics = candidate.get("metrics", {}) if isinstance(candidate.get("metrics", {}), dict) else {}
     return float(candidate.get(key, metrics.get(key, 0.0)) or 0.0)
@@ -213,6 +254,38 @@ def error_pareto_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PA
     return bool(legacy_no_worse and a_boundary >= b_boundary - eps and strictly_better)
 
 
+def competence_depth_dominates(a: Dict[str, Any], b: Dict[str, Any], eps: float = PARETO_EPSILON) -> bool:
+    objectives_a = (
+        _pareto_value(a, "vote_gain_rate"),
+        -_pareto_value(a, "vote_loss_rate"),
+        _pareto_value(a, "candidate_target_accuracy"),
+        _pareto_value(a, "stage_aux_objective"),
+    )
+    objectives_b = (
+        _pareto_value(b, "vote_gain_rate"),
+        -_pareto_value(b, "vote_loss_rate"),
+        _pareto_value(b, "candidate_target_accuracy"),
+        _pareto_value(b, "stage_aux_objective"),
+    )
+    return all(x >= y - eps for x, y in zip(objectives_a, objectives_b)) and any(
+        x > y + eps for x, y in zip(objectives_a, objectives_b)
+    )
+
+
+def competence_non_dominated_sort(candidates: Sequence[Dict[str, Any]]) -> List[List[int]]:
+    remaining = set(range(len(candidates)))
+    fronts: List[List[int]] = []
+    while remaining:
+        front = [
+            index for index in remaining
+            if not any(competence_depth_dominates(candidates[other], candidates[index]) for other in remaining if other != index)
+        ]
+        front.sort(key=lambda index: str(candidates[index].get("candidate_id", "")))
+        fronts.append(front)
+        remaining.difference_update(front)
+    return fronts
+
+
 def non_dominated_sort(
     candidates: Sequence[Dict[str, Any]],
     eps: float = PARETO_EPSILON,
@@ -242,6 +315,7 @@ def compute_crowding_distances(
     candidates: Sequence[Dict[str, Any]],
     front_indices: Sequence[int],
     include_boundary_error: bool = False,
+    include_competence_depth: bool = False,
 ) -> Dict[int, float]:
     """Compute normalized NSGA-style crowding distances for one Pareto front."""
     distances = {index: 0.0 for index in front_indices}
@@ -252,7 +326,9 @@ def compute_crowding_distances(
         lambda item: -_pareto_value(item, "vote_loss_rate"),
         lambda item: _pareto_value(item, "candidate_target_accuracy"),
     ]
-    if include_boundary_error:
+    if include_competence_depth:
+        objectives.append(lambda item: _pareto_value(item, "stage_aux_objective"))
+    elif include_boundary_error:
         objectives.append(lambda item: _pareto_value(item, "boundary_shared_error_net_gain"))
     for objective in objectives:
         ordered = sorted(front_indices, key=lambda index: (objective(candidates[index]), str(candidates[index].get("candidate_id", ""))))
@@ -297,6 +373,9 @@ class TraceBeamSearchSystem:
             "error_dependence_guard_enabled",
             "residual_cycle_guard_enabled",
             "mechanism_trust_region_enabled",
+            "competence_depth_enabled",
+            "competence_depth2_aux_enabled",
+            "competence_progressive_residual_enabled",
         ):
             setattr(self.cfg, name, bool(int(getattr(self.cfg, name, 0))))
         self.cfg.behavior_cycle_guard_enabled = bool(int(getattr(self.cfg, "behavior_cycle_guard_enabled", 1)))
@@ -349,6 +428,14 @@ class TraceBeamSearchSystem:
         self.no_effective_evolution_counter = 0
         self.no_effective_evolution_stopped = False
         self.no_effective_evolution_reason = ""
+        self.specialization_strength = 0.0
+        self.previous_epoch_per_agent_acc: List[float] = []
+        self.previous_epoch_bottom2_mean_acc = 0.0
+        self.competence_phase_epoch = 1
+        self.competence_schedule_version = str(getattr(self.cfg, "competence_schedule_version", "competence_depth_v1"))
+        self.specialization_strength_history: List[float] = []
+        self.prompt_overlength_rejection_count = 0
+        self.truncated_prompt_count = 0
         self.llm_call_logs: List[Dict[str, Any]] = []
         self.cost_summary: Dict[str, Any] = self._empty_cost_summary()
         self.embedding_model = None
@@ -384,12 +471,50 @@ class TraceBeamSearchSystem:
     def _is_vote_useful_diversity_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "vote_useful_diversity"
 
+    def _is_coverage_useful_diversity_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "coverage_useful_diversity"
+
+    def _is_competence_depth_reward_mode(self) -> bool:
+        return str(getattr(self.cfg, "reward_mode", "")).lower() == "competence_depth_schedule"
+
+    def _uses_competence_depth_pareto_selection(self) -> bool:
+        return str(getattr(self.cfg, "candidate_selection_mode", "")).lower() == "competence_depth_pareto"
+
+    def complete_competence_epoch(self, per_agent_acc: Sequence[float], epoch: int) -> float:
+        """Advance the v8 schedule using optimization-train evidence only."""
+        if not bool(getattr(self.cfg, "competence_depth_enabled", False)):
+            return float(self.specialization_strength)
+        values = [float(value) for value in per_agent_acc]
+        ordered = sorted(values)
+        bottom2 = float(np.mean(ordered[: min(2, len(ordered))])) if ordered else 0.0
+        self.previous_epoch_per_agent_acc = values
+        self.previous_epoch_bottom2_mean_acc = bottom2
+        self.specialization_strength = competence_specialization_strength(
+            bottom2,
+            float(getattr(self.cfg, "competence_floor_low", 0.55)),
+            float(getattr(self.cfg, "competence_floor_high", 0.65)),
+        )
+        self.competence_phase_epoch = int(epoch) + 1
+        return float(self.specialization_strength)
+
+    def _effective_progressive_weight(self, configured: float) -> float:
+        if bool(getattr(self.cfg, "competence_progressive_residual_enabled", False)):
+            return float(configured) * float(self.specialization_strength)
+        return float(configured)
+
+    def _effective_support_shrinkage(self) -> float:
+        base = float(getattr(self.cfg, "specialization_support_shrinkage", 3.0) or 3.0)
+        if not bool(getattr(self.cfg, "competence_progressive_residual_enabled", False)):
+            return base
+        extra = float(getattr(self.cfg, "competence_extra_support_shrinkage", 3.0) or 0.0)
+        return base + (1.0 - float(self.specialization_strength)) * extra
+
     def _uses_baseline_candidate_metrics(self) -> bool:
-        return self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode()
+        return self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode() or self._is_coverage_useful_diversity_mode() or self._is_competence_depth_reward_mode()
 
     def _uses_vote_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() in {
-            "vote_pareto", "vote_error_pareto"
+            "vote_pareto", "vote_error_pareto", "competence_depth_pareto"
         }
 
     def _uses_vote_error_pareto_selection(self) -> bool:
@@ -414,6 +539,8 @@ class TraceBeamSearchSystem:
         )
 
     def _experiment_protocol_version(self) -> str:
+        if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+            return "vote_oriented_v8_competence_depth"
         return EXPERIMENT_PROTOCOL_VERSION
 
     def _normalized_prompt_hash(self, prompt: str) -> str:
@@ -565,7 +692,7 @@ class TraceBeamSearchSystem:
         }
 
     def _candidate_residual_metrics(self, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
-        tau = float(getattr(self.cfg, "specialization_support_shrinkage", 3.0) or 3.0)
+        tau = self._effective_support_shrinkage()
         support = {family: 0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
         weighted_gain = {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
         weighted_loss = {family: 0.0 for family in CAPABILITY_RESIDUAL_FAMILY_NAMES}
@@ -682,7 +809,7 @@ class TraceBeamSearchSystem:
         period = max(1, int(getattr(self.cfg, "specialization_update_period", 2) or 2))
         if not agent.pending_capability_evidence or (not force and agent.pending_capability_update_count < period):
             return False
-        tau = float(getattr(self.cfg, "specialization_support_shrinkage", 3.0) or 3.0)
+        tau = self._effective_support_shrinkage()
         loss_weight = float(getattr(self.cfg, "capability_loss_weight", 1.5) or 1.5)
         for pending in agent.pending_capability_evidence:
             for family in CAPABILITY_RESIDUAL_FAMILY_NAMES:
@@ -975,7 +1102,11 @@ class TraceBeamSearchSystem:
         candidate_target = float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0)
         baseline_invalid = float(metrics.get("baseline_invalid_rate", 0.0) or 0.0)
         candidate_invalid = float(metrics.get("candidate_invalid_rate", metrics.get("invalid_rate", 0.0)) or 0.0)
-        accuracy_guard_passed = candidate_target >= baseline_target - float(weights.get("accuracy_guard_epsilon", 0.0))
+        guard_epsilon = float(weights.get("accuracy_guard_epsilon", 0.0))
+        if self._uses_competence_depth_pareto_selection():
+            guard_epsilon = float(self.specialization_strength) * float(getattr(self.cfg, "accuracy_guard_epsilon", guard_epsilon))
+        accuracy_guard_passed = candidate_target >= baseline_target - guard_epsilon
+        metrics["effective_accuracy_guard_epsilon"] = guard_epsilon
         invalid_guard_passed = candidate_invalid <= baseline_invalid + float(getattr(self.cfg, "invalid_guard_epsilon", 0.0) or 0.0)
         dependence_guard_passed = bool(
             not bool(getattr(self.cfg, "error_dependence_guard_enabled", False))
@@ -1033,6 +1164,22 @@ class TraceBeamSearchSystem:
             str(item.get("candidate_id", "")),
         )
 
+    def _competence_depth_sort_key(self, item: Dict[str, Any]) -> Tuple[Any, ...]:
+        metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+        strength = float(self.specialization_strength)
+        early = (
+            -float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+            -float(metrics.get("depth2_gain_rate", 0.0) or 0.0),
+            -float(metrics.get("depth2_net_delta", 0.0) or 0.0),
+        )
+        late = (
+            -float(metrics.get("vote_gain_rate", 0.0) or 0.0),
+            float(metrics.get("vote_loss_rate", 0.0) or 0.0),
+            -float(metrics.get("boundary_shared_error_net_gain", 0.0) or 0.0),
+        )
+        order = late + early if strength >= 0.5 else early + late
+        return order + (-float(metrics.get("reward", item.get("reward", 0.0)) or 0.0), str(item.get("candidate_id", "")))
+
     def _select_vote_pareto_beam(
         self,
         evaluated: List[Dict[str, Any]],
@@ -1072,12 +1219,16 @@ class TraceBeamSearchSystem:
             feasible = [fallback]
             forced_fallback = True
 
+        include_competence = self._uses_competence_depth_pareto_selection()
         include_boundary_error = self._uses_vote_error_pareto_selection()
-        fronts_by_item = non_dominated_sort(feasible, include_boundary_error=include_boundary_error)
+        fronts_by_item = competence_non_dominated_sort(feasible) if include_competence else non_dominated_sort(
+            feasible, include_boundary_error=include_boundary_error
+        )
         retained: List[Dict[str, Any]] = []
         for rank, front_indices in enumerate(fronts_by_item):
             distances = compute_crowding_distances(
-                feasible, front_indices, include_boundary_error=include_boundary_error
+                feasible, front_indices, include_boundary_error=include_boundary_error,
+                include_competence_depth=include_competence,
             )
             front = []
             for index in front_indices:
@@ -1091,12 +1242,18 @@ class TraceBeamSearchSystem:
             if len(front) <= slots:
                 retained.extend(sorted(front, key=lambda item: str(item.get("candidate_id", ""))))
             else:
-                retained.extend(sorted(front, key=self._vote_pareto_crowding_sort_key)[:slots])
+                if include_competence:
+                    retained.extend(sorted(front, key=lambda item: (
+                        -float(item.get("pareto_crowding_distance", 0.0) or 0.0),
+                        *self._competence_depth_sort_key(item),
+                    ))[:slots])
+                else:
+                    retained.extend(sorted(front, key=self._vote_pareto_crowding_sort_key)[:slots])
                 break
 
         if not retained:
             raise RuntimeError("Vote Pareto selection produced an empty beam")
-        retained.sort(key=self._vote_pareto_active_sort_key)
+        retained.sort(key=self._competence_depth_sort_key if include_competence else self._vote_pareto_active_sort_key)
         for item in retained:
             item["pareto_selected"] = True
         for item in evaluated:
@@ -2005,8 +2162,13 @@ class TraceBeamSearchSystem:
         }
 
     def _student_candidate_schema_json(self) -> str:
+        prompt_limit = int(
+            getattr(self.cfg, "student_candidate_prompt_hard_max_chars", 1400)
+            if bool(getattr(self.cfg, "competence_depth_enabled", False))
+            else getattr(self.cfg, "student_candidate_prompt_max_chars", 900)
+        )
         candidate_schema = {
-                    "candidate_prompt": "standalone prompt, <= 900 chars",
+                    "candidate_prompt": f"standalone complete prompt, <= {prompt_limit} chars",
                     "student_interpretation_of_question": "one short sentence",
                     "target_error_pattern": "short phrase",
                     "accuracy_repair_rule": "one short sentence",
@@ -2063,6 +2225,34 @@ class TraceBeamSearchSystem:
                 else:
                     out[key] = value[:field_max]
         return out
+
+    @staticmethod
+    def _prompt_ends_with_sentence_boundary(prompt: str) -> bool:
+        return bool(re.search(r"[.!?;:)\]}'\"]\s*$", str(prompt or "").strip()))
+
+    def _prepare_v8_candidate_text_fields(self, item: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
+        out = dict(item or {})
+        field_max = int(getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
+        for key, value in list(out.items()):
+            if isinstance(value, str):
+                out[key] = normalize_spaces(value) if key == "candidate_prompt" else normalize_spaces(value)[:field_max]
+        prompt = str(out.get("candidate_prompt", "")).strip()
+        soft = int(getattr(self.cfg, "student_candidate_prompt_soft_max_chars", 1100) or 1100)
+        hard = int(getattr(self.cfg, "student_candidate_prompt_hard_max_chars", 1400) or 1400)
+        audit = {
+            "candidate_prompt_char_count": len(prompt),
+            "candidate_prompt_over_soft_limit": len(prompt) > soft,
+            "candidate_prompt_over_hard_limit": len(prompt) > hard,
+            "candidate_prompt_overlength_rejected": len(prompt) > hard,
+            "candidate_prompt_ends_with_sentence_boundary": self._prompt_ends_with_sentence_boundary(prompt),
+        }
+        if len(prompt) > hard:
+            self.prompt_overlength_rejection_count += 1
+            return None, audit
+        if prompt and not audit["candidate_prompt_ends_with_sentence_boundary"]:
+            audit["candidate_prompt_incomplete_rejected"] = True
+            return None, audit
+        return out, audit
 
     def _structured_fallback_role(self, agent_id: int, index: int, mode: str = "diversity") -> Dict[str, Any]:
         def finalize(row: Dict[str, Any]) -> Dict[str, Any]:
@@ -3404,10 +3594,19 @@ class TraceBeamSearchSystem:
                     ) / max(1, (len(self.agents) // 2) + 1)
             score = (
                 base_score
-                + float(getattr(self.cfg, "capability_affinity_weight", 0.25)) * affinity
-                + float(getattr(self.cfg, "capability_coverage_gap_weight", 0.25)) * coverage_bonus
+                + self._effective_progressive_weight(float(getattr(self.cfg, "capability_affinity_weight", 0.25))) * affinity
+                + self._effective_progressive_weight(float(getattr(self.cfg, "capability_coverage_gap_weight", 0.25))) * coverage_bonus
             )
-            if score > 0.0:
+            if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+                references = self.previous_epoch_per_agent_acc or list(diagnosis.get("per_agent_accuracy", []))
+                reference = float(references[agent_id]) if agent_id < len(references) else 0.0
+                deficit = max(0.0, float(getattr(self.cfg, "competence_floor_high", 0.65)) - reference)
+                score += (
+                    (1.0 - float(self.specialization_strength))
+                    * float(getattr(self.cfg, "competence_selector_weight", 1.0))
+                    * deficit
+                )
+            if base_score > 0.0 and score > 0.0:
                 scored.append((score, agent_id))
         scored.sort(key=lambda item: item[0], reverse=True)
         selected = [agent_id for _, agent_id in scored]
@@ -4468,7 +4667,12 @@ class TraceBeamSearchSystem:
             context["observed_long_term_capability_profile"] = {
                 "strongest_supported_residual_families": [key for key, value in ordered_profile[:3] if value > 0.0],
                 "capability_coverage_gap": dict(window_stats.get("capability_coverage_gap", {})),
-                "guidance": "Use residual-family evidence as a small historical affinity, never as an assigned role.",
+                "residual_guidance_strength": float(self.specialization_strength) if bool(getattr(self.cfg, "competence_progressive_residual_enabled", False)) else 1.0,
+                "guidance": (
+                    "Treat residual-family evidence as observation only; do not steer the prompt from it yet."
+                    if bool(getattr(self.cfg, "competence_progressive_residual_enabled", False)) and float(self.specialization_strength) <= 0.0
+                    else "Use residual-family evidence as a strength-scaled historical affinity, never as an assigned role."
+                ),
             }
         return context
 
@@ -4718,7 +4922,11 @@ class TraceBeamSearchSystem:
         agent_id: int = 0,
     ) -> str:
         schema = self._student_candidate_schema_json()
-        prompt_max = int(getattr(self.cfg, "student_candidate_prompt_max_chars", 900) or 900)
+        prompt_max = int(
+            getattr(self.cfg, "student_candidate_prompt_hard_max_chars", 1400)
+            if bool(getattr(self.cfg, "competence_depth_enabled", False))
+            else getattr(self.cfg, "student_candidate_prompt_max_chars", 900)
+        )
         field_max = int(getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
         system_prompt = (
             "Your previous response was not valid JSON.\n\n"
@@ -4823,7 +5031,11 @@ class TraceBeamSearchSystem:
     ) -> Dict[str, Any]:
         schema = self._student_candidate_schema_json()
         schema_mode = str(getattr(self.cfg, "student_candidate_schema_mode", "compact") or "compact").lower()
-        prompt_max = int(getattr(self.cfg, "student_candidate_prompt_max_chars", 900) or 900)
+        prompt_max = int(
+            getattr(self.cfg, "student_candidate_prompt_hard_max_chars", 1400)
+            if bool(getattr(self.cfg, "competence_depth_enabled", False))
+            else getattr(self.cfg, "student_candidate_prompt_max_chars", 900)
+        )
         field_max = int(getattr(self.cfg, "student_candidate_max_chars_per_field", 320) or 320)
         compact_output_rules = (
             "Output format requirements:\n"
@@ -4845,6 +5057,8 @@ class TraceBeamSearchSystem:
             f"- Every other field must be <= {field_max} characters.\n"
             "- Each non-prompt field must be one short sentence.\n"
             "- Each candidate_prompt should be a concise solver instruction, not a long essay.\n"
+            "- Return a complete standalone prompt. Do not end mid-sentence.\n"
+            "- Preserve useful mechanisms but merge repeated instructions; avoid repeatedly saying explicitly, systematically, before final selection, or check every constraint.\n"
             "- Prefer semicolon-separated steps over numbered multiline lists.\n"
             '- If you cannot safely generate a candidate, return {"candidates":[]}.\n'
             f"Exact schema:\n{schema}"
@@ -5202,7 +5416,20 @@ class TraceBeamSearchSystem:
                     diagnostics["optimizer_schema_filtered_count"] += 1
                     filter_reasons.append("schema")
                     continue
-                item = self._truncate_candidate_text_fields(item)
+                length_audit: Dict[str, Any] = {}
+                if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+                    prepared, length_audit = self._prepare_v8_candidate_text_fields(item)
+                    if prepared is None:
+                        diagnostics["optimizer_schema_filtered_count"] += 1
+                        filter_reasons.append("candidate_prompt_overlength")
+                        continue
+                    item = prepared
+                else:
+                    original_prompt = str(item.get("candidate_prompt", ""))
+                    item = self._truncate_candidate_text_fields(item)
+                    self.truncated_prompt_count = int(getattr(self, "truncated_prompt_count", 0)) + int(
+                        str(item.get("candidate_prompt", "")) != normalize_spaces(original_prompt)
+                    )
                 if self._v7_residual_protocol_enabled():
                     if not str(item.get("modified_mechanism", "")).strip():
                         item["modified_mechanism"] = str(item.get("new_or_modified_mechanism", "")).strip()
@@ -5257,6 +5484,7 @@ class TraceBeamSearchSystem:
                         "modified_mechanism": str(item.get("modified_mechanism", item.get("new_or_modified_mechanism", ""))),
                         "target_residual_family": str(item.get("target_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
                         "expected_shared_error_effect": str(item.get("expected_shared_error_effect", "")),
+                        **length_audit,
                         "candidate_source": "teacher_critic_student",
                         "tcs_call_group_id": tcs_call_group_id,
                         "execution_session_id": execution_session_id,
@@ -5693,6 +5921,8 @@ class TraceBeamSearchSystem:
                 "vote_delta": self._nonnegative(getattr(self.cfg, "reward_weight_vote_delta", 0.0)),
                 "vote_margin": self._nonnegative(getattr(self.cfg, "reward_weight_vote_margin", 0.0)),
                 "boundary_diversity": self._nonnegative(getattr(self.cfg, "reward_weight_boundary_diversity", 0.0)),
+                "coverage": self._nonnegative(getattr(self.cfg, "reward_weight_coverage", 0.3)),
+                "useful_diversity": self._nonnegative(getattr(self.cfg, "reward_weight_useful_diversity", 0.2)),
                 "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
                 "accuracy_guard_epsilon": self._nonnegative(getattr(self.cfg, "accuracy_guard_epsilon", 0.0)),
                 **state,
@@ -5725,12 +5955,16 @@ class TraceBeamSearchSystem:
             float(getattr(self.cfg, "accuracy_guard_epsilon_late", 0.01)) * progress
             + float(getattr(self.cfg, "accuracy_guard_epsilon_early", 0.03)) * need
         )
+        coverage_weight = float(getattr(self.cfg, "reward_weight_coverage_late", 0.3)) * progress + float(getattr(self.cfg, "reward_weight_coverage_early", 0.4)) * need
+        useful_weight = float(getattr(self.cfg, "reward_weight_useful_diversity_late", 0.25)) * progress + float(getattr(self.cfg, "reward_weight_useful_diversity_early", 0.5)) * need
         return {
             "target_accuracy": self._nonnegative(target_weight),
             "div_delta": self._nonnegative(div_weight),
             "vote_delta": self._nonnegative(vote_delta_weight),
             "vote_margin": self._nonnegative(vote_margin_weight),
             "boundary_diversity": self._nonnegative(boundary_diversity_weight),
+            "coverage": self._nonnegative(coverage_weight),
+            "useful_diversity": self._nonnegative(useful_weight),
             "invalid_delta": self._nonnegative(getattr(self.cfg, "reward_weight_invalid_delta", 0.0)),
             "accuracy_guard_epsilon": self._nonnegative(guard_epsilon),
             **state,
@@ -5743,6 +5977,8 @@ class TraceBeamSearchSystem:
             "effective_weight_vote_delta": float(weights.get("vote_delta", 0.0)),
             "effective_weight_vote_margin": float(weights.get("vote_margin", 0.0)),
             "effective_weight_boundary_diversity": float(weights.get("boundary_diversity", 0.0)),
+            "effective_weight_coverage": float(weights.get("coverage", 0.0)),
+            "effective_weight_useful_diversity": float(weights.get("useful_diversity", 0.0)),
             "effective_accuracy_guard_epsilon": float(weights.get("accuracy_guard_epsilon", 0.0)),
             "reward_phase_progress": float(weights.get("phase_progress", 0.0)),
             "reward_diversity_need": float(weights.get("diversity_need", 0.0)),
@@ -5930,6 +6166,44 @@ class TraceBeamSearchSystem:
         }
         result.update(self._effective_reward_log_fields(weights))
         return result
+
+    def _candidate_reward_competence_depth(self, metrics: Dict[str, Any], v7_reward: float) -> Dict[str, Any]:
+        accuracy_delta = float(metrics.get("accuracy_delta", 0.0) or 0.0)
+        competence_component = (
+            float(getattr(self.cfg, "competence_weight_accuracy_gain", 1.0)) * max(0.0, accuracy_delta)
+            - float(getattr(self.cfg, "competence_weight_accuracy_loss", 1.5)) * max(0.0, -accuracy_delta)
+            + float(getattr(self.cfg, "competence_weight_depth2_gain", 0.8)) * float(metrics.get("depth2_gain_rate", 0.0) or 0.0)
+            - float(getattr(self.cfg, "competence_weight_depth2_loss", 1.0)) * float(metrics.get("depth2_loss_rate", 0.0) or 0.0)
+            + float(getattr(self.cfg, "competence_weight_vote_gain_early", 0.4)) * float(metrics.get("vote_gain_rate", 0.0) or 0.0)
+            - float(getattr(self.cfg, "competence_weight_vote_loss_early", 1.0)) * float(metrics.get("vote_loss_rate", 0.0) or 0.0)
+        )
+        strength = float(self.specialization_strength)
+        reward = (1.0 - strength) * competence_component + strength * float(v7_reward)
+        depth2_component = float(metrics.get("depth2_net_delta", 0.0) or 0.0) if bool(
+            getattr(self.cfg, "competence_depth2_aux_enabled", False)
+        ) else 0.0
+        boundary_component = float(metrics.get("boundary_shared_error_net_gain", 0.0) or 0.0)
+        return {
+            "reward": float(reward),
+            "reward_total": float(reward),
+            "final_reward": float(reward),
+            "competence_reward_component": float(competence_component),
+            "v7_reward_component": float(v7_reward),
+            "effective_reward_specialization_strength": strength,
+            "stage_aux_depth2_component": (1.0 - strength) * depth2_component,
+            "stage_aux_boundary_component": strength * boundary_component,
+            "stage_aux_objective": (1.0 - strength) * depth2_component + strength * boundary_component,
+        }
+
+    def _candidate_reward_coverage_useful_diversity(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
+        weights = self._effective_reward_weights()
+        invalid_passed = float(metrics.get("candidate_invalid_rate", 1.0)) <= float(metrics.get("baseline_invalid_rate", 1.0)) + float(self.cfg.invalid_guard_epsilon)
+        reward = -1.0 if not invalid_passed else (
+            float(weights["target_accuracy"]) * float(metrics.get("candidate_target_accuracy", 0.0))
+            + float(weights["coverage"]) * float(metrics.get("coverage_delta", 0.0))
+            + float(weights["useful_diversity"]) * float(metrics.get("useful_diversity", 0.0))
+        )
+        return {"reward": reward, "reward_total": reward, "invalid_guard_passed": invalid_passed, **self._effective_reward_log_fields(weights)}
 
     async def _evaluate_candidate_prompt_accuracy_only(
         self,
@@ -6246,6 +6520,8 @@ class TraceBeamSearchSystem:
                         "question_hash": sample_hash,
                         "baseline_vote_correct": baseline_vote_correct,
                         "candidate_vote_correct": candidate_vote_correct,
+                        "baseline_vote_tie": bool(baseline_rollout.get("vote_tie", False)),
+                        "candidate_vote_tie": bool(rollout.get("vote_tie", False)),
                         "baseline_any_correct": baseline_any_correct,
                         "candidate_any_correct": candidate_any_correct,
                         "baseline_individual_correct": [bool(value) for value in baseline_rollout.get("individual_correct", [])],
@@ -6334,10 +6610,22 @@ class TraceBeamSearchSystem:
             )
             if abs(float(coverage_transitions["net_coverage_delta"]) - float(coverage_delta)) > PARETO_EPSILON:
                 raise RuntimeError("Oracle coverage transition delta does not match candidate evaluation coverage delta")
+            coverage_depth_transitions = compute_coverage_depth_transitions(
+                [list(row.get("baseline_individual_correct", [])) for row in rows],
+                [list(row.get("candidate_individual_correct", [])) for row in rows],
+                max_depth=len(self.agents),
+            )
+            if abs(float(coverage_depth_transitions.get("depth1_net_delta", 0.0)) - float(coverage_delta)) > PARETO_EPSILON:
+                raise RuntimeError("Coverage depth-1 delta does not match oracle delta")
+            no_ties = all(not bool(row.get("baseline_vote_tie")) and not bool(row.get("candidate_vote_tie")) for row in rows)
+            if len(self.agents) == 5 and no_ties and abs(
+                float(coverage_depth_transitions.get("depth3_net_delta", 0.0)) - float(vote_delta)
+            ) > PARETO_EPSILON:
+                raise RuntimeError("Coverage depth-3 delta does not match five-agent majority vote delta")
             rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
             useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
             rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
-            if self._is_vote_useful_diversity_mode():
+            if self._is_vote_useful_diversity_mode() or self._is_competence_depth_reward_mode():
                 baseline_candidate_metrics = self._candidate_reward_vote_useful_diversity(
                     baseline_team_accuracy=baseline_team_accuracy,
                     candidate_team_accuracy=candidate_team_accuracy,
@@ -6374,6 +6662,7 @@ class TraceBeamSearchSystem:
                     "coverage_delta": float(coverage_delta),
                     **vote_transitions,
                     **coverage_transitions,
+                    **coverage_depth_transitions,
                     "baseline_mean_vote_margin": baseline_mean_vote_margin,
                     "candidate_mean_vote_margin": candidate_mean_vote_margin,
                     "vote_margin_delta": candidate_mean_vote_margin - baseline_mean_vote_margin,
@@ -6394,7 +6683,7 @@ class TraceBeamSearchSystem:
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
             )
-            if bool(getattr(self.cfg, "shared_error_metrics_enabled", False)) or self._uses_vote_error_pareto_selection() or self._residual_specialization_enabled():
+            if bool(getattr(self.cfg, "shared_error_metrics_enabled", False)) or self._uses_vote_error_pareto_selection() or self._uses_competence_depth_pareto_selection() or self._residual_specialization_enabled():
                 baseline_candidate_metrics.update(self._candidate_boundary_error_metrics(rows))
                 paired_keys = (
                     "question_hash", "baseline_target_correct", "candidate_target_correct",
@@ -6427,6 +6716,13 @@ class TraceBeamSearchSystem:
                     candidate_invalid_rate=candidate_invalid_rate,
                 )
             )
+            if self._is_coverage_useful_diversity_mode():
+                baseline_candidate_metrics.update(self._candidate_reward_coverage_useful_diversity(baseline_candidate_metrics))
+            if self._is_competence_depth_reward_mode():
+                v7_reward = float(baseline_candidate_metrics.get("reward", 0.0) or 0.0)
+                baseline_candidate_metrics.update(
+                    self._candidate_reward_competence_depth(baseline_candidate_metrics, v7_reward)
+                )
             reward = float(baseline_candidate_metrics.get("reward", 0.0))
         else:
             reward = team_accuracy
@@ -6478,6 +6774,20 @@ class TraceBeamSearchSystem:
         epoch_id: int,
     ) -> Tuple[bool, Dict[str, Any]]:
         agent = self.agents[agent_id]
+        reference_values = list(getattr(self, "previous_epoch_per_agent_acc", []) or []) or list(overlap_diagnosis.get("per_agent_accuracy", []))
+        target_reference = float(reference_values[agent_id]) if agent_id < len(reference_values) else 0.0
+        ordered_reference = sorted(float(value) for value in reference_values)
+        team_bottom2_reference = float(np.mean(ordered_reference[: min(2, len(ordered_reference))])) if ordered_reference else 0.0
+        team_best = max(ordered_reference, default=0.0)
+        competence_log_fields = {
+            "specialization_strength": float(getattr(self, "specialization_strength", 0.0)),
+            "competence_floor_low": float(getattr(self.cfg, "competence_floor_low", 0.55)),
+            "competence_floor_high": float(getattr(self.cfg, "competence_floor_high", 0.65)),
+            "target_agent_reference_accuracy": target_reference,
+            "target_agent_competence_deficit": max(0.0, float(getattr(self.cfg, "competence_floor_high", 0.65)) - target_reference),
+            "team_bottom2_reference_accuracy": team_bottom2_reference,
+            "team_best_minus_bottom2_gap": team_best - team_bottom2_reference,
+        }
         update_attempt_id = self._update_attempt_id(epoch_id, step_id, agent_id)
         beam = getattr(agent, "prompt_beam", []) or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
         generation = max([int(x.get("generation", 0) or 0) for x in beam] + [0]) + 1
@@ -6586,6 +6896,11 @@ class TraceBeamSearchSystem:
                         "error_correlation_reduction": str(proposal.get("error_correlation_reduction", "")),
                         "task_alignment_rule": str(proposal.get("task_alignment_rule", "")),
                         "peer_redundancy_avoidance": str(proposal.get("peer_redundancy_avoidance", "")),
+                        "candidate_prompt_char_count": int(proposal.get("candidate_prompt_char_count", len(prompt)) or len(prompt)),
+                        "candidate_prompt_over_soft_limit": bool(proposal.get("candidate_prompt_over_soft_limit", False)),
+                        "candidate_prompt_over_hard_limit": bool(proposal.get("candidate_prompt_over_hard_limit", False)),
+                        "candidate_prompt_overlength_rejected": bool(proposal.get("candidate_prompt_overlength_rejected", False)),
+                        "candidate_prompt_ends_with_sentence_boundary": bool(proposal.get("candidate_prompt_ends_with_sentence_boundary", self._prompt_ends_with_sentence_boundary(prompt))),
                         "optimizer_generation_diagnostics": proposal.get("optimizer_generation_diagnostics", {}),
                         "tcs_call_group_id": str(proposal.get("tcs_call_group_id", "") or ""),
                         "execution_session_id": str(proposal.get("execution_session_id", self._current_execution_session_id()) or self._current_execution_session_id()),
@@ -6992,7 +7307,11 @@ class TraceBeamSearchSystem:
                 ))
                 if retained_inactive:
                     self.trajectory_events[-1]["decision"] = "retained_beam_inactive"
-            active_selection_key = list(self._vote_pareto_active_sort_key(item)) if self._uses_vote_pareto_selection() and accepted else None
+            active_selection_key = list(
+                self._competence_depth_sort_key(item)
+                if self._uses_competence_depth_pareto_selection()
+                else self._vote_pareto_active_sort_key(item)
+            ) if self._uses_vote_pareto_selection() and accepted else None
             item_diagnostics = self._empty_optimizer_generation_diagnostics()
             if isinstance(item.get("optimizer_generation_diagnostics", {}), dict):
                 item_diagnostics.update(item.get("optimizer_generation_diagnostics", {}))
@@ -7067,6 +7386,23 @@ class TraceBeamSearchSystem:
                     "coverage_loss_rate": float(metrics.get("coverage_loss_rate", 0.0)),
                     "net_coverage_count": int(metrics.get("net_coverage_count", 0)),
                     "net_coverage_delta": float(metrics.get("net_coverage_delta", 0.0)),
+                    **{
+                        key: metrics.get(key, 0)
+                        for depth in range(1, 4)
+                        for key in (
+                            f"baseline_coverage_depth_c{depth}", f"candidate_coverage_depth_c{depth}",
+                            f"depth{depth}_gain_count", f"depth{depth}_gain_rate",
+                            f"depth{depth}_loss_count", f"depth{depth}_loss_rate",
+                            f"depth{depth}_net_count", f"depth{depth}_net_delta",
+                        )
+                    },
+                    "competence_reward_component": float(metrics.get("competence_reward_component", 0.0)),
+                    "v7_reward_component": float(metrics.get("v7_reward_component", 0.0)),
+                    "effective_reward_specialization_strength": float(metrics.get("effective_reward_specialization_strength", 0.0)),
+                    "final_reward": float(metrics.get("final_reward", metrics.get("reward", 0.0))),
+                    "stage_aux_objective": float(metrics.get("stage_aux_objective", 0.0)),
+                    "stage_aux_depth2_component": float(metrics.get("stage_aux_depth2_component", 0.0)),
+                    "stage_aux_boundary_component": float(metrics.get("stage_aux_boundary_component", 0.0)),
                     "baseline_target_accuracy": float(metrics.get("baseline_target_accuracy", 0.0)),
                     "candidate_target_accuracy": float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0))),
                     "rescue_rate": float(metrics.get("rescue_rate", 0.0)),
@@ -7175,6 +7511,11 @@ class TraceBeamSearchSystem:
                     "error_correlation_reduction": str(item.get("error_correlation_reduction", "")),
                     "task_alignment_rule": str(item.get("task_alignment_rule", "")),
                     "peer_redundancy_avoidance": str(item.get("peer_redundancy_avoidance", "")),
+                    "candidate_prompt_char_count": int(item.get("candidate_prompt_char_count", len(str(item.get("prompt", "")))) or 0),
+                    "candidate_prompt_over_soft_limit": bool(item.get("candidate_prompt_over_soft_limit", False)),
+                    "candidate_prompt_over_hard_limit": bool(item.get("candidate_prompt_over_hard_limit", False)),
+                    "candidate_prompt_overlength_rejected": bool(item.get("candidate_prompt_overlength_rejected", False)),
+                    "candidate_prompt_ends_with_sentence_boundary": bool(item.get("candidate_prompt_ends_with_sentence_boundary", self._prompt_ends_with_sentence_boundary(str(item.get("prompt", ""))))),
                     "optimizer_raw_response_empty": int(item_diagnostics.get("optimizer_raw_response_empty", 0) or 0),
                     "optimizer_json_parse_failed": int(item_diagnostics.get("optimizer_json_parse_failed", 0) or 0),
                     "optimizer_raw_candidate_count": int(item_diagnostics.get("optimizer_raw_candidate_count", 0) or 0),
@@ -7194,6 +7535,7 @@ class TraceBeamSearchSystem:
                     "candidate_eval_total_count": int(metrics.get("candidate_eval_total_count", metrics.get("actual_eval_batch_size", 0))),
                     "candidate_eval_unique_question_count": int(metrics.get("candidate_eval_unique_question_count", metrics.get("actual_eval_batch_size", 0))),
                     "candidate_eval_repeat_count": int(metrics.get("candidate_eval_repeat_count", getattr(self.cfg, "candidate_eval_repeats", 1))),
+                    **competence_log_fields,
                 }
             )
         self._append_prompt_history_event(agent_id, epoch_id, step_id, "beam_accept" if changed else "beam_keep", changed)
@@ -7209,6 +7551,7 @@ class TraceBeamSearchSystem:
             "agent_id": agent_id,
             "execution_session_id": self._current_execution_session_id(),
             "update_attempt_id": update_attempt_id,
+            **competence_log_fields,
             "updated": bool(changed),
             "candidate_count": len(candidate_pool),
             "generation_batches": generation_batches,
@@ -7254,6 +7597,7 @@ class TraceBeamSearchSystem:
                 "agent_id": agent_id,
                 "execution_session_id": self._current_execution_session_id(),
                 "update_attempt_id": update_attempt_id,
+                **competence_log_fields,
                 "search_mode": "evolutionary_beam",
                 "beam_size": beam_size,
                 "active_prompt_changed": bool(changed),
@@ -7856,6 +8200,22 @@ class TraceBeamSearchSystem:
         triple_joint_error_rate = float(np.mean([int((agent_count - depth) >= 3) for depth in correct_depths])) if correct_depths else 0.0
         shared_rescue_rate = float(np.mean(shared_rescue_values)) if shared_rescue_values else 0.0
         shared_creation_rate = float(np.mean(shared_creation_values)) if shared_creation_values else 0.0
+        ordered_acc = sorted(per_agent_acc)
+        min_acc = ordered_acc[0] if ordered_acc else 0.0
+        bottom2 = float(np.mean(ordered_acc[: min(2, len(ordered_acc))])) if ordered_acc else 0.0
+        bottom3 = float(np.mean(ordered_acc[: min(3, len(ordered_acc))])) if ordered_acc else 0.0
+        max_acc = ordered_acc[-1] if ordered_acc else 0.0
+        minority_rescue_counts = [0 for _ in range(agent_count)]
+        unique_correct_counts = [0 for _ in range(agent_count)]
+        for row in rows:
+            flags = [int(value) for value in row.get("individual_correct", [])]
+            for agent_id, correct in enumerate(flags):
+                if correct and not int(row.get("vote_correct", 0)):
+                    minority_rescue_counts[agent_id] += 1
+                if correct and sum(flags) == 1:
+                    unique_correct_counts[agent_id] += 1
+        rescue_total = sum(minority_rescue_counts)
+        rescue_shares = [count / rescue_total if rescue_total else 0.0 for count in minority_rescue_counts]
         result = {
             "size": len(rows),
             "num_test_samples": len(rows),
@@ -7865,6 +8225,18 @@ class TraceBeamSearchSystem:
             "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
             "best_individual_acc": float(max(per_agent_acc)) if per_agent_acc else 0.0,
             "per_agent_acc": per_agent_acc,
+            "min_individual_acc": min_acc,
+            "bottom2_mean_acc": bottom2,
+            "bottom3_mean_acc": bottom3,
+            "max_individual_acc": max_acc,
+            "individual_acc_std": float(np.std(per_agent_acc)) if per_agent_acc else 0.0,
+            "best_minus_worst_gap": max_acc - min_acc,
+            "best_minus_bottom2_gap": max_acc - bottom2,
+            "minority_rescue_count_per_agent": minority_rescue_counts,
+            "unique_correct_count_per_agent": unique_correct_counts,
+            "minority_rescue_share_per_agent": rescue_shares,
+            "max_minority_rescue_share": max(rescue_shares, default=0.0),
+            "minority_rescue_hhi": sum(value * value for value in rescue_shares),
             "oracle_acc": oracle_acc,
             "aggregation_gap": float(oracle_acc - vote_acc),
             "rescue_available_rate": rescue_available_rate,
@@ -7886,6 +8258,13 @@ class TraceBeamSearchSystem:
                 f"coverage_depth_c{depth}": float(np.mean([int(value >= depth) for value in correct_depths])) if correct_depths else 0.0
                 for depth in range(1, 6)
             },
+            **{f"correct_agent_count_{depth}": int(sum(value == depth for value in correct_depths)) for depth in range(6)},
+            "c1_minus_c2": float(np.mean([int(value >= 1) - int(value >= 2) for value in correct_depths])) if correct_depths else 0.0,
+            "c2_minus_c3": float(np.mean([int(value >= 2) - int(value >= 3) for value in correct_depths])) if correct_depths else 0.0,
+            "specialization_strength_final": float(getattr(self, "specialization_strength", 0.0)),
+            "mean_specialization_strength": float(np.mean(getattr(self, "specialization_strength_history", [0.0]))) if getattr(self, "specialization_strength_history", None) else 0.0,
+            "prompt_overlength_rejection_count": int(getattr(self, "prompt_overlength_rejection_count", 0)),
+            "truncated_prompt_count": int(getattr(self, "truncated_prompt_count", 0)),
             "mean_boundary_conditional_error": float(np.mean(boundary_conditional_errors)) if boundary_conditional_errors else 0.0,
             "mean_pivotal_fix_rate": float(np.mean(pivotal_fix_values)) if pivotal_fix_values else 0.0,
             "mean_pivotal_hold_rate": float(np.mean(pivotal_hold_values)) if pivotal_hold_values else 0.0,

@@ -34,6 +34,9 @@ class ExperimentSetting:
     specialization_update_period: Optional[int] = None
     pivotal_loss_guard_epsilon: Optional[float] = None
     shared_error_creation_epsilon: Optional[float] = None
+    competence_depth_enabled: Optional[bool] = None
+    competence_depth2_aux_enabled: Optional[bool] = None
+    competence_progressive_residual_enabled: Optional[bool] = None
 
 
 @dataclass(frozen=True)
@@ -136,6 +139,53 @@ ALL_EXPERIMENT_SETTINGS = [
         pivotal_loss_guard_epsilon=0.0,
         shared_error_creation_epsilon=0.02,
         **SHARED_VOTE_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_legacy_coverage_useful_tcs_strict",
+        candidate_selection_mode="scalar_reward",
+        reward_mode="coverage_useful_diversity",
+        reward_schedule_mode="phase_adaptive",
+        residual_specialization_enabled=False,
+        residual_cycle_guard_enabled=False,
+        mechanism_trust_region_enabled=False,
+        **SHARED_TCS_SEARCH_BASE,
+    ),
+    ExperimentSetting(
+        name="shared_vote_tcs_competence_schedule",
+        candidate_selection_mode="competence_depth_pareto",
+        reward_mode="competence_depth_schedule",
+        best_state_selection_mode="vote_competence_first",
+        competence_depth_enabled=True,
+        competence_depth2_aux_enabled=False,
+        competence_progressive_residual_enabled=False,
+        **{key: value for key, value in SHARED_TCS_SEARCH_BASE.items() if key != "best_state_selection_mode"},
+    ),
+    ExperimentSetting(
+        name="shared_vote_tcs_competence_depth2",
+        candidate_selection_mode="competence_depth_pareto",
+        reward_mode="competence_depth_schedule",
+        best_state_selection_mode="vote_competence_first",
+        competence_depth_enabled=True,
+        competence_depth2_aux_enabled=True,
+        competence_progressive_residual_enabled=False,
+        **{key: value for key, value in SHARED_TCS_SEARCH_BASE.items() if key != "best_state_selection_mode"},
+    ),
+    ExperimentSetting(
+        name="shared_vote_tcs_competence_depth2_progressive_residual",
+        candidate_selection_mode="competence_depth_pareto",
+        reward_mode="competence_depth_schedule",
+        best_state_selection_mode="vote_competence_first",
+        reward_schedule_mode="static",
+        boundary_selector_enabled=True,
+        shared_error_metrics_enabled=True,
+        residual_specialization_enabled=True,
+        error_dependence_guard_enabled=True,
+        residual_cycle_guard_enabled=True,
+        mechanism_trust_region_enabled=True,
+        competence_depth_enabled=True,
+        competence_depth2_aux_enabled=True,
+        competence_progressive_residual_enabled=True,
+        **{key: value for key, value in SHARED_TCS_SEARCH_BASE.items() if key != "best_state_selection_mode"},
     ),
     ExperimentSetting(
         name="shared_accuracy_only_tcs_vote_first",

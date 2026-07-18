@@ -74,12 +74,12 @@ def _append_common_cli_args(
     reward_mode = _setting_reward_mode(args, setting)
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto"}
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto"}
         else getattr(args, "candidate_selection_mode", Config().candidate_selection_mode)
     )
     best_state_selection_mode = (
         setting.best_state_selection_mode
-        if str(getattr(setting, "best_state_selection_mode", "") or "") == "vote_first"
+        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first"}
         else getattr(args, "best_state_selection_mode", Config().best_state_selection_mode)
     )
     optimizer_architecture = _setting_value(setting, "optimizer_architecture", args.optimizer_architecture)
@@ -117,6 +117,8 @@ def _append_common_cli_args(
             "--reward_weight_vote_delta", str(args.reward_weight_vote_delta),
             "--reward_weight_vote_margin", str(args.reward_weight_vote_margin),
             "--reward_weight_boundary_diversity", str(args.reward_weight_boundary_diversity),
+            "--reward_weight_coverage", str(getattr(args, "reward_weight_coverage", defaults.reward_weight_coverage)),
+            "--reward_weight_useful_diversity", str(getattr(args, "reward_weight_useful_diversity", defaults.reward_weight_useful_diversity)),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
             "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
@@ -129,6 +131,10 @@ def _append_common_cli_args(
             "--reward_weight_vote_margin_late", str(args.reward_weight_vote_margin_late),
             "--reward_weight_boundary_diversity_early", str(args.reward_weight_boundary_diversity_early),
             "--reward_weight_boundary_diversity_late", str(args.reward_weight_boundary_diversity_late),
+            "--reward_weight_coverage_early", str(getattr(args, "reward_weight_coverage_early", defaults.reward_weight_coverage_early)),
+            "--reward_weight_coverage_late", str(getattr(args, "reward_weight_coverage_late", defaults.reward_weight_coverage_late)),
+            "--reward_weight_useful_diversity_early", str(getattr(args, "reward_weight_useful_diversity_early", defaults.reward_weight_useful_diversity_early)),
+            "--reward_weight_useful_diversity_late", str(getattr(args, "reward_weight_useful_diversity_late", defaults.reward_weight_useful_diversity_late)),
             "--reward_weight_target_accuracy_early", str(args.reward_weight_target_accuracy_early),
             "--reward_weight_target_accuracy_late", str(args.reward_weight_target_accuracy_late),
             "--accuracy_guard_epsilon_early", str(args.accuracy_guard_epsilon_early),
@@ -150,6 +156,8 @@ def _append_common_cli_args(
             "--student_candidate_schema_mode", args.student_candidate_schema_mode,
             "--student_candidate_max_chars_per_field", str(args.student_candidate_max_chars_per_field),
             "--student_candidate_prompt_max_chars", str(args.student_candidate_prompt_max_chars),
+            "--student_candidate_prompt_soft_max_chars", str(getattr(args, "student_candidate_prompt_soft_max_chars", defaults.student_candidate_prompt_soft_max_chars)),
+            "--student_candidate_prompt_hard_max_chars", str(getattr(args, "student_candidate_prompt_hard_max_chars", defaults.student_candidate_prompt_hard_max_chars)),
             "--student_force_minified_json", str(int(args.student_force_minified_json)),
             "--teacher_critic_use_voting_failure", str(int(teacher_voting_failure)),
             "--optimizer_fallback_mode", str(optimizer_fallback_mode),
@@ -168,6 +176,13 @@ def _append_common_cli_args(
             "--prompt_large_shift_warmup_accepts", str(getattr(args, "prompt_large_shift_warmup_accepts", defaults.prompt_large_shift_warmup_accepts)),
             "--prompt_large_shift_min_vote_delta", str(getattr(args, "prompt_large_shift_min_vote_delta", defaults.prompt_large_shift_min_vote_delta)),
             "--baseline_allowed_vote_loss", str(getattr(args, "baseline_allowed_vote_loss", defaults.baseline_allowed_vote_loss)),
+            "--competence_depth_enabled", str(int(_setting_value(setting, "competence_depth_enabled", getattr(args, "competence_depth_enabled", defaults.competence_depth_enabled)))),
+            "--competence_depth2_aux_enabled", str(int(_setting_value(setting, "competence_depth2_aux_enabled", getattr(args, "competence_depth2_aux_enabled", defaults.competence_depth2_aux_enabled)))),
+            "--competence_progressive_residual_enabled", str(int(_setting_value(setting, "competence_progressive_residual_enabled", getattr(args, "competence_progressive_residual_enabled", defaults.competence_progressive_residual_enabled)))),
+            "--competence_floor_low", str(getattr(args, "competence_floor_low", defaults.competence_floor_low)),
+            "--competence_floor_high", str(getattr(args, "competence_floor_high", defaults.competence_floor_high)),
+            "--competence_selector_weight", str(getattr(args, "competence_selector_weight", defaults.competence_selector_weight)),
+            "--competence_extra_support_shrinkage", str(getattr(args, "competence_extra_support_shrinkage", defaults.competence_extra_support_shrinkage)),
             "--candidate_eval_strategy", str(candidate_eval_strategy),
             "--candidate_eval_concurrency", str(args.candidate_eval_concurrency),
             "--candidate_eval_pool_size", str(candidate_eval_pool_size),
@@ -553,9 +568,9 @@ def main():
     parser.add_argument("--agent_model", type=str, default=cli_defaults.agent_model)
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
-    parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first"])
+    parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
     parser.add_argument("--val_size", type=int, default=cli_defaults.val_size)
@@ -577,6 +592,8 @@ def main():
     parser.add_argument("--reward_weight_vote_delta", type=float, default=cli_defaults.reward_weight_vote_delta)
     parser.add_argument("--reward_weight_vote_margin", type=float, default=cli_defaults.reward_weight_vote_margin)
     parser.add_argument("--reward_weight_boundary_diversity", type=float, default=cli_defaults.reward_weight_boundary_diversity)
+    parser.add_argument("--reward_weight_coverage", type=float, default=cli_defaults.reward_weight_coverage)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=cli_defaults.reward_weight_useful_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
@@ -589,6 +606,10 @@ def main():
     parser.add_argument("--reward_weight_vote_margin_late", type=float, default=cli_defaults.reward_weight_vote_margin_late)
     parser.add_argument("--reward_weight_boundary_diversity_early", type=float, default=cli_defaults.reward_weight_boundary_diversity_early)
     parser.add_argument("--reward_weight_boundary_diversity_late", type=float, default=cli_defaults.reward_weight_boundary_diversity_late)
+    parser.add_argument("--reward_weight_coverage_early", type=float, default=cli_defaults.reward_weight_coverage_early)
+    parser.add_argument("--reward_weight_coverage_late", type=float, default=cli_defaults.reward_weight_coverage_late)
+    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=cli_defaults.reward_weight_useful_diversity_early)
+    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=cli_defaults.reward_weight_useful_diversity_late)
     parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=cli_defaults.reward_weight_target_accuracy_early)
     parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=cli_defaults.reward_weight_target_accuracy_late)
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=cli_defaults.accuracy_guard_epsilon_early)
@@ -610,6 +631,8 @@ def main():
     parser.add_argument("--student_candidate_schema_mode", type=str, default=cli_defaults.student_candidate_schema_mode, choices=["compact", "verbose"])
     parser.add_argument("--student_candidate_max_chars_per_field", type=int, default=cli_defaults.student_candidate_max_chars_per_field)
     parser.add_argument("--student_candidate_prompt_max_chars", type=int, default=cli_defaults.student_candidate_prompt_max_chars)
+    parser.add_argument("--student_candidate_prompt_soft_max_chars", type=int, default=cli_defaults.student_candidate_prompt_soft_max_chars)
+    parser.add_argument("--student_candidate_prompt_hard_max_chars", type=int, default=cli_defaults.student_candidate_prompt_hard_max_chars)
     parser.add_argument("--student_force_minified_json", type=int, default=int(cli_defaults.student_force_minified_json), choices=[0, 1])
     parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(cli_defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=cli_defaults.optimizer_fallback_mode, choices=["none", "template"])
@@ -622,6 +645,13 @@ def main():
     parser.add_argument("--error_dependence_guard_enabled", type=int, default=int(cli_defaults.error_dependence_guard_enabled), choices=[0, 1])
     parser.add_argument("--residual_cycle_guard_enabled", type=int, default=int(cli_defaults.residual_cycle_guard_enabled), choices=[0, 1])
     parser.add_argument("--mechanism_trust_region_enabled", type=int, default=int(cli_defaults.mechanism_trust_region_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth_enabled", type=int, default=int(cli_defaults.competence_depth_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth2_aux_enabled", type=int, default=int(cli_defaults.competence_depth2_aux_enabled), choices=[0, 1])
+    parser.add_argument("--competence_progressive_residual_enabled", type=int, default=int(cli_defaults.competence_progressive_residual_enabled), choices=[0, 1])
+    parser.add_argument("--competence_floor_low", type=float, default=cli_defaults.competence_floor_low)
+    parser.add_argument("--competence_floor_high", type=float, default=cli_defaults.competence_floor_high)
+    parser.add_argument("--competence_selector_weight", type=float, default=cli_defaults.competence_selector_weight)
+    parser.add_argument("--competence_extra_support_shrinkage", type=float, default=cli_defaults.competence_extra_support_shrinkage)
     parser.add_argument("--specialization_support_shrinkage", type=float, default=cli_defaults.specialization_support_shrinkage)
     parser.add_argument("--capability_loss_weight", type=float, default=cli_defaults.capability_loss_weight)
     parser.add_argument("--specialization_update_period", type=int, default=cli_defaults.specialization_update_period)

@@ -238,7 +238,23 @@ def vote_first_tiebreak_key(epoch_record):
     )
 
 
+def vote_competence_first_validation_key(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    return (
+        -float(val.get("vote_acc", 0.0) or 0.0),
+        -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
+        -float(val.get("coverage_depth_c2", 0.0) or 0.0),
+        float(val.get("best_minus_bottom2_gap", 0.0) or 0.0),
+        -float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        int(epoch_record.get("epoch", 0) or 0),
+    )
+
+
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
+    if str(selection_mode or "existing").lower() == "vote_competence_first":
+        return best_epoch_record is None or vote_competence_first_validation_key(epoch_record) < vote_competence_first_validation_key(best_epoch_record)
     if str(selection_mode or "existing").lower() == "vote_first":
         if best_epoch_record is None:
             return True
@@ -262,7 +278,13 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         "early_stopping_metric": metric_name,
         "best_validation_score": validation_score,
         "best_state_selection_mode": str(best_state_selection_mode or "existing"),
-        "best_state_selection_key": vote_first_validation_key_fields(epoch_record) if str(best_state_selection_mode or "existing").lower() == "vote_first" and isinstance(epoch_record, dict) else None,
+        "best_state_selection_key": (
+            list(vote_competence_first_validation_key(epoch_record))
+            if str(best_state_selection_mode or "existing").lower() == "vote_competence_first" and isinstance(epoch_record, dict)
+            else vote_first_validation_key_fields(epoch_record)
+            if str(best_state_selection_mode or "existing").lower() == "vote_first" and isinstance(epoch_record, dict)
+            else None
+        ),
         "selected_vote_acc": float(val.get("vote_acc", 0.0) or 0.0),
         "selected_oracle_acc": float(val.get("oracle_acc", 0.0) or 0.0),
         "selected_mean_individual_acc": float(val.get("mean_individual_acc", 0.0) or 0.0),
@@ -346,6 +368,22 @@ def restore_system_state(system, state_payload):
         if isinstance(recent_window_records, list)
         else []
     )
+    system.specialization_strength = float(state_payload.get("specialization_strength", 0.0) or 0.0)
+    system.previous_epoch_per_agent_acc = [float(x) for x in state_payload.get("previous_epoch_per_agent_acc", [])]
+    system.previous_epoch_bottom2_mean_acc = float(state_payload.get("previous_epoch_bottom2_mean_acc", 0.0) or 0.0)
+    system.competence_phase_epoch = int(state_payload.get("competence_phase_epoch", 1) or 1)
+    system.competence_schedule_version = str(state_payload.get("competence_schedule_version", "competence_depth_v1"))
+    system.specialization_strength_history = [float(x) for x in state_payload.get("specialization_strength_history", [])]
+    system.prompt_overlength_rejection_count = int(state_payload.get("prompt_overlength_rejection_count", 0) or 0)
+    system.truncated_prompt_count = int(state_payload.get("truncated_prompt_count", 0) or 0)
+    python_state = state_payload.get("python_random_state")
+    if isinstance(python_state, list):
+        def as_tuple(value):
+            return tuple(as_tuple(item) for item in value) if isinstance(value, list) else value
+        random.setstate(as_tuple(python_state))
+    numpy_state = state_payload.get("numpy_random_state")
+    if isinstance(numpy_state, list) and len(numpy_state) == 5:
+        np.random.set_state((str(numpy_state[0]), np.array(numpy_state[1], dtype=np.uint32), int(numpy_state[2]), int(numpy_state[3]), float(numpy_state[4])))
 
 
 def restore_prompt_history(system):
@@ -393,6 +431,8 @@ BEHAVIOR_CONFIG_FIELDS = (
         "reward_weight_vote_delta",
         "reward_weight_vote_margin",
         "reward_weight_boundary_diversity",
+        "reward_weight_coverage",
+        "reward_weight_useful_diversity",
         "use_baseline_relative_reward",
         "reward_schedule_mode",
         "reward_diversity_warmup_updates",
@@ -404,6 +444,10 @@ BEHAVIOR_CONFIG_FIELDS = (
         "reward_weight_vote_margin_late",
         "reward_weight_boundary_diversity_early",
         "reward_weight_boundary_diversity_late",
+        "reward_weight_coverage_early",
+        "reward_weight_coverage_late",
+        "reward_weight_useful_diversity_early",
+        "reward_weight_useful_diversity_late",
         "reward_weight_target_accuracy_early",
         "reward_weight_target_accuracy_late",
         "accuracy_guard_epsilon_early",
@@ -431,6 +475,8 @@ BEHAVIOR_CONFIG_FIELDS = (
         "student_candidate_schema_mode",
         "student_candidate_max_chars_per_field",
         "student_candidate_prompt_max_chars",
+        "student_candidate_prompt_soft_max_chars",
+        "student_candidate_prompt_hard_max_chars",
         "student_force_minified_json",
         "beam_size",
         "num_candidates_per_parent",
@@ -497,12 +543,46 @@ BEHAVIOR_CONFIG_FIELDS = (
         "prompt_large_shift_warmup_accepts",
         "prompt_large_shift_min_vote_delta",
         "baseline_allowed_vote_loss",
+        "competence_depth_enabled",
+        "competence_depth2_aux_enabled",
+        "competence_progressive_residual_enabled",
+        "competence_floor_low",
+        "competence_floor_high",
+        "competence_selector_weight",
+        "competence_extra_support_shrinkage",
+        "competence_weight_accuracy_gain",
+        "competence_weight_accuracy_loss",
+        "competence_weight_depth2_gain",
+        "competence_weight_depth2_loss",
+        "competence_weight_vote_gain_early",
+        "competence_weight_vote_loss_early",
+        "competence_schedule_version",
         "split_integrity_json",
 )
 
 
 def checkpoint_behavior_config(cfg):
-    return {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+    payload = {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+    if not bool(getattr(cfg, "competence_depth_enabled", False)):
+        for field in (
+            "student_candidate_prompt_soft_max_chars", "student_candidate_prompt_hard_max_chars",
+            "competence_depth_enabled", "competence_depth2_aux_enabled",
+            "competence_progressive_residual_enabled", "competence_floor_low", "competence_floor_high",
+            "competence_selector_weight", "competence_extra_support_shrinkage",
+            "competence_weight_accuracy_gain", "competence_weight_accuracy_loss",
+            "competence_weight_depth2_gain", "competence_weight_depth2_loss",
+            "competence_weight_vote_gain_early", "competence_weight_vote_loss_early",
+            "competence_schedule_version",
+        ):
+            payload.pop(field, None)
+    if str(getattr(cfg, "reward_mode", "")) != "coverage_useful_diversity":
+        for field in (
+            "reward_weight_coverage", "reward_weight_useful_diversity", "reward_weight_coverage_early",
+            "reward_weight_coverage_late", "reward_weight_useful_diversity_early",
+            "reward_weight_useful_diversity_late",
+        ):
+            payload.pop(field, None)
+    return payload
 
 
 def checkpoint_behavior_config_fingerprint(cfg):
@@ -558,6 +638,18 @@ def build_training_checkpoint(
         "no_effective_evolution_reason": str(no_effective_evolution_reason),
         "state": {
             "recent_window_records": list(getattr(system, "recent_window_records", [])),
+            "specialization_strength": float(getattr(system, "specialization_strength", 0.0)),
+            "previous_epoch_per_agent_acc": list(getattr(system, "previous_epoch_per_agent_acc", [])),
+            "previous_epoch_bottom2_mean_acc": float(getattr(system, "previous_epoch_bottom2_mean_acc", 0.0)),
+            "competence_phase_epoch": int(getattr(system, "competence_phase_epoch", 1)),
+            "competence_schedule_version": str(getattr(system, "competence_schedule_version", "competence_depth_v1")),
+            "specialization_strength_history": list(getattr(system, "specialization_strength_history", [0.0])),
+            "prompt_overlength_rejection_count": int(getattr(system, "prompt_overlength_rejection_count", 0)),
+            "truncated_prompt_count": int(getattr(system, "truncated_prompt_count", 0)),
+            "python_random_state": random.getstate(),
+            "numpy_random_state": (
+                lambda state: [state[0], state[1].tolist(), state[2], state[3], state[4]]
+            )(np.random.get_state()),
             "agents": [
                 {
                     "agent_id": i,
@@ -694,7 +786,14 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return float(val.get("vote_acc", 0.0) or 0.0)
-    if mode == "vote_useful_diversity":
+    if mode == "coverage_useful_diversity":
+        return (
+            0.4 * float(val.get("vote_acc", 0.0) or 0.0)
+            + 0.3 * float(val.get("oracle_acc", 0.0) or 0.0)
+            + 0.2 * float(val.get("mean_useful_diversity", 0.0) or 0.0)
+            - 0.2 * float(val.get("mean_invalid_rate", 0.0) or 0.0)
+        )
+    if mode in {"vote_useful_diversity", "competence_depth_schedule"}:
         return (
             0.5 * float(val.get("vote_acc", 0.0) or 0.0)
             + 0.2 * float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0)
@@ -709,12 +808,16 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
 
 
 def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
+    if str(best_state_selection_mode or "existing").lower() == "vote_competence_first":
+        return "vote_competence_first(vote,bottom2,C2,-gap,margin,mean,-invalid,earlier)"
     if str(best_state_selection_mode or "existing").lower() == "vote_first":
         return "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)"
     mode = str(reward_mode).lower()
     if mode == "accuracy_only":
         return "vote_acc"
-    if mode == "vote_useful_diversity":
+    if mode == "coverage_useful_diversity":
+        return "vote+oracle+useful_div-invalid"
+    if mode in {"vote_useful_diversity", "competence_depth_schedule"}:
         return "vote+margin+boundary_div-invalid"
     return "vote_acc+embedding_div-invalid"
 
@@ -1027,6 +1130,7 @@ async def main_async():
         train_vote_correct = []
         train_any_correct = []
         train_useful_diversity = []
+        train_individual_correct = []
         if resume_payload is not None and epoch == resume_epoch_index:
             train_embedding_diversity = [float(x) for x in resume_accumulators.get("train_embedding_diversity", [])]
             train_embedding_overlap = [float(x) for x in resume_accumulators.get("train_embedding_overlap", [])]
@@ -1034,6 +1138,7 @@ async def main_async():
             train_vote_correct = [int(x) for x in resume_accumulators.get("train_vote_correct", [])]
             train_any_correct = [int(x) for x in resume_accumulators.get("train_any_correct", [])]
             train_useful_diversity = [float(x) for x in resume_accumulators.get("train_useful_diversity", [])]
+            train_individual_correct = [list(map(int, row)) for row in resume_accumulators.get("train_individual_correct", [])]
         train_rollout_concurrency = max(1, auto_train_rollout_concurrency(cfg))
 
         cursor = min(max(0, int(resume_cursor if resume_payload is not None and epoch == resume_epoch_index else 0)), len(order))
@@ -1087,6 +1192,7 @@ async def main_async():
                 train_vote_correct.append(int(out.get("vote_correct", 0)))
                 train_any_correct.append(int(out.get("any_correct", 0)))
                 train_useful_diversity.append(float(out.get("useful_diversity", 0.0)))
+                train_individual_correct.append([int(value) for value in out.get("individual_correct", [])])
 
                 if (step + 1) % 10 == 0 or (step + 1) == len(order):
                     vote_acc = float(np.mean(train_vote_correct)) if train_vote_correct else 0.0
@@ -1112,6 +1218,7 @@ async def main_async():
                         "train_vote_correct": train_vote_correct,
                         "train_any_correct": train_any_correct,
                         "train_useful_diversity": train_useful_diversity,
+                        "train_individual_correct": train_individual_correct,
                     },
                     best_score=best_score,
                     best_epoch=best_epoch,
@@ -1143,6 +1250,7 @@ async def main_async():
                     "train_vote_correct": train_vote_correct,
                     "train_any_correct": train_any_correct,
                     "train_useful_diversity": train_useful_diversity,
+                    "train_individual_correct": train_individual_correct,
                 },
                 best_score=best_score,
                 best_epoch=best_epoch,
@@ -1161,6 +1269,8 @@ async def main_async():
             if no_effective_evolution_stopped:
                 break
 
+        train_rows = [{"individual_correct": row} for row in train_individual_correct]
+        train_competence = system._summarize_rollout_rows(train_rows)
         train_metrics = {
             "mean_embedding_diversity": float(np.mean(train_embedding_diversity)) if train_embedding_diversity else 0.0,
             "mean_embedding_overlap": float(np.mean(train_embedding_overlap)) if train_embedding_overlap else 0.0,
@@ -1172,6 +1282,13 @@ async def main_async():
             "no_effective_evolution_counter": int(no_effective_evolution_counter),
             "no_effective_evolution_stopped": bool(no_effective_evolution_stopped),
             "no_effective_evolution_reason": no_effective_evolution_reason,
+            **{key: train_competence[key] for key in (
+                "per_agent_acc", "min_individual_acc", "bottom2_mean_acc", "bottom3_mean_acc",
+                "max_individual_acc", "individual_acc_std", "best_minus_worst_gap",
+                "best_minus_bottom2_gap", "coverage_depth_c1", "coverage_depth_c2",
+                "coverage_depth_c3", "coverage_depth_c4", "coverage_depth_c5",
+                "c1_minus_c2", "c2_minus_c3",
+            )},
         }
         refresh_summary = None
         if cfg.beam_refresh_each_epoch:
@@ -1180,6 +1297,11 @@ async def main_async():
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
 
         val_metrics = await system.evaluate_dataset(val_data, split_name=f"val_epoch{epoch + 1}")
+        strength_used = float(system.specialization_strength)
+        system.specialization_strength_history.append(strength_used)
+        system.complete_competence_epoch(train_metrics.get("per_agent_acc", []), epoch + 1)
+        train_metrics["specialization_strength"] = strength_used
+        train_metrics["next_epoch_specialization_strength"] = float(system.specialization_strength)
         epoch_record = {"epoch": epoch + 1, "train": train_metrics, "val": val_metrics}
         if refresh_summary is not None:
             epoch_record["beam_refresh"] = refresh_summary
@@ -1198,6 +1320,7 @@ async def main_async():
                 "train_vote_correct": train_vote_correct,
                 "train_any_correct": train_any_correct,
                 "train_useful_diversity": train_useful_diversity,
+                "train_individual_correct": train_individual_correct,
             },
             best_score=best_score,
             best_epoch=best_epoch,

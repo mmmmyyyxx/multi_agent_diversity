@@ -1,0 +1,49 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_competence_first(vote,bottom2,C2,-gap,margin,mean,-invalid,earlier)",
+  "best_validation_score": 0.094,
+  "best_state_selection_mode": "vote_competence_first",
+  "best_state_selection_key": [
+    -0.3,
+    -0.32499999999999996,
+    -0.45,
+    0.07500000000000007,
+    0.27999999999999997,
+    -0.36,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.3,
+  "selected_oracle_acc": 0.45,
+  "selected_mean_individual_acc": 0.36,
+  "selected_mean_vote_margin": -0.27999999999999997,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "1d5d6ecee977",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible; verify key logic by binding each entity and checking for contradictions; give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "ee3d4b1998cc",
+      "prompt": "You are a careful reasoning solver. First, explicitly list all entities and their relationships as constraints; then produce a compact, explicit reasoning trace, making your decision procedure visible. Systematically evaluate each option against the enumerated constraints before elimination; verify key logic and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

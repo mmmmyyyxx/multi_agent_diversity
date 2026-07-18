@@ -1,5 +1,7 @@
 # Method: Vote-Oriented Multi-Agent Prompt Search
 
+The opt-in v8 competence-first extension is documented in [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md). Existing v7 settings below remain unchanged.
+
 ## Overview
 
 This project evolves prompts for a fixed team of solver agents. It does not update model weights and it is not policy-gradient RL. Reward only ranks candidate prompts inside a per-agent beam search.

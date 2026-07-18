@@ -1,5 +1,7 @@
 # Multi-Agent Diversity
 
+See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md) and [V8_EXPERIMENT_PLAN.md](V8_EXPERIMENT_PLAN.md) for the opt-in competence-first and coverage-depth method.
+
 This repository implements vote-oriented evolutionary prompt search for multi-agent reasoning. It evolves prompts, not model weights. A fixed team of solver agents answers each question, and the primary evaluation metric is final team `vote_acc`.
 
 See [method.md](method.md) for the implementation guide.

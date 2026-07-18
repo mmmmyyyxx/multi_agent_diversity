@@ -65,8 +65,8 @@ def test_parser_accepts_vote_error_pareto():
     assert build_parser().parse_args(["--candidate_selection_mode", "vote_error_pareto"]).candidate_selection_mode == "vote_error_pareto"
 
 
-def test_parser_accepts_vote_useful_diversity_and_rejects_removed_mode():
+def test_parser_accepts_vote_and_strict_legacy_reward_modes():
     parser = build_parser()
     assert parser.parse_args(["--reward_mode", "vote_useful_diversity"]).reward_mode == "vote_useful_diversity"
-    with pytest.raises(SystemExit):
-        parser.parse_args(["--reward_mode", "coverage_useful_diversity"])
+    assert parser.parse_args(["--reward_mode", "coverage_useful_diversity"]).reward_mode == "coverage_useful_diversity"
+    assert parser.parse_args(["--reward_mode", "competence_depth_schedule"]).reward_mode == "competence_depth_schedule"

@@ -59,6 +59,8 @@ class Config:
     reward_weight_vote_delta: float = 0.3
     reward_weight_vote_margin: float = 0.2
     reward_weight_boundary_diversity: float = 0.2
+    reward_weight_coverage: float = 0.3
+    reward_weight_useful_diversity: float = 0.2
     invalid_guard_epsilon: float = 0.05
     use_baseline_relative_reward: bool = True
     reward_schedule_mode: str = "phase_adaptive"
@@ -71,6 +73,10 @@ class Config:
     reward_weight_vote_margin_late: float = 0.25
     reward_weight_boundary_diversity_early: float = 0.3
     reward_weight_boundary_diversity_late: float = 0.2
+    reward_weight_coverage_early: float = 0.4
+    reward_weight_coverage_late: float = 0.3
+    reward_weight_useful_diversity_early: float = 0.5
+    reward_weight_useful_diversity_late: float = 0.25
     reward_weight_target_accuracy_early: float = 0.9
     reward_weight_target_accuracy_late: float = 1.0
     accuracy_guard_epsilon_early: float = 0.03
@@ -92,6 +98,8 @@ class Config:
     student_candidate_schema_mode: str = "compact"
     student_candidate_max_chars_per_field: int = 320
     student_candidate_prompt_max_chars: int = 900
+    student_candidate_prompt_soft_max_chars: int = 1100
+    student_candidate_prompt_hard_max_chars: int = 1400
     student_force_minified_json: bool = True
     teacher_critic_use_voting_failure: bool = True
     optimizer_fallback_mode: str = "none"
@@ -124,6 +132,21 @@ class Config:
     prompt_large_shift_warmup_accepts: int = 2
     prompt_large_shift_min_vote_delta: float = 0.02
     baseline_allowed_vote_loss: float = 0.0
+
+    competence_depth_enabled: bool = False
+    competence_depth2_aux_enabled: bool = False
+    competence_progressive_residual_enabled: bool = False
+    competence_floor_low: float = 0.55
+    competence_floor_high: float = 0.65
+    competence_selector_weight: float = 1.0
+    competence_extra_support_shrinkage: float = 3.0
+    competence_weight_accuracy_gain: float = 1.0
+    competence_weight_accuracy_loss: float = 1.5
+    competence_weight_depth2_gain: float = 0.8
+    competence_weight_depth2_loss: float = 1.0
+    competence_weight_vote_gain_early: float = 0.4
+    competence_weight_vote_loss_early: float = 1.0
+    competence_schedule_version: str = "competence_depth_v1"
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -190,6 +213,8 @@ class Config:
             "baseline_allowed_vote_loss",
             "pivotal_loss_guard_epsilon",
             "shared_error_creation_epsilon",
+            "competence_floor_low",
+            "competence_floor_high",
         )
         for field in probability_fields:
             value = float(getattr(self, field))
@@ -200,6 +225,14 @@ class Config:
             "capability_loss_weight",
             "capability_affinity_weight",
             "capability_coverage_gap_weight",
+            "competence_selector_weight",
+            "competence_extra_support_shrinkage",
+            "competence_weight_accuracy_gain",
+            "competence_weight_accuracy_loss",
+            "competence_weight_depth2_gain",
+            "competence_weight_depth2_loss",
+            "competence_weight_vote_gain_early",
+            "competence_weight_vote_loss_early",
         ):
             if float(getattr(self, field)) < 0.0:
                 raise ValueError(f"{field} must be non-negative")
@@ -209,6 +242,10 @@ class Config:
         for field in ("specialization_update_period", "behavior_archive_size", "behavior_cycle_min_overlap"):
             if int(getattr(self, field)) < 1:
                 raise ValueError(f"{field} must be at least 1")
+        if float(self.competence_floor_high) <= float(self.competence_floor_low):
+            raise ValueError("competence_floor_high must be greater than competence_floor_low")
+        if int(self.student_candidate_prompt_hard_max_chars) < int(self.student_candidate_prompt_soft_max_chars):
+            raise ValueError("student_candidate_prompt_hard_max_chars must be >= soft max")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -248,9 +285,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--baseline_only", type=int, default=int(defaults.baseline_only), choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "vote_useful_diversity"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first"])
+    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
@@ -268,6 +305,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_vote_delta", type=float, default=defaults.reward_weight_vote_delta)
     parser.add_argument("--reward_weight_vote_margin", type=float, default=defaults.reward_weight_vote_margin)
     parser.add_argument("--reward_weight_boundary_diversity", type=float, default=defaults.reward_weight_boundary_diversity)
+    parser.add_argument("--reward_weight_coverage", type=float, default=defaults.reward_weight_coverage)
+    parser.add_argument("--reward_weight_useful_diversity", type=float, default=defaults.reward_weight_useful_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=defaults.invalid_guard_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
@@ -280,6 +319,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_vote_margin_late", type=float, default=defaults.reward_weight_vote_margin_late)
     parser.add_argument("--reward_weight_boundary_diversity_early", type=float, default=defaults.reward_weight_boundary_diversity_early)
     parser.add_argument("--reward_weight_boundary_diversity_late", type=float, default=defaults.reward_weight_boundary_diversity_late)
+    parser.add_argument("--reward_weight_coverage_early", type=float, default=defaults.reward_weight_coverage_early)
+    parser.add_argument("--reward_weight_coverage_late", type=float, default=defaults.reward_weight_coverage_late)
+    parser.add_argument("--reward_weight_useful_diversity_early", type=float, default=defaults.reward_weight_useful_diversity_early)
+    parser.add_argument("--reward_weight_useful_diversity_late", type=float, default=defaults.reward_weight_useful_diversity_late)
     parser.add_argument("--reward_weight_target_accuracy_early", type=float, default=defaults.reward_weight_target_accuracy_early)
     parser.add_argument("--reward_weight_target_accuracy_late", type=float, default=defaults.reward_weight_target_accuracy_late)
     parser.add_argument("--accuracy_guard_epsilon_early", type=float, default=defaults.accuracy_guard_epsilon_early)
@@ -301,6 +344,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--student_candidate_schema_mode", type=str, default=defaults.student_candidate_schema_mode, choices=["compact", "verbose"])
     parser.add_argument("--student_candidate_max_chars_per_field", type=int, default=defaults.student_candidate_max_chars_per_field)
     parser.add_argument("--student_candidate_prompt_max_chars", type=int, default=defaults.student_candidate_prompt_max_chars)
+    parser.add_argument("--student_candidate_prompt_soft_max_chars", type=int, default=defaults.student_candidate_prompt_soft_max_chars)
+    parser.add_argument("--student_candidate_prompt_hard_max_chars", type=int, default=defaults.student_candidate_prompt_hard_max_chars)
     parser.add_argument("--student_force_minified_json", type=int, default=int(defaults.student_force_minified_json), choices=[0, 1])
     parser.add_argument("--teacher_critic_use_voting_failure", type=int, default=int(defaults.teacher_critic_use_voting_failure), choices=[0, 1])
     parser.add_argument("--optimizer_fallback_mode", type=str, default=defaults.optimizer_fallback_mode, choices=["none", "template"])
@@ -332,6 +377,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--prompt_large_shift_warmup_accepts", type=int, default=defaults.prompt_large_shift_warmup_accepts)
     parser.add_argument("--prompt_large_shift_min_vote_delta", type=float, default=defaults.prompt_large_shift_min_vote_delta)
     parser.add_argument("--baseline_allowed_vote_loss", type=float, default=defaults.baseline_allowed_vote_loss)
+    parser.add_argument("--competence_depth_enabled", type=int, default=int(defaults.competence_depth_enabled), choices=[0, 1])
+    parser.add_argument("--competence_depth2_aux_enabled", type=int, default=int(defaults.competence_depth2_aux_enabled), choices=[0, 1])
+    parser.add_argument("--competence_progressive_residual_enabled", type=int, default=int(defaults.competence_progressive_residual_enabled), choices=[0, 1])
+    parser.add_argument("--competence_floor_low", type=float, default=defaults.competence_floor_low)
+    parser.add_argument("--competence_floor_high", type=float, default=defaults.competence_floor_high)
+    parser.add_argument("--competence_selector_weight", type=float, default=defaults.competence_selector_weight)
+    parser.add_argument("--competence_extra_support_shrinkage", type=float, default=defaults.competence_extra_support_shrinkage)
+    parser.add_argument("--competence_weight_accuracy_gain", type=float, default=defaults.competence_weight_accuracy_gain)
+    parser.add_argument("--competence_weight_accuracy_loss", type=float, default=defaults.competence_weight_accuracy_loss)
+    parser.add_argument("--competence_weight_depth2_gain", type=float, default=defaults.competence_weight_depth2_gain)
+    parser.add_argument("--competence_weight_depth2_loss", type=float, default=defaults.competence_weight_depth2_loss)
+    parser.add_argument("--competence_weight_vote_gain_early", type=float, default=defaults.competence_weight_vote_gain_early)
+    parser.add_argument("--competence_weight_vote_loss_early", type=float, default=defaults.competence_weight_vote_loss_early)
+    parser.add_argument("--competence_schedule_version", type=str, default=defaults.competence_schedule_version)
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])
