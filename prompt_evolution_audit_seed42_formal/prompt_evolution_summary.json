@@ -1,0 +1,290 @@
+{
+  "analysis_mode": "offline_only",
+  "api_calls": 0,
+  "model_calls": 0,
+  "run_roots": [
+    "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v7_formal_3seed_0d6093e\\disambiguation_qa\\shared_vote_error_pareto_tcs_residual_cycle_guard_seed42"
+  ],
+  "coverage": {
+    "run_count": 1,
+    "candidate_count": 221,
+    "attempt_count": 42,
+    "complete_attempt_count": 42,
+    "full_distance_reconstruction_count": 9,
+    "full_distance_reconstruction_rate": 0.04072398190045249,
+    "proposal_metadata_count": 75,
+    "proposal_metadata_rate": 0.3393665158371041,
+    "runs_with_final_predictions": 1,
+    "runs_with_checkpoint": 0,
+    "per_run": [
+      {
+        "run_root": "shared_vote_error_pareto_tcs_residual_cycle_guard_seed42",
+        "run_dir": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v7_formal_3seed_0d6093e\\disambiguation_qa\\shared_vote_error_pareto_tcs_residual_cycle_guard_seed42",
+        "task": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 42,
+        "candidate_count": 221,
+        "optimizer_candidate_count": 144,
+        "attempt_count": 42,
+        "complete_attempt_count": 42,
+        "full_distance_reconstruction_count": 9,
+        "proposal_metadata_count": 75,
+        "has_final_predictions": true,
+        "has_checkpoint": false
+      }
+    ]
+  },
+  "probabilities": {
+    "optimizer_candidate_count": 144,
+    "known_parent_distance_count": 144,
+    "p_change_ratio_gt_0_45_given_optimizer_candidate": 0.1111111111111111,
+    "parent_distance_mean": 0.23431650405127155,
+    "parent_distance_p50": 0.18514643753465854,
+    "parent_distance_p75": 0.2767350828555227,
+    "parent_distance_p90": 0.4918020054712662,
+    "p_trust_rejection_given_change_ratio_gt_0_45": 0.1875,
+    "active_top1_optimizer_count": 24,
+    "active_before_distance_known_count": 14,
+    "active_before_distance_coverage": 0.5833333333333334,
+    "active_before_distance_mean": 0.2140442935926948,
+    "active_before_distance_p50": 0.19305819004641311,
+    "active_before_distance_p75": 0.2596338343460186,
+    "active_before_distance_p90": 0.34905982905982913,
+    "p_change_ratio_gt_0_45_given_active_top1": 0.07142857142857142,
+    "trust_rejection_count": 3,
+    "trust_rejection_rate_all_optimizer_candidates": 0.020833333333333332,
+    "active_update_rate": 0.5952380952380952,
+    "agents_with_large_shift_in_majority_of_attempts": 1,
+    "agents_with_candidate_attempts": 5,
+    "distance_bins": {
+      "[0.00, 0.20)": {
+        "candidate_count": 81,
+        "p_pareto_feasible": 0.49382716049382713,
+        "p_active_top1": 0.1728395061728395,
+        "p_vote_gain": 0.1728395061728395,
+        "p_accuracy_regression": 0.43209876543209874
+      },
+      "[0.20, 0.35)": {
+        "candidate_count": 32,
+        "p_pareto_feasible": 0.625,
+        "p_active_top1": 0.21875,
+        "p_vote_gain": 0.125,
+        "p_accuracy_regression": 0.34375
+      },
+      "[0.35, 0.45)": {
+        "candidate_count": 15,
+        "p_pareto_feasible": 0.4666666666666667,
+        "p_active_top1": 0.13333333333333333,
+        "p_vote_gain": 0.0,
+        "p_accuracy_regression": 0.4666666666666667
+      },
+      "[0.45, 0.60)": {
+        "candidate_count": 7,
+        "p_pareto_feasible": 0.5714285714285714,
+        "p_active_top1": 0.14285714285714285,
+        "p_vote_gain": 0.2857142857142857,
+        "p_accuracy_regression": 0.14285714285714285
+      },
+      "[0.60, 1.00]": {
+        "candidate_count": 9,
+        "p_pareto_feasible": 0.1111111111111111,
+        "p_active_top1": 0.0,
+        "p_vote_gain": 0.0,
+        "p_accuracy_regression": 0.5555555555555556
+      }
+    },
+    "optimizer_candidate_outcomes": {
+      "accuracy_guard_rejected": 59,
+      "active_top1": 24,
+      "dependence_guard_rejected": 9,
+      "exact_prompt_cycle_rejected": 1,
+      "pareto_not_retained": 19,
+      "retained_nonactive_beam": 29,
+      "unsupported_large_prompt_shift": 3
+    },
+    "all_candidate_outcomes": {
+      "accuracy_guard_rejected": 75,
+      "active_top1": 42,
+      "dependence_guard_rejected": 12,
+      "exact_prompt_cycle_rejected": 8,
+      "existing_beam": 13,
+      "pareto_not_retained": 19,
+      "retained_nonactive_beam": 49,
+      "unsupported_large_prompt_shift": 3
+    }
+  },
+  "probabilities_by_run_root": {
+    "shared_vote_error_pareto_tcs_residual_cycle_guard_seed42": {
+      "optimizer_candidate_count": 144,
+      "known_parent_distance_count": 144,
+      "p_change_ratio_gt_0_45_given_optimizer_candidate": 0.1111111111111111,
+      "parent_distance_mean": 0.23431650405127155,
+      "parent_distance_p50": 0.18514643753465854,
+      "parent_distance_p75": 0.2767350828555227,
+      "parent_distance_p90": 0.4918020054712662,
+      "p_trust_rejection_given_change_ratio_gt_0_45": 0.1875,
+      "active_top1_optimizer_count": 24,
+      "active_before_distance_known_count": 14,
+      "active_before_distance_coverage": 0.5833333333333334,
+      "active_before_distance_mean": 0.2140442935926948,
+      "active_before_distance_p50": 0.19305819004641311,
+      "active_before_distance_p75": 0.2596338343460186,
+      "active_before_distance_p90": 0.34905982905982913,
+      "p_change_ratio_gt_0_45_given_active_top1": 0.07142857142857142,
+      "trust_rejection_count": 3,
+      "trust_rejection_rate_all_optimizer_candidates": 0.020833333333333332,
+      "active_update_rate": 0.5952380952380952,
+      "agents_with_large_shift_in_majority_of_attempts": 1,
+      "agents_with_candidate_attempts": 5,
+      "distance_bins": {
+        "[0.00, 0.20)": {
+          "candidate_count": 81,
+          "p_pareto_feasible": 0.49382716049382713,
+          "p_active_top1": 0.1728395061728395,
+          "p_vote_gain": 0.1728395061728395,
+          "p_accuracy_regression": 0.43209876543209874
+        },
+        "[0.20, 0.35)": {
+          "candidate_count": 32,
+          "p_pareto_feasible": 0.625,
+          "p_active_top1": 0.21875,
+          "p_vote_gain": 0.125,
+          "p_accuracy_regression": 0.34375
+        },
+        "[0.35, 0.45)": {
+          "candidate_count": 15,
+          "p_pareto_feasible": 0.4666666666666667,
+          "p_active_top1": 0.13333333333333333,
+          "p_vote_gain": 0.0,
+          "p_accuracy_regression": 0.4666666666666667
+        },
+        "[0.45, 0.60)": {
+          "candidate_count": 7,
+          "p_pareto_feasible": 0.5714285714285714,
+          "p_active_top1": 0.14285714285714285,
+          "p_vote_gain": 0.2857142857142857,
+          "p_accuracy_regression": 0.14285714285714285
+        },
+        "[0.60, 1.00]": {
+          "candidate_count": 9,
+          "p_pareto_feasible": 0.1111111111111111,
+          "p_active_top1": 0.0,
+          "p_vote_gain": 0.0,
+          "p_accuracy_regression": 0.5555555555555556
+        }
+      },
+      "optimizer_candidate_outcomes": {
+        "accuracy_guard_rejected": 59,
+        "active_top1": 24,
+        "dependence_guard_rejected": 9,
+        "exact_prompt_cycle_rejected": 1,
+        "pareto_not_retained": 19,
+        "retained_nonactive_beam": 29,
+        "unsupported_large_prompt_shift": 3
+      },
+      "all_candidate_outcomes": {
+        "accuracy_guard_rejected": 75,
+        "active_top1": 42,
+        "dependence_guard_rejected": 12,
+        "exact_prompt_cycle_rejected": 8,
+        "existing_beam": 13,
+        "pareto_not_retained": 19,
+        "retained_nonactive_beam": 49,
+        "unsupported_large_prompt_shift": 3
+      }
+    }
+  },
+  "mechanism_analysis": {
+    "optimizer_candidate_count": 144,
+    "proposal_metadata_known_count": 27,
+    "proposal_metadata_coverage": 0.1875,
+    "large_shift_count": 16,
+    "large_shift_metadata_known_count": 1,
+    "large_shift_metadata_coverage": 0.0625,
+    "large_shift_modified_mechanism_known_count": 0,
+    "large_shift_with_modified_mechanism_rate_known": null,
+    "large_shift_preserved_mechanism_known_count": 1,
+    "large_shift_missing_preserved_mechanism_rate_known": 0.0,
+    "small_text_large_behavior_threshold": 0.25,
+    "small_text_large_behavior_count": 64,
+    "target_residual_family_mention_count": 0,
+    "repeated_target_residual_family_count": 0,
+    "repeated_target_residual_family_rate": null
+  },
+  "trust_rejections": [
+    {
+      "run_root": "shared_vote_error_pareto_tcs_residual_cycle_guard_seed42",
+      "task": "disambiguation_qa",
+      "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+      "seed": 42,
+      "epoch": 2,
+      "step": 70,
+      "agent_id": 4,
+      "candidate_id": "g5_a4_pb704109dd0f9_0_6c51d0270525",
+      "prompt_change_ratio_parent": 0.6176470588235294,
+      "agent_accept_count_before": 3,
+      "large_shift_warmup_exempt": false,
+      "large_shift_vote_support_passed": false,
+      "large_shift_accuracy_support_passed": true,
+      "large_shift_vote_loss_support_passed": true,
+      "large_shift_pivotal_loss_support_passed": true,
+      "large_shift_shared_error_support_passed": true,
+      "vote_delta": 0.0,
+      "accuracy_delta": 0.041666666666666685,
+      "vote_loss_rate": 0.0,
+      "pivotal_loss_rate": 0.0,
+      "shared_error_rescue_score": 0.0625,
+      "shared_error_creation_score": 0.0
+    },
+    {
+      "run_root": "shared_vote_error_pareto_tcs_residual_cycle_guard_seed42",
+      "task": "disambiguation_qa",
+      "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+      "seed": 42,
+      "epoch": 3,
+      "step": 40,
+      "agent_id": 3,
+      "candidate_id": "g4_a3_p77e8784f959f_1_7b1ad7495c2a",
+      "prompt_change_ratio_parent": 0.6408730158730158,
+      "agent_accept_count_before": 3,
+      "large_shift_warmup_exempt": false,
+      "large_shift_vote_support_passed": false,
+      "large_shift_accuracy_support_passed": true,
+      "large_shift_vote_loss_support_passed": true,
+      "large_shift_pivotal_loss_support_passed": true,
+      "large_shift_shared_error_support_passed": true,
+      "vote_delta": 0.0,
+      "accuracy_delta": 0.041666666666666685,
+      "vote_loss_rate": 0.0,
+      "pivotal_loss_rate": 0.0,
+      "shared_error_rescue_score": 0.0625,
+      "shared_error_creation_score": 0.03125
+    },
+    {
+      "run_root": "shared_vote_error_pareto_tcs_residual_cycle_guard_seed42",
+      "task": "disambiguation_qa",
+      "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+      "seed": 42,
+      "epoch": 3,
+      "step": 40,
+      "agent_id": 3,
+      "candidate_id": "g4_a3_pd2e25e060d2a_0_bc3e1b644023",
+      "prompt_change_ratio_parent": 0.542203147353362,
+      "agent_accept_count_before": 3,
+      "large_shift_warmup_exempt": false,
+      "large_shift_vote_support_passed": false,
+      "large_shift_accuracy_support_passed": true,
+      "large_shift_vote_loss_support_passed": true,
+      "large_shift_pivotal_loss_support_passed": true,
+      "large_shift_shared_error_support_passed": true,
+      "vote_delta": 0.0,
+      "accuracy_delta": 0.0,
+      "vote_loss_rate": 0.0,
+      "pivotal_loss_rate": 0.0,
+      "shared_error_rescue_score": 0.0,
+      "shared_error_creation_score": 0.0
+    }
+  ],
+  "runtime_logging_change_required": false,
+  "runtime_logging_decision": "Existing logs answer the core distance/trust/path questions. Missing all-candidate prompt text and proposal mechanism metadata are reported as coverage limitations; system.py was not modified."
+}
