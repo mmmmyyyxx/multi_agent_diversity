@@ -691,6 +691,7 @@ def compute_gold_vote_diagnostics(
     largest_wrong_vote_count = int(max(wrong_counts.values(), default=0))
     wrong_valid_count = len(wrong_answers)
     normalized_vote_margin = float(gold_vote_count - largest_wrong_vote_count) / float(max(1, int(num_agents)))
+    plurality_margin_votes = int(gold_vote_count - largest_wrong_vote_count)
     boundary_useful_diversity = (
         1.0 - float(largest_wrong_vote_count) / float(wrong_valid_count)
         if gold_vote_count > 0 and wrong_valid_count > 1 and abs(gold_vote_count - largest_wrong_vote_count) <= 1
@@ -699,9 +700,23 @@ def compute_gold_vote_diagnostics(
     return {
         "gold_vote_count": gold_vote_count,
         "largest_wrong_vote_count": largest_wrong_vote_count,
+        "plurality_margin_votes": plurality_margin_votes,
+        "normalized_plurality_margin": normalized_vote_margin,
         "normalized_vote_margin": normalized_vote_margin,
         "boundary_useful_diversity": boundary_useful_diversity,
+        "strict_plurality_win": bool(plurality_margin_votes > 0),
+        "plurality_gold_leading": bool(plurality_margin_votes > 0),
+        "plurality_gold_top_tied": bool(plurality_margin_votes == 0),
+        "plurality_gold_one_vote_behind": bool(plurality_margin_votes == -1),
+        "plurality_gold_far_behind": bool(plurality_margin_votes <= -2),
     }
+
+
+def canonical_aggregation_mode(mode: str) -> str:
+    normalized = str(mode or "").strip().lower()
+    if normalized in {"majority", "plurality"}:
+        return "plurality"
+    return normalized
 
 
 def majority_vote_with_diagnostics(
@@ -742,6 +757,21 @@ def majority_vote_with_diagnostics(
         "vote_counts": dict(cnt),
         "tie_break_method": method,
     }
+
+
+def plurality_vote_with_diagnostics(
+    answers: List[str],
+    tie_break_method: str = "first",
+    seed: int = 0,
+    question_hash: str = "",
+) -> Dict[str, Any]:
+    """Canonical plurality entry point; the historical majority name is an alias."""
+    return majority_vote_with_diagnostics(
+        answers,
+        tie_break_method=tie_break_method,
+        seed=seed,
+        question_hash=question_hash,
+    )
 
 
 def majority_vote(answers: List[str]) -> str:

@@ -42,7 +42,7 @@ def test_coverage_depth_single_threshold_transition(before, after, gain, loss):
         assert result[f"depth{loss}_loss_count"] == 1
 
 
-def test_depth1_and_depth3_match_oracle_and_majority_deltas():
+def test_depth1_and_depth3_track_independent_support_thresholds():
     before = [[0, 0, 0, 0, 0], [1, 1, 0, 0, 0]]
     after = [[1, 0, 0, 0, 0], [1, 1, 1, 0, 0]]
     result = compute_coverage_depth_transitions(before, after)

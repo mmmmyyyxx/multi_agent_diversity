@@ -479,7 +479,7 @@ def main():
     parser.add_argument("--train_rollout_concurrency", type=int, default=cli_defaults.train_rollout_concurrency)
     parser.add_argument("--eval_solver_call_concurrency", type=int, default=cli_defaults.eval_solver_call_concurrency)
     parser.add_argument("--vote_tie_break", type=str, default=cli_defaults.vote_tie_break, choices=["first", "random", "abstain"])
-    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "weighted_vote", "verifier_select"])
+    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "plurality", "weighted_vote", "verifier_select"])
     parser.add_argument("--seeds", type=str, default="42")
     parser.add_argument("--seed_baselines", type=int, default=DEFAULT_SEED_BASELINES, choices=[0, 1])
     parser.add_argument("--multi_seed_names", type=int, default=1, choices=[0, 1])

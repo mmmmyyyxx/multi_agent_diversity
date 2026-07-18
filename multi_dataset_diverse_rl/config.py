@@ -433,5 +433,5 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--evaluator_api_key_env", type=str, default=defaults.evaluator_api_key_env)
     parser.add_argument("--evaluator_base_url_env", type=str, default=defaults.evaluator_base_url_env)
     parser.add_argument("--vote_tie_break", type=str, default=defaults.vote_tie_break, choices=["first", "random", "abstain"])
-    parser.add_argument("--aggregation_mode", type=str, default=defaults.aggregation_mode, choices=["majority", "weighted_vote", "verifier_select"])
+    parser.add_argument("--aggregation_mode", type=str, default=defaults.aggregation_mode, choices=["majority", "plurality", "weighted_vote", "verifier_select"])
     return parser

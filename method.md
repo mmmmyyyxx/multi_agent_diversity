@@ -6,7 +6,7 @@ The opt-in v8 competence-first extension is documented in [V8_COMPETENCE_DEPTH_M
 
 This project evolves prompts for a fixed team of solver agents. It does not update model weights and it is not policy-gradient RL. Reward only ranks candidate prompts inside a per-agent beam search.
 
-The primary metric is `vote_acc`: agents answer the same question and the plurality-vote answer is compared with gold. The public configuration name `aggregation_mode=majority` is retained, although multi-class behavior is technically plurality vote.
+The primary metric is `vote_acc`: agents answer the same question and the plurality-vote answer is compared with gold. `aggregation_mode=plurality` is the canonical name. The historical `majority` value remains an alias and produces the same plurality result.
 
 The method prioritizes:
 
@@ -157,7 +157,7 @@ The update score is:
 + 1.0 * per_agent_dominant_wrong_redundancy_count
 ```
 
-A pivotal fix asks whether changing an incorrect agent to gold would make a wrong or tied vote clearly correct. Dominant-wrong redundancy finds incorrect agents repeating the largest wrong cluster near the boundary. Only positive-score agents are selected.
+A v8 pivotal fix asks whether changing an incorrect target agent to gold makes the actual plurality aggregator correct under the configured tie-break and the same question hash. It is not inferred from `K>=3` or a vote-margin threshold. Dominant-wrong redundancy remains descriptive. Only positive-score agents are selected.
 
 ## Boundary-Aware Residual Specialization (v7)
 
@@ -317,7 +317,7 @@ dominant_wrong_cluster_size
 gold_vs_largest_wrong_margin
 ```
 
-`oracle_acc` means at least one agent is correct. `aggregation_gap = oracle_acc - vote_acc` diagnoses correct paths that did not become the final vote.
+`oracle_acc` means at least one agent is correct. `aggregation_gap = oracle_acc - plurality_vote_acc` diagnoses correct paths that did not become the final vote.
 
 The default tie protocol is deterministic `random`: it is seeded by the run
 seed and question hash. All matched settings must use the same

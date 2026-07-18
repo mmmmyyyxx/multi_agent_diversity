@@ -9,7 +9,7 @@ import uuid
 import numpy as np
 
 from .config import Config, build_parser
-from .utils import ensure_dir, load_jsonl, set_seed
+from .utils import canonical_aggregation_mode, ensure_dir, load_jsonl, set_seed
 
 
 LEGACY_QUESTION_KEYS = ["question", "input", "query", "problem"]
@@ -241,11 +241,11 @@ def vote_first_tiebreak_key(epoch_record):
 def vote_competence_first_validation_key(epoch_record):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
     return (
-        -float(val.get("vote_acc", 0.0) or 0.0),
+        -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
         -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
         -float(val.get("coverage_depth_c2", 0.0) or 0.0),
         float(val.get("best_minus_bottom2_gap", 0.0) or 0.0),
-        -float(val.get("mean_vote_margin", -1.0) if val.get("mean_vote_margin") is not None else -1.0),
+        -float(val.get("mean_normalized_plurality_margin", val.get("mean_vote_margin", -1.0)) if val.get("mean_normalized_plurality_margin", val.get("mean_vote_margin")) is not None else -1.0),
         -float(val.get("mean_individual_acc", 0.0) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
         int(epoch_record.get("epoch", 0) or 0),
@@ -563,6 +563,11 @@ BEHAVIOR_CONFIG_FIELDS = (
 
 def checkpoint_behavior_config(cfg):
     payload = {field: getattr(cfg, field, None) for field in BEHAVIOR_CONFIG_FIELDS}
+    if bool(getattr(cfg, "competence_depth_enabled", False)):
+        payload["effective_aggregation_mode"] = canonical_aggregation_mode(
+            str(getattr(cfg, "aggregation_mode", "majority") or "majority")
+        )
+        payload["plurality_boundary_version"] = "plurality_boundary_v1"
     if not bool(getattr(cfg, "competence_depth_enabled", False)):
         for field in (
             "student_candidate_prompt_soft_max_chars", "student_candidate_prompt_hard_max_chars",

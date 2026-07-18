@@ -4,6 +4,13 @@ See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md) and [V8_EXPER
 
 This repository implements vote-oriented evolutionary prompt search for multi-agent reasoning. It evolves prompts, not model weights. A fixed team of solver agents answers each question, and the primary evaluation metric is final team `vote_acc`.
 
+The team uses plurality voting, not a strict-majority threshold: the answer with
+the most votes wins, and the configured deterministic tie-break resolves top
+ties. `aggregation_mode=plurality` is the canonical name;
+`aggregation_mode=majority` remains a compatibility alias for the same
+aggregator. All vote gains, losses, pivotal fixes, and v8 boundary diagnostics
+use that actual aggregator and the same question hash.
+
 See [method.md](method.md) for the implementation guide.
 
 ## Current Method

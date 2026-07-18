@@ -698,7 +698,7 @@ def main():
     parser.add_argument("--llm_call_logging", type=int, default=int(cli_defaults.llm_call_logging), choices=[0, 1])
     parser.add_argument("--llm_call_timeout", type=float, default=cli_defaults.llm_call_timeout)
     parser.add_argument("--vote_tie_break", type=str, default=cli_defaults.vote_tie_break, choices=["first", "random", "abstain"])
-    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "weighted_vote", "verifier_select"])
+    parser.add_argument("--aggregation_mode", type=str, default=cli_defaults.aggregation_mode, choices=["majority", "plurality", "weighted_vote", "verifier_select"])
     args = parser.parse_args()
 
     args.workspace = str(Path(args.workspace).resolve())

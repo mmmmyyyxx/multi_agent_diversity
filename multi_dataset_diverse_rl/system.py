@@ -35,12 +35,13 @@ from .policy import (
 )
 from .tasks import TaskSpec, get_task_spec
 from .utils import (
+    canonical_aggregation_mode,
     compute_gold_vote_diagnostics,
     ensure_dir,
     extract_json_obj,
     infer_task_type,
-    majority_vote_with_diagnostics,
     normalize_spaces,
+    plurality_vote_with_diagnostics,
     set_seed,
 )
 
@@ -49,6 +50,7 @@ PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
 EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v7_residual_specialization"
 CHECKPOINT_VERSION = 4
+PLURALITY_BOUNDARY_VERSION = "plurality_boundary_v1"
 VOTE_CONTEXT_WEIGHTS = {
     BehaviorContext.TEAM_WRONG_PIVOTAL_FIX.value: 4.0,
     BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value: 4.0,
@@ -568,6 +570,13 @@ class TraceBeamSearchSystem:
         gold_count = int(rollout.get("gold_vote_count", 0) or 0)
         largest_wrong = int(rollout.get("largest_wrong_vote_count", 0) or 0)
         if target_correct:
+            if bool(getattr(self.cfg, "competence_depth_enabled", False)) and team_correct:
+                without_target = list(answers)
+                without_target[agent_id] = ""
+                counterfactual = self._vote_with_diagnostics(without_target, question_hash=question_hash)
+                if not self.task_spec.match_answer(str(counterfactual.get("vote_answer", "")), gold):
+                    return BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value
+                return BehaviorContext.TARGET_CORRECT_ROBUST.value
             if gold_count - largest_wrong <= 1:
                 return BehaviorContext.TARGET_CORRECT_PIVOTAL_HOLD.value
             return BehaviorContext.TARGET_CORRECT_ROBUST.value
@@ -640,6 +649,7 @@ class TraceBeamSearchSystem:
         denominator = float(count) if count else 1.0
         individual_fix = individual_regression = 0
         pivotal_rescue = pivotal_loss = 0
+        plurality_opportunity = plurality_fix = plurality_loss = 0
         same_wrong_break = same_wrong_create = 0
         shared_rescue = shared_creation = 0.0
         for row in rows:
@@ -653,6 +663,9 @@ class TraceBeamSearchSystem:
             individual_regression += int(regressed)
             pivotal_rescue += int(fixed and not baseline_vote and candidate_vote)
             pivotal_loss += int(regressed and baseline_vote and not candidate_vote)
+            plurality_opportunity += int(bool(row.get("plurality_pivotal_fix_opportunity", False)))
+            plurality_fix += int(bool(row.get("plurality_pivotal_fix", False)))
+            plurality_loss += int(bool(row.get("plurality_pivotal_loss", False)))
             peer_wrong_count = int(row.get("peer_wrong_count", 0) or 0)
             shared_weight = float(peer_wrong_count) / max(1, len(self.agents) - 1)
             shared_rescue += shared_weight * int(fixed)
@@ -667,7 +680,7 @@ class TraceBeamSearchSystem:
         shared_creation_score = float(shared_creation) / denominator if count else 0.0
         same_wrong_break_rate = float(same_wrong_break) / denominator if count else 0.0
         same_wrong_create_rate = float(same_wrong_create) / denominator if count else 0.0
-        net_gain = (
+        legacy_net_gain = (
             4.0 * pivotal_rescue_rate
             - 4.0 * pivotal_loss_rate
             + shared_rescue_score
@@ -675,6 +688,18 @@ class TraceBeamSearchSystem:
             + 0.5 * same_wrong_break_rate
             - 0.5 * same_wrong_create_rate
         )
+        plurality_opportunity_rate = float(plurality_opportunity) / denominator if count else 0.0
+        plurality_fix_rate = float(plurality_fix) / denominator if count else 0.0
+        plurality_loss_rate = float(plurality_loss) / denominator if count else 0.0
+        plurality_net_gain = (
+            4.0 * plurality_fix_rate
+            - 4.0 * plurality_loss_rate
+            + shared_rescue_score
+            - 1.5 * shared_creation_score
+            + 0.5 * same_wrong_break_rate
+            - 0.5 * same_wrong_create_rate
+        )
+        active_net_gain = plurality_net_gain if bool(getattr(self.cfg, "competence_depth_enabled", False)) else legacy_net_gain
         return {
             "individual_fix_count": int(individual_fix),
             "individual_regression_count": int(individual_regression),
@@ -688,7 +713,19 @@ class TraceBeamSearchSystem:
             "same_wrong_cluster_create_count": int(same_wrong_create),
             "same_wrong_cluster_break_rate": same_wrong_break_rate,
             "same_wrong_cluster_create_rate": same_wrong_create_rate,
-            "boundary_shared_error_net_gain": float(net_gain),
+            "plurality_pivotal_fix_opportunity_count": int(plurality_opportunity),
+            "plurality_pivotal_fix_opportunity_rate": plurality_opportunity_rate,
+            "plurality_pivotal_fix_count": int(plurality_fix),
+            "plurality_pivotal_fix_rate": plurality_fix_rate,
+            "plurality_pivotal_loss_count": int(plurality_loss),
+            "plurality_pivotal_loss_rate": plurality_loss_rate,
+            "plurality_boundary_shared_error_net_gain": float(plurality_net_gain),
+            "boundary_shared_error_net_gain": float(active_net_gain),
+            "pivotal_definition": (
+                "actual_plurality_counterfactual"
+                if bool(getattr(self.cfg, "competence_depth_enabled", False))
+                else "legacy_vote_boundary"
+            ),
         }
 
     def _candidate_residual_metrics(self, rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
@@ -1680,7 +1717,8 @@ class TraceBeamSearchSystem:
         return prompts
 
     def _base_log_fields(self) -> Dict[str, Any]:
-        return {
+        requested_aggregation_mode = str(getattr(self.cfg, "aggregation_mode", "majority") or "majority")
+        fields = {
             "execution_session_id": self._current_execution_session_id(),
             "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
             "benchmark": getattr(self.cfg, "benchmark", ""),
@@ -1694,7 +1732,13 @@ class TraceBeamSearchSystem:
             "reward_mode": self.cfg.reward_mode,
             "diversity_metric": self.cfg.diversity_metric,
             "embedding_model": self.cfg.embedding_model,
+            "aggregation_mode": requested_aggregation_mode,
+            "requested_aggregation_mode": requested_aggregation_mode,
+            "effective_aggregation_mode": canonical_aggregation_mode(requested_aggregation_mode),
         }
+        if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+            fields["plurality_boundary_version"] = PLURALITY_BOUNDARY_VERSION
+        return fields
 
     def _read_previous_execution_session_id(self) -> str:
         path = os.path.join(self.cfg.out_dir, "run_meta.json")
@@ -2952,7 +2996,7 @@ class TraceBeamSearchSystem:
         }
 
     def _vote_with_diagnostics(self, answers: List[str], question_hash: str = "") -> Dict[str, Any]:
-        return majority_vote_with_diagnostics(
+        return plurality_vote_with_diagnostics(
             answers,
             tie_break_method=str(getattr(self.cfg, "vote_tie_break", "random")),
             seed=int(getattr(self.cfg, "seed", 0) or 0),
@@ -3089,16 +3133,31 @@ class TraceBeamSearchSystem:
         prompts: Optional[List[str]] = None,
         question_hash: str = "",
     ) -> Dict[str, Any]:
-        majority_vote = self._vote_with_diagnostics(answers, question_hash=question_hash)
-        majority_vote_answer = str(majority_vote.get("vote_answer", ""))
+        plurality_vote = self._vote_with_diagnostics(answers, question_hash=question_hash)
+        plurality_vote_answer = str(plurality_vote.get("vote_answer", ""))
         individual_correct = [int(self.task_spec.match_answer(a, gold)) for a in answers]
-        majority_vote_correct = int(self.task_spec.match_answer(majority_vote_answer, gold))
+        plurality_vote_correct = int(self.task_spec.match_answer(plurality_vote_answer, gold))
         gold_vote_diagnostics = compute_gold_vote_diagnostics(
             answers,
             gold,
             self.task_spec.match_answer,
             len(self.agents),
         )
+        plurality_margin_votes = int(
+            gold_vote_diagnostics.get("gold_vote_count", 0)
+            - gold_vote_diagnostics.get("largest_wrong_vote_count", 0)
+        )
+        gold_vote_diagnostics.update({
+            "plurality_margin_votes": plurality_margin_votes,
+            "normalized_plurality_margin": float(
+                gold_vote_diagnostics.get("normalized_vote_margin", -1.0)
+            ),
+            "strict_plurality_win": bool(plurality_margin_votes > 0),
+            "plurality_gold_leading": bool(plurality_margin_votes > 0),
+            "plurality_gold_top_tied": bool(plurality_margin_votes == 0 and bool(answers)),
+            "plurality_gold_one_vote_behind": bool(plurality_margin_votes == -1),
+            "plurality_gold_far_behind": bool(plurality_margin_votes <= -2),
+        })
         if self._is_accuracy_only_mode():
             n = len(traces)
             active_prompts = prompts or self._active_prompt_list()
@@ -3136,24 +3195,44 @@ class TraceBeamSearchSystem:
         )
         weighted_vote_answer = str(weighted_vote.get("weighted_vote_answer", ""))
         weighted_vote_correct = int(self.task_spec.match_answer(weighted_vote_answer, gold))
-        aggregation_mode = str(getattr(self.cfg, "aggregation_mode", "majority") or "majority").lower()
+        requested_aggregation_mode = str(getattr(self.cfg, "aggregation_mode", "majority") or "majority").lower()
+        effective_aggregation_mode = canonical_aggregation_mode(requested_aggregation_mode)
         aggregation_fallback = ""
-        if aggregation_mode == "weighted_vote":
+        if effective_aggregation_mode == "weighted_vote":
             vote_answer = weighted_vote_answer
             vote_correct = weighted_vote_correct
             vote_tie = bool(weighted_vote.get("weighted_vote_tie", False))
             tie_candidates = list(weighted_vote.get("weighted_tie_candidates", []))
             tie_break_method = str(weighted_vote.get("weighted_tie_break_method", ""))
         else:
-            if aggregation_mode == "verifier_select":
+            if effective_aggregation_mode == "verifier_select":
                 aggregation_fallback = "verifier_select_not_implemented_fallback_majority"
-            aggregation_mode = "majority" if aggregation_mode not in {"weighted_vote", "verifier_select"} else aggregation_mode
-            vote_answer = majority_vote_answer
-            vote_correct = majority_vote_correct
-            vote_tie = bool(majority_vote.get("vote_tie", False))
-            tie_candidates = list(majority_vote.get("tie_candidates", []))
-            tie_break_method = str(majority_vote.get("tie_break_method", ""))
+                effective_aggregation_mode = "plurality"
+            elif effective_aggregation_mode != "plurality":
+                effective_aggregation_mode = "plurality"
+            vote_answer = plurality_vote_answer
+            vote_correct = plurality_vote_correct
+            vote_tie = bool(plurality_vote.get("vote_tie", False))
+            tie_candidates = list(plurality_vote.get("tie_candidates", []))
+            tie_break_method = str(plurality_vote.get("tie_break_method", ""))
         any_correct = int(any(individual_correct))
+        pivotal_fix_opportunities = []
+        pivotal_holds = []
+        for agent_id, correct in enumerate(individual_correct):
+            opportunity = False
+            hold = False
+            if not correct and not plurality_vote_correct:
+                counterfactual_answers = list(answers)
+                counterfactual_answers[agent_id] = gold
+                counterfactual = self._vote_with_diagnostics(counterfactual_answers, question_hash=question_hash)
+                opportunity = bool(self.task_spec.match_answer(str(counterfactual.get("vote_answer", "")), gold))
+            if correct and plurality_vote_correct:
+                without_target = list(answers)
+                without_target[agent_id] = ""
+                counterfactual = self._vote_with_diagnostics(without_target, question_hash=question_hash)
+                hold = not bool(self.task_spec.match_answer(str(counterfactual.get("vote_answer", "")), gold))
+            pivotal_fix_opportunities.append(int(opportunity))
+            pivotal_holds.append(int(hold))
         useful_diversity = 0.0 if self._is_accuracy_only_mode() else self._useful_trace_diversity(traces, individual_correct, [int(x) for x in invalids])
         return {
             "vote_answer": vote_answer,
@@ -3161,16 +3240,31 @@ class TraceBeamSearchSystem:
             "individual_correct": individual_correct,
             "vote_tie": vote_tie,
             "tie_candidates": tie_candidates,
-            "vote_counts": dict(majority_vote.get("vote_counts", {})),
+            "vote_counts": dict(plurality_vote.get("vote_counts", {})),
             "tie_break_method": tie_break_method,
-            "aggregation_mode": aggregation_mode,
+            "aggregation_mode": requested_aggregation_mode,
+            "requested_aggregation_mode": requested_aggregation_mode,
+            "effective_aggregation_mode": effective_aggregation_mode,
             "aggregation_fallback": aggregation_fallback,
-            "majority_vote_answer": majority_vote_answer,
-            "majority_vote_correct": majority_vote_correct,
-            "majority_vote_tie": bool(majority_vote.get("vote_tie", False)),
-            "majority_tie_candidates": list(majority_vote.get("tie_candidates", [])),
-            "majority_vote_counts": dict(majority_vote.get("vote_counts", {})),
-            "majority_tie_break_method": str(majority_vote.get("tie_break_method", "")),
+            "plurality_boundary_version": PLURALITY_BOUNDARY_VERSION,
+            "plurality_vote_answer": plurality_vote_answer,
+            "plurality_vote_correct": plurality_vote_correct,
+            "plurality_vote_tie": bool(plurality_vote.get("vote_tie", False)),
+            "plurality_tie_candidates": list(plurality_vote.get("tie_candidates", [])),
+            "plurality_vote_counts": dict(plurality_vote.get("vote_counts", {})),
+            "plurality_tie_break_method": str(plurality_vote.get("tie_break_method", "")),
+            "plurality_tie_break_question_hash": str(question_hash),
+            "plurality_pivotal_fix_opportunity_per_agent": pivotal_fix_opportunities,
+            "plurality_pivotal_hold_per_agent": pivotal_holds,
+            "plurality_pivotal_fix_opportunity_rate": float(np.mean(pivotal_fix_opportunities)) if pivotal_fix_opportunities else 0.0,
+            "plurality_pivotal_hold_rate": float(np.mean(pivotal_holds)) if pivotal_holds else 0.0,
+            # Historical names remain diagnostic aliases for old readers.
+            "majority_vote_answer": plurality_vote_answer,
+            "majority_vote_correct": plurality_vote_correct,
+            "majority_vote_tie": bool(plurality_vote.get("vote_tie", False)),
+            "majority_tie_candidates": list(plurality_vote.get("tie_candidates", [])),
+            "majority_vote_counts": dict(plurality_vote.get("vote_counts", {})),
+            "majority_tie_break_method": str(plurality_vote.get("tie_break_method", "")),
             "weighted_vote_answer": weighted_vote_answer,
             "weighted_vote_correct": weighted_vote_correct,
             "weighted_vote_tie": bool(weighted_vote.get("weighted_vote_tie", False)),
@@ -3567,9 +3661,29 @@ class TraceBeamSearchSystem:
         gaps = diagnosis.get("capability_coverage_gap", {})
         scored: List[Tuple[float, int]] = []
         for agent_id in ids:
+            plurality_boundary = bool(getattr(self.cfg, "competence_depth_enabled", False))
+            pivotal_fix_rate = rate(
+                "per_agent_plurality_pivotal_fix_rate"
+                if plurality_boundary and diagnosis.get("per_agent_plurality_pivotal_fix_rate")
+                else "per_agent_pivotal_fix_rate",
+                agent_id,
+            )
+            pivotal_hold_rate = rate(
+                "per_agent_plurality_pivotal_hold_rate"
+                if plurality_boundary and diagnosis.get("per_agent_plurality_pivotal_hold_rate")
+                else "per_agent_pivotal_hold_rate",
+                agent_id,
+            )
+            boundary_error_rate = rate(
+                "per_agent_plurality_boundary_error_rate"
+                if plurality_boundary and diagnosis.get("per_agent_plurality_boundary_error_rate")
+                else "per_agent_near_boundary_error_rate",
+                agent_id,
+            )
             base_score = (
-                4.0 * rate("per_agent_pivotal_fix_rate", agent_id)
-                + 2.0 * rate("per_agent_near_boundary_error_rate", agent_id)
+                4.0 * pivotal_fix_rate
+                + 2.0 * boundary_error_rate
+                + 0.5 * pivotal_hold_rate
                 + 1.5 * rate("per_agent_dominant_wrong_rate", agent_id)
                 + 1.0 * rate("per_agent_shared_error_rate", agent_id)
                 + 0.5 * rate("per_agent_general_error_rate", agent_id)
@@ -3879,7 +3993,16 @@ class TraceBeamSearchSystem:
                 if agent_id >= len(individual):
                     continue
                 if individual[agent_id]:
-                    if gold_count - 1 <= largest_wrong:
+                    if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+                        without_target = list(answers)
+                        if agent_id < len(without_target):
+                            without_target[agent_id] = ""
+                        without_vote = self._vote_with_diagnostics(without_target, question_hash=question_hash)
+                        if vote_correct and not self.task_spec.match_answer(
+                            str(without_vote.get("vote_answer", "")), gold
+                        ):
+                            pivotal_hold_counts[agent_id] += 1
+                    elif gold_count - 1 <= largest_wrong:
                         pivotal_hold_counts[agent_id] += 1
                     continue
                 peer_wrong_count = sum(
@@ -3887,7 +4010,21 @@ class TraceBeamSearchSystem:
                     for peer_id in range(len(individual))
                     if peer_id != agent_id
                 )
-                if abs(gold_count - largest_wrong) <= 1:
+                plurality_pivotal = False
+                if bool(getattr(self.cfg, "competence_depth_enabled", False)):
+                    counterfactual_answers = list(answers)
+                    if agent_id < len(counterfactual_answers):
+                        counterfactual_answers[agent_id] = gold
+                    counterfactual_vote = self._vote_with_diagnostics(
+                        counterfactual_answers, question_hash=question_hash
+                    )
+                    plurality_pivotal = bool(
+                        not vote_correct
+                        and self.task_spec.match_answer(str(counterfactual_vote.get("vote_answer", "")), gold)
+                    )
+                    if plurality_pivotal:
+                        near_boundary_error_counts[agent_id] += 1
+                elif abs(gold_count - largest_wrong) <= 1:
                     near_boundary_error_counts[agent_id] += 1
                 if peer_wrong_count > 0:
                     shared_error_counts[agent_id] += 1
@@ -3898,7 +4035,11 @@ class TraceBeamSearchSystem:
                     if remaining_wrong[answer] <= 0:
                         remaining_wrong.pop(answer, None)
                 counterfactual_largest_wrong = max(remaining_wrong.values(), default=0)
-                if (not vote_correct or vote_tie) and gold_count + 1 > counterfactual_largest_wrong:
+                if (
+                    plurality_pivotal
+                    if bool(getattr(self.cfg, "competence_depth_enabled", False))
+                    else ((not vote_correct or vote_tie) and gold_count + 1 > counterfactual_largest_wrong)
+                ):
                     pivotal_fix_counts[agent_id] += 1
                 if answer and gold_count > 0 and wrong_counts.get(answer, 0) == largest_wrong and abs(gold_count - largest_wrong) <= 1:
                     dominant_wrong_counts[agent_id] += 1
@@ -3965,7 +4106,7 @@ class TraceBeamSearchSystem:
             )
             for family in CAPABILITY_RESIDUAL_FAMILY_NAMES
         }
-        majority_threshold = (num_agents // 2) + 1
+        majority_threshold = 2 if bool(getattr(self.cfg, "competence_depth_enabled", False)) else (num_agents // 2) + 1
         coverage_gap = {
             family: max(0, majority_threshold - depth)
             for family, depth in coverage_depth.items()
@@ -3999,6 +4140,8 @@ class TraceBeamSearchSystem:
             "per_agent_pivotal_fix_count": pivotal_fix_counts,
             "per_agent_dominant_wrong_redundancy_count": dominant_wrong_counts,
             "per_agent_pivotal_fix_rate": [pivotal_fix_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_plurality_pivotal_fix_rate": [pivotal_fix_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_plurality_boundary_error_rate": [near_boundary_error_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_near_boundary_error_rate": [near_boundary_error_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_shared_error_rate": [shared_error_counts[i] / seen[i] for i in range(num_agents)],
             "per_agent_dominant_wrong_rate": [dominant_wrong_counts[i] / seen[i] for i in range(num_agents)],
@@ -4007,6 +4150,8 @@ class TraceBeamSearchSystem:
                 for i in range(num_agents)
             ],
             "per_agent_pivotal_hold_rate": [pivotal_hold_counts[i] / seen[i] for i in range(num_agents)],
+            "per_agent_plurality_pivotal_hold_rate": [pivotal_hold_counts[i] / seen[i] for i in range(num_agents)],
+            "pivotal_definition": "actual_plurality_counterfactual" if bool(getattr(self.cfg, "competence_depth_enabled", False)) else "legacy_vote_boundary",
             "per_agent_capability_pressure": capability_pressure,
             "capability_coverage_depth": coverage_depth,
             "capability_coverage_gap": coverage_gap,
@@ -6182,7 +6327,10 @@ class TraceBeamSearchSystem:
         depth2_component = float(metrics.get("depth2_net_delta", 0.0) or 0.0) if bool(
             getattr(self.cfg, "competence_depth2_aux_enabled", False)
         ) else 0.0
-        boundary_component = float(metrics.get("boundary_shared_error_net_gain", 0.0) or 0.0)
+        boundary_component = float(metrics.get(
+            "plurality_boundary_shared_error_net_gain",
+            metrics.get("boundary_shared_error_net_gain", 0.0),
+        ) or 0.0)
         return {
             "reward": float(reward),
             "reward_total": float(reward),
@@ -6487,6 +6635,9 @@ class TraceBeamSearchSystem:
                 counterfactual_vote = self._vote_with_diagnostics(
                     counterfactual_answers, question_hash=sample_hash
                 )
+                counterfactual_gold_vote_correct = bool(
+                    self.task_spec.match_answer(str(counterfactual_vote.get("vote_answer", "")), gold)
+                )
                 counterfactual_gold_diagnostics = compute_gold_vote_diagnostics(
                     counterfactual_answers,
                     gold,
@@ -6520,8 +6671,16 @@ class TraceBeamSearchSystem:
                         "question_hash": sample_hash,
                         "baseline_vote_correct": baseline_vote_correct,
                         "candidate_vote_correct": candidate_vote_correct,
+                        "baseline_plurality_vote_correct": baseline_vote_correct,
+                        "candidate_plurality_vote_correct": candidate_vote_correct,
                         "baseline_vote_tie": bool(baseline_rollout.get("vote_tie", False)),
                         "candidate_vote_tie": bool(rollout.get("vote_tie", False)),
+                        "baseline_plurality_vote_tie": bool(baseline_rollout.get("plurality_vote_tie", False)),
+                        "candidate_plurality_vote_tie": bool(rollout.get("plurality_vote_tie", False)),
+                        "baseline_plurality_tie_candidates": list(baseline_rollout.get("plurality_tie_candidates", [])),
+                        "candidate_plurality_tie_candidates": list(rollout.get("plurality_tie_candidates", [])),
+                        "plurality_tie_break_method": str(baseline_rollout.get("plurality_tie_break_method", "")),
+                        "plurality_tie_break_question_hash": sample_hash,
                         "baseline_any_correct": baseline_any_correct,
                         "candidate_any_correct": candidate_any_correct,
                         "baseline_individual_correct": [bool(value) for value in baseline_rollout.get("individual_correct", [])],
@@ -6532,9 +6691,22 @@ class TraceBeamSearchSystem:
                         "peer_wrong_count": int(peer_wrong_count),
                         "baseline_vote_margin": float(baseline_rollout.get("normalized_vote_margin", -1.0)),
                         "candidate_vote_margin": float(rollout.get("normalized_vote_margin", -1.0)),
-                        "counterfactual_gold_vote_correct": bool(
-                            self.task_spec.match_answer(str(counterfactual_vote.get("vote_answer", "")), gold)
+                        "baseline_gold_vote_count": int(baseline_rollout.get("gold_vote_count", 0) or 0),
+                        "candidate_gold_vote_count": int(rollout.get("gold_vote_count", 0) or 0),
+                        "baseline_largest_wrong_vote_count": int(baseline_rollout.get("largest_wrong_vote_count", 0) or 0),
+                        "candidate_largest_wrong_vote_count": int(rollout.get("largest_wrong_vote_count", 0) or 0),
+                        "baseline_plurality_margin_votes": int(baseline_rollout.get("plurality_margin_votes", 0) or 0),
+                        "candidate_plurality_margin_votes": int(rollout.get("plurality_margin_votes", 0) or 0),
+                        "baseline_normalized_plurality_margin": float(baseline_rollout.get("normalized_plurality_margin", -1.0)),
+                        "candidate_normalized_plurality_margin": float(rollout.get("normalized_plurality_margin", -1.0)),
+                        "counterfactual_gold_vote_correct": counterfactual_gold_vote_correct,
+                        "plurality_pivotal_fix_opportunity": bool(
+                            not baseline_vote_correct and counterfactual_gold_vote_correct
                         ),
+                        "plurality_pivotal_fix": bool(
+                            not baseline_vote_correct and counterfactual_gold_vote_correct and candidate_vote_correct
+                        ),
+                        "plurality_pivotal_loss": bool(baseline_vote_correct and not candidate_vote_correct),
                         "counterfactual_gold_margin": float(counterfactual_gold_diagnostics.get("normalized_vote_margin", -1.0)),
                         "baseline_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(baseline_answers, agent_id),
                         "candidate_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(answers, agent_id),
@@ -6617,11 +6789,6 @@ class TraceBeamSearchSystem:
             )
             if abs(float(coverage_depth_transitions.get("depth1_net_delta", 0.0)) - float(coverage_delta)) > PARETO_EPSILON:
                 raise RuntimeError("Coverage depth-1 delta does not match oracle delta")
-            no_ties = all(not bool(row.get("baseline_vote_tie")) and not bool(row.get("candidate_vote_tie")) for row in rows)
-            if len(self.agents) == 5 and no_ties and abs(
-                float(coverage_depth_transitions.get("depth3_net_delta", 0.0)) - float(vote_delta)
-            ) > PARETO_EPSILON:
-                raise RuntimeError("Coverage depth-3 delta does not match five-agent majority vote delta")
             rescue_rate = self._clip01(float(np.mean([float(r.get("rescue", 0.0)) for r in rows])) if rows else 0.0)
             useful_diversity = self._clip01(float(np.mean([float(r.get("target_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
             rescue_useful_diversity = self._clip01(float(np.mean([float(r.get("rescue_useful_diversity", 0.0)) for r in rows])) if rows else 0.0)
@@ -6661,8 +6828,32 @@ class TraceBeamSearchSystem:
                     "candidate_oracle_acc": candidate_oracle_acc,
                     "coverage_delta": float(coverage_delta),
                     **vote_transitions,
+                    "plurality_vote_gain_count": int(vote_transitions["vote_gain_count"]),
+                    "plurality_vote_gain_rate": float(vote_transitions["vote_gain_rate"]),
+                    "plurality_vote_loss_count": int(vote_transitions["vote_loss_count"]),
+                    "plurality_vote_loss_rate": float(vote_transitions["vote_loss_rate"]),
+                    "plurality_vote_net_count": int(vote_transitions["net_vote_count"]),
+                    "plurality_vote_net_delta": float(vote_transitions["net_vote_delta"]),
                     **coverage_transitions,
                     **coverage_depth_transitions,
+                    "baseline_gold_vote_count": float(np.mean([float(row.get("baseline_gold_vote_count", 0.0)) for row in rows])) if rows else 0.0,
+                    "candidate_gold_vote_count": float(np.mean([float(row.get("candidate_gold_vote_count", 0.0)) for row in rows])) if rows else 0.0,
+                    "baseline_largest_wrong_vote_count": float(np.mean([float(row.get("baseline_largest_wrong_vote_count", 0.0)) for row in rows])) if rows else 0.0,
+                    "candidate_largest_wrong_vote_count": float(np.mean([float(row.get("candidate_largest_wrong_vote_count", 0.0)) for row in rows])) if rows else 0.0,
+                    "baseline_plurality_margin_votes": float(np.mean([float(row.get("baseline_plurality_margin_votes", 0.0)) for row in rows])) if rows else 0.0,
+                    "candidate_plurality_margin_votes": float(np.mean([float(row.get("candidate_plurality_margin_votes", 0.0)) for row in rows])) if rows else 0.0,
+                    "plurality_margin_vote_delta": float(np.mean([
+                        float(row.get("candidate_plurality_margin_votes", 0.0))
+                        - float(row.get("baseline_plurality_margin_votes", 0.0)) for row in rows
+                    ])) if rows else 0.0,
+                    "baseline_normalized_plurality_margin": float(np.mean([float(row.get("baseline_normalized_plurality_margin", -1.0)) for row in rows])) if rows else -1.0,
+                    "candidate_normalized_plurality_margin": float(np.mean([float(row.get("candidate_normalized_plurality_margin", -1.0)) for row in rows])) if rows else -1.0,
+                    "normalized_plurality_margin_delta": float(np.mean([
+                        float(row.get("candidate_normalized_plurality_margin", -1.0))
+                        - float(row.get("baseline_normalized_plurality_margin", -1.0)) for row in rows
+                    ])) if rows else 0.0,
+                    "baseline_plurality_vote_tie": float(np.mean([int(bool(row.get("baseline_plurality_vote_tie", False))) for row in rows])) if rows else 0.0,
+                    "candidate_plurality_vote_tie": float(np.mean([int(bool(row.get("candidate_plurality_vote_tie", False))) for row in rows])) if rows else 0.0,
                     "baseline_mean_vote_margin": baseline_mean_vote_margin,
                     "candidate_mean_vote_margin": candidate_mean_vote_margin,
                     "vote_margin_delta": candidate_mean_vote_margin - baseline_mean_vote_margin,
@@ -7364,6 +7555,32 @@ class TraceBeamSearchSystem:
                     "vote_loss_rate": float(metrics.get("vote_loss_rate", 0.0)),
                     "net_vote_count": int(metrics.get("net_vote_count", 0)),
                     "net_vote_delta": float(metrics.get("net_vote_delta", metrics.get("vote_delta", 0.0))),
+                    "plurality_vote_gain_count": int(metrics.get("plurality_vote_gain_count", metrics.get("vote_gain_count", 0))),
+                    "plurality_vote_gain_rate": float(metrics.get("plurality_vote_gain_rate", metrics.get("vote_gain_rate", 0.0))),
+                    "plurality_vote_loss_count": int(metrics.get("plurality_vote_loss_count", metrics.get("vote_loss_count", 0))),
+                    "plurality_vote_loss_rate": float(metrics.get("plurality_vote_loss_rate", metrics.get("vote_loss_rate", 0.0))),
+                    "plurality_vote_net_count": int(metrics.get("plurality_vote_net_count", metrics.get("net_vote_count", 0))),
+                    "plurality_vote_net_delta": float(metrics.get("plurality_vote_net_delta", metrics.get("net_vote_delta", 0.0))),
+                    "plurality_pivotal_fix_opportunity_count": int(metrics.get("plurality_pivotal_fix_opportunity_count", 0)),
+                    "plurality_pivotal_fix_opportunity_rate": float(metrics.get("plurality_pivotal_fix_opportunity_rate", 0.0)),
+                    "plurality_pivotal_fix_count": int(metrics.get("plurality_pivotal_fix_count", 0)),
+                    "plurality_pivotal_fix_rate": float(metrics.get("plurality_pivotal_fix_rate", 0.0)),
+                    "plurality_pivotal_loss_count": int(metrics.get("plurality_pivotal_loss_count", 0)),
+                    "plurality_pivotal_loss_rate": float(metrics.get("plurality_pivotal_loss_rate", 0.0)),
+                    "plurality_boundary_shared_error_net_gain": float(metrics.get("plurality_boundary_shared_error_net_gain", 0.0)),
+                    "pivotal_definition": str(metrics.get("pivotal_definition", "")),
+                    "baseline_gold_vote_count": float(metrics.get("baseline_gold_vote_count", 0.0)),
+                    "candidate_gold_vote_count": float(metrics.get("candidate_gold_vote_count", 0.0)),
+                    "baseline_largest_wrong_vote_count": float(metrics.get("baseline_largest_wrong_vote_count", 0.0)),
+                    "candidate_largest_wrong_vote_count": float(metrics.get("candidate_largest_wrong_vote_count", 0.0)),
+                    "baseline_plurality_margin_votes": float(metrics.get("baseline_plurality_margin_votes", 0.0)),
+                    "candidate_plurality_margin_votes": float(metrics.get("candidate_plurality_margin_votes", 0.0)),
+                    "plurality_margin_vote_delta": float(metrics.get("plurality_margin_vote_delta", 0.0)),
+                    "baseline_normalized_plurality_margin": float(metrics.get("baseline_normalized_plurality_margin", -1.0)),
+                    "candidate_normalized_plurality_margin": float(metrics.get("candidate_normalized_plurality_margin", -1.0)),
+                    "normalized_plurality_margin_delta": float(metrics.get("normalized_plurality_margin_delta", 0.0)),
+                    "baseline_plurality_vote_tie": float(metrics.get("baseline_plurality_vote_tie", 0.0)),
+                    "candidate_plurality_vote_tie": float(metrics.get("candidate_plurality_vote_tie", 0.0)),
                     "baseline_mean_vote_margin": float(metrics.get("baseline_mean_vote_margin", -1.0)),
                     "candidate_mean_vote_margin": float(metrics.get("candidate_mean_vote_margin", -1.0)),
                     "vote_margin_delta": float(metrics.get("vote_margin_delta", 0.0)),
@@ -8041,11 +8258,15 @@ class TraceBeamSearchSystem:
             "step": step_id,
             "vote_correct": int(metrics.get("vote_correct", 0)),
             "vote_answer": metrics.get("vote_answer", ""),
+            "plurality_vote_correct": int(metrics.get("plurality_vote_correct", metrics.get("vote_correct", 0))),
+            "plurality_vote_answer": metrics.get("plurality_vote_answer", metrics.get("vote_answer", "")),
             "majority_vote_correct": int(metrics.get("majority_vote_correct", metrics.get("vote_correct", 0))),
             "majority_vote_answer": metrics.get("majority_vote_answer", metrics.get("vote_answer", "")),
             "weighted_vote_correct": int(metrics.get("weighted_vote_correct", 0)),
             "weighted_vote_answer": metrics.get("weighted_vote_answer", ""),
             "aggregation_mode": metrics.get("aggregation_mode", "majority"),
+            "requested_aggregation_mode": metrics.get("requested_aggregation_mode", metrics.get("aggregation_mode", "majority")),
+            "effective_aggregation_mode": metrics.get("effective_aggregation_mode", "plurality"),
             "any_correct": int(metrics.get("any_correct", 0)),
             "aggregation_gap_available": int(metrics.get("any_correct", 0)) - int(metrics.get("vote_correct", 0)),
             "useful_diversity": float(metrics.get("useful_diversity", 0.0)),
@@ -8120,6 +8341,10 @@ class TraceBeamSearchSystem:
             vals = [int(row[agent_id]) for row in individual_matrix if agent_id < len(row)]
             per_agent_acc.append(float(np.mean(vals)) if vals else 0.0)
         vote_acc = float(np.mean([r.get("vote_correct", 0) for r in rows])) if rows else 0.0
+        plurality_vote_acc = float(np.mean([
+            r.get("plurality_vote_correct", r.get("majority_vote_correct", r.get("vote_correct", 0)))
+            for r in rows
+        ])) if rows else 0.0
         oracle_acc = float(np.mean([1 if any(int(x) for x in r.get("individual_correct", [])) else 0 for r in rows])) if rows else 0.0
         rescue_available_rate = float(
             np.mean([
@@ -8156,12 +8381,20 @@ class TraceBeamSearchSystem:
         shared_rescue_values = []
         shared_creation_values = []
         correct_depths = []
+        plurality_opportunity_values: List[int] = []
+        plurality_hold_values: List[int] = []
         for row in rows:
             flags = [int(value) for value in row.get("individual_correct", [])]
             n = len(flags)
             correct_count = sum(flags)
             wrong_count = n - correct_count
             correct_depths.append(correct_count)
+            plurality_opportunity_values.extend(
+                int(value) for value in row.get("plurality_pivotal_fix_opportunity_per_agent", [])
+            )
+            plurality_hold_values.extend(
+                int(value) for value in row.get("plurality_pivotal_hold_per_agent", [])
+            )
             largest_wrong = int(row.get("largest_wrong_vote_count", 0) or 0)
             dominant_wrong_sizes.append(largest_wrong)
             vote_counts = row.get("vote_counts", {}) if isinstance(row.get("vote_counts", {}), dict) else {}
@@ -8220,6 +8453,7 @@ class TraceBeamSearchSystem:
             "size": len(rows),
             "num_test_samples": len(rows),
             "vote_acc": vote_acc,
+            "plurality_vote_acc": plurality_vote_acc,
             "majority_vote_acc": float(np.mean([r.get("majority_vote_correct", r.get("vote_correct", 0)) for r in rows])) if rows else 0.0,
             "weighted_vote_acc": float(np.mean([r.get("weighted_vote_correct", 0) for r in rows])) if rows else 0.0,
             "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
@@ -8238,13 +8472,24 @@ class TraceBeamSearchSystem:
             "max_minority_rescue_share": max(rescue_shares, default=0.0),
             "minority_rescue_hhi": sum(value * value for value in rescue_shares),
             "oracle_acc": oracle_acc,
-            "aggregation_gap": float(oracle_acc - vote_acc),
+            "aggregation_gap": float(oracle_acc - plurality_vote_acc),
+            "oracle_minus_plurality_vote": float(oracle_acc - plurality_vote_acc),
             "rescue_available_rate": rescue_available_rate,
             "correct_disagreement_rate": correct_disagreement_rate,
             "mean_useful_diversity": float(np.mean([r.get("useful_diversity", 0.0) for r in rows])) if rows else 0.0,
             "mean_vote_margin": float(np.mean([r.get("normalized_vote_margin", -1.0) for r in rows])) if rows else -1.0,
+            "mean_plurality_margin_votes": float(np.mean([r.get("plurality_margin_votes", 0.0) for r in rows])) if rows else 0.0,
+            "mean_normalized_plurality_margin": float(np.mean([r.get("normalized_plurality_margin", -1.0) for r in rows])) if rows else -1.0,
+            "strict_plurality_win_rate": float(np.mean([int(bool(r.get("strict_plurality_win", False))) for r in rows])) if rows else 0.0,
+            "plurality_top_tie_rate": float(np.mean([int(bool(r.get("plurality_gold_top_tied", False))) for r in rows])) if rows else 0.0,
+            "plurality_pivotal_fix_opportunity_rate": float(np.mean(plurality_opportunity_values)) if plurality_opportunity_values else 0.0,
+            "plurality_pivotal_fix_rate": float(np.mean(plurality_hold_values)) if plurality_hold_values else 0.0,
+            "plurality_pivotal_hold_rate": float(np.mean(plurality_hold_values)) if plurality_hold_values else 0.0,
             "mean_boundary_useful_diversity": float(np.mean([r.get("boundary_useful_diversity", 0.0) for r in rows])) if rows else 0.0,
             "aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
+            "requested_aggregation_mode": str(getattr(self.cfg, "aggregation_mode", "majority") or "majority"),
+            "effective_aggregation_mode": canonical_aggregation_mode(str(getattr(self.cfg, "aggregation_mode", "majority") or "majority")),
+            "plurality_boundary_version": PLURALITY_BOUNDARY_VERSION,
             "vote_tie_rate": float(np.mean([1 if r.get("vote_tie", False) else 0 for r in rows])) if rows else 0.0,
             "mean_embedding_diversity": float(np.mean([r.get("embedding_diversity", 0.0) for r in rows])) if rows else 0.0,
             "mean_embedding_overlap": float(np.mean([r.get("mean_embedding_overlap", 0.0) for r in rows])) if rows else 0.0,
@@ -8261,6 +8506,8 @@ class TraceBeamSearchSystem:
             **{f"correct_agent_count_{depth}": int(sum(value == depth for value in correct_depths)) for depth in range(6)},
             "c1_minus_c2": float(np.mean([int(value >= 1) - int(value >= 2) for value in correct_depths])) if correct_depths else 0.0,
             "c2_minus_c3": float(np.mean([int(value >= 2) - int(value >= 3) for value in correct_depths])) if correct_depths else 0.0,
+            "c2_minus_plurality_vote": float(np.mean([int(value >= 2) for value in correct_depths])) - plurality_vote_acc if correct_depths else 0.0,
+            "c3_minus_plurality_vote": float(np.mean([int(value >= 3) for value in correct_depths])) - plurality_vote_acc if correct_depths else 0.0,
             "specialization_strength_final": float(getattr(self, "specialization_strength", 0.0)),
             "mean_specialization_strength": float(np.mean(getattr(self, "specialization_strength_history", [0.0]))) if getattr(self, "specialization_strength_history", None) else 0.0,
             "prompt_overlength_rejection_count": int(getattr(self, "prompt_overlength_rejection_count", 0)),
@@ -8300,21 +8547,27 @@ class TraceBeamSearchSystem:
                 "question_hash": question_hash,
                 "question": q,
                 "vote_answer": metrics.get("vote_answer", ""),
+                "plurality_vote_answer": metrics.get("plurality_vote_answer", metrics.get("vote_answer", "")),
                 "majority_vote_answer": metrics.get("majority_vote_answer", metrics.get("vote_answer", "")),
                 "weighted_vote_answer": metrics.get("weighted_vote_answer", ""),
                 "gold": gold,
                 "agent_answers": list(answers),
                 "agent_correct": agent_correct,
                 "vote_correct": int(metrics.get("vote_correct", 0)),
+                "plurality_vote_correct": int(metrics.get("plurality_vote_correct", metrics.get("vote_correct", 0))),
                 "majority_vote_correct": int(metrics.get("majority_vote_correct", metrics.get("vote_correct", 0))),
                 "weighted_vote_correct": int(metrics.get("weighted_vote_correct", 0)),
                 "aggregation_mode": metrics.get("aggregation_mode", "majority"),
+                "requested_aggregation_mode": metrics.get("requested_aggregation_mode", metrics.get("aggregation_mode", "majority")),
+                "effective_aggregation_mode": metrics.get("effective_aggregation_mode", "plurality"),
                 "aggregation_fallback": metrics.get("aggregation_fallback", ""),
                 "vote_tie": bool(metrics.get("vote_tie", False)),
                 "tie_candidates": metrics.get("tie_candidates", []),
                 "vote_counts": metrics.get("vote_counts", {}),
                 "gold_vote_count": int(metrics.get("gold_vote_count", 0)),
                 "largest_wrong_vote_count": int(metrics.get("largest_wrong_vote_count", 0)),
+                "plurality_margin_votes": int(metrics.get("plurality_margin_votes", 0)),
+                "normalized_plurality_margin": float(metrics.get("normalized_plurality_margin", -1.0)),
                 "normalized_vote_margin": float(metrics.get("normalized_vote_margin", -1.0)),
                 "boundary_useful_diversity": float(metrics.get("boundary_useful_diversity", 0.0)),
                 "tie_break_method": metrics.get("tie_break_method", ""),
