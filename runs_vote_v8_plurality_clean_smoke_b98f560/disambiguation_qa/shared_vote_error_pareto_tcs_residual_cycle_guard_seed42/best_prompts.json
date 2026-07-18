@@ -1,0 +1,46 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote_first(vote,mean_individual,margin,-invalid,earlier_epoch)",
+  "best_validation_score": 0.12299999999999998,
+  "best_state_selection_mode": "vote_first",
+  "best_state_selection_key": [
+    0.35,
+    0.37,
+    -0.26,
+    0.0,
+    1
+  ],
+  "selected_vote_acc": 0.35,
+  "selected_oracle_acc": 0.5,
+  "selected_mean_individual_acc": 0.37,
+  "selected_mean_vote_margin": -0.26,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.0,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "09fbc5d3cbd3",
+      "prompt": "You are a careful reasoning solver. First, explicitly list each entity and all pronouns that could refer to it, noting constraints from the sentence. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "7f4f526d03de",
+      "prompt": "You are a careful reasoning solver. Before reasoning, explicitly resolve each entity-pronoun binding and qualifier negation; then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "410c6c64e088",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; first list all constraints: entities and bindings, qualifiers and negations, temporal relations, and logical conditions; make your decision procedure visible, verify each constraint is satisfied, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "d8063e3e4a3f",
+      "prompt": "You are a careful reasoning solver. First, explicitly list each named entity and all pronouns that could refer to it, noting constraints from the sentence. Then produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    }
+  ]
+}

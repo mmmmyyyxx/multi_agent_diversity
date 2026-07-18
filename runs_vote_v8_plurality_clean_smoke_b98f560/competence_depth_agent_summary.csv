@@ -1,0 +1,16 @@
+﻿accuracy,agent_id,minority_rescue_count,minority_rescue_share,setting_seed,task,unique_correct_count
+0.4,0,1,0.5,shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,disambiguation_qa,0
+0.35,1,0,0.0,shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,disambiguation_qa,0
+0.45,2,1,0.5,shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,disambiguation_qa,0
+0.4,3,0,0.0,shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,disambiguation_qa,0
+0.4,4,0,0.0,shared_vote_error_pareto_tcs_residual_cycle_guard_seed42,disambiguation_qa,0
+0.35,0,0,0.0,shared_vote_tcs_competence_depth2_progressive_residual_seed42,disambiguation_qa,0
+0.3,1,0,0.0,shared_vote_tcs_competence_depth2_progressive_residual_seed42,disambiguation_qa,0
+0.4,2,1,0.3333333333333333,shared_vote_tcs_competence_depth2_progressive_residual_seed42,disambiguation_qa,0
+0.4,3,1,0.3333333333333333,shared_vote_tcs_competence_depth2_progressive_residual_seed42,disambiguation_qa,1
+0.4,4,1,0.3333333333333333,shared_vote_tcs_competence_depth2_progressive_residual_seed42,disambiguation_qa,0
+0.45,0,2,0.6666666666666666,shared_vote_tcs_competence_depth2_seed42,disambiguation_qa,1
+0.3,1,0,0.0,shared_vote_tcs_competence_depth2_seed42,disambiguation_qa,0
+0.45,2,1,0.3333333333333333,shared_vote_tcs_competence_depth2_seed42,disambiguation_qa,0
+0.4,3,0,0.0,shared_vote_tcs_competence_depth2_seed42,disambiguation_qa,0
+0.35,4,0,0.0,shared_vote_tcs_competence_depth2_seed42,disambiguation_qa,0
