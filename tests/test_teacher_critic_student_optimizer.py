@@ -346,6 +346,52 @@ def test_stable_qd_teacher_context_includes_lineage_and_peer_anchors():
     assert lineage["committed_peer_mechanisms"] == [{"agent_id": 1, "mechanism": ["weighted_scoring"]}]
 
 
+def test_refill_rejection_summary_reaches_teacher_and_critic_context():
+    system = _system(Config(method_version="v8_stable_qd_lineage"))
+    feedback = {
+        "refill_round": 1,
+        "required_candidate_types_missing": ["safe_task_specific_repair", "safe_distinct_mechanism"],
+        "previous_candidate_failures": [
+            {
+                "candidate_type": "task_specific_repair",
+                "failure_stage": "candidate_evaluation",
+                "reasons": ["target_accuracy_catastrophic_loss", "depth1_loss"],
+            },
+            {
+                "candidate_type": "mechanism_alternative",
+                "failure_stage": "archive_assignment",
+                "reasons": ["near_duplicate_existing_niche"],
+            },
+        ],
+    }
+    captured = {}
+
+    async def teacher(agent_id, parent_prompt, teacher_context, requested_candidates):
+        captured["teacher"] = teacher_context
+        return {"socratic_guiding_question": "Which rejected mechanism should be repaired?"}
+
+    async def critic(agent_id, teacher_question, teacher_context):
+        captured["critic"] = teacher_context
+        return {"passed": True, "score": 1.0}
+
+    async def student(**kwargs):
+        return []
+
+    system.propose_teacher_question = teacher
+    system.critique_teacher_question = critic
+    system.generate_student_candidates = student
+    asyncio.run(system.propose_candidates_teacher_critic_student(
+        agent_id=0,
+        parent_prompt="parent",
+        overlap_diagnosis=_diagnosis(),
+        num_candidates=2,
+        generation_batches=_batch(),
+        refill_feedback=feedback,
+    ))
+    assert captured["teacher"]["candidate_refill_feedback"] == feedback
+    assert captured["critic"]["candidate_refill_feedback"] == feedback
+
+
 def test_one_shot_optimizer_backward_compatible():
     system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
 

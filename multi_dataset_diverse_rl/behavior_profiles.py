@@ -10,7 +10,7 @@ def build_team_behavior_profiles(answer_vectors: Sequence[Sequence[str]], correc
     for agent_id in range(agent_count):
         correctness = [int(value) for value in correctness_vectors[agent_id]]
         error = [1 - value for value in correctness]
-        rescue, unique, shared, wrong_clusters = [], [], [], []
+        rescue, unique, shared, same_wrong, wrong_clusters = [], [], [], [], []
         for index in range(size):
             own = correctness[index] if index < len(correctness) else 0
             other_correct = sum(
@@ -22,6 +22,16 @@ def build_team_behavior_profiles(answer_vectors: Sequence[Sequence[str]], correc
             unique.append(int(own == 1 and other_correct == 0))
             shared.append(int(own == 0 and other_wrong >= 2))
             answer = str(answer_vectors[agent_id][index]) if agent_id < len(answer_vectors) and index < len(answer_vectors[agent_id]) else ""
+            peer_wrong_answers = [
+                str(answer_vectors[peer][index])
+                for peer in range(agent_count)
+                if peer != agent_id
+                and index < len(correctness_vectors[peer])
+                and not int(correctness_vectors[peer][index])
+                and peer < len(answer_vectors)
+                and index < len(answer_vectors[peer])
+            ]
+            same_wrong.append(int(own == 0 and bool(answer) and answer in peer_wrong_answers))
             wrong_clusters.append(answer if own == 0 else "")
         profiles.append({
             "answer_vector": list(answer_vectors[agent_id]) if agent_id < len(answer_vectors) else [],
@@ -30,6 +40,7 @@ def build_team_behavior_profiles(answer_vectors: Sequence[Sequence[str]], correc
             "rescue_vector": rescue,
             "unique_correct_vector": unique,
             "shared_error_vector": shared,
+            "same_wrong_vector": same_wrong,
             "wrong_answer_cluster_vector": wrong_clusters,
             "accuracy": float(np.mean(correctness)) if correctness else 0.0,
         })

@@ -85,9 +85,10 @@ def candidate_quality_bucket(item: Dict[str, Any], config: Any) -> str:
     c1_loss = max(0, -int(metrics.get("depth1_net_delta", 0) or 0))
     c2_loss = max(0, -int(metrics.get("depth2_net_delta", 0) or 0))
     novelty = bool(metrics.get("mechanism_novel", False))
+    candidate_type = str(metrics.get("candidate_type", ""))
     hard_guard_failed = not bool(metrics.get("hard_guard_passed", True))
     invalid_guard_failed = not bool(metrics.get("invalid_guard_passed", True))
-    if rejection or hard_guard_failed or invalid_guard_failed or accuracy_loss > float(config.catastrophic_target_accuracy_loss_epsilon) or c1_loss >= int(config.candidate_c1_catastrophic_loss_questions) or c2_loss >= int(config.candidate_c2_catastrophic_loss_questions):
+    if rejection or hard_guard_failed or invalid_guard_failed or (candidate_type == "mechanism_alternative" and not novelty) or accuracy_loss > float(config.catastrophic_target_accuracy_loss_epsilon) or c1_loss >= int(config.candidate_c1_catastrophic_loss_questions) or c2_loss >= int(config.candidate_c2_catastrophic_loss_questions):
         return "catastrophic"
     if accuracy_loss == 0.0 and c1_loss == 0 and c2_loss == 0:
         return "safe"
@@ -170,6 +171,7 @@ def _archive_quality_key(item: Dict[str, Any]) -> tuple:
         float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
         float(metrics.get("depth1_net_delta", 0.0) or 0.0),
         float(metrics.get("depth2_net_delta", 0.0) or 0.0),
+        float(metrics.get("plurality_vote_gain_rate", metrics.get("vote_gain_rate", 0.0)) or 0.0),
         float(metrics.get("penalized_reward", item.get("reward", 0.0)) or 0.0),
         -int(item.get("generation", 0) or 0),
         str(item.get("prompt_hash", "")),

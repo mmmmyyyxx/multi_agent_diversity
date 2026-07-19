@@ -1,3 +1,4 @@
+import asyncio
 from types import SimpleNamespace
 
 from multi_dataset_diverse_rl.behavior_profiles import behavior_distance, build_team_behavior_profiles
@@ -44,6 +45,24 @@ def test_refill_requirements_trigger_then_stop_when_safe_types_arrive():
     assert result["safe_non_incumbent_count"] == 2
 
 
+def test_stable_qd_config_rejects_invalid_search_relationships():
+    invalid = (
+        {"candidate_refill_max_rounds": -1},
+        {"candidate_refill_candidates_per_round": 0},
+        {"candidate_refill_max_unique_candidates_per_parent": 1, "num_candidates_per_parent": 2},
+        {"joint_representative_beam_size": 7, "qd_archive_size_per_agent": 6},
+        {"probation_max_accuracy_loss": 0.06, "catastrophic_target_accuracy_loss_epsilon": 0.05},
+        {"probation_max_c1_loss_questions": 2, "candidate_c1_catastrophic_loss_questions": 2},
+        {"probe_stability_fold_count": 3},
+    )
+    for overrides in invalid:
+        try:
+            Config(**overrides)
+        except ValueError:
+            continue
+        raise AssertionError(f"invalid Stable-QD configuration was accepted: {overrides}")
+
+
 def test_probation_is_not_safe_but_retains_small_novel_regression():
     cfg = Config()
     item = candidate("probation", accuracy_delta=-0.02, c1_delta=-1, sequence=("weighted_scoring",))
@@ -62,6 +81,13 @@ def test_candidate_bucket_distinguishes_safe_probation_and_catastrophic():
 def test_candidate_type_cannot_self_report_mechanism_novelty_for_probation():
     cfg = Config()
     item = candidate("claimed-novel", "mechanism_alternative", accuracy_delta=-0.02, c1_delta=-1)
+    item["metrics"]["mechanism_novel"] = False
+    assert candidate_quality_bucket(item, cfg) == "catastrophic"
+
+
+def test_non_novel_mechanism_alternative_is_catastrophic_even_without_quality_loss():
+    cfg = Config()
+    item = candidate("duplicate-mechanism", "mechanism_alternative")
     item["metrics"]["mechanism_novel"] = False
     assert candidate_quality_bucket(item, cfg) == "catastrophic"
 
@@ -153,8 +179,49 @@ def test_long_archive_keeps_incumbent_and_diverse_niches_when_over_capacity():
 def test_team_dependent_rescue_changes_with_peers():
     focal = [1, 0, 1]
     team_a = build_team_behavior_profiles([['A', 'B', 'A'], ['B', 'B', 'A'], ['B', 'A', 'A']], [focal, [0, 0, 1], [0, 0, 1]])
-    team_b = build_team_behavior_profiles([['A', 'B', 'A'], ['A', 'B', 'A'], ['A', 'B', 'A']], [focal, [1, 1, 1], [1, 0, 1]])
+    team_b = build_team_behavior_profiles([['A', 'B', 'A'], ['A', 'B', 'A'], ['A', 'C', 'A']], [focal, [1, 1, 1], [1, 0, 1]])
     assert team_a[0]["rescue_vector"] != team_b[0]["rescue_vector"]
+    assert team_a[0]["same_wrong_vector"] != team_b[0]["same_wrong_vector"]
+
+
+def test_stable_probe_and_mechanism_caches_report_real_hits():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(method_version="v8_stable_qd_lineage", agents=1, aggregation_mode="plurality")
+    system.prompt_probe_cache = {}
+    system.mechanism_embedding_cache = {}
+    system.full_probe_cache_hit_count = 0
+    system.full_probe_missing_pair_evaluation_count = 0
+    system.mechanism_embedding_cache_hit_count = 0
+    system.mechanism_embedding_cache_miss_count = 0
+    system.solver_call_semaphore = asyncio.Semaphore(1)
+    system.task_spec = SimpleNamespace(
+        parse_gold=lambda answer, question=None: str(answer),
+        match_answer=lambda left, right: left == right,
+    )
+    calls = {"solver": 0, "embedding": 0}
+
+    async def solve_once(question, agent_id, prompt):
+        calls["solver"] += 1
+        return "trace", "A"
+
+    class Encoder:
+        def encode(self, rows, normalize_embeddings=True):
+            calls["embedding"] += 1
+            return [[1.0, 0.0] for _ in rows]
+
+    system.solve_once = solve_once
+    system._record_solver_rollout = lambda **kwargs: None
+    system._load_embedding_model = lambda: Encoder()
+    system._normalize_vector = lambda value: list(value)
+    probe = [{"question": "q", "answer": "A"}]
+    first = asyncio.run(system._evaluate_prompt_on_stable_probe(0, "prompt", probe, ["Hard elimination"]))
+    second = asyncio.run(system._evaluate_prompt_on_stable_probe(0, "prompt", probe, ["Hard elimination"]))
+    assert first["answer_vector"] == second["answer_vector"] == ["A"]
+    assert calls == {"solver": 1, "embedding": 1}
+    assert system.full_probe_missing_pair_evaluation_count == 1
+    assert system.full_probe_cache_hit_count == 1
+    assert system.mechanism_embedding_cache_miss_count == 1
+    assert system.mechanism_embedding_cache_hit_count == 1
 
 
 def test_two_fold_order_is_deterministic_and_gap_penalizes_stability():

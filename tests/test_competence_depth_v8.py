@@ -87,6 +87,7 @@ def test_v8_settings_are_opt_in_and_v7_fingerprint_payload_has_no_v8_fields():
     assert full.candidate_selection_mode == "competence_depth_pareto"
     assert full.competence_progressive_residual_enabled is True
     assert "competence_depth_enabled" not in checkpoint_behavior_config(Config())
+    assert "candidate_refill_version" not in checkpoint_behavior_config(Config())
 
 
 def test_weak_agent_selector_bonus_prefers_larger_competence_deficit(monkeypatch):
@@ -747,6 +748,10 @@ def test_stable_qd_checkpoint_preserves_archive_probe_and_lineage_state(tmp_path
     system = make_system(cfg)
     system.mechanism_embedding_cache = {"mechanism": [1.0, 0.0]}
     system.prompt_probe_cache = {"probe": {"answer": "A"}}
+    system.mechanism_embedding_cache_hit_count = 2
+    system.mechanism_embedding_cache_miss_count = 1
+    system.full_probe_cache_hit_count = 7
+    system.full_probe_missing_pair_evaluation_count = 3
     system.behavior_profile_by_prompt_hash = {"prompt": {"correctness_vector": [1]}}
     system.joint_team_selection_history = [{"epoch": 1, "combination_count": 243}]
     system.lineage_history = [{"epoch": 1, "agent_id": 0}]
@@ -768,6 +773,10 @@ def test_stable_qd_checkpoint_preserves_archive_probe_and_lineage_state(tmp_path
     restored = make_system(cfg)
     restore_system_state(restored, payload["state"])
     assert restored.prompt_probe_cache == system.prompt_probe_cache
+    assert restored.mechanism_embedding_cache_hit_count == 2
+    assert restored.mechanism_embedding_cache_miss_count == 1
+    assert restored.full_probe_cache_hit_count == 7
+    assert restored.full_probe_missing_pair_evaluation_count == 3
     assert restored.quality_diversity_archive_history == system.quality_diversity_archive_history
     assert restored.agents[0].lineage_state["lineage_status"] == "provisional"
     assert restored.latest_joint_team_metrics["combination_count"] == 243

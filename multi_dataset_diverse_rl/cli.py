@@ -352,6 +352,17 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
             "tcs_candidate_policy_version": str(system.cfg.tcs_candidate_policy_version),
             "mechanism_signature_version": str(system.cfg.mechanism_signature_version),
         })
+        if str(getattr(system.cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
+            payload.update({
+                "active_team_selector_version": str(system.cfg.active_team_selector_version),
+                "lineage_policy_version": str(system.cfg.lineage_policy_version),
+                "mechanism_distance_version": str(system.cfg.mechanism_distance_version),
+                "candidate_refill_version": str(system.cfg.candidate_refill_version),
+                "archive_policy_version": str(system.cfg.archive_policy_version),
+                "joint_quality_filter_version": str(system.cfg.joint_quality_filter_version),
+                "probe_stability_version": str(system.cfg.probe_stability_version),
+                "parent_selection_version": str(system.cfg.parent_selection_version),
+            })
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
@@ -464,6 +475,10 @@ def restore_system_state(system, state_payload):
     system.truncated_prompt_count = int(state_payload.get("truncated_prompt_count", 0) or 0)
     system.mechanism_embedding_cache = {str(key): list(value) for key, value in dict(state_payload.get("mechanism_embedding_cache", {}) or {}).items()}
     system.prompt_probe_cache = {str(key): dict(value) for key, value in dict(state_payload.get("prompt_probe_cache", {}) or {}).items()}
+    system.mechanism_embedding_cache_hit_count = int(state_payload.get("mechanism_embedding_cache_hit_count", 0) or 0)
+    system.mechanism_embedding_cache_miss_count = int(state_payload.get("mechanism_embedding_cache_miss_count", 0) or 0)
+    system.full_probe_cache_hit_count = int(state_payload.get("full_probe_cache_hit_count", 0) or 0)
+    system.full_probe_missing_pair_evaluation_count = int(state_payload.get("full_probe_missing_pair_evaluation_count", 0) or 0)
     system.behavior_profile_by_prompt_hash = {str(key): dict(value) for key, value in dict(state_payload.get("behavior_profile_by_prompt_hash", {}) or {}).items()}
     system.joint_team_selection_history = [dict(value) for value in state_payload.get("joint_team_selection_history", []) if isinstance(value, dict)]
     system.lineage_history = [dict(value) for value in state_payload.get("lineage_history", []) if isinstance(value, dict)]
@@ -729,32 +744,6 @@ BEHAVIOR_CONFIG_FIELDS = (
         "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
         "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
         "target_selector_fairness_enabled",
-        "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
-        "probe_stability_version", "parent_selection_version", "candidate_refill_enabled",
-        "candidate_refill_max_rounds", "candidate_refill_candidates_per_round",
-        "candidate_refill_max_unique_candidates_per_parent", "candidate_refill_min_safe_non_incumbent",
-        "candidate_refill_require_task_repair", "candidate_refill_require_distinct_mechanism",
-        "candidate_refill_feed_rejection_reasons", "candidate_refill_stop_when_requirements_met",
-        "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_enabled",
-        "probation_archive_size_per_agent", "probation_archive_ttl_updates", "probation_max_accuracy_loss",
-        "probation_max_c1_loss_questions", "probation_max_c2_loss_questions",
-        "probation_require_mechanism_novelty", "candidate_c1_catastrophic_loss_questions",
-        "candidate_c2_catastrophic_loss_questions", "qd_archive_size_per_agent",
-        "joint_representative_beam_size", "qd_parent_selection_mode",
-        "qd_niche_min_parent_opportunities_per_epoch", "probation_parent_enabled",
-        "probe_stability_fold_count", "probe_stability_seed_offset", "joint_vote_band_questions",
-        "joint_mean_band_correct_count", "joint_bottom2_band_correct_count", "joint_c1_band_questions",
-        "joint_c2_band_questions", "joint_allowed_vote_loss_questions", "joint_allowed_c1_loss_questions",
-        "joint_allowed_c2_loss_questions", "joint_allowed_total_agent_correct_loss",
-        "joint_allowed_bottom2_correct_loss", "joint_allowed_per_agent_correct_loss",
-        "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
-        "joint_team_change_limit_switch_strength", "joint_team_no_diversification_patience",
-        "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
-        "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
-        "qd_readiness_min_diversity", "qd_readiness_max_fold_gap", "residual_specialization_qd_floor",
-        "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
-        "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
-        "target_selector_fairness_enabled",
         "split_integrity_json",
 )
 
@@ -832,6 +821,32 @@ def checkpoint_behavior_config(cfg):
         "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
         "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
         "validation_stable_specialization_tie_break_enabled",
+        "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
+        "probe_stability_version", "parent_selection_version", "candidate_refill_enabled",
+        "candidate_refill_max_rounds", "candidate_refill_candidates_per_round",
+        "candidate_refill_max_unique_candidates_per_parent", "candidate_refill_min_safe_non_incumbent",
+        "candidate_refill_require_task_repair", "candidate_refill_require_distinct_mechanism",
+        "candidate_refill_feed_rejection_reasons", "candidate_refill_stop_when_requirements_met",
+        "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_enabled",
+        "probation_archive_size_per_agent", "probation_archive_ttl_updates", "probation_max_accuracy_loss",
+        "probation_max_c1_loss_questions", "probation_max_c2_loss_questions",
+        "probation_require_mechanism_novelty", "candidate_c1_catastrophic_loss_questions",
+        "candidate_c2_catastrophic_loss_questions", "qd_archive_size_per_agent",
+        "joint_representative_beam_size", "qd_parent_selection_mode",
+        "qd_niche_min_parent_opportunities_per_epoch", "probation_parent_enabled",
+        "probe_stability_fold_count", "probe_stability_seed_offset", "joint_vote_band_questions",
+        "joint_mean_band_correct_count", "joint_bottom2_band_correct_count", "joint_c1_band_questions",
+        "joint_c2_band_questions", "joint_allowed_vote_loss_questions", "joint_allowed_c1_loss_questions",
+        "joint_allowed_c2_loss_questions", "joint_allowed_total_agent_correct_loss",
+        "joint_allowed_bottom2_correct_loss", "joint_allowed_per_agent_correct_loss",
+        "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
+        "joint_team_change_limit_switch_strength", "joint_team_no_diversification_patience",
+        "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
+        "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
+        "qd_readiness_min_diversity", "qd_readiness_max_fold_gap", "residual_specialization_qd_floor",
+        "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
+        "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
+        "target_selector_fairness_enabled",
     )
     if str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage":
         for field in qd_fields:
@@ -931,6 +946,10 @@ def build_training_checkpoint(
             "truncated_prompt_count": int(getattr(system, "truncated_prompt_count", 0)),
             "mechanism_embedding_cache": dict(getattr(system, "mechanism_embedding_cache", {})),
             "prompt_probe_cache": dict(getattr(system, "prompt_probe_cache", {})),
+            "mechanism_embedding_cache_hit_count": int(getattr(system, "mechanism_embedding_cache_hit_count", 0)),
+            "mechanism_embedding_cache_miss_count": int(getattr(system, "mechanism_embedding_cache_miss_count", 0)),
+            "full_probe_cache_hit_count": int(getattr(system, "full_probe_cache_hit_count", 0)),
+            "full_probe_missing_pair_evaluation_count": int(getattr(system, "full_probe_missing_pair_evaluation_count", 0)),
             "behavior_profile_by_prompt_hash": dict(getattr(system, "behavior_profile_by_prompt_hash", {})),
             "joint_team_selection_history": list(getattr(system, "joint_team_selection_history", [])),
             "lineage_history": list(getattr(system, "lineage_history", [])),

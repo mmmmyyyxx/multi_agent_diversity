@@ -586,6 +586,10 @@ class TraceBeamSearchSystem:
         self.exploration_slot_candidates: List[Dict[str, Any]] = []
         self.mechanism_embedding_cache: Dict[str, List[float]] = {}
         self.prompt_probe_cache: Dict[str, Dict[str, Any]] = {}
+        self.mechanism_embedding_cache_hit_count = 0
+        self.mechanism_embedding_cache_miss_count = 0
+        self.full_probe_cache_hit_count = 0
+        self.full_probe_missing_pair_evaluation_count = 0
         self.behavior_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
         self.joint_team_selection_history: List[Dict[str, Any]] = []
         self.lineage_history: List[Dict[str, Any]] = []
@@ -1725,7 +1729,10 @@ class TraceBeamSearchSystem:
         representation = normalize_mechanism_representation(str(item.get("prompt", "")), steps)
         cache_key = representation["mechanism_hash"]
         vector = self.mechanism_embedding_cache.get(cache_key)
+        if vector is not None:
+            self.mechanism_embedding_cache_hit_count = int(getattr(self, "mechanism_embedding_cache_hit_count", 0)) + 1
         if vector is None and representation["mechanism_embedding_text"]:
+            self.mechanism_embedding_cache_miss_count = int(getattr(self, "mechanism_embedding_cache_miss_count", 0)) + 1
             model = self._load_embedding_model()
             encoded = model.encode([representation["mechanism_embedding_text"]], normalize_embeddings=True)
             vector = self._normalize_vector(np.asarray(encoded)[0])
@@ -1751,6 +1758,10 @@ class TraceBeamSearchSystem:
             "candidate_eval_inflight_reuses": 0,
             "candidate_eval_calls_saved_vs_naive": 0,
             "candidate_eval_prompt_dedup_savings": 0,
+            "full_probe_cache_hits": 0,
+            "full_probe_missing_pair_evaluations": 0,
+            "embedding_cache_hits": 0,
+            "embedding_cache_misses": 0,
         }
 
     def _client_role_from_stage(self, stage: str, client_role: str) -> str:
@@ -2233,6 +2244,7 @@ class TraceBeamSearchSystem:
         fields = {
             "execution_session_id": self._current_execution_session_id(),
             "comparison_task_id": getattr(self.cfg, "comparison_task_id", ""),
+            "setting": getattr(self.cfg, "experiment_setting", ""),
             "benchmark": getattr(self.cfg, "benchmark", ""),
             "answer_format": getattr(self.cfg, "answer_format", ""),
             "task_type": self.cfg.task_type,
@@ -2266,6 +2278,8 @@ class TraceBeamSearchSystem:
                     "mechanism_distance_version": str(self.cfg.mechanism_distance_version),
                     "joint_active_team_selection_enabled": True,
                     "quality_diversity_archive_enabled": True,
+                    "probation_archive_enabled": bool(self.cfg.probation_archive_enabled),
+                    "candidate_refill_enabled": bool(self.cfg.candidate_refill_enabled),
                     "early_self_drift_disabled": True,
                     "behavior_diversity_primary": True,
                     "mechanism_embedding_secondary": True,
@@ -5568,7 +5582,7 @@ class TraceBeamSearchSystem:
             }
         if self._is_stable_qd_lineage():
             target_state = self.agents[agent_id].lineage_state
-            target_profile = self.behavior_profile_by_prompt_hash.get(
+            target_profile = getattr(self, "behavior_profile_by_prompt_hash", {}).get(
                 self._normalized_prompt_hash(parent_prompt), {}
             )
             context["stable_lineage_context"] = {
@@ -8363,6 +8377,17 @@ class TraceBeamSearchSystem:
                 }
                 for item in evaluated if item.get("archive_bucket") != "safe"
             ]
+            prior_failures.extend(
+                {
+                    "candidate_type": str(item.get("metrics", {}).get("candidate_type", "")),
+                    "failure_stage": "archive_assignment",
+                    "reasons": ["near_duplicate_existing_niche"],
+                    "nearest_niche": repr(mechanism_niche_key(item.get("metrics", {}).get("mechanism_representation", {}))),
+                }
+                for item in evaluated
+                if str(item.get("metrics", {}).get("candidate_type", "")) == "mechanism_alternative"
+                and not bool(item.get("metrics", {}).get("mechanism_novel", False))
+            )
             while (
                 bool(self.cfg.candidate_refill_enabled)
                 and not requirements.get("met")
@@ -8385,7 +8410,9 @@ class TraceBeamSearchSystem:
                 refill_feedback = {
                     "refill_round": refill_round_count,
                     "required_candidate_types_missing": list(requirements.get("missing", [])),
-                    "previous_candidate_failures": prior_failures[-6:],
+                    "previous_candidate_failures": (
+                        prior_failures[-6:] if bool(self.cfg.candidate_refill_feed_rejection_reasons) else []
+                    ),
                     "preserve_successes": ["Preserve competence and any valid mechanism steps from safe candidates."],
                 }
                 refill_job = {
@@ -9682,6 +9709,7 @@ class TraceBeamSearchSystem:
             cache_key = self._stable_probe_cache_key(agent_id, prompt, question_hash)
             cached = self.prompt_probe_cache.get(cache_key)
             if cached is None:
+                self.full_probe_missing_pair_evaluation_count = int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)) + 1
                 async with self.solver_call_semaphore:
                     trace, answer = await self.solve_once(question, agent_id, prompt)
                 cached = {"trace": trace, "answer": answer, "gold": gold, "question_hash": question_hash}
@@ -9694,6 +9722,8 @@ class TraceBeamSearchSystem:
                     agent_id=agent_id,
                     source="stable_qd_probe",
                 )
+            else:
+                self.full_probe_cache_hit_count = int(getattr(self, "full_probe_cache_hit_count", 0)) + 1
             answer = str(cached.get("answer", ""))
             return {
                 "answer": answer,
@@ -9799,15 +9829,35 @@ class TraceBeamSearchSystem:
             self.lineage_history.append({"epoch": epoch, "agent_id": agent_id, **lineage_record})
         record = {
             "epoch": epoch, "combination_count": len(teams),
+            "representative_count_per_agent": [len(beam) for beam in beams],
+            "theoretical_combination_count": int(np.prod([len(beam) for beam in beams])) if beams else 0,
+            "post_change_limit_combination_count": int(
+                len(teams) - int(joint_selection.get("combination_rejected_by_change_limit_count", 0))
+            ),
             "feasible_count": int(joint_selection["feasible_count"]),
             "quality_floor_feasible_count": int(joint_selection.get("quality_floor_feasible_count", joint_selection["feasible_count"])),
             "quality_frontier_count": int(joint_selection["quality_frontier_count"]),
             "final_candidate_team_count": int(joint_selection.get("final_candidate_team_count", joint_selection["quality_frontier_count"])),
             "hierarchical_band_counts": list(joint_selection.get("hierarchical_band_counts", [])),
+            "hierarchical_band_count_by_name": dict(joint_selection.get("hierarchical_band_count_by_name", {})),
             "combination_rejected_by_change_limit_count": int(joint_selection.get("combination_rejected_by_change_limit_count", 0)),
             "fold_quality_rejection_count": int(joint_selection.get("fold_quality_rejection_count", 0)),
-            "incumbent_metrics": {key: incumbent[key] for key in QUALITY_KEYS},
-            "selected_metrics": {key: selected[key] for key in QUALITY_KEYS},
+            "incumbent_metrics": {
+                key: incumbent[key] for key in (*QUALITY_KEYS, "vote_correct_count", "total_agent_correct_count", "bottom2_correct_count", "per_agent_correct_count", "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count")
+            },
+            "selected_metrics": {
+                key: selected[key] for key in (*QUALITY_KEYS, "vote_correct_count", "total_agent_correct_count", "bottom2_correct_count", "per_agent_correct_count", "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count")
+            },
+            "allowed_quality_losses": {
+                "vote_correct_count": int(self.cfg.joint_allowed_vote_loss_questions),
+                "total_agent_correct_count": int(self.cfg.joint_allowed_total_agent_correct_loss),
+                "bottom2_correct_count": int(self.cfg.joint_allowed_bottom2_correct_loss),
+                "c1_correct_count": int(self.cfg.joint_allowed_c1_loss_questions),
+                "c2_correct_count": int(self.cfg.joint_allowed_c2_loss_questions),
+                "per_agent_correct_count": int(self.cfg.joint_allowed_per_agent_correct_loss),
+            },
+            "safe_archive_size_per_agent": [len(getattr(agent, "safe_qd_archive", [])) for agent in self.agents],
+            "probation_archive_size_per_agent": [len(getattr(agent, "probation_archive", [])) for agent in self.agents],
             "selected_prompt_hashes": selected["prompt_hashes"], "selected_beam_sources": selected_sources,
             "team_diversity_score": selected["team_diversity_score"],
             "stable_team_score": selected["stable_team_score"],
@@ -9824,6 +9874,10 @@ class TraceBeamSearchSystem:
             "peer_collapse_penalty_mean": float(selected.get("peer_collapse_penalty_mean", 0.0) or 0.0),
             "active_prompt_changed_count": changed_count,
             "specialization_strength": float(self.specialization_strength),
+            "full_probe_cache_hits": int(getattr(self, "full_probe_cache_hit_count", 0)),
+            "full_probe_missing_pair_evaluations": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)),
+            "embedding_cache_hits": int(getattr(self, "mechanism_embedding_cache_hit_count", 0)),
+            "embedding_cache_misses": int(getattr(self, "mechanism_embedding_cache_miss_count", 0)),
         }
         self.joint_team_selection_history.append(record)
         self.latest_joint_team_metrics = dict(record)
@@ -10481,6 +10535,12 @@ class TraceBeamSearchSystem:
         self.llm_call_logs = []
 
     def write_cost_summary(self):
+        self.cost_summary.update({
+            "full_probe_cache_hits": int(getattr(self, "full_probe_cache_hit_count", 0)),
+            "full_probe_missing_pair_evaluations": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)),
+            "embedding_cache_hits": int(getattr(self, "mechanism_embedding_cache_hit_count", 0)),
+            "embedding_cache_misses": int(getattr(self, "mechanism_embedding_cache_miss_count", 0)),
+        })
         self._write_json_snapshot("cost_summary.json", self.cost_summary)
 
 

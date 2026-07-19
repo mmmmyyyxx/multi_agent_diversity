@@ -12,6 +12,7 @@ class Config:
     task_type: str = "auto"
     dataset_format: str = "legacy"
     comparison_task_id: str = ""
+    experiment_setting: str = ""
     benchmark: str = ""
     answer_format: str = ""
 
@@ -431,6 +432,46 @@ class Config:
         )
         if abs(behavior_weight_sum - 1.0) > 1e-9:
             raise ValueError(f"behavior distance weights must sum to 1, got {behavior_weight_sum}")
+        nonnegative_integer_fields = (
+            "candidate_refill_max_rounds", "candidate_refill_min_safe_non_incumbent",
+            "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_size_per_agent",
+            "probation_archive_ttl_updates", "probation_max_c1_loss_questions",
+            "probation_max_c2_loss_questions", "qd_archive_size_per_agent",
+            "joint_allowed_vote_loss_questions", "joint_allowed_c1_loss_questions",
+            "joint_allowed_c2_loss_questions", "joint_allowed_total_agent_correct_loss",
+            "joint_allowed_bottom2_correct_loss", "joint_allowed_per_agent_correct_loss",
+            "joint_vote_band_questions", "joint_mean_band_correct_count",
+            "joint_bottom2_band_correct_count", "joint_c1_band_questions", "joint_c2_band_questions",
+            "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
+            "joint_team_no_diversification_patience", "joint_team_change_limit_relaxation",
+        )
+        for field in nonnegative_integer_fields:
+            if int(getattr(self, field)) < 0:
+                raise ValueError(f"{field} must be non-negative")
+        positive_integer_fields = (
+            "candidate_refill_candidates_per_round", "candidate_refill_max_unique_candidates_per_parent",
+            "candidate_c1_catastrophic_loss_questions", "candidate_c2_catastrophic_loss_questions",
+            "joint_representative_beam_size", "probe_stability_fold_count",
+            "lineage_commit_required_snapshots", "lineage_switch_confirmation_snapshots",
+            "qd_readiness_min_distinct_niches", "min_optimizer_updates_per_agent_per_epoch",
+        )
+        for field in positive_integer_fields:
+            if int(getattr(self, field)) < 1:
+                raise ValueError(f"{field} must be at least 1")
+        if int(self.candidate_refill_max_unique_candidates_per_parent) < int(self.num_candidates_per_parent):
+            raise ValueError("candidate_refill_max_unique_candidates_per_parent must cover the initial candidates per parent")
+        if int(self.candidate_refill_min_safe_non_incumbent) > int(self.candidate_refill_max_unique_candidates_per_parent):
+            raise ValueError("candidate_refill_min_safe_non_incumbent cannot exceed the per-parent unique candidate limit")
+        if int(self.joint_representative_beam_size) > int(self.qd_archive_size_per_agent):
+            raise ValueError("joint_representative_beam_size must not exceed qd_archive_size_per_agent")
+        if float(self.probation_max_accuracy_loss) > float(self.catastrophic_target_accuracy_loss_epsilon):
+            raise ValueError("probation_max_accuracy_loss must not exceed catastrophic_target_accuracy_loss_epsilon")
+        if int(self.probation_max_c1_loss_questions) >= int(self.candidate_c1_catastrophic_loss_questions):
+            raise ValueError("probation C1 loss must remain below the catastrophic C1 threshold")
+        if int(self.probation_max_c2_loss_questions) >= int(self.candidate_c2_catastrophic_loss_questions):
+            raise ValueError("probation C2 loss must remain below the catastrophic C2 threshold")
+        if int(self.probe_stability_fold_count) != 2:
+            raise ValueError("Stable QD currently requires exactly two deterministic probe folds")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -439,6 +480,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--task_type", type=str, default=defaults.task_type, choices=["auto", "gsm8k", "mmlu", "bbh"])
     parser.add_argument("--dataset_format", type=str, default=defaults.dataset_format, choices=["legacy", "mars"])
     parser.add_argument("--comparison_task_id", type=str, default=defaults.comparison_task_id)
+    parser.add_argument("--experiment_setting", type=str, default=defaults.experiment_setting)
     parser.add_argument("--benchmark", type=str, default=defaults.benchmark)
     parser.add_argument("--answer_format", type=str, default=defaults.answer_format, choices=["", "option_letter", "boolean", "yes_no", "valid_invalid", "numeric", "free_text"])
 

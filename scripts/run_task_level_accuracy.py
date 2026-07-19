@@ -94,6 +94,7 @@ def _append_common_cli_args(
             "--task_type", task.task_type,
             "--dataset_format", args.dataset_format,
             "--comparison_task_id", task.task_id,
+            "--experiment_setting", setting.name,
             "--benchmark", task.benchmark,
             "--answer_format", task.answer_format,
             "--split_integrity_json", json.dumps(split_integrity or {}, sort_keys=True),

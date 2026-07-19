@@ -294,6 +294,28 @@ def test_explicit_candidate_eval_budget_overrides_setting_defaults():
     assert _explicit_cli_or_setting(args, setting, "candidate_eval_batch_size", 20) == 24
 
 
+def test_task_runner_passes_setting_name_to_run_metadata():
+    cfg = Config()
+    task = ComparisonTask(
+        task_id="disambiguation_qa", benchmark="BBH", task_type="bbh",
+        answer_format="option_letter", train_path="train.csv", val_path="val.csv", test_path="test.csv",
+    )
+    setting = next(
+        item for item in DEFAULT_EXPERIMENT_SETTINGS
+        if item.name == "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+    )
+    args = Namespace(**{
+        **vars(Namespace()),
+        **{name: getattr(cfg, name) for name in vars(cfg)},
+        "dataset_format": "mars",
+        "resume_from_checkpoint": 1,
+    })
+    cmd = []
+    _append_common_cli_args(cmd, args, task, setting, seed=42)
+    index = cmd.index("--experiment_setting")
+    assert cmd[index + 1] == setting.name
+
+
 def test_compute_metrics_reads_vote_tie_rate_and_mars_delta(tmp_path):
     run_dir = tmp_path / "mmlu" / "shared_guarded_beam_seed42"
     run_dir.mkdir(parents=True)

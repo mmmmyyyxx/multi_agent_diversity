@@ -157,6 +157,8 @@ def team_quality_metrics(
         "bottom2_mean_acc": float(np.mean(sorted_acc[:2])) if sorted_acc else 0.0,
         "coverage_depth_c1": float(np.mean([depth >= 1 for depth in depths])) if depths else 0.0,
         "coverage_depth_c2": float(np.mean([depth >= 2 for depth in depths])) if depths else 0.0,
+        "coverage_depth_c1_correct_count": int(sum(depth >= 1 for depth in depths)),
+        "coverage_depth_c2_correct_count": int(sum(depth >= 2 for depth in depths)),
         "mean_normalized_plurality_margin": float(np.mean(margins)) if margins else 0.0,
         "per_agent_acc": per_agent,
         "vote_correct_count": int(sum(votes)),
@@ -342,7 +344,12 @@ def hierarchical_quality_bands(teams: Sequence[Dict[str, Any]], incumbent: Dict[
         best = max(values)
         narrowed = [team for team, value in zip(previous, values) if best - value <= band]
         levels.append(narrowed or previous)
-    return {"quality_floor": levels[0], "bands": levels[1:], "final": levels[-1] or [incumbent]}
+    return {
+        "quality_floor": levels[0],
+        "bands": levels[1:],
+        "band_names": ["vote", "mean", "bottom2", "c1", "c2"],
+        "final": levels[-1] or [incumbent],
+    }
 
 
 def deterministic_team_key(team: Dict[str, Any]) -> tuple:
@@ -587,6 +594,9 @@ def select_stable_joint_team(
         "quality_frontier_count": len(frontier),
         "final_candidate_team_count": len(frontier),
         "hierarchical_band_counts": [len(level) for level in bands["bands"]],
+        "hierarchical_band_count_by_name": {
+            name: len(level) for name, level in zip(bands["band_names"], bands["bands"])
+        },
         "combination_rejected_by_change_limit_count": change_rejected,
         "fold_quality_rejection_count": fold_quality_rejections,
         "hard_rejection_count": hard_rejections,
