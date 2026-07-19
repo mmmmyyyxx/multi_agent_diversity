@@ -11,12 +11,15 @@ def empty_lineage_state() -> Dict[str, Any]:
         "lineage_anchor_prompt": "",
         "lineage_anchor_mechanism_signature": [],
         "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_mechanism_family_id": "unknown",
         "lineage_anchor_correctness_vector": [],
         "lineage_anchor_rescue_vector": [],
         "lineage_anchor_accuracy": -1.0,
         "lineage_anchor_epoch": -1,
         "lineage_stability_count": 0,
         "pending_lineage_signature": [],
+        "pending_lineage_family_id": "unknown",
+        "pending_lineage_embedding": [],
         "pending_lineage_count": 0,
         "lineage_commit_count": 0,
         "lineage_switch_attempt_count": 0,
@@ -26,16 +29,39 @@ def empty_lineage_state() -> Dict[str, Any]:
     }
 
 
-def _same_lineage(left: List[str], right: List[str]) -> bool:
-    if not left or not right:
-        return left == right
-    return left[0] == right[0] and levenshtein_sequence_distance(left, right) <= 0.25
+def _same_lineage(left: Dict[str, Any], right: Dict[str, Any], *, mechanism_threshold: float = 0.25) -> bool:
+    left_sequence = list(left.get("normalized_operation_sequence", []))
+    right_sequence = list(right.get("normalized_operation_sequence", []))
+    left_family = str(left.get("family_id", "") or "")
+    right_family = str(right.get("family_id", "") or "")
+    if left_family in {"", "unknown"} and left_sequence:
+        left_family = f"canonical:{left_sequence[0]}"
+    if right_family in {"", "unknown"} and right_sequence:
+        right_family = f"canonical:{right_sequence[0]}"
+    left_family = left_family or "unknown"
+    right_family = right_family or "unknown"
+    if left_family == "unknown" or right_family == "unknown" or left_family != right_family:
+        return False
+    return mechanism_distance(left, right)["mechanism_distance"] <= float(mechanism_threshold)
+
+
+def _lineage_representation(state: Dict[str, Any], prefix: str) -> Dict[str, Any]:
+    sequence = list(state.get(f"{prefix}_signature", []))
+    family_id = str(state.get(f"{prefix}_family_id", "") or "")
+    if family_id in {"", "unknown"} and sequence:
+        family_id = f"canonical:{sequence[0]}"
+    return {
+        "family_id": family_id or "unknown",
+        "normalized_operation_sequence": sequence,
+        "mechanism_embedding": list(state.get(f"{prefix}_embedding", [])),
+    }
 
 
 def lineage_drift(candidate: Dict[str, Any], state: Dict[str, Any], config: Any) -> Dict[str, float]:
     if state.get("lineage_status") != "committed":
         return {"anchor_mechanism_drift": 0.0, "anchor_behavior_drift": 0.0, "lineage_drift": 0.0, "lineage_drift_penalty": 0.0}
     anchor_mechanism = {
+        "family_id": state.get("lineage_anchor_mechanism_family_id", "unknown"),
         "normalized_operation_sequence": state.get("lineage_anchor_mechanism_signature", []),
         "mechanism_embedding": state.get("lineage_anchor_mechanism_embedding", []),
     }
@@ -65,14 +91,17 @@ def lineage_drift(candidate: Dict[str, Any], state: Dict[str, Any], config: Any)
 def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epoch: int, quality_gate_passed: bool, config: Any) -> Dict[str, Any]:
     state = {**empty_lineage_state(), **dict(state)}
     old_status = state["lineage_status"]
-    signature = list(selected.get("mechanism_representation", {}).get("normalized_operation_sequence", []))
-    same = _same_lineage(signature, list(state.get("pending_lineage_signature", [])))
+    representation = dict(selected.get("mechanism_representation", {}) or {})
+    signature = list(representation.get("normalized_operation_sequence", []))
+    same = _same_lineage(representation, _lineage_representation(state, "pending_lineage"))
     fold_quality_passed = bool(selected.get("fold_quality_gate_passed", True))
     fold_stable = (
         bool(selected.get("fold_behavior_stable", True))
     )
     if not quality_gate_passed or not fold_quality_passed or not fold_stable:
         state["pending_lineage_signature"] = []
+        state["pending_lineage_family_id"] = "unknown"
+        state["pending_lineage_embedding"] = []
         state["pending_lineage_count"] = 0
         return {
             **state,
@@ -82,6 +111,8 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
         }
     if old_status != "committed":
         state["pending_lineage_signature"] = signature
+        state["pending_lineage_family_id"] = str(representation.get("family_id", "") or (f"canonical:{signature[0]}" if signature else "unknown"))
+        state["pending_lineage_embedding"] = list(representation.get("mechanism_embedding", []))
         state["pending_lineage_count"] = int(state.get("pending_lineage_count", 0)) + 1 if same else 1
         state["lineage_stability_count"] = state["pending_lineage_count"]
         if old_status == "uncommitted" and state["lineage_stability_count"] >= int(getattr(config, "lineage_commit_required_snapshots", config.lineage_provisional_epochs)) - 1:
@@ -109,21 +140,26 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
                 state["lineage_commit_count"] += int(old_status != "committed")
                 _set_anchor(state, selected, epoch)
         return {**state, "old_status": old_status, "new_status": state["lineage_status"], "reason": "stable_lineage_observed"}
-    anchor_signature = list(state.get("lineage_anchor_mechanism_signature", []))
-    if _same_lineage(signature, anchor_signature):
+    if _same_lineage(representation, _lineage_representation(state, "lineage_anchor_mechanism")):
         if state.get("pending_lineage_count", 0):
             state["lineage_switch_cancel_count"] += 1
         state["pending_lineage_signature"] = []
+        state["pending_lineage_family_id"] = "unknown"
+        state["pending_lineage_embedding"] = []
         state["pending_lineage_count"] = 0
         state["lineage_stability_count"] += 1
         return {**state, "old_status": old_status, "new_status": old_status, "reason": "anchor_retained"}
     state["lineage_switch_attempt_count"] += int(not same)
     state["pending_lineage_signature"] = signature
+    state["pending_lineage_family_id"] = str(representation.get("family_id", "") or (f"canonical:{signature[0]}" if signature else "unknown"))
+    state["pending_lineage_embedding"] = list(representation.get("mechanism_embedding", []))
     state["pending_lineage_count"] = int(state.get("pending_lineage_count", 0)) + 1 if same else 1
     if state["pending_lineage_count"] >= int(getattr(config, "lineage_switch_confirmation_snapshots", config.lineage_switch_confirmation_epochs)):
         _set_anchor(state, selected, epoch)
         state["lineage_switch_commit_count"] += 1
         state["pending_lineage_signature"] = []
+        state["pending_lineage_family_id"] = "unknown"
+        state["pending_lineage_embedding"] = []
         state["pending_lineage_count"] = 0
         reason = "lineage_switch_committed"
     else:
@@ -139,6 +175,11 @@ def _set_anchor(state: Dict[str, Any], selected: Dict[str, Any], epoch: int) -> 
         "lineage_anchor_prompt": selected.get("prompt", ""),
         "lineage_anchor_mechanism_signature": list(representation.get("normalized_operation_sequence", [])),
         "lineage_anchor_mechanism_embedding": list(representation.get("mechanism_embedding", [])),
+        "lineage_anchor_mechanism_family_id": str(
+            representation.get("family_id", "")
+            or (f"canonical:{representation.get('normalized_operation_sequence', ['unknown'])[0]}"
+                if representation.get("normalized_operation_sequence") else "unknown")
+        ),
         "lineage_anchor_correctness_vector": list(behavior.get("correctness_vector", [])),
         "lineage_anchor_rescue_vector": list(behavior.get("rescue_vector", [])),
         "lineage_anchor_accuracy": float(behavior.get("accuracy", 0.0)),

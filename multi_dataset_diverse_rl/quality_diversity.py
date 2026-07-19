@@ -8,6 +8,7 @@ import numpy as np
 from .behavior_profiles import behavior_distance, build_team_behavior_profiles
 from .lineage import lineage_drift
 from .mechanisms import mechanism_distance, mechanism_niche_key, mechanisms_are_near_duplicate
+from .qd.quality_anchors import counts_feasible, quality_counts, real_anchor_feasible
 
 
 QUALITY_KEYS = ("vote_acc", "mean_individual_acc", "bottom2_mean_acc", "coverage_depth_c1", "coverage_depth_c2")
@@ -292,6 +293,7 @@ def hierarchical_quality_bands(
     incumbent: Dict[str, Any],
     config: Any,
     quality_anchor: Dict[str, Any] | None = None,
+    quality_anchors: Sequence[Any] = (),
 ) -> Dict[str, Any]:
     def count(team: Dict[str, Any], key: str) -> int:
         size = max(len(team.get("answer_vectors", [[0]])[0]), 1)
@@ -308,31 +310,15 @@ def hierarchical_quality_bands(
         if key == "coverage_depth_c2_correct_count":
             return int(round(float(team.get("coverage_depth_c2", 0.0)) * size))
         return 0
-    floor = quality_anchor or incumbent
-
     def feasible(team: Dict[str, Any]) -> bool:
-        if count(team, "vote_correct_count") < count(floor, "vote_correct_count") - int(config.joint_allowed_vote_loss_questions):
+        local = counts_feasible(quality_counts(team), quality_counts(incumbent), config)
+        if not local:
             return False
-        if count(team, "total_agent_correct_count") < count(floor, "total_agent_correct_count") - int(config.joint_allowed_total_agent_correct_loss):
-            return False
-        if count(team, "bottom2_correct_count") < count(floor, "bottom2_correct_count") - int(config.joint_allowed_bottom2_correct_loss):
-            return False
-        if count(team, "coverage_depth_c1_correct_count") < count(floor, "coverage_depth_c1_correct_count") - int(config.joint_allowed_c1_loss_questions):
-            return False
-        if count(team, "coverage_depth_c2_correct_count") < count(floor, "coverage_depth_c2_correct_count") - int(config.joint_allowed_c2_loss_questions):
-            return False
-        team_counts = team.get("per_agent_correct_count", [
-            int(round(value * max(len(team.get("answer_vectors", [[0]])[0]), 1)))
-            for value in team.get("per_agent_acc", [])
-        ])
-        incumbent_counts = floor.get("per_agent_correct_count", [
-            int(round(value * max(len(incumbent.get("answer_vectors", [[0]])[0]), 1)))
-            for value in floor.get("per_agent_acc", [])
-        ])
-        return all(
-            value >= (incumbent_counts[index] if index < len(incumbent_counts) else 0) - int(config.joint_allowed_per_agent_correct_loss)
-            for index, value in enumerate(team_counts)
-        )
+        if quality_anchors:
+            return real_anchor_feasible(team, quality_anchors, config)
+        if quality_anchor is not None:
+            return counts_feasible(quality_counts(team), quality_counts(quality_anchor), config)
+        return True
     levels = [[team for team in teams if feasible(team)]]
     rules = (
         ("vote_correct_count", int(config.joint_vote_band_questions)),
@@ -357,6 +343,8 @@ def hierarchical_quality_bands(
         levels.append(narrowed or previous)
     return {
         "quality_floor": levels[0],
+        "quality_anchor_feasible_team_count": len(levels[0]),
+        "quality_anchor_fallback_reason": "" if levels[0] else "no_real_anchor_feasible",
         "bands": levels[1:],
         "band_names": ["vote", "mean", "bottom2", "c1", "c2"],
         "final": levels[-1] or [incumbent],
@@ -444,6 +432,7 @@ def select_stable_joint_team(
     seed: int = 0,
     change_limit: int | None = None,
     quality_anchor: Dict[str, Any] | None = None,
+    quality_anchors: Sequence[Any] = (),
 ) -> Dict[str, Any]:
     change_rejected = 0
     eligible = []
@@ -453,7 +442,9 @@ def select_stable_joint_team(
             change_rejected += 1
             continue
         eligible.append(team)
-    bands = hierarchical_quality_bands(eligible, incumbent, config, quality_anchor=quality_anchor)
+    bands = hierarchical_quality_bands(
+        eligible, incumbent, config, quality_anchor=quality_anchor, quality_anchors=quality_anchors,
+    )
     feasible = bands["quality_floor"]
     frontier = bands["final"]
     stable_frontier = []
@@ -635,6 +626,8 @@ def select_stable_joint_team(
         "selected": selected,
         "feasible_count": len(feasible),
         "quality_floor_feasible_count": len(feasible),
+        "quality_anchor_feasible_team_count": int(bands.get("quality_anchor_feasible_team_count", len(feasible))),
+        "quality_anchor_fallback_reason": str(bands.get("quality_anchor_fallback_reason", "")),
         "quality_frontier_count": len(frontier),
         "final_candidate_team_count": len(frontier),
         "hierarchical_band_counts": [len(level) for level in bands["bands"]],

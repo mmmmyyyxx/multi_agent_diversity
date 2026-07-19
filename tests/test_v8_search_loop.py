@@ -12,6 +12,7 @@ from multi_dataset_diverse_rl.search_archive import (
     cheap_prescreen,
     mechanism_is_novel,
     refill_requirements,
+    search_space_requirements,
     select_joint_representatives,
     select_reproduction_parent,
     select_safe_archive,
@@ -44,6 +45,43 @@ def test_refill_requirements_trigger_then_stop_when_safe_types_arrive():
     result = refill_requirements(safe, cfg)
     assert result["met"]
     assert result["safe_non_incumbent_count"] == 2
+
+
+def test_archive_niche_collision_triggers_post_archive_refill():
+    cfg = Config()
+    incumbent = candidate("incumbent", sequence=("hard_elimination",))
+    incumbent.update({"archive_bucket": "safe", "is_incumbent": True})
+    first = candidate("repair-a", sequence=("binding_resolution",))
+    second = candidate("repair-b", sequence=("binding_resolution",))
+    for item in (first, second):
+        item["archive_bucket"] = "safe"
+        item["metrics"]["mechanism_novel"] = True
+    raw = [incumbent, first, second]
+    archive = select_safe_archive(raw, "incumbent", 6)
+    representatives = select_joint_representatives(archive, "incumbent", 3, cfg)
+    requirements = search_space_requirements(raw, archive, representatives, "incumbent", cfg)
+    assert requirements["raw_requirements_met"] is True
+    assert requirements["retained_requirements_met"] is False
+    assert requirements["post_archive_refill_triggered"] is True
+    assert requirements["archive_collision_count"] == 1
+    assert "archive_niche_collision" in requirements["missing"]
+
+
+def test_archive_requirements_stop_after_distinct_niche_survives():
+    cfg = Config()
+    incumbent = candidate("incumbent", sequence=("hard_elimination",))
+    incumbent.update({"archive_bucket": "safe", "is_incumbent": True})
+    repair = candidate("repair", sequence=("binding_resolution",))
+    alternative = candidate("alternative", "mechanism_alternative", sequence=("weighted_scoring",))
+    for item in (repair, alternative):
+        item["archive_bucket"] = "safe"
+        item["metrics"]["mechanism_novel"] = True
+    raw = [incumbent, repair, alternative]
+    archive = select_safe_archive(raw, "incumbent", 6)
+    representatives = select_joint_representatives(archive, "incumbent", 3, cfg)
+    requirements = search_space_requirements(raw, archive, representatives, "incumbent", cfg)
+    assert requirements["met"] is True
+    assert requirements["retained_distinct_niche_count"] == 2
 
 
 def test_stable_qd_config_rejects_invalid_search_relationships():
@@ -399,6 +437,47 @@ def test_long_archive_and_representatives_are_separate():
     representatives = select_joint_representatives(archive, "n0", 3)
     assert len(archive) == 6
     assert len(representatives) == 3
+
+
+def test_representatives_use_active_quality_then_behavior_complementarity():
+    cfg = Config()
+    active = candidate("active", sequence=("hard_elimination",))
+    quality = candidate("quality", sequence=("binding_resolution",))
+    redundant = candidate("redundant", sequence=("timeline_construction",))
+    complementary = candidate("complementary", sequence=("weighted_scoring",))
+    for item in (active, quality, redundant, complementary):
+        item["archive_bucket"] = "safe"
+    quality["metrics"]["candidate_target_accuracy"] = 0.95
+    redundant["metrics"]["candidate_target_accuracy"] = 0.80
+    complementary["metrics"]["candidate_target_accuracy"] = 0.75
+    profiles = {
+        "active": [1, 0, 1, 0], "quality": [1, 0, 1, 0],
+        "redundant": [1, 0, 1, 0], "complementary": [0, 1, 0, 1],
+    }
+    for item in (active, quality, redundant, complementary):
+        correctness = profiles[item["prompt_hash"]]
+        item["metrics"]["behavior_profile"] = {
+            "answer_vector": ["A" if value else "B" for value in correctness],
+            "correctness_vector": correctness,
+            "error_vector": [1 - value for value in correctness],
+            "rescue_vector": correctness,
+        }
+    archive = [active, redundant, complementary, quality]
+    selected = select_joint_representatives(archive, "active", 3, cfg)
+    assert [item["prompt_hash"] for item in selected] == ["active", "quality", "complementary"]
+
+
+def test_two_representative_slots_keep_quality_over_mechanism_distance():
+    cfg = Config()
+    active = candidate("active", sequence=("hard_elimination",))
+    quality = candidate("quality", sequence=("binding_resolution",))
+    distant = candidate("distant", sequence=("counterfactual_check",))
+    for item in (active, quality, distant):
+        item["archive_bucket"] = "safe"
+    quality["metrics"]["candidate_target_accuracy"] = 0.95
+    distant["metrics"]["candidate_target_accuracy"] = 0.20
+    selected = select_joint_representatives([active, distant, quality], "active", 2, cfg)
+    assert [item["prompt_hash"] for item in selected] == ["active", "quality"]
 
 
 def test_long_archive_keeps_incumbent_and_diverse_niches_when_over_capacity():

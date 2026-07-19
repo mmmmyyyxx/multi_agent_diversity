@@ -185,6 +185,8 @@ class _FlatConfigSchema:
     mechanism_sequence_distance_weight: float = 0.50
     mechanism_embedding_distance_weight: float = 0.50
     mechanism_near_duplicate_similarity_threshold: float = 0.97
+    semantic_niche_merge_threshold: float = 0.88
+    semantic_mechanism_novelty_distance: float = 0.12
     behavior_correct_set_weight: float = 0.40
     behavior_rescue_weight: float = 0.30
     behavior_shared_wrong_weight: float = 0.15
@@ -236,6 +238,7 @@ class _FlatConfigSchema:
     candidate_c1_catastrophic_loss_questions: int = 2
     candidate_c2_catastrophic_loss_questions: int = 2
     qd_archive_size_per_agent: int = 6
+    quality_anchor_archive_size: int = 5
     joint_representative_beam_size: int = 3
     qd_parent_selection_mode: str = "active_plus_round_robin_niche"
     qd_niche_min_parent_opportunities_per_epoch: int = 1
@@ -350,6 +353,8 @@ class _FlatConfigSchema:
             "mechanism_sequence_distance_weight",
             "mechanism_embedding_distance_weight",
             "mechanism_near_duplicate_similarity_threshold",
+            "semantic_niche_merge_threshold",
+            "semantic_mechanism_novelty_distance",
             "behavior_correct_set_weight",
             "behavior_rescue_weight",
             "behavior_shared_wrong_weight",

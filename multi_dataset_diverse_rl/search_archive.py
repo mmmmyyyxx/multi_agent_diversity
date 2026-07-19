@@ -49,10 +49,16 @@ def mechanism_is_novel(
     """Require an observed operation change that is not an existing niche duplicate."""
     representation = item.get("metrics", {}).get("mechanism_representation", {})
     sequence = _operation_sequence(item)
-    if not sequence:
+    family_kind = str(representation.get("family_kind", "unknown"))
+    specificity = float(representation.get("specificity_score", 0.0) or 0.0)
+    if not sequence and not (family_kind == "semantic" and specificity > 0.0):
         return False
-    if parent is not None and sequence == _operation_sequence(parent):
-        return False
+    if parent is not None:
+        parent_representation = parent.get("metrics", {}).get("mechanism_representation", {})
+        if sequence and sequence == _operation_sequence(parent):
+            return False
+        if not sequence and str(representation.get("family_id", "")) == str(parent_representation.get("family_id", "")):
+            return False
     return not any(
         mechanisms_are_near_duplicate(
             representation,
@@ -96,7 +102,10 @@ def cheap_prescreen(
     steps = proposal.get("mechanism_steps", metrics.get("mechanism_steps", []))
     if not isinstance(steps, list) or not steps:
         reasons.append("missing_mechanism_steps")
-    elif candidate_type == "mechanism_alternative" and not _operation_sequence(candidate):
+    elif candidate_type == "mechanism_alternative" and not (
+        _operation_sequence(candidate)
+        or normalize_mechanism_representation(str(candidate.get("prompt", "")), steps).get("family_kind") == "semantic"
+    ):
         reasons.append("missing_substantive_mechanism_operation")
     elif candidate_type == "mechanism_alternative" and parent is not None and _operation_sequence(candidate) == _operation_sequence(parent):
         reasons.append("mechanism_operation_unchanged")
@@ -143,6 +152,84 @@ def refill_requirements(items: Sequence[Dict[str, Any]], config: Any) -> Dict[st
         "safe_non_incumbent_count": len(safe),
         "safe_task_repair_count": len(task_repair),
         "safe_distinct_mechanism_count": len(distinct),
+        "missing": missing,
+        "met": not missing,
+    }
+
+
+def retained_archive_requirements(
+    archive: Sequence[Dict[str, Any]], active_hash: str, config: Any,
+) -> Dict[str, Any]:
+    safe = [item for item in archive if str(item.get("prompt_hash", "")) != active_hash]
+    niches = {mechanism_niche_key(item.get("metrics", {}).get("mechanism_representation", {})) for item in safe}
+    task_repairs = [item for item in safe if str(item.get("metrics", {}).get("candidate_type", "")) == "task_specific_repair"]
+    missing = []
+    if len(safe) < int(config.candidate_refill_min_safe_non_incumbent):
+        missing.append("retained_safe_non_incumbent_underfilled")
+    if len(niches) < min(2, int(config.candidate_refill_min_safe_non_incumbent)):
+        missing.append("retained_distinct_niche_underfilled")
+    if bool(config.candidate_refill_require_task_repair) and not task_repairs:
+        missing.append("retained_task_repair_missing")
+    return {
+        "retained_safe_count": len(safe),
+        "retained_distinct_niche_count": len(niches),
+        "retained_task_repair_count": len(task_repairs),
+        "missing": missing,
+        "met": not missing,
+    }
+
+
+def representative_requirements(
+    representatives: Sequence[Dict[str, Any]], archive: Sequence[Dict[str, Any]], active_hash: str, config: Any,
+) -> Dict[str, Any]:
+    hashes = {str(item.get("prompt_hash", "")) for item in representatives}
+    niches = {mechanism_niche_key(item.get("metrics", {}).get("mechanism_representation", {})) for item in representatives}
+    expected = min(int(config.joint_representative_beam_size), len(archive))
+    non_active = [item for item in representatives if str(item.get("prompt_hash", "")) != active_hash]
+    complementary_available = any(item.get("metrics", {}).get("behavior_profile") for item in archive if str(item.get("prompt_hash", "")) != active_hash)
+    complementary_retained = any(item.get("metrics", {}).get("behavior_profile") for item in non_active)
+    missing = []
+    if len(representatives) < expected:
+        missing.append("representative_underfilled")
+    if active_hash not in hashes:
+        missing.append("representative_missing_active")
+    if len(archive) > 1 and not non_active:
+        missing.append("representative_missing_non_active")
+    if complementary_available and not complementary_retained:
+        missing.append("missing_behaviorally_distinct_representative")
+    return {
+        "representative_count": len(representatives),
+        "representative_distinct_niche_count": len(niches),
+        "representative_behavior_span": _representative_behavior_span(representatives, config),
+        "missing": missing,
+        "met": not missing,
+    }
+
+
+def search_space_requirements(
+    evaluated: Sequence[Dict[str, Any]],
+    archive: Sequence[Dict[str, Any]],
+    representatives: Sequence[Dict[str, Any]],
+    active_hash: str,
+    config: Any,
+) -> Dict[str, Any]:
+    raw = refill_requirements(evaluated, config)
+    retained = retained_archive_requirements(archive, active_hash, config)
+    representative = representative_requirements(representatives, archive, active_hash, config)
+    missing = list(dict.fromkeys([*raw["missing"], *retained["missing"], *representative["missing"]]))
+    collision_count = max(0, int(raw["safe_non_incumbent_count"]) - int(retained["retained_safe_count"]))
+    if collision_count and not retained["met"]:
+        missing = list(dict.fromkeys(["archive_niche_collision", "safe_candidates_collapsed_after_archive", *missing]))
+    return {
+        **raw,
+        **{key: value for key, value in retained.items() if key not in {"missing", "met"}},
+        **{key: value for key, value in representative.items() if key not in {"missing", "met"}},
+        "raw_requirements_met": bool(raw["met"]),
+        "retained_requirements_met": bool(retained["met"]),
+        "representative_requirements_met": bool(representative["met"]),
+        "archive_collision_count": collision_count,
+        "post_archive_refill_triggered": bool(raw["met"] and (not retained["met"] or not representative["met"])),
+        "post_archive_refill_reason": ",".join([*retained["missing"], *representative["missing"]]),
         "missing": missing,
         "met": not missing,
     }
@@ -203,22 +290,68 @@ def _archive_quality_key(item: Dict[str, Any]) -> tuple:
     )
 
 
-def select_joint_representatives(archive: Sequence[Dict[str, Any]], active_hash: str, size: int) -> List[Dict[str, Any]]:
+def _representative_behavior_span(rows: Sequence[Dict[str, Any]], config: Any) -> float:
+    from .behavior_profiles import behavior_distance
+
+    distances = []
+    for index, left in enumerate(rows):
+        left_profile = left.get("metrics", {}).get("behavior_profile", {})
+        for right in rows[index + 1:]:
+            right_profile = right.get("metrics", {}).get("behavior_profile", {})
+            if left_profile and right_profile:
+                distances.append(behavior_distance(
+                    left_profile, right_profile,
+                    correct_set_weight=float(config.behavior_correct_set_weight),
+                    rescue_weight=float(config.behavior_rescue_weight),
+                    shared_wrong_weight=float(config.behavior_error_overlap_weight),
+                    wrong_answer_dispersion_weight=float(config.behavior_wrong_answer_dispersion_weight),
+                    support_shrinkage=float(config.behavior_support_shrinkage),
+                    wrong_support_shrinkage=float(config.behavior_wrong_support_shrinkage),
+                )["behavior_distance"])
+    return max(distances, default=0.0)
+
+
+def select_joint_representatives(
+    archive: Sequence[Dict[str, Any]], active_hash: str, size: int, config: Any = None,
+) -> List[Dict[str, Any]]:
+    config = config or type("Defaults", (), {
+        "behavior_correct_set_weight": 0.4, "behavior_rescue_weight": 0.3,
+        "behavior_error_overlap_weight": 0.15, "behavior_wrong_answer_dispersion_weight": 0.15,
+        "behavior_support_shrinkage": 5.0, "behavior_wrong_support_shrinkage": 5.0,
+    })()
     active = next((item for item in archive if str(item.get("prompt_hash", "")) == active_hash), None)
     retained = [active] if active is not None else []
-    for item in archive:
-        if item in retained:
-            continue
-        if not retained:
-            retained.append(item)
-        else:
-            if not any(mechanisms_are_near_duplicate(
+    remaining = [item for item in archive if item not in retained]
+    if remaining and len(retained) < int(size):
+        quality = max(remaining, key=_archive_quality_key)
+        retained.append(quality)
+        remaining.remove(quality)
+    while remaining and len(retained) < int(size):
+        def marginal_key(item: Dict[str, Any]) -> tuple:
+            candidate_profile = item.get("metrics", {}).get("behavior_profile", {})
+            behavior = []
+            if candidate_profile:
+                from .behavior_profiles import behavior_distance
+                for kept in retained:
+                    kept_profile = kept.get("metrics", {}).get("behavior_profile", {})
+                    if kept_profile:
+                        behavior.append(behavior_distance(
+                            candidate_profile, kept_profile,
+                            correct_set_weight=float(config.behavior_correct_set_weight),
+                            rescue_weight=float(config.behavior_rescue_weight),
+                            shared_wrong_weight=float(config.behavior_error_overlap_weight),
+                            wrong_answer_dispersion_weight=float(config.behavior_wrong_answer_dispersion_weight),
+                            support_shrinkage=float(config.behavior_support_shrinkage),
+                            wrong_support_shrinkage=float(config.behavior_wrong_support_shrinkage),
+                        )["behavior_distance"])
+            mechanism = min((mechanism_distance(
                 item.get("metrics", {}).get("mechanism_representation", {}),
                 kept.get("metrics", {}).get("mechanism_representation", {}),
-            ) for kept in retained):
-                retained.append(item)
-        if len(retained) >= int(size):
-            break
+            )["mechanism_distance"] for kept in retained), default=0.0)
+            return (min(behavior, default=-1.0), mechanism, _archive_quality_key(item))
+        chosen = max(remaining, key=marginal_key)
+        retained.append(chosen)
+        remaining.remove(chosen)
     return retained[: int(size)]
 
 

@@ -41,6 +41,18 @@ GENERIC_STEP_PATTERNS = (
     r"(?:give|return|output).*(?:final answer|exactly one answer)",
 )
 
+SPECIFIC_ACTION_TERMS = {
+    "align", "apply", "bind", "calculate", "compare", "construct", "convert",
+    "decompose", "derive", "eliminate", "enumerate", "evaluate", "extract",
+    "group", "map", "match", "normalize", "order", "parse", "resolve",
+    "score", "simulate", "substitute", "track", "transform",
+}
+SPECIFIC_OBJECT_TERMS = {
+    "antecedent", "binding", "candidate", "constraint", "coordinate", "counterexample",
+    "entity", "event", "evidence", "expression", "invariant", "operator", "option",
+    "precedence", "pronoun", "relation", "rule", "shape", "timeline", "variable",
+}
+
 
 def _clean_step(value: Any) -> str:
     text = str(value or "").strip().lower()
@@ -69,16 +81,41 @@ def _is_generic_step(step: str) -> bool:
     return not step or any(re.search(pattern, step, flags=re.IGNORECASE) for pattern in GENERIC_STEP_PATTERNS)
 
 
+def semantic_specificity_score(text: str) -> float:
+    """Score residual mechanisms without accepting generic reasoning prose."""
+    cleaned = _clean_step(text)
+    if _is_generic_step(cleaned):
+        return 0.0
+    tokens = set(re.findall(r"[a-z0-9]+", cleaned))
+    if len(tokens) < 3 or len(cleaned) < 18:
+        return 0.0
+    action = bool(tokens & SPECIFIC_ACTION_TERMS)
+    object_term = bool(tokens & SPECIFIC_OBJECT_TERMS)
+    if not (action and object_term):
+        return 0.0
+    return min(1.0, 0.4 + 0.05 * len(tokens) + 0.15 * int(action) + 0.15 * int(object_term))
+
+
 def normalize_mechanism_representation(prompt: str, mechanism_steps: Sequence[Any]) -> Dict[str, Any]:
     cleaned_steps = [_clean_step(step) for step in mechanism_steps if _clean_step(step)]
     specific_steps = [step for step in cleaned_steps if not _is_generic_step(step)]
     operations = [operation for step in specific_steps if (operation := _canonical_operation(step))]
     semantic_residuals = [step for step in specific_steps if not _canonical_operation(step)]
     semantic_residual_text = " ; ".join(semantic_residuals)
+    specificity_score = semantic_specificity_score(semantic_residual_text)
     embedding_parts = list(operations)
     if semantic_residual_text:
         embedding_parts.append(semantic_residual_text)
     embedding_text = " ; ".join(embedding_parts)
+    family_kind = "canonical" if operations else "semantic" if specificity_score > 0.0 else "unknown"
+    family_key = "|".join(operations) if operations else semantic_residual_text
+    family_id = (
+        f"canonical:{hashlib.sha256(family_key.encode('utf-8')).hexdigest()[:16]}"
+        if family_kind == "canonical"
+        else f"semantic:{hashlib.sha256(family_key.encode('utf-8')).hexdigest()[:16]}"
+        if family_kind == "semantic"
+        else "unknown"
+    )
     return {
         "canonical_operations": list(operations),
         "normalized_operations": list(operations),
@@ -87,6 +124,9 @@ def normalize_mechanism_representation(prompt: str, mechanism_steps: Sequence[An
         "normalized_mechanism_text": embedding_text,
         "mechanism_embedding_text": embedding_text,
         "mechanism_hash": hashlib.sha256(embedding_text.encode("utf-8")).hexdigest(),
+        "family_kind": family_kind,
+        "family_id": family_id,
+        "specificity_score": float(specificity_score),
     }
 
 
@@ -137,8 +177,9 @@ def mechanism_distance(
 
 def mechanism_niche_key(representation: Dict[str, Any]) -> tuple:
     sequence = tuple(representation.get("normalized_operation_sequence", [])[:4])
-    family = sequence[0] if sequence else "unknown"
-    return family, sequence
+    family = str(representation.get("family_id", "") or (sequence[0] if sequence else "unknown"))
+    semantic = str(representation.get("semantic_residual_text", "") or "")
+    return family, sequence or ((semantic,) if family.startswith("semantic:") else ())
 
 
 def mechanisms_are_near_duplicate(left: Dict[str, Any], right: Dict[str, Any], threshold: float = 0.97) -> bool:

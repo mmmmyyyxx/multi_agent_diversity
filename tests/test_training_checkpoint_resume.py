@@ -8,6 +8,7 @@ from multi_dataset_diverse_rl.cli import (
     checkpoint_compatible,
     checkpoint_incompatibility_reasons,
     checkpoint_behavior_config_fingerprint,
+    migrate_checkpoint,
     restore_cost_summary,
     restore_system_state,
     write_json_atomic,
@@ -52,7 +53,7 @@ def _checkpoint_kwargs():
 
 
 def test_checkpoint_atomic_write_retries_transient_replace_failure(tmp_path, monkeypatch):
-    from multi_dataset_diverse_rl import cli as cli_module
+    from multi_dataset_diverse_rl.persistence import checkpoint as cli_module
 
     path = tmp_path / "training_checkpoint.json"
     real_replace = cli_module.os.replace
@@ -76,7 +77,7 @@ def test_checkpoint_atomic_write_retries_transient_replace_failure(tmp_path, mon
 
 
 def test_checkpoint_atomic_write_raises_after_persistent_replace_failure(tmp_path, monkeypatch):
-    from multi_dataset_diverse_rl import cli as cli_module
+    from multi_dataset_diverse_rl.persistence import checkpoint as cli_module
 
     path = tmp_path / "training_checkpoint.json"
     attempts = 0
@@ -161,7 +162,7 @@ def test_pre_fix_checkpoint_version_is_rejected(tmp_path):
     payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
     payload["version"] = 4
     reasons = checkpoint_incompatibility_reasons(payload, system.cfg, [None, None, None, None])
-    assert any("version" in reason and "current=5" in reason for reason in reasons)
+    assert any("version" in reason and "current=6" in reason for reason in reasons)
 
 
 def test_old_v8_checkpoint_is_rejected_with_joint_qd_lineage_reason(tmp_path):
@@ -299,6 +300,48 @@ def test_restore_system_state_restores_prompts_beams_and_counts(tmp_path):
     assert [agent.accept_count for agent in target.agents] == [1, 2]
     assert [agent.reject_count for agent in target.agents] == [0, 1]
     assert target.recent_window_records == source.recent_window_records
+
+
+def test_v6_checkpoint_round_trip_preserves_semantic_families_and_real_anchors(tmp_path):
+    source = _system(tmp_path / "source")
+    source.semantic_mechanism_families = {
+        "semantic:shape": {"representative_text": "coordinate transform", "embedding": [1.0, 0.0]}
+    }
+    source.quality_anchor_archive = [{
+        "anchor_id": "team:one", "epoch": 1, "prompt_hashes": ["a", "b"],
+        "counts": {"vote": 2, "total_agent_correct": 3, "bottom2_correct": 3, "c1": 2, "c2": 1, "per_agent_correct": [2, 1]},
+        "created_order": 1,
+    }]
+    source.quality_anchor_created_count = 1
+    payload = build_training_checkpoint(source.cfg, source, **_checkpoint_kwargs())
+    target = _system(tmp_path / "target")
+    restore_system_state(target, payload["state"])
+    assert target.semantic_mechanism_families == source.semantic_mechanism_families
+    assert target.quality_anchor_archive == source.quality_anchor_archive
+    assert target.quality_anchor_created_count == 1
+
+
+def test_v5_stable_qd_checkpoint_migrates_only_with_real_team_evidence(tmp_path):
+    source = _system(tmp_path / "source")
+    source.cfg.method_version = "v8_stable_qd_lineage"
+    payload = build_training_checkpoint(source.cfg, source, **_checkpoint_kwargs())
+    payload["version"] = 5
+    reasons = checkpoint_incompatibility_reasons(payload, source.cfg, [None] * 4)
+    assert any("real selected-team anchor evidence" in reason for reason in reasons)
+
+    payload["state"]["joint_team_selection_history"] = [{
+        "epoch": 1, "selected_prompt_hashes": ["a", "b"],
+        "selected_metrics": {
+            "vote_correct_count": 2, "total_agent_correct_count": 3,
+            "bottom2_correct_count": 3, "coverage_depth_c1_correct_count": 2,
+            "coverage_depth_c2_correct_count": 1, "per_agent_correct_count": [2, 1],
+        },
+    }]
+    assert checkpoint_compatible(payload, source.cfg, [None] * 4)
+    migrated = migrate_checkpoint(payload, source.cfg)
+    assert migrated["version"] == 6
+    assert len(migrated["state"]["quality_anchor_archive"]) == 1
+    assert "joint_quality_anchor_metrics" not in migrated["state"]
 
 
 def test_restore_legacy_checkpoint_without_window_uses_empty_window(tmp_path):

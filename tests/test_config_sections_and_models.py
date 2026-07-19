@@ -36,3 +36,14 @@ def test_v8_policy_bundle_reuses_existing_public_identity():
     bundle = build_policy_bundle(cfg)
     assert bundle.target_selector.name == "hybrid_competence_boundary_v2"
     assert bundle.archive_policy.name == "safe_probation_qd_archive_v1"
+
+
+def test_legacy_checkpoint_imports_reexport_canonical_implementations():
+    from multi_dataset_diverse_rl import cli
+    from multi_dataset_diverse_rl.persistence import checkpoint
+
+    for name in (
+        "build_training_checkpoint", "checkpoint_incompatibility_reasons",
+        "restore_prompt_history", "restore_system_state", "write_json_atomic",
+    ):
+        assert getattr(cli, name) is getattr(checkpoint, name)
