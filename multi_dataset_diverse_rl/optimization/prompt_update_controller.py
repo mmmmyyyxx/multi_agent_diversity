@@ -47,9 +47,10 @@ class CandidateGenerationStage:
 
         async def propose_for_parent(job: Dict[str, Any]) -> Dict[str, Any]:
             async with context.parent_sem:
-                context_token = TCS_AUDIT_CONTEXT.set({'optimizer_architecture': str(getattr(system.cfg, 'optimizer_architecture', '') or ''), 'epoch': int(context.epoch_id), 'step': int(context.step_id), 'agent_id': int(context.agent_id), 'parent_id': str(job['parent_id']), 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id, 'tcs_call_group_id': system._tcs_call_group_id(context.update_attempt_id, str(job['parent_id']), str(job['parent_prompt'])), 'teacher_critic_round': 0})
+                feedback = job.get('refill_feedback')
+                generation_round = int(feedback.get('refill_round', 0) or 0) if isinstance(feedback, dict) else 0
+                context_token = TCS_AUDIT_CONTEXT.set({'optimizer_architecture': str(getattr(system.cfg, 'optimizer_architecture', '') or ''), 'epoch': int(context.epoch_id), 'step': int(context.step_id), 'agent_id': int(context.agent_id), 'parent_id': str(job['parent_id']), 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id, 'tcs_call_group_id': system._tcs_call_group_id(context.update_attempt_id, str(job['parent_id']), str(job['parent_prompt']), generation_round), 'teacher_critic_round': 0})
                 try:
-                    feedback = job.get('refill_feedback')
                     proposals = await system.propose_candidates(agent_id=context.agent_id, parent_prompt=str(job['parent_prompt']), overlap_diagnosis=context.overlap_diagnosis, num_candidates=context.requested, generation_batches=job['parent_batches'], refill_feedback=feedback if isinstance(feedback, dict) else None)
                 finally:
                     TCS_AUDIT_CONTEXT.reset(context_token)
@@ -260,7 +261,20 @@ class CandidateClassificationAndRefillStage:
                 context.refill_round_count += 1
                 context.round_candidate_limit = min(int(system.cfg.candidate_refill_candidates_per_round), context.remaining_unique_slots)
                 context.refill_requested_candidate_count += context.round_candidate_limit
+                context.missing_requirements = list(context.requirements.get('missing', []))
+                context.all_schema_invalid = bool(context.prior_failures) and all(
+                    'schema' in ' '.join(str(reason) for reason in failure.get('reasons', []))
+                    for failure in context.prior_failures
+                )
+                if context.all_schema_invalid or any('repair' in str(value) or 'schema' in str(value) for value in context.missing_requirements):
+                    context.refill_generator_type = 'tcs_repair'
+                else:
+                    context.refill_generator_type = 'open_mechanism_exploration'
                 context.refill_feedback = {'refill_round': context.refill_round_count, 'required_candidate_types_missing': list(context.requirements.get('missing', [])), 'previous_candidate_failures': context.prior_failures[-6:] if bool(system.cfg.candidate_refill_feed_rejection_reasons) else [], 'preserve_successes': ['Preserve competence and any valid mechanism steps from safe candidates.']}
+                context.refill_feedback.update({
+                    'refill_generator_type': context.refill_generator_type,
+                    'refill_missing_requirement': ','.join(str(value) for value in context.missing_requirements),
+                })
                 context.refill_job = {'parent_idx': 0, 'parent': context.active_parent, 'parent_prompt': str(context.active_parent.get('prompt', context.agent.current_prompt)), 'parent_id': str(context.active_parent.get('id', system._hash(context.agent.current_prompt))), 'parent_batches': list(context.generation_batches), 'refill_feedback': context.refill_feedback}
                 context.refill_result = await context.propose_for_parent(context.refill_job)
                 context.proposals = context.refill_result.get('proposals', []) if isinstance(context.refill_result.get('proposals', []), list) else []
@@ -272,6 +286,29 @@ class CandidateClassificationAndRefillStage:
                     context.prompt = str(context.proposal.get('candidate_prompt', '')).strip()
                     context.prompt, context._ = system._sanitize_prompt(context.prompt, context.agent_id)
                     context.candidate = system._make_refill_candidate(proposal=context.proposal, prompt=context.prompt, parent_id=context.refill_job['parent_id'], parent_prompt=context.refill_job['parent_prompt'], agent_id=context.agent_id, candidate_index=context.index, refill_round=context.refill_round_count, generation=context.generation)
+                    context.candidate.update({
+                        'refill_generator_type': context.refill_generator_type,
+                        'refill_missing_requirement': context.refill_feedback['refill_missing_requirement'],
+                        'refill_round': context.refill_round_count,
+                        'refill_candidate_source': str(context.proposal.get('candidate_source', '')),
+                    })
+                    context.refill_metadata = {
+                        'optimizer_architecture': str(context.candidate.get('optimizer_architecture', '')),
+                        'candidate_source': str(context.candidate.get('candidate_source', '')),
+                        'candidate_pool_source': 'optimizer',
+                        'tcs_call_group_id': str(context.candidate.get('tcs_call_group_id', '') or ''),
+                        'execution_session_id': str(context.candidate.get('execution_session_id', '') or ''),
+                        'update_attempt_id': str(context.candidate.get('update_attempt_id', '') or ''),
+                        **dict(context.candidate.get('optimizer_generation_diagnostics', {}) or {}),
+                    }
+                    context.refill_metadata_errors = validate_tcs_candidate_metadata(context.refill_metadata)
+                    if context.refill_metadata_errors:
+                        raise RuntimeError(
+                            f"Invalid refill TCS candidate metadata: agent_id={context.agent_id} "
+                            f"epoch={context.epoch_id} step={context.step_id} "
+                            f"parent_id={context.refill_job['parent_id']} "
+                            f"metadata_errors={','.join(context.refill_metadata_errors)}"
+                        )
                     context.prescreen = cheap_prescreen(context.candidate, system._normalized_prompt_hash(context.refill_job['parent_prompt']), context.seen, parent=context.active_parent)
                     if context.prescreen:
                         context.candidate['cheap_prescreen_reasons'] = context.prescreen

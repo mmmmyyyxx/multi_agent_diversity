@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import random
+import sys
 import time
 import uuid
 
@@ -451,6 +452,18 @@ async def main_async():
     cfg.baseline_only = bool(int(cfg.baseline_only))
     cfg.eval_test_each_epoch = bool(int(cfg.eval_test_each_epoch))
     cfg.beam_refresh_each_epoch = bool(int(cfg.beam_refresh_each_epoch))
+    cfg.legacy_beam_rescore_each_epoch = bool(int(cfg.legacy_beam_rescore_each_epoch))
+    old_refresh_explicit = "--beam_refresh_each_epoch" in sys.argv
+    if old_refresh_explicit:
+        cfg.legacy_beam_rescore_each_epoch = cfg.beam_refresh_each_epoch
+    if str(cfg.method_version) == "v8_stable_qd_lineage" and old_refresh_explicit and cfg.beam_refresh_each_epoch:
+        print(
+            "[DEPRECATION] --beam_refresh_each_epoch=1 is ignored by V8; "
+            "legacy beam rescore remains disabled.",
+            flush=True,
+        )
+    if str(cfg.method_version) == "v8_stable_qd_lineage":
+        cfg.legacy_beam_rescore_each_epoch = False
     cfg.use_joint_trace_diversity_evaluator = bool(int(cfg.use_joint_trace_diversity_evaluator))
     cfg.invalid_binary = bool(int(cfg.invalid_binary))
     cfg.use_baseline_relative_reward = bool(int(cfg.use_baseline_relative_reward))
@@ -478,7 +491,9 @@ async def main_async():
         "candidate_refill_require_distinct_mechanism", "candidate_refill_feed_rejection_reasons",
         "candidate_refill_stop_when_requirements_met", "probation_archive_enabled",
         "probation_require_mechanism_novelty", "probation_parent_enabled",
-        "target_selector_fairness_enabled",
+        "target_selector_fairness_enabled", "joint_refresh_on_safe_archive_change",
+        "joint_refresh_on_probation_promotion", "joint_refresh_on_representative_change",
+        "joint_refresh_force_final_epoch", "joint_refresh_skip_when_no_dirty_prompt",
     ):
         setattr(cfg, field, bool(int(getattr(cfg, field))))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
@@ -962,15 +977,20 @@ async def main_async():
             "online_train_C2": float(train_metrics.get("coverage_depth_c2", 0.0) or 0.0),
         })
         refresh_summary = None
-        if cfg.beam_refresh_each_epoch:
+        if (
+            str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage"
+            and cfg.legacy_beam_rescore_each_epoch
+        ):
             refresh_batch_size = max(1, int(cfg.candidate_eval_batch_size or 10))
             refresh_batch = [train_data[i] for i in order[: min(refresh_batch_size, len(order))]]
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
         joint_team_summary = None
         if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
             system.expire_probation_branches(epoch + 1)
-            joint_team_summary = await system.select_joint_active_team(
-                fixed_competence_probe, epoch=epoch + 1
+            joint_team_summary = await system.refresh_joint_active_team_if_needed(
+                fixed_competence_probe,
+                epoch=epoch + 1,
+                final_epoch=(epoch + 1 == int(cfg.epochs)),
             )
         system.specialization_strength_history.append(strength_used)
         if strength_used > 0.0:

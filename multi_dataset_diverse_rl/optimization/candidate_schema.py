@@ -253,7 +253,7 @@ class CandidateSchemaMixin:
 
     def _is_optimizer_generated_candidate_source(self, source: Any) -> bool:
         text = str(source or "").strip().lower()
-        return text in {"optimizer", "teacher_critic_student"}
+        return text in {"optimizer", "teacher_critic_student", "open_mechanism_exploration"}
 
     @staticmethod
     def _candidate_pool_source(item: Mapping[str, Any]) -> str:

@@ -116,3 +116,32 @@ checkpoint compatibility, TCS integrity, and validation selection. The search
 loop supplement adds dedicated tests for refill, probation, two folds,
 hierarchical bands, count floors, change limits, QD readiness, wrong-answer
 dispersion, and selector fairness.
+
+## Stable-QD Search-Loop Supplement
+
+The current V8 implementation keeps the public setting
+`shared_vote_tcs_competence_depth2_progressive_residual_hybrid` and
+`method_version=v8_stable_qd_lineage`. It does not introduce a new setting or
+rename the historical V1-V7 refresh path.
+
+The V8 orchestration now has these explicit boundaries:
+
+- Legacy per-epoch `refresh_all_prompt_beams` remains a compatibility path for
+  older method versions, but V8 rejects it even when the old CLI flag is set.
+- Stable-QD joint selection is event-driven. It skips when there is no material
+  archive, representative, or active-prompt change, runs at the configured
+  interval, and is forced on the final epoch.
+- Fixed-probe work is incremental: active/current representatives and a bounded
+  dirty shortlist are evaluated, while completed prompt-question profiles are
+  reused. The `3^5` team enumeration is offline and makes zero team-level
+  solver calls.
+- Candidate generation has separate TCS repair and open mechanism-exploration
+  channels. TCS is used when repair evidence exists; otherwise two open
+  candidates are requested. Both channels share the same downstream quality,
+  archive, refill, and lineage gates.
+
+The new policy fingerprints and counters are persisted in run metadata,
+checkpoint state, JSONL diagnostics, and cost summaries. The characterization
+tests cover the V8 refresh guard, dual-channel routing, event skip path, and
+checkpoint parent-directory recovery. External API smoke runs remain evidence
+only and are not committed with the source tree.

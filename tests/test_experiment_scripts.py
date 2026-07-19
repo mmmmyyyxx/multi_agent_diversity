@@ -314,6 +314,8 @@ def test_task_runner_passes_setting_name_to_run_metadata():
     _append_common_cli_args(cmd, args, task, setting, seed=42)
     index = cmd.index("--experiment_setting")
     assert cmd[index + 1] == setting.name
+    assert cmd[cmd.index("--beam_refresh_each_epoch") + 1] == "0"
+    assert cmd[cmd.index("--teacher_critic_max_rounds") + 1] == "2"
 
 
 def test_compute_metrics_reads_vote_tie_rate_and_mars_delta(tmp_path):

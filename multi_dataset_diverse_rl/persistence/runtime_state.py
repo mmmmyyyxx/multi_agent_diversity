@@ -52,6 +52,22 @@ class RuntimeStateMixin:
             "completion_tokens": 0,
             "total_tokens": 0,
             "estimated_cost": 0.0,
+            "tcs_teacher_calls": 0,
+            "tcs_critic_calls": 0,
+            "tcs_rewrite_calls": 0,
+            "tcs_student_calls": 0,
+            "open_exploration_calls": 0,
+            "legacy_beam_refresh_calls": 0,
+            "joint_refresh_count": 0,
+            "joint_refresh_skipped_count": 0,
+            "new_full_probe_prompt_count": 0,
+            "new_full_probe_pair_count": 0,
+            "full_probe_cache_hits": 0,
+            "offline_team_combination_count": 0,
+            "team_level_solver_calls": 0,
+            "calls_saved_by_skipped_joint_refresh": 0,
+            "calls_saved_by_dirty_prompt_cache": 0,
+            "calls_saved_by_tcs_round_reduction": 0,
             "latency_seconds": 0.0,
             "candidate_eval_solver_api_calls": 0,
             "candidate_eval_cache_hits": 0,
@@ -512,6 +528,7 @@ class RuntimeStateMixin:
         refill_round: int,
         generation: int,
     ) -> Dict[str, Any]:
+        diagnostics = dict(proposal.get("optimizer_generation_diagnostics", {}) or {})
         return {
             "candidate_id": f"refill{refill_round}_a{agent_id}_{candidate_index}_{self._hash(prompt)}",
             "prompt": prompt,
@@ -523,6 +540,18 @@ class RuntimeStateMixin:
             "candidate_pool_source": "optimizer",
             "candidate_source": str(
                 proposal.get("candidate_source", "teacher_critic_student") or "teacher_critic_student"
+            ),
+            "optimizer_architecture": str(
+                proposal.get("optimizer_architecture", diagnostics.get("optimizer_architecture", "")) or ""
+            ),
+            "optimizer_generation_diagnostics": diagnostics,
+            "tcs_call_group_id": str(proposal.get("tcs_call_group_id", diagnostics.get("tcs_call_group_id", "")) or ""),
+            "execution_session_id": str(
+                proposal.get("execution_session_id", diagnostics.get("execution_session_id", self._current_execution_session_id()))
+                or self._current_execution_session_id()
+            ),
+            "update_attempt_id": str(
+                proposal.get("update_attempt_id", diagnostics.get("update_attempt_id", "")) or ""
             ),
             "refill_candidate": True,
             "proposal": proposal,
@@ -642,6 +671,14 @@ class RuntimeStateMixin:
                 "beam_policy_version": str(getattr(self.cfg, "beam_policy_version", "legacy")),
                 "tcs_candidate_policy_version": str(getattr(self.cfg, "tcs_candidate_policy_version", "legacy")),
                 "mechanism_signature_version": str(getattr(self.cfg, "mechanism_signature_version", "legacy")),
+                "candidate_generation_policy_version": str(getattr(self.cfg, "candidate_generation_policy_version", "legacy")),
+                "joint_refresh_policy_version": str(getattr(self.cfg, "joint_refresh_policy_version", "legacy")),
+                "representative_probe_policy_version": str(getattr(self.cfg, "representative_probe_policy_version", "legacy")),
+                "requested_beam_refresh_each_epoch": bool(getattr(self.cfg, "beam_refresh_each_epoch", False)),
+                "effective_legacy_beam_refresh_each_epoch": bool(
+                    getattr(self.cfg, "legacy_beam_rescore_each_epoch", False)
+                    and not self._is_stable_qd_lineage()
+                ),
             })
             if self._is_stable_qd_lineage():
                 fields.update({
@@ -660,6 +697,11 @@ class RuntimeStateMixin:
                     "joint_quality_filter_version": str(self.cfg.joint_quality_filter_version),
                     "probe_stability_version": str(self.cfg.probe_stability_version),
                     "parent_selection_version": str(self.cfg.parent_selection_version),
+                    "joint_refresh_mode": str(getattr(self.cfg, "joint_refresh_mode", "legacy")),
+                    "joint_refresh_policy_version": str(getattr(self.cfg, "joint_refresh_policy_version", "legacy")),
+                    "representative_probe_policy_version": str(getattr(self.cfg, "representative_probe_policy_version", "legacy")),
+                    "joint_refresh_interval_epochs": int(getattr(self.cfg, "joint_refresh_interval_epochs", 0)),
+                    "joint_refresh_max_dirty_candidates_per_agent": int(getattr(self.cfg, "joint_refresh_max_dirty_candidates_per_agent", 0)),
                 })
         return fields
 
@@ -678,10 +720,16 @@ class RuntimeStateMixin:
     def _update_attempt_id(self, epoch_id: int, step_id: int, agent_id: int) -> str:
         return f"{self._current_execution_session_id()}_e{int(epoch_id)}_s{int(step_id)}_a{int(agent_id)}"
 
-    def _tcs_call_group_id(self, update_attempt_id: str, parent_id: str, parent_prompt: str) -> str:
+    def _tcs_call_group_id(
+        self,
+        update_attempt_id: str,
+        parent_id: str,
+        parent_prompt: str,
+        generation_round: int = 0,
+    ) -> str:
         return (
             f"{update_attempt_id}_p{self._hash(str(parent_id))}_"
-            f"{self._hash(str(parent_prompt))}"
+            f"{self._hash(str(parent_prompt))}_r{int(generation_round)}"
         )
 
     @staticmethod

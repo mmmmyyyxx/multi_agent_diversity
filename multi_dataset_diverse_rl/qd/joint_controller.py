@@ -4,16 +4,178 @@ from ..system_shared import *
 
 
 class JointControllerMixin:
+    def _joint_material_snapshot(self) -> Dict[str, Any]:
+        return {
+            "safe": {
+                str(agent_id): sorted(
+                    self._normalized_prompt_hash(str(item.get("prompt", "")))
+                    for item in getattr(agent, "safe_qd_archive", [])
+                )
+                for agent_id, agent in enumerate(self.agents)
+            },
+            "representatives": {
+                str(agent_id): [
+                    self._normalized_prompt_hash(str(item.get("prompt", "")))
+                    for item in getattr(agent, "prompt_beam", [])
+                ]
+                for agent_id, agent in enumerate(self.agents)
+            },
+            "active": [self._normalized_prompt_hash(agent.current_prompt) for agent in self.agents],
+            "probation_promotions": int(getattr(self, "probation_to_safe_conversion_count", 0)),
+        }
+
+    def _fixed_probe_hash(self, probe_data: List[Dict[str, str]]) -> str:
+        payload = [
+            (self._hash(str(item.get("question", ""))), self._hash(str(item.get("answer", ""))))
+            for item in probe_data
+        ]
+        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+    def _profile_is_current(self, agent_id: int, prompt_hash: str) -> bool:
+        key = f"{int(agent_id)}:{prompt_hash}"
+        profile = dict(getattr(self, "behavior_profile_by_prompt_hash", {}).get(key, {}) or {})
+        return bool(
+            profile
+            and str(profile.get("fixed_probe_hash", "")) == str(getattr(self, "current_fixed_probe_hash", ""))
+            and str(profile.get("fixed_probe_version", "")) == str(getattr(self, "prompt_probe_version", ""))
+        )
+
+    @staticmethod
+    def _dirty_shortlist_score(item: Dict[str, Any]) -> tuple:
+        metrics = dict(item.get("metrics", {}) or {})
+        candidate_type = str(metrics.get("candidate_type", item.get("proposal", {}).get("candidate_type", "")))
+        return (
+            float(metrics.get("candidate_target_accuracy", metrics.get("target_agent_accuracy", 0.0)) or 0.0),
+            float(metrics.get("depth1_net_count", 0) or 0) + float(metrics.get("depth2_net_count", 0) or 0),
+            float(metrics.get("mechanism_signature_distance", 0.0) or 0.0),
+            int(candidate_type == "mechanism_alternative"),
+            str(item.get("prompt_hash", "")),
+        )
+
+    async def refresh_joint_active_team_if_needed(
+        self,
+        probe_data: List[Dict[str, str]],
+        *,
+        epoch: int,
+        final_epoch: bool = False,
+    ) -> Dict[str, Any]:
+        if not self._is_stable_qd_lineage():
+            return {"enabled": False, "joint_refresh_triggered": False}
+        snapshot = self._joint_material_snapshot()
+        previous = dict(getattr(self, "last_archive_material_snapshot", {}) or {})
+        previous_safe = dict(previous.get("safe", {}) or {})
+        new_safe_count = sum(
+            len(set(values) - set(previous_safe.get(agent_id, [])))
+            for agent_id, values in snapshot["safe"].items()
+        ) if previous else sum(len(values) for values in snapshot["safe"].values())
+        safe_changed = bool(previous and snapshot["safe"] != previous.get("safe"))
+        representative_changed = bool(previous and snapshot["representatives"] != previous.get("representatives"))
+        active_changed = bool(previous and snapshot["active"] != previous.get("active"))
+        probation_promoted = snapshot["probation_promotions"] > int(previous.get("probation_promotions", 0) or 0)
+        epochs_since = int(epoch) - int(getattr(self, "last_joint_refresh_epoch", 0) or 0)
+        interval_due = epochs_since >= max(1, int(self.cfg.joint_refresh_interval_epochs))
+        reasons: List[str] = []
+        if bool(self.cfg.joint_refresh_on_safe_archive_change) and (
+            safe_changed or new_safe_count >= int(self.cfg.joint_refresh_min_new_safe_candidates)
+        ):
+            reasons.append("safe_archive_change")
+        if bool(self.cfg.joint_refresh_on_probation_promotion) and probation_promoted:
+            reasons.append("probation_promotion")
+        if bool(self.cfg.joint_refresh_on_representative_change) and representative_changed:
+            reasons.append("representative_change")
+        if active_changed:
+            reasons.append("active_prompt_change")
+        if interval_due:
+            reasons.append("interval")
+        if bool(self.cfg.joint_refresh_force_final_epoch) and final_epoch:
+            reasons.append("final_epoch")
+        triggered = str(self.cfg.joint_refresh_mode) != "event_driven" or bool(reasons)
+        self.epochs_since_last_joint_refresh = epochs_since
+        if not triggered:
+            self.joint_refresh_skipped_count = int(getattr(self, "joint_refresh_skipped_count", 0)) + 1
+            record = {
+                "epoch": int(epoch),
+                "joint_refresh_triggered": False,
+                "joint_refresh_skip_reason": "no_material_archive_change",
+                "joint_refresh_trigger_reasons": [],
+                "epochs_since_last_joint_refresh": epochs_since,
+                "new_full_probe_prompt_count": 0,
+                "new_full_probe_pair_count": 0,
+                "joint_team_combination_count": 0,
+                "joint_team_solver_call_count": 0,
+            }
+            self.joint_team_selection_history.append(record)
+            self._flush_jsonl("joint_team_selection_history.jsonl", [record])
+            return record
+        self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
+        self.last_archive_material_snapshot = snapshot
+        self.archive_material_change_version = int(getattr(self, "archive_material_change_version", 0)) + int(
+            safe_changed or probation_promoted
+        )
+        before_pairs = int(getattr(self, "full_probe_missing_pair_evaluation_count", 0))
+        before_prompts = int(getattr(self, "new_full_probe_prompt_count", 0))
+        record = await self.select_joint_active_team(probe_data, epoch=epoch)
+        self.last_joint_refresh_epoch = int(epoch)
+        self.epochs_since_last_joint_refresh = 0
+        self.joint_refresh_count = int(getattr(self, "joint_refresh_count", 0)) + 1
+        record.update({
+            "joint_refresh_triggered": True,
+            "joint_refresh_skip_reason": "",
+            "joint_refresh_trigger_reasons": reasons,
+            "epochs_since_last_joint_refresh": epochs_since,
+            "new_full_probe_prompt_count": int(getattr(self, "new_full_probe_prompt_count", 0)) - before_prompts,
+            "new_full_probe_pair_count": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)) - before_pairs,
+            "joint_team_combination_count": int(record.get("combination_count", 0)),
+            "joint_team_solver_call_count": 0,
+        })
+        self.last_archive_material_snapshot = self._joint_material_snapshot()
+        self.last_representative_snapshot = dict(self.last_archive_material_snapshot.get("representatives", {}))
+        self.last_active_prompt_hashes = list(self.last_archive_material_snapshot.get("active", []))
+        self._flush_jsonl("joint_team_selection_history.jsonl", [record])
+        return record
+
     async def select_joint_active_team(self, probe_data: List[Dict[str, str]], *, epoch: int) -> Dict[str, Any]:
         if not self._is_stable_qd_lineage():
             return {"enabled": False, "combination_count": 0}
+        if not str(getattr(self, "current_fixed_probe_hash", "")):
+            self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
         beams: List[List[Dict[str, Any]]] = []
+        cached_profile_count = 0
+        dirty_prompt_count = 0
+        dirty_shortlist_count = 0
         for agent_id, agent in enumerate(self.agents):
             archive = list(getattr(agent, "safe_qd_archive", []) or agent.prompt_beam)
-            profiled_archive = []
-            for item in archive:
+            active_hash = self._normalized_prompt_hash(agent.current_prompt)
+            existing_representatives = list(getattr(agent, "prompt_beam", []) or [])
+            dirty = [
+                item for item in archive
+                if not self._profile_is_current(agent_id, self._normalized_prompt_hash(str(item.get("prompt", ""))))
+            ]
+            dirty_prompt_count += len(dirty)
+            dirty.sort(key=self._dirty_shortlist_score, reverse=True)
+            shortlist = dirty[: max(0, int(self.cfg.joint_refresh_max_dirty_candidates_per_agent))]
+            dirty_shortlist_count += len(shortlist)
+            pool_by_hash: Dict[str, Dict[str, Any]] = {}
+            for item in [
+                next((row for row in archive if self._normalized_prompt_hash(str(row.get("prompt", ""))) == active_hash),
+                     self._make_beam_item(agent.current_prompt, None, {}, None, 0)),
+                *existing_representatives,
+                *shortlist,
+            ]:
+                pool_by_hash.setdefault(self._normalized_prompt_hash(str(item.get("prompt", ""))), dict(item))
+            profiled_pool = []
+            for item in pool_by_hash.values():
                 metrics = item.get("metrics", {})
-                profile = await self._evaluate_prompt_on_stable_probe(
+                prompt_hash = self._normalized_prompt_hash(str(item.get("prompt", agent.current_prompt)))
+                was_current = self._profile_is_current(agent_id, prompt_hash)
+                cached_profile = None
+                if was_current:
+                    cached_profile = dict(
+                        self.behavior_profile_by_prompt_hash.get(f"{agent_id}:{prompt_hash}")
+                        or self.behavior_profile_by_prompt_hash.get(prompt_hash)
+                        or {}
+                    )
+                profile = cached_profile or await self._evaluate_prompt_on_stable_probe(
                     agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
                     metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
                 )
@@ -23,16 +185,41 @@ class JointControllerMixin:
                     profile.get("answer_vector", []), profile.get("correctness_vector", [])
                 )
                 candidate["metrics"] = candidate_metrics
-                profiled_archive.append(candidate)
-            agent.safe_qd_archive = profiled_archive
-            self._refresh_joint_representatives(agent)
+                profiled_pool.append(candidate)
+                key = f"{agent_id}:{profile['prompt_hash']}"
+                self.behavior_profile_by_prompt_hash[key] = dict(profile)
+                self.behavior_profile_by_prompt_hash[profile["prompt_hash"]] = dict(profile)
+                if was_current:
+                    cached_profile_count += 1
+                else:
+                    self.new_full_probe_prompt_count = int(getattr(self, "new_full_probe_prompt_count", 0)) + 1
+                dirty_hashes = getattr(self, "dirty_prompt_hashes", {})
+                dirty_hashes.setdefault(str(agent_id), [])
+                if profile["prompt_hash"] in dirty_hashes[str(agent_id)]:
+                    dirty_hashes[str(agent_id)].remove(profile["prompt_hash"])
+                self.dirty_prompt_hashes = dirty_hashes
+            previous_hashes = [self._normalized_prompt_hash(str(item.get("prompt", ""))) for item in existing_representatives]
+            representatives = [dict(item) for item in select_joint_representatives(
+                profiled_pool, active_hash, int(self.cfg.joint_representative_beam_size), self.cfg,
+            )]
+            agent.prompt_beam = representatives or [dict(profiled_pool[0])]
+            current_hashes = [self._normalized_prompt_hash(str(item.get("prompt", ""))) for item in agent.prompt_beam]
+            if current_hashes != previous_hashes:
+                key = str(agent_id)
+                versions = getattr(self, "representative_version_per_agent", {})
+                versions[key] = int(versions.get(key, 0)) + 1
+                self.representative_version_per_agent = versions
             agent_profiles = []
             for beam_index, item in enumerate(agent.prompt_beam):
                 metrics = item.get("metrics", {})
-                profile = await self._evaluate_prompt_on_stable_probe(
-                    agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
-                    metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
-                )
+                prompt_hash = self._normalized_prompt_hash(str(item.get("prompt", "")))
+                profile = dict(self.behavior_profile_by_prompt_hash.get(f"{agent_id}:{prompt_hash}") or self.behavior_profile_by_prompt_hash.get(prompt_hash) or {})
+                if not profile:
+                    profile = await self._evaluate_prompt_on_stable_probe(
+                        agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
+                        metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
+                    )
+                    self.behavior_profile_by_prompt_hash[f"{agent_id}:{profile['prompt_hash']}"] = dict(profile)
                 profile.update({
                     "beam_index": beam_index,
                     "beam_source": str(item.get("beam_slot", metrics.get("beam_slot", "incumbent"))),
@@ -67,6 +254,7 @@ class JointControllerMixin:
             getattr(self, "initial_active_prompt_hashes", [])
             or [str(profile.get("prompt_hash", "")) for profile in initial_profiles]
         )
+        self.offline_team_combination_count = int(getattr(self, "offline_team_combination_count", 0)) + len(teams)
         incumbent["prompt_hashes"] = team_prompt_hashes(incumbent)
         new_anchors = []
         if not getattr(self, "quality_anchor_archive", []):
@@ -132,6 +320,10 @@ class JointControllerMixin:
             self.lineage_history.append({"epoch": epoch, "agent_id": agent_id, **lineage_record})
         record = {
             "epoch": epoch, "combination_count": len(teams),
+            "cached_prompt_profile_count": int(cached_profile_count),
+            "dirty_prompt_count": int(dirty_prompt_count),
+            "dirty_prompt_shortlist_count": int(dirty_shortlist_count),
+            "joint_team_solver_call_count": 0,
             "representative_count_per_agent": [len(beam) for beam in beams],
             "theoretical_combination_count": int(np.prod([len(beam) for beam in beams])) if beams else 0,
             "post_change_limit_combination_count": int(
@@ -281,7 +473,6 @@ class JointControllerMixin:
         self.qd_previous_active_niche_count = int(active_niches)
         if self.qd_no_diversification_epochs >= int(self.cfg.joint_team_no_diversification_patience):
             self.qd_change_limit_relaxed_epoch = int(epoch) + 1
-        self._flush_jsonl("joint_team_selection_history.jsonl", [record])
         self._flush_jsonl("lineage_history.jsonl", self.lineage_history[-len(self.agents):])
         self._flush_jsonl("quality_diversity_archive.jsonl", self.quality_diversity_archive_history)
         self.quality_diversity_archive_history = []

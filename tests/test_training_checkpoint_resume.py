@@ -76,6 +76,12 @@ def test_checkpoint_atomic_write_retries_transient_replace_failure(tmp_path, mon
     assert list(tmp_path.glob("*.tmp")) == []
 
 
+def test_checkpoint_atomic_write_creates_missing_parent(tmp_path):
+    path = tmp_path / "nested" / "run" / "training_checkpoint.json"
+    write_json_atomic(str(path), {"version": 2})
+    assert json.loads(path.read_text(encoding="utf-8")) == {"version": 2}
+
+
 def test_checkpoint_atomic_write_raises_after_persistent_replace_failure(tmp_path, monkeypatch):
     from multi_dataset_diverse_rl.persistence import checkpoint as cli_module
 

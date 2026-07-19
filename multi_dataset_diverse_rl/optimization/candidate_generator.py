@@ -320,8 +320,12 @@ class CandidateGeneratorMixin:
         teacher_context: Dict[str, Any],
         requested_candidates: int,
     ) -> Dict[str, Any]:
-        threshold = float(getattr(self.cfg, "teacher_question_pass_threshold", 0.75) or 0.75)
-        max_rounds = max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 3) or 3))
+        stable_qd = self._is_stable_qd_lineage()
+        direct_threshold = float(getattr(self.cfg, "teacher_critic_direct_pass_threshold", 0.75) or 0.75) if stable_qd else float(getattr(self.cfg, "teacher_question_pass_threshold", 0.75) or 0.75)
+        rewrite_threshold = float(getattr(self.cfg, "teacher_critic_rewrite_threshold", 0.50) or 0.50)
+        forced_threshold = float(getattr(self.cfg, "teacher_critic_forced_best_threshold", 0.60) or 0.60)
+        max_rounds = min(2, max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 2) or 2))) if stable_qd else max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 3) or 3))
+        max_rewrites = min(1, max(0, int(getattr(self.cfg, "teacher_rewrite_max_count", 1) or 0))) if stable_qd else max(0, max_rounds - 1)
         teacher_question = await self.propose_teacher_question(agent_id, parent_prompt, teacher_context, requested_candidates)
         reviews: List[Dict[str, Any]] = []
         question_versions: List[Dict[str, Any]] = []
@@ -344,10 +348,9 @@ class CandidateGeneratorMixin:
             reviews.append(review)
             question_versions.append(teacher_question)
             score = self._safe_float(review.get("score", 0.0), 0.0)
-            if (
-                has_guiding_question(teacher_question)
-                and bool(review.get("passed"))
-                and self._safe_float(review.get("score", 0.0), 0.0) >= threshold
+            if has_guiding_question(teacher_question) and (
+                (stable_qd and score >= direct_threshold)
+                or (not stable_qd and bool(review.get("passed")) and score >= direct_threshold)
             ):
                 return {
                     "approved": True,
@@ -359,7 +362,20 @@ class CandidateGeneratorMixin:
                     "teacher_question_forced_best_round": 0,
                     "teacher_question_forced_below_threshold": False,
                 }
-            if round_id < max_rounds - 1:
+            if stable_qd and round_id == 0 and score < rewrite_threshold:
+                return {
+                    "approved": False,
+                    "teacher_question": teacher_question if has_guiding_question(teacher_question) else {},
+                    "critic_reviews": reviews,
+                    "teacher_critic_rounds": 1,
+                    "teacher_rewrite_count": 0,
+                    "teacher_question_forced_best_score": False,
+                    "teacher_question_forced_best_round": 0,
+                    "teacher_question_forced_below_threshold": True,
+                    "teacher_question_forced_best_review": review,
+                    "teacher_question_rejection_reason": "critic_score_below_rewrite_threshold",
+                }
+            if round_id < max_rounds - 1 and rewrite_count < max_rewrites:
                 rewrite_context = dict(TCS_AUDIT_CONTEXT.get() or {})
                 rewrite_context["teacher_critic_round"] = round_id + 1
                 rewrite_token = TCS_AUDIT_CONTEXT.set(rewrite_context)
@@ -396,18 +412,18 @@ class CandidateGeneratorMixin:
                 best_score = score
         best_review = reviews[best_idx] if reviews else {}
         best_question = question_versions[best_idx] if question_versions else teacher_question
+        forced = (best_score >= forced_threshold) if stable_qd else True
         return {
-            # The question did not pass Critic; it is nevertheless the legal
-            # best-score fallback that may be handed to Student.
             "approved": False,
-            "teacher_question": best_question,
+            "teacher_question": best_question if forced else {},
             "critic_reviews": reviews,
             "teacher_critic_rounds": len(reviews),
             "teacher_rewrite_count": rewrite_count,
-            "teacher_question_forced_best_score": True,
+            "teacher_question_forced_best_score": forced,
             "teacher_question_forced_best_round": best_idx + 1,
-            "teacher_question_forced_below_threshold": best_score < threshold,
+            "teacher_question_forced_below_threshold": True,
             "teacher_question_forced_best_review": best_review,
+            "teacher_question_rejection_reason": "" if forced else "critic_score_below_forced_best_threshold",
         }
 
     async def retry_student_candidates_json_only(
@@ -524,7 +540,9 @@ class CandidateGeneratorMixin:
         approved_teacher_question: Dict[str, Any],
         teacher_context: Dict[str, Any],
         num_candidates: int,
+        generation_channel: str = "tcs_repair",
     ) -> Dict[str, Any]:
+        open_exploration = generation_channel == "open_mechanism_exploration"
         schema = self._student_candidate_schema_json()
         schema_mode = str(getattr(self.cfg, "student_candidate_schema_mode", "compact") or "compact").lower()
         prompt_max = int(
@@ -596,6 +614,17 @@ class CandidateGeneratorMixin:
             "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
             f"Do not only paraphrase the parent prompt.\n\n{return_mode}"
         )
+        if open_exploration:
+            system_prompt = (
+                "You are a direct prompt mutation generator exploring a new reasoning mechanism.\n"
+                "Do not rely on a Teacher or Critic question. Produce a complete standalone solver prompt that uses "
+                "a structurally different, executable decision procedure from the parent. Do not merely paraphrase, "
+                "add a persona, add generic care, or copy the parent's operation order. You may reorganize the reasoning "
+                "sequence, but preserve answer-format compliance and solver competence. Do not use gold answers, concrete "
+                "question text, answer labels, or peer prompts. Every candidate must set candidate_type to "
+                "mechanism_alternative.\n\n"
+                f"{return_mode}"
+            )
         if self._v7_residual_protocol_enabled():
             item_instruction += (
                 " Include non-empty preserved_mechanisms, exactly one modified_mechanism, change_summary, "
@@ -605,15 +634,18 @@ class CandidateGeneratorMixin:
                 "\nMake exactly one local mechanism change. Preserve the listed effective and pivotal-correct mechanisms. "
                 "State how the change should reduce shared error without manufacturing disagreement."
             )
-        if self._is_v82_hybrid():
+        if self._is_stable_qd_lineage() and not open_exploration:
             item_instruction += (
-                " Return exactly two candidates in this order: task_specific_repair, then mechanism_alternative. "
-                "Each must include candidate_type, ordered mechanism_steps, target_failure_buckets, and expected_effect."
+                " Return only task_specific_repair candidates. Each must include candidate_type, ordered "
+                "mechanism_steps, target_failure_buckets, and expected_effect."
             )
             system_prompt += (
-                "\nThe first candidate must be a task-specific repair grounded in the supplied failure buckets. "
-                "The second must change at least one substantive decision operation relative to the first and parent; "
-                "persona changes, synonyms, renumbering, and extra generic verification do not count."
+                "\nEach candidate must be a task-specific repair grounded in the supplied failure buckets."
+            )
+        elif self._is_stable_qd_lineage():
+            item_instruction += (
+                " Return only mechanism_alternative candidates. Each must include candidate_type, ordered "
+                "mechanism_steps, target_failure_buckets, and expected_effect."
             )
         if self._is_stable_qd_lineage():
             lineage_context = teacher_context.get("stable_lineage_context", {})
@@ -627,14 +659,27 @@ class CandidateGeneratorMixin:
                     else "This agent is not committed: a substantial mechanism departure is allowed and must not be reduced to a local paraphrase."
                 )
             )
+        visible_context = teacher_context
+        if open_exploration:
+            visible_context = {
+                key: teacher_context[key]
+                for key in (
+                    "diagnostic_focus", "observed_long_term_capability_profile",
+                    "stable_lineage_context", "candidate_refill_feedback",
+                )
+                if key in teacher_context
+            }
         user_prompt = (
             "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
             f"{item_instruction}\n\n"
             f"{format_rules}\n\n"
             f"target_agent_id: {agent_id}\nrequested_candidates: {num_candidates}\n\n"
             f"parent_prompt:\n{parent_prompt}\n\n"
-            f"approved_teacher_question:\n{json.dumps(approved_teacher_question, ensure_ascii=False, indent=2)}\n\n"
-            f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+            + (
+                f"approved_teacher_question:\n{json.dumps(approved_teacher_question, ensure_ascii=False, indent=2)}\n\n"
+                if not open_exploration else ""
+            )
+            + f"abstract_generation_context:\n{json.dumps(visible_context, ensure_ascii=False, indent=2)}"
         )
         text = await self._chat(
             model=self.cfg.optimizer_model,
@@ -642,7 +687,7 @@ class CandidateGeneratorMixin:
             user_prompt=user_prompt,
             temperature=float(getattr(self.cfg, "student_temperature", self.cfg.optimizer_temperature)),
             max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
-            stage=f"student_optimizer_agent_{agent_id}",
+            stage=(f"open_mechanism_exploration_agent_{agent_id}" if open_exploration else f"student_optimizer_agent_{agent_id}"),
             client_role="optimizer",
         )
         raw_text = text or ""
@@ -756,7 +801,9 @@ class CandidateGeneratorMixin:
         generation_batch: Optional[Dict[str, Any]] = None,
         generation_batches: Optional[List[Dict[str, Any]]] = None,
         refill_feedback: Optional[Dict[str, Any]] = None,
+        generation_channel: str = "tcs_repair",
     ) -> List[Dict[str, Any]]:
+        open_exploration = generation_channel == "open_mechanism_exploration"
         update_diagnosis = overlap_diagnosis
         prompt_roles = [
             r for r in update_diagnosis.get("prompt_roles", [])
@@ -815,37 +862,56 @@ class CandidateGeneratorMixin:
         )
         # Preserve the beam parent's stable ID for call-level provenance.
         parent_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("parent_id") or self._hash(parent_prompt))
-        tcs_call_group_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("tcs_call_group_id") or "")
+        tcs_call_group_id = (
+            ""
+            if open_exploration
+            else str((TCS_AUDIT_CONTEXT.get() or {}).get("tcs_call_group_id") or "")
+        )
         execution_session_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("execution_session_id") or getattr(self, "execution_session_id", ""))
         update_attempt_id = str((TCS_AUDIT_CONTEXT.get() or {}).get("update_attempt_id") or "")
         call_context = dict(TCS_AUDIT_CONTEXT.get() or {})
         call_context.update(
             {
-                "optimizer_architecture": "teacher_critic_student",
+                "optimizer_architecture": (
+                    "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                ),
                 "agent_id": int(agent_id),
                 "parent_id": parent_id,
                 "teacher_critic_round": 1,
+                "tcs_call_group_id": tcs_call_group_id,
             }
         )
-        context_token = TCS_AUDIT_CONTEXT.set(call_context)
-        try:
-            approved = await self.generate_approved_teacher_question(
-                agent_id=agent_id,
-                parent_prompt=parent_prompt,
-                teacher_context=teacher_context,
-                requested_candidates=num_candidates,
-            )
-        finally:
-            TCS_AUDIT_CONTEXT.reset(context_token)
+        if open_exploration:
+            approved = {
+                "approved": True,
+                "teacher_question": {},
+                "critic_reviews": [],
+                "teacher_critic_rounds": 0,
+                "teacher_rewrite_count": 0,
+                "teacher_question_forced_best_score": False,
+            }
+        else:
+            context_token = TCS_AUDIT_CONTEXT.set(call_context)
+            try:
+                approved = await self.generate_approved_teacher_question(
+                    agent_id=agent_id,
+                    parent_prompt=parent_prompt,
+                    teacher_context=teacher_context,
+                    requested_candidates=num_candidates,
+                )
+            finally:
+                TCS_AUDIT_CONTEXT.reset(context_token)
         diagnostics = self._empty_optimizer_generation_diagnostics()
-        diagnostics["optimizer_architecture"] = "teacher_critic_student"
+        diagnostics["optimizer_architecture"] = (
+            "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+        )
         diagnostics["tcs_call_group_id"] = tcs_call_group_id
         diagnostics["execution_session_id"] = execution_session_id
         diagnostics["update_attempt_id"] = update_attempt_id
         teacher_question = approved.get("teacher_question", {}) if isinstance(approved, dict) else {}
         critic_reviews = approved.get("critic_reviews", []) if isinstance(approved, dict) else []
         forced_best = bool(approved.get("teacher_question_forced_best_score", False)) if isinstance(approved, dict) else False
-        approved_for_student = bool(approved.get("approved", False)) or forced_best
+        approved_for_student = open_exploration or bool(approved.get("approved", False)) or forced_best
         forced_best_review = approved.get("teacher_question_forced_best_review", {}) if isinstance(approved, dict) else {}
         last_review = (
             forced_best_review
@@ -857,7 +923,7 @@ class CandidateGeneratorMixin:
             if isinstance(teacher_question, dict)
             else ""
         )
-        teacher_question_usable = bool(guiding_question)
+        teacher_question_usable = open_exploration or bool(guiding_question)
         approved_for_student = approved_for_student and teacher_question_usable
         diagnostics.update(
             {
@@ -875,11 +941,21 @@ class CandidateGeneratorMixin:
                 "teacher_error_alignment_critique": str(last_review.get("error_alignment_critique", "")),
                 "teacher_diversity_critique": str(last_review.get("diversity_critique", "")),
                 "teacher_rewrite_count": int(approved.get("teacher_rewrite_count", 0) or 0),
-                "num_teacher_calls": 1,
+                "num_teacher_calls": 0 if open_exploration else 1,
                 "num_critic_calls": int(approved.get("teacher_critic_rounds", len(critic_reviews)) or 0),
                 "num_teacher_rewrite_calls": int(approved.get("teacher_rewrite_count", 0) or 0),
             }
         )
+        if hasattr(self, "cost_summary"):
+            self.cost_summary["tcs_teacher_calls"] = int(self.cost_summary.get("tcs_teacher_calls", 0)) + int(diagnostics["num_teacher_calls"])
+            self.cost_summary["tcs_critic_calls"] = int(self.cost_summary.get("tcs_critic_calls", 0)) + int(diagnostics["num_critic_calls"])
+            self.cost_summary["tcs_rewrite_calls"] = int(self.cost_summary.get("tcs_rewrite_calls", 0)) + int(diagnostics["num_teacher_rewrite_calls"])
+            if self._is_stable_qd_lineage() and not open_exploration:
+                saved_calls = max(0, 3 - int(diagnostics["num_critic_calls"]))
+                saved_calls += max(0, 2 - int(diagnostics["num_teacher_rewrite_calls"]))
+                self.cost_summary["calls_saved_by_tcs_round_reduction"] = int(
+                    self.cost_summary.get("calls_saved_by_tcs_round_reduction", 0)
+                ) + saved_calls
         if not approved_for_student:
             diagnostics["teacher_question_rejection_reason"] = (
                 "empty_teacher_question"
@@ -898,10 +974,13 @@ class CandidateGeneratorMixin:
         student_context = dict(TCS_AUDIT_CONTEXT.get() or {})
         student_context.update(
             {
-                "optimizer_architecture": "teacher_critic_student",
+                "optimizer_architecture": (
+                    "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                ),
                 "agent_id": int(agent_id),
                 "parent_id": parent_id,
                 "teacher_critic_round": int(diagnostics["teacher_critic_rounds"]),
+                "tcs_call_group_id": tcs_call_group_id,
             }
         )
         student_context_token = TCS_AUDIT_CONTEXT.set(student_context)
@@ -912,6 +991,7 @@ class CandidateGeneratorMixin:
                 approved_teacher_question=approved,
                 teacher_context=teacher_context,
                 num_candidates=num_candidates,
+                generation_channel=generation_channel,
             )
         finally:
             TCS_AUDIT_CONTEXT.reset(student_context_token)
@@ -924,6 +1004,14 @@ class CandidateGeneratorMixin:
             student_candidates = student_result
         diagnostics["student_candidate_count_raw"] = len(student_candidates) if isinstance(student_candidates, list) else 0
         diagnostics["num_student_calls"] = 1
+        if open_exploration:
+            if hasattr(self, "cost_summary"):
+                self.cost_summary["open_exploration_calls"] = int(self.cost_summary.get("open_exploration_calls", 0)) + 1
+            self.open_exploration_generation_count = int(getattr(self, "open_exploration_generation_count", 0)) + 1
+        else:
+            if hasattr(self, "cost_summary"):
+                self.cost_summary["tcs_student_calls"] = int(self.cost_summary.get("tcs_student_calls", 0)) + 1
+            self.tcs_repair_generation_count = int(getattr(self, "tcs_repair_generation_count", 0)) + 1
         diagnostics["num_student_retry_calls"] = int(bool(diagnostics.get("student_json_retry_attempted", False)))
         diagnostics["num_student_repair_calls"] = int(bool(diagnostics.get("student_json_repair_attempted", False)))
         diagnostics["optimizer_raw_candidate_count"] = int(diagnostics["student_candidate_count_raw"])
@@ -960,9 +1048,14 @@ class CandidateGeneratorMixin:
                         item["expected_shared_error_effect"] = str(item.get("error_correlation_reduction", "")).strip()
                     if not str(item.get("change_summary", "")).strip():
                         item["change_summary"] = str(item.get("modified_mechanism", "")).strip()
-                if self._is_v82_hybrid():
+                if self._is_stable_qd_lineage():
                     candidate_type = str(item.get("candidate_type", "")).strip().lower()
-                    type_rejection = self._hybrid_candidate_type_rejection_reason(candidate_type, seen_candidate_types)
+                    expected_type = "mechanism_alternative" if open_exploration else "task_specific_repair"
+                    type_rejection = (
+                        "unexpected_candidate_type"
+                        if candidate_type != expected_type
+                        else ""
+                    )
                     if type_rejection:
                         diagnostics["optimizer_schema_filtered_count"] += 1
                         filter_reasons.append(type_rejection)
@@ -1045,7 +1138,9 @@ class CandidateGeneratorMixin:
                         "mechanism_signature": mechanism_signature,
                         "mechanism_alternative_invalid": mechanism_alternative_invalid,
                         **length_audit,
-                        "candidate_source": "teacher_critic_student",
+                        "candidate_source": (
+                            "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                        ),
                         "tcs_call_group_id": tcs_call_group_id,
                         "execution_session_id": execution_session_id,
                         "update_attempt_id": update_attempt_id,
@@ -1089,12 +1184,68 @@ class CandidateGeneratorMixin:
                 diagnostics["student_failure_stage"] = "unknown"
         diagnostics["optimizer_final_candidate_count"] = len(parsed)
         diagnostics["optimizer_underfilled"] = bool(len(parsed) < int(num_candidates))
+        if diagnostics.get("teacher_question_approved"):
+            diagnostics["teacher_question_forced_best_score"] = False
+            diagnostics["teacher_question_forced_best_round"] = 0
+        if diagnostics.get("teacher_question_forced_best_score"):
+            diagnostics["teacher_question_approved"] = False
         diagnostics = self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
         metadata = self._teacher_metadata_from_diagnostics(diagnostics)
         for item in parsed:
             item["optimizer_generation_diagnostics"] = dict(diagnostics)
             item.update(metadata)
+            item["optimizer_architecture"] = diagnostics["optimizer_architecture"]
+        if open_exploration:
+            self.open_exploration_candidate_count = int(getattr(self, "open_exploration_candidate_count", 0)) + len(parsed)
+        else:
+            self.tcs_repair_candidate_count = int(getattr(self, "tcs_repair_candidate_count", 0)) + len(parsed)
         return parsed[:num_candidates]
+
+    def _tcs_diagnostic_support_count(
+        self,
+        agent_id: int,
+        diagnosis: Dict[str, Any],
+        generation_batches: Optional[List[Dict[str, Any]]],
+    ) -> int:
+        support = 0
+        for field in (
+            "per_agent_error_count", "per_agent_team_wrong_error_count",
+            "per_agent_pivotal_fix_count", "per_agent_dominant_wrong_redundancy_count",
+        ):
+            values = diagnosis.get(field, [])
+            if isinstance(values, list) and agent_id < len(values) and float(values[agent_id] or 0) > 0:
+                support += 1
+        invalid_rates = diagnosis.get("per_agent_invalid_rate", [])
+        if isinstance(invalid_rates, list) and agent_id < len(invalid_rates) and float(invalid_rates[agent_id] or 0) > 0:
+            support += 1
+        supported_batch_types = {
+            "target_error_repair", "c1_c2_creation", "actual_plurality_boundary",
+            "residual_shared_error", "invalid_output_repair",
+        }
+        support += sum(
+            1 for batch in (generation_batches or [])
+            if isinstance(batch, dict)
+            and str(batch.get("batch_type", "")) in supported_batch_types
+            and bool(batch.get("cases", []))
+        )
+        return support
+
+    @staticmethod
+    def _merge_generation_diagnostics(records: List[Dict[str, Any]]) -> Dict[str, Any]:
+        merged: Dict[str, Any] = {}
+        additive = {
+            "num_teacher_calls", "num_critic_calls", "num_teacher_rewrite_calls",
+            "num_student_calls", "num_student_retry_calls", "num_student_repair_calls",
+            "optimizer_raw_candidate_count", "optimizer_final_candidate_count",
+            "student_candidate_count_raw", "student_candidate_count_final",
+        }
+        for record in records:
+            for key, value in record.items():
+                if key in additive:
+                    merged[key] = int(merged.get(key, 0) or 0) + int(value or 0)
+                elif key not in merged or (not merged[key] and value):
+                    merged[key] = value
+        return merged
 
     async def propose_candidates(
         self,
@@ -1108,6 +1259,52 @@ class CandidateGeneratorMixin:
     ) -> List[Dict[str, Any]]:
         architecture = str(getattr(self.cfg, "optimizer_architecture", "teacher_critic_student") or "teacher_critic_student").lower()
         if architecture == "teacher_critic_student":
+            if self._is_stable_qd_lineage():
+                forced_generator = str((refill_feedback or {}).get("refill_generator_type", ""))
+                support_count = self._tcs_diagnostic_support_count(
+                    agent_id, overlap_diagnosis, generation_batches,
+                )
+                if forced_generator == "tcs_repair":
+                    repair_count, open_count = num_candidates, 0
+                elif forced_generator == "open_mechanism_exploration":
+                    repair_count, open_count = 0, num_candidates
+                elif support_count > 0:
+                    repair_count = min(num_candidates, int(self.cfg.tcs_repair_candidates_per_parent))
+                    open_count = max(0, num_candidates - repair_count)
+                else:
+                    repair_count, open_count = 0, num_candidates
+                outputs: List[Dict[str, Any]] = []
+                diagnostics: List[Dict[str, Any]] = []
+                if repair_count:
+                    repair = await self.propose_candidates_teacher_critic_student(
+                        agent_id=agent_id, parent_prompt=parent_prompt,
+                        overlap_diagnosis=overlap_diagnosis, num_candidates=repair_count,
+                        generation_batch=generation_batch, generation_batches=generation_batches,
+                        refill_feedback=refill_feedback, generation_channel="tcs_repair",
+                    )
+                    outputs.extend(repair)
+                    diagnostics.append(self._optimizer_generation_diagnostics_for_parent(agent_id, parent_prompt))
+                if open_count:
+                    opened = await self.propose_candidates_teacher_critic_student(
+                        agent_id=agent_id, parent_prompt=parent_prompt,
+                        overlap_diagnosis=overlap_diagnosis, num_candidates=open_count,
+                        generation_batch=generation_batch, generation_batches=generation_batches,
+                        refill_feedback=refill_feedback,
+                        generation_channel="open_mechanism_exploration",
+                    )
+                    outputs.extend(opened)
+                    diagnostics.append(self._optimizer_generation_diagnostics_for_parent(agent_id, parent_prompt))
+                merged = self._merge_generation_diagnostics(diagnostics)
+                merged.update({
+                    "tcs_repair_triggered": bool(repair_count),
+                    "tcs_repair_skip_reason": "" if repair_count else "no_diagnostic_support",
+                    "diagnostic_support_count": int(support_count),
+                })
+                self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, merged)
+                # Keep channel-specific provenance on each candidate. The merged
+                # record is only an update-level summary; copying it back would
+                # mix TCS and open-branch flags for the same parent.
+                return outputs[:num_candidates]
             return await self.propose_candidates_teacher_critic_student(
                 agent_id=agent_id,
                 parent_prompt=parent_prompt,

@@ -2,6 +2,8 @@ import asyncio
 import json
 from types import SimpleNamespace
 
+import pytest
+
 from multi_dataset_diverse_rl.behavior_profiles import behavior_distance, build_team_behavior_profiles
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.lineage import empty_lineage_state, update_lineage_state
@@ -538,6 +540,99 @@ def test_stable_probe_and_mechanism_caches_report_real_hits():
     assert system.full_probe_cache_hit_count == 1
     assert system.mechanism_embedding_cache_miss_count == 1
     assert system.mechanism_embedding_cache_hit_count == 1
+
+
+def test_v8_rejects_legacy_beam_refresh_even_when_requested():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(method_version="v8_stable_qd_lineage", beam_refresh_each_epoch=True)
+
+    with pytest.raises(RuntimeError, match="must not call legacy refresh"):
+        asyncio.run(system.refresh_all_prompt_beams([], epoch_id=1))
+
+
+def test_v8_without_diagnostics_routes_generation_to_open_channel():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(
+        method_version="v8_stable_qd_lineage",
+        optimizer_architecture="teacher_critic_student",
+        tcs_repair_candidates_per_parent=1,
+        open_exploration_candidates_per_parent=1,
+    )
+    system.agents = [AgentState("parent")]
+    calls = []
+
+    async def fake_channel(**kwargs):
+        calls.append(kwargs["generation_channel"])
+        return [{"candidate_prompt": "candidate", "candidate_source": kwargs["generation_channel"]}]
+
+    system.propose_candidates_teacher_critic_student = fake_channel
+    candidates = asyncio.run(
+        system.propose_candidates(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis={},
+            num_candidates=1,
+            generation_batches=[],
+        )
+    )
+
+    assert calls == ["open_mechanism_exploration"]
+    assert candidates[0]["candidate_source"] == "open_mechanism_exploration"
+
+
+def test_v8_with_repair_evidence_uses_tcs_and_open_channels():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(
+        method_version="v8_stable_qd_lineage",
+        optimizer_architecture="teacher_critic_student",
+        tcs_repair_candidates_per_parent=1,
+        open_exploration_candidates_per_parent=1,
+    )
+    system.agents = [AgentState("parent")]
+    calls = []
+
+    async def fake_channel(**kwargs):
+        calls.append(kwargs["generation_channel"])
+        return [{"candidate_prompt": kwargs["generation_channel"], "candidate_source": kwargs["generation_channel"]}]
+
+    system.propose_candidates_teacher_critic_student = fake_channel
+    candidates = asyncio.run(
+        system.propose_candidates(
+            agent_id=0,
+            parent_prompt="parent",
+            overlap_diagnosis={"per_agent_error_count": [1]},
+            num_candidates=2,
+            generation_batches=[],
+        )
+    )
+
+    assert calls == ["tcs_repair", "open_mechanism_exploration"]
+    assert [item["candidate_source"] for item in candidates] == calls
+
+
+def test_v8_event_refresh_skips_when_no_material_archive_change():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(
+        method_version="v8_stable_qd_lineage",
+        joint_refresh_mode="event_driven",
+        joint_refresh_interval_epochs=2,
+        joint_refresh_force_final_epoch=True,
+    )
+    system.agents = [AgentState("parent") for _ in range(5)]
+    system.last_archive_material_snapshot = system._joint_material_snapshot()
+    system.last_joint_refresh_epoch = 0
+    system.joint_refresh_skipped_count = 0
+    system.joint_team_selection_history = []
+    system._flush_jsonl = lambda *args, **kwargs: None
+
+    record = asyncio.run(
+        system.refresh_joint_active_team_if_needed([], epoch=1, final_epoch=False)
+    )
+
+    assert record["joint_refresh_triggered"] is False
+    assert record["joint_refresh_skip_reason"] == "no_material_archive_change"
+    assert record["joint_team_solver_call_count"] == 0
+    assert system.joint_refresh_skipped_count == 1
 
 
 def test_two_fold_order_is_deterministic_and_gap_penalizes_stability():

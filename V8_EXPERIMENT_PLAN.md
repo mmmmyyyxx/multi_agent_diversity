@@ -19,6 +19,11 @@ Run only `disambiguation_qa`, seed 42, two epochs, and the existing hybrid setti
 - lineage remains valid uncommitted/provisional state;
 - checkpoint state restores and old V8 checkpoints fail explicitly;
 - no prompt truncation, probe drift, or candidate starvation occurs.
+- V8 legacy beam refresh calls are zero;
+- skipped joint refreshes preserve active prompts and lineage state;
+- dirty shortlist probing is capped and cache hits are reported;
+- TCS repair and open mechanism exploration are both routed and logged;
+- open exploration and offline team enumeration make no Teacher/Critic or team-level solver calls respectively.
 
 ## Stage 3: Matched Pilot
 

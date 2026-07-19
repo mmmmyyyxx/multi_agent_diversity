@@ -40,3 +40,18 @@ def test_artifact_writer_rejects_nonfinite_json(tmp_path):
     with pytest.raises(ValueError):
         writer.append_jsonl("bad.jsonl", [{"value": float("nan")}])
     assert not (tmp_path / "bad.jsonl").exists() or not (tmp_path / "bad.jsonl").read_text(encoding="utf-8")
+
+
+def test_artifact_writer_handles_long_run_paths_and_nested_outputs(tmp_path):
+    padding = "r" * max(1, min(120, 215 - len(str(tmp_path)) - 1))
+    root = tmp_path / padding
+    writer = ArtifactWriter(root)
+
+    writer.write_json("nested/prompt_history.json", {"ok": True})
+    writer.append_jsonl("nested/events.jsonl", [{"event": "ok"}])
+    writer.write_csv("nested/results.csv", [{"value": 1}], ["value"])
+
+    assert (root / "nested" / "prompt_history.json").exists()
+    assert (root / "nested" / "events.jsonl").read_text(encoding="utf-8").strip()
+    assert (root / "nested" / "results.csv").exists()
+    assert list((root / "nested").glob("*.tmp")) == []

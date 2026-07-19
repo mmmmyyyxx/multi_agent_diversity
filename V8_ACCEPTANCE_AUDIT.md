@@ -17,6 +17,9 @@ This audit covers the existing setting `shared_vote_tcs_competence_depth2_progre
 | `joint_quality_filter_version` | `hierarchical_epsilon_band_v1` |
 | `probe_stability_version` | `deterministic_two_fold_v1` |
 | `parent_selection_version` | `active_plus_round_robin_niche_v1` |
+| `candidate_generation_policy_version` | `tcs_repair_open_exploration_v1` |
+| `joint_refresh_policy_version` | `event_driven_incremental_v1` |
+| `representative_probe_policy_version` | `dirty_shortlist_probe_v1` |
 
 `safe_exploit_explore_v1`, the epsilon-Pareto helper, and three-epoch lineage fields remain only for historical settings or output compatibility. They are not called by the Stable-QD active policy.
 
@@ -62,6 +65,8 @@ This audit covers the existing setting `shared_vote_tcs_competence_depth2_progre
 9. `competence_schedule_strength` remains the raw schedule. QD readiness may raise only `effective_residual_strength`.
 
 ## Compatibility Notes
+
+V8 disables legacy per-epoch beam refresh. Joint refresh is event-driven with dirty-prompt fixed-probe evaluation, and all team combinations are offline (`joint_team_solver_call_count=0`). Candidate generation records separate TCS repair and open mechanism-exploration calls.
 
 - `quality_frontier_count` is a legacy output name for the final hierarchical-band count. `quality_floor_feasible_count`, named band counts, and `final_candidate_team_count` are the authoritative Stable-QD diagnostics.
 - `epsilon_quality_frontier` remains available for historical tests/settings but is not called by `select_stable_joint_team`.

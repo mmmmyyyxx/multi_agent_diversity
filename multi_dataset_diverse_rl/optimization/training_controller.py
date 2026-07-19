@@ -6,12 +6,8 @@ from ..system_shared import *
 class TrainingControllerMixin:
     async def refresh_all_prompt_beams(self, eval_batch: List[Dict[str, str]], epoch_id: int) -> Dict[str, Any]:
         if self._is_stable_qd_lineage():
-            for agent in self.agents:
-                self._refresh_joint_representatives(agent)
-            return {
-                "event": "beam_refresh", "enabled": True, "mode": "safe_archive_representatives",
-                "agent_count": len(self.agents), "active_prompt_changed_count": 0,
-            }
+            raise RuntimeError("V8 Stable-QD must not call legacy refresh_all_prompt_beams")
+        self.legacy_beam_refresh_call_count = int(getattr(self, "legacy_beam_refresh_call_count", 0)) + 1
         if not self.cfg.beam_refresh_each_epoch or not eval_batch:
             if self._residual_specialization_enabled():
                 for agent in self.agents:
@@ -545,7 +541,10 @@ class TrainingControllerMixin:
         payload = {
             "agent_id": int(agent_id), "prompt_hash": self._normalized_prompt_hash(prompt),
             "agent_model": self.cfg.agent_model, "question_hash": question_hash,
-            "task_type": self.cfg.task_type, "answer_format": getattr(self.cfg, "answer_format", ""),
+            "task_type": self.cfg.task_type, "task_parser": getattr(self.task_spec, "name", ""),
+            "answer_format": getattr(self.cfg, "answer_format", ""),
+            "fixed_probe_hash": str(getattr(self, "current_fixed_probe_hash", "")),
+            "prompt_probe_version": str(getattr(self, "prompt_probe_version", "legacy")),
             "aggregation_mode": self.cfg.aggregation_mode, "vote_tie_break": self.cfg.vote_tie_break,
             "seed": int(self.cfg.seed),
         }
@@ -601,4 +600,6 @@ class TrainingControllerMixin:
             "gold_answers": gold_answers,
             "mechanism_representation": representation,
             "prompt_static_profile": build_prompt_static_profile(answers, correctness),
+            "fixed_probe_hash": str(getattr(self, "current_fixed_probe_hash", "")),
+            "fixed_probe_version": str(getattr(self, "prompt_probe_version", "legacy")),
         }

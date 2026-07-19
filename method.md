@@ -21,7 +21,7 @@ lineage_policy_version       = stable_lineage_anchor_v1
 mechanism_distance_version   = mechanism_sequence_embedding_v1
 ```
 
-The setting name is retained for experiment continuity, but its old V8.2 behavior has been replaced. Checkpoint v6 is current; v5 Stable-QD checkpoints migrate only when they contain real selected-team evidence, otherwise resume fails explicitly.
+The setting name is retained for experiment continuity, but its old V8.2 behavior has been replaced. V8 disables legacy per-epoch beam refresh. Checkpoint v6 stores event-refresh and dual-channel policy state; older incompatible Stable-QD checkpoints fail explicitly.
 
 ## 2. Design Principle
 
@@ -70,12 +70,12 @@ Specialization strength controls the weight of residual and boundary repair. It 
 
 ## 6. Teacher-Critic-Student Evolution
 
-Each selected beam parent enters the Teacher-Critic-Student pipeline:
+Each selected beam parent enters one of two V8 generation channels:
 
-1. Teacher creates a Socratic repair question from abstract diagnostics.
-2. Critic audits it.
-3. Rejected questions are rewritten from Critic feedback and audited again.
-4. Student emits `task_specific_repair` and `mechanism_alternative` candidates.
+1. With repair evidence, TCS produces one `task_specific_repair`: Teacher creates a Socratic repair question, Critic audits it, and at most one rewrite is audited again.
+2. A first Critic score at least `0.75` goes directly to Student; `0.50` to below `0.75` permits one rewrite; below `0.50` stops the branch. After a second rejection, the best non-empty question is forced only at score at least `0.60`.
+3. With repair evidence, the default parent allocation is one TCS repair plus one open mechanism alternative. Without repair evidence, the allocation is two open mechanism alternatives and zero TCS calls. Open exploration sees only abstract diagnostics, lineage/mechanism summaries, and refill feedback, never gold/sample text/answer labels/peer full prompts.
+4. Both channels use the same schema, specificity, candidate evaluation, Safe/Probation/Catastrophic, and archive gates.
 5. JSON retry and syntax-only repair recover malformed Student output.
 
 Teacher context includes the target lineage status, committed anchor mechanism, committed peer mechanisms, and rescue/shared-error residual support. An uncommitted agent is explicitly allowed to leave its old prompt mechanism. For a committed agent, alternatives preferentially explore structural variants near the anchor, but joint selection decides whether a true switch is justified.
@@ -186,7 +186,7 @@ Sources are logged as `incumbent`, `task_repair_niche`, and `mechanism_niche`. A
 
 ## 12. Joint Active-Team Selection
 
-At every epoch end, active prompts are selected jointly rather than greedily per agent.
+Joint selection is event-driven: Safe archive changes, Probation promotion, representative or active-prompt changes, the configured interval, and the final epoch can trigger it. When no trigger fires, the active team and lineage state are unchanged and a skip record is written. A triggered refresh probes only active prompts, current representatives, and at most two dirty prompts per agent; cached profiles are reused. The `3^5 = 243` combinations are enumerated offline and require zero team-level solver calls.
 
 With five agents and beam size three, the system evaluates at most 15 unique agent-prompt profiles on the fixed probe, then enumerates all `3^5 = 243` teams offline. No team-level solver calls are needed.
 

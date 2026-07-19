@@ -50,6 +50,16 @@ def test_tcs_metadata_rejects_missing_provenance_but_excludes_existing_beam():
     assert not tcs_metadata_applicable(existing)
     assert validate_tcs_candidate_metadata(existing) == []
 
+    open_candidate = _metadata(
+        optimizer_architecture="open_mechanism_exploration",
+        candidate_source="open_mechanism_exploration",
+        teacher_question="",
+        teacher_critic_rounds=0,
+        tcs_call_group_id="",
+    )
+    assert not tcs_metadata_applicable(open_candidate)
+    assert validate_tcs_candidate_metadata(open_candidate) == []
+
 
 def test_tcs_metadata_checks_student_counts():
     assert "missing_student_raw_count" in validate_tcs_candidate_metadata(_metadata(student_candidate_count_raw=0))
@@ -187,6 +197,122 @@ def test_session_scoped_ids_share_update_but_separate_parents():
     assert update_id == "testsession01_e1_s10_a0"
     assert first != second
     assert first.startswith(update_id + "_p")
+
+
+def test_tcs_group_ids_separate_initial_and_refill_generation_rounds():
+    system = _bare_system()
+    update_id = system._update_attempt_id(epoch_id=1, step_id=10, agent_id=0)
+    initial = system._tcs_call_group_id(update_id, "parent", "prompt", generation_round=0)
+    refill = system._tcs_call_group_id(update_id, "parent", "prompt", generation_round=1)
+    assert initial != refill
+    assert initial.endswith("_r0")
+    assert refill.endswith("_r1")
+
+
+def test_refill_candidate_preserves_tcs_provenance():
+    system = _bare_system()
+    metadata = _metadata(
+        execution_session_id="testsession01",
+        update_attempt_id="testsession01_e1_s10_a0",
+    )
+    proposal = {
+        "candidate_source": "teacher_critic_student",
+        "optimizer_architecture": "teacher_critic_student",
+        "tcs_call_group_id": metadata["tcs_call_group_id"],
+        "execution_session_id": metadata["execution_session_id"],
+        "update_attempt_id": metadata["update_attempt_id"],
+        "optimizer_generation_diagnostics": metadata,
+    }
+    candidate = system._make_refill_candidate(
+        proposal=proposal,
+        prompt="repair prompt",
+        parent_id="parent",
+        parent_prompt="parent prompt",
+        agent_id=0,
+        candidate_index=0,
+        refill_round=1,
+        generation=1,
+    )
+    audit_metadata = {
+        "optimizer_architecture": candidate["optimizer_architecture"],
+        "candidate_source": candidate["candidate_source"],
+        "candidate_pool_source": candidate["candidate_pool_source"],
+        "tcs_call_group_id": candidate["tcs_call_group_id"],
+        **candidate["optimizer_generation_diagnostics"],
+    }
+    assert validate_tcs_candidate_metadata(audit_metadata) == []
+
+
+def test_open_exploration_call_has_no_tcs_group_or_teacher_critic_calls():
+    system = _bare_system(Config(
+        method_version="v8_stable_qd_lineage",
+        optimizer_architecture="teacher_critic_student",
+        optimizer_fallback_mode="none",
+        agents=1,
+    ))
+    client = _CompletionClient()
+    system.evaluator_client = client
+    system.solver_client = client
+    system.truncated_prompt_count = 0
+    system.prompt_overlength_rejection_count = 0
+    system.open_exploration_generation_count = 0
+    system.open_exploration_candidate_count = 0
+
+    token = TCS_AUDIT_CONTEXT.set({
+        "epoch": 1,
+        "step": 10,
+        "agent_id": 0,
+        "parent_id": "parent",
+        "execution_session_id": "testsession01",
+        "update_attempt_id": "testsession01_e1_s10_a0",
+        "tcs_call_group_id": "must-not-leak",
+    })
+    try:
+        asyncio.run(system.propose_candidates_teacher_critic_student(
+            agent_id=0,
+            parent_prompt="parent prompt",
+            overlap_diagnosis={"prompt_roles": [], "per_agent_overlap_pressure": [0.0]},
+            num_candidates=1,
+            generation_batches=[{"batch_type": "window_update_diagnosis", "cases": []}],
+            generation_channel="open_mechanism_exploration",
+        ))
+    finally:
+        TCS_AUDIT_CONTEXT.reset(token)
+
+    assert len(system.llm_call_logs) == 1
+    assert system.llm_call_logs[0]["llm_call_stage"] == "open_mechanism_exploration_agent_0"
+    assert system.llm_call_logs[0]["optimizer_architecture"] == "open_mechanism_exploration"
+    assert system.llm_call_logs[0]["tcs_call_group_id"] == ""
+    assert system.cost_summary["calls_saved_by_tcs_round_reduction"] == 0
+
+
+def test_v8_tcs_round_reduction_reports_saved_calls():
+    system = _bare_system(Config(
+        method_version="v8_stable_qd_lineage",
+        optimizer_architecture="teacher_critic_student",
+        optimizer_fallback_mode="none",
+        agents=1,
+    ))
+    client = _CompletionClient()
+    system.evaluator_client = client
+    system.solver_client = client
+    system.truncated_prompt_count = 0
+    system.prompt_overlength_rejection_count = 0
+    system.tcs_repair_generation_count = 0
+    system.tcs_repair_candidate_count = 0
+
+    asyncio.run(system.propose_candidates_teacher_critic_student(
+        agent_id=0,
+        parent_prompt="parent prompt",
+        overlap_diagnosis={"prompt_roles": [], "per_agent_overlap_pressure": [0.0]},
+        num_candidates=1,
+        generation_batches=[{"batch_type": "target_error_repair", "cases": [{"case_id": "c1"}]}],
+        generation_channel="tcs_repair",
+    ))
+
+    assert system.cost_summary["tcs_critic_calls"] == 1
+    assert system.cost_summary["tcs_rewrite_calls"] == 0
+    assert system.cost_summary["calls_saved_by_tcs_round_reduction"] == 4
 
 
 def test_repeated_step_in_new_session_has_distinct_provenance_ids():

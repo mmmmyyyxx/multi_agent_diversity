@@ -31,6 +31,8 @@ The method uses:
 - fixed-probe behavioral profiles as the primary differentiation signal;
 - normalized mechanism sequence and embedding distance as secondary evidence;
 - offline enumeration of all `3^5 = 243` beam teams;
+- event-driven joint refresh with dirty-prompt probe shortlists;
+- one TCS repair and one direct open mechanism-exploration channel per supported parent;
 - hierarchical integer-count quality bands before team diversity selection;
 - committed lineage anchors, drift control, peer-collapse prevention, and switch hysteresis.
 
@@ -40,7 +42,7 @@ Prompt textual diversity is not an optimization target. Diversity never compensa
 
 Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
 
-The setting's historical V8.2 safe/exploit/explore behavior has been replaced. Existing result directories remain readable by their recorded method version. Checkpoint v6 is current; v5 Stable-QD checkpoints migrate only when they contain real selected-team anchor evidence and otherwise fail explicitly.
+The setting's historical V8.2 safe/exploit/explore behavior has been replaced. V8 never performs the legacy per-epoch beam refresh. Joint refresh is event-driven and only probes new dirty prompts; team enumeration is offline. Existing result directories remain readable by their recorded method version. Checkpoint v6 stores the new refresh/generation policy state and older incompatible Stable-QD checkpoints fail explicitly.
 
 Specific unknown mechanisms can enter stable semantic families when they pass the specificity gate. Refill is checked after raw evaluation, archive compression, and representative selection. Joint quality uses a frontier of real prompt teams, never a synthetic component-wise maximum.
 

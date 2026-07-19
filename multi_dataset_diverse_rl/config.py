@@ -48,7 +48,9 @@ class _FlatConfigSchema:
     beam_size: int = 3
     num_candidates_per_parent: int = 2
     optimizer_parent_concurrency: int = 2
+    # Compatibility alias for the historical per-epoch beam rescore.
     beam_refresh_each_epoch: bool = True
+    legacy_beam_rescore_each_epoch: bool = True
     homogeneity_overlap_threshold: float = 0.55
     homogeneity_pressure_tie_eps: float = 0.03
     max_homogeneous_cases_per_agent: int = 4
@@ -86,7 +88,13 @@ class _FlatConfigSchema:
     accuracy_guard_epsilon_late: float = 0.01
     optimizer_architecture: str = "teacher_critic_student"
     teacher_critic_max_rounds: int = 3
+    teacher_rewrite_max_count: int = 1
     teacher_question_pass_threshold: float = 0.75
+    teacher_critic_direct_pass_threshold: float = 0.75
+    teacher_critic_rewrite_threshold: float = 0.50
+    teacher_critic_forced_best_threshold: float = 0.60
+    tcs_repair_candidates_per_parent: int = 1
+    open_exploration_candidates_per_parent: int = 1
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
@@ -180,6 +188,9 @@ class _FlatConfigSchema:
     soft_guard_accuracy_regression_weight: float = 0.50
     mechanism_novelty_bonus_weight: float = 0.20
     active_team_selector_version: str = "legacy"
+    candidate_generation_policy_version: str = "legacy"
+    joint_refresh_policy_version: str = "legacy"
+    representative_probe_policy_version: str = "legacy"
     lineage_policy_version: str = "legacy"
     mechanism_distance_version: str = "legacy"
     mechanism_sequence_distance_weight: float = 0.50
@@ -240,6 +251,15 @@ class _FlatConfigSchema:
     qd_archive_size_per_agent: int = 6
     quality_anchor_archive_size: int = 5
     joint_representative_beam_size: int = 3
+    joint_refresh_mode: str = "event_driven"
+    joint_refresh_on_safe_archive_change: bool = True
+    joint_refresh_on_probation_promotion: bool = True
+    joint_refresh_on_representative_change: bool = True
+    joint_refresh_interval_epochs: int = 2
+    joint_refresh_force_final_epoch: bool = True
+    joint_refresh_min_new_safe_candidates: int = 1
+    joint_refresh_max_dirty_candidates_per_agent: int = 2
+    joint_refresh_skip_when_no_dirty_prompt: bool = True
     qd_parent_selection_mode: str = "active_plus_round_robin_niche"
     qd_niche_min_parent_opportunities_per_epoch: int = 1
     probation_parent_enabled: bool = True
@@ -328,6 +348,9 @@ class _FlatConfigSchema:
             self.optimizer_model = "deepseek-chat"
         if not str(self.evaluator_model or "").strip():
             self.evaluator_model = "deepseek-chat"
+        if str(self.method_version) == "v8_stable_qd_lineage":
+            self.legacy_beam_rescore_each_epoch = False
+            self.teacher_critic_max_rounds = 2
         probability_fields = (
             "specialization_ema",
             "behavior_cycle_similarity_threshold",
@@ -406,6 +429,9 @@ class _FlatConfigSchema:
             "prompt_large_shift_warmup_accepts", "joint_team_vote_epsilon_questions",
             "joint_team_mean_epsilon_questions", "joint_team_bottom2_epsilon_questions",
             "joint_team_c1_epsilon_questions", "joint_team_c2_epsilon_questions",
+            "teacher_rewrite_max_count", "tcs_repair_candidates_per_parent",
+            "open_exploration_candidates_per_parent", "joint_refresh_interval_epochs",
+            "joint_refresh_min_new_safe_candidates", "joint_refresh_max_dirty_candidates_per_agent",
         ):
             if int(getattr(self, field)) < 0:
                 raise ValueError(f"{field} must be non-negative")
@@ -591,6 +617,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
     parser.add_argument("--beam_refresh_each_epoch", type=int, default=int(defaults.beam_refresh_each_epoch), choices=[0, 1])
+    parser.add_argument("--legacy_beam_rescore_each_epoch", type=int, default=int(defaults.legacy_beam_rescore_each_epoch), choices=[0, 1])
     parser.add_argument("--homogeneity_overlap_threshold", type=float, default=defaults.homogeneity_overlap_threshold)
     parser.add_argument("--homogeneity_pressure_tie_eps", type=float, default=defaults.homogeneity_pressure_tie_eps)
     parser.add_argument("--max_homogeneous_cases_per_agent", type=int, default=defaults.max_homogeneous_cases_per_agent)
@@ -628,7 +655,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--accuracy_guard_epsilon_late", type=float, default=defaults.accuracy_guard_epsilon_late)
     parser.add_argument("--optimizer_architecture", type=str, default=defaults.optimizer_architecture, choices=["one_shot", "teacher_critic_student"])
     parser.add_argument("--teacher_critic_max_rounds", type=int, default=defaults.teacher_critic_max_rounds)
+    parser.add_argument("--teacher_rewrite_max_count", type=int, default=defaults.teacher_rewrite_max_count)
     parser.add_argument("--teacher_question_pass_threshold", type=float, default=defaults.teacher_question_pass_threshold)
+    parser.add_argument("--teacher_critic_direct_pass_threshold", type=float, default=defaults.teacher_critic_direct_pass_threshold)
+    parser.add_argument("--teacher_critic_rewrite_threshold", type=float, default=defaults.teacher_critic_rewrite_threshold)
+    parser.add_argument("--teacher_critic_forced_best_threshold", type=float, default=defaults.teacher_critic_forced_best_threshold)
+    parser.add_argument("--tcs_repair_candidates_per_parent", type=int, default=defaults.tcs_repair_candidates_per_parent)
+    parser.add_argument("--open_exploration_candidates_per_parent", type=int, default=defaults.open_exploration_candidates_per_parent)
     parser.add_argument("--teacher_temperature", type=float, default=defaults.teacher_temperature)
     parser.add_argument("--critic_temperature", type=float, default=defaults.critic_temperature)
     parser.add_argument("--student_temperature", type=float, default=defaults.student_temperature)
@@ -720,11 +753,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--soft_guard_accuracy_regression_weight", type=float, default=defaults.soft_guard_accuracy_regression_weight)
     parser.add_argument("--mechanism_novelty_bonus_weight", type=float, default=defaults.mechanism_novelty_bonus_weight)
     parser.add_argument("--active_team_selector_version", default=defaults.active_team_selector_version)
+    parser.add_argument("--candidate_generation_policy_version", default=defaults.candidate_generation_policy_version)
+    parser.add_argument("--joint_refresh_policy_version", default=defaults.joint_refresh_policy_version)
+    parser.add_argument("--representative_probe_policy_version", default=defaults.representative_probe_policy_version)
     parser.add_argument("--lineage_policy_version", default=defaults.lineage_policy_version)
     parser.add_argument("--mechanism_distance_version", default=defaults.mechanism_distance_version)
     for name in (
         "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
         "probe_stability_version", "parent_selection_version", "qd_parent_selection_mode",
+        "joint_refresh_mode",
     ):
         parser.add_argument(f"--{name}", default=getattr(defaults, name))
     for name in (
@@ -764,7 +801,8 @@ def build_parser() -> argparse.ArgumentParser:
         "joint_team_max_active_changes_late", "joint_team_no_diversification_patience",
         "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
         "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
-        "min_optimizer_updates_per_agent_per_epoch",
+        "min_optimizer_updates_per_agent_per_epoch", "joint_refresh_interval_epochs",
+        "joint_refresh_min_new_safe_candidates", "joint_refresh_max_dirty_candidates_per_agent",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
     parser.add_argument(
@@ -776,7 +814,9 @@ def build_parser() -> argparse.ArgumentParser:
         "candidate_refill_require_distinct_mechanism", "candidate_refill_feed_rejection_reasons",
         "candidate_refill_stop_when_requirements_met", "probation_archive_enabled",
         "probation_require_mechanism_novelty", "probation_parent_enabled",
-        "target_selector_fairness_enabled",
+        "target_selector_fairness_enabled", "joint_refresh_on_safe_archive_change",
+        "joint_refresh_on_probation_promotion", "joint_refresh_on_representative_change",
+        "joint_refresh_force_final_epoch", "joint_refresh_skip_when_no_dirty_prompt",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])

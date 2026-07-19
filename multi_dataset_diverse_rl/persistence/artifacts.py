@@ -33,13 +33,15 @@ class ArtifactWriter:
         if not materialized:
             return
         path = self.root / filename
+        path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("a", encoding="utf-8", newline="\n") as handle:
             for row in materialized:
                 handle.write(_json_text(row) + "\n")
 
     def write_json(self, filename: str, payload: Any) -> None:
         path = self.root / filename
-        temporary = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_name(f".{uuid.uuid4().hex[:12]}.tmp")
         for attempt in range(3):
             try:
                 temporary.write_text(_json_text(payload, indent=2), encoding="utf-8")
@@ -56,7 +58,8 @@ class ArtifactWriter:
 
     def write_csv(self, filename: str, rows: Sequence[Mapping[str, Any]], fieldnames: Sequence[str]) -> None:
         path = self.root / filename
-        temporary = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_name(f".{uuid.uuid4().hex[:12]}.tmp")
         with temporary.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=list(fieldnames), extrasaction="ignore")
             writer.writeheader()

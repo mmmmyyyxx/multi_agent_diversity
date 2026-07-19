@@ -117,6 +117,31 @@ class LifecycleMixin:
         self.mechanism_embedding_cache_miss_count = 0
         self.full_probe_cache_hit_count = 0
         self.full_probe_missing_pair_evaluation_count = 0
+        self.last_joint_refresh_epoch = 0
+        self.epochs_since_last_joint_refresh = 0
+        self.archive_material_change_version = 0
+        self.representative_version_per_agent: Dict[str, int] = {
+            str(i): 0 for i in range(len(self.agents))
+        }
+        self.dirty_prompt_hashes: Dict[str, List[str]] = {
+            str(i): [self._normalized_prompt_hash(agent.current_prompt)]
+            for i, agent in enumerate(self.agents)
+        }
+        self.prompt_probe_version = str(getattr(self.cfg, "probe_stability_version", "legacy"))
+        self.last_archive_material_snapshot: Dict[str, Any] = self._joint_material_snapshot()
+        self.last_representative_snapshot: Dict[str, Any] = {}
+        self.last_active_prompt_hashes = list(self.initial_active_prompt_hashes)
+        self.last_probation_promotion_count = 0
+        self.joint_refresh_count = 0
+        self.joint_refresh_skipped_count = 0
+        self.legacy_beam_refresh_call_count = 0
+        self.new_full_probe_prompt_count = 0
+        self.offline_team_combination_count = 0
+        self.joint_team_solver_call_count = 0
+        self.tcs_repair_generation_count = 0
+        self.open_exploration_generation_count = 0
+        self.tcs_repair_candidate_count = 0
+        self.open_exploration_candidate_count = 0
         self.behavior_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
         self.joint_team_selection_history: List[Dict[str, Any]] = []
         self.lineage_history: List[Dict[str, Any]] = []

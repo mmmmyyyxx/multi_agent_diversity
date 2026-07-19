@@ -29,7 +29,10 @@ def read_json_file(path):
 
 
 def write_json_atomic(path, payload):
-    tmp_path = f"{path}.{uuid.uuid4().hex}.tmp"
+    parent = os.path.dirname(os.path.abspath(path))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    tmp_path = os.path.join(parent, f".{uuid.uuid4().hex[:12]}.tmp")
     for attempt in range(3):
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -131,6 +134,31 @@ def restore_system_state(system, state_payload):
         dict(value) for value in state_payload.get("quality_anchor_archive", []) if isinstance(value, dict)
     ]
     system.quality_anchor_created_count = int(state_payload.get("quality_anchor_created_count", len(system.quality_anchor_archive)) or 0)
+    for field in (
+        "last_joint_refresh_epoch", "epochs_since_last_joint_refresh",
+        "archive_material_change_version", "last_probation_promotion_count",
+        "joint_refresh_count", "joint_refresh_skipped_count",
+        "legacy_beam_refresh_call_count", "new_full_probe_prompt_count",
+        "offline_team_combination_count", "joint_team_solver_call_count",
+        "tcs_repair_generation_count", "open_exploration_generation_count",
+        "tcs_repair_candidate_count", "open_exploration_candidate_count",
+    ):
+        setattr(system, field, int(state_payload.get(field, getattr(system, field, 0)) or 0))
+    system.representative_version_per_agent = {
+        str(key): int(value) for key, value in dict(
+            state_payload.get("representative_version_per_agent", {}) or {}
+        ).items()
+    }
+    system.dirty_prompt_hashes = {
+        str(key): [str(value) for value in values]
+        for key, values in dict(state_payload.get("dirty_prompt_hashes", {}) or {}).items()
+        if isinstance(values, list)
+    }
+    system.prompt_probe_version = str(state_payload.get("prompt_probe_version", getattr(system, "prompt_probe_version", "legacy")))
+    system.current_fixed_probe_hash = str(state_payload.get("current_fixed_probe_hash", ""))
+    system.last_archive_material_snapshot = dict(state_payload.get("last_archive_material_snapshot", {}) or {})
+    system.last_representative_snapshot = dict(state_payload.get("last_representative_snapshot", {}) or {})
+    system.last_active_prompt_hashes = [str(value) for value in state_payload.get("last_active_prompt_hashes", [])]
     for field in (
         "qd_no_diversification_epochs", "qd_change_limit_relaxed_epoch",
         "qd_previous_active_niche_count",
@@ -388,6 +416,16 @@ BEHAVIOR_CONFIG_FIELDS = (
         "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
         "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
         "target_selector_fairness_enabled",
+        "teacher_rewrite_max_count", "teacher_critic_direct_pass_threshold",
+        "teacher_critic_rewrite_threshold", "teacher_critic_forced_best_threshold",
+        "legacy_beam_rescore_each_epoch", "candidate_generation_policy_version",
+        "joint_refresh_policy_version", "representative_probe_policy_version",
+        "joint_refresh_mode", "joint_refresh_on_safe_archive_change",
+        "joint_refresh_on_probation_promotion", "joint_refresh_on_representative_change",
+        "joint_refresh_interval_epochs", "joint_refresh_force_final_epoch",
+        "joint_refresh_min_new_safe_candidates", "joint_refresh_max_dirty_candidates_per_agent",
+        "joint_refresh_skip_when_no_dirty_prompt", "tcs_repair_candidates_per_parent",
+        "open_exploration_candidates_per_parent",
         "split_integrity_json",
 )
 
@@ -494,6 +532,34 @@ def checkpoint_behavior_config(cfg):
     )
     if str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage":
         for field in qd_fields:
+            payload.pop(field, None)
+    else:
+        for field in (
+            "teacher_rewrite_max_count", "teacher_critic_direct_pass_threshold",
+            "teacher_critic_rewrite_threshold", "teacher_critic_forced_best_threshold",
+            "legacy_beam_rescore_each_epoch", "candidate_generation_policy_version",
+            "joint_refresh_policy_version", "representative_probe_policy_version",
+            "joint_refresh_mode", "joint_refresh_on_safe_archive_change",
+            "joint_refresh_on_probation_promotion", "joint_refresh_on_representative_change",
+            "joint_refresh_interval_epochs", "joint_refresh_force_final_epoch",
+            "joint_refresh_min_new_safe_candidates", "joint_refresh_max_dirty_candidates_per_agent",
+            "joint_refresh_skip_when_no_dirty_prompt", "tcs_repair_candidates_per_parent",
+            "open_exploration_candidates_per_parent",
+        ):
+            payload[field] = getattr(cfg, field, None)
+    if str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage":
+        for field in (
+            "teacher_rewrite_max_count", "teacher_critic_direct_pass_threshold",
+            "teacher_critic_rewrite_threshold", "teacher_critic_forced_best_threshold",
+            "legacy_beam_rescore_each_epoch", "candidate_generation_policy_version",
+            "joint_refresh_policy_version", "representative_probe_policy_version",
+            "joint_refresh_mode", "joint_refresh_on_safe_archive_change",
+            "joint_refresh_on_probation_promotion", "joint_refresh_on_representative_change",
+            "joint_refresh_interval_epochs", "joint_refresh_force_final_epoch",
+            "joint_refresh_min_new_safe_candidates", "joint_refresh_max_dirty_candidates_per_agent",
+            "joint_refresh_skip_when_no_dirty_prompt", "tcs_repair_candidates_per_parent",
+            "open_exploration_candidates_per_parent",
+        ):
             payload.pop(field, None)
     if str(getattr(cfg, "reward_mode", "")) != "coverage_useful_diversity":
         for field in (
@@ -603,6 +669,27 @@ def build_training_checkpoint(
             "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
             "quality_anchor_archive": list(getattr(system, "quality_anchor_archive", [])),
             "quality_anchor_created_count": int(getattr(system, "quality_anchor_created_count", 0)),
+            "last_joint_refresh_epoch": int(getattr(system, "last_joint_refresh_epoch", 0)),
+            "epochs_since_last_joint_refresh": int(getattr(system, "epochs_since_last_joint_refresh", 0)),
+            "archive_material_change_version": int(getattr(system, "archive_material_change_version", 0)),
+            "representative_version_per_agent": dict(getattr(system, "representative_version_per_agent", {})),
+            "dirty_prompt_hashes": dict(getattr(system, "dirty_prompt_hashes", {})),
+            "prompt_probe_version": str(getattr(system, "prompt_probe_version", "legacy")),
+            "current_fixed_probe_hash": str(getattr(system, "current_fixed_probe_hash", "")),
+            "last_archive_material_snapshot": dict(getattr(system, "last_archive_material_snapshot", {})),
+            "last_representative_snapshot": dict(getattr(system, "last_representative_snapshot", {})),
+            "last_active_prompt_hashes": list(getattr(system, "last_active_prompt_hashes", [])),
+            "last_probation_promotion_count": int(getattr(system, "last_probation_promotion_count", 0)),
+            "joint_refresh_count": int(getattr(system, "joint_refresh_count", 0)),
+            "joint_refresh_skipped_count": int(getattr(system, "joint_refresh_skipped_count", 0)),
+            "legacy_beam_refresh_call_count": int(getattr(system, "legacy_beam_refresh_call_count", 0)),
+            "new_full_probe_prompt_count": int(getattr(system, "new_full_probe_prompt_count", 0)),
+            "offline_team_combination_count": int(getattr(system, "offline_team_combination_count", 0)),
+            "joint_team_solver_call_count": int(getattr(system, "joint_team_solver_call_count", 0)),
+            "tcs_repair_generation_count": int(getattr(system, "tcs_repair_generation_count", 0)),
+            "open_exploration_generation_count": int(getattr(system, "open_exploration_generation_count", 0)),
+            "tcs_repair_candidate_count": int(getattr(system, "tcs_repair_candidate_count", 0)),
+            "open_exploration_candidate_count": int(getattr(system, "open_exploration_candidate_count", 0)),
             "total_agent_update_count": int(getattr(system, "total_agent_update_count", 0)),
             "task_repair_niche_occupancy_count": int(getattr(system, "task_repair_niche_occupancy_count", 0)),
             "mechanism_niche_occupancy_count": int(getattr(system, "mechanism_niche_occupancy_count", 0)),
@@ -662,6 +749,12 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
     version = int(payload.get("version", 0) or 0)
     if version not in {5, CHECKPOINT_VERSION}:
         reasons.append(f"version: checkpoint={payload.get('version')!r} current={CHECKPOINT_VERSION}")
+    if (
+        version == CHECKPOINT_VERSION
+        and str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage"
+        and not isinstance(payload.get("behavior_config"), dict)
+    ):
+        reasons.append("Stable-QD checkpoint lacks the event-driven refresh and dual-channel policy fingerprint")
     if version == 5 and str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
         state = payload.get("state", {}) if isinstance(payload.get("state", {}), dict) else {}
         history = state.get("joint_team_selection_history", [])

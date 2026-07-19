@@ -68,5 +68,22 @@ class ArtifactMethodsMixin:
             "full_probe_missing_pair_evaluations": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)),
             "embedding_cache_hits": int(getattr(self, "mechanism_embedding_cache_hit_count", 0)),
             "embedding_cache_misses": int(getattr(self, "mechanism_embedding_cache_miss_count", 0)),
+            "legacy_beam_refresh_calls": int(getattr(self, "legacy_beam_refresh_call_count", 0)),
+            "joint_refresh_count": int(getattr(self, "joint_refresh_count", 0)),
+            "joint_refresh_skipped_count": int(getattr(self, "joint_refresh_skipped_count", 0)),
+            "new_full_probe_prompt_count": int(getattr(self, "new_full_probe_prompt_count", 0)),
+            "new_full_probe_pair_count": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)),
+            "offline_team_combination_count": int(getattr(self, "offline_team_combination_count", 0)),
+            "team_level_solver_calls": int(getattr(self, "joint_team_solver_call_count", 0)),
+            "tcs_teacher_calls": int(self.cost_summary.get("tcs_teacher_calls", 0)),
+            "tcs_critic_calls": int(self.cost_summary.get("tcs_critic_calls", 0)),
+            "tcs_rewrite_calls": int(self.cost_summary.get("tcs_rewrite_calls", 0)),
+            "tcs_student_calls": int(self.cost_summary.get("tcs_student_calls", 0)),
+            "open_exploration_calls": int(self.cost_summary.get("open_exploration_calls", 0)),
+            "calls_saved_by_skipped_joint_refresh": int(getattr(self, "joint_refresh_skipped_count", 0))
+            * int(getattr(self.cfg, "joint_representative_beam_size", 3))
+            * len(getattr(self, "agents", [])),
+            "calls_saved_by_dirty_prompt_cache": int(getattr(self, "full_probe_cache_hit_count", 0)),
+            "calls_saved_by_tcs_round_reduction": int(self.cost_summary.get("calls_saved_by_tcs_round_reduction", 0)),
         })
         self._write_json_snapshot("cost_summary.json", self.cost_summary)
