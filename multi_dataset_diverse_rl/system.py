@@ -2152,9 +2152,52 @@ class TraceBeamSearchSystem:
         archive = list(getattr(agent, "safe_qd_archive", []) or [])
         if not archive:
             archive = [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
-        agent.prompt_beam = [dict(item) for item in select_joint_representatives(
+        representatives = [dict(item) for item in select_joint_representatives(
             archive, self._normalized_prompt_hash(agent.current_prompt), int(self.cfg.joint_representative_beam_size),
         )] or [dict(archive[0])]
+        active_hash = self._normalized_prompt_hash(agent.current_prompt)
+        for item in representatives:
+            metrics = item.setdefault("metrics", {})
+            default_source = "incumbent" if str(item.get("prompt_hash", "")) == active_hash else "safe_archive_niche"
+            item["beam_slot"] = str(item.get("beam_slot") or metrics.get("beam_slot") or default_source)
+            metrics["beam_slot"] = item["beam_slot"]
+        agent.prompt_beam = representatives
+
+    def _record_stable_qd_archive_snapshot(
+        self,
+        *,
+        agent_id: int,
+        epoch: int,
+        step: int,
+        evaluated: Sequence[Dict[str, Any]],
+        parent_sources: Sequence[str],
+    ) -> None:
+        agent = self.agents[agent_id]
+        bucket_counts = {
+            bucket: sum(str(item.get("archive_bucket", "")) == bucket for item in evaluated)
+            for bucket in ("safe", "probation", "catastrophic")
+        }
+        self.quality_diversity_archive_history.append({
+            "event": "quality_diversity_archive",
+            "epoch": int(epoch),
+            "step": int(step),
+            "agent_id": int(agent_id),
+            "safe_archive_size": len(getattr(agent, "safe_qd_archive", [])),
+            "probation_archive_size": len(getattr(agent, "probation_archive", [])),
+            "representative_count": len(getattr(agent, "prompt_beam", [])),
+            "safe_candidate_count": int(bucket_counts["safe"]),
+            "probation_candidate_count": int(bucket_counts["probation"]),
+            "catastrophic_candidate_count": int(bucket_counts["catastrophic"]),
+            "parent_sources": list(parent_sources),
+            "safe_prompt_hashes": [str(item.get("prompt_hash", "")) for item in getattr(agent, "safe_qd_archive", [])],
+            "probation_prompt_hashes": [str(item.get("prompt_hash", "")) for item in getattr(agent, "probation_archive", [])],
+            "representative_prompt_hashes": [str(item.get("prompt_hash", "")) for item in getattr(agent, "prompt_beam", [])],
+            "safe_niches": [
+                [str(niche[0]), list(niche[1])]
+                for item in getattr(agent, "safe_qd_archive", [])
+                for niche in [mechanism_niche_key(item.get("metrics", {}).get("mechanism_representation", {}))]
+            ],
+        })
 
     def _expire_probation_branches(self, epoch_id: int) -> int:
         expired = 0
@@ -8536,6 +8579,13 @@ class TraceBeamSearchSystem:
             agent.probation_archive = (new_probation + retained_probation)[: int(self.cfg.probation_archive_size_per_agent)]
             self._refresh_joint_representatives(agent)
             selected = list(agent.prompt_beam)
+            self._record_stable_qd_archive_snapshot(
+                agent_id=agent_id,
+                epoch=epoch_id,
+                step=step_id,
+                evaluated=evaluated,
+                parent_sources=parent_sources,
+            )
             starvation = requirements["safe_non_incumbent_count"] == 0
             mechanism_starvation = requirements["safe_distinct_mechanism_count"] == 0
             self.candidate_starvation_count += int(starvation)
@@ -9879,6 +9929,45 @@ class TraceBeamSearchSystem:
             "embedding_cache_hits": int(getattr(self, "mechanism_embedding_cache_hit_count", 0)),
             "embedding_cache_misses": int(getattr(self, "mechanism_embedding_cache_miss_count", 0)),
         }
+        band_counts = record["hierarchical_band_count_by_name"]
+        fold_diversities = record["fold_diversities"]
+        record.update({
+            "actual_combination_count": record["post_change_limit_combination_count"],
+            "vote_band_remaining_count": int(band_counts.get("vote", 0)),
+            "mean_band_remaining_count": int(band_counts.get("mean", 0)),
+            "bottom2_band_remaining_count": int(band_counts.get("bottom2", 0)),
+            "c1_band_remaining_count": int(band_counts.get("c1", 0)),
+            "c2_band_remaining_count": int(band_counts.get("c2", 0)),
+            "fold_a_diversity": float(fold_diversities[0]) if fold_diversities else 0.0,
+            "fold_b_diversity": float(fold_diversities[1]) if len(fold_diversities) > 1 else 0.0,
+        })
+        actual_losses = {
+            key: max(0, int(record["incumbent_metrics"][key]) - int(record["selected_metrics"][key]))
+            for key in ("vote_correct_count", "total_agent_correct_count", "bottom2_correct_count", "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count")
+        }
+        actual_losses["per_agent_correct_count"] = [
+            max(0, int(before) - int(after))
+            for before, after in zip(
+                record["incumbent_metrics"]["per_agent_correct_count"],
+                record["selected_metrics"]["per_agent_correct_count"],
+            )
+        ]
+        quality_passed = (
+            actual_losses["vote_correct_count"] <= record["allowed_quality_losses"]["vote_correct_count"]
+            and actual_losses["total_agent_correct_count"] <= record["allowed_quality_losses"]["total_agent_correct_count"]
+            and actual_losses["bottom2_correct_count"] <= record["allowed_quality_losses"]["bottom2_correct_count"]
+            and actual_losses["coverage_depth_c1_correct_count"] <= record["allowed_quality_losses"]["c1_correct_count"]
+            and actual_losses["coverage_depth_c2_correct_count"] <= record["allowed_quality_losses"]["c2_correct_count"]
+            and all(
+                loss <= record["allowed_quality_losses"]["per_agent_correct_count"]
+                for loss in actual_losses["per_agent_correct_count"]
+            )
+        )
+        record.update({
+            "actual_quality_losses": actual_losses,
+            "quality_constraints_passed": bool(quality_passed),
+            "quality_constraint_violation": not bool(quality_passed),
+        })
         self.joint_team_selection_history.append(record)
         self.latest_joint_team_metrics = dict(record)
         safe_niches = {

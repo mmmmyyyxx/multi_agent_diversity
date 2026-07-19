@@ -1,4 +1,5 @@
 import asyncio
+import json
 from types import SimpleNamespace
 
 from multi_dataset_diverse_rl.behavior_profiles import behavior_distance, build_team_behavior_profiles
@@ -140,6 +141,45 @@ def test_expired_probation_branch_is_removed_before_parent_selection():
     assert system.probation_expired_count == 1
     assert parent is None
     assert source == "active"
+
+
+def test_stable_qd_archive_snapshot_records_real_archive_state(tmp_path):
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(out_dir=str(tmp_path), method_version="v8_stable_qd_lineage")
+    agent = AgentState("active")
+    active = {
+        "prompt": "active", "prompt_hash": "active-hash", "archive_bucket": "safe",
+        "metrics": {"mechanism_representation": {"normalized_operation_sequence": ["verify"]}},
+    }
+    alternate = {
+        "prompt": "alternate", "prompt_hash": "alternate-hash", "archive_bucket": "safe",
+        "metrics": {"mechanism_representation": {"normalized_operation_sequence": ["compare"]}},
+    }
+    agent.safe_qd_archive = [active, alternate]
+    agent.probation_archive = []
+    agent.prompt_beam = [active, alternate]
+    system.agents = [agent]
+    system.quality_diversity_archive_history = []
+
+    system._record_stable_qd_archive_snapshot(
+        agent_id=0,
+        epoch=2,
+        step=10,
+        evaluated=[active, alternate, {"archive_bucket": "catastrophic"}],
+        parent_sources=["active", "safe_niche"],
+    )
+
+    row = system.quality_diversity_archive_history[0]
+    assert row["epoch"] == 2 and row["step"] == 10 and row["agent_id"] == 0
+    assert row["safe_archive_size"] == 2
+    assert row["representative_count"] == 2
+    assert row["safe_candidate_count"] == 2
+    assert row["catastrophic_candidate_count"] == 1
+    assert row["parent_sources"] == ["active", "safe_niche"]
+    assert row["safe_prompt_hashes"] == ["active-hash", "alternate-hash"]
+    system._flush_jsonl("quality_diversity_archive.jsonl", system.quality_diversity_archive_history)
+    written = json.loads((tmp_path / "quality_diversity_archive.jsonl").read_text(encoding="utf-8"))
+    assert written == row
 
 
 def test_safe_niche_receives_round_robin_parent_opportunity():

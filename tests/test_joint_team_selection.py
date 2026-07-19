@@ -145,6 +145,15 @@ def test_mechanism_niche_candidate_can_become_jointly_active(tmp_path):
     assert system.agents[0].current_prompt == "alternative-0"
     assert result["selected_beam_sources"][0] == "mechanism_niche"
     assert result["combination_count"] == 2
+    assert result["actual_combination_count"] == (
+        result["theoretical_combination_count"]
+        - result["combination_rejected_by_change_limit_count"]
+    )
+    assert result["vote_band_remaining_count"] == result["hierarchical_band_count_by_name"]["vote"]
+    assert result["fold_a_diversity"] == result["fold_diversities"][0]
+    assert result["fold_b_diversity"] == result["fold_diversities"][1]
+    assert result["quality_constraints_passed"] is True
+    assert result["quality_constraint_violation"] is False
     assert result["peer_collapse_penalty_mean"] == 0.0
 
 
