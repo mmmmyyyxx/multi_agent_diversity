@@ -34,6 +34,16 @@ from .policy import (
     uniform_vote_context_profile,
 )
 from .tasks import TaskSpec, get_task_spec
+from .behavior_profiles import build_team_behavior_profiles
+from .lineage import update_lineage_state
+from .mechanisms import normalize_mechanism_representation
+from .quality_diversity import (
+    QUALITY_KEYS,
+    enumerate_joint_teams,
+    select_quality_diversity_archive,
+    select_stable_joint_team,
+    team_quality_metrics,
+)
 from .utils import (
     canonical_aggregation_mode,
     compute_gold_vote_diagnostics,
@@ -564,6 +574,19 @@ class TraceBeamSearchSystem:
         self.mechanism_signature_by_prompt_hash: Dict[str, List[str]] = {}
         self.beam_slot_state: Dict[str, Any] = {}
         self.exploration_slot_candidates: List[Dict[str, Any]] = []
+        self.mechanism_embedding_cache: Dict[str, List[float]] = {}
+        self.prompt_probe_cache: Dict[str, Dict[str, Any]] = {}
+        self.behavior_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
+        self.joint_team_selection_history: List[Dict[str, Any]] = []
+        self.lineage_history: List[Dict[str, Any]] = []
+        self.quality_diversity_archive_history: List[Dict[str, Any]] = []
+        self.behavior_profile_history: List[Dict[str, Any]] = []
+        self.total_agent_update_count = 0
+        self.task_repair_niche_occupancy_count = 0
+        self.mechanism_niche_occupancy_count = 0
+        self.peer_collapse_soft_count = 0
+        self.peer_collapse_hard_rejection_count = 0
+        self.latest_joint_team_metrics: Dict[str, Any] = {}
         self.prompt_overlength_rejection_count = 0
         self.truncated_prompt_count = 0
         self.llm_call_logs: List[Dict[str, Any]] = []
@@ -611,7 +634,10 @@ class TraceBeamSearchSystem:
         return str(getattr(self.cfg, "candidate_selection_mode", "")).lower() == "competence_depth_pareto"
 
     def _is_v82_hybrid(self) -> bool:
-        return str(getattr(self.cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive"
+        return str(getattr(self.cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}
+
+    def _is_stable_qd_lineage(self) -> bool:
+        return str(getattr(self.cfg, "method_version", "legacy")) == "v8_stable_qd_lineage"
 
     def _apply_competence_depth1_candidate_guard(self, metrics: Dict[str, Any]) -> bool:
         enabled = bool(getattr(self.cfg, "competence_depth1_candidate_guard_enabled", False))
@@ -718,6 +744,8 @@ class TraceBeamSearchSystem:
         )
 
     def _experiment_protocol_version(self) -> str:
+        if self._is_stable_qd_lineage():
+            return "vote_oriented_v8_stable_qd_lineage"
         if bool(getattr(self.cfg, "competence_depth_enabled", False)):
             return "vote_oriented_v8_competence_depth"
         return EXPERIMENT_PROTOCOL_VERSION
@@ -1515,6 +1543,9 @@ class TraceBeamSearchSystem:
         )
         if metrics.get("mechanism_contract_passed") is False:
             mechanism_shift_excess = max(mechanism_shift_excess, 1.0)
+        if self._is_stable_qd_lineage():
+            cycle_excess = 0.0
+            mechanism_shift_excess = 0.0
         mild_accuracy_regression = min(
             float(getattr(self.cfg, "catastrophic_target_accuracy_loss_epsilon", 0.05) or 0.05),
             max(0.0, -float(metrics.get("accuracy_delta", 0.0) or 0.0)),
@@ -1536,10 +1567,13 @@ class TraceBeamSearchSystem:
         if mild_accuracy_regression > 0.0:
             soft_reasons.append("mild_accuracy_regression")
         trajectory_reason = str(metrics.get("rejection_reason", ""))
-        if trajectory_reason in {
+        trajectory_soft_reasons = {
             "behavior_cycle", "accepted_state_cycle", "rejected_failure_cycle",
             "unsupported_large_prompt_shift", "mechanism_contract_missing",
-        }:
+        }
+        if self._is_stable_qd_lineage():
+            trajectory_soft_reasons.remove("mechanism_contract_missing")
+        if trajectory_reason in trajectory_soft_reasons:
             if trajectory_reason not in soft_reasons:
                 soft_reasons.append(trajectory_reason)
             metrics["rejection_reason"] = ""
@@ -1558,7 +1592,28 @@ class TraceBeamSearchSystem:
         evaluated: List[Dict[str, Any]],
         beam_size: int,
         current_prompt: str,
+        *,
+        agent_id: Optional[int] = None,
+        epoch_id: Optional[int] = None,
+        step_id: Optional[int] = None,
     ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        if self._is_stable_qd_lineage():
+            for item in evaluated:
+                self._attach_stable_mechanism_representation(item)
+                item["prompt_hash"] = self._normalized_prompt_hash(str(item.get("prompt", "")))
+            retained, summary = select_quality_diversity_archive(
+                evaluated, beam_size, self._normalized_prompt_hash(current_prompt), self.cfg
+            )
+            for item in evaluated:
+                item["pareto_selected"] = item in retained
+            self.quality_diversity_archive_history.append({
+                "event": "quality_diversity_archive", "agent_id": agent_id,
+                "epoch": epoch_id, "step": step_id, "niche_count": summary["niche_count"],
+                "retained_prompt_hashes": [item.get("prompt_hash", "") for item in retained],
+                "retained_sources": [item.get("beam_slot", "") for item in retained],
+                "retained_niches": [item.get("qd_niche_key", item.get("metrics", {}).get("qd_niche_key", [])) for item in retained],
+            })
+            return retained, summary
         _, summary = self._select_vote_pareto_beam(evaluated, len(evaluated), current_prompt)
         current_hash = self._normalized_prompt_hash(current_prompt)
         safe = next(
@@ -1622,6 +1677,22 @@ class TraceBeamSearchSystem:
             "explore_slot_occupancy": int(any(item.get("beam_slot") == "explore" for item in retained)),
         })
         return retained, summary
+
+    def _attach_stable_mechanism_representation(self, item: Dict[str, Any]) -> Dict[str, Any]:
+        metrics = item.setdefault("metrics", {})
+        steps = metrics.get("mechanism_steps", metrics.get("mechanism_signature", []))
+        representation = normalize_mechanism_representation(str(item.get("prompt", "")), steps)
+        cache_key = representation["mechanism_hash"]
+        vector = self.mechanism_embedding_cache.get(cache_key)
+        if vector is None and representation["mechanism_embedding_text"]:
+            model = self._load_embedding_model()
+            encoded = model.encode([representation["mechanism_embedding_text"]], normalize_embeddings=True)
+            vector = self._normalize_vector(np.asarray(encoded)[0])
+            self.mechanism_embedding_cache[cache_key] = list(vector)
+        representation["mechanism_embedding"] = list(vector or [])
+        metrics["mechanism_representation"] = representation
+        metrics["normalized_operation_sequence"] = list(representation["normalized_operation_sequence"])
+        return representation
 
     def _empty_cost_summary(self) -> Dict[str, Any]:
         return {
@@ -2062,6 +2133,17 @@ class TraceBeamSearchSystem:
                 "tcs_candidate_policy_version": str(getattr(self.cfg, "tcs_candidate_policy_version", "legacy")),
                 "mechanism_signature_version": str(getattr(self.cfg, "mechanism_signature_version", "legacy")),
             })
+            if self._is_stable_qd_lineage():
+                fields.update({
+                    "active_team_selector_version": str(self.cfg.active_team_selector_version),
+                    "lineage_policy_version": str(self.cfg.lineage_policy_version),
+                    "mechanism_distance_version": str(self.cfg.mechanism_distance_version),
+                    "joint_active_team_selection_enabled": True,
+                    "quality_diversity_archive_enabled": True,
+                    "early_self_drift_disabled": True,
+                    "behavior_diversity_primary": True,
+                    "mechanism_embedding_secondary": True,
+                })
         return fields
 
     def _read_previous_execution_session_id(self) -> str:
@@ -5323,6 +5405,36 @@ class TraceBeamSearchSystem:
                     else "Use residual-family evidence as a strength-scaled historical affinity, never as an assigned role."
                 ),
             }
+        if self._is_stable_qd_lineage():
+            target_state = self.agents[agent_id].lineage_state
+            target_profile = self.behavior_profile_by_prompt_hash.get(
+                self._normalized_prompt_hash(parent_prompt), {}
+            )
+            context["stable_lineage_context"] = {
+                "lineage_status": str(target_state.get("lineage_status", "uncommitted")),
+                "anchor_mechanism": list(target_state.get("lineage_anchor_mechanism_signature", [])),
+                "stay_near_anchor_required": bool(target_state.get("lineage_status") == "committed"),
+                "committed_peer_mechanisms": [
+                    {
+                        "agent_id": peer_id,
+                        "mechanism": list(peer.lineage_state.get("lineage_anchor_mechanism_signature", [])),
+                    }
+                    for peer_id, peer in enumerate(self.agents)
+                    if peer_id != agent_id and peer.lineage_state.get("lineage_status") == "committed"
+                ],
+                "target_behavior_residual": {
+                    "rescue_support": int(sum(target_profile.get("rescue_vector", []))),
+                    "unique_correct_support": int(sum(target_profile.get("unique_correct_vector", []))),
+                    "shared_error_support": int(sum(target_profile.get("shared_error_vector", []))),
+                    "window_target_error_count": target_error_count,
+                    "window_target_team_wrong_error_count": target_team_wrong_error_count,
+                },
+                "guidance": (
+                    "The target has no committed lineage: permit substantial mechanism changes while preserving competence."
+                    if target_state.get("lineage_status") != "committed"
+                    else "Prefer structural variants near the committed anchor, but allow a justified alternative for joint selection."
+                ),
+            }
         return context
 
     async def propose_teacher_question(
@@ -5767,6 +5879,18 @@ class TraceBeamSearchSystem:
                 "\nThe first candidate must be a task-specific repair grounded in the supplied failure buckets. "
                 "The second must change at least one substantive decision operation relative to the first and parent; "
                 "persona changes, synonyms, renumbering, and extra generic verification do not count."
+            )
+        if self._is_stable_qd_lineage():
+            lineage_context = teacher_context.get("stable_lineage_context", {})
+            committed = str(lineage_context.get("lineage_status", "uncommitted")) == "committed"
+            system_prompt += (
+                "\nThe mechanism_alternative must differ from the parent or committed peer mechanisms in at least one core operation. "
+                "It must target the same observed task errors; do not create novelty unrelated to competence. "
+                + (
+                    "For this committed agent, prefer a structural variant near its anchor, but still emit a genuine alternative when justified."
+                    if committed
+                    else "This agent is not committed: a substantial mechanism departure is allowed and must not be reduced to a local paraphrase."
+                )
             )
         user_prompt = (
             "Generate up to requested_candidates candidate prompts. Return JSON with a candidates list. "
@@ -7947,7 +8071,11 @@ class TraceBeamSearchSystem:
                     "parent_mechanism_signature": parent_signature,
                     "peer_dominant_mechanism_signature": [],
                     "mechanism_signature_distance": distance,
-                    "mechanism_novelty_bonus": float(getattr(self.cfg, "mechanism_novelty_bonus_weight", 0.2)) * distance,
+                    "mechanism_novelty_bonus": (
+                        0.0
+                        if self._is_stable_qd_lineage()
+                        else float(getattr(self.cfg, "mechanism_novelty_bonus_weight", 0.2)) * distance
+                    ),
                 })
                 if signature:
                     self.mechanism_signature_by_prompt_hash[self._normalized_prompt_hash(str(item.get("prompt", "")))] = list(signature)
@@ -7980,7 +8108,10 @@ class TraceBeamSearchSystem:
             "pareto_forced_current_fallback": None,
         }
         if self._is_v82_hybrid():
-            selected, pareto_summary = self._select_hybrid_beam(selectable, beam_size, agent.current_prompt)
+            selected, pareto_summary = self._select_hybrid_beam(
+                selectable, beam_size, agent.current_prompt,
+                agent_id=agent_id, epoch_id=epoch_id, step_id=step_id,
+            )
         elif self._uses_vote_pareto_selection():
             selected, pareto_summary = self._select_vote_pareto_beam(selectable, beam_size, agent.current_prompt)
         else:
@@ -8403,7 +8534,10 @@ class TraceBeamSearchSystem:
             "soft_cycle_penalty_count": sum(float(item.get("metrics", {}).get("soft_cycle_penalty", 0.0) or 0.0) > 0.0 for item in evaluated),
             "soft_mechanism_shift_penalty_count": sum(float(item.get("metrics", {}).get("soft_mechanism_shift_penalty", 0.0) or 0.0) > 0.0 for item in evaluated),
             "exploration_candidate_count": sum(self._candidate_pool_source(item) == "optimizer" and float(item.get("metrics", {}).get("mechanism_signature_distance", 0.0) or 0.0) > 0.0 for item in evaluated),
-            "exploration_slot_occupancy_count": sum(str(item.get("beam_slot", "")) == "explore" for item in selected),
+            "exploration_slot_occupancy_count": sum(
+                str(item.get("beam_slot", "")) == ("mechanism_niche" if self._is_stable_qd_lineage() else "explore")
+                for item in selected
+            ),
             "exploration_to_active_conversion_count": int(bool(selected and selected[0].get("beam_slot") == "explore" and changed)),
             "generation_batches": generation_batches,
             "baseline_homogeneous_case_count": len(baseline_cases),
@@ -8442,6 +8576,10 @@ class TraceBeamSearchSystem:
         self.depth1_guard_rejection_count = int(getattr(self, "depth1_guard_rejection_count", 0)) + int(
             summary["depth1_guard_rejection_count"]
         )
+        if self._is_stable_qd_lineage():
+            self.total_agent_update_count += 1
+            self.task_repair_niche_occupancy_count += int(pareto_summary.get("task_repair_niche_occupancy", 0) or 0)
+            self.mechanism_niche_occupancy_count += int(pareto_summary.get("mechanism_niche_occupancy", 0) or 0)
         for field in (
             "catastrophic_accuracy_guard_rejection_count",
             "soft_error_dependence_penalty_count",
@@ -8584,7 +8722,10 @@ class TraceBeamSearchSystem:
                 if not refreshed:
                     raise RuntimeError("Beam refresh trajectory guard removed the current active prompt")
             if self._is_v82_hybrid():
-                retained, _ = self._select_hybrid_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
+                retained, _ = self._select_hybrid_beam(
+                    refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt,
+                    agent_id=agent_id, epoch_id=epoch_id, step_id=0,
+                )
             elif self._uses_vote_pareto_selection():
                 retained, _ = self._select_vote_pareto_beam(refreshed, max(1, int(self.cfg.beam_size)), agent.current_prompt)
             else:
@@ -9038,6 +9179,146 @@ class TraceBeamSearchSystem:
             epoch_id=epoch_id,
         )
 
+    def _stable_probe_cache_key(self, agent_id: int, prompt: str, question_hash: str) -> str:
+        payload = {
+            "agent_id": int(agent_id), "prompt_hash": self._normalized_prompt_hash(prompt),
+            "agent_model": self.cfg.agent_model, "question_hash": question_hash,
+            "task_type": self.cfg.task_type, "answer_format": getattr(self.cfg, "answer_format", ""),
+            "aggregation_mode": self.cfg.aggregation_mode, "vote_tie_break": self.cfg.vote_tie_break,
+            "seed": int(self.cfg.seed),
+        }
+        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+    async def _evaluate_prompt_on_stable_probe(
+        self, agent_id: int, prompt: str, probe_data: List[Dict[str, str]], mechanism_steps: Sequence[Any] = (),
+    ) -> Dict[str, Any]:
+        async def evaluate_example(example: Dict[str, str]) -> Dict[str, Any]:
+            question = example["question"]
+            question_hash = self._hash(question)
+            gold = self.task_spec.parse_gold(example["answer"], question)
+            cache_key = self._stable_probe_cache_key(agent_id, prompt, question_hash)
+            cached = self.prompt_probe_cache.get(cache_key)
+            if cached is None:
+                async with self.solver_call_semaphore:
+                    trace, answer = await self.solve_once(question, agent_id, prompt)
+                cached = {"trace": trace, "answer": answer, "gold": gold, "question_hash": question_hash}
+                self.prompt_probe_cache[cache_key] = dict(cached)
+                self._record_solver_rollout(
+                    question_hash=question_hash,
+                    prompt=prompt,
+                    trace=trace,
+                    answer=answer,
+                    agent_id=agent_id,
+                    source="stable_qd_probe",
+                )
+            answer = str(cached.get("answer", ""))
+            return {
+                "answer": answer,
+                "correct": int(self.task_spec.match_answer(answer, gold)),
+                "question_hash": question_hash,
+                "gold": gold,
+            }
+
+        rows = await asyncio.gather(*[evaluate_example(example) for example in probe_data])
+        answers = [row["answer"] for row in rows]
+        correctness = [row["correct"] for row in rows]
+        question_hashes = [row["question_hash"] for row in rows]
+        gold_answers = [row["gold"] for row in rows]
+        item = {"prompt": prompt, "metrics": {"mechanism_steps": list(mechanism_steps)}}
+        representation = self._attach_stable_mechanism_representation(item)
+        return {
+            "prompt": prompt,
+            "prompt_hash": self._normalized_prompt_hash(prompt),
+            "answer_vector": answers,
+            "correctness_vector": correctness,
+            "accuracy": float(np.mean(correctness)) if correctness else 0.0,
+            "question_hashes": question_hashes,
+            "gold_answers": gold_answers,
+            "mechanism_representation": representation,
+        }
+
+    async def select_joint_active_team(self, probe_data: List[Dict[str, str]], *, epoch: int) -> Dict[str, Any]:
+        if not self._is_stable_qd_lineage():
+            return {"enabled": False, "combination_count": 0}
+        beams: List[List[Dict[str, Any]]] = []
+        for agent_id, agent in enumerate(self.agents):
+            agent_profiles = []
+            for beam_index, item in enumerate(agent.prompt_beam):
+                metrics = item.get("metrics", {})
+                profile = await self._evaluate_prompt_on_stable_probe(
+                    agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
+                    metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
+                )
+                profile.update({
+                    "beam_index": beam_index,
+                    "beam_source": str(item.get("beam_slot", metrics.get("beam_slot", "incumbent"))),
+                })
+                self.behavior_profile_by_prompt_hash[profile["prompt_hash"]] = dict(profile)
+                agent_profiles.append(profile)
+            beams.append(agent_profiles)
+        question_hashes = beams[0][0]["question_hashes"]
+        gold_answers = beams[0][0]["gold_answers"]
+        teams = enumerate_joint_teams(
+            beams, gold_answers, question_hashes,
+            vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
+            tie_break_method=self.cfg.vote_tie_break, seed=self.cfg.seed,
+        )
+        incumbent_indices = []
+        for agent_id, agent in enumerate(self.agents):
+            current_hash = self._normalized_prompt_hash(agent.current_prompt)
+            incumbent_indices.append(next((index for index, profile in enumerate(beams[agent_id]) if profile["prompt_hash"] == current_hash), 0))
+        incumbent = next(team for team in teams if team["beam_indices"] == incumbent_indices)
+        initial_per_agent = list(self.initial_competence_probe_metrics.get("per_agent_acc", incumbent["per_agent_acc"]))
+        joint_selection = select_stable_joint_team(
+            teams, incumbent, initial_per_agent,
+            [agent.lineage_state for agent in self.agents], len(probe_data), self.cfg,
+        )
+        selected = joint_selection["selected"]
+        self.peer_collapse_soft_count += int(joint_selection["selected_has_soft_peer_collapse"])
+        self.peer_collapse_hard_rejection_count += int(joint_selection["hard_rejection_count"])
+        selected_sources, changed_count = [], 0
+        for agent_id, beam_index in enumerate(selected["beam_indices"]):
+            agent = self.agents[agent_id]
+            chosen = agent.prompt_beam[beam_index]
+            old_hash = self._normalized_prompt_hash(agent.current_prompt)
+            agent.prompt_beam = [chosen] + [item for index, item in enumerate(agent.prompt_beam) if index != beam_index]
+            agent.current_prompt = str(chosen["prompt"])
+            changed_count += int(old_hash != self._normalized_prompt_hash(agent.current_prompt))
+            selected_sources.append(str(chosen.get("beam_slot", chosen.get("metrics", {}).get("beam_slot", "incumbent"))))
+            selected_profile = selected["prompt_profiles"][agent_id]
+            selected_profile["behavior_profile"] = selected["behavior_profiles"][agent_id]
+            selected_drift = selected_profile.get("lineage_drift", {})
+            agent.lineage_state["last_lineage_drift"] = float(selected_drift.get("lineage_drift", 0.0) or 0.0)
+            lineage_record = update_lineage_state(
+                agent.lineage_state, selected_profile, epoch=epoch, quality_gate_passed=True, config=self.cfg,
+            )
+            agent.lineage_state = {key: value for key, value in lineage_record.items() if key not in {"old_status", "new_status", "reason"}}
+            self.lineage_history.append({"epoch": epoch, "agent_id": agent_id, **lineage_record})
+        record = {
+            "epoch": epoch, "combination_count": len(teams),
+            "feasible_count": int(joint_selection["feasible_count"]),
+            "quality_frontier_count": int(joint_selection["quality_frontier_count"]),
+            "incumbent_metrics": {key: incumbent[key] for key in QUALITY_KEYS},
+            "selected_metrics": {key: selected[key] for key in QUALITY_KEYS},
+            "selected_prompt_hashes": selected["prompt_hashes"], "selected_beam_sources": selected_sources,
+            "team_diversity_score": selected["team_diversity_score"],
+            "stable_team_score": selected["stable_team_score"],
+            "mean_behavior_distance": selected["mean_behavior_distance"],
+            "min_behavior_distance": selected["min_behavior_distance"],
+            "mean_mechanism_distance": selected["mean_mechanism_distance"],
+            "lineage_drift_penalty_mean": float(selected.get("lineage_drift_penalty_mean", 0.0) or 0.0),
+            "peer_collapse_penalty_mean": float(selected.get("peer_collapse_penalty_mean", 0.0) or 0.0),
+            "active_prompt_changed_count": changed_count,
+            "specialization_strength": float(self.specialization_strength),
+        }
+        self.joint_team_selection_history.append(record)
+        self.latest_joint_team_metrics = dict(record)
+        self._flush_jsonl("joint_team_selection_history.jsonl", [record])
+        self._flush_jsonl("lineage_history.jsonl", self.lineage_history[-len(self.agents):])
+        self._flush_jsonl("quality_diversity_archive.jsonl", self.quality_diversity_archive_history)
+        self.quality_diversity_archive_history = []
+        return record
+
     async def evaluate_competence_probe(
         self,
         probe_data: List[Dict[str, str]],
@@ -9048,6 +9329,46 @@ class TraceBeamSearchSystem:
         """Evaluate current prompts on a fixed optimization-only probe without training side effects."""
         prompts = list(self._active_prompt_list())
         prompt_hashes = [self._hash(prompt) for prompt in prompts]
+
+        if self._is_stable_qd_lineage():
+            profiles = await asyncio.gather(*[
+                self._evaluate_prompt_on_stable_probe(
+                    agent_id, prompt, probe_data,
+                    self.agents[agent_id].prompt_beam[0].get("metrics", {}).get("mechanism_signature", []),
+                )
+                for agent_id, prompt in enumerate(prompts)
+            ])
+            question_hashes = profiles[0]["question_hashes"] if profiles else []
+            gold_answers = profiles[0]["gold_answers"] if profiles else []
+            summary = team_quality_metrics(
+                profiles, gold_answers, question_hashes,
+                vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
+                tie_break_method=self.cfg.vote_tie_break, seed=self.cfg.seed,
+            )
+            behavior_profiles = build_team_behavior_profiles(summary["answer_vectors"], summary["correctness_vectors"])
+            for profile, behavior in zip(profiles, behavior_profiles):
+                self.behavior_profile_by_prompt_hash[profile["prompt_hash"]] = dict(behavior)
+            record = {
+                "probe_name": str(probe_name), "probe_source": "optimization_train", "epoch": int(epoch),
+                "probe_size": len(probe_data), "question_hashes": question_hashes,
+                "active_prompt_hashes": prompt_hashes, "per_agent_acc": summary["per_agent_acc"],
+                "mean_individual_acc": summary["mean_individual_acc"],
+                "min_individual_acc": min(summary["per_agent_acc"], default=0.0),
+                "bottom2_mean_acc": summary["bottom2_mean_acc"],
+                "bottom3_mean_acc": float(np.mean(sorted(summary["per_agent_acc"])[:3])) if summary["per_agent_acc"] else 0.0,
+                "max_individual_acc": max(summary["per_agent_acc"], default=0.0),
+                "individual_acc_std": float(np.std(summary["per_agent_acc"])) if summary["per_agent_acc"] else 0.0,
+                "best_minus_worst_gap": max(summary["per_agent_acc"], default=0.0) - min(summary["per_agent_acc"], default=0.0),
+                "best_minus_bottom2_gap": max(summary["per_agent_acc"], default=0.0) - summary["bottom2_mean_acc"],
+                "coverage_depth_c1": summary["coverage_depth_c1"], "coverage_depth_c2": summary["coverage_depth_c2"],
+                **{f"coverage_depth_c{depth}": float(np.mean([sum(row) >= depth for row in zip(*summary["correctness_vectors"])])) if summary["correctness_vectors"] else 0.0 for depth in range(3, 6)},
+                "behavior_profiles": behavior_profiles,
+            }
+            self.behavior_profile_history.append({"epoch": epoch, "probe_name": probe_name, "profiles": behavior_profiles})
+            self._flush_jsonl("behavior_profile_history.jsonl", [self.behavior_profile_history[-1]])
+            self.competence_probe_history.append(dict(record))
+            self._flush_jsonl("competence_probe_history.jsonl", [record])
+            return record
 
         async def evaluate_one(index: int, example: Dict[str, str]) -> Dict[str, Any]:
             question = example["question"]
@@ -9307,7 +9628,11 @@ class TraceBeamSearchSystem:
             "soft_cycle_penalty_count": int(getattr(self, "soft_cycle_penalty_count", 0)),
             "soft_mechanism_shift_penalty_count": int(getattr(self, "soft_mechanism_shift_penalty_count", 0)),
             "exploration_candidate_count": int(getattr(self, "exploration_candidate_count", 0)),
-            "exploration_slot_occupancy_rate": float(getattr(self, "exploration_slot_occupancy_count", 0)) / max(1, len(getattr(self, "mechanism_signature_history", []))),
+            "exploration_slot_occupancy_rate": float(np.clip(
+                float(getattr(self, "exploration_slot_occupancy_count", 0))
+                / max(1, int(getattr(self, "total_agent_update_count", 0) or len(getattr(self, "mechanism_signature_history", [])))),
+                0.0, 1.0,
+            )),
             "exploration_to_active_conversion_count": int(getattr(self, "exploration_to_active_conversion_count", 0)),
             "prompt_overlength_rejection_count": int(getattr(self, "prompt_overlength_rejection_count", 0)),
             "truncated_prompt_count": int(getattr(self, "truncated_prompt_count", 0)),
@@ -9349,6 +9674,61 @@ class TraceBeamSearchSystem:
                 "dominant_final_mechanism_signature_share": max(counts.values(), default=0) / max(1, len(final_signatures)),
                 "mean_pairwise_mechanism_signature_distance": float(np.mean(pair_distances)) if pair_distances else 0.0,
                 "final_mechanism_signatures": final_signatures,
+            })
+        if self._is_stable_qd_lineage():
+            latest = dict(getattr(self, "latest_joint_team_metrics", {}) or {})
+            statuses = [str(agent.lineage_state.get("lineage_status", "uncommitted")) for agent in self.agents]
+            lineage_drifts = []
+            for agent in self.agents:
+                state = agent.lineage_state
+                lineage_drifts.append(0.0 if state.get("lineage_status") != "committed" else float(
+                    state.get("last_lineage_drift", 0.0) or 0.0
+                ))
+            mean_behavior = float(latest.get("mean_behavior_distance", 0.0) or 0.0)
+            min_behavior = float(latest.get("min_behavior_distance", 0.0) or 0.0)
+            mean_mechanism = float(latest.get("mean_mechanism_distance", 0.0) or 0.0)
+            mean_drift = float(np.mean(lineage_drifts)) if lineage_drifts else 0.0
+            task_rate = float(np.clip(self.task_repair_niche_occupancy_count / max(1, self.total_agent_update_count), 0.0, 1.0))
+            mechanism_rate = float(np.clip(self.mechanism_niche_occupancy_count / max(1, self.total_agent_update_count), 0.0, 1.0))
+            exploration_rate = float(result["exploration_slot_occupancy_rate"])
+            assert 0.0 <= exploration_rate <= 1.0
+            result.update({
+                "mean_inter_agent_behavior_distance": mean_behavior,
+                "min_inter_agent_behavior_distance": min_behavior,
+                "mean_inter_agent_mechanism_distance": mean_mechanism,
+                "mean_intra_agent_lineage_drift": mean_drift,
+                "max_intra_agent_lineage_drift": max(lineage_drifts, default=0.0),
+                "stable_specialization_score": mean_behavior + 0.5 * min_behavior + 0.25 * mean_mechanism - 0.5 * mean_drift,
+                "uncommitted_agent_count": statuses.count("uncommitted"),
+                "provisional_agent_count": statuses.count("provisional"),
+                "committed_agent_count": statuses.count("committed"),
+                "lineage_commit_count": sum(int(agent.lineage_state.get("lineage_commit_count", 0)) for agent in self.agents),
+                "lineage_switch_attempt_count": sum(int(agent.lineage_state.get("lineage_switch_attempt_count", 0)) for agent in self.agents),
+                "lineage_switch_commit_count": sum(int(agent.lineage_state.get("lineage_switch_commit_count", 0)) for agent in self.agents),
+                "lineage_switch_cancel_count": sum(int(agent.lineage_state.get("lineage_switch_cancel_count", 0)) for agent in self.agents),
+                "lineage_committed_but_not_exercised": sum(
+                    int(
+                        agent.lineage_state.get("lineage_status") == "committed"
+                        and int(agent.lineage_state.get("lineage_anchor_epoch", -1)) >= int(self.cfg.epochs)
+                    )
+                    for agent in self.agents
+                ),
+                "peer_collapse_soft_count": int(self.peer_collapse_soft_count),
+                "peer_collapse_hard_rejection_count": int(self.peer_collapse_hard_rejection_count),
+                "joint_team_combination_count": int(latest.get("combination_count", 0) or 0),
+                "joint_team_feasible_count": int(latest.get("feasible_count", 0) or 0),
+                "joint_team_quality_frontier_count": int(latest.get("quality_frontier_count", 0) or 0),
+                "joint_team_selected_diversity_score": float(latest.get("team_diversity_score", 0.0) or 0.0),
+                "joint_team_selected_stability_score": float(latest.get("stable_team_score", 0.0) or 0.0),
+                "active_from_incumbent_count": list(latest.get("selected_beam_sources", [])).count("incumbent"),
+                "active_from_task_repair_niche_count": list(latest.get("selected_beam_sources", [])).count("task_repair_niche"),
+                "active_from_mechanism_niche_count": list(latest.get("selected_beam_sources", [])).count("mechanism_niche"),
+                "mechanism_niche_occupancy_rate": mechanism_rate,
+                "task_repair_niche_occupancy_rate": task_rate,
+                "method_version": self.cfg.method_version,
+                "active_team_selector_version": self.cfg.active_team_selector_version,
+                "lineage_policy_version": self.cfg.lineage_policy_version,
+                "mechanism_distance_version": self.cfg.mechanism_distance_version,
             })
         initial_probe = dict(getattr(self, "initial_competence_probe_metrics", {}) or {})
         final_probe = dict(getattr(self, "latest_competence_probe_metrics", {}) or initial_probe)

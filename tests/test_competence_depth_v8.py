@@ -116,6 +116,20 @@ def test_vote_competence_first_prefers_bottom_agents_over_higher_mean():
     assert is_better_validation_state(a, b, 0, "competence_depth_schedule", "vote_competence_first")
 
 
+def test_stable_specialization_is_only_final_validation_tie_break():
+    common = {
+        "plurality_vote_acc": 0.6, "mean_individual_acc": 0.6,
+        "bottom2_mean_acc": 0.5, "coverage_depth_c1": 0.8,
+        "coverage_depth_c2": 0.6, "mean_normalized_plurality_margin": 0.1,
+        "mean_invalid_rate": 0.0,
+    }
+    diverse = {"epoch": 2, "method_version": "v8_stable_qd_lineage", "val": {**common, "stable_specialization_score": 0.7}}
+    flat = {"epoch": 1, "method_version": "v8_stable_qd_lineage", "val": {**common, "stable_specialization_score": 0.1}}
+    assert is_better_validation_state(diverse, flat, 0, "competence_depth_schedule", "vote_generalization_first")
+    weaker_vote = {"epoch": 3, "method_version": "v8_stable_qd_lineage", "val": {**common, "plurality_vote_acc": 0.59, "stable_specialization_score": 1.0}}
+    assert not is_better_validation_state(weaker_vote, flat, 0, "competence_depth_schedule", "vote_generalization_first")
+
+
 def make_system(cfg=None):
     system = TraceBeamSearchSystem.__new__(TraceBeamSearchSystem)
     system.cfg = cfg or Config(competence_depth_enabled=True)
@@ -412,8 +426,31 @@ def test_v82_setting_is_opt_in_and_legacy_progressive_stays_v1():
     hybrid = settings["shared_vote_tcs_competence_depth2_progressive_residual_hybrid"]
     assert legacy.competence_schedule_mode in (None, "")
     assert legacy.method_version in (None, "")
-    assert hybrid.method_version == "v8_2_hybrid_progressive"
+    assert hybrid.method_version == "v8_stable_qd_lineage"
     assert hybrid.target_selector_mode == "hybrid_competence_boundary"
+    assert hybrid.beam_policy_version == "quality_diversity_archive_v1"
+    assert hybrid.active_team_selector_version == "joint_quality_diversity_v1"
+
+
+def test_stable_qd_early_large_shift_has_no_self_drift_penalty():
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    metrics = {
+        "reward": 0.5,
+        "rejection_reason": "unsupported_large_prompt_shift",
+        "prompt_change_ratio": 1.0,
+        "accuracy_delta": 0.0,
+    }
+    result = system._apply_hybrid_soft_guards(metrics)
+    assert result["rejection_reason"] == ""
+    assert result["soft_mechanism_shift_penalty"] == 0.0
+    assert result["soft_cycle_penalty"] == 0.0
+
+
+def test_stable_qd_keeps_mechanism_contract_as_hard_guard():
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    result = system._apply_hybrid_soft_guards({"reward": 0.5, "rejection_reason": "mechanism_contract_missing"})
+    assert result["rejection_reason"] == "mechanism_contract_missing"
+    assert result["hard_guard_passed"] is False
 
 
 def test_v82_hybrid_selector_keeps_c1_c2_errors_early(monkeypatch):
@@ -649,3 +686,40 @@ def test_v82_checkpoint_preserves_mechanism_and_beam_slot_state(tmp_path):
     assert restored.mechanism_signature_by_prompt_hash == system.mechanism_signature_by_prompt_hash
     assert restored.beam_slot_state == system.beam_slot_state
     assert restored.exploration_slot_candidates == system.exploration_slot_candidates
+
+
+def test_stable_qd_checkpoint_preserves_archive_probe_and_lineage_state(tmp_path):
+    cfg = hybrid_config(
+        out_dir=str(tmp_path), method_version="v8_stable_qd_lineage",
+        beam_policy_version="quality_diversity_archive_v1",
+        active_team_selector_version="joint_quality_diversity_v1",
+        lineage_policy_version="stable_lineage_anchor_v1",
+        mechanism_distance_version="mechanism_sequence_embedding_v1",
+    )
+    system = make_system(cfg)
+    system.mechanism_embedding_cache = {"mechanism": [1.0, 0.0]}
+    system.prompt_probe_cache = {"probe": {"answer": "A"}}
+    system.behavior_profile_by_prompt_hash = {"prompt": {"correctness_vector": [1]}}
+    system.joint_team_selection_history = [{"epoch": 1, "combination_count": 243}]
+    system.lineage_history = [{"epoch": 1, "agent_id": 0}]
+    system.quality_diversity_archive_history = [{"agent_id": 0, "niche_count": 2}]
+    system.behavior_profile_history = [{"epoch": 1, "profiles": []}]
+    system.latest_joint_team_metrics = {"combination_count": 243}
+    system.total_agent_update_count = 2
+    system.task_repair_niche_occupancy_count = 1
+    system.mechanism_niche_occupancy_count = 1
+    system.peer_collapse_soft_count = 1
+    system.peer_collapse_hard_rejection_count = 0
+    system.agents[0].lineage_state["lineage_status"] = "provisional"
+    payload = build_training_checkpoint(
+        cfg, system, epoch_index=1, cursor=0, order=[], train_accumulators={}, best_score=0,
+        best_epoch=0, epochs_without_improvement=0, stopped_early=False,
+        no_effective_evolution_counter=0, no_effective_evolution_stopped=False,
+        no_effective_evolution_reason="", stage="between_epochs",
+    )
+    restored = make_system(cfg)
+    restore_system_state(restored, payload["state"])
+    assert restored.prompt_probe_cache == system.prompt_probe_cache
+    assert restored.quality_diversity_archive_history == system.quality_diversity_archive_history
+    assert restored.agents[0].lineage_state["lineage_status"] == "provisional"
+    assert restored.latest_joint_team_metrics["combination_count"] == 243

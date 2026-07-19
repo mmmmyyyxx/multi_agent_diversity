@@ -176,6 +176,38 @@ class Config:
     soft_guard_mechanism_shift_weight: float = 0.20
     soft_guard_accuracy_regression_weight: float = 0.50
     mechanism_novelty_bonus_weight: float = 0.20
+    active_team_selector_version: str = "legacy"
+    lineage_policy_version: str = "legacy"
+    mechanism_distance_version: str = "legacy"
+    mechanism_sequence_distance_weight: float = 0.50
+    mechanism_embedding_distance_weight: float = 0.50
+    mechanism_near_duplicate_similarity_threshold: float = 0.97
+    behavior_correct_set_weight: float = 0.50
+    behavior_rescue_weight: float = 0.35
+    behavior_shared_wrong_weight: float = 0.15
+    behavior_support_shrinkage: float = 5.0
+    team_diversity_mean_behavior_weight: float = 0.45
+    team_diversity_min_behavior_weight: float = 0.25
+    team_diversity_mechanism_weight: float = 0.20
+    team_diversity_rescue_balance_weight: float = 0.10
+    joint_team_vote_epsilon_questions: int = 1
+    joint_team_mean_epsilon_questions: int = 1
+    joint_team_bottom2_epsilon_questions: int = 1
+    joint_team_c1_epsilon_questions: int = 1
+    joint_team_c2_epsilon_questions: int = 1
+    joint_team_per_agent_accuracy_epsilon: float = 0.03
+    lineage_provisional_epochs: int = 2
+    lineage_commit_epochs: int = 3
+    lineage_switch_confirmation_epochs: int = 2
+    lineage_mechanism_drift_weight: float = 0.50
+    lineage_behavior_drift_weight: float = 0.50
+    lineage_soft_drift_threshold: float = 0.35
+    lineage_hard_drift_threshold: float = 0.75
+    lineage_switch_min_accuracy_gain: float = 0.03
+    lineage_switch_min_vote_gain: float = 0.02
+    peer_collapse_soft_similarity: float = 0.85
+    peer_collapse_hard_similarity: float = 0.97
+    validation_stable_specialization_tie_break_enabled: bool = True
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -254,6 +286,25 @@ class Config:
             "competence_depth1_candidate_guard_epsilon",
             "competence_residual_floor",
             "catastrophic_target_accuracy_loss_epsilon",
+            "mechanism_sequence_distance_weight",
+            "mechanism_embedding_distance_weight",
+            "mechanism_near_duplicate_similarity_threshold",
+            "behavior_correct_set_weight",
+            "behavior_rescue_weight",
+            "behavior_shared_wrong_weight",
+            "team_diversity_mean_behavior_weight",
+            "team_diversity_min_behavior_weight",
+            "team_diversity_mechanism_weight",
+            "team_diversity_rescue_balance_weight",
+            "joint_team_per_agent_accuracy_epsilon",
+            "lineage_mechanism_drift_weight",
+            "lineage_behavior_drift_weight",
+            "lineage_soft_drift_threshold",
+            "lineage_hard_drift_threshold",
+            "lineage_switch_min_accuracy_gain",
+            "lineage_switch_min_vote_gain",
+            "peer_collapse_soft_similarity",
+            "peer_collapse_hard_similarity",
         )
         for field in probability_fields:
             value = float(getattr(self, field))
@@ -279,10 +330,15 @@ class Config:
             "soft_guard_mechanism_shift_weight",
             "soft_guard_accuracy_regression_weight",
             "mechanism_novelty_bonus_weight",
+            "behavior_support_shrinkage",
         ):
             if float(getattr(self, field)) < 0.0:
                 raise ValueError(f"{field} must be non-negative")
-        for field in ("prompt_large_shift_warmup_accepts",):
+        for field in (
+            "prompt_large_shift_warmup_accepts", "joint_team_vote_epsilon_questions",
+            "joint_team_mean_epsilon_questions", "joint_team_bottom2_epsilon_questions",
+            "joint_team_c1_epsilon_questions", "joint_team_c2_epsilon_questions",
+        ):
             if int(getattr(self, field)) < 0:
                 raise ValueError(f"{field} must be non-negative")
         for field in ("specialization_update_period", "behavior_archive_size", "behavior_cycle_min_overlap"):
@@ -296,6 +352,15 @@ class Config:
             raise ValueError("competence_probe_size must be non-negative")
         if int(self.competence_min_effective_specialization_epochs) < 1:
             raise ValueError("competence_min_effective_specialization_epochs must be at least 1")
+        for field in ("lineage_provisional_epochs", "lineage_commit_epochs", "lineage_switch_confirmation_epochs"):
+            if int(getattr(self, field)) < 1:
+                raise ValueError(f"{field} must be at least 1")
+        if int(self.lineage_commit_epochs) < int(self.lineage_provisional_epochs):
+            raise ValueError("lineage_commit_epochs must be >= lineage_provisional_epochs")
+        if float(self.lineage_hard_drift_threshold) <= float(self.lineage_soft_drift_threshold):
+            raise ValueError("lineage_hard_drift_threshold must be greater than lineage_soft_drift_threshold")
+        if float(self.peer_collapse_hard_similarity) <= float(self.peer_collapse_soft_similarity):
+            raise ValueError("peer_collapse_hard_similarity must be greater than peer_collapse_soft_similarity")
         if int(self.student_candidate_prompt_hard_max_chars) < int(self.student_candidate_prompt_soft_max_chars):
             raise ValueError("student_candidate_prompt_hard_max_chars must be >= soft max")
 
@@ -472,6 +537,32 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--soft_guard_mechanism_shift_weight", type=float, default=defaults.soft_guard_mechanism_shift_weight)
     parser.add_argument("--soft_guard_accuracy_regression_weight", type=float, default=defaults.soft_guard_accuracy_regression_weight)
     parser.add_argument("--mechanism_novelty_bonus_weight", type=float, default=defaults.mechanism_novelty_bonus_weight)
+    parser.add_argument("--active_team_selector_version", default=defaults.active_team_selector_version)
+    parser.add_argument("--lineage_policy_version", default=defaults.lineage_policy_version)
+    parser.add_argument("--mechanism_distance_version", default=defaults.mechanism_distance_version)
+    for name in (
+        "mechanism_sequence_distance_weight", "mechanism_embedding_distance_weight",
+        "mechanism_near_duplicate_similarity_threshold", "behavior_correct_set_weight",
+        "behavior_rescue_weight", "behavior_shared_wrong_weight", "behavior_support_shrinkage",
+        "team_diversity_mean_behavior_weight", "team_diversity_min_behavior_weight",
+        "team_diversity_mechanism_weight", "team_diversity_rescue_balance_weight",
+        "joint_team_per_agent_accuracy_epsilon", "lineage_mechanism_drift_weight",
+        "lineage_behavior_drift_weight", "lineage_soft_drift_threshold", "lineage_hard_drift_threshold",
+        "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
+        "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
+    ):
+        parser.add_argument(f"--{name}", type=float, default=getattr(defaults, name))
+    for name in (
+        "joint_team_vote_epsilon_questions", "joint_team_mean_epsilon_questions",
+        "joint_team_bottom2_epsilon_questions", "joint_team_c1_epsilon_questions",
+        "joint_team_c2_epsilon_questions", "lineage_provisional_epochs", "lineage_commit_epochs",
+        "lineage_switch_confirmation_epochs",
+    ):
+        parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
+    parser.add_argument(
+        "--validation_stable_specialization_tie_break_enabled", type=int,
+        default=int(defaults.validation_stable_specialization_tie_break_enabled), choices=[0, 1],
+    )
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

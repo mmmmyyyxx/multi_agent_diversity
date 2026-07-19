@@ -1,44 +1,32 @@
-# V8 Experiment Plan
-
-## Isolation
-
-Run from a committed, clean source tree and write to a new commit-tagged output root. Never reuse v7 formal or pilot roots.
+# V8 Stable QD Lineage Experiment Plan
 
 ## Stage 1: Offline Tests
 
-```powershell
-python -m pytest -q
-```
+Verify mechanism normalization, behavior distance, QD niche quality, 243-team enumeration, quality feasibility, epsilon frontier selection, lineage transitions, switch hysteresis, checkpoint rejection, and occupancy bounds.
 
-This stage uses zero API calls.
+## Stage 2: Targeted Smoke
 
-## Stage 2: Strict Smoke
+Run only `disambiguation_qa`, seed 42, two epochs, and the existing hybrid setting. Confirm:
 
-Use `disambiguation_qa`, seed 42, five agents, one epoch, at least 20 train/validation/test examples, beam 3, and two candidates per parent. Run the matched v7 baseline, strict legacy, schedule-only, depth2, and full progressive settings.
-
-Require zero split overlap, zero v8 truncated prompts, depth1/oracle agreement,
-100% plurality/depth2/reward-component candidate metric coverage, deterministic
-tie-break behavior, complete checkpoint state, and non-empty candidate beams.
-C3 may differ from plurality vote accuracy.
+- `method_version=v8_stable_qd_lineage`;
+- early self-drift is zero;
+- QD retains incumbent and usable niches;
+- joint combination, feasible, and frontier counts are nonzero;
+- active prompts may come from mechanism niches;
+- selected mean, bottom-2, C1, and C2 satisfy tolerances;
+- behavior and mechanism distances are exported;
+- lineage remains valid uncommitted/provisional state;
+- checkpoint state restores and old V8 checkpoints fail explicitly;
+- no prompt truncation, probe drift, or candidate starvation occurs.
 
 ## Stage 3: Matched Pilot
 
-Run `disambiguation_qa` and `sports_understanding`, seeds 42 and 43, with the same five settings and matched budgets.
+Only after smoke passes, compare matched seeds with identical models, splits, beam size, candidate count, and evaluation budget. Report vote, mean, bottom-2, C1/C2, behavior distance, lineage stability, active source, update funnel, and cost.
 
-## Stage 4: Decision
+## Stage 4: Formal Runs
 
-Advance only when most comparisons show higher bottom-2 accuracy and C2,
-non-decreasing actual plurality vote accuracy, a smaller oracle-minus-plurality
-gap, lower rescue concentration, improved pivotal-opportunity conversion, no
-truncation, and no candidate starvation. C3 remains a redundancy diagnostic,
-not a mandatory gate. Oracle need not increase.
+Formal multi-seed or multi-task experiments require a separate explicit command. A smoke result is an execution-integrity result, not an accuracy claim.
 
-## Offline Audit
+## Historical Results
 
-```powershell
-python scripts/analyze_competence_depth.py <run_root>
-```
-
-The script writes the original summaries plus schedule, C1-guard, and mechanism summaries, and `COMPETENCE_DEPTH_AUDIT.md`, without API calls. Report aggregation-gap changes together with C1, all-wrong rate, mean accuracy, bottom-2, C2, and vote accuracy; a smaller gap alone is not evidence of improvement.
-
-For V8.2, use `shared_vote_tcs_competence_depth2_progressive_residual_hybrid`. Do not relabel results from the older full-progressive setting as V8.2, and do not treat reused-file `shared_guarded_beam` results as strict same-protocol effect estimates.
+Old V8 result directories remain readable under their recorded `method_version`. The current setting name has new behavior, so do not merge old and new rows without version filtering.

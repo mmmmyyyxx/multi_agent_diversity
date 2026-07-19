@@ -67,6 +67,9 @@ class ExperimentSetting:
     soft_guard_mechanism_shift_weight: Optional[float] = None
     soft_guard_accuracy_regression_weight: Optional[float] = None
     mechanism_novelty_bonus_weight: Optional[float] = None
+    active_team_selector_version: str = ""
+    lineage_policy_version: str = ""
+    mechanism_distance_version: str = ""
 
 
 @dataclass(frozen=True)
@@ -247,10 +250,13 @@ ALL_EXPERIMENT_SETTINGS = [
         competence_depth1_candidate_guard_enabled=True,
         competence_depth1_candidate_guard_epsilon=0.0,
         competence_min_effective_specialization_epochs=1,
-        method_version="v8_2_hybrid_progressive",
+        method_version="v8_stable_qd_lineage",
         target_selector_mode="hybrid_competence_boundary",
-        target_selector_version="hybrid_competence_boundary_v1",
-        beam_policy_version="safe_exploit_explore_v1",
+        target_selector_version="hybrid_competence_boundary_v2",
+        beam_policy_version="quality_diversity_archive_v1",
+        active_team_selector_version="joint_quality_diversity_v1",
+        lineage_policy_version="stable_lineage_anchor_v1",
+        mechanism_distance_version="mechanism_sequence_embedding_v1",
         tcs_candidate_policy_version="repair_mechanism_alternative_v1",
         mechanism_signature_version="mechanism_signature_v1",
         competence_weight_depth1_gain=0.80,

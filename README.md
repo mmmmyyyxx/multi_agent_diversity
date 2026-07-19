@@ -1,199 +1,151 @@
 # Multi-Agent Diversity
 
-See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md) and [V8_EXPERIMENT_PLAN.md](V8_EXPERIMENT_PLAN.md) for the opt-in competence-first and coverage-depth method.
+This repository performs evolutionary prompt search for a fixed team of reasoning agents. It changes prompts, not model weights.
 
-The latest opt-in method is [V8.2 Hybrid Progressive Prompt Optimization](V8_2_HYBRID_PROGRESSIVE_METHOD.md). It keeps early competence and C1/C2 creation pressure, progressively adds actual plurality-boundary and residual pressure, and retains controlled mechanism exploration without assigning fixed agent roles.
+The current V8 method is Stable Quality-Diversity Lineage Optimization. Start with [method.md](method.md) for the complete implementation guide. See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md), [V8_2_HYBRID_PROGRESSIVE_METHOD.md](V8_2_HYBRID_PROGRESSIVE_METHOD.md), and [V8_EXPERIMENT_PLAN.md](V8_EXPERIMENT_PLAN.md) for focused notes.
 
-V8.1 schedules progressive specialization from a fixed optimization-split probe evaluated before training and after each epoch-end beam refresh. Its task-adaptive schedule measures bottom-2 improvement relative to the initial prompts, gates increases on mean/C1/C2 preservation, and applies a candidate-level C1 non-degradation guard. Online train metrics remain trajectory diagnostics; validation and test never determine the training phase.
+## Current V8 Setting
 
-This repository implements vote-oriented evolutionary prompt search for multi-agent reasoning. It evolves prompts, not model weights. A fixed team of solver agents answers each question, and the primary evaluation metric is final team `vote_acc`.
-
-The team uses plurality voting, not a strict-majority threshold: the answer with
-the most votes wins, and the configured deterministic tie-break resolves top
-ties. `aggregation_mode=plurality` is the canonical name;
-`aggregation_mode=majority` remains a compatibility alias for the same
-aggregator. All vote gains, losses, pivotal fixes, and v8 boundary diagnostics
-use that actual aggregator and the same question hash.
-
-See [method.md](method.md) for the implementation guide.
-
-## Current Method
-
-The recommended method is `vote_useful_diversity`:
-
-- preserve target-agent accuracy with a guard;
-- reject candidates that worsen invalid-output rate;
-- optimize direct `vote_delta`;
-- use `vote_margin_delta` before a vote flip is available;
-- reward only the positive part of `boundary_useful_diversity_delta` near a gold-vs-wrong vote boundary, so a stronger correct vote is never penalized for leaving that boundary.
-
-`oracle_acc`, aggregation gap, trace embedding diversity, answer-level useful diversity, coverage, and rescue statistics are diagnostics. They are not candidate-selection objectives.
-
-Supported reward modes are:
+The existing setting name is intentionally unchanged:
 
 ```text
-accuracy_only
-guarded_diversity
-vote_useful_diversity
+shared_vote_tcs_competence_depth2_progressive_residual_hybrid
 ```
 
-Candidate selection supports:
+It now resolves to:
 
 ```text
-scalar_reward
-vote_pareto
-vote_error_pareto
+method_version               = v8_stable_qd_lineage
+beam_policy_version          = quality_diversity_archive_v1
+active_team_selector_version = joint_quality_diversity_v1
+lineage_policy_version       = stable_lineage_anchor_v1
+mechanism_distance_version   = mechanism_sequence_embedding_v1
 ```
 
-`vote_pareto` uses only vote gain, vote loss, and target-agent accuracy as Pareto objectives. Validation selection supports `existing` and `vote_first`; `vote_first` is the default.
-`vote_error_pareto` is the v7 four-objective variant that also maximizes
-`boundary_shared_error_net_gain`; it does not alter legacy `vote_pareto`.
+The method uses:
 
-Candidate prompts are evaluated only on optimization/train data. Validation is
-used only for epoch and best-state selection; test is evaluated once after the
-selected prompts are restored. Candidate logs report raw and clipped boundary
-gain, reward components, and total versus unique evaluated questions.
+- competence and actual plurality-boundary signals to choose update targets;
+- Teacher-Critic-Student to generate task-repair and mechanism-alternative prompts;
+- hard competence and validity guards before diversity is considered;
+- a three-slot per-agent quality-diversity archive;
+- fixed-probe behavioral profiles as the primary differentiation signal;
+- normalized mechanism sequence and embedding distance as secondary evidence;
+- offline enumeration of all `3^5 = 243` beam teams;
+- a quality-feasible epsilon-Pareto frontier before team diversity selection;
+- committed lineage anchors, drift control, peer-collapse prevention, and switch hysteresis.
 
-## Teacher-Critic-Student
+Prompt textual diversity is not an optimization target. Diversity never compensates for competence failure. Early search permits symmetry breaking; late search stabilizes useful per-agent lineages.
 
-The default optimizer architecture is Teacher-Critic-Student (TCS). Teacher receives abstract vote-oriented diagnosis, Critic audits and can request rewrites, and Student emits strict JSON prompt candidates. TCS calls, provenance, retries, and JSON repair are logged.
+The setting's historical V8.2 safe/exploit/explore behavior has been replaced. Existing result directories remain readable by their recorded method version, but old V8 checkpoints are rejected explicitly.
 
-Audit an existing run without changing it:
+## Voting
+
+The canonical aggregator is plurality: the most frequent answer wins, with the configured deterministic tie-break for top ties. `aggregation_mode=majority` remains a compatibility alias for plurality.
+
+Candidate counterfactuals, pivotal-boundary metrics, joint team enumeration, validation, and test evaluation use the same aggregator.
+
+## Data Protocol
+
+Prompt optimization uses the optimization training split. A fixed probe sampled from that split drives competence scheduling, behavior profiles, and joint active-team selection. Validation selects the best state. Final test runs after restoring validation-selected prompts.
+
+Strict manifests check normalized-question overlap and record split counts and hashes in `run_meta.json`.
+
+## Targeted Smoke
 
 ```powershell
-python scripts/audit_tcs_run.py <run_dir_or_root>
-```
+$PY = "D:\Anaconda\envs\DL\python.exe"
+$SHA = (git rev-parse --short HEAD)
+$OUT = "runs_v8_stable_qd_lineage_smoke_$SHA"
 
-## Boundary-Aware Residual Specialization (v7)
-
-V7 keeps vote contribution contexts separate from capability residual
-families. All agents start from the same zero-evidence capability profile.
-Only accepted active prompts add cumulative, reliability-shrunk evidence for
-task-independent mechanisms such as relation tracking, qualifier handling,
-option comparison, contradiction checking, or final verification. A rare
-pivotal improvement is shrunk but never discarded solely because support is
-one. Profiles update every two accepted edits by default or at epoch end.
-
-The v7 selector prioritizes pivotal and near-boundary errors over raw error
-volume. Candidate evaluation reuses the existing paired rows to log pivotal
-rescue/loss, shared-error rescue/creation, and same-wrong-cluster transitions;
-no solver calls are added. The full setting also checks accepted and rejected
-behavior archives and requires one declared local mechanism edit from Student.
-
-Matched v7 settings are:
-
-```text
-shared_vote_pareto_tcs_static
-shared_vote_pareto_tcs_boundary_selector
-shared_vote_error_pareto_tcs
-shared_vote_error_pareto_tcs_residual_specialization
-shared_vote_error_pareto_tcs_residual_cycle_guard
-```
-
-`shared_vote_pareto_tcs_static` is the matched v7 baseline. The historical
-`shared_vote_pareto_tcs` setting keeps its phase-adaptive schedule and should
-not be used to isolate the boundary selector's contribution.
-
-These use a static reward schedule. Prompt hash uniqueness remains diagnostic
-and cannot alter v7 reward weights or the accuracy guard.
-
-## Task-Level Accuracy Comparison
-
-MARS and this repository run separately. MAD does not read or depend on a local MARS checkout. Run MAD at the same `task_id` granularity, export `accuracy_results.jsonl`, then join it with a separately generated MARS `summary.csv`.
-
-The main MAD metric is `vote_acc`. Since it is multi-agent vote accuracy, always report `mean_individual_acc` and `best_individual_acc` alongside it.
-
-```powershell
-python scripts/run_task_level_accuracy.py `
-  --manifest configs/task_level_comparison.yaml `
-  --benchmarks BBH,MMLU `
-  --settings shared_baseline,shared_guarded_beam,bank_guarded_beam `
-  --seeds 42 `
-  --dataset_format mars `
-  --out_root runs_task_level_accuracy
-```
-
-```powershell
-python scripts/compare_external_accuracy.py `
-  --mars_summary path/to/mars/summary.csv `
-  --mad_results runs_task_level_accuracy/accuracy_results.jsonl `
-  --out_csv comparison/mars_vs_mad_accuracy.csv `
-  --out_md comparison/mars_vs_mad_accuracy.md
-```
-
-If a task manifest reuses one CSV for train, validation, and test, describe that result as a `paper-compatible setting`, not a strict no-leakage split. Strict manifests are checked before launch for normalized-question overlap across opt/validation/test and record counts plus SHA256 file hashes in `run_meta.json`.
-
-## Vote-Pareto Smoke Run
-
-```powershell
-python scripts/run_task_level_accuracy.py `
-  --manifest configs/task_level_comparison.yaml `
+& $PY scripts/run_task_level_accuracy.py `
+  --workspace . `
+  --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_baseline,shared_scalar_tcs_vote_first,shared_vote_pareto_tcs `
+  --settings shared_vote_tcs_competence_depth2_progressive_residual_hybrid `
   --seeds 42 `
   --dataset_format mars `
-  --out_root runs_vote_smoke `
-  --epochs 1 `
+  --out_root $OUT `
+  --run_concurrency 1 `
+  --agents 5 `
+  --epochs 2 `
   --train_size 20 `
   --val_size 20 `
-  --test_size 40 `
-  --update_every 10 `
-  --candidate_eval_strategy fixed_pool `
-  --candidate_eval_pool_size 50 `
-  --candidate_eval_batch_size 20 `
-  --candidate_reuse_recorded_rollouts 1
-```
-
-## Matched Scalar Vs Pareto Run
-
-The matched settings are `shared_scalar_tcs_vote_first` and `shared_vote_pareto_tcs`. Both use shared initialization, TCS, fixed-pool candidate evaluation, `vote_useful_diversity`, and `vote_first`. Only candidate selection differs.
-
-```powershell
-python scripts/run_task_level_accuracy.py `
-  --manifest configs/task_level_comparison.yaml `
-  --tasks disambiguation_qa,geometric_shapes,ruin_names,sports_understanding `
-  --settings shared_scalar_tcs_vote_first,shared_vote_pareto_tcs `
-  --seeds 42 `
-  --dataset_format mars `
-  --out_root runs_bbh_vote_pareto_matched `
-  --epochs 2 `
-  --train_size 80 `
-  --val_size 60 `
-  --test_size 100 `
+  --test_size 20 `
   --update_every 10 `
   --beam_size 3 `
   --num_candidates_per_parent 2 `
   --candidate_eval_strategy fixed_pool `
-  --candidate_eval_pool_size 100 `
-  --candidate_eval_batch_size 24 `
-  --candidate_reuse_recorded_rollouts 1
+  --candidate_eval_pool_size 20 `
+  --candidate_eval_batch_size 10 `
+  --candidate_eval_repeats 1 `
+  --candidate_eval_execution_mode factorized_cached `
+  --candidate_reuse_recorded_rollouts 1 `
+  --solver_rollout_singleflight 1 `
+  --candidate_eval_prompt_dedup 1 `
+  --candidate_eval_cache_logging 1 `
+  --aggregation_mode plurality `
+  --vote_tie_break random `
+  --eval_test_each_epoch 0 `
+  --resume_from_checkpoint 1
 ```
+
+This smoke checks execution integrity. It is not an accuracy claim and does not require a committed lineage in two epochs.
 
 ## Resume
 
-Resume an incomplete run with the same output root and configuration:
+Resume with exactly the same behavior-affecting arguments, output root, and split manifest:
 
 ```powershell
-python scripts/run_task_level_accuracy.py `
-  --manifest configs/task_level_comparison.yaml `
+& $PY scripts/run_task_level_accuracy.py `
+  --workspace . `
+  --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_vote_pareto_tcs `
+  --settings shared_vote_tcs_competence_depth2_progressive_residual_hybrid `
   --seeds 42 `
   --dataset_format mars `
-  --out_root runs_vote_pareto `
+  --out_root $OUT `
   --resume_completed 1 `
   --resume_from_checkpoint 1
 ```
 
-Incompatible checkpoints fail clearly instead of silently restarting in the same output directory.
+Include the original run's size, beam, evaluation, and concurrency arguments in a real resume command. Behavior fingerprint mismatches fail rather than silently restarting and contaminating the directory.
 
-`run_meta.json` records the Git commit, dirty-tree state, and protocol version
-`vote_oriented_v7_residual_specialization`. Checkpoint schema version is 4.
-Formal runs should start from a clean, committed tree; checkpoints also reject
-resume when behavior-affecting reward, evaluation, selection, model, tie-break,
-TCS, or trajectory configuration differs. Schema-v3 checkpoints are rejected
-clearly instead of being resumed under v7 state semantics.
+## Outputs
 
-## Cost Reporting
+Each run writes:
 
-Each run writes `llm_calls.jsonl` and `cost_summary.json` with solver, optimizer, evaluator, token, cost, and latency statistics. Cost is reported only: it never adds a budget limit, changes ranking, or stops training.
+```text
+history.json
+best_prompts.json
+prompt_history.json
+update_logs.jsonl
+solver_rollout_records.jsonl
+quality_diversity_archive.jsonl
+joint_team_selection_history.jsonl
+behavior_profile_history.jsonl
+lineage_history.jsonl
+training_checkpoint.json while incomplete
+run_meta.json
+llm_calls.jsonl
+cost_summary.json
+```
+
+The task runner also writes `accuracy_results.csv`, `accuracy_results.jsonl`, and summaries at the output root.
+
+## Metrics
+
+Report plurality accuracy with mean individual accuracy, bottom-2, C1, C2, and oracle coverage. Stable-QD diagnostics include pairwise behavior and mechanism distance, lineage drift and status, peer collapse, feasible/frontier counts, selected active sources, niche occupancy, and stable specialization score.
+
+Cost fields are reporting-only and never alter ranking or stop training.
+
+## Tests
+
+```powershell
+$PY = "D:\Anaconda\envs\DL\python.exe"
+& $PY -m pytest -q
+git diff --check
+```
+
+## Historical Methods
+
+Legacy reward modes and scalar/Pareto settings remain available for historical comparison. Match runs by `method_version`, setting, split, seed, models, and evaluation budget. Do not interpret a shared setting name as identical behavior across method versions.

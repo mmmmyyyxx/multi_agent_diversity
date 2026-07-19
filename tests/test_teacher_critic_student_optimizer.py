@@ -324,6 +324,28 @@ def test_no_gold_leakage_in_teacher_context():
     assert '"B"' not in text
 
 
+def test_stable_qd_teacher_context_includes_lineage_and_peer_anchors():
+    system = _system(Config(method_version="v8_stable_qd_lineage"))
+    system.behavior_profile_by_prompt_hash = {}
+    system.agents[1].lineage_state.update({
+        "lineage_status": "committed",
+        "lineage_anchor_mechanism_signature": ["weighted_scoring"],
+    })
+    context = system._build_teacher_context(
+        agent_id=0,
+        parent_prompt="shared prompt",
+        target_role_spec={"agent_id": 0},
+        peer_role_specs=[],
+        window_stats={"target_error_count": 2, "target_team_wrong_error_count": 1},
+        validity_constraints={"do_not_copy_case_content": True},
+        generation_batches=_batch(),
+    )
+    lineage = context["stable_lineage_context"]
+    assert lineage["lineage_status"] == "uncommitted"
+    assert lineage["stay_near_anchor_required"] is False
+    assert lineage["committed_peer_mechanisms"] == [{"agent_id": 1, "mechanism": ["weighted_scoring"]}]
+
+
 def test_one_shot_optimizer_backward_compatible():
     system = _system(Config(optimizer_architecture="one_shot", optimizer_fallback_mode="none"))
 

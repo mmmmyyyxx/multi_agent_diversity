@@ -153,9 +153,24 @@ def test_training_checkpoint_reports_changed_config_signature(tmp_path):
     changed_cfg = Config(out_dir=str(tmp_path), agents=2, train_size=4, epochs=2, seed=123, reward_mode="accuracy_only")
 
     reasons = checkpoint_incompatibility_reasons(payload, changed_cfg, [None, None, None, None])
-
     assert any("reward_mode" in reason for reason in reasons)
 
+
+def test_old_v8_checkpoint_is_rejected_with_joint_qd_lineage_reason(tmp_path):
+    system = _system(tmp_path)
+    system.cfg.method_version = "v8_2_hybrid_progressive"
+    system.cfg.beam_policy_version = "safe_exploit_explore_v1"
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    changed_cfg = Config(
+        out_dir=str(tmp_path), agents=2, train_size=4, epochs=2, seed=123,
+        method_version="v8_stable_qd_lineage",
+        beam_policy_version="quality_diversity_archive_v1",
+        active_team_selector_version="joint_quality_diversity_v1",
+        lineage_policy_version="stable_lineage_anchor_v1",
+        mechanism_distance_version="mechanism_sequence_embedding_v1",
+    )
+    reasons = checkpoint_incompatibility_reasons(payload, changed_cfg, [None, None, None, None])
+    assert any("joint quality-diversity lineage policy changed" in reason for reason in reasons)
 
 def test_training_checkpoint_reports_changed_derived_behavior_field(tmp_path):
     system = _system(tmp_path)

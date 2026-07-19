@@ -268,6 +268,10 @@ def vote_competence_first_validation_key(epoch_record):
 
 def vote_generalization_first_validation_key(epoch_record):
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    stable_tie_break = (
+        str(epoch_record.get("method_version", "")) == "v8_stable_qd_lineage"
+        and bool(epoch_record.get("validation_stable_specialization_tie_break_enabled", True))
+    )
     return (
         -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
         -float(val.get("mean_individual_acc", 0.0) or 0.0),
@@ -280,6 +284,7 @@ def vote_generalization_first_validation_key(epoch_record):
             else -1.0
         ),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        -float(val.get("stable_specialization_score", 0.0) or 0.0) if stable_tie_break else 0.0,
         int(epoch_record.get("epoch", 0) or 0),
     )
 
@@ -328,11 +333,17 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         "selected_mean_boundary_useful_diversity": float(val.get("mean_boundary_useful_diversity", 0.0) or 0.0),
         "selected_mean_invalid_rate": float(val.get("mean_invalid_rate", 0.0) or 0.0),
         "agents": [
-            {"agent_id": i, "prompt_hash": system._hash(prompt), "prompt": prompt}
+            {
+                "agent_id": i,
+                "prompt_hash": system._hash(prompt),
+                "prompt": prompt,
+                "lineage_state": dict(getattr(system.agents[i], "lineage_state", {})),
+            }
             for i, prompt in enumerate(prompts)
         ],
+        "joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {}) or {}),
     }
-    if str(getattr(system.cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+    if str(getattr(system.cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
         payload.update({
             "method_version": str(system.cfg.method_version),
             "competence_schedule_version": str(system.cfg.competence_schedule_version),
@@ -450,6 +461,20 @@ def restore_system_state(system, state_payload):
     system.exploration_slot_candidates = [dict(x) for x in state_payload.get("exploration_slot_candidates", []) if isinstance(x, dict)]
     system.prompt_overlength_rejection_count = int(state_payload.get("prompt_overlength_rejection_count", 0) or 0)
     system.truncated_prompt_count = int(state_payload.get("truncated_prompt_count", 0) or 0)
+    system.mechanism_embedding_cache = {str(key): list(value) for key, value in dict(state_payload.get("mechanism_embedding_cache", {}) or {}).items()}
+    system.prompt_probe_cache = {str(key): dict(value) for key, value in dict(state_payload.get("prompt_probe_cache", {}) or {}).items()}
+    system.behavior_profile_by_prompt_hash = {str(key): dict(value) for key, value in dict(state_payload.get("behavior_profile_by_prompt_hash", {}) or {}).items()}
+    system.joint_team_selection_history = [dict(value) for value in state_payload.get("joint_team_selection_history", []) if isinstance(value, dict)]
+    system.lineage_history = [dict(value) for value in state_payload.get("lineage_history", []) if isinstance(value, dict)]
+    system.quality_diversity_archive_history = [dict(value) for value in state_payload.get("quality_diversity_archive_history", []) if isinstance(value, dict)]
+    system.behavior_profile_history = [dict(value) for value in state_payload.get("behavior_profile_history", []) if isinstance(value, dict)]
+    system.latest_joint_team_metrics = dict(state_payload.get("latest_joint_team_metrics", {}) or {})
+    for field in (
+        "total_agent_update_count", "task_repair_niche_occupancy_count",
+        "mechanism_niche_occupancy_count", "peer_collapse_soft_count",
+        "peer_collapse_hard_rejection_count",
+    ):
+        setattr(system, field, int(state_payload.get(field, 0) or 0))
     python_state = state_payload.get("python_random_state")
     if isinstance(python_state, list):
         def as_tuple(value):
@@ -651,6 +676,21 @@ BEHAVIOR_CONFIG_FIELDS = (
         "catastrophic_target_accuracy_loss_epsilon", "soft_guard_error_dependence_weight",
         "soft_guard_cycle_weight", "soft_guard_mechanism_shift_weight",
         "soft_guard_accuracy_regression_weight", "mechanism_novelty_bonus_weight",
+        "active_team_selector_version", "lineage_policy_version", "mechanism_distance_version",
+        "mechanism_sequence_distance_weight", "mechanism_embedding_distance_weight",
+        "mechanism_near_duplicate_similarity_threshold", "behavior_correct_set_weight",
+        "behavior_rescue_weight", "behavior_shared_wrong_weight", "behavior_support_shrinkage",
+        "team_diversity_mean_behavior_weight", "team_diversity_min_behavior_weight",
+        "team_diversity_mechanism_weight", "team_diversity_rescue_balance_weight",
+        "joint_team_vote_epsilon_questions", "joint_team_mean_epsilon_questions",
+        "joint_team_bottom2_epsilon_questions", "joint_team_c1_epsilon_questions",
+        "joint_team_c2_epsilon_questions", "joint_team_per_agent_accuracy_epsilon",
+        "lineage_provisional_epochs", "lineage_commit_epochs", "lineage_switch_confirmation_epochs",
+        "lineage_mechanism_drift_weight", "lineage_behavior_drift_weight",
+        "lineage_soft_drift_threshold", "lineage_hard_drift_threshold",
+        "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
+        "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
+        "validation_stable_specialization_tie_break_enabled",
         "split_integrity_json",
 )
 
@@ -702,7 +742,7 @@ def checkpoint_behavior_config(cfg):
             "competence_min_effective_specialization_epochs",
         ):
             payload.pop(field, None)
-    if str(getattr(cfg, "method_version", "legacy")) != "v8_2_hybrid_progressive":
+    if str(getattr(cfg, "method_version", "legacy")) not in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
         for field in (
             "method_version", "target_selector_mode", "target_selector_version", "beam_policy_version",
             "tcs_candidate_policy_version", "mechanism_signature_version", "competence_weight_depth1_gain",
@@ -711,6 +751,26 @@ def checkpoint_behavior_config(cfg):
             "soft_guard_cycle_weight", "soft_guard_mechanism_shift_weight",
             "soft_guard_accuracy_regression_weight", "mechanism_novelty_bonus_weight",
         ):
+            payload.pop(field, None)
+    qd_fields = (
+        "active_team_selector_version", "lineage_policy_version", "mechanism_distance_version",
+        "mechanism_sequence_distance_weight", "mechanism_embedding_distance_weight",
+        "mechanism_near_duplicate_similarity_threshold", "behavior_correct_set_weight",
+        "behavior_rescue_weight", "behavior_shared_wrong_weight", "behavior_support_shrinkage",
+        "team_diversity_mean_behavior_weight", "team_diversity_min_behavior_weight",
+        "team_diversity_mechanism_weight", "team_diversity_rescue_balance_weight",
+        "joint_team_vote_epsilon_questions", "joint_team_mean_epsilon_questions",
+        "joint_team_bottom2_epsilon_questions", "joint_team_c1_epsilon_questions",
+        "joint_team_c2_epsilon_questions", "joint_team_per_agent_accuracy_epsilon",
+        "lineage_provisional_epochs", "lineage_commit_epochs", "lineage_switch_confirmation_epochs",
+        "lineage_mechanism_drift_weight", "lineage_behavior_drift_weight",
+        "lineage_soft_drift_threshold", "lineage_hard_drift_threshold",
+        "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
+        "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
+        "validation_stable_specialization_tie_break_enabled",
+    )
+    if str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage":
+        for field in qd_fields:
             payload.pop(field, None)
     if str(getattr(cfg, "reward_mode", "")) != "coverage_useful_diversity":
         for field in (
@@ -804,6 +864,19 @@ def build_training_checkpoint(
             "exploration_slot_candidates": list(getattr(system, "exploration_slot_candidates", [])),
             "prompt_overlength_rejection_count": int(getattr(system, "prompt_overlength_rejection_count", 0)),
             "truncated_prompt_count": int(getattr(system, "truncated_prompt_count", 0)),
+            "mechanism_embedding_cache": dict(getattr(system, "mechanism_embedding_cache", {})),
+            "prompt_probe_cache": dict(getattr(system, "prompt_probe_cache", {})),
+            "behavior_profile_by_prompt_hash": dict(getattr(system, "behavior_profile_by_prompt_hash", {})),
+            "joint_team_selection_history": list(getattr(system, "joint_team_selection_history", [])),
+            "lineage_history": list(getattr(system, "lineage_history", [])),
+            "quality_diversity_archive_history": list(getattr(system, "quality_diversity_archive_history", [])),
+            "behavior_profile_history": list(getattr(system, "behavior_profile_history", [])),
+            "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
+            "total_agent_update_count": int(getattr(system, "total_agent_update_count", 0)),
+            "task_repair_niche_occupancy_count": int(getattr(system, "task_repair_niche_occupancy_count", 0)),
+            "mechanism_niche_occupancy_count": int(getattr(system, "mechanism_niche_occupancy_count", 0)),
+            "peer_collapse_soft_count": int(getattr(system, "peer_collapse_soft_count", 0)),
+            "peer_collapse_hard_rejection_count": int(getattr(system, "peer_collapse_hard_rejection_count", 0)),
             "python_random_state": random.getstate(),
             "numpy_random_state": (
                 lambda state: [state[0], state[1].tolist(), state[2], state[3], state[4]]
@@ -863,6 +936,11 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
         reasons.append(
             "behavior_config_fingerprint: checkpoint and current optimization behavior differ"
         )
+        if (
+            str(saved_config.get("method_version", "")) == "v8_2_hybrid_progressive"
+            and str(current_config.get("method_version", "")) == "v8_stable_qd_lineage"
+        ):
+            reasons.append("V8 behavior fingerprint mismatch: joint quality-diversity lineage policy changed")
         for key in sorted(set(BEHAVIOR_CONFIG_FIELDS) | set(saved_config) | set(current_config)):
             saved_value = saved_config.get(key)
             current_value = current_config.get(key)
@@ -1025,6 +1103,7 @@ async def main_async():
     cfg.prompt_trust_region_enabled = bool(int(cfg.prompt_trust_region_enabled))
     cfg.competence_schedule_monotonic = bool(int(cfg.competence_schedule_monotonic))
     cfg.competence_depth1_candidate_guard_enabled = bool(int(cfg.competence_depth1_candidate_guard_enabled))
+    cfg.validation_stable_specialization_tie_break_enabled = bool(int(cfg.validation_stable_specialization_tie_break_enabled))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
 
     ensure_dir(cfg.out_dir)
@@ -1509,6 +1588,11 @@ async def main_async():
             refresh_batch_size = max(1, int(cfg.candidate_eval_batch_size or 10))
             refresh_batch = [train_data[i] for i in order[: min(refresh_batch_size, len(order))]]
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
+        joint_team_summary = None
+        if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
+            joint_team_summary = await system.select_joint_active_team(
+                fixed_competence_probe, epoch=epoch + 1
+            )
         system.specialization_strength_history.append(strength_used)
         if strength_used > 0.0:
             system.effective_specialization_epoch_count += 1
@@ -1532,7 +1616,7 @@ async def main_async():
         train_metrics["specialization_strength"] = strength_used
         train_metrics["next_epoch_specialization_strength"] = float(system.specialization_strength)
         epoch_record = {"epoch": epoch + 1, "train": train_metrics, "val": val_metrics}
-        if str(getattr(cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+        if str(getattr(cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
             epoch_record.update({
                 "method_version": str(cfg.method_version),
                 "competence_schedule_version": str(cfg.competence_schedule_version),
@@ -1541,7 +1625,12 @@ async def main_async():
                 "tcs_candidate_policy_version": str(cfg.tcs_candidate_policy_version),
                 "mechanism_signature_version": str(cfg.mechanism_signature_version),
                 "beam_slot_state": dict(getattr(system, "beam_slot_state", {})),
+                "validation_stable_specialization_tie_break_enabled": bool(
+                    getattr(cfg, "validation_stable_specialization_tie_break_enabled", True)
+                ),
             })
+            if joint_team_summary is not None:
+                epoch_record["joint_team_selection"] = joint_team_summary
         if competence_schedule_record is not None:
             epoch_record["competence_schedule"] = competence_schedule_record
         if refresh_summary is not None:
@@ -1677,6 +1766,11 @@ async def main_async():
         payload, prompts = read_selected_prompts(best_prompts_path)
         best_epoch = int(payload.get("selected_epoch", best_epoch) or best_epoch)
         restore_agent_prompts(system, prompts, selected_epoch=best_epoch)
+        if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
+            for agent, saved in zip(system.agents, payload.get("agents", [])):
+                if isinstance(saved, dict) and isinstance(saved.get("lineage_state"), dict):
+                    agent.lineage_state = dict(saved["lineage_state"])
+            system.latest_joint_team_metrics = dict(payload.get("joint_team_metrics", {}) or {})
         selected_probe = next(
             (
                 record for record in reversed(getattr(system, "competence_probe_history", []))
@@ -1701,7 +1795,7 @@ async def main_async():
         "test_evaluated_on": "best_state",
         "test": final_test_metrics,
     }
-    if str(getattr(cfg, "method_version", "legacy")) == "v8_2_hybrid_progressive":
+    if str(getattr(cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
         final_record.update({
             "method_version": str(cfg.method_version),
             "competence_schedule_version": str(cfg.competence_schedule_version),

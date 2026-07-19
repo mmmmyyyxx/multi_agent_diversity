@@ -203,6 +203,8 @@ class AgentState:
         self.large_shift_reject_count = 0
         self.duplicate_prompt_reject_count = 0
         self.last_accepted_prompt_hash = None
+        from .lineage import empty_lineage_state
+        self.lineage_state = empty_lineage_state()
 
     def observe_homogeneity_result(self, homogeneous_flag: int):
         flag = 1 if int(homogeneous_flag) > 0 else 0
@@ -225,6 +227,7 @@ class AgentState:
             "large_shift_reject_count": int(self.large_shift_reject_count),
             "duplicate_prompt_reject_count": int(self.duplicate_prompt_reject_count),
             "last_accepted_prompt_hash": self.last_accepted_prompt_hash,
+            "lineage_state": dict(self.lineage_state),
         }
 
     def restore_trajectory_state(self, payload: Dict[str, Any]) -> None:
@@ -266,3 +269,5 @@ class AgentState:
         self.duplicate_prompt_reject_count = int(payload.get("duplicate_prompt_reject_count", 0) or 0)
         value = payload.get("last_accepted_prompt_hash")
         self.last_accepted_prompt_hash = str(value) if value else None
+        from .lineage import empty_lineage_state
+        self.lineage_state = {**empty_lineage_state(), **dict(payload.get("lineage_state", {}) or {})}
