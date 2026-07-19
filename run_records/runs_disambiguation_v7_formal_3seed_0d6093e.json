@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v7_formal_3seed_0d6093e",
+  "deleted_at": "2026-07-19T11:01:11.590774+00:00",
+  "classification": "PARTIAL",
+  "reason": "non-canonical partial run",
+  "size_bytes": 47639775,
+  "file_count": 33,
+  "versions": [
+    "v7_vote_oriented"
+  ],
+  "settings": [
+    "shared_vote_error_pareto_tcs_residual_cycle_guard"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42,
+    43
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": "8b3e053f5dd6b73e1302e99d5fb385e66dd2c97a",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "8b3e053f5dd6b73e1302e99d5fb385e66dd2c97a",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 7421,
+      "optimizer_calls": 234,
+      "evaluator_calls": 151,
+      "total_llm_calls": 7806,
+      "prompt_tokens": 3257604,
+      "completion_tokens": 2738257,
+      "total_tokens": 5995861,
+      "estimated_cost": 0.0,
+      "latency_seconds": 49399.58896112442,
+      "candidate_eval_solver_api_calls": 4487,
+      "candidate_eval_cache_hits": 4849,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 22033,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 45,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 45,
+      "prompt_tokens": 8430,
+      "completion_tokens": 9358,
+      "total_tokens": 17788,
+      "estimated_cost": 0.0,
+      "latency_seconds": 135.23852944374084,
+      "candidate_eval_solver_api_calls": 0,
+      "candidate_eval_cache_hits": 0,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 0,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 1,
+    "results": [
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 42,
+        "vote_acc": 0.512,
+        "mean_individual_acc": 0.4992,
+        "oracle_acc": 0.736
+      }
+    ]
+  },
+  "failure_summary": ""
+}

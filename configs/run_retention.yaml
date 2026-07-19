@@ -1,0 +1,25 @@
+formal_versions:
+  - baseline
+  - v1_reward_redesign
+  - v2_teacher_critic_student
+  - v3_oracle_pareto
+  - v7_vote_oriented
+  - v8_stable_qd_lineage
+canonical_formal_roots:
+  baseline: runs_bbh_oracle_pareto_formal_v2
+  v1_reward_redesign: runs_task_level_bbh_selected_phase_adaptive
+  v2_teacher_critic_student: runs_task_level_bbh_tcs_useful_full
+  v3_oracle_pareto: runs_bbh_oracle_pareto_formal_v2
+  v7_vote_oriented: null
+  v8_stable_qd_lineage: null
+max_formal_per_version: 1
+max_v8_smoke_roots: 3
+ambiguous_default: keep
+completion_contract: run_meta_history_cost_and_test_metrics
+formal_name_markers:
+  - formal
+  - full
+v8_smoke_roles:
+  - latest_end_to_end
+  - refill_evidence
+  - checkpoint_resume_observability

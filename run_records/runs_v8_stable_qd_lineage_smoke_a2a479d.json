@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_lineage_smoke_a2a479d",
+  "deleted_at": "2026-07-19T11:01:15.586806+00:00",
+  "classification": "FAILED",
+  "reason": "older V8 smoke beyond representative limit",
+  "size_bytes": 2871533,
+  "file_count": 14,
+  "versions": [
+    "v8_stable_qd_lineage"
+  ],
+  "settings": [
+    "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": "a2a479dfce07ad4774f69d3f30008f8842b13bfb",
+      "setting": null,
+      "method_version": "v8_stable_qd_lineage",
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 240,
+      "optimizer_calls": 4,
+      "evaluator_calls": 2,
+      "total_llm_calls": 246,
+      "prompt_tokens": 65947,
+      "completion_tokens": 60237,
+      "total_tokens": 126184,
+      "estimated_cost": 0.0,
+      "latency_seconds": 2240.4931693077087,
+      "candidate_eval_solver_api_calls": 40,
+      "candidate_eval_cache_hits": 100,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 260,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 0,
+    "results": []
+  },
+  "failure_summary": ""
+}

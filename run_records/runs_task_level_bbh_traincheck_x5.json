@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_traincheck_x5",
+  "deleted_at": "2026-07-19T11:01:13.048625+00:00",
+  "classification": "PILOT",
+  "reason": "non-canonical pilot run",
+  "size_bytes": 133346276,
+  "file_count": 181,
+  "versions": [
+    "baseline",
+    "v1_reward_redesign"
+  ],
+  "settings": [
+    "shared_baseline",
+    "shared_guarded_beam"
+  ],
+  "tasks": [
+    "boolean_expressions",
+    "disambiguation_qa",
+    "formal_fallacies",
+    "geometric_shapes",
+    "ruin_names",
+    "sports_understanding"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "ruin_names"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "ruin_names"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "geometric_shapes"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "geometric_shapes"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "formal_fallacies"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "formal_fallacies"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "boolean_expressions"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "boolean_expressions"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 64335,
+      "completion_tokens": 43568,
+      "total_tokens": 107903,
+      "estimated_cost": 0.0,
+      "latency_seconds": 2635.4572031497955
+    },
+    {
+      "solver_calls": 4254,
+      "optimizer_calls": 91,
+      "evaluator_calls": 155,
+      "total_llm_calls": 4500,
+      "prompt_tokens": 1726676,
+      "completion_tokens": 699636,
+      "total_tokens": 2426312,
+      "estimated_cost": 0.0,
+      "latency_seconds": 22817.804937839508
+    },
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 86470,
+      "completion_tokens": 102323,
+      "total_tokens": 188793,
+      "estimated_cost": 0.0,
+      "latency_seconds": 4480.523864507675
+    },
+    {
+      "solver_calls": 4254,
+      "optimizer_calls": 91,
+      "evaluator_calls": 153,
+      "total_llm_calls": 4498,
+      "prompt_tokens": 2235385,
+      "completion_tokens": 1150010,
+      "total_tokens": 3385395,
+      "estimated_cost": 0.0,
+      "latency_seconds": 32889.50243592262
+    },
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 123150,
+      "completion_tokens": 150581,
+      "total_tokens": 273731,
+      "estimated_cost": 0.0,
+      "latency_seconds": 5472.80048418045
+    },
+    {
+      "solver_calls": 4332,
+      "optimizer_calls": 91,
+      "evaluator_calls": 166,
+      "total_llm_calls": 4589,
+      "prompt_tokens": 2419369,
+      "completion_tokens": 1700924,
+      "total_tokens": 4120293,
+      "estimated_cost": 0.0,
+      "latency_seconds": 45669.55938911438
+    },
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 118690,
+      "completion_tokens": 169960,
+      "total_tokens": 288650,
+      "estimated_cost": 0.0,
+      "latency_seconds": 6338.065731048584
+    },
+    {
+      "solver_calls": 4205,
+      "optimizer_calls": 91,
+      "evaluator_calls": 157,
+      "total_llm_calls": 4453,
+      "prompt_tokens": 2250512,
+      "completion_tokens": 1507591,
+      "total_tokens": 3758103,
+      "estimated_cost": 0.0,
+      "latency_seconds": 50857.399676561356
+    },
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 93730,
+      "completion_tokens": 63740,
+      "total_tokens": 157470,
+      "estimated_cost": 0.0,
+      "latency_seconds": 3462.370328426361
+    },
+    {
+      "solver_calls": 4361,
+      "optimizer_calls": 91,
+      "evaluator_calls": 154,
+      "total_llm_calls": 4606,
+      "prompt_tokens": 2403061,
+      "completion_tokens": 971520,
+      "total_tokens": 3374581,
+      "estimated_cost": 0.0,
+      "latency_seconds": 29860.546988248825
+    },
+    {
+      "solver_calls": 500,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 500,
+      "prompt_tokens": 61000,
+      "completion_tokens": 36224,
+      "total_tokens": 97224,
+      "estimated_cost": 0.0,
+      "latency_seconds": 3112.96852850914
+    },
+    {
+      "solver_calls": 4111,
+      "optimizer_calls": 91,
+      "evaluator_calls": 153,
+      "total_llm_calls": 4355,
+      "prompt_tokens": 1356955,
+      "completion_tokens": 661855,
+      "total_tokens": 2018810,
+      "estimated_cost": 0.0,
+      "latency_seconds": 26138.409284114838
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 12,
+    "results": [
+      {
+        "task_id": "boolean_expressions",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.97,
+        "mean_individual_acc": 0.972,
+        "oracle_acc": 0.99
+      },
+      {
+        "task_id": "boolean_expressions",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 0.99,
+        "mean_individual_acc": 0.976,
+        "oracle_acc": 0.99
+      },
+      {
+        "task_id": "formal_fallacies",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 1.0,
+        "mean_individual_acc": 0.99,
+        "oracle_acc": 1.0
+      },
+      {
+        "task_id": "formal_fallacies",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 1.0,
+        "mean_individual_acc": 0.99,
+        "oracle_acc": 1.0
+      },
+      {
+        "task_id": "geometric_shapes",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.68,
+        "mean_individual_acc": 0.664,
+        "oracle_acc": 0.82
+      },
+      {
+        "task_id": "geometric_shapes",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 0.75,
+        "mean_individual_acc": 0.718,
+        "oracle_acc": 0.86
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.83,
+        "mean_individual_acc": 0.834,
+        "oracle_acc": 0.89
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 0.82,
+        "mean_individual_acc": 0.824,
+        "oracle_acc": 0.91
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.45,
+        "mean_individual_acc": 0.446,
+        "oracle_acc": 0.53
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 0.63,
+        "mean_individual_acc": 0.604,
+        "oracle_acc": 0.81
+      },
+      {
+        "task_id": "ruin_names",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.81,
+        "mean_individual_acc": 0.808,
+        "oracle_acc": 0.89
+      },
+      {
+        "task_id": "ruin_names",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 0.82,
+        "mean_individual_acc": 0.806,
+        "oracle_acc": 0.92
+      }
+    ]
+  },
+  "failure_summary": ""
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_tcs_useful_smoke",
+  "deleted_at": "2026-07-19T11:01:12.793256+00:00",
+  "classification": "SMOKE",
+  "reason": "non-canonical smoke run",
+  "size_bytes": 6299183,
+  "file_count": 32,
+  "versions": [
+    "baseline",
+    "v2_teacher_critic_student"
+  ],
+  "settings": [
+    "shared_baseline",
+    "shared_guarded_beam"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 5,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 5,
+      "prompt_tokens": 915,
+      "completion_tokens": 862,
+      "total_tokens": 1777,
+      "estimated_cost": 0.0,
+      "latency_seconds": 37.01451873779297
+    },
+    {
+      "solver_calls": 775,
+      "optimizer_calls": 41,
+      "evaluator_calls": 166,
+      "total_llm_calls": 982,
+      "prompt_tokens": 824936,
+      "completion_tokens": 337885,
+      "total_tokens": 1162821,
+      "estimated_cost": 0.0,
+      "latency_seconds": 12842.129952192307
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 2,
+    "results": [
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_baseline",
+        "seed": 42,
+        "vote_acc": 0.0,
+        "mean_individual_acc": 0.4,
+        "oracle_acc": 1.0
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_guarded_beam",
+        "seed": 42,
+        "vote_acc": 1.0,
+        "mean_individual_acc": 0.8,
+        "oracle_acc": 1.0
+      }
+    ]
+  },
+  "failure_summary": ""
+}

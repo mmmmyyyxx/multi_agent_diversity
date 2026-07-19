@@ -40,7 +40,15 @@ Prompt textual diversity is not an optimization target. Diversity never compensa
 
 Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
 
-The setting's historical V8.2 safe/exploit/explore behavior has been replaced. Existing result directories remain readable by their recorded method version, but old V8 checkpoints are rejected explicitly.
+The setting's historical V8.2 safe/exploit/explore behavior has been replaced. Existing result directories remain readable by their recorded method version. Checkpoint v6 is current; v5 Stable-QD checkpoints migrate only when they contain real selected-team anchor evidence and otherwise fail explicitly.
+
+Specific unknown mechanisms can enter stable semantic families when they pass the specificity gate. Refill is checked after raw evaluation, archive compression, and representative selection. Joint quality uses a frontier of real prompt teams, never a synthetic component-wise maximum.
+
+## Architecture
+
+`Config` is composed from 11 sections while preserving old flat CLI names as aliases. Named experiments are sparse presets with validated overrides. `system.py` is a small public facade; generation, evaluation, metrics, QD policy, lifecycle, and persistence live in dedicated packages. Checkpoint v6 stores semantic families and the real-team quality-anchor frontier and explicitly validates resume compatibility.
+
+Start with `method.md`, then use `VERSION_PRESET_MAP.md`, `V8_ACCEPTANCE_AUDIT.md`, and `RUNS_CATALOG.md` for version, implementation, and local evidence maps.
 
 ## Voting
 

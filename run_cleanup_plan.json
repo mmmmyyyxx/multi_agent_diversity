@@ -1,0 +1,1336 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-07-19T11:00:47.146126+00:00",
+  "workspace": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity",
+  "retention_config": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\configs\\run_retention.yaml",
+  "roots": [
+    {
+      "path": "runs_bbh_oracle_pareto_formal_pilot",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_bbh_oracle_pareto_formal_pilot",
+      "size_bytes": 56841895,
+      "file_count": 42,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v3_oracle_pareto"
+      ],
+      "primary_version": "v3_oracle_pareto",
+      "settings": [
+        "shared_oracle_pareto_tcs",
+        "shared_scalar_tcs_oracle_first"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 2,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 2,
+      "completed_run_count": 2,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783861845.8863153,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_bbh_oracle_pareto_formal_v2",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_bbh_oracle_pareto_formal_v2",
+      "size_bytes": 181339068,
+      "file_count": 182,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student",
+        "v3_oracle_pareto"
+      ],
+      "primary_version": "v3_oracle_pareto",
+      "settings": [
+        "shared_baseline",
+        "shared_oracle_pareto_tcs",
+        "shared_scalar_tcs_oracle_first"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "geometric_shapes",
+        "ruin_names",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FORMAL",
+      "has_final_test": true,
+      "explicit_final_count": 8,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "FORMAL",
+      "classification": "FORMAL",
+      "run_count": 12,
+      "completed_run_count": 12,
+      "accuracy_result_count": 4,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1783926026.1416678,
+      "keep": true,
+      "reason": "reviewed canonical formal run for baseline; reviewed canonical formal run for v3_oracle_pareto"
+    },
+    {
+      "path": "runs_disambiguation_v7_formal_3seed_0d6093e",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v7_formal_3seed_0d6093e",
+      "size_bytes": 47639775,
+      "file_count": 33,
+      "method_versions": [],
+      "versions": [
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs_residual_cycle_guard"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42,
+        43
+      ],
+      "status": "PARTIAL",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "FORMAL",
+      "classification": "PARTIAL",
+      "run_count": 2,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784353042.3338826,
+      "keep": false,
+      "reason": "non-canonical partial run"
+    },
+    {
+      "path": "runs_disambiguation_v8_full_progressive_seed42_9598ad3",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v8_full_progressive_seed42_9598ad3",
+      "size_bytes": 49256625,
+      "file_count": 25,
+      "method_versions": [],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FORMAL",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "FORMAL",
+      "classification": "FORMAL",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784387995.2707622,
+      "keep": false,
+      "reason": "non-canonical formal run"
+    },
+    {
+      "path": "runs_disambiguation_v8_plurality_seed42_b98f560",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v8_plurality_seed42_b98f560",
+      "size_bytes": 1370576,
+      "file_count": 10,
+      "method_versions": [],
+      "versions": [
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs_residual_cycle_guard"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PARTIAL",
+      "has_final_test": false,
+      "explicit_final_count": 0,
+      "has_best_state": false,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "UNLABELED",
+      "classification": "PARTIAL",
+      "run_count": 1,
+      "completed_run_count": 0,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784376423.1363542,
+      "keep": false,
+      "reason": "non-canonical partial run"
+    },
+    {
+      "path": "runs_emergent_stage1_smoke",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_emergent_stage1_smoke",
+      "size_bytes": 12307889,
+      "file_count": 56,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_pareto_tcs",
+        "shared_vote_pareto_tcs_cycle_guard",
+        "shared_vote_pareto_tcs_emergent"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 3,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 3,
+      "completed_run_count": 3,
+      "accuracy_result_count": 3,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784190067.204676,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_task_level_bbh_selected_phase_adaptive",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_selected_phase_adaptive",
+      "size_bytes": 112301396,
+      "file_count": 118,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v1_reward_redesign"
+      ],
+      "primary_version": "v1_reward_redesign",
+      "settings": [
+        "shared_baseline",
+        "shared_guarded_beam"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "geometric_shapes",
+        "ruin_names",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FORMAL",
+      "has_final_test": true,
+      "explicit_final_count": 4,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "FORMAL",
+      "classification": "FORMAL",
+      "run_count": 8,
+      "completed_run_count": 8,
+      "accuracy_result_count": 8,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783446561.6247206,
+      "keep": true,
+      "reason": "reviewed canonical formal run for v1_reward_redesign"
+    },
+    {
+      "path": "runs_task_level_bbh_tcs_oracle_pareto_smoke_large",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_tcs_oracle_pareto_smoke_large",
+      "size_bytes": 83236894,
+      "file_count": 114,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v3_oracle_pareto"
+      ],
+      "primary_version": "v3_oracle_pareto",
+      "settings": [
+        "shared_baseline",
+        "shared_oracle_pareto_tcs"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "geometric_shapes",
+        "ruin_names",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 4,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 8,
+      "completed_run_count": 8,
+      "accuracy_result_count": 8,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783798889.559969,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_task_level_bbh_tcs_useful_full",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_tcs_useful_full",
+      "size_bytes": 235892511,
+      "file_count": 114,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_baseline",
+        "shared_guarded_beam"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "geometric_shapes",
+        "ruin_names",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FORMAL",
+      "has_final_test": true,
+      "explicit_final_count": 4,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "FORMAL",
+      "classification": "FORMAL",
+      "run_count": 8,
+      "completed_run_count": 8,
+      "accuracy_result_count": 8,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783695010.094746,
+      "keep": true,
+      "reason": "reviewed canonical formal run for v2_teacher_critic_student"
+    },
+    {
+      "path": "runs_task_level_bbh_tcs_useful_smoke",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_tcs_useful_smoke",
+      "size_bytes": 6299183,
+      "file_count": 32,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_baseline",
+        "shared_guarded_beam"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 2,
+      "completed_run_count": 2,
+      "accuracy_result_count": 2,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783522319.4083185,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_task_level_bbh_traincheck_x5",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_task_level_bbh_traincheck_x5",
+      "size_bytes": 133346276,
+      "file_count": 181,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v1_reward_redesign"
+      ],
+      "primary_version": "v1_reward_redesign",
+      "settings": [
+        "shared_baseline",
+        "shared_guarded_beam"
+      ],
+      "tasks": [
+        "boolean_expressions",
+        "disambiguation_qa",
+        "formal_fallacies",
+        "geometric_shapes",
+        "ruin_names",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 6,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 12,
+      "completed_run_count": 12,
+      "accuracy_result_count": 12,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783401635.8978305,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_tcs_factorized_integrity_smoke",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_tcs_factorized_integrity_smoke",
+      "size_bytes": 2120562,
+      "file_count": 22,
+      "method_versions": [],
+      "versions": [
+        "v3_oracle_pareto"
+      ],
+      "primary_version": "v3_oracle_pareto",
+      "settings": [
+        "shared_oracle_pareto_tcs"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783836206.8013406,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_tcs_integrity_smoke",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_tcs_integrity_smoke",
+      "size_bytes": 2077941,
+      "file_count": 22,
+      "method_versions": [],
+      "versions": [
+        "v3_oracle_pareto"
+      ],
+      "primary_version": "v3_oracle_pareto",
+      "settings": [
+        "shared_oracle_pareto_tcs"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": false,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783833719.8341522,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_v8_2_hybrid_targeted_smoke_249442c",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_2_hybrid_targeted_smoke_249442c",
+      "size_bytes": 8171171,
+      "file_count": 34,
+      "method_versions": [
+        "v8_2_hybrid_progressive"
+      ],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784398738.498696,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_v8_2_hybrid_targeted_smoke_300202d",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_2_hybrid_targeted_smoke_300202d",
+      "size_bytes": 7254567,
+      "file_count": 25,
+      "method_versions": [
+        "v8_2_hybrid_progressive"
+      ],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784408354.1599033,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_v8_2_hybrid_targeted_smoke_ea5df38",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_2_hybrid_targeted_smoke_ea5df38",
+      "size_bytes": 7973529,
+      "file_count": 25,
+      "method_versions": [
+        "v8_2_hybrid_progressive"
+      ],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784412364.543237,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_v8_2_hybrid_targeted_smoke_fb81c50",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_2_hybrid_targeted_smoke_fb81c50",
+      "size_bytes": 7468929,
+      "file_count": 34,
+      "method_versions": [
+        "v8_2_hybrid_progressive"
+      ],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784402774.5893614,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_v8_schedule_v2_c1_guard_smoke_249442c",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_schedule_v2_c1_guard_smoke_249442c",
+      "size_bytes": 56787,
+      "file_count": 7,
+      "method_versions": [],
+      "versions": [
+        "v8_historical_progressive"
+      ],
+      "primary_version": "",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FAILED",
+      "has_final_test": false,
+      "explicit_final_count": 0,
+      "has_best_state": false,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "FAILED",
+      "run_count": 1,
+      "completed_run_count": 0,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784393638.273816,
+      "keep": false,
+      "reason": "non-canonical failed run"
+    },
+    {
+      "path": "runs_v8_stable_qd_acceptance_b6ac725",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_acceptance_b6ac725",
+      "size_bytes": 11675498,
+      "file_count": 29,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784448057.9046452,
+      "keep": false,
+      "reason": "older V8 smoke beyond representative limit"
+    },
+    {
+      "path": "runs_v8_stable_qd_acceptance_fef10f3",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_acceptance_fef10f3",
+      "size_bytes": 11846958,
+      "file_count": 30,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784453208.21097,
+      "keep": true,
+      "reason": "latest completed V8 smoke; latest V8 checkpoint/observability smoke"
+    },
+    {
+      "path": "runs_v8_stable_qd_lineage_smoke_053fd34",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_lineage_smoke_053fd34",
+      "size_bytes": 12784430,
+      "file_count": 29,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784442894.947359,
+      "keep": false,
+      "reason": "older V8 smoke beyond representative limit"
+    },
+    {
+      "path": "runs_v8_stable_qd_lineage_smoke_7ce0613",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_lineage_smoke_7ce0613",
+      "size_bytes": 14704763,
+      "file_count": 28,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 1,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784443827.3911555,
+      "keep": false,
+      "reason": "older V8 smoke beyond representative limit"
+    },
+    {
+      "path": "runs_v8_stable_qd_lineage_smoke_a2a479d",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_lineage_smoke_a2a479d",
+      "size_bytes": 2871533,
+      "file_count": 14,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FAILED",
+      "has_final_test": false,
+      "explicit_final_count": 0,
+      "has_best_state": false,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "FAILED",
+      "run_count": 1,
+      "completed_run_count": 0,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784438613.22158,
+      "keep": false,
+      "reason": "older V8 smoke beyond representative limit"
+    },
+    {
+      "path": "runs_v8_stable_qd_lineage_smoke_e04461d",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_v8_stable_qd_lineage_smoke_e04461d",
+      "size_bytes": 7062193,
+      "file_count": 23,
+      "method_versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "versions": [
+        "v8_stable_qd_lineage"
+      ],
+      "primary_version": "v8_stable_qd_lineage",
+      "settings": [
+        "shared_vote_tcs_competence_depth2_progressive_residual_hybrid"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "FAILED",
+      "has_final_test": false,
+      "explicit_final_count": 0,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "FAILED",
+      "run_count": 1,
+      "completed_run_count": 0,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784438253.5875347,
+      "keep": false,
+      "reason": "older V8 smoke beyond representative limit"
+    },
+    {
+      "path": "runs_vote_disambiguation_validation_b924f19",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_disambiguation_validation_b924f19",
+      "size_bytes": 28177455,
+      "file_count": 38,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_accuracy_only_tcs_vote_first"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 1,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 1,
+      "completed_run_count": 1,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784006746.1810591,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_vote_disambiguation_validation_c823908",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_disambiguation_validation_c823908",
+      "size_bytes": 272995222,
+      "file_count": 205,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_accuracy_only_tcs_vote_first",
+        "shared_baseline",
+        "shared_guarded_diversity_tcs_vote_first",
+        "shared_scalar_tcs_vote_first",
+        "shared_vote_no_boundary_tcs_vote_first",
+        "shared_vote_no_margin_tcs_vote_first"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 8,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 10,
+      "completed_run_count": 10,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784060600.2924495,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_vote_stage1_smoke_83bcb8f",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_stage1_smoke_83bcb8f",
+      "size_bytes": 6180049,
+      "file_count": 54,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_baseline",
+        "shared_scalar_tcs_vote_first",
+        "shared_vote_pareto_tcs"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 2,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 3,
+      "completed_run_count": 3,
+      "accuracy_result_count": 3,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1783944847.9453657,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_vote_stage2_selector_pilot_v4_dcc9492",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_stage2_selector_pilot_v4_dcc9492",
+      "size_bytes": 171076997,
+      "file_count": 121,
+      "method_versions": [],
+      "versions": [
+        "baseline",
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_baseline",
+        "shared_scalar_tcs_vote_first",
+        "shared_vote_pareto_tcs"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "geometric_shapes",
+        "ruin_names"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 5,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 8,
+      "completed_run_count": 8,
+      "accuracy_result_count": 8,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1783997817.8796692,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_vote_v7_boundary_smoke_cleanup",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_boundary_smoke_cleanup",
+      "size_bytes": 9637669,
+      "file_count": 73,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs",
+        "shared_vote_error_pareto_tcs_residual_specialization",
+        "shared_vote_pareto_tcs",
+        "shared_vote_pareto_tcs_boundary_selector"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 4,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 4,
+      "completed_run_count": 4,
+      "accuracy_result_count": 4,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784198491.3272858,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_vote_v7_strict_clean_smoke_0d6093e",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_strict_clean_smoke_0d6093e",
+      "size_bytes": 6167516,
+      "file_count": 56,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "shared_vote_error_pareto_tcs_residual_specialization",
+        "shared_vote_pareto_tcs_static"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 3,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 3,
+      "completed_run_count": 3,
+      "accuracy_result_count": 3,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784211873.895022,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_vote_v7_strict_pilot_0d6093e",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_strict_pilot_0d6093e",
+      "size_bytes": 377849562,
+      "file_count": 373,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v7_vote_oriented"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs",
+        "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "shared_vote_error_pareto_tcs_residual_specialization",
+        "shared_vote_pareto_tcs_boundary_selector",
+        "shared_vote_pareto_tcs_static"
+      ],
+      "tasks": [
+        "disambiguation_qa",
+        "sports_understanding"
+      ],
+      "seeds": [
+        42,
+        43
+      ],
+      "status": "PILOT",
+      "has_final_test": true,
+      "explicit_final_count": 20,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "PILOT",
+      "classification": "PILOT",
+      "run_count": 20,
+      "completed_run_count": 20,
+      "accuracy_result_count": 20,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": true,
+      "latest_mtime": 1784303195.7708282,
+      "keep": false,
+      "reason": "non-canonical pilot run"
+    },
+    {
+      "path": "runs_vote_v7_strict_pilot_2task_2seed_0d6093e",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_strict_pilot_2task_2seed_0d6093e",
+      "size_bytes": 933943,
+      "file_count": 10,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student"
+      ],
+      "primary_version": "v2_teacher_critic_student",
+      "settings": [
+        "shared_vote_pareto_tcs_static"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "PARTIAL",
+      "has_final_test": false,
+      "explicit_final_count": 0,
+      "has_best_state": false,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "PILOT",
+      "classification": "PARTIAL",
+      "run_count": 1,
+      "completed_run_count": 0,
+      "accuracy_result_count": 0,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784212511.1232467,
+      "keep": false,
+      "reason": "non-canonical partial run"
+    },
+    {
+      "path": "runs_vote_v8_competence_depth_strict_smoke",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v8_competence_depth_strict_smoke",
+      "size_bytes": 17926390,
+      "file_count": 94,
+      "method_versions": [],
+      "versions": [
+        "v2_teacher_critic_student",
+        "v7_vote_oriented",
+        "v8_historical_progressive"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_legacy_coverage_useful_tcs_strict",
+        "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "shared_vote_tcs_competence_depth2",
+        "shared_vote_tcs_competence_depth2_progressive_residual",
+        "shared_vote_tcs_competence_schedule"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 5,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 5,
+      "completed_run_count": 5,
+      "accuracy_result_count": 5,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784367271.1008027,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    },
+    {
+      "path": "runs_vote_v8_plurality_clean_smoke_b98f560",
+      "resolved_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v8_plurality_clean_smoke_b98f560",
+      "size_bytes": 11812733,
+      "file_count": 62,
+      "method_versions": [],
+      "versions": [
+        "v7_vote_oriented",
+        "v8_historical_progressive"
+      ],
+      "primary_version": "v7_vote_oriented",
+      "settings": [
+        "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "shared_vote_tcs_competence_depth2",
+        "shared_vote_tcs_competence_depth2_progressive_residual"
+      ],
+      "tasks": [
+        "disambiguation_qa"
+      ],
+      "seeds": [
+        42
+      ],
+      "status": "SMOKE",
+      "has_final_test": true,
+      "explicit_final_count": 3,
+      "has_best_state": true,
+      "has_run_meta": true,
+      "strict_split": true,
+      "run_kind": "SMOKE",
+      "classification": "SMOKE",
+      "run_count": 3,
+      "completed_run_count": 3,
+      "accuracy_result_count": 3,
+      "refill_evidence": false,
+      "checkpoint_resume_evidence": false,
+      "latest_mtime": 1784371108.1991372,
+      "keep": false,
+      "reason": "non-canonical smoke run"
+    }
+  ],
+  "summary": {
+    "root_count": 34,
+    "size_bytes": 1918658485,
+    "keep_count": 4,
+    "delete_count": 30,
+    "ambiguous_keep_count": 0,
+    "delete_size_bytes": 1377278552
+  }
+}

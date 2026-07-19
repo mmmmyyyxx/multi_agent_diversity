@@ -1,0 +1,638 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_strict_pilot_0d6093e",
+  "deleted_at": "2026-07-19T11:01:17.586075+00:00",
+  "classification": "PILOT",
+  "reason": "non-canonical pilot run",
+  "size_bytes": 377849562,
+  "file_count": 373,
+  "versions": [
+    "v2_teacher_critic_student",
+    "v7_vote_oriented"
+  ],
+  "settings": [
+    "shared_vote_error_pareto_tcs",
+    "shared_vote_error_pareto_tcs_residual_cycle_guard",
+    "shared_vote_error_pareto_tcs_residual_specialization",
+    "shared_vote_pareto_tcs_boundary_selector",
+    "shared_vote_pareto_tcs_static"
+  ],
+  "tasks": [
+    "disambiguation_qa",
+    "sports_understanding"
+  ],
+  "seeds": [
+    42,
+    43
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "sports_understanding"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    },
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 2880,
+      "optimizer_calls": 71,
+      "evaluator_calls": 46,
+      "total_llm_calls": 2997,
+      "prompt_tokens": 805260,
+      "completion_tokens": 556230,
+      "total_tokens": 1361490,
+      "estimated_cost": 0.0,
+      "latency_seconds": 23894.442446947098,
+      "candidate_eval_solver_api_calls": 1434,
+      "candidate_eval_cache_hits": 1806,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 7086,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3211,
+      "optimizer_calls": 76,
+      "evaluator_calls": 47,
+      "total_llm_calls": 3334,
+      "prompt_tokens": 888188,
+      "completion_tokens": 711403,
+      "total_tokens": 1599591,
+      "estimated_cost": 0.0,
+      "latency_seconds": 23745.04883313179,
+      "candidate_eval_solver_api_calls": 1741,
+      "candidate_eval_cache_hits": 1979,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 8699,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3052,
+      "optimizer_calls": 101,
+      "evaluator_calls": 68,
+      "total_llm_calls": 3221,
+      "prompt_tokens": 1022822,
+      "completion_tokens": 682957,
+      "total_tokens": 1705779,
+      "estimated_cost": 0.0,
+      "latency_seconds": 21624.656683444977,
+      "candidate_eval_solver_api_calls": 1624,
+      "candidate_eval_cache_hits": 2312,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 8456,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3927,
+      "optimizer_calls": 117,
+      "evaluator_calls": 75,
+      "total_llm_calls": 4119,
+      "prompt_tokens": 1188387,
+      "completion_tokens": 778413,
+      "total_tokens": 1966800,
+      "estimated_cost": 0.0,
+      "latency_seconds": 30267.347502231598,
+      "candidate_eval_solver_api_calls": 2327,
+      "candidate_eval_cache_hits": 2329,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 11833,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4534,
+      "optimizer_calls": 140,
+      "evaluator_calls": 88,
+      "total_llm_calls": 4762,
+      "prompt_tokens": 1355300,
+      "completion_tokens": 900956,
+      "total_tokens": 2256256,
+      "estimated_cost": 0.0,
+      "latency_seconds": 42193.853347063065,
+      "candidate_eval_solver_api_calls": 2862,
+      "candidate_eval_cache_hits": 2682,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 14778,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3606,
+      "optimizer_calls": 118,
+      "evaluator_calls": 80,
+      "total_llm_calls": 3804,
+      "prompt_tokens": 1138671,
+      "completion_tokens": 825401,
+      "total_tokens": 1964072,
+      "estimated_cost": 0.0,
+      "latency_seconds": 30629.11773085594,
+      "candidate_eval_solver_api_calls": 2119,
+      "candidate_eval_cache_hits": 2225,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 10961,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3787,
+      "optimizer_calls": 114,
+      "evaluator_calls": 76,
+      "total_llm_calls": 3977,
+      "prompt_tokens": 1106625,
+      "completion_tokens": 512362,
+      "total_tokens": 1618987,
+      "estimated_cost": 0.0,
+      "latency_seconds": 34517.06220984459,
+      "candidate_eval_solver_api_calls": 2308,
+      "candidate_eval_cache_hits": 2636,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 11372,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3976,
+      "optimizer_calls": 137,
+      "evaluator_calls": 94,
+      "total_llm_calls": 4207,
+      "prompt_tokens": 1224362,
+      "completion_tokens": 540705,
+      "total_tokens": 1765067,
+      "estimated_cost": 0.0,
+      "latency_seconds": 40627.695878982544,
+      "candidate_eval_solver_api_calls": 2474,
+      "candidate_eval_cache_hits": 2806,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 12886,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4097,
+      "optimizer_calls": 163,
+      "evaluator_calls": 119,
+      "total_llm_calls": 4379,
+      "prompt_tokens": 1384898,
+      "completion_tokens": 720065,
+      "total_tokens": 2104963,
+      "estimated_cost": 0.0,
+      "latency_seconds": 48997.8226647377,
+      "candidate_eval_solver_api_calls": 2592,
+      "candidate_eval_cache_hits": 2544,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 13008,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3820,
+      "optimizer_calls": 157,
+      "evaluator_calls": 114,
+      "total_llm_calls": 4091,
+      "prompt_tokens": 1352387,
+      "completion_tokens": 597232,
+      "total_tokens": 1949619,
+      "estimated_cost": 0.0,
+      "latency_seconds": 38014.46914148331,
+      "candidate_eval_solver_api_calls": 2369,
+      "candidate_eval_cache_hits": 2479,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 12271,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4232,
+      "optimizer_calls": 130,
+      "evaluator_calls": 86,
+      "total_llm_calls": 4448,
+      "prompt_tokens": 1708243,
+      "completion_tokens": 732220,
+      "total_tokens": 2440463,
+      "estimated_cost": 0.0,
+      "latency_seconds": 40009.91263127327,
+      "candidate_eval_solver_api_calls": 2688,
+      "candidate_eval_cache_hits": 2760,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 13032,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3938,
+      "optimizer_calls": 119,
+      "evaluator_calls": 79,
+      "total_llm_calls": 4136,
+      "prompt_tokens": 1577267,
+      "completion_tokens": 829823,
+      "total_tokens": 2407090,
+      "estimated_cost": 0.0,
+      "latency_seconds": 40675.34131407738,
+      "candidate_eval_solver_api_calls": 2385,
+      "candidate_eval_cache_hits": 2751,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 11775,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4226,
+      "optimizer_calls": 140,
+      "evaluator_calls": 94,
+      "total_llm_calls": 4460,
+      "prompt_tokens": 1738470,
+      "completion_tokens": 787430,
+      "total_tokens": 2525900,
+      "estimated_cost": 0.0,
+      "latency_seconds": 49451.1739590168,
+      "candidate_eval_solver_api_calls": 2732,
+      "candidate_eval_cache_hits": 2836,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 13588,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4529,
+      "optimizer_calls": 165,
+      "evaluator_calls": 112,
+      "total_llm_calls": 4806,
+      "prompt_tokens": 1992351,
+      "completion_tokens": 967823,
+      "total_tokens": 2960174,
+      "estimated_cost": 0.0,
+      "latency_seconds": 54202.84454321861,
+      "candidate_eval_solver_api_calls": 3061,
+      "candidate_eval_cache_hits": 2891,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 15179,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 3970,
+      "optimizer_calls": 111,
+      "evaluator_calls": 70,
+      "total_llm_calls": 4151,
+      "prompt_tokens": 1482727,
+      "completion_tokens": 748963,
+      "total_tokens": 2231690,
+      "estimated_cost": 0.0,
+      "latency_seconds": 40605.43852567673,
+      "candidate_eval_solver_api_calls": 2497,
+      "candidate_eval_cache_hits": 2735,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 12143,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4191,
+      "optimizer_calls": 138,
+      "evaluator_calls": 91,
+      "total_llm_calls": 4420,
+      "prompt_tokens": 1725816,
+      "completion_tokens": 835416,
+      "total_tokens": 2561232,
+      "estimated_cost": 0.0,
+      "latency_seconds": 50164.04037117958,
+      "candidate_eval_solver_api_calls": 2715,
+      "candidate_eval_cache_hits": 2829,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 13485,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4287,
+      "optimizer_calls": 132,
+      "evaluator_calls": 86,
+      "total_llm_calls": 4505,
+      "prompt_tokens": 1658856,
+      "completion_tokens": 840948,
+      "total_tokens": 2499804,
+      "estimated_cost": 0.0,
+      "latency_seconds": 59510.434138298035,
+      "candidate_eval_solver_api_calls": 2777,
+      "candidate_eval_cache_hits": 2839,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 13783,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4019,
+      "optimizer_calls": 105,
+      "evaluator_calls": 63,
+      "total_llm_calls": 4187,
+      "prompt_tokens": 1430505,
+      "completion_tokens": 805984,
+      "total_tokens": 2236489,
+      "estimated_cost": 0.0,
+      "latency_seconds": 50140.466752290726,
+      "candidate_eval_solver_api_calls": 2533,
+      "candidate_eval_cache_hits": 2795,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 12587,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4613,
+      "optimizer_calls": 183,
+      "evaluator_calls": 129,
+      "total_llm_calls": 4925,
+      "prompt_tokens": 2021369,
+      "completion_tokens": 985155,
+      "total_tokens": 3006524,
+      "estimated_cost": 0.0,
+      "latency_seconds": 74330.59372472763,
+      "candidate_eval_solver_api_calls": 3133,
+      "candidate_eval_cache_hits": 2963,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 15827,
+      "candidate_eval_prompt_dedup_savings": 0
+    },
+    {
+      "solver_calls": 4402,
+      "optimizer_calls": 169,
+      "evaluator_calls": 120,
+      "total_llm_calls": 4691,
+      "prompt_tokens": 1897697,
+      "completion_tokens": 1015964,
+      "total_tokens": 2913661,
+      "estimated_cost": 0.0,
+      "latency_seconds": 63978.53225898743,
+      "candidate_eval_solver_api_calls": 2887,
+      "candidate_eval_cache_hits": 2921,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 14633,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 20,
+    "results": [
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_pareto_tcs_static",
+        "seed": 42,
+        "vote_acc": 0.5333333333333333,
+        "mean_individual_acc": 0.5333333333333333,
+        "oracle_acc": 0.75
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_pareto_tcs_static",
+        "seed": 43,
+        "vote_acc": 0.4166666666666667,
+        "mean_individual_acc": 0.43666666666666665,
+        "oracle_acc": 0.6166666666666667
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_pareto_tcs_boundary_selector",
+        "seed": 42,
+        "vote_acc": 0.6333333333333333,
+        "mean_individual_acc": 0.5966666666666667,
+        "oracle_acc": 0.8333333333333334
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_pareto_tcs_boundary_selector",
+        "seed": 43,
+        "vote_acc": 0.48333333333333334,
+        "mean_individual_acc": 0.48,
+        "oracle_acc": 0.6833333333333333
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs",
+        "seed": 42,
+        "vote_acc": 0.4666666666666667,
+        "mean_individual_acc": 0.4866666666666667,
+        "oracle_acc": 0.65
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs",
+        "seed": 43,
+        "vote_acc": 0.5333333333333333,
+        "mean_individual_acc": 0.49333333333333335,
+        "oracle_acc": 0.6666666666666666
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_specialization",
+        "seed": 42,
+        "vote_acc": 0.5166666666666667,
+        "mean_individual_acc": 0.5033333333333333,
+        "oracle_acc": 0.6833333333333333
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_specialization",
+        "seed": 43,
+        "vote_acc": 0.5166666666666667,
+        "mean_individual_acc": 0.5133333333333333,
+        "oracle_acc": 0.65
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 42,
+        "vote_acc": 0.5666666666666667,
+        "mean_individual_acc": 0.5233333333333333,
+        "oracle_acc": 0.7833333333333333
+      },
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 43,
+        "vote_acc": 0.5333333333333333,
+        "mean_individual_acc": 0.4633333333333333,
+        "oracle_acc": 0.6
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_pareto_tcs_static",
+        "seed": 42,
+        "vote_acc": 0.8666666666666667,
+        "mean_individual_acc": 0.8533333333333334,
+        "oracle_acc": 0.95
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_pareto_tcs_static",
+        "seed": 43,
+        "vote_acc": 0.85,
+        "mean_individual_acc": 0.85,
+        "oracle_acc": 0.9666666666666667
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_pareto_tcs_boundary_selector",
+        "seed": 42,
+        "vote_acc": 0.8333333333333334,
+        "mean_individual_acc": 0.86,
+        "oracle_acc": 0.95
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_pareto_tcs_boundary_selector",
+        "seed": 43,
+        "vote_acc": 0.85,
+        "mean_individual_acc": 0.8466666666666667,
+        "oracle_acc": 0.95
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs",
+        "seed": 42,
+        "vote_acc": 0.8333333333333334,
+        "mean_individual_acc": 0.8366666666666667,
+        "oracle_acc": 0.9166666666666666
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs",
+        "seed": 43,
+        "vote_acc": 0.9,
+        "mean_individual_acc": 0.88,
+        "oracle_acc": 0.9333333333333333
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs_residual_specialization",
+        "seed": 42,
+        "vote_acc": 0.8166666666666667,
+        "mean_individual_acc": 0.8366666666666667,
+        "oracle_acc": 0.95
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs_residual_specialization",
+        "seed": 43,
+        "vote_acc": 0.8333333333333334,
+        "mean_individual_acc": 0.8433333333333334,
+        "oracle_acc": 0.95
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 42,
+        "vote_acc": 0.85,
+        "mean_individual_acc": 0.85,
+        "oracle_acc": 0.9333333333333333
+      },
+      {
+        "task_id": "sports_understanding",
+        "setting": "shared_vote_error_pareto_tcs_residual_cycle_guard",
+        "seed": 43,
+        "vote_acc": 0.8666666666666667,
+        "mean_individual_acc": 0.8733333333333333,
+        "oracle_acc": 0.9833333333333333
+      }
+    ]
+  },
+  "failure_summary": ""
+}

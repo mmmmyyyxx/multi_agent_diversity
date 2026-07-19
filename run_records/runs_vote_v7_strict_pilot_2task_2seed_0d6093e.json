@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_vote_v7_strict_pilot_2task_2seed_0d6093e",
+  "deleted_at": "2026-07-19T11:01:17.818954+00:00",
+  "classification": "PARTIAL",
+  "reason": "non-canonical partial run",
+  "size_bytes": 933943,
+  "file_count": 10,
+  "versions": [
+    "v2_teacher_critic_student"
+  ],
+  "settings": [
+    "shared_vote_pareto_tcs_static"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": "0d6093e5944c56fc9873a5296b6ee154f8469b65",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 50,
+      "optimizer_calls": 0,
+      "evaluator_calls": 0,
+      "total_llm_calls": 50,
+      "prompt_tokens": 9460,
+      "completion_tokens": 6533,
+      "total_tokens": 15993,
+      "estimated_cost": 0.0,
+      "latency_seconds": 347.3301477432251,
+      "candidate_eval_solver_api_calls": 0,
+      "candidate_eval_cache_hits": 0,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 0,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 0,
+    "results": []
+  },
+  "failure_summary": ""
+}

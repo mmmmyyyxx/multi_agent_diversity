@@ -21,7 +21,7 @@ lineage_policy_version       = stable_lineage_anchor_v1
 mechanism_distance_version   = mechanism_sequence_embedding_v1
 ```
 
-The setting name is retained for experiment continuity, but its old V8.2 behavior has been replaced. Old V8 checkpoints are intentionally incompatible.
+The setting name is retained for experiment continuity, but its old V8.2 behavior has been replaced. Checkpoint v6 is current; v5 Stable-QD checkpoints migrate only when they contain real selected-team evidence, otherwise resume fails explicitly.
 
 ## 2. Design Principle
 
@@ -103,11 +103,11 @@ Quality constraints protect the active team, but they do not erase every novel b
 - `Probation`: genuinely novel candidates with only bounded small regressions. They can be used as later TCS parents for at most two updates, but can never enter active-team selection directly.
 - `Catastrophic`: invalid, duplicated, non-novel, or materially regressing candidates. These are discarded.
 
-If the initial batch lacks two Safe non-incumbent candidates, a Safe task repair, or a Safe distinct mechanism, bounded refill runs for at most two rounds. The Teacher and Student receive structured rejection feedback, including accuracy/C1 losses and duplicate-niche causes, rather than a generic request to try again. Solver rollouts for already seen prompt-question pairs are reused.
+If the initial batch lacks two Safe non-incumbent candidates, a Safe task repair, or a Safe distinct mechanism, bounded refill runs for at most two rounds. Requirements are checked three times: on raw evaluated candidates, after Safe archive niche compression, and after representative selection. Archive collisions or insufficient representative behavior span can therefore trigger refill even when the raw count passed. The Teacher and Student receive structured rejection feedback, including accuracy/C1 losses and duplicate-niche causes. Solver rollouts for already seen prompt-question pairs are reused.
 
 The long-term Safe archive holds up to six niche elites per agent. `beam_size=3` means three representatives selected from that archive for joint enumeration, not an archive size limit. Parent A is the active prompt; Parent B is chosen round-robin from an underused Probation branch or Safe niche, ensuring archived niches receive reproduction opportunities.
 
-Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after run-level integer loss floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. The floor uses the component-wise maximum of the initial fixed-probe baseline, historical best quality, committed lineage anchors, and current incumbent, so loss allowances cannot accumulate across epochs. This is narrower and more reproducible than retaining a large five-dimensional Pareto frontier.
+Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after integer quality floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. A team must pass both the current incumbent's local floor and at least one real team in the global quality-anchor frontier. No component-wise synthetic team is constructed.
 
 At most three active prompts change in an early epoch and two in a later epoch; a single next-epoch relaxation is available only after repeated no-diversification selection. Lineages become provisional after one stable snapshot and committed after two. Fold lineage evidence compares each agent's peer-relative correctness residual and rescue/unique-correct support, rather than raw fold accuracy differences. QD readiness can keep residual specialization at its 0.15 floor only when competence gates, two Safe niches, diversity, and fold stability all pass.
 
@@ -126,7 +126,7 @@ contradiction_minimization, evidence_accumulation,
 option_elimination, final_consistency_check
 ```
 
-Unknown but meaningful steps are preserved as normalized text.
+Unknown but meaningful steps pass a deterministic specificity gate and enter a semantic fallback family. Similar specific residuals merge by embedding threshold; a new family receives a stable `semantic:<representative_hash>` ID. Generic reasoning advice, persona text, and output-format instructions remain filtered. Semantic family representatives and mappings are checkpointed.
 
 Sequence distance is normalized Levenshtein distance over operation sequences. Embedding distance is `1 - cosine_similarity` over the normalized mechanism text, using the local embedding model. Full prompts are never embedded for mechanism comparison. Embeddings are cached by normalized mechanism hash.
 
@@ -166,7 +166,7 @@ Rescue-set distance is zero when both prompts have no rescue support. This preve
 
 ## 11. Per-Agent QD Archive
 
-Each agent keeps a beam of three prompts. The beam is a quality-diversity archive, not fixed safe/exploit/explore roles.
+Each agent keeps a long-term Safe archive of up to six niche elites. A behavior-aware selector exposes at most three representatives to joint enumeration. The representative set is not fixed safe/exploit/explore roles.
 
 The niche key is:
 
@@ -176,7 +176,7 @@ The niche key is:
 
 Hard-guard failures cannot enter the archive. Within one niche, candidates are ranked by target accuracy, C1 net delta, C2 net delta, plurality gain, penalized reward, and earlier generation. Novelty cannot displace a higher-quality candidate in the same niche.
 
-The archive retains:
+The representative selector retains:
 
 1. the incumbent or strongest stable elite;
 2. the best quality elite from a different niche;
@@ -203,6 +203,8 @@ plurality accuracy, mean accuracy, bottom-2, C1, C2
 ```
 
 The active guard uses at most one lost vote question, one lost C1 question, one lost C2 question, two lost agent-question correct outcomes, one lost bottom-2 correct outcome, and two lost correct outcomes for any single agent. Both deterministic folds must also avoid catastrophic C1, C2, or total-correct regression.
+
+Stable-QD also stores a frontier of at most five `QualityAnchor` objects. Every anchor contains one actual selected team's epoch, prompt hashes, vote count, total-agent-correct count, bottom-2 count, C1/C2 counts, and per-agent correct counts. Dominated anchors are pruned. Global feasibility means passing at least one real anchor; local feasibility still compares against the current incumbent to prevent accumulated epoch-by-epoch degradation. If no team passes a real anchor, the incumbent is kept and `quality_anchor_fallback_reason=no_real_anchor_feasible` is logged.
 
 The feasible teams are narrowed in order by vote, total agent correctness, bottom-2 correctness, C1, and C2 bands. Diversity is evaluated only in the final band. If a layer is empty it falls back to the preceding layer; if selection still has no candidate, the incumbent is retained. `quality_frontier_count` remains only as a compatibility field and equals the final-band count.
 
@@ -274,10 +276,10 @@ It is not a candidate reward. Validation may use it only as the last tie-break a
 
 ## 18. Checkpoint And Outputs
 
-Checkpoint behavior fingerprints include all QD, mechanism, behavior, joint-quality, lineage, and peer-collapse settings. An old V8 checkpoint fails with:
+Checkpoint v6 stores canonical configuration identity, per-agent search state, Safe/Probation archives, semantic mechanism families, representatives, the real quality-anchor frontier, lineage state, caches, counters, histories, and random state. Behavior fingerprints include all QD, mechanism, behavior, joint-quality, lineage, and peer-collapse settings. Incompatible checkpoints fail before modifying a run directory. A v5 Stable-QD checkpoint without real selected-team evidence fails with:
 
 ```text
-V8 behavior fingerprint mismatch: joint quality-diversity lineage policy changed
+version 5 Stable-QD checkpoint has no real selected-team anchor evidence
 ```
 
 New diagnostic files are:
@@ -294,15 +296,25 @@ lineage_history.jsonl
 ## 19. Code Map
 
 ```text
-multi_dataset_diverse_rl/system.py             orchestration and model calls
+multi_dataset_diverse_rl/system.py             public facade and mixin assembly
+multi_dataset_diverse_rl/config.py             section-composed Config and flat aliases
+multi_dataset_diverse_rl/config_sections.py    canonical section registry
+multi_dataset_diverse_rl/optimization/         TCS generation and update pipeline
+multi_dataset_diverse_rl/evaluation/           solver and candidate evaluation services
+multi_dataset_diverse_rl/metrics/              rollout and transition metrics
+multi_dataset_diverse_rl/qd/                    joint controller and real quality anchors
 multi_dataset_diverse_rl/mechanisms.py         normalized mechanism representation
 multi_dataset_diverse_rl/behavior_profiles.py  behavioral vectors and distances
-multi_dataset_diverse_rl/quality_diversity.py  QD archive and offline team metrics
+multi_dataset_diverse_rl/search_archive.py     Safe archive and representatives
+multi_dataset_diverse_rl/quality_diversity.py  offline team metrics and selection
 multi_dataset_diverse_rl/lineage.py             lineage state, drift, hysteresis
-multi_dataset_diverse_rl/cli.py                 training, validation, checkpoints
+multi_dataset_diverse_rl/persistence/           checkpoint v6 and artifact writing
+multi_dataset_diverse_rl/cli.py                 training/validation lifecycle entry
 scripts/experiment_config.py                    named experiment settings
 scripts/run_task_level_accuracy.py              task-level runner
 ```
+
+`Config` has 11 canonical section objects. Existing flat CLI/property names are compatibility views over those sections. Experiment definitions use sparse `ExperimentPreset(name, base, overrides)` records; unknown overrides fail immediately. See `VERSION_PRESET_MAP.md` for historical composition and `RUNS_CATALOG.md` for retained evidence.
 
 ## 20. Boundaries
 

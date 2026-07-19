@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_tcs_factorized_integrity_smoke",
+  "deleted_at": "2026-07-19T11:01:13.286527+00:00",
+  "classification": "SMOKE",
+  "reason": "non-canonical smoke run",
+  "size_bytes": 2120562,
+  "file_count": 22,
+  "versions": [
+    "v3_oracle_pareto"
+  ],
+  "settings": [
+    "shared_oracle_pareto_tcs"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": null,
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 460,
+      "optimizer_calls": 12,
+      "evaluator_calls": 8,
+      "total_llm_calls": 480,
+      "prompt_tokens": 149268,
+      "completion_tokens": 74855,
+      "total_tokens": 224123,
+      "estimated_cost": 0.0,
+      "latency_seconds": 4523.631169080734,
+      "candidate_eval_solver_api_calls": 136,
+      "candidate_eval_cache_hits": 200,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 584,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 1,
+    "results": [
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_oracle_pareto_tcs",
+        "seed": 42,
+        "vote_acc": 0.5,
+        "mean_individual_acc": 0.47,
+        "oracle_acc": 0.8
+      }
+    ]
+  },
+  "failure_summary": ""
+}

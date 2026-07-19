@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "original_path": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\runs_disambiguation_v8_full_progressive_seed42_9598ad3",
+  "deleted_at": "2026-07-19T11:01:11.812578+00:00",
+  "classification": "FORMAL",
+  "reason": "non-canonical formal run",
+  "size_bytes": 49256625,
+  "file_count": 25,
+  "versions": [
+    "v8_historical_progressive"
+  ],
+  "settings": [
+    "shared_vote_tcs_competence_depth2_progressive_residual"
+  ],
+  "tasks": [
+    "disambiguation_qa"
+  ],
+  "seeds": [
+    42
+  ],
+  "run_meta_summary": [
+    {
+      "git_commit": "9598ad3af52190fb74981fbd877ac5c9dbb6b8f6",
+      "setting": null,
+      "method_version": null,
+      "comparison_task_id": "disambiguation_qa"
+    }
+  ],
+  "cost_summary": [
+    {
+      "solver_calls": 7114,
+      "optimizer_calls": 204,
+      "evaluator_calls": 129,
+      "total_llm_calls": 7447,
+      "prompt_tokens": 3134913,
+      "completion_tokens": 2983217,
+      "total_tokens": 6118130,
+      "estimated_cost": 0.0,
+      "latency_seconds": 40630.33534359932,
+      "candidate_eval_solver_api_calls": 4390,
+      "candidate_eval_cache_hits": 4850,
+      "candidate_eval_inflight_reuses": 0,
+      "candidate_eval_calls_saved_vs_naive": 21650,
+      "candidate_eval_prompt_dedup_savings": 0
+    }
+  ],
+  "accuracy_summary": {
+    "result_count": 1,
+    "results": [
+      {
+        "task_id": "disambiguation_qa",
+        "setting": "shared_vote_tcs_competence_depth2_progressive_residual",
+        "seed": 42,
+        "vote_acc": 0.472,
+        "mean_individual_acc": 0.4544,
+        "oracle_acc": 0.632
+      }
+    ]
+  },
+  "failure_summary": ""
+}
