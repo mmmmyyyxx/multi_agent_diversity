@@ -218,6 +218,31 @@ def test_stable_qd_archive_snapshot_records_real_archive_state(tmp_path):
     assert written == row
 
 
+def test_refill_candidate_uses_current_round_and_preserves_tcs_provenance():
+    system = object.__new__(TraceBeamSearchSystem)
+    proposal = {
+        "candidate_prompt": "Use weighted evidence scoring.",
+        "candidate_source": "teacher_critic_student",
+        "candidate_type": "mechanism_alternative",
+    }
+    candidate_row = system._make_refill_candidate(
+        proposal=proposal,
+        prompt=proposal["candidate_prompt"],
+        parent_id="parent-1",
+        parent_prompt="Parent prompt.",
+        agent_id=3,
+        candidate_index=1,
+        refill_round=2,
+        generation=4,
+    )
+    assert candidate_row["candidate_id"].startswith("refill2_a3_1_")
+    assert candidate_row["generation"] == 6
+    assert candidate_row["parent_id"] == "parent-1"
+    assert candidate_row["candidate_source"] == "teacher_critic_student"
+    assert candidate_row["candidate_pool_source"] == "optimizer"
+    assert candidate_row["refill_candidate"] is True
+
+
 def test_safe_niche_receives_round_robin_parent_opportunity():
     active = candidate("active", sequence=("hard_elimination",))
     niche = candidate("niche", sequence=("counterfactual_check",))

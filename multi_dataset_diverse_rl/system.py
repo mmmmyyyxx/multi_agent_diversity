@@ -2200,6 +2200,34 @@ class TraceBeamSearchSystem:
             ],
         })
 
+    def _make_refill_candidate(
+        self,
+        *,
+        proposal: Dict[str, Any],
+        prompt: str,
+        parent_id: str,
+        parent_prompt: str,
+        agent_id: int,
+        candidate_index: int,
+        refill_round: int,
+        generation: int,
+    ) -> Dict[str, Any]:
+        return {
+            "candidate_id": f"refill{refill_round}_a{agent_id}_{candidate_index}_{self._hash(prompt)}",
+            "prompt": prompt,
+            "prompt_hash": self._normalized_prompt_hash(prompt),
+            "parent_id": parent_id,
+            "parent_prompt": parent_prompt,
+            "generation": generation + refill_round,
+            "source": "optimizer",
+            "candidate_pool_source": "optimizer",
+            "candidate_source": str(
+                proposal.get("candidate_source", "teacher_critic_student") or "teacher_critic_student"
+            ),
+            "refill_candidate": True,
+            "proposal": proposal,
+        }
+
     def _expire_probation_branches(self, epoch_id: int) -> int:
         expired = 0
         for agent in self.agents:
@@ -8476,17 +8504,16 @@ class TraceBeamSearchSystem:
                 for index, proposal in enumerate(proposals[:round_candidate_limit]):
                     prompt = str(proposal.get("candidate_prompt", "")).strip()
                     prompt, _ = self._sanitize_prompt(prompt, agent_id)
-                    candidate = {
-                        "candidate_id": f"refill{refill_round}_a{agent_id}_{index}_{self._hash(prompt)}",
-                        "prompt": prompt, "prompt_hash": self._normalized_prompt_hash(prompt),
-                        "parent_id": refill_job["parent_id"], "parent_prompt": refill_job["parent_prompt"],
-                        "generation": generation + refill_round_count, "source": "optimizer",
-                        "candidate_pool_source": "optimizer",
-                        # Preserve TCS provenance; refill is an event, not a new generator.
-                        "candidate_source": str(proposal.get("candidate_source", "teacher_critic_student") or "teacher_critic_student"),
-                        "refill_candidate": True,
-                        "proposal": proposal,
-                    }
+                    candidate = self._make_refill_candidate(
+                        proposal=proposal,
+                        prompt=prompt,
+                        parent_id=refill_job["parent_id"],
+                        parent_prompt=refill_job["parent_prompt"],
+                        agent_id=agent_id,
+                        candidate_index=index,
+                        refill_round=refill_round_count,
+                        generation=generation,
+                    )
                     prescreen = cheap_prescreen(
                         candidate,
                         self._normalized_prompt_hash(refill_job["parent_prompt"]),
