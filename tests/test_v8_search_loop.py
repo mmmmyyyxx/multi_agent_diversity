@@ -48,6 +48,13 @@ def test_probation_is_not_safe_but_retains_small_novel_regression():
     assert archive == []
 
 
+def test_candidate_bucket_distinguishes_safe_probation_and_catastrophic():
+    cfg = Config()
+    assert candidate_quality_bucket(candidate("safe"), cfg) == "safe"
+    assert candidate_quality_bucket(candidate("probation", accuracy_delta=-0.02, c1_delta=-1), cfg) == "probation"
+    assert candidate_quality_bucket(candidate("catastrophic", accuracy_delta=-0.06), cfg) == "catastrophic"
+
+
 def test_cheap_prescreen_rejects_duplicate_and_incomplete_candidates():
     item = candidate("duplicate")
     item["prompt"] = "unfinished"
