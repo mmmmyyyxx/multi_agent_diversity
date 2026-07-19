@@ -243,6 +243,142 @@ def test_refill_candidate_uses_current_round_and_preserves_tcs_provenance():
     assert candidate_row["refill_candidate"] is True
 
 
+def test_stable_qd_refill_loop_evaluates_safe_candidates_and_stops():
+    cfg = Config(
+        agents=2,
+        method_version="v8_stable_qd_lineage",
+        optimizer_architecture="one_shot",
+        beam_size=1,
+        num_candidates_per_parent=1,
+        candidate_refill_max_rounds=2,
+        candidate_refill_candidates_per_round=2,
+        candidate_refill_min_safe_non_incumbent=2,
+    )
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = cfg
+    system.execution_session_id = "refilltest"
+    system.task_spec = SimpleNamespace(name="test")
+    system.agents = [AgentState("active prompt."), AgentState("peer prompt.")]
+    incumbent = system._make_beam_item("active prompt.", None, {}, None, 0)
+    incumbent.update({"is_incumbent": True, "archive_bucket": "safe"})
+    system.agents[0].prompt_beam = [incumbent]
+    system.agents[0].safe_qd_archive = [incumbent]
+    system.update_logs = []
+    system.quality_diversity_archive_history = []
+    system.optimizer_generation_diagnostics = {}
+    system.per_agent_optimizer_update_count = {}
+    system.mechanism_embedding_cache = {}
+    system.mechanism_embedding_cache_hit_count = 0
+    system.mechanism_embedding_cache_miss_count = 0
+    system.probation_expired_count = 0
+    system.probation_to_safe_conversion_count = 0
+    system.candidate_starvation_count = 0
+    system.mechanism_starvation_count = 0
+    system.search_branch_starvation_count = 0
+    system.refill_requirements_unmet_count = 0
+    system.total_agent_update_count = 0
+    system.task_repair_niche_occupancy_count = 0
+    system.mechanism_niche_occupancy_count = 0
+    system.depth1_guard_rejection_count = 0
+    system.catastrophic_accuracy_guard_rejection_count = 0
+    system.soft_error_dependence_penalty_count = 0
+    system.soft_cycle_penalty_count = 0
+    system.soft_mechanism_shift_penalty_count = 0
+    system.exploration_candidate_count = 0
+    system.exploration_slot_occupancy_count = 0
+    system.exploration_to_active_conversion_count = 0
+    system.mechanism_signature_history = []
+    system.beam_slot_state = {}
+    system.exploration_slot_candidates = []
+    system.cost_summary = system._empty_cost_summary()
+    calls = {"propose": 0, "evaluated": []}
+
+    async def fake_propose_candidates(**kwargs):
+        calls["propose"] += 1
+        if kwargs.get("refill_feedback") is None:
+            return []
+        return [
+            {
+                "candidate_prompt": "Resolve references using explicit binding constraints.",
+                "candidate_source": "optimizer",
+                "candidate_type": "task_specific_repair",
+                "mechanism_steps": ["Resolve reference binding constraints"],
+            },
+            {
+                "candidate_prompt": "Compare candidates with weighted evidence scoring.",
+                "candidate_source": "optimizer",
+                "candidate_type": "mechanism_alternative",
+                "mechanism_steps": ["Use weighted scoring for each candidate"],
+            },
+        ]
+
+    async def fake_evaluate(agent_id, candidate_prompt, *args, **kwargs):
+        calls["evaluated"].append(candidate_prompt)
+        return {
+            "reward": 1.0,
+            "penalized_reward": 1.0,
+            "baseline_target_accuracy": 0.7,
+            "candidate_target_accuracy": 0.7,
+            "target_agent_accuracy": 0.7,
+            "accuracy_delta": 0.0,
+            "baseline_invalid_rate": 0.0,
+            "candidate_invalid_rate": 0.0,
+            "depth1_loss_count": 0,
+            "depth1_net_count": 0,
+            "depth1_net_delta": 0.0,
+            "depth2_loss_count": 0,
+            "depth2_net_count": 0,
+            "depth2_net_delta": 0.0,
+            "num_eval_samples": 1,
+            "solver_calls": 0,
+        }
+
+    async def fake_prewarm(**kwargs):
+        return {"candidate_eval_solver_api_call_count": 0}
+
+    class Encoder:
+        def encode(self, rows, normalize_embeddings=True):
+            return [[1.0, 0.0] if "binding" in row else [0.0, 1.0] for row in rows]
+
+    system.propose_candidates = fake_propose_candidates
+    system.evaluate_candidate_prompt = fake_evaluate
+    system.ensure_recorded_rollouts_for_prompts = fake_prewarm
+    system._load_embedding_model = lambda: Encoder()
+    system._normalize_vector = lambda value: list(value)
+    system._append_prompt_history_event = lambda *args, **kwargs: None
+
+    changed, summary = asyncio.run(
+        system.update_prompt_with_beam(
+            agent_id=0,
+            overlap_diagnosis={"homogeneous_cases": []},
+            eval_batch=[{"question": "q", "answer": "A"}],
+            step_id=10,
+            epoch_id=1,
+        )
+    )
+
+    refill_rows = [
+        row for row in system.update_logs
+        if row.get("event") == "candidate_evaluated" and row.get("refill_candidate")
+    ]
+    assert changed is False
+    assert calls["propose"] == 2
+    assert len(calls["evaluated"]) == 3
+    assert summary["refill_round_count"] == 1
+    assert summary["refill_actual_candidate_count"] == 2
+    assert summary["refill_stop_reason"] == "requirements_met"
+    assert summary["safe_non_incumbent_count"] == 2
+    assert summary["candidate_starvation"] is False
+    assert summary["mechanism_starvation"] is False
+    assert summary["search_branch_starvation"] is False
+    assert len(refill_rows) == 2
+    assert all(str(row["candidate_id"]).startswith("refill1_") for row in refill_rows)
+    assert {row["candidate_type"] for row in refill_rows} == {
+        "task_specific_repair",
+        "mechanism_alternative",
+    }
+
+
 def test_safe_niche_receives_round_robin_parent_opportunity():
     active = candidate("active", sequence=("hard_elimination",))
     niche = candidate("niche", sequence=("counterfactual_check",))
