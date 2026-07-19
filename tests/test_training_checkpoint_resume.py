@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 import pytest
 
@@ -16,6 +17,10 @@ from multi_dataset_diverse_rl.cli import (
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
+from multi_dataset_diverse_rl.diagnostics.candidate_funnel import (
+    empty_candidate_channel_funnel,
+    record_candidate_stage,
+)
 
 
 def _system(tmp_path, agents=2):
@@ -375,3 +380,29 @@ def test_restore_cost_summary_keeps_previous_counts(tmp_path):
     assert system.cost_summary["total_llm_calls"] == 9
     assert system.cost_summary["total_tokens"] == 1234
     assert "optimizer_calls" in system.cost_summary
+
+
+def test_checkpoint_round_trip_preserves_funnel_dedup_and_dirty_age(tmp_path):
+    source = _system(tmp_path / "source")
+    source.candidate_channel_funnel = empty_candidate_channel_funnel()
+    source.candidate_channel_funnel_seen = {}
+    candidate = {
+        "prompt_hash": "candidate", "generation": 3,
+        "candidate_source": "teacher_critic_student", "safe_created_epoch": 1,
+    }
+    assert record_candidate_stage(
+        source.candidate_channel_funnel, source.candidate_channel_funnel_seen,
+        candidate, agent_id=0, stage="evaluated_candidate_count",
+    )
+    source.agents[0].safe_qd_archive = [deepcopy(candidate)]
+    source.dirty_prompt_hashes = {"0": ["candidate"], "1": []}
+    payload = build_training_checkpoint(source.cfg, source, **_checkpoint_kwargs())
+    target = _system(tmp_path / "target")
+    restore_system_state(target, payload["state"])
+    assert target.agents[0].safe_qd_archive[0]["safe_created_epoch"] == 1
+    assert target.dirty_prompt_hashes["0"] == ["candidate"]
+    assert not record_candidate_stage(
+        target.candidate_channel_funnel, target.candidate_channel_funnel_seen,
+        candidate, agent_id=0, stage="evaluated_candidate_count",
+    )
+    assert target.candidate_channel_funnel["teacher_critic_student"]["evaluated_candidate_count"] == 1

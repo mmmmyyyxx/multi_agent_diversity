@@ -36,3 +36,21 @@ Formal multi-seed or multi-task experiments require a separate explicit command.
 ## Historical Results
 
 Old V8 result directories remain readable under their recorded `method_version`. The current setting name has new behavior, so do not merge old and new rows without version filtering.
+
+## Preformal Freeze Checklist
+
+Before the formal three-seed run, the frozen code must pass:
+
+- `362` local pytest tests, `compileall`, and `git diff --check`;
+- canonical semantic niche counting and Critic `passed` plus score checks;
+- per-question Oracle-to-Vote, C0/C1/C2/C3+, top-tie, and normalization diagnostics;
+- deduplicated TCS/Open/incumbent/other candidate funnel accounting persisted
+  through checkpoint resume;
+- dirty Safe profile coverage and representative distance diagnostics without
+  changing shortlist or ranking behavior;
+- one completed acceptance smoke in `runs_v8_preformal_acceptance_799df8c`:
+  1151 calls, two joint refreshes, zero skipped refreshes, zero legacy refresh
+  calls, zero team-level solver calls, and quality constraints passed.
+
+No formal run is launched by this checklist. After freezing, do not resume the
+acceptance directory with modified code or behavior arguments.

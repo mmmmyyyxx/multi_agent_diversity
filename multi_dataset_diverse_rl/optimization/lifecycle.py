@@ -142,6 +142,8 @@ class LifecycleMixin:
         self.open_exploration_generation_count = 0
         self.tcs_repair_candidate_count = 0
         self.open_exploration_candidate_count = 0
+        self.candidate_channel_funnel = empty_candidate_channel_funnel()
+        self.candidate_channel_funnel_seen: Dict[str, set[str]] = {}
         self.behavior_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
         self.joint_team_selection_history: List[Dict[str, Any]] = []
         self.lineage_history: List[Dict[str, Any]] = []

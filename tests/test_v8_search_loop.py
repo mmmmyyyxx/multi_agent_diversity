@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 from types import SimpleNamespace
 
@@ -540,6 +541,12 @@ def test_stable_probe_and_mechanism_caches_report_real_hits():
     assert system.full_probe_cache_hit_count == 1
     assert system.mechanism_embedding_cache_miss_count == 1
     assert system.mechanism_embedding_cache_hit_count == 1
+    system.current_fixed_probe_hash = "changed-probe"
+    third = asyncio.run(system._evaluate_prompt_on_stable_probe(0, "prompt", probe, ["Hard elimination"]))
+    assert third["answer_vector"] == ["A"]
+    assert calls["solver"] == 2
+    assert system.full_probe_missing_pair_evaluation_count == 2
+    assert system.full_probe_cache_hit_count == 1
 
 
 def test_v8_rejects_legacy_beam_refresh_even_when_requested():
@@ -633,6 +640,18 @@ def test_v8_event_refresh_skips_when_no_material_archive_change():
     assert record["joint_refresh_skip_reason"] == "no_material_archive_change"
     assert record["joint_team_solver_call_count"] == 0
     assert system.joint_refresh_skipped_count == 1
+
+
+def test_semantic_active_niche_count_uses_canonical_niche_identity():
+    semantic_a = {"mechanism_representation": {"family_id": "semantic:a", "normalized_operation_sequence": []}}
+    semantic_a_again = {"mechanism_representation": {"family_id": "semantic:a", "normalized_operation_sequence": []}}
+    semantic_b = {"mechanism_representation": {"family_id": "semantic:b", "normalized_operation_sequence": []}}
+    canonical = {"mechanism_representation": {"family_id": "hard_elimination", "normalized_operation_sequence": ["hard_elimination"]}}
+    unknown = {"mechanism_representation": {"family_id": "unknown", "normalized_operation_sequence": []}}
+    assert TraceBeamSearchSystem._active_mechanism_niche_count([semantic_a, semantic_a_again]) == 1
+    assert TraceBeamSearchSystem._active_mechanism_niche_count([semantic_a, semantic_b]) == 2
+    assert TraceBeamSearchSystem._active_mechanism_niche_count([semantic_a, canonical]) == 2
+    assert TraceBeamSearchSystem._active_mechanism_niche_count([unknown, copy.deepcopy(unknown)]) == 1
 
 
 def test_two_fold_order_is_deterministic_and_gap_penalizes_stability():

@@ -1222,6 +1222,17 @@ async def main_async():
     system.flush_prompt_history()
     system.flush_llm_call_logs()
     system.write_cost_summary()
+    write_json_atomic(
+        os.path.join(cfg.out_dir, "final_summary.json"),
+        {
+            "selected_epoch": best_epoch,
+            "best_validation_score": best_score,
+            "test": final_test_metrics,
+            "candidate_channel_funnel": dict(getattr(system, "candidate_channel_funnel", {})),
+            "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
+            "cost_summary": dict(getattr(system, "cost_summary", {})),
+        },
+    )
     clear_training_checkpoint(cfg)
 
 

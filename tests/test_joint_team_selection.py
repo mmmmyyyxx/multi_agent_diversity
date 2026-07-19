@@ -157,6 +157,11 @@ def test_mechanism_niche_candidate_can_become_jointly_active(tmp_path):
     assert result["quality_constraints_passed"] is True
     assert result["quality_constraint_violation"] is False
     assert result["peer_collapse_penalty_mean"] == 0.0
+    assert result["safe_archive_unprofiled_count_per_agent"] == [0, 0, 0, 0, 0]
+    assert result["representative_profile_current_count_per_agent"] == result["representative_count_per_agent"]
+    assert result["oracle_vote_gap_count"] == result["oracle_correct_count"] - result["vote_correct_count"]
+    assert result["representative_mean_behavior_distance"] >= result["representative_min_behavior_distance"]
+    assert result["representative_behavior_span"] >= result["representative_mean_behavior_distance"]
 
 
 def test_near_duplicate_peer_collapse_cannot_replace_incumbent_team():

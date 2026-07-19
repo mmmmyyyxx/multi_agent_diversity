@@ -4,6 +4,13 @@ from ..system_shared import *
 
 
 class JointControllerMixin:
+    @staticmethod
+    def _active_mechanism_niche_count(prompt_profiles: Sequence[Mapping[str, Any]]) -> int:
+        return len({
+            mechanism_niche_key(profile.get("mechanism_representation", {}))
+            for profile in prompt_profiles
+        })
+
     def _joint_material_snapshot(self) -> Dict[str, Any]:
         return {
             "safe": {
@@ -37,7 +44,7 @@ class JointControllerMixin:
         return bool(
             profile
             and str(profile.get("fixed_probe_hash", "")) == str(getattr(self, "current_fixed_probe_hash", ""))
-            and str(profile.get("fixed_probe_version", "")) == str(getattr(self, "prompt_probe_version", ""))
+            and str(profile.get("fixed_probe_version", "")) == str(getattr(self, "prompt_probe_version", "legacy"))
         )
 
     @staticmethod
@@ -143,8 +150,24 @@ class JointControllerMixin:
         cached_profile_count = 0
         dirty_prompt_count = 0
         dirty_shortlist_count = 0
+        safe_profile_current_counts: List[int] = []
+        safe_unprofiled_counts: List[int] = []
+        safe_profile_fractions: List[float] = []
+        dirty_shortlist_excluded_counts: List[int] = []
+        oldest_unprofiled_safe_ages: List[int] = []
+        representative_profile_current_counts: List[int] = []
         for agent_id, agent in enumerate(self.agents):
             archive = list(getattr(agent, "safe_qd_archive", []) or agent.prompt_beam)
+            for archive_item in archive:
+                self._record_candidate_funnel_item(
+                    archive_item, agent_id, "evaluated_candidate_count"
+                )
+                self._record_candidate_funnel_classification(
+                    archive_item, agent_id, "safe_count"
+                )
+                self._record_candidate_funnel_item(
+                    archive_item, agent_id, "archive_retained_count"
+                )
             active_hash = self._normalized_prompt_hash(agent.current_prompt)
             existing_representatives = list(getattr(agent, "prompt_beam", []) or [])
             dirty = [
@@ -155,6 +178,7 @@ class JointControllerMixin:
             dirty.sort(key=self._dirty_shortlist_score, reverse=True)
             shortlist = dirty[: max(0, int(self.cfg.joint_refresh_max_dirty_candidates_per_agent))]
             dirty_shortlist_count += len(shortlist)
+            dirty_shortlist_excluded_counts.append(max(0, len(dirty) - len(shortlist)))
             pool_by_hash: Dict[str, Dict[str, Any]] = {}
             for item in [
                 next((row for row in archive if self._normalized_prompt_hash(str(row.get("prompt", ""))) == active_hash),
@@ -179,6 +203,9 @@ class JointControllerMixin:
                     agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
                     metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
                 )
+                profile["prompt_hash"] = prompt_hash
+                profile["fixed_probe_hash"] = str(self.current_fixed_probe_hash)
+                profile["fixed_probe_version"] = str(getattr(self, "prompt_probe_version", "legacy"))
                 candidate = dict(item)
                 candidate_metrics = dict(metrics)
                 candidate_metrics["behavior_profile"] = build_prompt_static_profile(
@@ -219,6 +246,9 @@ class JointControllerMixin:
                         agent_id, str(item.get("prompt", agent.current_prompt)), probe_data,
                         metrics.get("mechanism_steps", metrics.get("mechanism_signature", [])),
                     )
+                    profile["prompt_hash"] = prompt_hash
+                    profile["fixed_probe_hash"] = str(self.current_fixed_probe_hash)
+                    profile["fixed_probe_version"] = str(getattr(self, "prompt_probe_version", "legacy"))
                     self.behavior_profile_by_prompt_hash[f"{agent_id}:{profile['prompt_hash']}"] = dict(profile)
                 profile.update({
                     "beam_index": beam_index,
@@ -227,6 +257,54 @@ class JointControllerMixin:
                 self.behavior_profile_by_prompt_hash[profile["prompt_hash"]] = dict(profile)
                 agent_profiles.append(profile)
             beams.append(agent_profiles)
+            current_safe = [
+                item for item in archive
+                if self._profile_is_current(
+                    agent_id, self._normalized_prompt_hash(str(item.get("prompt", "")))
+                )
+            ]
+            unprofiled_safe = [item for item in archive if item not in current_safe]
+            safe_profile_current_counts.append(len(current_safe))
+            safe_unprofiled_counts.append(len(unprofiled_safe))
+            safe_profile_fractions.append(float(len(current_safe) / len(archive)) if archive else 0.0)
+            oldest_unprofiled_safe_ages.append(max([
+                max(0, int(epoch) - int(item.get("safe_created_epoch", epoch) or epoch))
+                for item in unprofiled_safe
+            ], default=0))
+            representative_profile_current_counts.append(sum(
+                self._profile_is_current(
+                    agent_id, self._normalized_prompt_hash(str(item.get("prompt", "")))
+                )
+                for item in agent.prompt_beam
+            ))
+            assert representative_profile_current_counts[-1] == len(agent.prompt_beam)
+            assert self._profile_is_current(agent_id, active_hash)
+        representative_distances: List[float] = []
+        for beam in beams:
+            static_profiles = [
+                build_prompt_static_profile(
+                    profile.get("answer_vector", []),
+                    profile.get("correctness_vector", []),
+                    profile.get("invalid_vector", []),
+                )
+                for profile in beam
+            ]
+            for left in range(len(static_profiles)):
+                for right in range(left + 1, len(static_profiles)):
+                    representative_distances.append(behavior_distance(
+                        static_profiles[left], static_profiles[right],
+                        correct_set_weight=self.cfg.behavior_correct_set_weight,
+                        rescue_weight=self.cfg.behavior_rescue_weight,
+                        shared_wrong_weight=self.cfg.behavior_error_overlap_weight,
+                        wrong_answer_dispersion_weight=self.cfg.behavior_wrong_answer_dispersion_weight,
+                        support_shrinkage=self.cfg.behavior_support_shrinkage,
+                        wrong_support_shrinkage=self.cfg.behavior_wrong_support_shrinkage,
+                    )["behavior_distance"])
+        representative_mean_behavior_distance = (
+            float(np.mean(representative_distances)) if representative_distances else 0.0
+        )
+        representative_min_behavior_distance = min(representative_distances, default=0.0)
+        representative_behavior_span = max(representative_distances, default=0.0)
         question_hashes = beams[0][0]["question_hashes"]
         gold_answers = beams[0][0]["gold_answers"]
         teams = enumerate_joint_teams(
@@ -283,6 +361,11 @@ class JointControllerMixin:
         selected = joint_selection["selected"]
         self.peer_collapse_soft_count += int(joint_selection["selected_has_soft_peer_collapse"])
         self.peer_collapse_hard_rejection_count += int(joint_selection["hard_rejection_count"])
+        for agent_id, agent in enumerate(self.agents):
+            for item in agent.prompt_beam:
+                self._record_candidate_funnel_item(
+                    item, agent_id, "representative_selected_count"
+                )
         selected_sources, changed_count = [], 0
         for agent_id, beam_index in enumerate(selected["beam_indices"]):
             agent = self.agents[agent_id]
@@ -290,6 +373,7 @@ class JointControllerMixin:
             old_hash = self._normalized_prompt_hash(agent.current_prompt)
             agent.prompt_beam = [chosen] + [item for index, item in enumerate(agent.prompt_beam) if index != beam_index]
             agent.current_prompt = str(chosen["prompt"])
+            self._record_candidate_funnel_item(chosen, agent_id, "active_selected_count")
             changed_count += int(old_hash != self._normalized_prompt_hash(agent.current_prompt))
             selected_sources.append(str(chosen.get("beam_slot", chosen.get("metrics", {}).get("beam_slot", "incumbent"))))
             selected_profile = selected["prompt_profiles"][agent_id]
@@ -318,11 +402,22 @@ class JointControllerMixin:
             )
             agent.lineage_state = {key: value for key, value in lineage_record.items() if key not in {"old_status", "new_status", "reason"}}
             self.lineage_history.append({"epoch": epoch, "agent_id": agent_id, **lineage_record})
+        validate_candidate_channel_funnel(self.candidate_channel_funnel)
         record = {
             "epoch": epoch, "combination_count": len(teams),
             "cached_prompt_profile_count": int(cached_profile_count),
             "dirty_prompt_count": int(dirty_prompt_count),
             "dirty_prompt_shortlist_count": int(dirty_shortlist_count),
+            "safe_archive_profile_current_count_per_agent": safe_profile_current_counts,
+            "safe_archive_unprofiled_count_per_agent": safe_unprofiled_counts,
+            "safe_archive_profile_fraction_per_agent": safe_profile_fractions,
+            "dirty_shortlist_excluded_count_per_agent": dirty_shortlist_excluded_counts,
+            "oldest_unprofiled_safe_age_epochs_per_agent": oldest_unprofiled_safe_ages,
+            "representative_profile_current_count_per_agent": representative_profile_current_counts,
+            "representative_mean_behavior_distance": representative_mean_behavior_distance,
+            "representative_min_behavior_distance": representative_min_behavior_distance,
+            "representative_behavior_span": representative_behavior_span,
+            "candidate_channel_funnel": json.loads(json.dumps(self.candidate_channel_funnel)),
             "joint_team_solver_call_count": 0,
             "representative_count_per_agent": [len(beam) for beam in beams],
             "theoretical_combination_count": int(np.prod([len(beam) for beam in beams])) if beams else 0,
@@ -377,6 +472,20 @@ class JointControllerMixin:
             "full_probe_missing_pair_evaluations": int(getattr(self, "full_probe_missing_pair_evaluation_count", 0)),
             "embedding_cache_hits": int(getattr(self, "mechanism_embedding_cache_hit_count", 0)),
             "embedding_cache_misses": int(getattr(self, "mechanism_embedding_cache_miss_count", 0)),
+            **{
+                key: selected[key]
+                for key in (
+                    "oracle_correct_count", "vote_correct_count", "oracle_vote_gap_count",
+                    "oracle_to_vote_conversion_rate", "c0_count", "c1_count", "c2_count",
+                    "c3plus_count", "c1_vote_correct_count", "c1_vote_fail_count",
+                    "c2_vote_correct_count", "c2_vote_fail_count", "c3plus_vote_fail_count",
+                    "gold_top_tie_count", "gold_top_tie_win_count", "gold_top_tie_loss_count",
+                    "mean_gold_plurality_margin", "mean_gold_margin_on_oracle_vote_gap",
+                    "mean_max_wrong_vote_on_oracle_vote_gap", "dominant_wrong_concentration",
+                    "vote_normalization_anomaly_count",
+                    "vote_normalization_anomaly_question_hashes",
+                )
+            },
         }
         band_counts = record["hierarchical_band_count_by_name"]
         fold_diversities = record["fold_diversities"]
@@ -463,10 +572,7 @@ class JointControllerMixin:
             "effective_residual_strength": float(self.effective_residual_strength),
         })
         self.latest_joint_team_metrics = dict(record)
-        active_niches = len({
-            tuple(profile["mechanism_representation"].get("normalized_operation_sequence", [])[:4])
-            for profile in selected["prompt_profiles"]
-        })
+        active_niches = self._active_mechanism_niche_count(selected["prompt_profiles"])
         no_new_niche = active_niches <= int(getattr(self, "qd_previous_active_niche_count", 0) or 0)
         incumbent_retained = changed_count == 0
         self.qd_no_diversification_epochs = int(self.qd_no_diversification_epochs) + 1 if (incumbent_retained and no_new_niche) else 0

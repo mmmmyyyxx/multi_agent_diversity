@@ -90,6 +90,9 @@ class CandidateGenerationStage:
                 if context.metadata_errors:
                     context.candidate_id = str(context.candidate_pool[-1].get('candidate_id', ''))
                     raise RuntimeError(f"Invalid Teacher-Critic-Student candidate metadata: agent_id={context.agent_id} epoch={context.epoch_id} step={context.step_id} parent_id={context.parent_id} candidate_id={context.candidate_id} tcs_call_group_id={context.candidate_metadata.get('tcs_call_group_id', '')} metadata_errors={','.join(context.metadata_errors)}")
+                system._record_candidate_funnel_item(
+                    context.candidate_pool[-1], context.agent_id, "schema_valid_candidate_count"
+                )
         for context.parent in context.beam:
             context.prompt = str(context.parent.get('prompt', context.agent.current_prompt))
             context.key = normalize_spaces(context.prompt).lower()
@@ -121,6 +124,10 @@ class CheapPrescreenStage:
                 context.prescreen_seen.update({str(context.candidate.get('prompt_hash', '')), normalize_spaces(str(context.candidate.get('prompt', ''))).lower()})
                 context.accepted_pool.append(context.candidate)
             context.candidate_pool = context.accepted_pool
+        for context.candidate in context.candidate_pool:
+            system._record_candidate_funnel_item(
+                context.candidate, context.agent_id, "prescreen_pass_count"
+            )
         context.target_case_ids = {str(context.c.get('case_id', '')) for context.b in context.generation_batches if str(context.b.get('batch_type', '')) == 'target_error_repair' for context.c in context.b.get('cases', []) if isinstance(context.c, dict) and str(context.c.get('case_id', ''))}
         context.num_target_error_cases = len(context.target_case_ids)
         context.num_accuracy_repair_candidates = sum((1 for context.c in context.candidate_pool if str(context.c.get('generation_batch_type', '')) == 'target_error_repair' or bool(str(context.c.get('target_error_pattern', '')).strip()) or 'accuracy_repair' in str(context.c.get('candidate_source', ''))))
@@ -309,6 +316,7 @@ class CandidateClassificationAndRefillStage:
                             f"parent_id={context.refill_job['parent_id']} "
                             f"metadata_errors={','.join(context.refill_metadata_errors)}"
                         )
+                    system._record_candidate_funnel_item(context.candidate, context.agent_id, "schema_valid_candidate_count")
                     context.prescreen = cheap_prescreen(context.candidate, system._normalized_prompt_hash(context.refill_job['parent_prompt']), context.seen, parent=context.active_parent)
                     if context.prescreen:
                         context.candidate['cheap_prescreen_reasons'] = context.prescreen
@@ -316,6 +324,7 @@ class CandidateClassificationAndRefillStage:
                         continue
                     context.seen.add(normalize_spaces(context.prompt).lower())
                     context.new_candidates.append(context.candidate)
+                    system._record_candidate_funnel_item(context.candidate, context.agent_id, "prescreen_pass_count")
                 if not context.new_candidates:
                     context.refill_stop_reason = 'no_new_unique_candidate'
                     break
@@ -361,11 +370,10 @@ class CandidateClassificationAndRefillStage:
             context.converted_parent_ids = {str(context.item.get('parent_id', '')) for context.item in context.evaluated if context.item.get('archive_bucket') == 'safe' and str(context.item.get('parent_id', '')) in context.prior_probation_ids}
             context.agent.safe_qd_archive = select_safe_archive([*getattr(context.agent, 'safe_qd_archive', []), *context.evaluated], system._normalized_prompt_hash(context.agent.current_prompt), int(system.cfg.qd_archive_size_per_agent))
             context.new_probation = [context.item for context.item in context.evaluated if context.item.get('archive_bucket') == 'probation']
-            for context.item in context.new_probation:
-                context.item.setdefault('probation_created_update', int(context.agent_update_turn))
+            [context.item.setdefault('probation_created_update', int(context.agent_update_turn)) for context.item in context.new_probation]
             context.retained_probation = [context.item for context.item in getattr(context.agent, 'probation_archive', []) if str(context.item.get('id', system._hash(str(context.item.get('prompt', ''))))) not in context.converted_parent_ids]
             context.agent.probation_archive = (context.new_probation + context.retained_probation)[:int(system.cfg.probation_archive_size_per_agent)]
-            system._refresh_joint_representatives(context.agent)
+            system._refresh_joint_representatives(context.agent); system._record_candidate_funnel_outcomes(agent_id=context.agent_id, evaluated=context.evaluated, safe_archive=context.agent.safe_qd_archive, epoch=context.epoch_id)
             context.selected = list(context.agent.prompt_beam)
             system._record_stable_qd_archive_snapshot(agent_id=context.agent_id, epoch=context.epoch_id, step=context.step_id, evaluated=context.evaluated, parent_sources=context.parent_sources)
             context.starvation = context.requirements['safe_non_incumbent_count'] == 0

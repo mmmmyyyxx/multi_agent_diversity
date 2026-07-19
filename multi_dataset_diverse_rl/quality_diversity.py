@@ -8,6 +8,7 @@ import numpy as np
 from .behavior_profiles import behavior_distance, build_team_behavior_profiles
 from .lineage import lineage_drift
 from .mechanisms import mechanism_distance, mechanism_niche_key, mechanisms_are_near_duplicate
+from .metrics.vote_conversion import question_vote_conversion_diagnostics, summarize_vote_conversion
 from .qd.quality_anchors import counts_feasible, quality_counts, real_anchor_feasible
 
 
@@ -138,7 +139,7 @@ def team_quality_metrics(
     answers = [list(profile.get("answer_vector", [])) for profile in prompt_profiles]
     correctness = [list(profile.get("correctness_vector", [])) for profile in prompt_profiles]
     per_agent = [float(np.mean(values)) if values else 0.0 for values in correctness]
-    depths, votes, margins = [], [], []
+    depths, votes, margins, vote_diagnostic_rows = [], [], [], []
     for index, gold in enumerate(gold_answers):
         row_answers = [values[index] if index < len(values) else "" for values in answers]
         row_correct = [values[index] if index < len(values) else 0 for values in correctness]
@@ -149,6 +150,22 @@ def team_quality_metrics(
         gold_count = sum(int(match_fn(answer, str(gold))) * int(count) for answer, count in counts.items())
         wrong_count = max((int(count) for answer, count in counts.items() if not match_fn(answer, str(gold))), default=0)
         margins.append((gold_count - wrong_count) / max(len(prompt_profiles), 1))
+        invalid_flags = [
+            int(profile.get("invalid_vector", [0] * len(gold_answers))[index])
+            if index < len(profile.get("invalid_vector", [])) else 0
+            for profile in prompt_profiles
+        ]
+        diagnostic_row = {
+            "question_hash": str(question_hashes[index]),
+            "individual_correct": row_correct,
+            "vote_correct": votes[-1],
+            "vote_counts": dict(counts),
+            "gold_vote_count": int(gold_count),
+            "largest_wrong_vote_count": int(wrong_count),
+            "invalid_flags": invalid_flags,
+        }
+        diagnostic_row.update(question_vote_conversion_diagnostics(diagnostic_row))
+        vote_diagnostic_rows.append(diagnostic_row)
     sorted_acc = sorted(per_agent)
     total_correct = int(sum(sum(int(value) for value in row) for row in correctness))
     bottom2_correct = int(sum(sorted([sum(int(value) for value in row) for row in correctness])[:2])) if correctness else 0
@@ -168,6 +185,7 @@ def team_quality_metrics(
         "per_agent_correct_count": [int(sum(int(value) for value in row)) for row in correctness],
         "answer_vectors": answers,
         "correctness_vectors": correctness,
+        **summarize_vote_conversion(vote_diagnostic_rows),
     }
 
 

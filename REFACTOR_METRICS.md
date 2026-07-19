@@ -51,7 +51,7 @@ functions where old imports must remain valid.
    never a component-wise synthetic team.
 
 Characterization tests lock all unrelated behavior. The deterministic
-pre-smoke suite passes 344 tests; compileall and `git diff --check` also pass.
+pre-formal suite passes 362 tests; compileall and `git diff --check` also pass.
 
 ## Targeted Smoke
 
@@ -68,3 +68,19 @@ frontier contained one non-dominated actual team and used no fallback. Final
 lineages were two uncommitted, two provisional, and one committed. Final test
 was vote 0.35, mean individual 0.39, and oracle 0.55. The run made 1,264 LLM
 calls and is execution evidence, not an accuracy claim.
+
+## Final Preformal Acceptance
+
+The final one-time targeted acceptance smoke used the strict disambiguation
+task and 20/20/20 split in `runs_v8_preformal_acceptance_799df8c`. It completed
+with Vote 0.55, mean individual accuracy 0.54, Oracle 0.95, and 1151 LLM
+calls. Oracle-to-Vote conversion was 0.5789 with an eight-question gap; C1 had
+6 questions and all 6 failed plurality conversion, while C2 had 2 questions
+and both failed. There were no C3+ vote failures or normalization anomalies.
+
+The funnel recorded 14 TCS and 11 Open generation calls, two joint refreshes,
+zero skipped refreshes, zero legacy refresh calls, zero team-level solver
+calls, and passed quality constraints. Representative profile counts matched
+representative counts; unprofiled Safe counts 1/0/0/0/2 remained permitted by
+dirty-shortlist coverage. This is execution-integrity evidence, not a method
+comparison or a formal accuracy claim.

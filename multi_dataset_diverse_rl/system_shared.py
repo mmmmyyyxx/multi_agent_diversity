@@ -34,9 +34,24 @@ from .policy import (
     uniform_vote_context_profile,
 )
 from .tasks import TaskSpec, get_task_spec
-from .behavior_profiles import build_prompt_static_profile, build_team_behavior_profiles
+from .behavior_profiles import behavior_distance, build_prompt_static_profile, build_team_behavior_profiles
+from .diagnostics.candidate_funnel import (
+    candidate_funnel_identity,
+    empty_candidate_channel_funnel,
+    normalize_candidate_channel,
+    record_candidate_classification,
+    record_candidate_stage,
+    record_funnel_event,
+    restore_funnel_seen,
+    serialize_funnel_seen,
+    validate_candidate_channel_funnel,
+)
 from .lineage import update_lineage_state
 from .mechanisms import mechanism_niche_key, normalize_mechanism_representation
+from .metrics.vote_conversion import (
+    question_vote_conversion_diagnostics,
+    summarize_vote_conversion,
+)
 from .quality_diversity import (
     QUALITY_KEYS,
     enumerate_joint_teams,

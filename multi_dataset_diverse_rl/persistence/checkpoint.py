@@ -10,6 +10,11 @@ import uuid
 import numpy as np
 
 from ..config import Config
+from ..diagnostics.candidate_funnel import (
+    empty_candidate_channel_funnel,
+    restore_funnel_seen,
+    serialize_funnel_seen,
+)
 from ..utils import canonical_aggregation_mode
 from ..qd.quality_anchors import build_quality_anchor, update_quality_anchor_archive
 
@@ -124,6 +129,17 @@ def restore_system_state(system, state_payload):
     system.full_probe_cache_hit_count = int(state_payload.get("full_probe_cache_hit_count", 0) or 0)
     system.full_probe_missing_pair_evaluation_count = int(state_payload.get("full_probe_missing_pair_evaluation_count", 0) or 0)
     system.behavior_profile_by_prompt_hash = {str(key): dict(value) for key, value in dict(state_payload.get("behavior_profile_by_prompt_hash", {}) or {}).items()}
+    restored_funnel = state_payload.get("candidate_channel_funnel", {})
+    system.candidate_channel_funnel = (
+        {str(channel): {str(stage): int(count or 0) for stage, count in counts.items()}
+         for channel, counts in restored_funnel.items() if isinstance(counts, dict)}
+        if isinstance(restored_funnel, dict) and restored_funnel
+        else empty_candidate_channel_funnel()
+    )
+    system.candidate_channel_funnel_seen = restore_funnel_seen(
+        state_payload.get("candidate_channel_funnel_seen", {})
+        if isinstance(state_payload.get("candidate_channel_funnel_seen", {}), dict) else {}
+    )
     system.joint_team_selection_history = [dict(value) for value in state_payload.get("joint_team_selection_history", []) if isinstance(value, dict)]
     system.lineage_history = [dict(value) for value in state_payload.get("lineage_history", []) if isinstance(value, dict)]
     system.quality_diversity_archive_history = [dict(value) for value in state_payload.get("quality_diversity_archive_history", []) if isinstance(value, dict)]
@@ -662,6 +678,10 @@ def build_training_checkpoint(
             "full_probe_cache_hit_count": int(getattr(system, "full_probe_cache_hit_count", 0)),
             "full_probe_missing_pair_evaluation_count": int(getattr(system, "full_probe_missing_pair_evaluation_count", 0)),
             "behavior_profile_by_prompt_hash": dict(getattr(system, "behavior_profile_by_prompt_hash", {})),
+            "candidate_channel_funnel": dict(getattr(system, "candidate_channel_funnel", {})),
+            "candidate_channel_funnel_seen": serialize_funnel_seen(
+                getattr(system, "candidate_channel_funnel_seen", {})
+            ),
             "joint_team_selection_history": list(getattr(system, "joint_team_selection_history", [])),
             "lineage_history": list(getattr(system, "lineage_history", [])),
             "quality_diversity_archive_history": list(getattr(system, "quality_diversity_archive_history", [])),

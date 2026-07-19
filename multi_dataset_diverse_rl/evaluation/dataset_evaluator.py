@@ -214,6 +214,7 @@ class DatasetEvaluatorMixin:
             "boundary_shared_error_net_gain": shared_rescue_rate - 1.5 * shared_creation_rate,
             "dominant_wrong_cluster_size": float(np.mean(dominant_wrong_sizes)) if dominant_wrong_sizes else 0.0,
             "gold_vs_largest_wrong_margin": float(np.mean([r.get("normalized_vote_margin", -1.0) for r in rows])) if rows else -1.0,
+            **summarize_vote_conversion(rows),
         }
         if self._residual_specialization_enabled():
             result.update({
@@ -314,6 +315,21 @@ class DatasetEvaluatorMixin:
                 "joint_quality_filter_version": self.cfg.joint_quality_filter_version,
                 "probe_stability_version": self.cfg.probe_stability_version,
                 "parent_selection_version": self.cfg.parent_selection_version,
+                "candidate_channel_funnel": json.loads(json.dumps(getattr(self, "candidate_channel_funnel", {}))),
+                **{
+                    key: latest.get(key)
+                    for key in (
+                        "safe_archive_profile_current_count_per_agent",
+                        "safe_archive_unprofiled_count_per_agent",
+                        "safe_archive_profile_fraction_per_agent",
+                        "dirty_shortlist_excluded_count_per_agent",
+                        "oldest_unprofiled_safe_age_epochs_per_agent",
+                        "representative_profile_current_count_per_agent",
+                        "representative_mean_behavior_distance",
+                        "representative_min_behavior_distance",
+                        "representative_behavior_span",
+                    )
+                },
             })
         initial_probe = dict(getattr(self, "initial_competence_probe_metrics", {}) or {})
         final_probe = dict(getattr(self, "latest_competence_probe_metrics", {}) or initial_probe)
@@ -378,6 +394,14 @@ class DatasetEvaluatorMixin:
                 "vote_counts": metrics.get("vote_counts", {}),
                 "gold_vote_count": int(metrics.get("gold_vote_count", 0)),
                 "largest_wrong_vote_count": int(metrics.get("largest_wrong_vote_count", 0)),
+                "correct_agent_count": int(metrics.get("correct_agent_count", 0)),
+                "max_wrong_vote_count": int(metrics.get("max_wrong_vote_count", 0)),
+                "gold_plurality_margin": int(metrics.get("gold_plurality_margin", 0)),
+                "oracle_correct": int(metrics.get("oracle_correct", 0)),
+                "gold_in_top_tie": bool(metrics.get("gold_in_top_tie", False)),
+                "top_tie_size": int(metrics.get("top_tie_size", 0)),
+                "invalid_agent_count": int(metrics.get("invalid_agent_count", 0)),
+                "vote_normalization_anomaly": bool(metrics.get("vote_normalization_anomaly", False)),
                 "plurality_margin_votes": int(metrics.get("plurality_margin_votes", 0)),
                 "normalized_plurality_margin": float(metrics.get("normalized_plurality_margin", -1.0)),
                 "normalized_vote_margin": float(metrics.get("normalized_vote_margin", -1.0)),

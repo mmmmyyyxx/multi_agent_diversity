@@ -75,6 +75,16 @@ def _valid_student_candidate():
     }
 
 
+def test_critic_review_pass_truth_table():
+    system = _system()
+    assert system._critic_review_passed({"passed": True, "score": 0.80}, 0.75)
+    assert not system._critic_review_passed({"passed": False, "score": 0.80}, 0.75)
+    assert not system._critic_review_passed({"passed": True, "score": 0.60}, 0.75)
+    assert system._critic_review_passed({"score": 0.80}, 0.75)
+    assert not system._critic_review_passed({"score": "invalid"}, 0.75)
+    assert not system._critic_review_passed({}, 0.75)
+
+
 def test_teacher_question_forced_best_uses_best_scored_teacher_question():
     system = _system(Config(optimizer_architecture="teacher_critic_student", teacher_critic_max_rounds=3))
     called = {"student": 0}

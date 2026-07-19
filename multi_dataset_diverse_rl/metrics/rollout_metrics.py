@@ -410,7 +410,7 @@ class RolloutMetricsMixin:
             pivotal_fix_opportunities.append(int(opportunity))
             pivotal_holds.append(int(hold))
         useful_diversity = 0.0 if self._is_accuracy_only_mode() else self._useful_trace_diversity(traces, individual_correct, [int(x) for x in invalids])
-        return {
+        result = {
             "vote_answer": vote_answer,
             "vote_correct": vote_correct,
             "individual_correct": individual_correct,
@@ -456,6 +456,8 @@ class RolloutMetricsMixin:
             "invalid_flags": [int(x) for x in invalids],
             **overlap,
         }
+        result.update(question_vote_conversion_diagnostics(result))
+        return result
 
     def _trace_method_preview(self, trace: str, max_chars: int = 420) -> str:
         text = re.sub(r"FINAL_ANSWER\s*:\s*.*", "", str(trace or ""), flags=re.IGNORECASE)

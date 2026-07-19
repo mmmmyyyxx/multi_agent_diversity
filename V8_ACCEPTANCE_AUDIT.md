@@ -106,3 +106,35 @@ The natural smoke did not emit a residual-only semantic family. Specificity,
 semantic merge/separation, stable family IDs, and checkpoint persistence are
 covered deterministically in `tests/test_semantic_mechanisms.py` and
 `tests/test_training_checkpoint_resume.py`.
+
+## Preformal Acceptance Smoke
+
+Source SHA before these acceptance changes: `799df8c`.
+
+The final targeted smoke was run once in
+`runs_v8_preformal_acceptance_799df8c/`. Its scope was exactly
+`disambiguation_qa`, `shared_vote_tcs_competence_depth2_progressive_residual_hybrid`,
+seed 42, strict 20/20/20 splits, two epochs, five agents, and plurality.
+
+| Check | Result |
+| --- | ---: |
+| Final Vote / Mean / Oracle | 0.55 / 0.54 / 0.95 |
+| Oracle-Vote gap / conversion | 8 / 0.5789 |
+| C1 / C1 Vote failures | 6 / 6 |
+| C2 / C2 Vote failures | 2 / 2 |
+| C3+ Vote failures / anomalies | 0 / 0 |
+| Total LLM calls | 1151 |
+| Joint refresh / skipped | 2 / 0 |
+| Legacy refresh / team solver calls | 0 / 0 |
+| Quality constraints | true |
+| Checkpoint after completion | cleared |
+
+The funnel recorded TCS/Open generation calls 14/11, TCS/Open evaluated
+candidate counts 7/10, and active/representative profiles all current. Safe
+unprofiled counts were 1/0/0/0/2 and are allowed by the dirty-shortlist
+policy. The new diagnostics reuse canonical plurality normalization and do
+not enter reward, Stable-QD ranking, quality bands, archive or representative
+capacity, candidate budgets, or refresh triggers.
+
+The final frozen commit SHA is reported with the release command. This audit
+keeps the source SHA above to avoid a self-referential commit hash.

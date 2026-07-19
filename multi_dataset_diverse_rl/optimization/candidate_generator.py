@@ -4,6 +4,96 @@ from ..system_shared import *
 
 
 class CandidateGeneratorMixin:
+    def _ensure_candidate_channel_funnel(self) -> None:
+        if not isinstance(getattr(self, "candidate_channel_funnel", None), dict):
+            self.candidate_channel_funnel = empty_candidate_channel_funnel()
+        if not isinstance(getattr(self, "candidate_channel_funnel_seen", None), dict):
+            self.candidate_channel_funnel_seen = {}
+
+    def _record_candidate_funnel_item(self, item: Mapping[str, Any], agent_id: int, stage: str) -> bool:
+        self._ensure_candidate_channel_funnel()
+        return record_candidate_stage(
+            self.candidate_channel_funnel,
+            self.candidate_channel_funnel_seen,
+            item,
+            agent_id=agent_id,
+            stage=stage,
+        )
+
+    def _record_candidate_funnel_classification(
+        self, item: Mapping[str, Any], agent_id: int, stage: str
+    ) -> bool:
+        self._ensure_candidate_channel_funnel()
+        return record_candidate_classification(
+            self.candidate_channel_funnel,
+            self.candidate_channel_funnel_seen,
+            item,
+            agent_id=agent_id,
+            stage=stage,
+        )
+
+    def _record_candidate_funnel_outcomes(
+        self,
+        *,
+        agent_id: int,
+        evaluated: Sequence[Dict[str, Any]],
+        safe_archive: Sequence[Mapping[str, Any]],
+        epoch: int,
+    ) -> None:
+        bucket_stages = {
+            "safe": "safe_count",
+            "probation": "probation_count",
+            "catastrophic": "catastrophic_count",
+        }
+        for item in evaluated:
+            self._record_candidate_funnel_item(item, agent_id, "evaluated_candidate_count")
+            bucket = str(item.get("archive_bucket", "catastrophic"))
+            if bucket == "safe":
+                item.setdefault("safe_created_epoch", int(epoch))
+            self._record_candidate_funnel_classification(
+                item, agent_id, bucket_stages.get(bucket, "catastrophic_count")
+            )
+        for item in safe_archive:
+            self._record_candidate_funnel_item(item, agent_id, "archive_retained_count")
+
+    def _record_generation_channel_funnel(
+        self,
+        *,
+        agent_id: int,
+        parent_id: str,
+        channel: str,
+        refill_round: int,
+        raw_candidate_count: int,
+    ) -> None:
+        self._ensure_candidate_channel_funnel()
+        audit = dict(TCS_AUDIT_CONTEXT.get() or {})
+        identity = (
+            f"e{int(audit.get('epoch', 0) or 0)}:s{int(audit.get('step', 0) or 0)}:"
+            f"a{int(agent_id)}:p{parent_id}:r{int(refill_round)}:{channel}"
+        )
+        record_funnel_event(
+            self.candidate_channel_funnel,
+            self.candidate_channel_funnel_seen,
+            channel=channel,
+            stage="generation_call_count",
+            identity=identity,
+        )
+        record_funnel_event(
+            self.candidate_channel_funnel,
+            self.candidate_channel_funnel_seen,
+            channel=channel,
+            stage="raw_candidate_count",
+            identity=identity,
+            amount=raw_candidate_count,
+        )
+
+    def _critic_review_passed(self, review: Mapping[str, Any], threshold: float) -> bool:
+        score = self._safe_float(review.get("score", 0.0), 0.0)
+        declared_pass = review.get("passed")
+        if declared_pass is None:
+            return score >= float(threshold)
+        return bool(declared_pass) and score >= float(threshold)
+
     def _build_teacher_context(
         self,
         agent_id: int,
@@ -348,9 +438,8 @@ class CandidateGeneratorMixin:
             reviews.append(review)
             question_versions.append(teacher_question)
             score = self._safe_float(review.get("score", 0.0), 0.0)
-            if has_guiding_question(teacher_question) and (
-                (stable_qd and score >= direct_threshold)
-                or (not stable_qd and bool(review.get("passed")) and score >= direct_threshold)
+            if has_guiding_question(teacher_question) and self._critic_review_passed(
+                review, direct_threshold
             ):
                 return {
                     "approved": True,
@@ -969,6 +1058,13 @@ class CandidateGeneratorMixin:
             )
             diagnostics["optimizer_underfilled"] = True
             self._record_optimizer_generation_diagnostics(agent_id, parent_prompt, diagnostics)
+            self._record_generation_channel_funnel(
+                agent_id=agent_id,
+                parent_id=parent_id,
+                channel="open_mechanism_exploration" if open_exploration else "teacher_critic_student",
+                refill_round=int((refill_feedback or {}).get("refill_round", 0) or 0),
+                raw_candidate_count=0,
+            )
             return []
 
         student_context = dict(TCS_AUDIT_CONTEXT.get() or {})
@@ -1199,6 +1295,13 @@ class CandidateGeneratorMixin:
             self.open_exploration_candidate_count = int(getattr(self, "open_exploration_candidate_count", 0)) + len(parsed)
         else:
             self.tcs_repair_candidate_count = int(getattr(self, "tcs_repair_candidate_count", 0)) + len(parsed)
+        self._record_generation_channel_funnel(
+            agent_id=agent_id,
+            parent_id=parent_id,
+            channel="open_mechanism_exploration" if open_exploration else "teacher_critic_student",
+            refill_round=int((refill_feedback or {}).get("refill_round", 0) or 0),
+            raw_candidate_count=int(diagnostics.get("optimizer_raw_candidate_count", 0) or 0),
+        )
         return parsed[:num_candidates]
 
     def _tcs_diagnostic_support_count(

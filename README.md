@@ -38,11 +38,26 @@ The method uses:
 
 Prompt textual diversity is not an optimization target. Diversity never compensates for competence failure. Early search permits symmetry breaking; late search stabilizes useful per-agent lineages.
 
+Acceptance diagnostics are reporting-only. Each prediction records correct
+agent count, gold vote count, largest wrong cluster, plurality margin, Oracle
+status, top-tie status, invalid-agent count, and normalization anomaly status.
+Split summaries report C0/C1/C2/C3+ conversion, Oracle-to-Vote conversion,
+C1/C2 vote failures, top-tie wins/losses, and wrong-cluster concentration.
+These fields reuse the canonical plurality vote and do not affect reward or
+team selection.
+
 ## Search-Space Preservation
 
 Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
 
 The setting's historical V8.2 safe/exploit/explore behavior has been replaced. V8 never performs the legacy per-epoch beam refresh. Joint refresh is event-driven and only probes new dirty prompts; team enumeration is offline. Existing result directories remain readable by their recorded method version. Checkpoint v6 stores the new refresh/generation policy state and older incompatible Stable-QD checkpoints fail explicitly.
+
+Candidate accounting exposes a deduplicated funnel for TCS, Open exploration,
+incumbent, and other candidates from generation through active selection.
+Funnel identities are checkpointed for resume safety. Joint refresh also
+records Safe profile coverage, excluded dirty shortlist counts, oldest
+unprofiled Safe age, representative profile coverage, and representative
+behavior distances. These diagnostics do not change shortlist or ranking.
 
 Specific unknown mechanisms can enter stable semantic families when they pass the specificity gate. Refill is checked after raw evaluation, archive compression, and representative selection. Joint quality uses a frontier of real prompt teams, never a synthetic component-wise maximum.
 
@@ -142,9 +157,17 @@ training_checkpoint.json while incomplete
 run_meta.json
 llm_calls.jsonl
 cost_summary.json
+final_summary.json
 ```
 
 The task runner also writes `accuracy_results.csv`, `accuracy_results.jsonl`, and summaries at the output root.
+
+The final preformal acceptance smoke completed in
+`runs_v8_preformal_acceptance_799df8c` with 1151 total LLM calls, two joint
+refreshes, zero skipped refreshes, zero legacy refresh calls, and zero
+team-level solver calls. It produced Vote 0.55, Mean 0.54, Oracle 0.95, and
+Oracle-to-Vote conversion 0.5789. This is an execution-integrity check, not a
+formal result or method comparison.
 
 ## Metrics
 
