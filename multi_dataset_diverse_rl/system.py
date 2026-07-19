@@ -8979,6 +8979,20 @@ class TraceBeamSearchSystem:
                 "candidate_selection_mode": str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward")),
                 **candidate_eval_cache_stats,
                 **pareto_summary,
+                "candidate_starvation": bool(
+                    requirements.get("safe_non_incumbent_count", 1) == 0
+                ) if self._is_stable_qd_lineage() else False,
+                "mechanism_starvation": bool(
+                    requirements.get("safe_distinct_mechanism_count", 1) == 0
+                ) if self._is_stable_qd_lineage() else False,
+                "search_branch_starvation": bool(
+                    requirements.get("safe_non_incumbent_count", 1) == 0
+                    and not getattr(agent, "probation_archive", [])
+                ) if self._is_stable_qd_lineage() else False,
+                "candidate_starvation_count": int(getattr(self, "candidate_starvation_count", 0)),
+                "mechanism_starvation_count": int(getattr(self, "mechanism_starvation_count", 0)),
+                "search_branch_starvation_count": int(getattr(self, "search_branch_starvation_count", 0)),
+                "refill_requirements_unmet_count": int(getattr(self, "refill_requirements_unmet_count", 0)),
                 "top1_pareto_rank": selected[0].get("pareto_rank") if self._uses_vote_pareto_selection() and selected else None,
                 "top1_vote_gain_rate": float(selected[0].get("metrics", {}).get("vote_gain_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
                 "top1_vote_loss_rate": float(selected[0].get("metrics", {}).get("vote_loss_rate", 0.0)) if self._uses_vote_pareto_selection() and selected else None,
