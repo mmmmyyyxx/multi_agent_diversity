@@ -1,0 +1,213 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote+margin+boundary_div-invalid",
+  "best_validation_score": 0.184,
+  "best_state_selection_mode": "vote_generalization_first",
+  "best_state_selection_key": [
+    -0.45,
+    -0.39,
+    -0.35,
+    -0.5,
+    -0.45,
+    0.21000000000000002,
+    0.01,
+    -0.3384423504812766,
+    1
+  ],
+  "selected_vote_acc": 0.45,
+  "selected_oracle_acc": 0.5,
+  "selected_mean_individual_acc": 0.39,
+  "selected_mean_vote_margin": -0.21000000000000002,
+  "selected_mean_boundary_useful_diversity": 0.01666666666666667,
+  "selected_mean_invalid_rate": 0.01,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "e3ffddfec7b1",
+      "prompt": "You are a careful reasoning solver. For each pronoun or ambiguous reference, explicitly state its antecedent before using it in reasoning; maintain this binding throughout the trace. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "lineage_state": {
+        "lineage_status": "uncommitted",
+        "lineage_anchor_prompt_hash": "",
+        "lineage_anchor_prompt": "",
+        "lineage_anchor_mechanism_signature": [],
+        "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_correctness_vector": [],
+        "lineage_anchor_rescue_vector": [],
+        "lineage_anchor_accuracy": -1.0,
+        "lineage_anchor_epoch": -1,
+        "lineage_stability_count": 1,
+        "pending_lineage_signature": [
+          "binding_resolution"
+        ],
+        "pending_lineage_count": 1,
+        "lineage_commit_count": 0,
+        "lineage_switch_attempt_count": 0,
+        "lineage_switch_commit_count": 0,
+        "lineage_switch_cancel_count": 0,
+        "last_lineage_drift": 0.0
+      }
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "9c41419c900e",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; explicitly list all entities and assign each a unique label before reasoning; track references by these labels to resolve ambiguity; verify key logic and give exactly one final answer.",
+      "lineage_state": {
+        "lineage_status": "uncommitted",
+        "lineage_anchor_prompt_hash": "",
+        "lineage_anchor_prompt": "",
+        "lineage_anchor_mechanism_signature": [],
+        "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_correctness_vector": [],
+        "lineage_anchor_rescue_vector": [],
+        "lineage_anchor_accuracy": -1.0,
+        "lineage_anchor_epoch": -1,
+        "lineage_stability_count": 1,
+        "pending_lineage_signature": [
+          "list_all_entities_and_assign",
+          "track_all_references_using_these",
+          "resolve_ambiguities_via_label_matching",
+          "proceed_with_logical_reasoning_using",
+          "final_consistency_check",
+          "output_final_answer"
+        ],
+        "pending_lineage_count": 1,
+        "lineage_commit_count": 0,
+        "lineage_switch_attempt_count": 0,
+        "lineage_switch_commit_count": 0,
+        "lineage_switch_cancel_count": 0,
+        "last_lineage_drift": 0.0
+      }
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "497d03fdb68c",
+      "prompt": "You are a careful reasoning solver. First, extract and list all explicit and implicit constraints from the problem, especially qualifiers and negations; then produce a compact reasoning trace using these constraints, make your decision procedure visible, verify each constraint is satisfied, and give exactly one final answer.",
+      "lineage_state": {
+        "lineage_status": "uncommitted",
+        "lineage_anchor_prompt_hash": "",
+        "lineage_anchor_prompt": "",
+        "lineage_anchor_mechanism_signature": [],
+        "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_correctness_vector": [],
+        "lineage_anchor_rescue_vector": [],
+        "lineage_anchor_accuracy": -1.0,
+        "lineage_anchor_epoch": -1,
+        "lineage_stability_count": 1,
+        "pending_lineage_signature": [
+          "extract_and_list_all_explicit",
+          "produce_compact_reasoning_trace_using",
+          "make_decision_procedure_visible",
+          "final_consistency_check",
+          "give_final_answer"
+        ],
+        "pending_lineage_count": 1,
+        "lineage_commit_count": 0,
+        "lineage_switch_attempt_count": 0,
+        "lineage_switch_commit_count": 0,
+        "lineage_switch_cancel_count": 0,
+        "last_lineage_drift": 0.0
+      }
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "lineage_state": {
+        "lineage_status": "uncommitted",
+        "lineage_anchor_prompt_hash": "",
+        "lineage_anchor_prompt": "",
+        "lineage_anchor_mechanism_signature": [],
+        "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_correctness_vector": [],
+        "lineage_anchor_rescue_vector": [],
+        "lineage_anchor_accuracy": -1.0,
+        "lineage_anchor_epoch": -1,
+        "lineage_stability_count": 1,
+        "pending_lineage_signature": [
+          "and"
+        ],
+        "pending_lineage_count": 1,
+        "lineage_commit_count": 0,
+        "lineage_switch_attempt_count": 0,
+        "lineage_switch_commit_count": 0,
+        "lineage_switch_cancel_count": 0,
+        "last_lineage_drift": 0.0
+      }
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer.",
+      "lineage_state": {
+        "lineage_status": "uncommitted",
+        "lineage_anchor_prompt_hash": "",
+        "lineage_anchor_prompt": "",
+        "lineage_anchor_mechanism_signature": [],
+        "lineage_anchor_mechanism_embedding": [],
+        "lineage_anchor_correctness_vector": [],
+        "lineage_anchor_rescue_vector": [],
+        "lineage_anchor_accuracy": -1.0,
+        "lineage_anchor_epoch": -1,
+        "lineage_stability_count": 1,
+        "pending_lineage_signature": [
+          "and"
+        ],
+        "pending_lineage_count": 1,
+        "lineage_commit_count": 0,
+        "lineage_switch_attempt_count": 0,
+        "lineage_switch_commit_count": 0,
+        "lineage_switch_cancel_count": 0,
+        "last_lineage_drift": 0.0
+      }
+    }
+  ],
+  "joint_team_metrics": {
+    "epoch": 1,
+    "combination_count": 27,
+    "feasible_count": 27,
+    "quality_frontier_count": 12,
+    "incumbent_metrics": {
+      "vote_acc": 0.35,
+      "mean_individual_acc": 0.35,
+      "bottom2_mean_acc": 0.35,
+      "coverage_depth_c1": 0.35,
+      "coverage_depth_c2": 0.35
+    },
+    "selected_metrics": {
+      "vote_acc": 0.35,
+      "mean_individual_acc": 0.37,
+      "bottom2_mean_acc": 0.35,
+      "coverage_depth_c1": 0.45,
+      "coverage_depth_c2": 0.35
+    },
+    "selected_prompt_hashes": [
+      "61f1ad476b4d6006fdc680c68fb0af7eec94b785858840b1fc6927c693291a0f",
+      "fc351d5b73927a671c98992f6ead0200aeb8cb9ffce2d8e20ed4c027348829f6",
+      "323a7f8cf7d623fcc03baefdd5f9a3b9f3d0c7c6248b805bbab30b239008ffd3",
+      "b5a173b7c570bcba287a93de26d72949b641367cb3a9b478125130551ac3b82a",
+      "b5a173b7c570bcba287a93de26d72949b641367cb3a9b478125130551ac3b82a"
+    ],
+    "selected_beam_sources": [
+      "mechanism_niche",
+      "mechanism_niche",
+      "task_repair_niche",
+      "incumbent",
+      "incumbent"
+    ],
+    "team_diversity_score": 0.25963999149613237,
+    "stable_team_score": 0.24463999149613236,
+    "mean_behavior_distance": 0.1521111111111111,
+    "min_behavior_distance": 0.0525,
+    "mean_mechanism_distance": 0.640324957480662,
+    "lineage_drift_penalty_mean": 0.0,
+    "peer_collapse_penalty_mean": 0.015000000000000003,
+    "active_prompt_changed_count": 3,
+    "specialization_strength": 0.0
+  },
+  "method_version": "v8_stable_qd_lineage",
+  "competence_schedule_version": "competence_depth_v2_opt_snapshot_c1_guard",
+  "target_selector_version": "hybrid_competence_boundary_v2",
+  "beam_policy_version": "quality_diversity_archive_v1",
+  "tcs_candidate_policy_version": "repair_mechanism_alternative_v1",
+  "mechanism_signature_version": "mechanism_signature_v1"
+}
