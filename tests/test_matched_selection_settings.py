@@ -1,12 +1,10 @@
-from dataclasses import asdict
-
 from scripts.experiment_config import select_settings
 
 
 def test_scalar_and_pareto_settings_are_matched_except_selection_mode():
     scalar, pareto = select_settings("shared_scalar_tcs_vote_first,shared_vote_pareto_tcs")
-    scalar_values = asdict(scalar)
-    pareto_values = asdict(pareto)
+    scalar_values = scalar.compatibility_dict()
+    pareto_values = pareto.compatibility_dict()
     scalar_values.pop("name")
     pareto_values.pop("name")
     assert scalar_values.pop("candidate_selection_mode") == "scalar_reward"
@@ -30,11 +28,11 @@ def test_reward_ablation_settings_share_the_tcs_execution_contract():
         no_margin.name: "vote_useful_diversity",
         no_boundary.name: "vote_useful_diversity",
     }
-    reference = asdict(full)
+    reference = full.compatibility_dict()
     reference.pop("name")
     reference.pop("reward_mode")
     for setting in (accuracy, guarded, no_margin, no_boundary):
-        values = asdict(setting)
+        values = setting.compatibility_dict()
         assert values.pop("name") in expected_rewards
         assert values.pop("reward_mode") == expected_rewards[setting.name]
         assert values == reference
@@ -57,9 +55,9 @@ def test_v7_ablation_settings_keep_the_matched_search_budget():
         "candidate_eval_prompt_dedup", "candidate_eval_cache_logging",
         "reward_schedule_mode",
     )
-    reference = asdict(settings[0])
+    reference = settings[0].compatibility_dict()
     for setting in settings[1:]:
-        values = asdict(setting)
+        values = setting.compatibility_dict()
         assert {key: values[key] for key in matched_fields} == {
             key: reference[key] for key in matched_fields
         }
@@ -69,10 +67,10 @@ def test_static_vote_pareto_differs_from_historical_setting_only_by_schedule():
     historical, static = select_settings(
         "shared_vote_pareto_tcs,shared_vote_pareto_tcs_static"
     )
-    historical_values = asdict(historical)
-    static_values = asdict(static)
+    historical_values = historical.compatibility_dict()
+    static_values = static.compatibility_dict()
     historical_values.pop("name")
     static_values.pop("name")
-    assert historical_values.pop("reward_schedule_mode") == ""
+    assert historical_values.pop("reward_schedule_mode") is None
     assert static_values.pop("reward_schedule_mode") == "static"
     assert historical_values == static_values

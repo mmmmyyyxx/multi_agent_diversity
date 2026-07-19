@@ -2490,7 +2490,7 @@ class TraceBeamSearchSystem:
             },
             "initial_agent_prompts": self.initial_agent_prompts,
             "initial_agent_prompt_hashes": self.initial_agent_prompt_hashes,
-            "config": asdict(self.cfg),
+            "config": self.cfg.to_flat_dict(),
             "framework": "accuracy_only_evolutionary_beam" if self._is_accuracy_only_mode() else "vote_oriented_evolutionary_beam",
         }
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:

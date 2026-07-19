@@ -1,80 +1,69 @@
-from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional
+from dataclasses import dataclass, field
+from typing import Any, Dict, Iterable, List, Mapping
+
+from multi_dataset_diverse_rl.config import Config
+from multi_dataset_diverse_rl.config_sections import canonical_field_registry
 
 
-@dataclass(frozen=True)
-class ExperimentSetting:
+@dataclass(frozen=True, init=False)
+class ExperimentPreset:
     name: str
-    init_mode: str
-    baseline_only: bool
-    reward_mode: str = "guarded_diversity"
-    candidate_selection_mode: str = "scalar_reward"
-    best_state_selection_mode: str = "existing"
-    optimizer_architecture: str = ""
-    optimizer_fallback_mode: str = ""
-    teacher_critic_use_voting_failure: Optional[bool] = None
-    candidate_eval_strategy: str = ""
-    candidate_eval_pool_size: int = 0
-    candidate_eval_batch_size: int = 0
-    candidate_eval_execution_mode: str = ""
-    solver_rollout_singleflight: Optional[bool] = None
-    candidate_eval_prompt_dedup: Optional[bool] = None
-    candidate_eval_cache_logging: Optional[bool] = None
-    reward_schedule_mode: str = ""
-    boundary_selector_enabled: Optional[bool] = None
-    shared_error_metrics_enabled: Optional[bool] = None
-    residual_specialization_enabled: Optional[bool] = None
-    error_dependence_guard_enabled: Optional[bool] = None
-    residual_cycle_guard_enabled: Optional[bool] = None
-    mechanism_trust_region_enabled: Optional[bool] = None
-    capability_affinity_weight: Optional[float] = None
-    capability_coverage_gap_weight: Optional[float] = None
-    specialization_support_shrinkage: Optional[float] = None
-    capability_loss_weight: Optional[float] = None
-    specialization_update_period: Optional[int] = None
-    pivotal_loss_guard_epsilon: Optional[float] = None
-    shared_error_creation_epsilon: Optional[float] = None
-    competence_depth_enabled: Optional[bool] = None
-    competence_depth2_aux_enabled: Optional[bool] = None
-    competence_progressive_residual_enabled: Optional[bool] = None
-    competence_schedule_mode: str = ""
-    competence_schedule_version: str = ""
-    competence_probe_size: Optional[int] = None
-    competence_probe_seed_offset: Optional[int] = None
-    competence_relative_low_delta: Optional[float] = None
-    competence_relative_high_delta: Optional[float] = None
-    competence_schedule_ema: Optional[float] = None
-    competence_schedule_max_step: Optional[float] = None
-    competence_schedule_monotonic: Optional[bool] = None
-    competence_mean_guard_epsilon: Optional[float] = None
-    competence_c1_guard_epsilon: Optional[float] = None
-    competence_c2_guard_epsilon: Optional[float] = None
-    competence_depth1_candidate_guard_enabled: Optional[bool] = None
-    competence_depth1_candidate_guard_epsilon: Optional[float] = None
-    competence_min_effective_specialization_epochs: Optional[int] = None
-    method_version: str = ""
-    target_selector_mode: str = ""
-    target_selector_version: str = ""
-    beam_policy_version: str = ""
-    tcs_candidate_policy_version: str = ""
-    mechanism_signature_version: str = ""
-    competence_weight_depth1_gain: Optional[float] = None
-    competence_weight_depth1_loss: Optional[float] = None
-    competence_residual_floor: Optional[float] = None
-    catastrophic_target_accuracy_loss_epsilon: Optional[float] = None
-    soft_guard_error_dependence_weight: Optional[float] = None
-    soft_guard_cycle_weight: Optional[float] = None
-    soft_guard_mechanism_shift_weight: Optional[float] = None
-    soft_guard_accuracy_regression_weight: Optional[float] = None
-    mechanism_novelty_bonus_weight: Optional[float] = None
-    active_team_selector_version: str = ""
-    lineage_policy_version: str = ""
-    mechanism_distance_version: str = ""
-    candidate_refill_version: str = ""
-    archive_policy_version: str = ""
-    joint_quality_filter_version: str = ""
-    probe_stability_version: str = ""
-    parent_selection_version: str = ""
+    base: str | None = None
+    overrides: Mapping[str, Any] = field(default_factory=dict)
+
+    def __init__(
+        self,
+        name: str,
+        init_mode: str | None = None,
+        baseline_only: bool | None = None,
+        reward_mode: str | None = None,
+        *,
+        base: str | None = None,
+        overrides: Mapping[str, Any] | None = None,
+        **legacy_overrides: Any,
+    ) -> None:
+        values = dict(overrides or {})
+        if init_mode is not None:
+            legacy_overrides["init_mode"] = init_mode
+        if baseline_only is not None:
+            legacy_overrides["baseline_only"] = baseline_only
+        if reward_mode is not None:
+            legacy_overrides["reward_mode"] = reward_mode
+        registry = canonical_field_registry(Config)
+        for key, value in legacy_overrides.items():
+            if key not in registry:
+                raise ValueError(f"Unknown preset override for {name}: {key}")
+            values[registry[key]] = value
+        object.__setattr__(self, "name", name)
+        object.__setattr__(self, "base", base)
+        object.__setattr__(self, "overrides", values)
+
+    def resolved_overrides(self) -> Dict[str, Any]:
+        values: Dict[str, Any] = {}
+        if self.base:
+            values.update(PRESET_BASES[self.base])
+        for path, value in self.overrides.items():
+            flat_name = path.rsplit(".", 1)[-1]
+            values[flat_name] = value
+        return values
+
+    def __getattr__(self, name: str) -> Any:
+        values = self.resolved_overrides()
+        if name in values:
+            return values[name]
+        if name in canonical_field_registry(Config):
+            return None
+        raise AttributeError(name)
+
+    def compatibility_dict(self) -> Dict[str, Any]:
+        """Expose the old sparse setting view without restoring 71 fields."""
+        values = {name: None for name in canonical_field_registry(Config)}
+        values.update(self.resolved_overrides())
+        values["name"] = self.name
+        return values
+
+
+ExperimentSetting = ExperimentPreset
 
 
 @dataclass(frozen=True)
@@ -105,6 +94,21 @@ SHARED_VOTE_SEARCH_BASE = {
     **SHARED_TCS_SEARCH_BASE,
     "reward_mode": "vote_useful_diversity",
 }
+
+PRESET_BASES = {
+    "shared_tcs_base": SHARED_TCS_SEARCH_BASE,
+    "shared_vote_base": SHARED_VOTE_SEARCH_BASE,
+}
+
+
+def _preset(name: str, *, base: str | None = None, **overrides: Any) -> ExperimentPreset:
+    registry = canonical_field_registry(Config)
+    inherited = PRESET_BASES.get(base or "", {})
+    unknown = sorted((set(inherited) | set(overrides)) - set(registry))
+    if unknown:
+        raise ValueError(f"Unknown preset overrides for {name}: {unknown}")
+    dotted = {registry[key]: value for key, value in overrides.items()}
+    return ExperimentPreset(name=name, base=base, overrides=dotted)
 
 
 ALL_EXPERIMENT_SETTINGS = [

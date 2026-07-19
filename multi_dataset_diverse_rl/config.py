@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field, fields
 import argparse
+
+from .config_sections import canonical_config_dict, section_for_field, split_flat_config
 
 
 DEFAULT_TEMPERATURE = 0.0
@@ -8,7 +10,7 @@ DEFAULT_EVALUATOR_TEMPERATURE = 0.0
 
 
 @dataclass
-class Config:
+class _FlatConfigSchema:
     task_type: str = "auto"
     dataset_format: str = "legacy"
     comparison_task_id: str = ""
@@ -472,6 +474,71 @@ class Config:
             raise ValueError("probation C2 loss must remain below the catastrophic C2 threshold")
         if int(self.probe_stability_fold_count) != 2:
             raise ValueError("Stable QD currently requires exactly two deterministic probe folds")
+
+
+
+@dataclass(init=False)
+class Config:
+    """Section-owned configuration with a flat compatibility API."""
+
+    data: object = field(init=False)
+    models: object = field(init=False)
+    runtime: object = field(init=False)
+    generation: object = field(init=False)
+    evaluation: object = field(init=False)
+    quality: object = field(init=False)
+    archive: object = field(init=False)
+    joint: object = field(init=False)
+    lineage: object = field(init=False)
+    output: object = field(init=False)
+    identity: object = field(init=False)
+
+    _SECTION_NAMES = (
+        "data", "models", "runtime", "generation", "evaluation", "quality",
+        "archive", "joint", "lineage", "output", "identity",
+    )
+    _FLAT_FIELDS = {item.name for item in fields(_FlatConfigSchema)}
+
+    def __init__(self, **overrides):
+        unknown = sorted(set(overrides) - self._FLAT_FIELDS)
+        if unknown:
+            raise TypeError(f"Unknown Config fields: {unknown}")
+        flat = _FlatConfigSchema(**overrides)
+        sections = split_flat_config(asdict(flat))
+        for name, section in sections.items():
+            object.__setattr__(self, name, section)
+
+    def __getattr__(self, name):
+        if name in self._FLAT_FIELDS:
+            section = object.__getattribute__(self, section_for_field(name))
+            return section.values[name]
+        raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        if name in self._SECTION_NAMES:
+            object.__setattr__(self, name, value)
+            return
+        if name in self._FLAT_FIELDS:
+            section = object.__getattribute__(self, section_for_field(name))
+            section.values[name] = value
+            return
+        raise AttributeError(f"Unknown Config field: {name}")
+
+    @classmethod
+    def flat_field_registry(cls):
+        return {name: f"{section_for_field(name)}.{name}" for name in sorted(cls._FLAT_FIELDS)}
+
+    def to_flat_dict(self):
+        result = {}
+        for name in self._SECTION_NAMES:
+            result.update(dict(object.__getattribute__(self, name).values))
+        return {item.name: result[item.name] for item in fields(_FlatConfigSchema)}
+
+    def sections(self):
+        return {name: object.__getattribute__(self, name) for name in self._SECTION_NAMES}
+
+    def to_canonical_dict(self):
+        return canonical_config_dict(self)
 
 
 def build_parser() -> argparse.ArgumentParser:

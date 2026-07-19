@@ -306,7 +306,7 @@ def test_task_runner_passes_setting_name_to_run_metadata():
     )
     args = Namespace(**{
         **vars(Namespace()),
-        **{name: getattr(cfg, name) for name in vars(cfg)},
+        **cfg.to_flat_dict(),
         "dataset_format": "mars",
         "resume_from_checkpoint": 1,
     })
