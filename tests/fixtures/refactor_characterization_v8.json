@@ -1,0 +1,26 @@
+{
+  "baseline_sha": "2be2e30eef56d1019fe0dcf3cd6078c7edbf0872",
+  "default_behavior_fingerprint": "48c2f27cdcda64d2f7b32d008957b4903c683f49012988c4e5cab301ed29d5fa",
+  "v8_setting": {
+    "name": "shared_vote_tcs_competence_depth2_progressive_residual_hybrid",
+    "method_version": "v8_stable_qd_lineage",
+    "reward_mode": "competence_depth_schedule",
+    "candidate_selection_mode": "competence_depth_pareto",
+    "optimizer_architecture": "teacher_critic_student",
+    "candidate_eval_execution_mode": "factorized_cached",
+    "candidate_eval_batch_size": 24,
+    "candidate_eval_pool_size": 50,
+    "beam_policy_version": "quality_diversity_archive_v1",
+    "candidate_refill_version": "quality_feedback_refill_v1"
+  },
+  "mechanism_distance": {
+    "sequence_distance": 1.0,
+    "embedding_distance": 1.0,
+    "mechanism_distance": 1.0
+  },
+  "behavior_distance": 0.47738095238095246,
+  "candidate_buckets": ["safe", "probation", "catastrophic"],
+  "archive_prompt_hashes": ["incumbent", "repair", "alternative"],
+  "representative_prompt_hashes": ["incumbent", "repair", "alternative"],
+  "lineage_statuses": ["provisional", "committed"]
+}

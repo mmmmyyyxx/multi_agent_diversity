@@ -1,6 +1,12 @@
 # Refactor Audit
 
-Audit baseline: `main` at `a2a479dfce07ad4774f69d3f30008f8842b13bfb`.
+Audit baseline: `main` at `2be2e30eef56d1019fe0dcf3cd6078c7edbf0872`.
+
+The baseline has 296 flat `Config` fields, 71 `ExperimentSetting` fields,
+217 methods on `TraceBeamSearchSystem`, and 10,740 lines in `system.py`.
+The generated inventories are `REFACTOR_FIELD_MATRIX.csv` and
+`REFACTOR_FUNCTION_MATRIX.md`; regenerate them with
+`python scripts/generate_refactor_audit.py` after each structural stage.
 
 This audit is intentionally conservative. A field is not classified as dead
 until direct access, `getattr`, dataclass serialization, dynamic CLI mapping,
@@ -11,17 +17,18 @@ checked.
 
 | Area | Definition and consumers | Classification | New home | Compatibility |
 | --- | --- | --- | --- | --- |
-| Dataset and task | `Config` lines 12-29; CLI, task manifests, runner, metadata | ACTIVE_BEHAVIOR | `DatasetConfig` | Flat aliases retained |
-| Models and generation | `Config` lines 18-20, 84-105, 219-225; TCS, API client, cost logs | ACTIVE_RUNTIME | `ModelConfig` and `TCSConfig` | Flat aliases retained |
-| Training lifecycle | `Config` lines 31-55, 226-258; CLI, checkpoint, runner | ACTIVE_RUNTIME | `TrainingConfig` | Flat aliases retained |
-| Reward schedule | `Config` lines 56-83; candidate evaluator and schedule | ACTIVE_BEHAVIOR | `RewardConfig` | Legacy reward fields retained |
-| V7 residual controls | `Config` lines 110-135; selectors, trajectory guards, logs | ACTIVE_BEHAVIOR | `ResidualConfig` | Legacy fields retained |
-| V8 competence controls | `Config` lines 136-178; fixed probe, target selector, guards | ACTIVE_BEHAVIOR | `CompetenceConfig` | Legacy fields retained |
-| Stable QD and lineage | `Config` lines 179-210; QD archive, joint selector, checkpoint | ACTIVE_BEHAVIOR | `StableQDConfig` | Legacy fields retained |
-| Candidate evaluation/cache | `Config` lines 236-249; evaluator, cost, resume | ACTIVE_RUNTIME | `EvaluationConfig` | Flat aliases retained |
-| Trace diagnostics | `Config` lines 212-218; metrics only | OUTPUT_ONLY except evaluator toggle | `DiagnosticsConfig` | Flat aliases retained |
-| Experiment setting overrides | `ExperimentSetting` lines 6-72 and runner dynamic application | DUPLICATED | named preset overrides | Existing settings remain names/aliases |
-| Version strings | config, experiment setting, metadata, checkpoint | ACTIVE_BEHAVIOR | `MethodPreset` | Existing string values preserved |
+| Dataset and task | CLI, task manifests, runner, metadata | ACTIVE_RUNTIME | `DataConfig` | Flat properties retained |
+| Models and API roles | TCS, solver/evaluator clients, cost logs | ACTIVE_RUNTIME | `ModelConfig` | Flat properties retained |
+| Training lifecycle | CLI, checkpoint, runner | ACTIVE_RUNTIME | `RuntimeConfig` | Flat properties retained |
+| Candidate generation | TCS, one-shot generator, retry/repair | ACTIVE_POLICY | `CandidateGenerationConfig` | Flat properties retained |
+| Candidate evaluation/cache | evaluator, probe cache, cost, resume | ACTIVE_RUNTIME | `CandidateEvaluationConfig` | Flat properties retained |
+| Reward and candidate guards | candidate evaluator and schedule | ACTIVE_POLICY | `QualityGuardConfig` | Flat properties retained |
+| Stable-QD archive/refill | archive, representatives, parent policy | ACTIVE_POLICY | `ArchiveConfig` | `beam_size` becomes representative alias |
+| Joint team selection | enumeration, quality bands, fold stability | ACTIVE_POLICY | `JointSelectionConfig` | Flat properties retained |
+| Lineage | lineage state machine and checkpoint | ACTIVE_POLICY | `LineageConfig` | epoch aliases migrate to snapshots |
+| Output and diagnostics | histories, model diagnostics, run metadata | OUTPUT_ONLY | `OutputConfig` | Flat properties retained |
+| Experiment settings | runners and metadata | DUPLICATED | `ExperimentPreset.overrides` | Existing setting names preserved |
+| Method identity | preset registry, metadata, checkpoint | ACTIVE_POLICY | `MethodIdentity` | Existing version strings preserved |
 
 ## Repeated or Coupled Fields
 
@@ -71,8 +78,23 @@ system.py                          orchestration only
 state.py                           checkpoint/history/run metadata records
 ```
 
-The first implementation pass may leave compatibility adapters in `system.py`.
-No caller-facing behavior may change without characterization tests.
+Compatibility wrappers may remain in `system.py`, but formulas and storage
+details must not. No caller-facing behavior may change without the snapshots
+in `tests/test_refactor_characterization.py`, except for the three explicitly
+authorized Stable-QD search-space fixes.
+
+## Stable-QD Blocking Findings
+
+1. Residual-only specific mechanisms are normalized into semantic text but
+   `mechanism_alternative` prescreen still requires canonical operations.
+2. Refill requirements inspect raw evaluated candidates before archive niche
+   compression and representative selection, so retained search capacity can
+   remain underfilled.
+3. `joint_quality_anchor_metrics` is a component-wise maximum assembled from
+   different teams and therefore can describe a team that never existed.
+
+These are behavior changes, not refactor cleanup. Their tests and commits must
+remain separate from structural migration.
 
 ## Serialization and Output Risks
 
