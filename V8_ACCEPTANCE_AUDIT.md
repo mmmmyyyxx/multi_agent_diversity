@@ -30,7 +30,7 @@ This audit covers the existing setting `shared_vote_tcs_competence_depth2_progre
 | Safe QD archive | `search_archive.py`: `select_safe_archive` | `update_prompt_with_beam` | `qd_archive_size_per_agent` | `AgentState.safe_qd_archive` | long archive and over-capacity tests |
 | Probation archive TTL | `system.py`: `_expire_agent_probation_branches` | parent selection and epoch-end cleanup | `probation_archive_ttl_updates` | `AgentState.probation_archive`, expiry counter | `test_expired_probation_branch_is_removed_before_parent_selection` |
 | QD parent selection | `search_archive.py`: `select_reproduction_parent`; `system.py`: `_select_stable_qd_parents` | each selected agent update | `qd_niche_min_parent_opportunities_per_epoch`, `probation_parent_enabled` | per-niche counts, probation parent count | probation and Safe round-robin tests |
-| Mechanism normalization | `multi_dataset_diverse_rl/mechanisms.py`: `normalize_mechanism_representation` | `_attach_stable_mechanism_representation` | mechanism policy version | normalized sequence/text | `tests/test_mechanism_distance.py` |
+| Mechanism normalization | `multi_dataset_diverse_rl/mechanisms.py`: `normalize_mechanism_representation` | `_attach_stable_mechanism_representation` | mechanism policy version | canonical operations/filtered residual text | `tests/test_mechanism_distance.py` |
 | Mechanism embedding cache | `system.py`: `_attach_stable_mechanism_representation` | candidate/archive/probe profiling | embedding model and distance weights | `mechanism_embedding_cache`, hit/miss counters | `test_stable_probe_and_mechanism_caches_report_real_hits` |
 | Behavior distance | `multi_dataset_diverse_rl/behavior_profiles.py`: `behavior_distance` | QD archive and joint selector | four behavior weights and shrinkage | combination behavior profiles | same-wrong and no-support tests |
 | Wrong-answer dispersion | `behavior_profiles.py`: `behavior_distance` | pairwise combination scoring | `behavior_wrong_answer_dispersion_weight` | diagnostic component | `test_same_wrong_dispersion_rewards_different_wrong_answers` |
@@ -55,8 +55,8 @@ This audit covers the existing setting `shared_vote_tcs_competence_depth2_progre
 3. Bounded refill receives structured prior failures and stops on requirements, round limit, unique-candidate limit, optimizer failure, or no new unique candidate.
 4. The long-term Safe archive is six items; only three representatives per agent enter offline team enumeration.
 5. Prompt-level cache stores intrinsic outcomes only. Rescue, unique-correct, shared-error, same-wrong, coverage, plurality, and behavior distance are rebuilt for each team.
-6. Active-change filtering and integer incumbent quality floors run before hierarchical bands and diversity scoring.
-7. Two deterministic folds supply quality guards and `mean(diversity) - 0.5 * gap` stability.
+6. Active-change filtering and run-level integer quality floors run before hierarchical bands and diversity scoring. The component-wise anchor combines the initial fixed probe, historical best, committed lineage anchors, and current incumbent, preventing cumulative per-epoch loss.
+7. Two deterministic folds supply quality guards and `mean(diversity) - 0.5 * gap` stability. Lineage evidence uses peer-relative correctness residual and rescue/unique-correct support across folds, not raw fold accuracy gap.
 8. A first stable snapshot is provisional; the second can commit. Committed anchors alone create drift and peer-collapse pressure.
 9. `competence_schedule_strength` remains the raw schedule. QD readiness may raise only `effective_residual_strength`.
 

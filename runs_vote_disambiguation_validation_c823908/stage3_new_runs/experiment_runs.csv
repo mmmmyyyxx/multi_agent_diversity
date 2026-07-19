@@ -1,2 +1,0 @@
-answer_format,baseline_only,benchmark,dataset_format,elapsed_sec,init_mode,returncode,reward_mode,run_dir,seed,setting,status,task_id,task_type
-option_letter,0,BBH,mars,4925.19,shared,0,vote_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_vote_disambiguation_validation_c823908\stage3_new_runs\disambiguation_qa\shared_vote_no_boundary_tcs_vote_first_seed42,42,shared_vote_no_boundary_tcs_vote_first,ok,disambiguation_qa,bbh

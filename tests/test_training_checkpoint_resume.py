@@ -156,6 +156,14 @@ def test_training_checkpoint_reports_changed_config_signature(tmp_path):
     assert any("reward_mode" in reason for reason in reasons)
 
 
+def test_pre_fix_checkpoint_version_is_rejected(tmp_path):
+    system = _system(tmp_path)
+    payload = build_training_checkpoint(system.cfg, system, **_checkpoint_kwargs())
+    payload["version"] = 4
+    reasons = checkpoint_incompatibility_reasons(payload, system.cfg, [None, None, None, None])
+    assert any("version" in reason and "current=5" in reason for reason in reasons)
+
+
 def test_old_v8_checkpoint_is_rejected_with_joint_qd_lineage_reason(tmp_path):
     system = _system(tmp_path)
     system.cfg.method_version = "v8_2_hybrid_progressive"

@@ -70,8 +70,6 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
     fold_quality_passed = bool(selected.get("fold_quality_gate_passed", True))
     fold_stable = (
         bool(selected.get("fold_behavior_stable", True))
-        and float(selected.get("cross_fold_diversity_gap", 0.0) or 0.0)
-        <= float(getattr(config, "qd_readiness_max_fold_gap", 0.15))
     )
     if not quality_gate_passed or not fold_quality_passed or not fold_stable:
         state["pending_lineage_signature"] = []

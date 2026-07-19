@@ -1,6 +1,0 @@
-﻿accuracy,agent_id,minority_rescue_count,minority_rescue_share,setting_seed,task,unique_correct_count
-0.35,0,1,0.25,shared_vote_tcs_competence_depth2_progressive_residual_hybrid_seed42,disambiguation_qa,1
-0.35,1,1,0.25,shared_vote_tcs_competence_depth2_progressive_residual_hybrid_seed42,disambiguation_qa,0
-0.35,2,0,0.0,shared_vote_tcs_competence_depth2_progressive_residual_hybrid_seed42,disambiguation_qa,0
-0.4,3,1,0.25,shared_vote_tcs_competence_depth2_progressive_residual_hybrid_seed42,disambiguation_qa,0
-0.4,4,1,0.25,shared_vote_tcs_competence_depth2_progressive_residual_hybrid_seed42,disambiguation_qa,1

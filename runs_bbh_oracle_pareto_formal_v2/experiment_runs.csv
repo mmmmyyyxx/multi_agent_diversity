@@ -1,5 +1,0 @@
-answer_format,baseline_only,benchmark,dataset_format,elapsed_sec,init_mode,returncode,reward_mode,run_dir,seed,setting,status,task_id,task_type
-option_letter,1,BBH,mars,46.55,shared,0,guarded_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_bbh_oracle_pareto_formal_v2\disambiguation_qa\shared_baseline_seed42,42,shared_baseline,ok,disambiguation_qa,bbh
-option_letter,1,BBH,mars,57.7,shared,0,guarded_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_bbh_oracle_pareto_formal_v2\geometric_shapes\shared_baseline_seed42,42,shared_baseline,ok,geometric_shapes,bbh
-option_letter,1,BBH,mars,74.9,shared,0,guarded_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_bbh_oracle_pareto_formal_v2\ruin_names\shared_baseline_seed42,42,shared_baseline,ok,ruin_names,bbh
-yes_no,1,BBH,mars,44.51,shared,0,guarded_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_bbh_oracle_pareto_formal_v2\sports_understanding\shared_baseline_seed42,42,shared_baseline,ok,sports_understanding,bbh

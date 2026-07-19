@@ -10,6 +10,8 @@ from multi_dataset_diverse_rl.quality_diversity import (
     quality_feasible,
     select_stable_joint_team,
     team_diversity_metrics,
+    fold_specialization_profiles,
+    hierarchical_quality_bands,
 )
 from multi_dataset_diverse_rl.utils import plurality_vote_with_diagnostics
 from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
@@ -213,3 +215,56 @@ def test_fold_catastrophic_quality_regression_is_rejected():
     )
     assert result["fold_quality_rejection_count"] >= 1
     assert result["selected"]["prompt_hashes"] == [item["prompt_hash"] for item in incumbent_profiles]
+
+
+def test_fold_specialization_uses_peer_residual_not_raw_accuracy_gap():
+    easier_fold = {"correctness_vectors": [[1, 1, 1, 0]] * 5}
+    harder_fold = {"correctness_vectors": [[1, 0, 0, 0]] * 5}
+    assert fold_specialization_profiles(easier_fold) == fold_specialization_profiles(harder_fold)
+
+
+def test_global_quality_anchor_prevents_cumulative_epoch_loss():
+    cfg = Config(
+        joint_allowed_vote_loss_questions=1,
+        joint_allowed_total_agent_correct_loss=2,
+        joint_allowed_bottom2_correct_loss=1,
+        joint_allowed_c1_loss_questions=1,
+        joint_allowed_c2_loss_questions=1,
+        joint_allowed_per_agent_correct_loss=1,
+    )
+    incumbent = {
+        "answer_vectors": [["A"] * 10] * 5,
+        "vote_correct_count": 8,
+        "total_agent_correct_count": 38,
+        "bottom2_correct_count": 14,
+        "coverage_depth_c1_correct_count": 8,
+        "coverage_depth_c2_correct_count": 8,
+        "per_agent_correct_count": [8, 8, 8, 7, 7],
+    }
+    cumulative_regression = {
+        **incumbent,
+        "vote_correct_count": 7,
+        "total_agent_correct_count": 36,
+        "bottom2_correct_count": 13,
+        "coverage_depth_c1_correct_count": 7,
+        "coverage_depth_c2_correct_count": 7,
+        "per_agent_correct_count": [7, 7, 7, 7, 8],
+        "vote_acc": 0.7,
+        "mean_individual_acc": 0.72,
+        "bottom2_mean_acc": 0.65,
+        "coverage_depth_c1": 0.7,
+        "coverage_depth_c2": 0.7,
+    }
+    initial_anchor = {
+        **incumbent,
+        "vote_correct_count": 9,
+        "total_agent_correct_count": 40,
+        "bottom2_correct_count": 15,
+        "coverage_depth_c1_correct_count": 9,
+        "coverage_depth_c2_correct_count": 9,
+        "per_agent_correct_count": [8, 8, 8, 8, 8],
+    }
+    without_anchor = hierarchical_quality_bands([cumulative_regression], incumbent, cfg)
+    with_anchor = hierarchical_quality_bands([cumulative_regression], incumbent, cfg, quality_anchor=initial_anchor)
+    assert without_anchor["quality_floor"] == [cumulative_regression]
+    assert with_anchor["quality_floor"] == []

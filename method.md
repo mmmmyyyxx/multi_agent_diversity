@@ -107,13 +107,13 @@ If the initial batch lacks two Safe non-incumbent candidates, a Safe task repair
 
 The long-term Safe archive holds up to six niche elites per agent. `beam_size=3` means three representatives selected from that archive for joint enumeration, not an archive size limit. Parent A is the active prompt; Parent B is chosen round-robin from an underused Probation branch or Safe niche, ensuring archived niches receive reproduction opportunities.
 
-Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after incumbent integer loss floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. This is narrower and more reproducible than retaining a large five-dimensional Pareto frontier.
+Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after run-level integer loss floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. The floor uses the component-wise maximum of the initial fixed-probe baseline, historical best quality, committed lineage anchors, and current incumbent, so loss allowances cannot accumulate across epochs. This is narrower and more reproducible than retaining a large five-dimensional Pareto frontier.
 
-At most three active prompts change in an early epoch and two in a later epoch; a single next-epoch relaxation is available only after repeated no-diversification selection. Lineages become provisional after one stable snapshot and committed after two. QD readiness can keep residual specialization at its 0.15 floor only when competence gates, two Safe niches, diversity, and fold stability all pass.
+At most three active prompts change in an early epoch and two in a later epoch; a single next-epoch relaxation is available only after repeated no-diversification selection. Lineages become provisional after one stable snapshot and committed after two. Fold lineage evidence compares each agent's peer-relative correctness residual and rescue/unique-correct support, rather than raw fold accuracy differences. QD readiness can keep residual specialization at its 0.15 floor only when competence gates, two Safe niches, diversity, and fold stability all pass.
 
 ## 9. Mechanism Representation
 
-`multi_dataset_diverse_rl/mechanisms.py` normalizes Student mechanism steps into an operation sequence. It removes persona names, shared solver prefixes, output-format text, step numbers, and generic careful/verify wording.
+`multi_dataset_diverse_rl/mechanisms.py` normalizes Student mechanism steps into canonical operations plus filtered semantic residual text. It removes persona names, shared solver prefixes, output-format text, step numbers, and generic careful/verify wording. The full prompt is never used directly as mechanism embedding input, and generic steps cannot create a mechanism niche.
 
 Known operations include:
 
@@ -156,9 +156,10 @@ A rescue is a correct answer when at most one peer is also correct. A unique-cor
 Pairwise behavior distance is:
 
 ```text
-0.50 * correct_set_jaccard_distance
-+ 0.35 * shrinkage_adjusted_rescue_set_distance
-+ 0.15 * shared_wrong_complementarity
+0.40 * correct_set_jaccard_distance
++ 0.30 * shrinkage_adjusted_rescue_set_distance
++ 0.15 * error_set_jaccard_distance
++ 0.15 * shrinkage_adjusted_wrong_answer_dispersion
 ```
 
 Rescue-set distance is zero when both prompts have no rescue support. This prevents sparse evidence from appearing maximally diverse.

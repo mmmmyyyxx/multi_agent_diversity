@@ -758,6 +758,14 @@ def test_stable_qd_checkpoint_preserves_archive_probe_and_lineage_state(tmp_path
     system.quality_diversity_archive_history = [{"agent_id": 0, "niche_count": 2}]
     system.behavior_profile_history = [{"epoch": 1, "profiles": []}]
     system.latest_joint_team_metrics = {"combination_count": 243}
+    system.joint_quality_anchor_metrics = {
+        "vote_correct_count": 18,
+        "total_agent_correct_count": 82,
+        "bottom2_correct_count": 28,
+        "coverage_depth_c1_correct_count": 19,
+        "coverage_depth_c2_correct_count": 17,
+        "per_agent_correct_count": [18, 17, 16, 16, 15],
+    }
     system.total_agent_update_count = 2
     system.task_repair_niche_occupancy_count = 1
     system.mechanism_niche_occupancy_count = 1
@@ -780,3 +788,4 @@ def test_stable_qd_checkpoint_preserves_archive_probe_and_lineage_state(tmp_path
     assert restored.quality_diversity_archive_history == system.quality_diversity_archive_history
     assert restored.agents[0].lineage_state["lineage_status"] == "provisional"
     assert restored.latest_joint_team_metrics["combination_count"] == 243
+    assert restored.joint_quality_anchor_metrics == system.joint_quality_anchor_metrics

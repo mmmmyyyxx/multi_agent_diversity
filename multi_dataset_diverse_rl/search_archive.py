@@ -2,17 +2,40 @@
 
 from typing import Any, Dict, Iterable, List, Sequence
 
-from .mechanisms import mechanism_distance, mechanism_niche_key, mechanisms_are_near_duplicate
+from .mechanisms import (
+    mechanism_distance,
+    mechanism_niche_key,
+    mechanisms_are_near_duplicate,
+    normalize_mechanism_representation,
+)
+
+
+def _coverage_loss_count(metrics: Dict[str, Any], depth: int) -> int:
+    loss_key = f"depth{depth}_loss_count"
+    if loss_key in metrics:
+        return max(0, int(metrics.get(loss_key, 0) or 0))
+    net_key = f"depth{depth}_net_count"
+    if net_key in metrics:
+        return max(0, -int(metrics.get(net_key, 0) or 0))
+    # Legacy fixtures used integer deltas as counts. Fractional deltas are rates
+    # and must never be truncated into a false zero-loss classification.
+    delta = float(metrics.get(f"depth{depth}_net_delta", 0.0) or 0.0)
+    if delta >= 0.0:
+        return 0
+    if delta.is_integer():
+        return -int(delta)
+    denominator = int(metrics.get("num_eval_samples", metrics.get("actual_eval_batch_size", 0)) or 0)
+    return max(1, int(round(-delta * denominator))) if denominator > 0 else 1
 
 
 def _operation_sequence(item: Dict[str, Any]) -> List[str]:
     metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
     proposal = item.get("proposal", {}) if isinstance(item.get("proposal", {}), dict) else {}
     representation = metrics.get("mechanism_representation", {})
-    values = representation.get(
-        "normalized_operation_sequence",
-        proposal.get("mechanism_steps", metrics.get("mechanism_steps", [])),
-    )
+    values = representation.get("normalized_operation_sequence")
+    if values is None:
+        raw_steps = proposal.get("mechanism_steps", metrics.get("mechanism_steps", []))
+        values = normalize_mechanism_representation(str(item.get("prompt", "")), raw_steps)["normalized_operation_sequence"]
     return [str(value).strip().lower() for value in values if str(value).strip()] if isinstance(values, list) else []
 
 
@@ -73,6 +96,8 @@ def cheap_prescreen(
     steps = proposal.get("mechanism_steps", metrics.get("mechanism_steps", []))
     if not isinstance(steps, list) or not steps:
         reasons.append("missing_mechanism_steps")
+    elif candidate_type == "mechanism_alternative" and not _operation_sequence(candidate):
+        reasons.append("missing_substantive_mechanism_operation")
     elif candidate_type == "mechanism_alternative" and parent is not None and _operation_sequence(candidate) == _operation_sequence(parent):
         reasons.append("mechanism_operation_unchanged")
     return reasons
@@ -82,8 +107,8 @@ def candidate_quality_bucket(item: Dict[str, Any], config: Any) -> str:
     metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
     rejection = str(metrics.get("rejection_reason", ""))
     accuracy_loss = max(0.0, -float(metrics.get("accuracy_delta", 0.0) or 0.0))
-    c1_loss = max(0, -int(metrics.get("depth1_net_delta", 0) or 0))
-    c2_loss = max(0, -int(metrics.get("depth2_net_delta", 0) or 0))
+    c1_loss = _coverage_loss_count(metrics, 1)
+    c2_loss = _coverage_loss_count(metrics, 2)
     novelty = bool(metrics.get("mechanism_novel", False))
     candidate_type = str(metrics.get("candidate_type", ""))
     hard_guard_failed = not bool(metrics.get("hard_guard_passed", True))

@@ -79,6 +79,27 @@ def test_candidate_bucket_distinguishes_safe_probation_and_catastrophic():
     assert candidate_quality_bucket(candidate("catastrophic", accuracy_delta=-0.06), cfg) == "catastrophic"
 
 
+def test_fractional_coverage_rate_uses_real_loss_counts():
+    cfg = Config()
+    item = candidate("one-c1-loss", sequence=("weighted_scoring",))
+    item["metrics"].update({
+        "depth1_net_delta": -0.1,
+        "depth1_net_count": -1,
+        "depth1_loss_count": 1,
+        "depth2_net_delta": 0.0,
+        "depth2_net_count": 0,
+        "depth2_loss_count": 0,
+    })
+    assert candidate_quality_bucket(item, cfg) == "probation"
+
+
+def test_fractional_coverage_rate_without_count_is_never_truncated_to_safe():
+    cfg = Config()
+    item = candidate("legacy-rate", sequence=("weighted_scoring",))
+    item["metrics"].update({"depth1_net_delta": -0.1, "num_eval_samples": 10})
+    assert candidate_quality_bucket(item, cfg) == "probation"
+
+
 def test_candidate_type_cannot_self_report_mechanism_novelty_for_probation():
     cfg = Config()
     item = candidate("claimed-novel", "mechanism_alternative", accuracy_delta=-0.02, c1_delta=-1)
@@ -108,6 +129,21 @@ def test_mechanism_alternative_requires_observed_operation_change():
     assert not mechanism_is_novel(unchanged, parent)
     changed = candidate("changed", "mechanism_alternative", sequence=("weighted_scoring",))
     assert mechanism_is_novel(changed, parent)
+
+
+def test_generic_mechanism_steps_are_rejected_before_solver_evaluation():
+    item = candidate("generic", "mechanism_alternative", sequence=())
+    item["proposal"] = {
+        "candidate_type": "mechanism_alternative",
+        "mechanism_steps": [
+            "Produce a compact reasoning trace",
+            "Make the decision procedure visible",
+            "Proceed with logical reasoning carefully",
+            "Give exactly one final answer",
+        ],
+    }
+    reasons = cheap_prescreen(item, "parent", set())
+    assert "missing_substantive_mechanism_operation" in reasons
 
 
 def test_probation_parent_is_chosen_before_safe_niche_without_opportunity():

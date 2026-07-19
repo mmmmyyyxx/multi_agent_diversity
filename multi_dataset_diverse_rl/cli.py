@@ -485,6 +485,7 @@ def restore_system_state(system, state_payload):
     system.quality_diversity_archive_history = [dict(value) for value in state_payload.get("quality_diversity_archive_history", []) if isinstance(value, dict)]
     system.behavior_profile_history = [dict(value) for value in state_payload.get("behavior_profile_history", []) if isinstance(value, dict)]
     system.latest_joint_team_metrics = dict(state_payload.get("latest_joint_team_metrics", {}) or {})
+    system.joint_quality_anchor_metrics = dict(state_payload.get("joint_quality_anchor_metrics", {}) or {})
     for field in (
         "qd_no_diversification_epochs", "qd_change_limit_relaxed_epoch",
         "qd_previous_active_niche_count",
@@ -529,7 +530,7 @@ def restore_cost_summary(system):
         system.cost_summary = base
 
 
-CHECKPOINT_VERSION = 4
+CHECKPOINT_VERSION = 5
 
 # Fields that can change the objective, candidate distribution, optimizer
 # behavior, validation decision, or final aggregation of an interrupted run.
@@ -956,6 +957,7 @@ def build_training_checkpoint(
             "quality_diversity_archive_history": list(getattr(system, "quality_diversity_archive_history", [])),
             "behavior_profile_history": list(getattr(system, "behavior_profile_history", [])),
             "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
+            "joint_quality_anchor_metrics": dict(getattr(system, "joint_quality_anchor_metrics", {})),
             "total_agent_update_count": int(getattr(system, "total_agent_update_count", 0)),
             "task_repair_niche_occupancy_count": int(getattr(system, "task_repair_niche_occupancy_count", 0)),
             "mechanism_niche_occupancy_count": int(getattr(system, "mechanism_niche_occupancy_count", 0)),

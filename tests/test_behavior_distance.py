@@ -1,6 +1,26 @@
 from multi_dataset_diverse_rl.behavior_profiles import behavior_distance, build_team_behavior_profiles
 
 
+def test_behavior_distance_is_reflexive_symmetric_and_bounded():
+    left = {
+        "correctness_vector": [1, 0, 1, 0],
+        "error_vector": [0, 1, 0, 1],
+        "rescue_vector": [0, 1, 0, 0],
+        "answer_vector": ["A", "B", "A", "C"],
+    }
+    right = {
+        "correctness_vector": [0, 1, 1, 0],
+        "error_vector": [1, 0, 0, 1],
+        "rescue_vector": [1, 0, 0, 0],
+        "answer_vector": ["B", "A", "A", "D"],
+    }
+    assert behavior_distance(left, left)["behavior_distance"] == 0.0
+    forward = behavior_distance(left, right)["behavior_distance"]
+    backward = behavior_distance(right, left)["behavior_distance"]
+    assert forward == backward
+    assert 0.0 <= forward <= 1.0
+
+
 def test_no_rescue_support_has_zero_rescue_distance():
     left = {"correctness_vector": [0, 0], "error_vector": [1, 1], "rescue_vector": [0, 0]}
     right = {"correctness_vector": [0, 0], "error_vector": [1, 1], "rescue_vector": [0, 0]}

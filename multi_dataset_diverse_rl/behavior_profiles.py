@@ -87,11 +87,7 @@ def behavior_distance(
     rescue = reliability * _jaccard_distance(left_rescue, right_rescue, empty_distance=0.0)
     left_error, right_error = left.get("error_vector", []), right.get("error_vector", [])
     size = max(len(left_error), len(right_error), 1)
-    overlap = sum(
-        int(index < len(left_error) and int(left_error[index]) and index < len(right_error) and int(right_error[index]))
-        for index in range(size)
-    ) / size
-    shared_complementarity = 1.0 - overlap
+    error_set_distance = _jaccard_distance(left_error, right_error, empty_distance=0.0)
     left_answers = left.get("answer_vector", [])
     right_answers = right.get("answer_vector", [])
     both_wrong = same_wrong = 0
@@ -107,14 +103,15 @@ def behavior_distance(
     distance = (
         float(correct_set_weight) * correct
         + float(rescue_weight) * rescue
-        + float(shared_wrong_weight) * shared_complementarity
+        + float(shared_wrong_weight) * error_set_distance
         + float(wrong_answer_dispersion_weight) * wrong_dispersion
     )
     return {
         "correct_set_distance": float(correct),
         "rescue_distance": float(rescue),
         "rescue_reliability": float(reliability),
-        "shared_wrong_complementarity": float(shared_complementarity),
+        "error_set_distance": float(error_set_distance),
+        "shared_wrong_complementarity": float(error_set_distance),
         "wrong_answer_dispersion": float(wrong_dispersion),
         "behavior_distance": float(np.clip(distance, 0.0, 1.0)),
     }

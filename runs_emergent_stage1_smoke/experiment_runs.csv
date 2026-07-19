@@ -1,4 +1,0 @@
-answer_format,baseline_only,benchmark,dataset_format,elapsed_sec,init_mode,returncode,reward_mode,run_dir,seed,setting,status,task_id,task_type
-option_letter,0,BBH,mars,936.53,shared,0,vote_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_emergent_stage1_smoke\disambiguation_qa\shared_vote_pareto_tcs_seed42,42,shared_vote_pareto_tcs,ok,disambiguation_qa,bbh
-option_letter,0,BBH,mars,524.97,shared,0,vote_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_emergent_stage1_smoke\disambiguation_qa\shared_vote_pareto_tcs_cycle_guard_seed42,42,shared_vote_pareto_tcs_cycle_guard,ok,disambiguation_qa,bbh
-option_letter,0,BBH,mars,422.72,shared,0,vote_useful_diversity,D:\myx\grade_one\experiments\multi_agent_diversity\runs_emergent_stage1_smoke\disambiguation_qa\shared_vote_pareto_tcs_emergent_seed42,42,shared_vote_pareto_tcs_emergent,ok,disambiguation_qa,bbh

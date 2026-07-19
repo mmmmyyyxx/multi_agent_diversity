@@ -68,7 +68,7 @@ from .utils import (
 PARETO_EPSILON = 1e-12
 TCS_AUDIT_CONTEXT: ContextVar[Dict[str, Any]] = ContextVar("tcs_audit_context", default={})
 EXPERIMENT_PROTOCOL_VERSION = "vote_oriented_v7_residual_specialization"
-CHECKPOINT_VERSION = 4
+CHECKPOINT_VERSION = 5
 PLURALITY_BOUNDARY_VERSION = "plurality_boundary_v1"
 VOTE_CONTEXT_WEIGHTS = {
     BehaviorContext.TEAM_WRONG_PIVOTAL_FIX.value: 4.0,
@@ -601,6 +601,7 @@ class TraceBeamSearchSystem:
         self.peer_collapse_soft_count = 0
         self.peer_collapse_hard_rejection_count = 0
         self.latest_joint_team_metrics: Dict[str, Any] = {}
+        self.joint_quality_anchor_metrics: Dict[str, Any] = {}
         self.qd_no_diversification_epochs = 0
         self.qd_change_limit_relaxed_epoch = -1
         self.qd_previous_active_niche_count = 0
@@ -8415,8 +8416,10 @@ class TraceBeamSearchSystem:
                     "failure_stage": "candidate_evaluation",
                     "reasons": [str(item.get("metrics", {}).get("rejection_reason", item.get("archive_bucket", "")))],
                     "accuracy_delta": float(item.get("metrics", {}).get("accuracy_delta", 0.0) or 0.0),
-                    "depth1_gain_count": max(0, int(item.get("metrics", {}).get("depth1_net_delta", 0) or 0)),
-                    "depth1_loss_count": max(0, -int(item.get("metrics", {}).get("depth1_net_delta", 0) or 0)),
+                    "depth1_gain_count": int(item.get("metrics", {}).get("depth1_gain_count", 0) or 0),
+                    "depth1_loss_count": int(item.get("metrics", {}).get("depth1_loss_count", 0) or 0),
+                    "depth2_gain_count": int(item.get("metrics", {}).get("depth2_gain_count", 0) or 0),
+                    "depth2_loss_count": int(item.get("metrics", {}).get("depth2_loss_count", 0) or 0),
                 }
                 for item in evaluated if item.get("archive_bucket") != "safe"
             ]
@@ -9835,6 +9838,51 @@ class TraceBeamSearchSystem:
             incumbent_indices.append(next((index for index, profile in enumerate(beams[agent_id]) if profile["prompt_hash"] == current_hash), 0))
         incumbent = next(team for team in teams if team["beam_indices"] == incumbent_indices)
         initial_per_agent = list(self.initial_competence_probe_metrics.get("per_agent_acc", incumbent["per_agent_acc"]))
+        initial_profiles = list(self.initial_competence_probe_metrics.get("behavior_profiles", []))
+        initial_anchor = (
+            team_quality_metrics(
+                initial_profiles, gold_answers, question_hashes,
+                vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
+                tie_break_method=self.cfg.vote_tie_break, seed=self.cfg.seed,
+            )
+            if len(initial_profiles) == len(self.agents)
+            else incumbent
+        )
+        anchor_sources = [initial_anchor, incumbent]
+        previous_quality_anchor = dict(getattr(self, "joint_quality_anchor_metrics", {}) or {})
+        if previous_quality_anchor:
+            anchor_sources.append(previous_quality_anchor)
+        probe_size = max(len(probe_data), 1)
+        per_agent_anchor = [
+            max(
+                int(source.get("per_agent_correct_count", [0] * len(self.agents))[agent_id])
+                if agent_id < len(source.get("per_agent_correct_count", [])) else 0
+                for source in anchor_sources
+            )
+            for agent_id in range(len(self.agents))
+        ]
+        for agent_id, agent in enumerate(self.agents):
+            lineage_accuracy = float(agent.lineage_state.get("lineage_anchor_accuracy", -1.0) or -1.0)
+            if agent.lineage_state.get("lineage_status") == "committed" and lineage_accuracy >= 0.0:
+                per_agent_anchor[agent_id] = max(per_agent_anchor[agent_id], int(round(lineage_accuracy * probe_size)))
+        quality_anchor = {
+            "answer_vectors": incumbent["answer_vectors"],
+            "correctness_vectors": incumbent["correctness_vectors"],
+            "vote_correct_count": max(int(source.get("vote_correct_count", 0) or 0) for source in anchor_sources),
+            "total_agent_correct_count": max(int(source.get("total_agent_correct_count", 0) or 0) for source in anchor_sources),
+            "bottom2_correct_count": max(int(source.get("bottom2_correct_count", 0) or 0) for source in anchor_sources),
+            "coverage_depth_c1_correct_count": max(int(source.get("coverage_depth_c1_correct_count", 0) or 0) for source in anchor_sources),
+            "coverage_depth_c2_correct_count": max(int(source.get("coverage_depth_c2_correct_count", 0) or 0) for source in anchor_sources),
+            "per_agent_correct_count": per_agent_anchor,
+            "per_agent_acc": [value / probe_size for value in per_agent_anchor],
+        }
+        quality_anchor.update({
+            "vote_acc": quality_anchor["vote_correct_count"] / probe_size,
+            "mean_individual_acc": quality_anchor["total_agent_correct_count"] / (probe_size * len(self.agents)),
+            "bottom2_mean_acc": quality_anchor["bottom2_correct_count"] / (probe_size * min(2, len(self.agents))),
+            "coverage_depth_c1": quality_anchor["coverage_depth_c1_correct_count"] / probe_size,
+            "coverage_depth_c2": quality_anchor["coverage_depth_c2_correct_count"] / probe_size,
+        })
         joint_selection = select_stable_joint_team(
             teams, incumbent, initial_per_agent,
             [agent.lineage_state for agent in self.agents], len(probe_data), self.cfg,
@@ -9842,6 +9890,7 @@ class TraceBeamSearchSystem:
             vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
             tie_break_method=self.cfg.vote_tie_break, seed=self.cfg.seed,
             change_limit=self._current_joint_change_limit(epoch),
+            quality_anchor=quality_anchor,
         )
         selected = joint_selection["selected"]
         self.peer_collapse_soft_count += int(joint_selection["selected_has_soft_peer_collapse"])
@@ -9863,6 +9912,10 @@ class TraceBeamSearchSystem:
             selected_profile["cross_fold_behavior_gap"] = (
                 float(per_agent_fold_gaps[agent_id]) if agent_id < len(per_agent_fold_gaps) else 0.0
             )
+            fold_profiles = list(selected.get("per_agent_fold_specialization_profiles", []))
+            selected_profile["fold_specialization_profiles"] = [
+                list(fold[agent_id]) for fold in fold_profiles if agent_id < len(fold)
+            ]
             selected_profile["fold_behavior_stable"] = bool(
                 selected_profile["cross_fold_behavior_gap"] <= float(self.cfg.qd_readiness_max_fold_gap)
             )
@@ -9906,6 +9959,14 @@ class TraceBeamSearchSystem:
                 "c2_correct_count": int(self.cfg.joint_allowed_c2_loss_questions),
                 "per_agent_correct_count": int(self.cfg.joint_allowed_per_agent_correct_loss),
             },
+            "global_quality_anchor_metrics": {
+                key: quality_anchor[key]
+                for key in (
+                    "vote_correct_count", "total_agent_correct_count", "bottom2_correct_count",
+                    "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count",
+                    "per_agent_correct_count",
+                )
+            },
             "safe_archive_size_per_agent": [len(getattr(agent, "safe_qd_archive", [])) for agent in self.agents],
             "probation_archive_size_per_agent": [len(getattr(agent, "probation_archive", [])) for agent in self.agents],
             "selected_prompt_hashes": selected["prompt_hashes"], "selected_beam_sources": selected_sources,
@@ -9941,14 +10002,30 @@ class TraceBeamSearchSystem:
             "fold_a_diversity": float(fold_diversities[0]) if fold_diversities else 0.0,
             "fold_b_diversity": float(fold_diversities[1]) if len(fold_diversities) > 1 else 0.0,
         })
+        self.joint_quality_anchor_metrics = dict(quality_anchor)
+        for key in (
+            "vote_correct_count", "total_agent_correct_count", "bottom2_correct_count",
+            "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count",
+        ):
+            self.joint_quality_anchor_metrics[key] = max(
+                int(self.joint_quality_anchor_metrics.get(key, 0) or 0),
+                int(selected.get(key, 0) or 0),
+            )
+        self.joint_quality_anchor_metrics["per_agent_correct_count"] = [
+            max(int(anchor), int(current))
+            for anchor, current in zip(
+                self.joint_quality_anchor_metrics["per_agent_correct_count"],
+                selected.get("per_agent_correct_count", []),
+            )
+        ]
         actual_losses = {
-            key: max(0, int(record["incumbent_metrics"][key]) - int(record["selected_metrics"][key]))
+            key: max(0, int(record["global_quality_anchor_metrics"][key]) - int(record["selected_metrics"][key]))
             for key in ("vote_correct_count", "total_agent_correct_count", "bottom2_correct_count", "coverage_depth_c1_correct_count", "coverage_depth_c2_correct_count")
         }
         actual_losses["per_agent_correct_count"] = [
             max(0, int(before) - int(after))
             for before, after in zip(
-                record["incumbent_metrics"]["per_agent_correct_count"],
+                record["global_quality_anchor_metrics"]["per_agent_correct_count"],
                 record["selected_metrics"]["per_agent_correct_count"],
             )
         ]

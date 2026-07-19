@@ -29,3 +29,17 @@ def test_substantive_mechanism_change_has_larger_distance():
     elimination["mechanism_embedding"] = paraphrase["mechanism_embedding"] = [1.0, 0.0]
     alternative["mechanism_embedding"] = [0.0, 1.0]
     assert mechanism_distance(elimination, alternative)["mechanism_distance"] > mechanism_distance(elimination, paraphrase)["mechanism_distance"]
+
+
+def test_generic_student_steps_do_not_create_operation_niches():
+    rep = normalize_mechanism_representation("", [
+        "And",
+        "Produce a compact reasoning trace",
+        "Make the decision procedure visible",
+        "Proceed with logical reasoning carefully",
+        "Verify the answer",
+    ])
+    assert rep["canonical_operations"] == []
+    assert rep["normalized_operation_sequence"] == []
+    assert rep["semantic_residual_text"] == ""
+    assert rep["mechanism_embedding_text"] == ""

@@ -32,6 +32,15 @@ GENERIC_PROMPT_PATTERNS = (
     r"final_answer\s*:\s*<[^>]+>",
 )
 
+GENERIC_STEP_PATTERNS = (
+    r"^(?:and|then|next|finally)$",
+    r"(?:produce|provide|show|write).*(?:reasoning|trace)",
+    r"(?:make|show).*(?:procedure|reasoning).*(?:visible|explicit)",
+    r"(?:reason|think|proceed).*(?:carefully|logical|logically|step by step)",
+    r"(?:verify|check).*(?:answer|key logic|work)$",
+    r"(?:give|return|output).*(?:final answer|exactly one answer)",
+)
+
 
 def _clean_step(value: Any) -> str:
     text = str(value or "").strip().lower()
@@ -48,22 +57,33 @@ def normalize_operation(step: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "_", text).strip("_")
 
 
+def _canonical_operation(step: Any) -> str:
+    text = _clean_step(step)
+    for operation, needles in OPERATION_PATTERNS:
+        if any(needle in text for needle in needles):
+            return operation
+    return ""
+
+
+def _is_generic_step(step: str) -> bool:
+    return not step or any(re.search(pattern, step, flags=re.IGNORECASE) for pattern in GENERIC_STEP_PATTERNS)
+
+
 def normalize_mechanism_representation(prompt: str, mechanism_steps: Sequence[Any]) -> Dict[str, Any]:
     cleaned_steps = [_clean_step(step) for step in mechanism_steps if _clean_step(step)]
-    operations = [normalize_operation(step) for step in cleaned_steps]
-    operations = [operation for operation in operations if operation]
-    if not operations:
-        residual = str(prompt or "").lower()
-        for pattern in GENERIC_PROMPT_PATTERNS:
-            residual = re.sub(pattern, " ", residual, flags=re.IGNORECASE)
-        residual = re.sub(r"\s+", " ", residual).strip(" .;:-")
-        if residual:
-            operations = [normalize_operation(residual)]
-            cleaned_steps = [residual]
-    embedding_text = " ; ".join(operations)
+    specific_steps = [step for step in cleaned_steps if not _is_generic_step(step)]
+    operations = [operation for step in specific_steps if (operation := _canonical_operation(step))]
+    semantic_residuals = [step for step in specific_steps if not _canonical_operation(step)]
+    semantic_residual_text = " ; ".join(semantic_residuals)
+    embedding_parts = list(operations)
+    if semantic_residual_text:
+        embedding_parts.append(semantic_residual_text)
+    embedding_text = " ; ".join(embedding_parts)
     return {
+        "canonical_operations": list(operations),
         "normalized_operations": list(operations),
         "normalized_operation_sequence": list(operations),
+        "semantic_residual_text": semantic_residual_text,
         "normalized_mechanism_text": embedding_text,
         "mechanism_embedding_text": embedding_text,
         "mechanism_hash": hashlib.sha256(embedding_text.encode("utf-8")).hexdigest(),
