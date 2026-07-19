@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+import pytest
+
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
@@ -75,14 +77,101 @@ def _valid_student_candidate():
     }
 
 
-def test_critic_review_pass_truth_table():
+@pytest.mark.parametrize(
+    ("declared", "score", "expected"),
+    [
+        (True, 0.80, True),
+        (True, 0.60, False),
+        (False, 0.90, False),
+        ("true", 0.80, True),
+        ("TRUE", 0.80, True),
+        (" true ", 0.80, True),
+        ("true", 0.60, False),
+        ("false", 0.90, False),
+        ("FALSE", 0.90, False),
+        (" false ", 0.90, False),
+        ("yes", 0.90, False),
+        ("no", 0.90, False),
+        ("1", 0.90, False),
+        ("0", 0.90, False),
+        (1, 0.90, False),
+        (0, 0.90, False),
+        ([], 0.90, False),
+        ({}, 0.90, False),
+    ],
+)
+def test_critic_review_pass_strict_bool_truth_table(declared, score, expected):
     system = _system()
-    assert system._critic_review_passed({"passed": True, "score": 0.80}, 0.75)
-    assert not system._critic_review_passed({"passed": False, "score": 0.80}, 0.75)
-    assert not system._critic_review_passed({"passed": True, "score": 0.60}, 0.75)
+    assert system._critic_review_passed({"passed": declared, "score": score}, 0.75) is expected
+
+
+def test_critic_review_pass_missing_and_invalid_score_compatibility():
+    system = _system()
     assert system._critic_review_passed({"score": 0.80}, 0.75)
+    assert not system._critic_review_passed({"score": 0.60}, 0.75)
+    assert system._critic_review_passed({"passed": None, "score": 0.80}, 0.75)
     assert not system._critic_review_passed({"score": "invalid"}, 0.75)
-    assert not system._critic_review_passed({}, 0.75)
+    assert not system._critic_review_passed({"passed": True, "score": "invalid"}, 0.75)
+
+
+@pytest.mark.parametrize(
+    ("review", "expected_approved", "expected_rewrites"),
+    [
+        ({"passed": "true", "score": 0.82}, True, 0),
+        ({"score": 0.82}, True, 0),
+    ],
+)
+def test_teacher_direct_pass_accepts_strict_true_or_missing_passed(
+    review, expected_approved, expected_rewrites,
+):
+    system = _system(Config(method_version="v8_stable_qd_lineage"))
+    calls = {"rewrite": 0}
+
+    async def fake_teacher(*args, **kwargs):
+        return {"socratic_guiding_question": "Which constraint should be checked first?"}
+
+    async def fake_critic(*args, **kwargs):
+        return dict(review)
+
+    async def fake_rewrite(*args, **kwargs):
+        calls["rewrite"] += 1
+        return {"socratic_guiding_question": "Which revised constraint should be checked first?"}
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {}, 1))
+
+    assert approved["approved"] is expected_approved
+    assert calls["rewrite"] == expected_rewrites
+
+
+def test_teacher_string_false_cannot_direct_pass_and_uses_existing_rewrite_path():
+    system = _system(Config(method_version="v8_stable_qd_lineage"))
+    calls = {"critic": 0, "rewrite": 0}
+
+    async def fake_teacher(*args, **kwargs):
+        return {"socratic_guiding_question": "Which constraint should be checked first?"}
+
+    async def fake_critic(*args, **kwargs):
+        calls["critic"] += 1
+        if calls["critic"] == 1:
+            return {"passed": "false", "score": 0.82, "rewrite_instruction": "make it specific"}
+        return {"passed": False, "score": 0.40}
+
+    async def fake_rewrite(*args, **kwargs):
+        calls["rewrite"] += 1
+        return {"socratic_guiding_question": "Which named relation should be checked first?"}
+
+    system.propose_teacher_question = fake_teacher
+    system.critique_teacher_question = fake_critic
+    system.rewrite_teacher_question = fake_rewrite
+    approved = asyncio.run(system.generate_approved_teacher_question(0, "parent", {}, 1))
+
+    assert approved["approved"] is False
+    assert approved["teacher_question_forced_best_score"] is True
+    assert approved["teacher_question_forced_best_round"] == 1
+    assert calls == {"critic": 2, "rewrite": 1}
 
 
 def test_teacher_question_forced_best_uses_best_scored_teacher_question():

@@ -54,3 +54,20 @@ Before the formal three-seed run, the frozen code must pass:
 
 No formal run is launched by this checklist. After freezing, do not resume the
 acceptance directory with modified code or behavior arguments.
+
+## Final Boolean Freeze
+
+Critic direct pass uses strict optional boolean parsing. Only boolean/string
+true can approve when the score threshold also passes. False strings,
+numbers, lists, mappings, and unknown strings cannot approve. Missing or null
+`passed` remains compatible with historical score-only Critic output.
+Forced-best, rewrite thresholds, round counts, TCS/Open allocation, and every
+Stable-QD setting remain unchanged.
+
+After the `Harden V8 critic boolean validation` commit, run one clean 8/8/8,
+one-epoch `disambiguation_qa` execution smoke under
+`runs_v8_postcommit_clean_smoke_<frozen-short-sha>`. It supplements but does
+not replace the full 20/20/20 acceptance smoke. Do not launch the formal
+three-seed command until commit provenance, clean-tree metadata, artifacts,
+checkpoint cleanup, zero legacy refresh, and zero team-level solver calls are
+confirmed.

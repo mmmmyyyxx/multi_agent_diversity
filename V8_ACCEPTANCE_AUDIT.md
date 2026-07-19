@@ -138,3 +138,24 @@ capacity, candidate budgets, or refresh triggers.
 
 The final frozen commit SHA is reported with the release command. This audit
 keeps the source SHA above to avoid a self-referential commit hash.
+
+## Final Critic Boolean Hardening
+
+The final freeze accepts Critic direct-pass declarations only when `passed`
+is a real boolean `true` or a case-insensitive, whitespace-trimmed string
+`"true"`. Boolean/string false, numeric values, collections, and all other
+strings fail direct-pass validation. A missing or null field retains the
+legacy score-only compatibility path. Rewrite and forced-best score handling
+is unchanged.
+
+The deterministic suite contains 383 tests, including strict scalar parsing,
+invalid-score rejection, string false rewrite behavior, string true direct
+pass, and missing-field compatibility.
+
+The 20/20/20 two-epoch run in
+`runs_v8_preformal_acceptance_799df8c` remains the complete pre-commit
+Stable-QD acceptance. A separate 8/8/8 one-epoch clean-checkout smoke uses
+`runs_v8_postcommit_clean_smoke_<frozen-short-sha>` only to verify frozen SHA
+provenance, real API entry, artifact completion, and checkpoint cleanup. Its
+accuracy is not method evidence; exact post-commit values are reported from
+the untracked run artifacts after the frozen commit exists.

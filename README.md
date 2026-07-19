@@ -46,6 +46,12 @@ C1/C2 vote failures, top-tie wins/losses, and wrong-cluster concentration.
 These fields reuse the canonical plurality vote and do not affect reward or
 team selection.
 
+Critic direct approval uses strict optional boolean parsing. Boolean `true`
+and normalized string `"true"` are accepted declarations; false strings,
+numbers, collections, and unknown strings reject direct pass. Missing or null
+`passed` remains compatible with score-only historical Critic output.
+Rewrite and forced-best behavior is unchanged.
+
 ## Search-Space Preservation
 
 Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
@@ -168,6 +174,12 @@ refreshes, zero skipped refreshes, zero legacy refresh calls, and zero
 team-level solver calls. It produced Vote 0.55, Mean 0.54, Oracle 0.95, and
 Oracle-to-Vote conversion 0.5789. This is an execution-integrity check, not a
 formal result or method comparison.
+
+The 20/20/20 run above is the complete pre-commit acceptance smoke. The final
+frozen commit is additionally checked by one separate 8/8/8, one-epoch clean
+smoke under `runs_v8_postcommit_clean_smoke_<frozen-short-sha>`. That smaller
+run verifies Git provenance, real API execution, final artifacts, and
+checkpoint cleanup; its accuracy is not a method result.
 
 ## Metrics
 

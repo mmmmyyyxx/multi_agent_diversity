@@ -87,12 +87,22 @@ class CandidateGeneratorMixin:
             amount=raw_candidate_count,
         )
 
+    @staticmethod
+    def _parse_optional_strict_bool(value: Any) -> Optional[bool]:
+        if value is None:
+            return None
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value.strip().lower() == "true"
+        return False
+
     def _critic_review_passed(self, review: Mapping[str, Any], threshold: float) -> bool:
         score = self._safe_float(review.get("score", 0.0), 0.0)
-        declared_pass = review.get("passed")
+        declared_pass = self._parse_optional_strict_bool(review.get("passed"))
         if declared_pass is None:
             return score >= float(threshold)
-        return bool(declared_pass) and score >= float(threshold)
+        return declared_pass and score >= float(threshold)
 
     def _build_teacher_context(
         self,

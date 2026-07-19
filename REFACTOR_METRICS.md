@@ -51,7 +51,7 @@ functions where old imports must remain valid.
    never a component-wise synthetic team.
 
 Characterization tests lock all unrelated behavior. The deterministic
-pre-formal suite passes 362 tests; compileall and `git diff --check` also pass.
+pre-formal suite passes 383 tests; compileall and `git diff --check` also pass.
 
 ## Targeted Smoke
 
@@ -84,3 +84,17 @@ calls, and passed quality constraints. Representative profile counts matched
 representative counts; unprofiled Safe counts 1/0/0/0/2 remained permitted by
 dirty-shortlist coverage. This is execution-integrity evidence, not a method
 comparison or a formal accuracy claim.
+
+## Final Boolean Freeze
+
+The last algorithm-file change is limited to Critic `passed` parsing in
+`optimization/candidate_generator.py`. Truthy coercion was removed: boolean
+true and normalized string `"true"` are accepted, while false strings,
+numbers, containers, and unknown strings reject direct pass. Missing/null
+retains score-only compatibility. No Stable-QD objective, threshold, budget,
+allocation, archive, representative, refresh, or lineage behavior changed.
+
+The earlier 20/20/20 smoke remains the complete pre-commit acceptance. The
+post-commit 8/8/8 smoke is a clean-checkout provenance and artifact check only;
+its exact frozen SHA and runtime values are reported after commit without
+tracking the `runs_*` directory.
