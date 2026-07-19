@@ -138,7 +138,7 @@ The task runner also writes `accuracy_results.csv`, `accuracy_results.jsonl`, an
 
 ## Metrics
 
-Report plurality accuracy with mean individual accuracy, bottom-2, C1, C2, and oracle coverage. Stable-QD diagnostics include pairwise behavior and mechanism distance, lineage drift and status, peer collapse, feasible/frontier counts, selected active sources, niche occupancy, and stable specialization score.
+Report plurality accuracy with mean individual accuracy, bottom-2, C1, C2, and oracle coverage. Stable-QD diagnostics include pairwise behavior and mechanism distance, lineage drift and status, peer collapse, quality-floor/final-band counts, fold-quality rejections, selected active sources, niche occupancy, starvation, Probation conversion/expiry, and stable specialization score.
 
 Cost fields are reporting-only and never alter ranking or stop training.
 

@@ -350,6 +350,8 @@ class Config:
             "behavior_correct_set_weight",
             "behavior_rescue_weight",
             "behavior_shared_wrong_weight",
+            "behavior_error_overlap_weight",
+            "behavior_wrong_answer_dispersion_weight",
             "team_diversity_mean_behavior_weight",
             "team_diversity_min_behavior_weight",
             "team_diversity_mechanism_weight",
@@ -421,6 +423,14 @@ class Config:
             raise ValueError("peer_collapse_hard_similarity must be greater than peer_collapse_soft_similarity")
         if int(self.student_candidate_prompt_hard_max_chars) < int(self.student_candidate_prompt_soft_max_chars):
             raise ValueError("student_candidate_prompt_hard_max_chars must be >= soft max")
+        behavior_weight_sum = (
+            float(self.behavior_correct_set_weight)
+            + float(self.behavior_rescue_weight)
+            + float(self.behavior_error_overlap_weight)
+            + float(self.behavior_wrong_answer_dispersion_weight)
+        )
+        if abs(behavior_weight_sum - 1.0) > 1e-9:
+            raise ValueError(f"behavior distance weights must sum to 1, got {behavior_weight_sum}")
 
 
 def build_parser() -> argparse.ArgumentParser:

@@ -193,21 +193,21 @@ The probe cache key includes agent, prompt hash, solver model, question hash, pa
 
 For each team, the offline evaluator computes plurality accuracy, mean individual accuracy, bottom-2 accuracy, C1, C2, plurality margin, correctness vectors, and rescue profiles.
 
-## 13. Quality Feasibility And Frontier
+## 13. Quality Feasibility And Hierarchical Bands
 
-A team must remain within configured one-question tolerances of the incumbent on:
+A team must remain within configured integer-count tolerances of the incumbent on:
 
 ```text
 plurality accuracy, mean accuracy, bottom-2, C1, C2
 ```
 
-Each agent must also remain within `0.03` of its initial, incumbent, and committed-anchor accuracy where applicable.
+The active guard uses at most one lost vote question, one lost C1 question, one lost C2 question, two lost agent-question correct outcomes, one lost bottom-2 correct outcome, and two lost correct outcomes for any single agent. Both deterministic folds must also avoid catastrophic C1, C2, or total-correct regression.
 
-The feasible teams are reduced to a five-dimensional epsilon-Pareto quality frontier. Diversity is evaluated only on that frontier. If no frontier survives, the incumbent team is retained.
+The feasible teams are narrowed in order by vote, total agent correctness, bottom-2 correctness, C1, and C2 bands. Diversity is evaluated only in the final band. If a layer is empty it falls back to the preceding layer; if selection still has no candidate, the incumbent is retained. `quality_frontier_count` remains only as a compatibility field and equals the final-band count.
 
 ## 14. Team Complementarity
 
-For each frontier team:
+For each final-band team:
 
 ```text
 team_diversity_score =
@@ -219,14 +219,14 @@ team_diversity_score =
 
 The minimum pair term discourages a team where only some agents differentiate. Rescue balance is `1 - HHI` when rescue support exists and zero otherwise.
 
-Before any committed anchors exist, the team with the highest diversity score on the quality frontier is selected without self-lineage penalties. This is the symmetry-breaking phase.
+Before any committed anchors exist, the team with the highest stable diversity score in the final quality band is selected without self-lineage penalties. This is the symmetry-breaking phase.
 
 ## 15. Stable Lineages
 
 Each agent lineage is `uncommitted`, `provisional`, or `committed`.
 
-- Two consecutive quality-passing epochs in the same or nearby mechanism form a provisional lineage.
-- A third stable epoch commits it when behavior remains close and existing rescue support does not disappear.
+- The first fold-stable, quality-passing snapshot creates a provisional lineage.
+- A second consecutive stable snapshot commits it when behavior remains close and existing rescue support does not disappear.
 - A commitment at the final training epoch is logged as committed but not subsequently exercised.
 
 Only committed lineages receive drift constraints:
@@ -244,13 +244,15 @@ Committed peer anchors also impose a soft collapse penalty above similarity `0.8
 
 ## 16. Stable Team Score
 
-Within the quality frontier:
+Within the final hierarchical quality band:
 
 ```text
-stable_team_score = team_diversity_score
+stable_team_score = stable_diversity_score
                   - mean_lineage_drift_penalty
                   - mean_peer_collapse_penalty
 ```
+
+Here `stable_diversity_score = mean(fold_diversity) - 0.5 * abs(fold_A - fold_B)`. The active-change limit compares prompt hashes, allowing at most three changes early and two late, with a one-epoch relaxation after repeated no-diversification epochs.
 
 Tie-breaks are plurality, mean accuracy, bottom-2, C1, C2, fewer prompt changes, and prompt-hash order.
 

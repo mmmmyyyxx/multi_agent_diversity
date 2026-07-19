@@ -44,7 +44,15 @@ from .quality_diversity import (
     select_stable_joint_team,
     team_quality_metrics,
 )
-from .search_archive import candidate_quality_bucket, cheap_prescreen, refill_requirements, select_joint_representatives, select_reproduction_parent, select_safe_archive
+from .search_archive import (
+    candidate_quality_bucket,
+    cheap_prescreen,
+    mechanism_is_novel,
+    refill_requirements,
+    select_joint_representatives,
+    select_reproduction_parent,
+    select_safe_archive,
+)
 from .utils import (
     canonical_aggregation_mode,
     compute_gold_vote_diagnostics,
@@ -700,6 +708,7 @@ class TraceBeamSearchSystem:
             self.latest_competence_probe_metrics = dict(snapshot_metrics)
             self.specialization_strength = float(record["next_specialization_strength"])
             self.competence_phase_epoch = int(epoch) + 1
+            self._recompute_effective_residual_strength()
             return record
         values = [float(value) for value in (per_agent_acc or [])]
         ordered = sorted(values)
@@ -712,7 +721,27 @@ class TraceBeamSearchSystem:
             float(getattr(self.cfg, "competence_floor_high", 0.65)),
         )
         self.competence_phase_epoch = int(epoch) + 1
+        self._recompute_effective_residual_strength()
         return float(self.specialization_strength)
+
+    def _recompute_effective_residual_strength(self, qd_ready: Optional[bool] = None) -> float:
+        if not self._is_stable_qd_lineage():
+            self.effective_residual_strength = float(self.specialization_strength)
+            return self.effective_residual_strength
+        latest = dict(getattr(self, "latest_joint_team_metrics", {}) or {})
+        ready = bool(latest.get("qd_readiness_passed", False)) if qd_ready is None else bool(qd_ready)
+        self.effective_residual_strength = max(
+            float(self.specialization_strength),
+            float(self.cfg.residual_specialization_qd_floor) if ready else 0.0,
+        )
+        latest.update({
+            "competence_schedule_strength": float(self.specialization_strength),
+            "qd_residual_floor_applied": bool(ready and self.effective_residual_strength > self.specialization_strength),
+            "effective_residual_strength": float(self.effective_residual_strength),
+        })
+        if latest:
+            self.latest_joint_team_metrics = latest
+        return self.effective_residual_strength
 
     def _effective_progressive_weight(self, configured: float) -> float:
         if bool(getattr(self.cfg, "competence_progressive_residual_enabled", False)):
@@ -2119,16 +2148,21 @@ class TraceBeamSearchSystem:
     def _expire_probation_branches(self, epoch_id: int) -> int:
         expired = 0
         for agent in self.agents:
-            retained = []
-            update_count = sum(int(value or 0) for value in agent.optimizer_update_count_by_epoch.values())
-            for item in getattr(agent, "probation_archive", []):
-                born = int(item.get("probation_created_update", update_count) or update_count)
-                if update_count - born >= int(self.cfg.probation_archive_ttl_updates):
-                    expired += 1
-                else:
-                    retained.append(item)
-            agent.probation_archive = retained
+            expired += self._expire_agent_probation_branches(agent)
         self.probation_expired_count += expired
+        return expired
+
+    def _expire_agent_probation_branches(self, agent: AgentState) -> int:
+        retained = []
+        update_count = sum(int(value or 0) for value in agent.optimizer_update_count_by_epoch.values())
+        expired = 0
+        for item in getattr(agent, "probation_archive", []):
+            born = int(item.get("probation_created_update", update_count) or update_count)
+            if update_count - born >= int(self.cfg.probation_archive_ttl_updates):
+                expired += 1
+            else:
+                retained.append(item)
+        agent.probation_archive = retained
         return expired
 
     def expire_probation_branches(self, epoch_id: int) -> int:
@@ -2142,6 +2176,8 @@ class TraceBeamSearchSystem:
 
     def _select_stable_qd_parents(self, agent: AgentState, epoch_id: int) -> Tuple[List[Dict[str, Any]], List[str]]:
         """Keep active exploitation while guaranteeing archived niches reproduction turns."""
+        expired = self._expire_agent_probation_branches(agent)
+        self.probation_expired_count += expired
         active_hash = self._normalized_prompt_hash(agent.current_prompt)
         active = next(
             (item for item in getattr(agent, "safe_qd_archive", []) if str(item.get("prompt_hash", "")) == active_hash),
@@ -2165,6 +2201,22 @@ class TraceBeamSearchSystem:
             if source == "probation_niche":
                 agent.probation_parent_count += 1
         return parents, sources
+
+    def _mark_mechanism_novelty(
+        self,
+        item: Dict[str, Any],
+        *,
+        parent: Optional[Dict[str, Any]],
+        existing: Sequence[Dict[str, Any]],
+    ) -> bool:
+        novel = mechanism_is_novel(
+            item,
+            parent,
+            existing,
+            near_duplicate_threshold=float(self.cfg.mechanism_near_duplicate_similarity_threshold),
+        )
+        item.setdefault("metrics", {})["mechanism_novel"] = bool(novel)
+        return bool(novel)
 
     def _active_prompt_list(self) -> List[str]:
         prompts = []
@@ -4152,21 +4204,33 @@ class TraceBeamSearchSystem:
             if self._is_stable_qd_lineage() and bool(self.cfg.target_selector_fairness_enabled):
                 rows = diagnosis.get("hybrid_selector_diagnostics", [])
                 positive = [row for row in rows if float(row.get("hybrid_target_score", 0.0) or 0.0) > 0.0]
-                if positive:
-                    epoch = int(getattr(self, "competence_phase_epoch", 1))
+                epoch = int(getattr(self, "competence_phase_epoch", 1))
+                minimum = int(self.cfg.min_optimizer_updates_per_agent_per_epoch)
+                under_minimum = [
+                    row for row in positive
+                    if int(self.per_agent_optimizer_update_count.get(f"{epoch}:{int(row['agent_id'])}", 0)) < minimum
+                ]
+                if not positive:
+                    diagnosis["fairness_slot_selected"] = None
+                    diagnosis["fairness_slot_skipped_no_evidence"] = True
+                elif under_minimum:
                     fairness = min(
-                        positive,
+                        under_minimum,
                         key=lambda row: (
                             int(self.per_agent_optimizer_update_count.get(f"{epoch}:{int(row['agent_id'])}", 0)),
                             -float(row.get("hybrid_target_score", 0.0) or 0.0), int(row["agent_id"]),
                         ),
                     )
                     fairness_id = int(fairness["agent_id"])
-                    if fairness_id not in selected:
-                        selected = (selected[:1] + [fairness_id])[:2]
-                        diagnosis["fairness_slot_selected"] = fairness_id
-                    else:
-                        diagnosis["fairness_slot_selected"] = None
+                    selected = (selected[:1] + ([fairness_id] if fairness_id not in selected[:1] else selected[1:2]))[:2]
+                    diagnosis["fairness_slot_selected"] = fairness_id
+                    diagnosis["fairness_slot_skipped_no_evidence"] = False
+                else:
+                    selected = [int(row["agent_id"]) for row in sorted(
+                        positive, key=lambda row: (-float(row.get("hybrid_target_score", 0.0) or 0.0), int(row["agent_id"])),
+                    )[:2]]
+                    diagnosis["fairness_slot_selected"] = None
+                    diagnosis["fairness_slot_skipped_no_evidence"] = False
             return selected
         if bool(getattr(self.cfg, "boundary_selector_enabled", False)):
             return self._select_boundary_reward_agents(diagnosis)
@@ -4226,7 +4290,6 @@ class TraceBeamSearchSystem:
         gaps = diagnosis.get("capability_coverage_gap", {})
         diagnostics: List[Dict[str, Any]] = []
         ids = list(range(len(self.agents)))
-        random.shuffle(ids)
         scored: List[Tuple[float, int]] = []
         for agent_id in ids:
             family_pressure = pressure[agent_id] if agent_id < len(pressure) and isinstance(pressure[agent_id], dict) else {}
@@ -4259,7 +4322,7 @@ class TraceBeamSearchSystem:
             })
             if score > 0.0:
                 scored.append((float(score), agent_id))
-        scored.sort(key=lambda row: row[0], reverse=True)
+        scored.sort(key=lambda row: (-row[0], row[1]))
         selected = [agent_id for _, agent_id in scored[: (2 if len(scored) >= 2 else 1)]]
         for row in diagnostics:
             row["selected"] = int(row["agent_id"]) in selected
@@ -7997,6 +8060,10 @@ class TraceBeamSearchSystem:
                     candidate,
                     self._normalized_prompt_hash(str(candidate.get("parent_prompt", agent.current_prompt))),
                     prescreen_seen,
+                    parent=next(
+                        (parent for parent in beam if str(parent.get("id", "")) == str(candidate.get("parent_id", ""))),
+                        None,
+                    ),
                 )
                 if reasons:
                     candidate["cheap_prescreen_reasons"] = reasons
@@ -8244,9 +8311,13 @@ class TraceBeamSearchSystem:
                 item["pareto_selected"] = False
                 item["pareto_forced_fallback"] = False
         if self._is_stable_qd_lineage():
+            existing_niches = list(getattr(agent, "safe_qd_archive", [])) + list(getattr(agent, "probation_archive", []))
             for item in evaluated:
                 item["is_incumbent"] = str(item.get("prompt_hash", "")) == self._normalized_prompt_hash(agent.current_prompt)
+                parent = next((row for row in beam if str(row.get("id", "")) == str(item.get("parent_id", ""))), None)
+                self._mark_mechanism_novelty(item, parent=parent, existing=existing_niches)
                 item["archive_bucket"] = "safe" if item["is_incumbent"] else candidate_quality_bucket(item, self.cfg)
+                existing_niches.append(item)
             safe_archive = select_safe_archive(
                 [*getattr(agent, "safe_qd_archive", []), *evaluated],
                 self._normalized_prompt_hash(agent.current_prompt), int(self.cfg.qd_archive_size_per_agent),
@@ -8275,6 +8346,8 @@ class TraceBeamSearchSystem:
             refill_actual_candidate_count = 0
             refill_trigger_reasons = list(requirements.get("missing", []))
             refill_stop_reason = "requirements_met" if requirements.get("met") else "max_rounds_reached"
+            refill_solver_calls = 0
+            refill_solver_call_limit_reached = False
             prior_probation_ids = {
                 str(item.get("id", self._hash(str(item.get("prompt", "")))))
                 for item in getattr(agent, "probation_archive", [])
@@ -8295,15 +8368,26 @@ class TraceBeamSearchSystem:
                 and not requirements.get("met")
                 and refill_round_count < int(self.cfg.candidate_refill_max_rounds)
             ):
+                active_parent = beam[0]
+                active_parent_id = str(active_parent.get("id", self._hash(agent.current_prompt)))
+                parent_unique_count = sum(
+                    1 for item in evaluated
+                    if item.get("candidate_pool_source") == "optimizer"
+                    and str(item.get("parent_id", "")) == active_parent_id
+                )
+                remaining_unique_slots = int(self.cfg.candidate_refill_max_unique_candidates_per_parent) - parent_unique_count
+                if remaining_unique_slots <= 0:
+                    refill_stop_reason = "max_unique_candidates_reached"
+                    break
                 refill_round_count += 1
-                refill_requested_candidate_count += int(self.cfg.candidate_refill_candidates_per_round)
+                round_candidate_limit = min(int(self.cfg.candidate_refill_candidates_per_round), remaining_unique_slots)
+                refill_requested_candidate_count += round_candidate_limit
                 refill_feedback = {
                     "refill_round": refill_round_count,
                     "required_candidate_types_missing": list(requirements.get("missing", [])),
                     "previous_candidate_failures": prior_failures[-6:],
                     "preserve_successes": ["Preserve competence and any valid mechanism steps from safe candidates."],
                 }
-                active_parent = beam[0]
                 refill_job = {
                     "parent_idx": 0, "parent": active_parent,
                     "parent_prompt": str(active_parent.get("prompt", agent.current_prompt)),
@@ -8312,8 +8396,11 @@ class TraceBeamSearchSystem:
                 }
                 refill_result = await propose_for_parent(refill_job)
                 proposals = refill_result.get("proposals", []) if isinstance(refill_result.get("proposals", []), list) else []
+                if not proposals:
+                    refill_stop_reason = "optimizer_failure"
+                    break
                 new_candidates = []
-                for index, proposal in enumerate(proposals[: int(self.cfg.candidate_refill_candidates_per_round)]):
+                for index, proposal in enumerate(proposals[:round_candidate_limit]):
                     prompt = str(proposal.get("candidate_prompt", "")).strip()
                     prompt, _ = self._sanitize_prompt(prompt, agent_id)
                     candidate = {
@@ -8327,7 +8414,12 @@ class TraceBeamSearchSystem:
                         "refill_candidate": True,
                         "proposal": proposal,
                     }
-                    prescreen = cheap_prescreen(candidate, self._normalized_prompt_hash(refill_job["parent_prompt"]), seen)
+                    prescreen = cheap_prescreen(
+                        candidate,
+                        self._normalized_prompt_hash(refill_job["parent_prompt"]),
+                        seen,
+                        parent=active_parent,
+                    )
                     if prescreen:
                         candidate["cheap_prescreen_reasons"] = prescreen
                         prior_failures.append({"candidate_type": str(proposal.get("candidate_type", "")), "failure_stage": "cheap_prescreen", "reasons": prescreen})
@@ -8338,9 +8430,16 @@ class TraceBeamSearchSystem:
                     refill_stop_reason = "no_new_unique_candidate"
                     break
                 refill_actual_candidate_count += len(new_candidates)
-                if str(self.cfg.candidate_eval_execution_mode) == "factorized_cached":
+                solver_cap = int(self.cfg.candidate_refill_max_solver_calls_per_agent_update)
+                if str(self.cfg.candidate_eval_execution_mode) == "factorized_cached" and solver_cap <= 0:
                     await self._prewarm_factorized_candidate_rollouts(agent_id=agent_id, eval_batch=eval_batch, peer_prompts=peer_prompts, candidate_pool=new_candidates)
                 for candidate in new_candidates:
+                    # Peer rows are already warm; one target prompt can require at most one call per eval question.
+                    candidate_call_upper_bound = len(eval_batch)
+                    if solver_cap > 0 and refill_solver_calls + candidate_call_upper_bound > solver_cap:
+                        refill_stop_reason = "max_unique_candidates_reached"
+                        refill_solver_call_limit_reached = True
+                        break
                     metrics = await self.evaluate_candidate_prompt(agent_id, candidate["prompt"], peer_prompts, eval_batch, role_spec=candidate["proposal"], baseline_homogeneous_cases=baseline_cases)
                     candidate["metrics"] = metrics
                     candidate["reward"] = float(metrics.get("reward", 0.0) or 0.0)
@@ -8350,8 +8449,17 @@ class TraceBeamSearchSystem:
                         "mechanism_steps": list(proposal.get("mechanism_steps", [])),
                     })
                     self._attach_stable_mechanism_representation(candidate)
+                    self._mark_mechanism_novelty(
+                        candidate,
+                        parent=active_parent,
+                        existing=[*getattr(agent, "safe_qd_archive", []), *getattr(agent, "probation_archive", []), *evaluated],
+                    )
                     candidate["archive_bucket"] = candidate_quality_bucket(candidate, self.cfg)
                     evaluated.append(candidate)
+                    refill_solver_calls += int(metrics.get("solver_calls", 0) or 0)
+                if solver_cap > 0 and refill_solver_calls >= solver_cap:
+                    refill_solver_call_limit_reached = True
+                    break
                 requirements = refill_requirements(evaluated, self.cfg)
                 if requirements.get("met") and bool(self.cfg.candidate_refill_stop_when_requirements_met):
                     refill_stop_reason = "requirements_met"
@@ -8373,6 +8481,8 @@ class TraceBeamSearchSystem:
                 "refill_actual_candidate_count": refill_actual_candidate_count,
                 "refill_trigger_reasons": refill_trigger_reasons,
                 "refill_stop_reason": refill_stop_reason,
+                "refill_solver_call_budget_used": refill_solver_calls,
+                "refill_solver_call_limit_reached": bool(refill_solver_call_limit_reached),
                 **requirements,
             })
             for item in evaluated:
@@ -8380,6 +8490,11 @@ class TraceBeamSearchSystem:
                 item["archive_bucket"] = "safe" if item["is_incumbent"] else candidate_quality_bucket(item, self.cfg)
                 if item.get("archive_bucket") == "safe" and str(item.get("parent_id", "")) in prior_probation_ids:
                     self.probation_to_safe_conversion_count += 1
+            converted_parent_ids = {
+                str(item.get("parent_id", ""))
+                for item in evaluated
+                if item.get("archive_bucket") == "safe" and str(item.get("parent_id", "")) in prior_probation_ids
+            }
             agent.safe_qd_archive = select_safe_archive(
                 [*getattr(agent, "safe_qd_archive", []), *evaluated],
                 self._normalized_prompt_hash(agent.current_prompt), int(self.cfg.qd_archive_size_per_agent),
@@ -8387,7 +8502,11 @@ class TraceBeamSearchSystem:
             new_probation = [item for item in evaluated if item.get("archive_bucket") == "probation"]
             for item in new_probation:
                 item.setdefault("probation_created_update", int(agent_update_turn))
-            agent.probation_archive = (new_probation + list(getattr(agent, "probation_archive", [])))[: int(self.cfg.probation_archive_size_per_agent)]
+            retained_probation = [
+                item for item in getattr(agent, "probation_archive", [])
+                if str(item.get("id", self._hash(str(item.get("prompt", ""))))) not in converted_parent_ids
+            ]
+            agent.probation_archive = (new_probation + retained_probation)[: int(self.cfg.probation_archive_size_per_agent)]
             self._refresh_joint_representatives(agent)
             selected = list(agent.prompt_beam)
             starvation = requirements["safe_non_incumbent_count"] == 0
@@ -9163,12 +9282,36 @@ class TraceBeamSearchSystem:
             selected = self.select_reward_agents_for_update(diagnosis, metrics)
             no_selection_reason = "no_reward_relevant_agent"
         if self._is_v82_hybrid():
+            for row in diagnosis.get("hybrid_selector_diagnostics", []):
+                row["selected"] = int(row.get("agent_id", -1)) in selected
+            missed_niche_agents = []
+            if self._is_stable_qd_lineage():
+                for agent_id, agent in enumerate(self.agents):
+                    if agent_id in selected:
+                        continue
+                    active_hash = self._normalized_prompt_hash(agent.current_prompt)
+                    has_branch = any(
+                        str(item.get("prompt_hash", "")) != active_hash
+                        for item in getattr(agent, "safe_qd_archive", [])
+                    ) or bool(getattr(agent, "probation_archive", []))
+                    if has_branch:
+                        missed_niche_agents.append(agent_id)
+                diagnosis["niche_parent_opportunity_missed_due_to_agent_not_selected"] = missed_niche_agents
             selector_event = {
                 "epoch": int(epoch_id),
                 "step": int(step_id),
                 "applied_specialization_strength": float(getattr(self, "specialization_strength", 0.0)),
                 "weights": dict(diagnosis.get("hybrid_selector_weights", {})),
                 "agents": list(diagnosis.get("hybrid_selector_diagnostics", [])),
+                "fairness_slot_selected": diagnosis.get("fairness_slot_selected"),
+                "fairness_slot_skipped_no_evidence": bool(diagnosis.get("fairness_slot_skipped_no_evidence", False)),
+                "per_agent_optimizer_update_count": {
+                    str(agent_id): int(self.per_agent_optimizer_update_count.get(f"{epoch_id}:{agent_id}", 0))
+                    for agent_id in range(len(self.agents))
+                },
+                "niche_parent_opportunity_missed_due_to_agent_not_selected": list(
+                    diagnosis.get("niche_parent_opportunity_missed_due_to_agent_not_selected", [])
+                ),
             }
             self.hybrid_selector_history.append(selector_event)
             self.update_logs.append({**self._base_log_fields(), "event": "hybrid_target_selection", **selector_event})
@@ -9634,19 +9777,35 @@ class TraceBeamSearchSystem:
             selected_sources.append(str(chosen.get("beam_slot", chosen.get("metrics", {}).get("beam_slot", "incumbent"))))
             selected_profile = selected["prompt_profiles"][agent_id]
             selected_profile["behavior_profile"] = selected["behavior_profiles"][agent_id]
+            selected_profile["cross_fold_diversity_gap"] = float(selected.get("cross_fold_diversity_gap", 0.0))
+            selected_profile["fold_quality_gate_passed"] = bool(selected.get("fold_quality_gate_passed", True))
+            per_agent_fold_gaps = list(selected.get("per_agent_cross_fold_behavior_gap", []))
+            selected_profile["cross_fold_behavior_gap"] = (
+                float(per_agent_fold_gaps[agent_id]) if agent_id < len(per_agent_fold_gaps) else 0.0
+            )
+            selected_profile["fold_behavior_stable"] = bool(
+                selected_profile["cross_fold_behavior_gap"] <= float(self.cfg.qd_readiness_max_fold_gap)
+            )
             selected_drift = selected_profile.get("lineage_drift", {})
             agent.lineage_state["last_lineage_drift"] = float(selected_drift.get("lineage_drift", 0.0) or 0.0)
             lineage_record = update_lineage_state(
-                agent.lineage_state, selected_profile, epoch=epoch, quality_gate_passed=True, config=self.cfg,
+                agent.lineage_state,
+                selected_profile,
+                epoch=epoch,
+                quality_gate_passed=bool(selected.get("fold_quality_gate_passed", True)),
+                config=self.cfg,
             )
             agent.lineage_state = {key: value for key, value in lineage_record.items() if key not in {"old_status", "new_status", "reason"}}
             self.lineage_history.append({"epoch": epoch, "agent_id": agent_id, **lineage_record})
         record = {
             "epoch": epoch, "combination_count": len(teams),
             "feasible_count": int(joint_selection["feasible_count"]),
+            "quality_floor_feasible_count": int(joint_selection.get("quality_floor_feasible_count", joint_selection["feasible_count"])),
             "quality_frontier_count": int(joint_selection["quality_frontier_count"]),
+            "final_candidate_team_count": int(joint_selection.get("final_candidate_team_count", joint_selection["quality_frontier_count"])),
             "hierarchical_band_counts": list(joint_selection.get("hierarchical_band_counts", [])),
             "combination_rejected_by_change_limit_count": int(joint_selection.get("combination_rejected_by_change_limit_count", 0)),
+            "fold_quality_rejection_count": int(joint_selection.get("fold_quality_rejection_count", 0)),
             "incumbent_metrics": {key: incumbent[key] for key in QUALITY_KEYS},
             "selected_metrics": {key: selected[key] for key in QUALITY_KEYS},
             "selected_prompt_hashes": selected["prompt_hashes"], "selected_beam_sources": selected_sources,
@@ -9656,6 +9815,8 @@ class TraceBeamSearchSystem:
             "min_behavior_distance": selected["min_behavior_distance"],
             "mean_mechanism_distance": selected["mean_mechanism_distance"],
             "fold_diversities": list(selected.get("fold_diversities", [])),
+            "fold_quality_gate_passed": bool(selected.get("fold_quality_gate_passed", True)),
+            "per_agent_cross_fold_behavior_gap": list(selected.get("per_agent_cross_fold_behavior_gap", [])),
             "cross_fold_diversity_mean": float(selected.get("cross_fold_diversity_mean", 0.0)),
             "cross_fold_diversity_gap": float(selected.get("cross_fold_diversity_gap", 0.0)),
             "stable_diversity_score": float(selected.get("stable_diversity_score", 0.0)),
@@ -9689,10 +9850,7 @@ class TraceBeamSearchSystem:
             and float(record.get("stable_diversity_score", 0.0)) >= float(self.cfg.qd_readiness_min_diversity)
             and float(record.get("cross_fold_diversity_gap", 0.0)) <= float(self.cfg.qd_readiness_max_fold_gap)
         )
-        self.effective_residual_strength = max(
-            float(self.specialization_strength),
-            float(self.cfg.residual_specialization_qd_floor) if qd_ready else 0.0,
-        )
+        self._recompute_effective_residual_strength(qd_ready)
         record.update({
             "qd_readiness_passed": bool(qd_ready),
             "safe_distinct_mechanism_niche_count": len(safe_niches),
@@ -9703,6 +9861,7 @@ class TraceBeamSearchSystem:
             "qd_residual_floor_applied": bool(qd_ready and self.effective_residual_strength > self.specialization_strength),
             "effective_residual_strength": float(self.effective_residual_strength),
         })
+        self.latest_joint_team_metrics = dict(record)
         active_niches = len({
             tuple(profile["mechanism_representation"].get("normalized_operation_sequence", [])[:4])
             for profile in selected["prompt_profiles"]
@@ -10118,6 +10277,10 @@ class TraceBeamSearchSystem:
                 "joint_team_combination_count": int(latest.get("combination_count", 0) or 0),
                 "joint_team_feasible_count": int(latest.get("feasible_count", 0) or 0),
                 "joint_team_quality_frontier_count": int(latest.get("quality_frontier_count", 0) or 0),
+                "joint_team_quality_floor_feasible_count": int(latest.get("quality_floor_feasible_count", latest.get("feasible_count", 0)) or 0),
+                "joint_team_final_candidate_count": int(latest.get("final_candidate_team_count", latest.get("quality_frontier_count", 0)) or 0),
+                "joint_team_change_limit_rejection_count": int(latest.get("combination_rejected_by_change_limit_count", 0) or 0),
+                "joint_team_fold_quality_rejection_count": int(latest.get("fold_quality_rejection_count", 0) or 0),
                 "joint_team_selected_diversity_score": float(latest.get("team_diversity_score", 0.0) or 0.0),
                 "joint_team_selected_stability_score": float(latest.get("stable_team_score", 0.0) or 0.0),
                 "active_from_incumbent_count": list(latest.get("selected_beam_sources", [])).count("incumbent"),
@@ -10135,6 +10298,11 @@ class TraceBeamSearchSystem:
                 "active_team_selector_version": self.cfg.active_team_selector_version,
                 "lineage_policy_version": self.cfg.lineage_policy_version,
                 "mechanism_distance_version": self.cfg.mechanism_distance_version,
+                "candidate_refill_version": self.cfg.candidate_refill_version,
+                "archive_policy_version": self.cfg.archive_policy_version,
+                "joint_quality_filter_version": self.cfg.joint_quality_filter_version,
+                "probe_stability_version": self.cfg.probe_stability_version,
+                "parent_selection_version": self.cfg.parent_selection_version,
             })
         initial_probe = dict(getattr(self, "initial_competence_probe_metrics", {}) or {})
         final_probe = dict(getattr(self, "latest_competence_probe_metrics", {}) or initial_probe)

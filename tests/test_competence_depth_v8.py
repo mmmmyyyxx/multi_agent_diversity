@@ -490,6 +490,54 @@ def test_v82_hybrid_selector_increases_boundary_weight_late():
     assert diagnosis["hybrid_selector_weights"]["individual_error_rate"] > 0
 
 
+def _fairness_diagnosis(scores):
+    return {
+        "hybrid_selector_diagnostics": [
+            {"agent_id": agent_id, "hybrid_target_score": float(score)}
+            for agent_id, score in enumerate(scores)
+        ]
+    }
+
+
+def test_stable_qd_fairness_slot_prioritizes_positive_agent_below_minimum(monkeypatch):
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    system.competence_phase_epoch = 1
+    system.per_agent_optimizer_update_count = {"1:0": 2, "1:1": 2, "1:2": 0}
+    diagnosis = _fairness_diagnosis([1.0, 0.9, 0.2, 0.0, 0.0])
+    monkeypatch.setattr(system, "_select_hybrid_reward_agents", lambda _: [0, 1])
+    assert system.select_reward_agents_for_update(diagnosis, {}) == [0, 2]
+    assert diagnosis["fairness_slot_selected"] == 2
+
+
+def test_stable_qd_fairness_returns_to_score_after_minimum_is_met(monkeypatch):
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    system.competence_phase_epoch = 1
+    system.per_agent_optimizer_update_count = {f"1:{agent_id}": 1 for agent_id in range(5)}
+    diagnosis = _fairness_diagnosis([1.0, 0.9, 0.2, 0.0, 0.0])
+    monkeypatch.setattr(system, "_select_hybrid_reward_agents", lambda _: [0, 1])
+    assert system.select_reward_agents_for_update(diagnosis, {}) == [0, 1]
+    assert diagnosis["fairness_slot_selected"] is None
+
+
+def test_stable_qd_fairness_skips_when_no_positive_evidence(monkeypatch):
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    diagnosis = _fairness_diagnosis([0.0] * 5)
+    monkeypatch.setattr(system, "_select_hybrid_reward_agents", lambda _: [])
+    assert system.select_reward_agents_for_update(diagnosis, {}) == []
+    assert diagnosis["fairness_slot_skipped_no_evidence"] is True
+
+
+def test_effective_residual_floor_recomputes_after_schedule_update(monkeypatch):
+    system = make_system(hybrid_config(method_version="v8_stable_qd_lineage"))
+    system.latest_joint_team_metrics = {"qd_readiness_passed": True}
+    system.specialization_strength = 0.0
+    system._recompute_effective_residual_strength()
+    assert system.effective_residual_strength == system.cfg.residual_specialization_qd_floor
+    system.latest_joint_team_metrics["qd_readiness_passed"] = False
+    system._recompute_effective_residual_strength()
+    assert system.effective_residual_strength == system.specialization_strength
+
+
 def test_v82_case_batches_keep_general_creation_boundary_and_residual_evidence():
     system = make_system(hybrid_config(max_homogeneous_cases_per_agent=4, random_window_cases_per_agent=2))
     system.specialization_strength = 0.5

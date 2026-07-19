@@ -5,7 +5,49 @@ from typing import Any, Dict, Iterable, List, Sequence
 from .mechanisms import mechanism_distance, mechanism_niche_key, mechanisms_are_near_duplicate
 
 
-def cheap_prescreen(candidate: Dict[str, Any], parent_prompt_hash: str, seen_hashes: Iterable[str]) -> List[str]:
+def _operation_sequence(item: Dict[str, Any]) -> List[str]:
+    metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), dict) else {}
+    proposal = item.get("proposal", {}) if isinstance(item.get("proposal", {}), dict) else {}
+    representation = metrics.get("mechanism_representation", {})
+    values = representation.get(
+        "normalized_operation_sequence",
+        proposal.get("mechanism_steps", metrics.get("mechanism_steps", [])),
+    )
+    return [str(value).strip().lower() for value in values if str(value).strip()] if isinstance(values, list) else []
+
+
+def mechanism_is_novel(
+    item: Dict[str, Any],
+    parent: Dict[str, Any] | None = None,
+    existing: Sequence[Dict[str, Any]] = (),
+    *,
+    near_duplicate_threshold: float = 0.97,
+) -> bool:
+    """Require an observed operation change that is not an existing niche duplicate."""
+    representation = item.get("metrics", {}).get("mechanism_representation", {})
+    sequence = _operation_sequence(item)
+    if not sequence:
+        return False
+    if parent is not None and sequence == _operation_sequence(parent):
+        return False
+    return not any(
+        mechanisms_are_near_duplicate(
+            representation,
+            other.get("metrics", {}).get("mechanism_representation", {}),
+            near_duplicate_threshold,
+        )
+        for other in existing
+        if other is not item
+    )
+
+
+def cheap_prescreen(
+    candidate: Dict[str, Any],
+    parent_prompt_hash: str,
+    seen_hashes: Iterable[str],
+    *,
+    parent: Dict[str, Any] | None = None,
+) -> List[str]:
     prompt = str(candidate.get("prompt", "")).strip()
     metrics = candidate.get("metrics", {}) if isinstance(candidate.get("metrics", {}), dict) else {}
     proposal = candidate.get("proposal", {}) if isinstance(candidate.get("proposal", {}), dict) else {}
@@ -31,6 +73,8 @@ def cheap_prescreen(candidate: Dict[str, Any], parent_prompt_hash: str, seen_has
     steps = proposal.get("mechanism_steps", metrics.get("mechanism_steps", []))
     if not isinstance(steps, list) or not steps:
         reasons.append("missing_mechanism_steps")
+    elif candidate_type == "mechanism_alternative" and parent is not None and _operation_sequence(candidate) == _operation_sequence(parent):
+        reasons.append("mechanism_operation_unchanged")
     return reasons
 
 
@@ -40,8 +84,7 @@ def candidate_quality_bucket(item: Dict[str, Any], config: Any) -> str:
     accuracy_loss = max(0.0, -float(metrics.get("accuracy_delta", 0.0) or 0.0))
     c1_loss = max(0, -int(metrics.get("depth1_net_delta", 0) or 0))
     c2_loss = max(0, -int(metrics.get("depth2_net_delta", 0) or 0))
-    representation = metrics.get("mechanism_representation", {})
-    novelty = bool(representation.get("normalized_operation_sequence"))
+    novelty = bool(metrics.get("mechanism_novel", False))
     hard_guard_failed = not bool(metrics.get("hard_guard_passed", True))
     invalid_guard_failed = not bool(metrics.get("invalid_guard_passed", True))
     if rejection or hard_guard_failed or invalid_guard_failed or accuracy_loss > float(config.catastrophic_target_accuracy_loss_epsilon) or c1_loss >= int(config.candidate_c1_catastrophic_loss_questions) or c2_loss >= int(config.candidate_c2_catastrophic_loss_questions):
@@ -62,11 +105,7 @@ def candidate_quality_bucket(item: Dict[str, Any], config: Any) -> str:
 def refill_requirements(items: Sequence[Dict[str, Any]], config: Any) -> Dict[str, Any]:
     safe = [item for item in items if item.get("archive_bucket") == "safe" and not bool(item.get("is_incumbent", False))]
     task_repair = [item for item in safe if str(item.get("metrics", {}).get("candidate_type", "")) == "task_specific_repair"]
-    distinct = [
-        item for item in safe
-        if str(item.get("metrics", {}).get("candidate_type", "")) == "mechanism_alternative"
-        or bool(item.get("metrics", {}).get("mechanism_representation", {}).get("normalized_operation_sequence", []))
-    ]
+    distinct = [item for item in safe if bool(item.get("metrics", {}).get("mechanism_novel", False))]
     missing = []
     if len(safe) < int(config.candidate_refill_min_safe_non_incumbent):
         missing.append("safe_non_incumbent")
@@ -103,17 +142,38 @@ def select_safe_archive(items: Sequence[Dict[str, Any]], incumbent_hash: str, si
     retained: List[Dict[str, Any]] = []
     if incumbent is not None:
         retained.append(incumbent)
-    for item in sorted(elites, key=lambda row: (
-        float(row.get("metrics", {}).get("candidate_target_accuracy", 0.0) or 0.0),
-        float(row.get("metrics", {}).get("depth1_net_delta", 0.0) or 0.0),
-        float(row.get("metrics", {}).get("penalized_reward", row.get("reward", 0.0)) or 0.0),
-        str(row.get("prompt_hash", "")),
-    ), reverse=True):
-        if item not in retained:
-            retained.append(item)
-        if len(retained) >= int(size):
-            break
+    remaining = [item for item in elites if item not in retained]
+    while remaining and len(retained) < int(size):
+        def retention_key(row: Dict[str, Any]) -> tuple:
+            quality = _archive_quality_key(row)
+            if not retained:
+                min_distance = 1.0
+            else:
+                min_distance = min(
+                    mechanism_distance(
+                        row.get("metrics", {}).get("mechanism_representation", {}),
+                        kept.get("metrics", {}).get("mechanism_representation", {}),
+                    )["mechanism_distance"]
+                    for kept in retained
+                )
+            return (min_distance, quality)
+
+        chosen = max(remaining, key=retention_key)
+        retained.append(chosen)
+        remaining.remove(chosen)
     return retained[: int(size)]
+
+
+def _archive_quality_key(item: Dict[str, Any]) -> tuple:
+    metrics = item.get("metrics", {})
+    return (
+        float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+        float(metrics.get("depth1_net_delta", 0.0) or 0.0),
+        float(metrics.get("depth2_net_delta", 0.0) or 0.0),
+        float(metrics.get("penalized_reward", item.get("reward", 0.0)) or 0.0),
+        -int(item.get("generation", 0) or 0),
+        str(item.get("prompt_hash", "")),
+    )
 
 
 def select_joint_representatives(archive: Sequence[Dict[str, Any]], active_hash: str, size: int) -> List[Dict[str, Any]]:

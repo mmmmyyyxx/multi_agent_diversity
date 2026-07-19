@@ -81,7 +81,8 @@ def select_quality_diversity_archive(
                     kept.get("metrics", {}).get("behavior_profile", {}),
                     correct_set_weight=float(getattr(config, "behavior_correct_set_weight", 0.50)),
                     rescue_weight=float(getattr(config, "behavior_rescue_weight", 0.35)),
-                    shared_wrong_weight=float(getattr(config, "behavior_shared_wrong_weight", 0.15)),
+                    shared_wrong_weight=float(getattr(config, "behavior_error_overlap_weight", 0.15)),
+                    wrong_answer_dispersion_weight=float(getattr(config, "behavior_wrong_answer_dispersion_weight", 0.15)),
                     support_shrinkage=float(getattr(config, "behavior_support_shrinkage", 5.0)),
                 )["behavior_distance"]
                 for kept in retained
@@ -212,7 +213,7 @@ def team_diversity_metrics(team: Dict[str, Any], config: Any) -> Dict[str, float
                 profiles[left], profiles[right],
                 correct_set_weight=config.behavior_correct_set_weight,
                 rescue_weight=config.behavior_rescue_weight,
-                shared_wrong_weight=config.behavior_shared_wrong_weight,
+                shared_wrong_weight=config.behavior_error_overlap_weight,
                 wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
                 support_shrinkage=config.behavior_support_shrinkage,
                 wrong_support_shrinkage=config.behavior_wrong_support_shrinkage,
@@ -357,6 +358,30 @@ def deterministic_team_key(team: Dict[str, Any]) -> tuple:
     )
 
 
+def team_prompt_hashes(team: Dict[str, Any]) -> List[str]:
+    return [str(profile.get("prompt_hash", "")) for profile in team.get("prompt_profiles", [])]
+
+
+def active_prompt_change_count(team: Dict[str, Any], incumbent: Dict[str, Any]) -> int:
+    return sum(left != right for left, right in zip(team_prompt_hashes(team), team_prompt_hashes(incumbent)))
+
+
+def fold_quality_feasible(candidate: Dict[str, Any], incumbent: Dict[str, Any], config: Any) -> bool:
+    """Reject only catastrophic fold regressions, using integer evidence counts."""
+    if int(candidate.get("total_agent_correct_count", 0)) < int(incumbent.get("total_agent_correct_count", 0)) - int(config.joint_allowed_total_agent_correct_loss):
+        return False
+    size = max(len(candidate.get("answer_vectors", [[0]])[0]), 1)
+    incumbent_size = max(len(incumbent.get("answer_vectors", [[0]])[0]), 1)
+    candidate_c1 = int(round(float(candidate.get("coverage_depth_c1", 0.0)) * size))
+    incumbent_c1 = int(round(float(incumbent.get("coverage_depth_c1", 0.0)) * incumbent_size))
+    candidate_c2 = int(round(float(candidate.get("coverage_depth_c2", 0.0)) * size))
+    incumbent_c2 = int(round(float(incumbent.get("coverage_depth_c2", 0.0)) * incumbent_size))
+    return (
+        candidate_c1 >= incumbent_c1 - int(config.joint_allowed_c1_loss_questions)
+        and candidate_c2 >= incumbent_c2 - int(config.joint_allowed_c2_loss_questions)
+    )
+
+
 def select_stable_joint_team(
     teams: Sequence[Dict[str, Any]],
     incumbent: Dict[str, Any],
@@ -376,7 +401,7 @@ def select_stable_joint_team(
     change_rejected = 0
     eligible = []
     for team in teams:
-        changes = sum(left != right for left, right in zip(team["beam_indices"], incumbent["beam_indices"]))
+        changes = active_prompt_change_count(team, incumbent)
         if change_limit is not None and changes > int(change_limit):
             change_rejected += 1
             continue
@@ -386,12 +411,27 @@ def select_stable_joint_team(
     frontier = bands["final"]
     stable_frontier = []
     hard_rejections = 0
+    fold_quality_rejections = 0
+    folds = (
+        deterministic_probe_folds(question_hashes, seed=seed, seed_offset=int(config.probe_stability_seed_offset))
+        if gold_answers and question_hashes and vote_fn is not None and match_fn is not None
+        else []
+    )
+    incumbent_fold_metrics = [
+        team_metrics_for_indices(
+            incumbent, indices, gold_answers, question_hashes,
+            vote_fn=vote_fn, match_fn=match_fn, tie_break_method=tie_break_method, seed=seed,
+        )
+        for indices in folds if indices
+    ]
     for team in frontier:
         diversity = team_diversity_metrics(team, config)
         team.update(diversity)
         if gold_answers and question_hashes and vote_fn is not None and match_fn is not None:
-            folds = deterministic_probe_folds(question_hashes, seed=seed, seed_offset=int(config.probe_stability_seed_offset))
             fold_diversities = []
+            fold_metrics_rows = []
+            fold_quality_passed = True
+            incumbent_fold_index = 0
             for indices in folds:
                 if not indices:
                     fold_diversities.append(0.0)
@@ -400,13 +440,35 @@ def select_stable_joint_team(
                     team, indices, gold_answers, question_hashes,
                     vote_fn=vote_fn, match_fn=match_fn, tie_break_method=tie_break_method, seed=seed,
                 )
+                fold_metrics_rows.append(fold_metrics)
+                fold_quality_passed = fold_quality_passed and fold_quality_feasible(
+                    fold_metrics, incumbent_fold_metrics[incumbent_fold_index], config,
+                )
+                incumbent_fold_index += 1
                 fold_team = {**fold_metrics, "prompt_profiles": team["prompt_profiles"]}
                 fold_diversities.append(team_diversity_metrics(fold_team, config)["team_diversity_score"])
+            team["fold_quality_metrics"] = fold_metrics_rows
+            team["fold_quality_gate_passed"] = bool(fold_quality_passed)
+            if len(fold_metrics_rows) >= 2:
+                left_acc = list(fold_metrics_rows[0].get("per_agent_acc", []))
+                right_acc = list(fold_metrics_rows[1].get("per_agent_acc", []))
+                team["per_agent_cross_fold_behavior_gap"] = [
+                    abs(float(left_acc[index]) - float(right_acc[index]))
+                    for index in range(min(len(left_acc), len(right_acc)))
+                ]
+            else:
+                team["per_agent_cross_fold_behavior_gap"] = [0.0 for _ in team.get("prompt_profiles", [])]
             team["fold_diversities"] = fold_diversities
             team["cross_fold_diversity_mean"] = float(np.mean(fold_diversities)) if fold_diversities else 0.0
             team["cross_fold_diversity_gap"] = float(max(fold_diversities) - min(fold_diversities)) if len(fold_diversities) >= 2 else 0.0
             team["stable_diversity_score"] = team["cross_fold_diversity_mean"] - 0.50 * team["cross_fold_diversity_gap"]
+            if not fold_quality_passed:
+                fold_quality_rejections += 1
+                continue
         else:
+            team["fold_quality_metrics"] = []
+            team["fold_quality_gate_passed"] = True
+            team["per_agent_cross_fold_behavior_gap"] = [0.0 for _ in team.get("prompt_profiles", [])]
             team["fold_diversities"] = []
             team["cross_fold_diversity_mean"] = team["team_diversity_score"]
             team["cross_fold_diversity_gap"] = 0.0
@@ -435,8 +497,8 @@ def select_stable_joint_team(
                 left_profile = team["prompt_profiles"][left]
                 right_profile = team["prompt_profiles"][right]
                 pair_introduces_change = (
-                    team["beam_indices"][left] != incumbent["beam_indices"][left]
-                    or team["beam_indices"][right] != incumbent["beam_indices"][right]
+                    team["prompt_profiles"][left].get("prompt_hash") != incumbent["prompt_profiles"][left].get("prompt_hash")
+                    or team["prompt_profiles"][right].get("prompt_hash") != incumbent["prompt_profiles"][right].get("prompt_hash")
                 )
                 if pair_introduces_change and mechanisms_are_near_duplicate(
                     left_profile["mechanism_representation"], right_profile["mechanism_representation"],
@@ -444,11 +506,15 @@ def select_stable_joint_team(
                 ):
                     peer_hard = peer_hard or behavior_distance(
                         diversity["behavior_profiles"][left], diversity["behavior_profiles"][right],
+                        correct_set_weight=config.behavior_correct_set_weight,
+                        rescue_weight=config.behavior_rescue_weight,
+                        shared_wrong_weight=config.behavior_error_overlap_weight,
+                        wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
                         support_shrinkage=config.behavior_support_shrinkage,
                     )["behavior_distance"] < 0.10
 
         for agent_id, profile in enumerate(team["prompt_profiles"]):
-            if team["beam_indices"][agent_id] == incumbent["beam_indices"][agent_id]:
+            if profile.get("prompt_hash") == incumbent["prompt_profiles"][agent_id].get("prompt_hash"):
                 continue
             for peer_id, peer_state in enumerate(lineage_states):
                 if peer_id == agent_id or peer_state.get("lineage_status") != "committed":
@@ -474,6 +540,10 @@ def select_stable_joint_team(
                     }
                     peer_hard = peer_hard or behavior_distance(
                         diversity["behavior_profiles"][agent_id], peer_behavior,
+                        correct_set_weight=config.behavior_correct_set_weight,
+                        rescue_weight=config.behavior_rescue_weight,
+                        shared_wrong_weight=config.behavior_error_overlap_weight,
+                        wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
                         support_shrinkage=config.behavior_support_shrinkage,
                     )["behavior_distance"] < 0.10
         if peer_hard and team is not incumbent:
@@ -486,10 +556,8 @@ def select_stable_joint_team(
             - team["lineage_drift_penalty_mean"]
             - team["peer_collapse_penalty_mean"]
         )
-        team["active_prompt_changed_count"] = sum(
-            left != right for left, right in zip(team["beam_indices"], incumbent["beam_indices"])
-        )
-        team["prompt_hashes"] = [profile["prompt_hash"] for profile in team["prompt_profiles"]]
+        team["active_prompt_changed_count"] = active_prompt_change_count(team, incumbent)
+        team["prompt_hashes"] = team_prompt_hashes(team)
         stable_frontier.append(team)
     if not stable_frontier:
         incumbent.update(team_diversity_metrics(incumbent, config))
@@ -500,6 +568,9 @@ def select_stable_joint_team(
             "cross_fold_diversity_mean": incumbent["team_diversity_score"],
             "cross_fold_diversity_gap": 0.0,
             "stable_diversity_score": incumbent["team_diversity_score"],
+            "fold_quality_metrics": incumbent_fold_metrics,
+            "fold_quality_gate_passed": True,
+            "per_agent_cross_fold_behavior_gap": [0.0 for _ in incumbent.get("prompt_profiles", [])],
             "active_prompt_changed_count": 0,
             "prompt_hashes": [profile["prompt_hash"] for profile in incumbent["prompt_profiles"]],
         })
@@ -512,9 +583,12 @@ def select_stable_joint_team(
     return {
         "selected": selected,
         "feasible_count": len(feasible),
+        "quality_floor_feasible_count": len(feasible),
         "quality_frontier_count": len(frontier),
+        "final_candidate_team_count": len(frontier),
         "hierarchical_band_counts": [len(level) for level in bands["bands"]],
         "combination_rejected_by_change_limit_count": change_rejected,
+        "fold_quality_rejection_count": fold_quality_rejections,
         "hard_rejection_count": hard_rejections,
         "selected_has_soft_peer_collapse": bool(float(selected.get("peer_collapse_penalty_mean", 0.0)) > 0.0),
     }

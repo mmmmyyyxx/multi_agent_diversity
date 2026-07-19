@@ -3,15 +3,18 @@ from types import SimpleNamespace
 from multi_dataset_diverse_rl.behavior_profiles import behavior_distance, build_team_behavior_profiles
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.lineage import empty_lineage_state, update_lineage_state
+from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.quality_diversity import deterministic_probe_folds, hierarchical_quality_bands, select_stable_joint_team
 from multi_dataset_diverse_rl.search_archive import (
     candidate_quality_bucket,
     cheap_prescreen,
+    mechanism_is_novel,
     refill_requirements,
     select_joint_representatives,
     select_reproduction_parent,
     select_safe_archive,
 )
+from multi_dataset_diverse_rl.system import TraceBeamSearchSystem
 
 
 def candidate(name, candidate_type="task_specific_repair", accuracy_delta=0.0, c1_delta=0, c2_delta=0, sequence=("hard_elimination",)):
@@ -22,6 +25,7 @@ def candidate(name, candidate_type="task_specific_repair", accuracy_delta=0.0, c
             "depth1_net_delta": c1_delta, "depth2_net_delta": c2_delta,
             "candidate_target_accuracy": 0.7, "penalized_reward": 0.1,
             "mechanism_representation": {"normalized_operation_sequence": list(sequence), "mechanism_embedding": [1.0, 0.0]},
+            "mechanism_novel": bool(sequence),
         },
     }
 
@@ -55,11 +59,28 @@ def test_candidate_bucket_distinguishes_safe_probation_and_catastrophic():
     assert candidate_quality_bucket(candidate("catastrophic", accuracy_delta=-0.06), cfg) == "catastrophic"
 
 
+def test_candidate_type_cannot_self_report_mechanism_novelty_for_probation():
+    cfg = Config()
+    item = candidate("claimed-novel", "mechanism_alternative", accuracy_delta=-0.02, c1_delta=-1)
+    item["metrics"]["mechanism_novel"] = False
+    assert candidate_quality_bucket(item, cfg) == "catastrophic"
+
+
 def test_cheap_prescreen_rejects_duplicate_and_incomplete_candidates():
     item = candidate("duplicate")
     item["prompt"] = "unfinished"
     item["proposal"] = {"candidate_type": "task_specific_repair", "mechanism_steps": ["hard_elimination"]}
     assert {"incomplete_prompt", "duplicate_prompt"} <= set(cheap_prescreen(item, "parent", {"duplicate"}))
+
+
+def test_mechanism_alternative_requires_observed_operation_change():
+    parent = candidate("parent", sequence=("hard_elimination",))
+    unchanged = candidate("unchanged", "mechanism_alternative", sequence=("hard_elimination",))
+    unchanged["proposal"] = {"candidate_type": "mechanism_alternative", "mechanism_steps": ["hard_elimination"]}
+    assert "mechanism_operation_unchanged" in cheap_prescreen(unchanged, "parent", set(), parent=parent)
+    assert not mechanism_is_novel(unchanged, parent)
+    changed = candidate("changed", "mechanism_alternative", sequence=("weighted_scoring",))
+    assert mechanism_is_novel(changed, parent)
 
 
 def test_probation_parent_is_chosen_before_safe_niche_without_opportunity():
@@ -70,6 +91,29 @@ def test_probation_parent_is_chosen_before_safe_niche_without_opportunity():
     )
     assert parent is probation
     assert source == "probation_niche"
+
+
+def test_expired_probation_branch_is_removed_before_parent_selection():
+    system = object.__new__(TraceBeamSearchSystem)
+    system.cfg = Config(probation_archive_ttl_updates=2)
+    system.probation_expired_count = 0
+    agent = AgentState("active")
+    active = candidate("active")
+    probation = candidate("probation", "mechanism_alternative", accuracy_delta=-0.02, c1_delta=-1)
+    probation["probation_created_update"] = 1
+    agent.safe_qd_archive = [active]
+    agent.probation_archive = [probation]
+    agent.optimizer_update_count_by_epoch = {"1": 3}
+    system.agents = [agent]
+    system._expire_probation_branches(1)
+    parent, source, _ = select_reproduction_parent(
+        active, agent.safe_qd_archive, agent.probation_archive, {},
+        epoch=1, min_opportunities=1, allow_probation=True,
+    )
+    assert agent.probation_archive == []
+    assert system.probation_expired_count == 1
+    assert parent is None
+    assert source == "active"
 
 
 def test_safe_niche_receives_round_robin_parent_opportunity():
@@ -92,6 +136,18 @@ def test_long_archive_and_representatives_are_separate():
     representatives = select_joint_representatives(archive, "n0", 3)
     assert len(archive) == 6
     assert len(representatives) == 3
+
+
+def test_long_archive_keeps_incumbent_and_diverse_niches_when_over_capacity():
+    rows = []
+    for index in range(8):
+        item = candidate(f"n{index}", sequence=(f"operation_{index}",))
+        item["archive_bucket"] = "safe"
+        item["metrics"]["mechanism_representation"]["mechanism_embedding"] = [float(index == 0), float(index != 0)]
+        rows.append(item)
+    archive = select_safe_archive(rows, "n0", 6)
+    assert len(archive) == 6
+    assert "n0" in {item["prompt_hash"] for item in archive}
 
 
 def test_team_dependent_rescue_changes_with_peers():
@@ -128,3 +184,30 @@ def test_two_stable_snapshots_commit_lineage():
     second = update_lineage_state({key: value for key, value in first.items() if key not in {"old_status", "new_status", "reason"}}, selected, epoch=2, quality_gate_passed=True, config=cfg)
     assert first["new_status"] == "provisional"
     assert second["new_status"] == "committed"
+
+
+def test_fold_quality_failure_cannot_advance_lineage():
+    cfg = Config(lineage_commit_required_snapshots=2)
+    selected = {
+        "prompt_hash": "p", "prompt": "p",
+        "mechanism_representation": {"normalized_operation_sequence": ["hard_elimination"], "mechanism_embedding": [1.0]},
+        "behavior_profile": {"correctness_vector": [1, 0], "error_vector": [0, 1], "rescue_vector": [0, 0], "accuracy": 0.5},
+        "cross_fold_diversity_gap": 0.0, "fold_quality_gate_passed": False,
+    }
+    state = update_lineage_state(empty_lineage_state(), selected, epoch=1, quality_gate_passed=True, config=cfg)
+    assert state["new_status"] == "uncommitted"
+    assert state["reason"] == "quality_gate_failed"
+
+
+def test_single_fold_agent_behavior_cannot_advance_lineage():
+    cfg = Config(lineage_commit_required_snapshots=2)
+    selected = {
+        "prompt_hash": "p", "prompt": "p",
+        "mechanism_representation": {"normalized_operation_sequence": ["hard_elimination"], "mechanism_embedding": [1.0]},
+        "behavior_profile": {"correctness_vector": [1, 0], "error_vector": [0, 1], "rescue_vector": [0, 0], "accuracy": 0.5},
+        "cross_fold_diversity_gap": 0.0, "fold_quality_gate_passed": True,
+        "fold_behavior_stable": False,
+    }
+    state = update_lineage_state(empty_lineage_state(), selected, epoch=1, quality_gate_passed=True, config=cfg)
+    assert state["new_status"] == "uncommitted"
+    assert state["reason"] == "unstable_single_fold_specialization"

@@ -50,7 +50,8 @@ def lineage_drift(candidate: Dict[str, Any], state: Dict[str, Any], config: Any)
     behavior = behavior_distance(candidate.get("behavior_profile", {}), anchor_behavior,
         correct_set_weight=config.behavior_correct_set_weight,
         rescue_weight=config.behavior_rescue_weight,
-        shared_wrong_weight=config.behavior_shared_wrong_weight,
+        shared_wrong_weight=config.behavior_error_overlap_weight,
+        wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
         support_shrinkage=config.behavior_support_shrinkage)["behavior_distance"]
     drift = config.lineage_mechanism_drift_weight * mechanism + config.lineage_behavior_drift_weight * behavior
     return {
@@ -66,11 +67,21 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
     old_status = state["lineage_status"]
     signature = list(selected.get("mechanism_representation", {}).get("normalized_operation_sequence", []))
     same = _same_lineage(signature, list(state.get("pending_lineage_signature", [])))
-    fold_stable = float(selected.get("cross_fold_diversity_gap", 0.0) or 0.0) <= float(getattr(config, "qd_readiness_max_fold_gap", 0.15))
-    if not quality_gate_passed or not fold_stable:
+    fold_quality_passed = bool(selected.get("fold_quality_gate_passed", True))
+    fold_stable = (
+        bool(selected.get("fold_behavior_stable", True))
+        and float(selected.get("cross_fold_diversity_gap", 0.0) or 0.0)
+        <= float(getattr(config, "qd_readiness_max_fold_gap", 0.15))
+    )
+    if not quality_gate_passed or not fold_quality_passed or not fold_stable:
         state["pending_lineage_signature"] = []
         state["pending_lineage_count"] = 0
-        return {**state, "old_status": old_status, "new_status": state["lineage_status"], "reason": "unstable_single_fold_specialization" if not fold_stable else "quality_gate_failed"}
+        return {
+            **state,
+            "old_status": old_status,
+            "new_status": state["lineage_status"],
+            "reason": "unstable_single_fold_specialization" if not fold_stable else "quality_gate_failed",
+        }
     if old_status != "committed":
         state["pending_lineage_signature"] = signature
         state["pending_lineage_count"] = int(state.get("pending_lineage_count", 0)) + 1 if same else 1
@@ -90,7 +101,8 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
                 anchor_behavior,
                 correct_set_weight=config.behavior_correct_set_weight,
                 rescue_weight=config.behavior_rescue_weight,
-                shared_wrong_weight=config.behavior_shared_wrong_weight,
+                shared_wrong_weight=config.behavior_error_overlap_weight,
+                wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
                 support_shrinkage=config.behavior_support_shrinkage,
             )["behavior_distance"] <= config.lineage_soft_drift_threshold
             rescue_preserved = not sum(anchor_behavior["rescue_vector"]) or bool(sum(selected_behavior.get("rescue_vector", [])))

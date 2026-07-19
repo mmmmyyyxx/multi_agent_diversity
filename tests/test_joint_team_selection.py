@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.policy import AgentState
 from multi_dataset_diverse_rl.quality_diversity import (
+    active_prompt_change_count,
     enumerate_joint_teams,
     epsilon_quality_frontier,
     quality_feasible,
@@ -43,6 +44,15 @@ def test_enumerates_all_243_five_agent_three_slot_teams_offline():
         tie_break_method="random", seed=42,
     )
     assert len(teams) == 3 ** 5
+
+
+def test_active_change_limit_uses_prompt_hashes_not_beam_indices():
+    incumbent_profiles = [profile(f"p{i}", [1, 1], ["hard_elimination"], [1.0, 0.0]) for i in range(5)]
+    incumbent = {"beam_indices": [2] * 5, "prompt_profiles": incumbent_profiles}
+    same_hashes = {"beam_indices": [0] * 5, "prompt_profiles": [dict(item) for item in incumbent_profiles]}
+    changed_hash = {"beam_indices": [2] * 5, "prompt_profiles": [{**incumbent_profiles[0], "prompt_hash": "new"}, *incumbent_profiles[1:]]}
+    assert active_prompt_change_count(same_hashes, incumbent) == 0
+    assert active_prompt_change_count(changed_hash, incumbent) == 1
 
 
 def test_quality_constraints_exclude_diverse_but_degraded_team():
@@ -168,3 +178,29 @@ def test_near_duplicate_peer_collapse_cannot_replace_incumbent_team():
     result = select_stable_joint_team([incumbent, collapsed], incumbent, [0.5] * 5, states, 2, config)
     assert result["selected"] is incumbent
     assert result["hard_rejection_count"] >= 1
+
+
+def test_fold_catastrophic_quality_regression_is_rejected():
+    config = Config(
+        joint_allowed_total_agent_correct_loss=0,
+        joint_allowed_c1_loss_questions=0,
+        joint_allowed_c2_loss_questions=0,
+    )
+    incumbent_profiles = [profile(f"p{i}", [1, 1, 0, 0], ["hard_elimination"], [1.0, 0.0]) for i in range(5)]
+    candidate_profiles = [
+        profile(f"c{i}", [1, 1, 0, 0] if i else [0, 1, 1, 0], ["weighted_scoring"], [0.0, 1.0])
+        for i in range(5)
+    ]
+    teams = enumerate_joint_teams(
+        [[incumbent_profiles[i], candidate_profiles[i]] if i == 0 else [incumbent_profiles[i]] for i in range(5)],
+        ["A"] * 4, ["q0", "q1", "q2", "q3"],
+        vote_fn=plurality_vote_with_diagnostics, match_fn=exact, tie_break_method="random", seed=42,
+    )
+    incumbent = teams[0]
+    result = select_stable_joint_team(
+        teams, incumbent, [0.5] * 5, [AgentState("p").lineage_state for _ in range(5)], 4, config,
+        gold_answers=["A"] * 4, question_hashes=["q0", "q1", "q2", "q3"],
+        vote_fn=plurality_vote_with_diagnostics, match_fn=exact, tie_break_method="random", seed=42,
+    )
+    assert result["fold_quality_rejection_count"] >= 1
+    assert result["selected"]["prompt_hashes"] == [item["prompt_hash"] for item in incumbent_profiles]
