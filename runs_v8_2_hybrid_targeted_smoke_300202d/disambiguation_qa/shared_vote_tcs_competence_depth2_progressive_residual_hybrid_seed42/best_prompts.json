@@ -1,0 +1,55 @@
+{
+  "selected_epoch": 1,
+  "early_stopping_metric": "vote+margin+boundary_div-invalid",
+  "best_validation_score": 0.1625,
+  "best_state_selection_mode": "vote_generalization_first",
+  "best_state_selection_key": [
+    -0.4,
+    -0.41,
+    -0.4,
+    -0.5,
+    -0.45,
+    0.18,
+    0.01,
+    1
+  ],
+  "selected_vote_acc": 0.4,
+  "selected_oracle_acc": 0.5,
+  "selected_mean_individual_acc": 0.41,
+  "selected_mean_vote_margin": -0.18,
+  "selected_mean_boundary_useful_diversity": 0.0,
+  "selected_mean_invalid_rate": 0.01,
+  "agents": [
+    {
+      "agent_id": 0,
+      "prompt_hash": "c7d8be0fbc55",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; before selecting the answer, create a normalized relationship table to verify transitive composition and avoid tracking errors. Make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 1,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 2,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 3,
+      "prompt_hash": "00bcb3ee9efb",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace, make your decision procedure visible, verify key logic, and give exactly one final answer."
+    },
+    {
+      "agent_id": 4,
+      "prompt_hash": "acbbd93d3f3c",
+      "prompt": "You are a careful reasoning solver. Produce a compact, explicit reasoning trace; make your decision procedure visible. For disambiguation problems, before final selection, systematically compare each option against all constraints and eliminate options that violate any constraint; then give exactly one final answer."
+    }
+  ],
+  "method_version": "v8_2_hybrid_progressive",
+  "competence_schedule_version": "competence_depth_v2_opt_snapshot_c1_guard",
+  "target_selector_version": "hybrid_competence_boundary_v1",
+  "beam_policy_version": "safe_exploit_explore_v1",
+  "tcs_candidate_policy_version": "repair_mechanism_alternative_v1",
+  "mechanism_signature_version": "mechanism_signature_v1"
+}
