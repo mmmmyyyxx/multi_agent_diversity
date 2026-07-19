@@ -425,6 +425,7 @@ def restore_system_state(system, state_payload):
         else []
     )
     system.specialization_strength = float(state_payload.get("specialization_strength", 0.0) or 0.0)
+    system.effective_residual_strength = float(state_payload.get("effective_residual_strength", system.specialization_strength) or system.specialization_strength)
     system.previous_epoch_per_agent_acc = [float(x) for x in state_payload.get("previous_epoch_per_agent_acc", [])]
     system.previous_epoch_bottom2_mean_acc = float(state_payload.get("previous_epoch_bottom2_mean_acc", 0.0) or 0.0)
     system.competence_phase_epoch = int(state_payload.get("competence_phase_epoch", 1) or 1)
@@ -469,6 +470,17 @@ def restore_system_state(system, state_payload):
     system.quality_diversity_archive_history = [dict(value) for value in state_payload.get("quality_diversity_archive_history", []) if isinstance(value, dict)]
     system.behavior_profile_history = [dict(value) for value in state_payload.get("behavior_profile_history", []) if isinstance(value, dict)]
     system.latest_joint_team_metrics = dict(state_payload.get("latest_joint_team_metrics", {}) or {})
+    for field in (
+        "qd_no_diversification_epochs", "qd_change_limit_relaxed_epoch",
+        "qd_previous_active_niche_count",
+        "probation_to_safe_conversion_count", "probation_expired_count",
+        "candidate_starvation_count", "mechanism_starvation_count",
+        "search_branch_starvation_count", "refill_requirements_unmet_count",
+    ):
+        setattr(system, field, int(state_payload.get(field, 0) or 0))
+    system.per_agent_optimizer_update_count = {
+        str(key): int(value) for key, value in dict(state_payload.get("per_agent_optimizer_update_count", {}) or {}).items()
+    }
     for field in (
         "total_agent_update_count", "task_repair_niche_occupancy_count",
         "mechanism_niche_occupancy_count", "peer_collapse_soft_count",
@@ -691,6 +703,58 @@ BEHAVIOR_CONFIG_FIELDS = (
         "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
         "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
         "validation_stable_specialization_tie_break_enabled",
+        "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
+        "probe_stability_version", "parent_selection_version", "candidate_refill_enabled",
+        "candidate_refill_max_rounds", "candidate_refill_candidates_per_round",
+        "candidate_refill_max_unique_candidates_per_parent", "candidate_refill_min_safe_non_incumbent",
+        "candidate_refill_require_task_repair", "candidate_refill_require_distinct_mechanism",
+        "candidate_refill_feed_rejection_reasons", "candidate_refill_stop_when_requirements_met",
+        "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_enabled",
+        "probation_archive_size_per_agent", "probation_archive_ttl_updates", "probation_max_accuracy_loss",
+        "probation_max_c1_loss_questions", "probation_max_c2_loss_questions",
+        "probation_require_mechanism_novelty", "candidate_c1_catastrophic_loss_questions",
+        "candidate_c2_catastrophic_loss_questions", "qd_archive_size_per_agent",
+        "joint_representative_beam_size", "qd_parent_selection_mode",
+        "qd_niche_min_parent_opportunities_per_epoch", "probation_parent_enabled",
+        "probe_stability_fold_count", "probe_stability_seed_offset", "joint_vote_band_questions",
+        "joint_mean_band_correct_count", "joint_bottom2_band_correct_count", "joint_c1_band_questions",
+        "joint_c2_band_questions", "joint_allowed_vote_loss_questions", "joint_allowed_c1_loss_questions",
+        "joint_allowed_c2_loss_questions", "joint_allowed_total_agent_correct_loss",
+        "joint_allowed_bottom2_correct_loss", "joint_allowed_per_agent_correct_loss",
+        "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
+        "joint_team_change_limit_switch_strength", "joint_team_no_diversification_patience",
+        "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
+        "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
+        "qd_readiness_min_diversity", "qd_readiness_max_fold_gap", "residual_specialization_qd_floor",
+        "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
+        "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
+        "target_selector_fairness_enabled",
+        "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
+        "probe_stability_version", "parent_selection_version", "candidate_refill_enabled",
+        "candidate_refill_max_rounds", "candidate_refill_candidates_per_round",
+        "candidate_refill_max_unique_candidates_per_parent", "candidate_refill_min_safe_non_incumbent",
+        "candidate_refill_require_task_repair", "candidate_refill_require_distinct_mechanism",
+        "candidate_refill_feed_rejection_reasons", "candidate_refill_stop_when_requirements_met",
+        "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_enabled",
+        "probation_archive_size_per_agent", "probation_archive_ttl_updates", "probation_max_accuracy_loss",
+        "probation_max_c1_loss_questions", "probation_max_c2_loss_questions",
+        "probation_require_mechanism_novelty", "candidate_c1_catastrophic_loss_questions",
+        "candidate_c2_catastrophic_loss_questions", "qd_archive_size_per_agent",
+        "joint_representative_beam_size", "qd_parent_selection_mode",
+        "qd_niche_min_parent_opportunities_per_epoch", "probation_parent_enabled",
+        "probe_stability_fold_count", "probe_stability_seed_offset", "joint_vote_band_questions",
+        "joint_mean_band_correct_count", "joint_bottom2_band_correct_count", "joint_c1_band_questions",
+        "joint_c2_band_questions", "joint_allowed_vote_loss_questions", "joint_allowed_c1_loss_questions",
+        "joint_allowed_c2_loss_questions", "joint_allowed_total_agent_correct_loss",
+        "joint_allowed_bottom2_correct_loss", "joint_allowed_per_agent_correct_loss",
+        "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
+        "joint_team_change_limit_switch_strength", "joint_team_no_diversification_patience",
+        "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
+        "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
+        "qd_readiness_min_diversity", "qd_readiness_max_fold_gap", "residual_specialization_qd_floor",
+        "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
+        "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
+        "target_selector_fairness_enabled",
         "split_integrity_json",
 )
 
@@ -836,6 +900,7 @@ def build_training_checkpoint(
         "state": {
             "recent_window_records": list(getattr(system, "recent_window_records", [])),
             "specialization_strength": float(getattr(system, "specialization_strength", 0.0)),
+            "effective_residual_strength": float(getattr(system, "effective_residual_strength", 0.0)),
             "previous_epoch_per_agent_acc": list(getattr(system, "previous_epoch_per_agent_acc", [])),
             "previous_epoch_bottom2_mean_acc": float(getattr(system, "previous_epoch_bottom2_mean_acc", 0.0)),
             "competence_phase_epoch": int(getattr(system, "competence_phase_epoch", 1)),
@@ -877,6 +942,16 @@ def build_training_checkpoint(
             "mechanism_niche_occupancy_count": int(getattr(system, "mechanism_niche_occupancy_count", 0)),
             "peer_collapse_soft_count": int(getattr(system, "peer_collapse_soft_count", 0)),
             "peer_collapse_hard_rejection_count": int(getattr(system, "peer_collapse_hard_rejection_count", 0)),
+            "qd_no_diversification_epochs": int(getattr(system, "qd_no_diversification_epochs", 0)),
+            "qd_change_limit_relaxed_epoch": int(getattr(system, "qd_change_limit_relaxed_epoch", -1)),
+            "qd_previous_active_niche_count": int(getattr(system, "qd_previous_active_niche_count", 0)),
+            "probation_to_safe_conversion_count": int(getattr(system, "probation_to_safe_conversion_count", 0)),
+            "probation_expired_count": int(getattr(system, "probation_expired_count", 0)),
+            "candidate_starvation_count": int(getattr(system, "candidate_starvation_count", 0)),
+            "mechanism_starvation_count": int(getattr(system, "mechanism_starvation_count", 0)),
+            "search_branch_starvation_count": int(getattr(system, "search_branch_starvation_count", 0)),
+            "refill_requirements_unmet_count": int(getattr(system, "refill_requirements_unmet_count", 0)),
+            "per_agent_optimizer_update_count": dict(getattr(system, "per_agent_optimizer_update_count", {})),
             "python_random_state": random.getstate(),
             "numpy_random_state": (
                 lambda state: [state[0], state[1].tolist(), state[2], state[3], state[4]]
@@ -941,6 +1016,11 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
             and str(current_config.get("method_version", "")) == "v8_stable_qd_lineage"
         ):
             reasons.append("V8 behavior fingerprint mismatch: joint quality-diversity lineage policy changed")
+        if (
+            str(saved_config.get("method_version", "")) == "v8_stable_qd_lineage"
+            and not str(saved_config.get("candidate_refill_version", "") or "")
+        ):
+            reasons.append("Stable-QD checkpoint predates the refill/probation search-loop policy")
         for key in sorted(set(BEHAVIOR_CONFIG_FIELDS) | set(saved_config) | set(current_config)):
             saved_value = saved_config.get(key)
             current_value = current_config.get(key)
@@ -1104,6 +1184,14 @@ async def main_async():
     cfg.competence_schedule_monotonic = bool(int(cfg.competence_schedule_monotonic))
     cfg.competence_depth1_candidate_guard_enabled = bool(int(cfg.competence_depth1_candidate_guard_enabled))
     cfg.validation_stable_specialization_tie_break_enabled = bool(int(cfg.validation_stable_specialization_tie_break_enabled))
+    for field in (
+        "candidate_refill_enabled", "candidate_refill_require_task_repair",
+        "candidate_refill_require_distinct_mechanism", "candidate_refill_feed_rejection_reasons",
+        "candidate_refill_stop_when_requirements_met", "probation_archive_enabled",
+        "probation_require_mechanism_novelty", "probation_parent_enabled",
+        "target_selector_fairness_enabled",
+    ):
+        setattr(cfg, field, bool(int(getattr(cfg, field))))
     cfg.resume_from_checkpoint = bool(int(getattr(cfg, "resume_from_checkpoint", False)))
 
     ensure_dir(cfg.out_dir)
@@ -1590,6 +1678,7 @@ async def main_async():
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
         joint_team_summary = None
         if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
+            system.expire_probation_branches(epoch + 1)
             joint_team_summary = await system.select_joint_active_team(
                 fixed_competence_probe, epoch=epoch + 1
             )

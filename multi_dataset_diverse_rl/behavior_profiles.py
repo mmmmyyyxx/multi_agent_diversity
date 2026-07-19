@@ -36,6 +36,19 @@ def build_team_behavior_profiles(answer_vectors: Sequence[Sequence[str]], correc
     return profiles
 
 
+def build_prompt_static_profile(answer_vector: Sequence[str], correctness_vector: Sequence[int], invalid_vector: Sequence[int] = ()) -> Dict[str, Any]:
+    """Prompt cache contains only intrinsic outcomes; team-relative fields are rebuilt per combination."""
+    correctness = [int(value) for value in correctness_vector]
+    return {
+        "profile_kind": "prompt_static_profile",
+        "answer_vector": [str(value) for value in answer_vector],
+        "correctness_vector": correctness,
+        "error_vector": [1 - value for value in correctness],
+        "invalid_vector": [int(value) for value in invalid_vector],
+        "accuracy": float(np.mean(correctness)) if correctness else 0.0,
+    }
+
+
 def _jaccard_distance(left: Sequence[int], right: Sequence[int], *, empty_distance: float) -> float:
     a = {index for index, value in enumerate(left) if int(value)}
     b = {index for index, value in enumerate(right) if int(value)}
@@ -49,10 +62,12 @@ def behavior_distance(
     left: Dict[str, Any],
     right: Dict[str, Any],
     *,
-    correct_set_weight: float = 0.50,
-    rescue_weight: float = 0.35,
+    correct_set_weight: float = 0.40,
+    rescue_weight: float = 0.30,
     shared_wrong_weight: float = 0.15,
+    wrong_answer_dispersion_weight: float = 0.15,
     support_shrinkage: float = 5.0,
+    wrong_support_shrinkage: float = 5.0,
 ) -> Dict[str, float]:
     correct = _jaccard_distance(left.get("correctness_vector", []), right.get("correctness_vector", []), empty_distance=0.0)
     left_rescue, right_rescue = left.get("rescue_vector", []), right.get("rescue_vector", [])
@@ -66,15 +81,29 @@ def behavior_distance(
         for index in range(size)
     ) / size
     shared_complementarity = 1.0 - overlap
+    left_answers = left.get("answer_vector", [])
+    right_answers = right.get("answer_vector", [])
+    both_wrong = same_wrong = 0
+    for index in range(size):
+        left_wrong = index < len(left_error) and int(left_error[index])
+        right_wrong = index < len(right_error) and int(right_error[index])
+        if left_wrong and right_wrong:
+            both_wrong += 1
+            if index < len(left_answers) and index < len(right_answers) and left_answers[index] == right_answers[index]:
+                same_wrong += 1
+    wrong_reliability = both_wrong / (both_wrong + max(0.0, float(wrong_support_shrinkage))) if both_wrong else 0.0
+    wrong_dispersion = wrong_reliability * (1.0 - same_wrong / both_wrong) if both_wrong else 0.0
     distance = (
         float(correct_set_weight) * correct
         + float(rescue_weight) * rescue
         + float(shared_wrong_weight) * shared_complementarity
+        + float(wrong_answer_dispersion_weight) * wrong_dispersion
     )
     return {
         "correct_set_distance": float(correct),
         "rescue_distance": float(rescue),
         "rescue_reliability": float(reliability),
         "shared_wrong_complementarity": float(shared_complementarity),
+        "wrong_answer_dispersion": float(wrong_dispersion),
         "behavior_distance": float(np.clip(distance, 0.0, 1.0)),
     }

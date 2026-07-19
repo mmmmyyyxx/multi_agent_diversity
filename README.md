@@ -27,14 +27,18 @@ The method uses:
 - competence and actual plurality-boundary signals to choose update targets;
 - Teacher-Critic-Student to generate task-repair and mechanism-alternative prompts;
 - hard competence and validity guards before diversity is considered;
-- a three-slot per-agent quality-diversity archive;
+- a six-item Safe archive plus a three-item joint representative beam per agent;
 - fixed-probe behavioral profiles as the primary differentiation signal;
 - normalized mechanism sequence and embedding distance as secondary evidence;
 - offline enumeration of all `3^5 = 243` beam teams;
-- a quality-feasible epsilon-Pareto frontier before team diversity selection;
+- hierarchical integer-count quality bands before team diversity selection;
 - committed lineage anchors, drift control, peer-collapse prevention, and switch hysteresis.
 
 Prompt textual diversity is not an optimization target. Diversity never compensates for competence failure. Early search permits symmetry breaking; late search stabilizes useful per-agent lineages.
+
+## Search-Space Preservation
+
+Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
 
 The setting's historical V8.2 safe/exploit/explore behavior has been replaced. Existing result directories remain readable by their recorded method version, but old V8 checkpoints are rejected explicitly.
 

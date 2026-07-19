@@ -12,7 +12,7 @@ hybrid competence/boundary target selection
 -> fixed-probe evaluation of unique beam prompts
 -> offline joint team enumeration
 -> quality feasible region
--> epsilon-Pareto quality frontier
+-> hierarchical integer-count quality bands
 -> behavioral complementarity selection
 -> committed lineage stability and peer-collapse control
 ```
@@ -21,9 +21,13 @@ Candidate reward measures candidate quality. Behavioral and mechanism diversity 
 
 ## Early And Late Search
 
-Before commitment, self-drift penalties are disabled so identical initial prompts can separate. After three stable quality-passing selections, an agent can commit a lineage. Later prompt changes are evaluated relative to that anchor and use two-epoch switch hysteresis.
+Before commitment, self-drift penalties are disabled so identical initial prompts can separate. After one stable quality-passing snapshot, an agent is provisional; after two it can commit a lineage. Later prompt changes are evaluated relative to that anchor and use two-snapshot switch hysteresis.
 
 Behavioral residual complementarity on the fixed optimization probe is primary. Normalized mechanism embedding is secondary. Prompt textual diversity is not optimized.
+
+## Search-Space Preservation
+
+The current setting keeps a long-term Safe archive separate from its three-item joint representative beam. Mildly regressing but novel candidates go to Probation for bounded parent-only exploration. Rejected or duplicate candidate batches trigger failure-aware TCS refill, while archived niches receive round-robin reproduction opportunities. Joint combinations recompute team-relative rescue and use two-fold stable diversity after hierarchical quality bands.
 
 ## Compatibility
 

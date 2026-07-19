@@ -14,7 +14,11 @@ Candidate quality can use target accuracy, C1/C2 transitions, actual plurality c
 
 ## Quality Before Diversity
 
-Joint teams must stay within one-question tolerances of incumbent plurality, mean, bottom-2, C1, and C2, plus a per-agent accuracy tolerance. An epsilon-Pareto frontier is formed from feasible teams. Behavioral complementarity is considered only inside that frontier.
+Joint teams must stay within integer loss tolerances for incumbent plurality, total agent correctness, bottom-2, C1, C2, and every agent. Hierarchical vote, total-correct, bottom-2, C1, and C2 bands then shrink the feasible set. Behavioral complementarity is considered only inside the final band.
+
+## Search-Space Preservation
+
+Safe candidates form a six-item long-term niche archive; three representatives per agent are used for joint enumeration. Novel small-regression branches enter a bounded Probation archive and may reproduce, but cannot be active. Failed initial batches trigger bounded TCS refill with structured rejection feedback. Two deterministic probe folds and two stable snapshots are required before lineage commitment.
 
 ## Validation
 

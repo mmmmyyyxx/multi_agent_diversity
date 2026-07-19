@@ -1,5 +1,6 @@
 import itertools
 import json
+import hashlib
 from typing import Any, Callable, Dict, List, Sequence, Tuple
 
 import numpy as np
@@ -147,6 +148,8 @@ def team_quality_metrics(
         wrong_count = max((int(count) for answer, count in counts.items() if not match_fn(answer, str(gold))), default=0)
         margins.append((gold_count - wrong_count) / max(len(prompt_profiles), 1))
     sorted_acc = sorted(per_agent)
+    total_correct = int(sum(sum(int(value) for value in row) for row in correctness))
+    bottom2_correct = int(sum(sorted([sum(int(value) for value in row) for row in correctness])[:2])) if correctness else 0
     return {
         "vote_acc": float(np.mean(votes)) if votes else 0.0,
         "mean_individual_acc": float(np.mean(per_agent)) if per_agent else 0.0,
@@ -155,6 +158,10 @@ def team_quality_metrics(
         "coverage_depth_c2": float(np.mean([depth >= 2 for depth in depths])) if depths else 0.0,
         "mean_normalized_plurality_margin": float(np.mean(margins)) if margins else 0.0,
         "per_agent_acc": per_agent,
+        "vote_correct_count": int(sum(votes)),
+        "total_agent_correct_count": total_correct,
+        "bottom2_correct_count": bottom2_correct,
+        "per_agent_correct_count": [int(sum(int(value) for value in row)) for row in correctness],
         "answer_vectors": answers,
         "correctness_vectors": correctness,
     }
@@ -195,6 +202,8 @@ def epsilon_quality_frontier(teams: Sequence[Dict[str, Any]], epsilons: Dict[str
 
 
 def team_diversity_metrics(team: Dict[str, Any], config: Any) -> Dict[str, float]:
+    if any(profile.get("profile_kind") == "team_combination_profile" for profile in team["prompt_profiles"]):
+        raise AssertionError("team-dependent metrics cannot be loaded from prompt-level cache")
     profiles = build_team_behavior_profiles(team["answer_vectors"], team["correctness_vectors"])
     behavior_values, mechanism_values = [], []
     for left in range(len(profiles)):
@@ -204,7 +213,9 @@ def team_diversity_metrics(team: Dict[str, Any], config: Any) -> Dict[str, float
                 correct_set_weight=config.behavior_correct_set_weight,
                 rescue_weight=config.behavior_rescue_weight,
                 shared_wrong_weight=config.behavior_shared_wrong_weight,
+                wrong_answer_dispersion_weight=config.behavior_wrong_answer_dispersion_weight,
                 support_shrinkage=config.behavior_support_shrinkage,
+                wrong_support_shrinkage=config.behavior_wrong_support_shrinkage,
             )["behavior_distance"])
             mechanism_values.append(mechanism_distance(
                 team["prompt_profiles"][left].get("mechanism_representation", {}),
@@ -251,6 +262,88 @@ def enumerate_joint_teams(
     return teams
 
 
+def deterministic_probe_folds(question_hashes: Sequence[str], *, seed: int, seed_offset: int = 9100) -> List[List[int]]:
+    ordered = sorted(
+        range(len(question_hashes)),
+        key=lambda index: hashlib.sha256(f"{seed + seed_offset}:{question_hashes[index]}".encode("utf-8")).hexdigest(),
+    )
+    return [ordered[::2], ordered[1::2]]
+
+
+def team_metrics_for_indices(team: Dict[str, Any], indices: Sequence[int], gold_answers: Sequence[str], question_hashes: Sequence[str], *, vote_fn, match_fn, tie_break_method: str, seed: int) -> Dict[str, Any]:
+    profiles = []
+    for profile in team["prompt_profiles"]:
+        profiles.append({
+            **profile,
+            "answer_vector": [profile["answer_vector"][index] for index in indices],
+            "correctness_vector": [profile["correctness_vector"][index] for index in indices],
+        })
+    return team_quality_metrics(
+        profiles, [gold_answers[index] for index in indices], [question_hashes[index] for index in indices],
+        vote_fn=vote_fn, match_fn=match_fn, tie_break_method=tie_break_method, seed=seed,
+    )
+
+
+def hierarchical_quality_bands(teams: Sequence[Dict[str, Any]], incumbent: Dict[str, Any], config: Any) -> Dict[str, Any]:
+    def count(team: Dict[str, Any], key: str) -> int:
+        size = max(len(team.get("answer_vectors", [[0]])[0]), 1)
+        if key in team:
+            return int(team[key])
+        if key == "vote_correct_count":
+            return int(round(float(team.get("vote_acc", 0.0)) * size))
+        if key == "total_agent_correct_count":
+            return int(round(float(team.get("mean_individual_acc", 0.0)) * size * len(team.get("per_agent_acc", []))))
+        if key == "bottom2_correct_count":
+            return int(round(float(team.get("bottom2_mean_acc", 0.0)) * size * 2))
+        return 0
+    def feasible(team: Dict[str, Any]) -> bool:
+        if count(team, "vote_correct_count") < count(incumbent, "vote_correct_count") - int(config.joint_allowed_vote_loss_questions):
+            return False
+        if count(team, "total_agent_correct_count") < count(incumbent, "total_agent_correct_count") - int(config.joint_allowed_total_agent_correct_loss):
+            return False
+        if count(team, "bottom2_correct_count") < count(incumbent, "bottom2_correct_count") - int(config.joint_allowed_bottom2_correct_loss):
+            return False
+        if team["coverage_depth_c1"] * len(team["answer_vectors"][0]) < incumbent["coverage_depth_c1"] * len(incumbent["answer_vectors"][0]) - int(config.joint_allowed_c1_loss_questions):
+            return False
+        if team["coverage_depth_c2"] * len(team["answer_vectors"][0]) < incumbent["coverage_depth_c2"] * len(incumbent["answer_vectors"][0]) - int(config.joint_allowed_c2_loss_questions):
+            return False
+        team_counts = team.get("per_agent_correct_count", [
+            int(round(value * max(len(team.get("answer_vectors", [[0]])[0]), 1)))
+            for value in team.get("per_agent_acc", [])
+        ])
+        incumbent_counts = incumbent.get("per_agent_correct_count", [
+            int(round(value * max(len(incumbent.get("answer_vectors", [[0]])[0]), 1)))
+            for value in incumbent.get("per_agent_acc", [])
+        ])
+        return all(
+            value >= (incumbent_counts[index] if index < len(incumbent_counts) else 0) - int(config.joint_allowed_per_agent_correct_loss)
+            for index, value in enumerate(team_counts)
+        )
+    levels = [[team for team in teams if feasible(team)]]
+    rules = (
+        ("vote_correct_count", int(config.joint_vote_band_questions)),
+        ("total_agent_correct_count", int(config.joint_mean_band_correct_count)),
+        ("bottom2_correct_count", int(config.joint_bottom2_band_correct_count)),
+        ("c1_correct_count", int(config.joint_c1_band_questions)),
+        ("c2_correct_count", int(config.joint_c2_band_questions)),
+    )
+    for key, band in rules:
+        previous = levels[-1]
+        if not previous:
+            levels.append(previous)
+            continue
+        values = [
+            int(round(team["coverage_depth_c1"] * len(team["answer_vectors"][0]))) if key == "c1_correct_count"
+            else int(round(team["coverage_depth_c2"] * len(team["answer_vectors"][0]))) if key == "c2_correct_count"
+            else count(team, key)
+            for team in previous
+        ]
+        best = max(values)
+        narrowed = [team for team, value in zip(previous, values) if best - value <= band]
+        levels.append(narrowed or previous)
+    return {"quality_floor": levels[0], "bands": levels[1:], "final": levels[-1] or [incumbent]}
+
+
 def deterministic_team_key(team: Dict[str, Any]) -> tuple:
     return (
         float(team.get("stable_team_score", 0.0)),
@@ -271,26 +364,53 @@ def select_stable_joint_team(
     lineage_states: Sequence[Dict[str, Any]],
     probe_size: int,
     config: Any,
+    *,
+    gold_answers: Sequence[str] = (),
+    question_hashes: Sequence[str] = (),
+    vote_fn=None,
+    match_fn=None,
+    tie_break_method: str = "random",
+    seed: int = 0,
+    change_limit: int | None = None,
 ) -> Dict[str, Any]:
-    size = max(int(probe_size), 1)
-    epsilons = {
-        "vote_acc": config.joint_team_vote_epsilon_questions / size,
-        "mean_individual_acc": config.joint_team_mean_epsilon_questions / size,
-        "bottom2_mean_acc": config.joint_team_bottom2_epsilon_questions / size,
-        "coverage_depth_c1": config.joint_team_c1_epsilon_questions / size,
-        "coverage_depth_c2": config.joint_team_c2_epsilon_questions / size,
-    }
-    anchor_accuracies = [float(state.get("lineage_anchor_accuracy", -1.0)) for state in lineage_states]
-    feasible = [team for team in teams if quality_feasible(
-        team, incumbent, initial_per_agent, anchor_accuracies, epsilons,
-        config.joint_team_per_agent_accuracy_epsilon,
-    )]
-    frontier = epsilon_quality_frontier(feasible, epsilons) or [incumbent]
+    change_rejected = 0
+    eligible = []
+    for team in teams:
+        changes = sum(left != right for left, right in zip(team["beam_indices"], incumbent["beam_indices"]))
+        if change_limit is not None and changes > int(change_limit):
+            change_rejected += 1
+            continue
+        eligible.append(team)
+    bands = hierarchical_quality_bands(eligible, incumbent, config)
+    feasible = bands["quality_floor"]
+    frontier = bands["final"]
     stable_frontier = []
     hard_rejections = 0
     for team in frontier:
         diversity = team_diversity_metrics(team, config)
         team.update(diversity)
+        if gold_answers and question_hashes and vote_fn is not None and match_fn is not None:
+            folds = deterministic_probe_folds(question_hashes, seed=seed, seed_offset=int(config.probe_stability_seed_offset))
+            fold_diversities = []
+            for indices in folds:
+                if not indices:
+                    fold_diversities.append(0.0)
+                    continue
+                fold_metrics = team_metrics_for_indices(
+                    team, indices, gold_answers, question_hashes,
+                    vote_fn=vote_fn, match_fn=match_fn, tie_break_method=tie_break_method, seed=seed,
+                )
+                fold_team = {**fold_metrics, "prompt_profiles": team["prompt_profiles"]}
+                fold_diversities.append(team_diversity_metrics(fold_team, config)["team_diversity_score"])
+            team["fold_diversities"] = fold_diversities
+            team["cross_fold_diversity_mean"] = float(np.mean(fold_diversities)) if fold_diversities else 0.0
+            team["cross_fold_diversity_gap"] = float(max(fold_diversities) - min(fold_diversities)) if len(fold_diversities) >= 2 else 0.0
+            team["stable_diversity_score"] = team["cross_fold_diversity_mean"] - 0.50 * team["cross_fold_diversity_gap"]
+        else:
+            team["fold_diversities"] = []
+            team["cross_fold_diversity_mean"] = team["team_diversity_score"]
+            team["cross_fold_diversity_gap"] = 0.0
+            team["stable_diversity_score"] = team["team_diversity_score"]
         lineage_penalties, hard_jump = [], False
         for agent_id, profile in enumerate(team["prompt_profiles"]):
             profile["behavior_profile"] = diversity["behavior_profiles"][agent_id]
@@ -362,7 +482,7 @@ def select_stable_joint_team(
         team["lineage_drift_penalty_mean"] = float(np.mean(lineage_penalties)) if lineage_penalties else 0.0
         team["peer_collapse_penalty_mean"] = float(np.mean(peer_penalties)) if peer_penalties else 0.0
         team["stable_team_score"] = (
-            team["team_diversity_score"]
+            team["stable_diversity_score"]
             - team["lineage_drift_penalty_mean"]
             - team["peer_collapse_penalty_mean"]
         )
@@ -377,6 +497,9 @@ def select_stable_joint_team(
             "lineage_drift_penalty_mean": 0.0,
             "peer_collapse_penalty_mean": 0.0,
             "stable_team_score": incumbent["team_diversity_score"],
+            "cross_fold_diversity_mean": incumbent["team_diversity_score"],
+            "cross_fold_diversity_gap": 0.0,
+            "stable_diversity_score": incumbent["team_diversity_score"],
             "active_prompt_changed_count": 0,
             "prompt_hashes": [profile["prompt_hash"] for profile in incumbent["prompt_profiles"]],
         })
@@ -390,6 +513,8 @@ def select_stable_joint_team(
         "selected": selected,
         "feasible_count": len(feasible),
         "quality_frontier_count": len(frontier),
+        "hierarchical_band_counts": [len(level) for level in bands["bands"]],
+        "combination_rejected_by_change_limit_count": change_rejected,
         "hard_rejection_count": hard_rejections,
         "selected_has_soft_peer_collapse": bool(float(selected.get("peer_collapse_penalty_mean", 0.0)) > 0.0),
     }

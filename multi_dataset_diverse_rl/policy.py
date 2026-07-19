@@ -205,6 +205,11 @@ class AgentState:
         self.last_accepted_prompt_hash = None
         from .lineage import empty_lineage_state
         self.lineage_state = empty_lineage_state()
+        self.safe_qd_archive: List[Dict[str, Any]] = []
+        self.probation_archive: List[Dict[str, Any]] = []
+        self.per_niche_parent_count: Dict[str, int] = {}
+        self.probation_parent_count = 0
+        self.optimizer_update_count_by_epoch: Dict[str, int] = {}
 
     def observe_homogeneity_result(self, homogeneous_flag: int):
         flag = 1 if int(homogeneous_flag) > 0 else 0
@@ -228,6 +233,11 @@ class AgentState:
             "duplicate_prompt_reject_count": int(self.duplicate_prompt_reject_count),
             "last_accepted_prompt_hash": self.last_accepted_prompt_hash,
             "lineage_state": dict(self.lineage_state),
+            "safe_qd_archive": list(self.safe_qd_archive),
+            "probation_archive": list(self.probation_archive),
+            "per_niche_parent_count": dict(self.per_niche_parent_count),
+            "probation_parent_count": int(self.probation_parent_count),
+            "optimizer_update_count_by_epoch": dict(self.optimizer_update_count_by_epoch),
         }
 
     def restore_trajectory_state(self, payload: Dict[str, Any]) -> None:
@@ -271,3 +281,8 @@ class AgentState:
         self.last_accepted_prompt_hash = str(value) if value else None
         from .lineage import empty_lineage_state
         self.lineage_state = {**empty_lineage_state(), **dict(payload.get("lineage_state", {}) or {})}
+        self.safe_qd_archive = [dict(item) for item in payload.get("safe_qd_archive", []) if isinstance(item, dict)]
+        self.probation_archive = [dict(item) for item in payload.get("probation_archive", []) if isinstance(item, dict)]
+        self.per_niche_parent_count = {str(key): int(value) for key, value in dict(payload.get("per_niche_parent_count", {}) or {}).items()}
+        self.probation_parent_count = int(payload.get("probation_parent_count", 0) or 0)
+        self.optimizer_update_count_by_epoch = {str(key): int(value) for key, value in dict(payload.get("optimizer_update_count_by_epoch", {}) or {}).items()}

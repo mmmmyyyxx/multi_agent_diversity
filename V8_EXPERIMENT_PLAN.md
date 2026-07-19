@@ -2,7 +2,7 @@
 
 ## Stage 1: Offline Tests
 
-Verify mechanism normalization, behavior distance, QD niche quality, 243-team enumeration, quality feasibility, epsilon frontier selection, lineage transitions, switch hysteresis, checkpoint rejection, and occupancy bounds.
+Verify mechanism normalization, behavior distance, Safe/Probation retention, bounded refill feedback, niche parent opportunities, 243-team enumeration, hierarchical quality bands, two-fold stability, lineage transitions, checkpoint rejection, and occupancy bounds.
 
 ## Stage 2: Targeted Smoke
 
@@ -10,8 +10,9 @@ Run only `disambiguation_qa`, seed 42, two epochs, and the existing hybrid setti
 
 - `method_version=v8_stable_qd_lineage`;
 - early self-drift is zero;
-- QD retains incumbent and usable niches;
-- joint combination, feasible, and frontier counts are nonzero;
+- QD retains incumbent, Safe niches, and bounded Probation branches;
+- refill, parent-source, archive, and starvation diagnostics are recorded;
+- joint combination, quality-floor, band, and final-selector counts are nonzero;
 - active prompts may come from mechanism niches;
 - selected mean, bottom-2, C1, and C2 satisfy tolerances;
 - behavior and mechanism distances are exported;

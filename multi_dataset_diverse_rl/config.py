@@ -182,8 +182,8 @@ class Config:
     mechanism_sequence_distance_weight: float = 0.50
     mechanism_embedding_distance_weight: float = 0.50
     mechanism_near_duplicate_similarity_threshold: float = 0.97
-    behavior_correct_set_weight: float = 0.50
-    behavior_rescue_weight: float = 0.35
+    behavior_correct_set_weight: float = 0.40
+    behavior_rescue_weight: float = 0.30
     behavior_shared_wrong_weight: float = 0.15
     behavior_support_shrinkage: float = 5.0
     team_diversity_mean_behavior_weight: float = 0.45
@@ -208,6 +208,64 @@ class Config:
     peer_collapse_soft_similarity: float = 0.85
     peer_collapse_hard_similarity: float = 0.97
     validation_stable_specialization_tie_break_enabled: bool = True
+    candidate_refill_version: str = "legacy"
+    archive_policy_version: str = "legacy"
+    joint_quality_filter_version: str = "legacy"
+    probe_stability_version: str = "legacy"
+    parent_selection_version: str = "legacy"
+    candidate_refill_enabled: bool = True
+    candidate_refill_max_rounds: int = 2
+    candidate_refill_candidates_per_round: int = 2
+    candidate_refill_max_unique_candidates_per_parent: int = 6
+    candidate_refill_min_safe_non_incumbent: int = 2
+    candidate_refill_require_task_repair: bool = True
+    candidate_refill_require_distinct_mechanism: bool = True
+    candidate_refill_feed_rejection_reasons: bool = True
+    candidate_refill_stop_when_requirements_met: bool = True
+    candidate_refill_max_solver_calls_per_agent_update: int = 0
+    probation_archive_enabled: bool = True
+    probation_archive_size_per_agent: int = 1
+    probation_archive_ttl_updates: int = 2
+    probation_max_accuracy_loss: float = 0.03
+    probation_max_c1_loss_questions: int = 1
+    probation_max_c2_loss_questions: int = 1
+    probation_require_mechanism_novelty: bool = True
+    candidate_c1_catastrophic_loss_questions: int = 2
+    candidate_c2_catastrophic_loss_questions: int = 2
+    qd_archive_size_per_agent: int = 6
+    joint_representative_beam_size: int = 3
+    qd_parent_selection_mode: str = "active_plus_round_robin_niche"
+    qd_niche_min_parent_opportunities_per_epoch: int = 1
+    probation_parent_enabled: bool = True
+    probe_stability_fold_count: int = 2
+    probe_stability_seed_offset: int = 9100
+    joint_vote_band_questions: int = 1
+    joint_mean_band_correct_count: int = 2
+    joint_bottom2_band_correct_count: int = 1
+    joint_c1_band_questions: int = 1
+    joint_c2_band_questions: int = 1
+    joint_allowed_vote_loss_questions: int = 1
+    joint_allowed_c1_loss_questions: int = 1
+    joint_allowed_c2_loss_questions: int = 1
+    joint_allowed_total_agent_correct_loss: int = 2
+    joint_allowed_bottom2_correct_loss: int = 1
+    joint_allowed_per_agent_correct_loss: int = 2
+    joint_team_max_active_changes_early: int = 3
+    joint_team_max_active_changes_late: int = 2
+    joint_team_change_limit_switch_strength: float = 0.30
+    joint_team_no_diversification_patience: int = 2
+    joint_team_change_limit_relaxation: int = 1
+    lineage_commit_required_snapshots: int = 2
+    lineage_switch_confirmation_snapshots: int = 2
+    qd_readiness_min_distinct_niches: int = 2
+    qd_readiness_min_diversity: float = 0.10
+    qd_readiness_max_fold_gap: float = 0.15
+    residual_specialization_qd_floor: float = 0.15
+    behavior_error_overlap_weight: float = 0.15
+    behavior_wrong_answer_dispersion_weight: float = 0.15
+    behavior_wrong_support_shrinkage: float = 5.0
+    min_optimizer_updates_per_agent_per_epoch: int = 1
+    target_selector_fairness_enabled: bool = True
 
     diversity_metric: str = "trace_embedding"
     use_joint_trace_diversity_evaluator: bool = False
@@ -541,6 +599,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--lineage_policy_version", default=defaults.lineage_policy_version)
     parser.add_argument("--mechanism_distance_version", default=defaults.mechanism_distance_version)
     for name in (
+        "candidate_refill_version", "archive_policy_version", "joint_quality_filter_version",
+        "probe_stability_version", "parent_selection_version", "qd_parent_selection_mode",
+    ):
+        parser.add_argument(f"--{name}", default=getattr(defaults, name))
+    for name in (
         "mechanism_sequence_distance_weight", "mechanism_embedding_distance_weight",
         "mechanism_near_duplicate_similarity_threshold", "behavior_correct_set_weight",
         "behavior_rescue_weight", "behavior_shared_wrong_weight", "behavior_support_shrinkage",
@@ -550,6 +613,10 @@ def build_parser() -> argparse.ArgumentParser:
         "lineage_behavior_drift_weight", "lineage_soft_drift_threshold", "lineage_hard_drift_threshold",
         "lineage_switch_min_accuracy_gain", "lineage_switch_min_vote_gain",
         "peer_collapse_soft_similarity", "peer_collapse_hard_similarity",
+        "probation_max_accuracy_loss", "qd_readiness_min_diversity",
+        "qd_readiness_max_fold_gap", "residual_specialization_qd_floor",
+        "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
+        "behavior_wrong_support_shrinkage", "joint_team_change_limit_switch_strength",
     ):
         parser.add_argument(f"--{name}", type=float, default=getattr(defaults, name))
     for name in (
@@ -557,12 +624,37 @@ def build_parser() -> argparse.ArgumentParser:
         "joint_team_bottom2_epsilon_questions", "joint_team_c1_epsilon_questions",
         "joint_team_c2_epsilon_questions", "lineage_provisional_epochs", "lineage_commit_epochs",
         "lineage_switch_confirmation_epochs",
+        "candidate_refill_max_rounds", "candidate_refill_candidates_per_round",
+        "candidate_refill_max_unique_candidates_per_parent", "candidate_refill_min_safe_non_incumbent",
+        "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_size_per_agent",
+        "probation_archive_ttl_updates", "probation_max_c1_loss_questions",
+        "probation_max_c2_loss_questions", "candidate_c1_catastrophic_loss_questions",
+        "candidate_c2_catastrophic_loss_questions", "qd_archive_size_per_agent",
+        "joint_representative_beam_size", "qd_niche_min_parent_opportunities_per_epoch",
+        "probe_stability_fold_count", "probe_stability_seed_offset", "joint_vote_band_questions",
+        "joint_mean_band_correct_count", "joint_bottom2_band_correct_count",
+        "joint_c1_band_questions", "joint_c2_band_questions", "joint_allowed_vote_loss_questions",
+        "joint_allowed_c1_loss_questions", "joint_allowed_c2_loss_questions",
+        "joint_allowed_total_agent_correct_loss", "joint_allowed_bottom2_correct_loss",
+        "joint_allowed_per_agent_correct_loss", "joint_team_max_active_changes_early",
+        "joint_team_max_active_changes_late", "joint_team_no_diversification_patience",
+        "joint_team_change_limit_relaxation", "lineage_commit_required_snapshots",
+        "lineage_switch_confirmation_snapshots", "qd_readiness_min_distinct_niches",
+        "min_optimizer_updates_per_agent_per_epoch",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
     parser.add_argument(
         "--validation_stable_specialization_tie_break_enabled", type=int,
         default=int(defaults.validation_stable_specialization_tie_break_enabled), choices=[0, 1],
     )
+    for name in (
+        "candidate_refill_enabled", "candidate_refill_require_task_repair",
+        "candidate_refill_require_distinct_mechanism", "candidate_refill_feed_rejection_reasons",
+        "candidate_refill_stop_when_requirements_met", "probation_archive_enabled",
+        "probation_require_mechanism_novelty", "probation_parent_enabled",
+        "target_selector_fairness_enabled",
+    ):
+        parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--diversity_metric", type=str, default=defaults.diversity_metric, choices=["trace_embedding"])
     parser.add_argument("--use_joint_trace_diversity_evaluator", type=int, default=int(defaults.use_joint_trace_diversity_evaluator), choices=[0, 1])
     parser.add_argument("--invalid_binary", type=int, default=int(defaults.invalid_binary), choices=[0, 1])

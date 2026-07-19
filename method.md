@@ -32,8 +32,8 @@ The ordering is strict:
 1. Hard guards remove invalid or catastrophically degraded candidates.
 2. Candidate quality determines the elite within each mechanism niche.
 3. Team quality constraints define feasible prompt combinations.
-4. An epsilon-Pareto frontier keeps quality-competitive teams.
-5. Behavioral complementarity selects only within that frontier.
+4. Hierarchical integer-count quality bands keep quality-competitive teams.
+5. Behavioral complementarity selects only within the final band.
 6. Once a stable agent lineage is committed, drift and peer collapse are controlled.
 
 Diversity never compensates for failing competence constraints.
@@ -95,7 +95,23 @@ Candidate evaluation replaces one target prompt while holding peer prompts fixed
 
 Global prompt embedding distance and unconditional novelty bonuses are not candidate reward terms. Before a lineage is committed, self-drift, cycle-to-self, and lineage-switch penalties are zero.
 
-## 8. Mechanism Representation
+## 8. Search-Space Preservation
+
+Quality constraints protect the active team, but they do not erase every novel branch immediately. Generated candidates first pass a cheap schema, completeness, length, duplicate, type, and mechanism-step prescreen. After candidate-batch evaluation they are separated into three states:
+
+- `Safe`: valid, fully evaluated candidates without catastrophic target, C1, or C2 regression. Only Safe items may enter the long-term QD archive, joint representatives, lineage selection, or the active team.
+- `Probation`: genuinely novel candidates with only bounded small regressions. They can be used as later TCS parents for at most two updates, but can never enter active-team selection directly.
+- `Catastrophic`: invalid, duplicated, non-novel, or materially regressing candidates. These are discarded.
+
+If the initial batch lacks two Safe non-incumbent candidates, a Safe task repair, or a Safe distinct mechanism, bounded refill runs for at most two rounds. The Teacher and Student receive structured rejection feedback, including accuracy/C1 losses and duplicate-niche causes, rather than a generic request to try again. Solver rollouts for already seen prompt-question pairs are reused.
+
+The long-term Safe archive holds up to six niche elites per agent. `beam_size=3` means three representatives selected from that archive for joint enumeration, not an archive size limit. Parent A is the active prompt; Parent B is chosen round-robin from an underused Probation branch or Safe niche, ensuring archived niches receive reproduction opportunities.
+
+Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after incumbent integer loss floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. This is narrower and more reproducible than retaining a large five-dimensional Pareto frontier.
+
+At most three active prompts change in an early epoch and two in a later epoch; a single next-epoch relaxation is available only after repeated no-diversification selection. Lineages become provisional after one stable snapshot and committed after two. QD readiness can keep residual specialization at its 0.15 floor only when competence gates, two Safe niches, diversity, and fold stability all pass.
+
+## 9. Mechanism Representation
 
 `multi_dataset_diverse_rl/mechanisms.py` normalizes Student mechanism steps into an operation sequence. It removes persona names, shared solver prefixes, output-format text, step numbers, and generic careful/verify wording.
 
@@ -121,7 +137,7 @@ mechanism_distance = 0.50 * sequence_distance
 
 Mechanism distance is secondary evidence. A near duplicate requires the same normalized sequence and embedding similarity of at least `0.97`.
 
-## 9. Behavioral Profiles
+## 10. Behavioral Profiles
 
 Each unique beam prompt is evaluated on the fixed optimization probe. For each agent prompt, the system records:
 
@@ -147,7 +163,7 @@ Pairwise behavior distance is:
 
 Rescue-set distance is zero when both prompts have no rescue support. This prevents sparse evidence from appearing maximally diverse.
 
-## 10. Per-Agent QD Archive
+## 11. Per-Agent QD Archive
 
 Each agent keeps a beam of three prompts. The beam is a quality-diversity archive, not fixed safe/exploit/explore roles.
 
@@ -167,7 +183,7 @@ The archive retains:
 
 Sources are logged as `incumbent`, `task_repair_niche`, and `mechanism_niche`. Any source may become active during joint selection.
 
-## 11. Joint Active-Team Selection
+## 12. Joint Active-Team Selection
 
 At every epoch end, active prompts are selected jointly rather than greedily per agent.
 
@@ -177,7 +193,7 @@ The probe cache key includes agent, prompt hash, solver model, question hash, pa
 
 For each team, the offline evaluator computes plurality accuracy, mean individual accuracy, bottom-2 accuracy, C1, C2, plurality margin, correctness vectors, and rescue profiles.
 
-## 12. Quality Feasibility And Frontier
+## 13. Quality Feasibility And Frontier
 
 A team must remain within configured one-question tolerances of the incumbent on:
 
@@ -189,7 +205,7 @@ Each agent must also remain within `0.03` of its initial, incumbent, and committ
 
 The feasible teams are reduced to a five-dimensional epsilon-Pareto quality frontier. Diversity is evaluated only on that frontier. If no frontier survives, the incumbent team is retained.
 
-## 13. Team Complementarity
+## 14. Team Complementarity
 
 For each frontier team:
 
@@ -205,7 +221,7 @@ The minimum pair term discourages a team where only some agents differentiate. R
 
 Before any committed anchors exist, the team with the highest diversity score on the quality frontier is selected without self-lineage penalties. This is the symmetry-breaking phase.
 
-## 14. Stable Lineages
+## 15. Stable Lineages
 
 Each agent lineage is `uncommitted`, `provisional`, or `committed`.
 
@@ -226,7 +242,7 @@ Switching uses hysteresis. A different lineage is first recorded as pending and 
 
 Committed peer anchors also impose a soft collapse penalty above similarity `0.85`. Same-sequence, behaviorally near-identical copies above similarity `0.97` cannot occupy another active position.
 
-## 15. Stable Team Score
+## 16. Stable Team Score
 
 Within the quality frontier:
 
@@ -249,11 +265,11 @@ mean_behavior_distance
 
 It is not a candidate reward. Validation may use it only as the last tie-break after vote and competence fields.
 
-## 16. Validation And Final Test
+## 17. Validation And Final Test
 
 `vote_generalization_first` orders validation states by plurality vote, mean accuracy, bottom-2, C1, C2, plurality margin, invalid rate, stable-specialization tie-break, and earlier epoch. Final testing restores `best_prompts.json` selected from validation.
 
-## 17. Checkpoint And Outputs
+## 18. Checkpoint And Outputs
 
 Checkpoint behavior fingerprints include all QD, mechanism, behavior, joint-quality, lineage, and peer-collapse settings. An old V8 checkpoint fails with:
 
@@ -272,7 +288,7 @@ lineage_history.jsonl
 
 `run_meta.json` records all method versions and feature flags. `accuracy_results.csv/jsonl` exports stable specialization, lineage, joint-selection, niche occupancy, accuracy, plurality, coverage, and cost metrics.
 
-## 18. Code Map
+## 19. Code Map
 
 ```text
 multi_dataset_diverse_rl/system.py             orchestration and model calls
@@ -285,7 +301,7 @@ scripts/experiment_config.py                    named experiment settings
 scripts/run_task_level_accuracy.py              task-level runner
 ```
 
-## 19. Boundaries
+## 20. Boundaries
 
 - The method optimizes prompts, not model weights.
 - Fixed-probe behavior is an estimate and can overfit; validation remains separate.

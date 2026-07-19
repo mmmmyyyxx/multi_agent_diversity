@@ -29,8 +29,8 @@ def test_lineage_transitions_uncommitted_provisional_committed():
     first = update_lineage_state(state, selected(), epoch=1, quality_gate_passed=True, config=cfg)
     second = update_lineage_state(state_only(first), selected(), epoch=2, quality_gate_passed=True, config=cfg)
     third = update_lineage_state(state_only(second), selected(), epoch=3, quality_gate_passed=True, config=cfg)
-    assert first["new_status"] == "uncommitted"
-    assert second["new_status"] == "provisional"
+    assert first["new_status"] == "provisional"
+    assert second["new_status"] == "committed"
     assert third["new_status"] == "committed"
 
 

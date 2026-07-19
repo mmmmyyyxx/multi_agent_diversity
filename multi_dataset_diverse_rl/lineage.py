@@ -66,18 +66,19 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
     old_status = state["lineage_status"]
     signature = list(selected.get("mechanism_representation", {}).get("normalized_operation_sequence", []))
     same = _same_lineage(signature, list(state.get("pending_lineage_signature", [])))
-    if not quality_gate_passed:
+    fold_stable = float(selected.get("cross_fold_diversity_gap", 0.0) or 0.0) <= float(getattr(config, "qd_readiness_max_fold_gap", 0.15))
+    if not quality_gate_passed or not fold_stable:
         state["pending_lineage_signature"] = []
         state["pending_lineage_count"] = 0
-        return {**state, "old_status": old_status, "new_status": state["lineage_status"], "reason": "quality_gate_failed"}
+        return {**state, "old_status": old_status, "new_status": state["lineage_status"], "reason": "unstable_single_fold_specialization" if not fold_stable else "quality_gate_failed"}
     if old_status != "committed":
         state["pending_lineage_signature"] = signature
         state["pending_lineage_count"] = int(state.get("pending_lineage_count", 0)) + 1 if same else 1
         state["lineage_stability_count"] = state["pending_lineage_count"]
-        if old_status == "uncommitted" and state["lineage_stability_count"] >= config.lineage_provisional_epochs:
+        if old_status == "uncommitted" and state["lineage_stability_count"] >= int(getattr(config, "lineage_commit_required_snapshots", config.lineage_provisional_epochs)) - 1:
             state["lineage_status"] = "provisional"
             _set_anchor(state, selected, epoch)
-        if state["lineage_stability_count"] >= config.lineage_commit_epochs:
+        if state["lineage_stability_count"] >= int(getattr(config, "lineage_commit_required_snapshots", config.lineage_commit_epochs)):
             anchor_behavior = {
                 "correctness_vector": state.get("lineage_anchor_correctness_vector", []),
                 "error_vector": [1 - int(value) for value in state.get("lineage_anchor_correctness_vector", [])],
@@ -109,7 +110,7 @@ def update_lineage_state(state: Dict[str, Any], selected: Dict[str, Any], *, epo
     state["lineage_switch_attempt_count"] += int(not same)
     state["pending_lineage_signature"] = signature
     state["pending_lineage_count"] = int(state.get("pending_lineage_count", 0)) + 1 if same else 1
-    if state["pending_lineage_count"] >= config.lineage_switch_confirmation_epochs:
+    if state["pending_lineage_count"] >= int(getattr(config, "lineage_switch_confirmation_snapshots", config.lineage_switch_confirmation_epochs)):
         _set_anchor(state, selected, epoch)
         state["lineage_switch_commit_count"] += 1
         state["pending_lineage_signature"] = []

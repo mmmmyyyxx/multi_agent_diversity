@@ -70,6 +70,11 @@ class ExperimentSetting:
     active_team_selector_version: str = ""
     lineage_policy_version: str = ""
     mechanism_distance_version: str = ""
+    candidate_refill_version: str = ""
+    archive_policy_version: str = ""
+    joint_quality_filter_version: str = ""
+    probe_stability_version: str = ""
+    parent_selection_version: str = ""
 
 
 @dataclass(frozen=True)
@@ -257,6 +262,11 @@ ALL_EXPERIMENT_SETTINGS = [
         active_team_selector_version="joint_quality_diversity_v1",
         lineage_policy_version="stable_lineage_anchor_v1",
         mechanism_distance_version="mechanism_sequence_embedding_v1",
+        candidate_refill_version="quality_feedback_refill_v1",
+        archive_policy_version="safe_probation_qd_archive_v1",
+        joint_quality_filter_version="hierarchical_epsilon_band_v1",
+        probe_stability_version="deterministic_two_fold_v1",
+        parent_selection_version="active_plus_round_robin_niche_v1",
         tcs_candidate_policy_version="repair_mechanism_alternative_v1",
         mechanism_signature_version="mechanism_signature_v1",
         competence_weight_depth1_gain=0.80,
