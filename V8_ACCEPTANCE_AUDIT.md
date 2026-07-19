@@ -77,3 +77,27 @@ git diff --check
 ```
 
 Only the single targeted `disambiguation_qa`, seed 42, two-epoch acceptance smoke specified by the acceptance task may be launched after local checks pass. No formal experiment is part of this audit.
+
+## Post-Refactor Smoke Result
+
+`runs_v8_stable_qd_refactor_smoke_3196576` completed the one permitted smoke:
+
+| Check | Result |
+| --- | --- |
+| Scope | `disambiguation_qa`, seed 42, 2 epochs, 20/20/20 |
+| Split | strict manifest, zero cross-split question overlap |
+| TCS | 8/8 update summaries complete; 22 final Student candidates; 0 parse failures |
+| Archive/refill | one post-archive refill; trigger was retained niche/task-repair collapse; 2 rounds |
+| Representatives | 3 per agent; up to 3 distinct representative niches |
+| Mechanisms | 4 observed canonical family IDs plus unknown incumbent; no natural semantic fallback candidate |
+| Joint selection | 243 theoretical teams in epoch 2; 163 evaluated after change limit; 73 feasible |
+| Real anchors | 1 non-dominated actual team after epoch 2; 73 anchor-feasible teams; no fallback |
+| Lineage | 2 uncommitted, 2 provisional, 1 committed |
+| Final metrics | vote 0.35, mean individual 0.39, oracle 0.55 |
+| Calls | 1,188 solver, 46 optimizer, 30 evaluator; 1,264 total |
+| Completion | final history/results present; transient checkpoint cleared; runner exited |
+
+The natural smoke did not emit a residual-only semantic family. Specificity,
+semantic merge/separation, stable family IDs, and checkpoint persistence are
+covered deterministically in `tests/test_semantic_mechanisms.py` and
+`tests/test_training_checkpoint_resume.py`.

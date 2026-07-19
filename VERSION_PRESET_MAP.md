@@ -11,7 +11,7 @@ large optional-field record.
 | V2 TCS | `shared_guarded_beam` with TCS arguments in its recorded run | Teacher-Critic-Student generation, scalar selection | `runs_task_level_bbh_tcs_useful_full` | Current non-QD v5 can migrate to v6 |
 | V3 Oracle Pareto | `shared_oracle_pareto_tcs` | TCS generation, candidate-level oracle Pareto selection | `runs_bbh_oracle_pareto_formal_v2` | Current non-QD v5 can migrate to v6 |
 | V7 vote-oriented | `shared_vote_error_pareto_tcs_residual_cycle_guard` | TCS, vote-error Pareto selection, residual and cycle guards | Missing complete formal run; compact pilot records are in `run_records/` | Current non-QD v5 can migrate to v6 |
-| V8 Stable-QD | `shared_vote_tcs_competence_depth2_progressive_residual_hybrid` | TCS, Safe/Probation QD archive, behavior-aware representatives, real-team anchors, joint selector, lineage policy | Missing formal run; latest smoke is `runs_v8_stable_qd_acceptance_fef10f3` | v6; v5 requires real selected-team evidence |
+| V8 Stable-QD | `shared_vote_tcs_competence_depth2_progressive_residual_hybrid` | TCS, Safe/Probation QD archive, behavior-aware representatives, real-team anchors, joint selector, lineage policy | Missing formal run; latest smoke is `runs_v8_stable_qd_refactor_smoke_3196576` | v6; v5 requires real selected-team evidence |
 
 The V8 setting name intentionally still contains historical terms. Its
 authoritative identity is `method_version=v8_stable_qd_lineage`.

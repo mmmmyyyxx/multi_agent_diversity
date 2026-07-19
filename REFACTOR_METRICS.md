@@ -13,8 +13,8 @@ Baseline SHA: `2be2e30eef56d1019fe0dcf3cd6078c7edbf0872`.
 | Top-level canonical Config state | flat fields | 11 section objects |
 | Experiment setting record fields | 71 optional fields | 3 preset fields: name, base, overrides |
 | Checkpoint version | 5 | 6 |
-| Run roots | 34 | 4 |
-| Local run bytes | 1,918,658,485 | 541,379,933 |
+| Run roots | 34 | 4 after cleanup; 5 after the permitted targeted smoke |
+| Local run bytes | 1,918,658,485 | 541,379,933 after cleanup; 555,792,229 after smoke |
 
 ## Current Modules
 
@@ -52,3 +52,19 @@ functions where old imports must remain valid.
 
 Characterization tests lock all unrelated behavior. The deterministic
 pre-smoke suite passes 344 tests; compileall and `git diff --check` also pass.
+
+## Targeted Smoke
+
+The only post-refactor API smoke used `disambiguation_qa`, seed 42, two epochs,
+and 20/20/20 examples. It completed final test and removed its transient
+checkpoint. All eight update summaries completed TCS; Student produced 22
+usable candidates with no JSON parse failure. One archive collision triggered
+two refill rounds. Final per-agent Safe archive sizes were 4/5/5/3/3 and every
+joint representative beam had three entries.
+
+Epoch 2 enumerated the theoretical 243 teams, evaluated 163 after the active
+change limit, and retained 73 real-anchor-feasible teams. The real anchor
+frontier contained one non-dominated actual team and used no fallback. Final
+lineages were two uncommitted, two provisional, and one committed. Final test
+was vote 0.35, mean individual 0.39, and oracle 0.55. The run made 1,264 LLM
+calls and is execution evidence, not an accuracy claim.

@@ -12,6 +12,7 @@ Audit date: 2026-07-19. The reviewed source of truth is
 | `runs_task_level_bbh_tcs_useful_full` | V2 TCS scalar plus baseline | 4 BBH tasks, seed 42 | Historical reused-file protocol | Complete, 8/8 runs |
 | `runs_bbh_oracle_pareto_formal_v2` | V3 Oracle Pareto, scalar TCS, and baseline | 4 BBH tasks, seed 42 | Historical task-manifest protocol; root is not uniformly strict | Complete, 12/12 runs |
 | `runs_v8_stable_qd_acceptance_fef10f3` | Latest pre-refactor Stable-QD end-to-end and resume smoke | `disambiguation_qa`, seed 42 | Strict split | Complete smoke, 1/1 run |
+| `runs_v8_stable_qd_refactor_smoke_3196576` | Post-refactor targeted Stable-QD smoke | `disambiguation_qa`, seed 42 | Strict split | Complete smoke, 1/1 run; created after cleanup |
 
 There is no complete canonical formal root for V7 or Stable-QD V8. The V7
 2-task/2-seed pilot and the partial three-seed formal attempt were removed only
@@ -29,6 +30,11 @@ after their metrics, costs, metadata, and original paths were preserved in
 | Released space | 1,377,278,552 bytes (1.28 GiB) |
 | Compact deleted-run records | 30 |
 | Ambiguous roots deleted | 0 |
+
+The reviewed cleanup left four roots. The single permitted post-refactor
+targeted smoke then created the fifth current root. It is ignored by Git and
+is not part of the historical cleanup plan. The two retained V8 smokes remain
+below the configured maximum of three.
 
 The cleanup tool accepts only direct repository children named `runs_*`,
 rejects symlinks, traversal, locks, active-process references, and workspace
