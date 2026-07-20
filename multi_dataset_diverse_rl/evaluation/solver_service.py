@@ -3,6 +3,18 @@
 from ..system_shared import *
 
 
+def is_transient_llm_error(error: BaseException) -> bool:
+    message = str(error).lower()
+    return any(
+        marker in message
+        for marker in (
+            "timeout", "timed out", "deadline", "rate limit", "too many requests",
+            "temporarily", "temporary", "connection", "server", "overloaded",
+            "try again", "429", "503", "502", "504", "负载", "饱和", "稍后再试",
+        )
+    )
+
+
 class SolverServiceMixin:
     async def _chat(
         self,
@@ -52,25 +64,7 @@ class SolverServiceMixin:
                 return text
             except Exception as e:
                 last_err = e
-                msg = str(e).lower()
-                transient = any(
-                    x in msg
-                    for x in [
-                        "timeout",
-                        "timed out",
-                        "deadline",
-                        "rate limit",
-                        "temporarily",
-                        "temporary",
-                        "connection",
-                        "server",
-                        "overloaded",
-                        "try again",
-                        "503",
-                        "502",
-                        "504",
-                    ]
-                )
+                transient = is_transient_llm_error(e)
                 if not transient:
                     if attempt >= max(1, int(self.cfg.max_retries)):
                         self._record_llm_call(
