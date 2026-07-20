@@ -6,6 +6,11 @@ import pytest
 from multi_dataset_diverse_rl.cli import rollout_vote_first_validation_key, write_selected_prompts
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.persistence.checkpoint import checkpoint_behavior_config
+from multi_dataset_diverse_rl.diagnostics.candidate_funnel import (
+    empty_candidate_channel_funnel,
+    validate_candidate_channel_funnel,
+)
+from multi_dataset_diverse_rl.optimization.candidate_generator import CandidateGeneratorMixin
 from multi_dataset_diverse_rl.rollout_diversity import (
     candidate_reward,
     candidate_transition_metrics,
@@ -217,3 +222,27 @@ def test_rollout_best_state_serializes_selection_key_and_method_metadata(tmp_pat
     assert payload["method_version"] == "v8_rollout_qd_vote_ready"
     assert payload["mechanism_diversity_enabled"] is False
     assert payload["joint_team_metrics"] == {"vote_correct_count": 7}
+
+
+def test_joint_promoted_safe_candidate_records_full_funnel_path():
+    holder = object.__new__(CandidateGeneratorMixin)
+    holder.candidate_channel_funnel = empty_candidate_channel_funnel()
+    holder.candidate_channel_funnel_seen = {}
+    candidate = {
+        "prompt_hash": "candidate-a",
+        "generation": 1,
+        "candidate_source": "open_rollout_exploration",
+        "archive_bucket": "safe",
+    }
+    holder._record_candidate_funnel_outcomes(
+        agent_id=0, evaluated=[candidate], safe_archive=[candidate], epoch=1,
+    )
+    holder._record_candidate_funnel_item(candidate, 0, "representative_selected_count")
+    holder._record_candidate_funnel_item(candidate, 0, "active_selected_count")
+    validate_candidate_channel_funnel(holder.candidate_channel_funnel)
+    counts = holder.candidate_channel_funnel["open_rollout_exploration"]
+    assert counts["evaluated_candidate_count"] == 1
+    assert counts["safe_count"] == 1
+    assert counts["archive_retained_count"] == 1
+    assert counts["representative_selected_count"] == 1
+    assert counts["active_selected_count"] == 1

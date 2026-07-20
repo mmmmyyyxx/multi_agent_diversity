@@ -191,6 +191,14 @@ class JointControllerMixin:
                 profiled, active_hash, int(self.cfg.qd_archive_size_per_agent), self.cfg,
                 vote_ready=self._is_vote_ready_rollout_method(),
             )
+            for item in agent.safe_qd_archive:
+                item["archive_bucket"] = "safe"
+            self._record_candidate_funnel_outcomes(
+                agent_id=agent_id,
+                evaluated=agent.safe_qd_archive,
+                safe_archive=agent.safe_qd_archive,
+                epoch=epoch,
+            )
             representatives = select_rollout_representatives(
                 agent.safe_qd_archive, active_hash, int(self.cfg.joint_representative_beam_size), self.cfg,
                 vote_ready=self._is_vote_ready_rollout_method(),
