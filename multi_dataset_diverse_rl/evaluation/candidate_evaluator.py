@@ -709,12 +709,16 @@ class CandidateEvaluatorMixin:
                         and wrong_counts.get(target_value, 0) > 1
                     )
 
-                residual_info = self._infer_target_error_pattern(
-                    target_trace=baseline_traces[agent_id] if agent_id < len(baseline_traces) else "",
-                    target_answer=baseline_answers[agent_id] if agent_id < len(baseline_answers) else "",
-                    peer_traces=[trace for idx, trace in enumerate(baseline_traces) if idx != agent_id],
-                    rollout=baseline_rollout,
-                    agent_id=agent_id,
+                residual_info = (
+                    {}
+                    if self._is_rollout_qd_method()
+                    else self._infer_target_error_pattern(
+                        target_trace=baseline_traces[agent_id] if agent_id < len(baseline_traces) else "",
+                        target_answer=baseline_answers[agent_id] if agent_id < len(baseline_answers) else "",
+                        peer_traces=[trace for idx, trace in enumerate(baseline_traces) if idx != agent_id],
+                        rollout=baseline_rollout,
+                        agent_id=agent_id,
+                    )
                 )
                 row.update(
                     {
@@ -735,6 +739,12 @@ class CandidateEvaluatorMixin:
                         "candidate_any_correct": candidate_any_correct,
                         "baseline_individual_correct": [bool(value) for value in baseline_rollout.get("individual_correct", [])],
                         "candidate_individual_correct": [bool(value) for value in rollout.get("individual_correct", [])],
+                        "baseline_answers": list(baseline_answers),
+                        "candidate_answers": list(answers),
+                        "baseline_traces": list(baseline_traces),
+                        "candidate_traces": list(traces),
+                        "baseline_invalid_flags": [int(value) for value in baseline_rollout.get("invalid_flags", [])],
+                        "candidate_invalid_flags": [int(value) for value in rollout.get("invalid_flags", [])],
                         "baseline_target_correct": baseline_target_correct,
                         "candidate_target_correct": target_agent_correct,
                         "target_agent_correct": target_agent_correct,
@@ -760,8 +770,10 @@ class CandidateEvaluatorMixin:
                         "counterfactual_gold_margin": float(counterfactual_gold_diagnostics.get("normalized_vote_margin", -1.0)),
                         "baseline_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(baseline_answers, agent_id),
                         "candidate_target_in_dominant_wrong_cluster": in_dominant_wrong_cluster(answers, agent_id),
-                        "capability_residual_family": str(residual_info.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
-                        "capability_residual_confidence": float(residual_info.get("confidence", 0.0) or 0.0),
+                        **({} if self._is_rollout_qd_method() else {
+                            "capability_residual_family": str(residual_info.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
+                            "capability_residual_confidence": float(residual_info.get("confidence", 0.0) or 0.0),
+                        }),
                         "target_answer": answers[agent_id] if agent_id < len(answers) else "",
                         "target_trace_novelty": target_trace_novelty,
                         "target_useful_diversity": target_useful_diversity,
@@ -924,6 +936,96 @@ class CandidateEvaluatorMixin:
                     "candidate_mean_embedding_overlap": self._clip01(float(np.mean([float(r.get("candidate_mean_embedding_overlap", 0.0)) for r in rows])) if rows else 0.0),
                 }
             )
+            if self._is_rollout_qd_method():
+                def profile_for(agent_index: int, candidate: bool) -> Dict[str, Any]:
+                    prefix = "candidate" if candidate else "baseline"
+                    answers = [
+                        list(row.get(f"{prefix}_answers", []))[agent_index]
+                        if agent_index < len(row.get(f"{prefix}_answers", [])) else ""
+                        for row in rows
+                    ]
+                    correctness = [
+                        int(list(row.get(f"{prefix}_individual_correct", []))[agent_index])
+                        if agent_index < len(row.get(f"{prefix}_individual_correct", [])) else 0
+                        for row in rows
+                    ]
+                    invalid = [
+                        int(list(row.get(f"{prefix}_invalid_flags", []))[agent_index])
+                        if agent_index < len(row.get(f"{prefix}_invalid_flags", [])) else 1
+                        for row in rows
+                    ]
+                    traces = [
+                        list(row.get(f"{prefix}_traces", []))[agent_index]
+                        if agent_index < len(row.get(f"{prefix}_traces", [])) else ""
+                        for row in rows
+                    ]
+                    useful_wrong = [
+                        int(wrong_diversity_is_useful(row, candidate=candidate))
+                        for row in rows
+                    ]
+                    profile = {
+                        "answer_vector": answers,
+                        "correctness_vector": correctness,
+                        "invalid_vector": invalid,
+                        "trace_embedding_vector_per_question": [
+                            self._encode_trace_document(trace) if not invalid[index] else []
+                            for index, trace in enumerate(traces)
+                        ],
+                        "wrong_diversity_useful_vector": useful_wrong,
+                        "question_hashes": [str(row.get("question_hash", "")) for row in rows],
+                    }
+                    profile["rollout_signature_hash"] = rollout_signature(profile)
+                    return profile
+
+                baseline_profiles = [profile_for(index, False) for index in range(len(self.agents))]
+                candidate_profiles = [profile_for(index, True) for index in range(len(self.agents))]
+                def target_diversity(profiles: Sequence[Mapping[str, Any]]) -> tuple[float, Dict[str, float]]:
+                    distances = [
+                        rollout_distance(
+                            profiles[agent_id], profiles[peer_id],
+                            correctness_weight=self.cfg.rollout_correct_distance_weight,
+                            wrong_weight=self.cfg.rollout_wrong_distance_weight,
+                            trace_weight=self.cfg.rollout_trace_distance_weight,
+                        )
+                        for peer_id in range(len(profiles)) if peer_id != agent_id
+                    ]
+                    keys = (
+                        "correct_set_rollout_distance", "useful_wrong_answer_dispersion",
+                        "rollout_trace_embedding_distance", "rollout_distance",
+                    )
+                    mean = {key: float(np.mean([row[key] for row in distances])) if distances else 0.0 for key in keys}
+                    return mean["rollout_distance"], mean
+
+                baseline_rollout_diversity, baseline_components = target_diversity(baseline_profiles)
+                candidate_rollout_diversity, candidate_components = target_diversity(candidate_profiles)
+                transitions = candidate_transition_metrics(rows)
+                baseline_candidate_metrics.update({
+                    **transitions,
+                    "rollout_profile": candidate_profiles[agent_id],
+                    "baseline_rollout_profile": baseline_profiles[agent_id],
+                    "baseline_rollout_diversity": baseline_rollout_diversity,
+                    "candidate_rollout_diversity": candidate_rollout_diversity,
+                    "rollout_diversity_delta": candidate_rollout_diversity - baseline_rollout_diversity,
+                    "baseline_rollout_distance_components": baseline_components,
+                    "candidate_rollout_distance_components": candidate_components,
+                    "mechanism_based_decision_count": 0,
+                })
+                guard = rollout_quality_guard(baseline_candidate_metrics, self.cfg)
+                baseline_candidate_metrics.update(guard)
+                reward = rollout_candidate_reward(
+                    baseline_candidate_metrics,
+                    self.cfg,
+                    vote_ready=self._is_vote_ready_rollout_method(),
+                )
+                if not guard["rollout_quality_guard_passed"]:
+                    reward = -1.0
+                baseline_candidate_metrics.update({
+                    "reward": float(reward),
+                    "reward_total": float(reward),
+                    "rollout_reward_mode": (
+                        "vote_ready" if self._is_vote_ready_rollout_method() else "accuracy_rollout_embedding"
+                    ),
+                })
             if bool(getattr(self.cfg, "shared_error_metrics_enabled", False)) or self._uses_vote_error_pareto_selection() or self._uses_competence_depth_pareto_selection() or self._residual_specialization_enabled():
                 baseline_candidate_metrics.update(self._candidate_boundary_error_metrics(rows))
                 paired_keys = (

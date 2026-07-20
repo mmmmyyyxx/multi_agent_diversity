@@ -176,6 +176,14 @@ class CandidateSchemaMixin:
     def _required_optimizer_fields(self, architecture: Optional[str] = None) -> List[str]:
         arch = str(architecture or getattr(self.cfg, "optimizer_architecture", "one_shot") or "one_shot").lower()
         if arch == "teacher_critic_student":
+            if is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy")):
+                return [
+                    "candidate_prompt",
+                    "target_error_pattern",
+                    "accuracy_repair_rule",
+                    "expected_accuracy_effect",
+                    "rollout_diversity_intent",
+                ]
             required = [
                 "candidate_prompt",
                 "student_interpretation_of_question",
@@ -253,7 +261,7 @@ class CandidateSchemaMixin:
 
     def _is_optimizer_generated_candidate_source(self, source: Any) -> bool:
         text = str(source or "").strip().lower()
-        return text in {"optimizer", "teacher_critic_student", "open_mechanism_exploration"}
+        return text in {"optimizer", "teacher_critic_student", "open_mechanism_exploration", "open_rollout_exploration"}
 
     @staticmethod
     def _candidate_pool_source(item: Mapping[str, Any]) -> str:
@@ -343,6 +351,14 @@ class CandidateSchemaMixin:
             if bool(getattr(self.cfg, "competence_depth_enabled", False))
             else getattr(self.cfg, "student_candidate_prompt_max_chars", 900)
         )
+        if is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy")):
+            return json.dumps({"candidates": [{
+                "candidate_prompt": f"standalone complete prompt, <= {prompt_limit} chars",
+                "target_error_pattern": "short phrase grounded in observed rollout errors",
+                "accuracy_repair_rule": "one executable correction rule",
+                "expected_accuracy_effect": "one short sentence",
+                "rollout_diversity_intent": "one short rollout-level intent",
+            }]}, ensure_ascii=False, separators=(",", ":"))
         candidate_schema = {
                     "candidate_prompt": f"standalone complete prompt, <= {prompt_limit} chars",
                     "student_interpretation_of_question": "one short sentence",

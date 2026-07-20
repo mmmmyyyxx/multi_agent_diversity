@@ -663,6 +663,19 @@ class RuntimeStateMixin:
         }
         if bool(getattr(self.cfg, "competence_depth_enabled", False)):
             fields["plurality_boundary_version"] = PLURALITY_BOUNDARY_VERSION
+        if self._is_rollout_qd_method():
+            fields.update({
+                "method_version": str(self.cfg.method_version),
+                "mechanism_diversity_enabled": False,
+                "mechanism_metadata_required": False,
+                "mechanism_distance_used_for_selection": False,
+                "mechanism_based_decision_count": int(getattr(self, "mechanism_based_decision_count", 0)),
+                "capability_labeling_enabled": False,
+                "prompt_text_diversity_used": False,
+                "joint_active_team_selection_enabled": True,
+                "quality_diversity_archive_enabled": True,
+                "rollout_diversity_enabled": True,
+            })
         if self._is_v82_hybrid():
             fields.update({
                 "method_version": str(getattr(self.cfg, "method_version", "legacy")),
@@ -841,6 +854,22 @@ class RuntimeStateMixin:
             "config": self.cfg.to_flat_dict(),
             "framework": "accuracy_only_evolutionary_beam" if self._is_accuracy_only_mode() else "vote_oriented_evolutionary_beam",
         }
+        if self._is_rollout_qd_method():
+            meta.update({
+                "rollout_distance_weights": {
+                    "correctness_set": float(self.cfg.rollout_correct_distance_weight),
+                    "useful_wrong_answer": float(self.cfg.rollout_wrong_distance_weight),
+                    "trace_embedding": float(self.cfg.rollout_trace_distance_weight),
+                },
+                "rollout_quality_guards": {
+                    "accuracy_guard_epsilon": float(self.cfg.accuracy_guard_epsilon),
+                    "invalid_guard_epsilon": float(self.cfg.invalid_guard_epsilon),
+                    "c3_loss_epsilon": int(self.cfg.rollout_c3_loss_epsilon),
+                    "vote_loss_epsilon": int(self.cfg.rollout_vote_loss_epsilon),
+                },
+                "capability_profile_per_agent": None,
+                "top_capability_family_per_agent": None,
+            })
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
 

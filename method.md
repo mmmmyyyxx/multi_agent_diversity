@@ -1,48 +1,47 @@
-# Method: Stable Quality-Diversity Lineage Optimization
+# Method: Accuracy-First Rollout-Diversity Prompt Optimization
 
 ## 1. Purpose
 
-This repository evolves prompts for a team of solver agents. Model weights are not trained. Reward ranks prompt candidates, while validation selects the state used for final testing.
+This repository evolves prompts for a fixed team of solver agents. It does not train model weights. Candidate reward ranks prompts during search, validation selects the best epoch, and final test runs after restoring that validation-selected state.
 
-The current V8 setting is:
-
-```text
-shared_vote_tcs_competence_depth2_progressive_residual_hybrid
-```
-
-Its current implementation is identified by:
+The current V8 rollout-only settings are:
 
 ```text
-method_version               = v8_stable_qd_lineage
-target_selector_version      = hybrid_competence_boundary_v2
-beam_policy_version          = quality_diversity_archive_v1
-active_team_selector_version = joint_quality_diversity_v1
-lineage_policy_version       = stable_lineage_anchor_v1
-mechanism_distance_version   = mechanism_sequence_embedding_v1
+shared_accuracy_rollout_embedding_tcs
+method_version = v8_accuracy_rollout_embedding
+
+shared_vote_ready_rollout_diversity_tcs
+method_version = v8_rollout_qd_vote_ready
 ```
 
-The setting name is retained for experiment continuity, but its old V8.2 behavior has been replaced. V8 disables legacy per-epoch beam refresh. Checkpoint v6 stores event-refresh and dual-channel policy state; older incompatible Stable-QD checkpoints fail explicitly.
+The first setting is an accuracy-plus-rollout-diversity ablation. The second is the main vote-ready method. Both use the same models, strict splits, candidate budget, fixed optimization pool, archive capacity, validation protocol, and final-test protocol.
 
-## 2. Design Principle
+## 2. Core Principle
 
-Prompt wording diversity is not the objective. The method seeks agents that remain competent but solve different residual errors on a fixed optimization probe.
+The new methods optimize:
 
-The ordering is strict:
+```text
+target-agent accuracy
++ Vote and C2-to-C3 conversion
++ useful behavior observed in real solver rollouts
+```
 
-1. Hard guards remove invalid or catastrophically degraded candidates.
-2. Candidate quality determines the elite within each mechanism niche.
-3. Team quality constraints define feasible prompt combinations.
-4. Hierarchical integer-count quality bands keep quality-competitive teams.
-5. Behavioral complementarity selects only within the final band.
-6. Once a stable agent lineage is committed, drift and peer collapse are controlled.
+They do not use prompt wording, prompt embeddings, optimizer-reported mechanism names, or artificial capability families as diversity evidence. A prompt is behaviorally different only when its fixed-probe solver outputs differ.
 
-Diversity never compensates for failing competence constraints.
+Quality is ordered before diversity:
 
-## 3. Data And Split Integrity
+1. Accuracy, invalid, Vote-loss, and C3-loss guards reject unsafe candidates.
+2. Candidate accuracy and vote-readiness determine quality.
+3. Rollout diversity breaks ties or differentiates quality-compatible candidates.
+4. Joint selection prioritizes Vote, C3, total correctness, bottom-2, and margin before diversity.
 
-Training prompt updates use only the optimization training split. The fixed competence probe is sampled from that split and remains unchanged for the run. Validation selects the best epoch. The test split is evaluated only as configured, normally once after restoring the validation-selected prompts.
+Random wrong answers, empty traces, invalid outputs, and low-accuracy prompts cannot earn positive diversity.
 
-The supported task layer is centralized in `multi_dataset_diverse_rl/tasks.py`. The task-level runner reads `configs/task_level_comparison*.yaml` manifests and writes standardized CSV/JSONL results.
+## 3. Data Protocol
+
+Prompt optimization uses only the training split. A deterministic fixed probe is selected from the configured candidate-evaluation pool and remains unchanged for the run. Validation is separate and selects the best epoch. Test is not used for optimization or selection and normally runs once after best-state restoration.
+
+Strict manifests record split hashes and reject normalized-question overlap. The task layer is centralized in `multi_dataset_diverse_rl/tasks.py`.
 
 ## 4. Solver And Aggregation
 
@@ -52,274 +51,227 @@ All active agents answer the same question. Solver traces should end with:
 FINAL_ANSWER: <answer>
 ```
 
-The current V8 experiments use plurality aggregation. The system selects the answer with the largest vote count and applies the configured deterministic tie-break. Candidate counterfactuals and offline joint-team evaluation use the same canonical plurality implementation.
+Current experiments use plurality: the answer with the largest vote count wins, with the configured deterministic tie-break. Candidate counterfactuals, offline team enumeration, validation, and test use the same canonical implementation.
 
-Training records include per-agent correctness, plurality correctness and margin, C1/C2 coverage depth, invalid traces, shared errors, and pivotal boundary events.
+Each rollout records answers, traces, correctness, invalid flags, Vote correctness, gold vote count, largest wrong cluster, and gold plurality margin.
 
-## 5. Target-Agent Selection
+## 5. Update Targets
 
-At each update window, `hybrid_competence_boundary_v2` combines:
+At each `update_every` window, the target selector uses observed target errors, invalid output, pivotal vote opportunities, and dominant wrong-answer participation. New rollout-QD settings do not use capability profiles, capability HHI, mechanism families, or lineage status to select agents.
 
-- general target-agent errors;
-- C1 and C2 creation opportunities;
-- actual plurality pivotal fixes;
-- shared-error and dominant-wrong residuals;
-- competence state from the fixed probe.
+## 6. Candidate Generation
 
-Specialization strength controls the weight of residual and boundary repair. It does not enable or disable QD search. Even when specialization strength is zero, mechanism alternatives, niche retention, and joint team selection remain active.
+Each selected parent receives two generation channels under the configured budget:
 
-## 6. Teacher-Critic-Student Evolution
+1. `teacher_critic_student`: Teacher creates a Socratic accuracy-repair question from abstract rollout diagnostics; Critic audits it; Teacher can revise it using Critic feedback; Student writes candidate prompts.
+2. `open_rollout_exploration`: Student directly proposes a prompt that may improve target accuracy, C2-to-C3 conversion, Vote recovery, margin, or dominant-wrong reduction.
 
-Each selected beam parent enters one of two V8 generation channels:
+Neither channel asks for mechanisms, capability labels, personas, or prompt-text novelty. They cannot see gold answers, concrete sample text, answer labels, or full peer prompts.
 
-1. With repair evidence, TCS produces one `task_specific_repair`: Teacher creates a Socratic repair question, Critic audits it, and at most one rewrite is audited again.
-2. A first Critic score at least `0.75` goes directly to Student; `0.50` to below `0.75` permits one rewrite; below `0.50` stops the branch. After a second rejection, the best non-empty question is forced only at score at least `0.60`.
-3. With repair evidence, the default parent allocation is one TCS repair plus one open mechanism alternative. Without repair evidence, the allocation is two open mechanism alternatives and zero TCS calls. Open exploration sees only abstract diagnostics, lineage/mechanism summaries, and refill feedback, never gold/sample text/answer labels/peer full prompts.
-4. Both channels use the same schema, specificity, candidate evaluation, Safe/Probation/Catastrophic, and archive gates.
-5. JSON retry and syntax-only repair recover malformed Student output.
+The minimal candidate schema is:
 
-Teacher context includes the target lineage status, committed anchor mechanism, committed peer mechanisms, and rescue/shared-error residual support. An uncommitted agent is explicitly allowed to leave its old prompt mechanism. For a committed agent, alternatives preferentially explore structural variants near the anchor, but joint selection decides whether a true switch is justified.
-
-The Student must provide executable mechanism steps. Persona changes, generic verification, wording changes, and renumbering do not count as mechanism alternatives.
-
-## 7. Candidate Quality
-
-Candidate evaluation replaces one target prompt while holding peer prompts fixed. The active competence and specialization reward can use:
-
-- target-agent accuracy gain or loss;
-- C1 and C2 net changes;
-- actual plurality gain or loss;
-- shared-error residual repair;
-- boundary rescue;
-- invalid and catastrophic-accuracy guards.
-
-Global prompt embedding distance and unconditional novelty bonuses are not candidate reward terms. Before a lineage is committed, self-drift, cycle-to-self, and lineage-switch penalties are zero.
-
-## 8. Search-Space Preservation
-
-Quality constraints protect the active team, but they do not erase every novel branch immediately. Generated candidates first pass a cheap schema, completeness, length, duplicate, type, and mechanism-step prescreen. After candidate-batch evaluation they are separated into three states:
-
-- `Safe`: valid, fully evaluated candidates without catastrophic target, C1, or C2 regression. Only Safe items may enter the long-term QD archive, joint representatives, lineage selection, or the active team.
-- `Probation`: genuinely novel candidates with only bounded small regressions. They can be used as later TCS parents for at most two updates, but can never enter active-team selection directly.
-- `Catastrophic`: invalid, duplicated, non-novel, or materially regressing candidates. These are discarded.
-
-If the initial batch lacks two Safe non-incumbent candidates, a Safe task repair, or a Safe distinct mechanism, bounded refill runs for at most two rounds. Requirements are checked three times: on raw evaluated candidates, after Safe archive niche compression, and after representative selection. Archive collisions or insufficient representative behavior span can therefore trigger refill even when the raw count passed. The Teacher and Student receive structured rejection feedback, including accuracy/C1 losses and duplicate-niche causes. Solver rollouts for already seen prompt-question pairs are reused.
-
-The long-term Safe archive holds up to six niche elites per agent. `beam_size=3` means three representatives selected from that archive for joint enumeration, not an archive size limit. Parent A is the active prompt; Parent B is chosen round-robin from an underused Probation branch or Safe niche, ensuring archived niches receive reproduction opportunities.
-
-Rescue, shared-error, and same-wrong measures are recomputed for every proposed team combination because they depend on the other four prompts. The fixed optimization probe is deterministically split into two folds. Joint selection uses `mean(fold diversity) - 0.5 * fold gap`, after integer quality floors and hierarchical vote, total-correct, bottom-2, C1, and C2 bands. A team must pass both the current incumbent's local floor and at least one real team in the global quality-anchor frontier. No component-wise synthetic team is constructed.
-
-At most three active prompts change in an early epoch and two in a later epoch; a single next-epoch relaxation is available only after repeated no-diversification selection. Lineages become provisional after one stable snapshot and committed after two. Fold lineage evidence compares each agent's peer-relative correctness residual and rescue/unique-correct support, rather than raw fold accuracy differences. QD readiness can keep residual specialization at its 0.15 floor only when competence gates, two Safe niches, diversity, and fold stability all pass.
-
-## 9. Mechanism Representation
-
-`multi_dataset_diverse_rl/mechanisms.py` normalizes Student mechanism steps into canonical operations plus filtered semantic residual text. It removes persona names, shared solver prefixes, output-format text, step numbers, and generic careful/verify wording. The full prompt is never used directly as mechanism embedding input, and generic steps cannot create a mechanism niche.
-
-Known operations include:
-
-```text
-enumerate_candidates, extract_constraints, hard_elimination,
-weighted_scoring, pairwise_comparison, counterfactual_check,
-timeline_construction, binding_resolution, semantic_role_check,
-syntactic_agreement_check, discourse_distance_check,
-contradiction_minimization, evidence_accumulation,
-option_elimination, final_consistency_check
+```json
+{
+  "candidate_prompt": "...",
+  "target_error_pattern": "...",
+  "accuracy_repair_rule": "...",
+  "expected_accuracy_effect": "...",
+  "rollout_diversity_intent": "..."
+}
 ```
 
-Unknown but meaningful steps pass a deterministic specificity gate and enter a semantic fallback family. Similar specific residuals merge by embedding threshold; a new family receives a stable `semantic:<representative_hash>` ID. Generic reasoning advice, persona text, and output-format instructions remain filtered. Semantic family representatives and mappings are checkpointed.
+`rollout_diversity_intent` is generation context only. It is never used as a score or behavior label. JSON retry and syntax-only repair remain enabled for malformed Student output.
 
-Sequence distance is normalized Levenshtein distance over operation sequences. Embedding distance is `1 - cosine_similarity` over the normalized mechanism text, using the local embedding model. Full prompts are never embedded for mechanism comparison. Embeddings are cached by normalized mechanism hash.
+## 7. Candidate Evaluation
+
+For target agent `i`, evaluation compares on the same candidate batch:
 
 ```text
-mechanism_distance = 0.50 * sequence_distance
-                   + 0.50 * embedding_distance
+baseline team  = current active prompts
+candidate team = current active prompts with agent i replaced
 ```
 
-Mechanism distance is secondary evidence. A near duplicate requires the same normalized sequence and embedding similarity of at least `0.97`.
+Recorded transitions include:
 
-## 10. Behavioral Profiles
+```text
+C0->C1, C1->C2, C2->C3
+C3->C2, C2->C1, C1->C0
+Vote gain and Vote loss
+gold-margin gain and loss
+dominant-wrong break and creation
+```
 
-Each unique beam prompt is evaluated on the fixed optimization probe. For each agent prompt, the system records:
+`C2->C3` is the highest-value depth transition. `C3->C2` and Vote-correct to Vote-wrong are protected regressions.
+
+Candidate evaluation reuses recorded prompt-question rollouts when available. Rollout metrics are computed from those results and add no evaluator-model calls.
+
+## 8. Fixed-Probe Rollout Profile
+
+Every retained prompt is evaluated on the fixed optimization probe and stores:
 
 ```text
 answer_vector
 correctness_vector
-error_vector
-rescue_vector
-unique_correct_vector
-shared_error_vector
-wrong_answer_cluster_vector
+invalid_vector
+trace_embedding_vector_per_question
+rollout_signature_hash
 ```
 
-A rescue is a correct answer when at most one peer is also correct. A unique-correct case has no other correct peer. A shared error is an incorrect answer while at least two peers are also wrong.
+The rollout signature hashes answer, correctness, and invalid vectors. Two textually different prompts with the same rollout signature are behavior duplicates. Textually similar prompts with different signatures may coexist.
 
-Pairwise behavior distance is:
+Trace embeddings use the configured local sentence-transformer, currently `BAAI/bge-small-en-v1.5`. Only valid traces participate in positive trace distance, and a trace pair is counted only when at least one agent is correct.
+
+## 9. Rollout Distance
+
+Pairwise rollout distance is:
 
 ```text
-0.40 * correct_set_jaccard_distance
-+ 0.30 * shrinkage_adjusted_rescue_set_distance
-+ 0.15 * error_set_jaccard_distance
-+ 0.15 * shrinkage_adjusted_wrong_answer_dispersion
+D_rollout = 0.50 * D_correct_set
+          + 0.20 * D_useful_wrong
+          + 0.30 * D_valid_trace
 ```
 
-Rescue-set distance is zero when both prompts have no rescue support. This prevents sparse evidence from appearing maximally diverse.
+`D_correct_set` is Jaccard distance between the sets of correctly answered probe questions. If both sets are empty, distance is zero.
 
-## 11. Per-Agent QD Archive
+`D_useful_wrong` measures different valid wrong answers only when the team already has two gold votes or the candidate improves Vote, gold margin, or dominant-wrong concentration. All-wrong random dispersion is not useful diversity.
 
-Each agent keeps a long-term Safe archive of up to six niche elites. A behavior-aware selector exposes at most three representatives to joint enumeration. The representative set is not fixed safe/exploit/explore roles.
+`D_valid_trace` is mean cosine distance between valid solver-trace embeddings on supported questions. Empty, truncated, repetitive, or otherwise invalid traces contribute zero.
 
-The niche key is:
+## 10. Quality Guards
+
+A candidate is Safe only when:
 
 ```text
-(primary mechanism family, first four normalized operations)
+candidate_target_accuracy >= baseline_target_accuracy - 0.02
+candidate_invalid_rate    <= baseline_invalid_rate + 0.02
+C3->C2 loss count         <= 0
+Vote loss count           <= 0
 ```
 
-Hard-guard failures cannot enter the archive. Within one niche, candidates are ranked by target accuracy, C1 net delta, C2 net delta, plurality gain, penalized reward, and earlier generation. Novelty cannot displace a higher-quality candidate in the same niche.
+The thresholds are explicit configuration and checkpoint fields. Guard relaxation is not silent. The initial rollout-QD settings use zero Vote and C3 losses.
 
-The representative selector retains:
+## 11. Candidate Objectives
 
-1. the incumbent or strongest stable elite;
-2. the best quality elite from a different niche;
-3. a quality-passing elite maximally distinct from retained mechanisms and available behavior estimates.
-
-Sources are logged as `incumbent`, `task_repair_niche`, and `mechanism_niche`. Any source may become active during joint selection.
-
-## 12. Joint Active-Team Selection
-
-Joint selection is event-driven: Safe archive changes, Probation promotion, representative or active-prompt changes, the configured interval, and the final epoch can trigger it. When no trigger fires, the active team and lineage state are unchanged and a skip record is written. A triggered refresh probes only active prompts, current representatives, and at most two dirty prompts per agent; cached profiles are reused. The `3^5 = 243` combinations are enumerated offline and require zero team-level solver calls.
-
-With five agents and beam size three, the system evaluates at most 15 unique agent-prompt profiles on the fixed probe, then enumerates all `3^5 = 243` teams offline. No team-level solver calls are needed.
-
-The probe cache key includes agent, prompt hash, solver model, question hash, parsing configuration, aggregation configuration, and seed.
-
-For each team, the offline evaluator computes plurality accuracy, mean individual accuracy, bottom-2 accuracy, C1, C2, plurality margin, correctness vectors, and rescue profiles.
-
-## 13. Quality Feasibility And Hierarchical Bands
-
-A team must remain within configured integer-count tolerances of the incumbent on:
+The accuracy-rollout ablation ranks Safe candidates with:
 
 ```text
-plurality accuracy, mean accuracy, bottom-2, C1, C2
+R_simple = 1.00 * target_accuracy
+         + 0.20 * rollout_diversity_delta
+         - 1.00 * positive_invalid_delta
 ```
 
-The active guard uses at most one lost vote question, one lost C1 question, one lost C2 question, two lost agent-question correct outcomes, one lost bottom-2 correct outcome, and two lost correct outcomes for any single agent. Both deterministic folds must also avoid catastrophic C1, C2, or total-correct regression.
-
-Stable-QD also stores a frontier of at most five `QualityAnchor` objects. Every anchor contains one actual selected team's epoch, prompt hashes, vote count, total-agent-correct count, bottom-2 count, C1/C2 counts, and per-agent correct counts. Dominated anchors are pruned. Global feasibility means passing at least one real anchor; local feasibility still compares against the current incumbent to prevent accumulated epoch-by-epoch degradation. If no team passes a real anchor, the incumbent is kept and `quality_anchor_fallback_reason=no_real_anchor_feasible` is logged.
-
-The feasible teams are narrowed in order by vote, total agent correctness, bottom-2 correctness, C1, and C2 bands. Diversity is evaluated only in the final band. If a layer is empty it falls back to the preceding layer; if selection still has no candidate, the incumbent is retained. `quality_frontier_count` remains only as a compatibility field and equals the final-band count.
-
-## 14. Team Complementarity
-
-For each final-band team:
+The vote-ready method uses:
 
 ```text
-team_diversity_score =
-    0.45 * mean_pairwise_behavior_distance
-  + 0.25 * minimum_pairwise_behavior_distance
-  + 0.20 * mean_pairwise_mechanism_distance
-  + 0.10 * rescue_balance_score
+R_vote_ready = 1.00 * target_accuracy
+             + 1.00 * net_vote_rate
+             + 1.00 * net_C3_rate
+             + 0.30 * gold_margin_delta
+             + 0.30 * dominant_wrong_net_rate
+             + 0.15 * rollout_diversity_delta
+             - 1.00 * positive_invalid_delta
 ```
 
-The minimum pair term discourages a team where only some agents differentiate. Rescue balance is `1 - HHI` when rescue support exists and zero otherwise.
+Vote-ready candidate ordering is lexicographic: fewer Vote losses, fewer C3 losses, more Vote gains, more C2-to-C3 gains, higher target accuracy, larger margin gain, more wrong-cluster breaks, more rollout diversity, lower invalid rate, then earlier generation.
 
-Before any committed anchors exist, the team with the highest stable diversity score in the final quality band is selected without self-lineage penalties. This is the symmetry-breaking phase.
+## 12. Rollout Archive
 
-## 15. Stable Lineages
+Each agent maintains a Safe archive of up to six candidates. The archive first deduplicates by prompt hash, then by rollout signature. Mechanism niche, mechanism novelty, prompt distance, and capability labels do not participate.
 
-Each agent lineage is `uncommitted`, `provisional`, or `committed`.
+Archive retention covers the incumbent, highest-quality candidates, vote-ready and C2-to-C3 utility, and marginal rollout distance under the quality guard. At most three representatives enter joint enumeration:
 
-- The first fold-stable, quality-passing snapshot creates a provisional lineage.
-- A second consecutive stable snapshot commits it when behavior remains close and existing rescue support does not disappear.
-- A commitment at the final training epoch is logged as committed but not subsequently exercised.
+1. current active prompt;
+2. highest-quality Safe candidate;
+3. highest marginal rollout-distance candidate that remains Safe.
 
-Only committed lineages receive drift constraints:
+The parent pool is active plus rollout representatives. It does not call the historical mechanism-niche parent selector.
+
+## 13. Joint Team Selection
+
+Each unique agent-prompt representative is solver-evaluated once on the fixed probe. With three representatives and five agents, at most 15 prompt profiles support offline enumeration of `3^5 = 243` teams. Team combinations require zero solver calls.
+
+The vote-ready joint key is:
+
+1. Vote-correct count;
+2. C3-correct count;
+3. total individual-correct count;
+4. bottom-2 correct count;
+5. mean gold plurality margin;
+6. lower dominant-wrong concentration;
+7. rollout diversity;
+8. C2;
+9. C1.
+
+Thus a lower-Vote or lower-C3 team cannot win merely through high diversity. The accuracy-rollout ablation instead leads with total individual correctness, then Vote and C3, while retaining the same rollout-only evidence.
+
+After joint selection changes an active prompt, the system synchronizes prompt history, rollout-signature history, accepted rollout archive, active candidate source, candidate funnel, and selected fixed-probe profile. It does not update capability profiles or mechanism lineage.
+
+## 14. Validation And Final Test
+
+`rollout_vote_first` selects the best epoch by:
 
 ```text
-lineage_drift = 0.50 * anchor_mechanism_drift
-              + 0.50 * anchor_behavior_drift
+Vote, C3, mean individual, bottom-2, Oracle-to-Vote conversion,
+gold margin, lower wrong concentration, lower invalid rate,
+rollout diversity, earlier epoch
 ```
 
-Drift above `0.35` contributes a joint-selection penalty. Drift above `0.75` is rejected unless agent accuracy gains by at least `0.03` or team plurality gains by at least `0.02`.
+Final test restores `best_prompts.json` and evaluates that state once. `best_prompts.json` is the authoritative final prompt set.
 
-Switching uses hysteresis. A different lineage is first recorded as pending and must be selected for two consecutive epochs before replacing the committed anchor. Returning to the anchor cancels the pending switch.
+## 15. Diagnostics And Integrity
 
-Committed peer anchors also impose a soft collapse penalty above similarity `0.85`. Same-sequence, behaviorally near-identical copies above similarity `0.97` cannot occupy another active position.
+Split summaries include C0 through C5 counts, C1/C2 vote success and failure, C3, Oracle-to-Vote conversion, margins, wrong concentration, same-wrong rate, invalid rate, and trace diversity.
 
-## 16. Stable Team Score
+New-method metadata explicitly reports:
 
-Within the final hierarchical quality band:
+```json
+{
+  "mechanism_diversity_enabled": false,
+  "mechanism_metadata_required": false,
+  "mechanism_distance_used_for_selection": false,
+  "mechanism_based_decision_count": 0,
+  "capability_labeling_enabled": false,
+  "capability_profile_per_agent": null,
+  "top_capability_family_per_agent": null,
+  "prompt_text_diversity_used": false
+}
+```
+
+The candidate funnel separates `teacher_critic_student`, `open_rollout_exploration`, incumbent, and historical channels.
+
+## 16. Checkpoint And Resume
+
+Checkpoint v6 stores prompts, rollout profiles, rollout-signature history, archive state, active sources, candidate funnel, caches, counters, random state, and all rollout objective/guard weights. Behavior-affecting mismatches fail before continuing; they never silently restart in the same output directory.
+
+Completed runs remove `training_checkpoint.json`. Interrupted runs resume only with the same setting, split, seed, model, sizes, candidate budget, and behavior-affecting arguments.
+
+## 17. Historical Compatibility
+
+The completed historical setting remains available without semantic changes:
 
 ```text
-stable_team_score = stable_diversity_score
-                  - mean_lineage_drift_penalty
-                  - mean_peer_collapse_penalty
+shared_vote_tcs_competence_depth2_progressive_residual_hybrid
+method_version = v8_stable_qd_lineage
 ```
 
-Here `stable_diversity_score = mean(fold_diversity) - 0.5 * abs(fold_A - fold_B)`. The active-change limit compares prompt hashes, allowing at most three changes early and two late, with a one-epoch relaxation after repeated no-diversification epochs.
+Its mechanism schema, mechanism archive, capability diagnostics, lineage, and checkpoint parsing remain in the repository for reproduction and old-run analysis. New rollout-QD method versions do not enter those decision paths.
 
-Tie-breaks are plurality, mean accuracy, bottom-2, C1, C2, fewer prompt changes, and prompt-hash order.
-
-The diagnostic stable specialization score is:
+## 18. Code Map
 
 ```text
-mean_behavior_distance
-+ 0.5 * min_behavior_distance
-+ 0.25 * mean_mechanism_distance
-- 0.5 * mean_lineage_drift
+multi_dataset_diverse_rl/rollout_diversity.py       rollout distance, guards, archive, team keys
+multi_dataset_diverse_rl/optimization/              TCS/Open generation and update pipeline
+multi_dataset_diverse_rl/evaluation/                candidate and dataset evaluation
+multi_dataset_diverse_rl/qd/joint_controller.py     fixed-probe offline team selection
+multi_dataset_diverse_rl/persistence/               run metadata and checkpoint v6
+multi_dataset_diverse_rl/cli.py                     train/validation/final-test lifecycle
+scripts/experiment_config.py                        named settings
+scripts/run_task_level_accuracy.py                  matched task runner
 ```
 
-It is not a candidate reward. Validation may use it only as the last tie-break after vote and competence fields.
+## 19. Boundaries
 
-## 17. Validation And Final Test
-
-`vote_generalization_first` orders validation states by plurality vote, mean accuracy, bottom-2, C1, C2, plurality margin, invalid rate, stable-specialization tie-break, and earlier epoch. Final testing restores `best_prompts.json` selected from validation.
-
-## 18. Checkpoint And Outputs
-
-Checkpoint v6 stores canonical configuration identity, per-agent search state, Safe/Probation archives, semantic mechanism families, representatives, the real quality-anchor frontier, lineage state, caches, counters, histories, and random state. Behavior fingerprints include all QD, mechanism, behavior, joint-quality, lineage, and peer-collapse settings. Incompatible checkpoints fail before modifying a run directory. A v5 Stable-QD checkpoint without real selected-team evidence fails with:
-
-```text
-version 5 Stable-QD checkpoint has no real selected-team anchor evidence
-```
-
-New diagnostic files are:
-
-```text
-quality_diversity_archive.jsonl
-joint_team_selection_history.jsonl
-behavior_profile_history.jsonl
-lineage_history.jsonl
-```
-
-`run_meta.json` records all method versions and feature flags. `accuracy_results.csv/jsonl` exports stable specialization, lineage, joint-selection, niche occupancy, accuracy, plurality, coverage, and cost metrics.
-
-## 19. Code Map
-
-```text
-multi_dataset_diverse_rl/system.py             public facade and mixin assembly
-multi_dataset_diverse_rl/config.py             section-composed Config and flat aliases
-multi_dataset_diverse_rl/config_sections.py    canonical section registry
-multi_dataset_diverse_rl/optimization/         TCS generation and update pipeline
-multi_dataset_diverse_rl/evaluation/           solver and candidate evaluation services
-multi_dataset_diverse_rl/metrics/              rollout and transition metrics
-multi_dataset_diverse_rl/qd/                    joint controller and real quality anchors
-multi_dataset_diverse_rl/mechanisms.py         normalized mechanism representation
-multi_dataset_diverse_rl/behavior_profiles.py  behavioral vectors and distances
-multi_dataset_diverse_rl/search_archive.py     Safe archive and representatives
-multi_dataset_diverse_rl/quality_diversity.py  offline team metrics and selection
-multi_dataset_diverse_rl/lineage.py             lineage state, drift, hysteresis
-multi_dataset_diverse_rl/persistence/           checkpoint v6 and artifact writing
-multi_dataset_diverse_rl/cli.py                 training/validation lifecycle entry
-scripts/experiment_config.py                    named experiment settings
-scripts/run_task_level_accuracy.py              task-level runner
-```
-
-`Config` has 11 canonical section objects. Existing flat CLI/property names are compatibility views over those sections. Experiment definitions use sparse `ExperimentPreset(name, base, overrides)` records; unknown overrides fail immediately. See `VERSION_PRESET_MAP.md` for historical composition and `RUNS_CATALOG.md` for retained evidence.
-
-## 20. Boundaries
-
-- The method optimizes prompts, not model weights.
-- Fixed-probe behavior is an estimate and can overfit; validation remains separate.
-- Mechanism extraction depends on Student-provided steps and normalization.
-- Diversity is diagnostic and selection evidence, not proof of causal specialization.
-- Multi-seed matched experiments are required for scientific conclusions.
+- Prompt optimization is not model-weight training or policy-gradient RL.
+- Rollout diversity is empirical behavior evidence, not proof of causal specialization.
+- Fixed-probe selection can overfit; validation and multiple matched seeds remain necessary.
+- Oracle coverage alone is not the objective; the main question is whether correct information converts into plurality Vote.

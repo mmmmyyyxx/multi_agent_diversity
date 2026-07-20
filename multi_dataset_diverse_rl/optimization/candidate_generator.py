@@ -270,6 +270,16 @@ class CandidateGeneratorMixin:
             }
         if isinstance(window_stats.get("refill_feedback"), dict):
             context["candidate_refill_feedback"] = dict(window_stats["refill_feedback"])
+        if self._is_rollout_qd_method():
+            context.pop("parent_prompt_preview", None)
+            context.pop("target_role_spec", None)
+            context.pop("peer_role_specs", None)
+            context["diagnostic_focus"].pop("prompt_redundancy_summary", None)
+            context["diagnostic_focus"].pop("capability_residual_families", None)
+            context["diagnostic_focus"]["rollout_optimization_goal"] = (
+                "Improve target correctness first; prioritize C2-to-C3 and vote recovery; reduce dominant wrong clusters; "
+                "use valid solver-trace diversity only after quality guards."
+            )
         return context
 
     async def propose_teacher_question(
@@ -296,6 +306,14 @@ class CandidateGeneratorMixin:
             "- avoids duplicating peer prompts\n- avoids invalid or overlong outputs\n\n"
             "Return strict JSON only."
         )
+        if self._is_rollout_qd_method():
+            system_prompt = (
+                "You are the Teacher in a Teacher-Critic-Student prompt optimization system. Formulate one Socratic "
+                "question from observed solver rollout errors. Seek an executable accuracy repair, especially C2-to-C3 "
+                "conversion, vote recovery, margin improvement, or dominant wrong-cluster reduction. Rollout diversity is "
+                "secondary and must never reward random errors or invalid traces. Do not compare prompt wording, propose "
+                "named mechanisms, assign capability labels or roles, use gold answers, or quote samples. Return strict JSON only."
+            )
         if self._v7_residual_protocol_enabled():
             system_prompt = system_prompt.replace(
                 "Do not optimize for voting failure in this step.\n",
@@ -348,6 +366,13 @@ class CandidateGeneratorMixin:
             "repetition of recent failed edits, or vague non-executable reasoning steps. Prefer a concrete local mechanism edit.\n\n"
             "Return strict JSON only."
         )
+        if self._is_rollout_qd_method():
+            system_prompt = (
+                "Audit whether the Teacher question is specific to observed solver rollout failures and proposes an executable "
+                "accuracy-first repair. Reject prompt-wording novelty, named mechanisms, capability labels, personas, random "
+                "disagreement, invalid behavior, leakage, or any diversity goal that can reduce Vote, C3, or target accuracy. "
+                "Prefer C2-to-C3 conversion, vote recovery, margin gain, and dominant wrong-cluster reduction. Return strict JSON only."
+            )
         if self._v7_residual_protocol_enabled():
             system_prompt = system_prompt.replace(
                 "- focused on voting failure rather than prompt quality/diversity/accuracy\n\n",
@@ -393,6 +418,12 @@ class CandidateGeneratorMixin:
             "Do not use gold answers, concrete sample text, answer labels, or hard-coded task-specific roles.\n"
             "Return strict JSON only."
         )
+        if self._is_rollout_qd_method():
+            system_prompt = (
+                "Revise the Teacher question using Critic feedback. Keep it grounded in observed rollout failures and "
+                "accuracy-first vote readiness. Do not add mechanism names, capability labels, prompt-text novelty, roles, "
+                "gold answers, or sample text. Return strict JSON only."
+            )
         user_prompt = (
             "Rewrite the Teacher JSON so it can pass Critic review while staying grounded in the abstract diagnostics.\n"
             "Keep the same JSON schema as the Teacher output.\n\n"
@@ -641,7 +672,8 @@ class CandidateGeneratorMixin:
         num_candidates: int,
         generation_channel: str = "tcs_repair",
     ) -> Dict[str, Any]:
-        open_exploration = generation_channel == "open_mechanism_exploration"
+        open_exploration = generation_channel in {"open_mechanism_exploration", "open_rollout_exploration"}
+        rollout_exploration = generation_channel == "open_rollout_exploration"
         schema = self._student_candidate_schema_json()
         schema_mode = str(getattr(self.cfg, "student_candidate_schema_mode", "compact") or "compact").lower()
         prompt_max = int(
@@ -671,7 +703,8 @@ class CandidateGeneratorMixin:
             "- Each non-prompt field must be one short sentence.\n"
             "- Each candidate_prompt should be a concise solver instruction, not a long essay.\n"
             "- Return a complete standalone prompt. Do not end mid-sentence.\n"
-            "- Preserve useful mechanisms but merge repeated instructions; avoid repeatedly saying explicitly, systematically, before final selection, or check every constraint.\n"
+            + ("- Keep only executable accuracy and validity instructions; do not describe named mechanisms or capabilities.\n" if self._is_rollout_qd_method() else "- Preserve useful mechanisms but merge repeated instructions; avoid repeatedly saying explicitly, systematically, before final selection, or check every constraint.\n")
+            +
             "- Prefer semicolon-separated steps over numbered multiline lists.\n"
             '- If you cannot safely generate a candidate, return {"candidates":[]}.\n'
             f"Exact schema:\n{schema}"
@@ -707,13 +740,22 @@ class CandidateGeneratorMixin:
             "- align with the problem type and answer format\n- repair the target error pattern\n"
             "- improve target-agent accuracy\n- contribute useful reasoning diversity\n"
             "- reduce redundant behavior with peer prompts\n- avoid invalid, overlong, or generic outputs\n\n"
-            "Preserve effective mechanisms from the parent and make one local, executable reasoning change. "
+            + ("Make one executable accuracy-oriented change grounded in observed solver rollouts. " if self._is_rollout_qd_method() else "Preserve effective mechanisms from the parent and make one local, executable reasoning change. ")
+            +
             "Do not create superficial diversity by changing persona or expert-role labels.\n"
             "Do not use gold answers.\nDo not include concrete sample text.\nDo not include answer labels from examples.\n"
             "Do not write hard-coded task-specific roles.\nDo not simply ask the solver to 'think more carefully'.\n"
             f"Do not only paraphrase the parent prompt.\n\n{return_mode}"
         )
-        if open_exploration:
+        if rollout_exploration:
+            system_prompt = (
+                "You directly explore solver prompts from observed rollout failures. Do not infer behavior from prompt wording. "
+                "Generate a complete standalone solver prompt that may improve target accuracy, convert C2 to C3, "
+                "or reduce a dominant wrong-answer cluster. Do not propose named mechanisms, capability labels, personas, "
+                "random disagreement, or invalid output. Do not use gold answers or concrete sample text.\n\n"
+                f"{return_mode}"
+            )
+        elif open_exploration:
             system_prompt = (
                 "You are a direct prompt mutation generator exploring a new reasoning mechanism.\n"
                 "Do not rely on a Teacher or Critic question. Produce a complete standalone solver prompt that uses "
@@ -759,7 +801,13 @@ class CandidateGeneratorMixin:
                 )
             )
         visible_context = teacher_context
-        if open_exploration:
+        if rollout_exploration:
+            visible_context = {
+                key: teacher_context[key]
+                for key in ("diagnostic_focus", "candidate_refill_feedback")
+                if key in teacher_context
+            }
+        elif open_exploration:
             visible_context = {
                 key: teacher_context[key]
                 for key in (
@@ -786,7 +834,7 @@ class CandidateGeneratorMixin:
             user_prompt=user_prompt,
             temperature=float(getattr(self.cfg, "student_temperature", self.cfg.optimizer_temperature)),
             max_tokens=int(getattr(self.cfg, "student_max_tokens", self.cfg.optimizer_max_tokens)),
-            stage=(f"open_mechanism_exploration_agent_{agent_id}" if open_exploration else f"student_optimizer_agent_{agent_id}"),
+            stage=(f"open_rollout_exploration_agent_{agent_id}" if rollout_exploration else f"open_mechanism_exploration_agent_{agent_id}" if open_exploration else f"student_optimizer_agent_{agent_id}"),
             client_role="optimizer",
         )
         raw_text = text or ""
@@ -902,7 +950,8 @@ class CandidateGeneratorMixin:
         refill_feedback: Optional[Dict[str, Any]] = None,
         generation_channel: str = "tcs_repair",
     ) -> List[Dict[str, Any]]:
-        open_exploration = generation_channel == "open_mechanism_exploration"
+        open_exploration = generation_channel in {"open_mechanism_exploration", "open_rollout_exploration"}
+        rollout_exploration = generation_channel == "open_rollout_exploration"
         update_diagnosis = overlap_diagnosis
         prompt_roles = [
             r for r in update_diagnosis.get("prompt_roles", [])
@@ -972,7 +1021,7 @@ class CandidateGeneratorMixin:
         call_context.update(
             {
                 "optimizer_architecture": (
-                    "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                    "open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
                 ),
                 "agent_id": int(agent_id),
                 "parent_id": parent_id,
@@ -1002,7 +1051,7 @@ class CandidateGeneratorMixin:
                 TCS_AUDIT_CONTEXT.reset(context_token)
         diagnostics = self._empty_optimizer_generation_diagnostics()
         diagnostics["optimizer_architecture"] = (
-            "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+            "open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
         )
         diagnostics["tcs_call_group_id"] = tcs_call_group_id
         diagnostics["execution_session_id"] = execution_session_id
@@ -1071,7 +1120,7 @@ class CandidateGeneratorMixin:
             self._record_generation_channel_funnel(
                 agent_id=agent_id,
                 parent_id=parent_id,
-                channel="open_mechanism_exploration" if open_exploration else "teacher_critic_student",
+                channel="open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student",
                 refill_round=int((refill_feedback or {}).get("refill_round", 0) or 0),
                 raw_candidate_count=0,
             )
@@ -1081,7 +1130,7 @@ class CandidateGeneratorMixin:
         student_context.update(
             {
                 "optimizer_architecture": (
-                    "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                    "open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
                 ),
                 "agent_id": int(agent_id),
                 "parent_id": parent_id,
@@ -1228,6 +1277,7 @@ class CandidateGeneratorMixin:
                         "task_alignment_rule": str(item.get("task_alignment_rule", "")),
                         "peer_redundancy_avoidance": str(item.get("peer_redundancy_avoidance", "")),
                         "expected_accuracy_effect": str(item.get("expected_accuracy_effect", "")),
+                        "rollout_diversity_intent": str(item.get("rollout_diversity_intent", "")),
                         "expected_diversity_effect": str(item.get("expected_diversity_effect", "")),
                         "risk_control": str(item.get("risk_control", "")),
                         "rationale": str(item.get("rationale", "")),
@@ -1245,7 +1295,7 @@ class CandidateGeneratorMixin:
                         "mechanism_alternative_invalid": mechanism_alternative_invalid,
                         **length_audit,
                         "candidate_source": (
-                            "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
+                            "open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student"
                         ),
                         "tcs_call_group_id": tcs_call_group_id,
                         "execution_session_id": execution_session_id,
@@ -1308,7 +1358,7 @@ class CandidateGeneratorMixin:
         self._record_generation_channel_funnel(
             agent_id=agent_id,
             parent_id=parent_id,
-            channel="open_mechanism_exploration" if open_exploration else "teacher_critic_student",
+            channel="open_rollout_exploration" if rollout_exploration else "open_mechanism_exploration" if open_exploration else "teacher_critic_student",
             refill_round=int((refill_feedback or {}).get("refill_round", 0) or 0),
             raw_candidate_count=int(diagnostics.get("optimizer_raw_candidate_count", 0) or 0),
         )
@@ -1372,14 +1422,14 @@ class CandidateGeneratorMixin:
     ) -> List[Dict[str, Any]]:
         architecture = str(getattr(self.cfg, "optimizer_architecture", "teacher_critic_student") or "teacher_critic_student").lower()
         if architecture == "teacher_critic_student":
-            if self._is_stable_qd_lineage():
+            if self._is_stable_qd_lineage() or self._is_rollout_qd_method():
                 forced_generator = str((refill_feedback or {}).get("refill_generator_type", ""))
                 support_count = self._tcs_diagnostic_support_count(
                     agent_id, overlap_diagnosis, generation_batches,
                 )
                 if forced_generator == "tcs_repair":
                     repair_count, open_count = num_candidates, 0
-                elif forced_generator == "open_mechanism_exploration":
+                elif forced_generator in {"open_mechanism_exploration", "open_rollout_exploration"}:
                     repair_count, open_count = 0, num_candidates
                 elif support_count > 0:
                     repair_count = min(num_candidates, int(self.cfg.tcs_repair_candidates_per_parent))
@@ -1403,7 +1453,7 @@ class CandidateGeneratorMixin:
                         overlap_diagnosis=overlap_diagnosis, num_candidates=open_count,
                         generation_batch=generation_batch, generation_batches=generation_batches,
                         refill_feedback=refill_feedback,
-                        generation_channel="open_mechanism_exploration",
+                        generation_channel="open_rollout_exploration" if self._is_rollout_qd_method() else "open_mechanism_exploration",
                     )
                     outputs.extend(opened)
                     diagnostics.append(self._optimizer_generation_diagnostics_for_parent(agent_id, parent_prompt))

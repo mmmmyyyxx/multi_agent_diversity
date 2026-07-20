@@ -129,6 +129,11 @@ def restore_system_state(system, state_payload):
     system.full_probe_cache_hit_count = int(state_payload.get("full_probe_cache_hit_count", 0) or 0)
     system.full_probe_missing_pair_evaluation_count = int(state_payload.get("full_probe_missing_pair_evaluation_count", 0) or 0)
     system.behavior_profile_by_prompt_hash = {str(key): dict(value) for key, value in dict(state_payload.get("behavior_profile_by_prompt_hash", {}) or {}).items()}
+    system.rollout_profile_by_prompt_hash = {str(key): dict(value) for key, value in dict(state_payload.get("rollout_profile_by_prompt_hash", {}) or {}).items()}
+    system.rollout_signature_history = [dict(value) for value in state_payload.get("rollout_signature_history", []) if isinstance(value, dict)]
+    system.accepted_rollout_archive = [dict(value) for value in state_payload.get("accepted_rollout_archive", []) if isinstance(value, dict)]
+    system.active_candidate_source_by_agent = dict(state_payload.get("active_candidate_source_by_agent", {}) or {})
+    system.mechanism_based_decision_count = int(state_payload.get("mechanism_based_decision_count", 0) or 0)
     restored_funnel = state_payload.get("candidate_channel_funnel", {})
     system.candidate_channel_funnel = (
         {str(channel): {str(stage): int(count or 0) for stage, count in counts.items()}
@@ -584,6 +589,21 @@ def checkpoint_behavior_config(cfg):
             "reward_weight_useful_diversity_late",
         ):
             payload.pop(field, None)
+    if str(getattr(cfg, "method_version", "legacy")) in {"v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
+        for field in (
+            "method_version", "reward_mode", "candidate_selection_mode", "best_state_selection_mode",
+            "beam_policy_version", "active_team_selector_version", "candidate_generation_policy_version",
+            "tcs_candidate_policy_version", "archive_policy_version", "joint_quality_filter_version",
+            "probe_stability_version", "parent_selection_version", "legacy_beam_rescore_each_epoch",
+            "tcs_repair_candidates_per_parent", "open_exploration_candidates_per_parent",
+            "qd_archive_size_per_agent", "joint_representative_beam_size",
+            "rollout_correct_distance_weight", "rollout_wrong_distance_weight", "rollout_trace_distance_weight",
+            "rollout_simple_target_accuracy_weight", "rollout_simple_diversity_weight", "rollout_simple_invalid_weight",
+            "vote_ready_target_accuracy_weight", "vote_ready_vote_weight", "vote_ready_c3_weight",
+            "vote_ready_margin_weight", "vote_ready_wrong_break_weight", "vote_ready_diversity_weight",
+            "rollout_c3_loss_epsilon", "rollout_vote_loss_epsilon",
+        ):
+            payload[field] = getattr(cfg, field, None)
     return payload
 
 
@@ -678,6 +698,11 @@ def build_training_checkpoint(
             "full_probe_cache_hit_count": int(getattr(system, "full_probe_cache_hit_count", 0)),
             "full_probe_missing_pair_evaluation_count": int(getattr(system, "full_probe_missing_pair_evaluation_count", 0)),
             "behavior_profile_by_prompt_hash": dict(getattr(system, "behavior_profile_by_prompt_hash", {})),
+            "rollout_profile_by_prompt_hash": dict(getattr(system, "rollout_profile_by_prompt_hash", {})),
+            "rollout_signature_history": list(getattr(system, "rollout_signature_history", [])),
+            "accepted_rollout_archive": list(getattr(system, "accepted_rollout_archive", [])),
+            "active_candidate_source_by_agent": dict(getattr(system, "active_candidate_source_by_agent", {})),
+            "mechanism_based_decision_count": int(getattr(system, "mechanism_based_decision_count", 0)),
             "candidate_channel_funnel": dict(getattr(system, "candidate_channel_funnel", {})),
             "candidate_channel_funnel_seen": serialize_funnel_seen(
                 getattr(system, "candidate_channel_funnel_seen", {})

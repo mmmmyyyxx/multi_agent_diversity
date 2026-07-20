@@ -73,6 +73,23 @@ from .search_archive import (
     select_reproduction_parent,
     select_safe_archive,
 )
+from .rollout_diversity import (
+    accuracy_rollout_team_key,
+    candidate_reward as rollout_candidate_reward,
+    candidate_transition_metrics,
+    enumerate_rollout_teams,
+    is_rollout_qd_method,
+    is_vote_ready_rollout_method,
+    quality_guard as rollout_quality_guard,
+    rollout_distance,
+    rollout_signature,
+    rollout_team_key,
+    rollout_quality_key,
+    select_rollout_archive,
+    select_rollout_representatives,
+    vote_ready_candidate_key,
+    wrong_diversity_is_useful,
+)
 from .utils import (
     canonical_aggregation_mode,
     compute_gold_vote_diagnostics,

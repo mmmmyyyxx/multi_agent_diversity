@@ -66,6 +66,19 @@ class JointControllerMixin:
         epoch: int,
         final_epoch: bool = False,
     ) -> Dict[str, Any]:
+        if self._is_rollout_qd_method():
+            if not probe_data:
+                return {"enabled": False, "joint_refresh_triggered": False, "joint_refresh_skip_reason": "empty_probe"}
+            self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
+            record = await self._select_rollout_joint_active_team(probe_data, epoch=epoch)
+            record.update({
+                "joint_refresh_triggered": True,
+                "joint_refresh_trigger_reasons": ["epoch_end" if not final_epoch else "final_epoch"],
+                "joint_team_solver_call_count": 0,
+            })
+            self.joint_team_selection_history.append(dict(record))
+            self._flush_jsonl("joint_team_selection_history.jsonl", [record])
+            return record
         if not self._is_stable_qd_lineage():
             return {"enabled": False, "joint_refresh_triggered": False}
         snapshot = self._joint_material_snapshot()
@@ -141,7 +154,134 @@ class JointControllerMixin:
         self._flush_jsonl("joint_team_selection_history.jsonl", [record])
         return record
 
+    async def _select_rollout_joint_active_team(
+        self, probe_data: List[Dict[str, str]], *, epoch: int,
+    ) -> Dict[str, Any]:
+        beams: List[List[Dict[str, Any]]] = []
+        beam_items: List[List[Dict[str, Any]]] = []
+        profile_cache_hits = 0
+        for agent_id, agent in enumerate(self.agents):
+            active_hash = self._normalized_prompt_hash(agent.current_prompt)
+            archive = list(getattr(agent, "safe_qd_archive", []) or agent.prompt_beam)
+            by_hash: Dict[str, Dict[str, Any]] = {}
+            for item in archive:
+                by_hash.setdefault(
+                    self._normalized_prompt_hash(str(item.get("prompt", agent.current_prompt))), dict(item)
+                )
+            by_hash.setdefault(active_hash, self._make_beam_item(agent.current_prompt, None, {}, None, 0))
+            profiled = []
+            for item in by_hash.values():
+                prompt_hash = self._normalized_prompt_hash(str(item.get("prompt", agent.current_prompt)))
+                cache_key = f"{agent_id}:{prompt_hash}:{self.current_fixed_probe_hash}"
+                profile = dict(self.rollout_profile_by_prompt_hash.get(cache_key, {}) or {})
+                if profile:
+                    profile_cache_hits += 1
+                else:
+                    profile = await self._evaluate_prompt_on_stable_probe(
+                        agent_id, str(item.get("prompt", agent.current_prompt)), probe_data
+                    )
+                    self.rollout_profile_by_prompt_hash[cache_key] = dict(profile)
+                candidate = dict(item)
+                metrics = dict(candidate.get("metrics", {}) or {})
+                metrics["rollout_profile"] = dict(profile)
+                candidate["metrics"] = metrics
+                candidate["prompt_hash"] = prompt_hash
+                profiled.append(candidate)
+            agent.safe_qd_archive = select_rollout_archive(
+                profiled, active_hash, int(self.cfg.qd_archive_size_per_agent), self.cfg,
+                vote_ready=self._is_vote_ready_rollout_method(),
+            )
+            representatives = select_rollout_representatives(
+                agent.safe_qd_archive, active_hash, int(self.cfg.joint_representative_beam_size), self.cfg,
+                vote_ready=self._is_vote_ready_rollout_method(),
+            )
+            agent.prompt_beam = representatives or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
+            for item in agent.prompt_beam:
+                self._record_candidate_funnel_item(item, agent_id, "representative_selected_count")
+            beam_items.append(list(agent.prompt_beam))
+            beams.append([dict(item.get("metrics", {}).get("rollout_profile", {})) for item in agent.prompt_beam])
+            for item, profile in zip(agent.prompt_beam, beams[-1]):
+                profile["prompt_hash"] = str(item.get("prompt_hash", ""))
+                profile["candidate_source"] = self._candidate_generation_source(item)
+        question_hashes = [self._hash(str(example.get("question", ""))) for example in probe_data]
+        gold_answers = [self.task_spec.parse_gold(example.get("answer"), str(example.get("question", ""))) for example in probe_data]
+        teams = enumerate_rollout_teams(
+            beams,
+            gold_answers,
+            question_hashes,
+            vote_fn=plurality_vote_with_diagnostics,
+            match_fn=self.task_spec.match_answer,
+            tie_break_method=self.cfg.vote_tie_break,
+            seed=self.cfg.seed,
+            config=self.cfg,
+        )
+        incumbent_indices = []
+        for agent_id, agent in enumerate(self.agents):
+            active_hash = self._normalized_prompt_hash(agent.current_prompt)
+            incumbent_indices.append(next((
+                index for index, item in enumerate(beam_items[agent_id])
+                if str(item.get("prompt_hash", "")) == active_hash
+            ), 0))
+        incumbent = next(team for team in teams if team["beam_indices"] == incumbent_indices)
+        key_fn = rollout_team_key if self._is_vote_ready_rollout_method() else accuracy_rollout_team_key
+        selected = max(teams, key=key_fn)
+        changed_count = 0
+        selected_sources = []
+        for agent_id, beam_index in enumerate(selected["beam_indices"]):
+            agent = self.agents[agent_id]
+            chosen = beam_items[agent_id][beam_index]
+            old_hash = self._normalized_prompt_hash(agent.current_prompt)
+            new_hash = str(chosen.get("prompt_hash", ""))
+            agent.prompt_beam = [chosen] + [item for index, item in enumerate(beam_items[agent_id]) if index != beam_index]
+            agent.current_prompt = str(chosen.get("prompt", agent.current_prompt))
+            changed = old_hash != new_hash
+            changed_count += int(changed)
+            source = self._candidate_generation_source(chosen) or "incumbent"
+            selected_sources.append(source)
+            self.active_candidate_source_by_agent[str(agent_id)] = source
+            profile = dict(chosen.get("metrics", {}).get("rollout_profile", {}) or {})
+            signature = str(profile.get("rollout_signature_hash", "") or rollout_signature(profile))
+            self.rollout_signature_history.append({
+                "epoch": int(epoch), "agent_id": int(agent_id), "prompt_hash": new_hash,
+                "rollout_signature_hash": signature, "candidate_source": source,
+            })
+            self.accepted_rollout_archive.append({
+                "epoch": int(epoch), "agent_id": int(agent_id), "prompt_hash": new_hash,
+                "rollout_signature_hash": signature, "candidate_source": source,
+            })
+            if changed:
+                agent.history.append(agent.current_prompt)
+                agent.accept_count += 1
+            else:
+                agent.reject_count += 1
+            self._record_candidate_funnel_item(chosen, agent_id, "active_selected_count")
+            self._append_prompt_history_event(
+                agent_id, epoch, 0, "rollout_joint_selected" if changed else "rollout_joint_keep", changed
+            )
+        validate_candidate_channel_funnel(self.candidate_channel_funnel)
+        record = {
+            "enabled": True,
+            "epoch": int(epoch),
+            "combination_count": len(teams),
+            "joint_team_solver_call_count": 0,
+            "cached_prompt_profile_count": int(profile_cache_hits),
+            "representative_count_per_agent": [len(beam) for beam in beams],
+            "incumbent_metrics": {key: value for key, value in incumbent.items() if key not in {"prompt_profiles", "answer_vectors", "correctness_vectors", "invalid_vectors"}},
+            "selected_metrics": {key: value for key, value in selected.items() if key not in {"prompt_profiles", "answer_vectors", "correctness_vectors", "invalid_vectors"}},
+            "selected_prompt_hashes": list(selected.get("prompt_hashes", [])),
+            "selected_beam_sources": selected_sources,
+            "active_prompt_changed_count": int(changed_count),
+            "rollout_diversity_score": float(selected.get("rollout_diversity_score", 0.0)),
+            "mechanism_based_decision_count": 0,
+            "candidate_channel_funnel": json.loads(json.dumps(self.candidate_channel_funnel)),
+        }
+        self.latest_joint_team_metrics = dict(record)
+        self.flush_prompt_history()
+        return record
+
     async def select_joint_active_team(self, probe_data: List[Dict[str, str]], *, epoch: int) -> Dict[str, Any]:
+        if self._is_rollout_qd_method():
+            return await self._select_rollout_joint_active_team(probe_data, epoch=epoch)
         if not self._is_stable_qd_lineage():
             return {"enabled": False, "combination_count": 0}
         if not str(getattr(self, "current_fixed_probe_hash", "")):

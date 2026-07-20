@@ -67,6 +67,20 @@ class _FlatConfigSchema:
     reward_weight_coverage: float = 0.3
     reward_weight_useful_diversity: float = 0.2
     invalid_guard_epsilon: float = 0.05
+    rollout_correct_distance_weight: float = 0.50
+    rollout_wrong_distance_weight: float = 0.20
+    rollout_trace_distance_weight: float = 0.30
+    rollout_simple_target_accuracy_weight: float = 1.00
+    rollout_simple_diversity_weight: float = 0.20
+    rollout_simple_invalid_weight: float = 1.00
+    vote_ready_target_accuracy_weight: float = 1.00
+    vote_ready_vote_weight: float = 1.00
+    vote_ready_c3_weight: float = 1.00
+    vote_ready_margin_weight: float = 0.30
+    vote_ready_wrong_break_weight: float = 0.30
+    vote_ready_diversity_weight: float = 0.15
+    rollout_c3_loss_epsilon: int = 0
+    rollout_vote_loss_epsilon: int = 0
     use_baseline_relative_reward: bool = True
     reward_schedule_mode: str = "phase_adaptive"
     reward_diversity_warmup_updates: int = 10
@@ -351,6 +365,13 @@ class _FlatConfigSchema:
         if str(self.method_version) == "v8_stable_qd_lineage":
             self.legacy_beam_rescore_each_epoch = False
             self.teacher_critic_max_rounds = 2
+        if str(self.method_version) in {"v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
+            self.legacy_beam_rescore_each_epoch = False
+            self.beam_refresh_each_epoch = False
+            self.competence_depth_enabled = False
+            self.competence_depth2_aux_enabled = False
+            self.competence_progressive_residual_enabled = False
+            self.residual_specialization_enabled = False
         probability_fields = (
             "specialization_ema",
             "behavior_cycle_similarity_threshold",
@@ -465,6 +486,13 @@ class _FlatConfigSchema:
         )
         if abs(behavior_weight_sum - 1.0) > 1e-9:
             raise ValueError(f"behavior distance weights must sum to 1, got {behavior_weight_sum}")
+        rollout_weight_sum = (
+            float(self.rollout_correct_distance_weight)
+            + float(self.rollout_wrong_distance_weight)
+            + float(self.rollout_trace_distance_weight)
+        )
+        if abs(rollout_weight_sum - 1.0) > 1e-9:
+            raise ValueError(f"rollout distance weights must sum to 1, got {rollout_weight_sum}")
         nonnegative_integer_fields = (
             "candidate_refill_max_rounds", "candidate_refill_min_safe_non_incumbent",
             "candidate_refill_max_solver_calls_per_agent_update", "probation_archive_size_per_agent",
@@ -610,9 +638,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--baseline_only", type=int, default=int(defaults.baseline_only), choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first"])
+    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
@@ -634,6 +662,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reward_weight_coverage", type=float, default=defaults.reward_weight_coverage)
     parser.add_argument("--reward_weight_useful_diversity", type=float, default=defaults.reward_weight_useful_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=defaults.invalid_guard_epsilon)
+    parser.add_argument("--rollout_correct_distance_weight", type=float, default=defaults.rollout_correct_distance_weight)
+    parser.add_argument("--rollout_wrong_distance_weight", type=float, default=defaults.rollout_wrong_distance_weight)
+    parser.add_argument("--rollout_trace_distance_weight", type=float, default=defaults.rollout_trace_distance_weight)
+    parser.add_argument("--rollout_simple_target_accuracy_weight", type=float, default=defaults.rollout_simple_target_accuracy_weight)
+    parser.add_argument("--rollout_simple_diversity_weight", type=float, default=defaults.rollout_simple_diversity_weight)
+    parser.add_argument("--rollout_simple_invalid_weight", type=float, default=defaults.rollout_simple_invalid_weight)
+    parser.add_argument("--vote_ready_target_accuracy_weight", type=float, default=defaults.vote_ready_target_accuracy_weight)
+    parser.add_argument("--vote_ready_vote_weight", type=float, default=defaults.vote_ready_vote_weight)
+    parser.add_argument("--vote_ready_c3_weight", type=float, default=defaults.vote_ready_c3_weight)
+    parser.add_argument("--vote_ready_margin_weight", type=float, default=defaults.vote_ready_margin_weight)
+    parser.add_argument("--vote_ready_wrong_break_weight", type=float, default=defaults.vote_ready_wrong_break_weight)
+    parser.add_argument("--vote_ready_diversity_weight", type=float, default=defaults.vote_ready_diversity_weight)
+    parser.add_argument("--rollout_c3_loss_epsilon", type=int, default=defaults.rollout_c3_loss_epsilon)
+    parser.add_argument("--rollout_vote_loss_epsilon", type=int, default=defaults.rollout_vote_loss_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
     parser.add_argument("--reward_diversity_warmup_updates", type=int, default=defaults.reward_diversity_warmup_updates)

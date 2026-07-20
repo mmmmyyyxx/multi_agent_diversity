@@ -576,9 +576,13 @@ class TrainingControllerMixin:
             else:
                 self.full_probe_cache_hit_count = int(getattr(self, "full_probe_cache_hit_count", 0)) + 1
             answer = str(cached.get("answer", ""))
+            trace = str(cached.get("trace", ""))
+            invalid = int(self.rule_invalid_check(trace, answer).get("invalid", 1))
             return {
                 "answer": answer,
                 "correct": int(self.task_spec.match_answer(answer, gold)),
+                "trace": trace,
+                "invalid": invalid,
                 "question_hash": question_hash,
                 "gold": gold,
             }
@@ -588,6 +592,28 @@ class TrainingControllerMixin:
         correctness = [row["correct"] for row in rows]
         question_hashes = [row["question_hash"] for row in rows]
         gold_answers = [row["gold"] for row in rows]
+        invalid_vector = [int(row["invalid"]) for row in rows]
+        trace_embeddings = [
+            self._encode_trace_document(str(row["trace"])) if not int(row["invalid"]) else []
+            for row in rows
+        ]
+        if self._is_rollout_qd_method():
+            profile = {
+                "prompt": prompt,
+                "prompt_hash": self._normalized_prompt_hash(prompt),
+                "answer_vector": answers,
+                "correctness_vector": correctness,
+                "invalid_vector": invalid_vector,
+                "trace_embedding_vector_per_question": trace_embeddings,
+                "wrong_diversity_useful_vector": [0 for _ in rows],
+                "accuracy": float(np.mean(correctness)) if correctness else 0.0,
+                "question_hashes": question_hashes,
+                "gold_answers": gold_answers,
+                "fixed_probe_hash": str(getattr(self, "current_fixed_probe_hash", "")),
+                "fixed_probe_version": str(getattr(self, "prompt_probe_version", "legacy")),
+            }
+            profile["rollout_signature_hash"] = rollout_signature(profile)
+            return profile
         item = {"prompt": prompt, "metrics": {"mechanism_steps": list(mechanism_steps)}}
         representation = self._attach_stable_mechanism_representation(item)
         return {

@@ -290,7 +290,49 @@ def vote_generalization_first_validation_key(epoch_record):
     )
 
 
+def rollout_vote_first_validation_key(epoch_record):
+    val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), dict) else {}
+    return (
+        -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
+        -float(val.get("coverage_depth_c3", 0.0) or 0.0),
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
+        -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
+        -float(val.get("oracle_to_vote_conversion_rate", 0.0) or 0.0),
+        -float(val.get("mean_gold_plurality_margin", val.get("mean_normalized_plurality_margin", -1.0)) or 0.0),
+        float(val.get("dominant_wrong_concentration", 1.0) or 0.0),
+        float(val.get("mean_invalid_rate", 0.0) or 0.0),
+        -float(val.get("rollout_embedding_diversity", val.get("mean_embedding_diversity", 0.0)) or 0.0),
+        int(epoch_record.get("epoch", 0) or 0),
+    )
+
+
+def rollout_method_metadata(cfg, system=None):
+    if str(getattr(cfg, "method_version", "legacy")) not in {
+        "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready",
+    }:
+        return {}
+    return {
+        "method_version": str(cfg.method_version),
+        "beam_policy_version": str(cfg.beam_policy_version),
+        "active_team_selector_version": str(cfg.active_team_selector_version),
+        "candidate_generation_policy_version": str(cfg.candidate_generation_policy_version),
+        "tcs_candidate_policy_version": str(cfg.tcs_candidate_policy_version),
+        "archive_policy_version": str(cfg.archive_policy_version),
+        "joint_quality_filter_version": str(cfg.joint_quality_filter_version),
+        "probe_stability_version": str(cfg.probe_stability_version),
+        "parent_selection_version": str(cfg.parent_selection_version),
+        "mechanism_diversity_enabled": False,
+        "mechanism_metadata_required": False,
+        "mechanism_distance_used_for_selection": False,
+        "mechanism_based_decision_count": int(getattr(system, "mechanism_based_decision_count", 0)) if system is not None else 0,
+        "capability_labeling_enabled": False,
+        "prompt_text_diversity_used": False,
+    }
+
+
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
+    if str(selection_mode or "existing").lower() == "rollout_vote_first":
+        return best_epoch_record is None or rollout_vote_first_validation_key(epoch_record) < rollout_vote_first_validation_key(best_epoch_record)
     if str(selection_mode or "existing").lower() == "vote_generalization_first":
         return best_epoch_record is None or vote_generalization_first_validation_key(epoch_record) < vote_generalization_first_validation_key(best_epoch_record)
     if str(selection_mode or "existing").lower() == "vote_competence_first":
@@ -319,7 +361,9 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         "best_validation_score": validation_score,
         "best_state_selection_mode": str(best_state_selection_mode or "existing"),
         "best_state_selection_key": (
-            list(vote_generalization_first_validation_key(epoch_record))
+            list(rollout_vote_first_validation_key(epoch_record))
+            if str(best_state_selection_mode or "existing").lower() == "rollout_vote_first" and isinstance(epoch_record, dict)
+            else list(vote_generalization_first_validation_key(epoch_record))
             if str(best_state_selection_mode or "existing").lower() == "vote_generalization_first" and isinstance(epoch_record, dict)
             else list(vote_competence_first_validation_key(epoch_record))
             if str(best_state_selection_mode or "existing").lower() == "vote_competence_first" and isinstance(epoch_record, dict)
@@ -344,6 +388,7 @@ def write_selected_prompts(path, system, epoch, metric_name, validation_score, b
         ],
         "joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {}) or {}),
     }
+    payload.update(rollout_method_metadata(system.cfg, system))
     if str(getattr(system.cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
         payload.update({
             "method_version": str(system.cfg.method_version),
@@ -417,6 +462,8 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
 
 
 def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
+    if str(best_state_selection_mode or "existing").lower() == "rollout_vote_first":
+        return "rollout_vote_first(vote,C3,mean,bottom2,conversion,margin,-wrong,-invalid,rollout_div,earlier)"
     if str(best_state_selection_mode or "existing").lower() == "vote_competence_first":
         return "vote_competence_first(vote,bottom2,C2,-gap,margin,mean,-invalid,earlier)"
     if str(best_state_selection_mode or "existing").lower() == "vote_first":
@@ -462,7 +509,7 @@ async def main_async():
             "legacy beam rescore remains disabled.",
             flush=True,
         )
-    if str(cfg.method_version) == "v8_stable_qd_lineage":
+    if str(cfg.method_version) in {"v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
         cfg.legacy_beam_rescore_each_epoch = False
     cfg.use_joint_trace_diversity_evaluator = bool(int(cfg.use_joint_trace_diversity_evaluator))
     cfg.invalid_binary = bool(int(cfg.invalid_binary))
@@ -661,9 +708,17 @@ async def main_async():
         elif candidate is not None:
             abort_incompatible_checkpoint(cfg, incompatibility_reasons)
 
+    rollout_qd_method = str(cfg.method_version) in {"v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}
     adaptive_competence_schedule = bool(cfg.competence_depth_enabled) and str(cfg.competence_schedule_mode) == "baseline_relative_opt_snapshot"
     fixed_competence_probe = []
-    if adaptive_competence_schedule:
+    if rollout_qd_method:
+        fixed_competence_probe = list(candidate_eval_pool or train_data)
+        system.current_fixed_probe_hash = system._fixed_probe_hash(fixed_competence_probe)
+        system.prompt_probe_version = "rollout_fixed_probe_v1"
+        system.competence_probe_indices = [train_data.index(item) for item in fixed_competence_probe]
+        system.competence_probe_question_hashes = [system._hash(item["question"]) for item in fixed_competence_probe]
+        system.write_run_meta()
+    elif adaptive_competence_schedule:
         has_saved_baseline = bool(system.initial_competence_probe_metrics)
         if has_saved_baseline:
             probe_indices = select_competence_probe_indices(train_data, cfg, system.competence_probe_indices)
@@ -978,15 +1033,16 @@ async def main_async():
         })
         refresh_summary = None
         if (
-            str(getattr(cfg, "method_version", "legacy")) != "v8_stable_qd_lineage"
+            str(getattr(cfg, "method_version", "legacy")) not in {"v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}
             and cfg.legacy_beam_rescore_each_epoch
         ):
             refresh_batch_size = max(1, int(cfg.candidate_eval_batch_size or 10))
             refresh_batch = [train_data[i] for i in order[: min(refresh_batch_size, len(order))]]
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
         joint_team_summary = None
-        if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
-            system.expire_probation_branches(epoch + 1)
+        if str(getattr(cfg, "method_version", "legacy")) in {"v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
+            if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
+                system.expire_probation_branches(epoch + 1)
             joint_team_summary = await system.refresh_joint_active_team_if_needed(
                 fixed_competence_probe,
                 epoch=epoch + 1,
@@ -1015,6 +1071,7 @@ async def main_async():
         train_metrics["specialization_strength"] = strength_used
         train_metrics["next_epoch_specialization_strength"] = float(system.specialization_strength)
         epoch_record = {"epoch": epoch + 1, "train": train_metrics, "val": val_metrics}
+        epoch_record.update(rollout_method_metadata(cfg, system))
         if str(getattr(cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
             epoch_record.update({
                 "method_version": str(cfg.method_version),
@@ -1169,6 +1226,9 @@ async def main_async():
             for agent, saved in zip(system.agents, payload.get("agents", [])):
                 if isinstance(saved, dict) and isinstance(saved.get("lineage_state"), dict):
                     agent.lineage_state = dict(saved["lineage_state"])
+        if str(getattr(cfg, "method_version", "legacy")) in {
+            "v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready",
+        }:
             system.latest_joint_team_metrics = dict(payload.get("joint_team_metrics", {}) or {})
         selected_probe = next(
             (
@@ -1194,6 +1254,7 @@ async def main_async():
         "test_evaluated_on": "best_state",
         "test": final_test_metrics,
     }
+    final_record.update(rollout_method_metadata(cfg, system))
     if str(getattr(cfg, "method_version", "legacy")) in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
         final_record.update({
             "method_version": str(cfg.method_version),
@@ -1222,16 +1283,18 @@ async def main_async():
     system.flush_prompt_history()
     system.flush_llm_call_logs()
     system.write_cost_summary()
+    final_summary = {
+        "selected_epoch": best_epoch,
+        "best_validation_score": best_score,
+        "test": final_test_metrics,
+        "candidate_channel_funnel": dict(getattr(system, "candidate_channel_funnel", {})),
+        "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
+        "cost_summary": dict(getattr(system, "cost_summary", {})),
+    }
+    final_summary.update(rollout_method_metadata(cfg, system))
     write_json_atomic(
         os.path.join(cfg.out_dir, "final_summary.json"),
-        {
-            "selected_epoch": best_epoch,
-            "best_validation_score": best_score,
-            "test": final_test_metrics,
-            "candidate_channel_funnel": dict(getattr(system, "candidate_channel_funnel", {})),
-            "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
-            "cost_summary": dict(getattr(system, "cost_summary", {})),
-        },
+        final_summary,
     )
     clear_training_checkpoint(cfg)
 

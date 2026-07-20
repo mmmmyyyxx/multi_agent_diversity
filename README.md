@@ -2,41 +2,38 @@
 
 This repository performs evolutionary prompt search for a fixed team of reasoning agents. It changes prompts, not model weights.
 
-The current V8 method is Stable Quality-Diversity Lineage Optimization. Start with [method.md](method.md) for the complete implementation guide. See [V8_COMPETENCE_DEPTH_METHOD.md](V8_COMPETENCE_DEPTH_METHOD.md), [V8_2_HYBRID_PROGRESSIVE_METHOD.md](V8_2_HYBRID_PROGRESSIVE_METHOD.md), and [V8_EXPERIMENT_PLAN.md](V8_EXPERIMENT_PLAN.md) for focused notes.
+The current V8 line is Accuracy-First Rollout-Diversity Prompt Optimization. Start with [method.md](method.md) for the complete implementation guide. Historical Stable-QD notes remain available for reproducing earlier runs.
 
-## Current V8 Setting
+## Current V8 Settings
 
-The existing setting name is intentionally unchanged:
-
-```text
-shared_vote_tcs_competence_depth2_progressive_residual_hybrid
-```
-
-It now resolves to:
+The rollout-only settings are:
 
 ```text
-method_version               = v8_stable_qd_lineage
-beam_policy_version          = quality_diversity_archive_v1
-active_team_selector_version = joint_quality_diversity_v1
-lineage_policy_version       = stable_lineage_anchor_v1
-mechanism_distance_version   = mechanism_sequence_embedding_v1
+shared_accuracy_rollout_embedding_tcs
+shared_vote_ready_rollout_diversity_tcs
 ```
 
-The method uses:
+They resolve to:
 
-- competence and actual plurality-boundary signals to choose update targets;
-- Teacher-Critic-Student to generate task-repair and mechanism-alternative prompts;
-- hard competence and validity guards before diversity is considered;
+```text
+method_version = v8_accuracy_rollout_embedding
+method_version = v8_rollout_qd_vote_ready
+```
+
+The methods use:
+
+- observed solver errors and actual plurality-boundary signals to choose update targets;
+- Teacher-Critic-Student repair plus direct open rollout exploration;
+- hard accuracy, validity, Vote-loss, and C3-loss guards before diversity;
 - a six-item Safe archive plus a three-item joint representative beam per agent;
-- fixed-probe behavioral profiles as the primary differentiation signal;
-- normalized mechanism sequence and embedding distance as secondary evidence;
+- fixed-probe answer, correctness, invalid, and trace-embedding profiles;
+- rollout-signature deduplication instead of prompt or mechanism niches;
 - offline enumeration of all `3^5 = 243` beam teams;
-- event-driven joint refresh with dirty-prompt probe shortlists;
-- one TCS repair and one direct open mechanism-exploration channel per supported parent;
-- hierarchical integer-count quality bands before team diversity selection;
-- committed lineage anchors, drift control, peer-collapse prevention, and switch hysteresis.
+- one TCS repair and one direct open rollout-exploration channel per supported parent;
+- Vote and C3 before rollout diversity in joint team selection;
+- validation-only best epoch selection followed by one restored final test.
 
-Prompt textual diversity is not an optimization target. Diversity never compensates for competence failure. Early search permits symmetry breaking; late search stabilizes useful per-agent lineages.
+Prompt text, optimizer-reported mechanisms, and artificial capability labels are not optimization evidence. Diversity never compensates for quality failure.
 
 Acceptance diagnostics are reporting-only. Each prediction records correct
 agent count, gold vote count, largest wrong cluster, plurality margin, Oracle
@@ -52,11 +49,11 @@ numbers, collections, and unknown strings reject direct pass. Missing or null
 `passed` remains compatible with score-only historical Critic output.
 Rewrite and forced-best behavior is unchanged.
 
-## Search-Space Preservation
+## Rollout Search Space
 
-Initial candidates pass a cheap schema, completeness, duplicate, and mechanism-step screen. A bounded feedback-aware refill is triggered when the batch lacks two Safe non-incumbents, a Safe repair, or a Safe distinct mechanism. Safe candidates can participate in team selection; mildly regressing but novel Probation branches can only reproduce in later updates; catastrophic candidates are discarded. Team-relative rescue, shared-error, and same-wrong metrics are recomputed for each joint combination. Two deterministic probe folds, hierarchical count bands, active-change limits, and two-snapshot lineage commitment reduce probe overfitting without expanding solver calls for cached prompt-question pairs.
+Candidates pass the minimal rollout schema, completeness, and validity checks, then are evaluated against the active team. Safe candidates satisfy target-accuracy, invalid-rate, Vote-loss, and C3-loss guards. The archive deduplicates by prompt hash and fixed-probe rollout signature. Joint combinations are evaluated offline from cached fixed-probe answer, correctness, invalid, and trace profiles.
 
-The setting's historical V8.2 safe/exploit/explore behavior has been replaced. V8 never performs the legacy per-epoch beam refresh. Joint refresh is event-driven and only probes new dirty prompts; team enumeration is offline. Existing result directories remain readable by their recorded method version. Checkpoint v6 stores the new refresh/generation policy state and older incompatible Stable-QD checkpoints fail explicitly.
+The rollout methods never perform legacy per-epoch beam refresh. Existing result directories remain readable by their recorded method version. Checkpoint v6 fingerprints all rollout objective and guard settings; incompatible checkpoints fail explicitly.
 
 Candidate accounting exposes a deduplicated funnel for TCS, Open exploration,
 incumbent, and other candidates from generation through active selection.
@@ -65,7 +62,7 @@ records Safe profile coverage, excluded dirty shortlist counts, oldest
 unprofiled Safe age, representative profile coverage, and representative
 behavior distances. These diagnostics do not change shortlist or ranking.
 
-Specific unknown mechanisms can enter stable semantic families when they pass the specificity gate. Refill is checked after raw evaluation, archive compression, and representative selection. Joint quality uses a frontier of real prompt teams, never a synthetic component-wise maximum.
+Historical mechanism and lineage code remains available only for old settings and run analysis.
 
 ## Architecture
 
@@ -90,13 +87,13 @@ Strict manifests check normalized-question overlap and record split counts and h
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
 $SHA = (git rev-parse --short HEAD)
-$OUT = "runs_v8_stable_qd_lineage_smoke_$SHA"
+$OUT = "runs_v8_rollout_qd_smoke_$SHA"
 
 & $PY scripts/run_task_level_accuracy.py `
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_vote_tcs_competence_depth2_progressive_residual_hybrid `
+  --settings shared_accuracy_rollout_embedding_tcs,shared_vote_ready_rollout_diversity_tcs `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `
@@ -135,7 +132,7 @@ Resume with exactly the same behavior-affecting arguments, output root, and spli
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_vote_tcs_competence_depth2_progressive_residual_hybrid `
+  --settings shared_accuracy_rollout_embedding_tcs,shared_vote_ready_rollout_diversity_tcs `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `
@@ -183,7 +180,7 @@ checkpoint cleanup; its accuracy is not a method result.
 
 ## Metrics
 
-Report plurality accuracy with mean individual accuracy, bottom-2, C1, C2, and oracle coverage. Stable-QD diagnostics include pairwise behavior and mechanism distance, lineage drift and status, peer collapse, quality-floor/final-band counts, fold-quality rejections, selected active sources, niche occupancy, starvation, Probation conversion/expiry, and stable specialization score.
+Report plurality accuracy with best/mean/bottom-2 individual accuracy, C1/C2/C3, Oracle-to-Vote conversion, gold margin, wrong concentration, same-wrong rate, rollout diversity, invalid rate, active sources, funnel conversion, and cost.
 
 Cost fields are reporting-only and never alter ranking or stop training.
 

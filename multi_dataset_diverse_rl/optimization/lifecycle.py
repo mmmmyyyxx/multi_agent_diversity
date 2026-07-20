@@ -145,6 +145,11 @@ class LifecycleMixin:
         self.candidate_channel_funnel = empty_candidate_channel_funnel()
         self.candidate_channel_funnel_seen: Dict[str, set[str]] = {}
         self.behavior_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
+        self.rollout_profile_by_prompt_hash: Dict[str, Dict[str, Any]] = {}
+        self.rollout_signature_history: List[Dict[str, Any]] = []
+        self.accepted_rollout_archive: List[Dict[str, Any]] = []
+        self.active_candidate_source_by_agent: Dict[str, str] = {}
+        self.mechanism_based_decision_count = 0
         self.joint_team_selection_history: List[Dict[str, Any]] = []
         self.lineage_history: List[Dict[str, Any]] = []
         self.quality_diversity_archive_history: List[Dict[str, Any]] = []
@@ -210,6 +215,15 @@ class LifecycleMixin:
 
     def _is_competence_depth_reward_mode(self) -> bool:
         return str(getattr(self.cfg, "reward_mode", "")).lower() == "competence_depth_schedule"
+
+    def _is_rollout_qd_method(self) -> bool:
+        return is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy"))
+
+    def _is_vote_ready_rollout_method(self) -> bool:
+        return is_vote_ready_rollout_method(getattr(self.cfg, "method_version", "legacy"))
+
+    def _is_accuracy_rollout_method(self) -> bool:
+        return str(getattr(self.cfg, "method_version", "legacy")) == "v8_accuracy_rollout_embedding"
 
     def _uses_competence_depth_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "")).lower() == "competence_depth_pareto"
@@ -317,7 +331,7 @@ class LifecycleMixin:
         return base + (1.0 - float(self.specialization_strength)) * extra
 
     def _uses_baseline_candidate_metrics(self) -> bool:
-        return self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode() or self._is_coverage_useful_diversity_mode() or self._is_competence_depth_reward_mode()
+        return self._is_rollout_qd_method() or self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode() or self._is_coverage_useful_diversity_mode() or self._is_competence_depth_reward_mode()
 
     def _uses_vote_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() in {
@@ -346,6 +360,8 @@ class LifecycleMixin:
         )
 
     def _experiment_protocol_version(self) -> str:
+        if self._is_rollout_qd_method():
+            return str(self.cfg.method_version)
         if self._is_stable_qd_lineage():
             return "vote_oriented_v8_stable_qd_lineage"
         if bool(getattr(self.cfg, "competence_depth_enabled", False)):

@@ -10,6 +10,51 @@ class PromptUpdateContext:
     step_id: int
     epoch_id: int
 
+
+def _select_rollout_archive_for_update(system, context):
+    incumbent_hash = system._normalized_prompt_hash(context.agent.current_prompt)
+    for item in context.evaluated:
+        item['is_incumbent'] = str(item.get('prompt_hash', '')) == incumbent_hash
+        item['archive_bucket'] = (
+            'safe' if item['is_incumbent'] or bool(item.get('metrics', {}).get('rollout_quality_guard_passed', False))
+            else 'catastrophic'
+        )
+    context.agent.safe_qd_archive = select_rollout_archive(
+        [*getattr(context.agent, 'safe_qd_archive', []), *context.evaluated],
+        incumbent_hash, int(system.cfg.qd_archive_size_per_agent), system.cfg,
+        vote_ready=system._is_vote_ready_rollout_method(),
+    )
+    context.agent.probation_archive = []
+    context.agent.prompt_beam = select_rollout_representatives(
+        context.agent.safe_qd_archive, incumbent_hash,
+        int(system.cfg.joint_representative_beam_size), system.cfg,
+        vote_ready=system._is_vote_ready_rollout_method(),
+    ) or [system._make_beam_item(context.agent.current_prompt, None, {}, None, 0)]
+    context.selected = list(context.agent.prompt_beam)
+    context.requirements = {
+        'met': len(context.agent.safe_qd_archive) > 1,
+        'safe_non_incumbent_count': sum(
+            str(item.get('prompt_hash', '')) != incumbent_hash for item in context.agent.safe_qd_archive
+        ),
+        'missing': [] if len(context.agent.safe_qd_archive) > 1 else ['missing_rollout_distinct_candidate'],
+    }
+    context.pareto_summary.update({
+        'safe_archive_size': len(context.agent.safe_qd_archive),
+        'probation_archive_count': 0,
+        'rollout_signature_count': len({
+            str(item.get('metrics', {}).get('rollout_profile', {}).get('rollout_signature_hash', ''))
+            for item in context.agent.safe_qd_archive
+        }),
+        **context.requirements,
+    })
+    system._record_candidate_funnel_outcomes(
+        agent_id=context.agent_id, evaluated=context.evaluated,
+        safe_archive=context.agent.safe_qd_archive, epoch=context.epoch_id,
+    )
+    context.agent.optimizer_update_count_by_epoch[str(context.epoch_id)] = int(
+        context.agent.optimizer_update_count_by_epoch.get(str(context.epoch_id), 0) or 0
+    ) + 1
+
 class CandidateGenerationStage:
 
     @staticmethod
@@ -27,6 +72,12 @@ class CandidateGenerationStage:
         context.parent_sources = ['active'] * len(context.beam)
         if system._is_stable_qd_lineage():
             context.beam, context.parent_sources = system._select_stable_qd_parents(context.agent, context.epoch_id)
+        elif system._is_rollout_qd_method():
+            context.parent_sources = [
+                "active" if system._normalized_prompt_hash(str(item.get('prompt', ''))) == system._normalized_prompt_hash(context.agent.current_prompt)
+                else "rollout_representative"
+                for item in context.beam
+            ]
         context.generation = max([int(context.x.get('generation', 0) or 0) for context.x in context.beam] + [0]) + 1
         context.candidate_pool: List[Dict[str, Any]] = []
         context.seen = set()
@@ -187,12 +238,10 @@ class CandidateEvaluationStage:
             context.evaluated.append({**context.candidate, 'metrics': context.metrics, 'reward': float(context.metrics.get('reward', 0.0))})
 
 class CandidateClassificationAndRefillStage:
-
     @staticmethod
     async def run(system, context):
         context.old_hash = system._hash(context.agent.current_prompt)
-        context.trajectory_guard_enabled = system._v7_residual_protocol_enabled()
-        context.candidate_guard_enabled = bool(getattr(system.cfg, 'competence_depth1_candidate_guard_enabled', False))
+        context.trajectory_guard_enabled = system._v7_residual_protocol_enabled(); context.candidate_guard_enabled = bool(getattr(system.cfg, 'competence_depth1_candidate_guard_enabled', False))
         context.pareto_summary = {'num_pareto_feasible': None, 'num_pareto_infeasible': None, 'num_pareto_fronts': None, 'pareto_front0_size': None, 'pareto_forced_current_fallback': None}
         for context.item in context.evaluated:
             context.metrics = context.item.get('metrics', {}) if isinstance(context.item.get('metrics', {}), dict) else {}
@@ -383,6 +432,8 @@ class CandidateClassificationAndRefillStage:
             system.search_branch_starvation_count += int(context.starvation and (not context.agent.probation_archive))
             system.refill_requirements_unmet_count += int(not context.requirements['met'])
             context.agent.optimizer_update_count_by_epoch[str(context.epoch_id)] = int(context.agent.optimizer_update_count_by_epoch.get(str(context.epoch_id), 0) or 0) + 1
+        elif system._is_rollout_qd_method():
+            _select_rollout_archive_for_update(system, context)
         else:
             context.requirements = {}
 
@@ -394,7 +445,7 @@ class ArchiveSelectionStage:
         if not context.selectable:
             raise RuntimeError('Candidate guards removed the current active prompt fallback')
         context.beam_size = max(1, int(system.cfg.beam_size))
-        if system._is_stable_qd_lineage():
+        if system._is_stable_qd_lineage() or system._is_rollout_qd_method():
             context.selected = list(context.agent.prompt_beam)
         elif system._is_v82_hybrid():
             context.selected, context.pareto_summary = system._select_hybrid_beam(context.selectable, context.beam_size, context.agent.current_prompt, agent_id=context.agent_id, epoch_id=context.epoch_id, step_id=context.step_id)
@@ -415,7 +466,7 @@ class ArchiveSelectionStage:
         context.active_candidate_id = str(context.selected[0].get('candidate_id', '')) if context.selected else ''
         for context.item in context.selected:
             context.item.setdefault('metrics', {})['beam_slot'] = str(context.item.get('beam_slot', ''))
-        if not system._is_stable_qd_lineage():
+        if not (system._is_stable_qd_lineage() or system._is_rollout_qd_method()):
             context.agent.prompt_beam = [system._make_beam_item(prompt=str(context.x['prompt']), score=float(context.x.get('reward', 0.0)), metrics=context.x.get('metrics', {}), parent_id=context.x.get('parent_id'), generation=int(context.x.get('generation', context.generation) or context.generation), candidate_id=str(context.x.get('candidate_id', '')) or None) for context.x in context.selected] or [system._make_beam_item(context.agent.current_prompt, None, {}, None, 0)]
             context.agent.current_prompt = str(context.agent.prompt_beam[0]['prompt'])
         context.changed = context.old_hash != system._hash(context.agent.current_prompt)
@@ -491,8 +542,9 @@ class UpdateSummaryStage:
             system.cost_summary['candidate_eval_prompt_dedup_savings'] = int(system.cost_summary.get('candidate_eval_prompt_dedup_savings', 0) or 0) + int(context.candidate_eval_cache_stats.get('candidate_eval_prompt_dedup_savings', 0) or 0)
         context.summary = {'agent_id': context.agent_id, 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id, **context.competence_log_fields, 'updated': bool(context.changed), 'candidate_count': len(context.candidate_pool), 'depth1_guard_rejection_count': sum((str(context.item.get('metrics', {}).get('rejection_reason', '')) == 'competence_depth1_guard' for context.item in context.evaluated)), 'accuracy_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('accuracy_guard_passed', True)) for context.item in context.evaluated)), 'invalid_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('invalid_guard_passed', True)) for context.item in context.evaluated)), 'dependence_guard_rejection_count': sum((str(context.item.get('metrics', {}).get('rejection_reason', '')) in {'pivotal_loss_guard', 'shared_error_creation_guard'} for context.item in context.evaluated)), 'pareto_not_retained_count': sum((not bool(context.item.get('pareto_selected', False)) for context.item in context.evaluated)), 'retained_candidate_count': len(context.selected), 'active_prompt_changed_count': int(context.changed), 'catastrophic_accuracy_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('accuracy_guard_passed', True)) for context.item in context.evaluated)), 'soft_error_dependence_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_error_dependence_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'soft_cycle_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_cycle_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'soft_mechanism_shift_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_mechanism_shift_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'exploration_candidate_count': sum((system._candidate_pool_source(context.item) == 'optimizer' and float(context.item.get('metrics', {}).get('mechanism_signature_distance', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'exploration_slot_occupancy_count': sum((str(context.item.get('beam_slot', '')) == ('mechanism_niche' if system._is_stable_qd_lineage() else 'explore') for context.item in context.selected)), 'exploration_to_active_conversion_count': int(bool(context.selected and context.selected[0].get('beam_slot') == 'explore' and context.changed)), 'generation_batches': context.generation_batches, 'baseline_homogeneous_case_count': len(context.baseline_cases), 'num_target_error_cases': int(context.num_target_error_cases), 'num_accuracy_repair_candidates': int(context.num_accuracy_repair_candidates), 'num_diversity_candidates': int(context.num_diversity_candidates), 'optimizer_fallback_mode': str(getattr(system.cfg, 'optimizer_fallback_mode', 'none')), 'optimizer_parent_concurrency': int(context.parent_concurrency), 'parent_sources': list(context.parent_sources), 'per_niche_parent_count': dict(context.agent.per_niche_parent_count), 'probation_parent_count': int(context.agent.probation_parent_count), 'probation_to_safe_conversion_count': int(getattr(system, 'probation_to_safe_conversion_count', 0)), 'candidate_starvation': bool(context.requirements.get('safe_non_incumbent_count', 1) == 0) if system._is_stable_qd_lineage() else False, 'mechanism_starvation': bool(context.requirements.get('safe_distinct_mechanism_count', 1) == 0) if system._is_stable_qd_lineage() else False, 'search_branch_starvation': bool(context.requirements.get('safe_non_incumbent_count', 1) == 0 and (not getattr(context.agent, 'probation_archive', []))) if system._is_stable_qd_lineage() else False, 'candidate_starvation_count': int(getattr(system, 'candidate_starvation_count', 0)), 'mechanism_starvation_count': int(getattr(system, 'mechanism_starvation_count', 0)), 'search_branch_starvation_count': int(getattr(system, 'search_branch_starvation_count', 0)), 'refill_requirements_unmet_count': int(getattr(system, 'refill_requirements_unmet_count', 0)), 'fallback_enabled': bool(context.fallback_enabled), 'optimizer_underfilled': bool(context.optimizer_underfilled), 'requested_optimizer_candidates': int(context.requested_optimizer_candidates), 'num_optimizer_candidates': int(context.num_optimizer_candidates), 'num_fallback_candidates': int(context.num_fallback_candidates), 'num_existing_beam_candidates': int(context.num_existing_beam_candidates), 'num_tcs_optimizer_candidates': int(context.num_tcs_optimizer_candidates), 'num_tcs_metadata_valid_candidates': int(context.num_tcs_metadata_valid_candidates), 'num_tcs_metadata_invalid_candidates': int(context.num_tcs_metadata_invalid_candidates), 'tcs_execution_complete': context.tcs_execution_complete, 'tcs_call_group_ids': sorted({str(context.c.get('tcs_call_group_id', '')) for context.c in context.candidate_pool if str(context.c.get('tcs_call_group_id', ''))}), 'top1_candidate_source': context.top1_candidate_source, 'top1_candidate_pool_source': context.top1_candidate_pool_source, 'active_prompt_changed': bool(context.changed), **context.pareto_summary, 'top1_pareto_rank': context.selected[0].get('pareto_rank') if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_gain_rate': float(context.selected[0].get('metrics', {}).get('vote_gain_rate', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_loss_rate': float(context.selected[0].get('metrics', {}).get('vote_loss_rate', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_delta': float(context.selected[0].get('metrics', {}).get('vote_delta', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, **context.optimizer_generation_summary, **system._student_failure_log_fields(context.optimizer_generation_summary), 'top_reward': float(context.agent.prompt_beam[0].get('score', 0.0) or 0.0), 'top_metrics': context.agent.prompt_beam[0].get('metrics', {}), **context.candidate_eval_cache_stats, 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id}
         system.depth1_guard_rejection_count = int(getattr(system, 'depth1_guard_rejection_count', 0)) + int(context.summary['depth1_guard_rejection_count'])
-        if system._is_stable_qd_lineage():
+        if system._is_stable_qd_lineage() or system._is_rollout_qd_method():
             system.total_agent_update_count += 1
+        if system._is_stable_qd_lineage():
             system.task_repair_niche_occupancy_count += int(context.pareto_summary.get('task_repair_niche_occupancy', 0) or 0)
             system.mechanism_niche_occupancy_count += int(context.pareto_summary.get('mechanism_niche_occupancy', 0) or 0)
         for context.field in ('catastrophic_accuracy_guard_rejection_count', 'soft_error_dependence_penalty_count', 'soft_cycle_penalty_count', 'soft_mechanism_shift_penalty_count', 'exploration_candidate_count', 'exploration_slot_occupancy_count', 'exploration_to_active_conversion_count'):

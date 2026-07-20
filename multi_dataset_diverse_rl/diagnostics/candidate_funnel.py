@@ -5,6 +5,7 @@ from typing import Any, Dict, Mapping, MutableMapping, MutableSet
 
 CANDIDATE_CHANNELS = (
     "teacher_critic_student",
+    "open_rollout_exploration",
     "open_mechanism_exploration",
     "incumbent",
     "other",
@@ -36,6 +37,8 @@ def normalize_candidate_channel(item: Mapping[str, Any]) -> str:
     architecture = str(item.get("optimizer_architecture", "") or "").lower()
     if source == "teacher_critic_student" or architecture == "teacher_critic_student":
         return "teacher_critic_student"
+    if source == "open_rollout_exploration" or architecture == "open_rollout_exploration":
+        return "open_rollout_exploration"
     if source == "open_mechanism_exploration" or architecture == "open_mechanism_exploration":
         return "open_mechanism_exploration"
     pool_source = str(item.get("candidate_pool_source", "") or "").lower()

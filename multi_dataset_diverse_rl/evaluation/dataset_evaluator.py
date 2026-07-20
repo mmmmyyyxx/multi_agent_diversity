@@ -223,6 +223,35 @@ class DatasetEvaluatorMixin:
                 "capability_profile_update_count_per_agent": [int(agent.capability_profile_update_count) for agent in self.agents],
                 **self._capability_specialization_diagnostics(),
             })
+        if self._is_rollout_qd_method():
+            signatures = [
+                str(row.get("rollout_signature_hash", ""))
+                for row in getattr(self, "accepted_rollout_archive", [])
+                if str(row.get("rollout_signature_hash", ""))
+            ]
+            counts = Counter(signatures)
+            latest = dict(getattr(self, "latest_joint_team_metrics", {}) or {})
+            selected = dict(latest.get("selected_metrics", {}) or {})
+            result.update({
+                "method_version": str(self.cfg.method_version),
+                "mechanism_diversity_enabled": False,
+                "mechanism_metadata_required": False,
+                "mechanism_distance_used_for_selection": False,
+                "mechanism_based_decision_count": int(getattr(self, "mechanism_based_decision_count", 0)),
+                "capability_labeling_enabled": False,
+                "capability_profile_per_agent": None,
+                "top_capability_family_per_agent": None,
+                "prompt_text_diversity_used": False,
+                "rollout_embedding_diversity": float(selected.get("rollout_diversity_score", result.get("mean_embedding_diversity", 0.0)) or 0.0),
+                "correct_set_rollout_distance": float(selected.get("correct_set_rollout_distance", 0.0) or 0.0),
+                "useful_wrong_answer_dispersion": float(selected.get("useful_wrong_answer_dispersion", result.get("same_wrong_pair_rate", 0.0)) or 0.0),
+                "rollout_signature_count": len(counts),
+                "duplicate_rollout_signature_count": int(sum(max(0, count - 1) for count in counts.values())),
+                "joint_team_solver_call_count": int(latest.get("joint_team_solver_call_count", 0) or 0),
+                "legacy_beam_refresh_call_count": int(getattr(self, "legacy_beam_refresh_call_count", 0)),
+                "candidate_channel_funnel": json.loads(json.dumps(getattr(self, "candidate_channel_funnel", {}))),
+                "active_candidate_source_by_agent": dict(getattr(self, "active_candidate_source_by_agent", {})),
+            })
         if self._is_v82_hybrid():
             final_signatures = []
             for agent in self.agents:

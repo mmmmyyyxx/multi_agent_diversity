@@ -74,12 +74,12 @@ def _append_common_cli_args(
     reward_mode = _setting_reward_mode(args, setting)
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto"}
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready"}
         else getattr(args, "candidate_selection_mode", Config().candidate_selection_mode)
     )
     best_state_selection_mode = (
         setting.best_state_selection_mode
-        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first", "vote_generalization_first"}
+        if str(getattr(setting, "best_state_selection_mode", "") or "") in {"vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first"}
         else getattr(args, "best_state_selection_mode", Config().best_state_selection_mode)
     )
     optimizer_architecture = _setting_value(setting, "optimizer_architecture", args.optimizer_architecture)
@@ -123,6 +123,20 @@ def _append_common_cli_args(
             "--reward_weight_coverage", str(getattr(args, "reward_weight_coverage", defaults.reward_weight_coverage)),
             "--reward_weight_useful_diversity", str(getattr(args, "reward_weight_useful_diversity", defaults.reward_weight_useful_diversity)),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
+            "--rollout_correct_distance_weight", str(getattr(args, "rollout_correct_distance_weight", defaults.rollout_correct_distance_weight)),
+            "--rollout_wrong_distance_weight", str(getattr(args, "rollout_wrong_distance_weight", defaults.rollout_wrong_distance_weight)),
+            "--rollout_trace_distance_weight", str(getattr(args, "rollout_trace_distance_weight", defaults.rollout_trace_distance_weight)),
+            "--rollout_simple_target_accuracy_weight", str(getattr(args, "rollout_simple_target_accuracy_weight", defaults.rollout_simple_target_accuracy_weight)),
+            "--rollout_simple_diversity_weight", str(getattr(args, "rollout_simple_diversity_weight", defaults.rollout_simple_diversity_weight)),
+            "--rollout_simple_invalid_weight", str(getattr(args, "rollout_simple_invalid_weight", defaults.rollout_simple_invalid_weight)),
+            "--vote_ready_target_accuracy_weight", str(getattr(args, "vote_ready_target_accuracy_weight", defaults.vote_ready_target_accuracy_weight)),
+            "--vote_ready_vote_weight", str(getattr(args, "vote_ready_vote_weight", defaults.vote_ready_vote_weight)),
+            "--vote_ready_c3_weight", str(getattr(args, "vote_ready_c3_weight", defaults.vote_ready_c3_weight)),
+            "--vote_ready_margin_weight", str(getattr(args, "vote_ready_margin_weight", defaults.vote_ready_margin_weight)),
+            "--vote_ready_wrong_break_weight", str(getattr(args, "vote_ready_wrong_break_weight", defaults.vote_ready_wrong_break_weight)),
+            "--vote_ready_diversity_weight", str(getattr(args, "vote_ready_diversity_weight", defaults.vote_ready_diversity_weight)),
+            "--rollout_c3_loss_epsilon", str(getattr(args, "rollout_c3_loss_epsilon", defaults.rollout_c3_loss_epsilon)),
+            "--rollout_vote_loss_epsilon", str(getattr(args, "rollout_vote_loss_epsilon", defaults.rollout_vote_loss_epsilon)),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
             "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
@@ -689,6 +703,20 @@ def main():
     parser.add_argument("--reward_weight_coverage", type=float, default=cli_defaults.reward_weight_coverage)
     parser.add_argument("--reward_weight_useful_diversity", type=float, default=cli_defaults.reward_weight_useful_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
+    parser.add_argument("--rollout_correct_distance_weight", type=float, default=cli_defaults.rollout_correct_distance_weight)
+    parser.add_argument("--rollout_wrong_distance_weight", type=float, default=cli_defaults.rollout_wrong_distance_weight)
+    parser.add_argument("--rollout_trace_distance_weight", type=float, default=cli_defaults.rollout_trace_distance_weight)
+    parser.add_argument("--rollout_simple_target_accuracy_weight", type=float, default=cli_defaults.rollout_simple_target_accuracy_weight)
+    parser.add_argument("--rollout_simple_diversity_weight", type=float, default=cli_defaults.rollout_simple_diversity_weight)
+    parser.add_argument("--rollout_simple_invalid_weight", type=float, default=cli_defaults.rollout_simple_invalid_weight)
+    parser.add_argument("--vote_ready_target_accuracy_weight", type=float, default=cli_defaults.vote_ready_target_accuracy_weight)
+    parser.add_argument("--vote_ready_vote_weight", type=float, default=cli_defaults.vote_ready_vote_weight)
+    parser.add_argument("--vote_ready_c3_weight", type=float, default=cli_defaults.vote_ready_c3_weight)
+    parser.add_argument("--vote_ready_margin_weight", type=float, default=cli_defaults.vote_ready_margin_weight)
+    parser.add_argument("--vote_ready_wrong_break_weight", type=float, default=cli_defaults.vote_ready_wrong_break_weight)
+    parser.add_argument("--vote_ready_diversity_weight", type=float, default=cli_defaults.vote_ready_diversity_weight)
+    parser.add_argument("--rollout_c3_loss_epsilon", type=int, default=cli_defaults.rollout_c3_loss_epsilon)
+    parser.add_argument("--rollout_vote_loss_epsilon", type=int, default=cli_defaults.rollout_vote_loss_epsilon)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
     parser.add_argument("--reward_diversity_warmup_updates", type=int, default=cli_defaults.reward_diversity_warmup_updates)

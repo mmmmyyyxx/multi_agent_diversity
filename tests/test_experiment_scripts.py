@@ -30,6 +30,8 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "shared_vote_tcs_competence_depth2_progressive_residual",
         "shared_vote_tcs_competence_depth2_progressive_residual_hybrid",
         "shared_accuracy_only_tcs_vote_first",
+        "shared_accuracy_rollout_embedding_tcs",
+        "shared_vote_ready_rollout_diversity_tcs",
         "shared_guarded_diversity_tcs_vote_first",
         "shared_vote_no_margin_tcs_vote_first",
         "shared_vote_no_boundary_tcs_vote_first",
@@ -67,7 +69,8 @@ def test_default_and_all_setting_sets_are_distinct():
         "shared_legacy_coverage_useful_tcs_strict", "shared_vote_tcs_competence_schedule",
         "shared_vote_tcs_competence_depth2", "shared_vote_tcs_competence_depth2_progressive_residual",
         "shared_vote_tcs_competence_depth2_progressive_residual_hybrid",
-        "shared_accuracy_only_tcs_vote_first", "shared_guarded_diversity_tcs_vote_first",
+        "shared_accuracy_only_tcs_vote_first", "shared_accuracy_rollout_embedding_tcs",
+        "shared_vote_ready_rollout_diversity_tcs", "shared_guarded_diversity_tcs_vote_first",
         "shared_vote_no_margin_tcs_vote_first", "shared_vote_no_boundary_tcs_vote_first",
     ]
 
