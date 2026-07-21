@@ -2,18 +2,22 @@
 
 This repository performs evolutionary prompt search for a fixed team of reasoning agents. It changes prompts, not model weights.
 
-The current line is V9 State-Conditioned Correlated-Error Optimization. Start with [method.md](method.md) for the implementation guide. V8 settings and artifacts remain available with unchanged semantics.
+The current line is V9 State-Conditioned Correlated-Error Optimization. V9 is plurality-oriented exploitation; B-style rollout diversity is available only as guarded exploration. Start with [method.md](method.md) for the implementation guide. V8 settings and artifacts remain available with unchanged semantics.
 
 ## Current V9 Settings
 
 The main setting and matched ablations are:
 
 ```text
-shared_state_conditioned_error_tcs
-shared_v9_accuracy_only
-shared_v9_accuracy_coverage
-shared_v9_accuracy_coverage_c2split
-shared_v9_accuracy_coverage_c2split_trace_tiebreak
+shared_v9_accuracy_vote
+shared_v9_accuracy_vote_coverage
+shared_v9_accuracy_vote_coverage_c2correct
+shared_v9_accuracy_vote_coverage_c2correct_c2split
+shared_v9_accuracy_vote_coverage_c2correct_c2split_trace
+
+shared_v9_exploit_only
+shared_v9_exploit_b_archive
+shared_v9_exploit_b_archive_parent
 ```
 
 They use:
@@ -31,14 +35,15 @@ V9 uses:
 - representative, coverage, and option-stratified conversion candidate pools;
 - representative-pool accuracy and invalid guards before state utility;
 - an accuracy epsilon band before coverage or C2 candidates enter the Archive;
-- an incumbent, accuracy, coverage, and conversion representative per agent;
-- fixed-probe offline enumeration of at most `4^5 = 1024` teams;
+- separate incumbent, accuracy, coverage, C2-correct, C2-split, and optional rollout-exploration slots;
+- fixed-probe offline enumeration of at most `6^5 = 7776` cached teams;
+- deterministic use of at most one exploration parent per update;
 - trace distance only as the final optional tie-break;
 - no prompt-text, mechanism, capability, persona, or random-error diversity reward;
 - training-time validation baseline guard and validation-only state selection;
 - validation-only best epoch selection followed by one restored final test.
 
-Wrong-answer dispersion has task value only when a C2 target remains wrong and reduces the dominant wrong cluster. C0, C1, and C3+ receive zero wrong-dispersion task gain.
+Wrong-answer dispersion has task value only when a finite-option C2 target remains wrong and reduces the dominant wrong cluster. C0, C1, C3+, and unknown-option tasks receive zero wrong-dispersion task gain. Generic exploration uses only correct-set and valid-trace distance, after all quality guards.
 
 Acceptance diagnostics are reporting-only. Each prediction records correct
 agent count, gold vote count, largest wrong cluster, plurality margin, Oracle
@@ -58,7 +63,7 @@ Rewrite and forced-best behavior is unchanged.
 
 Candidates pass schema, completeness, and validity checks, then are evaluated against the active team. Safe candidates satisfy representative-pool target-accuracy and invalid guards plus directional C1/C2/C3 and Vote-loss guards. The Archive deduplicates by prompt hash and fixed-probe rollout signature. Joint combinations are evaluated offline from cached answer, correctness, invalid, and trace profiles.
 
-V9 never performs legacy per-epoch beam refresh. Existing result directories remain readable by their recorded method version. Checkpoint v6 plus the V9 state marker fingerprints behavior settings; incompatible checkpoints fail explicitly.
+V9 never performs legacy per-epoch beam refresh. Existing result directories remain readable by their recorded method version. Checkpoint v6 plus V9 state checkpoint version 2 fingerprints behavior settings and persists the fixed-probe snapshot and exploration lineage; incompatible checkpoints fail explicitly.
 
 Candidate accounting exposes a deduplicated funnel for TCS, Open exploration,
 incumbent, and other candidates from generation through active selection.
@@ -98,7 +103,7 @@ $OUT = "runs_v9_state_conditioned_smoke_$SHA"
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_state_conditioned_error_tcs `
+  --settings shared_v9_exploit_b_archive_parent `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `
@@ -129,7 +134,7 @@ $OUT = "runs_v9_state_conditioned_smoke_$SHA"
   --resume_from_checkpoint 1
 ```
 
-This smoke checks execution integrity. It is not an accuracy claim and does not require a committed lineage in two epochs.
+This smoke checks V9 routing, fixed-probe snapshots, Archive/parent flow, checkpointing, and logging. It is not an accuracy claim.
 
 ## Resume
 
@@ -140,7 +145,7 @@ Resume with exactly the same behavior-affecting arguments, output root, and spli
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_state_conditioned_error_tcs `
+  --settings shared_v9_exploit_b_archive_parent `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `

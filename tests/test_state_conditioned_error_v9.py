@@ -192,7 +192,7 @@ def test_archive_keeps_coverage_and_conversion_as_separate_slots():
     )
     slots = {item["prompt_hash"]: item["state_archive_slot"] for item in archive}
     assert slots["coverage"] == "coverage_repair"
-    assert slots["conversion"] == "vote_conversion"
+    assert slots["conversion"] == "c2_correct"
 
 
 def test_higher_diversity_cannot_replace_higher_quality_team():
@@ -215,7 +215,9 @@ def test_higher_diversity_cannot_replace_higher_quality_team():
 def test_accuracy_only_team_ablation_ignores_state_and_trace_keys():
     cfg = Config(
         method_version="v9_state_conditioned_error",
+        state_vote_objective_enabled=False,
         state_coverage_enabled=False,
+        state_c2_correct_conversion_enabled=False,
         state_c2_wrong_split_enabled=False,
         state_trace_tiebreak_enabled=False,
         state_joint_total_correct_slack_rate=0.0,
@@ -274,9 +276,10 @@ def test_candidate_batch_preserves_three_disjoint_pool_budgets():
     pools = [row["_candidate_pool"] for row in batch]
     assert len(batch) == 6
     assert len({row["question"] for row in batch}) == 6
-    assert pools.count("representative") == 2
+    assert sum(bool(row["_candidate_pool_primary"]) for row in batch) == 2
     assert pools.count("coverage") == 2
-    assert pools.count("conversion") == 2
+    assert pools.count("conversion") == 1
+    assert sum(row["_candidate_pool_fallback_for"] == "conversion" for row in batch) == 1
 
 
 def test_v9_checkpoint_has_version_and_rejects_missing_v9_marker():

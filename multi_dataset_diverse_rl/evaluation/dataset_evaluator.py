@@ -130,6 +130,9 @@ class DatasetEvaluatorMixin:
             "weighted_vote_acc": float(np.mean([r.get("weighted_vote_correct", 0) for r in rows])) if rows else 0.0,
             "mean_individual_acc": float(np.mean(flat_individual)) if flat_individual else 0.0,
             "best_individual_acc": float(max(per_agent_acc)) if per_agent_acc else 0.0,
+            "best_individual_minus_plurality_vote": (
+                float(max(per_agent_acc)) - plurality_vote_acc if per_agent_acc else -plurality_vote_acc
+            ),
             "per_agent_acc": per_agent_acc,
             "min_individual_acc": min_acc,
             "bottom2_mean_acc": bottom2,
@@ -253,12 +256,45 @@ class DatasetEvaluatorMixin:
                 "active_candidate_source_by_agent": dict(getattr(self, "active_candidate_source_by_agent", {})),
             })
             if self._is_state_conditioned_method():
+                archive_items = [
+                    item
+                    for agent in self.agents
+                    for item in getattr(agent, "safe_qd_archive", [])
+                    if isinstance(item, dict)
+                ]
+                archive_slots = Counter(
+                    getattr(self, "state_archive_slot_fill_counts", {})
+                )
+                if not archive_slots:
+                    archive_slots = Counter(
+                        str(item.get("state_archive_slot", "")) for item in archive_items
+                    )
+                exploration_items = [
+                    item for item in archive_items
+                    if str(item.get("state_archive_slot", "")) == "rollout_exploration"
+                ]
+                exploration_metrics = [
+                    item.get("metrics", {}) for item in exploration_items
+                    if isinstance(item.get("metrics", {}), dict)
+                ]
+                exploration_signatures = {
+                    str(metrics.get("rollout_profile", {}).get("rollout_signature_hash", ""))
+                    for metrics in exploration_metrics
+                    if isinstance(metrics.get("rollout_profile", {}), dict)
+                    and str(metrics.get("rollout_profile", {}).get("rollout_signature_hash", ""))
+                }
+                state_search = dict(getattr(self, "state_search_diagnostics", {}) or {})
+                exploration_descendants = int(getattr(self, "exploration_descendant_count", 0) or 0)
+                exploration_safe = int(getattr(self, "exploration_descendant_safe_count", 0) or 0)
                 result.update(state_dataset_metrics(rows))
                 result.update({
                     "state_conditioned_enabled": True,
+                    "state_vote_objective_enabled": bool(getattr(self.cfg, "state_vote_objective_enabled", True)),
                     "state_coverage_enabled": bool(getattr(self.cfg, "state_coverage_enabled", True)),
+                    "state_c2_correct_conversion_enabled": bool(getattr(self.cfg, "state_c2_correct_conversion_enabled", True)),
                     "state_c2_wrong_split_enabled": bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)),
                     "state_trace_tiebreak_enabled": bool(getattr(self.cfg, "state_trace_tiebreak_enabled", True)),
+                    "state_rollout_exploration_enabled": bool(getattr(self.cfg, "state_rollout_exploration_enabled", False)),
                     "composite_rollout_distance_used_for_selection": False,
                     "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
                     "coverage_case_assignment_per_agent": dict(
@@ -270,8 +306,63 @@ class DatasetEvaluatorMixin:
                     "c1_deepening_count_per_agent": dict(
                         getattr(self, "c1_deepening_count_per_agent", {})
                     ),
-                    "state_search_diagnostics": dict(
-                        getattr(self, "state_search_diagnostics", {})
+                    "state_search_diagnostics": state_search,
+                    "representative_pool_count": int(state_search.get("representative_pool_count", 0) or 0),
+                    "coverage_pool_requested": int(state_search.get("coverage_pool_requested", 0) or 0),
+                    "coverage_pool_actual": int(state_search.get("coverage_pool_actual", 0) or 0),
+                    "conversion_pool_requested": int(state_search.get("conversion_pool_requested", 0) or 0),
+                    "conversion_pool_actual": int(state_search.get("conversion_pool_actual", 0) or 0),
+                    "coverage_pool_fill_rate": float(
+                        int(state_search.get("coverage_pool_actual", 0) or 0)
+                        / max(1, int(state_search.get("coverage_pool_requested", 0) or 0))
+                    ),
+                    "conversion_pool_fill_rate": float(
+                        int(state_search.get("conversion_pool_actual", 0) or 0)
+                        / max(1, int(state_search.get("conversion_pool_requested", 0) or 0))
+                    ),
+                    "pool_state_histograms": dict(state_search.get("pool_state_histograms", {}) or {}),
+                    "accuracy_slot_fill_count": int(archive_slots.get("overall_accuracy", 0)),
+                    "coverage_slot_fill_count": int(archive_slots.get("coverage_repair", 0)),
+                    "c2_correct_slot_fill_count": int(archive_slots.get("c2_correct", 0)),
+                    "c2_split_slot_fill_count": int(archive_slots.get("c2_split", 0)),
+                    "exploration_slot_fill_count": int(archive_slots.get("rollout_exploration", 0)),
+                    "active_selection_source_counts": dict(
+                        getattr(self, "state_active_selection_source_counts", {})
+                    ),
+                    "parent_selection_source_counts": dict(
+                        getattr(self, "state_parent_selection_source_counts", {})
+                    ),
+                    "mean_exploration_correct_set_distance": float(np.mean([
+                        float(metrics.get("exploration_correct_set_distance", 0.0) or 0.0)
+                        for metrics in exploration_metrics
+                    ])) if exploration_metrics else 0.0,
+                    "mean_exploration_valid_trace_distance": float(np.mean([
+                        float(metrics.get("exploration_valid_trace_distance", 0.0) or 0.0)
+                        for metrics in exploration_metrics
+                    ])) if exploration_metrics else 0.0,
+                    "mean_exploration_nearest_archive_distance": float(np.mean([
+                        float(metrics.get("exploration_nearest_archive_distance", 0.0) or 0.0)
+                        for metrics in exploration_metrics
+                    ])) if exploration_metrics else 0.0,
+                    "exploration_signature_count": len(exploration_signatures),
+                    "exploration_parent_use_count": int(getattr(self, "exploration_parent_use_count", 0) or 0),
+                    "exploration_descendant_count": exploration_descendants,
+                    "exploration_descendant_safe_rate": exploration_safe / max(1, exploration_descendants),
+                    "exploration_descendant_state_gain_rate": int(
+                        getattr(self, "exploration_descendant_state_gain_count", 0) or 0
+                    ) / max(1, exploration_safe),
+                    "exploration_descendant_vote_gain_rate": int(
+                        getattr(self, "exploration_descendant_vote_gain_count", 0) or 0
+                    ) / max(1, exploration_safe),
+                    "exploration_descendant_active_rate": int(
+                        getattr(self, "exploration_descendant_active_count", 0) or 0
+                    ) / max(1, exploration_descendants),
+                    "joint_team_combination_count": int(latest.get("combination_count", 0) or 0),
+                    "fixed_probe_state_snapshot_version": str(
+                        getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
+                    ),
+                    "fixed_probe_state_snapshot_epoch": int(
+                        getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_epoch", 0) or 0
                     ),
                 })
         if self._is_v82_hybrid():

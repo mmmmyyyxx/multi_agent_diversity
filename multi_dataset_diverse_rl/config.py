@@ -87,9 +87,19 @@ class _FlatConfigSchema:
     state_c2_to_c1_loss_epsilon: int = 0
     state_c3_to_c2_loss_epsilon: int = 0
     state_vote_loss_epsilon: int = 0
+    state_vote_objective_enabled: bool = True
     state_coverage_enabled: bool = True
+    state_c2_correct_conversion_enabled: bool = True
     state_c2_wrong_split_enabled: bool = True
     state_trace_tiebreak_enabled: bool = True
+    state_rollout_exploration_enabled: bool = False
+    state_exploration_parent_enabled: bool = True
+    state_exploration_parent_probability: float = 0.15
+    state_exploration_stagnation_patience: int = 2
+    state_exploration_parent_max_per_update: int = 1
+    state_exploration_correct_set_weight: float = 0.60
+    state_exploration_valid_trace_weight: float = 0.40
+    state_c0_abstract_analyzer_enabled: bool = False
     state_joint_total_correct_slack_rate: float = 0.01
     state_representative_capacity: int = 4
     candidate_batch_representative_size: int = 12
@@ -531,6 +541,7 @@ class _FlatConfigSchema:
             "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
             "candidate_batch_representative_size", "candidate_batch_coverage_size",
             "candidate_batch_conversion_size",
+            "state_exploration_parent_max_per_update",
         )
         for field in nonnegative_integer_fields:
             if int(getattr(self, field)) < 0:
@@ -542,6 +553,7 @@ class _FlatConfigSchema:
             "lineage_commit_required_snapshots", "lineage_switch_confirmation_snapshots",
             "qd_readiness_min_distinct_niches", "min_optimizer_updates_per_agent_per_epoch",
             "state_representative_capacity",
+            "state_exploration_stagnation_patience",
         )
         for field in positive_integer_fields:
             if int(getattr(self, field)) < 1:
@@ -554,6 +566,17 @@ class _FlatConfigSchema:
             raise ValueError("joint_representative_beam_size must not exceed qd_archive_size_per_agent")
         if int(self.state_representative_capacity) > int(self.qd_archive_size_per_agent):
             raise ValueError("state_representative_capacity must not exceed qd_archive_size_per_agent")
+        if not 0.0 <= float(self.state_exploration_parent_probability) <= 1.0:
+            raise ValueError("state_exploration_parent_probability must be in [0, 1]")
+        exploration_weight_sum = (
+            float(self.state_exploration_correct_set_weight)
+            + float(self.state_exploration_valid_trace_weight)
+        )
+        if abs(exploration_weight_sum - 1.0) > 1e-9:
+            raise ValueError(
+                "state exploration distance weights must sum to 1, "
+                f"got {exploration_weight_sum}"
+            )
         if float(self.probation_max_accuracy_loss) > float(self.catastrophic_target_accuracy_loss_epsilon):
             raise ValueError("probation_max_accuracy_loss must not exceed catastrophic_target_accuracy_loss_epsilon")
         if int(self.probation_max_c1_loss_questions) >= int(self.candidate_c1_catastrophic_loss_questions):
@@ -705,16 +728,23 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--state_accuracy_tie_epsilon", type=float, default=defaults.state_accuracy_tie_epsilon)
     parser.add_argument("--state_joint_total_correct_slack_rate", type=float, default=defaults.state_joint_total_correct_slack_rate)
     parser.add_argument("--state_validation_accuracy_guard_epsilon", type=float, default=defaults.state_validation_accuracy_guard_epsilon)
+    parser.add_argument("--state_exploration_parent_probability", type=float, default=defaults.state_exploration_parent_probability)
+    parser.add_argument("--state_exploration_correct_set_weight", type=float, default=defaults.state_exploration_correct_set_weight)
+    parser.add_argument("--state_exploration_valid_trace_weight", type=float, default=defaults.state_exploration_valid_trace_weight)
     for name in (
         "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
         "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
         "state_representative_capacity", "candidate_batch_representative_size",
         "candidate_batch_coverage_size", "candidate_batch_conversion_size",
+        "state_exploration_stagnation_patience", "state_exploration_parent_max_per_update",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
     for name in (
         "state_conditioned_enabled", "state_coverage_enabled",
+        "state_vote_objective_enabled", "state_c2_correct_conversion_enabled",
         "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
+        "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
+        "state_c0_abstract_analyzer_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--vote_ready_diversity_weight", type=float, default=defaults.vote_ready_diversity_weight)

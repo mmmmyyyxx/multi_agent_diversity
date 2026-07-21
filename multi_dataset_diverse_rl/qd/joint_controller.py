@@ -1,5 +1,7 @@
 """Extracted TraceBeamSearchSystem responsibility mixin."""
 
+import itertools
+
 from ..system_shared import *
 
 
@@ -66,6 +68,20 @@ class JointControllerMixin:
         epoch: int,
         final_epoch: bool = False,
     ) -> Dict[str, Any]:
+        if self._is_state_conditioned_method():
+            if not probe_data:
+                return {"enabled": False, "joint_refresh_triggered": False, "joint_refresh_skip_reason": "empty_probe"}
+            self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
+            record = await self._select_state_conditioned_joint_active_team(probe_data, epoch=epoch)
+            record.update({
+                "joint_refresh_triggered": True,
+                "joint_refresh_trigger_reasons": ["epoch_end" if not final_epoch else "final_epoch"],
+                "joint_team_solver_call_count": 0,
+                "selector_route": "state_conditioned",
+            })
+            self.joint_team_selection_history.append(dict(record))
+            self._flush_jsonl("joint_team_selection_history.jsonl", [record])
+            return record
         if self._is_rollout_qd_method():
             if not probe_data:
                 return {"enabled": False, "joint_refresh_triggered": False, "joint_refresh_skip_reason": "empty_probe"}
@@ -153,6 +169,56 @@ class JointControllerMixin:
         self.last_active_prompt_hashes = list(self.last_archive_material_snapshot.get("active", []))
         self._flush_jsonl("joint_team_selection_history.jsonl", [record])
         return record
+
+    async def refresh_state_conditioned_fixed_probe_snapshot(
+        self, probe_data: List[Dict[str, str]], *, epoch: int
+    ) -> Dict[str, Any]:
+        if not self._is_state_conditioned_method():
+            return {}
+        if not probe_data:
+            raise ValueError("V9 fixed-probe snapshot requires non-empty probe data")
+        self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
+        active_hashes = [self._normalized_prompt_hash(agent.current_prompt) for agent in self.agents]
+        profiles = []
+        for agent_id, agent in enumerate(self.agents):
+            prompt_hash = active_hashes[agent_id]
+            cache_key = f"{agent_id}:{prompt_hash}:{self.current_fixed_probe_hash}"
+            profile = dict(self.rollout_profile_by_prompt_hash.get(cache_key, {}) or {})
+            if not profile:
+                profile = await self._evaluate_prompt_on_stable_probe(
+                    agent_id, agent.current_prompt, probe_data
+                )
+                self.rollout_profile_by_prompt_hash[cache_key] = dict(profile)
+            profiles.append(profile)
+        question_hashes = [self._hash(str(example.get("question", ""))) for example in probe_data]
+        gold_answers = [
+            self.task_spec.parse_gold(example.get("answer"), str(example.get("question", "")))
+            for example in probe_data
+        ]
+        option_counter = getattr(self.task_spec, "option_count", None)
+        option_counts = [
+            int(option_counter(str(example.get("question", ""))) or 0)
+            if callable(option_counter) else 0
+            for example in probe_data
+        ]
+        snapshot = build_fixed_probe_state_snapshot(
+            profiles,
+            gold_answers,
+            question_hashes,
+            option_counts,
+            active_hashes,
+            snapshot_epoch=epoch,
+            probe_hash=self.current_fixed_probe_hash,
+            vote_fn=plurality_vote_with_diagnostics,
+            match_fn=self.task_spec.match_answer,
+            tie_break_method=self.cfg.vote_tie_break,
+            seed=self.cfg.seed,
+        )
+        self.fixed_probe_state_snapshot = snapshot
+        self.fixed_probe_snapshot_refresh_count = int(
+            getattr(self, "fixed_probe_snapshot_refresh_count", 0)
+        ) + 1
+        return snapshot
 
     async def _select_rollout_joint_active_team(
         self, probe_data: List[Dict[str, str]], *, epoch: int,
@@ -323,6 +389,12 @@ class JointControllerMixin:
             agent.safe_qd_archive = select_state_conditioned_archive(
                 profiled, active_hash, int(self.cfg.qd_archive_size_per_agent), self.cfg
             )
+            for item in agent.safe_qd_archive:
+                slot = str(item.get("state_archive_slot", "") or "")
+                if slot:
+                    self.state_archive_slot_fill_counts[slot] = int(
+                        self.state_archive_slot_fill_counts.get(slot, 0) or 0
+                    ) + 1
             representatives = select_state_conditioned_representatives(
                 agent.safe_qd_archive,
                 active_hash,
@@ -375,6 +447,7 @@ class JointControllerMixin:
         selected = selection["selected"]
         changed_count = 0
         selected_sources = []
+        selected_archive_slots = []
         incumbent_correctness = [
             list(profile.get("correctness_vector", []))
             for profile in incumbent.get("prompt_profiles", [])
@@ -421,15 +494,46 @@ class JointControllerMixin:
                 })
                 agent.history.append(agent.current_prompt)
                 agent.accept_count += 1
+                if bool(chosen.get("parent_was_exploration", False)):
+                    self.exploration_descendant_active_count = int(
+                        getattr(self, "exploration_descendant_active_count", 0)
+                    ) + 1
             else:
                 agent.reject_count += 1
             source = self._candidate_generation_source(chosen) or "incumbent"
             selected_sources.append(source)
+            archive_slot = str(chosen.get("state_archive_slot", "incumbent") or "incumbent")
+            selected_archive_slots.append(archive_slot)
+            self.state_active_selection_source_counts[archive_slot] = int(
+                self.state_active_selection_source_counts.get(archive_slot, 0) or 0
+            ) + 1
             self.active_candidate_source_by_agent[str(agent_id)] = source
             self._record_candidate_funnel_item(chosen, agent_id, "active_selected_count")
             self._append_prompt_history_event(
                 agent_id, epoch, 0, "state_joint_selected" if changed else "state_joint_keep", changed
             )
+        option_counter = getattr(self.task_spec, "option_count", None)
+        option_counts = [
+            int(option_counter(str(example.get("question", ""))) or 0)
+            if callable(option_counter) else 0
+            for example in probe_data
+        ]
+        self.fixed_probe_state_snapshot = build_fixed_probe_state_snapshot(
+            list(selected.get("prompt_profiles", [])),
+            gold_answers,
+            question_hashes,
+            option_counts,
+            [self._normalized_prompt_hash(agent.current_prompt) for agent in self.agents],
+            snapshot_epoch=epoch,
+            probe_hash=self.current_fixed_probe_hash,
+            vote_fn=plurality_vote_with_diagnostics,
+            match_fn=self.task_spec.match_answer,
+            tie_break_method=self.cfg.vote_tie_break,
+            seed=self.cfg.seed,
+        )
+        self.fixed_probe_snapshot_refresh_count = int(
+            getattr(self, "fixed_probe_snapshot_refresh_count", 0)
+        ) + 1
         record = {
             "enabled": True,
             "epoch": int(epoch),
@@ -447,6 +551,9 @@ class JointControllerMixin:
             },
             "selected_prompt_hashes": list(selected.get("prompt_hashes", [])),
             "selected_beam_sources": selected_sources,
+            "selected_archive_slots": selected_archive_slots,
+            "active_selection_source_counts": dict(self.state_active_selection_source_counts),
+            "parent_selection_source_counts": dict(self.state_parent_selection_source_counts),
             "active_prompt_changed_count": int(changed_count),
             "joint_best_total_correct": int(selection["joint_best_total_correct"]),
             "joint_total_correct_slack": int(selection["joint_total_correct_slack"]),
@@ -462,6 +569,12 @@ class JointControllerMixin:
             "c1_deepening_count_per_agent": dict(self.c1_deepening_count_per_agent),
             "trace_diversity_used_as_tiebreak_only": True,
             "composite_rollout_distance_used_for_selection": False,
+            "selector_route": "state_conditioned",
+            "fixed_probe_state_snapshot_version": STATE_SNAPSHOT_VERSION,
+            "fixed_probe_state_snapshot_epoch": int(epoch),
+            "exploration_descendant_active_count": int(
+                getattr(self, "exploration_descendant_active_count", 0)
+            ),
             "mechanism_based_decision_count": 0,
             "candidate_channel_funnel": json.loads(json.dumps(self.candidate_channel_funnel)),
         }

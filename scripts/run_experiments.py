@@ -138,6 +138,15 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_mode", reward_mode,
             "--candidate_selection_mode", str(candidate_selection_mode),
             "--best_state_selection_mode", str(best_state_selection_mode),
+            "--method_version", str(setting_value("method_version", Config().method_version)),
+            "--active_team_selector_version", str(setting_value("active_team_selector_version", Config().active_team_selector_version)),
+            "--candidate_generation_policy_version", str(setting_value("candidate_generation_policy_version", Config().candidate_generation_policy_version)),
+            "--tcs_candidate_policy_version", str(setting_value("tcs_candidate_policy_version", Config().tcs_candidate_policy_version)),
+            "--archive_policy_version", str(setting_value("archive_policy_version", Config().archive_policy_version)),
+            "--joint_quality_filter_version", str(setting_value("joint_quality_filter_version", Config().joint_quality_filter_version)),
+            "--probe_stability_version", str(setting_value("probe_stability_version", Config().probe_stability_version)),
+            "--parent_selection_version", str(setting_value("parent_selection_version", Config().parent_selection_version)),
+            "--beam_policy_version", str(setting_value("beam_policy_version", Config().beam_policy_version)),
             "--beam_size", str(args.beam_size),
             "--num_candidates_per_parent", str(args.num_candidates_per_parent),
             "--optimizer_parent_concurrency", str(args.optimizer_parent_concurrency),
@@ -155,6 +164,21 @@ def _append_common_cli_args(cmd: List[str], args: argparse.Namespace, setting: E
             "--reward_weight_vote_margin", str(args.reward_weight_vote_margin),
             "--reward_weight_boundary_diversity", str(args.reward_weight_boundary_diversity),
             "--invalid_guard_epsilon", str(args.invalid_guard_epsilon),
+            "--state_conditioned_enabled", str(int(setting_value("state_conditioned_enabled", args.state_conditioned_enabled))),
+            "--state_vote_objective_enabled", str(int(setting_value("state_vote_objective_enabled", args.state_vote_objective_enabled))),
+            "--state_coverage_enabled", str(int(setting_value("state_coverage_enabled", args.state_coverage_enabled))),
+            "--state_c2_correct_conversion_enabled", str(int(setting_value("state_c2_correct_conversion_enabled", args.state_c2_correct_conversion_enabled))),
+            "--state_c2_wrong_split_enabled", str(int(setting_value("state_c2_wrong_split_enabled", args.state_c2_wrong_split_enabled))),
+            "--state_trace_tiebreak_enabled", str(int(setting_value("state_trace_tiebreak_enabled", args.state_trace_tiebreak_enabled))),
+            "--state_rollout_exploration_enabled", str(int(setting_value("state_rollout_exploration_enabled", args.state_rollout_exploration_enabled))),
+            "--state_exploration_parent_enabled", str(int(setting_value("state_exploration_parent_enabled", args.state_exploration_parent_enabled))),
+            "--state_exploration_parent_probability", str(setting_value("state_exploration_parent_probability", args.state_exploration_parent_probability)),
+            "--state_exploration_stagnation_patience", str(setting_value("state_exploration_stagnation_patience", args.state_exploration_stagnation_patience)),
+            "--state_exploration_parent_max_per_update", str(setting_value("state_exploration_parent_max_per_update", args.state_exploration_parent_max_per_update)),
+            "--state_exploration_correct_set_weight", str(setting_value("state_exploration_correct_set_weight", args.state_exploration_correct_set_weight)),
+            "--state_exploration_valid_trace_weight", str(setting_value("state_exploration_valid_trace_weight", args.state_exploration_valid_trace_weight)),
+            "--state_c0_abstract_analyzer_enabled", str(int(setting_value("state_c0_abstract_analyzer_enabled", args.state_c0_abstract_analyzer_enabled))),
+            "--state_representative_capacity", str(setting_value("state_representative_capacity", args.state_representative_capacity)),
             "--use_baseline_relative_reward", str(int(args.use_baseline_relative_reward)),
             "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
@@ -416,6 +440,19 @@ def main():
     parser.add_argument("--reward_weight_vote_margin", type=float, default=cli_defaults.reward_weight_vote_margin)
     parser.add_argument("--reward_weight_boundary_diversity", type=float, default=cli_defaults.reward_weight_boundary_diversity)
     parser.add_argument("--invalid_guard_epsilon", type=float, default=cli_defaults.invalid_guard_epsilon)
+    for name in (
+        "state_conditioned_enabled", "state_vote_objective_enabled", "state_coverage_enabled",
+        "state_c2_correct_conversion_enabled", "state_c2_wrong_split_enabled",
+        "state_trace_tiebreak_enabled", "state_rollout_exploration_enabled",
+        "state_exploration_parent_enabled", "state_c0_abstract_analyzer_enabled",
+    ):
+        parser.add_argument(f"--{name}", type=int, default=int(getattr(cli_defaults, name)), choices=[0, 1])
+    parser.add_argument("--state_exploration_parent_probability", type=float, default=cli_defaults.state_exploration_parent_probability)
+    parser.add_argument("--state_exploration_stagnation_patience", type=int, default=cli_defaults.state_exploration_stagnation_patience)
+    parser.add_argument("--state_exploration_parent_max_per_update", type=int, default=cli_defaults.state_exploration_parent_max_per_update)
+    parser.add_argument("--state_exploration_correct_set_weight", type=float, default=cli_defaults.state_exploration_correct_set_weight)
+    parser.add_argument("--state_exploration_valid_trace_weight", type=float, default=cli_defaults.state_exploration_valid_trace_weight)
+    parser.add_argument("--state_representative_capacity", type=int, default=cli_defaults.state_representative_capacity)
     parser.add_argument("--use_baseline_relative_reward", type=int, default=int(cli_defaults.use_baseline_relative_reward), choices=[0, 1])
     parser.add_argument("--reward_schedule_mode", type=str, default=cli_defaults.reward_schedule_mode, choices=["static", "phase_adaptive"])
     parser.add_argument("--reward_diversity_warmup_updates", type=int, default=cli_defaults.reward_diversity_warmup_updates)

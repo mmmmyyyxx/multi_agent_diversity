@@ -156,6 +156,30 @@ def restore_system_state(system, state_payload):
         for key, values in dict(state_payload.get("coverage_case_assignment_per_agent", {}) or {}).items()
         if isinstance(values, list)
     }
+    system.coverage_assignment_primary = {
+        str(key): int(value) for key, value in dict(
+            state_payload.get("coverage_assignment_primary", {}) or {}
+        ).items()
+    }
+    system.coverage_assignment_secondary = {
+        str(key): int(value) for key, value in dict(
+            state_payload.get("coverage_assignment_secondary", {}) or {}
+        ).items()
+    }
+    system.coverage_attempt_count_per_agent = {
+        str(key): int(value or 0) for key, value in dict(
+            state_payload.get("coverage_attempt_count_per_agent", {}) or {}
+        ).items()
+    }
+    system.coverage_last_attempt_epoch = dict(state_payload.get("coverage_last_attempt_epoch", {}) or {})
+    system.coverage_resolved_by = dict(state_payload.get("coverage_resolved_by", {}) or {})
+    system.coverage_resolved_epoch = dict(state_payload.get("coverage_resolved_epoch", {}) or {})
+    system.coverage_rotation_count = int(state_payload.get("coverage_rotation_count", 0) or 0)
+    system.coverage_failed_prompt_hashes = {
+        str(key): list(values) for key, values in dict(
+            state_payload.get("coverage_failed_prompt_hashes", {}) or {}
+        ).items()
+    }
     system.c0_rescue_count_per_agent = {
         str(key): int(value or 0)
         for key, value in dict(state_payload.get("c0_rescue_count_per_agent", {}) or {}).items()
@@ -164,9 +188,40 @@ def restore_system_state(system, state_payload):
         str(key): int(value or 0)
         for key, value in dict(state_payload.get("c1_deepening_count_per_agent", {}) or {}).items()
     }
-    system.state_search_diagnostics = {
-        str(key): int(value or 0)
-        for key, value in dict(state_payload.get("state_search_diagnostics", {}) or {}).items()
+    system.state_search_diagnostics = dict(
+        state_payload.get("state_search_diagnostics", {}) or {}
+    )
+    system.fixed_probe_state_snapshot = dict(state_payload.get("fixed_probe_state_snapshot", {}) or {})
+    system.fixed_probe_snapshot_refresh_count = int(
+        state_payload.get("fixed_probe_snapshot_refresh_count", 0) or 0
+    )
+    system.state_no_gain_updates_per_agent = {
+        str(key): int(value or 0) for key, value in dict(
+            state_payload.get("state_no_gain_updates_per_agent", {}) or {}
+        ).items()
+    }
+    for field in (
+        "exploration_parent_use_count", "exploration_descendant_count",
+        "exploration_descendant_safe_count", "exploration_descendant_archive_count",
+        "exploration_descendant_active_count", "exploration_descendant_vote_gain_count",
+        "exploration_descendant_c0_to_c1_count", "exploration_descendant_c1_to_c2_count",
+        "exploration_descendant_c2_to_c3_count", "exploration_descendant_state_gain_count",
+    ):
+        setattr(system, field, int(state_payload.get(field, 0) or 0))
+    system.state_parent_selection_source_counts = {
+        str(key): int(value or 0) for key, value in dict(
+            state_payload.get("state_parent_selection_source_counts", {}) or {}
+        ).items()
+    }
+    system.state_active_selection_source_counts = {
+        str(key): int(value or 0) for key, value in dict(
+            state_payload.get("state_active_selection_source_counts", {}) or {}
+        ).items()
+    }
+    system.state_archive_slot_fill_counts = {
+        str(key): int(value or 0) for key, value in dict(
+            state_payload.get("state_archive_slot_fill_counts", {}) or {}
+        ).items()
     }
     system.joint_quality_anchor_metrics = {}
     system.quality_anchor_archive = [
@@ -270,8 +325,18 @@ BEHAVIOR_CONFIG_FIELDS = (
         "state_c3_to_c2_loss_epsilon",
         "state_vote_loss_epsilon",
         "state_coverage_enabled",
+        "state_vote_objective_enabled",
+        "state_c2_correct_conversion_enabled",
         "state_c2_wrong_split_enabled",
         "state_trace_tiebreak_enabled",
+        "state_rollout_exploration_enabled",
+        "state_exploration_parent_enabled",
+        "state_exploration_parent_probability",
+        "state_exploration_stagnation_patience",
+        "state_exploration_parent_max_per_update",
+        "state_exploration_correct_set_weight",
+        "state_exploration_valid_trace_weight",
+        "state_c0_abstract_analyzer_enabled",
         "state_joint_total_correct_slack_rate",
         "state_representative_capacity",
         "candidate_batch_representative_size",
@@ -508,6 +573,11 @@ def checkpoint_behavior_config(cfg):
         "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
         "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
         "state_coverage_enabled", "state_c2_wrong_split_enabled",
+        "state_vote_objective_enabled", "state_c2_correct_conversion_enabled",
+        "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
+        "state_exploration_parent_probability", "state_exploration_stagnation_patience",
+        "state_exploration_parent_max_per_update", "state_exploration_correct_set_weight",
+        "state_exploration_valid_trace_weight", "state_c0_abstract_analyzer_enabled",
         "state_trace_tiebreak_enabled", "state_joint_total_correct_slack_rate",
         "state_representative_capacity", "candidate_batch_representative_size",
         "candidate_batch_coverage_size", "candidate_batch_conversion_size",
@@ -772,9 +842,33 @@ def build_training_checkpoint(
             "behavior_profile_history": list(getattr(system, "behavior_profile_history", [])),
             "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
             "coverage_case_assignment_per_agent": dict(getattr(system, "coverage_case_assignment_per_agent", {})),
+            "coverage_assignment_primary": dict(getattr(system, "coverage_assignment_primary", {})),
+            "coverage_assignment_secondary": dict(getattr(system, "coverage_assignment_secondary", {})),
+            "coverage_attempt_count_per_agent": dict(getattr(system, "coverage_attempt_count_per_agent", {})),
+            "coverage_last_attempt_epoch": dict(getattr(system, "coverage_last_attempt_epoch", {})),
+            "coverage_resolved_by": dict(getattr(system, "coverage_resolved_by", {})),
+            "coverage_resolved_epoch": dict(getattr(system, "coverage_resolved_epoch", {})),
+            "coverage_rotation_count": int(getattr(system, "coverage_rotation_count", 0)),
+            "coverage_failed_prompt_hashes": dict(getattr(system, "coverage_failed_prompt_hashes", {})),
             "c0_rescue_count_per_agent": dict(getattr(system, "c0_rescue_count_per_agent", {})),
             "c1_deepening_count_per_agent": dict(getattr(system, "c1_deepening_count_per_agent", {})),
             "state_search_diagnostics": dict(getattr(system, "state_search_diagnostics", {})),
+            "fixed_probe_state_snapshot": dict(getattr(system, "fixed_probe_state_snapshot", {})),
+            "fixed_probe_snapshot_refresh_count": int(getattr(system, "fixed_probe_snapshot_refresh_count", 0)),
+            "state_no_gain_updates_per_agent": dict(getattr(system, "state_no_gain_updates_per_agent", {})),
+            "exploration_parent_use_count": int(getattr(system, "exploration_parent_use_count", 0)),
+            "exploration_descendant_count": int(getattr(system, "exploration_descendant_count", 0)),
+            "exploration_descendant_safe_count": int(getattr(system, "exploration_descendant_safe_count", 0)),
+            "exploration_descendant_archive_count": int(getattr(system, "exploration_descendant_archive_count", 0)),
+            "exploration_descendant_active_count": int(getattr(system, "exploration_descendant_active_count", 0)),
+            "exploration_descendant_vote_gain_count": int(getattr(system, "exploration_descendant_vote_gain_count", 0)),
+            "exploration_descendant_c0_to_c1_count": int(getattr(system, "exploration_descendant_c0_to_c1_count", 0)),
+            "exploration_descendant_c1_to_c2_count": int(getattr(system, "exploration_descendant_c1_to_c2_count", 0)),
+            "exploration_descendant_c2_to_c3_count": int(getattr(system, "exploration_descendant_c2_to_c3_count", 0)),
+            "exploration_descendant_state_gain_count": int(getattr(system, "exploration_descendant_state_gain_count", 0)),
+            "state_parent_selection_source_counts": dict(getattr(system, "state_parent_selection_source_counts", {})),
+            "state_active_selection_source_counts": dict(getattr(system, "state_active_selection_source_counts", {})),
+            "state_archive_slot_fill_counts": dict(getattr(system, "state_archive_slot_fill_counts", {})),
             "quality_anchor_archive": list(getattr(system, "quality_anchor_archive", [])),
             "quality_anchor_created_count": int(getattr(system, "quality_anchor_created_count", 0)),
             "last_joint_refresh_epoch": int(getattr(system, "last_joint_refresh_epoch", 0)),

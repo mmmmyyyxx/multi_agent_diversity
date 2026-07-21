@@ -321,12 +321,55 @@ class TargetSelectorMixin:
                         seed=int(self.cfg.seed),
                         assignment_count=min(2, len(self.agents)),
                     )
-                    if agent_id in assignees:
+                    if assignees:
+                        self.coverage_assignment_primary.setdefault(question_hash, int(assignees[0]))
+                    if len(assignees) > 1:
+                        self.coverage_assignment_secondary.setdefault(question_hash, int(assignees[1]))
+                    failure_count = len(set(
+                        getattr(self, "coverage_failed_prompt_hashes", {}).get(question_hash, [])
+                    ))
+                    assigned_agent = int(self.coverage_assignment_primary.get(question_hash, assignees[0]))
+                    if failure_count >= 2 and len(assignees) > 1:
+                        assigned_agent = int(
+                            self.coverage_assignment_secondary.get(question_hash, assignees[1])
+                        )
+                    active_assignees = [assigned_agent]
+                    if agent_id in active_assignees:
                         enriched = dict(case)
-                        enriched["coverage_assigned_agents"] = assignees
+                        enriched["coverage_assigned_agents"] = active_assignees
                         enriched["state"] = f"C{correct_count}"
+                        if bool(getattr(self.cfg, "state_c0_abstract_analyzer_enabled", False)):
+                            unanimous_wrong = bool(
+                                correct_count == 0
+                                and len({
+                                    str(value) for value in case.get("answers", []) if str(value)
+                                }) <= 1
+                            )
+                            enriched.update({
+                                "shared_failure_category": (
+                                    "unanimous_correlated_error" if unanimous_wrong
+                                    else "insufficient_correct_coverage"
+                                ),
+                                "generalized_failure_mechanism": str(
+                                    case.get("error_pattern", "reasoning rule failed to separate plausible referents")
+                                )[:180],
+                                "missing_reasoning_step": str(
+                                    case.get("repair_hint", "apply an explicit ambiguity and contradiction check")
+                                )[:180],
+                                "misleading_reasoning_step": "avoid treating surface plausibility as decisive evidence",
+                                "generalizable_repair_rule": "compare all admissible referents before committing",
+                                "ambiguity_handling_rule": "choose ambiguity when multiple referents remain equally licensed",
+                                "memorization_risk": "low: sample text and answer labels are omitted",
+                            })
                         coverage.append(enriched)
                         assigned_to_target.add(question_hash)
+                        agent_key = str(agent_id)
+                        self.coverage_attempt_count_per_agent[agent_key] = int(
+                            self.coverage_attempt_count_per_agent.get(agent_key, 0) or 0
+                        ) + 1
+                        self.coverage_last_attempt_epoch[question_hash] = int(
+                            getattr(self, "total_agent_update_count", 0)
+                        )
                 elif correct_count == 2:
                     enriched = dict(case)
                     enriched["state"] = "C2"
@@ -355,7 +398,10 @@ class TargetSelectorMixin:
                         "or C1-to-C2 correct coverage without sacrificing existing correct cases"
                     ),
                 })
-            if bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)):
+            if (
+                bool(getattr(self.cfg, "state_c2_correct_conversion_enabled", True))
+                or bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True))
+            ):
                 batches.append({
                     "batch_type": "state_vote_conversion",
                     "optimization_route": "vote_conversion",
@@ -622,6 +668,9 @@ class TargetSelectorMixin:
             allowed.extend([
                 "baseline_correct_count", "state", "coverage_assigned_agents",
                 "option_count", "question_hash", "sample_hash",
+                "shared_failure_category", "generalized_failure_mechanism",
+                "missing_reasoning_step", "misleading_reasoning_step",
+                "generalizable_repair_rule", "ambiguity_handling_rule", "memorization_risk",
             ])
         if self._v7_residual_protocol_enabled():
             allowed.extend(["capability_residual_family", "confidence", "peer_wrong_count", "vote_context"])

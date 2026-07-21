@@ -143,9 +143,19 @@ def _append_common_cli_args(
             "--state_c2_to_c1_loss_epsilon", str(_setting_value(setting, "state_c2_to_c1_loss_epsilon", getattr(args, "state_c2_to_c1_loss_epsilon", defaults.state_c2_to_c1_loss_epsilon))),
             "--state_c3_to_c2_loss_epsilon", str(_setting_value(setting, "state_c3_to_c2_loss_epsilon", getattr(args, "state_c3_to_c2_loss_epsilon", defaults.state_c3_to_c2_loss_epsilon))),
             "--state_vote_loss_epsilon", str(_setting_value(setting, "state_vote_loss_epsilon", getattr(args, "state_vote_loss_epsilon", defaults.state_vote_loss_epsilon))),
+            "--state_vote_objective_enabled", str(int(_setting_value(setting, "state_vote_objective_enabled", getattr(args, "state_vote_objective_enabled", defaults.state_vote_objective_enabled)))),
             "--state_coverage_enabled", str(int(_setting_value(setting, "state_coverage_enabled", getattr(args, "state_coverage_enabled", defaults.state_coverage_enabled)))),
+            "--state_c2_correct_conversion_enabled", str(int(_setting_value(setting, "state_c2_correct_conversion_enabled", getattr(args, "state_c2_correct_conversion_enabled", defaults.state_c2_correct_conversion_enabled)))),
             "--state_c2_wrong_split_enabled", str(int(_setting_value(setting, "state_c2_wrong_split_enabled", getattr(args, "state_c2_wrong_split_enabled", defaults.state_c2_wrong_split_enabled)))),
             "--state_trace_tiebreak_enabled", str(int(_setting_value(setting, "state_trace_tiebreak_enabled", getattr(args, "state_trace_tiebreak_enabled", defaults.state_trace_tiebreak_enabled)))),
+            "--state_rollout_exploration_enabled", str(int(_setting_value(setting, "state_rollout_exploration_enabled", getattr(args, "state_rollout_exploration_enabled", defaults.state_rollout_exploration_enabled)))),
+            "--state_exploration_parent_enabled", str(int(_setting_value(setting, "state_exploration_parent_enabled", getattr(args, "state_exploration_parent_enabled", defaults.state_exploration_parent_enabled)))),
+            "--state_exploration_parent_probability", str(_setting_value(setting, "state_exploration_parent_probability", getattr(args, "state_exploration_parent_probability", defaults.state_exploration_parent_probability))),
+            "--state_exploration_stagnation_patience", str(_setting_value(setting, "state_exploration_stagnation_patience", getattr(args, "state_exploration_stagnation_patience", defaults.state_exploration_stagnation_patience))),
+            "--state_exploration_parent_max_per_update", str(_setting_value(setting, "state_exploration_parent_max_per_update", getattr(args, "state_exploration_parent_max_per_update", defaults.state_exploration_parent_max_per_update))),
+            "--state_exploration_correct_set_weight", str(_setting_value(setting, "state_exploration_correct_set_weight", getattr(args, "state_exploration_correct_set_weight", defaults.state_exploration_correct_set_weight))),
+            "--state_exploration_valid_trace_weight", str(_setting_value(setting, "state_exploration_valid_trace_weight", getattr(args, "state_exploration_valid_trace_weight", defaults.state_exploration_valid_trace_weight))),
+            "--state_c0_abstract_analyzer_enabled", str(int(_setting_value(setting, "state_c0_abstract_analyzer_enabled", getattr(args, "state_c0_abstract_analyzer_enabled", defaults.state_c0_abstract_analyzer_enabled)))),
             "--state_joint_total_correct_slack_rate", str(_setting_value(setting, "state_joint_total_correct_slack_rate", getattr(args, "state_joint_total_correct_slack_rate", defaults.state_joint_total_correct_slack_rate))),
             "--state_representative_capacity", str(_setting_value(setting, "state_representative_capacity", getattr(args, "state_representative_capacity", defaults.state_representative_capacity))),
             "--candidate_batch_representative_size", str(_explicit_cli_or_setting(args, setting, "candidate_batch_representative_size", defaults.candidate_batch_representative_size)),
@@ -841,10 +851,14 @@ def main():
     parser.add_argument("--state_accuracy_tie_epsilon", type=float, default=cli_defaults.state_accuracy_tie_epsilon)
     parser.add_argument("--state_joint_total_correct_slack_rate", type=float, default=cli_defaults.state_joint_total_correct_slack_rate)
     parser.add_argument("--state_validation_accuracy_guard_epsilon", type=float, default=cli_defaults.state_validation_accuracy_guard_epsilon)
+    parser.add_argument("--state_exploration_parent_probability", type=float, default=cli_defaults.state_exploration_parent_probability)
+    parser.add_argument("--state_exploration_correct_set_weight", type=float, default=cli_defaults.state_exploration_correct_set_weight)
+    parser.add_argument("--state_exploration_valid_trace_weight", type=float, default=cli_defaults.state_exploration_valid_trace_weight)
     for name in (
         "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
         "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
         "state_representative_capacity",
+        "state_exploration_stagnation_patience", "state_exploration_parent_max_per_update",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(cli_defaults, name))
     for name in (
@@ -854,7 +868,10 @@ def main():
         parser.add_argument(f"--{name}", type=int, default=None)
     for name in (
         "state_conditioned_enabled", "state_coverage_enabled",
+        "state_vote_objective_enabled", "state_c2_correct_conversion_enabled",
         "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
+        "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
+        "state_c0_abstract_analyzer_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(cli_defaults, name)), choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=None)

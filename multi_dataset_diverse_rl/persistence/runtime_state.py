@@ -680,9 +680,12 @@ class RuntimeStateMixin:
                 fields.update({
                     "state_conditioned_enabled": True,
                     "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                    "state_vote_objective_enabled": bool(self.cfg.state_vote_objective_enabled),
                     "state_coverage_enabled": bool(self.cfg.state_coverage_enabled),
+                    "state_c2_correct_conversion_enabled": bool(self.cfg.state_c2_correct_conversion_enabled),
                     "state_c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
                     "state_trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
+                    "state_rollout_exploration_enabled": bool(self.cfg.state_rollout_exploration_enabled),
                     "composite_rollout_distance_used_for_selection": False,
                     "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
                 })
@@ -816,6 +819,26 @@ class RuntimeStateMixin:
             "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
             "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "vote_first"),
             "method_version": str(getattr(self.cfg, "method_version", "legacy")),
+            "state_conditioned_enabled": bool(self._is_state_conditioned_method()),
+            "state_vote_objective_enabled": bool(getattr(self.cfg, "state_vote_objective_enabled", True)),
+            "state_coverage_enabled": bool(getattr(self.cfg, "state_coverage_enabled", True)),
+            "state_c2_correct_conversion_enabled": bool(getattr(self.cfg, "state_c2_correct_conversion_enabled", True)),
+            "state_c2_wrong_split_enabled": bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)),
+            "state_trace_tiebreak_enabled": bool(getattr(self.cfg, "state_trace_tiebreak_enabled", True)),
+            "state_rollout_exploration_enabled": bool(getattr(self.cfg, "state_rollout_exploration_enabled", False)),
+            "fixed_probe_state_snapshot_version": str(
+                getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
+            ),
+            "fixed_probe_state_snapshot_epoch": int(
+                getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_epoch", 0) or 0
+            ),
+            "exploration_parent_use_count": int(getattr(self, "exploration_parent_use_count", 0)),
+            "exploration_descendant_count": int(getattr(self, "exploration_descendant_count", 0)),
+            "exploration_descendant_safe_count": int(getattr(self, "exploration_descendant_safe_count", 0)),
+            "exploration_descendant_state_gain_count": int(getattr(self, "exploration_descendant_state_gain_count", 0)),
+            "state_archive_slot_fill_counts": dict(getattr(self, "state_archive_slot_fill_counts", {})),
+            "state_active_selection_source_counts": dict(getattr(self, "state_active_selection_source_counts", {})),
+            "state_parent_selection_source_counts": dict(getattr(self, "state_parent_selection_source_counts", {})),
             "target_selector_mode": str(getattr(self.cfg, "target_selector_mode", "legacy")),
             "target_selector_version": str(getattr(self.cfg, "target_selector_version", "legacy")),
             "beam_policy_version": str(getattr(self.cfg, "beam_policy_version", "legacy")),
@@ -895,9 +918,13 @@ class RuntimeStateMixin:
                         "vote_loss_epsilon": int(self.cfg.state_vote_loss_epsilon),
                     },
                     "state_conditioned_selection": {
+                        "vote_objective_enabled": bool(self.cfg.state_vote_objective_enabled),
                         "coverage_enabled": bool(self.cfg.state_coverage_enabled),
+                        "c2_correct_conversion_enabled": bool(self.cfg.state_c2_correct_conversion_enabled),
                         "c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
                         "trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
+                        "rollout_exploration_enabled": bool(self.cfg.state_rollout_exploration_enabled),
+                        "exploration_parent_enabled": bool(self.cfg.state_exploration_parent_enabled),
                     },
                     "coverage_case_assignment_per_agent": dict(
                         getattr(self, "coverage_case_assignment_per_agent", {})
@@ -910,6 +937,30 @@ class RuntimeStateMixin:
                     ),
                     "state_search_diagnostics": dict(
                         getattr(self, "state_search_diagnostics", {})
+                    ),
+                    "fixed_probe_state_snapshot": dict(
+                        getattr(self, "fixed_probe_state_snapshot", {})
+                    ),
+                    "exploration_lineage": {
+                        "parent_use_count": int(getattr(self, "exploration_parent_use_count", 0)),
+                        "descendant_count": int(getattr(self, "exploration_descendant_count", 0)),
+                        "descendant_safe_count": int(getattr(self, "exploration_descendant_safe_count", 0)),
+                        "descendant_archive_count": int(getattr(self, "exploration_descendant_archive_count", 0)),
+                        "descendant_active_count": int(getattr(self, "exploration_descendant_active_count", 0)),
+                        "descendant_state_gain_count": int(getattr(self, "exploration_descendant_state_gain_count", 0)),
+                        "descendant_vote_gain_count": int(getattr(self, "exploration_descendant_vote_gain_count", 0)),
+                        "descendant_c0_to_c1_count": int(getattr(self, "exploration_descendant_c0_to_c1_count", 0)),
+                        "descendant_c1_to_c2_count": int(getattr(self, "exploration_descendant_c1_to_c2_count", 0)),
+                        "descendant_c2_to_c3_count": int(getattr(self, "exploration_descendant_c2_to_c3_count", 0)),
+                    },
+                    "active_selection_source_counts": dict(
+                        getattr(self, "state_active_selection_source_counts", {})
+                    ),
+                    "parent_selection_source_counts": dict(
+                        getattr(self, "state_parent_selection_source_counts", {})
+                    ),
+                    "archive_slot_fill_counts": dict(
+                        getattr(self, "state_archive_slot_fill_counts", {})
                     ),
                 })
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:

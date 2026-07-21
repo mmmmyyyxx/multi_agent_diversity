@@ -14,13 +14,20 @@ active_team_selector_version = state_conditioned_joint_v1
 best_state_selection_mode = state_conditioned_vote_first
 ```
 
-The main setting is `shared_state_conditioned_error_tcs`. The matched ablations are:
+V9 is the plurality-oriented exploitation line. The recommended hybrid setting is
+`shared_v9_exploit_b_archive_parent`; it adds B-style rollout exploration only as
+an accuracy-constrained Archive and parent source. The matched V9 ablations are:
 
 ```text
-shared_v9_accuracy_only
-shared_v9_accuracy_coverage
-shared_v9_accuracy_coverage_c2split
-shared_v9_accuracy_coverage_c2split_trace_tiebreak
+shared_v9_accuracy_vote
+shared_v9_accuracy_vote_coverage
+shared_v9_accuracy_vote_coverage_c2correct
+shared_v9_accuracy_vote_coverage_c2correct_c2split
+shared_v9_accuracy_vote_coverage_c2correct_c2split_trace
+
+shared_v9_exploit_only
+shared_v9_exploit_b_archive
+shared_v9_exploit_b_archive_parent
 ```
 
 V8 method versions and completed runs retain their original semantics. V9 has separate configuration, selectors, metadata, and checkpoint compatibility checks.
@@ -35,7 +42,7 @@ training rollout window
   -> candidate counterfactual evaluation on three disjoint pools
   -> hard quality guards
   -> accuracy epsilon band
-  -> per-agent four-slot Archive
+  -> per-agent exploitation Archive plus optional guarded exploration slot
   -> fixed-probe prompt profiles
   -> offline joint team enumeration
   -> validation accuracy guard and vote-first selection
@@ -77,7 +84,7 @@ The task abstraction also reports `option_count` for multiple-choice questions. 
 
 ## 4. Why The Objective Is State-Conditioned
 
-Correct-set distance, wrong-answer dispersion, and trace distance have different meanings. V9 therefore does not combine them into a global rollout-diversity reward.
+Correct-set distance, wrong-answer dispersion, and trace distance have different meanings. V9 therefore does not combine them into a global rollout-diversity reward. The historical B setting, `shared_accuracy_rollout_embedding_tcs`, is retained unchanged. In the V9 hybrid, B-style correct-set and valid-trace distances can preserve a safe search parent, but they cannot compensate for accuracy, invalid, reverse-transition, or Vote regression.
 
 ### C0 And C1
 
@@ -209,20 +216,22 @@ conversion:
 
 Trace distance never appears before a quality metric.
 
-## 9. Per-Agent Archive
+## 9. Per-Agent Archive And Guarded Exploration
 
-Each agent keeps up to four rollout representatives:
+Each full V9 agent Archive keeps up to six rollout representatives:
 
 ```text
 1. incumbent
 2. overall accuracy best
 3. coverage repair best, when enabled
-4. vote conversion best, when enabled
+4. C2-to-C3 correct-conversion best, when enabled
+5. C2 wrong-split best, when enabled
+6. rollout exploration best, when enabled
 ```
 
-Duplicate prompt hashes and duplicate rollout signatures are stored once. If one prompt wins multiple slots, the next eligible accuracy-band prompt fills capacity. No mechanism niche, prompt-text distance, persona, or capability label participates.
+Duplicate prompt hashes and duplicate rollout signatures are stored once. If one prompt wins multiple exploitation slots, the next eligible accuracy-band prompt fills capacity. The exploration slot accepts only candidates that pass the same hard guards and accuracy band. It maximizes the minimum distance to exploitation representatives using `0.6 * correct-set distance + 0.4 * valid-trace distance`; generic wrong-answer distance is excluded.
 
-With four representatives per agent, five-agent offline enumeration has at most `4^5 = 1024` combinations. Prompt profiles are solver-evaluated once on the fixed optimization probe; team combinations add no solver or evaluator-model calls.
+With six representatives per agent, five-agent offline enumeration has at most `6^5 = 7776` combinations. Prompt profiles are solver-evaluated once on the fixed optimization probe; team combinations add no solver or evaluator-model calls. Exploration representatives may be parents for later generation, but at most one is selected per agent update. Selection is deterministic from seed, epoch, step, and agent; stagnation can force the exploration parent. The parent itself never becomes active automatically.
 
 ## 10. Joint Team Selection
 
@@ -237,9 +246,10 @@ keep teams with total_correct >= best_total_correct - allowed_slack
 Within the band, the full V9 key is:
 
 ```text
-lower C0,
 more vote-correct,
-more coverage depth C2,
+lower C0,
+more coverage depth,
+more C2-to-C3 conversion,
 more C2 strict vote-correct,
 more C2 vote-correct,
 lower C2 largest-wrong count,
@@ -250,13 +260,14 @@ optional trace distance as the final semantic tie-break,
 stable prompt-hash tie-break
 ```
 
-The ablation switches remove their terms from both Archive and joint selection:
+Exploration/trace distance appears only at the final semantic tie-break. It never precedes Vote, coverage, C2, bottom-2, margin, or invalid quality. The independent switches remove only their own terms:
 
 ```text
-accuracy_only: no coverage, C2 split, or trace key
-accuracy_coverage: coverage key only
-accuracy_coverage_c2split: coverage and C2 key
-accuracy_coverage_c2split_trace_tiebreak: full key, trace last
+accuracy_vote: Vote objective without coverage or C2 utilities
+accuracy_vote_coverage: add C0/C1 coverage
+accuracy_vote_coverage_c2correct: add C2-to-C3 conversion
+accuracy_vote_coverage_c2correct_c2split: add constrained C2 wrong split
+accuracy_vote_coverage_c2correct_c2split_trace: add final trace tie-break
 ```
 
 ## 11. Validation And Final Test
@@ -272,8 +283,8 @@ Eligible states are ordered by:
 
 ```text
 Vote accuracy,
-mean individual accuracy,
 lower C0 rate,
+mean individual accuracy,
 C2 vote-correct rate,
 bottom-2 accuracy,
 mean plurality margin,
@@ -287,11 +298,11 @@ The initial state remains a valid fallback. Final test restores `best_prompts.js
 
 Task objective metrics include Vote, mean/best/bottom-2 individual accuracy, Oracle, C0/C1/C2/C3PLUS, C2 vote correct/fail, C2 strict/tie, plurality margin, invalid rate, persistent/new/resolved C0, and all-agents-same-wrong rate.
 
-Search diagnostics include directional transition counts, C2 wrong-cluster reduction/creation, theoretical C2 rescuability, fixed-probe trace distance, candidate pool composition, optimization route, coverage assignments, per-agent rescue counters, Archive slots, and joint quality-band size.
+Search diagnostics include directional transition counts, C2 wrong-cluster reduction/creation, theoretical C2 rescuability, fixed-probe trace distance, candidate pool composition, optimization route, coverage assignments, per-agent rescue counters, all six Archive slots, active/parent source counts, exploration distances, and exploration-descendant conversion rates.
 
 `state_search_diagnostics` accumulates directional transitions over evaluated candidates. It is reported separately from final validation/test task metrics and must not be interpreted as a held-out accuracy estimate.
 
-`correct_set_rollout_distance_diagnostic`, `c2_wrong_answer_dispersion`, and `trace_embedding_distance` remain separate diagnostics. V9 never uses the historical composite rollout distance for reward or selection.
+`correct_set_rollout_distance_diagnostic`, `c2_wrong_answer_dispersion`, and `trace_embedding_distance` remain separate diagnostics. V9 never uses the historical composite rollout distance for reward or primary selection. Final reports explicitly include `best_individual_minus_plurality_vote` and `oracle_minus_plurality_vote`.
 
 Important artifacts:
 
@@ -313,10 +324,10 @@ cost_summary.json
 The global checkpoint format remains v6 for V8 compatibility. V9 additionally requires:
 
 ```text
-state_conditioned_checkpoint_version = 1
+state_conditioned_checkpoint_version = 2
 ```
 
-V9 behavior fields, pool sizes, switches, policy versions, assignments, counters, random state, prompt profiles, and Archive state are fingerprinted or persisted. Missing or incompatible state causes an explicit resume error; the runner does not silently restart in the same output directory.
+V9 behavior fields, pool sizes, switches, policy versions, fixed-probe snapshot, assignments, exploration lineage, source counters, random state, prompt profiles, and Archive state are fingerprinted or persisted. Missing or incompatible state causes an explicit resume error; the runner does not silently restart in the same output directory.
 
 The historical default behavior fingerprint remains:
 
@@ -355,6 +366,7 @@ multi_dataset_diverse_rl/config.py                     config and CLI schema
 scripts/experiment_config.py                           named matched settings
 scripts/run_task_level_accuracy.py                     task-level runner
 tests/test_state_conditioned_error_v9.py               V9 invariants
+tests/test_v9_guarded_rollout_exploration.py           routing, snapshot, Archive, parent, resume
 ```
 
 ## 16. Verification Order
@@ -368,4 +380,4 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
 git diff --check
 ```
 
-After tests, run an offline replay, then a single-task seed42 smoke, then the four matched seed42 settings. Multi-task and seed43/44 experiments should wait until those audits pass.
+After tests, run one single-task seed42 integration smoke. It verifies routing, snapshot, Archive, lineage, and logging only; it is not evidence of a performance improvement. Formal comparisons should then run B versus `shared_v9_exploit_only`, followed by the three hybrid settings and multiple seeds.

@@ -10,7 +10,12 @@ import uuid
 import numpy as np
 
 from .config import Config, build_parser
-from .state_conditioned import paired_c0_metrics, question_state, state_conditioned_validation_key
+from .state_conditioned import (
+    paired_c0_metrics,
+    question_state,
+    state_conditioned_validation_key,
+    validate_fixed_probe_state_snapshot,
+)
 from .tasks import infer_option_count
 from .utils import canonical_aggregation_mode, ensure_dir, load_jsonl, set_seed
 
@@ -189,7 +194,16 @@ def select_candidate_eval_batch(train_data, candidate_eval_pool, cfg, epoch, ste
 
 
 def select_state_conditioned_candidate_eval_batch(
-    train_data, candidate_eval_pool, cfg, epoch, step, state_records=None
+    train_data,
+    candidate_eval_pool,
+    cfg,
+    epoch,
+    step,
+    state_records=None,
+    *,
+    state_snapshot=None,
+    active_prompt_hashes=None,
+    probe_hash="",
 ):
     """Build disjoint representative/coverage/conversion pools for V9.
 
@@ -201,6 +215,13 @@ def select_state_conditioned_candidate_eval_batch(
     batch_size = max(0, int(cfg.candidate_eval_batch_size or 0))
     if not source or batch_size <= 0:
         return []
+    if state_snapshot is not None:
+        validate_fixed_probe_state_snapshot(
+            state_snapshot,
+            list(active_prompt_hashes or []),
+            str(probe_hash or ""),
+        )
+        state_records = list(state_snapshot.get("records", []))
     by_hash = {
         str(row.get("question_hash", "")): row
         for row in (state_records or [])
@@ -216,14 +237,47 @@ def select_state_conditioned_candidate_eval_batch(
     targeted_budget = max(0, batch_size - representative_budget)
     coverage_budget = min(
         targeted_budget, max(0, int(getattr(cfg, "candidate_batch_coverage_size", 6)))
-    )
+    ) if bool(getattr(cfg, "state_coverage_enabled", True)) else 0
     conversion_budget = min(
         targeted_budget - coverage_budget,
         max(0, int(getattr(cfg, "candidate_batch_conversion_size", 6))),
-    )
+    ) if (
+        bool(getattr(cfg, "state_c2_correct_conversion_enabled", True))
+        or bool(getattr(cfg, "state_c2_wrong_split_enabled", True))
+    ) else 0
 
     def record_hash(record):
         return hashlib.sha1(str(record.get("question", "")).encode("utf-8")).hexdigest()[:12]
+
+    requested = {
+        "representative": representative_budget,
+        "coverage": coverage_budget,
+        "conversion": conversion_budget,
+    }
+
+    def state_for(row):
+        if row is None:
+            return "UNKNOWN"
+        return str(row.get("state", "") or question_state(
+            row.get("metrics", {}).get("gold_vote_count", row.get("gold_vote_count", row.get("G", 0)))
+        ))
+
+    def decorate(record, pool_name, *, target_match=True, fallback_for=""):
+        key = record_hash(record)
+        state_row = by_hash.get(key) or {}
+        return {
+            **record,
+            "_candidate_pool": pool_name,
+            "_candidate_pool_primary": pool_name == "representative" and not fallback_for,
+            "_candidate_pool_target_match": bool(target_match),
+            "_candidate_pool_fallback_for": str(fallback_for),
+            "_candidate_pool_requested_count": int(requested.get(pool_name, 0)),
+            "_candidate_pool_requested_counts": dict(requested),
+            "_candidate_state": state_for(state_row),
+            "_option_count": int(state_row.get("option_count", 0) or infer_option_count(record.get("question", ""))),
+            "_state_snapshot_version": str((state_snapshot or {}).get("snapshot_version", "legacy_window")),
+            "_state_snapshot_epoch": int((state_snapshot or {}).get("snapshot_epoch", 0) or 0),
+        }
 
     def take(pool_name, count, predicate):
         selected = []
@@ -231,22 +285,18 @@ def select_state_conditioned_candidate_eval_batch(
             key = record_hash(record)
             if key in used or not predicate(by_hash.get(key)):
                 continue
-            state_row = by_hash.get(key) or {}
-            state = question_state(state_row.get("metrics", {}).get("gold_vote_count", state_row.get("gold_vote_count", 0)))
-            selected.append({
-                **record,
-                "_candidate_pool": pool_name,
-                "_candidate_state": state,
-                "_option_count": infer_option_count(record.get("question", "")),
-            })
+            selected.append(decorate(record, pool_name))
             used.add(key)
             if len(selected) >= count:
                 break
         return selected
 
+    # The representative sample is frozen before either ablation-specific pool
+    # inspects the shuffled probe.
+    representative = take("representative", representative_budget, lambda row: True)
     coverage = take(
         "coverage", coverage_budget,
-        lambda row: row is not None and question_state(row.get("metrics", {}).get("gold_vote_count", row.get("gold_vote_count", 0))) in {"C0", "C1"},
+        lambda row: row is not None and state_for(row) in {"C0", "C1"},
     )
     conversion_size = conversion_budget
     conversion_candidates = []
@@ -255,15 +305,10 @@ def select_state_conditioned_candidate_eval_batch(
         row = by_hash.get(key)
         if key in used or row is None:
             continue
-        state = question_state(row.get("metrics", {}).get("gold_vote_count", row.get("gold_vote_count", 0)))
+        state = state_for(row)
         if state != "C2":
             continue
-        conversion_candidates.append({
-            **record,
-            "_candidate_pool": "conversion",
-            "_candidate_state": "C2",
-            "_option_count": infer_option_count(record.get("question", "")),
-        })
+        conversion_candidates.append(decorate(record, "conversion"))
     conversion = []
     option_groups = {}
     for record in conversion_candidates:
@@ -274,23 +319,23 @@ def select_state_conditioned_candidate_eval_batch(
                 record = option_groups[option_count].pop(0)
                 conversion.append(record)
                 used.add(record_hash(record))
-    remaining = max(0, batch_size - len(coverage) - len(conversion))
-    representative = take("representative", max(representative_budget, remaining), lambda row: True)
-    result = coverage + conversion + representative
+    result = representative + coverage + conversion
     if len(result) < batch_size:
         for record in shuffled:
             key = record_hash(record)
             if key in used:
                 continue
-            state_row = by_hash.get(key) or {}
-            result.append({
-                **record,
-                "_candidate_pool": "representative",
-                "_candidate_state": question_state(
-                    state_row.get("metrics", {}).get("gold_vote_count", state_row.get("gold_vote_count", 0))
-                ) if state_row else "UNKNOWN",
-                "_option_count": infer_option_count(record.get("question", "")),
-            })
+            fallback_for = (
+                "coverage" if len(coverage) < coverage_budget
+                else "conversion" if len(conversion) < conversion_budget
+                else "unallocated"
+            )
+            result.append(decorate(
+                record,
+                "representative",
+                target_match=False,
+                fallback_for=fallback_for,
+            ))
             used.add(key)
             if len(result) >= batch_size:
                 break
@@ -447,9 +492,19 @@ def rollout_method_metadata(cfg, system=None):
         metadata.update({
             "state_conditioned_enabled": True,
             "state_accuracy_tie_epsilon": float(cfg.state_accuracy_tie_epsilon),
+            "state_vote_objective_enabled": bool(cfg.state_vote_objective_enabled),
             "state_coverage_enabled": bool(cfg.state_coverage_enabled),
+            "state_c2_correct_conversion_enabled": bool(cfg.state_c2_correct_conversion_enabled),
             "state_c2_wrong_split_enabled": bool(cfg.state_c2_wrong_split_enabled),
             "state_trace_tiebreak_enabled": bool(cfg.state_trace_tiebreak_enabled),
+            "state_rollout_exploration_enabled": bool(cfg.state_rollout_exploration_enabled),
+            "state_exploration_parent_enabled": bool(cfg.state_exploration_parent_enabled),
+            "state_exploration_parent_probability": float(cfg.state_exploration_parent_probability),
+            "state_exploration_stagnation_patience": int(cfg.state_exploration_stagnation_patience),
+            "state_exploration_parent_max_per_update": int(cfg.state_exploration_parent_max_per_update),
+            "state_exploration_correct_set_weight": float(cfg.state_exploration_correct_set_weight),
+            "state_exploration_valid_trace_weight": float(cfg.state_exploration_valid_trace_weight),
+            "state_c0_abstract_analyzer_enabled": bool(cfg.state_c0_abstract_analyzer_enabled),
             "state_joint_total_correct_slack_rate": float(cfg.state_joint_total_correct_slack_rate),
             "state_representative_capacity": int(cfg.state_representative_capacity),
             "candidate_batch_representative_size": int(cfg.candidate_batch_representative_size),
@@ -457,6 +512,37 @@ def rollout_method_metadata(cfg, system=None):
             "candidate_batch_conversion_size": int(cfg.candidate_batch_conversion_size),
             "composite_rollout_distance_used_for_selection": False,
             "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
+            "fixed_probe_state_snapshot_version": str(
+                getattr(system, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
+            ) if system is not None else "",
+            "fixed_probe_state_snapshot_epoch": int(
+                getattr(system, "fixed_probe_state_snapshot", {}).get("snapshot_epoch", 0) or 0
+            ) if system is not None else 0,
+            "exploration_profile_scope": "representative_or_cached_fixed_probe",
+            "exploration_parent_use_count": int(
+                getattr(system, "exploration_parent_use_count", 0)
+            ) if system is not None else 0,
+            "exploration_descendant_count": int(
+                getattr(system, "exploration_descendant_count", 0)
+            ) if system is not None else 0,
+            "exploration_descendant_safe_count": int(
+                getattr(system, "exploration_descendant_safe_count", 0)
+            ) if system is not None else 0,
+            "exploration_descendant_archive_count": int(
+                getattr(system, "exploration_descendant_archive_count", 0)
+            ) if system is not None else 0,
+            "exploration_descendant_active_count": int(
+                getattr(system, "exploration_descendant_active_count", 0)
+            ) if system is not None else 0,
+            "exploration_descendant_state_gain_count": int(
+                getattr(system, "exploration_descendant_state_gain_count", 0)
+            ) if system is not None else 0,
+            "active_selection_source_counts": dict(
+                getattr(system, "state_active_selection_source_counts", {})
+            ) if system is not None else {},
+            "parent_selection_source_counts": dict(
+                getattr(system, "state_parent_selection_source_counts", {})
+            ) if system is not None else {},
         })
     return metadata
 
@@ -886,6 +972,11 @@ async def main_async():
         )
         system.competence_probe_indices = [train_data.index(item) for item in fixed_competence_probe]
         system.competence_probe_question_hashes = [system._hash(item["question"]) for item in fixed_competence_probe]
+        if system._is_state_conditioned_method():
+            await system.refresh_state_conditioned_fixed_probe_snapshot(
+                fixed_competence_probe,
+                epoch=int(resume_epoch_index),
+            )
         system.write_run_meta()
     elif adaptive_competence_schedule:
         has_saved_baseline = bool(system.initial_competence_probe_metrics)
@@ -1115,7 +1206,12 @@ async def main_async():
                         cfg,
                         epoch=epoch + 1,
                         step=step + 1,
-                        state_records=[*getattr(system, "recent_window_records", []), solved],
+                        state_snapshot=getattr(system, "fixed_probe_state_snapshot", {}),
+                        active_prompt_hashes=[
+                            system._normalized_prompt_hash(agent.current_prompt)
+                            for agent in system.agents
+                        ],
+                        probe_hash=str(getattr(system, "current_fixed_probe_hash", "")),
                     )
                 else:
                     eval_batch = select_candidate_eval_batch(
@@ -1336,6 +1432,8 @@ async def main_async():
             })
             if joint_team_summary is not None:
                 epoch_record["joint_team_selection"] = joint_team_summary
+        if joint_team_summary is not None:
+            epoch_record["joint_team_selection"] = joint_team_summary
         if competence_schedule_record is not None:
             epoch_record["competence_schedule"] = competence_schedule_record
         if refresh_summary is not None:
@@ -1477,6 +1575,7 @@ async def main_async():
                     agent.lineage_state = dict(saved["lineage_state"])
         if str(getattr(cfg, "method_version", "legacy")) in {
             "v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready",
+            "v9_state_conditioned_error",
         }:
             system.latest_joint_team_metrics = dict(payload.get("joint_team_metrics", {}) or {})
         selected_probe = next(
@@ -1488,6 +1587,11 @@ async def main_async():
         )
         if selected_probe is not None:
             system.latest_competence_probe_metrics = dict(selected_probe)
+        if system._is_state_conditioned_method():
+            await system.refresh_state_conditioned_fixed_probe_snapshot(
+                fixed_competence_probe,
+                epoch=int(best_epoch),
+            )
 
     final_test_metrics = await system.evaluate_dataset(test_data, split_name="test_final")
     final_record = {
@@ -1532,6 +1636,7 @@ async def main_async():
     system.flush_prompt_history()
     system.flush_llm_call_logs()
     system.write_cost_summary()
+    system.write_run_meta()
     final_summary = {
         "selected_epoch": best_epoch,
         "best_validation_score": best_score,

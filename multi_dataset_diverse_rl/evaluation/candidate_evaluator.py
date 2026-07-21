@@ -191,6 +191,41 @@ class CandidateEvaluatorMixin:
             for example in eval_batch
             if isinstance(example, Mapping)
         )
+        requested_maps = [
+            example.get("_candidate_pool_requested_counts", {})
+            for example in eval_batch
+            if isinstance(example, Mapping)
+            and isinstance(example.get("_candidate_pool_requested_counts", {}), Mapping)
+        ]
+        requested = {
+            pool: max(
+                [int(values.get(pool, 0) or 0) for values in requested_maps]
+                or [
+                    max([
+                        int(example.get("_candidate_pool_requested_count", 0) or 0)
+                        for example in eval_batch
+                        if isinstance(example, Mapping)
+                        and str(example.get("_candidate_pool", "")) == pool
+                    ] or [0])
+                ]
+            )
+            for pool in ("representative", "coverage", "conversion")
+        }
+        targeted_actual = Counter(
+            str(example.get("_candidate_pool", ""))
+            for example in eval_batch
+            if isinstance(example, Mapping)
+            and bool(example.get("_candidate_pool_target_match", True))
+        )
+        fallback_counts = Counter(
+            str(example.get("_candidate_pool_fallback_for", ""))
+            for example in eval_batch
+            if isinstance(example, Mapping) and str(example.get("_candidate_pool_fallback_for", ""))
+        )
+        option_known_count = sum(
+            int(example.get("_option_count", 0) or 0) > 1
+            for example in eval_batch if isinstance(example, Mapping)
+        )
         return {
             "candidate_eval_data_source": str(getattr(self.cfg, "candidate_eval_data_source", "optimization_train")),
             "candidate_eval_total_count": len(eval_batch),
@@ -199,9 +234,33 @@ class CandidateEvaluatorMixin:
             "candidate_batch_state_counts": dict(state_counts),
             "candidate_batch_pool_counts": dict(pool_counts),
             "candidate_batch_option_count_histogram": dict(option_histogram),
-            "representative_pool_count": int(pool_counts.get("representative", 0)),
+            "representative_pool_count": int(sum(
+                bool(example.get("_candidate_pool_primary", False))
+                for example in eval_batch if isinstance(example, Mapping)
+            )),
+            "representative_fallback_count": int(sum(
+                str(example.get("_candidate_pool", "")) == "representative"
+                and bool(example.get("_candidate_pool_fallback_for", ""))
+                for example in eval_batch if isinstance(example, Mapping)
+            )),
             "coverage_pool_count": int(pool_counts.get("coverage", 0)),
             "conversion_pool_count": int(pool_counts.get("conversion", 0)),
+            "representative_pool_requested": int(requested["representative"]),
+            "coverage_pool_requested": int(requested["coverage"]),
+            "conversion_pool_requested": int(requested["conversion"]),
+            "coverage_pool_actual": int(targeted_actual.get("coverage", 0)),
+            "conversion_pool_actual": int(targeted_actual.get("conversion", 0)),
+            "coverage_pool_fill_rate": (
+                int(targeted_actual.get("coverage", 0)) / max(1, int(requested["coverage"]))
+            ),
+            "conversion_pool_fill_rate": (
+                int(targeted_actual.get("conversion", 0)) / max(1, int(requested["conversion"]))
+            ),
+            "targeted_pool_fallback_counts": dict(fallback_counts),
+            "targeted_pool_fallback_explicit": bool(fallback_counts),
+            "option_count_known_count": int(option_known_count),
+            "option_count_unknown_count": int(len(eval_batch) - option_known_count),
+            "option_count_unknown_rate": float((len(eval_batch) - option_known_count) / max(1, len(eval_batch))),
         }
 
     def _candidate_reward_guarded(
@@ -1025,7 +1084,7 @@ class CandidateEvaluatorMixin:
                 baseline_rollout_diversity, baseline_components = target_diversity(baseline_profiles)
                 candidate_rollout_diversity, candidate_components = target_diversity(candidate_profiles)
                 transitions = (
-                    state_conditioned_transition_metrics(rows)
+                    state_conditioned_transition_metrics(rows, self.cfg)
                     if self._is_state_conditioned_method()
                     else candidate_transition_metrics(rows)
                 )
@@ -1065,7 +1124,7 @@ class CandidateEvaluatorMixin:
                             float(np.mean([float(row.get("candidate_invalid_rate", 1.0)) for row in pool_rows]))
                             if pool_rows else 1.0
                         )
-                        pool_transitions = state_conditioned_transition_metrics(pool_rows)
+                        pool_transitions = state_conditioned_transition_metrics(pool_rows, self.cfg)
                         for key, value in pool_transitions.items():
                             if key == "state_transition_rows":
                                 continue
@@ -1093,6 +1152,22 @@ class CandidateEvaluatorMixin:
                         ),
                         "natural_distribution_metrics_source": "representative_pool",
                     })
+                    representative_accuracy_delta = float(
+                        baseline_candidate_metrics["candidate_target_accuracy"]
+                        - baseline_candidate_metrics["baseline_target_accuracy"]
+                    )
+                    representative_invalid_delta = float(
+                        baseline_candidate_metrics["candidate_invalid_rate"]
+                        - baseline_candidate_metrics["baseline_invalid_rate"]
+                    )
+                    baseline_candidate_metrics.update({
+                        "accuracy_delta": representative_accuracy_delta,
+                        "invalid_delta": representative_invalid_delta,
+                        "representative_accuracy_delta": representative_accuracy_delta,
+                        "all_pools_accuracy_delta": float(candidate_target_accuracy - baseline_target_accuracy),
+                        "representative_invalid_delta": representative_invalid_delta,
+                        "all_pools_invalid_delta": float(candidate_invalid_rate - baseline_invalid_rate),
+                    })
                     trace_delta = float(candidate_components.get("rollout_trace_embedding_distance", 0.0)) - float(
                         baseline_components.get("rollout_trace_embedding_distance", 0.0)
                     )
@@ -1109,6 +1184,7 @@ class CandidateEvaluatorMixin:
                         "trace_embedding_distance_delta": trace_delta,
                         "composite_rollout_distance_used_for_reward": False,
                         "composite_rollout_distance_used_for_selection": False,
+                        "exploration_profile_scope": "representative",
                     })
                     guard = state_quality_guard(baseline_candidate_metrics, self.cfg)
                     baseline_candidate_metrics.update(guard)

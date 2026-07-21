@@ -158,6 +158,13 @@ class CandidateGeneratorMixin:
                         "option_count": int(case.get("option_count", 0) or 0),
                         "coverage_assigned_agents": list(case.get("coverage_assigned_agents", [])),
                     })
+                    for field in (
+                        "shared_failure_category", "generalized_failure_mechanism",
+                        "missing_reasoning_step", "misleading_reasoning_step",
+                        "generalizable_repair_rule", "ambiguity_handling_rule", "memorization_risk",
+                    ):
+                        if field in case:
+                            safe_case[field] = normalize_spaces(str(case.get(field, "")))[:220]
                 if self._v7_residual_protocol_enabled():
                     safe_case.update({
                         "capability_residual_family": str(case.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),

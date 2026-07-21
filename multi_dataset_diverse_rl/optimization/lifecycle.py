@@ -163,6 +163,16 @@ class LifecycleMixin:
         self.coverage_case_assignment_per_agent: Dict[str, List[str]] = {
             str(i): [] for i in range(len(self.agents))
         }
+        self.coverage_assignment_primary: Dict[str, int] = {}
+        self.coverage_assignment_secondary: Dict[str, int] = {}
+        self.coverage_attempt_count_per_agent: Dict[str, int] = {
+            str(i): 0 for i in range(len(self.agents))
+        }
+        self.coverage_last_attempt_epoch: Dict[str, int] = {}
+        self.coverage_resolved_by: Dict[str, int] = {}
+        self.coverage_resolved_epoch: Dict[str, int] = {}
+        self.coverage_rotation_count: int = 0
+        self.coverage_failed_prompt_hashes: Dict[str, List[str]] = {}
         self.c0_rescue_count_per_agent: Dict[str, int] = {
             str(i): 0 for i in range(len(self.agents))
         }
@@ -170,6 +180,24 @@ class LifecycleMixin:
             str(i): 0 for i in range(len(self.agents))
         }
         self.state_search_diagnostics: Dict[str, int] = {"evaluated_candidate_count": 0}
+        self.fixed_probe_state_snapshot: Dict[str, Any] = {}
+        self.fixed_probe_snapshot_refresh_count: int = 0
+        self.state_no_gain_updates_per_agent: Dict[str, int] = {
+            str(i): 0 for i in range(len(self.agents))
+        }
+        self.exploration_parent_use_count: int = 0
+        self.exploration_descendant_count: int = 0
+        self.exploration_descendant_safe_count: int = 0
+        self.exploration_descendant_archive_count: int = 0
+        self.exploration_descendant_active_count: int = 0
+        self.exploration_descendant_vote_gain_count: int = 0
+        self.exploration_descendant_c0_to_c1_count: int = 0
+        self.exploration_descendant_c1_to_c2_count: int = 0
+        self.exploration_descendant_c2_to_c3_count: int = 0
+        self.exploration_descendant_state_gain_count: int = 0
+        self.state_parent_selection_source_counts: Dict[str, int] = {}
+        self.state_active_selection_source_counts: Dict[str, int] = {}
+        self.state_archive_slot_fill_counts: Dict[str, int] = {}
         self.joint_quality_anchor_metrics: Dict[str, Any] = {}
         self.quality_anchor_archive: List[Dict[str, Any]] = []
         self.quality_anchor_created_count = 0

@@ -9,9 +9,12 @@ import math
 from collections import Counter
 from typing import Any, Callable, Dict, Mapping, Sequence
 
+from .rollout_diversity import correctness_set_distance, rollout_signature, valid_trace_distance
+
 
 STATE_CONDITIONED_METHOD = "v9_state_conditioned_error"
-STATE_CONDITIONED_CHECKPOINT_VERSION = 1
+STATE_CONDITIONED_CHECKPOINT_VERSION = 2
+STATE_SNAPSHOT_VERSION = "state_fixed_probe_snapshot_v1"
 STATE_NAMES = ("C0", "C1", "C2", "C3PLUS")
 
 
@@ -122,7 +125,19 @@ def compute_c2_wrong_split_metrics(row: Mapping[str, Any]) -> Dict[str, Any]:
     candidate_g = int(row.get("candidate_G", row.get("candidate_gold_vote_count", 0)) or 0)
     baseline_h = int(row.get("baseline_H", row.get("baseline_largest_wrong_vote_count", 0)) or 0)
     candidate_h = int(row.get("candidate_H", row.get("candidate_largest_wrong_vote_count", 0)) or 0)
-    enabled = baseline_g == 2 and candidate_g == 2
+    option_count = max(0, int(row.get("option_count", 0) or 0))
+    baseline_target_correct = bool(row.get("baseline_target_correct", False))
+    candidate_target_correct = bool(row.get(
+        "candidate_target_correct", row.get("target_agent_correct", False)
+    ))
+    option_count_known = option_count > 1
+    target_remains_wrong = not baseline_target_correct and not candidate_target_correct
+    enabled = (
+        baseline_g == 2
+        and candidate_g == 2
+        and target_remains_wrong
+        and option_count_known
+    )
     reduction = max(0, baseline_h - candidate_h) if enabled else 0
     creation = max(0, candidate_h - baseline_h) if enabled else 0
     baseline_vote = bool(row.get("baseline_vote_correct", False))
@@ -134,6 +149,8 @@ def compute_c2_wrong_split_metrics(row: Mapping[str, Any]) -> Dict[str, Any]:
     strict_gain = int(enabled and candidate_margin > 0 and not baseline_vote and candidate_vote)
     return {
         "c2_wrong_split_enabled": bool(enabled),
+        "c2_wrong_split_option_count_known": bool(option_count_known),
+        "c2_wrong_split_target_remains_wrong": bool(target_remains_wrong),
         "c2_wrong_cluster_reduction": int(reduction),
         "c2_wrong_cluster_creation": int(creation),
         "c2_wrong_split_vote_gain_count": vote_gain,
@@ -146,7 +163,9 @@ def compute_c2_wrong_split_metrics(row: Mapping[str, Any]) -> Dict[str, Any]:
     }
 
 
-def state_conditioned_transition_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
+def state_conditioned_transition_metrics(
+    rows: Sequence[Mapping[str, Any]], config: Any | None = None
+) -> Dict[str, Any]:
     counts = {
         "c0_to_c1_count": 0,
         "c1_to_c2_count": 0,
@@ -198,6 +217,20 @@ def state_conditioned_transition_metrics(rows: Sequence[Mapping[str, Any]]) -> D
         counts["vote_gain_count"] += int(not before_vote and after_vote)
         counts["vote_loss_count"] += int(before_vote and not after_vote)
         split = compute_c2_wrong_split_metrics(row)
+        if config is not None and not bool(getattr(config, "state_c2_wrong_split_enabled", True)):
+            split = {
+                **split,
+                "c2_wrong_split_enabled": False,
+                "c2_wrong_cluster_reduction": 0,
+                "c2_wrong_cluster_creation": 0,
+                "c2_wrong_split_vote_gain_count": 0,
+                "c2_wrong_split_vote_loss_count": 0,
+                "c2_wrong_split_tie_gain_count": 0,
+                "c2_wrong_split_strict_gain_count": 0,
+                "c2_dominant_wrong_break_count": 0,
+                "c2_dominant_wrong_create_count": 0,
+                "wrong_answer_diversity_task_gain": 0.0,
+            }
         for key in (
             "c2_wrong_split_vote_gain_count", "c2_wrong_split_vote_loss_count",
             "c2_wrong_split_tie_gain_count", "c2_wrong_split_strict_gain_count",
@@ -205,8 +238,14 @@ def state_conditioned_transition_metrics(rows: Sequence[Mapping[str, Any]]) -> D
             "c2_wrong_cluster_reduction", "c2_wrong_cluster_creation",
         ):
             counts[key] += int(split[key])
-        rescue = c2_dispersion_rescuability(row.get("option_count", 0))
-        if baseline_g == 2:
+        option_count = int(row.get("option_count", 0) or 0)
+        rescue = c2_dispersion_rescuability(option_count) if option_count > 1 else {
+            "c2_strictly_rescuable_by_dispersion": False,
+            "c2_tie_only_rescuable_by_dispersion": False,
+            "c2_unrescuable_by_dispersion": False,
+            "c2_dispersion_min_h": 0,
+        }
+        if baseline_g == 2 and option_count > 1:
             counts["c2_strictly_rescuable_count"] += int(rescue["c2_strictly_rescuable_by_dispersion"])
             counts["c2_tie_only_rescuable_count"] += int(rescue["c2_tie_only_rescuable_by_dispersion"])
             counts["c2_unrescuable_by_dispersion_count"] += int(rescue["c2_unrescuable_by_dispersion"])
@@ -241,8 +280,17 @@ def state_quality_guard(metrics: Mapping[str, Any], config: Any) -> Dict[str, An
         "c3_to_c2": ("c3_to_c2_count", "state_c3_to_c2_loss_epsilon"),
         "vote": ("vote_loss_count", "state_vote_loss_epsilon"),
     }
+    enabled = {
+        "c1_to_c0": bool(getattr(config, "state_coverage_enabled", True)),
+        "c2_to_c1": bool(getattr(config, "state_coverage_enabled", True)),
+        "c3_to_c2": bool(getattr(config, "state_c2_correct_conversion_enabled", True)),
+        "vote": bool(getattr(config, "state_vote_objective_enabled", True)),
+    }
     loss_passed = {
-        name: int(metrics.get(metric, 0) or 0) <= int(getattr(config, epsilon, 0) or 0)
+        name: (
+            not enabled[name]
+            or int(metrics.get(metric, 0) or 0) <= int(getattr(config, epsilon, 0) or 0)
+        )
         for name, (metric, epsilon) in loss_fields.items()
     }
     passed = accuracy_passed and invalid_passed and all(loss_passed.values())
@@ -307,6 +355,34 @@ def conversion_utility_key(item: Mapping[str, Any], *, trace_tiebreak: bool = Fa
     )
 
 
+def c2_correct_utility_key(item: Mapping[str, Any], *, trace_tiebreak: bool = False) -> tuple:
+    metrics = _metrics(item)
+    return (
+        int(metrics.get("c2_to_c3_count", 0) or 0),
+        int(metrics.get("vote_gain_count", 0) or 0),
+        -int(metrics.get("vote_loss_count", 0) or 0),
+        float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+        -float(metrics.get("candidate_invalid_rate", 1.0) or 1.0),
+        float(metrics.get("trace_embedding_distance", 0.0) or 0.0) if trace_tiebreak else 0.0,
+        str(item.get("prompt_hash", "")),
+    )
+
+
+def c2_split_utility_key(item: Mapping[str, Any], *, trace_tiebreak: bool = False) -> tuple:
+    metrics = _metrics(item)
+    return (
+        int(metrics.get("c2_wrong_split_strict_gain_count", 0) or 0),
+        int(metrics.get("c2_wrong_split_vote_gain_count", 0) or 0),
+        int(metrics.get("c2_wrong_cluster_reduction", 0) or 0),
+        int(metrics.get("c2_wrong_split_tie_gain_count", 0) or 0),
+        -int(metrics.get("c2_dominant_wrong_create_count", 0) or 0),
+        float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+        -float(metrics.get("candidate_invalid_rate", 1.0) or 1.0),
+        float(metrics.get("trace_embedding_distance", 0.0) or 0.0) if trace_tiebreak else 0.0,
+        str(item.get("prompt_hash", "")),
+    )
+
+
 def state_conditioned_candidate_key(item: Mapping[str, Any], config: Any) -> tuple:
     metrics = _metrics(item)
     route = str(item.get("optimization_route", metrics.get("optimization_route", "general_accuracy")))
@@ -326,9 +402,133 @@ def state_conditioned_candidate_key(item: Mapping[str, Any], config: Any) -> tup
 
 def _rollout_signature(item: Mapping[str, Any]) -> str:
     profile = _metrics(item).get("rollout_profile", {})
-    if not isinstance(profile, Mapping):
+    if not isinstance(profile, Mapping) or not profile or not any(
+        profile.get(field) for field in ("answer_vector", "correctness_vector", "invalid_vector")
+    ):
         return ""
-    return str(profile.get("rollout_signature_hash", "") or "")
+    return str(profile.get("rollout_signature_hash", "") or rollout_signature(profile))
+
+
+def exploration_profile_distance(
+    left: Mapping[str, Any], right: Mapping[str, Any], config: Any
+) -> Dict[str, float]:
+    correct = float(correctness_set_distance(left, right))
+    trace = float(valid_trace_distance(left, right))
+    total = (
+        float(getattr(config, "state_exploration_correct_set_weight", 0.60)) * correct
+        + float(getattr(config, "state_exploration_valid_trace_weight", 0.40)) * trace
+    )
+    return {
+        "exploration_correct_set_distance": correct,
+        "exploration_valid_trace_distance": trace,
+        "exploration_rollout_distance": float(max(0.0, min(1.0, total))),
+    }
+
+
+def _attach_exploration_distance(
+    item: Mapping[str, Any], exploit_items: Sequence[Mapping[str, Any]], config: Any
+) -> Dict[str, Any]:
+    candidate = dict(item)
+    metrics = dict(_metrics(candidate))
+    profile = metrics.get("rollout_profile", {})
+    comparable = []
+    if isinstance(profile, Mapping):
+        candidate_hashes = list(profile.get("question_hashes", []))
+        for representative in exploit_items:
+            other = _metrics(representative).get("rollout_profile", {})
+            if not isinstance(other, Mapping):
+                continue
+            if candidate_hashes and candidate_hashes == list(other.get("question_hashes", [])):
+                comparable.append(exploration_profile_distance(profile, other, config))
+    nearest = min(
+        (row["exploration_rollout_distance"] for row in comparable),
+        default=0.0,
+    )
+    nearest_row = min(
+        comparable,
+        key=lambda row: row["exploration_rollout_distance"],
+        default={
+            "exploration_correct_set_distance": 0.0,
+            "exploration_valid_trace_distance": 0.0,
+            "exploration_rollout_distance": 0.0,
+        },
+    )
+    metrics.update({
+        **nearest_row,
+        "exploration_nearest_archive_distance": float(nearest),
+        "exploration_profile_scope": str(
+            metrics.get("exploration_profile_scope", "representative") or "representative"
+        ),
+        "generic_wrong_answer_distance_used_for_exploration": False,
+    })
+    candidate["metrics"] = metrics
+    return candidate
+
+
+def exploration_candidate_key(item: Mapping[str, Any]) -> tuple:
+    metrics = _metrics(item)
+    return (
+        float(metrics.get("exploration_nearest_archive_distance", 0.0) or 0.0),
+        float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+        -float(metrics.get("candidate_invalid_rate", 1.0) or 1.0),
+        -int(metrics.get("c1_to_c0_count", 0) or 0),
+        -int(metrics.get("c2_to_c1_count", 0) or 0),
+        -int(metrics.get("c3_to_c2_count", 0) or 0),
+        -int(metrics.get("vote_loss_count", 0) or 0),
+        -int(item.get("generation", 0) or 0),
+        str(item.get("prompt_hash", "")),
+    )
+
+
+def deterministic_exploration_parent_enabled(
+    *, seed: int, epoch: int, step: int, agent_id: int, probability: float,
+    stagnation_count: int, stagnation_patience: int,
+) -> bool:
+    if int(stagnation_count) >= max(1, int(stagnation_patience)):
+        return True
+    digest = hashlib.sha256(
+        f"{int(seed)}|{int(epoch)}|{int(step)}|{int(agent_id)}".encode("utf-8")
+    ).digest()
+    value = int.from_bytes(digest[:8], "big") / float(2**64)
+    return value < max(0.0, min(1.0, float(probability)))
+
+
+def select_state_conditioned_parents(
+    archive: Sequence[Mapping[str, Any]], incumbent_hash: str, config: Any, *,
+    seed: int, epoch: int, step: int, agent_id: int, stagnation_count: int = 0,
+) -> tuple[list[Dict[str, Any]], list[str], Dict[str, Any]]:
+    items = [dict(item) for item in archive]
+    exploit = [item for item in items if str(item.get("state_archive_slot", "")) != "rollout_exploration"]
+    exploration = [item for item in items if str(item.get("state_archive_slot", "")) == "rollout_exploration"]
+    selected = list(exploit)
+    use_exploration = bool(
+        exploration
+        and getattr(config, "state_rollout_exploration_enabled", False)
+        and getattr(config, "state_exploration_parent_enabled", True)
+        and int(getattr(config, "state_exploration_parent_max_per_update", 1) or 0) > 0
+        and deterministic_exploration_parent_enabled(
+            seed=seed,
+            epoch=epoch,
+            step=step,
+            agent_id=agent_id,
+            probability=float(getattr(config, "state_exploration_parent_probability", 0.15)),
+            stagnation_count=stagnation_count,
+            stagnation_patience=int(getattr(config, "state_exploration_stagnation_patience", 2)),
+        )
+    )
+    if use_exploration:
+        selected.append(max(exploration, key=exploration_candidate_key))
+    if not selected:
+        selected = [
+            item for item in items
+            if str(item.get("prompt_hash", "")) == str(incumbent_hash)
+        ] or items[:1]
+    sources = [str(item.get("state_archive_slot", "active") or "active") for item in selected]
+    return selected, sources, {
+        "exploration_parent_selected": bool(use_exploration),
+        "exploration_parent_count": int(use_exploration),
+        "stagnation_count": int(stagnation_count),
+    }
 
 
 def select_state_conditioned_archive(
@@ -393,8 +593,34 @@ def select_state_conditioned_archive(
     add(max(accuracy_band, key=lambda item: global_accuracy_quality_key(item, trace_tiebreak=trace), default=None), "overall_accuracy")
     if bool(getattr(config, "state_coverage_enabled", True)):
         add(max(accuracy_band, key=lambda item: coverage_utility_key(item, trace_tiebreak=trace), default=None), "coverage_repair")
+    if bool(getattr(config, "state_c2_correct_conversion_enabled", True)):
+        add(max(accuracy_band, key=lambda item: c2_correct_utility_key(item, trace_tiebreak=trace), default=None), "c2_correct")
     if bool(getattr(config, "state_c2_wrong_split_enabled", True)):
-        add(max(accuracy_band, key=lambda item: conversion_utility_key(item, trace_tiebreak=trace), default=None), "vote_conversion")
+        add(max(accuracy_band, key=lambda item: c2_split_utility_key(item, trace_tiebreak=trace), default=None), "c2_split")
+    if bool(getattr(config, "state_rollout_exploration_enabled", False)):
+        exploit_items = list(slots)
+        exploit_signatures = {_rollout_signature(item) for item in exploit_items if _rollout_signature(item)}
+        exploration_candidates = []
+        exploit_hashes = {
+            str(existing.get("prompt_hash", "")) for existing in exploit_items
+        }
+        seen_exploration_signatures = set(exploit_signatures)
+        for item in accuracy_band:
+            signature = _rollout_signature(item)
+            if (
+                not signature
+                or signature in seen_exploration_signatures
+                or str(item.get("prompt_hash", "")) in exploit_hashes
+            ):
+                continue
+            exploration_candidates.append(
+                _attach_exploration_distance(item, exploit_items, config)
+            )
+            seen_exploration_signatures.add(signature)
+        add(
+            max(exploration_candidates, key=exploration_candidate_key, default=None),
+            "rollout_exploration",
+        )
     for item in sorted(accuracy_band, key=lambda value: state_conditioned_candidate_key(value, config), reverse=True):
         add(item, "quality_fill")
         if len(slots) >= max(1, int(capacity)):
@@ -409,7 +635,13 @@ def select_state_conditioned_representatives(
         (dict(item) for item in archive),
         key=lambda item: (
             str(item.get("prompt_hash", "")) == incumbent_hash,
-            {"overall_accuracy": 3, "coverage_repair": 2, "vote_conversion": 1}.get(
+            {
+                "overall_accuracy": 5,
+                "coverage_repair": 4,
+                "c2_correct": 3,
+                "c2_split": 2,
+                "rollout_exploration": 1,
+            }.get(
                 str(item.get("state_archive_slot", "")), 0
             ),
             state_conditioned_candidate_key(item, config),
@@ -493,6 +725,80 @@ def state_team_metrics(
     }
 
 
+def build_fixed_probe_state_snapshot(
+    prompt_profiles: Sequence[Mapping[str, Any]],
+    gold_answers: Sequence[str],
+    question_hashes: Sequence[str],
+    option_counts: Sequence[int],
+    active_prompt_hashes: Sequence[str],
+    *,
+    snapshot_epoch: int,
+    probe_hash: str,
+    vote_fn: Callable[..., Mapping[str, Any]],
+    match_fn: Callable[[str, str], bool],
+    tie_break_method: str,
+    seed: int,
+) -> Dict[str, Any]:
+    answer_vectors = [list(profile.get("answer_vector", [])) for profile in prompt_profiles]
+    correctness_vectors = [list(profile.get("correctness_vector", [])) for profile in prompt_profiles]
+    records = []
+    for index, gold in enumerate(gold_answers):
+        answers = [vector[index] if index < len(vector) else "" for vector in answer_vectors]
+        correct = [
+            int(vector[index]) if index < len(vector) else int(match_fn(str(answers[agent_id]), str(gold)))
+            for agent_id, vector in enumerate(correctness_vectors)
+        ]
+        vote = vote_fn(
+            answers,
+            tie_break_method=tie_break_method,
+            seed=seed,
+            question_hash=str(question_hashes[index]),
+        )
+        counts = dict(vote.get("vote_counts", {}))
+        g = int(sum(correct))
+        wrong_counts = [
+            int(count) for answer, count in counts.items()
+            if not match_fn(str(answer), str(gold))
+        ]
+        h = int(max(wrong_counts, default=0))
+        records.append({
+            "question_hash": str(question_hashes[index]),
+            "G": g,
+            "H": h,
+            "M": g - h,
+            "gold_vote_count": g,
+            "largest_wrong_vote_count": h,
+            "state": question_state(g),
+            "vote_correct": bool(match_fn(str(vote.get("vote_answer", "")), str(gold))),
+            "option_count": int(option_counts[index]) if index < len(option_counts) else 0,
+            "active_prompt_hashes": list(active_prompt_hashes),
+            "snapshot_epoch": int(snapshot_epoch),
+            "snapshot_version": STATE_SNAPSHOT_VERSION,
+            "probe_hash": str(probe_hash),
+        })
+    return {
+        "snapshot_version": STATE_SNAPSHOT_VERSION,
+        "snapshot_epoch": int(snapshot_epoch),
+        "probe_hash": str(probe_hash),
+        "active_prompt_hashes": list(active_prompt_hashes),
+        "record_count": len(records),
+        "records": records,
+    }
+
+
+def validate_fixed_probe_state_snapshot(
+    snapshot: Mapping[str, Any], active_prompt_hashes: Sequence[str], probe_hash: str
+) -> None:
+    if not snapshot:
+        raise ValueError("missing fixed-probe state snapshot")
+    if str(snapshot.get("snapshot_version", "")) != STATE_SNAPSHOT_VERSION:
+        raise ValueError("incompatible fixed-probe state snapshot version")
+    if str(snapshot.get("probe_hash", "")) != str(probe_hash):
+        raise ValueError("fixed-probe state snapshot probe hash is stale")
+    if list(snapshot.get("active_prompt_hashes", [])) != list(active_prompt_hashes):
+        raise ValueError("fixed-probe state snapshot active prompt hashes are stale")
+
+
 def select_state_conditioned_team(
     teams: Sequence[Mapping[str, Any]], config: Any, *, probe_size: int, num_agents: int
 ) -> Dict[str, Any]:
@@ -502,23 +808,28 @@ def select_state_conditioned_team(
     slack = int(round(max(0, int(probe_size)) * max(1, int(num_agents)) * float(config.state_joint_total_correct_slack_rate)))
     band = [team for team in teams if int(team.get("total_agent_correct_count", 0) or 0) >= best_total - slack]
     trace_enabled = bool(getattr(config, "state_trace_tiebreak_enabled", True))
+    vote_enabled = bool(getattr(config, "state_vote_objective_enabled", True))
     coverage_enabled = bool(getattr(config, "state_coverage_enabled", True))
+    c2_correct_enabled = bool(getattr(config, "state_c2_correct_conversion_enabled", True))
     c2_split_enabled = bool(getattr(config, "state_c2_wrong_split_enabled", True))
 
     def key(team: Mapping[str, Any]) -> tuple:
         coverage_key = (
             -int(team.get("c0_count", 0) or 0),
-            int(team.get("vote_correct_count", 0) or 0),
             int(team.get("coverage_depth_c2", 0) or 0),
-        ) if coverage_enabled else (0, 0, 0)
-        conversion_key = (
+        ) if coverage_enabled else (0, 0)
+        c2_correct_key = (
             int(team.get("c2_strict_vote_correct_count", 0) or 0),
             int(team.get("c2_vote_correct_count", 0) or 0),
+        ) if c2_correct_enabled else (0, 0)
+        c2_split_key = (
             -float(team.get("c2_mean_largest_wrong_vote", 0.0) or 0.0),
-        ) if c2_split_enabled else (0, 0, 0.0)
+        ) if c2_split_enabled else (0.0,)
         return (
+            int(team.get("vote_correct_count", 0) or 0) if vote_enabled else 0,
             *coverage_key,
-            *conversion_key,
+            *c2_correct_key,
+            *c2_split_key,
             int(team.get("bottom2_correct_count", 0) or 0),
             float(team.get("mean_gold_plurality_margin", 0.0) or 0.0),
             -int(team.get("invalid_count", 0) or 0),
@@ -543,8 +854,8 @@ def state_conditioned_validation_key(epoch_record: Mapping[str, Any]) -> tuple:
     c2_rate = c2_vote_correct / max(1, c2_count)
     return (
         -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
-        -float(val.get("mean_individual_acc", 0.0) or 0.0),
         float(val.get("c0_rate", val.get("all_wrong_rate", 1.0)) or 0.0),
+        -float(val.get("mean_individual_acc", 0.0) or 0.0),
         -float(c2_rate),
         -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
         -float(val.get("mean_gold_plurality_margin", val.get("mean_plurality_margin_votes", 0.0)) or 0.0),
@@ -561,6 +872,8 @@ def state_dataset_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
     c2_strictly_rescuable = c2_tie_only_rescuable = c2_unrescuable = 0
     c2_largest_wrong_total = 0
     state_by_question_hash = {}
+    option_count_histogram: Counter[int] = Counter()
+    option_count_known = 0
     for row in rows:
         g = int(row.get("gold_vote_count", sum(int(value) for value in row.get("individual_correct", []))) or 0)
         h = int(row.get("largest_wrong_vote_count", 0) or 0)
@@ -569,6 +882,10 @@ def state_dataset_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
         question_hash = str(row.get("question_hash", ""))
         if question_hash:
             state_by_question_hash[question_hash] = state
+        option_count = max(0, int(row.get("option_count", 0) or 0))
+        if option_count > 1:
+            option_count_known += 1
+            option_count_histogram[option_count] += 1
         if g == 2:
             vote = int(bool(row.get("vote_correct", False)))
             c2_vote_correct += vote
@@ -576,10 +893,11 @@ def state_dataset_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
             c2_strict += int(g - h > 0)
             c2_tie += int(g - h == 0)
             c2_largest_wrong_total += h
-            rescuability = c2_dispersion_rescuability(row.get("option_count", 0))
-            c2_strictly_rescuable += int(rescuability["c2_strictly_rescuable_by_dispersion"])
-            c2_tie_only_rescuable += int(rescuability["c2_tie_only_rescuable_by_dispersion"])
-            c2_unrescuable += int(rescuability["c2_unrescuable_by_dispersion"])
+            if option_count > 1:
+                rescuability = c2_dispersion_rescuability(option_count)
+                c2_strictly_rescuable += int(rescuability["c2_strictly_rescuable_by_dispersion"])
+                c2_tie_only_rescuable += int(rescuability["c2_tie_only_rescuable_by_dispersion"])
+                c2_unrescuable += int(rescuability["c2_unrescuable_by_dispersion"])
         answers = list(row.get("vote_counts", {}).values()) if isinstance(row.get("vote_counts", {}), Mapping) else []
         all_same_wrong += int(g == 0 and bool(answers) and max([int(value) for value in answers], default=0) == sum(int(value) for value in answers))
     return {
@@ -599,6 +917,10 @@ def state_dataset_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
         "c2_strictly_rescuable_count": c2_strictly_rescuable,
         "c2_tie_only_rescuable_count": c2_tie_only_rescuable,
         "c2_unrescuable_by_dispersion_count": c2_unrescuable,
+        "option_count_known_count": option_count_known,
+        "option_count_unknown_count": max(0, size - option_count_known),
+        "option_count_unknown_rate": (size - option_count_known) / max(1, size),
+        "option_count_histogram": {str(key): value for key, value in sorted(option_count_histogram.items())},
         "all_agents_same_wrong_count": all_same_wrong,
         "all_agents_same_wrong_rate": all_same_wrong / max(1, size),
         "persistent_c0_count": 0,

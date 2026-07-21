@@ -92,6 +92,31 @@ class CandidateGenerationStage:
         context.parent_sources = ['active'] * len(context.beam)
         if system._is_stable_qd_lineage():
             context.beam, context.parent_sources = system._select_stable_qd_parents(context.agent, context.epoch_id)
+        elif system._is_state_conditioned_method():
+            context.beam, context.parent_sources, context.parent_selection_diagnostics = (
+                select_state_conditioned_parents(
+                    context.beam,
+                    system._normalized_prompt_hash(context.agent.current_prompt),
+                    system.cfg,
+                    seed=int(system.cfg.seed),
+                    epoch=int(context.epoch_id),
+                    step=int(context.step_id),
+                    agent_id=int(context.agent_id),
+                    stagnation_count=int(
+                        getattr(system, 'state_no_gain_updates_per_agent', {}).get(
+                            str(context.agent_id), 0
+                        ) or 0
+                    ),
+                )
+            )
+            if context.parent_selection_diagnostics.get('exploration_parent_selected'):
+                system.exploration_parent_use_count = int(
+                    getattr(system, 'exploration_parent_use_count', 0)
+                ) + 1
+            for source in context.parent_sources:
+                system.state_parent_selection_source_counts[source] = int(
+                    system.state_parent_selection_source_counts.get(source, 0) or 0
+                ) + 1
         elif system._is_rollout_qd_method():
             context.parent_sources = [
                 "active" if system._normalized_prompt_hash(str(item.get('prompt', ''))) == system._normalized_prompt_hash(context.agent.current_prompt)
@@ -123,7 +148,19 @@ class CandidateGenerationStage:
                     context.generation_batches[context.i % len(context.generation_batches)]
                     for context.i in range(context.requested)
                 ]
-            context.parent_jobs.append({'parent_idx': context.parent_idx, 'parent': context.parent, 'parent_prompt': context.parent_prompt, 'parent_id': context.parent_id, 'parent_batches': context.parent_batches, 'parent_source': context.parent_sources[context.parent_idx] if context.parent_idx < len(context.parent_sources) else 'active'})
+            context.parent_jobs.append({
+                'parent_idx': context.parent_idx,
+                'parent': context.parent,
+                'parent_prompt': context.parent_prompt,
+                'parent_id': context.parent_id,
+                'parent_batches': context.parent_batches,
+                'parent_source': context.parent_sources[context.parent_idx]
+                if context.parent_idx < len(context.parent_sources) else 'active',
+                'parent_archive_slot': str(context.parent.get('state_archive_slot', 'active')),
+                'parent_was_exploration': str(
+                    context.parent.get('state_archive_slot', '')
+                ) == 'rollout_exploration',
+            })
         context.configured_parent_concurrency = int(getattr(system.cfg, 'optimizer_parent_concurrency', 1) or 1)
         context.parent_concurrency = max(1, min(context.configured_parent_concurrency, len(context.parent_jobs) or 1))
         context.parent_sem = asyncio.Semaphore(context.parent_concurrency)
@@ -167,7 +204,13 @@ class CandidateGenerationStage:
                     continue
                 context.seen.add(context.key)
                 context.batch = context.parent_batches[context.idx % len(context.parent_batches)]
-                context.candidate_pool.append({'candidate_id': f'g{context.generation}_a{context.agent_id}_p{system._hash(context.parent_id)}_{context.idx}_{system._hash(context.prompt)}', 'prompt': context.prompt, 'parent_id': context.parent_id, 'parent_source': str(context.result.get('parent_source', 'active')), 'parent_prompt': context.parent_prompt, 'generation': context.generation, 'source': 'optimizer', 'candidate_pool_source': 'optimizer', 'candidate_source': str(context.proposal.get('candidate_source', 'optimizer') or 'optimizer'), 'generation_batch_type': str(context.proposal.get('generation_batch_type', '')) or str(context.batch.get('batch_type', '')), 'optimization_route': str(context.proposal.get('optimization_route', context.batch.get('optimization_route', 'general_accuracy')) or 'general_accuracy'), 'generation_case_ids': context.proposal.get('generation_case_ids', []), 'target_error_pattern': str(context.proposal.get('target_error_pattern', '')), 'accuracy_repair_rule': str(context.proposal.get('accuracy_repair_rule', '')), 'expected_accuracy_effect': str(context.proposal.get('expected_accuracy_effect', '')), 'diversity_contribution': str(context.proposal.get('diversity_contribution', '')), 'error_correlation_reduction': str(context.proposal.get('error_correlation_reduction', '')), 'task_alignment_rule': str(context.proposal.get('task_alignment_rule', '')), 'peer_redundancy_avoidance': str(context.proposal.get('peer_redundancy_avoidance', '')), 'candidate_prompt_char_count': int(context.proposal.get('candidate_prompt_char_count', len(context.prompt)) or len(context.prompt)), 'candidate_prompt_over_soft_limit': bool(context.proposal.get('candidate_prompt_over_soft_limit', False)), 'candidate_prompt_over_hard_limit': bool(context.proposal.get('candidate_prompt_over_hard_limit', False)), 'candidate_prompt_overlength_rejected': bool(context.proposal.get('candidate_prompt_overlength_rejected', False)), 'candidate_prompt_ends_with_sentence_boundary': bool(context.proposal.get('candidate_prompt_ends_with_sentence_boundary', system._prompt_ends_with_sentence_boundary(context.prompt))), 'optimizer_generation_diagnostics': context.proposal.get('optimizer_generation_diagnostics', {}), 'tcs_call_group_id': str(context.proposal.get('tcs_call_group_id', '') or ''), 'execution_session_id': str(context.proposal.get('execution_session_id', system._current_execution_session_id()) or system._current_execution_session_id()), 'update_attempt_id': str(context.proposal.get('update_attempt_id', context.update_attempt_id) or context.update_attempt_id), 'proposal': context.proposal, 'prompt_hash': system._normalized_prompt_hash(context.prompt)})
+                context.candidate_pool.append({'candidate_id': f'g{context.generation}_a{context.agent_id}_p{system._hash(context.parent_id)}_{context.idx}_{system._hash(context.prompt)}', 'prompt': context.prompt, 'parent_id': context.parent_id, 'parent_source': str(context.result.get('parent_source', 'active')), 'parent_prompt': context.parent_prompt, 'parent_prompt_hash': system._normalized_prompt_hash(context.parent_prompt), 'parent_archive_slot': str(context.result.get('parent_archive_slot', 'active')), 'parent_was_exploration': bool(context.result.get('parent_was_exploration', False)), 'generation': context.generation, 'source': 'optimizer', 'candidate_pool_source': 'optimizer', 'candidate_source': str(context.proposal.get('candidate_source', 'optimizer') or 'optimizer'), 'generation_batch_type': str(context.proposal.get('generation_batch_type', '')) or str(context.batch.get('batch_type', '')), 'optimization_route': str(context.proposal.get('optimization_route', context.batch.get('optimization_route', 'general_accuracy')) or 'general_accuracy'), 'generation_case_ids': context.proposal.get('generation_case_ids', []), 'target_error_pattern': str(context.proposal.get('target_error_pattern', '')), 'accuracy_repair_rule': str(context.proposal.get('accuracy_repair_rule', '')), 'expected_accuracy_effect': str(context.proposal.get('expected_accuracy_effect', '')), 'diversity_contribution': str(context.proposal.get('diversity_contribution', '')), 'error_correlation_reduction': str(context.proposal.get('error_correlation_reduction', '')), 'task_alignment_rule': str(context.proposal.get('task_alignment_rule', '')), 'peer_redundancy_avoidance': str(context.proposal.get('peer_redundancy_avoidance', '')), 'candidate_prompt_char_count': int(context.proposal.get('candidate_prompt_char_count', len(context.prompt)) or len(context.prompt)), 'candidate_prompt_over_soft_limit': bool(context.proposal.get('candidate_prompt_over_soft_limit', False)), 'candidate_prompt_over_hard_limit': bool(context.proposal.get('candidate_prompt_over_hard_limit', False)), 'candidate_prompt_overlength_rejected': bool(context.proposal.get('candidate_prompt_overlength_rejected', False)), 'candidate_prompt_ends_with_sentence_boundary': bool(context.proposal.get('candidate_prompt_ends_with_sentence_boundary', system._prompt_ends_with_sentence_boundary(context.prompt))), 'optimizer_generation_diagnostics': context.proposal.get('optimizer_generation_diagnostics', {}), 'tcs_call_group_id': str(context.proposal.get('tcs_call_group_id', '') or ''), 'execution_session_id': str(context.proposal.get('execution_session_id', system._current_execution_session_id()) or system._current_execution_session_id()), 'update_attempt_id': str(context.proposal.get('update_attempt_id', context.update_attempt_id) or context.update_attempt_id), 'proposal': context.proposal, 'prompt_hash': system._normalized_prompt_hash(context.prompt)})
+                context.candidate_pool[-1]['generation_question_hashes'] = sorted({
+                    str(case.get('question_hash', case.get('sample_hash', case.get('case_id', ''))))
+                    for case in context.batch.get('cases', [])
+                    if isinstance(case, dict)
+                    and str(case.get('question_hash', case.get('sample_hash', case.get('case_id', ''))))
+                })
                 context.candidate_metadata = {'optimizer_architecture': str(context.proposal.get('optimizer_architecture', getattr(system.cfg, 'optimizer_architecture', ''))), 'candidate_source': str(context.proposal.get('candidate_source', '')), 'candidate_pool_source': 'optimizer', 'tcs_call_group_id': str(context.proposal.get('tcs_call_group_id', '') or ''), 'execution_session_id': str(context.proposal.get('execution_session_id', system._current_execution_session_id()) or system._current_execution_session_id()), 'update_attempt_id': str(context.proposal.get('update_attempt_id', context.update_attempt_id) or context.update_attempt_id), **dict(context.proposal.get('optimizer_generation_diagnostics', {}) or {})}
                 context.metadata_errors = validate_tcs_candidate_metadata(context.candidate_metadata)
                 if context.metadata_errors:
@@ -269,6 +312,22 @@ class CandidateEvaluationStage:
             context.metrics = await system.evaluate_candidate_prompt(agent_id=context.agent_id, candidate_prompt=str(context.candidate['prompt']), peer_prompts=context.peer_prompts, eval_batch=context.eval_batch, role_spec=context.candidate.get('proposal', {}), baseline_homogeneous_cases=context.baseline_cases)
             context.evaluated.append({**context.candidate, 'metrics': context.metrics, 'reward': float(context.metrics.get('reward', 0.0))})
         if system._is_state_conditioned_method():
+            audit = system._candidate_eval_audit_fields(context.eval_batch)
+            for field in (
+                'representative_pool_count', 'representative_fallback_count',
+                'coverage_pool_requested', 'coverage_pool_actual',
+                'conversion_pool_requested', 'conversion_pool_actual',
+                'option_count_known_count', 'option_count_unknown_count',
+            ):
+                system.state_search_diagnostics[field] = int(
+                    system.state_search_diagnostics.get(field, 0) or 0
+                ) + int(audit.get(field, 0) or 0)
+            histograms = system.state_search_diagnostics.setdefault('pool_state_histograms', {})
+            for state, count in dict(audit.get('candidate_batch_state_counts', {})).items():
+                histograms[str(state)] = int(histograms.get(str(state), 0) or 0) + int(count or 0)
+            system.state_search_diagnostics['candidate_pool_update_count'] = int(
+                system.state_search_diagnostics.get('candidate_pool_update_count', 0) or 0
+            ) + 1
             count_fields = (
                 'c0_to_c1_count', 'c1_to_c2_count', 'c2_to_c3_count',
                 'c3plus_additional_correct_count', 'c1_to_c0_count',
@@ -595,6 +654,12 @@ class CandidateEventStage:
                         'optimization_route': str(item.get('optimization_route', 'general_accuracy') or 'general_accuracy'),
                         'candidate_target_accuracy': float(item.get('metrics', {}).get('candidate_target_accuracy', 0.0) or 0.0),
                         'representative_target_accuracy': float(item.get('metrics', {}).get('representative_pool_candidate_target_accuracy', 0.0) or 0.0),
+                        'accuracy_delta': float(item.get('metrics', {}).get('accuracy_delta', 0.0) or 0.0),
+                        'representative_accuracy_delta': float(item.get('metrics', {}).get('representative_accuracy_delta', 0.0) or 0.0),
+                        'all_pools_accuracy_delta': float(item.get('metrics', {}).get('all_pools_accuracy_delta', 0.0) or 0.0),
+                        'invalid_delta': float(item.get('metrics', {}).get('invalid_delta', 0.0) or 0.0),
+                        'representative_invalid_delta': float(item.get('metrics', {}).get('representative_invalid_delta', 0.0) or 0.0),
+                        'all_pools_invalid_delta': float(item.get('metrics', {}).get('all_pools_invalid_delta', 0.0) or 0.0),
                         'coverage_c0_to_c1_count': int(item.get('metrics', {}).get('coverage_pool_c0_to_c1_count', 0) or 0),
                         'coverage_c1_to_c2_count': int(item.get('metrics', {}).get('coverage_pool_c1_to_c2_count', 0) or 0),
                         'conversion_c2_to_c3_count': int(item.get('metrics', {}).get('conversion_pool_c2_to_c3_count', 0) or 0),
@@ -621,6 +686,94 @@ class UpdateSummaryStage:
             system.cost_summary['candidate_eval_calls_saved_vs_naive'] = int(system.cost_summary.get('candidate_eval_calls_saved_vs_naive', 0) or 0) + int(context.candidate_eval_cache_stats.get('candidate_eval_calls_saved_vs_naive', 0) or 0)
             system.cost_summary['candidate_eval_prompt_dedup_savings'] = int(system.cost_summary.get('candidate_eval_prompt_dedup_savings', 0) or 0) + int(context.candidate_eval_cache_stats.get('candidate_eval_prompt_dedup_savings', 0) or 0)
         context.summary = {'agent_id': context.agent_id, 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id, **context.competence_log_fields, 'updated': bool(context.changed), 'candidate_count': len(context.candidate_pool), 'depth1_guard_rejection_count': sum((str(context.item.get('metrics', {}).get('rejection_reason', '')) == 'competence_depth1_guard' for context.item in context.evaluated)), 'accuracy_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('accuracy_guard_passed', True)) for context.item in context.evaluated)), 'invalid_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('invalid_guard_passed', True)) for context.item in context.evaluated)), 'dependence_guard_rejection_count': sum((str(context.item.get('metrics', {}).get('rejection_reason', '')) in {'pivotal_loss_guard', 'shared_error_creation_guard'} for context.item in context.evaluated)), 'pareto_not_retained_count': sum((not bool(context.item.get('pareto_selected', False)) for context.item in context.evaluated)), 'retained_candidate_count': len(context.selected), 'active_prompt_changed_count': int(context.changed), 'catastrophic_accuracy_guard_rejection_count': sum((not bool(context.item.get('metrics', {}).get('accuracy_guard_passed', True)) for context.item in context.evaluated)), 'soft_error_dependence_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_error_dependence_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'soft_cycle_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_cycle_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'soft_mechanism_shift_penalty_count': sum((float(context.item.get('metrics', {}).get('soft_mechanism_shift_penalty', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'exploration_candidate_count': sum((system._candidate_pool_source(context.item) == 'optimizer' and float(context.item.get('metrics', {}).get('mechanism_signature_distance', 0.0) or 0.0) > 0.0 for context.item in context.evaluated)), 'exploration_slot_occupancy_count': sum((str(context.item.get('beam_slot', '')) == ('mechanism_niche' if system._is_stable_qd_lineage() else 'explore') for context.item in context.selected)), 'exploration_to_active_conversion_count': int(bool(context.selected and context.selected[0].get('beam_slot') == 'explore' and context.changed)), 'generation_batches': context.generation_batches, 'baseline_homogeneous_case_count': len(context.baseline_cases), 'num_target_error_cases': int(context.num_target_error_cases), 'num_accuracy_repair_candidates': int(context.num_accuracy_repair_candidates), 'num_diversity_candidates': int(context.num_diversity_candidates), 'optimizer_fallback_mode': str(getattr(system.cfg, 'optimizer_fallback_mode', 'none')), 'optimizer_parent_concurrency': int(context.parent_concurrency), 'parent_sources': list(context.parent_sources), 'per_niche_parent_count': dict(context.agent.per_niche_parent_count), 'probation_parent_count': int(context.agent.probation_parent_count), 'probation_to_safe_conversion_count': int(getattr(system, 'probation_to_safe_conversion_count', 0)), 'candidate_starvation': bool(context.requirements.get('safe_non_incumbent_count', 1) == 0) if system._is_stable_qd_lineage() else False, 'mechanism_starvation': bool(context.requirements.get('safe_distinct_mechanism_count', 1) == 0) if system._is_stable_qd_lineage() else False, 'search_branch_starvation': bool(context.requirements.get('safe_non_incumbent_count', 1) == 0 and (not getattr(context.agent, 'probation_archive', []))) if system._is_stable_qd_lineage() else False, 'candidate_starvation_count': int(getattr(system, 'candidate_starvation_count', 0)), 'mechanism_starvation_count': int(getattr(system, 'mechanism_starvation_count', 0)), 'search_branch_starvation_count': int(getattr(system, 'search_branch_starvation_count', 0)), 'refill_requirements_unmet_count': int(getattr(system, 'refill_requirements_unmet_count', 0)), 'fallback_enabled': bool(context.fallback_enabled), 'optimizer_underfilled': bool(context.optimizer_underfilled), 'requested_optimizer_candidates': int(context.requested_optimizer_candidates), 'num_optimizer_candidates': int(context.num_optimizer_candidates), 'num_fallback_candidates': int(context.num_fallback_candidates), 'num_existing_beam_candidates': int(context.num_existing_beam_candidates), 'num_tcs_optimizer_candidates': int(context.num_tcs_optimizer_candidates), 'num_tcs_metadata_valid_candidates': int(context.num_tcs_metadata_valid_candidates), 'num_tcs_metadata_invalid_candidates': int(context.num_tcs_metadata_invalid_candidates), 'tcs_execution_complete': context.tcs_execution_complete, 'tcs_call_group_ids': sorted({str(context.c.get('tcs_call_group_id', '')) for context.c in context.candidate_pool if str(context.c.get('tcs_call_group_id', ''))}), 'top1_candidate_source': context.top1_candidate_source, 'top1_candidate_pool_source': context.top1_candidate_pool_source, 'active_prompt_changed': bool(context.changed), **context.pareto_summary, 'top1_pareto_rank': context.selected[0].get('pareto_rank') if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_gain_rate': float(context.selected[0].get('metrics', {}).get('vote_gain_rate', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_loss_rate': float(context.selected[0].get('metrics', {}).get('vote_loss_rate', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, 'top1_vote_delta': float(context.selected[0].get('metrics', {}).get('vote_delta', 0.0)) if system._uses_vote_pareto_selection() and context.selected else None, **context.optimizer_generation_summary, **system._student_failure_log_fields(context.optimizer_generation_summary), 'top_reward': float(context.agent.prompt_beam[0].get('score', 0.0) or 0.0), 'top_metrics': context.agent.prompt_beam[0].get('metrics', {}), **context.candidate_eval_cache_stats, 'execution_session_id': system._current_execution_session_id(), 'update_attempt_id': context.update_attempt_id}
+        if system._is_state_conditioned_method():
+            coverage_candidates = [
+                item for item in context.evaluated
+                if str(item.get('optimization_route', '')) == 'coverage_repair'
+            ]
+            for question_hash in sorted({
+                question_hash
+                for item in coverage_candidates
+                for question_hash in item.get('generation_question_hashes', [])
+            }):
+                related = [
+                    item for item in coverage_candidates
+                    if question_hash in item.get('generation_question_hashes', [])
+                ]
+                successful = any(
+                    bool(item.get('metrics', {}).get('state_quality_guard_passed', False))
+                    and (
+                        int(item.get('metrics', {}).get('c0_to_c1_count', 0) or 0) > 0
+                        or int(item.get('metrics', {}).get('c1_to_c2_count', 0) or 0) > 0
+                    )
+                    for item in related
+                )
+                if successful:
+                    system.coverage_resolved_by[question_hash] = int(context.agent_id)
+                    system.coverage_resolved_epoch[question_hash] = int(context.epoch_id)
+                    continue
+                failed = list(system.coverage_failed_prompt_hashes.get(question_hash, []))
+                before = len(set(failed))
+                failed.extend(str(item.get('prompt_hash', '')) for item in related if item.get('prompt_hash'))
+                system.coverage_failed_prompt_hashes[question_hash] = sorted(set(failed))
+                if before < 2 <= len(system.coverage_failed_prompt_hashes[question_hash]):
+                    system.coverage_rotation_count += 1
+            exploration_descendants = [
+                item for item in context.evaluated
+                if bool(item.get('parent_was_exploration', False))
+            ]
+            safe_descendants = [
+                item for item in exploration_descendants
+                if bool(item.get('metrics', {}).get('state_quality_guard_passed', False))
+            ]
+            archive_hashes = {
+                str(item.get('prompt_hash', ''))
+                for item in getattr(context.agent, 'safe_qd_archive', [])
+            }
+            archived_descendants = [
+                item for item in safe_descendants
+                if str(item.get('prompt_hash', '')) in archive_hashes
+            ]
+            system.exploration_descendant_count += len(exploration_descendants)
+            system.exploration_descendant_safe_count += len(safe_descendants)
+            system.exploration_descendant_archive_count += len(archived_descendants)
+            for field in (
+                'vote_gain_count', 'c0_to_c1_count', 'c1_to_c2_count', 'c2_to_c3_count'
+            ):
+                system_field = f'exploration_descendant_{field}'
+                setattr(system, system_field, int(getattr(system, system_field, 0)) + sum(
+                    int(int(item.get('metrics', {}).get(field, 0) or 0) > 0)
+                    for item in safe_descendants
+                ))
+            has_state_gain = any(
+                any(int(item.get('metrics', {}).get(field, 0) or 0) > 0 for field in (
+                    'vote_gain_count', 'c0_to_c1_count', 'c1_to_c2_count', 'c2_to_c3_count'
+                ))
+                for item in safe_descendants
+            )
+            agent_key = str(context.agent_id)
+            system.state_no_gain_updates_per_agent[agent_key] = (
+                0 if has_state_gain else int(
+                    system.state_no_gain_updates_per_agent.get(agent_key, 0) or 0
+                ) + 1
+            )
+            system.exploration_descendant_state_gain_count += sum(
+                int(any(
+                    int(item.get('metrics', {}).get(field, 0) or 0) > 0
+                    for field in ('c0_to_c1_count', 'c1_to_c2_count', 'c2_to_c3_count')
+                ))
+                for item in safe_descendants
+            )
+            context.summary.update({
+                'parent_selection_diagnostics': dict(
+                    getattr(context, 'parent_selection_diagnostics', {}) or {}
+                ),
+                'state_no_gain_updates_per_agent': dict(system.state_no_gain_updates_per_agent),
+                'exploration_parent_use_count': int(system.exploration_parent_use_count),
+                'exploration_descendant_count': int(system.exploration_descendant_count),
+                'exploration_descendant_safe_count': int(system.exploration_descendant_safe_count),
+                'exploration_descendant_archive_count': int(system.exploration_descendant_archive_count),
+            })
         if system._is_state_conditioned_method() and context.changed and context.selected:
             selected_metrics = context.selected[0].get('metrics', {})
             agent_key = str(context.agent_id)
