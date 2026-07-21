@@ -124,6 +124,7 @@ class CandidateGeneratorMixin:
                 continue
             safe_cases = []
             batch_type = str(batch.get("batch_type", ""))
+            optimization_route = str(batch.get("optimization_route", "general_accuracy") or "general_accuracy")
             if batch_type:
                 batch_types.append(batch_type)
             for case in batch.get("cases", []):
@@ -150,6 +151,13 @@ class CandidateGeneratorMixin:
                         "repair_hint": normalize_spaces(str(case.get("repair_hint", "")))[:180],
                         "target_overlap_pressure": case.get("target_overlap_pressure", ""),
                 }
+                if self._is_state_conditioned_method():
+                    safe_case.update({
+                        "state": str(case.get("state", "")),
+                        "baseline_correct_count": int(case.get("baseline_correct_count", -1) or 0),
+                        "option_count": int(case.get("option_count", 0) or 0),
+                        "coverage_assigned_agents": list(case.get("coverage_assigned_agents", [])),
+                    })
                 if self._v7_residual_protocol_enabled():
                     safe_case.update({
                         "capability_residual_family": str(case.get("capability_residual_family", CapabilityResidualFamily.UNKNOWN.value)),
@@ -159,6 +167,7 @@ class CandidateGeneratorMixin:
             safe_generation_batches.append(
                 {
                     "batch_type": batch_type,
+                    "optimization_route": optimization_route,
                     "purpose": normalize_spaces(str(batch.get("purpose", "")))[:200],
                     "case_count": len(safe_cases),
                     "cases": safe_cases,
@@ -189,6 +198,10 @@ class CandidateGeneratorMixin:
             "window_stats": window_stats,
             "validity_constraints": validity_constraints,
             "generation_batches": safe_generation_batches,
+            "optimization_routes": sorted({
+                str(batch.get("optimization_route", "general_accuracy") or "general_accuracy")
+                for batch in safe_generation_batches
+            }),
             "diagnostic_focus": {
                 "problem_type": problem_type,
                 "answer_format": answer_format,
@@ -280,6 +293,13 @@ class CandidateGeneratorMixin:
                 "Improve target correctness first; prioritize C2-to-C3 and vote recovery; reduce dominant wrong clusters; "
                 "use valid solver-trace diversity only after quality guards."
             )
+        if self._is_state_conditioned_method():
+            context["diagnostic_focus"]["rollout_optimization_goal"] = (
+                "Follow the requested optimization route. general_accuracy repairs target errors; "
+                "coverage_repair repairs assigned C0/C1 residuals; vote_conversion first seeks C2-to-C3 "
+                "and only then reduces duplicated wrong votes on rescuable C2 cases. Never reward random "
+                "wrong-answer dispersion. Trace differences are not a task objective."
+            )
         return context
 
     async def propose_teacher_question(
@@ -313,6 +333,15 @@ class CandidateGeneratorMixin:
                 "conversion, vote recovery, margin improvement, or dominant wrong-cluster reduction. Rollout diversity is "
                 "secondary and must never reward random errors or invalid traces. Do not compare prompt wording, propose "
                 "named mechanisms, assign capability labels or roles, use gold answers, or quote samples. Return strict JSON only."
+            )
+        if self._is_state_conditioned_method():
+            system_prompt = (
+                "You are the Teacher in a state-conditioned prompt optimization system. Formulate one Socratic "
+                "question for the requested route: general accuracy, C0/C1 correct coverage, or C2 vote conversion. "
+                "Correctness comes first. On C2, prefer making the target correct; only if it remains wrong may a "
+                "rescuable dominant wrong cluster be reduced. Never praise random disagreement, prompt wording "
+                "difference, personas, assigned roles, or trace difference. Do not quote cases or reveal answers. "
+                "Return strict JSON only."
             )
         if self._v7_residual_protocol_enabled():
             system_prompt = system_prompt.replace(
@@ -754,6 +783,14 @@ class CandidateGeneratorMixin:
                 "or reduce a dominant wrong-answer cluster. Do not propose named mechanisms, capability labels, personas, "
                 "random disagreement, or invalid output. Do not use gold answers or concrete sample text.\n\n"
                 f"{return_mode}"
+            )
+        if self._is_state_conditioned_method():
+            system_prompt += (
+                "\nObey optimization_route in the generation context. For general_accuracy, repair target errors "
+                "and preserve correct behavior. For coverage_repair, seek correct coverage on assigned C0/C1 "
+                "residuals. For vote_conversion, first make the target correct on C2; only when still wrong may "
+                "you reduce duplicated wrong votes on a rescuable C2 case. Never optimize prompt wording, persona, "
+                "random disagreement, or trace difference."
             )
         elif open_exploration:
             system_prompt = (
@@ -1306,6 +1343,10 @@ class CandidateGeneratorMixin:
                         "teacher_critic_rounds": int(diagnostics["teacher_critic_rounds"]),
                         "critic_reviews": critic_reviews,
                         "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
+                        "optimization_route": str(
+                            generation_batches[batch_idx].get("optimization_route", "general_accuracy")
+                            or "general_accuracy"
+                        ),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
                             for c in generation_batches[batch_idx].get("cases", [])
@@ -1697,6 +1738,11 @@ class CandidateGeneratorMixin:
                         "candidate_source": "optimizer",
                         "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(item.get("source_batch_type", "")) or str(safe_generation_batches[min(len(parsed), len(safe_generation_batches) - 1)].get("batch_type", "")),
+                        "optimization_route": str(
+                            safe_generation_batches[min(len(parsed), len(safe_generation_batches) - 1)].get(
+                                "optimization_route", "general_accuracy"
+                            ) or "general_accuracy"
+                        ),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
                             for c in generation_batches[min(len(parsed), len(generation_batches) - 1)].get("cases", [])
@@ -1731,6 +1777,10 @@ class CandidateGeneratorMixin:
                         "candidate_source": f"{fallback_mode}_fallback",
                         "optimizer_generation_diagnostics": dict(diagnostics),
                         "generation_batch_type": str(generation_batches[batch_idx].get("batch_type", "")),
+                        "optimization_route": str(
+                            generation_batches[batch_idx].get("optimization_route", "general_accuracy")
+                            or "general_accuracy"
+                        ),
                         "generation_case_ids": [
                             str(c.get("case_id", ""))
                             for c in generation_batches[batch_idx].get("cases", [])

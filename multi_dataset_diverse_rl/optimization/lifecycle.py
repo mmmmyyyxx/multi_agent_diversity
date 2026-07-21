@@ -160,6 +160,16 @@ class LifecycleMixin:
         self.peer_collapse_soft_count = 0
         self.peer_collapse_hard_rejection_count = 0
         self.latest_joint_team_metrics: Dict[str, Any] = {}
+        self.coverage_case_assignment_per_agent: Dict[str, List[str]] = {
+            str(i): [] for i in range(len(self.agents))
+        }
+        self.c0_rescue_count_per_agent: Dict[str, int] = {
+            str(i): 0 for i in range(len(self.agents))
+        }
+        self.c1_deepening_count_per_agent: Dict[str, int] = {
+            str(i): 0 for i in range(len(self.agents))
+        }
+        self.state_search_diagnostics: Dict[str, int] = {"evaluated_candidate_count": 0}
         self.joint_quality_anchor_metrics: Dict[str, Any] = {}
         self.quality_anchor_archive: List[Dict[str, Any]] = []
         self.quality_anchor_created_count = 0
@@ -199,6 +209,7 @@ class LifecycleMixin:
             parse_gold=lambda answer, question=None: canonical_answer_format(answer, answer_format),
             extract_pred=lambda text, question=None: extract_prediction_format(text, answer_format),
             match_answer=lambda pred, gold: match_answer_format(pred, gold, answer_format),
+            option_count=infer_option_count,
         )
 
     def _is_accuracy_only_mode(self) -> bool:
@@ -218,6 +229,9 @@ class LifecycleMixin:
 
     def _is_rollout_qd_method(self) -> bool:
         return is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy"))
+
+    def _is_state_conditioned_method(self) -> bool:
+        return is_state_conditioned_method(getattr(self.cfg, "method_version", "legacy"))
 
     def _is_vote_ready_rollout_method(self) -> bool:
         return is_vote_ready_rollout_method(getattr(self.cfg, "method_version", "legacy"))

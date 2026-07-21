@@ -33,7 +33,7 @@ from .policy import (
     empty_capability_profile,
     uniform_vote_context_profile,
 )
-from .tasks import TaskSpec, get_task_spec
+from .tasks import TaskSpec, get_task_spec, infer_option_count
 from .behavior_profiles import behavior_distance, build_prompt_static_profile, build_team_behavior_profiles
 from .diagnostics.candidate_funnel import (
     candidate_funnel_identity,
@@ -89,6 +89,22 @@ from .rollout_diversity import (
     select_rollout_representatives,
     vote_ready_candidate_key,
     wrong_diversity_is_useful,
+)
+from .state_conditioned import (
+    STATE_CONDITIONED_CHECKPOINT_VERSION,
+    candidate_row_state_fields,
+    coverage_case_assignees,
+    is_state_conditioned_method,
+    paired_c0_metrics,
+    select_state_conditioned_archive,
+    select_state_conditioned_representatives,
+    select_state_conditioned_team,
+    state_conditioned_candidate_key,
+    state_conditioned_transition_metrics,
+    state_conditioned_validation_key,
+    state_dataset_metrics,
+    state_quality_guard,
+    state_team_metrics,
 )
 from .utils import (
     canonical_aggregation_mode,

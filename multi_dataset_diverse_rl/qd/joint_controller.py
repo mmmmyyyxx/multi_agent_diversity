@@ -287,7 +287,192 @@ class JointControllerMixin:
         self.flush_prompt_history()
         return record
 
+    async def _select_state_conditioned_joint_active_team(
+        self, probe_data: List[Dict[str, str]], *, epoch: int
+    ) -> Dict[str, Any]:
+        if not probe_data:
+            return {"enabled": False, "reason": "empty_probe", "combination_count": 0}
+        if not str(getattr(self, "current_fixed_probe_hash", "")):
+            self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
+        beam_items: List[List[Dict[str, Any]]] = []
+        beams: List[List[Dict[str, Any]]] = []
+        profile_cache_hits = 0
+        for agent_id, agent in enumerate(self.agents):
+            active_hash = self._normalized_prompt_hash(agent.current_prompt)
+            archive = list(getattr(agent, "safe_qd_archive", []) or agent.prompt_beam)
+            if not archive:
+                archive = [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
+            profiled = []
+            for item in archive:
+                prompt_hash = self._normalized_prompt_hash(str(item.get("prompt", agent.current_prompt)))
+                cache_key = f"{agent_id}:{prompt_hash}:{self.current_fixed_probe_hash}"
+                profile = dict(self.rollout_profile_by_prompt_hash.get(cache_key, {}) or {})
+                if profile:
+                    profile_cache_hits += 1
+                else:
+                    profile = await self._evaluate_prompt_on_stable_probe(
+                        agent_id, str(item.get("prompt", agent.current_prompt)), probe_data
+                    )
+                    self.rollout_profile_by_prompt_hash[cache_key] = dict(profile)
+                candidate = dict(item)
+                metrics = dict(candidate.get("metrics", {}) or {})
+                metrics["rollout_profile"] = dict(profile)
+                candidate["metrics"] = metrics
+                candidate["prompt_hash"] = prompt_hash
+                profiled.append(candidate)
+            agent.safe_qd_archive = select_state_conditioned_archive(
+                profiled, active_hash, int(self.cfg.qd_archive_size_per_agent), self.cfg
+            )
+            representatives = select_state_conditioned_representatives(
+                agent.safe_qd_archive,
+                active_hash,
+                int(self.cfg.state_representative_capacity),
+                self.cfg,
+            )
+            agent.prompt_beam = representatives or [self._make_beam_item(agent.current_prompt, None, {}, None, 0)]
+            beam_items.append(list(agent.prompt_beam))
+            profiles = []
+            for item in agent.prompt_beam:
+                profile = dict(item.get("metrics", {}).get("rollout_profile", {}) or {})
+                profile["prompt_hash"] = str(item.get("prompt_hash", ""))
+                profiles.append(profile)
+                self._record_candidate_funnel_item(item, agent_id, "representative_selected_count")
+            beams.append(profiles)
+        question_hashes = [self._hash(str(example.get("question", ""))) for example in probe_data]
+        gold_answers = [
+            self.task_spec.parse_gold(example.get("answer"), str(example.get("question", "")))
+            for example in probe_data
+        ]
+        teams = []
+        for indices in itertools.product(*[range(len(beam)) for beam in beams]):
+            profiles = [beams[agent_id][index] for agent_id, index in enumerate(indices)]
+            metrics = state_team_metrics(
+                profiles,
+                gold_answers,
+                question_hashes,
+                vote_fn=plurality_vote_with_diagnostics,
+                match_fn=self.task_spec.match_answer,
+                tie_break_method=self.cfg.vote_tie_break,
+                seed=self.cfg.seed,
+            )
+            teams.append({
+                "beam_indices": list(indices),
+                "prompt_profiles": profiles,
+                "prompt_hashes": [str(profile.get("prompt_hash", "")) for profile in profiles],
+                **metrics,
+            })
+        incumbent_indices = []
+        for agent_id, agent in enumerate(self.agents):
+            active_hash = self._normalized_prompt_hash(agent.current_prompt)
+            incumbent_indices.append(next((
+                index for index, item in enumerate(beam_items[agent_id])
+                if str(item.get("prompt_hash", "")) == active_hash
+            ), 0))
+        incumbent = next(team for team in teams if team["beam_indices"] == incumbent_indices)
+        selection = select_state_conditioned_team(
+            teams, self.cfg, probe_size=len(probe_data), num_agents=len(self.agents)
+        )
+        selected = selection["selected"]
+        changed_count = 0
+        selected_sources = []
+        incumbent_correctness = [
+            list(profile.get("correctness_vector", []))
+            for profile in incumbent.get("prompt_profiles", [])
+        ]
+        for agent_id, beam_index in enumerate(selected["beam_indices"]):
+            agent = self.agents[agent_id]
+            chosen = beam_items[agent_id][beam_index]
+            old_hash = self._normalized_prompt_hash(agent.current_prompt)
+            new_hash = str(chosen.get("prompt_hash", ""))
+            agent.prompt_beam = [chosen] + [
+                item for index, item in enumerate(beam_items[agent_id]) if index != beam_index
+            ]
+            agent.current_prompt = str(chosen.get("prompt", agent.current_prompt))
+            changed = old_hash != new_hash
+            changed_count += int(changed)
+            if changed:
+                selected_vector = list(
+                    selected.get("prompt_profiles", [])[agent_id].get("correctness_vector", [])
+                ) if agent_id < len(selected.get("prompt_profiles", [])) else []
+                incumbent_vector = (
+                    incumbent_correctness[agent_id] if agent_id < len(incumbent_correctness) else []
+                )
+                c0_rescue_vector = []
+                c1_deepening_vector = []
+                for question_index in range(len(gold_answers)):
+                    baseline_g = sum(
+                        int(vector[question_index]) if question_index < len(vector) else 0
+                        for vector in incumbent_correctness
+                    )
+                    before = int(incumbent_vector[question_index]) if question_index < len(incumbent_vector) else 0
+                    after = int(selected_vector[question_index]) if question_index < len(selected_vector) else 0
+                    c0_rescue_vector.append(int(baseline_g == 0 and not before and after))
+                    c1_deepening_vector.append(int(baseline_g == 1 and not before and after))
+                agent_key = str(agent_id)
+                self.c0_rescue_count_per_agent[agent_key] = int(
+                    self.c0_rescue_count_per_agent.get(agent_key, 0) or 0
+                ) + sum(c0_rescue_vector)
+                self.c1_deepening_count_per_agent[agent_key] = int(
+                    self.c1_deepening_count_per_agent.get(agent_key, 0) or 0
+                ) + sum(c1_deepening_vector)
+                chosen.setdefault("metrics", {}).update({
+                    "c0_rescue_vector_per_prompt": c0_rescue_vector,
+                    "c1_deepening_vector_per_prompt": c1_deepening_vector,
+                })
+                agent.history.append(agent.current_prompt)
+                agent.accept_count += 1
+            else:
+                agent.reject_count += 1
+            source = self._candidate_generation_source(chosen) or "incumbent"
+            selected_sources.append(source)
+            self.active_candidate_source_by_agent[str(agent_id)] = source
+            self._record_candidate_funnel_item(chosen, agent_id, "active_selected_count")
+            self._append_prompt_history_event(
+                agent_id, epoch, 0, "state_joint_selected" if changed else "state_joint_keep", changed
+            )
+        record = {
+            "enabled": True,
+            "epoch": int(epoch),
+            "combination_count": len(teams),
+            "joint_team_solver_call_count": 0,
+            "cached_prompt_profile_count": int(profile_cache_hits),
+            "representative_count_per_agent": [len(beam) for beam in beams],
+            "incumbent_metrics": {
+                key: value for key, value in incumbent.items()
+                if key not in {"prompt_profiles"}
+            },
+            "selected_metrics": {
+                key: value for key, value in selected.items()
+                if key not in {"prompt_profiles"}
+            },
+            "selected_prompt_hashes": list(selected.get("prompt_hashes", [])),
+            "selected_beam_sources": selected_sources,
+            "active_prompt_changed_count": int(changed_count),
+            "joint_best_total_correct": int(selection["joint_best_total_correct"]),
+            "joint_total_correct_slack": int(selection["joint_total_correct_slack"]),
+            "joint_quality_band_count": int(selection["joint_quality_band_count"]),
+            "joint_selection_key": list(selection["joint_selection_key"]),
+            "joint_selected_c0_count": int(selected.get("c0_count", 0) or 0),
+            "joint_selected_c1_count": int(selected.get("c1_count", 0) or 0),
+            "joint_selected_c2_count": int(selected.get("c2_count", 0) or 0),
+            "joint_selected_c2_vote_correct_count": int(selected.get("c2_vote_correct_count", 0) or 0),
+            "joint_selected_c2_strict_rescue_count": int(selected.get("c2_strict_vote_correct_count", 0) or 0),
+            "coverage_case_assignment_per_agent": dict(self.coverage_case_assignment_per_agent),
+            "c0_rescue_count_per_agent": dict(self.c0_rescue_count_per_agent),
+            "c1_deepening_count_per_agent": dict(self.c1_deepening_count_per_agent),
+            "trace_diversity_used_as_tiebreak_only": True,
+            "composite_rollout_distance_used_for_selection": False,
+            "mechanism_based_decision_count": 0,
+            "candidate_channel_funnel": json.loads(json.dumps(self.candidate_channel_funnel)),
+        }
+        self.offline_team_combination_count = int(getattr(self, "offline_team_combination_count", 0)) + len(teams)
+        self.latest_joint_team_metrics = dict(record)
+        self.flush_prompt_history()
+        return record
+
     async def select_joint_active_team(self, probe_data: List[Dict[str, str]], *, epoch: int) -> Dict[str, Any]:
+        if self._is_state_conditioned_method():
+            return await self._select_state_conditioned_joint_active_team(probe_data, epoch=epoch)
         if self._is_rollout_qd_method():
             return await self._select_rollout_joint_active_team(probe_data, epoch=epoch)
         if not self._is_stable_qd_lineage():

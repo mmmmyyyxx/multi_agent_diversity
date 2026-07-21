@@ -24,7 +24,9 @@ class SearchPolicyBundle:
 
 def build_policy_bundle(config) -> SearchPolicyBundle:
     stable = str(config.method_version) == "v8_stable_qd_lineage"
-    rollout = str(config.method_version) in {"v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}
+    rollout = str(config.method_version) in {
+        "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error"
+    }
     return SearchPolicyBundle(
         target_selector=NamedStrategy(str(config.target_selector_version or config.target_selector_mode)),
         candidate_selector=NamedStrategy(str(config.candidate_selection_mode)),

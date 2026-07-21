@@ -12,10 +12,28 @@ class TaskSpec:
     extract_pred: Callable[[Optional[str], Optional[str]], str]
     match_answer: Callable[[str, str], bool]
     format_question: Optional[Callable[[dict], str]] = None
+    option_count: Optional[Callable[[Optional[str]], int]] = None
 
 
 def normalize_spaces(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value or "")).strip()
+
+
+def infer_option_count(question: Optional[str]) -> int:
+    """Infer a multiple-choice option count at the task abstraction boundary."""
+    text = str(question or "")
+    labels = {
+        match.group(1).upper()
+        for match in re.finditer(r"(?:^|\n)\s*\(([A-Z])\)\s+", text, flags=re.MULTILINE)
+    }
+    if not labels:
+        labels = {
+            match.group(1).upper()
+            for match in re.finditer(r"(?:^|\n)\s*([A-Z])[\).]\s+", text, flags=re.MULTILINE)
+        }
+    if labels:
+        return len(labels)
+    return 0
 
 
 def extract_all_numbers(text: Optional[str]) -> List[str]:
@@ -267,10 +285,10 @@ def _auto_match_answer(pred: str, gold: str) -> bool:
 
 
 TASK_SPECS: Dict[str, TaskSpec] = {
-    "mmlu": TaskSpec("mmlu", parse_mmlu_gold, extract_pred_answer_mmlu, match_mmlu_answer),
+    "mmlu": TaskSpec("mmlu", parse_mmlu_gold, extract_pred_answer_mmlu, match_mmlu_answer, option_count=infer_option_count),
     "gsm8k": TaskSpec("gsm8k", parse_gsm8k_gold, extract_pred_answer_gsm8k, match_gsm8k_answer),
-    "bbh": TaskSpec("bbh", parse_gold_bbh, extract_pred_answer_bbh, match_bbh_answer),
-    "auto": TaskSpec("auto", _auto_parse_gold, _auto_extract_pred, _auto_match_answer),
+    "bbh": TaskSpec("bbh", parse_gold_bbh, extract_pred_answer_bbh, match_bbh_answer, option_count=infer_option_count),
+    "auto": TaskSpec("auto", _auto_parse_gold, _auto_extract_pred, _auto_match_answer, option_count=infer_option_count),
 }
 
 

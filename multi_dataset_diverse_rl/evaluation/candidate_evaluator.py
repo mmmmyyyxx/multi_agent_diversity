@@ -176,11 +176,32 @@ class CandidateEvaluatorMixin:
             for example in eval_batch
             if isinstance(example, Mapping)
         }
+        pool_counts = Counter(
+            str(example.get("_candidate_pool", "representative"))
+            for example in eval_batch
+            if isinstance(example, Mapping)
+        )
+        option_histogram = Counter(
+            int(example.get("_option_count", 0) or 0)
+            for example in eval_batch
+            if isinstance(example, Mapping) and int(example.get("_option_count", 0) or 0) > 0
+        )
+        state_counts = Counter(
+            str(example.get("_candidate_state", "UNKNOWN"))
+            for example in eval_batch
+            if isinstance(example, Mapping)
+        )
         return {
             "candidate_eval_data_source": str(getattr(self.cfg, "candidate_eval_data_source", "optimization_train")),
             "candidate_eval_total_count": len(eval_batch),
             "candidate_eval_unique_question_count": len(question_hashes),
             "candidate_eval_repeat_count": int(getattr(self.cfg, "candidate_eval_repeats", 1) or 1),
+            "candidate_batch_state_counts": dict(state_counts),
+            "candidate_batch_pool_counts": dict(pool_counts),
+            "candidate_batch_option_count_histogram": dict(option_histogram),
+            "representative_pool_count": int(pool_counts.get("representative", 0)),
+            "coverage_pool_count": int(pool_counts.get("coverage", 0)),
+            "conversion_pool_count": int(pool_counts.get("conversion", 0)),
         }
 
     def _candidate_reward_guarded(
@@ -795,8 +816,13 @@ class CandidateEvaluatorMixin:
                         "baseline_solver_reuse_misses": int(baseline_reuse_stats.get("solver_reuse_misses", 0) or 0),
                         "baseline_solver_calls": int(baseline_reuse_stats.get("solver_calls", 0) or 0),
                         "baseline_solver_reuse_total": int(baseline_reuse_stats.get("solver_reuse_total", 0) or 0),
+                        "candidate_pool": str(ex.get("_candidate_pool", "representative") or "representative"),
+                        "option_count": int(ex.get("_option_count", 0) or 0),
                     }
                 )
+                option_counter = getattr(self.task_spec, "option_count", None)
+                option_count = int(option_counter(q) or 0) if callable(option_counter) else 0
+                row.update(candidate_row_state_fields(row, option_count))
                 if self._v7_residual_protocol_enabled():
                     row["behavior_context"] = self._behavior_context_for_baseline(
                         agent_id=agent_id,
@@ -998,7 +1024,11 @@ class CandidateEvaluatorMixin:
 
                 baseline_rollout_diversity, baseline_components = target_diversity(baseline_profiles)
                 candidate_rollout_diversity, candidate_components = target_diversity(candidate_profiles)
-                transitions = candidate_transition_metrics(rows)
+                transitions = (
+                    state_conditioned_transition_metrics(rows)
+                    if self._is_state_conditioned_method()
+                    else candidate_transition_metrics(rows)
+                )
                 baseline_candidate_metrics.update({
                     **transitions,
                     "rollout_profile": candidate_profiles[agent_id],
@@ -1010,22 +1040,101 @@ class CandidateEvaluatorMixin:
                     "candidate_rollout_distance_components": candidate_components,
                     "mechanism_based_decision_count": 0,
                 })
-                guard = rollout_quality_guard(baseline_candidate_metrics, self.cfg)
-                baseline_candidate_metrics.update(guard)
-                reward = rollout_candidate_reward(
-                    baseline_candidate_metrics,
-                    self.cfg,
-                    vote_ready=self._is_vote_ready_rollout_method(),
-                )
-                if not guard["rollout_quality_guard_passed"]:
-                    reward = -1.0
-                baseline_candidate_metrics.update({
-                    "reward": float(reward),
-                    "reward_total": float(reward),
-                    "rollout_reward_mode": (
-                        "vote_ready" if self._is_vote_ready_rollout_method() else "accuracy_rollout_embedding"
-                    ),
-                })
+                if self._is_state_conditioned_method():
+                    pool_metrics = {}
+                    for pool_name in ("representative", "coverage", "conversion"):
+                        pool_rows = [
+                            row for row in rows
+                            if str(row.get("candidate_pool", "representative")) == pool_name
+                        ]
+                        prefix = f"{pool_name}_pool"
+                        pool_metrics[f"{prefix}_count"] = len(pool_rows)
+                        pool_metrics[f"{prefix}_baseline_target_accuracy"] = (
+                            float(np.mean([int(bool(row.get("baseline_target_correct", False))) for row in pool_rows]))
+                            if pool_rows else 0.0
+                        )
+                        pool_metrics[f"{prefix}_candidate_target_accuracy"] = (
+                            float(np.mean([int(bool(row.get("candidate_target_correct", row.get("target_agent_correct", False)))) for row in pool_rows]))
+                            if pool_rows else 0.0
+                        )
+                        pool_metrics[f"{prefix}_baseline_invalid_rate"] = (
+                            float(np.mean([float(row.get("baseline_invalid_rate", 1.0)) for row in pool_rows]))
+                            if pool_rows else 1.0
+                        )
+                        pool_metrics[f"{prefix}_candidate_invalid_rate"] = (
+                            float(np.mean([float(row.get("candidate_invalid_rate", 1.0)) for row in pool_rows]))
+                            if pool_rows else 1.0
+                        )
+                        pool_transitions = state_conditioned_transition_metrics(pool_rows)
+                        for key, value in pool_transitions.items():
+                            if key == "state_transition_rows":
+                                continue
+                            pool_metrics[f"{prefix}_{key}"] = value
+                    baseline_candidate_metrics.update(pool_metrics)
+                    baseline_candidate_metrics.update({
+                        "all_pools_baseline_target_accuracy": baseline_target_accuracy,
+                        "all_pools_candidate_target_accuracy": candidate_target_accuracy,
+                        "all_pools_baseline_invalid_rate": baseline_invalid_rate,
+                        "all_pools_candidate_invalid_rate": candidate_invalid_rate,
+                        "baseline_target_accuracy": float(
+                            pool_metrics.get("representative_pool_baseline_target_accuracy", baseline_target_accuracy)
+                        ),
+                        "candidate_target_accuracy": float(
+                            pool_metrics.get("representative_pool_candidate_target_accuracy", candidate_target_accuracy)
+                        ),
+                        "target_agent_accuracy": float(
+                            pool_metrics.get("representative_pool_candidate_target_accuracy", candidate_target_accuracy)
+                        ),
+                        "baseline_invalid_rate": float(
+                            pool_metrics.get("representative_pool_baseline_invalid_rate", baseline_invalid_rate)
+                        ),
+                        "candidate_invalid_rate": float(
+                            pool_metrics.get("representative_pool_candidate_invalid_rate", candidate_invalid_rate)
+                        ),
+                        "natural_distribution_metrics_source": "representative_pool",
+                    })
+                    trace_delta = float(candidate_components.get("rollout_trace_embedding_distance", 0.0)) - float(
+                        baseline_components.get("rollout_trace_embedding_distance", 0.0)
+                    )
+                    baseline_candidate_metrics.update({
+                        "correct_set_rollout_distance_diagnostic": float(
+                            candidate_components.get("correct_set_rollout_distance", 0.0)
+                        ),
+                        "c2_wrong_answer_dispersion": float(
+                            transitions.get("c2_wrong_cluster_reduction", 0.0) or 0.0
+                        ),
+                        "trace_embedding_distance": float(
+                            candidate_components.get("rollout_trace_embedding_distance", 0.0)
+                        ),
+                        "trace_embedding_distance_delta": trace_delta,
+                        "composite_rollout_distance_used_for_reward": False,
+                        "composite_rollout_distance_used_for_selection": False,
+                    })
+                    guard = state_quality_guard(baseline_candidate_metrics, self.cfg)
+                    baseline_candidate_metrics.update(guard)
+                    reward = float(baseline_candidate_metrics["candidate_target_accuracy"]) if guard["state_quality_guard_passed"] else -1.0
+                    baseline_candidate_metrics.update({
+                        "reward": reward,
+                        "reward_total": reward,
+                        "rollout_reward_mode": "state_conditioned_accuracy_first",
+                    })
+                else:
+                    guard = rollout_quality_guard(baseline_candidate_metrics, self.cfg)
+                    baseline_candidate_metrics.update(guard)
+                    reward = rollout_candidate_reward(
+                        baseline_candidate_metrics,
+                        self.cfg,
+                        vote_ready=self._is_vote_ready_rollout_method(),
+                    )
+                    if not guard["rollout_quality_guard_passed"]:
+                        reward = -1.0
+                    baseline_candidate_metrics.update({
+                        "reward": float(reward),
+                        "reward_total": float(reward),
+                        "rollout_reward_mode": (
+                            "vote_ready" if self._is_vote_ready_rollout_method() else "accuracy_rollout_embedding"
+                        ),
+                    })
             if bool(getattr(self.cfg, "shared_error_metrics_enabled", False)) or self._uses_vote_error_pareto_selection() or self._uses_competence_depth_pareto_selection() or self._residual_specialization_enabled():
                 baseline_candidate_metrics.update(self._candidate_boundary_error_metrics(rows))
                 paired_keys = (

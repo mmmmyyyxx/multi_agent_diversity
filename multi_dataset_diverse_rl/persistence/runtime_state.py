@@ -676,6 +676,16 @@ class RuntimeStateMixin:
                 "quality_diversity_archive_enabled": True,
                 "rollout_diversity_enabled": True,
             })
+            if self._is_state_conditioned_method():
+                fields.update({
+                    "state_conditioned_enabled": True,
+                    "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                    "state_coverage_enabled": bool(self.cfg.state_coverage_enabled),
+                    "state_c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
+                    "state_trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
+                    "composite_rollout_distance_used_for_selection": False,
+                    "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
+                })
         if self._is_v82_hybrid():
             fields.update({
                 "method_version": str(getattr(self.cfg, "method_version", "legacy")),
@@ -836,6 +846,10 @@ class RuntimeStateMixin:
             "previous_execution_session_id": self.previous_execution_session_id,
             "experiment_protocol_version": self._experiment_protocol_version(),
             "checkpoint_version": CHECKPOINT_VERSION,
+            "state_conditioned_checkpoint_version": (
+                int(STATE_CONDITIONED_CHECKPOINT_VERSION)
+                if self._is_state_conditioned_method() else None
+            ),
             **provenance,
             "split_integrity": self._split_integrity_metadata(),
             "model_role_map": {
@@ -870,6 +884,34 @@ class RuntimeStateMixin:
                 "capability_profile_per_agent": None,
                 "top_capability_family_per_agent": None,
             })
+            if self._is_state_conditioned_method():
+                meta.update({
+                    "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                    "state_conditioned_quality_guards": {
+                        "accuracy_tie_epsilon": float(self.cfg.state_accuracy_tie_epsilon),
+                        "c1_to_c0_loss_epsilon": int(self.cfg.state_c1_to_c0_loss_epsilon),
+                        "c2_to_c1_loss_epsilon": int(self.cfg.state_c2_to_c1_loss_epsilon),
+                        "c3_to_c2_loss_epsilon": int(self.cfg.state_c3_to_c2_loss_epsilon),
+                        "vote_loss_epsilon": int(self.cfg.state_vote_loss_epsilon),
+                    },
+                    "state_conditioned_selection": {
+                        "coverage_enabled": bool(self.cfg.state_coverage_enabled),
+                        "c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
+                        "trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
+                    },
+                    "coverage_case_assignment_per_agent": dict(
+                        getattr(self, "coverage_case_assignment_per_agent", {})
+                    ),
+                    "c0_rescue_count_per_agent": dict(
+                        getattr(self, "c0_rescue_count_per_agent", {})
+                    ),
+                    "c1_deepening_count_per_agent": dict(
+                        getattr(self, "c1_deepening_count_per_agent", {})
+                    ),
+                    "state_search_diagnostics": dict(
+                        getattr(self, "state_search_diagnostics", {})
+                    ),
+                })
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
 

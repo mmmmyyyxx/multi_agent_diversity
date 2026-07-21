@@ -81,6 +81,21 @@ class _FlatConfigSchema:
     vote_ready_diversity_weight: float = 0.15
     rollout_c3_loss_epsilon: int = 0
     rollout_vote_loss_epsilon: int = 0
+    state_conditioned_enabled: bool = False
+    state_accuracy_tie_epsilon: float = 0.02
+    state_c1_to_c0_loss_epsilon: int = 0
+    state_c2_to_c1_loss_epsilon: int = 0
+    state_c3_to_c2_loss_epsilon: int = 0
+    state_vote_loss_epsilon: int = 0
+    state_coverage_enabled: bool = True
+    state_c2_wrong_split_enabled: bool = True
+    state_trace_tiebreak_enabled: bool = True
+    state_joint_total_correct_slack_rate: float = 0.01
+    state_representative_capacity: int = 4
+    candidate_batch_representative_size: int = 12
+    candidate_batch_coverage_size: int = 6
+    candidate_batch_conversion_size: int = 6
+    state_validation_accuracy_guard_epsilon: float = 0.02
     use_baseline_relative_reward: bool = True
     reward_schedule_mode: str = "phase_adaptive"
     reward_diversity_warmup_updates: int = 10
@@ -365,13 +380,17 @@ class _FlatConfigSchema:
         if str(self.method_version) == "v8_stable_qd_lineage":
             self.legacy_beam_rescore_each_epoch = False
             self.teacher_critic_max_rounds = 2
-        if str(self.method_version) in {"v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
+        if str(self.method_version) in {
+            "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error"
+        }:
             self.legacy_beam_rescore_each_epoch = False
             self.beam_refresh_each_epoch = False
             self.competence_depth_enabled = False
             self.competence_depth2_aux_enabled = False
             self.competence_progressive_residual_enabled = False
             self.residual_specialization_enabled = False
+        if str(self.method_version) == "v9_state_conditioned_error":
+            self.state_conditioned_enabled = True
         probability_fields = (
             "specialization_ema",
             "behavior_cycle_similarity_threshold",
@@ -417,6 +436,9 @@ class _FlatConfigSchema:
             "lineage_switch_min_vote_gain",
             "peer_collapse_soft_similarity",
             "peer_collapse_hard_similarity",
+            "state_accuracy_tie_epsilon",
+            "state_joint_total_correct_slack_rate",
+            "state_validation_accuracy_guard_epsilon",
         )
         for field in probability_fields:
             value = float(getattr(self, field))
@@ -505,6 +527,10 @@ class _FlatConfigSchema:
             "joint_bottom2_band_correct_count", "joint_c1_band_questions", "joint_c2_band_questions",
             "joint_team_max_active_changes_early", "joint_team_max_active_changes_late",
             "joint_team_no_diversification_patience", "joint_team_change_limit_relaxation",
+            "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
+            "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
+            "candidate_batch_representative_size", "candidate_batch_coverage_size",
+            "candidate_batch_conversion_size",
         )
         for field in nonnegative_integer_fields:
             if int(getattr(self, field)) < 0:
@@ -515,6 +541,7 @@ class _FlatConfigSchema:
             "joint_representative_beam_size", "probe_stability_fold_count",
             "lineage_commit_required_snapshots", "lineage_switch_confirmation_snapshots",
             "qd_readiness_min_distinct_niches", "min_optimizer_updates_per_agent_per_epoch",
+            "state_representative_capacity",
         )
         for field in positive_integer_fields:
             if int(getattr(self, field)) < 1:
@@ -525,6 +552,8 @@ class _FlatConfigSchema:
             raise ValueError("candidate_refill_min_safe_non_incumbent cannot exceed the per-parent unique candidate limit")
         if int(self.joint_representative_beam_size) > int(self.qd_archive_size_per_agent):
             raise ValueError("joint_representative_beam_size must not exceed qd_archive_size_per_agent")
+        if int(self.state_representative_capacity) > int(self.qd_archive_size_per_agent):
+            raise ValueError("state_representative_capacity must not exceed qd_archive_size_per_agent")
         if float(self.probation_max_accuracy_loss) > float(self.catastrophic_target_accuracy_loss_epsilon):
             raise ValueError("probation_max_accuracy_loss must not exceed catastrophic_target_accuracy_loss_epsilon")
         if int(self.probation_max_c1_loss_questions) >= int(self.candidate_c1_catastrophic_loss_questions):
@@ -638,9 +667,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--baseline_only", type=int, default=int(defaults.baseline_only), choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready"])
-    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first"])
+    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready", "rollout_state_conditioned"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first"])
+    parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first", "state_conditioned_vote_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
     parser.add_argument("--optimizer_parent_concurrency", type=int, default=defaults.optimizer_parent_concurrency)
@@ -673,6 +702,21 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--vote_ready_c3_weight", type=float, default=defaults.vote_ready_c3_weight)
     parser.add_argument("--vote_ready_margin_weight", type=float, default=defaults.vote_ready_margin_weight)
     parser.add_argument("--vote_ready_wrong_break_weight", type=float, default=defaults.vote_ready_wrong_break_weight)
+    parser.add_argument("--state_accuracy_tie_epsilon", type=float, default=defaults.state_accuracy_tie_epsilon)
+    parser.add_argument("--state_joint_total_correct_slack_rate", type=float, default=defaults.state_joint_total_correct_slack_rate)
+    parser.add_argument("--state_validation_accuracy_guard_epsilon", type=float, default=defaults.state_validation_accuracy_guard_epsilon)
+    for name in (
+        "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
+        "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
+        "state_representative_capacity", "candidate_batch_representative_size",
+        "candidate_batch_coverage_size", "candidate_batch_conversion_size",
+    ):
+        parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
+    for name in (
+        "state_conditioned_enabled", "state_coverage_enabled",
+        "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
+    ):
+        parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--vote_ready_diversity_weight", type=float, default=defaults.vote_ready_diversity_weight)
     parser.add_argument("--rollout_c3_loss_epsilon", type=int, default=defaults.rollout_c3_loss_epsilon)
     parser.add_argument("--rollout_vote_loss_epsilon", type=int, default=defaults.rollout_vote_loss_epsilon)

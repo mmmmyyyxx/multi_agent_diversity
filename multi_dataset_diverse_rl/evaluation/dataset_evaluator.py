@@ -252,6 +252,28 @@ class DatasetEvaluatorMixin:
                 "candidate_channel_funnel": json.loads(json.dumps(getattr(self, "candidate_channel_funnel", {}))),
                 "active_candidate_source_by_agent": dict(getattr(self, "active_candidate_source_by_agent", {})),
             })
+            if self._is_state_conditioned_method():
+                result.update(state_dataset_metrics(rows))
+                result.update({
+                    "state_conditioned_enabled": True,
+                    "state_coverage_enabled": bool(getattr(self.cfg, "state_coverage_enabled", True)),
+                    "state_c2_wrong_split_enabled": bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)),
+                    "state_trace_tiebreak_enabled": bool(getattr(self.cfg, "state_trace_tiebreak_enabled", True)),
+                    "composite_rollout_distance_used_for_selection": False,
+                    "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
+                    "coverage_case_assignment_per_agent": dict(
+                        getattr(self, "coverage_case_assignment_per_agent", {})
+                    ),
+                    "c0_rescue_count_per_agent": dict(
+                        getattr(self, "c0_rescue_count_per_agent", {})
+                    ),
+                    "c1_deepening_count_per_agent": dict(
+                        getattr(self, "c1_deepening_count_per_agent", {})
+                    ),
+                    "state_search_diagnostics": dict(
+                        getattr(self, "state_search_diagnostics", {})
+                    ),
+                })
         if self._is_v82_hybrid():
             final_signatures = []
             for agent in self.agents:
@@ -396,13 +418,21 @@ class DatasetEvaluatorMixin:
             question_hash = self._hash(q)
             self._record_solver_rollouts(question_hash, prompts, traces, answers, source=f"{split_name}_rollout")
             metrics = self.compute_rollout_metrics(traces, answers, gold, prompts, question_hash=question_hash)
-            row = {"index": idx, "question_hash": question_hash, **metrics}
+            option_counter = getattr(self.task_spec, "option_count", None)
+            option_count = int(option_counter(q) or 0) if callable(option_counter) else 0
+            row = {
+                "index": idx,
+                "question_hash": question_hash,
+                "option_count": option_count,
+                **metrics,
+            }
             agent_correct = [int(x) for x in metrics.get("individual_correct", [])]
             prediction = {
                 "index": idx,
                 "sample_id": idx,
                 "question_hash": question_hash,
                 "question": q,
+                "option_count": option_count,
                 "vote_answer": metrics.get("vote_answer", ""),
                 "plurality_vote_answer": metrics.get("plurality_vote_answer", metrics.get("vote_answer", "")),
                 "majority_vote_answer": metrics.get("majority_vote_answer", metrics.get("vote_answer", "")),

@@ -17,6 +17,7 @@ from ..diagnostics.candidate_funnel import (
 )
 from ..utils import canonical_aggregation_mode
 from ..qd.quality_anchors import build_quality_anchor, update_quality_anchor_archive
+from ..state_conditioned import STATE_CONDITIONED_CHECKPOINT_VERSION, is_state_conditioned_method
 
 
 def checkpoint_path(cfg):
@@ -150,6 +151,23 @@ def restore_system_state(system, state_payload):
     system.quality_diversity_archive_history = [dict(value) for value in state_payload.get("quality_diversity_archive_history", []) if isinstance(value, dict)]
     system.behavior_profile_history = [dict(value) for value in state_payload.get("behavior_profile_history", []) if isinstance(value, dict)]
     system.latest_joint_team_metrics = dict(state_payload.get("latest_joint_team_metrics", {}) or {})
+    system.coverage_case_assignment_per_agent = {
+        str(key): sorted({str(value) for value in values})
+        for key, values in dict(state_payload.get("coverage_case_assignment_per_agent", {}) or {}).items()
+        if isinstance(values, list)
+    }
+    system.c0_rescue_count_per_agent = {
+        str(key): int(value or 0)
+        for key, value in dict(state_payload.get("c0_rescue_count_per_agent", {}) or {}).items()
+    }
+    system.c1_deepening_count_per_agent = {
+        str(key): int(value or 0)
+        for key, value in dict(state_payload.get("c1_deepening_count_per_agent", {}) or {}).items()
+    }
+    system.state_search_diagnostics = {
+        str(key): int(value or 0)
+        for key, value in dict(state_payload.get("state_search_diagnostics", {}) or {}).items()
+    }
     system.joint_quality_anchor_metrics = {}
     system.quality_anchor_archive = [
         dict(value) for value in state_payload.get("quality_anchor_archive", []) if isinstance(value, dict)
@@ -245,6 +263,21 @@ BEHAVIOR_CONFIG_FIELDS = (
         "reward_mode",
         "accuracy_guard_epsilon",
         "invalid_guard_epsilon",
+        "state_conditioned_enabled",
+        "state_accuracy_tie_epsilon",
+        "state_c1_to_c0_loss_epsilon",
+        "state_c2_to_c1_loss_epsilon",
+        "state_c3_to_c2_loss_epsilon",
+        "state_vote_loss_epsilon",
+        "state_coverage_enabled",
+        "state_c2_wrong_split_enabled",
+        "state_trace_tiebreak_enabled",
+        "state_joint_total_correct_slack_rate",
+        "state_representative_capacity",
+        "candidate_batch_representative_size",
+        "candidate_batch_coverage_size",
+        "candidate_batch_conversion_size",
+        "state_validation_accuracy_guard_epsilon",
         "reward_weight_div_delta",
         "reward_weight_invalid_delta",
         "reward_weight_vote_delta",
@@ -470,6 +503,19 @@ def checkpoint_behavior_config(cfg):
             str(getattr(cfg, "aggregation_mode", "majority") or "majority")
         )
         payload["plurality_boundary_version"] = "plurality_boundary_v1"
+    state_fields = (
+        "state_conditioned_enabled", "state_accuracy_tie_epsilon",
+        "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
+        "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
+        "state_coverage_enabled", "state_c2_wrong_split_enabled",
+        "state_trace_tiebreak_enabled", "state_joint_total_correct_slack_rate",
+        "state_representative_capacity", "candidate_batch_representative_size",
+        "candidate_batch_coverage_size", "candidate_batch_conversion_size",
+        "state_validation_accuracy_guard_epsilon",
+    )
+    if not is_state_conditioned_method(getattr(cfg, "method_version", "legacy")):
+        for field in state_fields:
+            payload.pop(field, None)
     if not bool(getattr(cfg, "competence_depth_enabled", False)):
         for field in (
             "student_candidate_prompt_soft_max_chars", "student_candidate_prompt_hard_max_chars",
@@ -498,7 +544,7 @@ def checkpoint_behavior_config(cfg):
             "competence_min_effective_specialization_epochs",
         ):
             payload.pop(field, None)
-    if str(getattr(cfg, "method_version", "legacy")) not in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage"}:
+    if str(getattr(cfg, "method_version", "legacy")) not in {"v8_2_hybrid_progressive", "v8_stable_qd_lineage", "v9_state_conditioned_error"}:
         for field in (
             "method_version", "target_selector_mode", "target_selector_version", "beam_policy_version",
             "tcs_candidate_policy_version", "mechanism_signature_version", "competence_weight_depth1_gain",
@@ -604,6 +650,15 @@ def checkpoint_behavior_config(cfg):
             "rollout_c3_loss_epsilon", "rollout_vote_loss_epsilon",
         ):
             payload[field] = getattr(cfg, field, None)
+    if is_state_conditioned_method(getattr(cfg, "method_version", "legacy")):
+        for field in (
+            "method_version", "reward_mode", "candidate_selection_mode", "best_state_selection_mode",
+            "beam_policy_version", "active_team_selector_version", "candidate_generation_policy_version",
+            "tcs_candidate_policy_version", "archive_policy_version", "joint_quality_filter_version",
+            "probe_stability_version", "parent_selection_version", "legacy_beam_rescore_each_epoch",
+            "qd_archive_size_per_agent", "joint_representative_beam_size", *state_fields,
+        ):
+            payload[field] = getattr(cfg, field, None)
     return payload
 
 
@@ -638,6 +693,10 @@ def build_training_checkpoint(
 ):
     payload = {
         "version": CHECKPOINT_VERSION,
+        "state_conditioned_checkpoint_version": (
+            int(STATE_CONDITIONED_CHECKPOINT_VERSION)
+            if is_state_conditioned_method(getattr(cfg, "method_version", "legacy")) else None
+        ),
         "stage": str(stage),
         "updated_at": time.time(),
         "seed": int(cfg.seed),
@@ -712,6 +771,10 @@ def build_training_checkpoint(
             "quality_diversity_archive_history": list(getattr(system, "quality_diversity_archive_history", [])),
             "behavior_profile_history": list(getattr(system, "behavior_profile_history", [])),
             "latest_joint_team_metrics": dict(getattr(system, "latest_joint_team_metrics", {})),
+            "coverage_case_assignment_per_agent": dict(getattr(system, "coverage_case_assignment_per_agent", {})),
+            "c0_rescue_count_per_agent": dict(getattr(system, "c0_rescue_count_per_agent", {})),
+            "c1_deepening_count_per_agent": dict(getattr(system, "c1_deepening_count_per_agent", {})),
+            "state_search_diagnostics": dict(getattr(system, "state_search_diagnostics", {})),
             "quality_anchor_archive": list(getattr(system, "quality_anchor_archive", [])),
             "quality_anchor_created_count": int(getattr(system, "quality_anchor_created_count", 0)),
             "last_joint_refresh_epoch": int(getattr(system, "last_joint_refresh_epoch", 0)),
@@ -800,6 +863,11 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
         and not isinstance(payload.get("behavior_config"), dict)
     ):
         reasons.append("Stable-QD checkpoint lacks the event-driven refresh and dual-channel policy fingerprint")
+    if (
+        str(getattr(cfg, "method_version", "legacy")) == "v9_state_conditioned_error"
+        and int(payload.get("state_conditioned_checkpoint_version", 0) or 0) != int(STATE_CONDITIONED_CHECKPOINT_VERSION)
+    ):
+        reasons.append("V9 checkpoint lacks the state-conditioned checkpoint fingerprint")
     if version == 5 and str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
         state = payload.get("state", {}) if isinstance(payload.get("state", {}), dict) else {}
         history = state.get("joint_team_selection_history", [])

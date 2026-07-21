@@ -14,6 +14,7 @@ import numpy as np
 ROLLOUT_QD_METHODS = frozenset({
     "v8_accuracy_rollout_embedding",
     "v8_rollout_qd_vote_ready",
+    "v9_state_conditioned_error",
 })
 
 

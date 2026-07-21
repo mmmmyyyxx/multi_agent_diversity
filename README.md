@@ -2,38 +2,43 @@
 
 This repository performs evolutionary prompt search for a fixed team of reasoning agents. It changes prompts, not model weights.
 
-The current V8 line is Accuracy-First Rollout-Diversity Prompt Optimization. Start with [method.md](method.md) for the complete implementation guide. Historical Stable-QD notes remain available for reproducing earlier runs.
+The current line is V9 State-Conditioned Correlated-Error Optimization. Start with [method.md](method.md) for the implementation guide. V8 settings and artifacts remain available with unchanged semantics.
 
-## Current V8 Settings
+## Current V9 Settings
 
-The rollout-only settings are:
-
-```text
-shared_accuracy_rollout_embedding_tcs
-shared_vote_ready_rollout_diversity_tcs
-```
-
-They resolve to:
+The main setting and matched ablations are:
 
 ```text
-method_version = v8_accuracy_rollout_embedding
-method_version = v8_rollout_qd_vote_ready
+shared_state_conditioned_error_tcs
+shared_v9_accuracy_only
+shared_v9_accuracy_coverage
+shared_v9_accuracy_coverage_c2split
+shared_v9_accuracy_coverage_c2split_trace_tiebreak
 ```
 
-The methods use:
+They use:
 
-- observed solver errors and actual plurality-boundary signals to choose update targets;
-- Teacher-Critic-Student repair plus direct open rollout exploration;
-- hard accuracy, validity, Vote-loss, and C3-loss guards before diversity;
-- a six-item Safe archive plus a three-item joint representative beam per agent;
-- fixed-probe answer, correctness, invalid, and trace-embedding profiles;
-- rollout-signature deduplication instead of prompt or mechanism niches;
-- offline enumeration of all `3^5 = 243` beam teams;
-- one TCS repair and one direct open rollout-exploration channel per supported parent;
-- Vote and C3 before rollout diversity in joint team selection;
+```text
+method_version = v9_state_conditioned_error
+reward_mode = rollout_state_conditioned
+candidate_selection_mode = state_conditioned_accuracy_first
+best_state_selection_mode = state_conditioned_vote_first
+```
+
+V9 uses:
+
+- C0/C1 correct-coverage repair, C2 vote conversion, and general accuracy as separate routes;
+- representative, coverage, and option-stratified conversion candidate pools;
+- representative-pool accuracy and invalid guards before state utility;
+- an accuracy epsilon band before coverage or C2 candidates enter the Archive;
+- an incumbent, accuracy, coverage, and conversion representative per agent;
+- fixed-probe offline enumeration of at most `4^5 = 1024` teams;
+- trace distance only as the final optional tie-break;
+- no prompt-text, mechanism, capability, persona, or random-error diversity reward;
+- training-time validation baseline guard and validation-only state selection;
 - validation-only best epoch selection followed by one restored final test.
 
-Prompt text, optimizer-reported mechanisms, and artificial capability labels are not optimization evidence. Diversity never compensates for quality failure.
+Wrong-answer dispersion has task value only when a C2 target remains wrong and reduces the dominant wrong cluster. C0, C1, and C3+ receive zero wrong-dispersion task gain.
 
 Acceptance diagnostics are reporting-only. Each prediction records correct
 agent count, gold vote count, largest wrong cluster, plurality margin, Oracle
@@ -49,11 +54,11 @@ numbers, collections, and unknown strings reject direct pass. Missing or null
 `passed` remains compatible with score-only historical Critic output.
 Rewrite and forced-best behavior is unchanged.
 
-## Rollout Search Space
+## State-Conditioned Search Space
 
-Candidates pass the minimal rollout schema, completeness, and validity checks, then are evaluated against the active team. Safe candidates satisfy target-accuracy, invalid-rate, Vote-loss, and C3-loss guards. The archive deduplicates by prompt hash and fixed-probe rollout signature. Joint combinations are evaluated offline from cached fixed-probe answer, correctness, invalid, and trace profiles.
+Candidates pass schema, completeness, and validity checks, then are evaluated against the active team. Safe candidates satisfy representative-pool target-accuracy and invalid guards plus directional C1/C2/C3 and Vote-loss guards. The Archive deduplicates by prompt hash and fixed-probe rollout signature. Joint combinations are evaluated offline from cached answer, correctness, invalid, and trace profiles.
 
-The rollout methods never perform legacy per-epoch beam refresh. Existing result directories remain readable by their recorded method version. Checkpoint v6 fingerprints all rollout objective and guard settings; incompatible checkpoints fail explicitly.
+V9 never performs legacy per-epoch beam refresh. Existing result directories remain readable by their recorded method version. Checkpoint v6 plus the V9 state marker fingerprints behavior settings; incompatible checkpoints fail explicitly.
 
 Candidate accounting exposes a deduplicated funnel for TCS, Open exploration,
 incumbent, and other candidates from generation through active selection.
@@ -62,7 +67,7 @@ records Safe profile coverage, excluded dirty shortlist counts, oldest
 unprofiled Safe age, representative profile coverage, and representative
 behavior distances. These diagnostics do not change shortlist or ranking.
 
-Historical mechanism and lineage code remains available only for old settings and run analysis.
+Historical V8 rollout, mechanism, and lineage code remains available for reproduction and old-run analysis.
 
 ## Architecture
 
@@ -87,19 +92,19 @@ Strict manifests check normalized-question overlap and record split counts and h
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
 $SHA = (git rev-parse --short HEAD)
-$OUT = "runs_v8_rollout_qd_smoke_$SHA"
+$OUT = "runs_v9_state_conditioned_smoke_$SHA"
 
 & $PY scripts/run_task_level_accuracy.py `
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_accuracy_rollout_embedding_tcs,shared_vote_ready_rollout_diversity_tcs `
+  --settings shared_state_conditioned_error_tcs `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `
   --run_concurrency 1 `
   --agents 5 `
-  --epochs 2 `
+  --epochs 1 `
   --train_size 20 `
   --val_size 20 `
   --test_size 20 `
@@ -108,7 +113,10 @@ $OUT = "runs_v8_rollout_qd_smoke_$SHA"
   --num_candidates_per_parent 2 `
   --candidate_eval_strategy fixed_pool `
   --candidate_eval_pool_size 20 `
-  --candidate_eval_batch_size 10 `
+  --candidate_eval_batch_size 12 `
+  --candidate_batch_representative_size 6 `
+  --candidate_batch_coverage_size 3 `
+  --candidate_batch_conversion_size 3 `
   --candidate_eval_repeats 1 `
   --candidate_eval_execution_mode factorized_cached `
   --candidate_reuse_recorded_rollouts 1 `
@@ -132,7 +140,7 @@ Resume with exactly the same behavior-affecting arguments, output root, and spli
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_accuracy_rollout_embedding_tcs,shared_vote_ready_rollout_diversity_tcs `
+  --settings shared_state_conditioned_error_tcs `
   --seeds 42 `
   --dataset_format mars `
   --out_root $OUT `

@@ -305,6 +305,68 @@ class TargetSelectorMixin:
     def _build_case_generation_batches(self, agent_id: int, diagnosis: Dict[str, Any]) -> List[Dict[str, Any]]:
         target_error_cases = self._target_error_cases_for_agent(diagnosis, agent_id)
         target_error_limit = max(1, int(self.cfg.max_homogeneous_cases_per_agent))
+        if self._is_state_conditioned_method():
+            general = [case for case in target_error_cases if not bool(case.get("target_correct", False))]
+            coverage = []
+            conversion = []
+            assignments = dict(getattr(self, "coverage_case_assignment_per_agent", {}) or {})
+            assigned_to_target = set(str(value) for value in assignments.get(str(agent_id), []))
+            for case in general:
+                correct_count = int(case.get("baseline_correct_count", -1) or 0)
+                question_hash = str(case.get("question_hash", case.get("sample_hash", case.get("case_id", ""))))
+                if correct_count in {0, 1}:
+                    assignees = coverage_case_assignees(
+                        question_hash,
+                        len(self.agents),
+                        seed=int(self.cfg.seed),
+                        assignment_count=min(2, len(self.agents)),
+                    )
+                    if agent_id in assignees:
+                        enriched = dict(case)
+                        enriched["coverage_assigned_agents"] = assignees
+                        enriched["state"] = f"C{correct_count}"
+                        coverage.append(enriched)
+                        assigned_to_target.add(question_hash)
+                elif correct_count == 2:
+                    enriched = dict(case)
+                    enriched["state"] = "C2"
+                    conversion.append(enriched)
+            assignments[str(agent_id)] = sorted(assigned_to_target)
+            self.coverage_case_assignment_per_agent = assignments
+
+            batches = [{
+                "batch_type": "state_general_accuracy",
+                "optimization_route": "general_accuracy",
+                "priority": 0,
+                "cases": general[:target_error_limit],
+                "purpose": (
+                    "repair target-agent errors while preserving overall accuracy; "
+                    "do not treat changed wrong answers as progress"
+                ),
+            }]
+            if bool(getattr(self.cfg, "state_coverage_enabled", True)):
+                batches.append({
+                    "batch_type": "state_coverage_repair",
+                    "optimization_route": "coverage_repair",
+                    "priority": 1,
+                    "cases": coverage[:target_error_limit],
+                    "purpose": (
+                        "repair deterministically assigned C0/C1 residual cases to create C0-to-C1 "
+                        "or C1-to-C2 correct coverage without sacrificing existing correct cases"
+                    ),
+                })
+            if bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)):
+                batches.append({
+                    "batch_type": "state_vote_conversion",
+                    "optimization_route": "vote_conversion",
+                    "priority": 2,
+                    "cases": conversion[:target_error_limit],
+                    "purpose": (
+                        "first make the target correct on C2 cases to create C2-to-C3; only if it remains "
+                        "wrong, reduce a dominant wrong cluster on theoretically rescuable C2 cases"
+                    ),
+                })
+            return [batch for batch in batches if batch["optimization_route"] == "general_accuracy" or batch.get("cases")]
         if self._is_accuracy_only_mode():
             error_cases = self._accuracy_cases_for_agent(diagnosis, agent_id)
             random_cases = [
@@ -556,6 +618,11 @@ class TargetSelectorMixin:
             "error_pattern",
             "repair_hint",
         ]
+        if self._is_state_conditioned_method():
+            allowed.extend([
+                "baseline_correct_count", "state", "coverage_assigned_agents",
+                "option_count", "question_hash", "sample_hash",
+            ])
         if self._v7_residual_protocol_enabled():
             allowed.extend(["capability_residual_family", "confidence", "peer_wrong_count", "vote_context"])
         for key in allowed:
