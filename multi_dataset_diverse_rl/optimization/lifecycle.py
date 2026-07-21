@@ -179,7 +179,20 @@ class LifecycleMixin:
         self.c1_deepening_count_per_agent: Dict[str, int] = {
             str(i): 0 for i in range(len(self.agents))
         }
-        self.state_search_diagnostics: Dict[str, int] = {"evaluated_candidate_count": 0}
+        self.state_search_diagnostics: Dict[str, int] = {
+            "evaluated_candidate_count": 0,
+            "candidate_diversity_constraint_evaluated_count": 0,
+            "candidate_diversity_constraint_pass_count": 0,
+            "candidate_diversity_constraint_rejection_count": 0,
+            "candidate_correct_set_constraint_rejection_count": 0,
+            "candidate_safe_trace_constraint_rejection_count": 0,
+            "correct_set_constraint_binding_count": 0,
+            "safe_trace_constraint_binding_count": 0,
+            "paired_safe_trace_available_count": 0,
+            "paired_safe_trace_pair_count": 0,
+            "safe_diversity_parent_use_count": 0,
+            "accepted_accuracy_regression_count": 0,
+        }
         self.fixed_probe_state_snapshot: Dict[str, Any] = {}
         self.fixed_acceptance_probe_data: List[Dict[str, str]] = []
         self.initial_sequential_profiles: List[Dict[str, Any]] = []
@@ -265,6 +278,11 @@ class LifecycleMixin:
 
     def _is_rollout_qd_method(self) -> bool:
         return is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy"))
+
+    def _uses_fixed_acceptance_probe(self) -> bool:
+        return is_fixed_acceptance_probe_method(
+            getattr(self.cfg, "method_version", "legacy")
+        )
 
     def _is_state_conditioned_method(self) -> bool:
         return is_state_conditioned_method(getattr(self.cfg, "method_version", "legacy"))
@@ -381,7 +399,7 @@ class LifecycleMixin:
         return base + (1.0 - float(self.specialization_strength)) * extra
 
     def _uses_baseline_candidate_metrics(self) -> bool:
-        return self._is_rollout_qd_method() or self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode() or self._is_coverage_useful_diversity_mode() or self._is_competence_depth_reward_mode()
+        return self._uses_fixed_acceptance_probe() or self._is_guarded_reward_mode() or self._is_vote_useful_diversity_mode() or self._is_coverage_useful_diversity_mode() or self._is_competence_depth_reward_mode()
 
     def _uses_vote_pareto_selection(self) -> bool:
         return str(getattr(self.cfg, "candidate_selection_mode", "scalar_reward") or "scalar_reward").lower() in {
@@ -410,6 +428,8 @@ class LifecycleMixin:
         )
 
     def _experiment_protocol_version(self) -> str:
+        if self._is_state_conditioned_method():
+            return str(self.cfg.method_version)
         if self._is_rollout_qd_method():
             return str(self.cfg.method_version)
         if self._is_stable_qd_lineage():

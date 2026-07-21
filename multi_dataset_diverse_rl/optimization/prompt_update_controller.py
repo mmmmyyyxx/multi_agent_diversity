@@ -115,6 +115,10 @@ class CandidateGenerationStage:
                 system.state_parent_selection_source_counts[source] = int(
                     system.state_parent_selection_source_counts.get(source, 0) or 0
                 ) + 1
+                if source == 'safe_diversity_parent':
+                    system.state_search_diagnostics['safe_diversity_parent_use_count'] = int(
+                        system.state_search_diagnostics.get('safe_diversity_parent_use_count', 0) or 0
+                    ) + 1
             selected_parent_hashes = {
                 str(item.get('prompt_hash', '')) for item in context.beam
             }
@@ -804,7 +808,7 @@ class UpdateSummaryStage:
                 ],
             })
         system.depth1_guard_rejection_count = int(getattr(system, 'depth1_guard_rejection_count', 0)) + int(context.summary['depth1_guard_rejection_count'])
-        if system._is_stable_qd_lineage() or system._is_rollout_qd_method():
+        if system._is_stable_qd_lineage() or system._is_rollout_qd_method() or system._is_state_conditioned_method():
             system.total_agent_update_count += 1
         if system._is_stable_qd_lineage():
             system.task_repair_niche_occupancy_count += int(context.pareto_summary.get('task_repair_niche_occupancy', 0) or 0)
@@ -827,6 +831,7 @@ class PromptUpdateMixin:
         if not getattr(self, 'current_sequential_profiles', []):
             await self.refresh_state_conditioned_fixed_probe_snapshot(probe_data, epoch=context.epoch_id)
         active_profiles = [dict(profile) for profile in self.current_sequential_profiles]
+        previous_active_profile = dict(active_profiles[context.agent_id])
         question_hashes = [self._hash(str(example.get('question', ''))) for example in probe_data]
         gold_answers = [
             self.task_spec.parse_gold(example.get('answer'), str(example.get('question', '')))
@@ -863,6 +868,7 @@ class PromptUpdateMixin:
             row['prompt_hash'] = self._normalized_prompt_hash(prompt)
             unique.setdefault(row['prompt_hash'], row)
         before_missing = int(getattr(self, 'full_probe_missing_pair_evaluation_count', 0))
+        before_cache_hits = int(getattr(self, 'full_probe_cache_hit_count', 0))
         stage_b_concurrency = max(1, min(
             int(getattr(self.cfg, 'candidate_eval_concurrency', 1) or 1),
             len(unique),
@@ -885,7 +891,15 @@ class PromptUpdateMixin:
                 active_team_metrics['vote_correct_vector'], team_metrics['vote_correct_vector'],
                 self.cfg,
             )
-            metrics = {**dict(row.get('metrics', {}) or {}), **team_metrics, **reward}
+            paired_safe_trace = paired_safe_trace_diversity_c4c5(
+                active_profiles, team_profiles, context.agent_id, self.cfg
+            )
+            metrics = {
+                **dict(row.get('metrics', {}) or {}),
+                **team_metrics,
+                **reward,
+                **paired_safe_trace,
+            }
             initial_metrics = (
                 self.initial_sequential_team_metrics[context.agent_id]
                 if context.agent_id < len(self.initial_sequential_team_metrics)
@@ -894,10 +908,17 @@ class PromptUpdateMixin:
             metrics.update(full_probe_constraints(metrics, active_team_metrics, initial_metrics, self.cfg))
             metrics['rollout_profile'] = dict(profile)
             metrics['outcome_signature_hash'] = outcome_signature(
-                profile, self.cfg.state_outcome_signature_version
+                profile,
+                self.cfg.state_outcome_signature_version,
+                str(getattr(self, 'current_fixed_probe_hash', '')),
+                question_hashes,
             )
             metrics['safe_trace_signature_hash'] = safe_trace_signature(
-                profile, self.cfg.state_safe_trace_signature_version
+                team_profiles,
+                context.agent_id,
+                self.cfg.state_safe_trace_signature_version,
+                str(getattr(self, 'current_fixed_probe_hash', '')),
+                question_hashes,
             )
             row['metrics'] = metrics
             row['outcome_signature_hash'] = metrics['outcome_signature_hash']
@@ -909,6 +930,55 @@ class PromptUpdateMixin:
         profiled = await asyncio.gather(*[
             evaluate_full_probe(dict(row)) for row in unique.values()
         ])
+        if not isinstance(getattr(self, 'state_search_diagnostics', None), dict):
+            self.state_search_diagnostics = {}
+        diagnostics = self.state_search_diagnostics
+        for key in (
+            'candidate_diversity_constraint_evaluated_count',
+            'candidate_diversity_constraint_pass_count',
+            'candidate_diversity_constraint_rejection_count',
+            'candidate_correct_set_constraint_rejection_count',
+            'candidate_safe_trace_constraint_rejection_count',
+            'correct_set_constraint_binding_count', 'safe_trace_constraint_binding_count',
+            'paired_safe_trace_available_count', 'paired_safe_trace_pair_count',
+            'safe_diversity_parent_use_count', 'accepted_accuracy_regression_count',
+        ):
+            diagnostics.setdefault(key, 0)
+        diagnostics['evaluated_candidate_count'] = int(
+            diagnostics.get('evaluated_candidate_count', 0) or 0
+        ) + len(profiled)
+        for item in profiled:
+            metrics = item.get('metrics', {})
+            evaluated_diversity = bool(metrics.get('diversity_constraint_evaluated', False))
+            correct_rejected = bool(metrics.get('correct_set_constraint_rejected', False))
+            safe_rejected = bool(metrics.get('safe_trace_constraint_rejected', False))
+            diagnostics['candidate_diversity_constraint_evaluated_count'] = int(
+                diagnostics.get('candidate_diversity_constraint_evaluated_count', 0) or 0
+            ) + int(evaluated_diversity)
+            diagnostics['candidate_diversity_constraint_pass_count'] = int(
+                diagnostics.get('candidate_diversity_constraint_pass_count', 0) or 0
+            ) + int(evaluated_diversity and not correct_rejected and not safe_rejected)
+            diagnostics['candidate_diversity_constraint_rejection_count'] = int(
+                diagnostics.get('candidate_diversity_constraint_rejection_count', 0) or 0
+            ) + int(correct_rejected or safe_rejected)
+            diagnostics['candidate_correct_set_constraint_rejection_count'] = int(
+                diagnostics.get('candidate_correct_set_constraint_rejection_count', 0) or 0
+            ) + int(correct_rejected)
+            diagnostics['candidate_safe_trace_constraint_rejection_count'] = int(
+                diagnostics.get('candidate_safe_trace_constraint_rejection_count', 0) or 0
+            ) + int(safe_rejected)
+            diagnostics['correct_set_constraint_binding_count'] = int(
+                diagnostics.get('correct_set_constraint_binding_count', 0) or 0
+            ) + int(bool(metrics.get('correct_set_constraint_binding', False)))
+            diagnostics['safe_trace_constraint_binding_count'] = int(
+                diagnostics.get('safe_trace_constraint_binding_count', 0) or 0
+            ) + int(bool(metrics.get('safe_trace_constraint_binding', False)))
+            diagnostics['paired_safe_trace_available_count'] = int(
+                diagnostics.get('paired_safe_trace_available_count', 0) or 0
+            ) + int(bool(metrics.get('paired_safe_trace_constraint_available', False)))
+            diagnostics['paired_safe_trace_pair_count'] = int(
+                diagnostics.get('paired_safe_trace_pair_count', 0) or 0
+            ) + int(metrics.get('paired_safe_trace_pair_count', 0) or 0)
         incumbent = next(item for item in profiled if item['prompt_hash'] == active_hash)
         feasible = [
             item for item in profiled
@@ -921,14 +991,23 @@ class PromptUpdateMixin:
                 item['metrics']['sequential_constraints_passed'] = False
                 item['metrics']['rejection_reason'] = 'prompt_reaccept_cooldown'
         feasible = [item for item in feasible if item['metrics']['sequential_constraints_passed']]
-        selected = max(feasible or [incumbent], key=accuracy_first_key)
+        selected = max(feasible or [incumbent], key=lambda item: accuracy_first_key(item, self.cfg))
         changed = (
             selected['prompt_hash'] != active_hash
             and candidate_strictly_beats_incumbent(selected, incumbent, self.cfg)
         )
         if not changed:
             selected = incumbent
+        previous_active_item = dict(incumbent)
+        previous_active_item['metrics'] = dict(incumbent.get('metrics', {}) or {})
+        previous_active_item['metrics']['rollout_profile'] = previous_active_profile
         if changed:
+            if int(selected['metrics'].get('candidate_target_correct_count', 0) or 0) < int(
+                incumbent['metrics'].get('candidate_target_correct_count', 0) or 0
+            ):
+                diagnostics['accepted_accuracy_regression_count'] = int(
+                    diagnostics.get('accepted_accuracy_regression_count', 0) or 0
+                ) + 1
             context.agent.current_prompt = str(selected['prompt'])
             context.agent.history.append(context.agent.current_prompt)
             context.agent.accept_count += 1
@@ -947,11 +1026,15 @@ class PromptUpdateMixin:
         else:
             context.agent.reject_count += 1
         memory_items = [item for item in profiled if item['metrics']['sequential_constraints_passed']]
-        context.agent.prompt_memory = rebuild_prompt_memory(
+        context.agent.prompt_memory, memory_diagnostics = rebuild_prompt_memory(
             memory_items,
             self._normalized_prompt_hash(context.agent.current_prompt),
             int(self.cfg.state_prompt_memory_capacity),
+            config=self.cfg,
+            previous_active_item=previous_active_item if changed else None,
+            return_diagnostics=True,
         )
+        context.agent.prompt_memory_diagnostics = dict(memory_diagnostics)
         if changed:
             for peer_id, peer in enumerate(self.agents):
                 if peer_id == context.agent_id or not peer.prompt_memory:
@@ -979,6 +1062,9 @@ class PromptUpdateMixin:
                         self.cfg,
                     )
                     merged = {**dict(memory_item.get('metrics', {}) or {}), **peer_metrics, **peer_reward}
+                    merged.update(paired_safe_trace_diversity_c4c5(
+                        self.current_sequential_profiles, peer_profiles, peer_id, self.cfg
+                    ))
                     peer_initial = (
                         self.initial_sequential_team_metrics[peer_id]
                         if peer_id < len(self.initial_sequential_team_metrics) else peer_active
@@ -986,13 +1072,24 @@ class PromptUpdateMixin:
                     merged.update(full_probe_constraints(merged, peer_active, peer_initial, self.cfg))
                     row = dict(memory_item)
                     row['metrics'] = merged
+                    row['safe_trace_signature_hash'] = safe_trace_signature(
+                        peer_profiles,
+                        peer_id,
+                        self.cfg.state_safe_trace_signature_version,
+                        str(getattr(self, 'current_fixed_probe_hash', '')),
+                        question_hashes,
+                    )
+                    row['metrics']['safe_trace_signature_hash'] = row['safe_trace_signature_hash']
                     refreshed_memory.append(row)
                 if refreshed_memory:
-                    peer.prompt_memory = rebuild_prompt_memory(
+                    peer.prompt_memory, peer_memory_diagnostics = rebuild_prompt_memory(
                         refreshed_memory,
                         self._normalized_prompt_hash(peer.current_prompt),
                         int(self.cfg.state_prompt_memory_capacity),
+                        config=self.cfg,
+                        return_diagnostics=True,
                     )
+                    peer.prompt_memory_diagnostics = dict(peer_memory_diagnostics)
                     peer.prompt_beam = [dict(item) for item in peer.prompt_memory]
         stage_a_candidate_count = len(context.evaluated)
         context.agent.prompt_beam = [dict(item) for item in context.agent.prompt_memory]
@@ -1012,19 +1109,34 @@ class PromptUpdateMixin:
             'target_selection_reason': 'deterministic_rotating_order',
             'active_prompt_changed': bool(changed),
             'active_prompt_changed_count': int(changed),
+            'previous_active_prompt_hash': active_hash,
             'selected_prompt_hash': str(selected['prompt_hash']),
-            'selected_accuracy_first_key': list(accuracy_first_key(selected)),
+            'rollback_prompt_hash': str(memory_diagnostics.get('rollback_prompt_hash', '')),
+            'selected_accuracy_first_key': list(accuracy_first_key(selected, self.cfg)),
             'stage_a_candidate_count': stage_a_candidate_count,
             'stage_b_candidate_count': len(profiled),
             'stage_b_full_probe_solver_calls': int(
                 getattr(self, 'full_probe_missing_pair_evaluation_count', 0)
             ) - before_missing,
+            'stage_b_cache_hits': int(getattr(self, 'full_probe_cache_hit_count', 0)) - before_cache_hits,
             'prompt_memory_size': len(context.agent.prompt_memory),
             'memory_capacity': int(self.cfg.state_prompt_memory_capacity),
             'memory_occupancy': len(context.agent.prompt_memory),
             'prompt_memory_slots': [item.get('prompt_memory_slot', '') for item in context.agent.prompt_memory],
+            'memory_underfilled': bool(memory_diagnostics.get('memory_underfilled', False)),
+            'memory_underfilled_reason': str(memory_diagnostics.get('memory_underfilled_reason', '')),
+            'memory_slot_candidate_count': dict(memory_diagnostics.get('slot_candidate_count', {})),
+            'memory_slot_duplicate_skip_count': int(memory_diagnostics.get('slot_duplicate_skip_count', 0)),
+            'memory_quality_fill_count': int(memory_diagnostics.get('quality_fill_count', 0)),
             'joint_team_combination_count': 0,
             'equal_vote_weighting': True,
+            'raw_vote_accuracy_delta': float(selected['metrics'].get('vote_accuracy_delta', 0.0) or 0.0),
+            'vote_gain_count': int(selected['metrics'].get('vote_gain_count', 0) or 0),
+            'vote_loss_count': int(selected['metrics'].get('vote_loss_count', 0) or 0),
+            'diversity_constraints_enabled': bool(self.cfg.state_diversity_constraints_enabled),
+            'optimizer_generation_diagnostics': dict(
+                getattr(context, 'optimizer_generation_summary', {}) or {}
+            ),
             'selected_metrics': {
                 key: value for key, value in selected['metrics'].items()
                 if key not in {'rollout_profile', 'correctness_rows', 'vote_correct_vector'}
@@ -1039,7 +1151,7 @@ class PromptUpdateMixin:
                         changed
                         and str(item.get('prompt_hash', '')) == str(selected.get('prompt_hash', ''))
                     ),
-                    'accuracy_first_key': list(accuracy_first_key(item)),
+                    'accuracy_first_key': list(accuracy_first_key(item, self.cfg)),
                     **{
                         key: item.get('metrics', {}).get(key)
                         for key in (
@@ -1051,7 +1163,19 @@ class PromptUpdateMixin:
                             'global_accuracy_loss_count', 'correct_set_diversity_mean',
                             'correct_set_diversity_min', 'safe_trace_diversity_c4c5',
                             'safe_trace_pair_count', 'safe_trace_constraint_available',
+                            'active_paired_safe_trace_diversity',
+                            'candidate_paired_safe_trace_diversity',
+                            'paired_safe_trace_delta', 'paired_safe_trace_pair_count',
+                            'paired_safe_trace_constraint_available',
                             'accuracy_constraint_passed', 'invalid_constraint_passed',
+                            'correct_set_diversity_constraint_passed',
+                            'safe_trace_constraint_passed',
+                            'diversity_constraint_evaluated',
+                            'correct_set_constraint_rejected',
+                            'safe_trace_constraint_rejected',
+                            'correct_set_constraint_binding',
+                            'safe_trace_constraint_binding',
+                            'vote_accuracy_delta', 'vote_gain_count', 'vote_loss_count',
                             'diversity_constraint_slack', 'sequential_constraints_passed',
                             'candidate_feasible',
                             'rejection_reason',
@@ -1066,6 +1190,17 @@ class PromptUpdateMixin:
         self.cost_summary['stage_b_full_probe_solver_calls'] = int(
             self.cost_summary.get('stage_b_full_probe_solver_calls', 0) or 0
         ) + int(record['stage_b_full_probe_solver_calls'])
+        self.cost_summary['stage_b_cache_hits'] = int(
+            self.cost_summary.get('stage_b_cache_hits', 0) or 0
+        ) + int(record['stage_b_cache_hits'])
+        stage_b_total = (
+            int(self.cost_summary['stage_b_full_probe_solver_calls'])
+            + int(self.cost_summary['stage_b_cache_hits'])
+        )
+        self.cost_summary['stage_b_cache_hit_rate'] = (
+            float(self.cost_summary['stage_b_cache_hits']) / stage_b_total
+            if stage_b_total else 0.0
+        )
         self.sequential_update_history.append(dict(record))
         self._flush_jsonl('sequential_update_history.jsonl', [record])
         self.update_logs.append(dict(record))
@@ -1079,6 +1214,7 @@ class PromptUpdateMixin:
             for row in getattr(context, 'optimizer_generation_records', [])
         )
         summary = {
+            **dict(getattr(context, 'optimizer_generation_summary', {}) or {}),
             'agent_id': context.agent_id,
             'updated': bool(changed),
             'active_prompt_changed': bool(changed),
@@ -1100,11 +1236,16 @@ class PromptUpdateMixin:
             'top_metrics': selected['metrics'],
             'prompt_memory_size': len(context.agent.prompt_memory),
             'stage_b_full_probe_solver_calls': record['stage_b_full_probe_solver_calls'],
+            'stage_b_cache_hits': record['stage_b_cache_hits'],
+            'memory_occupancy': record['memory_occupancy'],
+            'memory_underfilled': record['memory_underfilled'],
+            'rollback_prompt_hash': record['rollback_prompt_hash'],
             'joint_team_combination_count': 0,
             'epoch_agent_order': record['epoch_agent_order'],
             'current_agent_order_index': record['current_agent_order_index'],
             'target_selection_reason': record['target_selection_reason'],
         }
+        self.total_agent_update_count = int(getattr(self, 'total_agent_update_count', 0)) + 1
         context.agent.last_update_record = dict(summary)
         return changed, summary
 

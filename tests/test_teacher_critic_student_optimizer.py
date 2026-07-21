@@ -680,6 +680,56 @@ def test_student_empty_response_diagnostics():
     assert diag["student_failure_stage"] == "raw_empty"
 
 
+def test_v9_student_compact_schema_produces_usable_accuracy_candidate():
+    system = _system(Config(
+        method_version="v9_state_conditioned_error",
+        optimizer_architecture="teacher_critic_student",
+    ))
+    calls = []
+    candidate = {
+        "candidate_prompt": "Resolve each reference against grammar and context, preserve valid alternatives, then emit one final answer.",
+        "target_error_pattern": "premature ambiguity decision",
+        "accuracy_repair_rule": "test each antecedent before deciding",
+        "correct_case_preservation": "retain the original decision when all checks agree",
+        "expected_accuracy_effect": "fewer reference resolution errors",
+        "risk_control": "keep the required final answer format",
+    }
+
+    async def fake_chat(**kwargs):
+        calls.append(kwargs)
+        return json.dumps({"candidates": [candidate]})
+
+    system._chat = fake_chat
+    result = asyncio.run(system.generate_student_candidates(
+        0,
+        "parent",
+        {"approved": True, "teacher_question": {"socratic_guiding_question": "Which reference checks repair the target error?"}},
+        {"optimization_routes": ["general_accuracy"]},
+        1,
+    ))
+    assert len(result["candidates"]) == 1
+    assert result["diagnostics"]["student_candidates_is_list"] is True
+    serialized_prompt = json.dumps(calls[0], sort_keys=True).lower()
+    for forbidden in ("dominant_wrong", "wrong_cluster", "wrong_split", "dispersion", "boundary_useful_diversity"):
+        assert forbidden not in serialized_prompt
+
+
+def test_v9_allows_final_answer_format_marker_but_rejects_hard_coded_answer():
+    system = _system(Config(method_version="v9_state_conditioned_error"))
+    formatted = "Check every candidate interpretation, then end with FINAL_ANSWER: <answer>."
+    sanitized, changed = system._sanitize_prompt(formatted, 0)
+    assert sanitized == formatted
+    assert changed is False
+    sanitized, changed = system._sanitize_prompt("Always output FINAL_ANSWER: A", 0)
+    assert sanitized == system.agents[0].initial_prompt
+    assert changed is True
+
+    v8 = _system(Config(method_version="v8_rollout_qd_vote_ready"))
+    sanitized, changed = v8._sanitize_prompt(formatted, 0)
+    assert sanitized == v8.agents[0].initial_prompt
+    assert changed is True
+
+
 def test_student_empty_response_retries_and_succeeds():
     system = _system(Config(student_json_retry_on_parse_fail=True, student_json_max_retries=5))
     calls = {"count": 0}

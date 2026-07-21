@@ -65,6 +65,7 @@ class _SequentialSmokeSystem(PromptUpdateMixin):
         }
         self.fixed_probe_snapshot_refresh_count = 0
         self.full_probe_missing_pair_evaluation_count = 0
+        self.full_probe_cache_hit_count = 0
         self._profile_cache = set()
         self.sequential_update_history = []
         self.sequential_recent_accepted_prompt_hashes = []
@@ -73,6 +74,8 @@ class _SequentialSmokeSystem(PromptUpdateMixin):
         self.prompt_history = []
         self.cost_summary = {}
         self.state_parent_selection_source_counts = {}
+        self.state_search_diagnostics = {}
+        self.total_agent_update_count = 0
         self.recent_window_records = []
 
     @staticmethod
@@ -152,6 +155,11 @@ def test_deterministic_sequential_stage_b_smoke_and_checkpoint_resume():
         parent_jobs=[{}],
         requested=1,
         optimizer_generation_records=[],
+        optimizer_generation_summary={
+            "student_candidate_count_raw": 1,
+            "student_candidate_count_final": 1,
+            "student_failure_stage": "none",
+        },
     )
     changed, summary = asyncio.run(system._run_v9_sequential_stage_b(context))
 
@@ -161,7 +169,20 @@ def test_deterministic_sequential_stage_b_smoke_and_checkpoint_resume():
     assert system.fixed_probe_snapshot_refresh_count == 1
     assert system.fixed_probe_state_snapshot["active_prompt_hashes"][0] == "p0_new"
     assert len(system.agents[0].prompt_memory) <= 5
+    rollback = next(
+        item for item in system.agents[0].prompt_memory
+        if item["prompt_memory_slot"] == "rollback_or_recent_success"
+    )
+    assert rollback["prompt_hash"] == "p0"
+    assert system.sequential_update_history[-1]["previous_active_prompt_hash"] == "p0"
+    assert system.sequential_update_history[-1]["rollback_prompt_hash"] == "p0"
     assert system.sequential_update_history[-1]["joint_team_combination_count"] == 0
+    assert system.state_search_diagnostics["accepted_accuracy_regression_count"] == 0
+    assert system.total_agent_update_count == 1
+    assert system.sequential_update_history[-1]["optimizer_generation_diagnostics"][
+        "student_candidate_count_final"
+    ] == 1
+    assert summary["student_failure_stage"] == "none"
 
     checkpoint = build_training_checkpoint(
         system.cfg, system, epoch_index=0, cursor=1, order=[0, 1],

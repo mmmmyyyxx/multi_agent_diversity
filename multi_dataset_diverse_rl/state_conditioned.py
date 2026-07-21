@@ -1,4 +1,9 @@
-"""State-conditioned correlated-error optimization for the V9 method."""
+"""Legacy eef5387-era V9 artifact helpers.
+
+Current V9 training uses the sequential implementation in
+``sequential_state.py``. Archive, exploration, wrong-split, and joint selector
+helpers here remain available only for historical checkpoint analysis.
+"""
 
 from __future__ import annotations
 

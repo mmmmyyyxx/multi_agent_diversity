@@ -11,6 +11,7 @@ from multi_dataset_diverse_rl.persistence.checkpoint import (
     restore_system_state,
 )
 from multi_dataset_diverse_rl.qd.joint_controller import JointControllerMixin
+from multi_dataset_diverse_rl.strategy_registry import build_policy_bundle
 from multi_dataset_diverse_rl.state_conditioned import (
     STATE_SNAPSHOT_VERSION,
     build_fixed_probe_state_snapshot,
@@ -121,6 +122,12 @@ def test_v8_still_uses_rollout_selector():
     ))
     assert holder.rollout_calls == 1
     assert holder.state_calls == 0
+
+
+def test_v9_policy_bundle_has_no_rollout_archive_or_joint_selector():
+    bundle = build_policy_bundle(Config(method_version="v9_state_conditioned_error"))
+    assert bundle.archive_policy.name == "none"
+    assert bundle.joint_selector.name == "none"
 
 
 def _pool_fixture():

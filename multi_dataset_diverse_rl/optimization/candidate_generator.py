@@ -4,6 +4,84 @@ from ..system_shared import *
 
 
 class CandidateGeneratorMixin:
+    _V9_GENERATION_FORBIDDEN_TOKENS = (
+        "dominant_wrong", "wrong_cluster", "wrong_split", "dispersion",
+        "boundary_useful_diversity", "dominant wrong", "wrong cluster",
+        "wrong-answer split", "wrong-answer dispersion", "boundary useful diversity",
+        "diversity",
+    )
+
+    @classmethod
+    def _sanitize_v9_generation_value(cls, value: Any) -> Any:
+        if isinstance(value, dict):
+            return {
+                str(key): cls._sanitize_v9_generation_value(item)
+                for key, item in value.items()
+                if not any(token in str(key).lower() for token in cls._V9_GENERATION_FORBIDDEN_TOKENS)
+                and not (
+                    isinstance(item, str)
+                    and any(token in item.lower() for token in cls._V9_GENERATION_FORBIDDEN_TOKENS)
+                )
+            }
+        if isinstance(value, list):
+            return [
+                cls._sanitize_v9_generation_value(item)
+                for item in value
+                if not (
+                    isinstance(item, str)
+                    and any(token in item.lower() for token in cls._V9_GENERATION_FORBIDDEN_TOKENS)
+                )
+            ]
+        return value
+
+    def _build_v9_sequential_teacher_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        focus = dict(context.get("diagnostic_focus", {}) or {})
+        target_error_summary = str(focus.get("target_error_summary", ""))
+        target_error_summary = target_error_summary.split(
+            "; target_dominant_wrong_redundancy_count=", 1
+        )[0]
+        v9_context = {
+            "target_agent_id": int(context.get("target_agent_id", 0) or 0),
+            "parent_prompt_preview": str(context.get("parent_prompt_preview", "")),
+            "peer_prompt_summaries": list(context.get("peer_role_specs", []) or []),
+            "validity_constraints": dict(context.get("validity_constraints", {}) or {}),
+            "optimization_routes": list(context.get("optimization_routes", []) or []),
+            "generation_batches": list(context.get("generation_batches", []) or []),
+            "diagnostic_focus": {
+                "problem_type": str(focus.get("problem_type", "")),
+                "answer_format": str(focus.get("answer_format", "")),
+                "target_error_patterns": list(focus.get("target_error_patterns", []) or []),
+                "invalid_output_patterns": list(focus.get("invalid_output_patterns", []) or []),
+                "prompt_redundancy_summary": str(focus.get("prompt_redundancy_summary", "")),
+                "peer_behavior_summary": list(focus.get("peer_behavior_summary", []) or []),
+                "target_error_summary": target_error_summary,
+                "invalid_output_summary": str(focus.get("invalid_output_summary", "")),
+                "optimization_goal": (
+                    "Follow the requested route. Repair target errors and invalid output while preserving correct "
+                    "cases. Coverage repair makes the target correct on C0/C1 cases; vote conversion makes the "
+                    "target correct on C2/C3 cases. Generic procedural redundancy may be reduced, but "
+                    "disagreement and trace difference are not objectives."
+                ),
+            },
+        }
+        sanitized = self._sanitize_v9_generation_value(v9_context)
+        serialized = json.dumps(sanitized, ensure_ascii=False, sort_keys=True).lower()
+        forbidden_count = sum(serialized.count(token) for token in self._V9_GENERATION_FORBIDDEN_TOKENS)
+        if not isinstance(getattr(self, "state_search_diagnostics", None), dict):
+            self.state_search_diagnostics = {}
+        self.state_search_diagnostics["optimizer_context_audit_count"] = int(
+            self.state_search_diagnostics.get("optimizer_context_audit_count", 0) or 0
+        ) + 1
+        self.state_search_diagnostics["optimizer_context_wrong_cluster_field_count"] = int(
+            self.state_search_diagnostics.get("optimizer_context_wrong_cluster_field_count", 0) or 0
+        ) + forbidden_count
+        self.state_search_diagnostics["optimizer_context_forbidden_signal_count"] = int(
+            self.state_search_diagnostics.get("optimizer_context_forbidden_signal_count", 0) or 0
+        ) + forbidden_count
+        if forbidden_count:
+            raise RuntimeError("V9 optimizer context contains forbidden wrong-cluster diagnostics")
+        return sanitized
+
     def _ensure_candidate_channel_funnel(self) -> None:
         if not isinstance(getattr(self, "candidate_channel_funnel", None), dict):
             self.candidate_channel_funnel = empty_candidate_channel_funnel()
@@ -301,12 +379,7 @@ class CandidateGeneratorMixin:
                 "use valid solver-trace diversity only after quality guards."
             )
         if self._is_state_conditioned_method():
-            context["diagnostic_focus"]["rollout_optimization_goal"] = (
-                "Follow the requested optimization route. general_accuracy repairs target errors; "
-                "coverage_repair repairs assigned C0/C1 residuals; vote_conversion seeks C2-to-C3 "
-                "or C3-to-C4 by making the target correct. Wrong-answer label changes have zero value. "
-                "Trace differences are not a task objective."
-            )
+            return self._build_v9_sequential_teacher_context(context)
         return context
 
     async def propose_teacher_question(
@@ -345,8 +418,8 @@ class CandidateGeneratorMixin:
             system_prompt = (
                 "You are the Teacher in a state-conditioned prompt optimization system. Formulate one Socratic "
                 "question for the requested route: general accuracy, C0/C1 correct coverage, or C2/C3 vote conversion. "
-                "Correctness comes first. Vote conversion must make the target correct; changing one wrong answer "
-                "into another has no value. Never praise random disagreement, prompt wording "
+                "Correctness comes first. Vote conversion must make the target correct; label-only changes have no "
+                "value. Never praise random disagreement, prompt wording "
                 "difference, personas, assigned roles, or trace difference. Do not quote cases or reveal answers. "
                 "Return strict JSON only."
             )
@@ -370,6 +443,16 @@ class CandidateGeneratorMixin:
             f"parent_prompt_preview:\n{normalize_spaces(parent_prompt)[:600]}\n\n"
             f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
         )
+        if self._is_state_conditioned_method():
+            user_prompt = (
+                "Create one Socratic guiding question for an accuracy-first prompt repair. Return JSON with keys: "
+                "problem_type_analysis, answer_format_analysis, target_error_analysis, invalid_output_analysis, "
+                "correct_case_preservation, socratic_guiding_question, question_objective, expected_prompt_change, "
+                "expected_accuracy_effect, risk_to_avoid.\n\n"
+                f"target_agent_id: {agent_id}\nrequested_candidates: {requested_candidates}\n"
+                f"parent_prompt_preview:\n{normalize_spaces(parent_prompt)[:600]}\n\n"
+                f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+            )
         text = await self._chat(
             model=self.cfg.optimizer_model,
             system_prompt=system_prompt,
@@ -409,6 +492,13 @@ class CandidateGeneratorMixin:
                 "disagreement, invalid behavior, leakage, or any diversity goal that can reduce Vote, C3, or target accuracy. "
                 "Prefer C2-to-C3 or C3-to-C4 conversion, target correctness, and vote recovery. Return strict JSON only."
             )
+        if self._is_state_conditioned_method():
+            system_prompt = (
+                "Audit whether the Teacher question proposes one executable accuracy-first repair grounded in target "
+                "errors or invalid output. Vote failures may identify cases only when the repair makes the target correct. "
+                "Reject disagreement goals, trace-difference goals, personas, assigned roles, leakage, sample quoting, "
+                "generic advice, or changes that risk previously correct cases. Return strict JSON only."
+            )
         if self._v7_residual_protocol_enabled():
             system_prompt = system_prompt.replace(
                 "- focused on voting failure rather than prompt quality/diversity/accuracy\n\n",
@@ -429,6 +519,17 @@ class CandidateGeneratorMixin:
             f"teacher_question:\n{json.dumps(teacher_question, ensure_ascii=False, indent=2)}\n\n"
             f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
         )
+        if self._is_state_conditioned_method():
+            user_prompt = (
+                "Audit the Teacher question. Pass only if it is a specific executable accuracy repair with explicit "
+                "correct-case preservation and no leakage. Return JSON with keys: passed, score, quality_critique, "
+                "specificity_critique, task_alignment_critique, error_alignment_critique, safety_critique, "
+                "rewrite_instruction.\n\n"
+                f"target_agent_id: {agent_id}\n"
+                f"pass_threshold: {float(getattr(self.cfg, 'teacher_question_pass_threshold', 0.75))}\n"
+                f"teacher_question:\n{json.dumps(teacher_question, ensure_ascii=False, indent=2)}\n\n"
+                f"teacher_context:\n{json.dumps(teacher_context, ensure_ascii=False, indent=2)}"
+            )
         text = await self._chat(
             model=self.cfg.evaluator_model,
             system_prompt=system_prompt,
@@ -459,6 +560,12 @@ class CandidateGeneratorMixin:
                 "Revise the Teacher question using Critic feedback. Keep it grounded in observed rollout failures and "
                 "accuracy-first vote readiness. Do not add mechanism names, capability labels, prompt-text novelty, roles, "
                 "gold answers, or sample text. Return strict JSON only."
+            )
+        if self._is_state_conditioned_method():
+            system_prompt = (
+                "Revise the Teacher question using Critic feedback. Keep one concrete accuracy repair, preserve correct "
+                "cases, and address invalid output when present. Do not pursue disagreement, trace difference, personas, "
+                "roles, leakage, or sample-specific rules. Return strict JSON only."
             )
         user_prompt = (
             "Rewrite the Teacher JSON so it can pass Critic review while staying grounded in the abstract diagnostics.\n"
@@ -494,6 +601,8 @@ class CandidateGeneratorMixin:
         max_rounds = min(2, max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 2) or 2))) if stable_qd else max(1, int(getattr(self.cfg, "teacher_critic_max_rounds", 3) or 3))
         max_rewrites = min(1, max(0, int(getattr(self.cfg, "teacher_rewrite_max_count", 1) or 0))) if stable_qd else max(0, max_rounds - 1)
         teacher_question = await self.propose_teacher_question(agent_id, parent_prompt, teacher_context, requested_candidates)
+        if self._is_state_conditioned_method():
+            teacher_question = self._sanitize_v9_generation_value(teacher_question)
         reviews: List[Dict[str, Any]] = []
         question_versions: List[Dict[str, Any]] = []
         rewrite_count = 0
@@ -512,6 +621,8 @@ class CandidateGeneratorMixin:
                 review = await self.critique_teacher_question(agent_id, teacher_question, teacher_context)
             finally:
                 TCS_AUDIT_CONTEXT.reset(round_token)
+            if self._is_state_conditioned_method():
+                review = self._sanitize_v9_generation_value(review)
             reviews.append(review)
             question_versions.append(teacher_question)
             score = self._safe_float(review.get("score", 0.0), 0.0)
@@ -550,6 +661,8 @@ class CandidateGeneratorMixin:
                 finally:
                     TCS_AUDIT_CONTEXT.reset(rewrite_token)
                 rewrite_count += 1
+                if self._is_state_conditioned_method():
+                    teacher_question = self._sanitize_v9_generation_value(teacher_question)
         usable_indices = [
             idx for idx, question in enumerate(question_versions)
             if has_guiding_question(question)
@@ -739,7 +852,13 @@ class CandidateGeneratorMixin:
             "- Each non-prompt field must be one short sentence.\n"
             "- Each candidate_prompt should be a concise solver instruction, not a long essay.\n"
             "- Return a complete standalone prompt. Do not end mid-sentence.\n"
-            + ("- Keep only executable accuracy and validity instructions; do not describe named mechanisms or capabilities.\n" if self._is_rollout_qd_method() else "- Preserve useful mechanisms but merge repeated instructions; avoid repeatedly saying explicitly, systematically, before final selection, or check every constraint.\n")
+            + (
+                "- Keep only executable accuracy, correct-case preservation, and validity instructions.\n"
+                if self._is_state_conditioned_method()
+                else "- Keep only executable accuracy and validity instructions; do not describe named mechanisms or capabilities.\n"
+                if self._is_rollout_qd_method()
+                else "- Preserve useful mechanisms but merge repeated instructions; avoid repeatedly saying explicitly, systematically, before final selection, or check every constraint.\n"
+            )
             +
             "- Prefer semicolon-separated steps over numbered multiline lists.\n"
             '- If you cannot safely generate a candidate, return {"candidates":[]}.\n'
@@ -765,6 +884,11 @@ class CandidateGeneratorMixin:
             format_rules = (
                 "Return JSON with a candidates list. Do not use Markdown or code fences. "
                 f"Exact schema:\n{schema}"
+            )
+        if self._is_state_conditioned_method():
+            item_instruction = (
+                "Each item must match the schema and include one executable accuracy repair, one correct-case "
+                "preservation rule, and one validity risk control."
             )
         system_prompt = (
             "You are the Student in a Teacher-Critic-Student prompt optimization system.\n\n"
@@ -792,12 +916,14 @@ class CandidateGeneratorMixin:
                 f"{return_mode}"
             )
         if self._is_state_conditioned_method():
-            system_prompt += (
-                "\nObey optimization_route in the generation context. For general_accuracy, repair target errors "
-                "and preserve correct behavior. For coverage_repair, seek correct coverage on assigned C0/C1 "
-                "residuals. For vote_conversion, make the target correct on C2 or C3 cases. A wrong-to-wrong "
-                "answer change is not progress. Never optimize prompt wording, persona, "
-                "random disagreement, or trace difference."
+            system_prompt = (
+                "You are the Student in an accuracy-first sequential prompt optimization system. Generate complete "
+                "standalone solver prompts that implement the approved repair. Obey optimization_route: repair target "
+                "errors for general_accuracy, make the target correct on assigned C0/C1 cases for coverage_repair, and "
+                "make the target correct on C2/C3 cases for vote_conversion. Preserve behavior on already-correct cases "
+                "and keep output valid. Do not optimize disagreement, answer-label changes, trace difference, personas, "
+                "roles, prompt wording novelty, or sample-specific rules. Do not use gold answers or quote cases.\n\n"
+                f"{return_mode}"
             )
         elif open_exploration:
             system_prompt = (
@@ -1184,10 +1310,15 @@ class CandidateGeneratorMixin:
         )
         student_context_token = TCS_AUDIT_CONTEXT.set(student_context)
         try:
+            approved_for_generation = (
+                self._sanitize_v9_generation_value(approved)
+                if self._is_state_conditioned_method()
+                else approved
+            )
             student_result = await self.generate_student_candidates(
                 agent_id=agent_id,
                 parent_prompt=parent_prompt,
-                approved_teacher_question=approved,
+                approved_teacher_question=approved_for_generation,
                 teacher_context=teacher_context,
                 num_candidates=num_candidates,
                 generation_channel=generation_channel,

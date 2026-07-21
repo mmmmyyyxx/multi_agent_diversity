@@ -381,6 +381,7 @@ BEHAVIOR_CONFIG_FIELDS = (
         "state_potential_c0", "state_potential_c1", "state_potential_c2",
         "state_potential_c3", "state_potential_c4", "state_potential_c5",
         "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_bottom2_reward_enabled", "state_diversity_binding_tolerance",
         "state_min_secondary_reward_gain", "state_catastrophic_vote_loss_limit",
         "state_outcome_signature_version", "state_safe_trace_signature_version",
         "state_update_cycle_window", "state_prompt_reaccept_cooldown_updates",
@@ -640,7 +641,8 @@ def checkpoint_behavior_config(cfg):
         "state_outcome_signature_version", "state_safe_trace_signature_version",
         "state_update_cycle_window", "state_prompt_reaccept_cooldown_updates",
         "state_distribution_reward_enabled", "state_vote_reward_enabled",
-        "state_diversity_constraints_enabled",
+        "state_diversity_constraints_enabled", "state_bottom2_reward_enabled",
+        "state_diversity_binding_tolerance",
     )
     if not is_state_conditioned_method(getattr(cfg, "method_version", "legacy")):
         for field in state_fields:
@@ -780,6 +782,20 @@ def checkpoint_behavior_config(cfg):
         ):
             payload[field] = getattr(cfg, field, None)
     if is_state_conditioned_method(getattr(cfg, "method_version", "legacy")):
+        deprecated_v9_fields = {
+            "state_c2_wrong_split_enabled",
+            "state_trace_tiebreak_enabled",
+            "state_rollout_exploration_enabled",
+            "state_exploration_parent_enabled",
+            "state_exploration_parent_probability",
+            "state_exploration_stagnation_patience",
+            "state_exploration_parent_max_per_update",
+            "state_exploration_correct_set_weight",
+            "state_exploration_valid_trace_weight",
+            "state_joint_total_correct_slack_rate",
+            "state_representative_capacity",
+            "state_vote_objective_enabled",
+        }
         for field in (
             "method_version", "reward_mode", "candidate_selection_mode", "best_state_selection_mode",
             "beam_policy_version", "active_team_selector_version", "candidate_generation_policy_version",
@@ -787,7 +803,10 @@ def checkpoint_behavior_config(cfg):
             "probe_stability_version", "parent_selection_version", "legacy_beam_rescore_each_epoch",
             "qd_archive_size_per_agent", "joint_representative_beam_size", *state_fields,
         ):
-            payload[field] = getattr(cfg, field, None)
+            if field not in deprecated_v9_fields:
+                payload[field] = getattr(cfg, field, None)
+        for field in deprecated_v9_fields:
+            payload.pop(field, None)
     return payload
 
 

@@ -543,6 +543,28 @@ def rollout_method_metadata(cfg, system=None):
                 getattr(system, "state_parent_selection_source_counts", {})
             ) if system is not None else {},
         })
+        for deprecated_field in (
+            "state_vote_objective_enabled", "state_c2_wrong_split_enabled",
+            "state_trace_tiebreak_enabled", "state_rollout_exploration_enabled",
+            "state_exploration_parent_enabled", "state_exploration_parent_probability",
+            "state_exploration_stagnation_patience", "state_exploration_parent_max_per_update",
+            "state_exploration_correct_set_weight", "state_exploration_valid_trace_weight",
+            "state_joint_total_correct_slack_rate", "state_representative_capacity",
+            "exploration_profile_scope", "exploration_parent_use_count",
+            "exploration_descendant_count", "exploration_descendant_safe_count",
+            "exploration_descendant_archive_count", "exploration_descendant_active_count",
+            "exploration_descendant_state_gain_count", "active_selection_source_counts",
+        ):
+            metadata.pop(deprecated_field, None)
+        metadata.update({
+            "rollout_qd_method": False,
+            "fixed_acceptance_probe_enabled": True,
+            "rollout_archive_enabled": False,
+            "true_plurality_vote_delta_used": True,
+            "wrong_answer_dispersion_used_for_generation": False,
+            "diversity_is_noncollapse_constraint": True,
+            "deprecated_v9_fields_ignored": True,
+        })
     return metadata
 
 
@@ -956,12 +978,10 @@ async def main_async():
         elif candidate is not None:
             abort_incompatible_checkpoint(cfg, incompatibility_reasons)
 
-    rollout_qd_method = str(cfg.method_version) in {
-        "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error",
-    }
+    fixed_probe_method = system._uses_fixed_acceptance_probe()
     adaptive_competence_schedule = bool(cfg.competence_depth_enabled) and str(cfg.competence_schedule_mode) == "baseline_relative_opt_snapshot"
     fixed_competence_probe = []
-    if rollout_qd_method:
+    if fixed_probe_method:
         fixed_competence_probe = list(candidate_eval_pool or train_data)
         system.fixed_acceptance_probe_data = list(fixed_competence_probe)
         system.current_fixed_probe_hash = system._fixed_probe_hash(fixed_competence_probe)

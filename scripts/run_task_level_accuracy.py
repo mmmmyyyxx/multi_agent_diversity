@@ -371,8 +371,10 @@ def _append_common_cli_args(
         "state_safe_trace_weight_c5", "state_potential_c0", "state_potential_c1",
         "state_potential_c2", "state_potential_c3", "state_potential_c4",
         "state_potential_c5", "state_reward_vote_weight", "state_reward_bottom2_weight",
-        "state_min_secondary_reward_gain", "state_distribution_reward_enabled",
+        "state_min_secondary_reward_gain", "state_diversity_binding_tolerance",
+        "state_distribution_reward_enabled",
         "state_vote_reward_enabled", "state_diversity_constraints_enabled",
+        "state_bottom2_reward_enabled",
     ):
         value = _setting_value(setting, name, getattr(args, name, getattr(defaults, name)))
         if isinstance(getattr(defaults, name), bool):
@@ -882,7 +884,7 @@ def main():
         "state_potential_c0", "state_potential_c1", "state_potential_c2",
         "state_potential_c3", "state_potential_c4", "state_potential_c5",
         "state_reward_vote_weight", "state_reward_bottom2_weight",
-        "state_min_secondary_reward_gain",
+        "state_min_secondary_reward_gain", "state_diversity_binding_tolerance",
     ):
         parser.add_argument(f"--{name}", type=float, default=getattr(cli_defaults, name))
     for name in (
@@ -908,7 +910,7 @@ def main():
         "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
         "state_c0_abstract_analyzer_enabled",
         "state_distribution_reward_enabled", "state_vote_reward_enabled",
-        "state_diversity_constraints_enabled",
+        "state_diversity_constraints_enabled", "state_bottom2_reward_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(cli_defaults, name)), choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=None)

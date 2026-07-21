@@ -14,12 +14,20 @@ import numpy as np
 ROLLOUT_QD_METHODS = frozenset({
     "v8_accuracy_rollout_embedding",
     "v8_rollout_qd_vote_ready",
+})
+
+FIXED_ACCEPTANCE_PROBE_METHODS = frozenset({
+    *ROLLOUT_QD_METHODS,
     "v9_state_conditioned_error",
 })
 
 
 def is_rollout_qd_method(method_version: Any) -> bool:
     return str(method_version or "").strip().lower() in ROLLOUT_QD_METHODS
+
+
+def is_fixed_acceptance_probe_method(method_version: Any) -> bool:
+    return str(method_version or "").strip().lower() in FIXED_ACCEPTANCE_PROBE_METHODS
 
 
 def is_vote_ready_rollout_method(method_version: Any) -> bool:

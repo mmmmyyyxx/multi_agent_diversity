@@ -611,7 +611,7 @@ class TrainingControllerMixin:
             self._encode_trace_document(str(row["trace"])) if not int(row["invalid"]) else []
             for row in rows
         ]
-        if self._is_rollout_qd_method():
+        if self._uses_fixed_acceptance_probe():
             profile = {
                 "prompt": prompt,
                 "prompt_hash": self._normalized_prompt_hash(prompt),
@@ -619,14 +619,15 @@ class TrainingControllerMixin:
                 "correctness_vector": correctness,
                 "invalid_vector": invalid_vector,
                 "trace_embedding_vector_per_question": trace_embeddings,
-                "wrong_diversity_useful_vector": [0 for _ in rows],
                 "accuracy": float(np.mean(correctness)) if correctness else 0.0,
                 "question_hashes": question_hashes,
                 "gold_answers": gold_answers,
                 "fixed_probe_hash": str(getattr(self, "current_fixed_probe_hash", "")),
                 "fixed_probe_version": str(getattr(self, "prompt_probe_version", "legacy")),
             }
-            profile["rollout_signature_hash"] = rollout_signature(profile)
+            if self._is_rollout_qd_method():
+                profile["wrong_diversity_useful_vector"] = [0 for _ in rows]
+                profile["rollout_signature_hash"] = rollout_signature(profile)
             return profile
         item = {"prompt": prompt, "metrics": {"mechanism_steps": list(mechanism_steps)}}
         representation = self._attach_stable_mechanism_representation(item)

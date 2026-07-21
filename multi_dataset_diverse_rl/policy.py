@@ -207,6 +207,7 @@ class AgentState:
         self.lineage_state = empty_lineage_state()
         self.safe_qd_archive: List[Dict[str, Any]] = []
         self.prompt_memory: List[Dict[str, Any]] = []
+        self.prompt_memory_diagnostics: Dict[str, Any] = {}
         self.probation_archive: List[Dict[str, Any]] = []
         self.per_niche_parent_count: Dict[str, int] = {}
         self.probation_parent_count = 0
@@ -236,6 +237,7 @@ class AgentState:
             "lineage_state": dict(self.lineage_state),
             "safe_qd_archive": list(self.safe_qd_archive),
             "prompt_memory": list(self.prompt_memory),
+            "prompt_memory_diagnostics": dict(self.prompt_memory_diagnostics),
             "probation_archive": list(self.probation_archive),
             "per_niche_parent_count": dict(self.per_niche_parent_count),
             "probation_parent_count": int(self.probation_parent_count),
@@ -285,6 +287,7 @@ class AgentState:
         self.lineage_state = {**empty_lineage_state(), **dict(payload.get("lineage_state", {}) or {})}
         self.safe_qd_archive = [dict(item) for item in payload.get("safe_qd_archive", []) if isinstance(item, dict)]
         self.prompt_memory = [dict(item) for item in payload.get("prompt_memory", []) if isinstance(item, dict)]
+        self.prompt_memory_diagnostics = dict(payload.get("prompt_memory_diagnostics", {}) or {})
         self.probation_archive = [dict(item) for item in payload.get("probation_archive", []) if isinstance(item, dict)]
         self.per_niche_parent_count = {str(key): int(value) for key, value in dict(payload.get("per_niche_parent_count", {}) or {}).items()}
         self.probation_parent_count = int(payload.get("probation_parent_count", 0) or 0)

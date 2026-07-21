@@ -17,6 +17,8 @@ best_state_selection_mode = state_conditioned_vote_first
 
 V8 settings and their completed artifacts retain their historical behavior. In particular, V8 may still use rollout archives and joint team selection. V9 does not.
 
+V9 is not a rollout-QD method. It reuses only the fixed acceptance probe and per-prompt probe cache; it never enters the V8 rollout archive, rollout exploration, representative beam, or joint selector routes.
+
 ## 2. Fixed Voting Rule
 
 All five agents have equal weight. The normalized answer with the largest vote count wins; top ties use the configured deterministic tie-break. V9 does not add reliability weights, confidence weights, a judge, a router, learned aggregation, or test-time best-agent selection.
@@ -111,7 +113,7 @@ Feasible candidates are compared by:
 2. target accuracy
 3. state-vote reward
 4. lower invalid count
-5. diversity constraint slack
+5. diversity constraint slack, only in A3 when diversity constraints are enabled
 6. earlier generation
 7. stable prompt hash
 ```
@@ -132,13 +134,13 @@ For a candidate replacing one target agent:
 ```text
 distribution = mean(Phi(candidate_G) - Phi(active_G))
 vote         = state_reward_vote_weight * (candidate_vote_acc - active_vote_acc)
-balance      = state_reward_bottom2_weight * (candidate_bottom2_acc - active_bottom2_acc)
-state_vote_reward = distribution + vote + balance
+bottom2      = state_reward_bottom2_weight * (candidate_bottom2_acc - active_bottom2_acc)
+state_vote_reward = distribution + vote + bottom2
 ```
 
-This reward is secondary to target accuracy. Diversity is absent from it.
+The primary A0-A3 settings explicitly disable `state_bottom2_reward_enabled`, so their bottom-2 component is zero. Bottom-2 is an independent optional ablation and is not automatically enabled by state or Vote reward. This reward is secondary to target accuracy. Diversity is absent from it.
 
-Wrong-answer changes have zero optimization value. Changing one wrong answer label to another does not earn state, Vote, diversity, memory, or selection credit when `G` is unchanged. Largest-wrong cluster, same-wrong rate, option count, and raw vote changes may remain diagnostics only.
+Vote reward uses the true equal-weight plurality result even when `G` is unchanged. A real Vote wrong-to-correct transition earns positive Vote reward, and a correct-to-wrong transition is penalized. Changing only a wrong answer label earns no reward when the final Vote and correctness state are unchanged. Largest-wrong cluster, same-wrong rate, and option count remain diagnostics only and never enter generation, reward, selection, or prompt memory.
 
 ## 8. Diversity As Non-Collapse Constraints
 
@@ -150,16 +152,16 @@ For each agent, define the set of fixed-probe questions it answers correctly. V9
 
 ### Safe C4/C5 trace diversity
 
-Trace distance is computed only when:
+Trace distance is compared on paired support only. A target-peer-question tuple is included when:
 
 ```text
-candidate team state is C4 or C5
-target and peer are both correct
-both traces are valid
-both embeddings are available
+active and candidate team states are both C4 or C5
+target and the same peer are correct on both sides
+all four traces are valid
+all four embeddings are available
 ```
 
-C4 pairs have weight 1.0 and C5 pairs 1.5. Wrong traces and C0-C3 are excluded. A C5-to-C4 regression receives no diversity benefit. If no comparable pairs exist, the safe-trace constraint is unavailable and is skipped rather than treated as zero.
+C4 pairs have weight 1.0 and C5 pairs 1.5. Active and candidate distances are averaged over exactly the same tuples. Wrong traces, invalid traces, unpaired questions, and C0-C3 are excluded. If no paired tuples exist, the safe-trace constraint is unavailable and is skipped rather than treated as zero.
 
 ## 9. Per-Agent Prompt Memory
 
@@ -169,11 +171,13 @@ Each agent keeps at most five prompts:
 active
 accuracy_best
 state_vote_best
-safe_diversity_parent
+safe_diversity_parent in A3, otherwise recent_safe_parent
 rollback_or_recent_success
 ```
 
-Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. Entries deduplicate by prompt hash and fixed-probe outcome signature; the safe-diversity slot may retain a distinct safe-trace signature. Reaccept cooldown and a bounded recent-accept cycle window reduce prompt cycling.
+Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. On acceptance, the previous active prompt is explicitly reserved as the first rollback candidate. Every slot tries its ranked candidates until it finds a distinct legal prompt, then an accuracy-first quality fill uses remaining capacity. Thus five distinct safe prompts fill all five slots when available. A0-A2 never use trace or correct-set diversity to choose a parent.
+
+Outcome signatures contain the signature version, fixed-probe hash, ordered question hashes, correctness vector, and invalid vector; wrong labels are intentionally excluded. Safe-trace signatures contain only quantized normalized target-peer embeddings from valid, correct C4/C5 pairs.
 
 ## 10. Validation And Final Test
 
@@ -233,7 +237,15 @@ final_summary.json
 V9 does not write `joint_team_selection_history.jsonl`. Run metadata states:
 
 ```text
-v9_update_mode = sequential_single_agent
+update_mode = sequential_single_agent
+rollout_qd_method = false
+rollout_archive_enabled = false
+accuracy_is_primary_objective = true
+true_plurality_vote_delta_used = true
+wrong_answer_dispersion_used_for_generation = false
+wrong_answer_dispersion_used_for_reward = false
+wrong_answer_dispersion_used_for_selection = false
+diversity_is_noncollapse_constraint = true
 joint_team_enumeration_enabled = false
 joint_team_combination_count = 0
 equal_vote_weighting = true
@@ -244,6 +256,8 @@ The historical default fingerprint remains:
 ```text
 48c2f27cdcda64d2f7b32d008957b4903c683f49012988c4e5cab301ed29d5fa
 ```
+
+`state_search_diagnostics` reports diversity evaluations, passes, rejections, binding events, paired support, safe-diversity parent use, and accepted accuracy regressions. `diversity_ablation_informative` is false with an explicit reason when A3 never obtains binding, rejection, paired support, or diversity-parent use.
 
 ## 13. Code Map
 

@@ -16,7 +16,9 @@ PROMPT_MEMORY_SLOTS = (
     "accuracy_best",
     "state_vote_best",
     "safe_diversity_parent",
+    "recent_safe_parent",
     "rollback_or_recent_success",
+    "quality_fill",
 )
 
 
@@ -63,16 +65,8 @@ def state_vote_reward(
         potentials[max(0, min(5, after))] - potentials[max(0, min(5, before))]
         for before, after in zip(active_g, candidate_g)
     ])) if active_g else 0.0
-    # A wrong-to-wrong answer change has no optimization value even if it
-    # happens to alter a plurality tie. Vote credit requires a change in G.
-    reward_candidate_vote = [
-        candidate if before_g != after_g else active
-        for active, candidate, before_g, after_g in zip(
-            active_vote_correct, candidate_vote_correct, active_g, candidate_g
-        )
-    ]
     vote_delta = (
-        float(np.mean([bool(value) for value in reward_candidate_vote]))
+        float(np.mean([bool(value) for value in candidate_vote_correct]))
         - float(np.mean([bool(value) for value in active_vote_correct]))
     ) if active_vote_correct else 0.0
     active_agent_acc = np.mean(np.asarray(active_correctness, dtype=float), axis=0).tolist() if active_correctness else []
@@ -85,12 +79,9 @@ def state_vote_reward(
         float(getattr(config, "state_reward_vote_weight", 2.0)) * vote_delta
         if bool(getattr(config, "state_vote_reward_enabled", True)) else 0.0
     )
-    secondary_enabled = bool(getattr(config, "state_distribution_reward_enabled", True)) or bool(
-        getattr(config, "state_vote_reward_enabled", True)
-    )
     bottom2_component = (
         float(getattr(config, "state_reward_bottom2_weight", 0.25)) * bottom2_delta
-        if secondary_enabled else 0.0
+        if bool(getattr(config, "state_bottom2_reward_enabled", False)) else 0.0
     )
     transitions = {
         f"c{before}_to_c{after}_count": sum(
@@ -109,12 +100,9 @@ def state_vote_reward(
         "state_reward_vote_component": vote_component,
         "state_reward_bottom2_component": bottom2_component,
         "vote_accuracy_delta": vote_delta,
-        "vote_gain_count": sum(int(not bool(a) and bool(b)) for a, b in zip(active_vote_correct, reward_candidate_vote)),
-        "vote_loss_count": sum(int(bool(a) and not bool(b)) for a, b in zip(active_vote_correct, reward_candidate_vote)),
-        "diagnostic_raw_vote_accuracy_delta": (
-            float(np.mean([bool(value) for value in candidate_vote_correct]))
-            - float(np.mean([bool(value) for value in active_vote_correct]))
-        ) if active_vote_correct else 0.0,
+        "vote_gain_count": sum(int(not bool(a) and bool(b)) for a, b in zip(active_vote_correct, candidate_vote_correct)),
+        "vote_loss_count": sum(int(bool(a) and not bool(b)) for a, b in zip(active_vote_correct, candidate_vote_correct)),
+        "diagnostic_raw_vote_accuracy_delta": vote_delta,
         "active_bottom2_accuracy": active_bottom2,
         "candidate_bottom2_accuracy": candidate_bottom2,
         "active_gold_vote_counts": active_g,
@@ -132,7 +120,16 @@ def _jaccard_distance(left: set[int], right: set[int]) -> float:
 
 def correct_set_diversity(profiles: Sequence[Mapping[str, Any]]) -> Dict[str, float]:
     correct_sets = [
-        {index for index, value in enumerate(profile.get("correctness_vector", [])) if bool(value)}
+        {
+            index
+            for index, value in enumerate(profile.get("correctness_vector", []))
+            if bool(value)
+            and not bool(
+                profile.get("invalid_vector", [])[index]
+                if index < len(profile.get("invalid_vector", []))
+                else 1
+            )
+        }
         for profile in profiles
     ]
     distances = [_jaccard_distance(left, right) for left, right in combinations(correct_sets, 2)]
@@ -240,25 +237,175 @@ def safe_trace_diversity_c4c5(
     }
 
 
-def outcome_signature(profile: Mapping[str, Any], version: str) -> str:
+def paired_safe_trace_diversity_c4c5(
+    active_profiles: Sequence[Mapping[str, Any]],
+    candidate_profiles: Sequence[Mapping[str, Any]],
+    target_agent_id: int,
+    config: Any,
+) -> Dict[str, Any]:
+    if (
+        not active_profiles
+        or len(active_profiles) != len(candidate_profiles)
+        or target_agent_id < 0
+        or target_agent_id >= len(active_profiles)
+    ):
+        return {
+            "active_paired_safe_trace_diversity": 0.0,
+            "candidate_paired_safe_trace_diversity": 0.0,
+            "paired_safe_trace_delta": 0.0,
+            "paired_safe_trace_pair_count": 0,
+            "paired_safe_trace_constraint_available": False,
+        }
+    row_count = min(
+        min((len(profile.get("correctness_vector", [])) for profile in active_profiles), default=0),
+        min((len(profile.get("correctness_vector", [])) for profile in candidate_profiles), default=0),
+    )
+    active_weighted = []
+    candidate_weighted = []
+    weights = []
+    active_target = active_profiles[target_agent_id]
+    candidate_target = candidate_profiles[target_agent_id]
+    for question_index in range(row_count):
+        active_g = sum(bool(profile.get("correctness_vector", [])[question_index]) for profile in active_profiles)
+        candidate_g = sum(bool(profile.get("correctness_vector", [])[question_index]) for profile in candidate_profiles)
+        if active_g not in {4, 5} or candidate_g not in {4, 5}:
+            continue
+        if not bool(active_target.get("correctness_vector", [])[question_index]):
+            continue
+        if not bool(candidate_target.get("correctness_vector", [])[question_index]):
+            continue
+        if bool(active_target.get("invalid_vector", [1] * row_count)[question_index]):
+            continue
+        if bool(candidate_target.get("invalid_vector", [1] * row_count)[question_index]):
+            continue
+        active_target_embeddings = active_target.get("trace_embedding_vector_per_question", [])
+        candidate_target_embeddings = candidate_target.get("trace_embedding_vector_per_question", [])
+        if question_index >= len(active_target_embeddings) or question_index >= len(candidate_target_embeddings):
+            continue
+        for peer_id, (active_peer, candidate_peer) in enumerate(zip(active_profiles, candidate_profiles)):
+            if peer_id == target_agent_id:
+                continue
+            if not bool(active_peer.get("correctness_vector", [])[question_index]):
+                continue
+            if not bool(candidate_peer.get("correctness_vector", [])[question_index]):
+                continue
+            if bool(active_peer.get("invalid_vector", [1] * row_count)[question_index]):
+                continue
+            if bool(candidate_peer.get("invalid_vector", [1] * row_count)[question_index]):
+                continue
+            active_peer_embeddings = active_peer.get("trace_embedding_vector_per_question", [])
+            candidate_peer_embeddings = candidate_peer.get("trace_embedding_vector_per_question", [])
+            if question_index >= len(active_peer_embeddings) or question_index >= len(candidate_peer_embeddings):
+                continue
+            active_distance = _cosine_distance(
+                active_target_embeddings[question_index], active_peer_embeddings[question_index]
+            )
+            candidate_distance = _cosine_distance(
+                candidate_target_embeddings[question_index], candidate_peer_embeddings[question_index]
+            )
+            if active_distance is None or candidate_distance is None:
+                continue
+            weight = float(getattr(config, f"state_safe_trace_weight_c{active_g}", 1.0))
+            active_weighted.append(active_distance * weight)
+            candidate_weighted.append(candidate_distance * weight)
+            weights.append(weight)
+    active_mean = sum(active_weighted) / sum(weights) if weights else 0.0
+    candidate_mean = sum(candidate_weighted) / sum(weights) if weights else 0.0
+    return {
+        "active_paired_safe_trace_diversity": active_mean,
+        "candidate_paired_safe_trace_diversity": candidate_mean,
+        "paired_safe_trace_delta": candidate_mean - active_mean,
+        "paired_safe_trace_pair_count": len(weights),
+        "paired_safe_trace_constraint_available": bool(weights),
+    }
+
+
+def outcome_signature(
+    profile: Mapping[str, Any],
+    version: str,
+    probe_hash: str = "",
+    question_hashes: Sequence[str] = (),
+) -> str:
     payload = {
         "version": version,
+        "probe_hash": str(probe_hash or profile.get("fixed_probe_hash", "")),
+        "question_hashes": [
+            str(value) for value in (question_hashes or profile.get("question_hashes", []))
+        ],
         "correctness": [int(bool(value)) for value in profile.get("correctness_vector", [])],
         "invalid": [int(bool(value)) for value in profile.get("invalid_vector", [])],
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
 
-def safe_trace_signature(profile: Mapping[str, Any], version: str) -> str:
-    embeddings = profile.get("trace_embedding_vector_per_question", [])
+def _quantized_normalized_embedding(vector: Sequence[Any]) -> list[float]:
+    values = np.asarray(vector, dtype=float)
+    norm = float(np.linalg.norm(values))
+    if norm <= 0.0:
+        return []
+    return [round(float(component), 3) for component in (values / norm)]
+
+
+def safe_trace_signature(
+    profiles: Sequence[Mapping[str, Any]],
+    target_agent_id: int,
+    version: str,
+    probe_hash: str = "",
+    question_hashes: Sequence[str] = (),
+) -> str:
+    signature_question_hashes = list(
+        question_hashes or (profiles[0].get("question_hashes", []) if profiles else [])
+    )
+    if not profiles or target_agent_id < 0 or target_agent_id >= len(profiles):
+        pairs = []
+    else:
+        target = profiles[target_agent_id]
+        row_count = min((len(profile.get("correctness_vector", [])) for profile in profiles), default=0)
+        pairs = []
+        for question_index in range(row_count):
+            state = sum(bool(profile.get("correctness_vector", [])[question_index]) for profile in profiles)
+            if state not in {4, 5}:
+                continue
+            if not bool(target.get("correctness_vector", [])[question_index]):
+                continue
+            if bool(target.get("invalid_vector", [1] * row_count)[question_index]):
+                continue
+            target_embeddings = target.get("trace_embedding_vector_per_question", [])
+            if question_index >= len(target_embeddings):
+                continue
+            target_embedding = _quantized_normalized_embedding(target_embeddings[question_index])
+            if not target_embedding:
+                continue
+            for peer_id, peer in enumerate(profiles):
+                if peer_id == target_agent_id:
+                    continue
+                if not bool(peer.get("correctness_vector", [])[question_index]):
+                    continue
+                if bool(peer.get("invalid_vector", [1] * row_count)[question_index]):
+                    continue
+                peer_embeddings = peer.get("trace_embedding_vector_per_question", [])
+                if question_index >= len(peer_embeddings):
+                    continue
+                peer_embedding = _quantized_normalized_embedding(peer_embeddings[question_index])
+                if not peer_embedding:
+                    continue
+                pairs.append({
+                    "question_hash": str(
+                        signature_question_hashes[question_index]
+                        if question_index < len(signature_question_hashes)
+                        else question_index
+                    ),
+                    "state": f"C{state}",
+                    "target_agent_id": int(target_agent_id),
+                    "peer_agent_id": int(peer_id),
+                    "target_embedding": target_embedding,
+                    "peer_embedding": peer_embedding,
+                })
     payload = {
         "version": version,
-        "correctness": [int(bool(value)) for value in profile.get("correctness_vector", [])],
-        "valid_trace_embeddings": [
-            [round(float(component), 6) for component in vector]
-            if index < len(profile.get("invalid_vector", [])) and not bool(profile.get("invalid_vector", [])[index]) else []
-            for index, vector in enumerate(embeddings)
-        ],
+        "probe_hash": str(probe_hash or (profiles[0].get("fixed_probe_hash", "") if profiles else "")),
+        "question_hashes": [str(value) for value in signature_question_hashes],
+        "pairs": pairs,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -295,24 +442,26 @@ def full_probe_constraints(
     )
     correct_mean_slack = float(metrics.get("correct_set_diversity_mean", 0.0)) - mean_floor
     correct_min_slack = float(metrics.get("correct_set_diversity_min", 0.0)) - min_floor
-    active_safe_available = bool(active_metrics.get("safe_trace_constraint_available", False))
-    candidate_safe_available = bool(metrics.get("safe_trace_constraint_available", False))
-    safe_available = active_safe_available
-    safe_floor = max(
-        float(active_metrics.get("safe_trace_diversity_c4c5", 0.0)) - float(getattr(config, "state_safe_trace_local_epsilon", 0.05)),
-        float(initial_metrics.get("safe_trace_diversity_c4c5", 0.0)) - float(getattr(config, "state_safe_trace_global_epsilon", 0.08)),
+    safe_available = bool(metrics.get("paired_safe_trace_constraint_available", False))
+    safe_floor = (
+        float(metrics.get("active_paired_safe_trace_diversity", 0.0))
+        - float(getattr(config, "state_safe_trace_local_epsilon", 0.05))
     )
-    safe_slack = float(metrics.get("safe_trace_diversity_c4c5", 0.0)) - safe_floor
+    safe_slack = float(metrics.get("candidate_paired_safe_trace_diversity", 0.0)) - safe_floor
     safe_passed = (
         (not diversity_enabled)
         or (not safe_available)
-        or (candidate_safe_available and safe_slack >= -1e-12)
+        or safe_slack >= -1e-12
     )
     correct_passed = (not diversity_enabled) or (correct_mean_slack >= -1e-12 and correct_min_slack >= -1e-12)
     catastrophic_limit = int(getattr(config, "state_catastrophic_vote_loss_limit", -1))
     vote_loss_passed = catastrophic_limit < 0 or int(metrics.get("vote_loss_count", 0) or 0) <= catastrophic_limit
     passed = local_loss <= local_allowed and global_loss <= global_allowed and invalid_passed and correct_passed and safe_passed and vote_loss_passed
     slacks = [correct_mean_slack, correct_min_slack] + ([safe_slack] if safe_available else [])
+    binding_tolerance = float(getattr(config, "state_diversity_binding_tolerance", 0.01))
+    accuracy_invalid_passed = local_loss <= local_allowed and global_loss <= global_allowed and invalid_passed
+    correct_rejected = bool(diversity_enabled and accuracy_invalid_passed and not correct_passed)
+    safe_rejected = bool(diversity_enabled and accuracy_invalid_passed and correct_passed and not safe_passed)
     return {
         "active_target_correct_count": active_correct,
         "candidate_target_correct_count": candidate_correct,
@@ -336,23 +485,44 @@ def full_probe_constraints(
         "correct_set_diversity_constraint_passed": correct_passed,
         "safe_trace_constraint_passed": safe_passed,
         "safe_trace_constraint_available": safe_available,
-        "candidate_safe_trace_constraint_available": candidate_safe_available,
+        "candidate_safe_trace_constraint_available": safe_available,
+        "paired_safe_trace_constraint_available": safe_available,
+        "paired_safe_trace_pair_count": int(metrics.get("paired_safe_trace_pair_count", 0) or 0),
         "catastrophic_vote_loss_guard_passed": vote_loss_passed,
         "diversity_constraint_slack": min(slacks, default=0.0),
+        "diversity_constraint_evaluated": bool(diversity_enabled and accuracy_invalid_passed),
+        "correct_set_constraint_rejected": correct_rejected,
+        "safe_trace_constraint_rejected": safe_rejected,
+        "correct_set_constraint_binding": bool(
+            diversity_enabled
+            and accuracy_invalid_passed
+            and min(correct_mean_slack, correct_min_slack) <= binding_tolerance
+        ),
+        "safe_trace_constraint_binding": bool(
+            diversity_enabled
+            and accuracy_invalid_passed
+            and safe_available
+            and safe_slack <= binding_tolerance
+        ),
         "sequential_constraints_passed": passed,
         "candidate_feasible": passed,
         "rejection_reason": "" if passed else "sequential_full_probe_constraint",
     }
 
 
-def accuracy_first_key(item: Mapping[str, Any]) -> tuple:
+def accuracy_first_key(item: Mapping[str, Any], config: Any) -> tuple:
     metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), Mapping) else {}
+    diversity_key_value = (
+        float(metrics.get("diversity_constraint_slack", 0.0) or 0.0)
+        if bool(getattr(config, "state_diversity_constraints_enabled", False))
+        else 0.0
+    )
     return (
         int(metrics.get("candidate_target_correct_count", 0) or 0),
         float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
         float(metrics.get("state_vote_reward", metrics.get("state_reward_total", 0.0)) or 0.0),
         -int(metrics.get("candidate_invalid_count", 0) or 0),
-        float(metrics.get("diversity_constraint_slack", 0.0) or 0.0),
+        diversity_key_value,
         -int(item.get("generation", 0) or 0),
         str(item.get("prompt_hash", "")),
     )
@@ -370,7 +540,7 @@ def candidate_strictly_beats_incumbent(candidate: Mapping[str, Any], incumbent: 
     gain = float(candidate_metrics.get("state_vote_reward", 0.0) or 0.0) - float(incumbent_metrics.get("state_vote_reward", 0.0) or 0.0)
     if gain < float(getattr(config, "state_min_secondary_reward_gain", 0.0)) - 1e-12:
         return False
-    return accuracy_first_key(candidate) > accuracy_first_key(incumbent)
+    return accuracy_first_key(candidate, config) > accuracy_first_key(incumbent, config)
 
 
 def epoch_agent_order(epoch: int, num_agents: int = 5) -> list[int]:
@@ -381,8 +551,14 @@ def epoch_agent_order(epoch: int, num_agents: int = 5) -> list[int]:
 
 
 def rebuild_prompt_memory(
-    items: Sequence[Mapping[str, Any]], active_prompt_hash: str, capacity: int = 5
-) -> list[Dict[str, Any]]:
+    items: Sequence[Mapping[str, Any]],
+    active_prompt_hash: str,
+    capacity: int = 5,
+    *,
+    config: Any,
+    previous_active_item: Mapping[str, Any] | None = None,
+    return_diagnostics: bool = False,
+) -> list[Dict[str, Any]] | tuple[list[Dict[str, Any]], Dict[str, Any]]:
     unique_by_hash: Dict[str, Dict[str, Any]] = {}
     for raw in items:
         item = dict(raw)
@@ -393,38 +569,83 @@ def rebuild_prompt_memory(
     active = next((item for item in values if str(item.get("prompt_hash", "")) == active_prompt_hash), None)
     if active is None:
         raise ValueError("prompt memory requires the active prompt")
-    slots: list[tuple[str, Dict[str, Any] | None]] = [
-        ("active", active),
-        ("accuracy_best", max(values, key=lambda item: (
-            int(item.get("metrics", {}).get("candidate_target_correct_count", 0) or 0),
-            -int(item.get("generation", 0) or 0), str(item.get("prompt_hash", ""))), default=None)),
-        ("state_vote_best", max(values, key=lambda item: (
-            float(item.get("metrics", {}).get("state_vote_reward", 0.0) or 0.0),
-            int(item.get("metrics", {}).get("candidate_target_correct_count", 0) or 0),
-            str(item.get("prompt_hash", ""))), default=None)),
-        ("safe_diversity_parent", max(values, key=lambda item: (
+    capacity = max(1, int(capacity))
+    diversity_enabled = bool(getattr(config, "state_diversity_constraints_enabled", False))
+    rollback_hash = ""
+    rollback_first = None
+    if previous_active_item is not None:
+        previous_hash = str(previous_active_item.get("prompt_hash", ""))
+        if previous_hash and previous_hash != active_prompt_hash:
+            rollback_hash = previous_hash
+            rollback_first = unique_by_hash.get(previous_hash, dict(previous_active_item))
+    safe_values = [
+        item for item in values
+        if bool(item.get("metrics", {}).get("accuracy_constraint_passed", True))
+        and bool(item.get("metrics", {}).get("invalid_constraint_passed", True))
+    ]
+    slot_values = [
+        item for item in safe_values
+        if str(item.get("prompt_hash", "")) != rollback_hash
+    ]
+    accuracy_ranking = sorted(slot_values, key=lambda item: accuracy_first_key(item, config), reverse=True)
+    state_vote_ranking = sorted(slot_values, key=lambda item: (
+        float(item.get("metrics", {}).get("state_vote_reward", 0.0) or 0.0),
+        *accuracy_first_key(item, config),
+    ), reverse=True)
+    if diversity_enabled:
+        parent_slot = "safe_diversity_parent"
+        parent_ranking = sorted(slot_values, key=lambda item: (
             float(item.get("metrics", {}).get("diversity_constraint_slack", 0.0) or 0.0),
-            float(item.get("metrics", {}).get("safe_trace_diversity_c4c5", 0.0) or 0.0),
-            str(item.get("prompt_hash", ""))), default=None)),
-        ("rollback_or_recent_success", max(values, key=lambda item: (
+            float(item.get("metrics", {}).get("paired_safe_trace_delta", 0.0) or 0.0),
+            *accuracy_first_key(item, config),
+        ), reverse=True)
+    else:
+        parent_slot = "recent_safe_parent"
+        parent_ranking = sorted(slot_values, key=lambda item: (
             int(item.get("accepted_update_index", -1) or -1),
-            int(item.get("generation", 0) or 0), str(item.get("prompt_hash", ""))), default=None)),
+            *accuracy_first_key(item, config),
+        ), reverse=True)
+    rollback_ranking = [rollback_first] if rollback_first is not None else []
+    rollback_ranking.extend(sorted(
+        (item for item in safe_values if str(item.get("prompt_hash", "")) != rollback_hash),
+        key=lambda item: (
+            int(item.get("accepted_update_index", -1) or -1),
+            int(item.get("generation", 0) or 0),
+            *accuracy_first_key(item, config),
+        ),
+        reverse=True,
+    ))
+    slot_rankings: list[tuple[str, list[Dict[str, Any]]]] = [
+        ("active", [active]),
+        ("accuracy_best", accuracy_ranking),
+        ("state_vote_best", state_vote_ranking),
+        (parent_slot, parent_ranking),
+        ("rollback_or_recent_success", rollback_ranking),
     ]
     memory = []
     seen_hashes = set()
     seen_outcomes = set()
     seen_safe_traces = set()
-    for slot, candidate in slots:
-        if candidate is None:
-            continue
+    duplicate_skips = 0
+    slot_candidate_count = {slot: len(ranking) for slot, ranking in slot_rankings}
+
+    def add_candidate(slot: str, candidate: Mapping[str, Any], *, enforce_outcome: bool) -> bool:
+        nonlocal duplicate_skips
         prompt_hash = str(candidate.get("prompt_hash", ""))
         outcome = str(candidate.get("outcome_signature_hash", candidate.get("outcome_signature", "")))
         safe_trace = str(candidate.get("safe_trace_signature_hash", candidate.get("safe_trace_signature", "")))
-        if prompt_hash in seen_hashes:
-            continue
-        if outcome and outcome in seen_outcomes:
-            if slot != "safe_diversity_parent" or not safe_trace or safe_trace in seen_safe_traces:
-                continue
+        if not prompt_hash or prompt_hash in seen_hashes:
+            duplicate_skips += 1
+            return False
+        if enforce_outcome and outcome and outcome in seen_outcomes:
+            allows_safe_variant = (
+                slot == "safe_diversity_parent"
+                and bool(safe_trace)
+                and safe_trace not in seen_safe_traces
+            )
+            if not allows_safe_variant:
+                duplicate_skips += 1
+                return False
         row = dict(candidate)
         row["prompt_memory_slot"] = slot
         row["memory_slot"] = slot
@@ -434,9 +655,42 @@ def rebuild_prompt_memory(
             seen_outcomes.add(outcome)
         if safe_trace:
             seen_safe_traces.add(safe_trace)
-        if len(memory) >= max(1, int(capacity)):
+        return True
+
+    for slot, ranking in slot_rankings:
+        if len(memory) >= capacity:
             break
-    return memory
+        for candidate in ranking:
+            is_explicit_rollback = (
+                slot == "rollback_or_recent_success"
+                and str(candidate.get("prompt_hash", "")) == rollback_hash
+            )
+            if add_candidate(
+                slot,
+                candidate,
+                enforce_outcome=slot != "active" and not is_explicit_rollback,
+            ):
+                break
+
+    quality_fill_count = 0
+    for candidate in accuracy_ranking:
+        if len(memory) >= capacity:
+            break
+        if add_candidate("quality_fill", candidate, enforce_outcome=False):
+            quality_fill_count += 1
+    diagnostics = {
+        "memory_capacity": capacity,
+        "memory_occupancy": len(memory),
+        "memory_underfilled": len(memory) < capacity,
+        "memory_underfilled_reason": (
+            "insufficient_distinct_safe_prompts" if len(memory) < capacity else ""
+        ),
+        "slot_candidate_count": slot_candidate_count,
+        "slot_duplicate_skip_count": duplicate_skips,
+        "quality_fill_count": quality_fill_count,
+        "rollback_prompt_hash": rollback_hash,
+    }
+    return (memory, diagnostics) if return_diagnostics else memory
 
 
 def select_memory_parents(

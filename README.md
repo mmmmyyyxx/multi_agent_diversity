@@ -2,7 +2,7 @@
 
 This repository evolves prompts for a fixed five-agent reasoning team. Model weights and equal plurality vote weights stay unchanged.
 
-The current V9 method is accuracy-first sequential state optimization. It updates one agent at a time, evaluates final acceptance on a fixed full probe, activates accepted prompts immediately, and uses diversity only to prevent collapse. Wrong-answer dispersion has no training value. V9 does not enumerate prompt-team combinations.
+The current V9 method is accuracy-first sequential state optimization. It updates one agent at a time, evaluates final acceptance on a fixed full probe, activates accepted prompts immediately, and uses diversity only to prevent collapse. It uses the true equal-weight plurality Vote delta as a secondary signal. Wrong-answer dispersion has no training value and is excluded from optimizer inputs. V9 is not rollout-QD and does not use rollout archives or enumerate prompt-team combinations.
 
 Read [method.md](method.md) for the complete implementation guide.
 
@@ -55,6 +55,7 @@ $OUT = "runs_v9_sequential_smoke_$SHA"
   --solver_rollout_singleflight 1 `
   --aggregation_mode plurality `
   --vote_tie_break random `
+  --state_bottom2_reward_enabled 0 `
   --resume_from_checkpoint 1
 ```
 

@@ -125,15 +125,17 @@ class _FlatConfigSchema:
     state_potential_c5: float = 3.75
     state_reward_vote_weight: float = 2.0
     state_reward_bottom2_weight: float = 0.25
+    state_bottom2_reward_enabled: bool = False
     state_min_secondary_reward_gain: float = 0.0
     state_catastrophic_vote_loss_limit: int = -1
-    state_outcome_signature_version: str = "v9_sequential_outcome_v1"
-    state_safe_trace_signature_version: str = "v9_sequential_safe_trace_v1"
+    state_outcome_signature_version: str = "v9_sequential_outcome_v2"
+    state_safe_trace_signature_version: str = "v9_sequential_safe_trace_v2"
     state_update_cycle_window: int = 10
     state_prompt_reaccept_cooldown_updates: int = 5
     state_distribution_reward_enabled: bool = True
     state_vote_reward_enabled: bool = True
     state_diversity_constraints_enabled: bool = True
+    state_diversity_binding_tolerance: float = 0.01
     candidate_batch_representative_size: int = 12
     candidate_batch_coverage_size: int = 6
     candidate_batch_conversion_size: int = 6
@@ -434,8 +436,10 @@ class _FlatConfigSchema:
         if str(self.method_version) == "v9_state_conditioned_error":
             self.state_conditioned_enabled = True
             self.state_c2_wrong_split_enabled = False
+            self.state_trace_tiebreak_enabled = False
             self.state_rollout_exploration_enabled = False
             self.state_exploration_parent_enabled = False
+            self.state_vote_objective_enabled = False
             self.reward_mode = "state_distribution_vote_reward"
             self.candidate_selection_mode = "sequential_accuracy_first_state_reward"
             self.best_state_selection_mode = "state_conditioned_vote_first"
@@ -493,6 +497,8 @@ class _FlatConfigSchema:
             "state_validation_accuracy_guard_epsilon",
         )
         for field in probability_fields:
+            if str(self.method_version) == "v9_state_conditioned_error" and field == "state_joint_total_correct_slack_rate":
+                continue
             value = float(getattr(self, field))
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"{field} must be in [0, 1], got {value}")
@@ -586,6 +592,11 @@ class _FlatConfigSchema:
             "state_exploration_parent_max_per_update",
         )
         for field in nonnegative_integer_fields:
+            if (
+                str(self.method_version) == "v9_state_conditioned_error"
+                and field == "state_exploration_parent_max_per_update"
+            ):
+                continue
             if int(getattr(self, field)) < 0:
                 raise ValueError(f"{field} must be non-negative")
         positive_integer_fields = (
@@ -598,6 +609,11 @@ class _FlatConfigSchema:
             "state_exploration_stagnation_patience",
         )
         for field in positive_integer_fields:
+            if (
+                str(self.method_version) == "v9_state_conditioned_error"
+                and field in {"state_representative_capacity", "state_exploration_stagnation_patience"}
+            ):
+                continue
             if int(getattr(self, field)) < 1:
                 raise ValueError(f"{field} must be at least 1")
         if int(self.candidate_refill_max_unique_candidates_per_parent) < int(self.num_candidates_per_parent):
@@ -606,7 +622,10 @@ class _FlatConfigSchema:
             raise ValueError("candidate_refill_min_safe_non_incumbent cannot exceed the per-parent unique candidate limit")
         if int(self.joint_representative_beam_size) > int(self.qd_archive_size_per_agent):
             raise ValueError("joint_representative_beam_size must not exceed qd_archive_size_per_agent")
-        if int(self.state_representative_capacity) > int(self.qd_archive_size_per_agent):
+        if (
+            str(self.method_version) != "v9_state_conditioned_error"
+            and int(self.state_representative_capacity) > int(self.qd_archive_size_per_agent)
+        ):
             raise ValueError("state_representative_capacity must not exceed qd_archive_size_per_agent")
         if not 0.0 <= float(self.state_exploration_parent_probability) <= 1.0:
             raise ValueError("state_exploration_parent_probability must be in [0, 1]")
@@ -782,6 +801,7 @@ def build_parser() -> argparse.ArgumentParser:
         "state_min_pairwise_diversity_local_epsilon", "state_min_pairwise_diversity_global_epsilon",
         "state_safe_trace_local_epsilon", "state_safe_trace_global_epsilon",
         "state_safe_trace_weight_c4", "state_safe_trace_weight_c5",
+        "state_diversity_binding_tolerance",
         "state_potential_c0", "state_potential_c1", "state_potential_c2",
         "state_potential_c3", "state_potential_c4", "state_potential_c5",
         "state_reward_vote_weight", "state_reward_bottom2_weight",
@@ -807,7 +827,7 @@ def build_parser() -> argparse.ArgumentParser:
         "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
         "state_c0_abstract_analyzer_enabled",
         "state_distribution_reward_enabled", "state_vote_reward_enabled",
-        "state_diversity_constraints_enabled",
+        "state_diversity_constraints_enabled", "state_bottom2_reward_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--vote_ready_diversity_weight", type=float, default=defaults.vote_ready_diversity_weight)

@@ -674,21 +674,27 @@ class RuntimeStateMixin:
                 "prompt_text_diversity_used": False,
                 "joint_active_team_selection_enabled": True,
                 "quality_diversity_archive_enabled": True,
-                "rollout_diversity_enabled": True,
+                    "rollout_diversity_enabled": True,
             })
-            if self._is_state_conditioned_method():
-                fields.update({
-                    "state_conditioned_enabled": True,
-                    "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
-                    "state_vote_objective_enabled": bool(self.cfg.state_vote_objective_enabled),
-                    "state_coverage_enabled": bool(self.cfg.state_coverage_enabled),
-                    "state_c2_correct_conversion_enabled": bool(self.cfg.state_c2_correct_conversion_enabled),
-                    "state_c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
-                    "state_trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
-                    "state_rollout_exploration_enabled": bool(self.cfg.state_rollout_exploration_enabled),
-                    "composite_rollout_distance_used_for_selection": False,
-                    "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
-                })
+        if self._is_state_conditioned_method():
+            fields.update({
+                "method_version": str(self.cfg.method_version),
+                "state_conditioned_enabled": True,
+                "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                "fixed_acceptance_probe_enabled": True,
+                "rollout_qd_method": False,
+                "rollout_archive_enabled": False,
+                "accuracy_is_primary_objective": True,
+                "true_plurality_vote_delta_used": True,
+                "wrong_answer_dispersion_used_for_generation": False,
+                "wrong_answer_dispersion_used_for_reward": False,
+                "wrong_answer_dispersion_used_for_selection": False,
+                "diversity_is_noncollapse_constraint": True,
+                "joint_team_enumeration_enabled": False,
+                "joint_team_combination_count": 0,
+                "per_agent_prompt_memory_capacity": int(self.cfg.state_prompt_memory_capacity),
+                "update_mode": "sequential_single_agent",
+            })
         if self._is_v82_hybrid():
             fields.update({
                 "method_version": str(getattr(self.cfg, "method_version", "legacy")),
@@ -915,70 +921,67 @@ class RuntimeStateMixin:
                 "capability_profile_per_agent": None,
                 "top_capability_family_per_agent": None,
             })
-            if self._is_state_conditioned_method():
-                meta.update({
-                    "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
-                    "v9_update_mode": "sequential_single_agent",
-                    "joint_team_enumeration_enabled": False,
-                    "joint_team_combination_count": 0,
-                    "equal_vote_weighting": True,
-                    "wrong_answer_dispersion_used_for_reward": False,
-                    "wrong_answer_dispersion_used_for_selection": False,
-                    "accuracy_is_primary_objective": True,
-                    "diversity_is_constraint": True,
-                    "state_conditioned_quality_guards": {
-                        "accuracy_tie_epsilon": float(self.cfg.state_accuracy_tie_epsilon),
-                        "c1_to_c0_loss_epsilon": int(self.cfg.state_c1_to_c0_loss_epsilon),
-                        "c2_to_c1_loss_epsilon": int(self.cfg.state_c2_to_c1_loss_epsilon),
-                        "c3_to_c2_loss_epsilon": int(self.cfg.state_c3_to_c2_loss_epsilon),
-                        "vote_loss_epsilon": int(self.cfg.state_vote_loss_epsilon),
-                    },
-                    "state_conditioned_selection": {
-                        "vote_objective_enabled": bool(self.cfg.state_vote_objective_enabled),
-                        "coverage_enabled": bool(self.cfg.state_coverage_enabled),
-                        "c2_correct_conversion_enabled": bool(self.cfg.state_c2_correct_conversion_enabled),
-                        "c2_wrong_split_enabled": bool(self.cfg.state_c2_wrong_split_enabled),
-                        "trace_tiebreak_enabled": bool(self.cfg.state_trace_tiebreak_enabled),
-                        "rollout_exploration_enabled": bool(self.cfg.state_rollout_exploration_enabled),
-                        "exploration_parent_enabled": bool(self.cfg.state_exploration_parent_enabled),
-                    },
-                    "coverage_case_assignment_per_agent": dict(
-                        getattr(self, "coverage_case_assignment_per_agent", {})
-                    ),
-                    "c0_rescue_count_per_agent": dict(
-                        getattr(self, "c0_rescue_count_per_agent", {})
-                    ),
-                    "c1_deepening_count_per_agent": dict(
-                        getattr(self, "c1_deepening_count_per_agent", {})
-                    ),
-                    "state_search_diagnostics": dict(
-                        getattr(self, "state_search_diagnostics", {})
-                    ),
-                    "fixed_probe_state_snapshot": dict(
-                        getattr(self, "fixed_probe_state_snapshot", {})
-                    ),
-                    "exploration_lineage": {
-                        "parent_use_count": int(getattr(self, "exploration_parent_use_count", 0)),
-                        "descendant_count": int(getattr(self, "exploration_descendant_count", 0)),
-                        "descendant_safe_count": int(getattr(self, "exploration_descendant_safe_count", 0)),
-                        "descendant_archive_count": int(getattr(self, "exploration_descendant_archive_count", 0)),
-                        "descendant_active_count": int(getattr(self, "exploration_descendant_active_count", 0)),
-                        "descendant_state_gain_count": int(getattr(self, "exploration_descendant_state_gain_count", 0)),
-                        "descendant_vote_gain_count": int(getattr(self, "exploration_descendant_vote_gain_count", 0)),
-                        "descendant_c0_to_c1_count": int(getattr(self, "exploration_descendant_c0_to_c1_count", 0)),
-                        "descendant_c1_to_c2_count": int(getattr(self, "exploration_descendant_c1_to_c2_count", 0)),
-                        "descendant_c2_to_c3_count": int(getattr(self, "exploration_descendant_c2_to_c3_count", 0)),
-                    },
-                    "active_selection_source_counts": dict(
-                        getattr(self, "state_active_selection_source_counts", {})
-                    ),
-                    "parent_selection_source_counts": dict(
-                        getattr(self, "state_parent_selection_source_counts", {})
-                    ),
-                    "archive_slot_fill_counts": dict(
-                        getattr(self, "state_archive_slot_fill_counts", {})
-                    ),
-                })
+        if self._is_state_conditioned_method():
+            diagnostics = dict(getattr(self, "state_search_diagnostics", {}) or {})
+            informative = any(int(diagnostics.get(key, 0) or 0) > 0 for key in (
+                "candidate_diversity_constraint_rejection_count",
+                "correct_set_constraint_binding_count",
+                "safe_trace_constraint_binding_count",
+                "paired_safe_trace_available_count",
+                "safe_diversity_parent_use_count",
+            ))
+            if not bool(self.cfg.state_diversity_constraints_enabled):
+                uninformative_reason = "diversity_constraints_disabled"
+            elif informative:
+                uninformative_reason = ""
+            elif int(diagnostics.get("candidate_diversity_constraint_evaluated_count", 0) or 0) == 0:
+                uninformative_reason = "no_accuracy_valid_candidate_reached_diversity_constraints"
+            else:
+                uninformative_reason = "no_binding_rejection_paired_support_or_diversity_parent_use"
+            initial_metrics = list(getattr(self, "initial_sequential_team_metrics", []) or [])
+            initial_anchor = initial_metrics[0] if initial_metrics else {}
+            meta.update({
+                "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                "accuracy_is_primary_objective": True,
+                "true_plurality_vote_delta_used": True,
+                "wrong_answer_dispersion_used_for_generation": False,
+                "wrong_answer_dispersion_used_for_reward": False,
+                "wrong_answer_dispersion_used_for_selection": False,
+                "diversity_is_noncollapse_constraint": True,
+                "joint_team_enumeration_enabled": False,
+                "joint_team_combination_count": 0,
+                "per_agent_prompt_memory_capacity": int(self.cfg.state_prompt_memory_capacity),
+                "update_mode": "sequential_single_agent",
+                "equal_vote_weighting": True,
+                "rollout_qd_method": False,
+                "rollout_archive_enabled": False,
+                "deprecated_v9_fields_present": True,
+                "deprecated_v9_fields_ignored": [
+                    "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
+                    "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
+                    "state_vote_objective_enabled", "state_joint_total_correct_slack_rate",
+                    "state_representative_capacity",
+                ],
+                "initial_correct_set_diversity_mean": float(initial_anchor.get("correct_set_diversity_mean", 0.0)),
+                "initial_correct_set_diversity_min": float(initial_anchor.get("correct_set_diversity_min", 0.0)),
+                "initial_safe_trace_pair_count": int(sum(
+                    int(row.get("safe_trace_pair_count", 0) or 0) for row in initial_metrics
+                )),
+                "state_search_diagnostics": diagnostics,
+                "prompt_memory_occupancy_per_agent": [
+                    len(getattr(agent, "prompt_memory", []) or []) for agent in self.agents
+                ],
+                "accepted_update_count": int(sum(
+                    int(getattr(agent, "accept_count", 0) or 0) for agent in self.agents
+                )),
+                "accepted_accuracy_regression_count": int(
+                    diagnostics.get("accepted_accuracy_regression_count", 0) or 0
+                ),
+                "diversity_ablation_informative": bool(informative),
+                "diversity_ablation_uninformative_reason": uninformative_reason,
+                "fixed_probe_state_snapshot": dict(getattr(self, "fixed_probe_state_snapshot", {})),
+                "parent_selection_source_counts": dict(getattr(self, "state_parent_selection_source_counts", {})),
+            })
         with open(os.path.join(self.cfg.out_dir, "run_meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
 

@@ -38,7 +38,14 @@ class CandidateSchemaMixin:
     def _contains_task_specific_content(self, prompt: str, question: Optional[str] = None) -> bool:
         text = normalize_spaces(str(prompt)).lower()
         if "final_answer:" in text:
-            return True
+            if not is_state_conditioned_method(getattr(self.cfg, "method_version", "legacy")):
+                return True
+            hard_coded_answer = re.search(
+                r"\bfinal_answer\s*:\s*(?:[a-e]|true|false|yes|no|valid|invalid|-?\d+(?:\.\d+)?)\b",
+                text,
+            )
+            if hard_coded_answer:
+                return True
         if question:
             q = normalize_spaces(question).lower()
             words = [w for w in re.findall(r"[a-zA-Z0-9]{4,}", q) if len(w) >= 6]
@@ -176,6 +183,15 @@ class CandidateSchemaMixin:
     def _required_optimizer_fields(self, architecture: Optional[str] = None) -> List[str]:
         arch = str(architecture or getattr(self.cfg, "optimizer_architecture", "one_shot") or "one_shot").lower()
         if arch == "teacher_critic_student":
+            if is_state_conditioned_method(getattr(self.cfg, "method_version", "legacy")):
+                return [
+                    "candidate_prompt",
+                    "target_error_pattern",
+                    "accuracy_repair_rule",
+                    "correct_case_preservation",
+                    "expected_accuracy_effect",
+                    "risk_control",
+                ]
             if is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy")):
                 return [
                     "candidate_prompt",
@@ -351,6 +367,15 @@ class CandidateSchemaMixin:
             if bool(getattr(self.cfg, "competence_depth_enabled", False))
             else getattr(self.cfg, "student_candidate_prompt_max_chars", 900)
         )
+        if is_state_conditioned_method(getattr(self.cfg, "method_version", "legacy")):
+            return json.dumps({"candidates": [{
+                "candidate_prompt": f"standalone complete prompt, <= {prompt_limit} chars",
+                "target_error_pattern": "short phrase grounded in observed target errors",
+                "accuracy_repair_rule": "one executable correction rule",
+                "correct_case_preservation": "one short preservation rule",
+                "expected_accuracy_effect": "one short sentence",
+                "risk_control": "one short sentence",
+            }]}, ensure_ascii=False, separators=(",", ":"))
         if is_rollout_qd_method(getattr(self.cfg, "method_version", "legacy")):
             return json.dumps({"candidates": [{
                 "candidate_prompt": f"standalone complete prompt, <= {prompt_limit} chars",
