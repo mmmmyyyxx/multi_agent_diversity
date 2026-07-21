@@ -1,310 +1,221 @@
-# Method: State-Conditioned Correlated-Error Optimization
+# Method: Accuracy-First Sequential State Optimization
 
-## 1. Purpose
+## 1. What The Project Optimizes
 
-This repository evolves prompts for a fixed team of solver agents. It does not update model weights. Training reward and selection rank candidate prompts, validation selects the best state, and final test runs only after restoring that validation-selected state.
+This repository evolves prompts for a fixed team of five solver agents. It does not update model weights and is not policy-gradient reinforcement learning. Candidate rewards rank prompts during search; validation selects the best epoch; final test runs once after restoring `best_prompts.json`.
 
-The current method is:
+The current V9 identity is:
 
 ```text
 method_version = v9_state_conditioned_error
-reward_mode = rollout_state_conditioned
-candidate_selection_mode = state_conditioned_accuracy_first
-active_team_selector_version = state_conditioned_joint_v1
+state_update_mode = sequential_single_agent
+reward_mode = state_distribution_vote_reward
+candidate_selection_mode = sequential_accuracy_first_state_reward
+active_team_selector_version = sequential_accuracy_first_v1
 best_state_selection_mode = state_conditioned_vote_first
 ```
 
-V9 is the plurality-oriented exploitation line. The recommended hybrid setting is
-`shared_v9_exploit_b_archive_parent`; it adds B-style rollout exploration only as
-an accuracy-constrained Archive and parent source. The matched V9 ablations are:
+V8 settings and their completed artifacts retain their historical behavior. In particular, V8 may still use rollout archives and joint team selection. V9 does not.
+
+## 2. Fixed Voting Rule
+
+All five agents have equal weight. The normalized answer with the largest vote count wins; top ties use the configured deterministic tie-break. V9 does not add reliability weights, confidence weights, a judge, a router, learned aggregation, or test-time best-agent selection.
+
+For every question:
 
 ```text
-shared_v9_accuracy_vote
-shared_v9_accuracy_vote_coverage
-shared_v9_accuracy_vote_coverage_c2correct
-shared_v9_accuracy_vote_coverage_c2correct_c2split
-shared_v9_accuracy_vote_coverage_c2correct_c2split_trace
-
-shared_v9_exploit_only
-shared_v9_exploit_b_archive
-shared_v9_exploit_b_archive_parent
+G = number of correct agents
+C0 = G=0, C1 = G=1, ..., C5 = G=5
 ```
 
-V8 method versions and completed runs retain their original semantics. V9 has separate configuration, selectors, metadata, and checkpoint compatibility checks.
+New runs report `c0` through `c5`. `c3plus = c3 + c4 + c5` remains a compatibility summary for old analysis scripts.
 
-## 2. End-To-End Data Flow
+## 3. End-To-End Search
 
 ```text
 training rollout window
-  -> classify each question by current correct-agent count
-  -> select target agents and build three repair routes
-  -> Teacher-Critic-Student and open rollout generation
-  -> candidate counterfactual evaluation on three disjoint pools
-  -> hard quality guards
-  -> accuracy epsilon band
-  -> per-agent exploitation Archive plus optional guarded exploration slot
-  -> fixed-probe prompt profiles
-  -> offline joint team enumeration
-  -> validation accuracy guard and vote-first selection
-  -> restore best prompts
-  -> final test
+  -> choose one target agent by deterministic rotating order
+  -> choose parents from that agent's prompt memory
+  -> Teacher-Critic-Student candidate generation
+  -> Stage A candidate-batch prefilter
+  -> Stage B full fixed-probe evaluation
+  -> accuracy, invalid, and non-collapse constraints
+  -> accuracy-first lexicographic selection against incumbent
+  -> immediately activate an accepted prompt
+  -> immediately refresh the fixed-probe team snapshot
+  -> rebuild that agent's five-prompt memory
 ```
 
-Only the optimization training split supplies search evidence. Validation selects states. Test is never used for prompt generation, candidate ranking, Archive retention, or joint team selection.
+Only optimization-train data supplies search evidence. Validation selects epochs. Test never generates, ranks, retains, or activates prompts.
 
-## 3. Solver And Plurality Vote
+## 4. Sequential Agent Updates
 
-All five agents answer the same question. Solver traces should end with:
+One update attempts to change at most one agent. The order rotates by epoch:
 
 ```text
-FINAL_ANSWER: <answer>
+epoch 0: 0,1,2,3,4
+epoch 1: 1,2,3,4,0
+epoch 2: 2,3,4,0,1
 ```
 
-The canonical aggregator is plurality: the normalized answer with the largest count wins. Top ties use the configured deterministic tie-break. Training diagnostics, candidate counterfactuals, joint enumeration, validation, and test all use this implementation.
+The runner uses one-based epoch labels, but the first epoch still uses the epoch-0 order. `epoch_agent_order` and `current_agent_order_index` are checkpointed, so interruption and resume preserve the next target.
 
-For every question, V9 records:
+An accepted prompt becomes active immediately. Every later update is evaluated against the true current four peer prompts. V9 never combines historical prompts across agents and never enumerates a Cartesian product of prompt teams.
+
+## 5. Two-Stage Candidate Evaluation
+
+### Stage A: cheap prefilter
+
+Stage A evaluates generated prompts on a smaller batch with three disjoint pools:
 
 ```text
-G = number of agents answering correctly
-H = largest wrong-answer vote count
-M = G - H
-state = C0, C1, C2, or C3PLUS
+representative: natural optimization samples
+coverage: current C0/C1 cases
+conversion: current C2/C3 cases
 ```
 
-Definitions:
+It estimates target accuracy, invalid output, ordinary repairs, and likely state transitions. Stage A only shortlists candidates; it cannot activate a prompt.
+
+### Stage B: full fixed acceptance probe
+
+The top `state_full_probe_acceptance_candidates` Stage-A prompts, the incumbent, and rollback/memory prompts are evaluated on the complete fixed optimization probe. Per-agent prompt/question results are cached.
+
+Only Stage B decides:
 
 ```text
-C0: G == 0
-C1: G == 1
-C2: G == 2
-C3PLUS: G >= 3
+final target accuracy and correct count
+final invalid constraint
+correct-set and safe-trace constraints
+state-vote reward
+candidate ordering and acceptance
+prompt-memory rebuilding
 ```
 
-The task abstraction also reports `option_count` for multiple-choice questions. This supports theoretical C2 rescuability without task-specific logic in the candidate evaluator.
+`stage_b_full_probe_solver_calls` is reported separately. Removing joint enumeration is a semantic correction, not a solver-cost claim.
 
-## 4. Why The Objective Is State-Conditioned
+## 6. Accuracy First
 
-Correct-set distance, wrong-answer dispersion, and trace distance have different meanings. V9 therefore does not combine them into a global rollout-diversity reward. The historical B setting, `shared_accuracy_rollout_embedding_tcs`, is retained unchanged. In the V9 hybrid, B-style correct-set and valid-trace distances can preserve a safe search parent, but they cannot compensate for accuracy, invalid, reverse-transition, or Vote regression.
-
-### C0 And C1
-
-C0 and C1 optimize new correct coverage:
+Accuracy is both a hard constraint and the first candidate key. The target prompt must satisfy:
 
 ```text
-C0 -> C1: an all-agent failure gains at least one correct solver
-C1 -> C2: a singly covered question gains a second correct solver
+candidate_correct_count >= active_correct_count - local allowance
+candidate_correct_count >= initial_correct_count - global allowance
 ```
 
-Reverse transitions are losses. Merely changing one wrong answer into another earns nothing.
+Defaults are strict: both loss epsilons and the question-count accuracy band are zero. Invalid output must also stay within `invalid_guard_epsilon`.
 
-### C2
-
-C2 has two separate repair paths:
-
-1. If the target changes from wrong to correct, `C2 -> C3` records a third correct vote. It is not also counted as wrong-answer diversity.
-2. If the target remains wrong and `G` remains 2, V9 may count a reduction in the largest wrong cluster:
+Feasible candidates are compared by:
 
 ```text
-c2_wrong_cluster_reduction = max(0, baseline_H - candidate_H)
-c2_wrong_cluster_creation  = max(0, candidate_H - baseline_H)
+1. target correct count
+2. target accuracy
+3. state-vote reward
+4. lower invalid count
+5. diversity constraint slack
+6. earlier generation
+7. stable prompt hash
 ```
 
-Wrong-answer dispersion is a task utility only in this second C2 case. C0, C1, and C3PLUS always receive zero wrong-dispersion task gain.
+A lower-accuracy candidate cannot win through Vote, state reward, trace distance, prompt distance, or diversity. A higher-accuracy feasible candidate may win even when its secondary reward is lower. At equal accuracy, reward must improve by at least `state_min_secondary_reward_gain`.
 
-For `K` answer options, three wrong agents have theoretical minimum largest wrong cluster:
+## 7. State And Vote Reward
+
+The configurable state potentials are:
 
 ```text
-H_min = ceil(3 / (K - 1))
+Phi(C0)=0.00  Phi(C1)=1.00  Phi(C2)=1.75
+Phi(C3)=3.25  Phi(C4)=3.60  Phi(C5)=3.75
 ```
 
-This classifies C2 cases as strictly rescuable, tie-only rescuable, or unrescuable by dispersion. For example, four options can form `2:1:1:1`; three options can generally reach only `2:2:1`.
-
-### C3PLUS
-
-C3PLUS is already on the correct side of the five-agent plurality boundary. Different wrong answers or different traces do not create task reward. Correctness, invalid output, and regression guards remain active.
-
-## 5. Candidate Generation Routes
-
-V9 keeps the existing generation architectures:
+For a candidate replacing one target agent:
 
 ```text
-teacher_critic_student
-open_rollout_exploration
+distribution = mean(Phi(candidate_G) - Phi(active_G))
+vote         = state_reward_vote_weight * (candidate_vote_acc - active_vote_acc)
+balance      = state_reward_bottom2_weight * (candidate_bottom2_acc - active_bottom2_acc)
+state_vote_reward = distribution + vote + balance
 ```
 
-Each generated candidate also carries one state-conditioned route:
+This reward is secondary to target accuracy. Diversity is absent from it.
+
+Wrong-answer changes have zero optimization value. Changing one wrong answer label to another does not earn state, Vote, diversity, memory, or selection credit when `G` is unchanged. Largest-wrong cluster, same-wrong rate, option count, and raw vote changes may remain diagnostics only.
+
+## 8. Diversity As Non-Collapse Constraints
+
+V9 does not maximize generic rollout diversity. It applies two independent feasibility constraints after accuracy.
+
+### Correct-set complementarity
+
+For each agent, define the set of fixed-probe questions it answers correctly. V9 records mean and minimum pairwise Jaccard distance across the five agents. Candidate diversity must stay above both an active-team local floor and an initial-team global floor.
+
+### Safe C4/C5 trace diversity
+
+Trace distance is computed only when:
 
 ```text
-general_accuracy
-coverage_repair
-vote_conversion
+candidate team state is C4 or C5
+target and peer are both correct
+both traces are valid
+both embeddings are available
 ```
 
-`general_accuracy` repairs target-agent errors while preserving correct behavior. `coverage_repair` targets deterministically assigned C0/C1 residual cases. `vote_conversion` first seeks C2-to-C3; only when the target remains wrong may it reduce duplicated wrong votes on a rescuable C2 case.
+C4 pairs have weight 1.0 and C5 pairs 1.5. Wrong traces and C0-C3 are excluded. A C5-to-C4 regression receives no diversity benefit. If no comparable pairs exist, the safe-trace constraint is unavailable and is skipped rather than treated as zero.
 
-C0/C1 cases are assigned to one or two agents by a deterministic hash of the question, seed, and agent ID. This creates different repair histories without fixed personas, capability names, or predefined roles. Assignments and rescue counters are checkpointed.
+## 9. Per-Agent Prompt Memory
 
-Teacher proposes a Socratic repair question. Critic audits it. If rejected, Teacher receives Critic feedback and rewrites it. Student then emits strict JSON candidates. JSON retry and syntax-only repair remain enabled. Prompts, not optimizer self-reported claims, are evaluated.
-
-## 6. Three-Pool Candidate Evaluation
-
-Each candidate replaces one target agent while all peer prompts remain active:
+Each agent keeps at most five prompts:
 
 ```text
-baseline team  = current active prompts
-candidate team = current active prompts with target agent replaced
+active
+accuracy_best
+state_vote_best
+safe_diversity_parent
+rollback_or_recent_success
 ```
 
-The evaluation batch contains three disjoint pools:
+Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. Entries deduplicate by prompt hash and fixed-probe outcome signature; the safe-diversity slot may retain a distinct safe-trace signature. Reaccept cooldown and a bounded recent-accept cycle window reduce prompt cycling.
+
+## 10. Validation And Final Test
+
+Validation ordering is:
 
 ```text
-representative pool: natural optimization-split sample
-coverage pool: known current C0/C1 cases
-conversion pool: known current C2 cases, stratified by option count
+1. mean individual accuracy
+2. plurality vote accuracy
+3. lower C0
+4. higher C3+C4+C5
+5. higher C4+C5
+6. bottom-2 accuracy
+7. lower invalid rate
+8. earlier epoch
 ```
 
-If a targeted pool is short, representative examples fill the remaining budget. Actual pool counts, state counts, and option-count histograms are logged.
+This keeps team competence ahead of aggregation gains. Final test restores the validation-selected prompts from `best_prompts.json`.
 
-Only the representative pool estimates target accuracy and invalid rate for quality guards and accuracy ordering. Targeted-pool accuracy is diagnostic and cannot replace natural-distribution accuracy. Coverage and conversion pools estimate their corresponding state transitions.
+## 11. Settings
 
-Every per-question counterfactual row stores baseline and candidate state, G, H, M, option count, target correctness, vote correctness, tie status, target answer, and dominant wrong answer.
-
-## 7. Hard Quality Guards
-
-A non-incumbent candidate is Safe only when:
+The unchanged B baseline is:
 
 ```text
-candidate_target_accuracy >= baseline_target_accuracy - accuracy_guard_epsilon
-candidate_invalid_rate    <= baseline_invalid_rate + invalid_guard_epsilon
-C1 -> C0 loss count       <= state_c1_to_c0_loss_epsilon
-C2 -> C1 loss count       <= state_c2_to_c1_loss_epsilon
-C3 -> C2 loss count       <= state_c3_to_c2_loss_epsilon
-Vote loss count           <= state_vote_loss_epsilon
+shared_accuracy_rollout_embedding_tcs
 ```
 
-The incumbent is always retained as a fallback. Failed candidates are catastrophic and cannot enter the V9 Archive.
-
-V9's scalar `reward` field is only representative-pool target accuracy for compatibility and logging. It is not used to add state utilities together.
-
-## 8. Accuracy-First Candidate Selection
-
-Among Safe non-incumbents:
+V9 ablations are:
 
 ```text
-best_accuracy = max(candidate_target_accuracy)
-accuracy_band = candidates with accuracy >= best_accuracy - state_accuracy_tie_epsilon
+shared_v9_sequential_accuracy
+shared_v9_sequential_accuracy_state
+shared_v9_sequential_accuracy_state_vote
+shared_v9_sequential_accuracy_state_vote_diversity
 ```
 
-Coverage and conversion slots can select only from this band. A weaker candidate cannot enter the Archive because it has large state utility or trace distance.
+The last is the complete method. Historical V9 archive, C2-split, and hybrid aliases were removed rather than silently mapped to new behavior.
 
-The quality keys are:
+## 12. Checkpoint And Outputs
 
-```text
-global accuracy:
-  target accuracy, lower invalid, wrong->correct, fewer correct->wrong,
-  optional final trace tie-break, earlier generation, stable hash
+V9 requires `state_conditioned_checkpoint_version = 3`. A V9 v2 checkpoint is incompatible and resume fails explicitly. Checkpoints persist prompt memory, cached probe profiles, initial baselines, the current snapshot, rotating-order cursor, accepted history, cycle state, random state, and cost state.
 
-coverage:
-  C0->C1, C1->C2, fewer C1->C0, fewer C2->C1,
-  target accuracy, lower invalid, optional final trace tie-break, stable hash
-
-conversion:
-  C2->C3, strict split gains, vote gains, wrong-cluster reduction,
-  tie gains, fewer dominant-wrong creations, target accuracy, lower invalid,
-  optional final trace tie-break, stable hash
-```
-
-Trace distance never appears before a quality metric.
-
-## 9. Per-Agent Archive And Guarded Exploration
-
-Each full V9 agent Archive keeps up to six rollout representatives:
-
-```text
-1. incumbent
-2. overall accuracy best
-3. coverage repair best, when enabled
-4. C2-to-C3 correct-conversion best, when enabled
-5. C2 wrong-split best, when enabled
-6. rollout exploration best, when enabled
-```
-
-Duplicate prompt hashes and duplicate rollout signatures are stored once. If one prompt wins multiple exploitation slots, the next eligible accuracy-band prompt fills capacity. The exploration slot accepts only candidates that pass the same hard guards and accuracy band. It maximizes the minimum distance to exploitation representatives using `0.6 * correct-set distance + 0.4 * valid-trace distance`; generic wrong-answer distance is excluded.
-
-With six representatives per agent, five-agent offline enumeration has at most `6^5 = 7776` combinations. Prompt profiles are solver-evaluated once on the fixed optimization probe; team combinations add no solver or evaluator-model calls. Exploration representatives may be parents for later generation, but at most one is selected per agent update. Selection is deterministic from seed, epoch, step, and agent; stagnation can force the exploration parent. The parent itself never becomes active automatically.
-
-## 10. Joint Team Selection
-
-First, teams enter a total-correct quality band:
-
-```text
-best_total_correct = max(team total_agent_correct_count)
-allowed_slack = round(probe_size * num_agents * state_joint_total_correct_slack_rate)
-keep teams with total_correct >= best_total_correct - allowed_slack
-```
-
-Within the band, the full V9 key is:
-
-```text
-more vote-correct,
-lower C0,
-more coverage depth,
-more C2-to-C3 conversion,
-more C2 strict vote-correct,
-more C2 vote-correct,
-lower C2 largest-wrong count,
-higher bottom-2 correctness,
-higher mean gold plurality margin,
-lower invalid count,
-optional trace distance as the final semantic tie-break,
-stable prompt-hash tie-break
-```
-
-Exploration/trace distance appears only at the final semantic tie-break. It never precedes Vote, coverage, C2, bottom-2, margin, or invalid quality. The independent switches remove only their own terms:
-
-```text
-accuracy_vote: Vote objective without coverage or C2 utilities
-accuracy_vote_coverage: add C0/C1 coverage
-accuracy_vote_coverage_c2correct: add C2-to-C3 conversion
-accuracy_vote_coverage_c2correct_c2split: add constrained C2 wrong split
-accuracy_vote_coverage_c2correct_c2split_trace: add final trace tie-break
-```
-
-## 11. Validation And Final Test
-
-Before training, V9 evaluates validation once and stores `initial_validation`. A later epoch is eligible only when:
-
-```text
-mean_individual_acc >= initial_validation_mean_individual_acc
-                       - state_validation_accuracy_guard_epsilon
-```
-
-Eligible states are ordered by:
-
-```text
-Vote accuracy,
-lower C0 rate,
-mean individual accuracy,
-C2 vote-correct rate,
-bottom-2 accuracy,
-mean plurality margin,
-lower invalid rate,
-earlier epoch
-```
-
-The initial state remains a valid fallback. Final test restores `best_prompts.json`, which is the authoritative final prompt set.
-
-## 12. Metrics And Artifacts
-
-Task objective metrics include Vote, mean/best/bottom-2 individual accuracy, Oracle, C0/C1/C2/C3PLUS, C2 vote correct/fail, C2 strict/tie, plurality margin, invalid rate, persistent/new/resolved C0, and all-agents-same-wrong rate.
-
-Search diagnostics include directional transition counts, C2 wrong-cluster reduction/creation, theoretical C2 rescuability, fixed-probe trace distance, candidate pool composition, optimization route, coverage assignments, per-agent rescue counters, all six Archive slots, active/parent source counts, exploration distances, and exploration-descendant conversion rates.
-
-`state_search_diagnostics` accumulates directional transitions over evaluated candidates. It is reported separately from final validation/test task metrics and must not be interpreted as a held-out accuracy estimate.
-
-`correct_set_rollout_distance_diagnostic`, `c2_wrong_answer_dispersion`, and `trace_embedding_distance` remain separate diagnostics. V9 never uses the historical composite rollout distance for reward or primary selection. Final reports explicitly include `best_individual_minus_plurality_vote` and `oracle_minus_plurality_vote`.
-
-Important artifacts:
+Important outputs:
 
 ```text
 run_meta.json
@@ -312,72 +223,49 @@ history.json
 best_prompts.json
 prompt_history.json
 update_logs.jsonl
+sequential_update_history.jsonl
 solver_rollout_records.jsonl
-joint_team_selection_history.jsonl
 training_checkpoint.json while incomplete
-final_summary.json
 cost_summary.json
+final_summary.json
 ```
 
-## 13. Checkpoint And Resume
-
-The global checkpoint format remains v6 for V8 compatibility. V9 additionally requires:
+V9 does not write `joint_team_selection_history.jsonl`. Run metadata states:
 
 ```text
-state_conditioned_checkpoint_version = 2
+v9_update_mode = sequential_single_agent
+joint_team_enumeration_enabled = false
+joint_team_combination_count = 0
+equal_vote_weighting = true
 ```
 
-V9 behavior fields, pool sizes, switches, policy versions, fixed-probe snapshot, assignments, exploration lineage, source counters, random state, prompt profiles, and Archive state are fingerprinted or persisted. Missing or incompatible state causes an explicit resume error; the runner does not silently restart in the same output directory.
-
-The historical default behavior fingerprint remains:
+The historical default fingerprint remains:
 
 ```text
 48c2f27cdcda64d2f7b32d008957b4903c683f49012988c4e5cab301ed29d5fa
 ```
 
-## 14. Historical V8 Compatibility
-
-These settings remain available unchanged:
+## 13. Code Map
 
 ```text
-shared_accuracy_rollout_embedding_tcs
-method_version = v8_accuracy_rollout_embedding
-
-shared_vote_ready_rollout_diversity_tcs
-method_version = v8_rollout_qd_vote_ready
-
-shared_vote_tcs_competence_depth2_progressive_residual_hybrid
-method_version = v8_stable_qd_lineage
+multi_dataset_diverse_rl/sequential_state.py             V9 reward, constraints, keys, memory
+multi_dataset_diverse_rl/state_conditioned.py            state snapshots and legacy readers
+multi_dataset_diverse_rl/optimization/training_controller.py rotating target order
+multi_dataset_diverse_rl/optimization/prompt_update_controller.py Stage A/B and activation
+multi_dataset_diverse_rl/qd/joint_controller.py           fixed-probe snapshot; V8 joint path
+multi_dataset_diverse_rl/persistence/checkpoint.py        resume state and compatibility
+scripts/experiment_config.py                              named settings
+scripts/run_task_level_accuracy.py                        task-level runner
+tests/test_v9_sequential_accuracy_first.py                current V9 invariants
 ```
 
-V8 may use its recorded composite rollout distance, mechanism schema, lineage, or historical selectors according to its method version. V9 branches before those decisions. Old output directories and compatible checkpoints remain readable.
-
-## 15. Code Map
-
-```text
-multi_dataset_diverse_rl/state_conditioned.py          V9 states, transitions, Archive, team keys
-multi_dataset_diverse_rl/optimization/target_selector.py state-routed case construction
-multi_dataset_diverse_rl/optimization/candidate_generator.py TCS/open generation
-multi_dataset_diverse_rl/evaluation/candidate_evaluator.py counterfactual and pool metrics
-multi_dataset_diverse_rl/qd/joint_controller.py        fixed-probe team enumeration
-multi_dataset_diverse_rl/evaluation/dataset_evaluator.py split summaries
-multi_dataset_diverse_rl/persistence/checkpoint.py     fingerprint and resume checks
-multi_dataset_diverse_rl/config.py                     config and CLI schema
-scripts/experiment_config.py                           named matched settings
-scripts/run_task_level_accuracy.py                     task-level runner
-tests/test_state_conditioned_error_v9.py               V9 invariants
-tests/test_v9_guarded_rollout_exploration.py           routing, snapshot, Archive, parent, resume
-```
-
-## 16. Verification Order
+## 14. Verification
 
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
-& $PY -m pytest tests/test_rollout_qd_vote_ready.py -q
-& $PY -m pytest tests/test_state_conditioned_error_v9.py -q
 & $PY -m pytest -q
 & $PY -m compileall multi_dataset_diverse_rl scripts tests
 git diff --check
 ```
 
-After tests, run one single-task seed42 integration smoke. It verifies routing, snapshot, Archive, lineage, and logging only; it is not evidence of a performance improvement. Formal comparisons should then run B versus `shared_v9_exploit_only`, followed by the three hybrid settings and multiple seeds.
+After static and unit verification, run one deterministic single-task smoke. It verifies mechanism integrity only; it is not evidence of accuracy improvement.

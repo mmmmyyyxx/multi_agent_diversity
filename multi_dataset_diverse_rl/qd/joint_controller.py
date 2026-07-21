@@ -69,19 +69,14 @@ class JointControllerMixin:
         final_epoch: bool = False,
     ) -> Dict[str, Any]:
         if self._is_state_conditioned_method():
-            if not probe_data:
-                return {"enabled": False, "joint_refresh_triggered": False, "joint_refresh_skip_reason": "empty_probe"}
-            self.current_fixed_probe_hash = self._fixed_probe_hash(probe_data)
-            record = await self._select_state_conditioned_joint_active_team(probe_data, epoch=epoch)
-            record.update({
-                "joint_refresh_triggered": True,
-                "joint_refresh_trigger_reasons": ["epoch_end" if not final_epoch else "final_epoch"],
+            return {
+                "enabled": False,
+                "joint_refresh_triggered": False,
+                "joint_refresh_skip_reason": "v9_sequential_single_agent",
+                "joint_team_combination_count": 0,
                 "joint_team_solver_call_count": 0,
-                "selector_route": "state_conditioned",
-            })
-            self.joint_team_selection_history.append(dict(record))
-            self._flush_jsonl("joint_team_selection_history.jsonl", [record])
-            return record
+                "selector_route": "sequential_accuracy_first_v1",
+            }
         if self._is_rollout_qd_method():
             if not probe_data:
                 return {"enabled": False, "joint_refresh_triggered": False, "joint_refresh_skip_reason": "empty_probe"}
@@ -218,6 +213,17 @@ class JointControllerMixin:
         self.fixed_probe_snapshot_refresh_count = int(
             getattr(self, "fixed_probe_snapshot_refresh_count", 0)
         ) + 1
+        if not self.initial_sequential_profiles:
+            self.initial_sequential_profiles = [dict(profile) for profile in profiles]
+            self.initial_sequential_team_metrics = [
+                sequential_team_metrics(
+                    profiles, gold_answers, question_hashes, agent_id, self.cfg,
+                    vote_fn=plurality_vote_with_diagnostics,
+                    match_fn=self.task_spec.match_answer,
+                )
+                for agent_id in range(len(profiles))
+            ]
+        self.current_sequential_profiles = [dict(profile) for profile in profiles]
         return snapshot
 
     async def _select_rollout_joint_active_team(
@@ -585,7 +591,13 @@ class JointControllerMixin:
 
     async def select_joint_active_team(self, probe_data: List[Dict[str, str]], *, epoch: int) -> Dict[str, Any]:
         if self._is_state_conditioned_method():
-            return await self._select_state_conditioned_joint_active_team(probe_data, epoch=epoch)
+            return {
+                "enabled": False,
+                "reason": "v9_sequential_single_agent",
+                "combination_count": 0,
+                "joint_team_combination_count": 0,
+                "selector_route": "sequential_accuracy_first_v1",
+            }
         if self._is_rollout_qd_method():
             return await self._select_rollout_joint_active_team(probe_data, epoch=epoch)
         if not self._is_stable_qd_lineage():

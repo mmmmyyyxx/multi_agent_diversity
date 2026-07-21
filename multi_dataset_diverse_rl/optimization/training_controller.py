@@ -148,7 +148,21 @@ class TrainingControllerMixin:
     async def maybe_update_prompts(self, metrics: Dict[str, Any], eval_batch: List[Dict[str, str]], step_id: int, epoch_id: int) -> Dict[str, Any]:
         if not self.is_update_window_ready():
             return {"update_requested": True, "update_ready": False, "selected_agent_ids": [], "updated_agent_ids": [], "skipped_reason": "window_not_ready"}
-        if self._is_accuracy_only_mode():
+        if self._is_state_conditioned_method():
+            diagnosis = self._window_update_diagnosis(self.recent_window_records)
+            order = epoch_agent_order(max(0, int(epoch_id) - 1), len(self.agents))
+            order_key = str(epoch_id)
+            order_index = int(self.sequential_agent_order_index_by_epoch.get(order_key, 0) or 0)
+            selected = [order[order_index % len(order)]] if order else []
+            self.sequential_agent_order_index_by_epoch[order_key] = order_index + 1
+            diagnosis.update({
+                "epoch_agent_order": list(order),
+                "current_agent_order_index": order_index,
+                "target_agent_id": selected[0] if selected else None,
+                "target_selection_reason": "deterministic_rotating_order",
+            })
+            no_selection_reason = "empty_agent_order"
+        elif self._is_accuracy_only_mode():
             diagnosis = self._window_accuracy_diagnosis(self.recent_window_records)
             selected = self.select_reward_agents_for_update(diagnosis, metrics)
             no_selection_reason = "no_reward_relevant_agent"

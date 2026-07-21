@@ -370,9 +370,9 @@ class TargetSelectorMixin:
                         self.coverage_last_attempt_epoch[question_hash] = int(
                             getattr(self, "total_agent_update_count", 0)
                         )
-                elif correct_count == 2:
+                elif correct_count in {2, 3}:
                     enriched = dict(case)
-                    enriched["state"] = "C2"
+                    enriched["state"] = f"C{correct_count}"
                     conversion.append(enriched)
             assignments[str(agent_id)] = sorted(assigned_to_target)
             self.coverage_case_assignment_per_agent = assignments
@@ -398,18 +398,15 @@ class TargetSelectorMixin:
                         "or C1-to-C2 correct coverage without sacrificing existing correct cases"
                     ),
                 })
-            if (
-                bool(getattr(self.cfg, "state_c2_correct_conversion_enabled", True))
-                or bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True))
-            ):
+            if conversion:
                 batches.append({
                     "batch_type": "state_vote_conversion",
                     "optimization_route": "vote_conversion",
                     "priority": 2,
                     "cases": conversion[:target_error_limit],
                     "purpose": (
-                        "first make the target correct on C2 cases to create C2-to-C3; only if it remains "
-                        "wrong, reduce a dominant wrong cluster on theoretically rescuable C2 cases"
+                        "make the target correct on C2/C3 cases to create C2-to-C3 or C3-to-C4; "
+                        "wrong-answer label changes have no optimization value"
                     ),
                 })
             return [batch for batch in batches if batch["optimization_route"] == "general_accuracy" or batch.get("cases")]

@@ -826,6 +826,14 @@ class RuntimeStateMixin:
             "state_c2_wrong_split_enabled": bool(getattr(self.cfg, "state_c2_wrong_split_enabled", True)),
             "state_trace_tiebreak_enabled": bool(getattr(self.cfg, "state_trace_tiebreak_enabled", True)),
             "state_rollout_exploration_enabled": bool(getattr(self.cfg, "state_rollout_exploration_enabled", False)),
+            "v9_update_mode": "sequential_single_agent" if self._is_state_conditioned_method() else None,
+            "joint_team_enumeration_enabled": False if self._is_state_conditioned_method() else None,
+            "joint_team_combination_count": 0 if self._is_state_conditioned_method() else None,
+            "equal_vote_weighting": True if self._is_state_conditioned_method() else None,
+            "wrong_answer_dispersion_used_for_reward": False if self._is_state_conditioned_method() else None,
+            "wrong_answer_dispersion_used_for_selection": False if self._is_state_conditioned_method() else None,
+            "accuracy_is_primary_objective": True if self._is_state_conditioned_method() else None,
+            "diversity_is_constraint": True if self._is_state_conditioned_method() else None,
             "fixed_probe_state_snapshot_version": str(
                 getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
             ),
@@ -910,6 +918,14 @@ class RuntimeStateMixin:
             if self._is_state_conditioned_method():
                 meta.update({
                     "state_conditioned_checkpoint_version": int(STATE_CONDITIONED_CHECKPOINT_VERSION),
+                    "v9_update_mode": "sequential_single_agent",
+                    "joint_team_enumeration_enabled": False,
+                    "joint_team_combination_count": 0,
+                    "equal_vote_weighting": True,
+                    "wrong_answer_dispersion_used_for_reward": False,
+                    "wrong_answer_dispersion_used_for_selection": False,
+                    "accuracy_is_primary_objective": True,
+                    "diversity_is_constraint": True,
                     "state_conditioned_quality_guards": {
                         "accuracy_tie_epsilon": float(self.cfg.state_accuracy_tie_epsilon),
                         "c1_to_c0_loss_epsilon": int(self.cfg.state_c1_to_c0_loss_epsilon),

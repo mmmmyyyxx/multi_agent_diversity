@@ -102,6 +102,38 @@ class _FlatConfigSchema:
     state_c0_abstract_analyzer_enabled: bool = False
     state_joint_total_correct_slack_rate: float = 0.01
     state_representative_capacity: int = 4
+    state_update_mode: str = "sequential_single_agent"
+    state_prompt_memory_capacity: int = 5
+    state_memory_parent_count_per_update: int = 3
+    state_full_probe_acceptance_candidates: int = 3
+    state_local_accuracy_loss_epsilon: float = 0.0
+    state_global_accuracy_loss_epsilon: float = 0.0
+    state_accuracy_band_allowed_loss_questions: int = 0
+    state_correct_set_diversity_local_epsilon: float = 0.03
+    state_correct_set_diversity_global_epsilon: float = 0.05
+    state_min_pairwise_diversity_local_epsilon: float = 0.05
+    state_min_pairwise_diversity_global_epsilon: float = 0.08
+    state_safe_trace_local_epsilon: float = 0.05
+    state_safe_trace_global_epsilon: float = 0.08
+    state_safe_trace_weight_c4: float = 1.0
+    state_safe_trace_weight_c5: float = 1.5
+    state_potential_c0: float = 0.0
+    state_potential_c1: float = 1.0
+    state_potential_c2: float = 1.75
+    state_potential_c3: float = 3.25
+    state_potential_c4: float = 3.60
+    state_potential_c5: float = 3.75
+    state_reward_vote_weight: float = 2.0
+    state_reward_bottom2_weight: float = 0.25
+    state_min_secondary_reward_gain: float = 0.0
+    state_catastrophic_vote_loss_limit: int = -1
+    state_outcome_signature_version: str = "v9_sequential_outcome_v1"
+    state_safe_trace_signature_version: str = "v9_sequential_safe_trace_v1"
+    state_update_cycle_window: int = 10
+    state_prompt_reaccept_cooldown_updates: int = 5
+    state_distribution_reward_enabled: bool = True
+    state_vote_reward_enabled: bool = True
+    state_diversity_constraints_enabled: bool = True
     candidate_batch_representative_size: int = 12
     candidate_batch_coverage_size: int = 6
     candidate_batch_conversion_size: int = 6
@@ -401,6 +433,16 @@ class _FlatConfigSchema:
             self.residual_specialization_enabled = False
         if str(self.method_version) == "v9_state_conditioned_error":
             self.state_conditioned_enabled = True
+            self.state_c2_wrong_split_enabled = False
+            self.state_rollout_exploration_enabled = False
+            self.state_exploration_parent_enabled = False
+            self.reward_mode = "state_distribution_vote_reward"
+            self.candidate_selection_mode = "sequential_accuracy_first_state_reward"
+            self.best_state_selection_mode = "state_conditioned_vote_first"
+            self.active_team_selector_version = "sequential_accuracy_first_v1"
+            self.aggregation_mode = "plurality"
+            if int(self.agents) != 5:
+                raise ValueError("V9 sequential state optimization requires exactly five agents")
         probability_fields = (
             "specialization_ema",
             "behavior_cycle_similarity_threshold",
@@ -690,8 +732,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--baseline_only", type=int, default=int(defaults.baseline_only), choices=[0, 1])
 
     parser.add_argument("--search_mode", type=str, default=defaults.search_mode, choices=["evolutionary_beam"])
-    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready", "rollout_state_conditioned"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first"])
+    parser.add_argument("--reward_mode", type=str, default=defaults.reward_mode, choices=["accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready", "rollout_state_conditioned", "state_distribution_vote_reward"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first", "sequential_accuracy_first_state_reward"])
     parser.add_argument("--best_state_selection_mode", type=str, default=defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first", "state_conditioned_vote_first"])
     parser.add_argument("--beam_size", type=int, default=defaults.beam_size)
     parser.add_argument("--num_candidates_per_parent", type=int, default=defaults.num_candidates_per_parent)
@@ -731,12 +773,31 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--state_exploration_parent_probability", type=float, default=defaults.state_exploration_parent_probability)
     parser.add_argument("--state_exploration_correct_set_weight", type=float, default=defaults.state_exploration_correct_set_weight)
     parser.add_argument("--state_exploration_valid_trace_weight", type=float, default=defaults.state_exploration_valid_trace_weight)
+    parser.add_argument("--state_update_mode", type=str, default=defaults.state_update_mode, choices=["sequential_single_agent"])
+    parser.add_argument("--state_outcome_signature_version", type=str, default=defaults.state_outcome_signature_version)
+    parser.add_argument("--state_safe_trace_signature_version", type=str, default=defaults.state_safe_trace_signature_version)
+    for name in (
+        "state_local_accuracy_loss_epsilon", "state_global_accuracy_loss_epsilon",
+        "state_correct_set_diversity_local_epsilon", "state_correct_set_diversity_global_epsilon",
+        "state_min_pairwise_diversity_local_epsilon", "state_min_pairwise_diversity_global_epsilon",
+        "state_safe_trace_local_epsilon", "state_safe_trace_global_epsilon",
+        "state_safe_trace_weight_c4", "state_safe_trace_weight_c5",
+        "state_potential_c0", "state_potential_c1", "state_potential_c2",
+        "state_potential_c3", "state_potential_c4", "state_potential_c5",
+        "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_min_secondary_reward_gain",
+    ):
+        parser.add_argument(f"--{name}", type=float, default=getattr(defaults, name))
     for name in (
         "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
         "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
         "state_representative_capacity", "candidate_batch_representative_size",
         "candidate_batch_coverage_size", "candidate_batch_conversion_size",
         "state_exploration_stagnation_patience", "state_exploration_parent_max_per_update",
+        "state_prompt_memory_capacity", "state_memory_parent_count_per_update",
+        "state_full_probe_acceptance_candidates", "state_accuracy_band_allowed_loss_questions",
+        "state_catastrophic_vote_loss_limit", "state_update_cycle_window",
+        "state_prompt_reaccept_cooldown_updates",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(defaults, name))
     for name in (
@@ -745,6 +806,8 @@ def build_parser() -> argparse.ArgumentParser:
         "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
         "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
         "state_c0_abstract_analyzer_enabled",
+        "state_distribution_reward_enabled", "state_vote_reward_enabled",
+        "state_diversity_constraints_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(defaults, name)), choices=[0, 1])
     parser.add_argument("--vote_ready_diversity_weight", type=float, default=defaults.vote_ready_diversity_weight)

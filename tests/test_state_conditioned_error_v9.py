@@ -278,8 +278,8 @@ def test_candidate_batch_preserves_three_disjoint_pool_budgets():
     assert len({row["question"] for row in batch}) == 6
     assert sum(bool(row["_candidate_pool_primary"]) for row in batch) == 2
     assert pools.count("coverage") == 2
-    assert pools.count("conversion") == 1
-    assert sum(row["_candidate_pool_fallback_for"] == "conversion" for row in batch) == 1
+    assert pools.count("conversion") == 2
+    assert sum(row["_candidate_pool_fallback_for"] == "conversion" for row in batch) == 0
 
 
 def test_v9_checkpoint_has_version_and_rejects_missing_v9_marker():

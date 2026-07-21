@@ -93,30 +93,34 @@ class CandidateGenerationStage:
         if system._is_stable_qd_lineage():
             context.beam, context.parent_sources = system._select_stable_qd_parents(context.agent, context.epoch_id)
         elif system._is_state_conditioned_method():
-            context.beam, context.parent_sources, context.parent_selection_diagnostics = (
-                select_state_conditioned_parents(
-                    context.beam,
-                    system._normalized_prompt_hash(context.agent.current_prompt),
-                    system.cfg,
-                    seed=int(system.cfg.seed),
-                    epoch=int(context.epoch_id),
-                    step=int(context.step_id),
-                    agent_id=int(context.agent_id),
-                    stagnation_count=int(
-                        getattr(system, 'state_no_gain_updates_per_agent', {}).get(
-                            str(context.agent_id), 0
-                        ) or 0
-                    ),
+            if not context.agent.prompt_memory:
+                context.incumbent = system._make_beam_item(
+                    context.agent.current_prompt, None, {}, None, 0
                 )
+                context.incumbent['prompt_hash'] = system._normalized_prompt_hash(
+                    context.agent.current_prompt
+                )
+                context.incumbent['prompt_memory_slot'] = 'active'
+                context.agent.prompt_memory = [context.incumbent]
+            context.beam, context.parent_sources = select_memory_parents(
+                context.agent.prompt_memory,
+                int(system.cfg.state_memory_parent_count_per_update),
+                rotation_offset=max(0, int(context.agent_update_turn) - 1),
             )
-            if context.parent_selection_diagnostics.get('exploration_parent_selected'):
-                system.exploration_parent_use_count = int(
-                    getattr(system, 'exploration_parent_use_count', 0)
-                ) + 1
+            context.parent_selection_diagnostics = {
+                'mode': 'deterministic_prompt_memory',
+                'selected_slots': list(context.parent_sources),
+            }
             for source in context.parent_sources:
                 system.state_parent_selection_source_counts[source] = int(
                     system.state_parent_selection_source_counts.get(source, 0) or 0
                 ) + 1
+            selected_parent_hashes = {
+                str(item.get('prompt_hash', '')) for item in context.beam
+            }
+            for memory_item in context.agent.prompt_memory:
+                if str(memory_item.get('prompt_hash', '')) in selected_parent_hashes:
+                    memory_item['parent_use_count'] = int(memory_item.get('parent_use_count', 0) or 0) + 1
         elif system._is_rollout_qd_method():
             context.parent_sources = [
                 "active" if system._normalized_prompt_hash(str(item.get('prompt', ''))) == system._normalized_prompt_hash(context.agent.current_prompt)
@@ -816,11 +820,301 @@ class UpdateSummaryStage:
 
 class PromptUpdateMixin:
 
+    async def _run_v9_sequential_stage_b(self, context) -> Tuple[bool, Dict[str, Any]]:
+        probe_data = list(getattr(self, 'fixed_acceptance_probe_data', []) or [])
+        if not probe_data:
+            raise RuntimeError('V9 Stage B requires a non-empty fixed acceptance probe')
+        if not getattr(self, 'current_sequential_profiles', []):
+            await self.refresh_state_conditioned_fixed_probe_snapshot(probe_data, epoch=context.epoch_id)
+        active_profiles = [dict(profile) for profile in self.current_sequential_profiles]
+        question_hashes = [self._hash(str(example.get('question', ''))) for example in probe_data]
+        gold_answers = [
+            self.task_spec.parse_gold(example.get('answer'), str(example.get('question', '')))
+            for example in probe_data
+        ]
+        active_team_metrics = sequential_team_metrics(
+            active_profiles, gold_answers, question_hashes, context.agent_id, self.cfg,
+            vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
+        )
+        active_hash = self._normalized_prompt_hash(context.agent.current_prompt)
+        incumbent = self._make_beam_item(context.agent.current_prompt, None, {}, None, 0)
+        incumbent.update({
+            'candidate_id': f'incumbent_{active_hash}',
+            'prompt_hash': active_hash,
+            'source': 'incumbent',
+            'candidate_pool_source': 'incumbent',
+        })
+        stage_a_ranked = sorted(
+            context.evaluated,
+            key=lambda item: (
+                float(item.get('metrics', {}).get('candidate_target_accuracy', 0.0) or 0.0),
+                float(item.get('metrics', {}).get('candidate_team_accuracy', 0.0) or 0.0),
+                -float(item.get('metrics', {}).get('candidate_invalid_rate', 1.0) or 1.0),
+                str(item.get('prompt_hash', '')),
+            ),
+            reverse=True,
+        )[:max(1, int(self.cfg.state_full_probe_acceptance_candidates))]
+        stage_b_pool = [incumbent, *stage_a_ranked, *list(context.agent.prompt_memory)]
+        unique = {}
+        for item in stage_b_pool:
+            row = dict(item)
+            prompt = str(row.get('prompt', context.agent.current_prompt))
+            row['prompt'] = prompt
+            row['prompt_hash'] = self._normalized_prompt_hash(prompt)
+            unique.setdefault(row['prompt_hash'], row)
+        before_missing = int(getattr(self, 'full_probe_missing_pair_evaluation_count', 0))
+        stage_b_concurrency = max(1, min(
+            int(getattr(self.cfg, 'candidate_eval_concurrency', 1) or 1),
+            len(unique),
+        ))
+        stage_b_semaphore = asyncio.Semaphore(stage_b_concurrency)
+
+        async def evaluate_full_probe(row):
+            async with stage_b_semaphore:
+                profile = await self._evaluate_prompt_on_stable_probe(
+                    context.agent_id, str(row['prompt']), probe_data
+                )
+            team_profiles = [dict(value) for value in active_profiles]
+            team_profiles[context.agent_id] = dict(profile)
+            team_metrics = sequential_team_metrics(
+                team_profiles, gold_answers, question_hashes, context.agent_id, self.cfg,
+                vote_fn=plurality_vote_with_diagnostics, match_fn=self.task_spec.match_answer,
+            )
+            reward = state_vote_reward(
+                active_team_metrics['correctness_rows'], team_metrics['correctness_rows'],
+                active_team_metrics['vote_correct_vector'], team_metrics['vote_correct_vector'],
+                self.cfg,
+            )
+            metrics = {**dict(row.get('metrics', {}) or {}), **team_metrics, **reward}
+            initial_metrics = (
+                self.initial_sequential_team_metrics[context.agent_id]
+                if context.agent_id < len(self.initial_sequential_team_metrics)
+                else active_team_metrics
+            )
+            metrics.update(full_probe_constraints(metrics, active_team_metrics, initial_metrics, self.cfg))
+            metrics['rollout_profile'] = dict(profile)
+            metrics['outcome_signature_hash'] = outcome_signature(
+                profile, self.cfg.state_outcome_signature_version
+            )
+            metrics['safe_trace_signature_hash'] = safe_trace_signature(
+                profile, self.cfg.state_safe_trace_signature_version
+            )
+            row['metrics'] = metrics
+            row['outcome_signature_hash'] = metrics['outcome_signature_hash']
+            row['safe_trace_signature_hash'] = metrics['safe_trace_signature_hash']
+            row['reward'] = float(metrics['state_reward_total'])
+            row['stage_b_full_probe_evaluated'] = True
+            return row
+
+        profiled = await asyncio.gather(*[
+            evaluate_full_probe(dict(row)) for row in unique.values()
+        ])
+        incumbent = next(item for item in profiled if item['prompt_hash'] == active_hash)
+        feasible = [
+            item for item in profiled
+            if bool(item.get('metrics', {}).get('sequential_constraints_passed', False))
+        ]
+        recent = list(getattr(self, 'sequential_recent_accepted_prompt_hashes', []) or [])
+        cooldown = max(0, int(self.cfg.state_prompt_reaccept_cooldown_updates))
+        for item in feasible:
+            if item['prompt_hash'] != active_hash and item['prompt_hash'] in recent[-cooldown:]:
+                item['metrics']['sequential_constraints_passed'] = False
+                item['metrics']['rejection_reason'] = 'prompt_reaccept_cooldown'
+        feasible = [item for item in feasible if item['metrics']['sequential_constraints_passed']]
+        selected = max(feasible or [incumbent], key=accuracy_first_key)
+        changed = (
+            selected['prompt_hash'] != active_hash
+            and candidate_strictly_beats_incumbent(selected, incumbent, self.cfg)
+        )
+        if not changed:
+            selected = incumbent
+        if changed:
+            context.agent.current_prompt = str(selected['prompt'])
+            context.agent.history.append(context.agent.current_prompt)
+            context.agent.accept_count += 1
+            selected['accepted_update_index'] = len(self.sequential_update_history)
+            selected['active_selection_count'] = int(selected.get('active_selection_count', 0) or 0) + 1
+            self.sequential_recent_accepted_prompt_hashes.append(selected['prompt_hash'])
+            self.sequential_recent_accepted_prompt_hashes = self.sequential_recent_accepted_prompt_hashes[
+                -max(1, int(self.cfg.state_update_cycle_window)):
+            ]
+            self.current_sequential_profiles[context.agent_id] = dict(
+                selected['metrics']['rollout_profile']
+            )
+            await self.refresh_state_conditioned_fixed_probe_snapshot(
+                probe_data, epoch=context.epoch_id
+            )
+        else:
+            context.agent.reject_count += 1
+        memory_items = [item for item in profiled if item['metrics']['sequential_constraints_passed']]
+        context.agent.prompt_memory = rebuild_prompt_memory(
+            memory_items,
+            self._normalized_prompt_hash(context.agent.current_prompt),
+            int(self.cfg.state_prompt_memory_capacity),
+        )
+        if changed:
+            for peer_id, peer in enumerate(self.agents):
+                if peer_id == context.agent_id or not peer.prompt_memory:
+                    continue
+                peer_active = sequential_team_metrics(
+                    self.current_sequential_profiles, gold_answers, question_hashes,
+                    peer_id, self.cfg, vote_fn=plurality_vote_with_diagnostics,
+                    match_fn=self.task_spec.match_answer,
+                )
+                refreshed_memory = []
+                for memory_item in peer.prompt_memory:
+                    memory_profile = dict(memory_item.get('metrics', {}).get('rollout_profile', {}) or {})
+                    if not memory_profile:
+                        continue
+                    peer_profiles = [dict(value) for value in self.current_sequential_profiles]
+                    peer_profiles[peer_id] = memory_profile
+                    peer_metrics = sequential_team_metrics(
+                        peer_profiles, gold_answers, question_hashes, peer_id, self.cfg,
+                        vote_fn=plurality_vote_with_diagnostics,
+                        match_fn=self.task_spec.match_answer,
+                    )
+                    peer_reward = state_vote_reward(
+                        peer_active['correctness_rows'], peer_metrics['correctness_rows'],
+                        peer_active['vote_correct_vector'], peer_metrics['vote_correct_vector'],
+                        self.cfg,
+                    )
+                    merged = {**dict(memory_item.get('metrics', {}) or {}), **peer_metrics, **peer_reward}
+                    peer_initial = (
+                        self.initial_sequential_team_metrics[peer_id]
+                        if peer_id < len(self.initial_sequential_team_metrics) else peer_active
+                    )
+                    merged.update(full_probe_constraints(merged, peer_active, peer_initial, self.cfg))
+                    row = dict(memory_item)
+                    row['metrics'] = merged
+                    refreshed_memory.append(row)
+                if refreshed_memory:
+                    peer.prompt_memory = rebuild_prompt_memory(
+                        refreshed_memory,
+                        self._normalized_prompt_hash(peer.current_prompt),
+                        int(self.cfg.state_prompt_memory_capacity),
+                    )
+                    peer.prompt_beam = [dict(item) for item in peer.prompt_memory]
+        stage_a_candidate_count = len(context.evaluated)
+        context.agent.prompt_beam = [dict(item) for item in context.agent.prompt_memory]
+        context.selected = [selected]
+        context.changed = changed
+        context.evaluated = profiled
+        record = {
+            **self._base_log_fields(),
+            'event': 'sequential_single_agent_update',
+            'epoch': int(context.epoch_id),
+            'step': int(context.step_id),
+            'epoch_agent_order': epoch_agent_order(max(0, int(context.epoch_id) - 1), len(self.agents)),
+            'current_agent_order_index': int(
+                self.sequential_agent_order_index_by_epoch.get(str(context.epoch_id), 1)
+            ) - 1,
+            'target_agent_id': int(context.agent_id),
+            'target_selection_reason': 'deterministic_rotating_order',
+            'active_prompt_changed': bool(changed),
+            'active_prompt_changed_count': int(changed),
+            'selected_prompt_hash': str(selected['prompt_hash']),
+            'selected_accuracy_first_key': list(accuracy_first_key(selected)),
+            'stage_a_candidate_count': stage_a_candidate_count,
+            'stage_b_candidate_count': len(profiled),
+            'stage_b_full_probe_solver_calls': int(
+                getattr(self, 'full_probe_missing_pair_evaluation_count', 0)
+            ) - before_missing,
+            'prompt_memory_size': len(context.agent.prompt_memory),
+            'memory_capacity': int(self.cfg.state_prompt_memory_capacity),
+            'memory_occupancy': len(context.agent.prompt_memory),
+            'prompt_memory_slots': [item.get('prompt_memory_slot', '') for item in context.agent.prompt_memory],
+            'joint_team_combination_count': 0,
+            'equal_vote_weighting': True,
+            'selected_metrics': {
+                key: value for key, value in selected['metrics'].items()
+                if key not in {'rollout_profile', 'correctness_rows', 'vote_correct_vector'}
+            },
+            'candidate_decisions': [
+                {
+                    'candidate_id': str(item.get('candidate_id', '')),
+                    'prompt_hash': str(item.get('prompt_hash', '')),
+                    'selected': str(item.get('prompt_hash', '')) == str(selected.get('prompt_hash', '')),
+                    'candidate_selected': str(item.get('prompt_hash', '')) == str(selected.get('prompt_hash', '')),
+                    'candidate_accepted': bool(
+                        changed
+                        and str(item.get('prompt_hash', '')) == str(selected.get('prompt_hash', ''))
+                    ),
+                    'accuracy_first_key': list(accuracy_first_key(item)),
+                    **{
+                        key: item.get('metrics', {}).get(key)
+                        for key in (
+                            'candidate_target_correct_count', 'candidate_target_accuracy',
+                            'state_reward_total', 'state_reward_distribution_component',
+                            'state_reward_vote_component', 'state_reward_bottom2_component',
+                            'active_target_correct_count', 'initial_target_correct_count',
+                            'candidate_invalid_count', 'local_accuracy_loss_count',
+                            'global_accuracy_loss_count', 'correct_set_diversity_mean',
+                            'correct_set_diversity_min', 'safe_trace_diversity_c4c5',
+                            'safe_trace_pair_count', 'safe_trace_constraint_available',
+                            'accuracy_constraint_passed', 'invalid_constraint_passed',
+                            'diversity_constraint_slack', 'sequential_constraints_passed',
+                            'candidate_feasible',
+                            'rejection_reason',
+                        )
+                    },
+                }
+                for item in profiled
+            ],
+        }
+        if not hasattr(self, 'cost_summary'):
+            self.cost_summary = self._empty_cost_summary()
+        self.cost_summary['stage_b_full_probe_solver_calls'] = int(
+            self.cost_summary.get('stage_b_full_probe_solver_calls', 0) or 0
+        ) + int(record['stage_b_full_probe_solver_calls'])
+        self.sequential_update_history.append(dict(record))
+        self._flush_jsonl('sequential_update_history.jsonl', [record])
+        self.update_logs.append(dict(record))
+        self._append_prompt_history_event(
+            context.agent_id, context.epoch_id, context.step_id,
+            'sequential_accept' if changed else 'sequential_keep', changed,
+        )
+        self.flush_prompt_history()
+        requested = sum(
+            int(row.get('optimizer_final_candidate_count', 0) or 0)
+            for row in getattr(context, 'optimizer_generation_records', [])
+        )
+        summary = {
+            'agent_id': context.agent_id,
+            'updated': bool(changed),
+            'active_prompt_changed': bool(changed),
+            'active_prompt_changed_count': int(changed),
+            'candidate_count': len(context.candidate_pool),
+            'requested_optimizer_candidates': int(
+                len(context.parent_jobs) * int(context.requested)
+            ),
+            'num_optimizer_candidates': int(sum(
+                self._candidate_pool_source(item) == 'optimizer' for item in context.candidate_pool
+            )),
+            'num_fallback_candidates': int(sum(
+                self._candidate_pool_source(item) == 'fallback' for item in context.candidate_pool
+            )),
+            'num_existing_beam_candidates': int(sum(
+                self._candidate_pool_source(item) == 'existing_beam' for item in context.candidate_pool
+            )),
+            'optimizer_underfilled': bool(requested < len(context.parent_jobs) * int(context.requested)),
+            'top_metrics': selected['metrics'],
+            'prompt_memory_size': len(context.agent.prompt_memory),
+            'stage_b_full_probe_solver_calls': record['stage_b_full_probe_solver_calls'],
+            'joint_team_combination_count': 0,
+            'epoch_agent_order': record['epoch_agent_order'],
+            'current_agent_order_index': record['current_agent_order_index'],
+            'target_selection_reason': record['target_selection_reason'],
+        }
+        context.agent.last_update_record = dict(summary)
+        return changed, summary
+
     async def update_prompt_with_beam(self, agent_id: int, overlap_diagnosis: Dict[str, Any], eval_batch: List[Dict[str, str]], step_id: int, epoch_id: int) -> Tuple[bool, Dict[str, Any]]:
         context = PromptUpdateContext(agent_id=agent_id, overlap_diagnosis=overlap_diagnosis, eval_batch=eval_batch, step_id=step_id, epoch_id=epoch_id)
         await CandidateGenerationStage.run(self, context)
         await CheapPrescreenStage.run(self, context)
         await CandidateEvaluationStage.run(self, context)
+        if self._is_state_conditioned_method():
+            return await self._run_v9_sequential_stage_b(context)
         await CandidateClassificationAndRefillStage.run(self, context)
         await ArchiveSelectionStage.run(self, context)
         await CandidateEventStage.run(self, context)

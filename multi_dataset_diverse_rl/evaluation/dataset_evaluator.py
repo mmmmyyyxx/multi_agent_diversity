@@ -259,7 +259,7 @@ class DatasetEvaluatorMixin:
                 archive_items = [
                     item
                     for agent in self.agents
-                    for item in getattr(agent, "safe_qd_archive", [])
+                    for item in getattr(agent, "prompt_memory", [])
                     if isinstance(item, dict)
                 ]
                 archive_slots = Counter(
@@ -267,11 +267,11 @@ class DatasetEvaluatorMixin:
                 )
                 if not archive_slots:
                     archive_slots = Counter(
-                        str(item.get("state_archive_slot", "")) for item in archive_items
+                        str(item.get("prompt_memory_slot", "")) for item in archive_items
                     )
                 exploration_items = [
                     item for item in archive_items
-                    if str(item.get("state_archive_slot", "")) == "rollout_exploration"
+                    if str(item.get("prompt_memory_slot", "")) == "safe_diversity_parent"
                 ]
                 exploration_metrics = [
                     item.get("metrics", {}) for item in exploration_items
@@ -296,7 +296,20 @@ class DatasetEvaluatorMixin:
                     "state_trace_tiebreak_enabled": bool(getattr(self.cfg, "state_trace_tiebreak_enabled", True)),
                     "state_rollout_exploration_enabled": bool(getattr(self.cfg, "state_rollout_exploration_enabled", False)),
                     "composite_rollout_distance_used_for_selection": False,
-                    "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
+                    "trace_diversity_role": "non_collapse_constraint_only",
+                    "v9_update_mode": "sequential_single_agent",
+                    "joint_team_enumeration_enabled": False,
+                    "equal_vote_weighting": True,
+                    "wrong_answer_dispersion_used_for_reward": False,
+                    "wrong_answer_dispersion_used_for_selection": False,
+                    "accuracy_is_primary_objective": True,
+                    "diversity_is_constraint": True,
+                    "prompt_memory_size_per_agent": [
+                        len(getattr(agent, "prompt_memory", [])) for agent in self.agents
+                    ],
+                    "prompt_memory_slot_counts": dict(Counter(
+                        str(item.get("prompt_memory_slot", "")) for item in archive_items
+                    )),
                     "coverage_case_assignment_per_agent": dict(
                         getattr(self, "coverage_case_assignment_per_agent", {})
                     ),
@@ -357,7 +370,7 @@ class DatasetEvaluatorMixin:
                     "exploration_descendant_active_rate": int(
                         getattr(self, "exploration_descendant_active_count", 0) or 0
                     ) / max(1, exploration_descendants),
-                    "joint_team_combination_count": int(latest.get("combination_count", 0) or 0),
+                    "joint_team_combination_count": 0,
                     "fixed_probe_state_snapshot_version": str(
                         getattr(self, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
                     ),

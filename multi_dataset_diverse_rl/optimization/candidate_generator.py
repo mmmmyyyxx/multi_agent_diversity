@@ -297,15 +297,15 @@ class CandidateGeneratorMixin:
             context["diagnostic_focus"].pop("prompt_redundancy_summary", None)
             context["diagnostic_focus"].pop("capability_residual_families", None)
             context["diagnostic_focus"]["rollout_optimization_goal"] = (
-                "Improve target correctness first; prioritize C2-to-C3 and vote recovery; reduce dominant wrong clusters; "
+                "Improve target correctness first; prioritize C2-to-C3, C3-to-C4, and vote recovery; "
                 "use valid solver-trace diversity only after quality guards."
             )
         if self._is_state_conditioned_method():
             context["diagnostic_focus"]["rollout_optimization_goal"] = (
                 "Follow the requested optimization route. general_accuracy repairs target errors; "
-                "coverage_repair repairs assigned C0/C1 residuals; vote_conversion first seeks C2-to-C3 "
-                "and only then reduces duplicated wrong votes on rescuable C2 cases. Never reward random "
-                "wrong-answer dispersion. Trace differences are not a task objective."
+                "coverage_repair repairs assigned C0/C1 residuals; vote_conversion seeks C2-to-C3 "
+                "or C3-to-C4 by making the target correct. Wrong-answer label changes have zero value. "
+                "Trace differences are not a task objective."
             )
         return context
 
@@ -344,9 +344,9 @@ class CandidateGeneratorMixin:
         if self._is_state_conditioned_method():
             system_prompt = (
                 "You are the Teacher in a state-conditioned prompt optimization system. Formulate one Socratic "
-                "question for the requested route: general accuracy, C0/C1 correct coverage, or C2 vote conversion. "
-                "Correctness comes first. On C2, prefer making the target correct; only if it remains wrong may a "
-                "rescuable dominant wrong cluster be reduced. Never praise random disagreement, prompt wording "
+                "question for the requested route: general accuracy, C0/C1 correct coverage, or C2/C3 vote conversion. "
+                "Correctness comes first. Vote conversion must make the target correct; changing one wrong answer "
+                "into another has no value. Never praise random disagreement, prompt wording "
                 "difference, personas, assigned roles, or trace difference. Do not quote cases or reveal answers. "
                 "Return strict JSON only."
             )
@@ -407,7 +407,7 @@ class CandidateGeneratorMixin:
                 "Audit whether the Teacher question is specific to observed solver rollout failures and proposes an executable "
                 "accuracy-first repair. Reject prompt-wording novelty, named mechanisms, capability labels, personas, random "
                 "disagreement, invalid behavior, leakage, or any diversity goal that can reduce Vote, C3, or target accuracy. "
-                "Prefer C2-to-C3 conversion, vote recovery, margin gain, and dominant wrong-cluster reduction. Return strict JSON only."
+                "Prefer C2-to-C3 or C3-to-C4 conversion, target correctness, and vote recovery. Return strict JSON only."
             )
         if self._v7_residual_protocol_enabled():
             system_prompt = system_prompt.replace(
@@ -787,7 +787,7 @@ class CandidateGeneratorMixin:
             system_prompt = (
                 "You directly explore solver prompts from observed rollout failures. Do not infer behavior from prompt wording. "
                 "Generate a complete standalone solver prompt that may improve target accuracy, convert C2 to C3, "
-                "or reduce a dominant wrong-answer cluster. Do not propose named mechanisms, capability labels, personas, "
+                "or convert C3 to C4 by making the target correct. Do not propose named mechanisms, capability labels, personas, "
                 "random disagreement, or invalid output. Do not use gold answers or concrete sample text.\n\n"
                 f"{return_mode}"
             )
@@ -795,8 +795,8 @@ class CandidateGeneratorMixin:
             system_prompt += (
                 "\nObey optimization_route in the generation context. For general_accuracy, repair target errors "
                 "and preserve correct behavior. For coverage_repair, seek correct coverage on assigned C0/C1 "
-                "residuals. For vote_conversion, first make the target correct on C2; only when still wrong may "
-                "you reduce duplicated wrong votes on a rescuable C2 case. Never optimize prompt wording, persona, "
+                "residuals. For vote_conversion, make the target correct on C2 or C3 cases. A wrong-to-wrong "
+                "answer change is not progress. Never optimize prompt wording, persona, "
                 "random disagreement, or trace difference."
             )
         elif open_exploration:

@@ -13,9 +13,9 @@ from .rollout_diversity import correctness_set_distance, rollout_signature, vali
 
 
 STATE_CONDITIONED_METHOD = "v9_state_conditioned_error"
-STATE_CONDITIONED_CHECKPOINT_VERSION = 2
-STATE_SNAPSHOT_VERSION = "state_fixed_probe_snapshot_v1"
-STATE_NAMES = ("C0", "C1", "C2", "C3PLUS")
+STATE_CONDITIONED_CHECKPOINT_VERSION = 3
+STATE_SNAPSHOT_VERSION = "state_fixed_probe_snapshot_v2"
+STATE_NAMES = ("C0", "C1", "C2", "C3", "C4", "C5")
 
 
 def coverage_case_assignees(
@@ -43,14 +43,7 @@ def is_state_conditioned_method(method_version: Any) -> bool:
 
 
 def question_state(gold_vote_count: Any) -> str:
-    count = max(0, int(gold_vote_count or 0))
-    if count == 0:
-        return "C0"
-    if count == 1:
-        return "C1"
-    if count == 2:
-        return "C2"
-    return "C3PLUS"
+    return f"C{max(0, min(5, int(gold_vote_count or 0)))}"
 
 
 def c2_dispersion_rescuability(option_count: Any, *, wrong_agent_count: int = 3) -> Dict[str, Any]:
@@ -665,7 +658,7 @@ def state_team_metrics(
     correctness = [list(profile.get("correctness_vector", [])) for profile in prompt_profiles]
     invalids = [list(profile.get("invalid_vector", [])) for profile in prompt_profiles]
     trace_distances = []
-    c0 = c1 = c2 = c3plus = vote_correct = c2_vote_correct = c2_strict = c2_tie = 0
+    c0 = c1 = c2 = c3 = c4 = c5 = vote_correct = c2_vote_correct = c2_strict = c2_tie = 0
     margins = []
     c2_wrong = []
     for index, gold in enumerate(gold_answers):
@@ -681,7 +674,9 @@ def state_team_metrics(
         c0 += int(g == 0)
         c1 += int(g == 1)
         c2 += int(g == 2)
-        c3plus += int(g >= 3)
+        c3 += int(g == 3)
+        c4 += int(g == 4)
+        c5 += int(g == 5)
         vote_correct += is_vote_correct
         if g == 2:
             c2_vote_correct += is_vote_correct
@@ -710,7 +705,10 @@ def state_team_metrics(
         "c0_count": c0,
         "c1_count": c1,
         "c2_count": c2,
-        "c3plus_count": c3plus,
+        "c3_count": c3,
+        "c4_count": c4,
+        "c5_count": c5,
+        "c3plus_count": c3 + c4 + c5,
         "coverage_depth_c2": sum(g >= 2 for g in [
             sum(int(vector[index]) if index < len(vector) else 0 for vector in correctness)
             for index in range(len(gold_answers))
@@ -849,16 +847,13 @@ def select_state_conditioned_team(
 
 def state_conditioned_validation_key(epoch_record: Mapping[str, Any]) -> tuple:
     val = epoch_record.get("val", {}) if isinstance(epoch_record.get("val", {}), Mapping) else {}
-    c2_count = int(val.get("c2_count", val.get("correct_agent_count_2", 0)) or 0)
-    c2_vote_correct = int(val.get("c2_vote_correct_count", 0) or 0)
-    c2_rate = c2_vote_correct / max(1, c2_count)
     return (
-        -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
-        float(val.get("c0_rate", val.get("all_wrong_rate", 1.0)) or 0.0),
         -float(val.get("mean_individual_acc", 0.0) or 0.0),
-        -float(c2_rate),
+        -float(val.get("plurality_vote_acc", val.get("vote_acc", 0.0)) or 0.0),
+        float(val.get("c0_count", val.get("all_wrong_count", 0)) or 0),
+        -float(sum(int(val.get(f"c{index}_count", 0) or 0) for index in (3, 4, 5))),
+        -float(sum(int(val.get(f"c{index}_count", 0) or 0) for index in (4, 5))),
         -float(val.get("bottom2_mean_acc", 0.0) or 0.0),
-        -float(val.get("mean_gold_plurality_margin", val.get("mean_plurality_margin_votes", 0.0)) or 0.0),
         float(val.get("mean_invalid_rate", 0.0) or 0.0),
         int(epoch_record.get("epoch", 0) or 0),
     )
@@ -904,11 +899,17 @@ def state_dataset_metrics(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
         "c0_count": counts["C0"],
         "c1_count": counts["C1"],
         "c2_count": counts["C2"],
-        "c3plus_count": counts["C3PLUS"],
+        "c3_count": counts["C3"],
+        "c4_count": counts["C4"],
+        "c5_count": counts["C5"],
+        "c3plus_count": counts["C3"] + counts["C4"] + counts["C5"],
         "c0_rate": counts["C0"] / max(1, size),
         "c1_rate": counts["C1"] / max(1, size),
         "c2_rate": counts["C2"] / max(1, size),
-        "c3plus_rate": counts["C3PLUS"] / max(1, size),
+        "c3_rate": counts["C3"] / max(1, size),
+        "c4_rate": counts["C4"] / max(1, size),
+        "c5_rate": counts["C5"] / max(1, size),
+        "c3plus_rate": (counts["C3"] + counts["C4"] + counts["C5"]) / max(1, size),
         "c2_vote_correct_count": c2_vote_correct,
         "c2_vote_fail_count": c2_vote_fail,
         "c2_strict_win_count": c2_strict,

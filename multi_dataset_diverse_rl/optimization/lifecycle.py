@@ -181,6 +181,14 @@ class LifecycleMixin:
         }
         self.state_search_diagnostics: Dict[str, int] = {"evaluated_candidate_count": 0}
         self.fixed_probe_state_snapshot: Dict[str, Any] = {}
+        self.fixed_acceptance_probe_data: List[Dict[str, str]] = []
+        self.initial_sequential_profiles: List[Dict[str, Any]] = []
+        self.initial_sequential_team_metrics: List[Dict[str, Any]] = []
+        self.current_sequential_profiles: List[Dict[str, Any]] = []
+        self.sequential_update_history: List[Dict[str, Any]] = []
+        self.sequential_agent_order_index_by_epoch: Dict[str, int] = {}
+        self.sequential_recent_accepted_prompt_hashes: List[str] = []
+        self.joint_team_enumeration_count: int = 0
         self.fixed_probe_snapshot_refresh_count: int = 0
         self.state_no_gain_updates_per_agent: Dict[str, int] = {
             str(i): 0 for i in range(len(self.agents))

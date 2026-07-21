@@ -32,19 +32,10 @@ def test_run_experiments_default_settings_include_baselines_and_guarded_beams():
         "shared_accuracy_only_tcs_vote_first",
         "shared_accuracy_rollout_embedding_tcs",
         "shared_vote_ready_rollout_diversity_tcs",
-        "shared_state_conditioned_error_tcs",
-        "shared_v9_accuracy_vote",
-        "shared_v9_accuracy_vote_coverage",
-        "shared_v9_accuracy_vote_coverage_c2correct",
-        "shared_v9_accuracy_vote_coverage_c2correct_c2split",
-        "shared_v9_accuracy_vote_coverage_c2correct_c2split_trace",
-        "shared_v9_exploit_only",
-        "shared_v9_exploit_b_archive",
-        "shared_v9_exploit_b_archive_parent",
-        "shared_v9_accuracy_only",
-        "shared_v9_accuracy_coverage",
-        "shared_v9_accuracy_coverage_c2split",
-        "shared_v9_accuracy_coverage_c2split_trace_tiebreak",
+        "shared_v9_sequential_accuracy",
+        "shared_v9_sequential_accuracy_state",
+        "shared_v9_sequential_accuracy_state_vote",
+        "shared_v9_sequential_accuracy_state_vote_diversity",
         "shared_guarded_diversity_tcs_vote_first",
         "shared_vote_no_margin_tcs_vote_first",
         "shared_vote_no_boundary_tcs_vote_first",
@@ -83,16 +74,10 @@ def test_default_and_all_setting_sets_are_distinct():
         "shared_vote_tcs_competence_depth2", "shared_vote_tcs_competence_depth2_progressive_residual",
         "shared_vote_tcs_competence_depth2_progressive_residual_hybrid",
         "shared_accuracy_only_tcs_vote_first", "shared_accuracy_rollout_embedding_tcs",
-            "shared_vote_ready_rollout_diversity_tcs", "shared_state_conditioned_error_tcs",
-            "shared_v9_accuracy_vote", "shared_v9_accuracy_vote_coverage",
-            "shared_v9_accuracy_vote_coverage_c2correct",
-            "shared_v9_accuracy_vote_coverage_c2correct_c2split",
-            "shared_v9_accuracy_vote_coverage_c2correct_c2split_trace",
-            "shared_v9_exploit_only", "shared_v9_exploit_b_archive",
-            "shared_v9_exploit_b_archive_parent",
-            "shared_v9_accuracy_only", "shared_v9_accuracy_coverage",
-        "shared_v9_accuracy_coverage_c2split",
-        "shared_v9_accuracy_coverage_c2split_trace_tiebreak",
+            "shared_vote_ready_rollout_diversity_tcs", "shared_v9_sequential_accuracy",
+            "shared_v9_sequential_accuracy_state",
+            "shared_v9_sequential_accuracy_state_vote",
+            "shared_v9_sequential_accuracy_state_vote_diversity",
         "shared_guarded_diversity_tcs_vote_first",
         "shared_vote_no_margin_tcs_vote_first", "shared_vote_no_boundary_tcs_vote_first",
     ]
@@ -352,20 +337,24 @@ def test_task_runner_passes_v9_ablation_switches_to_child_cli():
     )
     setting = next(
         item for item in DEFAULT_EXPERIMENT_SETTINGS
-        if item.name == "shared_v9_accuracy_coverage"
+        if item.name == "shared_v9_sequential_accuracy_state"
     )
     args = Namespace(**{
         **cfg.to_flat_dict(),
         "dataset_format": "mars",
+        "reward_mode": "",
         "resume_from_checkpoint": 1,
     })
     cmd = []
     _append_common_cli_args(cmd, args, task, setting, seed=42)
 
     assert cmd[cmd.index("--state_conditioned_enabled") + 1] == "1"
-    assert cmd[cmd.index("--state_coverage_enabled") + 1] == "1"
-    assert cmd[cmd.index("--state_c2_wrong_split_enabled") + 1] == "0"
-    assert cmd[cmd.index("--state_trace_tiebreak_enabled") + 1] == "0"
+    assert cmd[cmd.index("--reward_mode") + 1] == "state_distribution_vote_reward"
+    assert cmd[cmd.index("--candidate_selection_mode") + 1] == "sequential_accuracy_first_state_reward"
+    assert cmd[cmd.index("--state_update_mode") + 1] == "sequential_single_agent"
+    assert cmd[cmd.index("--state_distribution_reward_enabled") + 1] == "1"
+    assert cmd[cmd.index("--state_vote_reward_enabled") + 1] == "0"
+    assert cmd[cmd.index("--state_diversity_constraints_enabled") + 1] == "0"
     assert cmd[cmd.index("--candidate_batch_representative_size") + 1] == "12"
     assert cmd[cmd.index("--candidate_batch_coverage_size") + 1] == "6"
     assert cmd[cmd.index("--candidate_batch_conversion_size") + 1] == "6"

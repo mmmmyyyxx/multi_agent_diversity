@@ -86,13 +86,14 @@ class _RouteHolder(JointControllerMixin):
         return {"enabled": True, "combination_count": 1}
 
 
-def test_v9_refresh_uses_state_selector():
+def test_v9_refresh_disables_joint_selector():
     holder = _RouteHolder(state=True, rollout=True)
     result = asyncio.run(holder.refresh_joint_active_team_if_needed(
         [{"question": "q", "answer": "A"}], epoch=1
     ))
-    assert holder.state_calls == 1
-    assert result["selector_route"] == "state_conditioned"
+    assert holder.state_calls == 0
+    assert result["selector_route"] == "sequential_accuracy_first_v1"
+    assert result["joint_team_combination_count"] == 0
 
 
 def test_v9_does_not_call_rollout_selector():
@@ -101,6 +102,16 @@ def test_v9_does_not_call_rollout_selector():
         [{"question": "q", "answer": "A"}], epoch=1
     ))
     assert holder.rollout_calls == 0
+
+
+def test_v9_direct_joint_selection_is_disabled():
+    holder = _RouteHolder(state=True, rollout=True)
+    result = asyncio.run(holder.select_joint_active_team(
+        [{"question": "q", "answer": "A"}], epoch=1
+    ))
+    assert holder.state_calls == 0
+    assert holder.rollout_calls == 0
+    assert result["joint_team_combination_count"] == 0
 
 
 def test_v8_still_uses_rollout_selector():
@@ -231,7 +242,7 @@ def test_snapshot_builder_covers_all_states():
         tie_break_method="first",
         seed=42,
     )
-    assert [row["state"] for row in snapshot["records"]] == ["C0", "C1", "C2", "C3PLUS"]
+    assert [row["state"] for row in snapshot["records"]] == ["C0", "C1", "C2", "C3"]
 
 
 def _archive_candidates():

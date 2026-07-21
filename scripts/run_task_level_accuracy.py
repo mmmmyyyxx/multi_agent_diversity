@@ -74,7 +74,7 @@ def _append_common_cli_args(
     reward_mode = _setting_reward_mode(args, setting)
     candidate_selection_mode = (
         setting.candidate_selection_mode
-        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first"}
+        if str(getattr(setting, "candidate_selection_mode", "") or "") in {"vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first", "sequential_accuracy_first_state_reward"}
         else getattr(args, "candidate_selection_mode", Config().candidate_selection_mode)
     )
     best_state_selection_mode = (
@@ -162,6 +162,9 @@ def _append_common_cli_args(
             "--candidate_batch_coverage_size", str(_explicit_cli_or_setting(args, setting, "candidate_batch_coverage_size", defaults.candidate_batch_coverage_size)),
             "--candidate_batch_conversion_size", str(_explicit_cli_or_setting(args, setting, "candidate_batch_conversion_size", defaults.candidate_batch_conversion_size)),
             "--state_validation_accuracy_guard_epsilon", str(_setting_value(setting, "state_validation_accuracy_guard_epsilon", getattr(args, "state_validation_accuracy_guard_epsilon", defaults.state_validation_accuracy_guard_epsilon))),
+            "--state_update_mode", str(_setting_value(setting, "state_update_mode", getattr(args, "state_update_mode", defaults.state_update_mode))),
+            "--state_outcome_signature_version", str(_setting_value(setting, "state_outcome_signature_version", getattr(args, "state_outcome_signature_version", defaults.state_outcome_signature_version))),
+            "--state_safe_trace_signature_version", str(_setting_value(setting, "state_safe_trace_signature_version", getattr(args, "state_safe_trace_signature_version", defaults.state_safe_trace_signature_version))),
             "--use_baseline_relative_reward", str(args.use_baseline_relative_reward),
             "--reward_schedule_mode", str(getattr(setting, "reward_schedule_mode", "") or args.reward_schedule_mode),
             "--reward_diversity_warmup_updates", str(args.reward_diversity_warmup_updates),
@@ -357,6 +360,19 @@ def _append_common_cli_args(
         "behavior_error_overlap_weight", "behavior_wrong_answer_dispersion_weight",
         "behavior_wrong_support_shrinkage", "min_optimizer_updates_per_agent_per_epoch",
         "target_selector_fairness_enabled",
+        "state_prompt_memory_capacity", "state_memory_parent_count_per_update",
+        "state_full_probe_acceptance_candidates", "state_accuracy_band_allowed_loss_questions",
+        "state_catastrophic_vote_loss_limit", "state_update_cycle_window",
+        "state_prompt_reaccept_cooldown_updates", "state_local_accuracy_loss_epsilon",
+        "state_global_accuracy_loss_epsilon", "state_correct_set_diversity_local_epsilon",
+        "state_correct_set_diversity_global_epsilon", "state_min_pairwise_diversity_local_epsilon",
+        "state_min_pairwise_diversity_global_epsilon", "state_safe_trace_local_epsilon",
+        "state_safe_trace_global_epsilon", "state_safe_trace_weight_c4",
+        "state_safe_trace_weight_c5", "state_potential_c0", "state_potential_c1",
+        "state_potential_c2", "state_potential_c3", "state_potential_c4",
+        "state_potential_c5", "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_min_secondary_reward_gain", "state_distribution_reward_enabled",
+        "state_vote_reward_enabled", "state_diversity_constraints_enabled",
     ):
         value = _setting_value(setting, name, getattr(args, name, getattr(defaults, name)))
         if isinstance(getattr(defaults, name), bool):
@@ -701,8 +717,8 @@ def main():
     parser.add_argument("--agent_model", type=str, default=cli_defaults.agent_model)
     parser.add_argument("--optimizer_model", type=str, default=cli_defaults.optimizer_model)
     parser.add_argument("--evaluator_model", type=str, default=cli_defaults.evaluator_model)
-    parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready", "rollout_state_conditioned"])
-    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first"])
+    parser.add_argument("--reward_mode", type=str, default="", choices=["", "accuracy_only", "guarded_diversity", "coverage_useful_diversity", "vote_useful_diversity", "competence_depth_schedule", "rollout_accuracy_diversity", "rollout_vote_ready", "rollout_state_conditioned", "state_distribution_vote_reward"])
+    parser.add_argument("--candidate_selection_mode", type=str, default=cli_defaults.candidate_selection_mode, choices=["scalar_reward", "vote_pareto", "vote_error_pareto", "competence_depth_pareto", "rollout_vote_ready", "state_conditioned_accuracy_first", "sequential_accuracy_first_state_reward"])
     parser.add_argument("--best_state_selection_mode", type=str, default=cli_defaults.best_state_selection_mode, choices=["existing", "vote_first", "vote_competence_first", "vote_generalization_first", "rollout_vote_first", "state_conditioned_vote_first"])
     parser.add_argument("--agents", type=int, default=cli_defaults.agents)
     parser.add_argument("--train_size", type=int, default=cli_defaults.train_size)
@@ -854,11 +870,30 @@ def main():
     parser.add_argument("--state_exploration_parent_probability", type=float, default=cli_defaults.state_exploration_parent_probability)
     parser.add_argument("--state_exploration_correct_set_weight", type=float, default=cli_defaults.state_exploration_correct_set_weight)
     parser.add_argument("--state_exploration_valid_trace_weight", type=float, default=cli_defaults.state_exploration_valid_trace_weight)
+    parser.add_argument("--state_update_mode", type=str, default=cli_defaults.state_update_mode)
+    parser.add_argument("--state_outcome_signature_version", type=str, default=cli_defaults.state_outcome_signature_version)
+    parser.add_argument("--state_safe_trace_signature_version", type=str, default=cli_defaults.state_safe_trace_signature_version)
+    for name in (
+        "state_local_accuracy_loss_epsilon", "state_global_accuracy_loss_epsilon",
+        "state_correct_set_diversity_local_epsilon", "state_correct_set_diversity_global_epsilon",
+        "state_min_pairwise_diversity_local_epsilon", "state_min_pairwise_diversity_global_epsilon",
+        "state_safe_trace_local_epsilon", "state_safe_trace_global_epsilon",
+        "state_safe_trace_weight_c4", "state_safe_trace_weight_c5",
+        "state_potential_c0", "state_potential_c1", "state_potential_c2",
+        "state_potential_c3", "state_potential_c4", "state_potential_c5",
+        "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_min_secondary_reward_gain",
+    ):
+        parser.add_argument(f"--{name}", type=float, default=getattr(cli_defaults, name))
     for name in (
         "state_c1_to_c0_loss_epsilon", "state_c2_to_c1_loss_epsilon",
         "state_c3_to_c2_loss_epsilon", "state_vote_loss_epsilon",
         "state_representative_capacity",
         "state_exploration_stagnation_patience", "state_exploration_parent_max_per_update",
+        "state_prompt_memory_capacity", "state_memory_parent_count_per_update",
+        "state_full_probe_acceptance_candidates", "state_accuracy_band_allowed_loss_questions",
+        "state_catastrophic_vote_loss_limit", "state_update_cycle_window",
+        "state_prompt_reaccept_cooldown_updates",
     ):
         parser.add_argument(f"--{name}", type=int, default=getattr(cli_defaults, name))
     for name in (
@@ -872,6 +907,8 @@ def main():
         "state_c2_wrong_split_enabled", "state_trace_tiebreak_enabled",
         "state_rollout_exploration_enabled", "state_exploration_parent_enabled",
         "state_c0_abstract_analyzer_enabled",
+        "state_distribution_reward_enabled", "state_vote_reward_enabled",
+        "state_diversity_constraints_enabled",
     ):
         parser.add_argument(f"--{name}", type=int, default=int(getattr(cli_defaults, name)), choices=[0, 1])
     parser.add_argument("--candidate_eval_batch_size", type=int, default=None)

@@ -195,6 +195,33 @@ def restore_system_state(system, state_payload):
     system.fixed_probe_snapshot_refresh_count = int(
         state_payload.get("fixed_probe_snapshot_refresh_count", 0) or 0
     )
+    system.initial_sequential_profiles = [
+        dict(value) for value in state_payload.get("initial_sequential_profiles", [])
+        if isinstance(value, dict)
+    ]
+    system.initial_sequential_team_metrics = [
+        dict(value) for value in state_payload.get("initial_sequential_team_metrics", [])
+        if isinstance(value, dict)
+    ]
+    system.current_sequential_profiles = [
+        dict(value) for value in state_payload.get("current_sequential_profiles", [])
+        if isinstance(value, dict)
+    ]
+    system.sequential_update_history = [
+        dict(value) for value in state_payload.get("sequential_update_history", [])
+        if isinstance(value, dict)
+    ]
+    system.sequential_agent_order_index_by_epoch = {
+        str(key): int(value) for key, value in dict(
+            state_payload.get("sequential_agent_order_index_by_epoch", {}) or {}
+        ).items()
+    }
+    system.sequential_recent_accepted_prompt_hashes = [
+        str(value) for value in state_payload.get("sequential_recent_accepted_prompt_hashes", [])
+    ]
+    system.joint_team_enumeration_count = int(
+        state_payload.get("joint_team_enumeration_count", 0) or 0
+    )
     system.state_no_gain_updates_per_agent = {
         str(key): int(value or 0) for key, value in dict(
             state_payload.get("state_no_gain_updates_per_agent", {}) or {}
@@ -343,6 +370,22 @@ BEHAVIOR_CONFIG_FIELDS = (
         "candidate_batch_coverage_size",
         "candidate_batch_conversion_size",
         "state_validation_accuracy_guard_epsilon",
+        "state_update_mode", "state_prompt_memory_capacity",
+        "state_memory_parent_count_per_update", "state_full_probe_acceptance_candidates",
+        "state_local_accuracy_loss_epsilon", "state_global_accuracy_loss_epsilon",
+        "state_accuracy_band_allowed_loss_questions",
+        "state_correct_set_diversity_local_epsilon", "state_correct_set_diversity_global_epsilon",
+        "state_min_pairwise_diversity_local_epsilon", "state_min_pairwise_diversity_global_epsilon",
+        "state_safe_trace_local_epsilon", "state_safe_trace_global_epsilon",
+        "state_safe_trace_weight_c4", "state_safe_trace_weight_c5",
+        "state_potential_c0", "state_potential_c1", "state_potential_c2",
+        "state_potential_c3", "state_potential_c4", "state_potential_c5",
+        "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_min_secondary_reward_gain", "state_catastrophic_vote_loss_limit",
+        "state_outcome_signature_version", "state_safe_trace_signature_version",
+        "state_update_cycle_window", "state_prompt_reaccept_cooldown_updates",
+        "state_distribution_reward_enabled", "state_vote_reward_enabled",
+        "state_diversity_constraints_enabled",
         "reward_weight_div_delta",
         "reward_weight_invalid_delta",
         "reward_weight_vote_delta",
@@ -582,6 +625,22 @@ def checkpoint_behavior_config(cfg):
         "state_representative_capacity", "candidate_batch_representative_size",
         "candidate_batch_coverage_size", "candidate_batch_conversion_size",
         "state_validation_accuracy_guard_epsilon",
+        "state_update_mode", "state_prompt_memory_capacity",
+        "state_memory_parent_count_per_update", "state_full_probe_acceptance_candidates",
+        "state_local_accuracy_loss_epsilon", "state_global_accuracy_loss_epsilon",
+        "state_accuracy_band_allowed_loss_questions",
+        "state_correct_set_diversity_local_epsilon", "state_correct_set_diversity_global_epsilon",
+        "state_min_pairwise_diversity_local_epsilon", "state_min_pairwise_diversity_global_epsilon",
+        "state_safe_trace_local_epsilon", "state_safe_trace_global_epsilon",
+        "state_safe_trace_weight_c4", "state_safe_trace_weight_c5",
+        "state_potential_c0", "state_potential_c1", "state_potential_c2",
+        "state_potential_c3", "state_potential_c4", "state_potential_c5",
+        "state_reward_vote_weight", "state_reward_bottom2_weight",
+        "state_min_secondary_reward_gain", "state_catastrophic_vote_loss_limit",
+        "state_outcome_signature_version", "state_safe_trace_signature_version",
+        "state_update_cycle_window", "state_prompt_reaccept_cooldown_updates",
+        "state_distribution_reward_enabled", "state_vote_reward_enabled",
+        "state_diversity_constraints_enabled",
     )
     if not is_state_conditioned_method(getattr(cfg, "method_version", "legacy")):
         for field in state_fields:
@@ -855,6 +914,13 @@ def build_training_checkpoint(
             "state_search_diagnostics": dict(getattr(system, "state_search_diagnostics", {})),
             "fixed_probe_state_snapshot": dict(getattr(system, "fixed_probe_state_snapshot", {})),
             "fixed_probe_snapshot_refresh_count": int(getattr(system, "fixed_probe_snapshot_refresh_count", 0)),
+            "initial_sequential_profiles": list(getattr(system, "initial_sequential_profiles", [])),
+            "initial_sequential_team_metrics": list(getattr(system, "initial_sequential_team_metrics", [])),
+            "current_sequential_profiles": list(getattr(system, "current_sequential_profiles", [])),
+            "sequential_update_history": list(getattr(system, "sequential_update_history", [])),
+            "sequential_agent_order_index_by_epoch": dict(getattr(system, "sequential_agent_order_index_by_epoch", {})),
+            "sequential_recent_accepted_prompt_hashes": list(getattr(system, "sequential_recent_accepted_prompt_hashes", [])),
+            "joint_team_enumeration_count": int(getattr(system, "joint_team_enumeration_count", 0)),
             "state_no_gain_updates_per_agent": dict(getattr(system, "state_no_gain_updates_per_agent", {})),
             "exploration_parent_use_count": int(getattr(system, "exploration_parent_use_count", 0)),
             "exploration_descendant_count": int(getattr(system, "exploration_descendant_count", 0)),

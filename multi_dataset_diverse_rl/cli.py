@@ -241,10 +241,7 @@ def select_state_conditioned_candidate_eval_batch(
     conversion_budget = min(
         targeted_budget - coverage_budget,
         max(0, int(getattr(cfg, "candidate_batch_conversion_size", 6))),
-    ) if (
-        bool(getattr(cfg, "state_c2_correct_conversion_enabled", True))
-        or bool(getattr(cfg, "state_c2_wrong_split_enabled", True))
-    ) else 0
+    )
 
     def record_hash(record):
         return hashlib.sha1(str(record.get("question", "")).encode("utf-8")).hexdigest()[:12]
@@ -306,19 +303,11 @@ def select_state_conditioned_candidate_eval_batch(
         if key in used or row is None:
             continue
         state = state_for(row)
-        if state != "C2":
+        if state not in {"C2", "C3"}:
             continue
         conversion_candidates.append(decorate(record, "conversion"))
-    conversion = []
-    option_groups = {}
-    for record in conversion_candidates:
-        option_groups.setdefault(int(record.get("_option_count", 0) or 0), []).append(record)
-    while len(conversion) < conversion_size and any(option_groups.values()):
-        for option_count in sorted(option_groups):
-            if option_groups[option_count] and len(conversion) < conversion_size:
-                record = option_groups[option_count].pop(0)
-                conversion.append(record)
-                used.add(record_hash(record))
+    conversion = conversion_candidates[:conversion_size]
+    used.update(record_hash(record) for record in conversion)
     result = representative + coverage + conversion
     if len(result) < batch_size:
         for record in shuffled:
@@ -491,6 +480,16 @@ def rollout_method_metadata(cfg, system=None):
     if str(getattr(cfg, "method_version", "legacy")) == "v9_state_conditioned_error":
         metadata.update({
             "state_conditioned_enabled": True,
+            "v9_update_mode": "sequential_single_agent",
+            "joint_team_enumeration_enabled": False,
+            "joint_team_combination_count": 0,
+            "equal_vote_weighting": True,
+            "wrong_answer_dispersion_used_for_reward": False,
+            "wrong_answer_dispersion_used_for_selection": False,
+            "accuracy_is_primary_objective": True,
+            "diversity_is_constraint": True,
+            "state_prompt_memory_capacity": int(cfg.state_prompt_memory_capacity),
+            "state_full_probe_acceptance_candidates": int(cfg.state_full_probe_acceptance_candidates),
             "state_accuracy_tie_epsilon": float(cfg.state_accuracy_tie_epsilon),
             "state_vote_objective_enabled": bool(cfg.state_vote_objective_enabled),
             "state_coverage_enabled": bool(cfg.state_coverage_enabled),
@@ -511,7 +510,7 @@ def rollout_method_metadata(cfg, system=None):
             "candidate_batch_coverage_size": int(cfg.candidate_batch_coverage_size),
             "candidate_batch_conversion_size": int(cfg.candidate_batch_conversion_size),
             "composite_rollout_distance_used_for_selection": False,
-            "trace_diversity_role": "diagnostic_or_last_tiebreak_only",
+            "trace_diversity_role": "non_collapse_constraint_only",
             "fixed_probe_state_snapshot_version": str(
                 getattr(system, "fixed_probe_state_snapshot", {}).get("snapshot_version", "")
             ) if system is not None else "",
@@ -705,7 +704,7 @@ def validation_score(epoch_record, reward_mode="guarded_diversity"):
 
 def validation_metric_name(reward_mode, best_state_selection_mode="existing"):
     if str(best_state_selection_mode or "existing").lower() == "state_conditioned_vote_first":
-        return "state_conditioned_vote_first(vote,mean,-C0,C2_vote,C2_margin,-invalid,earlier)"
+        return "state_conditioned_vote_first(mean,vote,-C0,C3plus,C4plus,bottom2,-invalid,earlier)"
     if str(best_state_selection_mode or "existing").lower() == "rollout_vote_first":
         return "rollout_vote_first(vote,C3,mean,bottom2,conversion,margin,-wrong,-invalid,rollout_div,earlier)"
     if str(best_state_selection_mode or "existing").lower() == "vote_competence_first":
@@ -964,6 +963,7 @@ async def main_async():
     fixed_competence_probe = []
     if rollout_qd_method:
         fixed_competence_probe = list(candidate_eval_pool or train_data)
+        system.fixed_acceptance_probe_data = list(fixed_competence_probe)
         system.current_fixed_probe_hash = system._fixed_probe_hash(fixed_competence_probe)
         system.prompt_probe_version = (
             "state_conditioned_fixed_probe_v1"
@@ -1359,7 +1359,7 @@ async def main_async():
             refresh_batch = [train_data[i] for i in order[: min(refresh_batch_size, len(order))]]
             refresh_summary = await system.refresh_all_prompt_beams(refresh_batch, epoch_id=epoch + 1)
         joint_team_summary = None
-        if str(getattr(cfg, "method_version", "legacy")) in {"v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error"}:
+        if str(getattr(cfg, "method_version", "legacy")) in {"v8_stable_qd_lineage", "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready"}:
             if str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
                 system.expire_probation_branches(epoch + 1)
             joint_team_summary = await system.refresh_joint_active_team_if_needed(
