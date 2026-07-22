@@ -9,30 +9,42 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from ..evaluation.fixed_probe import PromptAnswer
-from ..responsibility import ResponsibilityState
+from ..persistence.identity import validate_run_identity
+from ..responsibility import OracleRepairOpportunity, ResponsibilityState
 from ..system import METHOD_VERSION
 
 
-CHECKPOINT_VERSION = 1
+CHECKPOINT_VERSION = 2
 
 
 def _random_state_payload() -> str:
     return base64.b64encode(pickle.dumps(random.getstate())).decode("ascii")
 
 
-def build_checkpoint(system, *, epoch_index: int, update_index: int, best_state: Mapping[str, Any]) -> dict[str, Any]:
+def build_checkpoint(
+    system,
+    *,
+    epoch_index: int,
+    update_index: int,
+    best_state: Mapping[str, Any],
+) -> dict[str, Any]:
     if system.fixed_probe is None:
         raise RuntimeError("cannot checkpoint before fixed probe initialization")
+    if system.validation_probe is None:
+        raise RuntimeError("cannot checkpoint before validation probe initialization")
+    if system.run_identity is None:
+        raise RuntimeError("cannot checkpoint without run identity")
     return {
         "checkpoint_version": CHECKPOINT_VERSION,
         "method_version": METHOD_VERSION,
+        "run_identity": system.run_identity.to_dict(),
         "probe_version": system.fixed_probe.version,
         "probe_hash": system.fixed_probe.probe_hash,
         "epoch_index": int(epoch_index),
         "update_index": int(update_index),
         "best_state": dict(best_state),
         "prompts": [agent.current_prompt for agent in system.agents],
-        "prompt_memory": [agent.prompt_memory for agent in system.agents],
+        "previous_active_prompts": [agent.previous_active_prompt for agent in system.agents],
         "active_profiles": [[asdict(row) for row in profile] for profile in system.active_profiles],
         "initial_profiles": [[asdict(row) for row in profile] for profile in system.initial_profiles],
         "responsibility_state": asdict(system.responsibility_state),
@@ -41,64 +53,85 @@ def build_checkpoint(system, *, epoch_index: int, update_index: int, best_state:
             str(agent_id): [asdict(row) for row in rows]
             for agent_id, rows in system.cached_responsibility_assignments.items()
         },
+        "previous_update_summaries": dict(system.previous_update_summaries),
+        "agent_selection_counts": dict(system.agent_selection_counts),
         "history": list(system.history),
         "peer_state_history": list(system.peer_state_history),
         "responsibility_assignments": list(system.responsibility_assignments),
         "candidate_decisions": list(system.candidate_decisions),
-        "prompt_memory_history": list(system.prompt_memory_history),
+        "tcs_context_history": list(system.tcs_context_history),
+        "llm_calls": list(system.llm.calls),
         "fixed_probe": system.fixed_probe.to_dict(),
+        "validation_probe": system.validation_probe.to_dict(),
         "random_state": _random_state_payload(),
     }
 
 
 def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
-    if (
-        int(payload.get("checkpoint_version", -1)) != CHECKPOINT_VERSION
-        or str(payload.get("method_version", "")) != METHOD_VERSION
-    ):
-        raise ValueError("Legacy checkpoint is incompatible with peer_state_counterfactual_v1. Start a new run.")
-    if system.fixed_probe is None:
-        raise RuntimeError("fixed probe must be initialized before checkpoint restore")
-    if (
-        str(payload.get("probe_version", "")) != system.fixed_probe.version
-        or str(payload.get("probe_hash", "")) != system.fixed_probe.probe_hash
-    ):
+    if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
+        raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
+    if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
+        raise ValueError("Legacy checkpoint is incompatible with peer_state_counterfactual_v1")
+    if system.run_identity is None:
+        raise RuntimeError("run identity must be set before checkpoint validation")
+    validate_run_identity(system.run_identity, payload["run_identity"])
+    if system.fixed_probe is None or system.validation_probe is None:
+        raise RuntimeError("fixed and validation probes must exist before checkpoint restore")
+    if str(payload["probe_version"]) != system.fixed_probe.version or str(payload["probe_hash"]) != system.fixed_probe.probe_hash:
         raise ValueError("Fixed probe cache version or hash mismatch. Start a new run.")
 
 
 def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, dict[str, Any]]:
     validate_checkpoint(payload, system)
-    for agent, prompt, memory in zip(
-        system.agents, payload.get("prompts", []), payload.get("prompt_memory", []), strict=True,
-    ):
+    prompts = payload["prompts"]
+    previous_prompts = payload["previous_active_prompts"]
+    if len(prompts) != 5 or len(previous_prompts) != 5:
+        raise ValueError("checkpoint must contain exactly five agent prompts")
+    for agent, prompt, previous in zip(system.agents, prompts, previous_prompts, strict=True):
         agent.current_prompt = str(prompt)
-        agent.prompt_memory = [dict(row) for row in memory]
-    system.active_profiles = [tuple(PromptAnswer(**row) for row in profile) for profile in payload.get("active_profiles", [])]
-    system.initial_profiles = [tuple(PromptAnswer(**row) for row in profile) for profile in payload.get("initial_profiles", [])]
-    raw_state = dict(payload.get("responsibility_state", {}))
-    raw_state["agent_updates_since_last_selected"] = {
-        int(key): int(value) for key, value in raw_state.get("agent_updates_since_last_selected", {}).items()
+        agent.previous_active_prompt = None if previous is None else str(previous)
+    system.active_profiles = [
+        tuple(PromptAnswer(**row) for row in profile) for profile in payload["active_profiles"]
+    ]
+    system.initial_profiles = [
+        tuple(PromptAnswer(**row) for row in profile) for profile in payload["initial_profiles"]
+    ]
+    raw_state = dict(payload["responsibility_state"])
+    for field in ("assigned_load_by_agent", "updates_since_selected_by_agent"):
+        raw_state[field] = {int(key): int(value) for key, value in raw_state[field].items()}
+    raw_state["primary_owner_by_question"] = {
+        str(key): int(value) for key, value in raw_state["primary_owner_by_question"].items()
     }
-    raw_state["assigned_load_per_agent"] = {
-        int(key): int(value) for key, value in raw_state.get("assigned_load_per_agent", {}).items()
+    raw_state["owner_age_by_question"] = {
+        str(key): int(value) for key, value in raw_state["owner_age_by_question"].items()
     }
     system.responsibility_state = ResponsibilityState(**raw_state)
-    from ..responsibility import AgentExampleCredit
     system.cached_responsibility_owners = {
-        str(key): int(value) for key, value in dict(payload.get("cached_responsibility_owners", {})).items()
+        str(key): int(value) for key, value in payload["cached_responsibility_owners"].items()
     }
     system.cached_responsibility_assignments = {
-        int(agent_id): [AgentExampleCredit(**row) for row in rows]
-        for agent_id, rows in dict(payload.get("cached_responsibility_assignments", {})).items()
+        int(agent_id): [OracleRepairOpportunity(**row) for row in rows]
+        for agent_id, rows in payload["cached_responsibility_assignments"].items()
+    }
+    system.previous_update_summaries = {
+        int(key): str(value) for key, value in payload["previous_update_summaries"].items()
+    }
+    system.agent_selection_counts = {
+        int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }
     for name in (
-        "history", "peer_state_history", "responsibility_assignments",
-        "candidate_decisions", "prompt_memory_history",
+        "history",
+        "peer_state_history",
+        "responsibility_assignments",
+        "candidate_decisions",
+        "tcs_context_history",
     ):
-        setattr(system, name, list(payload.get(name, [])))
-    system.fixed_probe.restore(payload.get("fixed_probe", {}))
+        setattr(system, name, list(payload[name]))
+    system.llm.calls = list(payload["llm_calls"])
+    system.fixed_probe.restore(payload["fixed_probe"])
+    system.validation_probe.restore(payload["validation_probe"])
     random.setstate(pickle.loads(base64.b64decode(str(payload["random_state"]))))
-    return int(payload.get("epoch_index", 0)), int(payload.get("update_index", 0)), dict(payload.get("best_state", {}))
+    return int(payload["epoch_index"]), int(payload["update_index"]), dict(payload["best_state"])
 
 
 def load_checkpoint(path: str | Path) -> dict[str, Any] | None:

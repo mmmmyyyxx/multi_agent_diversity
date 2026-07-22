@@ -14,6 +14,7 @@ class DataConfig:
     train_path: str = "train.jsonl"
     val_path: str = ""
     test_path: str = "test.jsonl"
+    manifest_sha256: str = ""
     train_size: int = 200
     val_size: int = 100
     test_size: int = 200
@@ -26,6 +27,8 @@ class ModelConfig:
     evaluator_model: str = "deepseek-chat"
     solver_api_key_env: str = ""
     solver_base_url_env: str = ""
+    optimizer_api_key_env: str = ""
+    optimizer_base_url_env: str = ""
     evaluator_api_key_env: str = ""
     evaluator_base_url_env: str = ""
     temperature: float = 0.0
@@ -41,16 +44,14 @@ class TrainingConfig:
     update_every: int = 10
     seed: int = 42
     shared_prompt: str = "You are a careful reasoning solver. Use an explicit decision procedure, verify the key inference, and end with exactly one FINAL_ANSWER line."
-    baseline_only: bool = False
-    independent_accuracy_only: bool = False
-    target_selector: str = "residual_responsibility"
-    online_responsibility_refresh: bool = True
+    initialization_mode: str = "shared_identical"
+    provided_prompts_json: str = ""
 
 
 @dataclass(frozen=True)
 class TCSConfig:
-    responsibility_conditioned_tcs: bool = True
     teacher_critic_max_rounds: int = 3
+    critic_approval_threshold: float = 0.75
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
@@ -59,21 +60,24 @@ class TCSConfig:
     student_max_tokens: int = 1800
     student_json_max_retries: int = 5
     num_candidates_per_parent: int = 2
-    generation_parent_limit: int = 1
+    tcs_assigned_coverage_limit: int = 6
+    tcs_assigned_conversion_limit: int = 6
+    tcs_preservation_limit: int = 6
+    tcs_representative_limit: int = 6
+    tcs_context_max_chars: int = 24000
 
 
 @dataclass(frozen=True)
 class PeerStateConfig:
     aggregation_mode: str = "plurality"
-    vote_tie_break: str = "random"
+    vote_tie_break: str = "abstain"
     soft_vote_tau: float = 1.0
     probe_version: str = "peer_state_fixed_probe_v1"
+    parser_version: str = "task_parser_v1"
 
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
-    responsibility_assignment_enabled: bool = True
-    responsibility_inertia_enabled: bool = True
     responsibility_switch_margin: float = 0.05
     responsibility_max_wait_updates: int = 8
 
@@ -112,6 +116,8 @@ class PersistenceConfig:
     retry_sleep: float = 1.5
     max_retry_backoff: float = 60.0
     llm_call_timeout: float = 120.0
+    max_total_llm_calls: int = 0
+    max_total_tokens: int = 0
 
 
 SECTION_TYPES = {

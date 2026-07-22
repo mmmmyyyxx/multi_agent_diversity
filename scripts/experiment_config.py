@@ -12,46 +12,37 @@ class ExperimentSetting:
     overrides: Mapping[str, Any]
 
     def resolved_overrides(self) -> dict[str, Any]:
-        return dict(self.overrides)
+        return {"experiment_setting": self.name, **dict(self.overrides)}
 
 
 COMMON = {
     "method_version": "peer_state_counterfactual_v1",
     "agents": 5,
+    "initialization_mode": "shared_identical",
+    "vote_tie_break": "abstain",
 }
 
-ALL_EXPERIMENT_SETTINGS = [
-    ExperimentSetting("shared_baseline", {**COMMON, "baseline_only": True}),
-    ExperimentSetting("shared_independent_accuracy_tcs", {
-        **COMMON, "independent_accuracy_only": True, "target_selector": "round_robin",
-        "responsibility_assignment_enabled": False, "responsibility_conditioned_tcs": False,
-        "online_responsibility_refresh": False, "responsibility_inertia_enabled": False,
-    }),
-    ExperimentSetting("shared_peer_state_credit_round_robin", {
-        **COMMON, "target_selector": "round_robin", "responsibility_assignment_enabled": False,
-        "responsibility_conditioned_tcs": False, "online_responsibility_refresh": False,
-        "responsibility_inertia_enabled": False,
-    }),
-    ExperimentSetting("shared_peer_state_responsibility", {
-        **COMMON, "target_selector": "residual_responsibility", "responsibility_assignment_enabled": True,
-        "responsibility_conditioned_tcs": False, "online_responsibility_refresh": False,
-        "responsibility_inertia_enabled": True,
-    }),
-    ExperimentSetting("shared_peer_state_full", {
-        **COMMON, "target_selector": "residual_responsibility", "responsibility_assignment_enabled": True,
-        "responsibility_conditioned_tcs": True, "online_responsibility_refresh": True,
-        "responsibility_inertia_enabled": True,
-    }),
-]
+SETTING_NAMES = (
+    "shared_baseline",
+    "shared_independent_accuracy_tcs",
+    "shared_peer_state_credit_round_robin",
+    "shared_peer_state_responsibility",
+    "shared_peer_state_full",
+)
+
+ALL_EXPERIMENT_SETTINGS = [ExperimentSetting(name, COMMON) for name in SETTING_NAMES]
 DEFAULT_EXPERIMENT_SETTINGS = ALL_EXPERIMENT_SETTINGS
-DEFAULT_EXPERIMENT_SETTING_NAMES = [setting.name for setting in ALL_EXPERIMENT_SETTINGS]
+DEFAULT_EXPERIMENT_SETTING_NAMES = list(SETTING_NAMES)
 
 
 def parse_csv_list(raw: str) -> list[str]:
     return [item.strip() for item in str(raw or "").split(",") if item.strip()]
 
 
-def select_settings(raw: str, settings: Iterable[ExperimentSetting] = ALL_EXPERIMENT_SETTINGS) -> list[ExperimentSetting]:
+def select_settings(
+    raw: str,
+    settings: Iterable[ExperimentSetting] = ALL_EXPERIMENT_SETTINGS,
+) -> list[ExperimentSetting]:
     available = {setting.name: setting for setting in settings}
     names = list(available) if not raw or raw == "all" else parse_csv_list(raw)
     missing = [name for name in names if name not in available]

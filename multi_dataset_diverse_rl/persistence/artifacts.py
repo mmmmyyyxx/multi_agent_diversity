@@ -11,14 +11,6 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 
-SCHEMA_VERSIONS = {
-    "candidate_history_schema": 2,
-    "archive_history_schema": 2,
-    "joint_history_schema": 2,
-    "lineage_history_schema": 2,
-}
-
-
 def _json_text(payload: Any, *, indent: int | None = None) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=indent, allow_nan=False)
 
@@ -74,8 +66,3 @@ class ArtifactWriter:
             writer.writeheader()
             writer.writerows(rows)
         os.replace(temporary, path)
-
-    def record(self, filename: str, event: Mapping[str, Any], schema_name: str) -> None:
-        if schema_name not in SCHEMA_VERSIONS:
-            raise ValueError(f"Unknown artifact schema: {schema_name}")
-        self.append_jsonl(filename, [{"schema_version": SCHEMA_VERSIONS[schema_name], **dict(event)}])

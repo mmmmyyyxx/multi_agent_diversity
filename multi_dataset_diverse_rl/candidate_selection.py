@@ -1,53 +1,52 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, Sequence
+from typing import Sequence
+
+from .responsibility import CandidateMarginalContribution, ProtectionContribution
 
 
-def _metrics(item: Mapping[str, Any]) -> Mapping[str, Any]:
-    value = item.get("metrics", {})
-    return value if isinstance(value, Mapping) else {}
+@dataclass(frozen=True)
+class PromptCompetenceMetrics:
+    correct_count: int
+    accuracy: float
+    invalid_count: int
+    invalid_rate: float
 
 
-def _hash(item: Mapping[str, Any]) -> str:
-    return str(item.get("prompt_hash", ""))
+@dataclass(frozen=True)
+class TeamOutcomeMetrics:
+    vote_correct_vector: tuple[bool, ...]
+    plurality_vote_accuracy: float
+    gold_vote_counts: tuple[int, ...]
+    largest_wrong_vote_counts: tuple[int, ...]
+    plurality_margins: tuple[int, ...]
+    mean_soft_vote_utility: float
 
 
-def stage_a_multichannel_shortlist(
-    candidates: Sequence[Mapping[str, Any]], *, channel_top_k: int = 2, total_budget: int | None = None,
-) -> list[dict[str, Any]]:
-    rows = [dict(item) for item in candidates]
-    channels = (
-        lambda item: (
-            int(_metrics(item).get("candidate_target_correct_count", 0)),
-            -int(_metrics(item).get("candidate_invalid_count", 0)), _hash(item),
-        ),
-        lambda item: (
-            int(_metrics(item).get("net_vote_delta", 0)),
-            -int(_metrics(item).get("vote_loss_count", 0)),
-            float(_metrics(item).get("soft_vote_utility_delta", 0.0)), _hash(item),
-        ),
-        lambda item: (
-            int(_metrics(item).get("coverage_gain_count", 0)),
-            float(_metrics(item).get("assigned_residual_utility_delta", 0.0)),
-            -int(_metrics(item).get("unique_correct_loss_count", 0)),
-            -int(_metrics(item).get("pivotal_vote_correct_loss_count", 0)), _hash(item),
-        ),
-    )
-    selected: dict[str, dict[str, Any]] = {}
-    for channel in channels:
-        for item in sorted(rows, key=channel, reverse=True)[:max(0, int(channel_top_k))]:
-            selected.setdefault(_hash(item), item)
-    result = list(selected.values())
-    if total_budget is not None:
-        for item in sorted(rows, key=lambda row: _hash(row)):
-            if len(result) >= max(0, int(total_budget)):
-                break
-            if _hash(item) not in selected:
-                selected[_hash(item)] = item
-                result.append(item)
-        result = result[:max(0, int(total_budget))]
-    return result
+@dataclass(frozen=True)
+class CandidateEvaluation:
+    prompt: str
+    prompt_hash: str
+    competence: PromptCompetenceMetrics
+    team_outcome: TeamOutcomeMetrics
+    marginal: CandidateMarginalContribution
+    protection: ProtectionContribution
+
+
+@dataclass(frozen=True)
+class StageAScores:
+    accuracy_key: tuple
+    vote_key: tuple
+    responsibility_key: tuple
+
+
+@dataclass(frozen=True)
+class StageASelectionDecision:
+    selected: bool
+    selected_by_channels: tuple[str, ...]
+    pareto_front: int
+    aggregate_rank: int
 
 
 @dataclass(frozen=True)
@@ -61,52 +60,204 @@ class ConstraintLimits:
     min_soft_utility_gain: float = 0.005
 
 
-def candidate_is_feasible(
-    metrics: Mapping[str, Any], active_metrics: Mapping[str, Any], initial_metrics: Mapping[str, Any], limits: ConstraintLimits,
-) -> bool:
-    correct = int(metrics.get("candidate_target_correct_count", 0))
-    invalid = int(metrics.get("candidate_invalid_count", 0))
-    return bool(
-        correct >= int(active_metrics.get("candidate_target_correct_count", 0)) - limits.local_accuracy_allowance
-        and correct >= int(initial_metrics.get("candidate_target_correct_count", 0)) - limits.global_accuracy_allowance
-        and invalid <= int(active_metrics.get("candidate_invalid_count", 0)) + limits.invalid_allowance
-        and int(metrics.get("vote_loss_count", 0)) <= limits.vote_loss_limit
-        and int(metrics.get("unique_correct_loss_count", 0)) <= limits.unique_correct_loss_limit
-        and int(metrics.get("pivotal_vote_correct_loss_count", 0)) <= limits.pivotal_loss_limit
+@dataclass(frozen=True)
+class ConstraintDecision:
+    passed: bool
+    local_accuracy_passed: bool
+    initial_accuracy_passed: bool
+    invalid_passed: bool
+    vote_loss_passed: bool
+    unique_correct_passed: bool
+    pivotal_correct_passed: bool
+    rejection_reasons: tuple[str, ...]
+
+
+def stage_a_scores(candidate: CandidateEvaluation) -> StageAScores:
+    return StageAScores(
+        accuracy_key=(candidate.competence.correct_count, -candidate.competence.invalid_count),
+        vote_key=(
+            candidate.marginal.net_vote_delta,
+            -candidate.marginal.vote_loss_count,
+            candidate.marginal.soft_utility_delta,
+        ),
+        responsibility_key=(
+            candidate.marginal.coverage_gain_count,
+            candidate.marginal.assigned_residual_utility_delta,
+            -candidate.protection.unique_correct_loss_count,
+            -candidate.protection.pivotal_correct_loss_count,
+        ),
     )
 
 
-def vote_first_key(item: Mapping[str, Any]) -> tuple:
-    metrics = _metrics(item)
+def _ordinal_ranks(candidates: Sequence[CandidateEvaluation], attribute: str) -> dict[str, int]:
+    keys = {candidate.prompt_hash: getattr(stage_a_scores(candidate), attribute) for candidate in candidates}
+    ordered_unique = sorted(set(keys.values()), reverse=True)
+    rank_by_key = {key: index + 1 for index, key in enumerate(ordered_unique)}
+    return {prompt_hash: rank_by_key[key] for prompt_hash, key in keys.items()}
+
+
+def _pareto_fronts(rank_vectors: dict[str, tuple[int, int, int]]) -> dict[str, int]:
+    remaining = set(rank_vectors)
+    fronts: dict[str, int] = {}
+    front = 1
+    while remaining:
+        current = []
+        for prompt_hash in sorted(remaining):
+            vector = rank_vectors[prompt_hash]
+            dominated = any(
+                all(other_value <= value for other_value, value in zip(rank_vectors[other], vector, strict=True))
+                and any(other_value < value for other_value, value in zip(rank_vectors[other], vector, strict=True))
+                for other in remaining
+                if other != prompt_hash
+            )
+            if not dominated:
+                current.append(prompt_hash)
+        if not current:
+            raise AssertionError("Pareto front construction made no progress")
+        for prompt_hash in current:
+            fronts[prompt_hash] = front
+            remaining.remove(prompt_hash)
+        front += 1
+    return fronts
+
+
+def stage_a_multichannel_shortlist(
+    candidates: Sequence[CandidateEvaluation],
+    *,
+    channel_top_k: int = 2,
+    total_budget: int,
+) -> tuple[list[CandidateEvaluation], dict[str, StageASelectionDecision]]:
+    unique = {candidate.prompt_hash: candidate for candidate in candidates}
+    rows = list(unique.values())
+    if total_budget < 0 or channel_top_k < 0:
+        raise ValueError("Stage A budgets cannot be negative")
+    channels = {
+        "accuracy": _ordinal_ranks(rows, "accuracy_key"),
+        "vote": _ordinal_ranks(rows, "vote_key"),
+        "responsibility": _ordinal_ranks(rows, "responsibility_key"),
+    }
+    rank_vectors = {
+        candidate.prompt_hash: tuple(channels[name][candidate.prompt_hash] for name in channels)
+        for candidate in rows
+    }
+    fronts = _pareto_fronts(rank_vectors) if rows else {}
+    selected_by: dict[str, set[str]] = {candidate.prompt_hash: set() for candidate in rows}
+    union: set[str] = set()
+    for name, ranks in channels.items():
+        ordered = sorted(rows, key=lambda row: (ranks[row.prompt_hash], row.prompt_hash))
+        for candidate in ordered[:channel_top_k]:
+            union.add(candidate.prompt_hash)
+            selected_by[candidate.prompt_hash].add(name)
+
+    ordering = sorted(
+        rows,
+        key=lambda row: (
+            fronts[row.prompt_hash],
+            sum(rank_vectors[row.prompt_hash]),
+            rank_vectors[row.prompt_hash],
+            row.prompt_hash,
+        ),
+    )
+    if len(union) > total_budget:
+        selected_hashes = {
+            row.prompt_hash for row in ordering if row.prompt_hash in union
+        }
+        selected_hashes = set(sorted(
+            selected_hashes,
+            key=lambda prompt_hash: (
+                fronts[prompt_hash], sum(rank_vectors[prompt_hash]), rank_vectors[prompt_hash], prompt_hash,
+            ),
+        )[:total_budget])
+    else:
+        selected_hashes = set(union)
+        for row in ordering:
+            if len(selected_hashes) >= total_budget:
+                break
+            selected_hashes.add(row.prompt_hash)
+
+    decisions = {
+        row.prompt_hash: StageASelectionDecision(
+            selected=row.prompt_hash in selected_hashes,
+            selected_by_channels=tuple(sorted(selected_by[row.prompt_hash])),
+            pareto_front=fronts[row.prompt_hash],
+            aggregate_rank=sum(rank_vectors[row.prompt_hash]),
+        )
+        for row in rows
+    }
+    shortlist = [row for row in ordering if row.prompt_hash in selected_hashes]
+    return shortlist, decisions
+
+
+def evaluate_constraints(
+    candidate: CandidateEvaluation,
+    active: CandidateEvaluation,
+    initial: CandidateEvaluation,
+    limits: ConstraintLimits,
+) -> ConstraintDecision:
+    local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
+    global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
+    invalid = candidate.competence.invalid_count <= active.competence.invalid_count + limits.invalid_allowance
+    vote_loss = candidate.marginal.vote_loss_count <= limits.vote_loss_limit
+    unique = candidate.protection.unique_correct_loss_count <= limits.unique_correct_loss_limit
+    pivotal = candidate.protection.pivotal_correct_loss_count <= limits.pivotal_loss_limit
+    checks = (
+        ("local_accuracy", local),
+        ("initial_accuracy", global_),
+        ("invalid", invalid),
+        ("vote_loss", vote_loss),
+        ("unique_correct", unique),
+        ("pivotal_correct", pivotal),
+    )
+    reasons = tuple(name for name, passed in checks if not passed)
+    return ConstraintDecision(
+        passed=not reasons,
+        local_accuracy_passed=local,
+        initial_accuracy_passed=global_,
+        invalid_passed=invalid,
+        vote_loss_passed=vote_loss,
+        unique_correct_passed=unique,
+        pivotal_correct_passed=pivotal,
+        rejection_reasons=reasons,
+    )
+
+
+def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
     return (
-        int(metrics.get("net_vote_delta", 0)),
-        -int(metrics.get("vote_loss_count", 0)),
-        float(metrics.get("soft_vote_utility_delta", 0.0)),
-        int(metrics.get("coverage_gain_count", 0)),
-        float(metrics.get("assigned_residual_utility_delta", 0.0)),
-        int(metrics.get("candidate_target_correct_count", 0)),
-        -int(metrics.get("candidate_invalid_count", 0)),
-        -int(item.get("generation", 0)),
-        _hash(item),
+        candidate.marginal.net_vote_delta,
+        -candidate.marginal.vote_loss_count,
+        candidate.marginal.soft_utility_delta,
+        candidate.marginal.coverage_gain_count,
+        candidate.marginal.assigned_residual_utility_delta,
+        candidate.competence.correct_count,
+        -candidate.competence.invalid_count,
+        -int(generation),
+        candidate.prompt_hash,
     )
 
 
-def candidate_is_acceptable(item: Mapping[str, Any], incumbent: Mapping[str, Any], limits: ConstraintLimits) -> bool:
-    metrics = _metrics(item)
-    incumbent_metrics = _metrics(incumbent)
-    if vote_first_key(item) <= vote_first_key(incumbent):
-        return False
-    net_vote = int(metrics.get("net_vote_delta", 0))
-    vote_loss = int(metrics.get("vote_loss_count", 0))
-    if net_vote > 0:
+def individual_accuracy_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
+    return (
+        candidate.competence.correct_count,
+        -candidate.competence.invalid_count,
+        -int(generation),
+        candidate.prompt_hash,
+    )
+
+
+def candidate_is_acceptable(
+    candidate: CandidateEvaluation,
+    incumbent: CandidateEvaluation,
+    limits: ConstraintLimits,
+) -> bool:
+    marginal = candidate.marginal
+    if marginal.net_vote_delta > 0:
         return True
-    if net_vote != 0 or vote_loss != 0:
+    if marginal.net_vote_delta != 0 or marginal.vote_loss_count != 0:
         return False
-    if float(metrics.get("soft_vote_utility_delta", 0.0)) >= limits.min_soft_utility_gain:
+    if marginal.soft_utility_delta >= limits.min_soft_utility_gain:
         return True
     return bool(
-        int(metrics.get("candidate_target_correct_count", 0))
-        > int(incumbent_metrics.get("candidate_target_correct_count", 0))
-        and int(metrics.get("unique_correct_loss_count", 0)) == 0
-        and int(metrics.get("pivotal_vote_correct_loss_count", 0)) == 0
+        candidate.competence.correct_count > incumbent.competence.correct_count
+        and candidate.protection.unique_correct_loss_count == 0
+        and candidate.protection.pivotal_correct_loss_count == 0
     )

@@ -43,6 +43,41 @@ def test_stage_a_indices_are_one_shared_deterministic_pool(tmp_path):
     assert system.stage_a_indices(0, assigned) == system.stage_a_indices(0, assigned)
 
 
+def test_round_robin_peer_state_ablation_builds_global_c0_pool(tmp_path):
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        experiment_setting="shared_peer_state_credit_round_robin",
+        stage_a_representative_size=0,
+        stage_a_coverage_size=2,
+        stage_a_conversion_size=0,
+        stage_a_preservation_size=0,
+    )
+    system = PromptEnsembleOptimizationSystem(cfg, solver=lambda *_args: None)
+    system.fixed_probe = system.build_probe([{"question": f"q{i}", "answer": "A"} for i in range(3)])
+    from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
+    system.active_profiles = [tuple(PromptAnswer("B", "trace", True) for _ in range(3)) for _ in range(5)]
+    assert len(system.stage_a_indices(0, set())) == 2
+
+
+def test_representative_pool_uses_seeded_question_hash_not_file_order(tmp_path):
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        experiment_setting="shared_peer_state_credit_round_robin",
+        stage_a_representative_size=2,
+        stage_a_coverage_size=0,
+        stage_a_conversion_size=0,
+        stage_a_preservation_size=0,
+        seed=43,
+    )
+    system = PromptEnsembleOptimizationSystem(cfg, solver=lambda *_args: None)
+    system.fixed_probe = system.build_probe([{"question": f"q{i}", "answer": "A"} for i in range(5)])
+    from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
+    system.active_profiles = [tuple(PromptAnswer("B", "trace", True) for _ in range(5)) for _ in range(5)]
+    selected = system.stage_a_indices(0, set())
+    assert selected == system._representative_indices(2)
+    assert selected != [0, 1]
+
+
 def test_dataset_format_csv_can_be_loaded_directly():
     raw = load_jsonl("Dataset_format/BBH/boolean_expressions.csv", limit=2)
     rows = build_dataset(raw, "legacy")

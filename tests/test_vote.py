@@ -18,6 +18,12 @@ def test_plurality_first_and_abstain_tie_breaks():
     assert first["vote_tie"] and abstain["vote_tie"]
 
 
+def test_plurality_default_tie_policy_is_abstain():
+    vote = plurality_vote_with_diagnostics(["A", "B"])
+    assert vote["vote_answer"] == ""
+    assert vote["tie_break_method"] == "abstain"
+
+
 def test_plurality_random_is_deterministic():
     left = plurality_vote_with_diagnostics(["A", "B"], tie_break_method="random", seed=42, question_hash="q1")
     right = plurality_vote_with_diagnostics(["A", "B"], tie_break_method="random", seed=42, question_hash="q1")

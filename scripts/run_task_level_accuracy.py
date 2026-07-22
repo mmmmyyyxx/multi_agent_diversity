@@ -14,18 +14,20 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from multi_dataset_diverse_rl.config import Config
+from multi_dataset_diverse_rl.cli import build_dataset
+from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
+from multi_dataset_diverse_rl.utils import load_jsonl
 from scripts.experiment_config import select_settings
 
 
-RUNNER_FIELDS = (
-    "agent_model", "optimizer_model", "evaluator_model", "agents", "epochs", "update_every",
-    "train_size", "val_size", "test_size", "num_candidates_per_parent",
-    "candidate_eval_pool_size", "eval_solver_call_concurrency",
-    "generation_parent_limit", "stage_a_representative_size",
-    "stage_a_coverage_size", "stage_a_conversion_size", "stage_a_preservation_size",
-    "stage_a_channel_top_k", "stage_b_candidate_budget", "max_retries", "max_transient_retries",
-    "retry_sleep", "max_retry_backoff", "llm_call_timeout", "resume_from_checkpoint", "resume_completed",
+RUNNER_OWNED_FIELDS = {
+    "task_type", "dataset_format", "comparison_task_id", "benchmark", "answer_format",
+    "train_path", "val_path", "test_path", "manifest_sha256", "out_dir", "seed",
+    "method_version", "experiment_setting",
+}
+RUNNER_FIELDS = tuple(
+    name for name in Config().to_flat_dict() if name not in RUNNER_OWNED_FIELDS
 )
 
 
@@ -97,7 +99,7 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _completed_run(run_dir: Path) -> bool:
+def _completed_run(run_dir: Path, expected_identity) -> bool:
     required = ("final_summary.json", "history.json", "best_prompts.json", "run_meta.json")
     if not all((run_dir / filename).exists() for filename in required):
         return False
@@ -106,17 +108,21 @@ def _completed_run(run_dir: Path) -> bool:
         summary = _read_json(run_dir / "final_summary.json")
     except (OSError, json.JSONDecodeError):
         return False
-    return bool(
-        metadata.get("method_version") == "peer_state_counterfactual_v1"
-        and metadata.get("legacy_compatibility_enabled") is False
-        and "plurality_vote_acc" in summary
-    )
+    if metadata["method_version"] != "peer_state_counterfactual_v1":
+        raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
+    if metadata["legacy_compatibility_enabled"] is not False:
+        raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")
+    validate_run_identity(expected_identity, metadata["run_identity"])
+    if "plurality_vote_acc" not in summary:
+        raise ValueError(f"Completed run is missing plurality_vote_acc: {run_dir}")
+    return True
 
 
 def main() -> None:
     args = _parser().parse_args()
     workspace = args.workspace.resolve()
     tasks = load_task_manifest(str((workspace / args.manifest).resolve()))
+    manifest_sha256 = hashlib.sha256((workspace / args.manifest).resolve().read_bytes()).hexdigest()
     task_ids = resolve_task_ids(args.tasks, tasks, args.benchmarks)
     settings = select_settings(args.settings)
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]
@@ -125,33 +131,46 @@ def main() -> None:
     rows = []
     for task_id in task_ids:
         task = tasks[task_id]
-        _task_split_integrity(task, args.dataset_format, str(workspace))
+        split_integrity = _task_split_integrity(task, args.dataset_format, str(workspace))
         for setting in settings:
             for seed in seeds:
                 run_dir = root / task_id / f"{setting.name}_seed{seed}"
                 final_path = run_dir / "final_summary.json"
-                if args.resume_completed and _completed_run(run_dir):
+                values = {
+                    **setting.resolved_overrides(),
+                    "task_type": task.task_type,
+                    "dataset_format": args.dataset_format,
+                    "comparison_task_id": task.task_id,
+                    "benchmark": task.benchmark,
+                    "answer_format": task.answer_format,
+                    "train_path": str((workspace / task.train_path).resolve()),
+                    "val_path": str((workspace / task.val_path).resolve()),
+                    "test_path": str((workspace / task.test_path).resolve()),
+                    "manifest_sha256": manifest_sha256,
+                    "out_dir": str(run_dir),
+                    "seed": seed,
+                }
+                defaults = Config().to_flat_dict()
+                for name in RUNNER_FIELDS:
+                    value = getattr(args, name)
+                    if value is not None:
+                        values[name] = bool(value) if isinstance(defaults[name], bool) else value
+                cfg = Config.from_flat(**values)
+                split_rows = {
+                    "train": build_dataset(load_jsonl(cfg.data.train_path, cfg.data.train_size), cfg.data.dataset_format),
+                    "val": build_dataset(load_jsonl(cfg.data.val_path, cfg.data.val_size), cfg.data.dataset_format),
+                    "test": build_dataset(load_jsonl(cfg.data.test_path, cfg.data.test_size), cfg.data.dataset_format),
+                }
+                expected_identity = build_run_identity(
+                    cfg,
+                    train_rows=split_rows["train"],
+                    val_rows=split_rows["val"],
+                    test_rows=split_rows["test"],
+                    workspace=workspace,
+                )
+                if args.resume_completed and _completed_run(run_dir, expected_identity):
                     metrics = _read_json(final_path)
                 else:
-                    values = {
-                        **setting.resolved_overrides(),
-                        "task_type": task.task_type,
-                        "dataset_format": args.dataset_format,
-                        "comparison_task_id": task.task_id,
-                        "benchmark": task.benchmark,
-                        "answer_format": task.answer_format,
-                        "train_path": str((workspace / task.train_path).resolve()),
-                        "val_path": str((workspace / task.val_path).resolve()),
-                        "test_path": str((workspace / task.test_path).resolve()),
-                        "out_dir": str(run_dir),
-                        "seed": seed,
-                        "experiment_setting": setting.name,
-                    }
-                    for name in RUNNER_FIELDS:
-                        value = getattr(args, name)
-                        if value is not None:
-                            values[name] = bool(value) if isinstance(Config().to_flat_dict()[name], bool) else value
-                    cfg = Config.from_flat(**values)
                     cmd = [sys.executable, "-m", "multi_dataset_diverse_rl.cli"]
                     for name, value in cfg.to_flat_dict().items():
                         cmd.extend([f"--{name}", str(int(value) if isinstance(value, bool) else value)])
@@ -159,14 +178,26 @@ def main() -> None:
                     metrics = _read_json(final_path)
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
-                    "vote_acc": metrics.get("plurality_vote_acc", metrics.get("vote_acc", 0.0)),
-                    "mean_individual_acc": metrics.get("mean_individual_acc", 0.0),
-                    "min_individual_acc": metrics.get("min_individual_acc", 0.0),
-                    "mean_soft_vote_utility": metrics.get("mean_soft_vote_utility", 0.0),
-                    "mean_invalid_rate": metrics.get("mean_invalid_rate", 0.0),
+                    "vote_acc": metrics["plurality_vote_acc"],
+                    "mean_individual_acc": metrics["mean_individual_acc"],
+                    "min_individual_acc": metrics["min_individual_acc"],
+                    "mean_soft_vote_utility": metrics["mean_soft_vote_utility"],
+                    "mean_invalid_rate": metrics["mean_invalid_rate"],
+                    "tie_rate": metrics["tie_rate"],
+                    "run_identity": expected_identity.to_dict(),
+                    **split_integrity,
                 })
                 (root / "accuracy_results.jsonl").write_text(
                     "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows), encoding="utf-8",
+                )
+                (root / "experiment_runs.jsonl").write_text(
+                    "".join(json.dumps({
+                        "task_id": row["task_id"],
+                        "setting": row["setting"],
+                        "seed": row["seed"],
+                        "run_identity": row["run_identity"],
+                    }, ensure_ascii=False) + "\n" for row in rows),
+                    encoding="utf-8",
                 )
     columns = list(rows[0]) if rows else ["task_id", "benchmark", "setting", "seed", "vote_acc"]
     with (root / "accuracy_results.csv").open("w", encoding="utf-8", newline="") as handle:

@@ -3,11 +3,16 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any, Awaitable, Callable, Mapping, Sequence
 
-from ..peer_state import build_peer_vote_state, soft_vote_utility
-from ..responsibility import counterfactual_credit
+from ..candidate_selection import CandidateEvaluation, PromptCompetenceMetrics, TeamOutcomeMetrics
+from ..peer_state import build_peer_vote_context, build_team_vote_state, soft_vote_utility
+from ..responsibility import (
+    CandidateMarginalContribution,
+    ProtectionContribution,
+    compute_oracle_repair_opportunity,
+)
 
 
 @dataclass(frozen=True)
@@ -35,7 +40,7 @@ class FixedProbeEvaluator:
         self.version = str(version)
         self.probe_hash = fixed_probe_hash(self.examples, self.version)
         self.cache: dict[str, PromptAnswer] = {}
-        self.inflight: dict[str, asyncio.Future] = {}
+        self.inflight: dict[str, asyncio.Future[PromptAnswer]] = {}
         self.lock = asyncio.Lock()
         self.cache_hits = 0
         self.cache_misses = 0
@@ -52,9 +57,7 @@ class FixedProbeEvaluator:
         prompt_hash: str,
         solve: Callable[[str, int, str], Awaitable[PromptAnswer]],
     ) -> tuple[PromptAnswer, ...]:
-        rows = await self.evaluate_prompt_indices(
-            agent_id, prompt, prompt_hash, range(len(self.examples)), solve,
-        )
+        rows = await self.evaluate_prompt_indices(agent_id, prompt, prompt_hash, range(len(self.examples)), solve)
         return tuple(rows[index] for index in range(len(self.examples)))
 
     async def evaluate_prompt_indices(
@@ -105,23 +108,26 @@ class FixedProbeEvaluator:
         return {
             "version": self.version,
             "probe_hash": self.probe_hash,
-            "cache": {key: value.__dict__ for key, value in self.cache.items()},
+            "cache": {key: asdict(value) for key, value in self.cache.items()},
             "cache_hits": self.cache_hits,
             "cache_misses": self.cache_misses,
         }
 
     def restore(self, payload: Mapping[str, Any]) -> None:
-        if str(payload.get("version", "")) != self.version or str(payload.get("probe_hash", "")) != self.probe_hash:
+        if str(payload["version"]) != self.version or str(payload["probe_hash"]) != self.probe_hash:
             raise ValueError("Fixed probe cache version or hash mismatch. Start a new run.")
-        self.cache = {
-            str(key): PromptAnswer(**value) for key, value in dict(payload.get("cache", {})).items()
-        }
-        self.cache_hits = int(payload.get("cache_hits", 0))
-        self.cache_misses = int(payload.get("cache_misses", 0))
+        raw_cache = payload["cache"]
+        if not isinstance(raw_cache, Mapping):
+            raise ValueError("fixed probe cache must be an object")
+        self.cache = {str(key): PromptAnswer(**value) for key, value in raw_cache.items()}
+        self.cache_hits = int(payload["cache_hits"])
+        self.cache_misses = int(payload["cache_misses"])
 
 
-def candidate_probe_metrics(
+def evaluate_candidate_profile(
     *,
+    prompt: str,
+    prompt_hash: str,
     examples: Sequence[ProbeExample],
     active_profiles: Sequence[Sequence[PromptAnswer]],
     candidate_profile: Sequence[PromptAnswer],
@@ -132,118 +138,133 @@ def candidate_probe_metrics(
     tie_break: str,
     seed: int,
     tau: float,
-) -> dict[str, Any]:
-    target_correct = 0
-    invalid_count = 0
+) -> CandidateEvaluation:
+    if len(active_profiles) != 5:
+        raise ValueError("candidate evaluation requires five active agent profiles")
+    if any(len(profile) != len(examples) for profile in active_profiles):
+        raise ValueError("active profile length differs from fixed probe")
+    if len(candidate_profile) != len(examples):
+        raise ValueError("candidate profile length differs from fixed probe")
+
+    target_correct = invalid_count = 0
     vote_gain = vote_loss = coverage_gain = coverage_loss = 0
     unique_loss = pivotal_loss = 0
     dominant_exit = dominant_join = assigned_repair = 0
-    utility_delta = assigned_utility_delta = 0.0
-    vote_correct_vector: list[bool] = []
+    utility_delta = assigned_utility_delta = utility_total = 0.0
+    vote_vector: list[bool] = []
     gold_counts: list[int] = []
     wrong_counts: list[int] = []
     margins: list[int] = []
-    utility_vector: list[float] = []
-    normalized_answer_hashes: list[str] = []
-    vote_contribution: list[int] = []
-    coverage_contribution: list[int] = []
-    unique_vector: list[bool] = []
-    pivotal_vector: list[bool] = []
-    dominant_vector: list[bool] = []
 
     for index, example in enumerate(examples):
         active_answers = [profile[index].answer for profile in active_profiles]
-        active_valid = [profile[index].valid for profile in active_profiles]
+        active_validity = [profile[index].valid for profile in active_profiles]
         candidate_answers = list(active_answers)
-        candidate_valid = list(active_valid)
+        candidate_validity = list(active_validity)
         candidate_answers[target_agent_id] = candidate_profile[index].answer
-        candidate_valid[target_agent_id] = candidate_profile[index].valid
-        current = build_peer_vote_state(
-            question_hash=example.question_hash, gold_answer=example.gold_answer,
-            answers=active_answers, valid_vector=active_valid, normalize_answer=normalize_answer,
-            match_answer=match_answer, tie_break=tie_break, seed=seed,
+        candidate_validity[target_agent_id] = candidate_profile[index].valid
+        current = build_team_vote_state(
+            question_hash=example.question_hash,
+            gold_answer=example.gold_answer,
+            answers=active_answers,
+            valid_vector=active_validity,
+            normalize_answer=normalize_answer,
+            match_answer=match_answer,
+            tie_break=tie_break,
+            seed=seed,
         )
-        candidate = build_peer_vote_state(
-            question_hash=example.question_hash, gold_answer=example.gold_answer,
-            answers=candidate_answers, valid_vector=candidate_valid, normalize_answer=normalize_answer,
-            match_answer=match_answer, tie_break=tie_break, seed=seed,
+        candidate = build_team_vote_state(
+            question_hash=example.question_hash,
+            gold_answer=example.gold_answer,
+            answers=candidate_answers,
+            valid_vector=candidate_validity,
+            normalize_answer=normalize_answer,
+            match_answer=match_answer,
+            tie_break=tie_break,
+            seed=seed,
         )
-        current_credit = counterfactual_credit(
-            agent_id=target_agent_id, current_state=current, gold_answer=example.gold_answer,
-            normalize_answer=normalize_answer, match_answer=match_answer,
-            tie_break=tie_break, seed=seed, tau=tau,
+        current_opportunity = compute_oracle_repair_opportunity(
+            team_state=current,
+            peer_context=build_peer_vote_context(current, target_agent_id),
+            tau=tau,
         )
-        candidate_credit = counterfactual_credit(
-            agent_id=target_agent_id, current_state=candidate, gold_answer=example.gold_answer,
-            normalize_answer=normalize_answer, match_answer=match_answer,
-            tie_break=tie_break, seed=seed, tau=tau,
+        candidate_opportunity = compute_oracle_repair_opportunity(
+            team_state=candidate,
+            peer_context=build_peer_vote_context(candidate, target_agent_id),
+            tau=tau,
         )
-        candidate_correct = bool(candidate.correctness_vector[target_agent_id])
+        candidate_correct = candidate.team_correctness[target_agent_id]
         target_correct += int(candidate_correct)
-        invalid_count += int(not candidate.valid_vector[target_agent_id])
+        invalid_count += int(not candidate.team_validity[target_agent_id])
         vote_gain += int(not current.vote_correct and candidate.vote_correct)
         vote_loss += int(current.vote_correct and not candidate.vote_correct)
         coverage_gain += int(current.gold_vote_count == 0 and candidate.gold_vote_count > 0)
         coverage_loss += int(current.gold_vote_count > 0 and candidate.gold_vote_count == 0)
-        unique_loss += int(current_credit.unique_correct and not candidate_correct)
-        pivotal_loss += int(current_credit.pivotal_vote_correct and not candidate_correct)
-        dominant_exit += int(current_credit.dominant_wrong_member and not candidate_credit.dominant_wrong_member)
-        dominant_join += int(not current_credit.dominant_wrong_member and candidate_credit.dominant_wrong_member)
+        unique_loss += int(current_opportunity.unique_correct and not candidate_correct)
+        pivotal_loss += int(current_opportunity.pivotal_correct and not candidate_correct)
+        dominant_exit += int(
+            current_opportunity.dominant_wrong_member and not candidate_opportunity.dominant_wrong_member
+        )
+        dominant_join += int(
+            not current_opportunity.dominant_wrong_member and candidate_opportunity.dominant_wrong_member
+        )
         current_utility = soft_vote_utility(current.gold_vote_count, current.plurality_margin, tau)
         candidate_utility = soft_vote_utility(candidate.gold_vote_count, candidate.plurality_margin, tau)
         delta = candidate_utility - current_utility
+        if current.gold_vote_count == 0 and candidate.gold_vote_count == 0:
+            delta = 0.0
         utility_delta += delta
+        utility_total += candidate_utility
         if example.question_hash in assigned_question_hashes:
             assigned_utility_delta += delta
-            assigned_repair += int(not current_credit.current_correct and candidate_correct)
-        vote_correct_vector.append(candidate.vote_correct)
+            assigned_repair += int(not current_opportunity.current_correct and candidate_correct)
+        vote_vector.append(candidate.vote_correct)
         gold_counts.append(candidate.gold_vote_count)
         wrong_counts.append(candidate.largest_wrong_vote_count)
         margins.append(candidate.plurality_margin)
-        utility_vector.append(candidate_utility)
-        normalized_answer_hashes.append(hashlib.sha256(candidate.normalized_answers[target_agent_id].encode("utf-8")).hexdigest())
-        vote_contribution.append(int(candidate.vote_correct) - int(current.vote_correct))
-        coverage_contribution.append(int(candidate.gold_vote_count > 0) - int(current.gold_vote_count > 0))
-        unique_vector.append(candidate_credit.unique_correct)
-        pivotal_vector.append(candidate_credit.pivotal_vote_correct)
-        dominant_vector.append(candidate_credit.dominant_wrong_member)
 
-    size = max(1, len(examples))
-    return {
-        "candidate_target_correct_count": target_correct,
-        "candidate_target_accuracy": target_correct / size,
-        "candidate_invalid_count": invalid_count,
-        "candidate_invalid_rate": invalid_count / size,
-        "vote_gain_count": vote_gain,
-        "vote_loss_count": vote_loss,
-        "net_vote_delta": vote_gain - vote_loss,
-        "soft_vote_utility_delta": utility_delta / size,
-        "coverage_gain_count": coverage_gain,
-        "coverage_loss_count": coverage_loss,
-        "unique_correct_loss_count": unique_loss,
-        "pivotal_vote_correct_loss_count": pivotal_loss,
-        "assigned_residual_repair_count": assigned_repair,
-        "assigned_residual_utility_delta": assigned_utility_delta / size,
-        "dominant_wrong_exit_count": dominant_exit,
-        "dominant_wrong_join_count": dominant_join,
-        "vote_correct_vector": vote_correct_vector,
-        "plurality_vote_accuracy": sum(vote_correct_vector) / size,
-        "gold_vote_count_vector": gold_counts,
-        "largest_wrong_vote_count_vector": wrong_counts,
-        "plurality_margin_vector": margins,
-        "soft_vote_utility_vector": utility_vector,
-        "mean_soft_vote_utility": sum(utility_vector) / size,
-        "answer_hashes": normalized_answer_hashes,
-        "vote_contribution_vector": vote_contribution,
-        "coverage_contribution_vector": coverage_contribution,
-        "unique_correct_vector": unique_vector,
-        "pivotal_correct_vector": pivotal_vector,
-        "dominant_wrong_membership_vector": dominant_vector,
-    }
+    size = len(examples)
+    denominator = max(1, size)
+    return CandidateEvaluation(
+        prompt=str(prompt),
+        prompt_hash=str(prompt_hash),
+        competence=PromptCompetenceMetrics(
+            correct_count=target_correct,
+            accuracy=target_correct / denominator,
+            invalid_count=invalid_count,
+            invalid_rate=invalid_count / denominator,
+        ),
+        team_outcome=TeamOutcomeMetrics(
+            vote_correct_vector=tuple(vote_vector),
+            plurality_vote_accuracy=sum(vote_vector) / denominator,
+            gold_vote_counts=tuple(gold_counts),
+            largest_wrong_vote_counts=tuple(wrong_counts),
+            plurality_margins=tuple(margins),
+            mean_soft_vote_utility=utility_total / denominator,
+        ),
+        marginal=CandidateMarginalContribution(
+            vote_gain_count=vote_gain,
+            vote_loss_count=vote_loss,
+            net_vote_delta=vote_gain - vote_loss,
+            soft_utility_delta=utility_delta / denominator,
+            coverage_gain_count=coverage_gain,
+            coverage_loss_count=coverage_loss,
+            dominant_wrong_exit_count=dominant_exit,
+            dominant_wrong_join_count=dominant_join,
+            assigned_residual_repair_count=assigned_repair,
+            assigned_residual_utility_delta=assigned_utility_delta / denominator,
+        ),
+        protection=ProtectionContribution(
+            unique_correct_loss_count=unique_loss,
+            pivotal_correct_loss_count=pivotal_loss,
+        ),
+    )
 
 
 def subset_profiles(
-    examples: Sequence[ProbeExample], profiles: Sequence[Sequence[PromptAnswer]], indices: Sequence[int],
+    examples: Sequence[ProbeExample],
+    profiles: Sequence[Sequence[PromptAnswer]],
+    indices: Sequence[int],
 ) -> tuple[tuple[ProbeExample, ...], list[tuple[PromptAnswer, ...]]]:
     selected_examples = tuple(examples[index] for index in indices)
     selected_profiles = [tuple(profile[index] for index in indices) for profile in profiles]

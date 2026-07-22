@@ -50,7 +50,7 @@ def extract_json_obj(text: str) -> dict[str, Any] | None:
 
 
 def plurality_vote_with_diagnostics(
-    answers: list[str], *, tie_break_method: str = "random", seed: int = 0, question_hash: str = "",
+    answers: list[str], *, tie_break_method: str = "abstain", seed: int = 0, question_hash: str = "",
 ) -> dict[str, Any]:
     cleaned = [str(answer) for answer in answers if str(answer).strip()]
     method = str(tie_break_method).lower()

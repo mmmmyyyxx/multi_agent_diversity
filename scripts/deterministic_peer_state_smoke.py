@@ -12,6 +12,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
+from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 
 
@@ -28,9 +29,11 @@ async def solver(question: str, agent_id: int, prompt: str) -> PromptAnswer:
 
 
 async def optimizer(system_prompt: str, _user_prompt: str, _temperature: float, _max_tokens: int) -> str:
-    if "Audit whether" in system_prompt:
-        return json.dumps({"approved": True, "score": 1.0, "feedback": "approved"})
-    if "strict JSON" in system_prompt:
+    if "Audit the Teacher" in system_prompt:
+        return json.dumps({
+            "approved": True, "score": 1.0, "feedback": "approved", "rejection_reasons": [],
+        })
+    if system_prompt == "Return strict JSON only.":
         return json.dumps({"candidates": [{
             "candidate_prompt": "repair-uncovered",
             "target_failure_mechanism": "uncovered ambiguity",
@@ -38,7 +41,12 @@ async def optimizer(system_prompt: str, _user_prompt: str, _temperature: float, 
             "preservation_rule": "retain established correct decisions",
             "expected_responsibility_effect": "create the first correct vote",
         }]})
-    return "When ambiguity remains, compare interpretations and verify the selected referent."
+    return json.dumps({
+        "target_failure_mechanism": "uncovered ambiguity",
+        "repair_procedure": "compare interpretations and verify the selected referent",
+        "preservation_rule": "retain established correct decisions",
+        "expected_responsibility_effect": "create the first correct vote",
+    })
 
 
 async def run(out_dir: Path) -> dict:
@@ -47,11 +55,25 @@ async def run(out_dir: Path) -> dict:
         stage_a_channel_top_k=1, stage_b_candidate_budget=2,
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=solver, optimizer_chat=optimizer)
+    system.set_run_identity(RunIdentity(
+        method_version="peer_state_counterfactual_v1",
+        experiment_setting="shared_peer_state_full",
+        git_commit="deterministic-smoke",
+        git_dirty=False,
+        config_fingerprint="deterministic",
+        manifest_sha256="deterministic",
+        train_file_sha256="deterministic",
+        val_file_sha256="deterministic",
+        test_file_sha256="deterministic",
+        train_question_set_hash="deterministic",
+        val_question_set_hash="deterministic",
+        test_question_set_hash="deterministic",
+    ))
     data = [{"question": f"q{index}", "answer": "A"} for index in range(3)]
     await system.initialize_fixed_probe(data)
-    before, _ = system.current_states_and_credits()
+    before, _, _ = system.current_states_and_opportunities()
     changed = await system.update_once(0)
-    after, _ = system.current_states_and_credits()
+    after, _, _ = system.current_states_and_opportunities()
     system.history.append({"epoch": 1, "accepted": changed})
     system.flush_artifacts()
     return {

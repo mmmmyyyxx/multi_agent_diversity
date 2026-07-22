@@ -11,6 +11,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from multi_dataset_diverse_rl.config import Config
+from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 
 
@@ -30,6 +31,35 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
+        if cfg.peer_state.vote_tie_break != "abstain":
+            errors.append("all canonical settings must use tie-as-abstain")
+    budget = CandidateBudgetContract(2, 2, 6, 12, 6, 6, 4)
+    protocols = {
+        name: experiment_protocol(
+            name,
+            initialization_mode="shared_identical",
+            tie_policy="abstain",
+            candidate_budget_contract=budget,
+        )
+        for name in EXPECTED_SETTINGS
+    }
+    b3 = protocols["shared_peer_state_responsibility"]
+    b4 = protocols["shared_peer_state_full"]
+    b3_payload = b3.__dict__ | {
+        "name": b4.name,
+        "tcs_context_policy": b4.tcs_context_policy,
+    }
+    if b3_payload != b4.__dict__:
+        errors.append("B3 and B4 must differ only in responsibility-conditioned TCS")
+    help_result = subprocess.run(
+        [sys.executable, "scripts/run_task_level_accuracy.py", "--help"],
+        cwd=workspace,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if help_result.returncode != 0:
+        errors.append("task runner parser failed to build")
     try:
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=workspace, check=True, text=True,

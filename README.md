@@ -1,33 +1,48 @@
 # Multi-Agent Diversity
 
-This repository implements **Peer-State Counterfactual Prompt Optimization** for a fixed five-agent reasoning ensemble. Model weights and equal plurality-vote weights remain unchanged. The optimizer estimates each agent-example pair's counterfactual team value under current peer answers, assigns residual team failures to Students, and accepts only competence-feasible prompt updates.
-
-The method does not optimize generic diversity. Complementary behavior is expected to emerge because different Students own different residual responsibilities.
-
-Read [method.md](method.md) for the complete formulation and implementation map.
-
-## Settings
+This repository implements one formal method: **Peer-State Counterfactual Prompt Optimization** (`peer_state_counterfactual_v1`). It centrally optimizes five solver prompts for equal-weight plurality vote.
 
 ```text
-shared_baseline
-shared_independent_accuracy_tcs
-shared_peer_state_credit_round_robin
-shared_peer_state_responsibility
-shared_peer_state_full
+Team rollout
+-> peer-conditioned oracle opportunity
+-> residual responsibility assignment
+-> responsibility-conditioned Teacher-Critic-Student generation
+-> paired candidate rollout
+-> competence-constrained vote-first update
 ```
 
-Old setting names are intentionally unsupported.
+Vote accuracy is the objective, individual competence is constrained, and soft vote utility is a dense search signal. The canonical method uses shared-identical initialization and tie-as-abstain.
+
+## Experiment Settings
+
+| Setting | Purpose |
+|---|---|
+| `shared_baseline` | No prompt optimization |
+| `shared_independent_accuracy_tcs` | Independent accuracy optimization |
+| `shared_peer_state_credit_round_robin` | Peer-state vote optimization with round-robin targets |
+| `shared_peer_state_responsibility` | Adds dynamic residual responsibility and online refresh |
+| `shared_peer_state_full` | Adds responsibility-conditioned TCS to the previous setting |
+
+Detailed semantics and the isolated ablation contract are in [method.md](method.md).
 
 ## Preflight
 
-Run from a clean committed tree before an experiment:
-
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
+
+& $PY scripts/run_task_level_accuracy.py --help
+& $PY -m pytest -q
+& $PY -m compileall multi_dataset_diverse_rl scripts tests
+git diff --check
 & $PY scripts/preflight_peer_state.py --workspace .
+& $PY scripts/deterministic_peer_state_smoke.py
 ```
 
-## Task-Level Run
+The deterministic smoke uses local fake models and makes no external API calls.
+
+## Real API Smoke Template
+
+Set role-specific endpoint variables if solver, optimizer, and evaluator use different services. The optimizer has independent `optimizer_api_key_env` and `optimizer_base_url_env` configuration.
 
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
@@ -39,33 +54,22 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
   --settings shared_peer_state_full `
   --seeds 42 `
   --dataset_format mars `
-  --out_root runs_peer_state_disambiguation_seed42 `
-  --epochs 3 `
-  --train_size 75 `
-  --val_size 50 `
-  --test_size 125 `
-  --update_every 10 `
-  --candidate_eval_pool_size 75 `
-  --eval_solver_call_concurrency 20 `
-  --resume_from_checkpoint 1 `
-  --resume_completed 1
+  --out_root runs_peer_state_api_smoke `
+  --epochs 1 `
+  --train_size 12 `
+  --val_size 8 `
+  --test_size 12 `
+  --update_every 6 `
+  --candidate_eval_pool_size 12 `
+  --num_candidates_per_parent 2 `
+  --stage_b_candidate_budget 2 `
+  --eval_solver_call_concurrency 2 `
+  --max_total_llm_calls 800 `
+  --max_total_tokens 600000 `
+  --resume_completed 0 `
+  --resume_from_checkpoint 0
 ```
-
-Resume by repeating the exact command with the same output root. Only checkpoint version 1 with `method_version=peer_state_counterfactual_v1` is accepted.
 
 ## Outputs
 
-```text
-run_meta.json
-history.json
-best_prompts.json
-final_summary.json
-peer_state_history.jsonl
-responsibility_assignments.jsonl
-candidate_decisions.jsonl
-prompt_memory_history.jsonl
-llm_calls.jsonl
-training_checkpoint.json while incomplete
-```
-
-Final test data is used only after validation has selected `best_prompts.json`.
+Each run writes metadata and exact identity, training history, selected prompts, final metrics, typed peer-state and responsibility diagnostics, TCS context budgets, candidate funnels and guard rejections, per-attempt LLM logs, and cost totals. Root-level `accuracy_results.jsonl`, `accuracy_results.csv`, and `experiment_runs.jsonl` provide the matched experiment matrix.
