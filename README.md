@@ -2,7 +2,7 @@
 
 This repository evolves prompts for a fixed five-agent reasoning team. Model weights and equal plurality vote weights stay unchanged.
 
-The current V9 method is accuracy-first sequential state optimization. It updates one agent at a time, evaluates final acceptance on a fixed full probe, activates accepted prompts immediately, and uses diversity only to prevent collapse. It uses the true equal-weight plurality Vote delta as a secondary signal. Wrong-answer dispersion has no training value and is excluded from optimizer inputs. V9 is not rollout-QD and does not use rollout archives or enumerate prompt-team combinations.
+The current V9 method is accuracy-first sequential state optimization. It updates one agent at a time, evaluates final acceptance on a fixed full probe, activates accepted prompts immediately, and uses diversity only to prevent collapse. All A0-A3 settings share an accuracy/invalid-only Stage A; Vote, state, and diversity differences begin in Stage B. It uses the true equal-weight plurality Vote delta as a secondary signal. Wrong-answer dispersion has no training value and is excluded from optimizer inputs. V9 is not rollout-QD and does not use rollout archives or enumerate prompt-team combinations.
 
 Read [method.md](method.md) for the complete implementation guide.
 
@@ -16,6 +16,8 @@ shared_v9_sequential_accuracy_state_vote_diversity
 ```
 
 The complete method is `shared_v9_sequential_accuracy_state_vote_diversity`. The unchanged rollout-diversity comparison is `shared_accuracy_rollout_embedding_tcs`.
+
+Before a matched A0-A3 pilot, run `python scripts/preflight_v9_pilot.py --workspace .` from a clean committed tree.
 
 ## Deterministic Smoke
 

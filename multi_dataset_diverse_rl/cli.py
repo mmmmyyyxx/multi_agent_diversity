@@ -568,6 +568,17 @@ def rollout_method_metadata(cfg, system=None):
     return metadata
 
 
+def configure_runtime_probe_version(system, cfg) -> str:
+    """Bind fixed-probe cache identity to the resolved experiment configuration."""
+    version = str(getattr(cfg, "probe_stability_version", "") or "").strip()
+    if not version:
+        raise ValueError("fixed-probe methods require a non-empty probe_stability_version")
+    system.prompt_probe_version = version
+    if str(system.prompt_probe_version) != str(cfg.probe_stability_version):
+        raise RuntimeError("runtime prompt probe version does not match configured probe stability version")
+    return version
+
+
 def is_better_validation_state(epoch_record, best_epoch_record, best_score, reward_mode, selection_mode, min_delta=0.0):
     if str(selection_mode or "existing").lower() == "state_conditioned_vote_first":
         if best_epoch_record is None:
@@ -985,11 +996,7 @@ async def main_async():
         fixed_competence_probe = list(candidate_eval_pool or train_data)
         system.fixed_acceptance_probe_data = list(fixed_competence_probe)
         system.current_fixed_probe_hash = system._fixed_probe_hash(fixed_competence_probe)
-        system.prompt_probe_version = (
-            "state_conditioned_fixed_probe_v1"
-            if system._is_state_conditioned_method()
-            else "rollout_fixed_probe_v1"
-        )
+        configure_runtime_probe_version(system, cfg)
         system.competence_probe_indices = [train_data.index(item) for item in fixed_competence_probe]
         system.competence_probe_question_hashes = [system._hash(item["question"]) for item in fixed_competence_probe]
         if system._is_state_conditioned_method():

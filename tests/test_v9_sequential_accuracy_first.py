@@ -22,6 +22,8 @@ from multi_dataset_diverse_rl.sequential_state import (
     rebuild_prompt_memory,
     safe_trace_diversity_c4c5,
     safe_trace_signature,
+    select_memory_parents,
+    stage_a_accuracy_prefilter_key,
     state_histogram,
     state_vote_reward,
 )
@@ -38,7 +40,11 @@ def _item(prompt_hash, correct, reward=0.0, invalid=0, slack=0.0, generation=1):
             "candidate_target_accuracy": correct / 10,
             "state_vote_reward": reward,
             "candidate_invalid_count": invalid,
+            "candidate_invalid_rate": invalid / 10,
             "diversity_constraint_slack": slack,
+            "accuracy_constraint_passed": True,
+            "invalid_constraint_passed": True,
+            "sequential_constraints_passed": True,
         },
     }
 
@@ -119,6 +125,38 @@ def test_v9_ablation_presets_are_single_variable():
     assert all(preset["state_bottom2_reward_enabled"] is False for preset in presets)
     assert all(preset["state_c2_wrong_split_enabled"] is False for preset in presets)
     assert all(preset["state_rollout_exploration_enabled"] is False for preset in presets)
+
+
+def test_v9_stage_a_key_is_identical_across_a0_a3_and_ignores_team_accuracy():
+    from scripts.experiment_config import select_settings
+
+    settings = select_settings(
+        "shared_v9_sequential_accuracy,shared_v9_sequential_accuracy_state,"
+        "shared_v9_sequential_accuracy_state_vote,"
+        "shared_v9_sequential_accuracy_state_vote_diversity"
+    )
+    low_vote = _item("a", 8, invalid=0)
+    low_vote["metrics"]["candidate_team_accuracy"] = 0.0
+    high_vote = deepcopy(low_vote)
+    high_vote["prompt_hash"] = "b"
+    high_vote["metrics"]["candidate_team_accuracy"] = 1.0
+    keys = [
+        (stage_a_accuracy_prefilter_key(low_vote), stage_a_accuracy_prefilter_key(high_vote))
+        for _setting in settings
+    ]
+    assert len(set(keys)) == 1
+    assert keys[0][0][:-1] == keys[0][1][:-1]
+    assert stage_a_accuracy_prefilter_key(low_vote) == (
+        low_vote["metrics"]["candidate_target_accuracy"],
+        -0.0,
+        "a",
+    )
+
+
+def test_v9_stage_a_missing_invalid_rate_is_conservatively_worst():
+    item = _item("missing-invalid", 8)
+    item["metrics"].pop("candidate_invalid_rate")
+    assert stage_a_accuracy_prefilter_key(item)[1] == -1.0
 
 
 def test_v9_metadata_and_fingerprint_ignore_deprecated_archive_controls():
@@ -366,6 +404,78 @@ def test_previous_active_rollback_survives_matching_outcome_signature():
     )
     rollback = next(item for item in memory if item["prompt_memory_slot"] == "rollback_or_recent_success")
     assert rollback["prompt_hash"] == "old"
+
+
+def test_infeasible_rollback_is_retained_but_not_selected_as_parent():
+    active = _item("active", 8)
+    active["metrics"]["sequential_constraints_passed"] = True
+    rollback = _item("rollback", 8)
+    rollback["metrics"]["sequential_constraints_passed"] = False
+    safe = _item("safe", 8)
+    safe["metrics"]["sequential_constraints_passed"] = True
+    memory = rebuild_prompt_memory(
+        [active, rollback, safe],
+        "active",
+        config=Config(state_diversity_constraints_enabled=True),
+        previous_active_item=rollback,
+    )
+    rollback_row = next(item for item in memory if item["prompt_hash"] == "rollback")
+    assert rollback_row["prompt_memory_slot"] == "rollback_or_recent_success"
+    parents, _ = select_memory_parents(memory, count=5)
+    assert "rollback" not in {item["prompt_hash"] for item in parents}
+    assert {item["prompt_hash"] for item in parents} == {"active", "safe"}
+
+
+def test_a3_memory_drops_newly_diversity_infeasible_normal_parent():
+    active = _item("active", 8)
+    active["metrics"]["sequential_constraints_passed"] = True
+    safe = _item("safe", 8)
+    safe["metrics"]["sequential_constraints_passed"] = True
+    infeasible = _item("infeasible", 10, slack=-1.0)
+    infeasible["metrics"].update({
+        "accuracy_constraint_passed": True,
+        "invalid_constraint_passed": True,
+        "sequential_constraints_passed": False,
+    })
+    memory = rebuild_prompt_memory(
+        [active, safe, infeasible],
+        "active",
+        config=Config(state_diversity_constraints_enabled=True),
+    )
+    assert "infeasible" not in {item["prompt_hash"] for item in memory}
+    parents, _ = select_memory_parents(memory, count=5)
+    assert all(
+        item["prompt_memory_slot"] == "active"
+        or bool(item.get("metrics", {}).get("sequential_constraints_passed", False))
+        for item in parents
+    )
+
+
+def test_memory_parent_missing_current_constraint_marker_is_rejected():
+    active = _item("active", 8)
+    unverified = _item("unverified", 8)
+    unverified["metrics"].pop("sequential_constraints_passed")
+    unverified["prompt_memory_slot"] = "accuracy_best"
+    active["prompt_memory_slot"] = "active"
+    parents, _ = select_memory_parents([active, unverified], count=5)
+    assert [item["prompt_hash"] for item in parents] == ["active"]
+
+
+def test_active_is_retained_when_constraint_markers_are_missing():
+    active = _item("active", 8)
+    active["metrics"].pop("accuracy_constraint_passed")
+    active["metrics"].pop("invalid_constraint_passed")
+    active["metrics"].pop("sequential_constraints_passed")
+    safe = _item("safe", 8)
+    memory = rebuild_prompt_memory(
+        [active, safe],
+        "active",
+        config=Config(state_diversity_constraints_enabled=True),
+    )
+    active_row = next(item for item in memory if item["prompt_hash"] == "active")
+    assert active_row["prompt_memory_slot"] == "active"
+    parents, _ = select_memory_parents(memory, count=5)
+    assert {item["prompt_hash"] for item in parents} == {"active", "safe"}
 
 
 def test_memory_underfill_reports_reason():

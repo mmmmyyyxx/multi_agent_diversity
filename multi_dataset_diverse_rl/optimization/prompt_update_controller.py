@@ -851,12 +851,7 @@ class PromptUpdateMixin:
         })
         stage_a_ranked = sorted(
             context.evaluated,
-            key=lambda item: (
-                float(item.get('metrics', {}).get('candidate_target_accuracy', 0.0) or 0.0),
-                float(item.get('metrics', {}).get('candidate_team_accuracy', 0.0) or 0.0),
-                -float(item.get('metrics', {}).get('candidate_invalid_rate', 1.0) or 1.0),
-                str(item.get('prompt_hash', '')),
-            ),
+            key=stage_a_accuracy_prefilter_key,
             reverse=True,
         )[:max(1, int(self.cfg.state_full_probe_acceptance_candidates))]
         stage_b_pool = [incumbent, *stage_a_ranked, *list(context.agent.prompt_memory)]

@@ -825,6 +825,8 @@ class RuntimeStateMixin:
             "candidate_selection_mode": getattr(self.cfg, "candidate_selection_mode", "scalar_reward"),
             "best_state_selection_mode": getattr(self.cfg, "best_state_selection_mode", "vote_first"),
             "method_version": str(getattr(self.cfg, "method_version", "legacy")),
+            "probe_stability_version": str(getattr(self.cfg, "probe_stability_version", "legacy")),
+            "prompt_probe_version": str(getattr(self, "prompt_probe_version", "legacy")),
             "state_conditioned_enabled": bool(self._is_state_conditioned_method()),
             "state_vote_objective_enabled": bool(getattr(self.cfg, "state_vote_objective_enabled", True)),
             "state_coverage_enabled": bool(getattr(self.cfg, "state_coverage_enabled", True)),

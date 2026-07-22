@@ -275,7 +275,25 @@ def restore_system_state(system, state_payload):
         for key, values in dict(state_payload.get("dirty_prompt_hashes", {}) or {}).items()
         if isinstance(values, list)
     }
-    system.prompt_probe_version = str(state_payload.get("prompt_probe_version", getattr(system, "prompt_probe_version", "legacy")))
+    saved_probe_version = str(
+        state_payload.get("prompt_probe_version", getattr(system, "prompt_probe_version", "legacy"))
+    )
+    system_cfg = getattr(system, "cfg", None)
+    configured_probe_version = str(
+        getattr(system_cfg, "probe_stability_version", saved_probe_version)
+    )
+    fixed_probe_restore = bool(
+        system_cfg is not None
+        and str(getattr(system_cfg, "method_version", "legacy")) in {
+            "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error"
+        }
+    )
+    if fixed_probe_restore and saved_probe_version != configured_probe_version:
+        raise ValueError(
+            "Cannot restore state: checkpoint prompt probe version "
+            f"{saved_probe_version!r} does not match configured version {configured_probe_version!r}"
+        )
+    system.prompt_probe_version = saved_probe_version
     system.current_fixed_probe_hash = str(state_payload.get("current_fixed_probe_hash", ""))
     system.last_archive_material_snapshot = dict(state_payload.get("last_archive_material_snapshot", {}) or {})
     system.last_representative_snapshot = dict(state_payload.get("last_representative_snapshot", {}) or {})
@@ -961,7 +979,9 @@ def build_training_checkpoint(
             "archive_material_change_version": int(getattr(system, "archive_material_change_version", 0)),
             "representative_version_per_agent": dict(getattr(system, "representative_version_per_agent", {})),
             "dirty_prompt_hashes": dict(getattr(system, "dirty_prompt_hashes", {})),
-            "prompt_probe_version": str(getattr(system, "prompt_probe_version", "legacy")),
+            "prompt_probe_version": str(
+                getattr(system, "prompt_probe_version", getattr(cfg, "probe_stability_version", "legacy"))
+            ),
             "current_fixed_probe_hash": str(getattr(system, "current_fixed_probe_hash", "")),
             "last_archive_material_snapshot": dict(getattr(system, "last_archive_material_snapshot", {})),
             "last_representative_snapshot": dict(getattr(system, "last_representative_snapshot", {})),
@@ -1047,6 +1067,17 @@ def checkpoint_incompatibility_reasons(payload, cfg, train_data):
         and int(payload.get("state_conditioned_checkpoint_version", 0) or 0) != int(STATE_CONDITIONED_CHECKPOINT_VERSION)
     ):
         reasons.append("V9 checkpoint lacks the state-conditioned checkpoint fingerprint")
+    if str(getattr(cfg, "method_version", "legacy")) in {
+        "v8_accuracy_rollout_embedding", "v8_rollout_qd_vote_ready", "v9_state_conditioned_error"
+    }:
+        state = payload.get("state", {}) if isinstance(payload.get("state", {}), dict) else {}
+        saved_probe_version = str(state.get("prompt_probe_version", "") or "")
+        configured_probe_version = str(getattr(cfg, "probe_stability_version", "legacy"))
+        if saved_probe_version != configured_probe_version:
+            reasons.append(
+                "prompt_probe_version: "
+                f"checkpoint={saved_probe_version!r} current={configured_probe_version!r}"
+            )
     if version == 5 and str(getattr(cfg, "method_version", "legacy")) == "v8_stable_qd_lineage":
         state = payload.get("state", {}) if isinstance(payload.get("state", {}), dict) else {}
         history = state.get("joint_team_selection_history", [])

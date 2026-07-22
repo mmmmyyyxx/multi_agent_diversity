@@ -113,6 +113,17 @@ def state_vote_reward(
     }
 
 
+def stage_a_accuracy_prefilter_key(item: Mapping[str, Any]) -> tuple:
+    """Shared A0-A3 cheap shortlist key; no team, state, or diversity signal."""
+    metrics = item.get("metrics", {}) if isinstance(item.get("metrics", {}), Mapping) else {}
+    invalid_rate = metrics.get("candidate_invalid_rate")
+    return (
+        float(metrics.get("candidate_target_accuracy", 0.0) or 0.0),
+        -float(1.0 if invalid_rate is None else invalid_rate),
+        str(item.get("prompt_hash", "")),
+    )
+
+
 def _jaccard_distance(left: set[int], right: set[int]) -> float:
     union = left | right
     return 1.0 - (len(left & right) / len(union)) if union else 0.0
@@ -580,8 +591,9 @@ def rebuild_prompt_memory(
             rollback_first = unique_by_hash.get(previous_hash, dict(previous_active_item))
     safe_values = [
         item for item in values
-        if bool(item.get("metrics", {}).get("accuracy_constraint_passed", True))
-        and bool(item.get("metrics", {}).get("invalid_constraint_passed", True))
+        if bool(item.get("metrics", {}).get("accuracy_constraint_passed", False))
+        and bool(item.get("metrics", {}).get("invalid_constraint_passed", False))
+        and bool(item.get("metrics", {}).get("sequential_constraints_passed", False))
     ]
     slot_values = [
         item for item in safe_values
@@ -702,7 +714,11 @@ def select_memory_parents(
         key=lambda item: (order.get(str(item.get("prompt_memory_slot", "")), len(order)), str(item.get("prompt_hash", ""))),
     )
     active = [item for item in ranked if str(item.get("prompt_memory_slot", "")) == "active"]
-    remaining = [item for item in ranked if str(item.get("prompt_memory_slot", "")) != "active"]
+    remaining = [
+        item for item in ranked
+        if str(item.get("prompt_memory_slot", "")) != "active"
+        and bool(item.get("metrics", {}).get("sequential_constraints_passed", False))
+    ]
     if remaining:
         offset = int(rotation_offset) % len(remaining)
         remaining = remaining[offset:] + remaining[:offset]

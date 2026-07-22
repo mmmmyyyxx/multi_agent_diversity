@@ -305,7 +305,13 @@ def test_v9_checkpoint_has_version_and_rejects_missing_v9_marker():
         no_effective_evolution_reason="",
     )
     assert payload["state_conditioned_checkpoint_version"] == STATE_CONDITIONED_CHECKPOINT_VERSION
+    assert payload["state"]["prompt_probe_version"] == cfg.probe_stability_version
     assert not checkpoint_incompatibility_reasons(payload, cfg, [{}])
+    mismatched = {**payload, "state": {**payload["state"], "prompt_probe_version": "stale_probe_v1"}}
+    assert any(
+        "prompt_probe_version" in reason
+        for reason in checkpoint_incompatibility_reasons(mismatched, cfg, [{}])
+    )
     payload.pop("state_conditioned_checkpoint_version")
     assert any("state-conditioned checkpoint fingerprint" in reason for reason in checkpoint_incompatibility_reasons(payload, cfg, [{}]))
 

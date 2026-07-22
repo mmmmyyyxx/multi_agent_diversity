@@ -76,7 +76,15 @@ coverage: current C0/C1 cases
 conversion: current C2/C3 cases
 ```
 
-It estimates target accuracy, invalid output, ordinary repairs, and likely state transitions. Stage A only shortlists candidates; it cannot activate a prompt.
+It estimates target accuracy and invalid output. All A0-A3 settings use the same shortlist key:
+
+```text
+candidate_target_accuracy
+-candidate_invalid_rate
+stable_prompt_hash
+```
+
+Stage A does not read team Vote, state reward, or diversity. Those differences only take effect during the complete fixed-probe Stage B. Stage A only shortlists candidates; it cannot activate a prompt.
 
 ### Stage B: full fixed acceptance probe
 
@@ -175,7 +183,7 @@ safe_diversity_parent in A3, otherwise recent_safe_parent
 rollback_or_recent_success
 ```
 
-Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. On acceptance, the previous active prompt is explicitly reserved as the first rollback candidate. Every slot tries its ranked candidates until it finds a distinct legal prompt, then an accuracy-first quality fill uses remaining capacity. Thus five distinct safe prompts fill all five slots when available. A0-A2 never use trace or correct-set diversity to choose a parent.
+Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. On acceptance, the previous active prompt is explicitly reserved as the first rollback candidate. Active is always retained. An infeasible previous active may remain available for explicit rollback, but it cannot be selected as an ordinary generation parent. Every other retained or selected memory prompt must pass the current complete `sequential_constraints_passed` check. Every slot tries its ranked candidates until it finds a distinct legal prompt, then an accuracy-first quality fill uses remaining capacity. Thus five distinct safe prompts fill all five slots when available. A0-A2 never use trace or correct-set diversity to choose a parent.
 
 Outcome signatures contain the signature version, fixed-probe hash, ordered question hashes, correctness vector, and invalid vector; wrong labels are intentionally excluded. Safe-trace signatures contain only quantized normalized target-peer embeddings from valid, correct C4/C5 pairs.
 
@@ -217,7 +225,7 @@ The last is the complete method. Historical V9 archive, C2-split, and hybrid ali
 
 ## 12. Checkpoint And Outputs
 
-V9 requires `state_conditioned_checkpoint_version = 3`. A V9 v2 checkpoint is incompatible and resume fails explicitly. Checkpoints persist prompt memory, cached probe profiles, initial baselines, the current snapshot, rotating-order cursor, accepted history, cycle state, random state, and cost state.
+V9 requires `state_conditioned_checkpoint_version = 3`. A V9 v2 checkpoint is incompatible and resume fails explicitly. The runtime probe/cache version is always copied from the resolved setting's `probe_stability_version`; run metadata, full-probe profiles, and checkpoints record the same value, and resume rejects a mismatch. Checkpoints persist prompt memory, cached probe profiles, initial baselines, the current snapshot, rotating-order cursor, accepted history, cycle state, random state, and cost state.
 
 Important outputs:
 
@@ -281,5 +289,13 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
 & $PY -m compileall multi_dataset_diverse_rl scripts tests
 git diff --check
 ```
+
+Before an A0-A3 matched pilot, run the fail-fast static check from a clean committed tree:
+
+```powershell
+& $PY scripts/preflight_v9_pilot.py --workspace .
+```
+
+After run directories exist, `--run_root <path>` also checks their `run_meta.json` commit and probe-version identity.
 
 After static and unit verification, run one deterministic single-task smoke. It verifies mechanism integrity only; it is not evidence of accuracy improvement.
