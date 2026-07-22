@@ -1,301 +1,197 @@
-# Method: Accuracy-First Sequential State Optimization
+# Peer-State Counterfactual Prompt Optimization
 
-## 1. What The Project Optimizes
+## 1. Problem Formulation
 
-This repository evolves prompts for a fixed team of five solver agents. It does not update model weights and is not policy-gradient reinforcement learning. Candidate rewards rank prompts during search; validation selects the best epoch; final test runs once after restoring `best_prompts.json`.
+The system contains five fixed solver models with independently editable prompts. For question (x), agent (i) produces answer (a_i). Equal-weight deterministic plurality vote produces the team answer. Training changes prompts, not model weights or vote weights.
 
-The current V9 identity is:
-
-```text
-method_version = v9_state_conditioned_error
-state_update_mode = sequential_single_agent
-reward_mode = state_distribution_vote_reward
-candidate_selection_mode = sequential_accuracy_first_state_reward
-active_team_selector_version = sequential_accuracy_first_v1
-best_state_selection_mode = state_conditioned_vote_first
-```
-
-V8 settings and their completed artifacts retain their historical behavior. In particular, V8 may still use rollout archives and joint team selection. V9 does not.
-
-V9 is not a rollout-QD method. It reuses only the fixed acceptance probe and per-prompt probe cache; it never enters the V8 rollout archive, rollout exploration, representative beam, or joint selector routes.
-
-## 2. Fixed Voting Rule
-
-All five agents have equal weight. The normalized answer with the largest vote count wins; top ties use the configured deterministic tie-break. V9 does not add reliability weights, confidence weights, a judge, a router, learned aggregation, or test-time best-agent selection.
-
-For every question:
+The optimization objective is team performance under an individual competence constraint:
 
 ```text
-G = number of correct agents
-C0 = G=0, C1 = G=1, ..., C5 = G=5
+estimate each agent-example pair's counterfactual team value
+assign unresolved team errors to primary Student owners
+generate responsibility-conditioned prompt repairs
+accept vote-first improvements only when competence is preserved
 ```
 
-New runs report `c0` through `c5`. `c3plus = c3 + c4 + c5` remains a compatibility summary for old analysis scripts.
+`method_version` is `peer_state_counterfactual_v1`. There is no runtime compatibility path for earlier methods.
 
-## 3. End-To-End Search
+## 2. Why Individual Prompt Accuracy Is Insufficient
+
+An individually accurate prompt can repeat the same errors as its peers, while a prompt with the same individual accuracy can supply decisive correct minority votes. Candidate value therefore depends on the current four peer answers. Individual accuracy is enforced as a non-regression constraint; it is not the primary Stage-B objective.
+
+## 3. Peer Vote State (G, H, M)
+
+For each question:
 
 ```text
-training rollout window
-  -> choose one target agent by deterministic rotating order
-  -> choose parents from that agent's prompt memory
-  -> Teacher-Critic-Student candidate generation
-  -> Stage A candidate-batch prefilter
-  -> Stage B full fixed-probe evaluation
-  -> accuracy, invalid, and non-collapse constraints
-  -> accuracy-first lexicographic selection against incumbent
-  -> immediately activate an accepted prompt
-  -> immediately refresh the fixed-probe team snapshot
-  -> rebuild that agent's five-prompt memory
+G = number of valid gold votes
+H = largest valid wrong-answer cluster
+M = G - H
 ```
 
-Only optimization-train data supplies search evidence. Validation selects epochs. Test never generates, ranks, retains, or activates prompts.
+The full `PeerVoteState` stores normalized answers, validity, correctness, the complete wrong-answer histogram, dominant wrong ties, the true plurality result, and tie diagnostics. Thus `A,A,B,B,B` and `A,A,B,C,D` remain distinct despite equal (G=2).
 
-## 4. Sequential Agent Updates
-
-One update attempts to change at most one agent. The order rotates by epoch:
+Search uses the dense utility:
 
 ```text
-epoch 0: 0,1,2,3,4
-epoch 1: 1,2,3,4,0
-epoch 2: 2,3,4,0,1
+U(G, M) = 0                           when G = 0
+U(G, M) = sigmoid(M / soft_vote_tau)  otherwise
 ```
 
-The runner uses one-based epoch labels, but the first epoch still uses the epoch-0 order. `epoch_agent_order` and `current_agent_order_index` are checkpointed, so interruption and resume preserve the next target.
+Wrong-to-wrong changes at (G=0) have zero utility. Creating the first gold vote yields positive utility, lowering a dominant wrong cluster raises utility when a gold vote exists, and stable correct states saturate. Reported performance remains true plurality accuracy.
 
-An accepted prompt becomes active immediately. Every later update is evaluated against the true current four peer prompts. V9 never combines historical prompts across agents and never enumerates a Cartesian product of prompt teams.
+## 4. Counterfactual Agent-Example Credit
 
-## 5. Two-Stage Candidate Evaluation
-
-### Stage A: cheap prefilter
-
-Stage A evaluates generated prompts on a smaller batch with three disjoint pools:
+For target agent (i), peers remain fixed and only (a_i) is replaced by gold. The system records:
 
 ```text
-representative: natural optimization samples
-coverage: current C0/C1 cases
-conversion: current C2/C3 cases
+direct_vote_fix
+fix_soft_utility_gain
+coverage_opportunity
+dominant_wrong_member
+unique_correct
+pivotal_vote_correct
 ```
 
-It estimates target accuracy and invalid output. All A0-A3 settings use the same shortlist key:
+Unique and pivotal correctness use the same deterministic leave-one-out plurality policy as normal evaluation. No synthetic wrong answer is introduced.
+
+## 5. Residual Responsibility Assignment
+
+Each vote-wrong probe example receives one primary owner among currently wrong agents. Ranking is deterministic:
 
 ```text
-candidate_target_accuracy
--candidate_invalid_rate
-stable_prompt_hash
+direct vote fix
+soft-utility repair value
+dominant-wrong membership
+previous-owner inertia
+lower assigned load
+longer wait since update
+stable hash and agent id
 ```
 
-Stage A does not read team Vote, state reward, or diversity. Those differences only take effect during the complete fixed-probe Stage B. Stage A only shortlists candidates; it cannot activate a prompt.
+An owner changes only for a newly available direct fix or a soft-utility advantage larger than `responsibility_switch_margin`. C0 assignments preserve legal owners and otherwise balance load deterministically. Target selection aggregates assigned direct fixes, utility, coverage, and dominant-wrong responsibilities. `responsibility_max_wait_updates` provides fairness. Round-robin exists only in named ablations.
 
-### Stage B: full fixed acceptance probe
+## 6. Responsibility-Conditioned TCS
 
-The top `state_full_probe_acceptance_candidates` Stage-A prompts, the incumbent, and rollback/memory prompts are evaluated on the complete fixed optimization probe. Per-agent prompt/question results are cached.
+Teacher receives assigned coverage/conversion cases and unique/pivotal preservation cases. Each assigned case contains the question, gold, target answer, peer histogram, (G,H,M), dominant wrong answers, direct-fix value, soft gain, and responsibility reason.
 
-Only Stage B decides:
+Teacher proposes a generalizable executable decision-procedure repair. Critic rejects generic chain-of-thought, peer copying, memorization, preservation risk, preset roles, and surface wording changes. Student returns:
+
+```json
+{
+  "candidate_prompt": "...",
+  "target_failure_mechanism": "...",
+  "repair_procedure": "...",
+  "preservation_rule": "...",
+  "expected_responsibility_effect": "..."
+}
+```
+
+Candidate quality is determined by paired solver rollouts, not a candidate-text critic.
+
+## 7. Multi-Channel Stage A
+
+Every generated candidate runs on the same fixed Stage-A pool:
 
 ```text
-final target accuracy and correct count
-final invalid constraint
-correct-set and safe-trace constraints
-state-vote reward
-candidate ordering and acceptance
-prompt-memory rebuilding
+12 representative
+6 assigned coverage
+6 assigned conversion
+4 unique/pivotal preservation
 ```
 
-`stage_b_full_probe_solver_calls` is reported separately. Removing joint enumeration is a semantic correction, not a solver-cost claim.
-
-## 6. Accuracy First
-
-Accuracy is both a hard constraint and the first candidate key. The target prompt must satisfy:
+Three independent channels retain top-k candidates:
 
 ```text
-candidate_correct_count >= active_correct_count - local allowance
-candidate_correct_count >= initial_correct_count - global allowance
+accuracy: target correct, lower invalid
+vote: net vote delta, lower vote loss, soft utility
+responsibility: coverage, assigned utility, lower unique/pivotal loss
 ```
 
-Defaults are strict: both loss epsilons and the question-count accuracy band are zero. Invalid output must also stay within `invalid_guard_epsilon`.
+Their union is deduplicated. Stage B has a fixed total budget shared by new and memory candidates. Candidates outside the shortlist never receive full-probe evaluation.
 
-Feasible candidates are compared by:
+## 8. Competence-Constrained Vote-First Stage B
+
+Stage B evaluates shortlisted candidates on the complete fixed optimization probe. Four peer profiles are reused and only the target prompt is run. A candidate must pass local and initial target-accuracy floors, invalid guard, vote-loss guard, unique-correct guard, and pivotal-correct guard.
+
+Feasible candidates use this lexicographic order:
 
 ```text
-1. target correct count
-2. target accuracy
-3. state-vote reward
-4. lower invalid count
-5. diversity constraint slack, only in A3 when diversity constraints are enabled
-6. earlier generation
-7. stable prompt hash
+net vote delta
+lower vote loss
+soft utility delta
+coverage gain
+assigned residual utility delta
+target correct count
+lower invalid count
+earlier generation
+stable prompt hash
 ```
 
-A lower-accuracy candidate cannot win through Vote, state reward, trace distance, prompt distance, or diversity. A higher-accuracy feasible candidate may win even when its secondary reward is lower. At equal accuracy, reward must improve by at least `state_min_secondary_reward_gain`.
+Acceptance requires a strict improvement: positive net vote; or no vote loss plus sufficient soft gain; or no team loss plus an individual competence gain. Generic disagreement and C0 wrong-to-wrong changes cannot be accepted.
 
-## 7. State And Vote Reward
+## 9. Behavioral Prompt Memory
 
-The configurable state potentials are:
-
-```text
-Phi(C0)=0.00  Phi(C1)=1.00  Phi(C2)=1.75
-Phi(C3)=3.25  Phi(C4)=3.60  Phi(C5)=3.75
-```
-
-For a candidate replacing one target agent:
-
-```text
-distribution = mean(Phi(candidate_G) - Phi(active_G))
-vote         = state_reward_vote_weight * (candidate_vote_acc - active_vote_acc)
-bottom2      = state_reward_bottom2_weight * (candidate_bottom2_acc - active_bottom2_acc)
-state_vote_reward = distribution + vote + bottom2
-```
-
-The primary A0-A3 settings explicitly disable `state_bottom2_reward_enabled`, so their bottom-2 component is zero. Bottom-2 is an independent optional ablation and is not automatically enabled by state or Vote reward. This reward is secondary to target accuracy. Diversity is absent from it.
-
-Vote reward uses the true equal-weight plurality result even when `G` is unchanged. A real Vote wrong-to-correct transition earns positive Vote reward, and a correct-to-wrong transition is penalized. Changing only a wrong answer label earns no reward when the final Vote and correctness state are unchanged. Largest-wrong cluster, same-wrong rate, and option count remain diagnostics only and never enter generation, reward, selection, or prompt memory.
-
-## 8. Diversity As Non-Collapse Constraints
-
-V9 does not maximize generic rollout diversity. It applies two independent feasibility constraints after accuracy.
-
-### Correct-set complementarity
-
-For each agent, define the set of fixed-probe questions it answers correctly. V9 records mean and minimum pairwise Jaccard distance across the five agents. Candidate diversity must stay above both an active-team local floor and an initial-team global floor.
-
-### Safe C4/C5 trace diversity
-
-Trace distance is compared on paired support only. A target-peer-question tuple is included when:
-
-```text
-active and candidate team states are both C4 or C5
-target and the same peer are correct on both sides
-all four traces are valid
-all four embeddings are available
-```
-
-C4 pairs have weight 1.0 and C5 pairs 1.5. Active and candidate distances are averaged over exactly the same tuples. Wrong traces, invalid traces, unpaired questions, and C0-C3 are excluded. If no paired tuples exist, the safe-trace constraint is unavailable and is skipped rather than treated as zero.
-
-## 9. Per-Agent Prompt Memory
-
-Each agent keeps at most five prompts:
+Each agent has five semantic slots:
 
 ```text
 active
-accuracy_best
-state_vote_best
-safe_diversity_parent in A3, otherwise recent_safe_parent
-rollback_or_recent_success
+competence_best
+ensemble_best
+responsibility_best
+rollback
 ```
 
-Memory supplies deterministic generation parents and rollback candidates. It never activates a prompt automatically and never participates in cross-agent combinations. On acceptance, the previous active prompt is explicitly reserved as the first rollback candidate. Active is always retained. An infeasible previous active may remain available for explicit rollback, but it cannot be selected as an ordinary generation parent. Every other retained or selected memory prompt must pass the current complete `sequential_constraints_passed` check. Every slot tries its ranked candidates until it finds a distinct legal prompt, then an accuracy-first quality fill uses remaining capacity. Thus five distinct safe prompts fill all five slots when available. A0-A2 never use trace or correct-set diversity to choose a parent.
+Active always remains. Rollback is not a normal generation parent. Behavior signatures include normalized answer hashes, correctness, invalidity, vote/coverage contributions, unique/pivotal correctness, dominant-wrong membership, ordered question hashes, and fixed-probe identity. After a peer update, every non-active memory prompt is re-evaluated against current peers before retention or parent selection.
 
-Outcome signatures contain the signature version, fixed-probe hash, ordered question hashes, correctness vector, and invalid vector; wrong labels are intentionally excluded. Safe-trace signatures contain only quantized normalized target-peer embeddings from valid, correct C4/C5 pairs.
+## 10. Online Refresh
 
-## 10. Validation And Final Test
+At most one agent changes per update. An accepted prompt activates immediately; the target fixed-probe profile, peer states, contribution signatures, memories, and residual responsibilities are then refreshed. Historical prompts from different agents are never combined.
 
-Validation ordering is:
+## 11. Validation
+
+Validation first rejects states that violate any initial per-agent accuracy floor, initial mean accuracy, or invalid-rate floor. Feasible states rank by:
 
 ```text
-1. mean individual accuracy
-2. plurality vote accuracy
-3. lower C0
-4. higher C3+C4+C5
-5. higher C4+C5
-6. bottom-2 accuracy
-7. lower invalid rate
-8. earlier epoch
+plurality vote accuracy
+net vote gain vs initial
+lower vote loss vs initial
+mean soft vote utility
+lower C0
+mean individual accuracy
+minimum individual accuracy
+lower invalid rate
+earlier epoch
 ```
 
-This keeps team competence ahead of aggregation gains. Final test restores the validation-selected prompts from `best_prompts.json`.
+Final test restores only validation-selected prompts. Test examples never participate in generation, candidate ranking, rollback, or best-state selection.
 
-## 11. Settings
-
-The unchanged B baseline is:
+## 12. Ablations
 
 ```text
-shared_accuracy_rollout_embedding_tcs
+shared_baseline
+shared_independent_accuracy_tcs
+shared_peer_state_credit_round_robin
+shared_peer_state_responsibility
+shared_peer_state_full
 ```
 
-V9 ablations are:
+The complete method adds responsibility-conditioned TCS and online responsibility refresh. Old setting names fail explicitly.
 
-```text
-shared_v9_sequential_accuracy
-shared_v9_sequential_accuracy_state
-shared_v9_sequential_accuracy_state_vote
-shared_v9_sequential_accuracy_state_vote_diversity
-```
+## 13. Outputs
 
-The last is the complete method. Historical V9 archive, C2-split, and hybrid aliases were removed rather than silently mapped to new behavior.
+Core audit streams are `peer_state_history.jsonl`, `responsibility_assignments.jsonl`, `candidate_decisions.jsonl`, and `prompt_memory_history.jsonl`. `run_meta.json` states that true plurality and peer wrong histograms are used, while generic diversity, trace diversity, team enumeration, and legacy compatibility are disabled.
 
-## 12. Checkpoint And Outputs
+## 14. Reproducibility
 
-V9 requires `state_conditioned_checkpoint_version = 3`. A V9 v2 checkpoint is incompatible and resume fails explicitly. The runtime probe/cache version is always copied from the resolved setting's `probe_stability_version`; run metadata, full-probe profiles, and checkpoints record the same value, and resume rejects a mismatch. Checkpoints persist prompt memory, cached probe profiles, initial baselines, the current snapshot, rotating-order cursor, accepted history, cycle state, random state, and cost state.
+The fixed probe has a versioned content hash. Prompt-question solver calls are cached and singleflight-coalesced. Checkpoint version 1 stores prompts, memories, profiles, cache, responsibility owners/ages/loads, update cursor, histories, and random state. Any method, checkpoint, probe-version, or probe-hash mismatch fails and requires a new run.
 
-Important outputs:
-
-```text
-run_meta.json
-history.json
-best_prompts.json
-prompt_history.json
-update_logs.jsonl
-sequential_update_history.jsonl
-solver_rollout_records.jsonl
-training_checkpoint.json while incomplete
-cost_summary.json
-final_summary.json
-```
-
-V9 does not write `joint_team_selection_history.jsonl`. Run metadata states:
-
-```text
-update_mode = sequential_single_agent
-rollout_qd_method = false
-rollout_archive_enabled = false
-accuracy_is_primary_objective = true
-true_plurality_vote_delta_used = true
-wrong_answer_dispersion_used_for_generation = false
-wrong_answer_dispersion_used_for_reward = false
-wrong_answer_dispersion_used_for_selection = false
-diversity_is_noncollapse_constraint = true
-joint_team_enumeration_enabled = false
-joint_team_combination_count = 0
-equal_vote_weighting = true
-```
-
-The historical default fingerprint remains:
-
-```text
-48c2f27cdcda64d2f7b32d008957b4903c683f49012988c4e5cab301ed29d5fa
-```
-
-`state_search_diagnostics` reports diversity evaluations, passes, rejections, binding events, paired support, safe-diversity parent use, and accepted accuracy regressions. `diversity_ablation_informative` is false with an explicit reason when A3 never obtains binding, rejection, paired support, or diversity-parent use.
-
-## 13. Code Map
-
-```text
-multi_dataset_diverse_rl/sequential_state.py             V9 reward, constraints, keys, memory
-multi_dataset_diverse_rl/state_conditioned.py            state snapshots and legacy readers
-multi_dataset_diverse_rl/optimization/training_controller.py rotating target order
-multi_dataset_diverse_rl/optimization/prompt_update_controller.py Stage A/B and activation
-multi_dataset_diverse_rl/qd/joint_controller.py           fixed-probe snapshot; V8 joint path
-multi_dataset_diverse_rl/persistence/checkpoint.py        resume state and compatibility
-scripts/experiment_config.py                              named settings
-scripts/run_task_level_accuracy.py                        task-level runner
-tests/test_v9_sequential_accuracy_first.py                current V9 invariants
-```
-
-## 14. Verification
+Before experiments:
 
 ```powershell
 $PY = "D:\Anaconda\envs\DL\python.exe"
 & $PY -m pytest -q
 & $PY -m compileall multi_dataset_diverse_rl scripts tests
 git diff --check
+& $PY scripts/preflight_peer_state.py --workspace .
 ```
-
-Before an A0-A3 matched pilot, run the fail-fast static check from a clean committed tree:
-
-```powershell
-& $PY scripts/preflight_v9_pilot.py --workspace .
-```
-
-After run directories exist, `--run_root <path>` also checks their `run_meta.json` commit and probe-version identity.
-
-After static and unit verification, run one deterministic single-task smoke. It verifies mechanism integrity only; it is not evidence of accuracy improvement.

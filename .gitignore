@@ -1,4 +1,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+runs*/
 runs_*/
+artifacts/
+training_checkpoint.json
+*.sqlite

@@ -38,6 +38,15 @@ class ArtifactWriter:
             for row in materialized:
                 handle.write(_json_text(row) + "\n")
 
+    def write_jsonl(self, filename: str, rows: Iterable[Mapping[str, Any]]) -> None:
+        path = self.root / filename
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_name(f".{uuid.uuid4().hex[:12]}.tmp")
+        with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+            for row in rows:
+                handle.write(_json_text(dict(row)) + "\n")
+        os.replace(temporary, path)
+
     def write_json(self, filename: str, payload: Any) -> None:
         path = self.root / filename
         path.parent.mkdir(parents=True, exist_ok=True)
