@@ -1,10 +1,14 @@
 import pytest
 
 from multi_dataset_diverse_rl.tcs import (
+    AccuracyCase,
+    AccuracyProposalContext,
+    PeerStateCase,
+    PeerStateProposalContext,
     PreservationCase,
-    ProposalContext,
     RepresentativeCase,
     ResponsibilityCase,
+    ResponsibilityProposalContext,
     TCSContextLimits,
     TeacherProposal,
     build_critic_request,
@@ -38,11 +42,10 @@ def responsibility_case(question_hash="q", owner_age=2, gain=0.4):
     )
 
 
-def context(count=1, context_policy="responsibility_conditioned"):
+def responsibility_context(count=1):
     cases = tuple(responsibility_case(f"q{i}", owner_age=i, gain=i / 10) for i in range(count))
-    return ProposalContext(
+    return ResponsibilityProposalContext(
         target_agent_id=4,
-        context_policy=context_policy,
         parent_prompt="parent decision procedure",
         parent_prompt_hash="parent-hash",
         assigned_coverage_cases=cases,
@@ -69,7 +72,40 @@ def context(count=1, context_policy="responsibility_conditioned"):
             target_current_invalid=False,
         ),),
         responsibility_summary="Agent 4 owns one residual.",
-        previous_update_summary="No prior update.",
+        assigned_repair_history="No prior assigned repair.",
+    )
+
+
+def peer_context():
+    row = responsibility_case()
+    peer = PeerStateCase(**{
+        key: value for key, value in row.__dict__.items()
+        if key not in {"responsibility_reason", "owner_age"}
+    })
+    protected = responsibility_context().preservation_cases
+    representative = responsibility_context().representative_cases
+    return PeerStateProposalContext(
+        target_agent_id=4,
+        parent_prompt="parent decision procedure",
+        parent_prompt_hash="parent-hash",
+        coverage_cases=(peer,),
+        conversion_cases=(peer,),
+        preservation_cases=protected,
+        representative_cases=representative,
+        previous_vote_competence_summary="Vote unchanged; competence improved by one.",
+    )
+
+
+def accuracy_context():
+    row = AccuracyCase("q", "question", "A", "B", False, False)
+    protected = AccuracyCase("p", "protected", "A", "A", True, False)
+    return AccuracyProposalContext(
+        target_agent_id=4,
+        parent_prompt="parent decision procedure",
+        parent_prompt_hash="parent-hash",
+        error_cases=(row,),
+        protection_cases=(protected,),
+        previous_accuracy_summary="Correct count improved by one; invalid count unchanged.",
     )
 
 
@@ -78,12 +114,12 @@ def proposal():
         target_failure_mechanism="ambiguous reference",
         repair_procedure="compare candidate referents and verify constraints",
         preservation_rule="keep established answers unless a contradiction is found",
-        expected_responsibility_effect="repair the assigned conversion case",
+        expected_effect="repair the assigned conversion case",
     )
 
 
 def test_teacher_critic_student_share_parent_and_typed_context():
-    proposal_context = context()
+    proposal_context = responsibility_context()
     teacher = build_teacher_request(proposal_context)
     critic = build_critic_request(proposal_context, proposal())
     student = build_student_request(proposal_context, proposal(), 2)
@@ -97,15 +133,26 @@ def test_teacher_critic_student_share_parent_and_typed_context():
     assert "ApprovedTeacherProposal" in student
 
 
-def test_generic_peer_state_chain_does_not_claim_residual_responsibility():
-    proposal_context = context(context_policy="generic_peer_state")
+def test_context_types_enforce_ablation_information_boundaries():
+    proposal_context = peer_context()
     teacher = build_teacher_request(proposal_context)
     critic = build_critic_request(proposal_context, proposal())
     student = build_student_request(proposal_context, proposal(), 2)
-    assert "without claiming residual ownership" in teacher
+    assert "peer-state failure" in teacher
     assert "assigned residual targeting" not in critic
     assert "assigned responsibilities" not in student
     assert "peer-state evidence" in student
+    for forbidden in ("assigned_", "owner_age", "responsibility_reason", "responsibility_summary"):
+        assert forbidden not in teacher
+
+    accuracy = build_teacher_request(accuracy_context())
+    for forbidden in ('"team_G"', '"peer_G"', "vote", "responsibility", "owner_age"):
+        assert forbidden not in accuracy
+
+    responsibility = build_teacher_request(responsibility_context())
+    assert "assigned_coverage_cases" in responsibility
+    assert "owner_age" in responsibility
+    assert "responsibility_reason" in responsibility
 
 
 def test_critic_bool_and_threshold_are_strict():
@@ -124,16 +171,29 @@ def test_student_schema_is_typed_and_missing_fields_fail():
         "target_failure_mechanism": "failure",
         "repair_procedure": "repair",
         "preservation_rule": "preserve",
-        "expected_responsibility_effect": "effect",
+        "expected_effect": "effect",
     }]}
-    assert parse_student_candidates(payload)[0].candidate_prompt == "new prompt"
+    assert parse_student_candidates(payload, expected_count=1)[0].candidate_prompt == "new prompt"
     del payload["candidates"][0]["repair_procedure"]
     with pytest.raises(KeyError):
-        parse_student_candidates(payload)
+        parse_student_candidates(payload, expected_count=1)
+
+
+@pytest.mark.parametrize("count", [0, 2])
+def test_student_schema_requires_exact_candidate_count(count):
+    row = {
+        "candidate_prompt": "new prompt",
+        "target_failure_mechanism": "failure",
+        "repair_procedure": "repair",
+        "preservation_rule": "preserve",
+        "expected_effect": "effect",
+    }
+    with pytest.raises(ValueError, match="candidate count"):
+        parse_student_candidates({"candidates": [row] * count}, expected_count=1)
 
 
 def test_context_limits_are_deterministic_and_report_truncation():
-    original = context(8)
+    original = responsibility_context(8)
     left, left_diagnostics = limit_proposal_context(
         original,
         TCSContextLimits(assigned_coverage=3, assigned_conversion=2, preservation=1, representative=1, max_chars=5000),
@@ -146,5 +206,5 @@ def test_context_limits_are_deterministic_and_report_truncation():
     assert left_diagnostics == right_diagnostics
     assert len(left.assigned_coverage_cases) <= 3
     assert len(left.assigned_conversion_cases) <= 2
-    assert left_diagnostics.truncated_cases["assigned_coverage"] >= 5
+    assert left_diagnostics.truncated_cases["coverage"] >= 5
     assert left_diagnostics.context_characters <= 5000

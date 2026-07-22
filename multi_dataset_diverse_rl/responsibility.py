@@ -128,15 +128,28 @@ def assign_primary_responsibilities(
         all_c0 = team_state.gold_vote_count == 0
 
         if all_c0:
-            best = previous or min(
-                eligible,
-                key=lambda row: (
-                    loads[row.agent_id],
-                    -state.updates_since_selected_by_agent[row.agent_id],
-                    _stable_hash(question_hash, row.agent_id),
-                    row.agent_id,
-                ),
-            )
+            best_gain = max(row.oracle_soft_utility_gain for row in eligible)
+            gain_tolerance = max(float(switch_margin), 1e-9)
+            competitive = [
+                row for row in eligible
+                if best_gain - row.oracle_soft_utility_gain <= gain_tolerance
+            ]
+            dominant_exit = max(int(row.dominant_wrong_member) for row in competitive)
+            competitive = [
+                row for row in competitive if int(row.dominant_wrong_member) == dominant_exit
+            ]
+            if previous is not None and previous in competitive:
+                best = previous
+            else:
+                best = min(
+                    competitive,
+                    key=lambda row: (
+                        loads[row.agent_id],
+                        -state.updates_since_selected_by_agent[row.agent_id],
+                        _stable_hash(question_hash, row.agent_id),
+                        row.agent_id,
+                    ),
+                )
         else:
             best = max(
                 eligible,

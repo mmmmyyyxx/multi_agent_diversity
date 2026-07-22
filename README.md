@@ -11,7 +11,7 @@ Team rollout
 -> competence-constrained vote-first update
 ```
 
-Vote accuracy is the objective, individual competence is constrained, and soft vote utility is a dense search signal. The canonical method uses shared-identical initialization and tie-as-abstain.
+Vote accuracy is the objective, individual competence is constrained, and soft vote utility is a dense search signal. The canonical method uses shared-identical initialization, tie-as-abstain, and one run-scoped prompt-question cache shared by optimization, validation, and test.
 
 ## Experiment Settings
 
@@ -39,6 +39,21 @@ git diff --check
 ```
 
 The deterministic smoke uses local fake models and makes no external API calls.
+
+Before a real run, pass the intended experiment arguments to preflight. It validates splits, API roles, budgets, output identity, and RunIdentity without making model calls:
+
+```powershell
+& $PY scripts/preflight_peer_state.py `
+  --workspace . `
+  --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
+  --tasks disambiguation_qa `
+  --settings shared_baseline,shared_peer_state_full `
+  --seeds 42 `
+  --out_root runs_peer_state_api_smoke `
+  --train_size 8 --val_size 8 --test_size 8 `
+  --num_candidates_per_parent 1 --stage_b_candidate_budget 1 `
+  --max_total_llm_calls 500 --max_total_tokens 300000
+```
 
 ## Real API Smoke Template
 
@@ -72,4 +87,4 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
 
 ## Outputs
 
-Each run writes metadata and exact identity, training history, selected prompts, final metrics, typed peer-state and responsibility diagnostics, TCS context budgets, candidate funnels and guard rejections, per-attempt LLM logs, and cost totals. Root-level `accuracy_results.jsonl`, `accuracy_results.csv`, and `experiment_runs.jsonl` provide the matched experiment matrix.
+Each run writes metadata and exact identity, training history, selected prompts, final metrics, typed peer-state and responsibility diagnostics, concrete TCS context types, exact candidate and Stage A funnels, solver-validity reasons, per-attempt LLM logs, and cost totals. Root-level `accuracy_results.jsonl`, `accuracy_results.csv`, and `experiment_runs.jsonl` provide the matched experiment matrix.

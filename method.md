@@ -56,25 +56,23 @@ Every currently vote-wrong example receives at most one primary owner, chosen on
 7. deterministic hash;
 8. agent id.
 
-For C0 examples, where `G = 0`, assignment first preserves a legal previous owner and otherwise balances coverage load deterministically. `owner_age_by_question` increases the switch threshold, participates in C0 stability, and is written to diagnostics. A max-wait rule prevents any agent from being ignored indefinitely.
+For C0 examples, where `G = 0`, assignment still ranks oracle soft-utility gain and dominant-wrong departure before inertia and load balancing. A previous owner is retained only when its opportunity is within tolerance of the best opportunity. `owner_age_by_question` increases the non-C0 switch threshold and is written to diagnostics. A max-wait rule prevents any agent from being ignored indefinitely.
 
 ## 5. ProposalContext And TCS
 
-Candidate generation uses only the target agent's active prompt as parent. `ProposalContext` contains that parent plus bounded sets of:
+Candidate generation uses only the target agent's active prompt as parent. The generator input is one of three distinct typed objects:
 
 ```text
-assigned coverage cases
-assigned conversion cases
-preservation cases
-representative cases
-responsibility and previous-update summaries
+AccuracyProposalContext       (B1)
+PeerStateProposalContext      (B2 and B3)
+ResponsibilityProposalContext (B4)
 ```
 
-Teacher, Critic, and Student receive the same typed context, including one explicit `context_policy`. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. In B3, assigned cases are presented only as peer-state evidence. In B4, all three roles additionally interpret those same cases as owned residual responsibilities. Thus B3 does not silently inherit B4's responsibility-conditioned instructions.
+`AccuracyProposalContext` contains only individual errors, individual correct protection cases, and an accuracy/invalid-only update summary. `PeerStateProposalContext` contains `coverage_cases`, `conversion_cases`, peer/team state, preservation evidence, and a vote/competence summary, but has no assigned, owner, age, or responsibility fields. B3 may use responsibility internally to select evidence, but the generator cannot observe that fact. Only `ResponsibilityProposalContext` contains assigned residual cases, owner age, responsibility reason, responsibility summary, and assigned-repair history.
 
-The Critic applies policy-specific checks plus preservation, generic chain-of-thought, peer copying, answer memorization, parent-specific diagnosis, and procedural executability. Each TCS log records the context policy and a hash of the shared serialized context.
+Teacher, Critic, and Student receive the same typed object. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. Each TCS log records the concrete context type and a hash of the shared serialized context.
 
-Teacher, Critic, and Student outputs are strict typed JSON. Critic approval requires a real JSON boolean and `score >= 0.75`. Missing fields, wrong types, parse failure, or a low score reject the proposal.
+Teacher, Critic, and Student outputs are strict typed JSON. Critic approval requires a real JSON boolean and `score >= 0.75`. Student output must contain exactly `num_candidates_per_parent` raw candidates or the call enters JSON retry. Parent-identical and duplicate prompts may reduce the post-schema pool. The funnel records requested, raw, schema-valid, non-parent, and deduplicated counts.
 
 Context limits default to six cases per category and 24,000 characters. Selection is deterministic and logs available, selected, truncated, character, and estimated-token counts.
 
@@ -87,7 +85,11 @@ incumbent team = active five-prompt team
 candidate team = incumbent team with target prompt replaced
 ```
 
-The fixed optimization probe caches prompt-question rollouts with singleflight. Stage A evaluates every new candidate on a deterministic mixture of representative, coverage, conversion, and preservation examples. Stage B completes only the shortlist on the full fixed probe.
+A run-scoped `PromptQuestionEvaluator` is shared by optimization, validation, and final test. Its key contains model-request identity, prompt-content hash, question-content hash, parser version, temperature, and decoding seed, but not agent id. Therefore identical prompts share one deterministic output on a question in every phase; diversity must come from prompt differences rather than repeated sampling.
+
+Prompt canonicalization converts line endings and removes trailing line whitespace and outer blank lines. It preserves internal newlines, indentation, lists, and paragraphs. Prompt hashes and cache keys use this structure-preserving text.
+
+Stage A evaluates every new candidate on a deterministic mixture of representative, coverage, conversion, and preservation examples. Specialized pools are selected first without overlap; representative sampling fills the remaining fixed total budget. Stage B completes only the shortlist on the full fixed probe. Funnel diagnostics record requested, available and selected pool sizes, removed overlap, and actual unique Stage A size.
 
 For the round-robin peer-state ablation, coverage and conversion pools are global and do not disappear merely because no owner map exists. Representative examples are ordered by `seed + question_hash`, never by dataset order.
 
@@ -138,7 +140,9 @@ Update diagnostics include the complete candidate funnel, guard rejection counts
 
 ## 11. Validation
 
-`ValidationProbeEvaluator` has a separate cache keyed by validation probe hash, model identity, prompt hash, question hash, parser version, temperature, and seed. The same prompt-question pair is called once even when several agents share a prompt.
+Validation uses the same run-scoped prompt-question evaluator as optimization and test. The same prompt-question pair is called once even when several agents share a prompt or the pair appears in another evaluation phase.
+
+Solver output is valid only when it has exactly one line-level `FINAL_ANSWER:` marker and the parsed answer belongs to the task domain. Metrics separately count `missing_final_answer`, `multiple_final_answers`, `unparseable_final_answer`, `out_of_domain_answer`, and `valid`.
 
 Validation first enforces per-agent and mean competence feasibility, then ranks states by plurality accuracy, net vote gain versus initialization, fewer vote losses, soft utility, lower C0, mean and minimum individual accuracy, invalid rate, and earlier epoch. The test split is not used for selection and is evaluated once after validation restores `best_prompts`.
 
@@ -169,6 +173,8 @@ The agents do not communicate directly. The method is centrally coordinated prom
 `RunIdentity` records method and setting, git commit and dirty state, behavior-config fingerprint, manifest SHA, all split-file SHAs, and all split question-set hashes. The behavior fingerprint covers model and endpoint identity, temperatures, token limits, seed, initialization, prompts, tie and utility policies, responsibility parameters, TCS limits, candidate budgets, constraints, and parser/task identity.
 
 The same identity is stored in `run_meta.json`, `training_checkpoint.json`, and the root experiment matrix. Resume and completed-run reuse compare every field and reject old or mismatched artifacts explicitly.
+
+The run-specific preflight accepts manifest, tasks, settings, seeds, output root, and Config overrides. Before API use it verifies split existence, requested sizes, zero overlap, split hashes, role-specific API configuration, model names, candidate and Stage B budgets, TCS limits, call/token caps, output-directory identity, and successful RunIdentity construction.
 
 Core artifacts are:
 

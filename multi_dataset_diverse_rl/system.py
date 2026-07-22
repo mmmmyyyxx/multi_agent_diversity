@@ -4,7 +4,7 @@ import asyncio
 import hashlib
 import json
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Mapping, Sequence
 
@@ -32,6 +32,8 @@ from .evaluation.validation import (
     DatasetMetrics,
     ValidationProbeEvaluator,
 )
+from .evaluation.prompt_question import PromptQuestionEvaluator
+from .evaluation.solver_output import parse_solver_output
 from .llm_client import RoleAwareLLMClient
 from .peer_state import (
     PeerVoteContext,
@@ -41,7 +43,7 @@ from .peer_state import (
     soft_vote_utility,
 )
 from .persistence.artifacts import ArtifactWriter
-from .persistence.identity import RunIdentity
+from .persistence.identity import RunIdentity, solver_request_identity
 from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_protocol
 from .responsibility import (
     OracleRepairOpportunity,
@@ -52,11 +54,16 @@ from .responsibility import (
 )
 from .tasks import get_task_spec
 from .tcs import (
+    AccuracyCase,
+    AccuracyProposalContext,
+    AnyProposalContext,
     CriticDecision,
+    PeerStateCase,
+    PeerStateProposalContext,
     PreservationCase,
-    ProposalContext,
     RepresentativeCase,
     ResponsibilityCase,
+    ResponsibilityProposalContext,
     StudentCandidate,
     TCSContextDiagnostics,
     TCSContextLimits,
@@ -69,7 +76,7 @@ from .tcs import (
     parse_student_candidates,
     parse_teacher_proposal,
 )
-from .utils import extract_json_obj, normalize_spaces
+from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 
 
 METHOD_VERSION = "peer_state_counterfactual_v1"
@@ -103,9 +110,16 @@ class CandidateFunnel:
     critic_calls: int = 0
     critic_approved: int = 0
     student_calls: int = 0
-    generated_candidates: int = 0
-    schema_valid_candidates: int = 0
-    deduplicated_candidates: int = 0
+    requested_candidate_count: int = 0
+    raw_candidate_count: int = 0
+    schema_valid_count: int = 0
+    non_parent_count: int = 0
+    deduplicated_count: int = 0
+    stage_a_requested_size_per_pool: dict[str, int] = field(default_factory=dict)
+    stage_a_available_size_per_pool: dict[str, int] = field(default_factory=dict)
+    stage_a_selected_size_per_pool: dict[str, int] = field(default_factory=dict)
+    stage_a_overlap_removed: int = 0
+    actual_stage_a_size: int = 0
     stage_a_evaluated: int = 0
     selected_by_accuracy_channel: int = 0
     selected_by_vote_channel: int = 0
@@ -120,6 +134,22 @@ class CandidateFunnel:
     rejected_pivotal_loss: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
+
+
+@dataclass(frozen=True)
+class StageAPools:
+    representative: tuple[int, ...]
+    coverage: tuple[int, ...]
+    conversion: tuple[int, ...]
+    preservation: tuple[int, ...]
+    requested_size_per_pool: dict[str, int]
+    available_size_per_pool: dict[str, int]
+    selected_size_per_pool: dict[str, int]
+    overlap_removed: int
+    final_unique_size: int
+
+    def indices(self) -> list[int]:
+        return [*self.coverage, *self.conversion, *self.preservation, *self.representative]
 
 
 class PromptEnsembleOptimizationSystem:
@@ -154,10 +184,27 @@ class PromptEnsembleOptimizationSystem:
         self.tcs_context_history: list[dict[str, Any]] = []
         self.cached_responsibility_owners: dict[str, int] = {}
         self.cached_responsibility_assignments: dict[int, list[OracleRepairOpportunity]] = {}
-        self.previous_update_summaries = {agent_id: "No prior accepted update." for agent_id in range(5)}
+        self.previous_accuracy_summaries = {
+            agent_id: "No prior accepted update; individual accuracy and invalid rate are unchanged."
+            for agent_id in range(5)
+        }
+        self.previous_peer_summaries = {
+            agent_id: "No prior accepted update; vote and competence metrics are unchanged."
+            for agent_id in range(5)
+        }
+        self.previous_responsibility_summaries = {
+            agent_id: "No prior accepted update on assigned residual cases."
+            for agent_id in range(5)
+        }
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
         self.validation_probe: ValidationProbeEvaluator | None = None
+        self.prompt_question_evaluator = PromptQuestionEvaluator(
+            model_request_identity=solver_request_identity(cfg),
+            parser_version=cfg.peer_state.parser_version,
+            temperature=cfg.models.temperature,
+            decoding_seed=cfg.training.seed,
+        )
         self.active_profiles: list[tuple[PromptAnswer, ...]] = []
         self.initial_profiles: list[tuple[PromptAnswer, ...]] = []
         self.run_identity: RunIdentity | None = None
@@ -185,7 +232,10 @@ class PromptEnsembleOptimizationSystem:
 
     def _initial_prompts(self) -> list[str]:
         if self.cfg.training.initialization_mode == "shared_identical":
-            return [self.cfg.training.shared_prompt] * self.cfg.training.agents
+            prompt = normalize_prompt_text(self.cfg.training.shared_prompt)
+            if not prompt:
+                raise ValueError("shared_prompt must be non-empty")
+            return [prompt] * self.cfg.training.agents
         if self.cfg.training.initialization_mode != "provided_prompt_set":
             raise ValueError(f"Unknown initialization mode: {self.cfg.training.initialization_mode}")
         try:
@@ -196,7 +246,10 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("provided_prompt_set must contain exactly five prompts")
         if any(not isinstance(value, str) or not value.strip() for value in values):
             raise ValueError("provided_prompt_set prompts must be non-empty strings")
-        return [value.strip() for value in values]
+        prompts = [normalize_prompt_text(value) for value in values]
+        if any(not value for value in prompts):
+            raise ValueError("provided_prompt_set prompts must be non-empty strings")
+        return prompts
 
     def set_run_identity(self, identity: RunIdentity) -> None:
         if identity.method_version != METHOD_VERSION:
@@ -207,7 +260,7 @@ class PromptEnsembleOptimizationSystem:
 
     @staticmethod
     def prompt_hash(prompt: str) -> str:
-        return hashlib.sha256(normalize_spaces(prompt).encode("utf-8")).hexdigest()
+        return hashlib.sha256(normalize_prompt_text(prompt).encode("utf-8")).hexdigest()
 
     def normalize_answer(self, answer: str) -> str:
         return self.task_spec.extract_pred(f"FINAL_ANSWER: {answer}", None)
@@ -244,12 +297,19 @@ class PromptEnsembleOptimizationSystem:
                 self.cfg.models.max_tokens,
                 "solver",
             )
-        answer = self.task_spec.extract_pred(text, question)
-        valid = bool(answer and "FINAL_ANSWER" in text and len(text.split()) >= 3)
-        return PromptAnswer(answer=answer, trace=text, valid=valid)
+        return parse_solver_output(
+            text,
+            question=question,
+            task_spec=self.task_spec,
+            answer_format=self.cfg.data.answer_format,
+        )
 
     def build_probe(self, data: Sequence[Mapping[str, Any]]) -> FixedProbeEvaluator:
-        return FixedProbeEvaluator(self._probe_examples(data), self.cfg.peer_state.probe_version)
+        return FixedProbeEvaluator(
+            self._probe_examples(data),
+            self.cfg.peer_state.probe_version,
+            self.prompt_question_evaluator,
+        )
 
     def build_validation_probe(self, data: Sequence[Mapping[str, Any]]) -> ValidationProbeEvaluator:
         return ValidationProbeEvaluator(
@@ -258,6 +318,7 @@ class PromptEnsembleOptimizationSystem:
             parser_version=self.cfg.peer_state.parser_version,
             temperature=self.cfg.models.temperature,
             seed=self.cfg.training.seed,
+            prompt_question_evaluator=self.prompt_question_evaluator,
         )
 
     def _probe_examples(self, data: Sequence[Mapping[str, Any]]) -> tuple[ProbeExample, ...]:
@@ -382,98 +443,144 @@ class PromptEnsembleOptimizationSystem:
         self,
         target_agent_id: int,
         assigned_hashes: set[str],
-    ) -> dict[str, list[int]]:
+    ) -> StageAPools:
         states, _, opportunities = self.current_states_and_opportunities()
         if self.fixed_probe is None:
             raise RuntimeError("fixed probe is not initialized")
-        representative = self._representative_indices(self.cfg.evaluation.stage_a_representative_size)
+        deterministic = self._representative_indices(len(states))
+        requested = {
+            "representative": self.cfg.evaluation.stage_a_representative_size,
+            "coverage": self.cfg.evaluation.stage_a_coverage_size,
+            "conversion": self.cfg.evaluation.stage_a_conversion_size,
+            "preservation": self.cfg.evaluation.stage_a_preservation_size,
+        }
         if self.protocol.sample_pool_policy == "individual_errors":
             errors = [
                 index for index, state in enumerate(states)
                 if not opportunities[state.question_hash][target_agent_id].current_correct
             ]
             error_set = set(errors)
-            ordered_errors = [index for index in self._representative_indices(len(states)) if index in error_set]
-            return {
-                "representative": ordered_errors[: self.cfg.evaluation.stage_a_representative_size],
-                "coverage": [],
-                "conversion": [],
-                "preservation": [],
-            }
+            representative_candidates = [index for index in deterministic if index in error_set] + [
+                index for index in deterministic if index not in error_set
+            ]
+            coverage: list[int] = []
+            conversion: list[int] = []
+            preservation = [index for index in deterministic if index not in error_set]
+        else:
+            coverage = []
+            conversion = []
+            preservation = []
+            assigned_mode = self.protocol.sample_pool_policy == "assigned_residuals"
+            if self.protocol.sample_pool_policy not in {"global_peer_state", "assigned_residuals"}:
+                raise ValueError(f"Unsupported sample pool policy: {self.protocol.sample_pool_policy}")
+            for index, state in enumerate(states):
+                opportunity = opportunities[state.question_hash][target_agent_id]
+                included = state.question_hash in assigned_hashes if assigned_mode else True
+                if included and state.gold_vote_count == 0:
+                    coverage.append(index)
+                if included and not state.vote_correct and state.gold_vote_count > 0:
+                    conversion.append(index)
+                if opportunity.unique_correct or opportunity.pivotal_correct:
+                    preservation.append(index)
+            coverage.sort(key=lambda index: (
+                -self.responsibility_state.owner_age_by_question.get(states[index].question_hash, 0),
+                -opportunities[states[index].question_hash][target_agent_id].oracle_soft_utility_gain,
+                states[index].question_hash,
+            ))
+            conversion.sort(key=lambda index: (
+                -int(opportunities[states[index].question_hash][target_agent_id].direct_vote_fix),
+                -opportunities[states[index].question_hash][target_agent_id].oracle_soft_utility_gain,
+                abs(states[index].plurality_margin),
+                states[index].question_hash,
+            ))
+            preservation.sort(key=lambda index: (
+                -int(opportunities[states[index].question_hash][target_agent_id].pivotal_correct),
+                -int(opportunities[states[index].question_hash][target_agent_id].unique_correct),
+                states[index].plurality_margin,
+                states[index].question_hash,
+            ))
+            representative_candidates = deterministic
 
-        coverage: list[int] = []
-        conversion: list[int] = []
-        preservation: list[int] = []
-        assigned_mode = self.protocol.sample_pool_policy == "assigned_residuals"
-        if self.protocol.sample_pool_policy not in {"global_peer_state", "assigned_residuals"}:
-            raise ValueError(f"Unsupported sample pool policy: {self.protocol.sample_pool_policy}")
-        for index, state in enumerate(states):
-            opportunity = opportunities[state.question_hash][target_agent_id]
-            included = state.question_hash in assigned_hashes if assigned_mode else True
-            if included and state.gold_vote_count == 0:
-                coverage.append(index)
-            if included and not state.vote_correct and state.gold_vote_count > 0:
-                conversion.append(index)
-            if opportunity.unique_correct or opportunity.pivotal_correct:
-                preservation.append(index)
-        coverage.sort(key=lambda index: (
-            -self.responsibility_state.owner_age_by_question.get(states[index].question_hash, 0),
-            -opportunities[states[index].question_hash][target_agent_id].oracle_soft_utility_gain,
-            states[index].question_hash,
-        ))
-        conversion.sort(key=lambda index: (
-            -int(opportunities[states[index].question_hash][target_agent_id].direct_vote_fix),
-            -opportunities[states[index].question_hash][target_agent_id].oracle_soft_utility_gain,
-            abs(states[index].plurality_margin),
-            states[index].question_hash,
-        ))
-        preservation.sort(key=lambda index: (
-            -int(opportunities[states[index].question_hash][target_agent_id].pivotal_correct),
-            -int(opportunities[states[index].question_hash][target_agent_id].unique_correct),
-            states[index].plurality_margin,
-            states[index].question_hash,
-        ))
-        return {
-            "representative": representative,
-            "coverage": coverage[: self.cfg.evaluation.stage_a_coverage_size],
-            "conversion": conversion[: self.cfg.evaluation.stage_a_conversion_size],
-            "preservation": preservation[: self.cfg.evaluation.stage_a_preservation_size],
+        raw = {
+            "coverage": coverage,
+            "conversion": conversion,
+            "preservation": preservation,
         }
+        selected: dict[str, tuple[int, ...]] = {}
+        used: set[int] = set()
+        overlap_removed = 0
+        for name in ("coverage", "conversion", "preservation"):
+            available = raw[name]
+            non_overlapping = [index for index in available if index not in used]
+            overlap_removed += len(available) - len(non_overlapping)
+            chosen = tuple(non_overlapping[: requested[name]])
+            selected[name] = chosen
+            used.update(chosen)
+        target_size = min(len(states), sum(requested.values()))
+        representative = tuple(
+            index for index in representative_candidates if index not in used
+        )[: max(0, target_size - len(used))]
+        used.update(representative)
+        specialized_indices = set().union(*selected.values())
+        available_sizes = {
+            "representative": sum(index not in specialized_indices for index in representative_candidates),
+            **{name: len(values) for name, values in raw.items()},
+        }
+        selected_sizes = {
+            "representative": len(representative),
+            **{name: len(values) for name, values in selected.items()},
+        }
+        return StageAPools(
+            representative=representative,
+            coverage=selected["coverage"],
+            conversion=selected["conversion"],
+            preservation=selected["preservation"],
+            requested_size_per_pool=requested,
+            available_size_per_pool=available_sizes,
+            selected_size_per_pool=selected_sizes,
+            overlap_removed=overlap_removed,
+            final_unique_size=len(used),
+        )
 
     def stage_a_indices(self, target_agent_id: int, assigned_hashes: set[str]) -> list[int]:
-        pools = self._pool_indices(target_agent_id, assigned_hashes)
-        ordered = [
-            *pools["representative"],
-            *pools["coverage"],
-            *pools["conversion"],
-            *pools["preservation"],
-        ]
-        return list(dict.fromkeys(ordered))
+        return self._pool_indices(target_agent_id, assigned_hashes).indices()
 
     def _proposal_context(
         self,
         target_agent_id: int,
         parent_prompt: str,
         assigned_hashes: set[str],
-    ) -> tuple[ProposalContext, TCSContextDiagnostics]:
+    ) -> tuple[AnyProposalContext, TCSContextDiagnostics]:
         if self.fixed_probe is None:
             raise RuntimeError("fixed probe is not initialized")
         states, contexts, opportunities = self.current_states_and_opportunities()
         pools = self._pool_indices(target_agent_id, assigned_hashes)
-        coverage_set = {self.fixed_probe.examples[index].question_hash for index in pools["coverage"]}
-        conversion_set = {self.fixed_probe.examples[index].question_hash for index in pools["conversion"]}
-        preservation_set = {self.fixed_probe.examples[index].question_hash for index in pools["preservation"]}
-        representative_set = {self.fixed_probe.examples[index].question_hash for index in pools["representative"]}
+        coverage_set = {self.fixed_probe.examples[index].question_hash for index in pools.coverage}
+        conversion_set = {self.fixed_probe.examples[index].question_hash for index in pools.conversion}
+        preservation_set = {self.fixed_probe.examples[index].question_hash for index in pools.preservation}
+        representative_set = {self.fixed_probe.examples[index].question_hash for index in pools.representative}
         examples = {row.question_hash: row for row in self.fixed_probe.examples}
-        coverage_cases: list[ResponsibilityCase] = []
-        conversion_cases: list[ResponsibilityCase] = []
+        accuracy_errors: list[AccuracyCase] = []
+        accuracy_protection: list[AccuracyCase] = []
+        peer_coverage_cases: list[PeerStateCase] = []
+        peer_conversion_cases: list[PeerStateCase] = []
+        assigned_coverage_cases: list[ResponsibilityCase] = []
+        assigned_conversion_cases: list[ResponsibilityCase] = []
         preservation_cases: list[PreservationCase] = []
         representative_cases: list[RepresentativeCase] = []
         for state in states:
             opportunity = opportunities[state.question_hash][target_agent_id]
             peer = contexts[state.question_hash][target_agent_id]
             example = examples[state.question_hash]
-            responsibility_case = ResponsibilityCase(
+            accuracy_case = AccuracyCase(
+                question_hash=state.question_hash,
+                question=example.question,
+                gold_answer=example.gold_answer,
+                target_current_answer=state.team_answers[target_agent_id],
+                target_current_correct=opportunity.current_correct,
+                target_current_invalid=opportunity.current_invalid,
+            )
+            peer_case = PeerStateCase(
                 question_hash=state.question_hash,
                 question=example.question,
                 gold_answer=example.gold_answer,
@@ -489,19 +596,23 @@ class PromptEnsembleOptimizationSystem:
                 direct_vote_fix=opportunity.direct_vote_fix,
                 oracle_soft_utility_gain=opportunity.oracle_soft_utility_gain,
                 dominant_wrong_member=opportunity.dominant_wrong_member,
-                responsibility_reason=(
-                    "assigned residual owner"
-                    if self.protocol.tcs_context_policy == "responsibility_conditioned"
-                    and state.question_hash in assigned_hashes
-                    else "peer-state sample"
-                ),
-                owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
             )
             if state.question_hash in coverage_set:
-                coverage_cases.append(responsibility_case)
+                peer_coverage_cases.append(peer_case)
+                assigned_coverage_cases.append(ResponsibilityCase(
+                    **asdict(peer_case),
+                    responsibility_reason="assigned residual owner",
+                    owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
+                ))
             if state.question_hash in conversion_set:
-                conversion_cases.append(responsibility_case)
+                peer_conversion_cases.append(peer_case)
+                assigned_conversion_cases.append(ResponsibilityCase(
+                    **asdict(peer_case),
+                    responsibility_reason="assigned residual owner",
+                    owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
+                ))
             if state.question_hash in preservation_set:
+                accuracy_protection.append(accuracy_case)
                 preservation_cases.append(PreservationCase(
                     question_hash=state.question_hash,
                     question=example.question,
@@ -516,6 +627,8 @@ class PromptEnsembleOptimizationSystem:
                     peer_wrong_histogram=peer.peer_wrong_vote_histogram,
                 ))
             if state.question_hash in representative_set:
+                if not opportunity.current_correct:
+                    accuracy_errors.append(accuracy_case)
                 representative_cases.append(RepresentativeCase(
                     question_hash=state.question_hash,
                     question=example.question,
@@ -524,22 +637,41 @@ class PromptEnsembleOptimizationSystem:
                     target_current_correct=opportunity.current_correct,
                     target_current_invalid=opportunity.current_invalid,
                 ))
-        context = ProposalContext(
-            target_agent_id=target_agent_id,
-            context_policy=self.protocol.tcs_context_policy,
-            parent_prompt=parent_prompt,
-            parent_prompt_hash=self.prompt_hash(parent_prompt),
-            assigned_coverage_cases=tuple(coverage_cases),
-            assigned_conversion_cases=tuple(conversion_cases),
-            preservation_cases=tuple(preservation_cases),
-            representative_cases=tuple(representative_cases),
-            responsibility_summary=(
-                f"Agent {target_agent_id} owns {len(assigned_hashes)} current residual cases."
-                if self.protocol.tcs_context_policy == "responsibility_conditioned"
-                else "Residual ownership is not exposed by this ablation."
-            ),
-            previous_update_summary=self.previous_update_summaries[target_agent_id],
-        )
+        common = {
+            "target_agent_id": target_agent_id,
+            "parent_prompt": parent_prompt,
+            "parent_prompt_hash": self.prompt_hash(parent_prompt),
+        }
+        if self.protocol.tcs_context_policy == "generic_accuracy":
+            context: AnyProposalContext = AccuracyProposalContext(
+                **common,
+                error_cases=tuple(accuracy_errors),
+                protection_cases=tuple(accuracy_protection),
+                previous_accuracy_summary=self.previous_accuracy_summaries[target_agent_id],
+            )
+        elif self.protocol.tcs_context_policy == "generic_peer_state":
+            context = PeerStateProposalContext(
+                **common,
+                coverage_cases=tuple(peer_coverage_cases),
+                conversion_cases=tuple(peer_conversion_cases),
+                preservation_cases=tuple(preservation_cases),
+                representative_cases=tuple(representative_cases),
+                previous_vote_competence_summary=self.previous_peer_summaries[target_agent_id],
+            )
+        elif self.protocol.tcs_context_policy == "responsibility_conditioned":
+            context = ResponsibilityProposalContext(
+                **common,
+                assigned_coverage_cases=tuple(assigned_coverage_cases),
+                assigned_conversion_cases=tuple(assigned_conversion_cases),
+                preservation_cases=tuple(preservation_cases),
+                representative_cases=tuple(representative_cases),
+                responsibility_summary=(
+                    f"Agent {target_agent_id} owns {len(assigned_hashes)} current residual cases."
+                ),
+                assigned_repair_history=self.previous_responsibility_summaries[target_agent_id],
+            )
+        else:
+            raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
         return limit_proposal_context(context, TCSContextLimits(
             assigned_coverage=self.cfg.tcs.tcs_assigned_coverage_limit,
             assigned_conversion=self.cfg.tcs.tcs_assigned_conversion_limit,
@@ -559,7 +691,7 @@ class PromptEnsembleOptimizationSystem:
         context_payload = json.dumps(asdict(context), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         self.tcs_context_history.append({
             "target_agent_id": target_agent_id,
-            "context_policy": context.context_policy,
+            "context_type": type(context).__name__,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
             "proposal_context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
             **asdict(diagnostics),
@@ -620,6 +752,7 @@ class PromptEnsembleOptimizationSystem:
             return []
 
         parsed_candidates: tuple[StudentCandidate, ...] = ()
+        funnel.requested_candidate_count = self.cfg.tcs.num_candidates_per_parent
         for _ in range(self.cfg.tcs.student_json_max_retries + 1):
             funnel.student_calls += 1
             student_raw = await self._chat(
@@ -632,22 +765,27 @@ class PromptEnsembleOptimizationSystem:
             )
             parsed = extract_json_obj(student_raw)
             if parsed is None:
+                funnel.raw_candidate_count = 0
                 continue
             candidates_value = parsed.get("candidates")
-            if isinstance(candidates_value, list):
-                funnel.generated_candidates += len(candidates_value)
+            funnel.raw_candidate_count = len(candidates_value) if isinstance(candidates_value, list) else 0
             try:
-                parsed_candidates = parse_student_candidates(parsed)
+                parsed_candidates = parse_student_candidates(
+                    parsed,
+                    expected_count=self.cfg.tcs.num_candidates_per_parent,
+                )
                 break
             except (KeyError, TypeError, ValueError):
                 continue
-        funnel.schema_valid_candidates = len(parsed_candidates)
+        funnel.schema_valid_count = len(parsed_candidates)
         unique: dict[str, CandidateRuntime] = {}
+        non_parent = 0
         for candidate in parsed_candidates:
-            prompt = normalize_spaces(candidate.candidate_prompt)
+            prompt = normalize_prompt_text(candidate.candidate_prompt)
             prompt_hash = self.prompt_hash(prompt)
             if prompt_hash == self.prompt_hash(parent_prompt):
                 continue
+            non_parent += 1
             unique.setdefault(prompt_hash, CandidateRuntime(
                 student_candidate=candidate,
                 prompt=prompt,
@@ -655,7 +793,8 @@ class PromptEnsembleOptimizationSystem:
                 generation=1,
                 parent_prompt_hash=self.prompt_hash(parent_prompt),
             ))
-        funnel.deduplicated_candidates = len(unique)
+        funnel.non_parent_count = non_parent
+        funnel.deduplicated_count = len(unique)
         return list(unique.values())
 
     def _limits(self, size: int) -> ConstraintLimits:
@@ -733,7 +872,13 @@ class PromptEnsembleOptimizationSystem:
             seed=self.cfg.training.seed,
             tau=self.cfg.peer_state.soft_vote_tau,
         )
-        indices = self.stage_a_indices(target_agent_id, assigned_hashes)
+        pools = self._pool_indices(target_agent_id, assigned_hashes)
+        indices = pools.indices()
+        funnel.stage_a_requested_size_per_pool = dict(pools.requested_size_per_pool)
+        funnel.stage_a_available_size_per_pool = dict(pools.available_size_per_pool)
+        funnel.stage_a_selected_size_per_pool = dict(pools.selected_size_per_pool)
+        funnel.stage_a_overlap_removed = pools.overlap_removed
+        funnel.actual_stage_a_size = pools.final_unique_size
         stage_a_examples, stage_a_active = subset_profiles(self.fixed_probe.examples, self.active_profiles, indices)
         for candidate in candidates:
             partial = await self.fixed_probe.evaluate_prompt_indices(
@@ -909,7 +1054,15 @@ class PromptEnsembleOptimizationSystem:
         }
         self.candidate_decisions.append(decision)
         if accepted is None:
-            self.previous_update_summaries[target] = "Previous update produced no accepted candidate."
+            self.previous_accuracy_summaries[target] = (
+                "No candidate accepted; individual accuracy and invalid rate are unchanged."
+            )
+            self.previous_peer_summaries[target] = (
+                "No candidate accepted; vote and competence metrics are unchanged."
+            )
+            self.previous_responsibility_summaries[target] = (
+                "No candidate accepted on assigned residual cases."
+            )
             return False
 
         agent = self.agents[target]
@@ -929,9 +1082,20 @@ class PromptEnsembleOptimizationSystem:
             agent.current_prompt = old_prompt
             self.active_profiles[target] = old_profile
             raise
-        self.previous_update_summaries[target] = (
-            f"Accepted {accepted.prompt_hash}; net_vote_delta={accepted.final_evaluation.marginal.net_vote_delta}; "
-            f"competence={accepted.final_evaluation.competence.correct_count}."
+        evaluation = accepted.final_evaluation
+        competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
+        invalid_delta = evaluation.competence.invalid_count - incumbent.competence.invalid_count
+        self.previous_accuracy_summaries[target] = (
+            f"Individual correct-count change={competence_delta}; invalid-count change={invalid_delta}."
+        )
+        self.previous_peer_summaries[target] = (
+            f"Net vote change={evaluation.marginal.net_vote_delta}; vote losses={evaluation.marginal.vote_loss_count}; "
+            f"individual correct-count change={competence_delta}; invalid-count change={invalid_delta}."
+        )
+        self.previous_responsibility_summaries[target] = (
+            f"Assigned repairs={evaluation.marginal.assigned_residual_repair_count}; assigned utility change="
+            f"{evaluation.marginal.assigned_residual_utility_delta:.6f}; net vote change="
+            f"{evaluation.marginal.net_vote_delta}."
         )
         return True
 
@@ -944,6 +1108,7 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("dataset evaluation requires five profiles")
         correct_per_agent = [0] * 5
         vote_correct = invalid = c0 = tie_count = 0
+        validity_status_counts: dict[str, int] = {}
         utility = 0.0
         rows: list[DatasetEvaluationRow] = []
         for index, example in enumerate(examples):
@@ -959,6 +1124,8 @@ class PromptEnsembleOptimizationSystem:
             )
             for agent_id, correct in enumerate(state.team_correctness):
                 correct_per_agent[agent_id] += int(correct)
+                status = profiles[agent_id][index].validity_status
+                validity_status_counts[status] = validity_status_counts.get(status, 0) + 1
             vote_correct += int(state.vote_correct)
             invalid += sum(not value for value in state.team_validity)
             c0 += int(state.gold_vote_count == 0)
@@ -987,6 +1154,7 @@ class PromptEnsembleOptimizationSystem:
             tie_count=tie_count,
             tie_rate=tie_count / size,
             rows=tuple(rows),
+            validity_status_counts=validity_status_counts,
         )
 
     async def evaluate_dataset(
@@ -1012,14 +1180,20 @@ class PromptEnsembleOptimizationSystem:
             )))
             return self._dataset_metrics_from_profiles(examples, profiles)
 
-        profiles: list[list[PromptAnswer]] = [[] for _ in range(5)]
-        for example in examples:
-            outputs = await asyncio.gather(*(
-                self.solve(example.question, agent_id, agent.current_prompt)
-                for agent_id, agent in enumerate(self.agents)
+        profiles = list(await asyncio.gather(*(
+            asyncio.gather(*(
+                self.prompt_question_evaluator.evaluate(
+                    question=example.question,
+                    question_hash=example.question_hash,
+                    prompt=agent.current_prompt,
+                    prompt_hash=self.prompt_hash(agent.current_prompt),
+                    agent_id=agent_id,
+                    solve=self.solve,
+                )
+                for example in examples
             ))
-            for agent_id, output in enumerate(outputs):
-                profiles[agent_id].append(output)
+            for agent_id, agent in enumerate(self.agents)
+        )))
         return self._dataset_metrics_from_profiles(examples, profiles)
 
     def validation_key(
@@ -1072,6 +1246,10 @@ class PromptEnsembleOptimizationSystem:
             "update_mode": "single_agent_paired_counterfactual",
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_generator": self.protocol.tcs_context_policy,
+            "solver_sampling_semantics": "shared_prompt_question_output",
+            "prompt_question_evaluator_identity": self.prompt_question_evaluator.identity(),
+            "prompt_question_cache_hits": self.prompt_question_evaluator.cache_hits,
+            "prompt_question_cache_misses": self.prompt_question_evaluator.cache_misses,
             "true_plurality_vote_used": True,
             "generic_diversity_reward_used": False,
             "trace_diversity_used_for_selection": False,

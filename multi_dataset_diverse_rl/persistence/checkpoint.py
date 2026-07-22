@@ -53,7 +53,9 @@ def build_checkpoint(
             str(agent_id): [asdict(row) for row in rows]
             for agent_id, rows in system.cached_responsibility_assignments.items()
         },
-        "previous_update_summaries": dict(system.previous_update_summaries),
+        "previous_accuracy_summaries": dict(system.previous_accuracy_summaries),
+        "previous_peer_summaries": dict(system.previous_peer_summaries),
+        "previous_responsibility_summaries": dict(system.previous_responsibility_summaries),
         "agent_selection_counts": dict(system.agent_selection_counts),
         "history": list(system.history),
         "peer_state_history": list(system.peer_state_history),
@@ -113,9 +115,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         int(agent_id): [OracleRepairOpportunity(**row) for row in rows]
         for agent_id, rows in payload["cached_responsibility_assignments"].items()
     }
-    system.previous_update_summaries = {
-        int(key): str(value) for key, value in payload["previous_update_summaries"].items()
-    }
+    for field in (
+        "previous_accuracy_summaries",
+        "previous_peer_summaries",
+        "previous_responsibility_summaries",
+    ):
+        setattr(system, field, {int(key): str(value) for key, value in payload[field].items()})
     system.agent_selection_counts = {
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }

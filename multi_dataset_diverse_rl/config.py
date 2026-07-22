@@ -91,7 +91,7 @@ class CandidateEvaluationConfig:
     stage_a_conversion_size: int = 6
     stage_a_preservation_size: int = 4
     stage_a_channel_top_k: int = 2
-    stage_b_candidate_budget: int = 6
+    stage_b_candidate_budget: int = 2
 
 
 @dataclass(frozen=True)

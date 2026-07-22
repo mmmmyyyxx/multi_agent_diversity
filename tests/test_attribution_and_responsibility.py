@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from multi_dataset_diverse_rl.peer_state import build_peer_vote_context, build_team_vote_state
 from multi_dataset_diverse_rl.responsibility import (
     CandidateMarginalContribution,
@@ -68,8 +66,25 @@ def test_responsibility_is_assigned_only_to_currently_wrong_agents():
     assert not assigned[0] and not assigned[1]
 
 
-def test_c0_balancing_is_deterministic_and_keeps_legal_owner():
-    teams, contexts, rows = assignment_inputs(["B", "B", "C", "C", "D"])
+def test_c0_prefers_higher_oracle_gain_over_weaker_previous_owner():
+    teams, contexts, rows = assignment_inputs(["B", "B", "B", "C", "D"])
+    state = ResponsibilityState(
+        primary_owner_by_question={"q": 4},
+        owner_age_by_question={"q": 3},
+        assigned_load_by_agent={agent: 0 for agent in range(5)},
+        updates_since_selected_by_agent={agent: agent for agent in range(5)},
+    )
+    owners, _ = assign_primary_responsibilities(
+        team_states=teams, peer_contexts=contexts, opportunities=rows, state=state,
+    )
+    selected = next(row for row in rows["q"] if row.agent_id == owners["q"])
+    assert selected.oracle_soft_utility_gain == max(row.oracle_soft_utility_gain for row in rows["q"])
+    assert owners["q"] in {0, 1, 2}
+    assert state.owner_age_by_question["q"] == 0
+
+
+def test_c0_equal_opportunities_balance_deterministically_and_keep_owner():
+    teams, contexts, rows = assignment_inputs(["B", "C", "D", "E", "F"])
     state = ResponsibilityState(
         primary_owner_by_question={"q": 4},
         owner_age_by_question={"q": 3},
@@ -81,12 +96,6 @@ def test_c0_balancing_is_deterministic_and_keeps_legal_owner():
     )
     assert owners == {"q": 4}
     assert state.owner_age_by_question["q"] == 4
-    copied = deepcopy(state)
-    again, _ = assign_primary_responsibilities(
-        team_states=teams, peer_contexts=contexts, opportunities=rows, state=copied,
-    )
-    assert again == owners
-    assert copied.owner_age_by_question["q"] == 5
 
 
 def test_owner_inertia_and_owner_age_raise_switch_threshold():

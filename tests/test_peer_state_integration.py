@@ -36,13 +36,13 @@ async def fake_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens)
             "target_failure_mechanism": "misses uncovered cases",
             "repair_procedure": "check ambiguity before committing",
             "preservation_rule": "retain existing correct decisions",
-            "expected_responsibility_effect": "convert q0 to a gold vote",
+            "expected_effect": "convert q0 to a gold vote",
         }]})
     return json.dumps({
         "target_failure_mechanism": "misses uncovered cases",
         "repair_procedure": "check ambiguity before committing",
         "preservation_rule": "retain existing correct decisions",
-        "expected_responsibility_effect": "convert q0 to a gold vote",
+        "expected_effect": "convert q0 to a gold vote",
     })
 
 
@@ -52,7 +52,7 @@ def student_candidate():
         target_failure_mechanism="misses uncovered cases",
         repair_procedure="check ambiguity",
         preservation_rule="retain correct decisions",
-        expected_responsibility_effect="create a correct vote",
+        expected_effect="create a correct vote",
     )
 
 
@@ -83,7 +83,7 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert len(system.responsibility_assignments) == 2
     assert "assigned_opportunities" in system.responsibility_assignments[-1]
     assert system.candidate_decisions[-1]["funnel"]["accepted_candidate"] is True
-    assert system.tcs_context_history[-1]["context_policy"] == "responsibility_conditioned"
+    assert system.tcs_context_history[-1]["context_type"] == "ResponsibilityProposalContext"
     assert len(system.tcs_context_history[-1]["proposal_context_hash"]) == 64
 
 
@@ -102,7 +102,81 @@ def test_b3_also_refreshes_responsibilities_online(tmp_path):
 
     assert asyncio.run(run()) is True
     assert len(system.responsibility_assignments) == 2
-    assert system.tcs_context_history[-1]["context_policy"] == "generic_peer_state"
+    assert system.tcs_context_history[-1]["context_type"] == "PeerStateProposalContext"
+
+
+def test_student_wrong_candidate_count_retries_before_stage_a(tmp_path):
+    student_calls = 0
+
+    async def count_retry_optimizer(system_prompt, user_prompt, temperature, max_tokens):
+        nonlocal student_calls
+        if system_prompt != "Return strict JSON only.":
+            return await fake_optimizer(system_prompt, user_prompt, temperature, max_tokens)
+        student_calls += 1
+        count = 2 if student_calls == 1 else 1
+        row = {
+            "candidate_prompt": "repair-q0",
+            "target_failure_mechanism": "misses uncovered cases",
+            "repair_procedure": "check ambiguity before committing",
+            "preservation_rule": "retain existing correct decisions",
+            "expected_effect": "convert q0 to a gold vote",
+        }
+        return json.dumps({"candidates": [row] * count})
+
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        answer_format="option_letter",
+        num_candidates_per_parent=1,
+    )
+    system = PromptEnsembleOptimizationSystem(
+        cfg, solver=fake_solver, optimizer_chat=count_retry_optimizer,
+    )
+
+    async def run():
+        await system.initialize_fixed_probe([{"question": "q0", "answer": "A"}])
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert student_calls == 2
+    assert funnel.student_calls == 2
+    assert funnel.requested_candidate_count == 1
+    assert funnel.raw_candidate_count == 1
+    assert funnel.schema_valid_count == 1
+    assert len(candidates) == 1
+
+
+def test_stage_a_pool_budget_is_fixed_and_pools_are_disjoint(tmp_path):
+    async def build(setting):
+        cfg = Config.from_flat(
+            out_dir=str(tmp_path / setting),
+            answer_format="option_letter",
+            experiment_setting=setting,
+            stage_a_representative_size=2,
+            stage_a_coverage_size=2,
+            stage_a_conversion_size=2,
+            stage_a_preservation_size=2,
+        )
+        system = PromptEnsembleOptimizationSystem(cfg, solver=fake_solver, optimizer_chat=fake_optimizer)
+        data = [{"question": f"q{i}", "answer": "A"} for i in range(6)]
+        await system.initialize_fixed_probe(data)
+        pools = system._pool_indices(0, set())
+        return pools
+
+    async def run_all():
+        return await asyncio.gather(
+            build("shared_independent_accuracy_tcs"),
+            build("shared_peer_state_credit_round_robin"),
+            build("shared_peer_state_responsibility"),
+        )
+
+    b1, b2, b3 = asyncio.run(run_all())
+    for pools in (b1, b2, b3):
+        groups = [set(pools.coverage), set(pools.conversion), set(pools.preservation), set(pools.representative)]
+        assert pools.final_unique_size == 6
+        assert len(set().union(*groups)) == 6
+        assert sum(len(left & right) for index, left in enumerate(groups) for right in groups[index + 1:]) == 0
 
 
 def test_independent_accuracy_tcs_excludes_peer_state_fields(tmp_path):
@@ -129,6 +203,25 @@ def test_independent_accuracy_tcs_excludes_peer_state_fields(tmp_path):
     assert "peer_wrong_histogram" not in joined
     assert "oracle_soft_utility_gain" not in joined
     assert '"team_G"' not in joined
+
+
+def test_independent_accuracy_previous_summary_never_contains_vote_delta(tmp_path):
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        answer_format="option_letter",
+        experiment_setting="shared_independent_accuracy_tcs",
+        num_candidates_per_parent=1,
+    )
+    system = PromptEnsembleOptimizationSystem(cfg, solver=fake_solver, optimizer_chat=fake_optimizer)
+
+    async def run():
+        await system.initialize_fixed_probe([{"question": "q0", "answer": "A"}])
+        return await system.update_once(0)
+
+    assert asyncio.run(run()) is True
+    summary = system.previous_accuracy_summaries[0].lower()
+    assert "vote" not in summary
+    assert "correct-count change" in summary
 
 
 def test_independent_accuracy_tcs_does_not_leak_unique_correct_peer_context(tmp_path):

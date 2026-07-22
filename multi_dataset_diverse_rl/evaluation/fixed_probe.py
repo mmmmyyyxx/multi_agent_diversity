@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
-from dataclasses import asdict, dataclass
-from typing import Any, Awaitable, Callable, Mapping, Sequence
+from dataclasses import dataclass
+from typing import Awaitable, Callable, Sequence
 
 from ..candidate_selection import CandidateEvaluation, PromptCompetenceMetrics, TeamOutcomeMetrics
 from ..peer_state import build_peer_vote_context, build_team_vote_state, soft_vote_utility
@@ -13,6 +13,7 @@ from ..responsibility import (
     ProtectionContribution,
     compute_oracle_repair_opportunity,
 )
+from .prompt_question import PromptAnswer, PromptQuestionEvaluator
 
 
 @dataclass(frozen=True)
@@ -22,33 +23,30 @@ class ProbeExample:
     gold_answer: str
 
 
-@dataclass(frozen=True)
-class PromptAnswer:
-    answer: str
-    trace: str
-    valid: bool
-
-
 def fixed_probe_hash(examples: Sequence[ProbeExample], version: str) -> str:
     payload = [(row.question_hash, row.gold_answer) for row in examples]
     return hashlib.sha256(json.dumps([version, payload], sort_keys=True).encode("utf-8")).hexdigest()
 
 
 class FixedProbeEvaluator:
-    def __init__(self, examples: Sequence[ProbeExample], version: str):
+    def __init__(
+        self,
+        examples: Sequence[ProbeExample],
+        version: str,
+        prompt_question_evaluator: PromptQuestionEvaluator,
+    ):
         self.examples = tuple(examples)
         self.version = str(version)
         self.probe_hash = fixed_probe_hash(self.examples, self.version)
-        self.cache: dict[str, PromptAnswer] = {}
-        self.inflight: dict[str, asyncio.Future[PromptAnswer]] = {}
-        self.lock = asyncio.Lock()
-        self.cache_hits = 0
-        self.cache_misses = 0
+        self.prompt_question_evaluator = prompt_question_evaluator
 
-    def _key(self, agent_id: int, prompt_hash: str, question_hash: str) -> str:
-        return hashlib.sha256(
-            f"{self.version}|{self.probe_hash}|{agent_id}|{prompt_hash}|{question_hash}".encode("utf-8")
-        ).hexdigest()
+    @property
+    def cache_hits(self) -> int:
+        return self.prompt_question_evaluator.cache_hits
+
+    @property
+    def cache_misses(self) -> int:
+        return self.prompt_question_evaluator.cache_misses
 
     async def evaluate_prompt(
         self,
@@ -74,54 +72,32 @@ class FixedProbeEvaluator:
 
         async def one(index: int) -> tuple[int, PromptAnswer]:
             example = self.examples[index]
-            key = self._key(agent_id, prompt_hash, example.question_hash)
-            cached = self.cache.get(key)
-            if cached is not None:
-                self.cache_hits += 1
-                return index, cached
-            owner = False
-            async with self.lock:
-                future = self.inflight.get(key)
-                if future is None:
-                    future = asyncio.get_running_loop().create_future()
-                    self.inflight[key] = future
-                    owner = True
-            if not owner:
-                self.cache_hits += 1
-                return index, await future
-            try:
-                self.cache_misses += 1
-                answer = await solve(example.question, agent_id, prompt)
-                self.cache[key] = answer
-                future.set_result(answer)
-                return index, answer
-            except Exception as exc:
-                future.set_exception(exc)
-                raise
-            finally:
-                async with self.lock:
-                    self.inflight.pop(key, None)
+            answer = await self.prompt_question_evaluator.evaluate(
+                question=example.question,
+                question_hash=example.question_hash,
+                prompt=prompt,
+                prompt_hash=prompt_hash,
+                agent_id=agent_id,
+                solve=solve,
+            )
+            return index, answer
 
         return dict(await asyncio.gather(*(one(index) for index in selected)))
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "version": self.version,
             "probe_hash": self.probe_hash,
-            "cache": {key: asdict(value) for key, value in self.cache.items()},
-            "cache_hits": self.cache_hits,
-            "cache_misses": self.cache_misses,
+            "prompt_question_evaluator": self.prompt_question_evaluator.to_dict(),
         }
 
-    def restore(self, payload: Mapping[str, Any]) -> None:
+    def restore(self, payload: dict[str, object]) -> None:
         if str(payload["version"]) != self.version or str(payload["probe_hash"]) != self.probe_hash:
             raise ValueError("Fixed probe cache version or hash mismatch. Start a new run.")
-        raw_cache = payload["cache"]
-        if not isinstance(raw_cache, Mapping):
-            raise ValueError("fixed probe cache must be an object")
-        self.cache = {str(key): PromptAnswer(**value) for key, value in raw_cache.items()}
-        self.cache_hits = int(payload["cache_hits"])
-        self.cache_misses = int(payload["cache_misses"])
+        evaluator_payload = payload["prompt_question_evaluator"]
+        if not isinstance(evaluator_payload, dict):
+            raise ValueError("fixed probe prompt-question evaluator must be an object")
+        self.prompt_question_evaluator.restore(evaluator_payload)
 
 
 def evaluate_candidate_profile(

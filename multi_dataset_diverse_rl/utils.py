@@ -32,6 +32,17 @@ def normalize_spaces(value: str) -> str:
     return re.sub(r"\s+", " ", str(value or "")).strip()
 
 
+def normalize_prompt_text(value: str) -> str:
+    """Canonicalize transport whitespace without flattening prompt structure."""
+    lines = str(value or "").replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    lines = [line.rstrip() for line in lines]
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+    return "\n".join(lines)
+
+
 def extract_json_obj(text: str) -> dict[str, Any] | None:
     value = str(text or "").strip()
     candidates = [value] if value.startswith("{") and value.endswith("}") else []

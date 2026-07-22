@@ -39,13 +39,13 @@ async def optimizer(system_prompt: str, _user_prompt: str, _temperature: float, 
             "target_failure_mechanism": "uncovered ambiguity",
             "repair_procedure": "compare interpretations and verify the referent",
             "preservation_rule": "retain established correct decisions",
-            "expected_responsibility_effect": "create the first correct vote",
+            "expected_effect": "create the first correct vote",
         }]})
     return json.dumps({
         "target_failure_mechanism": "uncovered ambiguity",
         "repair_procedure": "compare interpretations and verify the selected referent",
         "preservation_rule": "retain established correct decisions",
-        "expected_responsibility_effect": "create the first correct vote",
+        "expected_effect": "create the first correct vote",
     })
 
 

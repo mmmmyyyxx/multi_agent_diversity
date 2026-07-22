@@ -148,6 +148,7 @@ def _metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
         "plurality_vote_acc", "vote_acc", "mean_individual_acc", "min_individual_acc",
         "per_agent_acc", "mean_soft_vote_utility", "c0_count", "mean_invalid_rate",
         "tie_count", "tie_rate", "rows",
+        "validity_status_counts",
     }
     missing = sorted(required - set(payload))
     if missing:
@@ -164,6 +165,9 @@ def _metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
         tie_count=int(payload["tie_count"]),
         tie_rate=float(payload["tie_rate"]),
         rows=tuple(DatasetEvaluationRow(**row) for row in payload["rows"]),
+        validity_status_counts={
+            str(key): int(value) for key, value in payload["validity_status_counts"].items()
+        },
     )
 
 

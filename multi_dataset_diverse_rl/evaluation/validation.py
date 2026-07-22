@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-import hashlib
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any, Awaitable, Callable, Mapping, Sequence
 
-from .fixed_probe import ProbeExample, PromptAnswer, fixed_probe_hash
+from .fixed_probe import ProbeExample, fixed_probe_hash
+from .prompt_question import PromptAnswer, PromptQuestionEvaluator
 
 
 @dataclass(frozen=True)
@@ -31,6 +31,7 @@ class DatasetMetrics:
     tie_count: int
     tie_rate: float
     rows: tuple[DatasetEvaluationRow, ...]
+    validity_status_counts: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -45,6 +46,7 @@ class ValidationProbeEvaluator:
         parser_version: str,
         temperature: float,
         seed: int,
+        prompt_question_evaluator: PromptQuestionEvaluator | None = None,
         version: str = "validation_probe_v1",
     ):
         self.examples = tuple(examples)
@@ -54,23 +56,20 @@ class ValidationProbeEvaluator:
         self.parser_version = str(parser_version)
         self.temperature = float(temperature)
         self.seed = int(seed)
-        self.cache: dict[str, PromptAnswer] = {}
-        self.inflight: dict[str, asyncio.Future[PromptAnswer]] = {}
-        self.lock = asyncio.Lock()
-        self.cache_hits = 0
-        self.cache_misses = 0
+        self.prompt_question_evaluator = prompt_question_evaluator or PromptQuestionEvaluator(
+            model_request_identity=self.model_identity,
+            parser_version=self.parser_version,
+            temperature=self.temperature,
+            decoding_seed=self.seed,
+        )
 
-    def _key(self, prompt_hash: str, question_hash: str) -> str:
-        raw = "|".join((
-            self.probe_hash,
-            self.model_identity,
-            str(prompt_hash),
-            str(question_hash),
-            self.parser_version,
-            repr(self.temperature),
-            str(self.seed),
-        ))
-        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    @property
+    def cache_hits(self) -> int:
+        return self.prompt_question_evaluator.cache_hits
+
+    @property
+    def cache_misses(self) -> int:
+        return self.prompt_question_evaluator.cache_misses
 
     async def evaluate_prompt(
         self,
@@ -80,33 +79,14 @@ class ValidationProbeEvaluator:
         solve: Callable[[str, int, str], Awaitable[PromptAnswer]],
     ) -> tuple[PromptAnswer, ...]:
         async def one(example: ProbeExample) -> PromptAnswer:
-            key = self._key(prompt_hash, example.question_hash)
-            cached = self.cache.get(key)
-            if cached is not None:
-                self.cache_hits += 1
-                return cached
-            owner = False
-            async with self.lock:
-                future = self.inflight.get(key)
-                if future is None:
-                    future = asyncio.get_running_loop().create_future()
-                    self.inflight[key] = future
-                    owner = True
-            if not owner:
-                self.cache_hits += 1
-                return await future
-            try:
-                self.cache_misses += 1
-                answer = await solve(example.question, agent_id, prompt)
-                self.cache[key] = answer
-                future.set_result(answer)
-                return answer
-            except Exception as exc:
-                future.set_exception(exc)
-                raise
-            finally:
-                async with self.lock:
-                    self.inflight.pop(key, None)
+            return await self.prompt_question_evaluator.evaluate(
+                question=example.question,
+                question_hash=example.question_hash,
+                prompt=prompt,
+                prompt_hash=prompt_hash,
+                agent_id=agent_id,
+                solve=solve,
+            )
 
         return tuple(await asyncio.gather(*(one(example) for example in self.examples)))
 
@@ -118,9 +98,7 @@ class ValidationProbeEvaluator:
             "parser_version": self.parser_version,
             "temperature": self.temperature,
             "seed": self.seed,
-            "cache": {key: asdict(value) for key, value in self.cache.items()},
-            "cache_hits": self.cache_hits,
-            "cache_misses": self.cache_misses,
+            "prompt_question_evaluator": self.prompt_question_evaluator.to_dict(),
         }
 
     def restore(self, payload: Mapping[str, Any]) -> None:
@@ -142,9 +120,7 @@ class ValidationProbeEvaluator:
         )
         if identity != expected:
             raise ValueError("Validation probe identity mismatch. Start a new run.")
-        raw_cache = payload["cache"]
-        if not isinstance(raw_cache, Mapping):
-            raise ValueError("validation cache must be an object")
-        self.cache = {str(key): PromptAnswer(**value) for key, value in raw_cache.items()}
-        self.cache_hits = int(payload["cache_hits"])
-        self.cache_misses = int(payload["cache_misses"])
+        evaluator_payload = payload["prompt_question_evaluator"]
+        if not isinstance(evaluator_payload, dict):
+            raise ValueError("validation prompt-question evaluator must be an object")
+        self.prompt_question_evaluator.restore(evaluator_payload)
