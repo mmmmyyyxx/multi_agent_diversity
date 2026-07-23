@@ -1,0 +1,27 @@
+[
+  {
+    "epoch": 0,
+    "test": {
+      "plurality_vote_acc": 0.375,
+      "vote_acc": 0.375,
+      "mean_individual_acc": 0.375,
+      "min_individual_acc": 0.375,
+      "per_agent_acc": [
+        0.375,
+        0.375,
+        0.375,
+        0.375,
+        0.375
+      ],
+      "mean_soft_vote_utility": 0.37249018090339325,
+      "c0_count": 5,
+      "mean_invalid_rate": 0.375,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 25,
+        "out_of_domain_answer": 15
+      }
+    }
+  }
+]

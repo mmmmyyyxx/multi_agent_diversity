@@ -1,0 +1,29 @@
+[
+  {
+    "epoch": 1,
+    "validation": {
+      "plurality_vote_acc": 0.125,
+      "vote_acc": 0.125,
+      "mean_individual_acc": 0.125,
+      "min_individual_acc": 0.125,
+      "per_agent_acc": [
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125
+      ],
+      "mean_soft_vote_utility": 0.12416339363446441,
+      "c0_count": 7,
+      "mean_invalid_rate": 0.625,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "out_of_domain_answer": 20,
+        "valid": 15,
+        "missing_final_answer": 5
+      }
+    },
+    "validation_feasible": true
+  }
+]
