@@ -14,7 +14,7 @@ from ..responsibility import OracleRepairOpportunity, ResponsibilityState
 from ..system import METHOD_VERSION
 
 
-CHECKPOINT_VERSION = 3
+CHECKPOINT_VERSION = 4
 
 
 def _random_state_payload() -> str:
@@ -88,7 +88,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Legacy checkpoint is incompatible with peer_state_counterfactual_v1")
+        raise ValueError("Legacy checkpoint is incompatible with peer_state_counterfactual_v2")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])

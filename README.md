@@ -1,6 +1,6 @@
 # Multi-Agent Diversity
 
-This repository implements one formal method: **Peer-State Counterfactual Prompt Optimization** (`peer_state_counterfactual_v1`). It centrally optimizes five solver prompts for equal-weight plurality vote.
+This repository implements one formal method: **Peer-State Counterfactual Prompt Optimization** (`peer_state_counterfactual_v2`). It centrally optimizes five solver prompts for equal-weight plurality vote.
 
 ```text
 Team rollout
@@ -39,6 +39,12 @@ git diff --check
 ```
 
 The deterministic smoke uses local fake models and makes no external API calls.
+
+The V2 TCS gate treats Critic as a hard-legality auditor. Critic must restate
+derived current/gold transition facts exactly; state misreads are retried.
+Task-internal specialization and uncertain empirical benefit are not blockers,
+and Critic score is diagnostic only. Stage A/B rollout determines whether an
+approved hypothesis actually works.
 
 The task runner automatically creates `<out_root>/_shared_solver_cache.sqlite`.
 The cache key includes solver request identity, output contract, parser, decoding
@@ -92,6 +98,13 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
 Transport and resume are tested separately from method quality:
 
 ```powershell
+& $PY scripts/critic_calibration_replay.py `
+  --out_dir runs_critic_calibration_v2 `
+  --evaluator_model deepseek-chat `
+  --critic_json_max_retries 2 `
+  --max_total_llm_calls 30 `
+  --max_total_tokens 60000
+
 & $PY scripts/real_api_role_transport_smoke.py `
   --out_dir runs_role_transport_smoke `
   --answer_format option_letter `
@@ -101,6 +114,10 @@ Transport and resume are tested separately from method quality:
 
 & $PY scripts/real_api_resume_smoke.py --help
 ```
+
+The calibration replay calls only the evaluator. It must accept at least one
+valid task-internal repair, reject every memorizing fixture, and parse all
+derived fact restatements before another end-to-end smoke is attempted.
 
 The transport smoke calls solver, Teacher, Critic, and Student independently;
 Student transport does not depend on Critic approval. The resume smoke waits for

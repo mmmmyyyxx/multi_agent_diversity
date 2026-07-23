@@ -1,3 +1,5 @@
+from dataclasses import asdict, replace
+
 import pytest
 
 from multi_dataset_diverse_rl.tcs import (
@@ -17,6 +19,7 @@ from multi_dataset_diverse_rl.tcs import (
     limit_proposal_context,
     parse_critic_decision,
     parse_student_candidates,
+    proposal_context_case_facts,
 )
 
 
@@ -37,6 +40,11 @@ def responsibility_case(question_hash="q", owner_age=2, gain=0.4):
         direct_vote_fix=True,
         oracle_soft_utility_gain=gain,
         dominant_wrong_member=False,
+        target_status="wrong",
+        required_transition="D -> A",
+        team_vote_status="wrong",
+        case_role="assigned_coverage",
+        repair_goal="introduce_first_gold_vote",
         responsibility_reason="assigned residual owner",
         owner_age=owner_age,
     )
@@ -44,12 +52,17 @@ def responsibility_case(question_hash="q", owner_age=2, gain=0.4):
 
 def responsibility_context(count=1):
     cases = tuple(responsibility_case(f"q{i}", owner_age=i, gain=i / 10) for i in range(count))
+    conversion_cases = tuple(replace(
+        row,
+        case_role="assigned_conversion",
+        repair_goal="convert_plurality_vote_to_gold",
+    ) for row in cases)
     return ResponsibilityProposalContext(
         target_agent_id=4,
         parent_prompt="parent decision procedure",
         parent_prompt_hash="parent-hash",
         assigned_coverage_cases=cases,
-        assigned_conversion_cases=cases,
+        assigned_conversion_cases=conversion_cases,
         preservation_cases=(PreservationCase(
             question_hash="protected",
             question="protected question",
@@ -62,6 +75,12 @@ def responsibility_context(count=1):
             peer_H=2,
             peer_M=-2,
             peer_wrong_histogram=(("B", 2),),
+            target_status="correct",
+            required_transition="",
+            team_vote_status="correct",
+            case_role="pivotal_preservation",
+            repair_goal="preserve_correct_vote",
+            forbidden_transition="A -> non-A",
         ),),
         representative_cases=(RepresentativeCase(
             question_hash="representative",
@@ -70,6 +89,11 @@ def responsibility_context(count=1):
             target_current_answer="B",
             target_current_correct=False,
             target_current_invalid=False,
+            target_status="wrong",
+            required_transition="B -> A",
+            team_vote_status="wrong",
+            case_role="representative_error",
+            repair_goal="repair_representative_error",
         ),),
         responsibility_summary="Agent 4 owns one residual.",
         assigned_repair_history="No prior assigned repair.",
@@ -82,6 +106,7 @@ def peer_context():
         key: value for key, value in row.__dict__.items()
         if key not in {"responsibility_reason", "owner_age"}
     })
+    peer = replace(peer, case_role="coverage", repair_goal="introduce_first_gold_vote")
     protected = responsibility_context().preservation_cases
     representative = responsibility_context().representative_cases
     return PeerStateProposalContext(
@@ -97,8 +122,15 @@ def peer_context():
 
 
 def accuracy_context():
-    row = AccuracyCase("q", "question", "A", "B", False, False)
-    protected = AccuracyCase("p", "protected", "A", "A", True, False)
+    row = AccuracyCase(
+        "q", "question", "A", "B", False, False,
+        "wrong", "B -> A", "individual_error", "correct_target_answer",
+    )
+    protected = AccuracyCase(
+        "p", "protected", "A", "A", True, False,
+        "correct", "", "individual_preservation", "preserve_correct_answer",
+        "A -> non-A",
+    )
     return AccuracyProposalContext(
         target_agent_id=4,
         parent_prompt="parent decision procedure",
@@ -111,11 +143,36 @@ def accuracy_context():
 
 def proposal():
     return TeacherProposal(
-        target_failure_mechanism="ambiguous reference",
-        repair_procedure="compare candidate referents and verify constraints",
-        preservation_rule="keep established answers unless a contradiction is found",
-        expected_effect="repair the assigned conversion case",
+        observed_failure_pattern="ambiguous reference",
+        generalizable_mechanism="candidate referents are not filtered by explicit constraints",
+        decision_rule="compare candidate referents and verify constraints",
+        uncertainty_or_abstention_rule="retain ambiguity when no candidate is excluded",
+        preservation_conditions="keep established answers unless a contradiction is found",
+        evidence_summary="assigned cases share a missing referent check",
     )
+
+
+def critic_payload(context, **overrides):
+    payload = {
+        "case_fact_restatements": [
+            asdict(row) for row in proposal_context_case_facts(context)
+        ],
+        "context_consistent": True,
+        "sample_memorization_free": True,
+        "executable_change": True,
+        "internally_consistent": True,
+        "preservation_rule_present": True,
+        "output_contract_safe": True,
+        "peer_copying_free": True,
+        "stereotype_forcing_free": True,
+        "non_generic_change": True,
+        "blocking_reasons": [],
+        "soft_concerns": [],
+        "score": 0.2,
+        "feedback": "worth testing",
+    }
+    payload.update(overrides)
+    return payload
 
 
 def test_teacher_critic_student_share_parent_and_typed_context():
@@ -131,6 +188,9 @@ def test_teacher_critic_student_share_parent_and_typed_context():
         assert '"D"' not in request.split('"peer_wrong_histogram"', 1)[1].split("]", 2)[0]
     assert "TeacherProposal" in critic
     assert "ApprovedTeacherProposal" in student
+    assert "Stage A/B rollout decides effectiveness" in critic
+    assert "unseen examples within the current task" in teacher
+    assert "unrelated benchmarks" in student
 
 
 def test_context_types_enforce_ablation_information_boundaries():
@@ -155,26 +215,51 @@ def test_context_types_enforce_ablation_information_boundaries():
     assert "responsibility_reason" in responsibility
 
 
-def test_critic_bool_and_threshold_are_strict():
-    valid = {"approved": True, "score": 0.8, "feedback": "sound", "rejection_reasons": []}
-    assert parse_critic_decision(valid, 0.75).approved is True
-    assert parse_critic_decision({**valid, "score": 0.7}, 0.75).approved is False
+def test_critic_approval_uses_hard_checks_not_score():
+    context = accuracy_context()
+    valid = critic_payload(context, score=0.01)
+    decision = parse_critic_decision(valid, context)
+    assert decision.approved is True
+    assert decision.score == 0.01
+    assert decision.hard_checks["context_consistent"] is True
+
+    blocked = critic_payload(
+        context,
+        executable_change=False,
+        blocking_reasons=["no executable behavior"],
+        score=1.0,
+    )
+    assert parse_critic_decision(blocked, context).approved is False
+
+
+def test_critic_hard_check_boolean_and_fact_restatement_are_strict():
+    context = accuracy_context()
+    valid = critic_payload(context)
     with pytest.raises(ValueError, match="JSON boolean"):
-        parse_critic_decision({**valid, "approved": "true"}, 0.75)
-    with pytest.raises(KeyError):
-        parse_critic_decision({"approved": True, "score": 1.0}, 0.75)
+        parse_critic_decision({**valid, "context_consistent": "true"}, context)
+    wrong_facts = [dict(row) for row in valid["case_fact_restatements"]]
+    wrong_facts[0]["target_status"] = "misread"
+    with pytest.raises(ValueError, match="restatement mismatch"):
+        parse_critic_decision({**valid, "case_fact_restatements": wrong_facts}, context)
+    with pytest.raises(ValueError, match="disagree"):
+        parse_critic_decision(
+            {**valid, "context_consistent": False, "blocking_reasons": []},
+            context,
+        )
 
 
 def test_student_schema_is_typed_and_missing_fields_fail():
     payload = {"candidates": [{
         "candidate_prompt": "new prompt",
-        "target_failure_mechanism": "failure",
-        "repair_procedure": "repair",
-        "preservation_rule": "preserve",
-        "expected_effect": "effect",
+        "observed_failure_pattern": "failure",
+        "generalizable_mechanism": "mechanism",
+        "decision_rule": "repair",
+        "uncertainty_or_abstention_rule": "abstain",
+        "preservation_conditions": "preserve",
+        "evidence_summary": "evidence",
     }]}
     assert parse_student_candidates(payload, expected_count=1)[0].candidate_prompt == "new prompt"
-    del payload["candidates"][0]["repair_procedure"]
+    del payload["candidates"][0]["decision_rule"]
     with pytest.raises(KeyError):
         parse_student_candidates(payload, expected_count=1)
 
@@ -183,10 +268,12 @@ def test_student_schema_is_typed_and_missing_fields_fail():
 def test_student_schema_requires_exact_candidate_count(count):
     row = {
         "candidate_prompt": "new prompt",
-        "target_failure_mechanism": "failure",
-        "repair_procedure": "repair",
-        "preservation_rule": "preserve",
-        "expected_effect": "effect",
+        "observed_failure_pattern": "failure",
+        "generalizable_mechanism": "mechanism",
+        "decision_rule": "repair",
+        "uncertainty_or_abstention_rule": "abstain",
+        "preservation_conditions": "preserve",
+        "evidence_summary": "evidence",
     }
     with pytest.raises(ValueError, match="candidate count"):
         parse_student_candidates({"candidates": [row] * count}, expected_count=1)

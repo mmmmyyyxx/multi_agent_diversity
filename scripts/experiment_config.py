@@ -16,7 +16,7 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "peer_state_counterfactual_v1",
+    "method_version": "peer_state_counterfactual_v2",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",

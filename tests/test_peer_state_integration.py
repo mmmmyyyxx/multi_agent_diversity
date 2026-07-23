@@ -24,35 +24,56 @@ async def fake_solver(question, agent_id, prompt):
 
 async def fake_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
     if "Audit the Teacher" in system_prompt:
+        facts = json.loads(
+            system_prompt.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
+                "\nProposalContext:", 1,
+            )[0]
+        )
         return json.dumps({
-            "approved": True,
-            "score": 1.0,
+            "case_fact_restatements": facts,
+            "context_consistent": True,
+            "sample_memorization_free": True,
+            "executable_change": True,
+            "internally_consistent": True,
+            "preservation_rule_present": True,
+            "output_contract_safe": True,
+            "peer_copying_free": True,
+            "stereotype_forcing_free": True,
+            "non_generic_change": True,
+            "blocking_reasons": [],
+            "soft_concerns": ["empirical benefit remains uncertain"],
+            "score": 0.2,
             "feedback": "approved",
-            "rejection_reasons": [],
         })
     if system_prompt == "Return strict JSON only.":
         return json.dumps({"candidates": [{
             "candidate_prompt": "repair-q0",
-            "target_failure_mechanism": "misses uncovered cases",
-            "repair_procedure": "check ambiguity before committing",
-            "preservation_rule": "retain existing correct decisions",
-            "expected_effect": "convert q0 to a gold vote",
+            "observed_failure_pattern": "misses uncovered cases",
+            "generalizable_mechanism": "premature ambiguity decisions",
+            "decision_rule": "check ambiguity before committing",
+            "uncertainty_or_abstention_rule": "retain ambiguity without exclusion evidence",
+            "preservation_conditions": "retain existing correct decisions",
+            "evidence_summary": "uncovered cases need another decision check",
         }]})
     return json.dumps({
-        "target_failure_mechanism": "misses uncovered cases",
-        "repair_procedure": "check ambiguity before committing",
-        "preservation_rule": "retain existing correct decisions",
-        "expected_effect": "convert q0 to a gold vote",
+        "observed_failure_pattern": "misses uncovered cases",
+        "generalizable_mechanism": "premature ambiguity decisions",
+        "decision_rule": "check ambiguity before committing",
+        "uncertainty_or_abstention_rule": "retain ambiguity without exclusion evidence",
+        "preservation_conditions": "retain existing correct decisions",
+        "evidence_summary": "uncovered cases need another decision check",
     })
 
 
 def student_candidate():
     return StudentCandidate(
         candidate_prompt="repair-q0",
-        target_failure_mechanism="misses uncovered cases",
-        repair_procedure="check ambiguity",
-        preservation_rule="retain correct decisions",
-        expected_effect="create a correct vote",
+        observed_failure_pattern="misses uncovered cases",
+        generalizable_mechanism="premature ambiguity decisions",
+        decision_rule="check ambiguity",
+        uncertainty_or_abstention_rule="retain ambiguity without exclusion evidence",
+        preservation_conditions="retain correct decisions",
+        evidence_summary="uncovered cases need another decision check",
     )
 
 
@@ -127,10 +148,12 @@ def test_student_wrong_candidate_count_retries_before_stage_a(tmp_path):
         count = 2 if student_calls == 1 else 1
         row = {
             "candidate_prompt": "repair-q0",
-            "target_failure_mechanism": "misses uncovered cases",
-            "repair_procedure": "check ambiguity before committing",
-            "preservation_rule": "retain existing correct decisions",
-            "expected_effect": "convert q0 to a gold vote",
+            "observed_failure_pattern": "misses uncovered cases",
+            "generalizable_mechanism": "premature ambiguity decisions",
+            "decision_rule": "check ambiguity before committing",
+            "uncertainty_or_abstention_rule": "retain ambiguity without exclusion evidence",
+            "preservation_conditions": "retain existing correct decisions",
+            "evidence_summary": "uncovered cases need another decision check",
         }
         return json.dumps({"candidates": [row] * count})
 
@@ -336,11 +359,26 @@ def test_unapproved_teacher_never_reaches_student(tmp_path):
     async def rejecting_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
         calls.append(system_prompt)
         if "Audit the Teacher" in system_prompt:
+            facts = json.loads(
+                system_prompt.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
+                    "\nProposalContext:", 1,
+                )[0]
+            )
             return json.dumps({
-                "approved": False,
+                "case_fact_restatements": facts,
+                "context_consistent": True,
+                "sample_memorization_free": True,
+                "executable_change": False,
+                "internally_consistent": True,
+                "preservation_rule_present": True,
+                "output_contract_safe": True,
+                "peer_copying_free": True,
+                "stereotype_forcing_free": True,
+                "non_generic_change": False,
+                "blocking_reasons": ["generic"],
+                "soft_concerns": [],
                 "score": 0.1,
                 "feedback": "too generic",
-                "rejection_reasons": ["generic"],
             })
         if system_prompt == "Return strict JSON only.":
             raise AssertionError("Student must not run after all critic rounds reject")
@@ -360,6 +398,113 @@ def test_unapproved_teacher_never_reaches_student(tmp_path):
     critic_rounds = [row for row in system.tcs_rounds if row["role"] == "critic"]
     assert len(critic_rounds) == 3
     assert all(row["json_extracted"] and row["schema_valid"] for row in critic_rounds)
-    assert all(row["approved_raw"] is False for row in critic_rounds)
     assert all(row["effective_approved"] is False for row in critic_rounds)
-    assert all(row["rejection_reasons"] == ["generic"] for row in critic_rounds)
+    assert all(row["blocking_reasons"] == ["generic"] for row in critic_rounds)
+
+
+def test_critic_fact_misread_retries_same_teacher_before_student(tmp_path):
+    teacher_calls = 0
+    critic_calls = 0
+
+    async def retrying_optimizer(system_prompt, user_prompt, temperature, max_tokens):
+        nonlocal teacher_calls, critic_calls
+        if "Audit the Teacher" in system_prompt:
+            critic_calls += 1
+            facts = json.loads(
+                system_prompt.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
+                    "\nProposalContext:", 1,
+                )[0]
+            )
+            if critic_calls == 1:
+                facts[0]["target_status"] = "misread"
+            return json.dumps({
+                "case_fact_restatements": facts,
+                "context_consistent": True,
+                "sample_memorization_free": True,
+                "executable_change": True,
+                "internally_consistent": True,
+                "preservation_rule_present": True,
+                "output_contract_safe": True,
+                "peer_copying_free": True,
+                "stereotype_forcing_free": True,
+                "non_generic_change": True,
+                "blocking_reasons": [],
+                "soft_concerns": [],
+                "score": 0.1,
+                "feedback": "worth testing",
+            })
+        if system_prompt != "Return strict JSON only.":
+            teacher_calls += 1
+        return await fake_optimizer(system_prompt, user_prompt, temperature, max_tokens)
+
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        answer_format="option_letter",
+        num_candidates_per_parent=1,
+        critic_json_max_retries=2,
+    )
+    system = PromptEnsembleOptimizationSystem(
+        cfg,
+        solver=fake_solver,
+        optimizer_chat=retrying_optimizer,
+    )
+
+    async def run():
+        await system.initialize_fixed_probe([{"question": "q0", "answer": "A"}])
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert teacher_calls == 1
+    assert critic_calls == 2
+    assert funnel.critic_invalid_responses == 1
+    assert funnel.critic_approved == 1
+    assert len(candidates) == 1
+    critic_rounds = [row for row in system.tcs_rounds if row["role"] == "critic"]
+    assert critic_rounds[0]["schema_valid"] is False
+    assert "restatement mismatch" in critic_rounds[0]["parse_error"]
+    assert critic_rounds[1]["fact_restatement_valid"] is True
+
+
+def test_student_candidate_copying_supplied_question_is_rejected_before_stage_a(tmp_path):
+    question = (
+        "The analyst called the manager after she reviewed the report. "
+        "Who does she refer to? (A) analyst (B) manager (C) ambiguous"
+    )
+
+    async def memorizing_student(system_prompt, user_prompt, temperature, max_tokens):
+        if system_prompt != "Return strict JSON only.":
+            return await fake_optimizer(system_prompt, user_prompt, temperature, max_tokens)
+        return json.dumps({"candidates": [{
+            "candidate_prompt": f"Memorize this example: {question}",
+            "observed_failure_pattern": "misses one example",
+            "generalizable_mechanism": "memorize the supplied text",
+            "decision_rule": "repeat the stored answer",
+            "uncertainty_or_abstention_rule": "abstain otherwise",
+            "preservation_conditions": "leave other cases unchanged",
+            "evidence_summary": "one supplied example is stored verbatim",
+        }]})
+
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        answer_format="option_letter",
+        num_candidates_per_parent=1,
+    )
+    system = PromptEnsembleOptimizationSystem(
+        cfg,
+        solver=fake_solver,
+        optimizer_chat=memorizing_student,
+    )
+
+    async def run():
+        await system.initialize_fixed_probe([{"question": question, "answer": "A"}])
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert funnel.schema_valid_count == 1
+    assert funnel.sample_memorization_rejected == 1
+    assert funnel.stage_a_evaluated == 0

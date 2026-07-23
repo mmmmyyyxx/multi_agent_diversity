@@ -1,6 +1,6 @@
 # Peer-State Counterfactual Prompt Optimization
 
-`method_version = peer_state_counterfactual_v1`
+`method_version = peer_state_counterfactual_v2`
 
 ## 1. Problem Formulation
 
@@ -72,13 +72,61 @@ ResponsibilityProposalContext (B4)
 
 Teacher, Critic, and Student receive the same typed object. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. Each context log records the concrete class, serialized top-level fields, recursive field paths, forbidden-field checks, and a hash of the shared serialized context. This provides runtime evidence that B1 cannot observe peer or responsibility state, B3 cannot observe ownership fields, and B4 can.
 
-Teacher, Critic, and Student outputs are strict typed JSON. Critic approval requires a real JSON boolean and `score >= 0.75`. Student output must contain exactly `num_candidates_per_parent` raw candidates or the call enters JSON retry. Parent-identical and duplicate prompts may reduce the post-schema pool. The funnel records requested, raw, schema-valid, non-parent, and deduplicated counts.
+Every supplied case carries explicit derived state so the evaluator does not
+have to infer the relationship between the current answer and gold:
+
+```text
+target_status
+required_transition
+team_vote_status       (peer-state contexts only)
+case_role
+repair_goal
+forbidden_transition  (preservation cases)
+```
+
+The Teacher emits a testable repair hypothesis with six typed fields:
+
+```text
+observed_failure_pattern
+generalizable_mechanism
+decision_rule
+uncertainty_or_abstention_rule
+preservation_conditions
+evidence_summary
+```
+
+Here, task-general means applicable to unseen examples within the current task.
+It does not mean transfer across unrelated benchmarks, and it must not memorize
+the supplied examples or gold answers.
+
+The Critic is a legality and consistency gate, not a pre-rollout performance
+predictor. Its hard checks cover context consistency, sample memorization,
+executable behavior, internal consistency, preservation, output-contract
+safety, explicit peer copying, forced resolution from occupational or social
+stereotypes, and generic-only changes. Any failed hard check blocks Student.
+Subjectivity, incomplete coverage, use of a common task method, overlap with the
+parent prompt, and uncertain empirical benefit are recorded as soft concerns
+and do not block rollout.
+
+Before auditing, the Critic must copy every derived case fact into a typed
+`case_fact_restatements` array. A missing or incorrect restatement invalidates
+the Critic response and retries the same Teacher proposal. Approval is computed
+only when every hard check passes and `blocking_reasons` is empty. The numeric
+`score` is diagnostic and never controls approval.
+
+Student output must contain exactly `num_candidates_per_parent` typed raw
+candidates or the call enters JSON retry. A schema-valid candidate that copies
+the text of a supplied optimization example is removed before Stage A.
+Parent-identical and duplicate prompts may further reduce the post-schema pool.
+The funnel separately records invalid Critic responses, requested/raw/schema
+counts, sample-memorization rejection, non-parent prompts, and deduplication.
 
 `tcs_rounds.jsonl` records every Teacher, Critic, and Student attempt separately:
 request/response hashes, bounded response excerpts, JSON extraction, schema
-validity, parse errors, raw and effective approval, score, rejection reasons,
-and Student count diagnostics. Transport failures are therefore distinct from
-legitimate Critic rejection. This audit does not change the approval gate.
+validity, fact-restatement validity, hard checks, effective approval, diagnostic
+score, blocking reasons, soft concerns, and Student count diagnostics.
+Transport failures, evaluator state misreads, legitimate hard rejection, and
+Student schema failure are therefore distinct.
 
 Context limits default to six cases per category and 24,000 characters. Selection is deterministic and logs available, selected, truncated, character, and estimated-token counts.
 
@@ -222,6 +270,10 @@ cost_summary.json
 
 `scripts/real_api_role_transport_smoke.py` independently tests solver, Teacher,
 Critic, and Student schemas without forcing Student transport through the method
-approval gate. `scripts/real_api_resume_smoke.py` performs a controlled
+approval gate. `scripts/critic_calibration_replay.py` runs a human-labeled
+evaluator-only set containing acceptable task-internal repairs and hard-blocker
+examples. It requires at least one good proposal to pass, rejects all memorizing
+proposals, validates every fact restatement, and makes zero Solver or optimizer
+calls. `scripts/real_api_resume_smoke.py` performs a controlled
 checkpoint interruption, resumes two copies of the same state through the
 shared solver cache, and compares substantive final artifacts and cache hashes.

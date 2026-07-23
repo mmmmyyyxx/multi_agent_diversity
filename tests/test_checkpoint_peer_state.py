@@ -17,7 +17,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="peer_state_counterfactual_v1",
+        method_version="peer_state_counterfactual_v2",
         experiment_setting="shared_peer_state_full",
         git_commit="commit",
         git_dirty=False,

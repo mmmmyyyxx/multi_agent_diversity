@@ -37,7 +37,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "peer_state_counterfactual_v1"
+    method_version: str = "peer_state_counterfactual_v2"
     experiment_setting: str = "shared_peer_state_full"
     agents: int = 5
     epochs: int = 3
@@ -51,12 +51,12 @@ class TrainingConfig:
 @dataclass(frozen=True)
 class TCSConfig:
     teacher_critic_max_rounds: int = 3
-    critic_approval_threshold: float = 0.75
+    critic_json_max_retries: int = 2
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
     teacher_max_tokens: int = 1200
-    critic_max_tokens: int = 1000
+    critic_max_tokens: int = 1800
     student_max_tokens: int = 1800
     student_json_max_retries: int = 5
     num_candidates_per_parent: int = 2

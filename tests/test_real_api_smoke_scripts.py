@@ -20,25 +20,44 @@ class FakeTransportClient:
         if system == "Return strict JSON only.":
             return json.dumps({"candidates": [{
                 "candidate_prompt": "Verify each option before selecting one letter.",
-                "target_failure_mechanism": "premature selection",
-                "repair_procedure": "compare all options",
-                "preservation_rule": "retain verified answers",
-                "expected_effect": "fewer selection errors",
+                "observed_failure_pattern": "premature selection",
+                "generalizable_mechanism": "options are not compared",
+                "decision_rule": "compare all options",
+                "uncertainty_or_abstention_rule": "retain viable options when unresolved",
+                "preservation_conditions": "retain verified answers",
+                "evidence_summary": "selection happens before verification",
             }]})
         if "Audit the Teacher" in system:
+            facts = json.loads(
+                system.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
+                    "\nProposalContext:", 1,
+                )[0]
+            )
             return json.dumps({
-                "approved": False,
+                "case_fact_restatements": facts,
+                "context_consistent": True,
+                "sample_memorization_free": True,
+                "executable_change": False,
+                "internally_consistent": True,
+                "preservation_rule_present": True,
+                "output_contract_safe": True,
+                "peer_copying_free": True,
+                "stereotype_forcing_free": True,
+                "non_generic_change": False,
+                "blocking_reasons": ["generic"],
+                "soft_concerns": [],
                 "score": 0.5,
                 "feedback": "transport-valid rejection",
-                "rejection_reasons": ["generic"],
             })
         if self.invalid_teacher:
             return "not-json"
         return json.dumps({
-            "target_failure_mechanism": "premature selection",
-            "repair_procedure": "compare all options",
-            "preservation_rule": "retain verified answers",
-            "expected_effect": "fewer selection errors",
+            "observed_failure_pattern": "premature selection",
+            "generalizable_mechanism": "options are not compared",
+            "decision_rule": "compare all options",
+            "uncertainty_or_abstention_rule": "retain viable options when unresolved",
+            "preservation_conditions": "retain verified answers",
+            "evidence_summary": "selection happens before verification",
         })
 
     def cost_summary(self):

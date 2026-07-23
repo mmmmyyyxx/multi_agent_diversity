@@ -30,22 +30,44 @@ async def solver(question: str, agent_id: int, prompt: str) -> PromptAnswer:
 
 async def optimizer(system_prompt: str, _user_prompt: str, _temperature: float, _max_tokens: int) -> str:
     if "Audit the Teacher" in system_prompt:
+        facts = json.loads(
+            system_prompt.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
+                "\nProposalContext:", 1,
+            )[0]
+        )
         return json.dumps({
-            "approved": True, "score": 1.0, "feedback": "approved", "rejection_reasons": [],
+            "case_fact_restatements": facts,
+            "context_consistent": True,
+            "sample_memorization_free": True,
+            "executable_change": True,
+            "internally_consistent": True,
+            "preservation_rule_present": True,
+            "output_contract_safe": True,
+            "peer_copying_free": True,
+            "stereotype_forcing_free": True,
+            "non_generic_change": True,
+            "blocking_reasons": [],
+            "soft_concerns": [],
+            "score": 1.0,
+            "feedback": "approved",
         })
     if system_prompt == "Return strict JSON only.":
         return json.dumps({"candidates": [{
             "candidate_prompt": "repair-uncovered",
-            "target_failure_mechanism": "uncovered ambiguity",
-            "repair_procedure": "compare interpretations and verify the referent",
-            "preservation_rule": "retain established correct decisions",
-            "expected_effect": "create the first correct vote",
+            "observed_failure_pattern": "uncovered ambiguity",
+            "generalizable_mechanism": "premature referent selection",
+            "decision_rule": "compare interpretations and verify the referent",
+            "uncertainty_or_abstention_rule": "retain ambiguity when neither interpretation is excluded",
+            "preservation_conditions": "retain established correct decisions",
+            "evidence_summary": "uncovered cases need a referent check",
         }]})
     return json.dumps({
-        "target_failure_mechanism": "uncovered ambiguity",
-        "repair_procedure": "compare interpretations and verify the selected referent",
-        "preservation_rule": "retain established correct decisions",
-        "expected_effect": "create the first correct vote",
+        "observed_failure_pattern": "uncovered ambiguity",
+        "generalizable_mechanism": "premature referent selection",
+        "decision_rule": "compare interpretations and verify the selected referent",
+        "uncertainty_or_abstention_rule": "retain ambiguity when neither interpretation is excluded",
+        "preservation_conditions": "retain established correct decisions",
+        "evidence_summary": "uncovered cases need a referent check",
     })
 
 
@@ -56,7 +78,7 @@ async def run(out_dir: Path) -> dict:
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=solver, optimizer_chat=optimizer)
     system.set_run_identity(RunIdentity(
-        method_version="peer_state_counterfactual_v1",
+        method_version="peer_state_counterfactual_v2",
         experiment_setting="shared_peer_state_full",
         git_commit="deterministic-smoke",
         git_dirty=False,

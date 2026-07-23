@@ -69,10 +69,13 @@ from .tcs import (
     StudentCandidate,
     TCSContextDiagnostics,
     TCSContextLimits,
+    TCS_PROTOCOL_VERSION,
+    SAMPLE_MEMORIZATION_FILTER_VERSION,
     TeacherProposal,
     build_critic_request,
     build_student_request,
     build_teacher_request,
+    contains_supplied_example_text,
     limit_proposal_context,
     parse_critic_decision,
     parse_student_candidates,
@@ -81,7 +84,7 @@ from .tcs import (
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 
 
-METHOD_VERSION = "peer_state_counterfactual_v1"
+METHOD_VERSION = "peer_state_counterfactual_v2"
 
 
 @dataclass
@@ -110,11 +113,13 @@ class CandidateFunnel:
     parents_considered: int = 0
     teacher_calls: int = 0
     critic_calls: int = 0
+    critic_invalid_responses: int = 0
     critic_approved: int = 0
     student_calls: int = 0
     requested_candidate_count: int = 0
     raw_candidate_count: int = 0
     schema_valid_count: int = 0
+    sample_memorization_rejected: int = 0
     non_parent_count: int = 0
     deduplicated_count: int = 0
     stage_a_requested_size_per_pool: dict[str, int] = field(default_factory=dict)
@@ -192,15 +197,21 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("peer_state_counterfactual_v1 requires exactly five agents")
+            raise ValueError("peer_state_counterfactual_v2 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("peer_state_counterfactual_v1 requires plurality aggregation")
+            raise ValueError("peer_state_counterfactual_v2 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("canonical peer_state_counterfactual_v1 requires tie-as-abstain")
+            raise ValueError("canonical peer_state_counterfactual_v2 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
             )
+        if cfg.tcs.teacher_critic_max_rounds <= 0:
+            raise ValueError("teacher_critic_max_rounds must be positive")
+        if cfg.tcs.critic_json_max_retries < 0:
+            raise ValueError("critic_json_max_retries cannot be negative")
+        if cfg.tcs.student_json_max_retries < 0:
+            raise ValueError("student_json_max_retries cannot be negative")
         self.cfg = cfg
         self.protocol = self._build_protocol()
         self.task_spec = get_task_spec(cfg.data.task_type)
@@ -666,19 +677,43 @@ class PromptEnsembleOptimizationSystem:
             opportunity = opportunities[state.question_hash][target_agent_id]
             peer = contexts[state.question_hash][target_agent_id]
             example = examples[state.question_hash]
+            target_answer = state.team_answers[target_agent_id]
+            target_status = (
+                "invalid"
+                if opportunity.current_invalid
+                else "correct"
+                if opportunity.current_correct
+                else "wrong"
+            )
+            required_transition = (
+                ""
+                if opportunity.current_correct
+                else f"{target_answer or '<invalid>'} -> {example.gold_answer}"
+            )
+            team_vote_status = (
+                "correct"
+                if state.vote_correct
+                else "tie_abstain"
+                if state.top_tie
+                else "wrong"
+            )
             accuracy_case = AccuracyCase(
                 question_hash=state.question_hash,
                 question=example.question,
                 gold_answer=example.gold_answer,
-                target_current_answer=state.team_answers[target_agent_id],
+                target_current_answer=target_answer,
                 target_current_correct=opportunity.current_correct,
                 target_current_invalid=opportunity.current_invalid,
+                target_status=target_status,
+                required_transition=required_transition,
+                case_role="unassigned",
+                repair_goal="",
             )
             peer_case = PeerStateCase(
                 question_hash=state.question_hash,
                 question=example.question,
                 gold_answer=example.gold_answer,
-                target_current_answer=state.team_answers[target_agent_id],
+                target_current_answer=target_answer,
                 team_G=state.gold_vote_count,
                 team_H=state.largest_wrong_vote_count,
                 team_M=state.plurality_margin,
@@ -690,28 +725,69 @@ class PromptEnsembleOptimizationSystem:
                 direct_vote_fix=opportunity.direct_vote_fix,
                 oracle_soft_utility_gain=opportunity.oracle_soft_utility_gain,
                 dominant_wrong_member=opportunity.dominant_wrong_member,
+                target_status=target_status,
+                required_transition=required_transition,
+                team_vote_status=team_vote_status,
+                case_role="unassigned",
+                repair_goal="",
             )
             if state.question_hash in coverage_set:
-                peer_coverage_cases.append(peer_case)
+                coverage_case = replace(
+                    peer_case,
+                    case_role="coverage",
+                    repair_goal=(
+                        "introduce_first_gold_vote"
+                        if state.gold_vote_count == 0
+                        else "add_gold_vote"
+                    ),
+                )
+                peer_coverage_cases.append(coverage_case)
                 assigned_coverage_cases.append(ResponsibilityCase(
-                    **asdict(peer_case),
+                    **asdict(replace(
+                        coverage_case,
+                        case_role="assigned_coverage",
+                    )),
                     responsibility_reason="assigned residual owner",
                     owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
                 ))
             if state.question_hash in conversion_set:
-                peer_conversion_cases.append(peer_case)
+                conversion_case = replace(
+                    peer_case,
+                    case_role="conversion",
+                    repair_goal=(
+                        "convert_plurality_vote_to_gold"
+                        if opportunity.direct_vote_fix
+                        else "improve_plurality_margin"
+                    ),
+                )
+                peer_conversion_cases.append(conversion_case)
                 assigned_conversion_cases.append(ResponsibilityCase(
-                    **asdict(peer_case),
+                    **asdict(replace(
+                        conversion_case,
+                        case_role="assigned_conversion",
+                    )),
                     responsibility_reason="assigned residual owner",
                     owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
                 ))
             if state.question_hash in preservation_set:
-                accuracy_protection.append(accuracy_case)
+                preservation_role = (
+                    "pivotal_preservation"
+                    if opportunity.pivotal_correct
+                    else "unique_correct_preservation"
+                    if opportunity.unique_correct
+                    else "competence_preservation"
+                )
+                accuracy_protection.append(replace(
+                    accuracy_case,
+                    case_role="individual_preservation",
+                    repair_goal="preserve_correct_answer",
+                    forbidden_transition=f"{target_answer} -> non-{target_answer}",
+                ))
                 preservation_cases.append(PreservationCase(
                     question_hash=state.question_hash,
                     question=example.question,
                     gold_answer=example.gold_answer,
-                    target_current_answer=state.team_answers[target_agent_id],
+                    target_current_answer=target_answer,
                     unique_correct=opportunity.unique_correct,
                     pivotal_correct=opportunity.pivotal_correct,
                     team_margin=state.plurality_margin,
@@ -719,17 +795,45 @@ class PromptEnsembleOptimizationSystem:
                     peer_H=peer.peer_largest_wrong_vote_count,
                     peer_M=peer.peer_margin,
                     peer_wrong_histogram=peer.peer_wrong_vote_histogram,
+                    target_status=target_status,
+                    required_transition="",
+                    team_vote_status=team_vote_status,
+                    case_role=preservation_role,
+                    repair_goal="preserve_correct_vote",
+                    forbidden_transition=f"{target_answer} -> non-{target_answer}",
                 ))
             if state.question_hash in representative_set:
                 if not opportunity.current_correct:
-                    accuracy_errors.append(accuracy_case)
+                    accuracy_errors.append(replace(
+                        accuracy_case,
+                        case_role="individual_error",
+                        repair_goal="correct_target_answer",
+                    ))
                 representative_cases.append(RepresentativeCase(
                     question_hash=state.question_hash,
                     question=example.question,
                     gold_answer=example.gold_answer,
-                    target_current_answer=state.team_answers[target_agent_id],
+                    target_current_answer=target_answer,
                     target_current_correct=opportunity.current_correct,
                     target_current_invalid=opportunity.current_invalid,
+                    target_status=target_status,
+                    required_transition=required_transition,
+                    team_vote_status=team_vote_status,
+                    case_role=(
+                        "representative_preservation"
+                        if opportunity.current_correct
+                        else "representative_error"
+                    ),
+                    repair_goal=(
+                        "preserve_representative_correct"
+                        if opportunity.current_correct
+                        else "repair_representative_error"
+                    ),
+                    forbidden_transition=(
+                        f"{target_answer} -> non-{target_answer}"
+                        if opportunity.current_correct
+                        else ""
+                    ),
                 ))
         common = {
             "target_agent_id": target_agent_id,
@@ -870,76 +974,102 @@ class PromptEnsembleOptimizationSystem:
                 continue
             teacher_round.update({
                 "schema_valid": True,
-                "target_failure_mechanism": teacher_proposal.target_failure_mechanism,
-                "repair_procedure": teacher_proposal.repair_procedure,
-                "preservation_rule": teacher_proposal.preservation_rule,
-                "expected_effect": teacher_proposal.expected_effect,
+                **asdict(teacher_proposal),
+                "supplied_example_text_detected": contains_supplied_example_text(
+                    json.dumps(asdict(teacher_proposal), ensure_ascii=False),
+                    context,
+                ),
             })
             self.tcs_rounds.append(teacher_round)
-            funnel.critic_calls += 1
             critic_request = build_critic_request(context, teacher_proposal)
-            critic_request_hash = _request_hash(critic_request, "Audit the proposal.")
-            critic_raw = await self._chat(
-                self.cfg.models.evaluator_model,
-                critic_request,
-                "Audit the proposal.",
-                self.cfg.tcs.critic_temperature,
-                self.cfg.tcs.critic_max_tokens,
-                "evaluator",
-            )
-            parsed_critic = extract_json_obj(critic_raw)
-            critic_round = {
-                "update_index": update_index,
-                "target_agent_id": target_agent_id,
-                "round_index": round_index,
-                "role": "critic",
-                "context_type": type(context).__name__,
-                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
-                "request_hash": critic_request_hash,
-                "response_hash": hashlib.sha256(critic_raw.encode("utf-8")).hexdigest(),
-                "json_extracted": parsed_critic is not None,
-                "schema_valid": False,
-                "approved_raw": (
-                    parsed_critic.get("approved")
-                    if isinstance(parsed_critic, Mapping)
-                    and isinstance(parsed_critic.get("approved"), bool)
-                    else None
-                ),
-                "score": (
-                    parsed_critic.get("score")
-                    if isinstance(parsed_critic, Mapping)
-                    and isinstance(parsed_critic.get("score"), (int, float))
-                    else None
-                ),
-                "effective_approved": False,
-                "rejection_reasons": [],
-                "parse_error": "",
-                "response_excerpt": _response_excerpt(critic_raw),
-            }
-            try:
-                if parsed_critic is None:
-                    raise ValueError("critic response is not JSON")
-                critic_decision = parse_critic_decision(
-                    parsed_critic,
-                    self.cfg.tcs.critic_approval_threshold,
+            critic_decision = None
+            critic_parse_error = ""
+            for critic_attempt in range(self.cfg.tcs.critic_json_max_retries + 1):
+                funnel.critic_calls += 1
+                critic_user_request = (
+                    "Audit the proposal."
+                    if critic_attempt == 0
+                    else (
+                        "Your previous Critic response was invalid because "
+                        f"{critic_parse_error}. Re-audit the same proposal, copy "
+                        "DERIVED_CASE_FACTS exactly, and return corrected strict JSON."
+                    )
                 )
-            except (KeyError, TypeError, ValueError) as exc:
-                critic_round["parse_error"] = str(exc)
+                critic_request_hash = _request_hash(critic_request, critic_user_request)
+                critic_raw = await self._chat(
+                    self.cfg.models.evaluator_model,
+                    critic_request,
+                    critic_user_request,
+                    self.cfg.tcs.critic_temperature,
+                    self.cfg.tcs.critic_max_tokens,
+                    "evaluator",
+                )
+                parsed_critic = extract_json_obj(critic_raw)
+                critic_round = {
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
+                    "round_index": round_index,
+                    "attempt_index": critic_attempt,
+                    "role": "critic",
+                    "context_type": type(context).__name__,
+                    "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                    "request_hash": critic_request_hash,
+                    "response_hash": hashlib.sha256(critic_raw.encode("utf-8")).hexdigest(),
+                    "json_extracted": parsed_critic is not None,
+                    "schema_valid": False,
+                    "fact_restatement_valid": False,
+                    "score": (
+                        parsed_critic.get("score")
+                        if isinstance(parsed_critic, Mapping)
+                        and isinstance(parsed_critic.get("score"), (int, float))
+                        else None
+                    ),
+                    "effective_approved": False,
+                    "hard_checks": {},
+                    "blocking_reasons": [],
+                    "soft_concerns": [],
+                    "parse_error": "",
+                    "response_excerpt": _response_excerpt(critic_raw),
+                    "approval_basis": "all_hard_checks_passed",
+                }
+                try:
+                    if parsed_critic is None:
+                        raise ValueError("critic response is not JSON")
+                    critic_decision = parse_critic_decision(parsed_critic, context)
+                except (KeyError, TypeError, ValueError) as exc:
+                    critic_parse_error = str(exc)
+                    critic_round["parse_error"] = critic_parse_error
+                    funnel.critic_invalid_responses += 1
+                    self.tcs_rounds.append(critic_round)
+                    continue
+                critic_round.update({
+                    "schema_valid": True,
+                    "fact_restatement_valid": True,
+                    "effective_approved": critic_decision.approved,
+                    "score": critic_decision.score,
+                    "hard_checks": critic_decision.hard_checks,
+                    "blocking_reasons": list(critic_decision.blocking_reasons),
+                    "soft_concerns": list(critic_decision.soft_concerns),
+                    "case_fact_restatements": [
+                        asdict(row) for row in critic_decision.case_fact_restatements
+                    ],
+                    "feedback": critic_decision.feedback,
+                })
                 self.tcs_rounds.append(critic_round)
-                critic_feedback = f"Critic schema failure: {exc}"
+                break
+            if critic_decision is None:
+                critic_feedback = (
+                    "Critic response remained invalid after retries: "
+                    f"{critic_parse_error}"
+                )
                 continue
-            critic_round.update({
-                "schema_valid": True,
-                "effective_approved": critic_decision.approved,
-                "score": critic_decision.score,
-                "rejection_reasons": list(critic_decision.rejection_reasons),
-                "feedback": critic_decision.feedback,
-            })
-            self.tcs_rounds.append(critic_round)
             if critic_decision.approved:
                 funnel.critic_approved += 1
                 break
-            critic_feedback = critic_decision.feedback
+            critic_feedback = (
+                f"{critic_decision.feedback} Hard blocking reasons: "
+                + "; ".join(critic_decision.blocking_reasons)
+            )
         if teacher_proposal is None or critic_decision is None or not critic_decision.approved:
             return []
 
@@ -1002,6 +1132,9 @@ class PromptEnsembleOptimizationSystem:
         non_parent = 0
         for candidate in parsed_candidates:
             prompt = normalize_prompt_text(candidate.candidate_prompt)
+            if contains_supplied_example_text(prompt, context):
+                funnel.sample_memorization_rejected += 1
+                continue
             prompt_hash = self.prompt_hash(prompt)
             if prompt_hash == self.prompt_hash(parent_prompt):
                 continue
@@ -1468,6 +1601,12 @@ class PromptEnsembleOptimizationSystem:
             "update_mode": "single_agent_paired_counterfactual",
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_generator": self.protocol.tcs_context_policy,
+            "tcs_protocol_version": TCS_PROTOCOL_VERSION,
+            "critic_approval_basis": "all_hard_checks_passed",
+            "critic_score_controls_approval": False,
+            "critic_case_fact_restatement_required": True,
+            "task_general_scope": "unseen_examples_within_current_task",
+            "student_sample_memorization_filter": SAMPLE_MEMORIZATION_FILTER_VERSION,
             "solver_sampling_semantics": "shared_prompt_question_output",
             "solver_output_contract_version": self.cfg.peer_state.solver_output_contract_version,
             "prompt_question_evaluator_identity": self.prompt_question_evaluator.identity(),

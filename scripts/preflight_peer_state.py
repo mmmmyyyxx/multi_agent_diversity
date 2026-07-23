@@ -36,7 +36,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append("experiment settings do not match the frozen five-setting protocol")
     for cfg in configs:
-        if cfg.training.method_version != "peer_state_counterfactual_v1":
+        if cfg.training.method_version != "peer_state_counterfactual_v2":
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
@@ -84,7 +84,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append("git working tree is not clean")
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
-        "method_version": "peer_state_counterfactual_v1", "settings": EXPECTED_SETTINGS,
+        "method_version": "peer_state_counterfactual_v2", "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 

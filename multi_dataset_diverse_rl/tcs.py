@@ -13,6 +13,11 @@ class AccuracyCase:
     target_current_answer: str
     target_current_correct: bool
     target_current_invalid: bool
+    target_status: str
+    required_transition: str
+    case_role: str
+    repair_goal: str
+    forbidden_transition: str = ""
 
 
 @dataclass(frozen=True)
@@ -32,6 +37,11 @@ class PeerStateCase:
     direct_vote_fix: bool
     oracle_soft_utility_gain: float
     dominant_wrong_member: bool
+    target_status: str
+    required_transition: str
+    team_vote_status: str
+    case_role: str
+    repair_goal: str
 
 
 @dataclass(frozen=True)
@@ -53,6 +63,12 @@ class PreservationCase:
     peer_H: int
     peer_M: int
     peer_wrong_histogram: tuple[tuple[str, int], ...]
+    target_status: str
+    required_transition: str
+    team_vote_status: str
+    case_role: str
+    repair_goal: str
+    forbidden_transition: str
 
 
 @dataclass(frozen=True)
@@ -63,6 +79,12 @@ class RepresentativeCase:
     target_current_answer: str
     target_current_correct: bool
     target_current_invalid: bool
+    target_status: str
+    required_transition: str
+    team_vote_status: str
+    case_role: str
+    repair_goal: str
+    forbidden_transition: str = ""
 
 
 @dataclass(frozen=True)
@@ -105,10 +127,23 @@ AnyProposalContext = AccuracyProposalContext | PeerStateProposalContext | Respon
 
 @dataclass(frozen=True)
 class TeacherProposal:
-    target_failure_mechanism: str
-    repair_procedure: str
-    preservation_rule: str
-    expected_effect: str
+    observed_failure_pattern: str
+    generalizable_mechanism: str
+    decision_rule: str
+    uncertainty_or_abstention_rule: str
+    preservation_conditions: str
+    evidence_summary: str
+
+
+@dataclass(frozen=True)
+class CriticCaseFact:
+    question_hash: str
+    target_status: str
+    case_role: str
+    required_transition: str = ""
+    forbidden_transition: str = ""
+    team_vote_status: str = ""
+    repair_goal: str = ""
 
 
 @dataclass(frozen=True)
@@ -116,16 +151,59 @@ class CriticDecision:
     approved: bool
     score: float
     feedback: str
-    rejection_reasons: tuple[str, ...]
+    context_consistent: bool
+    sample_memorization_free: bool
+    executable_change: bool
+    internally_consistent: bool
+    preservation_rule_present: bool
+    output_contract_safe: bool
+    peer_copying_free: bool
+    stereotype_forcing_free: bool
+    non_generic_change: bool
+    blocking_reasons: tuple[str, ...]
+    soft_concerns: tuple[str, ...]
+    case_fact_restatements: tuple[CriticCaseFact, ...]
+
+    @property
+    def hard_checks(self) -> dict[str, bool]:
+        return {
+            field: bool(getattr(self, field))
+            for field in CRITIC_HARD_CHECK_FIELDS
+        }
 
 
 @dataclass(frozen=True)
 class StudentCandidate:
     candidate_prompt: str
-    target_failure_mechanism: str
-    repair_procedure: str
-    preservation_rule: str
-    expected_effect: str
+    observed_failure_pattern: str
+    generalizable_mechanism: str
+    decision_rule: str
+    uncertainty_or_abstention_rule: str
+    preservation_conditions: str
+    evidence_summary: str
+
+
+CRITIC_HARD_CHECK_FIELDS = (
+    "context_consistent",
+    "sample_memorization_free",
+    "executable_change",
+    "internally_consistent",
+    "preservation_rule_present",
+    "output_contract_safe",
+    "peer_copying_free",
+    "stereotype_forcing_free",
+    "non_generic_change",
+)
+
+TASK_GENERAL_DEFINITION = (
+    "A task-general procedure means a rule that can apply to unseen examples "
+    "within the current task. It does not need to transfer to unrelated "
+    "benchmarks or task families. It must not memorize the supplied examples "
+    "or their gold answers."
+)
+
+TCS_PROTOCOL_VERSION = "hard_blocker_gate_v2"
+SAMPLE_MEMORIZATION_FILTER_VERSION = "exact_supplied_example_text_v1"
 
 
 @dataclass(frozen=True)
@@ -148,6 +226,66 @@ class TCSContextDiagnostics:
 
 def _payload(context: AnyProposalContext) -> str:
     return json.dumps(asdict(context), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _context_case_rows(context: AnyProposalContext) -> tuple[Any, ...]:
+    if isinstance(context, AccuracyProposalContext):
+        return context.error_cases + context.protection_cases
+    if isinstance(context, PeerStateProposalContext):
+        return (
+            context.coverage_cases
+            + context.conversion_cases
+            + context.preservation_cases
+            + context.representative_cases
+        )
+    if isinstance(context, ResponsibilityProposalContext):
+        return (
+            context.assigned_coverage_cases
+            + context.assigned_conversion_cases
+            + context.preservation_cases
+            + context.representative_cases
+        )
+    raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
+
+
+def proposal_context_case_facts(
+    context: AnyProposalContext,
+) -> tuple[CriticCaseFact, ...]:
+    facts = []
+    for row in _context_case_rows(context):
+        facts.append(CriticCaseFact(
+            question_hash=row.question_hash,
+            target_status=row.target_status,
+            case_role=row.case_role,
+            required_transition=getattr(row, "required_transition", ""),
+            forbidden_transition=getattr(row, "forbidden_transition", ""),
+            team_vote_status=getattr(row, "team_vote_status", ""),
+            repair_goal=getattr(row, "repair_goal", ""),
+        ))
+    return tuple(sorted(
+        facts,
+        key=lambda row: (row.question_hash, row.case_role),
+    ))
+
+
+def contains_supplied_example_text(
+    text: str,
+    context: AnyProposalContext,
+) -> bool:
+    normalized_text = " ".join(str(text or "").lower().split())
+    if not normalized_text:
+        return False
+    fragments: set[str] = set()
+    for row in _context_case_rows(context):
+        question = str(row.question or "")
+        normalized_question = " ".join(question.lower().split())
+        if len(normalized_question) >= 32:
+            fragments.add(normalized_question)
+        for line in question.splitlines():
+            normalized_line = " ".join(line.lower().split())
+            if len(normalized_line) >= 48:
+                fragments.add(normalized_line)
+    return any(fragment in normalized_text for fragment in fragments)
 
 
 def limit_proposal_context(
@@ -255,13 +393,17 @@ def build_teacher_request(context: AnyProposalContext) -> str:
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
     schema = {
-        "target_failure_mechanism": "task-general failure mechanism",
-        "repair_procedure": "executable decision procedure",
-        "preservation_rule": "rule protecting existing competence",
-        "expected_effect": "expected effect on the supplied cases",
+        "observed_failure_pattern": "abstract pattern supported by the supplied evidence",
+        "generalizable_mechanism": "mechanism that can transfer to unseen examples in this task",
+        "decision_rule": "concrete executable behavior to add or revise",
+        "uncertainty_or_abstention_rule": "operational rule for unresolved evidence",
+        "preservation_conditions": "operational conditions protecting existing correct behavior",
+        "evidence_summary": "abstract evidence summary without sample text, answers, or per-case transitions",
     }
     return (
-        f"{objective} Do not memorize answers, assign a preset role, copy a peer procedure, "
+        f"{objective} {TASK_GENERAL_DEFINITION} Propose a testable repair hypothesis; Stage A/B rollout, "
+        "not the Teacher, will determine empirical effectiveness. Do not memorize answers, quote supplied "
+        "questions, describe per-case answer transitions, assign a preset role, copy a peer procedure, "
         "or propose generic chain-of-thought. Diagnose a real defect in the parent prompt. Return strict JSON "
         f"matching this schema: {json.dumps(schema)}\nProposalContext:\n{_payload(context)}"
     )
@@ -276,11 +418,37 @@ def build_critic_request(context: AnyProposalContext, teacher_proposal: TeacherP
         policy_checks = "assigned residual targeting, team/peer-state interpretation, and preservation evidence"
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
+    case_facts = [asdict(row) for row in proposal_context_case_facts(context)]
+    schema = {
+        "case_fact_restatements": case_facts,
+        "context_consistent": True,
+        "sample_memorization_free": True,
+        "executable_change": True,
+        "internally_consistent": True,
+        "preservation_rule_present": True,
+        "output_contract_safe": True,
+        "peer_copying_free": True,
+        "stereotype_forcing_free": True,
+        "non_generic_change": True,
+        "blocking_reasons": [],
+        "soft_concerns": [],
+        "score": 0.5,
+        "feedback": "concise audit summary",
+    }
     return (
-        f"Audit the Teacher proposal against the same ProposalContext. Check {policy_checks}, "
-        "generic-CoT behavior, peer copying, answer memorization, the parent "
-        "prompt's actual defect, and whether the procedure is executable and task-general. Return strict JSON with "
-        "approved (boolean), score (0..1), feedback (string), and rejection_reasons (array of strings).\n"
+        f"Audit the Teacher proposal against the same ProposalContext. Check {policy_checks}. "
+        f"{TASK_GENERAL_DEFINITION} Your authority is limited to hard blockers. Reject only if the proposal "
+        "contradicts the derived context facts; quotes or memorizes supplied samples or answers; adds no "
+        "executable behavior; contradicts its preservation conditions; violates the output contract; explicitly "
+        "copies a peer answer or prompt; forces a resolution from occupational or social stereotypes, typicality, "
+        "or frequency rather than explicit sentence constraints; or contains only a role description, 'think "
+        "carefully', or similarly generic advice. Subjectivity, incomplete coverage, use of a common task method, overlap with the parent "
+        "prompt, uncertain benefit, and failure to prove empirical improvement are soft concerns only. Stage A/B "
+        "rollout decides effectiveness. First copy DERIVED_CASE_FACTS exactly into case_fact_restatements. A "
+        "missing or incorrect restatement makes the response invalid and it will be retried. Approval is computed "
+        "from all hard-check booleans being true and blocking_reasons being empty; score is diagnostic only. "
+        f"Return strict JSON matching this schema: {json.dumps(schema, ensure_ascii=False)}\n"
+        f"DERIVED_CASE_FACTS:\n{json.dumps(case_facts, ensure_ascii=False, sort_keys=True)}\n"
         f"ProposalContext:\n{_payload(context)}\nTeacherProposal:\n"
         f"{json.dumps(asdict(teacher_proposal), ensure_ascii=False, sort_keys=True)}"
     )
@@ -299,11 +467,15 @@ def build_student_request(
         policy_instruction = "address the supplied assigned responsibilities"
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
+    candidate_fields = (
+        "candidate_prompt, observed_failure_pattern, generalizable_mechanism, decision_rule, "
+        "uncertainty_or_abstention_rule, preservation_conditions, and evidence_summary"
+    )
     return (
-        f"Generate exactly {candidate_count} task-general prompt candidates. Each candidate must implement the "
-        f"approved repair, preserve protected cases, and {policy_instruction}. Return strict JSON "
-        "with a candidates array; every item must contain candidate_prompt, target_failure_mechanism, "
-        "repair_procedure, preservation_rule, and expected_effect.\n"
+        f"Generate exactly {candidate_count} task-general prompt candidates. {TASK_GENERAL_DEFINITION} "
+        "Each candidate must implement the approved repair, preserve protected cases, and "
+        f"{policy_instruction}. Do not quote any supplied question, answer, or per-case transition. Return strict "
+        f"JSON with a candidates array; every item must contain {candidate_fields}.\n"
         f"ProposalContext:\n{_payload(context)}\nApprovedTeacherProposal:\n"
         f"{json.dumps(asdict(approved_proposal), ensure_ascii=False, sort_keys=True)}"
     )
@@ -318,33 +490,87 @@ def _required_text(payload: Mapping[str, Any], field: str) -> str:
 
 def parse_teacher_proposal(payload: Mapping[str, Any]) -> TeacherProposal:
     return TeacherProposal(
-        target_failure_mechanism=_required_text(payload, "target_failure_mechanism"),
-        repair_procedure=_required_text(payload, "repair_procedure"),
-        preservation_rule=_required_text(payload, "preservation_rule"),
-        expected_effect=_required_text(payload, "expected_effect"),
+        observed_failure_pattern=_required_text(payload, "observed_failure_pattern"),
+        generalizable_mechanism=_required_text(payload, "generalizable_mechanism"),
+        decision_rule=_required_text(payload, "decision_rule"),
+        uncertainty_or_abstention_rule=_required_text(payload, "uncertainty_or_abstention_rule"),
+        preservation_conditions=_required_text(payload, "preservation_conditions"),
+        evidence_summary=_required_text(payload, "evidence_summary"),
     )
 
 
-def parse_critic_decision(payload: Mapping[str, Any], approval_threshold: float) -> CriticDecision:
-    approved = payload["approved"]
+def _required_bool(payload: Mapping[str, Any], field: str) -> bool:
+    value = payload[field]
+    if type(value) is not bool:
+        raise ValueError(f"critic {field} must be a JSON boolean")
+    return value
+
+
+def _required_text_array(payload: Mapping[str, Any], field: str) -> tuple[str, ...]:
+    value = payload[field]
+    if not isinstance(value, list) or any(not isinstance(row, str) for row in value):
+        raise ValueError(f"critic {field} must be an array of strings")
+    return tuple(row.strip() for row in value if row.strip())
+
+
+def _parse_case_fact(payload: Mapping[str, Any]) -> CriticCaseFact:
+    fields = {
+        "question_hash", "target_status", "case_role", "required_transition",
+        "forbidden_transition", "team_vote_status", "repair_goal",
+    }
+    if set(payload) != fields:
+        raise ValueError("critic case fact fields do not match the required schema")
+    values = {}
+    for field in fields:
+        value = payload[field]
+        if not isinstance(value, str):
+            raise ValueError(f"critic case fact {field} must be a string")
+        values[field] = value.strip()
+    if not values["question_hash"] or not values["target_status"] or not values["case_role"]:
+        raise ValueError("critic case facts require question_hash, target_status, and case_role")
+    return CriticCaseFact(**values)
+
+
+def parse_critic_decision(
+    payload: Mapping[str, Any],
+    context: AnyProposalContext,
+) -> CriticDecision:
     score = payload["score"]
-    reasons = payload["rejection_reasons"]
-    if type(approved) is not bool:
-        raise ValueError("critic approved must be a JSON boolean")
     if isinstance(score, bool) or not isinstance(score, (int, float)):
         raise ValueError("critic score must be numeric")
-    if not isinstance(reasons, list) or any(not isinstance(reason, str) for reason in reasons):
-        raise ValueError("critic rejection_reasons must be an array of strings")
-    feedback = _required_text(payload, "feedback")
     numeric_score = float(score)
-    effective_approval = bool(approved is True and numeric_score >= approval_threshold)
-    if approved and not effective_approval and not reasons:
-        reasons = ["score_below_threshold"]
+    if not 0.0 <= numeric_score <= 1.0:
+        raise ValueError("critic score must be between 0 and 1")
+    hard_checks = {
+        field: _required_bool(payload, field)
+        for field in CRITIC_HARD_CHECK_FIELDS
+    }
+    blocking_reasons = _required_text_array(payload, "blocking_reasons")
+    soft_concerns = _required_text_array(payload, "soft_concerns")
+    feedback = _required_text(payload, "feedback")
+    restatements_value = payload["case_fact_restatements"]
+    if not isinstance(restatements_value, list) or any(
+        not isinstance(row, Mapping) for row in restatements_value
+    ):
+        raise ValueError("critic case_fact_restatements must be an array of objects")
+    restatements = tuple(sorted(
+        (_parse_case_fact(row) for row in restatements_value),
+        key=lambda row: (row.question_hash, row.case_role),
+    ))
+    expected = proposal_context_case_facts(context)
+    if restatements != expected:
+        raise ValueError("critic case fact restatement mismatch")
+    all_hard_checks_passed = all(hard_checks.values())
+    if all_hard_checks_passed == bool(blocking_reasons):
+        raise ValueError("critic hard checks and blocking_reasons disagree")
     return CriticDecision(
-        approved=effective_approval,
+        approved=bool(all_hard_checks_passed and not blocking_reasons),
         score=numeric_score,
         feedback=feedback,
-        rejection_reasons=tuple(reasons),
+        **hard_checks,
+        blocking_reasons=blocking_reasons,
+        soft_concerns=soft_concerns,
+        case_fact_restatements=restatements,
     )
 
 
@@ -364,9 +590,13 @@ def parse_student_candidates(
             raise ValueError("each student candidate must be an object")
         candidates.append(StudentCandidate(
             candidate_prompt=_required_text(row, "candidate_prompt"),
-            target_failure_mechanism=_required_text(row, "target_failure_mechanism"),
-            repair_procedure=_required_text(row, "repair_procedure"),
-            preservation_rule=_required_text(row, "preservation_rule"),
-            expected_effect=_required_text(row, "expected_effect"),
+            observed_failure_pattern=_required_text(row, "observed_failure_pattern"),
+            generalizable_mechanism=_required_text(row, "generalizable_mechanism"),
+            decision_rule=_required_text(row, "decision_rule"),
+            uncertainty_or_abstention_rule=_required_text(
+                row, "uncertainty_or_abstention_rule",
+            ),
+            preservation_conditions=_required_text(row, "preservation_conditions"),
+            evidence_summary=_required_text(row, "evidence_summary"),
         ))
     return tuple(candidates)

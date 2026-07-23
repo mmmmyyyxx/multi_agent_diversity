@@ -75,6 +75,10 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
                 target_current_answer="B",
                 target_current_correct=False,
                 target_current_invalid=False,
+                target_status="wrong",
+                required_transition="B -> A",
+                case_role="individual_error",
+                repair_goal="correct_target_answer",
             ),
         ),
         protection_cases=(),
@@ -99,10 +103,12 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         teacher_error = str(exc)
 
     transport_teacher = teacher or TeacherProposal(
-        target_failure_mechanism="The solver commits before comparing every option.",
-        repair_procedure="Compare each option to the question, eliminate contradictions, then verify the selected letter.",
-        preservation_rule="Keep answers that already pass the option-by-option verification.",
-        expected_effect="Reduce premature option selection without changing already verified answers.",
+        observed_failure_pattern="The solver commits before comparing every option.",
+        generalizable_mechanism="Premature commitment bypasses contradiction checks.",
+        decision_rule="Compare each option, eliminate direct contradictions, then verify the selected letter.",
+        uncertainty_or_abstention_rule="If evidence is insufficient, retain all viable options until a decisive check is available.",
+        preservation_conditions="Keep answers that already pass the option-by-option verification.",
+        evidence_summary="Errors occur before the available options are compared consistently.",
     )
     critic_error = ""
     critic = None
@@ -120,7 +126,7 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
     try:
         if critic_json is None:
             raise ValueError("critic response is not JSON")
-        critic = parse_critic_decision(critic_json, cfg.tcs.critic_approval_threshold)
+        critic = parse_critic_decision(critic_json, context)
     except (KeyError, TypeError, ValueError) as exc:
         critic_error = str(exc)
 
