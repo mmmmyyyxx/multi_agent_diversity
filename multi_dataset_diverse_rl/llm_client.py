@@ -4,6 +4,7 @@ import asyncio
 import os
 import random
 import time
+from dataclasses import dataclass
 from email.utils import parsedate_to_datetime
 from typing import Any, Awaitable, Callable
 
@@ -18,6 +19,15 @@ NON_RETRYABLE_STATUS_CODES = {400, 401, 403, 404, 422}
 
 class LLMBudgetExceeded(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class LLMCallResult:
+    text: str
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+    latency_seconds: float
 
 
 class RoleAwareLLMClient:
@@ -113,6 +123,21 @@ class RoleAwareLLMClient:
         max_tokens: int,
         role: str,
     ) -> str:
+        return (
+            await self.chat_result(
+                model, system_prompt, user_prompt, temperature, max_tokens, role,
+            )
+        ).text
+
+    async def chat_result(
+        self,
+        model: str,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float,
+        max_tokens: int,
+        role: str,
+    ) -> LLMCallResult:
         max_attempts = max(1, self.cfg.persistence.max_retries + self.cfg.persistence.max_transient_retries)
         last_error: Exception | None = None
         for attempt in range(1, max_attempts + 1):
@@ -137,6 +162,7 @@ class RoleAwareLLMClient:
                     usage = response.usage
                     prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
                     completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
+                latency = time.time() - started
                 self.calls.append({
                     "role": role,
                     "model": model,
@@ -147,12 +173,18 @@ class RoleAwareLLMClient:
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
                     "total_tokens": prompt_tokens + completion_tokens,
-                    "latency_seconds": time.time() - started,
+                    "latency_seconds": latency,
                 })
                 used_tokens = sum(int(row["total_tokens"]) for row in self.calls)
                 if self.cfg.persistence.max_total_tokens > 0 and used_tokens > self.cfg.persistence.max_total_tokens:
                     raise LLMBudgetExceeded("max_total_tokens exceeded")
-                return text
+                return LLMCallResult(
+                    text=text,
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    total_tokens=prompt_tokens + completion_tokens,
+                    latency_seconds=latency,
+                )
             except LLMBudgetExceeded:
                 raise
             except Exception as exc:

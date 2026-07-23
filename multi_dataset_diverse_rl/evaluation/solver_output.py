@@ -75,18 +75,46 @@ def parse_solver_output(
     raw = str(text or "")
     matches = FINAL_ANSWER_LINE.findall(raw)
     if not matches:
-        return PromptAnswer("", raw, False, "missing_final_answer")
+        return PromptAnswer(
+            "", raw, False, "missing_final_answer",
+            raw_final_answer_payload="",
+            final_answer_line_count=0,
+        )
     if len(matches) != 1:
-        return PromptAnswer("", raw, False, "multiple_final_answers")
+        return PromptAnswer(
+            "", raw, False, "multiple_final_answers",
+            raw_final_answer_payload=str(matches[-1]).strip(),
+            final_answer_line_count=len(matches),
+        )
     if not matches[0].strip():
-        return PromptAnswer("", raw, False, "unparseable_final_answer")
+        return PromptAnswer(
+            "", raw, False, "unparseable_final_answer",
+            raw_final_answer_payload="",
+            final_answer_line_count=1,
+        )
     raw_payload = matches[0].strip()
     if not _raw_payload_in_domain(raw_payload, question, task_spec, answer_format):
-        return PromptAnswer("", raw, False, "out_of_domain_answer")
+        return PromptAnswer(
+            "", raw, False, "out_of_domain_answer",
+            raw_final_answer_payload=raw_payload,
+            final_answer_line_count=1,
+        )
     final_line = f"FINAL_ANSWER: {raw_payload}"
     answer = task_spec.extract_pred(final_line, question)
     if not answer:
-        return PromptAnswer("", raw, False, "unparseable_final_answer")
+        return PromptAnswer(
+            "", raw, False, "unparseable_final_answer",
+            raw_final_answer_payload=raw_payload,
+            final_answer_line_count=1,
+        )
     if not _in_domain(answer, question, task_spec, answer_format):
-        return PromptAnswer(answer, raw, False, "out_of_domain_answer")
-    return PromptAnswer(answer, raw, True, "valid")
+        return PromptAnswer(
+            answer, raw, False, "out_of_domain_answer",
+            raw_final_answer_payload=raw_payload,
+            final_answer_line_count=1,
+        )
+    return PromptAnswer(
+        answer, raw, True, "valid",
+        raw_final_answer_payload=raw_payload,
+        final_answer_line_count=1,
+    )

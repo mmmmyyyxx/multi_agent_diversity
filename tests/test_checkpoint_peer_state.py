@@ -52,6 +52,8 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     source.responsibility_state.primary_owner_by_question = {"q": 3}
     source.responsibility_state.owner_age_by_question = {"q": 2}
     payload = build_checkpoint(source, epoch_index=1, update_index=2, best_state={"epoch": 0})
+    assert "shared_solver_cache_audit" in payload
+    assert payload["shared_solver_cache_audit"]["ready_entries"] == 1
     target = build_system(tmp_path / "target")
     epoch, update, best = restore_checkpoint(target, payload)
     assert (epoch, update, best) == (1, 2, {"epoch": 0})

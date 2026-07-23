@@ -74,6 +74,7 @@ class PeerStateConfig:
     soft_vote_tau: float = 1.0
     probe_version: str = "peer_state_fixed_probe_v1"
     parser_version: str = "task_parser_v1"
+    solver_output_contract_version: str = "task_output_contract_v1"
 
 
 @dataclass(frozen=True)
@@ -110,6 +111,7 @@ class ConstraintConfig:
 @dataclass(frozen=True)
 class PersistenceConfig:
     out_dir: str = "runs_peer_state"
+    shared_solver_cache_path: str = ""
     resume_from_checkpoint: bool = False
     max_retries: int = 3
     max_transient_retries: int = 20

@@ -3,8 +3,9 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import time
 from dataclasses import asdict, dataclass
-from typing import Any, Awaitable, Callable, Mapping
+from typing import Any, Awaitable, Callable, Mapping, Protocol
 
 
 @dataclass(frozen=True)
@@ -13,10 +14,40 @@ class PromptAnswer:
     trace: str
     valid: bool
     validity_status: str = ""
+    raw_final_answer_payload: str = ""
+    final_answer_line_count: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    response_hash: str = ""
+    request_identity: str = ""
+    created_at: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.validity_status:
             object.__setattr__(self, "validity_status", "valid" if self.valid else "invalid_unspecified")
+        if not self.response_hash:
+            object.__setattr__(
+                self,
+                "response_hash",
+                hashlib.sha256(str(self.trace).encode("utf-8")).hexdigest(),
+            )
+        if not self.created_at:
+            object.__setattr__(self, "created_at", time.time())
+
+
+class SharedSolverCache(Protocol):
+    hits: int
+    misses: int
+    waits: int
+
+    async def resolve(
+        self,
+        *,
+        cache_key: str,
+        metadata: Mapping[str, Any],
+        producer: Callable[[], Awaitable[PromptAnswer]],
+    ) -> PromptAnswer: ...
 
 
 class PromptQuestionEvaluator:
@@ -29,6 +60,9 @@ class PromptQuestionEvaluator:
         parser_version: str,
         temperature: float,
         decoding_seed: int,
+        cache_metadata: Mapping[str, Any] | None = None,
+        shared_cache: SharedSolverCache | None = None,
+        observation_callback: Callable[[str, str, PromptAnswer], None] | None = None,
         version: str = "prompt_question_v1",
     ):
         self.version = str(version)
@@ -36,6 +70,9 @@ class PromptQuestionEvaluator:
         self.parser_version = str(parser_version)
         self.temperature = float(temperature)
         self.decoding_seed = int(decoding_seed)
+        self.cache_metadata = dict(cache_metadata or {})
+        self.shared_cache = shared_cache
+        self.observation_callback = observation_callback
         self.cache: dict[str, PromptAnswer] = {}
         self.inflight: dict[str, asyncio.Future[PromptAnswer]] = {}
         self.lock = asyncio.Lock()
@@ -43,16 +80,18 @@ class PromptQuestionEvaluator:
         self.cache_misses = 0
 
     def key(self, prompt_hash: str, question_hash: str) -> str:
-        payload = (
-            self.version,
-            self.model_request_identity,
-            str(prompt_hash),
-            str(question_hash),
-            self.parser_version,
-            repr(self.temperature),
-            str(self.decoding_seed),
-        )
-        return hashlib.sha256("|".join(payload).encode("utf-8")).hexdigest()
+        payload = {
+            "version": self.version,
+            "model_request_identity": self.model_request_identity,
+            "prompt_hash": str(prompt_hash),
+            "question_hash": str(question_hash),
+            "parser_version": self.parser_version,
+            "temperature": self.temperature,
+            "evaluation_replica_seed": self.decoding_seed,
+            **self.cache_metadata,
+        }
+        encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
     async def evaluate(
         self,
@@ -81,8 +120,28 @@ class PromptQuestionEvaluator:
             return await future
         try:
             self.cache_misses += 1
-            answer = await solve(question, agent_id, prompt)
+            async def produce() -> PromptAnswer:
+                return await solve(question, agent_id, prompt)
+
+            if self.shared_cache is None:
+                answer = await produce()
+            else:
+                answer = await self.shared_cache.resolve(
+                    cache_key=key,
+                    metadata={
+                        **self.cache_metadata,
+                        "model_request_identity": self.model_request_identity,
+                        "parser_version": self.parser_version,
+                        "temperature": self.temperature,
+                        "evaluation_replica_seed": self.decoding_seed,
+                        "prompt_hash": str(prompt_hash),
+                        "question_hash": str(question_hash),
+                    },
+                    producer=produce,
+                )
             self.cache[key] = answer
+            if self.observation_callback is not None:
+                self.observation_callback(str(prompt_hash), str(question_hash), answer)
             future.set_result(answer)
             return answer
         except Exception as exc:

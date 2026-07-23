@@ -85,6 +85,12 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert system.candidate_decisions[-1]["funnel"]["accepted_candidate"] is True
     assert system.tcs_context_history[-1]["context_type"] == "ResponsibilityProposalContext"
     assert len(system.tcs_context_history[-1]["proposal_context_hash"]) == 64
+    assert system.tcs_context_history[-1]["forbidden_field_violations"] == []
+    assert system.tcs_context_history[-1]["responsibility_specific_field_count"] > 0
+    assert [row["role"] for row in system.tcs_rounds] == ["teacher", "critic", "student"]
+    assert all(row["schema_valid"] for row in system.tcs_rounds)
+    assert system.tcs_rounds[1]["effective_approved"] is True
+    assert system.tcs_rounds[2]["raw_count"] == 1
 
 
 def test_b3_also_refreshes_responsibilities_online(tmp_path):
@@ -103,6 +109,11 @@ def test_b3_also_refreshes_responsibilities_online(tmp_path):
     assert asyncio.run(run()) is True
     assert len(system.responsibility_assignments) == 2
     assert system.tcs_context_history[-1]["context_type"] == "PeerStateProposalContext"
+    assert system.tcs_context_history[-1]["forbidden_field_violations"] == []
+    assert not any(
+        "assigned" in path or "owner_age" in path or "responsibility" in path
+        for path in system.tcs_context_history[-1]["serialized_recursive_field_paths"]
+    )
 
 
 def test_student_wrong_candidate_count_retries_before_stage_a(tmp_path):
@@ -203,6 +214,9 @@ def test_independent_accuracy_tcs_excludes_peer_state_fields(tmp_path):
     assert "peer_wrong_histogram" not in joined
     assert "oracle_soft_utility_gain" not in joined
     assert '"team_G"' not in joined
+    audit = system.tcs_context_history[-1]
+    assert audit["context_class"] == "AccuracyProposalContext"
+    assert audit["forbidden_field_violations"] == []
 
 
 def test_independent_accuracy_previous_summary_never_contains_vote_delta(tmp_path):
@@ -343,3 +357,9 @@ def test_unapproved_teacher_never_reaches_student(tmp_path):
 
     assert asyncio.run(run()) == []
     assert sum("Audit the Teacher" in call for call in calls) == 3
+    critic_rounds = [row for row in system.tcs_rounds if row["role"] == "critic"]
+    assert len(critic_rounds) == 3
+    assert all(row["json_extracted"] and row["schema_valid"] for row in critic_rounds)
+    assert all(row["approved_raw"] is False for row in critic_rounds)
+    assert all(row["effective_approved"] is False for row in critic_rounds)
+    assert all(row["rejection_reasons"] == ["generic"] for row in critic_rounds)

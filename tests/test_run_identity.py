@@ -30,6 +30,8 @@ def identity(fingerprint):
         {"agent_model": "different-model"},
         {"vote_tie_break": "first"},
         {"local_accuracy_loss_epsilon": 0.1},
+        {"solver_output_contract_version": "different-contract"},
+        {"shared_solver_cache_path": "different-cache.sqlite"},
     ],
 )
 def test_behavioral_config_changes_fingerprint_and_reject_resume(override):

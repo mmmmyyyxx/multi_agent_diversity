@@ -41,10 +41,15 @@ def test_completed_run_requires_exact_identity(tmp_path):
         "run_meta.json": {
             "method_version": "peer_state_counterfactual_v1",
             "legacy_compatibility_enabled": False,
+            "solver_output_contract_version": "task_output_contract_v1",
+            "shared_solver_cache_path": "shared.sqlite",
             "run_identity": identity().to_dict(),
         },
+        "cost_summary.json": {"total_llm_calls": 1},
     }.items():
         (run / filename).write_text(json.dumps(payload), encoding="utf-8")
+    (run / "tcs_rounds.jsonl").write_text("", encoding="utf-8")
+    (run / "solver_invalid_outputs.jsonl").write_text("", encoding="utf-8")
     assert _completed_run(run, identity()) is True
     metadata = json.loads((run / "run_meta.json").read_text(encoding="utf-8"))
     metadata["run_identity"]["config_fingerprint"] = "different"

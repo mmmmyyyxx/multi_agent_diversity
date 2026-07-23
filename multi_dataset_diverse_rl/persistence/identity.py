@@ -72,19 +72,24 @@ def config_fingerprint(cfg: Config) -> str:
 
 
 def solver_request_identity(cfg: Config) -> str:
+    payload = solver_request_components(cfg)
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def solver_request_components(cfg: Config) -> dict[str, Any]:
     endpoint = (
         os.getenv(cfg.models.solver_base_url_env, "")
         if cfg.models.solver_base_url_env
         else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", ""))
     )
-    payload = {
-        "model": cfg.models.agent_model,
-        "endpoint": endpoint,
+    return {
+        "solver_model": cfg.models.agent_model,
+        "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
         "max_tokens": cfg.models.max_tokens,
-        "request_template": "decision_procedure_final_answer_v1",
+        "output_contract_version": cfg.peer_state.solver_output_contract_version,
+        "request_template": "decision_procedure_with_task_contract_v1",
     }
-    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
 def build_run_identity(

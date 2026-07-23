@@ -15,6 +15,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.cli import build_dataset
+from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
 from multi_dataset_diverse_rl.utils import load_jsonl
@@ -100,7 +101,15 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def _completed_run(run_dir: Path, expected_identity) -> bool:
-    required = ("final_summary.json", "history.json", "best_prompts.json", "run_meta.json")
+    required = (
+        "final_summary.json",
+        "history.json",
+        "best_prompts.json",
+        "run_meta.json",
+        "tcs_rounds.jsonl",
+        "solver_invalid_outputs.jsonl",
+        "cost_summary.json",
+    )
     if not all((run_dir / filename).exists() for filename in required):
         return False
     try:
@@ -112,6 +121,10 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")
+    if metadata.get("solver_output_contract_version") != SOLVER_OUTPUT_CONTRACT_VERSION:
+        raise ValueError(f"Completed run has an incompatible solver output contract: {run_dir}")
+    if not metadata.get("shared_solver_cache_path"):
+        raise ValueError(f"Completed run has no persistent shared solver cache: {run_dir}")
     validate_run_identity(expected_identity, metadata["run_identity"])
     if "plurality_vote_acc" not in summary:
         raise ValueError(f"Completed run is missing plurality_vote_acc: {run_dir}")
@@ -148,6 +161,7 @@ def main() -> None:
                     "test_path": str((workspace / task.test_path).resolve()),
                     "manifest_sha256": manifest_sha256,
                     "out_dir": str(run_dir),
+                    "shared_solver_cache_path": str(root / "_shared_solver_cache.sqlite"),
                     "seed": seed,
                 }
                 defaults = Config().to_flat_dict()

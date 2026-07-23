@@ -4,7 +4,7 @@ import asyncio
 import hashlib
 import json
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Mapping, Sequence
 
@@ -33,6 +33,8 @@ from .evaluation.validation import (
     ValidationProbeEvaluator,
 )
 from .evaluation.prompt_question import PromptQuestionEvaluator
+from .evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION, solver_output_contract
+from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
 from .llm_client import RoleAwareLLMClient
 from .peer_state import (
@@ -43,7 +45,7 @@ from .peer_state import (
     soft_vote_utility,
 )
 from .persistence.artifacts import ArtifactWriter
-from .persistence.identity import RunIdentity, solver_request_identity
+from .persistence.identity import RunIdentity, solver_request_components, solver_request_identity
 from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_protocol
 from .responsibility import (
     OracleRepairOpportunity,
@@ -152,6 +154,33 @@ class StageAPools:
         return [*self.coverage, *self.conversion, *self.preservation, *self.representative]
 
 
+def _recursive_field_paths(value: Any, prefix: str = "") -> set[str]:
+    paths: set[str] = set()
+    if isinstance(value, Mapping):
+        for key, child in value.items():
+            path = f"{prefix}.{key}" if prefix else str(key)
+            paths.add(path)
+            paths.update(_recursive_field_paths(child, path))
+    elif isinstance(value, (list, tuple)):
+        for child in value:
+            paths.update(_recursive_field_paths(child, f"{prefix}[]"))
+    return paths
+
+
+def _response_excerpt(value: str, limit: int = 600) -> str:
+    text = str(value or "").strip()
+    if len(text) <= limit:
+        return text
+    half = max(1, (limit - 24) // 2)
+    return text[:half] + "\n...[truncated]...\n" + text[-half:]
+
+
+def _request_hash(*parts: str) -> str:
+    return hashlib.sha256(
+        json.dumps(parts, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
 class PromptEnsembleOptimizationSystem:
     def __init__(
         self,
@@ -168,6 +197,10 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("peer_state_counterfactual_v1 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
             raise ValueError("canonical peer_state_counterfactual_v1 requires tie-as-abstain")
+        if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
+            raise ValueError(
+                "solver_output_contract_version does not match the implemented task contract"
+            )
         self.cfg = cfg
         self.protocol = self._build_protocol()
         self.task_spec = get_task_spec(cfg.data.task_type)
@@ -182,6 +215,9 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_assignments: list[dict[str, Any]] = []
         self.candidate_decisions: list[dict[str, Any]] = []
         self.tcs_context_history: list[dict[str, Any]] = []
+        self.tcs_rounds: list[dict[str, Any]] = []
+        self.solver_invalid_outputs: list[dict[str, Any]] = []
+        self._audited_invalid_keys: set[tuple[str, str]] = set()
         self.cached_responsibility_owners: dict[str, int] = {}
         self.cached_responsibility_assignments: dict[int, list[OracleRepairOpportunity]] = {}
         self.previous_accuracy_summaries = {
@@ -199,11 +235,29 @@ class PromptEnsembleOptimizationSystem:
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
         self.validation_probe: ValidationProbeEvaluator | None = None
+        request_identity = solver_request_identity(cfg)
+        request_components = solver_request_components(cfg)
+        cache_path = str(cfg.persistence.shared_solver_cache_path or "").strip()
+        self.shared_solver_cache = (
+            PersistentSolverCache(
+                cache_path,
+                stale_after_seconds=max(
+                    1800.0,
+                    cfg.persistence.llm_call_timeout
+                    * max(1, cfg.persistence.max_retries + cfg.persistence.max_transient_retries),
+                ),
+            )
+            if cache_path
+            else None
+        )
         self.prompt_question_evaluator = PromptQuestionEvaluator(
-            model_request_identity=solver_request_identity(cfg),
+            model_request_identity=request_identity,
             parser_version=cfg.peer_state.parser_version,
             temperature=cfg.models.temperature,
             decoding_seed=cfg.training.seed,
+            cache_metadata=request_components,
+            shared_cache=self.shared_solver_cache,
+            observation_callback=self._record_solver_observation,
         )
         self.active_profiles: list[tuple[PromptAnswer, ...]] = []
         self.initial_profiles: list[tuple[PromptAnswer, ...]] = []
@@ -268,6 +322,30 @@ class PromptEnsembleOptimizationSystem:
     def match_answer(self, prediction: str, gold: str) -> bool:
         return self.task_spec.match_answer(prediction, gold)
 
+    def _record_solver_observation(
+        self,
+        prompt_hash: str,
+        question_hash: str,
+        answer: PromptAnswer,
+    ) -> None:
+        key = (prompt_hash, question_hash)
+        if answer.valid or key in self._audited_invalid_keys:
+            return
+        self._audited_invalid_keys.add(key)
+        self.solver_invalid_outputs.append({
+            "question_hash": question_hash,
+            "prompt_hash": prompt_hash,
+            "answer_format": self.cfg.data.answer_format,
+            "validity_status": answer.validity_status,
+            "raw_final_answer_payload": answer.raw_final_answer_payload,
+            "final_answer_line_count": answer.final_answer_line_count,
+            "response_excerpt": _response_excerpt(answer.trace),
+            "response_hash": answer.response_hash,
+            "request_identity": answer.request_identity
+            or self.prompt_question_evaluator.model_request_identity,
+            "created_at": answer.created_at,
+        })
+
     async def _chat(
         self,
         model: str,
@@ -282,26 +360,42 @@ class PromptEnsembleOptimizationSystem:
         )
 
     async def solve(self, question: str, agent_id: int, prompt: str) -> PromptAnswer:
+        request_identity = self.prompt_question_evaluator.model_request_identity
         if self._solver_override is not None:
             self.llm.check_budget()
             started = time.time()
             answer = await self._solver_override(question, agent_id, prompt)
             self.llm.record_override_solver(started=started)
-            return answer
+            return answer if answer.request_identity else replace(
+                answer,
+                request_identity=request_identity,
+            )
         async with self.solver_semaphore:
-            text = await self._chat(
+            result = await self.llm.chat_result(
                 self.cfg.models.agent_model,
-                "Follow the supplied decision procedure. End with exactly one FINAL_ANSWER line.\n\n" + prompt,
+                (
+                    "Follow the supplied decision procedure.\n\n"
+                    + solver_output_contract(self.cfg.data.answer_format)
+                    + "\n\nDecision procedure:\n"
+                    + prompt
+                ),
                 question,
                 self.cfg.models.temperature,
                 self.cfg.models.max_tokens,
                 "solver",
             )
-        return parse_solver_output(
-            text,
+        answer = parse_solver_output(
+            result.text,
             question=question,
             task_spec=self.task_spec,
             answer_format=self.cfg.data.answer_format,
+        )
+        return replace(
+            answer,
+            prompt_tokens=result.prompt_tokens,
+            completion_tokens=result.completion_tokens,
+            total_tokens=result.total_tokens,
+            request_identity=request_identity,
         )
 
     def build_probe(self, data: Sequence[Mapping[str, Any]]) -> FixedProbeEvaluator:
@@ -685,15 +779,47 @@ class PromptEnsembleOptimizationSystem:
         target_agent_id: int,
         assigned_hashes: set[str],
         funnel: CandidateFunnel,
+        update_index: int = -1,
     ) -> list[CandidateRuntime]:
         parent_prompt = self.agents[target_agent_id].current_prompt
         context, diagnostics = self._proposal_context(target_agent_id, parent_prompt, assigned_hashes)
         context_payload = json.dumps(asdict(context), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        context_object = asdict(context)
+        field_paths = sorted(_recursive_field_paths(context_object))
+        if isinstance(context, AccuracyProposalContext):
+            forbidden_tokens = (
+                "team_g", "team_h", "team_m", "peer_g", "peer_h", "peer_m",
+                "wrong_histogram", "responsibility", "owner", "assigned", "vote_delta",
+            )
+        elif isinstance(context, PeerStateProposalContext):
+            forbidden_tokens = (
+                "assigned", "owner", "owner_age", "responsibility", "responsibility_reason",
+            )
+        else:
+            forbidden_tokens = ()
+        lowered_paths = tuple(path.lower() for path in field_paths)
+        forbidden_check = {
+            token: any(token in path for path in lowered_paths)
+            for token in forbidden_tokens
+        }
+        responsibility_tokens = ("assigned", "owner_age", "responsibility")
         self.tcs_context_history.append({
+            "update_index": update_index,
             "target_agent_id": target_agent_id,
             "context_type": type(context).__name__,
+            "context_class": type(context).__name__,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
             "proposal_context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+            "serialized_top_level_fields": sorted(context_object),
+            "serialized_recursive_field_paths": field_paths,
+            "forbidden_field_check": forbidden_check,
+            "forbidden_field_violations": sorted(
+                token for token, present in forbidden_check.items() if present
+            ),
+            "responsibility_specific_field_count": sum(
+                any(token in path for token in responsibility_tokens)
+                for path in lowered_paths
+            ),
             **asdict(diagnostics),
         })
         funnel.parents_considered = 1
@@ -708,6 +834,7 @@ class PromptEnsembleOptimizationSystem:
                 if round_index == 0
                 else f"Revise the proposal using this critic feedback: {critic_feedback}"
             )
+            teacher_request_hash = _request_hash(teacher_request, user_request)
             teacher_raw = await self._chat(
                 self.cfg.models.optimizer_model,
                 teacher_request,
@@ -716,25 +843,80 @@ class PromptEnsembleOptimizationSystem:
                 self.cfg.tcs.teacher_max_tokens,
                 "optimizer",
             )
+            parsed_teacher = extract_json_obj(teacher_raw)
+            teacher_round = {
+                "update_index": update_index,
+                "target_agent_id": target_agent_id,
+                "round_index": round_index,
+                "role": "teacher",
+                "context_type": type(context).__name__,
+                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                "request_hash": teacher_request_hash,
+                "response_hash": hashlib.sha256(teacher_raw.encode("utf-8")).hexdigest(),
+                "json_extracted": parsed_teacher is not None,
+                "schema_valid": False,
+                "parse_error": "",
+                "response_excerpt": _response_excerpt(teacher_raw),
+                "revision_round": round_index,
+            }
             try:
-                parsed_teacher = extract_json_obj(teacher_raw)
                 if parsed_teacher is None:
                     raise ValueError("teacher response is not JSON")
                 teacher_proposal = parse_teacher_proposal(parsed_teacher)
             except (KeyError, TypeError, ValueError) as exc:
+                teacher_round["parse_error"] = str(exc)
+                self.tcs_rounds.append(teacher_round)
                 critic_feedback = f"Teacher schema failure: {exc}"
                 continue
+            teacher_round.update({
+                "schema_valid": True,
+                "target_failure_mechanism": teacher_proposal.target_failure_mechanism,
+                "repair_procedure": teacher_proposal.repair_procedure,
+                "preservation_rule": teacher_proposal.preservation_rule,
+                "expected_effect": teacher_proposal.expected_effect,
+            })
+            self.tcs_rounds.append(teacher_round)
             funnel.critic_calls += 1
+            critic_request = build_critic_request(context, teacher_proposal)
+            critic_request_hash = _request_hash(critic_request, "Audit the proposal.")
             critic_raw = await self._chat(
                 self.cfg.models.evaluator_model,
-                build_critic_request(context, teacher_proposal),
+                critic_request,
                 "Audit the proposal.",
                 self.cfg.tcs.critic_temperature,
                 self.cfg.tcs.critic_max_tokens,
                 "evaluator",
             )
+            parsed_critic = extract_json_obj(critic_raw)
+            critic_round = {
+                "update_index": update_index,
+                "target_agent_id": target_agent_id,
+                "round_index": round_index,
+                "role": "critic",
+                "context_type": type(context).__name__,
+                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                "request_hash": critic_request_hash,
+                "response_hash": hashlib.sha256(critic_raw.encode("utf-8")).hexdigest(),
+                "json_extracted": parsed_critic is not None,
+                "schema_valid": False,
+                "approved_raw": (
+                    parsed_critic.get("approved")
+                    if isinstance(parsed_critic, Mapping)
+                    and isinstance(parsed_critic.get("approved"), bool)
+                    else None
+                ),
+                "score": (
+                    parsed_critic.get("score")
+                    if isinstance(parsed_critic, Mapping)
+                    and isinstance(parsed_critic.get("score"), (int, float))
+                    else None
+                ),
+                "effective_approved": False,
+                "rejection_reasons": [],
+                "parse_error": "",
+                "response_excerpt": _response_excerpt(critic_raw),
+            }
             try:
-                parsed_critic = extract_json_obj(critic_raw)
                 if parsed_critic is None:
                     raise ValueError("critic response is not JSON")
                 critic_decision = parse_critic_decision(
@@ -742,8 +924,18 @@ class PromptEnsembleOptimizationSystem:
                     self.cfg.tcs.critic_approval_threshold,
                 )
             except (KeyError, TypeError, ValueError) as exc:
+                critic_round["parse_error"] = str(exc)
+                self.tcs_rounds.append(critic_round)
                 critic_feedback = f"Critic schema failure: {exc}"
                 continue
+            critic_round.update({
+                "schema_valid": True,
+                "effective_approved": critic_decision.approved,
+                "score": critic_decision.score,
+                "rejection_reasons": list(critic_decision.rejection_reasons),
+                "feedback": critic_decision.feedback,
+            })
+            self.tcs_rounds.append(critic_round)
             if critic_decision.approved:
                 funnel.critic_approved += 1
                 break
@@ -753,29 +945,57 @@ class PromptEnsembleOptimizationSystem:
 
         parsed_candidates: tuple[StudentCandidate, ...] = ()
         funnel.requested_candidate_count = self.cfg.tcs.num_candidates_per_parent
-        for _ in range(self.cfg.tcs.student_json_max_retries + 1):
+        for student_attempt in range(self.cfg.tcs.student_json_max_retries + 1):
             funnel.student_calls += 1
+            student_request = build_student_request(
+                context, teacher_proposal, self.cfg.tcs.num_candidates_per_parent,
+            )
             student_raw = await self._chat(
                 self.cfg.models.optimizer_model,
                 "Return strict JSON only.",
-                build_student_request(context, teacher_proposal, self.cfg.tcs.num_candidates_per_parent),
+                student_request,
                 self.cfg.tcs.student_temperature,
                 self.cfg.tcs.student_max_tokens,
                 "optimizer",
             )
             parsed = extract_json_obj(student_raw)
+            candidates_value = parsed.get("candidates") if isinstance(parsed, Mapping) else None
+            raw_count = len(candidates_value) if isinstance(candidates_value, list) else 0
+            student_round = {
+                "update_index": update_index,
+                "target_agent_id": target_agent_id,
+                "round_index": student_attempt,
+                "role": "student",
+                "context_type": type(context).__name__,
+                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                "request_hash": _request_hash("Return strict JSON only.", student_request),
+                "response_hash": hashlib.sha256(student_raw.encode("utf-8")).hexdigest(),
+                "json_extracted": parsed is not None,
+                "schema_valid": False,
+                "requested_count": self.cfg.tcs.num_candidates_per_parent,
+                "raw_count": raw_count,
+                "schema_valid_count": 0,
+                "parse_error": "",
+                "response_excerpt": _response_excerpt(student_raw),
+            }
             if parsed is None:
                 funnel.raw_candidate_count = 0
+                student_round["parse_error"] = "student response is not JSON"
+                self.tcs_rounds.append(student_round)
                 continue
-            candidates_value = parsed.get("candidates")
-            funnel.raw_candidate_count = len(candidates_value) if isinstance(candidates_value, list) else 0
+            funnel.raw_candidate_count = raw_count
             try:
                 parsed_candidates = parse_student_candidates(
                     parsed,
                     expected_count=self.cfg.tcs.num_candidates_per_parent,
                 )
+                student_round["schema_valid"] = True
+                student_round["schema_valid_count"] = len(parsed_candidates)
+                self.tcs_rounds.append(student_round)
                 break
-            except (KeyError, TypeError, ValueError):
+            except (KeyError, TypeError, ValueError) as exc:
+                student_round["parse_error"] = str(exc)
+                self.tcs_rounds.append(student_round)
                 continue
         funnel.schema_valid_count = len(parsed_candidates)
         unique: dict[str, CandidateRuntime] = {}
@@ -1025,7 +1245,9 @@ class PromptEnsembleOptimizationSystem:
         self.agent_selection_counts[target] += 1
         assigned_hashes = {question_hash for question_hash, owner in owners.items() if owner == target}
         funnel = CandidateFunnel()
-        candidates = await self.propose_candidates(target, assigned_hashes, funnel)
+        candidates = await self.propose_candidates(
+            target, assigned_hashes, funnel, update_index=update_index,
+        )
         accepted, incumbent, evaluated = await self.evaluate_candidates(
             target, candidates, assigned_hashes, funnel,
         )
@@ -1247,9 +1469,30 @@ class PromptEnsembleOptimizationSystem:
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_generator": self.protocol.tcs_context_policy,
             "solver_sampling_semantics": "shared_prompt_question_output",
+            "solver_output_contract_version": self.cfg.peer_state.solver_output_contract_version,
             "prompt_question_evaluator_identity": self.prompt_question_evaluator.identity(),
             "prompt_question_cache_hits": self.prompt_question_evaluator.cache_hits,
             "prompt_question_cache_misses": self.prompt_question_evaluator.cache_misses,
+            "shared_solver_cache_path": str(self.cfg.persistence.shared_solver_cache_path or ""),
+            "shared_solver_cache_hits": (
+                self.shared_solver_cache.hits if self.shared_solver_cache is not None else 0
+            ),
+            "shared_solver_cache_misses": (
+                self.shared_solver_cache.misses if self.shared_solver_cache is not None else 0
+            ),
+            "shared_solver_cache_waits": (
+                self.shared_solver_cache.waits if self.shared_solver_cache is not None else 0
+            ),
+            "shared_solver_cache_ready_entries": (
+                self.shared_solver_cache.ready_entry_count()
+                if self.shared_solver_cache is not None
+                else len(self.prompt_question_evaluator.cache)
+            ),
+            "shared_solver_cache_content_hash": (
+                self.shared_solver_cache.ready_content_hash()
+                if self.shared_solver_cache is not None
+                else ""
+            ),
             "true_plurality_vote_used": True,
             "generic_diversity_reward_used": False,
             "trace_diversity_used_for_selection": False,
@@ -1271,5 +1514,7 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("responsibility_assignments.jsonl", self.responsibility_assignments)
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
         self.artifacts.write_jsonl("tcs_context_history.jsonl", self.tcs_context_history)
+        self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
+        self.artifacts.write_jsonl("solver_invalid_outputs.jsonl", self.solver_invalid_outputs)
         self.artifacts.write_jsonl("llm_calls.jsonl", self.llm.calls)
         self.artifacts.write_json("cost_summary.json", self.cost_summary())

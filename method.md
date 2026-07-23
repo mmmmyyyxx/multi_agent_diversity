@@ -70,9 +70,15 @@ ResponsibilityProposalContext (B4)
 
 `AccuracyProposalContext` contains only individual errors, individual correct protection cases, and an accuracy/invalid-only update summary. `PeerStateProposalContext` contains `coverage_cases`, `conversion_cases`, peer/team state, preservation evidence, and a vote/competence summary, but has no assigned, owner, age, or responsibility fields. B3 may use responsibility internally to select evidence, but the generator cannot observe that fact. Only `ResponsibilityProposalContext` contains assigned residual cases, owner age, responsibility reason, responsibility summary, and assigned-repair history.
 
-Teacher, Critic, and Student receive the same typed object. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. Each TCS log records the concrete context type and a hash of the shared serialized context.
+Teacher, Critic, and Student receive the same typed object. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. Each context log records the concrete class, serialized top-level fields, recursive field paths, forbidden-field checks, and a hash of the shared serialized context. This provides runtime evidence that B1 cannot observe peer or responsibility state, B3 cannot observe ownership fields, and B4 can.
 
 Teacher, Critic, and Student outputs are strict typed JSON. Critic approval requires a real JSON boolean and `score >= 0.75`. Student output must contain exactly `num_candidates_per_parent` raw candidates or the call enters JSON retry. Parent-identical and duplicate prompts may reduce the post-schema pool. The funnel records requested, raw, schema-valid, non-parent, and deduplicated counts.
+
+`tcs_rounds.jsonl` records every Teacher, Critic, and Student attempt separately:
+request/response hashes, bounded response excerpts, JSON extraction, schema
+validity, parse errors, raw and effective approval, score, rejection reasons,
+and Student count diagnostics. Transport failures are therefore distinct from
+legitimate Critic rejection. This audit does not change the approval gate.
 
 Context limits default to six cases per category and 24,000 characters. Selection is deterministic and logs available, selected, truncated, character, and estimated-token counts.
 
@@ -85,9 +91,28 @@ incumbent team = active five-prompt team
 candidate team = incumbent team with target prompt replaced
 ```
 
-A run-scoped `PromptQuestionEvaluator` is shared by optimization, validation, and final test. Its key contains model-request identity, prompt-content hash, question-content hash, parser version, temperature, and decoding seed, but not agent id. Therefore identical prompts share one deterministic output on a question in every phase; diversity must come from prompt differences rather than repeated sampling.
+A `PromptQuestionEvaluator` is shared by optimization, validation, and final
+test. It uses an in-memory singleflight layer backed by a concurrent SQLite
+cache at `<out_root>/_shared_solver_cache.sqlite`. The persistent key contains
+solver model and endpoint identity, output-contract version, parser version,
+temperature, maximum tokens, evaluation-replica seed, prompt-content hash, and
+question-content hash. It contains neither agent id nor setting name. Thus
+matched settings with the same seed use exactly the same observation for an
+identical prompt-question pair; different seeds remain independent replicas.
+
+SQLite rows use atomic `pending`/`ready` claims, WAL mode, dead-owner PID
+detection, and stale-claim recovery. The cached value contains the raw response,
+parsed answer, validity status, token usage, response/request identity, and
+creation time.
 
 Prompt canonicalization converts line endings and removes trailing line whitespace and outer blank lines. It preserves internal newlines, indentation, lists, and paragraphs. Prompt hashes and cache keys use this structure-preserving text.
+
+The non-optimizable system layer appends a task-specific solver output contract.
+For `option_letter`, the only permitted final payload is one uppercase option
+letter with no punctuation or explanation. The contract version
+`task_output_contract_v1` participates in solver request identity, cache keys,
+RunIdentity, checkpoint compatibility, and run metadata. The optimized prompt
+cannot remove or rewrite this contract.
 
 Stage A evaluates every new candidate on a deterministic mixture of representative, coverage, conversion, and preservation examples. Specialized pools are selected first without overlap; representative sampling fills the remaining fixed total budget. Stage B completes only the shortlist on the full fixed probe. Funnel diagnostics record requested, available and selected pool sizes, removed overlap, and actual unique Stage A size.
 
@@ -140,9 +165,9 @@ Update diagnostics include the complete candidate funnel, guard rejection counts
 
 ## 11. Validation
 
-Validation uses the same run-scoped prompt-question evaluator as optimization and test. The same prompt-question pair is called once even when several agents share a prompt or the pair appears in another evaluation phase.
+Validation uses the same prompt-question evaluator as optimization and test, backed by the matched experiment's persistent cache. The same prompt-question pair is called once even when several agents or settings share a prompt or the pair appears in another evaluation phase.
 
-Solver output is valid only when it has exactly one line-level `FINAL_ANSWER:` marker and the parsed answer belongs to the task domain. Metrics separately count `missing_final_answer`, `multiple_final_answers`, `unparseable_final_answer`, `out_of_domain_answer`, and `valid`.
+Solver output is valid only when it has exactly one line-level `FINAL_ANSWER:` marker and the parsed answer belongs to the task domain. Metrics separately count `missing_final_answer`, `multiple_final_answers`, `unparseable_final_answer`, `out_of_domain_answer`, and `valid`. Every unique invalid prompt-question observation is written to `solver_invalid_outputs.jsonl` with raw final payload, marker count, bounded response excerpt, response hash, and request identity. The strict parser is not relaxed to hide instruction-following failures.
 
 Validation first enforces per-agent and mean competence feasibility, then ranks states by plurality accuracy, net vote gain versus initialization, fewer vote losses, soft utility, lower C0, mean and minimum individual accuracy, invalid rate, and earlier epoch. The test split is not used for selection and is evaluated once after validation restores `best_prompts`.
 
@@ -187,7 +212,16 @@ final_summary.json
 peer_state_history.jsonl
 responsibility_assignments.jsonl
 tcs_context_history.jsonl
+tcs_rounds.jsonl
 candidate_decisions.jsonl
+solver_invalid_outputs.jsonl
 llm_calls.jsonl
 cost_summary.json
+<out_root>/_shared_solver_cache.sqlite
 ```
+
+`scripts/real_api_role_transport_smoke.py` independently tests solver, Teacher,
+Critic, and Student schemas without forcing Student transport through the method
+approval gate. `scripts/real_api_resume_smoke.py` performs a controlled
+checkpoint interruption, resumes two copies of the same state through the
+shared solver cache, and compares substantive final artifacts and cache hashes.

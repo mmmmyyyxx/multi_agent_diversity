@@ -90,3 +90,75 @@ def test_multiline_prompt_structure_is_preserved_in_hash_and_rollout(tmp_path):
         solve=solve,
     ))
     assert seen == [canonical]
+
+
+def test_invalid_observation_is_audited_once_per_prompt_question(tmp_path):
+    calls = 0
+
+    async def solve(_question, _agent_id, _prompt):
+        nonlocal calls
+        calls += 1
+        return PromptAnswer(
+            "",
+            "Reasoning\nFINAL_ANSWER: Option A.",
+            False,
+            "out_of_domain_answer",
+            raw_final_answer_payload="Option A.",
+            final_answer_line_count=1,
+        )
+
+    system = PromptEnsembleOptimizationSystem(
+        Config.from_flat(out_dir=str(tmp_path), answer_format="option_letter"),
+        solver=solve,
+    )
+    asyncio.run(system.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
+    assert calls == 1
+    assert len(system.solver_invalid_outputs) == 1
+    audit = system.solver_invalid_outputs[0]
+    assert audit["raw_final_answer_payload"] == "Option A."
+    assert audit["final_answer_line_count"] == 1
+    assert audit["validity_status"] == "out_of_domain_answer"
+
+
+def test_matched_settings_share_persistent_solver_observation(tmp_path):
+    cache = tmp_path / "_shared_solver_cache.sqlite"
+    calls = []
+
+    async def baseline_solver(_question, _agent_id, _prompt):
+        calls.append("baseline")
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    async def full_solver(_question, _agent_id, _prompt):
+        calls.append("full")
+        return PromptAnswer("B", "FINAL_ANSWER: B", True)
+
+    common = {
+        "answer_format": "option_letter",
+        "shared_solver_cache_path": str(cache),
+        "seed": 42,
+    }
+    baseline = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            **common,
+            out_dir=str(tmp_path / "baseline"),
+            experiment_setting="shared_baseline",
+        ),
+        solver=baseline_solver,
+    )
+    full = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            **common,
+            out_dir=str(tmp_path / "full"),
+            experiment_setting="shared_peer_state_full",
+        ),
+        solver=full_solver,
+    )
+    data = [{"question": "same question", "answer": "A"}]
+
+    baseline_metrics = asyncio.run(baseline.evaluate_dataset(data))
+    full_metrics = asyncio.run(full.evaluate_dataset(data))
+
+    assert baseline_metrics.to_dict() == full_metrics.to_dict()
+    assert calls == ["baseline"]
+    assert baseline.shared_solver_cache.misses == 1
+    assert full.shared_solver_cache.hits == 1

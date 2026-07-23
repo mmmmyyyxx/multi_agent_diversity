@@ -15,6 +15,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.cli import build_dataset
+from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import PersistentSolverCache
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
@@ -144,6 +145,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     "test_path": str((workspace / task.test_path).resolve()),
                     "manifest_sha256": manifest_sha,
                     "out_dir": str(run_dir),
+                    "shared_solver_cache_path": str(root / "_shared_solver_cache.sqlite"),
                     "seed": seed,
                 }
                 for name in RUNNER_FIELDS:
@@ -185,6 +187,11 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("all TCS context limits must be positive")
                     if cfg.persistence.max_total_llm_calls <= 0 or cfg.persistence.max_total_tokens <= 0:
                         raise ValueError("run-specific preflight requires positive LLM call and token budgets")
+                    cache_path = Path(cfg.persistence.shared_solver_cache_path)
+                    if not cache_path.is_absolute():
+                        raise ValueError("shared_solver_cache_path must resolve to an absolute path")
+                    cache_path.parent.mkdir(parents=True, exist_ok=True)
+                    PersistentSolverCache(cache_path).ready_entry_count()
                     split_rows = {
                         "train": build_dataset(load_jsonl(cfg.data.train_path, cfg.data.train_size), cfg.data.dataset_format),
                         "val": build_dataset(load_jsonl(cfg.data.val_path, cfg.data.val_size), cfg.data.dataset_format),
@@ -213,6 +220,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "seed": seed,
                         "run_dir": str(run_dir),
                         "run_identity": identity.to_dict(),
+                        "shared_solver_cache_path": str(cache_path),
                         "split_integrity": integrity,
                         "role_environment": role_environment,
                     })

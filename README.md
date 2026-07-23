@@ -11,7 +11,7 @@ Team rollout
 -> competence-constrained vote-first update
 ```
 
-Vote accuracy is the objective, individual competence is constrained, and soft vote utility is a dense search signal. The canonical method uses shared-identical initialization, tie-as-abstain, and one run-scoped prompt-question cache shared by optimization, validation, and test.
+Vote accuracy is the objective, individual competence is constrained, and soft vote utility is a dense search signal. The canonical method uses shared-identical initialization, tie-as-abstain, and one persistent prompt-question cache shared by optimization, validation, test, and matched settings with the same seed.
 
 ## Experiment Settings
 
@@ -39,6 +39,10 @@ git diff --check
 ```
 
 The deterministic smoke uses local fake models and makes no external API calls.
+
+The task runner automatically creates `<out_root>/_shared_solver_cache.sqlite`.
+The cache key includes solver request identity, output contract, parser, decoding
+replica seed, prompt hash, and question hash, but never the setting name.
 
 Before a real run, pass the intended experiment arguments to preflight. It validates splits, API roles, budgets, output identity, and RunIdentity without making model calls:
 
@@ -85,6 +89,26 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
   --resume_from_checkpoint 0
 ```
 
+Transport and resume are tested separately from method quality:
+
+```powershell
+& $PY scripts/real_api_role_transport_smoke.py `
+  --out_dir runs_role_transport_smoke `
+  --answer_format option_letter `
+  --num_candidates_per_parent 1 `
+  --max_total_llm_calls 20 `
+  --max_total_tokens 30000
+
+& $PY scripts/real_api_resume_smoke.py --help
+```
+
+The transport smoke calls solver, Teacher, Critic, and Student independently;
+Student transport does not depend on Critic approval. The resume smoke waits for
+an exact atomic checkpoint, terminates the child process, resumes two copies of
+the same checkpoint through the shared solver cache, and compares the resulting
+prompts, decisions, responsibility records, validation history, final metrics,
+RunIdentity, and cache contents.
+
 ## Outputs
 
-Each run writes metadata and exact identity, training history, selected prompts, final metrics, typed peer-state and responsibility diagnostics, concrete TCS context types, exact candidate and Stage A funnels, solver-validity reasons, per-attempt LLM logs, and cost totals. Root-level `accuracy_results.jsonl`, `accuracy_results.csv`, and `experiment_runs.jsonl` provide the matched experiment matrix.
+Each run writes metadata and exact identity, training history, selected prompts, final metrics, typed peer-state and responsibility diagnostics, recursive TCS context-field audits, per-round TCS parse/approval logs, exact candidate and Stage A funnels, invalid solver-output excerpts, per-attempt LLM logs, and cost totals. Root-level `accuracy_results.jsonl`, `accuracy_results.csv`, and `experiment_runs.jsonl` provide the matched experiment matrix.

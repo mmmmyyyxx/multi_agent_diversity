@@ -48,6 +48,8 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     run = report["runs"][0]
     assert run["split_integrity"]["opt_val_question_overlap"] == 0
     assert run["run_identity"]["experiment_setting"] == "shared_peer_state_full"
+    assert Path(run["shared_solver_cache_path"]).name == "_shared_solver_cache.sqlite"
+    assert Path(run["shared_solver_cache_path"]).is_file()
 
     run_dir = Path(run["run_dir"])
     run_dir.mkdir(parents=True)
