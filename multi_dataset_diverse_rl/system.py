@@ -1512,6 +1512,14 @@ class PromptEnsembleOptimizationSystem:
             validity_status_counts=validity_status_counts,
         )
 
+    def active_probe_metrics(self) -> DatasetMetrics:
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        return self._dataset_metrics_from_profiles(
+            self.fixed_probe.examples,
+            self.active_profiles,
+        )
+
     async def evaluate_dataset(
         self,
         data: Sequence[Mapping[str, Any]],

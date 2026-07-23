@@ -2,7 +2,6 @@
 
 import argparse
 import asyncio
-import json
 import math
 import random
 from pathlib import Path
@@ -58,6 +57,31 @@ def _write_checkpoint(system, cfg: Config, epoch_index: int, update_index: int, 
     )
 
 
+def _progress_line(
+    *,
+    epoch: int | str,
+    step: int | str,
+    vote_acc: float,
+    individual_acc: float,
+) -> str:
+    return (
+        f"epoch={epoch} step={step} "
+        f"vote_acc={vote_acc:.4f} individual_acc={individual_acc:.4f}"
+    )
+
+
+def _print_progress(*, epoch: int | str, step: int | str, metrics: DatasetMetrics) -> None:
+    print(
+        _progress_line(
+            epoch=epoch,
+            step=step,
+            vote_acc=metrics.plurality_vote_acc,
+            individual_acc=metrics.mean_individual_acc,
+        ),
+        flush=True,
+    )
+
+
 async def run(cfg: Config) -> dict[str, Any]:
     random.seed(cfg.training.seed)
     train = _load(cfg.data.train_path, cfg.data.train_size, cfg.data.dataset_format)
@@ -109,6 +133,12 @@ async def run(cfg: Config) -> dict[str, Any]:
         first_update = start_update if epoch == start_epoch else 0
         for update in range(first_update, updates_per_epoch):
             await system.update_once(epoch * updates_per_epoch + update)
+            train_step = min((update + 1) * cfg.training.update_every, len(train))
+            _print_progress(
+                epoch=f"{epoch + 1}/{cfg.training.epochs}",
+                step=f"{train_step}/{len(train)}",
+                metrics=system.active_probe_metrics(),
+            )
             _write_checkpoint(system, cfg, epoch, update + 1, best_state)
         validation_metrics = await system.evaluate_dataset(validation, validation=True)
         key = system.validation_key(validation_metrics, initial_validation, epoch + 1)
@@ -179,7 +209,12 @@ def build_parser() -> argparse.ArgumentParser:
 async def main_async() -> None:
     cfg = config_from_args(build_parser().parse_args())
     result = await run(cfg)
-    print(json.dumps({key: value for key, value in result.items() if key != "rows"}, ensure_ascii=False, indent=2))
+    print(_progress_line(
+        epoch="final",
+        step="final",
+        vote_acc=float(result["plurality_vote_acc"]),
+        individual_acc=float(result["mean_individual_acc"]),
+    ), flush=True)
 
 
 def main() -> None:
