@@ -1,0 +1,87 @@
+{
+  "plurality_vote_acc": 0.5,
+  "vote_acc": 0.5,
+  "mean_individual_acc": 0.5,
+  "min_individual_acc": 0.5,
+  "per_agent_acc": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+  ],
+  "mean_soft_vote_utility": 0.49665357453785763,
+  "c0_count": 4,
+  "mean_invalid_rate": 0.0,
+  "tie_count": 0,
+  "tie_rate": 0.0,
+  "rows": [
+    {
+      "question_hash": "eb9e483074743b5eba5159305357c932232dda8fa730d06d16c5e6bd13dd0d5f",
+      "vote_correct": true,
+      "top_tie": false,
+      "gold_vote_count": 5,
+      "largest_wrong_vote_count": 0,
+      "plurality_margin": 5
+    },
+    {
+      "question_hash": "e64d2cc30c0118767463a0d9c850bcf11315282ac5a38eec55096302939965fe",
+      "vote_correct": true,
+      "top_tie": false,
+      "gold_vote_count": 5,
+      "largest_wrong_vote_count": 0,
+      "plurality_margin": 5
+    },
+    {
+      "question_hash": "f0f81fe3132478e56402cf15a695d5ad9fe3a5779973929782b40b10779abaa5",
+      "vote_correct": false,
+      "top_tie": false,
+      "gold_vote_count": 0,
+      "largest_wrong_vote_count": 5,
+      "plurality_margin": -5
+    },
+    {
+      "question_hash": "c97ed57162391268fffd615ee26e1c5e33ab86a6360de600ce9cd9844e1779ee",
+      "vote_correct": false,
+      "top_tie": false,
+      "gold_vote_count": 0,
+      "largest_wrong_vote_count": 5,
+      "plurality_margin": -5
+    },
+    {
+      "question_hash": "dfdc6885d50b94ea81d0339729c4b584d6d96340be0202e4a98168a25844f25e",
+      "vote_correct": true,
+      "top_tie": false,
+      "gold_vote_count": 5,
+      "largest_wrong_vote_count": 0,
+      "plurality_margin": 5
+    },
+    {
+      "question_hash": "12811a817efe1bab26f815e5b6288378ea92950fb261addd06ad10f6b6236804",
+      "vote_correct": false,
+      "top_tie": false,
+      "gold_vote_count": 0,
+      "largest_wrong_vote_count": 5,
+      "plurality_margin": -5
+    },
+    {
+      "question_hash": "d3054fe2a04eeeae589e533107c5d436d55d7e1bac9cae9217f3a1f3bfc5f453",
+      "vote_correct": false,
+      "top_tie": false,
+      "gold_vote_count": 0,
+      "largest_wrong_vote_count": 5,
+      "plurality_margin": -5
+    },
+    {
+      "question_hash": "697a61446351511b9146cdeaded79406018d99f8ba339664afcaf4f837cfbc15",
+      "vote_correct": true,
+      "top_tie": false,
+      "gold_vote_count": 5,
+      "largest_wrong_vote_count": 0,
+      "plurality_margin": 5
+    }
+  ],
+  "validity_status_counts": {
+    "valid": 40
+  }
+}

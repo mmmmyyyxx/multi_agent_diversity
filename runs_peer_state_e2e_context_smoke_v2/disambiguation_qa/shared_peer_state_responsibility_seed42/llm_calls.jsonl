@@ -1,0 +1,6 @@
+{"role": "optimizer", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1548, "completion_tokens": 319, "total_tokens": 1867, "latency_seconds": 4.54955530166626}
+{"role": "evaluator", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1834, "completion_tokens": 447, "total_tokens": 2281, "latency_seconds": 4.933581590652466}
+{"role": "optimizer", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1573, "completion_tokens": 304, "total_tokens": 1877, "latency_seconds": 3.0601489543914795}
+{"role": "evaluator", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1815, "completion_tokens": 604, "total_tokens": 2419, "latency_seconds": 5.866690397262573}
+{"role": "optimizer", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1593, "completion_tokens": 327, "total_tokens": 1920, "latency_seconds": 3.759380578994751}
+{"role": "evaluator", "model": "deepseek-chat", "attempt": 1, "success": true, "status_code": 200, "error_type": "", "prompt_tokens": 1838, "completion_tokens": 399, "total_tokens": 2237, "latency_seconds": 3.8394973278045654}

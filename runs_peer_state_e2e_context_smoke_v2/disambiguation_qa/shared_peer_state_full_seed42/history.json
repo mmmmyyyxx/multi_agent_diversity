@@ -1,0 +1,27 @@
+[
+  {
+    "epoch": 1,
+    "validation": {
+      "plurality_vote_acc": 0.25,
+      "vote_acc": 0.25,
+      "mean_individual_acc": 0.25,
+      "min_individual_acc": 0.25,
+      "per_agent_acc": [
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "mean_soft_vote_utility": 0.24832678726892882,
+      "c0_count": 6,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 40
+      }
+    },
+    "validation_feasible": true
+  }
+]
