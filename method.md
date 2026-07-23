@@ -1,90 +1,111 @@
-# Peer-State Counterfactual Prompt Optimization
+# Method
 
-`method_version = peer_state_counterfactual_v2`
+## 1. Scope
 
-## 1. Problem Formulation
+The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
-The system centrally optimizes a five-prompt ensemble for equal-weight plurality voting. Model weights are fixed. For each example, let:
+```text
+method_version = member_aware_peer_state_v1
+```
+
+It searches over a team of five prompts. The solver, optimizer, and evaluator
+models remain frozen; no policy gradient or model-weight update occurs. Candidate
+rollout outcomes are used for search and validation selection.
+
+The method addresses a failure of vote-only prompt optimization: a candidate can
+improve plurality accuracy while weakening one or more team members. Such a team
+may become dependent on a narrow coalition and can perform worse when the vote
+distribution changes. The new method therefore treats team vote quality,
+worst-member preservation, and total member improvement as joint objectives.
+
+## 2. Solver And Vote Contract
+
+Five equal-weight agents answer every example. A valid response must end with
+exactly one extractable:
+
+```text
+FINAL_ANSWER: <answer>
+```
+
+Invalid outputs are audited and do not silently become ordinary answers.
+Aggregation is true plurality vote. A top-count tie abstains.
+
+For each example:
 
 ```text
 G = number of valid votes matching gold
-H = size of the largest valid wrong-answer cluster
+H = largest valid wrong-answer vote count
 M = G - H
 ```
 
-The canonical vote is correct exactly when `M > 0`. The optimization objective is vote improvement, per-agent competence is a hard constraint, and soft vote utility is only a dense search signal.
+The system also constructs each target agent's leave-one-out peer state. These
+states diagnose whether changing that member can add coverage, repair the vote,
+leave a dominant wrong cluster, or endanger a unique or pivotal correct vote.
+
+## 3. Member Objectives
+
+All formal objectives use integer counts on a fixed probe.
+
+Let `c_i^0` be member `i`'s initial correct count and `c_i` its count under a
+candidate team:
 
 ```text
-Team Rollout
--> Peer-Conditioned Opportunity Attribution
--> Residual Responsibility Assignment
--> Responsibility-Conditioned TCS
--> Paired Candidate Rollout
--> Competence-Constrained Vote Update
+g_i   = c_i - c_i^0
+g_min = min_i g_i
+g_sum = sum_i g_i
 ```
 
-The method does not optimize generic diversity, trace distance, prompt wording distance, or unconditional answer dispersion. Complementarity means that different agents repair different residual team errors.
-
-## 2. Team And Peer State
-
-`TeamVoteState` represents one complete five-agent rollout. It stores normalized answers, validity, correctness, the complete wrong-answer histogram, `G`, `H`, `M`, the plurality result, and tie diagnostics.
-
-`PeerVoteContext` is a separate leave-one-out object for one target agent. It always contains exactly four peers. It is constructed from `TeamVoteState` by removing the target index before computing peer counts and histograms. Therefore a target vote cannot leak into a field named `peer_*`.
-
-Invalid answers remain visible in the validity vector but do not vote. Under the canonical tie policy, a top tie returns an empty vote and counts as incorrect.
-
-## 3. Oracle Repair Opportunity
-
-`OracleRepairOpportunity` asks a hypothetical question before candidate generation:
+The team objective vector is:
 
 ```text
-With the four peer answers fixed, what would happen if this target agent were repaired to gold?
+O = (V_count, g_min, g_sum)
 ```
 
-It records direct vote-fix potential, oracle soft-utility gain, C0 coverage opportunity, dominant-wrong membership, and whether the agent currently supplies a unique or pivotal correct vote. This object is used only for responsibility assignment. It is not evidence that any generated prompt actually achieves the repair.
+`V_count` is the number of probe examples where plurality vote is correct.
+Vector `a` Pareto-dominates `b` iff every component of `a` is at least the
+corresponding component of `b`, and at least one is strictly greater.
 
-## 4. Residual Responsibility Assignment
+Normalized accuracy and soft vote utility remain diagnostics. They are not
+substituted for the integer Pareto objectives.
 
-Every currently vote-wrong example receives at most one primary owner, chosen only among agents that are currently wrong on that example. Ranking prioritizes:
+## 4. Member-Aware Responsibility
 
-1. direct vote repair;
-2. oracle soft-utility gain;
-3. departure from a dominant wrong cluster;
-4. legal previous-owner inertia;
-5. lower assigned load;
-6. longer wait since selection;
-7. deterministic hash;
-8. agent id.
-
-For C0 examples, where `G = 0`, assignment still ranks oracle soft-utility gain and dominant-wrong departure before inertia and load balancing. A previous owner is retained only when its opportunity is within tolerance of the best opportunity. `owner_age_by_question` increases the non-C0 switch threshold and is written to diagnostics. A max-wait rule prevents any agent from being ignored indefinitely.
-
-## 5. ProposalContext And TCS
-
-Candidate generation uses only the target agent's active prompt as parent. The generator input is one of three distinct typed objects:
+Every currently wrong member is eligible for optimization, even if it owns no
+residual case. For member `i`, the global improvement pressure is:
 
 ```text
-AccuracyProposalContext       (B1)
-PeerStateProposalContext      (B2 and B3)
-ResponsibilityProposalContext (B4)
+improvement_need_i = max(0, g_sum_current - K * g_i_current)
 ```
 
-`AccuracyProposalContext` contains only individual errors, individual correct protection cases, and an accuracy/invalid-only update summary. `PeerStateProposalContext` contains `coverage_cases`, `conversion_cases`, peer/team state, preservation evidence, and a vote/competence summary, but has no assigned, owner, age, or responsibility fields. B3 may use responsibility internally to select evidence, but the generator cannot observe that fact. Only `ResponsibilityProposalContext` contains assigned residual cases, owner age, responsibility reason, responsibility summary, and assigned-repair history.
+where `K=5`. A large value means the member is behind the current team-wide
+improvement level.
 
-Teacher, Critic, and Student receive the same typed object. The Critic additionally sees the typed Teacher proposal; the Student additionally sees the approved proposal. Each context log records the concrete class, serialized top-level fields, recursive field paths, forbidden-field checks, and a hash of the shared serialized context. This provides runtime evidence that B1 cannot observe peer or responsibility state, B3 cannot observe ownership fields, and B4 can.
+On each unresolved example, ownership is selected from the wrong members by a
+Pareto comparison of direct vote repair, improvement need, coverage opportunity,
+and dominant-wrong exit. Ties are deterministic and include the experiment seed.
+Existing owners are retained when still on the owner frontier.
 
-Every supplied case carries explicit derived state so the evaluator does not
-have to infer the relationship between the current answer and gold:
+Target selection uses all agents with current errors. Agents waiting
+`responsibility_max_wait_updates` updates are considered first; the default is
+four. The remaining target comparison is member-aware and deterministic.
 
-```text
-target_status
-required_transition
-team_vote_status       (peer-state contexts only)
-case_role
-repair_goal
-forbidden_transition  (preservation cases)
-```
+After an accepted update, active profiles, peer states, opportunities, owners,
+loads, target priorities, and TCS summaries are refreshed immediately.
 
-The Teacher emits a testable repair hypothesis with six typed fields:
+## 5. Responsibility-Conditioned TCS
+
+TCS retains three typed context boundaries:
+
+- `AccuracyProposalContext`: individual errors and competence preservation only.
+- `PeerStateProposalContext`: peer/team state without ownership metadata.
+- `MemberAwareResponsibilityProposalContext`: member count/gain state,
+  improvement need, assigned residuals, member errors, preservation evidence,
+  and the previous member update summary.
+
+The member-error evidence limit is `tcs_member_error_limit`, defaulting to six.
+Contexts are deterministically truncated and audited.
+
+Teacher always returns the same six semantic fields:
 
 ```text
 observed_failure_pattern
@@ -95,185 +116,164 @@ preservation_conditions
 evidence_summary
 ```
 
-Here, task-general means applicable to unseen examples within the current task.
-It does not mean transfer across unrelated benchmarks, and it must not memorize
-the supplied examples or gold answers.
+Critic applies the existing hard gate: context consistency, no sample
+memorization, executable and internally consistent change, explicit preservation,
+output-contract safety, no peer copying, no stereotype forcing, and a non-generic
+change. Critic score is diagnostic only. Rejected proposals return feedback to a
+new Teacher round. Student runs only after approval and must produce strict JSON.
 
-The Critic is a legality and consistency gate, not a pre-rollout performance
-predictor. Its hard checks cover context consistency, sample memorization,
-executable behavior, internal consistency, preservation, output-contract
-safety, explicit peer copying, forced resolution from occupational or social
-stereotypes, and generic-only changes. Any failed hard check blocks Student.
-Subjectivity, incomplete coverage, use of a common task method, overlap with the
-parent prompt, and uncertain empirical benefit are recorded as soft concerns
-and do not block rollout.
+## 6. Candidate Evaluation
 
-Before auditing, the Critic must copy every derived case fact into a typed
-`case_fact_restatements` array. A missing or incorrect restatement invalidates
-the Critic response and retries the same Teacher proposal. Approval is computed
-only when every hard check passes and `blocking_reasons` is empty. The numeric
-`score` is diagnostic and never controls approval.
+Candidate evaluation replaces one target prompt while holding the other four
+active prompts fixed. The fixed probe records:
 
-Student output must contain exactly `num_candidates_per_parent` typed raw
-candidates or the call enters JSON retry. A schema-valid candidate that copies
-the text of a supplied optimization example is removed before Stage A.
-Parent-identical and duplicate prompts may further reduce the post-schema pool.
-The funnel separately records invalid Critic responses, requested/raw/schema
-counts, sample-memorization rejection, non-parent prompts, and deduplication.
+- target correct and invalid counts
+- vote gains and losses
+- coverage and residual repairs
+- unique and pivotal correct losses
+- candidate team vote-correct count
+- all five candidate member correct counts
+- gains relative to the initial prompt team
 
-`tcs_rounds.jsonl` records every Teacher, Critic, and Student attempt separately:
-request/response hashes, bounded response excerpts, JSON extraction, schema
-validity, fact-restatement validity, hard checks, effective approval, diagnostic
-score, blocking reasons, soft concerns, and Student count diagnostics.
-Transport failures, evaluator state misreads, legitimate hard rejection, and
-Student schema failure are therefore distinct.
+Prompt-question evaluation is cached by prompt, question, parser, model request,
+temperature, seed, and output-contract identity. Stage A subsets and full Stage B
+reuse the same cache entries.
 
-Context limits default to six cases per category and 24,000 characters. Selection is deterministic and logs available, selected, truncated, character, and estimated-token counts.
+## 7. Stage A
 
-## 6. Paired Candidate Rollout
-
-Candidate evaluation replaces only the target agent's active prompt while holding all four peer profiles fixed:
+Member-aware settings shortlist candidates through three channels:
 
 ```text
-incumbent team = active five-prompt team
-candidate team = incumbent team with target prompt replaced
+team_vote
+worst_member
+mean_member
 ```
 
-A `PromptQuestionEvaluator` is shared by optimization, validation, and final
-test. It uses an in-memory singleflight layer backed by a concurrent SQLite
-cache at `<out_root>/_shared_solver_cache.sqlite`. The persistent key contains
-solver model and endpoint identity, output-contract version, parser version,
-temperature, maximum tokens, evaluation-replica seed, prompt-content hash, and
-question-content hash. It contains neither agent id nor setting name. Thus
-matched settings with the same seed use exactly the same observation for an
-identical prompt-question pair; different seeds remain independent replicas.
+Each channel produces ordinal ranks. Rank vectors are divided into Pareto fronts,
+then channel top-k union and deterministic Pareto ordering fill the Stage B
+budget. The vote-first ablation uses only its vote-first Stage A ordering.
 
-SQLite rows use atomic `pending`/`ready` claims, WAL mode, dead-owner PID
-detection, and stale-claim recovery. The cached value contains the raw response,
-parsed answer, validity status, token usage, response/request identity, and
-creation time.
+## 8. Stage B
 
-Prompt canonicalization converts line endings and removes trailing line whitespace and outer blank lines. It preserves internal newlines, indentation, lists, and paragraphs. Prompt hashes and cache keys use this structure-preserving text.
+Before formal selection, a candidate must pass:
 
-The non-optimizable system layer appends a task-specific solver output contract.
-For `option_letter`, the only permitted final payload is one uppercase option
-letter with no punctuation or explanation. The contract version
-`task_output_contract_v1` participates in solver request identity, cache keys,
-RunIdentity, checkpoint compatibility, and run metadata. The optimized prompt
-cannot remove or rewrite this contract.
+- active target-member correct-count floor
+- initial target-member correct-count floor
+- invalid-count guard
+- vote-loss limit
+- unique-correct loss limit
+- pivotal-correct loss limit
 
-Stage A evaluates every new candidate on a deterministic mixture of representative, coverage, conversion, and preservation examples. Specialized pools are selected first without overlap; representative sampling fills the remaining fixed total budget. Stage B completes only the shortlist on the full fixed probe. Funnel diagnostics record requested, available and selected pool sizes, removed overlap, and actual unique Stage A size.
-
-For the round-robin peer-state ablation, coverage and conversion pools are global and do not disappear merely because no owner map exists. Representative examples are ordered by `seed + question_hash`, never by dataset order.
-
-## 7. Candidate Marginal Contribution
-
-`CandidateMarginalContribution` is computed from real candidate rollouts relative to the incumbent. It records vote gains and losses, net vote delta, soft-utility delta, coverage gains and losses, dominant-wrong exits and joins, and assigned-residual repairs.
-
-`ProtectionContribution` separately records lost unique-correct and pivotal-correct cases. These realized objects are distinct from the pre-generation oracle opportunity. A C0 wrong-to-wrong label change receives zero soft gain.
-
-## 8. Competence Constraints
-
-`CandidateEvaluation` contains required typed fields:
+For `member_aware_pareto`, feasibility is necessary but not sufficient. The
+candidate objective must Pareto-dominate the incumbent objective. Candidate
+preference among acceptable rows is:
 
 ```text
-PromptCompetenceMetrics
-TeamOutcomeMetrics
-CandidateMarginalContribution
-ProtectionContribution
+minimum member gain
+vote-correct count
+total member gain
+improved-member count
+fewer vote losses
+soft vote utility
+assigned repairs
+target correct count
+fewer invalids
+earlier generation
+prompt hash
 ```
 
-The selector does not read missing fields as zero. A peer-state candidate must satisfy local and initial competence floors, invalid-output limits, vote-loss limits, unique-correct protection, and pivotal-correct protection. `ConstraintDecision` records every passed guard and every rejection reason.
+Soft utility never converts a non-dominating candidate into an accepted one.
 
-## 9. Vote-First Selection
+## 9. Validation And Final Test
 
-Stage A has accuracy, vote, and responsibility/coverage channels. Each channel first selects top-k. The merged set is ordered by cross-channel Pareto front, then the sum of channel ordinal ranks. Prompt hash is used only after all substantive indicators tie. The same rule fills unused budget, so there is no hash-based arbitrary filler.
+Validation compares every epoch with the initial validation team. A state is
+feasible only when:
 
-Feasible Stage B candidates are ordered by:
+- no member falls below its initial count beyond the configured epsilon
+- invalid rate does not exceed the initial rate beyond its guard
+- vote-correct count is not below the initial count
+
+Feasible states are ordered by:
 
 ```text
-1. larger net vote delta
-2. fewer vote losses
-3. larger soft-utility delta
-4. larger coverage gain
-5. larger assigned-residual utility delta
-6. larger target correct count
-7. fewer invalid outputs
-8. earlier generation
-9. stable hash
+minimum member gain
+vote-correct count
+total member gain
+improved-member count
+soft vote utility
+fewer C0 examples
+lower invalid rate
+earlier epoch
 ```
 
-A candidate is accepted for positive net vote gain, or for zero net vote change with no vote loss and sufficient soft gain, or for a clear competence gain with no unique/pivotal loss. C0 wrong-to-wrong changes are not accepted.
-
-## 10. Online Responsibility Refresh
-
-After an accepted prompt transaction, the system immediately recomputes team states, all four-peer contexts, oracle opportunities, owner assignments, and target-selection pressure. Both responsibility-enabled settings use online refresh. If refresh fails, the transaction restores `previous_active_prompt`; that transactional value is never a generation parent.
-
-Update diagnostics include the complete candidate funnel, guard rejection counts, owner distribution, owner switches, owner ages, direct-fix/coverage/dominant-wrong assignment counts, and max-wait triggers.
-
-## 11. Validation
-
-Validation uses the same prompt-question evaluator as optimization and test, backed by the matched experiment's persistent cache. The same prompt-question pair is called once even when several agents or settings share a prompt or the pair appears in another evaluation phase.
-
-Solver output is valid only when it has exactly one line-level `FINAL_ANSWER:` marker and the parsed answer belongs to the task domain. Metrics separately count `missing_final_answer`, `multiple_final_answers`, `unparseable_final_answer`, `out_of_domain_answer`, and `valid`. Every unique invalid prompt-question observation is written to `solver_invalid_outputs.jsonl` with raw final payload, marker count, bounded response excerpt, response hash, and request identity. The strict parser is not relaxed to hide instruction-following failures.
-
-Validation first enforces per-agent and mean competence feasibility, then ranks states by plurality accuracy, net vote gain versus initialization, fewer vote losses, soft utility, lower C0, mean and minimum individual accuracy, invalid rate, and earlier epoch. The test split is not used for selection and is evaluated once after validation restores `best_prompts`.
-
-## 12. Ablation Protocol
-
-Method differences are explicit `ExperimentProtocol` fields rather than inferred boolean combinations.
-
-| Setting | Target | Sample pool | TCS context | Candidate selection | Refresh |
-|---|---|---|---|---|---|
-| `shared_baseline` | none | none | none | none | off |
-| `shared_independent_accuracy_tcs` | round-robin | individual errors | generic accuracy | individual accuracy | off |
-| `shared_peer_state_credit_round_robin` | round-robin | global peer state | generic peer state | constrained vote-first | off |
-| `shared_peer_state_responsibility` | dynamic responsibility | assigned residuals | generic peer state | constrained vote-first | online |
-| `shared_peer_state_full` | dynamic responsibility | assigned residuals | responsibility-conditioned | constrained vote-first | online |
-
-The B2-to-B3 change activates the dynamic responsibility subsystem, including assigned pools and refresh. B3-to-B4 changes only `tcs_context_policy`. All five settings share agent count, initialization, split, tie policy, candidate-generation count, Stage A/B budgets, validation, and test protocol.
-
-## 13. Initialization And Tie Policy
-
-The default initialization is `shared_identical`: all five agents start from the same prompt so that later specialization must arise from centrally assigned residual errors. `provided_prompt_set` is available only when exactly five non-empty prompts are supplied.
-
-The canonical tie policy is `abstain`. Ties are incorrect and logged with `tie_count` and `tie_rate`. Other tie rules remain low-level analysis options but are rejected by the formal system.
-
-The agents do not communicate directly. The method is centrally coordinated prompt ensemble optimization.
-
-## 14. Reproducibility
-
-`RunIdentity` records method and setting, git commit and dirty state, behavior-config fingerprint, manifest SHA, all split-file SHAs, and all split question-set hashes. The behavior fingerprint covers model and endpoint identity, temperatures, token limits, seed, initialization, prompts, tie and utility policies, responsibility parameters, TCS limits, candidate budgets, constraints, and parser/task identity.
-
-The same identity is stored in `run_meta.json`, `training_checkpoint.json`, and the root experiment matrix. Resume and completed-run reuse compare every field and reject old or mismatched artifacts explicitly.
-
-The run-specific preflight accepts manifest, tasks, settings, seeds, output root, and Config overrides. Before API use it verifies split existence, requested sizes, zero overlap, split hashes, role-specific API configuration, model names, candidate and Stage B budgets, TCS limits, call/token caps, output-directory identity, and successful RunIdentity construction.
-
-Core artifacts are:
+After validation selects prompts, test evaluation runs both the initial and
+selected prompt teams. `final_summary.json` contains:
 
 ```text
-run_meta.json
-training_checkpoint.json while interrupted
-history.json
-best_prompts.json
-final_summary.json
-peer_state_history.jsonl
-responsibility_assignments.jsonl
-tcs_context_history.jsonl
-tcs_rounds.jsonl
-candidate_decisions.jsonl
-solver_invalid_outputs.jsonl
-llm_calls.jsonl
-cost_summary.json
-<out_root>/_shared_solver_cache.sqlite
+initial_test
+selected_test
+member_gain
+selection_summary
 ```
 
-`scripts/real_api_role_transport_smoke.py` independently tests solver, Teacher,
-Critic, and Student schemas without forcing Student transport through the method
-approval gate. `scripts/critic_calibration_replay.py` runs a human-labeled
-evaluator-only set containing acceptable task-internal repairs and hard-blocker
-examples. It requires at least one good proposal to pass, rejects all memorizing
-proposals, validates every fact restatement, and makes zero Solver or optimizer
-calls. `scripts/real_api_resume_smoke.py` performs a controlled
-checkpoint interruption, resumes two copies of the same state through the
-shared solver cache, and compares substantive final artifacts and cache hashes.
+This makes test improvement and member regression directly auditable.
+
+## 10. Settings
+
+The repository exposes only:
+
+```text
+shared_baseline
+shared_independent_accuracy
+shared_peer_state_vote_first
+shared_peer_state_member_pareto
+shared_member_aware_responsibility
+shared_member_aware_full
+```
+
+There are no aliases for removed methods or settings.
+
+## 11. Persistence And Reproducibility
+
+Checkpoint version is 5. It stores active and initial profiles, member-aware
+opportunities, responsibility ownership and ages, accepted counts, seeded ranks,
+target-priority audit, prompt state, TCS state, caches, histories, LLM calls, and
+Python random state.
+
+Resume requires exact method, setting, config behavior fingerprint, code commit,
+split files, question sets, probe identity, model endpoint identity, parser,
+decoding, and output contract. Older checkpoints fail with:
+
+```text
+Checkpoint is incompatible with member_aware_peer_state_v1
+```
+
+The runner never silently restarts an incompatible run in the same directory.
+
+## 12. Implementation Map
+
+```text
+multi_dataset_diverse_rl/member_objectives.py
+multi_dataset_diverse_rl/peer_state.py
+multi_dataset_diverse_rl/responsibility.py
+multi_dataset_diverse_rl/tcs.py
+multi_dataset_diverse_rl/candidate_selection.py
+multi_dataset_diverse_rl/evaluation/fixed_probe.py
+multi_dataset_diverse_rl/evaluation/validation.py
+multi_dataset_diverse_rl/system.py
+multi_dataset_diverse_rl/persistence/checkpoint.py
+multi_dataset_diverse_rl/persistence/identity.py
+multi_dataset_diverse_rl/cli.py
+scripts/run_task_level_accuracy.py
+scripts/preflight_member_aware.py
+scripts/deterministic_member_aware_smoke.py
+```
+
+## 13. Boundaries
+
+- Diversity is not a standalone reward.
+- Soft vote utility is not a formal acceptance objective.
+- TCS proposes changes but does not decide empirical success.
+- Fixed-probe search can overfit; validation and multiple seeds remain necessary.
+- A selected test improvement is an experimental result, not guaranteed by the
+  optimization rule.

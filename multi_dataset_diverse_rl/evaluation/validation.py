@@ -20,6 +20,8 @@ class DatasetEvaluationRow:
 
 @dataclass(frozen=True)
 class DatasetMetrics:
+    vote_correct_count: int
+    per_agent_correct_counts: tuple[int, ...]
     plurality_vote_acc: float
     vote_acc: float
     mean_individual_acc: float

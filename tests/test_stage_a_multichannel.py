@@ -4,58 +4,48 @@ from multi_dataset_diverse_rl.candidate_selection import (
     TeamOutcomeMetrics,
     stage_a_multichannel_shortlist,
 )
-from multi_dataset_diverse_rl.responsibility import CandidateMarginalContribution, ProtectionContribution
+from multi_dataset_diverse_rl.member_objectives import member_gain_metrics
+from multi_dataset_diverse_rl.responsibility import (
+    CandidateMarginalContribution,
+    ProtectionContribution,
+)
 
 
-def candidate(name, accuracy=0, vote=0, soft=0.0, coverage=0, residual=0.0):
+def candidate(name, vote=5, member_counts=(10, 10, 10, 10, 10)):
     return CandidateEvaluation(
         prompt=name,
         prompt_hash=name,
-        competence=PromptCompetenceMetrics(accuracy, accuracy / 10, 0, 0.0),
-        team_outcome=TeamOutcomeMetrics((), 0.0, (), (), (), 0.0),
+        competence=PromptCompetenceMetrics(member_counts[0], 0.5, 0, 0.0),
+        team_outcome=TeamOutcomeMetrics((), vote, 0.5, (), (), (), 0.0),
         marginal=CandidateMarginalContribution(
-            vote_gain_count=max(0, vote),
-            vote_loss_count=max(0, -vote),
-            net_vote_delta=vote,
-            soft_utility_delta=soft,
-            coverage_gain_count=coverage,
-            coverage_loss_count=0,
-            dominant_wrong_exit_count=0,
-            dominant_wrong_join_count=0,
-            assigned_residual_repair_count=coverage,
-            assigned_residual_utility_delta=residual,
+            max(0, vote - 5), max(0, 5 - vote), vote - 5, 0.0,
+            0, 0, 0, 0, 0, 0.0,
         ),
         protection=ProtectionContribution(0, 0),
+        member_gain=member_gain_metrics((10, 10, 10, 10, 10), member_counts),
     )
 
 
-def test_three_channels_union_deduplicates_and_obeys_budget():
+def test_member_aware_channels_cover_vote_worst_and_mean_objectives():
     rows = [
-        candidate("accuracy", accuracy=9),
-        candidate("vote", vote=3),
-        candidate("coverage", coverage=4),
-        candidate("shared", accuracy=10, vote=4, coverage=5),
-        candidate("other", accuracy=1),
+        candidate("vote", vote=8),
+        candidate("worst", member_counts=(12, 12, 12, 12, 12)),
+        candidate("mean", member_counts=(10, 10, 10, 10, 25)),
+        candidate("balanced", vote=7, member_counts=(11, 11, 11, 11, 12)),
     ]
-    selected, decisions = stage_a_multichannel_shortlist(rows, channel_top_k=2, total_budget=4)
-    hashes = {row.prompt_hash for row in selected}
-    assert len(hashes) == 4
-    assert {"accuracy", "vote", "coverage", "shared"} == hashes
-    assert "accuracy" in decisions["accuracy"].selected_by_channels
-    assert "vote" in decisions["vote"].selected_by_channels
-    assert "responsibility" in decisions["coverage"].selected_by_channels
+    selected, decisions = stage_a_multichannel_shortlist(
+        rows, channel_top_k=1, total_budget=4
+    )
+    assert len(selected) == 4
+    assert "team_vote" in decisions["vote"].selected_by_channels
+    assert "worst_member" in decisions["worst"].selected_by_channels
+    assert "mean_member" in decisions["mean"].selected_by_channels
 
 
-def test_pareto_rank_fill_is_not_prompt_hash_fill():
+def test_pareto_front_rejects_strictly_dominated_member_vector():
     rows = [
-        candidate("accuracy", accuracy=9),
-        candidate("vote", vote=2),
-        candidate("coverage", residual=2.0),
-        candidate("aaa_dominated", accuracy=0, vote=-2),
-        candidate("zzz_balanced", accuracy=4, vote=1, coverage=1),
+        candidate("strong", vote=7, member_counts=(11, 11, 11, 11, 12)),
+        candidate("dominated", vote=5, member_counts=(9, 10, 10, 10, 10)),
     ]
-    selected, decisions = stage_a_multichannel_shortlist(rows, channel_top_k=1, total_budget=4)
-    hashes = {row.prompt_hash for row in selected}
-    assert "zzz_balanced" in hashes
-    assert "aaa_dominated" not in hashes
-    assert decisions["zzz_balanced"].pareto_front < decisions["aaa_dominated"].pareto_front
+    _, decisions = stage_a_multichannel_shortlist(rows, channel_top_k=1, total_budget=1)
+    assert decisions["strong"].pareto_front < decisions["dominated"].pareto_front

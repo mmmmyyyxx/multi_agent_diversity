@@ -8,8 +8,8 @@ from multi_dataset_diverse_rl.persistence.identity import RunIdentity, config_fi
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="peer_state_counterfactual_v2",
-        experiment_setting="shared_peer_state_full",
+        method_version="member_aware_peer_state_v1",
+        experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint=fingerprint,

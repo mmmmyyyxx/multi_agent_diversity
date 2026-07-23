@@ -97,9 +97,16 @@ async def run(cfg: Config) -> dict[str, Any]:
     ))
 
     if not system.protocol.optimization_enabled:
-        final_metrics = await system.evaluate_dataset(test)
-        final_payload = final_metrics.to_dict()
-        system.history = [{"epoch": 0, "test": _metrics_summary(final_metrics)}]
+        initial_test = await system.evaluate_dataset(test)
+        final_payload = _final_payload(
+            initial_test,
+            initial_test,
+            selection_summary={"selected_epoch": 0, "selection_changed": False},
+        )
+        system.history = [{"epoch": 0, "test": _metrics_summary(initial_test)}]
+        system.artifacts.write_json(
+            "best_prompts.json", [agent.current_prompt for agent in system.agents]
+        )
         system.flush_artifacts()
         system.artifacts.write_json("final_summary.json", final_payload)
         return final_payload
@@ -146,6 +153,9 @@ async def run(cfg: Config) -> dict[str, Any]:
             "epoch": epoch + 1,
             "validation": _metrics_summary(validation_metrics),
             "validation_feasible": key is not None,
+            "member_objective": _member_gain_summary(
+                initial_validation, validation_metrics
+            ),
         })
         if key is not None and (best_state.get("key") is None or tuple(key) > tuple(best_state["key"])):
             best_state = {
@@ -157,14 +167,68 @@ async def run(cfg: Config) -> dict[str, Any]:
         _write_checkpoint(system, cfg, epoch + 1, 0, best_state)
         start_update = 0
 
-    for agent, prompt in zip(system.agents, best_state["prompts"], strict=True):
+    initial_prompts = [agent.initial_prompt for agent in system.agents]
+    selected_prompts = [str(prompt) for prompt in best_state["prompts"]]
+    for agent, prompt in zip(system.agents, initial_prompts, strict=True):
+        agent.current_prompt = prompt
+    initial_test = await system.evaluate_dataset(test)
+    for agent, prompt in zip(system.agents, selected_prompts, strict=True):
         agent.current_prompt = str(prompt)
-    final_metrics = await system.evaluate_dataset(test)
-    system.artifacts.write_json("best_prompts.json", best_state["prompts"])
-    system.artifacts.write_json("final_summary.json", final_metrics.to_dict())
+    selected_test = await system.evaluate_dataset(test)
+    final_payload = _final_payload(
+        initial_test,
+        selected_test,
+        selection_summary={
+            "selected_epoch": int(best_state["epoch"]),
+            "selection_changed": selected_prompts != initial_prompts,
+            "validation_key": best_state["key"],
+        },
+    )
+    system.artifacts.write_json("best_prompts.json", selected_prompts)
+    system.artifacts.write_json("final_summary.json", final_payload)
     system.flush_artifacts()
     checkpoint_path.unlink(missing_ok=True)
-    return final_metrics.to_dict()
+    return final_payload
+
+
+def _member_gain_summary(
+    initial: DatasetMetrics,
+    selected: DatasetMetrics,
+) -> dict[str, Any]:
+    gains = tuple(
+        current - baseline
+        for current, baseline in zip(
+            selected.per_agent_correct_counts,
+            initial.per_agent_correct_counts,
+            strict=True,
+        )
+    )
+    return {
+        "per_agent_correct_count_gain": gains,
+        "minimum_member_gain": min(gains),
+        "mean_member_gain": sum(gains) / len(gains),
+        "total_member_gain": sum(gains),
+        "improved_member_count": sum(value > 0 for value in gains),
+        "regressed_member_count": sum(value < 0 for value in gains),
+        "all_members_improved": all(value > 0 for value in gains),
+        "vote_correct_count_gain": (
+            selected.vote_correct_count - initial.vote_correct_count
+        ),
+    }
+
+
+def _final_payload(
+    initial: DatasetMetrics,
+    selected: DatasetMetrics,
+    *,
+    selection_summary: Mapping[str, Any],
+) -> dict[str, Any]:
+    return {
+        "initial_test": initial.to_dict(),
+        "selected_test": selected.to_dict(),
+        "member_gain": _member_gain_summary(initial, selected),
+        "selection_summary": dict(selection_summary),
+    }
 
 
 def _metrics_summary(metrics: DatasetMetrics) -> dict[str, Any]:
@@ -175,6 +239,7 @@ def _metrics_summary(metrics: DatasetMetrics) -> dict[str, Any]:
 
 def _metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
     required = {
+        "vote_correct_count", "per_agent_correct_counts",
         "plurality_vote_acc", "vote_acc", "mean_individual_acc", "min_individual_acc",
         "per_agent_acc", "mean_soft_vote_utility", "c0_count", "mean_invalid_rate",
         "tie_count", "tie_rate", "rows",
@@ -184,6 +249,10 @@ def _metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
     if missing:
         raise ValueError(f"checkpoint validation metrics are missing fields: {missing}")
     return DatasetMetrics(
+        vote_correct_count=int(payload["vote_correct_count"]),
+        per_agent_correct_counts=tuple(
+            int(value) for value in payload["per_agent_correct_counts"]
+        ),
         plurality_vote_acc=float(payload["plurality_vote_acc"]),
         vote_acc=float(payload["vote_acc"]),
         mean_individual_acc=float(payload["mean_individual_acc"]),
@@ -202,18 +271,21 @@ def _metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Peer-State Counterfactual Prompt Optimization")
+    parser = argparse.ArgumentParser(
+        description="Member-Aware Peer-State Prompt-Team Optimization"
+    )
     return add_config_arguments(parser)
 
 
 async def main_async() -> None:
     cfg = config_from_args(build_parser().parse_args())
     result = await run(cfg)
+    selected = result["selected_test"]
     print(_progress_line(
         epoch="final",
         step="final",
-        vote_acc=float(result["plurality_vote_acc"]),
-        individual_acc=float(result["mean_individual_acc"]),
+        vote_acc=float(selected["plurality_vote_acc"]),
+        individual_acc=float(selected["mean_individual_acc"]),
     ), flush=True)
 
 

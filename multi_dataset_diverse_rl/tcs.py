@@ -45,8 +45,11 @@ class PeerStateCase:
 
 
 @dataclass(frozen=True)
-class ResponsibilityCase(PeerStateCase):
+class MemberAwareResponsibilityCase(PeerStateCase):
     responsibility_reason: str
+    member_correct_count: int
+    team_correct_count_sum: int
+    improvement_need: int
     owner_age: int = 0
 
 
@@ -110,19 +113,27 @@ class PeerStateProposalContext:
 
 
 @dataclass(frozen=True)
-class ResponsibilityProposalContext:
+class MemberAwareResponsibilityProposalContext:
     target_agent_id: int
     parent_prompt: str
     parent_prompt_hash: str
-    assigned_coverage_cases: tuple[ResponsibilityCase, ...]
-    assigned_conversion_cases: tuple[ResponsibilityCase, ...]
+    member_correct_counts: tuple[int, ...]
+    member_gains_from_initial: tuple[int, ...]
+    target_improvement_need: int
+    assigned_coverage_cases: tuple[MemberAwareResponsibilityCase, ...]
+    assigned_conversion_cases: tuple[MemberAwareResponsibilityCase, ...]
+    member_error_cases: tuple[MemberAwareResponsibilityCase, ...]
     preservation_cases: tuple[PreservationCase, ...]
     representative_cases: tuple[RepresentativeCase, ...]
     responsibility_summary: str
-    assigned_repair_history: str
+    previous_member_summary: str
 
 
-AnyProposalContext = AccuracyProposalContext | PeerStateProposalContext | ResponsibilityProposalContext
+AnyProposalContext = (
+    AccuracyProposalContext
+    | PeerStateProposalContext
+    | MemberAwareResponsibilityProposalContext
+)
 
 
 @dataclass(frozen=True)
@@ -212,6 +223,7 @@ class TCSContextLimits:
     assigned_conversion: int = 6
     preservation: int = 6
     representative: int = 6
+    member_error: int = 6
     max_chars: int = 24000
 
 
@@ -238,10 +250,11 @@ def _context_case_rows(context: AnyProposalContext) -> tuple[Any, ...]:
             + context.preservation_cases
             + context.representative_cases
         )
-    if isinstance(context, ResponsibilityProposalContext):
+    if isinstance(context, MemberAwareResponsibilityProposalContext):
         return (
             context.assigned_coverage_cases
             + context.assigned_conversion_cases
+            + context.member_error_cases
             + context.preservation_cases
             + context.representative_cases
         )
@@ -316,12 +329,12 @@ def limit_proposal_context(
     else:
         coverage_field = (
             "assigned_coverage_cases"
-            if isinstance(context, ResponsibilityProposalContext)
+            if isinstance(context, MemberAwareResponsibilityProposalContext)
             else "coverage_cases"
         )
         conversion_field = (
             "assigned_conversion_cases"
-            if isinstance(context, ResponsibilityProposalContext)
+            if isinstance(context, MemberAwareResponsibilityProposalContext)
             else "conversion_cases"
         )
         coverage_rows = getattr(context, coverage_field)
@@ -332,9 +345,11 @@ def limit_proposal_context(
             "preservation": len(context.preservation_cases),
             "representative": len(context.representative_cases),
         }
+        if isinstance(context, MemberAwareResponsibilityProposalContext):
+            available["member_error"] = len(context.member_error_cases)
         coverage_key = (
             (lambda row: (-row.owner_age, -row.oracle_soft_utility_gain, row.question_hash))
-            if isinstance(context, ResponsibilityProposalContext)
+            if isinstance(context, MemberAwareResponsibilityProposalContext)
             else (lambda row: (-row.oracle_soft_utility_gain, row.question_hash))
         )
         bounded = replace(
@@ -360,12 +375,37 @@ def limit_proposal_context(
                 )[: limits.representative]),
             },
         )
-        fields = ("representative_cases", coverage_field, conversion_field, "preservation_cases")
+        if isinstance(context, MemberAwareResponsibilityProposalContext):
+            bounded = replace(
+                bounded,
+                member_error_cases=tuple(sorted(
+                    context.member_error_cases,
+                    key=lambda row: (
+                        -row.improvement_need,
+                        -int(row.direct_vote_fix),
+                        row.question_hash,
+                    ),
+                )[: limits.member_error]),
+            )
+        fields = (
+            "representative_cases",
+            coverage_field,
+            conversion_field,
+            "member_error_cases",
+            "preservation_cases",
+        ) if isinstance(context, MemberAwareResponsibilityProposalContext) else (
+            "representative_cases", coverage_field, conversion_field, "preservation_cases"
+        )
         selected_counts = lambda value: {
             "coverage": len(getattr(value, coverage_field)),
             "conversion": len(getattr(value, conversion_field)),
             "preservation": len(value.preservation_cases),
             "representative": len(value.representative_cases),
+            **(
+                {"member_error": len(value.member_error_cases)}
+                if isinstance(value, MemberAwareResponsibilityProposalContext)
+                else {}
+            ),
         }
     while len(_payload(bounded)) > limits.max_chars:
         removable = next((field for field in fields if getattr(bounded, field)), None)
@@ -388,8 +428,11 @@ def build_teacher_request(context: AnyProposalContext) -> str:
         objective = "Repair the target Student's generalizable individual reasoning failure."
     elif isinstance(context, PeerStateProposalContext):
         objective = "Repair a peer-state failure using G, H, M and preservation evidence."
-    elif isinstance(context, ResponsibilityProposalContext):
-        objective = "Repair this Student's assigned residual cases while preserving unique and pivotal correct cases."
+    elif isinstance(context, MemberAwareResponsibilityProposalContext):
+        objective = (
+            "Improve this member's weak competence and assigned residual cases while "
+            "preserving every member and the team vote."
+        )
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
     schema = {
@@ -414,8 +457,11 @@ def build_critic_request(context: AnyProposalContext, teacher_proposal: TeacherP
         policy_checks = "individual-error diagnosis and individual competence preservation"
     elif isinstance(context, PeerStateProposalContext):
         policy_checks = "team/peer-state interpretation and preservation evidence"
-    elif isinstance(context, ResponsibilityProposalContext):
-        policy_checks = "assigned residual targeting, team/peer-state interpretation, and preservation evidence"
+    elif isinstance(context, MemberAwareResponsibilityProposalContext):
+        policy_checks = (
+            "member improvement need, assigned residual targeting, team/peer-state "
+            "interpretation, and preservation evidence"
+        )
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
     case_facts = [asdict(row) for row in proposal_context_case_facts(context)]
@@ -463,8 +509,11 @@ def build_student_request(
         policy_instruction = "address the supplied individual-error evidence"
     elif isinstance(context, PeerStateProposalContext):
         policy_instruction = "address the supplied peer-state evidence"
-    elif isinstance(context, ResponsibilityProposalContext):
-        policy_instruction = "address the supplied assigned responsibilities"
+    elif isinstance(context, MemberAwareResponsibilityProposalContext):
+        policy_instruction = (
+            "address the target member's error evidence and assigned responsibilities "
+            "without regressing another member"
+        )
     else:
         raise TypeError(f"Unsupported ProposalContext: {type(context).__name__}")
     candidate_fields = (

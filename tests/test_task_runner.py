@@ -8,8 +8,8 @@ from scripts.run_task_level_accuracy import RUNNER_FIELDS, _completed_run, _pars
 
 def identity():
     return RunIdentity(
-        method_version="peer_state_counterfactual_v2",
-        experiment_setting="shared_peer_state_full",
+        method_version="member_aware_peer_state_v1",
+        experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint="config",
@@ -35,11 +35,16 @@ def test_completed_run_requires_exact_identity(tmp_path):
     run = tmp_path / "run"
     run.mkdir()
     for filename, payload in {
-        "final_summary.json": {"plurality_vote_acc": 0.5},
+        "final_summary.json": {
+            "initial_test": {},
+            "selected_test": {},
+            "member_gain": {},
+            "selection_summary": {},
+        },
         "history.json": [],
         "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "peer_state_counterfactual_v2",
+            "method_version": "member_aware_peer_state_v1",
             "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite",

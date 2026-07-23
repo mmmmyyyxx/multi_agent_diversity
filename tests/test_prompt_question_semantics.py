@@ -149,7 +149,7 @@ def test_matched_settings_share_persistent_solver_observation(tmp_path):
         Config.from_flat(
             **common,
             out_dir=str(tmp_path / "full"),
-            experiment_setting="shared_peer_state_full",
+            experiment_setting="shared_member_aware_full",
         ),
         solver=full_solver,
     )

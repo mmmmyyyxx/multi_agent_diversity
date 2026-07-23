@@ -67,6 +67,15 @@ def config_fingerprint(cfg: Config) -> str:
         "optimizer": os.getenv(cfg.models.optimizer_base_url_env, "") if cfg.models.optimizer_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
         "evaluator": os.getenv(cfg.models.evaluator_base_url_env, "") if cfg.models.evaluator_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
     }
+    values["behavior_versions"] = {
+        "member_objective": "integer_vote_min_sum_v1",
+        "responsibility": "member_need_pareto_seeded_v1",
+        "target_selection": "overdue_member_pareto_v1",
+        "stage_a": "team_vote_worst_mean_v1",
+        "stage_b": "competence_guard_member_pareto_v1",
+        "validation": "initial_member_feasible_v1",
+        "checkpoint": 5,
+    }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 

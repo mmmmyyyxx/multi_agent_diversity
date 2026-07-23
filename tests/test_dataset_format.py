@@ -39,6 +39,7 @@ def test_stage_a_indices_are_one_shared_deterministic_pool(tmp_path):
     # Active profiles are populated directly because this test checks only pool identity.
     from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
     system.active_profiles = [tuple(PromptAnswer("B", "trace", True) for _ in range(3)) for _ in range(5)]
+    system.initial_profiles = list(system.active_profiles)
     assigned = {system.fixed_probe.examples[0].question_hash}
     assert system.stage_a_indices(0, assigned) == system.stage_a_indices(0, assigned)
 
@@ -46,7 +47,7 @@ def test_stage_a_indices_are_one_shared_deterministic_pool(tmp_path):
 def test_round_robin_peer_state_ablation_builds_global_c0_pool(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
-        experiment_setting="shared_peer_state_credit_round_robin",
+        experiment_setting="shared_peer_state_vote_first",
         stage_a_representative_size=0,
         stage_a_coverage_size=2,
         stage_a_conversion_size=0,
@@ -56,13 +57,14 @@ def test_round_robin_peer_state_ablation_builds_global_c0_pool(tmp_path):
     system.fixed_probe = system.build_probe([{"question": f"q{i}", "answer": "A"} for i in range(3)])
     from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
     system.active_profiles = [tuple(PromptAnswer("B", "trace", True) for _ in range(3)) for _ in range(5)]
+    system.initial_profiles = list(system.active_profiles)
     assert len(system.stage_a_indices(0, set())) == 2
 
 
 def test_representative_pool_uses_seeded_question_hash_not_file_order(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
-        experiment_setting="shared_peer_state_credit_round_robin",
+        experiment_setting="shared_peer_state_vote_first",
         stage_a_representative_size=2,
         stage_a_coverage_size=0,
         stage_a_conversion_size=0,
@@ -73,6 +75,7 @@ def test_representative_pool_uses_seeded_question_hash_not_file_order(tmp_path):
     system.fixed_probe = system.build_probe([{"question": f"q{i}", "answer": "A"} for i in range(5)])
     from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
     system.active_profiles = [tuple(PromptAnswer("B", "trace", True) for _ in range(5)) for _ in range(5)]
+    system.initial_profiles = list(system.active_profiles)
     selected = system.stage_a_indices(0, set())
     assert selected == system._representative_indices(2)
     assert selected != [0, 1]

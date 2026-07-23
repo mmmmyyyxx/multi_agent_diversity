@@ -78,7 +78,9 @@ def _task_split_integrity(task, dataset_format: str, workspace: str) -> dict[str
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run task-level peer-state experiments.")
+    parser = argparse.ArgumentParser(
+        description="Run task-level member-aware peer-state experiments."
+    )
     parser.add_argument("--workspace", type=Path, default=Path("."))
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--tasks", default="all")
@@ -117,7 +119,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         summary = _read_json(run_dir / "final_summary.json")
     except (OSError, json.JSONDecodeError):
         return False
-    if metadata["method_version"] != "peer_state_counterfactual_v2":
+    if metadata["method_version"] != "member_aware_peer_state_v1":
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")
@@ -126,8 +128,8 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
     if not metadata.get("shared_solver_cache_path"):
         raise ValueError(f"Completed run has no persistent shared solver cache: {run_dir}")
     validate_run_identity(expected_identity, metadata["run_identity"])
-    if "plurality_vote_acc" not in summary:
-        raise ValueError(f"Completed run is missing plurality_vote_acc: {run_dir}")
+    if not {"initial_test", "selected_test", "member_gain", "selection_summary"} <= set(summary):
+        raise ValueError(f"Completed run has an incompatible final summary: {run_dir}")
     return True
 
 
@@ -192,12 +194,22 @@ def main() -> None:
                     metrics = _read_json(final_path)
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
-                    "vote_acc": metrics["plurality_vote_acc"],
-                    "mean_individual_acc": metrics["mean_individual_acc"],
-                    "min_individual_acc": metrics["min_individual_acc"],
-                    "mean_soft_vote_utility": metrics["mean_soft_vote_utility"],
-                    "mean_invalid_rate": metrics["mean_invalid_rate"],
-                    "tie_rate": metrics["tie_rate"],
+                    "initial_vote_acc": metrics["initial_test"]["plurality_vote_acc"],
+                    "selected_vote_acc": metrics["selected_test"]["plurality_vote_acc"],
+                    "vote_acc_gain": (
+                        metrics["selected_test"]["plurality_vote_acc"]
+                        - metrics["initial_test"]["plurality_vote_acc"]
+                    ),
+                    "minimum_member_gain": metrics["member_gain"]["minimum_member_gain"],
+                    "mean_member_gain": metrics["member_gain"]["mean_member_gain"],
+                    "improved_member_count": metrics["member_gain"]["improved_member_count"],
+                    "regressed_member_count": metrics["member_gain"]["regressed_member_count"],
+                    "all_members_improved": metrics["member_gain"]["all_members_improved"],
+                    "selected_mean_individual_acc": metrics["selected_test"]["mean_individual_acc"],
+                    "selected_min_individual_acc": metrics["selected_test"]["min_individual_acc"],
+                    "selected_mean_soft_vote_utility": metrics["selected_test"]["mean_soft_vote_utility"],
+                    "selected_mean_invalid_rate": metrics["selected_test"]["mean_invalid_rate"],
+                    "selected_tie_rate": metrics["selected_test"]["tie_rate"],
                     "run_identity": expected_identity.to_dict(),
                     **split_integrity,
                 })
@@ -213,7 +225,9 @@ def main() -> None:
                     }, ensure_ascii=False) + "\n" for row in rows),
                     encoding="utf-8",
                 )
-    columns = list(rows[0]) if rows else ["task_id", "benchmark", "setting", "seed", "vote_acc"]
+    columns = list(rows[0]) if rows else [
+        "task_id", "benchmark", "setting", "seed", "selected_vote_acc"
+    ]
     with (root / "accuracy_results.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)
         writer.writeheader()

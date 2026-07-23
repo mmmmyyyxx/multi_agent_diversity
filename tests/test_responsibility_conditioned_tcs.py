@@ -9,8 +9,8 @@ from multi_dataset_diverse_rl.tcs import (
     PeerStateProposalContext,
     PreservationCase,
     RepresentativeCase,
-    ResponsibilityCase,
-    ResponsibilityProposalContext,
+    MemberAwareResponsibilityCase,
+    MemberAwareResponsibilityProposalContext,
     TCSContextLimits,
     TeacherProposal,
     build_critic_request,
@@ -23,8 +23,8 @@ from multi_dataset_diverse_rl.tcs import (
 )
 
 
-def responsibility_case(question_hash="q", owner_age=2, gain=0.4):
-    return ResponsibilityCase(
+def member_responsibility_case(question_hash="q", owner_age=2, gain=0.4):
+    return MemberAwareResponsibilityCase(
         question_hash=question_hash,
         question=f"question-{question_hash}",
         gold_answer="A",
@@ -46,23 +46,30 @@ def responsibility_case(question_hash="q", owner_age=2, gain=0.4):
         case_role="assigned_coverage",
         repair_goal="introduce_first_gold_vote",
         responsibility_reason="assigned residual owner",
+        member_correct_count=4,
+        team_correct_count_sum=30,
+        improvement_need=10,
         owner_age=owner_age,
     )
 
 
-def responsibility_context(count=1):
-    cases = tuple(responsibility_case(f"q{i}", owner_age=i, gain=i / 10) for i in range(count))
+def member_responsibility_context(count=1):
+    cases = tuple(member_responsibility_case(f"q{i}", owner_age=i, gain=i / 10) for i in range(count))
     conversion_cases = tuple(replace(
         row,
         case_role="assigned_conversion",
         repair_goal="convert_plurality_vote_to_gold",
     ) for row in cases)
-    return ResponsibilityProposalContext(
+    return MemberAwareResponsibilityProposalContext(
         target_agent_id=4,
         parent_prompt="parent decision procedure",
         parent_prompt_hash="parent-hash",
+        member_correct_counts=(8, 7, 6, 5, 4),
+        member_gains_from_initial=(0, 0, 1, 0, -1),
+        target_improvement_need=10,
         assigned_coverage_cases=cases,
         assigned_conversion_cases=conversion_cases,
+        member_error_cases=cases,
         preservation_cases=(PreservationCase(
             question_hash="protected",
             question="protected question",
@@ -96,19 +103,25 @@ def responsibility_context(count=1):
             repair_goal="repair_representative_error",
         ),),
         responsibility_summary="Agent 4 owns one residual.",
-        assigned_repair_history="No prior assigned repair.",
+        previous_member_summary="No prior assigned repair.",
     )
 
 
 def peer_context():
-    row = responsibility_case()
+    row = member_responsibility_case()
     peer = PeerStateCase(**{
         key: value for key, value in row.__dict__.items()
-        if key not in {"responsibility_reason", "owner_age"}
+        if key not in {
+            "responsibility_reason",
+            "member_correct_count",
+            "team_correct_count_sum",
+            "improvement_need",
+            "owner_age",
+        }
     })
     peer = replace(peer, case_role="coverage", repair_goal="introduce_first_gold_vote")
-    protected = responsibility_context().preservation_cases
-    representative = responsibility_context().representative_cases
+    protected = member_responsibility_context().preservation_cases
+    representative = member_responsibility_context().representative_cases
     return PeerStateProposalContext(
         target_agent_id=4,
         parent_prompt="parent decision procedure",
@@ -176,7 +189,7 @@ def critic_payload(context, **overrides):
 
 
 def test_teacher_critic_student_share_parent_and_typed_context():
-    proposal_context = responsibility_context()
+    proposal_context = member_responsibility_context()
     teacher = build_teacher_request(proposal_context)
     critic = build_critic_request(proposal_context, proposal())
     student = build_student_request(proposal_context, proposal(), 2)
@@ -209,7 +222,7 @@ def test_context_types_enforce_ablation_information_boundaries():
     for forbidden in ('"team_G"', '"peer_G"', "vote", "responsibility", "owner_age"):
         assert forbidden not in accuracy
 
-    responsibility = build_teacher_request(responsibility_context())
+    responsibility = build_teacher_request(member_responsibility_context())
     assert "assigned_coverage_cases" in responsibility
     assert "owner_age" in responsibility
     assert "responsibility_reason" in responsibility
@@ -280,18 +293,34 @@ def test_student_schema_requires_exact_candidate_count(count):
 
 
 def test_context_limits_are_deterministic_and_report_truncation():
-    original = responsibility_context(8)
+    original = member_responsibility_context(8)
     left, left_diagnostics = limit_proposal_context(
         original,
-        TCSContextLimits(assigned_coverage=3, assigned_conversion=2, preservation=1, representative=1, max_chars=5000),
+        TCSContextLimits(
+            assigned_coverage=3,
+            assigned_conversion=2,
+            preservation=1,
+            representative=1,
+            member_error=4,
+            max_chars=5000,
+        ),
     )
     right, right_diagnostics = limit_proposal_context(
         original,
-        TCSContextLimits(assigned_coverage=3, assigned_conversion=2, preservation=1, representative=1, max_chars=5000),
+        TCSContextLimits(
+            assigned_coverage=3,
+            assigned_conversion=2,
+            preservation=1,
+            representative=1,
+            member_error=4,
+            max_chars=5000,
+        ),
     )
     assert left == right
     assert left_diagnostics == right_diagnostics
     assert len(left.assigned_coverage_cases) <= 3
     assert len(left.assigned_conversion_cases) <= 2
+    assert len(left.member_error_cases) <= 4
     assert left_diagnostics.truncated_cases["coverage"] >= 5
+    assert left_diagnostics.truncated_cases["member_error"] >= 4
     assert left_diagnostics.context_characters <= 5000

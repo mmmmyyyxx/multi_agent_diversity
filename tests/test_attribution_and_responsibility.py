@@ -1,11 +1,10 @@
 from multi_dataset_diverse_rl.peer_state import build_peer_vote_context, build_team_vote_state
 from multi_dataset_diverse_rl.responsibility import (
-    CandidateMarginalContribution,
-    OracleRepairOpportunity,
     ResponsibilityState,
     assign_primary_responsibilities,
-    compute_oracle_repair_opportunity,
+    compute_member_aware_repair_opportunity,
     select_target_agent,
+    target_priorities,
 )
 
 
@@ -20,107 +19,73 @@ def team(answers, question_hash="q"):
     )
 
 
-def opportunities(answers, question_hash="q"):
+def opportunities(answers, counts=(8, 7, 6, 5, 4), question_hash="q"):
     current = team(answers, question_hash)
-    contexts = {agent: build_peer_vote_context(current, agent) for agent in range(5)}
     rows = tuple(
-        compute_oracle_repair_opportunity(team_state=current, peer_context=contexts[agent])
+        compute_member_aware_repair_opportunity(
+            team_state=current,
+            peer_context=build_peer_vote_context(current, agent),
+            member_correct_counts=counts,
+            member_gains_from_initial=(0, 1, 0, -1, -2),
+        )
         for agent in range(5)
     )
-    return current, contexts, rows
+    return current, rows
 
 
-def assignment_inputs(answers, question_hash="q"):
-    current, contexts, rows = opportunities(answers, question_hash)
-    return {question_hash: current}, {question_hash: contexts}, {question_hash: rows}
-
-
-def test_oracle_opportunity_is_not_candidate_marginal_contribution():
-    _, _, rows = opportunities(["A", "A", "B", "B", "B"])
-    assert isinstance(rows[2], OracleRepairOpportunity)
-    assert not isinstance(rows[2], CandidateMarginalContribution)
-    assert rows[2].direct_vote_fix is True
-    assert rows[2].oracle_soft_utility_gain > 0
-    assert rows[2].dominant_wrong_member is True
-
-
-def test_c0_coverage_unique_and_pivotal_opportunities():
-    _, _, c0 = opportunities(["B", "B", "C", "C", "D"])
-    _, _, unique = opportunities(["A", "B", "B", "C", "C"])
-    _, _, pivotal = opportunities(["A", "A", "A", "B", "B"])
-    assert c0[0].coverage_opportunity is True
-    assert unique[0].unique_correct is True
-    assert pivotal[0].pivotal_correct is True
-
-
-def test_responsibility_is_assigned_only_to_currently_wrong_agents():
-    teams, contexts, rows = assignment_inputs(["A", "A", "B", "B", "B"])
-    state = ResponsibilityState(
+def state(**overrides):
+    values = dict(
         assigned_load_by_agent={agent: 0 for agent in range(5)},
         updates_since_selected_by_agent={agent: 0 for agent in range(5)},
+        accepted_updates_by_agent={agent: 0 for agent in range(5)},
     )
-    owners, assigned = assign_primary_responsibilities(
-        team_states=teams, peer_contexts=contexts, opportunities=rows, state=state,
-    )
-    assert owners["q"] in {2, 3, 4}
-    assert not assigned[0] and not assigned[1]
+    values.update(overrides)
+    return ResponsibilityState(**values)
 
 
-def test_c0_prefers_higher_oracle_gain_over_weaker_previous_owner():
-    teams, contexts, rows = assignment_inputs(["B", "B", "B", "C", "D"])
-    state = ResponsibilityState(
-        primary_owner_by_question={"q": 4},
-        owner_age_by_question={"q": 3},
-        assigned_load_by_agent={agent: 0 for agent in range(5)},
-        updates_since_selected_by_agent={agent: agent for agent in range(5)},
-    )
-    owners, _ = assign_primary_responsibilities(
-        team_states=teams, peer_contexts=contexts, opportunities=rows, state=state,
-    )
-    selected = next(row for row in rows["q"] if row.agent_id == owners["q"])
-    assert selected.oracle_soft_utility_gain == max(row.oracle_soft_utility_gain for row in rows["q"])
-    assert owners["q"] in {0, 1, 2}
-    assert state.owner_age_by_question["q"] == 0
+def test_improvement_need_uses_gain_sum_minus_k_member_gain():
+    _, rows = opportunities(["A", "A", "B", "B", "B"])
+    assert rows[4].improvement_need == sum((0, 1, 0, -1, -2)) - 5 * -2
+    assert rows[0].improvement_need == 0
 
 
-def test_c0_equal_opportunities_balance_deterministically_and_keep_owner():
-    teams, contexts, rows = assignment_inputs(["B", "C", "D", "E", "F"])
-    state = ResponsibilityState(
-        primary_owner_by_question={"q": 4},
-        owner_age_by_question={"q": 3},
-        assigned_load_by_agent={agent: 0 for agent in range(5)},
-        updates_since_selected_by_agent={agent: agent for agent in range(5)},
+def test_assignment_uses_only_wrong_agents_and_is_seed_deterministic():
+    current, rows = opportunities(["A", "A", "B", "B", "B"])
+    kwargs = dict(
+        team_states={"q": current},
+        opportunities={"q": rows},
+        seed=43,
     )
-    owners, _ = assign_primary_responsibilities(
-        team_states=teams, peer_contexts=contexts, opportunities=rows, state=state,
-    )
-    assert owners == {"q": 4}
-    assert state.owner_age_by_question["q"] == 4
+    owners_a, assigned_a = assign_primary_responsibilities(state=state(), **kwargs)
+    owners_b, _ = assign_primary_responsibilities(state=state(), **kwargs)
+    assert owners_a == owners_b
+    assert owners_a["q"] in {2, 3, 4}
+    assert not assigned_a[0] and not assigned_a[1]
 
 
-def test_owner_inertia_and_owner_age_raise_switch_threshold():
-    teams, contexts, rows = assignment_inputs(["A", "A", "B", "B", "B"])
-    state = ResponsibilityState(
-        primary_owner_by_question={"q": 3},
-        owner_age_by_question={"q": 8},
-        assigned_load_by_agent={agent: 0 for agent in range(5)},
-        updates_since_selected_by_agent={agent: 0 for agent in range(5)},
+def test_all_agents_with_member_errors_are_target_eligible_without_assignments():
+    current, rows = opportunities(["B", "B", "B", "B", "B"])
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=state(),
+        seed=42,
+        max_wait_updates=4,
     )
-    owners, _ = assign_primary_responsibilities(
-        team_states=teams,
-        peer_contexts=contexts,
-        opportunities=rows,
-        state=state,
-        switch_margin=0.05,
-    )
-    assert owners["q"] == 3
-    assert state.owner_age_by_question["q"] == 9
+    assert {row.agent_id for row in priorities} == set(range(5))
+    assert select_target_agent(priorities) in range(5)
 
 
-def test_max_wait_fairness_overrides_residual_pressure():
-    _, _, rows = opportunities(["A", "A", "B", "B", "B"])
-    state = ResponsibilityState(
-        assigned_load_by_agent={agent: 0 for agent in range(5)},
-        updates_since_selected_by_agent={0: 0, 1: 8, 2: 0, 3: 0, 4: 0},
+def test_overdue_target_is_selected_before_non_overdue_frontier_member():
+    _, rows = opportunities(["B", "B", "B", "B", "B"])
+    current_state = state(
+        updates_since_selected_by_agent={0: 0, 1: 4, 2: 0, 3: 0, 4: 0}
     )
-    assert select_target_agent({2: [rows[2]], 1: []}, state, max_wait_updates=8) == 1
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=current_state,
+        seed=42,
+        max_wait_updates=4,
+    )
+    assert select_target_agent(priorities) == 1

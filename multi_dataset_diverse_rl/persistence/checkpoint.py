@@ -10,11 +10,11 @@ from typing import Any, Mapping
 
 from ..evaluation.fixed_probe import PromptAnswer
 from ..persistence.identity import validate_run_identity
-from ..responsibility import OracleRepairOpportunity, ResponsibilityState
+from ..responsibility import MemberAwareRepairOpportunity, ResponsibilityState
 from ..system import METHOD_VERSION
 
 
-CHECKPOINT_VERSION = 4
+CHECKPOINT_VERSION = 5
 
 
 def _random_state_payload() -> str:
@@ -53,10 +53,15 @@ def build_checkpoint(
             str(agent_id): [asdict(row) for row in rows]
             for agent_id, rows in system.cached_responsibility_assignments.items()
         },
+        "cached_member_opportunities": {
+            question_hash: [asdict(row) for row in rows]
+            for question_hash, rows in system.cached_member_opportunities.items()
+        },
         "previous_accuracy_summaries": dict(system.previous_accuracy_summaries),
         "previous_peer_summaries": dict(system.previous_peer_summaries),
         "previous_responsibility_summaries": dict(system.previous_responsibility_summaries),
         "agent_selection_counts": dict(system.agent_selection_counts),
+        "target_priority_audit": list(system.target_priority_audit),
         "history": list(system.history),
         "peer_state_history": list(system.peer_state_history),
         "responsibility_assignments": list(system.responsibility_assignments),
@@ -88,7 +93,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Legacy checkpoint is incompatible with peer_state_counterfactual_v2")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -114,8 +119,15 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         tuple(PromptAnswer(**row) for row in profile) for profile in payload["initial_profiles"]
     ]
     raw_state = dict(payload["responsibility_state"])
-    for field in ("assigned_load_by_agent", "updates_since_selected_by_agent"):
+    for field in (
+        "assigned_load_by_agent",
+        "updates_since_selected_by_agent",
+        "accepted_updates_by_agent",
+    ):
         raw_state[field] = {int(key): int(value) for key, value in raw_state[field].items()}
+    raw_state["seeded_rank_by_agent"] = {
+        int(key): str(value) for key, value in raw_state["seeded_rank_by_agent"].items()
+    }
     raw_state["primary_owner_by_question"] = {
         str(key): int(value) for key, value in raw_state["primary_owner_by_question"].items()
     }
@@ -127,8 +139,14 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         str(key): int(value) for key, value in payload["cached_responsibility_owners"].items()
     }
     system.cached_responsibility_assignments = {
-        int(agent_id): [OracleRepairOpportunity(**row) for row in rows]
+        int(agent_id): [MemberAwareRepairOpportunity(**row) for row in rows]
         for agent_id, rows in payload["cached_responsibility_assignments"].items()
+    }
+    system.cached_member_opportunities = {
+        str(question_hash): tuple(
+            MemberAwareRepairOpportunity(**row) for row in rows
+        )
+        for question_hash, rows in payload["cached_member_opportunities"].items()
     }
     for field in (
         "previous_accuracy_summaries",
@@ -139,6 +157,7 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.agent_selection_counts = {
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }
+    system.target_priority_audit = list(payload["target_priority_audit"])
     for name in (
         "history",
         "peer_state_history",

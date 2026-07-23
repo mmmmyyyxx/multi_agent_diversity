@@ -10,34 +10,39 @@ from multi_dataset_diverse_rl.evaluation.validation import (
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 
 
-def metrics(vote, mean, agents=None, invalid=0.0, utility=0.5, c0=1):
-    values = tuple(agents or [mean] * 5)
+def metrics(vote_count, counts=None, invalid=0.0, utility=0.5, c0=1):
+    values = tuple(counts or [7] * 5)
+    size = 10
     return DatasetMetrics(
-        plurality_vote_acc=vote,
-        vote_acc=vote,
-        mean_individual_acc=mean,
-        min_individual_acc=min(values),
-        per_agent_acc=values,
+        vote_correct_count=vote_count,
+        per_agent_correct_counts=values,
+        plurality_vote_acc=vote_count / size,
+        vote_acc=vote_count / size,
+        mean_individual_acc=sum(values) / (size * 5),
+        min_individual_acc=min(values) / size,
+        per_agent_acc=tuple(value / size for value in values),
         mean_soft_vote_utility=utility,
         c0_count=c0,
         mean_invalid_rate=invalid,
         tie_count=0,
         tie_rate=0.0,
         rows=(
-            DatasetEvaluationRow("q1", vote >= 0.6, False, 1, 2, -1),
-            DatasetEvaluationRow("q2", vote >= 0.7, False, 1, 2, -1),
+            DatasetEvaluationRow("q1", vote_count >= 6, False, 1, 2, -1),
+            DatasetEvaluationRow("q2", vote_count >= 7, False, 1, 2, -1),
         ),
     )
 
 
-def test_validation_filters_competence_then_ranks_vote_first():
+def test_validation_filters_initial_member_feasibility_then_ranks_member_objective():
     system = PromptEnsembleOptimizationSystem(Config())
-    initial = metrics(0.5, 0.7)
-    infeasible = metrics(0.9, 0.69, [0.69] * 5)
-    lower_vote_higher_mean = metrics(0.6, 0.9, [0.9] * 5)
-    higher_vote = metrics(0.7, 0.7)
+    initial = metrics(5)
+    infeasible = metrics(9, [6, 9, 9, 9, 9])
+    lower_min_gain = metrics(7, [7, 9, 9, 9, 9])
+    higher_min_gain = metrics(6, [8, 8, 8, 8, 8])
     assert system.validation_key(infeasible, initial, 1) is None
-    assert system.validation_key(higher_vote, initial, 1) > system.validation_key(lower_vote_higher_mean, initial, 1)
+    assert system.validation_key(higher_min_gain, initial, 1) > system.validation_key(
+        lower_min_gain, initial, 1
+    )
 
 
 def test_validation_prompt_question_cache_is_shared_across_agents():

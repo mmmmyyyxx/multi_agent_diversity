@@ -7,11 +7,12 @@ from dataclasses import dataclass
 from typing import Awaitable, Callable, Sequence
 
 from ..candidate_selection import CandidateEvaluation, PromptCompetenceMetrics, TeamOutcomeMetrics
+from ..member_objectives import member_gain_metrics
 from ..peer_state import build_peer_vote_context, build_team_vote_state, soft_vote_utility
 from ..responsibility import (
     CandidateMarginalContribution,
     ProtectionContribution,
-    compute_oracle_repair_opportunity,
+    compute_member_aware_repair_opportunity,
 )
 from .prompt_question import PromptAnswer, PromptQuestionEvaluator
 
@@ -106,6 +107,7 @@ def evaluate_candidate_profile(
     prompt_hash: str,
     examples: Sequence[ProbeExample],
     active_profiles: Sequence[Sequence[PromptAnswer]],
+    initial_profiles: Sequence[Sequence[PromptAnswer]],
     candidate_profile: Sequence[PromptAnswer],
     target_agent_id: int,
     assigned_question_hashes: set[str],
@@ -121,6 +123,10 @@ def evaluate_candidate_profile(
         raise ValueError("active profile length differs from fixed probe")
     if len(candidate_profile) != len(examples):
         raise ValueError("candidate profile length differs from fixed probe")
+    if len(initial_profiles) != 5 or any(
+        len(profile) != len(examples) for profile in initial_profiles
+    ):
+        raise ValueError("initial profiles must contain five complete fixed-probe profiles")
 
     target_correct = invalid_count = 0
     vote_gain = vote_loss = coverage_gain = coverage_loss = 0
@@ -131,6 +137,8 @@ def evaluate_candidate_profile(
     gold_counts: list[int] = []
     wrong_counts: list[int] = []
     margins: list[int] = []
+    candidate_member_counts = [0] * 5
+    initial_member_counts = [0] * 5
 
     for index, example in enumerate(examples):
         active_answers = [profile[index].answer for profile in active_profiles]
@@ -159,14 +167,41 @@ def evaluate_candidate_profile(
             tie_break=tie_break,
             seed=seed,
         )
-        current_opportunity = compute_oracle_repair_opportunity(
+        member_counts = [
+            sum(
+                int(profile[row_index].valid and match_answer(profile[row_index].answer, row.gold_answer))
+                for row_index, row in enumerate(examples)
+            )
+            for profile in active_profiles
+        ]
+        initial_counts_for_opportunity = [
+            sum(
+                int(
+                    profile[row_index].valid
+                    and match_answer(profile[row_index].answer, row.gold_answer)
+                )
+                for row_index, row in enumerate(examples)
+            )
+            for profile in initial_profiles
+        ]
+        active_gains = [
+            current_count - initial_count
+            for current_count, initial_count in zip(
+                member_counts, initial_counts_for_opportunity, strict=True
+            )
+        ]
+        current_opportunity = compute_member_aware_repair_opportunity(
             team_state=current,
             peer_context=build_peer_vote_context(current, target_agent_id),
+            member_correct_counts=member_counts,
+            member_gains_from_initial=active_gains,
             tau=tau,
         )
-        candidate_opportunity = compute_oracle_repair_opportunity(
+        candidate_opportunity = compute_member_aware_repair_opportunity(
             team_state=candidate,
             peer_context=build_peer_vote_context(candidate, target_agent_id),
+            member_correct_counts=member_counts,
+            member_gains_from_initial=active_gains,
             tau=tau,
         )
         candidate_correct = candidate.team_correctness[target_agent_id]
@@ -198,9 +233,16 @@ def evaluate_candidate_profile(
         gold_counts.append(candidate.gold_vote_count)
         wrong_counts.append(candidate.largest_wrong_vote_count)
         margins.append(candidate.plurality_margin)
+        for agent_id in range(5):
+            initial_answer = initial_profiles[agent_id][index]
+            initial_member_counts[agent_id] += int(
+                initial_answer.valid and match_answer(initial_answer.answer, example.gold_answer)
+            )
+            candidate_member_counts[agent_id] += int(candidate.team_correctness[agent_id])
 
     size = len(examples)
     denominator = max(1, size)
+    gains = member_gain_metrics(initial_member_counts, candidate_member_counts)
     return CandidateEvaluation(
         prompt=str(prompt),
         prompt_hash=str(prompt_hash),
@@ -212,6 +254,7 @@ def evaluate_candidate_profile(
         ),
         team_outcome=TeamOutcomeMetrics(
             vote_correct_vector=tuple(vote_vector),
+            vote_correct_count=sum(vote_vector),
             plurality_vote_accuracy=sum(vote_vector) / denominator,
             gold_vote_counts=tuple(gold_counts),
             largest_wrong_vote_counts=tuple(wrong_counts),
@@ -234,6 +277,7 @@ def evaluate_candidate_profile(
             unique_correct_loss_count=unique_loss,
             pivotal_correct_loss_count=pivotal_loss,
         ),
+        member_gain=gains,
     )
 
 

@@ -16,7 +16,7 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "peer_state_counterfactual_v2",
+    "method_version": "member_aware_peer_state_v1",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",
@@ -24,10 +24,11 @@ COMMON = {
 
 SETTING_NAMES = (
     "shared_baseline",
-    "shared_independent_accuracy_tcs",
-    "shared_peer_state_credit_round_robin",
-    "shared_peer_state_responsibility",
-    "shared_peer_state_full",
+    "shared_independent_accuracy",
+    "shared_peer_state_vote_first",
+    "shared_peer_state_member_pareto",
+    "shared_member_aware_responsibility",
+    "shared_member_aware_full",
 )
 
 ALL_EXPERIMENT_SETTINGS = [ExperimentSetting(name, COMMON) for name in SETTING_NAMES]

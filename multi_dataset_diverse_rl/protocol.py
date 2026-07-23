@@ -55,7 +55,7 @@ def experiment_protocol(
             candidate_selection_policy="none",
             responsibility_refresh_policy="off",
         ),
-        "shared_independent_accuracy_tcs": dict(
+        "shared_independent_accuracy": dict(
             optimization_enabled=True,
             target_selection_policy="round_robin",
             sample_pool_policy="individual_errors",
@@ -63,7 +63,7 @@ def experiment_protocol(
             candidate_selection_policy="individual_accuracy",
             responsibility_refresh_policy="off",
         ),
-        "shared_peer_state_credit_round_robin": dict(
+        "shared_peer_state_vote_first": dict(
             optimization_enabled=True,
             target_selection_policy="round_robin",
             sample_pool_policy="global_peer_state",
@@ -71,20 +71,28 @@ def experiment_protocol(
             candidate_selection_policy="competence_constrained_vote_first",
             responsibility_refresh_policy="off",
         ),
-        "shared_peer_state_responsibility": dict(
+        "shared_peer_state_member_pareto": dict(
             optimization_enabled=True,
-            target_selection_policy="dynamic_residual_responsibility",
-            sample_pool_policy="assigned_residuals",
+            target_selection_policy="round_robin",
+            sample_pool_policy="global_peer_state",
             tcs_context_policy="generic_peer_state",
-            candidate_selection_policy="competence_constrained_vote_first",
+            candidate_selection_policy="member_aware_pareto",
+            responsibility_refresh_policy="off",
+        ),
+        "shared_member_aware_responsibility": dict(
+            optimization_enabled=True,
+            target_selection_policy="member_aware_responsibility",
+            sample_pool_policy="member_aware_residuals",
+            tcs_context_policy="generic_peer_state",
+            candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
         ),
-        "shared_peer_state_full": dict(
+        "shared_member_aware_full": dict(
             optimization_enabled=True,
-            target_selection_policy="dynamic_residual_responsibility",
-            sample_pool_policy="assigned_residuals",
-            tcs_context_policy="responsibility_conditioned",
-            candidate_selection_policy="competence_constrained_vote_first",
+            target_selection_policy="member_aware_responsibility",
+            sample_pool_policy="member_aware_residuals",
+            tcs_context_policy="member_aware_responsibility_conditioned",
+            candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
         ),
     }

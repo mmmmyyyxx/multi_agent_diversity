@@ -17,8 +17,8 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="peer_state_counterfactual_v2",
-        experiment_setting="shared_peer_state_full",
+        method_version="member_aware_peer_state_v1",
+        experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint="config",
@@ -68,7 +68,7 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
         ("config_fingerprint", "different-seed-model-tie-or-constraint"),
         ("train_file_sha256", "different-split"),
         ("git_commit", "different-commit"),
-        ("experiment_setting", "shared_peer_state_responsibility"),
+        ("experiment_setting", "shared_member_aware_responsibility"),
     ],
 )
 def test_any_run_identity_mismatch_rejects_resume(tmp_path, field, value):
@@ -84,6 +84,13 @@ def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
     with pytest.raises(ValueError, match="lacks exact run identity"):
         restore_checkpoint(system, {"checkpoint_version": 1, "method_version": "old"})
     payload = build_checkpoint(system, epoch_index=0, update_index=0, best_state={})
+    incompatible = dict(payload)
+    incompatible["checkpoint_version"] = 4
+    with pytest.raises(
+        ValueError,
+        match="Checkpoint is incompatible with member_aware_peer_state_v1",
+    ):
+        restore_checkpoint(system, incompatible)
     payload["probe_version"] = "stale"
     with pytest.raises(ValueError, match="Fixed probe"):
         restore_checkpoint(system, payload)

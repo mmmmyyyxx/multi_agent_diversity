@@ -25,8 +25,12 @@ from scripts.run_task_level_accuracy import RUNNER_FIELDS, _task_split_integrity
 
 
 EXPECTED_SETTINGS = [
-    "shared_baseline", "shared_independent_accuracy_tcs", "shared_peer_state_credit_round_robin",
-    "shared_peer_state_responsibility", "shared_peer_state_full",
+    "shared_baseline",
+    "shared_independent_accuracy",
+    "shared_peer_state_vote_first",
+    "shared_peer_state_member_pareto",
+    "shared_member_aware_responsibility",
+    "shared_member_aware_full",
 ]
 
 
@@ -34,9 +38,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     errors = []
     configs = [Config.from_flat(**setting.resolved_overrides()) for setting in select_settings("all")]
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
-        errors.append("experiment settings do not match the frozen five-setting protocol")
+        errors.append("experiment settings do not match the frozen six-setting protocol")
     for cfg in configs:
-        if cfg.training.method_version != "peer_state_counterfactual_v2":
+        if cfg.training.method_version != "member_aware_peer_state_v1":
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
@@ -52,14 +56,16 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         )
         for name in EXPECTED_SETTINGS
     }
-    b3 = protocols["shared_peer_state_responsibility"]
-    b4 = protocols["shared_peer_state_full"]
-    b3_payload = b3.__dict__ | {
-        "name": b4.name,
-        "tcs_context_policy": b4.tcs_context_policy,
+    responsibility = protocols["shared_member_aware_responsibility"]
+    full = protocols["shared_member_aware_full"]
+    responsibility_payload = responsibility.__dict__ | {
+        "name": full.name,
+        "tcs_context_policy": full.tcs_context_policy,
     }
-    if b3_payload != b4.__dict__:
-        errors.append("B3 and B4 must differ only in responsibility-conditioned TCS")
+    if responsibility_payload != full.__dict__:
+        errors.append(
+            "member-aware responsibility and full settings must differ only in TCS context"
+        )
     help_result = subprocess.run(
         [sys.executable, "scripts/run_task_level_accuracy.py", "--help"],
         cwd=workspace,
@@ -84,7 +90,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append("git working tree is not clean")
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
-        "method_version": "peer_state_counterfactual_v2", "settings": EXPECTED_SETTINGS,
+        "method_version": "member_aware_peer_state_v1", "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 
@@ -182,6 +188,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         cfg.tcs.tcs_assigned_conversion_limit,
                         cfg.tcs.tcs_preservation_limit,
                         cfg.tcs.tcs_representative_limit,
+                        cfg.tcs.tcs_member_error_limit,
                         cfg.tcs.tcs_context_max_chars,
                     ) <= 0:
                         raise ValueError("all TCS context limits must be positive")

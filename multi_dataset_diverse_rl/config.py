@@ -37,8 +37,8 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "peer_state_counterfactual_v2"
-    experiment_setting: str = "shared_peer_state_full"
+    method_version: str = "member_aware_peer_state_v1"
+    experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
     update_every: int = 10
@@ -64,6 +64,7 @@ class TCSConfig:
     tcs_assigned_conversion_limit: int = 6
     tcs_preservation_limit: int = 6
     tcs_representative_limit: int = 6
+    tcs_member_error_limit: int = 6
     tcs_context_max_chars: int = 24000
 
 
@@ -79,8 +80,7 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
-    responsibility_switch_margin: float = 0.05
-    responsibility_max_wait_updates: int = 8
+    responsibility_max_wait_updates: int = 4
 
 
 @dataclass(frozen=True)
@@ -103,9 +103,7 @@ class ConstraintConfig:
     vote_loss_limit: int = 0
     unique_correct_loss_limit: int = 0
     pivotal_loss_limit: int = 0
-    min_soft_utility_gain: float = 0.005
     validation_accuracy_epsilon: float = 0.0
-    validation_mean_epsilon: float = 0.0
 
 
 @dataclass(frozen=True)

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from scripts.preflight_peer_state import build_parser, run_specific_preflight
+from scripts.preflight_member_aware import build_parser, run_specific_preflight
 
 
 def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monkeypatch):
@@ -30,7 +30,7 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     args = build_parser().parse_args([
         "--manifest", str(manifest),
         "--tasks", "task",
-        "--settings", "shared_peer_state_full",
+        "--settings", "shared_member_aware_full",
         "--seeds", "42",
         "--out_root", str(tmp_path / "runs"),
         "--train_size", "1",
@@ -47,7 +47,7 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     assert len(report["runs"]) == 1
     run = report["runs"][0]
     assert run["split_integrity"]["opt_val_question_overlap"] == 0
-    assert run["run_identity"]["experiment_setting"] == "shared_peer_state_full"
+    assert run["run_identity"]["experiment_setting"] == "shared_member_aware_full"
     assert Path(run["shared_solver_cache_path"]).name == "_shared_solver_cache.sqlite"
     assert Path(run["shared_solver_cache_path"]).is_file()
 

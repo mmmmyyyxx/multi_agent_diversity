@@ -11,7 +11,7 @@ QUESTIONS = {"q0": "A", "q1": "A", "q2": "A"}
 
 
 async def fake_solver(question, agent_id, prompt):
-    if "repair-q0" in prompt and question == "q0":
+    if "repair-q0" in prompt:
         answer = "A"
     elif question == "q1" and agent_id in {0, 1, 2}:
         answer = "A"
@@ -104,7 +104,10 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert len(system.responsibility_assignments) == 2
     assert "assigned_opportunities" in system.responsibility_assignments[-1]
     assert system.candidate_decisions[-1]["funnel"]["accepted_candidate"] is True
-    assert system.tcs_context_history[-1]["context_type"] == "ResponsibilityProposalContext"
+    assert (
+        system.tcs_context_history[-1]["context_type"]
+        == "MemberAwareResponsibilityProposalContext"
+    )
     assert len(system.tcs_context_history[-1]["proposal_context_hash"]) == 64
     assert system.tcs_context_history[-1]["forbidden_field_violations"] == []
     assert system.tcs_context_history[-1]["responsibility_specific_field_count"] > 0
@@ -118,7 +121,7 @@ def test_b3_also_refreshes_responsibilities_online(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
         answer_format="option_letter",
-        experiment_setting="shared_peer_state_responsibility",
+        experiment_setting="shared_member_aware_responsibility",
         num_candidates_per_parent=1,
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=fake_solver, optimizer_chat=fake_optimizer)
@@ -200,9 +203,9 @@ def test_stage_a_pool_budget_is_fixed_and_pools_are_disjoint(tmp_path):
 
     async def run_all():
         return await asyncio.gather(
-            build("shared_independent_accuracy_tcs"),
-            build("shared_peer_state_credit_round_robin"),
-            build("shared_peer_state_responsibility"),
+            build("shared_independent_accuracy"),
+            build("shared_peer_state_vote_first"),
+            build("shared_member_aware_responsibility"),
         )
 
     b1, b2, b3 = asyncio.run(run_all())
@@ -223,7 +226,7 @@ def test_independent_accuracy_tcs_excludes_peer_state_fields(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
         answer_format="option_letter",
-        experiment_setting="shared_independent_accuracy_tcs",
+        experiment_setting="shared_independent_accuracy",
         num_candidates_per_parent=1,
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=fake_solver, optimizer_chat=capture_optimizer)
@@ -246,7 +249,7 @@ def test_independent_accuracy_previous_summary_never_contains_vote_delta(tmp_pat
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
         answer_format="option_letter",
-        experiment_setting="shared_independent_accuracy_tcs",
+        experiment_setting="shared_independent_accuracy",
         num_candidates_per_parent=1,
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=fake_solver, optimizer_chat=fake_optimizer)
@@ -275,7 +278,7 @@ def test_independent_accuracy_tcs_does_not_leak_unique_correct_peer_context(tmp_
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
         answer_format="option_letter",
-        experiment_setting="shared_independent_accuracy_tcs",
+        experiment_setting="shared_independent_accuracy",
         num_candidates_per_parent=1,
     )
     system = PromptEnsembleOptimizationSystem(cfg, solver=unique_solver, optimizer_chat=capture_optimizer)
@@ -338,6 +341,7 @@ def test_c0_wrong_to_wrong_has_zero_real_candidate_utility(tmp_path):
             prompt_hash="wrong",
             examples=system.fixed_probe.examples,
             active_profiles=system.active_profiles,
+            initial_profiles=system.initial_profiles,
             candidate_profile=(PromptAnswer("C", "check FINAL_ANSWER: C", True),),
             target_agent_id=0,
             assigned_question_hashes=set(),

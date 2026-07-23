@@ -9,9 +9,9 @@ from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 
 
-def identity(setting="shared_peer_state_full"):
+def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="peer_state_counterfactual_v2",
+        method_version="member_aware_peer_state_v1",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -41,7 +41,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "peer_state_counterfactual_v2"
+    assert cfg.training.method_version == "member_aware_peer_state_v1"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
@@ -50,13 +50,14 @@ def test_config_is_sectioned_and_canonical_defaults_are_explicit():
         _ = cfg.method_version
 
 
-def test_only_five_settings_exist_and_old_setting_fails():
+def test_only_six_settings_exist_and_old_setting_fails():
     assert DEFAULT_EXPERIMENT_SETTING_NAMES == [
         "shared_baseline",
-        "shared_independent_accuracy_tcs",
-        "shared_peer_state_credit_round_robin",
-        "shared_peer_state_responsibility",
-        "shared_peer_state_full",
+        "shared_independent_accuracy",
+        "shared_peer_state_vote_first",
+        "shared_peer_state_member_pareto",
+        "shared_member_aware_responsibility",
+        "shared_member_aware_full",
     ]
     with pytest.raises(ValueError, match="Unknown experiment setting"):
         select_settings("shared_v9_sequential_accuracy")
@@ -64,18 +65,25 @@ def test_only_five_settings_exist_and_old_setting_fails():
 
 def test_ablation_protocols_are_field_isolated_and_budget_matched():
     rows = protocols()
-    b2 = asdict(rows["shared_peer_state_credit_round_robin"])
-    b3 = asdict(rows["shared_peer_state_responsibility"])
-    b4 = asdict(rows["shared_peer_state_full"])
-    b2_b3_differences = {key for key in b2 if b2[key] != b3[key]}
-    assert b2_b3_differences == {
+    b2 = asdict(rows["shared_peer_state_vote_first"])
+    pareto = asdict(rows["shared_peer_state_member_pareto"])
+    responsibility = asdict(rows["shared_member_aware_responsibility"])
+    full = asdict(rows["shared_member_aware_full"])
+    b2_pareto_differences = {key for key in b2 if b2[key] != pareto[key]}
+    assert b2_pareto_differences == {"name", "candidate_selection_policy"}
+    pareto_responsibility_differences = {
+        key for key in pareto if pareto[key] != responsibility[key]
+    }
+    assert pareto_responsibility_differences == {
         "name",
         "target_selection_policy",
         "sample_pool_policy",
         "responsibility_refresh_policy",
     }
-    b3_b4_differences = {key for key in b3 if b3[key] != b4[key]}
-    assert b3_b4_differences == {"name", "tcs_context_policy"}
+    responsibility_full_differences = {
+        key for key in responsibility if responsibility[key] != full[key]
+    }
+    assert responsibility_full_differences == {"name", "tcs_context_policy"}
     assert len({repr(row.candidate_budget_contract) for row in rows.values()}) == 1
     assert len({row.tie_policy for row in rows.values()}) == 1
     assert len({row.initialization_mode for row in rows.values()}) == 1
@@ -85,7 +93,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
     system.set_run_identity(identity())
     metadata = system.run_meta()
-    assert metadata["method_version"] == "peer_state_counterfactual_v2"
+    assert metadata["method_version"] == "member_aware_peer_state_v1"
     assert metadata["initialization_mode"] == "shared_identical"
     assert metadata["initial_prompts_identical"] is True
     assert metadata["tie_policy"] == "abstain"

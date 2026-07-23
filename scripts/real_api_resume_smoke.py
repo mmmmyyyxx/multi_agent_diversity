@@ -133,6 +133,7 @@ def main() -> int:
         "best_prompts.json",
         "candidate_decisions.jsonl",
         "responsibility_assignments.jsonl",
+        "target_priority_audit.jsonl",
         "history.json",
         "final_summary.json",
     ):

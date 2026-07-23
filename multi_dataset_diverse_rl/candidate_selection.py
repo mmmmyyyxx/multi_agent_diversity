@@ -3,6 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 
+from .member_objectives import (
+    MemberGainMetrics,
+    pareto_dominates,
+    team_objective_vector,
+)
 from .responsibility import CandidateMarginalContribution, ProtectionContribution
 
 
@@ -17,6 +22,7 @@ class PromptCompetenceMetrics:
 @dataclass(frozen=True)
 class TeamOutcomeMetrics:
     vote_correct_vector: tuple[bool, ...]
+    vote_correct_count: int
     plurality_vote_accuracy: float
     gold_vote_counts: tuple[int, ...]
     largest_wrong_vote_counts: tuple[int, ...]
@@ -32,13 +38,14 @@ class CandidateEvaluation:
     team_outcome: TeamOutcomeMetrics
     marginal: CandidateMarginalContribution
     protection: ProtectionContribution
+    member_gain: MemberGainMetrics
 
 
 @dataclass(frozen=True)
 class StageAScores:
-    accuracy_key: tuple
-    vote_key: tuple
-    responsibility_key: tuple
+    team_vote_key: tuple
+    worst_member_key: tuple
+    mean_member_key: tuple
 
 
 @dataclass(frozen=True)
@@ -57,7 +64,6 @@ class ConstraintLimits:
     vote_loss_limit: int = 0
     unique_correct_loss_limit: int = 0
     pivotal_loss_limit: int = 0
-    min_soft_utility_gain: float = 0.005
 
 
 @dataclass(frozen=True)
@@ -74,17 +80,20 @@ class ConstraintDecision:
 
 def stage_a_scores(candidate: CandidateEvaluation) -> StageAScores:
     return StageAScores(
-        accuracy_key=(candidate.competence.correct_count, -candidate.competence.invalid_count),
-        vote_key=(
-            candidate.marginal.net_vote_delta,
+        team_vote_key=(
+            candidate.team_outcome.vote_correct_count,
             -candidate.marginal.vote_loss_count,
             candidate.marginal.soft_utility_delta,
         ),
-        responsibility_key=(
-            candidate.marginal.coverage_gain_count,
-            candidate.marginal.assigned_residual_utility_delta,
+        worst_member_key=(
+            candidate.member_gain.minimum_gain,
+            candidate.member_gain.improved_member_count,
+            -candidate.member_gain.regressed_member_count,
+        ),
+        mean_member_key=(
+            candidate.member_gain.total_gain,
+            candidate.member_gain.improved_member_count,
             -candidate.protection.unique_correct_loss_count,
-            -candidate.protection.pivotal_correct_loss_count,
         ),
     )
 
@@ -132,9 +141,9 @@ def stage_a_multichannel_shortlist(
     if total_budget < 0 or channel_top_k < 0:
         raise ValueError("Stage A budgets cannot be negative")
     channels = {
-        "accuracy": _ordinal_ranks(rows, "accuracy_key"),
-        "vote": _ordinal_ranks(rows, "vote_key"),
-        "responsibility": _ordinal_ranks(rows, "responsibility_key"),
+        "team_vote": _ordinal_ranks(rows, "team_vote_key"),
+        "worst_member": _ordinal_ranks(rows, "worst_member_key"),
+        "mean_member": _ordinal_ranks(rows, "mean_member_key"),
     }
     rank_vectors = {
         candidate.prompt_hash: tuple(channels[name][candidate.prompt_hash] for name in channels)
@@ -235,6 +244,22 @@ def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple
     )
 
 
+def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
+    return (
+        candidate.member_gain.minimum_gain,
+        candidate.team_outcome.vote_correct_count,
+        candidate.member_gain.total_gain,
+        candidate.member_gain.improved_member_count,
+        -candidate.marginal.vote_loss_count,
+        candidate.team_outcome.mean_soft_vote_utility,
+        candidate.marginal.assigned_residual_repair_count,
+        candidate.competence.correct_count,
+        -candidate.competence.invalid_count,
+        -int(generation),
+        candidate.prompt_hash,
+    )
+
+
 def individual_accuracy_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
     return (
         candidate.competence.correct_count,
@@ -247,17 +272,14 @@ def individual_accuracy_key(candidate: CandidateEvaluation, generation: int = 0)
 def candidate_is_acceptable(
     candidate: CandidateEvaluation,
     incumbent: CandidateEvaluation,
-    limits: ConstraintLimits,
 ) -> bool:
-    marginal = candidate.marginal
-    if marginal.net_vote_delta > 0:
-        return True
-    if marginal.net_vote_delta != 0 or marginal.vote_loss_count != 0:
-        return False
-    if marginal.soft_utility_delta >= limits.min_soft_utility_gain:
-        return True
-    return bool(
-        candidate.competence.correct_count > incumbent.competence.correct_count
-        and candidate.protection.unique_correct_loss_count == 0
-        and candidate.protection.pivotal_correct_loss_count == 0
+    return pareto_dominates(
+        team_objective_vector(
+            candidate.team_outcome.vote_correct_count,
+            candidate.member_gain,
+        ),
+        team_objective_vector(
+            incumbent.team_outcome.vote_correct_count,
+            incumbent.member_gain,
+        ),
     )
