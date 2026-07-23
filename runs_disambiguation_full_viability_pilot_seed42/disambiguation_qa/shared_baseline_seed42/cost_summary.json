@@ -1,0 +1,12 @@
+{
+  "solver_calls": 0,
+  "optimizer_calls": 0,
+  "evaluator_calls": 0,
+  "total_llm_calls": 0,
+  "successful_llm_calls": 0,
+  "failed_llm_attempts": 0,
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "total_tokens": 0,
+  "latency_seconds": 0
+}

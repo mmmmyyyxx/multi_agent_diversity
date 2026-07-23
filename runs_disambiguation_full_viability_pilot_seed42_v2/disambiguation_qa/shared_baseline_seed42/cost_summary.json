@@ -1,0 +1,12 @@
+{
+  "solver_calls": 125,
+  "optimizer_calls": 0,
+  "evaluator_calls": 0,
+  "total_llm_calls": 125,
+  "successful_llm_calls": 125,
+  "failed_llm_attempts": 0,
+  "prompt_tokens": 22655,
+  "completion_tokens": 46687,
+  "total_tokens": 69342,
+  "latency_seconds": 570.2093086242676
+}

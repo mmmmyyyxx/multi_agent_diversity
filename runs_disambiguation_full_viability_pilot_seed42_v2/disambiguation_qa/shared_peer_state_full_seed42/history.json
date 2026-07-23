@@ -1,0 +1,28 @@
+[
+  {
+    "epoch": 1,
+    "validation": {
+      "plurality_vote_acc": 0.7,
+      "vote_acc": 0.7,
+      "mean_individual_acc": 0.652,
+      "min_individual_acc": 0.54,
+      "per_agent_acc": [
+        0.78,
+        0.68,
+        0.56,
+        0.54,
+        0.7
+      ],
+      "mean_soft_vote_utility": 0.6702064887124297,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.004,
+      "tie_count": 1,
+      "tie_rate": 0.02,
+      "validity_status_counts": {
+        "valid": 249,
+        "missing_final_answer": 1
+      }
+    },
+    "validation_feasible": false
+  }
+]
