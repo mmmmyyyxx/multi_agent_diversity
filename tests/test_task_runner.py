@@ -8,7 +8,7 @@ from scripts.run_task_level_accuracy import RUNNER_FIELDS, _completed_run, _pars
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v2",
+        method_version="member_aware_peer_state_v3",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -44,7 +44,7 @@ def test_completed_run_requires_exact_identity(tmp_path):
         "history.json": [],
         "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v2",
+            "method_version": "member_aware_peer_state_v3",
             "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite",

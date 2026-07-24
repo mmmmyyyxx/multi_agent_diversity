@@ -101,7 +101,9 @@ from .tcs import (
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 
 
-METHOD_VERSION = "member_aware_peer_state_v2"
+METHOD_VERSION = "member_aware_peer_state_v3"
+SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
+PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 
 
 @dataclass
@@ -225,11 +227,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v2 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v3 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v2 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v3 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v2 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v3 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -262,6 +264,10 @@ class PromptEnsembleOptimizationSystem:
             assigned_load_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             updates_since_selected_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
+            best_observed_target_gain_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
+            no_positive_candidate_streak_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
+            next_regular_eligible_update_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
+            target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
         )
         self.history: list[dict[str, Any]] = []
         self.peer_state_history: list[dict[str, Any]] = []
@@ -309,6 +315,7 @@ class PromptEnsembleOptimizationSystem:
             cache_metadata=request_components,
             shared_cache=self.shared_solver_cache,
             observation_callback=self._record_solver_observation,
+            version=PROMPT_QUESTION_EVALUATOR_VERSION,
         )
         self.active_profiles: list[tuple[PromptAnswer, ...]] = []
         self.initial_profiles: list[tuple[PromptAnswer, ...]] = []
@@ -394,6 +401,9 @@ class PromptEnsembleOptimizationSystem:
             "response_hash": answer.response_hash,
             "request_identity": answer.request_identity
             or self.prompt_question_evaluator.model_request_identity,
+            "terminal_invalid": answer.terminal_invalid,
+            "solver_attempt_count": answer.solver_attempt_count,
+            "raw_invalid_attempt_count": answer.raw_invalid_attempt_count,
             "created_at": answer.created_at,
         })
 
@@ -423,35 +433,65 @@ class PromptEnsembleOptimizationSystem:
 
     async def solve(self, question: str, agent_id: int, prompt: str) -> PromptAnswer:
         request_identity = self.prompt_question_evaluator.model_request_identity
-        if self._solver_override is not None:
-            started = time.time()
-            answer = await self._solver_override(question, agent_id, prompt)
-            self.llm.record_override_solver(started=started)
-            return answer if answer.request_identity else replace(
-                answer,
-                request_identity=request_identity,
-            )
+        attempts = []
+        system_prompt = solver_system_prompt(prompt, self.cfg.data.answer_format)
         async with self.solver_semaphore:
-            result = await self.llm.chat_result(
-                self.cfg.models.agent_model,
-                solver_system_prompt(prompt, self.cfg.data.answer_format),
-                question,
-                self.cfg.models.temperature,
-                self.cfg.models.solver_max_tokens,
-                "solver",
-            )
-        answer = parse_solver_output(
-            result.text,
-            question=question,
-            task_spec=self.task_spec,
-            answer_format=self.cfg.data.answer_format,
-        )
+            for _ in range(1 + max(0, self.cfg.models.solver_invalid_max_retries)):
+                if self._solver_override is not None:
+                    started = time.time()
+                    parsed = await self._solver_override(question, agent_id, prompt)
+                    self.llm.record_override_solver(started=started)
+                    result = LLMCallResult(
+                        text=parsed.trace,
+                        prompt_tokens=parsed.prompt_tokens,
+                        completion_tokens=parsed.completion_tokens,
+                        total_tokens=parsed.total_tokens,
+                        latency_seconds=0.0,
+                        finish_reason="stop",
+                    )
+                else:
+                    result = await self.llm.chat_result(
+                        self.cfg.models.agent_model,
+                        system_prompt,
+                        question,
+                        self.cfg.models.temperature,
+                        self.cfg.models.solver_max_tokens,
+                        "solver",
+                    )
+                    parsed = parse_solver_output(
+                        result.text,
+                        question=question,
+                        task_spec=self.task_spec,
+                        answer_format=self.cfg.data.answer_format,
+                    )
+                if self.llm.calls:
+                    self.llm.calls[-1]["solver_invalid_attempt_index"] = len(attempts) + 1
+                attempts.append((result, parsed))
+                if parsed.valid:
+                    break
+        result, answer = attempts[-1]
+        first_result, first_answer = attempts[0]
+        invalid_attempts = [item for _, item in attempts if not item.valid]
         return replace(
             answer,
             prompt_tokens=result.prompt_tokens,
             completion_tokens=result.completion_tokens,
             total_tokens=result.total_tokens,
             request_identity=request_identity,
+            solver_attempt_count=len(attempts),
+            first_attempt_valid=first_answer.valid,
+            recovered_from_invalid=(not first_answer.valid and answer.valid),
+            terminal_invalid=not answer.valid,
+            raw_invalid_attempt_count=len(invalid_attempts),
+            attempt_validity_statuses=tuple(item.validity_status for _, item in attempts),
+            attempt_finish_reasons=tuple(item.finish_reason for item, _ in attempts),
+            attempt_response_hashes=tuple(
+                hashlib.sha256(item.text.encode("utf-8")).hexdigest()
+                for item, _ in attempts
+            ),
+            recovery_prompt_tokens=sum(item.prompt_tokens for item, _ in attempts[1:]),
+            recovery_completion_tokens=sum(item.completion_tokens for item, _ in attempts[1:]),
+            recovery_total_tokens=sum(item.total_tokens for item, _ in attempts[1:]),
         )
 
     def build_probe(self, data: Sequence[Mapping[str, Any]]) -> FixedProbeEvaluator:
@@ -700,6 +740,7 @@ class PromptEnsembleOptimizationSystem:
             state=self.responsibility_state,
             seed=self.cfg.training.seed,
             max_wait_updates=max_wait,
+            update_index=update_index,
         )
         fairness = any(row.overdue for row in priorities)
         if self.protocol.target_selection_policy == "round_robin":
@@ -1412,6 +1453,7 @@ class PromptEnsembleOptimizationSystem:
             local_accuracy_allowance=int(self.cfg.constraints.local_accuracy_loss_epsilon * size),
             global_accuracy_allowance=int(self.cfg.constraints.global_accuracy_loss_epsilon * size),
             invalid_allowance=int(self.cfg.constraints.invalid_guard_epsilon * size),
+            global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
             vote_loss_limit=self.cfg.constraints.vote_loss_limit,
             unique_correct_loss_limit=self.cfg.constraints.unique_correct_loss_limit,
             pivotal_loss_limit=self.cfg.constraints.pivotal_loss_limit,
@@ -1570,6 +1612,11 @@ class PromptEnsembleOptimizationSystem:
         )
 
         limits = self._limits(len(self.fixed_probe.examples))
+        limits = replace(
+            limits,
+            invalid_allowance=max(limits.invalid_allowance, self.cfg.constraints.local_terminal_invalid_allowance),
+            global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
+        )
         feasible: list[CandidateRuntime] = []
         acceptable: list[CandidateRuntime] = []
         for candidate in shortlist:
@@ -1674,6 +1721,9 @@ class PromptEnsembleOptimizationSystem:
             update_index,
         )
         self.agent_selection_counts[target] += 1
+        self.responsibility_state.target_attempt_count_by_agent[target] = (
+            self.responsibility_state.target_attempt_count_by_agent.get(target, 0) + 1
+        )
         assigned_hashes = {question_hash for question_hash, owner in owners.items() if owner == target}
         funnel = CandidateFunnel()
         candidates = await self.propose_candidates(
@@ -1682,6 +1732,33 @@ class PromptEnsembleOptimizationSystem:
         accepted, incumbent, evaluated = await self.evaluate_candidates(
             target, candidates, assigned_hashes, funnel,
         )
+        stage_b_evaluations = [
+            row.final_evaluation for row in evaluated
+            if row.final_evaluation is not None
+        ]
+        if stage_b_evaluations:
+            best_attempt_target_gain = max(
+                row.member_gain.target_gain_vs_incumbent
+                for row in stage_b_evaluations
+            )
+            if best_attempt_target_gain > 0:
+                self.responsibility_state.best_observed_target_gain_by_agent[target] = max(
+                    self.responsibility_state.best_observed_target_gain_by_agent.get(target, 0),
+                    best_attempt_target_gain,
+                )
+                self.responsibility_state.no_positive_candidate_streak_by_agent[target] = 0
+                self.responsibility_state.next_regular_eligible_update_by_agent[target] = update_index + 1
+                cooldown_length = 0
+            else:
+                streak = self.responsibility_state.no_positive_candidate_streak_by_agent.get(target, 0) + 1
+                self.responsibility_state.no_positive_candidate_streak_by_agent[target] = streak
+                cooldown_length = min(streak, 2)
+                self.responsibility_state.next_regular_eligible_update_by_agent[target] = (
+                    update_index + 1 + cooldown_length
+                )
+        else:
+            best_attempt_target_gain = None
+            cooldown_length = 0
         for agent_id in self.responsibility_state.updates_since_selected_by_agent:
             self.responsibility_state.updates_since_selected_by_agent[agent_id] += 1
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
@@ -1692,6 +1769,12 @@ class PromptEnsembleOptimizationSystem:
             "assigned_question_hashes": sorted(assigned_hashes),
             "max_wait_fairness_trigger_count": int(fairness_triggered),
             "agent_target_priorities": target_priorities_payload,
+            "best_attempt_target_gain": best_attempt_target_gain,
+            "positive_target_gain_candidate_found": bool(
+                best_attempt_target_gain is not None and best_attempt_target_gain > 0
+            ),
+            "potential_state_updated": bool(stage_b_evaluations),
+            "cooldown_length_assigned": cooldown_length,
             "funnel": asdict(funnel),
             "accepted_prompt_hash": accepted.prompt_hash if accepted else "",
             "incumbent": asdict(incumbent),
@@ -1804,7 +1887,7 @@ class PromptEnsembleOptimizationSystem:
         if len(profiles) != 5:
             raise ValueError("dataset evaluation requires five profiles")
         correct_per_agent = [0] * 5
-        vote_correct = invalid = c0 = tie_count = 0
+        vote_correct = invalid = terminal_invalid = c0 = tie_count = 0
         validity_status_counts: dict[str, int] = {}
         utility = 0.0
         rows: list[DatasetEvaluationRow] = []
@@ -1825,6 +1908,9 @@ class PromptEnsembleOptimizationSystem:
                 validity_status_counts[status] = validity_status_counts.get(status, 0) + 1
             vote_correct += int(state.vote_correct)
             invalid += sum(not value for value in state.team_validity)
+            terminal_invalid += sum(
+                int(profile[index].terminal_invalid) for profile in profiles
+            )
             c0 += int(state.gold_vote_count == 0)
             tie_count += int(state.top_tie)
             utility += soft_vote_utility(
@@ -1854,6 +1940,7 @@ class PromptEnsembleOptimizationSystem:
             tie_rate=tie_count / size,
             rows=tuple(rows),
             validity_status_counts=validity_status_counts,
+            terminal_invalid_count=terminal_invalid,
         )
 
     def active_probe_metrics(self) -> DatasetMetrics:
@@ -1925,7 +2012,10 @@ class PromptEnsembleOptimizationSystem:
             )
         ):
             return None
-        if metrics.mean_invalid_rate > initial.mean_invalid_rate + self.cfg.constraints.invalid_guard_epsilon:
+        if metrics.terminal_invalid_count > (
+            initial.terminal_invalid_count
+            + self.cfg.constraints.validation_terminal_invalid_allowance
+        ):
             return None
         if metrics.vote_correct_count < initial.vote_correct_count:
             return None
@@ -1980,6 +2070,12 @@ class PromptEnsembleOptimizationSystem:
             "student_schema_version": STUDENT_SCHEMA_VERSION,
             "role_retry_policy_version": ROLE_RETRY_POLICY_VERSION,
             "completion_policy": "provider_default",
+            "solver_invalid_retry_policy_version": SOLVER_INVALID_RETRY_POLICY_VERSION,
+            "prompt_question_evaluator_version": PROMPT_QUESTION_EVALUATOR_VERSION,
+            "solver_invalid_max_retries": self.cfg.models.solver_invalid_max_retries,
+            "local_terminal_invalid_allowance": self.cfg.constraints.local_terminal_invalid_allowance,
+            "global_terminal_invalid_allowance": self.cfg.constraints.global_terminal_invalid_allowance,
+            "validation_terminal_invalid_allowance": self.cfg.constraints.validation_terminal_invalid_allowance,
             "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
             "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
             "teacher_total_character_limit": self.cfg.tcs.teacher_total_max_chars,
@@ -1988,7 +2084,7 @@ class PromptEnsembleOptimizationSystem:
             "student_count_policy": "reject_excess_keep_individually_valid_v1",
             "model_facing_payload_version": "audit_hash_isolated_v2",
             "terminal_failure_version": "role_specific_terminal_failure_v1",
-            "checkpoint_version": 7,
+            "checkpoint_version": 8,
             "tcs_protocol_version": TCS_PROTOCOL_VERSION,
             "critic_approval_basis": "failed_checks_empty",
             "task_general_scope": "unseen_examples_within_current_task",

@@ -17,7 +17,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v2",
+        method_version="member_aware_peer_state_v3",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -61,7 +61,7 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert payload["responsibility_state_version"] == source.responsibility_state_version
     assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
     assert "cached_member_opportunities" in payload
-    assert payload["checkpoint_version"] == 7
+    assert payload["checkpoint_version"] == 8
     assert "previous_update_outcomes" in payload
     assert set(payload["completed_tcs_state"]) == {
         "selected_pattern_ids",
@@ -114,14 +114,14 @@ def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
     missing_member_state.pop("member_gain_state")
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v2",
+        match="Checkpoint is incompatible with member_aware_peer_state_v3",
     ):
         restore_checkpoint(system, missing_member_state)
     incompatible = dict(payload)
     incompatible["checkpoint_version"] = 5
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v2",
+        match="Checkpoint is incompatible with member_aware_peer_state_v3",
     ):
         restore_checkpoint(system, incompatible)
     payload["probe_version"] = "stale"

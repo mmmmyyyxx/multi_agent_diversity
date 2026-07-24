@@ -120,7 +120,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         summary = _read_json(run_dir / "final_summary.json")
     except (OSError, json.JSONDecodeError):
         return False
-    if metadata["method_version"] != "member_aware_peer_state_v2":
+    if metadata["method_version"] != "member_aware_peer_state_v3":
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")

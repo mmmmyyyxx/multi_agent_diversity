@@ -11,7 +11,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v2",
+        method_version="member_aware_peer_state_v3",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -41,7 +41,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v2"
+    assert cfg.training.method_version == "member_aware_peer_state_v3"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
@@ -97,7 +97,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
     system.set_run_identity(identity())
     metadata = system.run_meta()
-    assert metadata["method_version"] == "member_aware_peer_state_v2"
+    assert metadata["method_version"] == "member_aware_peer_state_v3"
     assert metadata["initialization_mode"] == "shared_identical"
     assert metadata["initial_prompts_identical"] is True
     assert metadata["tie_policy"] == "abstain"
@@ -106,7 +106,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v2"
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
     assert metadata["diagnosis_aggregation_version"] == "peer_state_pattern_aggregation_v1"
-    assert metadata["checkpoint_version"] == 7
+    assert metadata["checkpoint_version"] == 8
     assert metadata["task_general_scope"] == "unseen_examples_within_current_task"
     assert metadata["student_sample_memorization_filter"] == "exact_supplied_example_text_v1"
     assert metadata["solver_request_template_version"] == (

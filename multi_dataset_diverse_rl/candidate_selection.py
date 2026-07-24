@@ -18,6 +18,7 @@ class PromptCompetenceMetrics:
     accuracy: float
     invalid_count: int
     invalid_rate: float
+    terminal_invalid_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -62,6 +63,7 @@ class ConstraintLimits:
     local_accuracy_allowance: int = 0
     global_accuracy_allowance: int = 0
     invalid_allowance: int = 0
+    global_invalid_allowance: int = 0
     vote_loss_limit: int = 0
     unique_correct_loss_limit: int = 0
     pivotal_loss_limit: int = 0
@@ -220,7 +222,17 @@ def evaluate_constraints(
 ) -> ConstraintDecision:
     local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
     global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
-    invalid = candidate.competence.invalid_count <= active.competence.invalid_count + limits.invalid_allowance
+    candidate_invalid = candidate.competence.terminal_invalid_count
+    active_invalid = active.competence.terminal_invalid_count
+    initial_invalid = initial.competence.terminal_invalid_count
+    if candidate_invalid == active_invalid == initial_invalid == 0:
+        candidate_invalid = candidate.competence.invalid_count
+        active_invalid = active.competence.invalid_count
+        initial_invalid = initial.competence.invalid_count
+    invalid = candidate_invalid <= active_invalid + limits.invalid_allowance
+    invalid = invalid and (
+        candidate_invalid <= initial_invalid + limits.global_invalid_allowance
+    )
     vote_loss = candidate.marginal.vote_loss_count <= limits.vote_loss_limit
     unique = candidate.protection.unique_correct_loss_count <= limits.unique_correct_loss_limit
     pivotal = candidate.protection.pivotal_correct_loss_count <= limits.pivotal_loss_limit

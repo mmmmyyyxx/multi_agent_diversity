@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v2
+method_version = member_aware_peer_state_v3
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -29,6 +29,19 @@ FINAL_ANSWER: <answer>
 
 Invalid outputs are audited and do not silently become ordinary answers.
 Aggregation is true plurality vote. A top-count tie abstains.
+
+Solver invalid recovery is request-local and cache-resolved. A strict-parser
+invalid response receives up to three additional identical Solver calls. The
+first valid response is used immediately; four invalid responses produce one
+terminal-invalid result. Transport retries remain separate. Formal competence
+and guards count only terminal-invalid results, while first-pass and recovery
+counts remain audit metrics.
+
+Target scheduling adds potential evidence without changing responsibility
+assignment or max-wait semantics. Unimproved members, headroom to the current
+best member, and historical positive target gains affect the Pareto priority.
+Repeated Stage-B attempts with no positive target-gain candidate receive a
+bounded cooldown; a positive but guard-rejected candidate clears that streak.
 
 The optimized prompt contains only the mutable decision procedure. For every
 Solver request, the program places that procedure first and appends the
@@ -345,7 +358,7 @@ split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v2
+Checkpoint is incompatible with member_aware_peer_state_v3
 ```
 
 The runner never silently restarts an incompatible run in the same directory.

@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import hashlib
@@ -40,7 +40,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append("experiment settings do not match the frozen six-setting protocol")
     for cfg in configs:
-        if cfg.training.method_version != "member_aware_peer_state_v2":
+        if cfg.training.method_version != "member_aware_peer_state_v3":
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
@@ -104,7 +104,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append("git working tree is not clean")
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
-        "method_version": "member_aware_peer_state_v2", "settings": EXPECTED_SETTINGS,
+        "method_version": "member_aware_peer_state_v3", "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 

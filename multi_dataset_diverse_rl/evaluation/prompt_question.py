@@ -22,6 +22,17 @@ class PromptAnswer:
     response_hash: str = ""
     request_identity: str = ""
     created_at: float = 0.0
+    solver_attempt_count: int = 1
+    first_attempt_valid: bool = False
+    recovered_from_invalid: bool = False
+    terminal_invalid: bool = False
+    raw_invalid_attempt_count: int = 0
+    attempt_validity_statuses: tuple[str, ...] = ()
+    attempt_finish_reasons: tuple[str, ...] = ()
+    attempt_response_hashes: tuple[str, ...] = ()
+    recovery_prompt_tokens: int = 0
+    recovery_completion_tokens: int = 0
+    recovery_total_tokens: int = 0
 
     def __post_init__(self) -> None:
         if not self.validity_status:

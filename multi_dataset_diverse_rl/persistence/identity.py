@@ -22,6 +22,8 @@ from ..tcs import (
     TEACHER_SCHEMA_VERSION,
 )
 from ..evaluation.output_contract import SOLVER_REQUEST_TEMPLATE_VERSION
+SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
+PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
 
 
@@ -105,6 +107,12 @@ def config_fingerprint(cfg: Config) -> str:
         "model_facing_payload_version": "audit_hash_isolated_v2",
         "terminal_failure_version": "role_specific_terminal_failure_v1",
         "solver_request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
+        "solver_invalid_retry_policy": SOLVER_INVALID_RETRY_POLICY_VERSION,
+        "prompt_question_evaluator": PROMPT_QUESTION_EVALUATOR_VERSION,
+        "solver_invalid_max_retries": cfg.models.solver_invalid_max_retries,
+        "local_terminal_invalid_allowance": cfg.constraints.local_terminal_invalid_allowance,
+        "global_terminal_invalid_allowance": cfg.constraints.global_terminal_invalid_allowance,
+        "validation_terminal_invalid_allowance": cfg.constraints.validation_terminal_invalid_allowance,
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
         "checkpoint": 7,
@@ -131,6 +139,9 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
         "max_tokens": cfg.models.solver_max_tokens,
         "output_contract_version": cfg.peer_state.solver_output_contract_version,
         "request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
+        "invalid_retry_policy": SOLVER_INVALID_RETRY_POLICY_VERSION,
+        "prompt_question_evaluator": PROMPT_QUESTION_EVALUATOR_VERSION,
+        "invalid_max_retries": cfg.models.solver_invalid_max_retries,
     }
 
 

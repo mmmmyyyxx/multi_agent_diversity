@@ -33,11 +33,12 @@ class ModelConfig:
     evaluator_base_url_env: str = ""
     temperature: float = 0.0
     solver_max_tokens: int = 1800
+    solver_invalid_max_retries: int = 3
 
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v2"
+    method_version: str = "member_aware_peer_state_v3"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -105,6 +106,9 @@ class ConstraintConfig:
     unique_correct_loss_limit: int = 0
     pivotal_loss_limit: int = 0
     validation_accuracy_epsilon: float = 0.0
+    local_terminal_invalid_allowance: int = 1
+    global_terminal_invalid_allowance: int = 1
+    validation_terminal_invalid_allowance: int = 1
 
 
 @dataclass(frozen=True)

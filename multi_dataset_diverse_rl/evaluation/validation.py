@@ -34,6 +34,7 @@ class DatasetMetrics:
     tie_rate: float
     rows: tuple[DatasetEvaluationRow, ...]
     validity_status_counts: dict[str, int] = field(default_factory=dict)
+    terminal_invalid_count: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

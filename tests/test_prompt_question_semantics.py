@@ -112,12 +112,46 @@ def test_invalid_observation_is_audited_once_per_prompt_question(tmp_path):
         solver=solve,
     )
     asyncio.run(system.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
-    assert calls == 1
+    assert calls == 4
     assert len(system.solver_invalid_outputs) == 1
     audit = system.solver_invalid_outputs[0]
     assert audit["raw_final_answer_payload"] == "Option A."
     assert audit["final_answer_line_count"] == 1
     assert audit["validity_status"] == "out_of_domain_answer"
+    assert audit["solver_attempt_count"] == 4
+    assert audit["terminal_invalid"] is True
+
+
+def test_invalid_solver_response_recovers_and_cache_stores_resolved_result(tmp_path):
+    calls = 0
+
+    async def solve(_question, _agent_id, _prompt):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return PromptAnswer("", "missing", False, "missing_final_answer")
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    system = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            answer_format="option_letter",
+            shared_solver_cache_path=str(tmp_path / "cache.sqlite"),
+        ),
+        solver=solve,
+    )
+    data = [{"question": "q\n(A) a\n(B) b", "answer": "A"}]
+    asyncio.run(system.initialize_fixed_probe(data))
+    assert calls == 2
+    answer = system.active_profiles[0][0]
+    assert answer.valid
+    assert answer.solver_attempt_count == 2
+    assert answer.recovered_from_invalid
+    assert not answer.terminal_invalid
+    assert answer.raw_invalid_attempt_count == 1
+
+    asyncio.run(system.evaluate_dataset(data))
+    assert calls == 2
 
 
 def test_matched_settings_share_persistent_solver_observation(tmp_path):

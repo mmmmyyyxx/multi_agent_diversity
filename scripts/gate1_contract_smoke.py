@@ -174,7 +174,7 @@ async def run(args: argparse.Namespace) -> int:
             run_dir = output / f"case{case_index:02d}_rep{repetition:02d}"
             run_dir.mkdir()
             cfg = Config.from_flat(
-                method_version="member_aware_peer_state_v2",
+                method_version="member_aware_peer_state_v3",
                 experiment_setting="shared_member_aware_full",
                 agents=5,
                 initialization_mode="shared_identical",

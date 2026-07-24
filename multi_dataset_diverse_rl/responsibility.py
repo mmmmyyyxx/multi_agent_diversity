@@ -63,6 +63,10 @@ class AgentTargetPriority:
     dominant_wrong_count: int
 
     gain_count: int
+    current_correct_count: int
+    best_current_correct_count: int
+    headroom_to_best: int
+    unimproved: bool
     improvement_need: int
     unique_correct_count: int
     pivotal_correct_count: int
@@ -71,14 +75,21 @@ class AgentTargetPriority:
     overdue: bool
     pareto_front: int
     seeded_rank: str
+    best_observed_target_gain: int = 0
+    no_positive_candidate_streak: int = 0
+    next_regular_eligible_update: int = 0
+    cooling_down: bool = False
+    target_attempt_count: int = 0
 
     def pareto_values(self) -> tuple[float, ...]:
         return (
+            float(self.headroom_to_best),
+            float(max(0, self.best_observed_target_gain)),
+            float(self.improvement_need),
             float(self.direct_vote_fix_count),
             float(self.oracle_soft_utility_gain_sum),
-            float(self.improvement_need),
             float(self.coverage_opportunity_count),
-            float(self.dominant_wrong_count),
+            float(-self.no_positive_candidate_streak),
         )
 
     @property
@@ -94,6 +105,10 @@ class ResponsibilityState:
     updates_since_selected_by_agent: dict[int, int] = field(default_factory=dict)
     accepted_updates_by_agent: dict[int, int] = field(default_factory=dict)
     seeded_rank_by_agent: dict[int, str] = field(default_factory=dict)
+    best_observed_target_gain_by_agent: dict[int, int] = field(default_factory=dict)
+    no_positive_candidate_streak_by_agent: dict[int, int] = field(default_factory=dict)
+    next_regular_eligible_update_by_agent: dict[int, int] = field(default_factory=dict)
+    target_attempt_count_by_agent: dict[int, int] = field(default_factory=dict)
 
 
 def compute_member_aware_repair_opportunity(
@@ -320,6 +335,7 @@ def target_priorities(
     state: ResponsibilityState,
     seed: int,
     max_wait_updates: int,
+    update_index: int = 0,
 ) -> tuple[AgentTargetPriority, ...]:
     rows_by_agent: dict[int, list[MemberAwareRepairOpportunity]] = {
         agent_id: [] for agent_id in state.updates_since_selected_by_agent
@@ -328,6 +344,11 @@ def target_priorities(
         for row in rows:
             rows_by_agent[row.agent_id].append(row)
     priorities = []
+    current_counts = {
+        agent_id: max((row.current_correct_count for row in rows), default=0)
+        for agent_id, rows in rows_by_agent.items()
+    }
+    best_current_count = max(current_counts.values(), default=0)
     for agent_id, rows in sorted(rows_by_agent.items()):
         errors = [row for row in rows if row.member_error]
         seeded_rank = state.seeded_rank_by_agent.setdefault(
@@ -349,6 +370,10 @@ def target_priorities(
                 row.dominant_wrong_member for row in errors
             ),
             gain_count=reference.gain_count if reference is not None else 0,
+            current_correct_count=current_counts[agent_id],
+            best_current_correct_count=best_current_count,
+            headroom_to_best=best_current_count - current_counts[agent_id],
+            unimproved=(reference.gain_count <= 0 if reference is not None else True),
             improvement_need=max((row.improvement_need for row in errors), default=0),
             unique_correct_count=(
                 reference.unique_correct_count if reference is not None else 0
@@ -364,6 +389,11 @@ def target_priorities(
             ),
             pareto_front=0,
             seeded_rank=seeded_rank,
+            best_observed_target_gain=state.best_observed_target_gain_by_agent.get(agent_id, 0),
+            no_positive_candidate_streak=state.no_positive_candidate_streak_by_agent.get(agent_id, 0),
+            next_regular_eligible_update=state.next_regular_eligible_update_by_agent.get(agent_id, 0),
+            cooling_down=update_index < state.next_regular_eligible_update_by_agent.get(agent_id, 0),
+            target_attempt_count=state.target_attempt_count_by_agent.get(agent_id, 0),
         ))
     eligible = [row for row in priorities if row.individual_error_count > 0]
     values = {row.agent_id: row.pareto_values() for row in eligible}
@@ -382,7 +412,12 @@ def select_target_agent(
     eligible = [row for row in priorities if row.individual_error_count > 0]
     if not eligible:
         raise ValueError("no erroneous agents are available for member-aware selection")
-    candidates = [row for row in eligible if row.overdue] or eligible
+    overdue = [row for row in eligible if row.overdue]
+    if overdue:
+        candidates = overdue
+    else:
+        regular = [row for row in eligible if not row.cooling_down] or eligible
+        candidates = [row for row in regular if row.unimproved] or regular
     candidate_values = {row.agent_id: row.pareto_values() for row in candidates}
     candidate_fronts = _pareto_front_numbers(
         [row.agent_id for row in candidates],
@@ -392,6 +427,8 @@ def select_target_agent(
     return min(
         frontier,
         key=lambda row: (
+            -row.headroom_to_best,
+            -row.best_observed_target_gain,
             -row.improvement_need,
             -row.direct_vote_fix_count,
             -row.oracle_soft_utility_gain_sum,

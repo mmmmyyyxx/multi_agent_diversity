@@ -28,6 +28,12 @@ The current formal method is:
 Member-Aware Peer-State Prompt-Team Optimization
 ```
 
+The current implementation version is `member_aware_peer_state_v3`. It keeps
+the v2 responsibility, TCS, Pareto, Stage A/B, and immutable Solver contract
+semantics, while adding potential-aware target priority and request-local
+first-valid Solver invalid recovery. Checkpoint version is 8; v7 checkpoints
+are intentionally incompatible.
+
 Read the current formal method version from:
 
 ```text
@@ -260,30 +266,18 @@ make a non-dominating candidate acceptable.
 
 ```text
 Initial five-prompt team
-    ↓
-Fixed optimization-probe rollout
-    ↓
-TeamVoteState and leave-one-out PeerVoteContext
-    ↓
-Member gains and improvement needs
-    ↓
-Member-aware counterfactual repair opportunities
-    ↓
-Residual owner assignment and target-member selection
-    ↓
-Responsibility-conditioned prompt proposal
-    ↓
-Target-only candidate rollout with four fixed peers
-    ↓
-Stage A multi-channel shortlist
-    ↓
-Hard competence and preservation guards
-    ↓
-Stage B Pareto comparison against incumbent
-    ↓
-Atomic prompt/profile commit
-    ↓
-Exactly one responsibility refresh for the new team state
+    鈫?Fixed optimization-probe rollout
+    鈫?TeamVoteState and leave-one-out PeerVoteContext
+    鈫?Member gains and improvement needs
+    鈫?Member-aware counterfactual repair opportunities
+    鈫?Residual owner assignment and target-member selection
+    鈫?Responsibility-conditioned prompt proposal
+    鈫?Target-only candidate rollout with four fixed peers
+    鈫?Stage A multi-channel shortlist
+    鈫?Hard competence and preservation guards
+    鈫?Stage B Pareto comparison against incumbent
+    鈫?Atomic prompt/profile commit
+    鈫?Exactly one responsibility refresh for the new team state
 ```
 
 Rejected candidates do not change team state or responsibility state.
@@ -598,7 +592,7 @@ requested candidate count
 
 Student must not receive raw optimization examples or gold answers.
 
-This pipeline is implemented by `member_aware_peer_state_v2` with
+This pipeline is implemented by `member_aware_peer_state_v3` with
 `aggregated_small_model_tcs_v1`. Do not revert to raw parallel case lists or
 expand language-model responsibilities. Do not change member objectives,
 responsibility assignment, Stage A/B, validation, or experiment-setting
@@ -662,6 +656,12 @@ multi_dataset_diverse_rl/responsibility.py
 Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, primary owner
 assignment, target priorities, target selection, and member improvement need.
 Responsibility lifecycle must be versioned by real team state.
+
+Potential-aware scheduling state is stored in `ResponsibilityState`:
+`best_observed_target_gain_by_agent`, `no_positive_candidate_streak_by_agent`,
+`next_regular_eligible_update_by_agent`, and `target_attempt_count_by_agent`.
+These fields are checkpointed and fingerprinted. They do not alter
+`updates_since_selected` attempt-aware max-wait behavior.
 
 ### TCS proposal mechanism
 
@@ -741,6 +741,12 @@ or reproducing the full interface is not part of the prompt search problem.
 
 Do not loosen the parser to hide model-output failures.
 
+Invalid recovery is implemented inside `system.solve()` before the
+prompt-question cache stores an observation. It retries only strict-parser
+invalid results, uses identical requests, stops at the first valid result, and
+stores only the resolved result. `PromptAnswer` carries attempt audit fields;
+formal invalid guards use `terminal_invalid_count`.
+
 ### LLM access
 
 ```text
@@ -797,7 +803,7 @@ start a real-API smoke, pilot, or experiment. Completing an implementation does
 not imply authorization to spend API calls.
 
 Only combine code modification and real-API testing when the user explicitly
-requests both in the same task. A request to “test”, “verify”, or “finish” means
+requests both in the same task. A request to 鈥渢est鈥? 鈥渧erify鈥? or 鈥渇inish鈥?means
 offline verification unless real API usage is stated explicitly.
 
 Tests must verify method semantics, not merely implementation details. Every
@@ -935,7 +941,7 @@ working-tree state
 push state
 ```
 
-Do not report only “tests passed.” Explain how the implementation maps back to
+Do not report only 鈥渢ests passed.鈥?Explain how the implementation maps back to
 the research question.
 
 ## 14. Historical Results

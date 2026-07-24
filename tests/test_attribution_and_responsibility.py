@@ -222,3 +222,42 @@ def test_seed_changes_only_exact_symmetric_ties():
     owners_a, _, _ = assign(current, rows, seed=42)
     owners_b, _, _ = assign(current, rows, seed=42)
     assert owners_a == owners_b
+
+
+def test_unimproved_member_is_preferred_by_headroom_and_potential():
+    _, rows = opportunities(
+        ["B", "B", "B", "B", "B"],
+        counts=(5, 5, 5, 5, 5),
+        gains=(0, 5, 0, 0, 0),
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=state(),
+        seed=42,
+        max_wait_updates=4,
+        update_index=0,
+    )
+    selected = select_target_agent(priorities)
+    selected_row = next(row for row in priorities if row.agent_id == selected)
+    assert selected_row.unimproved
+    assert selected_row.headroom_to_best >= 0
+
+
+def test_positive_guard_rejected_attempt_clears_streak():
+    current, rows = opportunities(["B", "B", "B", "B", "B"])
+    current_state = state(
+        best_observed_target_gain_by_agent={0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
+        no_positive_candidate_streak_by_agent={0: 2, 1: 0, 2: 0, 3: 0, 4: 0},
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=current_state,
+        seed=42,
+        max_wait_updates=4,
+        update_index=0,
+    )
+    row = next(item for item in priorities if item.agent_id == 0)
+    assert row.no_positive_candidate_streak == 2
+    assert row.cooling_down is False

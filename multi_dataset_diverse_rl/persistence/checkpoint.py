@@ -15,7 +15,7 @@ from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
 
 
-CHECKPOINT_VERSION = 7
+CHECKPOINT_VERSION = 8
 
 
 def _random_state_payload() -> str:
@@ -126,7 +126,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v2")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v3")
     required_member_state = {
         "member_gain_state",
         "cached_member_opportunities",
@@ -139,7 +139,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "completed_tcs_state",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v2")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v3")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -177,6 +177,10 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "assigned_load_by_agent",
         "updates_since_selected_by_agent",
         "accepted_updates_by_agent",
+        "best_observed_target_gain_by_agent",
+        "no_positive_candidate_streak_by_agent",
+        "next_regular_eligible_update_by_agent",
+        "target_attempt_count_by_agent",
     ):
         raw_state[field] = {int(key): int(value) for key, value in raw_state[field].items()}
     raw_state["seeded_rank_by_agent"] = {

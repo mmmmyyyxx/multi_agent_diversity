@@ -128,7 +128,7 @@ def evaluate_candidate_profile(
     ):
         raise ValueError("initial profiles must contain five complete fixed-probe profiles")
 
-    target_correct = invalid_count = 0
+    target_correct = invalid_count = terminal_invalid_count = 0
     vote_gain = vote_loss = coverage_gain = coverage_loss = 0
     unique_loss = pivotal_loss = 0
     dominant_exit = dominant_join = assigned_repair = 0
@@ -229,6 +229,7 @@ def evaluate_candidate_profile(
         candidate_correct = candidate.team_correctness[target_agent_id]
         target_correct += int(candidate_correct)
         invalid_count += int(not candidate.team_validity[target_agent_id])
+        terminal_invalid_count += int(candidate_profile[index].terminal_invalid)
         vote_gain += int(not current.vote_correct and candidate.vote_correct)
         vote_loss += int(current.vote_correct and not candidate.vote_correct)
         coverage_gain += int(current.gold_vote_count == 0 and candidate.gold_vote_count > 0)
@@ -271,6 +272,7 @@ def evaluate_candidate_profile(
             accuracy=target_correct / denominator,
             invalid_count=invalid_count,
             invalid_rate=invalid_count / denominator,
+            terminal_invalid_count=terminal_invalid_count,
         ),
         team_outcome=TeamOutcomeMetrics(
             vote_correct_vector=tuple(vote_vector),
