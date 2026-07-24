@@ -13,3 +13,12 @@ def test_real_system_smoke_covers_eight_updates_and_pareto_gates():
     assert report["vote_neutral_worst_member_positive_accepted"] is True
     assert report["single_agent_replacement_preserves_other_member_counts"] is True
     assert report["real_validation_key_is_feasible"] is True
+    assert report["typical_role_call_count"] == 3
+    assert report["max_selected_pattern_count"] <= 3
+    assert report["max_selected_case_count"] <= 3
+    assert report["student_raw_context_fields_seen"] == 0
+    assert report["fault_smokes"] == {
+        "critic_truncation": True,
+        "critic_semantic_rejection": True,
+        "student_partial_validity": True,
+    }

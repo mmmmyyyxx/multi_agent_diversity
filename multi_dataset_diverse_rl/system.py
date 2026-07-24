@@ -22,6 +22,12 @@ from .candidate_selection import (
     vote_first_key,
 )
 from .config import Config
+from .diagnosis_aggregation import (
+    ANSWER_ROLE_ENCODING_VERSION,
+    DIAGNOSIS_AGGREGATION_VERSION,
+    PATTERN_SELECTION_VERSION,
+    aggregate_probe_diagnosis,
+)
 from .evaluation.fixed_probe import (
     FixedProbeEvaluator,
     ProbeExample,
@@ -38,7 +44,7 @@ from .evaluation.prompt_question import PromptQuestionEvaluator
 from .evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION, solver_output_contract
 from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
-from .llm_client import RoleAwareLLMClient
+from .llm_client import LLMBudgetExceeded, LLMCallResult, RoleAwareLLMClient
 from .member_objectives import member_gain_metrics, team_member_gain_state
 from .peer_state import (
     PeerVoteContext,
@@ -60,35 +66,37 @@ from .responsibility import (
 )
 from .tasks import get_task_spec
 from .tcs import (
-    AccuracyCase,
-    AccuracyProposalContext,
-    AnyProposalContext,
+    CRITIC_SCHEMA_VERSION,
+    ROLE_RETRY_POLICY_VERSION,
+    STUDENT_SCHEMA_VERSION,
+    TEACHER_SCHEMA_VERSION,
+    AccuracyDiagnosisContext,
+    AnyDiagnosisContext,
     CriticDecision,
-    PeerStateCase,
-    PeerStateProposalContext,
-    PreservationCase,
-    RepresentativeCase,
-    MemberAwareResponsibilityCase,
-    MemberAwareResponsibilityProposalContext,
-    StudentCandidate,
+    MemberAwareDiagnosisContext,
+    PeerStateDiagnosisContext,
+    PreviousUpdateOutcome,
+    StudentPromptCandidate,
     TCSContextDiagnostics,
-    TCSContextLimits,
     TCS_PROTOCOL_VERSION,
     SAMPLE_MEMORIZATION_FILTER_VERSION,
-    TeacherProposal,
+    TeacherRepairPlan,
     build_critic_request,
     build_student_request,
     build_teacher_request,
     contains_supplied_example_text,
-    limit_proposal_context,
+    context_payload,
+    limit_diagnosis_context,
     parse_critic_decision,
     parse_student_candidates,
-    parse_teacher_proposal,
+    parse_teacher_repair_plan,
+    response_truncated,
+    serialize_context,
 )
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 
 
-METHOD_VERSION = "member_aware_peer_state_v1"
+METHOD_VERSION = "member_aware_peer_state_v2"
 
 
 @dataclass
@@ -100,11 +108,12 @@ class AgentRuntime:
 
 @dataclass
 class CandidateRuntime:
-    student_candidate: StudentCandidate
+    student_candidate: StudentPromptCandidate
     prompt: str
     prompt_hash: str
     generation: int
     parent_prompt_hash: str
+    repair_plan_hash: str = ""
     stage_a_evaluation: CandidateEvaluation | None = None
     final_evaluation: CandidateEvaluation | None = None
     profile: tuple[PromptAnswer, ...] | None = None
@@ -116,10 +125,18 @@ class CandidateRuntime:
 class CandidateFunnel:
     parents_considered: int = 0
     teacher_calls: int = 0
+    teacher_invalid_responses: int = 0
+    teacher_truncated_responses: int = 0
     critic_calls: int = 0
     critic_invalid_responses: int = 0
+    critic_truncated_responses: int = 0
+    critic_semantic_rejections: int = 0
     critic_approved: int = 0
     student_calls: int = 0
+    student_invalid_responses: int = 0
+    student_truncated_responses: int = 0
+    student_partially_valid_responses: int = 0
+    infrastructure_failed_updates: int = 0
     requested_candidate_count: int = 0
     raw_candidate_count: int = 0
     schema_valid_count: int = 0
@@ -201,21 +218,34 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v1 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v2 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v1 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v2 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v1 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v2 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
             )
         if cfg.tcs.teacher_critic_max_rounds <= 0:
             raise ValueError("teacher_critic_max_rounds must be positive")
+        if cfg.tcs.teacher_json_max_retries < 0:
+            raise ValueError("teacher_json_max_retries cannot be negative")
         if cfg.tcs.critic_json_max_retries < 0:
             raise ValueError("critic_json_max_retries cannot be negative")
         if cfg.tcs.student_json_max_retries < 0:
             raise ValueError("student_json_max_retries cannot be negative")
+        if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
+            raise ValueError("tcs_max_pattern_summaries must be between one and three")
+        if not 0 < cfg.tcs.tcs_max_evidence_cases <= 3:
+            raise ValueError("tcs_max_evidence_cases must be between one and three")
+        if min(
+            cfg.tcs.tcs_context_max_chars,
+            cfg.tcs.teacher_field_max_chars,
+            cfg.tcs.critic_feedback_max_chars,
+            cfg.tcs.candidate_prompt_max_chars,
+        ) <= 0:
+            raise ValueError("TCS character limits must be positive")
         self.cfg = cfg
         self.protocol = self._build_protocol()
         self.task_spec = get_task_spec(cfg.data.task_type)
@@ -243,17 +273,8 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state_version = -1
         self.responsibility_refresh_count = 0
         self.target_priority_audit: list[dict[str, Any]] = []
-        self.previous_accuracy_summaries = {
-            agent_id: "No prior accepted update; individual accuracy and invalid rate are unchanged."
-            for agent_id in range(5)
-        }
-        self.previous_peer_summaries = {
-            agent_id: "No prior accepted update; vote and competence metrics are unchanged."
-            for agent_id in range(5)
-        }
-        self.previous_responsibility_summaries = {
-            agent_id: "No prior accepted update on assigned residual cases."
-            for agent_id in range(5)
+        self.previous_update_outcomes = {
+            agent_id: PreviousUpdateOutcome() for agent_id in range(5)
         }
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
@@ -377,8 +398,8 @@ class PromptEnsembleOptimizationSystem:
         temperature: float,
         max_tokens: int,
         client_role: str,
-    ) -> str:
-        return await self.llm.chat(
+    ) -> LLMCallResult:
+        return await self.llm.chat_result(
             model, system_prompt, user_prompt, temperature, max_tokens, client_role,
         )
 
@@ -404,7 +425,7 @@ class PromptEnsembleOptimizationSystem:
                 ),
                 question,
                 self.cfg.models.temperature,
-                self.cfg.models.max_tokens,
+                self.cfg.models.solver_max_tokens,
                 "solver",
             )
         answer = parse_solver_output(
@@ -816,241 +837,59 @@ class PromptEnsembleOptimizationSystem:
         target_agent_id: int,
         parent_prompt: str,
         assigned_hashes: set[str],
-    ) -> tuple[AnyProposalContext, TCSContextDiagnostics]:
+    ) -> tuple[AnyDiagnosisContext, TCSContextDiagnostics]:
         if self.fixed_probe is None:
             raise RuntimeError("fixed probe is not initialized")
         states, contexts, opportunities = self.current_states_and_opportunities()
-        pools = self._pool_indices(target_agent_id, assigned_hashes)
-        coverage_set = {self.fixed_probe.examples[index].question_hash for index in pools.coverage}
-        conversion_set = {self.fixed_probe.examples[index].question_hash for index in pools.conversion}
-        preservation_set = {self.fixed_probe.examples[index].question_hash for index in pools.preservation}
-        representative_set = {self.fixed_probe.examples[index].question_hash for index in pools.representative}
-        examples = {row.question_hash: row for row in self.fixed_probe.examples}
-        accuracy_errors: list[AccuracyCase] = []
-        accuracy_protection: list[AccuracyCase] = []
-        peer_coverage_cases: list[PeerStateCase] = []
-        peer_conversion_cases: list[PeerStateCase] = []
-        assigned_coverage_cases: list[MemberAwareResponsibilityCase] = []
-        assigned_conversion_cases: list[MemberAwareResponsibilityCase] = []
-        member_error_cases: list[MemberAwareResponsibilityCase] = []
-        preservation_cases: list[PreservationCase] = []
-        representative_cases: list[RepresentativeCase] = []
-        for state in states:
-            opportunity = opportunities[state.question_hash][target_agent_id]
-            peer = contexts[state.question_hash][target_agent_id]
-            example = examples[state.question_hash]
-            target_answer = state.team_answers[target_agent_id]
-            target_status = (
-                "invalid"
-                if opportunity.current_invalid
-                else "correct"
-                if opportunity.current_correct
-                else "wrong"
-            )
-            required_transition = (
-                ""
-                if opportunity.current_correct
-                else f"{target_answer or '<invalid>'} -> {example.gold_answer}"
-            )
-            team_vote_status = (
-                "correct"
-                if state.vote_correct
-                else "tie_abstain"
-                if state.top_tie
-                else "wrong"
-            )
-            accuracy_case = AccuracyCase(
-                question_hash=state.question_hash,
-                question=example.question,
-                gold_answer=example.gold_answer,
-                target_current_answer=target_answer,
-                target_current_correct=opportunity.current_correct,
-                target_current_invalid=opportunity.current_invalid,
-                target_status=target_status,
-                required_transition=required_transition,
-                case_role="unassigned",
-                repair_goal="",
-            )
-            peer_case = PeerStateCase(
-                question_hash=state.question_hash,
-                question=example.question,
-                gold_answer=example.gold_answer,
-                target_current_answer=target_answer,
-                team_G=state.gold_vote_count,
-                team_H=state.largest_wrong_vote_count,
-                team_M=state.plurality_margin,
-                team_wrong_histogram=state.wrong_vote_histogram,
-                peer_G=peer.peer_gold_vote_count,
-                peer_H=peer.peer_largest_wrong_vote_count,
-                peer_M=peer.peer_margin,
-                peer_wrong_histogram=peer.peer_wrong_vote_histogram,
-                direct_vote_fix=opportunity.direct_vote_fix,
-                oracle_soft_utility_gain=opportunity.oracle_soft_utility_gain,
-                dominant_wrong_member=opportunity.dominant_wrong_member,
-                target_status=target_status,
-                required_transition=required_transition,
-                team_vote_status=team_vote_status,
-                case_role="unassigned",
-                repair_goal="",
-            )
-            if state.question_hash in coverage_set:
-                coverage_case = replace(
-                    peer_case,
-                    case_role="coverage",
-                    repair_goal=(
-                        "introduce_first_gold_vote"
-                        if state.gold_vote_count == 0
-                        else "add_gold_vote"
-                    ),
-                )
-                peer_coverage_cases.append(coverage_case)
-                assigned_coverage_cases.append(MemberAwareResponsibilityCase(
-                    **asdict(replace(
-                        coverage_case,
-                        case_role="assigned_coverage",
-                    )),
-                    responsibility_reason="assigned residual owner",
-                    initial_correct_count=opportunity.initial_correct_count,
-                    current_correct_count=opportunity.current_correct_count,
-                    gain_count=opportunity.gain_count,
-                    improvement_need=opportunity.improvement_need,
-                    unique_correct_count=opportunity.unique_correct_count,
-                    pivotal_correct_count=opportunity.pivotal_correct_count,
-                    owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
-                ))
-            if state.question_hash in conversion_set:
-                conversion_case = replace(
-                    peer_case,
-                    case_role="conversion",
-                    repair_goal=(
-                        "convert_plurality_vote_to_gold"
-                        if opportunity.direct_vote_fix
-                        else "improve_plurality_margin"
-                    ),
-                )
-                peer_conversion_cases.append(conversion_case)
-                assigned_conversion_cases.append(MemberAwareResponsibilityCase(
-                    **asdict(replace(
-                        conversion_case,
-                        case_role="assigned_conversion",
-                    )),
-                    responsibility_reason="assigned residual owner",
-                    initial_correct_count=opportunity.initial_correct_count,
-                    current_correct_count=opportunity.current_correct_count,
-                    gain_count=opportunity.gain_count,
-                    improvement_need=opportunity.improvement_need,
-                    unique_correct_count=opportunity.unique_correct_count,
-                    pivotal_correct_count=opportunity.pivotal_correct_count,
-                    owner_age=self.responsibility_state.owner_age_by_question.get(state.question_hash, 0),
-                ))
-            if opportunity.member_error:
-                member_error_cases.append(MemberAwareResponsibilityCase(
-                    **asdict(replace(
-                        peer_case,
-                        case_role="member_error",
-                        repair_goal="improve_target_member_competence",
-                    )),
-                    responsibility_reason=(
-                        "assigned residual owner"
-                        if state.question_hash in assigned_hashes
-                        else "unassigned member error"
-                    ),
-                    initial_correct_count=opportunity.initial_correct_count,
-                    current_correct_count=opportunity.current_correct_count,
-                    gain_count=opportunity.gain_count,
-                    improvement_need=opportunity.improvement_need,
-                    unique_correct_count=opportunity.unique_correct_count,
-                    pivotal_correct_count=opportunity.pivotal_correct_count,
-                    owner_age=self.responsibility_state.owner_age_by_question.get(
-                        state.question_hash, 0
-                    ),
-                ))
-            if state.question_hash in preservation_set:
-                preservation_role = (
-                    "pivotal_preservation"
-                    if opportunity.pivotal_correct
-                    else "unique_correct_preservation"
-                    if opportunity.unique_correct
-                    else "competence_preservation"
-                )
-                accuracy_protection.append(replace(
-                    accuracy_case,
-                    case_role="individual_preservation",
-                    repair_goal="preserve_correct_answer",
-                    forbidden_transition=f"{target_answer} -> non-{target_answer}",
-                ))
-                preservation_cases.append(PreservationCase(
-                    question_hash=state.question_hash,
-                    question=example.question,
-                    gold_answer=example.gold_answer,
-                    target_current_answer=target_answer,
-                    unique_correct=opportunity.unique_correct,
-                    pivotal_correct=opportunity.pivotal_correct,
-                    team_margin=state.plurality_margin,
-                    peer_G=peer.peer_gold_vote_count,
-                    peer_H=peer.peer_largest_wrong_vote_count,
-                    peer_M=peer.peer_margin,
-                    peer_wrong_histogram=peer.peer_wrong_vote_histogram,
-                    target_status=target_status,
-                    required_transition="",
-                    team_vote_status=team_vote_status,
-                    case_role=preservation_role,
-                    repair_goal="preserve_correct_vote",
-                    forbidden_transition=f"{target_answer} -> non-{target_answer}",
-                ))
-            if state.question_hash in representative_set:
-                if not opportunity.current_correct:
-                    accuracy_errors.append(replace(
-                        accuracy_case,
-                        case_role="individual_error",
-                        repair_goal="correct_target_answer",
-                    ))
-                representative_cases.append(RepresentativeCase(
-                    question_hash=state.question_hash,
-                    question=example.question,
-                    gold_answer=example.gold_answer,
-                    target_current_answer=target_answer,
-                    target_current_correct=opportunity.current_correct,
-                    target_current_invalid=opportunity.current_invalid,
-                    target_status=target_status,
-                    required_transition=required_transition,
-                    team_vote_status=team_vote_status,
-                    case_role=(
-                        "representative_preservation"
-                        if opportunity.current_correct
-                        else "representative_error"
-                    ),
-                    repair_goal=(
-                        "preserve_representative_correct"
-                        if opportunity.current_correct
-                        else "repair_representative_error"
-                    ),
-                    forbidden_transition=(
-                        f"{target_answer} -> non-{target_answer}"
-                        if opportunity.current_correct
-                        else ""
-                    ),
-                ))
+        target_rows = [
+            opportunities[state.question_hash][target_agent_id] for state in states
+        ]
+        target_improvement_need = max(
+            (row.improvement_need for row in target_rows if row.member_error),
+            default=0,
+        )
+        aggregation = aggregate_probe_diagnosis(
+            target_agent_id=target_agent_id,
+            examples=self.fixed_probe.examples,
+            states=states,
+            peer_contexts=contexts,
+            opportunities=opportunities,
+            assigned_hashes=assigned_hashes,
+            owner_age_by_question=self.responsibility_state.owner_age_by_question,
+            context_policy=self.protocol.tcs_context_policy,
+            target_improvement_need=target_improvement_need,
+            max_patterns=self.cfg.tcs.tcs_max_pattern_summaries,
+            max_cases=self.cfg.tcs.tcs_max_evidence_cases,
+        )
         common = {
             "target_agent_id": target_agent_id,
             "parent_prompt": parent_prompt,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
+            "patterns": aggregation.selected_patterns,
+            "evidence_cases": aggregation.evidence_cases,
+            "previous_outcome": self.previous_update_outcomes[target_agent_id],
         }
         if self.protocol.tcs_context_policy == "generic_accuracy":
-            context: AnyProposalContext = AccuracyProposalContext(
+            target_profile = self.active_profiles[target_agent_id]
+            target_correct_count = sum(row.current_correct for row in target_rows)
+            context: AnyDiagnosisContext = AccuracyDiagnosisContext(
                 **common,
-                error_cases=tuple(accuracy_errors),
-                protection_cases=tuple(accuracy_protection),
-                previous_accuracy_summary=self.previous_accuracy_summaries[target_agent_id],
+                target_correct_count=target_correct_count,
+                target_error_count=len(target_rows) - target_correct_count,
+                target_invalid_count=sum(not row.valid for row in target_profile),
             )
         elif self.protocol.tcs_context_policy == "generic_peer_state":
-            context = PeerStateProposalContext(
+            context = PeerStateDiagnosisContext(
                 **common,
-                coverage_cases=tuple(peer_coverage_cases),
-                conversion_cases=tuple(peer_conversion_cases),
-                preservation_cases=tuple(preservation_cases),
-                representative_cases=tuple(representative_cases),
-                previous_vote_competence_summary=self.previous_peer_summaries[target_agent_id],
+                vote_wrong_count=sum(not state.vote_correct for state in states),
+                coverage_failure_count=sum(state.gold_vote_count == 0 for state in states),
+                conversion_failure_count=sum(
+                    not state.vote_correct and state.gold_vote_count > 0
+                    for state in states
+                ),
+                preservation_count=sum(
+                    row.unique_correct or row.pivotal_correct for row in target_rows
+                ),
             )
         elif self.protocol.tcs_context_policy == "member_aware_responsibility_conditioned":
             current_counts = tuple(
@@ -1067,38 +906,24 @@ class PromptEnsembleOptimizationSystem:
                 )
                 for profile in self.initial_profiles
             )
-            context = MemberAwareResponsibilityProposalContext(
+            context = MemberAwareDiagnosisContext(
                 **common,
                 member_correct_counts=current_counts,
                 member_gains_from_initial=tuple(
                     current - initial
                     for current, initial in zip(current_counts, initial_counts, strict=True)
                 ),
-                target_improvement_need=max(
-                    (row.improvement_need for row in member_error_cases),
-                    default=0,
-                ),
-                assigned_coverage_cases=tuple(assigned_coverage_cases),
-                assigned_conversion_cases=tuple(assigned_conversion_cases),
-                member_error_cases=tuple(member_error_cases),
-                preservation_cases=tuple(preservation_cases),
-                representative_cases=tuple(representative_cases),
-                responsibility_summary=(
-                    f"Agent {target_agent_id} owns {len(assigned_hashes)} residual cases "
-                    f"and has {len(member_error_cases)} member errors."
-                ),
-                previous_member_summary=self.previous_responsibility_summaries[target_agent_id],
+                target_improvement_need=target_improvement_need,
+                assigned_residual_count=len(assigned_hashes),
             )
         else:
             raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
-        return limit_proposal_context(context, TCSContextLimits(
-            assigned_coverage=self.cfg.tcs.tcs_assigned_coverage_limit,
-            assigned_conversion=self.cfg.tcs.tcs_assigned_conversion_limit,
-            preservation=self.cfg.tcs.tcs_preservation_limit,
-            representative=self.cfg.tcs.tcs_representative_limit,
-            member_error=self.cfg.tcs.tcs_member_error_limit,
+        return limit_diagnosis_context(
+            context,
             max_chars=self.cfg.tcs.tcs_context_max_chars,
-        ))
+            full_probe_case_count=aggregation.full_probe_case_count,
+            available_pattern_count=len(aggregation.available_patterns),
+        )
 
     async def propose_candidates(
         self,
@@ -1109,17 +934,19 @@ class PromptEnsembleOptimizationSystem:
     ) -> list[CandidateRuntime]:
         parent_prompt = self.agents[target_agent_id].current_prompt
         context, diagnostics = self._proposal_context(target_agent_id, parent_prompt, assigned_hashes)
-        context_payload = json.dumps(asdict(context), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        context_object = asdict(context)
+        context_serialized = serialize_context(context)
+        context_object = context_payload(context)
         field_paths = sorted(_recursive_field_paths(context_object))
-        if isinstance(context, AccuracyProposalContext):
+        if isinstance(context, AccuracyDiagnosisContext):
             forbidden_tokens = (
-                "team_g", "team_h", "team_m", "peer_g", "peer_h", "peer_m",
-                "wrong_histogram", "responsibility", "owner", "assigned", "vote_delta",
+                "gold_vote_count", "largest_wrong_vote_count", "plurality_margin",
+                "peer_", "responsibility", "owner", "assigned", "member_gain",
+                "improvement_need", "answer_role",
             )
-        elif isinstance(context, PeerStateProposalContext):
+        elif isinstance(context, PeerStateDiagnosisContext):
             forbidden_tokens = (
-                "assigned", "owner", "owner_age", "responsibility", "responsibility_reason",
+                "assigned", "owner", "owner_age", "responsibility",
+                "member_gain", "improvement_need",
             )
         else:
             forbidden_tokens = ()
@@ -1135,7 +962,7 @@ class PromptEnsembleOptimizationSystem:
             "context_type": type(context).__name__,
             "context_class": type(context).__name__,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
-            "proposal_context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+            "proposal_context_hash": hashlib.sha256(context_serialized.encode("utf-8")).hexdigest(),
             "serialized_top_level_fields": sorted(context_object),
             "serialized_recursive_field_paths": field_paths,
             "forbidden_field_check": forbidden_check,
@@ -1146,220 +973,342 @@ class PromptEnsembleOptimizationSystem:
                 any(token in path for token in responsibility_tokens)
                 for path in lowered_paths
             ),
+            "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             **asdict(diagnostics),
         })
         funnel.parents_considered = 1
         teacher_request = build_teacher_request(context)
-        teacher_proposal: TeacherProposal | None = None
+        repair_plan: TeacherRepairPlan | None = None
         critic_decision: CriticDecision | None = None
         critic_feedback = ""
-        for round_index in range(self.cfg.tcs.teacher_critic_max_rounds):
-            funnel.teacher_calls += 1
+        context_hash = hashlib.sha256(context_serialized.encode("utf-8")).hexdigest()
+        for semantic_round in range(1, self.cfg.tcs.teacher_critic_max_rounds + 1):
             user_request = (
                 "Produce the repair proposal."
-                if round_index == 0
+                if semantic_round == 1
                 else f"Revise the proposal using this critic feedback: {critic_feedback}"
             )
+            repair_plan = None
             teacher_request_hash = _request_hash(teacher_request, user_request)
-            teacher_raw = await self._chat(
-                self.cfg.models.optimizer_model,
-                teacher_request,
-                user_request,
-                self.cfg.tcs.teacher_temperature,
-                self.cfg.tcs.teacher_max_tokens,
-                "optimizer",
-            )
-            parsed_teacher = extract_json_obj(teacher_raw)
-            teacher_round = {
-                "update_index": update_index,
-                "target_agent_id": target_agent_id,
-                "round_index": round_index,
-                "role": "teacher",
-                "context_type": type(context).__name__,
-                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
-                "request_hash": teacher_request_hash,
-                "response_hash": hashlib.sha256(teacher_raw.encode("utf-8")).hexdigest(),
-                "json_extracted": parsed_teacher is not None,
-                "schema_valid": False,
-                "parse_error": "",
-                "response_excerpt": _response_excerpt(teacher_raw),
-                "revision_round": round_index,
-            }
-            try:
-                if parsed_teacher is None:
-                    raise ValueError("teacher response is not JSON")
-                teacher_proposal = parse_teacher_proposal(parsed_teacher)
-            except (KeyError, TypeError, ValueError) as exc:
-                teacher_round["parse_error"] = str(exc)
-                self.tcs_rounds.append(teacher_round)
-                critic_feedback = f"Teacher schema failure: {exc}"
-                continue
-            teacher_round.update({
-                "schema_valid": True,
-                **asdict(teacher_proposal),
-                "supplied_example_text_detected": contains_supplied_example_text(
-                    json.dumps(asdict(teacher_proposal), ensure_ascii=False),
-                    context,
-                ),
-            })
-            self.tcs_rounds.append(teacher_round)
-            critic_request = build_critic_request(context, teacher_proposal)
-            critic_decision = None
-            critic_parse_error = ""
-            for critic_attempt in range(self.cfg.tcs.critic_json_max_retries + 1):
-                funnel.critic_calls += 1
-                critic_user_request = (
-                    "Audit the proposal."
-                    if critic_attempt == 0
-                    else (
-                        "Your previous Critic response was invalid because "
-                        f"{critic_parse_error}. Re-audit the same proposal, copy "
-                        "DERIVED_CASE_FACTS exactly, and return corrected strict JSON."
+            for format_attempt in range(self.cfg.tcs.teacher_json_max_retries + 1):
+                funnel.teacher_calls += 1
+                try:
+                    teacher_result = await self._chat(
+                        self.cfg.models.optimizer_model,
+                        teacher_request,
+                        user_request,
+                        self.cfg.tcs.teacher_temperature,
+                        self.cfg.tcs.teacher_max_tokens,
+                        "optimizer",
                     )
+                except LLMBudgetExceeded:
+                    raise
+                except Exception as exc:
+                    funnel.infrastructure_failed_updates += 1
+                    self.tcs_rounds.append({
+                        "update_index": update_index,
+                        "target_agent_id": target_agent_id,
+                        "role": "teacher",
+                        "semantic_round": semantic_round,
+                        "format_attempt": format_attempt,
+                        "request_hash": teacher_request_hash,
+                        "context_hash": context_hash,
+                        "schema_valid": False,
+                        "finish_reason": "",
+                        "hit_completion_limit": False,
+                        "response_truncated": False,
+                        "failure_class": "transport_failure",
+                        "retry_reason": type(exc).__name__,
+                        "input_characters": len(teacher_request) + len(user_request),
+                        "output_characters": 0,
+                    })
+                    return []
+                teacher_raw = teacher_result.text
+                parsed_teacher = extract_json_obj(teacher_raw)
+                truncated = response_truncated(teacher_result)
+                failure_class = (
+                    "completion_truncation"
+                    if truncated else "invalid_json"
+                    if parsed_teacher is None else ""
                 )
-                critic_request_hash = _request_hash(critic_request, critic_user_request)
-                critic_raw = await self._chat(
-                    self.cfg.models.evaluator_model,
-                    critic_request,
-                    critic_user_request,
-                    self.cfg.tcs.critic_temperature,
-                    self.cfg.tcs.critic_max_tokens,
-                    "evaluator",
-                )
-                parsed_critic = extract_json_obj(critic_raw)
-                critic_round = {
+                parse_error = ""
+                if not failure_class:
+                    try:
+                        repair_plan = parse_teacher_repair_plan(
+                            parsed_teacher,
+                            field_max_chars=self.cfg.tcs.teacher_field_max_chars,
+                        )
+                        if contains_supplied_example_text(
+                            json.dumps(asdict(repair_plan), ensure_ascii=False), context,
+                        ):
+                            raise ValueError("teacher repair plan copies supplied sample text")
+                    except (TypeError, ValueError) as exc:
+                        failure_class = "schema_error"
+                        parse_error = str(exc)
+                if failure_class:
+                    funnel.teacher_invalid_responses += 1
+                    if truncated:
+                        funnel.teacher_truncated_responses += 1
+                self.tcs_rounds.append({
                     "update_index": update_index,
                     "target_agent_id": target_agent_id,
-                    "round_index": round_index,
-                    "attempt_index": critic_attempt,
+                    "role": "teacher",
+                    "context_type": type(context).__name__,
+                    "context_hash": context_hash,
+                    "request_hash": teacher_request_hash,
+                    "response_hash": hashlib.sha256(teacher_raw.encode("utf-8")).hexdigest(),
+                    "response_excerpt": _response_excerpt(teacher_raw),
+                    "repair_plan": asdict(repair_plan) if repair_plan else None,
+                    "schema_valid": repair_plan is not None,
+                    "semantic_round": semantic_round,
+                    "format_attempt": format_attempt,
+                    "finish_reason": teacher_result.finish_reason,
+                    "hit_completion_limit": teacher_result.hit_completion_limit,
+                    "response_truncated": truncated,
+                    "failure_class": failure_class,
+                    "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
+                    "parse_error": parse_error,
+                    "input_characters": len(teacher_request) + len(user_request),
+                    "output_characters": len(teacher_raw),
+                })
+                if repair_plan is not None:
+                    break
+            if repair_plan is None:
+                return []
+
+            critic_request = build_critic_request(context, repair_plan)
+            critic_decision = None
+            critic_request_hash = _request_hash(critic_request, "Audit the repair plan.")
+            for format_attempt in range(self.cfg.tcs.critic_json_max_retries + 1):
+                funnel.critic_calls += 1
+                try:
+                    critic_result = await self._chat(
+                        self.cfg.models.evaluator_model,
+                        critic_request,
+                        "Audit the repair plan.",
+                        self.cfg.tcs.critic_temperature,
+                        self.cfg.tcs.critic_max_tokens,
+                        "evaluator",
+                    )
+                except LLMBudgetExceeded:
+                    raise
+                except Exception as exc:
+                    funnel.infrastructure_failed_updates += 1
+                    self.tcs_rounds.append({
+                        "update_index": update_index,
+                        "target_agent_id": target_agent_id,
+                        "role": "critic",
+                        "semantic_round": semantic_round,
+                        "format_attempt": format_attempt,
+                        "request_hash": critic_request_hash,
+                        "context_hash": context_hash,
+                        "schema_valid": False,
+                        "finish_reason": "",
+                        "hit_completion_limit": False,
+                        "response_truncated": False,
+                        "failure_class": "transport_failure",
+                        "retry_reason": type(exc).__name__,
+                        "input_characters": len(critic_request),
+                        "output_characters": 0,
+                    })
+                    return []
+                critic_raw = critic_result.text
+                parsed_critic = extract_json_obj(critic_raw)
+                truncated = response_truncated(critic_result)
+                failure_class = (
+                    "completion_truncation"
+                    if truncated else "invalid_json"
+                    if parsed_critic is None else ""
+                )
+                parse_error = ""
+                if not failure_class:
+                    try:
+                        critic_decision = parse_critic_decision(
+                            parsed_critic,
+                            allowed_case_ids={row.case_id for row in context.evidence_cases},
+                            feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                        )
+                        if contains_supplied_example_text(
+                            json.dumps(asdict(critic_decision), ensure_ascii=False),
+                            context,
+                        ):
+                            raise ValueError("critic response copies supplied sample text")
+                    except (TypeError, ValueError) as exc:
+                        failure_class = "schema_error"
+                        parse_error = str(exc)
+                if failure_class:
+                    funnel.critic_invalid_responses += 1
+                    if truncated:
+                        funnel.critic_truncated_responses += 1
+                elif critic_decision is not None and not critic_decision.approved:
+                    failure_class = "semantic_rejection"
+                    funnel.critic_semantic_rejections += 1
+                self.tcs_rounds.append({
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
                     "role": "critic",
                     "context_type": type(context).__name__,
-                    "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                    "context_hash": context_hash,
                     "request_hash": critic_request_hash,
                     "response_hash": hashlib.sha256(critic_raw.encode("utf-8")).hexdigest(),
-                    "json_extracted": parsed_critic is not None,
-                    "schema_valid": False,
-                    "fact_restatement_valid": False,
-                    "score": (
-                        parsed_critic.get("score")
-                        if isinstance(parsed_critic, Mapping)
-                        and isinstance(parsed_critic.get("score"), (int, float))
-                        else None
-                    ),
-                    "effective_approved": False,
-                    "hard_checks": {},
-                    "blocking_reasons": [],
-                    "soft_concerns": [],
-                    "parse_error": "",
                     "response_excerpt": _response_excerpt(critic_raw),
-                    "approval_basis": "all_hard_checks_passed",
-                }
-                try:
-                    if parsed_critic is None:
-                        raise ValueError("critic response is not JSON")
-                    critic_decision = parse_critic_decision(parsed_critic, context)
-                except (KeyError, TypeError, ValueError) as exc:
-                    critic_parse_error = str(exc)
-                    critic_round["parse_error"] = critic_parse_error
-                    funnel.critic_invalid_responses += 1
-                    self.tcs_rounds.append(critic_round)
-                    continue
-                critic_round.update({
-                    "schema_valid": True,
-                    "fact_restatement_valid": True,
-                    "effective_approved": critic_decision.approved,
-                    "score": critic_decision.score,
-                    "hard_checks": critic_decision.hard_checks,
-                    "blocking_reasons": list(critic_decision.blocking_reasons),
-                    "soft_concerns": list(critic_decision.soft_concerns),
-                    "case_fact_restatements": [
-                        asdict(row) for row in critic_decision.case_fact_restatements
-                    ],
-                    "feedback": critic_decision.feedback,
+                    "json_extracted": parsed_critic is not None,
+                    "schema_valid": critic_decision is not None,
+                    "failed_checks": (
+                        list(critic_decision.failed_checks) if critic_decision else []
+                    ),
+                    "risk_case_ids": (
+                        list(critic_decision.risk_case_ids) if critic_decision else []
+                    ),
+                    "feedback": critic_decision.feedback if critic_decision else "",
+                    "effective_approved": bool(
+                        critic_decision and critic_decision.approved
+                    ),
+                    "semantic_round": semantic_round,
+                    "format_attempt": format_attempt,
+                    "finish_reason": critic_result.finish_reason,
+                    "hit_completion_limit": critic_result.hit_completion_limit,
+                    "response_truncated": truncated,
+                    "failure_class": failure_class,
+                    "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
+                    "parse_error": parse_error,
+                    "input_characters": len(critic_request),
+                    "output_characters": len(critic_raw),
                 })
-                self.tcs_rounds.append(critic_round)
-                break
+                if critic_decision is not None:
+                    break
             if critic_decision is None:
-                critic_feedback = (
-                    "Critic response remained invalid after retries: "
-                    f"{critic_parse_error}"
-                )
-                continue
+                return []
             if critic_decision.approved:
                 funnel.critic_approved += 1
                 break
-            critic_feedback = (
-                f"{critic_decision.feedback} Hard blocking reasons: "
-                + "; ".join(critic_decision.blocking_reasons)
-            )
-        if teacher_proposal is None or critic_decision is None or not critic_decision.approved:
+            critic_feedback = critic_decision.feedback
+        if repair_plan is None or critic_decision is None or not critic_decision.approved:
             return []
 
-        parsed_candidates: tuple[StudentCandidate, ...] = ()
+        parsed_candidates: tuple[StudentPromptCandidate, ...] = ()
         funnel.requested_candidate_count = self.cfg.tcs.num_candidates_per_parent
-        for student_attempt in range(self.cfg.tcs.student_json_max_retries + 1):
+        student_request = build_student_request(
+            parent_prompt=parent_prompt,
+            approved_plan=repair_plan,
+            answer_format=self.cfg.data.answer_format,
+            candidate_count=self.cfg.tcs.num_candidates_per_parent,
+            candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
+        )
+        for format_attempt in range(self.cfg.tcs.student_json_max_retries + 1):
             funnel.student_calls += 1
-            student_request = build_student_request(
-                context, teacher_proposal, self.cfg.tcs.num_candidates_per_parent,
-            )
-            student_raw = await self._chat(
-                self.cfg.models.optimizer_model,
-                "Return strict JSON only.",
-                student_request,
-                self.cfg.tcs.student_temperature,
-                self.cfg.tcs.student_max_tokens,
-                "optimizer",
-            )
+            try:
+                student_result = await self._chat(
+                    self.cfg.models.optimizer_model,
+                    "Return strict JSON only.",
+                    student_request,
+                    self.cfg.tcs.student_temperature,
+                    self.cfg.tcs.student_max_tokens,
+                    "optimizer",
+                )
+            except LLMBudgetExceeded:
+                raise
+            except Exception as exc:
+                funnel.infrastructure_failed_updates += 1
+                self.tcs_rounds.append({
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
+                    "role": "student",
+                    "semantic_round": semantic_round,
+                    "format_attempt": format_attempt,
+                    "schema_valid": False,
+                    "finish_reason": "",
+                    "hit_completion_limit": False,
+                    "response_truncated": False,
+                    "failure_class": "transport_failure",
+                    "retry_reason": type(exc).__name__,
+                    "input_characters": len(student_request),
+                    "output_characters": 0,
+                })
+                return []
+            student_raw = student_result.text
             parsed = extract_json_obj(student_raw)
-            candidates_value = parsed.get("candidates") if isinstance(parsed, Mapping) else None
-            raw_count = len(candidates_value) if isinstance(candidates_value, list) else 0
+            truncated = response_truncated(student_result)
+            failure_class = (
+                "completion_truncation"
+                if truncated else "invalid_json"
+                if parsed is None else ""
+            )
+            raw_count = 0
+            rejection_reasons: tuple[tuple[str, ...], ...] = ()
+            parse_error = ""
+            if not failure_class:
+                try:
+                    parsed_result = parse_student_candidates(
+                        parsed,
+                        parent_prompt=parent_prompt,
+                        context=context,
+                        candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
+                    )
+                    parsed_candidates = parsed_result.candidates
+                    raw_count = parsed_result.raw_count
+                    rejection_reasons = parsed_result.rejection_reasons
+                    funnel.sample_memorization_rejected += sum(
+                        "sample_text_copy" in reasons
+                        for reasons in rejection_reasons
+                    )
+                    if raw_count and 0 < len(parsed_candidates) < raw_count:
+                        funnel.student_partially_valid_responses += 1
+                    if not parsed_candidates:
+                        failure_class = "zero_valid_student_candidates"
+                except (TypeError, ValueError) as exc:
+                    failure_class = "schema_error"
+                    parse_error = str(exc)
+            if failure_class:
+                funnel.student_invalid_responses += 1
+                if truncated:
+                    funnel.student_truncated_responses += 1
             student_round = {
                 "update_index": update_index,
                 "target_agent_id": target_agent_id,
-                "round_index": student_attempt,
                 "role": "student",
                 "context_type": type(context).__name__,
-                "context_hash": hashlib.sha256(context_payload.encode("utf-8")).hexdigest(),
+                "context_hash": context_hash,
                 "request_hash": _request_hash("Return strict JSON only.", student_request),
                 "response_hash": hashlib.sha256(student_raw.encode("utf-8")).hexdigest(),
                 "json_extracted": parsed is not None,
-                "schema_valid": False,
+                "schema_valid": bool(parsed is not None and failure_class in {"", "zero_valid_student_candidates"}),
                 "requested_count": self.cfg.tcs.num_candidates_per_parent,
                 "raw_count": raw_count,
-                "schema_valid_count": 0,
-                "parse_error": "",
+                "valid_count": len(parsed_candidates),
+                "per_candidate_rejection_reasons": [
+                    list(row) for row in rejection_reasons
+                ],
+                "semantic_round": semantic_round,
+                "format_attempt": format_attempt,
+                "finish_reason": student_result.finish_reason,
+                "hit_completion_limit": student_result.hit_completion_limit,
+                "response_truncated": truncated,
+                "failure_class": failure_class,
+                "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
+                "parse_error": parse_error,
                 "response_excerpt": _response_excerpt(student_raw),
+                "input_characters": len(student_request),
+                "output_characters": len(student_raw),
             }
-            if parsed is None:
-                funnel.raw_candidate_count = 0
-                student_round["parse_error"] = "student response is not JSON"
-                self.tcs_rounds.append(student_round)
-                continue
+            self.tcs_rounds.append(student_round)
             funnel.raw_candidate_count = raw_count
-            try:
-                parsed_candidates = parse_student_candidates(
-                    parsed,
-                    expected_count=self.cfg.tcs.num_candidates_per_parent,
-                )
-                student_round["schema_valid"] = True
-                student_round["schema_valid_count"] = len(parsed_candidates)
-                self.tcs_rounds.append(student_round)
+            if parsed_candidates:
                 break
-            except (KeyError, TypeError, ValueError) as exc:
-                student_round["parse_error"] = str(exc)
-                self.tcs_rounds.append(student_round)
-                continue
         funnel.schema_valid_count = len(parsed_candidates)
         unique: dict[str, CandidateRuntime] = {}
         non_parent = 0
+        repair_plan_hash = hashlib.sha256(
+            json.dumps(
+                asdict(repair_plan),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
         for candidate in parsed_candidates:
             prompt = normalize_prompt_text(candidate.candidate_prompt)
-            if contains_supplied_example_text(prompt, context):
-                funnel.sample_memorization_rejected += 1
-                continue
             prompt_hash = self.prompt_hash(prompt)
-            if prompt_hash == self.prompt_hash(parent_prompt):
-                continue
             non_parent += 1
             unique.setdefault(prompt_hash, CandidateRuntime(
                 student_candidate=candidate,
@@ -1367,6 +1316,7 @@ class PromptEnsembleOptimizationSystem:
                 prompt_hash=prompt_hash,
                 generation=1,
                 parent_prompt_hash=self.prompt_hash(parent_prompt),
+                repair_plan_hash=repair_plan_hash,
             ))
         funnel.non_parent_count = non_parent
         funnel.deduplicated_count = len(unique)
@@ -1664,6 +1614,7 @@ class PromptEnsembleOptimizationSystem:
                 {
                     "prompt_hash": row.prompt_hash,
                     "generation": row.generation,
+                    "repair_plan_hash": row.repair_plan_hash,
                     "stage_a_decision": asdict(row.stage_a_decision) if row.stage_a_decision else None,
                     "evaluation": asdict(row.final_evaluation) if row.final_evaluation else None,
                     "constraint": asdict(row.constraint) if row.constraint else None,
@@ -1673,14 +1624,18 @@ class PromptEnsembleOptimizationSystem:
         }
         self.candidate_decisions.append(decision)
         if accepted is None:
-            self.previous_accuracy_summaries[target] = (
-                "No candidate accepted; individual accuracy and invalid rate are unchanged."
-            )
-            self.previous_peer_summaries[target] = (
-                "No candidate accepted; vote and competence metrics are unchanged."
-            )
-            self.previous_responsibility_summaries[target] = (
-                "No candidate accepted on assigned residual cases."
+            rejection_reasons = sorted({
+                reason
+                for row in evaluated
+                if row.constraint is not None
+                for reason in row.constraint.rejection_reasons
+            })
+            if not rejection_reasons:
+                rejection_reasons = ["no_acceptable_candidate"]
+            self.previous_update_outcomes[target] = PreviousUpdateOutcome(
+                attempted=True,
+                accepted=False,
+                rejection_reasons=tuple(rejection_reasons),
             )
             return False
 
@@ -1728,18 +1683,25 @@ class PromptEnsembleOptimizationSystem:
             raise
         evaluation = accepted.final_evaluation
         competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
-        invalid_delta = evaluation.competence.invalid_count - incumbent.competence.invalid_count
-        self.previous_accuracy_summaries[target] = (
-            f"Individual correct-count change={competence_delta}; invalid-count change={invalid_delta}."
-        )
-        self.previous_peer_summaries[target] = (
-            f"Net vote change={evaluation.marginal.net_vote_delta}; vote losses={evaluation.marginal.vote_loss_count}; "
-            f"individual correct-count change={competence_delta}; invalid-count change={invalid_delta}."
-        )
-        self.previous_responsibility_summaries[target] = (
-            f"Assigned repairs={evaluation.marginal.assigned_residual_repair_count}; assigned utility change="
-            f"{evaluation.marginal.assigned_residual_utility_delta:.6f}; net vote change="
-            f"{evaluation.marginal.net_vote_delta}."
+        self.previous_update_outcomes[target] = PreviousUpdateOutcome(
+            attempted=True,
+            accepted=True,
+            target_correct_delta=competence_delta,
+            vote_correct_delta=(
+                evaluation.team_outcome.vote_correct_count
+                - incumbent.team_outcome.vote_correct_count
+            ),
+            minimum_member_gain_delta=(
+                evaluation.member_gain.minimum_gain_count
+                - incumbent.member_gain.minimum_gain_count
+            ),
+            total_member_gain_delta=(
+                evaluation.member_gain.total_gain_count
+                - incumbent.member_gain.total_gain_count
+            ),
+            assigned_repair_count=(
+                evaluation.marginal.assigned_residual_repair_count
+            ),
         )
         return True
 
@@ -1918,12 +1880,25 @@ class PromptEnsembleOptimizationSystem:
             "stage_a_version": "team_vote_worst_mean_v2",
             "stage_b_version": "competence_guard_member_pareto_v2",
             "validation_selection_version": "initial_member_feasible_v1",
-            "tcs_context_version": "member_aware_responsibility_context_v1",
-            "checkpoint_version": 5,
+            "tcs_context_version": "aggregated_diagnosis_context_v1",
+            "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
+            "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
+            "pattern_selection_version": PATTERN_SELECTION_VERSION,
+            "teacher_schema_version": TEACHER_SCHEMA_VERSION,
+            "critic_schema_version": CRITIC_SCHEMA_VERSION,
+            "student_schema_version": STUDENT_SCHEMA_VERSION,
+            "role_retry_policy_version": ROLE_RETRY_POLICY_VERSION,
+            "role_token_budgets": {
+                "teacher": self.cfg.tcs.teacher_max_tokens,
+                "critic": self.cfg.tcs.critic_max_tokens,
+                "student": self.cfg.tcs.student_max_tokens,
+            },
+            "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
+            "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
+            "candidate_prompt_length_limit": self.cfg.tcs.candidate_prompt_max_chars,
+            "checkpoint_version": 6,
             "tcs_protocol_version": TCS_PROTOCOL_VERSION,
-            "critic_approval_basis": "all_hard_checks_passed",
-            "critic_score_controls_approval": False,
-            "critic_case_fact_restatement_required": True,
+            "critic_approval_basis": "failed_checks_empty",
             "task_general_scope": "unseen_examples_within_current_task",
             "student_sample_memorization_filter": SAMPLE_MEMORIZATION_FILTER_VERSION,
             "solver_sampling_semantics": "shared_prompt_question_output",

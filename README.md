@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v1`).
+(`member_aware_peer_state_v2`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -12,13 +12,13 @@ Pareto rule decides whether a single-agent update enters the active team.
 ## Method Flow
 
 ```text
-five active prompts
-  -> peer vote state (G, H, M)
-  -> member-aware repair opportunities
-  -> residual owner and overdue-aware target selection
-  -> responsibility-conditioned TCS proposal
+Team Rollout
+  -> Programmatic Peer-State Pattern Aggregation
+  -> Lightweight Repair Hypothesis
+  -> Hard-Blocker Critique
+  -> Prompt Realization
   -> Stage A: team-vote / worst-member / mean-member shortlist
-  -> Stage B: competence guards + (vote count, minimum gain, total gain) Pareto test
+  -> Pareto Rollout Selection: competence guards + (vote count, minimum gain, total gain)
   -> accepted prompt, then immediate state and responsibility refresh
 ```
 
@@ -67,7 +67,8 @@ git diff --check
 ```
 
 The system smoke instantiates the real optimization system with fake models,
-runs eight real updates through TCS and Stage A/B, checks one responsibility
+runs eight offline fake-model updates through programmatic aggregation, TCS, and
+Stage A/B, checks one responsibility
 refresh per committed team transition, verifies the two critical Pareto
 accept/reject cases, covers all eligible members, and computes the real
 validation key. The smaller unit smoke retains deterministic helper-level
@@ -89,7 +90,7 @@ python scripts/run_task_level_accuracy.py `
 ```
 
 Add explicit sizes, budgets, models, and concurrency flags for a formal run.
-`--resume_from_checkpoint 1` resumes only an exact checkpoint-v5 run identity;
+`--resume_from_checkpoint 1` resumes only an exact checkpoint-v6 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 

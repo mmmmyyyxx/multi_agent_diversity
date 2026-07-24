@@ -19,15 +19,15 @@ from multi_dataset_diverse_rl.llm_client import RoleAwareLLMClient
 from multi_dataset_diverse_rl.persistence.artifacts import ArtifactWriter
 from multi_dataset_diverse_rl.tasks import get_task_spec
 from multi_dataset_diverse_rl.tcs import (
-    AccuracyCase,
-    AccuracyProposalContext,
-    TeacherProposal,
+    AccuracyDiagnosisContext,
+    PreviousUpdateOutcome,
+    TeacherRepairPlan,
     build_critic_request,
     build_student_request,
     build_teacher_request,
     parse_critic_decision,
     parse_student_candidates,
-    parse_teacher_proposal,
+    parse_teacher_repair_plan,
 )
 from multi_dataset_diverse_rl.utils import extract_json_obj
 
@@ -53,7 +53,7 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         solver_output_contract("option_letter"),
         question,
         0.0,
-        min(cfg.models.max_tokens, 200),
+        min(cfg.models.solver_max_tokens, 200),
         "solver",
     )
     solver_answer = parse_solver_output(
@@ -63,26 +63,16 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         answer_format="option_letter",
     )
 
-    context = AccuracyProposalContext(
+    context = AccuracyDiagnosisContext(
         target_agent_id=0,
         parent_prompt="Check each option against the question and return one option letter.",
         parent_prompt_hash=hashlib.sha256(b"transport-parent").hexdigest(),
-        error_cases=(
-            AccuracyCase(
-                question_hash=hashlib.sha256(question.encode("utf-8")).hexdigest(),
-                question=question,
-                gold_answer="A",
-                target_current_answer="B",
-                target_current_correct=False,
-                target_current_invalid=False,
-                target_status="wrong",
-                required_transition="B -> A",
-                case_role="individual_error",
-                repair_goal="correct_target_answer",
-            ),
-        ),
-        protection_cases=(),
-        previous_accuracy_summary="No prior update.",
+        target_correct_count=0,
+        target_error_count=1,
+        target_invalid_count=0,
+        patterns=(),
+        evidence_cases=(),
+        previous_outcome=PreviousUpdateOutcome(),
     )
     teacher_raw = await client.chat(
         cfg.models.optimizer_model,
@@ -98,17 +88,20 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
     try:
         if teacher_json is None:
             raise ValueError("teacher response is not JSON")
-        teacher = parse_teacher_proposal(teacher_json)
+        teacher = parse_teacher_repair_plan(
+            teacher_json,
+            field_max_chars=cfg.tcs.teacher_field_max_chars,
+        )
     except (KeyError, TypeError, ValueError) as exc:
         teacher_error = str(exc)
 
-    transport_teacher = teacher or TeacherProposal(
-        observed_failure_pattern="The solver commits before comparing every option.",
-        generalizable_mechanism="Premature commitment bypasses contradiction checks.",
-        decision_rule="Compare each option, eliminate direct contradictions, then verify the selected letter.",
-        uncertainty_or_abstention_rule="If evidence is insufficient, retain all viable options until a decisive check is available.",
-        preservation_conditions="Keep answers that already pass the option-by-option verification.",
-        evidence_summary="Errors occur before the available options are compared consistently.",
+    transport_teacher = teacher or TeacherRepairPlan(
+        failure_pattern="The solver commits before comparing every option.",
+        repair_rule=(
+            "Compare every option, eliminate direct contradictions, verify the selected "
+            "letter, and retain viable options when evidence is insufficient."
+        ),
+        preservation_rule="Keep answers that pass the option-by-option verification.",
     )
     critic_error = ""
     critic = None
@@ -126,14 +119,24 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
     try:
         if critic_json is None:
             raise ValueError("critic response is not JSON")
-        critic = parse_critic_decision(critic_json, context)
+        critic = parse_critic_decision(
+            critic_json,
+            allowed_case_ids=set(),
+            feedback_max_chars=cfg.tcs.critic_feedback_max_chars,
+        )
     except (KeyError, TypeError, ValueError) as exc:
         critic_error = str(exc)
 
     student_raw = await client.chat(
         cfg.models.optimizer_model,
         "Return strict JSON only.",
-        build_student_request(context, transport_teacher, cfg.tcs.num_candidates_per_parent),
+        build_student_request(
+            parent_prompt=context.parent_prompt,
+            approved_plan=transport_teacher,
+            answer_format="option_letter",
+            candidate_count=cfg.tcs.num_candidates_per_parent,
+            candidate_prompt_max_chars=cfg.tcs.candidate_prompt_max_chars,
+        ),
         cfg.tcs.student_temperature,
         cfg.tcs.student_max_tokens,
         "optimizer",
@@ -142,10 +145,13 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
     try:
         if student_json is None:
             raise ValueError("student response is not JSON")
-        candidates = parse_student_candidates(
+        parsed_candidates = parse_student_candidates(
             student_json,
-            expected_count=cfg.tcs.num_candidates_per_parent,
+            parent_prompt=context.parent_prompt,
+            context=context,
+            candidate_prompt_max_chars=cfg.tcs.candidate_prompt_max_chars,
         )
+        candidates = parsed_candidates.candidates
     except (KeyError, TypeError, ValueError) as exc:
         student_error = str(exc)
 

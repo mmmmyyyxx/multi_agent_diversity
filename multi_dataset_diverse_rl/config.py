@@ -32,12 +32,12 @@ class ModelConfig:
     evaluator_api_key_env: str = ""
     evaluator_base_url_env: str = ""
     temperature: float = 0.0
-    max_tokens: int = 1800
+    solver_max_tokens: int = 1800
 
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v1"
+    method_version: str = "member_aware_peer_state_v2"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -50,22 +50,23 @@ class TrainingConfig:
 
 @dataclass(frozen=True)
 class TCSConfig:
-    teacher_critic_max_rounds: int = 3
-    critic_json_max_retries: int = 2
+    teacher_critic_max_rounds: int = 2
+    teacher_json_max_retries: int = 1
+    critic_json_max_retries: int = 1
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
-    teacher_max_tokens: int = 1200
-    critic_max_tokens: int = 1800
-    student_max_tokens: int = 1800
-    student_json_max_retries: int = 5
+    teacher_max_tokens: int = 600
+    critic_max_tokens: int = 300
+    student_max_tokens: int = 1400
+    student_json_max_retries: int = 1
     num_candidates_per_parent: int = 2
-    tcs_assigned_coverage_limit: int = 6
-    tcs_assigned_conversion_limit: int = 6
-    tcs_preservation_limit: int = 6
-    tcs_representative_limit: int = 6
-    tcs_member_error_limit: int = 6
-    tcs_context_max_chars: int = 24000
+    tcs_max_pattern_summaries: int = 3
+    tcs_max_evidence_cases: int = 3
+    tcs_context_max_chars: int = 10000
+    teacher_field_max_chars: int = 800
+    critic_feedback_max_chars: int = 500
+    candidate_prompt_max_chars: int = 6000
 
 
 @dataclass(frozen=True)

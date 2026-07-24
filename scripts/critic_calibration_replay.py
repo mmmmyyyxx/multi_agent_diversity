@@ -63,7 +63,11 @@ async def run(
             try:
                 if parsed is None:
                     raise ValueError("critic response is not JSON")
-                decision = parse_critic_decision(parsed, context)
+                decision = parse_critic_decision(
+                    parsed,
+                    allowed_case_ids=set(),
+                    feedback_max_chars=cfg.tcs.critic_feedback_max_chars,
+                )
             except (KeyError, TypeError, ValueError) as exc:
                 parse_error = str(exc)
             attempts.append({

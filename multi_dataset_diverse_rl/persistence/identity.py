@@ -9,6 +9,18 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from ..config import Config
+from ..diagnosis_aggregation import (
+    ANSWER_ROLE_ENCODING_VERSION,
+    DIAGNOSIS_AGGREGATION_VERSION,
+    PATTERN_SELECTION_VERSION,
+)
+from ..tcs import (
+    CRITIC_SCHEMA_VERSION,
+    ROLE_RETRY_POLICY_VERSION,
+    STUDENT_SCHEMA_VERSION,
+    TCS_PROTOCOL_VERSION,
+    TEACHER_SCHEMA_VERSION,
+)
 from ..utils import normalize_spaces
 
 
@@ -75,8 +87,24 @@ def config_fingerprint(cfg: Config) -> str:
         "stage_a": "team_vote_worst_mean_v2",
         "stage_b": "competence_guard_member_pareto_v2",
         "validation": "initial_member_feasible_v1",
-        "tcs_context": "member_aware_responsibility_context_v1",
-        "checkpoint": 5,
+        "tcs_context": "aggregated_diagnosis_context_v1",
+        "diagnosis_aggregation": DIAGNOSIS_AGGREGATION_VERSION,
+        "answer_role_encoding": ANSWER_ROLE_ENCODING_VERSION,
+        "pattern_selection": PATTERN_SELECTION_VERSION,
+        "tcs_protocol": TCS_PROTOCOL_VERSION,
+        "teacher_schema": TEACHER_SCHEMA_VERSION,
+        "critic_schema": CRITIC_SCHEMA_VERSION,
+        "student_schema": STUDENT_SCHEMA_VERSION,
+        "role_retry_policy": ROLE_RETRY_POLICY_VERSION,
+        "role_token_budgets": {
+            "teacher": cfg.tcs.teacher_max_tokens,
+            "critic": cfg.tcs.critic_max_tokens,
+            "student": cfg.tcs.student_max_tokens,
+        },
+        "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
+        "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
+        "candidate_prompt_length_limit": cfg.tcs.candidate_prompt_max_chars,
+        "checkpoint": 6,
     }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
@@ -97,7 +125,7 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
     return {
         "solver_model": cfg.models.agent_model,
         "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
-        "max_tokens": cfg.models.max_tokens,
+        "max_tokens": cfg.models.solver_max_tokens,
         "output_contract_version": cfg.peer_state.solver_output_contract_version,
         "request_template": "decision_procedure_with_task_contract_v1",
     }

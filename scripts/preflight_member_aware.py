@@ -40,7 +40,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append("experiment settings do not match the frozen six-setting protocol")
     for cfg in configs:
-        if cfg.training.method_version != "member_aware_peer_state_v1":
+        if cfg.training.method_version != "member_aware_peer_state_v2":
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
@@ -104,7 +104,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append("git working tree is not clean")
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
-        "method_version": "member_aware_peer_state_v1", "settings": EXPECTED_SETTINGS,
+        "method_version": "member_aware_peer_state_v2", "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 
@@ -204,12 +204,12 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     if cfg.evaluation.candidate_eval_pool_size <= 0:
                         raise ValueError("fixed probe must contain at least one example")
                     if min(
-                        cfg.tcs.tcs_assigned_coverage_limit,
-                        cfg.tcs.tcs_assigned_conversion_limit,
-                        cfg.tcs.tcs_preservation_limit,
-                        cfg.tcs.tcs_representative_limit,
-                        cfg.tcs.tcs_member_error_limit,
+                        cfg.tcs.tcs_max_pattern_summaries,
+                        cfg.tcs.tcs_max_evidence_cases,
                         cfg.tcs.tcs_context_max_chars,
+                        cfg.tcs.teacher_field_max_chars,
+                        cfg.tcs.critic_feedback_max_chars,
+                        cfg.tcs.candidate_prompt_max_chars,
                     ) <= 0:
                         raise ValueError("all TCS context limits must be positive")
                     if cfg.persistence.max_total_llm_calls < 0 or cfg.persistence.max_total_tokens < 0:

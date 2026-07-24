@@ -17,7 +17,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v1",
+        method_version="member_aware_peer_state_v2",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -61,6 +61,18 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert payload["responsibility_state_version"] == source.responsibility_state_version
     assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
     assert "cached_member_opportunities" in payload
+    assert payload["checkpoint_version"] == 6
+    assert "previous_update_outcomes" in payload
+    assert set(payload["completed_tcs_state"]) == {
+        "selected_pattern_ids",
+        "selected_case_ids",
+        "teacher_repair_plan",
+        "critic_decision",
+        "role_retry_state",
+    }
+    assert payload["completed_tcs_state"]["role_retry_state"] == {
+        "in_progress": False
+    }
     assert payload["shared_solver_cache_audit"]["ready_entries"] == 1
     target = build_system(tmp_path / "target")
     epoch, update, best = restore_checkpoint(target, payload)
@@ -102,14 +114,14 @@ def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
     missing_member_state.pop("member_gain_state")
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v1",
+        match="Checkpoint is incompatible with member_aware_peer_state_v2",
     ):
         restore_checkpoint(system, missing_member_state)
     incompatible = dict(payload)
-    incompatible["checkpoint_version"] = 4
+    incompatible["checkpoint_version"] = 5
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v1",
+        match="Checkpoint is incompatible with member_aware_peer_state_v2",
     ):
         restore_checkpoint(system, incompatible)
     payload["probe_version"] = "stale"

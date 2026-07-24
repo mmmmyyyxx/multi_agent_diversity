@@ -28,7 +28,10 @@ class FakeCompletions:
         if isinstance(outcome, Exception):
             raise outcome
         return SimpleNamespace(
-            choices=[SimpleNamespace(message=SimpleNamespace(content=outcome))],
+            choices=[SimpleNamespace(
+                message=SimpleNamespace(content=outcome),
+                finish_reason="stop",
+            )],
             usage=SimpleNamespace(prompt_tokens=3, completion_tokens=2),
         )
 
@@ -53,11 +56,16 @@ def test_retryable_429_retries_and_logs_each_attempt(tmp_path, monkeypatch):
 
     monkeypatch.setattr("multi_dataset_diverse_rl.llm_client.asyncio.sleep", fake_sleep)
     result = asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer"))
-    assert result == "ok"
+    assert result.text == "ok"
+    assert result.finish_reason == "stop"
+    assert result.completion_token_limit == 10
     assert completions.calls == 2
     assert [row["success"] for row in system.llm.calls] == [False, True]
     assert system.llm.calls[0]["status_code"] == 429
     assert system.llm.calls[1]["total_tokens"] == 5
+    assert system.llm.calls[1]["finish_reason"] == "stop"
+    assert system.llm.calls[1]["completion_token_limit"] == 10
+    assert system.llm.calls[1]["hit_completion_limit"] is False
     assert sleeps[0] >= 2.0
 
 
@@ -78,7 +86,9 @@ def test_all_declared_transient_failures_retry(tmp_path, monkeypatch, failure):
         return None
 
     monkeypatch.setattr("multi_dataset_diverse_rl.llm_client.asyncio.sleep", no_sleep)
-    assert asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer")) == "ok"
+    assert asyncio.run(
+        system._chat("model", "system", "user", 0.0, 10, "optimizer")
+    ).text == "ok"
     assert completions.calls == 2
     assert [row["success"] for row in system.llm.calls] == [False, True]
 
@@ -100,7 +110,9 @@ def test_llm_call_budget_stops_before_extra_call(tmp_path):
     system = PromptEnsembleOptimizationSystem(cfg)
     client, completions = fake_client(["first", "second"])
     system.llm._client_or_raise = lambda _role: client
-    assert asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer")) == "first"
+    assert asyncio.run(
+        system._chat("model", "system", "user", 0.0, 10, "optimizer")
+    ).text == "first"
     with pytest.raises(RuntimeError, match="max_total_llm_calls"):
         asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer"))
     assert completions.calls == 1

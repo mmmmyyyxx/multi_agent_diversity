@@ -28,6 +28,9 @@ class LLMCallResult:
     completion_tokens: int
     total_tokens: int
     latency_seconds: float
+    finish_reason: str
+    completion_token_limit: int
+    hit_completion_limit: bool
 
 
 class RoleAwareLLMClient:
@@ -112,6 +115,9 @@ class RoleAwareLLMClient:
             "completion_tokens": 0,
             "total_tokens": 0,
             "latency_seconds": time.time() - started,
+            "finish_reason": "stop",
+            "completion_token_limit": self.cfg.models.solver_max_tokens,
+            "hit_completion_limit": False,
         })
 
     async def chat(
@@ -147,6 +153,7 @@ class RoleAwareLLMClient:
                 if self.override is not None and role in {"optimizer", "evaluator"}:
                     text = await self.override(system_prompt, user_prompt, temperature, max_tokens)
                     prompt_tokens = completion_tokens = 0
+                    finish_reason = "stop"
                 else:
                     response = await self._client_or_raise(role).chat.completions.create(
                         model=model,
@@ -162,6 +169,10 @@ class RoleAwareLLMClient:
                     usage = response.usage
                     prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
                     completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
+                    finish_reason = str(response.choices[0].finish_reason or "")
+                hit_completion_limit = bool(
+                    finish_reason == "length" or completion_tokens >= max_tokens
+                )
                 latency = time.time() - started
                 self.calls.append({
                     "role": role,
@@ -174,6 +185,9 @@ class RoleAwareLLMClient:
                     "completion_tokens": completion_tokens,
                     "total_tokens": prompt_tokens + completion_tokens,
                     "latency_seconds": latency,
+                    "finish_reason": finish_reason,
+                    "completion_token_limit": max_tokens,
+                    "hit_completion_limit": hit_completion_limit,
                 })
                 used_tokens = sum(int(row["total_tokens"]) for row in self.calls)
                 if self.cfg.persistence.max_total_tokens > 0 and used_tokens > self.cfg.persistence.max_total_tokens:
@@ -184,6 +198,9 @@ class RoleAwareLLMClient:
                     completion_tokens=completion_tokens,
                     total_tokens=prompt_tokens + completion_tokens,
                     latency_seconds=latency,
+                    finish_reason=finish_reason,
+                    completion_token_limit=max_tokens,
+                    hit_completion_limit=hit_completion_limit,
                 )
             except LLMBudgetExceeded:
                 raise
@@ -201,6 +218,9 @@ class RoleAwareLLMClient:
                     "completion_tokens": 0,
                     "total_tokens": 0,
                     "latency_seconds": time.time() - started,
+                    "finish_reason": "",
+                    "completion_token_limit": max_tokens,
+                    "hit_completion_limit": False,
                 })
                 if not self._retryable(exc) or attempt >= max_attempts:
                     raise

@@ -134,3 +134,19 @@ Zero gain must therefore not be reported as evidence against the method.
    treating the run as a viability result.
 5. Do not expand to a formal multi-task pilot until the full candidate funnel
    reaches Stage A and Stage B.
+
+## Implementation follow-up
+
+The subsequent `member_aware_peer_state_v2` behavioral protocol addresses this
+pilot finding without changing the formal vote, responsibility, Stage A, or
+Stage B objectives. The full fixed probe is now analyzed programmatically and
+compressed into at most three typed patterns and three representative cases.
+Teacher emits a three-field repair plan, Critic checks only four semantic hard
+blocker classes, and Student sees only the approved plan and realizes complete
+replacement prompts. Role-specific completion budgets are 600/300/1400 tokens.
+
+Provider finish reason, completion limit, and truncation classification are now
+recorded. Format retries do not consume semantic revision rounds, and two
+same-role truncations stop the update. These changes are covered only by
+offline deterministic tests in this implementation task; the real-API
+viability risk remains unverified until a separate explicitly authorized pilot.

@@ -16,7 +16,7 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "member_aware_peer_state_v1",
+    "method_version": "member_aware_peer_state_v2",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",

@@ -12,9 +12,10 @@ from ..evaluation.fixed_probe import PromptAnswer
 from ..persistence.identity import validate_run_identity
 from ..responsibility import MemberAwareRepairOpportunity, ResponsibilityState
 from ..system import METHOD_VERSION
+from ..tcs import PreviousUpdateOutcome
 
 
-CHECKPOINT_VERSION = 5
+CHECKPOINT_VERSION = 6
 
 
 def _random_state_payload() -> str:
@@ -34,6 +35,21 @@ def build_checkpoint(
         raise RuntimeError("cannot checkpoint before validation probe initialization")
     if system.run_identity is None:
         raise RuntimeError("cannot checkpoint without run identity")
+    last_context = system.tcs_context_history[-1] if system.tcs_context_history else {}
+    last_teacher = next(
+        (
+            row for row in reversed(system.tcs_rounds)
+            if row.get("role") == "teacher" and row.get("schema_valid")
+        ),
+        {},
+    )
+    last_critic = next(
+        (
+            row for row in reversed(system.tcs_rounds)
+            if row.get("role") == "critic" and row.get("schema_valid")
+        ),
+        {},
+    )
     return {
         "checkpoint_version": CHECKPOINT_VERSION,
         "method_version": METHOD_VERSION,
@@ -61,9 +77,22 @@ def build_checkpoint(
             question_hash: [asdict(row) for row in rows]
             for question_hash, rows in system.cached_member_opportunities.items()
         },
-        "previous_accuracy_summaries": dict(system.previous_accuracy_summaries),
-        "previous_peer_summaries": dict(system.previous_peer_summaries),
-        "previous_responsibility_summaries": dict(system.previous_responsibility_summaries),
+        "previous_update_outcomes": {
+            str(agent_id): asdict(row)
+            for agent_id, row in system.previous_update_outcomes.items()
+        },
+        "completed_tcs_state": {
+            "selected_pattern_ids": list(last_context.get("selected_pattern_ids", [])),
+            "selected_case_ids": list(last_context.get("selected_case_ids", [])),
+            "teacher_repair_plan": last_teacher.get("repair_plan"),
+            "critic_decision": {
+                "approved": last_critic.get("effective_approved"),
+                "failed_checks": list(last_critic.get("failed_checks", [])),
+                "risk_case_ids": list(last_critic.get("risk_case_ids", [])),
+                "feedback": last_critic.get("feedback", ""),
+            } if last_critic else None,
+            "role_retry_state": {"in_progress": False},
+        },
         "agent_selection_counts": dict(system.agent_selection_counts),
         "target_priority_audit": list(system.target_priority_audit),
         "history": list(system.history),
@@ -97,7 +126,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v2")
     required_member_state = {
         "member_gain_state",
         "cached_member_opportunities",
@@ -106,9 +135,11 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "team_state_version",
         "responsibility_state_version",
         "responsibility_refresh_count",
+        "previous_update_outcomes",
+        "completed_tcs_state",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v2")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -174,12 +205,15 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         )
         for question_hash, rows in payload["cached_member_opportunities"].items()
     }
-    for field in (
-        "previous_accuracy_summaries",
-        "previous_peer_summaries",
-        "previous_responsibility_summaries",
-    ):
-        setattr(system, field, {int(key): str(value) for key, value in payload[field].items()})
+    system.previous_update_outcomes = {
+        int(key): PreviousUpdateOutcome(
+            **{
+                **row,
+                "rejection_reasons": tuple(row.get("rejection_reasons", ())),
+            }
+        )
+        for key, row in payload["previous_update_outcomes"].items()
+    }
     system.agent_selection_counts = {
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }

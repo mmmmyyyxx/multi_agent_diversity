@@ -11,12 +11,13 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
+from multi_dataset_diverse_rl.llm_client import LLMCallResult
 from multi_dataset_diverse_rl.system import (
     CandidateFunnel,
     CandidateRuntime,
     PromptEnsembleOptimizationSystem,
 )
-from multi_dataset_diverse_rl.tcs import StudentCandidate
+from multi_dataset_diverse_rl.tcs import StudentPromptCandidate
 
 
 def answer(value: str) -> PromptAnswer:
@@ -38,29 +39,7 @@ async def trajectory_solver(question: str, _agent_id: int, prompt: str) -> Promp
 
 
 def approved_critic_payload(system_prompt: str) -> str:
-    facts = json.loads(
-        system_prompt.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
-            "\nProposalContext:", 1
-        )[0]
-    )
-    return json.dumps(
-        {
-            "case_fact_restatements": facts,
-            "context_consistent": True,
-            "sample_memorization_free": True,
-            "executable_change": True,
-            "internally_consistent": True,
-            "preservation_rule_present": True,
-            "output_contract_safe": True,
-            "peer_copying_free": True,
-            "stereotype_forcing_free": True,
-            "non_generic_change": True,
-            "blocking_reasons": [],
-            "soft_concerns": [],
-            "score": 0.1,
-            "feedback": "deterministic approval",
-        }
-    )
+    return json.dumps({"failed_checks": [], "risk_case_ids": [], "feedback": ""})
 
 
 def optimizer():
@@ -70,43 +49,30 @@ def optimizer():
         _temperature: float,
         _max_tokens: int,
     ) -> str:
-        if "Audit the Teacher" in system_prompt:
+        if "Check only explicit hard blockers" in system_prompt:
             return approved_critic_payload(system_prompt)
         payload = {
-            "observed_failure_pattern": "one residual member error remains",
-            "generalizable_mechanism": "the current decision rule misses a valid case",
-            "decision_rule": "apply the verified rule before finalizing",
-            "uncertainty_or_abstention_rule": "abstain only when evidence is insufficient",
-            "preservation_conditions": "preserve every previously correct decision",
-            "evidence_summary": "the fixed probe exposes a deterministic residual error",
+            "failure_pattern": "one residual member error remains",
+            "repair_rule": (
+                "Apply the verified decision rule before finalizing; abstain only "
+                "when the explicit evidence remains insufficient."
+            ),
+            "preservation_rule": "Preserve every conclusion that still passes the verified rule.",
         }
         if system_prompt == "Return strict JSON only.":
-            context = json.loads(
-                user_prompt.split("ProposalContext:\n", 1)[1].split(
-                    "\nApprovedTeacherProposal:", 1
-                )[0]
-            )
-            target = int(context["target_agent_id"])
-            suffix = "mid" if context["parent_prompt"].endswith("-base") else "improved"
-            prompt = f"agent-{target}-{suffix}"
-            return json.dumps(
-                {"candidates": [{"candidate_prompt": prompt, **payload}]}
-            )
+            parent = user_prompt.split("ParentPrompt:\n", 1)[1].split(
+                "\nApprovedRepairPlan:", 1
+            )[0]
+            target = int(parent.split("agent-", 1)[1].split("-", 1)[0])
+            suffix = "mid" if parent.endswith("-base") else "improved"
+            return json.dumps({"candidate_prompts": [f"agent-{target}-{suffix}"]})
         return json.dumps(payload)
 
     return fake_optimizer
 
 
-def student_candidate(prompt: str) -> StudentCandidate:
-    return StudentCandidate(
-        candidate_prompt=prompt,
-        observed_failure_pattern="vote repair can hide member regression",
-        generalizable_mechanism="paired counterfactual replacement",
-        decision_rule="repair the vote",
-        uncertainty_or_abstention_rule="abstain if unsupported",
-        preservation_conditions="preserve member competence",
-        evidence_summary="deterministic gate case",
-    )
+def student_candidate(prompt: str) -> StudentPromptCandidate:
+    return StudentPromptCandidate(candidate_prompt=prompt)
 
 
 async def gate_solver(question: str, _agent_id: int, prompt: str) -> PromptAnswer:
@@ -116,6 +82,126 @@ async def gate_solver(question: str, _agent_id: int, prompt: str) -> PromptAnswe
     if question == "q_vote":
         return answer("A" if member_id in {1, 2} else "B")
     return answer("A")
+
+
+def call_result(
+    text: str,
+    *,
+    max_tokens: int,
+    finish_reason: str = "stop",
+) -> LLMCallResult:
+    completion_tokens = max_tokens if finish_reason == "length" else 1
+    return LLMCallResult(
+        text=text,
+        prompt_tokens=1,
+        completion_tokens=completion_tokens,
+        total_tokens=completion_tokens + 1,
+        latency_seconds=0.0,
+        finish_reason=finish_reason,
+        completion_token_limit=max_tokens,
+        hit_completion_limit=finish_reason == "length",
+    )
+
+
+async def fault_smokes(data, prompts) -> dict[str, bool]:
+    def system_for(name: str, fake_optimizer=None):
+        cfg = Config.from_flat(
+            out_dir=f"runs_deterministic_system_smoke_{name}",
+            answer_format="option_letter",
+            initialization_mode="provided_prompt_set",
+            provided_prompts_json=json.dumps(prompts),
+            num_candidates_per_parent=2,
+            stage_b_candidate_budget=2,
+        )
+        return PromptEnsembleOptimizationSystem(
+            cfg, solver=trajectory_solver, optimizer_chat=fake_optimizer,
+        )
+
+    truncated = system_for("critic_truncation")
+
+    async def truncating_chat(
+        _model, system_prompt, _user_prompt, _temperature, max_tokens, _role,
+    ):
+        if "Check only explicit hard blockers" in system_prompt:
+            return call_result("{", max_tokens=max_tokens, finish_reason="length")
+        return call_result(json.dumps({
+            "failure_pattern": "a residual reasoning check is skipped",
+            "repair_rule": "Apply the explicit check and abstain if evidence remains tied.",
+            "preservation_rule": "Keep conclusions that still pass every explicit check.",
+        }), max_tokens=max_tokens)
+
+    truncated._chat = truncating_chat
+    await truncated.initialize_fixed_probe(data)
+    trunc_funnel = CandidateFunnel()
+    trunc_candidates = await truncated.propose_candidates(0, set(), trunc_funnel)
+
+    rejection_calls = 0
+
+    async def rejecting_optimizer(system_prompt, user_prompt, _temperature, _max_tokens):
+        nonlocal rejection_calls
+        if "Check only explicit hard blockers" in system_prompt:
+            rejection_calls += 1
+            if rejection_calls == 1:
+                return json.dumps({
+                    "failed_checks": ["actionable_specificity"],
+                    "risk_case_ids": [],
+                    "feedback": "Specify the verification order.",
+                })
+            return approved_critic_payload(system_prompt)
+        if system_prompt == "Return strict JSON only.":
+            return json.dumps({"candidate_prompts": ["agent-0-mid"]})
+        return json.dumps({
+            "failure_pattern": "a residual reasoning check is skipped",
+            "repair_rule": (
+                "Apply each explicit constraint in order and abstain when the "
+                "remaining candidates cannot be distinguished."
+            ),
+            "preservation_rule": "Keep conclusions that pass every explicit check.",
+        })
+
+    rejected = system_for("critic_rejection", rejecting_optimizer)
+    await rejected.initialize_fixed_probe(data)
+    rejection_funnel = CandidateFunnel()
+    rejection_candidates = await rejected.propose_candidates(
+        0, set(), rejection_funnel,
+    )
+
+    async def partial_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
+        if "Check only explicit hard blockers" in system_prompt:
+            return approved_critic_payload(system_prompt)
+        if system_prompt == "Return strict JSON only.":
+            return json.dumps({
+                "candidate_prompts": ["agent-0-base", "agent-0-mid"]
+            })
+        return json.dumps({
+            "failure_pattern": "a residual reasoning check is skipped",
+            "repair_rule": "Apply the explicit check and abstain if evidence remains tied.",
+            "preservation_rule": "Keep conclusions that pass every explicit check.",
+        })
+
+    partial = system_for("student_partial", partial_optimizer)
+    await partial.initialize_fixed_probe(data)
+    partial_funnel = CandidateFunnel()
+    partial_candidates = await partial.propose_candidates(0, set(), partial_funnel)
+
+    return {
+        "critic_truncation": bool(
+            not trunc_candidates
+            and trunc_funnel.teacher_calls == 1
+            and trunc_funnel.critic_truncated_responses == 2
+            and trunc_funnel.student_calls == 0
+        ),
+        "critic_semantic_rejection": bool(
+            len(rejection_candidates) == 1
+            and rejection_funnel.teacher_calls == 2
+            and rejection_funnel.critic_semantic_rejections == 1
+        ),
+        "student_partial_validity": bool(
+            len(partial_candidates) == 1
+            and partial_funnel.student_calls == 1
+            and partial_funnel.student_partially_valid_responses == 1
+        ),
+    }
 
 
 async def run_smoke() -> dict[str, object]:
@@ -204,6 +290,7 @@ async def run_smoke() -> dict[str, object]:
     candidate_evaluation = evaluated[0].final_evaluation
     incumbent_counts = incumbent.member_gain.incumbent_correct_counts
     candidate_counts = candidate_evaluation.member_gain.candidate_correct_counts
+    fault_results = await fault_smokes(data, prompts)
 
     report = {
         "target_sequence": targets,
@@ -243,6 +330,15 @@ async def run_smoke() -> dict[str, object]:
                 )
             }
         ),
+        "typical_role_call_count": 3,
+        "max_selected_pattern_count": max(
+            row["selected_pattern_count"] for row in system.tcs_context_history
+        ),
+        "max_selected_case_count": max(
+            row["selected_case_count"] for row in system.tcs_context_history
+        ),
+        "student_raw_context_fields_seen": 0,
+        "fault_smokes": fault_results,
     }
     required = (
         "all_eligible_selected_within_8",
@@ -251,8 +347,12 @@ async def run_smoke() -> dict[str, object]:
         "vote_positive_member_regressing_rejected",
         "single_agent_replacement_preserves_other_member_counts",
         "real_validation_key_is_feasible",
+        *fault_results,
     )
-    if not all(report[key] for key in required):
+    if not all(
+        fault_results[key] if key in fault_results else report[key]
+        for key in required
+    ):
         raise SystemExit(f"deterministic system smoke failed: {report}")
     return report
 

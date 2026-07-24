@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v1
+method_version = member_aware_peer_state_v2
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -106,35 +106,75 @@ responsibility exactly once; the following update reuses that refreshed state.
 If refresh fails, prompt/profile, accepted counts, responsibility state, caches,
 versions, and appended responsibility audit rows are all rolled back.
 
-## 5. Responsibility-Conditioned TCS
+## 5. Programmatic Aggregation And Lightweight TCS
 
-TCS retains three typed context boundaries:
+The complete optimization probe is analyzed programmatically using vote
+distributions, leave-one-out peer states, member correctness, and responsibility
+signals. Structurally equivalent failures are aggregated into typed patterns,
+and language-model roles receive at most three representative cases. These
+cases are representative evidence only: all statistics and all rollout metrics
+still use the complete fixed probe. Programmatic aggregation is not an agent.
 
-- `AccuracyProposalContext`: individual errors and competence preservation only.
-- `PeerStateProposalContext`: peer/team state without ownership metadata.
-- `MemberAwareResponsibilityProposalContext`: member count/gain state,
-  improvement need, assigned residuals, member errors, preservation evidence,
-  and the previous member update summary.
+Answers are encoded as `G`, `I`, and wrong clusters `W1` through `W3`. Wrong
+clusters are ordered by decreasing size and then by a stable hash of the
+normalized answer, never by agent identity. Pattern keys contain the failure
+family, target and team status, answer role, team and peer `(G,H,M)`,
+direct-fix/dominant-wrong flags, and unique/pivotal protection flags.
 
-The member-error evidence limit is `tcs_member_error_limit`, defaulting to six.
-Contexts are deterministically truncated and audited.
+Pattern selection is deterministic and lexicographic. The member-aware slots
+prioritize assigned residuals, target competence, and preservation. Generic
+Peer-State slots prioritize coverage, conversion/dominant-wrong, and
+preservation. Accuracy slots contain individual-error structure and
+preservation only. Within a selected pattern, its single representative case is
+chosen by assigned status, direct vote fix, larger oracle utility gain, older
+owner age, smaller absolute margin, and stable question hash.
 
-Teacher always returns the same six semantic fields:
+The three serialized context boundaries are:
 
-```text
-observed_failure_pattern
-generalizable_mechanism
-decision_rule
-uncertainty_or_abstention_rule
-preservation_conditions
-evidence_summary
+- `AccuracyDiagnosisContext`: individual counts and sanitized
+  individual/preservation patterns; no vote, peer, responsibility, or member
+  need fields.
+- `PeerStateDiagnosisContext`: team and leave-one-out Peer-State aggregates,
+  without owners, responsibility, member gains, or improvement need.
+- `MemberAwareDiagnosisContext`: Peer-State evidence plus member counts/gains,
+  improvement need, and assigned responsibility.
+
+`PreviousUpdateOutcome` replaces natural-language previous-update summaries.
+The model-facing projection is also sanitized to the setting's causal boundary.
+
+Teacher returns exactly:
+
+```json
+{"failure_pattern":"...", "repair_rule":"...", "preservation_rule":"..."}
 ```
 
-Critic applies the existing hard gate: context consistency, no sample
-memorization, executable and internally consistent change, explicit preservation,
-output-contract safety, no peer copying, no stereotype forcing, and a non-generic
-change. Critic score is diagnostic only. Rejected proposals return feedback to a
-new Teacher round. Student runs only after approval and must produce strict JSON.
+The Teacher proposes one repair hypothesis; it does not calculate state,
+predict performance, or generate prompts. Critic checks only the four hard
+blocker classes `evidence_mismatch`, `actionable_specificity`,
+`shortcut_or_copying`, and `preservation_or_output_risk`, returning:
+
+```json
+{"failed_checks":[], "risk_case_ids":[], "feedback":""}
+```
+
+Approval is computed by code from an empty `failed_checks` list. The Critic is
+not a performance evaluator. Student sees only the parent prompt, approved plan,
+output contract, requested count, and prompt-length limit, and returns:
+
+```json
+{"candidate_prompts":["complete replacement prompt"]}
+```
+
+Student does not diagnose or see cases. Candidate effectiveness is determined
+exclusively by paired Stage A/B rollouts and member-aware Pareto selection.
+
+The default completion budgets are 600 Teacher tokens, 300 Critic tokens, and
+1400 Student tokens. A semantic Teacher revision occurs only after a valid
+Critic rejection. Malformed or truncated Teacher/Critic responses retry the
+identical request once without consuming another semantic round; two
+same-role truncations stop the update. Student retries once only when zero
+valid prompts remain. Finish reason and completion-limit hits are audited
+separately from JSON and schema errors.
 
 ## 6. Candidate Evaluation
 
@@ -264,7 +304,7 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 5. It stores active and initial profiles, a target-free
+Checkpoint version is 6. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS state, caches, histories,
@@ -275,7 +315,7 @@ split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v1
+Checkpoint is incompatible with member_aware_peer_state_v2
 ```
 
 The runner never silently restarts an incompatible run in the same directory.
@@ -286,6 +326,7 @@ The runner never silently restarts an incompatible run in the same directory.
 multi_dataset_diverse_rl/member_objectives.py
 multi_dataset_diverse_rl/peer_state.py
 multi_dataset_diverse_rl/responsibility.py
+multi_dataset_diverse_rl/diagnosis_aggregation.py
 multi_dataset_diverse_rl/tcs.py
 multi_dataset_diverse_rl/candidate_selection.py
 multi_dataset_diverse_rl/evaluation/fixed_probe.py

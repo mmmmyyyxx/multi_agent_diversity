@@ -13,51 +13,34 @@ class FakeTransportClient:
 
     async def chat_result(self, _model, _system, _user, _temperature, _max_tokens, role):
         self.roles.append(role)
-        return LLMCallResult("Reason\nFINAL_ANSWER: A", 1, 1, 2, 0.01)
+        return LLMCallResult(
+            "Reason\nFINAL_ANSWER: A", 1, 1, 2, 0.01,
+            "stop", _max_tokens, False,
+        )
 
     async def chat(self, _model, system, _user, _temperature, _max_tokens, role):
         self.roles.append(role)
         if system == "Return strict JSON only.":
-            return json.dumps({"candidates": [{
-                "candidate_prompt": "Verify each option before selecting one letter.",
-                "observed_failure_pattern": "premature selection",
-                "generalizable_mechanism": "options are not compared",
-                "decision_rule": "compare all options",
-                "uncertainty_or_abstention_rule": "retain viable options when unresolved",
-                "preservation_conditions": "retain verified answers",
-                "evidence_summary": "selection happens before verification",
-            }]})
-        if "Audit the Teacher" in system:
-            facts = json.loads(
-                system.split("DERIVED_CASE_FACTS:\n", 1)[1].split(
-                    "\nProposalContext:", 1,
-                )[0]
-            )
             return json.dumps({
-                "case_fact_restatements": facts,
-                "context_consistent": True,
-                "sample_memorization_free": True,
-                "executable_change": False,
-                "internally_consistent": True,
-                "preservation_rule_present": True,
-                "output_contract_safe": True,
-                "peer_copying_free": True,
-                "stereotype_forcing_free": True,
-                "non_generic_change": False,
-                "blocking_reasons": ["generic"],
-                "soft_concerns": [],
-                "score": 0.5,
+                "candidate_prompts": [
+                    "Verify each option before selecting one letter."
+                ]
+            })
+        if "Check only explicit hard blockers" in system:
+            return json.dumps({
+                "failed_checks": ["actionable_specificity"],
+                "risk_case_ids": [],
                 "feedback": "transport-valid rejection",
             })
         if self.invalid_teacher:
             return "not-json"
         return json.dumps({
-            "observed_failure_pattern": "premature selection",
-            "generalizable_mechanism": "options are not compared",
-            "decision_rule": "compare all options",
-            "uncertainty_or_abstention_rule": "retain viable options when unresolved",
-            "preservation_conditions": "retain verified answers",
-            "evidence_summary": "selection happens before verification",
+            "failure_pattern": "premature selection",
+            "repair_rule": (
+                "Compare all options and retain viable options while evidence "
+                "remains unresolved."
+            ),
+            "preservation_rule": "Retain answers that pass the complete verification.",
         })
 
     def cost_summary(self):
