@@ -43,12 +43,15 @@ def approved_critic_payload(system_prompt: str) -> str:
 
 
 def optimizer():
+    max_tokens_seen: list[int | None] = []
+
     async def fake_optimizer(
         system_prompt: str,
         user_prompt: str,
         _temperature: float,
-        _max_tokens: int,
+        _max_tokens: int | None,
     ) -> str:
+        max_tokens_seen.append(_max_tokens)
         if "Check only explicit hard blockers" in system_prompt:
             return approved_critic_payload(system_prompt)
         payload = {
@@ -68,6 +71,7 @@ def optimizer():
             return json.dumps({"candidate_prompts": [f"agent-{target}-{suffix}"]})
         return json.dumps(payload)
 
+    fake_optimizer.max_tokens_seen = max_tokens_seen
     return fake_optimizer
 
 
@@ -87,10 +91,9 @@ async def gate_solver(question: str, _agent_id: int, prompt: str) -> PromptAnswe
 def call_result(
     text: str,
     *,
-    max_tokens: int,
     finish_reason: str = "stop",
 ) -> LLMCallResult:
-    completion_tokens = max_tokens if finish_reason == "length" else 1
+    completion_tokens = 1
     return LLMCallResult(
         text=text,
         prompt_tokens=1,
@@ -98,8 +101,6 @@ def call_result(
         total_tokens=completion_tokens + 1,
         latency_seconds=0.0,
         finish_reason=finish_reason,
-        completion_token_limit=max_tokens,
-        hit_completion_limit=finish_reason == "length",
     )
 
 
@@ -123,12 +124,12 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
         _model, system_prompt, _user_prompt, _temperature, max_tokens, _role,
     ):
         if "Check only explicit hard blockers" in system_prompt:
-            return call_result("{", max_tokens=max_tokens, finish_reason="length")
+            return call_result("{", finish_reason="length")
         return call_result(json.dumps({
             "failure_pattern": "a residual reasoning check is skipped",
             "repair_rule": "Apply the explicit check and abstain if evidence remains tied.",
             "preservation_rule": "Keep conclusions that still pass every explicit check.",
-        }), max_tokens=max_tokens)
+        }))
 
     truncated._chat = truncating_chat
     await truncated.initialize_fixed_probe(data)
@@ -190,16 +191,21 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
             and trunc_funnel.teacher_calls == 1
             and trunc_funnel.critic_truncated_responses == 2
             and trunc_funnel.student_calls == 0
+            and trunc_funnel.terminal_failure_class
+            == "critic_provider_truncation"
+            and trunc_funnel.terminal_failure_role == "critic"
         ),
         "critic_semantic_rejection": bool(
             len(rejection_candidates) == 1
             and rejection_funnel.teacher_calls == 2
             and rejection_funnel.critic_semantic_rejections == 1
+            and rejection_funnel.terminal_failure_class == ""
         ),
         "student_partial_validity": bool(
             len(partial_candidates) == 1
             and partial_funnel.student_calls == 1
             and partial_funnel.student_partially_valid_responses == 1
+            and partial_funnel.terminal_failure_class == ""
         ),
     }
 
@@ -224,8 +230,9 @@ async def run_smoke() -> dict[str, object]:
         stage_a_conversion_size=0,
         stage_a_preservation_size=0,
     )
+    fake_optimizer = optimizer()
     system = PromptEnsembleOptimizationSystem(
-        cfg, solver=trajectory_solver, optimizer_chat=optimizer()
+        cfg, solver=trajectory_solver, optimizer_chat=fake_optimizer
     )
     system.validation_probe = system.build_validation_probe(data)
     await system.initialize_fixed_probe(data)
@@ -338,6 +345,29 @@ async def run_smoke() -> dict[str, object]:
             row["selected_case_count"] for row in system.tcs_context_history
         ),
         "student_raw_context_fields_seen": 0,
+        "tcs_requests_use_provider_default": bool(
+            fake_optimizer.max_tokens_seen
+            and all(value is None for value in fake_optimizer.max_tokens_seen)
+        ),
+        "solver_limit_remains_1800": bool(
+            cfg.models.solver_max_tokens == 1800
+            and all(
+                row.get("configured_solver_max_tokens") == 1800
+                for row in system.llm.calls
+                if row["role"] == "solver"
+            )
+        ),
+        "normal_funnel_audit_passed": all(
+            decision["funnel"]["teacher_calls"] == 1
+            and decision["funnel"]["critic_calls"] == 1
+            and decision["funnel"]["student_calls"] == 1
+            and decision["funnel"]["terminal_failure_class"] == ""
+            and decision["funnel"]["raw_candidate_count"]
+            <= decision["funnel"]["requested_candidate_count"]
+            and decision["funnel"]["stage_a_evaluated"] >= 1
+            and decision["funnel"]["stage_b_evaluated"] >= 1
+            for decision in system.candidate_decisions
+        ),
         "fault_smokes": fault_results,
     }
     required = (
@@ -347,6 +377,9 @@ async def run_smoke() -> dict[str, object]:
         "vote_positive_member_regressing_rejected",
         "single_agent_replacement_preserves_other_member_counts",
         "real_validation_key_is_feasible",
+        "tcs_requests_use_provider_default",
+        "solver_limit_remains_1800",
+        "normal_funnel_audit_passed",
         *fault_results,
     )
     if not all(

@@ -15,7 +15,7 @@ from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
 
 
-CHECKPOINT_VERSION = 6
+CHECKPOINT_VERSION = 7
 
 
 def _random_state_payload() -> str:

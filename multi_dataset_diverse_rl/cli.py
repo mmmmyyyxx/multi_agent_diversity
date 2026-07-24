@@ -137,6 +137,7 @@ async def run(cfg: Config) -> dict[str, Any]:
 
     updates_per_epoch = max(1, math.ceil(len(train) / max(1, cfg.training.update_every)))
     for epoch in range(start_epoch, cfg.training.epochs):
+        epoch_decision_start = len(system.candidate_decisions)
         first_update = start_update if epoch == start_epoch else 0
         for update in range(first_update, updates_per_epoch):
             await system.update_once(epoch * updates_per_epoch + update)
@@ -155,6 +156,9 @@ async def run(cfg: Config) -> dict[str, Any]:
             "validation_feasible": key is not None,
             "member_objective": _member_gain_summary(
                 initial_validation, validation_metrics
+            ),
+            "candidate_funnel": system.candidate_funnel_summary(
+                system.candidate_decisions[epoch_decision_start:]
             ),
         })
         if key is not None and (best_state.get("key") is None or tuple(key) > tuple(best_state["key"])):

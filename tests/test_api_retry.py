@@ -21,8 +21,10 @@ class FakeCompletions:
     def __init__(self, outcomes):
         self.outcomes = list(outcomes)
         self.calls = 0
+        self.request_kwargs = []
 
-    async def create(self, **_kwargs):
+    async def create(self, **kwargs):
+        self.request_kwargs.append(kwargs)
         outcome = self.outcomes[self.calls]
         self.calls += 1
         if isinstance(outcome, Exception):
@@ -58,14 +60,12 @@ def test_retryable_429_retries_and_logs_each_attempt(tmp_path, monkeypatch):
     result = asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer"))
     assert result.text == "ok"
     assert result.finish_reason == "stop"
-    assert result.completion_token_limit == 10
     assert completions.calls == 2
     assert [row["success"] for row in system.llm.calls] == [False, True]
     assert system.llm.calls[0]["status_code"] == 429
     assert system.llm.calls[1]["total_tokens"] == 5
     assert system.llm.calls[1]["finish_reason"] == "stop"
-    assert system.llm.calls[1]["completion_token_limit"] == 10
-    assert system.llm.calls[1]["hit_completion_limit"] is False
+    assert completions.request_kwargs[1]["max_tokens"] == 10
     assert sleeps[0] >= 2.0
 
 
@@ -105,25 +105,39 @@ def test_non_retryable_client_status_fails_immediately(tmp_path, status):
     assert system.llm.calls[0]["status_code"] == status
 
 
-def test_llm_call_budget_stops_before_extra_call(tmp_path):
-    cfg = Config.from_flat(out_dir=str(tmp_path), max_total_llm_calls=1)
+def test_many_calls_do_not_stop_and_cost_keeps_accumulating(tmp_path):
+    cfg = Config.from_flat(out_dir=str(tmp_path))
     system = PromptEnsembleOptimizationSystem(cfg)
-    client, completions = fake_client(["first", "second"])
+    client, completions = fake_client([f"result-{index}" for index in range(25)])
     system.llm._client_or_raise = lambda _role: client
-    assert asyncio.run(
-        system._chat("model", "system", "user", 0.0, 10, "optimizer")
-    ).text == "first"
-    with pytest.raises(RuntimeError, match="max_total_llm_calls"):
-        asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer"))
-    assert completions.calls == 1
+    for index in range(25):
+        assert asyncio.run(
+            system._chat("model", "system", "user", 0.0, None, "optimizer", "teacher")
+        ).text == f"result-{index}"
+    assert completions.calls == 25
+    assert all("max_tokens" not in kwargs for kwargs in completions.request_kwargs)
+    assert system.cost_summary()["total_tokens"] == 125
 
 
-def test_llm_token_budget_stops_after_over_budget_response(tmp_path):
-    cfg = Config.from_flat(out_dir=str(tmp_path), max_total_tokens=4)
-    system = PromptEnsembleOptimizationSystem(cfg)
-    client, completions = fake_client(["five tokens", "unused"])
+def test_tcs_omits_completion_limit_while_solver_keeps_1800(tmp_path):
+    system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
+    client, completions = fake_client(["teacher", "critic", "student", "solver"])
     system.llm._client_or_raise = lambda _role: client
-    with pytest.raises(RuntimeError, match="max_total_tokens"):
-        asyncio.run(system._chat("model", "system", "user", 0.0, 10, "optimizer"))
-    assert completions.calls == 1
-    assert system.llm.calls[0]["total_tokens"] == 5
+
+    asyncio.run(system._chat("model", "teacher", "user", 0.0, None, "optimizer"))
+    asyncio.run(system._chat("model", "critic", "user", 0.0, None, "evaluator"))
+    asyncio.run(system._chat(
+        "model", "Return strict JSON only.", "user", 0.0, None, "optimizer"
+    ))
+    asyncio.run(system.llm.chat_result(
+        "model", "solver", "user", 0.0, system.cfg.models.solver_max_tokens,
+        "solver",
+    ))
+
+    assert all(
+        "max_tokens" not in kwargs for kwargs in completions.request_kwargs[:3]
+    )
+    assert completions.request_kwargs[3]["max_tokens"] == 1800
+    assert [row["role"] for row in system.llm.calls] == [
+        "teacher", "critic", "student", "solver"
+    ]

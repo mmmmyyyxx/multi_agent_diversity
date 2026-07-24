@@ -38,8 +38,6 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
         "--test_size", "1",
         "--num_candidates_per_parent", "1",
         "--stage_b_candidate_budget", "1",
-        "--max_total_llm_calls", "100",
-        "--max_total_tokens", "10000",
     ])
     workspace = Path(__file__).resolve().parents[1]
     report = run_specific_preflight(args, workspace)

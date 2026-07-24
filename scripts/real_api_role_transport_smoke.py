@@ -79,7 +79,7 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         build_teacher_request(context),
         "Produce the repair proposal.",
         cfg.tcs.teacher_temperature,
-        cfg.tcs.teacher_max_tokens,
+        None,
         "optimizer",
     )
     teacher_json = extract_json_obj(teacher_raw)
@@ -112,7 +112,7 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         build_critic_request(context, transport_teacher),
         "Audit the proposal.",
         cfg.tcs.critic_temperature,
-        cfg.tcs.critic_max_tokens,
+        None,
         "evaluator",
     )
     critic_json = extract_json_obj(critic_raw)
@@ -136,9 +136,10 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
             answer_format="option_letter",
             candidate_count=cfg.tcs.num_candidates_per_parent,
             candidate_prompt_max_chars=cfg.tcs.candidate_prompt_max_chars,
+            total_candidate_prompt_max_chars=cfg.tcs.total_candidate_prompt_max_chars,
         ),
         cfg.tcs.student_temperature,
-        cfg.tcs.student_max_tokens,
+        None,
         "optimizer",
     )
     student_json = extract_json_obj(student_raw)
@@ -149,7 +150,9 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
             student_json,
             parent_prompt=context.parent_prompt,
             context=context,
+            expected_count=cfg.tcs.num_candidates_per_parent,
             candidate_prompt_max_chars=cfg.tcs.candidate_prompt_max_chars,
+            total_candidate_prompt_max_chars=cfg.tcs.total_candidate_prompt_max_chars,
         )
         candidates = parsed_candidates.candidates
     except (KeyError, TypeError, ValueError) as exc:

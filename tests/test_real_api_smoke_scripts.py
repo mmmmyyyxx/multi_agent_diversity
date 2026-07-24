@@ -15,7 +15,7 @@ class FakeTransportClient:
         self.roles.append(role)
         return LLMCallResult(
             "Reason\nFINAL_ANSWER: A", 1, 1, 2, 0.01,
-            "stop", _max_tokens, False,
+            "stop",
         )
 
     async def chat(self, _model, system, _user, _temperature, _max_tokens, role):

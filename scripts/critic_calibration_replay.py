@@ -55,7 +55,7 @@ async def run(
                 request,
                 user_request,
                 cfg.tcs.critic_temperature,
-                cfg.tcs.critic_max_tokens,
+                None,
                 "evaluator",
             )
             parsed = extract_json_obj(raw)

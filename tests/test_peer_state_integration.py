@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+import pytest
+
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
 from multi_dataset_diverse_rl.llm_client import LLMCallResult
@@ -185,7 +187,6 @@ def result(
     *,
     finish_reason: str = "stop",
     completion_tokens: int = 1,
-    limit: int = 300,
 ) -> LLMCallResult:
     return LLMCallResult(
         text=text,
@@ -194,8 +195,6 @@ def result(
         total_tokens=completion_tokens + 1,
         latency_seconds=0.0,
         finish_reason=finish_reason,
-        completion_token_limit=limit,
-        hit_completion_limit=finish_reason == "length" or completion_tokens >= limit,
     )
 
 
@@ -206,12 +205,12 @@ def test_teacher_truncation_retries_identical_request_without_semantic_round_use
     async def chat(_model, system_prompt, user_prompt, _temperature, max_tokens, role):
         captured.append((role, system_prompt, user_prompt, max_tokens))
         if len(captured) == 1:
-            return result("{", finish_reason="length", completion_tokens=max_tokens, limit=max_tokens)
+            return result("{", finish_reason="length")
         if "Check only explicit hard blockers" in system_prompt:
-            return result(json.dumps(APPROVED), limit=max_tokens)
+            return result(json.dumps(APPROVED))
         if system_prompt == "Return strict JSON only.":
-            return result(json.dumps({"candidate_prompts": ["repair-q0"]}), limit=max_tokens)
-        return result(json.dumps(TEACHER), limit=max_tokens)
+            return result(json.dumps({"candidate_prompts": ["repair-q0"]}))
+        return result(json.dumps(TEACHER))
 
     system._chat = chat
 
@@ -236,9 +235,9 @@ def test_critic_truncation_never_triggers_teacher_revision(tmp_path):
     async def chat(_model, system_prompt, _user_prompt, _temperature, max_tokens, _role):
         if "Check only explicit hard blockers" in system_prompt:
             role_calls.append("critic")
-            return result("{", finish_reason="length", completion_tokens=max_tokens, limit=max_tokens)
+            return result("{", finish_reason="length")
         role_calls.append("teacher")
-        return result(json.dumps(TEACHER), limit=max_tokens)
+        return result(json.dumps(TEACHER))
 
     system._chat = chat
 
@@ -252,6 +251,84 @@ def test_critic_truncation_never_triggers_teacher_revision(tmp_path):
     assert candidates == []
     assert role_calls == ["teacher", "critic", "critic"]
     assert funnel.critic_truncated_responses == 2
+    assert funnel.terminal_failure_class == "critic_provider_truncation"
+    assert funnel.terminal_failure_role == "critic"
+    assert funnel.infrastructure_failed_updates == 1
+
+
+@pytest.mark.parametrize(
+    ("scenario", "expected_class", "expected_role", "infrastructure"),
+    [
+        ("teacher_schema", "teacher_schema_exhausted", "teacher", 0),
+        ("teacher_truncation", "teacher_provider_truncation", "teacher", 1),
+        ("critic_schema", "critic_schema_exhausted", "critic", 0),
+        (
+            "critic_rejection",
+            "critic_semantic_rejection_exhausted",
+            "critic",
+            0,
+        ),
+        ("student_schema", "student_schema_exhausted", "student", 0),
+        ("student_truncation", "student_provider_truncation", "student", 1),
+        (
+            "student_zero",
+            "zero_valid_student_candidates",
+            "student",
+            0,
+        ),
+        ("transport", "transport_failure", "teacher", 1),
+    ],
+)
+def test_terminal_failure_taxonomy(
+    tmp_path, scenario, expected_class, expected_role, infrastructure
+):
+    system = build_system(tmp_path)
+
+    async def chat(_model, system_prompt, _user_prompt, _temperature, _max_tokens, _role):
+        is_critic = "Check only explicit hard blockers" in system_prompt
+        is_student = system_prompt == "Return strict JSON only."
+        if scenario == "transport" and not is_critic and not is_student:
+            raise ConnectionError("offline transport fault")
+        if scenario.startswith("teacher_") and not is_critic and not is_student:
+            return result(
+                "{",
+                finish_reason=(
+                    "length" if scenario == "teacher_truncation" else "stop"
+                ),
+            )
+        if is_critic:
+            if scenario == "critic_schema":
+                return result("{")
+            if scenario == "critic_rejection":
+                return result(json.dumps({
+                    "failed_checks": ["actionable_specificity"],
+                    "risk_case_ids": [],
+                    "feedback": "Specify the executable verification order.",
+                }))
+            return result(json.dumps(APPROVED))
+        if is_student:
+            if scenario == "student_schema":
+                return result(json.dumps({"candidate_prompts": "invalid"}))
+            if scenario == "student_truncation":
+                return result("{", finish_reason="length")
+            if scenario == "student_zero":
+                return result(json.dumps({"candidate_prompts": []}))
+            return result(json.dumps({"candidate_prompts": ["repair-q0"]}))
+        return result(json.dumps(TEACHER))
+
+    system._chat = chat
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert funnel.terminal_failure_class == expected_class
+    assert funnel.terminal_failure_role == expected_role
+    assert funnel.infrastructure_failed_updates == infrastructure
 
 
 def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):

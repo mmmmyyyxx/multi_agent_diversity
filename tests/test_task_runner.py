@@ -51,6 +51,7 @@ def test_completed_run_requires_exact_identity(tmp_path):
             "run_identity": identity().to_dict(),
         },
         "cost_summary.json": {"total_llm_calls": 1},
+        "candidate_funnel.json": {"update_count": 1},
     }.items():
         (run / filename).write_text(json.dumps(payload), encoding="utf-8")
     (run / "tcs_rounds.jsonl").write_text("", encoding="utf-8")

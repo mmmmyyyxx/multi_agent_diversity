@@ -96,15 +96,16 @@ def config_fingerprint(cfg: Config) -> str:
         "critic_schema": CRITIC_SCHEMA_VERSION,
         "student_schema": STUDENT_SCHEMA_VERSION,
         "role_retry_policy": ROLE_RETRY_POLICY_VERSION,
-        "role_token_budgets": {
-            "teacher": cfg.tcs.teacher_max_tokens,
-            "critic": cfg.tcs.critic_max_tokens,
-            "student": cfg.tcs.student_max_tokens,
-        },
+        "completion_policy": "provider_default",
+        "teacher_total_max_chars": cfg.tcs.teacher_total_max_chars,
+        "candidate_prompt_max_chars": cfg.tcs.candidate_prompt_max_chars,
+        "total_candidate_prompt_max_chars": cfg.tcs.total_candidate_prompt_max_chars,
+        "student_count_policy": "reject_excess_keep_individually_valid_v1",
+        "model_facing_payload_version": "audit_hash_isolated_v2",
+        "terminal_failure_version": "role_specific_terminal_failure_v1",
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
-        "candidate_prompt_length_limit": cfg.tcs.candidate_prompt_max_chars,
-        "checkpoint": 6,
+        "checkpoint": 7,
     }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()

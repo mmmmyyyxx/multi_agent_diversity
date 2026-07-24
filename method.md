@@ -168,13 +168,18 @@ output contract, requested count, and prompt-length limit, and returns:
 Student does not diagnose or see cases. Candidate effectiveness is determined
 exclusively by paired Stage A/B rollouts and member-aware Pareto selection.
 
-The default completion budgets are 600 Teacher tokens, 300 Critic tokens, and
-1400 Student tokens. A semantic Teacher revision occurs only after a valid
-Critic rejection. Malformed or truncated Teacher/Critic responses retry the
-identical request once without consuming another semantic round; two
-same-role truncations stop the update. Student retries once only when zero
-valid prompts remain. Finish reason and completion-limit hits are audited
-separately from JSON and schema errors.
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+
+The Solver retains `solver_max_tokens=1800` to preserve its request identity
+and shared cache. Providers may still return `finish_reason=length`; the
+pipeline records this as a runtime failure, not as evidence of no method gain.
+
+A semantic Teacher revision occurs only after a valid Critic rejection.
+Malformed or provider-truncated Teacher/Critic responses retry the identical
+request once without consuming another semantic round. Student applies strict
+requested-count, per-prompt, and total-prompt character limits and never
+silently truncates extra candidates. Provider truncation is determined only
+from `finish_reason == "length"`.
 
 ## 6. Candidate Evaluation
 

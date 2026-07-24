@@ -61,7 +61,7 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert payload["responsibility_state_version"] == source.responsibility_state_version
     assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
     assert "cached_member_opportunities" in payload
-    assert payload["checkpoint_version"] == 6
+    assert payload["checkpoint_version"] == 7
     assert "previous_update_outcomes" in payload
     assert set(payload["completed_tcs_state"]) == {
         "selected_pattern_ids",

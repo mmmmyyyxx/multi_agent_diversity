@@ -17,10 +17,6 @@ RETRYABLE_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
 NON_RETRYABLE_STATUS_CODES = {400, 401, 403, 404, 422}
 
 
-class LLMBudgetExceeded(RuntimeError):
-    pass
-
-
 @dataclass(frozen=True)
 class LLMCallResult:
     text: str
@@ -29,15 +25,13 @@ class LLMCallResult:
     total_tokens: int
     latency_seconds: float
     finish_reason: str
-    completion_token_limit: int
-    hit_completion_limit: bool
 
 
 class RoleAwareLLMClient:
     def __init__(
         self,
         cfg: Config,
-        override: Callable[[str, str, float, int], Awaitable[str]] | None = None,
+        override: Callable[[str, str, float, int | None], Awaitable[str]] | None = None,
     ):
         self.cfg = cfg
         self.override = override
@@ -96,16 +90,10 @@ class RoleAwareLLMClient:
             marker in name for marker in ("timeout", "connection")
         )
 
-    def check_budget(self) -> None:
-        if self.cfg.persistence.max_total_llm_calls > 0 and len(self.calls) >= self.cfg.persistence.max_total_llm_calls:
-            raise LLMBudgetExceeded("max_total_llm_calls exceeded")
-        used_tokens = sum(int(row["total_tokens"]) for row in self.calls)
-        if self.cfg.persistence.max_total_tokens > 0 and used_tokens >= self.cfg.persistence.max_total_tokens:
-            raise LLMBudgetExceeded("max_total_tokens exceeded")
-
     def record_override_solver(self, *, started: float) -> None:
         self.calls.append({
             "role": "solver",
+            "client_role": "solver",
             "model": self.cfg.models.agent_model,
             "attempt": 1,
             "success": True,
@@ -116,8 +104,7 @@ class RoleAwareLLMClient:
             "total_tokens": 0,
             "latency_seconds": time.time() - started,
             "finish_reason": "stop",
-            "completion_token_limit": self.cfg.models.solver_max_tokens,
-            "hit_completion_limit": False,
+            "configured_solver_max_tokens": self.cfg.models.solver_max_tokens,
         })
 
     async def chat(
@@ -126,12 +113,14 @@ class RoleAwareLLMClient:
         system_prompt: str,
         user_prompt: str,
         temperature: float,
-        max_tokens: int,
+        max_tokens: int | None,
         role: str,
+        logical_role: str | None = None,
     ) -> str:
         return (
             await self.chat_result(
                 model, system_prompt, user_prompt, temperature, max_tokens, role,
+                logical_role,
             )
         ).text
 
@@ -141,13 +130,13 @@ class RoleAwareLLMClient:
         system_prompt: str,
         user_prompt: str,
         temperature: float,
-        max_tokens: int,
+        max_tokens: int | None,
         role: str,
+        logical_role: str | None = None,
     ) -> LLMCallResult:
         max_attempts = max(1, self.cfg.persistence.max_retries + self.cfg.persistence.max_transient_retries)
         last_error: Exception | None = None
         for attempt in range(1, max_attempts + 1):
-            self.check_budget()
             started = time.time()
             try:
                 if self.override is not None and role in {"optimizer", "evaluator"}:
@@ -155,27 +144,29 @@ class RoleAwareLLMClient:
                     prompt_tokens = completion_tokens = 0
                     finish_reason = "stop"
                 else:
-                    response = await self._client_or_raise(role).chat.completions.create(
-                        model=model,
-                        messages=[
+                    request_kwargs = {
+                        "model": model,
+                        "messages": [
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": user_prompt},
                         ],
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        timeout=self.cfg.persistence.llm_call_timeout,
+                        "temperature": temperature,
+                        "timeout": self.cfg.persistence.llm_call_timeout,
+                    }
+                    if max_tokens is not None:
+                        request_kwargs["max_tokens"] = max_tokens
+                    response = await self._client_or_raise(role).chat.completions.create(
+                        **request_kwargs,
                     )
                     text = response.choices[0].message.content or ""
                     usage = response.usage
                     prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
                     completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
                     finish_reason = str(response.choices[0].finish_reason or "")
-                hit_completion_limit = bool(
-                    finish_reason == "length" or completion_tokens >= max_tokens
-                )
                 latency = time.time() - started
-                self.calls.append({
-                    "role": role,
+                call_record = {
+                    "role": logical_role or role,
+                    "client_role": role,
                     "model": model,
                     "attempt": attempt,
                     "success": True,
@@ -186,12 +177,10 @@ class RoleAwareLLMClient:
                     "total_tokens": prompt_tokens + completion_tokens,
                     "latency_seconds": latency,
                     "finish_reason": finish_reason,
-                    "completion_token_limit": max_tokens,
-                    "hit_completion_limit": hit_completion_limit,
-                })
-                used_tokens = sum(int(row["total_tokens"]) for row in self.calls)
-                if self.cfg.persistence.max_total_tokens > 0 and used_tokens > self.cfg.persistence.max_total_tokens:
-                    raise LLMBudgetExceeded("max_total_tokens exceeded")
+                }
+                if role == "solver" and max_tokens is not None:
+                    call_record["configured_solver_max_tokens"] = max_tokens
+                self.calls.append(call_record)
                 return LLMCallResult(
                     text=text,
                     prompt_tokens=prompt_tokens,
@@ -199,16 +188,13 @@ class RoleAwareLLMClient:
                     total_tokens=prompt_tokens + completion_tokens,
                     latency_seconds=latency,
                     finish_reason=finish_reason,
-                    completion_token_limit=max_tokens,
-                    hit_completion_limit=hit_completion_limit,
                 )
-            except LLMBudgetExceeded:
-                raise
             except Exception as exc:
                 last_error = exc
                 status = self._status_code(exc)
                 self.calls.append({
-                    "role": role,
+                    "role": logical_role or role,
+                    "client_role": role,
                     "model": model,
                     "attempt": attempt,
                     "success": False,
@@ -219,8 +205,6 @@ class RoleAwareLLMClient:
                     "total_tokens": 0,
                     "latency_seconds": time.time() - started,
                     "finish_reason": "",
-                    "completion_token_limit": max_tokens,
-                    "hit_completion_limit": False,
                 })
                 if not self._retryable(exc) or attempt >= max_attempts:
                     raise
@@ -237,15 +221,30 @@ class RoleAwareLLMClient:
 
     def cost_summary(self) -> dict[str, Any]:
         successful = [row for row in self.calls if row["success"]]
+        tokens_by_role = {
+            logical_role: sum(
+                int(row["total_tokens"])
+                for row in self.calls
+                if row["role"] == logical_role
+            )
+            for logical_role in ("solver", "teacher", "critic", "student")
+        }
         return {
-            "solver_calls": sum(row["role"] == "solver" for row in successful),
-            "optimizer_calls": sum(row["role"] == "optimizer" for row in successful),
-            "evaluator_calls": sum(row["role"] == "evaluator" for row in successful),
+            "solver_calls": sum(
+                row.get("client_role", row["role"]) == "solver" for row in successful
+            ),
+            "optimizer_calls": sum(
+                row.get("client_role", row["role"]) == "optimizer" for row in successful
+            ),
+            "evaluator_calls": sum(
+                row.get("client_role", row["role"]) == "evaluator" for row in successful
+            ),
             "total_llm_calls": len(self.calls),
             "successful_llm_calls": len(successful),
             "failed_llm_attempts": len(self.calls) - len(successful),
             "prompt_tokens": sum(int(row["prompt_tokens"]) for row in self.calls),
             "completion_tokens": sum(int(row["completion_tokens"]) for row in self.calls),
             "total_tokens": sum(int(row["total_tokens"]) for row in self.calls),
+            "tokens_by_role": tokens_by_role,
             "latency_seconds": sum(float(row["latency_seconds"]) for row in self.calls),
         }

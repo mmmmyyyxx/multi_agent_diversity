@@ -207,13 +207,13 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         cfg.tcs.tcs_max_pattern_summaries,
                         cfg.tcs.tcs_max_evidence_cases,
                         cfg.tcs.tcs_context_max_chars,
+                        cfg.tcs.teacher_total_max_chars,
                         cfg.tcs.teacher_field_max_chars,
                         cfg.tcs.critic_feedback_max_chars,
                         cfg.tcs.candidate_prompt_max_chars,
+                        cfg.tcs.total_candidate_prompt_max_chars,
                     ) <= 0:
                         raise ValueError("all TCS context limits must be positive")
-                    if cfg.persistence.max_total_llm_calls < 0 or cfg.persistence.max_total_tokens < 0:
-                        raise ValueError("LLM call and token budgets cannot be negative")
                     cache_path = Path(cfg.persistence.shared_solver_cache_path)
                     if not cache_path.is_absolute():
                         raise ValueError("shared_solver_cache_path must resolve to an absolute path")

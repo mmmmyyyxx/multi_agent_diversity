@@ -74,7 +74,7 @@ def test_system_appends_non_optimizable_task_contract_to_solver_prompt(tmp_path)
         })
         return LLMCallResult(
             "Reason\nFINAL_ANSWER: A", 2, 3, 5, 0.01,
-            "stop", max_tokens, False,
+            "stop",
         )
 
     system.llm.chat_result = chat_result

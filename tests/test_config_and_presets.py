@@ -103,10 +103,10 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tie_policy"] == "abstain"
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
-    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v1"
+    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v2"
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
     assert metadata["diagnosis_aggregation_version"] == "peer_state_pattern_aggregation_v1"
-    assert metadata["checkpoint_version"] == 6
+    assert metadata["checkpoint_version"] == 7
     assert metadata["task_general_scope"] == "unseen_examples_within_current_task"
     assert metadata["student_sample_memorization_filter"] == "exact_supplied_example_text_v1"
     assert "prompt_memory_search_enabled" not in metadata

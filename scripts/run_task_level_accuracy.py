@@ -109,6 +109,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         "best_prompts.json",
         "run_meta.json",
         "tcs_rounds.jsonl",
+        "candidate_funnel.json",
         "solver_invalid_outputs.jsonl",
         "cost_summary.json",
     )

@@ -11,11 +11,11 @@ from .llm_client import LLMCallResult
 from .utils import extract_json_obj, normalize_prompt_text
 
 
-TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v1"
+TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v2"
 TEACHER_SCHEMA_VERSION = "three_field_repair_plan_v1"
 CRITIC_SCHEMA_VERSION = "four_hard_blocker_v1"
 STUDENT_SCHEMA_VERSION = "replacement_prompt_list_v1"
-ROLE_RETRY_POLICY_VERSION = "semantic_round_format_retry_v1"
+ROLE_RETRY_POLICY_VERSION = "uncapped_completion_semantic_round_v2"
 SAMPLE_MEMORIZATION_FILTER_VERSION = "exact_supplied_example_text_v1"
 
 CRITIC_FAILED_CHECKS = (
@@ -111,6 +111,7 @@ class StudentParseResult:
     candidates: tuple[StudentPromptCandidate, ...]
     raw_count: int
     rejection_reasons: tuple[tuple[str, ...], ...]
+    total_candidate_characters: int
 
 
 @dataclass(frozen=True)
@@ -141,7 +142,6 @@ def _accuracy_case_payload(row: CompactEvidenceCase) -> dict[str, Any]:
         "case_id": row.case_id,
         "pattern_id": row.pattern_id,
         "case_family": row.case_family,
-        "question_hash": row.question_hash,
         "question": row.question,
         "gold_answer": row.gold_answer,
         "target_current_answer": row.target_current_answer,
@@ -150,21 +150,53 @@ def _accuracy_case_payload(row: CompactEvidenceCase) -> dict[str, Any]:
 
 
 def _peer_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
-    payload = asdict(pattern)
-    payload.pop("assigned_case_count")
-    payload.pop("max_owner_age")
+    return {
+        "pattern_id": pattern.pattern_id,
+        "key": asdict(pattern.key),
+        "case_count": pattern.case_count,
+        "direct_vote_fix_count": pattern.direct_vote_fix_count,
+        "dominant_wrong_count": pattern.dominant_wrong_count,
+        "mean_oracle_soft_utility_gain": pattern.mean_oracle_soft_utility_gain,
+        "max_oracle_soft_utility_gain": pattern.max_oracle_soft_utility_gain,
+        "repair_goal": pattern.repair_goal,
+    }
+
+
+def _member_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
+    payload = _peer_pattern_payload(pattern)
+    payload["assigned_case_count"] = pattern.assigned_case_count
+    payload["max_owner_age"] = pattern.max_owner_age
     return payload
 
 
 def _peer_case_payload(row: CompactEvidenceCase) -> dict[str, Any]:
-    return asdict(row)
+    return {
+        "case_id": row.case_id,
+        "pattern_id": row.pattern_id,
+        "case_family": row.case_family,
+        "question": row.question,
+        "gold_answer": row.gold_answer,
+        "target_current_answer": row.target_current_answer,
+        "answer_role_signature": list(row.answer_role_signature),
+        "target_answer_role": row.target_answer_role,
+        "gold_vote_count": row.gold_vote_count,
+        "largest_wrong_vote_count": row.largest_wrong_vote_count,
+        "plurality_margin": row.plurality_margin,
+        "peer_gold_vote_count": row.peer_gold_vote_count,
+        "peer_largest_wrong_vote_count": row.peer_largest_wrong_vote_count,
+        "peer_margin": row.peer_margin,
+        "direct_vote_fix": row.direct_vote_fix,
+        "dominant_wrong_member": row.dominant_wrong_member,
+        "unique_correct": row.unique_correct,
+        "pivotal_correct": row.pivotal_correct,
+        "repair_goal": row.repair_goal,
+    }
 
 
 def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
     common: dict[str, Any] = {
         "target_agent_id": context.target_agent_id,
         "parent_prompt": context.parent_prompt,
-        "parent_prompt_hash": context.parent_prompt_hash,
     }
     if isinstance(context, AccuracyDiagnosisContext):
         common.update({
@@ -189,8 +221,8 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
             "member_gains_from_initial": list(context.member_gains_from_initial),
             "target_improvement_need": context.target_improvement_need,
             "assigned_residual_count": context.assigned_residual_count,
-            "patterns": [asdict(row) for row in context.patterns],
-            "evidence_cases": [asdict(row) for row in context.evidence_cases],
+            "patterns": [_member_pattern_payload(row) for row in context.patterns],
+            "evidence_cases": [_peer_case_payload(row) for row in context.evidence_cases],
         })
     else:
         raise TypeError(f"Unsupported diagnosis context: {type(context).__name__}")
@@ -234,8 +266,6 @@ def limit_diagnosis_context(
     if max_chars <= 0:
         raise ValueError("tcs_context_max_chars must be positive")
     bounded = context
-    while len(serialize_context(bounded)) > max_chars and bounded.evidence_cases:
-        bounded = replace(bounded, evidence_cases=bounded.evidence_cases[:-1])
     while len(serialize_context(bounded)) > max_chars and bounded.patterns:
         kept = bounded.patterns[:-1]
         kept_ids = {row.pattern_id for row in kept}
@@ -246,6 +276,8 @@ def limit_diagnosis_context(
                 row for row in bounded.evidence_cases if row.pattern_id in kept_ids
             ),
         )
+    while len(serialize_context(bounded)) > max_chars and bounded.evidence_cases:
+        bounded = replace(bounded, evidence_cases=bounded.evidence_cases[:-1])
     characters = len(serialize_context(bounded))
     if characters > max_chars:
         raise ValueError("TCS context metadata and parent prompt exceed tcs_context_max_chars")
@@ -329,6 +361,7 @@ def build_student_request(
     answer_format: str,
     candidate_count: int,
     candidate_prompt_max_chars: int,
+    total_candidate_prompt_max_chars: int = 5000,
 ) -> str:
     return (
         "Implement the approved repair plan as complete replacement prompts. Each prompt "
@@ -339,7 +372,8 @@ def build_student_request(
         f"ApprovedRepairPlan:\n{json.dumps(asdict(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
         f"OutputContract:\n{solver_output_contract(answer_format)}\n"
         f"RequestedCandidateCount: {candidate_count}\n"
-        f"CandidatePromptMaxCharacters: {candidate_prompt_max_chars}"
+        f"CandidatePromptMaxCharacters: {candidate_prompt_max_chars}\n"
+        f"TotalCandidatePromptMaxCharacters: {total_candidate_prompt_max_chars}"
     )
 
 
@@ -414,13 +448,24 @@ def parse_student_candidates(
     *,
     parent_prompt: str,
     context: AnyDiagnosisContext,
-    candidate_prompt_max_chars: int = 6000,
+    expected_count: int,
+    candidate_prompt_max_chars: int = 3000,
+    total_candidate_prompt_max_chars: int = 5000,
 ) -> StudentParseResult:
     if set(payload) != {"candidate_prompts"}:
         raise ValueError("student response must contain only candidate_prompts")
     values = payload["candidate_prompts"]
     if not isinstance(values, list):
         raise ValueError("candidate_prompts must be a list")
+    if len(values) > expected_count:
+        raise ValueError("candidate_count_exceeds_requested")
+    total_candidate_characters = sum(
+        len(normalize_prompt_text(value))
+        for value in values
+        if isinstance(value, str)
+    )
+    if total_candidate_characters > total_candidate_prompt_max_chars:
+        raise ValueError("candidate_total_too_long")
     parent_hash = hashlib.sha256(
         normalize_prompt_text(parent_prompt).encode("utf-8")
     ).hexdigest()
@@ -451,14 +496,9 @@ def parse_student_candidates(
         candidates=tuple(accepted),
         raw_count=len(values),
         rejection_reasons=tuple(rejections),
+        total_candidate_characters=total_candidate_characters,
     )
 
 
 def response_truncated(result: LLMCallResult) -> bool:
-    return bool(
-        result.finish_reason == "length"
-        or (
-            result.completion_tokens >= result.completion_token_limit
-            and extract_json_obj(result.text) is None
-        )
-    )
+    return result.finish_reason == "length"

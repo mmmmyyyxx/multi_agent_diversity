@@ -44,7 +44,7 @@ from .evaluation.prompt_question import PromptQuestionEvaluator
 from .evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION, solver_output_contract
 from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
-from .llm_client import LLMBudgetExceeded, LLMCallResult, RoleAwareLLMClient
+from .llm_client import LLMCallResult, RoleAwareLLMClient
 from .member_objectives import member_gain_metrics, team_member_gain_state
 from .peer_state import (
     PeerVoteContext,
@@ -162,6 +162,8 @@ class CandidateFunnel:
     rejected_pivotal_loss: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
+    terminal_failure_class: str = ""
+    terminal_failure_role: str = ""
 
 
 @dataclass(frozen=True)
@@ -396,17 +398,27 @@ class PromptEnsembleOptimizationSystem:
         system_prompt: str,
         user_prompt: str,
         temperature: float,
-        max_tokens: int,
+        max_tokens: int | None,
         client_role: str,
+        logical_role: str | None = None,
     ) -> LLMCallResult:
+        if logical_role is None:
+            if client_role == "solver":
+                logical_role = "solver"
+            elif client_role == "evaluator":
+                logical_role = "critic"
+            elif system_prompt == "Return strict JSON only.":
+                logical_role = "student"
+            else:
+                logical_role = "teacher"
         return await self.llm.chat_result(
             model, system_prompt, user_prompt, temperature, max_tokens, client_role,
+            logical_role,
         )
 
     async def solve(self, question: str, agent_id: int, prompt: str) -> PromptAnswer:
         request_identity = self.prompt_question_evaluator.model_request_identity
         if self._solver_override is not None:
-            self.llm.check_budget()
             started = time.time()
             answer = await self._solver_override(question, agent_id, prompt)
             self.llm.record_override_solver(started=started)
@@ -982,6 +994,8 @@ class PromptEnsembleOptimizationSystem:
         critic_decision: CriticDecision | None = None
         critic_feedback = ""
         context_hash = hashlib.sha256(context_serialized.encode("utf-8")).hexdigest()
+        last_teacher_failure = ""
+        last_critic_failure = ""
         for semantic_round in range(1, self.cfg.tcs.teacher_critic_max_rounds + 1):
             user_request = (
                 "Produce the repair proposal."
@@ -998,13 +1012,13 @@ class PromptEnsembleOptimizationSystem:
                         teacher_request,
                         user_request,
                         self.cfg.tcs.teacher_temperature,
-                        self.cfg.tcs.teacher_max_tokens,
+                        None,
                         "optimizer",
                     )
-                except LLMBudgetExceeded:
-                    raise
                 except Exception as exc:
                     funnel.infrastructure_failed_updates += 1
+                    funnel.terminal_failure_class = "transport_failure"
+                    funnel.terminal_failure_role = "teacher"
                     self.tcs_rounds.append({
                         "update_index": update_index,
                         "target_agent_id": target_agent_id,
@@ -1015,19 +1029,20 @@ class PromptEnsembleOptimizationSystem:
                         "context_hash": context_hash,
                         "schema_valid": False,
                         "finish_reason": "",
-                        "hit_completion_limit": False,
                         "response_truncated": False,
                         "failure_class": "transport_failure",
                         "retry_reason": type(exc).__name__,
                         "input_characters": len(teacher_request) + len(user_request),
                         "output_characters": 0,
+                        "raw_response_characters": 0,
+                        "parsed_payload_characters": 0,
                     })
                     return []
                 teacher_raw = teacher_result.text
                 parsed_teacher = extract_json_obj(teacher_raw)
                 truncated = response_truncated(teacher_result)
                 failure_class = (
-                    "completion_truncation"
+                    "provider_completion_truncation"
                     if truncated else "invalid_json"
                     if parsed_teacher is None else ""
                 )
@@ -1037,6 +1052,7 @@ class PromptEnsembleOptimizationSystem:
                         repair_plan = parse_teacher_repair_plan(
                             parsed_teacher,
                             field_max_chars=self.cfg.tcs.teacher_field_max_chars,
+                            total_max_chars=self.cfg.tcs.teacher_total_max_chars,
                         )
                         if contains_supplied_example_text(
                             json.dumps(asdict(repair_plan), ensure_ascii=False), context,
@@ -1046,6 +1062,7 @@ class PromptEnsembleOptimizationSystem:
                         failure_class = "schema_error"
                         parse_error = str(exc)
                 if failure_class:
+                    last_teacher_failure = failure_class
                     funnel.teacher_invalid_responses += 1
                     if truncated:
                         funnel.teacher_truncated_responses += 1
@@ -1063,17 +1080,27 @@ class PromptEnsembleOptimizationSystem:
                     "semantic_round": semantic_round,
                     "format_attempt": format_attempt,
                     "finish_reason": teacher_result.finish_reason,
-                    "hit_completion_limit": teacher_result.hit_completion_limit,
                     "response_truncated": truncated,
                     "failure_class": failure_class,
                     "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
                     "parse_error": parse_error,
                     "input_characters": len(teacher_request) + len(user_request),
                     "output_characters": len(teacher_raw),
+                    "raw_response_characters": len(teacher_raw),
+                    "parsed_payload_characters": (
+                        len(json.dumps(parsed_teacher, ensure_ascii=False, sort_keys=True))
+                        if parsed_teacher is not None else 0
+                    ),
                 })
                 if repair_plan is not None:
                     break
             if repair_plan is None:
+                funnel.terminal_failure_role = "teacher"
+                if last_teacher_failure == "provider_completion_truncation":
+                    funnel.terminal_failure_class = "teacher_provider_truncation"
+                    funnel.infrastructure_failed_updates += 1
+                else:
+                    funnel.terminal_failure_class = "teacher_schema_exhausted"
                 return []
 
             critic_request = build_critic_request(context, repair_plan)
@@ -1087,13 +1114,13 @@ class PromptEnsembleOptimizationSystem:
                         critic_request,
                         "Audit the repair plan.",
                         self.cfg.tcs.critic_temperature,
-                        self.cfg.tcs.critic_max_tokens,
+                        None,
                         "evaluator",
                     )
-                except LLMBudgetExceeded:
-                    raise
                 except Exception as exc:
                     funnel.infrastructure_failed_updates += 1
+                    funnel.terminal_failure_class = "transport_failure"
+                    funnel.terminal_failure_role = "critic"
                     self.tcs_rounds.append({
                         "update_index": update_index,
                         "target_agent_id": target_agent_id,
@@ -1104,19 +1131,20 @@ class PromptEnsembleOptimizationSystem:
                         "context_hash": context_hash,
                         "schema_valid": False,
                         "finish_reason": "",
-                        "hit_completion_limit": False,
                         "response_truncated": False,
                         "failure_class": "transport_failure",
                         "retry_reason": type(exc).__name__,
                         "input_characters": len(critic_request),
                         "output_characters": 0,
+                        "raw_response_characters": 0,
+                        "parsed_payload_characters": 0,
                     })
                     return []
                 critic_raw = critic_result.text
                 parsed_critic = extract_json_obj(critic_raw)
                 truncated = response_truncated(critic_result)
                 failure_class = (
-                    "completion_truncation"
+                    "provider_completion_truncation"
                     if truncated else "invalid_json"
                     if parsed_critic is None else ""
                 )
@@ -1137,6 +1165,7 @@ class PromptEnsembleOptimizationSystem:
                         failure_class = "schema_error"
                         parse_error = str(exc)
                 if failure_class:
+                    last_critic_failure = failure_class
                     funnel.critic_invalid_responses += 1
                     if truncated:
                         funnel.critic_truncated_responses += 1
@@ -1167,23 +1196,35 @@ class PromptEnsembleOptimizationSystem:
                     "semantic_round": semantic_round,
                     "format_attempt": format_attempt,
                     "finish_reason": critic_result.finish_reason,
-                    "hit_completion_limit": critic_result.hit_completion_limit,
                     "response_truncated": truncated,
                     "failure_class": failure_class,
                     "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
                     "parse_error": parse_error,
                     "input_characters": len(critic_request),
                     "output_characters": len(critic_raw),
+                    "raw_response_characters": len(critic_raw),
+                    "parsed_payload_characters": (
+                        len(json.dumps(parsed_critic, ensure_ascii=False, sort_keys=True))
+                        if parsed_critic is not None else 0
+                    ),
                 })
                 if critic_decision is not None:
                     break
             if critic_decision is None:
+                funnel.terminal_failure_role = "critic"
+                if last_critic_failure == "provider_completion_truncation":
+                    funnel.terminal_failure_class = "critic_provider_truncation"
+                    funnel.infrastructure_failed_updates += 1
+                else:
+                    funnel.terminal_failure_class = "critic_schema_exhausted"
                 return []
             if critic_decision.approved:
                 funnel.critic_approved += 1
                 break
             critic_feedback = critic_decision.feedback
         if repair_plan is None or critic_decision is None or not critic_decision.approved:
+            funnel.terminal_failure_class = "critic_semantic_rejection_exhausted"
+            funnel.terminal_failure_role = "critic"
             return []
 
         parsed_candidates: tuple[StudentPromptCandidate, ...] = ()
@@ -1194,7 +1235,11 @@ class PromptEnsembleOptimizationSystem:
             answer_format=self.cfg.data.answer_format,
             candidate_count=self.cfg.tcs.num_candidates_per_parent,
             candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
+            total_candidate_prompt_max_chars=(
+                self.cfg.tcs.total_candidate_prompt_max_chars
+            ),
         )
+        last_student_failure = ""
         for format_attempt in range(self.cfg.tcs.student_json_max_retries + 1):
             funnel.student_calls += 1
             try:
@@ -1203,13 +1248,13 @@ class PromptEnsembleOptimizationSystem:
                     "Return strict JSON only.",
                     student_request,
                     self.cfg.tcs.student_temperature,
-                    self.cfg.tcs.student_max_tokens,
+                    None,
                     "optimizer",
                 )
-            except LLMBudgetExceeded:
-                raise
             except Exception as exc:
                 funnel.infrastructure_failed_updates += 1
+                funnel.terminal_failure_class = "transport_failure"
+                funnel.terminal_failure_role = "student"
                 self.tcs_rounds.append({
                     "update_index": update_index,
                     "target_agent_id": target_agent_id,
@@ -1218,36 +1263,49 @@ class PromptEnsembleOptimizationSystem:
                     "format_attempt": format_attempt,
                     "schema_valid": False,
                     "finish_reason": "",
-                    "hit_completion_limit": False,
                     "response_truncated": False,
                     "failure_class": "transport_failure",
                     "retry_reason": type(exc).__name__,
                     "input_characters": len(student_request),
                     "output_characters": 0,
+                    "raw_response_characters": 0,
+                    "parsed_payload_characters": 0,
                 })
                 return []
             student_raw = student_result.text
             parsed = extract_json_obj(student_raw)
             truncated = response_truncated(student_result)
             failure_class = (
-                "completion_truncation"
+                "provider_completion_truncation"
                 if truncated else "invalid_json"
                 if parsed is None else ""
             )
-            raw_count = 0
+            raw_values = (
+                parsed.get("candidate_prompts")
+                if isinstance(parsed, Mapping) else None
+            )
+            raw_count = len(raw_values) if isinstance(raw_values, list) else 0
             rejection_reasons: tuple[tuple[str, ...], ...] = ()
             parse_error = ""
+            total_candidate_characters = 0
             if not failure_class:
                 try:
                     parsed_result = parse_student_candidates(
                         parsed,
                         parent_prompt=parent_prompt,
                         context=context,
+                        expected_count=self.cfg.tcs.num_candidates_per_parent,
                         candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
+                        total_candidate_prompt_max_chars=(
+                            self.cfg.tcs.total_candidate_prompt_max_chars
+                        ),
                     )
                     parsed_candidates = parsed_result.candidates
                     raw_count = parsed_result.raw_count
                     rejection_reasons = parsed_result.rejection_reasons
+                    total_candidate_characters = (
+                        parsed_result.total_candidate_characters
+                    )
                     funnel.sample_memorization_rejected += sum(
                         "sample_text_copy" in reasons
                         for reasons in rejection_reasons
@@ -1257,9 +1315,14 @@ class PromptEnsembleOptimizationSystem:
                     if not parsed_candidates:
                         failure_class = "zero_valid_student_candidates"
                 except (TypeError, ValueError) as exc:
-                    failure_class = "schema_error"
                     parse_error = str(exc)
+                    failure_class = (
+                        "candidate_total_too_long"
+                        if parse_error == "candidate_total_too_long"
+                        else "schema_error"
+                    )
             if failure_class:
+                last_student_failure = failure_class
                 funnel.student_invalid_responses += 1
                 if truncated:
                     funnel.student_truncated_responses += 1
@@ -1282,7 +1345,6 @@ class PromptEnsembleOptimizationSystem:
                 "semantic_round": semantic_round,
                 "format_attempt": format_attempt,
                 "finish_reason": student_result.finish_reason,
-                "hit_completion_limit": student_result.hit_completion_limit,
                 "response_truncated": truncated,
                 "failure_class": failure_class,
                 "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
@@ -1290,11 +1352,26 @@ class PromptEnsembleOptimizationSystem:
                 "response_excerpt": _response_excerpt(student_raw),
                 "input_characters": len(student_request),
                 "output_characters": len(student_raw),
+                "raw_response_characters": len(student_raw),
+                "parsed_payload_characters": (
+                    len(json.dumps(parsed, ensure_ascii=False, sort_keys=True))
+                    if parsed is not None else 0
+                ),
+                "total_candidate_characters": total_candidate_characters,
             }
             self.tcs_rounds.append(student_round)
             funnel.raw_candidate_count = raw_count
             if parsed_candidates:
                 break
+        if not parsed_candidates:
+            funnel.terminal_failure_role = "student"
+            if last_student_failure == "provider_completion_truncation":
+                funnel.terminal_failure_class = "student_provider_truncation"
+                funnel.infrastructure_failed_updates += 1
+            elif last_student_failure == "zero_valid_student_candidates":
+                funnel.terminal_failure_class = "zero_valid_student_candidates"
+            else:
+                funnel.terminal_failure_class = "student_schema_exhausted"
         funnel.schema_valid_count = len(parsed_candidates)
         unique: dict[str, CandidateRuntime] = {}
         non_parent = 0
@@ -1888,15 +1965,16 @@ class PromptEnsembleOptimizationSystem:
             "critic_schema_version": CRITIC_SCHEMA_VERSION,
             "student_schema_version": STUDENT_SCHEMA_VERSION,
             "role_retry_policy_version": ROLE_RETRY_POLICY_VERSION,
-            "role_token_budgets": {
-                "teacher": self.cfg.tcs.teacher_max_tokens,
-                "critic": self.cfg.tcs.critic_max_tokens,
-                "student": self.cfg.tcs.student_max_tokens,
-            },
+            "completion_policy": "provider_default",
             "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
             "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
+            "teacher_total_character_limit": self.cfg.tcs.teacher_total_max_chars,
             "candidate_prompt_length_limit": self.cfg.tcs.candidate_prompt_max_chars,
-            "checkpoint_version": 6,
+            "total_candidate_prompt_length_limit": self.cfg.tcs.total_candidate_prompt_max_chars,
+            "student_count_policy": "reject_excess_keep_individually_valid_v1",
+            "model_facing_payload_version": "audit_hash_isolated_v2",
+            "terminal_failure_version": "role_specific_terminal_failure_v1",
+            "checkpoint_version": 7,
             "tcs_protocol_version": TCS_PROTOCOL_VERSION,
             "critic_approval_basis": "failed_checks_empty",
             "task_general_scope": "unseen_examples_within_current_task",
@@ -1936,8 +2014,67 @@ class PromptEnsembleOptimizationSystem:
             "config": self.cfg.to_flat_dict(),
         }
 
+    def candidate_funnel_summary(
+        self,
+        decisions: Sequence[Mapping[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        rows = list(self.candidate_decisions if decisions is None else decisions)
+        funnels = [dict(row.get("funnel", {})) for row in rows]
+        terminal_counts: dict[str, int] = {}
+        for funnel in funnels:
+            failure = str(funnel.get("terminal_failure_class", ""))
+            if failure:
+                terminal_counts[failure] = terminal_counts.get(failure, 0) + 1
+        return {
+            "update_count": len(funnels),
+            "terminal_failure_counts": terminal_counts,
+            "terminal_failures": [
+                {
+                    "update_index": row.get("update_index"),
+                    "target_agent_id": row.get("target_agent_id"),
+                    "terminal_failure_class": row.get("funnel", {}).get(
+                        "terminal_failure_class", ""
+                    ),
+                    "terminal_failure_role": row.get("funnel", {}).get(
+                        "terminal_failure_role", ""
+                    ),
+                }
+                for row in rows
+                if row.get("funnel", {}).get("terminal_failure_class")
+            ],
+            "updates": funnels,
+        }
+
     def cost_summary(self) -> dict[str, Any]:
-        return self.llm.cost_summary()
+        summary = self.llm.cost_summary()
+        successful_candidates = sum(
+            int(row.get("funnel", {}).get("deduplicated_count", 0))
+            for row in self.candidate_decisions
+        )
+        stage_a_candidates = sum(
+            int(row.get("funnel", {}).get("stage_a_evaluated", 0))
+            for row in self.candidate_decisions
+        )
+        accepted_updates = sum(
+            bool(row.get("funnel", {}).get("accepted_candidate", False))
+            for row in self.candidate_decisions
+        )
+        total_tokens = int(summary["total_tokens"])
+        summary.update({
+            "successful_candidate_count": successful_candidates,
+            "stage_a_candidate_count": stage_a_candidates,
+            "accepted_update_count": accepted_updates,
+            "tokens_per_successful_candidate": (
+                total_tokens / successful_candidates if successful_candidates else None
+            ),
+            "tokens_per_stage_a_candidate": (
+                total_tokens / stage_a_candidates if stage_a_candidates else None
+            ),
+            "tokens_per_accepted_update": (
+                total_tokens / accepted_updates if accepted_updates else None
+            ),
+        })
+        return summary
 
     def flush_artifacts(self) -> None:
         self.artifacts.write_json("run_meta.json", self.run_meta())
@@ -1947,6 +2084,9 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("responsibility_assignments.jsonl", self.responsibility_assignments)
         self.artifacts.write_jsonl("target_priority_audit.jsonl", self.target_priority_audit)
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
+        self.artifacts.write_json(
+            "candidate_funnel.json", self.candidate_funnel_summary()
+        )
         self.artifacts.write_jsonl("tcs_context_history.jsonl", self.tcs_context_history)
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl("solver_invalid_outputs.jsonl", self.solver_invalid_outputs)

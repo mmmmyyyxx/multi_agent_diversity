@@ -722,8 +722,14 @@ Do not loosen the parser to hide model-output failures.
 multi_dataset_diverse_rl/llm_client.py
 ```
 
-Owns role endpoints, token/call accounting, transient retries, budgets, and
+Owns role endpoints, post-hoc token/call accounting, transient retries, and
 timeouts. Transport retry and semantic TCS revision are distinct control flows.
+
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+
+Keep `solver_max_tokens=1800` unchanged so Solver request identity and shared
+cache semantics remain stable. Treat provider `finish_reason=length` as an
+audited runtime failure, not as evidence that the method has no gain.
 
 ### Persistence
 

@@ -13,7 +13,9 @@ from multi_dataset_diverse_rl.tcs import (
     PeerStateDiagnosisContext,
     PreviousUpdateOutcome,
     TeacherRepairPlan,
+    build_critic_request,
     build_student_request,
+    build_teacher_request,
     context_payload,
     parse_critic_decision,
     parse_student_candidates,
@@ -127,6 +129,26 @@ def test_context_serialization_isolates_accuracy_peer_and_member_fields():
     assert "member_gains_from_initial" in member_text
     assert "target_improvement_need" in member_text
     assert "assigned_case_count" in member_text
+    for payload_text in (accuracy_text, peer_text, member_text):
+        assert "represented_question_hashes" not in payload_text
+        assert "question_hash" not in payload_text
+        assert "parent_prompt_hash" not in payload_text
+    assert pattern().represented_question_hashes == ("q1", "q2", "q3", "q4")
+
+    plan = TeacherRepairPlan(
+        "residual failure",
+        "Apply the explicit rule before committing.",
+        "Preserve outputs that pass the rule.",
+    )
+    for context in contexts():
+        teacher_request = build_teacher_request(context)
+        critic_request = build_critic_request(context, plan)
+        for request in (teacher_request, critic_request):
+            assert "represented_question_hashes" not in request
+            assert "question_hash" not in request
+            assert "parent_prompt_hash" not in request
+            assert "pattern_id" in request
+            assert "case_id" in request
 
 
 def test_teacher_schema_is_exact_nonempty_and_bounded():
@@ -221,6 +243,7 @@ def test_student_request_is_context_free_and_partial_validity_is_retained():
         },
         parent_prompt="parent",
         context=accuracy,
+        expected_count=3,
     )
     assert len(parsed.candidates) == 1
     assert parsed.rejection_reasons[0] == ("parent_identical",)
@@ -230,4 +253,52 @@ def test_student_request_is_context_free_and_partial_validity_is_retained():
             {"candidate_prompts": ["valid"], "metadata": "not allowed"},
             parent_prompt="parent",
             context=accuracy,
+            expected_count=1,
         )
+
+
+def test_student_rejects_excess_count_and_total_characters_without_truncating():
+    accuracy, _, _ = contexts()
+    with pytest.raises(ValueError, match="candidate_count_exceeds_requested"):
+        parse_student_candidates(
+            {"candidate_prompts": ["first", "second", "third"]},
+            parent_prompt="parent",
+            context=accuracy,
+            expected_count=2,
+        )
+    with pytest.raises(ValueError, match="candidate_total_too_long"):
+        parse_student_candidates(
+            {"candidate_prompts": ["a" * 6, "b" * 5]},
+            parent_prompt="parent",
+            context=accuracy,
+            expected_count=2,
+            candidate_prompt_max_chars=10,
+            total_candidate_prompt_max_chars=10,
+        )
+    parsed = parse_student_candidates(
+        {"candidate_prompts": ["valid replacement"]},
+        parent_prompt="parent",
+        context=accuracy,
+        expected_count=2,
+    )
+    assert parsed.raw_count == 1
+    assert [row.candidate_prompt for row in parsed.candidates] == [
+        "valid replacement"
+    ]
+    parsed = parse_student_candidates(
+        {"candidate_prompts": ["first valid", "second valid"]},
+        parent_prompt="parent",
+        context=accuracy,
+        expected_count=2,
+    )
+    assert len(parsed.candidates) == 2
+    parsed = parse_student_candidates(
+        {"candidate_prompts": ["valid", "x" * 11]},
+        parent_prompt="parent",
+        context=accuracy,
+        expected_count=2,
+        candidate_prompt_max_chars=10,
+        total_candidate_prompt_max_chars=20,
+    )
+    assert [row.candidate_prompt for row in parsed.candidates] == ["valid"]
+    assert parsed.rejection_reasons[1] == ("candidate_too_long",)

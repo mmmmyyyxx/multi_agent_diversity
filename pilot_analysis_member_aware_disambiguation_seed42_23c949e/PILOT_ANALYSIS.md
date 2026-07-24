@@ -143,10 +143,19 @@ Stage B objectives. The full fixed probe is now analyzed programmatically and
 compressed into at most three typed patterns and three representative cases.
 Teacher emits a three-field repair plan, Critic checks only four semantic hard
 blocker classes, and Student sees only the approved plan and realizes complete
-replacement prompts. Role-specific completion budgets are 600/300/1400 tokens.
+replacement prompts.
 
-Provider finish reason, completion limit, and truncation classification are now
-recorded. Format retries do not consume semantic revision rounds, and two
-same-role truncations stop the update. These changes are covered only by
-offline deterministic tests in this implementation task; the real-API
-viability risk remains unverified until a separate explicitly authorized pilot.
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+
+The Solver retains `solver_max_tokens=1800` to preserve its request identity
+and shared cache. Providers may still return `finish_reason=length`; this is
+recorded as a runtime failure and must not be interpreted as evidence of no
+method gain.
+
+Provider finish reason and provider truncation classification are recorded.
+Format retries do not consume semantic revision rounds, and role-specific
+terminal failures distinguish provider truncation, schema exhaustion, Critic
+semantic rejection exhaustion, zero valid Student candidates, and transport
+failure. These changes are covered only by offline deterministic tests in this
+implementation task; the real-API viability risk remains unverified until a
+separate explicitly authorized pilot.

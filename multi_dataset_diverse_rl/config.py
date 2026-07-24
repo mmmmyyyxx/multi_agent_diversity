@@ -56,17 +56,16 @@ class TCSConfig:
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
-    teacher_max_tokens: int = 600
-    critic_max_tokens: int = 300
-    student_max_tokens: int = 1400
     student_json_max_retries: int = 1
     num_candidates_per_parent: int = 2
     tcs_max_pattern_summaries: int = 3
     tcs_max_evidence_cases: int = 3
     tcs_context_max_chars: int = 10000
+    teacher_total_max_chars: int = 1800
     teacher_field_max_chars: int = 800
     critic_feedback_max_chars: int = 500
-    candidate_prompt_max_chars: int = 6000
+    candidate_prompt_max_chars: int = 3000
+    total_candidate_prompt_max_chars: int = 5000
 
 
 @dataclass(frozen=True)
@@ -118,8 +117,6 @@ class PersistenceConfig:
     retry_sleep: float = 1.5
     max_retry_backoff: float = 60.0
     llm_call_timeout: float = 120.0
-    max_total_llm_calls: int = 0
-    max_total_tokens: int = 0
 
 
 SECTION_TYPES = {

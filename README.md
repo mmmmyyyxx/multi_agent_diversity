@@ -89,8 +89,16 @@ python scripts/run_task_level_accuracy.py `
   --out_root runs_member_aware_disambiguation
 ```
 
-Add explicit sizes, budgets, models, and concurrency flags for a formal run.
-`--resume_from_checkpoint 1` resumes only an exact checkpoint-v6 run identity;
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+
+The Solver retains `solver_max_tokens=1800` so its request identity and shared
+cache remain stable. A provider may still return `finish_reason=length`; this
+is audited as a runtime failure rather than evidence that the method cannot
+improve.
+
+Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
+for a formal run. `--resume_from_checkpoint 1` resumes only an exact
+checkpoint-v7 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -100,8 +108,9 @@ Each optimized run writes:
 
 - `final_summary.json`: initial test, selected test, member gains, selection summary
 - `best_prompts.json`: validation-selected prompt team
-- `history.json`: epoch validation and member objective
+- `history.json`: epoch validation, member objective, and terminal-failure summary
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
+- `candidate_funnel.json`: update funnels and role-specific terminal failures
 - `responsibility_assignments.jsonl`: residual ownership after each refresh
 - `target_priority_audit.jsonl`: member-aware target priorities and overdue status
 - `tcs_context_history.jsonl` and `tcs_rounds.jsonl`: context isolation and JSON audit
