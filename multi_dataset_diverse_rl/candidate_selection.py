@@ -69,6 +69,27 @@ class ConstraintLimits:
     pivotal_loss_limit: int = 0
 
 
+def evaluate_terminal_invalid_constraints(
+    candidate: PromptCompetenceMetrics,
+    active: PromptCompetenceMetrics,
+    initial: PromptCompetenceMetrics,
+    *,
+    local_allowance: int,
+    global_allowance: int,
+) -> bool:
+    candidate_invalid = candidate.terminal_invalid_count
+    active_invalid = active.terminal_invalid_count
+    initial_invalid = initial.terminal_invalid_count
+    if candidate_invalid == active_invalid == initial_invalid == 0:
+        candidate_invalid = candidate.invalid_count
+        active_invalid = active.invalid_count
+        initial_invalid = initial.invalid_count
+    return (
+        candidate_invalid <= active_invalid + int(local_allowance)
+        and candidate_invalid <= initial_invalid + int(global_allowance)
+    )
+
+
 @dataclass(frozen=True)
 class ConstraintDecision:
     passed: bool
@@ -222,16 +243,12 @@ def evaluate_constraints(
 ) -> ConstraintDecision:
     local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
     global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
-    candidate_invalid = candidate.competence.terminal_invalid_count
-    active_invalid = active.competence.terminal_invalid_count
-    initial_invalid = initial.competence.terminal_invalid_count
-    if candidate_invalid == active_invalid == initial_invalid == 0:
-        candidate_invalid = candidate.competence.invalid_count
-        active_invalid = active.competence.invalid_count
-        initial_invalid = initial.competence.invalid_count
-    invalid = candidate_invalid <= active_invalid + limits.invalid_allowance
-    invalid = invalid and (
-        candidate_invalid <= initial_invalid + limits.global_invalid_allowance
+    invalid = evaluate_terminal_invalid_constraints(
+        candidate.competence,
+        active.competence,
+        initial.competence,
+        local_allowance=limits.invalid_allowance,
+        global_allowance=limits.global_invalid_allowance,
     )
     vote_loss = candidate.marginal.vote_loss_count <= limits.vote_loss_limit
     unique = candidate.protection.unique_correct_loss_count <= limits.unique_correct_loss_limit

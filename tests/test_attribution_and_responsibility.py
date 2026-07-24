@@ -261,3 +261,18 @@ def test_positive_guard_rejected_attempt_clears_streak():
     row = next(item for item in priorities if item.agent_id == 0)
     assert row.no_positive_candidate_streak == 2
     assert row.cooling_down is False
+
+
+def test_target_pool_audit_fields_describe_scheduler_stages():
+    _, rows = opportunities(["B", "B", "B", "B", "B"])
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=state(),
+        seed=42,
+        max_wait_updates=4,
+        update_index=0,
+    )
+    eligible = [row.agent_id for row in priorities if row.individual_error_count > 0]
+    assert eligible == list(range(5))
+    assert all(row.agent_id in eligible for row in priorities)

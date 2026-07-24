@@ -1,4 +1,5 @@
 from dataclasses import asdict
+import json
 
 import pytest
 
@@ -6,6 +7,7 @@ from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
+from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION, METHOD_VERSION, TARGET_SELECTION_VERSION
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 
 
@@ -97,7 +99,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
     system.set_run_identity(identity())
     metadata = system.run_meta()
-    assert metadata["method_version"] == "member_aware_peer_state_v3"
+    assert metadata["method_version"] == METHOD_VERSION
     assert metadata["initialization_mode"] == "shared_identical"
     assert metadata["initial_prompts_identical"] is True
     assert metadata["tie_policy"] == "abstain"
@@ -106,13 +108,24 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v2"
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
     assert metadata["diagnosis_aggregation_version"] == "peer_state_pattern_aggregation_v1"
-    assert metadata["checkpoint_version"] == 8
+    assert metadata["target_selection_version"] == TARGET_SELECTION_VERSION
+    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION
     assert metadata["task_general_scope"] == "unseen_examples_within_current_task"
     assert metadata["student_sample_memorization_filter"] == "exact_supplied_example_text_v1"
     assert metadata["solver_request_template_version"] == (
         "decision_procedure_then_mandatory_output_contract_v2"
     )
     assert "prompt_memory_search_enabled" not in metadata
+
+
+def test_v3_behavior_versions_are_consistent(tmp_path):
+    system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
+    system.set_run_identity(identity())
+    metadata = system.run_meta()
+    assert metadata["method_version"] == METHOD_VERSION
+    assert metadata["target_selection_version"] == TARGET_SELECTION_VERSION
+    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION
+    assert "five_axis_overdue_member_pareto_v2" not in json.dumps(metadata)
 
 
 def test_initialization_modes_are_explicit_and_five_prompt_bounded(tmp_path):

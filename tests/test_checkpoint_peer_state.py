@@ -82,6 +82,7 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert target.responsibility_state.accepted_updates_by_agent[3] == 2
     assert target.responsibility_state.seeded_rank_by_agent[3] == "seeded-rank"
     assert target.target_priority_audit == source.target_priority_audit
+    assert target.solver_recovery_observations == source.solver_recovery_observations
     assert target.team_state_version == source.team_state_version
     assert target.responsibility_state_version == source.responsibility_state_version
     assert target.responsibility_refresh_count == source.responsibility_refresh_count

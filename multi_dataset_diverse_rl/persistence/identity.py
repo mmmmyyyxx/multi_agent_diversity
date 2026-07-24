@@ -25,6 +25,7 @@ from ..evaluation.output_contract import SOLVER_REQUEST_TEMPLATE_VERSION
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
 PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
+from ..versions import CHECKPOINT_VERSION, TARGET_SELECTION_VERSION
 
 
 @dataclass(frozen=True)
@@ -85,7 +86,7 @@ def config_fingerprint(cfg: Config) -> str:
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
         "responsibility": "five_axis_member_need_pareto_v2",
-        "target_selection": "five_axis_overdue_member_pareto_v2",
+        "target_selection": TARGET_SELECTION_VERSION,
         "pareto_preference": "member_first_candidate_preference_v1",
         "stage_a": "team_vote_worst_mean_v2",
         "stage_b": "competence_guard_member_pareto_v2",
@@ -115,7 +116,7 @@ def config_fingerprint(cfg: Config) -> str:
         "validation_terminal_invalid_allowance": cfg.constraints.validation_terminal_invalid_allowance,
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
-        "checkpoint": 7,
+        "checkpoint": CHECKPOINT_VERSION,
     }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()

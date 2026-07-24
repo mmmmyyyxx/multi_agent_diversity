@@ -30,6 +30,9 @@ class PromptAnswer:
     attempt_validity_statuses: tuple[str, ...] = ()
     attempt_finish_reasons: tuple[str, ...] = ()
     attempt_response_hashes: tuple[str, ...] = ()
+    attempt_prompt_tokens: tuple[int, ...] = ()
+    attempt_completion_tokens: tuple[int, ...] = ()
+    attempt_total_tokens: tuple[int, ...] = ()
     recovery_prompt_tokens: int = 0
     recovery_completion_tokens: int = 0
     recovery_total_tokens: int = 0

@@ -149,6 +149,13 @@ def test_invalid_solver_response_recovers_and_cache_stores_resolved_result(tmp_p
     assert answer.recovered_from_invalid
     assert not answer.terminal_invalid
     assert answer.raw_invalid_attempt_count == 1
+    summary = system.solver_recovery_summary()
+    assert summary["unique_resolved_request_count"] == 1
+    assert summary["first_attempt_invalid_count"] == 1
+    assert summary["recovered_invalid_count"] == 1
+    assert summary["terminal_invalid_count"] == 0
+    assert summary["attempt_count_histogram"] == {"2": 1}
+    assert summary["invalid_recovery_extra_calls"] == 1
 
     asyncio.run(system.evaluate_dataset(data))
     assert calls == 2

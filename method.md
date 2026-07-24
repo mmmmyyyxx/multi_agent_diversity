@@ -37,6 +37,12 @@ terminal-invalid result. Transport retries remain separate. Formal competence
 and guards count only terminal-invalid results, while first-pass and recovery
 counts remain audit metrics.
 
+All selector settings use the same terminal-invalid ceilings: the candidate may
+add at most the configured local allowance over the active profile and the
+configured global allowance over the initial profile. The legacy
+`invalid_guard_epsilon` field is retained only for CLI compatibility and must
+remain zero; it is not part of the formal v3 guard.
+
 Target scheduling adds potential evidence without changing responsibility
 assignment or max-wait semantics. Unimproved members, headroom to the current
 best member, and historical positive target gains affect the Pareto priority.

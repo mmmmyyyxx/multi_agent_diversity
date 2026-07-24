@@ -118,7 +118,11 @@ Each optimized run writes:
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
 - `candidate_funnel.json`: update funnels and role-specific terminal failures
 - `responsibility_assignments.jsonl`: residual ownership after each refresh
-- `target_priority_audit.jsonl`: member-aware target priorities and overdue status
+- `target_priority_audit.jsonl`: member-aware target priorities, actual selection
+  pools, and the Pareto frontier used by the scheduler
+- `solver_recovery_summary.json`: one row per resolved prompt-question request,
+  including first-pass validity, recovery calls, terminal-invalid counts, and
+  token overhead
 - `tcs_context_history.jsonl` and `tcs_rounds.jsonl`: context isolation and JSON audit
 - `solver_invalid_outputs.jsonl`: strict `FINAL_ANSWER` failures
 - `llm_calls.jsonl` and `cost_summary.json`: role-level API accounting

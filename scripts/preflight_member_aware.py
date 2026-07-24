@@ -20,6 +20,11 @@ from multi_dataset_diverse_rl.persistence.identity import build_run_identity, va
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
 from multi_dataset_diverse_rl.utils import load_jsonl
+from multi_dataset_diverse_rl.versions import (
+    CHECKPOINT_VERSION,
+    METHOD_VERSION,
+    TARGET_SELECTION_VERSION,
+)
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 from scripts.run_task_level_accuracy import RUNNER_FIELDS, _task_split_integrity
 
@@ -40,8 +45,10 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append("experiment settings do not match the frozen six-setting protocol")
     for cfg in configs:
-        if cfg.training.method_version != "member_aware_peer_state_v3":
+        if cfg.training.method_version != METHOD_VERSION:
             errors.append(f"unexpected method version: {cfg.training.method_version}")
+        if cfg.constraints.invalid_guard_epsilon != 0.0:
+            errors.append("invalid_guard_epsilon is deprecated and must remain 0.0")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
@@ -104,7 +111,8 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append("git working tree is not clean")
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
-        "method_version": "member_aware_peer_state_v3", "settings": EXPECTED_SETTINGS,
+        "method_version": METHOD_VERSION, "target_selection_version": TARGET_SELECTION_VERSION,
+        "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 
@@ -201,6 +209,8 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("responsibility_max_wait_updates must be positive")
                     if cfg.responsibility.responsibility_switch_margin < 0:
                         raise ValueError("responsibility_switch_margin cannot be negative")
+                    if cfg.constraints.invalid_guard_epsilon != 0.0:
+                        raise ValueError("invalid_guard_epsilon is deprecated and must remain 0.0")
                     if cfg.evaluation.candidate_eval_pool_size <= 0:
                         raise ValueError("fixed probe must contain at least one example")
                     if min(

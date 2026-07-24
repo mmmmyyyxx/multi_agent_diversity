@@ -15,6 +15,7 @@ from .candidate_selection import (
     StageASelectionDecision,
     candidate_is_acceptable,
     evaluate_constraints,
+    evaluate_terminal_invalid_constraints,
     individual_accuracy_key,
     member_aware_pareto_front,
     member_first_key,
@@ -99,9 +100,9 @@ from .tcs import (
     serialize_context,
 )
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
+from .versions import CHECKPOINT_VERSION, METHOD_VERSION, TARGET_SELECTION_VERSION
 
 
-METHOD_VERSION = "member_aware_peer_state_v3"
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
 PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 
@@ -276,7 +277,9 @@ class PromptEnsembleOptimizationSystem:
         self.tcs_context_history: list[dict[str, Any]] = []
         self.tcs_rounds: list[dict[str, Any]] = []
         self.solver_invalid_outputs: list[dict[str, Any]] = []
+        self.solver_recovery_observations: list[dict[str, Any]] = []
         self._audited_invalid_keys: set[tuple[str, str]] = set()
+        self._observed_solver_keys: set[tuple[str, str]] = set()
         self.cached_responsibility_owners: dict[str, int] = {}
         self.cached_responsibility_assignments: dict[int, list[MemberAwareRepairOpportunity]] = {}
         self.cached_member_opportunities: dict[
@@ -387,6 +390,33 @@ class PromptEnsembleOptimizationSystem:
         answer: PromptAnswer,
     ) -> None:
         key = (prompt_hash, question_hash)
+        if key in self._observed_solver_keys:
+            return
+        self._observed_solver_keys.add(key)
+        self.solver_recovery_observations.append({
+            "prompt_hash": prompt_hash,
+            "question_hash": question_hash,
+            "request_identity": answer.request_identity
+            or self.prompt_question_evaluator.model_request_identity,
+            "solver_attempt_count": answer.solver_attempt_count,
+            "first_attempt_valid": answer.first_attempt_valid,
+            "recovered_from_invalid": answer.recovered_from_invalid,
+            "terminal_invalid": answer.terminal_invalid,
+            "raw_invalid_attempt_count": answer.raw_invalid_attempt_count,
+            "attempt_validity_statuses": list(answer.attempt_validity_statuses),
+            "attempt_finish_reasons": list(answer.attempt_finish_reasons),
+            "attempt_prompt_tokens": list(answer.attempt_prompt_tokens),
+            "attempt_completion_tokens": list(answer.attempt_completion_tokens),
+            "attempt_total_tokens": list(answer.attempt_total_tokens),
+            "prompt_tokens": answer.prompt_tokens,
+            "completion_tokens": answer.completion_tokens,
+            "total_tokens": answer.total_tokens,
+            "recovery_prompt_tokens": answer.recovery_prompt_tokens,
+            "recovery_completion_tokens": answer.recovery_completion_tokens,
+            "recovery_total_tokens": answer.recovery_total_tokens,
+            "validity_status": answer.validity_status,
+            "response_hash": answer.response_hash,
+        })
         if answer.valid or key in self._audited_invalid_keys:
             return
         self._audited_invalid_keys.add(key)
@@ -489,6 +519,9 @@ class PromptEnsembleOptimizationSystem:
                 hashlib.sha256(item.text.encode("utf-8")).hexdigest()
                 for item, _ in attempts
             ),
+            attempt_prompt_tokens=tuple(item.prompt_tokens for item, _ in attempts),
+            attempt_completion_tokens=tuple(item.completion_tokens for item, _ in attempts),
+            attempt_total_tokens=tuple(item.total_tokens for item, _ in attempts),
             recovery_prompt_tokens=sum(item.prompt_tokens for item, _ in attempts[1:]),
             recovery_completion_tokens=sum(item.completion_tokens for item, _ in attempts[1:]),
             recovery_total_tokens=sum(item.total_tokens for item, _ in attempts[1:]),
@@ -760,12 +793,75 @@ class PromptEnsembleOptimizationSystem:
             }
             for row in priorities
         ]
+        eligible_ids = [row.agent_id for row in priorities if row.individual_error_count > 0]
+        overdue_ids = [row.agent_id for row in priorities if row.individual_error_count > 0 and row.overdue]
+        non_cooling_ids = [
+            row.agent_id for row in priorities
+            if row.individual_error_count > 0 and not row.cooling_down
+        ]
+        unimproved_ids = [
+            row.agent_id for row in priorities
+            if row.individual_error_count > 0 and not row.cooling_down and row.unimproved
+        ]
+        if overdue_ids:
+            pool_stage = "overdue"
+            actual_ids = overdue_ids
+        elif unimproved_ids:
+            pool_stage = "regular_unimproved"
+            actual_ids = unimproved_ids
+        elif non_cooling_ids:
+            pool_stage = "regular_all"
+            actual_ids = non_cooling_ids
+        else:
+            pool_stage = "cooldown_fallback"
+            actual_ids = eligible_ids
+        actual_values = {
+            row.agent_id: row.pareto_values()
+            for row in priorities if row.agent_id in actual_ids
+        }
+        actual_fronts = self._target_fronts(actual_values)
         self.target_priority_audit.append({
             "update_index": int(update_index),
             "priorities": priority_payload,
             "overdue_first": fairness,
+            "selection_pool_stage": pool_stage,
+            "eligible_agent_ids": eligible_ids,
+            "overdue_agent_ids": overdue_ids,
+            "non_cooling_agent_ids": non_cooling_ids,
+            "unimproved_agent_ids": unimproved_ids,
+            "actual_candidate_agent_ids": actual_ids,
+            "actual_candidate_pareto_fronts": {
+                str(agent_id): actual_fronts[agent_id] for agent_id in actual_ids
+            },
+            "actual_frontier_agent_ids": [
+                agent_id for agent_id in actual_ids if actual_fronts[agent_id] == 1
+            ],
+            "cooldown_fallback": pool_stage == "cooldown_fallback",
+            "unimproved_pool_used": pool_stage == "regular_unimproved",
+            "selected_agent_id": target,
         })
         return target, fairness, priority_payload
+
+    @staticmethod
+    def _target_fronts(values: Mapping[int, Sequence[float]]) -> dict[int, int]:
+        remaining = set(values)
+        fronts: dict[int, int] = {}
+        level = 1
+        while remaining:
+            current = [
+                agent_id for agent_id in sorted(remaining)
+                if not any(
+                    other != agent_id
+                    and all(a >= b for a, b in zip(values[other], values[agent_id], strict=True))
+                    and any(a > b for a, b in zip(values[other], values[agent_id], strict=True))
+                    for other in remaining
+                )
+            ]
+            for agent_id in current:
+                fronts[agent_id] = level
+                remaining.remove(agent_id)
+            level += 1
+        return fronts
 
     def _representative_indices(self, count: int) -> list[int]:
         if self.fixed_probe is None:
@@ -1452,7 +1548,7 @@ class PromptEnsembleOptimizationSystem:
         return ConstraintLimits(
             local_accuracy_allowance=int(self.cfg.constraints.local_accuracy_loss_epsilon * size),
             global_accuracy_allowance=int(self.cfg.constraints.global_accuracy_loss_epsilon * size),
-            invalid_allowance=int(self.cfg.constraints.invalid_guard_epsilon * size),
+            invalid_allowance=self.cfg.constraints.local_terminal_invalid_allowance,
             global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
             vote_loss_limit=self.cfg.constraints.vote_loss_limit,
             unique_correct_loss_limit=self.cfg.constraints.unique_correct_loss_limit,
@@ -1468,7 +1564,13 @@ class PromptEnsembleOptimizationSystem:
     ) -> ConstraintDecision:
         local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
         global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
-        invalid = candidate.competence.invalid_count <= active.competence.invalid_count + limits.invalid_allowance
+        invalid = evaluate_terminal_invalid_constraints(
+            candidate.competence,
+            active.competence,
+            initial.competence,
+            local_allowance=limits.invalid_allowance,
+            global_allowance=limits.global_invalid_allowance,
+        )
         reasons = tuple(
             name for name, passed in (
                 ("local_accuracy", local), ("initial_accuracy", global_), ("invalid", invalid),
@@ -1614,7 +1716,6 @@ class PromptEnsembleOptimizationSystem:
         limits = self._limits(len(self.fixed_probe.examples))
         limits = replace(
             limits,
-            invalid_allowance=max(limits.invalid_allowance, self.cfg.constraints.local_terminal_invalid_allowance),
             global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
         )
         feasible: list[CandidateRuntime] = []
@@ -2056,7 +2157,7 @@ class PromptEnsembleOptimizationSystem:
             "member_objective_version": "integer_vote_min_sum_v2",
             "responsibility_version": "five_axis_member_need_pareto_v2",
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
-            "target_selection_version": "five_axis_overdue_member_pareto_v2",
+            "target_selection_version": TARGET_SELECTION_VERSION,
             "pareto_preference_version": "member_first_candidate_preference_v1",
             "stage_a_version": "team_vote_worst_mean_v2",
             "stage_b_version": "competence_guard_member_pareto_v2",
@@ -2073,6 +2174,8 @@ class PromptEnsembleOptimizationSystem:
             "solver_invalid_retry_policy_version": SOLVER_INVALID_RETRY_POLICY_VERSION,
             "prompt_question_evaluator_version": PROMPT_QUESTION_EVALUATOR_VERSION,
             "solver_invalid_max_retries": self.cfg.models.solver_invalid_max_retries,
+            "invalid_guard_epsilon": self.cfg.constraints.invalid_guard_epsilon,
+            "invalid_guard_epsilon_status": "deprecated_unused",
             "local_terminal_invalid_allowance": self.cfg.constraints.local_terminal_invalid_allowance,
             "global_terminal_invalid_allowance": self.cfg.constraints.global_terminal_invalid_allowance,
             "validation_terminal_invalid_allowance": self.cfg.constraints.validation_terminal_invalid_allowance,
@@ -2084,7 +2187,7 @@ class PromptEnsembleOptimizationSystem:
             "student_count_policy": "reject_excess_keep_individually_valid_v1",
             "model_facing_payload_version": "audit_hash_isolated_v2",
             "terminal_failure_version": "role_specific_terminal_failure_v1",
-            "checkpoint_version": 8,
+            "checkpoint_version": CHECKPOINT_VERSION,
             "tcs_protocol_version": TCS_PROTOCOL_VERSION,
             "critic_approval_basis": "failed_checks_empty",
             "task_general_scope": "unseen_examples_within_current_task",
@@ -2201,5 +2304,56 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("tcs_context_history.jsonl", self.tcs_context_history)
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl("solver_invalid_outputs.jsonl", self.solver_invalid_outputs)
+        self.artifacts.write_json("solver_recovery_summary.json", self.solver_recovery_summary())
         self.artifacts.write_jsonl("llm_calls.jsonl", self.llm.calls)
         self.artifacts.write_json("cost_summary.json", self.cost_summary())
+
+    def solver_recovery_summary(self) -> dict[str, Any]:
+        rows = list(self.solver_recovery_observations)
+        attempts = [int(row["solver_attempt_count"]) for row in rows]
+        first_valid = sum(bool(row["first_attempt_valid"]) for row in rows)
+        recovered = sum(bool(row["recovered_from_invalid"]) for row in rows)
+        terminal = sum(bool(row["terminal_invalid"]) for row in rows)
+        first_status: dict[str, int] = {}
+        terminal_status: dict[str, int] = {}
+        finish_by_attempt: dict[str, int] = {}
+        for row in rows:
+            statuses = list(row["attempt_validity_statuses"])
+            if statuses:
+                first_status[statuses[0]] = first_status.get(statuses[0], 0) + 1
+            if row["terminal_invalid"]:
+                status = str(row["validity_status"])
+                terminal_status[status] = terminal_status.get(status, 0) + 1
+            for attempt_index, finish_reason in enumerate(row["attempt_finish_reasons"], 1):
+                key = f"{attempt_index}:{finish_reason}"
+                finish_by_attempt[key] = finish_by_attempt.get(key, 0) + 1
+        extra_calls = sum(max(0, count - 1) for count in attempts)
+        extra_prompt = sum(int(row["recovery_prompt_tokens"]) for row in rows)
+        extra_completion = sum(int(row["recovery_completion_tokens"]) for row in rows)
+        extra_total = sum(int(row["recovery_total_tokens"]) for row in rows)
+        total_tokens = sum(
+            sum(int(value) for value in row["attempt_total_tokens"])
+            for row in rows
+        )
+        count = len(rows)
+        return {
+            "unique_resolved_request_count": count,
+            "first_attempt_valid_count": first_valid,
+            "first_attempt_invalid_count": count - first_valid,
+            "recovered_invalid_count": recovered,
+            "terminal_invalid_count": terminal,
+            "attempt_count_histogram": {
+                str(value): attempts.count(value) for value in sorted(set(attempts))
+            },
+            "first_pass_validity_status_counts": first_status,
+            "terminal_validity_status_counts": terminal_status,
+            "finish_reason_counts_by_attempt": finish_by_attempt,
+            "invalid_recovery_extra_calls": extra_calls,
+            "invalid_recovery_prompt_tokens": extra_prompt,
+            "invalid_recovery_completion_tokens": extra_completion,
+            "invalid_recovery_total_tokens": extra_total,
+            "first_attempt_valid_rate": first_valid / count if count else 1.0,
+            "eventual_valid_rate": (count - terminal) / count if count else 1.0,
+            "recovery_call_overhead_rate": extra_calls / count if count else 0.0,
+            "recovery_token_overhead_rate": extra_total / total_tokens if total_tokens else 0.0,
+        }

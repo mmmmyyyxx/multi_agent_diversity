@@ -13,9 +13,7 @@ from ..persistence.identity import validate_run_identity
 from ..responsibility import MemberAwareRepairOpportunity, ResponsibilityState
 from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
-
-
-CHECKPOINT_VERSION = 8
+from ..versions import CHECKPOINT_VERSION
 
 
 def _random_state_payload() -> str:
@@ -102,6 +100,7 @@ def build_checkpoint(
         "tcs_context_history": list(system.tcs_context_history),
         "tcs_rounds": list(system.tcs_rounds),
         "solver_invalid_outputs": list(system.solver_invalid_outputs),
+        "solver_recovery_observations": list(system.solver_recovery_observations),
         "llm_calls": list(system.llm.calls),
         "fixed_probe": system.fixed_probe.to_dict(),
         "validation_probe": system.validation_probe.to_dict(),
@@ -230,11 +229,17 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "tcs_context_history",
         "tcs_rounds",
         "solver_invalid_outputs",
+        "solver_recovery_observations",
     ):
         setattr(system, name, list(payload[name]))
     system._audited_invalid_keys = {
         (str(row["prompt_hash"]), str(row["question_hash"]))
         for row in system.solver_invalid_outputs
+    }
+    system.solver_recovery_observations = list(payload["solver_recovery_observations"])
+    system._observed_solver_keys = {
+        (str(row["prompt_hash"]), str(row["question_hash"]))
+        for row in system.solver_recovery_observations
     }
     system.llm.calls = list(payload["llm_calls"])
     system.fixed_probe.restore(payload["fixed_probe"])
