@@ -1,0 +1,18 @@
+{
+  "git_commit": "336ab63f41fe37cb6e24a4fb7f721b8fdcbbcb90",
+  "records": 30,
+  "repeats": 3,
+  "normal_controls": 8,
+  "solver_max_tokens": 1800,
+  "output_dir": "D:\\myx\\grade_one\\experiments\\multi_agent_diversity\\gate1_contract_smoke_336ab63_20260724_221737",
+  "validity_status_counts": {
+    "valid": 30
+  },
+  "finish_reason_counts": {
+    "stop": 30
+  },
+  "final_answer_line_count_counts": {
+    "1": 30
+  },
+  "gate1_pass": true
+}

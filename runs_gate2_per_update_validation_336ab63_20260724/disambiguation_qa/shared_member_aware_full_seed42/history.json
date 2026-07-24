@@ -1,0 +1,946 @@
+[
+  {
+    "epoch": 1,
+    "validation": {
+      "vote_correct_count": 29,
+      "per_agent_correct_counts": [
+        29,
+        29,
+        41,
+        29,
+        29
+      ],
+      "plurality_vote_acc": 0.58,
+      "vote_acc": 0.58,
+      "mean_individual_acc": 0.628,
+      "min_individual_acc": 0.58,
+      "per_agent_acc": [
+        0.58,
+        0.58,
+        0.82,
+        0.58,
+        0.58
+      ],
+      "mean_soft_vote_utility": 0.5880357841004735,
+      "c0_count": 5,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": true,
+    "member_objective": {
+      "gain_counts": [
+        0,
+        0,
+        12,
+        0,
+        0
+      ],
+      "minimum_gain_count": 0,
+      "total_gain_count": 12,
+      "mean_gain": 2.4,
+      "minimum_member_correct_count_gain": 0,
+      "mean_member_correct_count_gain": 2.4,
+      "minimum_member_accuracy_gain": 0.0,
+      "mean_member_accuracy_gain": 0.048,
+      "improved_agent_count": 1,
+      "regressed_agent_count": 0,
+      "all_members_non_regressed": true,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 69,
+            "coverage": 11,
+            "conversion": 0,
+            "preservation": 0
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 22,
+            "coverage": 6,
+            "conversion": 0,
+            "preservation": 0
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 2,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 0,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 0,
+          "acceptable_candidates": 2,
+          "accepted_candidate": true,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 2,
+    "validation": {
+      "vote_correct_count": 29,
+      "per_agent_correct_counts": [
+        29,
+        38,
+        41,
+        29,
+        29
+      ],
+      "plurality_vote_acc": 0.58,
+      "vote_acc": 0.58,
+      "mean_individual_acc": 0.664,
+      "min_individual_acc": 0.58,
+      "per_agent_acc": [
+        0.58,
+        0.76,
+        0.82,
+        0.58,
+        0.58
+      ],
+      "mean_soft_vote_utility": 0.6391571053869165,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": true,
+    "member_objective": {
+      "gain_counts": [
+        0,
+        9,
+        12,
+        0,
+        0
+      ],
+      "minimum_gain_count": 0,
+      "total_gain_count": 21,
+      "mean_gain": 4.2,
+      "minimum_member_correct_count_gain": 0,
+      "mean_member_correct_count_gain": 4.2,
+      "minimum_member_accuracy_gain": 0.0,
+      "mean_member_accuracy_gain": 0.084,
+      "improved_agent_count": 2,
+      "regressed_agent_count": 0,
+      "all_members_non_regressed": true,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 67,
+            "coverage": 2,
+            "conversion": 12,
+            "preservation": 0
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 20,
+            "coverage": 2,
+            "conversion": 6,
+            "preservation": 0
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 2,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 0,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 0,
+          "acceptable_candidates": 2,
+          "accepted_candidate": true,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 3,
+    "validation": {
+      "vote_correct_count": 32,
+      "per_agent_correct_counts": [
+        29,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.64,
+      "vote_acc": 0.64,
+      "mean_individual_acc": 0.66,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.58,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6600098425234716,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        0,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 20,
+      "mean_gain": 4.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 4.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.08000000000000003,
+      "improved_agent_count": 2,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 68,
+            "coverage": 0,
+            "conversion": 18,
+            "preservation": 1
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 21,
+            "coverage": 0,
+            "conversion": 6,
+            "preservation": 1
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 2,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 0,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 0,
+          "acceptable_candidates": 2,
+          "accepted_candidate": true,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 4,
+    "validation": {
+      "vote_correct_count": 34,
+      "per_agent_correct_counts": [
+        34,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.68,
+      "vote_acc": 0.68,
+      "mean_individual_acc": 0.68,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.68,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6917854617054179,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        5,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 25,
+      "mean_gain": 5.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 5.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.10000000000000005,
+      "improved_agent_count": 3,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 67,
+            "coverage": 1,
+            "conversion": 19,
+            "preservation": 1
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 20,
+            "coverage": 1,
+            "conversion": 6,
+            "preservation": 1
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 1,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 1,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 1,
+          "acceptable_candidates": 1,
+          "accepted_candidate": true,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 5,
+    "validation": {
+      "vote_correct_count": 34,
+      "per_agent_correct_counts": [
+        34,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.68,
+      "vote_acc": 0.68,
+      "mean_individual_acc": 0.68,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.68,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6917854617054179,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        5,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 25,
+      "mean_gain": 5.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 5.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.10000000000000005,
+      "improved_agent_count": 3,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 64,
+            "coverage": 3,
+            "conversion": 17,
+            "preservation": 2
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 17,
+            "coverage": 3,
+            "conversion": 6,
+            "preservation": 2
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 0,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 2,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 2,
+          "acceptable_candidates": 0,
+          "accepted_candidate": false,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 6,
+    "validation": {
+      "vote_correct_count": 34,
+      "per_agent_correct_counts": [
+        34,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.68,
+      "vote_acc": 0.68,
+      "mean_individual_acc": 0.68,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.68,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6917854617054179,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        5,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 25,
+      "mean_gain": 5.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 5.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.10000000000000005,
+      "improved_agent_count": 3,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 71,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 23
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 24,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 4
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 0,
+          "rejected_local_accuracy": 2,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 2,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 2,
+          "acceptable_candidates": 0,
+          "accepted_candidate": false,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 7,
+    "validation": {
+      "vote_correct_count": 34,
+      "per_agent_correct_counts": [
+        34,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.68,
+      "vote_acc": 0.68,
+      "mean_individual_acc": 0.68,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.68,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6917854617054179,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        5,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 25,
+      "mean_gain": 5.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 5.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.10000000000000005,
+      "improved_agent_count": 3,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 71,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 26
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 24,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 4
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 0,
+          "rejected_local_accuracy": 1,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 0,
+          "rejected_unique_loss": 2,
+          "rejected_pivotal_loss": 0,
+          "acceptable_candidates": 0,
+          "accepted_candidate": false,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  },
+  {
+    "epoch": 8,
+    "validation": {
+      "vote_correct_count": 34,
+      "per_agent_correct_counts": [
+        34,
+        38,
+        41,
+        29,
+        28
+      ],
+      "plurality_vote_acc": 0.68,
+      "vote_acc": 0.68,
+      "mean_individual_acc": 0.68,
+      "min_individual_acc": 0.56,
+      "per_agent_acc": [
+        0.68,
+        0.76,
+        0.82,
+        0.58,
+        0.56
+      ],
+      "mean_soft_vote_utility": 0.6917854617054179,
+      "c0_count": 2,
+      "mean_invalid_rate": 0.0,
+      "tie_count": 0,
+      "tie_rate": 0.0,
+      "validity_status_counts": {
+        "valid": 250
+      }
+    },
+    "validation_feasible": false,
+    "member_objective": {
+      "gain_counts": [
+        5,
+        9,
+        12,
+        0,
+        -1
+      ],
+      "minimum_gain_count": -1,
+      "total_gain_count": 25,
+      "mean_gain": 5.0,
+      "minimum_member_correct_count_gain": -1,
+      "mean_member_correct_count_gain": 5.0,
+      "minimum_member_accuracy_gain": -0.019999999999999907,
+      "mean_member_accuracy_gain": 0.10000000000000005,
+      "improved_agent_count": 3,
+      "regressed_agent_count": 1,
+      "all_members_non_regressed": false,
+      "all_members_improved": false
+    },
+    "candidate_funnel": {
+      "update_count": 1,
+      "terminal_failure_counts": {},
+      "terminal_failures": [],
+      "updates": [
+        {
+          "parents_considered": 1,
+          "teacher_calls": 1,
+          "teacher_invalid_responses": 0,
+          "teacher_truncated_responses": 0,
+          "critic_calls": 1,
+          "critic_invalid_responses": 0,
+          "critic_truncated_responses": 0,
+          "critic_semantic_rejections": 0,
+          "critic_approved": 1,
+          "student_calls": 1,
+          "student_invalid_responses": 0,
+          "student_truncated_responses": 0,
+          "student_partially_valid_responses": 0,
+          "infrastructure_failed_updates": 0,
+          "requested_candidate_count": 2,
+          "raw_candidate_count": 2,
+          "schema_valid_count": 2,
+          "sample_memorization_rejected": 0,
+          "non_parent_count": 2,
+          "deduplicated_count": 2,
+          "stage_a_requested_size_per_pool": {
+            "representative": 12,
+            "coverage": 6,
+            "conversion": 6,
+            "preservation": 4
+          },
+          "stage_a_available_size_per_pool": {
+            "representative": 72,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 3
+          },
+          "stage_a_selected_size_per_pool": {
+            "representative": 25,
+            "coverage": 0,
+            "conversion": 0,
+            "preservation": 3
+          },
+          "stage_a_overlap_removed": 0,
+          "actual_stage_a_size": 28,
+          "stage_a_evaluated": 2,
+          "selected_by_team_vote_channel": 2,
+          "selected_by_worst_member_channel": 2,
+          "selected_by_mean_member_channel": 2,
+          "stage_b_evaluated": 2,
+          "constraint_feasible": 0,
+          "rejected_local_accuracy": 0,
+          "rejected_initial_accuracy": 0,
+          "rejected_invalid": 0,
+          "rejected_vote_loss": 2,
+          "rejected_unique_loss": 0,
+          "rejected_pivotal_loss": 2,
+          "acceptable_candidates": 0,
+          "accepted_candidate": false,
+          "terminal_failure_class": "",
+          "terminal_failure_role": ""
+        }
+      ]
+    }
+  }
+]
