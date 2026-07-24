@@ -1,3 +1,5 @@
+import pytest
+
 from multi_dataset_diverse_rl.cli import _final_payload
 from multi_dataset_diverse_rl.evaluation.validation import DatasetMetrics
 
@@ -30,11 +32,16 @@ def test_final_payload_keeps_initial_selected_and_member_gain():
     assert set(payload) == {
         "initial_test", "selected_test", "member_gain", "selection_summary"
     }
-    assert payload["member_gain"] == {
+    member_gain = dict(payload["member_gain"])
+    assert member_gain.pop("mean_member_accuracy_gain") == pytest.approx(0.14)
+    assert member_gain == {
         "gain_counts": (1, 2, 0, 3, 1),
         "minimum_gain_count": 0,
         "total_gain_count": 7,
         "mean_gain": 1.4,
+        "minimum_member_correct_count_gain": 0,
+        "mean_member_correct_count_gain": 1.4,
+        "minimum_member_accuracy_gain": 0.0,
         "improved_agent_count": 4,
         "regressed_agent_count": 0,
         "all_members_non_regressed": True,

@@ -45,6 +45,35 @@ def test_validation_filters_initial_member_feasibility_then_ranks_member_objecti
     )
 
 
+def test_validation_uses_complete_declared_preference_order():
+    system = PromptEnsembleOptimizationSystem(Config())
+    initial = metrics(5, [7] * 5, invalid=0.2, utility=0.5, c0=2)
+
+    def key(
+        *,
+        vote=6,
+        counts=(8, 8, 7, 7, 7),
+        invalid=0.1,
+        utility=0.6,
+        c0=1,
+        epoch=1,
+    ):
+        return system.validation_key(
+            metrics(vote, counts, invalid=invalid, utility=utility, c0=c0),
+            initial,
+            epoch,
+        )
+
+    assert key(counts=(8, 8, 8, 8, 8)) > key(counts=(9, 9, 9, 9, 7))
+    assert key(vote=7) > key(vote=6)
+    assert key(counts=(9, 8, 7, 7, 7)) > key(counts=(8, 8, 7, 7, 7))
+    assert key(counts=(8, 8, 7, 7, 7)) > key(counts=(9, 7, 7, 7, 7))
+    assert key(utility=0.7) > key(utility=0.6)
+    assert key(c0=0) > key(c0=1)
+    assert key(invalid=0.05) > key(invalid=0.1)
+    assert key(epoch=1) > key(epoch=2)
+
+
 def test_validation_prompt_question_cache_is_shared_across_agents():
     calls = []
 

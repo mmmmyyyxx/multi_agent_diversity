@@ -92,8 +92,19 @@ Target selection uses all agents with current errors. Agents waiting
 `responsibility_max_wait_updates` updates are considered first; the default is
 four. The remaining target comparison is member-aware and deterministic.
 
-After an accepted update, active profiles, peer states, opportunities, owners,
-loads, target priorities, and TCS summaries are refreshed immediately.
+Responsibility answers **who to update and what residual to repair**. Competence
+preservation is deliberately not a sixth responsibility-attribution dimension:
+it is enforced downstream by preservation-conditioned TCS evidence and the hard
+competence, unique-correct, and pivotal-correct candidate guards. Strong members
+therefore remain eligible for repair without losing their protected capability.
+
+Responsibility has an explicit versioned lifecycle. The initial team is assigned
+once. Rejected updates reuse that assignment. An accepted prompt/profile pair is
+committed atomically, increments the team-state version, and refreshes
+responsibility exactly once; the following update reuses that refreshed state.
+`owner_age` advances once per real team-state refresh, never per function call.
+If refresh fails, prompt/profile, accepted counts, responsibility state, caches,
+versions, and appended responsibility audit rows are all rolled back.
 
 ## 5. Responsibility-Conditioned TCS
 
@@ -154,7 +165,10 @@ mean_member
 
 Each channel produces ordinal ranks. Rank vectors are divided into Pareto fronts,
 then channel top-k union and deterministic Pareto ordering fill the Stage B
-budget. The vote-first ablation uses only its vote-first Stage A ordering.
+budget. `shared_peer_state_vote_first` is a **pure vote-first
+candidate-selection ablation** using vote-first ordering in both stages; it is
+not an exact reproduction of the historical Peer-State V2 shortlist and
+acceptance pipeline.
 
 The channel keys are:
 
@@ -229,6 +243,9 @@ selection_summary
 ```
 
 This makes test improvement and member regression directly auditable.
+Summaries expose both integer correct-count gain and test-size-normalized
+accuracy gain. Integer counts remain the formal selection objective; normalized
+accuracy gains are the cross-task reporting fields.
 
 ## 10. Settings
 
@@ -247,10 +264,11 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 5. It stores active and initial profiles, member-aware
-opportunities, responsibility ownership and ages, accepted counts, seeded ranks,
-target-priority audit, prompt state, TCS state, caches, histories, LLM calls, and
-Python random state.
+Checkpoint version is 5. It stores active and initial profiles, a target-free
+`TeamMemberGainState`, member-aware opportunities, responsibility ownership and
+ages, accepted counts, seeded ranks, team/responsibility state versions and
+refresh count, target-priority audit, prompt state, TCS state, caches, histories,
+LLM calls, and Python random state.
 
 Resume requires exact method, setting, config behavior fingerprint, code commit,
 split files, question sets, probe identity, model endpoint identity, parser,
@@ -278,6 +296,8 @@ multi_dataset_diverse_rl/persistence/identity.py
 multi_dataset_diverse_rl/cli.py
 scripts/run_task_level_accuracy.py
 scripts/preflight_member_aware.py
+scripts/deterministic_member_objective_unit_smoke.py
+scripts/deterministic_member_aware_system_smoke.py
 scripts/deterministic_member_aware_smoke.py
 ```
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from copy import deepcopy
 import hashlib
 import json
 import time
@@ -38,7 +39,7 @@ from .evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION, solver_o
 from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
 from .llm_client import RoleAwareLLMClient
-from .member_objectives import member_gain_metrics
+from .member_objectives import member_gain_metrics, team_member_gain_state
 from .peer_state import (
     PeerVoteContext,
     TeamVoteState,
@@ -238,6 +239,9 @@ class PromptEnsembleOptimizationSystem:
         self.cached_member_opportunities: dict[
             str, tuple[MemberAwareRepairOpportunity, ...]
         ] = {}
+        self.team_state_version = 0
+        self.responsibility_state_version = -1
+        self.responsibility_refresh_count = 0
         self.target_priority_audit: list[dict[str, Any]] = []
         self.previous_accuracy_summaries = {
             agent_id: "No prior accepted update; individual accuracy and invalid rate are unchanged."
@@ -478,17 +482,10 @@ class PromptEnsembleOptimizationSystem:
             for profile in profiles
         )
 
-    def current_member_gain_state(self) -> dict[str, Any]:
+    def current_team_member_gain_state(self) -> dict[str, Any]:
         initial_counts = self._member_correct_counts(self.initial_profiles)
         current_counts = self._member_correct_counts(self.active_profiles)
-        return asdict(
-            member_gain_metrics(
-                initial_counts,
-                current_counts,
-                current_counts,
-                0,
-            )
-        )
+        return asdict(team_member_gain_state(initial_counts, current_counts))
 
     def current_states_and_opportunities(
         self,
@@ -565,6 +562,14 @@ class PromptEnsembleOptimizationSystem:
     def assign_responsibilities(
         self,
     ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+        if self.responsibility_state_version == self.team_state_version:
+            return (
+                dict(self.cached_responsibility_owners),
+                {
+                    agent_id: list(rows)
+                    for agent_id, rows in self.cached_responsibility_assignments.items()
+                },
+            )
         states, _, opportunities = self.current_states_and_opportunities()
         self.cached_member_opportunities = dict(opportunities)
         state_by_hash = {state.question_hash: state for state in states}
@@ -583,13 +588,14 @@ class PromptEnsembleOptimizationSystem:
             for question_hash, owner in owners.items()
         )
         rows = [row for values in assigned.values() for row in values]
-        member_gain_state = self.current_member_gain_state()
+        member_gain_state = self.current_team_member_gain_state()
         first_question_rows = next(iter(opportunities.values()), ())
         opportunity_by_agent = {
             row.agent_id: row for row in first_question_rows
         }
         self.peer_state_history.extend(asdict(state) for state in states)
         self.responsibility_assignments.append({
+            "team_state_version": self.team_state_version,
             "member_gain_counts": member_gain_state["gain_counts"],
             "minimum_member_gain_count": member_gain_state["minimum_gain_count"],
             "total_member_gain_count": member_gain_state["total_gain_count"],
@@ -627,7 +633,26 @@ class PromptEnsembleOptimizationSystem:
                 str(agent_id): [asdict(row) for row in values] for agent_id, values in assigned.items()
             },
         })
+        self.cached_responsibility_owners = dict(owners)
+        self.cached_responsibility_assignments = {
+            agent_id: list(values) for agent_id, values in assigned.items()
+        }
+        self.responsibility_state_version = self.team_state_version
+        self.responsibility_refresh_count += 1
         return owners, assigned
+
+    def ensure_responsibility_current(
+        self,
+    ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+        return self.assign_responsibilities()
+
+    def refresh_responsibility_after_commit(
+        self,
+    ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+        self.team_state_version += 1
+        if self.responsibility_state_version == self.team_state_version:
+            raise AssertionError("committed team state must invalidate responsibility state")
+        return self.assign_responsibilities()
 
     def select_target(
         self,
@@ -1601,12 +1626,9 @@ class PromptEnsembleOptimizationSystem:
         if not self.protocol.optimization_enabled:
             return False
         if self.protocol.target_selection_policy == "member_aware_responsibility":
-            if self.protocol.responsibility_refresh_policy == "online" or not self.cached_responsibility_owners:
-                owners, assigned = self.assign_responsibilities()
-                self.cached_responsibility_owners = dict(owners)
-                self.cached_responsibility_assignments = {agent_id: list(rows) for agent_id, rows in assigned.items()}
-            else:
+            if self.protocol.responsibility_refresh_policy != "online":
                 raise AssertionError("dynamic responsibility protocol requires online refresh")
+            owners, assigned = self.ensure_responsibility_current()
         else:
             owners = {}
             assigned = {agent_id: [] for agent_id in range(5)}
@@ -1664,7 +1686,18 @@ class PromptEnsembleOptimizationSystem:
 
         agent = self.agents[target]
         old_prompt = agent.current_prompt
+        old_previous_prompt = agent.previous_active_prompt
         old_profile = self.active_profiles[target]
+        old_responsibility_state = deepcopy(self.responsibility_state)
+        old_cached_owners = deepcopy(self.cached_responsibility_owners)
+        old_cached_assignments = deepcopy(self.cached_responsibility_assignments)
+        old_cached_opportunities = deepcopy(self.cached_member_opportunities)
+        old_team_state_version = self.team_state_version
+        old_responsibility_state_version = self.responsibility_state_version
+        old_responsibility_refresh_count = self.responsibility_refresh_count
+        old_peer_history_length = len(self.peer_state_history)
+        old_responsibility_history_length = len(self.responsibility_assignments)
+        old_target_audit_length = len(self.target_priority_audit)
         agent.previous_active_prompt = old_prompt
         try:
             agent.current_prompt = accepted.prompt
@@ -1675,12 +1708,23 @@ class PromptEnsembleOptimizationSystem:
                 self.responsibility_state.accepted_updates_by_agent.get(target, 0) + 1
             )
             if self.protocol.responsibility_refresh_policy == "online":
-                owners, assigned = self.assign_responsibilities()
-                self.cached_responsibility_owners = dict(owners)
-                self.cached_responsibility_assignments = {agent_id: list(rows) for agent_id, rows in assigned.items()}
+                self.refresh_responsibility_after_commit()
+            else:
+                self.team_state_version += 1
         except Exception:
             agent.current_prompt = old_prompt
+            agent.previous_active_prompt = old_previous_prompt
             self.active_profiles[target] = old_profile
+            self.responsibility_state = old_responsibility_state
+            self.cached_responsibility_owners = old_cached_owners
+            self.cached_responsibility_assignments = old_cached_assignments
+            self.cached_member_opportunities = old_cached_opportunities
+            self.team_state_version = old_team_state_version
+            self.responsibility_state_version = old_responsibility_state_version
+            self.responsibility_refresh_count = old_responsibility_refresh_count
+            del self.peer_state_history[old_peer_history_length:]
+            del self.responsibility_assignments[old_responsibility_history_length:]
+            del self.target_priority_audit[old_target_audit_length:]
             raise
         evaluation = accepted.final_evaluation
         competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
@@ -1868,6 +1912,7 @@ class PromptEnsembleOptimizationSystem:
             "candidate_generator": self.protocol.tcs_context_policy,
             "member_objective_version": "integer_vote_min_sum_v2",
             "responsibility_version": "five_axis_member_need_pareto_v2",
+            "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": "five_axis_overdue_member_pareto_v2",
             "pareto_preference_version": "member_first_candidate_preference_v1",
             "stage_a_version": "team_vote_worst_mean_v2",

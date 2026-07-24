@@ -25,6 +25,22 @@ class MemberGainMetrics:
 
 
 @dataclass(frozen=True)
+class TeamMemberGainState:
+    """Target-free member state for the current immutable team snapshot."""
+
+    initial_correct_counts: tuple[int, ...]
+    current_correct_counts: tuple[int, ...]
+    gain_counts: tuple[int, ...]
+    minimum_gain_count: int
+    total_gain_count: int
+    mean_gain: float
+    improved_agent_count: int
+    regressed_agent_count: int
+    all_members_non_regressed: bool
+    all_members_improved: bool
+
+
+@dataclass(frozen=True)
 class TeamObjectiveVector:
     vote_correct_count: int
     minimum_member_gain_count: int
@@ -57,11 +73,42 @@ def member_gain_metrics(
         )
     if not 0 <= int(target_agent_id) < len(initial):
         raise ValueError("target_agent_id is outside the member count vector")
-    gains = tuple(after - before for before, after in zip(initial, candidate, strict=True))
+    team_state = team_member_gain_state(initial, candidate)
     return MemberGainMetrics(
         initial_correct_counts=initial,
         incumbent_correct_counts=incumbent,
         candidate_correct_counts=candidate,
+        gain_counts=team_state.gain_counts,
+        minimum_gain_count=team_state.minimum_gain_count,
+        total_gain_count=team_state.total_gain_count,
+        mean_gain=team_state.mean_gain,
+        improved_agent_count=team_state.improved_agent_count,
+        regressed_agent_count=team_state.regressed_agent_count,
+        all_members_non_regressed=team_state.all_members_non_regressed,
+        all_members_improved=team_state.all_members_improved,
+        target_gain_vs_initial=(
+            candidate[int(target_agent_id)] - initial[int(target_agent_id)]
+        ),
+        target_gain_vs_incumbent=(
+            candidate[int(target_agent_id)] - incumbent[int(target_agent_id)]
+        ),
+    )
+
+
+def team_member_gain_state(
+    initial_correct_counts: Sequence[int],
+    current_correct_counts: Sequence[int],
+) -> TeamMemberGainState:
+    initial = tuple(int(value) for value in initial_correct_counts)
+    current = tuple(int(value) for value in current_correct_counts)
+    if not initial or len(initial) != len(current):
+        raise ValueError(
+            "initial and current member counts must have equal non-zero length"
+        )
+    gains = tuple(after - before for before, after in zip(initial, current, strict=True))
+    return TeamMemberGainState(
+        initial_correct_counts=initial,
+        current_correct_counts=current,
         gain_counts=gains,
         minimum_gain_count=min(gains),
         total_gain_count=sum(gains),
@@ -70,12 +117,6 @@ def member_gain_metrics(
         regressed_agent_count=sum(value < 0 for value in gains),
         all_members_non_regressed=all(value >= 0 for value in gains),
         all_members_improved=all(value > 0 for value in gains),
-        target_gain_vs_initial=(
-            candidate[int(target_agent_id)] - initial[int(target_agent_id)]
-        ),
-        target_gain_vs_incumbent=(
-            candidate[int(target_agent_id)] - incumbent[int(target_agent_id)]
-        ),
     )
 
 

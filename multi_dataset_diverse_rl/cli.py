@@ -203,11 +203,23 @@ def _member_gain_summary(
             strict=True,
         )
     )
+    accuracy_gains = tuple(
+        current - baseline
+        for current, baseline in zip(
+            selected.per_agent_acc,
+            initial.per_agent_acc,
+            strict=True,
+        )
+    )
     return {
         "gain_counts": gains,
         "minimum_gain_count": min(gains),
         "total_gain_count": sum(gains),
         "mean_gain": sum(gains) / len(gains),
+        "minimum_member_correct_count_gain": min(gains),
+        "mean_member_correct_count_gain": sum(gains) / len(gains),
+        "minimum_member_accuracy_gain": min(accuracy_gains),
+        "mean_member_accuracy_gain": sum(accuracy_gains) / len(accuracy_gains),
         "improved_agent_count": sum(value > 0 for value in gains),
         "regressed_agent_count": sum(value < 0 for value in gains),
         "all_members_non_regressed": all(value >= 0 for value in gains),

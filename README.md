@@ -43,7 +43,7 @@ Exactly six settings are supported:
 |---|---|
 | `shared_baseline` | Shared prompt, no optimization |
 | `shared_independent_accuracy` | Round-robin individual-accuracy ablation |
-| `shared_peer_state_vote_first` | Peer-state TCS with vote-first selection |
+| `shared_peer_state_vote_first` | Pure vote-first candidate-selection ablation |
 | `shared_peer_state_member_pareto` | Adds member-aware Pareto selection |
 | `shared_member_aware_responsibility` | Adds member-aware target responsibility |
 | `shared_member_aware_full` | Adds member-aware responsibility-conditioned TCS |
@@ -59,13 +59,19 @@ No API credentials are needed:
 python -m pytest -q
 python -m compileall -q multi_dataset_diverse_rl scripts
 python scripts/preflight_member_aware.py --workspace . --allow_dirty 1
+python scripts/deterministic_member_objective_unit_smoke.py
+python scripts/deterministic_member_aware_system_smoke.py
+# Or run both:
 python scripts/deterministic_member_aware_smoke.py
 git diff --check
 ```
 
-The deterministic smoke checks target fairness, rejection of a vote-positive
-member-regressing candidate, acceptance of a vote-neutral worst-member
-improvement, and strict final dominance.
+The system smoke instantiates the real optimization system with fake models,
+runs eight real updates through TCS and Stage A/B, checks one responsibility
+refresh per committed team transition, verifies the two critical Pareto
+accept/reject cases, covers all eligible members, and computes the real
+validation key. The smaller unit smoke retains deterministic helper-level
+coverage.
 
 ## Running Experiments
 
@@ -101,5 +107,11 @@ Each optimized run writes:
 - `solver_invalid_outputs.jsonl`: strict `FINAL_ANSWER` failures
 - `llm_calls.jsonl` and `cost_summary.json`: role-level API accounting
 - `run_meta.json`: frozen method, protocol, cache, and run identity
+
+Final and task-level summaries report both correct-count gains and normalized
+accuracy gains:
+`minimum_member_correct_count_gain`, `mean_member_correct_count_gain`,
+`minimum_member_accuracy_gain`, and `mean_member_accuracy_gain`. Formal
+selection continues to use integer correct counts.
 
 See [method.md](method.md) for definitions and implementation details.

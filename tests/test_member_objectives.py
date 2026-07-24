@@ -2,6 +2,7 @@ from multi_dataset_diverse_rl.member_objectives import (
     member_gain_metrics,
     pareto_dominates,
     pareto_front,
+    team_member_gain_state,
     team_objective_vector,
 )
 
@@ -35,6 +36,16 @@ def test_member_gain_reports_complete_integer_count_state():
     assert result.all_members_improved is False
     assert result.target_gain_vs_initial == 0
     assert result.target_gain_vs_incumbent == -1
+
+
+def test_team_member_gain_state_is_target_free():
+    state = team_member_gain_state((10, 10, 10), (12, 9, 10))
+    assert state.initial_correct_counts == (10, 10, 10)
+    assert state.current_correct_counts == (12, 9, 10)
+    assert state.gain_counts == (2, -1, 0)
+    assert state.minimum_gain_count == -1
+    assert state.total_gain_count == 1
+    assert state.regressed_agent_count == 1
 
 
 def test_zero_one_and_all_member_uplift_cases():

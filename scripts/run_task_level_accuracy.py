@@ -200,8 +200,18 @@ def main() -> None:
                         metrics["selected_test"]["plurality_vote_acc"]
                         - metrics["initial_test"]["plurality_vote_acc"]
                     ),
-                    "minimum_member_gain": metrics["member_gain"]["minimum_gain_count"],
-                    "mean_member_gain": metrics["member_gain"]["mean_gain"],
+                    "minimum_member_correct_count_gain": metrics["member_gain"][
+                        "minimum_member_correct_count_gain"
+                    ],
+                    "mean_member_correct_count_gain": metrics["member_gain"][
+                        "mean_member_correct_count_gain"
+                    ],
+                    "minimum_member_accuracy_gain": metrics["member_gain"][
+                        "minimum_member_accuracy_gain"
+                    ],
+                    "mean_member_accuracy_gain": metrics["member_gain"][
+                        "mean_member_accuracy_gain"
+                    ],
                     "improved_agent_count": metrics["member_gain"]["improved_agent_count"],
                     "regressed_agent_count": metrics["member_gain"]["regressed_agent_count"],
                     "all_members_improved": metrics["member_gain"]["all_members_improved"],

@@ -1,5 +1,8 @@
 import asyncio
+from copy import deepcopy
 import json
+
+import pytest
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer, evaluate_candidate_profile
@@ -102,6 +105,14 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert system.agents[target_agent_id].current_prompt == "repair-q0"
     assert after[0].gold_vote_count == 1
     assert len(system.responsibility_assignments) == 2
+    assert [
+        row["team_state_version"] for row in system.responsibility_assignments
+    ] == [0, 1]
+    assert system.responsibility_refresh_count == 2
+    prior_owner_age = dict(system.responsibility_state.owner_age_by_question)
+    system.ensure_responsibility_current()
+    assert len(system.responsibility_assignments) == 2
+    assert system.responsibility_state.owner_age_by_question == prior_owner_age
     responsibility_audit = system.responsibility_assignments[-1]
     assert "assigned_opportunities" in responsibility_audit
     assert "member_gain_counts" in responsibility_audit
@@ -143,6 +154,86 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert all(row["schema_valid"] for row in system.tcs_rounds)
     assert system.tcs_rounds[1]["effective_approved"] is True
     assert system.tcs_rounds[2]["raw_count"] == 1
+
+
+def test_responsibility_refresh_failure_rolls_back_complete_commit_state(tmp_path):
+    cfg = Config.from_flat(
+        out_dir=str(tmp_path),
+        answer_format="option_letter",
+        num_candidates_per_parent=1,
+        stage_a_channel_top_k=1,
+        stage_b_candidate_budget=2,
+    )
+    system = PromptEnsembleOptimizationSystem(
+        cfg, solver=fake_solver, optimizer_chat=fake_optimizer
+    )
+    captured = {}
+
+    async def run():
+        data = [{"question": question, "answer": gold} for question, gold in QUESTIONS.items()]
+        await system.initialize_fixed_probe(data)
+        system.ensure_responsibility_current()
+        original_refresh = system.refresh_responsibility_after_commit
+
+        def failing_refresh():
+            captured["responsibility_state"] = deepcopy(system.responsibility_state)
+            target = system.candidate_decisions[-1]["target_agent_id"]
+            captured["responsibility_state"].accepted_updates_by_agent[target] -= 1
+            captured["cached_owners"] = deepcopy(system.cached_responsibility_owners)
+            captured["cached_assignments"] = deepcopy(
+                system.cached_responsibility_assignments
+            )
+            captured["cached_opportunities"] = deepcopy(
+                system.cached_member_opportunities
+            )
+            captured["team_state_version"] = system.team_state_version
+            captured["responsibility_state_version"] = (
+                system.responsibility_state_version
+            )
+            captured["refresh_count"] = system.responsibility_refresh_count
+            captured["peer_history_length"] = len(system.peer_state_history)
+            captured["responsibility_history_length"] = len(
+                system.responsibility_assignments
+            )
+            captured["target_audit_length"] = len(system.target_priority_audit)
+            original_refresh()
+            raise RuntimeError("synthetic responsibility refresh failure")
+
+        system.refresh_responsibility_after_commit = failing_refresh
+        old_prompts = [agent.current_prompt for agent in system.agents]
+        old_previous_prompts = [
+            agent.previous_active_prompt for agent in system.agents
+        ]
+        old_profiles = deepcopy(system.active_profiles)
+        with pytest.raises(
+            RuntimeError, match="synthetic responsibility refresh failure"
+        ):
+            await system.update_once(0)
+        return old_prompts, old_previous_prompts, old_profiles
+
+    old_prompts, old_previous_prompts, old_profiles = asyncio.run(run())
+    assert [agent.current_prompt for agent in system.agents] == old_prompts
+    assert [agent.previous_active_prompt for agent in system.agents] == old_previous_prompts
+    assert system.active_profiles == old_profiles
+    assert system.responsibility_state == captured["responsibility_state"]
+    assert system.cached_responsibility_owners == captured["cached_owners"]
+    assert (
+        system.cached_responsibility_assignments
+        == captured["cached_assignments"]
+    )
+    assert system.cached_member_opportunities == captured["cached_opportunities"]
+    assert system.team_state_version == captured["team_state_version"]
+    assert (
+        system.responsibility_state_version
+        == captured["responsibility_state_version"]
+    )
+    assert system.responsibility_refresh_count == captured["refresh_count"]
+    assert len(system.peer_state_history) == captured["peer_history_length"]
+    assert (
+        len(system.responsibility_assignments)
+        == captured["responsibility_history_length"]
+    )
+    assert len(system.target_priority_audit) == captured["target_audit_length"]
 
 
 def test_b3_also_refreshes_responsibilities_online(tmp_path):

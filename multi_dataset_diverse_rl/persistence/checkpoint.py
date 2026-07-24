@@ -47,7 +47,10 @@ def build_checkpoint(
         "previous_active_prompts": [agent.previous_active_prompt for agent in system.agents],
         "active_profiles": [[asdict(row) for row in profile] for profile in system.active_profiles],
         "initial_profiles": [[asdict(row) for row in profile] for profile in system.initial_profiles],
-        "member_gain_state": system.current_member_gain_state(),
+        "member_gain_state": system.current_team_member_gain_state(),
+        "team_state_version": system.team_state_version,
+        "responsibility_state_version": system.responsibility_state_version,
+        "responsibility_refresh_count": system.responsibility_refresh_count,
         "responsibility_state": asdict(system.responsibility_state),
         "cached_responsibility_owners": dict(system.cached_responsibility_owners),
         "cached_responsibility_assignments": {
@@ -100,6 +103,9 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "cached_member_opportunities",
         "target_priority_audit",
         "responsibility_state",
+        "team_state_version",
+        "responsibility_state_version",
+        "responsibility_refresh_count",
     }
     if not required_member_state <= set(payload):
         raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
@@ -131,7 +137,7 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         payload["member_gain_state"],
         sort_keys=True,
     ) != json.dumps(
-        system.current_member_gain_state(),
+        system.current_team_member_gain_state(),
         sort_keys=True,
     ):
         raise ValueError("Checkpoint member gain state does not match restored profiles")
@@ -152,6 +158,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         str(key): int(value) for key, value in raw_state["owner_age_by_question"].items()
     }
     system.responsibility_state = ResponsibilityState(**raw_state)
+    system.team_state_version = int(payload["team_state_version"])
+    system.responsibility_state_version = int(payload["responsibility_state_version"])
+    system.responsibility_refresh_count = int(payload["responsibility_refresh_count"])
     system.cached_responsibility_owners = {
         str(key): int(value) for key, value in payload["cached_responsibility_owners"].items()
     }

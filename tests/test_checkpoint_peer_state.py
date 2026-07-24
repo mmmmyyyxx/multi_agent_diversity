@@ -56,7 +56,10 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     source.target_priority_audit = [{"update_index": 0, "priorities": [{"agent_id": 3}]}]
     payload = build_checkpoint(source, epoch_index=1, update_index=2, best_state={"epoch": 0})
     assert "shared_solver_cache_audit" in payload
-    assert payload["member_gain_state"] == source.current_member_gain_state()
+    assert payload["member_gain_state"] == source.current_team_member_gain_state()
+    assert payload["team_state_version"] == source.team_state_version
+    assert payload["responsibility_state_version"] == source.responsibility_state_version
+    assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
     assert "cached_member_opportunities" in payload
     assert payload["shared_solver_cache_audit"]["ready_entries"] == 1
     target = build_system(tmp_path / "target")
@@ -67,6 +70,9 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert target.responsibility_state.accepted_updates_by_agent[3] == 2
     assert target.responsibility_state.seeded_rank_by_agent[3] == "seeded-rank"
     assert target.target_priority_audit == source.target_priority_audit
+    assert target.team_state_version == source.team_state_version
+    assert target.responsibility_state_version == source.responsibility_state_version
+    assert target.responsibility_refresh_count == source.responsibility_refresh_count
     assert target.fixed_probe.to_dict() == source.fixed_probe.to_dict()
 
 
