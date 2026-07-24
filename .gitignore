@@ -6,3 +6,4 @@ runs_*/
 artifacts/
 training_checkpoint.json
 *.sqlite
+gate1_contract_smoke_*/
