@@ -46,9 +46,12 @@ def member_responsibility_case(question_hash="q", owner_age=2, gain=0.4):
         case_role="assigned_coverage",
         repair_goal="introduce_first_gold_vote",
         responsibility_reason="assigned residual owner",
-        member_correct_count=4,
-        team_correct_count_sum=30,
+        initial_correct_count=5,
+        current_correct_count=4,
+        gain_count=-1,
         improvement_need=10,
+        unique_correct_count=0,
+        pivotal_correct_count=0,
         owner_age=owner_age,
     )
 
@@ -113,9 +116,12 @@ def peer_context():
         key: value for key, value in row.__dict__.items()
         if key not in {
             "responsibility_reason",
-            "member_correct_count",
-            "team_correct_count_sum",
+            "initial_correct_count",
+            "current_correct_count",
+            "gain_count",
             "improvement_need",
+            "unique_correct_count",
+            "pivotal_correct_count",
             "owner_age",
         }
     })

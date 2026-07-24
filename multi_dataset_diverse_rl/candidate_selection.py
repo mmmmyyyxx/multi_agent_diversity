@@ -6,6 +6,7 @@ from typing import Sequence
 from .member_objectives import (
     MemberGainMetrics,
     pareto_dominates,
+    pareto_front,
     team_objective_vector,
 )
 from .responsibility import CandidateMarginalContribution, ProtectionContribution
@@ -79,21 +80,35 @@ class ConstraintDecision:
 
 
 def stage_a_scores(candidate: CandidateEvaluation) -> StageAScores:
+    incumbent_gains = tuple(
+        current - initial
+        for current, initial in zip(
+            candidate.member_gain.incumbent_correct_counts,
+            candidate.member_gain.initial_correct_counts,
+            strict=True,
+        )
+    )
     return StageAScores(
         team_vote_key=(
             candidate.team_outcome.vote_correct_count,
+            candidate.marginal.net_vote_delta,
             -candidate.marginal.vote_loss_count,
-            candidate.marginal.soft_utility_delta,
+            candidate.team_outcome.mean_soft_vote_utility,
+            candidate.marginal.assigned_residual_repair_count,
         ),
         worst_member_key=(
-            candidate.member_gain.minimum_gain,
-            candidate.member_gain.improved_member_count,
-            -candidate.member_gain.regressed_member_count,
+            candidate.member_gain.minimum_gain_count,
+            candidate.member_gain.minimum_gain_count - min(incumbent_gains),
+            candidate.member_gain.improved_agent_count,
+            candidate.member_gain.target_gain_vs_incumbent,
+            -candidate.competence.invalid_count,
         ),
         mean_member_key=(
-            candidate.member_gain.total_gain,
-            candidate.member_gain.improved_member_count,
-            -candidate.protection.unique_correct_loss_count,
+            candidate.member_gain.total_gain_count,
+            candidate.member_gain.target_gain_vs_incumbent,
+            candidate.member_gain.improved_agent_count,
+            candidate.marginal.assigned_residual_repair_count,
+            -candidate.competence.invalid_count,
         ),
     )
 
@@ -246,10 +261,10 @@ def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple
 
 def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
     return (
-        candidate.member_gain.minimum_gain,
+        candidate.member_gain.minimum_gain_count,
         candidate.team_outcome.vote_correct_count,
-        candidate.member_gain.total_gain,
-        candidate.member_gain.improved_member_count,
+        candidate.member_gain.total_gain_count,
+        candidate.member_gain.improved_agent_count,
         -candidate.marginal.vote_loss_count,
         candidate.team_outcome.mean_soft_vote_utility,
         candidate.marginal.assigned_residual_repair_count,
@@ -258,6 +273,19 @@ def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tup
         -int(generation),
         candidate.prompt_hash,
     )
+
+
+def member_aware_pareto_front(
+    candidates: Sequence[CandidateEvaluation],
+) -> tuple[str, ...]:
+    vectors = tuple(
+        team_objective_vector(
+            candidate.team_outcome.vote_correct_count,
+            candidate.member_gain,
+        )
+        for candidate in candidates
+    )
+    return tuple(candidates[index].prompt_hash for index in pareto_front(vectors))
 
 
 def individual_accuracy_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:

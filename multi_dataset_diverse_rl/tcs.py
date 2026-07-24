@@ -47,9 +47,12 @@ class PeerStateCase:
 @dataclass(frozen=True)
 class MemberAwareResponsibilityCase(PeerStateCase):
     responsibility_reason: str
-    member_correct_count: int
-    team_correct_count_sum: int
+    initial_correct_count: int
+    current_correct_count: int
+    gain_count: int
     improvement_need: int
+    unique_correct_count: int
+    pivotal_correct_count: int
     owner_age: int = 0
 
 

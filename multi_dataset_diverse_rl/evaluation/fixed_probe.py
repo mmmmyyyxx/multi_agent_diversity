@@ -137,8 +137,47 @@ def evaluate_candidate_profile(
     gold_counts: list[int] = []
     wrong_counts: list[int] = []
     margins: list[int] = []
-    candidate_member_counts = [0] * 5
-    initial_member_counts = [0] * 5
+    initial_member_counts = [
+        sum(
+            int(
+                profile[row_index].valid
+                and match_answer(profile[row_index].answer, row.gold_answer)
+            )
+            for row_index, row in enumerate(examples)
+        )
+        for profile in initial_profiles
+    ]
+    incumbent_member_counts = [
+        sum(
+            int(
+                profile[row_index].valid
+                and match_answer(profile[row_index].answer, row.gold_answer)
+            )
+            for row_index, row in enumerate(examples)
+        )
+        for profile in active_profiles
+    ]
+    candidate_member_counts = list(incumbent_member_counts)
+    candidate_member_counts[target_agent_id] = sum(
+        int(
+            answer.valid
+            and match_answer(answer.answer, example.gold_answer)
+        )
+        for answer, example in zip(candidate_profile, examples, strict=True)
+    )
+    active_gains = [
+        current_count - initial_count
+        for current_count, initial_count in zip(
+            incumbent_member_counts, initial_member_counts, strict=True
+        )
+    ]
+    candidate_gains = [
+        current_count - initial_count
+        for current_count, initial_count in zip(
+            candidate_member_counts, initial_member_counts, strict=True
+        )
+    ]
+    zero_protection_counts = (0,) * 5
 
     for index, example in enumerate(examples):
         active_answers = [profile[index].answer for profile in active_profiles]
@@ -167,41 +206,24 @@ def evaluate_candidate_profile(
             tie_break=tie_break,
             seed=seed,
         )
-        member_counts = [
-            sum(
-                int(profile[row_index].valid and match_answer(profile[row_index].answer, row.gold_answer))
-                for row_index, row in enumerate(examples)
-            )
-            for profile in active_profiles
-        ]
-        initial_counts_for_opportunity = [
-            sum(
-                int(
-                    profile[row_index].valid
-                    and match_answer(profile[row_index].answer, row.gold_answer)
-                )
-                for row_index, row in enumerate(examples)
-            )
-            for profile in initial_profiles
-        ]
-        active_gains = [
-            current_count - initial_count
-            for current_count, initial_count in zip(
-                member_counts, initial_counts_for_opportunity, strict=True
-            )
-        ]
         current_opportunity = compute_member_aware_repair_opportunity(
             team_state=current,
             peer_context=build_peer_vote_context(current, target_agent_id),
-            member_correct_counts=member_counts,
+            initial_correct_counts=initial_member_counts,
+            member_correct_counts=incumbent_member_counts,
             member_gains_from_initial=active_gains,
+            unique_correct_counts=zero_protection_counts,
+            pivotal_correct_counts=zero_protection_counts,
             tau=tau,
         )
         candidate_opportunity = compute_member_aware_repair_opportunity(
             team_state=candidate,
             peer_context=build_peer_vote_context(candidate, target_agent_id),
-            member_correct_counts=member_counts,
-            member_gains_from_initial=active_gains,
+            initial_correct_counts=initial_member_counts,
+            member_correct_counts=candidate_member_counts,
+            member_gains_from_initial=candidate_gains,
+            unique_correct_counts=zero_protection_counts,
+            pivotal_correct_counts=zero_protection_counts,
             tau=tau,
         )
         candidate_correct = candidate.team_correctness[target_agent_id]
@@ -233,16 +255,14 @@ def evaluate_candidate_profile(
         gold_counts.append(candidate.gold_vote_count)
         wrong_counts.append(candidate.largest_wrong_vote_count)
         margins.append(candidate.plurality_margin)
-        for agent_id in range(5):
-            initial_answer = initial_profiles[agent_id][index]
-            initial_member_counts[agent_id] += int(
-                initial_answer.valid and match_answer(initial_answer.answer, example.gold_answer)
-            )
-            candidate_member_counts[agent_id] += int(candidate.team_correctness[agent_id])
-
     size = len(examples)
     denominator = max(1, size)
-    gains = member_gain_metrics(initial_member_counts, candidate_member_counts)
+    gains = member_gain_metrics(
+        initial_member_counts,
+        incumbent_member_counts,
+        candidate_member_counts,
+        target_agent_id,
+    )
     return CandidateEvaluation(
         prompt=str(prompt),
         prompt_hash=str(prompt_hash),

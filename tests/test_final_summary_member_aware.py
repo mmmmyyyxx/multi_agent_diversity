@@ -30,6 +30,13 @@ def test_final_payload_keeps_initial_selected_and_member_gain():
     assert set(payload) == {
         "initial_test", "selected_test", "member_gain", "selection_summary"
     }
-    assert payload["member_gain"]["minimum_member_gain"] == 0
-    assert payload["member_gain"]["vote_correct_count_gain"] == 2
-    assert payload["member_gain"]["regressed_member_count"] == 0
+    assert payload["member_gain"] == {
+        "gain_counts": (1, 2, 0, 3, 1),
+        "minimum_gain_count": 0,
+        "total_gain_count": 7,
+        "mean_gain": 1.4,
+        "improved_agent_count": 4,
+        "regressed_agent_count": 0,
+        "all_members_non_regressed": True,
+        "all_members_improved": False,
+    }

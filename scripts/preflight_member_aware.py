@@ -46,6 +46,20 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
             errors.append("all canonical settings must use tie-as-abstain")
+        if cfg.responsibility.responsibility_max_wait_updates <= 0:
+            errors.append("responsibility_max_wait_updates must be positive")
+        if cfg.responsibility.responsibility_switch_margin < 0:
+            errors.append("responsibility_switch_margin cannot be negative")
+        if cfg.evaluation.candidate_eval_pool_size <= 0:
+            errors.append("fixed probe must contain at least one example")
+        if not (
+            0
+            < cfg.evaluation.stage_b_candidate_budget
+            <= cfg.tcs.num_candidates_per_parent
+        ):
+            errors.append(
+                "stage_b_candidate_budget must be within generated candidate count"
+            )
     budget = CandidateBudgetContract(2, 2, 2, 12, 6, 6, 4)
     protocols = {
         name: experiment_protocol(
@@ -183,6 +197,12 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("num_candidates_per_parent must be positive")
                     if not 0 < cfg.evaluation.stage_b_candidate_budget <= cfg.tcs.num_candidates_per_parent:
                         raise ValueError("stage_b_candidate_budget must be within generated candidate count")
+                    if cfg.responsibility.responsibility_max_wait_updates <= 0:
+                        raise ValueError("responsibility_max_wait_updates must be positive")
+                    if cfg.responsibility.responsibility_switch_margin < 0:
+                        raise ValueError("responsibility_switch_margin cannot be negative")
+                    if cfg.evaluation.candidate_eval_pool_size <= 0:
+                        raise ValueError("fixed probe must contain at least one example")
                     if min(
                         cfg.tcs.tcs_assigned_coverage_limit,
                         cfg.tcs.tcs_assigned_conversion_limit,
@@ -192,8 +212,8 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         cfg.tcs.tcs_context_max_chars,
                     ) <= 0:
                         raise ValueError("all TCS context limits must be positive")
-                    if cfg.persistence.max_total_llm_calls <= 0 or cfg.persistence.max_total_tokens <= 0:
-                        raise ValueError("run-specific preflight requires positive LLM call and token budgets")
+                    if cfg.persistence.max_total_llm_calls < 0 or cfg.persistence.max_total_tokens < 0:
+                        raise ValueError("LLM call and token budgets cannot be negative")
                     cache_path = Path(cfg.persistence.shared_solver_cache_path)
                     if not cache_path.is_absolute():
                         raise ValueError("shared_solver_cache_path must resolve to an absolute path")

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field
-from typing import Mapping, Sequence
+from dataclasses import dataclass, field, replace
+from typing import Any, Mapping, Sequence
 
 from .peer_state import PeerVoteContext, TeamVoteState, soft_vote_utility
 
@@ -19,9 +19,14 @@ class MemberAwareRepairOpportunity:
     dominant_wrong_member: bool
     unique_correct: bool
     pivotal_correct: bool
-    member_correct_count: int
-    team_correct_count_sum: int
+
+    initial_correct_count: int
+    current_correct_count: int
+    gain_count: int
     improvement_need: int
+    unique_correct_count: int
+    pivotal_correct_count: int
+
     member_error: bool
     protection_need_count: int
 
@@ -49,22 +54,36 @@ class ProtectionContribution:
 @dataclass(frozen=True)
 class AgentTargetPriority:
     agent_id: int
-    overdue: bool
-    improvement_need: int
-    member_error_count: int
-    assigned_count: int
+    individual_error_count: int
+    assigned_load: int
+
     direct_vote_fix_count: int
-    protection_need_count: int
+    oracle_soft_utility_gain_sum: float
+    coverage_opportunity_count: int
+    dominant_wrong_count: int
+
+    gain_count: int
+    improvement_need: int
+    unique_correct_count: int
+    pivotal_correct_count: int
+
     updates_since_selected: int
+    overdue: bool
+    pareto_front: int
     seeded_rank: str
 
-    def pareto_values(self) -> tuple[int, ...]:
+    def pareto_values(self) -> tuple[float, ...]:
         return (
-            self.improvement_need,
-            self.member_error_count,
-            self.assigned_count,
-            self.direct_vote_fix_count,
+            float(self.direct_vote_fix_count),
+            float(self.oracle_soft_utility_gain_sum),
+            float(self.improvement_need),
+            float(self.coverage_opportunity_count),
+            float(self.dominant_wrong_count),
         )
+
+    @property
+    def protection_risk(self) -> int:
+        return self.unique_correct_count + self.pivotal_correct_count
 
 
 @dataclass
@@ -81,26 +100,40 @@ def compute_member_aware_repair_opportunity(
     *,
     team_state: TeamVoteState,
     peer_context: PeerVoteContext,
+    initial_correct_counts: Sequence[int],
     member_correct_counts: Sequence[int],
     member_gains_from_initial: Sequence[int],
+    unique_correct_counts: Sequence[int] | None = None,
+    pivotal_correct_counts: Sequence[int] | None = None,
     tau: float = 1.0,
 ) -> MemberAwareRepairOpportunity:
     target = peer_context.target_agent_id
     if peer_context.question_hash != team_state.question_hash:
         raise ValueError("team and peer context question hashes differ")
-    if len(member_correct_counts) != len(team_state.team_correctness):
+    member_count = len(team_state.team_correctness)
+    if len(initial_correct_counts) != member_count:
+        raise ValueError("initial member count vector does not match team size")
+    if len(member_correct_counts) != member_count:
         raise ValueError("member count vector does not match team size")
     if len(member_gains_from_initial) != len(member_correct_counts):
         raise ValueError("member gain vector does not match member count vector")
+    if unique_correct_counts is None:
+        unique_correct_counts = (0,) * member_count
+    if pivotal_correct_counts is None:
+        pivotal_correct_counts = (0,) * member_count
+    if (
+        len(unique_correct_counts) != member_count
+        or len(pivotal_correct_counts) != member_count
+    ):
+        raise ValueError("member protection count vector does not match team size")
     current_correct = bool(team_state.team_correctness[target])
     current_invalid = not bool(team_state.team_validity[target])
     fixed_gold = peer_context.peer_gold_vote_count + 1
     fixed_margin = fixed_gold - peer_context.peer_largest_wrong_vote_count
     target_answer = team_state.team_answers[target]
-    total = sum(int(value) for value in member_correct_counts)
     total_gain = sum(int(value) for value in member_gains_from_initial)
     member_gain = int(member_gains_from_initial[target])
-    member_count = int(member_correct_counts[target])
+    current_count = int(member_correct_counts[target])
     member_count_n = len(member_correct_counts)
     return MemberAwareRepairOpportunity(
         agent_id=target,
@@ -122,12 +155,15 @@ def compute_member_aware_repair_opportunity(
         pivotal_correct=bool(
             current_correct and team_state.vote_correct and peer_context.peer_margin <= 0
         ),
-        member_correct_count=member_count,
-        team_correct_count_sum=total,
+        initial_correct_count=int(initial_correct_counts[target]),
+        current_correct_count=current_count,
+        gain_count=member_gain,
         improvement_need=max(0, total_gain - member_count_n * member_gain),
+        unique_correct_count=int(unique_correct_counts[target]),
+        pivotal_correct_count=int(pivotal_correct_counts[target]),
         member_error=not current_correct,
-        protection_need_count=int(current_correct) + int(
-            current_correct and team_state.vote_correct and peer_context.peer_margin <= 0
+        protection_need_count=(
+            int(unique_correct_counts[target]) + int(pivotal_correct_counts[target])
         ),
     )
 
@@ -136,10 +172,36 @@ def _seeded_hash(seed: int, question_hash: str, agent_id: int) -> str:
     return hashlib.sha256(f"{seed}:{question_hash}:{agent_id}".encode("utf-8")).hexdigest()
 
 
-def _dominates(left: Sequence[int], right: Sequence[int]) -> bool:
+def _dominates(left: Sequence[float], right: Sequence[float]) -> bool:
     return all(a >= b for a, b in zip(left, right, strict=True)) and any(
         a > b for a, b in zip(left, right, strict=True)
     )
+
+
+def _pareto_front_numbers(
+    identifiers: Sequence[int],
+    values: Mapping[int, Sequence[float]],
+) -> dict[int, int]:
+    remaining = set(int(identifier) for identifier in identifiers)
+    fronts: dict[int, int] = {}
+    front_number = 1
+    while remaining:
+        current = [
+            identifier
+            for identifier in sorted(remaining)
+            if not any(
+                other != identifier
+                and _dominates(values[other], values[identifier])
+                for other in remaining
+            )
+        ]
+        if not current:
+            raise AssertionError("Pareto front construction made no progress")
+        for identifier in current:
+            fronts[identifier] = front_number
+            remaining.remove(identifier)
+        front_number += 1
+    return fronts
 
 
 def assign_primary_responsibilities(
@@ -148,7 +210,12 @@ def assign_primary_responsibilities(
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     state: ResponsibilityState,
     seed: int,
-) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+    responsibility_switch_margin: float,
+) -> tuple[
+    dict[str, int],
+    dict[int, list[MemberAwareRepairOpportunity]],
+    dict[str, dict[str, Any]],
+]:
     agent_ids = sorted(state.updates_since_selected_by_agent)
     if not agent_ids:
         raise ValueError("responsibility state has no agents")
@@ -157,8 +224,11 @@ def assign_primary_responsibilities(
     owners: dict[str, int] = {}
     assigned = {agent_id: [] for agent_id in agent_ids}
     loads = {agent_id: 0 for agent_id in agent_ids}
+    audits: dict[str, dict[str, Any]] = {}
 
     for question_hash in sorted(team_states):
+        if team_states[question_hash].vote_correct:
+            continue
         eligible = [
             row for row in opportunities.get(question_hash, ())
             if row.member_error
@@ -167,38 +237,71 @@ def assign_primary_responsibilities(
             continue
         values = {
             row.agent_id: (
-                int(row.direct_vote_fix),
-                row.improvement_need,
-                int(row.coverage_opportunity),
-                int(row.dominant_wrong_member),
+                float(int(row.direct_vote_fix)),
+                float(row.oracle_soft_utility_gain),
+                float(row.improvement_need),
+                float(int(row.coverage_opportunity)),
+                float(int(row.dominant_wrong_member)),
             )
             for row in eligible
         }
+        front_numbers = _pareto_front_numbers(
+            [row.agent_id for row in eligible],
+            values,
+        )
         frontier = [
             row for row in eligible
-            if not any(
-                other.agent_id != row.agent_id
-                and _dominates(values[other.agent_id], values[row.agent_id])
-                for other in eligible
-            )
+            if front_numbers[row.agent_id] == 1
         ]
+        preferred = min(
+            frontier,
+            key=lambda row: (
+                -row.improvement_need,
+                -int(row.direct_vote_fix),
+                -row.oracle_soft_utility_gain,
+                -int(row.coverage_opportunity),
+                -int(row.dominant_wrong_member),
+                loads[row.agent_id],
+                -state.updates_since_selected_by_agent[row.agent_id],
+                _seeded_hash(seed, question_hash, row.agent_id),
+            ),
+        )
         previous_id = old_owners.get(question_hash)
         previous = next((row for row in frontier if row.agent_id == previous_id), None)
-        if previous is not None:
-            owner = previous
-        else:
-            owner = min(
-                frontier,
-                key=lambda row: (
-                    loads[row.agent_id],
-                    -state.updates_since_selected_by_agent[row.agent_id],
-                    state.accepted_updates_by_agent.get(row.agent_id, 0),
-                    _seeded_hash(seed, question_hash, row.agent_id),
-                ),
+        inertia_allowed = bool(
+            previous is not None
+            and preferred.improvement_need <= previous.improvement_need
+            and int(preferred.direct_vote_fix) <= int(previous.direct_vote_fix)
+            and (
+                preferred.oracle_soft_utility_gain
+                - previous.oracle_soft_utility_gain
+                <= float(responsibility_switch_margin)
             )
+        )
+        if inertia_allowed:
+            owner = previous
+            chosen_reason = "previous_owner_inertia_within_member_and_soft_margin"
+        else:
+            owner = preferred
+            chosen_reason = "member_aware_pareto_preference"
         owners[question_hash] = owner.agent_id
         assigned[owner.agent_id].append(owner)
         loads[owner.agent_id] += 1
+        audits[question_hash] = {
+            "vote_correct": False,
+            "eligible_agent_ids": [row.agent_id for row in eligible],
+            "candidate_pareto_fronts": {
+                str(agent_id): front_numbers[agent_id]
+                for agent_id in sorted(front_numbers)
+            },
+            "candidate_vectors": {
+                str(agent_id): list(values[agent_id])
+                for agent_id in sorted(values)
+            },
+            "previous_owner": previous_id,
+            "chosen_owner": owner.agent_id,
+            "chosen_reason": chosen_reason,
+        }
 
     state.primary_owner_by_question = dict(owners)
     state.owner_age_by_question = {
@@ -207,7 +310,7 @@ def assign_primary_responsibilities(
         for question_hash, owner in owners.items()
     }
     state.assigned_load_by_agent = loads
-    return owners, assigned
+    return owners, assigned, audits
 
 
 def target_priorities(
@@ -227,23 +330,48 @@ def target_priorities(
     priorities = []
     for agent_id, rows in sorted(rows_by_agent.items()):
         errors = [row for row in rows if row.member_error]
-        if not errors:
-            continue
         seeded_rank = state.seeded_rank_by_agent.setdefault(
             agent_id, _seeded_hash(seed, "target", agent_id)
         )
+        reference = rows[0] if rows else None
         priorities.append(AgentTargetPriority(
             agent_id=agent_id,
-            overdue=state.updates_since_selected_by_agent[agent_id] >= max_wait_updates,
-            improvement_need=max((row.improvement_need for row in errors), default=0),
-            member_error_count=len(errors),
-            assigned_count=len(assignments.get(agent_id, ())),
+            individual_error_count=len(errors),
+            assigned_load=len(assignments.get(agent_id, ())),
             direct_vote_fix_count=sum(row.direct_vote_fix for row in errors),
-            protection_need_count=sum(row.protection_need_count for row in rows),
+            oracle_soft_utility_gain_sum=sum(
+                row.oracle_soft_utility_gain for row in errors
+            ),
+            coverage_opportunity_count=sum(
+                row.coverage_opportunity for row in errors
+            ),
+            dominant_wrong_count=sum(
+                row.dominant_wrong_member for row in errors
+            ),
+            gain_count=reference.gain_count if reference is not None else 0,
+            improvement_need=max((row.improvement_need for row in errors), default=0),
+            unique_correct_count=(
+                reference.unique_correct_count if reference is not None else 0
+            ),
+            pivotal_correct_count=(
+                reference.pivotal_correct_count if reference is not None else 0
+            ),
             updates_since_selected=state.updates_since_selected_by_agent[agent_id],
+            overdue=bool(
+                errors
+                and state.updates_since_selected_by_agent[agent_id]
+                >= max_wait_updates
+            ),
+            pareto_front=0,
             seeded_rank=seeded_rank,
         ))
-    return tuple(priorities)
+    eligible = [row for row in priorities if row.individual_error_count > 0]
+    values = {row.agent_id: row.pareto_values() for row in eligible}
+    fronts = _pareto_front_numbers([row.agent_id for row in eligible], values)
+    return tuple(
+        replace(row, pareto_front=fronts.get(row.agent_id, 0))
+        for row in priorities
+    )
 
 
 def select_target_agent(
@@ -251,21 +379,25 @@ def select_target_agent(
 ) -> int:
     if not priorities:
         raise ValueError("no erroneous agents are available for member-aware selection")
-    candidates = [row for row in priorities if row.overdue] or list(priorities)
-    frontier = [
-        row for row in candidates
-        if not any(
-            other.agent_id != row.agent_id
-            and _dominates(other.pareto_values(), row.pareto_values())
-            for other in candidates
-        )
-    ]
+    eligible = [row for row in priorities if row.individual_error_count > 0]
+    if not eligible:
+        raise ValueError("no erroneous agents are available for member-aware selection")
+    candidates = [row for row in eligible if row.overdue] or eligible
+    candidate_values = {row.agent_id: row.pareto_values() for row in candidates}
+    candidate_fronts = _pareto_front_numbers(
+        [row.agent_id for row in candidates],
+        candidate_values,
+    )
+    frontier = [row for row in candidates if candidate_fronts[row.agent_id] == 1]
     return min(
         frontier,
         key=lambda row: (
-            -row.updates_since_selected,
             -row.improvement_need,
-            -row.member_error_count,
+            -row.direct_vote_fix_count,
+            -row.oracle_soft_utility_gain_sum,
+            -row.assigned_load,
+            -row.updates_since_selected,
+            row.protection_risk,
             row.seeded_rank,
         ),
     ).agent_id

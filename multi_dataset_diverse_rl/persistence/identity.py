@@ -68,12 +68,14 @@ def config_fingerprint(cfg: Config) -> str:
         "evaluator": os.getenv(cfg.models.evaluator_base_url_env, "") if cfg.models.evaluator_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
     }
     values["behavior_versions"] = {
-        "member_objective": "integer_vote_min_sum_v1",
-        "responsibility": "member_need_pareto_seeded_v1",
-        "target_selection": "overdue_member_pareto_v1",
-        "stage_a": "team_vote_worst_mean_v1",
-        "stage_b": "competence_guard_member_pareto_v1",
+        "member_objective": "integer_vote_min_sum_v2",
+        "responsibility": "five_axis_member_need_pareto_v2",
+        "target_selection": "five_axis_overdue_member_pareto_v2",
+        "pareto_preference": "member_first_candidate_preference_v1",
+        "stage_a": "team_vote_worst_mean_v2",
+        "stage_b": "competence_guard_member_pareto_v2",
         "validation": "initial_member_feasible_v1",
+        "tcs_context": "member_aware_responsibility_context_v1",
         "checkpoint": 5,
     }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))

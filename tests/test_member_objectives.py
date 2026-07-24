@@ -6,33 +6,66 @@ from multi_dataset_diverse_rl.member_objectives import (
 )
 
 
-def test_member_gain_is_integer_count_based():
-    metrics = member_gain_metrics((4, 5, 6, 7, 8), (5, 5, 8, 6, 10))
-    assert metrics.gains == (1, 0, 2, -1, 2)
-    assert metrics.minimum_gain == -1
-    assert metrics.total_gain == 4
-    assert metrics.improved_member_count == 3
-    assert metrics.regressed_member_count == 1
-
-
-def test_pareto_requires_no_worse_dimension_and_one_strict_gain():
-    baseline = team_objective_vector(
-        10, member_gain_metrics((5,) * 5, (5,) * 5)
+def metrics(candidate, incumbent=(5, 5, 5, 5, 5), target=0):
+    return member_gain_metrics(
+        (5, 5, 5, 5, 5),
+        incumbent,
+        candidate,
+        target,
     )
-    vote_only_with_regression = team_objective_vector(
-        11, member_gain_metrics((5,) * 5, (4, 5, 5, 5, 7))
-    )
-    member_only = team_objective_vector(
-        10, member_gain_metrics((5,) * 5, (6, 6, 6, 6, 6))
-    )
-    assert not pareto_dominates(vote_only_with_regression, baseline)
-    assert pareto_dominates(member_only, baseline)
 
 
-def test_pareto_front_keeps_incomparable_vectors():
+def test_member_gain_reports_complete_integer_count_state():
+    result = member_gain_metrics(
+        (4, 5, 6, 7, 8),
+        (4, 6, 6, 7, 9),
+        (5, 5, 8, 6, 10),
+        1,
+    )
+    assert result.initial_correct_counts == (4, 5, 6, 7, 8)
+    assert result.incumbent_correct_counts == (4, 6, 6, 7, 9)
+    assert result.candidate_correct_counts == (5, 5, 8, 6, 10)
+    assert result.gain_counts == (1, 0, 2, -1, 2)
+    assert result.minimum_gain_count == -1
+    assert result.total_gain_count == 4
+    assert result.mean_gain == 0.8
+    assert result.improved_agent_count == 3
+    assert result.regressed_agent_count == 1
+    assert result.all_members_non_regressed is False
+    assert result.all_members_improved is False
+    assert result.target_gain_vs_initial == 0
+    assert result.target_gain_vs_incumbent == -1
+
+
+def test_zero_one_and_all_member_uplift_cases():
+    zero = metrics((5, 5, 5, 5, 5))
+    one = metrics((6, 5, 5, 5, 5))
+    all_up = metrics((6, 6, 6, 6, 6))
+    assert zero.gain_counts == (0, 0, 0, 0, 0)
+    assert one.total_gain_count == 1
+    assert one.improved_agent_count == 1
+    assert one.minimum_gain_count == 0
+    assert all_up.minimum_gain_count == 1
+    assert all_up.all_members_non_regressed is True
+    assert all_up.all_members_improved is True
+
+
+def test_pareto_equality_dominance_and_tradeoff():
+    baseline = team_objective_vector(10, metrics((5, 5, 5, 5, 5)))
+    vote_only = team_objective_vector(11, metrics((5, 5, 5, 5, 5)))
+    members_only = team_objective_vector(10, metrics((6, 6, 6, 6, 6)))
+    tradeoff = team_objective_vector(9, metrics((7, 7, 7, 7, 7)))
+    assert not pareto_dominates(baseline, baseline)
+    assert pareto_dominates(vote_only, baseline)
+    assert pareto_dominates(members_only, baseline)
+    assert not pareto_dominates(tradeoff, vote_only)
+    assert not pareto_dominates(vote_only, tradeoff)
+
+
+def test_pareto_front_keeps_only_nondominated_vectors():
     vectors = (
-        team_objective_vector(11, member_gain_metrics((5,) * 5, (5,) * 5)),
-        team_objective_vector(10, member_gain_metrics((5,) * 5, (6,) * 5)),
-        team_objective_vector(9, member_gain_metrics((5,) * 5, (4,) * 5)),
+        team_objective_vector(11, metrics((5, 5, 5, 5, 5))),
+        team_objective_vector(10, metrics((6, 6, 6, 6, 6))),
+        team_objective_vector(9, metrics((4, 4, 4, 4, 4))),
     )
     assert pareto_front(vectors) == (0, 1)

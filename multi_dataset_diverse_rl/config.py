@@ -80,6 +80,7 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
+    responsibility_switch_margin: float = 0.05
     responsibility_max_wait_updates: int = 4
 
 

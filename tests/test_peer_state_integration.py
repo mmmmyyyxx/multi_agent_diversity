@@ -102,8 +102,36 @@ def test_full_fake_chain_accepts_and_refreshes_online(tmp_path):
     assert system.agents[target_agent_id].current_prompt == "repair-q0"
     assert after[0].gold_vote_count == 1
     assert len(system.responsibility_assignments) == 2
-    assert "assigned_opportunities" in system.responsibility_assignments[-1]
-    assert system.candidate_decisions[-1]["funnel"]["accepted_candidate"] is True
+    responsibility_audit = system.responsibility_assignments[-1]
+    assert "assigned_opportunities" in responsibility_audit
+    assert "member_gain_counts" in responsibility_audit
+    assert "improvement_need_by_agent" in responsibility_audit
+    assert "owner_candidate_pareto_fronts" in responsibility_audit
+    assert "owner_chosen_reasons" in responsibility_audit
+    decision = system.candidate_decisions[-1]
+    assert decision["funnel"]["accepted_candidate"] is True
+    assert len(decision["agent_target_priorities"]) == 5
+    assert sum(row["selected"] for row in decision["agent_target_priorities"]) == 1
+    assert all(
+        {
+            "individual_error_count",
+            "assigned_load",
+            "direct_vote_fix_count",
+            "oracle_soft_utility_gain_sum",
+            "coverage_opportunity_count",
+            "dominant_wrong_count",
+            "gain_count",
+            "improvement_need",
+            "unique_correct_count",
+            "pivotal_correct_count",
+            "updates_since_selected",
+            "overdue",
+            "pareto_front",
+            "selected",
+        }
+        <= set(row)
+        for row in decision["agent_target_priorities"]
+    )
     assert (
         system.tcs_context_history[-1]["context_type"]
         == "MemberAwareResponsibilityProposalContext"

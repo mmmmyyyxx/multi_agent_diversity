@@ -47,6 +47,7 @@ def build_checkpoint(
         "previous_active_prompts": [agent.previous_active_prompt for agent in system.agents],
         "active_profiles": [[asdict(row) for row in profile] for profile in system.active_profiles],
         "initial_profiles": [[asdict(row) for row in profile] for profile in system.initial_profiles],
+        "member_gain_state": system.current_member_gain_state(),
         "responsibility_state": asdict(system.responsibility_state),
         "cached_responsibility_owners": dict(system.cached_responsibility_owners),
         "cached_responsibility_assignments": {
@@ -94,6 +95,14 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
         raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
+    required_member_state = {
+        "member_gain_state",
+        "cached_member_opportunities",
+        "target_priority_audit",
+        "responsibility_state",
+    }
+    if not required_member_state <= set(payload):
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v1")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -118,6 +127,14 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.initial_profiles = [
         tuple(PromptAnswer(**row) for row in profile) for profile in payload["initial_profiles"]
     ]
+    if json.dumps(
+        payload["member_gain_state"],
+        sort_keys=True,
+    ) != json.dumps(
+        system.current_member_gain_state(),
+        sort_keys=True,
+    ):
+        raise ValueError("Checkpoint member gain state does not match restored profiles")
     raw_state = dict(payload["responsibility_state"])
     for field in (
         "assigned_load_by_agent",

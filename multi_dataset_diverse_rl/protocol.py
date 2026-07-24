@@ -68,7 +68,7 @@ def experiment_protocol(
             target_selection_policy="round_robin",
             sample_pool_policy="global_peer_state",
             tcs_context_policy="generic_peer_state",
-            candidate_selection_policy="competence_constrained_vote_first",
+            candidate_selection_policy="vote_first",
             responsibility_refresh_policy="off",
         ),
         "shared_peer_state_member_pareto": dict(

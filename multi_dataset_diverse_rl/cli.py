@@ -204,16 +204,14 @@ def _member_gain_summary(
         )
     )
     return {
-        "per_agent_correct_count_gain": gains,
-        "minimum_member_gain": min(gains),
-        "mean_member_gain": sum(gains) / len(gains),
-        "total_member_gain": sum(gains),
-        "improved_member_count": sum(value > 0 for value in gains),
-        "regressed_member_count": sum(value < 0 for value in gains),
+        "gain_counts": gains,
+        "minimum_gain_count": min(gains),
+        "total_gain_count": sum(gains),
+        "mean_gain": sum(gains) / len(gains),
+        "improved_agent_count": sum(value > 0 for value in gains),
+        "regressed_agent_count": sum(value < 0 for value in gains),
+        "all_members_non_regressed": all(value >= 0 for value in gains),
         "all_members_improved": all(value > 0 for value in gains),
-        "vote_correct_count_gain": (
-            selected.vote_correct_count - initial.vote_correct_count
-        ),
     }
 
 

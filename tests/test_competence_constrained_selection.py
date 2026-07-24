@@ -7,6 +7,7 @@ from multi_dataset_diverse_rl.candidate_selection import (
     TeamOutcomeMetrics,
     candidate_is_acceptable,
     evaluate_constraints,
+    member_aware_pareto_front,
     member_first_key,
 )
 from multi_dataset_diverse_rl.member_objectives import member_gain_metrics
@@ -26,14 +27,20 @@ def item(
     vote_loss=0,
     unique_loss=0,
     pivotal_loss=0,
+    soft_utility=0.0,
 ):
-    gains = member_gain_metrics((10, 10, 10, 10, 10), member_counts)
+    gains = member_gain_metrics(
+        (10, 10, 10, 10, 10),
+        (10, 10, 10, 10, 10),
+        member_counts,
+        0,
+    )
     return CandidateEvaluation(
         prompt=name,
         prompt_hash=name,
         competence=PromptCompetenceMetrics(correct, correct / 10, invalid, invalid / 10),
         team_outcome=TeamOutcomeMetrics(
-            (), vote_count, vote_count / 10, (), (), (), 0.0
+            (), vote_count, vote_count / 10, (), (), (), soft_utility
         ),
         marginal=CandidateMarginalContribution(
             vote_gain_count=max(0, vote_count - 8),
@@ -80,6 +87,41 @@ def test_vote_neutral_worst_member_gain_is_acceptable():
     candidate = item("member-up", member_counts=(11, 11, 11, 11, 11))
     assert candidate_is_acceptable(candidate, active)
     assert member_first_key(candidate) > member_first_key(active)
+
+
+def test_vote_neutral_total_member_gain_is_acceptable():
+    active = item("active")
+    candidate = item("total-up", member_counts=(11, 10, 10, 10, 10))
+    assert candidate_is_acceptable(candidate, active)
+
+
+def test_member_gain_cannot_compensate_for_vote_count_loss():
+    active = item("active")
+    candidate = item(
+        "vote-down",
+        vote_count=7,
+        member_counts=(12, 12, 12, 12, 12),
+    )
+    assert not candidate_is_acceptable(candidate, active)
+
+
+def test_soft_utility_or_prompt_hash_alone_cannot_accept_candidate():
+    active = item("active")
+    soft_only = item("zz-soft", soft_utility=1.0)
+    hash_only = item("zz-hash")
+    assert not candidate_is_acceptable(soft_only, active)
+    assert not candidate_is_acceptable(hash_only, active)
+
+
+def test_internal_candidate_front_and_member_first_preference():
+    dominated = item("dominated", vote_count=9, member_counts=(11, 10, 10, 10, 10))
+    dominant = item("dominant", vote_count=9, member_counts=(12, 10, 10, 10, 10))
+    tradeoff = item("tradeoff", vote_count=8, member_counts=(11, 11, 11, 11, 11))
+    assert set(member_aware_pareto_front((dominated, dominant, tradeoff))) == {
+        "dominant",
+        "tradeoff",
+    }
+    assert member_first_key(tradeoff) > member_first_key(dominant)
 
 
 def test_typed_metrics_require_member_gain():

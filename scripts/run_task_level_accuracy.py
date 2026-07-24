@@ -194,16 +194,16 @@ def main() -> None:
                     metrics = _read_json(final_path)
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
-                    "initial_vote_acc": metrics["initial_test"]["plurality_vote_acc"],
-                    "selected_vote_acc": metrics["selected_test"]["plurality_vote_acc"],
-                    "vote_acc_gain": (
+                    "vote_acc_initial": metrics["initial_test"]["plurality_vote_acc"],
+                    "vote_acc_selected": metrics["selected_test"]["plurality_vote_acc"],
+                    "vote_gain": (
                         metrics["selected_test"]["plurality_vote_acc"]
                         - metrics["initial_test"]["plurality_vote_acc"]
                     ),
-                    "minimum_member_gain": metrics["member_gain"]["minimum_member_gain"],
-                    "mean_member_gain": metrics["member_gain"]["mean_member_gain"],
-                    "improved_member_count": metrics["member_gain"]["improved_member_count"],
-                    "regressed_member_count": metrics["member_gain"]["regressed_member_count"],
+                    "minimum_member_gain": metrics["member_gain"]["minimum_gain_count"],
+                    "mean_member_gain": metrics["member_gain"]["mean_gain"],
+                    "improved_agent_count": metrics["member_gain"]["improved_agent_count"],
+                    "regressed_agent_count": metrics["member_gain"]["regressed_agent_count"],
                     "all_members_improved": metrics["member_gain"]["all_members_improved"],
                     "selected_mean_individual_acc": metrics["selected_test"]["mean_individual_acc"],
                     "selected_min_individual_acc": metrics["selected_test"]["min_individual_acc"],
@@ -226,7 +226,7 @@ def main() -> None:
                     encoding="utf-8",
                 )
     columns = list(rows[0]) if rows else [
-        "task_id", "benchmark", "setting", "seed", "selected_vote_acc"
+        "task_id", "benchmark", "setting", "seed", "vote_acc_selected"
     ]
     with (root / "accuracy_results.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)

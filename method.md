@@ -80,10 +80,13 @@ improvement_need_i = max(0, g_sum_current - K * g_i_current)
 where `K=5`. A large value means the member is behind the current team-wide
 improvement level.
 
-On each unresolved example, ownership is selected from the wrong members by a
-Pareto comparison of direct vote repair, improvement need, coverage opportunity,
-and dominant-wrong exit. Ties are deterministic and include the experiment seed.
-Existing owners are retained when still on the owner frontier.
+On each vote-wrong example, ownership is selected from the wrong members by a
+five-axis Pareto comparison of direct vote repair, oracle soft-utility gain,
+improvement need, coverage opportunity, and dominant-wrong exit. The frontier
+preference is member-first, then direct-fix, soft gain, coverage, dominant-wrong,
+load, wait, and seeded tie-break. Existing owners are retained only while still
+on the frontier, not behind on member/direct-fix priority, and within
+`responsibility_switch_margin` on soft utility.
 
 Target selection uses all agents with current errors. Agents waiting
 `responsibility_max_wait_updates` updates are considered first; the default is
@@ -152,6 +155,15 @@ mean_member
 Each channel produces ordinal ranks. Rank vectors are divided into Pareto fronts,
 then channel top-k union and deterministic Pareto ordering fill the Stage B
 budget. The vote-first ablation uses only its vote-first Stage A ordering.
+
+The channel keys are:
+
+- team-vote: vote-correct count, net vote delta, fewer vote losses, soft utility,
+  assigned repair;
+- worst-member: minimum gain, minimum-gain delta, improved-agent count, target
+  gain versus incumbent, lower invalid count;
+- mean-member: total gain, target gain versus incumbent, improved-agent count,
+  assigned repair, lower invalid count.
 
 ## 8. Stage B
 
