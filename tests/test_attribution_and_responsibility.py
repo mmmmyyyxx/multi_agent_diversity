@@ -9,6 +9,7 @@ from multi_dataset_diverse_rl.responsibility import (
     assign_primary_responsibilities,
     compute_member_aware_repair_opportunity,
     select_target_agent,
+    build_target_selection_decision,
     target_priorities,
 )
 
@@ -276,3 +277,27 @@ def test_target_pool_audit_fields_describe_scheduler_stages():
     eligible = [row.agent_id for row in priorities if row.individual_error_count > 0]
     assert eligible == list(range(5))
     assert all(row.agent_id in eligible for row in priorities)
+
+
+def test_all_cooling_mixed_pool_matches_selector():
+    _, rows = opportunities(
+        ["B", "B", "B", "B", "B"],
+        gains=(0, 1, 0, 1, 0),
+    )
+    current_state = state(
+        next_regular_eligible_update_by_agent={agent: 10 for agent in range(5)}
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows},
+        assignments={agent: [] for agent in range(5)},
+        state=current_state,
+        seed=42,
+        max_wait_updates=4,
+        update_index=0,
+    )
+    decision = build_target_selection_decision(priorities)
+    assert decision.selection_pool_stage == "cooldown_fallback"
+    assert set(decision.actual_candidate_agent_ids) == {
+        row.agent_id for row in priorities if row.unimproved
+    }
+    assert decision.selected_agent_id in decision.actual_frontier_agent_ids

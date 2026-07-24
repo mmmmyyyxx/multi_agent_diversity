@@ -128,3 +128,11 @@ def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
     payload["probe_version"] = "stale"
     with pytest.raises(ValueError, match="Fixed probe"):
         restore_checkpoint(system, payload)
+
+
+def test_checkpoint_missing_recovery_observations_is_incompatible(tmp_path):
+    system = build_system(tmp_path)
+    payload = build_checkpoint(system, epoch_index=0, update_index=0, best_state={})
+    payload.pop("solver_recovery_observations")
+    with pytest.raises(ValueError, match="Checkpoint is incompatible"):
+        restore_checkpoint(system, payload)

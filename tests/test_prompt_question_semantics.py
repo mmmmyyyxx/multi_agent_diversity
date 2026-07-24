@@ -156,6 +156,7 @@ def test_invalid_solver_response_recovers_and_cache_stores_resolved_result(tmp_p
     assert summary["terminal_invalid_count"] == 0
     assert summary["attempt_count_histogram"] == {"2": 1}
     assert summary["invalid_recovery_extra_calls"] == 1
+    assert summary["current_run_recovery_api_calls"] == 1
 
     asyncio.run(system.evaluate_dataset(data))
     assert calls == 2
@@ -203,3 +204,44 @@ def test_matched_settings_share_persistent_solver_observation(tmp_path):
     assert calls == ["baseline"]
     assert baseline.shared_solver_cache.misses == 1
     assert full.shared_solver_cache.hits == 1
+
+
+def test_recovery_cost_is_local_to_cache_producing_run(tmp_path):
+    cache = tmp_path / "shared.sqlite"
+    producer_calls = 0
+
+    async def producer_solver(_question, _agent_id, _prompt):
+        nonlocal producer_calls
+        producer_calls += 1
+        if producer_calls == 1:
+            return PromptAnswer("", "missing", False, "missing_final_answer")
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    baseline = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "baseline"),
+            answer_format="option_letter",
+            shared_solver_cache_path=str(cache),
+            experiment_setting="shared_baseline",
+        ),
+        solver=producer_solver,
+    )
+    data = [{"question": "q\n(A) a\n(B) b", "answer": "A"}]
+    asyncio.run(baseline.initialize_fixed_probe(data))
+    baseline_summary = baseline.solver_recovery_summary()
+    assert baseline_summary["current_run_recovery_api_calls"] == 1
+
+    consumer = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "consumer"),
+            answer_format="option_letter",
+            shared_solver_cache_path=str(cache),
+            experiment_setting="shared_member_aware_full",
+        ),
+        solver=lambda *_args: PromptAnswer("B", "FINAL_ANSWER: B", True),
+    )
+    asyncio.run(consumer.initialize_fixed_probe(data))
+    consumer_summary = consumer.solver_recovery_summary()
+    assert consumer_summary["unique_resolved_request_count"] == 1
+    assert consumer_summary["recovered_invalid_count"] == 1
+    assert consumer_summary["current_run_recovery_api_calls"] == 0

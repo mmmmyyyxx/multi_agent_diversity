@@ -1,5 +1,6 @@
 import asyncio
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -357,6 +358,64 @@ def test_pipeline_failure_does_not_masquerade_as_rollout_rejection(tmp_path):
     assert outcome.empirical_evaluation_completed is False
     assert outcome.accepted is False
     assert outcome.rejection_reasons == ()
+
+
+def test_pipeline_failure_does_not_update_target_potential(tmp_path):
+    system = build_system(tmp_path)
+    async def run():
+        await initialize(system)
+        system.ensure_responsibility_current()
+        before = (
+            dict(system.responsibility_state.best_observed_target_gain_by_agent),
+            dict(system.responsibility_state.no_positive_candidate_streak_by_agent),
+            dict(system.responsibility_state.next_regular_eligible_update_by_agent),
+        )
+        async def no_candidates(*_args, **_kwargs):
+            return []
+        system.propose_candidates = no_candidates
+        await system.update_once(0)
+        after = (
+            system.responsibility_state.best_observed_target_gain_by_agent,
+            system.responsibility_state.no_positive_candidate_streak_by_agent,
+            system.responsibility_state.next_regular_eligible_update_by_agent,
+        )
+        return before, after
+    before, after = asyncio.run(run())
+    assert before == after
+
+
+def test_target_potential_state_clears_on_positive_but_rejected_attempt(tmp_path):
+    system = build_system(tmp_path)
+    system.responsibility_state.no_positive_candidate_streak_by_agent[0] = 2
+    candidate = SimpleNamespace(
+        member_gain=SimpleNamespace(target_gain_vs_incumbent=4)
+    )
+    gain, cooldown = system._update_target_potential_state(
+        target=0,
+        update_index=3,
+        stage_b_evaluations=[candidate],
+    )
+    assert gain == 4
+    assert cooldown == 0
+    assert system.responsibility_state.best_observed_target_gain_by_agent[0] == 4
+    assert system.responsibility_state.no_positive_candidate_streak_by_agent[0] == 0
+    assert system.responsibility_state.next_regular_eligible_update_by_agent[0] == 4
+
+
+def test_target_potential_state_adds_bounded_cooldown_for_nonpositive_attempts(tmp_path):
+    system = build_system(tmp_path)
+    candidate = SimpleNamespace(
+        member_gain=SimpleNamespace(target_gain_vs_incumbent=0)
+    )
+    gain, cooldown = system._update_target_potential_state(
+        target=0,
+        update_index=3,
+        stage_b_evaluations=[candidate],
+    )
+    assert gain == 0
+    assert cooldown == 1
+    assert system.responsibility_state.no_positive_candidate_streak_by_agent[0] == 1
+    assert system.responsibility_state.next_regular_eligible_update_by_agent[0] == 5
 
 
 def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):

@@ -136,6 +136,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "responsibility_refresh_count",
         "previous_update_outcomes",
         "completed_tcs_state",
+        "solver_recovery_observations",
     }
     if not required_member_state <= set(payload):
         raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v3")

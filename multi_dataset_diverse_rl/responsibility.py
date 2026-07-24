@@ -97,6 +97,76 @@ class AgentTargetPriority:
         return self.unique_correct_count + self.pivotal_correct_count
 
 
+@dataclass(frozen=True)
+class TargetSelectionDecision:
+    selected_agent_id: int
+    selection_pool_stage: str
+    eligible_agent_ids: tuple[int, ...]
+    overdue_agent_ids: tuple[int, ...]
+    non_cooling_agent_ids: tuple[int, ...]
+    unimproved_agent_ids: tuple[int, ...]
+    actual_candidate_agent_ids: tuple[int, ...]
+    actual_candidate_pareto_fronts: dict[int, int]
+    actual_frontier_agent_ids: tuple[int, ...]
+
+
+def _selection_fronts(rows: Sequence[AgentTargetPriority]) -> dict[int, int]:
+    values = {row.agent_id: row.pareto_values() for row in rows}
+    return _pareto_front_numbers([row.agent_id for row in rows], values)
+
+
+def build_target_selection_decision(
+    priorities: Sequence[AgentTargetPriority],
+) -> TargetSelectionDecision:
+    eligible = tuple(row for row in priorities if row.individual_error_count > 0)
+    if not eligible:
+        raise ValueError("no erroneous agents are available for member-aware selection")
+    eligible_ids = tuple(row.agent_id for row in eligible)
+    overdue = tuple(row for row in eligible if row.overdue)
+    non_cooling = tuple(row for row in eligible if not row.cooling_down)
+    regular = non_cooling or eligible
+    unimproved = tuple(row for row in regular if row.unimproved)
+    if overdue:
+        stage = "overdue"
+        candidates = overdue
+    elif unimproved and non_cooling:
+        stage = "regular_unimproved"
+        candidates = unimproved
+    elif non_cooling:
+        stage = "regular_all"
+        candidates = regular
+    else:
+        stage = "cooldown_fallback"
+        candidates = unimproved or regular
+    fronts = _selection_fronts(candidates)
+    frontier = tuple(row for row in candidates if fronts[row.agent_id] == 1)
+    selected = min(
+        frontier,
+        key=lambda row: (
+            -row.headroom_to_best,
+            -row.best_observed_target_gain,
+            -row.improvement_need,
+            -row.direct_vote_fix_count,
+            -row.oracle_soft_utility_gain_sum,
+            -row.assigned_load,
+            -row.updates_since_selected,
+            row.protection_risk,
+            row.seeded_rank,
+        ),
+    )
+    return TargetSelectionDecision(
+        selected_agent_id=selected.agent_id,
+        selection_pool_stage=stage,
+        eligible_agent_ids=eligible_ids,
+        overdue_agent_ids=tuple(row.agent_id for row in overdue),
+        non_cooling_agent_ids=tuple(row.agent_id for row in non_cooling),
+        unimproved_agent_ids=tuple(row.agent_id for row in unimproved),
+        actual_candidate_agent_ids=tuple(row.agent_id for row in candidates),
+        actual_candidate_pareto_fronts=fronts,
+        actual_frontier_agent_ids=tuple(row.agent_id for row in frontier),
+    )
+
+
 @dataclass
 class ResponsibilityState:
     primary_owner_by_question: dict[str, int] = field(default_factory=dict)
@@ -407,34 +477,4 @@ def target_priorities(
 def select_target_agent(
     priorities: Sequence[AgentTargetPriority],
 ) -> int:
-    if not priorities:
-        raise ValueError("no erroneous agents are available for member-aware selection")
-    eligible = [row for row in priorities if row.individual_error_count > 0]
-    if not eligible:
-        raise ValueError("no erroneous agents are available for member-aware selection")
-    overdue = [row for row in eligible if row.overdue]
-    if overdue:
-        candidates = overdue
-    else:
-        regular = [row for row in eligible if not row.cooling_down] or eligible
-        candidates = [row for row in regular if row.unimproved] or regular
-    candidate_values = {row.agent_id: row.pareto_values() for row in candidates}
-    candidate_fronts = _pareto_front_numbers(
-        [row.agent_id for row in candidates],
-        candidate_values,
-    )
-    frontier = [row for row in candidates if candidate_fronts[row.agent_id] == 1]
-    return min(
-        frontier,
-        key=lambda row: (
-            -row.headroom_to_best,
-            -row.best_observed_target_gain,
-            -row.improvement_need,
-            -row.direct_vote_fix_count,
-            -row.oracle_soft_utility_gain_sum,
-            -row.assigned_load,
-            -row.updates_since_selected,
-            row.protection_risk,
-            row.seeded_rank,
-        ),
-    ).agent_id
+    return build_target_selection_decision(priorities).selected_agent_id

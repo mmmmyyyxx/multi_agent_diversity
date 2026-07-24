@@ -67,7 +67,7 @@ from .responsibility import (
     ResponsibilityState,
     assign_primary_responsibilities,
     compute_member_aware_repair_opportunity,
-    select_target_agent,
+    build_target_selection_decision,
     target_priorities,
 )
 from .tasks import get_task_spec
@@ -437,6 +437,19 @@ class PromptEnsembleOptimizationSystem:
             "created_at": answer.created_at,
         })
 
+    def _current_run_recovery_summary(self) -> dict[str, Any]:
+        rows = [
+            row for row in self.llm.calls
+            if row.get("role") == "solver"
+            and int(row.get("solver_invalid_attempt_index", 1)) > 1
+        ]
+        return {
+            "current_run_recovery_api_calls": len(rows),
+            "current_run_recovery_prompt_tokens": sum(int(row.get("prompt_tokens", 0)) for row in rows),
+            "current_run_recovery_completion_tokens": sum(int(row.get("completion_tokens", 0)) for row in rows),
+            "current_run_recovery_total_tokens": sum(int(row.get("total_tokens", 0)) for row in rows),
+        }
+
     async def _chat(
         self,
         model: str,
@@ -780,7 +793,8 @@ class PromptEnsembleOptimizationSystem:
             target = update_index % 5
             fairness = False
         elif self.protocol.target_selection_policy == "member_aware_responsibility":
-            target = select_target_agent(priorities)
+            selection = build_target_selection_decision(priorities)
+            target = selection.selected_agent_id
         else:
             raise ValueError(
                 f"Protocol has no optimization target selector: {self.protocol.name}"
@@ -793,33 +807,21 @@ class PromptEnsembleOptimizationSystem:
             }
             for row in priorities
         ]
-        eligible_ids = [row.agent_id for row in priorities if row.individual_error_count > 0]
-        overdue_ids = [row.agent_id for row in priorities if row.individual_error_count > 0 and row.overdue]
-        non_cooling_ids = [
-            row.agent_id for row in priorities
-            if row.individual_error_count > 0 and not row.cooling_down
-        ]
-        unimproved_ids = [
-            row.agent_id for row in priorities
-            if row.individual_error_count > 0 and not row.cooling_down and row.unimproved
-        ]
-        if overdue_ids:
-            pool_stage = "overdue"
-            actual_ids = overdue_ids
-        elif unimproved_ids:
-            pool_stage = "regular_unimproved"
-            actual_ids = unimproved_ids
-        elif non_cooling_ids:
-            pool_stage = "regular_all"
-            actual_ids = non_cooling_ids
+        if self.protocol.target_selection_policy == "member_aware_responsibility":
+            pool_stage = selection.selection_pool_stage
+            eligible_ids = list(selection.eligible_agent_ids)
+            overdue_ids = list(selection.overdue_agent_ids)
+            non_cooling_ids = list(selection.non_cooling_agent_ids)
+            unimproved_ids = list(selection.unimproved_agent_ids)
+            actual_ids = list(selection.actual_candidate_agent_ids)
+            actual_fronts = selection.actual_candidate_pareto_fronts
+            actual_frontier_ids = list(selection.actual_frontier_agent_ids)
         else:
-            pool_stage = "cooldown_fallback"
-            actual_ids = eligible_ids
-        actual_values = {
-            row.agent_id: row.pareto_values()
-            for row in priorities if row.agent_id in actual_ids
-        }
-        actual_fronts = self._target_fronts(actual_values)
+            eligible_ids = overdue_ids = non_cooling_ids = unimproved_ids = []
+            actual_ids = []
+            actual_fronts = {}
+            actual_frontier_ids = []
+            pool_stage = "round_robin"
         self.target_priority_audit.append({
             "update_index": int(update_index),
             "priorities": priority_payload,
@@ -834,34 +836,13 @@ class PromptEnsembleOptimizationSystem:
                 str(agent_id): actual_fronts[agent_id] for agent_id in actual_ids
             },
             "actual_frontier_agent_ids": [
-                agent_id for agent_id in actual_ids if actual_fronts[agent_id] == 1
+                agent_id for agent_id in actual_frontier_ids
             ],
             "cooldown_fallback": pool_stage == "cooldown_fallback",
             "unimproved_pool_used": pool_stage == "regular_unimproved",
             "selected_agent_id": target,
         })
         return target, fairness, priority_payload
-
-    @staticmethod
-    def _target_fronts(values: Mapping[int, Sequence[float]]) -> dict[int, int]:
-        remaining = set(values)
-        fronts: dict[int, int] = {}
-        level = 1
-        while remaining:
-            current = [
-                agent_id for agent_id in sorted(remaining)
-                if not any(
-                    other != agent_id
-                    and all(a >= b for a, b in zip(values[other], values[agent_id], strict=True))
-                    and any(a > b for a, b in zip(values[other], values[agent_id], strict=True))
-                    for other in remaining
-                )
-            ]
-            for agent_id in current:
-                fronts[agent_id] = level
-                remaining.remove(agent_id)
-            level += 1
-        return fronts
 
     def _representative_indices(self, count: int) -> list[int]:
         if self.fixed_probe is None:
@@ -1805,6 +1786,36 @@ class PromptEnsembleOptimizationSystem:
         funnel.accepted_candidate = accepted is not None
         return accepted, incumbent, list(candidates)
 
+    def _update_target_potential_state(
+        self,
+        *,
+        target: int,
+        update_index: int,
+        stage_b_evaluations: Sequence[CandidateEvaluation],
+    ) -> tuple[int | None, int]:
+        """Update scheduler potential only after an actual Stage-B evaluation."""
+        if not stage_b_evaluations:
+            return None, 0
+        best_attempt_target_gain = max(
+            row.member_gain.target_gain_vs_incumbent
+            for row in stage_b_evaluations
+        )
+        if best_attempt_target_gain > 0:
+            self.responsibility_state.best_observed_target_gain_by_agent[target] = max(
+                self.responsibility_state.best_observed_target_gain_by_agent.get(target, 0),
+                best_attempt_target_gain,
+            )
+            self.responsibility_state.no_positive_candidate_streak_by_agent[target] = 0
+            self.responsibility_state.next_regular_eligible_update_by_agent[target] = update_index + 1
+            return best_attempt_target_gain, 0
+        streak = self.responsibility_state.no_positive_candidate_streak_by_agent.get(target, 0) + 1
+        self.responsibility_state.no_positive_candidate_streak_by_agent[target] = streak
+        cooldown_length = min(streak, 2)
+        self.responsibility_state.next_regular_eligible_update_by_agent[target] = (
+            update_index + 1 + cooldown_length
+        )
+        return best_attempt_target_gain, cooldown_length
+
     async def update_once(self, update_index: int) -> bool:
         if not self.protocol.optimization_enabled:
             return False
@@ -1837,29 +1848,11 @@ class PromptEnsembleOptimizationSystem:
             row.final_evaluation for row in evaluated
             if row.final_evaluation is not None
         ]
-        if stage_b_evaluations:
-            best_attempt_target_gain = max(
-                row.member_gain.target_gain_vs_incumbent
-                for row in stage_b_evaluations
-            )
-            if best_attempt_target_gain > 0:
-                self.responsibility_state.best_observed_target_gain_by_agent[target] = max(
-                    self.responsibility_state.best_observed_target_gain_by_agent.get(target, 0),
-                    best_attempt_target_gain,
-                )
-                self.responsibility_state.no_positive_candidate_streak_by_agent[target] = 0
-                self.responsibility_state.next_regular_eligible_update_by_agent[target] = update_index + 1
-                cooldown_length = 0
-            else:
-                streak = self.responsibility_state.no_positive_candidate_streak_by_agent.get(target, 0) + 1
-                self.responsibility_state.no_positive_candidate_streak_by_agent[target] = streak
-                cooldown_length = min(streak, 2)
-                self.responsibility_state.next_regular_eligible_update_by_agent[target] = (
-                    update_index + 1 + cooldown_length
-                )
-        else:
-            best_attempt_target_gain = None
-            cooldown_length = 0
+        best_attempt_target_gain, cooldown_length = self._update_target_potential_state(
+            target=target,
+            update_index=update_index,
+            stage_b_evaluations=stage_b_evaluations,
+        )
         for agent_id in self.responsibility_state.updates_since_selected_by_agent:
             self.responsibility_state.updates_since_selected_by_agent[agent_id] += 1
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
@@ -2336,6 +2329,15 @@ class PromptEnsembleOptimizationSystem:
             for row in rows
         )
         count = len(rows)
+        current = self._current_run_recovery_summary()
+        current_count = int(current["current_run_recovery_api_calls"])
+        current_total = int(current["current_run_recovery_total_tokens"])
+        current["current_run_recovery_call_overhead_rate"] = (
+            current_count / count if count else 0.0
+        )
+        current["current_run_recovery_token_overhead_rate"] = (
+            current_total / total_tokens if total_tokens else 0.0
+        )
         return {
             "unique_resolved_request_count": count,
             "first_attempt_valid_count": first_valid,
@@ -2356,4 +2358,5 @@ class PromptEnsembleOptimizationSystem:
             "eventual_valid_rate": (count - terminal) / count if count else 1.0,
             "recovery_call_overhead_rate": extra_calls / count if count else 0.0,
             "recovery_token_overhead_rate": extra_total / total_tokens if total_tokens else 0.0,
+            **current,
         }
