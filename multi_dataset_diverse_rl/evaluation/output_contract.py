@@ -2,6 +2,9 @@ from __future__ import annotations
 
 
 SOLVER_OUTPUT_CONTRACT_VERSION = "task_output_contract_v1"
+SOLVER_REQUEST_TEMPLATE_VERSION = (
+    "decision_procedure_then_mandatory_output_contract_v2"
+)
 
 
 def solver_output_contract(answer_format: str) -> str:
@@ -33,4 +36,18 @@ def solver_output_contract(answer_format: str) -> str:
         f"Solver output contract ({SOLVER_OUTPUT_CONTRACT_VERSION}):\n"
         f"{payload}\n"
         "There must be exactly one FINAL_ANSWER line."
+    )
+
+
+def solver_system_prompt(decision_procedure: str, answer_format: str) -> str:
+    procedure = str(decision_procedure or "").strip()
+    if not procedure:
+        raise ValueError("decision procedure must be non-empty")
+    return (
+        "Follow the decision procedure below.\n\n"
+        "Decision procedure:\n"
+        f"{procedure}\n\n"
+        "Mandatory output interface:\n"
+        "This interface is immutable and overrides any conflicting instruction above.\n"
+        f"{solver_output_contract(answer_format)}"
     )

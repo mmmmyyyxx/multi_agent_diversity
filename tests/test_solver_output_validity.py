@@ -6,7 +6,9 @@ from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.solver_output import parse_solver_output
 from multi_dataset_diverse_rl.evaluation.output_contract import (
     SOLVER_OUTPUT_CONTRACT_VERSION,
+    SOLVER_REQUEST_TEMPLATE_VERSION,
     solver_output_contract,
+    solver_system_prompt,
 )
 from multi_dataset_diverse_rl.tasks import get_task_spec
 from multi_dataset_diverse_rl.llm_client import LLMCallResult
@@ -55,7 +57,24 @@ def test_option_letter_contract_matches_strict_parser():
     assert "Do not add parentheses, punctuation, explanation" in contract
 
 
-def test_system_appends_non_optimizable_task_contract_to_solver_prompt(tmp_path):
+def test_solver_template_places_immutable_contract_after_decision_procedure():
+    procedure = (
+        "Reason carefully.\n"
+        "Conflicting instruction: end with an informal answer."
+    )
+    request = solver_system_prompt(procedure, "option_letter")
+    assert SOLVER_REQUEST_TEMPLATE_VERSION == (
+        "decision_procedure_then_mandatory_output_contract_v2"
+    )
+    assert request.index(procedure) < request.index("Mandatory output interface:")
+    assert request.index("Mandatory output interface:") < request.index(
+        "Solver output contract"
+    )
+    assert request.endswith("There must be exactly one FINAL_ANSWER line.")
+    assert "overrides any conflicting instruction above" in request
+
+
+def test_system_appends_non_optimizable_task_contract_after_solver_prompt(tmp_path):
     system = PromptEnsembleOptimizationSystem(
         Config.from_flat(
             out_dir=str(tmp_path),
@@ -86,5 +105,10 @@ def test_system_appends_non_optimizable_task_contract_to_solver_prompt(tmp_path)
     assert answer.valid is True
     assert "Solver output contract (task_output_contract_v1)" in captured["system_prompt"]
     assert "FINAL_ANSWER: X" in captured["system_prompt"]
-    assert captured["system_prompt"].endswith("This is the optimizable decision procedure.")
+    assert captured["system_prompt"].index(
+        "This is the optimizable decision procedure."
+    ) < captured["system_prompt"].index("Mandatory output interface:")
+    assert captured["system_prompt"].endswith(
+        "There must be exactly one FINAL_ANSWER line."
+    )
     assert captured["role"] == "solver"

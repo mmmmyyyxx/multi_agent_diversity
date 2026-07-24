@@ -124,6 +124,12 @@ Each optimized run writes:
 - `llm_calls.jsonl` and `cost_summary.json`: role-level API accounting
 - `run_meta.json`: frozen method, protocol, cache, and run identity
 
+Candidate prompts optimize only the mutable reasoning procedure. Every Solver
+request appends an immutable, task-specific output interface after that
+procedure, and the interface explicitly overrides conflicting mutable
+instructions. The request-template version participates in Solver request and
+shared-cache identity.
+
 Final and task-level summaries report both correct-count gains and normalized
 accuracy gains:
 `minimum_member_correct_count_gain`, `mean_member_correct_count_gain`,

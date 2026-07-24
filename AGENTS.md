@@ -720,6 +720,25 @@ The solver must produce exactly one valid:
 FINAL_ANSWER: <answer>
 ```
 
+The optimized prompt is only the mutable decision procedure. The program must
+append the immutable task output interface after that procedure in every
+Solver request:
+
+```text
+Follow the decision procedure below.
+
+Decision procedure:
+<mutable candidate prompt>
+
+Mandatory output interface:
+This interface is immutable and overrides any conflicting instruction above.
+<strict task-specific FINAL_ANSWER contract>
+```
+
+The request-template version is part of Solver request and shared-cache
+identity. Student sees the output contract to avoid conflicts, but preserving
+or reproducing the full interface is not part of the prompt search problem.
+
 Do not loosen the parser to hide model-output failures.
 
 ### LLM access

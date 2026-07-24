@@ -41,7 +41,12 @@ from .evaluation.validation import (
     ValidationProbeEvaluator,
 )
 from .evaluation.prompt_question import PromptQuestionEvaluator
-from .evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION, solver_output_contract
+from .evaluation.output_contract import (
+    SOLVER_OUTPUT_CONTRACT_VERSION,
+    SOLVER_REQUEST_TEMPLATE_VERSION,
+    solver_output_contract,
+    solver_system_prompt,
+)
 from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
 from .llm_client import LLMCallResult, RoleAwareLLMClient
@@ -429,12 +434,7 @@ class PromptEnsembleOptimizationSystem:
         async with self.solver_semaphore:
             result = await self.llm.chat_result(
                 self.cfg.models.agent_model,
-                (
-                    "Follow the supplied decision procedure.\n\n"
-                    + solver_output_contract(self.cfg.data.answer_format)
-                    + "\n\nDecision procedure:\n"
-                    + prompt
-                ),
+                solver_system_prompt(prompt, self.cfg.data.answer_format),
                 question,
                 self.cfg.models.temperature,
                 self.cfg.models.solver_max_tokens,
@@ -1995,6 +1995,7 @@ class PromptEnsembleOptimizationSystem:
             "student_sample_memorization_filter": SAMPLE_MEMORIZATION_FILTER_VERSION,
             "solver_sampling_semantics": "shared_prompt_question_output",
             "solver_output_contract_version": self.cfg.peer_state.solver_output_contract_version,
+            "solver_request_template_version": SOLVER_REQUEST_TEMPLATE_VERSION,
             "prompt_question_evaluator_identity": self.prompt_question_evaluator.identity(),
             "prompt_question_cache_hits": self.prompt_question_evaluator.cache_hits,
             "prompt_question_cache_misses": self.prompt_question_evaluator.cache_misses,

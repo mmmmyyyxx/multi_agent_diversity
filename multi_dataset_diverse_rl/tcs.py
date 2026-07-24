@@ -388,10 +388,13 @@ def build_student_request(
     total_candidate_prompt_max_chars: int = 5000,
 ) -> str:
     return (
-        "Implement the approved repair plan as complete replacement prompts. Each prompt "
-        "must stand alone, preserve the task output contract, contain no training example "
-        "or answer, and be no longer than the stated limit. Do not return a patch or repeat "
-        "diagnosis metadata. Return strict JSON with the sole field candidate_prompts.\n"
+        "Implement the approved repair plan as complete replacement decision procedures. "
+        "Each candidate is only the mutable reasoning procedure: it must stand alone, "
+        "contain no training example or answer, and be no longer than the stated limit. "
+        "The system appends the immutable output interface after every candidate at Solver "
+        "request time. Do not duplicate that full interface or return a patch or diagnosis "
+        "metadata. Do not introduce instructions that conflict with the supplied contract. "
+        "Return strict JSON with the sole field candidate_prompts.\n"
         f"ParentPrompt:\n{parent_prompt}\n"
         f"ApprovedRepairPlan:\n{json.dumps(asdict(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
         f"OutputContract:\n{solver_output_contract(answer_format)}\n"

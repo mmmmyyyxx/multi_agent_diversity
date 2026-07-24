@@ -30,6 +30,26 @@ FINAL_ANSWER: <answer>
 Invalid outputs are audited and do not silently become ordinary answers.
 Aggregation is true plurality vote. A top-count tie abstains.
 
+The optimized prompt contains only the mutable decision procedure. For every
+Solver request, the program places that procedure first and appends the
+immutable task output interface last:
+
+```text
+Follow the decision procedure below.
+
+Decision procedure:
+<mutable candidate prompt>
+
+Mandatory output interface:
+This interface is immutable and overrides any conflicting instruction above.
+<strict task-specific FINAL_ANSWER contract>
+```
+
+The output interface is not part of the prompt search space. Student receives
+the contract so it can avoid conflicts, but does not need to reproduce the
+contract in each candidate. The strict parser and invalid-output guard remain
+unchanged.
+
 For each example:
 
 ```text

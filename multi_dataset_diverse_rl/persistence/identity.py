@@ -21,6 +21,7 @@ from ..tcs import (
     TCS_PROTOCOL_VERSION,
     TEACHER_SCHEMA_VERSION,
 )
+from ..evaluation.output_contract import SOLVER_REQUEST_TEMPLATE_VERSION
 from ..utils import normalize_spaces
 
 
@@ -103,6 +104,7 @@ def config_fingerprint(cfg: Config) -> str:
         "student_count_policy": "reject_excess_keep_individually_valid_v1",
         "model_facing_payload_version": "audit_hash_isolated_v2",
         "terminal_failure_version": "role_specific_terminal_failure_v1",
+        "solver_request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
         "checkpoint": 7,
@@ -128,7 +130,7 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
         "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
         "max_tokens": cfg.models.solver_max_tokens,
         "output_contract_version": cfg.peer_state.solver_output_contract_version,
-        "request_template": "decision_procedure_with_task_contract_v1",
+        "request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
     }
 
 

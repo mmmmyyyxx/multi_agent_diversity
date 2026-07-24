@@ -109,6 +109,9 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["checkpoint_version"] == 7
     assert metadata["task_general_scope"] == "unseen_examples_within_current_task"
     assert metadata["student_sample_memorization_filter"] == "exact_supplied_example_text_v1"
+    assert metadata["solver_request_template_version"] == (
+        "decision_procedure_then_mandatory_output_contract_v2"
+    )
     assert "prompt_memory_search_enabled" not in metadata
 
 
