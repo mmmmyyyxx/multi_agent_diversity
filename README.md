@@ -74,6 +74,12 @@ accept/reject cases, covers all eligible members, and computes the real
 validation key. The smaller unit smoke retains deterministic helper-level
 coverage.
 
+The real-API role transport smoke uses the production Solver limit, omits
+completion limits for Teacher/Critic/Student, applies the configured structural
+character limits, and accepts any non-empty valid Student candidate set up to
+the requested count. Critic calibration records finish reason, provider
+truncation, and token usage separately from JSON/schema validity.
+
 ## Running Experiments
 
 Run the preflight first, then use the task runner:

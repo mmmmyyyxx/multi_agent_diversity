@@ -989,7 +989,11 @@ class PromptEnsembleOptimizationSystem:
             **asdict(diagnostics),
         })
         funnel.parents_considered = 1
-        teacher_request = build_teacher_request(context)
+        teacher_request = build_teacher_request(
+            context,
+            field_max_chars=self.cfg.tcs.teacher_field_max_chars,
+            total_max_chars=self.cfg.tcs.teacher_total_max_chars,
+        )
         repair_plan: TeacherRepairPlan | None = None
         critic_decision: CriticDecision | None = None
         critic_feedback = ""
@@ -1103,7 +1107,11 @@ class PromptEnsembleOptimizationSystem:
                     funnel.terminal_failure_class = "teacher_schema_exhausted"
                 return []
 
-            critic_request = build_critic_request(context, repair_plan)
+            critic_request = build_critic_request(
+                context,
+                repair_plan,
+                feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+            )
             critic_decision = None
             critic_request_hash = _request_hash(critic_request, "Audit the repair plan.")
             for format_attempt in range(self.cfg.tcs.critic_json_max_retries + 1):
@@ -1701,18 +1709,23 @@ class PromptEnsembleOptimizationSystem:
         }
         self.candidate_decisions.append(decision)
         if accepted is None:
+            empirical_evaluation_completed = funnel.stage_a_evaluated > 0
             rejection_reasons = sorted({
                 reason
                 for row in evaluated
                 if row.constraint is not None
                 for reason in row.constraint.rejection_reasons
             })
-            if not rejection_reasons:
+            if empirical_evaluation_completed and not rejection_reasons:
                 rejection_reasons = ["no_acceptable_candidate"]
             self.previous_update_outcomes[target] = PreviousUpdateOutcome(
                 attempted=True,
+                empirical_evaluation_completed=empirical_evaluation_completed,
                 accepted=False,
-                rejection_reasons=tuple(rejection_reasons),
+                rejection_reasons=(
+                    tuple(rejection_reasons)
+                    if empirical_evaluation_completed else ()
+                ),
             )
             return False
 
@@ -1762,6 +1775,7 @@ class PromptEnsembleOptimizationSystem:
         competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
         self.previous_update_outcomes[target] = PreviousUpdateOutcome(
             attempted=True,
+            empirical_evaluation_completed=True,
             accepted=True,
             target_correct_delta=competence_delta,
             vote_correct_delta=(

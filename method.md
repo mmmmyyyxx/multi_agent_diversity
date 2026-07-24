@@ -141,6 +141,11 @@ The three serialized context boundaries are:
 
 `PreviousUpdateOutcome` replaces natural-language previous-update summaries.
 The model-facing projection is also sanitized to the setting's causal boundary.
+It exposes rollout deltas, rejection reasons, and acceptance only when at least
+one candidate actually completed Stage A. A TCS transport, truncation, or schema
+failure exposes only `attempted=true` and
+`empirical_feedback_available=false`; operational failure must not masquerade
+as empirical candidate rejection.
 
 Teacher returns exactly:
 

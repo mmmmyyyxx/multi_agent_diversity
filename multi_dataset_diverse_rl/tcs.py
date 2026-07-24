@@ -29,6 +29,7 @@ CRITIC_FAILED_CHECKS = (
 @dataclass(frozen=True)
 class PreviousUpdateOutcome:
     attempted: bool = False
+    empirical_evaluation_completed: bool = False
     accepted: bool = False
     target_correct_delta: int = 0
     vote_correct_delta: int = 0
@@ -227,11 +228,22 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
     else:
         raise TypeError(f"Unsupported diagnosis context: {type(context).__name__}")
     outcome = asdict(context.previous_outcome)
+    empirical_feedback_available = bool(
+        outcome.pop("empirical_evaluation_completed")
+    )
+    if not empirical_feedback_available:
+        common["previous_outcome"] = {
+            "attempted": bool(outcome["attempted"]),
+            "empirical_feedback_available": False,
+        }
+        return common
+    outcome["empirical_feedback_available"] = True
     if isinstance(context, AccuracyDiagnosisContext):
         outcome = {
             key: outcome[key]
             for key in (
-                "attempted", "accepted", "target_correct_delta",
+                "attempted", "empirical_feedback_available", "accepted",
+                "target_correct_delta",
                 "rejection_reasons",
             )
         }
@@ -239,7 +251,8 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
         outcome = {
             key: outcome[key]
             for key in (
-                "attempted", "accepted", "target_correct_delta",
+                "attempted", "empirical_feedback_available", "accepted",
+                "target_correct_delta",
                 "vote_correct_delta", "rejection_reasons",
             )
         }
@@ -316,7 +329,12 @@ def contains_supplied_example_text(text: str, context: AnyDiagnosisContext) -> b
     return any(fragment in normalized_text for fragment in fragments)
 
 
-def build_teacher_request(context: AnyDiagnosisContext) -> str:
+def build_teacher_request(
+    context: AnyDiagnosisContext,
+    *,
+    field_max_chars: int = 800,
+    total_max_chars: int = 1800,
+) -> str:
     schema = {
         "failure_pattern": "concise diagnosis",
         "repair_rule": "concrete executable rule including uncertainty handling",
@@ -329,6 +347,8 @@ def build_teacher_request(context: AnyDiagnosisContext) -> str:
         "rule must specify executable behavior and integrate uncertainty handling. The "
         "preservation rule must protect correct behavior and the strict output contract. "
         f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
+        f"TeacherFieldMaxCharacters: {field_max_chars}\n"
+        f"TeacherTotalMaxCharacters: {total_max_chars}\n"
         f"DiagnosisContext:\n{serialize_context(context)}"
     )
 
@@ -336,6 +356,8 @@ def build_teacher_request(context: AnyDiagnosisContext) -> str:
 def build_critic_request(
     context: AnyDiagnosisContext,
     repair_plan: TeacherRepairPlan,
+    *,
+    feedback_max_chars: int = 500,
 ) -> str:
     schema = {"failed_checks": [], "risk_case_ids": [], "feedback": ""}
     return (
@@ -348,7 +370,9 @@ def build_critic_request(
         "contract is endangered. Do not score, predict candidate performance, restate "
         "facts, or report soft concerns. risk_case_ids may only name supplied case IDs. "
         "Use empty feedback when approved; when rejecting give one concrete revision, at "
-        f"most 500 characters. Return exactly: {json.dumps(schema)}\n"
+        f"most {feedback_max_chars} characters. "
+        f"CriticFeedbackMaxCharacters: {feedback_max_chars}. "
+        f"Return exactly: {json.dumps(schema)}\n"
         f"DiagnosisContext:\n{serialize_context(context)}\n"
         f"TeacherRepairPlan:\n{json.dumps(asdict(repair_plan), ensure_ascii=False, sort_keys=True)}"
     )

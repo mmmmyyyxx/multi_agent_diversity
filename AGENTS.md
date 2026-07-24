@@ -510,6 +510,12 @@ LLMs perform only bounded semantic tasks.
 Rollouts verify empirical effects.
 ```
 
+`PreviousUpdateOutcome` must distinguish pipeline execution from empirical
+evaluation. Only a candidate that reached Stage A may produce model-facing
+acceptance, deltas, or rollout rejection reasons. TCS transport, truncation,
+and schema failures remain audit-only terminal failures and expose
+`empirical_feedback_available=false` to the next Teacher.
+
 The current aggregated role pipeline must satisfy:
 
 ```text

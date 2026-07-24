@@ -151,6 +151,62 @@ def test_context_serialization_isolates_accuracy_peer_and_member_fields():
             assert "case_id" in request
 
 
+def test_previous_outcome_hides_rollout_feedback_when_evaluation_did_not_run():
+    accuracy, _, _ = contexts()
+    failed_pipeline = type(accuracy)(
+        **{
+            **accuracy.__dict__,
+            "previous_outcome": PreviousUpdateOutcome(attempted=True),
+        }
+    )
+    assert context_payload(failed_pipeline)["previous_outcome"] == {
+        "attempted": True,
+        "empirical_feedback_available": False,
+    }
+
+    evaluated = type(accuracy)(
+        **{
+            **accuracy.__dict__,
+            "previous_outcome": PreviousUpdateOutcome(
+                attempted=True,
+                empirical_evaluation_completed=True,
+                accepted=False,
+                rejection_reasons=("local_accuracy",),
+            ),
+        }
+    )
+    assert context_payload(evaluated)["previous_outcome"] == {
+        "attempted": True,
+        "empirical_feedback_available": True,
+        "accepted": False,
+        "target_correct_delta": 0,
+        "rejection_reasons": ("local_accuracy",),
+    }
+
+
+def test_role_requests_state_configured_structural_character_limits():
+    accuracy, _, _ = contexts()
+    plan = TeacherRepairPlan(
+        "residual failure",
+        "Apply the explicit rule before committing.",
+        "Preserve outputs that pass the rule.",
+    )
+    teacher_request = build_teacher_request(
+        accuracy,
+        field_max_chars=321,
+        total_max_chars=654,
+    )
+    critic_request = build_critic_request(
+        accuracy,
+        plan,
+        feedback_max_chars=123,
+    )
+    assert "TeacherFieldMaxCharacters: 321" in teacher_request
+    assert "TeacherTotalMaxCharacters: 654" in teacher_request
+    assert "CriticFeedbackMaxCharacters: 123" in critic_request
+    assert "at most 123 characters" in critic_request
+
+
 def test_teacher_schema_is_exact_nonempty_and_bounded():
     valid = {
         "failure_pattern": "premature commitment",

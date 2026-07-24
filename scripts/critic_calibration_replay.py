@@ -17,7 +17,11 @@ from multi_dataset_diverse_rl.config import Config, add_config_arguments, config
 from multi_dataset_diverse_rl.critic_calibration import calibration_context, calibration_items
 from multi_dataset_diverse_rl.llm_client import RoleAwareLLMClient
 from multi_dataset_diverse_rl.persistence.artifacts import ArtifactWriter
-from multi_dataset_diverse_rl.tcs import build_critic_request, parse_critic_decision
+from multi_dataset_diverse_rl.tcs import (
+    build_critic_request,
+    parse_critic_decision,
+    response_truncated,
+)
 from multi_dataset_diverse_rl.utils import extract_json_obj
 
 
@@ -37,7 +41,11 @@ async def run(
     context = calibration_context()
     rows = []
     for item in calibration_items():
-        request = build_critic_request(context, item.proposal)
+        request = build_critic_request(
+            context,
+            item.proposal,
+            feedback_max_chars=cfg.tcs.critic_feedback_max_chars,
+        )
         decision = None
         parse_error = ""
         attempts = []
@@ -46,21 +54,26 @@ async def run(
                 "Audit this calibration proposal."
                 if attempt_index == 0
                 else (
-                    "Your previous response was invalid because "
-                    f"{parse_error}. Copy DERIVED_CASE_FACTS exactly and return corrected strict JSON."
+                    f"Your previous response was invalid because {parse_error}. "
+                    "Re-audit the same proposal and return corrected strict JSON "
+                    "containing only failed_checks, risk_case_ids, and feedback."
                 )
             )
-            raw = await client.chat(
+            result = await client.chat_result(
                 cfg.models.evaluator_model,
                 request,
                 user_request,
                 cfg.tcs.critic_temperature,
                 None,
                 "evaluator",
+                "critic",
             )
+            raw = result.text
             parsed = extract_json_obj(raw)
             parse_error = ""
             try:
+                if response_truncated(result):
+                    raise ValueError("provider_completion_truncation")
                 if parsed is None:
                     raise ValueError("critic response is not JSON")
                 decision = parse_critic_decision(
@@ -75,6 +88,10 @@ async def run(
                 "response_hash": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
                 "json_extracted": parsed is not None,
                 "schema_valid": decision is not None,
+                "finish_reason": result.finish_reason,
+                "response_truncated": response_truncated(result),
+                "prompt_tokens": result.prompt_tokens,
+                "completion_tokens": result.completion_tokens,
                 "parse_error": parse_error,
                 "response_excerpt": _excerpt(raw),
             })
@@ -96,12 +113,18 @@ async def run(
     good = [row for row in rows if row["category"] == "good"]
     memorizing = [row for row in rows if row["category"] == "memorizing"]
     schema_valid_count = sum(bool(row["schema_valid"]) for row in rows)
+    provider_truncation_count = sum(
+        bool(attempt["response_truncated"])
+        for row in rows
+        for attempt in row["attempts"]
+    )
     good_acceptance_count = sum(bool(row["actual_approved"]) for row in good)
     memorizing_rejection_count = sum(row["actual_approved"] is False for row in memorizing)
     cost = client.cost_summary()
     report = {
         "ok": bool(
             schema_valid_count == len(rows)
+            and provider_truncation_count == 0
             and good_acceptance_count > 0
             and memorizing_rejection_count == len(memorizing)
             and sum(bool(row["classification_correct"]) for row in rows) == len(rows)
@@ -111,6 +134,7 @@ async def run(
         "method_version": cfg.training.method_version,
         "criteria": {
             "all_schema_valid": schema_valid_count == len(rows),
+            "provider_truncation_zero": provider_truncation_count == 0,
             "good_proposal_acceptance_gt_zero": good_acceptance_count > 0,
             "memorizing_proposal_rejection_rate": (
                 memorizing_rejection_count / len(memorizing) if memorizing else 1.0
@@ -124,6 +148,7 @@ async def run(
         "summary": {
             "items": len(rows),
             "schema_valid_count": schema_valid_count,
+            "provider_truncation_count": provider_truncation_count,
             "good_acceptance_count": good_acceptance_count,
             "memorizing_rejection_count": memorizing_rejection_count,
             "classification_correct_count": sum(

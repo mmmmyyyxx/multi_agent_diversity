@@ -10,38 +10,40 @@ class FakeTransportClient:
     def __init__(self, invalid_teacher=False):
         self.invalid_teacher = invalid_teacher
         self.roles = []
+        self.max_tokens = []
 
-    async def chat_result(self, _model, _system, _user, _temperature, _max_tokens, role):
+    async def chat_result(
+        self, _model, system, _user, _temperature, _max_tokens, role,
+        _logical_role=None,
+    ):
         self.roles.append(role)
-        return LLMCallResult(
-            "Reason\nFINAL_ANSWER: A", 1, 1, 2, 0.01,
-            "stop",
-        )
-
-    async def chat(self, _model, system, _user, _temperature, _max_tokens, role):
-        self.roles.append(role)
+        self.max_tokens.append(_max_tokens)
         if system == "Return strict JSON only.":
-            return json.dumps({
+            text = json.dumps({
                 "candidate_prompts": [
                     "Verify each option before selecting one letter."
                 ]
             })
-        if "Check only explicit hard blockers" in system:
-            return json.dumps({
+        elif "Check only explicit hard blockers" in system:
+            text = json.dumps({
                 "failed_checks": ["actionable_specificity"],
                 "risk_case_ids": [],
                 "feedback": "transport-valid rejection",
             })
-        if self.invalid_teacher:
-            return "not-json"
-        return json.dumps({
-            "failure_pattern": "premature selection",
-            "repair_rule": (
-                "Compare all options and retain viable options while evidence "
-                "remains unresolved."
-            ),
-            "preservation_rule": "Retain answers that pass the complete verification.",
-        })
+        elif role == "solver":
+            text = "Reason\nFINAL_ANSWER: A"
+        elif self.invalid_teacher:
+            text = "not-json"
+        else:
+            text = json.dumps({
+                "failure_pattern": "premature selection",
+                "repair_rule": (
+                    "Compare all options and retain viable options while evidence "
+                    "remains unresolved."
+                ),
+                "preservation_rule": "Retain answers that pass the complete verification.",
+            })
+        return LLMCallResult(text, 1, 1, 2, 0.01, "stop")
 
     def cost_summary(self):
         return {"total_llm_calls": len(self.roles)}
@@ -60,7 +62,11 @@ def test_role_transport_smoke_validates_all_roles_without_requiring_critic_appro
     assert report["ok"] is True
     assert report["critic"]["decision"]["approved"] is False
     assert report["student"]["schema_valid_count"] == 1
+    assert report["student"]["requested_count"] == 1
+    assert report["student"]["raw_count"] == 1
+    assert report["student"]["valid_count"] == 1
     assert client.roles == ["solver", "optimizer", "evaluator", "optimizer"]
+    assert client.max_tokens == [1800, None, None, None]
     assert (tmp_path / "role_transport_smoke.json").is_file()
 
 
@@ -80,3 +86,23 @@ def test_role_transport_still_calls_critic_and_student_when_live_teacher_schema_
     assert report["critic"]["schema_valid"] is True
     assert report["student"]["schema_valid"] is True
     assert client.roles == ["solver", "optimizer", "evaluator", "optimizer"]
+
+
+def test_role_transport_accepts_fewer_valid_candidates_than_requested(tmp_path):
+    client = FakeTransportClient()
+    report = asyncio.run(run(
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            answer_format="option_letter",
+            num_candidates_per_parent=2,
+        ),
+        client,
+    ))
+    assert report["ok"] is True
+    assert report["student"]["requested_count"] == 2
+    assert report["student"]["raw_count"] == 1
+    assert report["student"]["valid_count"] == 1
+    assert report["teacher"]["request_max_tokens"] is None
+    assert report["critic"]["request_max_tokens"] is None
+    assert report["student"]["request_max_tokens"] is None
+    assert report["solver"]["request_max_tokens"] == 1800

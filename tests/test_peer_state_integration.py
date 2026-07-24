@@ -331,6 +331,34 @@ def test_terminal_failure_taxonomy(
     assert funnel.infrastructure_failed_updates == infrastructure
 
 
+def test_pipeline_failure_does_not_masquerade_as_rollout_rejection(tmp_path):
+    system = build_system(tmp_path)
+
+    async def no_candidates(
+        _target_agent_id, _assigned_hashes, funnel, update_index=-1
+    ):
+        funnel.parents_considered = 1
+        funnel.terminal_failure_class = "transport_failure"
+        funnel.terminal_failure_role = "teacher"
+        funnel.infrastructure_failed_updates = 1
+        return []
+
+    system.propose_candidates = no_candidates
+
+    async def run():
+        await initialize(system)
+        changed = await system.update_once(0)
+        target = system.candidate_decisions[-1]["target_agent_id"]
+        return changed, system.previous_update_outcomes[target]
+
+    changed, outcome = asyncio.run(run())
+    assert changed is False
+    assert outcome.attempted is True
+    assert outcome.empirical_evaluation_completed is False
+    assert outcome.accepted is False
+    assert outcome.rejection_reasons == ()
+
+
 def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):
     student_calls = 0
 
