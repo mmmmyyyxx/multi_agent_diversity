@@ -1,0 +1,31 @@
+{
+  "unique_resolved_request_count": 125,
+  "first_attempt_valid_count": 125,
+  "first_attempt_invalid_count": 0,
+  "recovered_invalid_count": 0,
+  "terminal_invalid_count": 0,
+  "attempt_count_histogram": {
+    "1": 125
+  },
+  "first_pass_validity_status_counts": {
+    "valid": 125
+  },
+  "terminal_validity_status_counts": {},
+  "finish_reason_counts_by_attempt": {
+    "1:stop": 125
+  },
+  "invalid_recovery_extra_calls": 0,
+  "invalid_recovery_prompt_tokens": 0,
+  "invalid_recovery_completion_tokens": 0,
+  "invalid_recovery_total_tokens": 0,
+  "first_attempt_valid_rate": 1.0,
+  "eventual_valid_rate": 1.0,
+  "recovery_call_overhead_rate": 0.0,
+  "recovery_token_overhead_rate": 0.0,
+  "current_run_recovery_api_calls": 0,
+  "current_run_recovery_prompt_tokens": 0,
+  "current_run_recovery_completion_tokens": 0,
+  "current_run_recovery_total_tokens": 0,
+  "current_run_recovery_call_overhead_rate": 0.0,
+  "current_run_recovery_token_overhead_rate": 0.0
+}

@@ -1,0 +1,213 @@
+{
+    "source_run":  "runs_matched_gpt4omini_seed42_20260725",
+    "source_commit":  "a51843fdab103b96d24c932ca46ba14c4ced09f0",
+    "method_version":  "member_aware_peer_state_v3",
+    "task":  "disambiguation_qa",
+    "seed":  42,
+    "settings":  [
+                     "shared_baseline",
+                     "shared_independent_accuracy",
+                     "shared_member_aware_full"
+                 ],
+    "publication_boundary":  "No credentials, raw responses, excerpts, questions, gold answers, member answers, prompt bodies, SQLite cache, checkpoints, or local absolute paths.",
+    "files":  [
+                  {
+                      "path":  "accuracy_results.csv",
+                      "bytes":  4446,
+                      "sha256":  "a99da28d04d39a612de6587dcf10efd8cd30164ca98b3016cb649d31f2cc9e03",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "accuracy_results.jsonl",
+                      "bytes":  6046,
+                      "sha256":  "bd71f3d9cc3a5afca709f2ca97e409cb93b4dec8b54e20292f6501f8ec78f9e9",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "experiment_runs.jsonl",
+                      "bytes":  2994,
+                      "sha256":  "4038ffb291e457ad27fc5f088f9ac2454767b0cd98879094f658f44a7d365309",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/candidate_funnel.json",
+                      "bytes":  105,
+                      "sha256":  "49e8b834adec0dae1ce78675214506a63697b6aef6384621b33b875b3adaf4c0",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/cost_summary.json",
+                      "bytes":  620,
+                      "sha256":  "2d627adc4c231f36db37bb9a727676dd626214c007d18f4215c7b6f46eb7c144",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/final_aggregate_summary.json",
+                      "bytes":  4411,
+                      "sha256":  "c5603569e5f8ae6facc278c77b105743e34f29e726bf6ac479963a526d395dd4",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/history.json",
+                      "bytes":  705,
+                      "sha256":  "7a7f4476d4b697af96a556d630e01f6fa2492cf2ab04f0070269f43e8204129f",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/llm_calls.jsonl",
+                      "bytes":  42775,
+                      "sha256":  "d9cbbef527c916a979f4d3912813f38608e2d4aabe3b8b521edfa0f5ae885f2c",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/responsibility_assignments.jsonl",
+                      "bytes":  0,
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/run_identity_summary.json",
+                      "bytes":  6144,
+                      "sha256":  "59c94a840d76f96d53e3f5c1e73a96ccf8947f8cb39c280d8ce30fc891113702",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/solver_recovery_summary.json",
+                      "bytes":  993,
+                      "sha256":  "ee4a8072337f4dd767b1f1fabb3a03dc41525eb500bf15bc57d91d1f49ec03ef",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/target_priority_audit.jsonl",
+                      "bytes":  0,
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_baseline_seed42/tcs_context_history.jsonl",
+                      "bytes":  0,
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/candidate_funnel.json",
+                      "bytes":  15737,
+                      "sha256":  "f11b6e3de12a8693e2f560cb92847b0bd929fd01cadca41a38a72a1bccb92455",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/cost_summary.json",
+                      "bytes":  650,
+                      "sha256":  "3631000873219e1f836491347fe46e71c7ed7ea15be47a7913d8d76f45c4fe63",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/final_aggregate_summary.json",
+                      "bytes":  5017,
+                      "sha256":  "b2cd8e86893beaa6edafbb05f2db4980485faa74eeea9249cac56c9d4096d679",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/history.json",
+                      "bytes":  29204,
+                      "sha256":  "515f5dd004df4b2090395674f86858b89f0614b1f04cda1e58ba563407fe61e2",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/llm_calls.jsonl",
+                      "bytes":  504873,
+                      "sha256":  "ae32cb61c7fbe4cafb9a15a23b59c5488db1f53b1e57af115de4aeb1241b331a",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/responsibility_assignments.jsonl",
+                      "bytes":  0,
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/run_identity_summary.json",
+                      "bytes":  6220,
+                      "sha256":  "b427ea67afcd47988b80773a280bc8a985899bcf58684a4c7339ae975aa2ddd6",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/solver_recovery_summary.json",
+                      "bytes":  998,
+                      "sha256":  "9df682f4bc7820cd9107c08a1a08300d32a63c75bac68873b0eb30bd4cdf8fc8",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/target_priority_audit.jsonl",
+                      "bytes":  33295,
+                      "sha256":  "5f89ebb9b83482a00fd5ac3eb780a0441c49838233049ffdaa6523d301858982",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_independent_accuracy_seed42/tcs_context_history.jsonl",
+                      "bytes":  15840,
+                      "sha256":  "aeef52f4f0e0e7ba1024b42c5533b6f57073209fbc856b50aebd3da7cba989e8",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/candidate_funnel.json",
+                      "bytes":  15517,
+                      "sha256":  "07eac995732531d381fca21c802dade5c660e3c59fe4c80d63e5e47bdb9e6323",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/cost_summary.json",
+                      "bytes":  671,
+                      "sha256":  "3333f4c095a73bb85d1efae221ded241649c9e1e604212f97f7897d0389b65a9",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/final_aggregate_summary.json",
+                      "bytes":  5014,
+                      "sha256":  "df535ba73e27fbc93bee5ec0cdbd5245d59040412bcca4e01afa8d2f27af8246",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/history.json",
+                      "bytes":  28994,
+                      "sha256":  "12b3a53b0365d4cce326748d7832766018ee3aaaa9c495e3ee09677c6d738792",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/llm_calls.jsonl",
+                      "bytes":  426406,
+                      "sha256":  "2cb06d5552b279b9a14bca737274c172896cb539f454d21e0d72f6ebb020488b",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/responsibility_assignments.jsonl",
+                      "bytes":  270327,
+                      "sha256":  "0bad2761058a200fffcb1e4e349c3419f50789f2507e52f1b4f3d248397ccb8b",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/run_identity_summary.json",
+                      "bytes":  6261,
+                      "sha256":  "db8523df0e456eec736d631d5fe50c8c3b8bb7f9e0cf710c3e7db3d9ecd94781",
+                      "record_type":  "derived_redacted"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/solver_recovery_summary.json",
+                      "bytes":  998,
+                      "sha256":  "59a24bfc154329f2fa4e70009f4911411abcee9c88d2453c1ee0f118d1fb4da5",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/target_priority_audit.jsonl",
+                      "bytes":  33814,
+                      "sha256":  "300dbfdbc01760063638632988a41e73804f98a830c456658c97f047fb2c1b5a",
+                      "record_type":  "exact_source_copy"
+                  },
+                  {
+                      "path":  "shared_member_aware_full_seed42/tcs_context_history.jsonl",
+                      "bytes":  24507,
+                      "sha256":  "03ab6a538d52a5b478a1bdcd85b6394e96dc2a3e27ddab3415c660ee2883b61f",
+                      "record_type":  "exact_source_copy"
+                  }
+              ]
+}

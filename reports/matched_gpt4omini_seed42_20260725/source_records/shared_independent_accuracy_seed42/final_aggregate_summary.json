@@ -1,0 +1,96 @@
+{
+    "initial_test":  {
+                         "vote_correct_count":  49,
+                         "per_agent_correct_counts":  [
+                                                          49,
+                                                          49,
+                                                          49,
+                                                          49,
+                                                          49
+                                                      ],
+                         "plurality_vote_acc":  0.392,
+                         "vote_acc":  0.392,
+                         "mean_individual_acc":  0.392,
+                         "min_individual_acc":  0.392,
+                         "per_agent_acc":  [
+                                               0.392,
+                                               0.392,
+                                               0.392,
+                                               0.392,
+                                               0.392
+                                           ],
+                         "mean_soft_vote_utility":  0.3893764024376808,
+                         "c0_count":  76,
+                         "mean_invalid_rate":  0.0,
+                         "tie_count":  0,
+                         "tie_rate":  0.0,
+                         "validity_status_counts":  {
+                                                        "valid":  625
+                                                    },
+                         "terminal_invalid_count":  0
+                     },
+    "selected_test":  {
+                          "vote_correct_count":  60,
+                          "per_agent_correct_counts":  [
+                                                           49,
+                                                           73,
+                                                           77,
+                                                           64,
+                                                           49
+                                                       ],
+                          "plurality_vote_acc":  0.48,
+                          "vote_acc":  0.48,
+                          "mean_individual_acc":  0.4992,
+                          "min_individual_acc":  0.392,
+                          "per_agent_acc":  [
+                                                0.392,
+                                                0.584,
+                                                0.616,
+                                                0.512,
+                                                0.392
+                                            ],
+                          "mean_soft_vote_utility":  0.48598566427411877,
+                          "c0_count":  19,
+                          "mean_invalid_rate":  0.0,
+                          "tie_count":  2,
+                          "tie_rate":  0.016,
+                          "validity_status_counts":  {
+                                                         "valid":  625
+                                                     },
+                          "terminal_invalid_count":  0
+                      },
+    "member_gain":  {
+                        "gain_counts":  [
+                                            0,
+                                            24,
+                                            28,
+                                            15,
+                                            0
+                                        ],
+                        "minimum_gain_count":  0,
+                        "total_gain_count":  67,
+                        "mean_gain":  13.4,
+                        "minimum_member_correct_count_gain":  0,
+                        "mean_member_correct_count_gain":  13.4,
+                        "minimum_member_accuracy_gain":  0.0,
+                        "mean_member_accuracy_gain":  0.10719999999999999,
+                        "improved_agent_count":  3,
+                        "regressed_agent_count":  0,
+                        "all_members_non_regressed":  true,
+                        "all_members_improved":  false
+                    },
+    "selection_summary":  {
+                              "selected_epoch":  8,
+                              "selection_changed":  true,
+                              "validation_key":  [
+                                                     0,
+                                                     32,
+                                                     20,
+                                                     3,
+                                                     0.5883549390414412,
+                                                     -7,
+                                                     0.0,
+                                                     -8
+                                                 ]
+                          }
+}

@@ -1,0 +1,94 @@
+{
+    "method_version":  "member_aware_peer_state_v3",
+    "experiment_protocol":  {
+                                "name":  "shared_baseline",
+                                "optimization_enabled":  false,
+                                "target_selection_policy":  "none",
+                                "sample_pool_policy":  "none",
+                                "tcs_context_policy":  "none",
+                                "candidate_selection_policy":  "none",
+                                "responsibility_refresh_policy":  "off",
+                                "initialization_mode":  "shared_identical",
+                                "tie_policy":  "abstain",
+                                "candidate_budget_contract":  {
+                                                                  "generated_per_update":  2,
+                                                                  "stage_a_channel_top_k":  2,
+                                                                  "stage_b_candidate_budget":  2,
+                                                                  "representative_size":  12,
+                                                                  "coverage_size":  6,
+                                                                  "conversion_size":  6,
+                                                                  "preservation_size":  4
+                                                              }
+                            },
+    "run_identity":  {
+                         "method_version":  "member_aware_peer_state_v3",
+                         "experiment_setting":  "shared_baseline",
+                         "git_commit":  "a51843fdab103b96d24c932ca46ba14c4ced09f0",
+                         "git_dirty":  false,
+                         "config_fingerprint":  "cb0ec4f8fe9cd2a17214bdea4631adb55f2564ed80f3268e0b00c501df9b59fe",
+                         "manifest_sha256":  "57a08aec0caebe4e275d0b97966bb3f20aeaf14f981cd70d3dd205db5231041c",
+                         "train_file_sha256":  "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+                         "val_file_sha256":  "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb",
+                         "test_file_sha256":  "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+                         "train_question_set_hash":  "a41f884bb8f15a53a23038f1a9d2c17a07b6e78df5296691d90e8b030d12666e",
+                         "val_question_set_hash":  "31399fc1bd4d80ff3b9cd53b570585f650cc37dabf376153ab51abae9974299f",
+                         "test_question_set_hash":  "6ee463ea586f191f89ba06bbeb5c5770441942aba367af14e3fdeb3260425d94"
+                     },
+    "initial_prompt_hashes":  [
+                                  "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+                                  "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+                                  "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+                                  "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+                                  "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+                              ],
+    "initial_prompts_identical":  true,
+    "checkpoint_version":  8,
+    "tcs_protocol_version":  "aggregated_small_model_tcs_v3",
+    "teacher_revision_protocol_version":  "critic_grounded_full_plan_revision_v1",
+    "solver_output_contract_version":  "task_output_contract_v1",
+    "solver_request_template_version":  "decision_procedure_then_mandatory_output_contract_v2",
+    "solver_invalid_retry_policy_version":  "retry_until_first_valid_v1",
+    "prompt_question_evaluator_identity":  [
+                                               "prompt_question_recovered_invalid_v2",
+                                               "3a837c977f7111116371e92aeee4c682a556b3e26c09f9a85a46b0cc23485b92",
+                                               "task_parser_v1",
+                                               0.0,
+                                               42
+                                           ],
+    "models":  {
+                   "agent_model":  "gpt-4o-mini",
+                   "optimizer_model":  "gpt-4o-mini",
+                   "evaluator_model":  "gpt-4o-mini"
+               },
+    "configuration":  {
+                          "agents":  5,
+                          "epochs":  8,
+                          "update_every":  75,
+                          "seed":  42,
+                          "initialization_mode":  "shared_identical",
+                          "train_size":  75,
+                          "val_size":  50,
+                          "test_size":  125,
+                          "candidate_eval_pool_size":  75,
+                          "num_candidates_per_parent":  2,
+                          "stage_a_representative_size":  12,
+                          "stage_a_coverage_size":  6,
+                          "stage_a_conversion_size":  6,
+                          "stage_a_preservation_size":  4,
+                          "stage_a_channel_top_k":  2,
+                          "stage_b_candidate_budget":  2,
+                          "solver_max_tokens":  1800,
+                          "solver_invalid_max_retries":  3,
+                          "eval_solver_call_concurrency":  8,
+                          "temperature":  0.0
+                      },
+    "cache_audit":  {
+                        "prompt_question_cache_hits":  500,
+                        "prompt_question_cache_misses":  125,
+                        "shared_solver_cache_hits":  0,
+                        "shared_solver_cache_misses":  125,
+                        "shared_solver_cache_waits":  0,
+                        "shared_solver_cache_ready_entries":  125,
+                        "shared_solver_cache_content_hash":  "77dbf24de628c2fdf914f80640b3a8a4a6f0fe753680ad54201f7fc17ced50a4"
+                    }
+}
