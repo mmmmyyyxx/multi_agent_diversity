@@ -1,0 +1,40 @@
+{
+  "revision_attempts": [
+    {
+      "update": 0,
+      "previous_plan_hash_matches": true,
+      "revision_critic_hash_matches": true,
+      "revised_plan_differs": true,
+      "changed_fields": ["failure_pattern", "repair_rule", "preservation_rule"],
+      "round_2_approved": false
+    },
+    {
+      "update": 1,
+      "previous_plan_hash_matches": true,
+      "revision_critic_hash_matches": true,
+      "revised_plan_differs": false,
+      "changed_fields": [],
+      "round_2_approved": false
+    },
+    {
+      "update": 2,
+      "previous_plan_hash_matches": true,
+      "revision_critic_hash_matches": true,
+      "revised_plan_differs": true,
+      "changed_fields": ["failure_pattern", "repair_rule", "preservation_rule"],
+      "round_2_approved": true
+    },
+    {
+      "update": 3,
+      "previous_plan_hash_matches": true,
+      "revision_critic_hash_matches": true,
+      "revised_plan_differs": true,
+      "changed_fields": ["failure_pattern", "repair_rule", "preservation_rule"],
+      "round_2_approved": true
+    }
+  ],
+  "critic_schema_format_retries": 1,
+  "critic_schema_retry_reason": "feedback_exceeds_character_limit",
+  "critic_bypass_observed": false,
+  "raw_model_responses_published": false
+}

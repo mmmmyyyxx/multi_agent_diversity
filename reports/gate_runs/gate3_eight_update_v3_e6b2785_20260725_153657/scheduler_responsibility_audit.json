@@ -1,0 +1,18 @@
+{
+  "target_sequence": [0, 4, 2, 3, 1, 0, 4, 2],
+  "all_five_agents_targeted": true,
+  "selected_always_in_actual_pool": true,
+  "selected_always_on_actual_pareto_frontier": true,
+  "overdue_pool_updates": [4, 5, 6, 7],
+  "potential_state_unchanged_without_stage_b": [0, 1],
+  "positive_target_gain_updates": [2, 3, 4, 5, 6, 7],
+  "cooldown_assigned_updates": [],
+  "accepted_update_count": 6,
+  "responsibility_snapshot_count": 7,
+  "team_state_versions": [0, 1, 2, 3, 4, 5, 6],
+  "responsibility_refresh_reconciled": true,
+  "checkpoint_artifact_present": false,
+  "shared_cache_hits": 0,
+  "shared_cache_misses": 2075,
+  "shared_cache_ready_entries": 2075
+}

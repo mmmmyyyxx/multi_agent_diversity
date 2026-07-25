@@ -1,0 +1,20 @@
+{
+  "unique_resolved_requests": 2075,
+  "first_pass_valid": 2047,
+  "first_pass_invalid": 28,
+  "recovered_invalid": 27,
+  "terminal_invalid": 1,
+  "eventual_valid_rate": 0.9995180723,
+  "recovery_api_calls": 36,
+  "recovery_call_overhead_rate": 0.0173493976,
+  "recovery_token_overhead_rate": 0.026574499,
+  "terminal_invalid_selected": false,
+  "solver_429_retry_attempts": 522,
+  "all_role_429_retry_attempts": 530,
+  "solver_calls_with_at_least_one_429": 375,
+  "successful_solver_calls": 2111,
+  "maximum_solver_429_retries_before_success": 4,
+  "terminal_429_failures": 0,
+  "solver_429_latency_seconds": 3258.7461,
+  "all_role_429_latency_seconds": 3306.7918
+}

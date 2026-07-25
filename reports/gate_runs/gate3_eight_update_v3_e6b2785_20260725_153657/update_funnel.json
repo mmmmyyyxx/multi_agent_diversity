@@ -1,0 +1,26 @@
+{
+  "totals": {
+    "updates": 8,
+    "teacher_calls": 12,
+    "critic_calls": 13,
+    "critic_semantic_rejections": 6,
+    "critic_approvals": 6,
+    "student_calls": 6,
+    "valid_candidates": 12,
+    "stage_a_evaluated": 12,
+    "stage_b_evaluated": 12,
+    "constraint_feasible": 9,
+    "pareto_acceptable": 9,
+    "accepted_updates": 6
+  },
+  "updates": [
+    {"update": 0, "target": 0, "stage_a": 0, "stage_b": 0, "accepted": false, "terminal": "critic_semantic_rejection_exhausted"},
+    {"update": 1, "target": 4, "stage_a": 0, "stage_b": 0, "accepted": false, "terminal": "critic_semantic_rejection_exhausted"},
+    {"update": 2, "target": 2, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"},
+    {"update": 3, "target": 3, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"},
+    {"update": 4, "target": 1, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"},
+    {"update": 5, "target": 0, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"},
+    {"update": 6, "target": 4, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"},
+    {"update": 7, "target": 2, "stage_a": 2, "stage_b": 2, "accepted": true, "terminal": "completed"}
+  ]
+}

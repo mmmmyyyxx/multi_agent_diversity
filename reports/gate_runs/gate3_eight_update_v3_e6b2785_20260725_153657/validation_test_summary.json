@@ -1,0 +1,27 @@
+{
+  "selected_epoch": 8,
+  "validation": {
+    "initial_vote_correct": 26,
+    "selected_vote_correct": 34,
+    "selected_member_correct_counts": [29, 38, 33, 30, 34],
+    "member_gains": [3, 12, 7, 4, 8],
+    "minimum_member_gain": 3,
+    "total_member_gain": 34,
+    "improved_member_count": 5,
+    "regressed_member_count": 0,
+    "terminal_invalid": 0
+  },
+  "test": {
+    "initial_vote_correct": 52,
+    "selected_vote_correct": 71,
+    "vote_correct_gain": 19,
+    "initial_member_correct_counts": [52, 52, 52, 52, 52],
+    "selected_member_correct_counts": [57, 85, 78, 57, 79],
+    "member_gains": [5, 33, 26, 5, 27],
+    "minimum_member_gain": 5,
+    "total_member_gain": 96,
+    "improved_member_count": 5,
+    "regressed_member_count": 0,
+    "terminal_invalid": 0
+  }
+}
