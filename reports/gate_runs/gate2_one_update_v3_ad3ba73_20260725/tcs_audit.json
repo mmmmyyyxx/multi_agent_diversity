@@ -1,0 +1,28 @@
+{
+  "update_index": 0,
+  "target_agent_id": 2,
+  "eligible_agent_ids": [0, 1, 2, 3, 4],
+  "teacher_calls": 2,
+  "critic_calls": 2,
+  "rounds": [
+    {
+      "semantic_round": 1,
+      "critic_schema_valid": true,
+      "critic_approved": false,
+      "failure_class": "semantic_rejection",
+      "failed_checks": ["evidence_mismatch"]
+    },
+    {
+      "semantic_round": 2,
+      "critic_schema_valid": true,
+      "critic_approved": false,
+      "failure_class": "semantic_rejection",
+      "failed_checks": ["actionable_specificity"]
+    }
+  ],
+  "student_calls": 0,
+  "stage_a_evaluated": 0,
+  "stage_b_evaluated": 0,
+  "terminal_failure_class": "critic_semantic_rejection_exhausted",
+  "raw_model_responses_published": false
+}

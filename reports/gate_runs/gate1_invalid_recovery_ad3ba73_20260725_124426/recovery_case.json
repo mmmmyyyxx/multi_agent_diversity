@@ -1,0 +1,18 @@
+{
+  "case": "historical_missing_final_04",
+  "repetition": 1,
+  "attempts": [
+    {
+      "validity_status": "missing_final_answer",
+      "finish_reason": "length"
+    },
+    {
+      "validity_status": "valid",
+      "finish_reason": "stop",
+      "final_answer_line_count": 1
+    }
+  ],
+  "terminal_invalid": false,
+  "recovery_reconciled": true,
+  "raw_response_payload_published": false
+}

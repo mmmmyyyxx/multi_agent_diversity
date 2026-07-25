@@ -1,0 +1,19 @@
+{
+  "source_commit": "ad3ba73a89cc579bae906c570a677c72600d955c",
+  "source_artifact": "runs_gate1_invalid_recovery_ad3ba73_20260725_124426",
+  "case_count": 14,
+  "repetitions": 3,
+  "records": 42,
+  "eventual_valid_rate": 1.0,
+  "terminal_invalid_count": 0,
+  "first_pass_valid_count": 41,
+  "recovered_request_count": 1,
+  "recovery_api_calls": 1,
+  "recovery_total_tokens": 633,
+  "recovery_call_overhead_rate": 0.0238095238,
+  "recovery_token_overhead_rate": 0.0246639392,
+  "all_cache_replays_zero_call": true,
+  "all_recovery_summaries_reconciled": true,
+  "recovery_viability": "pass",
+  "strict_zero_first_pass_invalid_contract": "conditional"
+}
