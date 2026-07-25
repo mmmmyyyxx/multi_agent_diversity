@@ -1,0 +1,30 @@
+{
+  "update_index": 0,
+  "target_agent_id": 0,
+  "role_sequence": [
+    {
+      "role": "teacher",
+      "semantic_round": 1,
+      "schema_valid": true,
+      "finish_reason": "stop",
+      "teacher_plan_hash": "1fdba920558fd1123b746485353e60a2c4694123e6aac2df681d34b1b1ff6647"
+    },
+    {
+      "role": "critic",
+      "semantic_round": 1,
+      "schema_valid": true,
+      "approved": true,
+      "failed_checks": [],
+      "risk_case_ids": [],
+      "critic_decision_hash": "c88aa7f6b24e66a80a5998eec1f10d2bc303b268d48fbe6d3879bbfea368911b"
+    },
+    {
+      "role": "student",
+      "semantic_round": 1,
+      "schema_valid": true,
+      "finish_reason": "stop"
+    }
+  ],
+  "live_revision_exercised": false,
+  "raw_model_responses_published": false
+}

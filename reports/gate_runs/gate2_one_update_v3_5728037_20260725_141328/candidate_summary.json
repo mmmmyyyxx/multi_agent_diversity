@@ -1,0 +1,36 @@
+{
+  "target_agent_id": 0,
+  "incumbent_objective": {
+    "vote_correct_count": 25,
+    "minimum_member_gain_count": 0,
+    "total_member_gain_count": 0
+  },
+  "candidates": [
+    {
+      "prompt_hash": "cf24a1ff1c5051114da93515b4c4e277662d094c2335c40579acd1ca0a38335f",
+      "stage_a_channels": ["mean_member", "team_vote", "worst_member"],
+      "stage_a_pareto_front": 2,
+      "target_correct_count": 51,
+      "vote_correct_count": 25,
+      "minimum_member_gain_count": 0,
+      "total_member_gain_count": 26,
+      "assigned_residual_repair_count": 4,
+      "invalid_count": 0,
+      "constraint_passed": true,
+      "accepted": false
+    },
+    {
+      "prompt_hash": "c49bd8cc8c515935d7637330c3f9844a7bb923a483576a872cae1902aa67401a",
+      "stage_a_channels": ["mean_member", "team_vote", "worst_member"],
+      "stage_a_pareto_front": 1,
+      "target_correct_count": 53,
+      "vote_correct_count": 25,
+      "minimum_member_gain_count": 0,
+      "total_member_gain_count": 28,
+      "assigned_residual_repair_count": 5,
+      "invalid_count": 0,
+      "constraint_passed": true,
+      "accepted": true
+    }
+  ]
+}
