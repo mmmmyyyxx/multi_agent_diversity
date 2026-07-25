@@ -16,10 +16,14 @@ from multi_dataset_diverse_rl.tcs import (
     build_critic_request,
     build_student_request,
     build_teacher_request,
+    build_teacher_revision_request,
+    changed_teacher_plan_fields,
     context_payload,
+    critic_decision_hash,
     parse_critic_decision,
     parse_student_candidates,
     parse_teacher_repair_plan,
+    teacher_repair_plan_hash,
 )
 
 
@@ -205,6 +209,46 @@ def test_role_requests_state_configured_structural_character_limits():
     assert "TeacherTotalMaxCharacters: 654" in teacher_request
     assert "CriticFeedbackMaxCharacters: 123" in critic_request
     assert "at most 123 characters" in critic_request
+
+
+def test_teacher_revision_request_contains_full_prior_plan_and_critic_decision():
+    accuracy, _, _ = contexts()
+    previous = TeacherRepairPlan(
+        "premature commitment",
+        "Compare each option before committing.",
+        "Preserve conclusions that pass every explicit check.",
+    )
+    critic = parse_critic_decision(
+        {
+            "failed_checks": ["evidence_mismatch"],
+            "risk_case_ids": ["c1"],
+            "feedback": "Use only observable task-input checks.",
+        },
+        allowed_case_ids={"c1"},
+    )
+    request = build_teacher_revision_request(
+        context=accuracy,
+        previous_plan=previous,
+        critic_decision=critic,
+    )
+    assert "PreviousTeacherRepairPlan:" in request
+    assert '"failure_pattern": "premature commitment"' in request
+    assert '"repair_rule": "Compare each option before committing."' in request
+    assert '"preservation_rule": "Preserve conclusions that pass every explicit check."' in request
+    assert '"failed_checks": ["evidence_mismatch"]' in request
+    assert '"risk_case_ids": ["c1"]' in request
+    assert "Use only observable task-input checks." in request
+    assert "DiagnosisContextHash:" in request
+    assert evidence().question not in request
+    assert "all four hard checks cumulatively" in request
+    assert teacher_repair_plan_hash(previous)
+    assert critic_decision_hash(critic)
+    revised = TeacherRepairPlan(
+        previous.failure_pattern,
+        "Compare each option in order before committing.",
+        previous.preservation_rule,
+    )
+    assert changed_teacher_plan_fields(previous, revised) == ("repair_rule",)
 
 
 def test_teacher_schema_is_exact_nonempty_and_bounded():

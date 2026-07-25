@@ -218,7 +218,15 @@ The Solver retains `solver_max_tokens=1800` to preserve its request identity
 and shared cache. Providers may still return `finish_reason=length`; the
 pipeline records this as a runtime failure, not as evidence of no method gain.
 
-A semantic Teacher revision occurs only after a valid Critic rejection.
+A semantic Teacher revision occurs only after a valid Critic rejection. The
+revision request is an explicit, stateless request containing the complete
+previous `TeacherRepairPlan`, structured `failed_checks`, `risk_case_ids`, and
+Critic feedback, together with the same bounded diagnosis context. It asks for
+all three replacement fields and requires cumulative satisfaction of every hard
+check; it cannot repair one check by weakening a previously valid rule. The
+revision protocol is `critic_grounded_full_plan_revision_v1` and is part of run
+identity and TCS audit metadata.
+
 Malformed or provider-truncated Teacher/Critic responses retry the identical
 request once without consuming another semantic round. Student applies strict
 requested-count, per-prompt, and total-prompt character limits and never

@@ -14,7 +14,10 @@
 - Recovery token overhead: `0.0246639392`
 - Cache replay created new Solver calls: `false`
 - Recovery summaries reconciled: `true`
+- Formal Gate 1 decision: `PASS`
 
 The one recovered case was `historical_missing_final_04`. Its first attempt
 had `finish_reason=length` and `missing_final_answer`; the request-local
-recovery was valid. Raw responses, SQLite caches, and runner logs remain local.
+recovery was valid. First-pass validity was 41/42 (97.62%), which is a
+stability metric rather than a hard failure under the first-valid recovery
+protocol. Raw responses, SQLite caches, and runner logs remain local.

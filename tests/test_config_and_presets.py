@@ -105,7 +105,10 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tie_policy"] == "abstain"
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
-    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v2"
+    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v3"
+    assert metadata["teacher_revision_protocol_version"] == (
+        "critic_grounded_full_plan_revision_v1"
+    )
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
     assert metadata["diagnosis_aggregation_version"] == "peer_state_pattern_aggregation_v1"
     assert metadata["target_selection_version"] == TARGET_SELECTION_VERSION

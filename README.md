@@ -95,7 +95,7 @@ python scripts/run_task_level_accuracy.py `
   --out_root runs_member_aware_disambiguation
 ```
 
-Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
 
 The Solver retains `solver_max_tokens=1800` so its request identity and shared
 cache remain stable. A provider may still return `finish_reason=length`; this

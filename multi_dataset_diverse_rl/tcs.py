@@ -11,7 +11,8 @@ from .llm_client import LLMCallResult
 from .utils import extract_json_obj, normalize_prompt_text
 
 
-TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v2"
+TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v3"
+TEACHER_REVISION_PROTOCOL_VERSION = "critic_grounded_full_plan_revision_v1"
 TEACHER_SCHEMA_VERSION = "three_field_repair_plan_v1"
 CRITIC_SCHEMA_VERSION = "four_hard_blocker_v1"
 STUDENT_SCHEMA_VERSION = "replacement_prompt_list_v1"
@@ -100,6 +101,41 @@ class CriticDecision:
     failed_checks: tuple[str, ...]
     risk_case_ids: tuple[str, ...]
     feedback: str
+
+
+def teacher_repair_plan_hash(plan: TeacherRepairPlan) -> str:
+    payload = json.dumps(
+        asdict(plan),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def critic_decision_hash(decision: CriticDecision) -> str:
+    payload = json.dumps(
+        {
+            "failed_checks": list(decision.failed_checks),
+            "risk_case_ids": list(decision.risk_case_ids),
+            "feedback": decision.feedback,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def changed_teacher_plan_fields(
+    previous: TeacherRepairPlan,
+    revised: TeacherRepairPlan,
+) -> tuple[str, ...]:
+    return tuple(
+        field
+        for field in ("failure_pattern", "repair_rule", "preservation_rule")
+        if getattr(previous, field) != getattr(revised, field)
+    )
 
 
 @dataclass(frozen=True)
@@ -350,6 +386,46 @@ def build_teacher_request(
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"
         f"DiagnosisContext:\n{serialize_context(context)}"
+    )
+
+
+def build_teacher_revision_request(
+    *,
+    context: AnyDiagnosisContext,
+    previous_plan: TeacherRepairPlan,
+    critic_decision: CriticDecision,
+    field_max_chars: int = 800,
+    total_max_chars: int = 1800,
+    feedback_max_chars: int = 500,
+) -> str:
+    if critic_decision.approved or not critic_decision.failed_checks:
+        raise ValueError("Teacher revision requires a rejected Critic decision")
+    critic_payload = {
+        "failed_checks": list(critic_decision.failed_checks),
+        "risk_case_ids": list(critic_decision.risk_case_ids),
+        "feedback": critic_decision.feedback,
+    }
+    context_hash = hashlib.sha256(
+        serialize_context(context).encode("utf-8")
+    ).hexdigest()
+    return (
+        "Revise the previous TeacherRepairPlan into a complete replacement plan. "
+        "Return all three original fields, not a patch or commentary. Address every "
+        "failed_check while preserving rules that were not challenged. A revision "
+        "must satisfy all four hard checks cumulatively; do not evade a prior "
+        "evidence_mismatch by replacing an executable rule with vague language. "
+        "Base every repair rule on observable checks available in the task input, "
+        "and do not claim that supplied evidence establishes facts it does not show. "
+        "Do not quote cases or answers, copy a peer procedure, predict performance, "
+        "or generate candidate prompts. The preservation rule must protect correct "
+        "behavior and the strict output contract. "
+        f"RevisionProtocolVersion: {TEACHER_REVISION_PROTOCOL_VERSION}\n"
+        f"TeacherFieldMaxCharacters: {field_max_chars}\n"
+        f"TeacherTotalMaxCharacters: {total_max_chars}\n"
+        f"CriticFeedbackMaxCharacters: {feedback_max_chars}\n"
+        f"PreviousTeacherRepairPlan:\n{json.dumps(asdict(previous_plan), ensure_ascii=False, sort_keys=True)}\n"
+        f"CriticDecision:\n{json.dumps(critic_payload, ensure_ascii=False, sort_keys=True)}\n"
+        f"DiagnosisContextHash: {context_hash}"
     )
 
 

@@ -20,6 +20,7 @@ from ..tcs import (
     STUDENT_SCHEMA_VERSION,
     TCS_PROTOCOL_VERSION,
     TEACHER_SCHEMA_VERSION,
+    TEACHER_REVISION_PROTOCOL_VERSION,
 )
 from ..evaluation.output_contract import SOLVER_REQUEST_TEMPLATE_VERSION
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
@@ -97,6 +98,7 @@ def config_fingerprint(cfg: Config) -> str:
         "pattern_selection": PATTERN_SELECTION_VERSION,
         "tcs_protocol": TCS_PROTOCOL_VERSION,
         "teacher_schema": TEACHER_SCHEMA_VERSION,
+        "teacher_revision_protocol": TEACHER_REVISION_PROTOCOL_VERSION,
         "critic_schema": CRITIC_SCHEMA_VERSION,
         "student_schema": STUDENT_SCHEMA_VERSION,
         "role_retry_policy": ROLE_RETRY_POLICY_VERSION,

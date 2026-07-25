@@ -123,6 +123,8 @@ def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
 
 def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
     teacher_calls = critic_calls = 0
+    teacher_system_requests = []
+    teacher_user_requests = []
 
     async def optimizer(system_prompt, user_prompt, _temperature, _max_tokens):
         nonlocal teacher_calls, critic_calls
@@ -138,8 +140,21 @@ def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
         if system_prompt == "Return strict JSON only.":
             return json.dumps({"candidate_prompts": ["repair-q0"]})
         teacher_calls += 1
+        teacher_system_requests.append(system_prompt)
+        teacher_user_requests.append(user_prompt)
         if teacher_calls == 2:
+            assert "PreviousTeacherRepairPlan:" in user_prompt
+            assert '"failure_pattern": "the solver commits before checking explicit constraints"' in user_prompt
+            assert '"failed_checks": ["actionable_specificity"]' in user_prompt
+            assert '"risk_case_ids": []' in user_prompt
             assert "Specify the executable verification order." in user_prompt
+            return json.dumps({
+                **TEACHER,
+                "repair_rule": (
+                    "Check each explicit constraint in order, record the first "
+                    "observable conflict, and abstain only when viable options remain tied."
+                ),
+            })
         return json.dumps(TEACHER)
 
     system = build_system(tmp_path, optimizer)
@@ -154,6 +169,61 @@ def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
     assert len(candidates) == 1
     assert teacher_calls == 2 and critic_calls == 2
     assert funnel.critic_semantic_rejections == 1
+    assert teacher_system_requests[0] == teacher_system_requests[1]
+    assert "DiagnosisContext:" in teacher_system_requests[1]
+    assert "DiagnosisContextHash:" in teacher_user_requests[1]
+    teacher_rows = [row for row in system.tcs_rounds if row["role"] == "teacher"]
+    critic_rows = [row for row in system.tcs_rounds if row["role"] == "critic"]
+    assert teacher_rows[0]["previous_plan_hash"] == ""
+    assert teacher_rows[1]["previous_plan_hash"] == teacher_rows[0]["teacher_plan_hash"]
+    assert teacher_rows[1]["revision_critic_hash"] == critic_rows[0]["critic_decision_hash"]
+    assert teacher_rows[1]["revision_changed_fields"] == ["repair_rule"]
+
+
+def test_teacher_revision_preserves_cumulative_hard_check_constraints(tmp_path):
+    teacher_calls = critic_calls = 0
+
+    async def optimizer(system_prompt, user_prompt, _temperature, _max_tokens):
+        nonlocal teacher_calls, critic_calls
+        if "Check only explicit hard blockers" in system_prompt:
+            critic_calls += 1
+            if critic_calls == 1:
+                return json.dumps({
+                    "failed_checks": ["evidence_mismatch"],
+                    "risk_case_ids": [],
+                    "feedback": "Use only checks observable in the task input.",
+                })
+            return json.dumps({
+                "failed_checks": ["actionable_specificity"],
+                "risk_case_ids": [],
+                "feedback": "The revised rule is still vague.",
+            })
+        if system_prompt == "Return strict JSON only.":
+            return json.dumps({"candidate_prompts": ["repair-q0"]})
+        teacher_calls += 1
+        if teacher_calls == 2:
+            assert '"failed_checks": ["evidence_mismatch"]' in user_prompt
+            assert '"risk_case_ids": []' in user_prompt
+            assert "all four hard checks cumulatively" in user_prompt
+            return json.dumps({
+                **TEACHER,
+                "repair_rule": "Use contextual evidence to choose the best option.",
+            })
+        return json.dumps(TEACHER)
+
+    system = build_system(tmp_path, optimizer)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert teacher_calls == 2 and critic_calls == 2
+    assert funnel.critic_semantic_rejections == 2
+    assert funnel.terminal_failure_class == "critic_semantic_rejection_exhausted"
 
 
 def test_critic_invalid_json_retries_same_request_without_teacher_revision(tmp_path):

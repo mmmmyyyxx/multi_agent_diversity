@@ -85,11 +85,15 @@ from .tcs import (
     StudentPromptCandidate,
     TCSContextDiagnostics,
     TCS_PROTOCOL_VERSION,
+    TEACHER_REVISION_PROTOCOL_VERSION,
     SAMPLE_MEMORIZATION_FILTER_VERSION,
     TeacherRepairPlan,
+    build_teacher_revision_request,
     build_critic_request,
     build_student_request,
     build_teacher_request,
+    changed_teacher_plan_fields,
+    critic_decision_hash,
     contains_supplied_example_text,
     context_payload,
     limit_diagnosis_context,
@@ -98,6 +102,7 @@ from .tcs import (
     parse_teacher_repair_plan,
     response_truncated,
     serialize_context,
+    teacher_repair_plan_hash,
 )
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 from .versions import CHECKPOINT_VERSION, METHOD_VERSION, TARGET_SELECTION_VERSION
@@ -1114,16 +1119,27 @@ class PromptEnsembleOptimizationSystem:
         )
         repair_plan: TeacherRepairPlan | None = None
         critic_decision: CriticDecision | None = None
-        critic_feedback = ""
         context_hash = hashlib.sha256(context_serialized.encode("utf-8")).hexdigest()
         last_teacher_failure = ""
         last_critic_failure = ""
         for semantic_round in range(1, self.cfg.tcs.teacher_critic_max_rounds + 1):
-            user_request = (
-                "Produce the repair proposal."
-                if semantic_round == 1
-                else f"Revise the proposal using this critic feedback: {critic_feedback}"
-            )
+            previous_plan = repair_plan
+            previous_critic_decision = critic_decision
+            if semantic_round == 1:
+                user_request = "Produce the repair proposal."
+            else:
+                if previous_plan is None or previous_critic_decision is None:
+                    raise RuntimeError(
+                        "Teacher revision requires the previous plan and Critic decision"
+                    )
+                user_request = build_teacher_revision_request(
+                    context=context,
+                    previous_plan=previous_plan,
+                    critic_decision=previous_critic_decision,
+                    field_max_chars=self.cfg.tcs.teacher_field_max_chars,
+                    total_max_chars=self.cfg.tcs.teacher_total_max_chars,
+                    feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                )
             repair_plan = None
             teacher_request_hash = _request_hash(teacher_request, user_request)
             for format_attempt in range(self.cfg.tcs.teacher_json_max_retries + 1):
@@ -1154,6 +1170,16 @@ class PromptEnsembleOptimizationSystem:
                         "response_truncated": False,
                         "failure_class": "transport_failure",
                         "retry_reason": type(exc).__name__,
+                        "previous_plan_hash": (
+                            teacher_repair_plan_hash(previous_plan)
+                            if previous_plan is not None else ""
+                        ),
+                        "revision_critic_hash": (
+                            critic_decision_hash(previous_critic_decision)
+                            if previous_critic_decision is not None else ""
+                        ),
+                        "teacher_plan_hash": "",
+                        "revision_changed_fields": [],
                         "input_characters": len(teacher_request) + len(user_request),
                         "output_characters": 0,
                         "raw_response_characters": 0,
@@ -1206,6 +1232,23 @@ class PromptEnsembleOptimizationSystem:
                     "failure_class": failure_class,
                     "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
                     "parse_error": parse_error,
+                    "previous_plan_hash": (
+                        teacher_repair_plan_hash(previous_plan)
+                        if previous_plan is not None else ""
+                    ),
+                    "revision_critic_hash": (
+                        critic_decision_hash(previous_critic_decision)
+                        if previous_critic_decision is not None else ""
+                    ),
+                    "teacher_plan_hash": (
+                        teacher_repair_plan_hash(repair_plan)
+                        if repair_plan is not None else ""
+                    ),
+                    "revision_changed_fields": (
+                        list(changed_teacher_plan_fields(previous_plan, repair_plan))
+                        if previous_plan is not None and repair_plan is not None
+                        else []
+                    ),
                     "input_characters": len(teacher_request) + len(user_request),
                     "output_characters": len(teacher_raw),
                     "raw_response_characters": len(teacher_raw),
@@ -1260,6 +1303,8 @@ class PromptEnsembleOptimizationSystem:
                         "response_truncated": False,
                         "failure_class": "transport_failure",
                         "retry_reason": type(exc).__name__,
+                        "teacher_plan_hash": teacher_repair_plan_hash(repair_plan),
+                        "critic_decision_hash": "",
                         "input_characters": len(critic_request),
                         "output_characters": 0,
                         "raw_response_characters": 0,
@@ -1326,6 +1371,11 @@ class PromptEnsembleOptimizationSystem:
                     "failure_class": failure_class,
                     "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
                     "parse_error": parse_error,
+                    "teacher_plan_hash": teacher_repair_plan_hash(repair_plan),
+                    "critic_decision_hash": (
+                        critic_decision_hash(critic_decision)
+                        if critic_decision is not None else ""
+                    ),
                     "input_characters": len(critic_request),
                     "output_characters": len(critic_raw),
                     "raw_response_characters": len(critic_raw),
@@ -1347,7 +1397,6 @@ class PromptEnsembleOptimizationSystem:
             if critic_decision.approved:
                 funnel.critic_approved += 1
                 break
-            critic_feedback = critic_decision.feedback
         if repair_plan is None or critic_decision is None or not critic_decision.approved:
             funnel.terminal_failure_class = "critic_semantic_rejection_exhausted"
             funnel.terminal_failure_role = "critic"
@@ -2160,6 +2209,7 @@ class PromptEnsembleOptimizationSystem:
             "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
             "pattern_selection_version": PATTERN_SELECTION_VERSION,
             "teacher_schema_version": TEACHER_SCHEMA_VERSION,
+            "teacher_revision_protocol_version": TEACHER_REVISION_PROTOCOL_VERSION,
             "critic_schema_version": CRITIC_SCHEMA_VERSION,
             "student_schema_version": STUDENT_SCHEMA_VERSION,
             "role_retry_policy_version": ROLE_RETRY_POLICY_VERSION,

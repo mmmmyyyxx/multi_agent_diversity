@@ -593,10 +593,15 @@ requested candidate count
 Student must not receive raw optimization examples or gold answers.
 
 This pipeline is implemented by `member_aware_peer_state_v3` with
-`aggregated_small_model_tcs_v1`. Do not revert to raw parallel case lists or
-expand language-model responsibilities. Do not change member objectives,
-responsibility assignment, Stage A/B, validation, or experiment-setting
-semantics as part of role-pipeline maintenance.
+`aggregated_small_model_tcs_v3`. After a valid Critic rejection, Teacher
+revision is stateless but grounded: the next request explicitly includes the
+complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
+feedback, and the same bounded diagnosis context. The revision protocol is
+`critic_grounded_full_plan_revision_v1`; it requires all three replacement
+fields and cumulative satisfaction of all hard checks. Do not revert to raw
+parallel case lists or expand language-model responsibilities. Do not change
+member objectives, responsibility assignment, Stage A/B, validation, or
+experiment-setting semantics as part of role-pipeline maintenance.
 
 ## 9. Code Map
 
