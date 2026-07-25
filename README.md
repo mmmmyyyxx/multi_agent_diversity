@@ -2,12 +2,13 @@
 
 This repository implements one current method:
 **Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v3`).
+(`member_aware_peer_state_v4`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
-fixed-probe rollouts evaluate them, and a competence-constrained member-aware
-Pareto rule decides whether a single-agent update enters the active team.
+fixed-probe rollouts evaluate them, and an aggregate non-regression rule plus
+the setting-specific selector decides whether a single-agent update enters the
+active team.
 
 ## Method Flow
 
@@ -18,7 +19,8 @@ Team Rollout
   -> Hard-Blocker Critique
   -> Prompt Realization
   -> Stage A: team-vote / worst-member / mean-member shortlist
-  -> Pareto Rollout Selection: competence guards + (vote count, minimum gain, total gain)
+  -> Aggregate Feasibility: target improvement + team/objective/invalid non-regression
+  -> Setting-Specific Rollout Selection
   -> accepted prompt, then immediate state and responsibility refresh
 ```
 
@@ -31,9 +33,13 @@ g_min   = min_i g_i
 g_sum   = sum_i g_i
 ```
 
-A member-aware candidate is accepted only when its
-`(V_count, g_min, g_sum)` vector Pareto-dominates the incumbent. Soft vote
-utility is only a deterministic tie-break signal.
+A candidate must strictly improve the target member, must not reduce aggregate
+team vote count, must not increase terminal-invalid outputs, and must
+Pareto-dominate the incumbent in `(V_count, g_min, g_sum)`. The method does not
+require zero loss on every probe example. Vote, unique-correct, and
+pivotal-correct gains and losses remain audited diagnostics and late
+tie-breakers; none independently rejects a candidate. Soft vote utility is only
+a deterministic tie-break signal.
 
 ## Experiment Settings
 
@@ -61,8 +67,9 @@ python -m compileall -q multi_dataset_diverse_rl scripts
 python scripts/preflight_member_aware.py --workspace . --allow_dirty 1
 python scripts/deterministic_member_objective_unit_smoke.py
 python scripts/deterministic_member_aware_system_smoke.py
-# Or run both:
-python scripts/deterministic_member_aware_smoke.py
+python scripts/deterministic_aggregate_acceptance_smoke.py
+python scripts/deterministic_student_recovery_smoke.py
+python scripts/deterministic_validation_selection_smoke.py
 git diff --check
 ```
 
@@ -72,7 +79,9 @@ Stage A/B, checks one responsibility
 refresh per committed team transition, verifies the two critical Pareto
 accept/reject cases, covers all eligible members, and computes the real
 validation key. The smaller unit smoke retains deterministic helper-level
-coverage.
+coverage. The three v4 smokes separately prove aggregate acceptance, bounded
+Student invalid recovery, and validation-state deduplication with one post-
+selection test evaluation.
 
 The real-API role transport smoke uses the production Solver limit, omits
 completion limits for Teacher/Critic/Student, applies the configured structural
@@ -95,7 +104,7 @@ python scripts/run_task_level_accuracy.py `
   --out_root runs_member_aware_disambiguation
 ```
 
-Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. A Student response with no valid candidate receives structured error feedback and up to three retries. If all four calls in that cycle are invalid, the program performs one fresh Teacher-Critic regeneration and allows one final four-call Student cycle. A partially valid response is used immediately. Thus one update can make at most eight Student calls, and invalid candidates never enter Stage A. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
 
 The Solver retains `solver_max_tokens=1800` so its request identity and shared
 cache remain stable. A provider may still return `finish_reason=length`; this
@@ -104,7 +113,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v8 run identity;
+checkpoint-v9 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -112,7 +121,8 @@ incompatible checkpoints fail with an error instead of restarting in place.
 
 Each optimized run writes:
 
-- `final_summary.json`: initial test, selected test, member gains, selection summary
+- `final_summary.json`: validation-selected test metrics and selection summary;
+  matched initial-test gains are supplied by the baseline run
 - `best_prompts.json`: validation-selected prompt team
 - `history.json`: epoch validation, member objective, and terminal-failure summary
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
@@ -124,6 +134,8 @@ Each optimized run writes:
   including first-pass validity, recovery calls, terminal-invalid counts, and
   token overhead
 - `tcs_context_history.jsonl` and `tcs_rounds.jsonl`: context isolation and JSON audit
+- `student_recovery_observations.jsonl`: retry classes, feedback, upstream
+  regeneration, and terminal Student recovery status
 - `solver_invalid_outputs.jsonl`: strict `FINAL_ANSWER` failures
 - `llm_calls.jsonl` and `cost_summary.json`: role-level API accounting
 - `run_meta.json`: frozen method, protocol, cache, and run identity
@@ -139,5 +151,12 @@ accuracy gains:
 `minimum_member_correct_count_gain`, `mean_member_correct_count_gain`,
 `minimum_member_accuracy_gain`, and `mean_member_accuracy_gain`. Formal
 selection continues to use integer correct counts.
+
+Validation is the only checkpoint-selection signal. Each unique prompt-team
+state is evaluated once; rejected updates reuse the cached validation result.
+After selection completes, an optimized run evaluates only the selected team on
+test, exactly once. It does not separately evaluate its initial team on test;
+the matched `shared_baseline` run is the shared initial-test reference. Test
+data therefore cannot influence search or validation selection.
 
 See [method.md](method.md) for definitions and implementation details.

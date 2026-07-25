@@ -11,7 +11,7 @@ from .llm_client import LLMCallResult
 from .utils import extract_json_obj, normalize_prompt_text
 
 
-TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v3"
+TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v4"
 TEACHER_REVISION_PROTOCOL_VERSION = "critic_grounded_full_plan_revision_v1"
 TEACHER_SCHEMA_VERSION = "three_field_repair_plan_v1"
 CRITIC_SCHEMA_VERSION = "four_hard_blocker_v1"
@@ -480,6 +480,54 @@ def build_student_request(
     )
 
 
+def build_student_recovery_request(
+    *,
+    base_request: str,
+    previous_rejection_classes: tuple[str, ...],
+    required_candidate_count: int,
+    parent_prompt_hash: str,
+    approved_repair_plan_hash: str,
+) -> str:
+    feedback = {
+        "student_recovery": True,
+        "previous_rejection_classes": list(previous_rejection_classes),
+        "required_candidate_count": int(required_candidate_count),
+        "parent_prompt_hash": str(parent_prompt_hash),
+        "approved_repair_plan_hash": str(approved_repair_plan_hash),
+        "requirements": [
+            "Return candidate_prompts as a JSON array.",
+            "Every candidate must be a non-empty string.",
+            "Do not return null, objects, nested arrays, or empty strings.",
+            "Each candidate must differ from the parent prompt and other candidates.",
+            "Return only the required schema.",
+        ],
+    }
+    return (
+        f"{base_request}\n"
+        "StudentRecoveryFeedback:\n"
+        f"{json.dumps(feedback, ensure_ascii=False, sort_keys=True)}"
+    )
+
+
+def build_teacher_regeneration_request(
+    *,
+    previous_plan_hash: str,
+    student_rejection_classes: tuple[str, ...],
+) -> str:
+    payload = {
+        "student_upstream_regeneration": True,
+        "previous_approved_plan_hash": str(previous_plan_hash),
+        "student_rejection_classes": list(student_rejection_classes),
+        "requirements": [
+            "Produce a materially different complete repair plan.",
+            "Return failure_pattern, repair_rule, and preservation_rule.",
+            "Use the same bounded diagnosis context.",
+            "Do not infer or reproduce invalid candidate text.",
+        ],
+    }
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True)
+
+
 def parse_teacher_repair_plan(
     payload: Mapping[str, Any],
     *,
@@ -556,19 +604,21 @@ def parse_student_candidates(
     total_candidate_prompt_max_chars: int = 5000,
 ) -> StudentParseResult:
     if set(payload) != {"candidate_prompts"}:
-        raise ValueError("student response must contain only candidate_prompts")
+        if "candidate_prompts" not in payload:
+            raise ValueError("candidate_list_missing")
+        raise ValueError("schema_invalid")
     values = payload["candidate_prompts"]
     if not isinstance(values, list):
-        raise ValueError("candidate_prompts must be a list")
+        raise ValueError("candidate_list_missing")
     if len(values) > expected_count:
-        raise ValueError("candidate_count_exceeds_requested")
+        raise ValueError("schema_invalid")
     total_candidate_characters = sum(
         len(normalize_prompt_text(value))
         for value in values
         if isinstance(value, str)
     )
     if total_candidate_characters > total_candidate_prompt_max_chars:
-        raise ValueError("candidate_total_too_long")
+        raise ValueError("too_long")
     parent_hash = hashlib.sha256(
         normalize_prompt_text(parent_prompt).encode("utf-8")
     ).hexdigest()
@@ -586,11 +636,11 @@ def parse_student_candidates(
             if prompt_hash == parent_hash:
                 reasons.append("parent_identical")
             if prompt_hash in seen:
-                reasons.append("duplicate")
+                reasons.append("duplicate_candidate")
             if len(prompt) > candidate_prompt_max_chars:
-                reasons.append("candidate_too_long")
+                reasons.append("too_long")
             if contains_supplied_example_text(prompt, context):
-                reasons.append("sample_text_copy")
+                reasons.append("sample_memorization")
             seen.add(prompt_hash)
         rejections.append(tuple(reasons))
         if not reasons:

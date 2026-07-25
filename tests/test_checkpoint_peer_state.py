@@ -17,7 +17,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v3",
+        method_version="member_aware_peer_state_v4",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -54,6 +54,24 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     source.responsibility_state.accepted_updates_by_agent[3] = 2
     source.responsibility_state.seeded_rank_by_agent[3] = "seeded-rank"
     source.target_priority_audit = [{"update_index": 0, "priorities": [{"agent_id": 3}]}]
+    source.student_recovery_state = {
+        "in_progress": False,
+        "update_index": 0,
+        "target_agent_id": 3,
+        "student_generation_cycle_index": 0,
+        "student_attempt_index": 2,
+        "upstream_regeneration_count": 0,
+    }
+    source.student_recovery_observations = [{
+        "update_index": 0,
+        "student_attempt_index": 2,
+        "student_recovered": True,
+    }]
+    source.validation_state_cache = {
+        "team-hash": {"cache_key": "key", "metrics": {}}
+    }
+    source.validation_evaluation_count = 1
+    source.validation_reuse_count = 2
     payload = build_checkpoint(source, epoch_index=1, update_index=2, best_state={"epoch": 0})
     assert "shared_solver_cache_audit" in payload
     assert payload["member_gain_state"] == source.current_team_member_gain_state()
@@ -61,7 +79,7 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert payload["responsibility_state_version"] == source.responsibility_state_version
     assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
     assert "cached_member_opportunities" in payload
-    assert payload["checkpoint_version"] == 8
+    assert payload["checkpoint_version"] == 9
     assert "previous_update_outcomes" in payload
     assert set(payload["completed_tcs_state"]) == {
         "selected_pattern_ids",
@@ -70,9 +88,11 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
         "critic_decision",
         "role_retry_state",
     }
-    assert payload["completed_tcs_state"]["role_retry_state"] == {
-        "in_progress": False
-    }
+    assert payload["completed_tcs_state"]["role_retry_state"] == (
+        source.student_recovery_state
+    )
+    assert "validation_state_cache" in payload
+    assert "student_recovery_observations" in payload
     assert payload["shared_solver_cache_audit"]["ready_entries"] == 1
     target = build_system(tmp_path / "target")
     epoch, update, best = restore_checkpoint(target, payload)
@@ -83,6 +103,14 @@ def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
     assert target.responsibility_state.seeded_rank_by_agent[3] == "seeded-rank"
     assert target.target_priority_audit == source.target_priority_audit
     assert target.solver_recovery_observations == source.solver_recovery_observations
+    assert target.student_recovery_state == source.student_recovery_state
+    assert (
+        target.student_recovery_observations
+        == source.student_recovery_observations
+    )
+    assert target.validation_state_cache == source.validation_state_cache
+    assert target.validation_evaluation_count == 1
+    assert target.validation_reuse_count == 2
     assert target.team_state_version == source.team_state_version
     assert target.responsibility_state_version == source.responsibility_state_version
     assert target.responsibility_refresh_count == source.responsibility_refresh_count
@@ -115,14 +143,14 @@ def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
     missing_member_state.pop("member_gain_state")
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v3",
+        match="Checkpoint is incompatible with member_aware_peer_state_v4",
     ):
         restore_checkpoint(system, missing_member_state)
     incompatible = dict(payload)
     incompatible["checkpoint_version"] = 5
     with pytest.raises(
         ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v3",
+        match="Checkpoint is incompatible with member_aware_peer_state_v4",
     ):
         restore_checkpoint(system, incompatible)
     payload["probe_version"] = "stale"

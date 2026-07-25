@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="member_aware_peer_state_v3",
+        method_version="member_aware_peer_state_v4",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -37,7 +37,7 @@ def identity(fingerprint):
         {"seed": 43},
         {"agent_model": "different-model"},
         {"vote_tie_break": "first"},
-        {"local_accuracy_loss_epsilon": 0.1},
+        {"student_invalid_max_retries": 2},
         {"solver_output_contract_version": "different-contract"},
         {"shared_solver_cache_path": "different-cache.sqlite"},
     ],

@@ -60,10 +60,13 @@ def test_cli_never_uses_test_split_for_prompt_selection(monkeypatch, tmp_path):
     result = asyncio.run(cli.run(cfg))
 
     test_events = [row for row in events if row[:2] == ("evaluate", "test")]
-    assert len(test_events) == 2
+    assert len(test_events) == 1
     assert events.index(test_events[0]) > max(
         index for index, row in enumerate(events) if row[0] == "update"
     )
-    assert all(prompt != "selected-prompt" for prompt in test_events[0][3])
-    assert all(prompt == "selected-prompt" for prompt in test_events[1][3])
+    assert all(prompt == "selected-prompt" for prompt in test_events[0][3])
+    assert result["initial_test"] is None
     assert result["selection_summary"]["selected_epoch"] == 1
+    assert result["selection_summary"]["test_evaluation_count"] == 1
+    assert result["selection_summary"]["test_used_for_selection"] is False
+    assert result["selection_summary"]["test_called_before_selection"] is False

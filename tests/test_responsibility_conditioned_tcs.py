@@ -175,7 +175,7 @@ def test_previous_outcome_hides_rollout_feedback_when_evaluation_did_not_run():
                 attempted=True,
                 empirical_evaluation_completed=True,
                 accepted=False,
-                rejection_reasons=("local_accuracy",),
+                rejection_reasons=("target_not_improved",),
             ),
         }
     )
@@ -184,7 +184,7 @@ def test_previous_outcome_hides_rollout_feedback_when_evaluation_did_not_run():
         "empirical_feedback_available": True,
         "accepted": False,
         "target_correct_delta": 0,
-        "rejection_reasons": ("local_accuracy",),
+        "rejection_reasons": ("target_not_improved",),
     }
 
 
@@ -351,7 +351,7 @@ def test_student_request_is_context_free_and_partial_validity_is_retained():
     )
     assert len(parsed.candidates) == 1
     assert parsed.rejection_reasons[0] == ("parent_identical",)
-    assert parsed.rejection_reasons[2] == ("duplicate",)
+    assert parsed.rejection_reasons[2] == ("duplicate_candidate",)
     with pytest.raises(ValueError):
         parse_student_candidates(
             {"candidate_prompts": ["valid"], "metadata": "not allowed"},
@@ -363,14 +363,14 @@ def test_student_request_is_context_free_and_partial_validity_is_retained():
 
 def test_student_rejects_excess_count_and_total_characters_without_truncating():
     accuracy, _, _ = contexts()
-    with pytest.raises(ValueError, match="candidate_count_exceeds_requested"):
+    with pytest.raises(ValueError, match="schema_invalid"):
         parse_student_candidates(
             {"candidate_prompts": ["first", "second", "third"]},
             parent_prompt="parent",
             context=accuracy,
             expected_count=2,
         )
-    with pytest.raises(ValueError, match="candidate_total_too_long"):
+    with pytest.raises(ValueError, match="too_long"):
         parse_student_candidates(
             {"candidate_prompts": ["a" * 6, "b" * 5]},
             parent_prompt="parent",
@@ -405,4 +405,4 @@ def test_student_rejects_excess_count_and_total_characters_without_truncating():
         total_candidate_prompt_max_chars=20,
     )
     assert [row.candidate_prompt for row in parsed.candidates] == ["valid"]
-    assert parsed.rejection_reasons[1] == ("candidate_too_long",)
+    assert parsed.rejection_reasons[1] == ("too_long",)

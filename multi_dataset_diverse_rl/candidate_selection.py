@@ -59,46 +59,28 @@ class StageASelectionDecision:
 
 
 @dataclass(frozen=True)
-class ConstraintLimits:
-    local_accuracy_allowance: int = 0
-    global_accuracy_allowance: int = 0
-    invalid_allowance: int = 0
-    global_invalid_allowance: int = 0
-    vote_loss_limit: int = 0
-    unique_correct_loss_limit: int = 0
-    pivotal_loss_limit: int = 0
-
-
-def evaluate_terminal_invalid_constraints(
-    candidate: PromptCompetenceMetrics,
-    active: PromptCompetenceMetrics,
-    initial: PromptCompetenceMetrics,
-    *,
-    local_allowance: int,
-    global_allowance: int,
-) -> bool:
-    candidate_invalid = candidate.terminal_invalid_count
-    active_invalid = active.terminal_invalid_count
-    initial_invalid = initial.terminal_invalid_count
-    if candidate_invalid == active_invalid == initial_invalid == 0:
-        candidate_invalid = candidate.invalid_count
-        active_invalid = active.invalid_count
-        initial_invalid = initial.invalid_count
-    return (
-        candidate_invalid <= active_invalid + int(local_allowance)
-        and candidate_invalid <= initial_invalid + int(global_allowance)
-    )
-
-
-@dataclass(frozen=True)
 class ConstraintDecision:
     passed: bool
-    local_accuracy_passed: bool
-    initial_accuracy_passed: bool
-    invalid_passed: bool
-    vote_loss_passed: bool
-    unique_correct_passed: bool
-    pivotal_correct_passed: bool
+    hard_feasible: bool
+    target_correct_incumbent: int
+    target_correct_candidate: int
+    target_gain: int
+    vote_correct_incumbent: int
+    vote_correct_candidate: int
+    vote_gain_count: int
+    vote_loss_count: int
+    vote_net_gain: int
+    unique_correct_gain_count: int
+    unique_correct_loss_count: int
+    pivotal_correct_gain_count: int
+    pivotal_correct_loss_count: int
+    incumbent_objective: tuple[int, int, int]
+    candidate_objective: tuple[int, int, int]
+    pareto_dominates_incumbent: bool
+    target_improvement_passed: bool
+    team_vote_nonregression_passed: bool
+    member_objective_nonregression_passed: bool
+    terminal_invalid_nonregression_passed: bool
     rejection_reasons: tuple[str, ...]
 
 
@@ -238,38 +220,69 @@ def stage_a_multichannel_shortlist(
 def evaluate_constraints(
     candidate: CandidateEvaluation,
     active: CandidateEvaluation,
-    initial: CandidateEvaluation,
-    limits: ConstraintLimits,
 ) -> ConstraintDecision:
-    local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
-    global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
-    invalid = evaluate_terminal_invalid_constraints(
-        candidate.competence,
-        active.competence,
-        initial.competence,
-        local_allowance=limits.invalid_allowance,
-        global_allowance=limits.global_invalid_allowance,
+    incumbent_objective = team_objective_vector(
+        active.team_outcome.vote_correct_count,
+        active.member_gain,
     )
-    vote_loss = candidate.marginal.vote_loss_count <= limits.vote_loss_limit
-    unique = candidate.protection.unique_correct_loss_count <= limits.unique_correct_loss_limit
-    pivotal = candidate.protection.pivotal_correct_loss_count <= limits.pivotal_loss_limit
+    candidate_objective = team_objective_vector(
+        candidate.team_outcome.vote_correct_count,
+        candidate.member_gain,
+    )
+    target_improvement = (
+        candidate.competence.correct_count > active.competence.correct_count
+    )
+    team_vote_nonregression = (
+        candidate.team_outcome.vote_correct_count
+        >= active.team_outcome.vote_correct_count
+    )
+    member_objective_nonregression = pareto_dominates(
+        candidate_objective,
+        incumbent_objective,
+    )
+    terminal_invalid_nonregression = (
+        candidate.competence.terminal_invalid_count
+        <= active.competence.terminal_invalid_count
+    )
     checks = (
-        ("local_accuracy", local),
-        ("initial_accuracy", global_),
-        ("invalid", invalid),
-        ("vote_loss", vote_loss),
-        ("unique_correct", unique),
-        ("pivotal_correct", pivotal),
+        ("target_not_improved", target_improvement),
+        ("team_vote_regression", team_vote_nonregression),
+        ("member_objective_regression", member_objective_nonregression),
+        ("terminal_invalid_regression", terminal_invalid_nonregression),
     )
     reasons = tuple(name for name, passed in checks if not passed)
     return ConstraintDecision(
         passed=not reasons,
-        local_accuracy_passed=local,
-        initial_accuracy_passed=global_,
-        invalid_passed=invalid,
-        vote_loss_passed=vote_loss,
-        unique_correct_passed=unique,
-        pivotal_correct_passed=pivotal,
+        hard_feasible=not reasons,
+        target_correct_incumbent=active.competence.correct_count,
+        target_correct_candidate=candidate.competence.correct_count,
+        target_gain=(
+            candidate.competence.correct_count - active.competence.correct_count
+        ),
+        vote_correct_incumbent=active.team_outcome.vote_correct_count,
+        vote_correct_candidate=candidate.team_outcome.vote_correct_count,
+        vote_gain_count=candidate.marginal.vote_gain_count,
+        vote_loss_count=candidate.marginal.vote_loss_count,
+        vote_net_gain=candidate.marginal.net_vote_delta,
+        unique_correct_gain_count=(
+            candidate.protection.unique_correct_gain_count
+        ),
+        unique_correct_loss_count=(
+            candidate.protection.unique_correct_loss_count
+        ),
+        pivotal_correct_gain_count=(
+            candidate.protection.pivotal_correct_gain_count
+        ),
+        pivotal_correct_loss_count=(
+            candidate.protection.pivotal_correct_loss_count
+        ),
+        incumbent_objective=incumbent_objective.as_tuple(),
+        candidate_objective=candidate_objective.as_tuple(),
+        pareto_dominates_incumbent=member_objective_nonregression,
+        target_improvement_passed=target_improvement,
+        team_vote_nonregression_passed=team_vote_nonregression,
+        member_objective_nonregression_passed=member_objective_nonregression,
+        terminal_invalid_nonregression_passed=terminal_invalid_nonregression,
         rejection_reasons=reasons,
     )
 
@@ -293,12 +306,14 @@ def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tup
         candidate.member_gain.minimum_gain_count,
         candidate.team_outcome.vote_correct_count,
         candidate.member_gain.total_gain_count,
-        candidate.member_gain.improved_agent_count,
-        -candidate.marginal.vote_loss_count,
-        candidate.team_outcome.mean_soft_vote_utility,
+        candidate.member_gain.target_gain_vs_incumbent,
+        candidate.marginal.net_vote_delta,
         candidate.marginal.assigned_residual_repair_count,
-        candidate.competence.correct_count,
-        -candidate.competence.invalid_count,
+        candidate.team_outcome.mean_soft_vote_utility,
+        candidate.marginal.coverage_gain_count,
+        -candidate.marginal.vote_loss_count,
+        -candidate.protection.pivotal_correct_loss_count,
+        -candidate.protection.unique_correct_loss_count,
         -int(generation),
         candidate.prompt_hash,
     )

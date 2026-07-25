@@ -130,7 +130,7 @@ def evaluate_candidate_profile(
 
     target_correct = invalid_count = terminal_invalid_count = 0
     vote_gain = vote_loss = coverage_gain = coverage_loss = 0
-    unique_loss = pivotal_loss = 0
+    unique_gain = unique_loss = pivotal_gain = pivotal_loss = 0
     dominant_exit = dominant_join = assigned_repair = 0
     utility_delta = assigned_utility_delta = utility_total = 0.0
     vote_vector: list[bool] = []
@@ -236,6 +236,14 @@ def evaluate_candidate_profile(
         coverage_loss += int(current.gold_vote_count > 0 and candidate.gold_vote_count == 0)
         unique_loss += int(current_opportunity.unique_correct and not candidate_correct)
         pivotal_loss += int(current_opportunity.pivotal_correct and not candidate_correct)
+        unique_gain += int(
+            candidate_opportunity.unique_correct
+            and not current_opportunity.unique_correct
+        )
+        pivotal_gain += int(
+            candidate_opportunity.pivotal_correct
+            and not current_opportunity.pivotal_correct
+        )
         dominant_exit += int(
             current_opportunity.dominant_wrong_member and not candidate_opportunity.dominant_wrong_member
         )
@@ -298,6 +306,8 @@ def evaluate_candidate_profile(
         protection=ProtectionContribution(
             unique_correct_loss_count=unique_loss,
             pivotal_correct_loss_count=pivotal_loss,
+            unique_correct_gain_count=unique_gain,
+            pivotal_correct_gain_count=pivotal_gain,
         ),
         member_gain=gains,
     )

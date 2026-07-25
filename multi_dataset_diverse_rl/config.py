@@ -38,7 +38,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v3"
+    method_version: str = "member_aware_peer_state_v4"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -57,7 +57,8 @@ class TCSConfig:
     teacher_temperature: float = 0.4
     critic_temperature: float = 0.0
     student_temperature: float = 0.5
-    student_json_max_retries: int = 1
+    student_invalid_max_retries: int = 3
+    student_upstream_regeneration_max_count: int = 1
     num_candidates_per_parent: int = 2
     tcs_max_pattern_summaries: int = 3
     tcs_max_evidence_cases: int = 3
@@ -95,19 +96,13 @@ class CandidateEvaluationConfig:
     stage_a_preservation_size: int = 4
     stage_a_channel_top_k: int = 2
     stage_b_candidate_budget: int = 2
+    validation_unique_state_cache_enabled: bool = True
+    test_evaluation_after_selection_only: bool = True
 
 
 @dataclass(frozen=True)
 class ConstraintConfig:
-    local_accuracy_loss_epsilon: float = 0.0
-    global_accuracy_loss_epsilon: float = 0.0
-    invalid_guard_epsilon: float = 0.0
-    vote_loss_limit: int = 0
-    unique_correct_loss_limit: int = 0
-    pivotal_loss_limit: int = 0
     validation_accuracy_epsilon: float = 0.0
-    local_terminal_invalid_allowance: int = 1
-    global_terminal_invalid_allowance: int = 1
     validation_terminal_invalid_allowance: int = 1
 
 

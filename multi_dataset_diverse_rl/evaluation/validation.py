@@ -40,6 +40,58 @@ class DatasetMetrics:
         return asdict(self)
 
 
+def dataset_metrics_from_dict(payload: Mapping[str, Any]) -> DatasetMetrics:
+    required = {
+        "vote_correct_count",
+        "per_agent_correct_counts",
+        "plurality_vote_acc",
+        "vote_acc",
+        "mean_individual_acc",
+        "min_individual_acc",
+        "per_agent_acc",
+        "mean_soft_vote_utility",
+        "c0_count",
+        "mean_invalid_rate",
+        "tie_count",
+        "tie_rate",
+        "rows",
+        "validity_status_counts",
+    }
+    missing = sorted(required - set(payload))
+    if missing:
+        raise ValueError(
+            f"dataset metrics are missing fields: {missing}"
+        )
+    return DatasetMetrics(
+        vote_correct_count=int(payload["vote_correct_count"]),
+        per_agent_correct_counts=tuple(
+            int(value) for value in payload["per_agent_correct_counts"]
+        ),
+        plurality_vote_acc=float(payload["plurality_vote_acc"]),
+        vote_acc=float(payload["vote_acc"]),
+        mean_individual_acc=float(payload["mean_individual_acc"]),
+        min_individual_acc=float(payload["min_individual_acc"]),
+        per_agent_acc=tuple(
+            float(value) for value in payload["per_agent_acc"]
+        ),
+        mean_soft_vote_utility=float(payload["mean_soft_vote_utility"]),
+        c0_count=int(payload["c0_count"]),
+        mean_invalid_rate=float(payload["mean_invalid_rate"]),
+        tie_count=int(payload["tie_count"]),
+        tie_rate=float(payload["tie_rate"]),
+        rows=tuple(
+            DatasetEvaluationRow(**row) for row in payload["rows"]
+        ),
+        validity_status_counts={
+            str(key): int(value)
+            for key, value in payload["validity_status_counts"].items()
+        },
+        terminal_invalid_count=int(
+            payload.get("terminal_invalid_count", 0)
+        ),
+    )
+
+
 class ValidationProbeEvaluator:
     def __init__(
         self,

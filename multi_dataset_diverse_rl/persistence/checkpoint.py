@@ -89,8 +89,29 @@ def build_checkpoint(
                 "risk_case_ids": list(last_critic.get("risk_case_ids", [])),
                 "feedback": last_critic.get("feedback", ""),
             } if last_critic else None,
-            "role_retry_state": {"in_progress": False},
+            "role_retry_state": dict(system.student_recovery_state),
         },
+        "student_recovery_state": dict(system.student_recovery_state),
+        "student_recovery_observations": list(
+            system.student_recovery_observations
+        ),
+        "validation_state_cache": dict(system.validation_state_cache),
+        "validation_evaluation_count": int(
+            system.validation_evaluation_count
+        ),
+        "validation_reuse_count": int(system.validation_reuse_count),
+        "current_selected_validation_checkpoint": dict(
+            system.current_selected_validation_checkpoint
+        ),
+        "validation_selection_completed": bool(
+            system.validation_selection_completed
+        ),
+        "test_evaluation_count": int(system.test_evaluation_count),
+        "test_used_for_selection": bool(system.test_used_for_selection),
+        "test_called_before_selection": bool(
+            system.test_called_before_selection
+        ),
+        "selected_test_metrics": dict(system.selected_test_metrics),
         "agent_selection_counts": dict(system.agent_selection_counts),
         "target_priority_audit": list(system.target_priority_audit),
         "history": list(system.history),
@@ -125,7 +146,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v3")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v4")
     required_member_state = {
         "member_gain_state",
         "cached_member_opportunities",
@@ -137,9 +158,20 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "previous_update_outcomes",
         "completed_tcs_state",
         "solver_recovery_observations",
+        "student_recovery_state",
+        "student_recovery_observations",
+        "validation_state_cache",
+        "validation_evaluation_count",
+        "validation_reuse_count",
+        "current_selected_validation_checkpoint",
+        "validation_selection_completed",
+        "test_evaluation_count",
+        "test_used_for_selection",
+        "test_called_before_selection",
+        "selected_test_metrics",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v3")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v4")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -218,6 +250,27 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         )
         for key, row in payload["previous_update_outcomes"].items()
     }
+    system.student_recovery_state = dict(payload["student_recovery_state"])
+    system.student_recovery_observations = list(
+        payload["student_recovery_observations"]
+    )
+    system.validation_state_cache = dict(payload["validation_state_cache"])
+    system.validation_evaluation_count = int(
+        payload["validation_evaluation_count"]
+    )
+    system.validation_reuse_count = int(payload["validation_reuse_count"])
+    system.current_selected_validation_checkpoint = dict(
+        payload["current_selected_validation_checkpoint"]
+    )
+    system.validation_selection_completed = bool(
+        payload["validation_selection_completed"]
+    )
+    system.test_evaluation_count = int(payload["test_evaluation_count"])
+    system.test_used_for_selection = bool(payload["test_used_for_selection"])
+    system.test_called_before_selection = bool(
+        payload["test_called_before_selection"]
+    )
+    system.selected_test_metrics = dict(payload["selected_test_metrics"])
     system.agent_selection_counts = {
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }

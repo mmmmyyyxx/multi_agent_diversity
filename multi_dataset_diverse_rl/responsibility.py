@@ -49,6 +49,8 @@ class CandidateMarginalContribution:
 class ProtectionContribution:
     unique_correct_loss_count: int
     pivotal_correct_loss_count: int
+    unique_correct_gain_count: int = 0
+    pivotal_correct_gain_count: int = 0
 
 
 @dataclass(frozen=True)

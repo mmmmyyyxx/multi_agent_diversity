@@ -1,0 +1,325 @@
+import asyncio
+import json
+
+from multi_dataset_diverse_rl.config import Config
+from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
+from multi_dataset_diverse_rl.system import (
+    CandidateFunnel,
+    PromptEnsembleOptimizationSystem,
+)
+
+
+TEACHER = {
+    "failure_pattern": "premature commitment",
+    "repair_rule": "Check every explicit condition before committing.",
+    "preservation_rule": "Keep conclusions that still pass the checks.",
+}
+REGENERATED = {
+    **TEACHER,
+    "repair_rule": "Compare every option in order before committing.",
+}
+APPROVED = {"failed_checks": [], "risk_case_ids": [], "feedback": ""}
+
+
+async def solver(_question, _agent_id, _prompt):
+    return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+
+def system_for(tmp_path, chat, **overrides):
+    values = {
+        "out_dir": str(tmp_path),
+        "answer_format": "option_letter",
+        "num_candidates_per_parent": 2,
+        "stage_a_channel_top_k": 1,
+        "stage_b_candidate_budget": 1,
+    }
+    values.update(overrides)
+    return PromptEnsembleOptimizationSystem(
+        Config.from_flat(**values),
+        solver=solver,
+        optimizer_chat=chat,
+    )
+
+
+async def initialize(system):
+    rows = [{"question": "q", "answer": "A"}]
+    system.validation_probe = system.build_validation_probe(rows)
+    await system.initialize_fixed_probe(rows)
+
+
+def role(system_prompt):
+    if system_prompt == "Return strict JSON only.":
+        return "student"
+    if "Check only explicit hard blockers" in system_prompt:
+        return "critic"
+    return "teacher"
+
+
+def test_invalid_invalid_valid_recovers_on_third_student_call(tmp_path):
+    student_calls = 0
+    student_requests = []
+
+    async def chat(system_prompt, user_prompt, _temperature, _max_tokens):
+        nonlocal student_calls
+        current = role(system_prompt)
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(TEACHER)
+        student_calls += 1
+        student_requests.append(user_prompt)
+        if student_calls < 3:
+            return json.dumps({"candidate_prompts": [None, ""]})
+        return json.dumps({"candidate_prompts": ["valid repair"]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert len(candidates) == 1
+    assert student_calls == 3
+    assert funnel.student_retry_count == 2
+    assert funnel.student_recovered is True
+    assert funnel.upstream_regeneration_count == 0
+    assert "StudentRecoveryFeedback:" in student_requests[1]
+    assert "empty_or_non_string" in student_requests[1]
+    assert "valid repair" not in student_requests[1]
+
+
+def test_partial_valid_stops_without_retry(tmp_path):
+    student_calls = 0
+
+    async def chat(system_prompt, _user_prompt, _temperature, _max_tokens):
+        nonlocal student_calls
+        current = role(system_prompt)
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(TEACHER)
+        student_calls += 1
+        return json.dumps({"candidate_prompts": [None, "valid repair"]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert len(candidates) == 1
+    assert student_calls == 1
+    assert funnel.student_partially_valid_responses == 1
+    assert funnel.student_retry_triggered is False
+
+
+def test_exhausted_cycle_regenerates_teacher_and_second_cycle_recovers(tmp_path):
+    counts = {"teacher": 0, "critic": 0, "student": 0}
+
+    async def chat(system_prompt, user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        counts[current] += 1
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(
+                REGENERATED
+                if "student_upstream_regeneration" in user_prompt
+                else TEACHER
+            )
+        if counts["student"] <= 4:
+            return json.dumps({"candidate_prompts": [None, ""]})
+        return json.dumps({"candidate_prompts": ["recovered upstream"]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert len(candidates) == 1
+    assert counts == {"teacher": 2, "critic": 2, "student": 5}
+    assert funnel.student_cycle_exhausted is True
+    assert funnel.upstream_regeneration_triggered is True
+    assert funnel.upstream_regeneration_count == 1
+    assert funnel.student_recovered is True
+    upstream_teacher = [
+        row for row in system.tcs_rounds
+        if row["role"] == "teacher"
+        and row.get("student_generation_cycle_index") == 1
+    ]
+    assert upstream_teacher[-1]["upstream_plan_changed"] is True
+
+
+def test_two_exhausted_cycles_have_distinct_terminal_failure(tmp_path):
+    async def chat(system_prompt, user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(
+                REGENERATED
+                if "student_upstream_regeneration" in user_prompt
+                else TEACHER
+            )
+        return json.dumps({"candidate_prompts": [None, ""]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert funnel.student_calls == 8
+    assert funnel.upstream_regeneration_count == 1
+    assert funnel.terminal_failure_class == (
+        "student_invalid_exhausted_after_upstream_regeneration"
+    )
+    assert funnel.terminal_student_failure_class == funnel.terminal_failure_class
+
+
+def test_unchanged_upstream_plan_is_audited_and_recriticized(tmp_path):
+    counts = {"teacher": 0, "critic": 0, "student": 0}
+
+    async def chat(system_prompt, _user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        counts[current] += 1
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(TEACHER)
+        if counts["student"] <= 4:
+            return json.dumps({"candidate_prompts": []})
+        return json.dumps({"candidate_prompts": ["valid repair"]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        await system.propose_candidates(0, set(), funnel, 0)
+        return funnel
+
+    funnel = asyncio.run(run())
+    upstream_teacher = [
+        row for row in system.tcs_rounds
+        if row["role"] == "teacher"
+        and row.get("student_generation_cycle_index") == 1
+    ]
+    assert upstream_teacher[-1]["upstream_plan_changed"] is False
+    assert counts["critic"] == 2
+    assert funnel.student_recovered is True
+
+
+def test_upstream_critic_rejection_never_enters_second_student_cycle(tmp_path):
+    counts = {"teacher": 0, "critic": 0, "student": 0}
+
+    async def chat(system_prompt, user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        counts[current] += 1
+        if current == "critic":
+            if counts["critic"] == 1:
+                return json.dumps(APPROVED)
+            return json.dumps({
+                "failed_checks": ["actionable_specificity"],
+                "risk_case_ids": [],
+                "feedback": "Make the regenerated rule executable.",
+            })
+        if current == "teacher":
+            return json.dumps(
+                REGENERATED
+                if (
+                    "student_upstream_regeneration" in user_prompt
+                    or "PreviousTeacherRepairPlan:" in user_prompt
+                )
+                else TEACHER
+            )
+        return json.dumps({"candidate_prompts": [None, ""]})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert counts["student"] == 4
+    assert counts["critic"] == 3
+    assert funnel.terminal_failure_class == (
+        "upstream_critic_semantic_rejection_exhausted"
+    )
+
+
+def test_upstream_teacher_invalid_has_distinct_terminal_failure(tmp_path):
+    counts = {"teacher": 0, "critic": 0, "student": 0}
+
+    async def chat(system_prompt, _user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        counts[current] += 1
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(TEACHER) if counts["teacher"] == 1 else "{"
+        return json.dumps({"candidate_prompts": []})
+
+    system = system_for(tmp_path, chat)
+
+    async def run():
+        await initialize(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(0, set(), funnel, 0)
+        return funnel, candidates
+
+    funnel, candidates = asyncio.run(run())
+    assert candidates == []
+    assert counts["student"] == 4
+    assert funnel.terminal_failure_class == "upstream_teacher_invalid_exhausted"
+
+
+def test_student_exhaustion_never_updates_potential_or_stage_b(tmp_path):
+    async def chat(system_prompt, _user_prompt, _temperature, _max_tokens):
+        current = role(system_prompt)
+        if current == "critic":
+            return json.dumps(APPROVED)
+        if current == "teacher":
+            return json.dumps(TEACHER)
+        return json.dumps({"candidate_prompts": [None, ""]})
+
+    system = system_for(
+        tmp_path,
+        chat,
+        experiment_setting="shared_independent_accuracy",
+    )
+
+    async def run():
+        await initialize(system)
+        before = dict(
+            system.responsibility_state.best_observed_target_gain_by_agent
+        )
+        await system.update_once(0)
+        return before, system.candidate_decisions[-1]
+
+    before, decision = asyncio.run(run())
+    assert decision["funnel"]["stage_a_evaluated"] == 0
+    assert decision["funnel"]["stage_b_evaluated"] == 0
+    assert decision["potential_state_updated"] is False
+    assert (
+        system.responsibility_state.best_observed_target_gain_by_agent
+        == before
+    )

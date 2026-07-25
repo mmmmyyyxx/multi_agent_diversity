@@ -11,11 +11,9 @@ from typing import Any, Awaitable, Callable, Mapping, Sequence
 from .candidate_selection import (
     CandidateEvaluation,
     ConstraintDecision,
-    ConstraintLimits,
     StageASelectionDecision,
     candidate_is_acceptable,
     evaluate_constraints,
-    evaluate_terminal_invalid_constraints,
     individual_accuracy_key,
     member_aware_pareto_front,
     member_first_key,
@@ -40,6 +38,7 @@ from .evaluation.validation import (
     DatasetEvaluationRow,
     DatasetMetrics,
     ValidationProbeEvaluator,
+    dataset_metrics_from_dict,
 )
 from .evaluation.prompt_question import PromptQuestionEvaluator
 from .evaluation.output_contract import (
@@ -91,6 +90,8 @@ from .tcs import (
     build_teacher_revision_request,
     build_critic_request,
     build_student_request,
+    build_student_recovery_request,
+    build_teacher_regeneration_request,
     build_teacher_request,
     changed_teacher_plan_fields,
     critic_decision_hash,
@@ -105,7 +106,15 @@ from .tcs import (
     teacher_repair_plan_hash,
 )
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
-from .versions import CHECKPOINT_VERSION, METHOD_VERSION, TARGET_SELECTION_VERSION
+from .versions import (
+    CANDIDATE_ACCEPTANCE_VERSION,
+    CHECKPOINT_VERSION,
+    METHOD_VERSION,
+    PRESERVATION_POLICY_VERSION,
+    STUDENT_INVALID_RECOVERY_VERSION,
+    TARGET_SELECTION_VERSION,
+    VALIDATION_SELECTION_VERSION,
+)
 
 
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
@@ -152,10 +161,18 @@ class CandidateFunnel:
     infrastructure_failed_updates: int = 0
     requested_candidate_count: int = 0
     raw_candidate_count: int = 0
+    valid_candidate_count: int = 0
     schema_valid_count: int = 0
     sample_memorization_rejected: int = 0
     non_parent_count: int = 0
     deduplicated_count: int = 0
+    student_retry_triggered: bool = False
+    student_retry_count: int = 0
+    student_recovered: bool = False
+    student_cycle_exhausted: bool = False
+    upstream_regeneration_triggered: bool = False
+    upstream_regeneration_count: int = 0
+    terminal_student_failure_class: str = ""
     stage_a_requested_size_per_pool: dict[str, int] = field(default_factory=dict)
     stage_a_available_size_per_pool: dict[str, int] = field(default_factory=dict)
     stage_a_selected_size_per_pool: dict[str, int] = field(default_factory=dict)
@@ -167,12 +184,10 @@ class CandidateFunnel:
     selected_by_mean_member_channel: int = 0
     stage_b_evaluated: int = 0
     constraint_feasible: int = 0
-    rejected_local_accuracy: int = 0
-    rejected_initial_accuracy: int = 0
-    rejected_invalid: int = 0
-    rejected_vote_loss: int = 0
-    rejected_unique_loss: int = 0
-    rejected_pivotal_loss: int = 0
+    rejected_target_not_improved: int = 0
+    rejected_team_vote_regression: int = 0
+    rejected_member_objective_regression: int = 0
+    rejected_terminal_invalid_regression: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
     terminal_failure_class: str = ""
@@ -233,11 +248,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v3 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v4 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v3 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v4 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v3 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v4 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -248,8 +263,12 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("teacher_json_max_retries cannot be negative")
         if cfg.tcs.critic_json_max_retries < 0:
             raise ValueError("critic_json_max_retries cannot be negative")
-        if cfg.tcs.student_json_max_retries < 0:
-            raise ValueError("student_json_max_retries cannot be negative")
+        if cfg.tcs.student_invalid_max_retries < 0:
+            raise ValueError("student_invalid_max_retries cannot be negative")
+        if cfg.tcs.student_upstream_regeneration_max_count not in {0, 1}:
+            raise ValueError(
+                "student_upstream_regeneration_max_count must be zero or one"
+            )
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
         if not 0 < cfg.tcs.tcs_max_evidence_cases <= 3:
@@ -281,6 +300,15 @@ class PromptEnsembleOptimizationSystem:
         self.candidate_decisions: list[dict[str, Any]] = []
         self.tcs_context_history: list[dict[str, Any]] = []
         self.tcs_rounds: list[dict[str, Any]] = []
+        self.student_recovery_observations: list[dict[str, Any]] = []
+        self.student_recovery_state: dict[str, Any] = {
+            "in_progress": False,
+            "update_index": -1,
+            "target_agent_id": -1,
+            "student_generation_cycle_index": 0,
+            "student_attempt_index": 0,
+            "upstream_regeneration_count": 0,
+        }
         self.solver_invalid_outputs: list[dict[str, Any]] = []
         self.solver_recovery_observations: list[dict[str, Any]] = []
         self._audited_invalid_keys: set[tuple[str, str]] = set()
@@ -300,6 +328,15 @@ class PromptEnsembleOptimizationSystem:
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
         self.validation_probe: ValidationProbeEvaluator | None = None
+        self.validation_state_cache: dict[str, dict[str, Any]] = {}
+        self.validation_evaluation_count = 0
+        self.validation_reuse_count = 0
+        self.current_selected_validation_checkpoint: dict[str, Any] = {}
+        self.validation_selection_completed = False
+        self.test_evaluation_count = 0
+        self.test_used_for_selection = False
+        self.test_called_before_selection = False
+        self.selected_test_metrics: dict[str, Any] = {}
         request_identity = solver_request_identity(cfg)
         request_components = solver_request_components(cfg)
         cache_path = str(cfg.persistence.shared_solver_cache_path or "").strip()
@@ -1060,6 +1097,630 @@ class PromptEnsembleOptimizationSystem:
             available_pattern_count=len(aggregation.available_patterns),
         )
 
+    async def _run_student_cycle(
+        self,
+        *,
+        context: AnyDiagnosisContext,
+        parent_prompt: str,
+        repair_plan: TeacherRepairPlan,
+        funnel: CandidateFunnel,
+        update_index: int,
+        target_agent_id: int,
+        semantic_round: int,
+        context_hash: str,
+        student_generation_cycle_index: int,
+        previous_teacher_plan_hash: str = "",
+    ) -> tuple[tuple[StudentPromptCandidate, ...], tuple[str, ...], bool]:
+        base_request = build_student_request(
+            parent_prompt=parent_prompt,
+            approved_plan=repair_plan,
+            answer_format=self.cfg.data.answer_format,
+            candidate_count=self.cfg.tcs.num_candidates_per_parent,
+            candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
+            total_candidate_prompt_max_chars=(
+                self.cfg.tcs.total_candidate_prompt_max_chars
+            ),
+        )
+        parent_prompt_hash = self.prompt_hash(parent_prompt)
+        repair_plan_hash = teacher_repair_plan_hash(repair_plan)
+        previous_rejection_classes: tuple[str, ...] = ()
+        parsed_candidates: tuple[StudentPromptCandidate, ...] = ()
+        for attempt_index in range(self.cfg.tcs.student_invalid_max_retries + 1):
+            student_request = (
+                base_request
+                if attempt_index == 0
+                else build_student_recovery_request(
+                    base_request=base_request,
+                    previous_rejection_classes=previous_rejection_classes,
+                    required_candidate_count=self.cfg.tcs.num_candidates_per_parent,
+                    parent_prompt_hash=parent_prompt_hash,
+                    approved_repair_plan_hash=repair_plan_hash,
+                )
+            )
+            self.student_recovery_state = {
+                "in_progress": True,
+                "update_index": int(update_index),
+                "target_agent_id": int(target_agent_id),
+                "student_generation_cycle_index": int(
+                    student_generation_cycle_index
+                ),
+                "student_attempt_index": int(attempt_index),
+                "upstream_regeneration_count": int(
+                    funnel.upstream_regeneration_count
+                ),
+            }
+            funnel.student_calls += 1
+            try:
+                student_result = await self._chat(
+                    self.cfg.models.optimizer_model,
+                    "Return strict JSON only.",
+                    student_request,
+                    self.cfg.tcs.student_temperature,
+                    None,
+                    "optimizer",
+                )
+            except Exception as exc:
+                funnel.infrastructure_failed_updates += 1
+                funnel.terminal_failure_class = "transport_failure"
+                funnel.terminal_failure_role = "student"
+                funnel.terminal_student_failure_class = "transport_failure"
+                self.tcs_rounds.append({
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
+                    "role": "student",
+                    "semantic_round": semantic_round,
+                    "format_attempt": attempt_index,
+                    "student_generation_cycle_index": (
+                        student_generation_cycle_index
+                    ),
+                    "student_attempt_index": attempt_index,
+                    "schema_valid": False,
+                    "finish_reason": "",
+                    "response_truncated": False,
+                    "failure_class": "transport_failure",
+                    "candidate_rejection_classes": ["transport_failure"],
+                    "student_retry_triggered": False,
+                    "student_retry_reason": type(exc).__name__,
+                    "input_characters": len(student_request),
+                    "output_characters": 0,
+                    "raw_response_characters": 0,
+                    "parsed_payload_characters": 0,
+                })
+                self.student_recovery_state["in_progress"] = False
+                return (), ("transport_failure",), False
+
+            student_raw = student_result.text
+            parsed = extract_json_obj(student_raw)
+            truncated = response_truncated(student_result)
+            parse_result = None
+            parse_error = ""
+            failure_class = ""
+            raw_count = 0
+            total_candidate_characters = 0
+            rejection_reasons: tuple[tuple[str, ...], ...] = ()
+            rejection_classes: tuple[str, ...] = ()
+            if truncated:
+                failure_class = "provider_completion_truncation"
+                rejection_classes = ("provider_completion_truncation",)
+            elif parsed is None:
+                failure_class = "invalid_json"
+                rejection_classes = ("invalid_json",)
+            else:
+                raw_values = (
+                    parsed.get("candidate_prompts")
+                    if isinstance(parsed, Mapping) else None
+                )
+                raw_count = len(raw_values) if isinstance(raw_values, list) else 0
+                try:
+                    parse_result = parse_student_candidates(
+                        parsed,
+                        parent_prompt=parent_prompt,
+                        context=context,
+                        expected_count=self.cfg.tcs.num_candidates_per_parent,
+                        candidate_prompt_max_chars=(
+                            self.cfg.tcs.candidate_prompt_max_chars
+                        ),
+                        total_candidate_prompt_max_chars=(
+                            self.cfg.tcs.total_candidate_prompt_max_chars
+                        ),
+                    )
+                    parsed_candidates = parse_result.candidates
+                    raw_count = parse_result.raw_count
+                    rejection_reasons = parse_result.rejection_reasons
+                    total_candidate_characters = (
+                        parse_result.total_candidate_characters
+                    )
+                    rejection_classes = tuple(
+                        reason
+                        for reasons in rejection_reasons
+                        for reason in reasons
+                    )
+                    funnel.sample_memorization_rejected += sum(
+                        "sample_memorization" in reasons
+                        for reasons in rejection_reasons
+                    )
+                    if raw_count and 0 < len(parsed_candidates) < raw_count:
+                        funnel.student_partially_valid_responses += 1
+                    if not parsed_candidates:
+                        failure_class = "zero_valid_student_candidates"
+                        if not rejection_classes:
+                            rejection_classes = (
+                                "candidate_list_missing",
+                            )
+                except (TypeError, ValueError) as exc:
+                    parse_error = str(exc)
+                    failure_class = (
+                        parse_error
+                        if parse_error in {
+                            "candidate_list_missing",
+                            "schema_invalid",
+                            "too_long",
+                        }
+                        else "schema_invalid"
+                    )
+                    rejection_classes = (failure_class,)
+
+            funnel.raw_candidate_count += raw_count
+            funnel.valid_candidate_count = len(parsed_candidates)
+            funnel.schema_valid_count = len(parsed_candidates)
+            if failure_class:
+                funnel.student_invalid_responses += 1
+                if truncated:
+                    funnel.student_truncated_responses += 1
+            retry_triggered = bool(
+                not parsed_candidates
+                and attempt_index < self.cfg.tcs.student_invalid_max_retries
+                and failure_class != "transport_failure"
+            )
+            if retry_triggered:
+                funnel.student_retry_triggered = True
+                funnel.student_retry_count += 1
+            if parsed_candidates and (
+                attempt_index > 0 or student_generation_cycle_index > 0
+            ):
+                funnel.student_recovered = True
+            student_round = {
+                "update_index": update_index,
+                "target_agent_id": target_agent_id,
+                "role": "student",
+                "context_type": type(context).__name__,
+                "context_hash": context_hash,
+                "request_hash": _request_hash(
+                    "Return strict JSON only.", student_request
+                ),
+                "response_hash": hashlib.sha256(
+                    student_raw.encode("utf-8")
+                ).hexdigest(),
+                "json_extracted": parsed is not None,
+                "schema_valid": parse_result is not None,
+                "requested_count": self.cfg.tcs.num_candidates_per_parent,
+                "raw_count": raw_count,
+                "valid_count": len(parsed_candidates),
+                "raw_candidate_count": raw_count,
+                "valid_candidate_count": len(parsed_candidates),
+                "per_candidate_rejection_reasons": [
+                    list(row) for row in rejection_reasons
+                ],
+                "candidate_rejection_classes": list(rejection_classes),
+                "semantic_round": semantic_round,
+                "format_attempt": attempt_index,
+                "student_generation_cycle_index": (
+                    student_generation_cycle_index
+                ),
+                "student_attempt_index": attempt_index,
+                "finish_reason": student_result.finish_reason,
+                "response_truncated": truncated,
+                "failure_class": failure_class,
+                "retry_reason": (
+                    failure_class if retry_triggered else ""
+                ),
+                "student_retry_triggered": retry_triggered,
+                "student_retry_reason": (
+                    ",".join(rejection_classes) if retry_triggered else ""
+                ),
+                "student_recovered": bool(
+                    parsed_candidates
+                    and (
+                        attempt_index > 0
+                        or student_generation_cycle_index > 0
+                    )
+                ),
+                "student_cycle_exhausted": bool(
+                    not parsed_candidates
+                    and attempt_index == self.cfg.tcs.student_invalid_max_retries
+                ),
+                "upstream_regeneration_triggered": bool(
+                    funnel.upstream_regeneration_triggered
+                ),
+                "upstream_regeneration_count": int(
+                    funnel.upstream_regeneration_count
+                ),
+                "parse_error": parse_error,
+                "response_excerpt": _response_excerpt(student_raw),
+                "input_characters": len(student_request),
+                "output_characters": len(student_raw),
+                "raw_response_characters": len(student_raw),
+                "parsed_payload_characters": (
+                    len(json.dumps(parsed, ensure_ascii=False, sort_keys=True))
+                    if parsed is not None else 0
+                ),
+                "total_candidate_characters": total_candidate_characters,
+                "previous_teacher_plan_hash": (
+                    previous_teacher_plan_hash
+                ),
+                "upstream_teacher_plan_hash": (
+                    repair_plan_hash if student_generation_cycle_index > 0 else ""
+                ),
+            }
+            self.tcs_rounds.append(student_round)
+            self.student_recovery_observations.append({
+                key: student_round[key]
+                for key in (
+                    "update_index",
+                    "target_agent_id",
+                    "student_generation_cycle_index",
+                    "student_attempt_index",
+                    "raw_candidate_count",
+                    "valid_candidate_count",
+                    "candidate_rejection_classes",
+                    "student_retry_triggered",
+                    "student_retry_reason",
+                    "student_recovered",
+                    "student_cycle_exhausted",
+                    "upstream_regeneration_triggered",
+                    "upstream_regeneration_count",
+                )
+            })
+            if parsed_candidates:
+                self.student_recovery_state["in_progress"] = False
+                return parsed_candidates, rejection_classes, True
+            previous_rejection_classes = rejection_classes
+
+        funnel.student_cycle_exhausted = True
+        self.student_recovery_state["in_progress"] = False
+        return (), previous_rejection_classes, True
+
+    async def _regenerate_teacher_critic_plan(
+        self,
+        *,
+        context: AnyDiagnosisContext,
+        teacher_request: str,
+        previous_approved_plan: TeacherRepairPlan,
+        student_rejection_classes: tuple[str, ...],
+        funnel: CandidateFunnel,
+        update_index: int,
+        target_agent_id: int,
+        context_hash: str,
+    ) -> tuple[TeacherRepairPlan | None, CriticDecision | None, int]:
+        funnel.upstream_regeneration_triggered = True
+        funnel.upstream_regeneration_count += 1
+        previous_approved_hash = teacher_repair_plan_hash(
+            previous_approved_plan
+        )
+        repair_plan: TeacherRepairPlan | None = None
+        critic_decision: CriticDecision | None = None
+        semantic_round_used = 1
+        for semantic_round in range(
+            1, self.cfg.tcs.teacher_critic_max_rounds + 1
+        ):
+            semantic_round_used = semantic_round
+            prior_plan = repair_plan
+            prior_critic = critic_decision
+            if semantic_round == 1:
+                user_request = build_teacher_regeneration_request(
+                    previous_plan_hash=previous_approved_hash,
+                    student_rejection_classes=student_rejection_classes,
+                )
+            else:
+                if prior_plan is None or prior_critic is None:
+                    raise RuntimeError(
+                        "Upstream Teacher revision requires prior plan and Critic"
+                    )
+                user_request = build_teacher_revision_request(
+                    context=context,
+                    previous_plan=prior_plan,
+                    critic_decision=prior_critic,
+                    field_max_chars=self.cfg.tcs.teacher_field_max_chars,
+                    total_max_chars=self.cfg.tcs.teacher_total_max_chars,
+                    feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                )
+            repair_plan = None
+            teacher_request_hash = _request_hash(
+                teacher_request, user_request
+            )
+            for format_attempt in range(
+                self.cfg.tcs.teacher_json_max_retries + 1
+            ):
+                funnel.teacher_calls += 1
+                try:
+                    teacher_result = await self._chat(
+                        self.cfg.models.optimizer_model,
+                        teacher_request,
+                        user_request,
+                        self.cfg.tcs.teacher_temperature,
+                        None,
+                        "optimizer",
+                    )
+                except Exception as exc:
+                    funnel.infrastructure_failed_updates += 1
+                    funnel.terminal_failure_class = "transport_failure"
+                    funnel.terminal_failure_role = "teacher"
+                    self.tcs_rounds.append({
+                        "update_index": update_index,
+                        "target_agent_id": target_agent_id,
+                        "role": "teacher",
+                        "semantic_round": semantic_round,
+                        "format_attempt": format_attempt,
+                        "student_generation_cycle_index": 1,
+                        "upstream_regeneration_triggered": True,
+                        "request_hash": teacher_request_hash,
+                        "context_hash": context_hash,
+                        "schema_valid": False,
+                        "failure_class": "transport_failure",
+                        "retry_reason": type(exc).__name__,
+                        "previous_teacher_plan_hash": previous_approved_hash,
+                        "upstream_teacher_plan_hash": "",
+                        "upstream_plan_changed": False,
+                        "input_characters": (
+                            len(teacher_request) + len(user_request)
+                        ),
+                        "output_characters": 0,
+                    })
+                    return None, None, semantic_round_used
+                teacher_raw = teacher_result.text
+                parsed_teacher = extract_json_obj(teacher_raw)
+                truncated = response_truncated(teacher_result)
+                failure_class = (
+                    "provider_completion_truncation"
+                    if truncated else "invalid_json"
+                    if parsed_teacher is None else ""
+                )
+                parse_error = ""
+                if not failure_class:
+                    try:
+                        repair_plan = parse_teacher_repair_plan(
+                            parsed_teacher,
+                            field_max_chars=(
+                                self.cfg.tcs.teacher_field_max_chars
+                            ),
+                            total_max_chars=(
+                                self.cfg.tcs.teacher_total_max_chars
+                            ),
+                        )
+                        if contains_supplied_example_text(
+                            json.dumps(
+                                asdict(repair_plan), ensure_ascii=False
+                            ),
+                            context,
+                        ):
+                            raise ValueError(
+                                "teacher repair plan copies supplied sample text"
+                            )
+                    except (TypeError, ValueError) as exc:
+                        repair_plan = None
+                        failure_class = "schema_error"
+                        parse_error = str(exc)
+                if failure_class:
+                    funnel.teacher_invalid_responses += 1
+                    if truncated:
+                        funnel.teacher_truncated_responses += 1
+                new_hash = (
+                    teacher_repair_plan_hash(repair_plan)
+                    if repair_plan is not None else ""
+                )
+                self.tcs_rounds.append({
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
+                    "role": "teacher",
+                    "context_type": type(context).__name__,
+                    "context_hash": context_hash,
+                    "request_hash": teacher_request_hash,
+                    "response_hash": hashlib.sha256(
+                        teacher_raw.encode("utf-8")
+                    ).hexdigest(),
+                    "response_excerpt": _response_excerpt(teacher_raw),
+                    "repair_plan": (
+                        asdict(repair_plan) if repair_plan else None
+                    ),
+                    "schema_valid": repair_plan is not None,
+                    "semantic_round": semantic_round,
+                    "format_attempt": format_attempt,
+                    "student_generation_cycle_index": 1,
+                    "upstream_regeneration_triggered": True,
+                    "finish_reason": teacher_result.finish_reason,
+                    "response_truncated": truncated,
+                    "failure_class": failure_class,
+                    "retry_reason": (
+                        failure_class
+                        if failure_class and format_attempt == 0 else ""
+                    ),
+                    "parse_error": parse_error,
+                    "previous_teacher_plan_hash": previous_approved_hash,
+                    "upstream_teacher_plan_hash": new_hash,
+                    "upstream_plan_changed": bool(
+                        new_hash and new_hash != previous_approved_hash
+                    ),
+                    "teacher_plan_hash": new_hash,
+                    "input_characters": (
+                        len(teacher_request) + len(user_request)
+                    ),
+                    "output_characters": len(teacher_raw),
+                    "raw_response_characters": len(teacher_raw),
+                    "parsed_payload_characters": (
+                        len(json.dumps(
+                            parsed_teacher,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        ))
+                        if parsed_teacher is not None else 0
+                    ),
+                })
+                if repair_plan is not None:
+                    break
+            if repair_plan is None:
+                funnel.terminal_failure_class = (
+                    "upstream_teacher_invalid_exhausted"
+                )
+                funnel.terminal_failure_role = "teacher"
+                return None, None, semantic_round_used
+
+            critic_request = build_critic_request(
+                context,
+                repair_plan,
+                feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+            )
+            critic_decision = None
+            critic_request_hash = _request_hash(
+                critic_request, "Audit the repair plan."
+            )
+            for format_attempt in range(
+                self.cfg.tcs.critic_json_max_retries + 1
+            ):
+                funnel.critic_calls += 1
+                try:
+                    critic_result = await self._chat(
+                        self.cfg.models.evaluator_model,
+                        critic_request,
+                        "Audit the repair plan.",
+                        self.cfg.tcs.critic_temperature,
+                        None,
+                        "evaluator",
+                    )
+                except Exception as exc:
+                    funnel.infrastructure_failed_updates += 1
+                    funnel.terminal_failure_class = "transport_failure"
+                    funnel.terminal_failure_role = "critic"
+                    self.tcs_rounds.append({
+                        "update_index": update_index,
+                        "target_agent_id": target_agent_id,
+                        "role": "critic",
+                        "semantic_round": semantic_round,
+                        "format_attempt": format_attempt,
+                        "student_generation_cycle_index": 1,
+                        "upstream_regeneration_triggered": True,
+                        "schema_valid": False,
+                        "failure_class": "transport_failure",
+                        "retry_reason": type(exc).__name__,
+                        "upstream_critic_decision_hash": "",
+                    })
+                    return None, None, semantic_round_used
+                critic_raw = critic_result.text
+                parsed_critic = extract_json_obj(critic_raw)
+                truncated = response_truncated(critic_result)
+                failure_class = (
+                    "provider_completion_truncation"
+                    if truncated else "invalid_json"
+                    if parsed_critic is None else ""
+                )
+                parse_error = ""
+                if not failure_class:
+                    try:
+                        critic_decision = parse_critic_decision(
+                            parsed_critic,
+                            allowed_case_ids={
+                                row.case_id for row in context.evidence_cases
+                            },
+                            feedback_max_chars=(
+                                self.cfg.tcs.critic_feedback_max_chars
+                            ),
+                        )
+                        if contains_supplied_example_text(
+                            json.dumps(
+                                asdict(critic_decision), ensure_ascii=False
+                            ),
+                            context,
+                        ):
+                            raise ValueError(
+                                "critic response copies supplied sample text"
+                            )
+                    except (TypeError, ValueError) as exc:
+                        critic_decision = None
+                        failure_class = "schema_error"
+                        parse_error = str(exc)
+                if failure_class:
+                    funnel.critic_invalid_responses += 1
+                    if truncated:
+                        funnel.critic_truncated_responses += 1
+                elif critic_decision is not None and not critic_decision.approved:
+                    failure_class = "semantic_rejection"
+                    funnel.critic_semantic_rejections += 1
+                decision_hash = (
+                    critic_decision_hash(critic_decision)
+                    if critic_decision is not None else ""
+                )
+                self.tcs_rounds.append({
+                    "update_index": update_index,
+                    "target_agent_id": target_agent_id,
+                    "role": "critic",
+                    "context_type": type(context).__name__,
+                    "context_hash": context_hash,
+                    "request_hash": critic_request_hash,
+                    "response_hash": hashlib.sha256(
+                        critic_raw.encode("utf-8")
+                    ).hexdigest(),
+                    "response_excerpt": _response_excerpt(critic_raw),
+                    "schema_valid": critic_decision is not None,
+                    "failed_checks": (
+                        list(critic_decision.failed_checks)
+                        if critic_decision else []
+                    ),
+                    "risk_case_ids": (
+                        list(critic_decision.risk_case_ids)
+                        if critic_decision else []
+                    ),
+                    "feedback": (
+                        critic_decision.feedback if critic_decision else ""
+                    ),
+                    "effective_approved": bool(
+                        critic_decision and critic_decision.approved
+                    ),
+                    "semantic_round": semantic_round,
+                    "format_attempt": format_attempt,
+                    "student_generation_cycle_index": 1,
+                    "upstream_regeneration_triggered": True,
+                    "finish_reason": critic_result.finish_reason,
+                    "response_truncated": truncated,
+                    "failure_class": failure_class,
+                    "retry_reason": (
+                        failure_class
+                        if failure_class and format_attempt == 0 else ""
+                    ),
+                    "parse_error": parse_error,
+                    "teacher_plan_hash": teacher_repair_plan_hash(
+                        repair_plan
+                    ),
+                    "critic_decision_hash": decision_hash,
+                    "upstream_critic_decision_hash": decision_hash,
+                    "input_characters": len(critic_request),
+                    "output_characters": len(critic_raw),
+                    "raw_response_characters": len(critic_raw),
+                    "parsed_payload_characters": (
+                        len(json.dumps(
+                            parsed_critic,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        ))
+                        if parsed_critic is not None else 0
+                    ),
+                })
+                if critic_decision is not None:
+                    break
+            if critic_decision is None:
+                funnel.terminal_failure_class = (
+                    "upstream_critic_schema_exhausted"
+                )
+                funnel.terminal_failure_role = "critic"
+                return None, None, semantic_round_used
+            if critic_decision.approved:
+                funnel.critic_approved += 1
+                return repair_plan, critic_decision, semantic_round_used
+
+        funnel.terminal_failure_class = (
+            "upstream_critic_semantic_rejection_exhausted"
+        )
+        funnel.terminal_failure_role = "critic"
+        return None, critic_decision, semantic_round_used
+
     async def propose_candidates(
         self,
         target_agent_id: int,
@@ -1404,160 +2065,76 @@ class PromptEnsembleOptimizationSystem:
 
         parsed_candidates: tuple[StudentPromptCandidate, ...] = ()
         funnel.requested_candidate_count = self.cfg.tcs.num_candidates_per_parent
-        student_request = build_student_request(
-            parent_prompt=parent_prompt,
-            approved_plan=repair_plan,
-            answer_format=self.cfg.data.answer_format,
-            candidate_count=self.cfg.tcs.num_candidates_per_parent,
-            candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
-            total_candidate_prompt_max_chars=(
-                self.cfg.tcs.total_candidate_prompt_max_chars
-            ),
+        parsed_candidates, rejection_classes, recoverable = (
+            await self._run_student_cycle(
+                context=context,
+                parent_prompt=parent_prompt,
+                repair_plan=repair_plan,
+                funnel=funnel,
+                update_index=update_index,
+                target_agent_id=target_agent_id,
+                semantic_round=semantic_round,
+                context_hash=context_hash,
+                student_generation_cycle_index=0,
+            )
         )
-        last_student_failure = ""
-        for format_attempt in range(self.cfg.tcs.student_json_max_retries + 1):
-            funnel.student_calls += 1
-            try:
-                student_result = await self._chat(
-                    self.cfg.models.optimizer_model,
-                    "Return strict JSON only.",
-                    student_request,
-                    self.cfg.tcs.student_temperature,
-                    None,
-                    "optimizer",
+        original_plan_hash = teacher_repair_plan_hash(repair_plan)
+        if (
+            not parsed_candidates
+            and recoverable
+            and self.cfg.tcs.student_upstream_regeneration_max_count > 0
+        ):
+            regenerated_plan, regenerated_critic, upstream_semantic_round = (
+                await self._regenerate_teacher_critic_plan(
+                    context=context,
+                    teacher_request=teacher_request,
+                    previous_approved_plan=repair_plan,
+                    student_rejection_classes=rejection_classes,
+                    funnel=funnel,
+                    update_index=update_index,
+                    target_agent_id=target_agent_id,
+                    context_hash=context_hash,
                 )
-            except Exception as exc:
-                funnel.infrastructure_failed_updates += 1
-                funnel.terminal_failure_class = "transport_failure"
-                funnel.terminal_failure_role = "student"
-                self.tcs_rounds.append({
-                    "update_index": update_index,
-                    "target_agent_id": target_agent_id,
-                    "role": "student",
-                    "semantic_round": semantic_round,
-                    "format_attempt": format_attempt,
-                    "schema_valid": False,
-                    "finish_reason": "",
-                    "response_truncated": False,
-                    "failure_class": "transport_failure",
-                    "retry_reason": type(exc).__name__,
-                    "input_characters": len(student_request),
-                    "output_characters": 0,
-                    "raw_response_characters": 0,
-                    "parsed_payload_characters": 0,
-                })
+            )
+            if regenerated_plan is None or regenerated_critic is None:
                 return []
-            student_raw = student_result.text
-            parsed = extract_json_obj(student_raw)
-            truncated = response_truncated(student_result)
-            failure_class = (
-                "provider_completion_truncation"
-                if truncated else "invalid_json"
-                if parsed is None else ""
+            repair_plan = regenerated_plan
+            critic_decision = regenerated_critic
+            parsed_candidates, rejection_classes, recoverable = (
+                await self._run_student_cycle(
+                    context=context,
+                    parent_prompt=parent_prompt,
+                    repair_plan=repair_plan,
+                    funnel=funnel,
+                    update_index=update_index,
+                    target_agent_id=target_agent_id,
+                    semantic_round=upstream_semantic_round,
+                    context_hash=context_hash,
+                    student_generation_cycle_index=1,
+                    previous_teacher_plan_hash=original_plan_hash,
+                )
             )
-            raw_values = (
-                parsed.get("candidate_prompts")
-                if isinstance(parsed, Mapping) else None
-            )
-            raw_count = len(raw_values) if isinstance(raw_values, list) else 0
-            rejection_reasons: tuple[tuple[str, ...], ...] = ()
-            parse_error = ""
-            total_candidate_characters = 0
-            if not failure_class:
-                try:
-                    parsed_result = parse_student_candidates(
-                        parsed,
-                        parent_prompt=parent_prompt,
-                        context=context,
-                        expected_count=self.cfg.tcs.num_candidates_per_parent,
-                        candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
-                        total_candidate_prompt_max_chars=(
-                            self.cfg.tcs.total_candidate_prompt_max_chars
-                        ),
-                    )
-                    parsed_candidates = parsed_result.candidates
-                    raw_count = parsed_result.raw_count
-                    rejection_reasons = parsed_result.rejection_reasons
-                    total_candidate_characters = (
-                        parsed_result.total_candidate_characters
-                    )
-                    funnel.sample_memorization_rejected += sum(
-                        "sample_text_copy" in reasons
-                        for reasons in rejection_reasons
-                    )
-                    if raw_count and 0 < len(parsed_candidates) < raw_count:
-                        funnel.student_partially_valid_responses += 1
-                    if not parsed_candidates:
-                        failure_class = "zero_valid_student_candidates"
-                except (TypeError, ValueError) as exc:
-                    parse_error = str(exc)
-                    failure_class = (
-                        "candidate_total_too_long"
-                        if parse_error == "candidate_total_too_long"
-                        else "schema_error"
-                    )
-            if failure_class:
-                last_student_failure = failure_class
-                funnel.student_invalid_responses += 1
-                if truncated:
-                    funnel.student_truncated_responses += 1
-            student_round = {
-                "update_index": update_index,
-                "target_agent_id": target_agent_id,
-                "role": "student",
-                "context_type": type(context).__name__,
-                "context_hash": context_hash,
-                "request_hash": _request_hash("Return strict JSON only.", student_request),
-                "response_hash": hashlib.sha256(student_raw.encode("utf-8")).hexdigest(),
-                "json_extracted": parsed is not None,
-                "schema_valid": bool(parsed is not None and failure_class in {"", "zero_valid_student_candidates"}),
-                "requested_count": self.cfg.tcs.num_candidates_per_parent,
-                "raw_count": raw_count,
-                "valid_count": len(parsed_candidates),
-                "per_candidate_rejection_reasons": [
-                    list(row) for row in rejection_reasons
-                ],
-                "semantic_round": semantic_round,
-                "format_attempt": format_attempt,
-                "finish_reason": student_result.finish_reason,
-                "response_truncated": truncated,
-                "failure_class": failure_class,
-                "retry_reason": failure_class if failure_class and format_attempt == 0 else "",
-                "parse_error": parse_error,
-                "response_excerpt": _response_excerpt(student_raw),
-                "input_characters": len(student_request),
-                "output_characters": len(student_raw),
-                "raw_response_characters": len(student_raw),
-                "parsed_payload_characters": (
-                    len(json.dumps(parsed, ensure_ascii=False, sort_keys=True))
-                    if parsed is not None else 0
-                ),
-                "total_candidate_characters": total_candidate_characters,
-            }
-            self.tcs_rounds.append(student_round)
-            funnel.raw_candidate_count = raw_count
-            if parsed_candidates:
-                break
-        if not parsed_candidates:
+            if not parsed_candidates and recoverable:
+                funnel.terminal_failure_class = (
+                    "student_invalid_exhausted_after_upstream_regeneration"
+                )
+                funnel.terminal_failure_role = "student"
+                funnel.terminal_student_failure_class = (
+                    funnel.terminal_failure_class
+                )
+        elif not parsed_candidates and recoverable:
+            funnel.terminal_failure_class = "student_invalid_exhausted"
             funnel.terminal_failure_role = "student"
-            if last_student_failure == "provider_completion_truncation":
-                funnel.terminal_failure_class = "student_provider_truncation"
-                funnel.infrastructure_failed_updates += 1
-            elif last_student_failure == "zero_valid_student_candidates":
-                funnel.terminal_failure_class = "zero_valid_student_candidates"
-            else:
-                funnel.terminal_failure_class = "student_schema_exhausted"
+            funnel.terminal_student_failure_class = (
+                funnel.terminal_failure_class
+            )
+        funnel.valid_candidate_count = len(parsed_candidates)
         funnel.schema_valid_count = len(parsed_candidates)
+        if not parsed_candidates:
+            return []
         unique: dict[str, CandidateRuntime] = {}
         non_parent = 0
-        repair_plan_hash = hashlib.sha256(
-            json.dumps(
-                asdict(repair_plan),
-                ensure_ascii=False,
-                sort_keys=True,
-                separators=(",", ":"),
-            ).encode("utf-8")
-        ).hexdigest()
+        repair_plan_hash = teacher_repair_plan_hash(repair_plan)
         for candidate in parsed_candidates:
             prompt = normalize_prompt_text(candidate.candidate_prompt)
             prompt_hash = self.prompt_hash(prompt)
@@ -1573,49 +2150,6 @@ class PromptEnsembleOptimizationSystem:
         funnel.non_parent_count = non_parent
         funnel.deduplicated_count = len(unique)
         return list(unique.values())
-
-    def _limits(self, size: int) -> ConstraintLimits:
-        return ConstraintLimits(
-            local_accuracy_allowance=int(self.cfg.constraints.local_accuracy_loss_epsilon * size),
-            global_accuracy_allowance=int(self.cfg.constraints.global_accuracy_loss_epsilon * size),
-            invalid_allowance=self.cfg.constraints.local_terminal_invalid_allowance,
-            global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
-            vote_loss_limit=self.cfg.constraints.vote_loss_limit,
-            unique_correct_loss_limit=self.cfg.constraints.unique_correct_loss_limit,
-            pivotal_loss_limit=self.cfg.constraints.pivotal_loss_limit,
-        )
-
-    @staticmethod
-    def _competence_only_constraint(
-        candidate: CandidateEvaluation,
-        active: CandidateEvaluation,
-        initial: CandidateEvaluation,
-        limits: ConstraintLimits,
-    ) -> ConstraintDecision:
-        local = candidate.competence.correct_count >= active.competence.correct_count - limits.local_accuracy_allowance
-        global_ = candidate.competence.correct_count >= initial.competence.correct_count - limits.global_accuracy_allowance
-        invalid = evaluate_terminal_invalid_constraints(
-            candidate.competence,
-            active.competence,
-            initial.competence,
-            local_allowance=limits.invalid_allowance,
-            global_allowance=limits.global_invalid_allowance,
-        )
-        reasons = tuple(
-            name for name, passed in (
-                ("local_accuracy", local), ("initial_accuracy", global_), ("invalid", invalid),
-            ) if not passed
-        )
-        return ConstraintDecision(
-            passed=not reasons,
-            local_accuracy_passed=local,
-            initial_accuracy_passed=global_,
-            invalid_passed=invalid,
-            vote_loss_passed=True,
-            unique_correct_passed=True,
-            pivotal_correct_passed=True,
-            rejection_reasons=reasons,
-        )
 
     async def evaluate_candidates(
         self,
@@ -1634,21 +2168,6 @@ class PromptEnsembleOptimizationSystem:
             active_profiles=self.active_profiles,
             initial_profiles=self.initial_profiles,
             candidate_profile=self.active_profiles[target_agent_id],
-            target_agent_id=target_agent_id,
-            assigned_question_hashes=assigned_hashes,
-            normalize_answer=self.normalize_answer,
-            match_answer=self.match_answer,
-            tie_break=self.protocol.tie_policy,
-            seed=self.cfg.training.seed,
-            tau=self.cfg.peer_state.soft_vote_tau,
-        )
-        initial = evaluate_candidate_profile(
-            prompt=self.agents[target_agent_id].initial_prompt,
-            prompt_hash=self.prompt_hash(self.agents[target_agent_id].initial_prompt),
-            examples=self.fixed_probe.examples,
-            active_profiles=self.initial_profiles,
-            initial_profiles=self.initial_profiles,
-            candidate_profile=self.initial_profiles[target_agent_id],
             target_agent_id=target_agent_id,
             assigned_question_hashes=assigned_hashes,
             normalize_answer=self.normalize_answer,
@@ -1743,11 +2262,6 @@ class PromptEnsembleOptimizationSystem:
             for candidate in candidates
         )
 
-        limits = self._limits(len(self.fixed_probe.examples))
-        limits = replace(
-            limits,
-            global_invalid_allowance=self.cfg.constraints.global_terminal_invalid_allowance,
-        )
         feasible: list[CandidateRuntime] = []
         acceptable: list[CandidateRuntime] = []
         for candidate in shortlist:
@@ -1769,44 +2283,36 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
-            candidate.constraint = (
-                self._competence_only_constraint(candidate.final_evaluation, incumbent, initial, limits)
-                if self.protocol.candidate_selection_policy == "individual_accuracy"
-                else evaluate_constraints(candidate.final_evaluation, incumbent, initial, limits)
+            candidate.constraint = evaluate_constraints(
+                candidate.final_evaluation,
+                incumbent,
             )
             if candidate.constraint.passed:
                 feasible.append(candidate)
             for reason in candidate.constraint.rejection_reasons:
                 field = {
-                    "local_accuracy": "rejected_local_accuracy",
-                    "initial_accuracy": "rejected_initial_accuracy",
-                    "invalid": "rejected_invalid",
-                    "vote_loss": "rejected_vote_loss",
-                    "unique_correct": "rejected_unique_loss",
-                    "pivotal_correct": "rejected_pivotal_loss",
+                    "target_not_improved": "rejected_target_not_improved",
+                    "team_vote_regression": "rejected_team_vote_regression",
+                    "member_objective_regression": (
+                        "rejected_member_objective_regression"
+                    ),
+                    "terminal_invalid_regression": (
+                        "rejected_terminal_invalid_regression"
+                    ),
                 }[reason]
                 setattr(funnel, field, getattr(funnel, field) + 1)
         funnel.stage_b_evaluated = len(shortlist)
         funnel.constraint_feasible = len(feasible)
 
         if self.protocol.candidate_selection_policy == "individual_accuracy":
-            acceptable = [
-                row for row in feasible
-                if individual_accuracy_key(row.final_evaluation, row.generation)
-                > individual_accuracy_key(incumbent, 0)
-                and row.final_evaluation.competence.correct_count > incumbent.competence.correct_count
-            ]
+            acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: individual_accuracy_key(row.final_evaluation, row.generation),
                 default=None,
             )
         elif self.protocol.candidate_selection_policy == "vote_first":
-            acceptable = [
-                row for row in feasible
-                if vote_first_key(row.final_evaluation, row.generation)
-                > vote_first_key(incumbent, 0)
-            ]
+            acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: vote_first_key(row.final_evaluation, row.generation),
@@ -1929,6 +2435,10 @@ class PromptEnsembleOptimizationSystem:
                     "stage_a_decision": asdict(row.stage_a_decision) if row.stage_a_decision else None,
                     "evaluation": asdict(row.final_evaluation) if row.final_evaluation else None,
                     "constraint": asdict(row.constraint) if row.constraint else None,
+                    **(
+                        asdict(row.constraint)
+                        if row.constraint is not None else {}
+                    ),
                 }
                 for row in evaluated
             ],
@@ -2094,6 +2604,93 @@ class PromptEnsembleOptimizationSystem:
             self.active_profiles,
         )
 
+    def team_prompt_state_hash(self) -> str:
+        prompt_hashes = [
+            self.prompt_hash(agent.current_prompt) for agent in self.agents
+        ]
+        return hashlib.sha256(json.dumps(
+            prompt_hashes,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")).hexdigest()
+
+    def _validation_state_cache_key(self, team_state_hash: str) -> str:
+        if self.validation_probe is None:
+            raise RuntimeError("validation probe is not initialized")
+        payload = (
+            str(team_state_hash),
+            self.validation_probe.probe_hash,
+            self.prompt_question_evaluator.identity(),
+            SOLVER_INVALID_RETRY_POLICY_VERSION,
+        )
+        return hashlib.sha256(json.dumps(
+            payload,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")).hexdigest()
+
+    async def evaluate_validation_state(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> tuple[DatasetMetrics, dict[str, Any]]:
+        team_state_hash = self.team_prompt_state_hash()
+        cache_key = self._validation_state_cache_key(team_state_hash)
+        cached = self.validation_state_cache.get(team_state_hash)
+        if (
+            self.cfg.evaluation.validation_unique_state_cache_enabled
+            and cached is not None
+        ):
+            if cached.get("cache_key") != cache_key:
+                raise ValueError("validation state cache identity mismatch")
+            self.validation_reuse_count += 1
+            return dataset_metrics_from_dict(cached["metrics"]), {
+                "team_prompt_state_hash": team_state_hash,
+                "validation_cache_hit": True,
+                "validation_result_source": "unique_team_state_cache",
+            }
+        metrics = await self.evaluate_dataset(data, validation=True)
+        self.validation_evaluation_count += 1
+        self.validation_state_cache[team_state_hash] = {
+            "cache_key": cache_key,
+            "team_prompt_state_hash": team_state_hash,
+            "metrics": metrics.to_dict(),
+        }
+        return metrics, {
+            "team_prompt_state_hash": team_state_hash,
+            "validation_cache_hit": False,
+            "validation_result_source": "solver_evaluation",
+        }
+
+    def complete_validation_selection(
+        self,
+        checkpoint: Mapping[str, Any],
+    ) -> None:
+        self.current_selected_validation_checkpoint = dict(checkpoint)
+        self.validation_selection_completed = True
+
+    async def evaluate_selected_test(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> DatasetMetrics:
+        if (
+            self.cfg.evaluation.test_evaluation_after_selection_only
+            and not self.validation_selection_completed
+        ):
+            self.test_called_before_selection = True
+            raise RuntimeError(
+                "test evaluation is forbidden before validation selection"
+            )
+        if self.test_evaluation_count:
+            if not self.selected_test_metrics:
+                raise RuntimeError(
+                    "test count is non-zero without persisted selected metrics"
+                )
+            return dataset_metrics_from_dict(self.selected_test_metrics)
+        self.test_evaluation_count += 1
+        metrics = await self.evaluate_dataset(data)
+        self.selected_test_metrics = metrics.to_dict()
+        return metrics
+
     async def evaluate_dataset(
         self,
         data: Sequence[Mapping[str, Any]],
@@ -2202,8 +2799,10 @@ class PromptEnsembleOptimizationSystem:
             "target_selection_version": TARGET_SELECTION_VERSION,
             "pareto_preference_version": "member_first_candidate_preference_v1",
             "stage_a_version": "team_vote_worst_mean_v2",
-            "stage_b_version": "competence_guard_member_pareto_v2",
-            "validation_selection_version": "initial_member_feasible_v1",
+            "stage_b_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "preservation_policy_version": PRESERVATION_POLICY_VERSION,
+            "validation_selection_version": VALIDATION_SELECTION_VERSION,
             "tcs_context_version": "aggregated_diagnosis_context_v1",
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
@@ -2217,10 +2816,6 @@ class PromptEnsembleOptimizationSystem:
             "solver_invalid_retry_policy_version": SOLVER_INVALID_RETRY_POLICY_VERSION,
             "prompt_question_evaluator_version": PROMPT_QUESTION_EVALUATOR_VERSION,
             "solver_invalid_max_retries": self.cfg.models.solver_invalid_max_retries,
-            "invalid_guard_epsilon": self.cfg.constraints.invalid_guard_epsilon,
-            "invalid_guard_epsilon_status": "deprecated_unused",
-            "local_terminal_invalid_allowance": self.cfg.constraints.local_terminal_invalid_allowance,
-            "global_terminal_invalid_allowance": self.cfg.constraints.global_terminal_invalid_allowance,
             "validation_terminal_invalid_allowance": self.cfg.constraints.validation_terminal_invalid_allowance,
             "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
             "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
@@ -2228,6 +2823,7 @@ class PromptEnsembleOptimizationSystem:
             "candidate_prompt_length_limit": self.cfg.tcs.candidate_prompt_max_chars,
             "total_candidate_prompt_length_limit": self.cfg.tcs.total_candidate_prompt_max_chars,
             "student_count_policy": "reject_excess_keep_individually_valid_v1",
+            "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
             "model_facing_payload_version": "audit_hash_isolated_v2",
             "terminal_failure_version": "role_specific_terminal_failure_v1",
             "checkpoint_version": CHECKPOINT_VERSION,
@@ -2268,6 +2864,15 @@ class PromptEnsembleOptimizationSystem:
             "probe_version": self.cfg.peer_state.probe_version,
             "probe_hash": self.fixed_probe.probe_hash if self.fixed_probe else "",
             "validation_probe_hash": self.validation_probe.probe_hash if self.validation_probe else "",
+            "validation_unique_state_count": len(self.validation_state_cache),
+            "validation_evaluation_count": self.validation_evaluation_count,
+            "validation_reuse_count": self.validation_reuse_count,
+            "current_selected_validation_checkpoint": dict(
+                self.current_selected_validation_checkpoint
+            ),
+            "test_evaluation_count": self.test_evaluation_count,
+            "test_used_for_selection": self.test_used_for_selection,
+            "test_called_before_selection": self.test_called_before_selection,
             "config": self.cfg.to_flat_dict(),
         }
 
@@ -2346,6 +2951,10 @@ class PromptEnsembleOptimizationSystem:
         )
         self.artifacts.write_jsonl("tcs_context_history.jsonl", self.tcs_context_history)
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
+        self.artifacts.write_jsonl(
+            "student_recovery_observations.jsonl",
+            self.student_recovery_observations,
+        )
         self.artifacts.write_jsonl("solver_invalid_outputs.jsonl", self.solver_invalid_outputs)
         self.artifacts.write_json("solver_recovery_summary.json", self.solver_recovery_summary())
         self.artifacts.write_jsonl("llm_calls.jsonl", self.llm.calls)

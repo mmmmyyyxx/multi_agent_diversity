@@ -28,11 +28,12 @@ The current formal method is:
 Member-Aware Peer-State Prompt-Team Optimization
 ```
 
-The current implementation version is `member_aware_peer_state_v3`. It keeps
-the v2 responsibility, TCS, Pareto, Stage A/B, and immutable Solver contract
-semantics, while adding potential-aware target priority and request-local
-first-valid Solver invalid recovery. Checkpoint version is 8; v7 checkpoints
-are intentionally incompatible.
+The current implementation version is `member_aware_peer_state_v4`. It keeps
+the v3 responsibility, potential-aware scheduling, bounded TCS roles, immutable
+Solver contract, and request-local first-valid Solver invalid recovery while
+replacing per-example zero-loss guards with aggregate non-regression, adding
+bounded Student invalid recovery, and deduplicating validation by team state.
+Checkpoint version is 9; v8 checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
 
@@ -181,13 +182,17 @@ Preservation answers:
 what must not be damaged during that update
 ```
 
-Preservation is enforced through:
+Preservation is supported through:
 
 - preservation evidence in proposal generation;
-- active and initial competence floors;
-- the invalid-output guard;
-- the unique-correct loss guard;
-- the pivotal-correct loss guard.
+- strict target-member improvement;
+- aggregate team-vote non-regression;
+- Pareto dominance in `(V_count, g_min, g_sum)`;
+- terminal-invalid non-regression.
+
+The method does not require per-example preservation. Vote, unique-correct, and
+pivotal-correct gains and losses are audited symmetrically but do not
+independently reject a candidate.
 
 All members with current individual errors remain eligible even when they own
 no residual case. Target selection must be deterministic for the same seed and
@@ -274,7 +279,7 @@ Initial five-prompt team
     鈫?Responsibility-conditioned prompt proposal
     鈫?Target-only candidate rollout with four fixed peers
     鈫?Stage A multi-channel shortlist
-    鈫?Hard competence and preservation guards
+    鈫?Aggregate target/team/objective/invalid feasibility
     鈫?Stage B Pareto comparison against incumbent
     鈫?Atomic prompt/profile commit
     鈫?Exactly one responsibility refresh for the new team state
@@ -340,18 +345,17 @@ tie-break after substantive metrics are equal.
 
 ### Stage B
 
-Hard guards include:
+The four hard conditions are:
 
 ```text
-active target competence floor
-initial target competence floor
-invalid-output guard
-vote-loss limit
-unique-correct loss limit
-pivotal-correct loss limit
+strict target correct-count improvement over incumbent
+team vote-correct count no lower than incumbent
+strict Pareto dominance in (V_count, g_min, g_sum)
+terminal-invalid count no higher than incumbent target
 ```
 
-The formal method accepts only candidates that Pareto-dominate the incumbent.
+Per-example vote loss, unique-correct loss, and pivotal-correct loss are
+diagnostics and late tie-break signals, not independent hard guards.
 
 The canonical preference among acceptable candidates is:
 
@@ -371,7 +375,7 @@ The canonical preference among acceptable candidates is:
 
 ## 6. Validation and Test
 
-Validation compares each epoch with the initial validation team.
+Validation compares each unique team state with the initial validation team.
 
 A validation state is feasible only when:
 
@@ -402,8 +406,12 @@ Test data must never influence:
 - candidate acceptance;
 - validation best-state selection.
 
-The final test runs only after validation selects the prompt team. Final
-reports must distinguish:
+Validation metrics are cached by prompt-team state hash. The initial state and
+each accepted unique state are evaluated once; rejected unchanged states reuse
+the cache. Test runs exactly once, only after validation completes selection,
+and only for the selected team. Optimized runs do not separately evaluate their
+initial team on test; the matched baseline supplies that shared initial-test
+reference. Final matched reports must distinguish:
 
 ```text
 initial test team
@@ -592,8 +600,8 @@ requested candidate count
 
 Student must not receive raw optimization examples or gold answers.
 
-This pipeline is implemented by `member_aware_peer_state_v3` with
-`aggregated_small_model_tcs_v3`. After a valid Critic rejection, Teacher
+This pipeline is implemented by `member_aware_peer_state_v4` with
+`aggregated_small_model_tcs_v4`. After a valid Critic rejection, Teacher
 revision is stateless but grounded: the next request explicitly includes the
 complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
 feedback, and the same bounded diagnosis context. The revision protocol is
@@ -602,6 +610,13 @@ fields and cumulative satisfaction of all hard checks. Do not revert to raw
 parallel case lists or expand language-model responsibilities. Do not change
 member objectives, responsibility assignment, Stage A/B, validation, or
 experiment-setting semantics as part of role-pipeline maintenance.
+
+A zero-valid Student response receives structured rejection feedback and up to
+three retries within the same approved-plan cycle. After four invalid calls,
+the program allows exactly one fresh Teacher-Critic regeneration and one final
+four-call Student cycle. A partially valid response stops recovery immediately
+and only its valid candidates may enter Stage A. The total bound is two cycles
+and eight Student calls.
 
 ## 9. Code Map
 
@@ -778,6 +793,8 @@ multi_dataset_diverse_rl/persistence/artifacts.py
 Owns exact run identity, behavior fingerprint, atomic checkpoint, incompatible
 checkpoint rejection, and artifacts. Checkpoint member state must be the
 target-free `TeamMemberGainState`.
+Checkpoint v9 also persists Student-recovery audit state, validation state
+cache/counters, the selected validation checkpoint, and selected-test state.
 
 Do not add compatibility code for obsolete method versions unless explicitly
 requested.
@@ -829,7 +846,7 @@ single-target candidate replacement
 four fixed peers during candidate comparison
 strict optimization/validation/test separation
 integer formal objectives
-member-wise competence guards
+aggregate member-objective preservation
 strict FINAL_ANSWER contract
 exact run identity
 deterministic same-seed behavior

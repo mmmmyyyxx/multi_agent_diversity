@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v3
+method_version = member_aware_peer_state_v4
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -16,7 +16,9 @@ The method addresses a failure of vote-only prompt optimization: a candidate can
 improve plurality accuracy while weakening one or more team members. Such a team
 may become dependent on a narrow coalition and can perform worse when the vote
 distribution changes. The new method therefore treats team vote quality,
-worst-member preservation, and total member improvement as joint objectives.
+worst-member preservation, and total member improvement as joint aggregate
+objectives. It does not impose zero-loss preservation on individual probe
+examples.
 
 ## 2. Solver And Vote Contract
 
@@ -37,11 +39,11 @@ terminal-invalid result. Transport retries remain separate. Formal competence
 and guards count only terminal-invalid results, while first-pass and recovery
 counts remain audit metrics.
 
-All selector settings use the same terminal-invalid ceilings: the candidate may
-add at most the configured local allowance over the active profile and the
-configured global allowance over the initial profile. The legacy
-`invalid_guard_epsilon` field is retained only for CLI compatibility and must
-remain zero; it is not part of the formal v3 guard.
+Candidate acceptance uses an aggregate terminal-invalid condition: the
+candidate target profile may not contain more terminal-invalid outputs than the
+incumbent target profile. First-pass invalids that recover successfully remain
+diagnostics and do not reject the candidate. The obsolete local/global invalid
+allowances and accuracy-epsilon guard fields were removed in v4.
 
 Target scheduling adds potential evidence without changing responsibility
 assignment or max-wait semantics. Unimproved members, headroom to the current
@@ -132,10 +134,13 @@ Target selection uses all agents with current errors. Agents waiting
 four. The remaining target comparison is member-aware and deterministic.
 
 Responsibility answers **who to update and what residual to repair**. Competence
-preservation is deliberately not a sixth responsibility-attribution dimension:
-it is enforced downstream by preservation-conditioned TCS evidence and the hard
-competence, unique-correct, and pivotal-correct candidate guards. Strong members
-therefore remain eligible for repair without losing their protected capability.
+preservation is deliberately not a sixth responsibility-attribution dimension.
+Preservation-conditioned TCS evidence remains part of proposal generation, and
+vote, unique-correct, and pivotal-correct changes remain symmetric diagnostics.
+Formal protection is instead enforced at aggregate level by target improvement,
+team-vote non-regression, member-objective Pareto dominance, and terminal-invalid
+non-regression. Strong members therefore remain eligible for repair without a
+per-example zero-loss constraint.
 
 Responsibility has an explicit versioned lifecycle. The initial team is assigned
 once. Rejected updates reuse that assignment. An accepted prompt/profile pair is
@@ -229,9 +234,17 @@ identity and TCS audit metadata.
 
 Malformed or provider-truncated Teacher/Critic responses retry the identical
 request once without consuming another semantic round. Student applies strict
-requested-count, per-prompt, and total-prompt character limits and never
-silently truncates extra candidates. Provider truncation is determined only
-from `finish_reason == "length"`.
+schema, requested-count, per-prompt, total-prompt, parent-identity, duplicate,
+and sample-memorization checks and never silently truncates extra candidates.
+When a Student call produces no valid candidate, the next identical-cycle call
+receives structured rejection classes and retries the same approved plan. The
+initial call plus three retries form one four-call cycle. If that cycle is
+exhausted, the program performs at most one fresh Teacher-Critic regeneration
+from the same bounded diagnosis context and runs one final four-call Student
+cycle. A response containing at least one valid candidate stops recovery
+immediately and uses only those valid candidates. Thus the bound is two cycles
+and eight Student calls; invalid candidates never enter Stage A. Provider
+truncation is determined only from `finish_reason == "length"`.
 
 ## 6. Candidate Evaluation
 
@@ -241,7 +254,7 @@ active prompts fixed. The fixed probe records:
 - target correct and invalid counts
 - vote gains and losses
 - coverage and residual repairs
-- unique and pivotal correct losses
+- unique and pivotal correct gains and losses
 - candidate team vote-correct count
 - all five candidate member correct counts
 - gains relative to the initial prompt team
@@ -278,18 +291,24 @@ The channel keys are:
 
 ## 8. Stage B
 
-Before formal selection, a candidate must pass:
+All optimized settings use the v4 aggregate feasibility contract. Relative to
+the incumbent, a candidate must:
 
-- active target-member correct-count floor
-- initial target-member correct-count floor
-- invalid-count guard
-- vote-loss limit
-- unique-correct loss limit
-- pivotal-correct loss limit
+- strictly increase the target member's correct count;
+- not reduce the aggregate team vote-correct count;
+- Pareto-dominate the incumbent in `(V_count, g_min, g_sum)`;
+- not increase the target member's terminal-invalid count.
 
-For `member_aware_pareto`, feasibility is necessary but not sufficient. The
-candidate objective must Pareto-dominate the incumbent objective. Candidate
-preference among acceptable rows is:
+These four conditions are the complete hard acceptance contract. A candidate
+may lose correctness on particular probe examples when the aggregate contract
+still holds. Vote gains/losses, unique-correct gains/losses, and pivotal-correct
+gains/losses are retained for diagnosis, audit, and late deterministic
+tie-breaking, but they do not independently reject a candidate. The old active
+and initial competence floors, accuracy epsilons, vote-loss limit,
+unique-correct loss limit, pivotal-correct loss limit, and local/global invalid
+allowances are deleted rather than retained as dormant behavior.
+
+The formal member-aware selector orders acceptable rows by:
 
 ```text
 minimum member gain
@@ -309,8 +328,8 @@ Soft utility never converts a non-dominating candidate into an accepted one.
 
 ## 9. Validation And Final Test
 
-Validation compares every epoch with the initial validation team. A state is
-feasible only when:
+Validation compares each unique prompt-team state with the initial validation
+team. A state is feasible only when:
 
 - no member falls below its initial count beyond the configured epsilon
 - invalid rate does not exceed the initial rate beyond its guard
@@ -329,20 +348,28 @@ lower invalid rate
 earlier epoch
 ```
 
-After validation selects prompts, test evaluation runs both the initial and
-selected prompt teams. `final_summary.json` contains:
+Prompt-team state hashes form a run-local validation cache. The initial state is
+evaluated once, each accepted new state is evaluated at most once, and a
+rejected update reuses the unchanged state's cached metrics. Repeated state
+observations do not spend another validation evaluation and do not create a new
+checkpoint candidate. Validation alone selects the best checkpoint.
+
+After selection is finalized, each optimized run evaluates exactly the selected
+prompt team on test, exactly once. It does not separately evaluate its initial
+team on test. In a matched comparison the required `shared_baseline` run is
+executed first and supplies the common initial-test reference. The optimized
+`final_summary.json` therefore records:
 
 ```text
-initial_test
 selected_test
-member_gain
 selection_summary
 ```
 
-This makes test improvement and member regression directly auditable.
-Summaries expose both integer correct-count gain and test-size-normalized
-accuracy gain. Integer counts remain the formal selection objective; normalized
-accuracy gains are the cross-task reporting fields.
+The matched runner computes member gains against the baseline metrics after the
+optimized run completes. Test is never called before validation selection and
+is never used to rank checkpoints. Summaries expose both integer correct-count
+gain and test-size-normalized accuracy gain. Integer counts remain the formal
+selection objective; normalized accuracy gains are cross-task reporting fields.
 
 ## 10. Settings
 
@@ -361,18 +388,19 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 6. It stores active and initial profiles, a target-free
+Checkpoint version is 9. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
-refresh count, target-priority audit, prompt state, TCS state, caches, histories,
-LLM calls, and Python random state.
+refresh count, target-priority audit, prompt state, TCS and Student-recovery
+state, validation state cache and counters, the selected validation checkpoint,
+selected-test state, caches, histories, LLM calls, and Python random state.
 
 Resume requires exact method, setting, config behavior fingerprint, code commit,
 split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v3
+Checkpoint is incompatible with member_aware_peer_state_v4
 ```
 
 The runner never silently restarts an incompatible run in the same directory.

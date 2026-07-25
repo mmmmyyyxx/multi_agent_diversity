@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v3",
+        method_version="member_aware_peer_state_v4",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,13 +43,17 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v3"
+    assert cfg.training.method_version == "member_aware_peer_state_v4"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
     assert cfg.tcs.critic_json_max_retries == 1
     assert cfg.tcs.teacher_json_max_retries == 1
     assert cfg.tcs.teacher_critic_max_rounds == 2
+    assert cfg.tcs.student_invalid_max_retries == 3
+    assert cfg.tcs.student_upstream_regeneration_max_count == 1
+    assert cfg.evaluation.validation_unique_state_cache_enabled is True
+    assert cfg.evaluation.test_evaluation_after_selection_only is True
     assert cfg.tcs.tcs_max_pattern_summaries == 3
     assert cfg.tcs.tcs_max_evidence_cases == 3
     with pytest.raises(AttributeError):
@@ -105,7 +109,19 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tie_policy"] == "abstain"
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
-    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v3"
+    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v4"
+    assert metadata["candidate_acceptance_version"] == (
+        "aggregate_nondegrading_target_improvement_v1"
+    )
+    assert metadata["preservation_policy_version"] == (
+        "diagnostic_only_sample_preservation_v1"
+    )
+    assert metadata["validation_selection_version"] == (
+        "cached_unique_state_validation_selection_v2"
+    )
+    assert metadata["student_invalid_recovery_version"] == (
+        "feedback_retry_then_upstream_regenerate_v1"
+    )
     assert metadata["teacher_revision_protocol_version"] == (
         "critic_grounded_full_plan_revision_v1"
     )
@@ -121,7 +137,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert "prompt_memory_search_enabled" not in metadata
 
 
-def test_v3_behavior_versions_are_consistent(tmp_path):
+def test_v4_behavior_versions_are_consistent(tmp_path):
     system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
     system.set_run_identity(identity())
     metadata = system.run_meta()

@@ -14,7 +14,8 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from multi_dataset_diverse_rl.config import Config
-from multi_dataset_diverse_rl.cli import build_dataset
+from multi_dataset_diverse_rl.cli import _member_gain_summary, build_dataset
+from multi_dataset_diverse_rl.evaluation.validation import dataset_metrics_from_dict
 from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
@@ -111,6 +112,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         "tcs_rounds.jsonl",
         "candidate_funnel.json",
         "solver_invalid_outputs.jsonl",
+        "student_recovery_observations.jsonl",
         "cost_summary.json",
     )
     if not all((run_dir / filename).exists() for filename in required):
@@ -120,7 +122,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         summary = _read_json(run_dir / "final_summary.json")
     except (OSError, json.JSONDecodeError):
         return False
-    if metadata["method_version"] != "member_aware_peer_state_v3":
+    if metadata["method_version"] != "member_aware_peer_state_v4":
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")
@@ -141,10 +143,18 @@ def main() -> None:
     manifest_sha256 = hashlib.sha256((workspace / args.manifest).resolve().read_bytes()).hexdigest()
     task_ids = resolve_task_ids(args.tasks, tasks, args.benchmarks)
     settings = select_settings(args.settings)
+    setting_names = [setting.name for setting in settings]
+    if any(name != "shared_baseline" for name in setting_names):
+        if not setting_names or setting_names[0] != "shared_baseline":
+            raise ValueError(
+                "v4 optimized comparisons must run shared_baseline first "
+                "to provide the single initial-test reference"
+            )
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]
     root = (workspace / args.out_root).resolve() if not Path(args.out_root).is_absolute() else Path(args.out_root)
     root.mkdir(parents=True, exist_ok=True)
     rows = []
+    baseline_test_by_task_seed: dict[tuple[str, int], dict[str, Any]] = {}
     for task_id in task_ids:
         task = tasks[task_id]
         split_integrity = _task_split_integrity(task, args.dataset_format, str(workspace))
@@ -193,34 +203,53 @@ def main() -> None:
                         cmd.extend([f"--{name}", str(int(value) if isinstance(value, bool) else value)])
                     subprocess.run(cmd, cwd=workspace, check=True)
                     metrics = _read_json(final_path)
+                selected_test = metrics["selected_test"]
+                initial_test = metrics.get("initial_test")
+                member_gain = metrics.get("member_gain")
+                baseline_key = (task_id, seed)
+                if setting.name == "shared_baseline":
+                    baseline_test_by_task_seed[baseline_key] = selected_test
+                    initial_test = selected_test
+                    member_gain = metrics["member_gain"]
+                elif initial_test is None or member_gain is None:
+                    if baseline_key not in baseline_test_by_task_seed:
+                        raise ValueError(
+                            "shared_baseline must run before optimized settings "
+                            "so test is evaluated once per optimized run"
+                        )
+                    initial_test = baseline_test_by_task_seed[baseline_key]
+                    member_gain = _member_gain_summary(
+                        dataset_metrics_from_dict(initial_test),
+                        dataset_metrics_from_dict(selected_test),
+                    )
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
-                    "vote_acc_initial": metrics["initial_test"]["plurality_vote_acc"],
-                    "vote_acc_selected": metrics["selected_test"]["plurality_vote_acc"],
+                    "vote_acc_initial": initial_test["plurality_vote_acc"],
+                    "vote_acc_selected": selected_test["plurality_vote_acc"],
                     "vote_gain": (
-                        metrics["selected_test"]["plurality_vote_acc"]
-                        - metrics["initial_test"]["plurality_vote_acc"]
+                        selected_test["plurality_vote_acc"]
+                        - initial_test["plurality_vote_acc"]
                     ),
-                    "minimum_member_correct_count_gain": metrics["member_gain"][
+                    "minimum_member_correct_count_gain": member_gain[
                         "minimum_member_correct_count_gain"
                     ],
-                    "mean_member_correct_count_gain": metrics["member_gain"][
+                    "mean_member_correct_count_gain": member_gain[
                         "mean_member_correct_count_gain"
                     ],
-                    "minimum_member_accuracy_gain": metrics["member_gain"][
+                    "minimum_member_accuracy_gain": member_gain[
                         "minimum_member_accuracy_gain"
                     ],
-                    "mean_member_accuracy_gain": metrics["member_gain"][
+                    "mean_member_accuracy_gain": member_gain[
                         "mean_member_accuracy_gain"
                     ],
-                    "improved_agent_count": metrics["member_gain"]["improved_agent_count"],
-                    "regressed_agent_count": metrics["member_gain"]["regressed_agent_count"],
-                    "all_members_improved": metrics["member_gain"]["all_members_improved"],
-                    "selected_mean_individual_acc": metrics["selected_test"]["mean_individual_acc"],
-                    "selected_min_individual_acc": metrics["selected_test"]["min_individual_acc"],
-                    "selected_mean_soft_vote_utility": metrics["selected_test"]["mean_soft_vote_utility"],
-                    "selected_mean_invalid_rate": metrics["selected_test"]["mean_invalid_rate"],
-                    "selected_tie_rate": metrics["selected_test"]["tie_rate"],
+                    "improved_agent_count": member_gain["improved_agent_count"],
+                    "regressed_agent_count": member_gain["regressed_agent_count"],
+                    "all_members_improved": member_gain["all_members_improved"],
+                    "selected_mean_individual_acc": selected_test["mean_individual_acc"],
+                    "selected_min_individual_acc": selected_test["min_individual_acc"],
+                    "selected_mean_soft_vote_utility": selected_test["mean_soft_vote_utility"],
+                    "selected_mean_invalid_rate": selected_test["mean_invalid_rate"],
+                    "selected_tie_rate": selected_test["tie_rate"],
                     "run_identity": expected_identity.to_dict(),
                     **split_integrity,
                 })

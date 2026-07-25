@@ -19,11 +19,16 @@ from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import Persiste
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
+from multi_dataset_diverse_rl.tcs import TCS_PROTOCOL_VERSION
 from multi_dataset_diverse_rl.utils import load_jsonl
 from multi_dataset_diverse_rl.versions import (
+    CANDIDATE_ACCEPTANCE_VERSION,
     CHECKPOINT_VERSION,
     METHOD_VERSION,
+    PRESERVATION_POLICY_VERSION,
+    STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
+    VALIDATION_SELECTION_VERSION,
 )
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 from scripts.run_task_level_accuracy import RUNNER_FIELDS, _task_split_integrity
@@ -47,8 +52,16 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     for cfg in configs:
         if cfg.training.method_version != METHOD_VERSION:
             errors.append(f"unexpected method version: {cfg.training.method_version}")
-        if cfg.constraints.invalid_guard_epsilon != 0.0:
-            errors.append("invalid_guard_epsilon is deprecated and must remain 0.0")
+        if cfg.tcs.student_invalid_max_retries < 0:
+            errors.append("student_invalid_max_retries cannot be negative")
+        if cfg.tcs.student_upstream_regeneration_max_count not in {0, 1}:
+            errors.append(
+                "student_upstream_regeneration_max_count must be zero or one"
+            )
+        if not cfg.evaluation.validation_unique_state_cache_enabled:
+            errors.append("validation unique-state cache must be enabled")
+        if not cfg.evaluation.test_evaluation_after_selection_only:
+            errors.append("test-after-selection-only must be enabled")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
@@ -112,6 +125,11 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     return {
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
         "method_version": METHOD_VERSION, "target_selection_version": TARGET_SELECTION_VERSION,
+        "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+        "preservation_policy_version": PRESERVATION_POLICY_VERSION,
+        "validation_selection_version": VALIDATION_SELECTION_VERSION,
+        "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
+        "tcs_protocol_version": TCS_PROTOCOL_VERSION,
         "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
@@ -209,8 +227,22 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("responsibility_max_wait_updates must be positive")
                     if cfg.responsibility.responsibility_switch_margin < 0:
                         raise ValueError("responsibility_switch_margin cannot be negative")
-                    if cfg.constraints.invalid_guard_epsilon != 0.0:
-                        raise ValueError("invalid_guard_epsilon is deprecated and must remain 0.0")
+                    if cfg.tcs.student_invalid_max_retries < 0:
+                        raise ValueError(
+                            "student_invalid_max_retries cannot be negative"
+                        )
+                    if cfg.tcs.student_upstream_regeneration_max_count not in {0, 1}:
+                        raise ValueError(
+                            "student_upstream_regeneration_max_count must be zero or one"
+                        )
+                    if not cfg.evaluation.validation_unique_state_cache_enabled:
+                        raise ValueError(
+                            "validation unique-state cache must be enabled"
+                        )
+                    if not cfg.evaluation.test_evaluation_after_selection_only:
+                        raise ValueError(
+                            "test-after-selection-only must be enabled"
+                        )
                     if cfg.evaluation.candidate_eval_pool_size <= 0:
                         raise ValueError("fixed probe must contain at least one example")
                     if min(
