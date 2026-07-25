@@ -19,5 +19,10 @@ approval twice. Solver eventual validity was 99.9518% with one terminal invalid
 on a non-selected candidate.
 
 There were zero terminal `429` failures, but 522 Solver rate-limit retry
-attempts over 2,075 unique requests (25.2%). Raw responses, SQLite cache, full
-LLM logs, and prompt bodies remain local.
+attempts over 2,075 unique requests (25.2%).
+
+The `source_records/` directory preserves an exact, hash-verified subset of
+the generated experiment artifacts used to audit these conclusions. It
+contains metric and lifecycle metadata only. Raw responses, response excerpts,
+prompt bodies, questions and answers, SQLite cache, checkpoints, and
+payload-bearing logs remain local.

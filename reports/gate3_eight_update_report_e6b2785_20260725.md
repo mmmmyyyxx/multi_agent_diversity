@@ -261,6 +261,10 @@ calibration.
 
 ## Publication Boundary
 
-The public directory contains compact, secret-free metrics and audit hashes.
-Raw API responses, SQLite cache, complete LLM logs, and prompt bodies remain
-local.
+The public directory contains compact, secret-free metrics and audit hashes,
+plus an exact source-record subset containing result rows, the candidate
+funnel, responsibility and target lifecycle records, TCS context-boundary
+metadata, per-call operational metadata, recovery statistics, and cost
+statistics. Raw API responses, response excerpts, candidate prompt bodies,
+questions and answers, SQLite cache, checkpoints, and payload-bearing logs
+remain local.
