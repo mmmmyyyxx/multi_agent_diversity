@@ -1,0 +1,20 @@
+{
+  "source_commit": "689a5c5cb4320720dd712a31889afd1eb2dcc219",
+  "files": {
+    "baseline_final_summary.json": "95ecb6ee1691268adf1c47d9114af13ba05a1fe02650109978c43e0c189e5209",
+    "candidate_decisions_sanitized.jsonl": "1ec469d00fa98b2e93e06fe94953ac6a21f94bce57f0f8a1b1210401d5403c87",
+    "candidate_funnel.json": "faca3dcac8b8d453a66b4a0a427c165eaf9f84d26c975a970023175f433c2af6",
+    "cost_summary.json": "6c0d79ec97ffeaefba51f600779e18c499877f8f5e7d2bf961d9c3037f946f4f",
+    "full_final_summary.json": "9ea22b5790384fe7325f6bc438ec21ac08f6082637647e3ad9f38fd7d1a5d588",
+    "full_gate_analysis.json": "be5b7e937712d5d3243819d7a146a9b24d9bb6fffdd7e920a836d7d077c3ff49",
+    "history.json": "5130852730b4800795fe19407d61c5d98f16ff2597a92da52c0b4ec2603ce98c",
+    "llm_calls_sanitized.jsonl": "f9e12f101a182bd5e8242c64568a8533d2519a8dbf8ad1b8bb486053fe9a6115",
+    "README.md": "14124f74f47f72bb7d454cf84ecd0cf434b0213a348b0310c27bb7ae481b29a0",
+    "responsibility_assignments_sanitized.jsonl": "6fd2dec48932618b289445724d377b323b11c13600d5a95cd82de2ec72c63e2b",
+    "run_meta_sanitized.json": "81955dcf79574271b7b2bd346f67d11ae58b8497d77662be7ba3e8a90ca4d28d",
+    "solver_recovery_summary.json": "366a1144ac1a93c50e650a99e5e1d882528c81093fd738758ee05188c23b299a",
+    "student_recovery_observations_sanitized.jsonl": "146483a6de7ff6c407e1da4a0b2c7a902e0b8f7f6a5a038e232241b51f134979",
+    "target_priority_audit_sanitized.jsonl": "631d2d3f1ceb1e10ef8f1a03b072829b23b068795a2c6a8fc252d091b3cab14f",
+    "tcs_context_history_sanitized.jsonl": "8fc3da2ebacc54cca560932bf6a05e9aa1481e8d26a7efb0389f91daec78c7c6"
+  }
+}

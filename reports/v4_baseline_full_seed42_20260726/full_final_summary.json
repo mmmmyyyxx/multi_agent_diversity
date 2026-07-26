@@ -1,0 +1,60 @@
+{
+  "initial_test": null,
+  "selected_test": {
+    "vote_correct_count": 64,
+    "per_agent_correct_counts": [
+      61,
+      73,
+      54,
+      61,
+      73
+    ],
+    "plurality_vote_acc": 0.512,
+    "vote_acc": 0.512,
+    "mean_individual_acc": 0.5152,
+    "min_individual_acc": 0.432,
+    "per_agent_acc": [
+      0.488,
+      0.584,
+      0.432,
+      0.488,
+      0.584
+    ],
+    "mean_soft_vote_utility": 0.5076710384526498,
+    "c0_count": 36,
+    "mean_invalid_rate": 0.0,
+    "tie_count": 0,
+    "tie_rate": 0.0,
+    "validity_status_counts": {
+      "valid": 625
+    },
+    "terminal_invalid_count": 0
+  },
+  "member_gain": null,
+  "selection_summary": {
+    "validation_used": true,
+    "validation_selection_policy": "validation_checkpoint_selection_v2",
+    "validation_unique_state_count": 6,
+    "validation_evaluation_count": 6,
+    "validation_reused_state_count": 3,
+    "selected_checkpoint_source": "validation",
+    "selected_by_validation": true,
+    "selected_checkpoint_update_index": 6,
+    "selected_team_prompt_state_hash": "3fe24b89faa25072f5d5d38057cf7543530c648d57360fceba3543c66e6e5e1e",
+    "selected_epoch": 6,
+    "selection_changed": true,
+    "validation_key": [
+      1,
+      32,
+      22,
+      5,
+      0.6229049899397666,
+      -11,
+      -0.0,
+      -6
+    ],
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_called_before_selection": false
+  }
+}

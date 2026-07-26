@@ -1,0 +1,99 @@
+{
+  "initial_test": {
+    "vote_correct_count": 52,
+    "per_agent_correct_counts": [
+      52,
+      52,
+      52,
+      52,
+      52
+    ],
+    "plurality_vote_acc": 0.416,
+    "vote_acc": 0.416,
+    "mean_individual_acc": 0.416,
+    "min_individual_acc": 0.416,
+    "per_agent_acc": [
+      0.416,
+      0.416,
+      0.416,
+      0.416,
+      0.416
+    ],
+    "mean_soft_vote_utility": 0.413215774015498,
+    "c0_count": 73,
+    "mean_invalid_rate": 0.0,
+    "tie_count": 0,
+    "tie_rate": 0.0,
+    "validity_status_counts": {
+      "valid": 625
+    },
+    "terminal_invalid_count": 0
+  },
+  "selected_test": {
+    "vote_correct_count": 52,
+    "per_agent_correct_counts": [
+      52,
+      52,
+      52,
+      52,
+      52
+    ],
+    "plurality_vote_acc": 0.416,
+    "vote_acc": 0.416,
+    "mean_individual_acc": 0.416,
+    "min_individual_acc": 0.416,
+    "per_agent_acc": [
+      0.416,
+      0.416,
+      0.416,
+      0.416,
+      0.416
+    ],
+    "mean_soft_vote_utility": 0.413215774015498,
+    "c0_count": 73,
+    "mean_invalid_rate": 0.0,
+    "tie_count": 0,
+    "tie_rate": 0.0,
+    "validity_status_counts": {
+      "valid": 625
+    },
+    "terminal_invalid_count": 0
+  },
+  "member_gain": {
+    "gain_counts": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "minimum_gain_count": 0,
+    "total_gain_count": 0,
+    "mean_gain": 0.0,
+    "minimum_member_correct_count_gain": 0,
+    "mean_member_correct_count_gain": 0.0,
+    "minimum_member_accuracy_gain": 0.0,
+    "mean_member_accuracy_gain": 0.0,
+    "improved_agent_count": 0,
+    "regressed_agent_count": 0,
+    "all_members_non_regressed": true,
+    "all_members_improved": false
+  },
+  "selection_summary": {
+    "validation_used": false,
+    "validation_selection_policy": "baseline_no_selection",
+    "validation_unique_state_count": 0,
+    "validation_evaluation_count": 0,
+    "validation_reused_state_count": 0,
+    "selected_checkpoint_source": "initial_baseline",
+    "selected_by_validation": false,
+    "selected_checkpoint_update_index": 0,
+    "selected_team_prompt_state_hash": "7525ec74fc56dd9af7bef2f7ecdfaf0b2a5eb5e283880ca0fc1287390f63fd60",
+    "selected_epoch": 0,
+    "selection_changed": false,
+    "validation_key": null,
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_called_before_selection": false
+  }
+}
