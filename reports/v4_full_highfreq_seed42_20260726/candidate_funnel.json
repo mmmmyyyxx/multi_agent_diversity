@@ -1,0 +1,93 @@
+{
+  "ranges": {
+    "all_updates": {
+      "acceptable_candidates": 23,
+      "accepted_updates": 15,
+      "constraint_feasible": 23,
+      "critic_calls": 26,
+      "critic_semantic_rejections": 3,
+      "infrastructure_failed_updates": 0,
+      "rejected_member_objective_regression": 18,
+      "rejected_target_not_improved": 18,
+      "rejected_team_vote_regression": 10,
+      "rejected_terminal_invalid_regression": 0,
+      "stage_a_evaluated": 42,
+      "stage_b_evaluated": 42,
+      "student_calls": 28,
+      "student_invalid_responses": 5,
+      "student_retry_count": 5,
+      "teacher_calls": 26,
+      "terminal_failure_counts": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "update_count": 24,
+      "valid_candidate_count": 42
+    },
+    "updates_0_7": {
+      "acceptable_candidates": 13,
+      "accepted_updates": 7,
+      "constraint_feasible": 13,
+      "critic_calls": 8,
+      "critic_semantic_rejections": 0,
+      "infrastructure_failed_updates": 0,
+      "rejected_member_objective_regression": 2,
+      "rejected_target_not_improved": 2,
+      "rejected_team_vote_regression": 0,
+      "rejected_terminal_invalid_regression": 0,
+      "stage_a_evaluated": 15,
+      "stage_b_evaluated": 15,
+      "student_calls": 10,
+      "student_invalid_responses": 2,
+      "student_retry_count": 2,
+      "teacher_calls": 8,
+      "terminal_failure_counts": {},
+      "update_count": 8,
+      "valid_candidate_count": 15
+    },
+    "updates_16_23": {
+      "acceptable_candidates": 4,
+      "accepted_updates": 4,
+      "constraint_feasible": 4,
+      "critic_calls": 10,
+      "critic_semantic_rejections": 3,
+      "infrastructure_failed_updates": 0,
+      "rejected_member_objective_regression": 8,
+      "rejected_target_not_improved": 8,
+      "rejected_team_vote_regression": 6,
+      "rejected_terminal_invalid_regression": 0,
+      "stage_a_evaluated": 12,
+      "stage_b_evaluated": 12,
+      "student_calls": 9,
+      "student_invalid_responses": 2,
+      "student_retry_count": 2,
+      "teacher_calls": 10,
+      "terminal_failure_counts": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "update_count": 8,
+      "valid_candidate_count": 12
+    },
+    "updates_8_15": {
+      "acceptable_candidates": 6,
+      "accepted_updates": 4,
+      "constraint_feasible": 6,
+      "critic_calls": 8,
+      "critic_semantic_rejections": 0,
+      "infrastructure_failed_updates": 0,
+      "rejected_member_objective_regression": 8,
+      "rejected_target_not_improved": 8,
+      "rejected_team_vote_regression": 4,
+      "rejected_terminal_invalid_regression": 0,
+      "stage_a_evaluated": 15,
+      "stage_b_evaluated": 15,
+      "student_calls": 9,
+      "student_invalid_responses": 1,
+      "student_retry_count": 1,
+      "teacher_calls": 8,
+      "terminal_failure_counts": {},
+      "update_count": 8,
+      "valid_candidate_count": 15
+    }
+  },
+  "version": "high_frequency_candidate_funnel_v1"
+}

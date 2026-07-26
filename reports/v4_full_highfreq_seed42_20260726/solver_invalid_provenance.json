@@ -1,0 +1,42 @@
+{
+  "provenance_counts": {
+    "active_state_terminal_invalid_count": 0,
+    "exploratory_accepted_candidate_terminal_invalid_count": 0,
+    "exploratory_rejected_candidate_terminal_invalid_count": 0,
+    "selected_test_terminal_invalid_count": 0,
+    "validation_selected_terminal_invalid_count": 0
+  },
+  "raw_invalid_output_record_count": 0,
+  "solver_recovery_summary": {
+    "attempt_count_histogram": {
+      "1": 3850
+    },
+    "current_run_recovery_api_calls": 0,
+    "current_run_recovery_call_overhead_rate": 0.0,
+    "current_run_recovery_completion_tokens": 0,
+    "current_run_recovery_prompt_tokens": 0,
+    "current_run_recovery_token_overhead_rate": 0.0,
+    "current_run_recovery_total_tokens": 0,
+    "eventual_valid_rate": 1.0,
+    "finish_reason_counts_by_attempt": {
+      "1:stop": 3850
+    },
+    "first_attempt_invalid_count": 0,
+    "first_attempt_valid_count": 3850,
+    "first_attempt_valid_rate": 1.0,
+    "first_pass_validity_status_counts": {
+      "valid": 3850
+    },
+    "invalid_recovery_completion_tokens": 0,
+    "invalid_recovery_extra_calls": 0,
+    "invalid_recovery_prompt_tokens": 0,
+    "invalid_recovery_total_tokens": 0,
+    "recovered_invalid_count": 0,
+    "recovery_call_overhead_rate": 0.0,
+    "recovery_token_overhead_rate": 0.0,
+    "terminal_invalid_count": 0,
+    "terminal_validity_status_counts": {},
+    "unique_resolved_request_count": 3850
+  },
+  "version": "solver_invalid_provenance_v1"
+}

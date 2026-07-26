@@ -1,0 +1,19 @@
+{
+  "files": {
+    "README.md": "f8c05ab9335792a37f9ba009ae7418b36bd973e20b71b9e54002ce7b2252b1e9",
+    "candidate_decisions_sanitized.jsonl": "73cd5e734b211545b3e01a2d6c0b640f00d12f3a3fcb4fe65fe1c58c77156a5c",
+    "candidate_funnel.json": "1159cec4adf59fca01db3026f614bb02d4239dad68836714c7ac74eaa89b66ef",
+    "cost_summary.json": "123e29d73a8e726fa3669b618044caa81524e43e19b7e2917f8857df1eef7059",
+    "dynamics_analysis.json": "285b4915040932ea5872c40cfe0d85f6ef2476693a2a18a5e6852add91c0e2ca",
+    "final_summary.json": "8b4da3aa05f4ac2f6393ecde8f997ee3ab25f03cd15e0f2878fbb123fff2fb72",
+    "final_test_differentiation.json": "0ebd3a2973456936c524bb7709238d9956c588b5b2899bd2a94e375d5afb2e94",
+    "run_meta_sanitized.json": "6b45ed42aafe197de16ad589df0b45ed08671c561c502a996393f40bdc4555b0",
+    "solver_invalid_provenance.json": "17ed839dfd5139b09d3bd0d83f1e485582aafd7880a59dde8106aa9d33e63c6a",
+    "student_recovery_summary.json": "ae4f842d0671e5d6959e10ee178b34f367d63442ee1b46baccd095d6d872793e",
+    "target_scheduler_summary.json": "28fc543c09eeb089c45a15cacd8b0927592decc33de8b42b576a3a39709134bf",
+    "team_differentiation_trajectory.jsonl": "fb25aa9b26ef3c76f8b61e013c3409df3f9d4d80f9fd799183771c661b9d1bec",
+    "training_dynamics.jsonl": "73563178f648c3848b111afdc653c35f41f967faf88e14b19b1bc271d3d773d1",
+    "update_transition_decomposition.jsonl": "68fe51bfffd9e1d751184248b5ad417335ea119b892e8970fff45b2aedc9161f"
+  },
+  "version": "sanitized_report_sha256_v1"
+}

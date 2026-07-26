@@ -1,0 +1,48 @@
+{
+  "initial_to_final_train": {
+    "double_fault_change": -0.4093333333333334,
+    "mean_G_change": 1.3333333333333335,
+    "mean_H_change": -1.4666666666666666,
+    "mean_M_change": 2.8,
+    "mean_member_correct_change": 20.0,
+    "minimum_member_correct_change": 9,
+    "same_wrong_excess_change": 0.24610430371703934,
+    "vote_correct_change": 23
+  },
+  "phase_summary": {
+    "updates_0_7": {
+      "accepted_updates": 7,
+      "double_fault_change": -0.24000000000000005,
+      "mean_G_change": 0.7066666666666666,
+      "mean_H_change": -0.7599999999999998,
+      "mean_M_change": 1.4666666666666666,
+      "mean_member_correct_change": 10.600000000000001,
+      "minimum_member_correct_change": 8,
+      "same_wrong_excess_change": 0.04316114842520816,
+      "train_vote_correct_change": 11
+    },
+    "updates_16_23": {
+      "accepted_updates": 4,
+      "double_fault_change": -0.04133333333333339,
+      "mean_G_change": 0.21333333333333337,
+      "mean_H_change": -0.22666666666666657,
+      "mean_M_change": 0.44000000000000017,
+      "mean_member_correct_change": 3.200000000000003,
+      "minimum_member_correct_change": 1,
+      "same_wrong_excess_change": 0.04084316284118722,
+      "train_vote_correct_change": 6
+    },
+    "updates_8_15": {
+      "accepted_updates": 4,
+      "double_fault_change": -0.12799999999999995,
+      "mean_G_change": 0.41333333333333355,
+      "mean_H_change": -0.4800000000000002,
+      "mean_M_change": 0.8933333333333333,
+      "mean_member_correct_change": 6.199999999999996,
+      "minimum_member_correct_change": 0,
+      "same_wrong_excess_change": 0.16209999245064396,
+      "train_vote_correct_change": 6
+    }
+  },
+  "version": "high_frequency_dynamics_analysis_v1"
+}
