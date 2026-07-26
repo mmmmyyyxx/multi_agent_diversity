@@ -10,7 +10,8 @@ method_version = member_aware_peer_state_v4
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
 models remain frozen; no policy gradient or model-weight update occurs. Candidate
-rollout outcomes are used for search and validation selection.
+rollout outcomes are used for search; the final active team is evaluated only
+after the fixed update budget completes.
 
 The method addresses a failure of vote-only prompt optimization: a candidate can
 improve plurality accuracy while weakening one or more team members. Such a team
@@ -326,48 +327,32 @@ prompt hash
 
 Soft utility never converts a non-dominating candidate into an accepted one.
 
-## 9. Validation And Final Test
+## 9. Final Active State And Test
 
-Validation compares each unique prompt-team state with the initial validation
-team. A state is feasible only when:
-
-- no member falls below its initial count beyond the configured epsilon
-- invalid rate does not exceed the initial rate beyond its guard
-- vote-correct count is not below the initial count
-
-Feasible states are ordered by:
+The v10 evaluation protocol is:
 
 ```text
-minimum member gain
-vote-correct count
-total member gain
-improved-member count
-soft vote utility
-fewer C0 examples
-lower invalid rate
-earlier epoch
+initial team -> fixed planned updates on train -> final active team -> one test
 ```
 
-Prompt-team state hashes form a run-local validation cache. The initial state is
-evaluated once, each accepted new state is evaluated at most once, and a
-rejected update reuses the unchanged state's cached metrics. Repeated state
-observations do not spend another validation evaluation and do not create a new
-checkpoint candidate. Validation alone selects the best checkpoint.
+The validation split remains in run identity but has zero Solver calls and no
+role in acceptance, diagnosis, scheduling, early stopping, or checkpoint
+selection. There is no best epoch, validation feasibility/key, rollback, or
+historical checkpoint selection. The selected state is always the active team
+after the planned update count, including when the final update is rejected.
 
-After selection is finalized, each optimized run evaluates exactly the selected
-prompt team on test, exactly once. It does not separately evaluate its initial
-team on test. In a matched comparison the required `shared_baseline` run is
-executed first and supplies the common initial-test reference. The optimized
-`final_summary.json` therefore records:
+Test is forbidden before training completes and is evaluated once for the final
+active team. It cannot alter the active team or any training decision. A frozen
+matched baseline may supply reporting-only differences. The optimized
+`final_summary.json` records:
 
 ```text
 selected_test
 selection_summary
 ```
 
-The matched runner computes member gains against the baseline metrics after the
-optimized run completes. Test is never called before validation selection and
-is never used to rank checkpoints. Summaries expose both integer correct-count
+Test is never called before training completion and is never used to rank any
+state. Summaries expose both integer correct-count
 gain and test-size-normalized accuracy gain. Integer counts remain the formal
 selection objective; normalized accuracy gains are cross-task reporting fields.
 
@@ -388,12 +373,13 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 9. It stores active and initial profiles, a target-free
+Checkpoint version is 10. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS and Student-recovery
-state, validation state cache and counters, the selected validation checkpoint,
-selected-test state, caches, histories, LLM calls, and Python random state.
+state, planned/completed update counts, final-state selection, training dynamics,
+differentiation trajectories, selected-test state, caches, histories, LLM calls,
+and Python random state. v9 checkpoints are incompatible.
 
 Resume requires exact method, setting, config behavior fingerprint, code commit,
 split files, question sets, probe identity, model endpoint identity, parser,

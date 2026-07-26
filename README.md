@@ -69,7 +69,9 @@ python scripts/deterministic_member_objective_unit_smoke.py
 python scripts/deterministic_member_aware_system_smoke.py
 python scripts/deterministic_aggregate_acceptance_smoke.py
 python scripts/deterministic_student_recovery_smoke.py
-python scripts/deterministic_validation_selection_smoke.py
+python scripts/deterministic_final_state_protocol_smoke.py
+python scripts/deterministic_high_frequency_update_smoke.py
+python scripts/deterministic_team_differentiation_metrics_smoke.py
 git diff --check
 ```
 
@@ -80,8 +82,8 @@ refresh per committed team transition, verifies the two critical Pareto
 accept/reject cases, covers all eligible members, and computes the real
 validation key. The smaller unit smoke retains deterministic helper-level
 coverage. The three v4 smokes separately prove aggregate acceptance, bounded
-Student invalid recovery, and validation-state deduplication with one post-
-selection test evaluation.
+Student invalid recovery, final-active-state test isolation, planned high-
+frequency update counting, and answer-behavior differentiation metrics.
 
 The real-API role transport smoke uses the production Solver limit, omits
 completion limits for Teacher/Critic/Student, applies the configured structural
@@ -113,7 +115,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v9 run identity;
+checkpoint-v10 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -121,10 +123,16 @@ incompatible checkpoints fail with an error instead of restarting in place.
 
 Each optimized run writes:
 
-- `final_summary.json`: validation-selected test metrics and selection summary;
-  matched initial-test gains are supplied by the baseline run
-- `best_prompts.json`: validation-selected prompt team
-- `history.json`: epoch validation, member objective, and terminal-failure summary
+- `final_summary.json`: final-active-team test metrics and lifecycle summary;
+  matched initial-test gains are supplied by the frozen baseline reference
+- `best_prompts.json`: final active prompt team
+- `history.json`: epoch-level active-probe and funnel summary
+- `training_dynamics.jsonl`: initial state and every planned update, including
+  rejected-state reuse
+- `team_differentiation_trajectory.jsonl` and
+  `update_transition_decomposition.jsonl`: answer-behavior geometry and
+  accepted-update G/H/M transitions
+- `final_test_differentiation.json`: final-team test behavior metrics
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
 - `candidate_funnel.json`: update funnels and role-specific terminal failures
 - `responsibility_assignments.jsonl`: residual ownership after each refresh
@@ -152,11 +160,10 @@ accuracy gains:
 `minimum_member_accuracy_gain`, and `mean_member_accuracy_gain`. Formal
 selection continues to use integer correct counts.
 
-Validation is the only checkpoint-selection signal. Each unique prompt-team
-state is evaluated once; rejected updates reuse the cached validation result.
-After selection completes, an optimized run evaluates only the selected team on
-test, exactly once. It does not separately evaluate its initial team on test;
-the matched `shared_baseline` run is the shared initial-test reference. Test
-data therefore cannot influence search or validation selection.
+The v10 evaluation protocol does not run validation during optimization. The
+final active team after the fixed update budget is the selected team; there is
+no best epoch, validation cache, rollback, or checkpoint selection. Test runs
+exactly once after every planned update completes and cannot influence training.
+The frozen matched baseline remains a reporting reference only.
 
 See [method.md](method.md) for definitions and implementation details.

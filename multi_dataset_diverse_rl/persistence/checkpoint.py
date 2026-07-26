@@ -25,14 +25,15 @@ def build_checkpoint(
     *,
     epoch_index: int,
     update_index: int,
-    best_state: Mapping[str, Any],
+    training_state: Mapping[str, Any] | None = None,
+    best_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if system.fixed_probe is None:
         raise RuntimeError("cannot checkpoint before fixed probe initialization")
-    if system.validation_probe is None:
-        raise RuntimeError("cannot checkpoint before validation probe initialization")
     if system.run_identity is None:
         raise RuntimeError("cannot checkpoint without run identity")
+    if training_state is None:
+        training_state = dict(best_state or {})
     last_context = system.tcs_context_history[-1] if system.tcs_context_history else {}
     last_teacher = next(
         (
@@ -56,7 +57,7 @@ def build_checkpoint(
         "probe_hash": system.fixed_probe.probe_hash,
         "epoch_index": int(epoch_index),
         "update_index": int(update_index),
-        "best_state": dict(best_state),
+        "training_state": dict(training_state),
         "prompts": [agent.current_prompt for agent in system.agents],
         "previous_active_prompts": [agent.previous_active_prompt for agent in system.agents],
         "active_profiles": [[asdict(row) for row in profile] for profile in system.active_profiles],
@@ -95,21 +96,25 @@ def build_checkpoint(
         "student_recovery_observations": list(
             system.student_recovery_observations
         ),
-        "validation_state_cache": dict(system.validation_state_cache),
-        "validation_evaluation_count": int(
-            system.validation_evaluation_count
+        "planned_update_count": int(system.planned_update_count),
+        "completed_update_count": int(system.completed_update_count),
+        "training_completed": bool(system.training_completed),
+        "final_state_selection": dict(system.final_state_selection),
+        "training_dynamics": list(system.training_dynamics),
+        "team_differentiation_trajectory": list(
+            system.team_differentiation_trajectory
         ),
-        "validation_reuse_count": int(system.validation_reuse_count),
-        "current_selected_validation_checkpoint": dict(
-            system.current_selected_validation_checkpoint
+        "update_transition_decomposition": list(
+            system.update_transition_decomposition
         ),
-        "validation_selection_completed": bool(
-            system.validation_selection_completed
+        "final_test_differentiation": dict(
+            system.final_test_differentiation
         ),
         "test_evaluation_count": int(system.test_evaluation_count),
         "test_used_for_selection": bool(system.test_used_for_selection),
-        "test_called_before_selection": bool(
-            system.test_called_before_selection
+        "test_used_for_training": bool(system.test_used_for_training),
+        "test_called_before_training_complete": bool(
+            system.test_called_before_training_complete
         ),
         "selected_test_metrics": dict(system.selected_test_metrics),
         "agent_selection_counts": dict(system.agent_selection_counts),
@@ -124,7 +129,6 @@ def build_checkpoint(
         "solver_recovery_observations": list(system.solver_recovery_observations),
         "llm_calls": list(system.llm.calls),
         "fixed_probe": system.fixed_probe.to_dict(),
-        "validation_probe": system.validation_probe.to_dict(),
         "shared_solver_cache_audit": {
             "path": str(system.cfg.persistence.shared_solver_cache_path or ""),
             "ready_entries": (
@@ -148,6 +152,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
         raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v4")
     required_member_state = {
+        "training_state",
         "member_gain_state",
         "cached_member_opportunities",
         "target_priority_audit",
@@ -160,14 +165,18 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "solver_recovery_observations",
         "student_recovery_state",
         "student_recovery_observations",
-        "validation_state_cache",
-        "validation_evaluation_count",
-        "validation_reuse_count",
-        "current_selected_validation_checkpoint",
-        "validation_selection_completed",
+        "planned_update_count",
+        "completed_update_count",
+        "training_completed",
+        "final_state_selection",
+        "training_dynamics",
+        "team_differentiation_trajectory",
+        "update_transition_decomposition",
+        "final_test_differentiation",
         "test_evaluation_count",
         "test_used_for_selection",
-        "test_called_before_selection",
+        "test_used_for_training",
+        "test_called_before_training_complete",
         "selected_test_metrics",
     }
     if not required_member_state <= set(payload):
@@ -175,8 +184,8 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
-    if system.fixed_probe is None or system.validation_probe is None:
-        raise RuntimeError("fixed and validation probes must exist before checkpoint restore")
+    if system.fixed_probe is None:
+        raise RuntimeError("fixed probe must exist before checkpoint restore")
     if str(payload["probe_version"]) != system.fixed_probe.version or str(payload["probe_hash"]) != system.fixed_probe.probe_hash:
         raise ValueError("Fixed probe cache version or hash mismatch. Start a new run.")
 
@@ -254,21 +263,25 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.student_recovery_observations = list(
         payload["student_recovery_observations"]
     )
-    system.validation_state_cache = dict(payload["validation_state_cache"])
-    system.validation_evaluation_count = int(
-        payload["validation_evaluation_count"]
+    system.planned_update_count = int(payload["planned_update_count"])
+    system.completed_update_count = int(payload["completed_update_count"])
+    system.training_completed = bool(payload["training_completed"])
+    system.final_state_selection = dict(payload["final_state_selection"])
+    system.training_dynamics = list(payload["training_dynamics"])
+    system.team_differentiation_trajectory = list(
+        payload["team_differentiation_trajectory"]
     )
-    system.validation_reuse_count = int(payload["validation_reuse_count"])
-    system.current_selected_validation_checkpoint = dict(
-        payload["current_selected_validation_checkpoint"]
+    system.update_transition_decomposition = list(
+        payload["update_transition_decomposition"]
     )
-    system.validation_selection_completed = bool(
-        payload["validation_selection_completed"]
+    system.final_test_differentiation = dict(
+        payload["final_test_differentiation"]
     )
     system.test_evaluation_count = int(payload["test_evaluation_count"])
     system.test_used_for_selection = bool(payload["test_used_for_selection"])
-    system.test_called_before_selection = bool(
-        payload["test_called_before_selection"]
+    system.test_used_for_training = bool(payload["test_used_for_training"])
+    system.test_called_before_training_complete = bool(
+        payload["test_called_before_training_complete"]
     )
     system.selected_test_metrics = dict(payload["selected_test_metrics"])
     system.agent_selection_counts = {
@@ -297,9 +310,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     }
     system.llm.calls = list(payload["llm_calls"])
     system.fixed_probe.restore(payload["fixed_probe"])
-    system.validation_probe.restore(payload["validation_probe"])
     random.setstate(pickle.loads(base64.b64decode(str(payload["random_state"]))))
-    return int(payload["epoch_index"]), int(payload["update_index"]), dict(payload["best_state"])
+    return (
+        int(payload["epoch_index"]),
+        int(payload["update_index"]),
+        dict(payload["training_state"]),
+    )
 
 
 def load_checkpoint(path: str | Path) -> dict[str, Any] | None:

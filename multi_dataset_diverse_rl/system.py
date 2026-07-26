@@ -70,6 +70,10 @@ from .responsibility import (
     target_priorities,
 )
 from .tasks import get_task_spec
+from .team_differentiation import (
+    team_behavior_metrics,
+    vote_transition_decomposition,
+)
 from .tcs import (
     CRITIC_SCHEMA_VERSION,
     ROLE_RETRY_POLICY_VERSION,
@@ -108,12 +112,14 @@ from .tcs import (
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 from .versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
-    VALIDATION_SELECTION_VERSION,
+    TEST_ISOLATION_VERSION,
 )
 
 
@@ -327,16 +333,28 @@ class PromptEnsembleOptimizationSystem:
         }
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
+        # Compatibility-only reader state. The v10 active lifecycle never
+        # builds or evaluates this probe.
         self.validation_probe: ValidationProbeEvaluator | None = None
         self.validation_state_cache: dict[str, dict[str, Any]] = {}
         self.validation_evaluation_count = 0
         self.validation_reuse_count = 0
-        self.current_selected_validation_checkpoint: dict[str, Any] = {}
-        self.validation_selection_completed = False
+        self._compat_validation_selection_completed = False
+        self.training_dynamics: list[dict[str, Any]] = []
+        self.team_differentiation_trajectory: list[dict[str, Any]] = []
+        self.update_transition_decomposition: list[dict[str, Any]] = []
+        self.final_test_differentiation: dict[str, Any] = {}
+        self.planned_update_count = 0
+        self.completed_update_count = 0
+        self.training_completed = False
+        self.final_state_selection: dict[str, Any] = {}
         self.test_evaluation_count = 0
         self.test_used_for_selection = False
-        self.test_called_before_selection = False
+        self.test_used_for_training = False
+        self.test_called_before_training_complete = False
         self.selected_test_metrics: dict[str, Any] = {}
+        self._last_evaluated_examples: tuple[ProbeExample, ...] = ()
+        self._last_evaluated_profiles: list[tuple[PromptAnswer, ...]] = []
         request_identity = solver_request_identity(cfg)
         request_components = solver_request_components(cfg)
         cache_path = str(cfg.persistence.shared_solver_cache_path or "").strip()
@@ -589,7 +607,11 @@ class PromptEnsembleOptimizationSystem:
             self.prompt_question_evaluator,
         )
 
-    def build_validation_probe(self, data: Sequence[Mapping[str, Any]]) -> ValidationProbeEvaluator:
+    def build_validation_probe(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> ValidationProbeEvaluator:
+        """Historical-report compatibility; never used by the v10 run loop."""
         return ValidationProbeEvaluator(
             self._probe_examples(data),
             model_identity=self.cfg.models.agent_model,
@@ -2614,107 +2636,11 @@ class PromptEnsembleOptimizationSystem:
             separators=(",", ":"),
         ).encode("utf-8")).hexdigest()
 
-    def _validation_state_cache_key(self, team_state_hash: str) -> str:
-        if self.validation_probe is None:
-            raise RuntimeError("validation probe is not initialized")
-        payload = (
-            str(team_state_hash),
-            self.validation_probe.probe_hash,
-            self.prompt_question_evaluator.identity(),
-            SOLVER_INVALID_RETRY_POLICY_VERSION,
-        )
-        return hashlib.sha256(json.dumps(
-            payload,
-            ensure_ascii=False,
-            separators=(",", ":"),
-        ).encode("utf-8")).hexdigest()
-
-    async def evaluate_validation_state(
+    async def _evaluate_profiles(
         self,
-        data: Sequence[Mapping[str, Any]],
-    ) -> tuple[DatasetMetrics, dict[str, Any]]:
-        team_state_hash = self.team_prompt_state_hash()
-        cache_key = self._validation_state_cache_key(team_state_hash)
-        cached = self.validation_state_cache.get(team_state_hash)
-        if (
-            self.cfg.evaluation.validation_unique_state_cache_enabled
-            and cached is not None
-        ):
-            if cached.get("cache_key") != cache_key:
-                raise ValueError("validation state cache identity mismatch")
-            self.validation_reuse_count += 1
-            return dataset_metrics_from_dict(cached["metrics"]), {
-                "team_prompt_state_hash": team_state_hash,
-                "validation_cache_hit": True,
-                "validation_result_source": "unique_team_state_cache",
-            }
-        metrics = await self.evaluate_dataset(data, validation=True)
-        self.validation_evaluation_count += 1
-        self.validation_state_cache[team_state_hash] = {
-            "cache_key": cache_key,
-            "team_prompt_state_hash": team_state_hash,
-            "metrics": metrics.to_dict(),
-        }
-        return metrics, {
-            "team_prompt_state_hash": team_state_hash,
-            "validation_cache_hit": False,
-            "validation_result_source": "solver_evaluation",
-        }
-
-    def complete_validation_selection(
-        self,
-        checkpoint: Mapping[str, Any],
-    ) -> None:
-        self.current_selected_validation_checkpoint = dict(checkpoint)
-        self.validation_selection_completed = True
-
-    async def evaluate_selected_test(
-        self,
-        data: Sequence[Mapping[str, Any]],
-    ) -> DatasetMetrics:
-        if (
-            self.cfg.evaluation.test_evaluation_after_selection_only
-            and not self.validation_selection_completed
-        ):
-            self.test_called_before_selection = True
-            raise RuntimeError(
-                "test evaluation is forbidden before validation selection"
-            )
-        if self.test_evaluation_count:
-            if not self.selected_test_metrics:
-                raise RuntimeError(
-                    "test count is non-zero without persisted selected metrics"
-                )
-            return dataset_metrics_from_dict(self.selected_test_metrics)
-        self.test_evaluation_count += 1
-        metrics = await self.evaluate_dataset(data)
-        self.selected_test_metrics = metrics.to_dict()
-        return metrics
-
-    async def evaluate_dataset(
-        self,
-        data: Sequence[Mapping[str, Any]],
-        *,
-        validation: bool = False,
-    ) -> DatasetMetrics:
-        examples = self._probe_examples(data)
-        if validation:
-            if self.validation_probe is None:
-                self.validation_probe = self.build_validation_probe(data)
-            if tuple(row.question_hash for row in self.validation_probe.examples) != tuple(row.question_hash for row in examples):
-                raise ValueError("validation dataset changed after validation cache initialization")
-            profiles = list(await asyncio.gather(*(
-                self.validation_probe.evaluate_prompt(
-                    agent_id,
-                    agent.current_prompt,
-                    self.prompt_hash(agent.current_prompt),
-                    self.solve,
-                )
-                for agent_id, agent in enumerate(self.agents)
-            )))
-            return self._dataset_metrics_from_profiles(examples, profiles)
-
-        profiles = list(await asyncio.gather(*(
+        examples: Sequence[ProbeExample],
+    ) -> list[tuple[PromptAnswer, ...]]:
+        return list(await asyncio.gather(*(
             asyncio.gather(*(
                 self.prompt_question_evaluator.evaluate(
                     question=example.question,
@@ -2728,7 +2654,57 @@ class PromptEnsembleOptimizationSystem:
             ))
             for agent_id, agent in enumerate(self.agents)
         )))
+
+    async def evaluate_dataset(
+        self,
+        data: Sequence[Mapping[str, Any]],
+        *,
+        validation: bool = False,
+    ) -> DatasetMetrics:
+        if validation:
+            if self.validation_probe is None:
+                raise RuntimeError(
+                    "validation evaluation is disabled by v10 unless a compatibility probe is supplied"
+                )
+            examples = self._probe_examples(data)
+            profiles = list(await asyncio.gather(*(
+                self.validation_probe.evaluate_prompt(
+                    agent_id,
+                    agent.current_prompt,
+                    self.prompt_hash(agent.current_prompt),
+                    self.solve,
+                )
+                for agent_id, agent in enumerate(self.agents)
+            )))
+            return self._dataset_metrics_from_profiles(examples, profiles)
+        examples = self._probe_examples(data)
+        profiles = await self._evaluate_profiles(examples)
+        self._last_evaluated_examples = examples
+        self._last_evaluated_profiles = profiles
         return self._dataset_metrics_from_profiles(examples, profiles)
+
+    async def evaluate_validation_state(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> tuple[DatasetMetrics, dict[str, Any]]:
+        """Historical-report compatibility; excluded from v10 active runs."""
+        state_hash = self.team_prompt_state_hash()
+        cached = self.validation_state_cache.get(state_hash)
+        if cached is not None:
+            self.validation_reuse_count += 1
+            return dataset_metrics_from_dict(cached["metrics"]), {
+                "team_prompt_state_hash": state_hash,
+                "validation_cache_hit": True,
+                "validation_result_source": "compatibility_cache",
+            }
+        metrics = await self.evaluate_dataset(data, validation=True)
+        self.validation_evaluation_count += 1
+        self.validation_state_cache[state_hash] = {"metrics": metrics.to_dict()}
+        return metrics, {
+            "team_prompt_state_hash": state_hash,
+            "validation_cache_hit": False,
+            "validation_result_source": "compatibility_solver_evaluation",
+        }
 
     def validation_key(
         self,
@@ -2736,26 +2712,15 @@ class PromptEnsembleOptimizationSystem:
         initial: DatasetMetrics,
         epoch: int,
     ) -> tuple | None:
-        if (
-            len(initial.per_agent_correct_counts) != 5
-            or len(metrics.per_agent_correct_counts) != 5
-        ):
-            raise ValueError("validation metrics must contain five agent accuracies")
-        size = max(1, len(initial.rows))
-        allowance = int(self.cfg.constraints.validation_accuracy_epsilon * size)
+        """Legacy read-only ordering retained outside the v10 active loop."""
         if any(
-            current < baseline - allowance
+            current < baseline
             for current, baseline in zip(
                 metrics.per_agent_correct_counts,
                 initial.per_agent_correct_counts,
                 strict=True,
             )
-        ):
-            return None
-        if metrics.terminal_invalid_count > (
-            initial.terminal_invalid_count
-            + self.cfg.constraints.validation_terminal_invalid_allowance
-        ):
+        ) or metrics.terminal_invalid_count > initial.terminal_invalid_count + 1:
             return None
         if metrics.vote_correct_count < initial.vote_correct_count:
             return None
@@ -2768,15 +2733,193 @@ class PromptEnsembleOptimizationSystem:
             )
         )
         return (
-            min(gains),
-            metrics.vote_correct_count,
-            sum(gains),
-            sum(value > 0 for value in gains),
-            metrics.mean_soft_vote_utility,
-            -metrics.c0_count,
-            -metrics.mean_invalid_rate,
-            -int(epoch),
+            min(gains), metrics.vote_correct_count, sum(gains),
+            sum(value > 0 for value in gains), metrics.mean_soft_vote_utility,
+            -metrics.c0_count, -metrics.mean_invalid_rate, -int(epoch),
         )
+
+    def complete_validation_selection(self, _checkpoint: Mapping[str, Any]) -> None:
+        self._compat_validation_selection_completed = True
+
+    async def evaluate_selected_test(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> DatasetMetrics:
+        if not self._compat_validation_selection_completed:
+            raise RuntimeError("test evaluation is forbidden before validation selection")
+        self.training_completed = True
+        return await self.evaluate_final_test(data)
+
+    def mark_training_complete(self, planned_update_count: int) -> None:
+        if self.completed_update_count != int(planned_update_count):
+            raise RuntimeError(
+                "cannot complete training before every planned update finishes"
+            )
+        self.planned_update_count = int(planned_update_count)
+        self.training_completed = True
+
+    async def evaluate_final_test(
+        self,
+        data: Sequence[Mapping[str, Any]],
+    ) -> DatasetMetrics:
+        if not self.training_completed:
+            self.test_called_before_training_complete = True
+            raise RuntimeError("test evaluation is forbidden before training completes")
+        if self.test_evaluation_count:
+            if not self.selected_test_metrics:
+                raise RuntimeError(
+                    "test count is non-zero without persisted final metrics"
+                )
+            return dataset_metrics_from_dict(self.selected_test_metrics)
+        metrics = await self.evaluate_dataset(data)
+        examples = self._last_evaluated_examples
+        profiles = self._last_evaluated_profiles
+        differentiation = team_behavior_metrics(
+            examples=examples,
+            profiles=profiles,
+            normalize_answer=self.normalize_answer,
+            match_answer=self.match_answer,
+            tie_break=self.protocol.tie_policy,
+            seed=self.cfg.training.seed,
+        )
+        self.selected_test_metrics = metrics.to_dict()
+        self.final_test_differentiation = differentiation
+        self.test_evaluation_count = 1
+        return metrics
+
+    def record_training_dynamics(
+        self,
+        *,
+        update_index: int,
+        incumbent_profiles: Sequence[Sequence[PromptAnswer]] | None = None,
+    ) -> dict[str, Any]:
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        behavior = team_behavior_metrics(
+            examples=self.fixed_probe.examples,
+            profiles=self.active_profiles,
+            normalize_answer=self.normalize_answer,
+            match_answer=self.match_answer,
+            tie_break=self.protocol.tie_policy,
+            seed=self.cfg.training.seed,
+        )
+        decision = (
+            self.candidate_decisions[-1]
+            if update_index >= 0 and self.candidate_decisions else {}
+        )
+        accepted_hash = str(decision.get("accepted_prompt_hash", ""))
+        accepted = bool(accepted_hash)
+        state_hash = self.team_prompt_state_hash()
+        previous_hash = (
+            str(self.training_dynamics[-1]["active_team_state_hash"])
+            if self.training_dynamics else state_hash
+        )
+        candidate = next(
+            (
+                row for row in decision.get("candidates", [])
+                if row.get("prompt_hash") == accepted_hash
+            ),
+            None,
+        )
+        if candidate is None and decision.get("candidates"):
+            candidate = max(
+                decision["candidates"],
+                key=lambda row: (
+                    int((row.get("constraint") or {}).get("target_gain", -10**9)),
+                    str(row.get("prompt_hash", "")),
+                ),
+            )
+        constraint = (candidate or {}).get("constraint") or {}
+        rejection_reasons = sorted({
+            reason
+            for row in decision.get("candidates", [])
+            for reason in ((row.get("constraint") or {}).get("rejection_reasons", []))
+        })
+        priorities = list(decision.get("agent_target_priorities", []))
+        target_id = decision.get("target_agent_id")
+        target_priority = next(
+            (row for row in priorities if row.get("agent_id") == target_id), {}
+        )
+        row = {
+            "update_index": int(update_index),
+            "target_agent_id": target_id,
+            "accepted": accepted,
+            "active_team_state_hash": state_hash,
+            "state_changed": state_hash != previous_hash,
+            "target_sequence": [
+                item.get("target_agent_id") for item in self.candidate_decisions
+            ],
+            "accepted_target_sequence": [
+                item.get("target_agent_id") for item in self.candidate_decisions
+                if item.get("accepted_prompt_hash")
+            ],
+            "target_attempt_count": target_priority.get("target_attempt_count"),
+            "updates_since_selected": target_priority.get("updates_since_selected"),
+            "max_wait_trigger": int(
+                decision.get("max_wait_fairness_trigger_count", 0)
+            ),
+            "cooldown_state": {
+                "cooling_down": target_priority.get("cooling_down"),
+                "next_regular_eligible_update": target_priority.get(
+                    "next_regular_eligible_update"
+                ),
+            },
+            "potential_state": {
+                "best_observed_target_gain": target_priority.get(
+                    "best_observed_target_gain"
+                ),
+                "no_positive_candidate_streak": target_priority.get(
+                    "no_positive_candidate_streak"
+                ),
+            },
+            "target_gain": constraint.get("target_gain"),
+            "vote_gain_count": constraint.get("vote_gain_count"),
+            "vote_loss_count": constraint.get("vote_loss_count"),
+            "vote_net_gain": constraint.get("vote_net_gain"),
+            "candidate_objective": constraint.get("candidate_objective"),
+            "incumbent_objective": constraint.get("incumbent_objective"),
+            "rejection_reasons": rejection_reasons,
+            **behavior,
+            "accepted_update_count_so_far": sum(
+                bool(item.get("accepted_prompt_hash"))
+                for item in self.candidate_decisions
+            ),
+            "distinct_improved_member_count": sum(
+                current > initial
+                for current, initial in zip(
+                    behavior["per_agent_correct_counts"],
+                    [
+                        sum(self.match_answer(answer.answer, example.gold_answer)
+                            for answer, example in zip(profile, self.fixed_probe.examples, strict=True))
+                        for profile in self.initial_profiles
+                    ],
+                    strict=True,
+                )
+            ),
+            "distinct_prompt_hash_count": len({
+                self.prompt_hash(agent.current_prompt) for agent in self.agents
+            }),
+        }
+        self.training_dynamics.append(row)
+        if update_index < 0 or row["state_changed"]:
+            self.team_differentiation_trajectory.append(dict(row))
+        if accepted and incumbent_profiles is not None:
+            transition = vote_transition_decomposition(
+                examples=self.fixed_probe.examples,
+                incumbent_profiles=incumbent_profiles,
+                candidate_profiles=self.active_profiles,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+            )
+            transition.update({
+                "update_index": int(update_index),
+                "target_agent_id": target_id,
+                "active_team_state_hash": state_hash,
+            })
+            self.update_transition_decomposition.append(transition)
+        return row
 
     def run_meta(self) -> dict[str, Any]:
         if self.run_identity is None:
@@ -2802,7 +2945,9 @@ class PromptEnsembleOptimizationSystem:
             "stage_b_version": CANDIDATE_ACCEPTANCE_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
             "preservation_policy_version": PRESERVATION_POLICY_VERSION,
-            "validation_selection_version": VALIDATION_SELECTION_VERSION,
+            "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
+            "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
+            "test_isolation_version": TEST_ISOLATION_VERSION,
             "tcs_context_version": "aggregated_diagnosis_context_v1",
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
@@ -2816,7 +2961,6 @@ class PromptEnsembleOptimizationSystem:
             "solver_invalid_retry_policy_version": SOLVER_INVALID_RETRY_POLICY_VERSION,
             "prompt_question_evaluator_version": PROMPT_QUESTION_EVALUATOR_VERSION,
             "solver_invalid_max_retries": self.cfg.models.solver_invalid_max_retries,
-            "validation_terminal_invalid_allowance": self.cfg.constraints.validation_terminal_invalid_allowance,
             "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
             "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
             "teacher_total_character_limit": self.cfg.tcs.teacher_total_max_chars,
@@ -2863,16 +3007,21 @@ class PromptEnsembleOptimizationSystem:
             "legacy_compatibility_enabled": False,
             "probe_version": self.cfg.peer_state.probe_version,
             "probe_hash": self.fixed_probe.probe_hash if self.fixed_probe else "",
-            "validation_probe_hash": self.validation_probe.probe_hash if self.validation_probe else "",
-            "validation_unique_state_count": len(self.validation_state_cache),
-            "validation_evaluation_count": self.validation_evaluation_count,
-            "validation_reuse_count": self.validation_reuse_count,
-            "current_selected_validation_checkpoint": dict(
-                self.current_selected_validation_checkpoint
-            ),
+            "validation_used": False,
+            "validation_probe_hash": "",
+            "validation_unique_state_count": 0,
+            "validation_evaluation_count": 0,
+            "validation_reuse_count": 0,
+            "planned_update_count": self.planned_update_count,
+            "completed_update_count": self.completed_update_count,
+            "training_completed": self.training_completed,
+            "final_state_selection": dict(self.final_state_selection),
             "test_evaluation_count": self.test_evaluation_count,
             "test_used_for_selection": self.test_used_for_selection,
-            "test_called_before_selection": self.test_called_before_selection,
+            "test_used_for_training": self.test_used_for_training,
+            "test_called_before_training_complete": (
+                self.test_called_before_training_complete
+            ),
             "config": self.cfg.to_flat_dict(),
         }
 
@@ -2959,6 +3108,19 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_json("solver_recovery_summary.json", self.solver_recovery_summary())
         self.artifacts.write_jsonl("llm_calls.jsonl", self.llm.calls)
         self.artifacts.write_json("cost_summary.json", self.cost_summary())
+        self.artifacts.write_jsonl("training_dynamics.jsonl", self.training_dynamics)
+        self.artifacts.write_jsonl(
+            "team_differentiation_trajectory.jsonl",
+            self.team_differentiation_trajectory,
+        )
+        self.artifacts.write_jsonl(
+            "update_transition_decomposition.jsonl",
+            self.update_transition_decomposition,
+        )
+        self.artifacts.write_json(
+            "final_test_differentiation.json",
+            self.final_test_differentiation,
+        )
 
     def solver_recovery_summary(self) -> dict[str, Any]:
         rows = list(self.solver_recovery_observations)

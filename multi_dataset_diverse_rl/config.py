@@ -96,14 +96,6 @@ class CandidateEvaluationConfig:
     stage_a_preservation_size: int = 4
     stage_a_channel_top_k: int = 2
     stage_b_candidate_budget: int = 2
-    validation_unique_state_cache_enabled: bool = True
-    test_evaluation_after_selection_only: bool = True
-
-
-@dataclass(frozen=True)
-class ConstraintConfig:
-    validation_accuracy_epsilon: float = 0.0
-    validation_terminal_invalid_allowance: int = 1
 
 
 @dataclass(frozen=True)
@@ -121,7 +113,7 @@ class PersistenceConfig:
 SECTION_TYPES = {
     "data": DataConfig, "models": ModelConfig, "training": TrainingConfig, "tcs": TCSConfig,
     "peer_state": PeerStateConfig, "responsibility": ResponsibilityConfig,
-    "evaluation": CandidateEvaluationConfig, "constraints": ConstraintConfig,
+    "evaluation": CandidateEvaluationConfig,
     "persistence": PersistenceConfig,
 }
 
@@ -135,7 +127,6 @@ class Config:
     peer_state: PeerStateConfig = field(default_factory=PeerStateConfig)
     responsibility: ResponsibilityConfig = field(default_factory=ResponsibilityConfig)
     evaluation: CandidateEvaluationConfig = field(default_factory=CandidateEvaluationConfig)
-    constraints: ConstraintConfig = field(default_factory=ConstraintConfig)
     persistence: PersistenceConfig = field(default_factory=PersistenceConfig)
 
     @classmethod

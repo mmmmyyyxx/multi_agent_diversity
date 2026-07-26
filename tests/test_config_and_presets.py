@@ -52,8 +52,8 @@ def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     assert cfg.tcs.teacher_critic_max_rounds == 2
     assert cfg.tcs.student_invalid_max_retries == 3
     assert cfg.tcs.student_upstream_regeneration_max_count == 1
-    assert cfg.evaluation.validation_unique_state_cache_enabled is True
-    assert cfg.evaluation.test_evaluation_after_selection_only is True
+    assert "validation_unique_state_cache_enabled" not in cfg.to_flat_dict()
+    assert "test_evaluation_after_selection_only" not in cfg.to_flat_dict()
     assert cfg.tcs.tcs_max_pattern_summaries == 3
     assert cfg.tcs.tcs_max_evidence_cases == 3
     with pytest.raises(AttributeError):
@@ -116,9 +116,10 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["preservation_policy_version"] == (
         "diagnostic_only_sample_preservation_v1"
     )
-    assert metadata["validation_selection_version"] == (
-        "cached_unique_state_validation_selection_v2"
+    assert metadata["evaluation_protocol_version"] == (
+        "final_active_state_no_validation_v1"
     )
+    assert metadata["checkpoint_selection_version"] == "none_final_state_v1"
     assert metadata["student_invalid_recovery_version"] == (
         "feedback_retry_then_upstream_regenerate_v1"
     )

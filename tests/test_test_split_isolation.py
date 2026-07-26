@@ -69,4 +69,4 @@ def test_cli_never_uses_test_split_for_prompt_selection(monkeypatch, tmp_path):
     assert result["selection_summary"]["selected_epoch"] == 1
     assert result["selection_summary"]["test_evaluation_count"] == 1
     assert result["selection_summary"]["test_used_for_selection"] is False
-    assert result["selection_summary"]["test_called_before_selection"] is False
+    assert result["selection_summary"]["test_called_before_training_complete"] is False

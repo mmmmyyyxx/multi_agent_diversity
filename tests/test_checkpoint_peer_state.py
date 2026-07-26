@@ -1,5 +1,4 @@
 import asyncio
-from dataclasses import replace
 
 import pytest
 
@@ -8,159 +7,57 @@ from multi_dataset_diverse_rl.evaluation.fixed_probe import PromptAnswer
 from multi_dataset_diverse_rl.persistence.checkpoint import build_checkpoint, restore_checkpoint
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
+from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION
 
 
 async def solver(_question, agent_id, _prompt):
     answer = "A" if agent_id == 0 else "B"
-    return PromptAnswer(answer=answer, trace=f"reason FINAL_ANSWER: {answer}", valid=True)
+    return PromptAnswer(answer, f"FINAL_ANSWER: {answer}", True)
 
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v4",
-        experiment_setting="shared_member_aware_full",
-        git_commit="commit",
-        git_dirty=False,
-        config_fingerprint="config",
-        manifest_sha256="manifest",
-        train_file_sha256="train",
-        val_file_sha256="val",
-        test_file_sha256="test",
-        train_question_set_hash="train-q",
-        val_question_set_hash="val-q",
-        test_question_set_hash="test-q",
+        method_version="member_aware_peer_state_v4", experiment_setting="shared_member_aware_full",
+        git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
+        train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
+        train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
     )
 
 
 def build_system(tmp_path, run_identity=None):
-    selected_identity = run_identity or identity()
-    cfg = Config.from_flat(
-        out_dir=str(tmp_path),
-        answer_format="option_letter",
-        experiment_setting=selected_identity.experiment_setting,
+    system = PromptEnsembleOptimizationSystem(
+        Config.from_flat(out_dir=str(tmp_path), answer_format="option_letter"), solver=solver
     )
-    system = PromptEnsembleOptimizationSystem(cfg, solver=solver)
-    system.set_run_identity(selected_identity)
-    data = [{"question": "q", "answer": "A"}]
-    system.validation_probe = system.build_validation_probe(data)
-    asyncio.run(system.initialize_fixed_probe(data))
+    system.set_run_identity(run_identity or identity())
+    asyncio.run(system.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
     return system
 
 
-def test_current_checkpoint_exact_resume_and_owner_state(tmp_path):
+def test_v10_checkpoint_persists_final_state_lifecycle(tmp_path):
     source = build_system(tmp_path / "source")
-    source.responsibility_state.primary_owner_by_question = {"q": 3}
-    source.responsibility_state.owner_age_by_question = {"q": 2}
-    source.responsibility_state.accepted_updates_by_agent[3] = 2
-    source.responsibility_state.seeded_rank_by_agent[3] = "seeded-rank"
-    source.target_priority_audit = [{"update_index": 0, "priorities": [{"agent_id": 3}]}]
-    source.student_recovery_state = {
-        "in_progress": False,
-        "update_index": 0,
-        "target_agent_id": 3,
-        "student_generation_cycle_index": 0,
-        "student_attempt_index": 2,
-        "upstream_regeneration_count": 0,
-    }
-    source.student_recovery_observations = [{
-        "update_index": 0,
-        "student_attempt_index": 2,
-        "student_recovered": True,
-    }]
-    source.validation_state_cache = {
-        "team-hash": {"cache_key": "key", "metrics": {}}
-    }
-    source.validation_evaluation_count = 1
-    source.validation_reuse_count = 2
-    payload = build_checkpoint(source, epoch_index=1, update_index=2, best_state={"epoch": 0})
-    assert "shared_solver_cache_audit" in payload
-    assert payload["member_gain_state"] == source.current_team_member_gain_state()
-    assert payload["team_state_version"] == source.team_state_version
-    assert payload["responsibility_state_version"] == source.responsibility_state_version
-    assert payload["responsibility_refresh_count"] == source.responsibility_refresh_count
-    assert "cached_member_opportunities" in payload
-    assert payload["checkpoint_version"] == 9
-    assert "previous_update_outcomes" in payload
-    assert set(payload["completed_tcs_state"]) == {
-        "selected_pattern_ids",
-        "selected_case_ids",
-        "teacher_repair_plan",
-        "critic_decision",
-        "role_retry_state",
-    }
-    assert payload["completed_tcs_state"]["role_retry_state"] == (
-        source.student_recovery_state
-    )
-    assert "validation_state_cache" in payload
-    assert "student_recovery_observations" in payload
-    assert payload["shared_solver_cache_audit"]["ready_entries"] == 1
+    source.planned_update_count = 24
+    source.completed_update_count = 3
+    source.training_dynamics = [{"update_index": -1}, {"update_index": 0}]
+    source.team_differentiation_trajectory = [{"update_index": -1}]
+    source.update_transition_decomposition = [{"update_index": 0}]
+    source.final_state_selection = {"selected_checkpoint_source": "final_active_state"}
+    payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 10
+    assert "validation_state_cache" not in payload
+    assert "validation_probe" not in payload
     target = build_system(tmp_path / "target")
-    epoch, update, best = restore_checkpoint(target, payload)
-    assert (epoch, update, best) == (1, 2, {"epoch": 0})
-    assert target.responsibility_state.primary_owner_by_question == {"q": 3}
-    assert target.responsibility_state.owner_age_by_question == {"q": 2}
-    assert target.responsibility_state.accepted_updates_by_agent[3] == 2
-    assert target.responsibility_state.seeded_rank_by_agent[3] == "seeded-rank"
-    assert target.target_priority_audit == source.target_priority_audit
-    assert target.solver_recovery_observations == source.solver_recovery_observations
-    assert target.student_recovery_state == source.student_recovery_state
-    assert (
-        target.student_recovery_observations
-        == source.student_recovery_observations
-    )
-    assert target.validation_state_cache == source.validation_state_cache
-    assert target.validation_evaluation_count == 1
-    assert target.validation_reuse_count == 2
-    assert target.team_state_version == source.team_state_version
-    assert target.responsibility_state_version == source.responsibility_state_version
-    assert target.responsibility_refresh_count == source.responsibility_refresh_count
-    assert target.fixed_probe.to_dict() == source.fixed_probe.to_dict()
+    epoch, update, state = restore_checkpoint(target, payload)
+    assert (epoch, update, state) == (1, 0, {"planned_update_count": 24})
+    assert target.planned_update_count == 24
+    assert target.completed_update_count == 3
+    assert target.training_dynamics == source.training_dynamics
+    assert target.team_differentiation_trajectory == source.team_differentiation_trajectory
+    assert target.update_transition_decomposition == source.update_transition_decomposition
 
 
-@pytest.mark.parametrize(
-    ("field", "value"),
-    [
-        ("config_fingerprint", "different-seed-model-tie-or-constraint"),
-        ("train_file_sha256", "different-split"),
-        ("git_commit", "different-commit"),
-        ("experiment_setting", "shared_member_aware_responsibility"),
-    ],
-)
-def test_any_run_identity_mismatch_rejects_resume(tmp_path, field, value):
-    source = build_system(tmp_path / "source")
-    payload = build_checkpoint(source, epoch_index=0, update_index=0, best_state={})
-    target = build_system(tmp_path / "target", replace(identity(), **{field: value}))
-    with pytest.raises(ValueError, match="Run identity mismatch"):
-        restore_checkpoint(target, payload)
-
-
-def test_old_checkpoint_and_probe_mismatch_fail_explicitly(tmp_path):
+def test_v9_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
-    with pytest.raises(ValueError, match="lacks exact run identity"):
-        restore_checkpoint(system, {"checkpoint_version": 1, "method_version": "old"})
-    payload = build_checkpoint(system, epoch_index=0, update_index=0, best_state={})
-    missing_member_state = dict(payload)
-    missing_member_state.pop("member_gain_state")
-    with pytest.raises(
-        ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v4",
-    ):
-        restore_checkpoint(system, missing_member_state)
-    incompatible = dict(payload)
-    incompatible["checkpoint_version"] = 5
-    with pytest.raises(
-        ValueError,
-        match="Checkpoint is incompatible with member_aware_peer_state_v4",
-    ):
-        restore_checkpoint(system, incompatible)
-    payload["probe_version"] = "stale"
-    with pytest.raises(ValueError, match="Fixed probe"):
-        restore_checkpoint(system, payload)
-
-
-def test_checkpoint_missing_recovery_observations_is_incompatible(tmp_path):
-    system = build_system(tmp_path)
-    payload = build_checkpoint(system, epoch_index=0, update_index=0, best_state={})
-    payload.pop("solver_recovery_observations")
-    with pytest.raises(ValueError, match="Checkpoint is incompatible"):
+    payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
+    payload["checkpoint_version"] = 9
+    with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

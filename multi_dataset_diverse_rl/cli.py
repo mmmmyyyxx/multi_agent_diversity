@@ -9,7 +9,6 @@ from typing import Any, Mapping, Sequence
 
 from .config import Config, add_config_arguments, config_from_args
 from .evaluation.validation import DatasetMetrics
-from .evaluation.validation import dataset_metrics_from_dict
 from .persistence.checkpoint import build_checkpoint, load_checkpoint, restore_checkpoint
 from .persistence.identity import build_run_identity
 from .system import PromptEnsembleOptimizationSystem
@@ -51,10 +50,21 @@ def _load(path: str, limit: int, fmt: str) -> list[dict[str, Any]]:
     return build_dataset(load_jsonl(path, limit), fmt)
 
 
-def _write_checkpoint(system, cfg: Config, epoch_index: int, update_index: int, best_state: Mapping[str, Any]) -> None:
+def _write_checkpoint(
+    system,
+    cfg: Config,
+    epoch_index: int,
+    update_index: int,
+    training_state: Mapping[str, Any],
+) -> None:
     system.artifacts.write_json(
         "training_checkpoint.json",
-        build_checkpoint(system, epoch_index=epoch_index, update_index=update_index, best_state=best_state),
+        build_checkpoint(
+            system,
+            epoch_index=epoch_index,
+            update_index=update_index,
+            training_state=training_state,
+        ),
     )
 
 
@@ -86,6 +96,7 @@ def _print_progress(*, epoch: int | str, step: int | str, metrics: DatasetMetric
 async def run(cfg: Config) -> dict[str, Any]:
     random.seed(cfg.training.seed)
     train = _load(cfg.data.train_path, cfg.data.train_size, cfg.data.dataset_format)
+    # Validation remains part of exact dataset identity but is never evaluated.
     validation = _load(cfg.data.val_path, cfg.data.val_size, cfg.data.dataset_format)
     test = _load(cfg.data.test_path, cfg.data.test_size, cfg.data.dataset_format)
     system = PromptEnsembleOptimizationSystem(cfg)
@@ -99,30 +110,38 @@ async def run(cfg: Config) -> dict[str, Any]:
 
     if not system.protocol.optimization_enabled:
         team_state_hash = system.team_prompt_state_hash()
+        system.planned_update_count = 0
+        system.completed_update_count = 0
+        system.mark_training_complete(0)
         selection_summary = {
             "validation_used": False,
-            "validation_selection_policy": "baseline_no_selection",
+            "validation_selection_policy": "none",
             "validation_unique_state_count": 0,
             "validation_evaluation_count": 0,
             "validation_reused_state_count": 0,
-            "selected_checkpoint_source": "initial_baseline",
+            "selected_checkpoint_source": "final_active_state",
             "selected_by_validation": False,
             "selected_checkpoint_update_index": 0,
             "selected_team_prompt_state_hash": team_state_hash,
             "selected_epoch": 0,
             "selection_changed": False,
-            "validation_key": None,
+            "checkpoint_selection": "none",
             "test_evaluation_count": 0,
             "test_used_for_selection": False,
-            "test_called_before_selection": False,
+            "test_used_for_training": False,
+            "test_called_before_training_complete": False,
         }
-        system.complete_validation_selection(selection_summary)
-        initial_test = await system.evaluate_selected_test(test)
+        system.final_state_selection = dict(selection_summary)
+        initial_test = await system.evaluate_final_test(test)
         selection_summary.update({
             "test_evaluation_count": system.test_evaluation_count,
             "test_used_for_selection": system.test_used_for_selection,
-            "test_called_before_selection": system.test_called_before_selection,
+            "test_used_for_training": system.test_used_for_training,
+            "test_called_before_training_complete": (
+                system.test_called_before_training_complete
+            ),
         })
+        system.final_state_selection = dict(selection_summary)
         final_payload = _final_payload(
             initial_test,
             initial_test,
@@ -139,146 +158,98 @@ async def run(cfg: Config) -> dict[str, Any]:
     probe = list(train[: min(len(train), cfg.evaluation.candidate_eval_pool_size)])
     checkpoint_path = Path(cfg.persistence.out_dir) / "training_checkpoint.json"
     payload = load_checkpoint(checkpoint_path) if cfg.persistence.resume_from_checkpoint else None
-    system.validation_probe = system.build_validation_probe(validation)
+    updates_per_epoch = max(
+        1,
+        math.ceil(len(train) / max(1, cfg.training.update_every)),
+    )
+    planned_update_count = cfg.training.epochs * updates_per_epoch
+    system.planned_update_count = planned_update_count
     if payload is None:
         await system.initialize_fixed_probe(probe)
     else:
         system.fixed_probe = system.build_probe(probe)
-    initial_validation: DatasetMetrics
-    best_state: dict[str, Any] = {}
+    training_state: dict[str, Any]
     start_epoch = start_update = 0
     if payload is not None:
-        start_epoch, start_update, best_state = restore_checkpoint(system, payload)
-        initial_validation = dataset_metrics_from_dict(
-            best_state["initial_validation"]
-        )
-        current_validation, current_validation_audit = (
-            await system.evaluate_validation_state(validation)
-        )
+        start_epoch, start_update, training_state = restore_checkpoint(system, payload)
+        if system.planned_update_count != planned_update_count:
+            raise ValueError("checkpoint planned update count mismatch")
     else:
-        initial_validation, current_validation_audit = (
-            await system.evaluate_validation_state(validation)
-        )
-        current_validation = initial_validation
         initial_state_hash = system.team_prompt_state_hash()
-        best_state = {
-            "key": system.validation_key(initial_validation, initial_validation, 0),
-            "epoch": 0,
-            "update_index": 0,
-            "team_prompt_state_hash": initial_state_hash,
-            "prompts": [agent.current_prompt for agent in system.agents],
-            "metrics": _metrics_summary(initial_validation),
-            "initial_validation": initial_validation.to_dict(),
-            "validation_audit": dict(current_validation_audit),
+        training_state = {
+            "planned_update_count": planned_update_count,
+            "initial_team_state_hash": initial_state_hash,
         }
-
-    updates_per_epoch = max(1, math.ceil(len(train) / max(1, cfg.training.update_every)))
-    key = system.validation_key(
-        current_validation,
-        initial_validation,
-        int(best_state.get("update_index", 0)),
-    )
+        system.record_training_dynamics(update_index=-1)
     for epoch in range(start_epoch, cfg.training.epochs):
         epoch_decision_start = len(system.candidate_decisions)
         first_update = start_update if epoch == start_epoch else 0
         for update in range(first_update, updates_per_epoch):
             global_update_index = epoch * updates_per_epoch + update
+            incumbent_profiles = [tuple(profile) for profile in system.active_profiles]
             accepted = await system.update_once(global_update_index)
-            current_validation, current_validation_audit = (
-                await system.evaluate_validation_state(validation)
+            system.completed_update_count = global_update_index + 1
+            system.record_training_dynamics(
+                update_index=global_update_index,
+                incumbent_profiles=incumbent_profiles,
             )
-            key = system.validation_key(
-                current_validation,
-                initial_validation,
-                global_update_index + 1,
-            )
-            if accepted and key is not None and (
-                best_state.get("key") is None
-                or tuple(key) > tuple(best_state["key"])
-            ):
-                best_state = {
-                    "key": key,
-                    "epoch": epoch + 1,
-                    "update_index": global_update_index + 1,
-                    "team_prompt_state_hash": (
-                        current_validation_audit["team_prompt_state_hash"]
-                    ),
-                    "prompts": [
-                        agent.current_prompt for agent in system.agents
-                    ],
-                    "metrics": _metrics_summary(current_validation),
-                    "initial_validation": initial_validation.to_dict(),
-                    "validation_audit": dict(current_validation_audit),
-                }
             train_step = min((update + 1) * cfg.training.update_every, len(train))
             _print_progress(
                 epoch=f"{epoch + 1}/{cfg.training.epochs}",
                 step=f"{train_step}/{len(train)}",
                 metrics=system.active_probe_metrics(),
             )
-            _write_checkpoint(system, cfg, epoch, update + 1, best_state)
+            _write_checkpoint(system, cfg, epoch, update + 1, training_state)
         system.history.append({
             "epoch": epoch + 1,
-            "team_prompt_state_hash": current_validation_audit[
-                "team_prompt_state_hash"
-            ],
-            "validation_cache_hit": current_validation_audit[
-                "validation_cache_hit"
-            ],
-            "validation_result_source": current_validation_audit[
-                "validation_result_source"
-            ],
-            "validation": _metrics_summary(current_validation),
-            "validation_feasible": key is not None,
-            "member_objective": _member_gain_summary(
-                initial_validation, current_validation
-            ),
+            "completed_update_count": system.completed_update_count,
+            "team_prompt_state_hash": system.team_prompt_state_hash(),
+            "active_probe": _metrics_summary(system.active_probe_metrics()),
             "candidate_funnel": system.candidate_funnel_summary(
                 system.candidate_decisions[epoch_decision_start:]
             ),
         })
-        _write_checkpoint(system, cfg, epoch + 1, 0, best_state)
+        _write_checkpoint(system, cfg, epoch + 1, 0, training_state)
         start_update = 0
 
-    selected_prompts = [str(prompt) for prompt in best_state["prompts"]]
-    for agent, prompt in zip(system.agents, selected_prompts, strict=True):
-        agent.current_prompt = str(prompt)
+    if system.completed_update_count != planned_update_count:
+        raise RuntimeError("not every planned update completed")
+    system.mark_training_complete(planned_update_count)
+    selected_prompts = [agent.current_prompt for agent in system.agents]
+    selected_hash = system.team_prompt_state_hash()
     selection_summary = {
-        "validation_used": True,
-        "validation_selection_policy": (
-            "validation_checkpoint_selection_v2"
-        ),
-        "validation_unique_state_count": len(
-            system.validation_state_cache
-        ),
-        "validation_evaluation_count": system.validation_evaluation_count,
-        "validation_reused_state_count": system.validation_reuse_count,
-        "selected_checkpoint_source": "validation",
-        "selected_by_validation": True,
-        "selected_checkpoint_update_index": int(
-            best_state.get("update_index", 0)
-        ),
-        "selected_team_prompt_state_hash": str(
-            best_state["team_prompt_state_hash"]
-        ),
-        "selected_epoch": int(best_state["epoch"]),
-        "selection_changed": selected_prompts != [
-            agent.initial_prompt for agent in system.agents
+        "validation_used": False,
+        "validation_selection_policy": "none",
+        "validation_unique_state_count": 0,
+        "validation_evaluation_count": 0,
+        "validation_reused_state_count": 0,
+        "selected_checkpoint_source": "final_active_state",
+        "selected_by_validation": False,
+        "selected_checkpoint_update_index": planned_update_count,
+        "selected_team_prompt_state_hash": selected_hash,
+        "selected_epoch": planned_update_count,
+        "selection_changed": selected_hash != training_state[
+            "initial_team_state_hash"
         ],
-        "validation_key": best_state["key"],
+        "checkpoint_selection": "none",
         "test_evaluation_count": 0,
         "test_used_for_selection": False,
-        "test_called_before_selection": False,
+        "test_used_for_training": False,
+        "test_called_before_training_complete": False,
     }
-    system.complete_validation_selection(selection_summary)
-    _write_checkpoint(system, cfg, cfg.training.epochs, 0, best_state)
-    selected_test = await system.evaluate_selected_test(test)
+    system.final_state_selection = dict(selection_summary)
+    _write_checkpoint(system, cfg, cfg.training.epochs, 0, training_state)
+    selected_test = await system.evaluate_final_test(test)
     selection_summary.update({
         "test_evaluation_count": system.test_evaluation_count,
         "test_used_for_selection": system.test_used_for_selection,
-        "test_called_before_selection": system.test_called_before_selection,
+        "test_used_for_training": system.test_used_for_training,
+        "test_called_before_training_complete": (
+            system.test_called_before_training_complete
+        ),
     })
-    _write_checkpoint(system, cfg, cfg.training.epochs, 0, best_state)
+    system.final_state_selection = dict(selection_summary)
+    _write_checkpoint(system, cfg, cfg.training.epochs, 0, training_state)
     final_payload = _final_payload(
         None,
         selected_test,

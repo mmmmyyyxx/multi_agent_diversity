@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -23,12 +24,14 @@ from multi_dataset_diverse_rl.tcs import TCS_PROTOCOL_VERSION
 from multi_dataset_diverse_rl.utils import load_jsonl
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
-    VALIDATION_SELECTION_VERSION,
+    TEST_ISOLATION_VERSION,
 )
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 from scripts.run_task_level_accuracy import RUNNER_FIELDS, _task_split_integrity
@@ -58,10 +61,6 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append(
                 "student_upstream_regeneration_max_count must be zero or one"
             )
-        if not cfg.evaluation.validation_unique_state_cache_enabled:
-            errors.append("validation unique-state cache must be enabled")
-        if not cfg.evaluation.test_evaluation_after_selection_only:
-            errors.append("test-after-selection-only must be enabled")
         if cfg.training.agents != 5 or cfg.peer_state.aggregation_mode != "plurality":
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
@@ -127,7 +126,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "method_version": METHOD_VERSION, "target_selection_version": TARGET_SELECTION_VERSION,
         "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
         "preservation_policy_version": PRESERVATION_POLICY_VERSION,
-        "validation_selection_version": VALIDATION_SELECTION_VERSION,
+        "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
+        "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
+        "test_isolation_version": TEST_ISOLATION_VERSION,
         "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
         "tcs_protocol_version": TCS_PROTOCOL_VERSION,
         "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
@@ -235,16 +236,25 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError(
                             "student_upstream_regeneration_max_count must be zero or one"
                         )
-                    if not cfg.evaluation.validation_unique_state_cache_enabled:
-                        raise ValueError(
-                            "validation unique-state cache must be enabled"
-                        )
-                    if not cfg.evaluation.test_evaluation_after_selection_only:
-                        raise ValueError(
-                            "test-after-selection-only must be enabled"
-                        )
                     if cfg.evaluation.candidate_eval_pool_size <= 0:
                         raise ValueError("fixed probe must contain at least one example")
+                    planned_update_count = cfg.training.epochs * max(
+                        1,
+                        math.ceil(
+                            cfg.data.train_size
+                            / max(1, cfg.training.update_every)
+                        ),
+                    )
+                    if (
+                        setting.name == "shared_member_aware_full"
+                        and cfg.training.epochs == 8
+                        and cfg.training.update_every == 25
+                        and cfg.data.train_size == 75
+                        and planned_update_count != 24
+                    ):
+                        raise ValueError(
+                            "high-frequency Full planned_update_count must equal 24"
+                        )
                     if min(
                         cfg.tcs.tcs_max_pattern_summaries,
                         cfg.tcs.tcs_max_evidence_cases,
@@ -292,6 +302,30 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "shared_solver_cache_path": str(cache_path),
                         "split_integrity": integrity,
                         "role_environment": role_environment,
+                        "planned_update_count": planned_update_count,
+                        "validation_solver_call_count": 0,
+                        "estimated_solver_calls": {
+                            "lower": 4786,
+                            "upper": 7180,
+                        },
+                        "estimated_role_calls": {
+                            "lower": 60,
+                            "upper": 288,
+                        },
+                        "estimated_total_tokens": {
+                            "lower": 1703422,
+                            "upper": 2555133,
+                        },
+                        "estimated_maximum_student_recovery_calls": (
+                            planned_update_count
+                            * (
+                                cfg.tcs.student_invalid_max_retries + 1
+                            )
+                            * (
+                                1
+                                + cfg.tcs.student_upstream_regeneration_max_count
+                            )
+                        ),
                     })
                 except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
                     errors.append(f"{task_id}/{setting.name}/seed{seed}: {exc}")

@@ -28,11 +28,13 @@ PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
 from ..versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    EVALUATION_PROTOCOL_VERSION,
     PRESERVATION_POLICY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
-    VALIDATION_SELECTION_VERSION,
+    TEST_ISOLATION_VERSION,
 )
 
 
@@ -100,7 +102,9 @@ def config_fingerprint(cfg: Config) -> str:
         "stage_b": CANDIDATE_ACCEPTANCE_VERSION,
         "candidate_acceptance": CANDIDATE_ACCEPTANCE_VERSION,
         "preservation_policy": PRESERVATION_POLICY_VERSION,
-        "validation": VALIDATION_SELECTION_VERSION,
+        "evaluation_protocol": EVALUATION_PROTOCOL_VERSION,
+        "checkpoint_selection": CHECKPOINT_SELECTION_VERSION,
+        "test_isolation": TEST_ISOLATION_VERSION,
         "tcs_context": "aggregated_diagnosis_context_v1",
         "diagnosis_aggregation": DIAGNOSIS_AGGREGATION_VERSION,
         "answer_role_encoding": ANSWER_ROLE_ENCODING_VERSION,
@@ -123,7 +127,6 @@ def config_fingerprint(cfg: Config) -> str:
         "solver_invalid_retry_policy": SOLVER_INVALID_RETRY_POLICY_VERSION,
         "prompt_question_evaluator": PROMPT_QUESTION_EVALUATOR_VERSION,
         "solver_invalid_max_retries": cfg.models.solver_invalid_max_retries,
-        "validation_terminal_invalid_allowance": cfg.constraints.validation_terminal_invalid_allowance,
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
         "checkpoint": CHECKPOINT_VERSION,

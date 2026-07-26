@@ -32,8 +32,9 @@ The current implementation version is `member_aware_peer_state_v4`. It keeps
 the v3 responsibility, potential-aware scheduling, bounded TCS roles, immutable
 Solver contract, and request-local first-valid Solver invalid recovery while
 replacing per-example zero-loss guards with aggregate non-regression, adding
-bounded Student invalid recovery, and deduplicating validation by team state.
-Checkpoint version is 9; v8 checkpoints are intentionally incompatible.
+bounded Student invalid recovery, and using the final active team after a fixed
+update budget instead of validation checkpoint selection. Checkpoint version is
+10; v9 checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
 
@@ -375,28 +376,9 @@ The canonical preference among acceptable candidates is:
 
 ## 6. Validation and Test
 
-Validation compares each unique team state with the initial validation team.
-
-A validation state is feasible only when:
-
-```text
-no member violates the initial competence floor
-invalid rate satisfies its guard
-vote-correct count is not below the initial team
-```
-
-Feasible states are ordered by:
-
-```text
-1. minimum member gain
-2. vote-correct count
-3. total member gain
-4. improved-member count
-5. soft vote utility
-6. fewer C0 examples
-7. lower invalid rate
-8. earlier epoch
-```
+The v10 active lifecycle performs no validation rollout or checkpoint
+selection. Validation split hashes remain in run identity only. The final active
+team after every planned update is the selected team.
 
 Test data must never influence:
 
@@ -406,11 +388,9 @@ Test data must never influence:
 - candidate acceptance;
 - validation best-state selection.
 
-Validation metrics are cached by prompt-team state hash. The initial state and
-each accepted unique state are evaluated once; rejected unchanged states reuse
-the cache. Test runs exactly once, only after validation completes selection,
-and only for the selected team. Optimized runs do not separately evaluate their
-initial team on test; the matched baseline supplies that shared initial-test
+Test runs exactly once, only after every planned update completes, and only for
+the final active team. Optimized runs do not separately evaluate their initial
+team on test; a frozen matched baseline supplies reporting-only initial-test
 reference. Final matched reports must distinguish:
 
 ```text
@@ -793,8 +773,9 @@ multi_dataset_diverse_rl/persistence/artifacts.py
 Owns exact run identity, behavior fingerprint, atomic checkpoint, incompatible
 checkpoint rejection, and artifacts. Checkpoint member state must be the
 target-free `TeamMemberGainState`.
-Checkpoint v9 also persists Student-recovery audit state, validation state
-cache/counters, the selected validation checkpoint, and selected-test state.
+Checkpoint v10 also persists Student-recovery audit state, planned/completed
+update counts, final-state selection, training dynamics, differentiation
+trajectories, and selected-test state.
 
 Do not add compatibility code for obsolete method versions unless explicitly
 requested.
@@ -852,7 +833,7 @@ exact run identity
 deterministic same-seed behavior
 atomic accepted update
 one responsibility refresh per real team transition
-test data used only after validation selection
+test data used only after all planned updates complete
 ```
 
 No accepted candidate may silently bypass these invariants.
