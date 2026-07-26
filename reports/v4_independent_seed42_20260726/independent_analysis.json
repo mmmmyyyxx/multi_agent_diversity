@@ -1,0 +1,236 @@
+{
+  "source_commit": "689a5c5cb4320720dd712a31889afd1eb2dcc219",
+  "setting": "shared_independent_accuracy",
+  "task": "disambiguation_qa",
+  "seed": 42,
+  "update_count": 8,
+  "accepted_update_count": 6,
+  "rejected_update_count": 2,
+  "target_sequence": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    0,
+    1,
+    2
+  ],
+  "accepted_target_sequence": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    0
+  ],
+  "distinct_successfully_improved_members": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "accepted_candidate_metrics": [
+    {
+      "target_gain": 24,
+      "vote_gain_count": 0,
+      "vote_loss_count": 0,
+      "vote_net_gain": 0,
+      "unique_correct_gain_count": 35,
+      "unique_correct_loss_count": 0,
+      "pivotal_correct_gain_count": 0,
+      "pivotal_correct_loss_count": 0,
+      "incumbent_objective": [
+        28,
+        0,
+        0
+      ],
+      "candidate_objective": [
+        28,
+        0,
+        24
+      ],
+      "hard_feasible": true,
+      "update_index": 0,
+      "target_agent_id": 0
+    },
+    {
+      "target_gain": 5,
+      "vote_gain_count": 0,
+      "vote_loss_count": 0,
+      "vote_net_gain": 0,
+      "unique_correct_gain_count": 1,
+      "unique_correct_loss_count": 0,
+      "pivotal_correct_gain_count": 0,
+      "pivotal_correct_loss_count": 0,
+      "incumbent_objective": [
+        28,
+        0,
+        24
+      ],
+      "candidate_objective": [
+        28,
+        0,
+        29
+      ],
+      "hard_feasible": true,
+      "update_index": 1,
+      "target_agent_id": 1
+    },
+    {
+      "target_gain": 9,
+      "vote_gain_count": 4,
+      "vote_loss_count": 0,
+      "vote_net_gain": 4,
+      "unique_correct_gain_count": 0,
+      "unique_correct_loss_count": 0,
+      "pivotal_correct_gain_count": 4,
+      "pivotal_correct_loss_count": 0,
+      "incumbent_objective": [
+        28,
+        0,
+        29
+      ],
+      "candidate_objective": [
+        32,
+        0,
+        38
+      ],
+      "hard_feasible": true,
+      "update_index": 2,
+      "target_agent_id": 2
+    },
+    {
+      "target_gain": 12,
+      "vote_gain_count": 6,
+      "vote_loss_count": 0,
+      "vote_net_gain": 6,
+      "unique_correct_gain_count": 0,
+      "unique_correct_loss_count": 0,
+      "pivotal_correct_gain_count": 6,
+      "pivotal_correct_loss_count": 0,
+      "incumbent_objective": [
+        32,
+        0,
+        38
+      ],
+      "candidate_objective": [
+        38,
+        0,
+        50
+      ],
+      "hard_feasible": true,
+      "update_index": 3,
+      "target_agent_id": 3
+    },
+    {
+      "target_gain": 10,
+      "vote_gain_count": 3,
+      "vote_loss_count": 1,
+      "vote_net_gain": 2,
+      "unique_correct_gain_count": 1,
+      "unique_correct_loss_count": 0,
+      "pivotal_correct_gain_count": 3,
+      "pivotal_correct_loss_count": 1,
+      "incumbent_objective": [
+        38,
+        0,
+        50
+      ],
+      "candidate_objective": [
+        40,
+        5,
+        60
+      ],
+      "hard_feasible": true,
+      "update_index": 4,
+      "target_agent_id": 4
+    },
+    {
+      "target_gain": 5,
+      "vote_gain_count": 1,
+      "vote_loss_count": 0,
+      "vote_net_gain": 1,
+      "unique_correct_gain_count": 2,
+      "unique_correct_loss_count": 2,
+      "pivotal_correct_gain_count": 1,
+      "pivotal_correct_loss_count": 0,
+      "incumbent_objective": [
+        40,
+        5,
+        60
+      ],
+      "candidate_objective": [
+        41,
+        5,
+        65
+      ],
+      "hard_feasible": true,
+      "update_index": 5,
+      "target_agent_id": 0
+    }
+  ],
+  "sample_loss_but_aggregate_accepted_count": 2,
+  "terminal_invalid_provenance": {
+    "exploratory_rejected_candidate_terminal_invalid_count": 12,
+    "exploratory_accepted_candidate_terminal_invalid_count": 0,
+    "active_state_terminal_invalid_count": 0,
+    "validation_selected_terminal_invalid_count": 0,
+    "selected_test_terminal_invalid_count": 0,
+    "sources": [
+      {
+        "update_index": 0,
+        "target_agent_id": 0,
+        "terminal_invalid_count": 12,
+        "rejection_reasons": [
+          "terminal_invalid_regression"
+        ]
+      }
+    ]
+  },
+  "infrastructure_failed_updates": 0,
+  "raw_invalid_candidates_entered_stage_a": false,
+  "stage_a_equals_valid_candidate_count_all_updates": true,
+  "student_call_count": 14,
+  "student_invalid_response_count": 6,
+  "student_retry_count": 6,
+  "student_recovered_update_count": 6,
+  "upstream_regeneration_count": 0,
+  "solver_unique_requests": 1875,
+  "solver_eventual_valid_rate": 0.9936,
+  "solver_terminal_invalid_count": 12,
+  "baseline_test_vote_correct_count": 52,
+  "independent_selected_test_vote_correct_count": 52,
+  "test_vote_gain": 0,
+  "baseline_test_member_correct_counts": [
+    52,
+    52,
+    52,
+    52,
+    52
+  ],
+  "independent_selected_test_member_correct_counts": [
+    75,
+    52,
+    52,
+    52,
+    52
+  ],
+  "independent_minus_baseline_member_gains": [
+    23,
+    0,
+    0,
+    0,
+    0
+  ],
+  "validation_unique_state_count": 7,
+  "validation_evaluation_count": 7,
+  "validation_reuse_count": 2,
+  "selected_by_validation": true,
+  "test_evaluation_count": 1,
+  "test_used_for_selection": false,
+  "test_called_before_selection": false,
+  "legacy_all_request_validity_gate_v1": "FAIL",
+  "active_state_validity_and_isolation_v2": "PASS"
+}

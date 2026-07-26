@@ -1,0 +1,19 @@
+{
+  "source_commit": "689a5c5cb4320720dd712a31889afd1eb2dcc219",
+  "files": {
+    "baseline_final_summary.json": "95ecb6ee1691268adf1c47d9114af13ba05a1fe02650109978c43e0c189e5209",
+    "candidate_decisions_sanitized.jsonl": "dc22f993e3aaa9a646643a00611ad11110204cba88ba2a42c0b19c6a4eb3dd14",
+    "candidate_funnel.json": "ce010dca4fbaf3c565acd5768619a9fc936d3663bfde4be228d9abedf481f2be",
+    "cost_summary.json": "f74065b5220cdc5112a882f9c5ffd3d659e5195dc39df26a796c0961291a0c23",
+    "history.json": "da5f275550155f43440495ac547664ac39eab7e58ee572b926d370b7abfee044",
+    "independent_analysis.json": "61f0267aed886ee824e1bc2e7eb55374468bd188745c8559a0549a060351b2d3",
+    "independent_final_summary.json": "2d9bcf6ae6b5d082e52513ad795f282f827a809e13e34c010d47687c353c7ecf",
+    "llm_calls_sanitized.jsonl": "9aac5ee1538a1557a96fc2632ee1962f4b7196a4521d70271dcc4d1c39d00d49",
+    "README.md": "cd84b84cda447c5bb6807ddcbf27258e9c89fbc31911bbe613e49619000f2ccb",
+    "run_meta_sanitized.json": "fced473f99018092642fce4c49f2cf27767370f613febaa529a156babb1e1254",
+    "solver_recovery_summary.json": "6de581d3c23b54ebbe2b616354c204f90c1f50a77c6c8a695ef337e90293f7a8",
+    "student_recovery_observations_sanitized.jsonl": "58ac4803b6c995c72c562c53338ca73903a47a32d119c64519808db6d425b77e",
+    "target_priority_audit_sanitized.jsonl": "b1628f065a3d933e780257ba22af00d4428c5c35f061c16ec25da324b7d9105f",
+    "tcs_context_history_sanitized.jsonl": "7584b4a787a866145800de336d4af829402471009913d407d7231107fd7df50b"
+  }
+}

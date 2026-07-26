@@ -1,0 +1,40 @@
+{
+  "unique_resolved_request_count": 1875,
+  "first_attempt_valid_count": 1844,
+  "first_attempt_invalid_count": 31,
+  "recovered_invalid_count": 19,
+  "terminal_invalid_count": 12,
+  "attempt_count_histogram": {
+    "1": 1844,
+    "2": 11,
+    "3": 4,
+    "4": 16
+  },
+  "first_pass_validity_status_counts": {
+    "valid": 1844,
+    "missing_final_answer": 31
+  },
+  "terminal_validity_status_counts": {
+    "missing_final_answer": 12
+  },
+  "finish_reason_counts_by_attempt": {
+    "1:stop": 1875,
+    "2:stop": 31,
+    "3:stop": 20,
+    "4:stop": 16
+  },
+  "invalid_recovery_extra_calls": 67,
+  "invalid_recovery_prompt_tokens": 17289,
+  "invalid_recovery_completion_tokens": 9296,
+  "invalid_recovery_total_tokens": 26585,
+  "first_attempt_valid_rate": 0.9834666666666667,
+  "eventual_valid_rate": 0.9936,
+  "recovery_call_overhead_rate": 0.03573333333333333,
+  "recovery_token_overhead_rate": 0.03766076834483863,
+  "current_run_recovery_api_calls": 67,
+  "current_run_recovery_prompt_tokens": 17289,
+  "current_run_recovery_completion_tokens": 9296,
+  "current_run_recovery_total_tokens": 26585,
+  "current_run_recovery_call_overhead_rate": 0.03573333333333333,
+  "current_run_recovery_token_overhead_rate": 0.03766076834483863
+}
