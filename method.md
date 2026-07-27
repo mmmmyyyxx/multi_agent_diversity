@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v4
+method_version = member_aware_peer_state_v5
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -46,11 +46,9 @@ incumbent target profile. First-pass invalids that recover successfully remain
 diagnostics and do not reject the candidate. The obsolete local/global invalid
 allowances and accuracy-epsilon guard fields were removed in v4.
 
-Target scheduling adds potential evidence without changing responsibility
-assignment or max-wait semantics. Unimproved members, headroom to the current
-best member, and historical positive target gains affect the Pareto priority.
-Repeated Stage-B attempts with no positive target-gain candidate receive a
-bounded cooldown; a positive but guard-rejected candidate clears that streak.
+Responsibility assignment and scheduling are repair-only. They never use
+member gain, improvement need, current-count gaps, relative potential/rank, or
+candidate-search history/cooldown.
 
 The optimized prompt contains only the mutable decision procedure. For every
 Solver request, the program places that procedure first and appends the
@@ -112,39 +110,21 @@ substituted for the integer Pareto objectives.
 
 ## 4. Member-Aware Responsibility
 
-Every currently wrong member is eligible for optimization, even if it owns no
-residual case. For member `i`, the global improvement pressure is:
+On each vote-wrong example, ownership is selected only from wrong members by a
+four-axis repair Pareto vector: direct vote repair, oracle soft-utility gain,
+coverage opportunity, and dominant-wrong exit. Lexical ties use those same four
+fields, lower assigned load, longer target wait, then seeded hash. An existing
+owner remains only if it is still on the frontier, is no weaker in direct,
+coverage, and dominant-wrong repair, and the preferred oracle advantage is no
+larger than `responsibility_switch_margin`.
 
-```text
-improvement_need_i = max(0, g_sum_current - K * g_i_current)
-```
-
-where `K=5`. A large value means the member is behind the current team-wide
-improvement level.
-
-On each vote-wrong example, ownership is selected from the wrong members by a
-five-axis Pareto comparison of direct vote repair, oracle soft-utility gain,
-improvement need, coverage opportunity, and dominant-wrong exit. The frontier
-preference is member-first, then direct-fix, soft gain, coverage, dominant-wrong,
-load, wait, and seeded tie-break. Existing owners are retained only while still
-on the frontier, not behind on member/direct-fix priority, and within
-`responsibility_switch_margin` on soft utility.
-
-Target selection uses all agents with current errors. Define
-`g_max = max_j g_j`, `gain_gap_to_best_i = g_max - g_i`, and a count tolerance
-of five. Only agents with `gain_gap_to_best_i > 5` have relative improvement
-potential; their rank is a discrete rank over distinct gain levels, with the
-lowest gain assigned the highest positive rank. Current correct-count gaps remain competence reports,
-not potential.
-
-Agents waiting `responsibility_max_wait_updates` updates are considered first;
-the default is eight. Otherwise, relative-potential agents are selected before
-current team-repair evidence. If every agent is inside the tolerance band,
-selection uses current repair value rather than forcing uniform member accuracy.
-Historical candidate gains and failed-search streaks are recorded only as
-candidate-search outcomes. They do not estimate future potential or enter the
-target-selection Pareto vector; any resulting cooldown is a bounded
-search-budget control.
+Only agents owning at least one residual are target-eligible. Their portfolio
+vector contains owned direct repairs, owned oracle utility, owned coverage,
+owned dominant-wrong exits, assigned load, and oldest owned responsibility age.
+Pareto-frontier ties use oldest age, target wait, assigned load, and seeded hash.
+The eight-update max-wait rule applies only within this owner set. If it is
+empty, the update is an audited `no_actionable_responsibility` no-op: no TCS,
+candidate generation, or generic competence fallback occurs.
 
 Responsibility answers **who to update and what residual to repair**. Competence
 preservation is deliberately not a sixth responsibility-attribution dimension.
@@ -179,7 +159,7 @@ family, target and team status, answer role, team and peer `(G,H,M)`,
 direct-fix/dominant-wrong flags, and unique/pivotal protection flags.
 
 Pattern selection is deterministic and lexicographic. The member-aware slots
-prioritize assigned residuals, target competence, and preservation. Generic
+prioritize assigned residuals and preservation. Generic
 Peer-State slots prioritize coverage, conversion/dominant-wrong, and
 preservation. Accuracy slots contain individual-error structure and
 preservation only. Within a selected pattern, its single representative case is
@@ -193,8 +173,9 @@ The three serialized context boundaries are:
   need fields.
 - `PeerStateDiagnosisContext`: team and leave-one-out Peer-State aggregates,
   without owners, responsibility, member gains, or improvement need.
-- `MemberAwareDiagnosisContext`: Peer-State evidence plus member counts/gains,
-  improvement need, and assigned responsibility.
+- `AssignedResidualDiagnosisContext`: parent prompt, assigned residual patterns,
+  representative/preservation evidence, and diagnostic prior outcome; no member
+  gain, need, rank, or potential field.
 
 `PreviousUpdateOutcome` replaces natural-language previous-update summaries.
 The model-facing projection is also sanitized to the setting's causal boundary.
@@ -385,7 +366,7 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 12. It stores active and initial profiles, a target-free
+Checkpoint version is 13. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS and Student-recovery
@@ -398,7 +379,7 @@ split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v4
+Checkpoint is incompatible with member_aware_peer_state_v5
 ```
 
 The runner never silently restarts an incompatible run in the same directory.

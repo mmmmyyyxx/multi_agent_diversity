@@ -1,0 +1,15 @@
+{
+  "source": "sanitized v11 Full seed43 artifacts only",
+  "available": {
+    "A_legacy_observed_targets": 32,
+    "B_repair_only_owner_states": 14,
+    "R_repair_only_portfolio_states": 14
+  },
+  "unavailable": {
+    "H0_pre_member_aware_observed_state_replay": "historical sanitized per-question state is unavailable",
+    "H1_or_29f2_target_replay": "no compatible sanitized target/state join exists",
+    "counterfactual_training_trajectory": "not identifiable from fixed observed states",
+    "counterfactual_test_or_efficacy": "not evaluated"
+  },
+  "rule": "unavailable is not encoded as zero"
+}

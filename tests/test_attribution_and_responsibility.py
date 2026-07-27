@@ -1,61 +1,40 @@
 from dataclasses import replace
 
-from multi_dataset_diverse_rl.peer_state import (
-    build_peer_vote_context,
-    build_team_vote_state,
-)
+from multi_dataset_diverse_rl.peer_state import build_peer_vote_context, build_team_vote_state
 from multi_dataset_diverse_rl.responsibility import (
     ResponsibilityState,
     assign_primary_responsibilities,
+    build_target_selection_decision,
     compute_member_aware_repair_opportunity,
     select_target_agent,
-    build_target_selection_decision,
     target_priorities,
 )
 
 
 def team(answers, question_hash="q"):
     return build_team_vote_state(
-        question_hash=question_hash,
-        gold_answer="A",
-        answers=answers,
-        normalize_answer=str.upper,
-        match_answer=lambda left, right: left == right,
+        question_hash=question_hash, gold_answer="A", answers=answers,
+        normalize_answer=str.upper, match_answer=lambda left, right: left == right,
         tie_break="abstain",
     )
 
 
-def opportunities(
-    answers,
-    counts=(8, 7, 6, 5, 4),
-    gains=(0, 1, 0, -1, -2),
-    question_hash="q",
-):
+def opportunities(answers, question_hash="q"):
     current = team(answers, question_hash)
-    initial = tuple(
-        count - gain for count, gain in zip(counts, gains, strict=True)
-    )
-    rows = tuple(
+    return current, tuple(
         compute_member_aware_repair_opportunity(
-            team_state=current,
-            peer_context=build_peer_vote_context(current, agent),
-            initial_correct_counts=initial,
-            member_correct_counts=counts,
-            member_gains_from_initial=gains,
-            unique_correct_counts=(1, 0, 0, 0, 0),
-            pivotal_correct_counts=(1, 0, 0, 0, 0),
-        )
-        for agent in range(5)
+            team_state=current, peer_context=build_peer_vote_context(current, agent)
+        ) for agent in range(5)
     )
-    return current, rows
 
 
 def state(**overrides):
-    values = dict(
-        assigned_load_by_agent={agent: 0 for agent in range(5)},
-        updates_since_selected_by_agent={agent: 0 for agent in range(5)},
-        accepted_updates_by_agent={agent: 0 for agent in range(5)},
-    )
+    values = {
+        "assigned_load_by_agent": {agent: 0 for agent in range(5)},
+        "updates_since_selected_by_agent": {agent: 0 for agent in range(5)},
+        "accepted_updates_by_agent": {agent: 0 for agent in range(5)},
+        "target_attempt_count_by_agent": {agent: 0 for agent in range(5)},
+    }
     values.update(overrides)
     return ResponsibilityState(**values)
 
@@ -63,22 +42,18 @@ def state(**overrides):
 def assign(current, rows, current_state=None, seed=43, margin=0.05):
     return assign_primary_responsibilities(
         team_states={current.question_hash: current},
-        opportunities={current.question_hash: rows},
-        state=current_state or state(),
-        seed=seed,
-        responsibility_switch_margin=margin,
+        opportunities={current.question_hash: rows}, state=current_state or state(),
+        seed=seed, responsibility_switch_margin=margin,
     )
 
 
-def test_opportunity_has_complete_member_state_and_exact_need_formula():
+def test_opportunity_contains_only_repair_and_local_preservation_fields():
     _, rows = opportunities(["A", "A", "B", "B", "B"])
-    assert rows[4].initial_correct_count == 6
-    assert rows[4].current_correct_count == 4
-    assert rows[4].gain_count == -2
-    assert rows[4].improvement_need == sum((0, 1, 0, -1, -2)) - 5 * -2
-    assert rows[0].improvement_need == 0
-    assert rows[0].unique_correct_count == 1
-    assert rows[0].pivotal_correct_count == 1
+    assert rows[2].repair_vector() == (
+        float(rows[2].direct_vote_fix), rows[2].oracle_soft_utility_gain,
+        float(rows[2].coverage_opportunity), float(rows[2].dominant_wrong_member),
+    )
+    assert not any(name in {"improvement_need", "gain_count", "relative_rank"} for name in rows[2].__dict__)
 
 
 def test_assignment_only_covers_vote_wrong_samples_and_wrong_agents():
@@ -87,293 +62,69 @@ def test_assignment_only_covers_vote_wrong_samples_and_wrong_agents():
     assert owners["q"] in {2, 3, 4}
     assert not assigned[0] and not assigned[1]
     assert audits["q"]["vote_correct"] is False
-
     correct_state, correct_rows = opportunities(["A", "A", "A", "B", "B"])
     owners, assigned, audits = assign(correct_state, correct_rows)
-    assert owners == {}
-    assert all(not rows for rows in assigned.values())
-    assert audits == {}
+    assert owners == {} and all(not rows for rows in assigned.values()) and audits == {}
 
 
-def test_owner_front_uses_all_five_dimensions_and_member_first_preference():
+def test_owner_front_and_lexical_priority_are_repair_only():
     current, rows = opportunities(["A", "A", "B", "B", "B"])
     by_id = {row.agent_id: row for row in rows}
-    # Agent 2 has direct vote leverage; agent 3 has the larger member need.
-    by_id[2] = replace(
-        by_id[2],
-        direct_vote_fix=True,
-        oracle_soft_utility_gain=0.2,
-        improvement_need=1,
-        coverage_opportunity=False,
-        dominant_wrong_member=False,
-    )
-    by_id[3] = replace(
-        by_id[3],
-        direct_vote_fix=False,
-        oracle_soft_utility_gain=0.1,
-        improvement_need=5,
-        coverage_opportunity=False,
-        dominant_wrong_member=False,
-    )
-    # Agent 4 is strictly dominated by agent 3.
-    by_id[4] = replace(
-        by_id[4],
-        direct_vote_fix=False,
-        oracle_soft_utility_gain=0.0,
-        improvement_need=1,
-        coverage_opportunity=False,
-        dominant_wrong_member=False,
-    )
+    by_id[2] = replace(by_id[2], direct_vote_fix=True, oracle_soft_utility_gain=0.2)
+    by_id[3] = replace(by_id[3], direct_vote_fix=False, oracle_soft_utility_gain=0.1)
+    by_id[4] = replace(by_id[4], direct_vote_fix=False, oracle_soft_utility_gain=0.0)
     owners, _, audits = assign(current, tuple(by_id[index] for index in range(5)))
     assert audits["q"]["candidate_pareto_fronts"]["2"] == 1
-    assert audits["q"]["candidate_pareto_fronts"]["3"] == 1
     assert audits["q"]["candidate_pareto_fronts"]["4"] > 1
-    assert owners["q"] == 3
+    assert owners["q"] == 2
 
 
-def test_dominated_previous_owner_switches_despite_inertia():
+def test_owner_inertia_requires_frontier_and_repair_nonweakness():
     current, rows = opportunities(["A", "A", "B", "B", "B"])
     by_id = {row.agent_id: row for row in rows}
-    by_id[2] = replace(
-        by_id[2],
-        direct_vote_fix=True,
-        oracle_soft_utility_gain=1.0,
-        improvement_need=10,
-        coverage_opportunity=True,
-        dominant_wrong_member=True,
-    )
-    by_id[3] = replace(
-        by_id[3],
-        direct_vote_fix=False,
-        oracle_soft_utility_gain=0.0,
-        improvement_need=0,
-        coverage_opportunity=False,
-        dominant_wrong_member=False,
-    )
-    current_state = state(
-        primary_owner_by_question={"q": 3},
-        owner_age_by_question={"q": 4},
-    )
+    by_id[2] = replace(by_id[2], direct_vote_fix=True, coverage_opportunity=True, oracle_soft_utility_gain=1.0)
+    by_id[3] = replace(by_id[3], direct_vote_fix=False, coverage_opportunity=False, oracle_soft_utility_gain=0.0)
     owners, _, audit = assign(
-        current,
-        tuple(by_id[index] for index in range(5)),
-        current_state=current_state,
+        current, tuple(by_id[index] for index in range(5)),
+        current_state=state(primary_owner_by_question={"q": 3}, owner_age_by_question={"q": 4}),
     )
     assert owners["q"] == 2
-    assert audit["q"]["chosen_reason"] == "member_aware_pareto_preference"
+    assert audit["q"]["chosen_reason"] == "repair_only_pareto_preference"
 
 
-def test_all_erroneous_agents_are_target_eligible_without_assignments():
+def test_only_assigned_owners_are_eligible_and_empty_portfolio_is_noop():
     _, rows = opportunities(["B", "B", "B", "B", "B"])
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=state(),
-        seed=42,
-        max_wait_updates=4,
-    )
-    assert {row.agent_id for row in priorities} == set(range(5))
-    assert all(row.assigned_load == 0 for row in priorities)
-    assert select_target_agent(priorities) in range(5)
-
-
-def test_target_priority_uses_current_repair_front_without_candidate_history():
-    _, rows = opportunities(["B", "B", "B", "B", "B"])
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=state(),
-        seed=42,
-        max_wait_updates=4,
-    )
-    selected = select_target_agent(priorities)
-    front = {row.agent_id for row in priorities if row.pareto_front == 1}
-    assert selected in front
-    selected_row = next(row for row in priorities if row.agent_id == selected)
-    assert selected_row.individual_error_count == 1
-    assert isinstance(selected_row.oracle_soft_utility_gain_sum, float)
-
-
-def test_overdue_after_configured_wait_is_selected_first():
-    _, rows = opportunities(["B", "B", "B", "B", "B"])
-    current_state = state(
-        updates_since_selected_by_agent={0: 0, 1: 4, 2: 0, 3: 0, 4: 0}
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=current_state,
-        seed=42,
-        max_wait_updates=4,
-    )
-    assert select_target_agent(priorities) == 1
-
-
-def test_seed_changes_only_exact_symmetric_ties():
-    current, rows = opportunities(
-        ["B", "B", "B", "B", "B"],
-        counts=(5, 5, 5, 5, 5),
-        gains=(0, 0, 0, 0, 0),
-    )
-    winners = set()
-    for seed in range(20):
-        owners, _, _ = assign(current, rows, seed=seed)
-        winners.add(owners["q"])
-    assert len(winners) > 1
-    owners_a, _, _ = assign(current, rows, seed=42)
-    owners_b, _, _ = assign(current, rows, seed=42)
-    assert owners_a == owners_b
-
-
-def test_relative_gain_potential_is_preferred_when_outside_tolerance_band():
-    _, rows = opportunities(
-        ["B", "B", "B", "B", "B"],
-        counts=(5, 5, 5, 5, 5),
-        gains=(0, 6, 0, 0, 0),
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=state(),
-        seed=42,
-        max_wait_updates=4,
-        update_index=0,
-    )
-    selected = select_target_agent(priorities)
-    selected_row = next(row for row in priorities if row.agent_id == selected)
-    assert selected_row.has_relative_improvement_potential
-    assert selected_row.relative_improvement_potential_rank > 0
-
-
-def test_candidate_search_outcome_is_reported_separately_from_potential():
-    current, rows = opportunities(["B", "B", "B", "B", "B"])
-    current_state = state(
-        candidate_search_best_observed_target_gain_by_agent={0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
-        candidate_search_no_positive_candidate_streak_by_agent={0: 2, 1: 0, 2: 0, 3: 0, 4: 0},
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=current_state,
-        seed=42,
-        max_wait_updates=4,
-        update_index=0,
-    )
-    row = next(item for item in priorities if item.agent_id == 0)
-    assert row.candidate_search_outcome.no_positive_candidate_streak == 2
-    assert row.candidate_search_outcome.cooling_down is False
-
-
-def test_target_pool_audit_fields_describe_scheduler_stages():
-    _, rows = opportunities(["B", "B", "B", "B", "B"])
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=state(),
-        seed=42,
-        max_wait_updates=4,
-        update_index=0,
-    )
-    eligible = [row.agent_id for row in priorities if row.individual_error_count > 0]
-    assert eligible == list(range(5))
-    assert all(row.agent_id in eligible for row in priorities)
-
-
-def test_all_cooling_mixed_pool_matches_selector():
-    _, rows = opportunities(
-        ["B", "B", "B", "B", "B"],
-        gains=(0, 1, 0, 1, 0),
-    )
-    current_state = state(
-        candidate_search_cooldown_until_update_by_agent={agent: 10 for agent in range(5)}
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows},
-        assignments={agent: [] for agent in range(5)},
-        state=current_state,
-        seed=42,
-        max_wait_updates=4,
-        update_index=0,
-    )
+    priorities = target_priorities(assignments={agent: [] for agent in range(5)}, state=state(), seed=42, max_wait_updates=8)
     decision = build_target_selection_decision(priorities)
-    assert decision.selection_pool_stage == "search_budget_cooldown_fallback"
-    assert set(decision.actual_candidate_agent_ids) == {
-        row.agent_id for row in priorities if row.individual_error_count > 0
-    }
-    assert decision.selected_agent_id in decision.actual_frontier_agent_ids
+    assert priorities == () and decision.selected_agent_id is None
+    assert decision.no_actionable_reason == "no_actionable_responsibility"
+    priorities = target_priorities(assignments={2: (rows[2],), 4: (rows[4],)}, state=state(), seed=42, max_wait_updates=8)
+    assert {row.agent_id for row in priorities} == {2, 4}
 
 
-def test_relative_gain_tolerance_marks_all_agents_in_band_with_rank_zero():
-    _, rows = opportunities(
-        ["B", "B", "B", "B", "B"],
-        gains=(25, 30, 28, 27, 29),
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
-    )
-    assert all(row.within_relative_gain_band for row in priorities)
-    assert all(row.relative_improvement_potential_rank == 0 for row in priorities)
+def test_target_portfolio_front_and_max_wait_apply_only_to_owners():
+    _, rows = opportunities(["B", "B", "B", "B", "B"])
+    current_state = state(updates_since_selected_by_agent={0: 8, 1: 0, 2: 0, 3: 0, 4: 0})
+    priorities = target_priorities(assignments={0: (), 2: (rows[2],), 4: (rows[4],)}, state=current_state, seed=42, max_wait_updates=8)
+    assert not any(row.agent_id == 0 for row in priorities)
+    assert select_target_agent(priorities) in {2, 4}
+    overdue_state = state(updates_since_selected_by_agent={0: 0, 1: 0, 2: 8, 3: 0, 4: 0})
+    overdue = target_priorities(assignments={2: (rows[2],), 4: (rows[4],)}, state=overdue_state, seed=42, max_wait_updates=8)
+    assert select_target_agent(overdue) == 2
 
 
-def test_relative_gain_rank_is_discrete_tied_and_independent_of_initial_counts():
-    _, rows = opportunities(
-        ["B", "B", "B", "B", "B"],
-        counts=(55, 80, 62, 75, 68), gains=(5, 30, 12, 5, 18),
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
-    )
-    by_id = {row.agent_id: row for row in priorities}
-    assert by_id[0].relative_improvement_potential_rank == by_id[3].relative_improvement_potential_rank == 3
-    assert by_id[2].relative_improvement_potential_rank == 2
-    assert by_id[4].relative_improvement_potential_rank == 1
-    assert by_id[1].relative_improvement_potential_rank == 0
-
-
-def test_lowest_gain_is_selected_when_repair_signals_are_equal():
-    _, rows = opportunities(
-        ["B", "B", "B", "B", "B"], gains=(5, 30, 12, 25, 18),
-    )
-    priorities = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
-    )
-    by_id = {row.agent_id: row for row in priorities}
-    assert [by_id[agent].relative_improvement_potential_rank for agent in range(5)] == [3, 0, 2, 0, 1]
-    assert select_target_agent(priorities) == 0
-
-
-def test_candidate_search_history_never_changes_relative_potential_rank():
-    _, rows = opportunities(["B", "B", "B", "B", "B"], gains=(5, 30, 12, 25, 18))
-    baseline = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(), seed=42, max_wait_updates=8,
-    )
-    changed = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(
-            candidate_search_best_observed_target_gain_by_agent={0: 99},
-            candidate_search_no_positive_candidate_streak_by_agent={0: 99},
-        ), seed=42, max_wait_updates=8,
-    )
-    assert [row.relative_improvement_potential_rank for row in changed] == [
-        row.relative_improvement_potential_rank for row in baseline
-    ]
+def test_owner_and_target_selection_are_invariant_to_removed_competence_state():
+    current, rows = opportunities(["B", "B", "B", "B", "B"])
+    first = assign(current, rows, current_state=state())[0]
+    second = assign(current, rows, current_state=state(accepted_updates_by_agent={agent: 99 for agent in range(5)}))[0]
+    assert first == second
+    priorities_a = target_priorities(assignments={2: (rows[2],), 4: (rows[4],)}, state=state(), seed=42, max_wait_updates=8)
+    priorities_b = target_priorities(assignments={2: (rows[2],), 4: (rows[4],)}, state=state(accepted_updates_by_agent={agent: 99 for agent in range(5)}), seed=42, max_wait_updates=8)
+    assert priorities_a == priorities_b
 
 
 def test_wait_eight_becomes_overdue_only_at_eight_updates():
     _, rows = opportunities(["B", "B", "B", "B", "B"])
-    at_seven = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(updates_since_selected_by_agent={0: 7, 1: 0, 2: 0, 3: 0, 4: 0}),
-        seed=42, max_wait_updates=8,
-    )
-    at_eight = target_priorities(
-        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
-        state=state(updates_since_selected_by_agent={0: 8, 1: 0, 2: 0, 3: 0, 4: 0}),
-        seed=42, max_wait_updates=8,
-    )
-    assert not next(row for row in at_seven if row.agent_id == 0).overdue
-    assert next(row for row in at_eight if row.agent_id == 0).overdue
+    at_seven = target_priorities(assignments={0: (rows[0],)}, state=state(updates_since_selected_by_agent={0: 7, 1: 0, 2: 0, 3: 0, 4: 0}), seed=42, max_wait_updates=8)
+    at_eight = target_priorities(assignments={0: (rows[0],)}, state=state(updates_since_selected_by_agent={0: 8, 1: 0, 2: 0, 3: 0, 4: 0}), seed=42, max_wait_updates=8)
+    assert not at_seven[0].overdue and at_eight[0].overdue

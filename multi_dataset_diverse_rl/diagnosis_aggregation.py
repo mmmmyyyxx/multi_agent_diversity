@@ -22,7 +22,6 @@ class FailureFamily(str, Enum):
     COVERAGE_FAILURE = "coverage_failure"
     CONVERSION_FAILURE = "conversion_failure"
     DOMINANT_WRONG = "dominant_wrong"
-    MEMBER_COMPETENCE = "member_competence"
     PRESERVATION = "preservation"
 
 
@@ -164,7 +163,6 @@ def _repair_goal(family: FailureFamily, state: TeamVoteState) -> str:
         FailureFamily.COVERAGE_FAILURE: "introduce_first_gold_vote",
         FailureFamily.CONVERSION_FAILURE: "convert_existing_gold_coverage",
         FailureFamily.DOMINANT_WRONG: "exit_dominant_wrong_cluster",
-        FailureFamily.MEMBER_COMPETENCE: "improve_target_member_competence",
         FailureFamily.PRESERVATION: "preserve_unique_or_pivotal_correctness",
     }[family]
 
@@ -182,8 +180,6 @@ def _families(
         rows.append(FailureFamily.CONVERSION_FAILURE)
     if opportunity.dominant_wrong_member:
         rows.append(FailureFamily.DOMINANT_WRONG)
-    if opportunity.member_error and opportunity.improvement_need > 0:
-        rows.append(FailureFamily.MEMBER_COMPETENCE)
     if opportunity.unique_correct or opportunity.pivotal_correct:
         rows.append(FailureFamily.PRESERVATION)
     return tuple(rows)
@@ -198,6 +194,7 @@ def _build_pattern_cases(
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     assigned_hashes: set[str],
     owner_age_by_question: Mapping[str, int],
+    context_policy: str,
 ) -> list[_PatternCase]:
     example_by_hash = {row.question_hash: row for row in examples}
     opportunity_by_hash = {
@@ -207,6 +204,12 @@ def _build_pattern_cases(
     result: list[_PatternCase] = []
     for state in states:
         opportunity = opportunity_by_hash[state.question_hash]
+        if (
+            context_policy == "member_aware_responsibility_conditioned"
+            and state.question_hash not in assigned_hashes
+            and not (opportunity.unique_correct or opportunity.pivotal_correct)
+        ):
+            continue
         peer = peer_contexts[state.question_hash][target_agent_id]
         example = example_by_hash[state.question_hash]
         roles = answer_role_signature(state)
@@ -298,7 +301,6 @@ def select_patterns(
     patterns: Sequence[AggregatedFailurePattern],
     *,
     context_policy: str,
-    target_improvement_need: int,
     max_patterns: int,
 ) -> tuple[AggregatedFailurePattern, ...]:
     if max_patterns < 0:
@@ -351,16 +353,6 @@ def select_patterns(
                 FailureFamily.DOMINANT_WRONG.value,
             },
             _descending,
-        )
-        add(
-            {FailureFamily.MEMBER_COMPETENCE.value},
-            lambda row: (
-                target_improvement_need,
-                row.direct_vote_fix_count,
-                row.case_count,
-                row.max_oracle_soft_utility_gain,
-                row.pattern_id,
-            ),
         )
         add({FailureFamily.PRESERVATION.value}, preservation_key)
     else:
@@ -439,7 +431,6 @@ def aggregate_probe_diagnosis(
     assigned_hashes: set[str],
     owner_age_by_question: Mapping[str, int],
     context_policy: str,
-    target_improvement_need: int,
     max_patterns: int = 3,
     max_cases: int = 3,
 ) -> DiagnosisAggregation:
@@ -453,12 +444,12 @@ def aggregate_probe_diagnosis(
         opportunities=opportunities,
         assigned_hashes=assigned_hashes,
         owner_age_by_question=owner_age_by_question,
+        context_policy=context_policy,
     )
     patterns, members = aggregate_patterns(rows)
     selected = select_patterns(
         patterns,
         context_policy=context_policy,
-        target_improvement_need=target_improvement_need,
         max_patterns=max_patterns,
     )
     evidence = select_representative_cases(

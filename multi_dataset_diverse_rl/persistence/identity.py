@@ -32,8 +32,10 @@ from ..versions import (
     CHECKPOINT_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     PRESERVATION_POLICY_VERSION,
+    RESPONSIBILITY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
+    TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
 )
 
@@ -95,7 +97,7 @@ def config_fingerprint(cfg: Config) -> str:
     }
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
-        "responsibility": "five_axis_member_need_pareto_v2",
+        "responsibility": RESPONSIBILITY_VERSION,
         "target_selection": TARGET_SELECTION_VERSION,
         "pareto_preference": "member_first_candidate_preference_v1",
         "stage_a": "team_vote_worst_mean_v2",
@@ -105,7 +107,7 @@ def config_fingerprint(cfg: Config) -> str:
         "evaluation_protocol": EVALUATION_PROTOCOL_VERSION,
         "checkpoint_selection": CHECKPOINT_SELECTION_VERSION,
         "test_isolation": TEST_ISOLATION_VERSION,
-        "tcs_context": "aggregated_diagnosis_context_v1",
+        "tcs_context": TCS_CONTEXT_VERSION,
         "diagnosis_aggregation": DIAGNOSIS_AGGREGATION_VERSION,
         "answer_role_encoding": ANSWER_ROLE_ENCODING_VERSION,
         "pattern_selection": PATTERN_SELECTION_VERSION,

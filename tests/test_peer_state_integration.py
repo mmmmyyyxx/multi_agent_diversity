@@ -82,7 +82,7 @@ def test_full_aggregated_chain_accepts_and_refreshes_once_per_transition(tmp_pat
     assert changed
     assert system.responsibility_refresh_count == before + 1
     audit = system.tcs_context_history[-1]
-    assert audit["context_type"] == "MemberAwareDiagnosisContext"
+    assert audit["context_type"] == "AssignedResidualDiagnosisContext"
     assert audit["full_probe_case_count"] == 3
     assert audit["selected_pattern_count"] <= 3
     assert audit["selected_case_count"] <= 3
@@ -440,33 +440,22 @@ def test_pipeline_failure_does_not_masquerade_as_rollout_rejection(tmp_path):
     assert outcome.rejection_reasons == ()
 
 
-def test_pipeline_failure_does_not_update_candidate_search_outcome(tmp_path):
+def test_pipeline_failure_has_no_scheduler_search_state(tmp_path):
     system = build_system(tmp_path)
     async def run():
         await initialize(system)
         system.ensure_responsibility_current()
-        before = (
-            dict(system.responsibility_state.candidate_search_best_observed_target_gain_by_agent),
-            dict(system.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent),
-            dict(system.responsibility_state.candidate_search_cooldown_until_update_by_agent),
-        )
         async def no_candidates(*_args, **_kwargs):
             return []
         system.propose_candidates = no_candidates
         await system.update_once(0)
-        after = (
-            system.responsibility_state.candidate_search_best_observed_target_gain_by_agent,
-            system.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent,
-            system.responsibility_state.candidate_search_cooldown_until_update_by_agent,
-        )
-        return before, after
-    before, after = asyncio.run(run())
-    assert before == after
+        return system.candidate_decisions[-1]
+    decision = asyncio.run(run())
+    assert decision["candidate_search_outcome_updated"] is False
 
 
-def test_candidate_search_outcome_clears_streak_on_positive_but_rejected_attempt(tmp_path):
+def test_observed_candidate_gain_is_audit_only(tmp_path):
     system = build_system(tmp_path)
-    system.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[0] = 2
     candidate = SimpleNamespace(
         member_gain=SimpleNamespace(target_gain_vs_incumbent=4)
     )
@@ -477,12 +466,10 @@ def test_candidate_search_outcome_clears_streak_on_positive_but_rejected_attempt
     )
     assert gain == 4
     assert cooldown == 0
-    assert system.responsibility_state.candidate_search_best_observed_target_gain_by_agent[0] == 4
-    assert system.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[0] == 0
-    assert system.responsibility_state.candidate_search_cooldown_until_update_by_agent[0] == 4
+    assert not any("candidate_search" in name for name in system.responsibility_state.__dict__)
 
 
-def test_candidate_search_outcome_adds_bounded_cooldown_for_nonpositive_attempts(tmp_path):
+def test_nonpositive_observation_creates_no_cooldown(tmp_path):
     system = build_system(tmp_path)
     candidate = SimpleNamespace(
         member_gain=SimpleNamespace(target_gain_vs_incumbent=0)
@@ -493,9 +480,8 @@ def test_candidate_search_outcome_adds_bounded_cooldown_for_nonpositive_attempts
         stage_b_evaluations=[candidate],
     )
     assert gain == 0
-    assert cooldown == 1
-    assert system.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[0] == 1
-    assert system.responsibility_state.candidate_search_cooldown_until_update_by_agent[0] == 5
+    assert cooldown == 0
+    assert not any("cooldown" in name for name in system.responsibility_state.__dict__)
 
 
 def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):

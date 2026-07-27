@@ -89,7 +89,7 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         "terminal_invalid_nonregression_passed", "rejection_reasons",
     )
     decision_keys = (
-        "update_index", "target_agent_id", "assigned_question_hashes",
+        "update_index", "update_lane", "stop_reason", "target_agent_id", "target_assigned_residual_count", "assigned_question_hashes",
         "max_wait_fairness_trigger_count", "best_attempt_target_gain",
         "positive_target_gain_candidate_found", "candidate_search_outcome_updated",
         "cooldown_length_assigned", "accepted_prompt_hash",
@@ -110,16 +110,14 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def responsibility_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
-        "team_state_version", "member_gain_counts", "minimum_member_gain_count",
-        "total_member_gain_count", "improvement_need_by_agent",
-        "protection_counts_by_agent", "owner_distribution", "owners",
+        "artifact_schema_version", "team_state_version", "owner_distribution", "owners",
         "owner_switch_count", "owner_age", "assigned_load_by_agent",
         "direct_fix_responsibility_count", "coverage_responsibility_count",
         "dominant_wrong_responsibility_count", "owner_candidate_pareto_fronts",
         "owner_chosen_reasons", "owner_assignment_audit", "assigned_opportunities",
     )
     return [
-        {"artifact_schema_version": "sanitized_responsibility_assignment_v1", **pick(row, keys)}
+        {"artifact_schema_version": "sanitized_repair_only_responsibility_assignment_v1", **pick(row, keys)}
         for row in rows
     ]
 
@@ -169,13 +167,12 @@ def specialization_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def priority_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
         "update_index", "overdue_first", "selection_pool_stage", "eligible_agent_ids",
-        "overdue_agent_ids", "non_cooling_agent_ids", "relative_potential_agent_ids",
+        "overdue_agent_ids", "no_actionable_reason",
         "actual_candidate_agent_ids", "actual_candidate_pareto_fronts",
-        "actual_frontier_agent_ids", "search_budget_cooldown_fallback",
-        "relative_potential_pool_used", "selected_agent_id",
+        "actual_frontier_agent_ids", "selected_agent_id",
     )
     return [
-        {"artifact_schema_version": "sanitized_target_priority_audit_v1", **pick(row, keys),
+        {"artifact_schema_version": "sanitized_responsibility_portfolio_audit_v1", **pick(row, keys),
          "priorities": sanitize(row.get("priorities", []))}
         for row in rows
     ]

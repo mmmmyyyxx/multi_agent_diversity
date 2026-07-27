@@ -1,0 +1,44 @@
+[
+  {
+    "label": "H0",
+    "period": "pre-member-aware peer-state",
+    "owner_semantics": "repair evidence with distinct all-agent target selection",
+    "replay": "unavailable",
+    "evidence": "source inspection only"
+  },
+  {
+    "label": "H1",
+    "period": "member-aware v1",
+    "owner_semantics": "owner vector included improvement_need",
+    "replay": "unavailable",
+    "evidence": "source inspection only"
+  },
+  {
+    "label": "A",
+    "period": "v11 archived behavior",
+    "owner_semantics": "five-axis owner and global-error target pool",
+    "replay": "available: 32 archived target decisions",
+    "evidence": "candidate_decisions_sanitized"
+  },
+  {
+    "label": "B",
+    "period": "repair-only historical owner replay",
+    "owner_semantics": "four repair axes only",
+    "replay": "available: 14 observed states",
+    "evidence": "owner_policy_replay"
+  },
+  {
+    "label": "P",
+    "period": "fec8f8d",
+    "owner_semantics": "relative-gain potential precedes team repair",
+    "replay": "source/audit only",
+    "evidence": "scheduler_rank_direction_summary"
+  },
+  {
+    "label": "R",
+    "period": "v5 proposed",
+    "owner_semantics": "repair-only owner plus assigned-portfolio target",
+    "replay": "available: 14 observed states",
+    "evidence": "this report"
+  }
+]

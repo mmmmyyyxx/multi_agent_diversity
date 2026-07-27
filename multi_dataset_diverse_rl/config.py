@@ -38,7 +38,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v4"
+    method_version: str = "member_aware_peer_state_v5"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -84,7 +84,6 @@ class PeerStateConfig:
 class ResponsibilityConfig:
     responsibility_switch_margin: float = 0.05
     responsibility_max_wait_updates: int = 8
-    relative_gain_tolerance_count: int = 5
 
 
 @dataclass(frozen=True)

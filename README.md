@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v4`).
+(`member_aware_peer_state_v5`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -115,7 +115,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v11 run identity;
+checkpoint-v13 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 

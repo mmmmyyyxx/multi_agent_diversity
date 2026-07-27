@@ -165,20 +165,6 @@ def evaluate_candidate_profile(
         )
         for answer, example in zip(candidate_profile, examples, strict=True)
     )
-    active_gains = [
-        current_count - initial_count
-        for current_count, initial_count in zip(
-            incumbent_member_counts, initial_member_counts, strict=True
-        )
-    ]
-    candidate_gains = [
-        current_count - initial_count
-        for current_count, initial_count in zip(
-            candidate_member_counts, initial_member_counts, strict=True
-        )
-    ]
-    zero_protection_counts = (0,) * 5
-
     for index, example in enumerate(examples):
         active_answers = [profile[index].answer for profile in active_profiles]
         active_validity = [profile[index].valid for profile in active_profiles]
@@ -209,21 +195,11 @@ def evaluate_candidate_profile(
         current_opportunity = compute_member_aware_repair_opportunity(
             team_state=current,
             peer_context=build_peer_vote_context(current, target_agent_id),
-            initial_correct_counts=initial_member_counts,
-            member_correct_counts=incumbent_member_counts,
-            member_gains_from_initial=active_gains,
-            unique_correct_counts=zero_protection_counts,
-            pivotal_correct_counts=zero_protection_counts,
             tau=tau,
         )
         candidate_opportunity = compute_member_aware_repair_opportunity(
             team_state=candidate,
             peer_context=build_peer_vote_context(candidate, target_agent_id),
-            initial_correct_counts=initial_member_counts,
-            member_correct_counts=candidate_member_counts,
-            member_gains_from_initial=candidate_gains,
-            unique_correct_counts=zero_protection_counts,
-            pivotal_correct_counts=zero_protection_counts,
             tau=tau,
         )
         candidate_correct = candidate.team_correctness[target_agent_id]

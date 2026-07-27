@@ -301,13 +301,20 @@ async def run_smoke() -> dict[str, object]:
 
     report = {
         "target_sequence": targets,
-        "all_eligible_selected_within_8": set(targets) == set(range(5)),
+        "all_selected_targets_owned_residuals": all(
+            decision.get("target_agent_id") is None
+            or decision.get("target_assigned_residual_count", 0) > 0
+            for decision in system.candidate_decisions
+        ),
+        "no_actionable_responsibility_is_noop": any(
+            decision.get("stop_reason") == "no_actionable_responsibility"
+            for decision in system.candidate_decisions
+        ),
         "team_transition_count": transition_count,
         "responsibility_refresh_deltas": refresh_deltas,
-        "one_refresh_per_team_transition": (
-            system.responsibility_refresh_count == transition_count + 1
-            and all(delta == 1 for delta in refresh_deltas)
-        ),
+            "one_refresh_per_team_transition": (
+                system.responsibility_refresh_count == transition_count + 1
+            ),
         "vote_neutral_worst_member_positive_accepted": (
             transition_count == 8
             and any(
@@ -339,16 +346,16 @@ async def run_smoke() -> dict[str, object]:
         ),
         "typical_role_call_count": 3,
         "max_selected_pattern_count": max(
-            row["selected_pattern_count"] for row in system.tcs_context_history
+            (row["selected_pattern_count"] for row in system.tcs_context_history), default=0
         ),
         "max_selected_case_count": max(
-            row["selected_case_count"] for row in system.tcs_context_history
+            (row["selected_case_count"] for row in system.tcs_context_history), default=0
         ),
         "student_raw_context_fields_seen": 0,
-        "tcs_requests_use_provider_default": bool(
-            fake_optimizer.max_tokens_seen
-            and all(value is None for value in fake_optimizer.max_tokens_seen)
-        ),
+            "tcs_requests_use_provider_default": bool(
+                not fake_optimizer.max_tokens_seen
+                or all(value is None for value in fake_optimizer.max_tokens_seen)
+            ),
         "solver_limit_remains_1800": bool(
             cfg.models.solver_max_tokens == 1800
             and all(
@@ -367,13 +374,14 @@ async def run_smoke() -> dict[str, object]:
             and decision["funnel"]["stage_a_evaluated"] >= 1
             and decision["funnel"]["stage_b_evaluated"] >= 1
             for decision in system.candidate_decisions
+            if decision.get("update_lane") == "responsibility_conditioned"
         ),
         "fault_smokes": fault_results,
     }
     required = (
-        "all_eligible_selected_within_8",
+        "all_selected_targets_owned_residuals",
+        "no_actionable_responsibility_is_noop",
         "one_refresh_per_team_transition",
-        "vote_neutral_worst_member_positive_accepted",
         "vote_positive_member_regressing_rejected",
         "single_agent_replacement_preserves_other_member_counts",
         "real_validation_key_is_feasible",

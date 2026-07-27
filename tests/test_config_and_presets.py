@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v4",
+        method_version="member_aware_peer_state_v5",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,7 +43,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v4"
+    assert cfg.training.method_version == "member_aware_peer_state_v5"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
@@ -109,7 +109,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["tie_policy"] == "abstain"
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
-    assert metadata["tcs_protocol_version"] == "aggregated_small_model_tcs_v4"
+    assert metadata["tcs_protocol_version"] == "assigned_residual_only_context_v1"
     assert metadata["candidate_acceptance_version"] == (
         "aggregate_nondegrading_target_improvement_v1"
     )
@@ -138,7 +138,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert "prompt_memory_search_enabled" not in metadata
 
 
-def test_v4_behavior_versions_are_consistent(tmp_path):
+def test_v5_behavior_versions_are_consistent(tmp_path):
     system = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path)))
     system.set_run_identity(identity())
     metadata = system.run_meta()

@@ -83,7 +83,7 @@ from .tcs import (
     AccuracyDiagnosisContext,
     AnyDiagnosisContext,
     CriticDecision,
-    MemberAwareDiagnosisContext,
+    AssignedResidualDiagnosisContext,
     PeerStateDiagnosisContext,
     PreviousUpdateOutcome,
     StudentPromptCandidate,
@@ -118,8 +118,10 @@ from .versions import (
     EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
+    RESPONSIBILITY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
+    TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
 )
 
@@ -255,11 +257,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v4 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v5 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v4 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v5 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v4 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v5 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -296,15 +298,6 @@ class PromptEnsembleOptimizationSystem:
             assigned_load_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             updates_since_selected_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
-            candidate_search_best_observed_target_gain_by_agent={
-                agent_id: 0 for agent_id in range(cfg.training.agents)
-            },
-            candidate_search_no_positive_candidate_streak_by_agent={
-                agent_id: 0 for agent_id in range(cfg.training.agents)
-            },
-            candidate_search_cooldown_until_update_by_agent={
-                agent_id: 0 for agent_id in range(cfg.training.agents)
-            },
             target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
         )
         self.history: list[dict[str, Any]] = []
@@ -338,6 +331,8 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state_version = -1
         self.responsibility_refresh_count = 0
         self.target_priority_audit: list[dict[str, Any]] = []
+        self.responsibility_service_trajectory: list[dict[str, Any]] = []
+        self.target_owner_context_alignment: list[dict[str, Any]] = []
         self.previous_update_outcomes = {
             agent_id: PreviousUpdateOutcome() for agent_id in range(5)
         }
@@ -692,14 +687,6 @@ class PromptEnsembleOptimizationSystem:
         states: list[TeamVoteState] = []
         contexts: dict[str, dict[int, PeerVoteContext]] = {}
         opportunities: dict[str, tuple[MemberAwareRepairOpportunity, ...]] = {}
-        member_correct_counts = self._member_correct_counts(self.active_profiles)
-        initial_correct_counts = self._member_correct_counts(self.initial_profiles)
-        member_gains = tuple(
-            current - initial
-            for current, initial in zip(
-                member_correct_counts, initial_correct_counts, strict=True
-            )
-        )
         for index, example in enumerate(self.fixed_probe.examples):
             state = build_team_vote_state(
                 question_hash=example.question_hash,
@@ -714,38 +701,12 @@ class PromptEnsembleOptimizationSystem:
             peer_by_agent = {agent_id: build_peer_vote_context(state, agent_id) for agent_id in range(5)}
             states.append(state)
             contexts[state.question_hash] = peer_by_agent
-        unique_correct_counts = tuple(
-            sum(
-                int(
-                    state.team_correctness[agent_id]
-                    and contexts[state.question_hash][agent_id].peer_gold_vote_count == 0
-                )
-                for state in states
-            )
-            for agent_id in range(5)
-        )
-        pivotal_correct_counts = tuple(
-            sum(
-                int(
-                    state.team_correctness[agent_id]
-                    and state.vote_correct
-                    and contexts[state.question_hash][agent_id].peer_margin <= 0
-                )
-                for state in states
-            )
-            for agent_id in range(5)
-        )
         for state in states:
             peer_by_agent = contexts[state.question_hash]
             opportunities[state.question_hash] = tuple(
                 compute_member_aware_repair_opportunity(
                     team_state=state,
                     peer_context=peer_by_agent[agent_id],
-                    initial_correct_counts=initial_correct_counts,
-                    member_correct_counts=member_correct_counts,
-                    member_gains_from_initial=member_gains,
-                    unique_correct_counts=unique_correct_counts,
-                    pivotal_correct_counts=pivotal_correct_counts,
                     tau=self.cfg.peer_state.soft_vote_tau,
                 )
                 for agent_id in range(5)
@@ -780,29 +741,19 @@ class PromptEnsembleOptimizationSystem:
             question_hash in old_owners and old_owners[question_hash] != owner
             for question_hash, owner in owners.items()
         )
+        for question_hash, audit in owner_audits.items():
+            team_state = state_by_hash[question_hash]
+            audit.update({
+                "G": team_state.gold_vote_count,
+                "H": team_state.largest_wrong_vote_count,
+                "M": team_state.plurality_margin,
+                "owner_age": self.responsibility_state.owner_age_by_question.get(question_hash, 0),
+            })
         rows = [row for values in assigned.values() for row in values]
-        member_gain_state = self.current_team_member_gain_state()
-        first_question_rows = next(iter(opportunities.values()), ())
-        opportunity_by_agent = {
-            row.agent_id: row for row in first_question_rows
-        }
         self.peer_state_history.extend(asdict(state) for state in states)
         self.responsibility_assignments.append({
+            "artifact_schema_version": "repair_only_responsibility_assignments_v1",
             "team_state_version": self.team_state_version,
-            "member_gain_counts": member_gain_state["gain_counts"],
-            "minimum_member_gain_count": member_gain_state["minimum_gain_count"],
-            "total_member_gain_count": member_gain_state["total_gain_count"],
-            "improvement_need_by_agent": {
-                str(agent_id): opportunity_by_agent[agent_id].improvement_need
-                for agent_id in sorted(opportunity_by_agent)
-            },
-            "protection_counts_by_agent": {
-                str(agent_id): {
-                    "unique_correct_count": opportunity_by_agent[agent_id].unique_correct_count,
-                    "pivotal_correct_count": opportunity_by_agent[agent_id].pivotal_correct_count,
-                }
-                for agent_id in sorted(opportunity_by_agent)
-            },
             "owner_distribution": {
                 str(agent_id): sum(owner == agent_id for owner in owners.values()) for agent_id in range(5)
             },
@@ -826,12 +777,18 @@ class PromptEnsembleOptimizationSystem:
                 str(agent_id): [asdict(row) for row in values] for agent_id, values in assigned.items()
             },
         })
+        self.responsibility_service_trajectory.append({
+            "team_state_version": self.team_state_version,
+            "owner_distribution": dict(self.responsibility_state.assigned_load_by_agent),
+            "owner_switch_count": owner_switch_count,
+            "owner_age_by_question": dict(self.responsibility_state.owner_age_by_question),
+        })
         for state in states:
             question_hash = state.question_hash
             owner_audit = owner_audits.get(question_hash, {})
             for opportunity in opportunities[question_hash]:
                 self.member_opportunities.append({
-                    "artifact_schema_version": "member_opportunities_v1",
+                    "artifact_schema_version": "repair_only_member_opportunities_v1",
                     "team_state_version": self.team_state_version,
                     "question_hash": question_hash,
                     "G": state.gold_vote_count,
@@ -870,19 +827,13 @@ class PromptEnsembleOptimizationSystem:
         self,
         assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
         update_index: int,
-    ) -> tuple[int, bool, list[dict[str, Any]]]:
+    ) -> tuple[int | None, bool, list[dict[str, Any]]]:
         max_wait = self.cfg.responsibility.responsibility_max_wait_updates
-        _, _, opportunities = self.current_states_and_opportunities()
         priorities = target_priorities(
-            opportunities=opportunities,
             assignments=assigned,
             state=self.responsibility_state,
             seed=self.cfg.training.seed,
             max_wait_updates=max_wait,
-            relative_gain_tolerance_count=(
-                self.cfg.responsibility.relative_gain_tolerance_count
-            ),
-            update_index=update_index,
         )
         fairness = any(row.overdue for row in priorities)
         if self.protocol.target_selection_policy == "round_robin":
@@ -898,7 +849,6 @@ class PromptEnsembleOptimizationSystem:
         priority_payload = [
             {
                 **asdict(row),
-                "protection_risk": row.protection_risk,
                 "selected": row.agent_id == target,
             }
             for row in priorities
@@ -907,13 +857,11 @@ class PromptEnsembleOptimizationSystem:
             pool_stage = selection.selection_pool_stage
             eligible_ids = list(selection.eligible_agent_ids)
             overdue_ids = list(selection.overdue_agent_ids)
-            non_cooling_ids = list(selection.non_cooling_agent_ids)
-            relative_potential_ids = list(selection.relative_potential_agent_ids)
             actual_ids = list(selection.actual_candidate_agent_ids)
             actual_fronts = selection.actual_candidate_pareto_fronts
             actual_frontier_ids = list(selection.actual_frontier_agent_ids)
         else:
-            eligible_ids = overdue_ids = non_cooling_ids = relative_potential_ids = []
+            eligible_ids = overdue_ids = []
             actual_ids = []
             actual_fronts = {}
             actual_frontier_ids = []
@@ -925,8 +873,6 @@ class PromptEnsembleOptimizationSystem:
             "selection_pool_stage": pool_stage,
             "eligible_agent_ids": eligible_ids,
             "overdue_agent_ids": overdue_ids,
-            "non_cooling_agent_ids": non_cooling_ids,
-            "relative_potential_agent_ids": relative_potential_ids,
             "actual_candidate_agent_ids": actual_ids,
             "actual_candidate_pareto_fronts": {
                 str(agent_id): actual_fronts[agent_id] for agent_id in actual_ids
@@ -934,12 +880,7 @@ class PromptEnsembleOptimizationSystem:
             "actual_frontier_agent_ids": [
                 agent_id for agent_id in actual_frontier_ids
             ],
-            "search_budget_cooldown_fallback": (
-                pool_stage == "search_budget_cooldown_fallback"
-            ),
-            "relative_potential_pool_used": (
-                pool_stage == "relative_improvement_potential"
-            ),
+            "no_actionable_reason": selection.no_actionable_reason if self.protocol.target_selection_policy == "member_aware_responsibility" else "",
             "selected_agent_id": target,
         })
         return target, fairness, priority_payload
@@ -1074,10 +1015,6 @@ class PromptEnsembleOptimizationSystem:
         target_rows = [
             opportunities[state.question_hash][target_agent_id] for state in states
         ]
-        target_improvement_need = max(
-            (row.improvement_need for row in target_rows if row.member_error),
-            default=0,
-        )
         aggregation = aggregate_probe_diagnosis(
             target_agent_id=target_agent_id,
             examples=self.fixed_probe.examples,
@@ -1087,7 +1024,6 @@ class PromptEnsembleOptimizationSystem:
             assigned_hashes=assigned_hashes,
             owner_age_by_question=self.responsibility_state.owner_age_by_question,
             context_policy=self.protocol.tcs_context_policy,
-            target_improvement_need=target_improvement_need,
             max_patterns=self.cfg.tcs.tcs_max_pattern_summaries,
             max_cases=self.cfg.tcs.tcs_max_evidence_cases,
         )
@@ -1122,28 +1058,8 @@ class PromptEnsembleOptimizationSystem:
                 ),
             )
         elif self.protocol.tcs_context_policy == "member_aware_responsibility_conditioned":
-            current_counts = tuple(
-                sum(
-                    int(answer.valid and self.match_answer(answer.answer, example.gold_answer))
-                    for answer, example in zip(profile, self.fixed_probe.examples, strict=True)
-                )
-                for profile in self.active_profiles
-            )
-            initial_counts = tuple(
-                sum(
-                    int(answer.valid and self.match_answer(answer.answer, example.gold_answer))
-                    for answer, example in zip(profile, self.fixed_probe.examples, strict=True)
-                )
-                for profile in self.initial_profiles
-            )
-            context = MemberAwareDiagnosisContext(
+            context = AssignedResidualDiagnosisContext(
                 **common,
-                member_correct_counts=current_counts,
-                member_gains_from_initial=tuple(
-                    current - initial
-                    for current, initial in zip(current_counts, initial_counts, strict=True)
-                ),
-                target_improvement_need=target_improvement_need,
                 assigned_residual_count=len(assigned_hashes),
             )
         else:
@@ -2410,31 +2326,14 @@ class PromptEnsembleOptimizationSystem:
         update_index: int,
         stage_b_evaluations: Sequence[CandidateEvaluation],
     ) -> tuple[int | None, int]:
-        """Record proposal-search outcomes and bounded search-budget cooldown."""
+        """Expose observed proposal quality as audit-only data, never scheduling state."""
         if not stage_b_evaluations:
             return None, 0
         best_attempt_target_gain = max(
             row.member_gain.target_gain_vs_incumbent
             for row in stage_b_evaluations
         )
-        if best_attempt_target_gain > 0:
-            self.responsibility_state.candidate_search_best_observed_target_gain_by_agent[target] = max(
-                self.responsibility_state.candidate_search_best_observed_target_gain_by_agent.get(target, 0),
-                best_attempt_target_gain,
-            )
-            self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[target] = 0
-            self.responsibility_state.candidate_search_cooldown_until_update_by_agent[target] = update_index + 1
-            return best_attempt_target_gain, 0
-        streak = (
-            self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent.get(target, 0)
-            + 1
-        )
-        self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[target] = streak
-        cooldown_length = min(streak, 2)
-        self.responsibility_state.candidate_search_cooldown_until_update_by_agent[target] = (
-            update_index + 1 + cooldown_length
-        )
-        return best_attempt_target_gain, cooldown_length
+        return best_attempt_target_gain, 0
 
     async def update_once(self, update_index: int) -> bool:
         if not self.protocol.optimization_enabled:
@@ -2452,11 +2351,31 @@ class PromptEnsembleOptimizationSystem:
             assigned,
             update_index,
         )
+        if target is None:
+            self.candidate_decisions.append({
+                "update_index": update_index,
+                "update_lane": "no_actionable_responsibility",
+                "target_agent_id": None,
+                "target_assigned_residual_count": 0,
+                "assigned_question_hashes": [],
+                "stop_reason": "no_actionable_responsibility",
+                "agent_target_priorities": target_priorities_payload,
+                "funnel": asdict(CandidateFunnel()),
+                "candidates": [],
+            })
+            self.responsibility_service_trajectory.append({
+                "update_index": update_index,
+                "event": "no_actionable_responsibility",
+                "selected_agent_id": None,
+            })
+            return False
         self.agent_selection_counts[target] += 1
         self.responsibility_state.target_attempt_count_by_agent[target] = (
             self.responsibility_state.target_attempt_count_by_agent.get(target, 0) + 1
         )
         assigned_hashes = {question_hash for question_hash, owner in owners.items() if owner == target}
+        if self.protocol.target_selection_policy == "member_aware_responsibility" and not assigned_hashes:
+            raise AssertionError("member-aware target must own at least one residual")
         funnel = CandidateFunnel()
         candidates = await self.propose_candidates(
             target, assigned_hashes, funnel, update_index=update_index,
@@ -2478,9 +2397,15 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
         decision = {
             "update_index": update_index,
+            "update_lane": (
+                "responsibility_conditioned"
+                if self.protocol.target_selection_policy == "member_aware_responsibility"
+                else "protocol_control"
+            ),
             "target_agent_id": target,
             "agent_selection_distribution": dict(self.agent_selection_counts),
             "assigned_question_hashes": sorted(assigned_hashes),
+            "target_assigned_residual_count": len(assigned_hashes),
             "max_wait_fairness_trigger_count": int(fairness_triggered),
             "agent_target_priorities": target_priorities_payload,
             "best_attempt_target_gain": best_attempt_target_gain,
@@ -2509,6 +2434,14 @@ class PromptEnsembleOptimizationSystem:
             ],
         }
         self.candidate_decisions.append(decision)
+        self.target_owner_context_alignment.append({
+            "update_index": update_index,
+            "target_agent_id": target,
+            "update_lane": decision["update_lane"],
+            "target_assigned_residual_count": len(assigned_hashes),
+            "nonassigned_residual_in_context": False,
+            "assertion_passed": bool(assigned_hashes) or self.protocol.target_selection_policy != "member_aware_responsibility",
+        })
         if accepted is None:
             empirical_evaluation_completed = funnel.stage_a_evaluated > 0
             rejection_reasons = sorted({
@@ -2901,21 +2834,18 @@ class PromptEnsembleOptimizationSystem:
             "max_wait_trigger": int(
                 decision.get("max_wait_fairness_trigger_count", 0)
             ),
-            "relative_improvement_potential": {
+            "owned_responsibility_portfolio": {
                 key: target_priority.get(key)
                 for key in (
-                    "gain_count",
-                    "best_team_gain_count",
-                    "gain_gap_to_best",
-                    "relative_gain_tolerance_count",
-                    "within_relative_gain_band",
-                    "has_relative_improvement_potential",
-                    "relative_improvement_potential_rank",
+                    "assigned_load",
+                    "owned_direct_vote_fix_count",
+                    "owned_oracle_soft_utility_gain_sum",
+                    "owned_coverage_opportunity_count",
+                    "owned_dominant_wrong_count",
+                    "oldest_owned_responsibility_age",
+                    "pareto_front",
                 )
             },
-            "candidate_search_outcome": target_priority.get(
-                "candidate_search_outcome", {}
-            ),
             "target_gain": constraint.get("target_gain"),
             "vote_gain_count": constraint.get("vote_gain_count"),
             "vote_loss_count": constraint.get("vote_loss_count"),
@@ -3070,7 +3000,7 @@ class PromptEnsembleOptimizationSystem:
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_generator": self.protocol.tcs_context_policy,
             "member_objective_version": "integer_vote_min_sum_v2",
-            "responsibility_version": "five_axis_member_need_pareto_v2",
+            "responsibility_version": RESPONSIBILITY_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": TARGET_SELECTION_VERSION,
             "pareto_preference_version": "member_first_candidate_preference_v1",
@@ -3081,7 +3011,7 @@ class PromptEnsembleOptimizationSystem:
             "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
             "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
             "test_isolation_version": TEST_ISOLATION_VERSION,
-            "tcs_context_version": "aggregated_diagnosis_context_v1",
+            "tcs_context_version": TCS_CONTEXT_VERSION,
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
             "pattern_selection_version": PATTERN_SELECTION_VERSION,
@@ -3230,6 +3160,8 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("g_transition_audit.jsonl", self.g_transition_audit)
         self.artifacts.write_jsonl("specialization_trajectory.jsonl", self.specialization_trajectory)
         self.artifacts.write_jsonl("target_priority_audit.jsonl", self.target_priority_audit)
+        self.artifacts.write_jsonl("responsibility_service_trajectory.jsonl", self.responsibility_service_trajectory)
+        self.artifacts.write_jsonl("target_owner_context_alignment.jsonl", self.target_owner_context_alignment)
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
         self.artifacts.write_json(
             "candidate_funnel.json", self.candidate_funnel_summary()

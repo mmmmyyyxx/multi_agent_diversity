@@ -9,7 +9,7 @@ from multi_dataset_diverse_rl.diagnosis_aggregation import (
 )
 from multi_dataset_diverse_rl.tcs import (
     AccuracyDiagnosisContext,
-    MemberAwareDiagnosisContext,
+    AssignedResidualDiagnosisContext,
     PeerStateDiagnosisContext,
     PreviousUpdateOutcome,
     TeacherRepairPlan,
@@ -107,11 +107,8 @@ def contexts():
             conversion_failure_count=2,
             preservation_count=1,
         ),
-        MemberAwareDiagnosisContext(
+        AssignedResidualDiagnosisContext(
             **common,
-            member_correct_counts=(3, 4, 4, 4, 4),
-            member_gains_from_initial=(0, 1, 1, 1, 1),
-            target_improvement_need=4,
             assigned_residual_count=2,
         ),
     )
@@ -130,8 +127,8 @@ def test_context_serialization_isolates_accuracy_peer_and_member_fields():
     assert "gold_vote_count" in peer_text and "peer_gold_vote_count" in peer_text
     assert "assigned_case_count" not in peer_text
     assert "member_gains_from_initial" not in peer_text
-    assert "member_gains_from_initial" in member_text
-    assert "target_improvement_need" in member_text
+    assert "member_gains_from_initial" not in member_text
+    assert "target_improvement_need" not in member_text
     assert "assigned_case_count" in member_text
     for payload_text in (accuracy_text, peer_text, member_text):
         assert "represented_question_hashes" not in payload_text

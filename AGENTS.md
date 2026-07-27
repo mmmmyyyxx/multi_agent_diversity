@@ -28,13 +28,12 @@ The current formal method is:
 Member-Aware Peer-State Prompt-Team Optimization
 ```
 
-The current implementation version is `member_aware_peer_state_v4`. It keeps
-the v3 responsibility, relative-gain scheduling, bounded TCS roles, immutable
-Solver contract, and request-local first-valid Solver invalid recovery while
-replacing per-example zero-loss guards with aggregate non-regression, adding
-bounded Student invalid recovery, and using the final active team after a fixed
-update budget instead of validation checkpoint selection. Checkpoint version is
-12; v11 and earlier checkpoints are intentionally incompatible.
+The current implementation version is `member_aware_peer_state_v5`. It uses
+repair-only residual ownership, owner-only portfolio scheduling, assigned-
+residual-only Full TCS context, bounded TCS roles, immutable Solver contract,
+request-local first-valid Solver invalid recovery, aggregate non-regression,
+and final-active-state evaluation. Checkpoint version is 13; v12 and earlier
+checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
 
@@ -148,25 +147,11 @@ For each wrong member on a vote-wrong example, the program computes:
 - oracle soft-vote-utility gain;
 - coverage opportunity;
 - dominant-wrong membership or exit potential;
-- current member improvement need.
+- no member competence, gain, improvement-need, rank, or search-history term.
 
-Member improvement need is:
-
-```text
-improvement_need_i = max(0, g_sum_current - K * g_i_current)
-```
-
-This identifies members that are falling behind the team-wide improvement
-trajectory, including a member that has remained unchanged while other members
-improve.
-
-Responsibility assignment combines:
-
-```text
-team-repair potential
-+
-member-improvement need
-```
+Ownership uses exactly those four repair dimensions. Target selection is limited
+to owners and uses their aggregated owned portfolio; it never falls back to an
+unassigned but inaccurate member.
 
 Competence preservation is not an extra responsibility dimension.
 
@@ -580,8 +565,8 @@ requested candidate count
 
 Student must not receive raw optimization examples or gold answers.
 
-This pipeline is implemented by `member_aware_peer_state_v4` with
-`aggregated_small_model_tcs_v4`. After a valid Critic rejection, Teacher
+This pipeline is implemented by `member_aware_peer_state_v5` with
+`assigned_residual_only_context_v1`. After a valid Critic rejection, Teacher
 revision is stateless but grounded: the next request explicitly includes the
 complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
 feedback, and the same bounded diagnosis context. The revision protocol is
@@ -654,22 +639,16 @@ multi_dataset_diverse_rl/responsibility.py
 ```
 
 Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, primary owner
-assignment, target priorities, target selection, and member improvement need.
-Responsibility lifecycle must be versioned by real team state.
+assignment, owned-portfolio priorities, and target selection. Responsibility
+lifecycle must be versioned by real team state.
 
-Relative improvement potential is derived only from current gains: an agent is
-outside the relative-gain band when `g_max - g_i >
-relative_gain_tolerance_count` (default 5). Its rank is discrete by gain level,
-with the lowest gain assigned the highest positive rank; current correct-count
-gaps are competence diagnostics, not potential. Historical
-candidate outcomes are stored separately as `candidate_search_outcome` and do
-not enter potential or target-selection Pareto vectors. Its cooldown is a
-search-budget control, never evidence that an agent lacks potential.
-
-`responsibility_max_wait_updates` defaults to 8. Overdue agents take priority;
-otherwise relative-potential agents are considered before team-repair evidence.
-When all members are within the tolerance band, team-repair evidence determines
-selection rather than forcing uniform individual accuracy.
+Owner vectors are exactly direct vote fix, oracle soft utility, coverage, and
+dominant-wrong membership. Runtime owner/target decisions must not use member
+gain, improvement need, count gaps, relative potential/rank, candidate history,
+streak, or cooldown. Only agents with assigned residuals are eligible. Their
+target Pareto vector is owned direct/oracle/coverage/dominant repair, assigned
+load, and oldest owned age. Max-wait 8 applies only inside that owner set; an
+empty owner set is the audited `no_actionable_responsibility` no-op.
 
 ### TCS proposal mechanism
 
@@ -998,8 +977,8 @@ secret-free artifacts: `run_meta_sanitized.json`,
 Each artifact declares a schema version and coverage counts. Per-example files
 must be checked for question-hash uniqueness, join consistency, and expected
 rows per team state; unavailable historical fields must be reported as
-`unavailable`, never as zero. Candidate-search outcomes belong under
-`candidate_search_outcome`, separate from relative-improvement-potential fields.
+`unavailable`, never as zero. Candidate-search outcomes are audit-only and do
+not enter responsibility or target scheduling.
 
 Never upload questions, gold labels, literal agent answers, prompts, raw TCS
 content, API responses/credentials, absolute paths, checkpoints, caches, or

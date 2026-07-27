@@ -67,8 +67,6 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all canonical settings must use tie-as-abstain")
         if cfg.responsibility.responsibility_max_wait_updates <= 0:
             errors.append("responsibility_max_wait_updates must be positive")
-        if cfg.responsibility.relative_gain_tolerance_count < 0:
-            errors.append("relative_gain_tolerance_count must be non-negative")
         if cfg.responsibility.responsibility_switch_margin < 0:
             errors.append("responsibility_switch_margin cannot be negative")
         if cfg.evaluation.candidate_eval_pool_size <= 0:
@@ -228,8 +226,6 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("stage_b_candidate_budget must be within generated candidate count")
                     if cfg.responsibility.responsibility_max_wait_updates <= 0:
                         raise ValueError("responsibility_max_wait_updates must be positive")
-                    if cfg.responsibility.relative_gain_tolerance_count < 0:
-                        raise ValueError("relative_gain_tolerance_count must be non-negative")
                     if cfg.responsibility.responsibility_switch_margin < 0:
                         raise ValueError("responsibility_switch_margin cannot be negative")
                     if cfg.tcs.student_invalid_max_retries < 0:

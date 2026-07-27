@@ -7,65 +7,23 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from multi_dataset_diverse_rl.responsibility import (  # noqa: E402
-    AgentTargetPriority,
-    CandidateSearchOutcome,
-    select_target_agent,
-)
+from multi_dataset_diverse_rl.responsibility import ResponsibilityTargetPriority, select_target_agent
 
 
-def row(agent_id: int, *, rank: int, gain: int, cooling: bool, overdue: bool):
-    return AgentTargetPriority(
-        agent_id=agent_id,
-        individual_error_count=1,
-        assigned_load=0,
-        direct_vote_fix_count=0,
-        oracle_soft_utility_gain_sum=0.0,
-        coverage_opportunity_count=0,
-        dominant_wrong_count=0,
-        gain_count=gain,
-        current_correct_count=10 - rank,
-        best_current_correct_count=10,
-        current_correct_gap_to_best=rank,
-        best_team_gain_count=max(0, gain + rank),
-        gain_gap_to_best=rank,
-        relative_gain_tolerance_count=5,
-        within_relative_gain_band=rank == 0,
-        has_relative_improvement_potential=rank > 0,
-        relative_improvement_potential_rank=rank,
-        improvement_need=0,
-        unique_correct_count=0,
-        pivotal_correct_count=0,
-        updates_since_selected=0,
-        overdue=overdue,
-        pareto_front=1,
-        seeded_rank=str(agent_id),
-        candidate_search_outcome=CandidateSearchOutcome(
-            no_positive_candidate_streak=1 if cooling else 0,
-            cooldown_until_update=2 if cooling else 0,
-            cooling_down=cooling,
-        ),
-        target_attempt_count=1,
+def row(agent_id: int, *, direct: int, age: int, wait: int, overdue: bool):
+    return ResponsibilityTargetPriority(
+        agent_id=agent_id, assigned_load=1,
+        owned_direct_vote_fix_count=direct, owned_oracle_soft_utility_gain_sum=0.0,
+        owned_coverage_opportunity_count=0, owned_dominant_wrong_count=0,
+        oldest_owned_responsibility_age=age, updates_since_selected=wait,
+        overdue=overdue, pareto_front=1, seeded_rank=str(agent_id),
     )
 
 
 def main() -> int:
-    assert select_target_agent((
-        row(0, rank=1, gain=0, cooling=False, overdue=False),
-        row(1, rank=0, gain=5, cooling=False, overdue=False),
-    )) == 0
-    assert select_target_agent((
-        row(0, rank=1, gain=0, cooling=True, overdue=False),
-        row(1, rank=0, gain=0, cooling=False, overdue=False),
-    )) == 1
-    assert select_target_agent((
-        row(0, rank=1, gain=0, cooling=True, overdue=True),
-        row(1, rank=3, gain=0, cooling=False, overdue=False),
-    )) == 0
-    assert select_target_agent((
-        row(0, rank=1, gain=0, cooling=True, overdue=False),
-        row(1, rank=2, gain=0, cooling=True, overdue=False),
-    )) in {0, 1}
+    assert select_target_agent((row(0, direct=1, age=0, wait=0, overdue=False), row(1, direct=0, age=9, wait=0, overdue=False))) == 1
+    assert select_target_agent((row(0, direct=1, age=0, wait=0, overdue=False), row(1, direct=0, age=0, wait=8, overdue=True))) == 1
+    assert select_target_agent(()) is None
     print("deterministic target scheduler smoke: PASS")
     return 0
 

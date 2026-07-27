@@ -11,7 +11,7 @@ from .llm_client import LLMCallResult
 from .utils import extract_json_obj, normalize_prompt_text
 
 
-TCS_PROTOCOL_VERSION = "aggregated_small_model_tcs_v4"
+TCS_PROTOCOL_VERSION = "assigned_residual_only_context_v1"
 TEACHER_REVISION_PROTOCOL_VERSION = "critic_grounded_full_plan_revision_v1"
 TEACHER_SCHEMA_VERSION = "three_field_repair_plan_v1"
 CRITIC_SCHEMA_VERSION = "four_hard_blocker_v1"
@@ -68,13 +68,10 @@ class PeerStateDiagnosisContext:
 
 
 @dataclass(frozen=True)
-class MemberAwareDiagnosisContext:
+class AssignedResidualDiagnosisContext:
     target_agent_id: int
     parent_prompt: str
     parent_prompt_hash: str
-    member_correct_counts: tuple[int, ...]
-    member_gains_from_initial: tuple[int, ...]
-    target_improvement_need: int
     assigned_residual_count: int
     patterns: tuple[AggregatedFailurePattern, ...]
     evidence_cases: tuple[CompactEvidenceCase, ...]
@@ -84,7 +81,7 @@ class MemberAwareDiagnosisContext:
 AnyDiagnosisContext = (
     AccuracyDiagnosisContext
     | PeerStateDiagnosisContext
-    | MemberAwareDiagnosisContext
+    | AssignedResidualDiagnosisContext
 )
 
 
@@ -252,11 +249,8 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
             "patterns": [_peer_pattern_payload(row) for row in context.patterns],
             "evidence_cases": [_peer_case_payload(row) for row in context.evidence_cases],
         })
-    elif isinstance(context, MemberAwareDiagnosisContext):
+    elif isinstance(context, AssignedResidualDiagnosisContext):
         common.update({
-            "member_correct_counts": list(context.member_correct_counts),
-            "member_gains_from_initial": list(context.member_gains_from_initial),
-            "target_improvement_need": context.target_improvement_need,
             "assigned_residual_count": context.assigned_residual_count,
             "patterns": [_member_pattern_payload(row) for row in context.patterns],
             "evidence_cases": [_peer_case_payload(row) for row in context.evidence_cases],
