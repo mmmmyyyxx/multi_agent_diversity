@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,10 @@ FORBIDDEN_KEYS = {
     "content", "text", "endpoint", "api_key", "cache", "checkpoint", "path",
 }
 SAFE_HASH_KEYS = {"question_hash", "prompt_hash", "repair_plan_hash", "probe_hash"}
-FORBIDDEN_TEXT = ("http://", "https://", "final_answer:", "openai_api_key", "d:\\\\")
+FORBIDDEN_TEXT = ("http://", "https://", "final_answer:", "openai_api_key")
+ABSOLUTE_PATH_PATTERN = re.compile(
+    r"(?i)(?:[a-z]:[\\/]|file://|\\\\[^\\/\s]+[\\/][^\\/\s]+|(?:^|[\s\"'=])/(?:[^\s\"']*))"
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -120,6 +124,48 @@ def responsibility_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
+def specialization_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    common = (
+        "update_index", "agent_id", "prompt_hash_before", "prompt_hash_after",
+        "prompt_character_count_before", "prompt_character_count_after",
+        "prompt_estimated_token_count_before", "prompt_estimated_token_count_after",
+        "correct_set_gain_count", "correct_set_loss_count", "correct_set_churn_count",
+        "unique_coverage_gain_count", "unique_coverage_loss_count",
+    )
+    output = []
+    for row in rows:
+        result = pick(row, common)
+        if row.get("artifact_schema_version") == "specialization_trajectory_v1":
+            result.update({
+                "artifact_schema_version": "sanitized_specialization_trajectory_v1",
+                "selected_context_pattern_ids": list(row.get("selected_pattern_ids", [])),
+                "selected_context_pattern_question_hashes": "unavailable",
+                "repaired_selected_pattern_ids": "unavailable",
+                "assigned_repaired_pattern_ids": "unavailable",
+                "legacy_selected_pattern_alias": list(
+                    row.get("accepted_repair_pattern_ids", [])
+                ),
+            })
+        else:
+            result.update({
+                "artifact_schema_version": "sanitized_specialization_trajectory_v2",
+                "selected_context_pattern_ids": list(
+                    row.get("selected_context_pattern_ids", [])
+                ),
+                "selected_context_pattern_question_hashes": sanitize(
+                    row.get("selected_context_pattern_question_hashes", {})
+                ),
+                "repaired_selected_pattern_ids": list(
+                    row.get("repaired_selected_pattern_ids", [])
+                ),
+                "assigned_repaired_pattern_ids": list(
+                    row.get("assigned_repaired_pattern_ids", [])
+                ),
+            })
+        output.append(result)
+    return output
+
+
 def priority_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
         "update_index", "overdue_first", "selection_pool_stage", "eligible_agent_ids",
@@ -173,7 +219,7 @@ def meta_row(meta: dict[str, Any]) -> dict[str, Any]:
 
 
 def verify_report(out: Path, *, candidates: list[dict[str, Any]], priorities: list[dict[str, Any]],
-                  opportunities: list[dict[str, Any]], transitions: list[dict[str, Any]],
+                  assignments: list[dict[str, Any]], opportunities: list[dict[str, Any]], transitions: list[dict[str, Any]],
                   specialization: list[dict[str, Any]]) -> dict[str, Any]:
     accepted_updates = {
         int(row["update_index"]) for row in candidates if row.get("accepted_prompt_hash")
@@ -183,6 +229,26 @@ def verify_report(out: Path, *, candidates: list[dict[str, Any]], priorities: li
     opportunity_by_state = Counter(int(row["team_state_version"]) for row in opportunities)
     transition_by_update = Counter(int(row["update_index"]) for row in transitions)
     question_hashes = {str(row["question_hash"]) for row in opportunities}
+    priority_by_update = {int(row["update_index"]): row for row in priorities}
+    assignment_by_state = {int(row["team_state_version"]): row for row in assignments}
+    update_to_state: dict[int, int] = {}
+    current_state = 0
+    for row in sorted(candidates, key=lambda item: int(item["update_index"])):
+        update_to_state[int(row["update_index"])] = current_state
+        if row.get("accepted_prompt_hash"):
+            current_state += 1
+    assigned_hashes_match = True
+    for row in candidates:
+        update = int(row["update_index"])
+        state = update_to_state[update]
+        owners = assignment_by_state[state]["owners"]
+        expected = sorted(
+            question_hash for question_hash, owner in owners.items()
+            if int(owner) == int(row["target_agent_id"])
+        )
+        if sorted(row.get("assigned_question_hashes", [])) != expected:
+            assigned_hashes_match = False
+            break
     checks = {
         "candidate_priority_update_join": {
             "passed": {int(row["update_index"]) for row in candidates} == {int(row["update_index"]) for row in priorities},
@@ -193,6 +259,26 @@ def verify_report(out: Path, *, candidates: list[dict[str, Any]], priorities: li
             "accepted_update_count": len(accepted_updates),
             "transition_update_count": len(transition_updates),
             "specialization_update_count": len(specialization_updates),
+        },
+        "responsibility_state_coverage": {
+            "passed": set(assignment_by_state) == set(opportunity_by_state),
+            "responsibility_state_count": len(assignment_by_state),
+            "member_opportunity_state_count": len(opportunity_by_state),
+        },
+        "selected_target_and_assignment_join": {
+            "passed": (
+                all(
+                    int(row["target_agent_id"]) == int(
+                        priority_by_update[int(row["update_index"])]["selected_agent_id"]
+                    ) for row in candidates
+                ) and assigned_hashes_match
+            ),
+            "candidate_target_priority_match": all(
+                int(row["target_agent_id"]) == int(
+                    priority_by_update[int(row["update_index"])]["selected_agent_id"]
+                ) for row in candidates
+            ),
+            "assigned_hashes_owner_map_match": assigned_hashes_match,
         },
         "expected_rows_per_state": {
             "passed": all(count == len(question_hashes) * 5 for count in opportunity_by_state.values())
@@ -205,7 +291,7 @@ def verify_report(out: Path, *, candidates: list[dict[str, Any]], priorities: li
     for path in out.rglob("*"):
         if path.is_file():
             text = path.read_text(encoding="utf-8").lower()
-            if any(token in text for token in FORBIDDEN_TEXT):
+            if any(token in text for token in FORBIDDEN_TEXT) or ABSOLUTE_PATH_PATTERN.search(text):
                 raise ValueError(f"sanitized scan failed: {path}")
     if not all(value["passed"] for value in checks.values()):
         raise ValueError("sanitized report fact assertions failed")
@@ -243,7 +329,7 @@ def main() -> None:
         for row in opportunities
     ]
     sanitized_transitions = [sanitize(row) for row in transitions]
-    sanitized_specialization = [sanitize(row) for row in specialization]
+    sanitized_specialization = specialization_rows(specialization)
     sanitized_dynamics = [sanitize(row) for row in dynamics]
     sanitized_trajectory = [sanitize(row) for row in trajectory]
 
@@ -272,7 +358,7 @@ def main() -> None:
     })
     integrity = verify_report(
         out, candidates=sanitized_candidates, priorities=sanitized_priorities,
-        opportunities=sanitized_opportunities, transitions=sanitized_transitions,
+        assignments=sanitized_assignments, opportunities=sanitized_opportunities, transitions=sanitized_transitions,
         specialization=sanitized_specialization,
     )
     dump_json(out / "report_integrity.json", integrity)
@@ -304,7 +390,7 @@ def main() -> None:
     dump_json(out / "sha256_manifest.json", manifest)
     verify_report(
         out, candidates=sanitized_candidates, priorities=sanitized_priorities,
-        opportunities=sanitized_opportunities, transitions=sanitized_transitions,
+        assignments=sanitized_assignments, opportunities=sanitized_opportunities, transitions=sanitized_transitions,
         specialization=sanitized_specialization,
     )
     print(json.dumps({"ok": True, "out_dir": str(out), "accepted_updates": accepted_count}, indent=2))

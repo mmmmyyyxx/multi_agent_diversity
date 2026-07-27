@@ -1,0 +1,17 @@
+{
+  "A_legacy_current": {
+    "accepted_zero_assignment_count": 5,
+    "update_count": 32,
+    "zero_assignment_count": 10
+  },
+  "B_repair_only": {
+    "accepted_zero_assignment_count": 0,
+    "update_count": 32,
+    "zero_assignment_count": 0
+  },
+  "C_repair_only_relative_rank_late": {
+    "accepted_zero_assignment_count": 0,
+    "update_count": 32,
+    "zero_assignment_count": 0
+  }
+}

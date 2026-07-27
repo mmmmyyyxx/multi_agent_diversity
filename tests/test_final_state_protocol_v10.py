@@ -1,3 +1,5 @@
+# Historical filename retained for compatibility with prior test invocation;
+# assertions below describe the version-agnostic active final-state lifecycle.
 import asyncio
 import json
 
@@ -86,7 +88,7 @@ def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
     assert system.test_evaluation_count == 1
 
 
-def test_checkpoint_v10_reuses_completed_final_test(tmp_path):
+def test_checkpoint_reuses_completed_final_test(tmp_path):
     identity = RunIdentity(
         method_version="member_aware_peer_state_v4", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",

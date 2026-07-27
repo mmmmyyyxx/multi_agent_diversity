@@ -326,10 +326,23 @@ def test_relative_gain_rank_is_discrete_tied_and_independent_of_initial_counts()
         state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
     )
     by_id = {row.agent_id: row for row in priorities}
-    assert by_id[0].relative_improvement_potential_rank == by_id[3].relative_improvement_potential_rank == 1
+    assert by_id[0].relative_improvement_potential_rank == by_id[3].relative_improvement_potential_rank == 3
     assert by_id[2].relative_improvement_potential_rank == 2
-    assert by_id[4].relative_improvement_potential_rank == 3
+    assert by_id[4].relative_improvement_potential_rank == 1
     assert by_id[1].relative_improvement_potential_rank == 0
+
+
+def test_lowest_gain_is_selected_when_repair_signals_are_equal():
+    _, rows = opportunities(
+        ["B", "B", "B", "B", "B"], gains=(5, 30, 12, 25, 18),
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
+    )
+    by_id = {row.agent_id: row for row in priorities}
+    assert [by_id[agent].relative_improvement_potential_rank for agent in range(5)] == [3, 0, 2, 0, 1]
+    assert select_target_agent(priorities) == 0
 
 
 def test_candidate_search_history_never_changes_relative_potential_rank():

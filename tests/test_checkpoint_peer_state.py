@@ -33,7 +33,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v11_checkpoint_persists_final_state_lifecycle(tmp_path):
+def test_v12_checkpoint_persists_final_state_lifecycle(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -42,7 +42,7 @@ def test_v11_checkpoint_persists_final_state_lifecycle(tmp_path):
     source.update_transition_decomposition = [{"update_index": 0}]
     source.final_state_selection = {"selected_checkpoint_source": "final_active_state"}
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 11
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 12
     assert "validation_state_cache" not in payload
     assert "validation_probe" not in payload
     target = build_system(tmp_path / "target")
@@ -55,9 +55,9 @@ def test_v11_checkpoint_persists_final_state_lifecycle(tmp_path):
     assert target.update_transition_decomposition == source.update_transition_decomposition
 
 
-def test_v10_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v11_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 10
+    payload["checkpoint_version"] = 11
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

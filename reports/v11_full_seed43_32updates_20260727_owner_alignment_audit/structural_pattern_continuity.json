@@ -1,0 +1,1435 @@
+{
+  "by_policy": {
+    "A_legacy_current": [
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          }
+        },
+        "team_state_version": 0
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.34833583088395825,
+          "1": 0.2814861112496224,
+          "2": 0.0,
+          "3": 0.27621156854915624,
+          "4": 0.1741363745690181
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "2": {},
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5
+          },
+          "4": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 1
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.14818913558232177,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.16639865071829532,
+          "4": 0.2915660852848194
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "1": {},
+          "2": {},
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 6
+          }
+        },
+        "team_state_version": 2
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0775765142798167,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.011806158883336172,
+          "4": 0.43984465636092385
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 12,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {},
+          "2": {},
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 4,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 8
+          },
+          "4": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 3
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.005325073690924637,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.014083137197196154,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 12,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {},
+          "2": {},
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 11,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 6
+          },
+          "4": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 4
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.06330042320440743,
+          "4": 0.31127812445913283
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 22,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 7,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 5
+          },
+          "4": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 5
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.38504236340521963
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 2,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 16,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 11,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          }
+        },
+        "team_state_version": 6
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.002533069518244224
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 2,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 14,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 10,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 5
+          }
+        },
+        "team_state_version": 7
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0002931497611302731
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {},
+          "3": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 2,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 13,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 9,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 5
+          }
+        },
+        "team_state_version": 8
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.013385303795070387
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {},
+          "3": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 12,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 8,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 7
+          }
+        },
+        "team_state_version": 9
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.04119451252347365
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {},
+          "3": {
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 12,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 9,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 10
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.31127812445913283,
+          "4": 0.059940633102501965
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 8,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 9,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 5
+          }
+        },
+        "team_state_version": 11
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.027237710962909344
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant0": 1,
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 8,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 5
+          }
+        },
+        "team_state_version": 12
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0487949406953985,
+          "4": 0.061525617959074484
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 2,
+            "G0|H4|M-4|direct0|coverage1|dominant0": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 6
+          }
+        },
+        "team_state_version": 13
+      }
+    ],
+    "B_repair_only": [
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          }
+        },
+        "team_state_version": 0
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.4934226057601447,
+          "1": 0.34833583088395825,
+          "2": 0.0,
+          "3": 0.27621156854915624,
+          "4": 0.1519602295264612
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5
+          },
+          "4": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 8,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 1
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.45274982526693786,
+          "1": 0.03321256042650729,
+          "2": 0.3112781244591328,
+          "3": 0.21738599967411315,
+          "4": 0.2313493278440502
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 7
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 2
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.03159591814810956,
+          "1": 0.0753959373497119,
+          "2": 0.07539593734971191,
+          "3": 0.008788112561672317,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 3
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.00651356206660781,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0365763473159056,
+          "4": 0.004968676393644192
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 4
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.014739610977485901,
+          "1": 0.03501607111950446,
+          "2": 0.0,
+          "3": 0.18721803629954145,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 5
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.21979146198894733,
+          "1": 0.2561733163834821,
+          "2": 0.12060038671085446,
+          "3": 0.001173591197057719,
+          "4": 0.007930817784408378
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 6
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0069498979327612745,
+          "1": 0.0,
+          "2": 0.2334585933443496,
+          "3": 0.10803154614559995,
+          "4": 0.11903021007074834
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 7
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0069498979327612745,
+          "1": 0.0,
+          "2": 0.021782221599798153,
+          "3": 0.0,
+          "4": 0.006513562066607807
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 4,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 8
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.14285714285714285,
+          "1": 0.07539593734971191,
+          "2": 0.00303874498927674,
+          "3": 0.03903595255631881,
+          "4": 0.06550784501721567
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 9
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.22736902377589055,
+          "1": 0.0,
+          "2": 0.21264179365667668,
+          "3": 0.012741798951829496,
+          "4": 0.1379253809700301
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 10
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.13337855804237386,
+          "1": 0.0849455074189347,
+          "2": 0.1206003867108545,
+          "3": 0.17787321397664732,
+          "4": 0.09455186666333368
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 4,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 11
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.1080315461456001,
+          "1": 0.3931558784658321,
+          "2": 0.036386881926224704,
+          "3": 0.07716539010400009,
+          "4": 0.01776071967763549
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 12
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.02072083962390822,
+          "3": 0.32073035683379025,
+          "4": 0.03501607111950446
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 13
+      }
+    ],
+    "C_repair_only_relative_rank_late": [
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 9
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 10
+          }
+        },
+        "team_state_version": 0
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.4934226057601447,
+          "1": 0.34833583088395825,
+          "2": 0.0,
+          "3": 0.27621156854915624,
+          "4": 0.1519602295264612
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 6
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5
+          },
+          "4": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 8,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 1
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.45274982526693786,
+          "1": 0.03321256042650729,
+          "2": 0.3112781244591328,
+          "3": 0.21738599967411315,
+          "4": 0.2313493278440502
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 7
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 2
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.03159591814810956,
+          "1": 0.0753959373497119,
+          "2": 0.07539593734971191,
+          "3": 0.008788112561672317,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          }
+        },
+        "team_state_version": 3
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.00651356206660781,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0365763473159056,
+          "4": 0.004968676393644192
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 4
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.014739610977485901,
+          "1": 0.03501607111950446,
+          "2": 0.0,
+          "3": 0.18721803629954145,
+          "4": 0.0
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 5,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 7,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 5
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.21979146198894733,
+          "1": 0.2561733163834821,
+          "2": 0.10784107173763842,
+          "3": 0.001173591197057719,
+          "4": 0.024355637131581398
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 6,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 6
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0069498979327612745,
+          "1": 0.0,
+          "2": 0.16889485547144859,
+          "3": 0.10803154614559995,
+          "4": 0.020960172928212215
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 7
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0069498979327612745,
+          "1": 0.0,
+          "2": 0.024893967542626454,
+          "3": 0.0,
+          "4": 0.006077489978553424
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 4,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 8
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.14285714285714285,
+          "1": 0.0,
+          "2": 0.003702451541836335,
+          "3": 0.03903595255631881,
+          "4": 0.012014703129777662
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 9
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.22736902377589055,
+          "1": 0.0,
+          "2": 0.21264179365667668,
+          "3": 0.012741798951829496,
+          "4": 0.07043829949825568
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "3": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 10
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.13337855804237386,
+          "1": 0.010360419811954107,
+          "2": 0.1206003867108545,
+          "3": 0.17787321397664732,
+          "4": 0.017760719677635498
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "1": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 3
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 4,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 3,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 11
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.1080315461456001,
+          "1": 0.3931558784658321,
+          "2": 0.036386881926224704,
+          "3": 0.07716539010400009,
+          "4": 0.01776071967763549
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 5,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 2,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          }
+        },
+        "team_state_version": 12
+      },
+      {
+        "per_agent_pattern_distribution_js_from_previous": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.02072083962390822,
+          "3": 0.32073035683379025,
+          "4": 0.03501607111950446
+        },
+        "per_agent_structural_pattern_histogram": {
+          "0": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 1
+          },
+          "1": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 3
+          },
+          "2": {
+            "G0|H3|M-3|direct0|coverage1|dominant1": 1,
+            "G0|H4|M-4|direct0|coverage1|dominant1": 2,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          },
+          "3": {
+            "G0|H4|M-4|direct0|coverage1|dominant1": 1,
+            "G0|H5|M-5|direct0|coverage1|dominant1": 1,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 4
+          },
+          "4": {
+            "G0|H5|M-5|direct0|coverage1|dominant1": 4,
+            "G1|H4|M-3|direct0|coverage0|dominant1": 1,
+            "G2|H3|M-1|direct1|coverage0|dominant1": 2
+          }
+        },
+        "team_state_version": 13
+      }
+    ]
+  },
+  "reasoning_strategy_continuity": "unavailable",
+  "scope": "structural_failure_pattern_continuity_not_semantic_specialization",
+  "semantic_error_type_specialization": "unavailable",
+  "semantic_role_formation": "unavailable"
+}

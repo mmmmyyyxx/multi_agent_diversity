@@ -160,7 +160,7 @@ accuracy gains:
 `minimum_member_accuracy_gain`, and `mean_member_accuracy_gain`. Formal
 selection continues to use integer correct counts.
 
-The v10 evaluation protocol does not run validation during optimization. The
+The active final-state evaluation protocol does not run validation during optimization. The
 final active team after the fixed update budget is the selected team; there is
 no best epoch, validation cache, rollback, or checkpoint selection. Test runs
 exactly once after every planned update completes and cannot influence training.

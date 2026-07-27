@@ -479,8 +479,12 @@ def target_priorities(
         gain for gain in gains.values()
         if best_gain - gain > relative_gain_tolerance_count
     })
+    # Positive rank is a priority, not an ordinal label: the lowest gain must
+    # receive the largest rank so descending selector preference repairs the
+    # most under-improved member first. Equal gains deliberately tie.
     relative_rank_by_gain = {
-        gain: index + 1 for index, gain in enumerate(lagging_gain_values)
+        gain: len(lagging_gain_values) - index
+        for index, gain in enumerate(lagging_gain_values)
     }
     for agent_id, rows in sorted(rows_by_agent.items()):
         errors = [row for row in rows if row.member_error]

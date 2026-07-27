@@ -134,7 +134,7 @@ Target selection uses all agents with current errors. Define
 `g_max = max_j g_j`, `gain_gap_to_best_i = g_max - g_i`, and a count tolerance
 of five. Only agents with `gain_gap_to_best_i > 5` have relative improvement
 potential; their rank is a discrete rank over distinct gain levels, with the
-lowest gain ranked first. Current correct-count gaps remain competence reports,
+lowest gain assigned the highest positive rank. Current correct-count gaps remain competence reports,
 not potential.
 
 Agents waiting `responsibility_max_wait_updates` updates are considered first;
@@ -341,7 +341,7 @@ Soft utility never converts a non-dominating candidate into an accepted one.
 
 ## 9. Final Active State And Test
 
-The v10 evaluation protocol is:
+The active final-state evaluation protocol is:
 
 ```text
 initial team -> fixed planned updates on train -> final active team -> one test
@@ -385,13 +385,13 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 10. It stores active and initial profiles, a target-free
+Checkpoint version is 12. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS and Student-recovery
 state, planned/completed update counts, final-state selection, training dynamics,
 differentiation trajectories, selected-test state, caches, histories, LLM calls,
-and Python random state. v9 checkpoints are incompatible.
+and Python random state. v11 and earlier checkpoints are incompatible.
 
 Resume requires exact method, setting, config behavior fingerprint, code commit,
 split files, question sets, probe identity, model endpoint identity, parser,

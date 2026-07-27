@@ -1,0 +1,10 @@
+{
+  "prompt_length_trajectory": "unavailable_in_sanitized_v11_artifact",
+  "role_by_phase_token_breakdown": "unavailable_in_sanitized_v11_artifact",
+  "specialization_trajectory_v1": {
+    "accepted_repair_pattern_ids": "misleading_legacy_selected_pattern_alias",
+    "selected_pattern_ids": "selected_context_structural_pattern_ids",
+    "semantic_specialization_claim": "unavailable"
+  },
+  "stage_a_selected_pool_composition": "unavailable_in_sanitized_v11_artifact"
+}

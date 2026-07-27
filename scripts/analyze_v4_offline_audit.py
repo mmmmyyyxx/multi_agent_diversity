@@ -28,7 +28,7 @@ def dump_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
 def relative_rows(priorities: list[dict[str, Any]], *, tolerance: int = 5) -> list[dict[str, Any]]:
     best_gain = max(int(row["gain_count"]) for row in priorities)
     lagging = sorted({int(row["gain_count"]) for row in priorities if best_gain - int(row["gain_count"]) > tolerance})
-    ranks = {gain: index + 1 for index, gain in enumerate(lagging)}
+    ranks = {gain: len(lagging) - index for index, gain in enumerate(lagging)}
     rows = []
     for source in priorities:
         gain = int(source["gain_count"])

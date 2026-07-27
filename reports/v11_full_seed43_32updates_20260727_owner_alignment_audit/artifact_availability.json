@@ -1,0 +1,16 @@
+{
+  "available": [
+    "14 observed responsibility states",
+    "32 target decisions",
+    "13 accepted-update structural transitions",
+    "sanitized owner maps and opportunities"
+  ],
+  "rule": "unavailable fields are not encoded as zero",
+  "unavailable": [
+    "semantic error-type specialization",
+    "reasoning-strategy continuity",
+    "actual Stage-A coverage/conversion selected counts",
+    "per-update role/phase token attribution",
+    "actual repaired selected-pattern attribution"
+  ]
+}

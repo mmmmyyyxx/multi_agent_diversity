@@ -343,7 +343,7 @@ class PromptEnsembleOptimizationSystem:
         }
         self.agent_selection_counts = {agent_id: 0 for agent_id in range(5)}
         self.fixed_probe: FixedProbeEvaluator | None = None
-        # Compatibility-only reader state. The v10 active lifecycle never
+        # Compatibility-only reader state. The active final-state lifecycle never
         # builds or evaluates this probe.
         self.validation_probe: ValidationProbeEvaluator | None = None
         self.validation_state_cache: dict[str, dict[str, Any]] = {}
@@ -621,7 +621,7 @@ class PromptEnsembleOptimizationSystem:
         self,
         data: Sequence[Mapping[str, Any]],
     ) -> ValidationProbeEvaluator:
-        """Historical-report compatibility; never used by the v10 run loop."""
+        """Historical-report compatibility; never used by the active run loop."""
         return ValidationProbeEvaluator(
             self._probe_examples(data),
             model_identity=self.cfg.models.agent_model,
@@ -1828,6 +1828,10 @@ class PromptEnsembleOptimizationSystem:
                 for path in lowered_paths
             ),
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
+            "selected_context_pattern_question_hashes": {
+                pattern.pattern_id: list(pattern.represented_question_hashes)
+                for pattern in context.patterns
+            },
             **asdict(diagnostics),
         })
         funnel.parents_considered = 1
@@ -2703,7 +2707,7 @@ class PromptEnsembleOptimizationSystem:
         if validation:
             if self.validation_probe is None:
                 raise RuntimeError(
-                    "validation evaluation is disabled by v10 unless a compatibility probe is supplied"
+                    "validation evaluation is disabled by the active final-state lifecycle unless a compatibility probe is supplied"
                 )
             examples = self._probe_examples(data)
             profiles = list(await asyncio.gather(*(
@@ -2726,7 +2730,7 @@ class PromptEnsembleOptimizationSystem:
         self,
         data: Sequence[Mapping[str, Any]],
     ) -> tuple[DatasetMetrics, dict[str, Any]]:
-        """Historical-report compatibility; excluded from v10 active runs."""
+        """Historical-report compatibility; excluded from active optimization runs."""
         state_hash = self.team_prompt_state_hash()
         cached = self.validation_state_cache.get(state_hash)
         if cached is not None:
@@ -2751,7 +2755,7 @@ class PromptEnsembleOptimizationSystem:
         initial: DatasetMetrics,
         epoch: int,
     ) -> tuple | None:
-        """Legacy read-only ordering retained outside the v10 active loop."""
+        """Legacy read-only ordering retained outside the active optimization loop."""
         if any(
             current < baseline
             for current, baseline in zip(
@@ -2997,8 +3001,22 @@ class PromptEnsembleOptimizationSystem:
                 ),
                 {},
             )
+            selected_context_pattern_question_hashes = {
+                str(pattern_id): tuple(str(question_hash) for question_hash in question_hashes)
+                for pattern_id, question_hashes in dict(
+                    context.get("selected_context_pattern_question_hashes", {})
+                ).items()
+            }
+            repaired_question_hashes = {
+                example.question_hash
+                for example, old, new in zip(
+                    self.fixed_probe.examples, old_correct, new_correct, strict=True
+                )
+                if not old and new
+            }
+            assigned_hashes = set(decision.get("assigned_question_hashes", ()))
             self.specialization_trajectory.append({
-                "artifact_schema_version": "specialization_trajectory_v1",
+                "artifact_schema_version": "specialization_trajectory_v2",
                 "update_index": int(update_index),
                 "agent_id": target,
                 "prompt_hash_before": str((decision.get("incumbent") or {}).get("prompt_hash", "")),
@@ -3007,8 +3025,21 @@ class PromptEnsembleOptimizationSystem:
                 "prompt_character_count_after": len(self.agents[target].current_prompt),
                 "prompt_estimated_token_count_before": None,
                 "prompt_estimated_token_count_after": None,
-                "selected_pattern_ids": list(context.get("selected_pattern_ids", [])),
-                "accepted_repair_pattern_ids": list(context.get("selected_pattern_ids", [])),
+                "selected_context_pattern_ids": list(context.get("selected_pattern_ids", [])),
+                "selected_context_pattern_question_hashes": {
+                    pattern_id: list(question_hashes)
+                    for pattern_id, question_hashes in selected_context_pattern_question_hashes.items()
+                },
+                "repaired_selected_pattern_ids": sorted(
+                    pattern_id
+                    for pattern_id, question_hashes in selected_context_pattern_question_hashes.items()
+                    if repaired_question_hashes.intersection(question_hashes)
+                ),
+                "assigned_repaired_pattern_ids": sorted(
+                    pattern_id
+                    for pattern_id, question_hashes in selected_context_pattern_question_hashes.items()
+                    if repaired_question_hashes.intersection(question_hashes).intersection(assigned_hashes)
+                ),
                 "correct_set_gain_count": sum(not old and new for old, new in zip(old_correct, new_correct, strict=True)),
                 "correct_set_loss_count": sum(old and not new for old, new in zip(old_correct, new_correct, strict=True)),
                 "correct_set_churn_count": sum(old != new for old, new in zip(old_correct, new_correct, strict=True)),

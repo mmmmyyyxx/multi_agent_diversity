@@ -1,0 +1,470 @@
+{
+  "A_legacy_current": [
+    {
+      "chosen_oracle_utility": 2.2764419125232056,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 48,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 2.2764419125232056,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 0
+    },
+    {
+      "chosen_oracle_utility": 5.727699835494676,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 29,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 5.727699835494676,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 1
+    },
+    {
+      "chosen_oracle_utility": 9.942219561848141,
+      "chosen_owner_direct_fix_count": 14,
+      "chosen_owner_direct_fix_rate": 0.2916666666666667,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 14,
+      "maximum_eligible_oracle_utility": 9.942219561848141,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 2
+    },
+    {
+      "chosen_oracle_utility": 9.042336422995104,
+      "chosen_owner_direct_fix_count": 12,
+      "chosen_owner_direct_fix_rate": 0.2608695652173913,
+      "chosen_owner_dominant_wrong_rate": 0.9782608695652174,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 12,
+      "maximum_eligible_oracle_utility": 9.192074922342982,
+      "oracle_utility_regret": 0.14973849934787756,
+      "team_state_version": 3
+    },
+    {
+      "chosen_oracle_utility": 7.260379728007786,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.21428571428571427,
+      "chosen_owner_dominant_wrong_rate": 0.9761904761904762,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.410118227355663,
+      "oracle_utility_regret": 0.14973849934787756,
+      "team_state_version": 4
+    },
+    {
+      "chosen_oracle_utility": 5.826602383050189,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.15789473684210525,
+      "chosen_owner_dominant_wrong_rate": 0.9736842105263158,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 5.976340882398067,
+      "oracle_utility_regret": 0.14973849934787756,
+      "team_state_version": 5
+    },
+    {
+      "chosen_oracle_utility": 5.701039394759927,
+      "chosen_owner_direct_fix_count": 4,
+      "chosen_owner_direct_fix_rate": 0.11764705882352941,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 19,
+      "direct_fix_eligible_question_count": 4,
+      "maximum_eligible_oracle_utility": 5.701039394759927,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 6
+    },
+    {
+      "chosen_oracle_utility": 6.308906414732385,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.18181818181818182,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 17,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 6.308906414732385,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 7
+    },
+    {
+      "chosen_oracle_utility": 6.723597698814827,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.21212121212121213,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 16,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.723597698814827,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 8
+    },
+    {
+      "chosen_oracle_utility": 7.229152092616975,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.2727272727272727,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.229152092616975,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 9
+    },
+    {
+      "chosen_oracle_utility": 5.602199011769364,
+      "chosen_owner_direct_fix_count": 5,
+      "chosen_owner_direct_fix_rate": 0.16666666666666666,
+      "chosen_owner_dominant_wrong_rate": 0.9666666666666667,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 5,
+      "maximum_eligible_oracle_utility": 5.751937511117241,
+      "oracle_utility_regret": 0.14973849934787756,
+      "team_state_version": 10
+    },
+    {
+      "chosen_oracle_utility": 6.455932755601234,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.23333333333333334,
+      "chosen_owner_dominant_wrong_rate": 0.9333333333333333,
+      "coverage_owner_count": 12,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.677448303793662,
+      "oracle_utility_regret": 0.2215155481924283,
+      "team_state_version": 11
+    },
+    {
+      "chosen_oracle_utility": 6.060327532393944,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.25,
+      "chosen_owner_dominant_wrong_rate": 0.9285714285714286,
+      "coverage_owner_count": 13,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.2818430805863725,
+      "oracle_utility_regret": 0.2215155481924283,
+      "team_state_version": 12
+    },
+    {
+      "chosen_oracle_utility": 6.074148478477266,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.34615384615384615,
+      "chosen_owner_dominant_wrong_rate": 0.9615384615384616,
+      "coverage_owner_count": 14,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 6.145925527321817,
+      "oracle_utility_regret": 0.07177704884455076,
+      "team_state_version": 13
+    }
+  ],
+  "B_repair_only": [
+    {
+      "chosen_oracle_utility": 2.2764419125232056,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 48,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 2.2764419125232056,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 0
+    },
+    {
+      "chosen_oracle_utility": 5.727699835494676,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 29,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 5.727699835494676,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 1
+    },
+    {
+      "chosen_oracle_utility": 9.942219561848141,
+      "chosen_owner_direct_fix_count": 14,
+      "chosen_owner_direct_fix_rate": 0.2916666666666667,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 14,
+      "maximum_eligible_oracle_utility": 9.942219561848141,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 2
+    },
+    {
+      "chosen_oracle_utility": 9.192074922342982,
+      "chosen_owner_direct_fix_count": 12,
+      "chosen_owner_direct_fix_rate": 0.2608695652173913,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 12,
+      "maximum_eligible_oracle_utility": 9.192074922342982,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 3
+    },
+    {
+      "chosen_oracle_utility": 7.410118227355663,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.21428571428571427,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.410118227355663,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 4
+    },
+    {
+      "chosen_oracle_utility": 5.976340882398067,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.15789473684210525,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 5.976340882398067,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 5
+    },
+    {
+      "chosen_oracle_utility": 5.701039394759927,
+      "chosen_owner_direct_fix_count": 4,
+      "chosen_owner_direct_fix_rate": 0.11764705882352941,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 19,
+      "direct_fix_eligible_question_count": 4,
+      "maximum_eligible_oracle_utility": 5.701039394759927,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 6
+    },
+    {
+      "chosen_oracle_utility": 6.308906414732385,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.18181818181818182,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 17,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 6.308906414732385,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 7
+    },
+    {
+      "chosen_oracle_utility": 6.723597698814827,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.21212121212121213,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 16,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.723597698814827,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 8
+    },
+    {
+      "chosen_oracle_utility": 7.229152092616975,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.2727272727272727,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.229152092616975,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 9
+    },
+    {
+      "chosen_oracle_utility": 5.751937511117241,
+      "chosen_owner_direct_fix_count": 5,
+      "chosen_owner_direct_fix_rate": 0.16666666666666666,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 5,
+      "maximum_eligible_oracle_utility": 5.751937511117241,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 10
+    },
+    {
+      "chosen_oracle_utility": 6.677448303793662,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.23333333333333334,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 12,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.677448303793662,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 11
+    },
+    {
+      "chosen_oracle_utility": 6.2818430805863725,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.25,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 13,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.2818430805863725,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 12
+    },
+    {
+      "chosen_oracle_utility": 6.145925527321817,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.34615384615384615,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 14,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 6.145925527321817,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 13
+    }
+  ],
+  "C_repair_only_relative_rank_late": [
+    {
+      "chosen_oracle_utility": 2.2764419125232056,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 48,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 2.2764419125232056,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 0
+    },
+    {
+      "chosen_oracle_utility": 5.727699835494676,
+      "chosen_owner_direct_fix_count": 0,
+      "chosen_owner_direct_fix_rate": 0.0,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 29,
+      "direct_fix_eligible_question_count": 0,
+      "maximum_eligible_oracle_utility": 5.727699835494676,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 1
+    },
+    {
+      "chosen_oracle_utility": 9.942219561848141,
+      "chosen_owner_direct_fix_count": 14,
+      "chosen_owner_direct_fix_rate": 0.2916666666666667,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 14,
+      "maximum_eligible_oracle_utility": 9.942219561848141,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 2
+    },
+    {
+      "chosen_oracle_utility": 9.192074922342982,
+      "chosen_owner_direct_fix_count": 12,
+      "chosen_owner_direct_fix_rate": 0.2608695652173913,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 12,
+      "maximum_eligible_oracle_utility": 9.192074922342982,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 3
+    },
+    {
+      "chosen_oracle_utility": 7.410118227355663,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.21428571428571427,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 25,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.410118227355663,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 4
+    },
+    {
+      "chosen_oracle_utility": 5.976340882398067,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.15789473684210525,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 24,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 5.976340882398067,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 5
+    },
+    {
+      "chosen_oracle_utility": 5.701039394759927,
+      "chosen_owner_direct_fix_count": 4,
+      "chosen_owner_direct_fix_rate": 0.11764705882352941,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 19,
+      "direct_fix_eligible_question_count": 4,
+      "maximum_eligible_oracle_utility": 5.701039394759927,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 6
+    },
+    {
+      "chosen_oracle_utility": 6.308906414732385,
+      "chosen_owner_direct_fix_count": 6,
+      "chosen_owner_direct_fix_rate": 0.18181818181818182,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 17,
+      "direct_fix_eligible_question_count": 6,
+      "maximum_eligible_oracle_utility": 6.308906414732385,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 7
+    },
+    {
+      "chosen_oracle_utility": 6.723597698814827,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.21212121212121213,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 16,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.723597698814827,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 8
+    },
+    {
+      "chosen_oracle_utility": 7.229152092616975,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.2727272727272727,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 7.229152092616975,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 9
+    },
+    {
+      "chosen_oracle_utility": 5.751937511117241,
+      "chosen_owner_direct_fix_count": 5,
+      "chosen_owner_direct_fix_rate": 0.16666666666666666,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 15,
+      "direct_fix_eligible_question_count": 5,
+      "maximum_eligible_oracle_utility": 5.751937511117241,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 10
+    },
+    {
+      "chosen_oracle_utility": 6.677448303793662,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.23333333333333334,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 12,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.677448303793662,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 11
+    },
+    {
+      "chosen_oracle_utility": 6.2818430805863725,
+      "chosen_owner_direct_fix_count": 7,
+      "chosen_owner_direct_fix_rate": 0.25,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 13,
+      "direct_fix_eligible_question_count": 7,
+      "maximum_eligible_oracle_utility": 6.2818430805863725,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 12
+    },
+    {
+      "chosen_oracle_utility": 6.145925527321817,
+      "chosen_owner_direct_fix_count": 9,
+      "chosen_owner_direct_fix_rate": 0.34615384615384615,
+      "chosen_owner_dominant_wrong_rate": 1.0,
+      "coverage_owner_count": 14,
+      "direct_fix_eligible_question_count": 9,
+      "maximum_eligible_oracle_utility": 6.145925527321817,
+      "oracle_utility_regret": 0.0,
+      "team_state_version": 13
+    }
+  ]
+}

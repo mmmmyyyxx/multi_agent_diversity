@@ -1,0 +1,386 @@
+{
+  "A_legacy_current": [
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 0,
+      "mean_owner_age": 0.0,
+      "median_owner_age": 0.0,
+      "owner_retention_rate": null,
+      "owner_switch_count": 0,
+      "team_state_version": 0
+    },
+    {
+      "inertia_override_count": 10,
+      "inertia_retained_count": 38,
+      "mean_owner_age": 0.7916666666666666,
+      "median_owner_age": 1.0,
+      "owner_retention_rate": 0.7916666666666666,
+      "owner_switch_count": 10,
+      "team_state_version": 1
+    },
+    {
+      "inertia_override_count": 13,
+      "inertia_retained_count": 35,
+      "mean_owner_age": 1.3125,
+      "median_owner_age": 2.0,
+      "owner_retention_rate": 0.7291666666666666,
+      "owner_switch_count": 13,
+      "team_state_version": 2
+    },
+    {
+      "inertia_override_count": 16,
+      "inertia_retained_count": 28,
+      "mean_owner_age": 1.3478260869565217,
+      "median_owner_age": 1.0,
+      "owner_retention_rate": 0.6363636363636364,
+      "owner_switch_count": 16,
+      "team_state_version": 3
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 42,
+      "mean_owner_age": 2.4047619047619047,
+      "median_owner_age": 2.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 4
+    },
+    {
+      "inertia_override_count": 21,
+      "inertia_retained_count": 17,
+      "mean_owner_age": 1.5263157894736843,
+      "median_owner_age": 0.0,
+      "owner_retention_rate": 0.4473684210526316,
+      "owner_switch_count": 21,
+      "team_state_version": 5
+    },
+    {
+      "inertia_override_count": 32,
+      "inertia_retained_count": 2,
+      "mean_owner_age": 0.17647058823529413,
+      "median_owner_age": 0.0,
+      "owner_retention_rate": 0.058823529411764705,
+      "owner_switch_count": 32,
+      "team_state_version": 6
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 1.1515151515151516,
+      "median_owner_age": 1,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 7
+    },
+    {
+      "inertia_override_count": 2,
+      "inertia_retained_count": 31,
+      "mean_owner_age": 1.9393939393939394,
+      "median_owner_age": 2,
+      "owner_retention_rate": 0.9393939393939394,
+      "owner_switch_count": 2,
+      "team_state_version": 8
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 2.8484848484848486,
+      "median_owner_age": 3,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 9
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 29,
+      "mean_owner_age": 3.8666666666666667,
+      "median_owner_age": 4.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 10
+    },
+    {
+      "inertia_override_count": 2,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 4.4,
+      "median_owner_age": 5.0,
+      "owner_retention_rate": 0.9285714285714286,
+      "owner_switch_count": 2,
+      "team_state_version": 11
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 28,
+      "mean_owner_age": 5.357142857142857,
+      "median_owner_age": 6.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 12
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 6.3076923076923075,
+      "median_owner_age": 7.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 13
+    }
+  ],
+  "B_repair_only": [
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 0,
+      "mean_owner_age": 0.0,
+      "median_owner_age": 0.0,
+      "owner_retention_rate": null,
+      "owner_switch_count": 0,
+      "team_state_version": 0
+    },
+    {
+      "inertia_override_count": 5,
+      "inertia_retained_count": 43,
+      "mean_owner_age": 0.8958333333333334,
+      "median_owner_age": 1.0,
+      "owner_retention_rate": 0.8958333333333334,
+      "owner_switch_count": 5,
+      "team_state_version": 1
+    },
+    {
+      "inertia_override_count": 5,
+      "inertia_retained_count": 43,
+      "mean_owner_age": 1.6875,
+      "median_owner_age": 2.0,
+      "owner_retention_rate": 0.8958333333333334,
+      "owner_switch_count": 5,
+      "team_state_version": 2
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 44,
+      "mean_owner_age": 2.5869565217391304,
+      "median_owner_age": 3.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 3
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 42,
+      "mean_owner_age": 3.6666666666666665,
+      "median_owner_age": 4.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 4
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 38,
+      "mean_owner_age": 4.684210526315789,
+      "median_owner_age": 5.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 5
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 31,
+      "mean_owner_age": 5.294117647058823,
+      "median_owner_age": 6.0,
+      "owner_retention_rate": 0.9117647058823529,
+      "owner_switch_count": 3,
+      "team_state_version": 6
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 6.0606060606060606,
+      "median_owner_age": 7,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 7
+    },
+    {
+      "inertia_override_count": 1,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 6.818181818181818,
+      "median_owner_age": 8,
+      "owner_retention_rate": 0.9696969696969697,
+      "owner_switch_count": 1,
+      "team_state_version": 8
+    },
+    {
+      "inertia_override_count": 1,
+      "inertia_retained_count": 31,
+      "mean_owner_age": 7.454545454545454,
+      "median_owner_age": 9,
+      "owner_retention_rate": 0.96875,
+      "owner_switch_count": 1,
+      "team_state_version": 9
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 7.733333333333333,
+      "median_owner_age": 10.0,
+      "owner_retention_rate": 0.896551724137931,
+      "owner_switch_count": 3,
+      "team_state_version": 10
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 25,
+      "mean_owner_age": 7.4,
+      "median_owner_age": 11.0,
+      "owner_retention_rate": 0.8928571428571429,
+      "owner_switch_count": 3,
+      "team_state_version": 11
+    },
+    {
+      "inertia_override_count": 2,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 7.678571428571429,
+      "median_owner_age": 12.0,
+      "owner_retention_rate": 0.9285714285714286,
+      "owner_switch_count": 2,
+      "team_state_version": 12
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 9.23076923076923,
+      "median_owner_age": 13.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 13
+    }
+  ],
+  "C_repair_only_relative_rank_late": [
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 0,
+      "mean_owner_age": 0.0,
+      "median_owner_age": 0.0,
+      "owner_retention_rate": null,
+      "owner_switch_count": 0,
+      "team_state_version": 0
+    },
+    {
+      "inertia_override_count": 5,
+      "inertia_retained_count": 43,
+      "mean_owner_age": 0.8958333333333334,
+      "median_owner_age": 1.0,
+      "owner_retention_rate": 0.8958333333333334,
+      "owner_switch_count": 5,
+      "team_state_version": 1
+    },
+    {
+      "inertia_override_count": 5,
+      "inertia_retained_count": 43,
+      "mean_owner_age": 1.6875,
+      "median_owner_age": 2.0,
+      "owner_retention_rate": 0.8958333333333334,
+      "owner_switch_count": 5,
+      "team_state_version": 2
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 44,
+      "mean_owner_age": 2.5869565217391304,
+      "median_owner_age": 3.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 3
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 42,
+      "mean_owner_age": 3.6666666666666665,
+      "median_owner_age": 4.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 4
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 38,
+      "mean_owner_age": 4.684210526315789,
+      "median_owner_age": 5.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 5
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 31,
+      "mean_owner_age": 5.294117647058823,
+      "median_owner_age": 6.0,
+      "owner_retention_rate": 0.9117647058823529,
+      "owner_switch_count": 3,
+      "team_state_version": 6
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 6.0606060606060606,
+      "median_owner_age": 7,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 7
+    },
+    {
+      "inertia_override_count": 1,
+      "inertia_retained_count": 32,
+      "mean_owner_age": 6.818181818181818,
+      "median_owner_age": 8,
+      "owner_retention_rate": 0.9696969696969697,
+      "owner_switch_count": 1,
+      "team_state_version": 8
+    },
+    {
+      "inertia_override_count": 1,
+      "inertia_retained_count": 31,
+      "mean_owner_age": 7.454545454545454,
+      "median_owner_age": 9,
+      "owner_retention_rate": 0.96875,
+      "owner_switch_count": 1,
+      "team_state_version": 9
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 7.733333333333333,
+      "median_owner_age": 10.0,
+      "owner_retention_rate": 0.896551724137931,
+      "owner_switch_count": 3,
+      "team_state_version": 10
+    },
+    {
+      "inertia_override_count": 3,
+      "inertia_retained_count": 25,
+      "mean_owner_age": 7.4,
+      "median_owner_age": 11.0,
+      "owner_retention_rate": 0.8928571428571429,
+      "owner_switch_count": 3,
+      "team_state_version": 11
+    },
+    {
+      "inertia_override_count": 2,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 7.678571428571429,
+      "median_owner_age": 12.0,
+      "owner_retention_rate": 0.9285714285714286,
+      "owner_switch_count": 2,
+      "team_state_version": 12
+    },
+    {
+      "inertia_override_count": 0,
+      "inertia_retained_count": 26,
+      "mean_owner_age": 9.23076923076923,
+      "median_owner_age": 13.0,
+      "owner_retention_rate": 1.0,
+      "owner_switch_count": 0,
+      "team_state_version": 13
+    }
+  ]
+}

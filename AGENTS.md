@@ -34,7 +34,7 @@ Solver contract, and request-local first-valid Solver invalid recovery while
 replacing per-example zero-loss guards with aggregate non-regression, adding
 bounded Student invalid recovery, and using the final active team after a fixed
 update budget instead of validation checkpoint selection. Checkpoint version is
-11; v10 checkpoints are intentionally incompatible.
+12; v11 and earlier checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
 
@@ -376,7 +376,7 @@ The canonical preference among acceptable candidates is:
 
 ## 6. Validation and Test
 
-The v10 active lifecycle performs no validation rollout or checkpoint
+The active final-state lifecycle performs no validation rollout or checkpoint
 selection. Validation split hashes remain in run identity only. The final active
 team after every planned update is the selected team.
 
@@ -659,8 +659,9 @@ Responsibility lifecycle must be versioned by real team state.
 
 Relative improvement potential is derived only from current gains: an agent is
 outside the relative-gain band when `g_max - g_i >
-relative_gain_tolerance_count` (default 5). Its rank is discrete by gain level;
-current correct-count gaps are competence diagnostics, not potential. Historical
+relative_gain_tolerance_count` (default 5). Its rank is discrete by gain level,
+with the lowest gain assigned the highest positive rank; current correct-count
+gaps are competence diagnostics, not potential. Historical
 candidate outcomes are stored separately as `candidate_search_outcome` and do
 not enter potential or target-selection Pareto vectors. Its cooldown is a
 search-budget control, never evidence that an agent lacks potential.

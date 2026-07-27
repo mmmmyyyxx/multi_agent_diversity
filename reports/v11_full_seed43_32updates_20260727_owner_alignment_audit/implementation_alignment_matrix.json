@@ -1,0 +1,86 @@
+[
+  {
+    "actual_behavior": "lowest gain receives rank 1 while selector prefers larger rank",
+    "behavior_change_required": true,
+    "concept": "relative potential rank direction",
+    "document_source": "task section 3.1",
+    "evidence": "lagging gains sorted ascending then index+1; selector negates rank",
+    "implementation_location": "responsibility.py target_priorities/build_target_selection_decision",
+    "intended_semantics": "lowest gain has highest positive rank",
+    "recommended_action": "reverse positive rank numbering and invalidate old scheduler checkpoints",
+    "severity": "high",
+    "status": "misaligned"
+  },
+  {
+    "actual_behavior": "improvement_need enters owner Pareto vector, preference, and inertia",
+    "behavior_change_required": false,
+    "concept": "primary owner",
+    "document_source": "task section 3.2",
+    "evidence": "five-axis vectors and member-aware inertia",
+    "implementation_location": "responsibility.py assign_primary_responsibilities",
+    "intended_semantics": "distinguish repair value from global member deficit",
+    "recommended_action": "retain current owner policy pending replay; consider repair-only policy later",
+    "severity": "high",
+    "status": "partially_aligned"
+  },
+  {
+    "actual_behavior": "target_improvement_need is old mean-relative deficit and enables MEMBER_COMPETENCE patterns",
+    "behavior_change_required": false,
+    "concept": "TCS competence context",
+    "document_source": "task section 3.3",
+    "evidence": "target_improvement_need derived from opportunity.improvement_need",
+    "implementation_location": "system.py/build_diagnosis_context; diagnosis_aggregation.py",
+    "intended_semantics": "must not be mislabeled as relative gain-gap potential",
+    "recommended_action": "defer formal TCS semantic change to a separate policy task",
+    "severity": "medium",
+    "status": "misaligned"
+  },
+  {
+    "actual_behavior": "target priority uses global opportunities while coverage/conversion and TCS assignment use primary-owner hashes",
+    "behavior_change_required": false,
+    "concept": "target-owner-proposal alignment",
+    "document_source": "task section 3.4",
+    "evidence": "assigned hashes gate member-aware Stage A pools",
+    "implementation_location": "system.py select_target/_pool_indices/build_diagnosis_context",
+    "intended_semantics": "report responsibility-conditioned versus zero-assignment updates distinctly",
+    "recommended_action": "audit classifications; do not force assigned target in this task",
+    "severity": "high",
+    "status": "partially_aligned"
+  },
+  {
+    "actual_behavior": "accepted_repair_pattern_ids copies selected_pattern_ids",
+    "behavior_change_required": true,
+    "concept": "specialization artifact",
+    "document_source": "task section 3.5/8",
+    "evidence": "direct list copy in specialization_trajectory_v1",
+    "implementation_location": "system.py record_training_dynamics",
+    "intended_semantics": "selected context differs from actually repaired structural patterns",
+    "recommended_action": "upgrade to v2 selected/repaired structural fields",
+    "severity": "high",
+    "status": "misaligned"
+  },
+  {
+    "actual_behavior": "some active-lifecycle prose still says v10",
+    "behavior_change_required": false,
+    "concept": "version wording",
+    "document_source": "task section 3.6",
+    "evidence": "static v10 search",
+    "implementation_location": "AGENTS.md/method.md/README.md/comments",
+    "intended_semantics": "current final-state lifecycle must not be called v10",
+    "recommended_action": "replace stale lifecycle wording while preserving historical references",
+    "severity": "low",
+    "status": "partially_aligned"
+  },
+  {
+    "actual_behavior": "basic joins exist but path scan is narrow and TCS/Stage-A field availability is not explicit",
+    "behavior_change_required": true,
+    "concept": "sanitized artifact completeness",
+    "document_source": "task section 3.7/9.4",
+    "evidence": "report_integrity only scans a subset of path forms",
+    "implementation_location": "build_sanitized_pilot_report.py",
+    "intended_semantics": "missing evidence is unavailable, and joins/path scans are explicit",
+    "recommended_action": "broaden scanner and record unavailable fields",
+    "severity": "medium",
+    "status": "partially_aligned"
+  }
+]

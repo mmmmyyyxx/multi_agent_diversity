@@ -1,0 +1,680 @@
+{
+  "A_legacy_current": [
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 0.24,
+      "maximum_owner_share": 0.20833333333333334,
+      "owner_count_per_agent": [
+        9,
+        10,
+        10,
+        9,
+        10
+      ],
+      "owner_entropy": 1.60812611128553,
+      "owner_gini": 0.025,
+      "owner_hhi": 0.20052083333333334,
+      "team_state_version": 0
+    },
+    {
+      "active_owner_count": 4,
+      "assigned_load_variance": 23.84,
+      "maximum_owner_share": 0.2708333333333333,
+      "owner_count_per_agent": [
+        11,
+        13,
+        0,
+        11,
+        13
+      ],
+      "owner_entropy": 1.382818108916972,
+      "owner_gini": 0.23333333333333334,
+      "owner_hhi": 0.25173611111111105,
+      "team_state_version": 1
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 61.839999999999996,
+      "maximum_owner_share": 0.3541666666666667,
+      "owner_count_per_agent": [
+        15,
+        0,
+        0,
+        16,
+        17
+      ],
+      "owner_entropy": 1.0973093562969467,
+      "owner_gini": 0.4166666666666667,
+      "owner_hhi": 0.3342013888888889,
+      "team_state_version": 2
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 109.76000000000002,
+      "maximum_owner_share": 0.4782608695652174,
+      "owner_count_per_agent": [
+        22,
+        0,
+        0,
+        22,
+        2
+      ],
+      "owner_entropy": 0.841855259339404,
+      "owner_gini": 0.5739130434782609,
+      "owner_hhi": 0.4593572778827978,
+      "team_state_version": 3
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 90.64,
+      "maximum_owner_share": 0.5,
+      "owner_count_per_agent": [
+        21,
+        0,
+        0,
+        19,
+        2
+      ],
+      "owner_entropy": 0.8503932812006506,
+      "owner_gini": 0.580952380952381,
+      "owner_hhi": 0.45691609977324266,
+      "team_state_version": 4
+    },
+    {
+      "active_owner_count": 2,
+      "assigned_load_variance": 202.23999999999998,
+      "maximum_owner_share": 0.9473684210526315,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        36,
+        2
+      ],
+      "owner_entropy": 0.20619205063323187,
+      "owner_gini": 0.7789473684210526,
+      "owner_hhi": 0.9002770083102491,
+      "team_state_version": 5
+    },
+    {
+      "active_owner_count": 1,
+      "assigned_load_variance": 184.95999999999998,
+      "maximum_owner_share": 1.0,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        0,
+        34
+      ],
+      "owner_entropy": -0.0,
+      "owner_gini": 0.8,
+      "owner_hhi": 1.0,
+      "team_state_version": 6
+    },
+    {
+      "active_owner_count": 2,
+      "assigned_load_variance": 161.44,
+      "maximum_owner_share": 0.9696969696969697,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        1,
+        32
+      ],
+      "owner_entropy": 0.13579395875159386,
+      "owner_gini": 0.7878787878787878,
+      "owner_hhi": 0.9412304866850323,
+      "team_state_version": 7
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 137.44,
+      "maximum_owner_share": 0.9090909090909091,
+      "owner_count_per_agent": [
+        0,
+        2,
+        0,
+        1,
+        30
+      ],
+      "owner_entropy": 0.3625010217396757,
+      "owner_gini": 0.7515151515151515,
+      "owner_hhi": 0.8310376492194673,
+      "team_state_version": 8
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 137.44,
+      "maximum_owner_share": 0.9090909090909091,
+      "owner_count_per_agent": [
+        0,
+        2,
+        0,
+        1,
+        30
+      ],
+      "owner_entropy": 0.3625010217396757,
+      "owner_gini": 0.7515151515151515,
+      "owner_hhi": 0.8310376492194673,
+      "team_state_version": 9
+    },
+    {
+      "active_owner_count": 3,
+      "assigned_load_variance": 110.8,
+      "maximum_owner_share": 0.9,
+      "owner_count_per_agent": [
+        0,
+        2,
+        0,
+        1,
+        27
+      ],
+      "owner_entropy": 0.3887343902209295,
+      "owner_gini": 0.7466666666666667,
+      "owner_hhi": 0.8155555555555556,
+      "team_state_version": 10
+    },
+    {
+      "active_owner_count": 2,
+      "assigned_load_variance": 102.4,
+      "maximum_owner_share": 0.8666666666666667,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        4,
+        26
+      ],
+      "owner_entropy": 0.39267446722755217,
+      "owner_gini": 0.7466666666666667,
+      "owner_hhi": 0.768888888888889,
+      "team_state_version": 11
+    },
+    {
+      "active_owner_count": 2,
+      "assigned_load_variance": 87.03999999999999,
+      "maximum_owner_share": 0.8571428571428571,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        4,
+        24
+      ],
+      "owner_entropy": 0.410116318288409,
+      "owner_gini": 0.7428571428571429,
+      "owner_hhi": 0.7551020408163265,
+      "team_state_version": 12
+    },
+    {
+      "active_owner_count": 2,
+      "assigned_load_variance": 72.96000000000001,
+      "maximum_owner_share": 0.8461538461538461,
+      "owner_count_per_agent": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "owner_entropy": 0.4293230219306162,
+      "owner_gini": 0.7384615384615385,
+      "owner_hhi": 0.7396449704142012,
+      "team_state_version": 13
+    }
+  ],
+  "B_repair_only": [
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 0.24,
+      "maximum_owner_share": 0.20833333333333334,
+      "owner_count_per_agent": [
+        9,
+        10,
+        10,
+        9,
+        10
+      ],
+      "owner_entropy": 1.60812611128553,
+      "owner_gini": 0.025,
+      "owner_hhi": 0.20052083333333334,
+      "team_state_version": 0
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.4399999999999995,
+      "maximum_owner_share": 0.22916666666666666,
+      "owner_count_per_agent": [
+        10,
+        11,
+        5,
+        11,
+        11
+      ],
+      "owner_entropy": 1.5752930006066996,
+      "owner_gini": 0.10833333333333334,
+      "owner_hhi": 0.21180555555555555,
+      "team_state_version": 1
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 8.64,
+      "maximum_owner_share": 0.25,
+      "owner_count_per_agent": [
+        12,
+        6,
+        6,
+        12,
+        12
+      ],
+      "owner_entropy": 1.559581156259877,
+      "owner_gini": 0.15,
+      "owner_hhi": 0.21875,
+      "team_state_version": 2
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.36,
+      "maximum_owner_share": 0.2608695652173913,
+      "owner_count_per_agent": [
+        8,
+        7,
+        7,
+        12,
+        12
+      ],
+      "owner_entropy": 1.5782928309428976,
+      "owner_gini": 0.13043478260869565,
+      "owner_hhi": 0.21266540642722118,
+      "team_state_version": 3
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.04,
+      "maximum_owner_share": 0.2619047619047619,
+      "owner_count_per_agent": [
+        7,
+        7,
+        7,
+        10,
+        11
+      ],
+      "owner_entropy": 1.588459807309937,
+      "owner_gini": 0.10476190476190476,
+      "owner_hhi": 0.20861678004535147,
+      "team_state_version": 4
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.04,
+      "maximum_owner_share": 0.2894736842105263,
+      "owner_count_per_agent": [
+        6,
+        7,
+        7,
+        7,
+        11
+      ],
+      "owner_entropy": 1.5851777927181756,
+      "owner_gini": 0.10526315789473684,
+      "owner_hhi": 0.21052631578947367,
+      "team_state_version": 5
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 2.96,
+      "maximum_owner_share": 0.2647058823529412,
+      "owner_count_per_agent": [
+        7,
+        6,
+        8,
+        4,
+        9
+      ],
+      "owner_entropy": 1.5755470295367568,
+      "owner_gini": 0.1411764705882353,
+      "owner_hhi": 0.21280276816608998,
+      "team_state_version": 6
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.44,
+      "maximum_owner_share": 0.24242424242424243,
+      "owner_count_per_agent": [
+        6,
+        6,
+        8,
+        5,
+        8
+      ],
+      "owner_entropy": 1.5928903535942216,
+      "owner_gini": 0.09696969696969697,
+      "owner_hhi": 0.2066115702479339,
+      "team_state_version": 7
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.04,
+      "maximum_owner_share": 0.24242424242424243,
+      "owner_count_per_agent": [
+        7,
+        6,
+        8,
+        5,
+        7
+      ],
+      "owner_entropy": 1.597234203958847,
+      "owner_gini": 0.08484848484848485,
+      "owner_hhi": 0.20477502295684116,
+      "team_state_version": 8
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.04,
+      "maximum_owner_share": 0.24242424242424243,
+      "owner_count_per_agent": [
+        7,
+        7,
+        6,
+        5,
+        8
+      ],
+      "owner_entropy": 1.597234203958847,
+      "owner_gini": 0.08484848484848485,
+      "owner_hhi": 0.20477502295684116,
+      "team_state_version": 9
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.2,
+      "maximum_owner_share": 0.23333333333333334,
+      "owner_count_per_agent": [
+        6,
+        7,
+        4,
+        7,
+        6
+      ],
+      "owner_entropy": 1.5915629429291351,
+      "owner_gini": 0.09333333333333334,
+      "owner_hhi": 0.2066666666666667,
+      "team_state_version": 10
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.6,
+      "maximum_owner_share": 0.23333333333333334,
+      "owner_count_per_agent": [
+        5,
+        4,
+        7,
+        7,
+        7
+      ],
+      "owner_entropy": 1.5859813771017672,
+      "owner_gini": 0.10666666666666667,
+      "owner_hhi": 0.2088888888888889,
+      "team_state_version": 11
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.04,
+      "maximum_owner_share": 0.2857142857142857,
+      "owner_count_per_agent": [
+        2,
+        4,
+        8,
+        7,
+        7
+      ],
+      "owner_entropy": 1.5175707163961851,
+      "owner_gini": 0.21428571428571427,
+      "owner_hhi": 0.23214285714285712,
+      "team_state_version": 12
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.7600000000000002,
+      "maximum_owner_share": 0.2692307692307692,
+      "owner_count_per_agent": [
+        2,
+        4,
+        6,
+        7,
+        7
+      ],
+      "owner_entropy": 1.53022074156986,
+      "owner_gini": 0.2,
+      "owner_hhi": 0.22781065088757396,
+      "team_state_version": 13
+    }
+  ],
+  "C_repair_only_relative_rank_late": [
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 0.24,
+      "maximum_owner_share": 0.20833333333333334,
+      "owner_count_per_agent": [
+        9,
+        10,
+        10,
+        9,
+        10
+      ],
+      "owner_entropy": 1.60812611128553,
+      "owner_gini": 0.025,
+      "owner_hhi": 0.20052083333333334,
+      "team_state_version": 0
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.4399999999999995,
+      "maximum_owner_share": 0.22916666666666666,
+      "owner_count_per_agent": [
+        10,
+        11,
+        5,
+        11,
+        11
+      ],
+      "owner_entropy": 1.5752930006066996,
+      "owner_gini": 0.10833333333333334,
+      "owner_hhi": 0.21180555555555555,
+      "team_state_version": 1
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 8.64,
+      "maximum_owner_share": 0.25,
+      "owner_count_per_agent": [
+        12,
+        6,
+        6,
+        12,
+        12
+      ],
+      "owner_entropy": 1.559581156259877,
+      "owner_gini": 0.15,
+      "owner_hhi": 0.21875,
+      "team_state_version": 2
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.36,
+      "maximum_owner_share": 0.2608695652173913,
+      "owner_count_per_agent": [
+        8,
+        7,
+        7,
+        12,
+        12
+      ],
+      "owner_entropy": 1.5782928309428976,
+      "owner_gini": 0.13043478260869565,
+      "owner_hhi": 0.21266540642722118,
+      "team_state_version": 3
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.04,
+      "maximum_owner_share": 0.2619047619047619,
+      "owner_count_per_agent": [
+        7,
+        7,
+        7,
+        10,
+        11
+      ],
+      "owner_entropy": 1.588459807309937,
+      "owner_gini": 0.10476190476190476,
+      "owner_hhi": 0.20861678004535147,
+      "team_state_version": 4
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.04,
+      "maximum_owner_share": 0.2894736842105263,
+      "owner_count_per_agent": [
+        6,
+        7,
+        7,
+        7,
+        11
+      ],
+      "owner_entropy": 1.5851777927181756,
+      "owner_gini": 0.10526315789473684,
+      "owner_hhi": 0.21052631578947367,
+      "team_state_version": 5
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.7600000000000002,
+      "maximum_owner_share": 0.29411764705882354,
+      "owner_count_per_agent": [
+        7,
+        6,
+        7,
+        4,
+        10
+      ],
+      "owner_entropy": 1.5685861929525515,
+      "owner_gini": 0.15294117647058825,
+      "owner_hhi": 0.21626297577854672,
+      "team_state_version": 6
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.8399999999999999,
+      "maximum_owner_share": 0.2727272727272727,
+      "owner_count_per_agent": [
+        6,
+        6,
+        7,
+        5,
+        9
+      ],
+      "owner_entropy": 1.5890925483658642,
+      "owner_gini": 0.10909090909090909,
+      "owner_hhi": 0.20844811753902662,
+      "team_state_version": 7
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.04,
+      "maximum_owner_share": 0.24242424242424243,
+      "owner_count_per_agent": [
+        7,
+        6,
+        7,
+        5,
+        8
+      ],
+      "owner_entropy": 1.597234203958847,
+      "owner_gini": 0.08484848484848485,
+      "owner_hhi": 0.20477502295684116,
+      "team_state_version": 8
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.8399999999999999,
+      "maximum_owner_share": 0.2727272727272727,
+      "owner_count_per_agent": [
+        7,
+        6,
+        6,
+        5,
+        9
+      ],
+      "owner_entropy": 1.5890925483658642,
+      "owner_gini": 0.10909090909090909,
+      "owner_hhi": 0.20844811753902662,
+      "team_state_version": 9
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.2,
+      "maximum_owner_share": 0.23333333333333334,
+      "owner_count_per_agent": [
+        6,
+        6,
+        4,
+        7,
+        7
+      ],
+      "owner_entropy": 1.5915629429291351,
+      "owner_gini": 0.09333333333333334,
+      "owner_hhi": 0.2066666666666667,
+      "team_state_version": 10
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 1.6,
+      "maximum_owner_share": 0.23333333333333334,
+      "owner_count_per_agent": [
+        5,
+        4,
+        7,
+        7,
+        7
+      ],
+      "owner_entropy": 1.5859813771017672,
+      "owner_gini": 0.10666666666666667,
+      "owner_hhi": 0.2088888888888889,
+      "team_state_version": 11
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 5.04,
+      "maximum_owner_share": 0.2857142857142857,
+      "owner_count_per_agent": [
+        2,
+        4,
+        8,
+        7,
+        7
+      ],
+      "owner_entropy": 1.5175707163961851,
+      "owner_gini": 0.21428571428571427,
+      "owner_hhi": 0.23214285714285712,
+      "team_state_version": 12
+    },
+    {
+      "active_owner_count": 5,
+      "assigned_load_variance": 3.7600000000000002,
+      "maximum_owner_share": 0.2692307692307692,
+      "owner_count_per_agent": [
+        2,
+        4,
+        6,
+        7,
+        7
+      ],
+      "owner_entropy": 1.53022074156986,
+      "owner_gini": 0.2,
+      "owner_hhi": 0.22781065088757396,
+      "team_state_version": 13
+    }
+  ]
+}

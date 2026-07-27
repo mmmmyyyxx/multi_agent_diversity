@@ -1,0 +1,22 @@
+{
+  "artifact_schema_version": "scheduler_rank_direction_summary_v1",
+  "changed_decision_count": 6,
+  "current_overdue_count": 7,
+  "current_target_frequency": {
+    "0": 5,
+    "1": 5,
+    "2": 7,
+    "3": 4,
+    "4": 11
+  },
+  "intended_overdue_count": 7,
+  "intended_target_frequency": {
+    "0": 5,
+    "1": 4,
+    "2": 7,
+    "3": 5,
+    "4": 11
+  },
+  "observed_decision_count": 32,
+  "scope": "observed_state_decision_replay_not_counterfactual_training"
+}
