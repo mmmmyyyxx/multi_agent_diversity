@@ -1,0 +1,33 @@
+{
+  "G_transition_counts": {
+    "G=0->G=0": 241,
+    "G=0->G=1": 45,
+    "G=1->G=0": 6,
+    "G=1->G=1": 102,
+    "G=1->G=2": 40,
+    "G=2->G=1": 8,
+    "G=2->G=2": 65,
+    "G=2->G=3": 33,
+    "G=3->G=2": 10,
+    "G=3->G=3": 76,
+    "G=3->G=4": 23,
+    "G=4->G=3": 14,
+    "G=4->G=4": 104,
+    "G=4->G=5": 13,
+    "G=5->G=4": 16,
+    "G=5->G=5": 329
+  },
+  "accepted_update_count": 15,
+  "artifact_schema_version": "protection_transition_summary_v1",
+  "available": [
+    "G/H/M",
+    "vote flips",
+    "target correctness"
+  ],
+  "reason_unavailable": "the historical peer-state artifact lacks per-target leave-one-out protection flags",
+  "row_count": 1125,
+  "unavailable": [
+    "per-example unique/pivotal retention",
+    "new unique coverage lifetime"
+  ]
+}

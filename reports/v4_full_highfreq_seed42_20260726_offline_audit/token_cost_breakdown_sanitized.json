@@ -1,0 +1,37 @@
+{
+  "artifact_schema_version": "token_cost_breakdown_v1",
+  "by_phase": "unavailable",
+  "by_role": {
+    "critic": {
+      "call_count": 26,
+      "completion_tokens": 734,
+      "prompt_tokens": 45946,
+      "token_share": 0.0283060399559037,
+      "total_tokens": 46680
+    },
+    "solver": {
+      "call_count": 3850,
+      "completion_tokens": 526094,
+      "prompt_tokens": 1012079,
+      "token_share": 0.9327246443250271,
+      "total_tokens": 1538173
+    },
+    "student": {
+      "call_count": 28,
+      "completion_tokens": 6031,
+      "prompt_tokens": 12732,
+      "token_share": 0.01137759699427209,
+      "total_tokens": 18763
+    },
+    "teacher": {
+      "call_count": 26,
+      "completion_tokens": 3597,
+      "prompt_tokens": 41905,
+      "token_share": 0.027591718724797133,
+      "total_tokens": 45502
+    }
+  },
+  "reason_phase_unavailable": "historical llm_calls.jsonl has no phase identifier",
+  "stage_b_budget_replay": "see stage_b_budget_replay.json",
+  "total_tokens": 1649118
+}

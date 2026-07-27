@@ -1,0 +1,43 @@
+{
+  "artifact_schema_version": "scheduler_replay_summary_v1",
+  "historical_max_wait_4": {
+    "changed_decision_count": 0,
+    "overdue_selected_count": 0,
+    "relative_potential_selected_count": 0,
+    "target_frequency": {
+      "0": 4,
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5
+    },
+    "team_repair_selected_count": 0
+  },
+  "relative_gain_max_wait_4": {
+    "changed_decision_count": 1,
+    "overdue_selected_count": 20,
+    "relative_potential_selected_count": 3,
+    "target_frequency": {
+      "0": 4,
+      "1": 6,
+      "2": 5,
+      "3": 4,
+      "4": 5
+    },
+    "team_repair_selected_count": 1
+  },
+  "relative_gain_max_wait_8": {
+    "changed_decision_count": 17,
+    "overdue_selected_count": 0,
+    "relative_potential_selected_count": 23,
+    "target_frequency": {
+      "0": 1,
+      "1": 6,
+      "2": 2,
+      "3": 9,
+      "4": 6
+    },
+    "team_repair_selected_count": 1
+  },
+  "scope": "observed_state_scheduler_decision_replay_not_counterfactual_training"
+}

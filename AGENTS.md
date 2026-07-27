@@ -29,12 +29,12 @@ Member-Aware Peer-State Prompt-Team Optimization
 ```
 
 The current implementation version is `member_aware_peer_state_v4`. It keeps
-the v3 responsibility, potential-aware scheduling, bounded TCS roles, immutable
+the v3 responsibility, relative-gain scheduling, bounded TCS roles, immutable
 Solver contract, and request-local first-valid Solver invalid recovery while
 replacing per-example zero-loss guards with aggregate non-regression, adding
 bounded Student invalid recovery, and using the final active team after a fixed
 update budget instead of validation checkpoint selection. Checkpoint version is
-10; v9 checkpoints are intentionally incompatible.
+11; v10 checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
 
@@ -657,11 +657,18 @@ Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, primary owner
 assignment, target priorities, target selection, and member improvement need.
 Responsibility lifecycle must be versioned by real team state.
 
-Potential-aware scheduling state is stored in `ResponsibilityState`:
-`best_observed_target_gain_by_agent`, `no_positive_candidate_streak_by_agent`,
-`next_regular_eligible_update_by_agent`, and `target_attempt_count_by_agent`.
-These fields are checkpointed and fingerprinted. They do not alter
-`updates_since_selected` attempt-aware max-wait behavior.
+Relative improvement potential is derived only from current gains: an agent is
+outside the relative-gain band when `g_max - g_i >
+relative_gain_tolerance_count` (default 5). Its rank is discrete by gain level;
+current correct-count gaps are competence diagnostics, not potential. Historical
+candidate outcomes are stored separately as `candidate_search_outcome` and do
+not enter potential or target-selection Pareto vectors. Its cooldown is a
+search-budget control, never evidence that an agent lacks potential.
+
+`responsibility_max_wait_updates` defaults to 8. Overdue agents take priority;
+otherwise relative-potential agents are considered before team-repair evidence.
+When all members are within the tolerance band, team-repair evidence determines
+selection rather than forcing uniform individual accuracy.
 
 ### TCS proposal mechanism
 
@@ -773,7 +780,7 @@ multi_dataset_diverse_rl/persistence/artifacts.py
 Owns exact run identity, behavior fingerprint, atomic checkpoint, incompatible
 checkpoint rejection, and artifacts. Checkpoint member state must be the
 target-free `TeamMemberGainState`.
-Checkpoint v10 also persists Student-recovery audit state, planned/completed
+Checkpoint v11 also persists Student-recovery audit state, planned/completed
 update counts, final-state selection, training dynamics, differentiation
 trajectories, and selected-test state.
 
@@ -975,7 +982,31 @@ Raw `runs*`, SQLite databases, LLM logs, and checkpoints remain ignored unless
 the user explicitly requests otherwise. Prefer compact, secret-free Markdown
 and JSON reports for version control.
 
-## 15. Git and Publication
+## 15. Required Sanitized Research Artifacts
+
+Every optimization pilot uploaded for analysis must include versioned,
+secret-free artifacts: `run_meta_sanitized.json`,
+`candidate_decisions_sanitized.jsonl`,
+`responsibility_assignments_sanitized.jsonl`,
+`member_opportunities_sanitized.jsonl`, `target_priority_audit_sanitized.jsonl`,
+`g_transition_audit_sanitized.jsonl`,
+`specialization_trajectory_sanitized.jsonl`,
+`token_cost_breakdown_sanitized.json`, and
+`final_behavior_matrices_sanitized.json`.
+
+Each artifact declares a schema version and coverage counts. Per-example files
+must be checked for question-hash uniqueness, join consistency, and expected
+rows per team state; unavailable historical fields must be reported as
+`unavailable`, never as zero. Candidate-search outcomes belong under
+`candidate_search_outcome`, separate from relative-improvement-potential fields.
+
+Never upload questions, gold labels, literal agent answers, prompts, raw TCS
+content, API responses/credentials, absolute paths, checkpoints, caches, or
+traces that can reconstruct dataset content. Question hashes, prompt hashes,
+anonymized pattern identifiers, booleans, counts, aggregate statistics, Pareto
+fronts, and sanitized request identities are permitted.
+
+## 16. Git and Publication
 
 Preserve user changes and inspect the worktree before staging. Never add ignored
 raw runs, API secrets, caches, or unrelated files to a commit.

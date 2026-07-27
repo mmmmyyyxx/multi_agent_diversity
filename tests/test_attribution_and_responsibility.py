@@ -177,7 +177,7 @@ def test_all_erroneous_agents_are_target_eligible_without_assignments():
     assert select_target_agent(priorities) in range(5)
 
 
-def test_target_priority_uses_five_axis_front_and_member_first_preference():
+def test_target_priority_uses_current_repair_front_without_candidate_history():
     _, rows = opportunities(["B", "B", "B", "B", "B"])
     priorities = target_priorities(
         opportunities={"q": rows},
@@ -194,7 +194,7 @@ def test_target_priority_uses_five_axis_front_and_member_first_preference():
     assert isinstance(selected_row.oracle_soft_utility_gain_sum, float)
 
 
-def test_overdue_after_four_misses_is_selected_first():
+def test_overdue_after_configured_wait_is_selected_first():
     _, rows = opportunities(["B", "B", "B", "B", "B"])
     current_state = state(
         updates_since_selected_by_agent={0: 0, 1: 4, 2: 0, 3: 0, 4: 0}
@@ -225,11 +225,11 @@ def test_seed_changes_only_exact_symmetric_ties():
     assert owners_a == owners_b
 
 
-def test_unimproved_member_is_preferred_by_headroom_and_potential():
+def test_relative_gain_potential_is_preferred_when_outside_tolerance_band():
     _, rows = opportunities(
         ["B", "B", "B", "B", "B"],
         counts=(5, 5, 5, 5, 5),
-        gains=(0, 5, 0, 0, 0),
+        gains=(0, 6, 0, 0, 0),
     )
     priorities = target_priorities(
         opportunities={"q": rows},
@@ -241,15 +241,15 @@ def test_unimproved_member_is_preferred_by_headroom_and_potential():
     )
     selected = select_target_agent(priorities)
     selected_row = next(row for row in priorities if row.agent_id == selected)
-    assert selected_row.unimproved
-    assert selected_row.headroom_to_best >= 0
+    assert selected_row.has_relative_improvement_potential
+    assert selected_row.relative_improvement_potential_rank > 0
 
 
-def test_positive_guard_rejected_attempt_clears_streak():
+def test_candidate_search_outcome_is_reported_separately_from_potential():
     current, rows = opportunities(["B", "B", "B", "B", "B"])
     current_state = state(
-        best_observed_target_gain_by_agent={0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
-        no_positive_candidate_streak_by_agent={0: 2, 1: 0, 2: 0, 3: 0, 4: 0},
+        candidate_search_best_observed_target_gain_by_agent={0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
+        candidate_search_no_positive_candidate_streak_by_agent={0: 2, 1: 0, 2: 0, 3: 0, 4: 0},
     )
     priorities = target_priorities(
         opportunities={"q": rows},
@@ -260,8 +260,8 @@ def test_positive_guard_rejected_attempt_clears_streak():
         update_index=0,
     )
     row = next(item for item in priorities if item.agent_id == 0)
-    assert row.no_positive_candidate_streak == 2
-    assert row.cooling_down is False
+    assert row.candidate_search_outcome.no_positive_candidate_streak == 2
+    assert row.candidate_search_outcome.cooling_down is False
 
 
 def test_target_pool_audit_fields_describe_scheduler_stages():
@@ -285,7 +285,7 @@ def test_all_cooling_mixed_pool_matches_selector():
         gains=(0, 1, 0, 1, 0),
     )
     current_state = state(
-        next_regular_eligible_update_by_agent={agent: 10 for agent in range(5)}
+        candidate_search_cooldown_until_update_by_agent={agent: 10 for agent in range(5)}
     )
     priorities = target_priorities(
         opportunities={"q": rows},
@@ -296,8 +296,71 @@ def test_all_cooling_mixed_pool_matches_selector():
         update_index=0,
     )
     decision = build_target_selection_decision(priorities)
-    assert decision.selection_pool_stage == "cooldown_fallback"
+    assert decision.selection_pool_stage == "search_budget_cooldown_fallback"
     assert set(decision.actual_candidate_agent_ids) == {
-        row.agent_id for row in priorities if row.unimproved
+        row.agent_id for row in priorities if row.individual_error_count > 0
     }
     assert decision.selected_agent_id in decision.actual_frontier_agent_ids
+
+
+def test_relative_gain_tolerance_marks_all_agents_in_band_with_rank_zero():
+    _, rows = opportunities(
+        ["B", "B", "B", "B", "B"],
+        gains=(25, 30, 28, 27, 29),
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
+    )
+    assert all(row.within_relative_gain_band for row in priorities)
+    assert all(row.relative_improvement_potential_rank == 0 for row in priorities)
+
+
+def test_relative_gain_rank_is_discrete_tied_and_independent_of_initial_counts():
+    _, rows = opportunities(
+        ["B", "B", "B", "B", "B"],
+        counts=(55, 80, 62, 75, 68), gains=(5, 30, 12, 5, 18),
+    )
+    priorities = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(), seed=42, max_wait_updates=8, relative_gain_tolerance_count=5,
+    )
+    by_id = {row.agent_id: row for row in priorities}
+    assert by_id[0].relative_improvement_potential_rank == by_id[3].relative_improvement_potential_rank == 1
+    assert by_id[2].relative_improvement_potential_rank == 2
+    assert by_id[4].relative_improvement_potential_rank == 3
+    assert by_id[1].relative_improvement_potential_rank == 0
+
+
+def test_candidate_search_history_never_changes_relative_potential_rank():
+    _, rows = opportunities(["B", "B", "B", "B", "B"], gains=(5, 30, 12, 25, 18))
+    baseline = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(), seed=42, max_wait_updates=8,
+    )
+    changed = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(
+            candidate_search_best_observed_target_gain_by_agent={0: 99},
+            candidate_search_no_positive_candidate_streak_by_agent={0: 99},
+        ), seed=42, max_wait_updates=8,
+    )
+    assert [row.relative_improvement_potential_rank for row in changed] == [
+        row.relative_improvement_potential_rank for row in baseline
+    ]
+
+
+def test_wait_eight_becomes_overdue_only_at_eight_updates():
+    _, rows = opportunities(["B", "B", "B", "B", "B"])
+    at_seven = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(updates_since_selected_by_agent={0: 7, 1: 0, 2: 0, 3: 0, 4: 0}),
+        seed=42, max_wait_updates=8,
+    )
+    at_eight = target_priorities(
+        opportunities={"q": rows}, assignments={agent: [] for agent in range(5)},
+        state=state(updates_since_selected_by_agent={0: 8, 1: 0, 2: 0, 3: 0, 4: 0}),
+        seed=42, max_wait_updates=8,
+    )
+    assert not next(row for row in at_seven if row.agent_id == 0).overdue
+    assert next(row for row in at_eight if row.agent_id == 0).overdue

@@ -1,0 +1,16 @@
+{
+  "artifact_schema_version": "historical_audit_availability_v1",
+  "available": [
+    "observed scheduler states",
+    "G/H/M accepted transitions",
+    "role token totals",
+    "selected anonymized pattern IDs"
+  ],
+  "unavailable": [
+    "historical per-example unique/pivotal flags",
+    "role-phase token attribution",
+    "candidate prompt length trajectory",
+    "exact Stage-B incremental cost",
+    "full owner/pattern Jaccard continuity"
+  ]
+}

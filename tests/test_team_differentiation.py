@@ -1,6 +1,7 @@
 from multi_dataset_diverse_rl.evaluation.fixed_probe import ProbeExample, PromptAnswer
 from multi_dataset_diverse_rl.tasks import get_task_spec, normalize_bbh_answer
 from multi_dataset_diverse_rl.team_differentiation import (
+    g_transition_audit_rows,
     team_behavior_metrics,
     vote_transition_decomposition,
 )
@@ -53,3 +54,21 @@ def test_vote_transition_decomposition_captures_concentration_driven_flip():
     assert result["mean_delta_G"] == 0
     assert result["mean_delta_H"] == -2
     assert result["boundary_vote_gains"] == 1
+
+
+def test_g_transition_audit_reconstructs_per_example_protection_state():
+    spec = get_task_spec("bbh")
+    rows = g_transition_audit_rows(
+        examples=(ProbeExample("q", "q", "A"),),
+        incumbent_profiles=_profiles(["A", "A", "B", "B", "B"]),
+        candidate_profiles=_profiles(["A", "A", "B", "C", "D"]),
+        target_agent_id=3,
+        normalize_answer=normalize_bbh_answer,
+        match_answer=spec.match_answer,
+        tie_break="abstain",
+        seed=42,
+    )
+    assert rows[0]["G_before"] == rows[0]["G_after"] == 2
+    assert rows[0]["H_before"] == 3 and rows[0]["H_after"] == 1
+    assert rows[0]["vote_correct_before"] is False
+    assert rows[0]["vote_correct_after"] is True

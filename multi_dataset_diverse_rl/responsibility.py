@@ -54,6 +54,16 @@ class ProtectionContribution:
 
 
 @dataclass(frozen=True)
+class CandidateSearchOutcome:
+    """Observed proposal-search results, deliberately separate from potential."""
+
+    best_observed_target_gain: int = 0
+    no_positive_candidate_streak: int = 0
+    cooldown_until_update: int = 0
+    cooling_down: bool = False
+
+
+@dataclass(frozen=True)
 class AgentTargetPriority:
     agent_id: int
     individual_error_count: int
@@ -67,8 +77,13 @@ class AgentTargetPriority:
     gain_count: int
     current_correct_count: int
     best_current_correct_count: int
-    headroom_to_best: int
-    unimproved: bool
+    current_correct_gap_to_best: int
+    best_team_gain_count: int
+    gain_gap_to_best: int
+    relative_gain_tolerance_count: int
+    within_relative_gain_band: bool
+    has_relative_improvement_potential: bool
+    relative_improvement_potential_rank: int
     improvement_need: int
     unique_correct_count: int
     pivotal_correct_count: int
@@ -77,22 +92,25 @@ class AgentTargetPriority:
     overdue: bool
     pareto_front: int
     seeded_rank: str
-    best_observed_target_gain: int = 0
-    no_positive_candidate_streak: int = 0
-    next_regular_eligible_update: int = 0
-    cooling_down: bool = False
+    candidate_search_outcome: CandidateSearchOutcome = field(
+        default_factory=CandidateSearchOutcome
+    )
     target_attempt_count: int = 0
 
-    def pareto_values(self) -> tuple[float, ...]:
-        return (
-            float(self.headroom_to_best),
-            float(max(0, self.best_observed_target_gain)),
-            float(self.improvement_need),
+    def selection_pareto_values(
+        self,
+        *,
+        include_relative_improvement_potential: bool,
+    ) -> tuple[float, ...]:
+        """Only current state evidence belongs in target-selection Pareto fronts."""
+        values: tuple[float, ...] = (
             float(self.direct_vote_fix_count),
             float(self.oracle_soft_utility_gain_sum),
             float(self.coverage_opportunity_count),
-            float(-self.no_positive_candidate_streak),
         )
+        if include_relative_improvement_potential:
+            return (float(self.relative_improvement_potential_rank), *values)
+        return values
 
     @property
     def protection_risk(self) -> int:
@@ -106,14 +124,23 @@ class TargetSelectionDecision:
     eligible_agent_ids: tuple[int, ...]
     overdue_agent_ids: tuple[int, ...]
     non_cooling_agent_ids: tuple[int, ...]
-    unimproved_agent_ids: tuple[int, ...]
+    relative_potential_agent_ids: tuple[int, ...]
     actual_candidate_agent_ids: tuple[int, ...]
     actual_candidate_pareto_fronts: dict[int, int]
     actual_frontier_agent_ids: tuple[int, ...]
 
 
-def _selection_fronts(rows: Sequence[AgentTargetPriority]) -> dict[int, int]:
-    values = {row.agent_id: row.pareto_values() for row in rows}
+def _selection_fronts(
+    rows: Sequence[AgentTargetPriority],
+    *,
+    include_relative_improvement_potential: bool,
+) -> dict[int, int]:
+    values = {
+        row.agent_id: row.selection_pareto_values(
+            include_relative_improvement_potential=include_relative_improvement_potential
+        )
+        for row in rows
+    }
     return _pareto_front_numbers([row.agent_id for row in rows], values)
 
 
@@ -125,31 +152,44 @@ def build_target_selection_decision(
         raise ValueError("no erroneous agents are available for member-aware selection")
     eligible_ids = tuple(row.agent_id for row in eligible)
     overdue = tuple(row for row in eligible if row.overdue)
-    non_cooling = tuple(row for row in eligible if not row.cooling_down)
+    non_cooling = tuple(
+        row for row in eligible if not row.candidate_search_outcome.cooling_down
+    )
     regular = non_cooling or eligible
-    unimproved = tuple(row for row in regular if row.unimproved)
+    relative_potential = tuple(
+        row for row in regular if row.has_relative_improvement_potential
+    )
     if overdue:
         stage = "overdue"
         candidates = overdue
-    elif unimproved and non_cooling:
-        stage = "regular_unimproved"
-        candidates = unimproved
+        include_relative = False
+    elif relative_potential and non_cooling:
+        stage = "relative_improvement_potential"
+        candidates = relative_potential
+        include_relative = True
     elif non_cooling:
-        stage = "regular_all"
+        stage = "team_repair"
         candidates = regular
+        include_relative = False
     else:
-        stage = "cooldown_fallback"
-        candidates = unimproved or regular
-    fronts = _selection_fronts(candidates)
+        stage = "search_budget_cooldown_fallback"
+        candidates = eligible
+        include_relative = False
+    fronts = _selection_fronts(
+        candidates,
+        include_relative_improvement_potential=include_relative,
+    )
     frontier = tuple(row for row in candidates if fronts[row.agent_id] == 1)
     selected = min(
         frontier,
         key=lambda row: (
-            -row.headroom_to_best,
-            -row.best_observed_target_gain,
-            -row.improvement_need,
+            (
+                -row.relative_improvement_potential_rank
+                if include_relative else 0
+            ),
             -row.direct_vote_fix_count,
             -row.oracle_soft_utility_gain_sum,
+            -row.coverage_opportunity_count,
             -row.assigned_load,
             -row.updates_since_selected,
             row.protection_risk,
@@ -162,7 +202,7 @@ def build_target_selection_decision(
         eligible_agent_ids=eligible_ids,
         overdue_agent_ids=tuple(row.agent_id for row in overdue),
         non_cooling_agent_ids=tuple(row.agent_id for row in non_cooling),
-        unimproved_agent_ids=tuple(row.agent_id for row in unimproved),
+        relative_potential_agent_ids=tuple(row.agent_id for row in relative_potential),
         actual_candidate_agent_ids=tuple(row.agent_id for row in candidates),
         actual_candidate_pareto_fronts=fronts,
         actual_frontier_agent_ids=tuple(row.agent_id for row in frontier),
@@ -177,9 +217,15 @@ class ResponsibilityState:
     updates_since_selected_by_agent: dict[int, int] = field(default_factory=dict)
     accepted_updates_by_agent: dict[int, int] = field(default_factory=dict)
     seeded_rank_by_agent: dict[int, str] = field(default_factory=dict)
-    best_observed_target_gain_by_agent: dict[int, int] = field(default_factory=dict)
-    no_positive_candidate_streak_by_agent: dict[int, int] = field(default_factory=dict)
-    next_regular_eligible_update_by_agent: dict[int, int] = field(default_factory=dict)
+    candidate_search_best_observed_target_gain_by_agent: dict[int, int] = field(
+        default_factory=dict
+    )
+    candidate_search_no_positive_candidate_streak_by_agent: dict[int, int] = field(
+        default_factory=dict
+    )
+    candidate_search_cooldown_until_update_by_agent: dict[int, int] = field(
+        default_factory=dict
+    )
     target_attempt_count_by_agent: dict[int, int] = field(default_factory=dict)
 
 
@@ -407,6 +453,7 @@ def target_priorities(
     state: ResponsibilityState,
     seed: int,
     max_wait_updates: int,
+    relative_gain_tolerance_count: int = 5,
     update_index: int = 0,
 ) -> tuple[AgentTargetPriority, ...]:
     rows_by_agent: dict[int, list[MemberAwareRepairOpportunity]] = {
@@ -416,17 +463,49 @@ def target_priorities(
         for row in rows:
             rows_by_agent[row.agent_id].append(row)
     priorities = []
+    if relative_gain_tolerance_count < 0:
+        raise ValueError("relative_gain_tolerance_count must be non-negative")
     current_counts = {
         agent_id: max((row.current_correct_count for row in rows), default=0)
         for agent_id, rows in rows_by_agent.items()
     }
     best_current_count = max(current_counts.values(), default=0)
+    gains = {
+        agent_id: (rows[0].gain_count if rows else 0)
+        for agent_id, rows in rows_by_agent.items()
+    }
+    best_gain = max(gains.values(), default=0)
+    lagging_gain_values = sorted({
+        gain for gain in gains.values()
+        if best_gain - gain > relative_gain_tolerance_count
+    })
+    relative_rank_by_gain = {
+        gain: index + 1 for index, gain in enumerate(lagging_gain_values)
+    }
     for agent_id, rows in sorted(rows_by_agent.items()):
         errors = [row for row in rows if row.member_error]
         seeded_rank = state.seeded_rank_by_agent.setdefault(
             agent_id, _seeded_hash(seed, "target", agent_id)
         )
         reference = rows[0] if rows else None
+        gain_count = gains[agent_id]
+        gain_gap = best_gain - gain_count
+        within_band = gain_gap <= relative_gain_tolerance_count
+        search_outcome = CandidateSearchOutcome(
+            best_observed_target_gain=(
+                state.candidate_search_best_observed_target_gain_by_agent.get(agent_id, 0)
+            ),
+            no_positive_candidate_streak=(
+                state.candidate_search_no_positive_candidate_streak_by_agent.get(agent_id, 0)
+            ),
+            cooldown_until_update=(
+                state.candidate_search_cooldown_until_update_by_agent.get(agent_id, 0)
+            ),
+            cooling_down=(
+                update_index
+                < state.candidate_search_cooldown_until_update_by_agent.get(agent_id, 0)
+            ),
+        )
         priorities.append(AgentTargetPriority(
             agent_id=agent_id,
             individual_error_count=len(errors),
@@ -441,11 +520,16 @@ def target_priorities(
             dominant_wrong_count=sum(
                 row.dominant_wrong_member for row in errors
             ),
-            gain_count=reference.gain_count if reference is not None else 0,
+            gain_count=gain_count,
             current_correct_count=current_counts[agent_id],
             best_current_correct_count=best_current_count,
-            headroom_to_best=best_current_count - current_counts[agent_id],
-            unimproved=(reference.gain_count <= 0 if reference is not None else True),
+            current_correct_gap_to_best=best_current_count - current_counts[agent_id],
+            best_team_gain_count=best_gain,
+            gain_gap_to_best=gain_gap,
+            relative_gain_tolerance_count=relative_gain_tolerance_count,
+            within_relative_gain_band=within_band,
+            has_relative_improvement_potential=not within_band,
+            relative_improvement_potential_rank=relative_rank_by_gain.get(gain_count, 0),
             improvement_need=max((row.improvement_need for row in errors), default=0),
             unique_correct_count=(
                 reference.unique_correct_count if reference is not None else 0
@@ -461,14 +545,16 @@ def target_priorities(
             ),
             pareto_front=0,
             seeded_rank=seeded_rank,
-            best_observed_target_gain=state.best_observed_target_gain_by_agent.get(agent_id, 0),
-            no_positive_candidate_streak=state.no_positive_candidate_streak_by_agent.get(agent_id, 0),
-            next_regular_eligible_update=state.next_regular_eligible_update_by_agent.get(agent_id, 0),
-            cooling_down=update_index < state.next_regular_eligible_update_by_agent.get(agent_id, 0),
+            candidate_search_outcome=search_outcome,
             target_attempt_count=state.target_attempt_count_by_agent.get(agent_id, 0),
         ))
     eligible = [row for row in priorities if row.individual_error_count > 0]
-    values = {row.agent_id: row.pareto_values() for row in eligible}
+    values = {
+        row.agent_id: row.selection_pareto_values(
+            include_relative_improvement_potential=True
+        )
+        for row in eligible
+    }
     fronts = _pareto_front_numbers([row.agent_id for row in eligible], values)
     return tuple(
         replace(row, pareto_front=fronts.get(row.agent_id, 0))

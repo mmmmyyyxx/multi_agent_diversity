@@ -130,9 +130,21 @@ load, wait, and seeded tie-break. Existing owners are retained only while still
 on the frontier, not behind on member/direct-fix priority, and within
 `responsibility_switch_margin` on soft utility.
 
-Target selection uses all agents with current errors. Agents waiting
-`responsibility_max_wait_updates` updates are considered first; the default is
-four. The remaining target comparison is member-aware and deterministic.
+Target selection uses all agents with current errors. Define
+`g_max = max_j g_j`, `gain_gap_to_best_i = g_max - g_i`, and a count tolerance
+of five. Only agents with `gain_gap_to_best_i > 5` have relative improvement
+potential; their rank is a discrete rank over distinct gain levels, with the
+lowest gain ranked first. Current correct-count gaps remain competence reports,
+not potential.
+
+Agents waiting `responsibility_max_wait_updates` updates are considered first;
+the default is eight. Otherwise, relative-potential agents are selected before
+current team-repair evidence. If every agent is inside the tolerance band,
+selection uses current repair value rather than forcing uniform member accuracy.
+Historical candidate gains and failed-search streaks are recorded only as
+candidate-search outcomes. They do not estimate future potential or enter the
+target-selection Pareto vector; any resulting cooldown is a bounded
+search-budget control.
 
 Responsibility answers **who to update and what residual to repair**. Competence
 preservation is deliberately not a sixth responsibility-attribution dimension.

@@ -310,7 +310,7 @@ def test_student_exhaustion_never_updates_potential_or_stage_b(tmp_path):
     async def run():
         await initialize(system)
         before = dict(
-            system.responsibility_state.best_observed_target_gain_by_agent
+            system.responsibility_state.candidate_search_best_observed_target_gain_by_agent
         )
         await system.update_once(0)
         return before, system.candidate_decisions[-1]
@@ -318,8 +318,8 @@ def test_student_exhaustion_never_updates_potential_or_stage_b(tmp_path):
     before, decision = asyncio.run(run())
     assert decision["funnel"]["stage_a_evaluated"] == 0
     assert decision["funnel"]["stage_b_evaluated"] == 0
-    assert decision["potential_state_updated"] is False
+    assert decision["candidate_search_outcome_updated"] is False
     assert (
-        system.responsibility_state.best_observed_target_gain_by_agent
+        system.responsibility_state.candidate_search_best_observed_target_gain_by_agent
         == before
     )

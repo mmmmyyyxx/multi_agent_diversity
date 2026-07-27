@@ -339,3 +339,72 @@ def vote_transition_decomposition(
             for row in boundary_rows
         ]),
     }
+
+
+def g_transition_audit_rows(
+    *,
+    examples: Sequence[ProbeExample],
+    incumbent_profiles: Sequence[Sequence[PromptAnswer]],
+    candidate_profiles: Sequence[Sequence[PromptAnswer]],
+    target_agent_id: int,
+    normalize_answer: Callable[[Any], str],
+    match_answer: Callable[[Any, Any], bool],
+    tie_break: str,
+    seed: int,
+) -> list[dict[str, Any]]:
+    """Per-example accepted-update audit; never used as an acceptance guard."""
+    from .peer_state import build_peer_vote_context
+
+    rows: list[dict[str, Any]] = []
+    for index, example in enumerate(examples):
+        states = []
+        for profiles in (incumbent_profiles, candidate_profiles):
+            states.append(build_team_vote_state(
+                question_hash=example.question_hash,
+                gold_answer=example.gold_answer,
+                answers=[profile[index].answer for profile in profiles],
+                valid_vector=[profile[index].valid for profile in profiles],
+                normalize_answer=normalize_answer,
+                match_answer=match_answer,
+                tie_break=tie_break,
+                seed=seed,
+            ))
+        before, after = states
+        before_peer = build_peer_vote_context(before, target_agent_id)
+        after_peer = build_peer_vote_context(after, target_agent_id)
+        rows.append({
+            "question_hash": example.question_hash,
+            "target_agent_id": target_agent_id,
+            "G_before": before.gold_vote_count,
+            "G_after": after.gold_vote_count,
+            "H_before": before.largest_wrong_vote_count,
+            "H_after": after.largest_wrong_vote_count,
+            "M_before": before.plurality_margin,
+            "M_after": after.plurality_margin,
+            "vote_correct_before": before.vote_correct,
+            "vote_correct_after": after.vote_correct,
+            "target_correct_before": before.team_correctness[target_agent_id],
+            "target_correct_after": after.team_correctness[target_agent_id],
+            "target_valid_before": before.team_validity[target_agent_id],
+            "target_valid_after": after.team_validity[target_agent_id],
+            "unique_correct_before": bool(
+                before.team_correctness[target_agent_id]
+                and before_peer.peer_gold_vote_count == 0
+            ),
+            "unique_correct_after": bool(
+                after.team_correctness[target_agent_id]
+                and after_peer.peer_gold_vote_count == 0
+            ),
+            "pivotal_correct_before": bool(
+                before.team_correctness[target_agent_id]
+                and before.vote_correct
+                and before_peer.peer_margin <= 0
+            ),
+            "pivotal_correct_after": bool(
+                after.team_correctness[target_agent_id]
+                and after.vote_correct
+                and after_peer.peer_margin <= 0
+            ),
+            "transition_class": f"G={before.gold_vote_count}->G={after.gold_vote_count}",
+        })
+    return rows

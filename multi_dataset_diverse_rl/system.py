@@ -71,6 +71,7 @@ from .responsibility import (
 )
 from .tasks import get_task_spec
 from .team_differentiation import (
+    g_transition_audit_rows,
     team_behavior_metrics,
     vote_transition_decomposition,
 )
@@ -295,14 +296,23 @@ class PromptEnsembleOptimizationSystem:
             assigned_load_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             updates_since_selected_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
-            best_observed_target_gain_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
-            no_positive_candidate_streak_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
-            next_regular_eligible_update_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
+            candidate_search_best_observed_target_gain_by_agent={
+                agent_id: 0 for agent_id in range(cfg.training.agents)
+            },
+            candidate_search_no_positive_candidate_streak_by_agent={
+                agent_id: 0 for agent_id in range(cfg.training.agents)
+            },
+            candidate_search_cooldown_until_update_by_agent={
+                agent_id: 0 for agent_id in range(cfg.training.agents)
+            },
             target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
         )
         self.history: list[dict[str, Any]] = []
         self.peer_state_history: list[dict[str, Any]] = []
         self.responsibility_assignments: list[dict[str, Any]] = []
+        self.member_opportunities: list[dict[str, Any]] = []
+        self.g_transition_audit: list[dict[str, Any]] = []
+        self.specialization_trajectory: list[dict[str, Any]] = []
         self.candidate_decisions: list[dict[str, Any]] = []
         self.tcs_context_history: list[dict[str, Any]] = []
         self.tcs_rounds: list[dict[str, Any]] = []
@@ -816,6 +826,25 @@ class PromptEnsembleOptimizationSystem:
                 str(agent_id): [asdict(row) for row in values] for agent_id, values in assigned.items()
             },
         })
+        for state in states:
+            question_hash = state.question_hash
+            owner_audit = owner_audits.get(question_hash, {})
+            for opportunity in opportunities[question_hash]:
+                self.member_opportunities.append({
+                    "artifact_schema_version": "member_opportunities_v1",
+                    "team_state_version": self.team_state_version,
+                    "question_hash": question_hash,
+                    "G": state.gold_vote_count,
+                    "H": state.largest_wrong_vote_count,
+                    "M": state.plurality_margin,
+                    "previous_owner": owner_audit.get("previous_owner"),
+                    "chosen_owner": owner_audit.get("chosen_owner"),
+                    "owner_age": self.responsibility_state.owner_age_by_question.get(
+                        question_hash, 0
+                    ),
+                    "owner_assignment_audit": owner_audit,
+                    **asdict(opportunity),
+                })
         self.cached_responsibility_owners = dict(owners)
         self.cached_responsibility_assignments = {
             agent_id: list(values) for agent_id, values in assigned.items()
@@ -850,6 +879,9 @@ class PromptEnsembleOptimizationSystem:
             state=self.responsibility_state,
             seed=self.cfg.training.seed,
             max_wait_updates=max_wait,
+            relative_gain_tolerance_count=(
+                self.cfg.responsibility.relative_gain_tolerance_count
+            ),
             update_index=update_index,
         )
         fairness = any(row.overdue for row in priorities)
@@ -876,12 +908,12 @@ class PromptEnsembleOptimizationSystem:
             eligible_ids = list(selection.eligible_agent_ids)
             overdue_ids = list(selection.overdue_agent_ids)
             non_cooling_ids = list(selection.non_cooling_agent_ids)
-            unimproved_ids = list(selection.unimproved_agent_ids)
+            relative_potential_ids = list(selection.relative_potential_agent_ids)
             actual_ids = list(selection.actual_candidate_agent_ids)
             actual_fronts = selection.actual_candidate_pareto_fronts
             actual_frontier_ids = list(selection.actual_frontier_agent_ids)
         else:
-            eligible_ids = overdue_ids = non_cooling_ids = unimproved_ids = []
+            eligible_ids = overdue_ids = non_cooling_ids = relative_potential_ids = []
             actual_ids = []
             actual_fronts = {}
             actual_frontier_ids = []
@@ -894,7 +926,7 @@ class PromptEnsembleOptimizationSystem:
             "eligible_agent_ids": eligible_ids,
             "overdue_agent_ids": overdue_ids,
             "non_cooling_agent_ids": non_cooling_ids,
-            "unimproved_agent_ids": unimproved_ids,
+            "relative_potential_agent_ids": relative_potential_ids,
             "actual_candidate_agent_ids": actual_ids,
             "actual_candidate_pareto_fronts": {
                 str(agent_id): actual_fronts[agent_id] for agent_id in actual_ids
@@ -902,8 +934,12 @@ class PromptEnsembleOptimizationSystem:
             "actual_frontier_agent_ids": [
                 agent_id for agent_id in actual_frontier_ids
             ],
-            "cooldown_fallback": pool_stage == "cooldown_fallback",
-            "unimproved_pool_used": pool_stage == "regular_unimproved",
+            "search_budget_cooldown_fallback": (
+                pool_stage == "search_budget_cooldown_fallback"
+            ),
+            "relative_potential_pool_used": (
+                pool_stage == "relative_improvement_potential"
+            ),
             "selected_agent_id": target,
         })
         return target, fairness, priority_payload
@@ -2363,14 +2399,14 @@ class PromptEnsembleOptimizationSystem:
         funnel.accepted_candidate = accepted is not None
         return accepted, incumbent, list(candidates)
 
-    def _update_target_potential_state(
+    def _update_candidate_search_outcome(
         self,
         *,
         target: int,
         update_index: int,
         stage_b_evaluations: Sequence[CandidateEvaluation],
     ) -> tuple[int | None, int]:
-        """Update scheduler potential only after an actual Stage-B evaluation."""
+        """Record proposal-search outcomes and bounded search-budget cooldown."""
         if not stage_b_evaluations:
             return None, 0
         best_attempt_target_gain = max(
@@ -2378,17 +2414,20 @@ class PromptEnsembleOptimizationSystem:
             for row in stage_b_evaluations
         )
         if best_attempt_target_gain > 0:
-            self.responsibility_state.best_observed_target_gain_by_agent[target] = max(
-                self.responsibility_state.best_observed_target_gain_by_agent.get(target, 0),
+            self.responsibility_state.candidate_search_best_observed_target_gain_by_agent[target] = max(
+                self.responsibility_state.candidate_search_best_observed_target_gain_by_agent.get(target, 0),
                 best_attempt_target_gain,
             )
-            self.responsibility_state.no_positive_candidate_streak_by_agent[target] = 0
-            self.responsibility_state.next_regular_eligible_update_by_agent[target] = update_index + 1
+            self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[target] = 0
+            self.responsibility_state.candidate_search_cooldown_until_update_by_agent[target] = update_index + 1
             return best_attempt_target_gain, 0
-        streak = self.responsibility_state.no_positive_candidate_streak_by_agent.get(target, 0) + 1
-        self.responsibility_state.no_positive_candidate_streak_by_agent[target] = streak
+        streak = (
+            self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent.get(target, 0)
+            + 1
+        )
+        self.responsibility_state.candidate_search_no_positive_candidate_streak_by_agent[target] = streak
         cooldown_length = min(streak, 2)
-        self.responsibility_state.next_regular_eligible_update_by_agent[target] = (
+        self.responsibility_state.candidate_search_cooldown_until_update_by_agent[target] = (
             update_index + 1 + cooldown_length
         )
         return best_attempt_target_gain, cooldown_length
@@ -2425,7 +2464,7 @@ class PromptEnsembleOptimizationSystem:
             row.final_evaluation for row in evaluated
             if row.final_evaluation is not None
         ]
-        best_attempt_target_gain, cooldown_length = self._update_target_potential_state(
+        best_attempt_target_gain, cooldown_length = self._update_candidate_search_outcome(
             target=target,
             update_index=update_index,
             stage_b_evaluations=stage_b_evaluations,
@@ -2444,7 +2483,7 @@ class PromptEnsembleOptimizationSystem:
             "positive_target_gain_candidate_found": bool(
                 best_attempt_target_gain is not None and best_attempt_target_gain > 0
             ),
-            "potential_state_updated": bool(stage_b_evaluations),
+            "candidate_search_outcome_updated": bool(stage_b_evaluations),
             "cooldown_length_assigned": cooldown_length,
             "funnel": asdict(funnel),
             "accepted_prompt_hash": accepted.prompt_hash if accepted else "",
@@ -2858,20 +2897,21 @@ class PromptEnsembleOptimizationSystem:
             "max_wait_trigger": int(
                 decision.get("max_wait_fairness_trigger_count", 0)
             ),
-            "cooldown_state": {
-                "cooling_down": target_priority.get("cooling_down"),
-                "next_regular_eligible_update": target_priority.get(
-                    "next_regular_eligible_update"
-                ),
+            "relative_improvement_potential": {
+                key: target_priority.get(key)
+                for key in (
+                    "gain_count",
+                    "best_team_gain_count",
+                    "gain_gap_to_best",
+                    "relative_gain_tolerance_count",
+                    "within_relative_gain_band",
+                    "has_relative_improvement_potential",
+                    "relative_improvement_potential_rank",
+                )
             },
-            "potential_state": {
-                "best_observed_target_gain": target_priority.get(
-                    "best_observed_target_gain"
-                ),
-                "no_positive_candidate_streak": target_priority.get(
-                    "no_positive_candidate_streak"
-                ),
-            },
+            "candidate_search_outcome": target_priority.get(
+                "candidate_search_outcome", {}
+            ),
             "target_gain": constraint.get("target_gain"),
             "vote_gain_count": constraint.get("vote_gain_count"),
             "vote_loss_count": constraint.get("vote_loss_count"),
@@ -2919,6 +2959,68 @@ class PromptEnsembleOptimizationSystem:
                 "active_team_state_hash": state_hash,
             })
             self.update_transition_decomposition.append(transition)
+            transition_rows = g_transition_audit_rows(
+                examples=self.fixed_probe.examples,
+                incumbent_profiles=incumbent_profiles,
+                candidate_profiles=self.active_profiles,
+                target_agent_id=int(target_id),
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+            )
+            for audit_row in transition_rows:
+                audit_row.update({
+                    "artifact_schema_version": "g_transition_audit_v1",
+                    "update_index": int(update_index),
+                    "team_state_version": self.team_state_version,
+                })
+                self.g_transition_audit.append(audit_row)
+            target = int(target_id)
+            old_correct = [
+                bool(answer.valid and self.match_answer(answer.answer, example.gold_answer))
+                for answer, example in zip(
+                    incumbent_profiles[target], self.fixed_probe.examples, strict=True
+                )
+            ]
+            new_correct = [
+                bool(answer.valid and self.match_answer(answer.answer, example.gold_answer))
+                for answer, example in zip(
+                    self.active_profiles[target], self.fixed_probe.examples, strict=True
+                )
+            ]
+            context = next(
+                (
+                    item for item in reversed(self.tcs_context_history)
+                    if item.get("update_index") == update_index
+                    and item.get("target_agent_id") == target
+                ),
+                {},
+            )
+            self.specialization_trajectory.append({
+                "artifact_schema_version": "specialization_trajectory_v1",
+                "update_index": int(update_index),
+                "agent_id": target,
+                "prompt_hash_before": str((decision.get("incumbent") or {}).get("prompt_hash", "")),
+                "prompt_hash_after": accepted_hash,
+                "prompt_character_count_before": len(str((decision.get("incumbent") or {}).get("prompt", ""))),
+                "prompt_character_count_after": len(self.agents[target].current_prompt),
+                "prompt_estimated_token_count_before": None,
+                "prompt_estimated_token_count_after": None,
+                "selected_pattern_ids": list(context.get("selected_pattern_ids", [])),
+                "accepted_repair_pattern_ids": list(context.get("selected_pattern_ids", [])),
+                "correct_set_gain_count": sum(not old and new for old, new in zip(old_correct, new_correct, strict=True)),
+                "correct_set_loss_count": sum(old and not new for old, new in zip(old_correct, new_correct, strict=True)),
+                "correct_set_churn_count": sum(old != new for old, new in zip(old_correct, new_correct, strict=True)),
+                "unique_coverage_gain_count": sum(
+                    not item["unique_correct_before"] and item["unique_correct_after"]
+                    for item in transition_rows
+                ),
+                "unique_coverage_loss_count": sum(
+                    item["unique_correct_before"] and not item["unique_correct_after"]
+                    for item in transition_rows
+                ),
+            })
         return row
 
     def run_meta(self) -> dict[str, Any]:
@@ -3093,6 +3195,9 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_json("best_prompts.json", [agent.current_prompt for agent in self.agents])
         self.artifacts.write_jsonl("peer_state_history.jsonl", self.peer_state_history)
         self.artifacts.write_jsonl("responsibility_assignments.jsonl", self.responsibility_assignments)
+        self.artifacts.write_jsonl("member_opportunities.jsonl", self.member_opportunities)
+        self.artifacts.write_jsonl("g_transition_audit.jsonl", self.g_transition_audit)
+        self.artifacts.write_jsonl("specialization_trajectory.jsonl", self.specialization_trajectory)
         self.artifacts.write_jsonl("target_priority_audit.jsonl", self.target_priority_audit)
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
         self.artifacts.write_json(

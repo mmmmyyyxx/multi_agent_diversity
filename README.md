@@ -115,7 +115,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v10 run identity;
+checkpoint-v11 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -167,3 +167,16 @@ exactly once after every planned update completes and cannot influence training.
 The frozen matched baseline remains a reporting reference only.
 
 See [method.md](method.md) for definitions and implementation details.
+
+For offline analysis of an already completed high-frequency v4 run, use:
+
+```powershell
+D:\Anaconda\envs\DL\python.exe scripts\analyze_v4_offline_audit.py `
+  --run_dir <local_raw_run_dir> `
+  --out_dir <new_sanitized_report_dir>
+```
+
+This is an observed-state scheduler decision replay, not a counterfactual
+training result. Candidate-search outcome is a realized search result, not an
+estimate of member potential. Behavioral subgroups are permitted; only their
+error complementarity and stability are evaluated.
