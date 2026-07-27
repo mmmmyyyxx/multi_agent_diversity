@@ -1,0 +1,670 @@
+{
+  "artifact_schema_version": "terminal_rejection_streak_audit_v1",
+  "assertions": {
+    "all_candidates_are_unacceptable": true,
+    "all_decisions_use_one_reused_responsibility_state": true,
+    "owned_residual_count_matches_target_audit": true,
+    "terminal_streak_is_consecutive_and_rejected": true
+  },
+  "method_version": "member_aware_peer_state_v5",
+  "per_update": [
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            49,
+            12,
+            98
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 4,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "9cc61092d46ec381fd8ff43b8cc487e7425ffdf1ad62ef258fbfeb8d19403ba3",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": -4,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 0,
+          "vote_net_gain": 0
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 2,
+          "candidate_objective": [
+            50,
+            12,
+            102
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 2,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": true,
+          "pareto_dominates_incumbent": true,
+          "prompt_hash": "80b1830e85e2d4f16759465e5ca706ffb30d43bad1cd0877b8a92c7d2800a55e",
+          "rejection_reasons": [
+            "target_not_improved"
+          ],
+          "target_gain": 0,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 0,
+          "vote_net_gain": 1
+        }
+      ],
+      "owned_coverage_count": 3,
+      "owned_direct_fix_count": 1,
+      "owned_dominant_wrong_count": 5,
+      "owned_oracle_soft_utility_sum": 0.8163672945475617,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 5.6,
+        "min": 2
+      },
+      "second_candidate_objective_dominates_first": true,
+      "selected_structural_pattern_ids": [
+        "c3dbe8489e619472bb48",
+        "15c32ceffa352dcbaea2",
+        "af61b8fee6f0622d7525"
+      ],
+      "target_agent_id": 0,
+      "target_assigned_residual_count": 5,
+      "team_state_version": 10,
+      "update_index": 25
+    },
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            49,
+            12,
+            96
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 1,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "ca2f76546c9ebfdfbf112c6dc0641fc7c6bc1d2eb63664ecb305d1e2ad40727e",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": -6,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 0,
+          "vote_net_gain": 0
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 1,
+          "candidate_index": 2,
+          "candidate_objective": [
+            50,
+            11,
+            91
+          ],
+          "coverage_gain_count": 1,
+          "coverage_loss_count": 1,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "59a52c369c1236d3a26139727ddba0cac0d908660ed49f1419d5227842a31b45",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": -11,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 0,
+          "vote_net_gain": 1
+        }
+      ],
+      "owned_coverage_count": 2,
+      "owned_direct_fix_count": 3,
+      "owned_dominant_wrong_count": 6,
+      "owned_oracle_soft_utility_sum": 1.842914235237892,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 8.5,
+        "min": 5
+      },
+      "second_candidate_objective_dominates_first": false,
+      "selected_structural_pattern_ids": [
+        "dad78bc7d6ba79b3cb06",
+        "15c32ceffa352dcbaea2",
+        "5292a3c0399f4bfb57bc"
+      ],
+      "target_agent_id": 2,
+      "target_assigned_residual_count": 6,
+      "team_state_version": 10,
+      "update_index": 26
+    },
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            48,
+            10,
+            100
+          ],
+          "coverage_gain_count": 2,
+          "coverage_loss_count": 0,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "6516e76cc5cd7e2c9668b068090fe2292134887230f43bfd241693fdc8734e88",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -2,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 2,
+          "vote_net_gain": -1
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 2,
+          "candidate_objective": [
+            47,
+            10,
+            100
+          ],
+          "coverage_gain_count": 1,
+          "coverage_loss_count": 0,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "1cf384e2458438c2e0e5b7d27a6ac69a1933908c8821243c695a77f9bd12329f",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -2,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 2,
+          "vote_net_gain": -2
+        }
+      ],
+      "owned_coverage_count": 0,
+      "owned_direct_fix_count": 2,
+      "owned_dominant_wrong_count": 6,
+      "owned_oracle_soft_utility_sum": 1.9791210675127635,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 8.166666666666666,
+        "min": 1
+      },
+      "second_candidate_objective_dominates_first": false,
+      "selected_structural_pattern_ids": [
+        "dad78bc7d6ba79b3cb06",
+        "15c32ceffa352dcbaea2",
+        "5292a3c0399f4bfb57bc"
+      ],
+      "target_agent_id": 4,
+      "target_assigned_residual_count": 6,
+      "team_state_version": 10,
+      "update_index": 27
+    },
+    {
+      "candidate_count": 1,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            48,
+            12,
+            98
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 0,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "3c23b94ca0b25354b9985f18c2e42a759becd5e8db604c835d6b8bd05ada4b6a",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -4,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 2,
+          "vote_net_gain": -1
+        }
+      ],
+      "owned_coverage_count": 2,
+      "owned_direct_fix_count": 2,
+      "owned_dominant_wrong_count": 5,
+      "owned_oracle_soft_utility_sum": 1.384155706756683,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 3.4,
+        "min": 0
+      },
+      "second_candidate_objective_dominates_first": false,
+      "selected_structural_pattern_ids": [
+        "dad78bc7d6ba79b3cb06",
+        "15c32ceffa352dcbaea2",
+        "5292a3c0399f4bfb57bc"
+      ],
+      "target_agent_id": 3,
+      "target_assigned_residual_count": 5,
+      "team_state_version": 10,
+      "update_index": 28
+    },
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            49,
+            12,
+            97
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 4,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "f47e8c38fb08ce42cb802a5a16429f1b6e22d416bc5143c19c2a52c802a377e3",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": -5,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 0,
+          "vote_net_gain": 0
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 2,
+          "candidate_objective": [
+            49,
+            12,
+            102
+          ],
+          "coverage_gain_count": 1,
+          "coverage_loss_count": 1,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "444e621167c8f94f0acfd49e69d0ebbcd3eb78e7a0303c5c740d25a7ccc1d610",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": 0,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 0,
+          "vote_net_gain": 0
+        }
+      ],
+      "owned_coverage_count": 3,
+      "owned_direct_fix_count": 1,
+      "owned_dominant_wrong_count": 5,
+      "owned_oracle_soft_utility_sum": 0.8163672945475617,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 5.6,
+        "min": 2
+      },
+      "second_candidate_objective_dominates_first": true,
+      "selected_structural_pattern_ids": [
+        "c3dbe8489e619472bb48",
+        "15c32ceffa352dcbaea2",
+        "af61b8fee6f0622d7525"
+      ],
+      "target_agent_id": 0,
+      "target_assigned_residual_count": 5,
+      "team_state_version": 10,
+      "update_index": 29
+    },
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            48,
+            11,
+            91
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 1,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "001862f0562f890e9272d77fc8c2000b8d60e509120250463e9ee82252dd750d",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -11,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 2,
+          "vote_net_gain": -1
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 2,
+          "candidate_objective": [
+            48,
+            8,
+            88
+          ],
+          "coverage_gain_count": 0,
+          "coverage_loss_count": 1,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "eea8b9ad01238723008ab6ffb1ffe8c6eecbbd7e383ae63181a799c10db73059",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -14,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 0,
+          "vote_loss_count": 1,
+          "vote_net_gain": -1
+        }
+      ],
+      "owned_coverage_count": 2,
+      "owned_direct_fix_count": 3,
+      "owned_dominant_wrong_count": 6,
+      "owned_oracle_soft_utility_sum": 1.842914235237892,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 8.5,
+        "min": 5
+      },
+      "second_candidate_objective_dominates_first": false,
+      "selected_structural_pattern_ids": [
+        "dad78bc7d6ba79b3cb06",
+        "15c32ceffa352dcbaea2",
+        "5292a3c0399f4bfb57bc"
+      ],
+      "target_agent_id": 2,
+      "target_assigned_residual_count": 6,
+      "team_state_version": 10,
+      "update_index": 30
+    },
+    {
+      "candidate_count": 2,
+      "candidates": [
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 1,
+          "candidate_objective": [
+            48,
+            11,
+            101
+          ],
+          "coverage_gain_count": 3,
+          "coverage_loss_count": 0,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "6879fe171e84944323d1545a17f80b0856022af768a1c02c80a7638298ab66a6",
+          "rejection_reasons": [
+            "target_not_improved",
+            "team_vote_regression",
+            "member_objective_regression"
+          ],
+          "target_gain": -1,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": false,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 2,
+          "vote_loss_count": 3,
+          "vote_net_gain": -1
+        },
+        {
+          "acceptable": false,
+          "assigned_residual_repair_count": 0,
+          "candidate_index": 2,
+          "candidate_objective": [
+            49,
+            10,
+            100
+          ],
+          "coverage_gain_count": 1,
+          "coverage_loss_count": 0,
+          "hard_feasible": false,
+          "incumbent_objective": [
+            49,
+            12,
+            102
+          ],
+          "member_objective_nonregression_passed": false,
+          "pareto_dominates_incumbent": false,
+          "prompt_hash": "9fc85d6db84ddf321cd18e719e3f46deeb68ea16ad93dc09490c04afa2a77f83",
+          "rejection_reasons": [
+            "target_not_improved",
+            "member_objective_regression"
+          ],
+          "target_gain": -2,
+          "target_improvement_passed": false,
+          "team_vote_nonregression_passed": true,
+          "terminal_invalid_nonregression_passed": true,
+          "vote_gain_count": 1,
+          "vote_loss_count": 1,
+          "vote_net_gain": 0
+        }
+      ],
+      "owned_coverage_count": 0,
+      "owned_direct_fix_count": 2,
+      "owned_dominant_wrong_count": 6,
+      "owned_oracle_soft_utility_sum": 1.9791210675127635,
+      "owner_subgroup": "direct_fix_positive",
+      "responsibility_age": {
+        "max": 10,
+        "mean": 8.166666666666666,
+        "min": 1
+      },
+      "second_candidate_objective_dominates_first": false,
+      "selected_structural_pattern_ids": [
+        "dad78bc7d6ba79b3cb06",
+        "15c32ceffa352dcbaea2",
+        "5292a3c0399f4bfb57bc"
+      ],
+      "target_agent_id": 4,
+      "target_assigned_residual_count": 6,
+      "team_state_version": 10,
+      "update_index": 31
+    }
+  ],
+  "streak_update_indices": [
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "summary": {
+    "agent_4_target_share": 0.2857142857142857,
+    "assigned_residual_repairs_by_candidates": 1,
+    "candidate_count": 13,
+    "candidate_rejection_reason_counts": {
+      "member_objective_regression": 12,
+      "target_not_improved": 13,
+      "team_vote_regression": 6
+    },
+    "coverage_gains_by_candidates": 9,
+    "decision_count": 7,
+    "owner_subgroup_frequency": {
+      "direct_fix_positive": 7
+    },
+    "repeated_structural_pattern_bundles": [
+      {
+        "pattern_ids": [
+          "c3dbe8489e619472bb48",
+          "15c32ceffa352dcbaea2",
+          "af61b8fee6f0622d7525"
+        ],
+        "update_indices": [
+          25,
+          29
+        ]
+      },
+      {
+        "pattern_ids": [
+          "dad78bc7d6ba79b3cb06",
+          "15c32ceffa352dcbaea2",
+          "5292a3c0399f4bfb57bc"
+        ],
+        "update_indices": [
+          26,
+          27,
+          28,
+          30,
+          31
+        ]
+      }
+    ],
+    "second_candidate_objective_dominates_first_updates": [
+      25,
+      29
+    ],
+    "target_frequency": {
+      "0": 2,
+      "1": 0,
+      "2": 2,
+      "3": 1,
+      "4": 2
+    }
+  }
+}
