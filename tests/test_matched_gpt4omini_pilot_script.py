@@ -13,9 +13,9 @@ SCRIPT = (
 def test_matched_gpt4omini_script_freezes_only_the_requested_pilot() -> None:
     text = SCRIPT.read_text(encoding="utf-8")
 
-    assert ModelConfig().agent_model == "deepseek-chat"
-    assert ModelConfig().optimizer_model == "deepseek-chat"
-    assert ModelConfig().evaluator_model == "deepseek-chat"
+    assert ModelConfig().agent_model == "gpt-4o-mini"
+    assert ModelConfig().optimizer_model == "gpt-4o-mini"
+    assert ModelConfig().evaluator_model == "gpt-4o-mini"
 
     assert (
         '"--settings", '

@@ -22,9 +22,9 @@ class DataConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
-    agent_model: str = "deepseek-chat"
-    optimizer_model: str = "deepseek-chat"
-    evaluator_model: str = "deepseek-chat"
+    agent_model: str = "gpt-4o-mini"
+    optimizer_model: str = "gpt-4o-mini"
+    evaluator_model: str = "gpt-4o-mini"
     solver_api_key_env: str = ""
     solver_base_url_env: str = ""
     optimizer_api_key_env: str = ""

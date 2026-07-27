@@ -182,12 +182,14 @@ def meta_row(meta: dict[str, Any]) -> dict[str, Any]:
     identity = meta.get("run_identity", {})
     identity_safe = {
         key: value for key, value in identity.items()
-        if "sha256" in key.lower() or key.lower().endswith("_count") or key in {"task_id", "seed"}
+        if "sha256" in key.lower() or key.lower().endswith("_count") or key in {
+            "task_id", "seed", "git_commit", "git_dirty", "config_fingerprint",
+        }
     }
     config = meta.get("config", {})
     config_safe = {
         key: value for key, value in config.items()
-        if allowed_key(key) and key not in {"shared_prompt", "provided_prompts_json"}
+        if allowed_key(key) and key not in {"shared_prompt", "provided_prompts_json", "out_dir"}
     }
     keys = (
         "method_version", "experiment_protocol", "initialization_mode", "tie_policy",
@@ -363,13 +365,21 @@ def main() -> None:
     accepted_count = integrity["checks"]["accepted_transition_join"]["accepted_update_count"]
     final_vote = final_behavior.get("team_vote_correct_count", "unavailable")
     total_tokens = cost.get("total_tokens", "unavailable")
+    setting = str(meta.get("experiment_protocol", {}).get("name", "unknown_setting"))
+    seed = meta.get("config", {}).get("seed", "unknown")
+    identity = meta.get("run_identity", {})
+    model_config = meta.get("config", {})
     (out / "README.md").write_text(
-        "# v11 Full Seed-43 32-Update Pilot\n\n"
+        f"# {meta.get('method_version', 'unknown_method')} {setting} Seed-{seed} Pilot\n\n"
         "This directory contains sanitized, analysis-ready artifacts for one completed "
-        "`shared_member_aware_full` pilot. It is a single-seed development result, not a "
+        f"`{setting}` pilot. It is a single-seed development result, not a "
         "formal efficacy or generalization claim.\n\n"
         "## Protocol facts\n\n"
+        f"- Source revision: `{identity.get('git_commit', 'unavailable')}`; working tree dirty: `{identity.get('git_dirty', 'unavailable')}`.\n"
         f"- Method: `{meta.get('method_version')}`; checkpoint: `{meta.get('checkpoint_version')}`.\n"
+        f"- Solver model: `{model_config.get('agent_model', 'unavailable')}`; "
+        f"Optimizer model: `{model_config.get('optimizer_model', 'unavailable')}`; "
+        f"Evaluator model: `{model_config.get('evaluator_model', 'unavailable')}`.\n"
         f"- Planned/completed updates: `{meta.get('planned_update_count')}`/`{meta.get('completed_update_count')}`.\n"
         f"- Validation used: `{meta.get('validation_used')}`; selected state: `final_active_state`.\n"
         f"- Final test evaluations: `{meta.get('test_evaluation_count')}`; test before training complete: `{meta.get('test_called_before_training_complete')}`.\n"

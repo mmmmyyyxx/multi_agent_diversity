@@ -1,0 +1,60 @@
+{
+  "artifact_schema_version": "sanitized_token_cost_breakdown_v1",
+  "cost_summary": {
+    "accepted_update_count": 10,
+    "completion_tokens": 501788,
+    "evaluator_calls": 42,
+    "failed_llm_attempts": 0,
+    "latency_seconds": 12962.81835770607,
+    "optimizer_calls": 77,
+    "solver_calls": 5072,
+    "stage_a_candidate_count": 57,
+    "successful_candidate_count": 57,
+    "successful_llm_calls": 5191,
+    "tokens_by_role": {
+      "critic": 73235,
+      "solver": 1752533,
+      "student": 22179,
+      "teacher": 73774
+    },
+    "tokens_per_accepted_update": 192172.1,
+    "tokens_per_stage_a_candidate": 33714.40350877193,
+    "tokens_per_successful_candidate": 33714.40350877193,
+    "total_llm_calls": 5191,
+    "total_tokens": 1921721
+  },
+  "solver_recovery_summary": {
+    "attempt_count_histogram": {
+      "1": 4917,
+      "3": 2,
+      "4": 56
+    },
+    "current_run_recovery_api_calls": 172,
+    "current_run_recovery_call_overhead_rate": 0.03457286432160804,
+    "current_run_recovery_completion_tokens": 9122,
+    "current_run_recovery_token_overhead_rate": 0.028192209829326614,
+    "current_run_recovery_total_tokens": 50037,
+    "eventual_valid_rate": 0.9889447236180905,
+    "finish_reason_counts_by_attempt": {
+      "1:stop": 4975,
+      "2:stop": 58,
+      "3:stop": 58,
+      "4:stop": 56
+    },
+    "first_attempt_invalid_count": 58,
+    "first_attempt_valid_count": 4917,
+    "first_attempt_valid_rate": 0.9883417085427135,
+    "first_pass_validity_status_counts": {
+      "valid": 4917
+    },
+    "invalid_recovery_completion_tokens": 9122,
+    "invalid_recovery_extra_calls": 172,
+    "invalid_recovery_total_tokens": 50037,
+    "recovered_invalid_count": 3,
+    "recovery_call_overhead_rate": 0.03457286432160804,
+    "recovery_token_overhead_rate": 0.028192209829326614,
+    "terminal_invalid_count": 55,
+    "terminal_validity_status_counts": {},
+    "unique_resolved_request_count": 4975
+  }
+}
