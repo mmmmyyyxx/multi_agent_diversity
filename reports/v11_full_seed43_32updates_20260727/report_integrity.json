@@ -1,0 +1,51 @@
+{
+  "artifact_schema_version": "sanitized_report_integrity_v1",
+  "checks": {
+    "accepted_transition_join": {
+      "accepted_update_count": 13,
+      "passed": true,
+      "specialization_update_count": 13,
+      "transition_update_count": 13
+    },
+    "candidate_priority_update_join": {
+      "candidate_count": 32,
+      "passed": true,
+      "priority_count": 32
+    },
+    "expected_rows_per_state": {
+      "g_transition_rows_by_update": {
+        "0": 75,
+        "1": 75,
+        "2": 75,
+        "3": 75,
+        "7": 75,
+        "8": 75,
+        "12": 75,
+        "14": 75,
+        "16": 75,
+        "25": 75,
+        "27": 75,
+        "28": 75,
+        "31": 75
+      },
+      "member_opportunity_rows_by_state": {
+        "0": 375,
+        "1": 375,
+        "2": 375,
+        "3": 375,
+        "4": 375,
+        "5": 375,
+        "6": 375,
+        "7": 375,
+        "8": 375,
+        "9": 375,
+        "10": 375,
+        "11": 375,
+        "12": 375,
+        "13": 375
+      },
+      "passed": true,
+      "question_hash_unique_count": 75
+    }
+  }
+}
