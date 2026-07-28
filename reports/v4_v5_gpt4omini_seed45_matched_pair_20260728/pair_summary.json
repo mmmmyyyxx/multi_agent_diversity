@@ -1,0 +1,204 @@
+{
+  "artifact_schema_version": "v4_v5_matched_pair_seed45_v1",
+  "deltas_v5_minus_v4": {
+    "mean_H": -0.18399999999999994,
+    "oracle_covered_but_vote_wrong_rate": 0.016000000000000014,
+    "team_vote_correct_count": 1
+  },
+  "matched_assertions": {
+    "initial_prompt_hashes": true,
+    "models": true,
+    "seed": true,
+    "shared_cache_path": true,
+    "split_hashes": true,
+    "v4_lifecycle": true,
+    "v5_lifecycle": true
+  },
+  "predeclared_mechanism_gate": {
+    "v5_fewer_oracle_covered_vote_wrong": false,
+    "v5_lower_mean_H": true,
+    "v5_owner_context_alignment": true,
+    "v5_test_vote_not_lower": true
+  },
+  "stable_method_evidence_gate_passed": false,
+  "v4_baseline": {
+    "completed_update_count": 0,
+    "final_test": {
+      "mean_G": 2.08,
+      "mean_H": 2.92,
+      "mean_M": -0.84,
+      "n_eff": 1.0,
+      "oracle_covered_but_vote_wrong_rate": 0.0,
+      "team_vote_accuracy": 0.416,
+      "team_vote_correct_count": 52,
+      "terminal_invalid_count": 0
+    },
+    "git_commit": "881a0a89a7011dbe861b44e8dda474e1393c84da",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "method_version": "member_aware_peer_state_v4",
+    "models": {
+      "evaluator": "gpt-4o-mini",
+      "optimizer": "gpt-4o-mini",
+      "solver": "gpt-4o-mini"
+    },
+    "planned_update_count": 0,
+    "reported_selected_vote_correct_count": 52,
+    "seed": 45,
+    "selected_source": "final_active_state",
+    "selected_update_index": 0,
+    "split_hashes": {
+      "test_file_sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+      "train_file_sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+      "val_file_sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    },
+    "test_before_training_complete": false,
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_used_for_training": false,
+    "training_completed": true,
+    "validation_used": false
+  },
+  "v4_full": {
+    "completed_update_count": 32,
+    "final_test": {
+      "mean_G": 3.008,
+      "mean_H": 1.888,
+      "mean_M": 1.12,
+      "n_eff": 1.598649037812768,
+      "oracle_covered_but_vote_wrong_rate": 0.152,
+      "team_vote_accuracy": 0.656,
+      "team_vote_correct_count": 82,
+      "terminal_invalid_count": 0
+    },
+    "git_commit": "881a0a89a7011dbe861b44e8dda474e1393c84da",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "method_version": "member_aware_peer_state_v4",
+    "models": {
+      "evaluator": "gpt-4o-mini",
+      "optimizer": "gpt-4o-mini",
+      "solver": "gpt-4o-mini"
+    },
+    "planned_update_count": 32,
+    "reported_selected_vote_correct_count": 82,
+    "seed": 45,
+    "selected_source": "final_active_state",
+    "selected_update_index": 32,
+    "split_hashes": {
+      "test_file_sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+      "train_file_sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+      "val_file_sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    },
+    "test_before_training_complete": false,
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_used_for_training": false,
+    "training_completed": true,
+    "validation_used": false
+  },
+  "v5_baseline": {
+    "completed_update_count": 0,
+    "final_test": {
+      "mean_G": 2.08,
+      "mean_H": 2.92,
+      "mean_M": -0.84,
+      "n_eff": 1.0,
+      "oracle_covered_but_vote_wrong_rate": 0.0,
+      "team_vote_accuracy": 0.416,
+      "team_vote_correct_count": 52,
+      "terminal_invalid_count": 0
+    },
+    "git_commit": "51226b910cd42bc5433772caf5837a17785f7307",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "method_version": "member_aware_peer_state_v5",
+    "models": {
+      "evaluator": "gpt-4o-mini",
+      "optimizer": "gpt-4o-mini",
+      "solver": "gpt-4o-mini"
+    },
+    "planned_update_count": 0,
+    "reported_selected_vote_correct_count": 52,
+    "seed": 45,
+    "selected_source": "final_active_state",
+    "selected_update_index": 0,
+    "split_hashes": {
+      "test_file_sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+      "train_file_sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+      "val_file_sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    },
+    "test_before_training_complete": false,
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_used_for_training": false,
+    "training_completed": true,
+    "validation_used": false
+  },
+  "v5_full": {
+    "completed_update_count": 32,
+    "final_test": {
+      "mean_G": 3.216,
+      "mean_H": 1.704,
+      "mean_M": 1.512,
+      "n_eff": 1.5326089967549523,
+      "oracle_covered_but_vote_wrong_rate": 0.168,
+      "team_vote_accuracy": 0.664,
+      "team_vote_correct_count": 83,
+      "terminal_invalid_count": 0
+    },
+    "git_commit": "51226b910cd42bc5433772caf5837a17785f7307",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "method_version": "member_aware_peer_state_v5",
+    "models": {
+      "evaluator": "gpt-4o-mini",
+      "optimizer": "gpt-4o-mini",
+      "solver": "gpt-4o-mini"
+    },
+    "planned_update_count": 32,
+    "reported_selected_vote_correct_count": 83,
+    "seed": 45,
+    "selected_source": "final_active_state",
+    "selected_update_index": 32,
+    "split_hashes": {
+      "test_file_sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+      "train_file_sha256": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+      "val_file_sha256": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+    },
+    "test_before_training_complete": false,
+    "test_evaluation_count": 1,
+    "test_used_for_selection": false,
+    "test_used_for_training": false,
+    "training_completed": true,
+    "validation_used": false
+  },
+  "v5_owner_context_alignment": {
+    "passed_count": 32,
+    "update_count": 32
+  }
+}

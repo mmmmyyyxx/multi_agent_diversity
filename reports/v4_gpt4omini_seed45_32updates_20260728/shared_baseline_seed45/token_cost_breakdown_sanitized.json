@@ -1,0 +1,55 @@
+{
+  "artifact_schema_version": "sanitized_token_cost_breakdown_v1",
+  "cost_summary": {
+    "accepted_update_count": 0,
+    "completion_tokens": 13033,
+    "evaluator_calls": 0,
+    "failed_llm_attempts": 0,
+    "latency_seconds": 352.89503622055054,
+    "optimizer_calls": 0,
+    "solver_calls": 125,
+    "stage_a_candidate_count": 0,
+    "successful_candidate_count": 0,
+    "successful_llm_calls": 125,
+    "tokens_by_role": {
+      "critic": 0,
+      "solver": 37165,
+      "student": 0,
+      "teacher": 0
+    },
+    "tokens_per_accepted_update": null,
+    "tokens_per_stage_a_candidate": null,
+    "tokens_per_successful_candidate": null,
+    "total_llm_calls": 125,
+    "total_tokens": 37165
+  },
+  "solver_recovery_summary": {
+    "attempt_count_histogram": {
+      "1": 125
+    },
+    "current_run_recovery_api_calls": 0,
+    "current_run_recovery_call_overhead_rate": 0.0,
+    "current_run_recovery_completion_tokens": 0,
+    "current_run_recovery_token_overhead_rate": 0.0,
+    "current_run_recovery_total_tokens": 0,
+    "eventual_valid_rate": 1.0,
+    "finish_reason_counts_by_attempt": {
+      "1:stop": 125
+    },
+    "first_attempt_invalid_count": 0,
+    "first_attempt_valid_count": 125,
+    "first_attempt_valid_rate": 1.0,
+    "first_pass_validity_status_counts": {
+      "valid": 125
+    },
+    "invalid_recovery_completion_tokens": 0,
+    "invalid_recovery_extra_calls": 0,
+    "invalid_recovery_total_tokens": 0,
+    "recovered_invalid_count": 0,
+    "recovery_call_overhead_rate": 0.0,
+    "recovery_token_overhead_rate": 0.0,
+    "terminal_invalid_count": 0,
+    "terminal_validity_status_counts": {},
+    "unique_resolved_request_count": 125
+  }
+}
