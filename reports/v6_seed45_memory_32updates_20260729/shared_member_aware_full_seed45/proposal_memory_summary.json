@@ -1,0 +1,22 @@
+{
+  "acceptable_candidate_rate": 0.21875,
+  "assigned_residual_repair_candidate_rate": 0.2,
+  "behavior_level_failure_count": 22,
+  "critic_level_failure_count": 3,
+  "cross_agent_collision_count": 0,
+  "entry_count_by_agent": {
+    "0": 2,
+    "1": 1,
+    "2": 1,
+    "3": 1,
+    "4": 1
+  },
+  "exact_bundle_immediate_repeat_rate": 0.0,
+  "longest_consecutive_rejection_length": 24,
+  "memory_hit_acceptance_rate": 0.0,
+  "memory_hit_count": 19,
+  "memory_mode": "state_local_v1",
+  "proposal_memory_version": "agent_isolated_state_local_proposal_memory_v1",
+  "target_or_vote_positive_candidate_rate": 0.1,
+  "tokens_per_accepted_update": 297907.4285714286
+}

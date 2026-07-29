@@ -1,0 +1,9 @@
+{
+  "all_entry_owned_residuals_match_target": true,
+  "cross_agent_collision_count": 0,
+  "entry_count": 6,
+  "key_hashes_unique": true,
+  "memory_mode": "state_local_v1",
+  "partial_key_fallback_used": false,
+  "proposal_memory_version": "agent_isolated_state_local_proposal_memory_v1"
+}
