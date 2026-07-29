@@ -1,0 +1,110 @@
+{
+  "artifact_schema_version": "v6_final_summary_sanitized_v1",
+  "final_test": {
+    "mean_G": 2.72,
+    "mean_H": 2.216,
+    "mean_M": 0.504,
+    "mean_dominant_wrong_concentration": 0.9813953488372094,
+    "mean_member_accuracy": 0.544,
+    "mean_off_diagonal_same_wrong_excess": 0.21472932187715554,
+    "mean_pairwise_correctness_correlation": 0.5740636560262485,
+    "minimum_member_accuracy": 0.456,
+    "n_eff": 1.5168731090844083,
+    "oracle_correct_count": 95,
+    "oracle_covered_but_vote_wrong_rate": 0.224,
+    "per_agent_correct_counts": [
+      66,
+      80,
+      61,
+      57,
+      76
+    ],
+    "team_vote_correct_count": 67,
+    "terminal_invalid_count": 0
+  },
+  "final_train": {
+    "mean_G": 2.7733333333333334,
+    "mean_H": 2.1333333333333333,
+    "mean_M": 0.64,
+    "mean_dominant_wrong_concentration": 0.9710691823899371,
+    "mean_member_accuracy": 0.5546666666666666,
+    "mean_off_diagonal_same_wrong_excess": 0.13958763969819685,
+    "mean_pairwise_correctness_correlation": 0.560254224517508,
+    "member_correct_counts": [
+      42,
+      50,
+      39,
+      35,
+      42
+    ],
+    "minimum_member_accuracy": 0.4666666666666667,
+    "n_eff": 1.5427256806274017,
+    "objective": [
+      43,
+      8,
+      73
+    ],
+    "oracle_correct_count": 57,
+    "oracle_covered_but_vote_wrong_rate": 0.18666666666666668,
+    "terminal_invalid_count": 0,
+    "vote_correct_count": 43
+  },
+  "initial_train": {
+    "mean_G": 1.8,
+    "mean_H": 3.2,
+    "mean_M": -1.4,
+    "mean_dominant_wrong_concentration": 1.0,
+    "mean_member_accuracy": 0.36,
+    "mean_off_diagonal_same_wrong_excess": 0.08072916666666652,
+    "mean_pairwise_correctness_correlation": 1.0,
+    "member_correct_counts": [
+      27,
+      27,
+      27,
+      27,
+      27
+    ],
+    "minimum_member_accuracy": 0.36,
+    "n_eff": 1.0,
+    "objective": [
+      27,
+      0,
+      0
+    ],
+    "oracle_correct_count": 27,
+    "oracle_covered_but_vote_wrong_rate": 0.0,
+    "terminal_invalid_count": 0,
+    "vote_correct_count": 27
+  },
+  "training": {
+    "accepted_update_count": 11,
+    "artifact_schema_version": "v6_acceptance_transition_summary_v1",
+    "counts": {
+      "other": 0,
+      "target_and_vote": 7,
+      "target_only": 4,
+      "vote_only": 0
+    },
+    "last_accepted_update_index": 24,
+    "longest_rejection_streak": 7,
+    "update_indexes": {
+      "other": [],
+      "target_and_vote": [
+        2,
+        6,
+        7,
+        10,
+        14,
+        22,
+        24
+      ],
+      "target_only": [
+        0,
+        1,
+        4,
+        5
+      ],
+      "vote_only": []
+    }
+  }
+}

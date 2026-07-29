@@ -1,0 +1,28 @@
+{
+  "artifact_schema_version": "v6_acceptance_transition_summary_v1",
+  "counts": {
+    "other": 0,
+    "target_and_vote": 7,
+    "target_only": 4,
+    "vote_only": 0
+  },
+  "update_indexes": {
+    "other": [],
+    "target_and_vote": [
+      2,
+      6,
+      7,
+      10,
+      14,
+      22,
+      24
+    ],
+    "target_only": [
+      0,
+      1,
+      4,
+      5
+    ],
+    "vote_only": []
+  }
+}

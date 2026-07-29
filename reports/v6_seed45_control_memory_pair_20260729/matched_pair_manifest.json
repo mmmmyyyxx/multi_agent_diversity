@@ -1,0 +1,83 @@
+{
+  "artifact_schema_version": "v6_matched_pair_manifest_v1",
+  "comparison_label": "unmatched: initial train state differs",
+  "control": {
+    "baseline_test_metrics_hash": "14822ec7e64e1430750740559a2a2e28e0f4fd7a45291bdc5942514e41a154c0",
+    "baseline_test_profile_hash": "unavailable",
+    "config_fingerprint": "e8a70a3b0f23c5b170b5e020dac2c4090ef442f546929f86dd402e146f5cf63d",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "initial_train_profile_hash": "unavailable",
+    "initial_train_state_hash": "9db0073e8a298aae1e824a970790277cb572a19a1c5abad63bcc0c1579069e1d",
+    "model_request_identity": [
+      "prompt_question_recovered_invalid_v2",
+      "3a837c977f7111116371e92aeee4c682a556b3e26c09f9a85a46b0cc23485b92",
+      "task_parser_v1",
+      0.0,
+      45
+    ],
+    "proposal_memory_mode": "off",
+    "source_commit": "50bbc70787d5206f89380f986d56c653de023a53"
+  },
+  "difference_affects_baseline_only": false,
+  "difference_affects_full_runtime": false,
+  "initial_state_match": false,
+  "matched_status": "unmatched",
+  "memory": {
+    "baseline_test_metrics_hash": "9c0edd1f84f471030b9dc9570288065e4f107804a4851a917c34ea9b2a849862",
+    "baseline_test_profile_hash": "unavailable",
+    "config_fingerprint": "79eb433c88624238ff8613bc901e80e155972cbedbc6e5c6fd5887ef929faaeb",
+    "git_dirty": false,
+    "initial_prompt_hashes": [
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+      "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+    ],
+    "initial_train_profile_hash": "unavailable",
+    "initial_train_state_hash": "797fe810f8f1d3fbc8849fd9d1a4ab1709426f652548c861e2fc7506df3f88c8",
+    "model_request_identity": [
+      "prompt_question_recovered_invalid_v2",
+      "3a837c977f7111116371e92aeee4c682a556b3e26c09f9a85a46b0cc23485b92",
+      "task_parser_v1",
+      0.0,
+      45
+    ],
+    "proposal_memory_mode": "state_local_v1",
+    "source_commit": "50bbc70787d5206f89380f986d56c653de023a53"
+  },
+  "runtime_config_match": true,
+  "seed": 45,
+  "shared": {
+    "cache_policy": "fresh_independent_local_shared_cache_per_treatment",
+    "candidate_budget": {
+      "candidate_eval_pool_size": 75,
+      "num_candidates_per_parent": 2,
+      "stage_b_candidate_budget": 2
+    },
+    "manifest_hash": "57a08aec0caebe4e275d0b97966bb3f20aeaf14f981cd70d3dd205db5231041c",
+    "planned_updates": {
+      "control": 32,
+      "memory": 32
+    },
+    "probe_hash": {
+      "control": "c4e6f9623c960c1e202ef728daffbfb4a334f80ae49f02b6f45c8e8f2aec9052",
+      "memory": "c4e6f9623c960c1e202ef728daffbfb4a334f80ae49f02b6f45c8e8f2aec9052"
+    },
+    "test_file_hash": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+    "train_file_hash": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+    "val_file_hash": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+  },
+  "source_revision_difference": false,
+  "unavailable_fields": {
+    "baseline_test_profile_hash": "baseline final summary persists aggregate metrics rather than per-member profiles",
+    "initial_train_profile_hash": "final v6 run artifacts do not persist initial per-question profiles"
+  }
+}

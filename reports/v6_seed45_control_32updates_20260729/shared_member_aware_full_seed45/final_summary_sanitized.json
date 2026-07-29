@@ -1,0 +1,115 @@
+{
+  "artifact_schema_version": "v6_final_summary_sanitized_v1",
+  "final_test": {
+    "mean_G": 2.928,
+    "mean_H": 1.976,
+    "mean_M": 0.952,
+    "mean_dominant_wrong_concentration": 0.9709302325581395,
+    "mean_member_accuracy": 0.5856,
+    "mean_off_diagonal_same_wrong_excess": 0.4534702196561072,
+    "mean_pairwise_correctness_correlation": 0.49112184590426156,
+    "minimum_member_accuracy": 0.544,
+    "n_eff": 1.6866322412542614,
+    "oracle_correct_count": 102,
+    "oracle_covered_but_vote_wrong_rate": 0.216,
+    "per_agent_correct_counts": [
+      81,
+      79,
+      68,
+      69,
+      69
+    ],
+    "team_vote_correct_count": 75,
+    "terminal_invalid_count": 0
+  },
+  "final_train": {
+    "mean_G": 2.933333333333333,
+    "mean_H": 1.9466666666666668,
+    "mean_M": 0.9866666666666667,
+    "mean_dominant_wrong_concentration": 0.9605442176870749,
+    "mean_member_accuracy": 0.5866666666666667,
+    "mean_off_diagonal_same_wrong_excess": 0.2531016284566408,
+    "mean_pairwise_correctness_correlation": 0.5781656157099798,
+    "member_correct_counts": [
+      53,
+      49,
+      42,
+      41,
+      35
+    ],
+    "minimum_member_accuracy": 0.4666666666666667,
+    "n_eff": 1.5093599351240692,
+    "objective": [
+      44,
+      7,
+      80
+    ],
+    "oracle_correct_count": 59,
+    "oracle_covered_but_vote_wrong_rate": 0.2,
+    "terminal_invalid_count": 0,
+    "vote_correct_count": 44
+  },
+  "initial_train": {
+    "mean_G": 1.8666666666666667,
+    "mean_H": 3.1333333333333333,
+    "mean_M": -1.2666666666666666,
+    "mean_dominant_wrong_concentration": 1.0,
+    "mean_member_accuracy": 0.37333333333333335,
+    "mean_off_diagonal_same_wrong_excess": 0.121321865097329,
+    "mean_pairwise_correctness_correlation": 1.0,
+    "member_correct_counts": [
+      28,
+      28,
+      28,
+      28,
+      28
+    ],
+    "minimum_member_accuracy": 0.37333333333333335,
+    "n_eff": 1.0,
+    "objective": [
+      28,
+      0,
+      0
+    ],
+    "oracle_correct_count": 28,
+    "oracle_covered_but_vote_wrong_rate": 0.0,
+    "terminal_invalid_count": 0,
+    "vote_correct_count": 28
+  },
+  "training": {
+    "accepted_update_count": 16,
+    "artifact_schema_version": "v6_acceptance_transition_summary_v1",
+    "counts": {
+      "other": 0,
+      "target_and_vote": 10,
+      "target_only": 6,
+      "vote_only": 0
+    },
+    "last_accepted_update_index": 31,
+    "longest_rejection_streak": 5,
+    "update_indexes": {
+      "other": [],
+      "target_and_vote": [
+        2,
+        3,
+        4,
+        8,
+        11,
+        13,
+        21,
+        22,
+        28,
+        31
+      ],
+      "target_only": [
+        0,
+        1,
+        5,
+        16,
+        17,
+        29
+      ],
+      "vote_only": []
+    }
+  }
+}
