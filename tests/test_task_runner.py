@@ -3,7 +3,12 @@ import json
 import pytest
 
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
-from scripts.run_task_level_accuracy import RUNNER_FIELDS, _completed_run, _parser
+from scripts.run_task_level_accuracy import (
+    RUNNER_FIELDS,
+    _completed_run,
+    _parser,
+    effective_proposal_memory_mode,
+)
 
 
 def identity():
@@ -29,6 +34,15 @@ def test_task_runner_parser_builds_and_resume_completed_is_registered_once():
     assert "resume_completed" not in RUNNER_FIELDS
     actions = [action.dest for action in parser._actions]
     assert actions.count("resume_completed") == 1
+
+
+def test_memory_treatment_applies_only_to_responsibility_conditioned_full_run():
+    assert effective_proposal_memory_mode(
+        "shared_baseline", "state_local_v1"
+    ) == "off"
+    assert effective_proposal_memory_mode(
+        "shared_member_aware_full", "state_local_v1"
+    ) == "state_local_v1"
 
 
 def test_completed_run_requires_exact_identity(tmp_path):

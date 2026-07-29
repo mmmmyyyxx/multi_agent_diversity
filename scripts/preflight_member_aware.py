@@ -36,7 +36,11 @@ from multi_dataset_diverse_rl.versions import (
     TEST_ISOLATION_VERSION,
 )
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
-from scripts.run_task_level_accuracy import RUNNER_FIELDS, _task_split_integrity
+from scripts.run_task_level_accuracy import (
+    RUNNER_FIELDS,
+    _task_split_integrity,
+    effective_proposal_memory_mode,
+)
 
 
 EXPECTED_SETTINGS = [
@@ -204,6 +208,10 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     value = getattr(args, name)
                     if value is not None:
                         values[name] = bool(value) if isinstance(defaults[name], bool) else value
+                values["proposal_memory_mode"] = effective_proposal_memory_mode(
+                    setting.name,
+                    str(values.get("proposal_memory_mode", defaults["proposal_memory_mode"])),
+                )
                 try:
                     cfg = Config.from_flat(**values)
                     if any(not model.strip() for model in (

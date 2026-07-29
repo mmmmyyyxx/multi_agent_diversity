@@ -62,3 +62,33 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     rejected = run_specific_preflight(args, workspace)
     assert rejected["ok"] is False
     assert "Run identity mismatch" in rejected["errors"][0]
+
+
+def test_run_specific_memory_preflight_keeps_its_baseline_memory_off(tmp_path, monkeypatch):
+    split_paths = {}
+    for name, question in (("train", "train q"), ("val", "val q"), ("test", "test q")):
+        path = tmp_path / f"memory-{name}.jsonl"
+        path.write_text(json.dumps({"question": question, "answer": "A"}) + "\n", encoding="utf-8")
+        split_paths[name] = str(path)
+    manifest = tmp_path / "memory-manifest.yaml"
+    manifest.write_text(yaml.safe_dump({"tasks": {"task": {
+        "benchmark": "BBH", "task_type": "bbh", "answer_format": "option_letter",
+        "train_path": split_paths["train"], "val_path": split_paths["val"],
+        "test_path": split_paths["test"],
+    }}}), encoding="utf-8")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://example.invalid/v1")
+    args = build_parser().parse_args([
+        "--manifest", str(manifest), "--tasks", "task",
+        "--settings", "shared_baseline,shared_member_aware_full", "--seeds", "44",
+        "--out_root", str(tmp_path / "runs"), "--train_size", "1", "--val_size", "1",
+        "--test_size", "1", "--num_candidates_per_parent", "1",
+        "--stage_b_candidate_budget", "1", "--proposal_memory_mode", "state_local_v1",
+    ])
+    report = run_specific_preflight(args, Path(__file__).resolve().parents[1])
+    assert report["ok"] is True
+    modes = {row["setting"]: row["proposal_memory_mode"] for row in report["runs"]}
+    assert modes == {
+        "shared_baseline": "off",
+        "shared_member_aware_full": "state_local_v1",
+    }

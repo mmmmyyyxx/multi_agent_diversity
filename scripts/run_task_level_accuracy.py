@@ -33,6 +33,23 @@ RUNNER_FIELDS = tuple(
 )
 
 
+def effective_proposal_memory_mode(
+    setting_name: str,
+    requested_mode: str,
+) -> str:
+    """Keep the reporting-only baseline outside the proposal mechanism.
+
+    A matched memory run still needs its own baseline in the same output root.
+    The baseline has no responsibility-conditioned TCS and therefore cannot
+    instantiate state-local proposal memory.  Only the optimized Full member
+    run receives the requested treatment; this is intentional, visible in its
+    own run metadata, and does not alter the baseline prompt team.
+    """
+    if setting_name == "shared_baseline":
+        return "off"
+    return str(requested_mode)
+
+
 def _task_split_protocol(task) -> dict[str, Any]:
     paths = {str(task.train_path), str(task.val_path), str(task.test_path)}
     if len(paths) < 3:
@@ -189,6 +206,10 @@ def main() -> None:
                     value = getattr(args, name)
                     if value is not None:
                         values[name] = bool(value) if isinstance(defaults[name], bool) else value
+                values["proposal_memory_mode"] = effective_proposal_memory_mode(
+                    setting.name,
+                    str(values.get("proposal_memory_mode", defaults["proposal_memory_mode"])),
+                )
                 cfg = Config.from_flat(**values)
                 split_rows = {
                     "train": build_dataset(load_jsonl(cfg.data.train_path, cfg.data.train_size), cfg.data.dataset_format),
