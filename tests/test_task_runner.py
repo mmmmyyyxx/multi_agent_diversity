@@ -69,3 +69,32 @@ def test_completed_run_requires_exact_identity(tmp_path):
 
 def test_incomplete_run_is_not_reused(tmp_path):
     assert _completed_run(tmp_path, identity()) is False
+
+
+def test_memory_completed_run_requires_memory_artifacts(tmp_path):
+    run = tmp_path / "run"
+    run.mkdir()
+    payloads = {
+        "final_summary.json": {
+            "initial_test": {}, "selected_test": {}, "member_gain": {}, "selection_summary": {},
+        },
+        "history.json": [], "best_prompts.json": ["p"] * 5,
+        "run_meta.json": {
+            "method_version": "member_aware_peer_state_v6", "legacy_compatibility_enabled": False,
+            "solver_output_contract_version": "task_output_contract_v1",
+            "shared_solver_cache_path": "shared.sqlite", "run_identity": identity().to_dict(),
+            "config": {"proposal_memory_mode": "state_local_v1"},
+        },
+        "cost_summary.json": {}, "candidate_funnel.json": {},
+    }
+    for name, payload in payloads.items():
+        (run / name).write_text(json.dumps(payload), encoding="utf-8")
+    for name in ("tcs_rounds.jsonl", "solver_invalid_outputs.jsonl", "student_recovery_observations.jsonl"):
+        (run / name).write_text("", encoding="utf-8")
+    assert _completed_run(run, identity()) is False
+    for name in (
+        "proposal_memory_events_sanitized.jsonl", "proposal_memory_summary.json",
+        "proposal_memory_key_isolation_audit.json", "proposal_rotation_trajectory.jsonl",
+    ):
+        (run / name).write_text("{}" if name.endswith(".json") else "", encoding="utf-8")
+    assert _completed_run(run, identity()) is True

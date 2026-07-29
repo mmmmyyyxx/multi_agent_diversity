@@ -29,8 +29,10 @@ from multi_dataset_diverse_rl.versions import (
     EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
+    PROPOSAL_MEMORY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
+    TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
 )
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
@@ -131,6 +133,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "test_isolation_version": TEST_ISOLATION_VERSION,
         "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
         "tcs_protocol_version": TCS_PROTOCOL_VERSION,
+        "tcs_context_version": TCS_CONTEXT_VERSION,
+        "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+        "proposal_memory_mode": Config().tcs.proposal_memory_mode,
         "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
@@ -300,6 +305,9 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "run_dir": str(run_dir),
                         "run_identity": identity.to_dict(),
                         "shared_solver_cache_path": str(cache_path),
+                        "tcs_context_version": TCS_CONTEXT_VERSION,
+                        "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+                        "proposal_memory_mode": cfg.tcs.proposal_memory_mode,
                         "split_integrity": integrity,
                         "role_environment": role_environment,
                         "planned_update_count": planned_update_count,

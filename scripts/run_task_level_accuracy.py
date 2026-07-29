@@ -104,7 +104,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def _completed_run(run_dir: Path, expected_identity) -> bool:
-    required = (
+    required = [
         "final_summary.json",
         "history.json",
         "best_prompts.json",
@@ -114,13 +114,20 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         "solver_invalid_outputs.jsonl",
         "student_recovery_observations.jsonl",
         "cost_summary.json",
-    )
-    if not all((run_dir / filename).exists() for filename in required):
-        return False
+    ]
     try:
         metadata = _read_json(run_dir / "run_meta.json")
         summary = _read_json(run_dir / "final_summary.json")
     except (OSError, json.JSONDecodeError):
+        return False
+    if metadata.get("config", {}).get("proposal_memory_mode", "off") == "state_local_v1":
+        required.extend((
+            "proposal_memory_events_sanitized.jsonl",
+            "proposal_memory_summary.json",
+            "proposal_memory_key_isolation_audit.json",
+            "proposal_rotation_trajectory.jsonl",
+        ))
+    if not all((run_dir / filename).exists() for filename in required):
         return False
     if metadata["method_version"] != "member_aware_peer_state_v6":
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")

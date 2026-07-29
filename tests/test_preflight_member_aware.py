@@ -48,6 +48,9 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     assert run["run_identity"]["experiment_setting"] == "shared_member_aware_full"
     assert Path(run["shared_solver_cache_path"]).name == "_shared_solver_cache.sqlite"
     assert Path(run["shared_solver_cache_path"]).is_file()
+    assert run["tcs_context_version"] == "assigned_residual_failure_aware_context_v1"
+    assert run["proposal_memory_version"] == "agent_isolated_state_local_proposal_memory_v1"
+    assert run["proposal_memory_mode"] == "off"
 
     run_dir = Path(run["run_dir"])
     run_dir.mkdir(parents=True)

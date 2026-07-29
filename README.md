@@ -76,6 +76,8 @@ python scripts/deterministic_student_recovery_smoke.py
 python scripts/deterministic_final_state_protocol_smoke.py
 python scripts/deterministic_high_frequency_update_smoke.py
 python scripts/deterministic_team_differentiation_metrics_smoke.py
+python scripts/deterministic_proposal_memory_smoke.py
+python scripts/historical_proposal_memory_trigger_replay.py
 git diff --check
 ```
 
@@ -119,7 +121,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v13 run identity;
+checkpoint-v14 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 

@@ -40,6 +40,7 @@ def identity(fingerprint):
         {"student_invalid_max_retries": 2},
         {"solver_output_contract_version": "different-contract"},
         {"shared_solver_cache_path": "different-cache.sqlite"},
+        {"proposal_memory_mode": "state_local_v1"},
     ],
 )
 def test_behavioral_config_changes_fingerprint_and_reject_resume(override):
