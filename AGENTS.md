@@ -28,11 +28,13 @@ The current formal method is:
 Member-Aware Peer-State Prompt-Team Optimization
 ```
 
-The current implementation version is `member_aware_peer_state_v5`. It uses
+The current implementation version is `member_aware_peer_state_v6`. It uses
 repair-only residual ownership, owner-only portfolio scheduling, assigned-
 residual-only Full TCS context, bounded TCS roles, immutable Solver contract,
 request-local first-valid Solver invalid recovery, aggregate non-regression,
-and final-active-state evaluation. Checkpoint version is 13; v12 and earlier
+and final-active-state evaluation. It also supports explicitly configured,
+agent-isolated state-local Proposal Memory for failed proposal searches.
+Checkpoint version is 14; v13 and earlier
 checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
@@ -171,9 +173,8 @@ what must not be damaged during that update
 Preservation is supported through:
 
 - preservation evidence in proposal generation;
-- strict target-member improvement;
-- aggregate team-vote non-regression;
-- Pareto dominance in `(V_count, g_min, g_sum)`;
+- target and team-vote non-regression with at least one strict improvement;
+- strict Pareto dominance in `(V_count, g_min, g_sum)`;
 - terminal-invalid non-regression.
 
 The method does not require per-example preservation. Vote, unique-correct, and
@@ -243,12 +244,10 @@ Candidate evaluation computes:
 - unique-correct and pivotal-correct losses;
 - member gains relative to the initial team.
 
-A candidate must first pass hard feasibility constraints. For the formal
-member-aware method, it must then strictly Pareto-dominate the incumbent in:
-
-```text
-(V_count, g_min, g_sum)
-```
+A candidate must first pass hard feasibility constraints: target and team vote
+correct counts must not regress, at least one must strictly improve, the full
+team objective must strictly Pareto-dominate, and terminal-invalid count must
+not increase.
 
 Soft vote utility is only a dense diagnostic and tie-break signal. It must not
 make a non-dominating candidate acceptable.
@@ -334,9 +333,9 @@ tie-break after substantive metrics are equal.
 The four hard conditions are:
 
 ```text
-strict target correct-count improvement over incumbent
-team vote-correct count no lower than incumbent
-strict Pareto dominance in (V_count, g_min, g_sum)
+target correct-count and team vote-correct count no lower than incumbent
+at least one of target correct-count or team vote-correct count strictly higher
+strict Pareto dominance in `(V_count, g_min, g_sum)`
 terminal-invalid count no higher than incumbent target
 ```
 
@@ -565,8 +564,11 @@ requested candidate count
 
 Student must not receive raw optimization examples or gold answers.
 
-This pipeline is implemented by `member_aware_peer_state_v5` with
-`assigned_residual_only_context_v1`. After a valid Critic rejection, Teacher
+This pipeline is implemented by `member_aware_peer_state_v6` with
+`assigned_residual_failure_aware_context_v1`. In `state_local_v1` mode, a
+complete-keyed Proposal Memory may provide only sanitized failure feedback for
+the same agent, team state, prompt hash, and owned residual set. After a valid
+Critic rejection, Teacher
 revision is stateless but grounded: the next request explicitly includes the
 complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
 feedback, and the same bounded diagnosis context. The revision protocol is
@@ -760,7 +762,7 @@ multi_dataset_diverse_rl/persistence/artifacts.py
 Owns exact run identity, behavior fingerprint, atomic checkpoint, incompatible
 checkpoint rejection, and artifacts. Checkpoint member state must be the
 target-free `TeamMemberGainState`.
-Checkpoint v11 also persists Student-recovery audit state, planned/completed
+Checkpoint v14 also persists Student-recovery audit state, planned/completed
 update counts, final-state selection, training dynamics, differentiation
 trajectories, and selected-test state.
 

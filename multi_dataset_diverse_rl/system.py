@@ -58,6 +58,14 @@ from .peer_state import (
     build_team_vote_state,
     soft_vote_utility,
 )
+from .proposal_memory import (
+    ProposalMemoryEntry,
+    ProposalMemoryKey,
+    SanitizedCandidateSummary,
+    assigned_residual_set_hash,
+    entry_to_dict,
+    feedback_for,
+)
 from .persistence.artifacts import ArtifactWriter
 from .persistence.identity import RunIdentity, solver_request_components, solver_request_identity
 from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_protocol
@@ -85,6 +93,7 @@ from .tcs import (
     CriticDecision,
     AssignedResidualDiagnosisContext,
     PeerStateDiagnosisContext,
+    ProposalFailureFeedback,
     PreviousUpdateOutcome,
     StudentPromptCandidate,
     TCSContextDiagnostics,
@@ -118,6 +127,7 @@ from .versions import (
     EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
+    PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
@@ -193,8 +203,9 @@ class CandidateFunnel:
     selected_by_mean_member_channel: int = 0
     stage_b_evaluated: int = 0
     constraint_feasible: int = 0
-    rejected_target_not_improved: int = 0
+    rejected_target_regression: int = 0
     rejected_team_vote_regression: int = 0
+    rejected_no_target_or_vote_progress: int = 0
     rejected_member_objective_regression: int = 0
     rejected_terminal_invalid_regression: int = 0
     acceptable_candidates: int = 0
@@ -257,11 +268,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v5 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v6 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v5 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v6 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v5 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v6 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -278,6 +289,8 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError(
                 "student_upstream_regeneration_max_count must be zero or one"
             )
+        if cfg.tcs.proposal_memory_mode not in {"off", "state_local_v1"}:
+            raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
         if not 0 < cfg.tcs.tcs_max_evidence_cases <= 3:
@@ -291,6 +304,14 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("TCS character limits must be positive")
         self.cfg = cfg
         self.protocol = self._build_protocol()
+        if (
+            cfg.tcs.proposal_memory_mode == "state_local_v1"
+            and self.protocol.tcs_context_policy
+            != "member_aware_responsibility_conditioned"
+        ):
+            raise ValueError(
+                "state_local_v1 proposal memory requires responsibility-conditioned TCS"
+            )
         self.task_spec = get_task_spec(cfg.data.task_type)
         prompts = self._initial_prompts()
         self.agents = [AgentRuntime(prompt, prompt) for prompt in prompts]
@@ -333,6 +354,11 @@ class PromptEnsembleOptimizationSystem:
         self.target_priority_audit: list[dict[str, Any]] = []
         self.responsibility_service_trajectory: list[dict[str, Any]] = []
         self.target_owner_context_alignment: list[dict[str, Any]] = []
+        self.proposal_memory_entries: dict[str, ProposalMemoryEntry] = {}
+        self.proposal_memory_events: list[dict[str, Any]] = []
+        self.proposal_rotation_trajectory: list[dict[str, Any]] = []
+        self._proposal_memory_attempts: dict[int, dict[str, Any]] = {}
+        self.proposal_memory_run_id = ""
         self.previous_update_outcomes = {
             agent_id: PreviousUpdateOutcome() for agent_id in range(5)
         }
@@ -437,6 +463,61 @@ class PromptEnsembleOptimizationSystem:
         if identity.experiment_setting != self.protocol.name:
             raise ValueError("run identity experiment setting does not match the protocol")
         self.run_identity = identity
+        payload = {
+            "run_identity": identity.to_dict(),
+            "out_dir": str(self.cfg.persistence.out_dir),
+        }
+        self.proposal_memory_run_id = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+
+    def _proposal_memory_key(
+        self,
+        *,
+        target_agent_id: int,
+        parent_prompt: str,
+        assigned_hashes: set[str],
+    ) -> ProposalMemoryKey:
+        if self.run_identity is None or not self.proposal_memory_run_id:
+            raise RuntimeError("proposal memory requires an exact run identity")
+        if any(
+            self.cached_responsibility_owners.get(question_hash) != target_agent_id
+            for question_hash in assigned_hashes
+        ):
+            raise RuntimeError("proposal memory key contains a non-owned residual")
+        return ProposalMemoryKey(
+            run_id=self.proposal_memory_run_id,
+            team_state_version=self.team_state_version,
+            target_agent_id=target_agent_id,
+            target_prompt_hash=self.prompt_hash(parent_prompt),
+            assigned_residual_set_hash=assigned_residual_set_hash(tuple(assigned_hashes)),
+        )
+
+    def _proposal_memory_entry(
+        self,
+        key: ProposalMemoryKey,
+        assigned_hashes: set[str],
+    ) -> ProposalMemoryEntry | None:
+        entry = self.proposal_memory_entries.get(key.key_hash())
+        if entry is None:
+            return None
+        if entry.key != key or entry.assigned_question_hashes != tuple(sorted(assigned_hashes)):
+            raise RuntimeError("proposal memory lifecycle/schema mismatch")
+        if any(
+            self.cached_responsibility_owners.get(question_hash) != key.target_agent_id
+            for question_hash in entry.assigned_question_hashes
+        ):
+            raise RuntimeError("proposal memory contains a non-owned residual")
+        return entry
+
+    @staticmethod
+    def _evidence_bundle_hash(context: AnyDiagnosisContext) -> str:
+        payload = {
+            "patterns": [row.pattern_id for row in context.patterns],
+            "questions": [row.question_hash for row in context.evidence_cases],
+        }
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
     @staticmethod
     def prompt_hash(prompt: str) -> str:
@@ -1008,6 +1089,9 @@ class PromptEnsembleOptimizationSystem:
         target_agent_id: int,
         parent_prompt: str,
         assigned_hashes: set[str],
+        *,
+        rotation_cursor: int = 0,
+        proposal_failure_feedback: ProposalFailureFeedback | None = None,
     ) -> tuple[AnyDiagnosisContext, TCSContextDiagnostics]:
         if self.fixed_probe is None:
             raise RuntimeError("fixed probe is not initialized")
@@ -1026,6 +1110,7 @@ class PromptEnsembleOptimizationSystem:
             context_policy=self.protocol.tcs_context_policy,
             max_patterns=self.cfg.tcs.tcs_max_pattern_summaries,
             max_cases=self.cfg.tcs.tcs_max_evidence_cases,
+            rotation_cursor=rotation_cursor,
         )
         common = {
             "target_agent_id": target_agent_id,
@@ -1061,6 +1146,7 @@ class PromptEnsembleOptimizationSystem:
             context = AssignedResidualDiagnosisContext(
                 **common,
                 assigned_residual_count=len(assigned_hashes),
+                proposal_failure_feedback=proposal_failure_feedback,
             )
         else:
             raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
@@ -1703,7 +1789,51 @@ class PromptEnsembleOptimizationSystem:
         update_index: int = -1,
     ) -> list[CandidateRuntime]:
         parent_prompt = self.agents[target_agent_id].current_prompt
-        context, diagnostics = self._proposal_context(target_agent_id, parent_prompt, assigned_hashes)
+        memory_key: ProposalMemoryKey | None = None
+        memory_entry: ProposalMemoryEntry | None = None
+        memory_feedback: ProposalFailureFeedback | None = None
+        rotation_cursor = 0
+        if self.cfg.tcs.proposal_memory_mode == "state_local_v1":
+            memory_key = self._proposal_memory_key(
+                target_agent_id=target_agent_id,
+                parent_prompt=parent_prompt,
+                assigned_hashes=assigned_hashes,
+            )
+            memory_entry = self._proposal_memory_entry(memory_key, assigned_hashes)
+            if memory_entry is not None:
+                memory_feedback = feedback_for(memory_entry)
+                rotation_cursor = memory_entry.rotation_cursor
+        context, diagnostics = self._proposal_context(
+            target_agent_id,
+            parent_prompt,
+            assigned_hashes,
+            rotation_cursor=rotation_cursor,
+            proposal_failure_feedback=memory_feedback,
+        )
+        evidence_bundle_hash = self._evidence_bundle_hash(context)
+        if (
+            memory_entry is not None
+            and memory_entry.immediate_tabu_bundle_hash == evidence_bundle_hash
+            and not memory_entry.rotation_exhausted
+        ):
+            context, diagnostics = self._proposal_context(
+                target_agent_id,
+                parent_prompt,
+                assigned_hashes,
+                rotation_cursor=rotation_cursor + 1,
+                proposal_failure_feedback=memory_feedback,
+            )
+            evidence_bundle_hash = self._evidence_bundle_hash(context)
+        self._proposal_memory_attempts[update_index] = {
+            "key": memory_key,
+            "memory_hit": memory_entry is not None,
+            "feedback": memory_feedback,
+            "evidence_bundle_hash": evidence_bundle_hash,
+            "rotation_cursor": rotation_cursor,
+            "rotation_exhausted": bool(
+                memory_entry and memory_entry.rotation_exhausted
+            ),
+        }
         context_serialized = serialize_context(context)
         context_object = context_payload(context)
         field_paths = sorted(_recursive_field_paths(context_object))
@@ -1733,6 +1863,11 @@ class PromptEnsembleOptimizationSystem:
             "context_class": type(context).__name__,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
             "proposal_context_hash": hashlib.sha256(context_serialized.encode("utf-8")).hexdigest(),
+            "proposal_memory_mode": self.cfg.tcs.proposal_memory_mode,
+            "proposal_memory_hit": memory_entry is not None,
+            "proposal_memory_key_hash": memory_key.key_hash() if memory_key else "",
+            "evidence_bundle_hash": evidence_bundle_hash,
+            "proposal_rotation_cursor": rotation_cursor,
             "serialized_top_level_fields": sorted(context_object),
             "serialized_recursive_field_paths": field_paths,
             "forbidden_field_check": forbidden_check,
@@ -2269,8 +2404,11 @@ class PromptEnsembleOptimizationSystem:
                 feasible.append(candidate)
             for reason in candidate.constraint.rejection_reasons:
                 field = {
-                    "target_not_improved": "rejected_target_not_improved",
+                    "target_regression": "rejected_target_regression",
                     "team_vote_regression": "rejected_team_vote_regression",
+                    "no_target_or_vote_progress": (
+                        "rejected_no_target_or_vote_progress"
+                    ),
                     "member_objective_regression": (
                         "rejected_member_objective_regression"
                     ),
@@ -2335,6 +2473,133 @@ class PromptEnsembleOptimizationSystem:
         )
         return best_attempt_target_gain, 0
 
+    def _record_proposal_memory_outcome(
+        self,
+        *,
+        update_index: int,
+        target_agent_id: int,
+        assigned_hashes: set[str],
+        evaluated: Sequence[CandidateRuntime],
+        funnel: CandidateFunnel,
+        accepted: CandidateRuntime | None,
+    ) -> None:
+        attempt = self._proposal_memory_attempts.pop(update_index, None)
+        if self.cfg.tcs.proposal_memory_mode == "off":
+            return
+        if attempt is None or not isinstance(attempt.get("key"), ProposalMemoryKey):
+            raise RuntimeError("proposal memory attempt is missing its exact key")
+        key = attempt["key"]
+        if key.target_agent_id != target_agent_id:
+            raise RuntimeError("proposal memory cross-agent lifecycle mismatch")
+        summaries: list[SanitizedCandidateSummary] = []
+        reasons: list[str] = []
+        for row in evaluated:
+            if row.final_evaluation is None:
+                continue
+            evaluation = row.final_evaluation
+            constraint = row.constraint
+            rejection_reasons = tuple(constraint.rejection_reasons) if constraint else ()
+            reasons.extend(rejection_reasons)
+            summaries.append(SanitizedCandidateSummary(
+                prompt_hash=row.prompt_hash,
+                target_gain=int(evaluation.member_gain.target_gain_vs_incumbent),
+                vote_gain_count=int(evaluation.marginal.vote_gain_count),
+                vote_loss_count=int(evaluation.marginal.vote_loss_count),
+                vote_net_gain=int(evaluation.marginal.net_vote_delta),
+                assigned_residual_repair_count=int(evaluation.marginal.assigned_residual_repair_count),
+                assigned_residual_utility_delta=float(evaluation.marginal.assigned_residual_utility_delta),
+                coverage_gain_count=int(evaluation.marginal.coverage_gain_count),
+                coverage_loss_count=int(evaluation.marginal.coverage_loss_count),
+                unique_correct_gain_count=int(evaluation.protection.unique_correct_gain_count),
+                unique_correct_loss_count=int(evaluation.protection.unique_correct_loss_count),
+                pivotal_correct_gain_count=int(evaluation.protection.pivotal_correct_gain_count),
+                pivotal_correct_loss_count=int(evaluation.protection.pivotal_correct_loss_count),
+                rejection_reasons=rejection_reasons,
+            ))
+        max_target_gain = max((row.target_gain for row in summaries), default=None)
+        max_vote_net_gain = max((row.vote_net_gain for row in summaries), default=None)
+        max_assigned_repair = max(
+            (row.assigned_residual_repair_count for row in summaries), default=None
+        )
+        if accepted is not None:
+            failure_stage = "accepted"
+        elif funnel.terminal_failure_role == "critic" or funnel.critic_semantic_rejections:
+            failure_stage = "critic"
+        elif not summaries:
+            failure_stage = "pipeline"
+        elif max_assigned_repair == 0:
+            failure_stage = "zero_repair_behavior"
+        elif any(
+            row.target_gain > 0 or row.vote_net_gain > 0
+            or row.assigned_residual_repair_count > 0
+            for row in summaries
+        ):
+            failure_stage = "regressive_progress"
+        else:
+            failure_stage = "stage_b_rejection"
+        histogram = {reason: reasons.count(reason) for reason in sorted(set(reasons))}
+        teacher_hashes = tuple(
+            row["teacher_plan_hash"]
+            for row in self.tcs_rounds
+            if row.get("update_index") == update_index
+            and row.get("target_agent_id") == target_agent_id
+            and row.get("role") == "teacher"
+            and row.get("teacher_plan_hash")
+        )
+        event = {
+            "update_index": update_index,
+            "memory_mode": self.cfg.tcs.proposal_memory_mode,
+            "memory_hit": bool(attempt["memory_hit"]),
+            "memory_key_hash": key.key_hash(),
+            "target_agent_id": target_agent_id,
+            "team_state_version": key.team_state_version,
+            "assigned_residual_set_hash": key.assigned_residual_set_hash,
+            "previous_evidence_bundle_hash": (
+                attempt["feedback"].previous_evidence_bundle_hash
+                if attempt["feedback"] else None
+            ),
+            "current_evidence_bundle_hash": attempt["evidence_bundle_hash"],
+            "failure_stage": failure_stage,
+            "revision_mode": (
+                attempt["feedback"].required_revision_mode if attempt["feedback"] else "none"
+            ),
+            "rotation_triggered": bool(attempt["memory_hit"]),
+            "rotation_level": (
+                attempt["feedback"].rotation_level if attempt["feedback"] else "none"
+            ),
+            "rotation_exhausted": bool(attempt["rotation_exhausted"]),
+            "cross_agent_guard_passed": True,
+            "acceptable_after_memory_hit": bool(accepted and attempt["memory_hit"]),
+        }
+        self.proposal_memory_events.append(event)
+        self.proposal_rotation_trajectory.append(dict(event))
+        if accepted is not None:
+            return
+        existing = self._proposal_memory_entry(key, assigned_hashes)
+        entry = existing or ProposalMemoryEntry(
+            key=key,
+            assigned_question_hashes=tuple(sorted(assigned_hashes)),
+        )
+        prior_bundles = entry.previous_evidence_bundle_hashes
+        current_bundle = str(attempt["evidence_bundle_hash"])
+        entry.attempt_count += 1
+        entry.previous_evidence_bundle_hashes = prior_bundles + (current_bundle,)
+        entry.previous_repair_plan_hashes = (
+            entry.previous_repair_plan_hashes + teacher_hashes
+        )
+        entry.last_failure_stage = failure_stage
+        entry.last_rejection_reason_histogram = histogram
+        entry.candidate_summaries = tuple(summaries)
+        entry.max_target_gain = max_target_gain
+        entry.max_vote_net_gain = max_vote_net_gain
+        entry.max_assigned_residual_repair_count = max_assigned_repair
+        entry.rotation_cursor += 1
+        entry.rotation_exhausted = bool(
+            prior_bundles and prior_bundles[-1] == current_bundle
+        )
+        entry.immediate_tabu_bundle_hash = current_bundle
+        self.proposal_memory_entries[key.key_hash()] = entry
+
     async def update_once(self, update_index: int) -> bool:
         if not self.protocol.optimization_enabled:
             return False
@@ -2382,6 +2647,14 @@ class PromptEnsembleOptimizationSystem:
         )
         accepted, incumbent, evaluated = await self.evaluate_candidates(
             target, candidates, assigned_hashes, funnel,
+        )
+        self._record_proposal_memory_outcome(
+            update_index=update_index,
+            target_agent_id=target,
+            assigned_hashes=assigned_hashes,
+            evaluated=evaluated,
+            funnel=funnel,
+            accepted=accepted,
         )
         stage_b_evaluations = [
             row.final_evaluation for row in evaluated
@@ -2984,6 +3257,93 @@ class PromptEnsembleOptimizationSystem:
             })
         return row
 
+    def proposal_memory_summary(self) -> dict[str, Any]:
+        events = list(self.proposal_memory_events)
+        hits = [row for row in events if row["memory_hit"]]
+        failures = [row for row in events if row["failure_stage"] != "accepted"]
+        accepted = [row for row in events if row["failure_stage"] == "accepted"]
+        summaries = [
+            summary for entry in self.proposal_memory_entries.values()
+            for summary in entry.candidate_summaries
+        ]
+        return {
+            "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+            "memory_mode": self.cfg.tcs.proposal_memory_mode,
+            "memory_hit_count": len(hits),
+            "entry_count_by_agent": {
+                str(agent_id): sum(
+                    entry.key.target_agent_id == agent_id
+                    for entry in self.proposal_memory_entries.values()
+                )
+                for agent_id in range(5)
+            },
+            "cross_agent_collision_count": 0,
+            "exact_bundle_immediate_repeat_rate": (
+                sum(
+                    row["previous_evidence_bundle_hash"]
+                    == row["current_evidence_bundle_hash"]
+                    for row in events if row["previous_evidence_bundle_hash"]
+                )
+                / max(1, len(hits))
+            ),
+            "critic_level_failure_count": sum(
+                row["failure_stage"] == "critic" for row in failures
+            ),
+            "behavior_level_failure_count": sum(
+                row["failure_stage"] in {"zero_repair_behavior", "regressive_progress"}
+                for row in failures
+            ),
+            "assigned_residual_repair_candidate_rate": (
+                sum(summary.assigned_residual_repair_count > 0 for summary in summaries)
+                / len(summaries) if summaries else None
+            ),
+            "target_or_vote_positive_candidate_rate": (
+                sum(
+                    summary.target_gain > 0 or summary.vote_net_gain > 0
+                    for summary in summaries
+                ) / len(summaries) if summaries else None
+            ),
+            "acceptable_candidate_rate": len(accepted) / max(1, len(events)),
+            "longest_consecutive_rejection_length": self._longest_rejection_streak(events),
+            "memory_hit_acceptance_rate": (
+                sum(row["acceptable_after_memory_hit"] for row in hits) / max(1, len(hits))
+            ),
+            "tokens_per_accepted_update": self.cost_summary().get("tokens_per_accepted_update"),
+        }
+
+    @staticmethod
+    def _longest_rejection_streak(events: Sequence[Mapping[str, Any]]) -> int:
+        longest = current = 0
+        for row in events:
+            if row.get("failure_stage") == "accepted":
+                current = 0
+            else:
+                current += 1
+                longest = max(longest, current)
+        return longest
+
+    def proposal_memory_isolation_audit(self) -> dict[str, Any]:
+        entries = list(self.proposal_memory_entries.values())
+        keys_unique = len({entry.key.key_hash() for entry in entries}) == len(entries)
+        ownership_valid = all(
+            all(
+                self.cached_responsibility_owners.get(question_hash)
+                == entry.key.target_agent_id
+                for question_hash in entry.assigned_question_hashes
+            )
+            for entry in entries
+            if entry.key.team_state_version == self.team_state_version
+        )
+        return {
+            "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+            "memory_mode": self.cfg.tcs.proposal_memory_mode,
+            "entry_count": len(entries),
+            "key_hashes_unique": keys_unique,
+            "cross_agent_collision_count": 0,
+            "all_entry_owned_residuals_match_target": ownership_valid,
+            "partial_key_fallback_used": False,
+        }
+
     def run_meta(self) -> dict[str, Any]:
         if self.run_identity is None:
             raise RuntimeError("run identity must be set before writing run metadata")
@@ -3012,6 +3372,9 @@ class PromptEnsembleOptimizationSystem:
             "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
             "test_isolation_version": TEST_ISOLATION_VERSION,
             "tcs_context_version": TCS_CONTEXT_VERSION,
+            "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+            "proposal_memory_mode": self.cfg.tcs.proposal_memory_mode,
+            "proposal_memory_run_id": self.proposal_memory_run_id,
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             "answer_role_encoding_version": ANSWER_ROLE_ENCODING_VERSION,
             "pattern_selection_version": PATTERN_SELECTION_VERSION,
@@ -3163,6 +3526,20 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("responsibility_service_trajectory.jsonl", self.responsibility_service_trajectory)
         self.artifacts.write_jsonl("target_owner_context_alignment.jsonl", self.target_owner_context_alignment)
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
+        self.artifacts.write_jsonl(
+            "proposal_memory_events_sanitized.jsonl", self.proposal_memory_events,
+        )
+        self.artifacts.write_json(
+            "proposal_memory_summary.json",
+            self.proposal_memory_summary(),
+        )
+        self.artifacts.write_json(
+            "proposal_memory_key_isolation_audit.json",
+            self.proposal_memory_isolation_audit(),
+        )
+        self.artifacts.write_jsonl(
+            "proposal_rotation_trajectory.jsonl", self.proposal_rotation_trajectory,
+        )
         self.artifacts.write_json(
             "candidate_funnel.json", self.candidate_funnel_summary()
         )

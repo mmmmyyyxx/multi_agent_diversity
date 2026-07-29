@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v5
+method_version = member_aware_peer_state_v6
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -130,9 +130,10 @@ Responsibility answers **who to update and what residual to repair**. Competence
 preservation is deliberately not a sixth responsibility-attribution dimension.
 Preservation-conditioned TCS evidence remains part of proposal generation, and
 vote, unique-correct, and pivotal-correct changes remain symmetric diagnostics.
-Formal protection is instead enforced at aggregate level by target improvement,
-team-vote non-regression, member-objective Pareto dominance, and terminal-invalid
-non-regression. Strong members therefore remain eligible for repair without a
+Formal protection is instead enforced at aggregate level by target and team-vote
+non-regression with at least one strict improvement, strict team-objective Pareto
+dominance in `(V_count, g_min, g_sum)`, and terminal-invalid non-regression. Strong
+members therefore remain eligible for repair without a
 per-example zero-loss constraint.
 
 Responsibility has an explicit versioned lifecycle. The initial team is assigned
@@ -285,12 +286,12 @@ The channel keys are:
 
 ## 8. Stage B
 
-All optimized settings use the v4 aggregate feasibility contract. Relative to
+All optimized settings use the v6 aggregate feasibility contract. Relative to
 the incumbent, a candidate must:
 
-- strictly increase the target member's correct count;
-- not reduce the aggregate team vote-correct count;
-- Pareto-dominate the incumbent in `(V_count, g_min, g_sum)`;
+- not reduce target correct count or aggregate team vote-correct count;
+- strictly increase at least one of target correct count or team vote-correct count;
+- strictly Pareto-dominate in `(V_count, g_min, g_sum)`;
 - not increase the target member's terminal-invalid count.
 
 These four conditions are the complete hard acceptance contract. A candidate
@@ -366,7 +367,7 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 13. It stores active and initial profiles, a target-free
+Checkpoint version is 14. It stores active and initial profiles, a target-free
 `TeamMemberGainState`, member-aware opportunities, responsibility ownership and
 ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS and Student-recovery
@@ -379,7 +380,7 @@ split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v5
+Checkpoint is incompatible with member_aware_peer_state_v6
 ```
 
 The runner never silently restarts an incompatible run in the same directory.

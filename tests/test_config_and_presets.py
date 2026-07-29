@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v5",
+        method_version="member_aware_peer_state_v6",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,7 +43,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v5"
+    assert cfg.training.method_version == "member_aware_peer_state_v6"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
@@ -110,9 +110,8 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
     assert metadata["tcs_protocol_version"] == "assigned_residual_only_context_v1"
-    assert metadata["candidate_acceptance_version"] == (
-        "aggregate_nondegrading_target_improvement_v1"
-    )
+    assert metadata["candidate_acceptance_version"] == "target_or_vote_strict_progress_v1"
+    assert metadata["proposal_memory_mode"] == "off"
     assert metadata["preservation_policy_version"] == (
         "diagnostic_only_sample_preservation_v1"
     )

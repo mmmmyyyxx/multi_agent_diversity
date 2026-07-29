@@ -84,8 +84,9 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         "vote_net_gain", "unique_correct_gain_count", "unique_correct_loss_count",
         "pivotal_correct_gain_count", "pivotal_correct_loss_count",
         "incumbent_objective", "candidate_objective", "pareto_dominates_incumbent",
-        "target_improvement_passed", "team_vote_nonregression_passed",
-        "member_objective_nonregression_passed",
+        "target_nonregression_passed", "target_strict_improvement",
+        "team_vote_nonregression_passed", "vote_strict_improvement",
+        "target_or_vote_progress_passed", "member_objective_dominance_passed",
         "terminal_invalid_nonregression_passed", "rejection_reasons",
     )
     decision_keys = (
@@ -199,7 +200,8 @@ def meta_row(meta: dict[str, Any]) -> dict[str, Any]:
         "pareto_preference_version", "stage_a_version", "stage_b_version",
         "candidate_acceptance_version", "preservation_policy_version",
         "evaluation_protocol_version", "checkpoint_selection_version",
-        "test_isolation_version", "tcs_context_version", "diagnosis_aggregation_version",
+        "test_isolation_version", "tcs_context_version", "proposal_memory_version",
+        "proposal_memory_mode", "proposal_memory_run_id", "diagnosis_aggregation_version",
         "checkpoint_version", "solver_output_contract_version",
         "solver_request_template_version", "validation_used",
         "validation_unique_state_count", "validation_evaluation_count",
@@ -319,6 +321,14 @@ def main() -> None:
     cost = load_json(run / "cost_summary.json")
     recovery = load_json(run / "solver_recovery_summary.json")
     final_behavior = load_json(run / "final_test_differentiation.json")
+    memory_events_path = run / "proposal_memory_events_sanitized.jsonl"
+    memory_events = load_jsonl(memory_events_path) if memory_events_path.exists() else []
+    memory_summary_path = run / "proposal_memory_summary.json"
+    memory_summary = load_json(memory_summary_path) if memory_summary_path.exists() else {}
+    memory_audit_path = run / "proposal_memory_key_isolation_audit.json"
+    memory_audit = load_json(memory_audit_path) if memory_audit_path.exists() else {}
+    rotation_path = run / "proposal_rotation_trajectory.jsonl"
+    rotation = load_jsonl(rotation_path) if rotation_path.exists() else []
 
     sanitized_candidates = candidate_rows(candidates)
     sanitized_priorities = priority_rows(priorities)
@@ -355,6 +365,10 @@ def main() -> None:
             for row in sanitized_candidates
         ],
     })
+    dump_jsonl(out / "proposal_memory_events_sanitized.jsonl", [sanitize(row) for row in memory_events])
+    dump_json(out / "proposal_memory_summary.json", sanitize(memory_summary))
+    dump_json(out / "proposal_memory_key_isolation_audit.json", sanitize(memory_audit))
+    dump_jsonl(out / "proposal_rotation_trajectory.jsonl", [sanitize(row) for row in rotation])
     integrity = verify_report(
         out, candidates=sanitized_candidates, priorities=sanitized_priorities,
         assignments=sanitized_assignments, opportunities=sanitized_opportunities, transitions=sanitized_transitions,

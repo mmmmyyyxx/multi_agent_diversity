@@ -38,7 +38,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v5"
+    method_version: str = "member_aware_peer_state_v6"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -51,6 +51,7 @@ class TrainingConfig:
 
 @dataclass(frozen=True)
 class TCSConfig:
+    proposal_memory_mode: str = "off"
     teacher_critic_max_rounds: int = 2
     teacher_json_max_retries: int = 1
     critic_json_max_retries: int = 1

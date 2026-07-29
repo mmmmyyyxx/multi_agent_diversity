@@ -302,6 +302,7 @@ def select_patterns(
     *,
     context_policy: str,
     max_patterns: int,
+    rotation_cursor: int = 0,
 ) -> tuple[AggregatedFailurePattern, ...]:
     if max_patterns < 0:
         raise ValueError("max_patterns cannot be negative")
@@ -364,6 +365,12 @@ def select_patterns(
             break
         selected.append(row)
         selected_ids.add(row.pattern_id)
+    if rotation_cursor and context_policy == "member_aware_responsibility_conditioned":
+        owned = [row for row in patterns if row.assigned_case_count > 0]
+        if owned:
+            ordered = sorted(owned, key=_descending, reverse=True)
+            shift = rotation_cursor % len(ordered)
+            selected = (ordered[shift:] + ordered[:shift])[:max_patterns]
     return tuple(selected)
 
 
@@ -372,6 +379,7 @@ def select_representative_cases(
     pattern_members: Mapping[str, Sequence[_PatternCase]],
     *,
     max_cases: int,
+    rotation_cursor: int = 0,
 ) -> tuple[CompactEvidenceCase, ...]:
     selected: list[CompactEvidenceCase] = []
     used_questions: set[str] = set()
@@ -389,6 +397,9 @@ def select_representative_cases(
                 row.question_hash,
             ),
         )
+        if rows and rotation_cursor:
+            shift = rotation_cursor % len(rows)
+            rows = rows[shift:] + rows[:shift]
         representative = next(
             (row for row in rows if row.question_hash not in used_questions),
             None,
@@ -433,6 +444,7 @@ def aggregate_probe_diagnosis(
     context_policy: str,
     max_patterns: int = 3,
     max_cases: int = 3,
+    rotation_cursor: int = 0,
 ) -> DiagnosisAggregation:
     if len(examples) != len(states):
         raise ValueError("full fixed probe examples and states must have equal length")
@@ -451,9 +463,10 @@ def aggregate_probe_diagnosis(
         patterns,
         context_policy=context_policy,
         max_patterns=max_patterns,
+        rotation_cursor=rotation_cursor,
     )
     evidence = select_representative_cases(
-        selected, members, max_cases=max_cases,
+        selected, members, max_cases=max_cases, rotation_cursor=rotation_cursor,
     )
     return DiagnosisAggregation(
         full_probe_case_count=len(states),

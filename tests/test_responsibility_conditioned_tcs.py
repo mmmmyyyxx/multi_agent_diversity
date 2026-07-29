@@ -172,7 +172,7 @@ def test_previous_outcome_hides_rollout_feedback_when_evaluation_did_not_run():
                 attempted=True,
                 empirical_evaluation_completed=True,
                 accepted=False,
-                rejection_reasons=("target_not_improved",),
+                rejection_reasons=("no_target_or_vote_progress",),
             ),
         }
     )
@@ -181,7 +181,7 @@ def test_previous_outcome_hides_rollout_feedback_when_evaluation_did_not_run():
         "empirical_feedback_available": True,
         "accepted": False,
         "target_correct_delta": 0,
-        "rejection_reasons": ("target_not_improved",),
+        "rejection_reasons": ("no_target_or_vote_progress",),
     }
 
 

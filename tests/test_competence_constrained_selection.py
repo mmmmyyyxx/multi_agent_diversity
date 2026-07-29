@@ -123,12 +123,32 @@ def test_unique_and_pivotal_losses_are_diagnostic_only():
     assert decision.pivotal_correct_loss_count == 1
 
 
-def test_target_must_strictly_improve_even_when_vote_improves():
+def test_vote_improvement_can_accept_a_target_neutral_candidate():
     active = item("active")
     candidate = item("vote-only", correct=10, vote_count=9, vote_gain=1)
     decision = evaluate_constraints(candidate, active)
+    assert decision.hard_feasible
+    assert not decision.target_strict_improvement
+    assert decision.target_nonregression_passed
+    assert decision.target_or_vote_progress_passed
+    assert decision.pareto_dominates_incumbent
+    assert candidate_is_acceptable(candidate, active)
+
+
+def test_neutral_target_and_vote_is_not_an_accepted_update():
+    active = item("active")
+    candidate = item("neutral", correct=10, vote_count=8)
+    decision = evaluate_constraints(candidate, active)
     assert not decision.hard_feasible
-    assert "target_not_improved" in decision.rejection_reasons
+    assert "no_target_or_vote_progress" in decision.rejection_reasons
+
+
+def test_target_cannot_regress_even_when_vote_improves():
+    active = item("active")
+    candidate = item("target-down", correct=9, vote_count=9, vote_gain=1)
+    decision = evaluate_constraints(candidate, active)
+    assert not decision.hard_feasible
+    assert "target_regression" in decision.rejection_reasons
 
 
 def test_terminal_invalid_cannot_increase():

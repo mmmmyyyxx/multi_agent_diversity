@@ -11,6 +11,7 @@ from typing import Any, Mapping
 from ..evaluation.fixed_probe import PromptAnswer
 from ..persistence.identity import validate_run_identity
 from ..responsibility import MemberAwareRepairOpportunity, ResponsibilityState
+from ..proposal_memory import entry_from_dict, entry_to_dict
 from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
 from ..versions import CHECKPOINT_VERSION
@@ -121,6 +122,13 @@ def build_checkpoint(
         "target_priority_audit": list(system.target_priority_audit),
         "responsibility_service_trajectory": list(system.responsibility_service_trajectory),
         "target_owner_context_alignment": list(system.target_owner_context_alignment),
+        "proposal_memory_run_id": system.proposal_memory_run_id,
+        "proposal_memory_entries": {
+            key: entry_to_dict(entry)
+            for key, entry in system.proposal_memory_entries.items()
+        },
+        "proposal_memory_events": list(system.proposal_memory_events),
+        "proposal_rotation_trajectory": list(system.proposal_rotation_trajectory),
         "history": list(system.history),
         "peer_state_history": list(system.peer_state_history),
         "responsibility_assignments": list(system.responsibility_assignments),
@@ -155,7 +163,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v5")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v6")
     required_member_state = {
         "training_state",
         "member_gain_state",
@@ -188,9 +196,13 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "selected_test_metrics",
         "responsibility_service_trajectory",
         "target_owner_context_alignment",
+        "proposal_memory_run_id",
+        "proposal_memory_entries",
+        "proposal_memory_events",
+        "proposal_rotation_trajectory",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v5")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v6")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -297,6 +309,14 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.target_priority_audit = list(payload["target_priority_audit"])
     system.responsibility_service_trajectory = list(payload["responsibility_service_trajectory"])
     system.target_owner_context_alignment = list(payload["target_owner_context_alignment"])
+    if str(payload["proposal_memory_run_id"]) != system.proposal_memory_run_id:
+        raise ValueError("Checkpoint proposal memory run identity mismatch")
+    system.proposal_memory_entries = {
+        str(key): entry_from_dict(value)
+        for key, value in payload["proposal_memory_entries"].items()
+    }
+    system.proposal_memory_events = list(payload["proposal_memory_events"])
+    system.proposal_rotation_trajectory = list(payload["proposal_rotation_trajectory"])
     for name in (
         "history",
         "peer_state_history",

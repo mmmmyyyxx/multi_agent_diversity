@@ -77,9 +77,12 @@ class ConstraintDecision:
     incumbent_objective: tuple[int, int, int]
     candidate_objective: tuple[int, int, int]
     pareto_dominates_incumbent: bool
-    target_improvement_passed: bool
+    target_nonregression_passed: bool
+    target_strict_improvement: bool
     team_vote_nonregression_passed: bool
-    member_objective_nonregression_passed: bool
+    vote_strict_improvement: bool
+    target_or_vote_progress_passed: bool
+    member_objective_dominance_passed: bool
     terminal_invalid_nonregression_passed: bool
     rejection_reasons: tuple[str, ...]
 
@@ -229,14 +232,22 @@ def evaluate_constraints(
         candidate.team_outcome.vote_correct_count,
         candidate.member_gain,
     )
-    target_improvement = (
+    target_strict_improvement = (
         candidate.competence.correct_count > active.competence.correct_count
+    )
+    target_nonregression = (
+        candidate.competence.correct_count >= active.competence.correct_count
     )
     team_vote_nonregression = (
         candidate.team_outcome.vote_correct_count
         >= active.team_outcome.vote_correct_count
     )
-    member_objective_nonregression = pareto_dominates(
+    vote_strict_improvement = (
+        candidate.team_outcome.vote_correct_count
+        > active.team_outcome.vote_correct_count
+    )
+    target_or_vote_progress = target_strict_improvement or vote_strict_improvement
+    member_objective_dominance = pareto_dominates(
         candidate_objective,
         incumbent_objective,
     )
@@ -245,9 +256,10 @@ def evaluate_constraints(
         <= active.competence.terminal_invalid_count
     )
     checks = (
-        ("target_not_improved", target_improvement),
+        ("target_regression", target_nonregression),
         ("team_vote_regression", team_vote_nonregression),
-        ("member_objective_regression", member_objective_nonregression),
+        ("no_target_or_vote_progress", target_or_vote_progress),
+        ("member_objective_regression", member_objective_dominance),
         ("terminal_invalid_regression", terminal_invalid_nonregression),
     )
     reasons = tuple(name for name, passed in checks if not passed)
@@ -278,10 +290,13 @@ def evaluate_constraints(
         ),
         incumbent_objective=incumbent_objective.as_tuple(),
         candidate_objective=candidate_objective.as_tuple(),
-        pareto_dominates_incumbent=member_objective_nonregression,
-        target_improvement_passed=target_improvement,
+        pareto_dominates_incumbent=member_objective_dominance,
+        target_nonregression_passed=target_nonregression,
+        target_strict_improvement=target_strict_improvement,
         team_vote_nonregression_passed=team_vote_nonregression,
-        member_objective_nonregression_passed=member_objective_nonregression,
+        vote_strict_improvement=vote_strict_improvement,
+        target_or_vote_progress_passed=target_or_vote_progress,
+        member_objective_dominance_passed=member_objective_dominance,
         terminal_invalid_nonregression_passed=terminal_invalid_nonregression,
         rejection_reasons=reasons,
     )
@@ -345,13 +360,4 @@ def candidate_is_acceptable(
     candidate: CandidateEvaluation,
     incumbent: CandidateEvaluation,
 ) -> bool:
-    return pareto_dominates(
-        team_objective_vector(
-            candidate.team_outcome.vote_correct_count,
-            candidate.member_gain,
-        ),
-        team_objective_vector(
-            incumbent.team_outcome.vote_correct_count,
-            incumbent.member_gain,
-        ),
-    )
+    return evaluate_constraints(candidate, incumbent).passed

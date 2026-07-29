@@ -8,6 +8,7 @@ def test_real_system_smoke_enforces_repair_only_targeting_and_pareto_gates():
     assert len(report["target_sequence"]) >= 1
     assert report["all_selected_targets_owned_residuals"] is True
     assert report["no_actionable_responsibility_is_noop"] is True
+    assert report["target_neutral_vote_positive_accepted"] is True
     assert report["vote_positive_member_regressing_rejected"] is True
     assert report["single_agent_replacement_preserves_other_member_counts"] is True
     assert report["real_validation_key_is_feasible"] is True

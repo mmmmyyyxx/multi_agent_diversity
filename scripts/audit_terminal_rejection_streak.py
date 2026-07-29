@@ -57,9 +57,12 @@ def candidate_projection(candidate: dict[str, Any], index: int) -> dict[str, Any
         "coverage_loss_count": marginal["coverage_loss_count"],
         "candidate_objective": candidate["candidate_objective"],
         "incumbent_objective": candidate["incumbent_objective"],
-        "target_improvement_passed": candidate["target_improvement_passed"],
+        "target_nonregression_passed": candidate.get("target_nonregression_passed"),
+        "target_strict_improvement": candidate.get("target_strict_improvement"),
         "team_vote_nonregression_passed": candidate["team_vote_nonregression_passed"],
-        "member_objective_nonregression_passed": candidate["member_objective_nonregression_passed"],
+        "vote_strict_improvement": candidate.get("vote_strict_improvement"),
+        "target_or_vote_progress_passed": candidate.get("target_or_vote_progress_passed"),
+        "member_objective_dominance_passed": candidate.get("member_objective_dominance_passed"),
         "terminal_invalid_nonregression_passed": candidate["terminal_invalid_nonregression_passed"],
         "pareto_dominates_incumbent": candidate["pareto_dominates_incumbent"],
         "hard_feasible": candidate["hard_feasible"],
@@ -167,7 +170,7 @@ def main() -> None:
         raise ValueError("rejection-streak fact assertion failed")
     result = {
         "artifact_schema_version": "terminal_rejection_streak_audit_v1",
-        "method_version": "member_aware_peer_state_v5",
+        "method_version": "member_aware_peer_state_v6",
         "streak_update_indices": indices,
         "per_update": rows,
         "summary": {

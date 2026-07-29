@@ -82,6 +82,8 @@ def student_candidate(prompt: str) -> StudentPromptCandidate:
 async def gate_solver(question: str, _agent_id: int, prompt: str) -> PromptAnswer:
     if prompt == "gate-vote-positive-member-regressing":
         return answer("A" if question == "q_vote" else "B")
+    if prompt == "gate-vote-only-improved":
+        return answer("A" if question in {"q_vote", "q_member_2"} else "B")
     member_id = int(prompt.split("gate-", 1)[1].split("-", 1)[0])
     if question == "q_vote":
         return answer("A" if member_id in {1, 2} else "B")
@@ -241,19 +243,11 @@ async def run_smoke() -> dict[str, object]:
 
     targets: list[int] = []
     refresh_deltas: list[int] = []
-    minimum_gain_deltas: list[int] = []
-    vote_count_deltas: list[int] = []
     for update_index in range(8):
         before_refresh = system.responsibility_refresh_count
-        before_minimum = system.current_team_member_gain_state()["minimum_gain_count"]
-        before_vote_count = system.active_probe_metrics().vote_correct_count
         changed = await system.update_once(update_index)
-        after_minimum = system.current_team_member_gain_state()["minimum_gain_count"]
-        after_vote_count = system.active_probe_metrics().vote_correct_count
         targets.append(system.candidate_decisions[-1]["target_agent_id"])
         refresh_deltas.append(system.responsibility_refresh_count - before_refresh)
-        minimum_gain_deltas.append(after_minimum - before_minimum)
-        vote_count_deltas.append(after_vote_count - before_vote_count)
         if not changed:
             break
 
@@ -297,6 +291,18 @@ async def run_smoke() -> dict[str, object]:
     candidate_evaluation = evaluated[0].final_evaluation
     incumbent_counts = incumbent.member_gain.incumbent_correct_counts
     candidate_counts = candidate_evaluation.member_gain.candidate_correct_counts
+    vote_only_prompt = "gate-vote-only-improved"
+    vote_only_candidate = CandidateRuntime(
+        student_candidate=student_candidate(vote_only_prompt),
+        prompt=vote_only_prompt,
+        prompt_hash=gate.prompt_hash(vote_only_prompt),
+        generation=1,
+        parent_prompt_hash=gate.prompt_hash(gate.agents[0].current_prompt),
+    )
+    vote_only_accepted, _vote_only_incumbent, vote_only_evaluated = (
+        await gate.evaluate_candidates(0, [vote_only_candidate], set(), CandidateFunnel())
+    )
+    vote_only_constraint = vote_only_evaluated[0].constraint
     fault_results = await fault_smokes(data, prompts)
 
     report = {
@@ -315,14 +321,16 @@ async def run_smoke() -> dict[str, object]:
             "one_refresh_per_team_transition": (
                 system.responsibility_refresh_count == transition_count + 1
             ),
-        "vote_neutral_worst_member_positive_accepted": (
-            transition_count == 8
-            and any(
-                minimum_delta == 1 and vote_delta == 0
-                for minimum_delta, vote_delta in zip(
-                    minimum_gain_deltas, vote_count_deltas, strict=True
-                )
-            )
+        "target_neutral_vote_positive_accepted": (
+            vote_only_accepted is not None
+            and vote_only_constraint is not None
+            and vote_only_constraint.target_gain == 0
+            and vote_only_constraint.vote_correct_candidate
+            > vote_only_constraint.vote_correct_incumbent
+            and vote_only_constraint.member_objective_dominance_passed
+            and vote_only_constraint.terminal_invalid_nonregression_passed
+            and vote_only_constraint.candidate_objective[1:]
+            == vote_only_constraint.incumbent_objective[1:]
         ),
         "vote_positive_member_regressing_rejected": (
             accepted is None
@@ -382,6 +390,7 @@ async def run_smoke() -> dict[str, object]:
         "all_selected_targets_owned_residuals",
         "no_actionable_responsibility_is_noop",
         "one_refresh_per_team_transition",
+        "target_neutral_vote_positive_accepted",
         "vote_positive_member_regressing_rejected",
         "single_agent_replacement_preserves_other_member_counts",
         "real_validation_key_is_feasible",

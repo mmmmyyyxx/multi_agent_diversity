@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v5`).
+(`member_aware_peer_state_v6`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -19,7 +19,7 @@ Team Rollout
   -> Hard-Blocker Critique
   -> Prompt Realization
   -> Stage A: team-vote / worst-member / mean-member shortlist
-  -> Aggregate Feasibility: target improvement + team/objective/invalid non-regression
+  -> Aggregate Feasibility: target-or-vote improvement + Pareto/invalid guards
   -> Setting-Specific Rollout Selection
   -> accepted prompt, then immediate state and responsibility refresh
 ```
@@ -33,13 +33,17 @@ g_min   = min_i g_i
 g_sum   = sum_i g_i
 ```
 
-A candidate must strictly improve the target member, must not reduce aggregate
-team vote count, must not increase terminal-invalid outputs, and must
-Pareto-dominate the incumbent in `(V_count, g_min, g_sum)`. The method does not
-require zero loss on every probe example. Vote, unique-correct, and
-pivotal-correct gains and losses remain audited diagnostics and late
-tie-breakers; none independently rejects a candidate. Soft vote utility is only
-a deterministic tie-break signal.
+A candidate must not reduce either target correct count or aggregate team vote
+count, must strictly improve at least one of them, must not increase
+terminal-invalid outputs, and must strictly Pareto-dominate the incumbent in
+`(V_count, g_min, g_sum)`. The method does not require zero loss on every probe
+example. Vote, unique-correct, and pivotal-correct gains and losses remain
+audited diagnostics and late tie-breakers; none independently rejects a candidate.
+
+Optional `proposal_memory_mode=state_local_v1` keeps only sanitized failed-search
+feedback under a complete run/state/agent/prompt/owned-residual key. It changes
+proposal search, not ownership, objectives, Stage A/B budgets, or evaluation.
+Soft vote utility is only a deterministic tie-break signal.
 
 ## Experiment Settings
 

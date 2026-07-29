@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from .diagnosis_aggregation import AggregatedFailurePattern, CompactEvidenceCase
 from .evaluation.output_contract import solver_output_contract
 from .llm_client import LLMCallResult
+from .proposal_memory import ProposalFailureFeedback
 from .utils import extract_json_obj, normalize_prompt_text
 
 
@@ -76,6 +77,7 @@ class AssignedResidualDiagnosisContext:
     patterns: tuple[AggregatedFailurePattern, ...]
     evidence_cases: tuple[CompactEvidenceCase, ...]
     previous_outcome: PreviousUpdateOutcome
+    proposal_failure_feedback: ProposalFailureFeedback | None = None
 
 
 AnyDiagnosisContext = (
@@ -255,6 +257,10 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
             "patterns": [_member_pattern_payload(row) for row in context.patterns],
             "evidence_cases": [_peer_case_payload(row) for row in context.evidence_cases],
         })
+        if context.proposal_failure_feedback is not None:
+            common["proposal_failure_feedback"] = asdict(
+                context.proposal_failure_feedback
+            )
     else:
         raise TypeError(f"Unsupported diagnosis context: {type(context).__name__}")
     outcome = asdict(context.previous_outcome)
@@ -370,13 +376,22 @@ def build_teacher_request(
         "repair_rule": "concrete executable rule including uncertainty handling",
         "preservation_rule": "concrete rule protecting existing correct behavior",
     }
+    feedback_instruction = ""
+    if isinstance(context, AssignedResidualDiagnosisContext) and context.proposal_failure_feedback:
+        feedback_instruction = (
+            " The state-local proposal failure feedback may only revise this target's "
+            "evidence selection and repair plan. Do not reassign responsibility or "
+            "discuss other agents, member competence, gains, ranks, cooldowns, or "
+            "non-owned residuals."
+        )
     return (
         "Propose one task-general, testable prompt repair plan from the typed aggregate "
         "diagnosis. Do not quote cases or answers, describe per-case transitions, copy a "
         "peer procedure, predict performance, or generate candidate prompts. The repair "
         "rule must specify executable behavior and integrate uncertainty handling. The "
         "preservation rule must protect correct behavior and the strict output contract. "
-        f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
+        + feedback_instruction
+        + f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"
         f"DiagnosisContext:\n{serialize_context(context)}"

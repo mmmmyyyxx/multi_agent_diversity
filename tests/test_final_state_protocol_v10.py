@@ -90,7 +90,7 @@ def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
 
 def test_checkpoint_reuses_completed_final_test(tmp_path):
     identity = RunIdentity(
-            method_version="member_aware_peer_state_v5", experiment_setting="shared_member_aware_full",
+            method_version="member_aware_peer_state_v6", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -111,7 +111,7 @@ def test_checkpoint_reuses_completed_final_test(tmp_path):
         source.mark_training_complete(0)
         expected = await source.evaluate_final_test([{"question": "test", "answer": "A"}])
         payload = build_checkpoint(source, epoch_index=0, update_index=0, training_state={"planned_update_count": 0})
-        target = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path / "target")), solver=make_solver("target"))
+        target = PromptEnsembleOptimizationSystem(Config.from_flat(out_dir=str(tmp_path / "source")), solver=make_solver("target"))
         target.set_run_identity(identity)
         target.fixed_probe = target.build_probe([{"question": "train", "answer": "A"}])
         restore_checkpoint(target, payload)
