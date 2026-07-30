@@ -64,6 +64,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--task", default="disambiguation_qa")
     parser.add_argument("--out_root", required=True)
+    parser.add_argument("--run_suffix", default="")
     parser.add_argument("--dry_run", type=int, choices=(0, 1), default=0)
     return parser
 
@@ -202,7 +203,11 @@ def _run_action(args: argparse.Namespace, workspace: Path, root: Path, manifest_
     if not frozen_manifest.is_file() or not frozen_cache.is_file():
         raise FileNotFoundError("freeze must complete before a treatment can start")
     label = TREATMENTS[args.treatment]["label"]
-    run_root = root / f"{label}_seed{args.seed}_{args.phase}"
+    suffix = str(args.run_suffix).strip()
+    if suffix and not suffix.replace("_", "").replace("-", "").isalnum():
+        raise ValueError("run_suffix may contain only letters, digits, underscores, and hyphens")
+    run_name = f"{label}_seed{args.seed}_{args.phase}{'_' + suffix if suffix else ''}"
+    run_root = root / run_name
     if run_root.exists():
         raise FileExistsError(f"treatment output root must be new: {run_root}")
     mutable_cache = run_root / "_shared_solver_cache.sqlite"
@@ -217,6 +222,7 @@ def _run_action(args: argparse.Namespace, workspace: Path, root: Path, manifest_
         "treatment": args.treatment,
         "treatment_label": label,
         "phase": args.phase,
+        "run_suffix": suffix,
         "seed": args.seed,
         "task_id": args.task,
         "frozen_initialization_manifest_sha256": hashlib.sha256(

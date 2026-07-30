@@ -341,7 +341,9 @@ def _verify_frozen_initialization(
     )
     mismatches = {
         field: {"expected": expected.get(field), "actual": actual.get(field)}
-        for field in fields if expected.get(field) != actual.get(field)
+        for field in fields
+        if json.loads(json.dumps(expected.get(field), sort_keys=True))
+        != json.loads(json.dumps(actual.get(field), sort_keys=True))
     }
     audit = {
         "frozen_initialization_manifest_version": manifest.get("manifest_version", ""),
