@@ -65,6 +65,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--task", default="disambiguation_qa")
     parser.add_argument("--out_root", required=True)
     parser.add_argument("--run_suffix", default="")
+    parser.add_argument("--refresh_frozen_manifest", type=int, choices=(0, 1), default=0)
     parser.add_argument("--dry_run", type=int, choices=(0, 1), default=0)
     return parser
 
@@ -163,7 +164,11 @@ def _freeze_action(args: argparse.Namespace, workspace: Path, root: Path, manife
         frozen_root.is_dir() and cache.is_file() and stable_cache.is_file()
         and not manifest_path_out.exists()
     )
-    if frozen_root.exists() and not recoverable_partial:
+    refreshable = (
+        bool(args.refresh_frozen_manifest) and frozen_root.is_dir()
+        and cache.is_file() and stable_cache.is_file() and manifest_path_out.is_file()
+    )
+    if frozen_root.exists() and not recoverable_partial and not refreshable:
         raise FileExistsError(f"frozen initialization root must be new: {frozen_root}")
     cfg = _config(**_base_values(
         workspace=workspace, manifest_path=manifest_path, task_id=args.task,
