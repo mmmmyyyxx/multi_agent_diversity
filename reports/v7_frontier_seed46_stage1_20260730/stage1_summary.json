@@ -1,0 +1,92 @@
+{
+  "report_version": "frontier_stage1_sanitized_v1",
+  "method_version": "member_aware_peer_state_v7",
+  "source_commit": "c013837a68315846c725eb15ed60be8fe9e65a23",
+  "seed": 46,
+  "task_id": "disambiguation_qa",
+  "stage": "mechanism_short",
+  "common_protocol": {
+    "frozen_initialization_matched": true,
+    "train_size": 75,
+    "planned_updates": 8,
+    "candidate_count": 2,
+    "stage_b_candidate_budget": 2,
+    "proposal_memory_mode": "off",
+    "validation_used": false,
+    "final_test_enabled": false,
+    "test_evaluation_count": 0,
+    "final_state_selection": "final_active_state"
+  },
+  "valid_treatments": [
+    {
+      "treatment": "A_v6_owner",
+      "responsibility_mode": "unique_owner_v6",
+      "member_catchup_mode": "off",
+      "completed_updates": 8,
+      "accepted_updates": 5,
+      "proposal_memory_hit_count": 0,
+      "infrastructure_failure_count": 0,
+      "terminal_failure_counts": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "correct_member_assignment_count": 0,
+      "assignment_outside_eligible_frontier_count": 0,
+      "selected_frontier_not_nondominated_count": 0,
+      "multi_member_frontier_residual_count": 0,
+      "maximum_responsibility_wait": 5,
+      "overdue_selection_mismatch_count": 0,
+      "selection_lane_counts": {
+        "responsibility_conditioned": 8
+      }
+    },
+    {
+      "treatment": "B_v7_frontier_core",
+      "responsibility_mode": "frontier_joint_v7",
+      "member_catchup_mode": "off",
+      "completed_updates": 8,
+      "accepted_updates": 6,
+      "proposal_memory_hit_count": 0,
+      "infrastructure_failure_count": 0,
+      "terminal_failure_counts": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "correct_member_assignment_count": 0,
+      "assignment_outside_eligible_frontier_count": 0,
+      "selected_frontier_not_nondominated_count": 0,
+      "multi_member_frontier_residual_count": 283,
+      "maximum_responsibility_wait": 4,
+      "overdue_selection_mismatch_count": 0,
+      "selection_lane_counts": {
+        "responsibility_conditioned": 8
+      }
+    },
+    {
+      "treatment": "C_v7_full",
+      "responsibility_mode": "frontier_joint_v7",
+      "member_catchup_mode": "fallback_v1",
+      "completed_updates": 8,
+      "accepted_updates": 7,
+      "proposal_memory_hit_count": 0,
+      "infrastructure_failure_count": 0,
+      "terminal_failure_counts": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "correct_member_assignment_count": 0,
+      "assignment_outside_eligible_frontier_count": 0,
+      "selected_frontier_not_nondominated_count": 0,
+      "multi_member_frontier_residual_count": 332,
+      "maximum_responsibility_wait": 4,
+      "overdue_selection_mismatch_count": 0,
+      "selection_lane_counts": {
+        "responsibility_conditioned": 8
+      },
+      "generic_member_catchup_count": 0,
+      "catchup_borrowed_residual_count": 0,
+      "catchup_interpretation": "unexercised_not_efficacy_evidence"
+    }
+  ],
+  "excluded_incomplete_launches": {
+    "count": 4,
+    "reason": "interrupted before completion or failed pre-update matching; not resumed or compared"
+  }
+}
