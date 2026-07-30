@@ -18,7 +18,7 @@ from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptim
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v6",
+        method_version="member_aware_peer_state_v7",
         experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",
@@ -35,7 +35,7 @@ def system(tmp_path):
     value = PromptEnsembleOptimizationSystem(cfg)
     value.set_run_identity(identity())
     value.team_state_version = 7
-    value.cached_responsibility_owners = {"q-a": 0, "q-b": 0, "q-c": 1}
+    value.cached_responsibility_eligibility = {"q-a": (0,), "q-b": (0,), "q-c": (1,)}
     return value
 
 
@@ -78,7 +78,7 @@ def test_non_owned_residual_in_entry_fails_closed(tmp_path):
     )
     with pytest.raises(RuntimeError, match="lifecycle/schema mismatch"):
         value._proposal_memory_entry(key, {"q-a", "q-b"})
-    with pytest.raises(RuntimeError, match="non-owned residual"):
+    with pytest.raises(RuntimeError, match="frontier-ineligible residual"):
         value._proposal_memory_key(
             target_agent_id=0, parent_prompt=value.agents[0].current_prompt,
             assigned_hashes={"q-c"},
@@ -178,7 +178,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
             {"question": f"q{index}", "answer": "A"} for index in range(3)
         ])
         owned = {row.question_hash for row in value.fixed_probe.examples}
-        value.cached_responsibility_owners = {question_hash: 0 for question_hash in owned}
+        value.cached_responsibility_eligibility = {question_hash: (0,) for question_hash in owned}
         first_funnel = CandidateFunnel()
         first = await value.propose_candidates(0, owned, first_funnel, update_index=0)
         accepted, _, evaluated = await value.evaluate_candidates(0, first, owned, first_funnel)
@@ -187,9 +187,9 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
                 update_index=0, target_agent_id=0, assigned_hashes=owned,
                 evaluated=evaluated, funnel=first_funnel, accepted=accepted,
             )
-            value.cached_responsibility_owners = {question_hash: 1 for question_hash in owned}
+            value.cached_responsibility_eligibility = {question_hash: (1,) for question_hash in owned}
             await value.propose_candidates(1, owned, CandidateFunnel(), update_index=1)
-            value.cached_responsibility_owners = {question_hash: 0 for question_hash in owned}
+            value.cached_responsibility_eligibility = {question_hash: (0,) for question_hash in owned}
             second = await value.propose_candidates(0, owned, CandidateFunnel(), update_index=2)
             return value, first, second, evaluated
         return value, first, (), evaluated

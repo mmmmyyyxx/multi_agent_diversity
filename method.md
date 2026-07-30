@@ -5,7 +5,7 @@
 The current method is **Member-Aware Peer-State Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v6
+method_version = member_aware_peer_state_v7
 ```
 
 It searches over a team of five prompts. The solver, optimizer, and evaluator
@@ -46,9 +46,9 @@ incumbent target profile. First-pass invalids that recover successfully remain
 diagnostics and do not reject the candidate. The obsolete local/global invalid
 allowances and accuracy-epsilon guard fields were removed in v4.
 
-Responsibility assignment and scheduling are repair-only. They never use
-member gain, improvement need, current-count gaps, relative potential/rank, or
-candidate-search history/cooldown.
+Repair eligibility is repair-only. Member gain and uplift deficit affect only
+member-level scheduling, never the per-residual repair frontier or candidate
+evaluation.
 
 The optimized prompt contains only the mutable decision procedure. For every
 Solver request, the program places that procedure first and appends the
@@ -110,21 +110,20 @@ substituted for the integer Pareto objectives.
 
 ## 4. Member-Aware Responsibility
 
-On each vote-wrong example, ownership is selected only from wrong members by a
-four-axis repair Pareto vector: direct vote repair, oracle soft-utility gain,
-coverage opportunity, and dominant-wrong exit. Lexical ties use those same four
-fields, lower assigned load, longer target wait, then seeded hash. An existing
-owner remains only if it is still on the frontier, is no weaker in direct,
-coverage, and dominant-wrong repair, and the preferred oracle advantage is no
-larger than `responsibility_switch_margin`.
+On each vote-wrong example, every wrong member receives the four-axis repair
+vector: direct vote repair, oracle soft-utility gain, coverage opportunity, and
+dominant-wrong exit. The repair frontier contains every non-dominated wrong
+member, so the same residual can appear in several legal member portfolios.
+Member gain, wait, load, history, and Proposal Memory never alter this frontier.
 
-Only agents owning at least one residual are target-eligible. Their portfolio
-vector contains owned direct repairs, owned oracle utility, owned coverage,
-owned dominant-wrong exits, assigned load, and oldest owned responsibility age.
-Pareto-frontier ties use oldest age, target wait, assigned load, and seeded hash.
-The eight-update max-wait rule applies only within this owner set. If it is
-empty, the update is an audited `no_actionable_responsibility` no-op: no TCS,
-candidate generation, or generic competence fallback occurs.
+For portfolio `R_i`, scheduling uses `(D_i, U_i, C_i, d_i, A_i)`: direct fixes,
+oracle utility, coverage, uplift deficit `d_i=max(0,g_max-g_i-5)`, and oldest
+unserved frontier responsibility age. It selects only the first Pareto frontier.
+At eight unselected updates, overdue responsible members take priority using
+their responsibility vector. A separate `generic_member_catchup` lane is allowed
+only for a member with positive uplift deficit, an empty portfolio, and wait at
+least eight; it receives only its own team-covered errors and has no assigned
+residuals. Ties are deterministic.
 
 Responsibility answers **who to update and what residual to repair**. Competence
 preservation is deliberately not a sixth responsibility-attribution dimension.
@@ -140,7 +139,9 @@ Responsibility has an explicit versioned lifecycle. The initial team is assigned
 once. Rejected updates reuse that assignment. An accepted prompt/profile pair is
 committed atomically, increments the team-state version, and refreshes
 responsibility exactly once; the following update reuses that refreshed state.
-`owner_age` advances once per real team-state refresh, never per function call.
+Responsibility age is stored per `(agent, question_hash)` frontier pair and is
+computed from its first-seen update; a selected responsibility target receives
+service even if its candidate is rejected.
 If refresh fails, prompt/profile, accepted counts, responsibility state, caches,
 versions, and appended responsibility audit rows are all rolled back.
 
@@ -367,9 +368,9 @@ There are no aliases for removed methods or settings.
 
 ## 11. Persistence And Reproducibility
 
-Checkpoint version is 14. It stores active and initial profiles, a target-free
-`TeamMemberGainState`, member-aware opportunities, responsibility ownership and
-ages, accepted counts, seeded ranks, team/responsibility state versions and
+Checkpoint version is 15. It stores active and initial profiles, a target-free
+`TeamMemberGainState`, member-aware opportunities, frontier eligibility and
+first-seen service ages, accepted counts, seeded ranks, team/responsibility state versions and
 refresh count, target-priority audit, prompt state, TCS and Student-recovery
 state, planned/completed update counts, final-state selection, training dynamics,
 differentiation trajectories, selected-test state, caches, histories, LLM calls,
@@ -380,7 +381,7 @@ split files, question sets, probe identity, model endpoint identity, parser,
 decoding, and output contract. Older checkpoints fail with:
 
 ```text
-Checkpoint is incompatible with member_aware_peer_state_v6
+Checkpoint is incompatible with member_aware_peer_state_v7
 ```
 
 The runner never silently restarts an incompatible run in the same directory.

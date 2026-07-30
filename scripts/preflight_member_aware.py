@@ -73,8 +73,10 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all canonical settings must use tie-as-abstain")
         if cfg.responsibility.responsibility_max_wait_updates <= 0:
             errors.append("responsibility_max_wait_updates must be positive")
-        if cfg.responsibility.responsibility_switch_margin < 0:
-            errors.append("responsibility_switch_margin cannot be negative")
+        if cfg.responsibility.member_uplift_tolerance < 0:
+            errors.append("member_uplift_tolerance cannot be negative")
+        if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
+            errors.append("member_catchup_mode must be 'off' or 'fallback_v1'")
         if cfg.evaluation.candidate_eval_pool_size <= 0:
             errors.append("fixed probe must contain at least one example")
         if not (
@@ -239,8 +241,10 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("stage_b_candidate_budget must be within generated candidate count")
                     if cfg.responsibility.responsibility_max_wait_updates <= 0:
                         raise ValueError("responsibility_max_wait_updates must be positive")
-                    if cfg.responsibility.responsibility_switch_margin < 0:
-                        raise ValueError("responsibility_switch_margin cannot be negative")
+                    if cfg.responsibility.member_uplift_tolerance < 0:
+                        raise ValueError("member_uplift_tolerance cannot be negative")
+                    if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
+                        raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
                     if cfg.tcs.student_invalid_max_retries < 0:
                         raise ValueError(
                             "student_invalid_max_retries cannot be negative"

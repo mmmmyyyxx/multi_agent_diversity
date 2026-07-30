@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v6`).
+(`member_aware_peer_state_v7`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -40,9 +40,15 @@ terminal-invalid outputs, and must strictly Pareto-dominate the incumbent in
 example. Vote, unique-correct, and pivotal-correct gains and losses remain
 audited diagnostics and late tie-breakers; none independently rejects a candidate.
 
+Member-Aware Responsibility first forms each vote-wrong residual's repair
+frontier, then gives every frontier-eligible member a portfolio and jointly
+Pareto-schedules repair value, uplift deficit, and responsibility age. An
+overdue member with no frontier portfolio may enter the separately labelled
+generic catch-up lane; it never borrows another member's residual.
+
 Optional `proposal_memory_mode=state_local_v1` keeps only sanitized failed-search
-feedback under a complete run/state/agent/prompt/owned-residual key. It changes
-proposal search, not ownership, objectives, Stage A/B budgets, or evaluation.
+feedback under a complete run/state/agent/prompt/frontier-residual key. It changes
+proposal search, not eligibility, scheduling, objectives, Stage A/B budgets, or evaluation.
 Soft vote utility is only a deterministic tie-break signal.
 
 ## Experiment Settings
@@ -121,7 +127,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v14 run identity;
+checkpoint-v15 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -141,7 +147,7 @@ Each optimized run writes:
 - `final_test_differentiation.json`: final-team test behavior metrics
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
 - `candidate_funnel.json`: update funnels and role-specific terminal failures
-- `responsibility_assignments.jsonl`: residual ownership after each refresh
+- `responsibility_assignments.jsonl`: repair frontiers and member portfolios after each refresh
 - `target_priority_audit.jsonl`: member-aware target priorities, actual selection
   pools, and the Pareto frontier used by the scheduler
 - `solver_recovery_summary.json`: one row per resolved prompt-question request,

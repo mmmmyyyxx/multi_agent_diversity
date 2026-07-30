@@ -1,10 +1,10 @@
 """Frozen protocol identifiers shared by runtime, metadata, and persistence."""
 
-METHOD_VERSION = "member_aware_peer_state_v6"
-RESPONSIBILITY_VERSION = "repair_only_responsibility_v1"
-TARGET_SELECTION_VERSION = "responsibility_portfolio_targeting_v1"
-TCS_CONTEXT_VERSION = "assigned_residual_failure_aware_context_v1"
-CHECKPOINT_VERSION = 14
+METHOD_VERSION = "member_aware_peer_state_v7"
+RESPONSIBILITY_VERSION = "member_aware_repair_frontier_portfolio_v2"
+TARGET_SELECTION_VERSION = "joint_responsibility_fairness_scheduler_v2"
+TCS_CONTEXT_VERSION = "frontier_responsibility_and_catchup_context_v2"
+CHECKPOINT_VERSION = 15
 CANDIDATE_ACCEPTANCE_VERSION = "target_or_vote_strict_progress_v1"
 PROPOSAL_MEMORY_VERSION = "agent_isolated_state_local_proposal_memory_v1"
 PRESERVATION_POLICY_VERSION = "diagnostic_only_sample_preservation_v1"

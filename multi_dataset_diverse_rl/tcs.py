@@ -201,7 +201,7 @@ def _peer_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
 def _member_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
     payload = _peer_pattern_payload(pattern)
     payload["assigned_case_count"] = pattern.assigned_case_count
-    payload["max_owner_age"] = pattern.max_owner_age
+    payload["max_responsibility_age"] = pattern.max_responsibility_age
     return payload
 
 

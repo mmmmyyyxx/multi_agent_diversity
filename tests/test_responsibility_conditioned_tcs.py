@@ -53,7 +53,7 @@ def pattern() -> AggregatedFailurePattern:
         dominant_wrong_count=4,
         mean_oracle_soft_utility_gain=0.25,
         max_oracle_soft_utility_gain=0.5,
-        max_owner_age=3,
+        max_responsibility_age=3,
         repair_goal="convert_existing_gold_coverage",
         represented_question_hashes=("q1", "q2", "q3", "q4"),
     )

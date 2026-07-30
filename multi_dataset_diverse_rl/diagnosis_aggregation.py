@@ -53,7 +53,7 @@ class AggregatedFailurePattern:
     dominant_wrong_count: int
     mean_oracle_soft_utility_gain: float
     max_oracle_soft_utility_gain: float
-    max_owner_age: int
+    max_responsibility_age: int
     repair_goal: str
     represented_question_hashes: tuple[str, ...]
 
@@ -92,7 +92,7 @@ class _PatternCase:
     answer_role_signature: tuple[str, ...]
     assigned: bool
     oracle_soft_utility_gain: float
-    owner_age: int
+    responsibility_age: int
     repair_goal: str
 
 
@@ -193,7 +193,7 @@ def _build_pattern_cases(
     peer_contexts: Mapping[str, Mapping[int, PeerVoteContext]],
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     assigned_hashes: set[str],
-    owner_age_by_question: Mapping[str, int],
+    responsibility_age_by_question: Mapping[str, int],
     context_policy: str,
 ) -> list[_PatternCase]:
     example_by_hash = {row.question_hash: row for row in examples}
@@ -204,13 +204,15 @@ def _build_pattern_cases(
     result: list[_PatternCase] = []
     for state in states:
         opportunity = opportunity_by_hash[state.question_hash]
-        if (
-            context_policy == "member_aware_responsibility_conditioned"
+        if (context_policy == "member_aware_responsibility_conditioned"
             and state.question_hash not in assigned_hashes
-            and not (opportunity.unique_correct or opportunity.pivotal_correct)
-        ):
+            and not (opportunity.unique_correct or opportunity.pivotal_correct)):
             continue
         peer = peer_contexts[state.question_hash][target_agent_id]
+        if (context_policy == "generic_member_catchup_context_v1"
+            and not ((opportunity.member_error and peer.peer_gold_vote_count > 0)
+                     or opportunity.unique_correct or opportunity.pivotal_correct)):
+            continue
         example = example_by_hash[state.question_hash]
         roles = answer_role_signature(state)
         for family in _families(state, opportunity):
@@ -239,7 +241,7 @@ def _build_pattern_cases(
                 answer_role_signature=roles,
                 assigned=state.question_hash in assigned_hashes,
                 oracle_soft_utility_gain=opportunity.oracle_soft_utility_gain,
-                owner_age=int(owner_age_by_question.get(state.question_hash, 0)),
+                responsibility_age=int(responsibility_age_by_question.get(state.question_hash, 0)),
                 repair_goal=_repair_goal(family, state),
             ))
     return result
@@ -270,7 +272,7 @@ def aggregate_patterns(
             max_oracle_soft_utility_gain=max(
                 row.oracle_soft_utility_gain for row in ordered
             ),
-            max_owner_age=max(row.owner_age for row in ordered),
+            max_responsibility_age=max(row.responsibility_age for row in ordered),
             repair_goal=ordered[0].repair_goal,
             represented_question_hashes=tuple(row.question_hash for row in ordered),
         ))
@@ -282,7 +284,7 @@ def _descending(pattern: AggregatedFailurePattern) -> tuple:
         pattern.assigned_case_count,
         pattern.direct_vote_fix_count,
         pattern.max_oracle_soft_utility_gain,
-        pattern.max_owner_age,
+        pattern.max_responsibility_age,
         pattern.case_count,
         pattern.pattern_id,
     )
@@ -332,7 +334,7 @@ def select_patterns(
         row.case_count,
         row.pattern_id,
     )
-    if context_policy == "generic_accuracy":
+    if context_policy in {"generic_accuracy", "generic_member_catchup_context_v1"}:
         add({FailureFamily.INDIVIDUAL_ERROR.value}, individual_key)
         add({FailureFamily.INDIVIDUAL_ERROR.value}, individual_key)
         add({FailureFamily.PRESERVATION.value}, preservation_key)
@@ -392,7 +394,7 @@ def select_representative_cases(
                 -int(row.assigned),
                 -int(row.key.direct_vote_fix),
                 -row.oracle_soft_utility_gain,
-                -row.owner_age,
+                -row.responsibility_age,
                 abs(row.key.plurality_margin),
                 row.question_hash,
             ),
@@ -440,7 +442,7 @@ def aggregate_probe_diagnosis(
     peer_contexts: Mapping[str, Mapping[int, PeerVoteContext]],
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     assigned_hashes: set[str],
-    owner_age_by_question: Mapping[str, int],
+    responsibility_age_by_question: Mapping[str, int],
     context_policy: str,
     max_patterns: int = 3,
     max_cases: int = 3,
@@ -455,7 +457,7 @@ def aggregate_probe_diagnosis(
         peer_contexts=peer_contexts,
         opportunities=opportunities,
         assigned_hashes=assigned_hashes,
-        owner_age_by_question=owner_age_by_question,
+        responsibility_age_by_question=responsibility_age_by_question,
         context_policy=context_policy,
     )
     patterns, members = aggregate_patterns(rows)

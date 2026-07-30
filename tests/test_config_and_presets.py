@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v6",
+        method_version="member_aware_peer_state_v7",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,7 +43,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v6"
+    assert cfg.training.method_version == "member_aware_peer_state_v7"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""

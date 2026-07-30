@@ -86,7 +86,7 @@ def test_full_probe_groups_structural_equivalents_and_splits_different_vote_stat
         peer_contexts=contexts,
         opportunities=opportunities,
         assigned_hashes={"q1", "q4"},
-        owner_age_by_question={"q1": 2, "q4": 4},
+        responsibility_age_by_question={"q1": 2, "q4": 4},
         context_policy="member_aware_responsibility_conditioned",
         max_patterns=3,
         max_cases=3,
@@ -128,7 +128,7 @@ def test_pattern_and_representative_selection_are_deterministic():
         peer_contexts=contexts,
         opportunities=opportunities,
         assigned_hashes={"q2"},
-        owner_age_by_question={"q1": 1, "q2": 3},
+        responsibility_age_by_question={"q1": 1, "q2": 3},
         context_policy="generic_peer_state",
     )
     first = aggregate_probe_diagnosis(**kwargs)

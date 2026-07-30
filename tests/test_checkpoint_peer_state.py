@@ -22,7 +22,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v6", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v7", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -38,7 +38,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v14_checkpoint_persists_final_state_lifecycle(tmp_path):
+def test_v15_checkpoint_persists_frontier_lifecycle(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -46,7 +46,7 @@ def test_v14_checkpoint_persists_final_state_lifecycle(tmp_path):
     source.team_differentiation_trajectory = [{"update_index": -1}]
     source.update_transition_decomposition = [{"update_index": 0}]
     source.final_state_selection = {"selected_checkpoint_source": "final_active_state"}
-    source.cached_responsibility_owners = {"q-hash": 2}
+    source.cached_responsibility_eligibility = {"q-hash": (2,)}
     memory_key = source._proposal_memory_key(
         target_agent_id=2,
         parent_prompt=source.agents[2].current_prompt,
@@ -80,7 +80,7 @@ def test_v14_checkpoint_persists_final_state_lifecycle(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 14
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 15
     assert "validation_state_cache" not in payload
     assert "validation_probe" not in payload
     target = build_system(tmp_path / "source")
@@ -96,7 +96,7 @@ def test_v14_checkpoint_persists_final_state_lifecycle(tmp_path):
     assert target.proposal_rotation_trajectory == source.proposal_rotation_trajectory
     restored = target._proposal_memory_entry(memory_key, {"q-hash"})
     assert restored is not None and restored.rotation_cursor == 3
-    target.cached_responsibility_owners = {"q-hash": 3}
+    target.cached_responsibility_eligibility = {"q-hash": (3,)}
     other_agent_key = target._proposal_memory_key(
         target_agent_id=3,
         parent_prompt=target.agents[3].current_prompt,
@@ -112,9 +112,9 @@ def test_v14_checkpoint_persists_final_state_lifecycle(tmp_path):
     assert target._proposal_memory_entry(successor_key, {"q-hash"}) is None
 
 
-def test_v13_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v14_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 13
+    payload["checkpoint_version"] = 14
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

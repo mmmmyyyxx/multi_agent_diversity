@@ -146,7 +146,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         ))
     if not all((run_dir / filename).exists() for filename in required):
         return False
-    if metadata["method_version"] != "member_aware_peer_state_v6":
+    if metadata["method_version"] != "member_aware_peer_state_v7":
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")

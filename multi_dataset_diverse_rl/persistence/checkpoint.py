@@ -68,7 +68,9 @@ def build_checkpoint(
         "responsibility_state_version": system.responsibility_state_version,
         "responsibility_refresh_count": system.responsibility_refresh_count,
         "responsibility_state": asdict(system.responsibility_state),
-        "cached_responsibility_owners": dict(system.cached_responsibility_owners),
+        "cached_responsibility_eligibility": {
+            str(key): list(value) for key, value in system.cached_responsibility_eligibility.items()
+        },
         "cached_responsibility_assignments": {
             str(agent_id): [asdict(row) for row in rows]
             for agent_id, rows in system.cached_responsibility_assignments.items()
@@ -163,7 +165,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v6")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v7")
     required_member_state = {
         "training_state",
         "member_gain_state",
@@ -202,7 +204,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "proposal_rotation_trajectory",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v6")
+        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v7")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -237,7 +239,6 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         raise ValueError("Checkpoint member gain state does not match restored profiles")
     raw_state = dict(payload["responsibility_state"])
     for field in (
-        "assigned_load_by_agent",
         "updates_since_selected_by_agent",
         "accepted_updates_by_agent",
         "target_attempt_count_by_agent",
@@ -246,18 +247,20 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     raw_state["seeded_rank_by_agent"] = {
         int(key): str(value) for key, value in raw_state["seeded_rank_by_agent"].items()
     }
-    raw_state["primary_owner_by_question"] = {
-        str(key): int(value) for key, value in raw_state["primary_owner_by_question"].items()
+    raw_state["eligible_agents_by_question"] = {
+        str(key): tuple(int(agent) for agent in value)
+        for key, value in raw_state["eligible_agents_by_question"].items()
     }
-    raw_state["owner_age_by_question"] = {
-        str(key): int(value) for key, value in raw_state["owner_age_by_question"].items()
+    raw_state["responsibility_first_seen_update"] = {
+        str(key): int(value) for key, value in raw_state["responsibility_first_seen_update"].items()
     }
     system.responsibility_state = ResponsibilityState(**raw_state)
     system.team_state_version = int(payload["team_state_version"])
     system.responsibility_state_version = int(payload["responsibility_state_version"])
     system.responsibility_refresh_count = int(payload["responsibility_refresh_count"])
-    system.cached_responsibility_owners = {
-        str(key): int(value) for key, value in payload["cached_responsibility_owners"].items()
+    system.cached_responsibility_eligibility = {
+        str(key): tuple(int(agent) for agent in value)
+        for key, value in payload["cached_responsibility_eligibility"].items()
     }
     system.cached_responsibility_assignments = {
         int(agent_id): [MemberAwareRepairOpportunity(**row) for row in rows]

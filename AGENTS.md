@@ -28,13 +28,13 @@ The current formal method is:
 Member-Aware Peer-State Prompt-Team Optimization
 ```
 
-The current implementation version is `member_aware_peer_state_v6`. It uses
-repair-only residual ownership, owner-only portfolio scheduling, assigned-
-residual-only Full TCS context, bounded TCS roles, immutable Solver contract,
-request-local first-valid Solver invalid recovery, aggregate non-regression,
-and final-active-state evaluation. It also supports explicitly configured,
-agent-isolated state-local Proposal Memory for failed proposal searches.
-Checkpoint version is 14; v13 and earlier
+The current implementation version is `member_aware_peer_state_v7`. It uses
+repair-frontier eligibility, multi-member portfolios, joint responsibility and
+uplift-deficit Pareto scheduling, a separately labelled generic catch-up lane,
+bounded TCS roles, immutable Solver contract, request-local first-valid Solver
+invalid recovery, aggregate non-regression, and final-active-state evaluation.
+It also supports explicitly configured, agent-isolated state-local Proposal
+Memory for failed proposal searches. Checkpoint version is 15; v14 and earlier
 checkpoints are intentionally incompatible.
 
 Read the current formal method version from:
@@ -564,10 +564,10 @@ requested candidate count
 
 Student must not receive raw optimization examples or gold answers.
 
-This pipeline is implemented by `member_aware_peer_state_v6` with
-`assigned_residual_failure_aware_context_v1`. In `state_local_v1` mode, a
+This pipeline is implemented by `member_aware_peer_state_v7` with
+`frontier_responsibility_and_catchup_context_v2`. In `state_local_v1` mode, a
 complete-keyed Proposal Memory may provide only sanitized failure feedback for
-the same agent, team state, prompt hash, and owned residual set. After a valid
+the same agent, team state, prompt hash, and frontier-eligible residual set. After a valid
 Critic rejection, Teacher
 revision is stateless but grounded: the next request explicitly includes the
 complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
@@ -640,17 +640,17 @@ Pareto dominance, and fronts. Formal selection uses integer counts.
 multi_dataset_diverse_rl/responsibility.py
 ```
 
-Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, primary owner
-assignment, owned-portfolio priorities, and target selection. Responsibility
+Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, repair-frontier
+eligibility, multi-member portfolios, and target selection. Responsibility
 lifecycle must be versioned by real team state.
 
-Owner vectors are exactly direct vote fix, oracle soft utility, coverage, and
-dominant-wrong membership. Runtime owner/target decisions must not use member
-gain, improvement need, count gaps, relative potential/rank, candidate history,
-streak, or cooldown. Only agents with assigned residuals are eligible. Their
-target Pareto vector is owned direct/oracle/coverage/dominant repair, assigned
-load, and oldest owned age. Max-wait 8 applies only inside that owner set; an
-empty owner set is the audited `no_actionable_responsibility` no-op.
+Per-residual repair vectors are exactly direct vote fix, oracle soft utility,
+coverage, and dominant-wrong membership. Frontier eligibility must not use
+member gain, deficit, wait, history, or Proposal Memory. Scheduling jointly
+uses portfolio direct/oracle/coverage value, uplift deficit, and oldest
+responsibility age. Max-wait 8 first serves overdue responsible members; the
+generic catch-up lane is only for an overdue, deficit-positive member with an
+empty portfolio.
 
 ### TCS proposal mechanism
 

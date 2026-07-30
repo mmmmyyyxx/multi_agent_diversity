@@ -72,9 +72,10 @@ from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_pr
 from .responsibility import (
     MemberAwareRepairOpportunity,
     ResponsibilityState,
-    assign_primary_responsibilities,
+    compute_repair_eligibility_frontiers,
     compute_member_aware_repair_opportunity,
     build_target_selection_decision,
+    mark_responsibilities_serviced,
     target_priorities,
 )
 from .tasks import get_task_spec
@@ -268,11 +269,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v6 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v7 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v6 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v7 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v6 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v7 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -291,6 +292,8 @@ class PromptEnsembleOptimizationSystem:
             )
         if cfg.tcs.proposal_memory_mode not in {"off", "state_local_v1"}:
             raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
+        if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
+            raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
         if not 0 < cfg.tcs.tcs_max_evidence_cases <= 3:
@@ -316,7 +319,6 @@ class PromptEnsembleOptimizationSystem:
         prompts = self._initial_prompts()
         self.agents = [AgentRuntime(prompt, prompt) for prompt in prompts]
         self.responsibility_state = ResponsibilityState(
-            assigned_load_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             updates_since_selected_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
@@ -343,7 +345,7 @@ class PromptEnsembleOptimizationSystem:
         self.solver_recovery_observations: list[dict[str, Any]] = []
         self._audited_invalid_keys: set[tuple[str, str]] = set()
         self._observed_solver_keys: set[tuple[str, str]] = set()
-        self.cached_responsibility_owners: dict[str, int] = {}
+        self.cached_responsibility_eligibility: dict[str, tuple[int, ...]] = {}
         self.cached_responsibility_assignments: dict[int, list[MemberAwareRepairOpportunity]] = {}
         self.cached_member_opportunities: dict[
             str, tuple[MemberAwareRepairOpportunity, ...]
@@ -481,10 +483,10 @@ class PromptEnsembleOptimizationSystem:
         if self.run_identity is None or not self.proposal_memory_run_id:
             raise RuntimeError("proposal memory requires an exact run identity")
         if any(
-            self.cached_responsibility_owners.get(question_hash) != target_agent_id
+            target_agent_id not in self.cached_responsibility_eligibility.get(question_hash, ())
             for question_hash in assigned_hashes
         ):
-            raise RuntimeError("proposal memory key contains a non-owned residual")
+            raise RuntimeError("proposal memory key contains a frontier-ineligible residual")
         return ProposalMemoryKey(
             run_id=self.proposal_memory_run_id,
             team_state_version=self.team_state_version,
@@ -504,10 +506,10 @@ class PromptEnsembleOptimizationSystem:
         if entry.key != key or entry.assigned_question_hashes != tuple(sorted(assigned_hashes)):
             raise RuntimeError("proposal memory lifecycle/schema mismatch")
         if any(
-            self.cached_responsibility_owners.get(question_hash) != key.target_agent_id
+            key.target_agent_id not in self.cached_responsibility_eligibility.get(question_hash, ())
             for question_hash in entry.assigned_question_hashes
         ):
-            raise RuntimeError("proposal memory contains a non-owned residual")
+            raise RuntimeError("proposal memory contains a frontier-ineligible residual")
         return entry
 
     @staticmethod
@@ -796,10 +798,11 @@ class PromptEnsembleOptimizationSystem:
 
     def assign_responsibilities(
         self,
-    ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+        current_update_index: int = 0,
+    ) -> tuple[dict[str, tuple[int, ...]], dict[int, list[MemberAwareRepairOpportunity]]]:
         if self.responsibility_state_version == self.team_state_version:
             return (
-                dict(self.cached_responsibility_owners),
+                dict(self.cached_responsibility_eligibility),
                 {
                     agent_id: list(rows)
                     for agent_id, rows in self.cached_responsibility_assignments.items()
@@ -808,101 +811,82 @@ class PromptEnsembleOptimizationSystem:
         states, _, opportunities = self.current_states_and_opportunities()
         self.cached_member_opportunities = dict(opportunities)
         state_by_hash = {state.question_hash: state for state in states}
-        old_owners = dict(self.responsibility_state.primary_owner_by_question)
-        owners, assigned, owner_audits = assign_primary_responsibilities(
+        eligibility, assigned, frontier_audits = compute_repair_eligibility_frontiers(
             team_states=state_by_hash,
             opportunities=opportunities,
             state=self.responsibility_state,
-            seed=self.cfg.training.seed,
-            responsibility_switch_margin=(
-                self.cfg.responsibility.responsibility_switch_margin
-            ),
+            current_update_index=current_update_index,
         )
-        owner_switch_count = sum(
-            question_hash in old_owners and old_owners[question_hash] != owner
-            for question_hash, owner in owners.items()
-        )
-        for question_hash, audit in owner_audits.items():
+        for question_hash, audit in frontier_audits.items():
             team_state = state_by_hash[question_hash]
             audit.update({
                 "G": team_state.gold_vote_count,
                 "H": team_state.largest_wrong_vote_count,
                 "M": team_state.plurality_margin,
-                "owner_age": self.responsibility_state.owner_age_by_question.get(question_hash, 0),
             })
         rows = [row for values in assigned.values() for row in values]
         self.peer_state_history.extend(asdict(state) for state in states)
         self.responsibility_assignments.append({
-            "artifact_schema_version": "repair_only_responsibility_assignments_v1",
+            "artifact_schema_version": "member_aware_responsibility_frontier_v2",
             "team_state_version": self.team_state_version,
-            "owner_distribution": {
-                str(agent_id): sum(owner == agent_id for owner in owners.values()) for agent_id in range(5)
-            },
-            "owners": owners,
-            "owner_switch_count": owner_switch_count,
-            "owner_age": dict(self.responsibility_state.owner_age_by_question),
-            "assigned_load_by_agent": dict(self.responsibility_state.assigned_load_by_agent),
+            "eligible_agents_by_question": {key: list(value) for key, value in eligibility.items()},
             "direct_fix_responsibility_count": sum(row.direct_vote_fix for row in rows),
             "coverage_responsibility_count": sum(row.coverage_opportunity for row in rows),
             "dominant_wrong_responsibility_count": sum(row.dominant_wrong_member for row in rows),
-            "owner_candidate_pareto_fronts": {
+            "candidate_pareto_fronts_by_question": {
                 question_hash: audit["candidate_pareto_fronts"]
-                for question_hash, audit in owner_audits.items()
+                for question_hash, audit in frontier_audits.items()
             },
-            "owner_chosen_reasons": {
-                question_hash: audit["chosen_reason"]
-                for question_hash, audit in owner_audits.items()
+            "candidate_repair_vectors_by_question": {
+                question_hash: audit["candidate_repair_vectors"]
+                for question_hash, audit in frontier_audits.items()
             },
-            "owner_assignment_audit": owner_audits,
+            "frontier_audit_by_question": frontier_audits,
             "assigned_opportunities": {
                 str(agent_id): [asdict(row) for row in values] for agent_id, values in assigned.items()
             },
         })
         self.responsibility_service_trajectory.append({
             "team_state_version": self.team_state_version,
-            "owner_distribution": dict(self.responsibility_state.assigned_load_by_agent),
-            "owner_switch_count": owner_switch_count,
-            "owner_age_by_question": dict(self.responsibility_state.owner_age_by_question),
+            "portfolio_size_by_agent": {str(agent): len(rows) for agent, rows in assigned.items()},
+            "responsibility_first_seen_update": dict(self.responsibility_state.responsibility_first_seen_update),
         })
         for state in states:
             question_hash = state.question_hash
-            owner_audit = owner_audits.get(question_hash, {})
+            frontier_audit = frontier_audits.get(question_hash, {})
             for opportunity in opportunities[question_hash]:
                 self.member_opportunities.append({
-                    "artifact_schema_version": "repair_only_member_opportunities_v1",
+                    "artifact_schema_version": "member_aware_repair_frontier_opportunities_v2",
                     "team_state_version": self.team_state_version,
                     "question_hash": question_hash,
                     "G": state.gold_vote_count,
                     "H": state.largest_wrong_vote_count,
                     "M": state.plurality_margin,
-                    "previous_owner": owner_audit.get("previous_owner"),
-                    "chosen_owner": owner_audit.get("chosen_owner"),
-                    "owner_age": self.responsibility_state.owner_age_by_question.get(
-                        question_hash, 0
-                    ),
-                    "owner_assignment_audit": owner_audit,
+                    "frontier_eligible": opportunity.agent_id in eligibility.get(question_hash, ()),
+                    "frontier_audit": frontier_audit,
                     **asdict(opportunity),
                 })
-        self.cached_responsibility_owners = dict(owners)
+        self.cached_responsibility_eligibility = dict(eligibility)
         self.cached_responsibility_assignments = {
             agent_id: list(values) for agent_id, values in assigned.items()
         }
         self.responsibility_state_version = self.team_state_version
         self.responsibility_refresh_count += 1
-        return owners, assigned
+        return eligibility, assigned
 
     def ensure_responsibility_current(
         self,
-    ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+    ) -> tuple[dict[str, tuple[int, ...]], dict[int, list[MemberAwareRepairOpportunity]]]:
         return self.assign_responsibilities()
 
     def refresh_responsibility_after_commit(
         self,
-    ) -> tuple[dict[str, int], dict[int, list[MemberAwareRepairOpportunity]]]:
+        current_update_index: int = 0,
+    ) -> tuple[dict[str, tuple[int, ...]], dict[int, list[MemberAwareRepairOpportunity]]]:
         self.team_state_version += 1
         if self.responsibility_state_version == self.team_state_version:
             raise AssertionError("committed team state must invalidate responsibility state")
-        return self.assign_responsibilities()
+        return self.assign_responsibilities(current_update_index=current_update_index)
 
     def select_target(
         self,
@@ -910,18 +894,31 @@ class PromptEnsembleOptimizationSystem:
         update_index: int,
     ) -> tuple[int | None, bool, list[dict[str, Any]]]:
         max_wait = self.cfg.responsibility.responsibility_max_wait_updates
+        current_counts = self._member_correct_counts(self.active_profiles)
+        initial_counts = self._member_correct_counts(self.initial_profiles)
         priorities = target_priorities(
             assignments=assigned,
             state=self.responsibility_state,
             seed=self.cfg.training.seed,
             max_wait_updates=max_wait,
+            current_member_correct_counts=current_counts,
+            initial_member_correct_counts=initial_counts,
+            current_update_index=update_index,
+            member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
         )
         fairness = any(row.overdue for row in priorities)
         if self.protocol.target_selection_policy == "round_robin":
             target = update_index % 5
             fairness = False
         elif self.protocol.target_selection_policy == "member_aware_responsibility":
-            selection = build_target_selection_decision(priorities)
+            selection = build_target_selection_decision(
+                priorities,
+                all_member_gains=[current - initial for current, initial in zip(current_counts, initial_counts, strict=True)],
+                state=self.responsibility_state,
+                max_wait_updates=max_wait,
+                member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
+                member_catchup_mode=self.cfg.responsibility.member_catchup_mode,
+            )
             target = selection.selected_agent_id
         else:
             raise ValueError(
@@ -951,6 +948,7 @@ class PromptEnsembleOptimizationSystem:
             "update_index": int(update_index),
             "priorities": priority_payload,
             "overdue_first": fairness,
+            "update_lane": selection.update_lane if self.protocol.target_selection_policy == "member_aware_responsibility" else "protocol_control",
             "selection_pool_stage": pool_stage,
             "eligible_agent_ids": eligible_ids,
             "overdue_agent_ids": overdue_ids,
@@ -1022,7 +1020,8 @@ class PromptEnsembleOptimizationSystem:
                 if opportunity.unique_correct or opportunity.pivotal_correct:
                     preservation.append(index)
             coverage.sort(key=lambda index: (
-                -self.responsibility_state.owner_age_by_question.get(states[index].question_hash, 0),
+                -max(0, self.completed_update_count - self.responsibility_state.responsibility_first_seen_update.get(
+                    f"{target_agent_id}:{states[index].question_hash}", self.completed_update_count)),
                 -opportunities[states[index].question_hash][target_agent_id].oracle_soft_utility_gain,
                 states[index].question_hash,
             ))
@@ -1099,6 +1098,10 @@ class PromptEnsembleOptimizationSystem:
         target_rows = [
             opportunities[state.question_hash][target_agent_id] for state in states
         ]
+        context_policy = self.protocol.tcs_context_policy
+        if (context_policy == "member_aware_responsibility_conditioned"
+                and not assigned_hashes):
+            context_policy = "generic_member_catchup_context_v1"
         aggregation = aggregate_probe_diagnosis(
             target_agent_id=target_agent_id,
             examples=self.fixed_probe.examples,
@@ -1106,8 +1109,12 @@ class PromptEnsembleOptimizationSystem:
             peer_contexts=contexts,
             opportunities=opportunities,
             assigned_hashes=assigned_hashes,
-            owner_age_by_question=self.responsibility_state.owner_age_by_question,
-            context_policy=self.protocol.tcs_context_policy,
+            responsibility_age_by_question={
+                state.question_hash: max(0, self.completed_update_count - self.responsibility_state.responsibility_first_seen_update.get(
+                    f"{target_agent_id}:{state.question_hash}", self.completed_update_count))
+                for state in states
+            },
+            context_policy=context_policy,
             max_patterns=self.cfg.tcs.tcs_max_pattern_summaries,
             max_cases=self.cfg.tcs.tcs_max_evidence_cases,
             rotation_cursor=rotation_cursor,
@@ -1142,11 +1149,19 @@ class PromptEnsembleOptimizationSystem:
                     row.unique_correct or row.pivotal_correct for row in target_rows
                 ),
             )
-        elif self.protocol.tcs_context_policy == "member_aware_responsibility_conditioned":
+        elif context_policy == "member_aware_responsibility_conditioned":
             context = AssignedResidualDiagnosisContext(
                 **common,
                 assigned_residual_count=len(assigned_hashes),
                 proposal_failure_feedback=proposal_failure_feedback,
+            )
+        elif context_policy == "generic_member_catchup_context_v1":
+            context = PeerStateDiagnosisContext(
+                **common,
+                vote_wrong_count=sum(not state.vote_correct for state in states),
+                coverage_failure_count=sum(state.gold_vote_count == 0 for state in states),
+                conversion_failure_count=sum(not state.vote_correct and state.gold_vote_count > 0 for state in states),
+                preservation_count=sum(row.unique_correct or row.pivotal_correct for row in target_rows),
             )
         else:
             raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
@@ -1834,6 +1849,11 @@ class PromptEnsembleOptimizationSystem:
                 memory_entry and memory_entry.rotation_exhausted
             ),
         }
+        context_mode = (
+            "generic_member_catchup_context_v1"
+            if self.protocol.tcs_context_policy == "member_aware_responsibility_conditioned" and not assigned_hashes
+            else self.protocol.tcs_context_policy
+        )
         context_serialized = serialize_context(context)
         context_object = context_payload(context)
         field_paths = sorted(_recursive_field_paths(context_object))
@@ -1861,6 +1881,7 @@ class PromptEnsembleOptimizationSystem:
             "target_agent_id": target_agent_id,
             "context_type": type(context).__name__,
             "context_class": type(context).__name__,
+            "context_mode": context_mode,
             "parent_prompt_hash": self.prompt_hash(parent_prompt),
             "proposal_context_hash": hashlib.sha256(context_serialized.encode("utf-8")).hexdigest(),
             "proposal_memory_mode": self.cfg.tcs.proposal_memory_mode,
@@ -2606,9 +2627,9 @@ class PromptEnsembleOptimizationSystem:
         if self.protocol.target_selection_policy == "member_aware_responsibility":
             if self.protocol.responsibility_refresh_policy != "online":
                 raise AssertionError("dynamic responsibility protocol requires online refresh")
-            owners, assigned = self.ensure_responsibility_current()
+            eligibility, assigned = self.ensure_responsibility_current()
         else:
-            owners = {}
+            eligibility = {}
             assigned = {agent_id: [] for agent_id in range(5)}
             states, _, _ = self.current_states_and_opportunities()
             self.peer_state_history.extend(asdict(state) for state in states)
@@ -2638,9 +2659,15 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state.target_attempt_count_by_agent[target] = (
             self.responsibility_state.target_attempt_count_by_agent.get(target, 0) + 1
         )
-        assigned_hashes = {question_hash for question_hash, owner in owners.items() if owner == target}
-        if self.protocol.target_selection_policy == "member_aware_responsibility" and not assigned_hashes:
-            raise AssertionError("member-aware target must own at least one residual")
+        update_lane = (self.target_priority_audit[-1].get("update_lane")
+                       if self.protocol.target_selection_policy == "member_aware_responsibility" else "protocol_control")
+        assigned_hashes = ({row.question_hash for row in assigned.get(target, ())}
+                           if update_lane == "responsibility_conditioned" else set())
+        if update_lane == "responsibility_conditioned" and not assigned_hashes:
+            raise AssertionError("responsibility target must have a nonempty frontier portfolio")
+        if update_lane == "responsibility_conditioned":
+            mark_responsibilities_serviced(state=self.responsibility_state, agent_id=target,
+                                           assignments=assigned, update_index=update_index)
         funnel = CandidateFunnel()
         candidates = await self.propose_candidates(
             target, assigned_hashes, funnel, update_index=update_index,
@@ -2670,14 +2697,12 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
         decision = {
             "update_index": update_index,
-            "update_lane": (
-                "responsibility_conditioned"
-                if self.protocol.target_selection_policy == "member_aware_responsibility"
-                else "protocol_control"
-            ),
+            "update_lane": update_lane,
             "target_agent_id": target,
             "agent_selection_distribution": dict(self.agent_selection_counts),
             "assigned_question_hashes": sorted(assigned_hashes),
+            "generic_member_catchup": update_lane == "generic_member_catchup",
+            "borrowed_residual_count": 0,
             "target_assigned_residual_count": len(assigned_hashes),
             "max_wait_fairness_trigger_count": int(fairness_triggered),
             "agent_target_priorities": target_priorities_payload,
@@ -2741,7 +2766,7 @@ class PromptEnsembleOptimizationSystem:
         old_previous_prompt = agent.previous_active_prompt
         old_profile = self.active_profiles[target]
         old_responsibility_state = deepcopy(self.responsibility_state)
-        old_cached_owners = deepcopy(self.cached_responsibility_owners)
+        old_cached_eligibility = deepcopy(self.cached_responsibility_eligibility)
         old_cached_assignments = deepcopy(self.cached_responsibility_assignments)
         old_cached_opportunities = deepcopy(self.cached_member_opportunities)
         old_team_state_version = self.team_state_version
@@ -2760,7 +2785,7 @@ class PromptEnsembleOptimizationSystem:
                 self.responsibility_state.accepted_updates_by_agent.get(target, 0) + 1
             )
             if self.protocol.responsibility_refresh_policy == "online":
-                self.refresh_responsibility_after_commit()
+                self.refresh_responsibility_after_commit(current_update_index=update_index)
             else:
                 self.team_state_version += 1
         except Exception:
@@ -2768,7 +2793,7 @@ class PromptEnsembleOptimizationSystem:
             agent.previous_active_prompt = old_previous_prompt
             self.active_profiles[target] = old_profile
             self.responsibility_state = old_responsibility_state
-            self.cached_responsibility_owners = old_cached_owners
+            self.cached_responsibility_eligibility = old_cached_eligibility
             self.cached_responsibility_assignments = old_cached_assignments
             self.cached_member_opportunities = old_cached_opportunities
             self.team_state_version = old_team_state_version
@@ -3325,10 +3350,9 @@ class PromptEnsembleOptimizationSystem:
     def proposal_memory_isolation_audit(self) -> dict[str, Any]:
         entries = list(self.proposal_memory_entries.values())
         keys_unique = len({entry.key.key_hash() for entry in entries}) == len(entries)
-        ownership_valid = all(
+        eligibility_valid = all(
             all(
-                self.cached_responsibility_owners.get(question_hash)
-                == entry.key.target_agent_id
+                entry.key.target_agent_id in self.cached_responsibility_eligibility.get(question_hash, ())
                 for question_hash in entry.assigned_question_hashes
             )
             for entry in entries
@@ -3340,7 +3364,7 @@ class PromptEnsembleOptimizationSystem:
             "entry_count": len(entries),
             "key_hashes_unique": keys_unique,
             "cross_agent_collision_count": 0,
-            "all_entry_owned_residuals_match_target": ownership_valid,
+            "all_entry_frontier_eligible_residuals_match_target": eligibility_valid,
             "partial_key_fallback_used": False,
         }
 
