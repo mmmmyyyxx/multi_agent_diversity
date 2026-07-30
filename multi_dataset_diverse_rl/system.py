@@ -73,6 +73,7 @@ from .responsibility import (
     MemberAwareRepairOpportunity,
     ResponsibilityState,
     compute_repair_eligibility_frontiers,
+    compute_unique_owner_control_portfolios,
     compute_member_aware_repair_opportunity,
     build_target_selection_decision,
     mark_responsibilities_serviced,
@@ -294,6 +295,8 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
         if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
             raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
+        if cfg.responsibility.responsibility_mode not in {"unique_owner_v6", "frontier_joint_v7"}:
+            raise ValueError("responsibility_mode must be 'unique_owner_v6' or 'frontier_joint_v7'")
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
         if not 0 < cfg.tcs.tcs_max_evidence_cases <= 3:
@@ -758,6 +761,83 @@ class PromptEnsembleOptimizationSystem:
         current_counts = self._member_correct_counts(self.active_profiles)
         return asdict(team_member_gain_state(initial_counts, current_counts))
 
+    def frozen_initialization_snapshot(self) -> dict[str, Any]:
+        """Hash-only evidence used to prove matched treatment initialization.
+
+        This is intentionally derived after the shared fixed-probe rollout and
+        before the first update.  It contains no prompt, question, gold answer,
+        or raw model response, so an experiment runner can compare treatments
+        without exporting private solver material.
+        """
+        if self.fixed_probe is None or self.run_identity is None:
+            raise RuntimeError("fixed probe and run identity are required for initialization audit")
+        states, _, _ = self.current_states_and_opportunities()
+        state_rows = [
+            {
+                "question_hash": state.question_hash,
+                "vote_correct": bool(state.vote_correct),
+                "oracle_covered": bool(state.gold_vote_count > 0),
+                "G": state.gold_vote_count,
+                "H": state.largest_wrong_vote_count,
+                "M": state.plurality_margin,
+                "member_correctness": list(state.team_correctness),
+                "member_validity": list(state.team_validity),
+            }
+            for state in sorted(states, key=lambda value: value.question_hash)
+        ]
+        behavior = team_behavior_metrics(
+            examples=self.fixed_probe.examples,
+            profiles=self.active_profiles,
+            normalize_answer=self.normalize_answer,
+            match_answer=self.match_answer,
+            tie_break=self.protocol.tie_policy,
+            seed=self.cfg.training.seed,
+        )
+        initial_prompt_hashes = [self.prompt_hash(agent.initial_prompt) for agent in self.agents]
+        member_counts = list(self._member_correct_counts(self.initial_profiles))
+        immutable_identity = {
+            key: getattr(self.run_identity, key)
+            for key in (
+                "git_commit", "git_dirty", "manifest_sha256",
+                "train_file_sha256", "val_file_sha256", "test_file_sha256",
+                "train_question_set_hash", "val_question_set_hash", "test_question_set_hash",
+            )
+        }
+        solver_identity = self.prompt_question_evaluator.identity()
+        state_payload = {
+            "initial_prompt_hashes": initial_prompt_hashes,
+            "initial_member_correct_counts": member_counts,
+            "state_rows": state_rows,
+            "probe_hash": self.fixed_probe.probe_hash,
+            "solver_request_identity": self.prompt_question_evaluator.model_request_identity,
+            "solver_identity": solver_identity,
+            "immutable_run_identity": immutable_identity,
+        }
+        initial_train_state_hash = hashlib.sha256(json.dumps(
+            state_payload, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")).hexdigest()
+        return {
+            "snapshot_version": "frozen_initialization_snapshot_v1",
+            "initial_prompt_hashes": initial_prompt_hashes,
+            "initial_member_correct_counts": member_counts,
+            "initial_team_outcome": {
+                key: behavior[key]
+                for key in (
+                    "team_vote_correct_count", "oracle_correct_count", "terminal_invalid_count",
+                    "mean_G", "mean_H", "mean_M", "oracle_covered_but_vote_wrong_rate",
+                    "per_agent_correct_counts",
+                )
+            },
+            "initial_vote_oracle_ghm_hash": hashlib.sha256(json.dumps(
+                state_rows, sort_keys=True, separators=(",", ":")
+            ).encode("utf-8")).hexdigest(),
+            "initial_train_state_hash": initial_train_state_hash,
+            "probe_hash": self.fixed_probe.probe_hash,
+            "solver_request_identity": self.prompt_question_evaluator.model_request_identity,
+            "solver_identity": solver_identity,
+            "immutable_run_identity": immutable_identity,
+        }
+
     def current_states_and_opportunities(
         self,
     ) -> tuple[
@@ -811,12 +891,16 @@ class PromptEnsembleOptimizationSystem:
         states, _, opportunities = self.current_states_and_opportunities()
         self.cached_member_opportunities = dict(opportunities)
         state_by_hash = {state.question_hash: state for state in states}
-        eligibility, assigned, frontier_audits = compute_repair_eligibility_frontiers(
-            team_states=state_by_hash,
-            opportunities=opportunities,
-            state=self.responsibility_state,
-            current_update_index=current_update_index,
+        responsibility_builder = (
+            compute_unique_owner_control_portfolios
+            if self.cfg.responsibility.responsibility_mode == "unique_owner_v6"
+            else compute_repair_eligibility_frontiers
         )
+        builder_kwargs = dict(team_states=state_by_hash, opportunities=opportunities,
+                              state=self.responsibility_state, current_update_index=current_update_index)
+        if self.cfg.responsibility.responsibility_mode == "unique_owner_v6":
+            builder_kwargs["seed"] = self.cfg.training.seed
+        eligibility, assigned, frontier_audits = responsibility_builder(**builder_kwargs)
         for question_hash, audit in frontier_audits.items():
             team_state = state_by_hash[question_hash]
             audit.update({
@@ -904,7 +988,9 @@ class PromptEnsembleOptimizationSystem:
             current_member_correct_counts=current_counts,
             initial_member_correct_counts=initial_counts,
             current_update_index=update_index,
-            member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
+            member_uplift_tolerance=(10**9 if self.cfg.responsibility.responsibility_mode == "unique_owner_v6"
+                                     else self.cfg.responsibility.member_uplift_tolerance),
+            responsibility_mode=self.cfg.responsibility.responsibility_mode,
         )
         fairness = any(row.overdue for row in priorities)
         if self.protocol.target_selection_policy == "round_robin":
@@ -917,7 +1003,9 @@ class PromptEnsembleOptimizationSystem:
                 state=self.responsibility_state,
                 max_wait_updates=max_wait,
                 member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
-                member_catchup_mode=self.cfg.responsibility.member_catchup_mode,
+                member_catchup_mode=("off" if self.cfg.responsibility.responsibility_mode == "unique_owner_v6"
+                                     else self.cfg.responsibility.member_catchup_mode),
+                responsibility_mode=self.cfg.responsibility.responsibility_mode,
             )
             target = selection.selected_agent_id
         else:

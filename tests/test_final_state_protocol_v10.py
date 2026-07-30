@@ -62,6 +62,37 @@ def test_cli_uses_final_active_state_without_validation(monkeypatch, tmp_path):
     assert selection["test_used_for_training"] is False
 
 
+def test_short_mechanism_run_can_skip_test_without_relaxing_final_state_selection(monkeypatch, tmp_path):
+    events = []
+
+    async def solver(_question, _agent_id, _prompt):
+        events.append("solver")
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    class ShortSystem(PromptEnsembleOptimizationSystem):
+        def __init__(self, cfg):
+            super().__init__(cfg, solver=solver)
+
+        async def update_once(self, update_index):
+            events.append(("update", update_index))
+            return False
+
+    monkeypatch.setattr(cli, "PromptEnsembleOptimizationSystem", ShortSystem)
+    cfg = Config.from_flat(
+        train_path=_split(tmp_path, "train"), val_path=_split(tmp_path, "val"),
+        test_path=_split(tmp_path, "test"), train_size=1, val_size=1, test_size=1,
+        answer_format="option_letter", epochs=2, update_every=1,
+        final_test_enabled=False, out_dir=str(tmp_path / "run"),
+    )
+    result = asyncio.run(cli.run(cfg))
+    selection = result["selection_summary"]
+    assert result["selected_test"] is None
+    assert selection["selected_checkpoint_source"] == "final_active_state"
+    assert selection["selected_checkpoint_update_index"] == 2
+    assert selection["test_evaluation_count"] == 0
+    assert selection["final_test_enabled"] is False
+
+
 def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
     calls = 0
 
@@ -86,6 +117,33 @@ def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
     assert first == second
     assert calls == 1
     assert system.test_evaluation_count == 1
+
+
+def test_frozen_initialization_snapshot_is_hash_only_and_deterministic(tmp_path):
+    async def solver(_question, _agent_id, _prompt):
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    identity = RunIdentity(
+        method_version="member_aware_peer_state_v7", experiment_setting="shared_member_aware_full",
+        git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
+        train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
+        train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
+    )
+
+    async def run_snapshot():
+        system = PromptEnsembleOptimizationSystem(
+            Config.from_flat(out_dir=str(tmp_path)), solver=solver,
+        )
+        system.set_run_identity(identity)
+        await system.initialize_fixed_probe([{"question": "q", "answer": "A"}])
+        return system.frozen_initialization_snapshot()
+
+    first = asyncio.run(run_snapshot())
+    second = asyncio.run(run_snapshot())
+    assert first == second
+    assert first["initial_member_correct_counts"] == [1, 1, 1, 1, 1]
+    assert len(first["initial_train_state_hash"]) == 64
+    assert "careful reasoning solver" not in json.dumps(first).lower()
 
 
 def test_checkpoint_reuses_completed_final_test(tmp_path):

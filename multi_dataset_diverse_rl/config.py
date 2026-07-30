@@ -83,6 +83,7 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
+    responsibility_mode: str = "frontier_joint_v7"
     responsibility_max_wait_updates: int = 8
     member_uplift_tolerance: int = 5
     member_catchup_mode: str = "fallback_v1"
@@ -110,6 +111,8 @@ class PersistenceConfig:
     retry_sleep: float = 1.5
     max_retry_backoff: float = 60.0
     llm_call_timeout: float = 120.0
+    final_test_enabled: bool = True
+    frozen_initialization_manifest_path: str = ""
 
 
 SECTION_TYPES = {

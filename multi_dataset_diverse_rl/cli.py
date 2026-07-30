@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+import json
 import math
 import random
 from pathlib import Path
@@ -181,6 +182,7 @@ async def run(cfg: Config) -> dict[str, Any]:
             "initial_team_state_hash": initial_state_hash,
         }
         system.record_training_dynamics(update_index=-1)
+        _verify_frozen_initialization(system, cfg)
     for epoch in range(start_epoch, cfg.training.epochs):
         epoch_decision_start = len(system.candidate_decisions)
         first_update = start_update if epoch == start_epoch else 0
@@ -239,7 +241,9 @@ async def run(cfg: Config) -> dict[str, Any]:
     }
     system.final_state_selection = dict(selection_summary)
     _write_checkpoint(system, cfg, cfg.training.epochs, 0, training_state)
-    selected_test = await system.evaluate_final_test(test)
+    selected_test = None
+    if cfg.persistence.final_test_enabled:
+        selected_test = await system.evaluate_final_test(test)
     selection_summary.update({
         "test_evaluation_count": system.test_evaluation_count,
         "test_used_for_selection": system.test_used_for_selection,
@@ -247,6 +251,7 @@ async def run(cfg: Config) -> dict[str, Any]:
         "test_called_before_training_complete": (
             system.test_called_before_training_complete
         ),
+        "final_test_enabled": cfg.persistence.final_test_enabled,
     })
     system.final_state_selection = dict(selection_summary)
     _write_checkpoint(system, cfg, cfg.training.epochs, 0, training_state)
@@ -300,19 +305,57 @@ def _member_gain_summary(
 
 def _final_payload(
     initial: DatasetMetrics | None,
-    selected: DatasetMetrics,
+    selected: DatasetMetrics | None,
     *,
     selection_summary: Mapping[str, Any],
 ) -> dict[str, Any]:
     return {
         "initial_test": initial.to_dict() if initial is not None else None,
-        "selected_test": selected.to_dict(),
+        "selected_test": selected.to_dict() if selected is not None else None,
         "member_gain": (
             _member_gain_summary(initial, selected)
-            if initial is not None else None
+            if initial is not None and selected is not None else None
         ),
         "selection_summary": dict(selection_summary),
     }
+
+
+def _verify_frozen_initialization(
+    system: PromptEnsembleOptimizationSystem,
+    cfg: Config,
+) -> None:
+    """Fail closed before update zero when a matched-pilot state diverges."""
+    manifest_path = str(cfg.persistence.frozen_initialization_manifest_path).strip()
+    if not manifest_path:
+        return
+    try:
+        manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+        expected = manifest["initialization_snapshot"]
+    except (OSError, KeyError, json.JSONDecodeError) as exc:
+        raise ValueError("frozen initialization manifest is unreadable") from exc
+    actual = system.frozen_initialization_snapshot()
+    fields = (
+        "initial_prompt_hashes", "initial_member_correct_counts", "initial_team_outcome",
+        "initial_vote_oracle_ghm_hash", "initial_train_state_hash", "probe_hash",
+        "solver_request_identity", "solver_identity", "immutable_run_identity",
+    )
+    mismatches = {
+        field: {"expected": expected.get(field), "actual": actual.get(field)}
+        for field in fields if expected.get(field) != actual.get(field)
+    }
+    audit = {
+        "frozen_initialization_manifest_version": manifest.get("manifest_version", ""),
+        "matched": not mismatches,
+        "checked_fields": list(fields),
+        "mismatches": mismatches,
+        "initialization_snapshot": actual,
+    }
+    system.artifacts.write_json("frozen_initialization_match.json", audit)
+    if mismatches:
+        raise RuntimeError(
+            "frozen initialization mismatch before update zero: "
+            + json.dumps(sorted(mismatches), separators=(",", ":"))
+        )
 
 
 def _metrics_summary(metrics: DatasetMetrics) -> dict[str, Any]:
@@ -332,6 +375,9 @@ async def main_async() -> None:
     cfg = config_from_args(build_parser().parse_args())
     result = await run(cfg)
     selected = result["selected_test"]
+    if selected is None:
+        print("final test skipped by final_test_enabled=0", flush=True)
+        return
     print(_progress_line(
         epoch="final",
         step="final",

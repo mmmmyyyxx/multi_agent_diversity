@@ -92,6 +92,14 @@ class ResponsibilityTargetPriority:
                 float(self.coverage_count), float(self.uplift_deficit),
                 float(self.oldest_responsibility_age))
 
+    def unique_owner_control_values(self) -> tuple[float, ...]:
+        """The frozen v6-style control vector, without uplift fairness."""
+        return (
+            float(self.direct_fix_count), float(self.soft_utility_gain_sum),
+            float(self.coverage_count), float(self.dominant_wrong_count),
+            float(self.responsibility_count), float(self.oldest_responsibility_age),
+        )
+
 
 @dataclass(frozen=True)
 class TargetSelectionDecision:
@@ -210,6 +218,40 @@ def compute_repair_eligibility_frontiers(*, team_states: Mapping[str, TeamVoteSt
     return eligible_by_question, portfolios, audits
 
 
+def compute_unique_owner_control_portfolios(*, team_states: Mapping[str, TeamVoteState],
+                                            opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
+                                            state: ResponsibilityState, seed: int,
+                                            current_update_index: int) -> tuple[
+                                                dict[str, tuple[int, ...]],
+                                                dict[int, list[MemberAwareRepairOpportunity]],
+                                                dict[str, dict[str, Any]],
+                                            ]:
+    """Experimental v6 control: one deterministic repair-frontier member per residual."""
+    frontier, portfolios, audits = compute_repair_eligibility_frontiers(
+        team_states=team_states, opportunities=opportunities, state=state,
+        current_update_index=current_update_index,
+    )
+    selected = {}
+    unique_portfolios = {agent: [] for agent in portfolios}
+    for question_hash, candidates in frontier.items():
+        options = [row for row in opportunities[question_hash] if row.agent_id in candidates]
+        chosen = min(options, key=lambda row: (
+            -int(row.direct_vote_fix), -row.oracle_soft_utility_gain,
+            -int(row.coverage_opportunity), -int(row.dominant_wrong_member),
+            -state.updates_since_selected_by_agent[row.agent_id],
+            _seeded_hash(seed, question_hash, row.agent_id),
+        ))
+        selected[question_hash] = (chosen.agent_id,)
+        unique_portfolios[chosen.agent_id].append(chosen)
+        audits[question_hash]["control_selected_agent_id"] = chosen.agent_id
+    active = {_pair_key(agent, question) for question, agents in selected.items() for agent in agents}
+    state.eligible_agents_by_question = selected
+    state.responsibility_first_seen_update = {
+        key: seen for key, seen in state.responsibility_first_seen_update.items() if key in active
+    }
+    return selected, unique_portfolios, audits
+
+
 def responsibility_portfolios(*, assignments: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
                               state: ResponsibilityState, current_update_index: int) -> dict[int, MemberResponsibilityPortfolio]:
     result = {}
@@ -231,7 +273,8 @@ def responsibility_portfolios(*, assignments: Mapping[int, Sequence[MemberAwareR
 def target_priorities(*, assignments: Mapping[int, Sequence[MemberAwareRepairOpportunity]], state: ResponsibilityState,
                       seed: int, max_wait_updates: int, current_member_correct_counts: Sequence[int],
                       initial_member_correct_counts: Sequence[int], current_update_index: int,
-                      member_uplift_tolerance: int) -> tuple[ResponsibilityTargetPriority, ...]:
+                      member_uplift_tolerance: int,
+                      responsibility_mode: str = "frontier_joint_v7") -> tuple[ResponsibilityTargetPriority, ...]:
     if max_wait_updates <= 0:
         raise ValueError("max_wait_updates must be positive")
     if len(current_member_correct_counts) != len(initial_member_correct_counts):
@@ -256,7 +299,17 @@ def target_priorities(*, assignments: Mapping[int, Sequence[MemberAwareRepairOpp
             seeded_rank=rank,
         ))
     responsibility_fronts = _pareto_front_numbers([row.agent_id for row in rows], {row.agent_id: row.responsibility_values() for row in rows}) if rows else {}
-    joint_fronts = _pareto_front_numbers([row.agent_id for row in rows], {row.agent_id: row.joint_values() for row in rows}) if rows else {}
+    if responsibility_mode not in {"unique_owner_v6", "frontier_joint_v7"}:
+        raise ValueError(f"unknown responsibility mode: {responsibility_mode}")
+    selection_values = (
+        (lambda row: row.unique_owner_control_values())
+        if responsibility_mode == "unique_owner_v6"
+        else (lambda row: row.joint_values())
+    )
+    joint_fronts = _pareto_front_numbers(
+        [row.agent_id for row in rows],
+        {row.agent_id: selection_values(row) for row in rows},
+    ) if rows else {}
     return tuple(replace(row, responsibility_pareto_front=responsibility_fronts[row.agent_id],
                          joint_target_pareto_front=joint_fronts[row.agent_id]) for row in rows)
 
@@ -264,7 +317,17 @@ def target_priorities(*, assignments: Mapping[int, Sequence[MemberAwareRepairOpp
 def build_target_selection_decision(priorities: Sequence[ResponsibilityTargetPriority], *,
                                     all_member_gains: Sequence[int], state: ResponsibilityState,
                                     max_wait_updates: int, member_uplift_tolerance: int,
-                                    member_catchup_mode: str) -> TargetSelectionDecision:
+                                    member_catchup_mode: str,
+                                    responsibility_mode: str = "frontier_joint_v7") -> TargetSelectionDecision:
+    if responsibility_mode not in {"unique_owner_v6", "frontier_joint_v7"}:
+        raise ValueError(f"unknown responsibility mode: {responsibility_mode}")
+    if responsibility_mode == "unique_owner_v6" and member_catchup_mode != "off":
+        raise ValueError("unique-owner control cannot enable generic member catch-up")
+    selection_values = (
+        (lambda row: row.unique_owner_control_values())
+        if responsibility_mode == "unique_owner_v6"
+        else (lambda row: row.joint_values())
+    )
     eligible = tuple(priorities)
     overdue = tuple(row for row in eligible if row.overdue)
     gains, maximum = list(map(int, all_member_gains)), max(all_member_gains, default=0)
@@ -275,14 +338,14 @@ def build_target_selection_decision(priorities: Sequence[ResponsibilityTargetPri
                     and state.updates_since_selected_by_agent[agent] >= max_wait_updates)
     if overdue:
         pool, stage, lane = overdue, "responsibility_overdue_frontier", "responsibility_conditioned"
-        values = {row.agent_id: row.responsibility_values() for row in pool}
+        values = {row.agent_id: selection_values(row) for row in pool}
     elif catchup:
         pool, stage, lane = (), "generic_member_catchup_frontier", "generic_member_catchup"
         values = {agent: (float(max(0, maximum - gains[agent] - int(member_uplift_tolerance))),
                           float(state.updates_since_selected_by_agent[agent])) for agent in catchup}
     elif eligible:
         pool, stage, lane = eligible, "responsibility_joint_frontier", "responsibility_conditioned"
-        values = {row.agent_id: row.joint_values() for row in pool}
+        values = {row.agent_id: selection_values(row) for row in pool}
     else:
         return TargetSelectionDecision(None, "no_actionable_responsibility", "no_actionable_responsibility", (), (), catchup, (), {}, (), "no_actionable_responsibility")
     ids = tuple(row.agent_id for row in pool) if pool else catchup
