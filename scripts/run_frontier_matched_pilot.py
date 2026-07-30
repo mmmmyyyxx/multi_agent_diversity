@@ -155,9 +155,15 @@ def _sqlite_backup(source: Path, destination: Path) -> None:
 
 def _freeze_action(args: argparse.Namespace, workspace: Path, root: Path, manifest_path: Path) -> None:
     frozen_root = root / f"frozen_seed{args.seed}"
-    if frozen_root.exists():
-        raise FileExistsError(f"frozen initialization root must be new: {frozen_root}")
     cache = frozen_root / "initial_solver_cache.sqlite"
+    stable_cache = frozen_root / "initial_solver_cache_frozen.sqlite"
+    manifest_path_out = frozen_root / "frozen_initialization_manifest.json"
+    recoverable_partial = (
+        frozen_root.is_dir() and cache.is_file() and stable_cache.is_file()
+        and not manifest_path_out.exists()
+    )
+    if frozen_root.exists() and not recoverable_partial:
+        raise FileExistsError(f"frozen initialization root must be new: {frozen_root}")
     cfg = _config(**_base_values(
         workspace=workspace, manifest_path=manifest_path, task_id=args.task,
         seed=args.seed, out_dir=frozen_root, cache_path=cache, treatment="A",
@@ -165,11 +171,11 @@ def _freeze_action(args: argparse.Namespace, workspace: Path, root: Path, manife
     if args.dry_run:
         print(json.dumps({"action": "freeze", "config": cfg.to_flat_dict()}, indent=2))
         return
-    frozen_root.mkdir(parents=True)
+    if not frozen_root.exists():
+        frozen_root.mkdir(parents=True)
     snapshot = asyncio.run(_freeze(cfg, workspace))
-    stable_cache = frozen_root / "initial_solver_cache_frozen.sqlite"
-    _sqlite_backup(cache, stable_cache)
-    cache.unlink(missing_ok=True)
+    if not stable_cache.exists():
+        _sqlite_backup(cache, stable_cache)
     manifest = {
         "manifest_version": MANIFEST_VERSION,
         "pilot_version": PILOT_VERSION,
@@ -179,7 +185,7 @@ def _freeze_action(args: argparse.Namespace, workspace: Path, root: Path, manife
         "initial_cache_sha256": hashlib.sha256(stable_cache.read_bytes()).hexdigest(),
         "initial_cache_ready": True,
     }
-    (frozen_root / "frozen_initialization_manifest.json").write_text(
+    manifest_path_out.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
     )
     print(json.dumps({
