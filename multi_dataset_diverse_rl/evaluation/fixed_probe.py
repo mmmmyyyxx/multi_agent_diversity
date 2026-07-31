@@ -235,7 +235,9 @@ def evaluate_candidate_profile(
         utility_total += candidate_utility
         if example.question_hash in assigned_question_hashes:
             assigned_utility_delta += delta
-            assigned_repair += int(not current_opportunity.current_correct and candidate_correct)
+            assigned_repair += int(
+                current_opportunity.member_error and candidate_correct
+            )
         vote_vector.append(candidate.vote_correct)
         gold_counts.append(candidate.gold_vote_count)
         wrong_counts.append(candidate.largest_wrong_vote_count)

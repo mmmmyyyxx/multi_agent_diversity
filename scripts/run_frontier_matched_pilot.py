@@ -1,8 +1,10 @@
-"""Run one frozen-initialization A/B/C frontier responsibility treatment.
+"""Legacy v6/v7 frozen-initialization A/B/C mechanism runner.
 
 This runner deliberately launches exactly one treatment at a time.  A caller
 must inspect the prior treatment's mechanism gate before launching the next
 one, so a failed short pilot cannot silently progress to the 32-update phase.
+Run it only from its original pinned v7 commit. The active v8 runtime
+intentionally rejects its legacy responsibility modes.
 """
 
 from __future__ import annotations

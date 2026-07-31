@@ -6,7 +6,12 @@ from scripts.deterministic_member_aware_system_smoke import run_smoke
 def test_real_system_smoke_enforces_repair_only_targeting_and_pareto_gates():
     report = asyncio.run(run_smoke())
     assert len(report["target_sequence"]) >= 1
-    assert report["all_selected_targets_owned_residuals"] is True
+    assert (
+        report["all_selected_targets_have_responsibility_portfolios"]
+        is True
+    )
+    assert report["default_catchup_disabled"] is True
+    assert report["default_proposal_memory_disabled"] is True
     assert report["no_actionable_responsibility_is_noop"] is True
     assert report["target_neutral_vote_positive_accepted"] is True
     assert report["vote_positive_member_regressing_rejected"] is True

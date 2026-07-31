@@ -39,7 +39,8 @@ def pattern() -> AggregatedFailurePattern:
         peer_gold_vote_count=2,
         peer_largest_wrong_vote_count=2,
         peer_margin=0,
-        direct_vote_fix=True,
+        vote_flip_gain=1,
+        margin_gain=2,
         dominant_wrong_member=True,
         unique_correct=False,
         pivotal_correct=False,
@@ -50,10 +51,10 @@ def pattern() -> AggregatedFailurePattern:
         case_count=4,
         assigned_case_count=2,
         direct_vote_fix_count=4,
+        margin_gain_sum=8,
         dominant_wrong_count=4,
         mean_oracle_soft_utility_gain=0.25,
         max_oracle_soft_utility_gain=0.5,
-        max_responsibility_age=3,
         repair_goal="convert_existing_gold_coverage",
         represented_question_hashes=("q1", "q2", "q3", "q4"),
     )
@@ -76,7 +77,8 @@ def evidence() -> CompactEvidenceCase:
         peer_gold_vote_count=2,
         peer_largest_wrong_vote_count=2,
         peer_margin=0,
-        direct_vote_fix=True,
+        vote_flip_gain=1,
+        margin_gain=2,
         dominant_wrong_member=True,
         unique_correct=False,
         pivotal_correct=False,
@@ -110,6 +112,13 @@ def contexts():
         AssignedResidualDiagnosisContext(
             **common,
             assigned_residual_count=2,
+            target_member_gain=1,
+            uplift_deficit=3,
+            direct_fix_responsibility_count=2,
+            margin_gain_responsibility_sum=4,
+            coverage_residual_count=0,
+            conversion_residual_count=2,
+            preservation_count=1,
         ),
     )
 
@@ -127,8 +136,9 @@ def test_context_serialization_isolates_accuracy_peer_and_member_fields():
     assert "gold_vote_count" in peer_text and "peer_gold_vote_count" in peer_text
     assert "assigned_case_count" not in peer_text
     assert "member_gains_from_initial" not in peer_text
-    assert "member_gains_from_initial" not in member_text
-    assert "target_improvement_need" not in member_text
+    assert "\"target_member_gain\": 1" in member_text
+    assert "\"uplift_deficit\": 3" in member_text
+    assert "\"margin_gain_responsibility_sum\": 4" in member_text
     assert "assigned_case_count" in member_text
     for payload_text in (accuracy_text, peer_text, member_text):
         assert "represented_question_hashes" not in payload_text

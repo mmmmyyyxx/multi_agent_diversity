@@ -38,7 +38,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v7"
+    method_version: str = "member_aware_peer_state_v8"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -83,10 +83,10 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
-    responsibility_mode: str = "frontier_joint_v7"
+    responsibility_mode: str = "compact_member_aware_v8"
     responsibility_max_wait_updates: int = 8
     member_uplift_tolerance: int = 5
-    member_catchup_mode: str = "fallback_v1"
+    member_catchup_mode: str = "off"
 
 
 @dataclass(frozen=True)

@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v7",
+        method_version="member_aware_peer_state_v8",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,7 +43,10 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v7"
+    assert cfg.training.method_version == "member_aware_peer_state_v8"
+    assert cfg.responsibility.responsibility_mode == "compact_member_aware_v8"
+    assert cfg.responsibility.member_catchup_mode == "off"
+    assert cfg.tcs.proposal_memory_mode == "off"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
     assert cfg.models.optimizer_api_key_env == ""
@@ -126,7 +129,9 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
         "critic_grounded_full_plan_revision_v1"
     )
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
-    assert metadata["diagnosis_aggregation_version"] == "peer_state_pattern_aggregation_v1"
+    assert metadata["diagnosis_aggregation_version"] == (
+        "compact_vote_margin_pattern_aggregation_v2"
+    )
     assert metadata["target_selection_version"] == TARGET_SELECTION_VERSION
     assert metadata["checkpoint_version"] == CHECKPOINT_VERSION
     assert metadata["task_general_scope"] == "unseen_examples_within_current_task"

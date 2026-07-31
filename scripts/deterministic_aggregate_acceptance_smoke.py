@@ -19,6 +19,7 @@ from multi_dataset_diverse_rl.responsibility import (
     CandidateMarginalContribution,
     ProtectionContribution,
 )
+from multi_dataset_diverse_rl.versions import CANDIDATE_ACCEPTANCE_VERSION
 
 
 def evaluation(
@@ -74,6 +75,15 @@ def main() -> None:
     vote_neutral = evaluate_constraints(
         evaluation("vote-neutral", target=11, vote=10), incumbent
     )
+    vote_only = evaluate_constraints(
+        evaluation(
+            "vote-only",
+            target=10,
+            vote=11,
+            vote_gain=1,
+        ),
+        incumbent,
+    )
     vote_regression = evaluate_constraints(
         evaluation(
             "vote-regression",
@@ -87,12 +97,20 @@ def main() -> None:
     assert five_gain_one_loss.hard_feasible
     assert five_gain_one_loss.pivotal_correct_loss_count == 1
     assert vote_neutral.hard_feasible
+    assert vote_only.hard_feasible
+    assert not vote_only.target_strict_improvement
+    assert vote_only.target_or_vote_progress_passed
+    assert (
+        CANDIDATE_ACCEPTANCE_VERSION
+        == "target_or_vote_strict_progress_v1"
+    )
     assert not vote_regression.hard_feasible
     assert "team_vote_regression" in vote_regression.rejection_reasons
     print(json.dumps({
         "aggregate_acceptance_smoke": {
             "five_gain_one_loss_accepted": True,
             "vote_neutral_target_gain_accepted": True,
+            "target_neutral_vote_gain_accepted": True,
             "vote_regression_rejected": True,
         }
     }, indent=2))

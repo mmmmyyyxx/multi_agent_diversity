@@ -12,9 +12,9 @@ from .peer_state import PeerVoteContext, TeamVoteState
 from .responsibility import MemberAwareRepairOpportunity
 
 
-DIAGNOSIS_AGGREGATION_VERSION = "peer_state_pattern_aggregation_v1"
+DIAGNOSIS_AGGREGATION_VERSION = "compact_vote_margin_pattern_aggregation_v2"
 ANSWER_ROLE_ENCODING_VERSION = "stable_wrong_cluster_roles_v1"
-PATTERN_SELECTION_VERSION = "three_slot_lexicographic_v1"
+PATTERN_SELECTION_VERSION = "three_slot_lexicographic_v2"
 
 
 class FailureFamily(str, Enum):
@@ -37,7 +37,8 @@ class FailurePatternKey:
     peer_gold_vote_count: int
     peer_largest_wrong_vote_count: int
     peer_margin: int
-    direct_vote_fix: bool
+    vote_flip_gain: int
+    margin_gain: int
     dominant_wrong_member: bool
     unique_correct: bool
     pivotal_correct: bool
@@ -50,10 +51,10 @@ class AggregatedFailurePattern:
     case_count: int
     assigned_case_count: int
     direct_vote_fix_count: int
+    margin_gain_sum: int
     dominant_wrong_count: int
     mean_oracle_soft_utility_gain: float
     max_oracle_soft_utility_gain: float
-    max_responsibility_age: int
     repair_goal: str
     represented_question_hashes: tuple[str, ...]
 
@@ -75,7 +76,8 @@ class CompactEvidenceCase:
     peer_gold_vote_count: int
     peer_largest_wrong_vote_count: int
     peer_margin: int
-    direct_vote_fix: bool
+    vote_flip_gain: int
+    margin_gain: int
     dominant_wrong_member: bool
     unique_correct: bool
     pivotal_correct: bool
@@ -92,7 +94,6 @@ class _PatternCase:
     answer_role_signature: tuple[str, ...]
     assigned: bool
     oracle_soft_utility_gain: float
-    responsibility_age: int
     repair_goal: str
 
 
@@ -145,10 +146,13 @@ def _case_id(pattern_id: str, question_hash: str) -> str:
     return _stable_hash(f"{pattern_id}:{question_hash}")[:20]
 
 
-def _status(opportunity: MemberAwareRepairOpportunity) -> str:
-    if opportunity.current_invalid:
+def _status(
+    opportunity: MemberAwareRepairOpportunity,
+    state: TeamVoteState,
+) -> str:
+    if not state.team_validity[opportunity.agent_id]:
         return "invalid"
-    return "correct" if opportunity.current_correct else "wrong"
+    return "wrong" if opportunity.member_error else "correct"
 
 
 def _vote_status(state: TeamVoteState) -> str:
@@ -176,7 +180,7 @@ def _families(
         rows.append(FailureFamily.INDIVIDUAL_ERROR)
     if state.gold_vote_count == 0:
         rows.append(FailureFamily.COVERAGE_FAILURE)
-    if not state.vote_correct and state.gold_vote_count > 0:
+    if opportunity.conversion_opportunity:
         rows.append(FailureFamily.CONVERSION_FAILURE)
     if opportunity.dominant_wrong_member:
         rows.append(FailureFamily.DOMINANT_WRONG)
@@ -193,7 +197,6 @@ def _build_pattern_cases(
     peer_contexts: Mapping[str, Mapping[int, PeerVoteContext]],
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     assigned_hashes: set[str],
-    responsibility_age_by_question: Mapping[str, int],
     context_policy: str,
 ) -> list[_PatternCase]:
     example_by_hash = {row.question_hash: row for row in examples}
@@ -218,7 +221,7 @@ def _build_pattern_cases(
         for family in _families(state, opportunity):
             key = FailurePatternKey(
                 case_family=family.value,
-                target_status=_status(opportunity),
+                target_status=_status(opportunity, state),
                 team_vote_status=_vote_status(state),
                 target_answer_role=roles[target_agent_id],
                 gold_vote_count=state.gold_vote_count,
@@ -227,7 +230,8 @@ def _build_pattern_cases(
                 peer_gold_vote_count=peer.peer_gold_vote_count,
                 peer_largest_wrong_vote_count=peer.peer_largest_wrong_vote_count,
                 peer_margin=peer.peer_margin,
-                direct_vote_fix=opportunity.direct_vote_fix,
+                vote_flip_gain=opportunity.vote_flip_gain,
+                margin_gain=opportunity.margin_gain,
                 dominant_wrong_member=opportunity.dominant_wrong_member,
                 unique_correct=opportunity.unique_correct,
                 pivotal_correct=opportunity.pivotal_correct,
@@ -241,7 +245,6 @@ def _build_pattern_cases(
                 answer_role_signature=roles,
                 assigned=state.question_hash in assigned_hashes,
                 oracle_soft_utility_gain=opportunity.oracle_soft_utility_gain,
-                responsibility_age=int(responsibility_age_by_question.get(state.question_hash, 0)),
                 repair_goal=_repair_goal(family, state),
             ))
     return result
@@ -264,7 +267,10 @@ def aggregate_patterns(
             key=key,
             case_count=len(ordered),
             assigned_case_count=sum(row.assigned for row in ordered),
-            direct_vote_fix_count=sum(row.key.direct_vote_fix for row in ordered),
+            direct_vote_fix_count=sum(
+                row.key.vote_flip_gain > 0 for row in ordered
+            ),
+            margin_gain_sum=sum(row.key.margin_gain for row in ordered),
             dominant_wrong_count=sum(row.key.dominant_wrong_member for row in ordered),
             mean_oracle_soft_utility_gain=(
                 sum(row.oracle_soft_utility_gain for row in ordered) / len(ordered)
@@ -272,7 +278,6 @@ def aggregate_patterns(
             max_oracle_soft_utility_gain=max(
                 row.oracle_soft_utility_gain for row in ordered
             ),
-            max_responsibility_age=max(row.responsibility_age for row in ordered),
             repair_goal=ordered[0].repair_goal,
             represented_question_hashes=tuple(row.question_hash for row in ordered),
         ))
@@ -283,8 +288,8 @@ def _descending(pattern: AggregatedFailurePattern) -> tuple:
     return (
         pattern.assigned_case_count,
         pattern.direct_vote_fix_count,
+        pattern.margin_gain_sum,
         pattern.max_oracle_soft_utility_gain,
-        pattern.max_responsibility_age,
         pattern.case_count,
         pattern.pattern_id,
     )
@@ -392,9 +397,9 @@ def select_representative_cases(
             pattern_members[pattern.pattern_id],
             key=lambda row: (
                 -int(row.assigned),
-                -int(row.key.direct_vote_fix),
+                -int(row.key.vote_flip_gain > 0),
+                -row.key.margin_gain,
                 -row.oracle_soft_utility_gain,
-                -row.responsibility_age,
                 abs(row.key.plurality_margin),
                 row.question_hash,
             ),
@@ -425,7 +430,8 @@ def select_representative_cases(
             peer_gold_vote_count=pattern.key.peer_gold_vote_count,
             peer_largest_wrong_vote_count=pattern.key.peer_largest_wrong_vote_count,
             peer_margin=pattern.key.peer_margin,
-            direct_vote_fix=pattern.key.direct_vote_fix,
+            vote_flip_gain=pattern.key.vote_flip_gain,
+            margin_gain=pattern.key.margin_gain,
             dominant_wrong_member=pattern.key.dominant_wrong_member,
             unique_correct=pattern.key.unique_correct,
             pivotal_correct=pattern.key.pivotal_correct,
@@ -442,7 +448,6 @@ def aggregate_probe_diagnosis(
     peer_contexts: Mapping[str, Mapping[int, PeerVoteContext]],
     opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
     assigned_hashes: set[str],
-    responsibility_age_by_question: Mapping[str, int],
     context_policy: str,
     max_patterns: int = 3,
     max_cases: int = 3,
@@ -457,7 +462,6 @@ def aggregate_probe_diagnosis(
         peer_contexts=peer_contexts,
         opportunities=opportunities,
         assigned_hashes=assigned_hashes,
-        responsibility_age_by_question=responsibility_age_by_question,
         context_policy=context_policy,
     )
     patterns, members = aggregate_patterns(rows)

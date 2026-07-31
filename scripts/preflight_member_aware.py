@@ -77,8 +77,10 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("member_uplift_tolerance cannot be negative")
         if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
             errors.append("member_catchup_mode must be 'off' or 'fallback_v1'")
-        if cfg.responsibility.responsibility_mode not in {"unique_owner_v6", "frontier_joint_v7"}:
-            errors.append("responsibility_mode must be 'unique_owner_v6' or 'frontier_joint_v7'")
+        if cfg.responsibility.responsibility_mode != "compact_member_aware_v8":
+            errors.append(
+                "responsibility_mode must be 'compact_member_aware_v8'"
+            )
         if cfg.evaluation.candidate_eval_pool_size <= 0:
             errors.append("fixed probe must contain at least one example")
         if not (
@@ -247,8 +249,14 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("member_uplift_tolerance cannot be negative")
                     if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
                         raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
-                    if cfg.responsibility.responsibility_mode not in {"unique_owner_v6", "frontier_joint_v7"}:
-                        raise ValueError("responsibility_mode must be 'unique_owner_v6' or 'frontier_joint_v7'")
+                    if (
+                        cfg.responsibility.responsibility_mode
+                        != "compact_member_aware_v8"
+                    ):
+                        raise ValueError(
+                            "responsibility_mode must be "
+                            "'compact_member_aware_v8'"
+                        )
                     if cfg.tcs.student_invalid_max_retries < 0:
                         raise ValueError(
                             "student_invalid_max_retries cannot be negative"

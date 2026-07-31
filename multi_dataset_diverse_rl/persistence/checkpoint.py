@@ -10,7 +10,10 @@ from typing import Any, Mapping
 
 from ..evaluation.fixed_probe import PromptAnswer
 from ..persistence.identity import validate_run_identity
-from ..responsibility import MemberAwareRepairOpportunity, ResponsibilityState
+from ..responsibility import (
+    ResponsibilityState,
+    compute_repair_eligibility_sets,
+)
 from ..proposal_memory import entry_from_dict, entry_to_dict
 from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
@@ -71,14 +74,6 @@ def build_checkpoint(
         "cached_responsibility_eligibility": {
             str(key): list(value) for key, value in system.cached_responsibility_eligibility.items()
         },
-        "cached_responsibility_assignments": {
-            str(agent_id): [asdict(row) for row in rows]
-            for agent_id, rows in system.cached_responsibility_assignments.items()
-        },
-        "cached_member_opportunities": {
-            question_hash: [asdict(row) for row in rows]
-            for question_hash, rows in system.cached_member_opportunities.items()
-        },
         "previous_update_outcomes": {
             str(agent_id): asdict(row)
             for agent_id, row in system.previous_update_outcomes.items()
@@ -122,8 +117,12 @@ def build_checkpoint(
         "selected_test_metrics": dict(system.selected_test_metrics),
         "agent_selection_counts": dict(system.agent_selection_counts),
         "target_priority_audit": list(system.target_priority_audit),
-        "responsibility_service_trajectory": list(system.responsibility_service_trajectory),
-        "target_owner_context_alignment": list(system.target_owner_context_alignment),
+        "responsibility_portfolio_trajectory": list(
+            system.responsibility_portfolio_trajectory
+        ),
+        "target_responsibility_context_alignment": list(
+            system.target_responsibility_context_alignment
+        ),
         "proposal_memory_run_id": system.proposal_memory_run_id,
         "proposal_memory_entries": {
             key: entry_to_dict(entry)
@@ -165,13 +164,13 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
     if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v7")
+        raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
     required_member_state = {
         "training_state",
         "member_gain_state",
-        "cached_member_opportunities",
         "target_priority_audit",
         "responsibility_state",
+        "cached_responsibility_eligibility",
         "team_state_version",
         "responsibility_state_version",
         "responsibility_refresh_count",
@@ -196,15 +195,15 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "test_used_for_training",
         "test_called_before_training_complete",
         "selected_test_metrics",
-        "responsibility_service_trajectory",
-        "target_owner_context_alignment",
+        "responsibility_portfolio_trajectory",
+        "target_responsibility_context_alignment",
         "proposal_memory_run_id",
         "proposal_memory_entries",
         "proposal_memory_events",
         "proposal_rotation_trajectory",
     }
     if not required_member_state <= set(payload):
-        raise ValueError("Checkpoint is incompatible with member_aware_peer_state_v7")
+        raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -251,9 +250,6 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         str(key): tuple(int(agent) for agent in value)
         for key, value in raw_state["eligible_agents_by_question"].items()
     }
-    raw_state["responsibility_first_seen_update"] = {
-        str(key): int(value) for key, value in raw_state["responsibility_first_seen_update"].items()
-    }
     system.responsibility_state = ResponsibilityState(**raw_state)
     system.team_state_version = int(payload["team_state_version"])
     system.responsibility_state_version = int(payload["responsibility_state_version"])
@@ -261,16 +257,6 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.cached_responsibility_eligibility = {
         str(key): tuple(int(agent) for agent in value)
         for key, value in payload["cached_responsibility_eligibility"].items()
-    }
-    system.cached_responsibility_assignments = {
-        int(agent_id): [MemberAwareRepairOpportunity(**row) for row in rows]
-        for agent_id, rows in payload["cached_responsibility_assignments"].items()
-    }
-    system.cached_member_opportunities = {
-        str(question_hash): tuple(
-            MemberAwareRepairOpportunity(**row) for row in rows
-        )
-        for question_hash, rows in payload["cached_member_opportunities"].items()
     }
     system.previous_update_outcomes = {
         int(key): PreviousUpdateOutcome(
@@ -310,8 +296,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }
     system.target_priority_audit = list(payload["target_priority_audit"])
-    system.responsibility_service_trajectory = list(payload["responsibility_service_trajectory"])
-    system.target_owner_context_alignment = list(payload["target_owner_context_alignment"])
+    system.responsibility_portfolio_trajectory = list(
+        payload["responsibility_portfolio_trajectory"]
+    )
+    system.target_responsibility_context_alignment = list(
+        payload["target_responsibility_context_alignment"]
+    )
     if str(payload["proposal_memory_run_id"]) != system.proposal_memory_run_id:
         raise ValueError("Checkpoint proposal memory run identity mismatch")
     system.proposal_memory_entries = {
@@ -345,6 +335,24 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     }
     system.llm.calls = list(payload["llm_calls"])
     system.fixed_probe.restore(payload["fixed_probe"])
+    states, _, opportunities = system.current_states_and_opportunities()
+    recomputed_eligibility, recomputed_assignments, _ = (
+        compute_repair_eligibility_sets(
+            team_states={row.question_hash: row for row in states},
+            opportunities=opportunities,
+            state=system.responsibility_state,
+        )
+    )
+    if recomputed_eligibility != system.cached_responsibility_eligibility:
+        raise ValueError(
+            "Checkpoint responsibility eligibility does not match "
+            "the restored active team"
+        )
+    system.cached_responsibility_assignments = {
+        agent_id: list(rows)
+        for agent_id, rows in recomputed_assignments.items()
+    }
+    system.cached_member_opportunities = dict(opportunities)
     random.setstate(pickle.loads(base64.b64decode(str(payload["random_state"]))))
     return (
         int(payload["epoch_index"]),

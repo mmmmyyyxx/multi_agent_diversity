@@ -1,8 +1,8 @@
 # Multi-Agent Diversity
 
 This repository implements one current method:
-**Member-Aware Peer-State Prompt-Team Optimization**
-(`member_aware_peer_state_v7`).
+**Member-Aware Prompt-Team Optimization**
+(`member_aware_peer_state_v8`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -10,18 +10,20 @@ fixed-probe rollouts evaluate them, and an aggregate non-regression rule plus
 the setting-specific selector decides whether a single-agent update enters the
 active team.
 
-## Method Flow
+## Three-Module Method
 
 ```text
-Team Rollout
-  -> Programmatic Peer-State Pattern Aggregation
-  -> Lightweight Repair Hypothesis
-  -> Hard-Blocker Critique
-  -> Prompt Realization
-  -> Stage A: team-vote / worst-member / mean-member shortlist
-  -> Aggregate Feasibility: target-or-vote improvement + Pareto/invalid guards
-  -> Setting-Specific Rollout Selection
-  -> accepted prompt, then immediate state and responsibility refresh
+Current Prompt Team
+  -> Joint Team Diagnosis: G, H, M and member gains
+  -> Member-Aware Responsibility
+     - per-residual lexicographic eligibility on (DeltaV, DeltaM)
+     - one member target Pareto on (D, S, d)
+  -> Responsibility-Conditioned Evolution
+     - bounded member-specific residual context and prompt candidates
+  -> Pareto-Constrained Team Update
+     - target-only paired rollout with four fixed peers
+     - target-or-vote progress plus team Pareto and invalid guards
+  -> Updated Prompt Team
 ```
 
 The three formal Stage B objectives are integer counts:
@@ -40,16 +42,29 @@ terminal-invalid outputs, and must strictly Pareto-dominate the incumbent in
 example. Vote, unique-correct, and pivotal-correct gains and losses remain
 audited diagnostics and late tie-breakers; none independently rejects a candidate.
 
-Member-Aware Responsibility first forms each vote-wrong residual's repair
-frontier, then gives every frontier-eligible member a portfolio and jointly
-Pareto-schedules repair value, uplift deficit, and responsibility age. An
-overdue member with no frontier portfolio may enter the separately labelled
-generic catch-up lane; it never borrows another member's residual.
+For each vote-wrong residual, only currently wrong members are considered.
+Replacing one member by gold while holding four peers fixed gives
+`DeltaV` (vote-correct gain) and `DeltaM` (plurality-margin gain). Eligibility
+keeps the lexicographic maximum and retains exact ties. Member portfolios then
+aggregate only direct-fix count `D` and margin-gain sum `S`; the scheduler
+computes one Pareto frontier over `(D, S, d)`, where `d` is the member uplift
+deficit. Wait is a member-level tie-break and max-wait starvation safeguard, not
+a per-residual objective.
 
 Optional `proposal_memory_mode=state_local_v1` keeps only sanitized failed-search
-feedback under a complete run/state/agent/prompt/frontier-residual key. It changes
+feedback under a complete run/state/agent/prompt/eligible-residual key. It changes
 proposal search, not eligibility, scheduling, objectives, Stage A/B budgets, or evaluation.
 Soft vote utility is only a deterministic tie-break signal.
+
+The formal defaults are:
+
+```text
+member_catchup_mode = off
+proposal_memory_mode = off
+```
+
+Explicit catch-up and Proposal Memory modes are optional research extensions,
+not parts of the default three-module method.
 
 ## Experiment Settings
 
@@ -90,9 +105,8 @@ git diff --check
 The system smoke instantiates the real optimization system with fake models,
 runs eight offline fake-model updates through programmatic aggregation, TCS, and
 Stage A/B, checks one responsibility
-refresh per committed team transition, verifies the two critical Pareto
-accept/reject cases, covers all eligible members, and computes the real
-validation key. The smaller unit smoke retains deterministic helper-level
+refresh per committed team transition, verifies the critical Pareto
+accept/reject cases, and covers compact eligibility and scheduling. The smaller unit smoke retains deterministic helper-level
 coverage. The three v4 smokes separately prove aggregate acceptance, bounded
 Student invalid recovery, final-active-state test isolation, planned high-
 frequency update counting, and answer-behavior differentiation metrics.
@@ -127,7 +141,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v15 run identity;
+checkpoint-v16 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -147,9 +161,10 @@ Each optimized run writes:
 - `final_test_differentiation.json`: final-team test behavior metrics
 - `candidate_decisions.jsonl`: Stage A/B evaluations, guards, and acceptance
 - `candidate_funnel.json`: update funnels and role-specific terminal failures
-- `responsibility_assignments.jsonl`: repair frontiers and member portfolios after each refresh
-- `target_priority_audit.jsonl`: member-aware target priorities, actual selection
-  pools, and the Pareto frontier used by the scheduler
+- `responsibility_assignments.jsonl`: counterfactual `(DeltaV, DeltaM)`
+  eligibility sets and member portfolios after each refresh
+- `target_priority_audit.jsonl`: `(D, S, d)` target priorities, member wait,
+  the single target Pareto frontier, and max-wait overrides
 - `solver_recovery_summary.json`: one row per resolved prompt-question request,
   including first-pass validity, recovery calls, terminal-invalid counts, and
   token overhead
@@ -179,6 +194,10 @@ exactly once after every planned update completes and cannot influence training.
 The frozen matched baseline remains a reporting reference only.
 
 See [method.md](method.md) for definitions and implementation details.
+
+The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
+development evidence for the superseded v7 mechanism. It does not define the
+v8 method and does not establish catch-up efficacy.
 
 For offline analysis of an already completed high-frequency v4 run, use:
 

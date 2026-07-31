@@ -32,9 +32,13 @@ async def trajectory_solver(question: str, _agent_id: int, prompt: str) -> Promp
         return answer("B" if question == f"q{member_id}_1" else "A")
     if "-base" in prompt:
         member_id = int(prompt.split("agent-", 1)[1].split("-", 1)[0])
-        return answer(
-            "B" if question in {f"q{member_id}_0", f"q{member_id}_1"} else "A"
-        )
+        residual_owner = int(question.split("q", 1)[1].split("_", 1)[0])
+        wrong_members = {
+            residual_owner,
+            (residual_owner + 1) % 5,
+            (residual_owner + 2) % 5,
+        }
+        return answer("B" if member_id in wrong_members else "A")
     raise AssertionError(f"unexpected trajectory prompt: {prompt}")
 
 
@@ -307,10 +311,24 @@ async def run_smoke() -> dict[str, object]:
 
     report = {
         "target_sequence": targets,
-        "all_selected_targets_owned_residuals": all(
+        "all_selected_targets_have_responsibility_portfolios": all(
             decision.get("target_agent_id") is None
             or decision.get("target_assigned_residual_count", 0) > 0
             for decision in system.candidate_decisions
+        ),
+        "default_catchup_disabled": (
+            cfg.responsibility.member_catchup_mode == "off"
+            and all(
+                decision.get("update_lane") != "generic_member_catchup"
+                for decision in system.candidate_decisions
+            )
+        ),
+        "default_proposal_memory_disabled": (
+            cfg.tcs.proposal_memory_mode == "off"
+            and not any(
+                event.get("memory_hit")
+                for event in system.proposal_memory_events
+            )
         ),
         "no_actionable_responsibility_is_noop": any(
             decision.get("stop_reason") == "no_actionable_responsibility"
@@ -387,7 +405,9 @@ async def run_smoke() -> dict[str, object]:
         "fault_smokes": fault_results,
     }
     required = (
-        "all_selected_targets_owned_residuals",
+        "all_selected_targets_have_responsibility_portfolios",
+        "default_catchup_disabled",
+        "default_proposal_memory_disabled",
         "no_actionable_responsibility_is_noop",
         "one_refresh_per_team_transition",
         "target_neutral_vote_positive_accepted",

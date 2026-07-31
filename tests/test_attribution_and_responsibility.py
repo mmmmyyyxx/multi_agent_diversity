@@ -1,129 +1,381 @@
 from dataclasses import replace
 
-from multi_dataset_diverse_rl.peer_state import build_peer_vote_context, build_team_vote_state
+from multi_dataset_diverse_rl.peer_state import (
+    build_peer_vote_context,
+    build_team_vote_state,
+)
 from multi_dataset_diverse_rl.responsibility import (
+    MemberAwareRepairOpportunity,
     ResponsibilityState,
     build_target_selection_decision,
     compute_member_aware_repair_opportunity,
-    compute_repair_eligibility_frontiers,
-    compute_unique_owner_control_portfolios,
+    compute_repair_eligibility_sets,
+    repair_eligibility_key,
+    responsibility_portfolios,
     target_priorities,
 )
 
 
 def team(answers, question_hash="q"):
-    return build_team_vote_state(question_hash=question_hash, gold_answer="A", answers=answers,
-                                 normalize_answer=str.upper, match_answer=lambda left, right: left == right,
-                                 tie_break="abstain")
-
-
-def opportunities(state):
-    return tuple(compute_member_aware_repair_opportunity(
-        team_state=state, peer_context=build_peer_vote_context(state, agent)) for agent in range(5))
+    return build_team_vote_state(
+        question_hash=question_hash,
+        gold_answer="A",
+        answers=answers,
+        normalize_answer=str.upper,
+        match_answer=lambda left, right: left == right,
+        tie_break="abstain",
+    )
 
 
 def runtime(**overrides):
-    value = {
-        "updates_since_selected_by_agent": {agent: 0 for agent in range(5)},
+    values = {
+        "eligible_agents_by_question": {},
+        "updates_since_selected_by_agent": {
+            agent: 0 for agent in range(5)
+        },
         "accepted_updates_by_agent": {agent: 0 for agent in range(5)},
-        "target_attempt_count_by_agent": {agent: 0 for agent in range(5)},
+        "seeded_rank_by_agent": {},
+        "target_attempt_count_by_agent": {
+            agent: 0 for agent in range(5)
+        },
     }
-    value.update(overrides)
-    return ResponsibilityState(**value)
+    values.update(overrides)
+    return ResponsibilityState(**values)
 
 
-def test_repair_vector_excludes_member_fairness_and_history():
-    row = opportunities(team(["A", "A", "B", "B", "B"]))[2]
-    assert row.repair_vector() == (float(row.direct_vote_fix), row.oracle_soft_utility_gain,
-                                   float(row.coverage_opportunity), float(row.dominant_wrong_member))
-    assert not any("gain" in name or "wait" in name for name in row.__dict__ if name != "oracle_soft_utility_gain")
-
-
-def test_frontier_keeps_all_nondominated_wrong_members_and_excludes_correct_members():
-    state = team(["A", "A", "B", "B", "B"])
-    rows = list(opportunities(state))
-    rows[2] = replace(rows[2], direct_vote_fix=True, oracle_soft_utility_gain=0.2)
-    rows[3] = replace(rows[3], direct_vote_fix=False, coverage_opportunity=True, oracle_soft_utility_gain=0.3)
-    rows[4] = replace(rows[4], oracle_soft_utility_gain=0.0)
-    eligible, portfolios, audit = compute_repair_eligibility_frontiers(
-        team_states={"q": state}, opportunities={"q": rows}, state=runtime(), current_update_index=0)
-    assert eligible["q"] == (2, 3)
-    assert [row.question_hash for row in portfolios[2]] == ["q"]
-    assert [row.question_hash for row in portfolios[3]] == ["q"]
-    assert not portfolios[0] and not portfolios[1] and not portfolios[4]
-    assert audit["q"]["candidate_pareto_fronts"]["4"] > 1
-
-
-def test_frontier_is_invariant_to_member_fairness_and_wait_state():
-    state = team(["B", "B", "B", "B", "B"])
-    rows = opportunities(state)
-    first, _, _ = compute_repair_eligibility_frontiers(
-        team_states={"q": state}, opportunities={"q": rows}, state=runtime(), current_update_index=0)
-    second, _, _ = compute_repair_eligibility_frontiers(
-        team_states={"q": state}, opportunities={"q": rows},
-        state=runtime(updates_since_selected_by_agent={agent: 99 for agent in range(5)},
-                      accepted_updates_by_agent={agent: 99 for agent in range(5)}), current_update_index=0)
-    assert first == second
-
-
-def test_unique_owner_control_selects_one_legal_frontier_member_per_residual():
-    state = team(["A", "A", "B", "B", "B"])
-    rows = list(opportunities(state))
-    rows[2] = replace(rows[2], direct_vote_fix=True, oracle_soft_utility_gain=0.2)
-    rows[3] = replace(rows[3], coverage_opportunity=True, oracle_soft_utility_gain=0.3)
-    eligible, portfolios, audit = compute_unique_owner_control_portfolios(
-        team_states={"q": state}, opportunities={"q": rows}, state=runtime(),
-        seed=42, current_update_index=0,
+def opportunity(
+    agent_id,
+    *,
+    vote_flip_gain=0,
+    margin_gain=0,
+    member_error=True,
+    coverage=False,
+    conversion=False,
+    dominant=False,
+    utility=0.0,
+    question_hash="q",
+):
+    return MemberAwareRepairOpportunity(
+        agent_id=agent_id,
+        question_hash=question_hash,
+        vote_flip_gain=vote_flip_gain,
+        margin_gain=margin_gain,
+        member_error=member_error,
+        coverage_opportunity=coverage,
+        conversion_opportunity=conversion,
+        dominant_wrong_member=dominant,
+        unique_correct=not member_error,
+        pivotal_correct=False,
+        oracle_soft_utility_gain=utility,
     )
-    assert len(eligible["q"]) == 1
-    selected = eligible["q"][0]
-    assert audit["q"]["candidate_pareto_fronts"][str(selected)] == 1
-    assert [row.question_hash for row in portfolios[selected]] == ["q"]
-    assert audit["q"]["control_selected_agent_id"] == selected
 
 
-def test_unique_owner_control_scheduler_ignores_uplift_deficit():
-    state = team(["B", "B", "B", "B", "B"])
-    rows = opportunities(state)
-    assignments = {0: [rows[0]], 1: [rows[1]], 2: [], 3: [], 4: []}
-    runtime_state = runtime(updates_since_selected_by_agent={0: 0, 1: 0, 2: 9, 3: 0, 4: 0})
-    priorities = target_priorities(
-        assignments=assignments, state=runtime_state, seed=42, max_wait_updates=8,
-        current_member_correct_counts=(0, 10, 0, 0, 0),
-        initial_member_correct_counts=(0, 0, 0, 0, 0), current_update_index=0,
-        member_uplift_tolerance=10**9, responsibility_mode="unique_owner_v6",
+def eligibility(rows, state=None):
+    vote_wrong = state or team(["B", "B", "C", "C", "D"])
+    return compute_repair_eligibility_sets(
+        team_states={"q": vote_wrong},
+        opportunities={"q": tuple(rows)},
+        state=runtime(),
+    )
+
+
+def test_counterfactual_opportunity_reports_vote_and_margin_gains():
+    state = team(["A", "B", "B", "C", "D"])
+    row = compute_member_aware_repair_opportunity(
+        team_state=state,
+        peer_context=build_peer_vote_context(state, 1),
+    )
+    assert row.member_error
+    assert row.vote_flip_gain == 1
+    assert row.margin_gain == 2
+    assert repair_eligibility_key(row) == (1, 2)
+
+
+def test_direct_vote_flip_precedes_larger_nonflip_margin_gain():
+    rows = [
+        opportunity(0, vote_flip_gain=1, margin_gain=1),
+        opportunity(1, vote_flip_gain=0, margin_gain=9),
+    ]
+    eligible, portfolios, audit = eligibility(rows)
+    assert eligible["q"] == (0,)
+    assert [row.agent_id for row in portfolios[0]] == [0]
+    assert audit["q"]["candidate_counterfactual_values"]["1"] == {
+        "vote_flip_gain": 0,
+        "margin_gain": 9,
+    }
+
+
+def test_margin_gain_breaks_equal_vote_flip_and_exact_ties_are_retained():
+    rows = [
+        opportunity(0, vote_flip_gain=1, margin_gain=1),
+        opportunity(1, vote_flip_gain=1, margin_gain=2),
+        opportunity(2, vote_flip_gain=1, margin_gain=2),
+    ]
+    eligible, _, audit = eligibility(rows)
+    assert eligible["q"] == (1, 2)
+    assert audit["q"]["eligibility_tie_count"] == 2
+
+
+def test_diagnostic_labels_do_not_change_eligibility():
+    rows = [
+        opportunity(
+            0,
+            vote_flip_gain=1,
+            margin_gain=2,
+            coverage=False,
+            dominant=False,
+            utility=0.0,
+        ),
+        opportunity(
+            1,
+            vote_flip_gain=1,
+            margin_gain=2,
+            coverage=True,
+            conversion=True,
+            dominant=True,
+            utility=100.0,
+        ),
+    ]
+    eligible, _, _ = eligibility(rows)
+    assert eligible["q"] == (0, 1)
+
+
+def test_member_state_and_history_do_not_change_eligibility():
+    rows = [
+        opportunity(0, vote_flip_gain=0, margin_gain=1),
+        opportunity(1, vote_flip_gain=0, margin_gain=1),
+    ]
+    first_state = runtime()
+    second_state = runtime(
+        updates_since_selected_by_agent={
+            0: 99,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+        },
+        accepted_updates_by_agent={
+            0: 10,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+        },
+    )
+    first, _, _ = compute_repair_eligibility_sets(
+        team_states={"q": team(["B", "B", "C", "C", "D"])},
+        opportunities={"q": rows},
+        state=first_state,
+    )
+    second, _, _ = compute_repair_eligibility_sets(
+        team_states={"q": team(["B", "B", "C", "C", "D"])},
+        opportunities={"q": rows},
+        state=second_state,
+    )
+    assert first == second == {"q": (0, 1)}
+
+
+def test_correct_member_and_vote_correct_example_do_not_generate_responsibility():
+    wrong_state = team(["B", "B", "C", "C", "D"])
+    eligible, _, _ = compute_repair_eligibility_sets(
+        team_states={"q": wrong_state},
+        opportunities={
+            "q": [
+                opportunity(
+                    0,
+                    vote_flip_gain=9,
+                    margin_gain=9,
+                    member_error=False,
+                ),
+                opportunity(1, vote_flip_gain=0, margin_gain=1),
+            ]
+        },
+        state=runtime(),
+    )
+    assert eligible == {"q": (1,)}
+
+    correct_state = team(["A", "A", "A", "B", "C"])
+    eligible, portfolios, audit = compute_repair_eligibility_sets(
+        team_states={"q": correct_state},
+        opportunities={
+            "q": [opportunity(agent) for agent in range(5)]
+        },
+        state=runtime(),
+    )
+    assert eligible == {}
+    assert all(not rows for rows in portfolios.values())
+    assert audit == {}
+
+
+def test_portfolio_formal_aggregates_are_only_direct_fix_and_margin():
+    rows = [
+        opportunity(
+            0,
+            vote_flip_gain=1,
+            margin_gain=2,
+            coverage=True,
+            conversion=True,
+            dominant=True,
+            utility=100.0,
+            question_hash="q1",
+        ),
+        opportunity(
+            0,
+            vote_flip_gain=0,
+            margin_gain=3,
+            question_hash="q2",
+        ),
+    ]
+    portfolio = responsibility_portfolios(
+        assignments={0: rows},
+        state=runtime(),
+    )[0]
+    assert portfolio.direct_fix_count == 1
+    assert portfolio.margin_gain_sum == 5
+    assert portfolio.residual_count == 2
+    assert portfolio.coverage_count == 1
+    assert portfolio.conversion_count == 1
+    assert portfolio.dominant_wrong_count == 1
+
+
+def priorities_for(
+    assignments,
+    *,
+    waits=None,
+    current=(10, 10, 10, 10, 10),
+    initial=(10, 10, 10, 10, 10),
+):
+    state = runtime(
+        updates_since_selected_by_agent=waits
+        or {agent: 0 for agent in range(5)}
+    )
+    rows = target_priorities(
+        assignments=assignments,
+        state=state,
+        seed=7,
+        max_wait_updates=8,
+        current_member_correct_counts=current,
+        initial_member_correct_counts=initial,
+        member_uplift_tolerance=5,
+    )
+    return state, rows
+
+
+def test_target_vector_is_exactly_direct_margin_and_uplift_deficit():
+    assignments = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=2)],
+        1: [opportunity(1, vote_flip_gain=0, margin_gain=4)],
+    }
+    _, rows = priorities_for(
+        assignments,
+        current=(10, 16, 10, 10, 10),
+    )
+    by_agent = {row.agent_id: row for row in rows}
+    assert by_agent[0].target_values() == (1.0, 2.0, 1.0)
+    assert by_agent[1].target_values() == (0.0, 4.0, 0.0)
+    assert {row.target_pareto_front for row in rows} == {1}
+
+
+def test_diagnostic_portfolio_fields_do_not_change_target_front():
+    base = opportunity(0, vote_flip_gain=1, margin_gain=2)
+    diagnostic = replace(
+        base,
+        coverage_opportunity=True,
+        conversion_opportunity=True,
+        dominant_wrong_member=True,
+        oracle_soft_utility_gain=999.0,
+    )
+    _, first = priorities_for({0: [base], 1: [
+        opportunity(1, vote_flip_gain=1, margin_gain=2)
+    ]})
+    _, second = priorities_for({0: [diagnostic], 1: [
+        opportunity(1, vote_flip_gain=1, margin_gain=2)
+    ]})
+    assert [
+        (row.agent_id, row.target_values(), row.target_pareto_front)
+        for row in first
+    ] == [
+        (row.agent_id, row.target_values(), row.target_pareto_front)
+        for row in second
+    ]
+
+
+def test_frontier_tie_break_uses_wait_then_seeded_rank_only():
+    assignments = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=2)],
+        1: [opportunity(1, vote_flip_gain=1, margin_gain=2)],
+    }
+    state, rows = priorities_for(
+        assignments,
+        waits={0: 2, 1: 4, 2: 0, 3: 0, 4: 0},
     )
     decision = build_target_selection_decision(
-        priorities, all_member_gains=(0, 10, 0, 0, 0), state=runtime_state,
-        max_wait_updates=8, member_uplift_tolerance=5, member_catchup_mode="off",
-        responsibility_mode="unique_owner_v6",
+        rows,
+        all_member_gains=(0, 0, 0, 0, 0),
+        state=state,
+        max_wait_updates=8,
+        member_uplift_tolerance=5,
+        member_catchup_mode="off",
     )
-    assert decision.update_lane == "responsibility_conditioned"
-    assert set(decision.actual_candidate_agent_ids) == {0, 1}
+    assert decision.selection_pool_stage == "responsibility_joint_pareto"
+    assert decision.selected_agent_id == 1
+    assert decision.target_frontier_agent_ids == (0, 1)
 
 
-def test_scheduler_joint_frontier_and_overdue_responsibility_precedence():
-    state = team(["B", "B", "B", "B", "B"])
-    rows = opportunities(state)
-    assignments = {0: [rows[0]], 1: [rows[1]], 2: [], 3: [], 4: []}
-    runtime_state = runtime(updates_since_selected_by_agent={0: 8, 1: 0, 2: 9, 3: 0, 4: 0})
-    priorities = target_priorities(assignments=assignments, state=runtime_state, seed=42, max_wait_updates=8,
-                                  current_member_correct_counts=(3, 7, 0, 7, 7),
-                                  initial_member_correct_counts=(0, 0, 0, 0, 0), current_update_index=8,
-                                  member_uplift_tolerance=5)
-    decision = build_target_selection_decision(priorities, all_member_gains=(3, 7, 0, 7, 7),
-                                                state=runtime_state, max_wait_updates=8,
-                                                member_uplift_tolerance=5, member_catchup_mode="fallback_v1")
-    assert decision.update_lane == "responsibility_conditioned"
-    assert decision.selection_pool_stage == "responsibility_overdue_frontier"
+def test_max_wait_uses_simple_lexicographic_override_without_second_pareto():
+    assignments = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=1)],
+        1: [opportunity(1, vote_flip_gain=0, margin_gain=9)],
+    }
+    state, rows = priorities_for(
+        assignments,
+        waits={0: 8, 1: 9, 2: 99, 3: 0, 4: 0},
+        current=(10, 10, 10, 10, 10),
+    )
+    decision = build_target_selection_decision(
+        rows,
+        all_member_gains=(0, 0, 0, 0, 0),
+        state=state,
+        max_wait_updates=8,
+        member_uplift_tolerance=5,
+        member_catchup_mode="off",
+    )
+    assert decision.selection_pool_stage == "responsibility_max_wait_override"
+    assert decision.selected_agent_id == 1
+    assert decision.target_pareto_fronts == {}
+    assert 2 not in decision.overdue_agent_ids
+
+
+def test_no_portfolio_member_cannot_enter_responsibility_lane():
+    state, rows = priorities_for({})
+    decision = build_target_selection_decision(
+        rows,
+        all_member_gains=(0, 0, 0, 0, 0),
+        state=state,
+        max_wait_updates=8,
+        member_uplift_tolerance=5,
+        member_catchup_mode="off",
+    )
+    assert decision.selected_agent_id is None
+    assert decision.selection_pool_stage == "no_actionable_responsibility"
+    assert decision.update_lane == "no_actionable_responsibility"
+
+
+def test_catchup_remains_an_explicit_nonresponsibility_extension():
+    state, rows = priorities_for(
+        {},
+        waits={0: 8, 1: 0, 2: 0, 3: 0, 4: 0},
+        current=(0, 10, 10, 10, 10),
+    )
+    decision = build_target_selection_decision(
+        rows,
+        all_member_gains=(-10, 0, 0, 0, 0),
+        state=state,
+        max_wait_updates=8,
+        member_uplift_tolerance=5,
+        member_catchup_mode="fallback_v1",
+    )
     assert decision.selected_agent_id == 0
-    assert 2 not in decision.actual_candidate_agent_ids
-
-
-def test_catchup_is_separate_and_only_when_no_responsibility_portfolio_exists():
-    state = runtime(updates_since_selected_by_agent={0: 8, 1: 8, 2: 0, 3: 0, 4: 0})
-    decision = build_target_selection_decision((), all_member_gains=(0, 10, 10, 10, 10), state=state,
-                                                max_wait_updates=8, member_uplift_tolerance=5,
-                                                member_catchup_mode="fallback_v1")
+    assert decision.selection_pool_stage == "no_actionable_responsibility"
     assert decision.update_lane == "generic_member_catchup"
-    assert decision.selected_agent_id == 0
+    assert decision.eligible_agent_ids == ()

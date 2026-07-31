@@ -18,7 +18,7 @@ from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptim
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v7",
+        method_version="member_aware_peer_state_v8",
         experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",
@@ -67,7 +67,7 @@ def test_memory_key_isolates_agent_prompt_state_and_run(tmp_path):
     ) is None
 
 
-def test_non_owned_residual_in_entry_fails_closed(tmp_path):
+def test_ineligible_residual_in_entry_fails_closed(tmp_path):
     value = system(tmp_path)
     key = value._proposal_memory_key(
         target_agent_id=0, parent_prompt=value.agents[0].current_prompt,
@@ -78,7 +78,7 @@ def test_non_owned_residual_in_entry_fails_closed(tmp_path):
     )
     with pytest.raises(RuntimeError, match="lifecycle/schema mismatch"):
         value._proposal_memory_entry(key, {"q-a", "q-b"})
-    with pytest.raises(RuntimeError, match="frontier-ineligible residual"):
+    with pytest.raises(RuntimeError, match="ineligible residual"):
         value._proposal_memory_key(
             target_agent_id=0, parent_prompt=value.agents[0].current_prompt,
             assigned_hashes={"q-c"},

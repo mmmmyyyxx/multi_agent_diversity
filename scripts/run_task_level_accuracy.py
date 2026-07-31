@@ -20,6 +20,7 @@ from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CO
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
 from multi_dataset_diverse_rl.utils import load_jsonl
+from multi_dataset_diverse_rl.versions import METHOD_VERSION
 from scripts.experiment_config import select_settings
 
 
@@ -97,7 +98,7 @@ def _task_split_integrity(task, dataset_format: str, workspace: str) -> dict[str
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run task-level member-aware peer-state experiments."
+        description="Run task-level Member-Aware Prompt-Team experiments."
     )
     parser.add_argument("--workspace", type=Path, default=Path("."))
     parser.add_argument("--manifest", required=True)
@@ -146,7 +147,7 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         ))
     if not all((run_dir / filename).exists() for filename in required):
         return False
-    if metadata["method_version"] != "member_aware_peer_state_v7":
+    if metadata["method_version"] != METHOD_VERSION:
         raise ValueError(f"Completed run has an incompatible method version: {run_dir}")
     if metadata["legacy_compatibility_enabled"] is not False:
         raise ValueError(f"Completed run enabled legacy compatibility: {run_dir}")
@@ -171,7 +172,7 @@ def main() -> None:
     if any(name != "shared_baseline" for name in setting_names):
         if not setting_names or setting_names[0] != "shared_baseline":
             raise ValueError(
-                "v4 optimized comparisons must run shared_baseline first "
+                "optimized comparisons must run shared_baseline first "
                 "to provide the single initial-test reference"
             )
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]

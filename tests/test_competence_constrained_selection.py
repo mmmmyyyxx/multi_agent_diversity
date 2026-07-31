@@ -14,6 +14,7 @@ from multi_dataset_diverse_rl.responsibility import (
     CandidateMarginalContribution,
     ProtectionContribution,
 )
+from multi_dataset_diverse_rl.versions import CANDIDATE_ACCEPTANCE_VERSION
 
 
 def item(
@@ -124,6 +125,10 @@ def test_unique_and_pivotal_losses_are_diagnostic_only():
 
 
 def test_vote_improvement_can_accept_a_target_neutral_candidate():
+    assert (
+        CANDIDATE_ACCEPTANCE_VERSION
+        == "target_or_vote_strict_progress_v1"
+    )
     active = item("active")
     candidate = item("vote-only", correct=10, vote_count=9, vote_gain=1)
     decision = evaluate_constraints(candidate, active)

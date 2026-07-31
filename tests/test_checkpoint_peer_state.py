@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 import pytest
 
@@ -22,7 +23,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v7", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v8", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -31,14 +32,20 @@ def identity():
 
 def build_system(tmp_path, run_identity=None):
     system = PromptEnsembleOptimizationSystem(
-        Config.from_flat(out_dir=str(tmp_path), answer_format="option_letter"), solver=solver
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            answer_format="option_letter",
+            initialization_mode="provided_prompt_set",
+            provided_prompts_json='["p0", "p1", "p2", "p3", "p4"]',
+        ),
+        solver=solver,
     )
     system.set_run_identity(run_identity or identity())
     asyncio.run(system.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
     return system
 
 
-def test_v15_checkpoint_persists_frontier_lifecycle(tmp_path):
+def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -46,15 +53,18 @@ def test_v15_checkpoint_persists_frontier_lifecycle(tmp_path):
     source.team_differentiation_trajectory = [{"update_index": -1}]
     source.update_transition_decomposition = [{"update_index": 0}]
     source.final_state_selection = {"selected_checkpoint_source": "final_active_state"}
-    source.cached_responsibility_eligibility = {"q-hash": (2,)}
+    source.ensure_responsibility_current()
+    question_hash = source.fixed_probe.examples[0].question_hash
+    assert 2 in source.cached_responsibility_eligibility[question_hash]
+    source.responsibility_state.updates_since_selected_by_agent[2] = 6
     memory_key = source._proposal_memory_key(
         target_agent_id=2,
         parent_prompt=source.agents[2].current_prompt,
-        assigned_hashes={"q-hash"},
+        assigned_hashes={question_hash},
     )
     source.proposal_memory_entries[memory_key.key_hash()] = ProposalMemoryEntry(
         key=memory_key,
-        assigned_question_hashes=("q-hash",),
+        assigned_question_hashes=(question_hash,),
         attempt_count=3,
         previous_evidence_bundle_hashes=("bundle-1", "bundle-2"),
         previous_repair_plan_hashes=("plan-1",),
@@ -80,7 +90,10 @@ def test_v15_checkpoint_persists_frontier_lifecycle(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 15
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 16
+    assert "responsibility_first_seen_update" not in json.dumps(payload)
+    assert "cached_responsibility_assignments" not in payload
+    assert "cached_member_opportunities" not in payload
     assert "validation_state_cache" not in payload
     assert "validation_probe" not in payload
     target = build_system(tmp_path / "source")
@@ -88,33 +101,45 @@ def test_v15_checkpoint_persists_frontier_lifecycle(tmp_path):
     assert (epoch, update, state) == (1, 0, {"planned_update_count": 24})
     assert target.planned_update_count == 24
     assert target.completed_update_count == 3
+    assert target.responsibility_state.updates_since_selected_by_agent[2] == 6
     assert target.training_dynamics == source.training_dynamics
     assert target.team_differentiation_trajectory == source.team_differentiation_trajectory
     assert target.update_transition_decomposition == source.update_transition_decomposition
     assert target.proposal_memory_entries == source.proposal_memory_entries
     assert target.proposal_memory_events == source.proposal_memory_events
     assert target.proposal_rotation_trajectory == source.proposal_rotation_trajectory
-    restored = target._proposal_memory_entry(memory_key, {"q-hash"})
+    assert (
+        target.cached_responsibility_eligibility
+        == source.cached_responsibility_eligibility
+    )
+    assert target.cached_responsibility_assignments
+    restored = target._proposal_memory_entry(memory_key, {question_hash})
     assert restored is not None and restored.rotation_cursor == 3
-    target.cached_responsibility_eligibility = {"q-hash": (3,)}
+    target.cached_responsibility_eligibility = {question_hash: (3,)}
     other_agent_key = target._proposal_memory_key(
         target_agent_id=3,
         parent_prompt=target.agents[3].current_prompt,
-        assigned_hashes={"q-hash"},
+        assigned_hashes={question_hash},
     )
-    assert target._proposal_memory_entry(other_agent_key, {"q-hash"}) is None
+    assert target._proposal_memory_entry(
+        other_agent_key,
+        {question_hash},
+    ) is None
     target.team_state_version += 1
     successor_key = target._proposal_memory_key(
         target_agent_id=3,
         parent_prompt=target.agents[3].current_prompt,
-        assigned_hashes={"q-hash"},
+        assigned_hashes={question_hash},
     )
-    assert target._proposal_memory_entry(successor_key, {"q-hash"}) is None
+    assert target._proposal_memory_entry(
+        successor_key,
+        {question_hash},
+    ) is None
 
 
-def test_v14_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v15_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 14
+    payload["checkpoint_version"] = 15
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

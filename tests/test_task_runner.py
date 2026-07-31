@@ -13,7 +13,7 @@ from scripts.run_task_level_accuracy import (
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v7",
+        method_version="member_aware_peer_state_v8",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -58,7 +58,7 @@ def test_completed_run_requires_exact_identity(tmp_path):
         "history.json": [],
         "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v7",
+            "method_version": "member_aware_peer_state_v8",
             "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite",
@@ -94,7 +94,7 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
         },
         "history.json": [], "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v7", "legacy_compatibility_enabled": False,
+            "method_version": "member_aware_peer_state_v8", "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite", "run_identity": identity().to_dict(),
             "config": {"proposal_memory_mode": "state_local_v1"},

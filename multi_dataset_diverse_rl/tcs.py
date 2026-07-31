@@ -74,6 +74,13 @@ class AssignedResidualDiagnosisContext:
     parent_prompt: str
     parent_prompt_hash: str
     assigned_residual_count: int
+    target_member_gain: int
+    uplift_deficit: int
+    direct_fix_responsibility_count: int
+    margin_gain_responsibility_sum: int
+    coverage_residual_count: int
+    conversion_residual_count: int
+    preservation_count: int
     patterns: tuple[AggregatedFailurePattern, ...]
     evidence_cases: tuple[CompactEvidenceCase, ...]
     previous_outcome: PreviousUpdateOutcome
@@ -191,6 +198,7 @@ def _peer_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
         "key": asdict(pattern.key),
         "case_count": pattern.case_count,
         "direct_vote_fix_count": pattern.direct_vote_fix_count,
+        "margin_gain_sum": pattern.margin_gain_sum,
         "dominant_wrong_count": pattern.dominant_wrong_count,
         "mean_oracle_soft_utility_gain": pattern.mean_oracle_soft_utility_gain,
         "max_oracle_soft_utility_gain": pattern.max_oracle_soft_utility_gain,
@@ -201,7 +209,6 @@ def _peer_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
 def _member_pattern_payload(pattern: AggregatedFailurePattern) -> dict[str, Any]:
     payload = _peer_pattern_payload(pattern)
     payload["assigned_case_count"] = pattern.assigned_case_count
-    payload["max_responsibility_age"] = pattern.max_responsibility_age
     return payload
 
 
@@ -221,7 +228,8 @@ def _peer_case_payload(row: CompactEvidenceCase) -> dict[str, Any]:
         "peer_gold_vote_count": row.peer_gold_vote_count,
         "peer_largest_wrong_vote_count": row.peer_largest_wrong_vote_count,
         "peer_margin": row.peer_margin,
-        "direct_vote_fix": row.direct_vote_fix,
+        "vote_flip_gain": row.vote_flip_gain,
+        "margin_gain": row.margin_gain,
         "dominant_wrong_member": row.dominant_wrong_member,
         "unique_correct": row.unique_correct,
         "pivotal_correct": row.pivotal_correct,
@@ -254,6 +262,17 @@ def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
     elif isinstance(context, AssignedResidualDiagnosisContext):
         common.update({
             "assigned_residual_count": context.assigned_residual_count,
+            "target_member_gain": context.target_member_gain,
+            "uplift_deficit": context.uplift_deficit,
+            "direct_fix_responsibility_count": (
+                context.direct_fix_responsibility_count
+            ),
+            "margin_gain_responsibility_sum": (
+                context.margin_gain_responsibility_sum
+            ),
+            "coverage_residual_count": context.coverage_residual_count,
+            "conversion_residual_count": context.conversion_residual_count,
+            "preservation_count": context.preservation_count,
             "patterns": [_member_pattern_payload(row) for row in context.patterns],
             "evidence_cases": [_peer_case_payload(row) for row in context.evidence_cases],
         })
@@ -382,7 +401,7 @@ def build_teacher_request(
             " The state-local proposal failure feedback may only revise this target's "
             "evidence selection and repair plan. Do not reassign responsibility or "
             "discuss other agents, member competence, gains, ranks, cooldowns, or "
-            "non-owned residuals."
+            "residuals outside this target's portfolio."
         )
     return (
         "Propose one task-general, testable prompt repair plan from the typed aggregate "

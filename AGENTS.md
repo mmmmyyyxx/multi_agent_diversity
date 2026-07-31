@@ -1,12 +1,16 @@
 # AGENTS.md
 
-This file contains stable project memory and engineering guardrails. Read it
-before `method.md`, `README.md`, implementation modules, tests, or historical
-run artifacts.
+This file defines the normative semantics and engineering guardrails for the
+current research method. Read it before `method.md`, `README.md`,
+implementation modules, tests, or historical run artifacts.
 
-Do not store the current Git commit, one-off pilot results, or the objective of
-a single task in this file. Supply that time-sensitive context in the opening
-message of each new Codex task.
+`AGENTS.md` defines the normative method semantics. Actual runtime identifiers
+must always be read from `multi_dataset_diverse_rl/versions.py`; method prose
+must not override executable version identity.
+
+Do not store the current Git commit, one-off pilot results, temporary
+experimental conclusions, or migration progress in this file. Supply that
+time-sensitive context in the opening message of each new Codex task.
 
 ## 1. Project Mission
 
@@ -16,41 +20,47 @@ The project does not search for one globally best prompt and does not merely
 collect several independently optimized prompts. It jointly optimizes a team
 of five prompts whose outputs are aggregated by equal-weight plurality voting.
 
+The formal method is:
+
+```text
+Member-Aware Prompt-Team Optimization
+```
+
 The central research question is:
 
-> How can a prompt team be jointly optimized so that team-level performance
-> and member-level competence achieve Pareto improvement, without obtaining
-> gains by sacrificing or permanently ignoring some members?
+> How can a prompt team be jointly optimized so that team voting performance
+> and member competence improve together, without concentrating optimization
+> on a small winning coalition?
 
-The current formal method is:
-
-```text
-Member-Aware Peer-State Prompt-Team Optimization
-```
-
-The current implementation version is `member_aware_peer_state_v7`. It uses
-repair-frontier eligibility, multi-member portfolios, joint responsibility and
-uplift-deficit Pareto scheduling, a separately labelled generic catch-up lane,
-bounded TCS roles, immutable Solver contract, request-local first-valid Solver
-invalid recovery, aggregate non-regression, and final-active-state evaluation.
-It also supports explicitly configured, agent-isolated state-local Proposal
-Memory for failed proposal searches. Checkpoint version is 15; v14 and earlier
-checkpoints are intentionally incompatible.
-
-Read the current formal method version from:
+The paper method has three modules:
 
 ```text
-multi_dataset_diverse_rl/system.py
-multi_dataset_diverse_rl/config.py
-method.md
+1. Member-Aware Responsibility
+2. Responsibility-Conditioned Evolution
+3. Pareto-Constrained Team Update
 ```
 
-Do not infer current method semantics or versions from historical run
-directories.
+Joint voting state, Teacher-Critic-Student, Stage A/B, fixed-peer rollout,
+online refresh, caching, retry, and checkpointing are diagnostic,
+implementation, or reliability mechanisms inside those modules. They are not
+additional research contributions.
 
-## 2. Research Problem
+### Normative method and runtime identity
 
-Let the prompt team be:
+The compact three-module method in this file is normative. The current runtime
+implements it as:
+
+```text
+method_version = member_aware_peer_state_v8
+checkpoint_version = 16
+```
+
+For every execution or artifact analysis, verify those and all other runtime
+identifiers directly in `versions.py`.
+
+## 2. Formal Research Objective
+
+Let the five-prompt team be:
 
 ```text
 Theta = (theta_1, ..., theta_K)
@@ -60,8 +70,8 @@ K = 5
 For member `i`, let:
 
 ```text
-c_i^0 = initial correct count on a fixed probe
-c_i   = current or candidate correct count
+c_i^0 = initial correct count on a fixed optimization probe
+c_i   = current or candidate correct count on that same probe
 g_i   = c_i - c_i^0
 ```
 
@@ -88,29 +98,67 @@ A candidate team Pareto-dominates the incumbent only when all three dimensions
 are no worse and at least one is strictly better.
 
 Formal search and selection use integer correct counts. Normalized accuracies
-are reporting metrics, not substitutes for the formal objectives.
+are reporting metrics only. Do not replace the objective with a fixed weighted
+sum.
 
-Do not replace this objective with a fixed weighted scalar such as:
+The method does not directly optimize prompt distance, trace distance, generic
+disagreement, or another standalone diversity reward. Member complementarity
+is an intended result of differentiated repair responsibility, not a separate
+optimization objective.
+
+## 3. Three Research Modules
+
+### Module 1: Member-Aware Responsibility
+
+Research question:
+
+> Which members can legitimately repair each residual team failure, and which
+> eligible member should be updated now?
+
+This module has two distinct decisions:
 
 ```text
-lambda_vote * V
-+ lambda_min * g_min
-+ lambda_sum * g_sum
+Residual eligibility asks who can legitimately repair a residual.
+Target scheduling asks which legitimate member should be updated now.
 ```
 
-unless the user explicitly changes the research question.
-
-## 3. Four Research Modules
-
-Every method module must correspond to one research question.
-
-### RQ1. How should joint prompt-team failures be represented?
-
-Module:
+The separation is mandatory:
 
 ```text
-Peer-State Representation
+eligibility != scheduling != candidate acceptance
 ```
+
+Eligibility is decided per residual using only counterfactual vote correctness
+and plurality-margin improvement. Scheduling aggregates those eligibility
+decisions at member level. Candidate acceptance is handled only by Module 3
+after empirical rollout.
+
+### Module 2: Responsibility-Conditioned Evolution
+
+Research question:
+
+> How should a member's compact repair responsibility be converted into
+> testable replacement prompts?
+
+The program constructs bounded numerical and diagnostic evidence. The
+Teacher-Critic-Student pipeline turns that evidence into candidate prompts.
+Rollouts, not role-model predictions, determine empirical value.
+
+### Module 3: Pareto-Constrained Team Update
+
+Research question:
+
+> Which target-only replacement improves the team without sacrificing the
+> formal member objectives?
+
+Only one target prompt is replaced at a time. The other four prompts and their
+profiles remain fixed during paired candidate evaluation. Aggregate
+feasibility and strict team-objective Pareto dominance determine acceptance.
+
+## 4. Diagnostic Foundation: Joint Voting State
+
+Joint voting state is the diagnostic foundation for Member-Aware
+Responsibility. It is not a fourth paper module.
 
 For each example:
 
@@ -120,175 +168,366 @@ H = size of the largest valid wrong-answer cluster
 M = G - H
 ```
 
-Plurality vote is correct when `M > 0`. A top-count tie abstains and is counted
-as incorrect.
+The plurality rule is:
+
+```text
+vote correct iff M > 0
+top-count tie => abstain => incorrect
+```
 
 The system also constructs a leave-one-out `PeerVoteContext` for every target
-member. It distinguishes:
+member. Full-team voting state and leave-one-out peer state must remain
+distinct typed concepts.
 
-- no-gold-coverage failures;
-- minority-gold but dominant-wrong failures;
+The diagnostic representation distinguishes:
+
+- coverage failure: no current member supplies the gold answer;
+- conversion failure: gold coverage exists but does not win the vote;
 - fragile and stable correct votes;
 - unique and pivotal correct members;
-- dominant wrong-cluster members.
+- members in the dominant wrong-answer cluster.
 
-Do not replace `G, H, M` with generic disagreement, textual prompt distance,
-embedding diversity, or trace diversity.
-
-### RQ2. Which member should be updated and what should it repair?
-
-Module:
+These quantities support:
 
 ```text
-Member-Aware Counterfactual Responsibility
+responsibility diagnosis
+proposal context
+behavior analysis
 ```
 
-For each wrong member on a vote-wrong example, the program computes:
+Coverage, conversion, dominant-wrong membership, unique/pivotal status, and
+soft vote utility do not create another method module and do not add formal
+dimensions to residual eligibility or target scheduling.
 
-- direct vote-fix potential;
-- oracle soft-vote-utility gain;
-- coverage opportunity;
-- dominant-wrong membership or exit potential;
-- no member competence, gain, improvement-need, rank, or search-history term.
+Do not replace `G`, `H`, and `M` with generic disagreement, textual prompt
+distance, embedding diversity, or trace diversity.
 
-Ownership uses exactly those four repair dimensions. Target selection is limited
-to owners and uses their aggregated owned portfolio; it never falls back to an
-unassigned but inaccurate member.
+## 5. Module 1: Compact Member-Aware Responsibility
 
-Competence preservation is not an extra responsibility dimension.
+### 5.1 Per-residual eligibility
 
-Responsibility answers:
+Only vote-wrong examples produce team residuals. For a vote-wrong example `x`,
+only members that are currently wrong on `x` can enter its eligibility set.
+
+For every such member `i`, compute:
 
 ```text
-who should be updated
-what residual failure should be repaired
+DeltaV_i,x = counterfactual vote-correct gain
+DeltaM_i,x = counterfactual plurality-margin gain
 ```
 
-Preservation answers:
+Define:
 
 ```text
-what must not be damaged during that update
+eligibility_key(i, x) = (DeltaV_i,x, DeltaM_i,x)
 ```
 
-Preservation is supported through:
-
-- preservation evidence in proposal generation;
-- target and team-vote non-regression with at least one strict improvement;
-- strict Pareto dominance in `(V_count, g_min, g_sum)`;
-- terminal-invalid non-regression.
-
-The method does not require per-example preservation. Vote, unique-correct, and
-pivotal-correct gains and losses are audited symmetrically but do not
-independently reject a candidate.
-
-All members with current individual errors remain eligible even when they own
-no residual case. Target selection must be deterministic for the same seed and
-must include max-wait protection against member starvation.
-
-### RQ3. How are differentiated responsibilities converted into prompt changes?
-
-Module:
+Eligibility uses lexicographic maximization:
 
 ```text
-Responsibility-Conditioned Prompt Proposal
+1. direct vote flip first
+2. larger plurality-margin gain second
+3. retain all exact ties
 ```
 
-Teacher-Critic-Student is a proposal mechanism, not the core credit-assignment
-innovation.
+Formally:
 
-Different members receive different optimization signals because they own
-different residual responsibilities. Complementarity should emerge from
-different repair responsibilities, not from predefined personas or generic
-diversity rewards.
+```text
+E_x = lexicographic argmax over wrong members of (DeltaV_i,x, DeltaM_i,x)
+```
 
-The intended role division is:
+One residual may therefore have multiple legitimate responsible members.
+Eligibility is state-local repair legitimacy, not permanent ownership.
+
+None of the following may influence `E_x`:
+
+```text
+member gain
+uplift deficit
+wait
+accepted-update history
+candidate-search history
+Proposal Memory
+coverage label
+dominant-wrong label
+soft utility
+portfolio load
+```
+
+Coverage, conversion, dominant-wrong, unique/pivotal, and soft-utility
+quantities are diagnostic or proposal-context evidence only.
+
+### 5.2 Responsibility portfolios
+
+For each member:
+
+```text
+R_i = {x : i in E_x}
+```
+
+The only formal portfolio aggregates used by target scheduling are:
+
+```text
+D_i = direct vote-fix residual count
+S_i = sum of counterfactual plurality-margin gains
+```
+
+Portfolio size, coverage count, conversion count, dominant-wrong count, and
+soft utility may be audited or reported, but they must not enter the formal
+target vector.
+
+### 5.3 Uplift deficit
+
+Let:
+
+```text
+g_max = max_j g_j
+d_i = max(0, g_max - g_i - 5)
+```
+
+`d_i` affects member-level target scheduling only. It never changes
+per-residual eligibility.
+
+### 5.4 One member-level target Pareto
+
+For every member with a non-empty responsibility portfolio, define:
+
+```text
+T_i = (D_i, S_i, d_i)
+```
+
+Compute exactly one Pareto frontier across those member vectors. There is no
+nested or per-residual Pareto mechanism in the compact method.
+
+Within the first member-level frontier, select deterministically using:
+
+```text
+1. larger updates_since_selected
+2. stable seeded rank
+```
+
+Do not add coverage, portfolio size, history, or an implicit weighted score to
+`T_i`.
+
+### 5.5 Member-level max-wait safeguard
+
+The fixed default is:
+
+```text
+max_wait = 8
+```
+
+This is a responsibility-conditioned starvation safeguard, not another
+optimization module. It triggers only when:
+
+```text
+R_i is non-empty
+and updates_since_selected >= 8
+```
+
+The overdue branch does not compute another Pareto frontier. It orders overdue
+responsible members by:
+
+```text
+1. longest wait
+2. larger D_i
+3. larger S_i
+4. larger d_i
+5. stable seeded rank
+```
+
+Wait is member-level scheduling state. It does not attach scheduling age to a
+residual and does not affect residual eligibility.
+
+## 6. Optional Research Extensions
+
+The following extensions are outside the default compact three-module method.
+They must be explicitly configured, separately labelled, and interpreted as
+extensions rather than established method contributions.
+
+### 6.1 Catch-up
+
+The normative default is:
+
+```text
+member_catchup_mode = off
+```
+
+An explicit `fallback_v1` mode may be retained as a research extension, but it:
+
+- is not part of the three-module core method;
+- does not enter the default scheduler or main experimental flow;
+- must not be described as validated or effective without matched evidence;
+- must not borrow another member's responsibility.
+
+### 6.2 Proposal Memory
+
+The normative default is:
+
+```text
+proposal_memory_mode = off
+```
+
+An explicit `state_local_v1` mode is a proposal-search extension only. It may
+provide sanitized historical failure feedback solely for the same complete
+key, including the same agent, team state, prompt hash, and eligible residual
+set.
+
+Proposal Memory must never affect:
+
+```text
+repair eligibility
+responsibility portfolio
+target scheduling
+candidate acceptance
+```
+
+## 7. Module 2: Responsibility-Conditioned Evolution
+
+The stable division of labor is:
 
 ```text
 Program:
-    compute and aggregate all numerical evidence
+    compute and aggregate numerical and typed diagnostic evidence
 
 Teacher:
-    propose one testable repair hypothesis
+    propose one bounded, testable repair hypothesis
 
 Critic:
-    reject only proposals with clear hard semantic blockers
+    check only hard semantic blockers
 
 Student:
-    realize the approved repair hypothesis as replacement prompts
+    realize the approved repair plan as replacement prompts
 
-Stage A / Stage B:
-    empirically determine whether candidates are useful
+Rollouts:
+    determine empirical candidate value
 ```
 
 Teacher, Critic, and Student must not calculate vote counts, Pareto metrics,
 responsibility scores, candidate accuracy, or final candidate value.
 
-### RQ4. How should a candidate prompt team be selected?
-
-Module:
+The default responsibility-conditioned context includes:
 
 ```text
-Member-Aware Pareto Team Update
+target prompt
+member gain
+uplift deficit
+direct-fix responsibility summary
+margin-gain responsibility summary
+coverage residuals
+conversion residuals
+preservation evidence
+representative evidence
 ```
 
-Only the target prompt is replaced. The other four active prompts and their
-profiles remain fixed during paired candidate evaluation.
+It must not introduce frontier numbers, residual scheduling ages, ownership
+competition, or default catch-up state.
+
+Programmatic aggregation uses the complete fixed optimization probe and
+provides at most:
+
+```text
+3 pattern summaries
+3 representative evidence cases
+```
+
+Do not use an LLM to cluster or numerically aggregate cases. The context bounds,
+strict schemas, Student retry, and one upstream regeneration are bounded
+proposal implementation, not separate research contributions.
+
+### Teacher output
+
+```json
+{
+  "failure_pattern": "...",
+  "repair_rule": "...",
+  "preservation_rule": "..."
+}
+```
+
+Teacher proposes one concise, executable repair plan.
+
+### Critic output
+
+```json
+{
+  "failed_checks": [],
+  "risk_case_ids": [],
+  "feedback": ""
+}
+```
+
+Allowed hard checks are:
+
+```text
+evidence_mismatch
+actionable_specificity
+shortcut_or_copying
+preservation_or_output_risk
+```
+
+Critic approves when `failed_checks` is empty. It must not restate every case,
+produce numerical scores, predict accuracy or vote gain, reproduce
+program-known audit facts, or return long soft-concern essays.
+
+After a valid Critic rejection, Teacher revision is stateless but grounded.
+The next request includes the complete previous repair plan, `failed_checks`,
+`risk_case_ids`, Critic feedback, and the same bounded diagnosis context. The
+revision protocol requires replacement values for all three Teacher fields and
+cumulative satisfaction of all hard checks.
+
+### Student output
+
+```json
+{
+  "candidate_prompts": [
+    "...",
+    "..."
+  ]
+}
+```
+
+Student sees only:
+
+```text
+parent prompt
+approved repair plan
+task output contract
+requested candidate count
+```
+
+Student must not receive raw optimization examples or gold answers.
+
+A zero-valid Student response receives structured rejection feedback and up to
+three retries within the same approved-plan cycle. After four invalid calls,
+the program allows exactly one fresh Teacher-Critic regeneration and one final
+four-call Student cycle. A partially valid response stops recovery immediately,
+and only its valid candidates may enter Stage A. The total bound is two cycles
+and eight Student calls.
+
+`PreviousUpdateOutcome` must distinguish pipeline execution from empirical
+evaluation. Only a candidate that reached Stage A may produce model-facing
+acceptance, deltas, or rollout rejection reasons. Transport, truncation, and
+schema failures remain audit-only terminal failures and expose
+`empirical_feedback_available=false` to the next Teacher.
+
+## 8. Module 3: Pareto-Constrained Team Update
+
+Only the target prompt is replaced. The other four active prompts and profiles
+remain fixed during paired candidate evaluation.
 
 Candidate evaluation computes:
 
-- target correct and invalid counts;
+- target correct and terminal-invalid counts;
 - team vote-correct count;
 - all five member correct counts;
+- member gains relative to the initial team;
 - vote gains and losses;
-- residual and coverage repairs;
-- unique-correct and pivotal-correct losses;
-- member gains relative to the initial team.
+- residual, coverage, and conversion repairs;
+- unique-correct and pivotal-correct gains and losses;
+- soft vote utility.
 
-A candidate must first pass hard feasibility constraints: target and team vote
-correct counts must not regress, at least one must strictly improve, the full
-team objective must strictly Pareto-dominate, and terminal-invalid count must
-not increase.
-
-Soft vote utility is only a dense diagnostic and tie-break signal. It must not
-make a non-dominating candidate acceptable.
-
-## 4. End-to-End Method Flow
-
-```text
-Initial five-prompt team
-    鈫?Fixed optimization-probe rollout
-    鈫?TeamVoteState and leave-one-out PeerVoteContext
-    鈫?Member gains and improvement needs
-    鈫?Member-aware counterfactual repair opportunities
-    鈫?Residual owner assignment and target-member selection
-    鈫?Responsibility-conditioned prompt proposal
-    鈫?Target-only candidate rollout with four fixed peers
-    鈫?Stage A multi-channel shortlist
-    鈫?Aggregate target/team/objective/invalid feasibility
-    鈫?Stage B Pareto comparison against incumbent
-    鈫?Atomic prompt/profile commit
-    鈫?Exactly one responsibility refresh for the new team state
-```
-
-Rejected candidates do not change team state or responsibility state.
-
-An accepted update must be atomic. On any refresh failure, restore:
-
-- current and previous prompts;
-- the active profile;
-- accepted-update counters;
-- responsibility state;
-- cached ownership, assignments, and opportunities;
-- team/responsibility versions and refresh count;
-- affected peer, responsibility, and target audit records.
-
-`owner_age` advances once per real team-state refresh, not once per function
-call. If responsibility is already current for the team-state version,
-recomputation must be an idempotent no-op.
-
-## 5. Stage A and Stage B
-
-### Stage A
+### 8.1 Stage A shortlist
 
 The formal member-aware settings use three shortlist channels:
 
@@ -298,49 +537,55 @@ worst_member
 mean_member
 ```
 
-They correspond directly to the three team objectives.
+They correspond to the three team-objective dimensions.
 
-`team_vote` prioritizes:
+`team_vote` prioritizes candidate vote-correct count, net vote delta, fewer vote
+losses, soft utility, and target-portfolio residual repair.
 
-- candidate vote-correct count;
-- net vote delta;
-- fewer vote losses;
-- soft utility;
-- assigned residual repair.
+`worst_member` prioritizes minimum member gain, improvement in minimum gain,
+improved-member count, target gain versus incumbent, and lower invalid count.
 
-`worst_member` prioritizes:
+`mean_member` prioritizes total member gain, target gain versus incumbent,
+improved-member count, target-portfolio residual repair, and lower invalid
+count.
 
-- minimum member gain;
-- improvement in minimum gain;
-- improved-member count;
-- target gain versus incumbent;
-- lower invalid count.
+Channel ranks are merged through deterministic Pareto-front ordering. Stable
+prompt hash is only a final tie-break after substantive metrics are equal.
+This shortlist machinery is an implementation mechanism, not an additional
+paper module.
 
-`mean_member` prioritizes:
+### 8.2 Stage B acceptance
 
-- total member gain;
-- target gain versus incumbent;
-- improved-member count;
-- assigned residual repair;
-- lower invalid count.
-
-Channel ranks are merged through deterministic Pareto-front ordering. Do not
-fill the Stage B budget using arbitrary prompt-hash order except as the final
-tie-break after substantive metrics are equal.
-
-### Stage B
-
-The four hard conditions are:
+Every acceptable candidate must satisfy all of:
 
 ```text
-target correct-count and team vote-correct count no lower than incumbent
-at least one of target correct-count or team vote-correct count strictly higher
-strict Pareto dominance in `(V_count, g_min, g_sum)`
-terminal-invalid count no higher than incumbent target
+candidate target correct count >= incumbent target correct count
+candidate vote correct count >= incumbent vote correct count
+target correct count or vote correct count must strictly improve
+(V_count, g_min, g_sum) must strictly Pareto-dominate the incumbent
+terminal-invalid count must not increase
 ```
 
-Per-example vote loss, unique-correct loss, and pivotal-correct loss are
-diagnostics and late tie-break signals, not independent hard guards.
+A vote-only update remains valid when:
+
+```text
+target gain = 0
+vote gain > 0
+```
+
+provided every other guard passes. Do not replace target-or-vote progress with
+a strict-target-improvement requirement.
+
+The acceptance identifier to preserve is:
+
+```text
+CANDIDATE_ACCEPTANCE_VERSION =
+target_or_vote_strict_progress_v1
+```
+
+Soft utility, coverage, conversion, vote loss, and unique/pivotal loss are
+diagnostic or late tie-break evidence. They cannot make a non-Pareto candidate
+acceptable and are not independent hard rejection guards.
 
 The canonical preference among acceptable candidates is:
 
@@ -351,35 +596,81 @@ The canonical preference among acceptable candidates is:
 4. larger improved-member count
 5. fewer vote losses
 6. larger soft vote utility
-7. more assigned repairs
+7. more target-portfolio repairs
 8. larger target correct count
 9. fewer invalid outputs
 10. earlier generation
 11. stable prompt hash
 ```
 
-## 6. Validation and Test
+## 9. End-to-End Method Flow
+
+```text
+Initial five-prompt team
+    ↓
+Fixed optimization-probe rollout
+    ↓
+Joint voting diagnosis: G, H, M and member gains
+    ↓
+Counterfactual vote-margin eligibility sets
+    ↓
+Member portfolios and compact target Pareto over (D, S, d)
+    ↓
+Responsibility-conditioned candidate generation
+    ↓
+Target-only paired rollout with four fixed peers
+    ↓
+Stage A shortlist
+    ↓
+Stage B full-probe feasibility and team Pareto decision
+    ↓
+Atomic prompt/profile commit
+    ↓
+Refresh diagnosis and responsibilities after an accepted update
+```
+
+Rejected candidates do not change the active team, profiles, member state, or
+responsibility state.
+
+An accepted update must be atomic. On any refresh failure, restore:
+
+- current and previous prompts;
+- the active profile;
+- accepted-update counters;
+- responsibility and member state;
+- cached eligibility sets, portfolios, and opportunities;
+- team/responsibility versions and refresh count;
+- affected peer, responsibility, and target audit records.
+
+Diagnosis and responsibility are refreshed exactly once after a real accepted
+team transition. Re-reading current state must be idempotent. This lifecycle
+rule does not create residual ownership or per-residual scheduling age.
+
+## 10. Validation and Test Isolation
 
 The active final-state lifecycle performs no validation rollout or checkpoint
-selection. Validation split hashes remain in run identity only. The final active
-team after every planned update is the selected team.
+selection. Validation split hashes remain in run identity only. The final
+active team after every planned update is the selected team.
 
 Test data must never influence:
 
 - target selection;
-- responsibility assignment;
+- residual eligibility;
+- responsibility portfolios;
 - Teacher, Critic, or Student context;
 - candidate acceptance;
-- validation best-state selection.
+- final-state selection.
 
 Test runs exactly once, only after every planned update completes, and only for
 the final active team. Optimized runs do not separately evaluate their initial
-team on test; a frozen matched baseline supplies reporting-only initial-test
-reference. Final matched reports must distinguish:
+team on test; a frozen matched baseline supplies the reporting-only initial-test
+reference.
+
+Final matched reports must distinguish:
 
 ```text
 initial test team
-validation-selected test team
+final active test team
 correct-count member gains
 normalized accuracy member gains
 ```
@@ -394,9 +685,10 @@ minimum_member_accuracy_gain
 mean_member_accuracy_gain
 ```
 
-## 7. Experiment Protocols
+## 11. Experiment Protocols and Ablations
 
-The repository currently supports exactly:
+Keep the existing protocol names until an explicit code-migration task changes
+them:
 
 ```text
 shared_baseline
@@ -433,159 +725,61 @@ Research question: Is independent prompt optimization sufficient?
 Research question: Does vote-only selection form a narrow winning coalition?
 
 This is a pure vote-first ablation, not an exact recreation of every historical
-Peer-State version.
+peer-state method.
 
 ### `shared_peer_state_member_pareto`
 
 - the same round-robin target policy;
 - the same generic peer-state proposal context;
-- member-aware Pareto candidate selection.
+- Pareto-Constrained Team Update.
 
 Research question: What is the effect of replacing vote-first selection with
-team Pareto selection?
+team Pareto acceptance?
 
 ### `shared_member_aware_responsibility`
 
-- member-aware responsibility and target selection;
+- compact counterfactual eligibility;
+- compact target scheduling over `(D_i, S_i, d_i)`;
 - generic peer-state proposal context;
-- member-aware Pareto selection;
+- Pareto-Constrained Team Update;
 - online responsibility refresh.
 
-Research question: What is the effect of member-aware attribution and target
-assignment?
+Research question: Does Member-Aware Responsibility improve target and
+residual attribution?
 
 ### `shared_member_aware_full`
 
-- the same member-aware responsibility;
-- the same member-aware Pareto selection;
-- responsibility-conditioned proposal context.
+- the same compact responsibility and target scheduling;
+- responsibility-conditioned proposal context;
+- the same team Pareto acceptance;
+- online responsibility refresh.
 
-Research question: Does exposing assigned responsibility improve prompt
-proposal quality?
+Research question: Does responsibility-conditioned context improve proposal
+realization and final team performance?
+
+The three core ablations map to the method as follows:
+
+```text
+Member-Aware Responsibility
+↔ attribution and target-selection ablation
+
+Responsibility-Conditioned Evolution
+↔ generic versus responsibility-conditioned context
+
+Pareto-Constrained Team Update
+↔ vote-first or individual selector versus team Pareto acceptance
+```
+
+Catch-up and Proposal Memory are not part of the default main-experiment
+settings.
 
 Do not silently add settings. Every new setting must isolate one research
 hypothesis and use matched candidate and evaluation budgets.
 
-## 8. Small-Model Role Pipeline
+## 12. Code Map
 
-Optimizer and evaluator roles may use small models. The stable principle is:
-
-```text
-Program computes and aggregates.
-LLMs perform only bounded semantic tasks.
-Rollouts verify empirical effects.
-```
-
-`PreviousUpdateOutcome` must distinguish pipeline execution from empirical
-evaluation. Only a candidate that reached Stage A may produce model-facing
-acceptance, deltas, or rollout rejection reasons. TCS transport, truncation,
-and schema failures remain audit-only terminal failures and expose
-`empirical_feedback_available=false` to the next Teacher.
-
-The current aggregated role pipeline must satisfy:
-
-```text
-raw evidence cases per TCS context <= 3
-aggregated failure patterns <= 3
-```
-
-Programmatic aggregation should use the full fixed probe and summarize:
-
-- vote distributions and `G, H, M`;
-- leave-one-out peer states;
-- answer-role signatures;
-- target correctness;
-- dominant-wrong membership;
-- direct vote-fix potential;
-- member gains and improvement need;
-- residual responsibility;
-- unique/pivotal protection.
-
-Do not use an LLM to cluster or aggregate cases.
-
-### Teacher output
-
-```json
-{
-  "failure_pattern": "...",
-  "repair_rule": "...",
-  "preservation_rule": "..."
-}
-```
-
-Teacher proposes one concise, executable repair plan.
-
-### Critic output
-
-```json
-{
-  "failed_checks": [],
-  "risk_case_ids": [],
-  "feedback": ""
-}
-```
-
-Allowed hard checks:
-
-```text
-evidence_mismatch
-actionable_specificity
-shortcut_or_copying
-preservation_or_output_risk
-```
-
-Critic is approved when `failed_checks` is empty. Critic must not:
-
-- restate every case;
-- produce numerical scores;
-- predict candidate accuracy or vote gain;
-- reproduce program-known audit facts;
-- return long soft-concern essays.
-
-### Student output
-
-```json
-{
-  "candidate_prompts": [
-    "...",
-    "..."
-  ]
-}
-```
-
-Student sees only:
-
-```text
-parent prompt
-approved repair plan
-task output contract
-requested candidate count
-```
-
-Student must not receive raw optimization examples or gold answers.
-
-This pipeline is implemented by `member_aware_peer_state_v7` with
-`frontier_responsibility_and_catchup_context_v2`. In `state_local_v1` mode, a
-complete-keyed Proposal Memory may provide only sanitized failure feedback for
-the same agent, team state, prompt hash, and frontier-eligible residual set. After a valid
-Critic rejection, Teacher
-revision is stateless but grounded: the next request explicitly includes the
-complete previous repair plan, `failed_checks`, `risk_case_ids`, Critic
-feedback, and the same bounded diagnosis context. The revision protocol is
-`critic_grounded_full_plan_revision_v1`; it requires all three replacement
-fields and cumulative satisfaction of all hard checks. Do not revert to raw
-parallel case lists or expand language-model responsibilities. Do not change
-member objectives, responsibility assignment, Stage A/B, validation, or
-experiment-setting semantics as part of role-pipeline maintenance.
-
-A zero-valid Student response receives structured rejection feedback and up to
-three retries within the same approved-plan cycle. After four invalid calls,
-the program allows exactly one fresh Teacher-Critic regeneration and one final
-four-call Student cycle. A partially valid response stops recovery immediately
-and only its valid candidates may enter Stage A. The total bound is two cycles
-and eight Student calls.
-
-## 9. Code Map
+The map below describes semantic ownership in the current compact
+implementation.
 
 ### Central orchestration
 
@@ -593,12 +787,22 @@ and eight Student calls.
 multi_dataset_diverse_rl/system.py
 ```
 
-Owns prompts/profiles; builds the protocol; initializes probes; orchestrates
-responsibility, TCS, Stage A/B, validation, and test; manages atomic updates;
-and writes method-level audits.
+Owns prompts and profiles; builds the protocol; initializes probes;
+orchestrates diagnosis, responsibility, bounded proposal, Stage A/B, and final
+test; manages atomic updates; and writes method-level audits.
 
 Do not move all domain logic into `system.py`. Pure calculations belong in
 their domain modules.
+
+### Runtime versions
+
+```text
+multi_dataset_diverse_rl/versions.py
+```
+
+This is the source of truth for actual runtime identifiers. The compact method
+uses checkpoint version 16; implementation, persistence, and tests must remain
+consistent with it.
 
 ### Configuration and protocols
 
@@ -615,15 +819,20 @@ Avoid flags for behavior that should be fixed by method semantics.
 `ExperimentProtocol`, `CandidateBudgetContract`, and `InitializationMode`.
 Do not infer settings through unrelated boolean combinations.
 
-### Peer-state domain
+### Joint voting diagnosis
 
 ```text
 multi_dataset_diverse_rl/peer_state.py
+multi_dataset_diverse_rl/diagnosis_aggregation.py
 ```
 
-Defines and computes `TeamVoteState`, `PeerVoteContext`, `G, H, M`, plurality
-results, and soft vote utility. Full-team and leave-one-out states must remain
-distinct types.
+`peer_state.py` defines full-team `TeamVoteState`, leave-one-out
+`PeerVoteContext`, `G`, `H`, `M`, plurality results, and soft vote utility.
+
+`diagnosis_aggregation.py` analyzes the complete fixed probe, assigns answer
+roles, groups typed diagnostic patterns, and deterministically selects at most
+three patterns and three cases. These files provide the diagnostic foundation;
+they do not define a separate paper module.
 
 ### Member objectives
 
@@ -640,31 +849,27 @@ Pareto dominance, and fronts. Formal selection uses integer counts.
 multi_dataset_diverse_rl/responsibility.py
 ```
 
-Defines `MemberAwareRepairOpportunity`, `ResponsibilityState`, repair-frontier
-eligibility, multi-member portfolios, and target selection. Responsibility
-lifecycle must be versioned by real team state.
+The responsibility module defines:
 
-Per-residual repair vectors are exactly direct vote fix, oracle soft utility,
-coverage, and dominant-wrong membership. Frontier eligibility must not use
-member gain, deficit, wait, history, or Proposal Memory. Scheduling jointly
-uses portfolio direct/oracle/coverage value, uplift deficit, and oldest
-responsibility age. Max-wait 8 first serves overdue responsible members; the
-generic catch-up lane is only for an overdue, deficit-positive member with an
-empty portfolio.
+- counterfactual vote-margin repair opportunities;
+- per-residual eligibility sets;
+- member responsibility portfolios;
+- compact `(D_i, S_i, d_i)` target scheduling;
+- the member-level max-wait safeguard.
 
-### TCS proposal mechanism
+There must be one lexicographic eligibility decision per residual and one
+member-level target Pareto frontier. Coverage and dominant-wrong labels remain
+diagnostic; generic catch-up is not a default path.
+
+### Responsibility-conditioned proposal
 
 ```text
-multi_dataset_diverse_rl/diagnosis_aggregation.py
 multi_dataset_diverse_rl/tcs.py
 ```
 
-The aggregation module analyzes the complete fixed probe, assigns answer roles,
-groups typed failure patterns, and deterministically selects at most three
-patterns and cases. `tcs.py` defines isolated diagnosis contexts,
-Teacher/Critic/Student response types, request builders, strict parsers,
-sample-memorization checks, and context limiting. Preserve context isolation
-across settings.
+Defines isolated diagnosis contexts, Teacher/Critic/Student response types,
+request builders, strict parsers, sample-memorization checks, revision, and
+bounded invalid recovery. Preserve context isolation across settings.
 
 ### Candidate selection
 
@@ -672,10 +877,13 @@ across settings.
 multi_dataset_diverse_rl/candidate_selection.py
 ```
 
-Defines candidate and constraint decisions, Stage A channel keys, hard
-constraint checks, vote-first and member-aware selection, and Pareto
-acceptability. Core decision paths must use typed fields; do not interpret a
-missing metric as zero.
+Remains the source of truth for target-or-vote strict progress and team Pareto
+acceptance. It also owns candidate and constraint decisions, Stage A channel
+keys, vote-first selection, member-aware selection, and deterministic
+preference.
+
+Core decision paths must use typed fields. Do not interpret a missing metric as
+zero.
 
 ### Evaluation and caches
 
@@ -689,12 +897,10 @@ multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py
 Fixed-probe evaluation replaces one target with four fixed peers and computes
 target, team, member, residual, and protection metrics.
 
-Validation computes `DatasetMetrics` without leaking test information into
-selection.
-
-The same prompt, question, model request, parser, output contract, temperature,
-and seed must map to the same observation across matched settings. Do not put
-the experiment setting in the cache key.
+Validation utilities compute `DatasetMetrics` but are not used for active-state
+selection. The same prompt, question, model request, parser, output contract,
+temperature, and seed must map to the same observation across matched settings.
+Do not put the experiment setting in the shared Solver-cache key.
 
 ### Solver contract
 
@@ -703,15 +909,14 @@ multi_dataset_diverse_rl/evaluation/output_contract.py
 multi_dataset_diverse_rl/evaluation/solver_output.py
 ```
 
-The solver must produce exactly one valid:
+The Solver must produce exactly one valid:
 
 ```text
 FINAL_ANSWER: <answer>
 ```
 
-The optimized prompt is only the mutable decision procedure. The program must
-append the immutable task output interface after that procedure in every
-Solver request:
+The optimized prompt is only the mutable decision procedure. The program
+appends the immutable task output interface in every Solver request:
 
 ```text
 Follow the decision procedure below.
@@ -725,16 +930,14 @@ This interface is immutable and overrides any conflicting instruction above.
 ```
 
 The request-template version is part of Solver request and shared-cache
-identity. Student sees the output contract to avoid conflicts, but preserving
-or reproducing the full interface is not part of the prompt search problem.
+identity. Student sees the output contract to avoid conflicts, but reproducing
+the immutable interface is not part of prompt search.
 
-Do not loosen the parser to hide model-output failures.
-
-Invalid recovery is implemented inside `system.solve()` before the
-prompt-question cache stores an observation. It retries only strict-parser
-invalid results, uses identical requests, stops at the first valid result, and
-stores only the resolved result. `PromptAnswer` carries attempt audit fields;
-formal invalid guards use `terminal_invalid_count`.
+Do not loosen the parser to hide model-output failures. Invalid recovery occurs
+before the prompt-question cache stores an observation. It retries only strict
+parser-invalid results with identical requests, stops at the first valid
+result, and stores only the resolved result. Formal invalid guards use terminal
+invalid count.
 
 ### LLM access
 
@@ -743,13 +946,14 @@ multi_dataset_diverse_rl/llm_client.py
 ```
 
 Owns role endpoints, post-hoc token/call accounting, transient retries, and
-timeouts. Transport retry and semantic TCS revision are distinct control flows.
+timeouts. Transport retry and semantic proposal revision are distinct control
+flows.
 
-Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
-
-Keep `solver_max_tokens=1800` unchanged so Solver request identity and shared
-cache semantics remain stable. Treat provider `finish_reason=length` as an
-audited runtime failure, not as evidence that the method has no gain.
+Teacher, Critic, and Student outputs are bounded structurally rather than by
+experiment-level completion-token budgets. Keep `solver_max_tokens=1800`
+unchanged so Solver request identity and shared-cache semantics remain stable.
+Treat provider `finish_reason=length` as an audited runtime failure, not as
+evidence of method efficacy.
 
 ### Persistence
 
@@ -759,12 +963,9 @@ multi_dataset_diverse_rl/persistence/checkpoint.py
 multi_dataset_diverse_rl/persistence/artifacts.py
 ```
 
-Owns exact run identity, behavior fingerprint, atomic checkpoint, incompatible
-checkpoint rejection, and artifacts. Checkpoint member state must be the
-target-free `TeamMemberGainState`.
-Checkpoint v14 also persists Student-recovery audit state, planned/completed
-update counts, final-state selection, training dynamics, differentiation
-trajectories, and selected-test state.
+Owns exact run identity, behavior fingerprint, atomic checkpointing,
+incompatible-checkpoint rejection, and artifacts. The current checkpoint
+version is 16; inspect `versions.py` for executable identity.
 
 Do not add compatibility code for obsolete method versions unless explicitly
 requested.
@@ -782,27 +983,15 @@ scripts/deterministic_member_aware_smoke.py
 tests/
 ```
 
-Task specs define answer parsing and matching. Optimization, validation, and
-test splits must remain disjoint.
+Task specifications define answer parsing and matching. Optimization,
+validation, and test splits must remain disjoint.
 
 No external API experiment may start unless the user explicitly asks in the
-current task.
+current task. Implementation work and real-API testing are separate tasks by
+default. A request to "test", "verify", or "finish" means offline verification
+unless real API usage is explicitly stated.
 
-Implementation work and real-API testing are separate tasks by default. A task
-that changes code may run offline unit tests, integration tests, deterministic
-fake-model smokes, compile checks, and preflight checks, but it must not also
-start a real-API smoke, pilot, or experiment. Completing an implementation does
-not imply authorization to spend API calls.
-
-Only combine code modification and real-API testing when the user explicitly
-requests both in the same task. A request to 鈥渢est鈥? 鈥渧erify鈥? or 鈥渇inish鈥?means
-offline verification unless real API usage is stated explicitly.
-
-Tests must verify method semantics, not merely implementation details. Every
-important method change needs a unit test, an integration test, and a
-deterministic system smoke when appropriate.
-
-## 10. Engineering Invariants
+## 13. Engineering Invariants
 
 The following invariants are mandatory unless the user explicitly changes the
 research method:
@@ -812,58 +1001,71 @@ exactly five agents
 frozen model weights
 plurality aggregation
 tie-as-abstain
+integer formal objectives
 single-target candidate replacement
 four fixed peers during candidate comparison
 strict optimization/validation/test separation
-integer formal objectives
-aggregate member-objective preservation
 strict FINAL_ANSWER contract
 exact run identity
 deterministic same-seed behavior
 atomic accepted update
-one responsibility refresh per real team transition
-test data used only after all planned updates complete
+one diagnosis/responsibility refresh per accepted team transition
+test only after all planned updates complete
+one per-residual eligibility decision based only on (DeltaV, DeltaM)
+one member-level target Pareto over (D_i, S_i, d_i)
+member_catchup_mode = off by default
+proposal_memory_mode = off by default
+vote-only v6 acceptance preserved
 ```
 
 No accepted candidate may silently bypass these invariants.
 
-## 11. Anti-Bloat Rules
+## 14. Anti-Bloat Rules
 
-Do not turn the research method into a generic engineering framework.
+The paper method has three modules. Implementation details must not be promoted
+into additional contributions.
 
 Do not add:
 
+- multiple nested Pareto mechanisms;
+- per-residual scheduling age;
+- permanent ownership or owner inertia;
+- hidden weighted responsibility scores;
+- coverage or dominant-wrong dimensions in formal eligibility;
+- coverage or portfolio size in the formal target vector;
+- default catch-up;
+- default Proposal Memory;
 - new agents or roles without a new research question;
-- duplicate settings;
-- duplicate metric implementations;
+- duplicate settings or duplicate metric implementations;
 - generic plugin abstractions;
 - archive or beam search;
 - MAP-Elites;
 - embedding diversity objectives;
-- prompt-text distance rewards;
+- prompt-text or trace-distance rewards;
 - extra LLM critics after candidate rollout;
 - compatibility wrappers for deleted semantics;
 - configuration flags without a real methodological purpose.
 
-Caching, retry, checkpointing, audit, and concurrency are experiment reliability
-infrastructure. Do not describe them as method contributions.
+Caching, retry, checkpointing, audit, and concurrency are experiment
+reliability infrastructure. Do not describe them as method contributions.
 
 Prefer one clear domain type over a generic dictionary. Do not reuse a class or
-function when its name and semantics do not match the new method merely to
-minimize the diff.
+function when its name and semantics conflict with the compact method merely
+to minimize the diff.
 
-## 12. Required Workflow for Every Codex Task
+## 15. Required Workflow for Every Codex Task
 
 Before editing:
 
 ```text
 1. Read AGENTS.md.
 2. Read method.md and README.md.
-3. Inspect current git HEAD and working-tree status.
-4. Inspect config.py and protocol.py.
+3. Inspect current git HEAD, latest commit, and working-tree status.
+4. Inspect versions.py, config.py, and protocol.py.
 5. Read the exact modules involved in the requested change.
 6. Inspect relevant tests and recent compact experiment reports.
-7. Separate confirmed implementation from requested changes and assumptions.
+7. Separate normative target semantics, confirmed runtime implementation,
+   requested changes, and assumptions.
 ```
 
 Before implementation, identify:
@@ -871,7 +1073,7 @@ Before implementation, identify:
 ```text
 research question affected
 current code semantics
-desired code semantics
+desired target semantics
 files that should change
 files that should not change
 tests proving semantic alignment
@@ -881,22 +1083,21 @@ During implementation:
 
 - make the smallest coherent semantic change;
 - delete superseded logic rather than leave dormant branches;
-- preserve strict data isolation;
-- preserve existing valid infrastructure;
+- preserve strict data isolation and existing valid infrastructure;
 - avoid unrelated refactors;
 - do not overwrite historical experiment directories;
-- keep code modification and real-API testing in separate tasks by default;
+- keep code modification and real-API testing separate by default;
 - do not run external APIs without explicit authorization in the current task.
 
 All Python execution in this Windows workspace uses the `DL` Conda
-environment. Prefer the direct interpreter to avoid `conda run` encoding
-problems:
+environment. Prefer:
 
 ```text
 D:\Anaconda\envs\DL\python.exe
 ```
 
-After implementation, run:
+For code changes, run the relevant task-specific tests and, unless the current
+task explicitly narrows verification, run:
 
 ```powershell
 D:\Anaconda\envs\DL\python.exe -m pytest -q
@@ -907,10 +1108,11 @@ D:\Anaconda\envs\DL\python.exe scripts\deterministic_member_aware_system_smoke.p
 git diff --check
 ```
 
-Also run task-specific tests for modified behavior. LF/CRLF warnings on Windows
-are informational; `git diff --check` is the whitespace gate.
+Documentation-only tasks may use documentation-specific validation when the
+user explicitly excludes code tests. LF/CRLF warnings on Windows are
+informational; `git diff --check` remains the whitespace gate.
 
-## 13. Completion Report
+## 16. Completion Report
 
 A Codex completion report must include:
 
@@ -920,33 +1122,54 @@ ending commit
 files changed
 method semantics changed
 method semantics deliberately unchanged
-old code deleted
+old code or stale documentation deleted
 new or updated tests
-pytest result
-compileall result
-preflight result
-smoke result
+pytest result, or explicit reason not run
+compileall result, or explicit reason not run
+preflight result, or explicit reason not run
+smoke result, or explicit reason not run
 git diff --check result
 external API calls performed or not performed
 remaining real-API risks
 working-tree state
-push state
+commit and push state
 ```
 
-Do not report only 鈥渢ests passed.鈥?Explain how the implementation maps back to
-the research question.
+Do not report only "tests passed." Explain how the change maps to the affected
+research question and distinguish target specification from runtime
+implementation status.
 
-## 14. Historical Results
+## 17. Historical Methods and Results
 
 Historical pilot and smoke directories are evidence, not current method code.
+In particular, v6 and v7 owner/frontier/catch-up reports are historical
+development evidence. They do not define the active compact method.
+
+Historical terms such as `repair-frontier`, `primary owner`, `owner_age`,
+`oldest responsibility age`, `responsibility_pareto_front`,
+`joint_target_pareto_front`, and
+`frontier_responsibility_and_catchup_context_v2` are deprecated semantics, not
+instructions for the compact target method.
+
+Do not delete or rewrite historical reports to make them appear consistent
+with the current target. Interpret every historical experiment according to
+its original:
+
+```text
+commit
+method version
+configuration
+artifact schema
+```
 
 Do not:
 
 - infer current behavior from old artifact names;
 - restore old settings for compatibility;
 - overwrite old results;
-- compare unmatched commits as formal method results;
-- interpret an operationally failed run as a method efficacy result.
+- compare unmatched commits as a formal method comparison;
+- reinterpret an operationally failed run as a method efficacy result;
+- retroactively apply current compact semantics to an older run.
 
 When analyzing a run, first verify:
 
@@ -957,41 +1180,46 @@ experiment protocol
 dataset hashes
 solver request identity
 candidate funnel reached
-validation selection completed
+final-state selection completed
 ```
 
-Raw `runs*`, SQLite databases, LLM logs, and checkpoints remain ignored unless
-the user explicitly requests otherwise. Prefer compact, secret-free Markdown
-and JSON reports for version control.
+Raw run directories, SQLite databases, LLM logs, and checkpoints remain
+ignored unless the user explicitly requests otherwise. Prefer compact,
+secret-free Markdown and JSON reports.
 
-## 15. Required Sanitized Research Artifacts
+## 18. Required Sanitized Research Artifacts
 
 Every optimization pilot uploaded for analysis must include versioned,
-secret-free artifacts: `run_meta_sanitized.json`,
-`candidate_decisions_sanitized.jsonl`,
-`responsibility_assignments_sanitized.jsonl`,
-`member_opportunities_sanitized.jsonl`, `target_priority_audit_sanitized.jsonl`,
-`g_transition_audit_sanitized.jsonl`,
-`specialization_trajectory_sanitized.jsonl`,
-`token_cost_breakdown_sanitized.json`, and
-`final_behavior_matrices_sanitized.json`.
+secret-free artifacts:
+
+```text
+run_meta_sanitized.json
+candidate_decisions_sanitized.jsonl
+responsibility_assignments_sanitized.jsonl
+member_opportunities_sanitized.jsonl
+target_priority_audit_sanitized.jsonl
+g_transition_audit_sanitized.jsonl
+specialization_trajectory_sanitized.jsonl
+token_cost_breakdown_sanitized.json
+final_behavior_matrices_sanitized.json
+```
 
 Each artifact declares a schema version and coverage counts. Per-example files
 must be checked for question-hash uniqueness, join consistency, and expected
-rows per team state; unavailable historical fields must be reported as
+rows per team state. Unavailable historical fields must be reported as
 `unavailable`, never as zero. Candidate-search outcomes are audit-only and do
-not enter responsibility or target scheduling.
+not enter eligibility or target scheduling.
 
 Never upload questions, gold labels, literal agent answers, prompts, raw TCS
-content, API responses/credentials, absolute paths, checkpoints, caches, or
+content, API responses or credentials, absolute paths, checkpoints, caches, or
 traces that can reconstruct dataset content. Question hashes, prompt hashes,
 anonymized pattern identifiers, booleans, counts, aggregate statistics, Pareto
 fronts, and sanitized request identities are permitted.
 
-## 16. Git and Publication
+## 19. Git and Publication
 
-Preserve user changes and inspect the worktree before staging. Never add ignored
-raw runs, API secrets, caches, or unrelated files to a commit.
+Preserve user changes and inspect the worktree before staging. Never add
+ignored raw runs, API secrets, caches, or unrelated files to a commit.
 
 The established remote is:
 
@@ -1000,4 +1228,5 @@ git@github.com:mmmmyyyxx/multi_agent_diversity.git
 ```
 
 The user has historically requested direct updates to `main`. Do not create a
-new branch or pull request unless the current task asks for one.
+new branch or pull request unless the current task asks for one. Never commit
+or push unless the current task explicitly authorizes it.

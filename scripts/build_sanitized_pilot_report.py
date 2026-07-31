@@ -111,14 +111,25 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def responsibility_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
-        "artifact_schema_version", "team_state_version", "owner_distribution", "owners",
-        "owner_switch_count", "owner_age", "assigned_load_by_agent",
-        "direct_fix_responsibility_count", "coverage_responsibility_count",
-        "dominant_wrong_responsibility_count", "owner_candidate_pareto_fronts",
-        "owner_chosen_reasons", "owner_assignment_audit", "assigned_opportunities",
+        "artifact_schema_version",
+        "team_state_version",
+        "eligible_agents_by_question",
+        "direct_fix_responsibility_count",
+        "margin_gain_responsibility_sum",
+        "coverage_responsibility_count",
+        "conversion_responsibility_count",
+        "dominant_wrong_responsibility_count",
+        "candidate_counterfactual_values_by_question",
+        "eligibility_audit_by_question",
+        "assigned_opportunities",
     )
     return [
-        {"artifact_schema_version": "sanitized_repair_only_responsibility_assignment_v1", **pick(row, keys)}
+        {
+            "artifact_schema_version": (
+                "sanitized_compact_vote_margin_responsibility_v1"
+            ),
+            **pick(row, keys),
+        }
         for row in rows
     ]
 
@@ -169,11 +180,11 @@ def priority_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
         "update_index", "overdue_first", "selection_pool_stage", "eligible_agent_ids",
         "overdue_agent_ids", "no_actionable_reason",
-        "actual_candidate_agent_ids", "actual_candidate_pareto_fronts",
-        "actual_frontier_agent_ids", "selected_agent_id",
+        "actual_candidate_agent_ids", "target_pareto_fronts",
+        "target_frontier_agent_ids", "selected_agent_id",
     )
     return [
-        {"artifact_schema_version": "sanitized_responsibility_portfolio_audit_v1", **pick(row, keys),
+        {"artifact_schema_version": "sanitized_compact_target_priority_v1", **pick(row, keys),
          "priorities": sanitize(row.get("priorities", []))}
         for row in rows
     ]
