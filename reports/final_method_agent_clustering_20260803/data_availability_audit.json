@@ -1,0 +1,833 @@
+{
+  "analysis_version": "final_method_agent_clustering_v1",
+  "expected_run_count": 15,
+  "audited_run_count": 15,
+  "runs": [
+    {
+      "task": "disambiguation_qa",
+      "seed": 44,
+      "setting": "shared_independent_accuracy",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed44/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed44/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed44/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed44/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed44/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "99e9ca4dac61618e3a3bd20a5bd8e98fe05534e39f5e177972ff3b8ccdbb49c3",
+        "best_prompts.json": "48524e38733b6f8fb70a4636271f607c539706ad06d74c64a1a598fe61d762bf",
+        "_solver_cache.sqlite": "128f1e23ed3a9489e9f30db372b8b75c36785e6c6a5ce546865d33a9ce9c77b7",
+        "training_dynamics.jsonl": "8c8ddd293ba4d83da1e48d063121541257912ac064d088bd65228ea0019864be",
+        "final_test_differentiation.json": "27b50ac24d34dfba1dc99dadea9ed97e436f286004a0909b29718d362d9b0f2d"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "06456ce95c17bcb3f1d25cd0c406e82f98fd2ae6a5349564f2fb761792fd57c7"
+      },
+      "final_prompt_hashes": [
+        "6afd94b8ca6d6b52ebeab63447dcbc3606fe9da7ccffcd8fe35531bd9e1306dc",
+        "5eb09a74cad79b5e79e5ae030a48e60c0969681cf4edccd1295f9ee48bb6d648",
+        "05c0dcc8ee2fe0ed2cd2b094550fe07a1245cc331a632f0caa3d0011a2220993",
+        "945b3621dabd9a757498e96404fdb1ffd92cf6db795c8e69fcae6f4c190bd1f5",
+        "6fc0b69623d6996aea5ffeae889b162153213555e2338a09e77899fa2670ec05"
+      ],
+      "final_team_state_hash": "1de1334580af3805ad1bd6cc9fb77e517333e134488d1926d283c9436f4e6e81",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 44,
+      "setting": "shared_peer_state_vote_first",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed44/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed44/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed44/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed44/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed44/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "d86861c42b4aaa7f82d1286cf962adb3be8ce6a5f4e2436f0114159b310cb4e8",
+        "best_prompts.json": "ccef31d5d88a5b6314f1973cb30f01c3b73735e82081db9b84ba5454d1fcee4a",
+        "_solver_cache.sqlite": "2021c1c3e0a962e0d6208f9c8c4442a63069cb643237ff4dd0c542173dba8e3a",
+        "training_dynamics.jsonl": "73816c4f8feea9b1979fe20080658009edbee288f8699905476c40ba7561b337",
+        "final_test_differentiation.json": "dcb74c0ce9e30ff466b4e5d148ee9c628416132a1b4eece45eb94aa68f144fbd"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "5d5b97dc1e94c022d02df25c7e9be5344a0964e1e7c6fdab900e392f2810d35b"
+      },
+      "final_prompt_hashes": [
+        "b055c375164400ed7e8249b95a0f1e53e72e7fbca81f5e03d70f032f022d66a9",
+        "c968edee45e6e2cdf2338957410c5cf0bd9b698ad57131a74fca9fc1ca63200d",
+        "44d009047ada0a329244cef0d422df0522b56cd4899c418663022fb44e87d077",
+        "02d2991e2045cfa84dffe1ae572114f859da43bc6e765d84b275089649dc3799",
+        "7d0006880b96f5b689490e178b699fea97da47fd1bf300f819ca2298ce928ce6"
+      ],
+      "final_team_state_hash": "3a1fcb942acb34deea4d2871b73cd42209863ab1058f819d9648bc406941ab62",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 44,
+      "setting": "shared_peer_state_member_pareto",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed44/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed44/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed44/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed44/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed44/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "f239c338cc011d87665181ba0ab90730931ba3d8fa08e9bc630aff0c30b10c42",
+        "best_prompts.json": "4f73fa5571dd917336d49dcf62ca032cf0d80dc7ebc4ece5a3e224bbbb72b05c",
+        "_solver_cache.sqlite": "757d172542297587617ec7a3b2d53bced02322960af38f5eabe3f96ce94622b3",
+        "training_dynamics.jsonl": "9c5462932f7cb840286726668ef5e27fb306e12395b6f85f19891696bc743598",
+        "final_test_differentiation.json": "94e4cede240f59460d7d73a9937f36a33757e64f5349244f4b01085e1bf56c67"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "9c0786de1bba89f55863f6274484bf04bd3402675ce22fa8299d785a9a9bab05"
+      },
+      "final_prompt_hashes": [
+        "c40a206e09d9208189ff8d72790737da8a23835c23544bb806458b0fb93e673e",
+        "a70e2475a298afe12302ac271d011408bb73f78ff8c1ba5cc1a72b66bf37e333",
+        "61f325d71e3cbfc2de8faadf511f3d8a729862b3ed42c3bdc41a7597127159d0",
+        "feee44bc28fa3d3627b643a62d5440e8212f40b94f6566efbd51f74c7b2ca0b6",
+        "a760df1e3456d0430121210f462f1ae7800bae56b0d90a7f0fcae5d4fdca11c6"
+      ],
+      "final_team_state_hash": "a735b7298be80fe1b22364c75ea2f4c7b7cdd8619c2d9328a88adcdb3f85affd",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 44,
+      "setting": "shared_member_aware_responsibility",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed44/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed44/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed44/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed44/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed44/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "59dc0d8388dbb99a17ea4e6567f06c7bb05633ef22457ac02b9da74387e186fd",
+        "best_prompts.json": "53f7a57e7fe0f0d5ad8edf6c7197b7da8c48a89326a4a9f54b1fd94520e931ca",
+        "_solver_cache.sqlite": "7c78ad526086969d32ab7834fb46f2a4247ecf24a83a96351b1df90a02b35948",
+        "training_dynamics.jsonl": "0defe302abfb86a048591ce9bf5698dcfdad08a808b144986623836977d6ab9d",
+        "final_test_differentiation.json": "6fcdba638bd03f0d68bdd548536f6b5f3b5d604b3fa23ae2884637a43095dd71"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "87085035c62f5addbc14eaef1ccbc1114929059bdb6dc6ad6dd3858fe94b28ff"
+      },
+      "final_prompt_hashes": [
+        "ae8fa219e202550356913fe2316e109a38533d174031887350aad7aa7a8bf6b9",
+        "cfdddabbff1cad05a158b58bf77d02630060cccda2c92bf5cfe29f2103a8587f",
+        "cc6324ad5a31525e5611281b40f57ff87fe1ed63090117f1577e58ddb615c8c7",
+        "c1683c18d763df5f2a6e04f5a435ab3e787c5abd8238d61fb4e3a79841827d69",
+        "4d3688e0a8952b96eeaae4fc79f96bc163bf81c25ef7633cb4c41d626b8c8b34"
+      ],
+      "final_team_state_hash": "980b9e85ad7ec667aa464ced65fec53b529ab1bff3939d1b6ef40a873cbb0c97",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 44,
+      "setting": "shared_member_aware_full",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed44/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed44/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed44/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed44/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed44/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "3844a141dac5a16b4068cc9cb25dd33c7ec90a0b857143f483316dd9ac75cfda",
+        "best_prompts.json": "a8696543409b57194aed48e428b1d74faefa70c2efa7b29a225b151306267631",
+        "_solver_cache.sqlite": "b176186607569140e09903a1272642127671671ee2314bf8da6be5562d10ea83",
+        "training_dynamics.jsonl": "0ad5520866a4d334b32efff3a585b8b83584a53c1836647f6ad81f03c83a562c",
+        "final_test_differentiation.json": "5ae5612c3499303b7f568704384ce1698d717c9a2d83ce7e03186d20b7de0643"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "414dfe24b0841a953cc7073f2e02a250310535e2a386b080dcbb9392b2f56ebc"
+      },
+      "final_prompt_hashes": [
+        "ac119809fe508ce2d81549a8eaec75af54f24a2d0859dafa2611a1ca85820a73",
+        "dad78eb24526c15d10fc393802c189776f6628251fc6fdd8fd67175d58977222",
+        "98da4b94b13eb560a6a2e8b6420598dc45211cd055b72b011002e56c8226e461",
+        "e1f21bd66ea9376c64e226c3fa0efdabd962545ec08a35537b3a74169cbeebac",
+        "0aa1f9edbc4e9bbfabcade7c4a11728d5656939ade67c74dcb6f57a6429c44f4"
+      ],
+      "final_team_state_hash": "1e1981104fd5faa00d8884f023c3845bdae46cb40530bea43a08b2dd3b107014",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 45,
+      "setting": "shared_independent_accuracy",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed45/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed45/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed45/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed45/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed45/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "03ec35265583e106f89a04ac299062db359dc48516197bbfcffa58e3743963e4",
+        "best_prompts.json": "b108eb06c68f0279c01e3ec84fde7dd2b9eca5a0753ec3190c1ccc93bb564b8f",
+        "_solver_cache.sqlite": "9814f2252be82b67744b5d0cebc3c261f08429cc5fa111e80e675815c0a7d738",
+        "training_dynamics.jsonl": "3a5687cf4e6b4e2eb03029f48b8b33f5ede60927e2ee98991ee1f8a0880402fb",
+        "final_test_differentiation.json": "7907979005a5a4cc39b31f214f00bee46a9986ff8d6fc64807ec18e020db9a17"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "3d8e97670468aa78cea3973116d63f38548aa7fdc1b819c50c9ecfd412f9c0fb"
+      },
+      "final_prompt_hashes": [
+        "e80528286fd957575fbb17e4d64080a4be8589f2e8ce49fd5619691d3014be57",
+        "c0dd74106a920ab2c5db3fe84ac72da55a06e6861db0979c6f173737767e1ed8",
+        "44e1802e9fc466a1dc896a8c43b3bd2505ef810dfb447e37ff9e42bb023bad4c",
+        "ab0c570d13dc7f3346986fd6b2ea420068b024d23e5c6ce51c425fc79a932a19",
+        "3ff7ef407181fa9cea95dbadc1b5a26dd8bf6dc56262783a3c2cb239c14ab18c"
+      ],
+      "final_team_state_hash": "c9f3df49674c5b44cf0d574fd2afbb8e50be6b3319b628a24f76454da425f813",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 45,
+      "setting": "shared_peer_state_vote_first",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed45/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed45/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed45/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed45/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed45/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "0fdd27e4e714b3dbcd066d3e1f8f8c7e4ba55b957fcf730eb0e04b22ac93e07d",
+        "best_prompts.json": "2a671aa3032813baf869338684d35d775d4a6bbf7ce32259b44a9beca37208d0",
+        "_solver_cache.sqlite": "3de4e750d6732cfe8b5ea980ed4e43a1582eba0b479c60492186248178902b6c",
+        "training_dynamics.jsonl": "e55d7239a3a5ba917577d75150f96f21d1a830e3cc668c593044e6a20fdc9784",
+        "final_test_differentiation.json": "25e843bcc08693dfbeed322b9aa9db0f67af86ce494553f5dba332734f9e6abd"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "64e94081b419f77ab850677b17f8c9956fd08df929aa0c2b042773826de4d35e"
+      },
+      "final_prompt_hashes": [
+        "ed1adfccc0c6bd372261633fdc1bfb14905b94c25bf017885b66b5f84b13683d",
+        "cc55cbadd8897534f092b0c59178f00540ebee25ca901484cf5e0d516e02562f",
+        "d49b705a3b0e7fa28b2273fb466c02fc0ff0e7914dd6d131bc1418efa362fa03",
+        "3dbbb4ca3abc06c40070d270a4a3255ebf320829ba82fefb0e38980f78decd12",
+        "4f0a31efda6d97da709ddd6b1d65f8a03622b051eb46f1e99423ac1d8ca1f85e"
+      ],
+      "final_team_state_hash": "7a19490feb849030c5efd8207c3f016fd92b37e21a3773c0e126c944e205ccf0",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 45,
+      "setting": "shared_peer_state_member_pareto",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed45/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed45/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed45/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed45/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed45/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "868fddbdfbc74047df06227f8b9423cd6ab68cc36323662dc43e5f2e6df76ba0",
+        "best_prompts.json": "bcb5b02d6ba320798d5203f19c60f71895f616543080334d87fb01b5a4157e8c",
+        "_solver_cache.sqlite": "e3e44bb5317f1ca877087617786d4e138f36727fd6049cae0cc7f3b3e3f57620",
+        "training_dynamics.jsonl": "c650133d4f8fc511a0590a4ebb321a7b46f83254af61fcbe8e078bfbcaf6c40a",
+        "final_test_differentiation.json": "2f760448b21c3b78fcee3546cfcb6418a41d4ce12d9e9ea064f19806e741280d"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "b72403695478d1f5a922422c8a0a32aa5157e399d2942233e36fe849d53e0663"
+      },
+      "final_prompt_hashes": [
+        "3050bf11f11b9a8c64c3d6169bc3eac027f78f32c2c5c0a0b3a8991d8d3b4fd8",
+        "c2ffa64d56aff1151d9607bb21d64089911d4e2489b2971b1495a7f1489d3751",
+        "e60f43c7b3a164f68d3027b5382d70dc717411ad4dd3b8fe165f41311d8c3fcb",
+        "6ef01955dbd22667a6d7e77a6de65e4ce4a4a91c54055340c2e2f34fb7594e1f",
+        "b9b41c0aa20405b32d62a012760ab736d6a49f01c4410033973efc0e67c5b68f"
+      ],
+      "final_team_state_hash": "46e2c0dcb8c959b6e874ae16630e99acab0f6f7de7530bbacaddb849bfd52f79",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 45,
+      "setting": "shared_member_aware_responsibility",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed45/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed45/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed45/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed45/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed45/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "114ed34b898c2b6d110c37698bc2312968665b7ea195f5337ff87f0de7f6d112",
+        "best_prompts.json": "1e514ed9af94790cdd9d1ce17adb9edc46af678d1e55aba53bc44ecb01122295",
+        "_solver_cache.sqlite": "efcbec70e3f808dd5ff01aafcf0a698c255ce754620b65cd7d9e07372689856c",
+        "training_dynamics.jsonl": "92254f5217696c8e0ad4be59f12f7f9ce8f183e6f3430866cfd59ee4482f950b",
+        "final_test_differentiation.json": "36a6db1ee0fb047b2cfa064303a5e8cfe45bf02206d4fe40ca5b2518f3ddd04d"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "762043988d84b72b238fd4024ca487df275ed5da66c1d2a5ba50d7d88d4821f6"
+      },
+      "final_prompt_hashes": [
+        "1d076c8cec1585bdcb7d0373d15bdf2d1f87422f9e042a3d9156c33f3768454e",
+        "fbd3b317b790cac67ed6ae540ca450fd2bf8d34906790b48a1928775c0f1d8be",
+        "d779141f42382418cfc3271487b4963c471e01cf83f3fbe31ef8e7000d576dec",
+        "a053a77f618864b99c6bf03c27891fb95cc31634440400c6fe64ec73dac829ac",
+        "cdaf7d1e6bc74ed82678b0e91f56fe4490a2d117448485168029ee4465e7349e"
+      ],
+      "final_team_state_hash": "54fb9bfe0472f5be29314bd613f6258e69b40c1fe867bb33d362c8d710341f99",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 45,
+      "setting": "shared_member_aware_full",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed45/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed45/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed45/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed45/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed45/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "a9651bc3eebc8a4349d80ac4b4934fd2a0dfcacad0f1b4fe9af1a3ceff70348e",
+        "best_prompts.json": "c22c5bceac5962b808024beb030e2b57591bdb667df0529ba7d4e62d5462fb0c",
+        "_solver_cache.sqlite": "27e0d7c96da38019ce11d1ce7496ffeae3a9146e38066f416cc23e4be2b92044",
+        "training_dynamics.jsonl": "5197d95bb2f0a13f242c26fd76a60293fc092d8d14cc14caccb8eab0bb40edca",
+        "final_test_differentiation.json": "a239206eb94058520cf66236bd92701ef184f44e55ddedac64dd0ee0491a399e"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "8d665d238554465dc4378cf017d71ea0665a1ab2137b37107e52a506c83658b5"
+      },
+      "final_prompt_hashes": [
+        "42a13d63a5f5d916ba2048d6df392735ffb5683f3a5ceda1e8cd22581d0df742",
+        "a0f46553f1d0124d29ba86b9517b77565b1394f0d262a98a5d1e86c8cc65c3d0",
+        "fa605b8b25f787d21610c37d063b4ada7e4f1bb13ae09f74ee390a9142f75479",
+        "24aeee47787a7252eb20c610e2635fc7e4b0d163076ebc6838ac6d07074f5ca6",
+        "4f80a8d855cf250d0b6baebb9fe4cb1f79e401f42c4de26a76ebf8d3e50b1e3e"
+      ],
+      "final_team_state_hash": "c060594e824101265d27a9ecb0e10e9e2c65f19c91b33b6ae4bf116f7d1e8feb",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_independent_accuracy",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed46/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed46/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed46/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed46/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_independent_accuracy_seed46/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "11d0a22d5b1c2a2aad419d8fb11480c34ded291254f929ccd88665c5fb306553",
+        "best_prompts.json": "fa78021d7b4611fcd33e4d89c536491228786310c9513282ca2426965cb2bd68",
+        "_solver_cache.sqlite": "142992b0a82af88775e73f32e97145ac77e5f11a320851048a4c6c5d0c018390",
+        "training_dynamics.jsonl": "f4b2aa11a394f6e3f751616355890a1286f74a578d050eaec2147b6d6ad9a0dd",
+        "final_test_differentiation.json": "2329edebf30b783ba135c17511f20d07a0e42657de5beb700452fa1b647169e1"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "11d0b76658d46868c47f0c0c6a6a328f40132de96cdd6219a71ba0ad449090f7"
+      },
+      "final_prompt_hashes": [
+        "56640229639d71567b1c51774de43ce9ea61119eca10ccf9aa6e9c5ef45318fc",
+        "9f62c4b419fa900d7418dabae2e32cdfc6bc63721dbfdf506906fdd00829c223",
+        "96ca7174543cd95803cb08e0a617afe8fa5ea80ce763a3471fd3d9b604d883bd",
+        "f1fce8114aa9cfc114f158e17af139b90855eedcaa67ea3eb0303e989cc2fa28",
+        "da9b059d8969e24cfa586732c1b65c06342b9eb917352b6472bfc6e3f38fe560"
+      ],
+      "final_team_state_hash": "cf109a4e0ea4ad257fa07eba779e0e4c33af8701ca3a3414b3dea2258191ddb4",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_peer_state_vote_first",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed46/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed46/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed46/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed46/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_vote_first_seed46/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "9a8175dc0501fbd790c8ff0ae78ec7d783eb515b995ce8980d10ea806b5b70a7",
+        "best_prompts.json": "b517413d56ed72556355f16dc6cf80504c1d82879e3a0fe54673f7bb2f79175f",
+        "_solver_cache.sqlite": "1d520955ee8ec98394b6008747ab541eec23b4cb91313ef412231c5e7f663854",
+        "training_dynamics.jsonl": "f3aac58898d9eac61f27eaa039cb601fa3f54fbdf2b4c80ae3516d50271e4be0",
+        "final_test_differentiation.json": "e84b2d36da429e9bdd82f8c4bfa6dc2050e25b9e11b597962363e3deb4f9ba80"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "00c6e08daf1f772cfceb6133ab1bdb7078321556863cf5bedb1319ddfa778b17"
+      },
+      "final_prompt_hashes": [
+        "6fbd2c126e7ceec967ce29abaa5ed6e7112c27254ee571bbc6d9f4e2280e8699",
+        "8888d61a2c1f2b9b09e2a515cfcf7e27a35b84963e9afd742ec0a15a899a2ca7",
+        "92dc4214558851f6aaa49d44028182dd7fe991e8678fa407fd2a8aeac5d78ff4",
+        "3a827600150e3cc7ad4fa287438d9dd636853e050a9e2775e5758c6d15c91f7f",
+        "8c613f392e18b6f35c4e20519f2aca8cd7ff0ab2e4e1d5b34faa0b1a1fc5e7ff"
+      ],
+      "final_team_state_hash": "d5dd9350b2027e6b6a6e22b170033def1c5907809668599abd9458d4596281c7",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_peer_state_member_pareto",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed46/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed46/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed46/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed46/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_peer_state_member_pareto_seed46/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "02737aac056516d29764556cad9e6b731c213f362407638b463ed7db36fbd792",
+        "best_prompts.json": "4674d1f70461725f0f8cebf694f07b36f867b27a74043b45d3cc754c104f9515",
+        "_solver_cache.sqlite": "8b62ca104eb9c45b2d61e42d5f4ef6d6905d53b11b2f063e18719c638fe84753",
+        "training_dynamics.jsonl": "a1442a40af90d7216bd96f5c92936e7811984da2799bfebd346e070ecaa0f8e9",
+        "final_test_differentiation.json": "442ceeb9f6eedf0a1948fcf30377852881dc59515d4aaf50f444a1252cd1799c"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "4539a92326d0c482334b407e027151441497f2b2bca23244fb3a63cb0d4ace3f"
+      },
+      "final_prompt_hashes": [
+        "c1ffe1b5b82f82cbf63f8c00b7e1822e3c29a9b2e0515645785f79e6bc5a29a9",
+        "631a018ca6592d03f7b051216bc763eca351f5616a12288d07ac1597fa0b410b",
+        "2e96409b789bce38f510dd2f7de6e8446fbdc9e437bacd673794494db6d9b7bc",
+        "25bb28b591747986fd7cfdaf08bd1f12c821c39e64e7f70cdc2f737c8cd37b07",
+        "106dffdf832d44744daefbb983759dbf1e46b67a4387b785955e8fa505c915e8"
+      ],
+      "final_team_state_hash": "a599d0a56fe142fc84dcd076cd726d13ea7b94fc3397ff0cc2f850c1ead138de",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_member_aware_responsibility",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed46/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed46/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed46/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed46/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_responsibility_seed46/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "3535acc02f295b27c68dba96d0279435a1b1bdfff56031ab4cf41efdd68a1778",
+        "best_prompts.json": "223717b3b8f1d4b90b06fe7237d46ed126b52bd4f737451f0b0c01f3d1277945",
+        "_solver_cache.sqlite": "e692b3f399cea9daffa7c3a6668de66019ee060cadbcc2a6a1de418524356175",
+        "training_dynamics.jsonl": "e685301955e75d096ee8e2e69a79f8741f14423a217f1a3d0eeb14b7f2b19336",
+        "final_test_differentiation.json": "a86fbe13f02180e655ac5c1a274af631621eb01ba3925c7d53bf4f9679319dd1"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "716ed8158110a3531a96b264e003a237f8e61f84598d72a334a231ea4af6b3b4"
+      },
+      "final_prompt_hashes": [
+        "5105d1b0a977a1d061cfb8799693a1bc2a4bf80a14e0b5da42f43639915a4881",
+        "9dcfd3d02e9b767b3dcfd6b01e1a1ed2965eb9daa00eb9467379019410643ae6",
+        "2ed521b76ebf5a88f447166cab45afdbfd73ca17503c69946b6a080091644c0c",
+        "99b4ff250fd9ff64e349008677e3f9675394b2188443c5c5b11e0ece072d9836",
+        "3c3620272037570cf9913e8dd092dc04feef474fe5356c120d0723eb6b7bfb4e"
+      ],
+      "final_team_state_hash": "d17dbe370451398bb4cba8356a220d376a120ffdf5ba3cf48777effed51434c9",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_member_aware_full",
+      "train_available": true,
+      "test_available": true,
+      "profile_lengths": {
+        "train": [
+          75,
+          75,
+          75,
+          75,
+          75
+        ],
+        "test": [
+          125,
+          125,
+          125,
+          125,
+          125
+        ]
+      },
+      "source_paths_sanitized": [
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed46/run_meta.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed46/best_prompts.json",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed46/_solver_cache.sqlite",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed46/training_dynamics.jsonl",
+        "runs_final_method_disambiguation_full_20260731/disambiguation_qa/shared_member_aware_full_seed46/final_test_differentiation.json"
+      ],
+      "source_hashes": {
+        "run_meta.json": "8059007b651c11d82660a8d810e6ef15f4162be653fe4d96a7e7bc6437e2875a",
+        "best_prompts.json": "dd4fa3c667548a0d277f08d6c15e313097dfdb56b8b1ccc6b79c4d4bd2c77e81",
+        "_solver_cache.sqlite": "528fc509965e156855aaada0a85a775afe00dad1490d41a02cdcb1806e4841eb",
+        "training_dynamics.jsonl": "c8890750cd79b106a7f21d150487c627209797f42329e555564a7395d09e8455",
+        "final_test_differentiation.json": "c2f793560c1ad5f8363af597c1ecb66563b958ece315dba27361204199a8c8d4"
+      },
+      "issues": [],
+      "source_identity": {
+        "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+        "method_version": "member_aware_peer_state_v8",
+        "config_fingerprint": "1408d88d71b0019376a3c4bf93f2ae684513dc2e5a313288a3d3efa233350b79"
+      },
+      "final_prompt_hashes": [
+        "f3f3491cb8ffe23448c09b7157a8a248a90653673a12ecf8bd727e57caa637be",
+        "60698fd0ce6ffa7cf92822bc541d69670a771f1e82a858ccf36d705cee838485",
+        "a175bb58d52c6358e2846b155e5d44d27f4da4a8db668db1409cb47cbcc8ff72",
+        "2daa1273417b588361039be1dd78d758ee5515b2441ef2a0629e966f1d6615fa",
+        "69aae5a92002b22c91574ad1ea8d3e1080df91a563c5fe2f3ed55196aea4cc12"
+      ],
+      "final_team_state_hash": "4e55f51492d08aaccab72fa356ed1fdcad242abd73957624775d446dea4f4bf3",
+      "question_hash_modes": {
+        "train": "normalized_spaces_v1",
+        "test": "normalized_spaces_v1"
+      }
+    }
+  ],
+  "strict_comparison_status": "exploratory_due_to_unmatched_repeated_test_observations"
+}

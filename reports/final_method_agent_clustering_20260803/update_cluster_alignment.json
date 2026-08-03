@@ -1,0 +1,2881 @@
+[
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      2,
+      1,
+      3,
+      4
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      5,
+      3,
+      4,
+      6
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 10,
+        "target_positive_candidates": 18,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.7692307692307693,
+        "acceptance_efficiency": 0.38461538461538464
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.23076923076923078,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23076923076923078,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      2,
+      1,
+      3,
+      4
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      5,
+      3,
+      4,
+      6
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 10,
+        "target_positive_candidates": 18,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.7692307692307693,
+        "acceptance_efficiency": 0.38461538461538464
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.23076923076923078,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23076923076923078,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      1,
+      2,
+      4,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      2,
+      4,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          3
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 9,
+        "target_positive_candidates": 13,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.75,
+        "acceptance_efficiency": 0.47368421052631576
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1,
+          4
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 3,
+        "target_positive_candidates": 6,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.25,
+        "acceptance_efficiency": 0.23076923076923078
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.25,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.75
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 1,
+        "cluster_id": 1,
+        "cluster_members": [
+          1,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.14285714285714285,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.08333333333333333,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.25
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      1,
+      2,
+      4,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      2,
+      4,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          3
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 9,
+        "target_positive_candidates": 13,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.75,
+        "acceptance_efficiency": 0.47368421052631576
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1,
+          4
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 3,
+        "target_positive_candidates": 6,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.25,
+        "acceptance_efficiency": 0.23076923076923078
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.25,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.75
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 1,
+        "cluster_id": 1,
+        "cluster_members": [
+          1,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.14285714285714285,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.08333333333333333,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.25
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      4,
+      2,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      2,
+      5,
+      2,
+      5,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          3
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 6,
+        "target_positive_candidates": 9,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.46153846153846156,
+        "acceptance_efficiency": 0.3157894736842105
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1,
+          4
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 7,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.5384615384615384,
+        "acceptance_efficiency": 0.5384615384615384
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 1,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.14285714285714285,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.07692307692307693,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.46153846153846156
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 1,
+        "cluster_members": [
+          1,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.5384615384615384
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      4,
+      2,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      2,
+      5,
+      2,
+      5,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 10,
+        "target_positive_candidates": 14,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.7692307692307693,
+        "acceptance_efficiency": 0.38461538461538464
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          4
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 3,
+        "target_positive_candidates": 5,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.23076923076923078,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 1,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.14285714285714285,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.07692307692307693,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "selected_updates_by_agent": [
+      9,
+      9,
+      5,
+      5,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      1,
+      3,
+      1,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      2,
+      5,
+      2,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 23,
+        "accepted_updates": 8,
+        "target_positive_candidates": 13,
+        "attempt_share": 0.71875,
+        "accepted_share": 0.8,
+        "acceptance_efficiency": 0.34782608695652173
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "selected_updates": 9,
+        "accepted_updates": 2,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.28125,
+        "accepted_share": 0.2,
+        "acceptance_efficiency": 0.2222222222222222
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 9,
+        "accepted_updates": 2,
+        "cluster_id": 1,
+        "cluster_members": [
+          0
+        ],
+        "is_singleton_cluster": true,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.2222222222222222,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.28125,
+        "cluster_accepted_share": 0.2
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 9,
+        "accepted_updates": 1,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.1111111111111111,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.1,
+        "cluster_attempt_share": 0.71875,
+        "cluster_accepted_share": 0.8
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": true,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "selected_updates_by_agent": [
+      9,
+      9,
+      5,
+      5,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      1,
+      3,
+      1,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      2,
+      5,
+      2,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 14,
+        "accepted_updates": 7,
+        "target_positive_candidates": 11,
+        "attempt_share": 0.4375,
+        "accepted_share": 0.7,
+        "acceptance_efficiency": 0.5
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          1
+        ],
+        "selected_updates": 18,
+        "accepted_updates": 3,
+        "target_positive_candidates": 5,
+        "attempt_share": 0.5625,
+        "accepted_share": 0.3,
+        "acceptance_efficiency": 0.16666666666666666
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 9,
+        "accepted_updates": 2,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          1
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.2222222222222222,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.5625,
+        "cluster_accepted_share": 0.3
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 9,
+        "accepted_updates": 1,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          1
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.1111111111111111,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.1,
+        "cluster_attempt_share": 0.5625,
+        "cluster_accepted_share": 0.3
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "selected_updates_by_agent": [
+      5,
+      5,
+      8,
+      5,
+      9
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      2,
+      3,
+      5
+    ],
+    "target_positive_candidates_by_agent": [
+      8,
+      3,
+      5,
+      7,
+      7
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 27,
+        "accepted_updates": 13,
+        "target_positive_candidates": 23,
+        "attempt_share": 0.84375,
+        "accepted_share": 0.8125,
+        "acceptance_efficiency": 0.48148148148148145
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 5,
+        "accepted_updates": 3,
+        "target_positive_candidates": 7,
+        "attempt_share": 0.15625,
+        "accepted_share": 0.1875,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "most_selected_agents": [
+      4
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 4,
+        "selected_updates": 9,
+        "accepted_updates": 5,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.5555555555555556,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.3125,
+        "cluster_attempt_share": 0.84375,
+        "cluster_accepted_share": 0.8125
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "selected_updates_by_agent": [
+      5,
+      5,
+      8,
+      5,
+      9
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      2,
+      3,
+      5
+    ],
+    "target_positive_candidates_by_agent": [
+      8,
+      3,
+      5,
+      7,
+      7
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "selected_updates": 24,
+        "accepted_updates": 14,
+        "target_positive_candidates": 25,
+        "attempt_share": 0.75,
+        "accepted_share": 0.875,
+        "acceptance_efficiency": 0.5833333333333334
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          2
+        ],
+        "selected_updates": 8,
+        "accepted_updates": 2,
+        "target_positive_candidates": 5,
+        "attempt_share": 0.25,
+        "accepted_share": 0.125,
+        "acceptance_efficiency": 0.25
+      }
+    ],
+    "most_selected_agents": [
+      4
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 4,
+        "selected_updates": 9,
+        "accepted_updates": 5,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.5555555555555556,
+        "agent_attempt_share": 0.28125,
+        "agent_accepted_share": 0.3125,
+        "cluster_attempt_share": 0.75,
+        "cluster_accepted_share": 0.875
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      3,
+      1,
+      2,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      7,
+      6,
+      4,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 8,
+        "target_positive_candidates": 21,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.8,
+        "acceptance_efficiency": 0.3076923076923077
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 2,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.2,
+        "acceptance_efficiency": 0.3333333333333333
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      3,
+      1,
+      2,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      7,
+      6,
+      4,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 8,
+        "target_positive_candidates": 21,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.8,
+        "acceptance_efficiency": 0.3076923076923077
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 2,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.2,
+        "acceptance_efficiency": 0.3333333333333333
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      5,
+      4,
+      6,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          4
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 9,
+        "target_positive_candidates": 14,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.6,
+        "acceptance_efficiency": 0.47368421052631576
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1,
+          3
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 6,
+        "target_positive_candidates": 11,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.4,
+        "acceptance_efficiency": 0.46153846153846156
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.6
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 1,
+        "cluster_members": [
+          1,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.4
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      5,
+      4,
+      6,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          4
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 9,
+        "target_positive_candidates": 14,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.6,
+        "acceptance_efficiency": 0.47368421052631576
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1,
+          3
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 6,
+        "target_positive_candidates": 11,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.4,
+        "acceptance_efficiency": 0.46153846153846156
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.6
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 1,
+        "cluster_members": [
+          1,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.2,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.4
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      3,
+      5,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      5,
+      4,
+      7,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 25,
+        "accepted_updates": 13,
+        "target_positive_candidates": 21,
+        "attempt_share": 0.78125,
+        "accepted_share": 0.7647058823529411,
+        "acceptance_efficiency": 0.52
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "target_positive_candidates": 5,
+        "attempt_share": 0.21875,
+        "accepted_share": 0.23529411764705882,
+        "acceptance_efficiency": 0.5714285714285714
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 1,
+        "cluster_members": [
+          0
+        ],
+        "is_singleton_cluster": true,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23529411764705882,
+        "cluster_attempt_share": 0.21875,
+        "cluster_accepted_share": 0.23529411764705882
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.11764705882352941,
+        "cluster_attempt_share": 0.78125,
+        "cluster_accepted_share": 0.7647058823529411
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": true,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      3,
+      5,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      5,
+      5,
+      4,
+      7,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 18,
+        "accepted_updates": 11,
+        "target_positive_candidates": 16,
+        "attempt_share": 0.5625,
+        "accepted_share": 0.6470588235294118,
+        "acceptance_efficiency": 0.6111111111111112
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          1
+        ],
+        "selected_updates": 14,
+        "accepted_updates": 6,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.4375,
+        "accepted_share": 0.35294117647058826,
+        "acceptance_efficiency": 0.42857142857142855
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          1
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23529411764705882,
+        "cluster_attempt_share": 0.4375,
+        "cluster_accepted_share": 0.35294117647058826
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          1
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.11764705882352941,
+        "cluster_attempt_share": 0.4375,
+        "cluster_accepted_share": 0.35294117647058826
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "selected_updates_by_agent": [
+      13,
+      5,
+      4,
+      4,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      2,
+      2,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      2,
+      5,
+      3,
+      3,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 14,
+        "accepted_updates": 7,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.4375,
+        "accepted_share": 0.7,
+        "acceptance_efficiency": 0.5
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          1
+        ],
+        "selected_updates": 18,
+        "accepted_updates": 3,
+        "target_positive_candidates": 7,
+        "attempt_share": 0.5625,
+        "accepted_share": 0.3,
+        "acceptance_efficiency": 0.16666666666666666
+      }
+    ],
+    "most_selected_agents": [
+      0
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 13,
+        "accepted_updates": 1,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          1
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.07692307692307693,
+        "agent_attempt_share": 0.40625,
+        "agent_accepted_share": 0.1,
+        "cluster_attempt_share": 0.5625,
+        "cluster_accepted_share": 0.3
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "selected_updates_by_agent": [
+      13,
+      5,
+      4,
+      4,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      2,
+      2,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      2,
+      5,
+      3,
+      3,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 28,
+        "accepted_updates": 7,
+        "target_positive_candidates": 14,
+        "attempt_share": 0.875,
+        "accepted_share": 0.7,
+        "acceptance_efficiency": 0.25
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 4,
+        "accepted_updates": 3,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.125,
+        "accepted_share": 0.3,
+        "acceptance_efficiency": 0.75
+      }
+    ],
+    "most_selected_agents": [
+      0
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 13,
+        "accepted_updates": 1,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.07692307692307693,
+        "agent_attempt_share": 0.40625,
+        "agent_accepted_share": 0.1,
+        "cluster_attempt_share": 0.875,
+        "cluster_accepted_share": 0.7
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      4,
+      16,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      1,
+      2,
+      2,
+      1
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      2,
+      4,
+      4,
+      2
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 28,
+        "accepted_updates": 6,
+        "target_positive_candidates": 12,
+        "attempt_share": 0.875,
+        "accepted_share": 0.75,
+        "acceptance_efficiency": 0.21428571428571427
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "selected_updates": 4,
+        "accepted_updates": 2,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.125,
+        "accepted_share": 0.25,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      3
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 3,
+        "selected_updates": 16,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.125,
+        "agent_attempt_share": 0.5,
+        "agent_accepted_share": 0.25,
+        "cluster_attempt_share": 0.875,
+        "cluster_accepted_share": 0.75
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      4,
+      16,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      1,
+      2,
+      2,
+      1
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      2,
+      4,
+      4,
+      2
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3
+        ],
+        "selected_updates": 24,
+        "accepted_updates": 5,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.75,
+        "accepted_share": 0.625,
+        "acceptance_efficiency": 0.20833333333333334
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          4
+        ],
+        "selected_updates": 8,
+        "accepted_updates": 3,
+        "target_positive_candidates": 5,
+        "attempt_share": 0.25,
+        "accepted_share": 0.375,
+        "acceptance_efficiency": 0.375
+      }
+    ],
+    "most_selected_agents": [
+      3
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 3,
+        "selected_updates": 16,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.125,
+        "agent_attempt_share": 0.5,
+        "agent_accepted_share": 0.25,
+        "cluster_attempt_share": 0.75,
+        "cluster_accepted_share": 0.625
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      2,
+      3,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      6,
+      5,
+      6,
+      3
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 25,
+        "accepted_updates": 10,
+        "target_positive_candidates": 20,
+        "attempt_share": 0.78125,
+        "accepted_share": 0.7692307692307693,
+        "acceptance_efficiency": 0.4
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.21875,
+        "accepted_share": 0.23076923076923078,
+        "acceptance_efficiency": 0.42857142857142855
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 1,
+        "cluster_members": [
+          0
+        ],
+        "is_singleton_cluster": true,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23076923076923078,
+        "cluster_attempt_share": 0.21875,
+        "cluster_accepted_share": 0.23076923076923078
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.78125,
+        "cluster_accepted_share": 0.7692307692307693
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": true,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      2,
+      3,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      6,
+      5,
+      6,
+      3
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2
+        ],
+        "selected_updates": 20,
+        "accepted_updates": 8,
+        "target_positive_candidates": 15,
+        "attempt_share": 0.625,
+        "accepted_share": 0.6153846153846154,
+        "acceptance_efficiency": 0.4
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3,
+          4
+        ],
+        "selected_updates": 12,
+        "accepted_updates": 5,
+        "target_positive_candidates": 9,
+        "attempt_share": 0.375,
+        "accepted_share": 0.38461538461538464,
+        "acceptance_efficiency": 0.4166666666666667
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.23076923076923078,
+        "cluster_attempt_share": 0.625,
+        "cluster_accepted_share": 0.6153846153846154
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.625,
+        "cluster_accepted_share": 0.6153846153846154
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      2,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      6,
+      3,
+      2,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 19,
+        "accepted_updates": 6,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.59375,
+        "accepted_share": 0.46153846153846156,
+        "acceptance_efficiency": 0.3157894736842105
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          3
+        ],
+        "selected_updates": 13,
+        "accepted_updates": 7,
+        "target_positive_candidates": 10,
+        "attempt_share": 0.40625,
+        "accepted_share": 0.5384615384615384,
+        "acceptance_efficiency": 0.5384615384615384
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 1,
+        "cluster_members": [
+          0,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": true,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.40625,
+        "cluster_accepted_share": 0.5384615384615384
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.59375,
+        "cluster_accepted_share": 0.46153846153846156
+      }
+    ],
+    "cluster_of_most_selected_agent": 1,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": true,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      4,
+      2,
+      2,
+      3,
+      2
+    ],
+    "target_positive_candidates_by_agent": [
+      6,
+      3,
+      2,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 10,
+        "target_positive_candidates": 16,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.7692307692307693,
+        "acceptance_efficiency": 0.38461538461538464
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.23076923076923078,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 4,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.5714285714285714,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.2857142857142857,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.15384615384615385,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.7692307692307693
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      3,
+      2,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      6,
+      3,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 12,
+        "target_positive_candidates": 18,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.8571428571428571,
+        "acceptance_efficiency": 0.46153846153846156
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          2
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 2,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.14285714285714285,
+        "acceptance_efficiency": 0.3333333333333333
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.21428571428571427,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8571428571428571
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.21428571428571427,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8571428571428571
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "selected_updates_by_agent": [
+      7,
+      7,
+      6,
+      6,
+      6
+    ],
+    "accepted_updates_by_agent": [
+      3,
+      3,
+      2,
+      3,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      6,
+      3,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "selected_updates": 26,
+        "accepted_updates": 12,
+        "target_positive_candidates": 18,
+        "attempt_share": 0.8125,
+        "accepted_share": 0.8571428571428571,
+        "acceptance_efficiency": 0.46153846153846156
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          2
+        ],
+        "selected_updates": 6,
+        "accepted_updates": 2,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.1875,
+        "accepted_share": 0.14285714285714285,
+        "acceptance_efficiency": 0.3333333333333333
+      }
+    ],
+    "most_selected_agents": [
+      0,
+      1
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 0,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.21428571428571427,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8571428571428571
+      },
+      {
+        "agent_id": 1,
+        "selected_updates": 7,
+        "accepted_updates": 3,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.42857142857142855,
+        "agent_attempt_share": 0.21875,
+        "agent_accepted_share": 0.21428571428571427,
+        "cluster_attempt_share": 0.8125,
+        "cluster_accepted_share": 0.8571428571428571
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      12,
+      7,
+      5
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      3,
+      2,
+      2,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      6,
+      3,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_updates": 27,
+        "accepted_updates": 8,
+        "target_positive_candidates": 16,
+        "attempt_share": 0.84375,
+        "accepted_share": 0.7272727272727273,
+        "acceptance_efficiency": 0.2962962962962963
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          4
+        ],
+        "selected_updates": 5,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.15625,
+        "accepted_share": 0.2727272727272727,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "most_selected_agents": [
+      2
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 2,
+        "selected_updates": 12,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.16666666666666666,
+        "agent_attempt_share": 0.375,
+        "agent_accepted_share": 0.18181818181818182,
+        "cluster_attempt_share": 0.84375,
+        "cluster_accepted_share": 0.7272727272727273
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      12,
+      7,
+      5
+    ],
+    "accepted_updates_by_agent": [
+      1,
+      3,
+      2,
+      2,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      3,
+      6,
+      3,
+      4,
+      4
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_updates": 27,
+        "accepted_updates": 8,
+        "target_positive_candidates": 16,
+        "attempt_share": 0.84375,
+        "accepted_share": 0.7272727272727273,
+        "acceptance_efficiency": 0.2962962962962963
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          4
+        ],
+        "selected_updates": 5,
+        "accepted_updates": 3,
+        "target_positive_candidates": 4,
+        "attempt_share": 0.15625,
+        "accepted_share": 0.2727272727272727,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "most_selected_agents": [
+      2
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 2,
+        "selected_updates": 12,
+        "accepted_updates": 2,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.16666666666666666,
+        "agent_attempt_share": 0.375,
+        "agent_accepted_share": 0.18181818181818182,
+        "cluster_attempt_share": 0.84375,
+        "cluster_accepted_share": 0.7272727272727273
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      4,
+      16,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      2,
+      2,
+      4,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      3,
+      4,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "selected_updates": 28,
+        "accepted_updates": 11,
+        "target_positive_candidates": 17,
+        "attempt_share": 0.875,
+        "accepted_share": 0.8461538461538461,
+        "acceptance_efficiency": 0.39285714285714285
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1
+        ],
+        "selected_updates": 4,
+        "accepted_updates": 2,
+        "target_positive_candidates": 3,
+        "attempt_share": 0.125,
+        "accepted_share": 0.15384615384615385,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      3
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 3,
+        "selected_updates": 16,
+        "accepted_updates": 4,
+        "cluster_id": 0,
+        "cluster_members": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.25,
+        "agent_attempt_share": 0.5,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.875,
+        "cluster_accepted_share": 0.8461538461538461
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "selected_updates_by_agent": [
+      4,
+      4,
+      4,
+      16,
+      4
+    ],
+    "accepted_updates_by_agent": [
+      2,
+      2,
+      2,
+      4,
+      3
+    ],
+    "target_positive_candidates_by_agent": [
+      4,
+      3,
+      4,
+      4,
+      5
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          3,
+          4
+        ],
+        "selected_updates": 24,
+        "accepted_updates": 9,
+        "target_positive_candidates": 12,
+        "attempt_share": 0.75,
+        "accepted_share": 0.6923076923076923,
+        "acceptance_efficiency": 0.375
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          2
+        ],
+        "selected_updates": 8,
+        "accepted_updates": 4,
+        "target_positive_candidates": 8,
+        "attempt_share": 0.25,
+        "accepted_share": 0.3076923076923077,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "most_selected_agents": [
+      3
+    ],
+    "most_selected_agent_details": [
+      {
+        "agent_id": 3,
+        "selected_updates": 16,
+        "accepted_updates": 4,
+        "cluster_id": 0,
+        "cluster_members": [
+          1,
+          3,
+          4
+        ],
+        "is_singleton_cluster": false,
+        "is_minority_cluster": false,
+        "acceptance_efficiency": 0.25,
+        "agent_attempt_share": 0.5,
+        "agent_accepted_share": 0.3076923076923077,
+        "cluster_attempt_share": 0.75,
+        "cluster_accepted_share": 0.6923076923076923
+      }
+    ],
+    "cluster_of_most_selected_agent": 0,
+    "is_singleton_cluster": false,
+    "is_minority_cluster": false,
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  }
+]

@@ -1,0 +1,2140 @@
+[
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "bootstrap_seed": 2086456796,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.999,
+        0.951,
+        0.049,
+        0.951
+      ],
+      [
+        0.999,
+        1.0,
+        0.95,
+        0.05,
+        0.95
+      ],
+      [
+        0.951,
+        0.95,
+        1.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.049,
+        0.05,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.951,
+        0.95,
+        1.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.9702,
+    "minimum_pair_support": 0.95,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "bootstrap_seed": 396026130,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.952,
+        0.783,
+        0.217,
+        0.783
+      ],
+      [
+        0.952,
+        1.0,
+        0.805,
+        0.195,
+        0.805
+      ],
+      [
+        0.783,
+        0.805,
+        1.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.217,
+        0.195,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.783,
+        0.805,
+        1.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8715999999999999,
+    "minimum_pair_support": 0.783,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "bootstrap_seed": 4167994579,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.258,
+        0.61,
+        0.691,
+        0.266
+      ],
+      [
+        0.258,
+        1.0,
+        0.138,
+        0.567,
+        0.986
+      ],
+      [
+        0.61,
+        0.138,
+        1.0,
+        0.333,
+        0.146
+      ],
+      [
+        0.691,
+        0.567,
+        0.333,
+        1.0,
+        0.565
+      ],
+      [
+        0.266,
+        0.986,
+        0.146,
+        0.565,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.6679999999999999,
+    "minimum_pair_support": 0.333,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.61
+      },
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.691
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.43300000000000005
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.333
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.43500000000000005
+      }
+    ],
+    "bootstrap_stability": "weak",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "bootstrap_seed": 1927952519,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.003,
+        0.854,
+        1.0,
+        0.147
+      ],
+      [
+        0.003,
+        1.0,
+        0.143,
+        0.003,
+        0.856
+      ],
+      [
+        0.854,
+        0.143,
+        1.0,
+        0.854,
+        0.287
+      ],
+      [
+        1.0,
+        0.003,
+        0.854,
+        1.0,
+        0.147
+      ],
+      [
+        0.147,
+        0.856,
+        0.287,
+        0.147,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8834,
+    "minimum_pair_support": 0.7130000000000001,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "bootstrap_seed": 3243703757,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.338,
+        0.904,
+        0.815,
+        0.182
+      ],
+      [
+        0.338,
+        1.0,
+        0.27,
+        0.171,
+        0.83
+      ],
+      [
+        0.904,
+        0.27,
+        1.0,
+        0.893,
+        0.118
+      ],
+      [
+        0.815,
+        0.171,
+        0.893,
+        1.0,
+        0.011
+      ],
+      [
+        0.182,
+        0.83,
+        0.118,
+        0.011,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8352,
+    "minimum_pair_support": 0.6619999999999999,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.6619999999999999
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "bootstrap_seed": 3350325063,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.43,
+        0.861,
+        0.706,
+        0.194
+      ],
+      [
+        0.43,
+        1.0,
+        0.367,
+        0.634,
+        0.612
+      ],
+      [
+        0.861,
+        0.367,
+        1.0,
+        0.697,
+        0.071
+      ],
+      [
+        0.706,
+        0.634,
+        0.697,
+        1.0,
+        0.262
+      ],
+      [
+        0.194,
+        0.612,
+        0.071,
+        0.262,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.6556,
+    "minimum_pair_support": 0.367,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.43
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.367
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.634
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.388
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.697
+      }
+    ],
+    "bootstrap_stability": "weak",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "bootstrap_seed": 1263622278,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.154,
+        0.459,
+        0.4,
+        0.324
+      ],
+      [
+        0.154,
+        1.0,
+        0.621,
+        0.684,
+        0.556
+      ],
+      [
+        0.459,
+        0.621,
+        1.0,
+        0.827,
+        0.825
+      ],
+      [
+        0.4,
+        0.684,
+        0.827,
+        1.0,
+        0.838
+      ],
+      [
+        0.324,
+        0.556,
+        0.825,
+        0.838,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7013999999999999,
+    "minimum_pair_support": 0.5409999999999999,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.5409999999999999
+      },
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.6
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.6759999999999999
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.621
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.684
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.556
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "bootstrap_seed": 1334905979,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.455,
+        0.113,
+        0.111,
+        0.111
+      ],
+      [
+        0.455,
+        1.0,
+        0.438,
+        0.438,
+        0.434
+      ],
+      [
+        0.113,
+        0.438,
+        1.0,
+        0.994,
+        0.996
+      ],
+      [
+        0.111,
+        0.438,
+        0.994,
+        1.0,
+        0.996
+      ],
+      [
+        0.111,
+        0.434,
+        0.996,
+        0.996,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7796000000000001,
+    "minimum_pair_support": 0.455,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.455
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.562
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.562
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.5660000000000001
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "bootstrap_seed": 3580673498,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.902,
+        0.786,
+        0.185,
+        0.904
+      ],
+      [
+        0.902,
+        1.0,
+        0.752,
+        0.213,
+        0.934
+      ],
+      [
+        0.786,
+        0.752,
+        1.0,
+        0.147,
+        0.696
+      ],
+      [
+        0.185,
+        0.213,
+        0.147,
+        1.0,
+        0.163
+      ],
+      [
+        0.904,
+        0.934,
+        0.696,
+        0.163,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8266,
+    "minimum_pair_support": 0.696,
+    "unstable_pairs": [
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.696
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "bootstrap_seed": 1864128534,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.577,
+        0.399,
+        0.616,
+        0.688
+      ],
+      [
+        0.577,
+        1.0,
+        0.144,
+        0.917,
+        0.797
+      ],
+      [
+        0.399,
+        0.144,
+        1.0,
+        0.069,
+        0.167
+      ],
+      [
+        0.616,
+        0.917,
+        0.069,
+        1.0,
+        0.798
+      ],
+      [
+        0.688,
+        0.797,
+        0.167,
+        0.798,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7614,
+    "minimum_pair_support": 0.577,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.577
+      },
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.601
+      },
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.616
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.688
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "bootstrap_seed": 1995352915,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.964,
+        0.631,
+        0.043,
+        0.986
+      ],
+      [
+        0.964,
+        1.0,
+        0.623,
+        0.007,
+        0.97
+      ],
+      [
+        0.631,
+        0.623,
+        1.0,
+        0.374,
+        0.621
+      ],
+      [
+        0.043,
+        0.007,
+        0.374,
+        1.0,
+        0.033
+      ],
+      [
+        0.986,
+        0.97,
+        0.621,
+        0.033,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8337999999999999,
+    "minimum_pair_support": 0.621,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.631
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.623
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.626
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.621
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "bootstrap_seed": 584059307,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.996,
+        0.72,
+        0.007,
+        0.994
+      ],
+      [
+        0.996,
+        1.0,
+        0.716,
+        0.005,
+        0.992
+      ],
+      [
+        0.72,
+        0.716,
+        1.0,
+        0.283,
+        0.72
+      ],
+      [
+        0.007,
+        0.005,
+        0.283,
+        1.0,
+        0.007
+      ],
+      [
+        0.994,
+        0.992,
+        0.72,
+        0.007,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8836,
+    "minimum_pair_support": 0.716,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "bootstrap_seed": 1831146353,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.392,
+        0.788,
+        0.206,
+        0.788
+      ],
+      [
+        0.392,
+        1.0,
+        0.19,
+        0.814,
+        0.19
+      ],
+      [
+        0.788,
+        0.19,
+        1.0,
+        0.006,
+        1.0
+      ],
+      [
+        0.206,
+        0.814,
+        0.006,
+        1.0,
+        0.006
+      ],
+      [
+        0.788,
+        0.19,
+        1.0,
+        0.006,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8400000000000001,
+    "minimum_pair_support": 0.608,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.608
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "bootstrap_seed": 622330755,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.118,
+        0.878,
+        0.118,
+        0.878
+      ],
+      [
+        0.118,
+        1.0,
+        0.004,
+        1.0,
+        0.004
+      ],
+      [
+        0.878,
+        0.004,
+        1.0,
+        0.004,
+        1.0
+      ],
+      [
+        0.118,
+        1.0,
+        0.004,
+        1.0,
+        0.004
+      ],
+      [
+        0.878,
+        0.004,
+        1.0,
+        0.004,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.9503999999999999,
+    "minimum_pair_support": 0.878,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "bootstrap_seed": 447317806,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.283,
+        0.197,
+        0.161,
+        0.196
+      ],
+      [
+        0.283,
+        1.0,
+        0.568,
+        0.636,
+        0.567
+      ],
+      [
+        0.197,
+        0.568,
+        1.0,
+        0.884,
+        0.999
+      ],
+      [
+        0.161,
+        0.636,
+        0.884,
+        1.0,
+        0.885
+      ],
+      [
+        0.196,
+        0.567,
+        0.999,
+        0.885,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7702,
+    "minimum_pair_support": 0.567,
+    "unstable_pairs": [
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.568
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.636
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.567
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "bootstrap_seed": 2304015150,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.87,
+        0.002,
+        0.003,
+        0.002
+      ],
+      [
+        0.87,
+        1.0,
+        0.128,
+        0.129,
+        0.128
+      ],
+      [
+        0.002,
+        0.128,
+        1.0,
+        0.999,
+        1.0
+      ],
+      [
+        0.003,
+        0.129,
+        0.999,
+        1.0,
+        0.999
+      ],
+      [
+        0.002,
+        0.128,
+        1.0,
+        0.999,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.9475999999999999,
+    "minimum_pair_support": 0.87,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "bootstrap_seed": 3035782469,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.876,
+        0.382,
+        0.088,
+        0.46
+      ],
+      [
+        0.876,
+        1.0,
+        0.324,
+        0.036,
+        0.398
+      ],
+      [
+        0.382,
+        0.324,
+        1.0,
+        0.706,
+        0.922
+      ],
+      [
+        0.088,
+        0.036,
+        0.706,
+        1.0,
+        0.628
+      ],
+      [
+        0.46,
+        0.398,
+        0.922,
+        0.628,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7444,
+    "minimum_pair_support": 0.54,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.618
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.54
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.6759999999999999
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.602
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.628
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "bootstrap_seed": 3414171492,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.97,
+        0.999,
+        0.028,
+        0.999
+      ],
+      [
+        0.97,
+        1.0,
+        0.969,
+        0.002,
+        0.969
+      ],
+      [
+        0.999,
+        0.969,
+        1.0,
+        0.029,
+        1.0
+      ],
+      [
+        0.028,
+        0.002,
+        0.029,
+        1.0,
+        0.029
+      ],
+      [
+        0.999,
+        0.969,
+        1.0,
+        0.029,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.9818,
+    "minimum_pair_support": 0.969,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "bootstrap_seed": 2563107308,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.239,
+        0.249,
+        0.229,
+        0.132
+      ],
+      [
+        0.239,
+        1.0,
+        0.988,
+        0.97,
+        0.669
+      ],
+      [
+        0.249,
+        0.988,
+        1.0,
+        0.962,
+        0.661
+      ],
+      [
+        0.229,
+        0.97,
+        0.962,
+        1.0,
+        0.639
+      ],
+      [
+        0.132,
+        0.669,
+        0.661,
+        0.639,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8039999999999999,
+    "minimum_pair_support": 0.639,
+    "unstable_pairs": [
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.669
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.661
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.639
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "bootstrap_seed": 4162814474,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.087,
+        0.261,
+        0.043,
+        0.631
+      ],
+      [
+        0.087,
+        1.0,
+        0.766,
+        0.956,
+        0.376
+      ],
+      [
+        0.261,
+        0.766,
+        1.0,
+        0.776,
+        0.464
+      ],
+      [
+        0.043,
+        0.956,
+        0.776,
+        1.0,
+        0.332
+      ],
+      [
+        0.631,
+        0.376,
+        0.464,
+        0.332,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7565999999999999,
+    "minimum_pair_support": 0.536,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.631
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.624
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.536
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.6679999999999999
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "split": "train",
+    "bootstrap_seed": 1768020066,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.535,
+        0.222,
+        0.449,
+        0.261
+      ],
+      [
+        0.535,
+        1.0,
+        0.543,
+        0.752,
+        0.716
+      ],
+      [
+        0.222,
+        0.543,
+        1.0,
+        0.335,
+        0.639
+      ],
+      [
+        0.449,
+        0.752,
+        0.335,
+        1.0,
+        0.696
+      ],
+      [
+        0.261,
+        0.716,
+        0.639,
+        0.696,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.6214,
+    "minimum_pair_support": 0.335,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.46499999999999997
+      },
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.5509999999999999
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.543
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.335
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.639
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.696
+      }
+    ],
+    "bootstrap_stability": "weak",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "split": "test",
+    "bootstrap_seed": 71623793,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.684,
+        0.49,
+        0.018,
+        0.019
+      ],
+      [
+        0.684,
+        1.0,
+        0.732,
+        0.326,
+        0.333
+      ],
+      [
+        0.49,
+        0.732,
+        1.0,
+        0.494,
+        0.499
+      ],
+      [
+        0.018,
+        0.326,
+        0.494,
+        1.0,
+        0.993
+      ],
+      [
+        0.019,
+        0.333,
+        0.499,
+        0.993,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.721,
+    "minimum_pair_support": 0.49,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.684
+      },
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.49
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.6739999999999999
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.667
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.506
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.501
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "split": "train",
+    "bootstrap_seed": 596788656,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.414,
+        0.401,
+        0.363,
+        0.512
+      ],
+      [
+        0.414,
+        1.0,
+        0.797,
+        0.287,
+        0.864
+      ],
+      [
+        0.401,
+        0.797,
+        1.0,
+        0.438,
+        0.745
+      ],
+      [
+        0.363,
+        0.287,
+        0.438,
+        1.0,
+        0.271
+      ],
+      [
+        0.512,
+        0.864,
+        0.745,
+        0.271,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.6446,
+    "minimum_pair_support": 0.363,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.5860000000000001
+      },
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.599
+      },
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.363
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.488
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.562
+      }
+    ],
+    "bootstrap_stability": "weak",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "split": "test",
+    "bootstrap_seed": 187792938,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.661,
+        0.681,
+        0.136,
+        0.659
+      ],
+      [
+        0.661,
+        1.0,
+        0.98,
+        0.205,
+        0.998
+      ],
+      [
+        0.681,
+        0.98,
+        1.0,
+        0.191,
+        0.978
+      ],
+      [
+        0.136,
+        0.205,
+        0.191,
+        1.0,
+        0.205
+      ],
+      [
+        0.659,
+        0.998,
+        0.978,
+        0.205,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8220000000000001,
+    "minimum_pair_support": 0.659,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.661
+      },
+      {
+        "agents": [
+          0,
+          2
+        ],
+        "support": 0.681
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.659
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "train",
+    "bootstrap_seed": 784434008,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.881,
+        0.049,
+        0.884,
+        0.741
+      ],
+      [
+        0.881,
+        1.0,
+        0.092,
+        0.993,
+        0.69
+      ],
+      [
+        0.049,
+        0.092,
+        1.0,
+        0.099,
+        0.286
+      ],
+      [
+        0.884,
+        0.993,
+        0.099,
+        1.0,
+        0.695
+      ],
+      [
+        0.741,
+        0.69,
+        0.286,
+        0.695,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.8358000000000001,
+    "minimum_pair_support": 0.69,
+    "unstable_pairs": [
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.69
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.695
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "split": "test",
+    "bootstrap_seed": 4199594209,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.525,
+        0.056,
+        0.808,
+        0.997
+      ],
+      [
+        0.525,
+        1.0,
+        0.453,
+        0.633,
+        0.526
+      ],
+      [
+        0.056,
+        0.453,
+        1.0,
+        0.186,
+        0.055
+      ],
+      [
+        0.808,
+        0.633,
+        0.186,
+        1.0,
+        0.811
+      ],
+      [
+        0.997,
+        0.526,
+        0.055,
+        0.811,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.755,
+    "minimum_pair_support": 0.525,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.525
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.5469999999999999
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.633
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.526
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "bootstrap_seed": 3051265758,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.626,
+        0.961,
+        0.879,
+        0.378
+      ],
+      [
+        0.626,
+        1.0,
+        0.587,
+        0.511,
+        0.01
+      ],
+      [
+        0.961,
+        0.587,
+        1.0,
+        0.904,
+        0.403
+      ],
+      [
+        0.879,
+        0.511,
+        0.904,
+        1.0,
+        0.499
+      ],
+      [
+        0.378,
+        0.01,
+        0.403,
+        0.499,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7178,
+    "minimum_pair_support": 0.501,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          1
+        ],
+        "support": 0.626
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.622
+      },
+      {
+        "agents": [
+          1,
+          2
+        ],
+        "support": 0.587
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.511
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.597
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.501
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "bootstrap_seed": 3243261037,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.973,
+        0.916,
+        0.985,
+        0.027
+      ],
+      [
+        0.973,
+        1.0,
+        0.889,
+        0.958,
+        0.0
+      ],
+      [
+        0.916,
+        0.889,
+        1.0,
+        0.931,
+        0.111
+      ],
+      [
+        0.985,
+        0.958,
+        0.931,
+        1.0,
+        0.042
+      ],
+      [
+        0.027,
+        0.0,
+        0.111,
+        0.042,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.9471999999999999,
+    "minimum_pair_support": 0.889,
+    "unstable_pairs": [],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "bootstrap_seed": 3700054745,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.217,
+        0.892,
+        0.644,
+        0.456
+      ],
+      [
+        0.217,
+        1.0,
+        0.285,
+        0.461,
+        0.333
+      ],
+      [
+        0.892,
+        0.285,
+        1.0,
+        0.738,
+        0.546
+      ],
+      [
+        0.644,
+        0.461,
+        0.738,
+        1.0,
+        0.798
+      ],
+      [
+        0.456,
+        0.333,
+        0.546,
+        0.798,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.6778000000000001,
+    "minimum_pair_support": 0.456,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.644
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.456
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.5389999999999999
+      },
+      {
+        "agents": [
+          1,
+          4
+        ],
+        "support": 0.667
+      },
+      {
+        "agents": [
+          2,
+          4
+        ],
+        "support": 0.546
+      }
+    ],
+    "bootstrap_stability": "weak",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "bootstrap_seed": 280865897,
+    "replicates": 1000,
+    "consensus_matrix": [
+      [
+        1.0,
+        0.283,
+        0.725,
+        0.613,
+        0.307
+      ],
+      [
+        0.283,
+        1.0,
+        0.024,
+        0.614,
+        0.944
+      ],
+      [
+        0.725,
+        0.024,
+        1.0,
+        0.406,
+        0.048
+      ],
+      [
+        0.613,
+        0.614,
+        0.406,
+        1.0,
+        0.642
+      ],
+      [
+        0.307,
+        0.944,
+        0.048,
+        0.642,
+        1.0
+      ]
+    ],
+    "bootstrap_partition_support": 0.7243999999999999,
+    "minimum_pair_support": 0.387,
+    "unstable_pairs": [
+      {
+        "agents": [
+          0,
+          3
+        ],
+        "support": 0.387
+      },
+      {
+        "agents": [
+          0,
+          4
+        ],
+        "support": 0.6930000000000001
+      },
+      {
+        "agents": [
+          1,
+          3
+        ],
+        "support": 0.614
+      },
+      {
+        "agents": [
+          2,
+          3
+        ],
+        "support": 0.594
+      },
+      {
+        "agents": [
+          3,
+          4
+        ],
+        "support": 0.642
+      }
+    ],
+    "bootstrap_stability": "supported",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  }
+]

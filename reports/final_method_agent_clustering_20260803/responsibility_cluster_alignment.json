@@ -1,0 +1,1120 @@
+[
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 2,
+        "S_i": 38,
+        "d_i": 4,
+        "portfolio_size": 19,
+        "coverage_residual_count": 8,
+        "conversion_residual_count": 11
+      },
+      {
+        "agent_id": 1,
+        "D_i": 5,
+        "S_i": 38,
+        "d_i": 3,
+        "portfolio_size": 19,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 34,
+        "d_i": 0,
+        "portfolio_size": 17,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 3,
+        "D_i": 3,
+        "S_i": 34,
+        "d_i": 2,
+        "portfolio_size": 17,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 4,
+        "D_i": 2,
+        "S_i": 30,
+        "d_i": 0,
+        "portfolio_size": 15,
+        "coverage_residual_count": 6,
+        "conversion_residual_count": 9
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "cluster_D": 11,
+        "cluster_S": 136,
+        "cluster_uplift_deficit": 5,
+        "responsibility_share": 0.7816091954022989,
+        "selected_update_share": 0.71875,
+        "accepted_update_share": 0.8,
+        "acceptance_efficiency": 0.34782608695652173
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "cluster_D": 2,
+        "cluster_S": 38,
+        "cluster_uplift_deficit": 4,
+        "responsibility_share": 0.21839080459770116,
+        "selected_update_share": 0.28125,
+        "accepted_update_share": 0.2,
+        "acceptance_efficiency": 0.2222222222222222
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0,
+      1,
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      0,
+      1
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 2,
+        "S_i": 38,
+        "d_i": 4,
+        "portfolio_size": 19,
+        "coverage_residual_count": 8,
+        "conversion_residual_count": 11
+      },
+      {
+        "agent_id": 1,
+        "D_i": 5,
+        "S_i": 38,
+        "d_i": 3,
+        "portfolio_size": 19,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 34,
+        "d_i": 0,
+        "portfolio_size": 17,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 3,
+        "D_i": 3,
+        "S_i": 34,
+        "d_i": 2,
+        "portfolio_size": 17,
+        "coverage_residual_count": 7,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 4,
+        "D_i": 2,
+        "S_i": 30,
+        "d_i": 0,
+        "portfolio_size": 15,
+        "coverage_residual_count": 6,
+        "conversion_residual_count": 9
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          2,
+          3,
+          4
+        ],
+        "cluster_D": 6,
+        "cluster_S": 98,
+        "cluster_uplift_deficit": 2,
+        "responsibility_share": 0.5632183908045977,
+        "selected_update_share": 0.4375,
+        "accepted_update_share": 0.7,
+        "acceptance_efficiency": 0.5
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          1
+        ],
+        "cluster_D": 7,
+        "cluster_S": 76,
+        "cluster_uplift_deficit": 7,
+        "responsibility_share": 0.4367816091954023,
+        "selected_update_share": 0.5625,
+        "accepted_update_share": 0.3,
+        "acceptance_efficiency": 0.16666666666666666
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0,
+      1,
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      0,
+      1
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 2,
+        "S_i": 39,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 7
+      },
+      {
+        "agent_id": 1,
+        "D_i": 1,
+        "S_i": 41,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 2,
+        "D_i": 2,
+        "S_i": 40,
+        "d_i": 3,
+        "portfolio_size": 20,
+        "coverage_residual_count": 12,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 33,
+        "d_i": 0,
+        "portfolio_size": 17,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 4
+      },
+      {
+        "agent_id": 4,
+        "D_i": 3,
+        "S_i": 41,
+        "d_i": 1,
+        "portfolio_size": 21,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 8
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "cluster_D": 8,
+        "cluster_S": 161,
+        "cluster_uplift_deficit": 4,
+        "responsibility_share": 0.8282828282828283,
+        "selected_update_share": 0.84375,
+        "accepted_update_share": 0.8125,
+        "acceptance_efficiency": 0.48148148148148145
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "cluster_D": 1,
+        "cluster_S": 33,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.1717171717171717,
+        "selected_update_share": 0.15625,
+        "accepted_update_share": 0.1875,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      1,
+      2
+    ],
+    "high_attempt_low_acceptance_agents": [
+      2
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 2,
+        "S_i": 39,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 7
+      },
+      {
+        "agent_id": 1,
+        "D_i": 1,
+        "S_i": 41,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 2,
+        "D_i": 2,
+        "S_i": 40,
+        "d_i": 3,
+        "portfolio_size": 20,
+        "coverage_residual_count": 12,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 33,
+        "d_i": 0,
+        "portfolio_size": 17,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 4
+      },
+      {
+        "agent_id": 4,
+        "D_i": 3,
+        "S_i": 41,
+        "d_i": 1,
+        "portfolio_size": 21,
+        "coverage_residual_count": 13,
+        "conversion_residual_count": 8
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "cluster_D": 7,
+        "cluster_S": 154,
+        "cluster_uplift_deficit": 1,
+        "responsibility_share": 0.797979797979798,
+        "selected_update_share": 0.75,
+        "accepted_update_share": 0.875,
+        "acceptance_efficiency": 0.5833333333333334
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          2
+        ],
+        "cluster_D": 2,
+        "cluster_S": 40,
+        "cluster_uplift_deficit": 3,
+        "responsibility_share": 0.20202020202020202,
+        "selected_update_share": 0.25,
+        "accepted_update_share": 0.125,
+        "acceptance_efficiency": 0.25
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      1,
+      2
+    ],
+    "high_attempt_low_acceptance_agents": [
+      2
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 3,
+        "S_i": 56,
+        "d_i": 9,
+        "portfolio_size": 28,
+        "coverage_residual_count": 19,
+        "conversion_residual_count": 9
+      },
+      {
+        "agent_id": 1,
+        "D_i": 3,
+        "S_i": 48,
+        "d_i": 0,
+        "portfolio_size": 24,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 6
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 54,
+        "d_i": 0,
+        "portfolio_size": 27,
+        "coverage_residual_count": 19,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 46,
+        "d_i": 0,
+        "portfolio_size": 23,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 5
+      },
+      {
+        "agent_id": 4,
+        "D_i": 4,
+        "S_i": 58,
+        "d_i": 0,
+        "portfolio_size": 29,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 11
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          2,
+          3,
+          4
+        ],
+        "cluster_D": 6,
+        "cluster_S": 158,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.6030534351145038,
+        "selected_update_share": 0.4375,
+        "accepted_update_share": 0.7,
+        "acceptance_efficiency": 0.5
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          1
+        ],
+        "cluster_D": 6,
+        "cluster_S": 104,
+        "cluster_uplift_deficit": 9,
+        "responsibility_share": 0.3969465648854962,
+        "selected_update_share": 0.5625,
+        "accepted_update_share": 0.3,
+        "acceptance_efficiency": 0.16666666666666666
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0
+    ],
+    "high_attempt_low_acceptance_agents": [
+      0
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 3,
+        "S_i": 56,
+        "d_i": 9,
+        "portfolio_size": 28,
+        "coverage_residual_count": 19,
+        "conversion_residual_count": 9
+      },
+      {
+        "agent_id": 1,
+        "D_i": 3,
+        "S_i": 48,
+        "d_i": 0,
+        "portfolio_size": 24,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 6
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 54,
+        "d_i": 0,
+        "portfolio_size": 27,
+        "coverage_residual_count": 19,
+        "conversion_residual_count": 8
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 46,
+        "d_i": 0,
+        "portfolio_size": 23,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 5
+      },
+      {
+        "agent_id": 4,
+        "D_i": 4,
+        "S_i": 58,
+        "d_i": 0,
+        "portfolio_size": 29,
+        "coverage_residual_count": 18,
+        "conversion_residual_count": 11
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "cluster_D": 11,
+        "cluster_S": 216,
+        "cluster_uplift_deficit": 9,
+        "responsibility_share": 0.8244274809160306,
+        "selected_update_share": 0.875,
+        "accepted_update_share": 0.7,
+        "acceptance_efficiency": 0.25
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          3
+        ],
+        "cluster_D": 1,
+        "cluster_S": 46,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.17557251908396945,
+        "selected_update_share": 0.125,
+        "accepted_update_share": 0.3,
+        "acceptance_efficiency": 0.75
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0
+    ],
+    "high_attempt_low_acceptance_agents": [
+      0
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 0,
+        "S_i": 28,
+        "d_i": 0,
+        "portfolio_size": 14,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 5
+      },
+      {
+        "agent_id": 1,
+        "D_i": 6,
+        "S_i": 54,
+        "d_i": 2,
+        "portfolio_size": 27,
+        "coverage_residual_count": 11,
+        "conversion_residual_count": 16
+      },
+      {
+        "agent_id": 2,
+        "D_i": 4,
+        "S_i": 48,
+        "d_i": 1,
+        "portfolio_size": 24,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 14
+      },
+      {
+        "agent_id": 3,
+        "D_i": 6,
+        "S_i": 54,
+        "d_i": 13,
+        "portfolio_size": 27,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 17
+      },
+      {
+        "agent_id": 4,
+        "D_i": 2,
+        "S_i": 36,
+        "d_i": 0,
+        "portfolio_size": 18,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 8
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "cluster_D": 18,
+        "cluster_S": 192,
+        "cluster_uplift_deficit": 16,
+        "responsibility_share": 0.8727272727272727,
+        "selected_update_share": 0.875,
+        "accepted_update_share": 0.75,
+        "acceptance_efficiency": 0.21428571428571427
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0
+        ],
+        "cluster_D": 0,
+        "cluster_S": 28,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.12727272727272726,
+        "selected_update_share": 0.125,
+        "accepted_update_share": 0.25,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 0,
+        "S_i": 28,
+        "d_i": 0,
+        "portfolio_size": 14,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 5
+      },
+      {
+        "agent_id": 1,
+        "D_i": 6,
+        "S_i": 54,
+        "d_i": 2,
+        "portfolio_size": 27,
+        "coverage_residual_count": 11,
+        "conversion_residual_count": 16
+      },
+      {
+        "agent_id": 2,
+        "D_i": 4,
+        "S_i": 48,
+        "d_i": 1,
+        "portfolio_size": 24,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 14
+      },
+      {
+        "agent_id": 3,
+        "D_i": 6,
+        "S_i": 54,
+        "d_i": 13,
+        "portfolio_size": 27,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 17
+      },
+      {
+        "agent_id": 4,
+        "D_i": 2,
+        "S_i": 36,
+        "d_i": 0,
+        "portfolio_size": 18,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 8
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          2,
+          3
+        ],
+        "cluster_D": 16,
+        "cluster_S": 156,
+        "cluster_uplift_deficit": 16,
+        "responsibility_share": 0.7090909090909091,
+        "selected_update_share": 0.75,
+        "accepted_update_share": 0.625,
+        "acceptance_efficiency": 0.20833333333333334
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          4
+        ],
+        "cluster_D": 2,
+        "cluster_S": 64,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.2909090909090909,
+        "selected_update_share": 0.25,
+        "accepted_update_share": 0.375,
+        "acceptance_efficiency": 0.375
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 1,
+        "S_i": 42,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 1,
+        "D_i": 1,
+        "S_i": 30,
+        "d_i": 0,
+        "portfolio_size": 15,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 6
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 40,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 42,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 4,
+        "D_i": 1,
+        "S_i": 30,
+        "d_i": 3,
+        "portfolio_size": 15,
+        "coverage_residual_count": 8,
+        "conversion_residual_count": 7
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cluster_D": 4,
+        "cluster_S": 154,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.8369565217391305,
+        "selected_update_share": 0.84375,
+        "accepted_update_share": 0.7272727272727273,
+        "acceptance_efficiency": 0.2962962962962963
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          4
+        ],
+        "cluster_D": 1,
+        "cluster_S": 30,
+        "cluster_uplift_deficit": 3,
+        "responsibility_share": 0.16304347826086957,
+        "selected_update_share": 0.15625,
+        "accepted_update_share": 0.2727272727272727,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0,
+      2,
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      2,
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 1,
+        "S_i": 42,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 1,
+        "D_i": 1,
+        "S_i": 30,
+        "d_i": 0,
+        "portfolio_size": 15,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 6
+      },
+      {
+        "agent_id": 2,
+        "D_i": 1,
+        "S_i": 40,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 3,
+        "D_i": 1,
+        "S_i": 42,
+        "d_i": 0,
+        "portfolio_size": 21,
+        "coverage_residual_count": 9,
+        "conversion_residual_count": 12
+      },
+      {
+        "agent_id": 4,
+        "D_i": 1,
+        "S_i": 30,
+        "d_i": 3,
+        "portfolio_size": 15,
+        "coverage_residual_count": 8,
+        "conversion_residual_count": 7
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cluster_D": 4,
+        "cluster_S": 154,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.8369565217391305,
+        "selected_update_share": 0.84375,
+        "accepted_update_share": 0.7272727272727273,
+        "acceptance_efficiency": 0.2962962962962963
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          4
+        ],
+        "cluster_D": 1,
+        "cluster_S": 30,
+        "cluster_uplift_deficit": 3,
+        "responsibility_share": 0.16304347826086957,
+        "selected_update_share": 0.15625,
+        "accepted_update_share": 0.2727272727272727,
+        "acceptance_efficiency": 0.6
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      0,
+      2,
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      2,
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "train",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 3,
+        "S_i": 40,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 1,
+        "D_i": 4,
+        "S_i": 38,
+        "d_i": 0,
+        "portfolio_size": 19,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 9
+      },
+      {
+        "agent_id": 2,
+        "D_i": 6,
+        "S_i": 50,
+        "d_i": 5,
+        "portfolio_size": 25,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 15
+      },
+      {
+        "agent_id": 3,
+        "D_i": 8,
+        "S_i": 58,
+        "d_i": 6,
+        "portfolio_size": 29,
+        "coverage_residual_count": 12,
+        "conversion_residual_count": 17
+      },
+      {
+        "agent_id": 4,
+        "D_i": 5,
+        "S_i": 44,
+        "d_i": 0,
+        "portfolio_size": 22,
+        "coverage_residual_count": 11,
+        "conversion_residual_count": 11
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "cluster_D": 22,
+        "cluster_S": 192,
+        "cluster_uplift_deficit": 11,
+        "responsibility_share": 0.8347826086956521,
+        "selected_update_share": 0.875,
+        "accepted_update_share": 0.8461538461538461,
+        "acceptance_efficiency": 0.39285714285714285
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          1
+        ],
+        "cluster_D": 4,
+        "cluster_S": 38,
+        "cluster_uplift_deficit": 0,
+        "responsibility_share": 0.16521739130434782,
+        "selected_update_share": 0.125,
+        "accepted_update_share": 0.15384615384615385,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "split": "test",
+    "per_agent": [
+      {
+        "agent_id": 0,
+        "D_i": 3,
+        "S_i": 40,
+        "d_i": 0,
+        "portfolio_size": 20,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 10
+      },
+      {
+        "agent_id": 1,
+        "D_i": 4,
+        "S_i": 38,
+        "d_i": 0,
+        "portfolio_size": 19,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 9
+      },
+      {
+        "agent_id": 2,
+        "D_i": 6,
+        "S_i": 50,
+        "d_i": 5,
+        "portfolio_size": 25,
+        "coverage_residual_count": 10,
+        "conversion_residual_count": 15
+      },
+      {
+        "agent_id": 3,
+        "D_i": 8,
+        "S_i": 58,
+        "d_i": 6,
+        "portfolio_size": 29,
+        "coverage_residual_count": 12,
+        "conversion_residual_count": 17
+      },
+      {
+        "agent_id": 4,
+        "D_i": 5,
+        "S_i": 44,
+        "d_i": 0,
+        "portfolio_size": 22,
+        "coverage_residual_count": 11,
+        "conversion_residual_count": 11
+      }
+    ],
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "members": [
+          1,
+          3,
+          4
+        ],
+        "cluster_D": 17,
+        "cluster_S": 140,
+        "cluster_uplift_deficit": 6,
+        "responsibility_share": 0.6086956521739131,
+        "selected_update_share": 0.75,
+        "accepted_update_share": 0.6923076923076923,
+        "acceptance_efficiency": 0.375
+      },
+      {
+        "cluster_id": 1,
+        "members": [
+          0,
+          2
+        ],
+        "cluster_D": 9,
+        "cluster_S": 90,
+        "cluster_uplift_deficit": 5,
+        "responsibility_share": 0.391304347826087,
+        "selected_update_share": 0.25,
+        "accepted_update_share": 0.3076923076923077,
+        "acceptance_efficiency": 0.5
+      }
+    ],
+    "high_responsibility_low_efficiency_agents": [
+      3
+    ],
+    "high_attempt_low_acceptance_agents": [
+      3
+    ],
+    "diagnostic_rule": "high responsibility means D_i or S_i at/above run median; low efficiency means below run-wide acceptance efficiency",
+    "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+  }
+]

@@ -1,0 +1,110 @@
+{
+  "analysis_version": "final_method_agent_clustering_v1",
+  "settings": [
+    {
+      "setting": "shared_independent_accuracy",
+      "available_split_count": 6,
+      "dominant_cluster_size_pattern": "4+1",
+      "size_pattern_counts": {
+        "4+1": 5,
+        "3+2": 1
+      },
+      "cluster_strength_counts": {
+        "strong": 4,
+        "moderate": 2
+      },
+      "mean_silhouette": 0.2637685768627065,
+      "mean_within_between_gap": 0.22041496038700623,
+      "mean_bootstrap_support": 0.8169333333333334,
+      "train_test_stable_seed_count": 2,
+      "cluster_strength_vs_mean_M_correlation": 0.164675925202789,
+      "cluster_strength_vs_same_wrong_correlation": 0.15521218851239388,
+      "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+    },
+    {
+      "setting": "shared_peer_state_vote_first",
+      "available_split_count": 6,
+      "dominant_cluster_size_pattern": "3+2",
+      "size_pattern_counts": {
+        "3+2": 5,
+        "4+1": 1
+      },
+      "cluster_strength_counts": {
+        "moderate": 3,
+        "strong": 3
+      },
+      "mean_silhouette": 0.3254560577935274,
+      "mean_within_between_gap": 0.18967551201540908,
+      "mean_bootstrap_support": 0.8014,
+      "train_test_stable_seed_count": 2,
+      "cluster_strength_vs_mean_M_correlation": -0.5382461818746842,
+      "cluster_strength_vs_same_wrong_correlation": -0.09976650349665558,
+      "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+    },
+    {
+      "setting": "shared_peer_state_member_pareto",
+      "available_split_count": 6,
+      "dominant_cluster_size_pattern": "4+1",
+      "size_pattern_counts": {
+        "3+2": 2,
+        "4+1": 4
+      },
+      "cluster_strength_counts": {
+        "strong": 3,
+        "moderate": 3
+      },
+      "mean_silhouette": 0.24702522412532313,
+      "mean_within_between_gap": 0.15782642587082293,
+      "mean_bootstrap_support": 0.7999,
+      "train_test_stable_seed_count": 1,
+      "cluster_strength_vs_mean_M_correlation": -0.2009765389804986,
+      "cluster_strength_vs_same_wrong_correlation": -0.33708529722296676,
+      "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+    },
+    {
+      "setting": "shared_member_aware_responsibility",
+      "available_split_count": 6,
+      "dominant_cluster_size_pattern": "4+1",
+      "size_pattern_counts": {
+        "4+1": 4,
+        "3+2": 2
+      },
+      "cluster_strength_counts": {
+        "moderate": 2,
+        "strong": 4
+      },
+      "mean_silhouette": 0.2616974684801687,
+      "mean_within_between_gap": 0.22126774455311515,
+      "mean_bootstrap_support": 0.8120333333333333,
+      "train_test_stable_seed_count": 1,
+      "cluster_strength_vs_mean_M_correlation": -0.5468527292116564,
+      "cluster_strength_vs_same_wrong_correlation": 0.10433869992768724,
+      "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+    },
+    {
+      "setting": "shared_member_aware_full",
+      "available_split_count": 6,
+      "dominant_cluster_size_pattern": "4+1",
+      "size_pattern_counts": {
+        "4+1": 4,
+        "3+2": 2
+      },
+      "cluster_strength_counts": {
+        "moderate": 6
+      },
+      "mean_silhouette": 0.18797844042029074,
+      "mean_within_between_gap": 0.13489640399761138,
+      "mean_bootstrap_support": 0.7584666666666666,
+      "train_test_stable_seed_count": 0,
+      "cluster_strength_vs_mean_M_correlation": -0.2528146032834922,
+      "cluster_strength_vs_same_wrong_correlation": -0.6506551102945025,
+      "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+    }
+  ],
+  "overall_relationships": {
+    "within_between_gap_vs_mean_M_correlation": -0.1766831042105737,
+    "within_between_gap_vs_same_wrong_excess_correlation": 0.003310102295994928,
+    "within_between_gap_vs_team_vote_accuracy_correlation": -0.15946747753206394
+  },
+  "strictness_status": "exploratory_due_to_unmatched_repeated_test_observations"
+}
