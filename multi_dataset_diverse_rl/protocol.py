@@ -29,6 +29,7 @@ class ExperimentProtocol:
     tcs_context_policy: str
     candidate_selection_policy: str
     responsibility_refresh_policy: str
+    repairability_freeze_enabled: bool
     initialization_mode: InitializationMode
     tie_policy: str
     candidate_budget_contract: CandidateBudgetContract
@@ -54,6 +55,7 @@ def experiment_protocol(
             tcs_context_policy="none",
             candidate_selection_policy="none",
             responsibility_refresh_policy="off",
+            repairability_freeze_enabled=False,
         ),
         "shared_independent_accuracy": dict(
             optimization_enabled=True,
@@ -62,6 +64,7 @@ def experiment_protocol(
             tcs_context_policy="generic_accuracy",
             candidate_selection_policy="individual_accuracy",
             responsibility_refresh_policy="off",
+            repairability_freeze_enabled=False,
         ),
         "shared_peer_state_vote_first": dict(
             optimization_enabled=True,
@@ -70,6 +73,7 @@ def experiment_protocol(
             tcs_context_policy="generic_peer_state",
             candidate_selection_policy="vote_first",
             responsibility_refresh_policy="off",
+            repairability_freeze_enabled=False,
         ),
         "shared_peer_state_member_pareto": dict(
             optimization_enabled=True,
@@ -78,6 +82,7 @@ def experiment_protocol(
             tcs_context_policy="generic_peer_state",
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="off",
+            repairability_freeze_enabled=False,
         ),
         "shared_member_aware_responsibility": dict(
             optimization_enabled=True,
@@ -86,6 +91,7 @@ def experiment_protocol(
             tcs_context_policy="generic_peer_state",
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
+            repairability_freeze_enabled=True,
         ),
         "shared_member_aware_full": dict(
             optimization_enabled=True,
@@ -94,6 +100,7 @@ def experiment_protocol(
             tcs_context_policy="member_aware_responsibility_conditioned",
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
+            repairability_freeze_enabled=True,
         ),
     }
     if name not in definitions:

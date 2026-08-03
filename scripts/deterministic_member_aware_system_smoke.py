@@ -316,11 +316,12 @@ async def run_smoke() -> dict[str, object]:
             or decision.get("target_assigned_residual_count", 0) > 0
             for decision in system.candidate_decisions
         ),
-        "default_catchup_disabled": (
-            cfg.responsibility.member_catchup_mode == "off"
-            and all(
-                decision.get("update_lane") != "generic_member_catchup"
-                for decision in system.candidate_decisions
+        "compensation_paths_removed": (
+            not hasattr(
+                cfg.responsibility, "responsibility_" + "max_wait_updates"
+            )
+            and not hasattr(
+                cfg.responsibility, "member_" + "catchup_mode"
             )
         ),
         "default_proposal_memory_disabled": (
@@ -406,7 +407,7 @@ async def run_smoke() -> dict[str, object]:
     }
     required = (
         "all_selected_targets_have_responsibility_portfolios",
-        "default_catchup_disabled",
+        "compensation_paths_removed",
         "default_proposal_memory_disabled",
         "no_actionable_responsibility_is_noop",
         "one_refresh_per_team_transition",

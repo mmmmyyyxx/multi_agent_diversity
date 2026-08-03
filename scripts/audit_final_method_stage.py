@@ -37,28 +37,29 @@ PROTOCOL_FIELDS = (
     "tcs_context_policy",
     "candidate_selection_policy",
     "responsibility_refresh_policy",
+    "repairability_freeze_enabled",
 )
 EXPECTED_PROTOCOLS = {
-    "shared_baseline": (False, "none", "none", "none", "none", "off"),
+    "shared_baseline": (False, "none", "none", "none", "none", "off", False),
     "shared_independent_accuracy": (
         True, "round_robin", "individual_errors", "generic_accuracy",
-        "individual_accuracy", "off",
+        "individual_accuracy", "off", False,
     ),
     "shared_peer_state_vote_first": (
         True, "round_robin", "global_peer_state", "generic_peer_state",
-        "vote_first", "off",
+        "vote_first", "off", False,
     ),
     "shared_peer_state_member_pareto": (
         True, "round_robin", "global_peer_state", "generic_peer_state",
-        "member_aware_pareto", "off",
+        "member_aware_pareto", "off", False,
     ),
     "shared_member_aware_responsibility": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "generic_peer_state", "member_aware_pareto", "online",
+        "generic_peer_state", "member_aware_pareto", "online", True,
     ),
     "shared_member_aware_full": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "member_aware_responsibility_conditioned", "member_aware_pareto", "online",
+        "member_aware_responsibility_conditioned", "member_aware_pareto", "online", True,
     ),
 }
 INFRASTRUCTURE_FAILURES = {
@@ -131,9 +132,6 @@ def _finding(
 def _priority_key(priority: dict[str, Any]) -> tuple[Any, ...]:
     return (
         -int(priority["updates_since_selected"]),
-        -int(priority["D_i"]),
-        -int(priority["S_i"]),
-        -int(priority["d_i"]),
         str(priority["seeded_rank"]),
     )
 
@@ -155,47 +153,59 @@ def _audit_member_responsibility(
                 if agent not in eligible.get(str(opportunity.get("question_hash", "")), set()):
                     outside_eligibility += 1
 
-    non_responsible = target_front = max_wait = 0
+    non_responsible = target_front = frozen_pool = 0
     for row in _read_jsonl(run_dir / "target_priority_audit.jsonl"):
         selected = row.get("selected_agent_id")
         priorities = list(row.get("priorities", []))
         by_agent = {int(priority["agent_id"]): priority for priority in priorities}
-        overdue = [priority for priority in priorities if priority.get("overdue")]
+        frozen_ids = {int(agent) for agent in row.get("frozen_agent_ids", [])}
+        active_ids = {
+            int(agent) for agent in row.get("active_candidate_agent_ids", [])
+        }
         if selected is None:
-            if priorities:
+            reason = row.get("no_actionable_reason")
+            if priorities and reason != "no_actionable_repairability":
                 non_responsible += 1
+            if priorities and frozen_ids != set(by_agent):
+                frozen_pool += 1
             continue
         selected = int(selected)
         if selected not in by_agent:
             non_responsible += 1
             continue
-        if overdue:
-            expected = min(overdue, key=_priority_key)
-            if selected != int(expected["agent_id"]):
-                max_wait += 1
-        else:
-            frontier = [
-                priority for priority in priorities
-                if int(priority.get("target_pareto_front", 0)) == 1
-            ]
-            expected = min(
-                frontier,
-                key=lambda priority: (
-                    -int(priority["updates_since_selected"]),
-                    str(priority["seeded_rank"]),
-                ),
-            ) if frontier else None
-            if expected is None or selected != int(expected["agent_id"]):
-                target_front += 1
-            recorded = {int(agent) for agent in row.get("target_frontier_agent_ids", [])}
-            if recorded != {int(priority["agent_id"]) for priority in frontier}:
-                target_front += 1
+        if selected in frozen_ids or selected not in active_ids:
+            frozen_pool += 1
+        frontier = [
+            priority for priority in priorities
+            if not priority.get("frozen")
+            and int(priority.get("target_pareto_front", 0)) == 1
+        ]
+        expected = min(frontier, key=_priority_key) if frontier else None
+        if expected is None or selected != int(expected["agent_id"]):
+            target_front += 1
+        recorded = {int(agent) for agent in row.get("target_frontier_agent_ids", [])}
+        if recorded != {int(priority["agent_id"]) for priority in frontier}:
+            target_front += 1
+
+    repairability_event = sum(
+        int(event.get("failure_streak", 0)) != 2
+        for event in _read_jsonl(run_dir / "repairability_freeze_events.jsonl")
+    )
+    repairability_event += sum(
+        int(event.get("other_accepted_updates", 0)) < 2
+        or not (
+            float(event.get("portfolio_jaccard", 1.0)) < 0.8
+            or int(event.get("D_before", 0)) != int(event.get("D_after", 0))
+        )
+        for event in _read_jsonl(run_dir / "repairability_unfreeze_events.jsonl")
+    )
 
     for count, requirement, name in (
         (outside_eligibility, "Every assigned residual must include its target in E_x", "assignment outside eligibility"),
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
         (target_front, "Normal scheduling must select from the single (D,S,d) frontier", "target-front"),
-        (max_wait, "Overdue scheduling must use wait,D,S,d,seeded-rank without a second Pareto", "max-wait"),
+        (frozen_pool, "Frozen members must remain outside the active target pool", "frozen-pool"),
+        (repairability_event, "Freeze and unfreeze events must satisfy fixed v9 thresholds", "repairability-event"),
     ):
         if count:
             _finding(
@@ -209,7 +219,8 @@ def _audit_member_responsibility(
         "assignment_outside_eligibility": outside_eligibility,
         "non_responsible_target_selection": non_responsible,
         "target_front_violation": target_front,
-        "max_wait_lifecycle_violation": max_wait,
+        "frozen_pool_violation": frozen_pool,
+        "repairability_event_violation": repairability_event,
     }
 
 
@@ -275,13 +286,8 @@ def _audit_run(
         "num_candidates_per_parent": (config.get("num_candidates_per_parent"), 2),
         "stage_b_candidate_budget": (config.get("stage_b_candidate_budget"), 2),
         "member_uplift_tolerance": (config.get("member_uplift_tolerance"), 5),
-        "responsibility_max_wait_updates": (
-            config.get("responsibility_max_wait_updates"), 8,
-        ),
-        "member_catchup_mode": (config.get("member_catchup_mode"), "off"),
         "proposal_memory_mode": (config.get("proposal_memory_mode"), "off"),
         "planned_update_count": (meta.get("planned_update_count"), expected_completed),
-        "completed_update_count": (meta.get("completed_update_count"), expected_completed),
         "test_evaluation_count": (
             meta.get("test_evaluation_count"), 1 if final_test_enabled else 0,
         ),
@@ -295,6 +301,22 @@ def _audit_run(
         _finding(
             findings, "BLOCKER", "Run identity, budget, defaults, and lifecycle must match",
             f"{label}: {mismatches}", "stop and rerun with the frozen formal configuration",
+        )
+    completed = int(meta.get("completed_update_count", -1))
+    early_stop = str(meta.get("early_stop_reason", ""))
+    if not (
+        completed == expected_completed
+        or (
+            early_stop == "all_actionable_members_frozen"
+            and 0 < completed <= expected_completed
+        )
+    ):
+        _finding(
+            findings,
+            "BLOCKER",
+            "Runs must finish the budget or stop because all actionable members are frozen",
+            f"{label}: completed={completed} expected={expected_completed} early_stop={early_stop!r}",
+            "stop the stage and repair lifecycle accounting",
         )
 
     expected_protocol = dict(zip(PROTOCOL_FIELDS, EXPECTED_PROTOCOLS[setting], strict=True))
@@ -358,12 +380,6 @@ def _audit_run(
         )
 
     decisions = _read_jsonl(run_dir / "candidate_decisions.jsonl")
-    catchup_count = sum(bool(row.get("generic_member_catchup")) for row in decisions)
-    if catchup_count:
-        _finding(
-            findings, "BLOCKER", "Catch-up must never activate in the formal matrix",
-            f"{label}: catch-up count={catchup_count}", "stop the pipeline",
-        )
     terminal_counts = funnel.get("terminal_failure_counts", {})
     infrastructure_count = sum(
         int(terminal_counts.get(name, 0)) for name in INFRASTRUCTURE_FAILURES
@@ -382,7 +398,8 @@ def _audit_run(
             "assignment_outside_eligibility": 0,
             "non_responsible_target_selection": 0,
             "target_front_violation": 0,
-            "max_wait_lifecycle_violation": 0,
+            "frozen_pool_violation": 0,
+            "repairability_event_violation": 0,
         }
     )
     selected_test = summary.get("selected_test")
@@ -416,7 +433,9 @@ def _audit_run(
         "planned_update_count": meta.get("planned_update_count"),
         "completed_update_count": meta.get("completed_update_count"),
         "test_evaluation_count": meta.get("test_evaluation_count"),
-        "catchup_count": catchup_count,
+        "repairability_freeze_count": len(
+            _read_jsonl(run_dir / "repairability_freeze_events.jsonl")
+        ),
         "proposal_memory_hit_count": int(memory.get("memory_hit_count", 0)),
         "infrastructure_failure_count": infrastructure_count,
         "accepted_update_count": accepted,

@@ -23,7 +23,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v8", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v9", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -45,7 +45,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
+def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -57,6 +57,20 @@ def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
     question_hash = source.fixed_probe.examples[0].question_hash
     assert 2 in source.cached_responsibility_eligibility[question_hash]
     source.responsibility_state.updates_since_selected_by_agent[2] = 6
+    source.responsibility_state.consecutive_failed_updates_by_agent[2] = 2
+    source.responsibility_state.last_failed_portfolio_signature_by_agent[2] = "sig"
+    source.responsibility_state.frozen_by_agent[2] = True
+    source.responsibility_state.frozen_portfolio_signature_by_agent[2] = "sig"
+    source.responsibility_state.frozen_residual_hashes_by_agent[2] = (question_hash,)
+    source.responsibility_state.frozen_direct_fix_count_by_agent[2] = 1
+    source.responsibility_state.frozen_margin_gain_sum_by_agent[2] = 2
+    source.responsibility_state.other_accepted_updates_since_freeze_by_agent[2] = 1
+    source.responsibility_state.freeze_count_by_agent[2] = 3
+    source.repairability_freeze_events = [{"agent_id": 2, "update_index": 2}]
+    source.repairability_unfreeze_events = [{"agent_id": 1, "update_index": 1}]
+    source_target, _ = source.select_target(
+        source.cached_responsibility_assignments, update_index=3
+    )
     memory_key = source._proposal_memory_key(
         target_agent_id=2,
         parent_prompt=source.agents[2].current_prompt,
@@ -90,7 +104,7 @@ def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 16
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 17
     assert "responsibility_first_seen_update" not in json.dumps(payload)
     assert "cached_responsibility_assignments" not in payload
     assert "cached_member_opportunities" not in payload
@@ -102,6 +116,18 @@ def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
     assert target.planned_update_count == 24
     assert target.completed_update_count == 3
     assert target.responsibility_state.updates_since_selected_by_agent[2] == 6
+    assert target.responsibility_state.frozen_by_agent[2]
+    assert target.responsibility_state.frozen_residual_hashes_by_agent[2] == (
+        question_hash,
+    )
+    assert target.responsibility_state.other_accepted_updates_since_freeze_by_agent[2] == 1
+    assert target.responsibility_state.freeze_count_by_agent[2] == 3
+    assert target.repairability_freeze_events == source.repairability_freeze_events
+    assert target.repairability_unfreeze_events == source.repairability_unfreeze_events
+    restored_target, _ = target.select_target(
+        target.cached_responsibility_assignments, update_index=3
+    )
+    assert restored_target == source_target
     assert target.training_dynamics == source.training_dynamics
     assert target.team_differentiation_trajectory == source.team_differentiation_trajectory
     assert target.update_transition_decomposition == source.update_transition_decomposition
@@ -137,9 +163,9 @@ def test_v16_checkpoint_recomputes_compact_responsibility_portfolios(tmp_path):
     ) is None
 
 
-def test_v15_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v16_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 15
+    payload["checkpoint_version"] = 16
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

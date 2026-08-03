@@ -196,6 +196,7 @@ async def run(cfg: Config) -> dict[str, Any]:
         }
         system.record_training_dynamics(update_index=-1)
         _verify_frozen_initialization(system, cfg)
+    early_stopped = False
     for epoch in range(start_epoch, cfg.training.epochs):
         epoch_decision_start = len(system.candidate_decisions)
         first_update = start_update if epoch == start_epoch else 0
@@ -215,6 +216,9 @@ async def run(cfg: Config) -> dict[str, Any]:
                 metrics=system.active_probe_metrics(),
             )
             _write_checkpoint(system, cfg, epoch, update + 1, training_state)
+            if system.early_stop_reason:
+                early_stopped = True
+                break
         system.history.append({
             "epoch": epoch + 1,
             "completed_update_count": system.completed_update_count,
@@ -226,8 +230,13 @@ async def run(cfg: Config) -> dict[str, Any]:
         })
         _write_checkpoint(system, cfg, epoch + 1, 0, training_state)
         start_update = 0
+        if early_stopped:
+            break
 
-    if system.completed_update_count != planned_update_count:
+    if (
+        system.completed_update_count != planned_update_count
+        and not system.early_stop_reason
+    ):
         raise RuntimeError("not every planned update completed")
     system.mark_training_complete(planned_update_count)
     selected_prompts = [agent.current_prompt for agent in system.agents]
@@ -240,9 +249,10 @@ async def run(cfg: Config) -> dict[str, Any]:
         "validation_reused_state_count": 0,
         "selected_checkpoint_source": "final_active_state",
         "selected_by_validation": False,
-        "selected_checkpoint_update_index": planned_update_count,
+        "selected_checkpoint_update_index": system.completed_update_count,
         "selected_team_prompt_state_hash": selected_hash,
-        "selected_epoch": planned_update_count,
+        "selected_epoch": system.completed_update_count,
+        "early_stop_reason": system.early_stop_reason,
         "selection_changed": selected_hash != training_state[
             "initial_team_state_hash"
         ],

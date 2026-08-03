@@ -10,7 +10,11 @@ from multi_dataset_diverse_rl.responsibility import (
     build_target_selection_decision,
     compute_member_aware_repair_opportunity,
     compute_repair_eligibility_sets,
+    initialize_repairability_state,
+    record_target_update_acceptance,
+    record_target_update_failure,
     repair_eligibility_key,
+    refresh_frozen_member_states,
     responsibility_portfolios,
     target_priorities,
 )
@@ -253,7 +257,6 @@ def priorities_for(
         assignments=assignments,
         state=state,
         seed=7,
-        max_wait_updates=8,
         current_member_correct_counts=current,
         initial_member_correct_counts=initial,
         member_uplift_tolerance=5,
@@ -305,77 +308,159 @@ def test_frontier_tie_break_uses_wait_then_seeded_rank_only():
         0: [opportunity(0, vote_flip_gain=1, margin_gain=2)],
         1: [opportunity(1, vote_flip_gain=1, margin_gain=2)],
     }
-    state, rows = priorities_for(
+    _, rows = priorities_for(
         assignments,
         waits={0: 2, 1: 4, 2: 0, 3: 0, 4: 0},
     )
-    decision = build_target_selection_decision(
-        rows,
-        all_member_gains=(0, 0, 0, 0, 0),
-        state=state,
-        max_wait_updates=8,
-        member_uplift_tolerance=5,
-        member_catchup_mode="off",
-    )
+    decision = build_target_selection_decision(rows)
     assert decision.selection_pool_stage == "responsibility_joint_pareto"
     assert decision.selected_agent_id == 1
     assert decision.target_frontier_agent_ids == (0, 1)
 
 
-def test_max_wait_uses_simple_lexicographic_override_without_second_pareto():
+def test_arbitrarily_large_wait_cannot_override_first_frontier():
     assignments = {
-        0: [opportunity(0, vote_flip_gain=1, margin_gain=1)],
-        1: [opportunity(1, vote_flip_gain=0, margin_gain=9)],
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=2)],
+        1: [opportunity(1, vote_flip_gain=0, margin_gain=1)],
     }
-    state, rows = priorities_for(
+    _, rows = priorities_for(
         assignments,
-        waits={0: 8, 1: 9, 2: 99, 3: 0, 4: 0},
+        waits={0: 0, 1: 999, 2: 0, 3: 0, 4: 0},
         current=(10, 10, 10, 10, 10),
     )
-    decision = build_target_selection_decision(
-        rows,
-        all_member_gains=(0, 0, 0, 0, 0),
-        state=state,
-        max_wait_updates=8,
-        member_uplift_tolerance=5,
-        member_catchup_mode="off",
-    )
-    assert decision.selection_pool_stage == "responsibility_max_wait_override"
-    assert decision.selected_agent_id == 1
-    assert decision.target_pareto_fronts == {}
-    assert 2 not in decision.overdue_agent_ids
+    decision = build_target_selection_decision(rows)
+    assert decision.selection_pool_stage == "responsibility_joint_pareto"
+    assert decision.selected_agent_id == 0
+    assert decision.target_pareto_fronts == {0: 1, 1: 2}
 
 
 def test_no_portfolio_member_cannot_enter_responsibility_lane():
-    state, rows = priorities_for({})
-    decision = build_target_selection_decision(
-        rows,
-        all_member_gains=(0, 0, 0, 0, 0),
-        state=state,
-        max_wait_updates=8,
-        member_uplift_tolerance=5,
-        member_catchup_mode="off",
-    )
+    _, rows = priorities_for({})
+    decision = build_target_selection_decision(rows)
     assert decision.selected_agent_id is None
     assert decision.selection_pool_stage == "no_actionable_responsibility"
     assert decision.update_lane == "no_actionable_responsibility"
 
 
-def test_catchup_remains_an_explicit_nonresponsibility_extension():
-    state, rows = priorities_for(
-        {},
-        waits={0: 8, 1: 0, 2: 0, 3: 0, 4: 0},
-        current=(0, 10, 10, 10, 10),
+def test_frozen_member_is_excluded_even_with_largest_vector_and_wait():
+    assignments = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=9)],
+        1: [opportunity(1, vote_flip_gain=0, margin_gain=1)],
+    }
+    state = runtime(
+        updates_since_selected_by_agent={0: 999, 1: 0, 2: 0, 3: 0, 4: 0}
     )
-    decision = build_target_selection_decision(
-        rows,
-        all_member_gains=(-10, 0, 0, 0, 0),
+    initialize_repairability_state(state, range(5))
+    state.frozen_by_agent[0] = True
+    rows = target_priorities(
+        assignments=assignments,
         state=state,
-        max_wait_updates=8,
+        seed=7,
+        current_member_correct_counts=(0, 10, 10, 10, 10),
+        initial_member_correct_counts=(0, 10, 10, 10, 10),
         member_uplift_tolerance=5,
-        member_catchup_mode="fallback_v1",
     )
-    assert decision.selected_agent_id == 0
-    assert decision.selection_pool_stage == "no_actionable_responsibility"
-    assert decision.update_lane == "generic_member_catchup"
-    assert decision.eligible_agent_ids == ()
+    decision = build_target_selection_decision(rows)
+    assert decision.selected_agent_id == 1
+    assert decision.frozen_agent_ids == (0,)
+    assert decision.active_candidate_agent_ids == (1,)
+
+
+def test_same_portfolio_second_complete_failure_freezes_and_changed_state_resets():
+    state = runtime()
+    initialize_repairability_state(state, range(5))
+    first = responsibility_portfolios(
+        assignments={0: [opportunity(0, vote_flip_gain=1, margin_gain=2)]},
+        state=state,
+    )[0]
+    assert record_target_update_failure(
+        state=state, portfolio=first, update_index=0
+    ) is None
+    assert state.consecutive_failed_updates_by_agent[0] == 1
+    event = record_target_update_failure(
+        state=state, portfolio=first, update_index=1
+    )
+    assert event is not None
+    assert state.frozen_by_agent[0]
+
+    changed_state = runtime()
+    initialize_repairability_state(changed_state, range(5))
+    record_target_update_failure(
+        state=changed_state, portfolio=first, update_index=0
+    )
+    changed = responsibility_portfolios(
+        assignments={0: [opportunity(
+            0, vote_flip_gain=0, margin_gain=4, question_hash="q2"
+        )]},
+        state=changed_state,
+    )[0]
+    assert record_target_update_failure(
+        state=changed_state, portfolio=changed, update_index=1
+    ) is None
+    assert changed_state.consecutive_failed_updates_by_agent[0] == 1
+    assert not changed_state.frozen_by_agent[0]
+
+
+def test_unfreeze_requires_both_other_accepts_and_material_portfolio_change():
+    state = runtime()
+    initialize_repairability_state(state, range(5))
+    original_assignments = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=2, question_hash="q1")]
+    }
+    portfolio = responsibility_portfolios(
+        assignments=original_assignments, state=state
+    )[0]
+    record_target_update_failure(state=state, portfolio=portfolio, update_index=0)
+    record_target_update_failure(state=state, portfolio=portfolio, update_index=1)
+
+    changed_assignments = {
+        0: [opportunity(0, vote_flip_gain=0, margin_gain=3, question_hash="q2")]
+    }
+    assert not refresh_frozen_member_states(
+        state=state, assignments=changed_assignments, update_index=2
+    )
+    record_target_update_acceptance(state=state, accepted_agent_id=1)
+    record_target_update_acceptance(state=state, accepted_agent_id=2)
+    s_only_change = {
+        0: [opportunity(0, vote_flip_gain=1, margin_gain=3, question_hash="q1")]
+    }
+    assert not refresh_frozen_member_states(
+        state=state, assignments=s_only_change, update_index=3
+    )
+    assert not refresh_frozen_member_states(
+        state=state, assignments=original_assignments, update_index=3
+    )
+    events = refresh_frozen_member_states(
+        state=state, assignments=changed_assignments, update_index=4
+    )
+    assert len(events) == 1
+    assert not state.frozen_by_agent[0]
+    assert state.consecutive_failed_updates_by_agent[0] == 0
+
+
+def test_accepted_target_resets_failure_streak_and_signature():
+    state = runtime()
+    initialize_repairability_state(state, range(5))
+    state.consecutive_failed_updates_by_agent[1] = 1
+    state.last_failed_portfolio_signature_by_agent[1] = "previous"
+    record_target_update_acceptance(state=state, accepted_agent_id=1)
+    assert state.consecutive_failed_updates_by_agent[1] == 0
+    assert state.last_failed_portfolio_signature_by_agent[1] == ""
+
+
+def test_all_nonempty_portfolios_frozen_has_no_actionable_repairability():
+    assignments = {0: [opportunity(0, vote_flip_gain=1, margin_gain=2)]}
+    state = runtime()
+    initialize_repairability_state(state, range(5))
+    state.frozen_by_agent[0] = True
+    rows = target_priorities(
+        assignments=assignments,
+        state=state,
+        seed=7,
+        current_member_correct_counts=(10,) * 5,
+        initial_member_correct_counts=(10,) * 5,
+        member_uplift_tolerance=5,
+    )
+    decision = build_target_selection_decision(rows)
+    assert decision.selected_agent_id is None
+    assert decision.no_actionable_reason == "no_actionable_repairability"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass, field, replace
 from typing import Any, Mapping, Sequence
 
@@ -71,7 +72,7 @@ class ResponsibilityTargetPriority:
     maximum_member_gain: int
     uplift_deficit: int
     updates_since_selected: int
-    overdue: bool
+    frozen: bool
     target_pareto_front: int
     seeded_rank: str
 
@@ -89,11 +90,14 @@ class TargetSelectionDecision:
     selection_pool_stage: str
     update_lane: str
     eligible_agent_ids: tuple[int, ...]
-    overdue_agent_ids: tuple[int, ...]
-    catchup_eligible_agent_ids: tuple[int, ...]
-    actual_candidate_agent_ids: tuple[int, ...]
+    frozen_agent_ids: tuple[int, ...]
+    active_candidate_agent_ids: tuple[int, ...]
     target_pareto_fronts: dict[int, int]
     target_frontier_agent_ids: tuple[int, ...]
+    selected_direct_fix_count: int | None = None
+    selected_margin_gain_sum: int | None = None
+    selected_uplift_deficit: int | None = None
+    selected_updates_since_selected: int | None = None
     no_actionable_reason: str = ""
 
 
@@ -106,6 +110,36 @@ class ResponsibilityState:
     accepted_updates_by_agent: dict[int, int] = field(default_factory=dict)
     seeded_rank_by_agent: dict[int, str] = field(default_factory=dict)
     target_attempt_count_by_agent: dict[int, int] = field(default_factory=dict)
+    consecutive_failed_updates_by_agent: dict[int, int] = field(default_factory=dict)
+    last_failed_portfolio_signature_by_agent: dict[int, str] = field(default_factory=dict)
+    frozen_by_agent: dict[int, bool] = field(default_factory=dict)
+    frozen_portfolio_signature_by_agent: dict[int, str] = field(default_factory=dict)
+    frozen_residual_hashes_by_agent: dict[int, tuple[str, ...]] = field(default_factory=dict)
+    frozen_direct_fix_count_by_agent: dict[int, int] = field(default_factory=dict)
+    frozen_margin_gain_sum_by_agent: dict[int, int] = field(default_factory=dict)
+    other_accepted_updates_since_freeze_by_agent: dict[int, int] = field(default_factory=dict)
+    freeze_count_by_agent: dict[int, int] = field(default_factory=dict)
+
+
+FREEZE_FAILURE_THRESHOLD = 2
+FREEZE_OTHER_ACCEPT_THRESHOLD = 2
+FREEZE_PORTFOLIO_OVERLAP_THRESHOLD = 0.8
+
+
+def initialize_repairability_state(
+    state: ResponsibilityState,
+    agent_ids: Sequence[int],
+) -> None:
+    for agent_id in map(int, agent_ids):
+        state.consecutive_failed_updates_by_agent.setdefault(agent_id, 0)
+        state.last_failed_portfolio_signature_by_agent.setdefault(agent_id, "")
+        state.frozen_by_agent.setdefault(agent_id, False)
+        state.frozen_portfolio_signature_by_agent.setdefault(agent_id, "")
+        state.frozen_residual_hashes_by_agent.setdefault(agent_id, ())
+        state.frozen_direct_fix_count_by_agent.setdefault(agent_id, 0)
+        state.frozen_margin_gain_sum_by_agent.setdefault(agent_id, 0)
+        state.other_accepted_updates_since_freeze_by_agent.setdefault(agent_id, 0)
+        state.freeze_count_by_agent.setdefault(agent_id, 0)
 
 
 def compute_member_aware_repair_opportunity(
@@ -303,6 +337,147 @@ def responsibility_portfolios(
     return result
 
 
+def responsibility_portfolio_signature(
+    portfolio: MemberResponsibilityPortfolio,
+) -> str:
+    payload = {
+        "residuals": sorted(
+            (
+                row.question_hash,
+                int(row.vote_flip_gain),
+                int(row.margin_gain),
+            )
+            for row in portfolio.residuals
+        ),
+        "direct_fix_count": int(portfolio.direct_fix_count),
+        "margin_gain_sum": int(portfolio.margin_gain_sum),
+        "residual_count": int(portfolio.residual_count),
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def responsibility_portfolio_overlap(
+    frozen_residual_hashes: Sequence[str],
+    current_residual_hashes: Sequence[str],
+) -> float:
+    frozen = set(map(str, frozen_residual_hashes))
+    current = set(map(str, current_residual_hashes))
+    union = frozen | current
+    if not union:
+        return 1.0
+    return len(frozen & current) / len(union)
+
+
+def record_target_update_failure(
+    *,
+    state: ResponsibilityState,
+    portfolio: MemberResponsibilityPortfolio,
+    update_index: int,
+) -> dict[str, Any] | None:
+    """Record one complete semantic search failure and freeze on repetition."""
+
+    agent_id = int(portfolio.agent_id)
+    initialize_repairability_state(state, (agent_id,))
+    signature = responsibility_portfolio_signature(portfolio)
+    if state.last_failed_portfolio_signature_by_agent[agent_id] == signature:
+        streak = state.consecutive_failed_updates_by_agent[agent_id] + 1
+    else:
+        streak = 1
+    state.consecutive_failed_updates_by_agent[agent_id] = streak
+    state.last_failed_portfolio_signature_by_agent[agent_id] = signature
+    if streak < FREEZE_FAILURE_THRESHOLD or state.frozen_by_agent[agent_id]:
+        return None
+
+    residual_hashes = tuple(sorted(row.question_hash for row in portfolio.residuals))
+    state.frozen_by_agent[agent_id] = True
+    state.frozen_portfolio_signature_by_agent[agent_id] = signature
+    state.frozen_residual_hashes_by_agent[agent_id] = residual_hashes
+    state.frozen_direct_fix_count_by_agent[agent_id] = int(portfolio.direct_fix_count)
+    state.frozen_margin_gain_sum_by_agent[agent_id] = int(portfolio.margin_gain_sum)
+    state.other_accepted_updates_since_freeze_by_agent[agent_id] = 0
+    state.freeze_count_by_agent[agent_id] += 1
+    return {
+        "artifact_schema_version": "repairability_freeze_event_v1",
+        "agent_id": agent_id,
+        "update_index": int(update_index),
+        "failure_streak": streak,
+        "portfolio_signature_hash": signature,
+        "D": int(portfolio.direct_fix_count),
+        "S": int(portfolio.margin_gain_sum),
+        "residual_count": int(portfolio.residual_count),
+        "freeze_reason": "same_responsibility_state_complete_failure_threshold",
+    }
+
+
+def record_target_update_acceptance(
+    *,
+    state: ResponsibilityState,
+    accepted_agent_id: int,
+) -> None:
+    accepted_agent_id = int(accepted_agent_id)
+    initialize_repairability_state(
+        state, state.updates_since_selected_by_agent
+    )
+    state.consecutive_failed_updates_by_agent[accepted_agent_id] = 0
+    state.last_failed_portfolio_signature_by_agent[accepted_agent_id] = ""
+    for agent_id, frozen in state.frozen_by_agent.items():
+        if frozen and agent_id != accepted_agent_id:
+            state.other_accepted_updates_since_freeze_by_agent[agent_id] += 1
+
+
+def refresh_frozen_member_states(
+    *,
+    state: ResponsibilityState,
+    assignments: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
+    update_index: int,
+) -> list[dict[str, Any]]:
+    """Unfreeze only after other accepted updates and material portfolio change."""
+
+    initialize_repairability_state(
+        state, state.updates_since_selected_by_agent
+    )
+    portfolios = responsibility_portfolios(assignments=assignments, state=state)
+    events: list[dict[str, Any]] = []
+    for agent_id in sorted(state.frozen_by_agent):
+        if not state.frozen_by_agent[agent_id]:
+            continue
+        portfolio = portfolios[agent_id]
+        current_hashes = tuple(
+            sorted(row.question_hash for row in portfolio.residuals)
+        )
+        overlap = responsibility_portfolio_overlap(
+            state.frozen_residual_hashes_by_agent[agent_id], current_hashes
+        )
+        accepted = state.other_accepted_updates_since_freeze_by_agent[agent_id]
+        old_direct = state.frozen_direct_fix_count_by_agent[agent_id]
+        material_change = (
+            overlap < FREEZE_PORTFOLIO_OVERLAP_THRESHOLD
+            or portfolio.direct_fix_count != old_direct
+        )
+        if accepted < FREEZE_OTHER_ACCEPT_THRESHOLD or not material_change:
+            continue
+        events.append({
+            "artifact_schema_version": "repairability_unfreeze_event_v1",
+            "agent_id": agent_id,
+            "update_index": int(update_index),
+            "other_accepted_updates": int(accepted),
+            "portfolio_jaccard": float(overlap),
+            "D_before": int(old_direct),
+            "D_after": int(portfolio.direct_fix_count),
+            "unfreeze_reason": "other_accepts_and_material_portfolio_change",
+        })
+        state.frozen_by_agent[agent_id] = False
+        state.consecutive_failed_updates_by_agent[agent_id] = 0
+        state.last_failed_portfolio_signature_by_agent[agent_id] = ""
+        state.frozen_portfolio_signature_by_agent[agent_id] = ""
+        state.frozen_residual_hashes_by_agent[agent_id] = ()
+        state.frozen_direct_fix_count_by_agent[agent_id] = 0
+        state.frozen_margin_gain_sum_by_agent[agent_id] = 0
+        state.other_accepted_updates_since_freeze_by_agent[agent_id] = 0
+    return events
+
+
 def target_priorities(
     *,
     assignments: Mapping[
@@ -310,13 +485,10 @@ def target_priorities(
     ],
     state: ResponsibilityState,
     seed: int,
-    max_wait_updates: int,
     current_member_correct_counts: Sequence[int],
     initial_member_correct_counts: Sequence[int],
     member_uplift_tolerance: int,
 ) -> tuple[ResponsibilityTargetPriority, ...]:
-    if max_wait_updates <= 0:
-        raise ValueError("max_wait_updates must be positive")
     if member_uplift_tolerance < 0:
         raise ValueError("member_uplift_tolerance cannot be negative")
     if len(current_member_correct_counts) != len(
@@ -337,6 +509,7 @@ def target_priorities(
         assignments=assignments,
         state=state,
     )
+    initialize_repairability_state(state, portfolios)
     rows: list[ResponsibilityTargetPriority] = []
     for agent_id, portfolio in portfolios.items():
         if not portfolio.residual_count:
@@ -360,24 +533,25 @@ def target_priorities(
                     - int(member_uplift_tolerance),
                 ),
                 updates_since_selected=wait,
-                overdue=wait >= max_wait_updates,
+                frozen=state.frozen_by_agent[agent_id],
                 target_pareto_front=0,
                 seeded_rank=rank,
             )
         )
 
+    active_rows = [row for row in rows if not row.frozen]
     fronts = (
         _pareto_front_numbers(
-            [row.agent_id for row in rows],
-            {row.agent_id: row.target_values() for row in rows},
+            [row.agent_id for row in active_rows],
+            {row.agent_id: row.target_values() for row in active_rows},
         )
-        if rows
+        if active_rows
         else {}
     )
     return tuple(
         replace(
             row,
-            target_pareto_front=fronts[row.agent_id],
+            target_pareto_front=fronts.get(row.agent_id, 0),
         )
         for row in rows
     )
@@ -385,49 +559,15 @@ def target_priorities(
 
 def build_target_selection_decision(
     priorities: Sequence[ResponsibilityTargetPriority],
-    *,
-    all_member_gains: Sequence[int],
-    state: ResponsibilityState,
-    max_wait_updates: int,
-    member_uplift_tolerance: int,
-    member_catchup_mode: str,
 ) -> TargetSelectionDecision:
-    if member_catchup_mode not in {"off", "fallback_v1"}:
-        raise ValueError(
-            "member_catchup_mode must be 'off' or 'fallback_v1'"
-        )
-
     eligible = tuple(priorities)
-    overdue = tuple(row for row in eligible if row.overdue)
     eligible_ids = tuple(row.agent_id for row in eligible)
-    overdue_ids = tuple(row.agent_id for row in overdue)
-
-    if overdue:
-        selected_row = min(
-            overdue,
-            key=lambda row: (
-                -row.updates_since_selected,
-                -row.direct_fix_count,
-                -row.margin_gain_sum,
-                -row.uplift_deficit,
-                row.seeded_rank,
-            ),
-        )
-        return TargetSelectionDecision(
-            selected_agent_id=selected_row.agent_id,
-            selection_pool_stage="responsibility_max_wait_override",
-            update_lane="responsibility_conditioned",
-            eligible_agent_ids=eligible_ids,
-            overdue_agent_ids=overdue_ids,
-            catchup_eligible_agent_ids=(),
-            actual_candidate_agent_ids=overdue_ids,
-            target_pareto_fronts={},
-            target_frontier_agent_ids=(),
-        )
-
-    if eligible:
+    frozen_ids = tuple(row.agent_id for row in eligible if row.frozen)
+    active = tuple(row for row in eligible if not row.frozen)
+    active_ids = tuple(row.agent_id for row in active)
+    if active:
         frontier = tuple(
-            row for row in eligible if row.target_pareto_front == 1
+            row for row in active if row.target_pareto_front == 1
         )
         selected_row = min(
             frontier,
@@ -441,64 +581,30 @@ def build_target_selection_decision(
             selection_pool_stage="responsibility_joint_pareto",
             update_lane="responsibility_conditioned",
             eligible_agent_ids=eligible_ids,
-            overdue_agent_ids=(),
-            catchup_eligible_agent_ids=(),
-            actual_candidate_agent_ids=eligible_ids,
+            frozen_agent_ids=frozen_ids,
+            active_candidate_agent_ids=active_ids,
             target_pareto_fronts={
-                row.agent_id: row.target_pareto_front for row in eligible
+                row.agent_id: row.target_pareto_front for row in active
             },
             target_frontier_agent_ids=tuple(
                 row.agent_id for row in frontier
             ),
+            selected_direct_fix_count=selected_row.direct_fix_count,
+            selected_margin_gain_sum=selected_row.margin_gain_sum,
+            selected_uplift_deficit=selected_row.uplift_deficit,
+            selected_updates_since_selected=selected_row.updates_since_selected,
         )
-
-    gains = list(map(int, all_member_gains))
-    maximum = max(gains, default=0)
-    catchup = tuple(
-        agent_id
-        for agent_id in sorted(state.updates_since_selected_by_agent)
-        if member_catchup_mode == "fallback_v1"
-        and max(
-            0,
-            maximum
-            - gains[agent_id]
-            - int(member_uplift_tolerance),
-        )
-        > 0
-        and state.updates_since_selected_by_agent[agent_id]
-        >= max_wait_updates
-    )
-    if catchup:
-        selected = min(
-            catchup,
-            key=lambda agent_id: (
-                -state.updates_since_selected_by_agent[agent_id],
-                -max(
-                    0,
-                    maximum
-                    - gains[agent_id]
-                    - int(member_uplift_tolerance),
-                ),
-                state.seeded_rank_by_agent.setdefault(
-                    agent_id,
-                    _seeded_hash(0, "target", agent_id),
-                ),
-            ),
-        )
+    if eligible:
         return TargetSelectionDecision(
-            selected_agent_id=selected,
-            selection_pool_stage="no_actionable_responsibility",
-            update_lane="generic_member_catchup",
-            eligible_agent_ids=(),
-            overdue_agent_ids=(),
-            catchup_eligible_agent_ids=catchup,
-            actual_candidate_agent_ids=(),
+            selected_agent_id=None,
+            selection_pool_stage="no_actionable_repairability",
+            update_lane="no_actionable_repairability",
+            eligible_agent_ids=eligible_ids,
+            frozen_agent_ids=frozen_ids,
+            active_candidate_agent_ids=(),
             target_pareto_fronts={},
             target_frontier_agent_ids=(),
-            no_actionable_reason=(
-                "catchup_extension_selected_after_"
-                "no_actionable_responsibility"
-            ),
+            no_actionable_reason="no_actionable_repairability",
         )
 
     return TargetSelectionDecision(
@@ -506,9 +612,8 @@ def build_target_selection_decision(
         selection_pool_stage="no_actionable_responsibility",
         update_lane="no_actionable_responsibility",
         eligible_agent_ids=(),
-        overdue_agent_ids=(),
-        catchup_eligible_agent_ids=(),
-        actual_candidate_agent_ids=(),
+        frozen_agent_ids=(),
+        active_candidate_agent_ids=(),
         target_pareto_fronts={},
         target_frontier_agent_ids=(),
         no_actionable_reason="no_actionable_responsibility",
@@ -517,27 +622,10 @@ def build_target_selection_decision(
 
 def select_target_agent(
     priorities: Sequence[ResponsibilityTargetPriority],
-    **kwargs: Any,
 ) -> int | None:
-    if kwargs:
-        return build_target_selection_decision(
-            priorities,
-            **kwargs,
-        ).selected_agent_id
-    overdue = tuple(row for row in priorities if row.overdue)
-    if overdue:
-        return min(
-            overdue,
-            key=lambda row: (
-                -row.updates_since_selected,
-                -row.direct_fix_count,
-                -row.margin_gain_sum,
-                -row.uplift_deficit,
-                row.seeded_rank,
-            ),
-        ).agent_id
     frontier = tuple(
-        row for row in priorities if row.target_pareto_front == 1
+        row for row in priorities
+        if not row.frozen and row.target_pareto_front == 1
     )
     return min(
         frontier,

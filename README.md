@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Prompt-Team Optimization**
-(`member_aware_peer_state_v8`).
+(`member_aware_peer_state_v9`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -48,23 +48,21 @@ Replacing one member by gold while holding four peers fixed gives
 keeps the lexicographic maximum and retains exact ties. Member portfolios then
 aggregate only direct-fix count `D` and margin-gain sum `S`; the scheduler
 computes one Pareto frontier over `(D, S, d)`, where `d` is the member uplift
-deficit. Wait is a member-level tie-break and max-wait starvation safeguard, not
-a per-residual objective.
+deficit. Wait is only a tie-break inside the first frontier. State-conditioned
+repairability freeze excludes a member after two complete failures under the
+same portfolio state and returns it only after two accepted updates by other
+members plus material portfolio change. There is no waiting-time override or
+generic compensation lane.
+`d` is the sole weak-member protection term; an empty-portfolio, frozen, or
+strictly dominated weak member receives no additional forced service.
 
 Optional `proposal_memory_mode=state_local_v1` keeps only sanitized failed-search
 feedback under a complete run/state/agent/prompt/eligible-residual key. It changes
 proposal search, not eligibility, scheduling, objectives, Stage A/B budgets, or evaluation.
 Soft vote utility is only a deterministic tie-break signal.
 
-The formal defaults are:
-
-```text
-member_catchup_mode = off
-proposal_memory_mode = off
-```
-
-Explicit catch-up and Proposal Memory modes are optional research extensions,
-not parts of the default three-module method.
+The formal default is `proposal_memory_mode=off`. Proposal Memory is an
+optional proposal-search extension, not part of the three-module method.
 
 ## Experiment Settings
 
@@ -141,7 +139,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v16 run identity;
+checkpoint-v17 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -153,7 +151,7 @@ Each optimized run writes:
   matched initial-test gains are supplied by the frozen baseline reference
 - `best_prompts.json`: final active prompt team
 - `history.json`: epoch-level active-probe and funnel summary
-- `training_dynamics.jsonl`: initial state and every planned update, including
+- `training_dynamics.jsonl`: initial state and every executed update, including
   rejected-state reuse
 - `team_differentiation_trajectory.jsonl` and
   `update_transition_decomposition.jsonl`: answer-behavior geometry and
@@ -163,8 +161,11 @@ Each optimized run writes:
 - `candidate_funnel.json`: update funnels and role-specific terminal failures
 - `responsibility_assignments.jsonl`: counterfactual `(DeltaV, DeltaM)`
   eligibility sets and member portfolios after each refresh
-- `target_priority_audit.jsonl`: `(D, S, d)` target priorities, member wait,
-  the single target Pareto frontier, and max-wait overrides
+- `target_priority_audit.jsonl`: `(D, S, d)` priorities, frozen and active
+  member IDs, the single target Pareto frontier, and selection reason
+- `repairability_freeze_events.jsonl` and
+  `repairability_unfreeze_events.jsonl`: sanitized state-conditioned budget
+  safeguard events
 - `solver_recovery_summary.json`: one row per resolved prompt-question request,
   including first-pass validity, recovery calls, terminal-invalid counts, and
   token overhead
@@ -188,16 +189,16 @@ accuracy gains:
 selection continues to use integer correct counts.
 
 The active final-state evaluation protocol does not run validation during optimization. The
-final active team after the fixed update budget is the selected team; there is
+final active team after the fixed update budget or valid repairability early
+stop is the selected team; there is
 no best epoch, validation cache, rollback, or checkpoint selection. Test runs
-exactly once after every planned update completes and cannot influence training.
+exactly once after the optimization lifecycle completes and cannot influence training.
 The frozen matched baseline remains a reporting reference only.
 
 See [method.md](method.md) for definitions and implementation details.
 
 The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
-development evidence for the superseded v7 mechanism. It does not define the
-v8 method and does not establish catch-up efficacy.
+development evidence for a superseded mechanism. It does not define v9.
 
 For offline analysis of an already completed high-frequency v4 run, use:
 

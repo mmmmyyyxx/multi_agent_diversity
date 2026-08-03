@@ -155,7 +155,7 @@ def test_frozen_initialization_snapshot_is_hash_only_and_deterministic(tmp_path)
         return PromptAnswer("A", "FINAL_ANSWER: A", True)
 
     identity = RunIdentity(
-        method_version="member_aware_peer_state_v8", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v9", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -179,7 +179,7 @@ def test_frozen_initialization_snapshot_is_hash_only_and_deterministic(tmp_path)
 
 def test_checkpoint_reuses_completed_final_test(tmp_path):
     identity = RunIdentity(
-            method_version="member_aware_peer_state_v8", experiment_setting="shared_member_aware_full",
+            method_version="member_aware_peer_state_v9", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",

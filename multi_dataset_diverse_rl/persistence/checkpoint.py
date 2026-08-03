@@ -96,6 +96,7 @@ def build_checkpoint(
         ),
         "planned_update_count": int(system.planned_update_count),
         "completed_update_count": int(system.completed_update_count),
+        "early_stop_reason": system.early_stop_reason,
         "training_completed": bool(system.training_completed),
         "final_state_selection": dict(system.final_state_selection),
         "training_dynamics": list(system.training_dynamics),
@@ -117,6 +118,8 @@ def build_checkpoint(
         "selected_test_metrics": dict(system.selected_test_metrics),
         "agent_selection_counts": dict(system.agent_selection_counts),
         "target_priority_audit": list(system.target_priority_audit),
+        "repairability_freeze_events": list(system.repairability_freeze_events),
+        "repairability_unfreeze_events": list(system.repairability_unfreeze_events),
         "responsibility_portfolio_trajectory": list(
             system.responsibility_portfolio_trajectory
         ),
@@ -181,6 +184,7 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "student_recovery_observations",
         "planned_update_count",
         "completed_update_count",
+        "early_stop_reason",
         "training_completed",
         "final_state_selection",
         "training_dynamics",
@@ -197,6 +201,8 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "selected_test_metrics",
         "responsibility_portfolio_trajectory",
         "target_responsibility_context_alignment",
+        "repairability_freeze_events",
+        "repairability_unfreeze_events",
         "proposal_memory_run_id",
         "proposal_memory_entries",
         "proposal_memory_events",
@@ -241,8 +247,27 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "updates_since_selected_by_agent",
         "accepted_updates_by_agent",
         "target_attempt_count_by_agent",
+        "consecutive_failed_updates_by_agent",
+        "frozen_direct_fix_count_by_agent",
+        "frozen_margin_gain_sum_by_agent",
+        "other_accepted_updates_since_freeze_by_agent",
+        "freeze_count_by_agent",
     ):
         raw_state[field] = {int(key): int(value) for key, value in raw_state[field].items()}
+    for field in (
+        "last_failed_portfolio_signature_by_agent",
+        "frozen_portfolio_signature_by_agent",
+    ):
+        raw_state[field] = {
+            int(key): str(value) for key, value in raw_state[field].items()
+        }
+    raw_state["frozen_by_agent"] = {
+        int(key): bool(value) for key, value in raw_state["frozen_by_agent"].items()
+    }
+    raw_state["frozen_residual_hashes_by_agent"] = {
+        int(key): tuple(map(str, value))
+        for key, value in raw_state["frozen_residual_hashes_by_agent"].items()
+    }
     raw_state["seeded_rank_by_agent"] = {
         int(key): str(value) for key, value in raw_state["seeded_rank_by_agent"].items()
     }
@@ -273,6 +298,7 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     )
     system.planned_update_count = int(payload["planned_update_count"])
     system.completed_update_count = int(payload["completed_update_count"])
+    system.early_stop_reason = str(payload["early_stop_reason"])
     system.training_completed = bool(payload["training_completed"])
     system.final_state_selection = dict(payload["final_state_selection"])
     system.training_dynamics = list(payload["training_dynamics"])
@@ -296,6 +322,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }
     system.target_priority_audit = list(payload["target_priority_audit"])
+    system.repairability_freeze_events = list(
+        payload["repairability_freeze_events"]
+    )
+    system.repairability_unfreeze_events = list(
+        payload["repairability_unfreeze_events"]
+    )
     system.responsibility_portfolio_trajectory = list(
         payload["responsibility_portfolio_trajectory"]
     )

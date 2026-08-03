@@ -10,7 +10,7 @@ def test_real_system_smoke_enforces_repair_only_targeting_and_pareto_gates():
         report["all_selected_targets_have_responsibility_portfolios"]
         is True
     )
-    assert report["default_catchup_disabled"] is True
+    assert report["compensation_paths_removed"] is True
     assert report["default_proposal_memory_disabled"] is True
     assert report["no_actionable_responsibility_is_noop"] is True
     assert report["target_neutral_vote_positive_accepted"] is True

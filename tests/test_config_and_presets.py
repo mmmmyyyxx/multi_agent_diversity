@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v8",
+        method_version="member_aware_peer_state_v9",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,9 +43,16 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v8"
+    assert cfg.training.method_version == "member_aware_peer_state_v9"
     assert cfg.responsibility.responsibility_mode == "compact_member_aware_v8"
-    assert cfg.responsibility.member_catchup_mode == "off"
+    removed_wait_field = "responsibility_" + "max_wait_updates"
+    removed_compensation_field = "member_" + "catchup_mode"
+    assert not hasattr(cfg.responsibility, removed_wait_field)
+    assert not hasattr(cfg.responsibility, removed_compensation_field)
+    with pytest.raises(TypeError, match="Unknown Config fields"):
+        Config.from_flat(**{removed_wait_field: 8})
+    with pytest.raises(TypeError, match="Unknown Config fields"):
+        Config.from_flat(**{removed_compensation_field: "off"})
     assert cfg.tcs.proposal_memory_mode == "off"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
@@ -92,6 +99,7 @@ def test_ablation_protocols_are_field_isolated_and_budget_matched():
         "target_selection_policy",
         "sample_pool_policy",
         "responsibility_refresh_policy",
+        "repairability_freeze_enabled",
     }
     responsibility_full_differences = {
         key for key in responsibility if responsibility[key] != full[key]
@@ -100,6 +108,16 @@ def test_ablation_protocols_are_field_isolated_and_budget_matched():
     assert len({repr(row.candidate_budget_contract) for row in rows.values()}) == 1
     assert len({row.tie_policy for row in rows.values()}) == 1
     assert len({row.initialization_mode for row in rows.values()}) == 1
+    assert {
+        name: row.repairability_freeze_enabled for name, row in rows.items()
+    } == {
+        "shared_baseline": False,
+        "shared_independent_accuracy": False,
+        "shared_peer_state_vote_first": False,
+        "shared_peer_state_member_pareto": False,
+        "shared_member_aware_responsibility": True,
+        "shared_member_aware_full": True,
+    }
 
 
 def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_path):

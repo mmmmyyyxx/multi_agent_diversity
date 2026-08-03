@@ -5,7 +5,7 @@
 The current method is **Member-Aware Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v8
+method_version = member_aware_peer_state_v9
 ```
 
 It jointly searches a team of five prompts. Solver, optimizer, and evaluator
@@ -49,7 +49,7 @@ which eligible member is updated now
 whether an empirically evaluated candidate is committed
 ```
 
-Teacher-Critic-Student, Stage A/B, fixed-peer rollout, max-wait, retry, cache,
+Teacher-Critic-Student, Stage A/B, fixed-peer rollout, repairability freeze, retry, cache,
 checkpointing, and audit are bounded implementation or reliability mechanisms.
 They are not additional paper modules.
 
@@ -206,7 +206,7 @@ eligibility.
 
 ### 4.4 One member-level Pareto
 
-For each member with a non-empty portfolio:
+For each member with a non-empty portfolio that is not frozen:
 
 ```text
 T_i = (D_i, S_i, d_i)
@@ -220,36 +220,61 @@ first frontier, selection uses:
 2. stable seeded rank
 ```
 
+Equivalently:
+
+```text
+A_t = {i : R_i is non-empty and frozen_i = false}
+T_i = (D_i, S_i, d_i), i in A_t
+F_t = ParetoFront({T_i : i in A_t})
+i_t = lexicographic argmax over i in F_t of
+      (updates_since_selected_i, -seeded_rank_i)
+```
+
 There is no second responsibility frontier, joint frontier, hidden scalar, or
 substantive reordering by `D_i`, `S_i`, or `d_i` after the frontier is formed.
 
-### 4.5 Max-wait safeguard
+`d_i` is the sole weak-member protection term. A weakest member is protected
+only when its portfolio is non-empty, it is not frozen, and its vector remains
+on the first frontier. Equal deficit does not prevent strict domination in
+`D_i` and `S_i`. There is no waiting-time override, deficit-service lane, or
+generic compensation mechanism.
 
-The member-level safeguard is:
+### 4.5 State-Conditioned Repairability Freeze
 
-```text
-responsibility_max_wait_updates = 8
-```
-
-It applies only when a member has a non-empty portfolio and:
-
-```text
-updates_since_selected >= 8
-```
-
-When overdue responsible members exist, no additional Pareto frontier is
-computed. They are ordered by:
+The active responsibility set is:
 
 ```text
-1. longest wait
-2. larger D_i
-3. larger S_i
-4. larger d_i
-5. stable seeded rank
+A_t = {i : R_i is non-empty and frozen_i = false}
 ```
 
-This is a starvation safeguard, not another optimization module. The method
-stores member wait only; it has no per-agent-question or per-residual age.
+Two consecutive complete failures under the same responsibility portfolio
+state freeze a member. The sanitized portfolio signature hashes sorted
+`(question_hash, DeltaV, DeltaM)` tuples plus `D_i`, `S_i`, and residual count.
+A complete failure requires a formally selected target, exhausted normal
+Teacher/Critic/Student and candidate evaluation budget, no infrastructure,
+protocol, or parser failure, and no accepted candidate. Each update contributes
+at most one failure. An accepted update resets the target's failure streak.
+
+Frozen members remain in residual eligibility, portfolios, and audit records,
+but cannot enter `A_t`, the target Pareto frontier, or target selection. They
+return only when both conditions hold:
+
+```text
+at least two accepted updates by other members
+and
+Jaccard(frozen residual hashes, current residual hashes) < 0.8
+    or current D_i != frozen D_i
+```
+
+Minor `S_i` changes alone do not unfreeze a member. If all portfolios are
+empty, selection reports `no_actionable_responsibility`. If non-empty
+portfolios exist but all corresponding members are frozen, selection reports
+`no_actionable_repairability` and optimization stops with
+`early_stop_reason = all_actionable_members_frozen`.
+
+Freeze is a search-budget safeguard inside target scheduling, not a fourth
+research module. `updates_since_selected` remains only a first-frontier
+tie-break and never revives a frozen or dominated member.
 
 ## 5. Module 2: Responsibility-Conditioned Evolution
 
@@ -269,8 +294,7 @@ representative evidence
 ```
 
 It does not expose repair-front numbers, multiple target-front numbers,
-per-residual age, ownership competition, frontier overlap as an objective, or
-catch-up information in default mode.
+per-residual age, ownership competition, or portfolio overlap as an objective.
 
 The role division is:
 
@@ -399,24 +423,20 @@ transition.
 On refresh failure, restore prompts, profiles, accepted counters, member wait,
 eligibility, caches, versions, refresh count, and affected audit rows.
 
-The only persistent fairness clock is:
+The persistent scheduling tie-break is:
 
 ```text
 updates_since_selected_by_agent
 ```
 
-## 8. Optional Extensions
+Repairability failure streaks, frozen snapshots, accepted updates by other
+members, and freeze counts are checkpointed exactly. After an accepted update,
+responsibility refresh completes before unfreeze conditions are evaluated for
+the next target pool.
 
-The formal defaults are:
+## 8. Optional Extension
 
-```text
-member_catchup_mode = off
-proposal_memory_mode = off
-```
-
-Explicit `fallback_v1` catch-up is a separately labelled research extension.
-It is not in the default scheduler or main experiment and cannot borrow another
-member's responsibility.
+The formal default is `proposal_memory_mode = off`.
 
 Explicit `state_local_v1` Proposal Memory is a proposal-search extension. Its
 complete key includes run, team state, target agent, prompt, and eligible
@@ -426,12 +446,11 @@ residual set. It may provide sanitized failure feedback only. It cannot alter:
 repair eligibility
 responsibility portfolio
 target Pareto
-max-wait
 candidate acceptance
 ```
 
-Historical v6/v7 owner, frontier, age, and catch-up reports remain development
-evidence tied to their original commits. They do not define v8.
+Historical owner, frontier, age, and compensation reports remain development
+evidence tied to their original commits. They do not define v9.
 
 ## 9. Experiment Settings
 
@@ -468,14 +487,14 @@ The lifecycle is:
 
 ```text
 initial team
-→ fixed planned updates on train
+→ planned train updates or all-actionable-members-frozen early stop
 → final active team
 → one test
 ```
 
 Validation split hashes remain in run identity but validation has no role in
 target selection, diagnosis, proposal, acceptance, early stopping, or
-checkpoint selection. Test runs once only after all planned updates complete
+checkpoint selection. Test runs once only after the optimization lifecycle completes
 and cannot influence training.
 
 Formal selection uses integer counts. Cross-task reports additionally expose
@@ -486,7 +505,7 @@ normalized accuracy gains.
 Checkpoint version is:
 
 ```text
-16
+17
 ```
 
 Checkpoint state includes active prompts and profiles, initial profiles,
@@ -526,8 +545,10 @@ S_i
 g_i
 d_i
 updates_since_selected
-overdue
+frozen
 target_pareto_front
+active candidate IDs
+freeze/unfreeze events
 selected agent
 selection stage
 ```

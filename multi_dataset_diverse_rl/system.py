@@ -70,11 +70,19 @@ from .persistence.artifacts import ArtifactWriter
 from .persistence.identity import RunIdentity, solver_request_components, solver_request_identity
 from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_protocol
 from .responsibility import (
+    FREEZE_FAILURE_THRESHOLD,
+    FREEZE_OTHER_ACCEPT_THRESHOLD,
+    FREEZE_PORTFOLIO_OVERLAP_THRESHOLD,
     MemberAwareRepairOpportunity,
     ResponsibilityState,
-    compute_repair_eligibility_sets,
-    compute_member_aware_repair_opportunity,
     build_target_selection_decision,
+    compute_member_aware_repair_opportunity,
+    compute_repair_eligibility_sets,
+    initialize_repairability_state,
+    record_target_update_acceptance,
+    record_target_update_failure,
+    refresh_frozen_member_states,
+    responsibility_portfolios,
     target_priorities,
 )
 from .tasks import get_task_spec
@@ -268,11 +276,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v8 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v9 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v8 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v9 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v8 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v9 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -291,8 +299,6 @@ class PromptEnsembleOptimizationSystem:
             )
         if cfg.tcs.proposal_memory_mode not in {"off", "state_local_v1"}:
             raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
-        if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
-            raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
         if cfg.responsibility.responsibility_mode != "compact_member_aware_v8":
             raise ValueError(
                 "responsibility_mode must be 'compact_member_aware_v8'"
@@ -326,6 +332,9 @@ class PromptEnsembleOptimizationSystem:
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
         )
+        initialize_repairability_state(
+            self.responsibility_state, range(cfg.training.agents)
+        )
         self.history: list[dict[str, Any]] = []
         self.peer_state_history: list[dict[str, Any]] = []
         self.responsibility_assignments: list[dict[str, Any]] = []
@@ -357,6 +366,8 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state_version = -1
         self.responsibility_refresh_count = 0
         self.target_priority_audit: list[dict[str, Any]] = []
+        self.repairability_freeze_events: list[dict[str, Any]] = []
+        self.repairability_unfreeze_events: list[dict[str, Any]] = []
         self.responsibility_portfolio_trajectory: list[dict[str, Any]] = []
         self.target_responsibility_context_alignment: list[
             dict[str, Any]
@@ -384,6 +395,7 @@ class PromptEnsembleOptimizationSystem:
         self.final_test_differentiation: dict[str, Any] = {}
         self.planned_update_count = 0
         self.completed_update_count = 0
+        self.early_stop_reason = ""
         self.training_completed = False
         self.final_state_selection: dict[str, Any] = {}
         self.test_evaluation_count = 0
@@ -974,32 +986,22 @@ class PromptEnsembleOptimizationSystem:
         self,
         assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
         update_index: int,
-    ) -> tuple[int | None, bool, list[dict[str, Any]]]:
-        max_wait = self.cfg.responsibility.responsibility_max_wait_updates
+    ) -> tuple[int | None, list[dict[str, Any]]]:
         current_counts = self._member_correct_counts(self.active_profiles)
         initial_counts = self._member_correct_counts(self.initial_profiles)
         priorities = target_priorities(
             assignments=assigned,
             state=self.responsibility_state,
             seed=self.cfg.training.seed,
-            max_wait_updates=max_wait,
             current_member_correct_counts=current_counts,
             initial_member_correct_counts=initial_counts,
             member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
         )
-        fairness = any(row.overdue for row in priorities)
         if self.protocol.target_selection_policy == "round_robin":
             target = update_index % 5
-            fairness = False
+            selection = None
         elif self.protocol.target_selection_policy == "member_aware_responsibility":
-            selection = build_target_selection_decision(
-                priorities,
-                all_member_gains=[current - initial for current, initial in zip(current_counts, initial_counts, strict=True)],
-                state=self.responsibility_state,
-                max_wait_updates=max_wait,
-                member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
-                member_catchup_mode=self.cfg.responsibility.member_catchup_mode,
-            )
+            selection = build_target_selection_decision(priorities)
             target = selection.selected_agent_id
         else:
             raise ValueError(
@@ -1019,30 +1021,29 @@ class PromptEnsembleOptimizationSystem:
         if self.protocol.target_selection_policy == "member_aware_responsibility":
             pool_stage = selection.selection_pool_stage
             eligible_ids = list(selection.eligible_agent_ids)
-            overdue_ids = list(selection.overdue_agent_ids)
-            actual_ids = list(selection.actual_candidate_agent_ids)
+            frozen_ids = list(selection.frozen_agent_ids)
+            active_ids = list(selection.active_candidate_agent_ids)
             target_fronts = selection.target_pareto_fronts
             target_frontier_ids = list(
                 selection.target_frontier_agent_ids
             )
         else:
-            eligible_ids = overdue_ids = []
-            actual_ids = []
+            eligible_ids = frozen_ids = []
+            active_ids = []
             target_fronts = {}
             target_frontier_ids = []
             pool_stage = "round_robin"
         self.target_priority_audit.append({
             "update_index": int(update_index),
             "priorities": priority_payload,
-            "overdue_first": fairness,
             "update_lane": selection.update_lane if self.protocol.target_selection_policy == "member_aware_responsibility" else "protocol_control",
             "selection_pool_stage": pool_stage,
             "eligible_agent_ids": eligible_ids,
-            "overdue_agent_ids": overdue_ids,
-            "actual_candidate_agent_ids": actual_ids,
+            "frozen_agent_ids": frozen_ids,
+            "active_candidate_agent_ids": active_ids,
             "target_pareto_fronts": {
                 str(agent_id): target_fronts[agent_id]
-                for agent_id in actual_ids
+                for agent_id in active_ids
                 if agent_id in target_fronts
             },
             "target_frontier_agent_ids": [
@@ -1050,8 +1051,12 @@ class PromptEnsembleOptimizationSystem:
             ],
             "no_actionable_reason": selection.no_actionable_reason if self.protocol.target_selection_policy == "member_aware_responsibility" else "",
             "selected_agent_id": target,
+            "selected_D": selection.selected_direct_fix_count if selection else None,
+            "selected_S": selection.selected_margin_gain_sum if selection else None,
+            "selected_d": selection.selected_uplift_deficit if selection else None,
+            "updates_since_selected": selection.selected_updates_since_selected if selection else None,
         })
-        return target, fairness, priority_payload
+        return target, priority_payload
 
     def _representative_indices(self, count: int) -> list[int]:
         if self.fixed_probe is None:
@@ -1203,9 +1208,6 @@ class PromptEnsembleOptimizationSystem:
             opportunities[state.question_hash][target_agent_id] for state in states
         ]
         context_policy = self.protocol.tcs_context_policy
-        if (context_policy == "member_aware_responsibility_conditioned"
-                and not assigned_hashes):
-            context_policy = "generic_member_catchup_context_v1"
         aggregation = aggregate_probe_diagnosis(
             target_agent_id=target_agent_id,
             examples=self.fixed_probe.examples,
@@ -1292,14 +1294,6 @@ class PromptEnsembleOptimizationSystem:
                     for row in target_rows
                 ),
                 proposal_failure_feedback=proposal_failure_feedback,
-            )
-        elif context_policy == "generic_member_catchup_context_v1":
-            context = PeerStateDiagnosisContext(
-                **common,
-                vote_wrong_count=sum(not state.vote_correct for state in states),
-                coverage_failure_count=sum(state.gold_vote_count == 0 for state in states),
-                conversion_failure_count=sum(not state.vote_correct and state.gold_vote_count > 0 for state in states),
-                preservation_count=sum(row.unique_correct or row.pivotal_correct for row in target_rows),
             )
         else:
             raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
@@ -1987,11 +1981,7 @@ class PromptEnsembleOptimizationSystem:
                 memory_entry and memory_entry.rotation_exhausted
             ),
         }
-        context_mode = (
-            "generic_member_catchup_context_v1"
-            if self.protocol.tcs_context_policy == "member_aware_responsibility_conditioned" and not assigned_hashes
-            else self.protocol.tcs_context_policy
-        )
+        context_mode = self.protocol.tcs_context_policy
         context_serialized = serialize_context(context)
         context_object = context_payload(context)
         field_paths = sorted(_recursive_field_paths(context_object))
@@ -2764,6 +2754,27 @@ class PromptEnsembleOptimizationSystem:
         entry.immediate_tabu_bundle_hash = current_bundle
         self.proposal_memory_entries[key.key_hash()] = entry
 
+    @staticmethod
+    def is_complete_repairability_failure(funnel: CandidateFunnel) -> bool:
+        """Return true only for a completed semantic search with no acceptance."""
+
+        terminal_failure = str(funnel.terminal_failure_class or "")
+        return bool(
+            funnel.infrastructure_failed_updates == 0
+            and (
+                funnel.stage_a_evaluated > 0
+                or terminal_failure == "critic_semantic_rejection_exhausted"
+                or (
+                    not terminal_failure
+                    and funnel.student_calls > 0
+                    and (
+                        funnel.sample_memorization_rejected > 0
+                        or funnel.raw_candidate_count > 0
+                    )
+                )
+            )
+        )
+
     async def update_once(self, update_index: int) -> bool:
         if not self.protocol.optimization_enabled:
             return False
@@ -2776,25 +2787,33 @@ class PromptEnsembleOptimizationSystem:
             assigned = {agent_id: [] for agent_id in range(5)}
             states, _, _ = self.current_states_and_opportunities()
             self.peer_state_history.extend(asdict(state) for state in states)
-        target, fairness_triggered, target_priorities_payload = self.select_target(
+        target, target_priorities_payload = self.select_target(
             assigned,
             update_index,
         )
         if target is None:
+            no_actionable_reason = (
+                self.target_priority_audit[-1].get("no_actionable_reason", "")
+                if self.protocol.target_selection_policy
+                == "member_aware_responsibility"
+                else "no_actionable_responsibility"
+            )
+            if no_actionable_reason == "no_actionable_repairability":
+                self.early_stop_reason = "all_actionable_members_frozen"
             self.candidate_decisions.append({
                 "update_index": update_index,
-                "update_lane": "no_actionable_responsibility",
+                "update_lane": no_actionable_reason,
                 "target_agent_id": None,
                 "target_assigned_residual_count": 0,
                 "assigned_question_hashes": [],
-                "stop_reason": "no_actionable_responsibility",
+                "stop_reason": no_actionable_reason,
                 "agent_target_priorities": target_priorities_payload,
                 "funnel": asdict(CandidateFunnel()),
                 "candidates": [],
             })
             self.responsibility_portfolio_trajectory.append({
                 "update_index": update_index,
-                "event": "no_actionable_responsibility",
+                "event": no_actionable_reason,
                 "selected_agent_id": None,
             })
             return False
@@ -2810,6 +2829,10 @@ class PromptEnsembleOptimizationSystem:
             raise AssertionError(
                 "responsibility target must have a nonempty portfolio"
             )
+        target_portfolio = responsibility_portfolios(
+            assignments=assigned,
+            state=self.responsibility_state,
+        )[target]
         funnel = CandidateFunnel()
         candidates = await self.propose_candidates(
             target, assigned_hashes, funnel, update_index=update_index,
@@ -2843,10 +2866,8 @@ class PromptEnsembleOptimizationSystem:
             "target_agent_id": target,
             "agent_selection_distribution": dict(self.agent_selection_counts),
             "assigned_question_hashes": sorted(assigned_hashes),
-            "generic_member_catchup": update_lane == "generic_member_catchup",
             "borrowed_residual_count": 0,
             "target_assigned_residual_count": len(assigned_hashes),
-            "max_wait_fairness_trigger_count": int(fairness_triggered),
             "agent_target_priorities": target_priorities_payload,
             "best_attempt_target_gain": best_attempt_target_gain,
             "positive_target_gain_candidate_found": bool(
@@ -2901,6 +2922,20 @@ class PromptEnsembleOptimizationSystem:
                     if empirical_evaluation_completed else ()
                 ),
             )
+            complete_semantic_failure = self.is_complete_repairability_failure(
+                funnel
+            )
+            if (
+                self.protocol.repairability_freeze_enabled
+                and complete_semantic_failure
+            ):
+                event = record_target_update_failure(
+                    state=self.responsibility_state,
+                    portfolio=target_portfolio,
+                    update_index=update_index,
+                )
+                if event is not None:
+                    self.repairability_freeze_events.append(event)
             return False
 
         agent = self.agents[target]
@@ -2917,6 +2952,8 @@ class PromptEnsembleOptimizationSystem:
         old_peer_history_length = len(self.peer_state_history)
         old_responsibility_history_length = len(self.responsibility_assignments)
         old_target_audit_length = len(self.target_priority_audit)
+        old_freeze_event_length = len(self.repairability_freeze_events)
+        old_unfreeze_event_length = len(self.repairability_unfreeze_events)
         agent.previous_active_prompt = old_prompt
         try:
             agent.current_prompt = accepted.prompt
@@ -2926,8 +2963,22 @@ class PromptEnsembleOptimizationSystem:
             self.responsibility_state.accepted_updates_by_agent[target] = (
                 self.responsibility_state.accepted_updates_by_agent.get(target, 0) + 1
             )
+            if (
+                self.protocol.repairability_freeze_enabled
+            ):
+                record_target_update_acceptance(
+                    state=self.responsibility_state,
+                    accepted_agent_id=target,
+                )
             if self.protocol.responsibility_refresh_policy == "online":
-                self.refresh_responsibility_after_commit()
+                _, refreshed_assignments = self.refresh_responsibility_after_commit()
+                self.repairability_unfreeze_events.extend(
+                    refresh_frozen_member_states(
+                        state=self.responsibility_state,
+                        assignments=refreshed_assignments,
+                        update_index=update_index,
+                    )
+                )
             else:
                 self.team_state_version += 1
         except Exception:
@@ -2944,6 +2995,8 @@ class PromptEnsembleOptimizationSystem:
             del self.peer_state_history[old_peer_history_length:]
             del self.responsibility_assignments[old_responsibility_history_length:]
             del self.target_priority_audit[old_target_audit_length:]
+            del self.repairability_freeze_events[old_freeze_event_length:]
+            del self.repairability_unfreeze_events[old_unfreeze_event_length:]
             raise
         evaluation = accepted.final_evaluation
         competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
@@ -3167,7 +3220,13 @@ class PromptEnsembleOptimizationSystem:
         return await self.evaluate_final_test(data)
 
     def mark_training_complete(self, planned_update_count: int) -> None:
-        if self.completed_update_count != int(planned_update_count):
+        if (
+            self.completed_update_count != int(planned_update_count)
+            and not (
+                self.early_stop_reason == "all_actionable_members_frozen"
+                and self.completed_update_count <= int(planned_update_count)
+            )
+        ):
             raise RuntimeError(
                 "cannot complete training before every planned update finishes"
             )
@@ -3271,9 +3330,7 @@ class PromptEnsembleOptimizationSystem:
             ],
             "target_attempt_count": target_priority.get("target_attempt_count"),
             "updates_since_selected": target_priority.get("updates_since_selected"),
-            "max_wait_trigger": int(
-                decision.get("max_wait_fairness_trigger_count", 0)
-            ),
+            "target_frozen": bool(target_priority.get("frozen", False)),
             "responsibility_portfolio": {
                 key: target_priority.get(key)
                 for key in (
@@ -3525,6 +3582,11 @@ class PromptEnsembleOptimizationSystem:
             "responsibility_version": RESPONSIBILITY_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": TARGET_SELECTION_VERSION,
+            "repairability_freeze_failure_threshold": FREEZE_FAILURE_THRESHOLD,
+            "repairability_freeze_other_accept_threshold": FREEZE_OTHER_ACCEPT_THRESHOLD,
+            "repairability_freeze_portfolio_overlap_threshold": (
+                FREEZE_PORTFOLIO_OVERLAP_THRESHOLD
+            ),
             "pareto_preference_version": "member_first_candidate_preference_v1",
             "stage_a_version": "team_vote_worst_mean_v2",
             "stage_b_version": CANDIDATE_ACCEPTANCE_VERSION,
@@ -3533,6 +3595,7 @@ class PromptEnsembleOptimizationSystem:
             "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
             "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
             "test_isolation_version": TEST_ISOLATION_VERSION,
+            "early_stop_reason": self.early_stop_reason,
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
             "proposal_memory_mode": self.cfg.tcs.proposal_memory_mode,
@@ -3685,6 +3748,14 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("g_transition_audit.jsonl", self.g_transition_audit)
         self.artifacts.write_jsonl("specialization_trajectory.jsonl", self.specialization_trajectory)
         self.artifacts.write_jsonl("target_priority_audit.jsonl", self.target_priority_audit)
+        self.artifacts.write_jsonl(
+            "repairability_freeze_events.jsonl",
+            self.repairability_freeze_events,
+        )
+        self.artifacts.write_jsonl(
+            "repairability_unfreeze_events.jsonl",
+            self.repairability_unfreeze_events,
+        )
         self.artifacts.write_jsonl(
             "responsibility_portfolio_trajectory.jsonl",
             self.responsibility_portfolio_trajectory,

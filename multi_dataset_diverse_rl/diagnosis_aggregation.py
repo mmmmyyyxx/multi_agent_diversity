@@ -212,10 +212,6 @@ def _build_pattern_cases(
             and not (opportunity.unique_correct or opportunity.pivotal_correct)):
             continue
         peer = peer_contexts[state.question_hash][target_agent_id]
-        if (context_policy == "generic_member_catchup_context_v1"
-            and not ((opportunity.member_error and peer.peer_gold_vote_count > 0)
-                     or opportunity.unique_correct or opportunity.pivotal_correct)):
-            continue
         example = example_by_hash[state.question_hash]
         roles = answer_role_signature(state)
         for family in _families(state, opportunity):
@@ -339,7 +335,7 @@ def select_patterns(
         row.case_count,
         row.pattern_id,
     )
-    if context_policy in {"generic_accuracy", "generic_member_catchup_context_v1"}:
+    if context_policy == "generic_accuracy":
         add({FailureFamily.INDIVIDUAL_ERROR.value}, individual_key)
         add({FailureFamily.INDIVIDUAL_ERROR.value}, individual_key)
         add({FailureFamily.PRESERVATION.value}, preservation_key)

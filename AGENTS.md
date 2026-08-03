@@ -51,8 +51,8 @@ The compact three-module method in this file is normative. The current runtime
 implements it as:
 
 ```text
-method_version = member_aware_peer_state_v8
-checkpoint_version = 16
+method_version = member_aware_peer_state_v9
+checkpoint_version = 17
 ```
 
 For every execution or artifact analysis, verify those and all other runtime
@@ -306,61 +306,48 @@ Within the first member-level frontier, select deterministically using:
 2. stable seeded rank
 ```
 
+Formally:
+
+```text
+A_t = {i : R_i is non-empty and frozen_i = false}
+T_i = (D_i, S_i, d_i), i in A_t
+F_t = ParetoFront({T_i : i in A_t})
+i_t = lexicographic argmax over i in F_t of
+      (updates_since_selected_i, -seeded_rank_i)
+```
+
 Do not add coverage, portfolio size, history, or an implicit weighted score to
 `T_i`.
 
-### 5.5 Member-level max-wait safeguard
+### 5.5 State-Conditioned Repairability Freeze
 
-The fixed default is:
+The active set is exactly the members with a non-empty responsibility portfolio
+that are not frozen. `d_i` is the sole weak-member protection term. Compute one
+Pareto frontier over `(D_i, S_i, d_i)` for that active set; within the first
+frontier use larger `updates_since_selected`, then stable seeded rank.
 
-```text
-max_wait = 8
-```
+Two consecutive complete failures under the same sanitized portfolio signature
+freeze a member. A complete failure requires a formally selected target, the
+normal proposal and candidate budgets to finish, no infrastructure, protocol,
+or parser failure, and no accepted candidate. Each update increments a streak
+at most once.
 
-This is a responsibility-conditioned starvation safeguard, not another
-optimization module. It triggers only when:
+Frozen members remain in eligibility, portfolios, and audits but cannot enter
+the active target pool. They unfreeze only after at least two accepted updates
+by other members and a material portfolio change: residual-hash Jaccard below
+`0.8` or changed `D_i`. A small `S_i` change alone is insufficient.
 
-```text
-R_i is non-empty
-and updates_since_selected >= 8
-```
+There is no waiting-time override, deficit-service lane, or generic
+compensation mechanism. If all non-empty portfolios belong to frozen members,
+stop optimization with `early_stop_reason = all_actionable_members_frozen`.
 
-The overdue branch does not compute another Pareto frontier. It orders overdue
-responsible members by:
-
-```text
-1. longest wait
-2. larger D_i
-3. larger S_i
-4. larger d_i
-5. stable seeded rank
-```
-
-Wait is member-level scheduling state. It does not attach scheduling age to a
-residual and does not affect residual eligibility.
-
-## 6. Optional Research Extensions
+## 6. Optional Research Extension
 
 The following extensions are outside the default compact three-module method.
 They must be explicitly configured, separately labelled, and interpreted as
 extensions rather than established method contributions.
 
-### 6.1 Catch-up
-
-The normative default is:
-
-```text
-member_catchup_mode = off
-```
-
-An explicit `fallback_v1` mode may be retained as a research extension, but it:
-
-- is not part of the three-module core method;
-- does not enter the default scheduler or main experimental flow;
-- must not be described as validated or effective without matched evidence;
-- must not borrow another member's responsibility.
-
-### 6.2 Proposal Memory
+### 6.1 Proposal Memory
 
 The normative default is:
 
@@ -421,7 +408,7 @@ representative evidence
 ```
 
 It must not introduce frontier numbers, residual scheduling ages, ownership
-competition, or default catch-up state.
+competition, or an independent compensation state.
 
 Programmatic aggregation uses the complete fixed optimization probe and
 provides at most:
@@ -650,7 +637,8 @@ rule does not create residual ownership or per-residual scheduling age.
 
 The active final-state lifecycle performs no validation rollout or checkpoint
 selection. Validation split hashes remain in run identity only. The final
-active team after every planned update is the selected team.
+active team after the planned budget or a valid repairability early stop is the
+selected team.
 
 Test data must never influence:
 
@@ -661,8 +649,9 @@ Test data must never influence:
 - candidate acceptance;
 - final-state selection.
 
-Test runs exactly once, only after every planned update completes, and only for
-the final active team. Optimized runs do not separately evaluate their initial
+Test runs exactly once, only after the optimization lifecycle completes its
+budget or valid all-actionable-members-frozen stop, and only for the final
+active team. Optimized runs do not separately evaluate their initial
 team on test; a frozen matched baseline supplies the reporting-only initial-test
 reference.
 
@@ -801,7 +790,7 @@ multi_dataset_diverse_rl/versions.py
 ```
 
 This is the source of truth for actual runtime identifiers. The compact method
-uses checkpoint version 16; implementation, persistence, and tests must remain
+uses checkpoint version 17; implementation, persistence, and tests must remain
 consistent with it.
 
 ### Configuration and protocols
@@ -855,11 +844,11 @@ The responsibility module defines:
 - per-residual eligibility sets;
 - member responsibility portfolios;
 - compact `(D_i, S_i, d_i)` target scheduling;
-- the member-level max-wait safeguard.
+- State-Conditioned Repairability Freeze.
 
 There must be one lexicographic eligibility decision per residual and one
 member-level target Pareto frontier. Coverage and dominant-wrong labels remain
-diagnostic; generic catch-up is not a default path.
+diagnostic; no generic compensation path exists.
 
 ### Responsibility-conditioned proposal
 
@@ -1010,10 +999,10 @@ exact run identity
 deterministic same-seed behavior
 atomic accepted update
 one diagnosis/responsibility refresh per accepted team transition
-test only after all planned updates complete
+test only after the optimization lifecycle completes
 one per-residual eligibility decision based only on (DeltaV, DeltaM)
 one member-level target Pareto over (D_i, S_i, d_i)
-member_catchup_mode = off by default
+state-conditioned repairability freeze in S4/S5 only
 proposal_memory_mode = off by default
 vote-only v6 acceptance preserved
 ```
@@ -1033,7 +1022,7 @@ Do not add:
 - hidden weighted responsibility scores;
 - coverage or dominant-wrong dimensions in formal eligibility;
 - coverage or portfolio size in the formal target vector;
-- default catch-up;
+- waiting-time or deficit-service compensation lanes;
 - default Proposal Memory;
 - new agents or roles without a new research question;
 - duplicate settings or duplicate metric implementations;
@@ -1142,7 +1131,7 @@ implementation status.
 ## 17. Historical Methods and Results
 
 Historical pilot and smoke directories are evidence, not current method code.
-In particular, v6 and v7 owner/frontier/catch-up reports are historical
+In particular, v6 and v7 owner/frontier/compensation reports are historical
 development evidence. They do not define the active compact method.
 
 Historical terms such as `repair-frontier`, `primary owner`, `owner_age`,
@@ -1198,6 +1187,8 @@ candidate_decisions_sanitized.jsonl
 responsibility_assignments_sanitized.jsonl
 member_opportunities_sanitized.jsonl
 target_priority_audit_sanitized.jsonl
+repairability_freeze_events_sanitized.jsonl
+repairability_unfreeze_events_sanitized.jsonl
 g_transition_audit_sanitized.jsonl
 specialization_trajectory_sanitized.jsonl
 token_cost_breakdown_sanitized.json

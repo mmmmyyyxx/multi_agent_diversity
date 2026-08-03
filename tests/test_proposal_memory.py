@@ -18,7 +18,7 @@ from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptim
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v8",
+        method_version="member_aware_peer_state_v9",
         experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",

@@ -91,7 +91,7 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
     decision_keys = (
         "update_index", "update_lane", "stop_reason", "target_agent_id", "target_assigned_residual_count", "assigned_question_hashes",
-        "max_wait_fairness_trigger_count", "best_attempt_target_gain",
+        "best_attempt_target_gain",
         "positive_target_gain_candidate_found", "candidate_search_outcome_updated",
         "cooldown_length_assigned", "accepted_prompt_hash",
     )
@@ -178,13 +178,13 @@ def specialization_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def priority_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     keys = (
-        "update_index", "overdue_first", "selection_pool_stage", "eligible_agent_ids",
-        "overdue_agent_ids", "no_actionable_reason",
-        "actual_candidate_agent_ids", "target_pareto_fronts",
-        "target_frontier_agent_ids", "selected_agent_id",
+        "update_index", "selection_pool_stage", "eligible_agent_ids",
+        "frozen_agent_ids", "active_candidate_agent_ids", "no_actionable_reason",
+        "target_pareto_fronts", "target_frontier_agent_ids", "selected_agent_id",
+        "selected_D", "selected_S", "selected_d", "updates_since_selected",
     )
     return [
-        {"artifact_schema_version": "sanitized_compact_target_priority_v1", **pick(row, keys),
+        {"artifact_schema_version": "sanitized_compact_target_priority_v2", **pick(row, keys),
          "priorities": sanitize(row.get("priorities", []))}
         for row in rows
     ]
@@ -340,6 +340,10 @@ def main() -> None:
     memory_audit = load_json(memory_audit_path) if memory_audit_path.exists() else {}
     rotation_path = run / "proposal_rotation_trajectory.jsonl"
     rotation = load_jsonl(rotation_path) if rotation_path.exists() else []
+    freeze_path = run / "repairability_freeze_events.jsonl"
+    freeze_events = load_jsonl(freeze_path) if freeze_path.exists() else []
+    unfreeze_path = run / "repairability_unfreeze_events.jsonl"
+    unfreeze_events = load_jsonl(unfreeze_path) if unfreeze_path.exists() else []
 
     sanitized_candidates = candidate_rows(candidates)
     sanitized_priorities = priority_rows(priorities)
@@ -358,6 +362,28 @@ def main() -> None:
     dump_jsonl(out / "responsibility_assignments_sanitized.jsonl", sanitized_assignments)
     dump_jsonl(out / "member_opportunities_sanitized.jsonl", sanitized_opportunities)
     dump_jsonl(out / "target_priority_audit_sanitized.jsonl", sanitized_priorities)
+    dump_jsonl(
+        out / "repairability_freeze_events_sanitized.jsonl",
+        [
+            {
+                "artifact_schema_version": "sanitized_repairability_freeze_event_v1",
+                "artifact_event_count": len(freeze_events),
+                **sanitize(row),
+            }
+            for row in freeze_events
+        ],
+    )
+    dump_jsonl(
+        out / "repairability_unfreeze_events_sanitized.jsonl",
+        [
+            {
+                "artifact_schema_version": "sanitized_repairability_unfreeze_event_v1",
+                "artifact_event_count": len(unfreeze_events),
+                **sanitize(row),
+            }
+            for row in unfreeze_events
+        ],
+    )
     dump_jsonl(out / "g_transition_audit_sanitized.jsonl", sanitized_transitions)
     dump_jsonl(out / "specialization_trajectory_sanitized.jsonl", sanitized_specialization)
     dump_jsonl(out / "training_dynamics_sanitized.jsonl", sanitized_dynamics)

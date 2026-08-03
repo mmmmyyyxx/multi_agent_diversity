@@ -16,12 +16,11 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "member_aware_peer_state_v8",
+    "method_version": "member_aware_peer_state_v9",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",
     "responsibility_mode": "compact_member_aware_v8",
-    "member_catchup_mode": "off",
     "proposal_memory_mode": "off",
 }
 

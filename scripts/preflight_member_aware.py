@@ -71,12 +71,8 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
             errors.append("all canonical settings must use tie-as-abstain")
-        if cfg.responsibility.responsibility_max_wait_updates <= 0:
-            errors.append("responsibility_max_wait_updates must be positive")
         if cfg.responsibility.member_uplift_tolerance < 0:
             errors.append("member_uplift_tolerance cannot be negative")
-        if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
-            errors.append("member_catchup_mode must be 'off' or 'fallback_v1'")
         if cfg.responsibility.responsibility_mode != "compact_member_aware_v8":
             errors.append(
                 "responsibility_mode must be 'compact_member_aware_v8'"
@@ -243,12 +239,8 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("num_candidates_per_parent must be positive")
                     if not 0 < cfg.evaluation.stage_b_candidate_budget <= cfg.tcs.num_candidates_per_parent:
                         raise ValueError("stage_b_candidate_budget must be within generated candidate count")
-                    if cfg.responsibility.responsibility_max_wait_updates <= 0:
-                        raise ValueError("responsibility_max_wait_updates must be positive")
                     if cfg.responsibility.member_uplift_tolerance < 0:
                         raise ValueError("member_uplift_tolerance cannot be negative")
-                    if cfg.responsibility.member_catchup_mode not in {"off", "fallback_v1"}:
-                        raise ValueError("member_catchup_mode must be 'off' or 'fallback_v1'")
                     if (
                         cfg.responsibility.responsibility_mode
                         != "compact_member_aware_v8"

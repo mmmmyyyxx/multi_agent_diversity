@@ -605,6 +605,7 @@ def main() -> None:
                     "test_evaluation_count": selection_summary["test_evaluation_count"],
                     "planned_update_count": run_meta["planned_update_count"],
                     "completed_update_count": run_meta["completed_update_count"],
+                    "early_stop_reason": run_meta.get("early_stop_reason", ""),
                     "frozen_initialization_matched": True,
                     "frozen_initialization_manifest_sha256": frozen_manifests[
                         (task_id, seed)
