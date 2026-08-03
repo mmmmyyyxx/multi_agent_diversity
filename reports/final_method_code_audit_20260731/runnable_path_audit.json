@@ -1,0 +1,30 @@
+{
+  "audit_version": "final_method_runnable_path_audit_v1",
+  "gate": "PASS",
+  "runner": "scripts/run_task_level_accuracy.py",
+  "source_freezer": "scripts/final_method_source_identity.py",
+  "stage_gate": "scripts/audit_final_method_stage.py",
+  "final_report_builder": "scripts/build_final_method_complete_report.py",
+  "pilot_protocol": {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "settings": "S0-S5",
+    "planned_updates": 8,
+    "final_test_enabled": false
+  },
+  "full_protocol": {
+    "task": "disambiguation_qa",
+    "seeds": [44, 45, 46],
+    "settings": "S0-S5",
+    "planned_updates": 32,
+    "final_test_enabled": true
+  },
+  "cross_task_protocol": {
+    "tasks": ["geometric_shapes", "ruin_names"],
+    "seeds": [44, 45, 46],
+    "settings": ["S0", "S5"],
+    "planned_updates": 32,
+    "final_test_enabled": true
+  },
+  "monitor_interval_minutes": 30
+}

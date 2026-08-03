@@ -1,0 +1,127 @@
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from multi_dataset_diverse_rl.versions import (
+    CANDIDATE_ACCEPTANCE_VERSION,
+    CHECKPOINT_VERSION,
+    METHOD_VERSION,
+    RESPONSIBILITY_VERSION,
+    TARGET_SELECTION_VERSION,
+    TCS_CONTEXT_VERSION,
+)
+
+
+SOURCE_IDENTITY_VERSION = "final_method_source_identity_v1"
+SOURCE_ROOTS = (
+    "AGENTS.md",
+    "README.md",
+    "method.md",
+    "configs",
+    "multi_dataset_diverse_rl",
+    "scripts",
+    "tests",
+)
+EXPERIMENT_SCRIPTS = (
+    "scripts/run_task_level_accuracy.py",
+    "scripts/audit_final_method_stage.py",
+    "scripts/build_final_method_complete_report.py",
+)
+
+
+def _git(workspace: Path, *args: str) -> bytes:
+    return subprocess.run(
+        ["git", *args],
+        cwd=workspace,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout
+
+
+def _source_files(workspace: Path) -> list[Path]:
+    files: list[Path] = []
+    for raw in SOURCE_ROOTS:
+        path = workspace / raw
+        if path.is_file():
+            files.append(path)
+        elif path.is_dir():
+            files.extend(
+                candidate
+                for candidate in path.rglob("*")
+                if candidate.is_file()
+                and "__pycache__" not in candidate.parts
+                and candidate.suffix.lower() in {".py", ".ps1", ".yaml", ".yml", ".md"}
+            )
+    return sorted(set(files), key=lambda path: path.relative_to(workspace).as_posix())
+
+
+def _tree_hash(workspace: Path, files: list[Path]) -> str:
+    digest = hashlib.sha256()
+    for path in files:
+        relative = path.relative_to(workspace).as_posix()
+        payload = path.read_bytes()
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(payload).digest())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def build_source_identity(workspace: Path) -> dict[str, Any]:
+    workspace = workspace.resolve()
+    files = _source_files(workspace)
+    diff = _git(workspace, "diff", "--binary", "HEAD")
+    status = _git(workspace, "status", "--porcelain=v1").decode("utf-8").splitlines()
+    script_hashes = {
+        name: hashlib.sha256((workspace / name).read_bytes()).hexdigest()
+        if (workspace / name).is_file() else "missing"
+        for name in EXPERIMENT_SCRIPTS
+    }
+    return {
+        "source_identity_version": SOURCE_IDENTITY_VERSION,
+        "git_commit": _git(workspace, "rev-parse", "HEAD").decode("utf-8").strip(),
+        "git_dirty": bool(status),
+        "git_diff_hash": hashlib.sha256(diff).hexdigest(),
+        "source_tree_hash": _tree_hash(workspace, files),
+        "source_file_count": len(files),
+        "experiment_script_hashes": script_hashes,
+        "method_identifiers": {
+            "method_version": METHOD_VERSION,
+            "responsibility_version": RESPONSIBILITY_VERSION,
+            "target_selection_version": TARGET_SELECTION_VERSION,
+            "tcs_context_version": TCS_CONTEXT_VERSION,
+            "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "checkpoint_version": CHECKPOINT_VERSION,
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--workspace", type=Path, default=Path("."))
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+    workspace = args.workspace.resolve()
+    out = args.out if args.out.is_absolute() else workspace / args.out
+    payload = build_source_identity(workspace)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

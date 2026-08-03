@@ -1,0 +1,75 @@
+{
+  "audit_version": "final_method_code_audit_v1",
+  "gate": "PASS",
+  "blocker_count": 0,
+  "major_count": 0,
+  "requirements": [
+    {
+      "requirement": "Runtime version and formal defaults",
+      "status": "PASS",
+      "evidence": "member_aware_peer_state_v8; checkpoint 16; catch-up off; Proposal Memory off"
+    },
+    {
+      "requirement": "Residual eligibility is lexicographic argmax over (DeltaV, DeltaM)",
+      "status": "PASS",
+      "evidence": "responsibility.compute_repair_eligibility_sets and deterministic eligibility tests"
+    },
+    {
+      "requirement": "Portfolio and target vector are exactly (D, S, d)",
+      "status": "PASS",
+      "evidence": "responsibility_portfolios, target_priorities, scheduler tests"
+    },
+    {
+      "requirement": "Exactly one member-level Pareto; max-wait has no second Pareto",
+      "status": "PASS",
+      "evidence": "build_target_selection_decision and max-wait audit replay"
+    },
+    {
+      "requirement": "S4/S5 proposal context isolation",
+      "status": "PASS",
+      "evidence": "protocol definitions and test_config_and_presets"
+    },
+    {
+      "requirement": "Target-or-vote candidate acceptance remains frozen",
+      "status": "PASS",
+      "evidence": "target_or_vote_strict_progress_v1; vote-only acceptance smoke"
+    },
+    {
+      "requirement": "Final active state, no validation selection, exactly one optional final test",
+      "status": "PASS",
+      "evidence": "CLI lifecycle tests and deterministic final-state smoke"
+    },
+    {
+      "requirement": "Atomic accepted update and one responsibility refresh",
+      "status": "PASS",
+      "evidence": "deterministic system smoke and checkpoint tests"
+    },
+    {
+      "requirement": "Formal experiment runner is executable and fail-closed",
+      "status": "PASS",
+      "evidence": "per-task-seed frozen initialization, cumulative exact-observation reference, per-run cloned mutable cache, v2 cache-chain and matched-observation audit"
+    }
+  ],
+  "resolved_findings": [
+    {
+      "severity": "BLOCKER",
+      "finding": "baseline ignored final_test_enabled=0",
+      "resolution": "baseline now initializes the frozen train probe and skips test when disabled"
+    },
+    {
+      "severity": "BLOCKER",
+      "finding": "settings shared one mutable solver cache and lacked frozen initialization enforcement",
+      "resolution": "runner freezes once per task-seed; every setting clones a cumulative exact-observation reference into a distinct mutable SQLite cache and merges new ready entries back before the next setting"
+    },
+    {
+      "severity": "BLOCKER",
+      "finding": "two ruin_names rows had comma-split option structures",
+      "resolution": "the two rows were reconstructed as unambiguous four-option questions and gold letters"
+    },
+    {
+      "severity": "MAJOR",
+      "finding": "historical v6 report unit test depended on deleted raw runs",
+      "resolution": "manifest construction now consumes explicitly supplied baseline hashes"
+    }
+  ]
+}

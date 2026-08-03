@@ -1,0 +1,17 @@
+{
+  "audit_version": "final_method_persistence_cache_audit_v2",
+  "gate": "PASS",
+  "checkpoint_version": 16,
+  "checkpoint_v15_migration": false,
+  "checkpoint_identity_validation": "exact",
+  "frozen_initialization": "one per task-seed",
+  "frozen_cache": "read-only initialization SQLite backup source",
+  "comparison_reference_cache": "cumulative task-seed exact-observation cache seeded from frozen initialization and extended after each sequential setting",
+  "mutable_cache": "independent per-setting clone; newly completed exact-request entries merge back into the cumulative reference",
+  "cache_key_contains_experiment_setting": false,
+  "shared_mutable_cache_across_settings": false,
+  "resume_policy": "only exact completed-run reuse; incomplete paths fail closed",
+  "source_identity": "commit, dirty state, diff hash, source tree hash, script hashes",
+  "post_run_finding": "the completed 2026-07-31 runs predate v2 and are invalid as strict matched-test comparisons",
+  "v2_gate": "requires comparison_cache_match.json and rejects metric drift for unchanged prompt hashes"
+}

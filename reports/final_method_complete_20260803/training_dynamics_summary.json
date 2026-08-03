@@ -1,0 +1,560 @@
+[
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 3,
+      "1": 2,
+      "2": 1,
+      "3": 3,
+      "4": 4
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5384615384615384,
+    "max_min_accepted_gap": 3,
+    "last_accepted_update": 29,
+    "longest_rejection_streak": 8
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 3,
+      "1": 1,
+      "2": 2,
+      "3": 4,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5833333333333334,
+    "max_min_accepted_gap": 3,
+    "last_accepted_update": 30,
+    "longest_rejection_streak": 7
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 4,
+      "2": 2,
+      "3": 3,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5384615384615384,
+    "max_min_accepted_gap": 3,
+    "last_accepted_update": 31,
+    "longest_rejection_streak": 6
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 9,
+      "1": 9,
+      "2": 5,
+      "3": 5,
+      "4": 4
+    },
+    "accepted_updates_by_member": {
+      "0": 2,
+      "1": 1,
+      "2": 3,
+      "3": 1,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.6,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 21,
+    "longest_rejection_streak": 10
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 5,
+      "1": 5,
+      "2": 8,
+      "3": 5,
+      "4": 9
+    },
+    "accepted_updates_by_member": {
+      "0": 4,
+      "1": 2,
+      "2": 2,
+      "3": 3,
+      "4": 5
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5625,
+    "max_min_accepted_gap": 3,
+    "last_accepted_update": 20,
+    "longest_rejection_streak": 11
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 2,
+      "1": 3,
+      "2": 1,
+      "3": 2,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 21,
+    "longest_rejection_streak": 10
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 3,
+      "1": 3,
+      "2": 3,
+      "3": 3,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.4,
+    "max_min_accepted_gap": 0,
+    "last_accepted_update": 18,
+    "longest_rejection_streak": 13
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 4,
+      "1": 2,
+      "2": 3,
+      "3": 5,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5294117647058824,
+    "max_min_accepted_gap": 3,
+    "last_accepted_update": 29,
+    "longest_rejection_streak": 6
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 13,
+      "1": 5,
+      "2": 4,
+      "3": 4,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 2,
+      "2": 2,
+      "3": 3,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 29,
+    "longest_rejection_streak": 10
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 4,
+      "1": 4,
+      "2": 4,
+      "3": 16,
+      "4": 4
+    },
+    "accepted_updates_by_member": {
+      "0": 2,
+      "1": 1,
+      "2": 2,
+      "3": 2,
+      "4": 1
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5,
+    "max_min_accepted_gap": 1,
+    "last_accepted_update": 12,
+    "longest_rejection_streak": 19
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 3,
+      "1": 2,
+      "2": 3,
+      "3": 3,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.46153846153846156,
+    "max_min_accepted_gap": 1,
+    "last_accepted_update": 26,
+    "longest_rejection_streak": 7
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 4,
+      "1": 2,
+      "2": 2,
+      "3": 3,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5384615384615384,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 25,
+    "longest_rejection_streak": 6
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 7,
+      "2": 6,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 3,
+      "1": 3,
+      "2": 2,
+      "3": 3,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.42857142857142855,
+    "max_min_accepted_gap": 1,
+    "last_accepted_update": 23,
+    "longest_rejection_streak": 8
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 4,
+      "1": 4,
+      "2": 12,
+      "3": 7,
+      "4": 5
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 3,
+      "2": 2,
+      "3": 2,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5454545454545454,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 29,
+    "longest_rejection_streak": 7
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 4,
+      "1": 4,
+      "2": 4,
+      "3": 16,
+      "4": 4
+    },
+    "accepted_updates_by_member": {
+      "0": 2,
+      "1": 2,
+      "2": 2,
+      "3": 4,
+      "4": 3
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5384615384615384,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 29,
+    "longest_rejection_streak": 7
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 5,
+      "1": 5,
+      "2": 11,
+      "3": 4,
+      "4": 7
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 2,
+      "2": 0,
+      "3": 1,
+      "4": 1
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [
+      2
+    ],
+    "top_2_accepted_share": 0.6,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 24,
+    "longest_rejection_streak": 13
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 5,
+      "1": 6,
+      "2": 7,
+      "3": 7,
+      "4": 7
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [
+      1,
+      2,
+      3
+    ],
+    "top_2_accepted_share": 1.0,
+    "max_min_accepted_gap": 1,
+    "last_accepted_update": 30,
+    "longest_rejection_streak": 18
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 6,
+      "1": 7,
+      "2": 7,
+      "3": 6,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "top_2_accepted_share": "unavailable",
+    "max_min_accepted_gap": 0,
+    "last_accepted_update": "unavailable",
+    "longest_rejection_streak": 32
+  },
+  {
+    "task": "ruin_names",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 4,
+      "1": 12,
+      "2": 4,
+      "3": 8,
+      "4": 4
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 3,
+      "2": 1,
+      "3": 2,
+      "4": 2
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5555555555555556,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 26,
+    "longest_rejection_streak": 8
+  },
+  {
+    "task": "ruin_names",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 4,
+      "1": 4,
+      "2": 5,
+      "3": 13,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 1,
+      "1": 3,
+      "2": 3,
+      "3": 2,
+      "4": 1
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.6,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 20,
+    "longest_rejection_streak": 11
+  },
+  {
+    "task": "ruin_names",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "trajectory_length": 33,
+    "selected_updates_by_member": {
+      "0": 7,
+      "1": 5,
+      "2": 7,
+      "3": 7,
+      "4": 6
+    },
+    "accepted_updates_by_member": {
+      "0": 2,
+      "1": 1,
+      "2": 3,
+      "3": 2,
+      "4": 1
+    },
+    "never_selected_members": [],
+    "never_accepted_members": [],
+    "top_2_accepted_share": 0.5555555555555556,
+    "max_min_accepted_gap": 2,
+    "last_accepted_update": 27,
+    "longest_rejection_streak": 14
+  }
+]

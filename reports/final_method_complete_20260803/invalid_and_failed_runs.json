@@ -1,0 +1,13 @@
+{
+  "failed_or_incomplete_runs": [],
+  "infrastructure_failure_count": 0,
+  "retried_runs": "unavailable",
+  "strict_comparison_failures": [
+    {
+      "scope": "all full matched-setting test comparisons",
+      "reason": "settings used independent mutable caches cloned before baseline test observations were available",
+      "direct_evidence": "geometric_shapes/seed46/shared_member_aware_full accepted zero updates but changed every member test correct count from 73 to 75",
+      "status": "invalidated; exploratory values retained"
+    }
+  ]
+}

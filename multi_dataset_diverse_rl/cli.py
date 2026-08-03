@@ -108,8 +108,11 @@ async def run(cfg: Config) -> dict[str, Any]:
         test_rows=test,
         workspace=Path.cwd(),
     ))
+    probe = list(train[: min(len(train), cfg.evaluation.candidate_eval_pool_size)])
 
     if not system.protocol.optimization_enabled:
+        await system.initialize_fixed_probe(probe)
+        _verify_frozen_initialization(system, cfg)
         team_state_hash = system.team_prompt_state_hash()
         system.planned_update_count = 0
         system.completed_update_count = 0
@@ -133,7 +136,9 @@ async def run(cfg: Config) -> dict[str, Any]:
             "test_called_before_training_complete": False,
         }
         system.final_state_selection = dict(selection_summary)
-        initial_test = await system.evaluate_final_test(test)
+        selected_test = None
+        if cfg.persistence.final_test_enabled:
+            selected_test = await system.evaluate_final_test(test)
         selection_summary.update({
             "test_evaluation_count": system.test_evaluation_count,
             "test_used_for_selection": system.test_used_for_selection,
@@ -141,14 +146,23 @@ async def run(cfg: Config) -> dict[str, Any]:
             "test_called_before_training_complete": (
                 system.test_called_before_training_complete
             ),
+            "final_test_enabled": cfg.persistence.final_test_enabled,
         })
         system.final_state_selection = dict(selection_summary)
         final_payload = _final_payload(
-            initial_test,
-            initial_test,
+            selected_test,
+            selected_test,
             selection_summary=selection_summary,
         )
-        system.history = [{"epoch": 0, "test": _metrics_summary(initial_test)}]
+        history_row = {
+            "epoch": 0,
+            "completed_update_count": 0,
+            "team_prompt_state_hash": team_state_hash,
+            "active_probe": _metrics_summary(system.active_probe_metrics()),
+        }
+        if selected_test is not None:
+            history_row["test"] = _metrics_summary(selected_test)
+        system.history = [history_row]
         system.artifacts.write_json(
             "best_prompts.json", [agent.current_prompt for agent in system.agents]
         )
@@ -156,7 +170,6 @@ async def run(cfg: Config) -> dict[str, Any]:
         system.artifacts.write_json("final_summary.json", final_payload)
         return final_payload
 
-    probe = list(train[: min(len(train), cfg.evaluation.candidate_eval_pool_size)])
     checkpoint_path = Path(cfg.persistence.out_dir) / "training_checkpoint.json"
     payload = load_checkpoint(checkpoint_path) if cfg.persistence.resume_from_checkpoint else None
     updates_per_epoch = max(

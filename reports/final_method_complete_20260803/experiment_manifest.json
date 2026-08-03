@@ -1,0 +1,13 @@
+{
+  "report_version": "final_method_completed_run_inventory_v2",
+  "pilot_run_count": 6,
+  "disambiguation_run_count": 18,
+  "cross_task_run_count": 12,
+  "legacy_v1_stage_gates": {
+    "pilot": "PASS",
+    "disambiguation": "PASS",
+    "cross_task": "PASS"
+  },
+  "strict_matched_test_comparison_status": "invalidated",
+  "invalidating_evidence": "geometric_shapes seed46 shared_member_aware_full had zero accepted updates but its test counts differed from the matched baseline"
+}

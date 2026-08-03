@@ -3,10 +3,13 @@ import json
 import pytest
 
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
+from multi_dataset_diverse_rl.task_manifest import ComparisonTask
 from scripts.run_task_level_accuracy import (
     RUNNER_FIELDS,
+    _comparison_cache_source,
     _completed_run,
     _parser,
+    _task_split_integrity,
     effective_proposal_memory_mode,
 )
 
@@ -66,6 +69,8 @@ def test_completed_run_requires_exact_identity(tmp_path):
         },
         "cost_summary.json": {"total_llm_calls": 1},
         "candidate_funnel.json": {"update_count": 1},
+        "frozen_initialization_match.json": {"matched": True},
+        "comparison_cache_match.json": {"matched": True},
     }.items():
         (run / filename).write_text(json.dumps(payload), encoding="utf-8")
     (run / "tcs_rounds.jsonl").write_text("", encoding="utf-8")
@@ -100,6 +105,8 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
             "config": {"proposal_memory_mode": "state_local_v1"},
         },
         "cost_summary.json": {}, "candidate_funnel.json": {},
+        "frozen_initialization_match.json": {"matched": True},
+        "comparison_cache_match.json": {"matched": True},
     }
     for name, payload in payloads.items():
         (run / name).write_text(json.dumps(payload), encoding="utf-8")
@@ -112,3 +119,52 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
     ):
         (run / name).write_text("{}" if name.endswith(".json") else "", encoding="utf-8")
     assert _completed_run(run, identity()) is True
+
+
+def test_task_split_integrity_rejects_option_letter_gold_outside_question(tmp_path):
+    paths = []
+    for index, name in enumerate(("train", "val", "test")):
+        path = tmp_path / f"{name}.jsonl"
+        path.write_text(json.dumps({
+            "question": f"q{index}\n(A) first\n(B) second",
+            "answer": "literal answer",
+        }) + "\n", encoding="utf-8")
+        paths.append(str(path))
+    task = ComparisonTask(
+        "toy", "BBH", "bbh", "option_letter", *paths,
+    )
+    with pytest.raises(ValueError, match="answer-space integrity"):
+        _task_split_integrity(task, "legacy", str(tmp_path))
+
+
+def test_task_split_integrity_accepts_unique_option_letter_gold(tmp_path):
+    paths = []
+    for index, name in enumerate(("train", "val", "test")):
+        path = tmp_path / f"{name}.jsonl"
+        path.write_text(json.dumps({
+            "question": f"q{index}\n(A) first\n(B) second",
+            "answer": "(B)",
+        }) + "\n", encoding="utf-8")
+        paths.append(str(path))
+    task = ComparisonTask(
+        "toy", "BBH", "bbh", "option_letter", *paths,
+    )
+    audit = _task_split_integrity(task, "legacy", str(tmp_path))
+    assert audit["option_letter_invalid_gold_count"] == 0
+    assert audit["option_letter_ambiguous_gold_count"] == 0
+
+
+def test_optimized_setting_requires_baseline_comparison_cache(tmp_path):
+    reference = tmp_path / "comparison.sqlite"
+    with pytest.raises(FileNotFoundError, match="cumulative task-seed comparison cache"):
+        _comparison_cache_source(
+            comparison_reference_cache_path=reference,
+        )
+    reference.write_bytes(b"baseline plus matched test")
+    source, role = _comparison_cache_source(
+        comparison_reference_cache_path=reference,
+    )
+    assert (source, role) == (
+        reference,
+        "cumulative_task_seed_observation_reference",
+    )

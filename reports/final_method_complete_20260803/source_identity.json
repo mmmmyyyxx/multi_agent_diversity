@@ -1,0 +1,21 @@
+{
+  "source_identity_version": "final_method_source_identity_v1",
+  "git_commit": "418cfab96e4caada42ab06c4b6fa492773b9a305",
+  "git_dirty": true,
+  "git_diff_hash": "c0814222344dcf54a86ef8ed25b251f8134d7783f519f1fab81f432f1f58f8cb",
+  "source_tree_hash": "c4f29fa770346f5b4a3a55d0aa7c8bd8ac7fe94c1be508055953c469bdede6b9",
+  "source_file_count": 118,
+  "experiment_script_hashes": {
+    "scripts/run_task_level_accuracy.py": "dca62431d6a6271f1c41553003ce11a4f67925939f4c0199ecf8eadfce1d5337",
+    "scripts/audit_final_method_stage.py": "bad995b228ae85b0fe5c064528452732d2d6a9e4c44172f3d9a2ad9e727ddacb",
+    "scripts/build_final_method_complete_report.py": "b7f2637d9052c3716c459b6500433675d7429c433611f6d9863087af5fb73096"
+  },
+  "method_identifiers": {
+    "method_version": "member_aware_peer_state_v8",
+    "responsibility_version": "counterfactual_vote_margin_responsibility_v1",
+    "target_selection_version": "compact_repair_uplift_scheduler_v1",
+    "tcs_context_version": "compact_responsibility_conditioned_context_v1",
+    "candidate_acceptance_version": "target_or_vote_strict_progress_v1",
+    "checkpoint_version": 16
+  }
+}

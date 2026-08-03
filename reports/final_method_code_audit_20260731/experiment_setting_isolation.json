@@ -1,0 +1,44 @@
+{
+  "audit_version": "final_method_setting_isolation_v1",
+  "gate": "PASS",
+  "settings": [
+    "shared_baseline",
+    "shared_independent_accuracy",
+    "shared_peer_state_vote_first",
+    "shared_peer_state_member_pareto",
+    "shared_member_aware_responsibility",
+    "shared_member_aware_full"
+  ],
+  "registered_comparisons": [
+    {
+      "comparison": "S2 vs S3",
+      "only_protocol_difference": "candidate_selection_policy",
+      "module": "Pareto-Constrained Team Update"
+    },
+    {
+      "comparison": "S3 vs S4",
+      "only_protocol_differences": [
+        "target_selection_policy",
+        "sample_pool_policy",
+        "responsibility_refresh_policy"
+      ],
+      "module": "Member-Aware Responsibility"
+    },
+    {
+      "comparison": "S4 vs S5",
+      "only_protocol_difference": "tcs_context_policy",
+      "module": "Responsibility-Conditioned Evolution"
+    }
+  ],
+  "matched_fields": [
+    "models",
+    "temperatures",
+    "candidate budgets",
+    "context capacity",
+    "evaluation protocol",
+    "solver contract",
+    "retry policy",
+    "five-agent plurality"
+  ],
+  "runtime_gate": "audit_final_method_stage.py recomputes this comparison for every task-seed"
+}

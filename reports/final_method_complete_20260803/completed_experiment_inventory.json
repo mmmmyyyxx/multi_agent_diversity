@@ -1,0 +1,35 @@
+{
+  "status": "operationally_complete_strict_comparison_invalidated",
+  "total_complete_runs": 36,
+  "stages": [
+    {
+      "name": "seed46_short_pilot",
+      "task": "disambiguation_qa",
+      "seeds": [46],
+      "settings": 6,
+      "updates_per_optimized_run": 8,
+      "complete_runs": 6,
+      "test_enabled": false
+    },
+    {
+      "name": "disambiguation_full",
+      "task": "disambiguation_qa",
+      "seeds": [44, 45, 46],
+      "settings": 6,
+      "updates_per_optimized_run": 32,
+      "complete_runs": 18,
+      "test_enabled": true
+    },
+    {
+      "name": "cross_task_baseline_full",
+      "tasks": ["geometric_shapes", "ruin_names"],
+      "seeds": [44, 45, 46],
+      "settings": ["shared_baseline", "shared_member_aware_full"],
+      "updates_per_optimized_run": 32,
+      "complete_runs": 12,
+      "test_enabled": true
+    }
+  ],
+  "recorded_tokens": 48855009,
+  "formal_interpretation": "invalidated by unmatched repeated test observations; values are exploratory"
+}

@@ -307,8 +307,16 @@ def baseline_metrics_hash(seed: int, treatment: str) -> str:
     return hash_json(metrics)
 
 
-def build_pair_manifest(seed: int, control_meta: dict[str, Any], memory_meta: dict[str, Any],
-                        control_initial: dict[str, Any], memory_initial: dict[str, Any]) -> dict[str, Any]:
+def build_pair_manifest(
+    seed: int,
+    control_meta: dict[str, Any],
+    memory_meta: dict[str, Any],
+    control_initial: dict[str, Any],
+    memory_initial: dict[str, Any],
+    *,
+    control_baseline_metrics_hash: str = "unavailable",
+    memory_baseline_metrics_hash: str = "unavailable",
+) -> dict[str, Any]:
     control_identity = control_meta["run_identity"]
     memory_identity = memory_meta["run_identity"]
     source_match = control_identity["git_commit"] == memory_identity["git_commit"]
@@ -326,7 +334,7 @@ def build_pair_manifest(seed: int, control_meta: dict[str, Any], memory_meta: di
             "initial_train_profile_hash": "unavailable",
             "initial_train_state_hash": hash_json(control_initial),
             "baseline_test_profile_hash": "unavailable",
-            "baseline_test_metrics_hash": baseline_metrics_hash(seed, "control"),
+            "baseline_test_metrics_hash": control_baseline_metrics_hash,
             "model_request_identity": control_meta["prompt_question_evaluator_identity"],
         },
         "memory": {
@@ -337,7 +345,7 @@ def build_pair_manifest(seed: int, control_meta: dict[str, Any], memory_meta: di
             "initial_train_profile_hash": "unavailable",
             "initial_train_state_hash": hash_json(memory_initial),
             "baseline_test_profile_hash": "unavailable",
-            "baseline_test_metrics_hash": baseline_metrics_hash(seed, "memory"),
+            "baseline_test_metrics_hash": memory_baseline_metrics_hash,
             "model_request_identity": memory_meta["prompt_question_evaluator_identity"],
         },
         "shared": {
@@ -477,6 +485,8 @@ def main() -> None:
         manifest = build_pair_manifest(
             seed, pair_meta[seed]["control"], pair_meta[seed]["memory"],
             pair_initial[seed]["control"], pair_initial[seed]["memory"],
+            control_baseline_metrics_hash=baseline_metrics_hash(seed, "control"),
+            memory_baseline_metrics_hash=baseline_metrics_hash(seed, "memory"),
         )
         control_cost = load_json(run_dir(seed, "control") / "cost_summary.json")
         memory_cost = load_json(run_dir(seed, "memory") / "cost_summary.json")

@@ -93,6 +93,37 @@ def test_short_mechanism_run_can_skip_test_without_relaxing_final_state_selectio
     assert selection["final_test_enabled"] is False
 
 
+def test_baseline_short_run_uses_frozen_probe_and_never_touches_test(monkeypatch, tmp_path):
+    events = []
+
+    async def solver(question, _agent_id, _prompt):
+        events.append(question)
+        return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+    class BaselineSystem(PromptEnsembleOptimizationSystem):
+        def __init__(self, cfg):
+            super().__init__(cfg, solver=solver)
+
+    monkeypatch.setattr(cli, "PromptEnsembleOptimizationSystem", BaselineSystem)
+    cfg = Config.from_flat(
+        experiment_setting="shared_baseline",
+        train_path=_split(tmp_path, "train"),
+        val_path=_split(tmp_path, "val"),
+        test_path=_split(tmp_path, "test"),
+        train_size=1,
+        val_size=1,
+        test_size=1,
+        answer_format="option_letter",
+        final_test_enabled=False,
+        out_dir=str(tmp_path / "baseline"),
+    )
+    result = asyncio.run(cli.run(cfg))
+    assert result["selected_test"] is None
+    assert result["selection_summary"]["test_evaluation_count"] == 0
+    assert result["selection_summary"]["final_test_enabled"] is False
+    assert events and all(question.startswith("train-") for question in events)
+
+
 def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
     calls = 0
 

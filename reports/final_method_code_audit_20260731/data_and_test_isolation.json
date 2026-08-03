@@ -1,0 +1,43 @@
+{
+  "audit_version": "final_method_data_test_isolation_v1",
+  "gate": "PASS",
+  "tasks": {
+    "disambiguation_qa": {
+      "train_count": 75,
+      "validation_count": 50,
+      "test_count": 125,
+      "train_validation_overlap": 0,
+      "train_test_overlap": 0,
+      "validation_test_overlap": 0,
+      "invalid_option_gold_count": 0,
+      "ambiguous_option_gold_count": 0
+    },
+    "geometric_shapes": {
+      "train_count": 75,
+      "validation_count": 50,
+      "test_count": 125,
+      "train_validation_overlap": 0,
+      "train_test_overlap": 0,
+      "validation_test_overlap": 0,
+      "invalid_option_gold_count": 0,
+      "ambiguous_option_gold_count": 0
+    },
+    "ruin_names": {
+      "train_count": 75,
+      "validation_count": 50,
+      "test_count": 125,
+      "train_validation_overlap": 0,
+      "train_test_overlap": 0,
+      "validation_test_overlap": 0,
+      "invalid_option_gold_count": 0,
+      "ambiguous_option_gold_count": 0,
+      "repaired_comma_split_rows": 2
+    }
+  },
+  "lifecycle": {
+    "validation_selection": false,
+    "pilot_test_evaluation_count": 0,
+    "full_test_evaluation_count": 1,
+    "test_before_training": false
+  }
+}

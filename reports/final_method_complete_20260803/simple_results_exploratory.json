@@ -1,0 +1,15 @@
+{
+  "warning": "These are observed aggregates, not strict matched-setting effect estimates.",
+  "disambiguation_qa_three_seed_means": [
+    {"setting": "shared_baseline", "final_vote_accuracy": 0.4187, "vote_correct_gain": 0.0, "g_min": 0.0, "g_sum": 0.0},
+    {"setting": "shared_independent_accuracy", "final_vote_accuracy": 0.6400, "vote_correct_gain": 27.67, "g_min": 15.0, "g_sum": 116.67},
+    {"setting": "shared_peer_state_vote_first", "final_vote_accuracy": 0.6533, "vote_correct_gain": 29.33, "g_min": 18.33, "g_sum": 123.67},
+    {"setting": "shared_peer_state_member_pareto", "final_vote_accuracy": 0.6400, "vote_correct_gain": 27.67, "g_min": 16.67, "g_sum": 116.33},
+    {"setting": "shared_member_aware_responsibility", "final_vote_accuracy": 0.5920, "vote_correct_gain": 21.67, "g_min": 10.0, "g_sum": 98.0},
+    {"setting": "shared_member_aware_full", "final_vote_accuracy": 0.6000, "vote_correct_gain": 22.67, "g_min": 11.0, "g_sum": 101.33}
+  ],
+  "cross_task_full_vs_baseline_three_seed_means": [
+    {"task": "geometric_shapes", "baseline_vote_accuracy": 0.5600, "full_vote_accuracy": 0.5627, "vote_correct_gain": 0.33},
+    {"task": "ruin_names", "baseline_vote_accuracy": 0.8720, "full_vote_accuracy": 0.8613, "vote_correct_gain": -1.33}
+  ]
+}

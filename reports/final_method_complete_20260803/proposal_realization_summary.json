@@ -1,0 +1,338 @@
+[
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_independent_accuracy",
+    "update_count": 32,
+    "evaluated_candidate_count": 62,
+    "target_positive_candidate_rate": 0.3548387096774194,
+    "vote_positive_candidate_rate": 0.2903225806451613,
+    "acceptable_candidate_rate": 0.3064516129032258,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 6,
+      "vote-only": 1,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_vote_first",
+    "update_count": 32,
+    "evaluated_candidate_count": 63,
+    "target_positive_candidate_rate": 0.30158730158730157,
+    "vote_positive_candidate_rate": 0.19047619047619047,
+    "acceptable_candidate_rate": 0.2698412698412698,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 7,
+      "vote-only": 0,
+      "target-and-vote": 5
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_peer_state_member_pareto",
+    "update_count": 32,
+    "evaluated_candidate_count": 64,
+    "target_positive_candidate_rate": 0.296875,
+    "vote_positive_candidate_rate": 0.28125,
+    "acceptable_candidate_rate": 0.328125,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 6,
+      "vote-only": 1,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_responsibility",
+    "update_count": 32,
+    "evaluated_candidate_count": 63,
+    "target_positive_candidate_rate": 0.25396825396825395,
+    "vote_positive_candidate_rate": 0.19047619047619047,
+    "acceptable_candidate_rate": 0.25396825396825395,
+    "assigned_residual_repair_count": 283,
+    "acceptance_types": {
+      "target-only": 3,
+      "vote-only": 2,
+      "target-and-vote": 5
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 56,
+    "target_positive_candidate_rate": 0.5357142857142857,
+    "vote_positive_candidate_rate": 0.21428571428571427,
+    "acceptable_candidate_rate": 0.44642857142857145,
+    "assigned_residual_repair_count": 222,
+    "acceptance_types": {
+      "target-only": 7,
+      "vote-only": 0,
+      "target-and-vote": 9
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_independent_accuracy",
+    "update_count": 32,
+    "evaluated_candidate_count": 60,
+    "target_positive_candidate_rate": 0.4166666666666667,
+    "vote_positive_candidate_rate": 0.2833333333333333,
+    "acceptable_candidate_rate": 0.2833333333333333,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 3,
+      "vote-only": 0,
+      "target-and-vote": 7
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_vote_first",
+    "update_count": 32,
+    "evaluated_candidate_count": 56,
+    "target_positive_candidate_rate": 0.44642857142857145,
+    "vote_positive_candidate_rate": 0.26785714285714285,
+    "acceptable_candidate_rate": 0.42857142857142855,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 5,
+      "vote-only": 0,
+      "target-and-vote": 10
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_peer_state_member_pareto",
+    "update_count": 32,
+    "evaluated_candidate_count": 62,
+    "target_positive_candidate_rate": 0.41935483870967744,
+    "vote_positive_candidate_rate": 0.24193548387096775,
+    "acceptable_candidate_rate": 0.3548387096774194,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 7,
+      "vote-only": 0,
+      "target-and-vote": 10
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_responsibility",
+    "update_count": 32,
+    "evaluated_candidate_count": 57,
+    "target_positive_candidate_rate": 0.2982456140350877,
+    "vote_positive_candidate_rate": 0.21052631578947367,
+    "acceptable_candidate_rate": 0.2631578947368421,
+    "assigned_residual_repair_count": 201,
+    "acceptance_types": {
+      "target-only": 3,
+      "vote-only": 0,
+      "target-and-vote": 7
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 53,
+    "target_positive_candidate_rate": 0.2830188679245283,
+    "vote_positive_candidate_rate": 0.20754716981132076,
+    "acceptable_candidate_rate": 0.2641509433962264,
+    "assigned_residual_repair_count": 212,
+    "acceptance_types": {
+      "target-only": 2,
+      "vote-only": 0,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_independent_accuracy",
+    "update_count": 32,
+    "evaluated_candidate_count": 59,
+    "target_positive_candidate_rate": 0.4067796610169492,
+    "vote_positive_candidate_rate": 0.22033898305084745,
+    "acceptable_candidate_rate": 0.3220338983050847,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 5,
+      "vote-only": 0,
+      "target-and-vote": 8
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_vote_first",
+    "update_count": 32,
+    "evaluated_candidate_count": 59,
+    "target_positive_candidate_rate": 0.3389830508474576,
+    "vote_positive_candidate_rate": 0.23728813559322035,
+    "acceptable_candidate_rate": 0.3050847457627119,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 4,
+      "vote-only": 0,
+      "target-and-vote": 9
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_peer_state_member_pareto",
+    "update_count": 32,
+    "evaluated_candidate_count": 61,
+    "target_positive_candidate_rate": 0.3442622950819672,
+    "vote_positive_candidate_rate": 0.16393442622950818,
+    "acceptable_candidate_rate": 0.3442622950819672,
+    "assigned_residual_repair_count": 0,
+    "acceptance_types": {
+      "target-only": 8,
+      "vote-only": 0,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_responsibility",
+    "update_count": 32,
+    "evaluated_candidate_count": 64,
+    "target_positive_candidate_rate": 0.3125,
+    "vote_positive_candidate_rate": 0.25,
+    "acceptable_candidate_rate": 0.265625,
+    "assigned_residual_repair_count": 270,
+    "acceptance_types": {
+      "target-only": 5,
+      "vote-only": 0,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "disambiguation_qa",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 58,
+    "target_positive_candidate_rate": 0.3448275862068966,
+    "vote_positive_candidate_rate": 0.22413793103448276,
+    "acceptable_candidate_rate": 0.3103448275862069,
+    "assigned_residual_repair_count": 182,
+    "acceptance_types": {
+      "target-only": 6,
+      "vote-only": 1,
+      "target-and-vote": 6
+    }
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 64,
+    "target_positive_candidate_rate": 0.078125,
+    "vote_positive_candidate_rate": 0.09375,
+    "acceptable_candidate_rate": 0.109375,
+    "assigned_residual_repair_count": 183,
+    "acceptance_types": {
+      "target-only": 2,
+      "vote-only": 2,
+      "target-and-vote": 1
+    }
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 60,
+    "target_positive_candidate_rate": 0.03333333333333333,
+    "vote_positive_candidate_rate": 0.0,
+    "acceptable_candidate_rate": 0.03333333333333333,
+    "assigned_residual_repair_count": 164,
+    "acceptance_types": {
+      "target-only": 2,
+      "vote-only": 0,
+      "target-and-vote": 0
+    }
+  },
+  {
+    "task": "geometric_shapes",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 62,
+    "target_positive_candidate_rate": 0.0,
+    "vote_positive_candidate_rate": 0.0,
+    "acceptable_candidate_rate": 0.0,
+    "assigned_residual_repair_count": 197,
+    "acceptance_types": {
+      "target-only": 0,
+      "vote-only": 0,
+      "target-and-vote": 0
+    }
+  },
+  {
+    "task": "ruin_names",
+    "seed": 44,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 62,
+    "target_positive_candidate_rate": 0.25806451612903225,
+    "vote_positive_candidate_rate": 0.0967741935483871,
+    "acceptable_candidate_rate": 0.22580645161290322,
+    "assigned_residual_repair_count": 107,
+    "acceptance_types": {
+      "target-only": 6,
+      "vote-only": 0,
+      "target-and-vote": 3
+    }
+  },
+  {
+    "task": "ruin_names",
+    "seed": 45,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 61,
+    "target_positive_candidate_rate": 0.2786885245901639,
+    "vote_positive_candidate_rate": 0.16393442622950818,
+    "acceptable_candidate_rate": 0.2459016393442623,
+    "assigned_residual_repair_count": 93,
+    "acceptance_types": {
+      "target-only": 5,
+      "vote-only": 0,
+      "target-and-vote": 5
+    }
+  },
+  {
+    "task": "ruin_names",
+    "seed": 46,
+    "setting": "shared_member_aware_full",
+    "update_count": 32,
+    "evaluated_candidate_count": 61,
+    "target_positive_candidate_rate": 0.2786885245901639,
+    "vote_positive_candidate_rate": 0.09836065573770492,
+    "acceptable_candidate_rate": 0.22950819672131148,
+    "assigned_residual_repair_count": 107,
+    "acceptance_types": {
+      "target-only": 5,
+      "vote-only": 0,
+      "target-and-vote": 4
+    }
+  }
+]

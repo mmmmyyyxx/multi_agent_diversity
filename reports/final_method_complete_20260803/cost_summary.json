@@ -1,0 +1,23 @@
+{
+  "pilot": {
+    "total_tokens": 2266228,
+    "accepted_update_count": 34,
+    "run_count": 6,
+    "mean_accepted_update_rate": 0.85
+  },
+  "disambiguation": {
+    "total_tokens": 30110137,
+    "accepted_update_count": 188,
+    "run_count": 18,
+    "mean_accepted_update_rate": 0.39166666666666666
+  },
+  "cross_task": {
+    "total_tokens": 16478644,
+    "accepted_update_count": 35,
+    "run_count": 12,
+    "mean_accepted_update_rate": 0.18229166666666666
+  },
+  "total_tokens": 48855009,
+  "role_breakdown": "unavailable",
+  "wall_clock_time": "unavailable"
+}
