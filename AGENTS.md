@@ -51,8 +51,8 @@ The compact three-module method in this file is normative. The current runtime
 implements it as:
 
 ```text
-method_version = member_aware_peer_state_v9
-checkpoint_version = 17
+method_version = member_aware_peer_state_v10
+checkpoint_version = 18
 ```
 
 For every execution or artifact analysis, verify those and all other runtime
@@ -129,9 +129,12 @@ eligibility != scheduling != candidate acceptance
 ```
 
 Eligibility is decided per residual using only counterfactual vote correctness
-and plurality-margin improvement. Scheduling aggregates those eligibility
-decisions at member level. Candidate acceptance is handled only by Module 3
-after empirical rollout.
+and plurality-margin improvement. The complete Module-1 flow is
+`E_x -> q_x -> P_i -> A_i`: legal eligibility, unique service routing,
+disjoint service portfolios, and one active-lane slice. Scheduling aggregates
+only the active slice at member level. Candidate acceptance is handled only by
+Module 3 after empirical rollout. Routing and anchors remain mechanisms inside
+Module 1, not a fourth module.
 
 ### Module 2: Responsibility-Conditioned Evolution
 
@@ -257,7 +260,7 @@ portfolio load
 Coverage, conversion, dominant-wrong, unique/pivotal, and soft-utility
 quantities are diagnostic or proposal-context evidence only.
 
-### 5.2 Responsibility portfolios
+### 5.2 Legal portfolios, repair lanes, and unique service
 
 For each member:
 
@@ -265,18 +268,49 @@ For each member:
 R_i = {x : i in E_x}
 ```
 
-The only formal portfolio aggregates used by target scheduling are:
+`R_i` is the legal portfolio. It may overlap across members and is retained for
+eligibility audit, freeze signatures, and complete responsibility coverage.
+Each residual has exactly one program-defined lane:
 
 ```text
-D_i = direct vote-fix residual count
-S_i = sum of counterfactual plurality-margin gains
+coverage       if G_x = 0
+direct_flip    if G_x > 0 and DeltaV_x = 1
+margin_support otherwise
 ```
 
-Portfolio size, coverage count, conversion count, dominant-wrong count, and
-soft utility may be audited or reported, but they must not enter the formal
-target vector.
+Dominant-wrong remains a diagnostic label and preservation remains separate
+protection evidence. Neither is another repair lane.
 
-### 5.3 Uplift deficit
+For each residual, deterministic routing chooses exactly one service agent
+`q_x in E_x`. Frozen members are excluded whenever any unfrozen eligible
+member exists. If all eligible members are frozen, the residual is audited as
+`service_blocked_by_freeze` and enters no service portfolio. Routing prefers:
+
+```text
+matching anchor
+then no anchor
+then a different anchor
+then lower lane load
+then lower total service load
+then stable seeded rank
+```
+
+The service portfolios `P_i = {x : q_x = i}` are pairwise disjoint and cover
+every currently serviceable residual.
+
+### 5.3 Specialization anchor and active lane
+
+Each S4/S5 member has `specialization_anchor_by_agent[i]`, initially `None`.
+Only an accepted update sets or switches the anchor to the active repair lane
+used by that update. Rejection and operational failure retain it. Unfreezing
+clears it.
+
+If the anchored lane is non-empty in `P_i`, it remains active. Otherwise choose
+one lane lexicographically by `(D_i^lane, S_i^lane, N_i^lane, laneRank)`, with
+`direct_flip > coverage > margin_support` only as the final exact tie-break.
+The active slice is `A_i = {x in P_i : lane(x) = active_lane_i}`.
+
+### 5.4 Uplift deficit
 
 Let:
 
@@ -288,11 +322,14 @@ d_i = max(0, g_max - g_i - 5)
 `d_i` affects member-level target scheduling only. It never changes
 per-residual eligibility.
 
-### 5.4 One member-level target Pareto
+### 5.5 One member-level target Pareto
 
-For every member with a non-empty responsibility portfolio, define:
+For every unfrozen member with a non-empty service portfolio and active slice,
+aggregate only `A_i`:
 
 ```text
+D_i = direct vote-fix count in A_i
+S_i = sum of counterfactual margin gains in A_i
 T_i = (D_i, S_i, d_i)
 ```
 
@@ -309,7 +346,7 @@ Within the first member-level frontier, select deterministically using:
 Formally:
 
 ```text
-A_t = {i : R_i is non-empty and frozen_i = false}
+A_t = {i : P_i and A_i are non-empty and frozen_i = false}
 T_i = (D_i, S_i, d_i), i in A_t
 F_t = ParetoFront({T_i : i in A_t})
 i_t = lexicographic argmax over i in F_t of
@@ -319,10 +356,10 @@ i_t = lexicographic argmax over i in F_t of
 Do not add coverage, portfolio size, history, or an implicit weighted score to
 `T_i`.
 
-### 5.5 State-Conditioned Repairability Freeze
+### 5.6 State-Conditioned Repairability Freeze
 
-The active set is exactly the members with a non-empty responsibility portfolio
-that are not frozen. `d_i` is the sole weak-member protection term. Compute one
+The active set is exactly the members with non-empty service and active-lane
+portfolios that are not frozen. `d_i` is the sole weak-member protection term. Compute one
 Pareto frontier over `(D_i, S_i, d_i)` for that active set; within the first
 frontier use larger `updates_since_selected`, then stable seeded rank.
 
@@ -332,10 +369,14 @@ normal proposal and candidate budgets to finish, no infrastructure, protocol,
 or parser failure, and no accepted candidate. Each update increments a streak
 at most once.
 
-Frozen members remain in eligibility, portfolios, and audits but cannot enter
-the active target pool. They unfreeze only after at least two accepted updates
+Frozen members remain in eligibility, legal portfolios, anchors, and audits but cannot receive
+new service or enter the active target pool. They unfreeze only after at least two accepted updates
 by other members and a material portfolio change: residual-hash Jaccard below
 `0.8` or changed `D_i`. A small `S_i` change alone is insufficient.
+
+Rejected updates do not refresh routing. On an accepted team transition,
+refresh legal eligibility, update freeze/unfreeze state, clear newly unfrozen
+anchors, then rebuild unique routing, service portfolios, and active slices.
 
 There is no waiting-time override, deficit-service lane, or generic
 compensation mechanism. If all non-empty portfolios belong to frozen members,
@@ -356,15 +397,17 @@ proposal_memory_mode = off
 ```
 
 An explicit `state_local_v1` mode is a proposal-search extension only. It may
-provide sanitized historical failure feedback solely for the same complete
+retain sanitized historical failure feedback solely for the same complete
 key, including the same agent, team state, prompt hash, and eligible residual
-set.
+set. The compact S5 context never exposes that feedback; it remains available
+only to proposal contexts whose declared schema permits it and to audit state.
 
 Proposal Memory must never affect:
 
 ```text
 repair eligibility
-responsibility portfolio
+legal and service portfolios
+repair lane and specialization anchor
 target scheduling
 candidate acceptance
 ```
@@ -393,30 +436,38 @@ Rollouts:
 Teacher, Critic, and Student must not calculate vote counts, Pareto metrics,
 responsibility scores, candidate accuracy, or final candidate value.
 
-The default responsibility-conditioned context includes:
+The S5 responsibility-conditioned context includes only:
 
 ```text
-target prompt
-member gain
-uplift deficit
-direct-fix responsibility summary
-margin-gain responsibility summary
-coverage residuals
-conversion residuals
-preservation evidence
-representative evidence
+parent prompt
+one program-selected repair lane and fixed repair goal
+one dominant (repair lane, target error role) pattern
+at most two same-lane repair cases
+at most one independent preservation case
+compact previous status and one main rejection
 ```
 
-It must not introduce frontier numbers, residual scheduling ages, ownership
-competition, or an independent compensation state.
+It must not expose member identity, gain, uplift deficit, responsibility
+aggregates, vote/peer-state numbers, proposal-failure feedback, routing loads,
+seeded rank, freeze/anchor state, or all rejection reasons. The LLM does not
+choose the lane, route residuals, compare members, or interpret scheduler
+scores.
 
-Programmatic aggregation uses the complete fixed optimization probe and
-provides at most:
+Programmatic aggregation uses the complete fixed optimization probe. S5
+provides exactly:
 
 ```text
-3 pattern summaries
-3 representative evidence cases
+1 repair pattern
+at most 2 repair cases
+at most 1 preservation case
+min(config.tcs_context_max_chars, 6000) serialized characters
 ```
+
+If necessary, remove the preservation case first and then the second repair
+case. Never truncate the parent prompt, question, gold answer, or repair goal.
+S4 uses the same eligibility, routing, anchors, active-lane scheduler, freeze,
+and acceptance but retains generic peer-state TCS context. S1-S3 use none of
+routing, anchors, active lanes, or freeze.
 
 Do not use an LLM to cluster or numerically aggregate cases. The context bounds,
 strict schemas, Student retry, and one upstream regeneration are bounded
@@ -644,7 +695,7 @@ Test data must never influence:
 
 - target selection;
 - residual eligibility;
-- responsibility portfolios;
+- legal/service portfolios and active lanes;
 - Teacher, Critic, or Student context;
 - candidate acceptance;
 - final-state selection.
@@ -728,7 +779,9 @@ team Pareto acceptance?
 ### `shared_member_aware_responsibility`
 
 - compact counterfactual eligibility;
-- compact target scheduling over `(D_i, S_i, d_i)`;
+- unique service routing, specialization anchors, and active-lane scheduling;
+- compact target scheduling over active-slice `(D_i, S_i, d_i)`;
+- State-Conditioned Repairability Freeze;
 - generic peer-state proposal context;
 - Pareto-Constrained Team Update;
 - online responsibility refresh.
@@ -738,8 +791,8 @@ residual attribution?
 
 ### `shared_member_aware_full`
 
-- the same compact responsibility and target scheduling;
-- responsibility-conditioned proposal context;
+- the same eligibility, routing, anchors, active-lane scheduling, and freeze;
+- compact single-lane responsibility-conditioned proposal context;
 - the same team Pareto acceptance;
 - online responsibility refresh.
 
@@ -790,7 +843,7 @@ multi_dataset_diverse_rl/versions.py
 ```
 
 This is the source of truth for actual runtime identifiers. The compact method
-uses checkpoint version 17; implementation, persistence, and tests must remain
+uses checkpoint version 18; implementation, persistence, and tests must remain
 consistent with it.
 
 ### Configuration and protocols
@@ -818,9 +871,9 @@ multi_dataset_diverse_rl/diagnosis_aggregation.py
 `peer_state.py` defines full-team `TeamVoteState`, leave-one-out
 `PeerVoteContext`, `G`, `H`, `M`, plurality results, and soft vote utility.
 
-`diagnosis_aggregation.py` analyzes the complete fixed probe, assigns answer
-roles, groups typed diagnostic patterns, and deterministically selects at most
-three patterns and three cases. These files provide the diagnostic foundation;
+`diagnosis_aggregation.py` analyzes the complete fixed probe. Generic contexts
+retain configured typed aggregation; S5 deterministically selects one lane
+pattern, at most two repair cases, and at most one preservation case. These files provide the diagnostic foundation;
 they do not define a separate paper module.
 
 ### Member objectives
@@ -842,8 +895,9 @@ The responsibility module defines:
 
 - counterfactual vote-margin repair opportunities;
 - per-residual eligibility sets;
-- member responsibility portfolios;
-- compact `(D_i, S_i, d_i)` target scheduling;
+- overlapping legal portfolios and unique service portfolios;
+- specialization anchors and active-lane slices;
+- compact active-slice `(D_i, S_i, d_i)` target scheduling;
 - State-Conditioned Repairability Freeze.
 
 There must be one lexicographic eligibility decision per residual and one
@@ -939,7 +993,9 @@ timeouts. Transport retry and semantic proposal revision are distinct control
 flows.
 
 Teacher, Critic, and Student outputs are bounded structurally rather than by
-experiment-level completion-token budgets. Keep `solver_max_tokens=1800`
+experiment-level completion-token budgets. S5 uses one repair pattern, at most
+two repair cases, at most one preservation case, and a 6000-character context
+cap. Keep `solver_max_tokens=1800`
 unchanged so Solver request identity and shared-cache semantics remain stable.
 Treat provider `finish_reason=length` as an audited runtime failure, not as
 evidence of method efficacy.
@@ -954,7 +1010,7 @@ multi_dataset_diverse_rl/persistence/artifacts.py
 
 Owns exact run identity, behavior fingerprint, atomic checkpointing,
 incompatible-checkpoint rejection, and artifacts. The current checkpoint
-version is 16; inspect `versions.py` for executable identity.
+version is 18; inspect `versions.py` for executable identity.
 
 Do not add compatibility code for obsolete method versions unless explicitly
 requested.
@@ -1001,7 +1057,10 @@ atomic accepted update
 one diagnosis/responsibility refresh per accepted team transition
 test only after the optimization lifecycle completes
 one per-residual eligibility decision based only on (DeltaV, DeltaM)
-one member-level target Pareto over (D_i, S_i, d_i)
+one unique service agent per serviceable residual in S4/S5
+one active repair lane per serviceable member in S4/S5
+one member-level target Pareto over active-slice (D_i, S_i, d_i)
+accepted-update-only specialization anchors
 state-conditioned repairability freeze in S4/S5 only
 proposal_memory_mode = off by default
 vote-only v6 acceptance preserved
@@ -1189,6 +1248,8 @@ member_opportunities_sanitized.jsonl
 target_priority_audit_sanitized.jsonl
 repairability_freeze_events_sanitized.jsonl
 repairability_unfreeze_events_sanitized.jsonl
+service_routing_audit_sanitized.jsonl
+specialization_anchor_trajectory_sanitized.jsonl
 g_transition_audit_sanitized.jsonl
 specialization_trajectory_sanitized.jsonl
 token_cost_breakdown_sanitized.json

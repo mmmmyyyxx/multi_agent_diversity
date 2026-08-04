@@ -22,7 +22,11 @@ from ..tcs import (
     TEACHER_SCHEMA_VERSION,
     TEACHER_REVISION_PROTOCOL_VERSION,
 )
-from ..evaluation.output_contract import SOLVER_REQUEST_TEMPLATE_VERSION
+from ..evaluation.output_contract import (
+    SOLVER_REQUEST_TEMPLATE_VERSION,
+    solver_output_contract,
+    solver_system_prompt,
+)
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
 PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
@@ -34,6 +38,7 @@ from ..versions import (
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
+    SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
@@ -99,6 +104,7 @@ def config_fingerprint(cfg: Config) -> str:
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
         "responsibility": RESPONSIBILITY_VERSION,
+        "service_routing": SERVICE_ROUTING_VERSION,
         "target_selection": TARGET_SELECTION_VERSION,
         "pareto_preference": "member_first_candidate_preference_v1",
         "stage_a": "team_vote_worst_mean_v2",
@@ -134,6 +140,12 @@ def config_fingerprint(cfg: Config) -> str:
         "solver_invalid_max_retries": cfg.models.solver_invalid_max_retries,
         "max_pattern_count": cfg.tcs.tcs_max_pattern_summaries,
         "max_evidence_case_count": cfg.tcs.tcs_max_evidence_cases,
+        "member_aware_repair_pattern_count": 1,
+        "member_aware_repair_case_count": 2,
+        "member_aware_preservation_case_count": 1,
+        "member_aware_context_character_cap": min(
+            cfg.tcs.tcs_context_max_chars, 6000
+        ),
         "checkpoint": CHECKPOINT_VERSION,
     }
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
@@ -152,12 +164,21 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
         if cfg.models.solver_base_url_env
         else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", ""))
     )
+    output_contract = solver_output_contract(cfg.data.answer_format)
+    request_template = solver_system_prompt("<DECISION_PROCEDURE>", cfg.data.answer_format)
     return {
         "solver_model": cfg.models.agent_model,
         "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
         "max_tokens": cfg.models.solver_max_tokens,
         "output_contract_version": cfg.peer_state.solver_output_contract_version,
+        "answer_format": cfg.data.answer_format,
+        "output_contract_sha256": hashlib.sha256(
+            output_contract.encode("utf-8")
+        ).hexdigest(),
         "request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
+        "request_template_sha256": hashlib.sha256(
+            request_template.encode("utf-8")
+        ).hexdigest(),
         "invalid_retry_policy": SOLVER_INVALID_RETRY_POLICY_VERSION,
         "prompt_question_evaluator": PROMPT_QUESTION_EVALUATOR_VERSION,
         "invalid_max_retries": cfg.models.solver_invalid_max_retries,

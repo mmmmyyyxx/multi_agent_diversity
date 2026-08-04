@@ -12,6 +12,7 @@ from multi_dataset_diverse_rl.proposal_memory import (
     ProposalMemoryKey,
     SanitizedCandidateSummary,
 )
+from multi_dataset_diverse_rl.responsibility import RepairLane
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION
 
@@ -23,7 +24,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v9", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v10", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -45,7 +46,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
+def test_v18_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -53,6 +54,9 @@ def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.team_differentiation_trajectory = [{"update_index": -1}]
     source.update_transition_decomposition = [{"update_index": 0}]
     source.final_state_selection = {"selected_checkpoint_source": "final_active_state"}
+    source.responsibility_state.specialization_anchor_by_agent[2] = (
+        RepairLane.COVERAGE
+    )
     source.ensure_responsibility_current()
     question_hash = source.fixed_probe.examples[0].question_hash
     assert 2 in source.cached_responsibility_eligibility[question_hash]
@@ -104,12 +108,16 @@ def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 17
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 18
     assert "responsibility_first_seen_update" not in json.dumps(payload)
     assert "cached_responsibility_assignments" not in payload
     assert "cached_member_opportunities" not in payload
     assert "validation_state_cache" not in payload
     assert "validation_probe" not in payload
+    assert payload["service_routing_version"] == "single_service_anchor_routing_v1"
+    assert payload["cached_service_assignments"]
+    assert payload["cached_service_portfolios"]
+    assert payload["cached_active_lane_by_agent"]
     target = build_system(tmp_path / "source")
     epoch, update, state = restore_checkpoint(target, payload)
     assert (epoch, update, state) == (1, 0, {"planned_update_count": 24})
@@ -124,6 +132,12 @@ def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     assert target.responsibility_state.freeze_count_by_agent[2] == 3
     assert target.repairability_freeze_events == source.repairability_freeze_events
     assert target.repairability_unfreeze_events == source.repairability_unfreeze_events
+    assert (
+        target.responsibility_state.specialization_anchor_by_agent
+        == source.responsibility_state.specialization_anchor_by_agent
+    )
+    assert target.cached_service_assignments == source.cached_service_assignments
+    assert target.cached_active_lane_by_agent == source.cached_active_lane_by_agent
     restored_target, _ = target.select_target(
         target.cached_responsibility_assignments, update_index=3
     )
@@ -163,9 +177,9 @@ def test_v17_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     ) is None
 
 
-def test_v16_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v17_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 16
+    payload["checkpoint_version"] = 17
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

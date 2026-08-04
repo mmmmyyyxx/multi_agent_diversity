@@ -9,12 +9,32 @@ from typing import Mapping, Sequence
 
 from .evaluation.fixed_probe import ProbeExample
 from .peer_state import PeerVoteContext, TeamVoteState
-from .responsibility import MemberAwareRepairOpportunity
+from .responsibility import (
+    MemberAwareRepairOpportunity,
+    RepairLane,
+    repair_lane_for,
+)
 
 
-DIAGNOSIS_AGGREGATION_VERSION = "compact_vote_margin_pattern_aggregation_v2"
+DIAGNOSIS_AGGREGATION_VERSION = "single_lane_pattern_aggregation_v1"
 ANSWER_ROLE_ENCODING_VERSION = "stable_wrong_cluster_roles_v1"
 PATTERN_SELECTION_VERSION = "three_slot_lexicographic_v2"
+
+
+REPAIR_GOALS = {
+    RepairLane.COVERAGE: (
+        "Establish the first reliable correct vote by adding a general reasoning "
+        "rule for cases where every current team member misses the answer."
+    ),
+    RepairLane.DIRECT_FLIP: (
+        "Convert existing correct coverage into a correct plurality by repairing "
+        "the target member's recurring reasoning error."
+    ),
+    RepairLane.MARGIN_SUPPORT: (
+        "Strengthen the correct coalition or leave the dominant wrong coalition "
+        "using a task-general reasoning rule."
+    ),
+}
 
 
 class FailureFamily(str, Enum):
@@ -103,6 +123,45 @@ class DiagnosisAggregation:
     available_patterns: tuple[AggregatedFailurePattern, ...]
     selected_patterns: tuple[AggregatedFailurePattern, ...]
     evidence_cases: tuple[CompactEvidenceCase, ...]
+
+
+@dataclass(frozen=True)
+class LanePatternKey:
+    repair_lane: str
+    target_error_role: str
+
+
+@dataclass(frozen=True)
+class LanePatternSummary:
+    pattern_id: str
+    key: LanePatternKey
+    case_count: int
+    total_margin_gain: int
+
+
+@dataclass(frozen=True)
+class CompactLaneEvidenceCase:
+    case_id: str
+    question_hash: str
+    question: str
+    gold_answer: str
+    target_current_answer: str
+    vote_flip_gain: int
+    margin_gain: int
+    dominant_wrong_member: bool
+    unique_correct: bool = False
+    pivotal_correct: bool = False
+
+
+@dataclass(frozen=True)
+class SingleLaneDiagnosisAggregation:
+    full_probe_case_count: int
+    available_pattern_count: int
+    repair_lane: RepairLane
+    repair_goal: str
+    dominant_pattern: LanePatternSummary
+    repair_cases: tuple[CompactLaneEvidenceCase, ...]
+    preservation_case: CompactLaneEvidenceCase | None
 
 
 def _stable_hash(value: str) -> str:
@@ -475,4 +534,159 @@ def aggregate_probe_diagnosis(
         available_patterns=patterns,
         selected_patterns=selected,
         evidence_cases=evidence,
+    )
+
+
+def _lane_pattern_id(key: LanePatternKey) -> str:
+    canonical = json.dumps(
+        asdict(key), ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+    )
+    return _stable_hash(f"{DIAGNOSIS_AGGREGATION_VERSION}:{canonical}")[:20]
+
+
+def _lane_case(
+    *,
+    pattern_id: str,
+    question_hash: str,
+    example: ProbeExample,
+    state: TeamVoteState,
+    opportunity: MemberAwareRepairOpportunity,
+) -> CompactLaneEvidenceCase:
+    return CompactLaneEvidenceCase(
+        case_id=_case_id(pattern_id, question_hash),
+        question_hash=question_hash,
+        question=example.question,
+        gold_answer=example.gold_answer,
+        target_current_answer=state.team_answers[opportunity.agent_id],
+        vote_flip_gain=int(opportunity.vote_flip_gain),
+        margin_gain=int(opportunity.margin_gain),
+        dominant_wrong_member=bool(opportunity.dominant_wrong_member),
+        unique_correct=bool(opportunity.unique_correct),
+        pivotal_correct=bool(opportunity.pivotal_correct),
+    )
+
+
+def aggregate_single_lane_diagnosis(
+    *,
+    target_agent_id: int,
+    examples: Sequence[ProbeExample],
+    states: Sequence[TeamVoteState],
+    opportunities: Mapping[str, Sequence[MemberAwareRepairOpportunity]],
+    active_hashes: set[str],
+    active_lane: RepairLane,
+) -> SingleLaneDiagnosisAggregation:
+    """Build the single-direction S5 context selected entirely by the program."""
+
+    if len(examples) != len(states):
+        raise ValueError("full fixed probe examples and states must have equal length")
+    example_by_hash = {row.question_hash: row for row in examples}
+    state_by_hash = {row.question_hash: row for row in states}
+    grouped: dict[LanePatternKey, list[CompactLaneEvidenceCase]] = defaultdict(list)
+    for question_hash in sorted(active_hashes):
+        state = state_by_hash[question_hash]
+        opportunity = next(
+            row for row in opportunities[question_hash]
+            if row.agent_id == target_agent_id
+        )
+        actual_lane = repair_lane_for(state, opportunity)
+        if actual_lane != active_lane:
+            raise ValueError("active residual contains a different repair lane")
+        key = LanePatternKey(
+            repair_lane=active_lane.value,
+            target_error_role=(
+                "dominant_wrong"
+                if opportunity.dominant_wrong_member
+                else "other_wrong"
+            ),
+        )
+        pattern_id = _lane_pattern_id(key)
+        grouped[key].append(_lane_case(
+            pattern_id=pattern_id,
+            question_hash=question_hash,
+            example=example_by_hash[question_hash],
+            state=state,
+            opportunity=opportunity,
+        ))
+    if not grouped:
+        raise ValueError("single-lane diagnosis requires a nonempty active slice")
+
+    ordered_patterns = sorted(
+        grouped,
+        key=lambda key: (
+            -len(grouped[key]),
+            -sum(row.margin_gain for row in grouped[key]),
+            _lane_pattern_id(key),
+        ),
+    )
+    dominant_key = ordered_patterns[0]
+    dominant_pattern = LanePatternSummary(
+        pattern_id=_lane_pattern_id(dominant_key),
+        key=dominant_key,
+        case_count=len(grouped[dominant_key]),
+        total_margin_gain=sum(
+            row.margin_gain for row in grouped[dominant_key]
+        ),
+    )
+
+    def repair_key(row: CompactLaneEvidenceCase) -> tuple[int, int, int, str]:
+        return (
+            -int(row.vote_flip_gain),
+            -int(row.margin_gain),
+            -int(row.dominant_wrong_member),
+            row.question_hash,
+        )
+
+    selected: list[CompactLaneEvidenceCase] = sorted(
+        grouped[dominant_key], key=repair_key
+    )[:2]
+    if len(selected) < 2:
+        selected_hashes = {row.question_hash for row in selected}
+        supplements = sorted(
+            (
+                row
+                for key in ordered_patterns[1:]
+                for row in grouped[key]
+                if row.question_hash not in selected_hashes
+            ),
+            key=repair_key,
+        )
+        selected.extend(supplements[: 2 - len(selected)])
+
+    preservation: list[CompactLaneEvidenceCase] = []
+    for state in states:
+        opportunity = next(
+            row for row in opportunities[state.question_hash]
+            if row.agent_id == target_agent_id
+        )
+        if opportunity.member_error:
+            continue
+        preservation.append(_lane_case(
+            pattern_id="preservation",
+            question_hash=state.question_hash,
+            example=example_by_hash[state.question_hash],
+            state=state,
+            opportunity=opportunity,
+        ))
+    preservation_case = min(
+        preservation,
+        key=lambda row: (
+            -int(row.pivotal_correct),
+            -int(row.unique_correct),
+            (
+                state_by_hash[row.question_hash].plurality_margin
+                if state_by_hash[row.question_hash].plurality_margin > 0
+                else 10**9
+            ),
+            row.question_hash,
+        ),
+        default=None,
+    )
+    return SingleLaneDiagnosisAggregation(
+        full_probe_case_count=len(states),
+        available_pattern_count=len(grouped),
+        repair_lane=active_lane,
+        repair_goal=REPAIR_GOALS[active_lane],
+        dominant_pattern=dominant_pattern,
+        repair_cases=tuple(selected),
+        preservation_case=preservation_case,
     )

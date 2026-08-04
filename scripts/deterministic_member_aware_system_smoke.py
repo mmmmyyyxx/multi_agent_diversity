@@ -119,6 +119,7 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
             provided_prompts_json=json.dumps(prompts),
             num_candidates_per_parent=2,
             stage_b_candidate_budget=2,
+            experiment_setting="shared_peer_state_member_pareto",
         )
         return PromptEnsembleOptimizationSystem(
             cfg, solver=trajectory_solver, optimizer_chat=fake_optimizer,
@@ -378,6 +379,23 @@ async def run_smoke() -> dict[str, object]:
         "max_selected_case_count": max(
             (row["selected_case_count"] for row in system.tcs_context_history), default=0
         ),
+        "single_lane_context_only": all(
+            row["context_type"] == "SingleLaneDiagnosisContext"
+            and row["selected_pattern_count"] == 1
+            and row["selected_case_count"] <= 3
+            and row["context_characters"] <= 6000
+            for row in system.tcs_context_history
+        ),
+        "service_portfolios_are_disjoint": (
+            len({
+                item.question_hash
+                for rows in system.cached_service_portfolios.values()
+                for item in rows
+            })
+            == sum(
+                len(rows) for rows in system.cached_service_portfolios.values()
+            )
+        ),
         "student_raw_context_fields_seen": 0,
             "tcs_requests_use_provider_default": bool(
                 not fake_optimizer.max_tokens_seen
@@ -418,6 +436,8 @@ async def run_smoke() -> dict[str, object]:
         "tcs_requests_use_provider_default",
         "solver_limit_remains_1800",
         "normal_funnel_audit_passed",
+        "single_lane_context_only",
+        "service_portfolios_are_disjoint",
         *fault_results,
     )
     if not all(

@@ -5,7 +5,12 @@ import json
 from dataclasses import asdict, dataclass, replace
 from typing import Any, Mapping
 
-from .diagnosis_aggregation import AggregatedFailurePattern, CompactEvidenceCase
+from .diagnosis_aggregation import (
+    AggregatedFailurePattern,
+    CompactEvidenceCase,
+    CompactLaneEvidenceCase,
+    LanePatternSummary,
+)
 from .evaluation.output_contract import solver_output_contract
 from .llm_client import LLMCallResult
 from .proposal_memory import ProposalFailureFeedback
@@ -87,10 +92,42 @@ class AssignedResidualDiagnosisContext:
     proposal_failure_feedback: ProposalFailureFeedback | None = None
 
 
+@dataclass(frozen=True)
+class CompactPreviousOutcome:
+    status: str
+    main_rejection: str | None
+
+
+@dataclass(frozen=True)
+class SingleLaneDiagnosisContext:
+    parent_prompt: str
+    parent_prompt_hash: str
+    repair_lane: str
+    repair_goal: str
+    active_residual_count: int
+    dominant_target_role: str
+    dominant_pattern_case_count: int
+    dominant_pattern: LanePatternSummary
+    repair_cases: tuple[CompactLaneEvidenceCase, ...]
+    preservation_case: CompactLaneEvidenceCase | None
+    previous_outcome: CompactPreviousOutcome
+
+    @property
+    def patterns(self) -> tuple[LanePatternSummary, ...]:
+        return (self.dominant_pattern,)
+
+    @property
+    def evidence_cases(self) -> tuple[CompactLaneEvidenceCase, ...]:
+        return self.repair_cases + (
+            (self.preservation_case,) if self.preservation_case is not None else ()
+        )
+
+
 AnyDiagnosisContext = (
     AccuracyDiagnosisContext
     | PeerStateDiagnosisContext
     | AssignedResidualDiagnosisContext
+    | SingleLaneDiagnosisContext
 )
 
 
@@ -142,6 +179,41 @@ def changed_teacher_plan_fields(
         for field in ("failure_pattern", "repair_rule", "preservation_rule")
         if getattr(previous, field) != getattr(revised, field)
     )
+
+
+def compact_previous_outcome(
+    outcome: PreviousUpdateOutcome,
+) -> CompactPreviousOutcome:
+    if not outcome.attempted:
+        return CompactPreviousOutcome(status="none", main_rejection=None)
+    if any("semantic" in reason for reason in outcome.rejection_reasons):
+        return CompactPreviousOutcome(
+            status="rejected", main_rejection="semantic_rejection"
+        )
+    if not outcome.empirical_evaluation_completed:
+        return CompactPreviousOutcome(
+            status="operational_failure", main_rejection=None
+        )
+    if outcome.accepted:
+        return CompactPreviousOutcome(status="accepted", main_rejection=None)
+
+    reasons = set(outcome.rejection_reasons)
+    priorities = (
+        ("target_not_improved", {"target_regression", "no_target_or_vote_progress"}),
+        ("team_vote_regression", {"team_vote_regression"}),
+        ("member_objective_regression", {"member_objective_regression"}),
+        ("terminal_invalid_regression", {"terminal_invalid_regression"}),
+    )
+    for label, matches in priorities:
+        if reasons & matches:
+            return CompactPreviousOutcome(
+                status="rejected", main_rejection=label
+            )
+    if any("semantic" in reason for reason in reasons):
+        return CompactPreviousOutcome(
+            status="rejected", main_rejection="semantic_rejection"
+        )
+    return CompactPreviousOutcome(status="rejected", main_rejection="other")
 
 
 @dataclass(frozen=True)
@@ -237,7 +309,47 @@ def _peer_case_payload(row: CompactEvidenceCase) -> dict[str, Any]:
     }
 
 
+def _lane_case_payload(row: CompactLaneEvidenceCase) -> dict[str, Any]:
+    return {
+        "case_id": row.case_id,
+        "question": row.question,
+        "gold_answer": row.gold_answer,
+        "target_current_answer": row.target_current_answer,
+    }
+
+
+def _lane_pattern_payload(
+    context: SingleLaneDiagnosisContext,
+) -> dict[str, Any]:
+    return {
+        "repair_lane": context.repair_lane,
+        "repair_goal": context.repair_goal,
+        "target_error_role": context.dominant_target_role,
+        "case_count": context.dominant_pattern_case_count,
+    }
+
+
 def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
+    if isinstance(context, SingleLaneDiagnosisContext):
+        return {
+            "parent_prompt": context.parent_prompt,
+            "repair_lane": context.repair_lane,
+            "repair_goal": context.repair_goal,
+            "active_residual_count": context.active_residual_count,
+            "dominant_target_role": context.dominant_target_role,
+            "dominant_pattern_case_count": (
+                context.dominant_pattern_case_count
+            ),
+            "pattern_summary": _lane_pattern_payload(context),
+            "repair_cases": [
+                _lane_case_payload(row) for row in context.repair_cases
+            ],
+            "preservation_case": (
+                _lane_case_payload(context.preservation_case)
+                if context.preservation_case is not None else None
+            ),
+            "previous_outcome": asdict(context.previous_outcome),
+        }
     common: dict[str, Any] = {
         "target_agent_id": context.target_agent_id,
         "parent_prompt": context.parent_prompt,
@@ -333,6 +445,41 @@ def limit_diagnosis_context(
 ) -> tuple[AnyDiagnosisContext, TCSContextDiagnostics]:
     if max_chars <= 0:
         raise ValueError("tcs_context_max_chars must be positive")
+    if isinstance(context, SingleLaneDiagnosisContext):
+        effective_cap = min(max_chars, 6000)
+        bounded = context
+        if (
+            len(serialize_context(bounded)) > effective_cap
+            and bounded.preservation_case is not None
+        ):
+            bounded = replace(bounded, preservation_case=None)
+        if (
+            len(serialize_context(bounded)) > effective_cap
+            and len(bounded.repair_cases) > 1
+        ):
+            bounded = replace(bounded, repair_cases=bounded.repair_cases[:1])
+        characters = len(serialize_context(bounded))
+        if characters > effective_cap:
+            raise ValueError(
+                "single-lane context metadata and parent prompt exceed 6000 characters"
+            )
+        return bounded, TCSContextDiagnostics(
+            full_probe_case_count=full_probe_case_count,
+            available_pattern_count=available_pattern_count,
+            selected_pattern_count=1,
+            selected_pattern_ids=(bounded.dominant_pattern.pattern_id,),
+            selected_case_count=len(bounded.repair_cases) + int(
+                bounded.preservation_case is not None
+            ),
+            selected_case_ids=tuple(
+                row.case_id for row in bounded.evidence_cases
+            ),
+            cases_represented_by_selected_patterns=(
+                bounded.dominant_pattern_case_count
+            ),
+            context_characters=characters,
+            estimated_input_tokens=(characters + 3) // 4,
+        )
     bounded = context
     while len(serialize_context(bounded)) > max_chars and bounded.patterns:
         kept = bounded.patterns[:-1]
@@ -364,7 +511,9 @@ def limit_diagnosis_context(
     )
 
 
-def _case_rows(context: AnyDiagnosisContext) -> tuple[CompactEvidenceCase, ...]:
+def _case_rows(
+    context: AnyDiagnosisContext,
+) -> tuple[CompactEvidenceCase | CompactLaneEvidenceCase, ...]:
     return context.evidence_cases
 
 
@@ -403,6 +552,15 @@ def build_teacher_request(
             "discuss other agents, member competence, gains, ranks, cooldowns, or "
             "residuals outside this target's portfolio."
         )
+    lane_instruction = ""
+    if isinstance(context, SingleLaneDiagnosisContext):
+        lane_instruction = (
+            " The program has already selected the sole RepairLane. failure_pattern "
+            "must summarize only that lane; repair_rule must address only that lane "
+            "and must not add coverage, conversion, margin, dominant-wrong, or any "
+            "other parallel repair objective. preservation_rule may only protect "
+            "existing behavior and must not introduce another repair target."
+        )
     return (
         "Propose one task-general, testable prompt repair plan from the typed aggregate "
         "diagnosis. Do not quote cases or answers, describe per-case transitions, copy a "
@@ -410,6 +568,7 @@ def build_teacher_request(
         "rule must specify executable behavior and integrate uncertainty handling. The "
         "preservation rule must protect correct behavior and the strict output contract. "
         + feedback_instruction
+        + lane_instruction
         + f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"
@@ -464,6 +623,13 @@ def build_critic_request(
     feedback_max_chars: int = 500,
 ) -> str:
     schema = {"failed_checks": [], "risk_case_ids": [], "feedback": ""}
+    lane_instruction = ""
+    if isinstance(context, SingleLaneDiagnosisContext):
+        lane_instruction = (
+            " A plan that introduces more than the supplied repair lane must fail "
+            "actionable_specificity. A failure_pattern inconsistent with the supplied "
+            "repair_lane must fail evidence_mismatch."
+        )
     return (
         "Check only explicit hard blockers in the repair plan. Allowed failed_checks are "
         f"{json.dumps(CRITIC_FAILED_CHECKS)}. evidence_mismatch means a clear conflict "
@@ -473,6 +639,8 @@ def build_critic_request(
         "preservation_or_output_risk means preservation is inoperable or the strict output "
         "contract is endangered. Do not score, predict candidate performance, restate "
         "facts, or report soft concerns. risk_case_ids may only name supplied case IDs. "
+        + lane_instruction
+        + " "
         "Use empty feedback when approved; when rejecting give one concrete revision, at "
         f"most {feedback_max_chars} characters. "
         f"CriticFeedbackMaxCharacters: {feedback_max_chars}. "
@@ -490,7 +658,14 @@ def build_student_request(
     candidate_count: int,
     candidate_prompt_max_chars: int,
     total_candidate_prompt_max_chars: int = 5000,
+    single_lane: bool = False,
 ) -> str:
+    lane_instruction = (
+        " Implement only the current repair lane's one core rule. Prefer replacing or "
+        "merging an old rule instead of appending sections; do not add a second unrelated "
+        "strategy, and preserve parent rules that remain valid."
+        if single_lane else ""
+    )
     return (
         "Implement the approved repair plan as complete replacement decision procedures. "
         "Each candidate is only the mutable reasoning procedure: it must stand alone, "
@@ -498,6 +673,8 @@ def build_student_request(
         "The system appends the immutable output interface after every candidate at Solver "
         "request time. Do not duplicate that full interface or return a patch or diagnosis "
         "metadata. Do not introduce instructions that conflict with the supplied contract. "
+        + lane_instruction
+        + " "
         "Return strict JSON with the sole field candidate_prompts.\n"
         f"ParentPrompt:\n{parent_prompt}\n"
         f"ApprovedRepairPlan:\n{json.dumps(asdict(approved_plan), ensure_ascii=False, sort_keys=True)}\n"

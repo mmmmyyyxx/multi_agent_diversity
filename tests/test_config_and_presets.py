@@ -13,7 +13,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v9",
+        method_version="member_aware_peer_state_v10",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,8 +43,8 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v9"
-    assert cfg.responsibility.responsibility_mode == "compact_member_aware_v8"
+    assert cfg.training.method_version == "member_aware_peer_state_v10"
+    assert cfg.responsibility.responsibility_mode == "single_service_member_aware_v10"
     removed_wait_field = "responsibility_" + "max_wait_updates"
     removed_compensation_field = "member_" + "catchup_mode"
     assert not hasattr(cfg.responsibility, removed_wait_field)
@@ -100,6 +100,7 @@ def test_ablation_protocols_are_field_isolated_and_budget_matched():
         "sample_pool_policy",
         "responsibility_refresh_policy",
         "repairability_freeze_enabled",
+        "service_routing_enabled",
     }
     responsibility_full_differences = {
         key for key in responsibility if responsibility[key] != full[key]
@@ -148,7 +149,7 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     )
     assert metadata["critic_approval_basis"] == "failed_checks_empty"
     assert metadata["diagnosis_aggregation_version"] == (
-        "compact_vote_margin_pattern_aggregation_v2"
+        "single_lane_pattern_aggregation_v1"
     )
     assert metadata["target_selection_version"] == TARGET_SELECTION_VERSION
     assert metadata["checkpoint_version"] == CHECKPOINT_VERSION

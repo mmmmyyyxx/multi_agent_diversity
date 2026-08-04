@@ -5,24 +5,32 @@ import pytest
 from multi_dataset_diverse_rl.diagnosis_aggregation import (
     AggregatedFailurePattern,
     CompactEvidenceCase,
+    CompactLaneEvidenceCase,
     FailurePatternKey,
+    LanePatternKey,
+    LanePatternSummary,
 )
 from multi_dataset_diverse_rl.tcs import (
     AccuracyDiagnosisContext,
     AssignedResidualDiagnosisContext,
+    CompactPreviousOutcome,
     PeerStateDiagnosisContext,
     PreviousUpdateOutcome,
+    SingleLaneDiagnosisContext,
     TeacherRepairPlan,
     build_critic_request,
     build_student_request,
     build_teacher_request,
     build_teacher_revision_request,
     changed_teacher_plan_fields,
+    compact_previous_outcome,
     context_payload,
     critic_decision_hash,
     parse_critic_decision,
     parse_student_candidates,
     parse_teacher_repair_plan,
+    limit_diagnosis_context,
+    serialize_context,
     teacher_repair_plan_hash,
 )
 
@@ -83,6 +91,127 @@ def evidence() -> CompactEvidenceCase:
         unique_correct=False,
         pivotal_correct=False,
         repair_goal="convert_existing_gold_coverage",
+    )
+
+
+def single_lane_context(parent_prompt="parent") -> SingleLaneDiagnosisContext:
+    key = LanePatternKey("direct_flip", "dominant_wrong")
+    pattern = LanePatternSummary("lane-p1", key, 5, 10)
+    cases = tuple(
+        CompactLaneEvidenceCase(
+            case_id=f"lane-c{index}",
+            question_hash=f"q{index}",
+            question=f"Representative lane question {index} " + "x" * 80,
+            gold_answer="A",
+            target_current_answer="B",
+            vote_flip_gain=1,
+            margin_gain=2,
+            dominant_wrong_member=True,
+        )
+        for index in range(2)
+    )
+    preservation = CompactLaneEvidenceCase(
+        case_id="preserve-c1",
+        question_hash="qp",
+        question="Representative preservation question " + "y" * 80,
+        gold_answer="A",
+        target_current_answer="A",
+        vote_flip_gain=0,
+        margin_gain=0,
+        dominant_wrong_member=False,
+        unique_correct=True,
+    )
+    return SingleLaneDiagnosisContext(
+        parent_prompt=parent_prompt,
+        parent_prompt_hash="parent-hash",
+        repair_lane="direct_flip",
+        repair_goal="Convert existing correct coverage into a correct plurality.",
+        active_residual_count=7,
+        dominant_target_role="dominant_wrong",
+        dominant_pattern_case_count=5,
+        dominant_pattern=pattern,
+        repair_cases=cases,
+        preservation_case=preservation,
+        previous_outcome=CompactPreviousOutcome(
+            status="rejected", main_rejection="team_vote_regression"
+        ),
+    )
+
+
+def test_single_lane_context_exposes_only_compact_directional_fields():
+    context = single_lane_context()
+    payload = context_payload(context)
+    serialized = json.dumps(payload, sort_keys=True)
+    assert payload["repair_lane"] == "direct_flip"
+    assert payload["pattern_summary"] == {
+        "repair_lane": "direct_flip",
+        "repair_goal": context.repair_goal,
+        "target_error_role": "dominant_wrong",
+        "case_count": 5,
+    }
+    assert len(payload["repair_cases"]) == 2
+    assert payload["preservation_case"] is not None
+    forbidden = (
+        "target_agent_id", "target_member_gain", "uplift_deficit",
+        "direct_fix_responsibility_count", "margin_gain_responsibility_sum",
+        "coverage_residual_count", "conversion_residual_count",
+        "mean_oracle_soft_utility_gain", "answer_role_signature",
+        "peer_gold_vote_count", "proposal_failure_feedback", "question_hash",
+        "vote_flip_gain", "margin_gain", "dominant_wrong_member",
+    )
+    assert all(token not in serialized for token in forbidden)
+
+
+def test_single_lane_context_limit_drops_preservation_then_second_repair_case():
+    context = single_lane_context(parent_prompt="p" * 5200)
+    bounded, diagnostics = limit_diagnosis_context(
+        context,
+        max_chars=10000,
+        full_probe_case_count=20,
+        available_pattern_count=2,
+    )
+    assert diagnostics.context_characters <= 6000
+    assert diagnostics.selected_pattern_count == 1
+    assert len(bounded.repair_cases) <= 2
+    assert bounded.preservation_case is None
+    assert len(serialize_context(bounded)) <= 6000
+
+
+def test_single_lane_requests_enforce_one_direction_and_compact_outcome():
+    context = single_lane_context()
+    teacher = build_teacher_request(context)
+    critic = build_critic_request(
+        context,
+        TeacherRepairPlan("direct flip", "check constraints", "keep valid rules"),
+    )
+    student = build_student_request(
+        parent_prompt="parent",
+        approved_plan=TeacherRepairPlan(
+            "direct flip", "check constraints", "keep valid rules"
+        ),
+        answer_format="option_letter",
+        candidate_count=2,
+        candidate_prompt_max_chars=3000,
+        single_lane=True,
+    )
+    assert "sole RepairLane" in teacher
+    assert "more than the supplied repair lane" in critic
+    assert "one core rule" in student
+    assert compact_previous_outcome(PreviousUpdateOutcome()).status == "none"
+    rejected = compact_previous_outcome(PreviousUpdateOutcome(
+        attempted=True,
+        empirical_evaluation_completed=True,
+        rejection_reasons=("member_objective_regression", "team_vote_regression"),
+    ))
+    assert rejected == CompactPreviousOutcome(
+        status="rejected", main_rejection="team_vote_regression"
+    )
+    semantic = compact_previous_outcome(PreviousUpdateOutcome(
+        attempted=True,
+        rejection_reasons=("semantic_rejection",),
+    ))
+    assert semantic == CompactPreviousOutcome(
+        status="rejected", main_rejection="semantic_rejection"
     )
 
 

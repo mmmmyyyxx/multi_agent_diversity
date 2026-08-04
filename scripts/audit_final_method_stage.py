@@ -107,6 +107,27 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
             32,
             True,
         )
+    if stage == "strict_v2_witness":
+        return (
+            ("disambiguation_qa",),
+            (46,),
+            ("shared_baseline", "shared_peer_state_member_pareto"),
+            0,
+            True,
+        )
+    if stage == "strict_v2_disambiguation":
+        return (
+            ("disambiguation_qa",),
+            (44, 45, 46),
+            (
+                "shared_baseline",
+                "shared_peer_state_member_pareto",
+                "shared_member_aware_responsibility",
+                "shared_member_aware_full",
+            ),
+            32,
+            True,
+        )
     raise ValueError(stage)
 
 
@@ -205,7 +226,7 @@ def _audit_member_responsibility(
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
         (target_front, "Normal scheduling must select from the single (D,S,d) frontier", "target-front"),
         (frozen_pool, "Frozen members must remain outside the active target pool", "frozen-pool"),
-        (repairability_event, "Freeze and unfreeze events must satisfy fixed v9 thresholds", "repairability-event"),
+        (repairability_event, "Freeze and unfreeze events must satisfy fixed v10 thresholds", "repairability-event"),
     ):
         if count:
             _finding(
@@ -338,17 +359,45 @@ def _audit_run(
             f"{label}: frozen match={frozen.get('matched')}", "stop; do not reuse this run",
         )
     expected_cache_role = "cumulative_task_seed_observation_reference"
-    if (
-        comparison_cache.get("matched") is not True
-        or comparison_cache.get("source_role") != expected_cache_role
-    ):
+    cache_gate_failures = {
+        "manifest_version": comparison_cache.get("manifest_version")
+        != "matched_task_seed_observation_cache_v2",
+        "gate": comparison_cache.get("gate") != "PASS",
+        "matched": comparison_cache.get("matched") is not True,
+        "source_role": comparison_cache.get("source_role") != expected_cache_role,
+        "cache_chain_continuity": comparison_cache.get("cache_chain_continuity") is not True,
+        "exact_request_conflict_count": int(
+            comparison_cache.get("exact_request_conflict_count", -1)
+        ) != 0,
+        "missing_reference_count": int(
+            comparison_cache.get("missing_reference_count", -1)
+        ) != 0,
+        "unexpected_provider_recall_count": int(
+            comparison_cache.get("unexpected_provider_recall_count", -1)
+        ) != 0,
+        "unaccounted_new_entry_count": int(
+            comparison_cache.get("unaccounted_new_entry_count", -1)
+        ) != 0,
+        "unchanged_prompt_drift_count": int(
+            comparison_cache.get("unchanged_prompt_drift_count", -1)
+        ) != 0,
+        "unchanged_prompt_aggregate_drift_count": int(
+            comparison_cache.get("unchanged_prompt_aggregate_drift_count", -1)
+        ) != 0,
+        "unchanged_team_vote_drift_count": int(
+            comparison_cache.get("unchanged_team_vote_drift_count", -1)
+        ) != 0,
+        "test_observation_missing_count": int(
+            comparison_cache.get("test_observation_missing_count", -1)
+        ) != 0,
+    }
+    if any(cache_gate_failures.values()):
         _finding(
             findings,
             "BLOCKER",
-            "Matched settings must start from the same baseline-derived observation cache",
-            f"{label}: role={comparison_cache.get('source_role')} "
-            f"matched={comparison_cache.get('matched')}",
-            "stop and rerun from a baseline-derived comparison cache",
+            "Matched settings must pass the cumulative exact-observation cache gate",
+            f"{label}: failures={sorted(key for key, failed in cache_gate_failures.items() if failed)}",
+            "stop and rerun from a valid cumulative task-seed observation reference",
         )
     if identity.get("git_commit") != source_identity.get("git_commit"):
         _finding(
@@ -539,13 +588,22 @@ def _comparison_cache_chain(
         for row in sorted(group, key=lambda value: setting_order[value["setting"]]):
             cache = row["comparison_cache_match"]
             starting_hash = str(cache.get("starting_cache_sha256", ""))
-            reference_hash = str(cache.get("reference_cache_sha256", ""))
-            post_hash = str(cache.get("post_run_reference_cache_sha256", ""))
+            reference_hash = str(
+                cache.get("parent_reference_hash", cache.get("reference_cache_sha256", ""))
+            )
+            post_hash = str(
+                cache.get("result_reference_hash", cache.get("post_run_reference_cache_sha256", ""))
+            )
             passed = (
-                cache.get("matched") is True
+                cache.get("gate") == "PASS"
+                and cache.get("matched") is True
+                and cache.get("cache_chain_continuity") is True
                 and bool(starting_hash)
                 and starting_hash == reference_hash
                 and bool(post_hash)
+                and int(cache.get("exact_request_conflict_count", -1)) == 0
+                and int(cache.get("missing_reference_count", -1)) == 0
+                and int(cache.get("unexpected_provider_recall_count", -1)) == 0
                 and (
                     previous_post_hash is None
                     or reference_hash == previous_post_hash
@@ -623,7 +681,14 @@ def _setting_isolation(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", type=Path, default=Path("."))
-    parser.add_argument("--stage", choices=("pilot", "disambiguation", "cross_task"), required=True)
+    parser.add_argument(
+        "--stage",
+        choices=(
+            "pilot", "disambiguation", "cross_task",
+            "strict_v2_witness", "strict_v2_disambiguation",
+        ),
+        required=True,
+    )
     parser.add_argument("--run_root", type=Path, required=True)
     parser.add_argument("--report_dir", type=Path, required=True)
     parser.add_argument("--source_identity", type=Path, required=True)

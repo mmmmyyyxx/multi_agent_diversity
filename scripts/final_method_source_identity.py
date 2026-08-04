@@ -17,8 +17,18 @@ from multi_dataset_diverse_rl.versions import (
     CHECKPOINT_VERSION,
     METHOD_VERSION,
     RESPONSIBILITY_VERSION,
+    SERVICE_ROUTING_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
+)
+from multi_dataset_diverse_rl.evaluation.output_contract import (
+    SOLVER_REQUEST_TEMPLATE_VERSION,
+)
+from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import (
+    SCHEMA_VERSION as SOLVER_CACHE_SCHEMA_VERSION,
+)
+from multi_dataset_diverse_rl.persistence.identity import (
+    PROMPT_QUESTION_EVALUATOR_VERSION,
 )
 
 
@@ -36,6 +46,7 @@ EXPERIMENT_SCRIPTS = (
     "scripts/run_task_level_accuracy.py",
     "scripts/audit_final_method_stage.py",
     "scripts/build_final_method_complete_report.py",
+    "scripts/build_strict_v2_s345_report.py",
 )
 
 
@@ -99,10 +110,14 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
         "method_identifiers": {
             "method_version": METHOD_VERSION,
             "responsibility_version": RESPONSIBILITY_VERSION,
+            "service_routing_version": SERVICE_ROUTING_VERSION,
             "target_selection_version": TARGET_SELECTION_VERSION,
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
             "checkpoint_version": CHECKPOINT_VERSION,
+            "exact_request_identity_version": PROMPT_QUESTION_EVALUATOR_VERSION,
+            "solver_request_template_version": SOLVER_REQUEST_TEMPLATE_VERSION,
+            "solver_cache_schema_version": SOLVER_CACHE_SCHEMA_VERSION,
         },
     }
 

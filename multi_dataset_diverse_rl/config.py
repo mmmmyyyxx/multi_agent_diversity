@@ -38,7 +38,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v9"
+    method_version: str = "member_aware_peer_state_v10"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3
@@ -83,7 +83,7 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
-    responsibility_mode: str = "compact_member_aware_v8"
+    responsibility_mode: str = "single_service_member_aware_v10"
     member_uplift_tolerance: int = 5
 
 

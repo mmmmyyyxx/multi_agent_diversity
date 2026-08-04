@@ -30,6 +30,7 @@ from multi_dataset_diverse_rl.versions import (
     METHOD_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
+    SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
@@ -73,9 +74,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all canonical settings must use tie-as-abstain")
         if cfg.responsibility.member_uplift_tolerance < 0:
             errors.append("member_uplift_tolerance cannot be negative")
-        if cfg.responsibility.responsibility_mode != "compact_member_aware_v8":
+        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v10":
             errors.append(
-                "responsibility_mode must be 'compact_member_aware_v8'"
+                "responsibility_mode must be 'single_service_member_aware_v10'"
             )
         if cfg.evaluation.candidate_eval_pool_size <= 0:
             errors.append("fixed probe must contain at least one example")
@@ -107,6 +108,13 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         errors.append(
             "member-aware responsibility and full settings must differ only in TCS context"
         )
+    if not responsibility.service_routing_enabled or not full.service_routing_enabled:
+        errors.append("S4 and S5 must enable unique service routing")
+    if any(
+        protocols[name].service_routing_enabled
+        for name in EXPECTED_SETTINGS[:4]
+    ):
+        errors.append("S0-S3 must not enable service routing or anchors")
     help_result = subprocess.run(
         [sys.executable, "scripts/run_task_level_accuracy.py", "--help"],
         cwd=workspace,
@@ -141,6 +149,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "tcs_protocol_version": TCS_PROTOCOL_VERSION,
         "tcs_context_version": TCS_CONTEXT_VERSION,
         "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
+        "service_routing_version": SERVICE_ROUTING_VERSION,
         "proposal_memory_mode": Config().tcs.proposal_memory_mode,
         "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
         "legacy_compatibility_enabled": False, "errors": errors,
@@ -243,11 +252,11 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         raise ValueError("member_uplift_tolerance cannot be negative")
                     if (
                         cfg.responsibility.responsibility_mode
-                        != "compact_member_aware_v8"
+                        != "single_service_member_aware_v10"
                     ):
                         raise ValueError(
                             "responsibility_mode must be "
-                            "'compact_member_aware_v8'"
+                            "'single_service_member_aware_v10'"
                         )
                     if cfg.tcs.student_invalid_max_retries < 0:
                         raise ValueError(

@@ -14,11 +14,12 @@ from multi_dataset_diverse_rl.proposal_memory import (
     feedback_for,
 )
 from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptimizationSystem
+from multi_dataset_diverse_rl.responsibility import RepairLane
 
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v9",
+        method_version="member_aware_peer_state_v10",
         experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",
@@ -179,6 +180,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
         ])
         owned = {row.question_hash for row in value.fixed_probe.examples}
         value.cached_responsibility_eligibility = {question_hash: (0,) for question_hash in owned}
+        value.cached_active_lane_by_agent[0] = RepairLane.COVERAGE
         first_funnel = CandidateFunnel()
         first = await value.propose_candidates(0, owned, first_funnel, update_index=0)
         accepted, _, evaluated = await value.evaluate_candidates(0, first, owned, first_funnel)
@@ -188,6 +190,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
                 evaluated=evaluated, funnel=first_funnel, accepted=accepted,
             )
             value.cached_responsibility_eligibility = {question_hash: (1,) for question_hash in owned}
+            value.cached_active_lane_by_agent[1] = RepairLane.COVERAGE
             await value.propose_candidates(1, owned, CandidateFunnel(), update_index=1)
             value.cached_responsibility_eligibility = {question_hash: (0,) for question_hash in owned}
             second = await value.propose_candidates(0, owned, CandidateFunnel(), update_index=2)
@@ -205,14 +208,14 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
         assert off.tcs_rounds[0]["request_hash"] == on.tcs_rounds[0]["request_hash"]
         assert on.proposal_memory_events[0]["memory_hit"] is False
         assert on.tcs_context_history[-1]["proposal_memory_hit"] is True
-        assert on.tcs_context_history[-1]["evidence_bundle_hash"] != on.proposal_memory_events[0]["current_evidence_bundle_hash"]
+        assert on.tcs_context_history[-1]["evidence_bundle_hash"] == on.proposal_memory_events[0]["current_evidence_bundle_hash"]
         assert on.proposal_memory_events[0]["target_agent_id"] == 0
         assert len(on_second) == 2
         second_agent_context = on.tcs_context_history[1]
         assert second_agent_context["target_agent_id"] == 1
         assert second_agent_context["proposal_memory_hit"] is False
         assert "proposal_failure_feedback" not in second_agent_context["serialized_recursive_field_paths"]
-        assert "change_repair_mechanism" in teacher_requests[-1][0]
+        assert "proposal_failure_feedback" not in teacher_requests[-1][0]
         assert "target_agent_id\":1" not in teacher_requests[-1][0]
         on.flush_artifacts()
         memory_files = (

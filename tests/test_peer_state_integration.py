@@ -68,6 +68,14 @@ async def initialize(system):
     )
 
 
+def routed_proposal(system):
+    _, assignments = system.ensure_responsibility_current()
+    target = next(
+        agent_id for agent_id, rows in assignments.items() if rows
+    )
+    return target, {row.question_hash for row in assignments[target]}
+
+
 def test_full_aggregated_chain_accepts_and_refreshes_once_per_transition(tmp_path):
     system = build_system(tmp_path)
 
@@ -82,9 +90,9 @@ def test_full_aggregated_chain_accepts_and_refreshes_once_per_transition(tmp_pat
     assert changed
     assert system.responsibility_refresh_count == before + 1
     audit = system.tcs_context_history[-1]
-    assert audit["context_type"] == "AssignedResidualDiagnosisContext"
+    assert audit["context_type"] == "SingleLaneDiagnosisContext"
     assert audit["full_probe_case_count"] == 3
-    assert audit["selected_pattern_count"] <= 3
+    assert audit["selected_pattern_count"] == 1
     assert audit["selected_case_count"] <= 3
     assert audit["forbidden_field_violations"] == []
     assert [row["role"] for row in system.tcs_rounds] == [
@@ -92,6 +100,55 @@ def test_full_aggregated_chain_accepts_and_refreshes_once_per_transition(tmp_pat
     ]
     assert system.candidate_decisions[-1]["funnel"]["accepted_candidate"]
     assert system.candidate_decisions[-1]["candidates"][0]["repair_plan_hash"]
+    target = system.candidate_decisions[-1]["target_agent_id"]
+    assert system.responsibility_state.specialization_anchor_by_agent[target]
+    assert any(
+        row["event"] == "accepted_anchor_set" and row["agent_id"] == target
+        for row in system.specialization_anchor_trajectory
+    )
+
+
+def test_service_refresh_failure_rolls_back_anchor_routing_and_team_state(tmp_path):
+    system = build_system(tmp_path)
+
+    async def run():
+        await initialize(system)
+        system.ensure_responsibility_current()
+        before = {
+            "prompts": [agent.current_prompt for agent in system.agents],
+            "profiles": list(system.active_profiles),
+            "anchors": dict(
+                system.responsibility_state.specialization_anchor_by_agent
+            ),
+            "routing": dict(system.cached_service_assignments),
+            "active": dict(system.cached_active_lane_by_agent),
+            "team_version": system.team_state_version,
+            "responsibility_version": system.responsibility_state_version,
+            "routing_audit": len(system.service_routing_audit),
+            "anchor_audit": len(system.specialization_anchor_trajectory),
+        }
+
+        def fail_refresh(*, update_index):
+            system.team_state_version += 1
+            system.cached_service_assignments = {}
+            system.specialization_anchor_trajectory.append({"event": "bad"})
+            raise RuntimeError("offline routing refresh failure")
+
+        system.refresh_responsibility_after_commit = fail_refresh
+        with pytest.raises(RuntimeError, match="routing refresh failure"):
+            await system.update_once(0)
+        return before
+
+    before = asyncio.run(run())
+    assert [agent.current_prompt for agent in system.agents] == before["prompts"]
+    assert system.active_profiles == before["profiles"]
+    assert system.responsibility_state.specialization_anchor_by_agent == before["anchors"]
+    assert system.cached_service_assignments == before["routing"]
+    assert system.cached_active_lane_by_agent == before["active"]
+    assert system.team_state_version == before["team_version"]
+    assert system.responsibility_state_version == before["responsibility_version"]
+    assert len(system.service_routing_audit) == before["routing_audit"]
+    assert len(system.specialization_anchor_trajectory) == before["anchor_audit"]
 
 
 def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
@@ -119,6 +176,54 @@ def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
         "assigned" in path or "member_gain" in path
         for path in peer["serialized_recursive_field_paths"]
     )
+
+
+def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
+    async def inspect(setting):
+        system = build_system(
+            tmp_path / setting,
+            experiment_setting=setting,
+        )
+        await initialize(system)
+        _, assignments = system.ensure_responsibility_current()
+        target, _ = system.select_target(assignments, 0)
+        assert target is not None
+        hashes = {row.question_hash for row in assignments[target]}
+        await system.propose_candidates(target, hashes, CandidateFunnel())
+        return system, target, system.tcs_context_history[-1]
+
+    async def run():
+        return await asyncio.gather(
+            inspect("shared_member_aware_responsibility"),
+            inspect("shared_member_aware_full"),
+        )
+
+    (s4, s4_target, s4_audit), (s5, s5_target, s5_audit) = asyncio.run(run())
+    assert s4.cached_service_assignments == s5.cached_service_assignments
+    assert s4.cached_active_lane_by_agent == s5.cached_active_lane_by_agent
+    assert s4_target == s5_target
+    assert s4_audit["context_type"] == "PeerStateDiagnosisContext"
+    assert s5_audit["context_type"] == "SingleLaneDiagnosisContext"
+
+
+@pytest.mark.parametrize(
+    "setting",
+    (
+        "shared_independent_accuracy",
+        "shared_peer_state_vote_first",
+        "shared_peer_state_member_pareto",
+    ),
+)
+def test_s1_through_s3_create_no_service_anchor_or_freeze_state(tmp_path, setting):
+    system = build_system(tmp_path / setting, experiment_setting=setting)
+    asyncio.run(initialize(system))
+    target, _ = system.select_target({agent: [] for agent in range(5)}, 0)
+    assert target == 0
+    assert system.cached_service_assignments == {}
+    assert system.cached_service_portfolios == {}
+    assert system.cached_active_lane_by_agent == {}
+    assert system.responsibility_state.specialization_anchor_by_agent == {}
+    assert system.responsibility_state.frozen_by_agent == {}
 
 
 def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
@@ -162,7 +267,8 @@ def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -216,7 +322,8 @@ def test_teacher_revision_preserves_cumulative_hard_check_constraints(tmp_path):
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -240,7 +347,8 @@ def test_critic_invalid_json_retries_same_request_without_teacher_revision(tmp_p
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -288,7 +396,8 @@ def test_teacher_truncation_retries_identical_request_without_semantic_round_use
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -315,7 +424,8 @@ def test_critic_truncation_never_triggers_teacher_revision(tmp_path):
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -402,7 +512,8 @@ def test_terminal_failure_taxonomy(
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
@@ -507,7 +618,8 @@ def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):
     async def run():
         await initialize(system)
         funnel = CandidateFunnel()
-        candidates = await system.propose_candidates(0, set(), funnel)
+        target, hashes = routed_proposal(system)
+        candidates = await system.propose_candidates(target, hashes, funnel)
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())

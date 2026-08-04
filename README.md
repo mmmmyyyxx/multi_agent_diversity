@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Prompt-Team Optimization**
-(`member_aware_peer_state_v9`).
+(`member_aware_peer_state_v10`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -17,9 +17,10 @@ Current Prompt Team
   -> Joint Team Diagnosis: G, H, M and member gains
   -> Member-Aware Responsibility
      - per-residual lexicographic eligibility on (DeltaV, DeltaM)
-     - one member target Pareto on (D, S, d)
+     - unique legal-member service routing
+     - one anchored active lane and target Pareto on (D, S, d)
   -> Responsibility-Conditioned Evolution
-     - bounded member-specific residual context and prompt candidates
+     - one lane, one pattern, <=2 repair cases, <=1 preservation case
   -> Pareto-Constrained Team Update
      - target-only paired rollout with four fixed peers
      - target-or-vote progress plus team Pareto and invalid guards
@@ -45,24 +46,36 @@ audited diagnostics and late tie-breakers; none independently rejects a candidat
 For each vote-wrong residual, only currently wrong members are considered.
 Replacing one member by gold while holding four peers fixed gives
 `DeltaV` (vote-correct gain) and `DeltaM` (plurality-margin gain). Eligibility
-keeps the lexicographic maximum and retains exact ties. Member portfolios then
-aggregate only direct-fix count `D` and margin-gain sum `S`; the scheduler
-computes one Pareto frontier over `(D, S, d)`, where `d` is the member uplift
-deficit. Wait is only a tie-break inside the first frontier. State-conditioned
+keeps the lexicographic maximum and retains exact ties. These legal portfolios
+may overlap. The program routes every serviceable residual to exactly one
+eligible, unfrozen member using anchor compatibility, lane load, total load,
+and seeded rank. Each member exposes one active repair lane; direct-fix count
+`D` and margin-gain sum `S` are aggregated only over that active slice. The
+scheduler computes one Pareto frontier over `(D, S, d)`, where `d` is the member
+uplift deficit. Wait is only a tie-break inside the first frontier. State-conditioned
 repairability freeze excludes a member after two complete failures under the
 same portfolio state and returns it only after two accepted updates by other
 members plus material portfolio change. There is no waiting-time override or
 generic compensation lane.
+Only an accepted update sets or switches the target's specialization anchor;
+rejection retains it and unfreezing clears it.
 `d` is the sole weak-member protection term; an empty-portfolio, frozen, or
 strictly dominated weak member receives no additional forced service.
 
 Optional `proposal_memory_mode=state_local_v1` keeps only sanitized failed-search
-feedback under a complete run/state/agent/prompt/eligible-residual key. It changes
-proposal search, not eligibility, scheduling, objectives, Stage A/B budgets, or evaluation.
+feedback under a complete run/state/agent/prompt/eligible-residual key. The compact
+S5 context never exposes that feedback. It does not change eligibility, scheduling,
+objectives, Stage A/B budgets, or evaluation.
 Soft vote utility is only a deterministic tie-break signal.
 
 The formal default is `proposal_memory_mode=off`. Proposal Memory is an
 optional proposal-search extension, not part of the three-module method.
+
+S4 (`shared_member_aware_responsibility`) and S5
+(`shared_member_aware_full`) use identical eligibility, routing, anchors,
+active-lane scheduling, freeze, and acceptance. S4 retains generic peer-state
+TCS context; S5 alone receives the compact single-lane context. S1-S3 create no
+service routing, anchor, active-lane, or freeze state.
 
 ## Experiment Settings
 
@@ -90,6 +103,7 @@ python -m compileall -q multi_dataset_diverse_rl scripts
 python scripts/preflight_member_aware.py --workspace . --allow_dirty 1
 python scripts/deterministic_member_objective_unit_smoke.py
 python scripts/deterministic_member_aware_system_smoke.py
+python scripts/deterministic_target_scheduler_smoke.py
 python scripts/deterministic_aggregate_acceptance_smoke.py
 python scripts/deterministic_student_recovery_smoke.py
 python scripts/deterministic_final_state_protocol_smoke.py
@@ -130,7 +144,7 @@ python scripts/run_task_level_accuracy.py `
   --out_root runs_member_aware_disambiguation
 ```
 
-Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, at most three representative cases, bounded text fields, a fixed candidate count, and prompt-length constraints. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. A Student response with no valid candidate receives structured error feedback and up to three retries. If all four calls in that cycle are invalid, the program performs one fresh Teacher-Critic regeneration and allows one final four-call Student cycle. A partially valid response is used immediately. Thus one update can make at most eight Student calls, and invalid candidates never enter Stage A. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
+Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, bounded text fields, a fixed candidate count, and prompt-length constraints. Generic contexts retain their configured bounds; S5 is fixed to one lane, one dominant pattern, at most two repair cases, at most one preservation case, and at most 6000 serialized characters. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. A Student response with no valid candidate receives structured error feedback and up to three retries. If all four calls in that cycle are invalid, the program performs one fresh Teacher-Critic regeneration and allows one final four-call Student cycle. A partially valid response is used immediately. Thus one update can make at most eight Student calls, and invalid candidates never enter Stage A. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
 
 The Solver retains `solver_max_tokens=1800` so its request identity and shared
 cache remain stable. A provider may still return `finish_reason=length`; this
@@ -139,7 +153,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v17 run identity;
+checkpoint-v18 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -166,6 +180,10 @@ Each optimized run writes:
 - `repairability_freeze_events.jsonl` and
   `repairability_unfreeze_events.jsonl`: sanitized state-conditioned budget
   safeguard events
+- `service_routing_audit_sanitized.jsonl`: per-state unique routing decisions
+  without prompts, questions, answers, or model output
+- `specialization_anchor_trajectory_sanitized.jsonl`: anchor initialization,
+  accepted set/switch, retained rejection, freeze, and unfreeze-clear events
 - `solver_recovery_summary.json`: one row per resolved prompt-question request,
   including first-pass validity, recovery calls, terminal-invalid counts, and
   token overhead
@@ -198,7 +216,7 @@ The frozen matched baseline remains a reporting reference only.
 See [method.md](method.md) for definitions and implementation details.
 
 The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
-development evidence for a superseded mechanism. It does not define v9.
+development evidence for a superseded mechanism. It does not define v10.
 
 For offline analysis of an already completed high-frequency v4 run, use:
 

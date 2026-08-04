@@ -26,6 +26,7 @@ from .diagnosis_aggregation import (
     DIAGNOSIS_AGGREGATION_VERSION,
     PATTERN_SELECTION_VERSION,
     aggregate_probe_diagnosis,
+    aggregate_single_lane_diagnosis,
 )
 from .evaluation.fixed_probe import (
     FixedProbeEvaluator,
@@ -74,13 +75,17 @@ from .responsibility import (
     FREEZE_OTHER_ACCEPT_THRESHOLD,
     FREEZE_PORTFOLIO_OVERLAP_THRESHOLD,
     MemberAwareRepairOpportunity,
+    RepairLane,
+    ResidualServiceAssignment,
     ResponsibilityState,
+    build_service_routing,
     build_target_selection_decision,
     compute_member_aware_repair_opportunity,
     compute_repair_eligibility_sets,
     initialize_repairability_state,
     record_target_update_acceptance,
     record_target_update_failure,
+    record_specialization_anchor_acceptance,
     refresh_frozen_member_states,
     responsibility_portfolios,
     target_priorities,
@@ -101,6 +106,7 @@ from .tcs import (
     CriticDecision,
     AssignedResidualDiagnosisContext,
     PeerStateDiagnosisContext,
+    SingleLaneDiagnosisContext,
     ProposalFailureFeedback,
     PreviousUpdateOutcome,
     StudentPromptCandidate,
@@ -116,6 +122,7 @@ from .tcs import (
     build_teacher_regeneration_request,
     build_teacher_request,
     changed_teacher_plan_fields,
+    compact_previous_outcome,
     critic_decision_hash,
     contains_supplied_example_text,
     context_payload,
@@ -137,6 +144,7 @@ from .versions import (
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
+    SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
@@ -276,11 +284,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v9 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v10 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v9 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v10 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v9 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v10 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -299,9 +307,9 @@ class PromptEnsembleOptimizationSystem:
             )
         if cfg.tcs.proposal_memory_mode not in {"off", "state_local_v1"}:
             raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
-        if cfg.responsibility.responsibility_mode != "compact_member_aware_v8":
+        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v10":
             raise ValueError(
-                "responsibility_mode must be 'compact_member_aware_v8'"
+                "responsibility_mode must be 'single_service_member_aware_v10'"
             )
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
@@ -332,9 +340,10 @@ class PromptEnsembleOptimizationSystem:
             accepted_updates_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
             target_attempt_count_by_agent={agent_id: 0 for agent_id in range(cfg.training.agents)},
         )
-        initialize_repairability_state(
-            self.responsibility_state, range(cfg.training.agents)
-        )
+        if self.protocol.service_routing_enabled:
+            initialize_repairability_state(
+                self.responsibility_state, range(cfg.training.agents)
+            )
         self.history: list[dict[str, Any]] = []
         self.peer_state_history: list[dict[str, Any]] = []
         self.responsibility_assignments: list[dict[str, Any]] = []
@@ -359,6 +368,17 @@ class PromptEnsembleOptimizationSystem:
         self._observed_solver_keys: set[tuple[str, str]] = set()
         self.cached_responsibility_eligibility: dict[str, tuple[int, ...]] = {}
         self.cached_responsibility_assignments: dict[int, list[MemberAwareRepairOpportunity]] = {}
+        self.cached_service_assignments: dict[
+            str, ResidualServiceAssignment
+        ] = {}
+        self.cached_repair_lane_by_question: dict[str, RepairLane] = {}
+        self.cached_service_portfolios: dict[
+            int, list[MemberAwareRepairOpportunity]
+        ] = {}
+        self.cached_active_lane_by_agent: dict[int, RepairLane | None] = {}
+        self.cached_active_responsibility_assignments: dict[
+            int, list[MemberAwareRepairOpportunity]
+        ] = {}
         self.cached_member_opportunities: dict[
             str, tuple[MemberAwareRepairOpportunity, ...]
         ] = {}
@@ -368,6 +388,22 @@ class PromptEnsembleOptimizationSystem:
         self.target_priority_audit: list[dict[str, Any]] = []
         self.repairability_freeze_events: list[dict[str, Any]] = []
         self.repairability_unfreeze_events: list[dict[str, Any]] = []
+        self.service_routing_audit: list[dict[str, Any]] = []
+        self.specialization_anchor_trajectory: list[dict[str, Any]] = [
+            {
+                "artifact_schema_version": "specialization_anchor_event_v1",
+                "update_index": -1,
+                "agent_id": agent_id,
+                "old_anchor": None,
+                "active_lane": None,
+                "new_anchor": None,
+                "event": "initialized",
+            }
+            for agent_id in (
+                range(cfg.training.agents)
+                if self.protocol.service_routing_enabled else ()
+            )
+        ]
         self.responsibility_portfolio_trajectory: list[dict[str, Any]] = []
         self.target_responsibility_context_alignment: list[
             dict[str, Any]
@@ -734,7 +770,10 @@ class PromptEnsembleOptimizationSystem:
         return tuple(
             ProbeExample(
                 question=str(row["question"]),
-                question_hash=hashlib.sha256(normalize_spaces(str(row["question"])).encode("utf-8")).hexdigest(),
+                # The Solver sends the original question text verbatim.  Use its
+                # exact bytes in the cache/domain identity so whitespace-distinct
+                # requests can never alias in the persistent observation cache.
+                question_hash=hashlib.sha256(str(row["question"]).encode("utf-8")).hexdigest(),
                 gold_answer=self.task_spec.parse_gold(row["answer"], str(row["question"])),
             )
             for row in data
@@ -896,13 +935,20 @@ class PromptEnsembleOptimizationSystem:
 
     def assign_responsibilities(
         self,
+        *,
+        update_index: int = -1,
     ) -> tuple[dict[str, tuple[int, ...]], dict[int, list[MemberAwareRepairOpportunity]]]:
         if self.responsibility_state_version == self.team_state_version:
+            selected_assignments = (
+                self.cached_active_responsibility_assignments
+                if self.protocol.service_routing_enabled
+                else self.cached_responsibility_assignments
+            )
             return (
                 dict(self.cached_responsibility_eligibility),
                 {
                     agent_id: list(rows)
-                    for agent_id, rows in self.cached_responsibility_assignments.items()
+                    for agent_id, rows in selected_assignments.items()
                 },
             )
         states, _, opportunities = self.current_states_and_opportunities()
@@ -922,6 +968,62 @@ class PromptEnsembleOptimizationSystem:
                 "H": team_state.largest_wrong_vote_count,
                 "M": team_state.plurality_margin,
             })
+        routing = None
+        if self.protocol.service_routing_enabled:
+            unfreeze_events = refresh_frozen_member_states(
+                state=self.responsibility_state,
+                assignments=assigned,
+                update_index=update_index,
+            )
+            self.repairability_unfreeze_events.extend(unfreeze_events)
+            for event in unfreeze_events:
+                self.specialization_anchor_trajectory.append({
+                    "artifact_schema_version": "specialization_anchor_event_v1",
+                    "update_index": int(update_index),
+                    "agent_id": int(event["agent_id"]),
+                    "old_anchor": event.get("old_anchor"),
+                    "active_lane": None,
+                    "new_anchor": None,
+                    "event": "unfreeze_anchor_cleared",
+                })
+            routing = build_service_routing(
+                team_states=state_by_hash,
+                opportunities=opportunities,
+                eligible_agents_by_question=eligibility,
+                state=self.responsibility_state,
+                seed=self.cfg.training.seed,
+            )
+            self.cached_service_assignments = dict(
+                routing.assignments_by_question
+            )
+            self.cached_repair_lane_by_question = dict(
+                routing.repair_lane_by_question
+            )
+            self.cached_service_portfolios = {
+                agent_id: list(values)
+                for agent_id, values in routing.service_portfolios.items()
+            }
+            self.cached_active_lane_by_agent = dict(
+                routing.active_lane_by_agent
+            )
+            self.cached_active_responsibility_assignments = {
+                agent_id: list(values)
+                for agent_id, values in routing.active_slices.items()
+            }
+            self.service_routing_audit.extend({
+                "artifact_schema_version": "service_routing_audit_v1",
+                "team_state_version": self.team_state_version,
+                **{
+                    **asdict(row),
+                    "repair_lane": row.repair_lane.value,
+                },
+            } for row in routing.assignments_by_question.values())
+        else:
+            self.cached_service_assignments = {}
+            self.cached_repair_lane_by_question = {}
+            self.cached_service_portfolios = {}
+            self.cached_active_lane_by_agent = {}
+            self.cached_active_responsibility_assignments = {}
         rows = [row for values in assigned.values() for row in values]
         self.peer_state_history.extend(asdict(state) for state in states)
         self.responsibility_assignments.append({
@@ -941,10 +1043,34 @@ class PromptEnsembleOptimizationSystem:
             "assigned_opportunities": {
                 str(agent_id): [asdict(row) for row in values] for agent_id, values in assigned.items()
             },
+            "service_assignment_by_question": (
+                {
+                    question_hash: {
+                        **asdict(row),
+                        "repair_lane": row.repair_lane.value,
+                    }
+                    for question_hash, row in routing.assignments_by_question.items()
+                }
+                if routing is not None else {}
+            ),
         })
         self.responsibility_portfolio_trajectory.append({
             "team_state_version": self.team_state_version,
-            "portfolio_size_by_agent": {str(agent): len(rows) for agent, rows in assigned.items()},
+            "legal_portfolio_size_by_agent": {
+                str(agent): len(values) for agent, values in assigned.items()
+            },
+            "service_portfolio_size_by_agent": {
+                str(agent): len(values)
+                for agent, values in self.cached_service_portfolios.items()
+            },
+            "active_lane_by_agent": {
+                str(agent): lane.value if lane is not None else None
+                for agent, lane in self.cached_active_lane_by_agent.items()
+            },
+            "active_lane_size_by_agent": {
+                str(agent): len(values)
+                for agent, values in self.cached_active_responsibility_assignments.items()
+            },
         })
         for state in states:
             question_hash = state.question_hash
@@ -967,7 +1093,14 @@ class PromptEnsembleOptimizationSystem:
         }
         self.responsibility_state_version = self.team_state_version
         self.responsibility_refresh_count += 1
-        return eligibility, assigned
+        selected_assignments = (
+            self.cached_active_responsibility_assignments
+            if self.protocol.service_routing_enabled else assigned
+        )
+        return eligibility, {
+            agent_id: list(values)
+            for agent_id, values in selected_assignments.items()
+        }
 
     def ensure_responsibility_current(
         self,
@@ -976,31 +1109,39 @@ class PromptEnsembleOptimizationSystem:
 
     def refresh_responsibility_after_commit(
         self,
+        *,
+        update_index: int,
     ) -> tuple[dict[str, tuple[int, ...]], dict[int, list[MemberAwareRepairOpportunity]]]:
         self.team_state_version += 1
         if self.responsibility_state_version == self.team_state_version:
             raise AssertionError("committed team state must invalidate responsibility state")
-        return self.assign_responsibilities()
+        return self.assign_responsibilities(update_index=update_index)
 
     def select_target(
         self,
         assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
         update_index: int,
     ) -> tuple[int | None, list[dict[str, Any]]]:
-        current_counts = self._member_correct_counts(self.active_profiles)
-        initial_counts = self._member_correct_counts(self.initial_profiles)
-        priorities = target_priorities(
-            assignments=assigned,
-            state=self.responsibility_state,
-            seed=self.cfg.training.seed,
-            current_member_correct_counts=current_counts,
-            initial_member_correct_counts=initial_counts,
-            member_uplift_tolerance=self.cfg.responsibility.member_uplift_tolerance,
-        )
         if self.protocol.target_selection_policy == "round_robin":
+            priorities = ()
             target = update_index % 5
             selection = None
         elif self.protocol.target_selection_policy == "member_aware_responsibility":
+            current_counts = self._member_correct_counts(self.active_profiles)
+            initial_counts = self._member_correct_counts(self.initial_profiles)
+            priorities = target_priorities(
+                assignments=assigned,
+                state=self.responsibility_state,
+                seed=self.cfg.training.seed,
+                current_member_correct_counts=current_counts,
+                initial_member_correct_counts=initial_counts,
+                member_uplift_tolerance=(
+                    self.cfg.responsibility.member_uplift_tolerance
+                ),
+                legal_assignments=self.cached_responsibility_assignments,
+                service_portfolios=self.cached_service_portfolios,
+                active_lane_by_agent=self.cached_active_lane_by_agent,
+            )
             selection = build_target_selection_decision(priorities)
             target = selection.selected_agent_id
         else:
@@ -1208,6 +1349,45 @@ class PromptEnsembleOptimizationSystem:
             opportunities[state.question_hash][target_agent_id] for state in states
         ]
         context_policy = self.protocol.tcs_context_policy
+        if context_policy == "member_aware_responsibility_conditioned":
+            active_lane = self.cached_active_lane_by_agent.get(target_agent_id)
+            if active_lane is None or not assigned_hashes:
+                raise ValueError(
+                    "responsibility-conditioned context requires an active lane"
+                )
+            aggregation = aggregate_single_lane_diagnosis(
+                target_agent_id=target_agent_id,
+                examples=self.fixed_probe.examples,
+                states=states,
+                opportunities=opportunities,
+                active_hashes=assigned_hashes,
+                active_lane=active_lane,
+            )
+            context: AnyDiagnosisContext = SingleLaneDiagnosisContext(
+                parent_prompt=parent_prompt,
+                parent_prompt_hash=self.prompt_hash(parent_prompt),
+                repair_lane=active_lane.value,
+                repair_goal=aggregation.repair_goal,
+                active_residual_count=len(assigned_hashes),
+                dominant_target_role=(
+                    aggregation.dominant_pattern.key.target_error_role
+                ),
+                dominant_pattern_case_count=(
+                    aggregation.dominant_pattern.case_count
+                ),
+                dominant_pattern=aggregation.dominant_pattern,
+                repair_cases=aggregation.repair_cases,
+                preservation_case=aggregation.preservation_case,
+                previous_outcome=compact_previous_outcome(
+                    self.previous_update_outcomes[target_agent_id]
+                ),
+            )
+            return limit_diagnosis_context(
+                context,
+                max_chars=min(self.cfg.tcs.tcs_context_max_chars, 6000),
+                full_probe_case_count=aggregation.full_probe_case_count,
+                available_pattern_count=aggregation.available_pattern_count,
+            )
         aggregation = aggregate_probe_diagnosis(
             target_agent_id=target_agent_id,
             examples=self.fixed_probe.examples,
@@ -1250,51 +1430,6 @@ class PromptEnsembleOptimizationSystem:
                     row.unique_correct or row.pivotal_correct for row in target_rows
                 ),
             )
-        elif context_policy == "member_aware_responsibility_conditioned":
-            current_counts = self._member_correct_counts(self.active_profiles)
-            initial_counts = self._member_correct_counts(self.initial_profiles)
-            member_gains = [
-                current - initial
-                for current, initial in zip(
-                    current_counts,
-                    initial_counts,
-                    strict=True,
-                )
-            ]
-            maximum_gain = max(member_gains, default=0)
-            assigned_rows = tuple(
-                row
-                for row in target_rows
-                if row.question_hash in assigned_hashes
-            )
-            context = AssignedResidualDiagnosisContext(
-                **common,
-                assigned_residual_count=len(assigned_hashes),
-                target_member_gain=member_gains[target_agent_id],
-                uplift_deficit=max(
-                    0,
-                    maximum_gain
-                    - member_gains[target_agent_id]
-                    - self.cfg.responsibility.member_uplift_tolerance,
-                ),
-                direct_fix_responsibility_count=sum(
-                    row.vote_flip_gain > 0 for row in assigned_rows
-                ),
-                margin_gain_responsibility_sum=sum(
-                    row.margin_gain for row in assigned_rows
-                ),
-                coverage_residual_count=sum(
-                    row.coverage_opportunity for row in assigned_rows
-                ),
-                conversion_residual_count=sum(
-                    row.conversion_opportunity for row in assigned_rows
-                ),
-                preservation_count=sum(
-                    row.unique_correct or row.pivotal_correct
-                    for row in target_rows
-                ),
-                proposal_failure_feedback=proposal_failure_feedback,
-            )
         else:
             raise ValueError(f"Unsupported TCS context policy: {self.protocol.tcs_context_policy}")
         return limit_diagnosis_context(
@@ -1327,6 +1462,7 @@ class PromptEnsembleOptimizationSystem:
             total_candidate_prompt_max_chars=(
                 self.cfg.tcs.total_candidate_prompt_max_chars
             ),
+            single_lane=isinstance(context, SingleLaneDiagnosisContext),
         )
         parent_prompt_hash = self.prompt_hash(parent_prompt)
         repair_plan_hash = teacher_repair_plan_hash(repair_plan)
@@ -1996,6 +2132,19 @@ class PromptEnsembleOptimizationSystem:
                 "assigned", "responsibility", "member_gain",
                 "uplift_deficit",
             )
+        elif isinstance(context, SingleLaneDiagnosisContext):
+            forbidden_tokens = (
+                "target_agent_id", "target_member_gain", "uplift_deficit",
+                "assigned_residual_count", "direct_fix_responsibility_count",
+                "margin_gain_responsibility_sum", "coverage_residual_count",
+                "conversion_residual_count", "preservation_count",
+                "oracle_soft_utility_gain", "answer_role_signature",
+                "gold_vote_count", "largest_wrong_vote_count",
+                "plurality_margin", "peer_", "vote_flip_gain",
+                "margin_gain", "dominant_wrong_member", "unique_correct",
+                "pivotal_correct", "proposal_failure_feedback", "frontier",
+                "service_load", "seeded_rank", "freeze", "anchor_match",
+            )
         else:
             forbidden_tokens = ()
         lowered_paths = tuple(path.lower() for path in field_paths)
@@ -2033,10 +2182,18 @@ class PromptEnsembleOptimizationSystem:
                 for path in lowered_paths
             ),
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
-            "selected_context_pattern_question_hashes": {
-                pattern.pattern_id: list(pattern.represented_question_hashes)
-                for pattern in context.patterns
-            },
+            "selected_context_pattern_question_hashes": (
+                {
+                    context.dominant_pattern.pattern_id: [
+                        row.question_hash for row in context.repair_cases
+                    ]
+                }
+                if isinstance(context, SingleLaneDiagnosisContext)
+                else {
+                    pattern.pattern_id: list(pattern.represented_question_hashes)
+                    for pattern in context.patterns
+                }
+            ),
             **asdict(diagnostics),
         })
         funnel.parents_considered = 1
@@ -2829,10 +2986,21 @@ class PromptEnsembleOptimizationSystem:
             raise AssertionError(
                 "responsibility target must have a nonempty portfolio"
             )
+        legal_assignments = (
+            self.cached_responsibility_assignments
+            if self.protocol.service_routing_enabled else assigned
+        )
         target_portfolio = responsibility_portfolios(
-            assignments=assigned,
+            assignments=legal_assignments,
             state=self.responsibility_state,
         )[target]
+        active_lane = self.cached_active_lane_by_agent.get(target)
+        if (
+            self.protocol.service_routing_enabled
+            and update_lane == "responsibility_conditioned"
+            and active_lane is None
+        ):
+            raise AssertionError("service target must have one active repair lane")
         funnel = CandidateFunnel()
         candidates = await self.propose_candidates(
             target, assigned_hashes, funnel, update_index=update_index,
@@ -2913,14 +3081,21 @@ class PromptEnsembleOptimizationSystem:
             })
             if empirical_evaluation_completed and not rejection_reasons:
                 rejection_reasons = ["no_acceptable_candidate"]
+            previous_rejection_reasons = (
+                tuple(rejection_reasons)
+                if empirical_evaluation_completed
+                else (
+                    ("semantic_rejection",)
+                    if funnel.terminal_failure_class
+                    == "critic_semantic_rejection_exhausted"
+                    else ()
+                )
+            )
             self.previous_update_outcomes[target] = PreviousUpdateOutcome(
                 attempted=True,
                 empirical_evaluation_completed=empirical_evaluation_completed,
                 accepted=False,
-                rejection_reasons=(
-                    tuple(rejection_reasons)
-                    if empirical_evaluation_completed else ()
-                ),
+                rejection_reasons=previous_rejection_reasons,
             )
             complete_semantic_failure = self.is_complete_repairability_failure(
                 funnel
@@ -2936,6 +3111,43 @@ class PromptEnsembleOptimizationSystem:
                 )
                 if event is not None:
                     self.repairability_freeze_events.append(event)
+                    retained_anchor = (
+                        self.responsibility_state.specialization_anchor_by_agent[
+                            target
+                        ]
+                    )
+                    self.specialization_anchor_trajectory.append({
+                        "artifact_schema_version": "specialization_anchor_event_v1",
+                        "update_index": int(update_index),
+                        "agent_id": target,
+                        "old_anchor": (
+                            retained_anchor.value
+                            if retained_anchor is not None else None
+                        ),
+                        "active_lane": (
+                            active_lane.value if active_lane is not None else None
+                        ),
+                        "new_anchor": (
+                            retained_anchor.value
+                            if retained_anchor is not None else None
+                        ),
+                        "event": "freeze",
+                    })
+            if self.protocol.service_routing_enabled:
+                anchor = self.responsibility_state.specialization_anchor_by_agent[
+                    target
+                ]
+                self.specialization_anchor_trajectory.append({
+                    "artifact_schema_version": "specialization_anchor_event_v1",
+                    "update_index": int(update_index),
+                    "agent_id": target,
+                    "old_anchor": anchor.value if anchor is not None else None,
+                    "active_lane": (
+                        active_lane.value if active_lane is not None else None
+                    ),
+                    "new_anchor": anchor.value if anchor is not None else None,
+                    "event": "rejected_anchor_retained",
+                })
             return False
 
         agent = self.agents[target]
@@ -2945,6 +3157,13 @@ class PromptEnsembleOptimizationSystem:
         old_responsibility_state = deepcopy(self.responsibility_state)
         old_cached_eligibility = deepcopy(self.cached_responsibility_eligibility)
         old_cached_assignments = deepcopy(self.cached_responsibility_assignments)
+        old_cached_service_assignments = deepcopy(self.cached_service_assignments)
+        old_cached_repair_lanes = deepcopy(self.cached_repair_lane_by_question)
+        old_cached_service_portfolios = deepcopy(self.cached_service_portfolios)
+        old_cached_active_lanes = deepcopy(self.cached_active_lane_by_agent)
+        old_cached_active_assignments = deepcopy(
+            self.cached_active_responsibility_assignments
+        )
         old_cached_opportunities = deepcopy(self.cached_member_opportunities)
         old_team_state_version = self.team_state_version
         old_responsibility_state_version = self.responsibility_state_version
@@ -2954,6 +3173,14 @@ class PromptEnsembleOptimizationSystem:
         old_target_audit_length = len(self.target_priority_audit)
         old_freeze_event_length = len(self.repairability_freeze_events)
         old_unfreeze_event_length = len(self.repairability_unfreeze_events)
+        old_service_routing_audit_length = len(self.service_routing_audit)
+        old_anchor_trajectory_length = len(
+            self.specialization_anchor_trajectory
+        )
+        old_portfolio_trajectory_length = len(
+            self.responsibility_portfolio_trajectory
+        )
+        old_member_opportunities_length = len(self.member_opportunities)
         agent.previous_active_prompt = old_prompt
         try:
             agent.current_prompt = accepted.prompt
@@ -2970,14 +3197,20 @@ class PromptEnsembleOptimizationSystem:
                     state=self.responsibility_state,
                     accepted_agent_id=target,
                 )
-            if self.protocol.responsibility_refresh_policy == "online":
-                _, refreshed_assignments = self.refresh_responsibility_after_commit()
-                self.repairability_unfreeze_events.extend(
-                    refresh_frozen_member_states(
+            if self.protocol.service_routing_enabled:
+                if active_lane is None:
+                    raise AssertionError("accepted routed update has no active lane")
+                self.specialization_anchor_trajectory.append(
+                    record_specialization_anchor_acceptance(
                         state=self.responsibility_state,
-                        assignments=refreshed_assignments,
+                        accepted_agent_id=target,
+                        active_lane=active_lane,
                         update_index=update_index,
                     )
+                )
+            if self.protocol.responsibility_refresh_policy == "online":
+                self.refresh_responsibility_after_commit(
+                    update_index=update_index
                 )
             else:
                 self.team_state_version += 1
@@ -2988,6 +3221,13 @@ class PromptEnsembleOptimizationSystem:
             self.responsibility_state = old_responsibility_state
             self.cached_responsibility_eligibility = old_cached_eligibility
             self.cached_responsibility_assignments = old_cached_assignments
+            self.cached_service_assignments = old_cached_service_assignments
+            self.cached_repair_lane_by_question = old_cached_repair_lanes
+            self.cached_service_portfolios = old_cached_service_portfolios
+            self.cached_active_lane_by_agent = old_cached_active_lanes
+            self.cached_active_responsibility_assignments = (
+                old_cached_active_assignments
+            )
             self.cached_member_opportunities = old_cached_opportunities
             self.team_state_version = old_team_state_version
             self.responsibility_state_version = old_responsibility_state_version
@@ -2997,6 +3237,14 @@ class PromptEnsembleOptimizationSystem:
             del self.target_priority_audit[old_target_audit_length:]
             del self.repairability_freeze_events[old_freeze_event_length:]
             del self.repairability_unfreeze_events[old_unfreeze_event_length:]
+            del self.service_routing_audit[old_service_routing_audit_length:]
+            del self.specialization_anchor_trajectory[
+                old_anchor_trajectory_length:
+            ]
+            del self.responsibility_portfolio_trajectory[
+                old_portfolio_trajectory_length:
+            ]
+            del self.member_opportunities[old_member_opportunities_length:]
             raise
         evaluation = accepted.final_evaluation
         competence_delta = evaluation.competence.correct_count - incumbent.competence.correct_count
@@ -3580,6 +3828,7 @@ class PromptEnsembleOptimizationSystem:
             "candidate_generator": self.protocol.tcs_context_policy,
             "member_objective_version": "integer_vote_min_sum_v2",
             "responsibility_version": RESPONSIBILITY_VERSION,
+            "service_routing_version": SERVICE_ROUTING_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": TARGET_SELECTION_VERSION,
             "repairability_freeze_failure_threshold": FREEZE_FAILURE_THRESHOLD,
@@ -3614,6 +3863,12 @@ class PromptEnsembleOptimizationSystem:
             "solver_invalid_max_retries": self.cfg.models.solver_invalid_max_retries,
             "max_pattern_count": self.cfg.tcs.tcs_max_pattern_summaries,
             "max_evidence_case_count": self.cfg.tcs.tcs_max_evidence_cases,
+            "member_aware_repair_pattern_count": 1,
+            "member_aware_repair_case_count": 2,
+            "member_aware_preservation_case_count": 1,
+            "member_aware_context_character_cap": min(
+                self.cfg.tcs.tcs_context_max_chars, 6000
+            ),
             "teacher_total_character_limit": self.cfg.tcs.teacher_total_max_chars,
             "candidate_prompt_length_limit": self.cfg.tcs.candidate_prompt_max_chars,
             "total_candidate_prompt_length_limit": self.cfg.tcs.total_candidate_prompt_max_chars,
@@ -3755,6 +4010,14 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl(
             "repairability_unfreeze_events.jsonl",
             self.repairability_unfreeze_events,
+        )
+        self.artifacts.write_jsonl(
+            "service_routing_audit_sanitized.jsonl",
+            self.service_routing_audit,
+        )
+        self.artifacts.write_jsonl(
+            "specialization_anchor_trajectory_sanitized.jsonl",
+            self.specialization_anchor_trajectory,
         )
         self.artifacts.write_jsonl(
             "responsibility_portfolio_trajectory.jsonl",

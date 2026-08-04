@@ -6,6 +6,7 @@ from multi_dataset_diverse_rl.peer_state import (
 )
 from multi_dataset_diverse_rl.responsibility import (
     MemberAwareRepairOpportunity,
+    RepairLane,
     ResponsibilityState,
     build_target_selection_decision,
     compute_member_aware_repair_opportunity,
@@ -412,6 +413,7 @@ def test_unfreeze_requires_both_other_accepts_and_material_portfolio_change():
     )[0]
     record_target_update_failure(state=state, portfolio=portfolio, update_index=0)
     record_target_update_failure(state=state, portfolio=portfolio, update_index=1)
+    state.specialization_anchor_by_agent[0] = RepairLane.COVERAGE
 
     changed_assignments = {
         0: [opportunity(0, vote_flip_gain=0, margin_gain=3, question_hash="q2")]
@@ -436,6 +438,7 @@ def test_unfreeze_requires_both_other_accepts_and_material_portfolio_change():
     assert len(events) == 1
     assert not state.frozen_by_agent[0]
     assert state.consecutive_failed_updates_by_agent[0] == 0
+    assert state.specialization_anchor_by_agent[0] is None
 
 
 def test_accepted_target_resets_failure_streak_and_signature():

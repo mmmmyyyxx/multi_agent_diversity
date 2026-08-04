@@ -11,17 +11,28 @@ from typing import Any, Mapping
 from ..evaluation.fixed_probe import PromptAnswer
 from ..persistence.identity import validate_run_identity
 from ..responsibility import (
+    RepairLane,
+    ResidualServiceAssignment,
     ResponsibilityState,
     compute_repair_eligibility_sets,
 )
 from ..proposal_memory import entry_from_dict, entry_to_dict
 from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
-from ..versions import CHECKPOINT_VERSION
+from ..versions import CHECKPOINT_VERSION, SERVICE_ROUTING_VERSION
 
 
 def _random_state_payload() -> str:
     return base64.b64encode(pickle.dumps(random.getstate())).decode("ascii")
+
+
+def _service_assignment_payload(value) -> dict[str, Any]:
+    return {
+        **asdict(value),
+        "repair_lane": value.repair_lane.value,
+        "eligible_agent_ids": list(value.eligible_agent_ids),
+        "active_eligible_agent_ids": list(value.active_eligible_agent_ids),
+    }
 
 
 def build_checkpoint(
@@ -74,6 +85,29 @@ def build_checkpoint(
         "cached_responsibility_eligibility": {
             str(key): list(value) for key, value in system.cached_responsibility_eligibility.items()
         },
+        "service_routing_version": SERVICE_ROUTING_VERSION,
+        "cached_repair_lane_by_question": {
+            key: value.value
+            for key, value in system.cached_repair_lane_by_question.items()
+        },
+        "cached_service_assignments": {
+            key: _service_assignment_payload(value)
+            for key, value in system.cached_service_assignments.items()
+        },
+        "cached_service_portfolios": {
+            str(agent_id): sorted(row.question_hash for row in rows)
+            for agent_id, rows in system.cached_service_portfolios.items()
+        },
+        "cached_active_lane_by_agent": {
+            str(agent_id): lane.value if lane is not None else None
+            for agent_id, lane in system.cached_active_lane_by_agent.items()
+        },
+        "cached_active_residual_hashes": {
+            str(agent_id): sorted(row.question_hash for row in rows)
+            for agent_id, rows in (
+                system.cached_active_responsibility_assignments.items()
+            )
+        },
         "previous_update_outcomes": {
             str(agent_id): asdict(row)
             for agent_id, row in system.previous_update_outcomes.items()
@@ -120,6 +154,10 @@ def build_checkpoint(
         "target_priority_audit": list(system.target_priority_audit),
         "repairability_freeze_events": list(system.repairability_freeze_events),
         "repairability_unfreeze_events": list(system.repairability_unfreeze_events),
+        "service_routing_audit": list(system.service_routing_audit),
+        "specialization_anchor_trajectory": list(
+            system.specialization_anchor_trajectory
+        ),
         "responsibility_portfolio_trajectory": list(
             system.responsibility_portfolio_trajectory
         ),
@@ -203,6 +241,14 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "target_responsibility_context_alignment",
         "repairability_freeze_events",
         "repairability_unfreeze_events",
+        "service_routing_version",
+        "cached_repair_lane_by_question",
+        "cached_service_assignments",
+        "cached_service_portfolios",
+        "cached_active_lane_by_agent",
+        "cached_active_residual_hashes",
+        "service_routing_audit",
+        "specialization_anchor_trajectory",
         "proposal_memory_run_id",
         "proposal_memory_entries",
         "proposal_memory_events",
@@ -275,6 +321,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         str(key): tuple(int(agent) for agent in value)
         for key, value in raw_state["eligible_agents_by_question"].items()
     }
+    raw_state["specialization_anchor_by_agent"] = {
+        int(key): (RepairLane(value) if value is not None else None)
+        for key, value in raw_state[
+            "specialization_anchor_by_agent"
+        ].items()
+    }
     system.responsibility_state = ResponsibilityState(**raw_state)
     system.team_state_version = int(payload["team_state_version"])
     system.responsibility_state_version = int(payload["responsibility_state_version"])
@@ -327,6 +379,10 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     )
     system.repairability_unfreeze_events = list(
         payload["repairability_unfreeze_events"]
+    )
+    system.service_routing_audit = list(payload["service_routing_audit"])
+    system.specialization_anchor_trajectory = list(
+        payload["specialization_anchor_trajectory"]
     )
     system.responsibility_portfolio_trajectory = list(
         payload["responsibility_portfolio_trajectory"]
@@ -384,6 +440,97 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         agent_id: list(rows)
         for agent_id, rows in recomputed_assignments.items()
     }
+    if str(payload["service_routing_version"]) != SERVICE_ROUTING_VERSION:
+        raise ValueError("Checkpoint service routing version is incompatible")
+    if system.protocol.service_routing_enabled:
+        saved_assignments = {
+            str(key): ResidualServiceAssignment(
+                **{
+                    **row,
+                    "repair_lane": RepairLane(row["repair_lane"]),
+                    "eligible_agent_ids": tuple(row["eligible_agent_ids"]),
+                    "active_eligible_agent_ids": tuple(
+                        row["active_eligible_agent_ids"]
+                    ),
+                }
+            )
+            for key, row in payload["cached_service_assignments"].items()
+        }
+        for question_hash, assignment in saved_assignments.items():
+            if assignment.eligible_agent_ids != recomputed_eligibility.get(
+                question_hash, ()
+            ):
+                raise ValueError(
+                    "Checkpoint service assignment violates restored eligibility"
+                )
+            if (
+                assignment.service_agent_id is not None
+                and assignment.service_agent_id
+                not in assignment.eligible_agent_ids
+            ):
+                raise ValueError("Checkpoint service agent is not legally eligible")
+        legal_rows = {
+            agent_id: {row.question_hash: row for row in rows}
+            for agent_id, rows in recomputed_assignments.items()
+        }
+        service_portfolios = {
+            int(agent_id): []
+            for agent_id in payload["cached_service_portfolios"]
+        }
+        for question_hash, assignment in saved_assignments.items():
+            if assignment.service_agent_id is not None:
+                service_portfolios.setdefault(assignment.service_agent_id, [])
+                service_portfolios[assignment.service_agent_id].append(
+                    legal_rows[assignment.service_agent_id][question_hash]
+                )
+        restored_service_hashes = {
+            str(agent_id): sorted(row.question_hash for row in rows)
+            for agent_id, rows in service_portfolios.items()
+        }
+        if restored_service_hashes != payload["cached_service_portfolios"]:
+            raise ValueError("Checkpoint service portfolios are incompatible")
+        active_hashes = {
+            int(agent_id): tuple(map(str, hashes))
+            for agent_id, hashes in payload[
+                "cached_active_residual_hashes"
+            ].items()
+        }
+        active_slices = {
+            agent_id: [
+                legal_rows[agent_id][question_hash]
+                for question_hash in hashes
+            ]
+            for agent_id, hashes in active_hashes.items()
+        }
+        active_lanes = {
+            int(agent_id): (RepairLane(value) if value is not None else None)
+            for agent_id, value in payload[
+                "cached_active_lane_by_agent"
+            ].items()
+        }
+        for agent_id, rows in active_slices.items():
+            lane = active_lanes[agent_id]
+            if any(
+                saved_assignments[row.question_hash].repair_lane != lane
+                for row in rows
+            ):
+                raise ValueError("Checkpoint active slice mixes repair lanes")
+        system.cached_service_assignments = saved_assignments
+        system.cached_repair_lane_by_question = {
+            key: RepairLane(value)
+            for key, value in payload[
+                "cached_repair_lane_by_question"
+            ].items()
+        }
+        system.cached_service_portfolios = service_portfolios
+        system.cached_active_lane_by_agent = active_lanes
+        system.cached_active_responsibility_assignments = active_slices
+    else:
+        system.cached_service_assignments = {}
+        system.cached_repair_lane_by_question = {}
+        system.cached_service_portfolios = {}
+        system.cached_active_lane_by_agent = {}
+        system.cached_active_responsibility_assignments = {}
     system.cached_member_opportunities = dict(opportunities)
     random.setstate(pickle.loads(base64.b64decode(str(payload["random_state"]))))
     return (

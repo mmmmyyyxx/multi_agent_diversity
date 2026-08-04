@@ -30,6 +30,7 @@ class ExperimentProtocol:
     candidate_selection_policy: str
     responsibility_refresh_policy: str
     repairability_freeze_enabled: bool
+    service_routing_enabled: bool
     initialization_mode: InitializationMode
     tie_policy: str
     candidate_budget_contract: CandidateBudgetContract
@@ -56,6 +57,7 @@ def experiment_protocol(
             candidate_selection_policy="none",
             responsibility_refresh_policy="off",
             repairability_freeze_enabled=False,
+            service_routing_enabled=False,
         ),
         "shared_independent_accuracy": dict(
             optimization_enabled=True,
@@ -65,6 +67,7 @@ def experiment_protocol(
             candidate_selection_policy="individual_accuracy",
             responsibility_refresh_policy="off",
             repairability_freeze_enabled=False,
+            service_routing_enabled=False,
         ),
         "shared_peer_state_vote_first": dict(
             optimization_enabled=True,
@@ -74,6 +77,7 @@ def experiment_protocol(
             candidate_selection_policy="vote_first",
             responsibility_refresh_policy="off",
             repairability_freeze_enabled=False,
+            service_routing_enabled=False,
         ),
         "shared_peer_state_member_pareto": dict(
             optimization_enabled=True,
@@ -83,6 +87,7 @@ def experiment_protocol(
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="off",
             repairability_freeze_enabled=False,
+            service_routing_enabled=False,
         ),
         "shared_member_aware_responsibility": dict(
             optimization_enabled=True,
@@ -92,6 +97,7 @@ def experiment_protocol(
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
             repairability_freeze_enabled=True,
+            service_routing_enabled=True,
         ),
         "shared_member_aware_full": dict(
             optimization_enabled=True,
@@ -101,6 +107,7 @@ def experiment_protocol(
             candidate_selection_policy="member_aware_pareto",
             responsibility_refresh_policy="online",
             repairability_freeze_enabled=True,
+            service_routing_enabled=True,
         ),
     }
     if name not in definitions:

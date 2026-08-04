@@ -2,6 +2,7 @@ from multi_dataset_diverse_rl.diagnosis_aggregation import (
     DIAGNOSIS_AGGREGATION_VERSION,
     answer_role_signature,
     aggregate_probe_diagnosis,
+    aggregate_single_lane_diagnosis,
 )
 from multi_dataset_diverse_rl.evaluation.fixed_probe import ProbeExample
 from multi_dataset_diverse_rl.peer_state import (
@@ -9,6 +10,7 @@ from multi_dataset_diverse_rl.peer_state import (
     build_team_vote_state,
 )
 from multi_dataset_diverse_rl.responsibility import (
+    RepairLane,
     compute_member_aware_repair_opportunity,
 )
 
@@ -92,7 +94,7 @@ def test_full_probe_groups_structural_equivalents_and_splits_different_vote_stat
     )
     assert (
         DIAGNOSIS_AGGREGATION_VERSION
-        == "compact_vote_margin_pattern_aggregation_v2"
+        == "single_lane_pattern_aggregation_v1"
     )
     assert result.full_probe_case_count == 4
     assert all(
@@ -135,3 +137,24 @@ def test_pattern_and_representative_selection_are_deterministic():
     first = aggregate_probe_diagnosis(**kwargs)
     second = aggregate_probe_diagnosis(**kwargs)
     assert first == second
+
+
+def test_single_lane_preservation_can_use_stable_current_correct_case():
+    states = (
+        state("repair", ("B", "A", "A", "B", "B")),
+        state("stable", ("A", "A", "A", "B", "C")),
+    )
+    examples, _, opportunities = inputs(states)
+    result = aggregate_single_lane_diagnosis(
+        target_agent_id=0,
+        examples=examples,
+        states=states,
+        opportunities=opportunities,
+        active_hashes={"repair"},
+        active_lane=RepairLane.DIRECT_FLIP,
+    )
+    assert [row.question_hash for row in result.repair_cases] == ["repair"]
+    assert result.preservation_case is not None
+    assert result.preservation_case.question_hash == "stable"
+    assert not result.preservation_case.unique_correct
+    assert not result.preservation_case.pivotal_correct

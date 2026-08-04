@@ -344,6 +344,12 @@ def main() -> None:
     freeze_events = load_jsonl(freeze_path) if freeze_path.exists() else []
     unfreeze_path = run / "repairability_unfreeze_events.jsonl"
     unfreeze_events = load_jsonl(unfreeze_path) if unfreeze_path.exists() else []
+    service_routing_path = run / "service_routing_audit_sanitized.jsonl"
+    service_routing = (
+        load_jsonl(service_routing_path) if service_routing_path.exists() else []
+    )
+    anchor_path = run / "specialization_anchor_trajectory_sanitized.jsonl"
+    anchor_trajectory = load_jsonl(anchor_path) if anchor_path.exists() else []
 
     sanitized_candidates = candidate_rows(candidates)
     sanitized_priorities = priority_rows(priorities)
@@ -383,6 +389,14 @@ def main() -> None:
             }
             for row in unfreeze_events
         ],
+    )
+    dump_jsonl(
+        out / "service_routing_audit_sanitized.jsonl",
+        [sanitize(row) for row in service_routing],
+    )
+    dump_jsonl(
+        out / "specialization_anchor_trajectory_sanitized.jsonl",
+        [sanitize(row) for row in anchor_trajectory],
     )
     dump_jsonl(out / "g_transition_audit_sanitized.jsonl", sanitized_transitions)
     dump_jsonl(out / "specialization_trajectory_sanitized.jsonl", sanitized_specialization)

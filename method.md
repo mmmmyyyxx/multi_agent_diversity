@@ -5,7 +5,7 @@
 The current method is **Member-Aware Prompt-Team Optimization**:
 
 ```text
-method_version = member_aware_peer_state_v9
+method_version = member_aware_peer_state_v10
 ```
 
 It jointly searches a team of five prompts. Solver, optimizer, and evaluator
@@ -174,25 +174,69 @@ dominant-wrong label, soft utility, and portfolio load cannot alter `E_x`.
 Coverage, conversion, dominant-wrong, unique/pivotal, and soft-utility fields
 remain diagnostic, proposal-context, and artifact evidence only.
 
-### 4.2 Compact member portfolios
+### 4.2 Repair lanes and unique service routing
 
-For each member:
+The legal portfolio remains:
 
 ```text
 R_i = {x : i in E_x}
 ```
 
-The two formal portfolio aggregates are:
+Legal portfolios may overlap and are used for eligibility audit, complete
+coverage statistics, and repairability-freeze signatures. The program assigns
+each residual exactly one mutually exclusive lane:
 
 ```text
-D_i = number of residuals in R_i with DeltaV_i,x = 1
-S_i = sum over x in R_i of DeltaM_i,x
+coverage       if G_x = 0
+direct_flip    if G_x > 0 and DeltaV_x = 1
+margin_support otherwise
 ```
 
-Portfolio size, coverage count, conversion count, dominant-wrong count, and
-soft utility may be reported but do not enter target scheduling.
+Dominant-wrong is a diagnostic label and preservation is separate protection
+evidence; neither is another repair lane.
 
-### 4.3 Uplift deficit
+For every serviceable residual, deterministic routing chooses exactly one
+`q_x in E_x`. If any eligible member is unfrozen, frozen members are excluded;
+if all are frozen, the residual is retained in legal audit but marked blocked.
+Routing orders candidates by:
+
+```text
+1. matching specialization anchor
+2. no anchor
+3. a different anchor
+4. lower current load in the residual lane
+5. lower total service load
+6. stable seeded rank
+```
+
+The resulting service portfolios are disjoint:
+
+```text
+P_i = {x : q_x = i}
+P_i intersect P_j = empty, i != j
+```
+
+### 4.3 Specialization anchor and active slice
+
+Each S4/S5 member has an optional specialization anchor. Only an accepted
+update sets or switches it to the active lane used by that update. Rejection,
+schema failure, transport failure, and candidate regression leave it unchanged.
+If the anchored lane remains in `P_i`, it is retained. Otherwise the program
+selects one non-empty lane lexicographically by `(D_i^lane, S_i^lane,
+N_i^lane, laneRank)`, with `direct_flip > coverage > margin_support` only as
+the final exact-tie breaker.
+
+Define the single active slice:
+
+```text
+A_i = {x in P_i : lane(x) = active_lane_i}
+```
+
+The target scheduler and the S5 proposal context use `A_i`, never the mixed
+service portfolio. Unfreezing clears the old anchor so the member can choose a
+new direction.
+
+### 4.4 Uplift deficit
 
 Let:
 
@@ -204,11 +248,13 @@ d_i   = max(0, g_max - g_i - 5)
 `d_i` affects only member-level scheduling. It never changes per-residual
 eligibility.
 
-### 4.4 One member-level Pareto
+### 4.5 One member-level Pareto
 
-For each member with a non-empty portfolio that is not frozen:
+For each unfrozen member with a non-empty service portfolio and active slice:
 
 ```text
+D_i = number of direct flips in A_i
+S_i = sum of DeltaM over A_i
 T_i = (D_i, S_i, d_i)
 ```
 
@@ -223,7 +269,7 @@ first frontier, selection uses:
 Equivalently:
 
 ```text
-A_t = {i : R_i is non-empty and frozen_i = false}
+A_t = {i : P_i and A_i are non-empty and frozen_i = false}
 T_i = (D_i, S_i, d_i), i in A_t
 F_t = ParetoFront({T_i : i in A_t})
 i_t = lexicographic argmax over i in F_t of
@@ -239,12 +285,12 @@ on the first frontier. Equal deficit does not prevent strict domination in
 `D_i` and `S_i`. There is no waiting-time override, deficit-service lane, or
 generic compensation mechanism.
 
-### 4.5 State-Conditioned Repairability Freeze
+### 4.6 State-Conditioned Repairability Freeze
 
 The active responsibility set is:
 
 ```text
-A_t = {i : R_i is non-empty and frozen_i = false}
+A_t = {i : P_i and A_i are non-empty and frozen_i = false}
 ```
 
 Two consecutive complete failures under the same responsibility portfolio
@@ -255,8 +301,8 @@ Teacher/Critic/Student and candidate evaluation budget, no infrastructure,
 protocol, or parser failure, and no accepted candidate. Each update contributes
 at most one failure. An accepted update resets the target's failure streak.
 
-Frozen members remain in residual eligibility, portfolios, and audit records,
-but cannot enter `A_t`, the target Pareto frontier, or target selection. They
+Frozen members remain in residual eligibility, legal portfolios, anchors, and
+audit records, but cannot receive new service routing or enter target selection. They
 return only when both conditions hold:
 
 ```text
@@ -266,9 +312,10 @@ Jaccard(frozen residual hashes, current residual hashes) < 0.8
     or current D_i != frozen D_i
 ```
 
-Minor `S_i` changes alone do not unfreeze a member. If all portfolios are
-empty, selection reports `no_actionable_responsibility`. If non-empty
-portfolios exist but all corresponding members are frozen, selection reports
+Minor `S_i` changes alone do not unfreeze a member. Rejected updates do not
+refresh routing. Accepted transitions atomically refresh eligibility, freeze
+state, routing, service portfolios, and active lanes. If no service portfolio
+is actionable, selection reports
 `no_actionable_repairability` and optimization stops with
 `early_stop_reason = all_actionable_members_frozen`.
 
@@ -278,23 +325,23 @@ tie-break and never revives a frozen or dominated member.
 
 ## 5. Module 2: Responsibility-Conditioned Evolution
 
-Different target members receive different residual portfolios and therefore
-different proposal contexts. The default member-aware context contains:
+S5 receives only the target's program-selected active lane. Its model-facing
+context contains:
 
 ```text
-target current prompt
-target member gain
-uplift deficit
-direct-fix responsibility summary
-margin-gain responsibility summary
-coverage residuals
-conversion residuals
-preservation evidence
-representative evidence
+parent prompt
+one repair lane and its fixed repair goal
+one dominant (lane, target-error-role) pattern
+at most two repair examples from that lane
+at most one independent preservation example
+one compact previous-outcome status and main rejection
 ```
 
-It does not expose repair-front numbers, multiple target-front numbers,
-per-residual age, ownership competition, or portfolio overlap as an objective.
+The context never exposes member identity, gain, uplift deficit, responsibility
+scores, vote/peer-state numbers, routing loads, freeze/anchor state, or the
+complete rejection list. The program computes eligibility, chooses and routes
+the residual, selects the lane and pattern, and compares scheduler vectors;
+the LLM performs none of those decisions.
 
 The role division is:
 
@@ -315,10 +362,14 @@ Rollouts:
     determine empirical value
 ```
 
-Programmatic aggregation uses the complete fixed probe, then supplies at most
-three pattern summaries and three representative evidence cases. LLM roles do
-not aggregate cases, compute responsibility, predict candidate performance, or
-decide acceptance.
+Programmatic aggregation uses the complete fixed probe. S5 supplies exactly
+one pattern, no more than two repair cases, and no more than one preservation
+case. Its serialized context is capped at
+`min(config.tcs_context_max_chars, 6000)`: preservation is removed first, then
+the second repair case; parent prompt, question, gold answer, and repair goal
+are never truncated. S4 uses the same routing and scheduler but retains the
+generic peer-state context. S1-S3 create no service routing, anchors, active
+lanes, or freeze state.
 
 Teacher returns exactly:
 
@@ -420,8 +471,16 @@ team-state version and triggers exactly one diagnosis and responsibility
 refresh. The refreshed state is reused until the next accepted team
 transition.
 
+Before the accepted-state refresh, the target anchor is set to the active lane
+used by the accepted update. The refresh then recomputes legal eligibility,
+applies freeze/unfreeze transitions, clears anchors for newly unfrozen members,
+and deterministically rebuilds service routing, service portfolios, and active
+lane slices. Rejected and operationally failed updates change none of those
+routing states.
+
 On refresh failure, restore prompts, profiles, accepted counters, member wait,
-eligibility, caches, versions, refresh count, and affected audit rows.
+anchors, freeze state, eligibility, routing, service/active portfolios, versions,
+refresh count, and affected audit rows.
 
 The persistent scheduling tie-break is:
 
@@ -430,9 +489,8 @@ updates_since_selected_by_agent
 ```
 
 Repairability failure streaks, frozen snapshots, accepted updates by other
-members, and freeze counts are checkpointed exactly. After an accepted update,
-responsibility refresh completes before unfreeze conditions are evaluated for
-the next target pool.
+members, freeze counts, anchors, service assignments, repair lanes, and active
+slices are checkpointed exactly.
 
 ## 8. Optional Extension
 
@@ -440,7 +498,8 @@ The formal default is `proposal_memory_mode = off`.
 
 Explicit `state_local_v1` Proposal Memory is a proposal-search extension. Its
 complete key includes run, team state, target agent, prompt, and eligible
-residual set. It may provide sanitized failure feedback only. It cannot alter:
+residual set. It may retain sanitized failure feedback only; the compact S5
+context never exposes that feedback. It cannot alter:
 
 ```text
 repair eligibility
@@ -450,7 +509,7 @@ candidate acceptance
 ```
 
 Historical owner, frontier, age, and compensation reports remain development
-evidence tied to their original commits. They do not define v9.
+evidence tied to their original commits. They do not define v10.
 
 ## 9. Experiment Settings
 
@@ -481,6 +540,13 @@ Pareto-Constrained Team Update
 All settings keep matched initialization, candidate budgets, five agents,
 plurality voting, and tie-as-abstain.
 
+`shared_member_aware_responsibility` and `shared_member_aware_full` share the
+same legal eligibility, unique routing, anchors, active-lane scheduler, freeze,
+and Pareto acceptance. Their only method difference is generic peer-state
+versus compact single-lane proposal context. The baseline and first three
+optimization ablations do not create service assignments, anchors, active
+lanes, or freeze state.
+
 ## 10. Final Active State And Test Isolation
 
 The lifecycle is:
@@ -505,20 +571,22 @@ normalized accuracy gains.
 Checkpoint version is:
 
 ```text
-17
+18
 ```
 
 Checkpoint state includes active prompts and profiles, initial profiles,
 member-gain state, team/responsibility versions, eligibility sets, member wait,
 accepted counts, target-attempt counts, seeded ranks, proposal-memory state
 when explicitly enabled, TCS recovery state, training lifecycle, histories,
-LLM accounting, and Python random state.
+LLM accounting, Python random state, specialization anchors, residual repair
+lanes, unique service assignments, service portfolios, active lanes, and active
+residual hashes.
 
-Per-residual age and repair/target Pareto-front state are not persisted.
-Member portfolios and target fronts are recomputed from the restored active
-team, and recomputed eligibility must match the stored eligibility set.
+Per-residual age and target Pareto-front state are not persisted. Recomputed
+eligibility must match the stored legal eligibility; checkpointed routing and
+active slices must remain legal and deterministic for the restored state.
 
-Checkpoint v15 and earlier fail with an explicit version mismatch. There is no
+Checkpoint v17 and earlier fail with an explicit version mismatch. There is no
 silent migration or restart in place.
 
 Resume also requires exact run identity, code commit, split files, question
@@ -548,10 +616,19 @@ updates_since_selected
 frozen
 target_pareto_front
 active candidate IDs
+legal/service/active portfolio sizes
+active lane and specialization anchor
 freeze/unfreeze events
 selected agent
 selection stage
 ```
+
+`service_routing_audit_sanitized.jsonl` records one safe row per residual and
+team state, including lane, legal and active eligible IDs, unique service
+agent or freeze block, anchor-match level, pre-routing loads, and seeded rank.
+`specialization_anchor_trajectory_sanitized.jsonl` records initialization,
+accepted set/switch, retained rejection, freeze, and unfreeze-clear events.
+Neither artifact contains prompts, questions, answers, or model output.
 
 Candidate decisions continue to record target and vote gains/losses, objective
 vectors before/after, acceptance booleans, rejection reasons, portfolio

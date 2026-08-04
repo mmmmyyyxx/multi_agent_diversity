@@ -9,20 +9,26 @@ if str(ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.responsibility import (
     MemberAwareRepairOpportunity,
+    RepairLane,
     ResponsibilityState,
+    build_service_routing,
     build_target_selection_decision,
     initialize_repairability_state,
     record_target_update_acceptance,
     record_target_update_failure,
+    record_specialization_anchor_acceptance,
     refresh_frozen_member_states,
     responsibility_portfolios,
     target_priorities,
 )
+from multi_dataset_diverse_rl.peer_state import build_team_vote_state
 
 
-def opportunity(question_hash: str, *, direct: int, margin: int):
+def opportunity(
+    question_hash: str, *, direct: int, margin: int, agent_id: int = 0
+):
     return MemberAwareRepairOpportunity(
-        agent_id=0,
+        agent_id=agent_id,
         question_hash=question_hash,
         vote_flip_gain=direct,
         margin_gain=margin,
@@ -33,6 +39,17 @@ def opportunity(question_hash: str, *, direct: int, margin: int):
         unique_correct=False,
         pivotal_correct=False,
         oracle_soft_utility_gain=0.0,
+    )
+
+
+def team(question_hash: str, answers: list[str]):
+    return build_team_vote_state(
+        question_hash=question_hash,
+        gold_answer="A",
+        answers=answers,
+        normalize_answer=str.upper,
+        match_answer=lambda left, right: left == right,
+        tie_break="abstain",
     )
 
 
@@ -55,6 +72,48 @@ def main() -> int:
         target_attempt_count_by_agent={agent: 0 for agent in range(5)},
     )
     initialize_repairability_state(state, range(5))
+    coverage_state = team("coverage", ["B", "B", "C", "C", "D"])
+    direct_state = team("direct", ["A", "A", "B", "B", "B"])
+    route_rows = {
+        "coverage": (
+            opportunity("coverage", direct=0, margin=2, agent_id=0),
+            opportunity("coverage", direct=0, margin=2, agent_id=2),
+        ),
+        "direct": (
+            opportunity("direct", direct=1, margin=2, agent_id=1),
+            opportunity("direct", direct=1, margin=2, agent_id=2),
+        ),
+    }
+    initial_route = build_service_routing(
+        team_states={"coverage": coverage_state, "direct": direct_state},
+        opportunities=route_rows,
+        eligible_agents_by_question={"coverage": (0, 2), "direct": (1, 2)},
+        state=state,
+        seed=42,
+    )
+    routed_hashes = [
+        row.question_hash
+        for rows in initial_route.service_portfolios.values()
+        for row in rows
+    ]
+    assert sorted(routed_hashes) == ["coverage", "direct"]
+    assert len(routed_hashes) == len(set(routed_hashes))
+
+    record_specialization_anchor_acceptance(
+        state=state,
+        accepted_agent_id=0,
+        active_lane=RepairLane.COVERAGE,
+        update_index=0,
+    )
+    anchored_route = build_service_routing(
+        team_states={"coverage": coverage_state, "direct": direct_state},
+        opportunities=route_rows,
+        eligible_agents_by_question={"coverage": (0, 2), "direct": (1, 2)},
+        state=state,
+        seed=42,
+    )
+    assert anchored_route.assignments_by_question["coverage"].service_agent_id == 0
+    assert anchored_route.active_lane_by_agent[0] is RepairLane.COVERAGE
     original = {0: [opportunity("q0", direct=1, margin=2)]}
     portfolio = responsibility_portfolios(
         assignments=original, state=state
@@ -85,6 +144,7 @@ def main() -> int:
     assert refresh_frozen_member_states(
         state=state, assignments=changed, update_index=4
     )
+    assert state.specialization_anchor_by_agent[0] is None
     assert decision(state, changed).selected_agent_id == 0
 
     print("deterministic target scheduler smoke: PASS")
