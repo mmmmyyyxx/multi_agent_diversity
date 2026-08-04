@@ -1235,6 +1235,11 @@ Raw run directories, SQLite databases, LLM logs, and checkpoints remain
 ignored unless the user explicitly requests otherwise. Prefer compact,
 secret-free Markdown and JSON reports.
 
+Keep local raw run roots under `experiments/runs_*`; do not create new raw
+`runs_*` directories directly at the repository root. Historical report paths
+remain evidence of their original locations and must not be rewritten merely
+because the local raw directories were reorganized.
+
 ## 18. Required Sanitized Research Artifacts
 
 Every optimization pilot uploaded for analysis must include versioned,

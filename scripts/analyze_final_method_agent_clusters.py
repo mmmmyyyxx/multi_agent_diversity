@@ -35,7 +35,9 @@ from multi_dataset_diverse_rl.utils import normalize_prompt_text
 
 ANALYSIS_VERSION = "final_method_agent_clustering_v1"
 STRICTNESS_STATUS = "exploratory_due_to_unmatched_repeated_test_observations"
-DEFAULT_RUN_ROOT = Path("runs_final_method_disambiguation_full_20260731")
+DEFAULT_RUN_ROOT = (
+    Path("experiments") / "runs_final_method_disambiguation_full_20260731"
+)
 AGENT_COUNT = 5
 
 

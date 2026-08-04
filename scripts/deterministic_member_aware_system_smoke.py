@@ -113,7 +113,7 @@ def call_result(
 async def fault_smokes(data, prompts) -> dict[str, bool]:
     def system_for(name: str, fake_optimizer=None):
         cfg = Config.from_flat(
-            out_dir=f"runs_deterministic_system_smoke_{name}",
+            out_dir=f"experiments/runs_deterministic_system_smoke_{name}",
             answer_format="option_letter",
             initialization_mode="provided_prompt_set",
             provided_prompts_json=json.dumps(prompts),
@@ -225,7 +225,7 @@ async def run_smoke() -> dict[str, object]:
     ]
     prompts = [f"agent-{agent_id}-base" for agent_id in range(5)]
     cfg = Config.from_flat(
-        out_dir="runs_deterministic_system_smoke",
+        out_dir="experiments/runs_deterministic_system_smoke",
         answer_format="option_letter",
         initialization_mode="provided_prompt_set",
         provided_prompts_json=json.dumps(prompts),
@@ -269,7 +269,7 @@ async def run_smoke() -> dict[str, object]:
     ]
     gate_prompts = [f"gate-{agent_id}-base" for agent_id in range(5)]
     gate_cfg = Config.from_flat(
-        out_dir="runs_deterministic_system_smoke_gate",
+        out_dir="experiments/runs_deterministic_system_smoke_gate",
         answer_format="option_letter",
         initialization_mode="provided_prompt_set",
         provided_prompts_json=json.dumps(gate_prompts),

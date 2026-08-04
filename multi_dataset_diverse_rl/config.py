@@ -101,7 +101,7 @@ class CandidateEvaluationConfig:
 
 @dataclass(frozen=True)
 class PersistenceConfig:
-    out_dir: str = "runs_peer_state"
+    out_dir: str = "experiments/runs_peer_state"
     shared_solver_cache_path: str = ""
     resume_from_checkpoint: bool = False
     max_retries: int = 3

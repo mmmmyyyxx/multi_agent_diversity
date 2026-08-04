@@ -141,7 +141,7 @@ python scripts/run_task_level_accuracy.py `
   --settings shared_baseline,shared_member_aware_full `
   --seeds 42 `
   --dataset_format mars `
-  --out_root runs_member_aware_disambiguation
+  --out_root experiments/runs_member_aware_disambiguation
 ```
 
 Teacher, Critic, and Student outputs are not truncated by experiment-level completion-token budgets. Their search space is bounded structurally through strict schemas, bounded text fields, a fixed candidate count, and prompt-length constraints. Generic contexts retain their configured bounds; S5 is fixed to one lane, one dominant pattern, at most two repair cases, at most one preservation case, and at most 6000 serialized characters. After a valid Critic rejection, Teacher receives an explicit stateless revision request containing the complete prior plan, structured Critic decision, and the same bounded diagnosis context. A Student response with no valid candidate receives structured error feedback and up to three retries. If all four calls in that cycle are invalid, the program performs one fresh Teacher-Critic regeneration and allows one final four-call Student cycle. A partially valid response is used immediately. Thus one update can make at most eight Student calls, and invalid candidates never enter Stage A. Actual token usage is recorded for post-hoc analysis but does not terminate the experiment.
