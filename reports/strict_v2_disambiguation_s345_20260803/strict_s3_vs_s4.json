@@ -1,0 +1,17 @@
+{
+  "schema_version": "strict_v2_pairwise_partial_v1",
+  "status": "incomplete_nonformal",
+  "available_seed_count": 1,
+  "required_seed_count": 3,
+  "seed_44_s4_minus_s3": {
+    "vote_correct_count": 6,
+    "vote_accuracy": 0.04799999999999993,
+    "g_min": -1,
+    "g_sum": 14,
+    "N_positive": 0,
+    "acceptable_candidate_rate": -0.078125,
+    "accepted_update_count": -5
+  },
+  "aggregate_claim": "unavailable",
+  "reason": "seeds 45 and 46 were not started"
+}

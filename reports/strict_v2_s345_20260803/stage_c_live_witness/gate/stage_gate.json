@@ -1,0 +1,2529 @@
+{
+  "audit_version": "final_method_stage_gate_v2",
+  "stage": "strict_v2_witness",
+  "gate": "PASS",
+  "blocker_count": 0,
+  "major_count": 0,
+  "expected_run_count": 2,
+  "complete_run_count": 2,
+  "source_identity": {
+    "source_identity_version": "final_method_source_identity_v1",
+    "git_commit": "6b1882ed521dd0601e972db59de1636c5b6cc0f3",
+    "git_dirty": true,
+    "git_diff_hash": "613937116c73ea77b39b25581b525b9e62d91f0a9cbe1c7e3a9410e192aa08d3",
+    "source_tree_hash": "72fdcbc0c5d2a410e3f143d8bdf0e6a0608bfefb8ee6172805530eaf81a276f6",
+    "source_file_count": 119,
+    "experiment_script_hashes": {
+      "scripts/run_task_level_accuracy.py": "bd5b963afc723a7b086c5b978bd5c157a9eab031d2265581bb1d6d087ad1d917",
+      "scripts/audit_final_method_stage.py": "5e3cf20ef2dd6079c22c28cc389d386a79523c8ca7637fa5e116d78eca173a76",
+      "scripts/build_final_method_complete_report.py": "24941c857125c0a556688a0018adbff27b9e31b360a43911e1476b0ee87109b9",
+      "scripts/build_strict_v2_s345_report.py": "7a57da9e9e490b791c7823ff4d5dfd4b50b3f577c47932afccb40170f6f94d12"
+    },
+    "method_identifiers": {
+      "method_version": "member_aware_peer_state_v8",
+      "responsibility_version": "counterfactual_vote_margin_responsibility_v1",
+      "target_selection_version": "compact_repair_uplift_scheduler_v1",
+      "tcs_context_version": "compact_responsibility_conditioned_context_v1",
+      "candidate_acceptance_version": "target_or_vote_strict_progress_v1",
+      "checkpoint_version": 16,
+      "exact_request_identity_version": "prompt_question_recovered_invalid_v2",
+      "solver_request_template_version": "decision_procedure_then_mandatory_output_contract_v2",
+      "solver_cache_schema_version": "shared_solver_cache_v1"
+    }
+  },
+  "runs": [
+    {
+      "run": "disambiguation_qa/shared_baseline_seed46",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_baseline",
+      "initial_train_state_hash": "a05ef250672263455f0c458f238bbc757f8f5b302d85571102f2e21c65a66fce",
+      "solver_request_identity": "3e4ccfcd53b745fdb4756b97bba1729ec0800c5af47a3e22d52e9fb7236c4b4c",
+      "mutable_cache_identity": "537f1915efc6a6047ae613bb70a0bf7b61fc646ccb5cd9a237a5754f14ca14c8",
+      "planned_update_count": 0,
+      "completed_update_count": 0,
+      "test_evaluation_count": 1,
+      "catchup_count": 0,
+      "proposal_memory_hit_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 0,
+      "total_tokens": 37091,
+      "tokens_per_accepted_update": null,
+      "selected_test": {
+        "vote_correct_count": 52,
+        "per_agent_correct_counts": [
+          52,
+          52,
+          52,
+          52,
+          52
+        ],
+        "plurality_vote_acc": 0.416,
+        "vote_acc": 0.416,
+        "mean_individual_acc": 0.416,
+        "min_individual_acc": 0.416,
+        "per_agent_acc": [
+          0.416,
+          0.416,
+          0.416,
+          0.416,
+          0.416
+        ],
+        "mean_soft_vote_utility": 0.413215774015498,
+        "c0_count": 73,
+        "mean_invalid_rate": 0.0,
+        "tie_count": 0,
+        "tie_rate": 0.0,
+        "rows": [
+          {
+            "question_hash": "a5ec6ad4f6d2b626332e4bc9a776339e8c97c5f701b74bae88bc900938aaa8a9",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "ff77951ead20acedb613ba7b67c41bbb17397ac55bef240de03aaca43c4c2531",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c7cfcef52e4f3b05dd5ba8014557518b95190211373ff06889942aebe9af8fa4",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5666fe664558d18a9a362baf9c280d3fde51a9f33c543032cadcb602d4fd246b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b5df986d4d4fa74cf6a744efa619776881de2642b340da19ff63c3171629a465",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1b018fe618421bc56e6cda2e7bfaab95d8c42213e44e6c87b9e8f4e6ed6fc885",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1a3a5d3f89ee4286b298ad85744c0653b8a14735cdfbadfe9e594f3d84443752",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5147ccce636394d1773531bbccd6f904010397f216f40583146c0a0b86a66ad4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b57bb865b75f1b8147cefd419b340d0f866137f67d7abe0a618ba72af7b43e99",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4edf7bcca12a8a169fe1e33dab1b5652d39a731c0e9f89503f8f44489e431d9d",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b310d29d6d76004fb7749d2d0c2d9a07ca45bcbce1e66cdedee15497008cd3f2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c71cafbaa8501253f35fe2c44c578c813cd743c92019dcdee3df64bd25acf526",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "9fb196a78fc2bceed95e50ab1e4399bae9d96779b78223d9592045bd06a978cb",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1c0d09134ace6d04438ed84758cc901e06d0eb3556fa3047b124d305d7465775",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1b873c9bf994e640370a3b0b53a1586f9f22906a3dec5fc97766cfc7b1b27e14",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "5dcf3a612cce85b85153154f10a64ffe63af541cda3f43cc33b618ca5492d099",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c9e4dd614f10cfea3d78ee676d4b258017823ac4822d641331db02eed2204307",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "336c5214ed9dc2195afc62857d20c59c336688efb3a31e70ec50655e4f418797",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4991e4aff0bf39ca5a8a83f7130efd4276d60c3a5582352c0421fb3f25f34cf4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bbafe69619b57815780fbc34195d2b71286fc4d46d4f82ba5dd8e28fd0ae05fc",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "68a944b1cc11c5a650474aa85342ca66ffc87864431f74be110e6ea504297544",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "887b5c43d2195fc3457149e9385779011bab77f21086e38351901689aa4ed6c1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "fbbd3582494dc27df855c357d0230da04e92ef5128eb1e88faae7610cad7c9c3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "38829bd4db069f2e3a10c6dc7e12a3774d887cddc24449c5d5449c6674715788",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "8e5fdb00c5ebba3874a89ec88ac1a1edc1efcb9b406045143153cccee71fff2a",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "7af9bc59a9b12a1f5411592a3217b3db650e765546ec6da42ba9f031ad08e51c",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "aee75995527f9bf0ceeb1abcabc4eaa2dd3ade0f7a91bde1bcce686ecf69b50d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bf50047f1e371ec41fe17b2ed11551f7da6cba0328e46875c385adff10d3a6e0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "cf65df1afe06aec83137918594cdd78d2b957fd9522545259fea3a1452cbf603",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "88ec4eabc6a1c35a93d956128678edc3e9b57a532e89fd47aaf5477d3ed36db0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "8689dd2f6bc4596ee682822a1d82fb586bd5a8c4444987b36c0ca6292b512602",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "87a94dce012ec1ba6bcb62819ba69dd4e56b8b8b7cfcdebc9737206e4fdc020b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a122a5f0d5e0ab3e140db1b1ea573a23f1f9d90c9249cccc7a56648fa9214ab1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "138a463ad6ab47bc1df5b7480ddc584f53ad4bca5a464627f327eb5b8e326a6d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "ad15c0ec6aa52015fbb6ecf6eb3537bd500da09c5eb3789f939c8aff533f5a5e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "758274d526a2ca94072774be151a5e1158a2465d9f1eea5339e384b8958597fe",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5aa5eabe5e5486223cbd68106c628f908b0b2651e403fbbaffe649fbad3380eb",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "2b530e4b6749093afcd8006fcf623502799e9d63b9e4eea93c4cce090571f4cd",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "5fc0c380ebaf73e7770021ef1253d6d47c369509c390515245b02de72bb3a3f1",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "65fc4d1c5581a86e566c160218877a869b507ad3a282e74f1f54fd53a88749d4",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "872ea7186896ce3554a8ec2c95729a5f47ca1a6f2b4f34fc27ba34a1b8a3a821",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "417e36ad2691d36166252564d2e127805a6142dd408c85a44d1cd8adcc2e2e94",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "25bc24fa4de5569184adfcc1d623ce91ed889f31e2b8d70a09e8d631e423530e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "d30dad6351a58ce606f9f7cc845ce530c1c49f1f9faadd4b72a4c62f41ab97b8",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e91484585a0ac731f0453f64f78f119d0e4fef7e2fd74c1c25eb4c0f39478297",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e1b1beb5b836318c1b22d0261cd61de049e6ace2b46d6f4aba51965ad38baab2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "62409362a1bac86ef51f659741b05dd9fc029376f1efef98b2e9d2593b715f27",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bf93eab7018c887760b53dcdf65392139af85b2b9d87ed35da8b2c58df7257e5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a896510b1a6ebb0a594558ccfa9cbb20359698b4d07003418bc685e0f7928eac",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bdab3e052c742fd480ee0e3c744556d053f620aaa3fcd4c9148fb59c00b7fb21",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "a3d6b6e1a6f9e7c742c569a6e2b098301967c27ff61815cbb82f1776519a2700",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "485c13ae66f39e79285b31f23193edf6ba33c4a514c0d5f34e3ba7b8d12406b6",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e0868c2af0e75c4f3afe48d291f42c78efb7a73eab1a6e1a97f2314e7a46a5c3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b7e82cb2f4134d67be7021016fc8ad323f8282064352db91f01375ccb4cc2fa0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a729ea71de802e50bd3d5e1887ee29d84d3c45c942189244e29ab37688b6fe46",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "be27864e50c34f78a501db0b86a0caac9ecbaa88eb09d443b190846db946a6b8",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "3ce46e376ea8ae439bb5745e2667ad9c935e3cfce4aa14a943a0135b6d64a34f",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "7f40ae01b1f7a7ebbaadde2725cfcc29664d1bf96aa113244d78e7ae925ceb33",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bdaa4594970f655c2d0dbd1691b7c4330924bcb36afd4189bf473387ad10ae24",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "fef4788ce5ced505f395dc54bd6f666b511c95b76fdd00c262a5f2aecaf318a9",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "31adc4f0af2001990841b3a963c1162f55dad7da3175b0b638d325268760880c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "541a81feeaf06f656d0b8ccd1cf9561c45a6a7cded674247c0e7272b41a8a52d",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a74fe412ccb8451d1aadc88c095e23881bd0635088cece92cbcdf59a97c2d590",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b0e1cd597bbe93388c904ea21d6cb9127209e8d692ed0d4857144d6f7aca4582",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "dd20b1c732b9982c1d884e38117fb43fbc46e7af305990d2990028daabad2e95",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "514b55867f5698a800959efc08c31ce48e6fde42f91b7c075a93632e1983f8e2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "538463f0d053279bab3b7e57cb47df43c6d9e261800470ab72a7da02690437d2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b3271f14c417a14669867b20f3029e0137703b57ea87d4953fd0d3cc5137962e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "164ea8e29f8fe1c9236803f06dc1e43c8972b532c8a1827c0b6b3d0d0e252115",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "fffb207462383401c156445cf4c2b9940d7a9a59b7471f96575a3e9a25cece6f",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "6b1afb0b7f0bb50c261322321bfa33b4130cbbcbca330a24909a7f5e98c828dd",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a8099342885afdce31de21bfe055d456cff9dde5cd79a145c5bf2926f7dc0531",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4ad63306fa21c7bffc987dcb73710c460d4522ea5587d44394f6e28484d0b1e2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "4733520e8a6955819b0b16d2c4075184e95d50bd8b9dab0d50e4a3c22a2bfb16",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "f21dfd714237a1553589a644f662f9756e073d909a88dedddecba70945b6de2a",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0e12a2b1c10d2c2c1b3f2f7a54a90a75be65395ec08c989da7f5070cc2f32d75",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "57aed234596f8f1788f53a5629ec0dc114496e104feb966997fb1456be0ad70a",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "6a5e390c06bbc75192f83c92a376b7eb717c48b0de5e44947d34d8f131bc1b1e",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "7dab8ad9c205723dbebad7a102e8c470a0442eae2732c0cfb647d8f57a0a49e5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a929a8dc8ccccf86a721846294f84d27f3cd75fcc48f2a78b08256b994a964b3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c5f091f3bf5ee8f14305a5958c9b97a3e23e661bbc5094cc49c8a22682bce9e2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4b4d9cf4ab584d98d4013f22628af1ae3b96f4aa804220f744a91f8bb4998b4e",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "7d44d58e097a9ac47c0853ae5265a63ab7770191c62520d7fc54fb1ad8824164",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b331705d6cd6bf849dd5dc0d48af7450dddd0ba80fc9b5ff63dbe39112b1d46f",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "a472020ca97d44c58c66f739bf8a4655aa12517f89098f8bb0fd4fc8626b9ea6",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "eef1f3a9429a7ec1795253ce5eca7ea3c77ce1bbc698e854eed41ce8e8b94d68",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "67153841d4b6c829a902658f57b50e315984bbb7def4305d68a604229b408f9c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "973252e0d5db99a313aac9b9604b4322abc974972bdcdb0dc2bbaa6a5ae87643",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "dcc9b8f66f50700b1922381c7ace0da3cb270073fd905d5651c1feac31eaa4c4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "f90ee1dd23611516c359124b243365b2d65326a3fa72643b1549e646b8a088e3",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b34b48ca8c7d759caf3d4bdf26e73b3c1635148ed45fc34f76929f3094efa64b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "419c38b4ba783bfc4238b03729f893204d1444673f9a450264ca9043a8176d0b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e3fdd89bb0f2dfe0ba8d1059640b0b25575d9e309a2328255d725a2a544224d9",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "32e49ff79ff85df7c9facc0dbc3721013287a4d4e6691eff014b55e28261d353",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "af7c2733e48510c2516b7c40decda6634b9c94739f117433d9a4487d597573fa",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "0e416c87d347e94e27735d4844cc1e3ca3c37ad0a2a460ac1986ce240f23b20d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1c0f1040a2b851016580032d22b4118bb0e69a649cc18f4dbf4f78b4b171e41b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "aaef1abbba3fec71c69e22295d1f2a289b367b6e290d02c4df4b1d5dbb23dca5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0f0b0315639b5e146bf33284ae4310d669f69fb9a6007e83113cf1d2bd94fe94",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "fa90db782fb5056039ceda1ed1ffef86fa73db1fd089d88feb50d059f103bba8",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "2646f155b13f2cc0d935559b56631ff0ff42721531664f060419270e42c18aa6",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "ed67f1139c2c6c0509ae5d40335c4ee3926b021c74b3da176f9fd3c4830d9b9c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a43224db311f9932850d8b0d2a07d707097d129f8c2fe9ea333a9ce91a0c4340",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e303c87c24d6e8314ba05b5c22267f67ad8bf2dbdcee161df5ae75e397feef32",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "cdaea76bd3636de0666dc0c6b49f62482fefa9d315cbe73b21eeb6902e72d07b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "10cdeb20385863619e7526e6caa7616d2d26903cc343b403b69e7e38dd78b0e7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "140270c4b419623845656cd6dbcd140e5fb3ec99417eeb2c4c096efcb2156ba1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "54cb103672ec02f98cd0609acdb2e1f6bfb1a0d0d5181ab81182ca435df81471",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0c91d68a9f1f9d551d3f0d95b69becfec9727d30cd36c2f344f96b5735f01336",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "eb275ae5ff86417dfd5fa132c76111c5531d3521283bd85bf5fdfa0c8448609c",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "da223ce4d1212da56ad5c75cc3d959466c4ba711f4ba2a25aad18cec4ab51865",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1b8693c22a9a9c9644791115c6889320d9cdcb26f4d8cf39a001d4cedf1c68a5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "6842147649a29a8911fe6f3a69fe5015362432834fe96a72e223cd4fd23d9be3",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e3e4eacc1e4769872187386cc047ee7d06befd0da59e31b7cb531b5235a5aad2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5bbbfcadc43cace293eb506be58e23631016ffa9e5c33a82b46663c3cacd6cea",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "f10ba5709246366a6bb51c54cd85f5635d92886a052eb77ca903a5e4998dc666",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "273d3ab39d65eadf603697b16b3061c2921a6253339862520e8b1d98447a1f6b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "71e3f3e5a562b598e6f3034c6fc877115657e9d03a9db4937468011cf20c3637",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "317020e0964df390d195ef2ae49e9478b098ee63a2a0ee4d75b02af345f42ea2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          }
+        ],
+        "validity_status_counts": {
+          "valid": 625
+        },
+        "terminal_invalid_count": 0
+      },
+      "final_prompt_hashes": [
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+      ],
+      "comparison_cache_match": {
+        "manifest_version": "matched_task_seed_observation_cache_v2",
+        "task": "disambiguation_qa",
+        "seed": 46,
+        "setting": "shared_baseline",
+        "source_role": "cumulative_task_seed_observation_reference",
+        "starting_cache_sha256": "e86435d4372eb4382783d056695ea71be6d6a8c12236161177b5d1e3d33dd1e4",
+        "reference_cache_sha256": "e86435d4372eb4382783d056695ea71be6d6a8c12236161177b5d1e3d33dd1e4",
+        "parent_reference_hash": "e86435d4372eb4382783d056695ea71be6d6a8c12236161177b5d1e3d33dd1e4",
+        "reference_entry_count_before": 75,
+        "local_clone_entry_count": 75,
+        "reference_cache_path_hash": "39a5e41c36635bb6dd08be39220e2cb5ca01f83b48e39912f667e926e1580f8b",
+        "local_cache_path_hash": "537f1915efc6a6047ae613bb70a0bf7b61fc646ccb5cd9a237a5754f14ca14c8",
+        "cache_chain_continuity": true,
+        "matched": true,
+        "gate": "PASS",
+        "source_ready_entry_count": 200,
+        "reference_entry_count_after": 200,
+        "new_entries_merged": 125,
+        "duplicate_same_observation_count": 75,
+        "exact_request_conflict_count": 0,
+        "conflicts": [],
+        "missing_reference_count": 0,
+        "missing_reference_keys": [],
+        "source_non_ready_entry_count": 0,
+        "reference_non_ready_entry_count": 0,
+        "source_invalid_entry_count": 0,
+        "reference_invalid_entry_count": 0,
+        "source_invalid_entries": [],
+        "reference_invalid_entries": [],
+        "local_cache_hash_after_run": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "result_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "local_entry_count_after_run": 200,
+        "post_run_reference_cache_sha256": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "shared_solver_cache_hit_count": 75,
+        "provider_cache_miss_count": 125,
+        "unexpected_provider_recall_count": 0,
+        "unaccounted_new_entry_count": 0,
+        "test_question_set_hash": "c2e6bab46b8761c4e116e614033cb91f1e01374415a6ddda7b5238d615de5432",
+        "test_observation_missing_count": 0,
+        "final_prompt_hashes": [
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+        ],
+        "test_team_vote_vector_hash": "d2dcb0aa34a7ac91622e7d0c9b7f00fe7dbabf205ce1c5360868f7fc02373e70",
+        "test_team_vote_correct_count": 52,
+        "test_per_agent_correct_counts": [
+          52,
+          52,
+          52,
+          52,
+          52
+        ],
+        "unchanged_prompt_comparisons": [],
+        "unchanged_prompt_drift_count": 0,
+        "unchanged_prompt_aggregate_drift_count": 0,
+        "unchanged_team_vote_drift_count": 0
+      },
+      "responsibility_gate": {
+        "assignment_outside_eligibility": 0,
+        "non_responsible_target_selection": 0,
+        "target_front_violation": 0,
+        "max_wait_lifecycle_violation": 0
+      },
+      "protocol": {
+        "optimization_enabled": false,
+        "target_selection_policy": "none",
+        "sample_pool_policy": "none",
+        "tcs_context_policy": "none",
+        "candidate_selection_policy": "none",
+        "responsibility_refresh_policy": "off"
+      },
+      "candidate_budget_contract": {
+        "generated_per_update": 2,
+        "stage_a_channel_top_k": 2,
+        "stage_b_candidate_budget": 2,
+        "representative_size": 12,
+        "coverage_size": 6,
+        "conversion_size": 6,
+        "preservation_size": 4
+      },
+      "substantive_config": {
+        "task_type": "bbh",
+        "dataset_format": "mars",
+        "comparison_task_id": "disambiguation_qa",
+        "benchmark": "BBH",
+        "answer_format": "option_letter",
+        "train_path": "strict_splits_bbh_seed42/disambiguation_qa/opt.csv",
+        "val_path": "strict_splits_bbh_seed42/disambiguation_qa/val.csv",
+        "test_path": "strict_splits_bbh_seed42/disambiguation_qa/test.csv",
+        "manifest_sha256": "57a08aec0caebe4e275d0b97966bb3f20aeaf14f981cd70d3dd205db5231041c",
+        "train_size": 75,
+        "val_size": 50,
+        "test_size": 125,
+        "agent_model": "gpt-4o-mini",
+        "optimizer_model": "gpt-4o-mini",
+        "evaluator_model": "gpt-4o-mini",
+        "solver_api_key_env": "",
+        "solver_base_url_env": "",
+        "optimizer_api_key_env": "",
+        "optimizer_base_url_env": "",
+        "evaluator_api_key_env": "",
+        "evaluator_base_url_env": "",
+        "temperature": 0.0,
+        "solver_max_tokens": 1800,
+        "solver_invalid_max_retries": 3,
+        "method_version": "member_aware_peer_state_v8",
+        "agents": 5,
+        "epochs": 0,
+        "update_every": 24,
+        "seed": 46,
+        "shared_prompt": "You are a careful reasoning solver. Use an explicit decision procedure, verify the key inference, and end with exactly one FINAL_ANSWER line.",
+        "initialization_mode": "shared_identical",
+        "provided_prompts_json": "",
+        "proposal_memory_mode": "off",
+        "teacher_critic_max_rounds": 2,
+        "teacher_json_max_retries": 1,
+        "critic_json_max_retries": 1,
+        "teacher_temperature": 0.4,
+        "critic_temperature": 0.0,
+        "student_temperature": 0.5,
+        "student_invalid_max_retries": 3,
+        "student_upstream_regeneration_max_count": 1,
+        "num_candidates_per_parent": 2,
+        "tcs_max_pattern_summaries": 3,
+        "tcs_max_evidence_cases": 3,
+        "tcs_context_max_chars": 10000,
+        "teacher_total_max_chars": 1800,
+        "teacher_field_max_chars": 800,
+        "critic_feedback_max_chars": 500,
+        "candidate_prompt_max_chars": 3000,
+        "total_candidate_prompt_max_chars": 5000,
+        "aggregation_mode": "plurality",
+        "vote_tie_break": "abstain",
+        "soft_vote_tau": 1.0,
+        "probe_version": "peer_state_fixed_probe_v1",
+        "parser_version": "task_parser_v1",
+        "solver_output_contract_version": "task_output_contract_v1",
+        "responsibility_mode": "compact_member_aware_v8",
+        "responsibility_max_wait_updates": 8,
+        "member_uplift_tolerance": 5,
+        "member_catchup_mode": "off",
+        "candidate_eval_pool_size": 75,
+        "eval_solver_call_concurrency": 20,
+        "stage_a_representative_size": 12,
+        "stage_a_coverage_size": 6,
+        "stage_a_conversion_size": 6,
+        "stage_a_preservation_size": 4,
+        "stage_a_channel_top_k": 2,
+        "stage_b_candidate_budget": 2,
+        "resume_from_checkpoint": false,
+        "max_retries": 3,
+        "max_transient_retries": 20,
+        "retry_sleep": 1.5,
+        "max_retry_backoff": 60.0,
+        "llm_call_timeout": 120.0,
+        "final_test_enabled": true
+      }
+    },
+    {
+      "run": "disambiguation_qa/shared_peer_state_member_pareto_seed46",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_peer_state_member_pareto",
+      "initial_train_state_hash": "a05ef250672263455f0c458f238bbc757f8f5b302d85571102f2e21c65a66fce",
+      "solver_request_identity": "3e4ccfcd53b745fdb4756b97bba1729ec0800c5af47a3e22d52e9fb7236c4b4c",
+      "mutable_cache_identity": "b4c95500f4d38b76f1a801559461ef34ab01a86549d7f43c773469d69da157ba",
+      "planned_update_count": 0,
+      "completed_update_count": 0,
+      "test_evaluation_count": 1,
+      "catchup_count": 0,
+      "proposal_memory_hit_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 0,
+      "total_tokens": 0,
+      "tokens_per_accepted_update": null,
+      "selected_test": {
+        "vote_correct_count": 52,
+        "per_agent_correct_counts": [
+          52,
+          52,
+          52,
+          52,
+          52
+        ],
+        "plurality_vote_acc": 0.416,
+        "vote_acc": 0.416,
+        "mean_individual_acc": 0.416,
+        "min_individual_acc": 0.416,
+        "per_agent_acc": [
+          0.416,
+          0.416,
+          0.416,
+          0.416,
+          0.416
+        ],
+        "mean_soft_vote_utility": 0.413215774015498,
+        "c0_count": 73,
+        "mean_invalid_rate": 0.0,
+        "tie_count": 0,
+        "tie_rate": 0.0,
+        "rows": [
+          {
+            "question_hash": "a5ec6ad4f6d2b626332e4bc9a776339e8c97c5f701b74bae88bc900938aaa8a9",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "ff77951ead20acedb613ba7b67c41bbb17397ac55bef240de03aaca43c4c2531",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c7cfcef52e4f3b05dd5ba8014557518b95190211373ff06889942aebe9af8fa4",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5666fe664558d18a9a362baf9c280d3fde51a9f33c543032cadcb602d4fd246b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b5df986d4d4fa74cf6a744efa619776881de2642b340da19ff63c3171629a465",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1b018fe618421bc56e6cda2e7bfaab95d8c42213e44e6c87b9e8f4e6ed6fc885",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1a3a5d3f89ee4286b298ad85744c0653b8a14735cdfbadfe9e594f3d84443752",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5147ccce636394d1773531bbccd6f904010397f216f40583146c0a0b86a66ad4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b57bb865b75f1b8147cefd419b340d0f866137f67d7abe0a618ba72af7b43e99",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4edf7bcca12a8a169fe1e33dab1b5652d39a731c0e9f89503f8f44489e431d9d",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b310d29d6d76004fb7749d2d0c2d9a07ca45bcbce1e66cdedee15497008cd3f2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c71cafbaa8501253f35fe2c44c578c813cd743c92019dcdee3df64bd25acf526",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "9fb196a78fc2bceed95e50ab1e4399bae9d96779b78223d9592045bd06a978cb",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1c0d09134ace6d04438ed84758cc901e06d0eb3556fa3047b124d305d7465775",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1b873c9bf994e640370a3b0b53a1586f9f22906a3dec5fc97766cfc7b1b27e14",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "5dcf3a612cce85b85153154f10a64ffe63af541cda3f43cc33b618ca5492d099",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c9e4dd614f10cfea3d78ee676d4b258017823ac4822d641331db02eed2204307",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "336c5214ed9dc2195afc62857d20c59c336688efb3a31e70ec50655e4f418797",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4991e4aff0bf39ca5a8a83f7130efd4276d60c3a5582352c0421fb3f25f34cf4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bbafe69619b57815780fbc34195d2b71286fc4d46d4f82ba5dd8e28fd0ae05fc",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "68a944b1cc11c5a650474aa85342ca66ffc87864431f74be110e6ea504297544",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "887b5c43d2195fc3457149e9385779011bab77f21086e38351901689aa4ed6c1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "fbbd3582494dc27df855c357d0230da04e92ef5128eb1e88faae7610cad7c9c3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "38829bd4db069f2e3a10c6dc7e12a3774d887cddc24449c5d5449c6674715788",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "8e5fdb00c5ebba3874a89ec88ac1a1edc1efcb9b406045143153cccee71fff2a",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "7af9bc59a9b12a1f5411592a3217b3db650e765546ec6da42ba9f031ad08e51c",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "aee75995527f9bf0ceeb1abcabc4eaa2dd3ade0f7a91bde1bcce686ecf69b50d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bf50047f1e371ec41fe17b2ed11551f7da6cba0328e46875c385adff10d3a6e0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "cf65df1afe06aec83137918594cdd78d2b957fd9522545259fea3a1452cbf603",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "88ec4eabc6a1c35a93d956128678edc3e9b57a532e89fd47aaf5477d3ed36db0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "8689dd2f6bc4596ee682822a1d82fb586bd5a8c4444987b36c0ca6292b512602",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "87a94dce012ec1ba6bcb62819ba69dd4e56b8b8b7cfcdebc9737206e4fdc020b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a122a5f0d5e0ab3e140db1b1ea573a23f1f9d90c9249cccc7a56648fa9214ab1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "138a463ad6ab47bc1df5b7480ddc584f53ad4bca5a464627f327eb5b8e326a6d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "ad15c0ec6aa52015fbb6ecf6eb3537bd500da09c5eb3789f939c8aff533f5a5e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "758274d526a2ca94072774be151a5e1158a2465d9f1eea5339e384b8958597fe",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5aa5eabe5e5486223cbd68106c628f908b0b2651e403fbbaffe649fbad3380eb",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "2b530e4b6749093afcd8006fcf623502799e9d63b9e4eea93c4cce090571f4cd",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "5fc0c380ebaf73e7770021ef1253d6d47c369509c390515245b02de72bb3a3f1",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "65fc4d1c5581a86e566c160218877a869b507ad3a282e74f1f54fd53a88749d4",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "872ea7186896ce3554a8ec2c95729a5f47ca1a6f2b4f34fc27ba34a1b8a3a821",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "417e36ad2691d36166252564d2e127805a6142dd408c85a44d1cd8adcc2e2e94",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "25bc24fa4de5569184adfcc1d623ce91ed889f31e2b8d70a09e8d631e423530e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "d30dad6351a58ce606f9f7cc845ce530c1c49f1f9faadd4b72a4c62f41ab97b8",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e91484585a0ac731f0453f64f78f119d0e4fef7e2fd74c1c25eb4c0f39478297",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e1b1beb5b836318c1b22d0261cd61de049e6ace2b46d6f4aba51965ad38baab2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "62409362a1bac86ef51f659741b05dd9fc029376f1efef98b2e9d2593b715f27",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bf93eab7018c887760b53dcdf65392139af85b2b9d87ed35da8b2c58df7257e5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a896510b1a6ebb0a594558ccfa9cbb20359698b4d07003418bc685e0f7928eac",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bdab3e052c742fd480ee0e3c744556d053f620aaa3fcd4c9148fb59c00b7fb21",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "a3d6b6e1a6f9e7c742c569a6e2b098301967c27ff61815cbb82f1776519a2700",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "485c13ae66f39e79285b31f23193edf6ba33c4a514c0d5f34e3ba7b8d12406b6",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e0868c2af0e75c4f3afe48d291f42c78efb7a73eab1a6e1a97f2314e7a46a5c3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b7e82cb2f4134d67be7021016fc8ad323f8282064352db91f01375ccb4cc2fa0",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a729ea71de802e50bd3d5e1887ee29d84d3c45c942189244e29ab37688b6fe46",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "be27864e50c34f78a501db0b86a0caac9ecbaa88eb09d443b190846db946a6b8",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "3ce46e376ea8ae439bb5745e2667ad9c935e3cfce4aa14a943a0135b6d64a34f",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "7f40ae01b1f7a7ebbaadde2725cfcc29664d1bf96aa113244d78e7ae925ceb33",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "bdaa4594970f655c2d0dbd1691b7c4330924bcb36afd4189bf473387ad10ae24",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "fef4788ce5ced505f395dc54bd6f666b511c95b76fdd00c262a5f2aecaf318a9",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "31adc4f0af2001990841b3a963c1162f55dad7da3175b0b638d325268760880c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "541a81feeaf06f656d0b8ccd1cf9561c45a6a7cded674247c0e7272b41a8a52d",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a74fe412ccb8451d1aadc88c095e23881bd0635088cece92cbcdf59a97c2d590",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "b0e1cd597bbe93388c904ea21d6cb9127209e8d692ed0d4857144d6f7aca4582",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "dd20b1c732b9982c1d884e38117fb43fbc46e7af305990d2990028daabad2e95",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "514b55867f5698a800959efc08c31ce48e6fde42f91b7c075a93632e1983f8e2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "538463f0d053279bab3b7e57cb47df43c6d9e261800470ab72a7da02690437d2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b3271f14c417a14669867b20f3029e0137703b57ea87d4953fd0d3cc5137962e",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "164ea8e29f8fe1c9236803f06dc1e43c8972b532c8a1827c0b6b3d0d0e252115",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "fffb207462383401c156445cf4c2b9940d7a9a59b7471f96575a3e9a25cece6f",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "6b1afb0b7f0bb50c261322321bfa33b4130cbbcbca330a24909a7f5e98c828dd",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a8099342885afdce31de21bfe055d456cff9dde5cd79a145c5bf2926f7dc0531",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4ad63306fa21c7bffc987dcb73710c460d4522ea5587d44394f6e28484d0b1e2",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "4733520e8a6955819b0b16d2c4075184e95d50bd8b9dab0d50e4a3c22a2bfb16",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "f21dfd714237a1553589a644f662f9756e073d909a88dedddecba70945b6de2a",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0e12a2b1c10d2c2c1b3f2f7a54a90a75be65395ec08c989da7f5070cc2f32d75",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "57aed234596f8f1788f53a5629ec0dc114496e104feb966997fb1456be0ad70a",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "6a5e390c06bbc75192f83c92a376b7eb717c48b0de5e44947d34d8f131bc1b1e",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "7dab8ad9c205723dbebad7a102e8c470a0442eae2732c0cfb647d8f57a0a49e5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a929a8dc8ccccf86a721846294f84d27f3cd75fcc48f2a78b08256b994a964b3",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "c5f091f3bf5ee8f14305a5958c9b97a3e23e661bbc5094cc49c8a22682bce9e2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "4b4d9cf4ab584d98d4013f22628af1ae3b96f4aa804220f744a91f8bb4998b4e",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "7d44d58e097a9ac47c0853ae5265a63ab7770191c62520d7fc54fb1ad8824164",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b331705d6cd6bf849dd5dc0d48af7450dddd0ba80fc9b5ff63dbe39112b1d46f",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "a472020ca97d44c58c66f739bf8a4655aa12517f89098f8bb0fd4fc8626b9ea6",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "eef1f3a9429a7ec1795253ce5eca7ea3c77ce1bbc698e854eed41ce8e8b94d68",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "67153841d4b6c829a902658f57b50e315984bbb7def4305d68a604229b408f9c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "973252e0d5db99a313aac9b9604b4322abc974972bdcdb0dc2bbaa6a5ae87643",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "dcc9b8f66f50700b1922381c7ace0da3cb270073fd905d5651c1feac31eaa4c4",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "f90ee1dd23611516c359124b243365b2d65326a3fa72643b1549e646b8a088e3",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "b34b48ca8c7d759caf3d4bdf26e73b3c1635148ed45fc34f76929f3094efa64b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "419c38b4ba783bfc4238b03729f893204d1444673f9a450264ca9043a8176d0b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e3fdd89bb0f2dfe0ba8d1059640b0b25575d9e309a2328255d725a2a544224d9",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "32e49ff79ff85df7c9facc0dbc3721013287a4d4e6691eff014b55e28261d353",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "af7c2733e48510c2516b7c40decda6634b9c94739f117433d9a4487d597573fa",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "0e416c87d347e94e27735d4844cc1e3ca3c37ad0a2a460ac1986ce240f23b20d",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "1c0f1040a2b851016580032d22b4118bb0e69a649cc18f4dbf4f78b4b171e41b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "aaef1abbba3fec71c69e22295d1f2a289b367b6e290d02c4df4b1d5dbb23dca5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0f0b0315639b5e146bf33284ae4310d669f69fb9a6007e83113cf1d2bd94fe94",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "fa90db782fb5056039ceda1ed1ffef86fa73db1fd089d88feb50d059f103bba8",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "2646f155b13f2cc0d935559b56631ff0ff42721531664f060419270e42c18aa6",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "ed67f1139c2c6c0509ae5d40335c4ee3926b021c74b3da176f9fd3c4830d9b9c",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "a43224db311f9932850d8b0d2a07d707097d129f8c2fe9ea333a9ce91a0c4340",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e303c87c24d6e8314ba05b5c22267f67ad8bf2dbdcee161df5ae75e397feef32",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "cdaea76bd3636de0666dc0c6b49f62482fefa9d315cbe73b21eeb6902e72d07b",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "10cdeb20385863619e7526e6caa7616d2d26903cc343b403b69e7e38dd78b0e7",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "140270c4b419623845656cd6dbcd140e5fb3ec99417eeb2c4c096efcb2156ba1",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "54cb103672ec02f98cd0609acdb2e1f6bfb1a0d0d5181ab81182ca435df81471",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "0c91d68a9f1f9d551d3f0d95b69becfec9727d30cd36c2f344f96b5735f01336",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "eb275ae5ff86417dfd5fa132c76111c5531d3521283bd85bf5fdfa0c8448609c",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "da223ce4d1212da56ad5c75cc3d959466c4ba711f4ba2a25aad18cec4ab51865",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "1b8693c22a9a9c9644791115c6889320d9cdcb26f4d8cf39a001d4cedf1c68a5",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "6842147649a29a8911fe6f3a69fe5015362432834fe96a72e223cd4fd23d9be3",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "e3e4eacc1e4769872187386cc047ee7d06befd0da59e31b7cb531b5235a5aad2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "5bbbfcadc43cace293eb506be58e23631016ffa9e5c33a82b46663c3cacd6cea",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "f10ba5709246366a6bb51c54cd85f5635d92886a052eb77ca903a5e4998dc666",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "273d3ab39d65eadf603697b16b3061c2921a6253339862520e8b1d98447a1f6b",
+            "vote_correct": true,
+            "top_tie": false,
+            "gold_vote_count": 5,
+            "largest_wrong_vote_count": 0,
+            "plurality_margin": 5
+          },
+          {
+            "question_hash": "71e3f3e5a562b598e6f3034c6fc877115657e9d03a9db4937468011cf20c3637",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          },
+          {
+            "question_hash": "317020e0964df390d195ef2ae49e9478b098ee63a2a0ee4d75b02af345f42ea2",
+            "vote_correct": false,
+            "top_tie": false,
+            "gold_vote_count": 0,
+            "largest_wrong_vote_count": 5,
+            "plurality_margin": -5
+          }
+        ],
+        "validity_status_counts": {
+          "valid": 625
+        },
+        "terminal_invalid_count": 0
+      },
+      "final_prompt_hashes": [
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+        "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+      ],
+      "comparison_cache_match": {
+        "manifest_version": "matched_task_seed_observation_cache_v2",
+        "task": "disambiguation_qa",
+        "seed": 46,
+        "setting": "shared_peer_state_member_pareto",
+        "source_role": "cumulative_task_seed_observation_reference",
+        "starting_cache_sha256": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "reference_cache_sha256": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "parent_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "reference_entry_count_before": 200,
+        "local_clone_entry_count": 200,
+        "reference_cache_path_hash": "39a5e41c36635bb6dd08be39220e2cb5ca01f83b48e39912f667e926e1580f8b",
+        "local_cache_path_hash": "b4c95500f4d38b76f1a801559461ef34ab01a86549d7f43c773469d69da157ba",
+        "cache_chain_continuity": true,
+        "matched": true,
+        "gate": "PASS",
+        "source_ready_entry_count": 200,
+        "reference_entry_count_after": 200,
+        "new_entries_merged": 0,
+        "duplicate_same_observation_count": 200,
+        "exact_request_conflict_count": 0,
+        "conflicts": [],
+        "missing_reference_count": 0,
+        "missing_reference_keys": [],
+        "source_non_ready_entry_count": 0,
+        "reference_non_ready_entry_count": 0,
+        "source_invalid_entry_count": 0,
+        "reference_invalid_entry_count": 0,
+        "source_invalid_entries": [],
+        "reference_invalid_entries": [],
+        "local_cache_hash_after_run": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "result_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "local_entry_count_after_run": 200,
+        "post_run_reference_cache_sha256": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+        "shared_solver_cache_hit_count": 200,
+        "provider_cache_miss_count": 0,
+        "unexpected_provider_recall_count": 0,
+        "unaccounted_new_entry_count": 0,
+        "test_question_set_hash": "c2e6bab46b8761c4e116e614033cb91f1e01374415a6ddda7b5238d615de5432",
+        "test_observation_missing_count": 0,
+        "final_prompt_hashes": [
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943",
+          "8d88bad2f88dbe90566691ba9492a9dca4756100d957ae8df15b86eb11648943"
+        ],
+        "test_team_vote_vector_hash": "d2dcb0aa34a7ac91622e7d0c9b7f00fe7dbabf205ce1c5360868f7fc02373e70",
+        "test_team_vote_correct_count": 52,
+        "test_per_agent_correct_counts": [
+          52,
+          52,
+          52,
+          52,
+          52
+        ],
+        "unchanged_prompt_comparisons": [
+          {
+            "prior_setting": "shared_baseline",
+            "unchanged_member_ids": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "per_question_drift_count": 0,
+            "per_question_drifts": [],
+            "aggregate_correct_count_drift_member_ids": [],
+            "exact_unchanged_team": true,
+            "team_vote_vector_drift": false,
+            "passed": true
+          }
+        ],
+        "unchanged_prompt_drift_count": 0,
+        "unchanged_prompt_aggregate_drift_count": 0,
+        "unchanged_team_vote_drift_count": 0
+      },
+      "responsibility_gate": {
+        "assignment_outside_eligibility": 0,
+        "non_responsible_target_selection": 0,
+        "target_front_violation": 0,
+        "max_wait_lifecycle_violation": 0
+      },
+      "protocol": {
+        "optimization_enabled": true,
+        "target_selection_policy": "round_robin",
+        "sample_pool_policy": "global_peer_state",
+        "tcs_context_policy": "generic_peer_state",
+        "candidate_selection_policy": "member_aware_pareto",
+        "responsibility_refresh_policy": "off"
+      },
+      "candidate_budget_contract": {
+        "generated_per_update": 2,
+        "stage_a_channel_top_k": 2,
+        "stage_b_candidate_budget": 2,
+        "representative_size": 12,
+        "coverage_size": 6,
+        "conversion_size": 6,
+        "preservation_size": 4
+      },
+      "substantive_config": {
+        "task_type": "bbh",
+        "dataset_format": "mars",
+        "comparison_task_id": "disambiguation_qa",
+        "benchmark": "BBH",
+        "answer_format": "option_letter",
+        "train_path": "strict_splits_bbh_seed42/disambiguation_qa/opt.csv",
+        "val_path": "strict_splits_bbh_seed42/disambiguation_qa/val.csv",
+        "test_path": "strict_splits_bbh_seed42/disambiguation_qa/test.csv",
+        "manifest_sha256": "57a08aec0caebe4e275d0b97966bb3f20aeaf14f981cd70d3dd205db5231041c",
+        "train_size": 75,
+        "val_size": 50,
+        "test_size": 125,
+        "agent_model": "gpt-4o-mini",
+        "optimizer_model": "gpt-4o-mini",
+        "evaluator_model": "gpt-4o-mini",
+        "solver_api_key_env": "",
+        "solver_base_url_env": "",
+        "optimizer_api_key_env": "",
+        "optimizer_base_url_env": "",
+        "evaluator_api_key_env": "",
+        "evaluator_base_url_env": "",
+        "temperature": 0.0,
+        "solver_max_tokens": 1800,
+        "solver_invalid_max_retries": 3,
+        "method_version": "member_aware_peer_state_v8",
+        "agents": 5,
+        "epochs": 0,
+        "update_every": 24,
+        "seed": 46,
+        "shared_prompt": "You are a careful reasoning solver. Use an explicit decision procedure, verify the key inference, and end with exactly one FINAL_ANSWER line.",
+        "initialization_mode": "shared_identical",
+        "provided_prompts_json": "",
+        "proposal_memory_mode": "off",
+        "teacher_critic_max_rounds": 2,
+        "teacher_json_max_retries": 1,
+        "critic_json_max_retries": 1,
+        "teacher_temperature": 0.4,
+        "critic_temperature": 0.0,
+        "student_temperature": 0.5,
+        "student_invalid_max_retries": 3,
+        "student_upstream_regeneration_max_count": 1,
+        "num_candidates_per_parent": 2,
+        "tcs_max_pattern_summaries": 3,
+        "tcs_max_evidence_cases": 3,
+        "tcs_context_max_chars": 10000,
+        "teacher_total_max_chars": 1800,
+        "teacher_field_max_chars": 800,
+        "critic_feedback_max_chars": 500,
+        "candidate_prompt_max_chars": 3000,
+        "total_candidate_prompt_max_chars": 5000,
+        "aggregation_mode": "plurality",
+        "vote_tie_break": "abstain",
+        "soft_vote_tau": 1.0,
+        "probe_version": "peer_state_fixed_probe_v1",
+        "parser_version": "task_parser_v1",
+        "solver_output_contract_version": "task_output_contract_v1",
+        "responsibility_mode": "compact_member_aware_v8",
+        "responsibility_max_wait_updates": 8,
+        "member_uplift_tolerance": 5,
+        "member_catchup_mode": "off",
+        "candidate_eval_pool_size": 75,
+        "eval_solver_call_concurrency": 20,
+        "stage_a_representative_size": 12,
+        "stage_a_coverage_size": 6,
+        "stage_a_conversion_size": 6,
+        "stage_a_preservation_size": 4,
+        "stage_a_channel_top_k": 2,
+        "stage_b_candidate_budget": 2,
+        "resume_from_checkpoint": false,
+        "max_retries": 3,
+        "max_transient_retries": 20,
+        "retry_sleep": 1.5,
+        "max_retry_backoff": 60.0,
+        "llm_call_timeout": 120.0,
+        "final_test_enabled": true
+      }
+    }
+  ],
+  "comparison_cache_chain": [
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_baseline",
+      "chain_continuity": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_peer_state_member_pareto",
+      "chain_continuity": true
+    }
+  ],
+  "matched_observation_consistency": [
+    {
+      "task": "disambiguation_qa",
+      "seed": 46,
+      "setting": "shared_peer_state_member_pareto",
+      "unchanged_member_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "mismatched_unchanged_member_ids": [],
+      "exact_unchanged_team": true,
+      "passed": true
+    }
+  ],
+  "setting_isolation": [],
+  "cost": {
+    "total_tokens": 37091,
+    "accepted_update_count": 0,
+    "run_count": 2,
+    "mean_accepted_update_rate": null
+  }
+}

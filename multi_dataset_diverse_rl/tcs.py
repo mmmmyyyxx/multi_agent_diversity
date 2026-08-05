@@ -30,7 +30,8 @@ STUDENT_SYSTEM_PROMPT = (
     "Return strict JSON only. Generate only mutable reasoning and decision "
     "procedures. Do not include, quote, imitate, or describe the solver output "
     "interface. Do not include FINAL_ANSWER or any fixed answer value; the program "
-    "appends the immutable solver output interface later."
+    "appends the immutable solver output interface later. Do not prescribe final "
+    "response formatting, confidence labels, or fallback answer tokens."
 )
 
 CRITIC_FAILED_CHECKS = (

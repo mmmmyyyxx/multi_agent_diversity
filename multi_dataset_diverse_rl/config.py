@@ -6,6 +6,9 @@ from dataclasses import asdict, dataclass, field
 from .provider_credentials import DASHSCOPE_API_KEY_ENV, DASHSCOPE_BASE_URL_ENV
 
 
+DEFAULT_MODEL = "qwen3.7-flash-2026-07-15"
+
+
 @dataclass(frozen=True)
 class DataConfig:
     task_type: str = "auto"
@@ -24,9 +27,9 @@ class DataConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
-    agent_model: str = "gpt-4o-mini"
-    optimizer_model: str = "gpt-4o-mini"
-    evaluator_model: str = "gpt-4o-mini"
+    agent_model: str = DEFAULT_MODEL
+    optimizer_model: str = DEFAULT_MODEL
+    evaluator_model: str = DEFAULT_MODEL
     solver_api_key_env: str = DASHSCOPE_API_KEY_ENV
     solver_base_url_env: str = DASHSCOPE_BASE_URL_ENV
     optimizer_api_key_env: str = DASHSCOPE_API_KEY_ENV

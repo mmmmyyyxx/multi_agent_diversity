@@ -64,6 +64,7 @@ def test_solver_request_identity_includes_immutable_wrapper_version():
     assert components["request_template"] == (
         "decision_procedure_then_mandatory_output_contract_v2"
     )
+    assert components["enable_thinking"] is False
     old_components = {
         **components,
         "request_template": "decision_procedure_with_task_contract_v1",

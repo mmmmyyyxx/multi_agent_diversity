@@ -1,0 +1,7 @@
+{
+  "schema_version": "strict_v2_historical_comparison_v1",
+  "status": "not_performed",
+  "reason": "The current formal matrix is incomplete, so comparison with historical exploratory results would invite unmatched-commit or incomplete-matrix interpretation.",
+  "historical_values_used_to_fill_missing_cells": false,
+  "historical_directories_modified": false
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_member_aware_full_seed44: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_baseline_seed45: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_peer_state_member_pareto_seed45: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_member_aware_responsibility_seed45: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_member_aware_full_seed45: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_baseline_seed46: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_peer_state_member_pareto_seed46: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_member_aware_responsibility_seed46: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  },
+  {
+    "severity": "BLOCKER",
+    "requirement": "Every matrix run must be complete",
+    "current_implementation": "stage artifact did not satisfy the requirement",
+    "evidence": "disambiguation_qa/shared_member_aware_full_seed46: missing=['run_meta.json', 'final_summary.json', 'candidate_funnel.json', 'candidate_decisions.jsonl', 'responsibility_assignments.jsonl', 'target_priority_audit.jsonl', 'proposal_memory_summary.json', 'cost_summary.json', 'frozen_initialization_match.json', 'comparison_cache_match.json', 'best_prompts.json']",
+    "required_action": "rerun once from a clean run directory",
+    "blocks_real_api": true
+  }
+]

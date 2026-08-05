@@ -1,0 +1,15 @@
+{
+  "audit_version": "strict_v2_witness_comparison_match_v1",
+  "gate": "PASS",
+  "cache_chain_continuity": true,
+  "unchanged_prompt_drift_count": 0,
+  "unchanged_prompt_aggregate_drift_count": 0,
+  "unchanged_team_vote_drift_count": 0,
+  "exact_request_conflict_count": 0,
+  "missing_reference_count": 0,
+  "unexpected_provider_recall_count": 0,
+  "unaccounted_new_entry_count": 0,
+  "test_observation_missing_count": 0,
+  "test_question_count": 125,
+  "unchanged_member_count": 5
+}

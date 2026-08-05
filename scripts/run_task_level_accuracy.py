@@ -10,7 +10,7 @@ import sqlite3
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, Sequence
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -18,9 +18,21 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.cli import _load, _member_gain_summary, build_dataset
+from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import SCHEMA_VERSION
+from multi_dataset_diverse_rl.evaluation.prompt_question import (
+    PromptAnswer,
+    PromptQuestionEvaluator,
+)
 from multi_dataset_diverse_rl.evaluation.validation import dataset_metrics_from_dict
 from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION
-from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
+from multi_dataset_diverse_rl.peer_state import build_team_vote_state
+from multi_dataset_diverse_rl.persistence.identity import (
+    PROMPT_QUESTION_EVALUATOR_VERSION,
+    build_run_identity,
+    solver_request_components,
+    solver_request_identity,
+    validate_run_identity,
+)
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
 from multi_dataset_diverse_rl.tasks import get_task_spec
@@ -30,7 +42,21 @@ from scripts.experiment_config import select_settings
 
 
 FROZEN_INITIALIZATION_MANIFEST_VERSION = "final_method_frozen_initialization_v1"
-COMPARISON_CACHE_MANIFEST_VERSION = "matched_task_seed_observation_cache_v1"
+COMPARISON_CACHE_MANIFEST_VERSION = "matched_task_seed_observation_cache_v2"
+
+CACHE_COLUMNS = (
+    "cache_key", "schema_version", "state", "owner_id", "updated_at",
+    "created_at", "model_request_identity", "solver_model",
+    "endpoint_identity", "output_contract_version", "parser_version",
+    "temperature", "max_tokens", "evaluation_replica_seed", "prompt_hash",
+    "question_hash", "answer_json",
+)
+CACHE_CONTENT_COLUMNS = (
+    "cache_key", "schema_version", "model_request_identity", "solver_model",
+    "endpoint_identity", "output_contract_version", "parser_version",
+    "temperature", "max_tokens", "evaluation_replica_seed", "prompt_hash",
+    "question_hash", "answer_json",
+)
 
 
 RUNNER_OWNED_FIELDS = {
@@ -192,6 +218,131 @@ def _sqlite_content_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _canonical_json(value: str) -> tuple[str, dict[str, Any]]:
+    payload = json.loads(value)
+    if not isinstance(payload, dict):
+        raise ValueError("cached solver answer must be a JSON object")
+    PromptAnswer(**payload)
+    return (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+        payload,
+    )
+
+
+def _cache_key_evaluator(cfg: Config) -> PromptQuestionEvaluator:
+    return PromptQuestionEvaluator(
+        model_request_identity=solver_request_identity(cfg),
+        parser_version=cfg.peer_state.parser_version,
+        temperature=cfg.models.temperature,
+        decoding_seed=cfg.training.seed,
+        cache_metadata=solver_request_components(cfg),
+        version=PROMPT_QUESTION_EVALUATOR_VERSION,
+    )
+
+
+def _solver_cache_snapshot(
+    path: Path,
+    *,
+    expected_evaluator: PromptQuestionEvaluator | None = None,
+) -> dict[str, Any]:
+    """Return a content-addressed, secret-free view of a solver cache."""
+    with sqlite3.connect(str(path)) as connection:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute(
+            f"SELECT {', '.join(CACHE_COLUMNS)} FROM solver_cache ORDER BY cache_key"
+        ).fetchall()
+    entries: dict[str, dict[str, Any]] = {}
+    invalid_entries: list[dict[str, str]] = []
+    non_ready_count = 0
+    for raw in rows:
+        values = {name: raw[name] for name in CACHE_COLUMNS}
+        cache_key = str(values["cache_key"])
+        if str(values["state"]) != "ready":
+            non_ready_count += 1
+            continue
+        reasons: list[str] = []
+        if str(values["schema_version"]) != SCHEMA_VERSION:
+            reasons.append("schema_version")
+        answer_text = values.get("answer_json")
+        payload: dict[str, Any] = {}
+        canonical_answer = ""
+        if not isinstance(answer_text, str) or not answer_text:
+            reasons.append("missing_answer_json")
+        else:
+            try:
+                canonical_answer, payload = _canonical_json(answer_text)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                reasons.append("invalid_answer_json")
+        values["answer_json"] = canonical_answer
+        if expected_evaluator is not None:
+            expected_key = expected_evaluator.key(
+                str(values["prompt_hash"]), str(values["question_hash"])
+            )
+            if cache_key != expected_key:
+                reasons.append("cache_key")
+            expected_metadata = {
+                **expected_evaluator.cache_metadata,
+                "model_request_identity": expected_evaluator.model_request_identity,
+                "parser_version": expected_evaluator.parser_version,
+                "temperature": expected_evaluator.temperature,
+                "evaluation_replica_seed": expected_evaluator.decoding_seed,
+            }
+            for name in (
+                "model_request_identity", "solver_model", "endpoint_identity",
+                "output_contract_version", "parser_version", "temperature",
+                "max_tokens", "evaluation_replica_seed",
+            ):
+                expected = expected_metadata[name]
+                actual = values[name]
+                if name == "temperature":
+                    matched = float(actual) == float(expected)
+                elif name in {"max_tokens", "evaluation_replica_seed"}:
+                    matched = int(actual) == int(expected)
+                else:
+                    matched = str(actual) == str(expected)
+                if not matched:
+                    reasons.append(name)
+        if reasons:
+            invalid_entries.append({
+                "cache_key": cache_key,
+                "reason": ",".join(sorted(set(reasons))),
+            })
+            continue
+        observation_hash = hashlib.sha256(canonical_answer.encode("utf-8")).hexdigest()
+        content_payload = [values[name] for name in CACHE_CONTENT_COLUMNS]
+        content_hash = hashlib.sha256(
+            json.dumps(
+                content_payload, ensure_ascii=False, separators=(",", ":")
+            ).encode("utf-8")
+        ).hexdigest()
+        entries[cache_key] = {
+            "values": values,
+            "content_hash": content_hash,
+            "observation_hash": observation_hash,
+            "parsed_answer_hash": hashlib.sha256(
+                str(payload.get("answer", "")).encode("utf-8")
+            ).hexdigest(),
+            "response_hash": str(payload.get("response_hash", "")),
+            "valid": bool(payload.get("valid", False)),
+            "terminal_invalid": bool(payload.get("terminal_invalid", False)),
+            "answer_payload": payload,
+        }
+    content_hash = hashlib.sha256(
+        json.dumps(
+            [(key, entries[key]["content_hash"]) for key in sorted(entries)],
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return {
+        "entries": entries,
+        "entry_count": len(entries),
+        "content_hash": content_hash,
+        "non_ready_entry_count": non_ready_count,
+        "invalid_entries": invalid_entries,
+    }
+
+
 def _comparison_cache_source(
     *,
     comparison_reference_cache_path: Path,
@@ -204,26 +355,240 @@ def _comparison_cache_source(
     return comparison_reference_cache_path, "cumulative_task_seed_observation_reference"
 
 
-def _merge_ready_solver_cache(source: Path, destination: Path) -> None:
-    columns = (
-        "cache_key", "schema_version", "state", "owner_id", "updated_at",
-        "created_at", "model_request_identity", "solver_model",
-        "endpoint_identity", "output_contract_version", "parser_version",
-        "temperature", "max_tokens", "evaluation_replica_seed", "prompt_hash",
-        "question_hash", "answer_json",
+def _merge_ready_solver_cache(
+    source: Path,
+    destination: Path,
+    *,
+    expected_evaluator: PromptQuestionEvaluator | None = None,
+) -> dict[str, Any]:
+    """Merge completed exact observations without ever overwriting the first value."""
+    source_snapshot = _solver_cache_snapshot(
+        source, expected_evaluator=expected_evaluator,
     )
-    placeholders = ", ".join("?" for _ in columns)
-    with sqlite3.connect(str(source)) as source_connection:
-        rows = source_connection.execute(
-            f"SELECT {', '.join(columns)} FROM solver_cache "
-            "WHERE state = 'ready' ORDER BY cache_key"
-        ).fetchall()
-    with sqlite3.connect(str(destination)) as destination_connection:
-        destination_connection.executemany(
-            f"INSERT OR IGNORE INTO solver_cache ({', '.join(columns)}) "
-            f"VALUES ({placeholders})",
-            rows,
+    destination_before = _solver_cache_snapshot(
+        destination, expected_evaluator=expected_evaluator,
+    )
+    source_entries = source_snapshot["entries"]
+    destination_entries = destination_before["entries"]
+    missing_reference_keys = sorted(set(destination_entries) - set(source_entries))
+    duplicate_keys = sorted(set(source_entries) & set(destination_entries))
+    conflicts = [
+        {
+            "cache_key": key,
+            "reference_observation_hash": destination_entries[key]["observation_hash"],
+            "local_observation_hash": source_entries[key]["observation_hash"],
+        }
+        for key in duplicate_keys
+        if source_entries[key]["content_hash"] != destination_entries[key]["content_hash"]
+    ]
+    new_keys = sorted(set(source_entries) - set(destination_entries))
+    precondition_failed = bool(
+        source_snapshot["non_ready_entry_count"]
+        or destination_before["non_ready_entry_count"]
+        or source_snapshot["invalid_entries"]
+        or destination_before["invalid_entries"]
+        or missing_reference_keys
+        or conflicts
+    )
+    if not precondition_failed and new_keys:
+        placeholders = ", ".join("?" for _ in CACHE_COLUMNS)
+        rows = [
+            tuple(source_entries[key]["values"][name] for name in CACHE_COLUMNS)
+            for key in new_keys
+        ]
+        with sqlite3.connect(str(destination)) as destination_connection:
+            destination_connection.executemany(
+                f"INSERT INTO solver_cache ({', '.join(CACHE_COLUMNS)}) "
+                f"VALUES ({placeholders})",
+                rows,
+            )
+    destination_after = _solver_cache_snapshot(
+        destination, expected_evaluator=expected_evaluator,
+    )
+    passed = (
+        not precondition_failed
+        and destination_after["entry_count"]
+        == destination_before["entry_count"] + len(new_keys)
+    )
+    return {
+        "gate": "PASS" if passed else "FAIL",
+        "source_ready_entry_count": source_snapshot["entry_count"],
+        "reference_entry_count_before": destination_before["entry_count"],
+        "reference_entry_count_after": destination_after["entry_count"],
+        "new_entries_merged": len(new_keys) if passed else 0,
+        "duplicate_same_observation_count": len(duplicate_keys) - len(conflicts),
+        "exact_request_conflict_count": len(conflicts),
+        "conflicts": conflicts,
+        "missing_reference_count": len(missing_reference_keys),
+        "missing_reference_keys": missing_reference_keys,
+        "source_non_ready_entry_count": source_snapshot["non_ready_entry_count"],
+        "reference_non_ready_entry_count": destination_before["non_ready_entry_count"],
+        "source_invalid_entry_count": len(source_snapshot["invalid_entries"]),
+        "reference_invalid_entry_count": len(destination_before["invalid_entries"]),
+        "source_invalid_entries": source_snapshot["invalid_entries"],
+        "reference_invalid_entries": destination_before["invalid_entries"],
+        "parent_reference_hash": destination_before["content_hash"],
+        "local_cache_hash_after_run": source_snapshot["content_hash"],
+        "result_reference_hash": destination_after["content_hash"],
+    }
+
+
+def _test_observation_audit(
+    *,
+    snapshot: Mapping[str, Any],
+    prompt_hashes: Sequence[str],
+    test_rows: Sequence[Mapping[str, Any]],
+    task_type: str,
+    tie_break: str,
+    seed: int,
+) -> dict[str, Any]:
+    """Build a sanitized per-question observation and team-vote fingerprint."""
+    entries = snapshot["entries"]
+    by_prompt_question = {
+        (str(row["values"]["prompt_hash"]), str(row["values"]["question_hash"])): row
+        for row in entries.values()
+    }
+    task_spec = get_task_spec(task_type)
+    per_member: list[dict[str, dict[str, Any]]] = [dict() for _ in prompt_hashes]
+    team_rows: list[dict[str, Any]] = []
+    missing: list[dict[str, Any]] = []
+    correct_counts = [0 for _ in prompt_hashes]
+    normalize = lambda value: task_spec.extract_pred(f"FINAL_ANSWER: {value}", None)
+    for test_row in test_rows:
+        question = str(test_row["question"])
+        question_hash = hashlib.sha256(question.encode("utf-8")).hexdigest()
+        gold = task_spec.parse_gold(test_row["answer"], question)
+        answers: list[str] = []
+        valid_vector: list[bool] = []
+        observation_hashes: list[str] = []
+        terminal_vector: list[bool] = []
+        question_missing = False
+        for agent_id, prompt_hash in enumerate(prompt_hashes):
+            entry = by_prompt_question.get((str(prompt_hash), question_hash))
+            if entry is None:
+                missing.append({"agent_id": agent_id, "question_hash": question_hash})
+                question_missing = True
+                continue
+            payload = entry["answer_payload"]
+            answer = str(payload.get("answer", ""))
+            valid = bool(payload.get("valid", False))
+            terminal_invalid = bool(payload.get("terminal_invalid", False))
+            correct = bool(valid and task_spec.match_answer(answer, gold))
+            correct_counts[agent_id] += int(correct)
+            record = {
+                "cache_key": str(entry["values"]["cache_key"]),
+                "observation_hash": str(entry["observation_hash"]),
+                "parsed_answer_hash": str(entry["parsed_answer_hash"]),
+                "response_hash": str(entry["response_hash"]),
+                "valid": valid,
+                "terminal_invalid": terminal_invalid,
+                "correct": correct,
+            }
+            per_member[agent_id][question_hash] = record
+            answers.append(answer)
+            valid_vector.append(valid)
+            observation_hashes.append(str(entry["observation_hash"]))
+            terminal_vector.append(terminal_invalid)
+        if question_missing:
+            continue
+        state = build_team_vote_state(
+            question_hash=question_hash,
+            gold_answer=gold,
+            answers=answers,
+            valid_vector=valid_vector,
+            normalize_answer=normalize,
+            match_answer=task_spec.match_answer,
+            tie_break=tie_break,
+            seed=seed,
         )
+        team_rows.append({
+            "question_hash": question_hash,
+            "member_observation_hashes": observation_hashes,
+            "member_terminal_invalid": terminal_vector,
+            "vote_answer_hash": hashlib.sha256(
+                state.vote_answer.encode("utf-8")
+            ).hexdigest(),
+            "vote_correct": state.vote_correct,
+            "top_tie": state.top_tie,
+        })
+    team_rows.sort(key=lambda row: row["question_hash"])
+    vector_text = json.dumps(
+        team_rows, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
+    return {
+        "prompt_hashes": list(prompt_hashes),
+        "test_question_count": len(test_rows),
+        "test_question_set_hash": hashlib.sha256(
+            json.dumps(
+                sorted(
+                    hashlib.sha256(str(row["question"]).encode("utf-8")).hexdigest()
+                    for row in test_rows
+                ),
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest(),
+        "per_member": per_member,
+        "per_agent_correct_counts": correct_counts,
+        "team_vote_vector": team_rows,
+        "team_vote_vector_hash": hashlib.sha256(vector_text.encode("utf-8")).hexdigest(),
+        "team_vote_correct_count": sum(bool(row["vote_correct"]) for row in team_rows),
+        "missing_entry_count": len(missing),
+        "missing_entries": missing,
+    }
+
+
+def _compare_unchanged_test_observations(
+    prior: Mapping[str, Any],
+    current: Mapping[str, Any],
+    *,
+    prior_setting: str,
+) -> dict[str, Any]:
+    mismatches: list[dict[str, Any]] = []
+    aggregate_mismatches: list[int] = []
+    unchanged_ids: list[int] = []
+    for agent_id, (prior_hash, current_hash) in enumerate(zip(
+        prior["prompt_hashes"], current["prompt_hashes"], strict=True,
+    )):
+        if prior_hash != current_hash:
+            continue
+        unchanged_ids.append(agent_id)
+        left = prior["per_member"][agent_id]
+        right = current["per_member"][agent_id]
+        question_hashes = sorted(set(left) | set(right))
+        drift_questions = [
+            question_hash
+            for question_hash in question_hashes
+            if left.get(question_hash) != right.get(question_hash)
+        ]
+        if drift_questions:
+            mismatches.append({
+                "agent_id": agent_id,
+                "drift_count": len(drift_questions),
+                "question_hashes": drift_questions,
+            })
+        if (
+            prior["per_agent_correct_counts"][agent_id]
+            != current["per_agent_correct_counts"][agent_id]
+        ):
+            aggregate_mismatches.append(agent_id)
+    exact_team = len(unchanged_ids) == len(current["prompt_hashes"])
+    team_mismatch = bool(
+        exact_team
+        and (
+            prior["team_vote_vector_hash"] != current["team_vote_vector_hash"]
+            or prior["team_vote_correct_count"] != current["team_vote_correct_count"]
+        )
+    )
+    return {
+        "prior_setting": prior_setting,
+        "unchanged_member_ids": unchanged_ids,
+        "per_question_drift_count": sum(row["drift_count"] for row in mismatches),
+        "per_question_drifts": mismatches,
+        "aggregate_correct_count_drift_member_ids": aggregate_mismatches,
+        "exact_unchanged_team": exact_team,
+        "team_vote_vector_drift": team_mismatch,
+        "passed": not mismatches and not aggregate_mismatches and not team_mismatch,
+    }
 
 
 async def _freeze_initialization(
@@ -361,6 +726,7 @@ def main() -> None:
     baseline_test_by_task_seed: dict[tuple[str, int], dict[str, Any]] = {}
     mutable_cache_paths: set[str] = set()
     frozen_manifests: dict[tuple[str, int], dict[str, Any]] = {}
+    comparison_history: dict[tuple[str, int], list[dict[str, Any]]] = {}
 
     def resolved_values(
         *,
@@ -472,6 +838,7 @@ def main() -> None:
                 cache_source_path, cache_source_role = _comparison_cache_source(
                     comparison_reference_cache_path=comparison_reference_cache_path,
                 )
+                cache_evaluator = _cache_key_evaluator(cfg)
                 if (
                     args.resume_completed
                     and run_dir.is_dir()
@@ -484,36 +851,99 @@ def main() -> None:
                             f"Run output must be new when not reusing an exact completed run: {run_dir}"
                         )
                     run_dir.mkdir(parents=True)
+                    reference_before = _solver_cache_snapshot(
+                        cache_source_path, expected_evaluator=cache_evaluator,
+                    )
                     _sqlite_backup(cache_source_path, mutable_cache_path)
-                    starting_cache_sha256 = _sqlite_content_sha256(mutable_cache_path)
-                    reference_cache_sha256 = _sqlite_content_sha256(cache_source_path)
+                    starting_snapshot = _solver_cache_snapshot(
+                        mutable_cache_path, expected_evaluator=cache_evaluator,
+                    )
+                    starting_cache_sha256 = starting_snapshot["content_hash"]
+                    reference_cache_sha256 = reference_before["content_hash"]
+                    initial_match = (
+                        starting_cache_sha256 == reference_cache_sha256
+                        and starting_snapshot["entry_count"] == reference_before["entry_count"]
+                        and not starting_snapshot["invalid_entries"]
+                        and not reference_before["invalid_entries"]
+                        and not starting_snapshot["non_ready_entry_count"]
+                        and not reference_before["non_ready_entry_count"]
+                    )
                     (run_dir / "comparison_cache_match.json").write_text(
                         json.dumps({
                             "manifest_version": COMPARISON_CACHE_MANIFEST_VERSION,
+                            "task": task_id,
+                            "seed": seed,
+                            "setting": setting.name,
                             "source_role": cache_source_role,
                             "starting_cache_sha256": starting_cache_sha256,
                             "reference_cache_sha256": reference_cache_sha256,
-                            "matched": starting_cache_sha256 == reference_cache_sha256,
+                            "parent_reference_hash": reference_cache_sha256,
+                            "reference_entry_count_before": reference_before["entry_count"],
+                            "local_clone_entry_count": starting_snapshot["entry_count"],
+                            "reference_cache_path_hash": hashlib.sha256(
+                                str(cache_source_path.resolve()).lower().encode("utf-8")
+                            ).hexdigest(),
+                            "local_cache_path_hash": hashlib.sha256(
+                                str(mutable_cache_path.resolve()).lower().encode("utf-8")
+                            ).hexdigest(),
+                            "cache_chain_continuity": initial_match,
+                            "matched": initial_match,
                         }, ensure_ascii=False, indent=2) + "\n",
                         encoding="utf-8",
                     )
+                    if not initial_match:
+                        raise RuntimeError(
+                            f"Comparison reference clone mismatch before run: {run_dir}"
+                        )
                     cmd = [sys.executable, "-m", "multi_dataset_diverse_rl.cli"]
                     for name, value in cfg.to_flat_dict().items():
                         cmd.extend([f"--{name}", str(int(value) if isinstance(value, bool) else value)])
                     subprocess.run(cmd, cwd=workspace, check=True)
                     metrics = _read_json(final_path)
-                _merge_ready_solver_cache(
-                    mutable_cache_path, comparison_reference_cache_path
+                run_meta = _read_json(run_dir / "run_meta.json")
+                merge_audit = _merge_ready_solver_cache(
+                    mutable_cache_path,
+                    comparison_reference_cache_path,
+                    expected_evaluator=cache_evaluator,
                 )
                 cache_match_path = run_dir / "comparison_cache_match.json"
                 cache_match = _read_json(cache_match_path)
-                cache_match["post_run_reference_cache_sha256"] = (
-                    _sqlite_content_sha256(comparison_reference_cache_path)
+                provider_misses = int(run_meta.get("shared_solver_cache_misses", 0))
+                new_local_entries = max(
+                    0,
+                    int(merge_audit["source_ready_entry_count"])
+                    - int(merge_audit["reference_entry_count_before"]),
                 )
+                unexpected_provider_recall_count = max(
+                    0, provider_misses - new_local_entries,
+                )
+                unaccounted_new_entry_count = max(
+                    0, new_local_entries - provider_misses,
+                )
+                cache_match.update(merge_audit)
+                cache_match.update({
+                    "local_entry_count_after_run": merge_audit["source_ready_entry_count"],
+                    "post_run_reference_cache_sha256": merge_audit["result_reference_hash"],
+                    "shared_solver_cache_hit_count": int(
+                        run_meta.get("shared_solver_cache_hits", 0)
+                    ),
+                    "provider_cache_miss_count": provider_misses,
+                    "unexpected_provider_recall_count": unexpected_provider_recall_count,
+                    "unaccounted_new_entry_count": unaccounted_new_entry_count,
+                })
+                cache_match["matched"] = bool(
+                    cache_match.get("cache_chain_continuity")
+                    and merge_audit["gate"] == "PASS"
+                    and unexpected_provider_recall_count == 0
+                    and unaccounted_new_entry_count == 0
+                )
+                cache_match["gate"] = "PASS" if cache_match["matched"] else "FAIL"
                 cache_match_path.write_text(
                     json.dumps(cache_match, ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8",
                 )
+                if cache_match["gate"] != "PASS":
+                    raise RuntimeError(f"Comparison cache gate failed: {run_dir}")
                 frozen_match = _read_json(run_dir / "frozen_initialization_match.json")
                 if frozen_match.get("matched") is not True:
                     raise RuntimeError(f"Frozen initialization mismatch: {run_dir}")
@@ -544,10 +974,78 @@ def main() -> None:
                             dataset_metrics_from_dict(initial_test),
                             dataset_metrics_from_dict(selected_test),
                         )
-                cache_match = _read_json(run_dir / "comparison_cache_match.json")
-                if cache_match.get("matched") is not True:
-                    raise RuntimeError(f"Comparison cache mismatch: {run_dir}")
-                run_meta = _read_json(run_dir / "run_meta.json")
+                local_after = _solver_cache_snapshot(
+                    mutable_cache_path, expected_evaluator=cache_evaluator,
+                )
+                prompts = _read_json(run_dir / "best_prompts.json")
+                prompt_hashes = [
+                    PromptEnsembleOptimizationSystem.prompt_hash(str(prompt))
+                    for prompt in prompts
+                ]
+                test_audit = _test_observation_audit(
+                    snapshot=local_after,
+                    prompt_hashes=prompt_hashes,
+                    test_rows=split_rows["test"],
+                    task_type=cfg.data.task_type,
+                    tie_break=cfg.peer_state.vote_tie_break,
+                    seed=seed,
+                ) if cfg.persistence.final_test_enabled else {
+                    "prompt_hashes": prompt_hashes,
+                    "test_question_count": 0,
+                    "test_question_set_hash": "",
+                    "per_member": [dict() for _ in prompt_hashes],
+                    "per_agent_correct_counts": [],
+                    "team_vote_vector": [],
+                    "team_vote_vector_hash": "",
+                    "team_vote_correct_count": 0,
+                    "missing_entry_count": 0,
+                    "missing_entries": [],
+                }
+                history_key = (task_id, seed)
+                comparisons = [
+                    _compare_unchanged_test_observations(
+                        prior["test_audit"],
+                        test_audit,
+                        prior_setting=prior["setting"],
+                    )
+                    for prior in comparison_history.get(history_key, [])
+                ]
+                cache_match = _read_json(cache_match_path)
+                cache_match.update({
+                    "test_question_set_hash": test_audit["test_question_set_hash"],
+                    "test_observation_missing_count": test_audit["missing_entry_count"],
+                    "final_prompt_hashes": prompt_hashes,
+                    "test_team_vote_vector_hash": test_audit["team_vote_vector_hash"],
+                    "test_team_vote_correct_count": test_audit["team_vote_correct_count"],
+                    "test_per_agent_correct_counts": test_audit["per_agent_correct_counts"],
+                    "unchanged_prompt_comparisons": comparisons,
+                    "unchanged_prompt_drift_count": sum(
+                        int(row["per_question_drift_count"]) for row in comparisons
+                    ),
+                    "unchanged_prompt_aggregate_drift_count": sum(
+                        len(row["aggregate_correct_count_drift_member_ids"])
+                        for row in comparisons
+                    ),
+                    "unchanged_team_vote_drift_count": sum(
+                        int(row["team_vote_vector_drift"]) for row in comparisons
+                    ),
+                })
+                cache_match["matched"] = bool(
+                    cache_match.get("matched")
+                    and test_audit["missing_entry_count"] == 0
+                    and all(row["passed"] for row in comparisons)
+                )
+                cache_match["gate"] = "PASS" if cache_match["matched"] else "FAIL"
+                cache_match_path.write_text(
+                    json.dumps(cache_match, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                if cache_match["gate"] != "PASS":
+                    raise RuntimeError(f"Comparison observation gate failed: {run_dir}")
+                comparison_history.setdefault(history_key, []).append({
+                    "setting": setting.name,
+                    "test_audit": test_audit,
+                })
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
                     "vote_acc_initial": (

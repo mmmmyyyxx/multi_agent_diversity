@@ -84,6 +84,15 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _portable_config_value(key: str, value: Any) -> Any:
+    if key not in {"train_path", "val_path", "test_path"}:
+        return value
+    path = Path(str(value))
+    if not path.is_absolute():
+        return path.as_posix()
+    return Path(*path.parts[-3:]).as_posix()
+
+
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     if not path.is_file():
         return []
@@ -500,7 +509,8 @@ def _audit_run(
         "protocol": {key: actual_protocol.get(key) for key in PROTOCOL_FIELDS},
         "candidate_budget_contract": actual_protocol.get("candidate_budget_contract", {}),
         "substantive_config": {
-            key: value for key, value in config.items()
+            key: _portable_config_value(key, value)
+            for key, value in config.items()
             if key not in {
                 "experiment_setting", "out_dir", "shared_solver_cache_path",
                 "frozen_initialization_manifest_path",

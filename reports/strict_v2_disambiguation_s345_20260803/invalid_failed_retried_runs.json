@@ -1,0 +1,20 @@
+{
+  "schema_version": "strict_v2_failed_run_audit_v1",
+  "status": "stopped",
+  "failed_runs": [
+    {
+      "run": "disambiguation_qa/shared_member_aware_full_seed44",
+      "failure_stage": "final_test",
+      "exception_type": "openai.PermissionDeniedError",
+      "http_status": 403,
+      "provider_code": "local:insufficient_quota",
+      "retry_performed": false,
+      "retry_reason": "not_applicable",
+      "rationale": "Insufficient quota is non-transient and outside the allowed timeout/rate-limit/transient retry scope.",
+      "training_checkpoint_preserved": true,
+      "local_cache_merged": false
+    }
+  ],
+  "invalid_solver_terminal_outputs_in_complete_runs": 0,
+  "additional_runs_started_after_failure": 0
+}

@@ -160,6 +160,7 @@ class RoleAwareLLMClient:
                         ],
                         "temperature": temperature,
                         "timeout": self.cfg.persistence.llm_call_timeout,
+                        "extra_body": {"enable_thinking": False},
                     }
                     if max_tokens is not None:
                         request_kwargs["max_tokens"] = max_tokens

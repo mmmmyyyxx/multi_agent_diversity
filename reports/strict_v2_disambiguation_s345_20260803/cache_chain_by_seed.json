@@ -1,0 +1,35 @@
+{
+  "schema_version": "strict_v2_cache_chain_partial_v1",
+  "status": "partial",
+  "seed_44": [
+    {
+      "setting": "shared_baseline",
+      "gate": "PASS",
+      "parent": "f52c6370f2e4b992a2158a19e8f921bf76e5cfe7aaf5f1283a8d78bb2e3273a9",
+      "result": "75ee5cbd7dff3e514bf6e1432b8ca488f29438e923c01e45df4e5f25b023aa01"
+    },
+    {
+      "setting": "shared_peer_state_member_pareto",
+      "gate": "PASS",
+      "parent": "75ee5cbd7dff3e514bf6e1432b8ca488f29438e923c01e45df4e5f25b023aa01",
+      "result": "d0fe6763b0dcb9f4c3ce416b3ad7c103c21919646fa46548c0a50621015abd5a"
+    },
+    {
+      "setting": "shared_member_aware_responsibility",
+      "gate": "PASS",
+      "parent": "d0fe6763b0dcb9f4c3ce416b3ad7c103c21919646fa46548c0a50621015abd5a",
+      "result": "c23055cf6a83581652f4a88d14b96c401b65fd7f3dfd3998aabb3bc5b61fccca"
+    },
+    {
+      "setting": "shared_member_aware_full",
+      "gate": "unavailable",
+      "parent": "c23055cf6a83581652f4a88d14b96c401b65fd7f3dfd3998aabb3bc5b61fccca",
+      "result": "unavailable",
+      "reason": "final test quota failure; local cache was not merged"
+    }
+  ],
+  "seed_45": "not_started",
+  "seed_46": "not_started",
+  "completed_link_continuity": true,
+  "cumulative_reference_clean_after_stop": true
+}

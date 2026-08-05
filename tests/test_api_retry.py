@@ -66,6 +66,7 @@ def test_retryable_429_retries_and_logs_each_attempt(tmp_path, monkeypatch):
     assert system.llm.calls[1]["total_tokens"] == 5
     assert system.llm.calls[1]["finish_reason"] == "stop"
     assert completions.request_kwargs[1]["max_tokens"] == 10
+    assert completions.request_kwargs[1]["extra_body"] == {"enable_thinking": False}
     assert sleeps[0] >= 2.0
 
 
@@ -138,6 +139,10 @@ def test_tcs_omits_completion_limit_while_solver_keeps_1800(tmp_path):
         "max_tokens" not in kwargs for kwargs in completions.request_kwargs[:3]
     )
     assert completions.request_kwargs[3]["max_tokens"] == 1800
+    assert all(
+        kwargs["extra_body"] == {"enable_thinking": False}
+        for kwargs in completions.request_kwargs
+    )
     assert [row["role"] for row in system.llm.calls] == [
         "teacher", "critic", "student", "solver"
     ]

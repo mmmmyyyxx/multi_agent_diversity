@@ -5,6 +5,7 @@ runs*/
 runs_*/
 experiments/runs*/
 experiments/runs_*/
+qwen/
 artifacts/
 training_checkpoint.json
 *.sqlite

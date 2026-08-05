@@ -1,0 +1,18 @@
+{
+  "audit_version": "strict_v2_offline_gate_v1",
+  "gate": "PASS",
+  "compileall": "PASS",
+  "pytest": {
+    "status": "PASS",
+    "passed": 229,
+    "failed": 0
+  },
+  "preflight": "PASS",
+  "deterministic_member_objective_unit_smoke": "PASS",
+  "deterministic_member_aware_system_smoke": "PASS",
+  "deterministic_aggregate_acceptance_smoke": "PASS",
+  "deterministic_final_state_protocol_smoke": "PASS",
+  "cache_chain_regressions": "PASS",
+  "git_diff_check": "PASS",
+  "external_api_calls": 0
+}

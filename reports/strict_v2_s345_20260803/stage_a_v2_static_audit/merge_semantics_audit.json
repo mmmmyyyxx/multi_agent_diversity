@@ -1,0 +1,11 @@
+{
+  "audit_version": "strict_v2_merge_semantics_audit_v1",
+  "gate": "PASS",
+  "accepted_rows": "ready rows with valid schema, exact key, request metadata, and PromptAnswer JSON",
+  "first_observation_overwrite_allowed": false,
+  "same_key_same_observation": "deduplicated",
+  "same_key_different_observation": "reference retained; conflict recorded; gate FAIL",
+  "partial_merge_on_conflict": false,
+  "non_ready_rows_accepted": false,
+  "invalidly_keyed_rows_accepted": false
+}

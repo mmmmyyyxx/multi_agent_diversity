@@ -1,0 +1,23 @@
+{
+  "audit_version": "strict_v2_exact_request_identity_audit_v1",
+  "gate": "PASS",
+  "included": {
+    "solver_model": true,
+    "provider_endpoint_identity_hash": true,
+    "exact_decision_procedure_hash": true,
+    "exact_question_bytes_hash": true,
+    "immutable_output_contract_content_hash": true,
+    "request_template_content_hash": true,
+    "temperature": true,
+    "evaluation_replica_seed": true,
+    "max_tokens": true,
+    "parser_version": true,
+    "invalid_recovery_policy": true
+  },
+  "excluded": {
+    "experiment_setting": true,
+    "output_directory": true,
+    "run_label": true
+  },
+  "whitespace_distinct_user_messages_can_alias": false
+}

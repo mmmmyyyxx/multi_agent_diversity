@@ -110,13 +110,13 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
     assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 19
     assert payload["mutable_prompt_contract_version"] == (
-        "reasoning_only_no_solver_interface_v1"
+        "reasoning_only_no_response_format_v2"
     )
     assert payload["student_prompt_contract_version"] == (
-        "mutable_reasoning_only_v1"
+        "mutable_reasoning_only_v2"
     )
     assert payload["candidate_protocol_filter_version"] == (
-        "output_contract_contamination_v1"
+        "output_contract_contamination_v2"
     )
     assert "responsibility_first_seen_update" not in json.dumps(payload)
     assert "cached_responsibility_assignments" not in payload

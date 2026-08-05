@@ -1,0 +1,48 @@
+{
+  "schema_version": "strict_v2_proposal_summary_partial_v1",
+  "status": "partial_training_audit_only",
+  "runs": [
+    {
+      "seed": 44,
+      "setting": "shared_peer_state_member_pareto",
+      "run_complete": true,
+      "evaluated_candidate_count": 64,
+      "target_positive_candidate_rate": 0.3125,
+      "vote_positive_candidate_rate": 0.234375,
+      "target_or_vote_positive_rate": 0.375,
+      "acceptable_candidate_rate": 0.296875,
+      "assigned_residual_repair_candidate_rate": 0.0,
+      "accepted_update_count": 13,
+      "longest_rejection_streak": 6
+    },
+    {
+      "seed": 44,
+      "setting": "shared_member_aware_responsibility",
+      "run_complete": true,
+      "evaluated_candidate_count": 64,
+      "target_positive_candidate_rate": 0.328125,
+      "vote_positive_candidate_rate": 0.15625,
+      "target_or_vote_positive_rate": 0.359375,
+      "acceptable_candidate_rate": 0.21875,
+      "assigned_residual_repair_candidate_rate": 0.671875,
+      "accepted_update_count": 8,
+      "longest_rejection_streak": 11
+    },
+    {
+      "seed": 44,
+      "setting": "shared_member_aware_full",
+      "run_complete": false,
+      "training_completed": true,
+      "evaluated_candidate_count": 44,
+      "target_positive_candidate_rate": 0.7045454545454546,
+      "vote_positive_candidate_rate": 0.29545454545454547,
+      "target_or_vote_positive_rate": 0.7045454545454546,
+      "acceptable_candidate_rate": 0.5,
+      "assigned_residual_repair_candidate_rate": 0.9772727272727273,
+      "accepted_update_count": 14,
+      "longest_rejection_streak": 11,
+      "use_for_final_comparison": false
+    }
+  ],
+  "seeds_45_46": "not_started"
+}

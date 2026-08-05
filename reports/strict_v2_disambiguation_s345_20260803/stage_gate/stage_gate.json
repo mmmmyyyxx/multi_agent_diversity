@@ -1,0 +1,69 @@
+{
+  "audit_version": "final_method_stage_gate_v2_sanitized_summary",
+  "stage": "strict_v2_disambiguation",
+  "gate": "FAIL",
+  "blocker_count": 9,
+  "major_count": 0,
+  "expected_run_count": 12,
+  "complete_run_count": 3,
+  "source_identity": {
+    "git_commit": "6b1882ed521dd0601e972db59de1636c5b6cc0f3",
+    "git_dirty": true,
+    "git_diff_hash": "613937116c73ea77b39b25581b525b9e62d91f0a9cbe1c7e3a9410e192aa08d3",
+    "source_tree_hash": "72fdcbc0c5d2a410e3f143d8bdf0e6a0608bfefb8ee6172805530eaf81a276f6",
+    "method_version": "member_aware_peer_state_v8",
+    "checkpoint_version": 16
+  },
+  "complete_runs": [
+    {
+      "run": "disambiguation_qa/shared_baseline_seed44",
+      "cache_gate": "PASS",
+      "cache_chain_continuity": true,
+      "test_evaluation_count": 1
+    },
+    {
+      "run": "disambiguation_qa/shared_peer_state_member_pareto_seed44",
+      "cache_gate": "PASS",
+      "cache_chain_continuity": true,
+      "test_evaluation_count": 1,
+      "completed_update_count": 32
+    },
+    {
+      "run": "disambiguation_qa/shared_member_aware_responsibility_seed44",
+      "cache_gate": "PASS",
+      "cache_chain_continuity": true,
+      "test_evaluation_count": 1,
+      "completed_update_count": 32
+    }
+  ],
+  "incomplete_runs": [
+    {
+      "run": "disambiguation_qa/shared_member_aware_full_seed44",
+      "state": "failed_final_test_after_training",
+      "completed_update_count": 32,
+      "test_evaluation_count": 0
+    },
+    {"run": "disambiguation_qa/shared_baseline_seed45", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_peer_state_member_pareto_seed45", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_member_aware_responsibility_seed45", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_member_aware_full_seed45", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_baseline_seed46", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_peer_state_member_pareto_seed46", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_member_aware_responsibility_seed46", "state": "not_started"},
+    {"run": "disambiguation_qa/shared_member_aware_full_seed46", "state": "not_started"}
+  ],
+  "completed_cache_chain": [
+    {"seed": 44, "setting": "shared_baseline", "continuity": true},
+    {"seed": 44, "setting": "shared_peer_state_member_pareto", "continuity": true},
+    {"seed": 44, "setting": "shared_member_aware_responsibility", "continuity": true}
+  ],
+  "completed_observation_consistency": {
+    "unchanged_prompt_drift_count": 0,
+    "exact_request_conflict_count": 0,
+    "missing_reference_count": 0,
+    "unexpected_provider_recall_count": 0
+  },
+  "completed_run_total_tokens": 4637250,
+  "accepted_update_count": 21,
+  "unresolved_findings_file": "unresolved_findings.json"
+}

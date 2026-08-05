@@ -133,6 +133,10 @@ truncation, and token usage separately from JSON/schema validity.
 
 The default provider credential routing uses the Alibaba Cloud Model Studio
 environment variable `DASHSCOPE_API_KEY` for Solver, Optimizer, and Evaluator.
+All three active model roles default to the pinned
+`qwen3.7-flash-2026-07-15` snapshot. Every request explicitly sends
+`enable_thinking=false`; TCS continues to use the existing text-JSON parsing
+protocol rather than enabling provider JSON mode.
 The default OpenAI-compatible endpoint is:
 
 ```text
@@ -231,6 +235,10 @@ exactly once after the optimization lifecycle completes and cannot influence tra
 The frozen matched baseline remains a reporting reference only.
 
 See [method.md](method.md) for definitions and implementation details.
+
+Historical scripts whose filenames explicitly name GPT-4o mini keep their
+original model pins for reproducibility; they are not active defaults and must
+not be mixed into matched Qwen comparisons.
 
 The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
 development evidence for a superseded mechanism. It does not define v10.

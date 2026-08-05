@@ -1,0 +1,25 @@
+{
+  "source_identity_version": "final_method_source_identity_v1",
+  "git_commit": "6b1882ed521dd0601e972db59de1636c5b6cc0f3",
+  "git_dirty": true,
+  "git_diff_hash": "613937116c73ea77b39b25581b525b9e62d91f0a9cbe1c7e3a9410e192aa08d3",
+  "source_tree_hash": "72fdcbc0c5d2a410e3f143d8bdf0e6a0608bfefb8ee6172805530eaf81a276f6",
+  "source_file_count": 119,
+  "experiment_script_hashes": {
+    "scripts/run_task_level_accuracy.py": "bd5b963afc723a7b086c5b978bd5c157a9eab031d2265581bb1d6d087ad1d917",
+    "scripts/audit_final_method_stage.py": "5e3cf20ef2dd6079c22c28cc389d386a79523c8ca7637fa5e116d78eca173a76",
+    "scripts/build_final_method_complete_report.py": "24941c857125c0a556688a0018adbff27b9e31b360a43911e1476b0ee87109b9",
+    "scripts/build_strict_v2_s345_report.py": "7a57da9e9e490b791c7823ff4d5dfd4b50b3f577c47932afccb40170f6f94d12"
+  },
+  "method_identifiers": {
+    "method_version": "member_aware_peer_state_v8",
+    "responsibility_version": "counterfactual_vote_margin_responsibility_v1",
+    "target_selection_version": "compact_repair_uplift_scheduler_v1",
+    "tcs_context_version": "compact_responsibility_conditioned_context_v1",
+    "candidate_acceptance_version": "target_or_vote_strict_progress_v1",
+    "checkpoint_version": 16,
+    "exact_request_identity_version": "prompt_question_recovered_invalid_v2",
+    "solver_request_template_version": "decision_procedure_then_mandatory_output_contract_v2",
+    "solver_cache_schema_version": "shared_solver_cache_v1"
+  }
+}

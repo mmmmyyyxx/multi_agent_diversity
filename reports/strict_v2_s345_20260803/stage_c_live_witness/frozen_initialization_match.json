@@ -1,0 +1,13 @@
+{
+  "audit_version": "strict_v2_witness_frozen_initialization_v1",
+  "gate": "PASS",
+  "baseline_matched": true,
+  "noop_s3_matched": true,
+  "mismatch_count": 0,
+  "initial_prompt_hashes_equal": true,
+  "initial_train_state_hash_equal": true,
+  "probe_hash_equal": true,
+  "solver_request_identity_equal": true,
+  "initial_member_correct_counts": [28, 28, 28, 28, 28],
+  "initial_team_vote_correct_count": 28
+}

@@ -1,0 +1,25 @@
+{
+  "audit_version": "strict_v2_witness_cache_chain_v1",
+  "gate": "PASS",
+  "links": [
+    {
+      "setting": "shared_baseline",
+      "reference_entry_count_before": 75,
+      "local_entry_count_after_run": 200,
+      "new_entries_merged": 125,
+      "reference_entry_count_after": 200,
+      "parent_reference_hash": "e86435d4372eb4382783d056695ea71be6d6a8c12236161177b5d1e3d33dd1e4",
+      "result_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb"
+    },
+    {
+      "setting": "shared_peer_state_member_pareto",
+      "reference_entry_count_before": 200,
+      "local_entry_count_after_run": 200,
+      "new_entries_merged": 0,
+      "reference_entry_count_after": 200,
+      "parent_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb",
+      "result_reference_hash": "ffd0d0ca96e990067e81035917c389d41498c1725721ac4b8ee6375005e144bb"
+    }
+  ],
+  "baseline_after_equals_noop_before": true
+}

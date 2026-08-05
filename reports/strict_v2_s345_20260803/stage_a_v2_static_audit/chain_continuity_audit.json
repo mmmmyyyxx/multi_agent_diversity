@@ -1,0 +1,24 @@
+{
+  "audit_version": "strict_v2_chain_continuity_audit_v1",
+  "gate": "PASS",
+  "required_fields": [
+    "task",
+    "seed",
+    "setting",
+    "reference_cache_path_hash",
+    "local_cache_path_hash",
+    "parent_reference_hash",
+    "starting_cache_sha256",
+    "reference_entry_count_before",
+    "local_clone_entry_count",
+    "local_entry_count_after_run",
+    "new_entries_merged",
+    "reference_entry_count_after",
+    "result_reference_hash"
+  ],
+  "required_equalities": [
+    "reference_after(S0) == reference_before(S3)",
+    "reference_after(S3) == reference_before(S4)",
+    "reference_after(S4) == reference_before(S5)"
+  ]
+}

@@ -23,6 +23,24 @@ _COPIED_FORMATTING_DIRECTIVES = (
     re.compile(
         r"(?<!\w)end\s+(?:your|the)\s+(?:response|output)\s+with(?!\w)"
     ),
+    re.compile(
+        r"(?<!\w)(?:the\s+)?final\s+(?:output|response)\s+"
+        r"(?:must|should|shall|has\s+to|needs\s+to|is\s+to|will)\b"
+    ),
+    re.compile(
+        r"(?<!\w)(?:output|return|respond(?:\s+with)?|answer)\s+"
+        r"(?:must\s+be\s+)?(?:exactly\s+)?(?:in\s+)?(?:the\s+)?format\b"
+    ),
+    re.compile(
+        r"(?<!\w)(?:append|add|attach)\b.{0,100}\b(?:to|in)\s+"
+        r"(?:the\s+)?(?:final\s+)?(?:output|response|answer)\b"
+    ),
+    re.compile(
+        r"(?<!\w)(?:output|return|respond\s+with)\s+[\"'`]?none[\"'`]?(?!\w)"
+    ),
+    re.compile(
+        r"(?<!\w)confidence\s+(?:indicator|label|score|tag)(?!\w)"
+    ),
 )
 _FIXED_ANSWER_PAYLOAD = re.compile(
     r"(?i)(?<!\w)(?:[\"']answer[\"']|answer|label)\s*(?::|=)\s*"

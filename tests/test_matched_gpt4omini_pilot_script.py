@@ -13,9 +13,9 @@ SCRIPT = (
 def test_matched_gpt4omini_script_freezes_only_the_requested_pilot() -> None:
     text = SCRIPT.read_text(encoding="utf-8")
 
-    assert ModelConfig().agent_model == "gpt-4o-mini"
-    assert ModelConfig().optimizer_model == "gpt-4o-mini"
-    assert ModelConfig().evaluator_model == "gpt-4o-mini"
+    assert ModelConfig().agent_model == "qwen3.7-flash-2026-07-15"
+    assert ModelConfig().optimizer_model == "qwen3.7-flash-2026-07-15"
+    assert ModelConfig().evaluator_model == "qwen3.7-flash-2026-07-15"
 
     assert (
         '"--settings", '

@@ -1,0 +1,18 @@
+{
+  "audit_version": "strict_v2_comparison_match_audit_v1",
+  "gate": "PASS",
+  "comparison_cache_manifest_version": "matched_task_seed_observation_cache_v2",
+  "checks": {
+    "cache_chain_continuity": true,
+    "same_exact_request_same_observation_hash": true,
+    "unchanged_prompt_same_per_question_result": true,
+    "unchanged_prompt_same_aggregate_correct_count": true,
+    "exact_unchanged_team_same_vote_vector": true,
+    "missing_reference_entries_zero": true,
+    "conflicting_reference_entries_zero": true,
+    "unexpected_provider_recalls_zero": true,
+    "unaccounted_new_entries_zero": true
+  },
+  "offline_regression_test_count": 7,
+  "offline_regression_tests_passed": 7
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "strict_v2_test_lifecycle_partial_v1",
+  "status": "partial_with_stop",
+  "completed_runs": {
+    "count": 3,
+    "test_evaluations_per_run": 1,
+    "test_used_for_training": false,
+    "test_used_for_selection": false,
+    "test_called_before_training_complete": false
+  },
+  "failed_s5_seed44": {
+    "planned_updates": 32,
+    "completed_updates": 32,
+    "training_completed": true,
+    "successful_test_evaluation_count": 0,
+    "test_used_for_training": false,
+    "test_used_for_selection": false,
+    "test_called_before_training_complete": false,
+    "failure": "provider quota rejection during final-test rollout"
+  },
+  "seeds_45_46": "not_started"
+}

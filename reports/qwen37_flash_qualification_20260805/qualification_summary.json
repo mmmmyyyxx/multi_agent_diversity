@@ -1,0 +1,59 @@
+{
+  "schema_version": "qwen_model_qualification_v1",
+  "date": "2026-08-05",
+  "model": "qwen3.7-flash-2026-07-15",
+  "roles": [
+    "solver",
+    "teacher",
+    "critic",
+    "student"
+  ],
+  "enable_thinking": false,
+  "method_version": "member_aware_peer_state_v10",
+  "checkpoint_version": 19,
+  "seed": 44,
+  "git_commit": "3943a29dd41919a907bfa85379a17d56ffc863ea",
+  "git_dirty": true,
+  "transport_gate": "PASS",
+  "frozen_prompt_gate": "FAIL",
+  "qualification_thresholds": {
+    "eventual_solver_valid_rate": 0.995,
+    "student_output_contract_contamination_count": 0,
+    "provider_truncation_count_for_transport_smoke": 0
+  },
+  "tasks": [
+    {
+      "task_id": "disambiguation_qa",
+      "test_vote_accuracy": 0.728,
+      "first_attempt_valid_rate": 0.97,
+      "eventual_valid_rate": 1.0,
+      "terminal_invalid_unique_requests": 0,
+      "unique_requests": 200,
+      "gate": "PASS"
+    },
+    {
+      "task_id": "geometric_shapes",
+      "test_vote_accuracy": 0.76,
+      "first_attempt_valid_rate": 0.9,
+      "eventual_valid_rate": 0.955,
+      "terminal_invalid_unique_requests": 9,
+      "unique_requests": 200,
+      "gate": "FAIL"
+    },
+    {
+      "task_id": "ruin_names",
+      "test_vote_accuracy": 0.88,
+      "first_attempt_valid_rate": 0.94,
+      "eventual_valid_rate": 0.99,
+      "terminal_invalid_unique_requests": 2,
+      "unique_requests": 200,
+      "gate": "FAIL"
+    }
+  ],
+  "dataset_overlap_gate": "PASS",
+  "comparison_cache_gate": "PASS",
+  "pilot_started": false,
+  "formal_experiment_started": false,
+  "raw_artifacts_published": false,
+  "stop_reason": "solver_protocol_validity_below_threshold"
+}

@@ -1,0 +1,12 @@
+{
+  "audit_version": "strict_v2_witness_provider_call_audit_v1",
+  "gate": "PASS",
+  "baseline_solver_provider_calls": 125,
+  "baseline_cache_hits": 75,
+  "baseline_cache_misses": 125,
+  "noop_s3_solver_provider_calls": 0,
+  "noop_s3_total_provider_calls": 0,
+  "noop_s3_cache_hits": 200,
+  "noop_s3_cache_misses": 0,
+  "unexpected_provider_recall_count": 0
+}

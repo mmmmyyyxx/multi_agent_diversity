@@ -1,0 +1,23 @@
+{
+  "schema_version": "strict_v2_setting_isolation_partial_v1",
+  "status": "partial",
+  "s3_vs_s4": {
+    "gate": "PASS",
+    "expected_protocol_differences": [
+      "responsibility_refresh_policy",
+      "sample_pool_policy",
+      "target_selection_policy"
+    ],
+    "actual_protocol_differences": [
+      "responsibility_refresh_policy",
+      "sample_pool_policy",
+      "target_selection_policy"
+    ],
+    "substantive_config_matched": true
+  },
+  "s4_vs_s5": {
+    "static_protocol_definition": "matched except proposal context as specified",
+    "empirical_final_test_isolation": "unavailable_due_to_s5_final_test_failure"
+  },
+  "seeds_45_46": "not_started"
+}

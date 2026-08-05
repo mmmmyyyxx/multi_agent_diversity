@@ -36,6 +36,10 @@ from scripts.audit_mutable_prompt_contamination import scan_run_directory
         '"answer": "B"',
         "Output the answer as one option letter.",
         "End your response with the selected label.",
+        "The final output must be exactly in the format: [Option Letter] [Confidence Indicator].",
+        "Append a confidence indicator to the final output.",
+        "If the evidence is insufficient, return 'None'.",
+        "Add a confidence label after deciding.",
     ],
 )
 @pytest.mark.parametrize(

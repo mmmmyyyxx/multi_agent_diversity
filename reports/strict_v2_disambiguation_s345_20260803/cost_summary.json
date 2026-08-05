@@ -1,0 +1,15 @@
+{
+  "schema_version": "strict_v2_cost_summary_partial_v1",
+  "status": "partial",
+  "completed_runs": [
+    {"seed": 44, "setting": "shared_baseline", "total_tokens": 36983, "accepted_update_count": 0},
+    {"seed": 44, "setting": "shared_peer_state_member_pareto", "total_tokens": 2349703, "accepted_update_count": 13},
+    {"seed": 44, "setting": "shared_member_aware_responsibility", "total_tokens": 2250564, "accepted_update_count": 8}
+  ],
+  "completed_run_total_tokens": 4637250,
+  "failed_s5_seed44_checkpointed_training_tokens": 1448447,
+  "known_checkpointed_total_tokens": 6085697,
+  "failed_final_test_attempt_tokens": "unavailable_not_flushed_to_checkpoint",
+  "full_matrix_total_tokens": "unavailable",
+  "note": "The S5 checkpoint total is training-side post-hoc accounting only; the failed final-test request is not represented in that checkpoint."
+}

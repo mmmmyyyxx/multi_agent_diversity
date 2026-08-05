@@ -37,6 +37,7 @@ from ..versions import (
     CHECKPOINT_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
+    MODEL_THINKING_MODE_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
@@ -139,6 +140,7 @@ def config_fingerprint(cfg: Config) -> str:
         "student_prompt_contract": STUDENT_PROMPT_CONTRACT_VERSION,
         "candidate_protocol_filter": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "model_facing_payload_version": "audit_hash_isolated_v2",
+        "model_thinking_mode": MODEL_THINKING_MODE_VERSION,
         "terminal_failure_version": "role_specific_terminal_failure_v1",
         "solver_request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
         "solver_invalid_retry_policy": SOLVER_INVALID_RETRY_POLICY_VERSION,
@@ -170,6 +172,7 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
     request_template = solver_system_prompt("<DECISION_PROCEDURE>", cfg.data.answer_format)
     return {
         "solver_model": cfg.models.agent_model,
+        "enable_thinking": False,
         "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
         "max_tokens": cfg.models.solver_max_tokens,
         "output_contract_version": cfg.peer_state.solver_output_contract_version,

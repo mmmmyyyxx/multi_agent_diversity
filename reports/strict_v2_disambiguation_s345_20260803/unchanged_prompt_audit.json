@@ -1,0 +1,10 @@
+{
+  "schema_version": "strict_v2_unchanged_prompt_partial_v1",
+  "status": "PASS_for_completed_runs",
+  "completed_run_count": 3,
+  "per_question_observation_drift_count": 0,
+  "aggregate_correct_count_drift_count": 0,
+  "exact_unchanged_team_vote_vector_drift_count": 0,
+  "failed_or_unstarted_run_audit": "unavailable",
+  "interpretation": "No unchanged-prompt inconsistency was observed in any completed chain link."
+}

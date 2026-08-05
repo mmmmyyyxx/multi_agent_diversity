@@ -150,13 +150,13 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
         "feedback_retry_then_upstream_regenerate_v1"
     )
     assert metadata["mutable_prompt_contract_version"] == (
-        "reasoning_only_no_solver_interface_v1"
+        "reasoning_only_no_response_format_v2"
     )
     assert metadata["student_prompt_contract_version"] == (
-        "mutable_reasoning_only_v1"
+        "mutable_reasoning_only_v2"
     )
     assert metadata["candidate_protocol_filter_version"] == (
-        "output_contract_contamination_v1"
+        "output_contract_contamination_v2"
     )
     assert metadata["teacher_revision_protocol_version"] == (
         "critic_grounded_full_plan_revision_v1"

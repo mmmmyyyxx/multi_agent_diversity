@@ -1,0 +1,44 @@
+{
+  "schema_version": "strict_v2_training_summary_partial_v1",
+  "status": "partial_training_evidence",
+  "runs": [
+    {
+      "seed": 44,
+      "setting": "shared_peer_state_member_pareto",
+      "run_complete": true,
+      "trajectory_length": 33,
+      "initial_train_vote_correct_count": 28,
+      "final_train_vote_correct_count": 48,
+      "initial_train_member_correct_counts": [28, 28, 28, 28, 28],
+      "final_train_member_correct_counts": [40, 49, 37, 47, 50],
+      "accepted_update_count": 13,
+      "final_oracle_correct_count": 63
+    },
+    {
+      "seed": 44,
+      "setting": "shared_member_aware_responsibility",
+      "run_complete": true,
+      "trajectory_length": 33,
+      "initial_train_vote_correct_count": 28,
+      "final_train_vote_correct_count": 49,
+      "initial_train_member_correct_counts": [28, 28, 28, 28, 28],
+      "final_train_member_correct_counts": [53, 51, 35, 51, 39],
+      "accepted_update_count": 8,
+      "final_oracle_correct_count": 66
+    },
+    {
+      "seed": 44,
+      "setting": "shared_member_aware_full",
+      "run_complete": false,
+      "training_completed": true,
+      "trajectory_length": 33,
+      "initial_train_vote_correct_count": 28,
+      "final_train_vote_correct_count": 52,
+      "initial_train_member_correct_counts": [28, 28, 28, 28, 28],
+      "final_train_member_correct_counts": [51, 48, 59, 43, 49],
+      "accepted_update_count": 14,
+      "final_oracle_correct_count": 62,
+      "use_as_final_test_result": false
+    }
+  ]
+}

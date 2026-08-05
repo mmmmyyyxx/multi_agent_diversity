@@ -1,0 +1,48 @@
+{
+  "schema_version": "strict_v2_comparison_cache_partial_v1",
+  "status": "partial",
+  "seed_44_complete_runs": [
+    {
+      "setting": "shared_baseline",
+      "gate": "PASS",
+      "reference_entries_before": 75,
+      "reference_entries_after": 200,
+      "new_entries": 125,
+      "shared_hits": 75,
+      "provider_misses": 125,
+      "conflicts": 0,
+      "missing": 0,
+      "unexpected_recall": 0,
+      "unaccounted_new_entries": 0
+    },
+    {
+      "setting": "shared_peer_state_member_pareto",
+      "gate": "PASS",
+      "reference_entries_before": 200,
+      "reference_entries_after": 5625,
+      "new_entries": 5425,
+      "shared_hits": 75,
+      "provider_misses": 5425,
+      "conflicts": 0,
+      "missing": 0,
+      "unexpected_recall": 0,
+      "unaccounted_new_entries": 0
+    },
+    {
+      "setting": "shared_member_aware_responsibility",
+      "gate": "PASS",
+      "reference_entries_before": 5625,
+      "reference_entries_after": 11050,
+      "new_entries": 5425,
+      "shared_hits": 75,
+      "provider_misses": 5425,
+      "conflicts": 0,
+      "missing": 0,
+      "unexpected_recall": 0,
+      "unaccounted_new_entries": 0
+    }
+  ],
+  "seed_44_s5": "unavailable_due_to_unmerged_failed_run",
+  "seed_45": "not_started",
+  "seed_46": "not_started"
+}

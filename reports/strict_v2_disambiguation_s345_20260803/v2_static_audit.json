@@ -1,0 +1,18 @@
+{
+  "schema_version": "strict_v2_static_audit_summary_v1",
+  "gate": "PASS",
+  "scope": "exact request identity, immutable first observation, conflict rejection, atomic cumulative merge, chain continuity, and sanitized comparison audit",
+  "unresolved_findings": 0,
+  "offline_gate": {
+    "pytest": "229 passed",
+    "compileall": "PASS",
+    "preflight": "PASS",
+    "member_objective_smoke": "PASS",
+    "member_aware_system_smoke": "PASS",
+    "aggregate_acceptance_smoke": "PASS",
+    "final_state_protocol_smoke": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "evidence_directory": "reports/strict_v2_s345_20260803/stage_a_v2_static_audit",
+  "offline_gate_file": "reports/strict_v2_s345_20260803/stage_b_offline_gate.json"
+}

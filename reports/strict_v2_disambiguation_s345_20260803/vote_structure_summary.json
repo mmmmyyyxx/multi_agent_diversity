@@ -1,0 +1,32 @@
+{
+  "schema_version": "strict_v2_vote_structure_partial_v1",
+  "status": "completed_final_tests_only",
+  "runs": [
+    {
+      "seed": 44,
+      "setting": "shared_peer_state_member_pareto",
+      "oracle_correct_count": 103,
+      "mean_G": 2.8,
+      "mean_H": 2.04,
+      "mean_M": 0.76,
+      "all_wrong_rate": 0.176,
+      "oracle_covered_but_vote_wrong_rate": 0.264,
+      "mean_off_diagonal_double_fault": 0.2944,
+      "mean_off_diagonal_same_wrong_excess": 0.3776803175579719
+    },
+    {
+      "seed": 44,
+      "setting": "shared_member_aware_responsibility",
+      "oracle_correct_count": 104,
+      "mean_G": 2.912,
+      "mean_H": 1.92,
+      "mean_M": 0.992,
+      "all_wrong_rate": 0.168,
+      "oracle_covered_but_vote_wrong_rate": 0.224,
+      "mean_off_diagonal_double_fault": 0.2712,
+      "mean_off_diagonal_same_wrong_excess": 0.3146349503523272
+    }
+  ],
+  "s5_seed44": "unavailable_without_final_test",
+  "seeds_45_46": "not_started"
+}

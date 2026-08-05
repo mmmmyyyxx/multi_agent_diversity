@@ -1,0 +1,21 @@
+{
+  "schema_version": "strict_v2_live_witness_summary_v1",
+  "gate": "PASS",
+  "task": "disambiguation_qa",
+  "seed": 46,
+  "baseline_vote_correct_count": 52,
+  "noop_vote_correct_count": 52,
+  "baseline_per_member_correct_counts": [52, 52, 52, 52, 52],
+  "noop_per_member_correct_counts": [52, 52, 52, 52, 52],
+  "same_final_prompt_hashes": true,
+  "same_question_set_and_request_identity": true,
+  "observation_drift_count": 0,
+  "team_vote_vector_drift_count": 0,
+  "terminal_invalid_drift_count": 0,
+  "noop_shared_cache_hits": 200,
+  "noop_provider_cache_misses": 0,
+  "noop_solver_provider_calls": 0,
+  "cache_conflict_count": 0,
+  "cache_missing_count": 0,
+  "evidence_directory": "reports/strict_v2_s345_20260803/stage_c_live_witness"
+}

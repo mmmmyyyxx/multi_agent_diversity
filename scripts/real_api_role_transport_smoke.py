@@ -22,6 +22,7 @@ from multi_dataset_diverse_rl.tcs import (
     AccuracyDiagnosisContext,
     PreviousUpdateOutcome,
     TeacherRepairPlan,
+    STUDENT_SYSTEM_PROMPT,
     build_critic_request,
     build_student_request,
     build_teacher_request,
@@ -151,12 +152,29 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
     except (KeyError, TypeError, ValueError) as exc:
         critic_error = str(exc)
 
+    student_teacher = (
+        transport_teacher
+        if critic is not None and critic.approved
+        else TeacherRepairPlan(
+            failure_pattern="The solver commits before comparing every option.",
+            repair_rule=(
+                "Compare every option, eliminate direct contradictions, and verify "
+                "the selected choice against the question before deciding."
+            ),
+            preservation_rule="Keep conclusions that pass the same verification.",
+        )
+    )
+    student_teacher_source = (
+        "live_critic_approved"
+        if critic is not None and critic.approved
+        else "fixed_approved_fixture_after_live_rejection"
+    )
     student_result = await client.chat_result(
         cfg.models.optimizer_model,
-        "Return strict JSON only.",
+        STUDENT_SYSTEM_PROMPT,
         build_student_request(
             parent_prompt=context.parent_prompt,
-            approved_plan=transport_teacher,
+            approved_plan=student_teacher,
             answer_format="option_letter",
             candidate_count=cfg.tcs.num_candidates_per_parent,
             candidate_prompt_max_chars=cfg.tcs.candidate_prompt_max_chars,
@@ -222,7 +240,7 @@ async def run(cfg: Config, client: RoleAwareLLMClient | None = None) -> dict:
         },
         "student": {
             **_audit(student_result, student_json, student_error),
-            "teacher_input_source": "live" if teacher is not None else "fixed_transport_fixture",
+            "teacher_input_source": student_teacher_source,
             "requested_count": cfg.tcs.num_candidates_per_parent,
             "raw_count": student_raw_count,
             "valid_count": len(candidates),

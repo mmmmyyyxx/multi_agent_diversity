@@ -1,0 +1,39 @@
+{
+  "schema_version": "strict_v2_partial_manifest_v1",
+  "status": "stopped_incomplete",
+  "formal_comparison_available": false,
+  "task": "disambiguation_qa",
+  "seeds": [44, 45, 46],
+  "settings": [
+    "shared_baseline",
+    "shared_peer_state_member_pareto",
+    "shared_member_aware_responsibility",
+    "shared_member_aware_full"
+  ],
+  "expected_run_count": 12,
+  "complete_run_count": 3,
+  "failed_run_count": 1,
+  "not_started_run_count": 8,
+  "complete_runs": [
+    "disambiguation_qa/shared_baseline_seed44",
+    "disambiguation_qa/shared_peer_state_member_pareto_seed44",
+    "disambiguation_qa/shared_member_aware_responsibility_seed44"
+  ],
+  "failed_run": {
+    "run": "disambiguation_qa/shared_member_aware_full_seed44",
+    "completed_update_count": 32,
+    "planned_update_count": 32,
+    "training_completed": true,
+    "test_evaluation_count": 0,
+    "failure_stage": "final_test",
+    "provider_status": 403,
+    "provider_code": "local:insufficient_quota"
+  },
+  "not_started": {
+    "seeds": [45, 46],
+    "run_count": 8
+  },
+  "stage_gate": "FAIL",
+  "stage_gate_blocker_count": 9,
+  "source_identity_matches_frozen": true
+}

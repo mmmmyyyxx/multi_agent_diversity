@@ -1,0 +1,17 @@
+{
+  "audit_version": "strict_v2_static_audit_v1",
+  "gate": "PASS",
+  "scope": "task_seed",
+  "flow": [
+    "frozen_initialization_cache",
+    "cumulative_task_seed_observation_reference",
+    "setting_local_independent_mutable_clone",
+    "setting_run",
+    "validated_completed_exact_observations",
+    "immutable_merge_into_cumulative_reference"
+  ],
+  "shared_mutable_cache_used": false,
+  "old_mutable_cache_reused": false,
+  "setting_local_cache_distinctness_required": true,
+  "cumulative_reference_chain_required": true
+}
