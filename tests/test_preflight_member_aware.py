@@ -2,8 +2,21 @@ import json
 from pathlib import Path
 
 import yaml
+import pytest
 
-from scripts.preflight_member_aware import build_parser, run_specific_preflight
+from multi_dataset_diverse_rl.config import Config
+from scripts.preflight_member_aware import (
+    _validate_configured_initial_prompts,
+    build_parser,
+    run_specific_preflight,
+)
+
+
+def test_preflight_rejects_contaminated_initial_prompt():
+    with pytest.raises(ValueError, match="output_contract_contamination"):
+        _validate_configured_initial_prompts(
+            Config.from_flat(shared_prompt="Reason. FINAL_ANSWER: A")
+        )
 
 
 def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monkeypatch):
@@ -25,8 +38,8 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
             }
         }
     }), encoding="utf-8")
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
-    monkeypatch.setenv("OPENAI_BASE_URL", "https://example.invalid/v1")
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+    monkeypatch.setenv("DASHSCOPE_BASE_URL", "https://example.invalid/v1")
     args = build_parser().parse_args([
         "--manifest", str(manifest),
         "--tasks", "task",
@@ -78,8 +91,8 @@ def test_run_specific_memory_preflight_keeps_its_baseline_memory_off(tmp_path, m
         "train_path": split_paths["train"], "val_path": split_paths["val"],
         "test_path": split_paths["test"],
     }}}), encoding="utf-8")
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
-    monkeypatch.setenv("OPENAI_BASE_URL", "https://example.invalid/v1")
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+    monkeypatch.setenv("DASHSCOPE_BASE_URL", "https://example.invalid/v1")
     args = build_parser().parse_args([
         "--manifest", str(manifest), "--tasks", "task",
         "--settings", "shared_baseline,shared_member_aware_full", "--seeds", "44",

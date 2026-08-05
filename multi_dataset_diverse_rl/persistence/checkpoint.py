@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from ..evaluation.fixed_probe import PromptAnswer
+from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
 from ..persistence.identity import validate_run_identity
 from ..responsibility import (
     RepairLane,
@@ -19,7 +20,13 @@ from ..responsibility import (
 from ..proposal_memory import entry_from_dict, entry_to_dict
 from ..system import METHOD_VERSION
 from ..tcs import PreviousUpdateOutcome
-from ..versions import CHECKPOINT_VERSION, SERVICE_ROUTING_VERSION
+from ..versions import (
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
+    CHECKPOINT_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
+    SERVICE_ROUTING_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
+)
 
 
 def _random_state_payload() -> str:
@@ -43,6 +50,7 @@ def build_checkpoint(
     training_state: Mapping[str, Any] | None = None,
     best_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
+    system.validate_active_prompts()
     if system.fixed_probe is None:
         raise RuntimeError("cannot checkpoint before fixed probe initialization")
     if system.run_identity is None:
@@ -67,6 +75,9 @@ def build_checkpoint(
     return {
         "checkpoint_version": CHECKPOINT_VERSION,
         "method_version": METHOD_VERSION,
+        "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
+        "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
+        "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "run_identity": system.run_identity.to_dict(),
         "probe_version": system.fixed_probe.version,
         "probe_hash": system.fixed_probe.probe_hash,
@@ -253,8 +264,21 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "proposal_memory_entries",
         "proposal_memory_events",
         "proposal_rotation_trajectory",
+        "mutable_prompt_contract_version",
+        "student_prompt_contract_version",
+        "candidate_protocol_filter_version",
     }
     if not required_member_state <= set(payload):
+        raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
+    expected_contract_versions = {
+        "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
+        "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
+        "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
+    }
+    if any(
+        str(payload[key]) != expected
+        for key, expected in expected_contract_versions.items()
+    ):
         raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
@@ -271,9 +295,20 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     previous_prompts = payload["previous_active_prompts"]
     if len(prompts) != 5 or len(previous_prompts) != 5:
         raise ValueError("checkpoint must contain exactly five agent prompts")
-    for agent, prompt, previous in zip(system.agents, prompts, previous_prompts, strict=True):
-        agent.current_prompt = str(prompt)
-        agent.previous_active_prompt = None if previous is None else str(previous)
+    normalized_prompts = [str(prompt) for prompt in prompts]
+    normalized_previous = [
+        None if prompt is None else str(prompt) for prompt in previous_prompts
+    ]
+    for prompt in normalized_prompts:
+        validate_mutable_decision_procedure(prompt)
+    for prompt in normalized_previous:
+        if prompt is not None:
+            validate_mutable_decision_procedure(prompt)
+    for agent, prompt, previous in zip(
+        system.agents, normalized_prompts, normalized_previous, strict=True
+    ):
+        agent.current_prompt = prompt
+        agent.previous_active_prompt = previous
     system.active_profiles = [
         tuple(PromptAnswer(**row) for row in profile) for profile in payload["active_profiles"]
     ]

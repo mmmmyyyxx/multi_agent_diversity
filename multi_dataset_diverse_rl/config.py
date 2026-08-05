@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 from dataclasses import asdict, dataclass, field
 
+from .provider_credentials import DASHSCOPE_API_KEY_ENV, DASHSCOPE_BASE_URL_ENV
+
 
 @dataclass(frozen=True)
 class DataConfig:
@@ -25,12 +27,12 @@ class ModelConfig:
     agent_model: str = "gpt-4o-mini"
     optimizer_model: str = "gpt-4o-mini"
     evaluator_model: str = "gpt-4o-mini"
-    solver_api_key_env: str = ""
-    solver_base_url_env: str = ""
-    optimizer_api_key_env: str = ""
-    optimizer_base_url_env: str = ""
-    evaluator_api_key_env: str = ""
-    evaluator_base_url_env: str = ""
+    solver_api_key_env: str = DASHSCOPE_API_KEY_ENV
+    solver_base_url_env: str = DASHSCOPE_BASE_URL_ENV
+    optimizer_api_key_env: str = DASHSCOPE_API_KEY_ENV
+    optimizer_base_url_env: str = DASHSCOPE_BASE_URL_ENV
+    evaluator_api_key_env: str = DASHSCOPE_API_KEY_ENV
+    evaluator_base_url_env: str = DASHSCOPE_BASE_URL_ENV
     temperature: float = 0.0
     solver_max_tokens: int = 1800
     solver_invalid_max_retries: int = 3
@@ -44,7 +46,7 @@ class TrainingConfig:
     epochs: int = 3
     update_every: int = 10
     seed: int = 42
-    shared_prompt: str = "You are a careful reasoning solver. Use an explicit decision procedure, verify the key inference, and end with exactly one FINAL_ANSWER line."
+    shared_prompt: str = "You are a careful reasoning solver. Use an explicit decision procedure and verify the key inference before finalizing the decision."
     initialization_mode: str = "shared_identical"
     provided_prompts_json: str = ""
 

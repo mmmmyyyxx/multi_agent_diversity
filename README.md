@@ -131,6 +131,19 @@ truncation, and token usage separately from JSON/schema validity.
 
 ## Running Experiments
 
+The default provider credential routing uses the Alibaba Cloud Model Studio
+environment variable `DASHSCOPE_API_KEY` for Solver, Optimizer, and Evaluator.
+The default OpenAI-compatible endpoint is:
+
+```text
+https://ws-tbeq6fj4ndibcz5p.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+```
+
+Set `DASHSCOPE_BASE_URL` only when an endpoint override is required. API keys
+must remain in environment variables and must never be written to configs,
+commands, artifacts, or source files. A process started before the Windows
+system variable was created must be restarted before it can read the key.
+
 Run the preflight first, then use the task runner:
 
 ```powershell
@@ -153,7 +166,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v18 run identity;
+checkpoint-v19 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -197,8 +210,12 @@ Each optimized run writes:
 Candidate prompts optimize only the mutable reasoning procedure. Every Solver
 request appends an immutable, task-specific output interface after that
 procedure, and the interface explicitly overrides conflicting mutable
-instructions. The request-template version participates in Solver request and
-shared-cache identity.
+instructions. A deterministic validator rejects any mutable prompt containing
+the interface marker or copied output instructions at initial load, checkpoint
+restore, candidate parsing, accepted-state commit, and Solver construction.
+The request-template version participates in Solver request and shared-cache
+identity. Hash-only historical audits are available through
+`scripts/audit_mutable_prompt_contamination.py`; they do not rewrite artifacts.
 
 Final and task-level summaries report both correct-count gains and normalized
 accuracy gains:

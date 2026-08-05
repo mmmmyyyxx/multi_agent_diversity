@@ -21,6 +21,13 @@ def test_infrastructure_and_parser_failures_do_not_count_as_complete_failures():
             terminal_failure_class="student_invalid_exhausted",
         )
     )
+    assert not PromptEnsembleOptimizationSystem.is_complete_repairability_failure(
+        CandidateFunnel(
+            student_calls=8,
+            output_contract_contamination_count=16,
+            terminal_failure_class="proposal_protocol_failure",
+        )
+    )
     assert PromptEnsembleOptimizationSystem.is_complete_repairability_failure(
         CandidateFunnel(stage_a_evaluated=2)
     )

@@ -18,7 +18,7 @@ class FakeTransportClient:
     ):
         self.roles.append(role)
         self.max_tokens.append(_max_tokens)
-        if system == "Return strict JSON only.":
+        if system.startswith("Return strict JSON only."):
             text = json.dumps({
                 "candidate_prompts": [
                     "Verify each option before selecting one letter."

@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 $PY = "D:\Anaconda\envs\DL\python.exe"
 
-if (-not $env:OPENAI_API_KEY) { throw "OPENAI_API_KEY is not set" }
+if (-not $env:DASHSCOPE_API_KEY) { throw "DASHSCOPE_API_KEY is not set" }
 if (Test-Path -LiteralPath $OutRoot) { throw "out_root must be fresh" }
 
 & $PY scripts\run_v4_full_high_frequency_seed42.py --workspace . --out_root $OutRoot

@@ -30,7 +30,13 @@ def test_final_payload_keeps_initial_selected_and_member_gain():
         initial, selected, selection_summary={"selected_epoch": 2}
     )
     assert set(payload) == {
-        "initial_test", "selected_test", "member_gain", "selection_summary"
+        "initial_test", "selected_test", "member_gain", "selection_summary",
+        "protocol_versions",
+    }
+    assert payload["protocol_versions"] == {
+        "mutable_prompt_contract": "reasoning_only_no_solver_interface_v1",
+        "student_prompt_contract": "mutable_reasoning_only_v1",
+        "candidate_protocol_filter": "output_contract_contamination_v1",
     }
     member_gain = dict(payload["member_gain"])
     assert member_gain.pop("mean_member_accuracy_gain") == pytest.approx(0.14)

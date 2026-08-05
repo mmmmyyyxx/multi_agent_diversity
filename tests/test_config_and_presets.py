@@ -56,7 +56,12 @@ def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     assert cfg.tcs.proposal_memory_mode == "off"
     assert cfg.training.initialization_mode == "shared_identical"
     assert cfg.peer_state.vote_tie_break == "abstain"
-    assert cfg.models.optimizer_api_key_env == ""
+    assert cfg.models.solver_api_key_env == "DASHSCOPE_API_KEY"
+    assert cfg.models.optimizer_api_key_env == "DASHSCOPE_API_KEY"
+    assert cfg.models.evaluator_api_key_env == "DASHSCOPE_API_KEY"
+    assert cfg.models.solver_base_url_env == "DASHSCOPE_BASE_URL"
+    assert cfg.models.optimizer_base_url_env == "DASHSCOPE_BASE_URL"
+    assert cfg.models.evaluator_base_url_env == "DASHSCOPE_BASE_URL"
     assert cfg.tcs.critic_json_max_retries == 1
     assert cfg.tcs.teacher_json_max_retries == 1
     assert cfg.tcs.teacher_critic_max_rounds == 2
@@ -143,6 +148,15 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["checkpoint_selection_version"] == "none_final_state_v1"
     assert metadata["student_invalid_recovery_version"] == (
         "feedback_retry_then_upstream_regenerate_v1"
+    )
+    assert metadata["mutable_prompt_contract_version"] == (
+        "reasoning_only_no_solver_interface_v1"
+    )
+    assert metadata["student_prompt_contract_version"] == (
+        "mutable_reasoning_only_v1"
+    )
+    assert metadata["candidate_protocol_filter_version"] == (
+        "output_contract_contamination_v1"
     )
     assert metadata["teacher_revision_protocol_version"] == (
         "critic_grounded_full_plan_revision_v1"

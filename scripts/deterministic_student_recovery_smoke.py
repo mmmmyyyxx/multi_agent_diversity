@@ -36,9 +36,10 @@ async def solver(_question, _agent_id, _prompt):
 
 async def run() -> dict:
     counts = {"teacher": 0, "critic": 0, "student": 0}
+    student_requests: list[str] = []
 
     async def chat(system_prompt, user_prompt, _temperature, _max_tokens):
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             role = "student"
         elif "Check only explicit hard blockers" in system_prompt:
             role = "critic"
@@ -53,8 +54,12 @@ async def run() -> dict:
                 if "student_upstream_regeneration" in user_prompt
                 else TEACHER
             )
+        student_requests.append(user_prompt)
         if counts["student"] <= 4:
-            return json.dumps({"candidate_prompts": [None, ""]})
+            return json.dumps({"candidate_prompts": [
+                "Check every condition.\nFINAL_ANSWER: A",
+                "Compare all options.\nFINAL ANSWER: B",
+            ]})
         return json.dumps({"candidate_prompts": ["valid recovered repair"]})
 
     with tempfile.TemporaryDirectory() as directory:
@@ -62,6 +67,7 @@ async def run() -> dict:
             Config.from_flat(
                 out_dir=directory,
                 answer_format="option_letter",
+                experiment_setting="shared_peer_state_member_pareto",
                 num_candidates_per_parent=2,
                 stage_a_channel_top_k=1,
                 stage_b_candidate_budget=1,
@@ -79,6 +85,10 @@ async def run() -> dict:
         assert funnel.student_cycle_exhausted
         assert funnel.upstream_regeneration_count == 1
         assert funnel.student_recovered
+        assert funnel.output_contract_contamination_count == 8
+        assert "A candidate included the immutable solver output interface." in (
+            student_requests[1]
+        )
         assert all(
             row["valid_candidate_count"] == 0
             for row in system.student_recovery_observations[:4]
@@ -87,6 +97,9 @@ async def run() -> dict:
             "student_calls": counts["student"],
             "upstream_regeneration_count": funnel.upstream_regeneration_count,
             "student_recovered": funnel.student_recovered,
+            "output_contract_contamination_count": (
+                funnel.output_contract_contamination_count
+            ),
             "invalid_candidates_entered_stage_a": False,
         }
 

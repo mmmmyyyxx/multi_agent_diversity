@@ -14,6 +14,11 @@ from .persistence.checkpoint import build_checkpoint, load_checkpoint, restore_c
 from .persistence.identity import build_run_identity
 from .system import PromptEnsembleOptimizationSystem
 from .utils import load_jsonl
+from .versions import (
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
+)
 
 
 LEGACY_QUESTION_KEYS = ("question", "input", "query", "problem")
@@ -340,6 +345,11 @@ def _final_payload(
             if initial is not None and selected is not None else None
         ),
         "selection_summary": dict(selection_summary),
+        "protocol_versions": {
+            "mutable_prompt_contract": MUTABLE_PROMPT_CONTRACT_VERSION,
+            "student_prompt_contract": STUDENT_PROMPT_CONTRACT_VERSION,
+            "candidate_protocol_filter": CANDIDATE_PROTOCOL_FILTER_VERSION,
+        },
     }
 
 

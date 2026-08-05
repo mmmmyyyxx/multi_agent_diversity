@@ -4,7 +4,6 @@ import argparse
 import hashlib
 import json
 import math
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -17,21 +16,31 @@ if str(REPO_ROOT) not in sys.path:
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.cli import build_dataset
 from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import PersistentSolverCache
+from multi_dataset_diverse_rl.evaluation.mutable_prompt_contract import (
+    validate_mutable_decision_procedure,
+)
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity, validate_run_identity
+from multi_dataset_diverse_rl.provider_credentials import (
+    resolve_api_key,
+    resolve_base_url,
+)
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
 from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_task_ids
 from multi_dataset_diverse_rl.tcs import TCS_PROTOCOL_VERSION
 from multi_dataset_diverse_rl.utils import load_jsonl
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
@@ -54,12 +63,36 @@ EXPECTED_SETTINGS = [
 ]
 
 
+def _validate_configured_initial_prompts(cfg: Config) -> None:
+    if cfg.training.initialization_mode == "shared_identical":
+        validate_mutable_decision_procedure(cfg.training.shared_prompt)
+        return
+    if cfg.training.initialization_mode != "provided_prompt_set":
+        raise ValueError(
+            f"unknown initialization mode: {cfg.training.initialization_mode}"
+        )
+    try:
+        prompts = json.loads(cfg.training.provided_prompts_json)
+    except json.JSONDecodeError as exc:
+        raise ValueError("provided_prompts_json is not valid JSON") from exc
+    if not isinstance(prompts, list) or len(prompts) != cfg.training.agents:
+        raise ValueError("provided_prompt_set must contain exactly five prompts")
+    for prompt in prompts:
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise ValueError("provided_prompt_set prompts must be non-empty strings")
+        validate_mutable_decision_procedure(prompt)
+
+
 def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     errors = []
     configs = [Config.from_flat(**setting.resolved_overrides()) for setting in select_settings("all")]
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append("experiment settings do not match the frozen six-setting protocol")
     for cfg in configs:
+        try:
+            _validate_configured_initial_prompts(cfg)
+        except ValueError as exc:
+            errors.append(str(exc))
         if cfg.training.method_version != METHOD_VERSION:
             errors.append(f"unexpected method version: {cfg.training.method_version}")
         if cfg.tcs.student_invalid_max_retries < 0:
@@ -146,6 +179,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
         "test_isolation_version": TEST_ISOLATION_VERSION,
         "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
+        "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
+        "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
+        "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "tcs_protocol_version": TCS_PROTOCOL_VERSION,
         "tcs_context_version": TCS_CONTEXT_VERSION,
         "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
@@ -159,15 +195,13 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
 def _role_environment(cfg: Config, role: str) -> dict[str, Any]:
     key_env = getattr(cfg.models, f"{role}_api_key_env")
     base_env = getattr(cfg.models, f"{role}_base_url_env")
+    resolved_key_env, key = resolve_api_key(key_env)
+    resolved_base_env, base_url = resolve_base_url(base_env)
     return {
-        "key_env": key_env or "OPENAI_API_KEY",
-        "base_url_env": base_env or "OPENAI_BASE_URL/OPENAI_API_BASE",
-        "key_present": bool(os.getenv(key_env) if key_env else os.getenv("OPENAI_API_KEY")),
-        "base_url": (
-            os.getenv(base_env, "")
-            if base_env
-            else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", ""))
-        ),
+        "key_env": resolved_key_env,
+        "base_url_env": resolved_base_env,
+        "key_present": bool(key),
+        "base_url": base_url,
     }
 
 
@@ -225,6 +259,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                 )
                 try:
                     cfg = Config.from_flat(**values)
+                    _validate_configured_initial_prompts(cfg)
                     if any(not model.strip() for model in (
                         cfg.models.agent_model, cfg.models.optimizer_model, cfg.models.evaluator_model,
                     )):
@@ -333,6 +368,15 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "tcs_context_version": TCS_CONTEXT_VERSION,
                         "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
                         "proposal_memory_mode": cfg.tcs.proposal_memory_mode,
+                        "mutable_prompt_contract_version": (
+                            MUTABLE_PROMPT_CONTRACT_VERSION
+                        ),
+                        "student_prompt_contract_version": (
+                            STUDENT_PROMPT_CONTRACT_VERSION
+                        ),
+                        "candidate_protocol_filter_version": (
+                            CANDIDATE_PROTOCOL_FILTER_VERSION
+                        ),
                         "split_integrity": integrity,
                         "role_environment": role_environment,
                         "planned_update_count": planned_update_count,

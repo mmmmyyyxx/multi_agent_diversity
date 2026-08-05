@@ -159,7 +159,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
     async def optimizer(system_prompt, user_prompt, _temperature, _max_tokens):
         if "Check only explicit hard blockers" in system_prompt:
             return json.dumps({"failed_checks": [], "risk_case_ids": [], "feedback": ""})
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return json.dumps({"candidate_prompts": ["candidate-a", "candidate-b"]})
         teacher_requests.append((system_prompt, user_prompt))
         return json.dumps({

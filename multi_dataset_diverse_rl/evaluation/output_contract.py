@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .mutable_prompt_contract import validate_mutable_decision_procedure
+
 
 SOLVER_OUTPUT_CONTRACT_VERSION = "task_output_contract_v1"
 SOLVER_REQUEST_TEMPLATE_VERSION = (
@@ -43,6 +45,7 @@ def solver_system_prompt(decision_procedure: str, answer_format: str) -> str:
     procedure = str(decision_procedure or "").strip()
     if not procedure:
         raise ValueError("decision procedure must be non-empty")
+    validate_mutable_decision_procedure(procedure)
     return (
         "Follow the decision procedure below.\n\n"
         "Decision procedure:\n"

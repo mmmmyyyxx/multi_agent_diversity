@@ -471,7 +471,7 @@ def test_student_request_is_context_free_and_partial_validity_is_retained():
         assert forbidden not in request
     assert "mutable reasoning procedure" in request
     assert "immutable output interface" in request
-    assert "Do not duplicate that full interface" in request
+    assert "Do not include, quote, imitate, or describe" in request
     assert "OutputContract:" in request
     parsed = parse_student_candidates(
         {

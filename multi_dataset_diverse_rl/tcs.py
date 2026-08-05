@@ -12,9 +12,11 @@ from .diagnosis_aggregation import (
     LanePatternSummary,
 )
 from .evaluation.output_contract import solver_output_contract
+from .evaluation.mutable_prompt_contract import mutable_prompt_violation_reasons
 from .llm_client import LLMCallResult
 from .proposal_memory import ProposalFailureFeedback
 from .utils import extract_json_obj, normalize_prompt_text
+from .versions import STUDENT_PROMPT_CONTRACT_VERSION
 
 
 TCS_PROTOCOL_VERSION = "assigned_residual_only_context_v1"
@@ -24,6 +26,12 @@ CRITIC_SCHEMA_VERSION = "four_hard_blocker_v1"
 STUDENT_SCHEMA_VERSION = "replacement_prompt_list_v1"
 ROLE_RETRY_POLICY_VERSION = "uncapped_completion_semantic_round_v2"
 SAMPLE_MEMORIZATION_FILTER_VERSION = "exact_supplied_example_text_v1"
+STUDENT_SYSTEM_PROMPT = (
+    "Return strict JSON only. Generate only mutable reasoning and decision "
+    "procedures. Do not include, quote, imitate, or describe the solver output "
+    "interface. Do not include FINAL_ANSWER or any fixed answer value; the program "
+    "appends the immutable solver output interface later."
+)
 
 CRITIC_FAILED_CHECKS = (
     "evidence_mismatch",
@@ -637,7 +645,10 @@ def build_critic_request(
         "rule is generic, non-executable, or contradictory; shortcut_or_copying means "
         "sample memorization, specific-answer or peer copying, or stereotype shortcuts; "
         "preservation_or_output_risk means preservation is inoperable or the strict output "
-        "contract is endangered. Do not score, predict candidate performance, restate "
+        "contract is endangered. Reject a repair plan under preservation_or_output_risk "
+        "if it directs the Student to emit, copy, specialize, or hard-code the solver "
+        "output interface, a FINAL_ANSWER line, or a fixed answer label. Do not score, "
+        "predict candidate performance, restate "
         "facts, or report soft concerns. risk_case_ids may only name supplied case IDs. "
         + lane_instruction
         + " "
@@ -668,14 +679,21 @@ def build_student_request(
     )
     return (
         "Implement the approved repair plan as complete replacement decision procedures. "
-        "Each candidate is only the mutable reasoning procedure: it must stand alone, "
-        "contain no training example or answer, and be no longer than the stated limit. "
-        "The system appends the immutable output interface after every candidate at Solver "
-        "request time. Do not duplicate that full interface or return a patch or diagnosis "
-        "metadata. Do not introduce instructions that conflict with the supplied contract. "
+        "Generate only the mutable reasoning procedure and decision process. Each candidate must "
+        "stand alone, contain no training example or answer, and be no longer than the "
+        "stated limit. Do not include, quote, imitate, or describe the solver output "
+        "interface. Do not include any FINAL_ANSWER line or fixed answer value. Do not "
+        "append an answer letter, label, placeholder, example output, JSON answer field, "
+        "or formatting instruction for the final response. The immutable output interface "
+        "for the Solver is appended later by the program and is not part of the candidate "
+        "prompt. Do not return a patch or diagnosis metadata. Clean example: Identify the "
+        "pronoun, enumerate grammatically compatible antecedents, compare contextual "
+        "evidence, and select the best-supported interpretation. Invalid example (do not "
+        "copy): Identify the pronoun and select the best interpretation. FINAL_ANSWER: A. "
         + lane_instruction
         + " "
         "Return strict JSON with the sole field candidate_prompts.\n"
+        f"StudentPromptContractVersion: {STUDENT_PROMPT_CONTRACT_VERSION}\n"
         f"ParentPrompt:\n{parent_prompt}\n"
         f"ApprovedRepairPlan:\n{json.dumps(asdict(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
         f"OutputContract:\n{solver_output_contract(answer_format)}\n"
@@ -693,19 +711,26 @@ def build_student_recovery_request(
     parent_prompt_hash: str,
     approved_repair_plan_hash: str,
 ) -> str:
+    requirements = [
+        "Return candidate_prompts as a JSON array.",
+        "Every candidate must be a non-empty string.",
+        "Do not return null, objects, nested arrays, or empty strings.",
+        "Each candidate must differ from the parent prompt and other candidates.",
+        "Return only the required schema.",
+    ]
+    if "output_contract_contamination" in previous_rejection_classes:
+        requirements.append(
+            "A candidate included the immutable solver output interface. Return only "
+            "the mutable decision procedure and do not include FINAL_ANSWER or any "
+            "fixed answer."
+        )
     feedback = {
         "student_recovery": True,
         "previous_rejection_classes": list(previous_rejection_classes),
         "required_candidate_count": int(required_candidate_count),
         "parent_prompt_hash": str(parent_prompt_hash),
         "approved_repair_plan_hash": str(approved_repair_plan_hash),
-        "requirements": [
-            "Return candidate_prompts as a JSON array.",
-            "Every candidate must be a non-empty string.",
-            "Do not return null, objects, nested arrays, or empty strings.",
-            "Each candidate must differ from the parent prompt and other candidates.",
-            "Return only the required schema.",
-        ],
+        "requirements": requirements,
     }
     return (
         f"{base_request}\n"
@@ -846,6 +871,8 @@ def parse_student_candidates(
                 reasons.append("too_long")
             if contains_supplied_example_text(prompt, context):
                 reasons.append("sample_memorization")
+            if mutable_prompt_violation_reasons(prompt):
+                reasons.append("output_contract_contamination")
             seen.add(prompt_hash)
         rejections.append(tuple(reasons))
         if not reasons:

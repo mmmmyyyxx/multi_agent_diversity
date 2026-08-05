@@ -14,12 +14,15 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_VERSION,
     METHOD_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
     RESPONSIBILITY_VERSION,
     SERVICE_ROUTING_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
 )
 from multi_dataset_diverse_rl.evaluation.output_contract import (
     SOLVER_REQUEST_TEMPLATE_VERSION,
@@ -114,6 +117,9 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
             "target_selection_version": TARGET_SELECTION_VERSION,
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
+            "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
+            "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
             "checkpoint_version": CHECKPOINT_VERSION,
             "exact_request_identity_version": PROMPT_QUESTION_EVALUATOR_VERSION,
             "solver_request_template_version": SOLVER_REQUEST_TEMPLATE_VERSION,

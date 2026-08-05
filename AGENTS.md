@@ -52,7 +52,7 @@ implements it as:
 
 ```text
 method_version = member_aware_peer_state_v10
-checkpoint_version = 18
+checkpoint_version = 19
 ```
 
 For every execution or artifact analysis, verify those and all other runtime
@@ -843,7 +843,7 @@ multi_dataset_diverse_rl/versions.py
 ```
 
 This is the source of truth for actual runtime identifiers. The compact method
-uses checkpoint version 18; implementation, persistence, and tests must remain
+uses checkpoint version 19; implementation, persistence, and tests must remain
 consistent with it.
 
 ### Configuration and protocols
@@ -976,6 +976,14 @@ The request-template version is part of Solver request and shared-cache
 identity. Student sees the output contract to avoid conflicts, but reproducing
 the immutable interface is not part of prompt search.
 
+Every mutable prompt must pass the shared deterministic contract validator at
+initial load, checkpoint restore, candidate parsing, accepted-state commit, and
+Solver construction. Mutable prompts must not contain any recognizable
+`FINAL_ANSWER` marker, copied Solver-interface heading, fixed answer payload, or
+final-response formatting instruction. Reject contaminated candidates without
+stripping or rewriting them. A protocol-only proposal failure must not advance
+repairability-freeze state.
+
 Do not loosen the parser to hide model-output failures. Invalid recovery occurs
 before the prompt-question cache stores an observation. It retries only strict
 parser-invalid results with identical requests, stops at the first valid
@@ -991,6 +999,12 @@ multi_dataset_diverse_rl/llm_client.py
 Owns role endpoints, post-hoc token/call accounting, transient retries, and
 timeouts. Transport retry and semantic proposal revision are distinct control
 flows.
+
+The canonical default credential environment is `DASHSCOPE_API_KEY` for all
+three roles. The canonical OpenAI-compatible endpoint is the project-scoped
+Beijing Model Studio URL declared in `provider_credentials.py`; an explicit
+`DASHSCOPE_BASE_URL` environment value may override it. Never persist or print
+the API key.
 
 Teacher, Critic, and Student outputs are bounded structurally rather than by
 experiment-level completion-token budgets. S5 uses one repair pattern, at most

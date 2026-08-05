@@ -66,7 +66,7 @@ def optimizer():
             ),
             "preservation_rule": "Preserve every conclusion that still passes the verified rule.",
         }
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             parent = user_prompt.split("ParentPrompt:\n", 1)[1].split(
                 "\nApprovedRepairPlan:", 1
             )[0]
@@ -156,7 +156,7 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
                     "feedback": "Specify the verification order.",
                 })
             return approved_critic_payload(system_prompt)
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return json.dumps({"candidate_prompts": ["agent-0-mid"]})
         return json.dumps({
             "failure_pattern": "a residual reasoning check is skipped",
@@ -177,7 +177,7 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
     async def partial_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
         if "Check only explicit hard blockers" in system_prompt:
             return approved_critic_payload(system_prompt)
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return json.dumps({
                 "candidate_prompts": ["agent-0-base", "agent-0-mid"]
             })

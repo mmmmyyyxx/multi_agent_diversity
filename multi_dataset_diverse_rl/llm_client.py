@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import random
 import time
 from dataclasses import dataclass
@@ -11,6 +10,7 @@ from typing import Any, Awaitable, Callable
 from openai import AsyncOpenAI
 
 from .config import Config
+from .provider_credentials import resolve_api_key, resolve_base_url
 
 
 RETRYABLE_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
@@ -50,10 +50,18 @@ class RoleAwareLLMClient:
     def _client_or_raise(self, role: str) -> AsyncOpenAI:
         if role not in self.clients:
             key_env, base_env = self._role_credentials(role)
-            key = os.getenv(key_env) if key_env else os.getenv("OPENAI_API_KEY")
-            base = os.getenv(base_env) if base_env else (os.getenv("OPENAI_BASE_URL") or os.getenv("OPENAI_API_BASE"))
+            resolved_key_env, key = resolve_api_key(key_env)
+            resolved_base_env, base = resolve_base_url(base_env)
             if not key:
-                raise ValueError(f"API key is not configured for role={role}")
+                raise ValueError(
+                    f"API key is not configured for role={role} via "
+                    f"{resolved_key_env}"
+                )
+            if not base:
+                raise ValueError(
+                    f"API base URL is not configured for role={role} via "
+                    f"{resolved_base_env}"
+                )
             self.clients[role] = AsyncOpenAI(api_key=key, base_url=base)
         return self.clients[role]
 

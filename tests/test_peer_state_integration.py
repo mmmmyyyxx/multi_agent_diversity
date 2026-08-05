@@ -42,7 +42,7 @@ APPROVED = {"failed_checks": [], "risk_case_ids": [], "feedback": ""}
 async def fake_optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
     if "Check only explicit hard blockers" in system_prompt:
         return json.dumps(APPROVED)
-    if system_prompt == "Return strict JSON only.":
+    if system_prompt.startswith("Return strict JSON only."):
         return json.dumps({"candidate_prompts": ["repair-q0"]})
     return json.dumps(TEACHER)
 
@@ -242,7 +242,7 @@ def test_only_valid_critic_rejection_consumes_semantic_revision(tmp_path):
                     "feedback": "Specify the executable verification order.",
                 })
             return json.dumps(APPROVED)
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return json.dumps({"candidate_prompts": ["repair-q0"]})
         teacher_calls += 1
         teacher_system_requests.append(system_prompt)
@@ -304,7 +304,7 @@ def test_teacher_revision_preserves_cumulative_hard_check_constraints(tmp_path):
                 "risk_case_ids": [],
                 "feedback": "The revised rule is still vague.",
             })
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return json.dumps({"candidate_prompts": ["repair-q0"]})
         teacher_calls += 1
         if teacher_calls == 2:
@@ -387,7 +387,7 @@ def test_teacher_truncation_retries_identical_request_without_semantic_round_use
             return result("{", finish_reason="length")
         if "Check only explicit hard blockers" in system_prompt:
             return result(json.dumps(APPROVED))
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             return result(json.dumps({"candidate_prompts": ["repair-q0"]}))
         return result(json.dumps(TEACHER))
 
@@ -477,7 +477,7 @@ def test_terminal_failure_taxonomy(
 
     async def chat(_model, system_prompt, _user_prompt, _temperature, _max_tokens, _role):
         is_critic = "Check only explicit hard blockers" in system_prompt
-        is_student = system_prompt == "Return strict JSON only."
+        is_student = system_prompt.startswith("Return strict JSON only.")
         if scenario == "transport" and not is_critic and not is_student:
             raise ConnectionError("offline transport fault")
         if scenario.startswith("teacher_") and not is_critic and not is_student:
@@ -602,7 +602,7 @@ def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):
         nonlocal student_calls
         if "Check only explicit hard blockers" in system_prompt:
             return json.dumps(APPROVED)
-        if system_prompt == "Return strict JSON only.":
+        if system_prompt.startswith("Return strict JSON only."):
             student_calls += 1
             return json.dumps({"candidate_prompts": ["parent", "repair-q0"]})
         return json.dumps(TEACHER)

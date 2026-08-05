@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import subprocess
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from ..config import Config
+from ..provider_credentials import resolve_base_url
 from ..diagnosis_aggregation import (
     ANSWER_ROLE_ENCODING_VERSION,
     DIAGNOSIS_AGGREGATION_VERSION,
@@ -32,14 +32,17 @@ PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
 from ..versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
     EVALUATION_PROTOCOL_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
@@ -97,9 +100,9 @@ def config_fingerprint(cfg: Config) -> str:
     for operational in ("out_dir", "resume_from_checkpoint"):
         values.pop(operational, None)
     values["endpoint_identity"] = {
-        "solver": os.getenv(cfg.models.solver_base_url_env, "") if cfg.models.solver_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
-        "optimizer": os.getenv(cfg.models.optimizer_base_url_env, "") if cfg.models.optimizer_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
-        "evaluator": os.getenv(cfg.models.evaluator_base_url_env, "") if cfg.models.evaluator_base_url_env else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", "")),
+        "solver": resolve_base_url(cfg.models.solver_base_url_env)[1],
+        "optimizer": resolve_base_url(cfg.models.optimizer_base_url_env)[1],
+        "evaluator": resolve_base_url(cfg.models.evaluator_base_url_env)[1],
     }
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
@@ -132,6 +135,9 @@ def config_fingerprint(cfg: Config) -> str:
         "total_candidate_prompt_max_chars": cfg.tcs.total_candidate_prompt_max_chars,
         "student_count_policy": "reject_excess_keep_individually_valid_v1",
         "student_invalid_recovery": STUDENT_INVALID_RECOVERY_VERSION,
+        "mutable_prompt_contract": MUTABLE_PROMPT_CONTRACT_VERSION,
+        "student_prompt_contract": STUDENT_PROMPT_CONTRACT_VERSION,
+        "candidate_protocol_filter": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "model_facing_payload_version": "audit_hash_isolated_v2",
         "terminal_failure_version": "role_specific_terminal_failure_v1",
         "solver_request_template": SOLVER_REQUEST_TEMPLATE_VERSION,
@@ -159,11 +165,7 @@ def solver_request_identity(cfg: Config) -> str:
 
 
 def solver_request_components(cfg: Config) -> dict[str, Any]:
-    endpoint = (
-        os.getenv(cfg.models.solver_base_url_env, "")
-        if cfg.models.solver_base_url_env
-        else os.getenv("OPENAI_BASE_URL", os.getenv("OPENAI_API_BASE", ""))
-    )
+    endpoint = resolve_base_url(cfg.models.solver_base_url_env)[1]
     output_contract = solver_output_contract(cfg.data.answer_format)
     request_template = solver_system_prompt("<DECISION_PROCEDURE>", cfg.data.answer_format)
     return {

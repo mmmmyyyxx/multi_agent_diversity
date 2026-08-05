@@ -48,6 +48,10 @@ from .evaluation.output_contract import (
     solver_output_contract,
     solver_system_prompt,
 )
+from .evaluation.mutable_prompt_contract import (
+    mutable_prompt_violation_reasons,
+    validate_mutable_decision_procedure,
+)
 from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
 from .llm_client import LLMCallResult, RoleAwareLLMClient
@@ -114,6 +118,7 @@ from .tcs import (
     TCS_PROTOCOL_VERSION,
     TEACHER_REVISION_PROTOCOL_VERSION,
     SAMPLE_MEMORIZATION_FILTER_VERSION,
+    STUDENT_SYSTEM_PROMPT,
     TeacherRepairPlan,
     build_teacher_revision_request,
     build_critic_request,
@@ -137,15 +142,18 @@ from .tcs import (
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 from .versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     METHOD_VERSION,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     RESPONSIBILITY_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
+    STUDENT_PROMPT_CONTRACT_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
@@ -199,6 +207,8 @@ class CandidateFunnel:
     valid_candidate_count: int = 0
     schema_valid_count: int = 0
     sample_memorization_rejected: int = 0
+    output_contract_contamination_count: int = 0
+    student_non_protocol_invalid_responses: int = 0
     non_parent_count: int = 0
     deduplicated_count: int = 0
     student_retry_triggered: bool = False
@@ -496,6 +506,7 @@ class PromptEnsembleOptimizationSystem:
             prompt = normalize_prompt_text(self.cfg.training.shared_prompt)
             if not prompt:
                 raise ValueError("shared_prompt must be non-empty")
+            validate_mutable_decision_procedure(prompt)
             return [prompt] * self.cfg.training.agents
         if self.cfg.training.initialization_mode != "provided_prompt_set":
             raise ValueError(f"Unknown initialization mode: {self.cfg.training.initialization_mode}")
@@ -510,6 +521,8 @@ class PromptEnsembleOptimizationSystem:
         prompts = [normalize_prompt_text(value) for value in values]
         if any(not value for value in prompts):
             raise ValueError("provided_prompt_set prompts must be non-empty strings")
+        for prompt in prompts:
+            validate_mutable_decision_procedure(prompt)
         return prompts
 
     def set_run_identity(self, identity: RunIdentity) -> None:
@@ -525,6 +538,10 @@ class PromptEnsembleOptimizationSystem:
         self.proposal_memory_run_id = hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
+
+    def validate_active_prompts(self) -> None:
+        for agent in self.agents:
+            validate_mutable_decision_procedure(agent.current_prompt)
 
     def _proposal_memory_key(
         self,
@@ -670,7 +687,10 @@ class PromptEnsembleOptimizationSystem:
                 logical_role = "solver"
             elif client_role == "evaluator":
                 logical_role = "critic"
-            elif system_prompt == "Return strict JSON only.":
+            elif system_prompt in {
+                STUDENT_SYSTEM_PROMPT,
+                "Return strict JSON only.",
+            }:
                 logical_role = "student"
             else:
                 logical_role = "teacher"
@@ -780,6 +800,7 @@ class PromptEnsembleOptimizationSystem:
         )
 
     async def initialize_fixed_probe(self, data: Sequence[Mapping[str, Any]]) -> None:
+        self.validate_active_prompts()
         self.fixed_probe = self.build_probe(data)
         self.active_profiles = list(await asyncio.gather(*(
             self.fixed_probe.evaluate_prompt(
@@ -1496,7 +1517,7 @@ class PromptEnsembleOptimizationSystem:
             try:
                 student_result = await self._chat(
                     self.cfg.models.optimizer_model,
-                    "Return strict JSON only.",
+                    STUDENT_SYSTEM_PROMPT,
                     student_request,
                     self.cfg.tcs.student_temperature,
                     None,
@@ -1542,6 +1563,8 @@ class PromptEnsembleOptimizationSystem:
             total_candidate_characters = 0
             rejection_reasons: tuple[tuple[str, ...], ...] = ()
             rejection_classes: tuple[str, ...] = ()
+            raw_values: Any = None
+            protocol_rejections: list[dict[str, Any]] = []
             if truncated:
                 failure_class = "provider_completion_truncation"
                 rejection_classes = ("provider_completion_truncation",)
@@ -1582,6 +1605,35 @@ class PromptEnsembleOptimizationSystem:
                         "sample_memorization" in reasons
                         for reasons in rejection_reasons
                     )
+                    funnel.output_contract_contamination_count += sum(
+                        "output_contract_contamination" in reasons
+                        for reasons in rejection_reasons
+                    )
+                    if isinstance(raw_values, list):
+                        for value, reasons in zip(
+                            raw_values, rejection_reasons, strict=True
+                        ):
+                            if (
+                                "output_contract_contamination" not in reasons
+                                or not isinstance(value, str)
+                            ):
+                                continue
+                            normalized_candidate = normalize_prompt_text(value)
+                            protocol_rejections.append({
+                                "candidate_hash": self.prompt_hash(
+                                    normalized_candidate
+                                ),
+                                "parent_prompt_hash": parent_prompt_hash,
+                                "rejection_reason": (
+                                    "output_contract_contamination"
+                                ),
+                                "detected_marker_type": list(
+                                    mutable_prompt_violation_reasons(
+                                        normalized_candidate
+                                    )
+                                ),
+                                "retry_index": int(attempt_index),
+                            })
                     if raw_count and 0 < len(parsed_candidates) < raw_count:
                         funnel.student_partially_valid_responses += 1
                     if not parsed_candidates:
@@ -1608,6 +1660,17 @@ class PromptEnsembleOptimizationSystem:
             funnel.schema_valid_count = len(parsed_candidates)
             if failure_class:
                 funnel.student_invalid_responses += 1
+                protocol_only_attempt = bool(
+                    parse_result is not None
+                    and raw_count > 0
+                    and len(rejection_reasons) == raw_count
+                    and all(
+                        "output_contract_contamination" in reasons
+                        for reasons in rejection_reasons
+                    )
+                )
+                if not protocol_only_attempt:
+                    funnel.student_non_protocol_invalid_responses += 1
                 if truncated:
                     funnel.student_truncated_responses += 1
             retry_triggered = bool(
@@ -1629,7 +1692,7 @@ class PromptEnsembleOptimizationSystem:
                 "context_type": type(context).__name__,
                 "context_hash": context_hash,
                 "request_hash": _request_hash(
-                    "Return strict JSON only.", student_request
+                    STUDENT_SYSTEM_PROMPT, student_request
                 ),
                 "response_hash": hashlib.sha256(
                     student_raw.encode("utf-8")
@@ -1644,6 +1707,10 @@ class PromptEnsembleOptimizationSystem:
                 "per_candidate_rejection_reasons": [
                     list(row) for row in rejection_reasons
                 ],
+                "output_contract_contamination_count": len(
+                    protocol_rejections
+                ),
+                "protocol_rejections": protocol_rejections,
                 "candidate_rejection_classes": list(rejection_classes),
                 "semantic_round": semantic_round,
                 "format_attempt": attempt_index,
@@ -1679,7 +1746,10 @@ class PromptEnsembleOptimizationSystem:
                     funnel.upstream_regeneration_count
                 ),
                 "parse_error": parse_error,
-                "response_excerpt": _response_excerpt(student_raw),
+                "response_excerpt": (
+                    "" if protocol_rejections else _response_excerpt(student_raw)
+                ),
+                "response_excerpt_omitted": bool(protocol_rejections),
                 "input_characters": len(student_request),
                 "output_characters": len(student_raw),
                 "raw_response_characters": len(student_raw),
@@ -1706,6 +1776,7 @@ class PromptEnsembleOptimizationSystem:
                     "raw_candidate_count",
                     "valid_candidate_count",
                     "candidate_rejection_classes",
+                    "output_contract_contamination_count",
                     "student_retry_triggered",
                     "student_retry_reason",
                     "student_recovered",
@@ -2072,6 +2143,7 @@ class PromptEnsembleOptimizationSystem:
         update_index: int = -1,
     ) -> list[CandidateRuntime]:
         parent_prompt = self.agents[target_agent_id].current_prompt
+        validate_mutable_decision_procedure(parent_prompt)
         memory_key: ProposalMemoryKey | None = None
         memory_entry: ProposalMemoryEntry | None = None
         memory_feedback: ProposalFailureFeedback | None = None
@@ -2540,14 +2612,26 @@ class PromptEnsembleOptimizationSystem:
             )
             if not parsed_candidates and recoverable:
                 funnel.terminal_failure_class = (
-                    "student_invalid_exhausted_after_upstream_regeneration"
+                    "proposal_protocol_failure"
+                    if (
+                        funnel.output_contract_contamination_count > 0
+                        and funnel.student_non_protocol_invalid_responses == 0
+                    )
+                    else "student_invalid_exhausted_after_upstream_regeneration"
                 )
                 funnel.terminal_failure_role = "student"
                 funnel.terminal_student_failure_class = (
                     funnel.terminal_failure_class
                 )
         elif not parsed_candidates and recoverable:
-            funnel.terminal_failure_class = "student_invalid_exhausted"
+            funnel.terminal_failure_class = (
+                "proposal_protocol_failure"
+                if (
+                    funnel.output_contract_contamination_count > 0
+                    and funnel.student_non_protocol_invalid_responses == 0
+                )
+                else "student_invalid_exhausted"
+            )
             funnel.terminal_failure_role = "student"
             funnel.terminal_student_failure_class = (
                 funnel.terminal_failure_class
@@ -2916,6 +3000,8 @@ class PromptEnsembleOptimizationSystem:
         """Return true only for a completed semantic search with no acceptance."""
 
         terminal_failure = str(funnel.terminal_failure_class or "")
+        if terminal_failure == "proposal_protocol_failure":
+            return False
         return bool(
             funnel.infrastructure_failed_updates == 0
             and (
@@ -3085,6 +3171,10 @@ class PromptEnsembleOptimizationSystem:
                 tuple(rejection_reasons)
                 if empirical_evaluation_completed
                 else (
+                    ("proposal_protocol_failure",)
+                    if funnel.terminal_failure_class
+                    == "proposal_protocol_failure"
+                    else
                     ("semantic_rejection",)
                     if funnel.terminal_failure_class
                     == "critic_semantic_rejection_exhausted"
@@ -3183,6 +3273,7 @@ class PromptEnsembleOptimizationSystem:
         old_member_opportunities_length = len(self.member_opportunities)
         agent.previous_active_prompt = old_prompt
         try:
+            validate_mutable_decision_procedure(accepted.prompt)
             agent.current_prompt = accepted.prompt
             if accepted.profile is None:
                 raise AssertionError("accepted candidate has no full fixed-probe profile")
@@ -3378,6 +3469,7 @@ class PromptEnsembleOptimizationSystem:
         *,
         validation: bool = False,
     ) -> DatasetMetrics:
+        self.validate_active_prompts()
         if validation:
             if self.validation_probe is None:
                 raise RuntimeError(
@@ -3874,6 +3966,9 @@ class PromptEnsembleOptimizationSystem:
             "total_candidate_prompt_length_limit": self.cfg.tcs.total_candidate_prompt_max_chars,
             "student_count_policy": "reject_excess_keep_individually_valid_v1",
             "student_invalid_recovery_version": STUDENT_INVALID_RECOVERY_VERSION,
+            "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
+            "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
+            "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
             "model_facing_payload_version": "audit_hash_isolated_v2",
             "terminal_failure_version": "role_specific_terminal_failure_v1",
             "checkpoint_version": CHECKPOINT_VERSION,
@@ -3944,6 +4039,10 @@ class PromptEnsembleOptimizationSystem:
                 terminal_counts[failure] = terminal_counts.get(failure, 0) + 1
         return {
             "update_count": len(funnels),
+            "output_contract_contamination_count": sum(
+                int(row.get("output_contract_contamination_count", 0))
+                for row in funnels
+            ),
             "terminal_failure_counts": terminal_counts,
             "terminal_failures": [
                 {

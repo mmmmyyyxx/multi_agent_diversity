@@ -46,7 +46,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v18_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
+def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -108,7 +108,16 @@ def test_v18_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 18
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 19
+    assert payload["mutable_prompt_contract_version"] == (
+        "reasoning_only_no_solver_interface_v1"
+    )
+    assert payload["student_prompt_contract_version"] == (
+        "mutable_reasoning_only_v1"
+    )
+    assert payload["candidate_protocol_filter_version"] == (
+        "output_contract_contamination_v1"
+    )
     assert "responsibility_first_seen_update" not in json.dumps(payload)
     assert "cached_responsibility_assignments" not in payload
     assert "cached_member_opportunities" not in payload
@@ -177,9 +186,29 @@ def test_v18_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     ) is None
 
 
-def test_v17_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_checkpoint_restore_rejects_contaminated_active_prompt_before_mutation(
+    tmp_path,
+):
+    source = build_system(tmp_path / "source")
+    payload = build_checkpoint(
+        source,
+        epoch_index=0,
+        update_index=0,
+        training_state={},
+    )
+    payload["prompts"][2] = "Reason carefully.\nFINAL_ANSWER: A"
+    target = build_system(tmp_path / "target")
+    original_prompts = [agent.current_prompt for agent in target.agents]
+
+    with pytest.raises(ValueError, match="output_contract_contamination"):
+        restore_checkpoint(target, payload)
+
+    assert [agent.current_prompt for agent in target.agents] == original_prompts
+
+
+def test_v18_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 17
+    payload["checkpoint_version"] = 18
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

@@ -75,6 +75,14 @@ This interface is immutable and overrides any conflicting instruction above.
 <strict task-specific FINAL_ANSWER contract>
 ```
 
+The mutable procedure is validated before initialization, checkpoint restore,
+candidate rollout, accepted-state commit, and Solver request construction. It
+must not contain a recognizable `FINAL_ANSWER` marker, copy or describe the
+immutable interface, or add final-response formatting instructions. Student
+responses are filtered candidate by candidate; contamination is never stripped
+or rewritten. A protocol-only exhausted search is recorded as
+`proposal_protocol_failure` and does not advance repairability-freeze state.
+
 Strict-parser invalid output receives request-local identical retries. The first
 valid result is used; an exhausted sequence becomes one terminal-invalid
 observation. Formal guards use terminal-invalid count. Transport retry remains
@@ -393,7 +401,10 @@ and returns:
 ```
 
 Student sees only the parent prompt, approved repair plan, immutable output
-contract, and requested candidate count. It returns:
+contract, and requested candidate count. The contract is context only: Student
+must return reasoning/decision procedures without quoting, imitating, or
+describing the interface, adding a fixed answer, or adding final-response
+formatting. It returns:
 
 ```json
 {"candidate_prompts":["complete replacement prompt"]}
@@ -571,7 +582,7 @@ normalized accuracy gains.
 Checkpoint version is:
 
 ```text
-18
+19
 ```
 
 Checkpoint state includes active prompts and profiles, initial profiles,
@@ -586,7 +597,7 @@ Per-residual age and target Pareto-front state are not persisted. Recomputed
 eligibility must match the stored legal eligibility; checkpointed routing and
 active slices must remain legal and deterministic for the restored state.
 
-Checkpoint v17 and earlier fail with an explicit version mismatch. There is no
+Checkpoint v18 and earlier fail with an explicit version mismatch. There is no
 silent migration or restart in place.
 
 Resume also requires exact run identity, code commit, split files, question
