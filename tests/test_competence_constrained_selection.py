@@ -7,6 +7,7 @@ from multi_dataset_diverse_rl.candidate_selection import (
     PromptCompetenceMetrics,
     TeamOutcomeMetrics,
     candidate_is_acceptable,
+    common_monotone_safe_key,
     evaluate_constraints,
     member_first_safe_key,
     vote_first_key,
@@ -17,6 +18,11 @@ from multi_dataset_diverse_rl.responsibility import (
     ProtectionContribution,
 )
 from multi_dataset_diverse_rl.versions import CANDIDATE_ACCEPTANCE_VERSION
+from multi_dataset_diverse_rl.protocol import (
+    MAIN_ABLATION_SETTINGS,
+    CandidateBudgetContract,
+    experiment_protocol,
+)
 
 
 def item(
@@ -150,6 +156,43 @@ def test_vote_improvement_can_accept_a_target_neutral_candidate():
     assert decision.objective_invariant_checked
     assert decision.pareto_dominates_incumbent
     assert candidate_is_acceptable(candidate, active)
+
+
+def test_s1_through_s4_have_identical_feasible_sets_and_ranking():
+    active = item("active")
+    candidates = (
+        item("vote-only", correct=10, vote_count=9, vote_gain=1),
+        item("target-only", correct=11, vote_count=8),
+        item("regression", correct=11, vote_count=7, vote_loss=1),
+    )
+    budget = CandidateBudgetContract(3, 3, 3, 12, 6, 6, 4)
+    protocols = [
+        experiment_protocol(
+            setting,
+            initialization_mode="shared_identical",
+            tie_policy="abstain",
+            candidate_budget_contract=budget,
+        )
+        for setting in MAIN_ABLATION_SETTINGS[1:5]
+    ]
+    feasible_sets = []
+    selected_hashes = []
+    for protocol in protocols:
+        assert protocol.candidate_acceptance_policy == (
+            "fixed_peer_monotone_target_or_vote"
+        )
+        assert protocol.candidate_ranking_policy == "common_monotone_safe"
+        feasible = [
+            candidate
+            for candidate in candidates
+            if evaluate_constraints(candidate, active).passed
+        ]
+        feasible_sets.append(tuple(row.prompt_hash for row in feasible))
+        selected_hashes.append(
+            max(feasible, key=common_monotone_safe_key).prompt_hash
+        )
+    assert len(set(feasible_sets)) == 1
+    assert len(set(selected_hashes)) == 1
 
 
 def test_neutral_target_and_vote_is_not_an_accepted_update():

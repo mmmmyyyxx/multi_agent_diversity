@@ -43,11 +43,11 @@ def test_formal_stage_matrices_are_exact():
         (46,),
         (
             "shared_baseline",
-            "shared_independent_accuracy",
-            "shared_peer_state_vote_first",
-            "shared_peer_state_member_first_safe",
+            "shared_generic_evolution",
+            "shared_vote_state_diagnosis",
             "shared_member_aware_responsibility",
-            "shared_member_aware_full",
+            "shared_responsibility_conditioned_evolution",
+            "shared_full_rcru",
         ),
         8,
         False,
@@ -56,14 +56,14 @@ def test_formal_stage_matrices_are_exact():
     assert _expected_matrix("cross_task") == (
         ("geometric_shapes", "ruin_names"),
         (44, 45, 46),
-        ("shared_baseline", "shared_member_aware_full"),
+        ("shared_baseline", "shared_full_rcru"),
         32,
         True,
     )
     assert _expected_matrix("strict_v2_witness") == (
         ("disambiguation_qa",),
         (46,),
-        ("shared_baseline", "shared_peer_state_member_first_safe"),
+        ("shared_baseline", "shared_vote_state_diagnosis"),
         0,
         True,
     )
@@ -72,9 +72,10 @@ def test_formal_stage_matrices_are_exact():
         (44, 45, 46),
         (
             "shared_baseline",
-            "shared_peer_state_member_first_safe",
+            "shared_vote_state_diagnosis",
             "shared_member_aware_responsibility",
-            "shared_member_aware_full",
+            "shared_responsibility_conditioned_evolution",
+            "shared_full_rcru",
         ),
         32,
         True,
@@ -187,7 +188,7 @@ def test_matched_observation_gate_rejects_unchanged_prompt_metric_drift():
     }
     unchanged = {
         **baseline,
-        "setting": "shared_member_aware_full",
+        "setting": "shared_full_rcru",
         "selected_test": {
             "per_agent_correct_counts": [12, 12, 12, 12, 12],
             "vote_correct_count": 12,
@@ -223,7 +224,7 @@ def test_comparison_cache_chain_requires_previous_post_run_reference():
             "complete": True,
             "task": "toy",
             "seed": 46,
-            "setting": "shared_member_aware_full",
+            "setting": "shared_full_rcru",
             "comparison_cache_match": {
                 "gate": "PASS",
                 "matched": True,
@@ -345,7 +346,7 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
         "shared_solver_cache_path": str(tmp_path / "cache.sqlite"),
     }
     s3 = Config.from_flat(
-        **common, experiment_setting="shared_peer_state_member_first_safe",
+        **common, experiment_setting="shared_vote_state_diagnosis",
     )
     s4 = Config.from_flat(
         **common, experiment_setting="shared_member_aware_responsibility",
@@ -370,7 +371,7 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
     assert left.key("prompt", "question") == right.key("prompt", "question")
     changed_contract = Config.from_flat(
         **common,
-        experiment_setting="shared_peer_state_member_first_safe",
+        experiment_setting="shared_vote_state_diagnosis",
         answer_format="yes_no",
     )
     assert solver_request_identity(s3) != solver_request_identity(changed_contract)

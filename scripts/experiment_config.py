@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from typing import Any, Iterable, Mapping
 
 from multi_dataset_diverse_rl.config import Config
-from multi_dataset_diverse_rl.protocol import canonical_experiment_setting
+from multi_dataset_diverse_rl.protocol import (
+    LEGACY_CONTROL_SETTINGS,
+    MAIN_ABLATION_SETTINGS,
+    canonical_experiment_setting,
+)
 
 
 @dataclass(frozen=True)
@@ -17,7 +21,7 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "member_aware_peer_state_v11",
+    "method_version": "member_aware_peer_state_v12",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",
@@ -25,16 +29,13 @@ COMMON = {
     "proposal_memory_mode": "off",
 }
 
-SETTING_NAMES = (
-    "shared_baseline",
-    "shared_independent_accuracy",
-    "shared_peer_state_vote_first",
-    "shared_peer_state_member_first_safe",
-    "shared_member_aware_responsibility",
-    "shared_member_aware_full",
-)
+SETTING_NAMES = MAIN_ABLATION_SETTINGS
 
 ALL_EXPERIMENT_SETTINGS = [ExperimentSetting(name, COMMON) for name in SETTING_NAMES]
+LEGACY_EXPERIMENT_SETTINGS = [
+    ExperimentSetting(name, {**COMMON, "allow_legacy_setting": True})
+    for name in LEGACY_CONTROL_SETTINGS
+]
 DEFAULT_EXPERIMENT_SETTINGS = ALL_EXPERIMENT_SETTINGS
 DEFAULT_EXPERIMENT_SETTING_NAMES = list(SETTING_NAMES)
 
@@ -46,10 +47,22 @@ def parse_csv_list(raw: str) -> list[str]:
 def select_settings(
     raw: str,
     settings: Iterable[ExperimentSetting] = ALL_EXPERIMENT_SETTINGS,
+    *,
+    allow_legacy_setting: bool = False,
 ) -> list[ExperimentSetting]:
     available = {setting.name: setting for setting in settings}
+    if allow_legacy_setting:
+        available.update(
+            {setting.name: setting for setting in LEGACY_EXPERIMENT_SETTINGS}
+        )
     requested_names = list(available) if not raw or raw == "all" else parse_csv_list(raw)
-    names = [canonical_experiment_setting(name) for name in requested_names]
+    names = [
+        canonical_experiment_setting(
+            name,
+            allow_legacy_setting=allow_legacy_setting,
+        )
+        for name in requested_names
+    ]
     missing = [name for name in names if name not in available]
     if missing:
         raise ValueError(f"Unknown experiment setting: {missing}")

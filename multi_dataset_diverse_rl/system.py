@@ -12,6 +12,7 @@ from .candidate_selection import (
     CandidateEvaluation,
     ConstraintDecision,
     StageASelectionDecision,
+    common_monotone_safe_key,
     evaluate_constraints,
     individual_accuracy_key,
     member_first_safe_key,
@@ -71,7 +72,13 @@ from .proposal_memory import (
 )
 from .persistence.artifacts import ArtifactWriter
 from .persistence.identity import RunIdentity, solver_request_components, solver_request_identity
-from .protocol import CandidateBudgetContract, ExperimentProtocol, experiment_protocol
+from .protocol import (
+    CandidateBudgetContract,
+    ExperimentProtocol,
+    added_module_vs_previous,
+    experiment_protocol,
+    setting_index,
+)
 from .responsibility import (
     FREEZE_FAILURE_THRESHOLD,
     FREEZE_OTHER_ACCEPT_THRESHOLD,
@@ -91,6 +98,15 @@ from .responsibility import (
     refresh_frozen_member_states,
     responsibility_portfolios,
     target_priorities,
+)
+from .responsibility_contribution import (
+    RobustContributionDecision,
+    build_rcru_incumbent_cache,
+    build_responsibility_contribution_metrics,
+    evaluate_robust_contribution_constraints,
+    responsibility_contribution_pareto_front,
+    responsibility_contribution_pareto_front_numbers,
+    robust_contribution_key,
 )
 from .tasks import get_task_spec
 from .team_differentiation import (
@@ -145,12 +161,20 @@ from .versions import (
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    COALITION_CONTRIBUTION_VERSION,
+    COMMON_UPDATE_POLICY_VERSION,
     EVALUATION_PROTOCOL_VERSION,
+    EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
+    MINIMAL_EDIT_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
+    PROTOCOL_RESOLUTION_VERSION,
     RESPONSIBILITY_VERSION,
+    RESPONSIBILITY_UTILITY_VERSION,
+    RCRU_VERSION,
+    ROBUST_SUPPORT_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     STUDENT_PROMPT_CONTRACT_VERSION,
@@ -183,7 +207,7 @@ class CandidateRuntime:
     final_evaluation: CandidateEvaluation | None = None
     profile: tuple[PromptAnswer, ...] | None = None
     stage_a_decision: StageASelectionDecision | None = None
-    constraint: ConstraintDecision | None = None
+    constraint: ConstraintDecision | RobustContributionDecision | None = None
 
 
 @dataclass
@@ -233,6 +257,10 @@ class CandidateFunnel:
     rejected_team_vote_regression: int = 0
     rejected_no_target_or_vote_progress: int = 0
     rejected_terminal_invalid_regression: int = 0
+    rejected_active_lane_regression: int = 0
+    rejected_no_vote_or_lane_progress: int = 0
+    rejected_insufficient_lane_support: int = 0
+    rejected_negative_lane_bootstrap_lcb: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
     terminal_failure_class: str = ""
@@ -293,11 +321,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v11 requires exactly five agents")
+            raise ValueError(f"{METHOD_VERSION} requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v11 requires plurality aggregation")
+            raise ValueError(f"{METHOD_VERSION} requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v11 requires tie-as-abstain")
+            raise ValueError(f"{METHOD_VERSION} requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -360,6 +388,7 @@ class PromptEnsembleOptimizationSystem:
         self.g_transition_audit: list[dict[str, Any]] = []
         self.specialization_trajectory: list[dict[str, Any]] = []
         self.candidate_decisions: list[dict[str, Any]] = []
+        self.rcru_candidate_decisions: list[dict[str, Any]] = []
         self.tcs_context_history: list[dict[str, Any]] = []
         self.tcs_rounds: list[dict[str, Any]] = []
         self.student_recovery_observations: list[dict[str, Any]] = []
@@ -498,6 +527,7 @@ class PromptEnsembleOptimizationSystem:
             initialization_mode=self.cfg.training.initialization_mode,
             tie_policy=self.cfg.peer_state.vote_tie_break,
             candidate_budget_contract=budget,
+            allow_legacy_setting=self.cfg.training.allow_legacy_setting,
         )
 
     def _initial_prompts(self) -> list[str]:
@@ -2664,6 +2694,7 @@ class PromptEnsembleOptimizationSystem:
         candidates: Sequence[CandidateRuntime],
         assigned_hashes: set[str],
         funnel: CandidateFunnel,
+        update_index: int = 0,
     ) -> tuple[CandidateRuntime | None, CandidateEvaluation, list[CandidateRuntime]]:
         if self.fixed_probe is None:
             raise RuntimeError("fixed probe is not initialized")
@@ -2696,6 +2727,36 @@ class PromptEnsembleOptimizationSystem:
         _, stage_a_initial = subset_profiles(
             self.fixed_probe.examples, self.initial_profiles, indices
         )
+        rcru_enabled = (
+            self.protocol.candidate_acceptance_policy
+            == "responsibility_robust_contribution"
+        )
+        active_lane = self.cached_active_lane_by_agent.get(target_agent_id)
+        if rcru_enabled and (active_lane is None or not assigned_hashes):
+            raise ValueError("RCRU requires the target active responsibility slice")
+        stage_a_active_hashes = tuple(
+            example.question_hash
+            for example in stage_a_examples
+            if example.question_hash in assigned_hashes
+        )
+        if rcru_enabled and not stage_a_active_hashes:
+            raise ValueError("RCRU Stage A active slice is empty")
+        stage_a_rcru_cache = (
+            build_rcru_incumbent_cache(
+                examples=stage_a_examples,
+                active_profiles=stage_a_active,
+                target_agent_id=target_agent_id,
+                active_question_hashes=stage_a_active_hashes,
+                active_lane=active_lane.value,
+                parent_prompt=active_prompt,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                run_seed=self.cfg.training.seed,
+            )
+            if rcru_enabled
+            else None
+        )
         for candidate in candidates:
             partial = await self.fixed_probe.evaluate_prompt_indices(
                 target_agent_id, candidate.prompt, candidate.prompt_hash, indices, self.solve,
@@ -2716,8 +2777,41 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
+            if rcru_enabled:
+                candidate.stage_a_evaluation = replace(
+                    candidate.stage_a_evaluation,
+                    responsibility_contribution=(
+                        build_responsibility_contribution_metrics(
+                            examples=stage_a_examples,
+                            active_profiles=stage_a_active,
+                            candidate_profile=stage_a_profile,
+                            target_agent_id=target_agent_id,
+                            active_question_hashes=stage_a_active_hashes,
+                            active_lane=active_lane.value,
+                            parent_prompt=active_prompt,
+                            candidate_prompt=candidate.prompt,
+                            candidate_prompt_hash=candidate.prompt_hash,
+                            normalize_answer=self.normalize_answer,
+                            match_answer=self.match_answer,
+                            tie_break=self.protocol.tie_policy,
+                            run_seed=self.cfg.training.seed,
+                            team_state_version=self.team_state_version,
+                            update_index=update_index,
+                            incumbent_cache=stage_a_rcru_cache,
+                        )
+                    ),
+                )
         funnel.stage_a_evaluated = len(candidates)
-        if self.protocol.candidate_selection_policy == "individual_first_safe":
+        if self.protocol.stage_a_policy == "matched_all_generated":
+            shortlist = list(candidates)
+            for rank, candidate in enumerate(candidates, start=1):
+                candidate.stage_a_decision = StageASelectionDecision(
+                    selected=True,
+                    selected_by_channels=("matched_all_generated",),
+                    pareto_front=1,
+                    aggregate_rank=rank,
+                )
+        elif self.protocol.stage_a_policy == "legacy_individual_first":
             shortlist = sorted(
                 candidates,
                 key=lambda row: individual_accuracy_key(row.stage_a_evaluation, row.generation),
@@ -2730,7 +2824,7 @@ class PromptEnsembleOptimizationSystem:
                     pareto_front=1,
                     aggregate_rank=0,
                 )
-        elif self.protocol.candidate_selection_policy == "vote_first_safe":
+        elif self.protocol.stage_a_policy == "legacy_vote_first":
             shortlist = sorted(
                 candidates,
                 key=lambda row: vote_first_key(row.stage_a_evaluation, row.generation),
@@ -2743,7 +2837,7 @@ class PromptEnsembleOptimizationSystem:
                     pareto_front=1,
                     aggregate_rank=0,
                 )
-        elif self.protocol.candidate_selection_policy == "member_first_safe":
+        elif self.protocol.stage_a_policy == "legacy_member_multichannel":
             evaluation_to_runtime = {row.stage_a_evaluation.prompt_hash: row for row in candidates}
             selected, decisions = stage_a_multichannel_shortlist(
                 [row.stage_a_evaluation for row in candidates],
@@ -2755,8 +2849,8 @@ class PromptEnsembleOptimizationSystem:
                 candidate.stage_a_decision = decisions[candidate.prompt_hash]
         else:
             raise ValueError(
-                "Unknown candidate selection policy: "
-                f"{self.protocol.candidate_selection_policy}"
+                "Unknown Stage A policy: "
+                f"{self.protocol.stage_a_policy}"
             )
         funnel.selected_by_team_vote_channel = sum(
             candidate.stage_a_decision.selected
@@ -2774,6 +2868,22 @@ class PromptEnsembleOptimizationSystem:
             for candidate in candidates
         )
 
+        full_rcru_cache = (
+            build_rcru_incumbent_cache(
+                examples=self.fixed_probe.examples,
+                active_profiles=self.active_profiles,
+                target_agent_id=target_agent_id,
+                active_question_hashes=tuple(sorted(assigned_hashes)),
+                active_lane=active_lane.value,
+                parent_prompt=active_prompt,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                run_seed=self.cfg.training.seed,
+            )
+            if rcru_enabled
+            else None
+        )
         feasible: list[CandidateRuntime] = []
         acceptable: list[CandidateRuntime] = []
         for candidate in shortlist:
@@ -2795,10 +2905,47 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
-            candidate.constraint = evaluate_constraints(
-                candidate.final_evaluation,
-                incumbent,
-            )
+            if rcru_enabled:
+                candidate.final_evaluation = replace(
+                    candidate.final_evaluation,
+                    responsibility_contribution=(
+                        build_responsibility_contribution_metrics(
+                            examples=self.fixed_probe.examples,
+                            active_profiles=self.active_profiles,
+                            candidate_profile=candidate.profile,
+                            target_agent_id=target_agent_id,
+                            active_question_hashes=tuple(sorted(assigned_hashes)),
+                            active_lane=active_lane.value,
+                            parent_prompt=active_prompt,
+                            candidate_prompt=candidate.prompt,
+                            candidate_prompt_hash=candidate.prompt_hash,
+                            normalize_answer=self.normalize_answer,
+                            match_answer=self.match_answer,
+                            tie_break=self.protocol.tie_policy,
+                            run_seed=self.cfg.training.seed,
+                            team_state_version=self.team_state_version,
+                            update_index=update_index,
+                            incumbent_cache=full_rcru_cache,
+                        )
+                    ),
+                )
+                candidate.constraint = evaluate_robust_contribution_constraints(
+                    candidate.final_evaluation,
+                    incumbent,
+                )
+            elif self.protocol.candidate_acceptance_policy in {
+                "fixed_peer_monotone_target_or_vote",
+                "legacy_monotone_safe",
+            }:
+                candidate.constraint = evaluate_constraints(
+                    candidate.final_evaluation,
+                    incumbent,
+                )
+            else:
+                raise ValueError(
+                    "Unknown candidate acceptance policy: "
+                    f"{self.protocol.candidate_acceptance_policy}"
+                )
             if candidate.constraint.passed:
                 feasible.append(candidate)
             for reason in candidate.constraint.rejection_reasons:
@@ -2811,26 +2958,47 @@ class PromptEnsembleOptimizationSystem:
                     "terminal_invalid_regression": (
                         "rejected_terminal_invalid_regression"
                     ),
+                    "active_lane_regression": (
+                        "rejected_active_lane_regression"
+                    ),
+                    "no_vote_or_lane_progress": (
+                        "rejected_no_vote_or_lane_progress"
+                    ),
+                    "insufficient_lane_support": (
+                        "rejected_insufficient_lane_support"
+                    ),
+                    "negative_lane_bootstrap_lcb": (
+                        "rejected_negative_lane_bootstrap_lcb"
+                    ),
                 }[reason]
                 setattr(funnel, field, getattr(funnel, field) + 1)
         funnel.stage_b_evaluated = len(shortlist)
         funnel.constraint_feasible = len(feasible)
 
-        if self.protocol.candidate_selection_policy == "individual_first_safe":
+        if self.protocol.candidate_ranking_policy == "common_monotone_safe":
+            acceptable = list(feasible)
+            accepted = max(
+                acceptable,
+                key=lambda row: common_monotone_safe_key(
+                    row.final_evaluation, row.generation
+                ),
+                default=None,
+            )
+        elif self.protocol.candidate_ranking_policy == "individual_first_safe":
             acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: individual_accuracy_key(row.final_evaluation, row.generation),
                 default=None,
             )
-        elif self.protocol.candidate_selection_policy == "vote_first_safe":
+        elif self.protocol.candidate_ranking_policy == "vote_first_safe":
             acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: vote_first_key(row.final_evaluation, row.generation),
                 default=None,
             )
-        elif self.protocol.candidate_selection_policy == "member_first_safe":
+        elif self.protocol.candidate_ranking_policy == "member_first_safe":
             acceptable = list(feasible)
             accepted = max(
                 acceptable,
@@ -2839,13 +3007,122 @@ class PromptEnsembleOptimizationSystem:
                 ),
                 default=None,
             )
+        elif (
+            self.protocol.candidate_ranking_policy
+            == "responsibility_contribution_pareto"
+        ):
+            acceptable = list(feasible)
+            frontier_evaluations = responsibility_contribution_pareto_front(
+                [row.final_evaluation for row in acceptable]
+            )
+            frontier_hashes = {
+                row.prompt_hash for row in frontier_evaluations
+            }
+            frontier = [
+                row for row in acceptable if row.prompt_hash in frontier_hashes
+            ]
+            accepted = max(
+                frontier,
+                key=lambda row: robust_contribution_key(
+                    row.final_evaluation, row.generation
+                ),
+                default=None,
+            )
         else:
             raise ValueError(
                 "Unknown candidate selection policy: "
-                f"{self.protocol.candidate_selection_policy}"
+                f"{self.protocol.candidate_ranking_policy}"
             )
         funnel.acceptable_candidates = len(acceptable)
         funnel.accepted_candidate = accepted is not None
+        if rcru_enabled:
+            contribution_fronts = (
+                responsibility_contribution_pareto_front_numbers(
+                    [row.final_evaluation for row in feasible]
+                )
+                if feasible
+                else {}
+            )
+            for row in shortlist:
+                evaluation = row.final_evaluation
+                constraint = row.constraint
+                if (
+                    evaluation is None
+                    or evaluation.responsibility_contribution is None
+                    or not isinstance(constraint, RobustContributionDecision)
+                ):
+                    raise ValueError("rcru_metrics_missing_for_candidate")
+                metrics = evaluation.responsibility_contribution
+                utility = metrics.utility
+                coalition = metrics.coalition
+                robust = metrics.robust_support
+                edit = metrics.edit
+                layer1_passed = bool(
+                    constraint.target_nonregression_passed
+                    and constraint.team_vote_nonregression_passed
+                    and constraint.terminal_invalid_nonregression_passed
+                )
+                layer2_passed = bool(
+                    layer1_passed
+                    and constraint.active_lane_nonregression_passed
+                    and constraint.vote_or_lane_progress_passed
+                )
+                layer3_passed = bool(
+                    layer2_passed
+                    and constraint.minimum_support_passed
+                    and constraint.bootstrap_guard_passed
+                )
+                self.rcru_candidate_decisions.append({
+                    "artifact_schema_version": "rcru_candidate_decision_v1",
+                    "update_index": int(update_index),
+                    "team_state_version": int(self.team_state_version),
+                    "target_agent_id": int(target_agent_id),
+                    "candidate_prompt_hash": row.prompt_hash,
+                    "repair_lane": utility.repair_lane,
+                    "active_residual_count": utility.active_residual_count,
+                    "target_gain": constraint.target_gain,
+                    "vote_gain": constraint.vote_gain,
+                    "terminal_invalid_delta": (
+                        evaluation.competence.terminal_invalid_count
+                        - incumbent.competence.terminal_invalid_count
+                    ),
+                    "incumbent_lane_utility": utility.incumbent_utility_total,
+                    "candidate_lane_utility": utility.utility_total,
+                    "lane_utility_delta": utility.utility_delta,
+                    "positive_support_count": utility.positive_support_count,
+                    "negative_support_count": utility.negative_support_count,
+                    "incumbent_positive_pivotal_count": (
+                        coalition.incumbent_positive_pivotal_count
+                    ),
+                    "candidate_positive_pivotal_count": (
+                        coalition.positive_pivotal_count
+                    ),
+                    "incumbent_negative_pivotal_count": (
+                        coalition.incumbent_negative_pivotal_count
+                    ),
+                    "candidate_negative_pivotal_count": (
+                        coalition.negative_pivotal_count
+                    ),
+                    "net_contribution_delta": (
+                        coalition.net_contribution_delta
+                    ),
+                    "bootstrap_replicates": robust.bootstrap_replicates,
+                    "bootstrap_lcb": robust.bootstrap_lcb,
+                    "bootstrap_seed_hash": robust.deterministic_seed_hash,
+                    "parent_character_count": edit.parent_character_count,
+                    "candidate_character_count": edit.candidate_character_count,
+                    "character_growth": edit.character_growth,
+                    "total_edit_token_count": edit.total_edit_token_count,
+                    "normalized_edit_ratio": edit.normalized_edit_ratio,
+                    "layer1_passed": layer1_passed,
+                    "layer2_passed": layer2_passed,
+                    "layer3_passed": layer3_passed,
+                    "rejection_reasons": list(constraint.rejection_reasons),
+                    "contribution_pareto_front": contribution_fronts.get(
+                        row.prompt_hash
+                    ),
+                    "selected": accepted is row,
+                })
         return accepted, incumbent, list(candidates)
 
     def _update_candidate_search_outcome(
@@ -3041,10 +3318,12 @@ class PromptEnsembleOptimizationSystem:
                 self.early_stop_reason = "all_actionable_members_frozen"
             self.candidate_decisions.append({
                 "update_index": update_index,
-                "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
+                "acceptance_policy": self.protocol.candidate_acceptance_policy,
                 "candidate_selection_policy": (
                     self.protocol.candidate_selection_policy
                 ),
+                "candidate_ranking_policy": self.protocol.candidate_ranking_policy,
+                "stage_a_policy": self.protocol.stage_a_policy,
                 "team_objective_role": "derived_invariant_diagnostic",
                 "update_lane": no_actionable_reason,
                 "target_agent_id": None,
@@ -3093,7 +3372,11 @@ class PromptEnsembleOptimizationSystem:
             target, assigned_hashes, funnel, update_index=update_index,
         )
         accepted, incumbent, evaluated = await self.evaluate_candidates(
-            target, candidates, assigned_hashes, funnel,
+            target,
+            candidates,
+            assigned_hashes,
+            funnel,
+            update_index=update_index,
         )
         self._record_proposal_memory_outcome(
             update_index=update_index,
@@ -3117,8 +3400,15 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
         decision = {
             "update_index": update_index,
-            "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
+            "acceptance_policy": (
+                RCRU_VERSION
+                if self.protocol.candidate_acceptance_policy
+                == "responsibility_robust_contribution"
+                else CANDIDATE_ACCEPTANCE_POLICY
+            ),
             "candidate_selection_policy": self.protocol.candidate_selection_policy,
+            "candidate_ranking_policy": self.protocol.candidate_ranking_policy,
+            "stage_a_policy": self.protocol.stage_a_policy,
             "team_objective_role": "derived_invariant_diagnostic",
             "update_lane": update_lane,
             "target_agent_id": target,
@@ -3913,11 +4203,31 @@ class PromptEnsembleOptimizationSystem:
         initial_hashes = [self.prompt_hash(agent.initial_prompt) for agent in self.agents]
         canonical_config = self.cfg.to_flat_dict()
         canonical_config["experiment_setting"] = self.protocol.name
+        resolved_acceptance_version = (
+            RCRU_VERSION
+            if self.protocol.candidate_acceptance_policy
+            == "responsibility_robust_contribution"
+            else CANDIDATE_ACCEPTANCE_VERSION
+        )
         return {
             "method_version": METHOD_VERSION,
-            "experiment_protocol": asdict(self.protocol),
+            "experiment_protocol": {
+                **asdict(self.protocol),
+                "candidate_selection_policy": (
+                    self.protocol.candidate_selection_policy
+                ),
+            },
             "requested_experiment_setting": self.protocol.requested_name,
             "canonical_experiment_setting": self.protocol.name,
+            "setting_index": setting_index(self.protocol.name),
+            "setting_display_name": self.protocol.display_name,
+            "module_vector": asdict(self.protocol.modules),
+            "added_module_vs_previous": added_module_vs_previous(
+                self.protocol.name
+            ),
+            "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
+            "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
+            "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
             "run_identity": self.run_identity.to_dict(),
             "initialization_mode": self.protocol.initialization_mode.value,
             "initial_prompt_hashes": initial_hashes,
@@ -3927,7 +4237,20 @@ class PromptEnsembleOptimizationSystem:
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_selection_policy": self.protocol.candidate_selection_policy,
             "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
-            "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
+            "acceptance_policy": (
+                RCRU_VERSION
+                if self.protocol.candidate_acceptance_policy
+                == "responsibility_robust_contribution"
+                else CANDIDATE_ACCEPTANCE_POLICY
+            ),
+            "candidate_acceptance_policy": (
+                self.protocol.candidate_acceptance_policy
+            ),
+            "candidate_ranking_policy": self.protocol.candidate_ranking_policy,
+            "stage_a_policy": self.protocol.stage_a_policy,
+            "resolved_candidate_acceptance_version": (
+                resolved_acceptance_version
+            ),
             "candidate_generator": self.protocol.tcs_context_policy,
             "member_objective_version": "integer_vote_min_sum_v2",
             "team_objective_role": "evaluation_trajectory_and_derived_invariant",
@@ -3940,9 +4263,14 @@ class PromptEnsembleOptimizationSystem:
             "repairability_freeze_portfolio_overlap_threshold": (
                 FREEZE_PORTFOLIO_OVERLAP_THRESHOLD
             ),
-            "stage_a_version": "team_vote_worst_mean_v2",
-            "stage_b_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "stage_a_version": self.protocol.stage_a_policy,
+            "stage_b_version": resolved_acceptance_version,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "rcru_version": RCRU_VERSION,
+            "responsibility_utility_version": RESPONSIBILITY_UTILITY_VERSION,
+            "coalition_contribution_version": COALITION_CONTRIBUTION_VERSION,
+            "robust_support_version": ROBUST_SUPPORT_VERSION,
+            "minimal_edit_version": MINIMAL_EDIT_VERSION,
             "preservation_policy_version": PRESERVATION_POLICY_VERSION,
             "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
             "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
@@ -4016,7 +4344,7 @@ class PromptEnsembleOptimizationSystem:
             "true_plurality_vote_used": True,
             "generic_diversity_reward_used": False,
             "trace_diversity_used_for_selection": False,
-            "legacy_compatibility_enabled": False,
+            "legacy_compatibility_enabled": self.protocol.legacy_protocol,
             "probe_version": self.cfg.peer_state.probe_version,
             "probe_hash": self.fixed_probe.probe_hash if self.fixed_probe else "",
             "validation_used": False,
@@ -4138,6 +4466,14 @@ class PromptEnsembleOptimizationSystem:
             self.target_responsibility_context_alignment,
         )
         self.artifacts.write_jsonl("candidate_decisions.jsonl", self.candidate_decisions)
+        if (
+            self.protocol.candidate_acceptance_policy
+            == "responsibility_robust_contribution"
+        ):
+            self.artifacts.write_jsonl(
+                "rcru_candidate_decisions_sanitized.jsonl",
+                self.rcru_candidate_decisions,
+            )
         self.artifacts.write_jsonl(
             "proposal_memory_events_sanitized.jsonl", self.proposal_memory_events,
         )

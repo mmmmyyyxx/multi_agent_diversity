@@ -43,8 +43,9 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v11"
-    experiment_setting: str = "shared_member_aware_full"
+    method_version: str = "member_aware_peer_state_v12"
+    experiment_setting: str = "shared_full_rcru"
+    allow_legacy_setting: bool = False
     agents: int = 5
     epochs: int = 3
     update_every: int = 10

@@ -19,8 +19,8 @@ from multi_dataset_diverse_rl.responsibility import RepairLane
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v11",
-        experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v12",
+        experiment_setting="shared_responsibility_conditioned_evolution",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",
         val_file_sha256="val", test_file_sha256="test",
@@ -32,6 +32,7 @@ def identity():
 def system(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path), proposal_memory_mode="state_local_v1",
+        experiment_setting="shared_responsibility_conditioned_evolution",
     )
     value = PromptEnsembleOptimizationSystem(cfg)
     value.set_run_identity(identity())
@@ -170,6 +171,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
     async def run(mode: str):
         cfg = Config.from_flat(
             out_dir=str(tmp_path / mode), proposal_memory_mode=mode,
+            experiment_setting="shared_responsibility_conditioned_evolution",
             initialization_mode="provided_prompt_set",
             provided_prompts_json=json.dumps([f"p{agent}" for agent in range(5)]),
         )

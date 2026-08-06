@@ -43,7 +43,7 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     args = build_parser().parse_args([
         "--manifest", str(manifest),
         "--tasks", "task",
-        "--settings", "shared_member_aware_full",
+        "--settings", "shared_full_rcru",
         "--seeds", "42",
         "--out_root", str(tmp_path / "runs"),
         "--train_size", "1",
@@ -58,7 +58,7 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     assert len(report["runs"]) == 1
     run = report["runs"][0]
     assert run["split_integrity"]["opt_val_question_overlap"] == 0
-    assert run["run_identity"]["experiment_setting"] == "shared_member_aware_full"
+    assert run["run_identity"]["experiment_setting"] == "shared_full_rcru"
     assert Path(run["shared_solver_cache_path"]).name == "_shared_solver_cache.sqlite"
     assert Path(run["shared_solver_cache_path"]).is_file()
     assert run["tcs_context_version"] == (
@@ -95,7 +95,7 @@ def test_run_specific_memory_preflight_keeps_its_baseline_memory_off(tmp_path, m
     monkeypatch.setenv("DASHSCOPE_BASE_URL", "https://example.invalid/v1")
     args = build_parser().parse_args([
         "--manifest", str(manifest), "--tasks", "task",
-        "--settings", "shared_baseline,shared_member_aware_full", "--seeds", "44",
+        "--settings", "shared_baseline,shared_full_rcru", "--seeds", "44",
         "--out_root", str(tmp_path / "runs"), "--train_size", "1", "--val_size", "1",
         "--test_size", "1", "--num_candidates_per_parent", "1",
         "--stage_b_candidate_budget", "1", "--proposal_memory_mode", "state_local_v1",
@@ -105,5 +105,5 @@ def test_run_specific_memory_preflight_keeps_its_baseline_memory_off(tmp_path, m
     modes = {row["setting"]: row["proposal_memory_mode"] for row in report["runs"]}
     assert modes == {
         "shared_baseline": "off",
-        "shared_member_aware_full": "state_local_v1",
+        "shared_full_rcru": "state_local_v1",
     }

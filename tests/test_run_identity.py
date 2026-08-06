@@ -16,8 +16,8 @@ from multi_dataset_diverse_rl.persistence.identity import (
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="member_aware_peer_state_v11",
-        experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v12",
+        experiment_setting="shared_full_rcru",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint=fingerprint,
@@ -81,11 +81,17 @@ def test_solver_request_identity_includes_immutable_wrapper_version():
     )
 
 
-def test_legacy_setting_alias_has_canonical_behavior_fingerprint():
+def test_legacy_setting_alias_requires_opt_in_and_has_legacy_fingerprint():
     legacy = Config.from_flat(
-        experiment_setting="shared_peer_state_member_pareto"
+        experiment_setting="shared_peer_state_member_pareto",
+        allow_legacy_setting=True,
     )
     canonical = Config.from_flat(
-        experiment_setting="shared_peer_state_member_first_safe"
+        experiment_setting="legacy_shared_peer_state_member_first_safe_v11",
+        allow_legacy_setting=True,
     )
     assert config_fingerprint(legacy) == config_fingerprint(canonical)
+    with pytest.raises(ValueError, match="allow_legacy_setting=1"):
+        config_fingerprint(Config.from_flat(
+            experiment_setting="shared_peer_state_member_pareto"
+        ))

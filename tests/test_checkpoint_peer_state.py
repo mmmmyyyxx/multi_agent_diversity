@@ -14,7 +14,7 @@ from multi_dataset_diverse_rl.proposal_memory import (
 )
 from multi_dataset_diverse_rl.responsibility import RepairLane
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
-from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION
+from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION, METHOD_VERSION
 
 
 async def solver(_question, agent_id, _prompt):
@@ -24,7 +24,8 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v11", experiment_setting="shared_member_aware_full",
+        method_version=METHOD_VERSION,
+        experiment_setting="shared_full_rcru",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -108,7 +109,9 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 20
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 21
+    assert payload["module_vector"]["robust_contribution_update"] is True
+    assert payload["resolved_stage_a_policy"] == "matched_all_generated"
     assert payload["mutable_prompt_contract_version"] == (
         "reasoning_only_no_response_format_v2"
     )
@@ -212,3 +215,57 @@ def test_v19_checkpoint_is_explicitly_incompatible(tmp_path):
     payload["checkpoint_version"] = 19
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)
+
+
+def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
+    run_identity = RunIdentity(
+        **{
+            **identity().__dict__,
+            "experiment_setting": "shared_full_rcru",
+        }
+    )
+    system = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            answer_format="option_letter",
+            experiment_setting="shared_full_rcru",
+        ),
+        solver=solver,
+    )
+    system.set_run_identity(run_identity)
+    asyncio.run(
+        system.initialize_fixed_probe([{"question": "q", "answer": "A"}])
+    )
+    system.rcru_candidate_decisions = [{
+        "candidate_prompt_hash": "hash",
+        "bootstrap_seed_hash": "seed",
+        "contribution_pareto_front": 1,
+        "selected": True,
+    }]
+    payload = build_checkpoint(
+        system, epoch_index=0, update_index=0, training_state={}
+    )
+    assert payload["canonical_experiment_setting"] == (
+        "shared_full_rcru"
+    )
+    assert payload["resolved_candidate_acceptance_policy"] == (
+        "responsibility_robust_contribution"
+    )
+    assert payload["resolved_candidate_ranking_policy"] == (
+        "responsibility_contribution_pareto"
+    )
+    assert payload["rcru_versions"]["rcru"].endswith("_v1")
+    target = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            answer_format="option_letter",
+            experiment_setting="shared_full_rcru",
+        ),
+        solver=solver,
+    )
+    target.set_run_identity(run_identity)
+    asyncio.run(
+        target.initialize_fixed_probe([{"question": "q", "answer": "A"}])
+    )
+    restore_checkpoint(target, payload)
+    assert target.rcru_candidate_decisions == system.rcru_candidate_decisions

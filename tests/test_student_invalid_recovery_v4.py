@@ -29,10 +29,10 @@ def system_for(tmp_path, chat, **overrides):
     values = {
         "out_dir": str(tmp_path),
         "answer_format": "option_letter",
-        "experiment_setting": "shared_peer_state_member_first_safe",
+        "experiment_setting": "shared_vote_state_diagnosis",
         "num_candidates_per_parent": 2,
         "stage_a_channel_top_k": 1,
-        "stage_b_candidate_budget": 1,
+        "stage_b_candidate_budget": 2,
     }
     values.update(overrides)
     return PromptEnsembleOptimizationSystem(
@@ -218,7 +218,7 @@ def test_contract_contamination_exhaustion_is_protocol_failure_without_rollout_o
     system = system_for(
         tmp_path,
         chat,
-        experiment_setting="shared_member_aware_full",
+        experiment_setting="shared_responsibility_conditioned_evolution",
     )
 
     async def run():
@@ -383,7 +383,7 @@ def test_student_exhaustion_never_updates_potential_or_stage_b(tmp_path):
     system = system_for(
         tmp_path,
         chat,
-        experiment_setting="shared_independent_accuracy",
+        experiment_setting="shared_generic_evolution",
     )
 
     async def run():

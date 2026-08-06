@@ -17,8 +17,8 @@ from scripts.run_task_level_accuracy import (
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v11",
-        experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v12",
+        experiment_setting="shared_full_rcru",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint="config",
@@ -44,26 +44,26 @@ def test_task_runner_parser_builds_and_resume_completed_is_registered_once():
 
 def test_optimized_only_allows_one_non_baseline_setting_without_synthetic_reference():
     _validate_setting_sequence(
-        ["shared_member_aware_full"],
+        ["shared_full_rcru"],
         optimized_only=True,
     )
     with pytest.raises(ValueError, match="exactly one non-baseline"):
         _validate_setting_sequence(["shared_baseline"], optimized_only=True)
     with pytest.raises(ValueError, match="exactly one non-baseline"):
         _validate_setting_sequence(
-            ["shared_member_aware_full", "shared_peer_state_vote_first"],
+            ["shared_full_rcru", "shared_vote_state_diagnosis"],
             optimized_only=True,
         )
 
 
 def test_standard_comparison_still_requires_baseline_first():
     _validate_setting_sequence(
-        ["shared_baseline", "shared_member_aware_full"],
+        ["shared_baseline", "shared_full_rcru"],
         optimized_only=False,
     )
     with pytest.raises(ValueError, match="shared_baseline first"):
         _validate_setting_sequence(
-            ["shared_member_aware_full"],
+            ["shared_full_rcru"],
             optimized_only=False,
         )
 
@@ -73,7 +73,7 @@ def test_memory_treatment_applies_only_to_responsibility_conditioned_full_run():
         "shared_baseline", "state_local_v1"
     ) == "off"
     assert effective_proposal_memory_mode(
-        "shared_member_aware_full", "state_local_v1"
+        "shared_full_rcru", "state_local_v1"
     ) == "state_local_v1"
 
 
@@ -90,7 +90,7 @@ def test_completed_run_requires_exact_identity(tmp_path):
         "history.json": [],
         "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v11",
+            "method_version": "member_aware_peer_state_v12",
             "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite",
@@ -128,7 +128,7 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
         },
         "history.json": [], "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v11", "legacy_compatibility_enabled": False,
+            "method_version": "member_aware_peer_state_v12", "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite", "run_identity": identity().to_dict(),
             "config": {"proposal_memory_mode": "state_local_v1"},

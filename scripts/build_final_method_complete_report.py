@@ -7,13 +7,14 @@ from pathlib import Path
 from typing import Any
 
 
-REPORT_VERSION = "final_method_complete_evaluation_v3"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v3"
+REPORT_VERSION = "final_method_complete_evaluation_v4"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v4"
 ABLATION_COMPARISONS = (
-    ("shared_independent_accuracy", "shared_peer_state_vote_first", "selection_preference_individual_to_vote"),
-    ("shared_peer_state_vote_first", "shared_peer_state_member_first_safe", "selection_preference_vote_to_conditional_member_first"),
-    ("shared_peer_state_member_first_safe", "shared_member_aware_responsibility", "module_member_aware_responsibility"),
-    ("shared_member_aware_responsibility", "shared_member_aware_full", "module_responsibility_conditioned_evolution"),
+    ("shared_baseline", "shared_generic_evolution", "optimization_effect"),
+    ("shared_generic_evolution", "shared_vote_state_diagnosis", "vote_state_diagnosis_effect"),
+    ("shared_vote_state_diagnosis", "shared_member_aware_responsibility", "responsibility_allocation_effect"),
+    ("shared_member_aware_responsibility", "shared_responsibility_conditioned_evolution", "responsibility_conditioned_proposal_effect"),
+    ("shared_responsibility_conditioned_evolution", "shared_full_rcru", "robust_contribution_update_effect"),
 )
 
 
@@ -215,11 +216,11 @@ def main() -> None:
         baseline = disamb_runs[("disambiguation_qa", seed, "shared_baseline")]["selected_test"]
         for setting in (
             "shared_baseline",
-            "shared_independent_accuracy",
-            "shared_peer_state_vote_first",
-            "shared_peer_state_member_first_safe",
+            "shared_generic_evolution",
+            "shared_vote_state_diagnosis",
             "shared_member_aware_responsibility",
-            "shared_member_aware_full",
+            "shared_responsibility_conditioned_evolution",
+            "shared_full_rcru",
         ):
             run = disamb_runs[("disambiguation_qa", seed, setting)]
             outcome = _member_outcome(baseline, run["selected_test"])
@@ -257,7 +258,7 @@ def main() -> None:
     for task in ("geometric_shapes", "ruin_names"):
         for seed in (44, 45, 46):
             baseline = cross_runs[(task, seed, "shared_baseline")]["selected_test"]
-            full = cross_runs[(task, seed, "shared_member_aware_full")]
+            full = cross_runs[(task, seed, "shared_full_rcru")]
             cross_rows.append({
                 "task": task,
                 "seed": seed,

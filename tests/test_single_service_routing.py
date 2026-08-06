@@ -239,7 +239,7 @@ def test_anchor_is_created_or_switched_only_by_acceptance():
 
 
 def test_setting_isolation_enables_service_flow_only_for_s4_and_s5():
-    budget = CandidateBudgetContract(2, 1, 1, 3, 1, 1, 1)
+    budget = CandidateBudgetContract(2, 1, 2, 3, 1, 1, 1)
     protocols = {
         name: experiment_protocol(
             name,
@@ -249,17 +249,16 @@ def test_setting_isolation_enables_service_flow_only_for_s4_and_s5():
         )
         for name in (
             "shared_baseline",
-            "shared_independent_accuracy",
-            "shared_peer_state_vote_first",
-            "shared_peer_state_member_first_safe",
+            "shared_generic_evolution",
+            "shared_vote_state_diagnosis",
             "shared_member_aware_responsibility",
-            "shared_member_aware_full",
+            "shared_responsibility_conditioned_evolution",
         )
     }
-    for name in tuple(protocols)[:4]:
+    for name in tuple(protocols)[:3]:
         assert not protocols[name].service_routing_enabled
         assert not protocols[name].repairability_freeze_enabled
     assert protocols["shared_member_aware_responsibility"].service_routing_enabled
-    assert protocols["shared_member_aware_full"].service_routing_enabled
+    assert protocols["shared_responsibility_conditioned_evolution"].service_routing_enabled
     assert protocols["shared_member_aware_responsibility"].tcs_context_policy == "generic_peer_state"
-    assert protocols["shared_member_aware_full"].tcs_context_policy == "member_aware_responsibility_conditioned"
+    assert protocols["shared_responsibility_conditioned_evolution"].tcs_context_policy == "member_aware_responsibility_conditioned"

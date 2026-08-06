@@ -47,7 +47,7 @@ def test_stage_a_indices_are_one_shared_deterministic_pool(tmp_path):
 def test_round_robin_peer_state_ablation_builds_global_c0_pool(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
-        experiment_setting="shared_peer_state_vote_first",
+        experiment_setting="shared_vote_state_diagnosis",
         stage_a_representative_size=0,
         stage_a_coverage_size=2,
         stage_a_conversion_size=0,
@@ -64,7 +64,7 @@ def test_round_robin_peer_state_ablation_builds_global_c0_pool(tmp_path):
 def test_representative_pool_uses_seeded_question_hash_not_file_order(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path),
-        experiment_setting="shared_peer_state_vote_first",
+        experiment_setting="shared_vote_state_diagnosis",
         stage_a_representative_size=2,
         stage_a_coverage_size=0,
         stage_a_conversion_size=0,

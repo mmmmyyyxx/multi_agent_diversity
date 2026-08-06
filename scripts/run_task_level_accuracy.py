@@ -737,7 +737,10 @@ def main() -> None:
     tasks = load_task_manifest(str((workspace / args.manifest).resolve()))
     manifest_sha256 = hashlib.sha256((workspace / args.manifest).resolve().read_bytes()).hexdigest()
     task_ids = resolve_task_ids(args.tasks, tasks, args.benchmarks)
-    settings = select_settings(args.settings)
+    settings = select_settings(
+        args.settings,
+        allow_legacy_setting=bool(args.allow_legacy_setting),
+    )
     setting_names = [setting.name for setting in settings]
     _validate_setting_sequence(
         setting_names,

@@ -23,7 +23,15 @@ from ..tcs import PreviousUpdateOutcome
 from ..versions import (
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_VERSION,
+    COALITION_CONTRIBUTION_VERSION,
+    COMMON_UPDATE_POLICY_VERSION,
+    EXPERIMENT_MATRIX_VERSION,
+    MINIMAL_EDIT_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
+    PROTOCOL_RESOLUTION_VERSION,
+    RCRU_VERSION,
+    RESPONSIBILITY_UTILITY_VERSION,
+    ROBUST_SUPPORT_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_PROMPT_CONTRACT_VERSION,
 )
@@ -78,6 +86,25 @@ def build_checkpoint(
         "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
         "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
         "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
+        "canonical_experiment_setting": system.protocol.name,
+        "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
+        "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
+        "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
+        "module_vector": asdict(system.protocol.modules),
+        "resolved_candidate_acceptance_policy": (
+            system.protocol.candidate_acceptance_policy
+        ),
+        "resolved_candidate_ranking_policy": (
+            system.protocol.candidate_ranking_policy
+        ),
+        "resolved_stage_a_policy": system.protocol.stage_a_policy,
+        "rcru_versions": {
+            "rcru": RCRU_VERSION,
+            "responsibility_utility": RESPONSIBILITY_UTILITY_VERSION,
+            "coalition_contribution": COALITION_CONTRIBUTION_VERSION,
+            "robust_support": ROBUST_SUPPORT_VERSION,
+            "minimal_edit": MINIMAL_EDIT_VERSION,
+        },
         "run_identity": system.run_identity.to_dict(),
         "probe_version": system.fixed_probe.version,
         "probe_hash": system.fixed_probe.probe_hash,
@@ -189,6 +216,7 @@ def build_checkpoint(
         "g_transition_audit": list(system.g_transition_audit),
         "specialization_trajectory": list(system.specialization_trajectory),
         "candidate_decisions": list(system.candidate_decisions),
+        "rcru_candidate_decisions": list(system.rcru_candidate_decisions),
         "tcs_context_history": list(system.tcs_context_history),
         "tcs_rounds": list(system.tcs_rounds),
         "solver_invalid_outputs": list(system.solver_invalid_outputs),
@@ -267,6 +295,14 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "mutable_prompt_contract_version",
         "student_prompt_contract_version",
         "candidate_protocol_filter_version",
+        "canonical_experiment_setting",
+        "experiment_matrix_version",
+        "protocol_resolution_version",
+        "common_update_policy_version",
+        "module_vector",
+        "resolved_candidate_acceptance_policy",
+        "resolved_candidate_ranking_policy",
+        "resolved_stage_a_policy",
     }
     if not required_member_state <= set(payload):
         raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
@@ -274,12 +310,41 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
         "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
         "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
+        "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
+        "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
+        "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
     }
     if any(
         str(payload[key]) != expected
         for key, expected in expected_contract_versions.items()
     ):
         raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
+    if str(payload.get("canonical_experiment_setting", system.protocol.name)) != (
+        system.protocol.name
+    ):
+        raise ValueError("Checkpoint candidate protocol setting is incompatible")
+    expected_acceptance = system.protocol.candidate_acceptance_policy
+    expected_ranking = system.protocol.candidate_ranking_policy
+    if payload.get("module_vector") != asdict(system.protocol.modules):
+        raise ValueError("Checkpoint module vector is incompatible")
+    if str(
+        payload.get("resolved_candidate_acceptance_policy", expected_acceptance)
+    ) != expected_acceptance or str(
+        payload.get("resolved_candidate_ranking_policy", expected_ranking)
+    ) != expected_ranking or str(
+        payload.get("resolved_stage_a_policy", system.protocol.stage_a_policy)
+    ) != system.protocol.stage_a_policy:
+        raise ValueError("Checkpoint candidate decision policy is incompatible")
+    if expected_acceptance == "responsibility_robust_contribution":
+        expected_rcru_versions = {
+            "rcru": RCRU_VERSION,
+            "responsibility_utility": RESPONSIBILITY_UTILITY_VERSION,
+            "coalition_contribution": COALITION_CONTRIBUTION_VERSION,
+            "robust_support": ROBUST_SUPPORT_VERSION,
+            "minimal_edit": MINIMAL_EDIT_VERSION,
+        }
+        if payload.get("rcru_versions") != expected_rcru_versions:
+            raise ValueError("Checkpoint RCRU versions are incompatible")
     if system.run_identity is None:
         raise RuntimeError("run identity must be set before checkpoint validation")
     validate_run_identity(system.run_identity, payload["run_identity"])
@@ -447,6 +512,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "solver_recovery_observations",
     ):
         setattr(system, name, list(payload[name]))
+    system.rcru_candidate_decisions = list(
+        payload.get("rcru_candidate_decisions", [])
+    )
     system._audited_invalid_keys = {
         (str(row["prompt_hash"]), str(row["question_hash"]))
         for row in system.solver_invalid_outputs

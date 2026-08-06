@@ -8,7 +8,10 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from ..config import Config
-from ..protocol import canonical_experiment_setting
+from ..protocol import (
+    CandidateBudgetContract,
+    experiment_protocol,
+)
 from ..provider_credentials import resolve_base_url
 from ..diagnosis_aggregation import (
     ANSWER_ROLE_ENCODING_VERSION,
@@ -37,12 +40,20 @@ from ..versions import (
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    COALITION_CONTRIBUTION_VERSION,
     EVALUATION_PROTOCOL_VERSION,
+    EXPERIMENT_MATRIX_VERSION,
+    COMMON_UPDATE_POLICY_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     MODEL_THINKING_MODE_VERSION,
+    MINIMAL_EDIT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
+    PROTOCOL_RESOLUTION_VERSION,
     RESPONSIBILITY_VERSION,
+    RESPONSIBILITY_UTILITY_VERSION,
+    RCRU_VERSION,
+    ROBUST_SUPPORT_VERSION,
     SERVICE_ROUTING_VERSION,
     STUDENT_INVALID_RECOVERY_VERSION,
     STUDENT_PROMPT_CONTRACT_VERSION,
@@ -98,10 +109,38 @@ def _git_identity(workspace: Path) -> tuple[str, bool]:
     return commit, dirty
 
 
+def _protocol_for_config(cfg: Config):
+    return experiment_protocol(
+        cfg.training.experiment_setting,
+        initialization_mode=cfg.training.initialization_mode,
+        tie_policy=cfg.peer_state.vote_tie_break,
+        candidate_budget_contract=CandidateBudgetContract(
+            generated_per_update=cfg.tcs.num_candidates_per_parent,
+            stage_a_channel_top_k=cfg.evaluation.stage_a_channel_top_k,
+            stage_b_candidate_budget=cfg.evaluation.stage_b_candidate_budget,
+            representative_size=cfg.evaluation.stage_a_representative_size,
+            coverage_size=cfg.evaluation.stage_a_coverage_size,
+            conversion_size=cfg.evaluation.stage_a_conversion_size,
+            preservation_size=cfg.evaluation.stage_a_preservation_size,
+        ),
+        allow_legacy_setting=cfg.training.allow_legacy_setting,
+    )
+
+
 def config_fingerprint(cfg: Config) -> str:
     values = cfg.to_flat_dict()
-    values["experiment_setting"] = canonical_experiment_setting(
-        cfg.training.experiment_setting
+    protocol = _protocol_for_config(cfg)
+    values["experiment_setting"] = protocol.name
+    values["canonical_setting_name"] = protocol.name
+    values["module_vector"] = asdict(protocol.modules)
+    values["candidate_acceptance_policy"] = (
+        protocol.candidate_acceptance_policy
+    )
+    values["candidate_ranking_policy"] = protocol.candidate_ranking_policy
+    values["stage_a_policy"] = protocol.stage_a_policy
+    rcru_enabled = (
+        protocol.candidate_acceptance_policy
+        == "responsibility_robust_contribution"
     )
     for operational in ("out_dir", "resume_from_checkpoint"):
         values.pop(operational, None)
@@ -112,13 +151,18 @@ def config_fingerprint(cfg: Config) -> str:
     }
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
+        "experiment_matrix": EXPERIMENT_MATRIX_VERSION,
+        "protocol_resolution": PROTOCOL_RESOLUTION_VERSION,
+        "common_update_policy": COMMON_UPDATE_POLICY_VERSION,
         "responsibility": RESPONSIBILITY_VERSION,
         "service_routing": SERVICE_ROUTING_VERSION,
         "target_selection": TARGET_SELECTION_VERSION,
         "candidate_selection": CANDIDATE_SELECTION_VERSION,
-        "stage_a": "team_vote_worst_mean_v2",
-        "stage_b": CANDIDATE_ACCEPTANCE_VERSION,
-        "candidate_acceptance": CANDIDATE_ACCEPTANCE_VERSION,
+        "stage_a": protocol.stage_a_policy,
+        "stage_b": RCRU_VERSION if rcru_enabled else CANDIDATE_ACCEPTANCE_VERSION,
+        "candidate_acceptance": (
+            RCRU_VERSION if rcru_enabled else CANDIDATE_ACCEPTANCE_VERSION
+        ),
         "preservation_policy": PRESERVATION_POLICY_VERSION,
         "evaluation_protocol": EVALUATION_PROTOCOL_VERSION,
         "checkpoint_selection": CHECKPOINT_SELECTION_VERSION,
@@ -161,6 +205,16 @@ def config_fingerprint(cfg: Config) -> str:
         ),
         "checkpoint": CHECKPOINT_VERSION,
     }
+    if rcru_enabled:
+        values["behavior_versions"].update({
+            "rcru": RCRU_VERSION,
+            "candidate_acceptance_policy": protocol.candidate_acceptance_policy,
+            "candidate_ranking_policy": protocol.candidate_ranking_policy,
+            "responsibility_utility": RESPONSIBILITY_UTILITY_VERSION,
+            "coalition_contribution": COALITION_CONTRIBUTION_VERSION,
+            "robust_support": ROBUST_SUPPORT_VERSION,
+            "minimal_edit": MINIMAL_EDIT_VERSION,
+        })
     encoded = json.dumps(values, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
@@ -206,9 +260,7 @@ def build_run_identity(
     commit, dirty = _git_identity(Path(workspace).resolve())
     return RunIdentity(
         method_version=cfg.training.method_version,
-        experiment_setting=canonical_experiment_setting(
-            cfg.training.experiment_setting
-        ),
+        experiment_setting=_protocol_for_config(cfg).name,
         git_commit=commit,
         git_dirty=dirty,
         config_fingerprint=config_fingerprint(cfg),

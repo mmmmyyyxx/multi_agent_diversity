@@ -17,19 +17,25 @@ from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
     CANDIDATE_SELECTION_VERSION,
     CHECKPOINT_VERSION,
+    COMMON_UPDATE_POLICY_VERSION,
+    EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
+    PROTOCOL_RESOLUTION_VERSION,
+    RCRU_VERSION,
     RESPONSIBILITY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
 )
 from scripts.experiment_config import SETTING_NAMES
 from scripts.final_method_source_identity import build_source_identity
+from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v3"
+AUDIT_VERSION = "final_method_stage_gate_v4"
 MEMBER_AWARE_SETTINGS = {
     "shared_member_aware_responsibility",
-    "shared_member_aware_full",
+    "shared_responsibility_conditioned_evolution",
+    "shared_full_rcru",
 }
 PROTOCOL_FIELDS = (
     "optimization_enabled",
@@ -37,30 +43,46 @@ PROTOCOL_FIELDS = (
     "sample_pool_policy",
     "tcs_context_policy",
     "candidate_selection_policy",
+    "candidate_acceptance_policy",
+    "candidate_ranking_policy",
+    "stage_a_policy",
     "responsibility_refresh_policy",
     "repairability_freeze_enabled",
 )
 EXPECTED_PROTOCOLS = {
-    "shared_baseline": (False, "none", "none", "none", "none", "off", False),
-    "shared_independent_accuracy": (
+    "shared_baseline": (
+        False, "none", "none", "none", "none", "none", "none", "none",
+        "off", False
+    ),
+    "shared_generic_evolution": (
         True, "round_robin", "individual_errors", "generic_accuracy",
-        "individual_first_safe", "off", False,
+        "common_monotone_safe", "fixed_peer_monotone_target_or_vote",
+        "common_monotone_safe", "matched_all_generated", "off", False,
     ),
-    "shared_peer_state_vote_first": (
+    "shared_vote_state_diagnosis": (
         True, "round_robin", "global_peer_state", "generic_peer_state",
-        "vote_first_safe", "off", False,
-    ),
-    "shared_peer_state_member_first_safe": (
-        True, "round_robin", "global_peer_state", "generic_peer_state",
-        "member_first_safe", "off", False,
+        "common_monotone_safe", "fixed_peer_monotone_target_or_vote",
+        "common_monotone_safe", "matched_all_generated", "off", False,
     ),
     "shared_member_aware_responsibility": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "generic_peer_state", "member_first_safe", "online", True,
+        "generic_peer_state", "common_monotone_safe",
+        "fixed_peer_monotone_target_or_vote", "common_monotone_safe",
+        "matched_all_generated", "online", True,
     ),
-    "shared_member_aware_full": (
+    "shared_responsibility_conditioned_evolution": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "member_aware_responsibility_conditioned", "member_first_safe", "online", True,
+        "member_aware_responsibility_conditioned", "common_monotone_safe",
+        "fixed_peer_monotone_target_or_vote", "common_monotone_safe",
+        "matched_all_generated", "online", True,
+    ),
+    "shared_full_rcru": (
+        True, "member_aware_responsibility", "member_aware_residuals",
+        "member_aware_responsibility_conditioned",
+        "responsibility_contribution_pareto",
+        "responsibility_robust_contribution",
+        "responsibility_contribution_pareto", "matched_all_generated",
+        "online", True,
     ),
 }
 INFRASTRUCTURE_FAILURES = {
@@ -113,7 +135,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("geometric_shapes", "ruin_names"),
             (44, 45, 46),
-            ("shared_baseline", "shared_member_aware_full"),
+            ("shared_baseline", "shared_full_rcru"),
             32,
             True,
         )
@@ -121,7 +143,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("disambiguation_qa",),
             (46,),
-            ("shared_baseline", "shared_peer_state_member_first_safe"),
+            ("shared_baseline", "shared_vote_state_diagnosis"),
             0,
             True,
         )
@@ -131,9 +153,10 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
             (44, 45, 46),
             (
                 "shared_baseline",
-                "shared_peer_state_member_first_safe",
+                "shared_vote_state_diagnosis",
                 "shared_member_aware_responsibility",
-                "shared_member_aware_full",
+                "shared_responsibility_conditioned_evolution",
+                "shared_full_rcru",
             ),
             32,
             True,
@@ -280,6 +303,10 @@ def _audit_run(
         "frozen_initialization_match.json",
         "comparison_cache_match.json",
         "best_prompts.json",
+    ) + (
+        ("rcru_candidate_decisions_sanitized.jsonl",)
+        if setting == "shared_full_rcru"
+        else ()
     )
     missing = [name for name in required if not (run_dir / name).is_file()]
     if missing:
@@ -304,6 +331,15 @@ def _audit_run(
 
     exact_checks = {
         "method_version": (meta.get("method_version"), METHOD_VERSION),
+        "experiment_matrix_version": (
+            meta.get("experiment_matrix_version"), EXPERIMENT_MATRIX_VERSION,
+        ),
+        "protocol_resolution_version": (
+            meta.get("protocol_resolution_version"), PROTOCOL_RESOLUTION_VERSION,
+        ),
+        "common_update_policy_version": (
+            meta.get("common_update_policy_version"), COMMON_UPDATE_POLICY_VERSION,
+        ),
         "responsibility_version": (meta.get("responsibility_version"), RESPONSIBILITY_VERSION),
         "target_selection_version": (meta.get("target_selection_version"), TARGET_SELECTION_VERSION),
         "tcs_context_version": (meta.get("tcs_context_version"), TCS_CONTEXT_VERSION),
@@ -325,7 +361,30 @@ def _audit_run(
         "test_evaluation_count": (
             meta.get("test_evaluation_count"), 1 if final_test_enabled else 0,
         ),
+        "module_vector": (
+            meta.get("module_vector"),
+            asdict(MAIN_ABLATION_MODULES[setting]),
+        ),
+        "setting_index": (
+            meta.get("setting_index"),
+            SETTING_NAMES.index(setting),
+        ),
     }
+    if setting == "shared_full_rcru":
+        exact_checks.update({
+            "resolved_candidate_acceptance_version": (
+                meta.get("resolved_candidate_acceptance_version"),
+                RCRU_VERSION,
+            ),
+            "candidate_acceptance_policy": (
+                meta.get("candidate_acceptance_policy"),
+                "responsibility_robust_contribution",
+            ),
+            "candidate_ranking_policy": (
+                meta.get("candidate_ranking_policy"),
+                "responsibility_contribution_pareto",
+            ),
+        })
     mismatches = {
         key: {"actual": actual, "expected": expected}
         for key, (actual, expected) in exact_checks.items()
@@ -650,11 +709,29 @@ def _setting_isolation(
         for row in summaries if row.get("complete")
     }
     comparisons = (
-        ("shared_peer_state_vote_first", "shared_peer_state_member_first_safe", {"candidate_selection_policy"}),
-        ("shared_peer_state_member_first_safe", "shared_member_aware_responsibility", {
-            "target_selection_policy", "sample_pool_policy", "responsibility_refresh_policy",
+        (
+            "shared_generic_evolution",
+            "shared_vote_state_diagnosis",
+            {"sample_pool_policy", "tcs_context_policy"},
+        ),
+        ("shared_vote_state_diagnosis", "shared_member_aware_responsibility", {
+            "target_selection_policy", "sample_pool_policy",
+            "responsibility_refresh_policy", "repairability_freeze_enabled",
         }),
-        ("shared_member_aware_responsibility", "shared_member_aware_full", {"tcs_context_policy"}),
+        (
+            "shared_member_aware_responsibility",
+            "shared_responsibility_conditioned_evolution",
+            {"tcs_context_policy"},
+        ),
+        (
+            "shared_responsibility_conditioned_evolution",
+            "shared_full_rcru",
+            {
+                "candidate_selection_policy",
+                "candidate_acceptance_policy",
+                "candidate_ranking_policy",
+            },
+        ),
     )
     rows = []
     task_seeds = sorted({(row["task"], row["seed"]) for row in summaries if row.get("complete")})

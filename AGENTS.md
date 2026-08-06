@@ -37,7 +37,7 @@ The paper method has three modules:
 ```text
 1. Member-Aware Responsibility
 2. Responsibility-Conditioned Evolution
-3. Monotone Target-or-Vote Team Update
+3. Robust Contribution Update
 ```
 
 Joint voting state, Teacher-Critic-Student, Stage A/B, fixed-peer rollout,
@@ -51,8 +51,8 @@ The compact three-module method in this file is normative. The current runtime
 implements it as:
 
 ```text
-method_version = member_aware_peer_state_v11
-checkpoint_version = 20
+method_version = member_aware_peer_state_v12
+checkpoint_version = 21
 ```
 
 For every execution or artifact analysis, verify those and all other runtime
@@ -99,14 +99,15 @@ are no worse and at least one is strictly better.
 
 Under fixed-peer single-target replacement, target non-regression implies
 that `g_sum` and `g_min` cannot regress, and `g_sum` changes by exactly the
-target member's correct-count change. Together with vote non-regression and
-strict target-or-vote progress, this makes team-objective Pareto improvement a
-derived invariant. The objective remains an evaluation, trajectory, and audit
-objective; it is not an additional candidate rejection guard.
+target member's correct-count change. Vote non-regression therefore preserves
+all three objective dimensions. For S1-S4, strict target-or-vote progress makes
+team-objective Pareto improvement a derived invariant. S5 may additionally
+accept a robust, objective-neutral active-lane improvement; it still cannot
+regress the team objective. The objective remains an evaluation, trajectory,
+and audit objective, not an additional candidate rejection guard.
 
 `g_min` is candidate-discriminative only when the selected target is the
-unique weakest member. Member-first selection is therefore a conditional
-preference, not a general three-objective candidate optimizer. The uplift
+unique weakest member. It is not part of the common S1-S4 ranking. The uplift
 deficit `d_i` in target scheduling is the weak-member mechanism with broad
 operational effect.
 
@@ -160,17 +161,17 @@ The program constructs bounded numerical and diagnostic evidence. The
 Teacher-Critic-Student pipeline turns that evidence into candidate prompts.
 Rollouts, not role-model predictions, determine empirical value.
 
-### Module 3: Monotone Target-or-Vote Team Update
+### Module 3: Robust Contribution Update
 
 Research question:
 
-> Which target-only replacement makes strict target-or-vote progress while
-> preserving target competence, team vote, and terminal validity?
+> Which target-only replacement preserves target competence, team vote, and
+> terminal validity while making robust vote or assigned-lane progress?
 
 Only one target prompt is replaced at a time. The other four prompts and their
-profiles remain fixed during paired candidate evaluation. The four monotone
-guards determine acceptance; team-objective Pareto dominance is verified as a
-derived fixed-peer invariant.
+profiles remain fixed during paired candidate evaluation. S1-S4 use the common
+target-or-vote scaffold; S5 adds assigned-lane utility, coalition contribution,
+paired support robustness, and minimal edit.
 
 ## 4. Diagnostic Foundation: Joint Voting State
 
@@ -314,7 +315,7 @@ every currently serviceable residual.
 
 ### 5.3 Specialization anchor and active lane
 
-Each S4/S5 member has `specialization_anchor_by_agent[i]`, initially `None`.
+Each S3-S5 member has `specialization_anchor_by_agent[i]`, initially `None`.
 Only an accepted update sets or switches the anchor to the active repair lane
 used by that update. Rejection and operational failure retain it. Unfreezing
 clears it.
@@ -413,7 +414,7 @@ proposal_memory_mode = off
 An explicit `state_local_v1` mode is a proposal-search extension only. It may
 retain sanitized historical failure feedback solely for the same complete
 key, including the same agent, team state, prompt hash, and eligible residual
-set. The compact S5 context never exposes that feedback; it remains available
+set. The compact S4/S5 context never exposes that feedback; it remains available
 only to proposal contexts whose declared schema permits it and to audit state.
 
 Proposal Memory must never affect:
@@ -450,7 +451,7 @@ Rollouts:
 Teacher, Critic, and Student must not calculate vote counts, Pareto metrics,
 responsibility scores, candidate accuracy, or final candidate value.
 
-The S5 responsibility-conditioned context includes only:
+The S4/S5 responsibility-conditioned context includes only:
 
 ```text
 parent prompt
@@ -467,7 +468,7 @@ seeded rank, freeze/anchor state, or all rejection reasons. The LLM does not
 choose the lane, route residuals, compare members, or interpret scheduler
 scores.
 
-Programmatic aggregation uses the complete fixed optimization probe. S5
+Programmatic aggregation uses the complete fixed optimization probe. S4/S5
 provides exactly:
 
 ```text
@@ -479,8 +480,8 @@ min(config.tcs_context_max_chars, 6000) serialized characters
 
 If necessary, remove the preservation case first and then the second repair
 case. Never truncate the parent prompt, question, gold answer, or repair goal.
-S4 uses the same eligibility, routing, anchors, active-lane scheduler, freeze,
-and acceptance but retains generic peer-state TCS context. S1-S3 use none of
+S3 uses the same eligibility, routing, anchors, active-lane scheduler, freeze,
+and acceptance but retains generic peer-state TCS context. S1-S2 use none of
 routing, anchors, active lanes, or freeze.
 
 Do not use an LLM to cluster or numerically aggregate cases. The context bounds,
@@ -563,7 +564,7 @@ acceptance, deltas, or rollout rejection reasons. Transport, truncation, and
 schema failures remain audit-only terminal failures and expose
 `empirical_feedback_available=false` to the next Teacher.
 
-## 8. Module 3: Monotone Target-or-Vote Team Update
+## 8. Module 3: Robust Contribution Update
 
 Only the target prompt is replaced. The other four active prompts and profiles
 remain fixed during paired candidate evaluation.
@@ -579,36 +580,16 @@ Candidate evaluation computes:
 - unique-correct and pivotal-correct gains and losses;
 - soft vote utility.
 
-### 8.1 Stage A shortlist
+### 8.1 Matched Stage A
 
-The formal member-aware settings use three shortlist channels:
-
-```text
-team_vote
-worst_member
-mean_member
-```
-
-They correspond to the three team-objective dimensions.
-
-`team_vote` prioritizes candidate vote-correct count, net vote delta, fewer vote
-losses, soft utility, and target-portfolio residual repair.
-
-`worst_member` prioritizes minimum member gain, improvement in minimum gain,
-improved-member count, target gain versus incumbent, and lower invalid count.
-
-`mean_member` prioritizes total member gain, target gain versus incumbent,
-improved-member count, target-portfolio residual repair, and lower invalid
-count.
-
-Channel ranks are merged through deterministic Pareto-front ordering. Stable
-prompt hash is only a final tie-break after substantive metrics are equal.
-This shortlist machinery is an implementation mechanism, not an additional
-paper module.
+Every main optimized setting uses `stage_a_policy=matched_all_generated` and
+requires `stage_b_candidate_budget >= num_candidates_per_parent`. Every valid
+generated candidate enters full paired evaluation. Diagnostic channels may be
+recorded but cannot filter the main ablation matrix.
 
 ### 8.2 Stage B acceptance
 
-Every acceptable candidate must satisfy all of:
+Every acceptable S1-S4 candidate must satisfy all of:
 
 ```text
 candidate target correct count >= incumbent target correct count
@@ -643,20 +624,32 @@ Soft utility, coverage, conversion, vote loss, and unique/pivotal loss are
 diagnostic or late tie-break evidence and are not independent hard rejection
 guards.
 
-The canonical preference among acceptable candidates is:
+S1-S4 use the same `common_monotone_safe` preference:
 
 ```text
-1. larger minimum member gain
-2. larger vote-correct count
-3. larger target gain versus incumbent
-4. larger net vote delta
-5. more target-portfolio repairs
-6. larger soft vote utility
-7. larger coverage gain
-8. fewer vote losses
-9. fewer pivotal- and unique-correct losses
-10. earlier generation
-11. stable prompt hash
+1. larger vote-correct count
+2. larger target correct count
+3. larger mean soft vote utility
+4. fewer vote losses
+5. fewer invalid outputs
+6. earlier generation
+7. stable prompt hash
+```
+
+It excludes `g_min`, `g_sum`, uplift deficit, assigned-residual repair,
+active-lane utility, and coalition contribution. S5 replaces only candidate
+acceptance/ranking with RCRU:
+
+```text
+Layer 1:
+    target, vote, and terminal-invalid non-regression
+Layer 2:
+    active-lane utility non-regression
+    strict vote or active-lane utility progress
+    leave-one-out coalition contribution and (V,U,C) Pareto
+Layer 3:
+    multi-example support and paired-bootstrap LCB for lane-only progress
+    minimal edit as the final tie-break
 ```
 
 ## 9. End-to-End Method Flow
@@ -676,7 +669,7 @@ Responsibility-conditioned candidate generation
     ↓
 Target-only paired rollout with four fixed peers
     ↓
-Stage A shortlist
+Matched-all-generated Stage A
     ↓
 Stage B monotone feasibility and derived Pareto assertion
     ↓
@@ -749,11 +742,22 @@ New runs use exactly these canonical protocol names:
 
 ```text
 shared_baseline
-shared_independent_accuracy
-shared_peer_state_vote_first
-shared_peer_state_member_first_safe
+shared_generic_evolution
+shared_vote_state_diagnosis
 shared_member_aware_responsibility
-shared_member_aware_full
+shared_responsibility_conditioned_evolution
+shared_full_rcru
+```
+
+Their cumulative module vectors are exactly:
+
+```text
+S0 00000
+S1 10000
+S2 11000
+S3 11100
+S4 11110
+S5 11111
 ```
 
 ### `shared_baseline`
@@ -764,39 +768,22 @@ shared_member_aware_full
 
 Research question: Is any optimization better than the shared initial team?
 
-### `shared_independent_accuracy`
+### `shared_generic_evolution`
 
 - round-robin target selection;
 - individual-error evidence;
 - generic accuracy proposal;
-- Individual-First Safe Selection.
+- the common fixed-peer monotone-safe update.
 
-Research question: Is independent prompt optimization sufficient?
+Research question: Is generic prompt evolution useful?
 
-### `shared_peer_state_vote_first`
+### `shared_vote_state_diagnosis`
 
 - round-robin target selection;
-- generic peer-state evidence;
-- Vote-First Safe Selection over the common monotone-safe feasible set.
+- G/H/M and leave-one-out peer-state proposal evidence;
+- the same target and candidate decision as S1.
 
-Research question: What is the effect of prioritizing vote geometry among
-equally safe candidates?
-
-This is a pure vote-first ablation, not an exact recreation of every historical
-peer-state method.
-
-### `shared_peer_state_member_first_safe`
-
-- the same round-robin target policy;
-- the same generic peer-state proposal context;
-- Member-First Safe Selection over the same monotone-safe feasible set as S2.
-
-Research question: What is the effect of ranking first by minimum member gain,
-then vote and target gain? Minimum gain usually distinguishes candidates only
-when the target is the unique weakest member.
-
-`shared_peer_state_member_pareto` remains a read-only legacy input alias. New
-run identity and metadata use `shared_peer_state_member_first_safe`.
+Research question: Does structured vote-state diagnosis improve proposals?
 
 ### `shared_member_aware_responsibility`
 
@@ -805,13 +792,13 @@ run identity and metadata use `shared_peer_state_member_first_safe`.
 - compact target scheduling over active-slice `(D_i, S_i, d_i)`;
 - State-Conditioned Repairability Freeze;
 - generic peer-state proposal context;
-- Monotone Target-or-Vote Team Update;
+- the same common candidate update as S1/S2;
 - online responsibility refresh.
 
 Research question: Does Member-Aware Responsibility improve target and
 residual attribution?
 
-### `shared_member_aware_full`
+### `shared_responsibility_conditioned_evolution`
 
 - the same eligibility, routing, anchors, active-lane scheduling, and freeze;
 - compact single-lane responsibility-conditioned proposal context;
@@ -821,18 +808,45 @@ residual attribution?
 Research question: Does responsibility-conditioned context improve proposal
 realization and final team performance?
 
+### `shared_full_rcru`
+
+This S5 full setting inherits S4 eligibility, routing,
+anchors, active-lane scheduling, freeze, compact context, candidate generation,
+and budgets. It replaces only candidate acceptance and ranking with the
+three-layer Responsibility-Conditioned Robust Contribution Update:
+
+```text
+Layer 1: target, vote, and terminal-validity safety
+Layer 2: active-lane utility plus leave-one-out coalition contribution
+Layer 3: paired support robustness plus minimal token edit
+```
+
+Its candidate Pareto vector is `(V, U_i, C_i)`.
+
 The setting progression is:
 
 ```text
-S1-S3
-↔ common monotone-safe update with different proposal/selection preferences
+S0 -> S1
+↔ add Generic Prompt Evolution
 
-S3 -> S4
+S1 -> S2
+↔ add Vote-State Diagnosis
+
+S2 -> S3
 ↔ add Member-Aware Responsibility scheduling
 
-S4 -> S5
+S3 -> S4
 ↔ add Responsibility-Conditioned Evolution context
+
+S4 -> S5
+↔ replace only candidate decision with RCRU
 ```
+
+S1-S4 share the exact acceptance policy
+`fixed_peer_monotone_target_or_vote`, ranking `common_monotone_safe`, and
+`matched_all_generated` Stage A. Vote-First and Member-First names are explicit
+legacy controls only; they require `allow_legacy_setting=1` and never alias to
+new main semantics.
 
 Catch-up and Proposal Memory are not part of the default main-experiment
 settings.
@@ -865,7 +879,7 @@ multi_dataset_diverse_rl/versions.py
 ```
 
 This is the source of truth for actual runtime identifiers. The compact method
-uses checkpoint version 20; implementation, persistence, and tests must remain
+uses checkpoint version 21; implementation, persistence, and tests must remain
 consistent with it.
 
 ### Configuration and protocols
@@ -1097,11 +1111,11 @@ atomic accepted update
 one diagnosis/responsibility refresh per accepted team transition
 test only after the optimization lifecycle completes
 one per-residual eligibility decision based only on (DeltaV, DeltaM)
-one unique service agent per serviceable residual in S4/S5
-one active repair lane per serviceable member in S4/S5
+one unique service agent per serviceable residual in S3-S5
+one active repair lane per serviceable member in S3-S5
 one member-level target Pareto over active-slice (D_i, S_i, d_i)
 accepted-update-only specialization anchors
-state-conditioned repairability freeze in S4/S5 only
+state-conditioned repairability freeze in S3-S5 only
 proposal_memory_mode = off by default
 vote-only and target-only monotone acceptance preserved
 ```

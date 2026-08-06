@@ -54,6 +54,7 @@ def build_system(tmp_path, optimizer=fake_optimizer, **overrides):
         "num_candidates_per_parent": 1,
         "stage_a_channel_top_k": 1,
         "stage_b_candidate_budget": 1,
+        "experiment_setting": "shared_responsibility_conditioned_evolution",
     }
     values.update(overrides)
     cfg = Config.from_flat(**values)
@@ -163,8 +164,8 @@ def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
 
     async def run_all():
         return await asyncio.gather(
-            inspect("shared_independent_accuracy"),
-            inspect("shared_peer_state_vote_first"),
+            inspect("shared_generic_evolution"),
+            inspect("shared_vote_state_diagnosis"),
         )
 
     accuracy, peer = asyncio.run(run_all())
@@ -195,7 +196,7 @@ def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
     async def run():
         return await asyncio.gather(
             inspect("shared_member_aware_responsibility"),
-            inspect("shared_member_aware_full"),
+            inspect("shared_responsibility_conditioned_evolution"),
         )
 
     (s4, s4_target, s4_audit), (s5, s5_target, s5_audit) = asyncio.run(run())
@@ -206,12 +207,82 @@ def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
     assert s5_audit["context_type"] == "SingleLaneDiagnosisContext"
 
 
+def test_s6_shares_s5_target_slice_context_and_candidate_generation(tmp_path):
+    async def inspect(setting):
+        system = build_system(
+            tmp_path / setting,
+            experiment_setting=setting,
+        )
+        await initialize(system)
+        _, assignments = system.ensure_responsibility_current()
+        target, _ = system.select_target(assignments, 0)
+        assert target is not None
+        hashes = {row.question_hash for row in assignments[target]}
+        candidates = await system.propose_candidates(
+            target, hashes, CandidateFunnel(), update_index=0
+        )
+        return system, target, hashes, candidates
+
+    async def run():
+        return await asyncio.gather(
+            inspect("shared_responsibility_conditioned_evolution"),
+            inspect("shared_full_rcru"),
+        )
+
+    (s5, target5, hashes5, candidates5), (
+        s6, target6, hashes6, candidates6,
+    ) = asyncio.run(run())
+    assert target5 == target6
+    assert hashes5 == hashes6
+    assert s5.cached_service_assignments == s6.cached_service_assignments
+    assert s5.cached_active_lane_by_agent == s6.cached_active_lane_by_agent
+    assert s5.tcs_context_history[-1]["proposal_context_hash"] == (
+        s6.tcs_context_history[-1]["proposal_context_hash"]
+    )
+    assert [row.prompt_hash for row in candidates5] == [
+        row.prompt_hash for row in candidates6
+    ]
+    assert s5.protocol.candidate_acceptance_policy == (
+        "fixed_peer_monotone_target_or_vote"
+    )
+    assert s6.protocol.candidate_acceptance_policy == (
+        "responsibility_robust_contribution"
+    )
+
+
+def test_s6_writes_hash_only_rcru_candidate_audit(tmp_path):
+    system = build_system(
+        tmp_path,
+        experiment_setting="shared_full_rcru",
+    )
+
+    async def run():
+        await initialize(system)
+        return await system.update_once(0)
+
+    asyncio.run(run())
+    assert system.rcru_candidate_decisions
+    forbidden = {
+        "question",
+        "gold",
+        "answer",
+        "prompt",
+        "raw",
+    }
+    for row in system.rcru_candidate_decisions:
+        assert "candidate_prompt_hash" in row
+        assert not any(
+            token in key.lower() and key != "candidate_prompt_hash"
+            for key in row
+            for token in forbidden
+        )
+
+
 @pytest.mark.parametrize(
     "setting",
     (
-        "shared_independent_accuracy",
-        "shared_peer_state_vote_first",
-        "shared_peer_state_member_first_safe",
+        "shared_generic_evolution",
+        "shared_vote_state_diagnosis",
     ),
 )
 def test_s1_through_s3_create_no_service_anchor_or_freeze_state(tmp_path, setting):
@@ -626,3 +697,42 @@ def test_student_partial_validity_keeps_valid_candidate_without_retry(tmp_path):
     assert student_calls == 1
     assert [row.prompt for row in candidates] == ["repair-q0"]
     assert funnel.student_partially_valid_responses == 1
+
+
+def test_main_stage_a_passes_every_valid_generated_candidate_to_stage_b(tmp_path):
+    async def optimizer(system_prompt, _user_prompt, _temperature, _max_tokens):
+        if "Check only explicit hard blockers" in system_prompt:
+            return json.dumps(APPROVED)
+        if system_prompt.startswith("Return strict JSON only."):
+            return json.dumps({
+                "candidate_prompts": ["repair-q0", "unhelpful-candidate"]
+            })
+        return json.dumps(TEACHER)
+
+    system = build_system(
+        tmp_path,
+        optimizer,
+        experiment_setting="shared_responsibility_conditioned_evolution",
+        num_candidates_per_parent=2,
+        stage_b_candidate_budget=2,
+    )
+
+    async def run():
+        await initialize(system)
+        target, hashes = routed_proposal(system)
+        funnel = CandidateFunnel()
+        candidates = await system.propose_candidates(target, hashes, funnel)
+        _, _, evaluated = await system.evaluate_candidates(
+            target, candidates, hashes, funnel
+        )
+        return funnel, evaluated
+
+    funnel, evaluated = asyncio.run(run())
+    assert len(evaluated) == 2
+    assert funnel.stage_a_evaluated == 2
+    assert funnel.stage_b_evaluated == 2
+    assert all(row.stage_a_decision.selected for row in evaluated)
+    assert all(
+        row.stage_a_decision.selected_by_channels == ("matched_all_generated",)
+        for row in evaluated
+    )

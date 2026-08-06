@@ -191,7 +191,7 @@ def test_matched_settings_share_persistent_solver_observation(tmp_path):
         Config.from_flat(
             **common,
             out_dir=str(tmp_path / "full"),
-            experiment_setting="shared_member_aware_full",
+            experiment_setting="shared_responsibility_conditioned_evolution",
         ),
         solver=full_solver,
     )
@@ -236,7 +236,7 @@ def test_recovery_cost_is_local_to_cache_producing_run(tmp_path):
             out_dir=str(tmp_path / "consumer"),
             answer_format="option_letter",
             shared_solver_cache_path=str(cache),
-            experiment_setting="shared_member_aware_full",
+            experiment_setting="shared_responsibility_conditioned_evolution",
         ),
         solver=lambda *_args: PromptAnswer("B", "FINAL_ANSWER: B", True),
     )

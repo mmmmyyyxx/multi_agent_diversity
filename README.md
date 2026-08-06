@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Prompt-Team Optimization**
-(`member_aware_peer_state_v11`).
+(`member_aware_peer_state_v12`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -21,10 +21,10 @@ Current Prompt Team
      - one anchored active lane and target Pareto on (D, S, d)
   -> Responsibility-Conditioned Evolution
      - one lane, one pattern, <=2 repair cases, <=1 preservation case
-  -> Monotone Target-or-Vote Team Update
+  -> Robust Contribution Update
      - target-only paired rollout with four fixed peers
-     - target/vote/terminal-invalid monotone guards
-     - derived team-objective Pareto invariant
+     - monotone safety, active-lane utility, coalition contribution
+     - paired support robustness and minimal-edit tie-break
   -> Updated Prompt Team
 ```
 
@@ -37,23 +37,18 @@ g_min   = min_i g_i
 g_sum   = sum_i g_i
 ```
 
-A candidate must not reduce either target correct count or aggregate team vote
-count, must strictly improve at least one of them, and must not increase
-terminal-invalid outputs. Under fixed-peer single-target replacement, these
-monotone conditions imply strict Pareto improvement in
-`(V_count, g_min, g_sum)`; Pareto dominance is checked as a fail-fast invariant,
-not used as another rejection guard or ranking dimension. The method does not
-require zero loss on every probe example. Vote, unique-correct, and
-pivotal-correct gains and losses remain audited diagnostics and late
-tie-breakers; none independently rejects a candidate.
+The common S1-S4 update cannot reduce target correct count or aggregate team
+vote, must strictly improve at least one, and cannot increase terminal-invalid
+outputs. Those guards imply strict Pareto improvement in
+`(V_count, g_min, g_sum)`. S5 preserves target, vote, terminal validity, and
+active-lane utility, and permits strict vote or robust active-lane progress.
+The method does not require zero loss on every probe example.
 
 Under the same fixed-peer replacement, `g_sum` changes by exactly the target
 member's correct-count change. `g_min` distinguishes candidates only when the
-selected target is the unique weakest member. Consequently, Member-First Safe
-Selection is a conditional member-first preference rather than a general
-three-objective Pareto optimizer. The broad weak-member mechanism is the
-uplift-deficit term `d` in target scheduling, not an independent `g_min`
-acceptance guard.
+selected target is the unique weakest member. The main S1-S4 matrix therefore
+does not vary a Member-First key; its broad weak-member mechanism begins in S3
+through the uplift-deficit term `d` in target scheduling.
 
 For each vote-wrong residual, only currently wrong members are considered.
 Replacing one member by gold while holding four peers fixed gives
@@ -83,24 +78,25 @@ Soft vote utility is only a deterministic tie-break signal.
 The formal default is `proposal_memory_mode=off`. Proposal Memory is an
 optional proposal-search extension, not part of the three-module method.
 
-S4 (`shared_member_aware_responsibility`) and S5
-(`shared_member_aware_full`) use identical eligibility, routing, anchors,
-active-lane scheduling, freeze, and acceptance. S4 retains generic peer-state
-TCS context; S5 alone receives the compact single-lane context. S1-S3 create no
-service routing, anchor, active-lane, or freeze state.
+S1-S4 share the same fixed-peer monotone target-or-vote acceptance,
+`common_monotone_safe` ranking, matched candidate budget, and all-generated
+Stage A. S2 adds only vote-state diagnosis, S3 adds only responsibility
+allocation, and S4 adds only the compact single-lane context. S5 inherits S4's
+target, active slice, proposal context, generation, and budgets, and changes
+only the candidate decision to RCRU.
 
 ## Experiment Settings
 
-Exactly six settings are supported:
+Exactly six main settings are supported:
 
 | Setting | Display name | Primary change |
 |---|---|---|
-| `shared_baseline` | S0 Shared Baseline | No optimization |
-| `shared_independent_accuracy` | S1 Individual-First Safe Selection | Individual context and target ranking |
-| `shared_peer_state_vote_first` | S2 Vote-First Safe Selection | Vote-geometry ranking |
-| `shared_peer_state_member_first_safe` | S3 Member-First Safe Selection | Unique-weak-sensitive member ranking |
-| `shared_member_aware_responsibility` | S4 Member-Aware Responsibility | Routing, anchors, freeze, and target scheduling |
-| `shared_member_aware_full` | S5 Responsibility-Conditioned Evolution | S4 plus compact single-lane context |
+| `shared_baseline` | S0 Static Prompt Team | No optimization |
+| `shared_generic_evolution` | S1 Generic Prompt Evolution | Generic individual-error proposal scaffold |
+| `shared_vote_state_diagnosis` | S2 Vote-State Diagnosis | S1 plus G/H/M and Peer-State diagnosis |
+| `shared_member_aware_responsibility` | S3 Member-Aware Responsibility | S2 plus routing, anchors, freeze, and target scheduling |
+| `shared_responsibility_conditioned_evolution` | S4 Responsibility-Conditioned Evolution | S3 plus compact single-lane context |
+| `shared_full_rcru` | S5 Robust Contribution Update (Full) | S4 plus three-layer RCRU decision |
 
 All settings use five agents, plurality aggregation, tie-as-abstain, and matched
 candidate budgets.
@@ -117,6 +113,7 @@ python scripts/deterministic_member_objective_unit_smoke.py
 python scripts/deterministic_member_aware_system_smoke.py
 python scripts/deterministic_target_scheduler_smoke.py
 python scripts/deterministic_aggregate_acceptance_smoke.py
+python scripts/deterministic_rcru_smoke.py
 python scripts/deterministic_student_recovery_smoke.py
 python scripts/deterministic_final_state_protocol_smoke.py
 python scripts/deterministic_high_frequency_update_smoke.py
@@ -167,7 +164,7 @@ python scripts/run_task_level_accuracy.py `
   --workspace . `
   --manifest configs/task_level_comparison_strict_bbh_seed42.yaml `
   --tasks disambiguation_qa `
-  --settings shared_baseline,shared_member_aware_full `
+  --settings shared_baseline,shared_full_rcru `
   --seeds 42 `
   --dataset_format mars `
   --out_root experiments/runs_member_aware_disambiguation
@@ -182,7 +179,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v20 run identity;
+checkpoint-v21 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -253,7 +250,7 @@ original model pins for reproducibility; they are not active defaults and must
 not be mixed into matched Qwen comparisons.
 
 The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
-development evidence for a superseded mechanism. It does not define v11.
+development evidence for a superseded mechanism. It does not define v12.
 
 For offline analysis of an already completed high-frequency v4 run, use:
 

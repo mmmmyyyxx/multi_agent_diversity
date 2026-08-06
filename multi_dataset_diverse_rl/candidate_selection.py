@@ -9,6 +9,7 @@ from .member_objectives import (
     team_objective_vector,
 )
 from .responsibility import CandidateMarginalContribution, ProtectionContribution
+from .responsibility_contribution import ResponsibilityContributionMetrics
 
 
 @dataclass(frozen=True)
@@ -40,6 +41,7 @@ class CandidateEvaluation:
     marginal: CandidateMarginalContribution
     protection: ProtectionContribution
     member_gain: MemberGainMetrics
+    responsibility_contribution: ResponsibilityContributionMetrics | None = None
 
 
 @dataclass(frozen=True)
@@ -225,6 +227,110 @@ def stage_a_multichannel_shortlist(
     return shortlist, decisions
 
 
+def stage_a_rcru_shortlist(
+    candidates: Sequence[CandidateEvaluation],
+    *,
+    channel_top_k: int = 2,
+    total_budget: int,
+) -> tuple[list[CandidateEvaluation], dict[str, StageASelectionDecision]]:
+    unique = {candidate.prompt_hash: candidate for candidate in candidates}
+    rows = list(unique.values())
+    if total_budget < 0 or channel_top_k < 0:
+        raise ValueError("Stage A budgets cannot be negative")
+    for row in rows:
+        if row.responsibility_contribution is None:
+            raise ValueError("rcru_metrics_missing_for_candidate")
+
+    channel_keys = {
+        "team_vote": {
+            row.prompt_hash: (
+                row.team_outcome.vote_correct_count,
+                row.marginal.net_vote_delta,
+                -row.marginal.vote_loss_count,
+                row.team_outcome.mean_soft_vote_utility,
+            )
+            for row in rows
+        },
+        "lane_fulfillment": {
+            row.prompt_hash: (
+                row.responsibility_contribution.utility.utility_total,
+                row.responsibility_contribution.utility.utility_delta,
+                row.responsibility_contribution.utility.positive_support_count,
+                -row.responsibility_contribution.utility.negative_support_count,
+            )
+            for row in rows
+        },
+        "coalition_contribution": {
+            row.prompt_hash: (
+                row.responsibility_contribution.coalition.net_contribution,
+                -row.responsibility_contribution.coalition.negative_pivotal_count,
+                row.responsibility_contribution.coalition.positive_pivotal_count,
+            )
+            for row in rows
+        },
+    }
+    channels: dict[str, dict[str, int]] = {}
+    for name, keys in channel_keys.items():
+        ordered_unique = sorted(set(keys.values()), reverse=True)
+        rank_by_key = {key: index + 1 for index, key in enumerate(ordered_unique)}
+        channels[name] = {
+            prompt_hash: rank_by_key[key] for prompt_hash, key in keys.items()
+        }
+    rank_vectors = {
+        row.prompt_hash: tuple(
+            channels[name][row.prompt_hash] for name in channels
+        )
+        for row in rows
+    }
+    fronts = _pareto_fronts(rank_vectors) if rows else {}
+    selected_by = {row.prompt_hash: set() for row in rows}
+    union: set[str] = set()
+    for name, ranks in channels.items():
+        ordered = sorted(
+            rows, key=lambda row: (ranks[row.prompt_hash], row.prompt_hash)
+        )
+        for row in ordered[:channel_top_k]:
+            union.add(row.prompt_hash)
+            selected_by[row.prompt_hash].add(name)
+    ordering = sorted(
+        rows,
+        key=lambda row: (
+            fronts[row.prompt_hash],
+            sum(rank_vectors[row.prompt_hash]),
+            rank_vectors[row.prompt_hash],
+            row.prompt_hash,
+        ),
+    )
+    selected_hashes = set(
+        sorted(
+            union,
+            key=lambda prompt_hash: (
+                fronts[prompt_hash],
+                sum(rank_vectors[prompt_hash]),
+                rank_vectors[prompt_hash],
+                prompt_hash,
+            ),
+        )[:total_budget]
+    )
+    for row in ordering:
+        if len(selected_hashes) >= total_budget:
+            break
+        selected_hashes.add(row.prompt_hash)
+    decisions = {
+        row.prompt_hash: StageASelectionDecision(
+            selected=row.prompt_hash in selected_hashes,
+            selected_by_channels=tuple(sorted(selected_by[row.prompt_hash])),
+            pareto_front=fronts[row.prompt_hash],
+            aggregate_rank=sum(rank_vectors[row.prompt_hash]),
+        )
+        for row in rows
+    }
+    return (
+        [row for row in ordering if row.prompt_hash in selected_hashes],
+        decisions,
+    )
+
+
 def evaluate_constraints(
     candidate: CandidateEvaluation,
     active: CandidateEvaluation,
@@ -348,6 +454,23 @@ def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple
         candidate.marginal.soft_utility_delta,
         candidate.marginal.coverage_gain_count,
         candidate.competence.correct_count,
+        -candidate.competence.invalid_count,
+        -int(generation),
+        candidate.prompt_hash,
+    )
+
+
+def common_monotone_safe_key(
+    candidate: CandidateEvaluation,
+    generation: int = 0,
+) -> tuple:
+    """Shared S1-S4 ranking over the common monotone-safe feasible set."""
+
+    return (
+        candidate.team_outcome.vote_correct_count,
+        candidate.competence.correct_count,
+        candidate.team_outcome.mean_soft_vote_utility,
+        -candidate.marginal.vote_loss_count,
         -candidate.competence.invalid_count,
         -int(generation),
         candidate.prompt_hash,
