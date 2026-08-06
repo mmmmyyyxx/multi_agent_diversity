@@ -617,6 +617,46 @@ def _compare_unchanged_test_observations(
     }
 
 
+def _not_applicable_test_audit(
+    prompt_hashes: Sequence[str],
+    *,
+    test_evaluation_count: int,
+) -> dict[str, Any]:
+    """Describe a no-test run without fabricating zero-valued observations."""
+    if test_evaluation_count != 0:
+        raise ValueError(
+            "A no-test comparison manifest requires test_evaluation_count=0"
+        )
+    return {
+        "prompt_hashes": list(prompt_hashes),
+        "final_test_enabled": False,
+        "final_test_evaluated": False,
+        "final_test_evaluation_count": 0,
+        "test_observation_status": "not_applicable",
+        "test_member_count_status": "not_applicable",
+        "test_drift_status": "not_applicable",
+    }
+
+
+def _test_observation_comparisons(
+    history: Sequence[Mapping[str, Any]],
+    current: Mapping[str, Any],
+    *,
+    final_test_enabled: bool,
+) -> list[dict[str, Any]]:
+    """Compare test observations only when the run actually evaluated test."""
+    if not final_test_enabled:
+        return []
+    return [
+        _compare_unchanged_test_observations(
+            prior["test_audit"],
+            current,
+            prior_setting=prior["setting"],
+        )
+        for prior in history
+    ]
+
+
 async def _freeze_initialization(
     cfg: Config,
     *,
@@ -1012,58 +1052,94 @@ def main() -> None:
                     PromptEnsembleOptimizationSystem.prompt_hash(str(prompt))
                     for prompt in prompts
                 ]
-                test_audit = _test_observation_audit(
-                    snapshot=local_after,
-                    prompt_hashes=prompt_hashes,
-                    test_rows=split_rows["test"],
-                    task_type=cfg.data.task_type,
-                    tie_break=cfg.peer_state.vote_tie_break,
-                    seed=seed,
-                ) if cfg.persistence.final_test_enabled else {
-                    "prompt_hashes": prompt_hashes,
-                    "test_question_count": 0,
-                    "test_question_set_hash": "",
-                    "per_member": [dict() for _ in prompt_hashes],
-                    "per_agent_correct_counts": [],
-                    "team_vote_vector": [],
-                    "team_vote_vector_hash": "",
-                    "team_vote_correct_count": 0,
-                    "missing_entry_count": 0,
-                    "missing_entries": [],
-                }
-                history_key = (task_id, seed)
-                comparisons = [
-                    _compare_unchanged_test_observations(
-                        prior["test_audit"],
-                        test_audit,
-                        prior_setting=prior["setting"],
+                if cfg.persistence.final_test_enabled:
+                    test_audit = _test_observation_audit(
+                        snapshot=local_after,
+                        prompt_hashes=prompt_hashes,
+                        test_rows=split_rows["test"],
+                        task_type=cfg.data.task_type,
+                        tie_break=cfg.peer_state.vote_tie_break,
+                        seed=seed,
                     )
-                    for prior in comparison_history.get(history_key, [])
-                ]
+                    test_audit.update({
+                        "final_test_enabled": True,
+                        "final_test_evaluated": True,
+                        "final_test_evaluation_count": int(
+                            selection_summary["test_evaluation_count"]
+                        ),
+                        "test_observation_status": "evaluated",
+                        "test_member_count_status": "available",
+                        "test_drift_status": "checked",
+                    })
+                else:
+                    test_audit = _not_applicable_test_audit(
+                        prompt_hashes,
+                        test_evaluation_count=int(
+                            selection_summary["test_evaluation_count"]
+                        ),
+                    )
+                history_key = (task_id, seed)
+                comparisons = _test_observation_comparisons(
+                    comparison_history.get(history_key, []),
+                    test_audit,
+                    final_test_enabled=cfg.persistence.final_test_enabled,
+                )
                 cache_match = _read_json(cache_match_path)
                 cache_match.update({
-                    "test_question_set_hash": test_audit["test_question_set_hash"],
-                    "test_observation_missing_count": test_audit["missing_entry_count"],
+                    "final_test_enabled": test_audit["final_test_enabled"],
+                    "final_test_evaluated": test_audit["final_test_evaluated"],
+                    "final_test_evaluation_count": test_audit[
+                        "final_test_evaluation_count"
+                    ],
+                    "test_observation_status": test_audit[
+                        "test_observation_status"
+                    ],
+                    "test_member_count_status": test_audit[
+                        "test_member_count_status"
+                    ],
+                    "test_drift_status": test_audit["test_drift_status"],
                     "final_prompt_hashes": prompt_hashes,
-                    "test_team_vote_vector_hash": test_audit["team_vote_vector_hash"],
-                    "test_team_vote_correct_count": test_audit["team_vote_correct_count"],
-                    "test_per_agent_correct_counts": test_audit["per_agent_correct_counts"],
                     "unchanged_prompt_comparisons": comparisons,
-                    "unchanged_prompt_drift_count": sum(
-                        int(row["per_question_drift_count"]) for row in comparisons
-                    ),
-                    "unchanged_prompt_aggregate_drift_count": sum(
-                        len(row["aggregate_correct_count_drift_member_ids"])
-                        for row in comparisons
-                    ),
-                    "unchanged_team_vote_drift_count": sum(
-                        int(row["team_vote_vector_drift"]) for row in comparisons
-                    ),
                 })
+                if cfg.persistence.final_test_enabled:
+                    cache_match.update({
+                        "test_question_set_hash": test_audit[
+                            "test_question_set_hash"
+                        ],
+                        "test_observation_missing_count": test_audit[
+                            "missing_entry_count"
+                        ],
+                        "test_team_vote_vector_hash": test_audit[
+                            "team_vote_vector_hash"
+                        ],
+                        "test_team_vote_correct_count": test_audit[
+                            "team_vote_correct_count"
+                        ],
+                        "test_per_agent_correct_counts": test_audit[
+                            "per_agent_correct_counts"
+                        ],
+                        "unchanged_prompt_drift_count": sum(
+                            int(row["per_question_drift_count"])
+                            for row in comparisons
+                        ),
+                        "unchanged_prompt_aggregate_drift_count": sum(
+                            len(row["aggregate_correct_count_drift_member_ids"])
+                            for row in comparisons
+                        ),
+                        "unchanged_team_vote_drift_count": sum(
+                            int(row["team_vote_vector_drift"])
+                            for row in comparisons
+                        ),
+                    })
                 cache_match["matched"] = bool(
                     cache_match.get("matched")
-                    and test_audit["missing_entry_count"] == 0
-                    and all(row["passed"] for row in comparisons)
+                    and (
+                        not cfg.persistence.final_test_enabled
+                        or (
+                            test_audit["missing_entry_count"] == 0
+                            and all(row["passed"] for row in comparisons)
+                        )
+                    )
                 )
                 cache_match["gate"] = "PASS" if cache_match["matched"] else "FAIL"
                 cache_match_path.write_text(
@@ -1072,10 +1148,11 @@ def main() -> None:
                 )
                 if cache_match["gate"] != "PASS":
                     raise RuntimeError(f"Comparison observation gate failed: {run_dir}")
-                comparison_history.setdefault(history_key, []).append({
-                    "setting": setting.name,
-                    "test_audit": test_audit,
-                })
+                if cfg.persistence.final_test_enabled:
+                    comparison_history.setdefault(history_key, []).append({
+                        "setting": setting.name,
+                        "test_audit": test_audit,
+                    })
                 rows.append({
                     "task_id": task_id, "benchmark": task.benchmark, "setting": setting.name, "seed": seed,
                     "vote_acc_initial": (

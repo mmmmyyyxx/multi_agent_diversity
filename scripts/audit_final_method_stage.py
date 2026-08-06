@@ -31,7 +31,12 @@ from scripts.final_method_source_identity import build_source_identity
 from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v4"
+AUDIT_VERSION = "final_method_stage_gate_v5"
+AUDIT_MODES = (
+    "frozen_source_execution",
+    "offline_existing_artifact_revalidation",
+)
+LEGACY_NO_TEST_NORMALIZATION = "legacy_no_test_manifest_v1"
 MEMBER_AWARE_SETTINGS = {
     "shared_member_aware_responsibility",
     "shared_responsibility_conditioned_evolution",
@@ -114,6 +119,171 @@ def _portable_config_value(key: str, value: Any) -> Any:
     if not path.is_absolute():
         return path.as_posix()
     return Path(*path.parts[-3:]).as_posix()
+
+
+def _test_artifact_contract(
+    meta: dict[str, Any],
+    summary: dict[str, Any],
+    comparison_cache: dict[str, Any],
+    *,
+    final_test_enabled: bool,
+) -> dict[str, Any]:
+    """Validate test evidence without equating absence with zero accuracy."""
+    config = meta.get("config", {})
+    selection = summary.get("selection_summary", {})
+    failures: list[str] = []
+    meta_count = meta.get("test_evaluation_count")
+    selection_count = selection.get("test_evaluation_count")
+    lifecycle_flags = {
+        "test_called_before_training_complete": meta.get(
+            "test_called_before_training_complete"
+        ),
+        "test_used_for_selection": meta.get("test_used_for_selection"),
+        "test_used_for_training": meta.get("test_used_for_training"),
+    }
+
+    if final_test_enabled:
+        if config.get("final_test_enabled") is not True:
+            failures.append("config_final_test_enabled")
+        if meta_count != 1 or selection_count != 1:
+            failures.append("final_test_evaluation_count")
+        if any(value is not False for value in lifecycle_flags.values()):
+            failures.append("test_isolation")
+        selected_test = summary.get("selected_test")
+        selected_counts = (
+            selected_test.get("per_agent_correct_counts")
+            if isinstance(selected_test, dict)
+            else None
+        )
+        if not (
+            isinstance(selected_counts, list)
+            and len(selected_counts) == 5
+            and all(isinstance(value, int) for value in selected_counts)
+        ):
+            failures.append("selected_test_member_counts")
+        cache_counts = comparison_cache.get("test_per_agent_correct_counts")
+        if not (
+            isinstance(cache_counts, list)
+            and len(cache_counts) == 5
+            and all(isinstance(value, int) for value in cache_counts)
+        ):
+            failures.append("cache_test_member_counts")
+        if not comparison_cache.get("test_question_set_hash"):
+            failures.append("test_question_set_hash")
+        if not comparison_cache.get("test_team_vote_vector_hash"):
+            failures.append("test_team_vote_vector_hash")
+        if int(comparison_cache.get("test_observation_missing_count", -1)) != 0:
+            failures.append("test_observation_missing_count")
+        explicit_status = comparison_cache.get("test_observation_status")
+        if explicit_status is not None and explicit_status != "evaluated":
+            failures.append("test_observation_status")
+        return {
+            "final_test_enabled": True,
+            "final_test_evaluated": meta_count == 1,
+            "final_test_evaluation_count": meta_count,
+            "test_observation_status": "evaluated",
+            "test_member_count_status": "available",
+            "test_drift_status": "checked",
+            "artifact_normalization": "none",
+            "original_artifacts_modified": False,
+            "failures": sorted(set(failures)),
+        }
+
+    if config.get("final_test_enabled") is not False:
+        failures.append("config_final_test_disabled")
+    if selection.get("final_test_enabled") is not False:
+        failures.append("selection_final_test_disabled")
+    if meta_count != 0 or selection_count != 0:
+        failures.append("final_test_evaluation_count")
+    if any(value is not False for value in lifecycle_flags.values()):
+        failures.append("test_isolation")
+    if any(
+        summary.get(key) is not None
+        for key in ("initial_test", "selected_test", "member_gain")
+    ):
+        failures.append("test_selection_or_metrics_present")
+
+    nonempty_observation_fields = {
+        "test_question_set_hash": comparison_cache.get("test_question_set_hash"),
+        "test_team_vote_vector_hash": comparison_cache.get(
+            "test_team_vote_vector_hash"
+        ),
+        "test_per_agent_correct_counts": comparison_cache.get(
+            "test_per_agent_correct_counts"
+        ),
+    }
+    if any(value not in (None, "", []) for value in nonempty_observation_fields.values()):
+        failures.append("test_observation_present")
+    missing_count = comparison_cache.get("test_observation_missing_count")
+    if missing_count not in (None, 0):
+        failures.append("test_observation_attempt_present")
+
+    status_fields = (
+        "final_test_enabled",
+        "final_test_evaluated",
+        "final_test_evaluation_count",
+        "test_observation_status",
+        "test_member_count_status",
+        "test_drift_status",
+    )
+    has_explicit_status = any(key in comparison_cache for key in status_fields)
+    if has_explicit_status:
+        expected_status = {
+            "final_test_enabled": False,
+            "final_test_evaluated": False,
+            "final_test_evaluation_count": 0,
+            "test_observation_status": "not_applicable",
+            "test_member_count_status": "not_applicable",
+            "test_drift_status": "not_applicable",
+        }
+        if any(
+            comparison_cache.get(key) != value
+            for key, value in expected_status.items()
+        ):
+            failures.append("no_test_status_contract")
+        normalization = "none"
+    else:
+        normalization = LEGACY_NO_TEST_NORMALIZATION
+
+    return {
+        "final_test_enabled": False,
+        "final_test_evaluated": False,
+        "final_test_evaluation_count": 0,
+        "test_observation_status": "not_applicable",
+        "test_member_count_status": "not_applicable",
+        "test_drift_status": "not_applicable",
+        "artifact_normalization": normalization,
+        "original_artifacts_modified": False,
+        "failures": sorted(set(failures)),
+    }
+
+
+def _audit_source_contract(
+    run_source_identity: dict[str, Any],
+    auditor_identity: dict[str, Any],
+    *,
+    audit_mode: str,
+    stage: str,
+) -> list[str]:
+    failures: list[str] = []
+    if audit_mode == "frozen_source_execution":
+        if auditor_identity != run_source_identity:
+            failures.append("current_source_differs_from_frozen_run_source")
+        return failures
+    if audit_mode != "offline_existing_artifact_revalidation":
+        return ["unknown_audit_mode"]
+    if stage != "pilot":
+        failures.append("offline_revalidation_is_pilot_only")
+    if run_source_identity.get("git_dirty") is not False:
+        failures.append("run_source_not_clean")
+    if auditor_identity.get("git_dirty") is not False:
+        failures.append("auditor_source_not_clean")
+    if (
+        auditor_identity.get("method_identifiers")
+        != run_source_identity.get("method_identifiers")
+    ):
+        failures.append("method_runtime_semantics_changed")
+    return failures
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -328,6 +498,12 @@ def _audit_run(
     selection = summary.get("selection_summary", {})
     identity = meta.get("run_identity", {})
     expected_completed = 0 if setting == "shared_baseline" else expected_updates
+    test_contract = _test_artifact_contract(
+        meta,
+        summary,
+        comparison_cache,
+        final_test_enabled=final_test_enabled,
+    )
 
     exact_checks = {
         "method_version": (meta.get("method_version"), METHOD_VERSION),
@@ -450,19 +626,24 @@ def _audit_run(
         "unaccounted_new_entry_count": int(
             comparison_cache.get("unaccounted_new_entry_count", -1)
         ) != 0,
-        "unchanged_prompt_drift_count": int(
-            comparison_cache.get("unchanged_prompt_drift_count", -1)
-        ) != 0,
-        "unchanged_prompt_aggregate_drift_count": int(
-            comparison_cache.get("unchanged_prompt_aggregate_drift_count", -1)
-        ) != 0,
-        "unchanged_team_vote_drift_count": int(
-            comparison_cache.get("unchanged_team_vote_drift_count", -1)
-        ) != 0,
-        "test_observation_missing_count": int(
-            comparison_cache.get("test_observation_missing_count", -1)
-        ) != 0,
     }
+    if final_test_enabled:
+        cache_gate_failures.update({
+            "unchanged_prompt_drift_count": int(
+                comparison_cache.get("unchanged_prompt_drift_count", -1)
+            ) != 0,
+            "unchanged_prompt_aggregate_drift_count": int(
+                comparison_cache.get(
+                    "unchanged_prompt_aggregate_drift_count", -1
+                )
+            ) != 0,
+            "unchanged_team_vote_drift_count": int(
+                comparison_cache.get("unchanged_team_vote_drift_count", -1)
+            ) != 0,
+            "test_observation_missing_count": int(
+                comparison_cache.get("test_observation_missing_count", -1)
+            ) != 0,
+        })
     if any(cache_gate_failures.values()):
         _finding(
             findings,
@@ -470,6 +651,14 @@ def _audit_run(
             "Matched settings must pass the cumulative exact-observation cache gate",
             f"{label}: failures={sorted(key for key, failed in cache_gate_failures.items() if failed)}",
             "stop and rerun from a valid cumulative task-seed observation reference",
+        )
+    if test_contract["failures"]:
+        _finding(
+            findings,
+            "BLOCKER",
+            "Test artifacts must satisfy the stage-specific lifecycle contract",
+            f"{label}: failures={test_contract['failures']}",
+            "repair the test lifecycle or reject the artifact",
         )
     if identity.get("git_commit") != source_identity.get("git_commit"):
         _finding(
@@ -524,16 +713,6 @@ def _audit_run(
         }
     )
     selected_test = summary.get("selected_test")
-    if final_test_enabled and not isinstance(selected_test, dict):
-        _finding(
-            findings, "BLOCKER", "A full run must contain exactly one final test",
-            f"{label}: selected_test missing", "rerun once from scratch",
-        )
-    if not final_test_enabled and selected_test is not None:
-        _finding(
-            findings, "BLOCKER", "A pilot must not evaluate test",
-            f"{label}: selected_test is present", "stop the pipeline",
-        )
 
     accepted = int(cost.get("accepted_update_count", 0))
     return {
@@ -563,6 +742,8 @@ def _audit_run(
         "total_tokens": int(cost.get("total_tokens", 0)),
         "tokens_per_accepted_update": cost.get("tokens_per_accepted_update"),
         "selected_test": selected_test,
+        "test_artifact_contract": test_contract,
+        "artifact_normalization": test_contract["artifact_normalization"],
         "final_prompt_hashes": [
             hashlib.sha256(str(prompt).encode("utf-8")).hexdigest()
             for prompt in prompts
@@ -585,6 +766,8 @@ def _audit_run(
 def _matched_observation_consistency(
     summaries: list[dict[str, Any]],
     findings: list[Finding],
+    *,
+    final_test_enabled: bool = True,
 ) -> list[dict[str, Any]]:
     by_key = {
         (row["task"], row["seed"], row["setting"]): row
@@ -593,6 +776,20 @@ def _matched_observation_consistency(
     rows: list[dict[str, Any]] = []
     for row in summaries:
         if not row.get("complete") or row["setting"] == "shared_baseline":
+            continue
+        if not final_test_enabled:
+            rows.append({
+                "task": row["task"],
+                "seed": row["seed"],
+                "setting": row["setting"],
+                "test_observation_status": "not_applicable",
+                "test_member_count_status": "not_applicable",
+                "test_drift_status": "not_applicable",
+                "artifact_normalization": row.get(
+                    "artifact_normalization", "none"
+                ),
+                "passed": True,
+            })
             continue
         baseline = by_key.get((row["task"], row["seed"], "shared_baseline"))
         if baseline is None:
@@ -783,6 +980,11 @@ def main() -> None:
     parser.add_argument("--run_root", type=Path, required=True)
     parser.add_argument("--report_dir", type=Path, required=True)
     parser.add_argument("--source_identity", type=Path, required=True)
+    parser.add_argument(
+        "--audit_mode",
+        choices=AUDIT_MODES,
+        default="frozen_source_execution",
+    )
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     run_root = args.run_root if args.run_root.is_absolute() else workspace / args.run_root
@@ -792,14 +994,22 @@ def main() -> None:
         if args.source_identity.is_absolute()
         else workspace / args.source_identity
     )
-    source_identity = _read_json(source_path)
+    run_source_identity = _read_json(source_path)
     findings: list[Finding] = []
-    current_source = build_source_identity(workspace)
-    if current_source != source_identity:
+    auditor_identity = build_source_identity(workspace)
+    source_failures = _audit_source_contract(
+        run_source_identity,
+        auditor_identity,
+        audit_mode=args.audit_mode,
+        stage=args.stage,
+    )
+    if source_failures:
         _finding(
-            findings, "BLOCKER", "The source snapshot must remain frozen across real runs",
-            "current source identity differs from the stage-C frozen identity",
-            "mark completed runs source_mismatch and restart at stage A",
+            findings,
+            "BLOCKER",
+            "Run-source and auditor identities must satisfy the selected audit mode",
+            f"failures={source_failures}",
+            "use a clean auditor and the exact recorded run source identity",
         )
 
     tasks, seeds, settings, expected_updates, final_test_enabled = _expected_matrix(args.stage)
@@ -812,7 +1022,7 @@ def main() -> None:
             run_dir=run_root / task / f"{setting}_seed{seed}",
             expected_updates=expected_updates,
             final_test_enabled=final_test_enabled,
-            source_identity=source_identity,
+            source_identity=run_source_identity,
             findings=findings,
         )
         for task in tasks
@@ -844,7 +1054,9 @@ def main() -> None:
 
     comparison_cache_chain = _comparison_cache_chain(complete, findings)
     matched_observation_consistency = _matched_observation_consistency(
-        complete, findings
+        complete,
+        findings,
+        final_test_enabled=final_test_enabled,
     )
     isolation = _setting_isolation(complete, findings)
     blocker_count = sum(row.severity == "BLOCKER" for row in findings)
@@ -864,15 +1076,39 @@ def main() -> None:
     )
 
     report_dir.mkdir(parents=True, exist_ok=True)
+    normalized_runs = [
+        row["run"]
+        for row in complete
+        if row.get("artifact_normalization") == LEGACY_NO_TEST_NORMALIZATION
+    ]
+    normalization = {
+        "artifact_normalization": (
+            LEGACY_NO_TEST_NORMALIZATION if normalized_runs else "none"
+        ),
+        "normalized_run_count": len(normalized_runs),
+        "normalized_runs": normalized_runs,
+        "original_artifacts_modified": False,
+    }
     payload = {
         "audit_version": AUDIT_VERSION,
+        "audit_mode": args.audit_mode,
         "stage": args.stage,
         "gate": gate,
         "blocker_count": blocker_count,
         "major_count": major_count,
         "expected_run_count": len(tasks) * len(seeds) * len(settings),
         "complete_run_count": len(complete),
-        "source_identity": source_identity,
+        "source_identity": run_source_identity,
+        "run_source_identity": run_source_identity,
+        "auditor_identity": auditor_identity,
+        "run_source_commit": run_source_identity.get("git_commit"),
+        "auditor_commit": auditor_identity.get("git_commit"),
+        "method_runtime_semantics_changed": (
+            run_source_identity.get("method_identifiers")
+            != auditor_identity.get("method_identifiers")
+        ),
+        "original_run_artifacts_modified": False,
+        "artifact_normalization": normalization,
         "runs": summaries,
         "comparison_cache_chain": comparison_cache_chain,
         "matched_observation_consistency": matched_observation_consistency,
@@ -896,6 +1132,9 @@ def main() -> None:
             f"- BLOCKER: {blocker_count}",
             f"- MAJOR: {major_count}",
             f"- Total tokens: {total_cost['total_tokens']}",
+            f"- Audit mode: `{args.audit_mode}`",
+            f"- Run source commit: `{run_source_identity.get('git_commit')}`",
+            f"- Auditor commit: `{auditor_identity.get('git_commit')}`",
             "",
             "This report contains hashes, counts, aggregate metrics, and method identifiers only.",
             "",

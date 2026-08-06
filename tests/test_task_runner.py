@@ -8,8 +8,10 @@ from scripts.run_task_level_accuracy import (
     RUNNER_FIELDS,
     _comparison_cache_source,
     _completed_run,
+    _not_applicable_test_audit,
     _parser,
     _task_split_integrity,
+    _test_observation_comparisons,
     _validate_setting_sequence,
     effective_proposal_memory_mode,
 )
@@ -65,6 +67,37 @@ def test_standard_comparison_still_requires_baseline_first():
         _validate_setting_sequence(
             ["shared_full_rcru"],
             optimized_only=False,
+        )
+
+
+def test_no_test_runner_manifest_is_not_applicable_and_has_no_fake_arrays():
+    audit = _not_applicable_test_audit(
+        ["a", "b", "c", "d", "e"],
+        test_evaluation_count=0,
+    )
+    assert audit == {
+        "prompt_hashes": ["a", "b", "c", "d", "e"],
+        "final_test_enabled": False,
+        "final_test_evaluated": False,
+        "final_test_evaluation_count": 0,
+        "test_observation_status": "not_applicable",
+        "test_member_count_status": "not_applicable",
+        "test_drift_status": "not_applicable",
+    }
+    assert "per_agent_correct_counts" not in audit
+    assert "team_vote_vector" not in audit
+    assert _test_observation_comparisons(
+        [{"setting": "prior", "test_audit": {"invalid": "would crash"}}],
+        audit,
+        final_test_enabled=False,
+    ) == []
+
+
+def test_no_test_runner_rejects_nonzero_test_evaluation_count():
+    with pytest.raises(ValueError, match="test_evaluation_count=0"):
+        _not_applicable_test_audit(
+            ["a", "b", "c", "d", "e"],
+            test_evaluation_count=1,
         )
 
 

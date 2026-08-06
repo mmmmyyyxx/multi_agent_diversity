@@ -13,11 +13,14 @@ from multi_dataset_diverse_rl.persistence.identity import (
 )
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from scripts.audit_final_method_stage import (
+    LEGACY_NO_TEST_NORMALIZATION,
+    _audit_source_contract,
     _comparison_cache_chain,
     _expected_matrix,
     _matched_observation_consistency,
     _portable_config_value,
     _priority_key,
+    _test_artifact_contract,
 )
 from scripts.final_method_source_identity import build_source_identity
 from scripts.run_task_level_accuracy import (
@@ -199,6 +202,196 @@ def test_matched_observation_gate_rejects_unchanged_prompt_metric_drift():
     assert rows[0]["passed"] is False
     assert rows[0]["mismatched_unchanged_member_ids"] == [0, 1, 2, 3, 4]
     assert len(findings) == 1
+
+
+def _no_test_artifacts() -> tuple[dict, dict, dict]:
+    meta = {
+        "config": {"final_test_enabled": False},
+        "test_evaluation_count": 0,
+        "test_called_before_training_complete": False,
+        "test_used_for_selection": False,
+        "test_used_for_training": False,
+    }
+    summary = {
+        "initial_test": None,
+        "selected_test": None,
+        "member_gain": None,
+        "selection_summary": {
+            "final_test_enabled": False,
+            "test_evaluation_count": 0,
+        },
+    }
+    return meta, summary, {}
+
+
+def test_legacy_no_test_manifest_is_normalized_without_fake_counts():
+    meta, summary, cache = _no_test_artifacts()
+    contract = _test_artifact_contract(
+        meta,
+        summary,
+        cache,
+        final_test_enabled=False,
+    )
+    assert contract["failures"] == []
+    assert contract["artifact_normalization"] == LEGACY_NO_TEST_NORMALIZATION
+    assert contract["test_observation_status"] == "not_applicable"
+    assert contract["test_member_count_status"] == "not_applicable"
+    assert contract["original_artifacts_modified"] is False
+
+
+def test_no_test_artifact_with_any_test_evaluation_fails():
+    meta, summary, cache = _no_test_artifacts()
+    meta["test_evaluation_count"] = 1
+    contract = _test_artifact_contract(
+        meta,
+        summary,
+        cache,
+        final_test_enabled=False,
+    )
+    assert "final_test_evaluation_count" in contract["failures"]
+
+
+def test_no_test_artifact_with_observation_or_selection_fails():
+    meta, summary, cache = _no_test_artifacts()
+    summary["selected_test"] = {"per_agent_correct_counts": [0] * 5}
+    cache["test_question_set_hash"] = "observed"
+    contract = _test_artifact_contract(
+        meta,
+        summary,
+        cache,
+        final_test_enabled=False,
+    )
+    assert "test_selection_or_metrics_present" in contract["failures"]
+    assert "test_observation_present" in contract["failures"]
+
+
+def test_test_enabled_contract_requires_complete_counts_and_observations():
+    meta = {
+        "config": {"final_test_enabled": True},
+        "test_evaluation_count": 1,
+        "test_called_before_training_complete": False,
+        "test_used_for_selection": False,
+        "test_used_for_training": False,
+    }
+    summary = {
+        "selected_test": {},
+        "selection_summary": {"test_evaluation_count": 1},
+    }
+    contract = _test_artifact_contract(
+        meta,
+        summary,
+        {},
+        final_test_enabled=True,
+    )
+    assert "selected_test_member_counts" in contract["failures"]
+    assert "cache_test_member_counts" in contract["failures"]
+    assert "test_question_set_hash" in contract["failures"]
+    assert "test_team_vote_vector_hash" in contract["failures"]
+
+
+def test_test_once_contract_remains_strict_and_passes_complete_artifact():
+    meta = {
+        "config": {"final_test_enabled": True},
+        "test_evaluation_count": 1,
+        "test_called_before_training_complete": False,
+        "test_used_for_selection": False,
+        "test_used_for_training": False,
+    }
+    summary = {
+        "selected_test": {"per_agent_correct_counts": [10] * 5},
+        "selection_summary": {"test_evaluation_count": 1},
+    }
+    cache = {
+        "test_per_agent_correct_counts": [10] * 5,
+        "test_question_set_hash": "questions",
+        "test_team_vote_vector_hash": "votes",
+        "test_observation_missing_count": 0,
+        "test_observation_status": "evaluated",
+    }
+    contract = _test_artifact_contract(
+        meta,
+        summary,
+        cache,
+        final_test_enabled=True,
+    )
+    assert contract["failures"] == []
+    assert contract["final_test_evaluation_count"] == 1
+    assert contract["test_drift_status"] == "checked"
+
+
+def test_no_test_matched_observation_consistency_is_not_applicable():
+    prompt_hashes = [str(index) * 64 for index in range(5)]
+    baseline = {
+        "complete": True,
+        "task": "toy",
+        "seed": 46,
+        "setting": "shared_baseline",
+        "final_prompt_hashes": prompt_hashes,
+        "selected_test": None,
+        "artifact_normalization": LEGACY_NO_TEST_NORMALIZATION,
+    }
+    optimized = {
+        **baseline,
+        "setting": "shared_full_rcru",
+    }
+    findings = []
+    rows = _matched_observation_consistency(
+        [baseline, optimized],
+        findings,
+        final_test_enabled=False,
+    )
+    assert rows == [{
+        "task": "toy",
+        "seed": 46,
+        "setting": "shared_full_rcru",
+        "test_observation_status": "not_applicable",
+        "test_member_count_status": "not_applicable",
+        "test_drift_status": "not_applicable",
+        "artifact_normalization": LEGACY_NO_TEST_NORMALIZATION,
+        "passed": True,
+    }]
+    assert findings == []
+
+
+def test_offline_auditor_identity_preserves_original_run_identity():
+    run_source = {
+        "git_commit": "c81",
+        "git_dirty": False,
+        "method_identifiers": {"method_version": "v12", "checkpoint_version": 21},
+    }
+    auditor = {
+        "git_commit": "new-auditor",
+        "git_dirty": False,
+        "method_identifiers": {"method_version": "v12", "checkpoint_version": 21},
+    }
+    original = json.loads(json.dumps(run_source))
+    assert _audit_source_contract(
+        run_source,
+        auditor,
+        audit_mode="offline_existing_artifact_revalidation",
+        stage="pilot",
+    ) == []
+    assert run_source == original
+    assert run_source["git_commit"] != auditor["git_commit"]
+
+
+def test_offline_revalidation_rejects_method_runtime_change():
+    run_source = {
+        "git_commit": "c81",
+        "git_dirty": False,
+        "method_identifiers": {"method_version": "v12"},
+    }
+    auditor = {
+        "git_commit": "new-auditor",
+        "git_dirty": False,
+        "method_identifiers": {"method_version": "v13"},
+    }
+    assert _audit_source_contract(
+        run_source,
+        auditor,
+        audit_mode="offline_existing_artifact_revalidation",
+        stage="pilot",
+    ) == ["method_runtime_semantics_changed"]
 
 
 def test_comparison_cache_chain_requires_previous_post_run_reference():

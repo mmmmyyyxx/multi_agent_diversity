@@ -8,7 +8,7 @@ from typing import Any
 
 
 REPORT_VERSION = "final_method_complete_evaluation_v4"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v4"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v5"
 ABLATION_COMPARISONS = (
     ("shared_baseline", "shared_generic_evolution", "optimization_effect"),
     ("shared_generic_evolution", "shared_vote_state_diagnosis", "vote_state_diagnosis_effect"),
