@@ -183,7 +183,7 @@ def test_matched_settings_share_persistent_solver_observation(tmp_path):
         Config.from_flat(
             **common,
             out_dir=str(tmp_path / "baseline"),
-            experiment_setting="shared_baseline",
+            experiment_setting="shared_static_reference",
         ),
         solver=baseline_solver,
     )
@@ -191,7 +191,7 @@ def test_matched_settings_share_persistent_solver_observation(tmp_path):
         Config.from_flat(
             **common,
             out_dir=str(tmp_path / "full"),
-            experiment_setting="shared_responsibility_conditioned_evolution",
+            experiment_setting="shared_responsibility_conditioned_dual_target",
         ),
         solver=full_solver,
     )
@@ -222,7 +222,7 @@ def test_recovery_cost_is_local_to_cache_producing_run(tmp_path):
             out_dir=str(tmp_path / "baseline"),
             answer_format="option_letter",
             shared_solver_cache_path=str(cache),
-            experiment_setting="shared_baseline",
+            experiment_setting="shared_static_reference",
         ),
         solver=producer_solver,
     )
@@ -236,7 +236,7 @@ def test_recovery_cost_is_local_to_cache_producing_run(tmp_path):
             out_dir=str(tmp_path / "consumer"),
             answer_format="option_letter",
             shared_solver_cache_path=str(cache),
-            experiment_setting="shared_responsibility_conditioned_evolution",
+            experiment_setting="shared_responsibility_conditioned_dual_target",
         ),
         solver=lambda *_args: PromptAnswer("B", "FINAL_ANSWER: B", True),
     )

@@ -2,760 +2,209 @@
 
 ## 1. Scope
 
-The current method is **Member-Aware Prompt-Team Optimization**:
+The current runtime implements:
 
 ```text
-method_version = member_aware_peer_state_v12
+Repairability-Adjusted Dual-Target Prompt-Team Optimization
+method_version = member_aware_peer_state_v13
+checkpoint_version = 22
 ```
 
-It jointly searches a team of five prompts. Solver, optimizer, and evaluator
-model weights remain frozen. Five equal-weight outputs are aggregated by
-plurality vote, and a top-count tie abstains.
+The team contains five prompts and uses equal-weight plurality with
+tie-as-abstain. Model weights remain fixed. Every evaluated candidate changes
+one target prompt while holding four peers fixed.
 
-The paper method has exactly three modules:
-
-```text
-1. Member-Aware Responsibility
-2. Responsibility-Conditioned Evolution
-3. Robust Contribution Update
-```
-
-The complete data flow is:
-
-```text
-Current Prompt Team
-        ↓
-Joint Team Diagnosis
-(G, H, M and member gains)
-        ↓
-Member-Aware Responsibility
-(counterfactual eligibility + compact target scheduling)
-        ↓
-Responsibility-Conditioned Evolution
-(member-specific residual context and prompt candidates)
-        ↓
-Robust Contribution Update
-        ↓
-Updated Prompt Team
-```
-
-Three decisions remain separate:
-
-```text
-who is eligible to repair a residual
-!=
-which eligible member is updated now
-!=
-whether an empirically evaluated candidate is committed
-```
-
-Teacher-Critic-Student, Stage A/B, fixed-peer rollout, repairability freeze, retry, cache,
-checkpointing, and audit are bounded implementation or reliability mechanisms.
-They are not additional paper modules.
-
-## 2. Solver And Vote Contract
-
-Each member must return exactly one valid:
-
-```text
-FINAL_ANSWER: <answer>
-```
-
-The optimized prompt is only the mutable decision procedure. Every Solver
-request appends an immutable task-specific output interface after it:
-
-```text
-Follow the decision procedure below.
-
-Decision procedure:
-<mutable candidate prompt>
-
-Mandatory output interface:
-This interface is immutable and overrides any conflicting instruction above.
-<strict task-specific FINAL_ANSWER contract>
-```
-
-The mutable procedure is validated before initialization, checkpoint restore,
-candidate rollout, accepted-state commit, and Solver request construction. It
-must not contain a recognizable `FINAL_ANSWER` marker, copy or describe the
-immutable interface, or add final-response formatting instructions. Student
-responses are filtered candidate by candidate; contamination is never stripped
-or rewritten. A protocol-only exhausted search is recorded as
-`proposal_protocol_failure` and does not advance repairability-freeze state.
-
-Strict-parser invalid output receives request-local identical retries. The first
-valid result is used; an exhausted sequence becomes one terminal-invalid
-observation. Formal guards use terminal-invalid count. Transport retry remains
-separate.
+## 2. Voting state and objective
 
 For each example:
 
 ```text
-G = number of valid gold votes
-H = size of the largest valid wrong-answer cluster
+G = valid gold votes
+H = largest valid wrong cluster
 M = G - H
-```
-
-Under tie-as-abstain:
-
-```text
 vote correct iff M > 0
 ```
 
-Full-team `TeamVoteState` and each member's leave-one-out `PeerVoteContext`
-diagnose coverage failure, conversion failure, dominant wrong clusters, and
-unique or pivotal correct behavior. This diagnosis supports Module 1 and Module
-2; it is not a separate contribution.
-
-## 3. Formal Member And Team Objectives
-
-All formal objectives use integer correct counts on one fixed optimization
-probe.
-
-Let `c_i^0` be member `i`'s initial correct count and `c_i` its current or
-candidate count:
+On the fixed optimization probe:
 
 ```text
-g_i   = c_i - c_i^0
-g_min = min_i g_i
-g_sum = sum_i g_i
+g_i = c_i - c_i^0
+O(Theta) = (V_count, min_i g_i, sum_i g_i)
 ```
 
-The team objective is:
+The common candidate safety rule requires target non-regression, vote
+non-regression, strict target-or-vote progress, and terminal-invalid
+non-regression. Fixed-peer replacement makes strict improvement in `O(Theta)` a
+derived invariant.
+
+## 3. Residual eligibility and service
+
+Only vote-wrong examples create residuals. For each currently wrong member:
 
 ```text
-O(Theta) = (V_count, g_min, g_sum)
+DeltaV_i,x = vote-correct change after counterfactual gold repair
+DeltaM_i,x = plurality-margin change after counterfactual gold repair
 ```
 
-`V_count` is the number of examples correctly answered by plurality vote.
-Vector `a` Pareto-dominates `b` when every component is no lower and at least
-one is strictly higher.
-
-Under fixed-peer single-target replacement, `g_sum` changes by exactly the
-target member's correct-count change. Target and vote non-regression therefore
-preserve every component of `O(Theta)`. For S1-S4, strict target-or-vote
-progress implies strict Pareto improvement. S5 may additionally commit a
-robust objective-neutral active-lane improvement, while still forbidding
-objective regression. The objective is retained for evaluation, trajectories,
-and invariant auditing; it is not an additional candidate rejection guard.
-
-`g_min` is candidate-discriminative only when the selected target is the
-unique weakest member and is not part of the common S1-S4 ranking. The
-all-member fairness mechanism with broad operational effect is the uplift
-deficit `d_i` in target scheduling, not an independent `g_min` acceptance
-guard.
-
-Normalized accuracy and soft vote utility are diagnostics. The method does not
-replace the integer objective with a weighted scalar and does not directly
-optimize prompt distance, trace distance, generic disagreement, or another
-standalone diversity reward.
-
-## 4. Module 1: Member-Aware Responsibility
-
-### 4.1 Counterfactual eligibility
-
-Only vote-wrong examples create team residuals. For a vote-wrong example `x`,
-only members currently wrong on `x` are considered.
-
-Holding the other four members fixed, replace member `i`'s answer by gold and
-compute:
+The legal eligibility set retains all lexicographic maximizers:
 
 ```text
-DeltaV_i,x = counterfactual vote-correct gain
-DeltaM_i,x = counterfactual plurality-margin gain
+E_x = argmax_i (DeltaV_i,x, DeltaM_i,x)
 ```
 
-The eligibility key is:
+Every serviceable residual is routed to one eligible member. The resulting
+service portfolios are disjoint. Routing prefers anchor match, then no anchor,
+then a different anchor, followed by lower lane load, lower total load, and
+stable seeded rank.
+
+Each residual has one lane: `coverage`, `direct_flip`, or `margin_support`.
+Each member exposes one non-empty active lane and slice `A_i`. Only accepted
+updates set or switch the committed member's specialization anchor.
+
+v13 service routing never filters a member through freeze state.
+
+## 4. Repairability-adjusted target selection
+
+For actionable member `i`:
 
 ```text
-eligibility_key(i, x) = (DeltaV_i,x, DeltaM_i,x)
+D_i = #{x in A_i : DeltaV_i,x = 1}
+
+S_i_support =
+  sum_{x in A_i, DeltaV_i,x = 0} max(0, DeltaM_i,x)
+
+d_i = max(0, g_max - g_i - 5)
+w_i = updates_since_selected_i
 ```
 
-It is maximized lexicographically:
+Normalize each dimension by its maximum over the current actionable set. When
+a maximum is zero, every normalized value in that dimension is zero.
 
 ```text
-1. direct vote flip first
-2. larger margin gain second
-3. retain all exact ties
+B_i = 0.5 Dhat_i + 0.3 Shat_i + 0.2 dhat_i
+rho_i = 1 / (1 + f_i)
+score_i = B_i rho_i + 0.05 what_i
 ```
 
-Thus:
+`f_i` is the number of normally completed, zero-feasible branch searches for
+member `i` under the current prompt-team hash.
+
+Order actionable members by:
 
 ```text
-E_x = lexicographic argmax over wrong members
-      of (DeltaV_i,x, DeltaM_i,x)
+(
+  -score_i,
+  -B_i,
+  -Dhat_i,
+  -Shat_i,
+  -dhat_i,
+  -what_i,
+  seeded_rank_i,
+  agent_id,
+)
 ```
 
-The same residual may legitimately appear in several member portfolios.
-Eligibility is state-local repair legitimacy, not permanent ownership.
+S1-S3 select Top-2 distinct members. Top-2 degrades to Top-1 when necessary.
+An empty actionable set stops with
+`no_actionable_responsibility`.
 
-Member gain, uplift deficit, member wait, accepted-update history,
-candidate-search history, Proposal Memory, coverage label, conversion label,
-dominant-wrong label, soft utility, and portfolio load cannot alter `E_x`.
+No target Pareto frontier is used in the v13 path.
 
-Coverage, conversion, dominant-wrong, unique/pivotal, and soft-utility fields
-remain diagnostic, proposal-context, and artifact evidence only.
+## 5. State-local repairability
 
-### 4.2 Repair lanes and unique service routing
+A normal branch completion increments `branch_attempt_count`. It increments
+`branch_feasible_count` when any candidate passes branch-local acceptance;
+otherwise it increments `branch_failure_count`.
 
-The legal portfolio remains:
+Operational failures do not update these counters. A feasible branch that loses
+cross-branch competition is still feasible and receives no failure penalty.
+
+Only a committed prompt transition with a changed team hash resets all
+failure/attempt/feasible counters. Rejection, responsibility refresh, epoch
+change, checkpointing, and audit refresh do not reset them.
+
+v13 has no freeze/unfreeze state machine.
+
+## 6. Independent target branches
+
+Candidate budget contracts are:
 
 ```text
-R_i = {x : i in E_x}
+Static: 0 branches x 0 candidates = 0
+S0:     1 branch x 2 candidates = 2
+S1-S3: 2 branches x 2 candidates = 4
 ```
 
-Legal portfolios may overlap and are used for eligibility audit, complete
-coverage statistics, and repairability-freeze signatures. The program assigns
-each residual exactly one mutually exclusive lane:
+Both S1-S3 branches start from the same parent team hash, profiles, team-state
+version, peer cache, responsibility refresh, and routing snapshot. They build
+independent target contexts and run complete Stage A/B without committing.
+Every valid generated candidate enters its own branch's Stage B.
+
+Each branch returns at most one winner. If two winners exist, common settings
+use:
 
 ```text
-coverage       if G_x = 0
-direct_flip    if G_x > 0 and DeltaV_x = 1
-margin_support otherwise
+(vote gain,
+ minimum-member-gain delta,
+ total-member-gain delta,
+ soft-utility delta,
+ -vote losses,
+ -edit tokens,
+ -target selection rank,
+ prompt hash)
 ```
 
-Dominant-wrong is a diagnostic label and preservation is separate protection
-evidence; neither is another repair lane.
+S3 uses the corresponding RCRU key with normalized lane utility, coalition
+contribution, bootstrap LCB, positive/negative support, and edit size.
 
-For every serviceable residual, deterministic routing chooses exactly one
-`q_x in E_x`. If any eligible member is unfrozen, frozen members are excluded;
-if all are frozen, the residual is retained in legal audit but marked blocked.
-Routing orders candidates by:
+Absolute target correct count, raw lane utility, and raw portfolio size are
+not cross-member comparison dimensions.
+
+The program atomically commits at most one winner, updates only its anchor,
+computes the successor team hash, resets repairability counters, and refreshes
+responsibility. The losing branch cannot change prompts, profiles, anchors, or
+team state.
+
+## 7. Proposal and candidate decisions
+
+Teacher receives bounded programmatic diagnosis and produces one repair plan.
+Critic checks only hard semantic blockers. Student sees the parent prompt,
+approved plan, immutable task output contract, and requested candidate count.
+Rollouts determine value.
+
+S2/S3 compact context contains one selected lane, one dominant pattern, at
+most two repair cases, and at most one preservation case. Scores, member IDs,
+failure counts, waits, and routing loads are not exposed.
+
+S0-S2 use the common monotone target-or-vote branch policy. S3 retains RCRU
+branch-local evaluation and changes no responsibility or dual-search rule.
+
+## 8. Ablation matrix
 
 ```text
-1. matching specialization anchor
-2. no anchor
-3. a different anchor
-4. lower current load in the residual lane
-5. lower total service load
-6. stable seeded rank
+Static shared_static_reference                    outside module vector
+S0     shared_generic_evolution                   000
+S1     shared_member_aware_dual_target            100
+S2     shared_responsibility_conditioned_dual_target 110
+S3     shared_full_dual_target_rcru                111
 ```
 
-The resulting service portfolios are disjoint:
-
-```text
-P_i = {x : q_x = i}
-P_i intersect P_j = empty, i != j
-```
-
-### 4.3 Specialization anchor and active slice
-
-Each S3-S5 member has an optional specialization anchor. Only an accepted
-update sets or switches it to the active lane used by that update. Rejection,
-schema failure, transport failure, and candidate regression leave it unchanged.
-If the anchored lane remains in `P_i`, it is retained. Otherwise the program
-selects one non-empty lane lexicographically by `(D_i^lane, S_i^lane,
-N_i^lane, laneRank)`, with `direct_flip > coverage > margin_support` only as
-the final exact-tie breaker.
-
-Define the single active slice:
-
-```text
-A_i = {x in P_i : lane(x) = active_lane_i}
-```
-
-The target scheduler and the S5 proposal context use `A_i`, never the mixed
-service portfolio. Unfreezing clears the old anchor so the member can choose a
-new direction.
-
-### 4.4 Uplift deficit
-
-Let:
-
-```text
-g_max = max_j g_j
-d_i   = max(0, g_max - g_i - 5)
-```
-
-`d_i` affects only member-level scheduling. It never changes per-residual
-eligibility.
-
-### 4.5 One member-level Pareto
-
-For each unfrozen member with a non-empty service portfolio and active slice:
-
-```text
-D_i = number of direct flips in A_i
-S_i = sum of DeltaM over A_i
-T_i = (D_i, S_i, d_i)
-```
-
-The scheduler computes exactly one member-level Pareto frontier. Within its
-first frontier, selection uses:
-
-```text
-1. larger updates_since_selected
-2. stable seeded rank
-```
-
-Equivalently:
-
-```text
-A_t = {i : P_i and A_i are non-empty and frozen_i = false}
-T_i = (D_i, S_i, d_i), i in A_t
-F_t = ParetoFront({T_i : i in A_t})
-i_t = lexicographic argmax over i in F_t of
-      (updates_since_selected_i, -seeded_rank_i)
-```
-
-There is no second responsibility frontier, joint frontier, hidden scalar, or
-substantive reordering by `D_i`, `S_i`, or `d_i` after the frontier is formed.
-
-`d_i` is the sole weak-member protection term. A weakest member is protected
-only when its portfolio is non-empty, it is not frozen, and its vector remains
-on the first frontier. Equal deficit does not prevent strict domination in
-`D_i` and `S_i`. There is no waiting-time override, deficit-service lane, or
-generic compensation mechanism.
-
-### 4.6 State-Conditioned Repairability Freeze
-
-The active responsibility set is:
-
-```text
-A_t = {i : P_i and A_i are non-empty and frozen_i = false}
-```
-
-Two consecutive complete failures under the same responsibility portfolio
-state freeze a member. The sanitized portfolio signature hashes sorted
-`(question_hash, DeltaV, DeltaM)` tuples plus `D_i`, `S_i`, and residual count.
-A complete failure requires a formally selected target, exhausted normal
-Teacher/Critic/Student and candidate evaluation budget, no infrastructure,
-protocol, or parser failure, and no accepted candidate. Each update contributes
-at most one failure. An accepted update resets the target's failure streak.
-
-Frozen members remain in residual eligibility, legal portfolios, anchors, and
-audit records, but cannot receive new service routing or enter target selection. They
-return only when both conditions hold:
-
-```text
-at least two accepted updates by other members
-and
-Jaccard(frozen residual hashes, current residual hashes) < 0.8
-    or current D_i != frozen D_i
-```
-
-Minor `S_i` changes alone do not unfreeze a member. Rejected updates do not
-refresh routing. Accepted transitions atomically refresh eligibility, freeze
-state, routing, service portfolios, and active lanes. If no service portfolio
-is actionable, selection reports
-`no_actionable_repairability` and optimization stops with
-`early_stop_reason = all_actionable_members_frozen`.
-
-Freeze is a search-budget safeguard inside target scheduling, not a fourth
-research module. `updates_since_selected` remains only a first-frontier
-tie-break and never revives a frozen or dominated member.
-
-## 5. Module 2: Responsibility-Conditioned Evolution
-
-S5 receives only the target's program-selected active lane. Its model-facing
-context contains:
-
-```text
-parent prompt
-one repair lane and its fixed repair goal
-one dominant (lane, target-error-role) pattern
-at most two repair examples from that lane
-at most one independent preservation example
-one compact previous-outcome status and main rejection
-```
-
-The context never exposes member identity, gain, uplift deficit, responsibility
-scores, vote/peer-state numbers, routing loads, freeze/anchor state, or the
-complete rejection list. The program computes eligibility, chooses and routes
-the residual, selects the lane and pattern, and compares scheduler vectors;
-the LLM performs none of those decisions.
-
-The role division is:
-
-```text
-Program:
-    compute all numerical and typed diagnostic evidence
-
-Teacher:
-    propose one bounded repair hypothesis
-
-Critic:
-    check hard semantic blockers
-
-Student:
-    realize the approved plan as replacement prompts
-
-Rollouts:
-    determine empirical value
-```
-
-Programmatic aggregation uses the complete fixed probe. S4/S5 supply exactly
-one pattern, no more than two repair cases, and no more than one preservation
-case. Its serialized context is capped at
-`min(config.tcs_context_max_chars, 6000)`: preservation is removed first, then
-the second repair case; parent prompt, question, gold answer, and repair goal
-are never truncated. S3 uses the same routing and scheduler but retains the
-generic peer-state context. S1-S2 create no service routing, anchors, active
-lanes, or freeze state.
-
-Teacher returns exactly:
-
-```json
-{"failure_pattern":"...", "repair_rule":"...", "preservation_rule":"..."}
-```
-
-Critic checks only:
-
-```text
-evidence_mismatch
-actionable_specificity
-shortcut_or_copying
-preservation_or_output_risk
-```
-
-and returns:
-
-```json
-{"failed_checks":[], "risk_case_ids":[], "feedback":""}
-```
-
-Student sees only the parent prompt, approved repair plan, immutable output
-contract, and requested candidate count. The contract is context only: Student
-must return reasoning/decision procedures without quoting, imitating, or
-describing the interface, adding a fixed answer, or adding final-response
-formatting. It returns:
-
-```json
-{"candidate_prompts":["complete replacement prompt"]}
-```
-
-The existing revision and recovery protocol remains unchanged: a zero-valid
-Student response receives structured feedback and up to three retries; after
-four invalid calls, at most one fresh Teacher-Critic regeneration starts one
-final four-call Student cycle. A partially valid response stops recovery and
-only valid candidates enter Stage A.
-
-`PreviousUpdateOutcome` distinguishes operational pipeline execution from
-empirical rollout feedback. Transport, truncation, and schema failures never
-masquerade as candidate evidence.
-
-## 6. Module 3: Robust Contribution Update
-
-Candidate evaluation replaces exactly one target prompt and holds the other
-four prompts and profiles fixed. It computes target, team vote, all-member,
-terminal-invalid, residual, coverage, conversion, and protection diagnostics.
-
-### 6.1 Matched Stage A
-
-All six main settings use `matched_all_generated`. Every valid generated
-candidate enters full paired evaluation, and
-`stage_b_candidate_budget >= num_candidates_per_parent`. Stage A may record
-diagnostic scores but does not filter the main ablation matrix.
-
-### 6.2 Common S1-S4 Stage B acceptance
-
-An S1-S4 candidate must satisfy:
-
-```text
-candidate target correct count >= incumbent
-candidate vote correct count >= incumbent
-target or vote must strictly improve
-terminal-invalid count must not increase
-```
-
-The acceptance identifier is:
-
-```text
-CANDIDATE_ACCEPTANCE_VERSION =
-fixed_peer_monotone_target_or_vote_v2
-```
-
-The first three conditions imply that `(V_count, g_min, g_sum)` strictly
-Pareto-dominates the incumbent. Runtime verifies this derived property with a
-fail-fast invariant. It does not enter `passed`, `hard_feasible`, rejection
-reasons, or candidate ranking. The legacy objective-dominance artifact fields
-remain diagnostic aliases for this derived invariant.
-
-In particular, vote-only progress remains valid:
-
-```text
-target gain = 0
-vote gain > 0
-```
-
-provided every other guard passes. Strict target improvement is not required.
-Target-only progress (`target gain > 0`, `vote gain = 0`) is equally valid.
-
-Vote loss, soft utility, coverage, conversion, unique-correct loss, and
-pivotal-correct loss remain diagnostics or late deterministic tie-break
-evidence. None is an independent rejection guard.
-
-### 6.3 Common S1-S4 selection preference
-
-S1-S4 use the same four Stage B guards and the same
-`common_monotone_safe` ranking:
-
-```text
-vote-correct count
-target correct count
-mean soft vote utility
-fewer vote losses
-fewer invalid outputs
-earlier generation
-stable prompt hash
-```
-
-Minimum member gain, total gain, uplift deficit, assigned-residual repair,
-active-lane utility, and coalition contribution are deliberately absent from
-this common ranking. S5 replaces only this candidate decision layer with RCRU:
-target, vote, terminal-invalid, and active-lane utility cannot regress; vote or
-lane utility must strictly progress; `(V,U,C)` Pareto, paired support
-robustness, and minimal edit complete the decision.
-
-## 7. State Lifecycle
-
-The initial team is diagnosed once. Rejected candidates do not change active
-prompts, profiles, team state, or responsibility state.
-
-An accepted target prompt/profile replacement is atomic. It increments the
-team-state version and triggers exactly one diagnosis and responsibility
-refresh. The refreshed state is reused until the next accepted team
-transition.
-
-Before the accepted-state refresh, the target anchor is set to the active lane
-used by the accepted update. The refresh then recomputes legal eligibility,
-applies freeze/unfreeze transitions, clears anchors for newly unfrozen members,
-and deterministically rebuilds service routing, service portfolios, and active
-lane slices. Rejected and operationally failed updates change none of those
-routing states.
-
-On refresh failure, restore prompts, profiles, accepted counters, member wait,
-anchors, freeze state, eligibility, routing, service/active portfolios, versions,
-refresh count, and affected audit rows.
-
-The persistent scheduling tie-break is:
-
-```text
-updates_since_selected_by_agent
-```
-
-Repairability failure streaks, frozen snapshots, accepted updates by other
-members, freeze counts, anchors, service assignments, repair lanes, and active
-slices are checkpointed exactly.
-
-## 8. Optional Extension
-
-The formal default is `proposal_memory_mode = off`.
-
-Explicit `state_local_v1` Proposal Memory is a proposal-search extension. Its
-complete key includes run, team state, target agent, prompt, and eligible
-residual set. It may retain sanitized failure feedback only; the compact S5
-context never exposes that feedback. It cannot alter:
-
-```text
-repair eligibility
-responsibility portfolio
-target Pareto
-candidate acceptance
-```
-
-Historical owner, frontier, age, and compensation reports remain development
-evidence tied to their original commits. They do not define v12.
-
-## 9. Experiment Settings
-
-The repository exposes exactly:
-
-```text
-shared_baseline
-shared_generic_evolution
-shared_vote_state_diagnosis
-shared_member_aware_responsibility
-shared_responsibility_conditioned_evolution
-shared_full_rcru
-```
-
-The settings have the following structure:
-
-```text
-S0 -> S1
-    add generic prompt evolution
-
-S1 -> S2
-    add vote-state diagnosis
-
-S2 -> S3
-    add Member-Aware Responsibility
-
-S3 -> S4
-    add Responsibility-Conditioned Evolution
-
-S4 -> S5
-    replace only candidate decision with RCRU
-```
-
-S1-S4 share the same fixed-peer monotone target-or-vote feasible set,
-`common_monotone_safe` ranking, and matched-all-generated Stage A. Old
-Vote-First and Member-First names are explicit legacy controls only and cannot
-start a new run unless `allow_legacy_setting=1`.
-
-All settings keep matched initialization, candidate budgets, five agents,
-plurality voting, and tie-as-abstain.
-
-`shared_member_aware_responsibility` and
-`shared_responsibility_conditioned_evolution` share the
-same legal eligibility, unique routing, anchors, active-lane scheduler, freeze,
-and monotone target-or-vote acceptance. Their only method difference is generic peer-state
-versus compact single-lane proposal context. The baseline and first three
-optimization ablations do not create service assignments, anchors, active
-lanes, or freeze state.
-
-### S5: Responsibility-Conditioned Robust Contribution Update
-
-`shared_full_rcru` preserves S4 eligibility, unique service
-routing, specialization anchors, active-lane scheduling, freeze state, compact
-single-lane context, candidate generation, and budgets. It changes only the
-candidate decision policy.
-
-Layer 1 requires target correct-count, team vote-correct count, and
-terminal-validity non-regression. Layer 2 requires active-lane utility
-non-regression and strict progress in team vote or active-lane utility, while
-auditing leave-one-out pivotal coalition contribution. Layer 3 requires
-multi-example support and a deterministic paired-bootstrap lower bound for
-lane-only progress; minimal token edit is a final tie-break, not a guard.
-
-For a feasible candidate:
-
-```text
-Q_i(p') = (V(p'), U_i(p'), C_i(p'))
-```
-
-Only the first candidate Pareto frontier under this vector is eligible for
-final deterministic ranking. The method does not reward generic disagreement,
-same-wrong reduction, cluster separation, or prompt distance. Behavioral
-differentiation remains an evaluation outcome, not an acceptance target.
-
-## 10. Final Active State And Test Isolation
-
-The lifecycle is:
-
-```text
-initial team
-→ planned train updates or all-actionable-members-frozen early stop
-→ final active team
-→ one test
-```
-
-Validation split hashes remain in run identity but validation has no role in
-target selection, diagnosis, proposal, acceptance, early stopping, or
-checkpoint selection. Test runs once only after the optimization lifecycle completes
-and cannot influence training.
-
-Formal selection uses integer counts. Cross-task reports additionally expose
-normalized accuracy gains.
-
-## 11. Persistence And Reproducibility
-
-Checkpoint version is:
-
-```text
-20
-```
-
-Checkpoint state includes active prompts and profiles, initial profiles,
-member-gain state, team/responsibility versions, eligibility sets, member wait,
-accepted counts, target-attempt counts, seeded ranks, proposal-memory state
-when explicitly enabled, TCS recovery state, training lifecycle, histories,
-LLM accounting, Python random state, specialization anchors, residual repair
-lanes, unique service assignments, service portfolios, active lanes, and active
-residual hashes.
-
-Per-residual age and target Pareto-front state are not persisted. Recomputed
-eligibility must match the stored legal eligibility; checkpointed routing and
-active slices must remain legal and deterministic for the restored state.
-
-Checkpoint v18 and earlier fail with an explicit version mismatch. There is no
-silent migration or restart in place.
-
-Resume also requires exact run identity, code commit, split files, question
-sets, probe, model request, parser, decoding, and output-contract identities.
-
-## 12. Artifacts
-
-Responsibility audit records, for every vote-wrong residual:
-
-```text
-question hash
-candidate (DeltaV, DeltaM) values
-eligible agent IDs
-eligibility tie count
-coverage/conversion diagnosis
-```
-
-Target-selection audit records:
-
-```text
-agent_id
-D_i
-S_i
-g_i
-d_i
-updates_since_selected
-frozen
-target_pareto_front
-active candidate IDs
-legal/service/active portfolio sizes
-active lane and specialization anchor
-freeze/unfreeze events
-selected agent
-selection stage
-```
-
-`service_routing_audit_sanitized.jsonl` records one safe row per residual and
-team state, including lane, legal and active eligible IDs, unique service
-agent or freeze block, anchor-match level, pre-routing loads, and seeded rank.
-`specialization_anchor_trajectory_sanitized.jsonl` records initialization,
-accepted set/switch, retained rejection, freeze, and unfreeze-clear events.
-Neither artifact contains prompts, questions, answers, or model output.
-
-Candidate decisions record canonical acceptance and selection policies,
-target and vote gains/losses, objective vectors before/after, the derived
-Pareto invariant, target weakest-member status, minimum/total gain deltas,
-acceptance booleans, rejection reasons, portfolio
-repairs, and coverage transitions. Diagnostic error-structure metrics are not
-acceptance objectives.
-
-## 13. Implementation Map And Boundaries
-
-```text
-multi_dataset_diverse_rl/versions.py
-multi_dataset_diverse_rl/member_objectives.py
-multi_dataset_diverse_rl/peer_state.py
-multi_dataset_diverse_rl/responsibility.py
-multi_dataset_diverse_rl/diagnosis_aggregation.py
-multi_dataset_diverse_rl/tcs.py
-multi_dataset_diverse_rl/candidate_selection.py
-multi_dataset_diverse_rl/evaluation/fixed_probe.py
-multi_dataset_diverse_rl/system.py
-multi_dataset_diverse_rl/persistence/checkpoint.py
-multi_dataset_diverse_rl/persistence/identity.py
-scripts/run_task_level_accuracy.py
-scripts/preflight_member_aware.py
-tests/
-```
-
-Do not change the following as part of responsibility maintenance:
-
-```text
-five-agent setting
-plurality voting
-tie-as-abstain
-G/H/M
-fixed peers
-TCS retry protocol
-Stage A/B candidate budget
-Solver contract
-no validation selection
-final active state
-test once
-target-or-vote candidate acceptance
-```
-
-Do not add a scalar responsibility score, generic diversity reward,
-same-wrong objective, prompt-distance objective, another target Pareto,
-per-example hard preservation guard, or proposal-success predictor.
+Static performs no optimization, planned updates, target selection, or TCS
+calls. The two auxiliary budget controls and the old seven-setting semantics
+are explicit, require opt-in, and do not belong to the main matrix.
+
+## 9. Evaluation lifecycle and persistence
+
+The active lifecycle performs no validation rollout or checkpoint selection.
+The final active state is selected automatically. Test executes once after
+training and never participates in optimization.
+
+Checkpoint v22 persists the state-local repairability counters, selected target
+IDs, target-score history, branch decisions, routing, active lanes, and anchors.
+Checkpoint v21/v12 is rejected with `checkpoint_version_mismatch`; there is no
+migration.
+
+Sanitized v13 artifacts contain only hashes, counters, lanes, normalized
+values, and decision keys. They exclude prompt/question/answer text, raw model
+output, credentials, endpoints, cache contents, checkpoints, and absolute
+paths.

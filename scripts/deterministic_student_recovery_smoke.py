@@ -67,10 +67,10 @@ async def run() -> dict:
             Config.from_flat(
                 out_dir=directory,
                 answer_format="option_letter",
-                experiment_setting="shared_vote_state_diagnosis",
+                experiment_setting="shared_generic_evolution",
                 num_candidates_per_parent=2,
                 stage_a_channel_top_k=1,
-                stage_b_candidate_budget=1,
+                stage_b_candidate_budget=2,
             ),
             solver=solver,
             optimizer_chat=chat,

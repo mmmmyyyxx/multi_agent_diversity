@@ -9,7 +9,8 @@ from typing import Any, Mapping, Sequence
 
 from ..config import Config
 from ..protocol import (
-    CandidateBudgetContract,
+    candidate_budget_contract,
+    canonical_experiment_setting,
     experiment_protocol,
 )
 from ..provider_credentials import resolve_base_url
@@ -44,12 +45,14 @@ from ..versions import (
     EVALUATION_PROTOCOL_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     MODEL_THINKING_MODE_VERSION,
     MINIMAL_EDIT_VERSION,
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RESPONSIBILITY_VERSION,
     RESPONSIBILITY_UTILITY_VERSION,
     RCRU_VERSION,
@@ -110,20 +113,27 @@ def _git_identity(workspace: Path) -> tuple[str, bool]:
 
 
 def _protocol_for_config(cfg: Config):
+    canonical_name = canonical_experiment_setting(
+        cfg.training.experiment_setting,
+        allow_legacy_setting=cfg.training.allow_legacy_setting,
+        allow_auxiliary_setting=cfg.training.allow_auxiliary_setting,
+    )
     return experiment_protocol(
         cfg.training.experiment_setting,
         initialization_mode=cfg.training.initialization_mode,
         tie_policy=cfg.peer_state.vote_tie_break,
-        candidate_budget_contract=CandidateBudgetContract(
-            generated_per_update=cfg.tcs.num_candidates_per_parent,
+        candidate_budget_contract=candidate_budget_contract(
+            canonical_name,
+            candidates_per_target_branch=cfg.tcs.num_candidates_per_parent,
+            stage_b_budget_per_branch=cfg.evaluation.stage_b_candidate_budget,
             stage_a_channel_top_k=cfg.evaluation.stage_a_channel_top_k,
-            stage_b_candidate_budget=cfg.evaluation.stage_b_candidate_budget,
             representative_size=cfg.evaluation.stage_a_representative_size,
             coverage_size=cfg.evaluation.stage_a_coverage_size,
             conversion_size=cfg.evaluation.stage_a_conversion_size,
             preservation_size=cfg.evaluation.stage_a_preservation_size,
         ),
         allow_legacy_setting=cfg.training.allow_legacy_setting,
+        allow_auxiliary_setting=cfg.training.allow_auxiliary_setting,
     )
 
 
@@ -132,12 +142,15 @@ def config_fingerprint(cfg: Config) -> str:
     protocol = _protocol_for_config(cfg)
     values["experiment_setting"] = protocol.name
     values["canonical_setting_name"] = protocol.name
-    values["module_vector"] = asdict(protocol.modules)
+    values["module_vector"] = protocol.module_vector
     values["candidate_acceptance_policy"] = (
         protocol.candidate_acceptance_policy
     )
     values["candidate_ranking_policy"] = protocol.candidate_ranking_policy
     values["stage_a_policy"] = protocol.stage_a_policy
+    values["candidate_budget_contract"] = asdict(
+        protocol.candidate_budget_contract
+    )
     rcru_enabled = (
         protocol.candidate_acceptance_policy
         == "responsibility_robust_contribution"
@@ -157,6 +170,8 @@ def config_fingerprint(cfg: Config) -> str:
         "responsibility": RESPONSIBILITY_VERSION,
         "service_routing": SERVICE_ROUTING_VERSION,
         "target_selection": TARGET_SELECTION_VERSION,
+        "repairability": REPAIRABILITY_VERSION,
+        "dual_target_search": DUAL_TARGET_SEARCH_VERSION,
         "candidate_selection": CANDIDATE_SELECTION_VERSION,
         "stage_a": protocol.stage_a_policy,
         "stage_b": RCRU_VERSION if rcru_enabled else CANDIDATE_ACCEPTANCE_VERSION,

@@ -7,14 +7,25 @@ from pathlib import Path
 from typing import Any
 
 
-REPORT_VERSION = "final_method_complete_evaluation_v4"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v5"
+REPORT_VERSION = "final_method_complete_evaluation_v13_reduced_v1"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v13_reduced_v1"
 ABLATION_COMPARISONS = (
-    ("shared_baseline", "shared_generic_evolution", "optimization_effect"),
-    ("shared_generic_evolution", "shared_vote_state_diagnosis", "vote_state_diagnosis_effect"),
-    ("shared_vote_state_diagnosis", "shared_member_aware_responsibility", "responsibility_allocation_effect"),
-    ("shared_member_aware_responsibility", "shared_responsibility_conditioned_evolution", "responsibility_conditioned_proposal_effect"),
-    ("shared_responsibility_conditioned_evolution", "shared_full_rcru", "robust_contribution_update_effect"),
+    (
+        "shared_static_reference",
+        "shared_generic_evolution",
+        "generic_evolution_effect",
+    ),
+    (
+        "shared_generic_evolution",
+        "shared_member_aware_dual_target",
+        "member_aware_dual_target_effect",
+    ),
+    (
+        "shared_member_aware_dual_target",
+        "shared_responsibility_conditioned_dual_target",
+        "responsibility_conditioned_proposal_effect",
+    ),
+    ("shared_responsibility_conditioned_dual_target", "shared_full_dual_target_rcru", "robust_contribution_update_effect"),
 )
 
 
@@ -213,14 +224,15 @@ def main() -> None:
 
     disamb_rows = []
     for seed in (44, 45, 46):
-        baseline = disamb_runs[("disambiguation_qa", seed, "shared_baseline")]["selected_test"]
+        baseline = disamb_runs[
+            ("disambiguation_qa", seed, "shared_static_reference")
+        ]["selected_test"]
         for setting in (
-            "shared_baseline",
+            "shared_static_reference",
             "shared_generic_evolution",
-            "shared_vote_state_diagnosis",
-            "shared_member_aware_responsibility",
-            "shared_responsibility_conditioned_evolution",
-            "shared_full_rcru",
+            "shared_member_aware_dual_target",
+            "shared_responsibility_conditioned_dual_target",
+            "shared_full_dual_target_rcru",
         ):
             run = disamb_runs[("disambiguation_qa", seed, setting)]
             outcome = _member_outcome(baseline, run["selected_test"])
@@ -257,8 +269,12 @@ def main() -> None:
     cross_rows = []
     for task in ("geometric_shapes", "ruin_names"):
         for seed in (44, 45, 46):
-            baseline = cross_runs[(task, seed, "shared_baseline")]["selected_test"]
-            full = cross_runs[(task, seed, "shared_full_rcru")]
+            baseline = cross_runs[
+                (task, seed, "shared_static_reference")
+            ]["selected_test"]
+            full = cross_runs[
+                (task, seed, "shared_full_dual_target_rcru")
+            ]
             cross_rows.append({
                 "task": task,
                 "seed": seed,
@@ -268,7 +284,10 @@ def main() -> None:
 
     training, proposals, votes = [], [], []
     for run in (*disambiguation["runs"], *cross["runs"]):
-        if not run.get("complete") or run["setting"] == "shared_baseline":
+        if (
+            not run.get("complete")
+            or run["setting"] == "shared_static_reference"
+        ):
             continue
         root = args.disambiguation_root if run["task"] == "disambiguation_qa" else args.cross_task_root
         run_dir = root / run["task"] / f"{run['setting']}_seed{run['seed']}"

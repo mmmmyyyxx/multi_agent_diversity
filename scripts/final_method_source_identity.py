@@ -18,10 +18,12 @@ from multi_dataset_diverse_rl.versions import (
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RCRU_VERSION,
     RESPONSIBILITY_VERSION,
     SERVICE_ROUTING_VERSION,
@@ -40,7 +42,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 )
 
 
-SOURCE_IDENTITY_VERSION = "final_method_source_identity_v2"
+SOURCE_IDENTITY_VERSION = "final_method_source_identity_v3"
 SOURCE_ROOTS = (
     "AGENTS.md",
     "README.md",
@@ -55,6 +57,8 @@ EXPERIMENT_SCRIPTS = (
     "scripts/audit_final_method_stage.py",
     "scripts/build_final_method_complete_report.py",
     "scripts/build_strict_v2_s345_report.py",
+    "scripts/run_v13_search_budget_control.py",
+    "scripts/audit_v13_search_budget_control.py",
 )
 
 
@@ -120,6 +124,8 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
             "responsibility_version": RESPONSIBILITY_VERSION,
             "service_routing_version": SERVICE_ROUTING_VERSION,
             "target_selection_version": TARGET_SELECTION_VERSION,
+            "repairability_version": REPAIRABILITY_VERSION,
+            "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
             "candidate_selection_version": CANDIDATE_SELECTION_VERSION,

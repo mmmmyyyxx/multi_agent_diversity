@@ -2,7 +2,10 @@ from multi_dataset_diverse_rl.peer_state import (
     build_peer_vote_context,
     build_team_vote_state,
 )
-from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
+from multi_dataset_diverse_rl.protocol import (
+    candidate_budget_contract,
+    experiment_protocol,
+)
 from multi_dataset_diverse_rl.responsibility import (
     MemberAwareRepairOpportunity,
     RepairLane,
@@ -157,21 +160,20 @@ def test_anchor_match_then_unanchored_then_load_control_routing():
     assert routed.assignments_by_question["q"].service_agent_id == 1
 
 
-def test_frozen_members_do_not_receive_service_and_all_frozen_is_blocked():
+def test_v13_service_routing_ignores_legacy_frozen_state():
     state = runtime()
     state.frozen_by_agent = {agent: False for agent in range(5)}
     state.frozen_by_agent[0] = True
     coverage = team("q", ["B", "B", "C", "C", "D"])
     rows = {"q": (opportunity(0, "q"), opportunity(1, "q"))}
     routed = route({"q": coverage}, rows, {"q": (0, 1)}, state)
-    assert routed.assignments_by_question["q"].service_agent_id == 1
+    assert routed.assignments_by_question["q"].service_agent_id in {0, 1}
 
     state.frozen_by_agent[1] = True
-    blocked = route({"q": coverage}, rows, {"q": (0, 1)}, state)
-    decision = blocked.assignments_by_question["q"]
-    assert decision.service_agent_id is None
-    assert decision.service_blocked_by_freeze
-    assert all(not portfolio for portfolio in blocked.service_portfolios.values())
+    rerouted = route({"q": coverage}, rows, {"q": (0, 1)}, state)
+    decision = rerouted.assignments_by_question["q"]
+    assert decision.service_agent_id in {0, 1}
+    assert not decision.service_blocked_by_freeze
 
 
 def test_anchor_retains_active_lane_and_scheduler_uses_only_that_slice():
@@ -238,27 +240,37 @@ def test_anchor_is_created_or_switched_only_by_acceptance():
     assert switched["event"] == "accepted_anchor_switch"
 
 
-def test_setting_isolation_enables_service_flow_only_for_s4_and_s5():
-    budget = CandidateBudgetContract(2, 1, 2, 3, 1, 1, 1)
+def test_setting_isolation_enables_service_flow_from_s1():
+    names = (
+        "shared_static_reference",
+        "shared_generic_evolution",
+        "shared_member_aware_dual_target",
+        "shared_responsibility_conditioned_dual_target",
+    )
     protocols = {
         name: experiment_protocol(
             name,
             initialization_mode="shared_identical",
             tie_policy="abstain",
-            candidate_budget_contract=budget,
+            candidate_budget_contract=candidate_budget_contract(
+                name,
+                candidates_per_target_branch=2,
+                stage_b_budget_per_branch=2,
+                stage_a_channel_top_k=2,
+                representative_size=3,
+                coverage_size=1,
+                conversion_size=1,
+                preservation_size=1,
+            ),
         )
-        for name in (
-            "shared_baseline",
-            "shared_generic_evolution",
-            "shared_vote_state_diagnosis",
-            "shared_member_aware_responsibility",
-            "shared_responsibility_conditioned_evolution",
-        )
+        for name in names
     }
-    for name in tuple(protocols)[:3]:
+    for name in tuple(protocols)[:2]:
         assert not protocols[name].service_routing_enabled
         assert not protocols[name].repairability_freeze_enabled
-    assert protocols["shared_member_aware_responsibility"].service_routing_enabled
-    assert protocols["shared_responsibility_conditioned_evolution"].service_routing_enabled
-    assert protocols["shared_member_aware_responsibility"].tcs_context_policy == "generic_peer_state"
-    assert protocols["shared_responsibility_conditioned_evolution"].tcs_context_policy == "member_aware_responsibility_conditioned"
+    assert protocols["shared_member_aware_dual_target"].service_routing_enabled
+    assert (
+        protocols["shared_member_aware_dual_target"].tcs_context_policy
+        == "generic_peer_state"
+    )
+    assert protocols["shared_responsibility_conditioned_dual_target"].tcs_context_policy == "member_aware_responsibility_conditioned"

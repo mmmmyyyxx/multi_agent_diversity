@@ -575,7 +575,7 @@ def aggregate_single_lane_diagnosis(
     active_hashes: set[str],
     active_lane: RepairLane,
 ) -> SingleLaneDiagnosisAggregation:
-    """Build the single-direction S5 context selected entirely by the program."""
+    """Build the single-direction S2/S3 context selected by the program."""
 
     if len(examples) != len(states):
         raise ValueError("full fixed probe examples and states must have equal length")

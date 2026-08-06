@@ -15,12 +15,13 @@ from multi_dataset_diverse_rl.proposal_memory import (
 )
 from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptimizationSystem
 from multi_dataset_diverse_rl.responsibility import RepairLane
+from multi_dataset_diverse_rl.versions import METHOD_VERSION
 
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v12",
-        experiment_setting="shared_responsibility_conditioned_evolution",
+        method_version=METHOD_VERSION,
+        experiment_setting="shared_responsibility_conditioned_dual_target",
         git_commit="commit", git_dirty=False, config_fingerprint="config",
         manifest_sha256="manifest", train_file_sha256="train",
         val_file_sha256="val", test_file_sha256="test",
@@ -32,7 +33,7 @@ def identity():
 def system(tmp_path):
     cfg = Config.from_flat(
         out_dir=str(tmp_path), proposal_memory_mode="state_local_v1",
-        experiment_setting="shared_responsibility_conditioned_evolution",
+        experiment_setting="shared_responsibility_conditioned_dual_target",
     )
     value = PromptEnsembleOptimizationSystem(cfg)
     value.set_run_identity(identity())
@@ -107,7 +108,7 @@ def test_rejected_update_writes_a_state_local_entry_and_accepted_event_does_not(
         target_agent_id=0, parent_prompt=value.agents[0].current_prompt,
         assigned_hashes=assigned,
     )
-    value._proposal_memory_attempts[0] = {
+    value._proposal_memory_attempts[(0, 0)] = {
         "key": key, "memory_hit": False, "feedback": None,
         "evidence_bundle_hash": "bundle-a", "rotation_cursor": 0,
         "rotation_exhausted": False,
@@ -129,7 +130,7 @@ def test_accepted_outcome_does_not_create_failure_memory_and_new_state_cannot_hi
         target_agent_id=0, parent_prompt=value.agents[0].current_prompt,
         assigned_hashes=assigned,
     )
-    value._proposal_memory_attempts[0] = {
+    value._proposal_memory_attempts[(0, 0)] = {
         "key": key, "memory_hit": False, "feedback": None,
         "evidence_bundle_hash": "bundle-a", "rotation_cursor": 0,
         "rotation_exhausted": False,
@@ -171,7 +172,7 @@ def test_end_to_end_memory_hit_rotates_only_the_same_agent_state(tmp_path):
     async def run(mode: str):
         cfg = Config.from_flat(
             out_dir=str(tmp_path / mode), proposal_memory_mode=mode,
-            experiment_setting="shared_responsibility_conditioned_evolution",
+            experiment_setting="shared_responsibility_conditioned_dual_target",
             initialization_mode="provided_prompt_set",
             provided_prompts_json=json.dumps([f"p{agent}" for agent in range(5)]),
         )

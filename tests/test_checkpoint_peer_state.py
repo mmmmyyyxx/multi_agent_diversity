@@ -25,7 +25,7 @@ async def solver(_question, agent_id, _prompt):
 def identity():
     return RunIdentity(
         method_version=METHOD_VERSION,
-        experiment_setting="shared_full_rcru",
+        experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -47,7 +47,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_path):
+def test_v22_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -62,20 +62,28 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     question_hash = source.fixed_probe.examples[0].question_hash
     assert 2 in source.cached_responsibility_eligibility[question_hash]
     source.responsibility_state.updates_since_selected_by_agent[2] = 6
-    source.responsibility_state.consecutive_failed_updates_by_agent[2] = 2
-    source.responsibility_state.last_failed_portfolio_signature_by_agent[2] = "sig"
-    source.responsibility_state.frozen_by_agent[2] = True
-    source.responsibility_state.frozen_portfolio_signature_by_agent[2] = "sig"
-    source.responsibility_state.frozen_residual_hashes_by_agent[2] = (question_hash,)
-    source.responsibility_state.frozen_direct_fix_count_by_agent[2] = 1
-    source.responsibility_state.frozen_margin_gain_sum_by_agent[2] = 2
-    source.responsibility_state.other_accepted_updates_since_freeze_by_agent[2] = 1
-    source.responsibility_state.freeze_count_by_agent[2] = 3
-    source.repairability_freeze_events = [{"agent_id": 2, "update_index": 2}]
-    source.repairability_unfreeze_events = [{"agent_id": 1, "update_index": 1}]
-    source_target, _ = source.select_target(
-        source.cached_responsibility_assignments, update_index=3
+    source.responsibility_state.branch_failure_count_by_agent[2] = 2
+    source.responsibility_state.branch_attempt_count_by_agent[2] = 3
+    source.responsibility_state.branch_feasible_count_by_agent[2] = 1
+    source.responsibility_state.repairability_state_team_hash = (
+        source.team_prompt_state_hash()
     )
+    source.responsibility_state.repairability_reset_count = 4
+    source.select_targets(
+        source.cached_active_responsibility_assignments, update_index=3
+    )
+    source.dual_target_branch_decisions = [{
+        "update_index": 3,
+        "parent_team_hash": source.team_prompt_state_hash(),
+        "target_agent_id": 2,
+    }]
+    source.dual_target_commit_decisions = [{
+        "update_index": 3,
+        "selected_target_ids": [2],
+        "committed_target_id": None,
+    }]
+    source.repairability_failure_events = [{"agent_id": 2, "update_index": 3}]
+    source.repairability_reset_events = [{"update_index": 2}]
     memory_key = source._proposal_memory_key(
         target_agent_id=2,
         parent_prompt=source.agents[2].current_prompt,
@@ -109,7 +117,7 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 21
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 22
     assert payload["module_vector"]["robust_contribution_update"] is True
     assert payload["resolved_stage_a_policy"] == "matched_all_generated"
     assert payload["mutable_prompt_contract_version"] == (
@@ -126,7 +134,18 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     assert "cached_member_opportunities" not in payload
     assert "validation_state_cache" not in payload
     assert "validation_probe" not in payload
-    assert payload["service_routing_version"] == "single_service_anchor_routing_v1"
+    assert payload["service_routing_version"] == (
+        "single_service_anchor_routing_no_freeze_v2"
+    )
+    assert not (
+        {
+            "frozen_by_agent",
+            "consecutive_failed_updates_by_agent",
+            "freeze_count_by_agent",
+        }
+        & set(payload["responsibility_state"])
+    )
+    assert payload["branch_lifecycle_status"]["failure_count_by_agent"][2] == 2
     assert payload["cached_service_assignments"]
     assert payload["cached_service_portfolios"]
     assert payload["cached_active_lane_by_agent"]
@@ -136,24 +155,31 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     assert target.planned_update_count == 24
     assert target.completed_update_count == 3
     assert target.responsibility_state.updates_since_selected_by_agent[2] == 6
-    assert target.responsibility_state.frozen_by_agent[2]
-    assert target.responsibility_state.frozen_residual_hashes_by_agent[2] == (
-        question_hash,
+    assert target.responsibility_state.branch_failure_count_by_agent[2] == 2
+    assert target.responsibility_state.branch_attempt_count_by_agent[2] == 3
+    assert target.responsibility_state.branch_feasible_count_by_agent[2] == 1
+    assert target.responsibility_state.repairability_reset_count == 4
+    assert not any(target.responsibility_state.frozen_by_agent.values())
+    assert target.repairability_freeze_events == []
+    assert target.repairability_unfreeze_events == []
+    assert (
+        target.dual_target_branch_decisions
+        == source.dual_target_branch_decisions
     )
-    assert target.responsibility_state.other_accepted_updates_since_freeze_by_agent[2] == 1
-    assert target.responsibility_state.freeze_count_by_agent[2] == 3
-    assert target.repairability_freeze_events == source.repairability_freeze_events
-    assert target.repairability_unfreeze_events == source.repairability_unfreeze_events
+    assert (
+        target.dual_target_commit_decisions
+        == source.dual_target_commit_decisions
+    )
     assert (
         target.responsibility_state.specialization_anchor_by_agent
         == source.responsibility_state.specialization_anchor_by_agent
     )
     assert target.cached_service_assignments == source.cached_service_assignments
     assert target.cached_active_lane_by_agent == source.cached_active_lane_by_agent
-    restored_target, _ = target.select_target(
-        target.cached_responsibility_assignments, update_index=3
+    assert (
+        target.repairability_adjusted_target_scores
+        == source.repairability_adjusted_target_scores
     )
-    assert restored_target == source_target
     assert target.training_dynamics == source.training_dynamics
     assert target.team_differentiation_trajectory == source.team_differentiation_trajectory
     assert target.update_transition_decomposition == source.update_transition_decomposition
@@ -209,11 +235,11 @@ def test_checkpoint_restore_rejects_contaminated_active_prompt_before_mutation(
     assert [agent.current_prompt for agent in target.agents] == original_prompts
 
 
-def test_v19_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v12_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 19
-    with pytest.raises(ValueError, match="incompatible"):
+    payload["checkpoint_version"] = 21
+    with pytest.raises(ValueError, match="checkpoint_version_mismatch"):
         restore_checkpoint(system, payload)
 
 
@@ -221,14 +247,14 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
     run_identity = RunIdentity(
         **{
             **identity().__dict__,
-            "experiment_setting": "shared_full_rcru",
+            "experiment_setting": "shared_full_dual_target_rcru",
         }
     )
     system = PromptEnsembleOptimizationSystem(
         Config.from_flat(
             out_dir=str(tmp_path),
             answer_format="option_letter",
-            experiment_setting="shared_full_rcru",
+            experiment_setting="shared_full_dual_target_rcru",
         ),
         solver=solver,
     )
@@ -246,7 +272,7 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
         system, epoch_index=0, update_index=0, training_state={}
     )
     assert payload["canonical_experiment_setting"] == (
-        "shared_full_rcru"
+        "shared_full_dual_target_rcru"
     )
     assert payload["resolved_candidate_acceptance_policy"] == (
         "responsibility_robust_contribution"
@@ -259,7 +285,7 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
         Config.from_flat(
             out_dir=str(tmp_path),
             answer_format="option_letter",
-            experiment_setting="shared_full_rcru",
+            experiment_setting="shared_full_dual_target_rcru",
         ),
         solver=solver,
     )

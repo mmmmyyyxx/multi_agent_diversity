@@ -16,8 +16,8 @@ from multi_dataset_diverse_rl.persistence.identity import (
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="member_aware_peer_state_v12",
-        experiment_setting="shared_full_rcru",
+        method_version="member_aware_peer_state_v13",
+        experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint=fingerprint,
@@ -95,3 +95,21 @@ def test_legacy_setting_alias_requires_opt_in_and_has_legacy_fingerprint():
         config_fingerprint(Config.from_flat(
             experiment_setting="shared_peer_state_member_pareto"
         ))
+
+
+def test_dual_and_auxiliary_candidate_budgets_enter_run_fingerprint():
+    single = Config.from_flat(
+        experiment_setting="shared_generic_evolution"
+    )
+    dual = Config.from_flat(
+        experiment_setting="shared_member_aware_dual_target"
+    )
+    auxiliary = Config.from_flat(
+        experiment_setting="aux_single_target_compute_matched_1x4",
+        allow_auxiliary_setting=True,
+    )
+    assert len({
+        config_fingerprint(single),
+        config_fingerprint(dual),
+        config_fingerprint(auxiliary),
+    }) == 3

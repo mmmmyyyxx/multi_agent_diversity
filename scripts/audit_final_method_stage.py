@@ -18,9 +18,11 @@ from multi_dataset_diverse_rl.versions import (
     CANDIDATE_SELECTION_VERSION,
     CHECKPOINT_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RCRU_VERSION,
     RESPONSIBILITY_VERSION,
     TARGET_SELECTION_VERSION,
@@ -31,16 +33,16 @@ from scripts.final_method_source_identity import build_source_identity
 from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v5"
+AUDIT_VERSION = "final_method_stage_gate_v13_reduced_v1"
 AUDIT_MODES = (
     "frozen_source_execution",
     "offline_existing_artifact_revalidation",
 )
 LEGACY_NO_TEST_NORMALIZATION = "legacy_no_test_manifest_v1"
 MEMBER_AWARE_SETTINGS = {
-    "shared_member_aware_responsibility",
-    "shared_responsibility_conditioned_evolution",
-    "shared_full_rcru",
+    "shared_member_aware_dual_target",
+    "shared_responsibility_conditioned_dual_target",
+    "shared_full_dual_target_rcru",
 }
 PROTOCOL_FIELDS = (
     "optimization_enabled",
@@ -53,41 +55,37 @@ PROTOCOL_FIELDS = (
     "stage_a_policy",
     "responsibility_refresh_policy",
     "repairability_freeze_enabled",
+    "service_routing_enabled",
 )
 EXPECTED_PROTOCOLS = {
-    "shared_baseline": (
+    "shared_static_reference": (
         False, "none", "none", "none", "none", "none", "none", "none",
-        "off", False
+        "off", False, False,
     ),
     "shared_generic_evolution": (
         True, "round_robin", "individual_errors", "generic_accuracy",
         "common_monotone_safe", "fixed_peer_monotone_target_or_vote",
-        "common_monotone_safe", "matched_all_generated", "off", False,
+        "common_monotone_safe", "matched_all_generated", "off", False, False,
     ),
-    "shared_vote_state_diagnosis": (
-        True, "round_robin", "global_peer_state", "generic_peer_state",
-        "common_monotone_safe", "fixed_peer_monotone_target_or_vote",
-        "common_monotone_safe", "matched_all_generated", "off", False,
-    ),
-    "shared_member_aware_responsibility": (
-        True, "member_aware_responsibility", "member_aware_residuals",
+    "shared_member_aware_dual_target": (
+        True, "repairability_adjusted_responsibility", "member_aware_residuals",
         "generic_peer_state", "common_monotone_safe",
         "fixed_peer_monotone_target_or_vote", "common_monotone_safe",
-        "matched_all_generated", "online", True,
+        "matched_all_generated", "online", False, True,
     ),
-    "shared_responsibility_conditioned_evolution": (
-        True, "member_aware_responsibility", "member_aware_residuals",
+    "shared_responsibility_conditioned_dual_target": (
+        True, "repairability_adjusted_responsibility", "member_aware_residuals",
         "member_aware_responsibility_conditioned", "common_monotone_safe",
         "fixed_peer_monotone_target_or_vote", "common_monotone_safe",
-        "matched_all_generated", "online", True,
+        "matched_all_generated", "online", False, True,
     ),
-    "shared_full_rcru": (
-        True, "member_aware_responsibility", "member_aware_residuals",
+    "shared_full_dual_target_rcru": (
+        True, "repairability_adjusted_responsibility", "member_aware_residuals",
         "member_aware_responsibility_conditioned",
         "responsibility_contribution_pareto",
         "responsibility_robust_contribution",
         "responsibility_contribution_pareto", "matched_all_generated",
-        "online", True,
+        "online", False, True,
     ),
 }
 INFRASTRUCTURE_FAILURES = {
@@ -305,7 +303,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("geometric_shapes", "ruin_names"),
             (44, 45, 46),
-            ("shared_baseline", "shared_full_rcru"),
+            ("shared_static_reference", "shared_full_dual_target_rcru"),
             32,
             True,
         )
@@ -313,7 +311,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("disambiguation_qa",),
             (46,),
-            ("shared_baseline", "shared_vote_state_diagnosis"),
+            ("shared_static_reference", "shared_member_aware_dual_target"),
             0,
             True,
         )
@@ -322,11 +320,11 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
             ("disambiguation_qa",),
             (44, 45, 46),
             (
-                "shared_baseline",
-                "shared_vote_state_diagnosis",
-                "shared_member_aware_responsibility",
-                "shared_responsibility_conditioned_evolution",
-                "shared_full_rcru",
+                "shared_static_reference",
+                "shared_generic_evolution",
+                "shared_member_aware_dual_target",
+                "shared_responsibility_conditioned_dual_target",
+                "shared_full_dual_target_rcru",
             ),
             32,
             True,
@@ -355,8 +353,14 @@ def _finding(
 
 def _priority_key(priority: dict[str, Any]) -> tuple[Any, ...]:
     return (
-        -int(priority["updates_since_selected"]),
+        -float(priority["expected_update_value"]),
+        -float(priority["opportunity_value"]),
+        -float(priority["normalized_direct_fix"]),
+        -float(priority["normalized_support_margin"]),
+        -float(priority["normalized_uplift_deficit"]),
+        -float(priority["normalized_wait"]),
         str(priority["seeded_rank"]),
+        int(priority["agent_id"]),
     )
 
 
@@ -377,59 +381,168 @@ def _audit_member_responsibility(
                 if agent not in eligible.get(str(opportunity.get("question_hash", "")), set()):
                     outside_eligibility += 1
 
-    non_responsible = target_front = frozen_pool = 0
+    non_responsible = scalar_order = scalar_formula = legacy_scheduler = 0
     for row in _read_jsonl(run_dir / "target_priority_audit.jsonl"):
-        selected = row.get("selected_agent_id")
+        selected_ids = [int(agent) for agent in row.get("selected_target_ids", [])]
         priorities = list(row.get("priorities", []))
         by_agent = {int(priority["agent_id"]): priority for priority in priorities}
-        frozen_ids = {int(agent) for agent in row.get("frozen_agent_ids", [])}
-        active_ids = {
-            int(agent) for agent in row.get("active_candidate_agent_ids", [])
-        }
-        if selected is None:
+        if any(
+            key in row or any(key in priority for priority in priorities)
+            for key in (
+                "target_pareto_front",
+                "target_frontier_agent_ids",
+                "frozen_agent_ids",
+                "frozen",
+            )
+        ):
+            legacy_scheduler += 1
+        if not selected_ids:
             reason = row.get("no_actionable_reason")
-            if priorities and reason != "no_actionable_repairability":
+            if priorities or reason != "no_actionable_responsibility":
                 non_responsible += 1
-            if priorities and frozen_ids != set(by_agent):
-                frozen_pool += 1
             continue
-        selected = int(selected)
-        if selected not in by_agent:
+        if any(selected not in by_agent for selected in selected_ids):
             non_responsible += 1
             continue
-        if selected in frozen_ids or selected not in active_ids:
-            frozen_pool += 1
-        frontier = [
-            priority for priority in priorities
-            if not priority.get("frozen")
-            and int(priority.get("target_pareto_front", 0)) == 1
+        maxima = {
+            source: max(
+                (int(priority[source]) for priority in priorities),
+                default=0,
+            )
+            for source in (
+                "direct_fix_count",
+                "support_margin_sum",
+                "uplift_deficit",
+                "updates_since_selected",
+            )
+        }
+        normalized_fields = {
+            "direct_fix_count": "normalized_direct_fix",
+            "support_margin_sum": "normalized_support_margin",
+            "uplift_deficit": "normalized_uplift_deficit",
+            "updates_since_selected": "normalized_wait",
+        }
+        for priority in priorities:
+            for source, normalized_field in normalized_fields.items():
+                expected_normalized = (
+                    int(priority[source]) / maxima[source]
+                    if maxima[source] > 0 else 0.0
+                )
+                if abs(
+                    expected_normalized
+                    - float(priority[normalized_field])
+                ) > 1e-12:
+                    scalar_formula += 1
+            opportunity = (
+                0.5 * float(priority["normalized_direct_fix"])
+                + 0.3 * float(priority["normalized_support_margin"])
+                + 0.2 * float(priority["normalized_uplift_deficit"])
+            )
+            discount = 1.0 / (
+                1.0 + int(priority["branch_failure_count"])
+            )
+            expected_value = (
+                opportunity * discount
+                + 0.05 * float(priority["normalized_wait"])
+            )
+            if (
+                abs(opportunity - float(priority["opportunity_value"]))
+                > 1e-12
+                or abs(
+                    discount - float(priority["repairability_discount"])
+                ) > 1e-12
+                or abs(
+                    expected_value
+                    - float(priority["expected_update_value"])
+                ) > 1e-12
+            ):
+                scalar_formula += 1
+        expected = [
+            int(priority["agent_id"])
+            for priority in sorted(priorities, key=_priority_key)[
+                : len(selected_ids)
+            ]
         ]
-        expected = min(frontier, key=_priority_key) if frontier else None
-        if expected is None or selected != int(expected["agent_id"]):
-            target_front += 1
-        recorded = {int(agent) for agent in row.get("target_frontier_agent_ids", [])}
-        if recorded != {int(priority["agent_id"]) for priority in frontier}:
-            target_front += 1
+        if selected_ids != expected:
+            scalar_order += 1
 
-    repairability_event = sum(
-        int(event.get("failure_streak", 0)) != 2
-        for event in _read_jsonl(run_dir / "repairability_freeze_events.jsonl")
-    )
-    repairability_event += sum(
-        int(event.get("other_accepted_updates", 0)) < 2
-        or not (
-            float(event.get("portfolio_jaccard", 1.0)) < 0.8
-            or int(event.get("D_before", 0)) != int(event.get("D_after", 0))
+    freeze_artifact_rows = sum(
+        len(_read_jsonl(run_dir / name))
+        for name in (
+            "repairability_freeze_events.jsonl",
+            "repairability_unfreeze_events.jsonl",
         )
-        for event in _read_jsonl(run_dir / "repairability_unfreeze_events.jsonl")
     )
+    branch_parent_violation = 0
+    branch_counter_violation = 0
+    prior_counters: dict[tuple[str, int], tuple[int, int, int]] = {}
+    for event in _read_jsonl(
+        run_dir / "repairability_failure_events.jsonl"
+    ):
+        key = (
+            str(event.get("team_prompt_state_hash", "")),
+            int(event["agent_id"]),
+        )
+        previous = prior_counters.get(key, (0, 0, 0))
+        current = (
+            int(event["branch_attempt_count"]),
+            int(event["branch_feasible_count"]),
+            int(event["branch_failure_count"]),
+        )
+        if event.get("normal_completion"):
+            expected = (
+                previous[0] + 1,
+                previous[1] + int(bool(event.get("passed_candidate_found"))),
+                previous[2] + int(
+                    not bool(event.get("passed_candidate_found"))
+                ),
+            )
+        else:
+            expected = previous
+        if current != expected:
+            branch_counter_violation += 1
+        prior_counters[key] = current
+    reset_violation = sum(
+        not event.get("old_team_hash")
+        or not event.get("new_team_hash")
+        or event.get("old_team_hash") == event.get("new_team_hash")
+        for event in _read_jsonl(
+            run_dir / "repairability_reset_events.jsonl"
+        )
+    )
+    by_update: dict[int, list[dict[str, Any]]] = {}
+    for row in _read_jsonl(run_dir / "dual_target_branch_decisions.jsonl"):
+        by_update.setdefault(int(row["update_index"]), []).append(row)
+    commits = {
+        int(row["update_index"]): row
+        for row in _read_jsonl(
+            run_dir / "dual_target_commit_decisions.jsonl"
+        )
+    }
+    for update_index, rows in by_update.items():
+        parent_hashes = {str(row.get("parent_team_hash", "")) for row in rows}
+        target_ids = [int(row["target_agent_id"]) for row in rows]
+        commit = commits.get(update_index, {})
+        if (
+            len(parent_hashes) != 1
+            or len(target_ids) != len(set(target_ids))
+            or (
+                commit.get("committed_target_id") is not None
+                and int(commit["committed_target_id"]) not in target_ids
+            )
+        ):
+            branch_parent_violation += 1
 
     for count, requirement, name in (
         (outside_eligibility, "Every assigned residual must include its target in E_x", "assignment outside eligibility"),
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
-        (target_front, "Normal scheduling must select from the single (D,S,d) frontier", "target-front"),
-        (frozen_pool, "Frozen members must remain outside the active target pool", "frozen-pool"),
-        (repairability_event, "Freeze and unfreeze events must satisfy fixed thresholds", "repairability-event"),
+        (scalar_order, "Target selection must follow the scalar v13 total order", "scalar-order"),
+        (scalar_formula, "Target scores must follow the frozen v13 formula", "scalar-formula"),
+        (legacy_scheduler, "v13 target selection must contain no Pareto or freeze fields", "legacy-scheduler"),
+        (freeze_artifact_rows, "v13 must emit no active freeze or unfreeze events", "freeze-event"),
+        (branch_counter_violation, "State-local branch counters must follow normal/operational semantics", "branch-counter"),
+        (reset_violation, "Repairability counters reset only across a changed team hash", "repairability-reset"),
+        (branch_parent_violation, "Dual branches must share one parent and commit at most one selected target", "dual-branch"),
     ):
         if count:
             _finding(
@@ -442,9 +555,13 @@ def _audit_member_responsibility(
     return {
         "assignment_outside_eligibility": outside_eligibility,
         "non_responsible_target_selection": non_responsible,
-        "target_front_violation": target_front,
-        "frozen_pool_violation": frozen_pool,
-        "repairability_event_violation": repairability_event,
+        "scalar_order_violation": scalar_order,
+        "scalar_formula_violation": scalar_formula,
+        "legacy_scheduler_field_violation": legacy_scheduler,
+        "freeze_event_violation": freeze_artifact_rows,
+        "branch_counter_violation": branch_counter_violation,
+        "repairability_reset_violation": reset_violation,
+        "dual_branch_parent_or_commit_violation": branch_parent_violation,
     }
 
 
@@ -473,9 +590,14 @@ def _audit_run(
         "frozen_initialization_match.json",
         "comparison_cache_match.json",
         "best_prompts.json",
+        "repairability_adjusted_target_scores.jsonl",
+        "dual_target_branch_decisions.jsonl",
+        "dual_target_commit_decisions.jsonl",
+        "repairability_failure_events.jsonl",
+        "repairability_reset_events.jsonl",
     ) + (
         ("rcru_candidate_decisions_sanitized.jsonl",)
-        if setting == "shared_full_rcru"
+        if setting == "shared_full_dual_target_rcru"
         else ()
     )
     missing = [name for name in required if not (run_dir / name).is_file()]
@@ -497,7 +619,9 @@ def _audit_run(
     config = meta.get("config", {})
     selection = summary.get("selection_summary", {})
     identity = meta.get("run_identity", {})
-    expected_completed = 0 if setting == "shared_baseline" else expected_updates
+    expected_completed = (
+        0 if setting == "shared_static_reference" else expected_updates
+    )
     test_contract = _test_artifact_contract(
         meta,
         summary,
@@ -518,6 +642,12 @@ def _audit_run(
         ),
         "responsibility_version": (meta.get("responsibility_version"), RESPONSIBILITY_VERSION),
         "target_selection_version": (meta.get("target_selection_version"), TARGET_SELECTION_VERSION),
+        "repairability_version": (
+            meta.get("repairability_version"), REPAIRABILITY_VERSION,
+        ),
+        "dual_target_search_version": (
+            meta.get("dual_target_search_version"), DUAL_TARGET_SEARCH_VERSION,
+        ),
         "tcs_context_version": (meta.get("tcs_context_version"), TCS_CONTEXT_VERSION),
         "candidate_acceptance_version": (
             meta.get("candidate_acceptance_version"), CANDIDATE_ACCEPTANCE_VERSION,
@@ -531,6 +661,34 @@ def _audit_run(
         "test_size": (config.get("test_size"), 125),
         "num_candidates_per_parent": (config.get("num_candidates_per_parent"), 2),
         "stage_b_candidate_budget": (config.get("stage_b_candidate_budget"), 2),
+        "target_branch_count": (
+            meta.get("target_branch_count"),
+            (
+                0
+                if setting == "shared_static_reference"
+                else (
+                    2
+                    if MAIN_ABLATION_MODULES[
+                        setting
+                    ].member_aware_dual_target_search
+                    else 1
+                )
+            ),
+        ),
+        "total_generated_candidates_per_update": (
+            meta.get("total_generated_candidates_per_update"),
+            (
+                0
+                if setting == "shared_static_reference"
+                else (
+                    4
+                    if MAIN_ABLATION_MODULES[
+                        setting
+                    ].member_aware_dual_target_search
+                    else 2
+                )
+            ),
+        ),
         "member_uplift_tolerance": (config.get("member_uplift_tolerance"), 5),
         "proposal_memory_mode": (config.get("proposal_memory_mode"), "off"),
         "planned_update_count": (meta.get("planned_update_count"), expected_completed),
@@ -539,14 +697,18 @@ def _audit_run(
         ),
         "module_vector": (
             meta.get("module_vector"),
-            asdict(MAIN_ABLATION_MODULES[setting]),
+            (
+                None
+                if setting == "shared_static_reference"
+                else asdict(MAIN_ABLATION_MODULES[setting])
+            ),
         ),
         "setting_index": (
             meta.get("setting_index"),
             SETTING_NAMES.index(setting),
         ),
     }
-    if setting == "shared_full_rcru":
+    if setting == "shared_full_dual_target_rcru":
         exact_checks.update({
             "resolved_candidate_acceptance_version": (
                 meta.get("resolved_candidate_acceptance_version"),
@@ -576,14 +738,14 @@ def _audit_run(
     if not (
         completed == expected_completed
         or (
-            early_stop == "all_actionable_members_frozen"
+            early_stop == "no_actionable_responsibility"
             and 0 < completed <= expected_completed
         )
     ):
         _finding(
             findings,
             "BLOCKER",
-            "Runs must finish the budget or stop because all actionable members are frozen",
+            "Runs must finish the budget or stop because no responsibility is actionable",
             f"{label}: completed={completed} expected={expected_completed} early_stop={early_stop!r}",
             "stop the stage and repair lifecycle accounting",
         )
@@ -707,9 +869,13 @@ def _audit_run(
         else {
             "assignment_outside_eligibility": 0,
             "non_responsible_target_selection": 0,
-            "target_front_violation": 0,
-            "frozen_pool_violation": 0,
-            "repairability_event_violation": 0,
+            "scalar_order_violation": 0,
+            "scalar_formula_violation": 0,
+            "legacy_scheduler_field_violation": 0,
+            "freeze_event_violation": 0,
+            "branch_counter_violation": 0,
+            "repairability_reset_violation": 0,
+            "dual_branch_parent_or_commit_violation": 0,
         }
     )
     selected_test = summary.get("selected_test")
@@ -733,8 +899,8 @@ def _audit_run(
         "planned_update_count": meta.get("planned_update_count"),
         "completed_update_count": meta.get("completed_update_count"),
         "test_evaluation_count": meta.get("test_evaluation_count"),
-        "repairability_freeze_count": len(
-            _read_jsonl(run_dir / "repairability_freeze_events.jsonl")
+        "repairability_reset_count": len(
+            _read_jsonl(run_dir / "repairability_reset_events.jsonl")
         ),
         "proposal_memory_hit_count": int(memory.get("memory_hit_count", 0)),
         "infrastructure_failure_count": infrastructure_count,
@@ -775,7 +941,10 @@ def _matched_observation_consistency(
     }
     rows: list[dict[str, Any]] = []
     for row in summaries:
-        if not row.get("complete") or row["setting"] == "shared_baseline":
+        if (
+            not row.get("complete")
+            or row["setting"] == "shared_static_reference"
+        ):
             continue
         if not final_test_enabled:
             rows.append({
@@ -791,7 +960,9 @@ def _matched_observation_consistency(
                 "passed": True,
             })
             continue
-        baseline = by_key.get((row["task"], row["seed"], "shared_baseline"))
+        baseline = by_key.get(
+            (row["task"], row["seed"], "shared_static_reference")
+        )
         if baseline is None:
             continue
         baseline_counts = list((baseline.get("selected_test") or {}).get(
@@ -907,22 +1078,38 @@ def _setting_isolation(
     }
     comparisons = (
         (
+            "shared_static_reference",
             "shared_generic_evolution",
-            "shared_vote_state_diagnosis",
-            {"sample_pool_policy", "tcs_context_policy"},
+            {
+                "optimization_enabled",
+                "target_selection_policy",
+                "sample_pool_policy",
+                "tcs_context_policy",
+                "candidate_selection_policy",
+                "candidate_acceptance_policy",
+                "candidate_ranking_policy",
+                "stage_a_policy",
+            },
         ),
-        ("shared_vote_state_diagnosis", "shared_member_aware_responsibility", {
-            "target_selection_policy", "sample_pool_policy",
-            "responsibility_refresh_policy", "repairability_freeze_enabled",
-        }),
         (
-            "shared_member_aware_responsibility",
-            "shared_responsibility_conditioned_evolution",
+            "shared_generic_evolution",
+            "shared_member_aware_dual_target",
+            {
+                "target_selection_policy",
+                "sample_pool_policy",
+                "tcs_context_policy",
+                "responsibility_refresh_policy",
+                "service_routing_enabled",
+            },
+        ),
+        (
+            "shared_member_aware_dual_target",
+            "shared_responsibility_conditioned_dual_target",
             {"tcs_context_policy"},
         ),
         (
-            "shared_responsibility_conditioned_evolution",
-            "shared_full_rcru",
+            "shared_responsibility_conditioned_dual_target",
+            "shared_full_dual_target_rcru",
             {
                 "candidate_selection_policy",
                 "candidate_acceptance_policy",
@@ -941,9 +1128,41 @@ def _setting_isolation(
                 key for key in PROTOCOL_FIELDS
                 if lhs["protocol"].get(key) != rhs["protocol"].get(key)
             }
+            budget_match = (
+                lhs["candidate_budget_contract"]
+                == rhs["candidate_budget_contract"]
+            )
+            if (
+                left == "shared_static_reference"
+                and right == "shared_generic_evolution"
+            ):
+                left_budget = lhs["candidate_budget_contract"]
+                right_budget = rhs["candidate_budget_contract"]
+                budget_match = (
+                    int(left_budget.get("target_branch_count", -1)) == 0
+                    and int(right_budget.get("target_branch_count", -1)) == 1
+                    and int(right_budget.get(
+                        "candidates_per_target_branch", -1
+                    )) == 2
+                )
+            elif (
+                left == "shared_generic_evolution"
+                and right == "shared_member_aware_dual_target"
+            ):
+                left_budget = lhs["candidate_budget_contract"]
+                right_budget = rhs["candidate_budget_contract"]
+                budget_match = (
+                    int(left_budget.get("target_branch_count", -1)) == 1
+                    and int(right_budget.get("target_branch_count", -1)) == 2
+                    and int(left_budget.get(
+                        "candidates_per_target_branch", -1
+                    )) == int(right_budget.get(
+                        "candidates_per_target_branch", -2
+                    )) == 2
+                )
             substantive_match = (
                 lhs["substantive_config"] == rhs["substantive_config"]
-                and lhs["candidate_budget_contract"] == rhs["candidate_budget_contract"]
+                and budget_match
                 and lhs["initial_train_state_hash"] == rhs["initial_train_state_hash"]
                 and lhs["solver_request_identity"] == rhs["solver_request_identity"]
             )

@@ -106,7 +106,7 @@ def test_baseline_short_run_uses_frozen_probe_and_never_touches_test(monkeypatch
 
     monkeypatch.setattr(cli, "PromptEnsembleOptimizationSystem", BaselineSystem)
     cfg = Config.from_flat(
-        experiment_setting="shared_baseline",
+        experiment_setting="shared_static_reference",
         train_path=_split(tmp_path, "train"),
         val_path=_split(tmp_path, "val"),
         test_path=_split(tmp_path, "test"),
@@ -122,6 +122,20 @@ def test_baseline_short_run_uses_frozen_probe_and_never_touches_test(monkeypatch
     assert result["selection_summary"]["test_evaluation_count"] == 0
     assert result["selection_summary"]["final_test_enabled"] is False
     assert events and all(question.startswith("train-") for question in events)
+    run_meta = json.loads(
+        (tmp_path / "baseline" / "run_meta.json").read_text(encoding="utf-8")
+    )
+    assert run_meta["planned_update_count"] == 0
+    assert run_meta["completed_update_count"] == 0
+    assert run_meta["module_vector"] is None
+    assert run_meta["target_branch_count"] == 0
+    assert run_meta["total_generated_candidates_per_update"] == 0
+    assert (
+        tmp_path / "baseline" / "tcs_context_history.jsonl"
+    ).read_text(encoding="utf-8") == ""
+    assert (
+        tmp_path / "baseline" / "tcs_rounds.jsonl"
+    ).read_text(encoding="utf-8") == ""
 
 
 def test_final_test_is_forbidden_before_training_complete_and_cached(tmp_path):
@@ -155,8 +169,8 @@ def test_frozen_initialization_snapshot_is_hash_only_and_deterministic(tmp_path)
         return PromptAnswer("A", "FINAL_ANSWER: A", True)
 
     identity = RunIdentity(
-        method_version="member_aware_peer_state_v12",
-        experiment_setting="shared_full_rcru",
+        method_version="member_aware_peer_state_v13",
+        experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -180,8 +194,8 @@ def test_frozen_initialization_snapshot_is_hash_only_and_deterministic(tmp_path)
 
 def test_checkpoint_reuses_completed_final_test(tmp_path):
     identity = RunIdentity(
-            method_version="member_aware_peer_state_v12",
-            experiment_setting="shared_full_rcru",
+            method_version="member_aware_peer_state_v13",
+            experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",

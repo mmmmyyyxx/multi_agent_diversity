@@ -29,7 +29,7 @@ def system_for(tmp_path, chat, **overrides):
     values = {
         "out_dir": str(tmp_path),
         "answer_format": "option_letter",
-        "experiment_setting": "shared_vote_state_diagnosis",
+        "experiment_setting": "shared_generic_evolution",
         "num_candidates_per_parent": 2,
         "stage_a_channel_top_k": 1,
         "stage_b_candidate_budget": 2,
@@ -218,7 +218,7 @@ def test_contract_contamination_exhaustion_is_protocol_failure_without_rollout_o
     system = system_for(
         tmp_path,
         chat,
-        experiment_setting="shared_responsibility_conditioned_evolution",
+        experiment_setting="shared_responsibility_conditioned_dual_target",
     )
 
     async def run():
@@ -245,9 +245,9 @@ def test_contract_contamination_exhaustion_is_protocol_failure_without_rollout_o
     assert funnel["stage_a_evaluated"] == 0
     assert funnel["output_contract_contamination_count"] == 16
     assert funnel["terminal_failure_class"] == "proposal_protocol_failure"
-    assert system.previous_update_outcomes[decision["target_agent_id"]].rejection_reasons == (
-        "proposal_protocol_failure",
-    )
+    outcome = system.previous_update_outcomes[decision["target_agent_id"]]
+    assert outcome.rejection_reasons == ()
+    assert outcome.empirical_evaluation_completed is False
     assert (
         system.responsibility_state.consecutive_failed_updates_by_agent
         == failures_before

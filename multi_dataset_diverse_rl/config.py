@@ -43,9 +43,10 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v12"
-    experiment_setting: str = "shared_full_rcru"
+    method_version: str = "member_aware_peer_state_v13"
+    experiment_setting: str = "shared_full_dual_target_rcru"
     allow_legacy_setting: bool = False
+    allow_auxiliary_setting: bool = False
     agents: int = 5
     epochs: int = 3
     update_every: int = 10
@@ -89,7 +90,7 @@ class PeerStateConfig:
 
 @dataclass(frozen=True)
 class ResponsibilityConfig:
-    responsibility_mode: str = "single_service_member_aware_v10"
+    responsibility_mode: str = "single_service_member_aware_v13"
     member_uplift_tolerance: int = 5
 
 

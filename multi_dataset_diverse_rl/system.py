@@ -5,17 +5,19 @@ from copy import deepcopy
 import hashlib
 import json
 import time
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import asdict, dataclass, field, fields, replace
 from typing import Any, Awaitable, Callable, Mapping, Sequence
 
 from .candidate_selection import (
     CandidateEvaluation,
     ConstraintDecision,
     StageASelectionDecision,
+    common_cross_branch_transition_key,
     common_monotone_safe_key,
     evaluate_constraints,
     individual_accuracy_key,
     member_first_safe_key,
+    rcru_cross_branch_transition_key,
     stage_a_multichannel_shortlist,
     vote_first_key,
 )
@@ -73,17 +75,16 @@ from .proposal_memory import (
 from .persistence.artifacts import ArtifactWriter
 from .persistence.identity import RunIdentity, solver_request_components, solver_request_identity
 from .protocol import (
-    CandidateBudgetContract,
     ExperimentProtocol,
     added_module_vs_previous,
+    candidate_budget_contract,
+    canonical_experiment_setting,
     experiment_protocol,
     setting_index,
 )
 from .responsibility import (
-    FREEZE_FAILURE_THRESHOLD,
-    FREEZE_OTHER_ACCEPT_THRESHOLD,
-    FREEZE_PORTFOLIO_OVERLAP_THRESHOLD,
     MemberAwareRepairOpportunity,
+    RepairabilityAdjustedTargetScore,
     RepairLane,
     ResidualServiceAssignment,
     ResponsibilityState,
@@ -92,11 +93,15 @@ from .responsibility import (
     compute_member_aware_repair_opportunity,
     compute_repair_eligibility_sets,
     initialize_repairability_state,
+    record_branch_search_outcome,
     record_target_update_acceptance,
     record_target_update_failure,
     record_specialization_anchor_acceptance,
+    repairability_adjusted_target_scores,
+    reset_state_local_repairability,
     refresh_frozen_member_states,
     responsibility_portfolios,
+    select_repairability_targets,
     target_priorities,
 )
 from .responsibility_contribution import (
@@ -163,6 +168,7 @@ from .versions import (
     CHECKPOINT_VERSION,
     COALITION_CONTRIBUTION_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
@@ -171,6 +177,7 @@ from .versions import (
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RESPONSIBILITY_VERSION,
     RESPONSIBILITY_UTILITY_VERSION,
     RCRU_VERSION,
@@ -208,6 +215,20 @@ class CandidateRuntime:
     profile: tuple[PromptAnswer, ...] | None = None
     stage_a_decision: StageASelectionDecision | None = None
     constraint: ConstraintDecision | RobustContributionDecision | None = None
+
+
+@dataclass
+class TargetBranchResult:
+    target_agent_id: int
+    target_selection_rank: int
+    parent_team_hash: str
+    active_lane: RepairLane | None
+    assigned_hashes: set[str]
+    funnel: CandidateFunnel
+    accepted: CandidateRuntime | None
+    incumbent: CandidateEvaluation
+    evaluated: list[CandidateRuntime]
+    normal_completion: bool
 
 
 @dataclass
@@ -344,9 +365,9 @@ class PromptEnsembleOptimizationSystem:
             )
         if cfg.tcs.proposal_memory_mode not in {"off", "state_local_v1"}:
             raise ValueError("proposal_memory_mode must be 'off' or 'state_local_v1'")
-        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v10":
+        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v13":
             raise ValueError(
-                "responsibility_mode must be 'single_service_member_aware_v10'"
+                "responsibility_mode must be 'single_service_member_aware_v13'"
             )
         if not 0 < cfg.tcs.tcs_max_pattern_summaries <= 3:
             raise ValueError("tcs_max_pattern_summaries must be between one and three")
@@ -361,6 +382,26 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("TCS character limits must be positive")
         self.cfg = cfg
         self.protocol = self._build_protocol()
+        if (
+            not self.protocol.legacy_protocol
+            and not self.protocol.auxiliary_protocol
+            and (
+                cfg.tcs.num_candidates_per_parent != 2
+                or cfg.evaluation.stage_b_candidate_budget != 2
+            )
+        ):
+            raise ValueError(
+                "v13 main protocols require exactly two generated and "
+                "two Stage B candidates per target branch"
+            )
+        if (
+            not self.protocol.legacy_protocol
+            and cfg.responsibility.member_uplift_tolerance != 5
+        ):
+            raise ValueError(
+                "v13 canonical protocols require "
+                "member_uplift_tolerance=5"
+            )
         if (
             cfg.tcs.proposal_memory_mode == "state_local_v1"
             and self.protocol.tcs_context_policy
@@ -381,6 +422,9 @@ class PromptEnsembleOptimizationSystem:
             initialize_repairability_state(
                 self.responsibility_state, range(cfg.training.agents)
             )
+            self.responsibility_state.repairability_state_team_hash = (
+                self.team_prompt_state_hash()
+            )
         self.history: list[dict[str, Any]] = []
         self.peer_state_history: list[dict[str, Any]] = []
         self.responsibility_assignments: list[dict[str, Any]] = []
@@ -389,6 +433,12 @@ class PromptEnsembleOptimizationSystem:
         self.specialization_trajectory: list[dict[str, Any]] = []
         self.candidate_decisions: list[dict[str, Any]] = []
         self.rcru_candidate_decisions: list[dict[str, Any]] = []
+        self.repairability_adjusted_target_scores: list[dict[str, Any]] = []
+        self.dual_target_branch_decisions: list[dict[str, Any]] = []
+        self.dual_target_commit_decisions: list[dict[str, Any]] = []
+        self.repairability_failure_events: list[dict[str, Any]] = []
+        self.repairability_reset_events: list[dict[str, Any]] = []
+        self.selected_target_ids: list[int] = []
         self.tcs_context_history: list[dict[str, Any]] = []
         self.tcs_rounds: list[dict[str, Any]] = []
         self.student_recovery_observations: list[dict[str, Any]] = []
@@ -449,7 +499,9 @@ class PromptEnsembleOptimizationSystem:
         self.proposal_memory_entries: dict[str, ProposalMemoryEntry] = {}
         self.proposal_memory_events: list[dict[str, Any]] = []
         self.proposal_rotation_trajectory: list[dict[str, Any]] = []
-        self._proposal_memory_attempts: dict[int, dict[str, Any]] = {}
+        self._proposal_memory_attempts: dict[
+            tuple[int, int], dict[str, Any]
+        ] = {}
         self.proposal_memory_run_id = ""
         self.previous_update_outcomes = {
             agent_id: PreviousUpdateOutcome() for agent_id in range(5)
@@ -513,10 +565,16 @@ class PromptEnsembleOptimizationSystem:
         self.solver_semaphore = asyncio.Semaphore(max(1, cfg.evaluation.eval_solver_call_concurrency))
 
     def _build_protocol(self) -> ExperimentProtocol:
-        budget = CandidateBudgetContract(
-            generated_per_update=self.cfg.tcs.num_candidates_per_parent,
+        canonical_name = canonical_experiment_setting(
+            self.cfg.training.experiment_setting,
+            allow_legacy_setting=self.cfg.training.allow_legacy_setting,
+            allow_auxiliary_setting=self.cfg.training.allow_auxiliary_setting,
+        )
+        budget = candidate_budget_contract(
+            canonical_name,
+            candidates_per_target_branch=self.cfg.tcs.num_candidates_per_parent,
+            stage_b_budget_per_branch=self.cfg.evaluation.stage_b_candidate_budget,
             stage_a_channel_top_k=self.cfg.evaluation.stage_a_channel_top_k,
-            stage_b_candidate_budget=self.cfg.evaluation.stage_b_candidate_budget,
             representative_size=self.cfg.evaluation.stage_a_representative_size,
             coverage_size=self.cfg.evaluation.stage_a_coverage_size,
             conversion_size=self.cfg.evaluation.stage_a_conversion_size,
@@ -528,6 +586,7 @@ class PromptEnsembleOptimizationSystem:
             tie_policy=self.cfg.peer_state.vote_tie_break,
             candidate_budget_contract=budget,
             allow_legacy_setting=self.cfg.training.allow_legacy_setting,
+            allow_auxiliary_setting=self.cfg.training.allow_auxiliary_setting,
         )
 
     def _initial_prompts(self) -> list[str]:
@@ -1020,28 +1079,33 @@ class PromptEnsembleOptimizationSystem:
             })
         routing = None
         if self.protocol.service_routing_enabled:
-            unfreeze_events = refresh_frozen_member_states(
-                state=self.responsibility_state,
-                assignments=assigned,
-                update_index=update_index,
-            )
-            self.repairability_unfreeze_events.extend(unfreeze_events)
-            for event in unfreeze_events:
-                self.specialization_anchor_trajectory.append({
-                    "artifact_schema_version": "specialization_anchor_event_v1",
-                    "update_index": int(update_index),
-                    "agent_id": int(event["agent_id"]),
-                    "old_anchor": event.get("old_anchor"),
-                    "active_lane": None,
-                    "new_anchor": None,
-                    "event": "unfreeze_anchor_cleared",
-                })
+            if self.protocol.legacy_protocol and self.protocol.repairability_freeze_enabled:
+                unfreeze_events = refresh_frozen_member_states(
+                    state=self.responsibility_state,
+                    assignments=assigned,
+                    update_index=update_index,
+                )
+                self.repairability_unfreeze_events.extend(unfreeze_events)
+                for event in unfreeze_events:
+                    self.specialization_anchor_trajectory.append({
+                        "artifact_schema_version": "specialization_anchor_event_v1",
+                        "update_index": int(update_index),
+                        "agent_id": int(event["agent_id"]),
+                        "old_anchor": event.get("old_anchor"),
+                        "active_lane": None,
+                        "new_anchor": None,
+                        "event": "unfreeze_anchor_cleared",
+                    })
             routing = build_service_routing(
                 team_states=state_by_hash,
                 opportunities=opportunities,
                 eligible_agents_by_question=eligibility,
                 state=self.responsibility_state,
                 seed=self.cfg.training.seed,
+                respect_legacy_freeze=bool(
+                    self.protocol.legacy_protocol
+                    and self.protocol.repairability_freeze_enabled
+                ),
             )
             self.cached_service_assignments = dict(
                 routing.assignments_by_question
@@ -1064,7 +1128,14 @@ class PromptEnsembleOptimizationSystem:
                 "artifact_schema_version": "service_routing_audit_v1",
                 "team_state_version": self.team_state_version,
                 **{
-                    **asdict(row),
+                    **{
+                        key: value
+                        for key, value in asdict(row).items()
+                        if (
+                            self.protocol.legacy_protocol
+                            or key != "service_blocked_by_freeze"
+                        )
+                    },
                     "repair_lane": row.repair_lane.value,
                 },
             } for row in routing.assignments_by_question.values())
@@ -1096,7 +1167,14 @@ class PromptEnsembleOptimizationSystem:
             "service_assignment_by_question": (
                 {
                     question_hash: {
-                        **asdict(row),
+                        **{
+                            key: value
+                            for key, value in asdict(row).items()
+                            if (
+                                self.protocol.legacy_protocol
+                                or key != "service_blocked_by_freeze"
+                            )
+                        },
                         "repair_lane": row.repair_lane.value,
                     }
                     for question_hash, row in routing.assignments_by_question.items()
@@ -1167,24 +1245,112 @@ class PromptEnsembleOptimizationSystem:
             raise AssertionError("committed team state must invalidate responsibility state")
         return self.assign_responsibilities(update_index=update_index)
 
-    def select_target(
+    def select_targets(
         self,
         assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
         update_index: int,
-    ) -> tuple[int | None, list[dict[str, Any]]]:
-        if self.protocol.target_selection_policy == "round_robin":
-            priorities = ()
-            target = update_index % 5
-            selection = None
-        elif self.protocol.target_selection_policy == "member_aware_responsibility":
-            current_counts = self._member_correct_counts(self.active_profiles)
-            initial_counts = self._member_correct_counts(self.initial_profiles)
+    ) -> tuple[tuple[int, ...], list[dict[str, Any]]]:
+        policy = self.protocol.target_selection_policy
+        if policy == "round_robin":
+            targets = (update_index % 5,)
+            self.selected_target_ids = list(targets)
+            payload: list[dict[str, Any]] = []
+            self.target_priority_audit.append({
+                "artifact_schema_version": "target_selection_audit_v13",
+                "update_index": int(update_index),
+                "selection_pool_stage": "round_robin",
+                "update_lane": "protocol_control",
+                "selected_target_ids": list(targets),
+                "no_actionable_reason": "",
+                "priorities": [],
+            })
+            return targets, payload
+
+        if policy == "repairability_adjusted_responsibility":
+            scores = repairability_adjusted_target_scores(
+                active_assignments=assigned,
+                state=self.responsibility_state,
+                seed=self.cfg.training.seed,
+                current_member_correct_counts=self._member_correct_counts(
+                    self.active_profiles
+                ),
+                initial_member_correct_counts=self._member_correct_counts(
+                    self.initial_profiles
+                ),
+                member_uplift_tolerance=(
+                    self.cfg.responsibility.member_uplift_tolerance
+                ),
+                legal_assignments=self.cached_responsibility_assignments,
+                service_portfolios=self.cached_service_portfolios,
+                active_lane_by_agent=self.cached_active_lane_by_agent,
+            )
+            selected = select_repairability_targets(
+                scores,
+                target_branch_count=self.protocol.target_branch_count,
+            )
+            targets = tuple(row.agent_id for row in selected)
+            self.selected_target_ids = list(targets)
+            total_order_ranks = {
+                row.agent_id: rank
+                for rank, row in enumerate(scores, start=1)
+            }
+            selected_ranks = {
+                row.agent_id: rank
+                for rank, row in enumerate(selected, start=1)
+            }
+            payload = []
+            parent_hash = self.team_prompt_state_hash()
+            for row in scores:
+                score_payload = {
+                    "artifact_schema_version": (
+                        "repairability_adjusted_target_score_v1"
+                    ),
+                    "update_index": int(update_index),
+                    "team_state_version": int(self.team_state_version),
+                    "team_prompt_state_hash": parent_hash,
+                    **asdict(row),
+                    "D": row.direct_fix_count,
+                    "S_support": row.support_margin_sum,
+                    "d": row.uplift_deficit,
+                    "wait": row.updates_since_selected,
+                    "failure_count": row.branch_failure_count,
+                    "selection_rank": total_order_ranks[row.agent_id],
+                    "selected": row.agent_id in selected_ranks,
+                }
+                payload.append(score_payload)
+                self.repairability_adjusted_target_scores.append(
+                    dict(score_payload)
+                )
+            self.target_priority_audit.append({
+                "artifact_schema_version": "target_selection_audit_v13",
+                "update_index": int(update_index),
+                "selection_pool_stage": (
+                    "repairability_adjusted_scalar_total_order"
+                ),
+                "update_lane": "responsibility_conditioned",
+                "eligible_agent_ids": [row.agent_id for row in scores],
+                "active_candidate_agent_ids": [
+                    row.agent_id for row in scores
+                ],
+                "selected_target_ids": list(targets),
+                "no_actionable_reason": (
+                    "" if targets else "no_actionable_responsibility"
+                ),
+                "priorities": payload,
+            })
+            return targets, payload
+
+        if policy == "member_aware_responsibility" and self.protocol.legacy_protocol:
             priorities = target_priorities(
                 assignments=assigned,
                 state=self.responsibility_state,
                 seed=self.cfg.training.seed,
-                current_member_correct_counts=current_counts,
-                initial_member_correct_counts=initial_counts,
+                current_member_correct_counts=self._member_correct_counts(
+                    self.active_profiles
+                ),
+                initial_member_correct_counts=self._member_correct_counts(
+                    self.initial_profiles
+                ),
                 member_uplift_tolerance=(
                     self.cfg.responsibility.member_uplift_tolerance
                 ),
@@ -1194,60 +1360,30 @@ class PromptEnsembleOptimizationSystem:
             )
             selection = build_target_selection_decision(priorities)
             target = selection.selected_agent_id
-        else:
-            raise ValueError(
-                f"Protocol has no optimization target selector: {self.protocol.name}"
-            )
-        priority_payload = [
-            {
-                **asdict(row),
-                "D_i": row.direct_fix_count,
-                "S_i": row.margin_gain_sum,
-                "g_i": row.member_gain,
-                "d_i": row.uplift_deficit,
-                "selected": row.agent_id == target,
-            }
-            for row in priorities
-        ]
-        if self.protocol.target_selection_policy == "member_aware_responsibility":
-            pool_stage = selection.selection_pool_stage
-            eligible_ids = list(selection.eligible_agent_ids)
-            frozen_ids = list(selection.frozen_agent_ids)
-            active_ids = list(selection.active_candidate_agent_ids)
-            target_fronts = selection.target_pareto_fronts
-            target_frontier_ids = list(
-                selection.target_frontier_agent_ids
-            )
-        else:
-            eligible_ids = frozen_ids = []
-            active_ids = []
-            target_fronts = {}
-            target_frontier_ids = []
-            pool_stage = "round_robin"
-        self.target_priority_audit.append({
-            "update_index": int(update_index),
-            "priorities": priority_payload,
-            "update_lane": selection.update_lane if self.protocol.target_selection_policy == "member_aware_responsibility" else "protocol_control",
-            "selection_pool_stage": pool_stage,
-            "eligible_agent_ids": eligible_ids,
-            "frozen_agent_ids": frozen_ids,
-            "active_candidate_agent_ids": active_ids,
-            "target_pareto_fronts": {
-                str(agent_id): target_fronts[agent_id]
-                for agent_id in active_ids
-                if agent_id in target_fronts
-            },
-            "target_frontier_agent_ids": [
-                agent_id for agent_id in target_frontier_ids
-            ],
-            "no_actionable_reason": selection.no_actionable_reason if self.protocol.target_selection_policy == "member_aware_responsibility" else "",
-            "selected_agent_id": target,
-            "selected_D": selection.selected_direct_fix_count if selection else None,
-            "selected_S": selection.selected_margin_gain_sum if selection else None,
-            "selected_d": selection.selected_uplift_deficit if selection else None,
-            "updates_since_selected": selection.selected_updates_since_selected if selection else None,
-        })
-        return target, priority_payload
+            self.selected_target_ids = [] if target is None else [target]
+            payload = [asdict(row) for row in priorities]
+            self.target_priority_audit.append({
+                "artifact_schema_version": "legacy_v12_target_selection_audit",
+                "update_index": int(update_index),
+                "selection_pool_stage": selection.selection_pool_stage,
+                "update_lane": selection.update_lane,
+                "selected_target_ids": [] if target is None else [target],
+                "no_actionable_reason": selection.no_actionable_reason,
+                "priorities": payload,
+            })
+            return (() if target is None else (target,)), payload
+
+        raise ValueError(
+            f"Protocol has no optimization target selector: {self.protocol.name}"
+        )
+
+    def select_target(
+        self,
+        assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
+        update_index: int,
+    ) -> tuple[int | None, list[dict[str, Any]]]:
+        targets, payload = self.select_targets(assigned, update_index)
+        return (targets[0] if targets else None), payload
 
     def _representative_indices(self, count: int) -> list[int]:
         if self.fixed_probe is None:
@@ -1507,7 +1643,7 @@ class PromptEnsembleOptimizationSystem:
             parent_prompt=parent_prompt,
             approved_plan=repair_plan,
             answer_format=self.cfg.data.answer_format,
-            candidate_count=self.cfg.tcs.num_candidates_per_parent,
+            candidate_count=self.protocol.candidates_per_target_branch,
             candidate_prompt_max_chars=self.cfg.tcs.candidate_prompt_max_chars,
             total_candidate_prompt_max_chars=(
                 self.cfg.tcs.total_candidate_prompt_max_chars
@@ -1525,7 +1661,7 @@ class PromptEnsembleOptimizationSystem:
                 else build_student_recovery_request(
                     base_request=base_request,
                     previous_rejection_classes=previous_rejection_classes,
-                    required_candidate_count=self.cfg.tcs.num_candidates_per_parent,
+                    required_candidate_count=self.protocol.candidates_per_target_branch,
                     parent_prompt_hash=parent_prompt_hash,
                     approved_repair_plan_hash=repair_plan_hash,
                 )
@@ -1611,7 +1747,7 @@ class PromptEnsembleOptimizationSystem:
                         parsed,
                         parent_prompt=parent_prompt,
                         context=context,
-                        expected_count=self.cfg.tcs.num_candidates_per_parent,
+                        expected_count=self.protocol.candidates_per_target_branch,
                         candidate_prompt_max_chars=(
                             self.cfg.tcs.candidate_prompt_max_chars
                         ),
@@ -1728,7 +1864,7 @@ class PromptEnsembleOptimizationSystem:
                 ).hexdigest(),
                 "json_extracted": parsed is not None,
                 "schema_valid": parse_result is not None,
-                "requested_count": self.cfg.tcs.num_candidates_per_parent,
+                "requested_count": self.protocol.candidates_per_target_branch,
                 "raw_count": raw_count,
                 "valid_count": len(parsed_candidates),
                 "raw_candidate_count": raw_count,
@@ -2208,7 +2344,9 @@ class PromptEnsembleOptimizationSystem:
                 proposal_failure_feedback=memory_feedback,
             )
             evidence_bundle_hash = self._evidence_bundle_hash(context)
-        self._proposal_memory_attempts[update_index] = {
+        self._proposal_memory_attempts[
+            (int(update_index), int(target_agent_id))
+        ] = {
             "key": memory_key,
             "memory_hit": memory_entry is not None,
             "feedback": memory_feedback,
@@ -2245,6 +2383,9 @@ class PromptEnsembleOptimizationSystem:
                 "margin_gain", "dominant_wrong_member", "unique_correct",
                 "pivotal_correct", "proposal_failure_feedback", "frontier",
                 "service_load", "seeded_rank", "freeze", "anchor_match",
+                "branch_failure", "branch_attempt", "branch_feasible",
+                "expected_update_value", "opportunity_value",
+                "updates_since_selected", "normalized_wait",
             )
         else:
             forbidden_tokens = ()
@@ -2589,7 +2730,9 @@ class PromptEnsembleOptimizationSystem:
             return []
 
         parsed_candidates: tuple[StudentPromptCandidate, ...] = ()
-        funnel.requested_candidate_count = self.cfg.tcs.num_candidates_per_parent
+        funnel.requested_candidate_count = (
+            self.protocol.candidates_per_target_branch
+        )
         parsed_candidates, rejection_classes, recoverable = (
             await self._run_student_cycle(
                 context=context,
@@ -2803,8 +2946,11 @@ class PromptEnsembleOptimizationSystem:
                 )
         funnel.stage_a_evaluated = len(candidates)
         if self.protocol.stage_a_policy == "matched_all_generated":
-            shortlist = list(candidates)
-            for rank, candidate in enumerate(candidates, start=1):
+            shortlist = sorted(
+                candidates,
+                key=lambda row: (row.generation, row.prompt_hash),
+            )
+            for rank, candidate in enumerate(shortlist, start=1):
                 candidate.stage_a_decision = StageASelectionDecision(
                     selected=True,
                     selected_by_channels=("matched_all_generated",),
@@ -3151,7 +3297,10 @@ class PromptEnsembleOptimizationSystem:
         funnel: CandidateFunnel,
         accepted: CandidateRuntime | None,
     ) -> None:
-        attempt = self._proposal_memory_attempts.pop(update_index, None)
+        attempt = self._proposal_memory_attempts.pop(
+            (int(update_index), int(target_agent_id)),
+            None,
+        )
         if self.cfg.tcs.proposal_memory_mode == "off":
             return
         if attempt is None or not isinstance(attempt.get("key"), ProposalMemoryKey):
@@ -3273,25 +3422,564 @@ class PromptEnsembleOptimizationSystem:
         """Return true only for a completed semantic search with no acceptance."""
 
         terminal_failure = str(funnel.terminal_failure_class or "")
-        if terminal_failure == "proposal_protocol_failure":
+        if terminal_failure in {
+            "transport_failure",
+            "teacher_provider_truncation",
+            "teacher_schema_exhausted",
+            "critic_provider_truncation",
+            "critic_schema_exhausted",
+            "upstream_teacher_schema_exhausted",
+            "upstream_critic_schema_exhausted",
+            "student_invalid_exhausted",
+            "student_invalid_exhausted_after_upstream_regeneration",
+            "student_provider_truncation",
+            "proposal_protocol_failure",
+        }:
             return False
         return bool(
             funnel.infrastructure_failed_updates == 0
             and (
                 funnel.stage_a_evaluated > 0
-                or terminal_failure == "critic_semantic_rejection_exhausted"
+                or terminal_failure in {
+                    "critic_semantic_rejection_exhausted",
+                    "upstream_critic_semantic_rejection_exhausted",
+                }
                 or (
                     not terminal_failure
                     and funnel.student_calls > 0
                     and (
                         funnel.sample_memorization_rejected > 0
-                        or funnel.raw_candidate_count > 0
+                        or funnel.valid_candidate_count > 0
                     )
                 )
             )
         )
 
+    @staticmethod
+    def _aggregate_branch_funnels(
+        branches: Sequence[TargetBranchResult],
+        *,
+        committed: bool,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {}
+        for definition in fields(CandidateFunnel):
+            values = [getattr(branch.funnel, definition.name) for branch in branches]
+            first = values[0] if values else getattr(CandidateFunnel(), definition.name)
+            if isinstance(first, bool):
+                payload[definition.name] = any(bool(value) for value in values)
+            elif isinstance(first, int):
+                payload[definition.name] = sum(int(value) for value in values)
+            elif isinstance(first, dict):
+                keys = sorted({key for value in values for key in value})
+                payload[definition.name] = {
+                    key: sum(int(value.get(key, 0)) for value in values)
+                    for key in keys
+                }
+            elif isinstance(first, str):
+                payload[definition.name] = "|".join(
+                    value for value in map(str, values) if value
+                )
+            else:
+                payload[definition.name] = first
+        payload["accepted_candidate"] = bool(committed)
+        return payload
+
+    def _cross_branch_key(
+        self,
+        branch: TargetBranchResult,
+    ) -> tuple:
+        if branch.accepted is None or branch.accepted.final_evaluation is None:
+            raise ValueError("cross_branch_winner_missing_evaluation")
+        if (
+            self.protocol.candidate_acceptance_policy
+            == "responsibility_robust_contribution"
+        ):
+            return rcru_cross_branch_transition_key(
+                branch.accepted.final_evaluation,
+                branch.incumbent,
+                target_selection_rank=branch.target_selection_rank,
+            )
+        return common_cross_branch_transition_key(
+            branch.accepted.final_evaluation,
+            branch.incumbent,
+            target_selection_rank=branch.target_selection_rank,
+        )
+
+    async def _evaluate_target_branch(
+        self,
+        *,
+        target: int,
+        target_rank: int,
+        assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
+        parent_team_hash: str,
+        update_index: int,
+    ) -> TargetBranchResult:
+        if self.team_prompt_state_hash() != parent_team_hash:
+            raise AssertionError("dual_target_branch_parent_state_drift")
+        update_lane = (
+            "responsibility_conditioned"
+            if self.protocol.target_selection_policy
+            == "repairability_adjusted_responsibility"
+            else "protocol_control"
+        )
+        assigned_hashes = (
+            {row.question_hash for row in assigned.get(target, ())}
+            if update_lane == "responsibility_conditioned"
+            else set()
+        )
+        if update_lane == "responsibility_conditioned" and not assigned_hashes:
+            raise AssertionError("responsibility target has empty active slice")
+        active_lane = self.cached_active_lane_by_agent.get(target)
+        if (
+            self.protocol.service_routing_enabled
+            and update_lane == "responsibility_conditioned"
+            and active_lane is None
+        ):
+            raise AssertionError("responsibility target has no active lane")
+        funnel = CandidateFunnel()
+        candidates = await self.propose_candidates(
+            target,
+            assigned_hashes,
+            funnel,
+            update_index=update_index,
+        )
+        accepted, incumbent, evaluated = await self.evaluate_candidates(
+            target,
+            candidates,
+            assigned_hashes,
+            funnel,
+            update_index=update_index,
+        )
+        self._record_proposal_memory_outcome(
+            update_index=update_index,
+            target_agent_id=target,
+            assigned_hashes=assigned_hashes,
+            evaluated=evaluated,
+            funnel=funnel,
+            accepted=accepted,
+        )
+        stage_b = [
+            row.final_evaluation
+            for row in evaluated
+            if row.final_evaluation is not None
+        ]
+        self._update_candidate_search_outcome(
+            target=target,
+            update_index=update_index,
+            stage_b_evaluations=stage_b,
+        )
+        normal_completion = bool(
+            accepted is not None
+            or self.is_complete_repairability_failure(funnel)
+        ) and funnel.infrastructure_failed_updates == 0
+        return TargetBranchResult(
+            target_agent_id=target,
+            target_selection_rank=target_rank,
+            parent_team_hash=parent_team_hash,
+            active_lane=active_lane,
+            assigned_hashes=assigned_hashes,
+            funnel=funnel,
+            accepted=accepted,
+            incumbent=incumbent,
+            evaluated=list(evaluated),
+            normal_completion=normal_completion,
+        )
+
     async def update_once(self, update_index: int) -> bool:
+        if self.protocol.legacy_protocol:
+            return await self._legacy_update_once(update_index)
+        if not self.protocol.optimization_enabled:
+            return False
+        if (
+            self.protocol.target_selection_policy
+            == "repairability_adjusted_responsibility"
+        ):
+            if self.protocol.responsibility_refresh_policy != "online":
+                raise AssertionError(
+                    "dynamic responsibility protocol requires online refresh"
+                )
+            _, assigned = self.ensure_responsibility_current()
+        else:
+            assigned = {agent_id: [] for agent_id in range(5)}
+            states, _, _ = self.current_states_and_opportunities()
+            self.peer_state_history.extend(asdict(state) for state in states)
+
+        parent_team_hash = self.team_prompt_state_hash()
+        targets, target_scores = self.select_targets(assigned, update_index)
+        if not targets:
+            self.early_stop_reason = "no_actionable_responsibility"
+            self.candidate_decisions.append({
+                "update_index": int(update_index),
+                "selected_target_ids": [],
+                "target_agent_id": None,
+                "stop_reason": "no_actionable_responsibility",
+                "agent_target_priorities": target_scores,
+                "funnel": asdict(CandidateFunnel()),
+                "candidates": [],
+            })
+            return False
+        if len(set(targets)) != len(targets):
+            raise AssertionError("dual_target_selection_not_distinct")
+
+        state_before_branch_accounting = deepcopy(self.responsibility_state)
+        branches: list[TargetBranchResult] = []
+        for rank, target in enumerate(targets, start=1):
+            if self.team_prompt_state_hash() != parent_team_hash:
+                raise AssertionError("branch_observed_prior_branch_mutation")
+            self.agent_selection_counts[target] += 1
+            self.responsibility_state.target_attempt_count_by_agent[target] = (
+                self.responsibility_state.target_attempt_count_by_agent.get(
+                    target, 0
+                )
+                + 1
+            )
+            branches.append(await self._evaluate_target_branch(
+                target=target,
+                target_rank=rank,
+                assigned=assigned,
+                parent_team_hash=parent_team_hash,
+                update_index=update_index,
+            ))
+        branches.sort(key=lambda row: row.target_selection_rank)
+        if any(
+            branch.parent_team_hash != parent_team_hash
+            for branch in branches
+        ):
+            raise AssertionError("dual_target_branch_parent_hash_mismatch")
+
+        for agent_id in self.responsibility_state.updates_since_selected_by_agent:
+            self.responsibility_state.updates_since_selected_by_agent[agent_id] += 1
+        for target in targets:
+            self.responsibility_state.updates_since_selected_by_agent[target] = 0
+
+        feasible = [branch for branch in branches if branch.accepted is not None]
+        winner = max(feasible, key=self._cross_branch_key, default=None)
+        for branch in branches:
+            event = record_branch_search_outcome(
+                state=self.responsibility_state,
+                agent_id=branch.target_agent_id,
+                normal_completion=branch.normal_completion,
+                passed_candidate_found=branch.accepted is not None,
+                update_index=update_index,
+            )
+            event.update({
+                "team_state_version": int(self.team_state_version),
+                "team_prompt_state_hash": parent_team_hash,
+                "competition_loser": bool(
+                    branch.accepted is not None and branch is not winner
+                ),
+            })
+            self.repairability_failure_events.append(event)
+
+        for branch in branches:
+            branch_winner_hash = (
+                branch.accepted.prompt_hash if branch.accepted is not None else ""
+            )
+            self.dual_target_branch_decisions.append({
+                "artifact_schema_version": "dual_target_branch_decision_v1",
+                "update_index": int(update_index),
+                "parent_team_hash": parent_team_hash,
+                "team_state_version": int(self.team_state_version),
+                "target_agent_id": branch.target_agent_id,
+                "target_rank": branch.target_selection_rank,
+                "active_lane": (
+                    branch.active_lane.value
+                    if branch.active_lane is not None else None
+                ),
+                "candidate_count": len(branch.evaluated),
+                "passed_candidate_count": sum(
+                    bool(
+                        candidate.constraint is not None
+                        and candidate.constraint.passed
+                    )
+                    for candidate in branch.evaluated
+                ),
+                "branch_winner_hash": branch_winner_hash,
+                "normal_failure": bool(
+                    branch.normal_completion and branch.accepted is None
+                ),
+                "operational_failure": not branch.normal_completion,
+                "competition_loser": bool(
+                    branch.accepted is not None and branch is not winner
+                ),
+            })
+
+        winner_key = list(self._cross_branch_key(winner)) if winner else []
+        commit_row = {
+            "artifact_schema_version": "dual_target_commit_decision_v1",
+            "update_index": int(update_index),
+            "parent_team_hash": parent_team_hash,
+            "selected_target_ids": list(targets),
+            "branch_winner_hashes": [
+                branch.accepted.prompt_hash
+                for branch in branches
+                if branch.accepted is not None
+            ],
+            "committed_target_id": (
+                winner.target_agent_id if winner is not None else None
+            ),
+            "committed_prompt_hash": (
+                winner.accepted.prompt_hash if winner is not None else ""
+            ),
+            "winner_key": winner_key,
+            "new_team_hash": parent_team_hash,
+        }
+
+        candidate_rows = []
+        for branch in branches:
+            for row in sorted(
+                branch.evaluated,
+                key=lambda candidate: (
+                    candidate.generation,
+                    candidate.prompt_hash,
+                ),
+            ):
+                candidate_rows.append({
+                    "target_agent_id": branch.target_agent_id,
+                    "target_selection_rank": branch.target_selection_rank,
+                    "prompt_hash": row.prompt_hash,
+                    "generation": row.generation,
+                    "repair_plan_hash": row.repair_plan_hash,
+                    "stage_a_decision": (
+                        asdict(row.stage_a_decision)
+                        if row.stage_a_decision else None
+                    ),
+                    "evaluation": (
+                        asdict(row.final_evaluation)
+                        if row.final_evaluation else None
+                    ),
+                    "constraint": (
+                        asdict(row.constraint) if row.constraint else None
+                    ),
+                })
+        decision = {
+            "update_index": int(update_index),
+            "acceptance_policy": (
+                RCRU_VERSION
+                if self.protocol.candidate_acceptance_policy
+                == "responsibility_robust_contribution"
+                else CANDIDATE_ACCEPTANCE_POLICY
+            ),
+            "candidate_selection_policy": self.protocol.candidate_selection_policy,
+            "candidate_ranking_policy": self.protocol.candidate_ranking_policy,
+            "stage_a_policy": self.protocol.stage_a_policy,
+            "parent_team_hash": parent_team_hash,
+            "selected_target_ids": list(targets),
+            "target_agent_id": (
+                winner.target_agent_id if winner else targets[0]
+            ),
+            "agent_target_priorities": target_scores,
+            "candidate_search_outcome_updated": any(
+                any(
+                    candidate.final_evaluation is not None
+                    for candidate in branch.evaluated
+                )
+                for branch in branches
+            ),
+            "funnel": self._aggregate_branch_funnels(
+                branches, committed=winner is not None
+            ),
+            "accepted_prompt_hash": (
+                winner.accepted.prompt_hash if winner else ""
+            ),
+            "branches": [
+                {
+                    "target_agent_id": branch.target_agent_id,
+                    "target_selection_rank": branch.target_selection_rank,
+                    "active_lane": (
+                        branch.active_lane.value
+                        if branch.active_lane is not None else None
+                    ),
+                    "assigned_question_hashes": sorted(
+                        branch.assigned_hashes
+                    ),
+                    "funnel": asdict(branch.funnel),
+                    "branch_winner_hash": (
+                        branch.accepted.prompt_hash
+                        if branch.accepted is not None else ""
+                    ),
+                }
+                for branch in branches
+            ],
+            "candidates": candidate_rows,
+        }
+        self.candidate_decisions.append(decision)
+
+        if winner is None:
+            for branch in branches:
+                self.previous_update_outcomes[
+                    branch.target_agent_id
+                ] = PreviousUpdateOutcome(
+                    attempted=True,
+                    empirical_evaluation_completed=bool(
+                        branch.funnel.stage_a_evaluated
+                    ),
+                    accepted=False,
+                    rejection_reasons=tuple(sorted({
+                        reason
+                        for row in branch.evaluated
+                        if row.constraint is not None
+                        for reason in row.constraint.rejection_reasons
+                    })),
+                )
+            self.dual_target_commit_decisions.append(commit_row)
+            return False
+
+        if len([branch for branch in branches if branch is winner]) != 1:
+            raise AssertionError("dual_target_requires_exactly_one_winner")
+        if self.team_prompt_state_hash() != parent_team_hash:
+            raise AssertionError("candidate_parent_team_hash_mismatch")
+        target = winner.target_agent_id
+        accepted = winner.accepted
+        if accepted is None or accepted.profile is None:
+            raise AssertionError("committed branch has no evaluated candidate")
+        if target not in targets:
+            raise AssertionError("committed target was not selected")
+
+        agent = self.agents[target]
+        old_prompt = agent.current_prompt
+        old_previous_prompt = agent.previous_active_prompt
+        old_profile = self.active_profiles[target]
+        old_state = state_before_branch_accounting
+        old_team_state_version = self.team_state_version
+        old_responsibility_state_version = self.responsibility_state_version
+        old_refresh_count = self.responsibility_refresh_count
+        old_cached = (
+            deepcopy(self.cached_responsibility_eligibility),
+            deepcopy(self.cached_responsibility_assignments),
+            deepcopy(self.cached_service_assignments),
+            deepcopy(self.cached_repair_lane_by_question),
+            deepcopy(self.cached_service_portfolios),
+            deepcopy(self.cached_active_lane_by_agent),
+            deepcopy(self.cached_active_responsibility_assignments),
+            deepcopy(self.cached_member_opportunities),
+        )
+        old_lengths = (
+            len(self.peer_state_history),
+            len(self.responsibility_assignments),
+            len(self.service_routing_audit),
+            len(self.specialization_anchor_trajectory),
+            len(self.responsibility_portfolio_trajectory),
+            len(self.member_opportunities),
+            len(self.repairability_reset_events),
+        )
+        try:
+            validate_mutable_decision_procedure(accepted.prompt)
+            agent.previous_active_prompt = old_prompt
+            agent.current_prompt = accepted.prompt
+            self.active_profiles[target] = accepted.profile
+            self.responsibility_state.accepted_updates_by_agent[target] = (
+                self.responsibility_state.accepted_updates_by_agent.get(
+                    target, 0
+                )
+                + 1
+            )
+            if self.protocol.service_routing_enabled:
+                if winner.active_lane is None:
+                    raise AssertionError("winner has no active lane")
+                self.specialization_anchor_trajectory.append(
+                    record_specialization_anchor_acceptance(
+                        state=self.responsibility_state,
+                        accepted_agent_id=target,
+                        active_lane=winner.active_lane,
+                        update_index=update_index,
+                    )
+                )
+            new_team_hash = self.team_prompt_state_hash()
+            reset_event = reset_state_local_repairability(
+                state=self.responsibility_state,
+                agent_ids=range(5),
+                old_team_hash=parent_team_hash,
+                new_team_hash=new_team_hash,
+                update_index=update_index,
+            )
+            if reset_event is None:
+                raise AssertionError("accepted transition did not change team hash")
+            self.repairability_reset_events.append(reset_event)
+            if self.protocol.responsibility_refresh_policy == "online":
+                self.refresh_responsibility_after_commit(
+                    update_index=update_index
+                )
+            else:
+                self.team_state_version += 1
+        except Exception:
+            agent.current_prompt = old_prompt
+            agent.previous_active_prompt = old_previous_prompt
+            self.active_profiles[target] = old_profile
+            self.responsibility_state = old_state
+            self.team_state_version = old_team_state_version
+            self.responsibility_state_version = old_responsibility_state_version
+            self.responsibility_refresh_count = old_refresh_count
+            (
+                self.cached_responsibility_eligibility,
+                self.cached_responsibility_assignments,
+                self.cached_service_assignments,
+                self.cached_repair_lane_by_question,
+                self.cached_service_portfolios,
+                self.cached_active_lane_by_agent,
+                self.cached_active_responsibility_assignments,
+                self.cached_member_opportunities,
+            ) = old_cached
+            (
+                peer_len,
+                responsibility_len,
+                routing_len,
+                anchor_len,
+                portfolio_len,
+                opportunity_len,
+                reset_len,
+            ) = old_lengths
+            del self.peer_state_history[peer_len:]
+            del self.responsibility_assignments[responsibility_len:]
+            del self.service_routing_audit[routing_len:]
+            del self.specialization_anchor_trajectory[anchor_len:]
+            del self.responsibility_portfolio_trajectory[portfolio_len:]
+            del self.member_opportunities[opportunity_len:]
+            del self.repairability_reset_events[reset_len:]
+            raise
+
+        evaluation = accepted.final_evaluation
+        if evaluation is None:
+            raise AssertionError("winner evaluation missing")
+        for branch in branches:
+            branch_target = branch.target_agent_id
+            if branch is winner:
+                self.previous_update_outcomes[branch_target] = PreviousUpdateOutcome(
+                    attempted=True,
+                    empirical_evaluation_completed=True,
+                    accepted=True,
+                    target_correct_delta=(
+                        evaluation.competence.correct_count
+                        - branch.incumbent.competence.correct_count
+                    ),
+                    vote_correct_delta=(
+                        evaluation.team_outcome.vote_correct_count
+                        - branch.incumbent.team_outcome.vote_correct_count
+                    ),
+                    minimum_member_gain_delta=(
+                        evaluation.member_gain.minimum_gain_count
+                        - branch.incumbent.member_gain.minimum_gain_count
+                    ),
+                    total_member_gain_delta=(
+                        evaluation.member_gain.total_gain_count
+                        - branch.incumbent.member_gain.total_gain_count
+                    ),
+                    assigned_repair_count=(
+                        evaluation.marginal.assigned_residual_repair_count
+                    ),
+                )
+            elif branch.accepted is not None:
+                self.previous_update_outcomes[branch_target] = PreviousUpdateOutcome(
+                    attempted=True,
+                    empirical_evaluation_completed=True,
+                    accepted=False,
+                    rejection_reasons=("cross_branch_competition_loser",),
+                )
+        commit_row["new_team_hash"] = self.team_prompt_state_hash()
+        self.dual_target_commit_decisions.append(commit_row)
+        return True
+
+    async def _legacy_update_once(self, update_index: int) -> bool:
         if not self.protocol.optimization_enabled:
             return False
         if self.protocol.target_selection_policy == "member_aware_responsibility":
@@ -3854,10 +4542,13 @@ class PromptEnsembleOptimizationSystem:
         return await self.evaluate_final_test(data)
 
     def mark_training_complete(self, planned_update_count: int) -> None:
+        allowed_early_stops = {"no_actionable_responsibility"}
+        if self.protocol.legacy_protocol:
+            allowed_early_stops.add("all_actionable_members_frozen")
         if (
             self.completed_update_count != int(planned_update_count)
             and not (
-                self.early_stop_reason == "all_actionable_members_frozen"
+                self.early_stop_reason in allowed_early_stops
                 and self.completed_update_count <= int(planned_update_count)
             )
         ):
@@ -3949,6 +4640,35 @@ class PromptEnsembleOptimizationSystem:
         target_priority = next(
             (row for row in priorities if row.get("agent_id") == target_id), {}
         )
+        if self.protocol.legacy_protocol:
+            target_selection_state = {
+                "target_frozen": bool(target_priority.get("frozen", False)),
+                "responsibility_portfolio": {
+                    key: target_priority.get(key)
+                    for key in (
+                        "direct_fix_count",
+                        "margin_gain_sum",
+                        "target_pareto_front",
+                    )
+                },
+            }
+        else:
+            target_selection_state = {
+                "repairability_adjusted_target_score": {
+                    key: target_priority.get(key)
+                    for key in (
+                        "direct_fix_count",
+                        "support_margin_sum",
+                        "uplift_deficit",
+                        "updates_since_selected",
+                        "branch_failure_count",
+                        "opportunity_value",
+                        "repairability_discount",
+                        "expected_update_value",
+                        "selection_rank",
+                    )
+                },
+            }
         row = {
             "update_index": int(update_index),
             "target_agent_id": target_id,
@@ -3964,15 +4684,7 @@ class PromptEnsembleOptimizationSystem:
             ],
             "target_attempt_count": target_priority.get("target_attempt_count"),
             "updates_since_selected": target_priority.get("updates_since_selected"),
-            "target_frozen": bool(target_priority.get("frozen", False)),
-            "responsibility_portfolio": {
-                key: target_priority.get(key)
-                for key in (
-                    "direct_fix_count",
-                    "margin_gain_sum",
-                    "target_pareto_front",
-                )
-            },
+            **target_selection_state,
             "target_gain": constraint.get("target_gain"),
             "vote_gain_count": constraint.get("vote_gain_count"),
             "vote_loss_count": constraint.get("vote_loss_count"),
@@ -4221,7 +4933,7 @@ class PromptEnsembleOptimizationSystem:
             "canonical_experiment_setting": self.protocol.name,
             "setting_index": setting_index(self.protocol.name),
             "setting_display_name": self.protocol.display_name,
-            "module_vector": asdict(self.protocol.modules),
+            "module_vector": self.protocol.module_vector,
             "added_module_vs_previous": added_module_vs_previous(
                 self.protocol.name
             ),
@@ -4233,7 +4945,27 @@ class PromptEnsembleOptimizationSystem:
             "initial_prompt_hashes": initial_hashes,
             "initial_prompts_identical": len(set(initial_hashes)) == 1,
             "tie_policy": self.protocol.tie_policy,
-            "update_mode": "single_agent_paired_counterfactual",
+            "update_mode": (
+                "dual_target_independent_branches_single_commit"
+                if self.protocol.target_branch_count > 1
+                else "single_target_single_commit"
+            ),
+            "target_branch_count": self.protocol.target_branch_count,
+            "candidates_per_target_branch": (
+                self.protocol.candidates_per_target_branch
+            ),
+            "total_generated_candidates_per_update": (
+                self.protocol.candidate_budget_contract
+                .total_generated_candidates_per_update
+            ),
+            "stage_b_budget_per_branch": (
+                self.protocol.candidate_budget_contract
+                .stage_b_budget_per_branch
+            ),
+            "total_stage_b_candidate_budget": (
+                self.protocol.candidate_budget_contract
+                .total_stage_b_candidate_budget
+            ),
             "candidate_selector": self.protocol.candidate_selection_policy,
             "candidate_selection_policy": self.protocol.candidate_selection_policy,
             "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
@@ -4258,10 +4990,10 @@ class PromptEnsembleOptimizationSystem:
             "service_routing_version": SERVICE_ROUTING_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": TARGET_SELECTION_VERSION,
-            "repairability_freeze_failure_threshold": FREEZE_FAILURE_THRESHOLD,
-            "repairability_freeze_other_accept_threshold": FREEZE_OTHER_ACCEPT_THRESHOLD,
-            "repairability_freeze_portfolio_overlap_threshold": (
-                FREEZE_PORTFOLIO_OVERLAP_THRESHOLD
+            "repairability_version": REPAIRABILITY_VERSION,
+            "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
+            "repairability_freeze_enabled": bool(
+                self.protocol.repairability_freeze_enabled
             ),
             "stage_a_version": self.protocol.stage_a_policy,
             "stage_b_version": resolved_acceptance_version,
@@ -4276,6 +5008,7 @@ class PromptEnsembleOptimizationSystem:
             "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
             "test_isolation_version": TEST_ISOLATION_VERSION,
             "early_stop_reason": self.early_stop_reason,
+            "selected_target_ids": list(self.selected_target_ids),
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
             "proposal_memory_mode": self.cfg.tcs.proposal_memory_mode,
@@ -4441,13 +5174,34 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl("g_transition_audit.jsonl", self.g_transition_audit)
         self.artifacts.write_jsonl("specialization_trajectory.jsonl", self.specialization_trajectory)
         self.artifacts.write_jsonl("target_priority_audit.jsonl", self.target_priority_audit)
+        if self.protocol.legacy_protocol:
+            self.artifacts.write_jsonl(
+                "repairability_freeze_events.jsonl",
+                self.repairability_freeze_events,
+            )
+            self.artifacts.write_jsonl(
+                "repairability_unfreeze_events.jsonl",
+                self.repairability_unfreeze_events,
+            )
         self.artifacts.write_jsonl(
-            "repairability_freeze_events.jsonl",
-            self.repairability_freeze_events,
+            "repairability_adjusted_target_scores.jsonl",
+            self.repairability_adjusted_target_scores,
         )
         self.artifacts.write_jsonl(
-            "repairability_unfreeze_events.jsonl",
-            self.repairability_unfreeze_events,
+            "dual_target_branch_decisions.jsonl",
+            self.dual_target_branch_decisions,
+        )
+        self.artifacts.write_jsonl(
+            "dual_target_commit_decisions.jsonl",
+            self.dual_target_commit_decisions,
+        )
+        self.artifacts.write_jsonl(
+            "repairability_failure_events.jsonl",
+            self.repairability_failure_events,
+        )
+        self.artifacts.write_jsonl(
+            "repairability_reset_events.jsonl",
+            self.repairability_reset_events,
         )
         self.artifacts.write_jsonl(
             "service_routing_audit_sanitized.jsonl",

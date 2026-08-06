@@ -25,10 +25,12 @@ from ..versions import (
     CHECKPOINT_VERSION,
     COALITION_CONTRIBUTION_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     MINIMAL_EDIT_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RCRU_VERSION,
     RESPONSIBILITY_UTILITY_VERSION,
     ROBUST_SUPPORT_VERSION,
@@ -37,17 +39,45 @@ from ..versions import (
 )
 
 
+_LEGACY_FREEZE_STATE_FIELDS = {
+    "consecutive_failed_updates_by_agent",
+    "last_failed_portfolio_signature_by_agent",
+    "frozen_by_agent",
+    "frozen_portfolio_signature_by_agent",
+    "frozen_residual_hashes_by_agent",
+    "frozen_direct_fix_count_by_agent",
+    "frozen_margin_gain_sum_by_agent",
+    "other_accepted_updates_since_freeze_by_agent",
+    "freeze_count_by_agent",
+}
+
+
+def _responsibility_state_payload(system) -> dict[str, Any]:
+    payload = asdict(system.responsibility_state)
+    if not system.protocol.legacy_protocol:
+        for field in _LEGACY_FREEZE_STATE_FIELDS:
+            payload.pop(field, None)
+    return payload
+
+
 def _random_state_payload() -> str:
     return base64.b64encode(pickle.dumps(random.getstate())).decode("ascii")
 
 
-def _service_assignment_payload(value) -> dict[str, Any]:
-    return {
+def _service_assignment_payload(
+    value,
+    *,
+    include_legacy_freeze: bool,
+) -> dict[str, Any]:
+    payload = {
         **asdict(value),
         "repair_lane": value.repair_lane.value,
         "eligible_agent_ids": list(value.eligible_agent_ids),
         "active_eligible_agent_ids": list(value.active_eligible_agent_ids),
     }
+    if not include_legacy_freeze:
+        payload.pop("service_blocked_by_freeze", None)
+    return payload
 
 
 def build_checkpoint(
@@ -90,7 +120,7 @@ def build_checkpoint(
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
-        "module_vector": asdict(system.protocol.modules),
+        "module_vector": system.protocol.module_vector,
         "resolved_candidate_acceptance_policy": (
             system.protocol.candidate_acceptance_policy
         ),
@@ -119,7 +149,12 @@ def build_checkpoint(
         "team_state_version": system.team_state_version,
         "responsibility_state_version": system.responsibility_state_version,
         "responsibility_refresh_count": system.responsibility_refresh_count,
-        "responsibility_state": asdict(system.responsibility_state),
+        "responsibility_state": _responsibility_state_payload(system),
+        "repairability_version": REPAIRABILITY_VERSION,
+        "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
+        "candidate_budget_contract": asdict(
+            system.protocol.candidate_budget_contract
+        ),
         "cached_responsibility_eligibility": {
             str(key): list(value) for key, value in system.cached_responsibility_eligibility.items()
         },
@@ -129,7 +164,10 @@ def build_checkpoint(
             for key, value in system.cached_repair_lane_by_question.items()
         },
         "cached_service_assignments": {
-            key: _service_assignment_payload(value)
+            key: _service_assignment_payload(
+                value,
+                include_legacy_freeze=system.protocol.legacy_protocol,
+            )
             for key, value in system.cached_service_assignments.items()
         },
         "cached_service_portfolios": {
@@ -189,9 +227,40 @@ def build_checkpoint(
         ),
         "selected_test_metrics": dict(system.selected_test_metrics),
         "agent_selection_counts": dict(system.agent_selection_counts),
+        "selected_target_ids": list(system.selected_target_ids),
         "target_priority_audit": list(system.target_priority_audit),
-        "repairability_freeze_events": list(system.repairability_freeze_events),
-        "repairability_unfreeze_events": list(system.repairability_unfreeze_events),
+        "repairability_adjusted_target_scores": list(
+            system.repairability_adjusted_target_scores
+        ),
+        "dual_target_branch_decisions": list(
+            system.dual_target_branch_decisions
+        ),
+        "dual_target_commit_decisions": list(
+            system.dual_target_commit_decisions
+        ),
+        "repairability_failure_events": list(
+            system.repairability_failure_events
+        ),
+        "repairability_reset_events": list(
+            system.repairability_reset_events
+        ),
+        "branch_lifecycle_status": {
+            "failure_count_by_agent": dict(
+                system.responsibility_state.branch_failure_count_by_agent
+            ),
+            "attempt_count_by_agent": dict(
+                system.responsibility_state.branch_attempt_count_by_agent
+            ),
+            "feasible_count_by_agent": dict(
+                system.responsibility_state.branch_feasible_count_by_agent
+            ),
+            "repairability_state_team_hash": (
+                system.responsibility_state.repairability_state_team_hash
+            ),
+            "repairability_reset_count": int(
+                system.responsibility_state.repairability_reset_count
+            ),
+        },
         "service_routing_audit": list(system.service_routing_audit),
         "specialization_anchor_trajectory": list(
             system.specialization_anchor_trajectory
@@ -243,8 +312,17 @@ def build_checkpoint(
 def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
     if "checkpoint_version" not in payload or "method_version" not in payload or "run_identity" not in payload:
         raise ValueError("Legacy checkpoint lacks exact run identity and cannot be resumed")
-    if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION or str(payload["method_version"]) != METHOD_VERSION:
-        raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
+    if int(payload["checkpoint_version"]) != CHECKPOINT_VERSION:
+        raise ValueError(
+            "checkpoint_version_mismatch: "
+            f"expected={CHECKPOINT_VERSION}, "
+            f"observed={payload['checkpoint_version']}"
+        )
+    if str(payload["method_version"]) != METHOD_VERSION:
+        raise ValueError(
+            "checkpoint_method_version_mismatch: "
+            f"expected={METHOD_VERSION}, observed={payload['method_version']}"
+        )
     required_member_state = {
         "training_state",
         "member_gain_state",
@@ -278,8 +356,16 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "selected_test_metrics",
         "responsibility_portfolio_trajectory",
         "target_responsibility_context_alignment",
-        "repairability_freeze_events",
-        "repairability_unfreeze_events",
+        "selected_target_ids",
+        "repairability_adjusted_target_scores",
+        "dual_target_branch_decisions",
+        "dual_target_commit_decisions",
+        "repairability_failure_events",
+        "repairability_reset_events",
+        "branch_lifecycle_status",
+        "repairability_version",
+        "dual_target_search_version",
+        "candidate_budget_contract",
         "service_routing_version",
         "cached_repair_lane_by_question",
         "cached_service_assignments",
@@ -313,6 +399,8 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
+        "repairability_version": REPAIRABILITY_VERSION,
+        "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
     }
     if any(
         str(payload[key]) != expected
@@ -325,8 +413,12 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         raise ValueError("Checkpoint candidate protocol setting is incompatible")
     expected_acceptance = system.protocol.candidate_acceptance_policy
     expected_ranking = system.protocol.candidate_ranking_policy
-    if payload.get("module_vector") != asdict(system.protocol.modules):
+    if payload.get("module_vector") != system.protocol.module_vector:
         raise ValueError("Checkpoint module vector is incompatible")
+    if payload.get("candidate_budget_contract") != asdict(
+        system.protocol.candidate_budget_contract
+    ):
+        raise ValueError("Checkpoint candidate budget contract is incompatible")
     if str(
         payload.get("resolved_candidate_acceptance_policy", expected_acceptance)
     ) != expected_acceptance or str(
@@ -389,6 +481,12 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     ):
         raise ValueError("Checkpoint member gain state does not match restored profiles")
     raw_state = dict(payload["responsibility_state"])
+    if not system.protocol.legacy_protocol:
+        if _LEGACY_FREEZE_STATE_FIELDS & set(raw_state):
+            raise ValueError("v13 checkpoint contains legacy freeze state")
+        defaults = ResponsibilityState()
+        for field in _LEGACY_FREEZE_STATE_FIELDS:
+            raw_state[field] = getattr(defaults, field)
     for field in (
         "updates_since_selected_by_agent",
         "accepted_updates_by_agent",
@@ -398,6 +496,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "frozen_margin_gain_sum_by_agent",
         "other_accepted_updates_since_freeze_by_agent",
         "freeze_count_by_agent",
+        "branch_failure_count_by_agent",
+        "branch_attempt_count_by_agent",
+        "branch_feasible_count_by_agent",
     ):
         raw_state[field] = {int(key): int(value) for key, value in raw_state[field].items()}
     for field in (
@@ -428,6 +529,44 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         ].items()
     }
     system.responsibility_state = ResponsibilityState(**raw_state)
+    lifecycle = dict(payload["branch_lifecycle_status"])
+    expected_lifecycle = {
+        "failure_count_by_agent": dict(
+            system.responsibility_state.branch_failure_count_by_agent
+        ),
+        "attempt_count_by_agent": dict(
+            system.responsibility_state.branch_attempt_count_by_agent
+        ),
+        "feasible_count_by_agent": dict(
+            system.responsibility_state.branch_feasible_count_by_agent
+        ),
+        "repairability_state_team_hash": (
+            system.responsibility_state.repairability_state_team_hash
+        ),
+        "repairability_reset_count": int(
+            system.responsibility_state.repairability_reset_count
+        ),
+    }
+    normalized_lifecycle = {
+        **lifecycle,
+        "failure_count_by_agent": {
+            int(key): int(value)
+            for key, value in lifecycle["failure_count_by_agent"].items()
+        },
+        "attempt_count_by_agent": {
+            int(key): int(value)
+            for key, value in lifecycle["attempt_count_by_agent"].items()
+        },
+        "feasible_count_by_agent": {
+            int(key): int(value)
+            for key, value in lifecycle["feasible_count_by_agent"].items()
+        },
+        "repairability_reset_count": int(
+            lifecycle["repairability_reset_count"]
+        ),
+    }
+    if normalized_lifecycle != expected_lifecycle:
+        raise ValueError("Checkpoint branch lifecycle state is inconsistent")
     system.team_state_version = int(payload["team_state_version"])
     system.responsibility_state_version = int(payload["responsibility_state_version"])
     system.responsibility_refresh_count = int(payload["responsibility_refresh_count"])
@@ -474,12 +613,26 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         int(key): int(value) for key, value in payload["agent_selection_counts"].items()
     }
     system.target_priority_audit = list(payload["target_priority_audit"])
-    system.repairability_freeze_events = list(
-        payload["repairability_freeze_events"]
+    system.selected_target_ids = [
+        int(agent_id) for agent_id in payload["selected_target_ids"]
+    ]
+    system.repairability_adjusted_target_scores = list(
+        payload["repairability_adjusted_target_scores"]
     )
-    system.repairability_unfreeze_events = list(
-        payload["repairability_unfreeze_events"]
+    system.dual_target_branch_decisions = list(
+        payload["dual_target_branch_decisions"]
     )
+    system.dual_target_commit_decisions = list(
+        payload["dual_target_commit_decisions"]
+    )
+    system.repairability_failure_events = list(
+        payload["repairability_failure_events"]
+    )
+    system.repairability_reset_events = list(
+        payload["repairability_reset_events"]
+    )
+    system.repairability_freeze_events = []
+    system.repairability_unfreeze_events = []
     system.service_routing_audit = list(payload["service_routing_audit"])
     system.specialization_anchor_trajectory = list(
         payload["specialization_anchor_trajectory"]
@@ -550,6 +703,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
             str(key): ResidualServiceAssignment(
                 **{
                     **row,
+                    "service_blocked_by_freeze": bool(
+                        row.get("service_blocked_by_freeze", False)
+                    ),
                     "repair_lane": RepairLane(row["repair_lane"]),
                     "eligible_agent_ids": tuple(row["eligible_agent_ids"]),
                     "active_eligible_agent_ids": tuple(

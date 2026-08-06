@@ -45,12 +45,11 @@ def test_formal_stage_matrices_are_exact():
         ("disambiguation_qa",),
         (46,),
         (
-            "shared_baseline",
+            "shared_static_reference",
             "shared_generic_evolution",
-            "shared_vote_state_diagnosis",
-            "shared_member_aware_responsibility",
-            "shared_responsibility_conditioned_evolution",
-            "shared_full_rcru",
+            "shared_member_aware_dual_target",
+            "shared_responsibility_conditioned_dual_target",
+            "shared_full_dual_target_rcru",
         ),
         8,
         False,
@@ -59,14 +58,14 @@ def test_formal_stage_matrices_are_exact():
     assert _expected_matrix("cross_task") == (
         ("geometric_shapes", "ruin_names"),
         (44, 45, 46),
-        ("shared_baseline", "shared_full_rcru"),
+        ("shared_static_reference", "shared_full_dual_target_rcru"),
         32,
         True,
     )
     assert _expected_matrix("strict_v2_witness") == (
         ("disambiguation_qa",),
         (46,),
-        ("shared_baseline", "shared_vote_state_diagnosis"),
+        ("shared_static_reference", "shared_member_aware_dual_target"),
         0,
         True,
     )
@@ -74,42 +73,51 @@ def test_formal_stage_matrices_are_exact():
         ("disambiguation_qa",),
         (44, 45, 46),
         (
-            "shared_baseline",
-            "shared_vote_state_diagnosis",
-            "shared_member_aware_responsibility",
-            "shared_responsibility_conditioned_evolution",
-            "shared_full_rcru",
+            "shared_static_reference",
+            "shared_generic_evolution",
+            "shared_member_aware_dual_target",
+            "shared_responsibility_conditioned_dual_target",
+            "shared_full_dual_target_rcru",
         ),
         32,
         True,
     )
 
 
-def test_first_frontier_tie_break_orders_wait_then_seed_only():
+def test_scalar_target_key_uses_expected_value_then_fixed_ties():
     rows = [
         {
-            "updates_since_selected": 9,
-            "D_i": 99,
-            "S_i": 99,
-            "d_i": 99,
+            "expected_update_value": 0.4,
+            "opportunity_value": 0.9,
+            "normalized_direct_fix": 1.0,
+            "normalized_support_margin": 1.0,
+            "normalized_uplift_deficit": 1.0,
+            "normalized_wait": 1.0,
             "seeded_rank": "b",
+            "agent_id": 0,
         },
         {
-            "updates_since_selected": 9,
-            "D_i": 0,
-            "S_i": 0,
-            "d_i": 0,
+            "expected_update_value": 0.5,
+            "opportunity_value": 0.5,
+            "normalized_direct_fix": 0.0,
+            "normalized_support_margin": 0.0,
+            "normalized_uplift_deficit": 0.0,
+            "normalized_wait": 0.0,
             "seeded_rank": "a",
+            "agent_id": 1,
         },
         {
-            "updates_since_selected": 8,
-            "D_i": 99,
-            "S_i": 99,
-            "d_i": 99,
+            "expected_update_value": 0.5,
+            "opportunity_value": 0.5,
+            "normalized_direct_fix": 0.0,
+            "normalized_support_margin": 0.0,
+            "normalized_uplift_deficit": 0.0,
+            "normalized_wait": 0.0,
             "seeded_rank": "0",
+            "agent_id": 2,
         },
     ]
-    assert min(rows, key=_priority_key) is rows[1]
+    assert min(rows, key=_priority_key) is rows[2]
 
 
 def test_sqlite_frozen_cache_clone_is_independent(tmp_path):
@@ -135,7 +143,7 @@ def test_source_identity_is_hash_only_and_covers_formal_scripts():
     workspace = Path(__file__).resolve().parents[1]
     identity = build_source_identity(workspace)
     encoded = json.dumps(identity)
-    assert identity["source_identity_version"] == "final_method_source_identity_v2"
+    assert identity["source_identity_version"] == "final_method_source_identity_v3"
     assert len(identity["source_tree_hash"]) == 64
     assert len(identity["git_diff_hash"]) == 64
     assert all(
@@ -182,7 +190,7 @@ def test_matched_observation_gate_rejects_unchanged_prompt_metric_drift():
         "complete": True,
         "task": "toy",
         "seed": 46,
-        "setting": "shared_baseline",
+        "setting": "shared_static_reference",
         "final_prompt_hashes": prompt_hashes,
         "selected_test": {
             "per_agent_correct_counts": [10, 10, 10, 10, 10],
@@ -191,7 +199,7 @@ def test_matched_observation_gate_rejects_unchanged_prompt_metric_drift():
     }
     unchanged = {
         **baseline,
-        "setting": "shared_full_rcru",
+        "setting": "shared_full_dual_target_rcru",
         "selected_test": {
             "per_agent_correct_counts": [12, 12, 12, 12, 12],
             "vote_correct_count": 12,
@@ -325,14 +333,14 @@ def test_no_test_matched_observation_consistency_is_not_applicable():
         "complete": True,
         "task": "toy",
         "seed": 46,
-        "setting": "shared_baseline",
+        "setting": "shared_static_reference",
         "final_prompt_hashes": prompt_hashes,
         "selected_test": None,
         "artifact_normalization": LEGACY_NO_TEST_NORMALIZATION,
     }
     optimized = {
         **baseline,
-        "setting": "shared_full_rcru",
+        "setting": "shared_full_dual_target_rcru",
     }
     findings = []
     rows = _matched_observation_consistency(
@@ -343,7 +351,7 @@ def test_no_test_matched_observation_consistency_is_not_applicable():
     assert rows == [{
         "task": "toy",
         "seed": 46,
-        "setting": "shared_full_rcru",
+        "setting": "shared_full_dual_target_rcru",
         "test_observation_status": "not_applicable",
         "test_member_count_status": "not_applicable",
         "test_drift_status": "not_applicable",
@@ -400,7 +408,7 @@ def test_comparison_cache_chain_requires_previous_post_run_reference():
             "complete": True,
             "task": "toy",
             "seed": 46,
-            "setting": "shared_baseline",
+            "setting": "shared_static_reference",
             "comparison_cache_match": {
                 "gate": "PASS",
                 "matched": True,
@@ -417,7 +425,7 @@ def test_comparison_cache_chain_requires_previous_post_run_reference():
             "complete": True,
             "task": "toy",
             "seed": 46,
-            "setting": "shared_full_rcru",
+            "setting": "shared_full_dual_target_rcru",
             "comparison_cache_match": {
                 "gate": "PASS",
                 "matched": True,
@@ -539,10 +547,11 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
         "shared_solver_cache_path": str(tmp_path / "cache.sqlite"),
     }
     s3 = Config.from_flat(
-        **common, experiment_setting="shared_vote_state_diagnosis",
+        **common, experiment_setting="shared_generic_evolution",
     )
     s4 = Config.from_flat(
-        **common, experiment_setting="shared_member_aware_responsibility",
+        **common,
+        experiment_setting="shared_member_aware_dual_target",
     )
     assert solver_request_identity(s3) == solver_request_identity(s4)
     left = PromptQuestionEvaluator(
@@ -564,7 +573,7 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
     assert left.key("prompt", "question") == right.key("prompt", "question")
     changed_contract = Config.from_flat(
         **common,
-        experiment_setting="shared_vote_state_diagnosis",
+        experiment_setting="shared_generic_evolution",
         answer_format="yes_no",
     )
     assert solver_request_identity(s3) != solver_request_identity(changed_contract)
@@ -609,7 +618,7 @@ def test_unchanged_prompt_per_question_observation_drift_fails():
         "q": {**base_member["q"], "observation_hash": "B"}
     }
     audit = _compare_unchanged_test_observations(
-        prior, current, prior_setting="shared_baseline",
+        prior, current, prior_setting="shared_static_reference",
     )
     assert audit["passed"] is False
     assert audit["per_question_drift_count"] == 1

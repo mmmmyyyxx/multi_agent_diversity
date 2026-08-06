@@ -51,10 +51,10 @@ def build_system(tmp_path, optimizer=fake_optimizer, **overrides):
     values = {
         "out_dir": str(tmp_path),
         "answer_format": "option_letter",
-        "num_candidates_per_parent": 1,
+        "num_candidates_per_parent": 2,
         "stage_a_channel_top_k": 1,
-        "stage_b_candidate_budget": 1,
-        "experiment_setting": "shared_responsibility_conditioned_evolution",
+        "stage_b_candidate_budget": 2,
+        "experiment_setting": "shared_responsibility_conditioned_dual_target",
     }
     values.update(overrides)
     cfg = Config.from_flat(**values)
@@ -159,13 +159,20 @@ def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
             experiment_setting=setting,
         )
         await initialize(system)
-        await system.propose_candidates(0, set(), CandidateFunnel())
+        if setting == "shared_member_aware_dual_target":
+            _, assignments = system.ensure_responsibility_current()
+            target, _ = system.select_target(assignments, 0)
+            assert target is not None
+            hashes = {row.question_hash for row in assignments[target]}
+        else:
+            target, hashes = 0, set()
+        await system.propose_candidates(target, hashes, CandidateFunnel())
         return system.tcs_context_history[-1]
 
     async def run_all():
         return await asyncio.gather(
             inspect("shared_generic_evolution"),
-            inspect("shared_vote_state_diagnosis"),
+            inspect("shared_member_aware_dual_target"),
         )
 
     accuracy, peer = asyncio.run(run_all())
@@ -179,7 +186,7 @@ def test_generic_context_isolation_for_accuracy_and_peer_state(tmp_path):
     )
 
 
-def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
+def test_s1_and_s2_share_routing_scheduler_but_isolate_context(tmp_path):
     async def inspect(setting):
         system = build_system(
             tmp_path / setting,
@@ -195,8 +202,8 @@ def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
 
     async def run():
         return await asyncio.gather(
-            inspect("shared_member_aware_responsibility"),
-            inspect("shared_responsibility_conditioned_evolution"),
+            inspect("shared_member_aware_dual_target"),
+            inspect("shared_responsibility_conditioned_dual_target"),
         )
 
     (s4, s4_target, s4_audit), (s5, s5_target, s5_audit) = asyncio.run(run())
@@ -225,8 +232,8 @@ def test_s6_shares_s5_target_slice_context_and_candidate_generation(tmp_path):
 
     async def run():
         return await asyncio.gather(
-            inspect("shared_responsibility_conditioned_evolution"),
-            inspect("shared_full_rcru"),
+            inspect("shared_responsibility_conditioned_dual_target"),
+            inspect("shared_full_dual_target_rcru"),
         )
 
     (s5, target5, hashes5, candidates5), (
@@ -253,7 +260,7 @@ def test_s6_shares_s5_target_slice_context_and_candidate_generation(tmp_path):
 def test_s6_writes_hash_only_rcru_candidate_audit(tmp_path):
     system = build_system(
         tmp_path,
-        experiment_setting="shared_full_rcru",
+        experiment_setting="shared_full_dual_target_rcru",
     )
 
     async def run():
@@ -282,10 +289,9 @@ def test_s6_writes_hash_only_rcru_candidate_audit(tmp_path):
     "setting",
     (
         "shared_generic_evolution",
-        "shared_vote_state_diagnosis",
     ),
 )
-def test_s1_through_s3_create_no_service_anchor_or_freeze_state(tmp_path, setting):
+def test_s0_creates_no_service_anchor_or_freeze_state(tmp_path, setting):
     system = build_system(tmp_path / setting, experiment_setting=setting)
     asyncio.run(initialize(system))
     target, _ = system.select_target({agent: [] for agent in range(5)}, 0)
@@ -712,7 +718,7 @@ def test_main_stage_a_passes_every_valid_generated_candidate_to_stage_b(tmp_path
     system = build_system(
         tmp_path,
         optimizer,
-        experiment_setting="shared_responsibility_conditioned_evolution",
+        experiment_setting="shared_responsibility_conditioned_dual_target",
         num_candidates_per_parent=2,
         stage_b_candidate_budget=2,
     )

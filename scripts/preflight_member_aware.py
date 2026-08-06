@@ -28,7 +28,7 @@ from multi_dataset_diverse_rl.protocol import (
     EXPECTED_ADJACENT_MODULE,
     MAIN_ABLATION_MODULES,
     MAIN_ABLATION_SETTINGS,
-    CandidateBudgetContract,
+    candidate_budget_contract,
     changed_ablation_modules,
     experiment_protocol,
 )
@@ -43,6 +43,7 @@ from multi_dataset_diverse_rl.versions import (
     CHECKPOINT_VERSION,
     COALITION_CONTRIBUTION_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
+    DUAL_TARGET_SEARCH_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     EXPERIMENT_MATRIX_VERSION,
     METHOD_VERSION,
@@ -51,6 +52,7 @@ from multi_dataset_diverse_rl.versions import (
     PRESERVATION_POLICY_VERSION,
     PROPOSAL_MEMORY_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
+    REPAIRABILITY_VERSION,
     RCRU_VERSION,
     RESPONSIBILITY_UTILITY_VERSION,
     ROBUST_SUPPORT_VERSION,
@@ -96,7 +98,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     errors = []
     configs = [Config.from_flat(**setting.resolved_overrides()) for setting in select_settings("all")]
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
-        errors.append("experiment settings do not match the cumulative S0-S5 protocol")
+        errors.append(
+            "experiment settings do not match Static plus reduced S0-S3 protocol"
+        )
     for cfg in configs:
         try:
             _validate_configured_initial_prompts(cfg)
@@ -114,29 +118,37 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append("all settings must use five equal-weight plurality voters")
         if cfg.peer_state.vote_tie_break != "abstain":
             errors.append("all canonical settings must use tie-as-abstain")
-        if cfg.responsibility.member_uplift_tolerance < 0:
-            errors.append("member_uplift_tolerance cannot be negative")
-        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v10":
+        if cfg.responsibility.member_uplift_tolerance != 5:
+            errors.append("canonical v13 member_uplift_tolerance must equal 5")
+        if cfg.responsibility.responsibility_mode != "single_service_member_aware_v13":
             errors.append(
-                "responsibility_mode must be 'single_service_member_aware_v10'"
+                "responsibility_mode must be 'single_service_member_aware_v13'"
             )
         if cfg.evaluation.candidate_eval_pool_size <= 0:
             errors.append("fixed probe must contain at least one example")
-        if not (
-            cfg.evaluation.stage_b_candidate_budget
-            >= cfg.tcs.num_candidates_per_parent
-            > 0
+        if (
+            cfg.tcs.num_candidates_per_parent != 2
+            or cfg.evaluation.stage_b_candidate_budget != 2
         ):
             errors.append(
-                "main ablation requires all generated candidates to enter Stage B"
+                "v13 main protocols require exactly two generated and "
+                "two Stage B candidates per target branch"
             )
-    budget = CandidateBudgetContract(2, 2, 2, 12, 6, 6, 4)
     protocols = {
         name: experiment_protocol(
             name,
             initialization_mode="shared_identical",
             tie_policy="abstain",
-            candidate_budget_contract=budget,
+            candidate_budget_contract=candidate_budget_contract(
+                name,
+                candidates_per_target_branch=2,
+                stage_b_budget_per_branch=2,
+                stage_a_channel_top_k=2,
+                representative_size=12,
+                coverage_size=6,
+                conversion_size=6,
+                preservation_size=4,
+            ),
         )
         for name in EXPECTED_SETTINGS
     }
@@ -144,14 +156,13 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         tuple(int(value) for value in MAIN_ABLATION_MODULES[name].as_tuple())
         for name in EXPECTED_SETTINGS
     ) != (
-        (0, 0, 0, 0, 0),
-        (1, 0, 0, 0, 0),
-        (1, 1, 0, 0, 0),
-        (1, 1, 1, 0, 0),
-        (1, 1, 1, 1, 0),
-        (1, 1, 1, 1, 1),
+        (0, 0, 0),
+        (0, 0, 0),
+        (1, 0, 0),
+        (1, 1, 0),
+        (1, 1, 1),
     ):
-        errors.append("main ablation module vectors are not cumulative")
+        errors.append("main three-module vectors are not Static/000/100/110/111")
     for left, right, expected_module in EXPECTED_ADJACENT_MODULE:
         if changed_ablation_modules(
             protocols[left], protocols[right]
@@ -159,21 +170,24 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append(
                 f"{left}->{right} does not add only {expected_module}"
             )
-    common = [protocols[name] for name in EXPECTED_SETTINGS[1:5]]
+    common = [protocols[name] for name in EXPECTED_SETTINGS[1:4]]
     if len({
         (
             row.candidate_acceptance_policy,
             row.candidate_ranking_policy,
             row.stage_a_policy,
-            row.candidate_budget_contract,
         )
         for row in common
     }) != 1:
-        errors.append("S1-S4 do not share one candidate update protocol")
+        errors.append("S0-S2 do not share one candidate safety protocol")
     if common[0].candidate_acceptance_policy != (
         "fixed_peer_monotone_target_or_vote"
     ) or common[0].candidate_ranking_policy != "common_monotone_safe":
-        errors.append("S1-S4 common update policy is incorrect")
+        errors.append("S0-S2 common update policy is incorrect")
+    if [protocols[name].target_branch_count for name in EXPECTED_SETTINGS] != (
+        [0, 1, 2, 2, 2]
+    ):
+        errors.append("main target branch budgets do not match Static/S0-S3")
     if any(row.stage_a_policy != "matched_all_generated" for row in protocols.values() if row.optimization_enabled):
         errors.append("main optimized settings must use matched-all Stage A")
     help_result = subprocess.run(
@@ -206,6 +220,8 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "rcru_version": RCRU_VERSION,
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
+        "repairability_version": REPAIRABILITY_VERSION,
+        "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
         "responsibility_utility_version": RESPONSIBILITY_UTILITY_VERSION,
         "coalition_contribution_version": COALITION_CONTRIBUTION_VERSION,
@@ -227,8 +243,9 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "checkpoint_version": CHECKPOINT_VERSION, "settings": EXPECTED_SETTINGS,
         "module_vectors": {
             name: [int(value) for value in MAIN_ABLATION_MODULES[name].as_tuple()]
-            for name in EXPECTED_SETTINGS
+            for name in EXPECTED_SETTINGS[1:]
         },
+        "static_reference_in_module_vector": False,
         "legacy_compatibility_enabled": False, "errors": errors,
     }
 
@@ -258,6 +275,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
     settings = select_settings(
         args.settings,
         allow_legacy_setting=bool(args.allow_legacy_setting),
+        allow_auxiliary_setting=bool(args.allow_auxiliary_setting),
     )
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]
     if not seeds:
@@ -323,25 +341,31 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                             raise ValueError(
                                 f"{split}_size={requested} must be within available count {available}"
                             )
-                    if cfg.tcs.num_candidates_per_parent <= 0:
-                        raise ValueError("num_candidates_per_parent must be positive")
                     if (
-                        cfg.evaluation.stage_b_candidate_budget
-                        < cfg.tcs.num_candidates_per_parent
+                        setting.name in MAIN_ABLATION_SETTINGS
+                        and (
+                            cfg.tcs.num_candidates_per_parent != 2
+                            or cfg.evaluation.stage_b_candidate_budget != 2
+                        )
                     ):
                         raise ValueError(
-                            "main ablation requires all generated candidates "
-                            "to enter Stage B"
+                            "v13 main protocols require exactly two generated "
+                            "and two Stage B candidates per target branch"
                         )
-                    if cfg.responsibility.member_uplift_tolerance < 0:
-                        raise ValueError("member_uplift_tolerance cannot be negative")
+                    if (
+                        not cfg.training.allow_legacy_setting
+                        and cfg.responsibility.member_uplift_tolerance != 5
+                    ):
+                        raise ValueError(
+                            "canonical v13 member_uplift_tolerance must equal 5"
+                        )
                     if (
                         cfg.responsibility.responsibility_mode
-                        != "single_service_member_aware_v10"
+                        != "single_service_member_aware_v13"
                     ):
                         raise ValueError(
                             "responsibility_mode must be "
-                            "'single_service_member_aware_v10'"
+                            "'single_service_member_aware_v13'"
                         )
                     if cfg.tcs.student_invalid_max_retries < 0:
                         raise ValueError(
@@ -358,6 +382,43 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         math.ceil(
                             cfg.data.train_size
                             / max(1, cfg.training.update_every)
+                        ),
+                    )
+                    if setting.name == "shared_static_reference":
+                        planned_update_count = 0
+                    protocol = experiment_protocol(
+                        setting.name,
+                        initialization_mode=cfg.training.initialization_mode,
+                        tie_policy=cfg.peer_state.vote_tie_break,
+                        candidate_budget_contract=candidate_budget_contract(
+                            setting.name,
+                            candidates_per_target_branch=(
+                                cfg.tcs.num_candidates_per_parent
+                            ),
+                            stage_b_budget_per_branch=(
+                                cfg.evaluation.stage_b_candidate_budget
+                            ),
+                            stage_a_channel_top_k=(
+                                cfg.evaluation.stage_a_channel_top_k
+                            ),
+                            representative_size=(
+                                cfg.evaluation.stage_a_representative_size
+                            ),
+                            coverage_size=(
+                                cfg.evaluation.stage_a_coverage_size
+                            ),
+                            conversion_size=(
+                                cfg.evaluation.stage_a_conversion_size
+                            ),
+                            preservation_size=(
+                                cfg.evaluation.stage_a_preservation_size
+                            ),
+                        ),
+                        allow_legacy_setting=bool(
+                            cfg.training.allow_legacy_setting
+                        ),
+                        allow_auxiliary_setting=bool(
+                            cfg.training.allow_auxiliary_setting
                         ),
                     )
                     if min(
@@ -420,14 +481,28 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "split_integrity": integrity,
                         "role_environment": role_environment,
                         "planned_update_count": planned_update_count,
+                        "target_branch_count": protocol.target_branch_count,
+                        "candidates_per_target_branch": (
+                            protocol.candidates_per_target_branch
+                        ),
+                        "total_generated_candidates_per_update": (
+                            protocol.candidate_budget_contract
+                            .total_generated_candidates_per_update
+                        ),
                         "validation_solver_call_count": 0,
                         "estimated_solver_calls": {
                             "lower": 4786,
                             "upper": 7180,
                         },
                         "estimated_role_calls": {
-                            "lower": 60,
-                            "upper": 288,
+                            "lower": (
+                                0
+                                if not protocol.optimization_enabled else 60
+                            ),
+                            "upper": (
+                                0
+                                if not protocol.optimization_enabled else 288
+                            ),
                         },
                         "estimated_total_tokens": {
                             "lower": 1703422,
@@ -435,6 +510,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         },
                         "estimated_maximum_student_recovery_calls": (
                             planned_update_count
+                            * protocol.target_branch_count
                             * (
                                 cfg.tcs.student_invalid_max_retries + 1
                             )

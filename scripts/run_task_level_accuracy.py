@@ -81,7 +81,7 @@ def effective_proposal_memory_mode(
     run receives the requested treatment; this is intentional, visible in its
     own run metadata, and does not alter the baseline prompt team.
     """
-    if setting_name == "shared_baseline":
+    if setting_name == "shared_static_reference":
         return "off"
     return str(requested_mode)
 
@@ -211,15 +211,15 @@ def _validate_setting_sequence(
     synthesize a reporting-only baseline test evaluation.
     """
     if optimized_only:
-        if len(setting_names) != 1 or setting_names[0] == "shared_baseline":
+        if len(setting_names) != 1 or setting_names[0] == "shared_static_reference":
             raise ValueError(
                 "optimized_only requires exactly one non-baseline setting"
             )
         return
-    if any(name != "shared_baseline" for name in setting_names):
-        if not setting_names or setting_names[0] != "shared_baseline":
+    if any(name != "shared_static_reference" for name in setting_names):
+        if not setting_names or setting_names[0] != "shared_static_reference":
             raise ValueError(
-                "optimized comparisons must run shared_baseline first "
+                "optimized comparisons must run shared_static_reference first "
                 "to provide the single initial-test reference"
             )
 
@@ -703,7 +703,7 @@ def _ensure_frozen_initialization(
     frozen_root.mkdir(parents=True, exist_ok=False)
     freeze_values = cfg.to_flat_dict()
     freeze_values.update({
-        "experiment_setting": "shared_baseline",
+        "experiment_setting": "shared_static_reference",
         "out_dir": str(frozen_root),
         "shared_solver_cache_path": str(raw_cache),
         "resume_from_checkpoint": False,
@@ -742,6 +742,11 @@ def _completed_run(run_dir: Path, expected_identity) -> bool:
         "cost_summary.json",
         "frozen_initialization_match.json",
         "comparison_cache_match.json",
+        "repairability_adjusted_target_scores.jsonl",
+        "dual_target_branch_decisions.jsonl",
+        "dual_target_commit_decisions.jsonl",
+        "repairability_failure_events.jsonl",
+        "repairability_reset_events.jsonl",
     ]
     try:
         metadata = _read_json(run_dir / "run_meta.json")
@@ -780,6 +785,7 @@ def main() -> None:
     settings = select_settings(
         args.settings,
         allow_legacy_setting=bool(args.allow_legacy_setting),
+        allow_auxiliary_setting=bool(args.allow_auxiliary_setting),
     )
     setting_names = [setting.name for setting in settings]
     _validate_setting_sequence(
@@ -1026,7 +1032,7 @@ def main() -> None:
                     if int(selection_summary.get("test_evaluation_count", -1)) != 0:
                         raise RuntimeError(f"Test was evaluated in a no-test run: {run_dir}")
                 else:
-                    if setting.name == "shared_baseline":
+                    if setting.name == "shared_static_reference":
                         baseline_test_by_task_seed[baseline_key] = selected_test
                         initial_test = selected_test
                         member_gain = metrics["member_gain"]
@@ -1036,7 +1042,7 @@ def main() -> None:
                     ):
                         if baseline_key not in baseline_test_by_task_seed:
                             raise ValueError(
-                                "shared_baseline must run before optimized settings "
+                                "shared_static_reference must run before optimized settings "
                                 "so test is evaluated once per optimized run"
                             )
                         initial_test = baseline_test_by_task_seed[baseline_key]

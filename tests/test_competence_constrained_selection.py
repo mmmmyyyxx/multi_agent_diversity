@@ -20,7 +20,7 @@ from multi_dataset_diverse_rl.responsibility import (
 from multi_dataset_diverse_rl.versions import CANDIDATE_ACCEPTANCE_VERSION
 from multi_dataset_diverse_rl.protocol import (
     MAIN_ABLATION_SETTINGS,
-    CandidateBudgetContract,
+    candidate_budget_contract,
     experiment_protocol,
 )
 
@@ -165,15 +165,23 @@ def test_s1_through_s4_have_identical_feasible_sets_and_ranking():
         item("target-only", correct=11, vote_count=8),
         item("regression", correct=11, vote_count=7, vote_loss=1),
     )
-    budget = CandidateBudgetContract(3, 3, 3, 12, 6, 6, 4)
     protocols = [
         experiment_protocol(
             setting,
             initialization_mode="shared_identical",
             tie_policy="abstain",
-            candidate_budget_contract=budget,
+            candidate_budget_contract=candidate_budget_contract(
+                setting,
+                candidates_per_target_branch=2,
+                stage_b_budget_per_branch=2,
+                stage_a_channel_top_k=3,
+                representative_size=12,
+                coverage_size=6,
+                conversion_size=6,
+                preservation_size=4,
+            ),
         )
-        for setting in MAIN_ABLATION_SETTINGS[1:5]
+        for setting in MAIN_ABLATION_SETTINGS[1:4]
     ]
     feasible_sets = []
     selected_hashes = []

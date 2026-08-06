@@ -9,7 +9,10 @@ from .member_objectives import (
     team_objective_vector,
 )
 from .responsibility import CandidateMarginalContribution, ProtectionContribution
-from .responsibility_contribution import ResponsibilityContributionMetrics
+from .responsibility_contribution import (
+    ResponsibilityContributionMetrics,
+    prompt_edit_metrics,
+)
 
 
 @dataclass(frozen=True)
@@ -464,7 +467,7 @@ def common_monotone_safe_key(
     candidate: CandidateEvaluation,
     generation: int = 0,
 ) -> tuple:
-    """Shared S1-S4 ranking over the common monotone-safe feasible set."""
+    """Shared S0-S2 ranking over the common monotone-safe feasible set."""
 
     return (
         candidate.team_outcome.vote_correct_count,
@@ -473,6 +476,63 @@ def common_monotone_safe_key(
         -candidate.marginal.vote_loss_count,
         -candidate.competence.invalid_count,
         -int(generation),
+        candidate.prompt_hash,
+    )
+
+
+def common_cross_branch_transition_key(
+    candidate: CandidateEvaluation,
+    incumbent: CandidateEvaluation,
+    *,
+    target_selection_rank: int,
+) -> tuple:
+    edit = prompt_edit_metrics(
+        parent_prompt=incumbent.prompt,
+        candidate_prompt=candidate.prompt,
+    )
+    return (
+        candidate.team_outcome.vote_correct_count
+        - incumbent.team_outcome.vote_correct_count,
+        candidate.member_gain.minimum_gain_count
+        - incumbent.member_gain.minimum_gain_count,
+        candidate.member_gain.total_gain_count
+        - incumbent.member_gain.total_gain_count,
+        candidate.team_outcome.mean_soft_vote_utility
+        - incumbent.team_outcome.mean_soft_vote_utility,
+        -candidate.marginal.vote_loss_count,
+        -edit.total_edit_token_count,
+        -int(target_selection_rank),
+        candidate.prompt_hash,
+    )
+
+
+def rcru_cross_branch_transition_key(
+    candidate: CandidateEvaluation,
+    incumbent: CandidateEvaluation,
+    *,
+    target_selection_rank: int,
+) -> tuple:
+    metrics = candidate.responsibility_contribution
+    if metrics is None:
+        raise ValueError("rcru_metrics_missing_for_cross_branch_comparison")
+    utility = metrics.utility
+    coalition = metrics.coalition
+    robust = metrics.robust_support
+    edit = metrics.edit
+    return (
+        candidate.team_outcome.vote_correct_count
+        - incumbent.team_outcome.vote_correct_count,
+        candidate.member_gain.minimum_gain_count
+        - incumbent.member_gain.minimum_gain_count,
+        candidate.member_gain.total_gain_count
+        - incumbent.member_gain.total_gain_count,
+        utility.utility_delta / max(1, utility.active_residual_count),
+        coalition.net_contribution_delta,
+        robust.bootstrap_lcb,
+        utility.positive_support_count,
+        -utility.negative_support_count,
+        -edit.total_edit_token_count,
+        -int(target_selection_rank),
         candidate.prompt_hash,
     )
 

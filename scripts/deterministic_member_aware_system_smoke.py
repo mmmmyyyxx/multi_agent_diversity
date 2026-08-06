@@ -119,7 +119,7 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
             provided_prompts_json=json.dumps(prompts),
             num_candidates_per_parent=2,
             stage_b_candidate_budget=2,
-            experiment_setting="shared_vote_state_diagnosis",
+            experiment_setting="shared_generic_evolution",
         )
         return PromptEnsembleOptimizationSystem(
             cfg, solver=trajectory_solver, optimizer_chat=fake_optimizer,
@@ -237,6 +237,7 @@ async def run_smoke() -> dict[str, object]:
         stage_a_conversion_size=0,
         stage_a_preservation_size=0,
         experiment_setting="shared_responsibility_conditioned_evolution",
+        allow_legacy_setting=True,
     )
     fake_optimizer = optimizer()
     system = PromptEnsembleOptimizationSystem(
@@ -282,6 +283,7 @@ async def run_smoke() -> dict[str, object]:
         stage_a_conversion_size=0,
         stage_a_preservation_size=0,
         experiment_setting="shared_responsibility_conditioned_evolution",
+        allow_legacy_setting=True,
     )
     gate = PromptEnsembleOptimizationSystem(gate_cfg, solver=gate_solver)
     await gate.initialize_fixed_probe(gate_data)

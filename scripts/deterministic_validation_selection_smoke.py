@@ -54,7 +54,9 @@ async def run() -> dict:
             "validation_reuse_count": system.validation_reuse_count,
             "test_evaluation_count": system.test_evaluation_count,
             "test_used_for_selection": system.test_used_for_selection,
-            "test_called_before_selection": system.test_called_before_selection,
+            "test_called_before_training_complete": (
+                system.test_called_before_training_complete
+            ),
             "selected_member_correct_count": changed.per_agent_correct_counts[0],
         }
 

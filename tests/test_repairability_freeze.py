@@ -40,7 +40,11 @@ def test_infrastructure_and_parser_failures_do_not_count_as_complete_failures():
 
 def test_all_actionable_members_frozen_sets_method_early_stop(tmp_path):
     system = PromptEnsembleOptimizationSystem(
-        Config.from_flat(out_dir=str(tmp_path))
+        Config.from_flat(
+            out_dir=str(tmp_path),
+            experiment_setting="shared_member_aware_responsibility",
+            allow_legacy_setting=True,
+        )
     )
     system.ensure_responsibility_current = lambda: ({}, {})
     system.target_priority_audit.append({

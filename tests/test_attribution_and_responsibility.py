@@ -11,7 +11,7 @@ from multi_dataset_diverse_rl.responsibility import (
     build_target_selection_decision,
     compute_member_aware_repair_opportunity,
     compute_repair_eligibility_sets,
-    initialize_repairability_state,
+    initialize_legacy_freeze_state,
     record_target_update_acceptance,
     record_target_update_failure,
     repair_eligibility_key,
@@ -351,7 +351,7 @@ def test_frozen_member_is_excluded_even_with_largest_vector_and_wait():
     state = runtime(
         updates_since_selected_by_agent={0: 999, 1: 0, 2: 0, 3: 0, 4: 0}
     )
-    initialize_repairability_state(state, range(5))
+    initialize_legacy_freeze_state(state, range(5))
     state.frozen_by_agent[0] = True
     rows = target_priorities(
         assignments=assignments,
@@ -369,7 +369,7 @@ def test_frozen_member_is_excluded_even_with_largest_vector_and_wait():
 
 def test_same_portfolio_second_complete_failure_freezes_and_changed_state_resets():
     state = runtime()
-    initialize_repairability_state(state, range(5))
+    initialize_legacy_freeze_state(state, range(5))
     first = responsibility_portfolios(
         assignments={0: [opportunity(0, vote_flip_gain=1, margin_gain=2)]},
         state=state,
@@ -385,7 +385,7 @@ def test_same_portfolio_second_complete_failure_freezes_and_changed_state_resets
     assert state.frozen_by_agent[0]
 
     changed_state = runtime()
-    initialize_repairability_state(changed_state, range(5))
+    initialize_legacy_freeze_state(changed_state, range(5))
     record_target_update_failure(
         state=changed_state, portfolio=first, update_index=0
     )
@@ -404,7 +404,7 @@ def test_same_portfolio_second_complete_failure_freezes_and_changed_state_resets
 
 def test_unfreeze_requires_both_other_accepts_and_material_portfolio_change():
     state = runtime()
-    initialize_repairability_state(state, range(5))
+    initialize_legacy_freeze_state(state, range(5))
     original_assignments = {
         0: [opportunity(0, vote_flip_gain=1, margin_gain=2, question_hash="q1")]
     }
@@ -443,7 +443,7 @@ def test_unfreeze_requires_both_other_accepts_and_material_portfolio_change():
 
 def test_accepted_target_resets_failure_streak_and_signature():
     state = runtime()
-    initialize_repairability_state(state, range(5))
+    initialize_legacy_freeze_state(state, range(5))
     state.consecutive_failed_updates_by_agent[1] = 1
     state.last_failed_portfolio_signature_by_agent[1] = "previous"
     record_target_update_acceptance(state=state, accepted_agent_id=1)
@@ -454,7 +454,7 @@ def test_accepted_target_resets_failure_streak_and_signature():
 def test_all_nonempty_portfolios_frozen_has_no_actionable_repairability():
     assignments = {0: [opportunity(0, vote_flip_gain=1, margin_gain=2)]}
     state = runtime()
-    initialize_repairability_state(state, range(5))
+    initialize_legacy_freeze_state(state, range(5))
     state.frozen_by_agent[0] = True
     rows = target_priorities(
         assignments=assignments,

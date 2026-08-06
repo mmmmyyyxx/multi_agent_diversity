@@ -19,8 +19,8 @@ from scripts.run_task_level_accuracy import (
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v12",
-        experiment_setting="shared_full_rcru",
+        method_version="member_aware_peer_state_v13",
+        experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit",
         git_dirty=False,
         config_fingerprint="config",
@@ -46,26 +46,28 @@ def test_task_runner_parser_builds_and_resume_completed_is_registered_once():
 
 def test_optimized_only_allows_one_non_baseline_setting_without_synthetic_reference():
     _validate_setting_sequence(
-        ["shared_full_rcru"],
+        ["shared_full_dual_target_rcru"],
         optimized_only=True,
     )
     with pytest.raises(ValueError, match="exactly one non-baseline"):
-        _validate_setting_sequence(["shared_baseline"], optimized_only=True)
+        _validate_setting_sequence(
+            ["shared_static_reference"], optimized_only=True
+        )
     with pytest.raises(ValueError, match="exactly one non-baseline"):
         _validate_setting_sequence(
-            ["shared_full_rcru", "shared_vote_state_diagnosis"],
+            ["shared_full_dual_target_rcru", "shared_member_aware_dual_target"],
             optimized_only=True,
         )
 
 
 def test_standard_comparison_still_requires_baseline_first():
     _validate_setting_sequence(
-        ["shared_baseline", "shared_full_rcru"],
+        ["shared_static_reference", "shared_full_dual_target_rcru"],
         optimized_only=False,
     )
-    with pytest.raises(ValueError, match="shared_baseline first"):
+    with pytest.raises(ValueError, match="shared_static_reference first"):
         _validate_setting_sequence(
-            ["shared_full_rcru"],
+            ["shared_full_dual_target_rcru"],
             optimized_only=False,
         )
 
@@ -103,10 +105,10 @@ def test_no_test_runner_rejects_nonzero_test_evaluation_count():
 
 def test_memory_treatment_applies_only_to_responsibility_conditioned_full_run():
     assert effective_proposal_memory_mode(
-        "shared_baseline", "state_local_v1"
+        "shared_static_reference", "state_local_v1"
     ) == "off"
     assert effective_proposal_memory_mode(
-        "shared_full_rcru", "state_local_v1"
+        "shared_full_dual_target_rcru", "state_local_v1"
     ) == "state_local_v1"
 
 
@@ -123,7 +125,7 @@ def test_completed_run_requires_exact_identity(tmp_path):
         "history.json": [],
         "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v12",
+            "method_version": "member_aware_peer_state_v13",
             "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite",
@@ -140,6 +142,14 @@ def test_completed_run_requires_exact_identity(tmp_path):
     (run / "student_recovery_observations.jsonl").write_text(
         "", encoding="utf-8"
     )
+    for name in (
+        "repairability_adjusted_target_scores.jsonl",
+        "dual_target_branch_decisions.jsonl",
+        "dual_target_commit_decisions.jsonl",
+        "repairability_failure_events.jsonl",
+        "repairability_reset_events.jsonl",
+    ):
+        (run / name).write_text("", encoding="utf-8")
     assert _completed_run(run, identity()) is True
     metadata = json.loads((run / "run_meta.json").read_text(encoding="utf-8"))
     metadata["run_identity"]["config_fingerprint"] = "different"
@@ -161,7 +171,7 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
         },
         "history.json": [], "best_prompts.json": ["p"] * 5,
         "run_meta.json": {
-            "method_version": "member_aware_peer_state_v12", "legacy_compatibility_enabled": False,
+            "method_version": "member_aware_peer_state_v13", "legacy_compatibility_enabled": False,
             "solver_output_contract_version": "task_output_contract_v1",
             "shared_solver_cache_path": "shared.sqlite", "run_identity": identity().to_dict(),
             "config": {"proposal_memory_mode": "state_local_v1"},
@@ -172,7 +182,16 @@ def test_memory_completed_run_requires_memory_artifacts(tmp_path):
     }
     for name, payload in payloads.items():
         (run / name).write_text(json.dumps(payload), encoding="utf-8")
-    for name in ("tcs_rounds.jsonl", "solver_invalid_outputs.jsonl", "student_recovery_observations.jsonl"):
+    for name in (
+        "tcs_rounds.jsonl",
+        "solver_invalid_outputs.jsonl",
+        "student_recovery_observations.jsonl",
+        "repairability_adjusted_target_scores.jsonl",
+        "dual_target_branch_decisions.jsonl",
+        "dual_target_commit_decisions.jsonl",
+        "repairability_failure_events.jsonl",
+        "repairability_reset_events.jsonl",
+    ):
         (run / name).write_text("", encoding="utf-8")
     assert _completed_run(run, identity()) is False
     for name in (

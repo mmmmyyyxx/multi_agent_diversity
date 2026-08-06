@@ -7,6 +7,12 @@ from enum import Enum
 from typing import Any, Mapping, Sequence
 
 from .peer_state import PeerVoteContext, TeamVoteState, soft_vote_utility
+from .versions import (
+    TARGET_SCORE_DIRECT_WEIGHT,
+    TARGET_SCORE_SUPPORT_WEIGHT,
+    TARGET_SCORE_UPLIFT_WEIGHT,
+    TARGET_SCORE_WAIT_WEIGHT,
+)
 
 
 @dataclass(frozen=True)
@@ -120,6 +126,41 @@ class ResponsibilityTargetPriority:
 
 
 @dataclass(frozen=True)
+class RepairabilityAdjustedTargetScore:
+    agent_id: int
+    direct_fix_count: int
+    support_margin_sum: int
+    uplift_deficit: int
+    updates_since_selected: int
+    branch_failure_count: int
+    normalized_direct_fix: float
+    normalized_support_margin: float
+    normalized_uplift_deficit: float
+    normalized_wait: float
+    opportunity_value: float
+    repairability_discount: float
+    expected_update_value: float
+    seeded_rank: str
+    legal_portfolio_size: int = 0
+    service_portfolio_size: int = 0
+    active_lane: str | None = None
+    active_lane_size: int = 0
+    anchor: str | None = None
+
+    def ranking_key(self) -> tuple[Any, ...]:
+        return (
+            -self.expected_update_value,
+            -self.opportunity_value,
+            -self.normalized_direct_fix,
+            -self.normalized_support_margin,
+            -self.normalized_uplift_deficit,
+            -self.normalized_wait,
+            self.seeded_rank,
+            self.agent_id,
+        )
+
+
+@dataclass(frozen=True)
 class TargetSelectionDecision:
     selected_agent_id: int | None
     selection_pool_stage: str
@@ -157,6 +198,11 @@ class ResponsibilityState:
     specialization_anchor_by_agent: dict[int, RepairLane | None] = field(
         default_factory=dict
     )
+    branch_failure_count_by_agent: dict[int, int] = field(default_factory=dict)
+    branch_attempt_count_by_agent: dict[int, int] = field(default_factory=dict)
+    branch_feasible_count_by_agent: dict[int, int] = field(default_factory=dict)
+    repairability_state_team_hash: str = ""
+    repairability_reset_count: int = 0
 
 
 FREEZE_FAILURE_THRESHOLD = 2
@@ -168,6 +214,25 @@ def initialize_repairability_state(
     state: ResponsibilityState,
     agent_ids: Sequence[int],
 ) -> None:
+    """Initialize fields used by the canonical v13 responsibility runtime."""
+
+    for agent_id in map(int, agent_ids):
+        state.updates_since_selected_by_agent.setdefault(agent_id, 0)
+        state.accepted_updates_by_agent.setdefault(agent_id, 0)
+        state.target_attempt_count_by_agent.setdefault(agent_id, 0)
+        state.specialization_anchor_by_agent.setdefault(agent_id, None)
+        state.branch_failure_count_by_agent.setdefault(agent_id, 0)
+        state.branch_attempt_count_by_agent.setdefault(agent_id, 0)
+        state.branch_feasible_count_by_agent.setdefault(agent_id, 0)
+
+
+def initialize_legacy_freeze_state(
+    state: ResponsibilityState,
+    agent_ids: Sequence[int],
+) -> None:
+    """Initialize v12 freeze fields only for explicit legacy replay paths."""
+
+    initialize_repairability_state(state, agent_ids)
     for agent_id in map(int, agent_ids):
         state.consecutive_failed_updates_by_agent.setdefault(agent_id, 0)
         state.last_failed_portfolio_signature_by_agent.setdefault(agent_id, "")
@@ -178,7 +243,6 @@ def initialize_repairability_state(
         state.frozen_margin_gain_sum_by_agent.setdefault(agent_id, 0)
         state.other_accepted_updates_since_freeze_by_agent.setdefault(agent_id, 0)
         state.freeze_count_by_agent.setdefault(agent_id, 0)
-        state.specialization_anchor_by_agent.setdefault(agent_id, None)
 
 
 def compute_member_aware_repair_opportunity(
@@ -396,11 +460,17 @@ def build_service_routing(
     eligible_agents_by_question: Mapping[str, Sequence[int]],
     state: ResponsibilityState,
     seed: int,
+    respect_legacy_freeze: bool = False,
 ) -> ServiceRoutingState:
-    """Route each serviceable residual to one legal, unfrozen member."""
+    """Route each serviceable residual to one legal member.
+
+    Freeze filtering is retained only for explicit legacy-v12 replay.
+    """
 
     agent_ids = tuple(sorted(state.updates_since_selected_by_agent))
     initialize_repairability_state(state, agent_ids)
+    if respect_legacy_freeze:
+        initialize_legacy_freeze_state(state, agent_ids)
     lane_load: dict[tuple[int, RepairLane], int] = {}
     total_load = {agent_id: 0 for agent_id in agent_ids}
     portfolios: dict[int, list[MemberAwareRepairOpportunity]] = {
@@ -423,7 +493,10 @@ def build_service_routing(
         active = tuple(
             agent_id
             for agent_id in eligible
-            if not state.frozen_by_agent.get(agent_id, False)
+            if (
+                not respect_legacy_freeze
+                or not state.frozen_by_agent.get(agent_id, False)
+            )
         )
         ranks = _routing_rank(seed, eligible, state)
         if not active:
@@ -485,7 +558,10 @@ def build_service_routing(
             lane = lanes[row.question_hash]
             grouped.setdefault(lane, []).append(row)
         anchor = state.specialization_anchor_by_agent[agent_id]
-        if state.frozen_by_agent.get(agent_id, False) or not grouped:
+        if (
+            respect_legacy_freeze
+            and state.frozen_by_agent.get(agent_id, False)
+        ) or not grouped:
             active_lane = None
         elif anchor is not None and grouped.get(anchor):
             active_lane = anchor
@@ -546,6 +622,201 @@ def responsibility_portfolios(
     return result
 
 
+def repairability_adjusted_target_scores(
+    *,
+    active_assignments: Mapping[
+        int, Sequence[MemberAwareRepairOpportunity]
+    ],
+    state: ResponsibilityState,
+    seed: int,
+    current_member_correct_counts: Sequence[int],
+    initial_member_correct_counts: Sequence[int],
+    member_uplift_tolerance: int,
+    legal_assignments: Mapping[
+        int, Sequence[MemberAwareRepairOpportunity]
+    ],
+    service_portfolios: Mapping[
+        int, Sequence[MemberAwareRepairOpportunity]
+    ],
+    active_lane_by_agent: Mapping[int, RepairLane | None],
+) -> tuple[RepairabilityAdjustedTargetScore, ...]:
+    """Return the v13 total ordering over currently actionable members."""
+    if member_uplift_tolerance < 0:
+        raise ValueError("member_uplift_tolerance cannot be negative")
+    if len(current_member_correct_counts) != len(
+        initial_member_correct_counts
+    ):
+        raise ValueError("member count vectors differ")
+    agent_ids = tuple(range(len(current_member_correct_counts)))
+    initialize_repairability_state(state, agent_ids)
+    gains = [
+        int(current) - int(initial)
+        for current, initial in zip(
+            current_member_correct_counts,
+            initial_member_correct_counts,
+            strict=True,
+        )
+    ]
+    maximum_gain = max(gains, default=0)
+    raw_rows: list[dict[str, Any]] = []
+    for agent_id in agent_ids:
+        legal = tuple(legal_assignments.get(agent_id, ()))
+        service = tuple(service_portfolios.get(agent_id, ()))
+        active = tuple(active_assignments.get(agent_id, ()))
+        lane = active_lane_by_agent.get(agent_id)
+        if not legal or not service or not active or lane is None:
+            continue
+        direct = sum(int(row.vote_flip_gain == 1) for row in active)
+        support = sum(
+            max(0, int(row.margin_gain))
+            for row in active
+            if int(row.vote_flip_gain) == 0
+        )
+        uplift = max(
+            0,
+            maximum_gain
+            - gains[agent_id]
+            - int(member_uplift_tolerance),
+        )
+        raw_rows.append({
+            "agent_id": agent_id,
+            "direct": direct,
+            "support": support,
+            "uplift": uplift,
+            "wait": int(state.updates_since_selected_by_agent[agent_id]),
+            "failures": int(
+                state.branch_failure_count_by_agent.get(agent_id, 0)
+            ),
+            "legal_size": len(legal),
+            "service_size": len(service),
+            "active_size": len(active),
+            "lane": lane,
+        })
+    maxima = {
+        key: max((row[key] for row in raw_rows), default=0)
+        for key in ("direct", "support", "uplift", "wait")
+    }
+
+    def normalized(row: Mapping[str, Any], key: str) -> float:
+        maximum = maxima[key]
+        return float(row[key]) / float(maximum) if maximum > 0 else 0.0
+
+    scores: list[RepairabilityAdjustedTargetScore] = []
+    for row in raw_rows:
+        agent_id = int(row["agent_id"])
+        norm_direct = normalized(row, "direct")
+        norm_support = normalized(row, "support")
+        norm_uplift = normalized(row, "uplift")
+        norm_wait = normalized(row, "wait")
+        opportunity = (
+            TARGET_SCORE_DIRECT_WEIGHT * norm_direct
+            + TARGET_SCORE_SUPPORT_WEIGHT * norm_support
+            + TARGET_SCORE_UPLIFT_WEIGHT * norm_uplift
+        )
+        discount = 1.0 / (1.0 + int(row["failures"]))
+        expected = opportunity * discount + TARGET_SCORE_WAIT_WEIGHT * norm_wait
+        rank = state.seeded_rank_by_agent.setdefault(
+            agent_id,
+            _seeded_hash(seed, "target", agent_id),
+        )
+        lane = row["lane"]
+        scores.append(RepairabilityAdjustedTargetScore(
+            agent_id=agent_id,
+            direct_fix_count=int(row["direct"]),
+            support_margin_sum=int(row["support"]),
+            uplift_deficit=int(row["uplift"]),
+            updates_since_selected=int(row["wait"]),
+            branch_failure_count=int(row["failures"]),
+            normalized_direct_fix=norm_direct,
+            normalized_support_margin=norm_support,
+            normalized_uplift_deficit=norm_uplift,
+            normalized_wait=norm_wait,
+            opportunity_value=opportunity,
+            repairability_discount=discount,
+            expected_update_value=expected,
+            seeded_rank=rank,
+            legal_portfolio_size=int(row["legal_size"]),
+            service_portfolio_size=int(row["service_size"]),
+            active_lane=lane.value,
+            active_lane_size=int(row["active_size"]),
+            anchor=(
+                state.specialization_anchor_by_agent[agent_id].value
+                if state.specialization_anchor_by_agent[agent_id] is not None
+                else None
+            ),
+        ))
+    return tuple(sorted(scores, key=lambda row: row.ranking_key()))
+
+
+def select_repairability_targets(
+    scores: Sequence[RepairabilityAdjustedTargetScore],
+    *,
+    target_branch_count: int,
+) -> tuple[RepairabilityAdjustedTargetScore, ...]:
+    if target_branch_count <= 0:
+        raise ValueError("target_branch_count must be positive")
+    ordered = sorted(scores, key=lambda row: row.ranking_key())
+    return tuple(ordered[: min(target_branch_count, len(ordered))])
+
+
+def record_branch_search_outcome(
+    *,
+    state: ResponsibilityState,
+    agent_id: int,
+    normal_completion: bool,
+    passed_candidate_found: bool,
+    update_index: int,
+) -> dict[str, Any]:
+    """Record state-local branch repairability without freeze semantics."""
+    agent_id = int(agent_id)
+    initialize_repairability_state(state, (agent_id,))
+    if normal_completion:
+        state.branch_attempt_count_by_agent[agent_id] += 1
+        if passed_candidate_found:
+            state.branch_feasible_count_by_agent[agent_id] += 1
+        else:
+            state.branch_failure_count_by_agent[agent_id] += 1
+    return {
+        "artifact_schema_version": "repairability_failure_event_v1",
+        "update_index": int(update_index),
+        "agent_id": agent_id,
+        "normal_completion": bool(normal_completion),
+        "passed_candidate_found": bool(passed_candidate_found),
+        "operational_failure": not bool(normal_completion),
+        "branch_attempt_count": state.branch_attempt_count_by_agent[agent_id],
+        "branch_feasible_count": state.branch_feasible_count_by_agent[agent_id],
+        "branch_failure_count": state.branch_failure_count_by_agent[agent_id],
+    }
+
+
+def reset_state_local_repairability(
+    *,
+    state: ResponsibilityState,
+    agent_ids: Sequence[int],
+    old_team_hash: str,
+    new_team_hash: str,
+    update_index: int,
+) -> dict[str, Any] | None:
+    if not new_team_hash or new_team_hash == old_team_hash:
+        return None
+    initialize_repairability_state(state, agent_ids)
+    before = dict(state.branch_failure_count_by_agent)
+    for agent_id in map(int, agent_ids):
+        state.branch_failure_count_by_agent[agent_id] = 0
+        state.branch_attempt_count_by_agent[agent_id] = 0
+        state.branch_feasible_count_by_agent[agent_id] = 0
+    state.repairability_state_team_hash = str(new_team_hash)
+    state.repairability_reset_count += 1
+    return {
+        "artifact_schema_version": "repairability_reset_event_v1",
+        "update_index": int(update_index),
+        "old_team_hash": str(old_team_hash),
+        "new_team_hash": str(new_team_hash),
+        "failure_counts_before": before,
+        "reset_count": state.repairability_reset_count,
+    }
+
+
 def responsibility_portfolio_signature(
     portfolio: MemberResponsibilityPortfolio,
 ) -> str:
@@ -587,7 +858,7 @@ def record_target_update_failure(
     """Record one complete semantic search failure and freeze on repetition."""
 
     agent_id = int(portfolio.agent_id)
-    initialize_repairability_state(state, (agent_id,))
+    initialize_legacy_freeze_state(state, (agent_id,))
     signature = responsibility_portfolio_signature(portfolio)
     if state.last_failed_portfolio_signature_by_agent[agent_id] == signature:
         streak = state.consecutive_failed_updates_by_agent[agent_id] + 1
@@ -625,7 +896,7 @@ def record_target_update_acceptance(
     accepted_agent_id: int,
 ) -> None:
     accepted_agent_id = int(accepted_agent_id)
-    initialize_repairability_state(
+    initialize_legacy_freeze_state(
         state, state.updates_since_selected_by_agent
     )
     state.consecutive_failed_updates_by_agent[accepted_agent_id] = 0
@@ -671,7 +942,7 @@ def refresh_frozen_member_states(
 ) -> list[dict[str, Any]]:
     """Unfreeze only after other accepted updates and material portfolio change."""
 
-    initialize_repairability_state(
+    initialize_legacy_freeze_state(
         state, state.updates_since_selected_by_agent
     )
     portfolios = responsibility_portfolios(assignments=assignments, state=state)
@@ -765,7 +1036,7 @@ def target_priorities(
         state=state,
     )
     service_portfolio_rows = service_portfolios or assignments
-    initialize_repairability_state(state, legal_portfolios)
+    initialize_legacy_freeze_state(state, legal_portfolios)
     rows: list[ResponsibilityTargetPriority] = []
     for agent_id, legal_portfolio in legal_portfolios.items():
         if not legal_portfolio.residual_count:

@@ -1,13 +1,15 @@
 """Frozen protocol identifiers shared by runtime, metadata, and persistence."""
 
-METHOD_VERSION = "member_aware_peer_state_v12"
+METHOD_VERSION = "member_aware_peer_state_v13"
 RESPONSIBILITY_VERSION = "counterfactual_vote_margin_responsibility_v1"
-SERVICE_ROUTING_VERSION = "single_service_anchor_routing_v1"
-TARGET_SELECTION_VERSION = "anchored_single_lane_scheduler_v1"
+SERVICE_ROUTING_VERSION = "single_service_anchor_routing_no_freeze_v2"
+TARGET_SELECTION_VERSION = "repairability_adjusted_expected_update_value_v1"
+REPAIRABILITY_VERSION = "state_local_branch_failure_discount_v1"
+DUAL_TARGET_SEARCH_VERSION = "dual_target_single_commit_search_v1"
 TCS_CONTEXT_VERSION = "compact_single_lane_responsibility_context_v1"
-CHECKPOINT_VERSION = 21
+CHECKPOINT_VERSION = 22
 CANDIDATE_ACCEPTANCE_VERSION = "fixed_peer_monotone_target_or_vote_v2"
-CANDIDATE_SELECTION_VERSION = "cumulative_module_candidate_selection_v1"
+CANDIDATE_SELECTION_VERSION = "reduced_three_module_candidate_selection_v1"
 CANDIDATE_ACCEPTANCE_POLICY = "fixed_peer_monotone_target_or_vote"
 PROPOSAL_MEMORY_VERSION = "agent_isolated_state_local_proposal_memory_v1"
 PRESERVATION_POLICY_VERSION = "diagnostic_only_sample_preservation_v1"
@@ -24,6 +26,11 @@ RESPONSIBILITY_UTILITY_VERSION = "three_lane_responsibility_utility_v1"
 COALITION_CONTRIBUTION_VERSION = "leave_one_out_pivotal_contribution_v1"
 ROBUST_SUPPORT_VERSION = "paired_bootstrap_min_support_v1"
 MINIMAL_EDIT_VERSION = "token_diff_minimal_edit_v1"
-EXPERIMENT_MATRIX_VERSION = "cumulative_module_ablation_v1"
-PROTOCOL_RESOLUTION_VERSION = "module_vector_protocol_resolution_v1"
+EXPERIMENT_MATRIX_VERSION = "reduced_three_module_ablation_v1"
+PROTOCOL_RESOLUTION_VERSION = "reduced_three_module_protocol_resolution_v1"
 COMMON_UPDATE_POLICY_VERSION = "common_fixed_peer_monotone_safe_v1"
+
+TARGET_SCORE_DIRECT_WEIGHT = 0.5
+TARGET_SCORE_SUPPORT_WEIGHT = 0.3
+TARGET_SCORE_UPLIFT_WEIGHT = 0.2
+TARGET_SCORE_WAIT_WEIGHT = 0.05
