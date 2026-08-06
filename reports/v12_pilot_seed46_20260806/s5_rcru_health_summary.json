@@ -1,0 +1,49 @@
+{
+  "artifact_schema_version": "v12_s5_rcru_health_summary_v1",
+  "task": "disambiguation_qa",
+  "seed": 46,
+  "setting": "shared_full_rcru",
+  "planned_update_count": 8,
+  "completed_update_count": 8,
+  "stage_a_candidate_count": 11,
+  "full_rcru_candidate_count": 11,
+  "layer1_pass_count": 2,
+  "layer2_pass_count": 1,
+  "layer3_pass_count": 1,
+  "accepted_update_count": 1,
+  "nonfinite_bootstrap_lcb_count": 0,
+  "missing_bootstrap_lcb_after_layer1_count": 0,
+  "infrastructure_failed_update_count": 0,
+  "critic_semantic_rejection_exhausted_count": 2,
+  "output_contract_contamination_count": 1,
+  "freeze_event_count": 2,
+  "all_actionable_members_frozen": false,
+  "rejection_reason_counts": {
+    "target_regression": 9,
+    "no_vote_or_lane_progress": 4,
+    "insufficient_lane_support": 3,
+    "team_vote_regression": 0,
+    "terminal_invalid_regression": 0,
+    "negative_lane_bootstrap_lcb": 0
+  },
+  "accepted_candidate": {
+    "target_gain": 2,
+    "vote_gain": 0,
+    "positive_support_count": 3,
+    "negative_support_count": 0,
+    "bootstrap_lcb": 1.0
+  },
+  "cost": {
+    "solver_calls": 855,
+    "teacher_calls": 15,
+    "critic_calls": 14,
+    "student_calls": 7,
+    "solver_tokens": 888617,
+    "role_model_tokens": 39876,
+    "total_tokens": 928493,
+    "tokens_per_stage_a_candidate": 84408.45454545454,
+    "tokens_per_accepted_update": 928493.0
+  },
+  "operational_viability": "PARTIAL_PASS",
+  "formal_experiment_decision": "HOLD"
+}
