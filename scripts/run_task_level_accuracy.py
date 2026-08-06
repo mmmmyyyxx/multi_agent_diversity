@@ -190,12 +190,38 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--dataset_format", default="mars")
     parser.add_argument("--out_root", required=True)
     parser.add_argument("--resume_completed", type=int, choices=[0, 1], default=0)
+    parser.add_argument("--optimized_only", type=int, choices=[0, 1], default=0)
     defaults = Config().to_flat_dict()
     for name in RUNNER_FIELDS:
         default = defaults[name]
         arg_type = int if isinstance(default, bool) else type(default)
         parser.add_argument(f"--{name}", type=arg_type, default=None)
     return parser
+
+
+def _validate_setting_sequence(
+    setting_names: Sequence[str],
+    *,
+    optimized_only: bool,
+) -> None:
+    """Validate whether a run has a matched baseline test reference.
+
+    ``optimized_only`` is an explicit pilot/reporting mode. It still creates
+    the frozen optimization-probe initialization, but it does not run or
+    synthesize a reporting-only baseline test evaluation.
+    """
+    if optimized_only:
+        if len(setting_names) != 1 or setting_names[0] == "shared_baseline":
+            raise ValueError(
+                "optimized_only requires exactly one non-baseline setting"
+            )
+        return
+    if any(name != "shared_baseline" for name in setting_names):
+        if not setting_names or setting_names[0] != "shared_baseline":
+            raise ValueError(
+                "optimized comparisons must run shared_baseline first "
+                "to provide the single initial-test reference"
+            )
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -713,12 +739,10 @@ def main() -> None:
     task_ids = resolve_task_ids(args.tasks, tasks, args.benchmarks)
     settings = select_settings(args.settings)
     setting_names = [setting.name for setting in settings]
-    if any(name != "shared_baseline" for name in setting_names):
-        if not setting_names or setting_names[0] != "shared_baseline":
-            raise ValueError(
-                "optimized comparisons must run shared_baseline first "
-                "to provide the single initial-test reference"
-            )
+    _validate_setting_sequence(
+        setting_names,
+        optimized_only=bool(args.optimized_only),
+    )
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]
     root = (workspace / args.out_root).resolve() if not Path(args.out_root).is_absolute() else Path(args.out_root)
     root.mkdir(parents=True, exist_ok=True)
@@ -963,7 +987,10 @@ def main() -> None:
                         baseline_test_by_task_seed[baseline_key] = selected_test
                         initial_test = selected_test
                         member_gain = metrics["member_gain"]
-                    elif initial_test is None or member_gain is None:
+                    elif (
+                        (initial_test is None or member_gain is None)
+                        and not bool(args.optimized_only)
+                    ):
                         if baseline_key not in baseline_test_by_task_seed:
                             raise ValueError(
                                 "shared_baseline must run before optimized settings "
@@ -1084,6 +1111,8 @@ def main() -> None:
                     "all_members_improved": (
                         member_gain["all_members_improved"] if member_gain is not None else None
                     ),
+                    "optimized_only": bool(args.optimized_only),
+                    "reporting_initial_test_reference_available": initial_test is not None,
                     "selected_mean_individual_acc": (
                         selected_test["mean_individual_acc"] if selected_test is not None else None
                     ),
@@ -1137,6 +1166,7 @@ def main() -> None:
             "frozen_initializations": list(frozen_manifests.values()),
             "run_count": len(rows),
             "distinct_mutable_cache_count": len(mutable_cache_paths),
+            "optimized_only": bool(args.optimized_only),
         }, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )

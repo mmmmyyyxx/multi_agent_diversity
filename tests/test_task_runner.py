@@ -10,6 +10,7 @@ from scripts.run_task_level_accuracy import (
     _completed_run,
     _parser,
     _task_split_integrity,
+    _validate_setting_sequence,
     effective_proposal_memory_mode,
 )
 
@@ -35,8 +36,36 @@ def test_task_runner_parser_builds_and_resume_completed_is_registered_once():
     parser = _parser()
     assert parser is not None
     assert "resume_completed" not in RUNNER_FIELDS
+    assert "optimized_only" not in RUNNER_FIELDS
     actions = [action.dest for action in parser._actions]
     assert actions.count("resume_completed") == 1
+    assert actions.count("optimized_only") == 1
+
+
+def test_optimized_only_allows_one_non_baseline_setting_without_synthetic_reference():
+    _validate_setting_sequence(
+        ["shared_member_aware_full"],
+        optimized_only=True,
+    )
+    with pytest.raises(ValueError, match="exactly one non-baseline"):
+        _validate_setting_sequence(["shared_baseline"], optimized_only=True)
+    with pytest.raises(ValueError, match="exactly one non-baseline"):
+        _validate_setting_sequence(
+            ["shared_member_aware_full", "shared_peer_state_vote_first"],
+            optimized_only=True,
+        )
+
+
+def test_standard_comparison_still_requires_baseline_first():
+    _validate_setting_sequence(
+        ["shared_baseline", "shared_member_aware_full"],
+        optimized_only=False,
+    )
+    with pytest.raises(ValueError, match="shared_baseline first"):
+        _validate_setting_sequence(
+            ["shared_member_aware_full"],
+            optimized_only=False,
+        )
 
 
 def test_memory_treatment_applies_only_to_responsibility_conditioned_full_run():
