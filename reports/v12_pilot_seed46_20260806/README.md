@@ -1,5 +1,10 @@
 # v12 Seed46 Pilot Report
 
+```text
+Pilot method execution: BASIC PASS
+Pilot official certification: PASS after offline revalidation
+```
+
 ## Scope
 
 - Task: `disambiguation_qa`
@@ -56,7 +61,7 @@ in the same pilot root using the same frozen initialization and cumulative
 comparison cache. This preserved the frozen source and cache-chain
 continuity.
 
-## Official pilot gate
+## Original pilot gate
 
 ```text
 gate = FAIL
@@ -73,9 +78,57 @@ The six blockers are caused by the no-test audit path:
    for all five optimized settings, although this pilot requires final testing
    to be disabled.
 
-The official audit did not report incomplete runs, cache-chain discontinuity,
+The original audit did not report incomplete runs, cache-chain discontinuity,
 frozen-initialization mismatch, module-isolation failure, or infrastructure
-failure. The official `PASS` requirement nevertheless remains unmet.
+failure.
+
+## Offline official revalidation
+
+The no-test runner and audit paths were repaired without changing the method,
+RCRU, checkpoint version, or any original pilot artifact. No API call and no
+pilot rerun was performed.
+
+The existing artifacts were then revalidated in explicit offline mode:
+
+```text
+audit_version = final_method_stage_gate_v5
+audit_mode = offline_existing_artifact_revalidation
+gate = PASS
+complete_run_count = 6
+blocker_count = 0
+major_count = 0
+```
+
+Identity separation:
+
+- Run source commit:
+  `c81f9525e6009189ad1c50ab53204822b6742875`
+- Auditor commit:
+  `16318b15359344563e85e6419a4e6d1b4c42ab44`
+- Method runtime semantics changed: false
+- Original run artifacts modified: false
+
+The audit normalized all six legacy no-test manifests using
+`legacy_no_test_manifest_v1`. Normalization was permitted only because every
+run independently established:
+
+- `final_test_enabled=false`
+- final-test evaluation count `0`
+- no selected or initial test metrics
+- no test observation hashes or member observations
+- no test use for training or selection
+
+The normalization records test observation, member-count, and drift status as
+`not_applicable`; it does not synthesize zero-valued member counts.
+
+Revalidated protocol facts:
+
+- Cache-chain continuity: 6/6
+- Adjacent-setting isolation: 4/4
+- Final-test evaluations: 0
+- Validation evaluations: 0
+- Infrastructure failures: 0
+- Unresolved findings: 0
 
 ## S5 RCRU empirical health
 
@@ -111,7 +164,7 @@ The accepted candidate had:
 | `negative_lane_bootstrap_lcb` | 0 |
 
 The main bottleneck was candidate target regression, not the bootstrap LCB
-guard.
+guard. RCRU thresholds were not changed.
 
 ### Operational and cost result
 
@@ -135,9 +188,11 @@ no mass rapid freeze and no common infrastructure or parser failure.
 
 ```text
 Pilot execution: COMPLETE
-RCRU operational viability: PARTIAL PASS
-Official pilot gate: FAIL
-Formal 32-update experiments: HOLD
+Pilot method execution: BASIC PASS
+RCRU operational viability: BASIC PASS
+Official pilot gate: PASS_AFTER_OFFLINE_REVALIDATION
+Formal disambiguation experiment eligibility: GO
+Formal experiment execution: NOT_STARTED
 ```
 
 This pilot contains no final-test observations and provides no efficacy or

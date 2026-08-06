@@ -44,6 +44,7 @@
     "tokens_per_stage_a_candidate": 84408.45454545454,
     "tokens_per_accepted_update": 928493.0
   },
-  "operational_viability": "PARTIAL_PASS",
-  "formal_experiment_decision": "HOLD"
+  "operational_viability": "BASIC_PASS",
+  "rcru_thresholds_changed_after_pilot": false,
+  "formal_experiment_decision": "GO"
 }
