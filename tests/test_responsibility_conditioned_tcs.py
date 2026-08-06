@@ -206,6 +206,14 @@ def test_single_lane_requests_enforce_one_direction_and_compact_outcome():
     assert rejected == CompactPreviousOutcome(
         status="rejected", main_rejection="team_vote_regression"
     )
+    legacy = compact_previous_outcome(PreviousUpdateOutcome(
+        attempted=True,
+        empirical_evaluation_completed=True,
+        rejection_reasons=("member_objective_regression",),
+    ))
+    assert legacy == CompactPreviousOutcome(
+        status="rejected", main_rejection="legacy_objective_guard"
+    )
     semantic = compact_previous_outcome(PreviousUpdateOutcome(
         attempted=True,
         rejection_reasons=("semantic_rejection",),

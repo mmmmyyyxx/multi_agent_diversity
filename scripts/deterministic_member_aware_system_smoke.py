@@ -84,7 +84,7 @@ def student_candidate(prompt: str) -> StudentPromptCandidate:
 
 
 async def gate_solver(question: str, _agent_id: int, prompt: str) -> PromptAnswer:
-    if prompt == "gate-vote-positive-member-regressing":
+    if prompt == "gate-vote-positive-target-regressing":
         return answer("A" if question == "q_vote" else "B")
     if prompt == "gate-vote-only-improved":
         return answer("A" if question in {"q_vote", "q_member_2"} else "B")
@@ -119,7 +119,7 @@ async def fault_smokes(data, prompts) -> dict[str, bool]:
             provided_prompts_json=json.dumps(prompts),
             num_candidates_per_parent=2,
             stage_b_candidate_budget=2,
-            experiment_setting="shared_peer_state_member_pareto",
+            experiment_setting="shared_peer_state_member_first_safe",
         )
         return PromptEnsembleOptimizationSystem(
             cfg, solver=trajectory_solver, optimizer_chat=fake_optimizer,
@@ -282,7 +282,7 @@ async def run_smoke() -> dict[str, object]:
     )
     gate = PromptEnsembleOptimizationSystem(gate_cfg, solver=gate_solver)
     await gate.initialize_fixed_probe(gate_data)
-    prompt = "gate-vote-positive-member-regressing"
+    prompt = "gate-vote-positive-target-regressing"
     candidate = CandidateRuntime(
         student_candidate=student_candidate(prompt),
         prompt=prompt,
@@ -347,12 +347,12 @@ async def run_smoke() -> dict[str, object]:
             and vote_only_constraint.target_gain == 0
             and vote_only_constraint.vote_correct_candidate
             > vote_only_constraint.vote_correct_incumbent
-            and vote_only_constraint.member_objective_dominance_passed
+            and vote_only_constraint.derived_team_pareto_passed
             and vote_only_constraint.terminal_invalid_nonregression_passed
             and vote_only_constraint.candidate_objective[1:]
             == vote_only_constraint.incumbent_objective[1:]
         ),
-        "vote_positive_member_regressing_rejected": (
+        "vote_positive_target_regression_rejected": (
             accepted is None
             and candidate_evaluation.marginal.net_vote_delta == 1
             and candidate_evaluation.member_gain.target_gain_vs_incumbent < 0
@@ -430,7 +430,7 @@ async def run_smoke() -> dict[str, object]:
         "no_actionable_responsibility_is_noop",
         "one_refresh_per_team_transition",
         "target_neutral_vote_positive_accepted",
-        "vote_positive_member_regressing_rejected",
+        "vote_positive_target_regression_rejected",
         "single_agent_replacement_preserves_other_member_counts",
         "real_validation_key_is_feasible",
         "tcs_requests_use_provider_default",

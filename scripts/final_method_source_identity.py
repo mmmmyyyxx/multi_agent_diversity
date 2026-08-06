@@ -14,6 +14,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_SELECTION_VERSION,
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_VERSION,
     METHOD_VERSION,
@@ -35,7 +36,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 )
 
 
-SOURCE_IDENTITY_VERSION = "final_method_source_identity_v1"
+SOURCE_IDENTITY_VERSION = "final_method_source_identity_v2"
 SOURCE_ROOTS = (
     "AGENTS.md",
     "README.md",
@@ -117,6 +118,7 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
             "target_selection_version": TARGET_SELECTION_VERSION,
             "tcs_context_version": TCS_CONTEXT_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+            "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
             "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
             "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
             "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,

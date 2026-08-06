@@ -65,27 +65,21 @@ def main() -> None:
         member_uplift_tolerance=5,
     )
     initial = (10, 10, 10, 10, 10)
+    incumbent_counts = (10, 13, 14, 15, 16)
+    candidate_counts = (11, 13, 14, 15, 16)
+    incumbent_metrics = member_gain_metrics(
+        initial, incumbent_counts, incumbent_counts, 0
+    )
+    candidate_metrics = member_gain_metrics(
+        initial, incumbent_counts, candidate_counts, 0
+    )
     incumbent = team_objective_vector(
         12,
-        member_gain_metrics(initial, initial, initial, 0),
+        incumbent_metrics,
     )
-    vote_positive_regressing = team_objective_vector(
-        13,
-        member_gain_metrics(
-            initial,
-            initial,
-            (9, 10, 10, 10, 12),
-            0,
-        ),
-    )
-    vote_neutral_worst_positive = team_objective_vector(
+    target_only_candidate = team_objective_vector(
         12,
-        member_gain_metrics(
-            initial,
-            initial,
-            (11, 11, 11, 11, 11),
-            0,
-        ),
+        candidate_metrics,
     )
     report = {
         "first_target_has_responsibility_portfolio": first in range(5),
@@ -95,12 +89,12 @@ def main() -> None:
         "target_vector_is_direct_margin_uplift": all(
             len(row.target_values()) == 3 for row in priorities
         ),
-        "vote_positive_member_regressing_rejected": not pareto_dominates(
-            vote_positive_regressing,
-            incumbent,
+        "single_target_total_gain_delta_matches_target_gain": (
+            candidate_metrics.total_gain_count - incumbent_metrics.total_gain_count
+            == candidate_metrics.target_gain_vs_incumbent
         ),
-        "vote_neutral_worst_member_positive_accepted": pareto_dominates(
-            vote_neutral_worst_positive,
+        "unique_weak_target_only_progress_implies_pareto": pareto_dominates(
+            target_only_candidate,
             incumbent,
         ),
     }

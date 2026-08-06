@@ -57,6 +57,16 @@ def candidate_projection(candidate: dict[str, Any], index: int) -> dict[str, Any
         "coverage_loss_count": marginal["coverage_loss_count"],
         "candidate_objective": candidate["candidate_objective"],
         "incumbent_objective": candidate["incumbent_objective"],
+        "derived_team_pareto_passed": candidate.get(
+            "derived_team_pareto_passed"
+        ),
+        "objective_invariant_checked": candidate.get(
+            "objective_invariant_checked"
+        ),
+        "minimum_gain_delta": candidate.get("minimum_gain_delta"),
+        "total_gain_delta": candidate.get("total_gain_delta"),
+        "target_is_unique_weakest": candidate.get("target_is_unique_weakest"),
+        "target_is_tied_weakest": candidate.get("target_is_tied_weakest"),
         "target_nonregression_passed": candidate.get("target_nonregression_passed"),
         "target_strict_improvement": candidate.get("target_strict_improvement"),
         "team_vote_nonregression_passed": candidate["team_vote_nonregression_passed"],

@@ -7,12 +7,13 @@ from pathlib import Path
 from typing import Any
 
 
-REPORT_VERSION = "final_method_complete_evaluation_v2"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v2"
-MODULE_COMPARISONS = (
-    ("shared_peer_state_vote_first", "shared_peer_state_member_pareto", "Pareto-Constrained Team Update"),
-    ("shared_peer_state_member_pareto", "shared_member_aware_responsibility", "Member-Aware Responsibility"),
-    ("shared_member_aware_responsibility", "shared_member_aware_full", "Responsibility-Conditioned Evolution"),
+REPORT_VERSION = "final_method_complete_evaluation_v3"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v3"
+ABLATION_COMPARISONS = (
+    ("shared_independent_accuracy", "shared_peer_state_vote_first", "selection_preference_individual_to_vote"),
+    ("shared_peer_state_vote_first", "shared_peer_state_member_first_safe", "selection_preference_vote_to_conditional_member_first"),
+    ("shared_peer_state_member_first_safe", "shared_member_aware_responsibility", "module_member_aware_responsibility"),
+    ("shared_member_aware_responsibility", "shared_member_aware_full", "module_responsibility_conditioned_evolution"),
 )
 
 
@@ -216,7 +217,7 @@ def main() -> None:
             "shared_baseline",
             "shared_independent_accuracy",
             "shared_peer_state_vote_first",
-            "shared_peer_state_member_pareto",
+            "shared_peer_state_member_first_safe",
             "shared_member_aware_responsibility",
             "shared_member_aware_full",
         ):
@@ -230,8 +231,8 @@ def main() -> None:
                 "tokens_per_accepted_update": run["tokens_per_accepted_update"],
             })
 
-    module_rows = []
-    for left, right, module in MODULE_COMPARISONS:
+    ablation_rows = []
+    for left, right, comparison_axis in ABLATION_COMPARISONS:
         raw = []
         for seed in (44, 45, 46):
             lhs = next(row for row in disamb_rows if row["seed"] == seed and row["setting"] == left)
@@ -243,8 +244,8 @@ def main() -> None:
                 "g_sum_delta": rhs["g_sum"] - lhs["g_sum"],
                 "N_positive_delta": rhs["N_positive"] - lhs["N_positive"],
             })
-        module_rows.append({
-            "module": module,
+        ablation_rows.append({
+            "comparison_axis": comparison_axis,
             "comparison": f"{left} -> {right}",
             "per_seed": raw,
             "vote_accuracy_delta": _aggregate([row["vote_accuracy_delta"] for row in raw]),
@@ -319,7 +320,7 @@ def main() -> None:
     })
     _write(out / "code_audit_summary.json", _read_json(args.code_audit_dir / "semantic_alignment_matrix.json"))
     _write(out / "disambiguation_main_table.json", disamb_rows)
-    _write(out / "module_ablation_comparisons.json", module_rows)
+    _write(out / "ablation_comparisons.json", ablation_rows)
     _write(out / "cross_task_baseline_full.json", cross_rows)
     _write(out / "training_dynamics_summary.json", training)
     _write(out / "member_gain_summary.json", {

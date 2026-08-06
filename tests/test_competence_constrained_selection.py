@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 from multi_dataset_diverse_rl.candidate_selection import (
@@ -6,8 +8,8 @@ from multi_dataset_diverse_rl.candidate_selection import (
     TeamOutcomeMetrics,
     candidate_is_acceptable,
     evaluate_constraints,
-    member_aware_pareto_front,
-    member_first_key,
+    member_first_safe_key,
+    vote_first_key,
 )
 from multi_dataset_diverse_rl.member_objectives import member_gain_metrics
 from multi_dataset_diverse_rl.responsibility import (
@@ -31,13 +33,21 @@ def item(
     pivotal_gain=0,
     pivotal_loss=0,
     soft_utility=0.0,
+    initial_counts=(10, 10, 10, 10, 10),
+    incumbent_counts=(10, 10, 10, 10, 10),
+    target_id=0,
 ):
-    counts = tuple(member_counts or (correct, 10, 10, 10, 10))
+    if member_counts is None:
+        counts_list = list(incumbent_counts)
+        counts_list[target_id] = correct
+        counts = tuple(counts_list)
+    else:
+        counts = tuple(member_counts)
     gains = member_gain_metrics(
-        (10, 10, 10, 10, 10),
-        (10, 10, 10, 10, 10),
+        initial_counts,
+        incumbent_counts,
         counts,
-        0,
+        target_id,
     )
     return CandidateEvaluation(
         prompt=name,
@@ -127,7 +137,7 @@ def test_unique_and_pivotal_losses_are_diagnostic_only():
 def test_vote_improvement_can_accept_a_target_neutral_candidate():
     assert (
         CANDIDATE_ACCEPTANCE_VERSION
-        == "target_or_vote_strict_progress_v1"
+        == "fixed_peer_monotone_target_or_vote_v2"
     )
     active = item("active")
     candidate = item("vote-only", correct=10, vote_count=9, vote_gain=1)
@@ -136,6 +146,8 @@ def test_vote_improvement_can_accept_a_target_neutral_candidate():
     assert not decision.target_strict_improvement
     assert decision.target_nonregression_passed
     assert decision.target_or_vote_progress_passed
+    assert decision.derived_team_pareto_passed
+    assert decision.objective_invariant_checked
     assert decision.pareto_dominates_incumbent
     assert candidate_is_acceptable(candidate, active)
 
@@ -161,35 +173,177 @@ def test_terminal_invalid_cannot_increase():
     candidate = item("invalid-up", correct=11, terminal_invalid=1)
     decision = evaluate_constraints(candidate, active)
     assert not decision.hard_feasible
+    assert decision.derived_team_pareto_passed
+    assert decision.objective_invariant_checked
     assert "terminal_invalid_regression" in decision.rejection_reasons
 
 
-def test_member_objective_must_pareto_dominate_incumbent():
+def test_pareto_is_diagnostic_and_never_an_active_rejection_reason():
     active = item("active")
+    candidate = item("member-up", correct=11)
+    decision = evaluate_constraints(candidate, active)
+    assert decision.hard_feasible
+    assert "member_objective_regression" not in decision.rejection_reasons
+    assert decision.member_objective_dominance_passed
+    assert decision.member_objective_dominance_passed == decision.derived_team_pareto_passed
+
+
+@pytest.mark.parametrize("target_delta", [-1, 0, 3])
+def test_total_gain_delta_equals_target_gain(target_delta):
+    active = item("active")
+    candidate = item("candidate", correct=10 + target_delta)
+    decision = evaluate_constraints(candidate, active)
+    assert decision.target_gain == target_delta
+    assert decision.total_gain_delta == target_delta
+
+
+def test_non_weak_target_does_not_change_minimum_gain():
+    initial = (10, 10, 10, 10, 10)
+    incumbent = (13, 15, 17, 18, 19)
+    active = item(
+        "active", correct=17, initial_counts=initial,
+        incumbent_counts=incumbent, member_counts=incumbent, target_id=2,
+    )
     candidate = item(
-        "member-regression",
-        correct=11,
-        member_counts=(11, 9, 10, 10, 10),
+        "candidate", correct=18, initial_counts=initial,
+        incumbent_counts=incumbent, target_id=2,
     )
     decision = evaluate_constraints(candidate, active)
-    assert not decision.hard_feasible
-    assert "member_objective_regression" in decision.rejection_reasons
+    assert not decision.target_is_unique_weakest
+    assert not decision.target_is_tied_weakest
+    assert decision.minimum_gain_delta == 0
 
 
-def test_internal_candidate_front_and_member_first_preference():
-    dominated = item("dominated", correct=11, vote_count=9)
-    dominant = item("dominant", correct=12, vote_count=9)
-    tradeoff = item(
-        "tradeoff",
-        correct=11,
-        vote_count=8,
-        member_counts=(11, 11, 11, 11, 11),
+def test_tied_weakest_target_does_not_change_minimum_gain():
+    initial = (10, 10, 10, 10, 10)
+    incumbent = (13, 13, 17, 18, 19)
+    active = item(
+        "active", correct=13, initial_counts=initial,
+        incumbent_counts=incumbent, member_counts=incumbent,
     )
-    assert set(member_aware_pareto_front((dominated, dominant, tradeoff))) == {
-        "dominant",
-        "tradeoff",
+    candidate = item(
+        "candidate", correct=16, initial_counts=initial,
+        incumbent_counts=incumbent,
+    )
+    decision = evaluate_constraints(candidate, active)
+    assert decision.target_is_tied_weakest
+    assert not decision.target_is_unique_weakest
+    assert decision.minimum_gain_delta == 0
+
+
+@pytest.mark.parametrize(
+    ("candidate_correct", "expected_minimum_delta"),
+    [(14, 2), (16, 3)],
+)
+def test_unique_weakest_target_minimum_gain_is_capped_by_next_member(
+    candidate_correct, expected_minimum_delta
+):
+    initial = (10, 10, 10, 10, 10)
+    incumbent = (12, 15, 17, 18, 19)
+    active = item(
+        "active", correct=12, initial_counts=initial,
+        incumbent_counts=incumbent, member_counts=incumbent,
+    )
+    candidate = item(
+        "candidate", correct=candidate_correct, initial_counts=initial,
+        incumbent_counts=incumbent,
+    )
+    decision = evaluate_constraints(candidate, active)
+    assert decision.target_is_unique_weakest
+    assert not decision.target_is_tied_weakest
+    assert decision.minimum_gain_delta == expected_minimum_delta
+
+
+def test_monotone_core_guards_imply_derived_team_pareto_property_style():
+    initial = (10, 10, 10, 10, 10)
+    for gains in ((0, 0, 0, 0, 0), (2, 5, 7, 8, 9), (-2, 1, 3, 3, 6)):
+        incumbent = tuple(base + gain for base, gain in zip(initial, gains, strict=True))
+        for target_id in range(5):
+            active = item(
+                "active", correct=incumbent[target_id], vote_count=8,
+                initial_counts=initial, incumbent_counts=incumbent,
+                member_counts=incumbent, target_id=target_id,
+            )
+            for target_delta, vote_delta in ((0, 1), (1, 0), (2, 3)):
+                candidate = item(
+                    "candidate", correct=incumbent[target_id] + target_delta,
+                    vote_count=8 + vote_delta, vote_gain=vote_delta,
+                    initial_counts=initial, incumbent_counts=incumbent,
+                    target_id=target_id,
+                )
+                decision = evaluate_constraints(candidate, active)
+                assert decision.objective_invariant_checked
+                assert decision.derived_team_pareto_passed
+
+
+def test_corrupted_total_gain_metrics_fail_fast():
+    active = item("active")
+    candidate = item("candidate", correct=11)
+    corrupted = replace(
+        candidate,
+        member_gain=replace(candidate.member_gain, total_gain_count=99),
+    )
+    with pytest.raises(AssertionError, match="single_target_total_gain_delta_mismatch"):
+        evaluate_constraints(corrupted, active)
+
+
+def test_corrupted_minimum_gain_metrics_break_objective_invariant():
+    active = item("active")
+    candidate = item("candidate", correct=11)
+    corrupted = replace(
+        candidate,
+        member_gain=replace(candidate.member_gain, minimum_gain_count=-1),
+    )
+    with pytest.raises(
+        AssertionError,
+        match="fixed_peer_single_target_objective_invariant_broken",
+    ):
+        evaluate_constraints(corrupted, active)
+
+
+def test_member_first_safe_key_removes_redundant_total_gain_dimension():
+    candidates = [
+        item("gain-1", correct=11, vote_count=9),
+        item("gain-2", correct=12, vote_count=9),
+        item("vote-2", correct=11, vote_count=10, vote_gain=2),
+    ]
+    old_key = lambda row: (
+        row.member_gain.minimum_gain_count,
+        row.team_outcome.vote_correct_count,
+        row.member_gain.total_gain_count,
+        row.member_gain.target_gain_vs_incumbent,
+    )
+    new_key = lambda row: member_first_safe_key(row)[:3]
+    assert max(candidates, key=old_key).prompt_hash == max(
+        candidates, key=new_key
+    ).prompt_hash
+
+
+def test_vote_first_and_member_first_share_feasible_set_but_can_rank_differently():
+    initial = (10, 10, 10, 10, 10)
+    incumbent = (12, 15, 17, 18, 19)
+    active = item(
+        "active", correct=12, vote_count=8, initial_counts=initial,
+        incumbent_counts=incumbent, member_counts=incumbent,
+    )
+    member_candidate = item(
+        "member", correct=15, vote_count=9, vote_gain=1,
+        initial_counts=initial, incumbent_counts=incumbent,
+    )
+    vote_candidate = item(
+        "vote", correct=13, vote_count=10, vote_gain=2,
+        initial_counts=initial, incumbent_counts=incumbent,
+    )
+    candidates = (member_candidate, vote_candidate)
+    feasible_for_s2 = {
+        row.prompt_hash for row in candidates if evaluate_constraints(row, active).passed
     }
-    assert member_first_key(tradeoff) > member_first_key(dominant)
+    feasible_for_s3 = {
+        row.prompt_hash for row in candidates if evaluate_constraints(row, active).passed
+    }
+    assert feasible_for_s2 == feasible_for_s3 == {"member", "vote"}
+    assert max(candidates, key=vote_first_key).prompt_hash == "vote"
+    assert max(candidates, key=member_first_safe_key).prompt_hash == "member"
 
 
 def test_typed_metrics_require_member_gain():

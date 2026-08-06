@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Iterable, Mapping
 
 from multi_dataset_diverse_rl.config import Config
+from multi_dataset_diverse_rl.protocol import canonical_experiment_setting
 
 
 @dataclass(frozen=True)
@@ -16,7 +17,7 @@ class ExperimentSetting:
 
 
 COMMON = {
-    "method_version": "member_aware_peer_state_v10",
+    "method_version": "member_aware_peer_state_v11",
     "agents": 5,
     "initialization_mode": "shared_identical",
     "vote_tie_break": "abstain",
@@ -28,7 +29,7 @@ SETTING_NAMES = (
     "shared_baseline",
     "shared_independent_accuracy",
     "shared_peer_state_vote_first",
-    "shared_peer_state_member_pareto",
+    "shared_peer_state_member_first_safe",
     "shared_member_aware_responsibility",
     "shared_member_aware_full",
 )
@@ -47,7 +48,8 @@ def select_settings(
     settings: Iterable[ExperimentSetting] = ALL_EXPERIMENT_SETTINGS,
 ) -> list[ExperimentSetting]:
     available = {setting.name: setting for setting in settings}
-    names = list(available) if not raw or raw == "all" else parse_csv_list(raw)
+    requested_names = list(available) if not raw or raw == "all" else parse_csv_list(raw)
+    names = [canonical_experiment_setting(name) for name in requested_names]
     missing = [name for name in names if name not in available]
     if missing:
         raise ValueError(f"Unknown experiment setting: {missing}")

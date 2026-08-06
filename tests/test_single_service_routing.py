@@ -251,7 +251,7 @@ def test_setting_isolation_enables_service_flow_only_for_s4_and_s5():
             "shared_baseline",
             "shared_independent_accuracy",
             "shared_peer_state_vote_first",
-            "shared_peer_state_member_pareto",
+            "shared_peer_state_member_first_safe",
             "shared_member_aware_responsibility",
             "shared_member_aware_full",
         )

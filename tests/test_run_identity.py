@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="member_aware_peer_state_v10",
+        method_version="member_aware_peer_state_v11",
         experiment_setting="shared_member_aware_full",
         git_commit="commit",
         git_dirty=False,
@@ -79,3 +79,13 @@ def test_solver_request_identity_includes_immutable_wrapper_version():
     assert solver_request_identity(cfg) != solver_request_identity(
         Config.from_flat(solver_max_tokens=1799)
     )
+
+
+def test_legacy_setting_alias_has_canonical_behavior_fingerprint():
+    legacy = Config.from_flat(
+        experiment_setting="shared_peer_state_member_pareto"
+    )
+    canonical = Config.from_flat(
+        experiment_setting="shared_peer_state_member_first_safe"
+    )
+    assert config_fingerprint(legacy) == config_fingerprint(canonical)

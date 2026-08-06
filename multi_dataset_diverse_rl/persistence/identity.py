@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from ..config import Config
+from ..protocol import canonical_experiment_setting
 from ..provider_credentials import resolve_base_url
 from ..diagnosis_aggregation import (
     ANSWER_ROLE_ENCODING_VERSION,
@@ -31,6 +32,7 @@ SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
 PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
 from ..utils import normalize_spaces
 from ..versions import (
+    CANDIDATE_SELECTION_VERSION,
     CANDIDATE_ACCEPTANCE_VERSION,
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
@@ -98,6 +100,9 @@ def _git_identity(workspace: Path) -> tuple[str, bool]:
 
 def config_fingerprint(cfg: Config) -> str:
     values = cfg.to_flat_dict()
+    values["experiment_setting"] = canonical_experiment_setting(
+        cfg.training.experiment_setting
+    )
     for operational in ("out_dir", "resume_from_checkpoint"):
         values.pop(operational, None)
     values["endpoint_identity"] = {
@@ -110,7 +115,7 @@ def config_fingerprint(cfg: Config) -> str:
         "responsibility": RESPONSIBILITY_VERSION,
         "service_routing": SERVICE_ROUTING_VERSION,
         "target_selection": TARGET_SELECTION_VERSION,
-        "pareto_preference": "member_first_candidate_preference_v1",
+        "candidate_selection": CANDIDATE_SELECTION_VERSION,
         "stage_a": "team_vote_worst_mean_v2",
         "stage_b": CANDIDATE_ACCEPTANCE_VERSION,
         "candidate_acceptance": CANDIDATE_ACCEPTANCE_VERSION,
@@ -201,7 +206,9 @@ def build_run_identity(
     commit, dirty = _git_identity(Path(workspace).resolve())
     return RunIdentity(
         method_version=cfg.training.method_version,
-        experiment_setting=cfg.training.experiment_setting,
+        experiment_setting=canonical_experiment_setting(
+            cfg.training.experiment_setting
+        ),
         git_commit=commit,
         git_dirty=dirty,
         config_fingerprint=config_fingerprint(cfg),

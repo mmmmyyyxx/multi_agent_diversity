@@ -24,7 +24,7 @@ async def solver(_question, agent_id, _prompt):
 
 def identity():
     return RunIdentity(
-        method_version="member_aware_peer_state_v10", experiment_setting="shared_member_aware_full",
+        method_version="member_aware_peer_state_v11", experiment_setting="shared_member_aware_full",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -108,7 +108,7 @@ def test_v19_checkpoint_restores_freeze_state_and_responsibility_portfolios(tmp_
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 19
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 20
     assert payload["mutable_prompt_contract_version"] == (
         "reasoning_only_no_response_format_v2"
     )
@@ -206,9 +206,9 @@ def test_checkpoint_restore_rejects_contaminated_active_prompt_before_mutation(
     assert [agent.current_prompt for agent in target.agents] == original_prompts
 
 
-def test_v18_checkpoint_is_explicitly_incompatible(tmp_path):
+def test_v19_checkpoint_is_explicitly_incompatible(tmp_path):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 18
+    payload["checkpoint_version"] = 19
     with pytest.raises(ValueError, match="incompatible"):
         restore_checkpoint(system, payload)

@@ -37,7 +37,7 @@ The paper method has three modules:
 ```text
 1. Member-Aware Responsibility
 2. Responsibility-Conditioned Evolution
-3. Pareto-Constrained Team Update
+3. Monotone Target-or-Vote Team Update
 ```
 
 Joint voting state, Teacher-Critic-Student, Stage A/B, fixed-peer rollout,
@@ -51,8 +51,8 @@ The compact three-module method in this file is normative. The current runtime
 implements it as:
 
 ```text
-method_version = member_aware_peer_state_v10
-checkpoint_version = 19
+method_version = member_aware_peer_state_v11
+checkpoint_version = 20
 ```
 
 For every execution or artifact analysis, verify those and all other runtime
@@ -96,6 +96,19 @@ O(Theta) = (V_count, g_min, g_sum)
 
 A candidate team Pareto-dominates the incumbent only when all three dimensions
 are no worse and at least one is strictly better.
+
+Under fixed-peer single-target replacement, target non-regression implies
+that `g_sum` and `g_min` cannot regress, and `g_sum` changes by exactly the
+target member's correct-count change. Together with vote non-regression and
+strict target-or-vote progress, this makes team-objective Pareto improvement a
+derived invariant. The objective remains an evaluation, trajectory, and audit
+objective; it is not an additional candidate rejection guard.
+
+`g_min` is candidate-discriminative only when the selected target is the
+unique weakest member. Member-first selection is therefore a conditional
+preference, not a general three-objective candidate optimizer. The uplift
+deficit `d_i` in target scheduling is the weak-member mechanism with broad
+operational effect.
 
 Formal search and selection use integer correct counts. Normalized accuracies
 are reporting metrics only. Do not replace the objective with a fixed weighted
@@ -147,16 +160,17 @@ The program constructs bounded numerical and diagnostic evidence. The
 Teacher-Critic-Student pipeline turns that evidence into candidate prompts.
 Rollouts, not role-model predictions, determine empirical value.
 
-### Module 3: Pareto-Constrained Team Update
+### Module 3: Monotone Target-or-Vote Team Update
 
 Research question:
 
-> Which target-only replacement improves the team without sacrificing the
-> formal member objectives?
+> Which target-only replacement makes strict target-or-vote progress while
+> preserving target competence, team vote, and terminal validity?
 
 Only one target prompt is replaced at a time. The other four prompts and their
-profiles remain fixed during paired candidate evaluation. Aggregate
-feasibility and strict team-objective Pareto dominance determine acceptance.
+profiles remain fixed during paired candidate evaluation. The four monotone
+guards determine acceptance; team-objective Pareto dominance is verified as a
+derived fixed-peer invariant.
 
 ## 4. Diagnostic Foundation: Joint Voting State
 
@@ -549,7 +563,7 @@ acceptance, deltas, or rollout rejection reasons. Transport, truncation, and
 schema failures remain audit-only terminal failures and expose
 `empirical_feedback_available=false` to the next Teacher.
 
-## 8. Module 3: Pareto-Constrained Team Update
+## 8. Module 3: Monotone Target-or-Vote Team Update
 
 Only the target prompt is replaced. The other four active prompts and profiles
 remain fixed during paired candidate evaluation.
@@ -600,9 +614,13 @@ Every acceptable candidate must satisfy all of:
 candidate target correct count >= incumbent target correct count
 candidate vote correct count >= incumbent vote correct count
 target correct count or vote correct count must strictly improve
-(V_count, g_min, g_sum) must strictly Pareto-dominate the incumbent
 terminal-invalid count must not increase
 ```
+
+Whenever the first three guards pass, the candidate must strictly
+Pareto-dominate the incumbent in `(V_count, g_min, g_sum)`. This is a fail-fast
+derived invariant regardless of the terminal-invalid guard, not an independent
+hard check, rejection reason, or ranking dimension.
 
 A vote-only update remains valid when:
 
@@ -614,29 +632,29 @@ vote gain > 0
 provided every other guard passes. Do not replace target-or-vote progress with
 a strict-target-improvement requirement.
 
-The acceptance identifier to preserve is:
+The acceptance identifier is:
 
 ```text
 CANDIDATE_ACCEPTANCE_VERSION =
-target_or_vote_strict_progress_v1
+fixed_peer_monotone_target_or_vote_v2
 ```
 
 Soft utility, coverage, conversion, vote loss, and unique/pivotal loss are
-diagnostic or late tie-break evidence. They cannot make a non-Pareto candidate
-acceptable and are not independent hard rejection guards.
+diagnostic or late tie-break evidence and are not independent hard rejection
+guards.
 
 The canonical preference among acceptable candidates is:
 
 ```text
 1. larger minimum member gain
 2. larger vote-correct count
-3. larger total member gain
-4. larger improved-member count
-5. fewer vote losses
+3. larger target gain versus incumbent
+4. larger net vote delta
+5. more target-portfolio repairs
 6. larger soft vote utility
-7. more target-portfolio repairs
-8. larger target correct count
-9. fewer invalid outputs
+7. larger coverage gain
+8. fewer vote losses
+9. fewer pivotal- and unique-correct losses
 10. earlier generation
 11. stable prompt hash
 ```
@@ -660,7 +678,7 @@ Target-only paired rollout with four fixed peers
     ↓
 Stage A shortlist
     ↓
-Stage B full-probe feasibility and team Pareto decision
+Stage B monotone feasibility and derived Pareto assertion
     ↓
 Atomic prompt/profile commit
     ↓
@@ -727,14 +745,13 @@ mean_member_accuracy_gain
 
 ## 11. Experiment Protocols and Ablations
 
-Keep the existing protocol names until an explicit code-migration task changes
-them:
+New runs use exactly these canonical protocol names:
 
 ```text
 shared_baseline
 shared_independent_accuracy
 shared_peer_state_vote_first
-shared_peer_state_member_pareto
+shared_peer_state_member_first_safe
 shared_member_aware_responsibility
 shared_member_aware_full
 ```
@@ -752,7 +769,7 @@ Research question: Is any optimization better than the shared initial team?
 - round-robin target selection;
 - individual-error evidence;
 - generic accuracy proposal;
-- individual-accuracy candidate selection.
+- Individual-First Safe Selection.
 
 Research question: Is independent prompt optimization sufficient?
 
@@ -760,21 +777,26 @@ Research question: Is independent prompt optimization sufficient?
 
 - round-robin target selection;
 - generic peer-state evidence;
-- pure vote-first candidate selection.
+- Vote-First Safe Selection over the common monotone-safe feasible set.
 
-Research question: Does vote-only selection form a narrow winning coalition?
+Research question: What is the effect of prioritizing vote geometry among
+equally safe candidates?
 
 This is a pure vote-first ablation, not an exact recreation of every historical
 peer-state method.
 
-### `shared_peer_state_member_pareto`
+### `shared_peer_state_member_first_safe`
 
 - the same round-robin target policy;
 - the same generic peer-state proposal context;
-- Pareto-Constrained Team Update.
+- Member-First Safe Selection over the same monotone-safe feasible set as S2.
 
-Research question: What is the effect of replacing vote-first selection with
-team Pareto acceptance?
+Research question: What is the effect of ranking first by minimum member gain,
+then vote and target gain? Minimum gain usually distinguishes candidates only
+when the target is the unique weakest member.
+
+`shared_peer_state_member_pareto` remains a read-only legacy input alias. New
+run identity and metadata use `shared_peer_state_member_first_safe`.
 
 ### `shared_member_aware_responsibility`
 
@@ -783,7 +805,7 @@ team Pareto acceptance?
 - compact target scheduling over active-slice `(D_i, S_i, d_i)`;
 - State-Conditioned Repairability Freeze;
 - generic peer-state proposal context;
-- Pareto-Constrained Team Update;
+- Monotone Target-or-Vote Team Update;
 - online responsibility refresh.
 
 Research question: Does Member-Aware Responsibility improve target and
@@ -793,23 +815,23 @@ residual attribution?
 
 - the same eligibility, routing, anchors, active-lane scheduling, and freeze;
 - compact single-lane responsibility-conditioned proposal context;
-- the same team Pareto acceptance;
+- the same monotone target-or-vote acceptance;
 - online responsibility refresh.
 
 Research question: Does responsibility-conditioned context improve proposal
 realization and final team performance?
 
-The three core ablations map to the method as follows:
+The setting progression is:
 
 ```text
-Member-Aware Responsibility
-↔ attribution and target-selection ablation
+S1-S3
+↔ common monotone-safe update with different proposal/selection preferences
 
-Responsibility-Conditioned Evolution
-↔ generic versus responsibility-conditioned context
+S3 -> S4
+↔ add Member-Aware Responsibility scheduling
 
-Pareto-Constrained Team Update
-↔ vote-first or individual selector versus team Pareto acceptance
+S4 -> S5
+↔ add Responsibility-Conditioned Evolution context
 ```
 
 Catch-up and Proposal Memory are not part of the default main-experiment
@@ -843,7 +865,7 @@ multi_dataset_diverse_rl/versions.py
 ```
 
 This is the source of truth for actual runtime identifiers. The compact method
-uses checkpoint version 19; implementation, persistence, and tests must remain
+uses checkpoint version 20; implementation, persistence, and tests must remain
 consistent with it.
 
 ### Configuration and protocols
@@ -883,7 +905,9 @@ multi_dataset_diverse_rl/member_objectives.py
 ```
 
 Defines `MemberGainMetrics`, `TeamMemberGainState`, `TeamObjectiveVector`,
-Pareto dominance, and fronts. Formal selection uses integer counts.
+Pareto dominance, and fronts. Formal selection uses integer counts. Candidate
+team-objective dominance is a derived fixed-peer invariant; member-level target
+Pareto scheduling remains active.
 
 ### Responsibility
 
@@ -920,10 +944,12 @@ bounded invalid recovery. Preserve context isolation across settings.
 multi_dataset_diverse_rl/candidate_selection.py
 ```
 
-Remains the source of truth for target-or-vote strict progress and team Pareto
-acceptance. It also owns candidate and constraint decisions, Stage A channel
-keys, vote-first selection, member-aware selection, and deterministic
-preference.
+Remains the source of truth for monotone target-or-vote acceptance and the
+derived team-objective invariant. It also owns candidate and constraint
+decisions, Stage A channel keys, vote-first-safe selection, member-first-safe
+selection, and deterministic preference. It must not generate
+`member_objective_regression` for new candidate decisions or filter feasible
+candidates through a team-objective Pareto front.
 
 Core decision paths must use typed fields. Do not interpret a missing metric as
 zero.
@@ -1077,7 +1103,7 @@ one member-level target Pareto over active-slice (D_i, S_i, d_i)
 accepted-update-only specialization anchors
 state-conditioned repairability freeze in S4/S5 only
 proposal_memory_mode = off by default
-vote-only v6 acceptance preserved
+vote-only and target-only monotone acceptance preserved
 ```
 
 No accepted candidate may silently bypass these invariants.

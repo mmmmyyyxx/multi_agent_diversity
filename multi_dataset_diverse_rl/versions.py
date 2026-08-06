@@ -1,12 +1,14 @@
 """Frozen protocol identifiers shared by runtime, metadata, and persistence."""
 
-METHOD_VERSION = "member_aware_peer_state_v10"
+METHOD_VERSION = "member_aware_peer_state_v11"
 RESPONSIBILITY_VERSION = "counterfactual_vote_margin_responsibility_v1"
 SERVICE_ROUTING_VERSION = "single_service_anchor_routing_v1"
 TARGET_SELECTION_VERSION = "anchored_single_lane_scheduler_v1"
 TCS_CONTEXT_VERSION = "compact_single_lane_responsibility_context_v1"
-CHECKPOINT_VERSION = 19
-CANDIDATE_ACCEPTANCE_VERSION = "target_or_vote_strict_progress_v1"
+CHECKPOINT_VERSION = 20
+CANDIDATE_ACCEPTANCE_VERSION = "fixed_peer_monotone_target_or_vote_v2"
+CANDIDATE_SELECTION_VERSION = "member_first_safe_selection_v1"
+CANDIDATE_ACCEPTANCE_POLICY = "fixed_peer_monotone_target_or_vote"
 PROPOSAL_MEMORY_VERSION = "agent_isolated_state_local_proposal_memory_v1"
 PRESERVATION_POLICY_VERSION = "diagnostic_only_sample_preservation_v1"
 EVALUATION_PROTOCOL_VERSION = "final_active_state_no_validation_v1"

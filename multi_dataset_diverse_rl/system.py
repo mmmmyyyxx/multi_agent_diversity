@@ -12,11 +12,9 @@ from .candidate_selection import (
     CandidateEvaluation,
     ConstraintDecision,
     StageASelectionDecision,
-    candidate_is_acceptable,
     evaluate_constraints,
     individual_accuracy_key,
-    member_aware_pareto_front,
-    member_first_key,
+    member_first_safe_key,
     stage_a_multichannel_shortlist,
     vote_first_key,
 )
@@ -141,7 +139,9 @@ from .tcs import (
 )
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 from .versions import (
+    CANDIDATE_ACCEPTANCE_POLICY,
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_SELECTION_VERSION,
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
@@ -232,7 +232,6 @@ class CandidateFunnel:
     rejected_target_regression: int = 0
     rejected_team_vote_regression: int = 0
     rejected_no_target_or_vote_progress: int = 0
-    rejected_member_objective_regression: int = 0
     rejected_terminal_invalid_regression: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
@@ -294,11 +293,11 @@ class PromptEnsembleOptimizationSystem:
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
         if cfg.training.agents != 5:
-            raise ValueError("member_aware_peer_state_v10 requires exactly five agents")
+            raise ValueError("member_aware_peer_state_v11 requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":
-            raise ValueError("member_aware_peer_state_v10 requires plurality aggregation")
+            raise ValueError("member_aware_peer_state_v11 requires plurality aggregation")
         if cfg.peer_state.vote_tie_break != "abstain":
-            raise ValueError("member_aware_peer_state_v10 requires tie-as-abstain")
+            raise ValueError("member_aware_peer_state_v11 requires tie-as-abstain")
         if cfg.peer_state.solver_output_contract_version != SOLVER_OUTPUT_CONTRACT_VERSION:
             raise ValueError(
                 "solver_output_contract_version does not match the implemented task contract"
@@ -2718,7 +2717,7 @@ class PromptEnsembleOptimizationSystem:
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
         funnel.stage_a_evaluated = len(candidates)
-        if self.protocol.candidate_selection_policy == "individual_accuracy":
+        if self.protocol.candidate_selection_policy == "individual_first_safe":
             shortlist = sorted(
                 candidates,
                 key=lambda row: individual_accuracy_key(row.stage_a_evaluation, row.generation),
@@ -2731,7 +2730,7 @@ class PromptEnsembleOptimizationSystem:
                     pareto_front=1,
                     aggregate_rank=0,
                 )
-        elif self.protocol.candidate_selection_policy == "vote_first":
+        elif self.protocol.candidate_selection_policy == "vote_first_safe":
             shortlist = sorted(
                 candidates,
                 key=lambda row: vote_first_key(row.stage_a_evaluation, row.generation),
@@ -2744,7 +2743,7 @@ class PromptEnsembleOptimizationSystem:
                     pareto_front=1,
                     aggregate_rank=0,
                 )
-        else:
+        elif self.protocol.candidate_selection_policy == "member_first_safe":
             evaluation_to_runtime = {row.stage_a_evaluation.prompt_hash: row for row in candidates}
             selected, decisions = stage_a_multichannel_shortlist(
                 [row.stage_a_evaluation for row in candidates],
@@ -2754,6 +2753,11 @@ class PromptEnsembleOptimizationSystem:
             shortlist = [evaluation_to_runtime[row.prompt_hash] for row in selected]
             for candidate in candidates:
                 candidate.stage_a_decision = decisions[candidate.prompt_hash]
+        else:
+            raise ValueError(
+                "Unknown candidate selection policy: "
+                f"{self.protocol.candidate_selection_policy}"
+            )
         funnel.selected_by_team_vote_channel = sum(
             candidate.stage_a_decision.selected
             and "team_vote" in candidate.stage_a_decision.selected_by_channels
@@ -2804,9 +2808,6 @@ class PromptEnsembleOptimizationSystem:
                     "no_target_or_vote_progress": (
                         "rejected_no_target_or_vote_progress"
                     ),
-                    "member_objective_regression": (
-                        "rejected_member_objective_regression"
-                    ),
                     "terminal_invalid_regression": (
                         "rejected_terminal_invalid_regression"
                     ),
@@ -2815,38 +2816,33 @@ class PromptEnsembleOptimizationSystem:
         funnel.stage_b_evaluated = len(shortlist)
         funnel.constraint_feasible = len(feasible)
 
-        if self.protocol.candidate_selection_policy == "individual_accuracy":
+        if self.protocol.candidate_selection_policy == "individual_first_safe":
             acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: individual_accuracy_key(row.final_evaluation, row.generation),
                 default=None,
             )
-        elif self.protocol.candidate_selection_policy == "vote_first":
+        elif self.protocol.candidate_selection_policy == "vote_first_safe":
             acceptable = list(feasible)
             accepted = max(
                 acceptable,
                 key=lambda row: vote_first_key(row.final_evaluation, row.generation),
                 default=None,
             )
-        else:
-            acceptable = [
-                row for row in feasible
-                if candidate_is_acceptable(row.final_evaluation, incumbent)
-            ]
-            front_hashes = set(
-                member_aware_pareto_front(
-                    [row.final_evaluation for row in acceptable]
-                )
-            )
-            nondominated = [
-                row for row in acceptable
-                if row.prompt_hash in front_hashes
-            ]
+        elif self.protocol.candidate_selection_policy == "member_first_safe":
+            acceptable = list(feasible)
             accepted = max(
-                nondominated,
-                key=lambda row: member_first_key(row.final_evaluation, row.generation),
+                acceptable,
+                key=lambda row: member_first_safe_key(
+                    row.final_evaluation, row.generation
+                ),
                 default=None,
+            )
+        else:
+            raise ValueError(
+                "Unknown candidate selection policy: "
+                f"{self.protocol.candidate_selection_policy}"
             )
         funnel.acceptable_candidates = len(acceptable)
         funnel.accepted_candidate = accepted is not None
@@ -3045,6 +3041,11 @@ class PromptEnsembleOptimizationSystem:
                 self.early_stop_reason = "all_actionable_members_frozen"
             self.candidate_decisions.append({
                 "update_index": update_index,
+                "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
+                "candidate_selection_policy": (
+                    self.protocol.candidate_selection_policy
+                ),
+                "team_objective_role": "derived_invariant_diagnostic",
                 "update_lane": no_actionable_reason,
                 "target_agent_id": None,
                 "target_assigned_residual_count": 0,
@@ -3116,6 +3117,9 @@ class PromptEnsembleOptimizationSystem:
         self.responsibility_state.updates_since_selected_by_agent[target] = 0
         decision = {
             "update_index": update_index,
+            "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
+            "candidate_selection_policy": self.protocol.candidate_selection_policy,
+            "team_objective_role": "derived_invariant_diagnostic",
             "update_lane": update_lane,
             "target_agent_id": target,
             "agent_selection_distribution": dict(self.agent_selection_counts),
@@ -3907,9 +3911,13 @@ class PromptEnsembleOptimizationSystem:
         if self.run_identity is None:
             raise RuntimeError("run identity must be set before writing run metadata")
         initial_hashes = [self.prompt_hash(agent.initial_prompt) for agent in self.agents]
+        canonical_config = self.cfg.to_flat_dict()
+        canonical_config["experiment_setting"] = self.protocol.name
         return {
             "method_version": METHOD_VERSION,
             "experiment_protocol": asdict(self.protocol),
+            "requested_experiment_setting": self.protocol.requested_name,
+            "canonical_experiment_setting": self.protocol.name,
             "run_identity": self.run_identity.to_dict(),
             "initialization_mode": self.protocol.initialization_mode.value,
             "initial_prompt_hashes": initial_hashes,
@@ -3917,8 +3925,12 @@ class PromptEnsembleOptimizationSystem:
             "tie_policy": self.protocol.tie_policy,
             "update_mode": "single_agent_paired_counterfactual",
             "candidate_selector": self.protocol.candidate_selection_policy,
+            "candidate_selection_policy": self.protocol.candidate_selection_policy,
+            "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
+            "acceptance_policy": CANDIDATE_ACCEPTANCE_POLICY,
             "candidate_generator": self.protocol.tcs_context_policy,
             "member_objective_version": "integer_vote_min_sum_v2",
+            "team_objective_role": "evaluation_trajectory_and_derived_invariant",
             "responsibility_version": RESPONSIBILITY_VERSION,
             "service_routing_version": SERVICE_ROUTING_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
@@ -3928,7 +3940,6 @@ class PromptEnsembleOptimizationSystem:
             "repairability_freeze_portfolio_overlap_threshold": (
                 FREEZE_PORTFOLIO_OVERLAP_THRESHOLD
             ),
-            "pareto_preference_version": "member_first_candidate_preference_v1",
             "stage_a_version": "team_vote_worst_mean_v2",
             "stage_b_version": CANDIDATE_ACCEPTANCE_VERSION,
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
@@ -4023,7 +4034,7 @@ class PromptEnsembleOptimizationSystem:
             "test_called_before_training_complete": (
                 self.test_called_before_training_complete
             ),
-            "config": self.cfg.to_flat_dict(),
+            "config": canonical_config,
         }
 
     def candidate_funnel_summary(

@@ -211,7 +211,7 @@ def test_s4_and_s5_share_routing_scheduler_but_isolate_context(tmp_path):
     (
         "shared_independent_accuracy",
         "shared_peer_state_vote_first",
-        "shared_peer_state_member_pareto",
+        "shared_peer_state_member_first_safe",
     ),
 )
 def test_s1_through_s3_create_no_service_anchor_or_freeze_state(tmp_path, setting):

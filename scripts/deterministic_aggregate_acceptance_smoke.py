@@ -102,7 +102,7 @@ def main() -> None:
     assert vote_only.target_or_vote_progress_passed
     assert (
         CANDIDATE_ACCEPTANCE_VERSION
-        == "target_or_vote_strict_progress_v1"
+        == "fixed_peer_monotone_target_or_vote_v2"
     )
     assert not vote_regression.hard_feasible
     assert "team_vote_regression" in vote_regression.rejection_reasons

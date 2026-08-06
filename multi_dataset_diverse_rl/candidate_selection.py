@@ -6,7 +6,6 @@ from typing import Sequence
 from .member_objectives import (
     MemberGainMetrics,
     pareto_dominates,
-    pareto_front,
     team_objective_vector,
 )
 from .responsibility import CandidateMarginalContribution, ProtectionContribution
@@ -76,6 +75,12 @@ class ConstraintDecision:
     pivotal_correct_loss_count: int
     incumbent_objective: tuple[int, int, int]
     candidate_objective: tuple[int, int, int]
+    derived_team_pareto_passed: bool
+    objective_invariant_checked: bool
+    minimum_gain_delta: int
+    total_gain_delta: int
+    target_is_unique_weakest: bool
+    target_is_tied_weakest: bool
     pareto_dominates_incumbent: bool
     target_nonregression_passed: bool
     target_strict_improvement: bool
@@ -247,10 +252,41 @@ def evaluate_constraints(
         > active.team_outcome.vote_correct_count
     )
     target_or_vote_progress = target_strict_improvement or vote_strict_improvement
-    member_objective_dominance = pareto_dominates(
+    derived_team_pareto = pareto_dominates(
         candidate_objective,
         incumbent_objective,
     )
+    target_gain = candidate.competence.correct_count - active.competence.correct_count
+    minimum_gain_delta = (
+        candidate.member_gain.minimum_gain_count
+        - active.member_gain.minimum_gain_count
+    )
+    total_gain_delta = (
+        candidate.member_gain.total_gain_count
+        - active.member_gain.total_gain_count
+    )
+    if total_gain_delta != target_gain:
+        raise AssertionError("single_target_total_gain_delta_mismatch")
+
+    incumbent_gains = active.member_gain.gain_counts
+    target_gain_before = active.member_gain.target_gain_vs_initial
+    minimum_gain_before = min(incumbent_gains)
+    minimum_count = incumbent_gains.count(minimum_gain_before)
+    target_is_unique_weakest = (
+        target_gain_before == minimum_gain_before and minimum_count == 1
+    )
+    target_is_tied_weakest = (
+        target_gain_before == minimum_gain_before and minimum_count > 1
+    )
+    objective_invariant_checked = (
+        target_nonregression
+        and team_vote_nonregression
+        and target_or_vote_progress
+    )
+    if objective_invariant_checked and not derived_team_pareto:
+        raise AssertionError(
+            "fixed_peer_single_target_objective_invariant_broken"
+        )
     terminal_invalid_nonregression = (
         candidate.competence.terminal_invalid_count
         <= active.competence.terminal_invalid_count
@@ -259,7 +295,6 @@ def evaluate_constraints(
         ("target_regression", target_nonregression),
         ("team_vote_regression", team_vote_nonregression),
         ("no_target_or_vote_progress", target_or_vote_progress),
-        ("member_objective_regression", member_objective_dominance),
         ("terminal_invalid_regression", terminal_invalid_nonregression),
     )
     reasons = tuple(name for name, passed in checks if not passed)
@@ -268,9 +303,7 @@ def evaluate_constraints(
         hard_feasible=not reasons,
         target_correct_incumbent=active.competence.correct_count,
         target_correct_candidate=candidate.competence.correct_count,
-        target_gain=(
-            candidate.competence.correct_count - active.competence.correct_count
-        ),
+        target_gain=target_gain,
         vote_correct_incumbent=active.team_outcome.vote_correct_count,
         vote_correct_candidate=candidate.team_outcome.vote_correct_count,
         vote_gain_count=candidate.marginal.vote_gain_count,
@@ -290,13 +323,19 @@ def evaluate_constraints(
         ),
         incumbent_objective=incumbent_objective.as_tuple(),
         candidate_objective=candidate_objective.as_tuple(),
-        pareto_dominates_incumbent=member_objective_dominance,
+        derived_team_pareto_passed=derived_team_pareto,
+        objective_invariant_checked=objective_invariant_checked,
+        minimum_gain_delta=minimum_gain_delta,
+        total_gain_delta=total_gain_delta,
+        target_is_unique_weakest=target_is_unique_weakest,
+        target_is_tied_weakest=target_is_tied_weakest,
+        pareto_dominates_incumbent=derived_team_pareto,
         target_nonregression_passed=target_nonregression,
         target_strict_improvement=target_strict_improvement,
         team_vote_nonregression_passed=team_vote_nonregression,
         vote_strict_improvement=vote_strict_improvement,
         target_or_vote_progress_passed=target_or_vote_progress,
-        member_objective_dominance_passed=member_objective_dominance,
+        member_objective_dominance_passed=derived_team_pareto,
         terminal_invalid_nonregression_passed=terminal_invalid_nonregression,
         rejection_reasons=reasons,
     )
@@ -308,7 +347,6 @@ def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple
         -candidate.marginal.vote_loss_count,
         candidate.marginal.soft_utility_delta,
         candidate.marginal.coverage_gain_count,
-        candidate.marginal.assigned_residual_utility_delta,
         candidate.competence.correct_count,
         -candidate.competence.invalid_count,
         -int(generation),
@@ -316,11 +354,10 @@ def vote_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple
     )
 
 
-def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
+def member_first_safe_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
     return (
         candidate.member_gain.minimum_gain_count,
         candidate.team_outcome.vote_correct_count,
-        candidate.member_gain.total_gain_count,
         candidate.member_gain.target_gain_vs_incumbent,
         candidate.marginal.net_vote_delta,
         candidate.marginal.assigned_residual_repair_count,
@@ -332,20 +369,6 @@ def member_first_key(candidate: CandidateEvaluation, generation: int = 0) -> tup
         -int(generation),
         candidate.prompt_hash,
     )
-
-
-def member_aware_pareto_front(
-    candidates: Sequence[CandidateEvaluation],
-) -> tuple[str, ...]:
-    vectors = tuple(
-        team_objective_vector(
-            candidate.team_outcome.vote_correct_count,
-            candidate.member_gain,
-        )
-        for candidate in candidates
-    )
-    return tuple(candidates[index].prompt_hash for index in pareto_front(vectors))
-
 
 def individual_accuracy_key(candidate: CandidateEvaluation, generation: int = 0) -> tuple:
     return (

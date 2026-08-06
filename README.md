@@ -2,7 +2,7 @@
 
 This repository implements one current method:
 **Member-Aware Prompt-Team Optimization**
-(`member_aware_peer_state_v10`).
+(`member_aware_peer_state_v11`).
 
 The system optimizes five solver prompts for equal-weight plurality voting. Model
 weights are never updated. Teacher-Critic-Student (TCS) proposes prompt changes,
@@ -21,13 +21,14 @@ Current Prompt Team
      - one anchored active lane and target Pareto on (D, S, d)
   -> Responsibility-Conditioned Evolution
      - one lane, one pattern, <=2 repair cases, <=1 preservation case
-  -> Pareto-Constrained Team Update
+  -> Monotone Target-or-Vote Team Update
      - target-only paired rollout with four fixed peers
-     - target-or-vote progress plus team Pareto and invalid guards
+     - target/vote/terminal-invalid monotone guards
+     - derived team-objective Pareto invariant
   -> Updated Prompt Team
 ```
 
-The three formal Stage B objectives are integer counts:
+The retained team evaluation objective has three integer-count dimensions:
 
 ```text
 V_count = correctly aggregated fixed-probe examples
@@ -37,11 +38,22 @@ g_sum   = sum_i g_i
 ```
 
 A candidate must not reduce either target correct count or aggregate team vote
-count, must strictly improve at least one of them, must not increase
-terminal-invalid outputs, and must strictly Pareto-dominate the incumbent in
-`(V_count, g_min, g_sum)`. The method does not require zero loss on every probe
-example. Vote, unique-correct, and pivotal-correct gains and losses remain
-audited diagnostics and late tie-breakers; none independently rejects a candidate.
+count, must strictly improve at least one of them, and must not increase
+terminal-invalid outputs. Under fixed-peer single-target replacement, these
+monotone conditions imply strict Pareto improvement in
+`(V_count, g_min, g_sum)`; Pareto dominance is checked as a fail-fast invariant,
+not used as another rejection guard or ranking dimension. The method does not
+require zero loss on every probe example. Vote, unique-correct, and
+pivotal-correct gains and losses remain audited diagnostics and late
+tie-breakers; none independently rejects a candidate.
+
+Under the same fixed-peer replacement, `g_sum` changes by exactly the target
+member's correct-count change. `g_min` distinguishes candidates only when the
+selected target is the unique weakest member. Consequently, Member-First Safe
+Selection is a conditional member-first preference rather than a general
+three-objective Pareto optimizer. The broad weak-member mechanism is the
+uplift-deficit term `d` in target scheduling, not an independent `g_min`
+acceptance guard.
 
 For each vote-wrong residual, only currently wrong members are considered.
 Replacing one member by gold while holding four peers fixed gives
@@ -81,14 +93,14 @@ service routing, anchor, active-lane, or freeze state.
 
 Exactly six settings are supported:
 
-| Setting | Purpose |
-|---|---|
-| `shared_baseline` | Shared prompt, no optimization |
-| `shared_independent_accuracy` | Round-robin individual-accuracy ablation |
-| `shared_peer_state_vote_first` | Pure vote-first candidate-selection ablation |
-| `shared_peer_state_member_pareto` | Adds member-aware Pareto selection |
-| `shared_member_aware_responsibility` | Adds member-aware target responsibility |
-| `shared_member_aware_full` | Adds member-aware responsibility-conditioned TCS |
+| Setting | Display name | Primary change |
+|---|---|---|
+| `shared_baseline` | S0 Shared Baseline | No optimization |
+| `shared_independent_accuracy` | S1 Individual-First Safe Selection | Individual context and target ranking |
+| `shared_peer_state_vote_first` | S2 Vote-First Safe Selection | Vote-geometry ranking |
+| `shared_peer_state_member_first_safe` | S3 Member-First Safe Selection | Unique-weak-sensitive member ranking |
+| `shared_member_aware_responsibility` | S4 Member-Aware Responsibility | Routing, anchors, freeze, and target scheduling |
+| `shared_member_aware_full` | S5 Responsibility-Conditioned Evolution | S4 plus compact single-lane context |
 
 All settings use five agents, plurality aggregation, tie-as-abstain, and matched
 candidate budgets.
@@ -117,8 +129,8 @@ git diff --check
 The system smoke instantiates the real optimization system with fake models,
 runs eight offline fake-model updates through programmatic aggregation, TCS, and
 Stage A/B, checks one responsibility
-refresh per committed team transition, verifies the critical Pareto
-accept/reject cases, and covers compact eligibility and scheduling. The smaller unit smoke retains deterministic helper-level
+refresh per committed team transition, verifies monotone acceptance and the
+derived Pareto invariant, and covers compact eligibility and scheduling. The smaller unit smoke retains deterministic helper-level
 coverage. The three v4 smokes separately prove aggregate acceptance, bounded
 Student invalid recovery, final-active-state test isolation, planned high-
 frequency update counting, and answer-behavior differentiation metrics.
@@ -170,7 +182,7 @@ improve.
 
 Add explicit sizes, candidate-evaluation budgets, models, and concurrency flags
 for a formal run. `--resume_from_checkpoint 1` resumes only an exact
-checkpoint-v19 run identity;
+checkpoint-v20 run identity;
 incompatible checkpoints fail with an error instead of restarting in place.
 `--resume_completed 1` reuses only complete artifacts with an exact identity.
 
@@ -241,7 +253,7 @@ original model pins for reproducibility; they are not active defaults and must
 not be mixed into matched Qwen comparisons.
 
 The tracked `reports/v7_frontier_seed46_stage1_20260730` bundle is historical
-development evidence for a superseded mechanism. It does not define v10.
+development evidence for a superseded mechanism. It does not define v11.
 
 For offline analysis of an already completed high-frequency v4 run, use:
 

@@ -84,13 +84,18 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         "vote_net_gain", "unique_correct_gain_count", "unique_correct_loss_count",
         "pivotal_correct_gain_count", "pivotal_correct_loss_count",
         "incumbent_objective", "candidate_objective", "pareto_dominates_incumbent",
+        "derived_team_pareto_passed", "objective_invariant_checked",
+        "minimum_gain_delta", "total_gain_delta",
+        "target_is_unique_weakest", "target_is_tied_weakest",
         "target_nonregression_passed", "target_strict_improvement",
         "team_vote_nonregression_passed", "vote_strict_improvement",
         "target_or_vote_progress_passed", "member_objective_dominance_passed",
         "terminal_invalid_nonregression_passed", "rejection_reasons",
     )
     decision_keys = (
-        "update_index", "update_lane", "stop_reason", "target_agent_id", "target_assigned_residual_count", "assigned_question_hashes",
+        "update_index", "acceptance_policy", "candidate_selection_policy",
+        "team_objective_role",
+        "update_lane", "stop_reason", "target_agent_id", "target_assigned_residual_count", "assigned_question_hashes",
         "best_attempt_target_gain",
         "positive_target_gain_candidate_found", "candidate_search_outcome_updated",
         "cooldown_length_assigned", "accepted_prompt_hash",
@@ -98,7 +103,7 @@ def candidate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for row in rows:
         result = pick(row, decision_keys)
-        result["artifact_schema_version"] = "sanitized_candidate_decision_v1"
+        result["artifact_schema_version"] = "sanitized_candidate_decision_v2"
         result["funnel"] = numeric_map(row.get("funnel", {}))
         result["incumbent"] = pick(
             row.get("incumbent", {}),
@@ -204,11 +209,14 @@ def meta_row(meta: dict[str, Any]) -> dict[str, Any]:
         if allowed_key(key) and key not in {"shared_prompt", "provided_prompts_json", "out_dir"}
     }
     keys = (
-        "method_version", "experiment_protocol", "initialization_mode", "tie_policy",
-        "update_mode", "candidate_selector", "candidate_generator",
+        "method_version", "experiment_protocol", "requested_experiment_setting",
+        "canonical_experiment_setting", "initialization_mode", "tie_policy",
+        "update_mode", "candidate_selector", "candidate_selection_policy",
+        "candidate_selection_version", "acceptance_policy", "candidate_generator",
         "member_objective_version", "responsibility_version",
+        "team_objective_role",
         "responsibility_lifecycle_version", "target_selection_version",
-        "pareto_preference_version", "stage_a_version", "stage_b_version",
+        "stage_a_version", "stage_b_version",
         "candidate_acceptance_version", "preservation_policy_version",
         "evaluation_protocol_version", "checkpoint_selection_version",
         "test_isolation_version", "tcs_context_version", "proposal_memory_version",
@@ -222,7 +230,7 @@ def meta_row(meta: dict[str, Any]) -> dict[str, Any]:
         "initial_prompt_hashes", "initial_prompts_identical", "probe_hash",
     )
     return {
-        "artifact_schema_version": "sanitized_run_meta_v1",
+        "artifact_schema_version": "sanitized_run_meta_v2",
         **pick(meta, keys),
         "run_identity": identity_safe,
         "final_state_selection": sanitize(meta.get("final_state_selection", {})),

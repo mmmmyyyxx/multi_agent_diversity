@@ -29,7 +29,7 @@ def system_for(tmp_path, chat, **overrides):
     values = {
         "out_dir": str(tmp_path),
         "answer_format": "option_letter",
-        "experiment_setting": "shared_peer_state_member_pareto",
+        "experiment_setting": "shared_peer_state_member_first_safe",
         "num_candidates_per_parent": 2,
         "stage_a_channel_top_k": 1,
         "stage_b_candidate_budget": 1,

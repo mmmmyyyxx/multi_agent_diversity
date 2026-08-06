@@ -5,7 +5,11 @@ import pytest
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
-from multi_dataset_diverse_rl.protocol import CandidateBudgetContract, experiment_protocol
+from multi_dataset_diverse_rl.protocol import (
+    CandidateBudgetContract,
+    canonical_candidate_selection_policy,
+    experiment_protocol,
+)
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from multi_dataset_diverse_rl.versions import CHECKPOINT_VERSION, METHOD_VERSION, TARGET_SELECTION_VERSION
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
@@ -13,7 +17,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 
 def identity(setting="shared_member_aware_full"):
     return RunIdentity(
-        method_version="member_aware_peer_state_v10",
+        method_version="member_aware_peer_state_v11",
         experiment_setting=setting,
         git_commit="test",
         git_dirty=False,
@@ -43,7 +47,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v10"
+    assert cfg.training.method_version == "member_aware_peer_state_v11"
     assert cfg.responsibility.responsibility_mode == "single_service_member_aware_v10"
     removed_wait_field = "responsibility_" + "max_wait_updates"
     removed_compensation_field = "member_" + "catchup_mode"
@@ -80,7 +84,7 @@ def test_only_six_settings_exist_and_old_setting_fails():
         "shared_baseline",
         "shared_independent_accuracy",
         "shared_peer_state_vote_first",
-        "shared_peer_state_member_pareto",
+        "shared_peer_state_member_first_safe",
         "shared_member_aware_responsibility",
         "shared_member_aware_full",
     ]
@@ -88,19 +92,63 @@ def test_only_six_settings_exist_and_old_setting_fails():
         select_settings("shared_v9_sequential_accuracy")
 
 
+def test_legacy_s3_alias_resolves_to_canonical_protocol_and_setting(tmp_path):
+    budget = CandidateBudgetContract(2, 2, 6, 12, 6, 6, 4)
+    legacy = experiment_protocol(
+        "shared_peer_state_member_pareto",
+        initialization_mode="shared_identical",
+        tie_policy="abstain",
+        candidate_budget_contract=budget,
+    )
+    canonical = experiment_protocol(
+        "shared_peer_state_member_first_safe",
+        initialization_mode="shared_identical",
+        tie_policy="abstain",
+        candidate_budget_contract=budget,
+    )
+    assert legacy.name == canonical.name == "shared_peer_state_member_first_safe"
+    assert legacy.requested_name == "shared_peer_state_member_pareto"
+    assert canonical.requested_name == canonical.name
+    assert legacy.candidate_selection_policy == "member_first_safe"
+    assert canonical_candidate_selection_policy("individual_accuracy") == (
+        "individual_first_safe"
+    )
+    assert canonical_candidate_selection_policy("vote_first") == "vote_first_safe"
+    assert canonical_candidate_selection_policy("member_aware_pareto") == (
+        "member_first_safe"
+    )
+    assert select_settings("shared_peer_state_member_pareto")[0].name == canonical.name
+    system = PromptEnsembleOptimizationSystem(Config.from_flat(
+        out_dir=str(tmp_path),
+        experiment_setting="shared_peer_state_member_pareto",
+    ))
+    system.set_run_identity(identity("shared_peer_state_member_first_safe"))
+    metadata = system.run_meta()
+    assert metadata["requested_experiment_setting"] == (
+        "shared_peer_state_member_pareto"
+    )
+    assert metadata["canonical_experiment_setting"] == canonical.name
+    assert metadata["config"]["experiment_setting"] == canonical.name
+
+
 def test_ablation_protocols_are_field_isolated_and_budget_matched():
     rows = protocols()
     b2 = asdict(rows["shared_peer_state_vote_first"])
-    pareto = asdict(rows["shared_peer_state_member_pareto"])
+    member_first = asdict(rows["shared_peer_state_member_first_safe"])
     responsibility = asdict(rows["shared_member_aware_responsibility"])
     full = asdict(rows["shared_member_aware_full"])
-    b2_pareto_differences = {key for key in b2 if b2[key] != pareto[key]}
-    assert b2_pareto_differences == {"name", "candidate_selection_policy"}
-    pareto_responsibility_differences = {
-        key for key in pareto if pareto[key] != responsibility[key]
+    b2_member_first_differences = {
+        key for key in b2 if b2[key] != member_first[key]
     }
-    assert pareto_responsibility_differences == {
+    assert b2_member_first_differences == {
+        "name", "requested_name", "candidate_selection_policy"
+    }
+    member_first_responsibility_differences = {
+        key for key in member_first if member_first[key] != responsibility[key]
+    }
+    assert member_first_responsibility_differences == {
         "name",
+        "requested_name",
         "target_selection_policy",
         "sample_pool_policy",
         "responsibility_refresh_policy",
@@ -110,7 +158,9 @@ def test_ablation_protocols_are_field_isolated_and_budget_matched():
     responsibility_full_differences = {
         key for key in responsibility if responsibility[key] != full[key]
     }
-    assert responsibility_full_differences == {"name", "tcs_context_policy"}
+    assert responsibility_full_differences == {
+        "name", "requested_name", "tcs_context_policy"
+    }
     assert len({repr(row.candidate_budget_contract) for row in rows.values()}) == 1
     assert len({row.tie_policy for row in rows.values()}) == 1
     assert len({row.initialization_mode for row in rows.values()}) == 1
@@ -120,7 +170,7 @@ def test_ablation_protocols_are_field_isolated_and_budget_matched():
         "shared_baseline": False,
         "shared_independent_accuracy": False,
         "shared_peer_state_vote_first": False,
-        "shared_peer_state_member_pareto": False,
+        "shared_peer_state_member_first_safe": False,
         "shared_member_aware_responsibility": True,
         "shared_member_aware_full": True,
     }
@@ -137,7 +187,14 @@ def test_run_metadata_records_initialization_protocol_and_no_legacy_search(tmp_p
     assert metadata["generic_diversity_reward_used"] is False
     assert metadata["legacy_compatibility_enabled"] is False
     assert metadata["tcs_protocol_version"] == "assigned_residual_only_context_v1"
-    assert metadata["candidate_acceptance_version"] == "target_or_vote_strict_progress_v1"
+    assert metadata["candidate_acceptance_version"] == (
+        "fixed_peer_monotone_target_or_vote_v2"
+    )
+    assert metadata["candidate_selection_version"] == (
+        "member_first_safe_selection_v1"
+    )
+    assert metadata["candidate_selection_policy"] == "member_first_safe"
+    assert metadata["acceptance_policy"] == "fixed_peer_monotone_target_or_vote"
     assert metadata["proposal_memory_mode"] == "off"
     assert metadata["preservation_policy_version"] == (
         "diagnostic_only_sample_preservation_v1"

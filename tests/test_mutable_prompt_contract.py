@@ -147,7 +147,7 @@ def test_contaminated_active_parent_stops_before_tcs_or_solver_calls(tmp_path):
     system = PromptEnsembleOptimizationSystem(
         Config.from_flat(
             out_dir=str(tmp_path),
-            experiment_setting="shared_peer_state_member_pareto",
+            experiment_setting="shared_peer_state_member_first_safe",
         ),
         solver=solver,
         optimizer_chat=optimizer,

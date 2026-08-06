@@ -43,7 +43,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v10"
+    method_version: str = "member_aware_peer_state_v11"
     experiment_setting: str = "shared_member_aware_full"
     agents: int = 5
     epochs: int = 3

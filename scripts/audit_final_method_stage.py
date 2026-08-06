@@ -15,6 +15,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_SELECTION_VERSION,
     CHECKPOINT_VERSION,
     METHOD_VERSION,
     RESPONSIBILITY_VERSION,
@@ -25,7 +26,7 @@ from scripts.experiment_config import SETTING_NAMES
 from scripts.final_method_source_identity import build_source_identity
 
 
-AUDIT_VERSION = "final_method_stage_gate_v2"
+AUDIT_VERSION = "final_method_stage_gate_v3"
 MEMBER_AWARE_SETTINGS = {
     "shared_member_aware_responsibility",
     "shared_member_aware_full",
@@ -43,23 +44,23 @@ EXPECTED_PROTOCOLS = {
     "shared_baseline": (False, "none", "none", "none", "none", "off", False),
     "shared_independent_accuracy": (
         True, "round_robin", "individual_errors", "generic_accuracy",
-        "individual_accuracy", "off", False,
+        "individual_first_safe", "off", False,
     ),
     "shared_peer_state_vote_first": (
         True, "round_robin", "global_peer_state", "generic_peer_state",
-        "vote_first", "off", False,
+        "vote_first_safe", "off", False,
     ),
-    "shared_peer_state_member_pareto": (
+    "shared_peer_state_member_first_safe": (
         True, "round_robin", "global_peer_state", "generic_peer_state",
-        "member_aware_pareto", "off", False,
+        "member_first_safe", "off", False,
     ),
     "shared_member_aware_responsibility": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "generic_peer_state", "member_aware_pareto", "online", True,
+        "generic_peer_state", "member_first_safe", "online", True,
     ),
     "shared_member_aware_full": (
         True, "member_aware_responsibility", "member_aware_residuals",
-        "member_aware_responsibility_conditioned", "member_aware_pareto", "online", True,
+        "member_aware_responsibility_conditioned", "member_first_safe", "online", True,
     ),
 }
 INFRASTRUCTURE_FAILURES = {
@@ -120,7 +121,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("disambiguation_qa",),
             (46,),
-            ("shared_baseline", "shared_peer_state_member_pareto"),
+            ("shared_baseline", "shared_peer_state_member_first_safe"),
             0,
             True,
         )
@@ -130,7 +131,7 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
             (44, 45, 46),
             (
                 "shared_baseline",
-                "shared_peer_state_member_pareto",
+                "shared_peer_state_member_first_safe",
                 "shared_member_aware_responsibility",
                 "shared_member_aware_full",
             ),
@@ -235,7 +236,7 @@ def _audit_member_responsibility(
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
         (target_front, "Normal scheduling must select from the single (D,S,d) frontier", "target-front"),
         (frozen_pool, "Frozen members must remain outside the active target pool", "frozen-pool"),
-        (repairability_event, "Freeze and unfreeze events must satisfy fixed v10 thresholds", "repairability-event"),
+        (repairability_event, "Freeze and unfreeze events must satisfy fixed thresholds", "repairability-event"),
     ):
         if count:
             _finding(
@@ -308,6 +309,9 @@ def _audit_run(
         "tcs_context_version": (meta.get("tcs_context_version"), TCS_CONTEXT_VERSION),
         "candidate_acceptance_version": (
             meta.get("candidate_acceptance_version"), CANDIDATE_ACCEPTANCE_VERSION,
+        ),
+        "candidate_selection_version": (
+            meta.get("candidate_selection_version"), CANDIDATE_SELECTION_VERSION,
         ),
         "checkpoint_version": (meta.get("checkpoint_version"), CHECKPOINT_VERSION),
         "agents": (config.get("agents"), 5),
@@ -646,8 +650,8 @@ def _setting_isolation(
         for row in summaries if row.get("complete")
     }
     comparisons = (
-        ("shared_peer_state_vote_first", "shared_peer_state_member_pareto", {"candidate_selection_policy"}),
-        ("shared_peer_state_member_pareto", "shared_member_aware_responsibility", {
+        ("shared_peer_state_vote_first", "shared_peer_state_member_first_safe", {"candidate_selection_policy"}),
+        ("shared_peer_state_member_first_safe", "shared_member_aware_responsibility", {
             "target_selection_policy", "sample_pool_policy", "responsibility_refresh_policy",
         }),
         ("shared_member_aware_responsibility", "shared_member_aware_full", {"tcs_context_policy"}),

@@ -195,11 +195,11 @@ def compact_previous_outcome(
 ) -> CompactPreviousOutcome:
     if not outcome.attempted:
         return CompactPreviousOutcome(status="none", main_rejection=None)
-    if any("semantic" in reason for reason in outcome.rejection_reasons):
-        return CompactPreviousOutcome(
-            status="rejected", main_rejection="semantic_rejection"
-        )
     if not outcome.empirical_evaluation_completed:
+        if any("semantic" in reason for reason in outcome.rejection_reasons):
+            return CompactPreviousOutcome(
+                status="rejected", main_rejection="semantic_rejection"
+            )
         return CompactPreviousOutcome(
             status="operational_failure", main_rejection=None
         )
@@ -210,7 +210,6 @@ def compact_previous_outcome(
     priorities = (
         ("target_not_improved", {"target_regression", "no_target_or_vote_progress"}),
         ("team_vote_regression", {"team_vote_regression"}),
-        ("member_objective_regression", {"member_objective_regression"}),
         ("terminal_invalid_regression", {"terminal_invalid_regression"}),
     )
     for label, matches in priorities:
@@ -221,6 +220,10 @@ def compact_previous_outcome(
     if any("semantic" in reason for reason in reasons):
         return CompactPreviousOutcome(
             status="rejected", main_rejection="semantic_rejection"
+        )
+    if "member_objective_regression" in reasons:
+        return CompactPreviousOutcome(
+            status="rejected", main_rejection="legacy_objective_guard"
         )
     return CompactPreviousOutcome(status="rejected", main_rejection="other")
 

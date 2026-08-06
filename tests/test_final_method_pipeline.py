@@ -45,7 +45,7 @@ def test_formal_stage_matrices_are_exact():
             "shared_baseline",
             "shared_independent_accuracy",
             "shared_peer_state_vote_first",
-            "shared_peer_state_member_pareto",
+            "shared_peer_state_member_first_safe",
             "shared_member_aware_responsibility",
             "shared_member_aware_full",
         ),
@@ -63,7 +63,7 @@ def test_formal_stage_matrices_are_exact():
     assert _expected_matrix("strict_v2_witness") == (
         ("disambiguation_qa",),
         (46,),
-        ("shared_baseline", "shared_peer_state_member_pareto"),
+        ("shared_baseline", "shared_peer_state_member_first_safe"),
         0,
         True,
     )
@@ -72,7 +72,7 @@ def test_formal_stage_matrices_are_exact():
         (44, 45, 46),
         (
             "shared_baseline",
-            "shared_peer_state_member_pareto",
+            "shared_peer_state_member_first_safe",
             "shared_member_aware_responsibility",
             "shared_member_aware_full",
         ),
@@ -131,7 +131,7 @@ def test_source_identity_is_hash_only_and_covers_formal_scripts():
     workspace = Path(__file__).resolve().parents[1]
     identity = build_source_identity(workspace)
     encoded = json.dumps(identity)
-    assert identity["source_identity_version"] == "final_method_source_identity_v1"
+    assert identity["source_identity_version"] == "final_method_source_identity_v2"
     assert len(identity["source_tree_hash"]) == 64
     assert len(identity["git_diff_hash"]) == 64
     assert all(
@@ -345,7 +345,7 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
         "shared_solver_cache_path": str(tmp_path / "cache.sqlite"),
     }
     s3 = Config.from_flat(
-        **common, experiment_setting="shared_peer_state_member_pareto",
+        **common, experiment_setting="shared_peer_state_member_first_safe",
     )
     s4 = Config.from_flat(
         **common, experiment_setting="shared_member_aware_responsibility",
@@ -370,7 +370,7 @@ def test_setting_name_does_not_change_solver_request_identity_or_cache_key(tmp_p
     assert left.key("prompt", "question") == right.key("prompt", "question")
     changed_contract = Config.from_flat(
         **common,
-        experiment_setting="shared_peer_state_member_pareto",
+        experiment_setting="shared_peer_state_member_first_safe",
         answer_format="yes_no",
     )
     assert solver_request_identity(s3) != solver_request_identity(changed_contract)

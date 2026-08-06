@@ -30,6 +30,7 @@ from multi_dataset_diverse_rl.tcs import TCS_PROTOCOL_VERSION
 from multi_dataset_diverse_rl.utils import load_jsonl
 from multi_dataset_diverse_rl.versions import (
     CANDIDATE_ACCEPTANCE_VERSION,
+    CANDIDATE_SELECTION_VERSION,
     CANDIDATE_PROTOCOL_FILTER_VERSION,
     CHECKPOINT_SELECTION_VERSION,
     CHECKPOINT_VERSION,
@@ -57,7 +58,7 @@ EXPECTED_SETTINGS = [
     "shared_baseline",
     "shared_independent_accuracy",
     "shared_peer_state_vote_first",
-    "shared_peer_state_member_pareto",
+    "shared_peer_state_member_first_safe",
     "shared_member_aware_responsibility",
     "shared_member_aware_full",
 ]
@@ -135,6 +136,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     full = protocols["shared_member_aware_full"]
     responsibility_payload = responsibility.__dict__ | {
         "name": full.name,
+        "requested_name": full.requested_name,
         "tcs_context_policy": full.tcs_context_policy,
     }
     if responsibility_payload != full.__dict__:
@@ -174,6 +176,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "ok": not errors, "git_commit": head, "git_dirty": dirty,
         "method_version": METHOD_VERSION, "target_selection_version": TARGET_SELECTION_VERSION,
         "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
+        "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
         "preservation_policy_version": PRESERVATION_POLICY_VERSION,
         "evaluation_protocol_version": EVALUATION_PROTOCOL_VERSION,
         "checkpoint_selection_version": CHECKPOINT_SELECTION_VERSION,
