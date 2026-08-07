@@ -59,8 +59,19 @@ def test_run_specific_preflight_builds_identity_and_checks_inputs(tmp_path, monk
     run = report["runs"][0]
     assert run["split_integrity"]["opt_val_question_overlap"] == 0
     assert run["run_identity"]["experiment_setting"] == "shared_full_dual_target_rcru"
-    assert Path(run["shared_solver_cache_path"]).name == "_shared_solver_cache.sqlite"
-    assert Path(run["shared_solver_cache_path"]).is_file()
+    assert Path(run["shared_solver_cache_path"]).name == "_solver_cache.sqlite"
+    assert Path(run["shared_solver_cache_path"]).parent == Path(run["run_dir"])
+    assert Path(run["shared_solver_cache_path"]).exists() is False
+    assert Path(run["frozen_initialization_manifest_path"]).name == (
+        "frozen_initialization_manifest.json"
+    )
+    assert run["runner_owned_cache_path"] is True
+    assert run["runner_owned_frozen_manifest"] is True
+    assert run["setting_local_cache_isolated"] is True
+    assert len(run["setting_local_cache_path_hash"]) == 64
+    assert len(run["frozen_manifest_path_hash"]) == 64
+    assert "base_url" not in run["role_environment"]["solver"]
+    assert run["role_environment"]["solver"]["base_url_present"] is True
     assert run["tcs_context_version"] == (
         "compact_single_lane_responsibility_context_v1"
     )

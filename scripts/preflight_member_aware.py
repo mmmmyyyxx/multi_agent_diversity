@@ -15,7 +15,6 @@ if str(REPO_ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.cli import build_dataset
-from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import PersistentSolverCache
 from multi_dataset_diverse_rl.evaluation.mutable_prompt_contract import (
     validate_mutable_decision_procedure,
 )
@@ -67,6 +66,7 @@ from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_s
 from scripts.run_task_level_accuracy import (
     RUNNER_FIELDS,
     _task_split_integrity,
+    _with_runner_owned_paths,
     effective_proposal_memory_mode,
 )
 
@@ -259,7 +259,10 @@ def _role_environment(cfg: Config, role: str) -> dict[str, Any]:
         "key_env": resolved_key_env,
         "base_url_env": resolved_base_env,
         "key_present": bool(key),
-        "base_url": base_url,
+        "base_url_present": bool(base_url),
+        "base_url_identity_hash": hashlib.sha256(
+            str(base_url).strip().lower().encode("utf-8")
+        ).hexdigest() if base_url else "",
     }
 
 
@@ -296,6 +299,15 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
         for setting in settings:
             for seed in seeds:
                 run_dir = root / task_id / f"{setting.name}_seed{seed}"
+                expected_cache_path = (run_dir / "_solver_cache.sqlite").resolve()
+                expected_frozen_manifest = (
+                    root / "_frozen_initialization" / task_id / f"seed{seed}"
+                    / "frozen_initialization_manifest.json"
+                ).resolve()
+                comparison_reference_cache = (
+                    root / "_frozen_initialization" / task_id / f"seed{seed}"
+                    / "comparison_reference_solver_cache.sqlite"
+                ).resolve()
                 values = {
                     **setting.resolved_overrides(),
                     "task_type": task.task_type,
@@ -307,8 +319,6 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     "val_path": str((workspace / task.val_path).resolve()),
                     "test_path": str((workspace / task.test_path).resolve()),
                     "manifest_sha256": manifest_sha,
-                    "out_dir": str(run_dir),
-                    "shared_solver_cache_path": str(root / "_shared_solver_cache.sqlite"),
                     "seed": seed,
                 }
                 for name in RUNNER_FIELDS:
@@ -318,6 +328,12 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                 values["proposal_memory_mode"] = effective_proposal_memory_mode(
                     setting.name,
                     str(values.get("proposal_memory_mode", defaults["proposal_memory_mode"])),
+                )
+                values = _with_runner_owned_paths(
+                    values,
+                    run_dir=run_dir,
+                    solver_cache_path=expected_cache_path,
+                    frozen_manifest_path=expected_frozen_manifest,
                 )
                 try:
                     cfg = Config.from_flat(**values)
@@ -332,7 +348,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     for role, environment in role_environment.items():
                         if not environment["key_present"]:
                             raise ValueError(f"{role} API key is unavailable via {environment['key_env']}")
-                        if not environment["base_url"]:
+                        if not environment["base_url_present"]:
                             raise ValueError(f"{role} base URL is unavailable via {environment['base_url_env']}")
                     for split in ("train", "val", "test"):
                         requested = getattr(cfg.data, f"{split}_size")
@@ -435,8 +451,27 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                     cache_path = Path(cfg.persistence.shared_solver_cache_path)
                     if not cache_path.is_absolute():
                         raise ValueError("shared_solver_cache_path must resolve to an absolute path")
-                    cache_path.parent.mkdir(parents=True, exist_ok=True)
-                    PersistentSolverCache(cache_path).ready_entry_count()
+                    frozen_manifest_path = Path(
+                        cfg.persistence.frozen_initialization_manifest_path
+                    )
+                    if not frozen_manifest_path.is_absolute():
+                        raise ValueError(
+                            "frozen_initialization_manifest_path must resolve "
+                            "to an absolute path"
+                        )
+                    runner_owned_cache_path = cache_path.resolve() == expected_cache_path
+                    runner_owned_frozen_manifest = (
+                        frozen_manifest_path.resolve() == expected_frozen_manifest
+                    )
+                    setting_local_cache_isolated = (
+                        cache_path.resolve() != comparison_reference_cache
+                    )
+                    if not runner_owned_cache_path:
+                        raise ValueError("runner_owned_solver_cache_path_mismatch")
+                    if not runner_owned_frozen_manifest:
+                        raise ValueError("runner_owned_frozen_manifest_path_mismatch")
+                    if not setting_local_cache_isolated:
+                        raise ValueError("runner_owned_solver_cache_path_mismatch")
                     split_rows = {
                         "train": build_dataset(load_jsonl(cfg.data.train_path, cfg.data.train_size), cfg.data.dataset_format),
                         "val": build_dataset(load_jsonl(cfg.data.val_path, cfg.data.val_size), cfg.data.dataset_format),
@@ -466,6 +501,24 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         "run_dir": str(run_dir),
                         "run_identity": identity.to_dict(),
                         "shared_solver_cache_path": str(cache_path),
+                        "frozen_initialization_manifest_path": str(
+                            frozen_manifest_path
+                        ),
+                        "runner_owned_cache_path": runner_owned_cache_path,
+                        "runner_owned_frozen_manifest": (
+                            runner_owned_frozen_manifest
+                        ),
+                        "setting_local_cache_isolated": (
+                            setting_local_cache_isolated
+                        ),
+                        "setting_local_cache_path_hash": hashlib.sha256(
+                            str(cache_path.resolve()).lower().encode("utf-8")
+                        ).hexdigest(),
+                        "frozen_manifest_path_hash": hashlib.sha256(
+                            str(frozen_manifest_path.resolve()).lower().encode(
+                                "utf-8"
+                            )
+                        ).hexdigest(),
                         "tcs_context_version": TCS_CONTEXT_VERSION,
                         "proposal_memory_version": PROPOSAL_MEMORY_VERSION,
                         "proposal_memory_mode": cfg.tcs.proposal_memory_mode,

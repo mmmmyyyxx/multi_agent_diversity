@@ -1,18 +1,33 @@
+import asyncio
 import json
+from pathlib import Path
 
 import pytest
 
+from multi_dataset_diverse_rl.evaluation.persistent_solver_cache import (
+    PersistentSolverCache,
+)
+from multi_dataset_diverse_rl.evaluation.prompt_question import (
+    PromptAnswer,
+    PromptQuestionEvaluator,
+)
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.task_manifest import ComparisonTask
 from scripts.run_task_level_accuracy import (
     RUNNER_FIELDS,
+    _assert_runner_owned_child_command,
+    _assert_runner_owned_child_paths,
+    _build_child_command,
     _comparison_cache_source,
     _completed_run,
     _not_applicable_test_audit,
     _parser,
+    _prepare_setting_local_cache,
+    _sqlite_backup,
     _task_split_integrity,
     _test_observation_comparisons,
     _validate_setting_sequence,
+    _with_runner_owned_paths,
     effective_proposal_memory_mode,
 )
 
@@ -39,9 +54,212 @@ def test_task_runner_parser_builds_and_resume_completed_is_registered_once():
     assert parser is not None
     assert "resume_completed" not in RUNNER_FIELDS
     assert "optimized_only" not in RUNNER_FIELDS
+    assert "shared_solver_cache_path" not in RUNNER_FIELDS
+    assert "frozen_initialization_manifest_path" not in RUNNER_FIELDS
     actions = [action.dest for action in parser._actions]
     assert actions.count("resume_completed") == 1
     assert actions.count("optimized_only") == 1
+    assert "shared_solver_cache_path" not in actions
+    assert "frozen_initialization_manifest_path" not in actions
+
+
+def test_task_runner_parser_rejects_runner_owned_path_overrides():
+    parser = _parser()
+    with pytest.raises(SystemExit):
+        parser.parse_args([
+            "--manifest", "manifest.yaml",
+            "--out_root", "runs",
+            "--shared_solver_cache_path", "root.sqlite",
+        ])
+    with pytest.raises(SystemExit):
+        parser.parse_args([
+            "--manifest", "manifest.yaml",
+            "--out_root", "runs",
+            "--frozen_initialization_manifest_path", "wrong.json",
+        ])
+
+
+def test_runner_owned_paths_override_generic_and_setting_values(tmp_path):
+    run_dir = tmp_path / "runs" / "setting"
+    local = run_dir / "_solver_cache.sqlite"
+    manifest = tmp_path / "frozen" / "frozen_initialization_manifest.json"
+    values = _with_runner_owned_paths(
+        {
+            "shared_solver_cache_path": str(tmp_path / "hostile.sqlite"),
+            "frozen_initialization_manifest_path": str(tmp_path / "wrong.json"),
+        },
+        run_dir=run_dir,
+        solver_cache_path=local,
+        frozen_manifest_path=manifest,
+    )
+    assert Path(values["shared_solver_cache_path"]) == local.resolve()
+    assert Path(values["frozen_initialization_manifest_path"]) == manifest.resolve()
+
+
+def test_prelaunch_path_assertions_reject_reference_cache_and_wrong_manifest(tmp_path):
+    run_dir = tmp_path / "run"
+    local = run_dir / "_solver_cache.sqlite"
+    reference = tmp_path / "reference.sqlite"
+    manifest = tmp_path / "frozen.json"
+    child = {
+        "shared_solver_cache_path": str(local),
+        "frozen_initialization_manifest_path": str(manifest),
+    }
+    assert _assert_runner_owned_child_paths(
+        child,
+        run_dir=run_dir,
+        frozen_manifest_path=manifest,
+        comparison_reference_cache_path=reference,
+    )["setting_local_cache_isolated"] is True
+
+    tampered_cache = dict(child, shared_solver_cache_path=str(reference))
+    with pytest.raises(RuntimeError, match="runner_owned_solver_cache_path_mismatch"):
+        _assert_runner_owned_child_paths(
+            tampered_cache,
+            run_dir=run_dir,
+            frozen_manifest_path=manifest,
+            comparison_reference_cache_path=reference,
+        )
+    tampered_manifest = dict(
+        child,
+        frozen_initialization_manifest_path=str(tmp_path / "wrong.json"),
+    )
+    with pytest.raises(RuntimeError, match="runner_owned_frozen_manifest_path_mismatch"):
+        _assert_runner_owned_child_paths(
+            tampered_manifest,
+            run_dir=run_dir,
+            frozen_manifest_path=manifest,
+            comparison_reference_cache_path=reference,
+        )
+
+
+def test_final_child_command_tampering_fails_before_launch(tmp_path):
+    run_dir = tmp_path / "run"
+    local = run_dir / "_solver_cache.sqlite"
+    reference = tmp_path / "reference.sqlite"
+    manifest = tmp_path / "frozen.json"
+    child = _with_runner_owned_paths(
+        {},
+        run_dir=run_dir,
+        solver_cache_path=local,
+        frozen_manifest_path=manifest,
+    )
+    command = _build_child_command(child, python_executable="python")
+    cache_value_index = command.index("--shared_solver_cache_path") + 1
+    command[cache_value_index] = str(reference)
+    with pytest.raises(RuntimeError, match="runner_owned_solver_cache_path_mismatch"):
+        _assert_runner_owned_child_command(
+            command,
+            run_dir=run_dir,
+            frozen_manifest_path=manifest,
+            comparison_reference_cache_path=reference,
+        )
+
+
+def _cache_evaluator(path=None):
+    return PromptQuestionEvaluator(
+        model_request_identity="request-v1",
+        parser_version="parser-v1",
+        temperature=0.0,
+        decoding_seed=46,
+        cache_metadata={
+            "solver_model": "solver",
+            "endpoint_identity": "endpoint",
+            "output_contract_version": "contract",
+            "max_tokens": 1800,
+        },
+        shared_cache=(PersistentSolverCache(path) if path is not None else None),
+    )
+
+
+def _seed_observation_cache(path, *, correct_count, entry_count=75):
+    evaluator = _cache_evaluator()
+    cache = PersistentSolverCache(path)
+    for index in range(entry_count):
+        prompt_hash = "prompt"
+        question_hash = f"question-{index}"
+        key = evaluator.key(prompt_hash, question_hash)
+        metadata = {
+            **evaluator.cache_metadata,
+            "model_request_identity": evaluator.model_request_identity,
+            "parser_version": evaluator.parser_version,
+            "temperature": evaluator.temperature,
+            "evaluation_replica_seed": evaluator.decoding_seed,
+            "prompt_hash": prompt_hash,
+            "question_hash": question_hash,
+        }
+        assert cache._claim_or_read(key, metadata)[0] == "owner"
+        answer = "A" if index < correct_count else "B"
+        cache._store(key, PromptAnswer(answer, f"trace-{answer}-{index}", True))
+
+
+def test_exact_frozen_observations_are_reused_from_setting_local_clone(tmp_path):
+    frozen = tmp_path / "frozen.sqlite"
+    reference = tmp_path / "reference.sqlite"
+    hostile = tmp_path / "hostile-root.sqlite"
+    local = tmp_path / "run" / "_solver_cache.sqlite"
+    _seed_observation_cache(frozen, correct_count=62)
+    _seed_observation_cache(hostile, correct_count=60)
+    _sqlite_backup(frozen, reference)
+
+    audit = _prepare_setting_local_cache(
+        comparison_reference_cache_path=reference,
+        frozen_cache_path=frozen,
+        setting_local_cache_path=local,
+        expected_evaluator=_cache_evaluator(),
+    )
+    assert audit["frozen_ready_entry_count"] == 75
+    assert audit["local_frozen_entry_count"] == 75
+    assert audit["frozen_observation_set_matched"] is True
+    assert audit["setting_local_cache_isolated"] is True
+    assert local.resolve() not in {reference.resolve(), hostile.resolve()}
+
+    provider_calls = 0
+
+    async def evaluate_all():
+        nonlocal provider_calls
+        evaluator = _cache_evaluator(local)
+        answers = []
+        for index in range(75):
+            async def forbidden(*_args):
+                nonlocal provider_calls
+                provider_calls += 1
+                raise AssertionError("provider must not be called for frozen rows")
+
+            answers.append(await evaluator.evaluate(
+                question=f"question-{index}",
+                question_hash=f"question-{index}",
+                prompt="prompt",
+                prompt_hash="prompt",
+                agent_id=0,
+                solve=forbidden,
+            ))
+        return answers
+
+    answers = asyncio.run(evaluate_all())
+    assert sum(answer.answer == "A" for answer in answers) == 62
+    assert provider_calls == 0
+
+
+def test_partial_frozen_ready_set_is_cloned_exactly_without_fixed_count_assumption(
+    tmp_path,
+):
+    frozen = tmp_path / "partial-frozen.sqlite"
+    reference = tmp_path / "partial-reference.sqlite"
+    local = tmp_path / "run" / "_solver_cache.sqlite"
+    _seed_observation_cache(frozen, correct_count=62, entry_count=62)
+    _sqlite_backup(frozen, reference)
+    audit = _prepare_setting_local_cache(
+        comparison_reference_cache_path=reference,
+        frozen_cache_path=frozen,
+        setting_local_cache_path=local,
+        expected_evaluator=_cache_evaluator(),
+    )
+    assert audit["frozen_ready_entry_count"] == 62
+    assert audit["local_frozen_entry_count"] == 62
+    assert audit["missing_frozen_observation_count"] == 0
+    assert audit["conflicting_frozen_observation_count"] == 0
+    assert audit["frozen_observation_set_matched"] is True
 
 
 def test_optimized_only_allows_one_non_baseline_setting_without_synthetic_reference():

@@ -62,7 +62,8 @@ CACHE_CONTENT_COLUMNS = (
 RUNNER_OWNED_FIELDS = {
     "task_type", "dataset_format", "comparison_task_id", "benchmark", "answer_format",
     "train_path", "val_path", "test_path", "manifest_sha256", "out_dir", "seed",
-    "method_version", "experiment_setting",
+    "method_version", "experiment_setting", "shared_solver_cache_path",
+    "frozen_initialization_manifest_path",
 }
 RUNNER_FIELDS = tuple(
     name for name in Config().to_flat_dict() if name not in RUNNER_OWNED_FIELDS
@@ -228,6 +229,103 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _with_runner_owned_paths(
+    values: Mapping[str, Any],
+    *,
+    run_dir: Path,
+    solver_cache_path: Path,
+    frozen_manifest_path: Path | None,
+) -> dict[str, Any]:
+    """Apply execution paths after all setting and generic CLI overrides."""
+    resolved = dict(values)
+    resolved.update({
+        "out_dir": str(run_dir.resolve()),
+        "shared_solver_cache_path": str(solver_cache_path.resolve()),
+        "frozen_initialization_manifest_path": (
+            str(frozen_manifest_path.resolve())
+            if frozen_manifest_path is not None else ""
+        ),
+    })
+    return resolved
+
+
+def _assert_runner_owned_child_paths(
+    child_config: Mapping[str, Any],
+    *,
+    run_dir: Path,
+    frozen_manifest_path: Path,
+    comparison_reference_cache_path: Path,
+) -> dict[str, bool]:
+    """Fail closed if a child could escape its setting-local cache clone."""
+    expected_cache = (run_dir / "_solver_cache.sqlite").resolve()
+    actual_cache = Path(str(child_config.get("shared_solver_cache_path", ""))).resolve()
+    reference_cache = comparison_reference_cache_path.resolve()
+    if actual_cache != expected_cache or actual_cache == reference_cache:
+        raise RuntimeError("runner_owned_solver_cache_path_mismatch")
+
+    expected_manifest = frozen_manifest_path.resolve()
+    actual_manifest = Path(
+        str(child_config.get("frozen_initialization_manifest_path", ""))
+    ).resolve()
+    if actual_manifest != expected_manifest:
+        raise RuntimeError("runner_owned_frozen_manifest_path_mismatch")
+    return {
+        "runner_owned_cache_path": True,
+        "runner_owned_frozen_manifest": True,
+        "setting_local_cache_isolated": True,
+    }
+
+
+def _build_child_command(
+    child_config: Mapping[str, Any],
+    *,
+    python_executable: str | None = None,
+) -> list[str]:
+    cmd = [
+        python_executable or sys.executable,
+        "-m",
+        "multi_dataset_diverse_rl.cli",
+    ]
+    for name, value in child_config.items():
+        cmd.extend([
+            f"--{name}",
+            str(int(value) if isinstance(value, bool) else value),
+        ])
+    return cmd
+
+
+def _child_command_config(command: Sequence[str]) -> dict[str, str]:
+    if (
+        len(command) < 3
+        or list(command[1:3]) != ["-m", "multi_dataset_diverse_rl.cli"]
+        or (len(command) - 3) % 2
+    ):
+        raise RuntimeError("runner_child_command_shape_mismatch")
+    values: dict[str, str] = {}
+    for index in range(3, len(command), 2):
+        option = str(command[index])
+        if not option.startswith("--"):
+            raise RuntimeError("runner_child_command_shape_mismatch")
+        values[option[2:]] = str(command[index + 1])
+    return values
+
+
+def _assert_runner_owned_child_command(
+    command: Sequence[str],
+    *,
+    run_dir: Path,
+    frozen_manifest_path: Path,
+    comparison_reference_cache_path: Path,
+) -> dict[str, bool]:
+    """Re-read the final argv immediately before launching the child."""
+    return _assert_runner_owned_child_paths(
+        _child_command_config(command),
+        run_dir=run_dir,
+        frozen_manifest_path=frozen_manifest_path,
+        comparison_reference_cache_path=comparison_reference_cache_path,
+    )
+
+
 def _sqlite_backup(source: Path, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(str(source)) as read_connection:
@@ -367,6 +465,102 @@ def _solver_cache_snapshot(
         "non_ready_entry_count": non_ready_count,
         "invalid_entries": invalid_entries,
     }
+
+
+def _entry_subset_hash(
+    entries: Mapping[str, Mapping[str, Any]],
+    keys: Sequence[str],
+) -> str:
+    return hashlib.sha256(json.dumps(
+        [(key, entries[key]["content_hash"]) for key in sorted(keys)],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+
+
+def _prepare_setting_local_cache(
+    *,
+    comparison_reference_cache_path: Path,
+    frozen_cache_path: Path,
+    setting_local_cache_path: Path,
+    expected_evaluator: PromptQuestionEvaluator,
+) -> dict[str, Any]:
+    """Clone the cumulative reference and prove frozen observations survived.
+
+    The cumulative cache may contain observations added by prior settings. The
+    frozen initialization rows are therefore checked as an exact subset while
+    the complete reference is checked for an exact byte-semantic clone.
+    """
+    reference_path = comparison_reference_cache_path.resolve()
+    frozen_path = frozen_cache_path.resolve()
+    local_path = setting_local_cache_path.resolve()
+    if local_path in {reference_path, frozen_path}:
+        raise RuntimeError("runner_owned_solver_cache_path_mismatch")
+    if local_path.exists():
+        raise FileExistsError(f"Setting-local solver cache already exists: {local_path}")
+
+    reference = _solver_cache_snapshot(
+        reference_path, expected_evaluator=expected_evaluator,
+    )
+    frozen = _solver_cache_snapshot(
+        frozen_path, expected_evaluator=expected_evaluator,
+    )
+    _sqlite_backup(reference_path, local_path)
+    local = _solver_cache_snapshot(
+        local_path, expected_evaluator=expected_evaluator,
+    )
+
+    frozen_keys = sorted(frozen["entries"])
+    local_keys = set(local["entries"])
+    missing_frozen_keys = sorted(set(frozen_keys) - local_keys)
+    conflicting_frozen_keys = sorted(
+        key for key in frozen_keys
+        if key in local_keys
+        and frozen["entries"][key]["content_hash"]
+        != local["entries"][key]["content_hash"]
+    )
+    present_frozen_keys = sorted(set(frozen_keys) & local_keys)
+    frozen_subset_hash = _entry_subset_hash(frozen["entries"], frozen_keys)
+    local_frozen_subset_hash = _entry_subset_hash(
+        local["entries"], present_frozen_keys,
+    )
+    full_reference_clone_matched = bool(
+        reference["content_hash"] == local["content_hash"]
+        and reference["entry_count"] == local["entry_count"]
+        and not reference["invalid_entries"]
+        and not local["invalid_entries"]
+        and not reference["non_ready_entry_count"]
+        and not local["non_ready_entry_count"]
+    )
+    frozen_observation_set_matched = bool(
+        not missing_frozen_keys
+        and not conflicting_frozen_keys
+        and not frozen["invalid_entries"]
+        and not frozen["non_ready_entry_count"]
+        and frozen_subset_hash == local_frozen_subset_hash
+    )
+    audit = {
+        "reference_ready_entry_count": reference["entry_count"],
+        "local_ready_entry_count": local["entry_count"],
+        "frozen_ready_entry_count": frozen["entry_count"],
+        "local_frozen_entry_count": len(present_frozen_keys),
+        "reference_relevant_content_hash": reference["content_hash"],
+        "local_relevant_content_hash": local["content_hash"],
+        "frozen_relevant_content_hash": frozen_subset_hash,
+        "local_frozen_relevant_content_hash": local_frozen_subset_hash,
+        "missing_frozen_observation_count": len(missing_frozen_keys),
+        "conflicting_frozen_observation_count": len(conflicting_frozen_keys),
+        "full_reference_clone_matched": full_reference_clone_matched,
+        "frozen_observation_set_matched": frozen_observation_set_matched,
+        "setting_local_cache_isolated": local_path not in {reference_path, frozen_path},
+    }
+    if not (
+        audit["full_reference_clone_matched"]
+        and audit["frozen_observation_set_matched"]
+        and audit["setting_local_cache_isolated"]
+    ):
+        raise RuntimeError("setting_local_cache_clone_mismatch")
+    return audit
 
 
 def _comparison_cache_source(
@@ -821,11 +1015,6 @@ def main() -> None:
             "val_path": str((workspace / task.val_path).resolve()),
             "test_path": str((workspace / task.test_path).resolve()),
             "manifest_sha256": manifest_sha256,
-            "out_dir": str(run_dir),
-            "shared_solver_cache_path": str(cache_path),
-            "frozen_initialization_manifest_path": (
-                str(frozen_manifest_path) if frozen_manifest_path is not None else ""
-            ),
             "seed": seed,
         }
         defaults = Config().to_flat_dict()
@@ -837,7 +1026,12 @@ def main() -> None:
             setting.name,
             str(values.get("proposal_memory_mode", defaults["proposal_memory_mode"])),
         )
-        return values
+        return _with_runner_owned_paths(
+            values,
+            run_dir=run_dir,
+            solver_cache_path=cache_path,
+            frozen_manifest_path=frozen_manifest_path,
+        )
 
     for task_id in task_ids:
         task = tasks[task_id]
@@ -924,22 +1118,22 @@ def main() -> None:
                             f"Run output must be new when not reusing an exact completed run: {run_dir}"
                         )
                     run_dir.mkdir(parents=True)
-                    reference_before = _solver_cache_snapshot(
-                        cache_source_path, expected_evaluator=cache_evaluator,
+                    clone_audit = _prepare_setting_local_cache(
+                        comparison_reference_cache_path=cache_source_path,
+                        frozen_cache_path=frozen_cache_path,
+                        setting_local_cache_path=mutable_cache_path,
+                        expected_evaluator=cache_evaluator,
                     )
-                    _sqlite_backup(cache_source_path, mutable_cache_path)
-                    starting_snapshot = _solver_cache_snapshot(
-                        mutable_cache_path, expected_evaluator=cache_evaluator,
-                    )
-                    starting_cache_sha256 = starting_snapshot["content_hash"]
-                    reference_cache_sha256 = reference_before["content_hash"]
-                    initial_match = (
-                        starting_cache_sha256 == reference_cache_sha256
-                        and starting_snapshot["entry_count"] == reference_before["entry_count"]
-                        and not starting_snapshot["invalid_entries"]
-                        and not reference_before["invalid_entries"]
-                        and not starting_snapshot["non_ready_entry_count"]
-                        and not reference_before["non_ready_entry_count"]
+                    starting_cache_sha256 = clone_audit[
+                        "local_relevant_content_hash"
+                    ]
+                    reference_cache_sha256 = clone_audit[
+                        "reference_relevant_content_hash"
+                    ]
+                    initial_match = bool(
+                        clone_audit["full_reference_clone_matched"]
+                        and clone_audit["frozen_observation_set_matched"]
+                        and clone_audit["setting_local_cache_isolated"]
                     )
                     (run_dir / "comparison_cache_match.json").write_text(
                         json.dumps({
@@ -951,8 +1145,33 @@ def main() -> None:
                             "starting_cache_sha256": starting_cache_sha256,
                             "reference_cache_sha256": reference_cache_sha256,
                             "parent_reference_hash": reference_cache_sha256,
-                            "reference_entry_count_before": reference_before["entry_count"],
-                            "local_clone_entry_count": starting_snapshot["entry_count"],
+                            "reference_entry_count_before": clone_audit[
+                                "reference_ready_entry_count"
+                            ],
+                            "local_clone_entry_count": clone_audit[
+                                "local_ready_entry_count"
+                            ],
+                            "frozen_reference_entry_count": clone_audit[
+                                "frozen_ready_entry_count"
+                            ],
+                            "local_frozen_entry_count": clone_audit[
+                                "local_frozen_entry_count"
+                            ],
+                            "frozen_relevant_content_hash": clone_audit[
+                                "frozen_relevant_content_hash"
+                            ],
+                            "local_frozen_relevant_content_hash": clone_audit[
+                                "local_frozen_relevant_content_hash"
+                            ],
+                            "frozen_observation_set_matched": clone_audit[
+                                "frozen_observation_set_matched"
+                            ],
+                            "missing_frozen_observation_count": clone_audit[
+                                "missing_frozen_observation_count"
+                            ],
+                            "conflicting_frozen_observation_count": clone_audit[
+                                "conflicting_frozen_observation_count"
+                            ],
                             "reference_cache_path_hash": hashlib.sha256(
                                 str(cache_source_path.resolve()).lower().encode("utf-8")
                             ).hexdigest(),
@@ -968,9 +1187,21 @@ def main() -> None:
                         raise RuntimeError(
                             f"Comparison reference clone mismatch before run: {run_dir}"
                         )
-                    cmd = [sys.executable, "-m", "multi_dataset_diverse_rl.cli"]
-                    for name, value in cfg.to_flat_dict().items():
-                        cmd.extend([f"--{name}", str(int(value) if isinstance(value, bool) else value)])
+                    child_values = _with_runner_owned_paths(
+                        cfg.to_flat_dict(),
+                        run_dir=run_dir,
+                        solver_cache_path=mutable_cache_path,
+                        frozen_manifest_path=frozen_manifest_path,
+                    )
+                    cmd = _build_child_command(child_values)
+                    _assert_runner_owned_child_command(
+                        cmd,
+                        run_dir=run_dir,
+                        frozen_manifest_path=frozen_manifest_path,
+                        comparison_reference_cache_path=(
+                            comparison_reference_cache_path
+                        ),
+                    )
                     subprocess.run(cmd, cwd=workspace, check=True)
                     metrics = _read_json(final_path)
                 run_meta = _read_json(run_dir / "run_meta.json")
