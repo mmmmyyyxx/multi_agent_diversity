@@ -297,7 +297,7 @@ def test_layer_one_guards_are_independent(kwargs, reason):
     assert reason in decision.rejection_reasons
 
 
-def test_role_only_support_and_vote_gain_rules():
+def test_role_only_positive_no_negative_support_and_vote_gain_rules():
     incumbent = candidate("incumbent")
     one = candidate(
         "one",
@@ -305,24 +305,48 @@ def test_role_only_support_and_vote_gain_rules():
             utility_delta=1, utility_total=6, deltas=(1, 0, 0), lcb=0
         ),
     )
-    assert "insufficient_lane_support" in (
-        evaluate_robust_contribution_constraints(one, incumbent).rejection_reasons
-    )
-    two = candidate(
-        "two",
+    one_decision = evaluate_robust_contribution_constraints(one, incumbent)
+    assert one_decision.passed
+    assert one_decision.minimum_support_required
+    assert one_decision.minimum_support_passed
+    assert one_decision.no_negative_support_required
+    assert one_decision.no_negative_support_passed
+    negative = candidate(
+        "negative",
         metrics=rcru_metrics(
-            utility_delta=2, utility_total=7, deltas=(1, 1, 0), lcb=0
+            utility_delta=1, utility_total=6, deltas=(2, -1, 0), lcb=0
         ),
     )
-    assert evaluate_robust_contribution_constraints(two, incumbent).passed
+    negative_decision = evaluate_robust_contribution_constraints(
+        negative, incumbent
+    )
+    assert not negative_decision.passed
+    assert "negative_lane_support" in negative_decision.rejection_reasons
+    assert negative_decision.minimum_support_passed
+    assert not negative_decision.no_negative_support_passed
+    no_positive = candidate(
+        "no-positive",
+        metrics=rcru_metrics(
+            utility_delta=1, utility_total=6, deltas=(0, 0, 0), lcb=0
+        ),
+    )
+    assert "insufficient_lane_support" in (
+        evaluate_robust_contribution_constraints(
+            no_positive, incumbent
+        ).rejection_reasons
+    )
     vote_gain = candidate(
         "vote",
         vote=9,
         metrics=rcru_metrics(
-            utility_delta=1, utility_total=6, deltas=(1, 0), lcb=-1
+            utility_delta=1, utility_total=6, deltas=(2, -1), lcb=-1
         ),
     )
-    assert evaluate_robust_contribution_constraints(vote_gain, incumbent).passed
+    vote_decision = evaluate_robust_contribution_constraints(
+        vote_gain, incumbent
+    )
+    assert vote_decision.passed
+    assert not vote_decision.no_negative_support_required
 
 
 def test_bootstrap_is_reproducible_and_can_reject_role_only_gain():

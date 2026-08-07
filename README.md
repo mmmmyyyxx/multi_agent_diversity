@@ -4,8 +4,8 @@ This repository implements Repairability-Adjusted Dual-Target Prompt-Team
 Optimization:
 
 ```text
-method_version = member_aware_peer_state_v13
-checkpoint_version = 22
+method_version = member_aware_peer_state_v14
+checkpoint_version = 23
 ```
 
 Five prompts are jointly optimized for equal-weight plurality voting. Each
@@ -39,13 +39,16 @@ repairability_discount = 1 / (1 + state-local branch failures)
 score = B * repairability_discount + 0.05 wait_hat
 ```
 
-All normalization is recomputed over the current actionable set. v13 does not
+All normalization is recomputed over the current actionable set. v14 does not
 use a target Pareto frontier and has no active freeze/unfreeze mechanism.
 State-local failure counts reset only after a real accepted team transition.
 
-S0-S2 use the common monotone target-or-vote safety rule. S3 uses the existing
-branch-local RCRU decision. Cross-branch competition never commits more than one
-member and never counts a feasible loser as a repairability failure.
+S0-S2 use the common monotone target-or-vote safety rule. S3 uses branch-local
+RCRU. For a role-only candidate (zero vote gain with positive active-lane
+progress), v14 Layer 3 requires at least one positive residual, no negative
+residual, and a non-negative paired-bootstrap LCB. Cross-branch competition
+never commits more than one member and never counts a feasible loser as a
+repairability failure.
 
 ## Main settings
 
@@ -81,7 +84,7 @@ $PY = "D:\Anaconda\envs\DL\python.exe"
 & $PY scripts\preflight_member_aware.py --workspace . --allow_dirty 1
 & $PY scripts\deterministic_repairability_selector_smoke.py
 & $PY scripts\deterministic_dual_target_competition_smoke.py
-& $PY scripts\deterministic_v13_protocol_smoke.py
+& $PY scripts\deterministic_v14_protocol_smoke.py
 & $PY scripts\deterministic_rcru_smoke.py
 & $PY scripts\deterministic_final_state_protocol_smoke.py
 git diff --check
@@ -101,7 +104,7 @@ Run the preflight before a user-authorized API experiment:
   --settings shared_static_reference,shared_full_dual_target_rcru `
   --seeds 46 `
   --dataset_format mars `
-  --out_root experiments\runs_v13_seed46
+  --out_root experiments\runs_v14_seed46
 ```
 
 Static uses no branch or candidate and performs no TCS calls. S0 uses one
@@ -113,13 +116,13 @@ The active lifecycle uses no validation selection. The final active team is
 tested once after training only. `solver_max_tokens=1800` remains fixed so
 Solver request and shared-cache identity stay stable.
 
-Checkpoint resume accepts only checkpoint v22 with exact v13 run identity.
+Checkpoint resume accepts only checkpoint v23 with exact v14 run identity.
 Older checkpoints fail rather than migrate or silently restart.
 
 ## Key artifacts
 
 In addition to the existing final summary, candidate, TCS, cost, and lifecycle
-artifacts, v13 writes:
+artifacts, v14 writes:
 
 - `repairability_adjusted_target_scores.jsonl`
 - `dual_target_branch_decisions.jsonl`

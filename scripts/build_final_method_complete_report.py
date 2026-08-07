@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Any
 
 
-REPORT_VERSION = "final_method_complete_evaluation_v13_reduced_v1"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v13_reduced_v1"
+REPORT_VERSION = "final_method_complete_evaluation_v14_reduced_v1"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v14_reduced_v1"
 ABLATION_COMPARISONS = (
     (
         "shared_static_reference",

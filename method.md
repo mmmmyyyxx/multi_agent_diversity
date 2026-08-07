@@ -6,8 +6,8 @@ The current runtime implements:
 
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
-method_version = member_aware_peer_state_v13
-checkpoint_version = 22
+method_version = member_aware_peer_state_v14
+checkpoint_version = 23
 ```
 
 The team contains five prompts and uses equal-weight plurality with
@@ -61,7 +61,7 @@ Each residual has one lane: `coverage`, `direct_flip`, or `margin_support`.
 Each member exposes one non-empty active lane and slice `A_i`. Only accepted
 updates set or switch the committed member's specialization anchor.
 
-v13 service routing never filters a member through freeze state.
+v14 service routing never filters a member through freeze state.
 
 ## 4. Repairability-adjusted target selection
 
@@ -108,7 +108,7 @@ S1-S3 select Top-2 distinct members. Top-2 degrades to Top-1 when necessary.
 An empty actionable set stops with
 `no_actionable_responsibility`.
 
-No target Pareto frontier is used in the v13 path.
+No target Pareto frontier is used in the v14 path.
 
 ## 5. State-local repairability
 
@@ -123,7 +123,7 @@ Only a committed prompt transition with a changed team hash resets all
 failure/attempt/feasible counters. Rejection, responsibility refresh, epoch
 change, checkpointing, and audit refresh do not reset them.
 
-v13 has no freeze/unfreeze state machine.
+v14 has no freeze/unfreeze state machine.
 
 ## 6. Independent target branches
 
@@ -179,6 +179,21 @@ failure counts, waits, and routing loads are not exposed.
 S0-S2 use the common monotone target-or-vote branch policy. S3 retains RCRU
 branch-local evaluation and changes no responsibility or dual-search rule.
 
+RCRU Layer 1 requires target, vote, and terminal-invalid non-regression.
+Layer 2 requires active-lane non-regression plus vote or lane progress. For a
+role-only candidate (`vote_gain = 0` and `lane_utility_delta > 0`), v14
+Layer 3 requires:
+
+```text
+positive_support_count >= 1
+negative_support_count == 0
+bootstrap_lcb >= 0
+```
+
+The three conditions mean positive evidence, no harmed assigned residual, and
+no negative paired-bootstrap evidence. Direct vote-gain candidates retain the
+frozen v13 RCRU scope and do not acquire a new support requirement.
+
 ## 8. Ablation matrix
 
 ```text
@@ -199,12 +214,12 @@ The active lifecycle performs no validation rollout or checkpoint selection.
 The final active state is selected automatically. Test executes once after
 training and never participates in optimization.
 
-Checkpoint v22 persists the state-local repairability counters, selected target
+Checkpoint v23 persists the state-local repairability counters, selected target
 IDs, target-score history, branch decisions, routing, active lanes, and anchors.
-Checkpoint v21/v12 is rejected with `checkpoint_version_mismatch`; there is no
+Checkpoint v22/v21 is rejected with `checkpoint_version_mismatch`; there is no
 migration.
 
-Sanitized v13 artifacts contain only hashes, counters, lanes, normalized
+Sanitized v14 artifacts contain only hashes, counters, lanes, normalized
 values, and decision keys. They exclude prompt/question/answer text, raw model
 output, credentials, endpoints, cache contents, checkpoints, and absolute
 paths.

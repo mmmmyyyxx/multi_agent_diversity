@@ -117,7 +117,7 @@ def test_v22_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 22
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 23
     assert payload["module_vector"]["robust_contribution_update"] is True
     assert payload["resolved_stage_a_policy"] == "matched_all_generated"
     assert payload["mutable_prompt_contract_version"] == (
@@ -235,10 +235,13 @@ def test_checkpoint_restore_rejects_contaminated_active_prompt_before_mutation(
     assert [agent.current_prompt for agent in target.agents] == original_prompts
 
 
-def test_v12_checkpoint_is_explicitly_incompatible(tmp_path):
+@pytest.mark.parametrize("legacy_version", (21, 22))
+def test_legacy_checkpoint_is_explicitly_incompatible(
+    tmp_path, legacy_version
+):
     system = build_system(tmp_path)
     payload = build_checkpoint(system, epoch_index=0, update_index=0, training_state={})
-    payload["checkpoint_version"] = 21
+    payload["checkpoint_version"] = legacy_version
     with pytest.raises(ValueError, match="checkpoint_version_mismatch"):
         restore_checkpoint(system, payload)
 
@@ -281,6 +284,9 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
         "responsibility_contribution_pareto"
     )
     assert payload["rcru_versions"]["rcru"].endswith("_v1")
+    assert payload["rcru_versions"]["robust_support"] == (
+        "paired_positive_no_negative_bootstrap_v2"
+    )
     target = PromptEnsembleOptimizationSystem(
         Config.from_flat(
             out_dir=str(tmp_path),

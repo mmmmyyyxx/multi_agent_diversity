@@ -6,6 +6,7 @@ runs_*/
 experiments/runs*/
 experiments/runs_*/
 experiments/v13_reduced_source_identity/
+experiments/v14_reduced_source_identity/
 qwen/
 artifacts/
 training_checkpoint.json

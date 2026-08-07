@@ -19,8 +19,8 @@ The current method is:
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
 
-method_version = member_aware_peer_state_v13
-checkpoint_version = 22
+method_version = member_aware_peer_state_v14
+checkpoint_version = 23
 ```
 
 The paper method has three modules:
@@ -71,8 +71,20 @@ This permits vote-only progress when target gain is zero. Under fixed peers the
 first three guards imply strict Pareto improvement in `O(Theta)`; this is a
 derived invariant, not another rejection reason.
 
-S3 retains its existing branch-local RCRU guards and ranking. Cross-branch
-competition never weakens branch-local safety.
+S3 retains branch-local RCRU ranking. For a role-only S3 candidate
+(`vote_gain = 0` and `lane_utility_delta > 0`), Layer 3 is:
+
+```text
+positive_support_count >= 1
+negative_support_count == 0
+bootstrap_lcb >= 0
+```
+
+This is versioned as
+`paired_positive_no_negative_bootstrap_v2`. Layer 1, Layer 2, the paired
+bootstrap implementation, minimal-edit ranking, and direct vote-gain scope are
+unchanged from v13. A direct vote-gain candidate does not acquire a new support
+guard. Cross-branch competition never weakens branch-local safety.
 
 ## 3. Joint voting diagnosis
 
@@ -116,7 +128,7 @@ R_i = {x : i in E_x}
 
 Every serviceable residual is routed to exactly one `q_x in E_x`, producing
 pairwise-disjoint service portfolios `P_i`. Routing uses anchor compatibility,
-lane load, total load, and stable seeded rank. v13 has no active freeze filter:
+lane load, total load, and stable seeded rank. v14 has no active freeze filter:
 all legally eligible members may receive service.
 
 Every residual has one lane:
@@ -180,7 +192,7 @@ results. Members are totally ordered by:
 )
 ```
 
-The v13 canonical path must not construct or query a target Pareto frontier.
+The v14 canonical path must not construct or query a target Pareto frontier.
 Old Pareto code may remain only for explicit legacy-v12 readers and replay
 tests.
 
@@ -217,7 +229,7 @@ Only an accepted prompt-team transition with a changed team hash resets all
 three per-agent counters. Rejection, routing refresh, epoch change, audit
 refresh, and checkpoint save do not reset them.
 
-v13 has no active freeze/unfreeze mechanism, freeze threshold, frozen portfolio
+v14 has no active freeze/unfreeze mechanism, freeze threshold, frozen portfolio
 signature, service block, or `all_actionable_members_frozen` stop.
 
 ## 5. Dual-target competitive search
@@ -391,18 +403,18 @@ authorizes API calls in that task.
 
 ## 9. Persistence and artifacts
 
-Checkpoint v22 stores branch failure/attempt/feasible counts, repairability team
+Checkpoint v23 stores branch failure/attempt/feasible counts, repairability team
 hash and reset count, selected targets, target scores, branch lifecycle,
-routing, active lanes, and anchors. A v12/v21 checkpoint fails with:
+routing, active lanes, and anchors. A v13/v22 or earlier checkpoint fails with:
 
 ```text
 checkpoint_version_mismatch
 ```
 
-There is no automatic migration and legacy freeze state must not enter a v13
+There is no automatic migration and legacy freeze state must not enter a v14
 runtime.
 
-Required v13 sanitized artifacts include:
+Required v14 sanitized artifacts include:
 
 ```text
 repairability_adjusted_target_scores.jsonl

@@ -277,7 +277,14 @@ def test_s6_writes_hash_only_rcru_candidate_audit(tmp_path):
         "raw",
     }
     for row in system.rcru_candidate_decisions:
+        assert row["artifact_schema_version"] == "rcru_candidate_decision_v2"
         assert "candidate_prompt_hash" in row
+        assert "positive_support_guard_required" in row
+        assert "positive_support_guard_passed" in row
+        assert "no_negative_support_guard_required" in row
+        assert "no_negative_support_guard_passed" in row
+        assert "bootstrap_guard_required" in row
+        assert "bootstrap_guard_passed" in row
         assert not any(
             token in key.lower() and key != "candidate_prompt_hash"
             for key in row

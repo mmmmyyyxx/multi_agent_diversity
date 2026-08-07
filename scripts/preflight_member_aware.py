@@ -119,7 +119,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         if cfg.peer_state.vote_tie_break != "abstain":
             errors.append("all canonical settings must use tie-as-abstain")
         if cfg.responsibility.member_uplift_tolerance != 5:
-            errors.append("canonical v13 member_uplift_tolerance must equal 5")
+            errors.append("canonical v14 member_uplift_tolerance must equal 5")
         if cfg.responsibility.responsibility_mode != "single_service_member_aware_v13":
             errors.append(
                 "responsibility_mode must be 'single_service_member_aware_v13'"
@@ -131,7 +131,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             or cfg.evaluation.stage_b_candidate_budget != 2
         ):
             errors.append(
-                "v13 main protocols require exactly two generated and "
+                "v14 main protocols require exactly two generated and "
                 "two Stage B candidates per target branch"
             )
     protocols = {
@@ -349,7 +349,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         )
                     ):
                         raise ValueError(
-                            "v13 main protocols require exactly two generated "
+                            "v14 main protocols require exactly two generated "
                             "and two Stage B candidates per target branch"
                         )
                     if (
@@ -357,7 +357,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         and cfg.responsibility.member_uplift_tolerance != 5
                     ):
                         raise ValueError(
-                            "canonical v13 member_uplift_tolerance must equal 5"
+                            "canonical v14 member_uplift_tolerance must equal 5"
                         )
                     if (
                         cfg.responsibility.responsibility_mode

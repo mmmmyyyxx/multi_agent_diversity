@@ -483,7 +483,7 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     raw_state = dict(payload["responsibility_state"])
     if not system.protocol.legacy_protocol:
         if _LEGACY_FREEZE_STATE_FIELDS & set(raw_state):
-            raise ValueError("v13 checkpoint contains legacy freeze state")
+            raise ValueError("v14 checkpoint contains legacy freeze state")
         defaults = ResponsibilityState()
         for field in _LEGACY_FREEZE_STATE_FIELDS:
             raw_state[field] = getattr(defaults, field)

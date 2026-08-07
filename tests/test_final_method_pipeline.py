@@ -143,7 +143,10 @@ def test_source_identity_is_hash_only_and_covers_formal_scripts():
     workspace = Path(__file__).resolve().parents[1]
     identity = build_source_identity(workspace)
     encoded = json.dumps(identity)
-    assert identity["source_identity_version"] == "final_method_source_identity_v3"
+    assert identity["source_identity_version"] == "final_method_source_identity_v4"
+    assert identity["method_identifiers"]["robust_support_version"] == (
+        "paired_positive_no_negative_bootstrap_v2"
+    )
     assert len(identity["source_tree_hash"]) == 64
     assert len(identity["git_diff_hash"]) == 64
     assert all(

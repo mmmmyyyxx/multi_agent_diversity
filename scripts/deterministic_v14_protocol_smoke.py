@@ -46,8 +46,8 @@ def _protocol(name: str):
 
 def main() -> None:
     protocols = [_protocol(name) for name in MAIN_ABLATION_SETTINGS]
-    assert METHOD_VERSION == "member_aware_peer_state_v13"
-    assert CHECKPOINT_VERSION == 22
+    assert METHOD_VERSION == "member_aware_peer_state_v14"
+    assert CHECKPOINT_VERSION == 23
     assert EXPERIMENT_MATRIX_VERSION == "reduced_three_module_ablation_v1"
     assert PROTOCOL_RESOLUTION_VERSION == (
         "reduced_three_module_protocol_resolution_v1"

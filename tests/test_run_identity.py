@@ -16,7 +16,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 
 def identity(fingerprint):
     return RunIdentity(
-        method_version="member_aware_peer_state_v13",
+        method_version="member_aware_peer_state_v14",
         experiment_setting="shared_full_dual_target_rcru",
         git_commit="commit",
         git_dirty=False,

@@ -67,7 +67,7 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v13"
+    assert cfg.training.method_version == "member_aware_peer_state_v14"
     assert cfg.training.experiment_setting == "shared_full_dual_target_rcru"
     assert cfg.training.allow_legacy_setting is False
     assert cfg.training.allow_auxiliary_setting is False
@@ -334,7 +334,7 @@ def test_run_metadata_records_module_fingerprint(tmp_path):
     system.set_run_identity(identity())
     metadata = system.run_meta()
     assert metadata["method_version"] == METHOD_VERSION
-    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 22
+    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 23
     assert metadata["experiment_matrix_version"] == EXPERIMENT_MATRIX_VERSION
     assert metadata["protocol_resolution_version"] == PROTOCOL_RESOLUTION_VERSION
     assert metadata["setting_index"] == 4

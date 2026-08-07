@@ -106,6 +106,8 @@ class RobustContributionDecision:
     vote_or_lane_progress_passed: bool
     minimum_support_required: bool
     minimum_support_passed: bool
+    no_negative_support_required: bool
+    no_negative_support_passed: bool
     bootstrap_guard_required: bool
     bootstrap_guard_passed: bool
     vote_gain: int
@@ -515,7 +517,10 @@ def evaluate_robust_contribution_constraints(
     vote_or_lane_progress = vote_gain > 0 or metrics.utility.utility_delta > 0
     role_only = vote_gain == 0 and metrics.utility.utility_delta > 0
     minimum_support_passed = (
-        not role_only or metrics.utility.positive_support_count >= 2
+        not role_only or metrics.utility.positive_support_count >= 1
+    )
+    no_negative_support_passed = (
+        not role_only or metrics.utility.negative_support_count == 0
     )
     bootstrap_passed = (
         not role_only or metrics.robust_support.bootstrap_lcb >= 0
@@ -527,6 +532,7 @@ def evaluate_robust_contribution_constraints(
         ("active_lane_regression", lane_nonregression),
         ("no_vote_or_lane_progress", vote_or_lane_progress),
         ("insufficient_lane_support", minimum_support_passed),
+        ("negative_lane_support", no_negative_support_passed),
         ("negative_lane_bootstrap_lcb", bootstrap_passed),
     )
     reasons = tuple(name for name, passed in checks if not passed)
@@ -540,6 +546,8 @@ def evaluate_robust_contribution_constraints(
         vote_or_lane_progress_passed=vote_or_lane_progress,
         minimum_support_required=role_only,
         minimum_support_passed=minimum_support_passed,
+        no_negative_support_required=role_only,
+        no_negative_support_passed=no_negative_support_passed,
         bootstrap_guard_required=role_only,
         bootstrap_guard_passed=bootstrap_passed,
         vote_gain=vote_gain,

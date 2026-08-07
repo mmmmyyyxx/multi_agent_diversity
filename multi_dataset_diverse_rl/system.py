@@ -281,6 +281,7 @@ class CandidateFunnel:
     rejected_active_lane_regression: int = 0
     rejected_no_vote_or_lane_progress: int = 0
     rejected_insufficient_lane_support: int = 0
+    rejected_negative_lane_support: int = 0
     rejected_negative_lane_bootstrap_lcb: int = 0
     acceptable_candidates: int = 0
     accepted_candidate: bool = False
@@ -391,7 +392,7 @@ class PromptEnsembleOptimizationSystem:
             )
         ):
             raise ValueError(
-                "v13 main protocols require exactly two generated and "
+                "v14 main protocols require exactly two generated and "
                 "two Stage B candidates per target branch"
             )
         if (
@@ -399,7 +400,7 @@ class PromptEnsembleOptimizationSystem:
             and cfg.responsibility.member_uplift_tolerance != 5
         ):
             raise ValueError(
-                "v13 canonical protocols require "
+                "v14 canonical protocols require "
                 "member_uplift_tolerance=5"
             )
         if (
@@ -3113,6 +3114,9 @@ class PromptEnsembleOptimizationSystem:
                     "insufficient_lane_support": (
                         "rejected_insufficient_lane_support"
                     ),
+                    "negative_lane_support": (
+                        "rejected_negative_lane_support"
+                    ),
                     "negative_lane_bootstrap_lcb": (
                         "rejected_negative_lane_bootstrap_lcb"
                     ),
@@ -3216,10 +3220,11 @@ class PromptEnsembleOptimizationSystem:
                 layer3_passed = bool(
                     layer2_passed
                     and constraint.minimum_support_passed
+                    and constraint.no_negative_support_passed
                     and constraint.bootstrap_guard_passed
                 )
                 self.rcru_candidate_decisions.append({
-                    "artifact_schema_version": "rcru_candidate_decision_v1",
+                    "artifact_schema_version": "rcru_candidate_decision_v2",
                     "update_index": int(update_index),
                     "team_state_version": int(self.team_state_version),
                     "target_agent_id": int(target_agent_id),
@@ -3237,6 +3242,24 @@ class PromptEnsembleOptimizationSystem:
                     "lane_utility_delta": utility.utility_delta,
                     "positive_support_count": utility.positive_support_count,
                     "negative_support_count": utility.negative_support_count,
+                    "positive_support_guard_required": (
+                        constraint.minimum_support_required
+                    ),
+                    "positive_support_guard_passed": (
+                        constraint.minimum_support_passed
+                    ),
+                    "no_negative_support_guard_required": (
+                        constraint.no_negative_support_required
+                    ),
+                    "no_negative_support_guard_passed": (
+                        constraint.no_negative_support_passed
+                    ),
+                    "bootstrap_guard_required": (
+                        constraint.bootstrap_guard_required
+                    ),
+                    "bootstrap_guard_passed": (
+                        constraint.bootstrap_guard_passed
+                    ),
                     "incumbent_positive_pivotal_count": (
                         coalition.incumbent_positive_pivotal_count
                     ),

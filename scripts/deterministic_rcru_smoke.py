@@ -195,6 +195,18 @@ def main() -> None:
                 edit_tokens=6,
             ),
         ),
+        "F": _candidate(
+            "candidate-f",
+            target_count=45,
+            vote_count=40,
+            metrics=_metrics(
+                delta=1,
+                supports=(2, -1, 0, 0, 0),
+                lcb=0.0,
+                contribution=0,
+                edit_tokens=3,
+            ),
+        ),
     }
     decisions = {
         name: evaluate_robust_contribution_constraints(row, incumbent)
@@ -203,8 +215,9 @@ def main() -> None:
     assert decisions["A"].passed
     assert decisions["B"].rejection_reasons == ("no_vote_or_lane_progress",)
     assert "active_lane_regression" in decisions["C"].rejection_reasons
-    assert "insufficient_lane_support" in decisions["D"].rejection_reasons
+    assert decisions["D"].passed
     assert decisions["E"].passed
+    assert "negative_lane_support" in decisions["F"].rejection_reasons
     feasible = [row for name, row in candidates.items() if decisions[name].passed]
     frontier = responsibility_contribution_pareto_front(feasible)
     selected = max(frontier, key=robust_contribution_key)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import statistics
 import sys
 from dataclasses import asdict, dataclass
@@ -24,6 +25,7 @@ from multi_dataset_diverse_rl.versions import (
     PROTOCOL_RESOLUTION_VERSION,
     REPAIRABILITY_VERSION,
     RCRU_VERSION,
+    ROBUST_SUPPORT_VERSION,
     RESPONSIBILITY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
@@ -33,7 +35,7 @@ from scripts.final_method_source_identity import build_source_identity
 from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v13_reduced_v1"
+AUDIT_VERSION = "final_method_stage_gate_v14_reduced_v1"
 AUDIT_MODES = (
     "frozen_source_execution",
     "offline_existing_artifact_revalidation",
@@ -536,10 +538,10 @@ def _audit_member_responsibility(
     for count, requirement, name in (
         (outside_eligibility, "Every assigned residual must include its target in E_x", "assignment outside eligibility"),
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
-        (scalar_order, "Target selection must follow the scalar v13 total order", "scalar-order"),
-        (scalar_formula, "Target scores must follow the frozen v13 formula", "scalar-formula"),
-        (legacy_scheduler, "v13 target selection must contain no Pareto or freeze fields", "legacy-scheduler"),
-        (freeze_artifact_rows, "v13 must emit no active freeze or unfreeze events", "freeze-event"),
+        (scalar_order, "Target selection must follow the scalar v14 total order", "scalar-order"),
+        (scalar_formula, "Target scores must follow the frozen v14 formula", "scalar-formula"),
+        (legacy_scheduler, "v14 target selection must contain no Pareto or freeze fields", "legacy-scheduler"),
+        (freeze_artifact_rows, "v14 must emit no active freeze or unfreeze events", "freeze-event"),
         (branch_counter_violation, "State-local branch counters must follow normal/operational semantics", "branch-counter"),
         (reset_violation, "Repairability counters reset only across a changed team hash", "repairability-reset"),
         (branch_parent_violation, "Dual branches must share one parent and commit at most one selected target", "dual-branch"),
@@ -655,6 +657,9 @@ def _audit_run(
         "candidate_selection_version": (
             meta.get("candidate_selection_version"), CANDIDATE_SELECTION_VERSION,
         ),
+        "robust_support_version": (
+            meta.get("robust_support_version"), ROBUST_SUPPORT_VERSION,
+        ),
         "checkpoint_version": (meta.get("checkpoint_version"), CHECKPOINT_VERSION),
         "agents": (config.get("agents"), 5),
         "train_size": (config.get("train_size"), 75),
@@ -762,6 +767,70 @@ def _audit_run(
             findings, "BLOCKER", "Experiment setting must isolate its registered module",
             f"{label}: {protocol_mismatches}", "repair protocol dispatch before continuing",
         )
+    if setting == "shared_full_dual_target_rcru":
+        robust_rows = _read_jsonl(
+            run_dir / "rcru_candidate_decisions_sanitized.jsonl"
+        )
+        robust_guard_violations = 0
+        for row in robust_rows:
+            required = bool(
+                int(row.get("vote_gain", 0)) == 0
+                and int(row.get("lane_utility_delta", 0)) > 0
+            )
+            positive_passed = (
+                not required
+                or int(row.get("positive_support_count", 0)) >= 1
+            )
+            no_negative_passed = (
+                not required
+                or int(row.get("negative_support_count", 0)) == 0
+            )
+            bootstrap_lcb = row.get("bootstrap_lcb")
+            bootstrap_passed = (
+                not required
+                or (
+                    isinstance(bootstrap_lcb, (int, float))
+                    and math.isfinite(float(bootstrap_lcb))
+                    and float(bootstrap_lcb) >= 0
+                )
+            )
+            expected_layer3 = bool(
+                row.get("layer2_passed")
+                and positive_passed
+                and no_negative_passed
+                and bootstrap_passed
+            )
+            reasons = set(map(str, row.get("rejection_reasons", [])))
+            robust_guard_violations += int(
+                row.get("artifact_schema_version")
+                != "rcru_candidate_decision_v2"
+                or bool(row.get("positive_support_guard_required"))
+                != required
+                or bool(row.get("positive_support_guard_passed"))
+                != positive_passed
+                or bool(row.get("no_negative_support_guard_required"))
+                != required
+                or bool(row.get("no_negative_support_guard_passed"))
+                != no_negative_passed
+                or bool(row.get("bootstrap_guard_required")) != required
+                or bool(row.get("bootstrap_guard_passed"))
+                != bootstrap_passed
+                or bool(row.get("layer3_passed")) != expected_layer3
+                or ("insufficient_lane_support" in reasons)
+                != (not positive_passed)
+                or ("negative_lane_support" in reasons)
+                != (not no_negative_passed)
+                or ("negative_lane_bootstrap_lcb" in reasons)
+                != (not bootstrap_passed)
+            )
+        if robust_guard_violations:
+            _finding(
+                findings,
+                "BLOCKER",
+                "S3 artifacts must implement the v14 robust-support guard",
+                f"{label}: robust_guard_violations={robust_guard_violations}",
+                "stop and repair Layer-3 guard accounting before continuing",
+            )
 
     if frozen.get("matched") is not True:
         _finding(

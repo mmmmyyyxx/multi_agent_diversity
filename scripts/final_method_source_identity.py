@@ -25,6 +25,7 @@ from multi_dataset_diverse_rl.versions import (
     PROTOCOL_RESOLUTION_VERSION,
     REPAIRABILITY_VERSION,
     RCRU_VERSION,
+    ROBUST_SUPPORT_VERSION,
     RESPONSIBILITY_VERSION,
     SERVICE_ROUTING_VERSION,
     TARGET_SELECTION_VERSION,
@@ -42,7 +43,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 )
 
 
-SOURCE_IDENTITY_VERSION = "final_method_source_identity_v3"
+SOURCE_IDENTITY_VERSION = "final_method_source_identity_v4"
 SOURCE_ROOTS = (
     "AGENTS.md",
     "README.md",
@@ -133,6 +134,7 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
             "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
             "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
             "rcru_version": RCRU_VERSION,
+            "robust_support_version": ROBUST_SUPPORT_VERSION,
             "mutable_prompt_contract_version": MUTABLE_PROMPT_CONTRACT_VERSION,
             "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
             "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
