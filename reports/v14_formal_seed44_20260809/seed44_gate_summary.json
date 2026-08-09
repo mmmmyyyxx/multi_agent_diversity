@@ -1,0 +1,303 @@
+{
+  "artifact_schema_version": "v14_seed44_intermediate_gate_v1",
+  "seed": 44,
+  "seed44_formal_execution": "COMPLETE",
+  "protocol_gate": "PASS",
+  "module1": {
+    "status": "PASS",
+    "score_rows": 152,
+    "protocol_valid_candidates": 79,
+    "stage_b_candidates": 79,
+    "feasible_branch_count": 7,
+    "safety_pass_candidates": 9,
+    "accepted_updates": 5,
+    "selector_violations": 0,
+    "parent_state_violations": 0,
+    "branch_count_violations": 0,
+    "duplicate_target_selections": 0,
+    "distinct_selected_agents": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "selector_collapse_warning": false
+  },
+  "module2": {
+    "status": "PASS",
+    "conditioned_context_count": 64,
+    "context_violations": 0,
+    "protocol_valid_candidates": 68,
+    "stage_b_candidates": 68,
+    "safety_pass_candidates": 5,
+    "accepted_updates": 4
+  },
+  "module3": {
+    "status": "PASS",
+    "rcru_evaluated": 43,
+    "stage_b_candidates": 43,
+    "layer1_pass": 11,
+    "layer2_pass": 10,
+    "layer3_pass": 10,
+    "selected_candidates": 8,
+    "accepted_updates": 7,
+    "nonfinite_bootstrap": 0,
+    "nonfinite_utility_or_contribution": 0,
+    "accepted_safety_violations": 0
+  },
+  "full_method": {
+    "status": "PASS",
+    "objective_regression_violations": 0,
+    "multiple_commit_violations": 0,
+    "distinct_selected_agents": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "distinct_committed_agents": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "real_cross_branch_competition_count": 1,
+    "target_concentration_warning": false,
+    "commit_concentration_warning": false
+  },
+  "execution": {
+    "complete_run_count": 5,
+    "blocker_count": 0,
+    "major_count": 0,
+    "infrastructure_failed_updates": 0,
+    "nonfinite_artifact_values": 0,
+    "child_cache_path_violations": 0,
+    "cache_chain": [
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_static_reference",
+        "chain_continuity": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_generic_evolution",
+        "chain_continuity": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_member_aware_dual_target",
+        "chain_continuity": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_responsibility_conditioned_dual_target",
+        "chain_continuity": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_full_dual_target_rcru",
+        "chain_continuity": true
+      }
+    ],
+    "matched_observation_consistency": [
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_generic_evolution",
+        "unchanged_member_ids": [
+          4
+        ],
+        "mismatched_unchanged_member_ids": [],
+        "exact_unchanged_team": false,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_member_aware_dual_target",
+        "unchanged_member_ids": [],
+        "mismatched_unchanged_member_ids": [],
+        "exact_unchanged_team": false,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_responsibility_conditioned_dual_target",
+        "unchanged_member_ids": [
+          0,
+          2
+        ],
+        "mismatched_unchanged_member_ids": [],
+        "exact_unchanged_team": false,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "setting": "shared_full_dual_target_rcru",
+        "unchanged_member_ids": [
+          3
+        ],
+        "mismatched_unchanged_member_ids": [],
+        "exact_unchanged_team": false,
+        "passed": true
+      }
+    ],
+    "setting_isolation": [
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "comparison": "shared_static_reference__vs__shared_generic_evolution",
+        "expected_protocol_differences": [
+          "candidate_acceptance_policy",
+          "candidate_ranking_policy",
+          "candidate_selection_policy",
+          "optimization_enabled",
+          "sample_pool_policy",
+          "stage_a_policy",
+          "target_selection_policy",
+          "tcs_context_policy"
+        ],
+        "actual_protocol_differences": [
+          "candidate_acceptance_policy",
+          "candidate_ranking_policy",
+          "candidate_selection_policy",
+          "optimization_enabled",
+          "sample_pool_policy",
+          "stage_a_policy",
+          "target_selection_policy",
+          "tcs_context_policy"
+        ],
+        "substantive_match": true,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "comparison": "shared_generic_evolution__vs__shared_member_aware_dual_target",
+        "expected_protocol_differences": [
+          "responsibility_refresh_policy",
+          "sample_pool_policy",
+          "service_routing_enabled",
+          "target_selection_policy",
+          "tcs_context_policy"
+        ],
+        "actual_protocol_differences": [
+          "responsibility_refresh_policy",
+          "sample_pool_policy",
+          "service_routing_enabled",
+          "target_selection_policy",
+          "tcs_context_policy"
+        ],
+        "substantive_match": true,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "comparison": "shared_member_aware_dual_target__vs__shared_responsibility_conditioned_dual_target",
+        "expected_protocol_differences": [
+          "tcs_context_policy"
+        ],
+        "actual_protocol_differences": [
+          "tcs_context_policy"
+        ],
+        "substantive_match": true,
+        "passed": true
+      },
+      {
+        "task": "disambiguation_qa",
+        "seed": 44,
+        "comparison": "shared_responsibility_conditioned_dual_target__vs__shared_full_dual_target_rcru",
+        "expected_protocol_differences": [
+          "candidate_acceptance_policy",
+          "candidate_ranking_policy",
+          "candidate_selection_policy"
+        ],
+        "actual_protocol_differences": [
+          "candidate_acceptance_policy",
+          "candidate_ranking_policy",
+          "candidate_selection_policy"
+        ],
+        "substantive_match": true,
+        "passed": true
+      }
+    ]
+  },
+  "performance": {
+    "gate_use": false,
+    "reason": "Seed44 formal test metrics are report-only",
+    "settings": {
+      "shared_static_reference": {
+        "vote_correct_count": 92,
+        "vote_accuracy": 0.736,
+        "per_agent_correct_counts": [
+          92,
+          92,
+          92,
+          92,
+          92
+        ],
+        "mean_individual_accuracy": 0.736
+      },
+      "shared_generic_evolution": {
+        "vote_correct_count": 101,
+        "vote_accuracy": 0.808,
+        "per_agent_correct_counts": [
+          105,
+          98,
+          96,
+          103,
+          92
+        ],
+        "mean_individual_accuracy": 0.7904
+      },
+      "shared_member_aware_dual_target": {
+        "vote_correct_count": 102,
+        "vote_accuracy": 0.816,
+        "per_agent_correct_counts": [
+          104,
+          92,
+          94,
+          101,
+          95
+        ],
+        "mean_individual_accuracy": 0.7776
+      },
+      "shared_responsibility_conditioned_dual_target": {
+        "vote_correct_count": 100,
+        "vote_accuracy": 0.8,
+        "per_agent_correct_counts": [
+          92,
+          97,
+          92,
+          98,
+          103
+        ],
+        "mean_individual_accuracy": 0.7712
+      },
+      "shared_full_dual_target_rcru": {
+        "vote_correct_count": 99,
+        "vote_accuracy": 0.792,
+        "per_agent_correct_counts": [
+          94,
+          103,
+          93,
+          92,
+          93
+        ],
+        "mean_individual_accuracy": 0.76
+      }
+    }
+  },
+  "seed44_test_used_for_gate": false,
+  "formal_continuation": "GO_SEEDS_45_46"
+}
