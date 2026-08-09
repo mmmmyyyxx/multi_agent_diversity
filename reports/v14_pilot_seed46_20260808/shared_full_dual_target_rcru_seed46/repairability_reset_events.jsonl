@@ -1,0 +1,1 @@
+{"artifact_schema_version": "repairability_reset_event_v1", "update_index": 4, "old_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89", "new_team_hash": "dc97e15bb2846936fa4568685864e5637d7a3c7f3bb139db5bf57a628e5b19cf", "failure_counts_before": {"0": 1, "1": 2, "2": 3, "3": 2, "4": 1}, "reset_count": 1}
