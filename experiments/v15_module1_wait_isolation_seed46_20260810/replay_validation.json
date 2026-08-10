@@ -1,0 +1,14 @@
+{
+  "API_CALLS": 0,
+  "BASELINE_REPLAY": "PASS",
+  "Task1_Module3_policy_used": false,
+  "baseline_mismatch_count": 0,
+  "fixed_actual_trajectory": true,
+  "history_uses_prior_actual_outcomes_only": true,
+  "settings": [
+    "S1",
+    "S2",
+    "S3"
+  ],
+  "updates_per_setting": 32
+}

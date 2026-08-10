@@ -1,0 +1,30 @@
+{
+  "R0": {
+    "formula": "B*rho_state+0.05*normalized_wait",
+    "name": "V14_WAIT_BYPASS_BASELINE"
+  },
+  "W1": {
+    "formula": "(B+0.05*normalized_wait)*rho_state",
+    "isolates": "wait_placement",
+    "name": "WAIT_PLACEMENT_ONLY",
+    "persistent_state": []
+  },
+  "W2": {
+    "formula": "(B*r_beta+0.05*normalized_wait)*rho_state",
+    "isolates_vs_W1": "persistent_feasible_rate",
+    "name": "WAIT_PLACEMENT_PLUS_BETA_REALIZABILITY",
+    "r_beta": "(persistent_feasible+1)/(persistent_attempt+2)"
+  },
+  "W3": {
+    "formula": "(B*rho_cross+0.05*normalized_wait)*rho_state",
+    "isolates_vs_W1": "consecutive_failure_discount",
+    "name": "WAIT_PLACEMENT_PLUS_CONSECUTIVE_REALIZABILITY",
+    "rho_cross": "1/(1+persistent_consecutive_normal_failure)"
+  },
+  "shared": {
+    "actual_trajectory_fixed": true,
+    "future_leakage": false,
+    "hard_freeze": false,
+    "test_used": false
+  }
+}
