@@ -1,0 +1,17 @@
+setting,update,agent,lane,candidate_hash,target_gain,vote_gain,vote_gain_count,vote_loss_count,lane_delta,positive_support,negative_support,bootstrap,coalition_delta,coverage_only_improvements,margin_progress_no_flip,boundary_crosses,train_vote_before,train_vote_after,lane_only_commit,member_only_commit
+S2,0,1,coverage,8d9382177d99ddc96ad86a4b45080f4ab18f400dff5b3a74bafc230344ce8e4e,6,0,0,0,,,,,,10,11,0,50,50,False,True
+S2,1,3,margin_support,b0fe1457ca8b410d7d9e9bfe756e723166bae001cb3bf21ffc6ca66d39433176,2,0,0,0,,,,,,8,9,0,50,50,False,True
+S2,2,0,direct_flip,c9899348fbdb539ea9ee27ed478c90b57f84b8c1858f724fc4247aaba76eaec1,5,4,5,1,,,,,,4,7,5,50,54,False,False
+S2,3,4,direct_flip,03a6d8d45bf14a161b0d2fa68d23b84be47379712ce1699262947a9904b390c3,5,1,1,0,,,,,,2,3,1,54,55,False,False
+S2,4,2,direct_flip,75a9a4861bc3a5df7b67e5666afa4c30e34052c56fff52ff8162ab325c5c3dbf,3,1,3,2,,,,,,2,2,3,55,56,False,False
+S2,9,3,margin_support,e967044a25481bcfabc3825d9cf3704fcf1ac90965c270842606dc199ed8467a,4,1,1,0,,,,,,0,0,1,56,57,False,False
+S2,13,2,direct_flip,1755df28d004ee21cfdaf49d1f0b6ba3de32eb090b3a3d689c0590e5b6d020e4,4,0,2,2,,,,,,0,0,2,57,57,False,True
+S2,15,2,direct_flip,762ee91b645186fa6cdf6562a5b5b13a4b504d3c7a6eb2ff5405156aefe73fd4,3,3,3,0,,,,,,0,0,3,57,60,False,False
+S2,22,3,margin_support,53f94fbb86fc7ebd2e946f5956986568a63a49721d77994c249d789d955e61fc,1,0,0,0,,,,,,0,0,0,60,60,False,True
+S3,0,2,coverage,36b98fddfb7598504c03334b8da0bad80da8f97ab891fe47365bf682d76676d8,3,0,0,0,3,3,0,0.4,0,7,9,0,50,50,False,True
+S3,1,3,margin_support,df6439f1830a942a711c6b243c7911195f8bdde07a154023ec275870193f644b,1,0,0,0,4,2,0,2.0,0,8,9,0,50,50,False,True
+S3,2,0,direct_flip,82dc58fb77f2ff7f8387151fabbeb14d15960d17888635337e836fee9b0e2c98,10,5,5,0,2,2,0,1.0,5,8,11,5,50,55,False,False
+S3,4,3,margin_support,bdea0b744147bb10dc2c3f0e2d25dbf113ebb0c83f2db8a5e75ce791f41b706e,4,2,2,0,0,0,0,0.0,2,0,1,2,55,57,False,False
+S3,7,2,coverage,2caa00e628b86f7bfa5b9eca813712cc25eed358b20ff1d2a9db300302b6f6bc,3,0,0,0,2,2,0,0.0,0,2,2,0,57,57,False,True
+S3,8,3,margin_support,b10043cd0813196a6d7130d126ff35f75640e05cee04f219e2b542328f87418c,0,0,0,0,3,2,0,0.125,0,1,2,0,57,57,True,False
+S3,12,2,coverage,d7e2c850912d91764c92137c520ea7c01dbc360e03d81c62d445ee46af3fa8a3,1,1,1,0,0,0,0,0.0,1,0,0,1,57,58,False,False

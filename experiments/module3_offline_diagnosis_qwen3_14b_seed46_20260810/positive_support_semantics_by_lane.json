@@ -1,0 +1,33 @@
+{
+  "all_lanes": {
+    "boundary_cross": 10,
+    "coverage_margin_overlap": 30,
+    "coverage_only": 30,
+    "margin_progress_no_flip": 4,
+    "positive_support": 44
+  },
+  "by_lane": {
+    "coverage": {
+      "coverage_margin_overlap": 18,
+      "coverage_only": 18,
+      "positive_support": 18
+    },
+    "direct_flip": {
+      "boundary_cross": 10,
+      "positive_support": 10
+    },
+    "margin_support": {
+      "coverage_margin_overlap": 12,
+      "coverage_only": 12,
+      "margin_progress_no_flip": 4,
+      "positive_support": 16
+    }
+  },
+  "classification_note": "Categories are exclusive in the order boundary_cross, coverage_only, margin_progress_no_flip, already_correct_strengthening, other; the coverage_margin_overlap diagnostic reports the underlying overlap.",
+  "coverage_majority_transitions": {
+    "0->1": 18
+  },
+  "coverage_vote_outcomes": {
+    "still_vote_wrong": 18
+  }
+}

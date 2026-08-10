@@ -1,0 +1,28 @@
+{
+  "COUNTERFACTUAL_REPLAY_VALIDATION": "PASS",
+  "RCRU_REPLAY_VALIDATION": "PASS",
+  "function_source_hashes": {
+    "common_cross_branch_transition_key": "73eb5c2aaf5747d2bb409c9cd3460a70348562b260845ab8d40cbf3f362e18ad",
+    "common_monotone_safe_key": "73c32019d6bd0b8894456893f0a2f0cc315bb067060d7624eed1daecf876db2b",
+    "evaluate_constraints": "4078d7e5e387038e1dbbb42eb319c65a96d100c3e04bda857f0bba1bdbdb994c",
+    "evaluate_robust_contribution_constraints": "d1c83025e21691b81c9a27e8d29c4c2e76235b9ebf67d139b932cc0b8780d075",
+    "rcru_cross_branch_transition_key": "a0cda40a624fbe988a76b288c1052d81d71b7ebdcea62cf65897702c434fdf33",
+    "responsibility_utility": "ffdef15906a2d3ca6621c45bbf7b7911229b2af82dae9de3a9109e92fa00b070",
+    "responsibility_utility_metrics": "41e9328880b1686b36a8f7f81a747d920727106e79c562f9fecd26e302a4d0f8",
+    "robust_contribution_key": "95bec4f06252796c05de8aacc954e21c0984b4b977c424ea1b1761be6608f3d8",
+    "stage_a_multichannel_shortlist": "b89edef72286abac57d580c1a6869b68a6b4a466cd50fb7b804cd6695c716e68",
+    "stage_a_rcru_shortlist": "8c305a6c6e6128e2e9127524c8933ed2e7efff33ad7252b9549a293a43476bcb"
+  },
+  "s2": {
+    "branch_mismatches": [],
+    "constraint_mismatches": [],
+    "global_mismatches": [],
+    "parent_prompt_mismatches": []
+  },
+  "s3": {
+    "branch_mismatches": [],
+    "constraint_mismatches": [],
+    "global_mismatches": [],
+    "parent_prompt_mismatches": []
+  }
+}

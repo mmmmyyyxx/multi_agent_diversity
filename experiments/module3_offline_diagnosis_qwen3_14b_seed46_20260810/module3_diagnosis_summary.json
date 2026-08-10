@@ -1,0 +1,924 @@
+{
+  "AGENT1_ZERO_COMMIT_PRIMARY_CAUSE": "COMMON_SAFETY",
+  "AGENT4_ZERO_COMMIT_PRIMARY_CAUSE": "COMMON_SAFETY",
+  "API_CALLS": 0,
+  "BOTH_FEASIBLE_CANDIDATE_COUNT": 11,
+  "COMMON_ONLY_CANDIDATE_COUNT": 2,
+  "COMMON_ONLY_TARGET_GAIN_NO_VOTE_NO_LANE_COUNT": 2,
+  "COUNTERFACTUAL_GLOBAL_WINNER_CHANGED_UPDATES": 4,
+  "MARGIN_UTILITY_SATURATION_OBSERVED": false,
+  "MODULE3_DIAGNOSIS": "COMPLETE",
+  "NEITHER_FEASIBLE_CANDIDATE_COUNT": 72,
+  "PRIMARY_FACTOR_COMPONENTS": [
+    "FEASIBILITY_MISALIGNMENT",
+    "RANKING_MISALIGNMENT",
+    "BOUNDARY_CREDIT_MISALIGNMENT"
+  ],
+  "PRIMARY_MODULE3_FAILURE_MODE": "MIXED",
+  "RCRU_LANE_ONLY_COMMIT_COUNT": 1,
+  "RCRU_ONLY_CANDIDATE_COUNT": 3,
+  "RCRU_ONLY_LANE_ONLY_CANDIDATE_COUNT": 3,
+  "RCRU_POSITIVE_SUPPORT_BOUNDARY_CROSS_FRACTION": 0.22727272727272727,
+  "RCRU_POSITIVE_SUPPORT_PREBOUNDARY_FRACTION": 0.7727272727272727,
+  "S2_BOUNDARY_CROSS_COUNT": 15,
+  "S3_BOUNDARY_CROSS_COUNT": 8,
+  "SECONDARY_CONFOUNDED_SIGNALS": [
+    "GENERATION_ATTRITION"
+  ],
+  "V15_DESIGN_CHANGE_AUTHORIZED": false,
+  "accepted_transition_summary": {
+    "S2": {
+      "accepted_updates": 9,
+      "boundary_cross_count": 15,
+      "coverage_only_count": 26,
+      "final_train_vote": 60,
+      "initial_train_vote": 50,
+      "lane_only_commit_count": 0,
+      "margin_progress_no_flip_count": 32,
+      "member_only_commit_count": 4,
+      "net_train_vote_gain": 10,
+      "total_vote_gains": 15,
+      "total_vote_losses": 5
+    },
+    "S3": {
+      "accepted_updates": 7,
+      "boundary_cross_count": 8,
+      "coverage_only_count": 26,
+      "final_train_vote": 58,
+      "initial_train_vote": 50,
+      "lane_only_commit_count": 1,
+      "margin_progress_no_flip_count": 34,
+      "member_only_commit_count": 3,
+      "net_train_vote_gain": 8,
+      "total_vote_gains": 8,
+      "total_vote_losses": 0
+    }
+  },
+  "agent_attrition": [
+    {
+      "agent": 0,
+      "branch_produced_candidates": 1,
+      "branch_winner": 1,
+      "commit": 1,
+      "competition_loser": 0,
+      "layer1_pass": 2,
+      "layer2_pass": 2,
+      "layer3_pass": 2,
+      "selected": 1,
+      "stage_b_candidates": 2
+    },
+    {
+      "agent": 1,
+      "branch_produced_candidates": 16,
+      "branch_winner": 1,
+      "commit": 0,
+      "competition_loser": 1,
+      "layer1_pass": 1,
+      "layer2_pass": 1,
+      "layer3_pass": 1,
+      "selected": 17,
+      "stage_b_candidates": 31
+    },
+    {
+      "agent": 2,
+      "branch_produced_candidates": 9,
+      "branch_winner": 4,
+      "commit": 3,
+      "competition_loser": 1,
+      "layer1_pass": 8,
+      "layer2_pass": 5,
+      "layer3_pass": 5,
+      "selected": 18,
+      "stage_b_candidates": 17
+    },
+    {
+      "agent": 3,
+      "branch_produced_candidates": 7,
+      "branch_winner": 3,
+      "commit": 3,
+      "competition_loser": 0,
+      "layer1_pass": 8,
+      "layer2_pass": 6,
+      "layer3_pass": 6,
+      "selected": 14,
+      "stage_b_candidates": 12
+    },
+    {
+      "agent": 4,
+      "branch_produced_candidates": 13,
+      "branch_winner": 0,
+      "commit": 0,
+      "competition_loser": 0,
+      "layer1_pass": 0,
+      "layer2_pass": 0,
+      "layer3_pass": 0,
+      "selected": 14,
+      "stage_b_candidates": 26
+    }
+  ],
+  "boundary_transition_summary": {
+    "accepted_transition_summary": {
+      "S2": {
+        "accepted_updates": 9,
+        "boundary_cross_count": 15,
+        "coverage_only_count": 26,
+        "final_train_vote": 60,
+        "initial_train_vote": 50,
+        "lane_only_commit_count": 0,
+        "margin_progress_no_flip_count": 32,
+        "member_only_commit_count": 4,
+        "net_train_vote_gain": 10,
+        "total_vote_gains": 15,
+        "total_vote_losses": 5
+      },
+      "S3": {
+        "accepted_updates": 7,
+        "boundary_cross_count": 8,
+        "coverage_only_count": 26,
+        "final_train_vote": 58,
+        "initial_train_vote": 50,
+        "lane_only_commit_count": 1,
+        "margin_progress_no_flip_count": 34,
+        "member_only_commit_count": 3,
+        "net_train_vote_gain": 8,
+        "total_vote_gains": 8,
+        "total_vote_losses": 0
+      }
+    },
+    "coalition_alignment": {
+      "all_candidates": {
+        "count": 88,
+        "lane_only_candidates": 3,
+        "lane_positive_coalition_zero": 11,
+        "lane_positive_coalition_zero_fraction": 0.125,
+        "vote_gain_candidates": 6
+      },
+      "branch_winners": {
+        "count": 9,
+        "lane_only_candidates": 2,
+        "lane_positive_coalition_zero": 5,
+        "lane_positive_coalition_zero_fraction": 0.5555555555555556,
+        "vote_gain_candidates": 4
+      },
+      "global_commits": {
+        "count": 7,
+        "lane_only_candidates": 1,
+        "lane_positive_coalition_zero": 4,
+        "lane_positive_coalition_zero_fraction": 0.5714285714285714,
+        "vote_gain_candidates": 3
+      },
+      "rcru_feasible": {
+        "count": 14,
+        "lane_only_candidates": 3,
+        "lane_positive_coalition_zero": 8,
+        "lane_positive_coalition_zero_fraction": 0.5714285714285714,
+        "vote_gain_candidates": 6
+      }
+    },
+    "five_agent_majority_note": "G 2->3 is reported separately and is not the sole plurality boundary.",
+    "margin_utility_saturation": {
+      "cross_boundary_count": 0,
+      "saturation_observed": false,
+      "saturation_witness_group_count": 0,
+      "tie_at_boundary_count": 4,
+      "witness_groups": [],
+      "witnesses": []
+    },
+    "plurality_boundary_definition": "M0 <= 0 and M1 > 0",
+    "positive_support": {
+      "all_lanes": {
+        "boundary_cross": 10,
+        "coverage_margin_overlap": 30,
+        "coverage_only": 30,
+        "margin_progress_no_flip": 4,
+        "positive_support": 44
+      },
+      "by_lane": {
+        "coverage": {
+          "coverage_margin_overlap": 18,
+          "coverage_only": 18,
+          "positive_support": 18
+        },
+        "direct_flip": {
+          "boundary_cross": 10,
+          "positive_support": 10
+        },
+        "margin_support": {
+          "coverage_margin_overlap": 12,
+          "coverage_only": 12,
+          "margin_progress_no_flip": 4,
+          "positive_support": 16
+        }
+      },
+      "classification_note": "Categories are exclusive in the order boundary_cross, coverage_only, margin_progress_no_flip, already_correct_strengthening, other; the coverage_margin_overlap diagnostic reports the underlying overlap.",
+      "coverage_majority_transitions": {
+        "0->1": 18
+      },
+      "coverage_vote_outcomes": {
+        "still_vote_wrong": 18
+      }
+    },
+    "ranking_alignment": {
+      "branch_count_with_at_least_two_rcru_feasible_candidates": 5,
+      "candidate_rank_observation_count": 10,
+      "interpretation_limit": "Rank correlations concatenate branch-local ranks and are descriptive, not causal; most branches contain at most two candidates.",
+      "rcru_winner_agreement_count": {
+        "boundary_cross_count": 4,
+        "common_policy": 2,
+        "lane_utility_delta": 4,
+        "preboundary_delta_M": 3,
+        "target_gain": 3,
+        "vote_gain": 4
+      },
+      "spearman_on_concatenated_branch_local_ranks": {
+        "boundary_cross_count": 0.4472135954999579,
+        "common": -0.19999999999999996,
+        "lane_utility_delta": 0.6324555320336759,
+        "preboundary_delta_M": 0.19999999999999996,
+        "target_gain": 0.0,
+        "vote_gain": 0.4472135954999579
+      }
+    }
+  },
+  "candidate_feasibility_classes": {
+    "A_BOTH": 11,
+    "B_COMMON_ONLY": 2,
+    "C_RCRU_ONLY": 3,
+    "D_NEITHER": 72
+  },
+  "changed_update_count": 4,
+  "counterfactual_objective_regret": {
+    "common_commits_rcru_rejects_all": 1,
+    "common_winner_higher_vote_gain": 1,
+    "rcru_lane_only_common_target_improving": 1,
+    "same_vote_gain_common_higher_target_gain": 2
+  },
+  "counterfactual_scope": "S3_STAGE_B_FIXED_POOL_COMMON_POLICY_COUNTERFACTUAL; ONE-STEP DECISION-POLICY COUNTERFACTUAL, NOT A FULL ALTERNATIVE TRAINING TRAJECTORY.",
+  "failure_decomposition": {
+    "per_agent": {
+      "0": {
+        "common_counterfactual_candidate_rejection_reasons": {},
+        "event_outcome_percent_of_selected": {
+          "COMMIT": 1.0
+        },
+        "event_outcomes": {
+          "COMMIT": 1
+        },
+        "generation_terminal_reasons": {},
+        "rcru_candidate_rejection_reasons": {}
+      },
+      "1": {
+        "common_counterfactual_candidate_rejection_reasons": {
+          "no_target_or_vote_progress": 17,
+          "target_regression": 15,
+          "team_vote_regression": 27
+        },
+        "event_outcome_percent_of_selected": {
+          "COMMON_SAFETY_FAILURE": 0.8823529411764706,
+          "CROSS_BRANCH_COMPETITION_LOSS": 0.058823529411764705,
+          "GENERATION_FAILURE": 0.058823529411764705
+        },
+        "event_outcomes": {
+          "COMMON_SAFETY_FAILURE": 15,
+          "CROSS_BRANCH_COMPETITION_LOSS": 1,
+          "GENERATION_FAILURE": 1
+        },
+        "generation_terminal_reasons": {
+          "critic_semantic_rejection_exhausted": 1
+        },
+        "rcru_candidate_rejection_reasons": {
+          "no_vote_or_lane_progress": 24,
+          "target_regression": 15,
+          "team_vote_regression": 27
+        }
+      },
+      "2": {
+        "common_counterfactual_candidate_rejection_reasons": {
+          "no_target_or_vote_progress": 13,
+          "target_regression": 9,
+          "team_vote_regression": 7
+        },
+        "event_outcome_percent_of_selected": {
+          "COMMIT": 0.16666666666666666,
+          "COMMON_SAFETY_FAILURE": 0.2777777777777778,
+          "CROSS_BRANCH_COMPETITION_LOSS": 0.05555555555555555,
+          "GENERATION_FAILURE": 0.5
+        },
+        "event_outcomes": {
+          "COMMIT": 3,
+          "COMMON_SAFETY_FAILURE": 5,
+          "CROSS_BRANCH_COMPETITION_LOSS": 1,
+          "GENERATION_FAILURE": 9
+        },
+        "generation_terminal_reasons": {
+          "critic_semantic_rejection_exhausted": 9
+        },
+        "rcru_candidate_rejection_reasons": {
+          "no_vote_or_lane_progress": 9,
+          "target_regression": 9,
+          "team_vote_regression": 7
+        }
+      },
+      "3": {
+        "common_counterfactual_candidate_rejection_reasons": {
+          "no_target_or_vote_progress": 6,
+          "target_regression": 3,
+          "team_vote_regression": 4
+        },
+        "event_outcome_percent_of_selected": {
+          "COMMIT": 0.21428571428571427,
+          "COMMON_SAFETY_FAILURE": 0.21428571428571427,
+          "GENERATION_FAILURE": 0.5,
+          "RCRU_LANE_FAILURE": 0.07142857142857142
+        },
+        "event_outcomes": {
+          "COMMIT": 3,
+          "COMMON_SAFETY_FAILURE": 3,
+          "GENERATION_FAILURE": 7,
+          "RCRU_LANE_FAILURE": 1
+        },
+        "generation_terminal_reasons": {
+          "critic_semantic_rejection_exhausted": 7
+        },
+        "rcru_candidate_rejection_reasons": {
+          "no_vote_or_lane_progress": 5,
+          "target_regression": 3,
+          "team_vote_regression": 4
+        }
+      },
+      "4": {
+        "common_counterfactual_candidate_rejection_reasons": {
+          "no_target_or_vote_progress": 6,
+          "target_regression": 6,
+          "team_vote_regression": 26
+        },
+        "event_outcome_percent_of_selected": {
+          "COMMON_SAFETY_FAILURE": 0.9285714285714286,
+          "GENERATION_FAILURE": 0.07142857142857142
+        },
+        "event_outcomes": {
+          "COMMON_SAFETY_FAILURE": 13,
+          "GENERATION_FAILURE": 1
+        },
+        "generation_terminal_reasons": {
+          "critic_semantic_rejection_exhausted": 1
+        },
+        "rcru_candidate_rejection_reasons": {
+          "no_vote_or_lane_progress": 20,
+          "target_regression": 6,
+          "team_vote_regression": 26
+        }
+      }
+    }
+  },
+  "formal_results": {
+    "S0": {
+      "accepted": 4,
+      "test_vote": 90,
+      "train_vote": 55
+    },
+    "S1": {
+      "accepted": 6,
+      "test_vote": 90,
+      "train_vote": 55
+    },
+    "S2": {
+      "accepted": 9,
+      "test_vote": 93,
+      "train_vote": 60
+    },
+    "S3": {
+      "accepted": 7,
+      "test_vote": 87,
+      "train_vote": 58
+    },
+    "Static": {
+      "test_vote": 85,
+      "train_vote": 50
+    }
+  },
+  "generation_comparison": {
+    "S2": {
+      "normal_failure_branches": 51,
+      "operational_failure_branches": 1,
+      "selected_branches": 64,
+      "stage_b_candidates": 90,
+      "zero_candidate_branches": 11
+    },
+    "S3": {
+      "normal_failure_branches": 55,
+      "operational_failure_branches": 0,
+      "selected_branches": 64,
+      "stage_b_candidates": 88,
+      "zero_candidate_branches": 18
+    },
+    "interpretation": "S2/S3 generation totals come from different realized training trajectories and are a secondary, confounded signal; fixed-pool replay does not attribute the S2-S3 gap to generation."
+  },
+  "identity": {
+    "checkpoint_version": 23,
+    "formal_protocol_gate": "PASS",
+    "method_version": "member_aware_peer_state_v14",
+    "model": "qwen3-14b",
+    "report_commit": "ce58803a4314152f0fa62211edc3335ba1bcc524",
+    "run_source_commit": "e5bdc9f27f7a5594072aafd828c7c6053297c03c",
+    "run_source_tree_hash": "9b38c5fbf3519481e0ab02faee5d69f71e674449eb478698d295475428723ceb",
+    "seed": 46,
+    "task": "disambiguation_qa"
+  },
+  "repeated_target_timeline": [
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 5,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.3,
+      "failure_reasons": "target_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 0
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 2,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 1,
+      "event_outcome": "CROSS_BRANCH_COMPETITION_LOSS",
+      "expected_update_value": 0.525,
+      "failure_reasons": "cross_branch_competition_loser|target_regression",
+      "rcru_passed_candidate_count": 1,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 2
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.7,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 3
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.265,
+      "failure_reasons": "target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 1,
+      "update_index": 6
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 0,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "GENERATION_FAILURE",
+      "expected_update_value": 0.75,
+      "failure_reasons": "critic_semantic_rejection_exhausted",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 1,
+      "update_index": 9
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 1,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.35,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.5,
+      "target_rank": 1,
+      "update_index": 10
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 2,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.2333333333333333,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.3333333333333333,
+      "target_rank": 2,
+      "update_index": 11
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 3,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.175,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.25,
+      "target_rank": 2,
+      "update_index": 12
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.25833333333333336,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 1,
+      "update_index": 14
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 1,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.16666666666666669,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.5,
+      "target_rank": 1,
+      "update_index": 16
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 2,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.12777777777777777,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.3333333333333333,
+      "target_rank": 1,
+      "update_index": 18
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 3,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.10833333333333334,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.25,
+      "target_rank": 1,
+      "update_index": 20
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 4,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.09666666666666668,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.2,
+      "target_rank": 1,
+      "update_index": 22
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 5,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.08888888888888889,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.16666666666666666,
+      "target_rank": 1,
+      "update_index": 24
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 6,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.08333333333333334,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.14285714285714285,
+      "target_rank": 1,
+      "update_index": 26
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 7,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.07916666666666666,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.125,
+      "target_rank": 1,
+      "update_index": 28
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 1,
+      "branch_failure_count_before_selection": 8,
+      "candidate_count": 1,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.07592592592592592,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.1111111111111111,
+      "target_rank": 1,
+      "update_index": 30
+    },
+    {
+      "active_lane": "direct_flip",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.75,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 1,
+      "update_index": 3
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.28,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 5
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 1,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.165,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.5,
+      "target_rank": 2,
+      "update_index": 7
+    },
+    {
+      "active_lane": "coverage",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.2833333333333333,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 10
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 0,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.2833333333333333,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 1.0,
+      "target_rank": 2,
+      "update_index": 13
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 1,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.16666666666666669,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.5,
+      "target_rank": 2,
+      "update_index": 15
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 2,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.12777777777777777,
+      "failure_reasons": "team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.3333333333333333,
+      "target_rank": 2,
+      "update_index": 17
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 3,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.10833333333333334,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.25,
+      "target_rank": 2,
+      "update_index": 19
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 4,
+      "candidate_count": 0,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "GENERATION_FAILURE",
+      "expected_update_value": 0.09666666666666668,
+      "failure_reasons": "critic_semantic_rejection_exhausted",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.2,
+      "target_rank": 2,
+      "update_index": 21
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 5,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.08888888888888889,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.16666666666666666,
+      "target_rank": 2,
+      "update_index": 23
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 6,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.08333333333333334,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.14285714285714285,
+      "target_rank": 2,
+      "update_index": 25
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 7,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.07916666666666666,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.125,
+      "target_rank": 2,
+      "update_index": 27
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 8,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.07592592592592592,
+      "failure_reasons": "no_vote_or_lane_progress|target_regression|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.1111111111111111,
+      "target_rank": 2,
+      "update_index": 29
+    },
+    {
+      "active_lane": "margin_support",
+      "active_slice_size": 1,
+      "agent_id": 4,
+      "branch_failure_count_before_selection": 9,
+      "candidate_count": 2,
+      "common_passed_candidate_count": 0,
+      "event_outcome": "COMMON_SAFETY_FAILURE",
+      "expected_update_value": 0.07333333333333333,
+      "failure_reasons": "no_vote_or_lane_progress|team_vote_regression",
+      "rcru_passed_candidate_count": 0,
+      "repairability_discount": 0.1,
+      "target_rank": 2,
+      "update_index": 31
+    }
+  ],
+  "replay_validation": {
+    "COUNTERFACTUAL_REPLAY_VALIDATION": "PASS",
+    "RCRU_REPLAY_VALIDATION": "PASS",
+    "function_source_hashes": {
+      "common_cross_branch_transition_key": "73eb5c2aaf5747d2bb409c9cd3460a70348562b260845ab8d40cbf3f362e18ad",
+      "common_monotone_safe_key": "73c32019d6bd0b8894456893f0a2f0cc315bb067060d7624eed1daecf876db2b",
+      "evaluate_constraints": "4078d7e5e387038e1dbbb42eb319c65a96d100c3e04bda857f0bba1bdbdb994c",
+      "evaluate_robust_contribution_constraints": "d1c83025e21691b81c9a27e8d29c4c2e76235b9ebf67d139b932cc0b8780d075",
+      "rcru_cross_branch_transition_key": "a0cda40a624fbe988a76b288c1052d81d71b7ebdcea62cf65897702c434fdf33",
+      "responsibility_utility": "ffdef15906a2d3ca6621c45bbf7b7911229b2af82dae9de3a9109e92fa00b070",
+      "responsibility_utility_metrics": "41e9328880b1686b36a8f7f81a747d920727106e79c562f9fecd26e302a4d0f8",
+      "robust_contribution_key": "95bec4f06252796c05de8aacc954e21c0984b4b977c424ea1b1761be6608f3d8",
+      "stage_a_multichannel_shortlist": "b89edef72286abac57d580c1a6869b68a6b4a466cd50fb7b804cd6695c716e68",
+      "stage_a_rcru_shortlist": "8c305a6c6e6128e2e9127524c8933ed2e7efff33ad7252b9549a293a43476bcb"
+    },
+    "s2": {
+      "branch_mismatches": [],
+      "constraint_mismatches": [],
+      "global_mismatches": [],
+      "parent_prompt_mismatches": []
+    },
+    "s3": {
+      "branch_mismatches": [],
+      "constraint_mismatches": [],
+      "global_mismatches": [],
+      "parent_prompt_mismatches": []
+    }
+  },
+  "test_usage_note": "Final test is report-only and was not used in any candidate replay, ranking, or diagnosis decision."
+}

@@ -1,0 +1,124 @@
+{
+  "accepted_transition_summary": {
+    "S2": {
+      "accepted_updates": 9,
+      "boundary_cross_count": 15,
+      "coverage_only_count": 26,
+      "final_train_vote": 60,
+      "initial_train_vote": 50,
+      "lane_only_commit_count": 0,
+      "margin_progress_no_flip_count": 32,
+      "member_only_commit_count": 4,
+      "net_train_vote_gain": 10,
+      "total_vote_gains": 15,
+      "total_vote_losses": 5
+    },
+    "S3": {
+      "accepted_updates": 7,
+      "boundary_cross_count": 8,
+      "coverage_only_count": 26,
+      "final_train_vote": 58,
+      "initial_train_vote": 50,
+      "lane_only_commit_count": 1,
+      "margin_progress_no_flip_count": 34,
+      "member_only_commit_count": 3,
+      "net_train_vote_gain": 8,
+      "total_vote_gains": 8,
+      "total_vote_losses": 0
+    }
+  },
+  "coalition_alignment": {
+    "all_candidates": {
+      "count": 88,
+      "lane_only_candidates": 3,
+      "lane_positive_coalition_zero": 11,
+      "lane_positive_coalition_zero_fraction": 0.125,
+      "vote_gain_candidates": 6
+    },
+    "branch_winners": {
+      "count": 9,
+      "lane_only_candidates": 2,
+      "lane_positive_coalition_zero": 5,
+      "lane_positive_coalition_zero_fraction": 0.5555555555555556,
+      "vote_gain_candidates": 4
+    },
+    "global_commits": {
+      "count": 7,
+      "lane_only_candidates": 1,
+      "lane_positive_coalition_zero": 4,
+      "lane_positive_coalition_zero_fraction": 0.5714285714285714,
+      "vote_gain_candidates": 3
+    },
+    "rcru_feasible": {
+      "count": 14,
+      "lane_only_candidates": 3,
+      "lane_positive_coalition_zero": 8,
+      "lane_positive_coalition_zero_fraction": 0.5714285714285714,
+      "vote_gain_candidates": 6
+    }
+  },
+  "five_agent_majority_note": "G 2->3 is reported separately and is not the sole plurality boundary.",
+  "margin_utility_saturation": {
+    "cross_boundary_count": 0,
+    "saturation_observed": false,
+    "saturation_witness_group_count": 0,
+    "tie_at_boundary_count": 4,
+    "witness_groups": [],
+    "witnesses": []
+  },
+  "plurality_boundary_definition": "M0 <= 0 and M1 > 0",
+  "positive_support": {
+    "all_lanes": {
+      "boundary_cross": 10,
+      "coverage_margin_overlap": 30,
+      "coverage_only": 30,
+      "margin_progress_no_flip": 4,
+      "positive_support": 44
+    },
+    "by_lane": {
+      "coverage": {
+        "coverage_margin_overlap": 18,
+        "coverage_only": 18,
+        "positive_support": 18
+      },
+      "direct_flip": {
+        "boundary_cross": 10,
+        "positive_support": 10
+      },
+      "margin_support": {
+        "coverage_margin_overlap": 12,
+        "coverage_only": 12,
+        "margin_progress_no_flip": 4,
+        "positive_support": 16
+      }
+    },
+    "classification_note": "Categories are exclusive in the order boundary_cross, coverage_only, margin_progress_no_flip, already_correct_strengthening, other; the coverage_margin_overlap diagnostic reports the underlying overlap.",
+    "coverage_majority_transitions": {
+      "0->1": 18
+    },
+    "coverage_vote_outcomes": {
+      "still_vote_wrong": 18
+    }
+  },
+  "ranking_alignment": {
+    "branch_count_with_at_least_two_rcru_feasible_candidates": 5,
+    "candidate_rank_observation_count": 10,
+    "interpretation_limit": "Rank correlations concatenate branch-local ranks and are descriptive, not causal; most branches contain at most two candidates.",
+    "rcru_winner_agreement_count": {
+      "boundary_cross_count": 4,
+      "common_policy": 2,
+      "lane_utility_delta": 4,
+      "preboundary_delta_M": 3,
+      "target_gain": 3,
+      "vote_gain": 4
+    },
+    "spearman_on_concatenated_branch_local_ranks": {
+      "boundary_cross_count": 0.4472135954999579,
+      "common": -0.19999999999999996,
+      "lane_utility_delta": 0.6324555320336759,
+      "preboundary_delta_M": 0.19999999999999996,
+      "target_gain": 0.0,
+      "vote_gain": 0.4472135954999579
+    }
+  }
+}

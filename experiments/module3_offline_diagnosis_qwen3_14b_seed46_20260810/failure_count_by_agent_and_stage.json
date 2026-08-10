@@ -1,0 +1,117 @@
+{
+  "per_agent": {
+    "0": {
+      "common_counterfactual_candidate_rejection_reasons": {},
+      "event_outcome_percent_of_selected": {
+        "COMMIT": 1.0
+      },
+      "event_outcomes": {
+        "COMMIT": 1
+      },
+      "generation_terminal_reasons": {},
+      "rcru_candidate_rejection_reasons": {}
+    },
+    "1": {
+      "common_counterfactual_candidate_rejection_reasons": {
+        "no_target_or_vote_progress": 17,
+        "target_regression": 15,
+        "team_vote_regression": 27
+      },
+      "event_outcome_percent_of_selected": {
+        "COMMON_SAFETY_FAILURE": 0.8823529411764706,
+        "CROSS_BRANCH_COMPETITION_LOSS": 0.058823529411764705,
+        "GENERATION_FAILURE": 0.058823529411764705
+      },
+      "event_outcomes": {
+        "COMMON_SAFETY_FAILURE": 15,
+        "CROSS_BRANCH_COMPETITION_LOSS": 1,
+        "GENERATION_FAILURE": 1
+      },
+      "generation_terminal_reasons": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "rcru_candidate_rejection_reasons": {
+        "no_vote_or_lane_progress": 24,
+        "target_regression": 15,
+        "team_vote_regression": 27
+      }
+    },
+    "2": {
+      "common_counterfactual_candidate_rejection_reasons": {
+        "no_target_or_vote_progress": 13,
+        "target_regression": 9,
+        "team_vote_regression": 7
+      },
+      "event_outcome_percent_of_selected": {
+        "COMMIT": 0.16666666666666666,
+        "COMMON_SAFETY_FAILURE": 0.2777777777777778,
+        "CROSS_BRANCH_COMPETITION_LOSS": 0.05555555555555555,
+        "GENERATION_FAILURE": 0.5
+      },
+      "event_outcomes": {
+        "COMMIT": 3,
+        "COMMON_SAFETY_FAILURE": 5,
+        "CROSS_BRANCH_COMPETITION_LOSS": 1,
+        "GENERATION_FAILURE": 9
+      },
+      "generation_terminal_reasons": {
+        "critic_semantic_rejection_exhausted": 9
+      },
+      "rcru_candidate_rejection_reasons": {
+        "no_vote_or_lane_progress": 9,
+        "target_regression": 9,
+        "team_vote_regression": 7
+      }
+    },
+    "3": {
+      "common_counterfactual_candidate_rejection_reasons": {
+        "no_target_or_vote_progress": 6,
+        "target_regression": 3,
+        "team_vote_regression": 4
+      },
+      "event_outcome_percent_of_selected": {
+        "COMMIT": 0.21428571428571427,
+        "COMMON_SAFETY_FAILURE": 0.21428571428571427,
+        "GENERATION_FAILURE": 0.5,
+        "RCRU_LANE_FAILURE": 0.07142857142857142
+      },
+      "event_outcomes": {
+        "COMMIT": 3,
+        "COMMON_SAFETY_FAILURE": 3,
+        "GENERATION_FAILURE": 7,
+        "RCRU_LANE_FAILURE": 1
+      },
+      "generation_terminal_reasons": {
+        "critic_semantic_rejection_exhausted": 7
+      },
+      "rcru_candidate_rejection_reasons": {
+        "no_vote_or_lane_progress": 5,
+        "target_regression": 3,
+        "team_vote_regression": 4
+      }
+    },
+    "4": {
+      "common_counterfactual_candidate_rejection_reasons": {
+        "no_target_or_vote_progress": 6,
+        "target_regression": 6,
+        "team_vote_regression": 26
+      },
+      "event_outcome_percent_of_selected": {
+        "COMMON_SAFETY_FAILURE": 0.9285714285714286,
+        "GENERATION_FAILURE": 0.07142857142857142
+      },
+      "event_outcomes": {
+        "COMMON_SAFETY_FAILURE": 13,
+        "GENERATION_FAILURE": 1
+      },
+      "generation_terminal_reasons": {
+        "critic_semantic_rejection_exhausted": 1
+      },
+      "rcru_candidate_rejection_reasons": {
+        "no_vote_or_lane_progress": 20,
+        "target_regression": 6,
+        "team_vote_regression": 26
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "H1": {
+    "evidence": {
+      "1": {
+        "COMMON_SAFETY_FAILURE": 15,
+        "CROSS_BRANCH_COMPETITION_LOSS": 1,
+        "GENERATION_FAILURE": 1
+      },
+      "4": {
+        "COMMON_SAFETY_FAILURE": 13,
+        "GENERATION_FAILURE": 1
+      }
+    },
+    "interpretation": "Generation failure occurred in only 2/31 Agent1/4 selections; 28/31 ended in common target/vote safety failure.",
+    "verdict": "NOT_SUPPORTED"
+  },
+  "H2": {
+    "common_only_candidates_agent1_agent4": 0,
+    "verdict": "NOT_SUPPORTED"
+  },
+  "H3": {
+    "rcru_lane_only_commit_count": 1,
+    "rcru_only_lane_only_candidate_count": 3,
+    "verdict": "SUPPORTED"
+  },
+  "H4": {
+    "boundary_cross_count": 10,
+    "positive_support_total": 44,
+    "preboundary_count": 34,
+    "verdict": "SUPPORTED"
+  },
+  "H5": {
+    "saturation_witness_group_count": 0,
+    "verdict": "NOT_SUPPORTED"
+  },
+  "H6": {
+    "branch_winner_lane_positive_coalition_zero": 5,
+    "commit_lane_positive_coalition_zero": 4,
+    "limitation": "Zero coalition delta shows ranking tolerance, not causal dilution by itself.",
+    "verdict": "PARTIALLY_SUPPORTED"
+  },
+  "H7": {
+    "layer2_pass": 14,
+    "layer3_pass": 14,
+    "verdict": "SUPPORTED"
+  }
+}
