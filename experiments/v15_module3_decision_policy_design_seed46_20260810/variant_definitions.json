@@ -1,0 +1,45 @@
+{
+  "B0": {
+    "branch_ranking": "v14_RCRU_Pareto_then_robust_contribution_key",
+    "cross_branch": "rcru_cross_branch_transition_key",
+    "feasibility": "vote_or_lane_progress_with_v14_RCRU_guards",
+    "name": "V14_CURRENT_RCRU",
+    "role": "baseline"
+  },
+  "B1": {
+    "branch_ranking": "common_monotone_safe_key",
+    "cross_branch": "common_cross_branch_transition_key",
+    "feasibility": "evaluate_constraints",
+    "name": "S2_COMMON_POLICY",
+    "role": "control"
+  },
+  "M3_A": {
+    "branch_ranking": "existing_RCRU_Pareto_then_robust_contribution_key",
+    "cross_branch": "rcru_cross_branch_transition_key",
+    "feasibility": "evaluate_constraints",
+    "isolates": "feasibility/progress semantics",
+    "name": "COMMON_PROGRESS_RCRU_RANK"
+  },
+  "M3_B": {
+    "branch_ranking": "common_monotone_safe_key_without_hash_then_RCRU_secondary",
+    "cross_branch": "common_cross_branch_transition_key_without_hash_then_RCRU_secondary",
+    "feasibility": "evaluate_constraints",
+    "isolates": "responsibility metrics as secondary selection",
+    "name": "COMMON_PRIMARY_RCRU_TIEBREAK"
+  },
+  "M3_C": {
+    "boundary_definition": "M0<=0_and_M1>0",
+    "feasibility": "evaluate_constraints",
+    "name": "COMMON_PROGRESS_BOUNDARY_AWARE_RCRU",
+    "ranking": "task_specified_lexicographic_keys_no_new_weights",
+    "tests": "explicit plurality-boundary-aware secondary ranking"
+  },
+  "fixed_pool_contract": {
+    "actual_candidate_pool": true,
+    "actual_parent": true,
+    "actual_stage_b_rollout": true,
+    "actual_target_pair": true,
+    "hypothetical_commit_propagated": false,
+    "test_used_for_selection": false
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "API_CALLS": 0,
+  "REPLAY_VALIDATION": "PASS",
+  "S2_COMMON": {
+    "branch_mismatches": [],
+    "constraint_mismatches": [],
+    "global_mismatches": [],
+    "parent_prompt_mismatches": []
+  },
+  "S3_RCRU": {
+    "branch_mismatches": [],
+    "constraint_mismatches": [],
+    "global_mismatches": [],
+    "parent_prompt_mismatches": []
+  },
+  "all_mismatch_counts": {
+    "s2": 0,
+    "s3": 0
+  },
+  "evidence_commit": "2e6f573378e62e5412eb4a5c1b31dada41bd272e",
+  "replay_mode": "ONE_STEP_FIXED_PARENT_REPLAY",
+  "run_source_commit": "e5bdc9f27f7a5594072aafd828c7c6053297c03c"
+}

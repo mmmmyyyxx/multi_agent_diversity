@@ -1,0 +1,6 @@
+policy,feasible_candidates,commits,lane_only_commits,target_gain_sum,vote_gain_count,vote_loss_count,net_vote_gain,boundary_crosses,preboundary_progress,coverage_only,changed_updates_vs_v14,changed_updates_vs_common
+B0,14,7,1,22,8,0,8,8,34,26,0,4
+B1,13,8,0,30,8,0,8,8,35,28,4,0
+M3_A,13,8,0,25,8,0,8,8,33,26,2,2
+M3_B,13,8,0,30,8,0,8,8,36,28,3,1
+M3_C,13,8,0,30,8,0,8,8,36,28,3,1

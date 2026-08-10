@@ -1,0 +1,15 @@
+update,target,candidate_hash,B0_selected,B1_selected,M3_A_selected,M3_B_selected,M3_C_selected,target_gain,vote_gain,vote_gain_count,vote_loss_count,boundary_cross_count,preboundary_margin_progress,lane_delta,positive_support,negative_support,bootstrap,coalition_delta,edit_tokens,difference_reason
+1,2,43d3fed8b0b0f9a8ab57b942a3c062c36554c486994d165a7b513546fce18f70,False,False,False,False,False,1,0,0,0,0,0,0,0,0,0.0,0,66,COMMON_PRIMARY_RANK;FEASIBILITY
+1,2,4ebefe1aa14f66e0fd8897943438a9e788c4f4f72d9f584de812d206a79411c8,False,False,False,False,False,0,0,0,0,0,3,2,2,0,0.0,0,30,COMMON_PRIMARY_RANK;FEASIBILITY
+1,3,7a5c1a854a7cab9925994fe20bea312a7af308a57750c9c3c4adabc055fe1856,False,True,False,True,True,6,0,0,0,0,12,4,2,0,2.0,0,45,COMMON_PRIMARY_RANK;FEASIBILITY
+1,3,df6439f1830a942a711c6b243c7911195f8bdde07a154023ec275870193f644b,True,False,True,False,False,1,0,0,0,0,9,4,2,0,2.0,0,40,COMMON_PRIMARY_RANK;FEASIBILITY
+4,3,bdea0b744147bb10dc2c3f0e2d25dbf113ebb0c83f2db8a5e75ce791f41b706e,True,False,True,True,True,4,2,2,0,2,1,0,0,0,0.0,2,56,RCRU_SECONDARY_RANK
+4,3,c85605bc81394ec0bd2bde02afe3c10cc3d2d2070096a94aeb80d71a0b61921a,False,True,False,False,False,4,2,2,0,2,0,0,0,0,0.0,2,69,RCRU_SECONDARY_RANK
+4,2,978c20b0061def3c40d679780a17e86ca27dd39a089985bb6cf9a07886dc4e93,False,False,False,False,False,0,0,0,0,0,1,0,0,0,0.0,0,58,RCRU_SECONDARY_RANK
+4,2,b1fa281ca8fbe353eadfa1047f4d531d0ea9e6ce9dec46d07ed2d3736496b1c2,False,False,False,False,False,0,0,0,0,0,1,0,0,0,0.0,0,55,RCRU_SECONDARY_RANK
+8,3,b10043cd0813196a6d7130d126ff35f75640e05cee04f219e2b542328f87418c,True,False,False,False,False,0,0,0,0,0,2,3,2,0,0.125,0,44,FEASIBILITY
+8,3,b61d64332042733d2db85e7f32659887f46d34c0528ffd24ef6a6c4833f6f55f,False,True,True,True,True,2,0,0,0,0,1,2,1,0,0.0,0,46,FEASIBILITY
+22,1,06fac90a1f66234fb25b06ea2222ee5890442c27b24b90eb5f4ccd3e7b3da0c8,False,False,False,False,False,0,-1,0,1,0,2,0,0,0,0.0,-1,57,FEASIBILITY
+22,1,26e6971cd0bf548f5e4f09f3489d0b689ffbff826c1b6f58b0e51af354bab2a5,False,False,False,False,False,-6,-1,0,1,0,4,0,0,0,0.0,-1,53,FEASIBILITY
+22,3,1cbad85a6238305848b5359faac6eefd7a7f9f36559b3388e010cab548ac3b1c,False,False,False,False,False,0,-1,0,1,0,1,0,0,0,0.0,-1,32,FEASIBILITY
+22,3,e662f19e65c46d4c8d8a2f8a96e50fabe2b735383fa4f3ffeb1bddc5895cb9d3,False,True,True,True,True,1,0,0,0,0,0,0,0,0,0.0,0,122,FEASIBILITY

@@ -1,0 +1,15 @@
+{
+  "API_CALLS": 0,
+  "BASELINE_REPLAY": "PASS",
+  "baseline_mismatch_count": 0,
+  "baseline_mismatches": [],
+  "fixed_actual_trajectory": true,
+  "history_causality": "PRIOR_ACTUAL_BRANCH_OUTCOMES_ONLY",
+  "operational_failures_excluded_from_history": true,
+  "settings": [
+    "S1",
+    "S2",
+    "S3"
+  ],
+  "updates_per_setting": 32
+}

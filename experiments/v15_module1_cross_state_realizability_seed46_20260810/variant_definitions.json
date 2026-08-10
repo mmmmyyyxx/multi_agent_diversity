@@ -1,0 +1,41 @@
+{
+  "R0": {
+    "formula": "B_i*rho_state_i+0.05*what_i",
+    "name": "V14_STATE_LOCAL_REPAIRABILITY"
+  },
+  "R1": {
+    "alpha": 1,
+    "beta": 1,
+    "factor": "(feasible_i+1)/(attempt_i+2)",
+    "history": [
+      "persistent_attempt_count",
+      "persistent_feasible_count"
+    ],
+    "name": "PERSISTENT_BETA_REALIZABILITY"
+  },
+  "R2": {
+    "factor": "1/(1+c_i)",
+    "feasible_branch_reset": true,
+    "history": [
+      "persistent_consecutive_normal_failure_count"
+    ],
+    "name": "PERSISTENT_CONSECUTIVE_FAILURE"
+  },
+  "R3": {
+    "factor": "0.25+0.75*((feasible_i+1)/(attempt_i+2))",
+    "floor": 0.25,
+    "history": [
+      "persistent_attempt_count",
+      "persistent_feasible_count"
+    ],
+    "name": "FLOORED_PERSISTENT_REALIZABILITY"
+  },
+  "shared_constraints": {
+    "actual_trajectory_fixed": true,
+    "commit_is_only_success": false,
+    "future_leakage": false,
+    "hard_freeze": false,
+    "operational_failure_updates_history": false,
+    "test_used": false
+  }
+}
