@@ -14,6 +14,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from scripts.audit_final_method_stage import (
     LEGACY_NO_TEST_NORMALIZATION,
+    _audit_common_safe_commits,
     _audit_source_contract,
     _comparison_cache_chain,
     _expected_matrix,
@@ -49,7 +50,6 @@ def test_formal_stage_matrices_are_exact():
             "shared_generic_evolution",
             "shared_member_aware_dual_target",
             "shared_responsibility_conditioned_dual_target",
-            "shared_full_dual_target_rcru",
         ),
         8,
         False,
@@ -58,7 +58,10 @@ def test_formal_stage_matrices_are_exact():
     assert _expected_matrix("cross_task") == (
         ("geometric_shapes", "ruin_names"),
         (44, 45, 46),
-        ("shared_static_reference", "shared_full_dual_target_rcru"),
+        (
+            "shared_static_reference",
+            "shared_responsibility_conditioned_dual_target",
+        ),
         32,
         True,
     )
@@ -77,7 +80,6 @@ def test_formal_stage_matrices_are_exact():
             "shared_generic_evolution",
             "shared_member_aware_dual_target",
             "shared_responsibility_conditioned_dual_target",
-            "shared_full_dual_target_rcru",
         ),
         32,
         True,
@@ -120,6 +122,32 @@ def test_scalar_target_key_uses_expected_value_then_fixed_ties():
     assert min(rows, key=_priority_key) is rows[2]
 
 
+def test_v15_audit_rejects_committed_candidate_without_common_safety():
+    safe = {
+        "accepted_prompt_hash": "safe",
+        "candidates": [{
+            "prompt_hash": "safe",
+            "constraint": {
+                "passed": True,
+                "target_nonregression_passed": True,
+                "team_vote_nonregression_passed": True,
+                "target_or_vote_progress_passed": True,
+                "terminal_invalid_nonregression_passed": True,
+            },
+        }],
+    }
+    findings = []
+    assert _audit_common_safe_commits("run", [safe], findings) == 0
+    assert findings == []
+
+    unsafe = json.loads(json.dumps(safe))
+    unsafe["candidates"][0]["constraint"][
+        "target_or_vote_progress_passed"
+    ] = False
+    assert _audit_common_safe_commits("run", [unsafe], findings) == 1
+    assert findings[-1].severity == "BLOCKER"
+
+
 def test_sqlite_frozen_cache_clone_is_independent(tmp_path):
     source = tmp_path / "frozen.sqlite"
     destination = tmp_path / "mutable.sqlite"
@@ -143,7 +171,7 @@ def test_source_identity_is_hash_only_and_covers_formal_scripts():
     workspace = Path(__file__).resolve().parents[1]
     identity = build_source_identity(workspace)
     encoded = json.dumps(identity)
-    assert identity["source_identity_version"] == "final_method_source_identity_v4"
+    assert identity["source_identity_version"] == "final_method_source_identity_v5"
     assert identity["method_identifiers"]["robust_support_version"] == (
         "paired_positive_no_negative_bootstrap_v2"
     )
@@ -428,7 +456,7 @@ def test_comparison_cache_chain_requires_previous_post_run_reference():
             "complete": True,
             "task": "toy",
             "seed": 46,
-            "setting": "shared_full_dual_target_rcru",
+            "setting": "shared_responsibility_conditioned_dual_target",
             "comparison_cache_match": {
                 "gate": "PASS",
                 "matched": True,

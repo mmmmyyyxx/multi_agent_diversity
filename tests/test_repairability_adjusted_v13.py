@@ -50,7 +50,13 @@ def opportunity(agent, name, *, direct=0, margin=0):
     )
 
 
-def scores_for(active, state, counts=(50, 50, 50, 50, 50)):
+def scores_for(
+    active,
+    state,
+    counts=(50, 50, 50, 50, 50),
+    *,
+    wait_inside_discount=True,
+):
     lanes = {
         agent: RepairLane.DIRECT_FLIP for agent in active
     }
@@ -64,6 +70,7 @@ def scores_for(active, state, counts=(50, 50, 50, 50, 50)):
         legal_assignments=active,
         service_portfolios=active,
         active_lane_by_agent=lanes,
+        wait_inside_discount=wait_inside_discount,
     )
 
 
@@ -101,6 +108,80 @@ def test_all_zero_dimensions_failure_discount_and_wait_exploration():
     assert rows[0].expected_update_value == 0.0
     assert rows[1].expected_update_value == pytest.approx(0.05)
     assert rows[1].normalized_wait == 1.0
+
+
+def test_v15_w1_wait_is_inside_state_local_failure_discount():
+    state = ResponsibilityState()
+    initialize_repairability_state(state, range(5))
+    state.branch_failure_count_by_agent[0] = 8
+    state.updates_since_selected_by_agent.update({0: 10, 1: 0})
+    active = {
+        0: (opportunity(0, "target", direct=0, margin=1),),
+        1: (opportunity(1, "maximum", direct=0, margin=9),),
+    }
+    rows = {
+        row.agent_id: row
+        for row in scores_for(active, state, counts=(45, 55, 45, 45, 45))
+    }
+    target = rows[0]
+    assert target.opportunity_value == pytest.approx(0.23333333333333334)
+    assert target.normalized_wait == 1.0
+    assert target.repairability_discount == pytest.approx(1 / 9)
+    assert target.expected_update_value == pytest.approx(
+        (0.23333333333333334 + 0.05) / 9
+    )
+    assert target.expected_update_value != pytest.approx(
+        0.23333333333333334 / 9 + 0.05
+    )
+
+    legacy = {
+        row.agent_id: row
+        for row in scores_for(
+            active,
+            state,
+            counts=(45, 55, 45, 45, 45),
+            wait_inside_discount=False,
+        )
+    }[0]
+    assert legacy.expected_update_value == pytest.approx(
+        0.23333333333333334 / 9 + 0.05
+    )
+
+
+def test_v15_w1_boundary_cases_and_failure_monotonicity():
+    active = {
+        0: (opportunity(0, "a", direct=1),),
+        1: (opportunity(1, "b", direct=1),),
+    }
+    state = ResponsibilityState()
+    initialize_repairability_state(state, range(5))
+    state.updates_since_selected_by_agent.update({0: 0, 1: 10})
+    rows = {row.agent_id: row for row in scores_for(active, state)}
+    assert rows[0].expected_update_value == pytest.approx(
+        rows[0].opportunity_value
+    )
+    assert rows[1].expected_update_value == pytest.approx(
+        rows[1].opportunity_value + 0.05
+    )
+
+    state.branch_failure_count_by_agent[1] = 3
+    discounted = {row.agent_id: row for row in scores_for(active, state)}[1]
+    assert discounted.expected_update_value == pytest.approx(
+        (discounted.opportunity_value + 0.05) / 4
+    )
+    assert discounted.expected_update_value < rows[1].expected_update_value
+
+
+def test_v15_w1_ranking_is_deterministic():
+    active = {
+        0: (opportunity(0, "a", direct=1),),
+        1: (opportunity(1, "b", direct=1),),
+    }
+    state = ResponsibilityState()
+    first = scores_for(active, state)
+    second = scores_for(active, state)
+    assert first == second
+    assert [row.agent_id for row in first] == [row.agent_id for row in second]
 
 
 def test_selector_is_total_top_k_downgrades_and_never_calls_pareto(monkeypatch):

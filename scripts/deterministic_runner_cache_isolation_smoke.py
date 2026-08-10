@@ -98,7 +98,11 @@ def main() -> int:
         frozen = root / "frozen" / "initial_solver_cache_frozen.sqlite"
         reference = root / "frozen" / "comparison_reference_solver_cache.sqlite"
         hostile = root / "hostile" / "_shared_solver_cache.sqlite"
-        run_dir = root / "runs" / "shared_full_dual_target_rcru_seed46"
+        run_dir = (
+            root
+            / "runs"
+            / "shared_responsibility_conditioned_dual_target_seed46"
+        )
         local = run_dir / "_solver_cache.sqlite"
         manifest = root / "frozen" / "frozen_initialization_manifest.json"
 

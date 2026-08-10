@@ -43,8 +43,8 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainingConfig:
-    method_version: str = "member_aware_peer_state_v14"
-    experiment_setting: str = "shared_full_dual_target_rcru"
+    method_version: str = "member_aware_peer_state_v15"
+    experiment_setting: str = "shared_responsibility_conditioned_dual_target"
     allow_legacy_setting: bool = False
     allow_auxiliary_setting: bool = False
     agents: int = 5

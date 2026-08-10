@@ -54,7 +54,7 @@ _LEGACY_FREEZE_STATE_FIELDS = {
 
 def _responsibility_state_payload(system) -> dict[str, Any]:
     payload = asdict(system.responsibility_state)
-    if not system.protocol.legacy_protocol:
+    if not system.protocol.repairability_freeze_enabled:
         for field in _LEGACY_FREEZE_STATE_FIELDS:
             payload.pop(field, None)
     return payload
@@ -166,7 +166,9 @@ def build_checkpoint(
         "cached_service_assignments": {
             key: _service_assignment_payload(
                 value,
-                include_legacy_freeze=system.protocol.legacy_protocol,
+                include_legacy_freeze=(
+                    system.protocol.repairability_freeze_enabled
+                ),
             )
             for key, value in system.cached_service_assignments.items()
         },
@@ -481,9 +483,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     ):
         raise ValueError("Checkpoint member gain state does not match restored profiles")
     raw_state = dict(payload["responsibility_state"])
-    if not system.protocol.legacy_protocol:
+    if not system.protocol.repairability_freeze_enabled:
         if _LEGACY_FREEZE_STATE_FIELDS & set(raw_state):
-            raise ValueError("v14 checkpoint contains legacy freeze state")
+            raise ValueError("v15 checkpoint contains legacy freeze state")
         defaults = ResponsibilityState()
         for field in _LEGACY_FREEZE_STATE_FIELDS:
             raw_state[field] = getattr(defaults, field)

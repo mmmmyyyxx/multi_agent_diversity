@@ -639,8 +639,9 @@ def repairability_adjusted_target_scores(
         int, Sequence[MemberAwareRepairOpportunity]
     ],
     active_lane_by_agent: Mapping[int, RepairLane | None],
+    wait_inside_discount: bool = True,
 ) -> tuple[RepairabilityAdjustedTargetScore, ...]:
-    """Return the v13 total ordering over currently actionable members."""
+    """Return v15 W1 scores, with an explicit frozen-v14 replay switch."""
     if member_uplift_tolerance < 0:
         raise ValueError("member_uplift_tolerance cannot be negative")
     if len(current_member_correct_counts) != len(
@@ -714,7 +715,11 @@ def repairability_adjusted_target_scores(
             + TARGET_SCORE_UPLIFT_WEIGHT * norm_uplift
         )
         discount = 1.0 / (1.0 + int(row["failures"]))
-        expected = opportunity * discount + TARGET_SCORE_WAIT_WEIGHT * norm_wait
+        expected = (
+            (opportunity + TARGET_SCORE_WAIT_WEIGHT * norm_wait) * discount
+            if wait_inside_discount
+            else opportunity * discount + TARGET_SCORE_WAIT_WEIGHT * norm_wait
+        )
         rank = state.seeded_rank_by_agent.setdefault(
             agent_id,
             _seeded_hash(seed, "target", agent_id),

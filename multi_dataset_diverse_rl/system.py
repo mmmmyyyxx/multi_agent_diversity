@@ -392,7 +392,7 @@ class PromptEnsembleOptimizationSystem:
             )
         ):
             raise ValueError(
-                "v14 main protocols require exactly two generated and "
+                "v15 main protocols require exactly two generated and "
                 "two Stage B candidates per target branch"
             )
         if (
@@ -400,7 +400,7 @@ class PromptEnsembleOptimizationSystem:
             and cfg.responsibility.member_uplift_tolerance != 5
         ):
             raise ValueError(
-                "v14 canonical protocols require "
+                "v15 canonical protocols require "
                 "member_uplift_tolerance=5"
             )
         if (
@@ -1284,6 +1284,10 @@ class PromptEnsembleOptimizationSystem:
                 legal_assignments=self.cached_responsibility_assignments,
                 service_portfolios=self.cached_service_portfolios,
                 active_lane_by_agent=self.cached_active_lane_by_agent,
+                wait_inside_discount=(
+                    self.protocol.name
+                    != "legacy_v14_shared_full_dual_target_rcru"
+                ),
             )
             selected = select_repairability_targets(
                 scores,
@@ -3609,7 +3613,11 @@ class PromptEnsembleOptimizationSystem:
         )
 
     async def update_once(self, update_index: int) -> bool:
-        if self.protocol.legacy_protocol:
+        if (
+            self.protocol.legacy_protocol
+            and self.protocol.name
+            != "legacy_v14_shared_full_dual_target_rcru"
+        ):
             return await self._legacy_update_once(update_index)
         if not self.protocol.optimization_enabled:
             return False

@@ -23,7 +23,7 @@ from multi_dataset_diverse_rl.versions import (
 from scripts.experiment_config import DEFAULT_EXPERIMENT_SETTING_NAMES, select_settings
 
 
-def identity(setting="shared_full_dual_target_rcru"):
+def identity(setting="shared_responsibility_conditioned_dual_target"):
     return RunIdentity(
         method_version=METHOD_VERSION,
         experiment_setting=setting,
@@ -67,8 +67,10 @@ def protocols():
 
 def test_config_is_sectioned_and_canonical_defaults_are_explicit():
     cfg = Config()
-    assert cfg.training.method_version == "member_aware_peer_state_v14"
-    assert cfg.training.experiment_setting == "shared_full_dual_target_rcru"
+    assert cfg.training.method_version == "member_aware_peer_state_v15"
+    assert cfg.training.experiment_setting == (
+        "shared_responsibility_conditioned_dual_target"
+    )
     assert cfg.training.allow_legacy_setting is False
     assert cfg.training.allow_auxiliary_setting is False
     assert cfg.responsibility.responsibility_mode == "single_service_member_aware_v13"
@@ -89,9 +91,8 @@ def test_main_ablation_settings_are_exact_and_legacy_names_fail_closed():
         "shared_generic_evolution",
         "shared_member_aware_dual_target",
         "shared_responsibility_conditioned_dual_target",
-        "shared_full_dual_target_rcru",
     )
-    assert len(DEFAULT_EXPERIMENT_SETTING_NAMES) == 5
+    assert len(DEFAULT_EXPERIMENT_SETTING_NAMES) == 4
     assert not set(AUXILIARY_SEARCH_CONTROL_SETTINGS) & set(
         DEFAULT_EXPERIMENT_SETTING_NAMES
     )
@@ -111,6 +112,7 @@ def test_main_ablation_settings_are_exact_and_legacy_names_fail_closed():
         "shared_member_aware_responsibility",
         "shared_responsibility_conditioned_evolution",
         "shared_full_rcru",
+        "shared_full_dual_target_rcru",
     ):
         with pytest.raises(ValueError, match="allow_legacy_setting=1"):
             select_settings(old)
@@ -119,6 +121,27 @@ def test_main_ablation_settings_are_exact_and_legacy_names_fail_closed():
 
 
 def test_legacy_controls_require_explicit_opt_in_and_keep_legacy_identity():
+    historical_rcru = select_settings(
+        "shared_full_dual_target_rcru",
+        allow_legacy_setting=True,
+    )
+    assert historical_rcru[0].name == (
+        "legacy_v14_shared_full_dual_target_rcru"
+    )
+    rcru_protocol = experiment_protocol(
+        "shared_full_dual_target_rcru",
+        initialization_mode="shared_identical",
+        tie_policy="abstain",
+        candidate_budget_contract=budget(historical_rcru[0].name),
+        allow_legacy_setting=True,
+    )
+    assert rcru_protocol.legacy_protocol
+    assert rcru_protocol.candidate_acceptance_policy == (
+        "responsibility_robust_contribution"
+    )
+    assert rcru_protocol.candidate_ranking_policy == (
+        "responsibility_contribution_pareto"
+    )
     selected = select_settings(
         "shared_peer_state_member_pareto",
         allow_legacy_setting=True,
@@ -244,7 +267,6 @@ def test_static_and_reduced_main_candidate_budgets_are_exact():
         (1, 2, 2, 2),
         (2, 2, 4, 4),
         (2, 2, 4, 4),
-        (2, 2, 4, 4),
     ]
 
 
@@ -255,10 +277,9 @@ def test_module_vectors_and_adjacent_diffs_are_exact():
         tuple(int(value) for value in rows[name].modules.as_tuple())
         for name in MAIN_ABLATION_SETTINGS[1:]
     ] == [
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (1, 1, 1),
+        (0, 0),
+        (1, 0),
+        (1, 1),
     ]
     for left, right, expected in EXPECTED_ADJACENT_MODULE:
         assert changed_ablation_modules(rows[left], rows[right]) == (expected,)
@@ -281,11 +302,8 @@ def test_s0_through_s2_share_safety_policy_and_no_hidden_stage_a():
             "matched_all_generated",
         )
     }
-    assert rows["shared_full_dual_target_rcru"].stage_a_policy == (
-        "matched_all_generated"
-    )
     assert [row.target_branch_count for row in rows.values()] == [
-        0, 1, 2, 2, 2
+        0, 1, 2, 2
     ]
 
 
@@ -295,7 +313,6 @@ def test_adjacent_low_level_protocol_isolation():
     s0 = asdict(rows["shared_generic_evolution"])
     s1 = asdict(rows["shared_member_aware_dual_target"])
     s2 = asdict(rows["shared_responsibility_conditioned_dual_target"])
-    s3 = asdict(rows["shared_full_dual_target_rcru"])
     ignored = {"name", "requested_name", "display_name", "modules"}
 
     def diff(left, right):
@@ -323,10 +340,6 @@ def test_adjacent_low_level_protocol_isolation():
         "candidate_budget_contract",
     }
     assert diff(s1, s2) == {"tcs_context_policy"}
-    assert diff(s2, s3) == {
-        "candidate_acceptance_policy",
-        "candidate_ranking_policy",
-    }
 
 
 def test_run_metadata_records_module_fingerprint(tmp_path):
@@ -334,25 +347,24 @@ def test_run_metadata_records_module_fingerprint(tmp_path):
     system.set_run_identity(identity())
     metadata = system.run_meta()
     assert metadata["method_version"] == METHOD_VERSION
-    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 23
+    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 24
     assert metadata["experiment_matrix_version"] == EXPERIMENT_MATRIX_VERSION
     assert metadata["protocol_resolution_version"] == PROTOCOL_RESOLUTION_VERSION
-    assert metadata["setting_index"] == 4
+    assert metadata["setting_index"] == 3
     assert metadata["setting_display_name"] == (
-        "S3 Robust Contribution Update (Full)"
+        "S2 Responsibility-Conditioned Evolution (Full)"
     )
     assert metadata["module_vector"] == {
         "member_aware_dual_target_search": True,
         "responsibility_conditioned_evolution": True,
-        "robust_contribution_update": True,
     }
-    assert metadata["added_module_vs_previous"] == "robust_contribution_update"
+    assert metadata["added_module_vs_previous"] == (
+        "responsibility_conditioned_evolution"
+    )
     assert metadata["candidate_acceptance_policy"] == (
-        "responsibility_robust_contribution"
+        "fixed_peer_monotone_target_or_vote"
     )
-    assert metadata["candidate_ranking_policy"] == (
-        "responsibility_contribution_pareto"
-    )
+    assert metadata["candidate_ranking_policy"] == "common_monotone_safe"
     assert metadata["stage_a_policy"] == "matched_all_generated"
     assert metadata["legacy_compatibility_enabled"] is False
 
@@ -363,10 +375,7 @@ def test_invalid_module_combinations_fail_without_auto_completion():
         validate_ablation_modules,
     )
 
-    invalid = (
-        AblationModules(False, True, False),
-        AblationModules(True, False, True),
-    )
+    invalid = (AblationModules(False, True),)
     for modules in invalid:
         with pytest.raises(ValueError):
             validate_ablation_modules(modules)

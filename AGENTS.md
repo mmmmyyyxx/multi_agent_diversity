@@ -19,23 +19,25 @@ The current method is:
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
 
-method_version = member_aware_peer_state_v14
-checkpoint_version = 23
+method_version = member_aware_peer_state_v15
+checkpoint_version = 24
 ```
 
-The paper method has three modules:
+The paper method has two core modules:
 
 ```text
 1. Repairability-Adjusted Member-Aware Dual-Target Search
 2. Responsibility-Conditioned Evolution
-3. Monotone Target-or-Vote Team Update
 ```
+
+Candidate write-back uses the Common-Safe Team Update. It is the foundational
+safety rule, not a third independent research contribution.
 
 Module one is added atomically: counterfactual responsibility, unique routing,
 one active lane, scalar repairability-adjusted selection, state-local failure
 discount, Top-2 independent branches, and competitive max-one commit are not
-separate default ablations. RCRU is the module-three candidate decision
-extension. Joint voting state, Teacher-Critic-Student, Stage A/B, caching,
+separate default ablations. Joint voting state, Teacher-Critic-Student, Stage
+A/B, caching,
 retry, checkpointing, and audits are implementation or reliability mechanisms
 rather than additional research contributions.
 
@@ -71,20 +73,9 @@ This permits vote-only progress when target gain is zero. Under fixed peers the
 first three guards imply strict Pareto improvement in `O(Theta)`; this is a
 derived invariant, not another rejection reason.
 
-S3 retains branch-local RCRU ranking. For a role-only S3 candidate
-(`vote_gain = 0` and `lane_utility_delta > 0`), Layer 3 is:
-
-```text
-positive_support_count >= 1
-negative_support_count == 0
-bootstrap_lcb >= 0
-```
-
-This is versioned as
-`paired_positive_no_negative_bootstrap_v2`. Layer 1, Layer 2, the paired
-bootstrap implementation, minimal-edit ranking, and direct vote-gain scope are
-unchanged from v13. A direct vote-gain candidate does not acquire a new support
-guard. Cross-branch competition never weakens branch-local safety.
+All optimized v15 main settings use this common policy. Responsibility or lane
+utility cannot redefine progress. The v14 RCRU policy remains only for explicit
+legacy replay and offline analysis.
 
 ## 3. Joint voting diagnosis
 
@@ -128,7 +119,7 @@ R_i = {x : i in E_x}
 
 Every serviceable residual is routed to exactly one `q_x in E_x`, producing
 pairwise-disjoint service portfolios `P_i`. Routing uses anchor compatibility,
-lane load, total load, and stable seeded rank. v14 has no active freeze filter:
+lane load, total load, and stable seeded rank. v15 has no active freeze filter:
 all legally eligible members may receive service.
 
 Every residual has one lane:
@@ -173,7 +164,7 @@ actionable set. A zero maximum yields a zero normalized dimension.
 ```text
 B_i = 0.5 Dhat_i + 0.3 Shat_i + 0.2 dhat_i
 rho_i = 1 / (1 + branch_failure_count_i)
-A_i_score = B_i * rho_i + 0.05 what_i
+A_i_score = (B_i + 0.05 what_i) * rho_i
 ```
 
 The weights are frozen in `versions.py` and must not be tuned on formal test
@@ -192,11 +183,11 @@ results. Members are totally ordered by:
 )
 ```
 
-The v14 canonical path must not construct or query a target Pareto frontier.
+The v15 canonical path must not construct or query a target Pareto frontier.
 Old Pareto code may remain only for explicit legacy-v12 readers and replay
 tests.
 
-All reduced-matrix member-aware settings S1-S3 select Top-2 distinct actionable
+All reduced-matrix member-aware settings S1-S2 select Top-2 distinct actionable
 members. If only one is actionable, dual search degrades to one branch. If none
 is actionable:
 
@@ -229,12 +220,12 @@ Only an accepted prompt-team transition with a changed team hash resets all
 three per-agent counters. Rejection, routing refresh, epoch change, audit
 refresh, and checkpoint save do not reset them.
 
-v14 has no active freeze/unfreeze mechanism, freeze threshold, frozen portfolio
+v15 has no active freeze/unfreeze mechanism, freeze threshold, frozen portfolio
 signature, service block, or `all_actionable_members_frozen` stop.
 
 ## 5. Dual-target competitive search
 
-S1-S3 use:
+S1-S2 use:
 
 ```text
 target_branch_count = 2
@@ -268,24 +259,6 @@ Common-policy cross-branch key:
   total_member_gain_delta,
   soft_vote_utility_delta,
   -vote_loss_count,
-  -total_edit_token_count,
-  -target_selection_rank,
-  prompt_hash,
-)
-```
-
-S3 RCRU cross-branch key:
-
-```text
-(
-  team_vote_gain,
-  minimum_member_gain_delta,
-  total_member_gain_delta,
-  normalized_lane_utility_delta,
-  net_coalition_contribution_delta,
-  bootstrap_lcb,
-  positive_support_count,
-  -negative_support_count,
   -total_edit_token_count,
   -target_selection_rank,
   prompt_hash,
@@ -346,16 +319,15 @@ Proposal Memory remains optional and defaults to `off`. It may not alter
 eligibility, routing, active lanes, target scores, branch selection, or
 acceptance.
 
-## 7. Reduced three-module matrix
+## 7. Reduced two-module matrix
 
 Canonical main settings are:
 
 ```text
 Static shared_static_reference                    not in module vector
-S0     shared_generic_evolution                   000
-S1     shared_member_aware_dual_target            100
-S2     shared_responsibility_conditioned_dual_target 110
-S3     shared_full_dual_target_rcru                111
+S0     shared_generic_evolution                   00
+S1     shared_member_aware_dual_target            10
+S2     shared_responsibility_conditioned_dual_target 11
 ```
 
 Adjacent settings add exactly:
@@ -364,12 +336,14 @@ Adjacent settings add exactly:
 Static -> S0 generic prompt evolution
 S0 -> S1 repairability-adjusted member-aware dual-target search
 S1 -> S2 responsibility-conditioned evolution
-S2 -> S3 robust contribution update
 ```
 
-The old seven-setting v13 semantics and legacy v12 settings are rejected by
-default and are available only through explicit `legacy_v13_*` or
-`legacy_v12_*` identities with `--allow_legacy_setting 1`.
+S2 is the full method. Common-Safe Team Update is shared by S0-S2 and is not a
+module-vector dimension.
+
+The old v14 RCRU setting, seven-setting v13 semantics, and legacy v12 settings
+are rejected by default and are available only through explicit legacy
+identities with `--allow_legacy_setting 1`.
 
 Auxiliary compute controls are not main settings:
 
@@ -403,18 +377,18 @@ authorizes API calls in that task.
 
 ## 9. Persistence and artifacts
 
-Checkpoint v23 stores branch failure/attempt/feasible counts, repairability team
+Checkpoint v24 stores branch failure/attempt/feasible counts, repairability team
 hash and reset count, selected targets, target scores, branch lifecycle,
-routing, active lanes, and anchors. A v13/v22 or earlier checkpoint fails with:
+routing, active lanes, and anchors. A v23 or earlier checkpoint fails with:
 
 ```text
 checkpoint_version_mismatch
 ```
 
-There is no automatic migration and legacy freeze state must not enter a v14
+There is no automatic migration and legacy freeze state must not enter a v15
 runtime.
 
-Required v14 sanitized artifacts include:
+Required v15 sanitized artifacts include:
 
 ```text
 repairability_adjusted_target_scores.jsonl

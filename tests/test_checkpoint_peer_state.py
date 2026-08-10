@@ -25,7 +25,7 @@ async def solver(_question, agent_id, _prompt):
 def identity():
     return RunIdentity(
         method_version=METHOD_VERSION,
-        experiment_setting="shared_full_dual_target_rcru",
+        experiment_setting="shared_responsibility_conditioned_dual_target",
         git_commit="commit", git_dirty=False, config_fingerprint="config", manifest_sha256="manifest",
         train_file_sha256="train", val_file_sha256="val", test_file_sha256="test",
         train_question_set_hash="train-q", val_question_set_hash="val-q", test_question_set_hash="test-q",
@@ -47,7 +47,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v22_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
+def test_v24_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -117,8 +117,11 @@ def test_v22_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 23
-    assert payload["module_vector"]["robust_contribution_update"] is True
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 24
+    assert payload["module_vector"] == {
+        "member_aware_dual_target_search": True,
+        "responsibility_conditioned_evolution": True,
+    }
     assert payload["resolved_stage_a_policy"] == "matched_all_generated"
     assert payload["mutable_prompt_contract_version"] == (
         "reasoning_only_no_response_format_v2"
@@ -235,7 +238,7 @@ def test_checkpoint_restore_rejects_contaminated_active_prompt_before_mutation(
     assert [agent.current_prompt for agent in target.agents] == original_prompts
 
 
-@pytest.mark.parametrize("legacy_version", (21, 22))
+@pytest.mark.parametrize("legacy_version", (21, 22, 23))
 def test_legacy_checkpoint_is_explicitly_incompatible(
     tmp_path, legacy_version
 ):
@@ -246,18 +249,19 @@ def test_legacy_checkpoint_is_explicitly_incompatible(
         restore_checkpoint(system, payload)
 
 
-def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
+def test_legacy_v14_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
     run_identity = RunIdentity(
         **{
             **identity().__dict__,
-            "experiment_setting": "shared_full_dual_target_rcru",
+            "experiment_setting": "legacy_v14_shared_full_dual_target_rcru",
         }
     )
     system = PromptEnsembleOptimizationSystem(
         Config.from_flat(
             out_dir=str(tmp_path),
             answer_format="option_letter",
-            experiment_setting="shared_full_dual_target_rcru",
+                experiment_setting="shared_full_dual_target_rcru",
+                allow_legacy_setting=True,
         ),
         solver=solver,
     )
@@ -275,7 +279,7 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
         system, epoch_index=0, update_index=0, training_state={}
     )
     assert payload["canonical_experiment_setting"] == (
-        "shared_full_dual_target_rcru"
+        "legacy_v14_shared_full_dual_target_rcru"
     )
     assert payload["resolved_candidate_acceptance_policy"] == (
         "responsibility_robust_contribution"
@@ -292,6 +296,7 @@ def test_s6_checkpoint_persists_resolved_rcru_policy_and_audit(tmp_path):
             out_dir=str(tmp_path),
             answer_format="option_letter",
             experiment_setting="shared_full_dual_target_rcru",
+            allow_legacy_setting=True,
         ),
         solver=solver,
     )

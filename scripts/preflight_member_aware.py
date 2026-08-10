@@ -96,10 +96,18 @@ def _validate_configured_initial_prompts(cfg: Config) -> None:
 
 def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
     errors = []
+    if METHOD_VERSION != "member_aware_peer_state_v15":
+        errors.append("canonical method version is not v15")
+    if TARGET_SELECTION_VERSION != (
+        "repairability_adjusted_expected_update_value_wait_coupled_v2"
+    ):
+        errors.append("v15 W1 target selection version is incorrect")
+    if CHECKPOINT_VERSION != 24:
+        errors.append("canonical v15 checkpoint version is not 24")
     configs = [Config.from_flat(**setting.resolved_overrides()) for setting in select_settings("all")]
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append(
-            "experiment settings do not match Static plus reduced S0-S3 protocol"
+            "experiment settings do not match Static plus reduced S0-S2 protocol"
         )
     for cfg in configs:
         try:
@@ -119,7 +127,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         if cfg.peer_state.vote_tie_break != "abstain":
             errors.append("all canonical settings must use tie-as-abstain")
         if cfg.responsibility.member_uplift_tolerance != 5:
-            errors.append("canonical v14 member_uplift_tolerance must equal 5")
+            errors.append("canonical v15 member_uplift_tolerance must equal 5")
         if cfg.responsibility.responsibility_mode != "single_service_member_aware_v13":
             errors.append(
                 "responsibility_mode must be 'single_service_member_aware_v13'"
@@ -131,7 +139,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             or cfg.evaluation.stage_b_candidate_budget != 2
         ):
             errors.append(
-                "v14 main protocols require exactly two generated and "
+                "v15 main protocols require exactly two generated and "
                 "two Stage B candidates per target branch"
             )
     protocols = {
@@ -156,13 +164,12 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         tuple(int(value) for value in MAIN_ABLATION_MODULES[name].as_tuple())
         for name in EXPECTED_SETTINGS
     ) != (
-        (0, 0, 0),
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (1, 1, 1),
+        (0, 0),
+        (0, 0),
+        (1, 0),
+        (1, 1),
     ):
-        errors.append("main three-module vectors are not Static/000/100/110/111")
+        errors.append("main two-module vectors are not Static/00/10/11")
     for left, right, expected_module in EXPECTED_ADJACENT_MODULE:
         if changed_ablation_modules(
             protocols[left], protocols[right]
@@ -170,7 +177,7 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
             errors.append(
                 f"{left}->{right} does not add only {expected_module}"
             )
-    common = [protocols[name] for name in EXPECTED_SETTINGS[1:4]]
+    common = [protocols[name] for name in EXPECTED_SETTINGS[1:]]
     if len({
         (
             row.candidate_acceptance_policy,
@@ -179,15 +186,26 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         )
         for row in common
     }) != 1:
-        errors.append("S0-S2 do not share one candidate safety protocol")
+        errors.append("S0-S2 do not share the common-safe update protocol")
     if common[0].candidate_acceptance_policy != (
         "fixed_peer_monotone_target_or_vote"
     ) or common[0].candidate_ranking_policy != "common_monotone_safe":
         errors.append("S0-S2 common update policy is incorrect")
     if [protocols[name].target_branch_count for name in EXPECTED_SETTINGS] != (
-        [0, 1, 2, 2, 2]
+        [0, 1, 2, 2]
     ):
-        errors.append("main target branch budgets do not match Static/S0-S3")
+        errors.append("main target branch budgets do not match Static/S0-S2")
+    if any(
+        row.candidate_acceptance_policy
+        != "fixed_peer_monotone_target_or_vote"
+        or row.candidate_ranking_policy != "common_monotone_safe"
+        for row in common
+    ):
+        errors.append("a main optimized setting enables a non-common policy")
+    if protocols["shared_responsibility_conditioned_dual_target"].tcs_context_policy != (
+        "member_aware_responsibility_conditioned"
+    ):
+        errors.append("S2 does not enable responsibility-conditioned evolution")
     if any(row.stage_a_policy != "matched_all_generated" for row in protocols.values() if row.optimization_enabled):
         errors.append("main optimized settings must use matched-all Stage A")
     help_result = subprocess.run(
@@ -365,7 +383,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         )
                     ):
                         raise ValueError(
-                            "v14 main protocols require exactly two generated "
+                            "v15 main protocols require exactly two generated "
                             "and two Stage B candidates per target branch"
                         )
                     if (
@@ -373,7 +391,7 @@ def run_specific_preflight(args: argparse.Namespace, workspace: Path) -> dict:
                         and cfg.responsibility.member_uplift_tolerance != 5
                     ):
                         raise ValueError(
-                            "canonical v14 member_uplift_tolerance must equal 5"
+                            "canonical v15 member_uplift_tolerance must equal 5"
                         )
                     if (
                         cfg.responsibility.responsibility_mode

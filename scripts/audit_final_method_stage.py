@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import statistics
 import sys
 from dataclasses import asdict, dataclass
@@ -24,8 +23,6 @@ from multi_dataset_diverse_rl.versions import (
     METHOD_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
     REPAIRABILITY_VERSION,
-    RCRU_VERSION,
-    ROBUST_SUPPORT_VERSION,
     RESPONSIBILITY_VERSION,
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
@@ -35,7 +32,7 @@ from scripts.final_method_source_identity import build_source_identity
 from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v14_reduced_v1"
+AUDIT_VERSION = "final_method_stage_gate_v15_reduced_v1"
 AUDIT_MODES = (
     "frozen_source_execution",
     "offline_existing_artifact_revalidation",
@@ -44,7 +41,6 @@ LEGACY_NO_TEST_NORMALIZATION = "legacy_no_test_manifest_v1"
 MEMBER_AWARE_SETTINGS = {
     "shared_member_aware_dual_target",
     "shared_responsibility_conditioned_dual_target",
-    "shared_full_dual_target_rcru",
 }
 PROTOCOL_FIELDS = (
     "optimization_enabled",
@@ -80,14 +76,6 @@ EXPECTED_PROTOCOLS = {
         "member_aware_responsibility_conditioned", "common_monotone_safe",
         "fixed_peer_monotone_target_or_vote", "common_monotone_safe",
         "matched_all_generated", "online", False, True,
-    ),
-    "shared_full_dual_target_rcru": (
-        True, "repairability_adjusted_responsibility", "member_aware_residuals",
-        "member_aware_responsibility_conditioned",
-        "responsibility_contribution_pareto",
-        "responsibility_robust_contribution",
-        "responsibility_contribution_pareto", "matched_all_generated",
-        "online", False, True,
     ),
 }
 INFRASTRUCTURE_FAILURES = {
@@ -305,7 +293,10 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
         return (
             ("geometric_shapes", "ruin_names"),
             (44, 45, 46),
-            ("shared_static_reference", "shared_full_dual_target_rcru"),
+            (
+                "shared_static_reference",
+                "shared_responsibility_conditioned_dual_target",
+            ),
             32,
             True,
         )
@@ -326,7 +317,6 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
                 "shared_generic_evolution",
                 "shared_member_aware_dual_target",
                 "shared_responsibility_conditioned_dual_target",
-                "shared_full_dual_target_rcru",
             ),
             32,
             True,
@@ -444,9 +434,8 @@ def _audit_member_responsibility(
                 1.0 + int(priority["branch_failure_count"])
             )
             expected_value = (
-                opportunity * discount
-                + 0.05 * float(priority["normalized_wait"])
-            )
+                opportunity + 0.05 * float(priority["normalized_wait"])
+            ) * discount
             if (
                 abs(opportunity - float(priority["opportunity_value"]))
                 > 1e-12
@@ -538,10 +527,10 @@ def _audit_member_responsibility(
     for count, requirement, name in (
         (outside_eligibility, "Every assigned residual must include its target in E_x", "assignment outside eligibility"),
         (non_responsible, "Member-aware targets must have non-empty portfolios", "non-responsible target"),
-        (scalar_order, "Target selection must follow the scalar v14 total order", "scalar-order"),
-        (scalar_formula, "Target scores must follow the frozen v14 formula", "scalar-formula"),
-        (legacy_scheduler, "v14 target selection must contain no Pareto or freeze fields", "legacy-scheduler"),
-        (freeze_artifact_rows, "v14 must emit no active freeze or unfreeze events", "freeze-event"),
+        (scalar_order, "Target selection must follow the scalar v15 total order", "scalar-order"),
+        (scalar_formula, "Target scores must follow the frozen v15 W1 formula", "scalar-formula"),
+        (legacy_scheduler, "v15 target selection must contain no Pareto or freeze fields", "legacy-scheduler"),
+        (freeze_artifact_rows, "v15 must emit no active freeze or unfreeze events", "freeze-event"),
         (branch_counter_violation, "State-local branch counters must follow normal/operational semantics", "branch-counter"),
         (reset_violation, "Repairability counters reset only across a changed team hash", "repairability-reset"),
         (branch_parent_violation, "Dual branches must share one parent and commit at most one selected target", "dual-branch"),
@@ -565,6 +554,43 @@ def _audit_member_responsibility(
         "repairability_reset_violation": reset_violation,
         "dual_branch_parent_or_commit_violation": branch_parent_violation,
     }
+
+
+def _audit_common_safe_commits(
+    run_label: str,
+    decisions: list[dict[str, Any]],
+    findings: list[Finding],
+) -> int:
+    violations = 0
+    for decision in decisions:
+        accepted_hash = str(decision.get("accepted_prompt_hash", ""))
+        if not accepted_hash:
+            continue
+        matches = [
+            row
+            for row in decision.get("candidates", [])
+            if str(row.get("prompt_hash", "")) == accepted_hash
+        ]
+        if len(matches) != 1:
+            violations += 1
+            continue
+        constraint = matches[0].get("constraint") or {}
+        violations += int(not all((
+            constraint.get("passed") is True,
+            constraint.get("target_nonregression_passed") is True,
+            constraint.get("team_vote_nonregression_passed") is True,
+            constraint.get("target_or_vote_progress_passed") is True,
+            constraint.get("terminal_invalid_nonregression_passed") is True,
+        )))
+    if violations:
+        _finding(
+            findings,
+            "BLOCKER",
+            "Every committed v15 candidate must pass common safety",
+            f"{run_label}: common-safety commit violations={violations}",
+            "stop and repair candidate acceptance or audit production",
+        )
+    return violations
 
 
 def _audit_run(
@@ -597,10 +623,6 @@ def _audit_run(
         "dual_target_commit_decisions.jsonl",
         "repairability_failure_events.jsonl",
         "repairability_reset_events.jsonl",
-    ) + (
-        ("rcru_candidate_decisions_sanitized.jsonl",)
-        if setting == "shared_full_dual_target_rcru"
-        else ()
     )
     missing = [name for name in required if not (run_dir / name).is_file()]
     if missing:
@@ -657,9 +679,6 @@ def _audit_run(
         "candidate_selection_version": (
             meta.get("candidate_selection_version"), CANDIDATE_SELECTION_VERSION,
         ),
-        "robust_support_version": (
-            meta.get("robust_support_version"), ROBUST_SUPPORT_VERSION,
-        ),
         "checkpoint_version": (meta.get("checkpoint_version"), CHECKPOINT_VERSION),
         "agents": (config.get("agents"), 5),
         "train_size": (config.get("train_size"), 75),
@@ -713,21 +732,6 @@ def _audit_run(
             SETTING_NAMES.index(setting),
         ),
     }
-    if setting == "shared_full_dual_target_rcru":
-        exact_checks.update({
-            "resolved_candidate_acceptance_version": (
-                meta.get("resolved_candidate_acceptance_version"),
-                RCRU_VERSION,
-            ),
-            "candidate_acceptance_policy": (
-                meta.get("candidate_acceptance_policy"),
-                "responsibility_robust_contribution",
-            ),
-            "candidate_ranking_policy": (
-                meta.get("candidate_ranking_policy"),
-                "responsibility_contribution_pareto",
-            ),
-        })
     mismatches = {
         key: {"actual": actual, "expected": expected}
         for key, (actual, expected) in exact_checks.items()
@@ -767,71 +771,6 @@ def _audit_run(
             findings, "BLOCKER", "Experiment setting must isolate its registered module",
             f"{label}: {protocol_mismatches}", "repair protocol dispatch before continuing",
         )
-    if setting == "shared_full_dual_target_rcru":
-        robust_rows = _read_jsonl(
-            run_dir / "rcru_candidate_decisions_sanitized.jsonl"
-        )
-        robust_guard_violations = 0
-        for row in robust_rows:
-            required = bool(
-                int(row.get("vote_gain", 0)) == 0
-                and int(row.get("lane_utility_delta", 0)) > 0
-            )
-            positive_passed = (
-                not required
-                or int(row.get("positive_support_count", 0)) >= 1
-            )
-            no_negative_passed = (
-                not required
-                or int(row.get("negative_support_count", 0)) == 0
-            )
-            bootstrap_lcb = row.get("bootstrap_lcb")
-            bootstrap_passed = (
-                not required
-                or (
-                    isinstance(bootstrap_lcb, (int, float))
-                    and math.isfinite(float(bootstrap_lcb))
-                    and float(bootstrap_lcb) >= 0
-                )
-            )
-            expected_layer3 = bool(
-                row.get("layer2_passed")
-                and positive_passed
-                and no_negative_passed
-                and bootstrap_passed
-            )
-            reasons = set(map(str, row.get("rejection_reasons", [])))
-            robust_guard_violations += int(
-                row.get("artifact_schema_version")
-                != "rcru_candidate_decision_v2"
-                or bool(row.get("positive_support_guard_required"))
-                != required
-                or bool(row.get("positive_support_guard_passed"))
-                != positive_passed
-                or bool(row.get("no_negative_support_guard_required"))
-                != required
-                or bool(row.get("no_negative_support_guard_passed"))
-                != no_negative_passed
-                or bool(row.get("bootstrap_guard_required")) != required
-                or bool(row.get("bootstrap_guard_passed"))
-                != bootstrap_passed
-                or bool(row.get("layer3_passed")) != expected_layer3
-                or ("insufficient_lane_support" in reasons)
-                != (not positive_passed)
-                or ("negative_lane_support" in reasons)
-                != (not no_negative_passed)
-                or ("negative_lane_bootstrap_lcb" in reasons)
-                != (not bootstrap_passed)
-            )
-        if robust_guard_violations:
-            _finding(
-                findings,
-                "BLOCKER",
-                "S3 artifacts must implement the v14 robust-support guard",
-                f"{label}: robust_guard_violations={robust_guard_violations}",
-                "stop and repair Layer-3 guard accounting before continuing",
-            )
-
     if frozen.get("matched") is not True:
         _finding(
             findings, "BLOCKER", "Every run must exact-match the task-seed frozen initialization",
@@ -921,6 +860,11 @@ def _audit_run(
         )
 
     decisions = _read_jsonl(run_dir / "candidate_decisions.jsonl")
+    common_safety_violations = (
+        _audit_common_safe_commits(label, decisions, findings)
+        if setting != "shared_static_reference"
+        else 0
+    )
     terminal_counts = funnel.get("terminal_failure_counts", {})
     infrastructure_count = sum(
         int(terminal_counts.get(name, 0)) for name in INFRASTRUCTURE_FAILURES
@@ -968,6 +912,7 @@ def _audit_run(
         "planned_update_count": meta.get("planned_update_count"),
         "completed_update_count": meta.get("completed_update_count"),
         "test_evaluation_count": meta.get("test_evaluation_count"),
+        "common_safety_commit_violation": common_safety_violations,
         "repairability_reset_count": len(
             _read_jsonl(run_dir / "repairability_reset_events.jsonl")
         ),
@@ -1175,15 +1120,6 @@ def _setting_isolation(
             "shared_member_aware_dual_target",
             "shared_responsibility_conditioned_dual_target",
             {"tcs_context_policy"},
-        ),
-        (
-            "shared_responsibility_conditioned_dual_target",
-            "shared_full_dual_target_rcru",
-            {
-                "candidate_selection_policy",
-                "candidate_acceptance_policy",
-                "candidate_ranking_policy",
-            },
         ),
     )
     rows = []

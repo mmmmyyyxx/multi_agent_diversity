@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Any
 
 
-REPORT_VERSION = "final_method_complete_evaluation_v14_reduced_v1"
-REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v14_reduced_v1"
+REPORT_VERSION = "final_method_complete_evaluation_v15_reduced_v1"
+REQUIRED_STAGE_AUDIT_VERSION = "final_method_stage_gate_v15_reduced_v1"
 ABLATION_COMPARISONS = (
     (
         "shared_static_reference",
@@ -25,7 +25,6 @@ ABLATION_COMPARISONS = (
         "shared_responsibility_conditioned_dual_target",
         "responsibility_conditioned_proposal_effect",
     ),
-    ("shared_responsibility_conditioned_dual_target", "shared_full_dual_target_rcru", "robust_contribution_update_effect"),
 )
 
 
@@ -232,7 +231,6 @@ def main() -> None:
             "shared_generic_evolution",
             "shared_member_aware_dual_target",
             "shared_responsibility_conditioned_dual_target",
-            "shared_full_dual_target_rcru",
         ):
             run = disamb_runs[("disambiguation_qa", seed, setting)]
             outcome = _member_outcome(baseline, run["selected_test"])
@@ -273,7 +271,7 @@ def main() -> None:
                 (task, seed, "shared_static_reference")
             ]["selected_test"]
             full = cross_runs[
-                (task, seed, "shared_full_dual_target_rcru")
+                (task, seed, "shared_responsibility_conditioned_dual_target")
             ]
             cross_rows.append({
                 "task": task,

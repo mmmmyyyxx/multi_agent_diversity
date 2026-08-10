@@ -61,9 +61,8 @@ class CandidateBudgetContract:
 class AblationModules:
     member_aware_dual_target_search: bool
     responsibility_conditioned_evolution: bool
-    robust_contribution_update: bool
 
-    def as_tuple(self) -> tuple[bool, bool, bool]:
+    def as_tuple(self) -> tuple[bool, bool]:
         return tuple(
             bool(getattr(self, field.name)) for field in fields(type(self))
         )
@@ -147,7 +146,6 @@ MAIN_ABLATION_SETTINGS = (
     "shared_generic_evolution",
     "shared_member_aware_dual_target",
     "shared_responsibility_conditioned_dual_target",
-    "shared_full_dual_target_rcru",
 )
 
 SETTING_DISPLAY_NAMES = {
@@ -155,19 +153,15 @@ SETTING_DISPLAY_NAMES = {
     "shared_generic_evolution": "S0 Generic Prompt Evolution",
     "shared_member_aware_dual_target": "S1 Member-Aware Dual-Target Search",
     "shared_responsibility_conditioned_dual_target": (
-        "S2 Responsibility-Conditioned Evolution"
+        "S2 Responsibility-Conditioned Evolution (Full)"
     ),
-    "shared_full_dual_target_rcru": "S3 Robust Contribution Update (Full)",
 }
 
 MAIN_ABLATION_MODULES = {
-    "shared_static_reference": AblationModules(False, False, False),
-    "shared_generic_evolution": AblationModules(False, False, False),
-    "shared_member_aware_dual_target": AblationModules(True, False, False),
-    "shared_responsibility_conditioned_dual_target": AblationModules(
-        True, True, False
-    ),
-    "shared_full_dual_target_rcru": AblationModules(True, True, True),
+    "shared_static_reference": AblationModules(False, False),
+    "shared_generic_evolution": AblationModules(False, False),
+    "shared_member_aware_dual_target": AblationModules(True, False),
+    "shared_responsibility_conditioned_dual_target": AblationModules(True, True),
 }
 
 EXPECTED_ADJACENT_MODULE = (
@@ -181,11 +175,6 @@ EXPECTED_ADJACENT_MODULE = (
         "shared_member_aware_dual_target",
         "shared_responsibility_conditioned_dual_target",
         "responsibility_conditioned_evolution",
-    ),
-    (
-        "shared_responsibility_conditioned_dual_target",
-        "shared_full_dual_target_rcru",
-        "robust_contribution_update",
     ),
 )
 
@@ -213,6 +202,10 @@ LEGACY_V13_SEVEN_SETTINGS = (
     "legacy_v13_shared_full_dual_target_rcru",
 )
 
+LEGACY_V14_SETTINGS = (
+    "legacy_v14_shared_full_dual_target_rcru",
+)
+
 LEGACY_V11_SETTINGS = (
     "legacy_shared_independent_accuracy_v11",
     "legacy_shared_peer_state_vote_first_v11",
@@ -220,10 +213,16 @@ LEGACY_V11_SETTINGS = (
     "legacy_shared_member_aware_full_v11",
 )
 LEGACY_CONTROL_SETTINGS = (
-    LEGACY_V13_SEVEN_SETTINGS + LEGACY_V12_SETTINGS + LEGACY_V11_SETTINGS
+    LEGACY_V14_SETTINGS
+    + LEGACY_V13_SEVEN_SETTINGS
+    + LEGACY_V12_SETTINGS
+    + LEGACY_V11_SETTINGS
 )
 
 HISTORICAL_SETTING_TO_LEGACY_CONTROL = {
+    "shared_full_dual_target_rcru": (
+        "legacy_v14_shared_full_dual_target_rcru"
+    ),
     "shared_baseline": "legacy_v13_shared_baseline",
     "shared_vote_state_diagnosis": (
         "legacy_v13_shared_vote_state_diagnosis"
@@ -265,7 +264,6 @@ def validate_ablation_modules(modules: AblationModules) -> None:
             "responsibility_conditioned_evolution",
             "member_aware_dual_target_search",
         ),
-        ("robust_contribution_update", "responsibility_conditioned_evolution"),
     )
     for child, parent in dependencies:
         if getattr(modules, child) and not getattr(modules, parent):
@@ -300,20 +298,13 @@ def resolve_protocol_from_modules(
         if modules.responsibility_conditioned_evolution
         else ("generic_peer_state" if responsibility else "generic_accuracy")
     )
-    rcru = modules.robust_contribution_update
     return ResolvedProtocolPolicies(
         optimization_enabled=True,
         target_selection_policy=target,
         sample_pool_policy=sample_pool,
         tcs_context_policy=context,
-        candidate_acceptance_policy=(
-            "responsibility_robust_contribution"
-            if rcru else "fixed_peer_monotone_target_or_vote"
-        ),
-        candidate_ranking_policy=(
-            "responsibility_contribution_pareto"
-            if rcru else "common_monotone_safe"
-        ),
+        candidate_acceptance_policy="fixed_peer_monotone_target_or_vote",
+        candidate_ranking_policy="common_monotone_safe",
         stage_a_policy="matched_all_generated",
         responsibility_refresh_policy="online" if responsibility else "off",
         repairability_freeze_enabled=False,
@@ -412,6 +403,8 @@ def candidate_budget_contract(
         branch_count, candidate_count, stage_b = 2, 1, 1
     elif name == "aux_single_target_compute_matched_1x4":
         branch_count, candidate_count, stage_b = 1, 4, 4
+    elif name in LEGACY_V14_SETTINGS:
+        branch_count, candidate_count, stage_b = 2, 2, 2
     elif name in LEGACY_V13_SEVEN_SETTINGS:
         branch_count = (
             2 if LEGACY_V13_SEVEN_SETTINGS.index(name) >= 4 else 1
@@ -442,6 +435,24 @@ def candidate_budget_contract(
 def _legacy_definition(
     name: str,
 ) -> tuple[str, LegacyAblationModules, dict]:
+    if name in LEGACY_V14_SETTINGS:
+        modules = LegacyAblationModules(True, True, True, True, True, True)
+        return (
+            "Legacy v14 S3 Robust Contribution Update (Full)",
+            modules,
+            dict(
+                optimization_enabled=True,
+                target_selection_policy="repairability_adjusted_responsibility",
+                sample_pool_policy="member_aware_residuals",
+                tcs_context_policy="member_aware_responsibility_conditioned",
+                candidate_acceptance_policy="responsibility_robust_contribution",
+                candidate_ranking_policy="responsibility_contribution_pareto",
+                stage_a_policy="matched_all_generated",
+                responsibility_refresh_policy="online",
+                repairability_freeze_enabled=False,
+                service_routing_enabled=True,
+            ),
+        )
     if name in LEGACY_V13_SEVEN_SETTINGS:
         index = LEGACY_V13_SEVEN_SETTINGS.index(name)
         modules = LegacyAblationModules(

@@ -43,7 +43,7 @@ from multi_dataset_diverse_rl.persistence.identity import (
 )
 
 
-SOURCE_IDENTITY_VERSION = "final_method_source_identity_v4"
+SOURCE_IDENTITY_VERSION = "final_method_source_identity_v5"
 SOURCE_ROOTS = (
     "AGENTS.md",
     "README.md",

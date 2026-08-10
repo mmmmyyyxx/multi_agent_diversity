@@ -57,6 +57,8 @@ def build_system(tmp_path, optimizer=fake_optimizer, **overrides):
         "experiment_setting": "shared_responsibility_conditioned_dual_target",
     }
     values.update(overrides)
+    if values["experiment_setting"] == "shared_full_dual_target_rcru":
+        values["allow_legacy_setting"] = True
     cfg = Config.from_flat(**values)
     return PromptEnsembleOptimizationSystem(
         cfg, solver=fake_solver, optimizer_chat=optimizer,
@@ -214,7 +216,7 @@ def test_s1_and_s2_share_routing_scheduler_but_isolate_context(tmp_path):
     assert s5_audit["context_type"] == "SingleLaneDiagnosisContext"
 
 
-def test_s6_shares_s5_target_slice_context_and_candidate_generation(tmp_path):
+def test_legacy_v14_rcru_shares_v15_s2_context_and_generation(tmp_path):
     async def inspect(setting):
         system = build_system(
             tmp_path / setting,
@@ -257,7 +259,7 @@ def test_s6_shares_s5_target_slice_context_and_candidate_generation(tmp_path):
     )
 
 
-def test_s6_writes_hash_only_rcru_candidate_audit(tmp_path):
+def test_legacy_v14_rcru_writes_hash_only_candidate_audit(tmp_path):
     system = build_system(
         tmp_path,
         experiment_setting="shared_full_dual_target_rcru",
