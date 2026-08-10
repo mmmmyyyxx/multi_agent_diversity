@@ -1,0 +1,11 @@
+{
+  "API_CALLS": 0,
+  "B1_exact": true,
+  "M3B_exact": true,
+  "REPLAY_MODE": "ONE_STEP_FIXED_PARENT_FIXED_POOL",
+  "REPLAY_VALIDATION": "PASS",
+  "TEST_USED_FOR_POLICY_SELECTION": false,
+  "Task2_Module1_W1_used": false,
+  "mismatch_count": 0,
+  "mismatches": []
+}

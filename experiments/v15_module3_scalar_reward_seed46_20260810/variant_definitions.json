@@ -1,0 +1,37 @@
+{
+  "SRA": {
+    "R": "lane_delta/active_count; margin_support uses lane_delta/(5*active_count)",
+    "name": "COMMON_SAFE_EQUAL_SCALAR_LANE"
+  },
+  "SRB": {
+    "R": "(positive_support-negative_support)/active_count",
+    "name": "COMMON_SAFE_EQUAL_SCALAR_SUPPORT"
+  },
+  "SRC": {
+    "R": "net_coalition_contribution_delta/75",
+    "name": "COMMON_SAFE_EQUAL_SCALAR_COALITION"
+  },
+  "forbidden_primary_dimensions": [
+    "diversity",
+    "oracle_coverage",
+    "prompt_distance",
+    "raw_lane_utility_total",
+    "raw_portfolio_size",
+    "bootstrap_lcb",
+    "edit_tokens",
+    "target_rank"
+  ],
+  "shared": {
+    "M": "target_gain/75",
+    "T": "net_team_vote_gain/75",
+    "feasibility": "evaluate_constraints",
+    "lane_only_progress_allowed": false,
+    "primary_arithmetic": "exact_Fraction",
+    "utility": "T+M+R",
+    "weights": [
+      1,
+      1,
+      1
+    ]
+  }
+}

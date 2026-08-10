@@ -1,0 +1,7 @@
+policy,feasible_candidates,branch_winners,global_commits,no_commit_updates,changed_updates_vs_S2,changed_updates_vs_M3B,changed_updates_vs_v14_RCRU,distinct_selected_target_agents,target_gain_sum,vote_gain_count,vote_loss_count,net_vote_gain,boundary_cross_count,minimum_member_gain_delta_sum,total_member_gain_delta_sum,soft_vote_utility_delta_sum,normalized_lane_progress_sum,positive_support_sum,negative_support_sum,net_support_rate_mean,coalition_contribution_delta_sum,lane_only_commit_count,safety_violation_count
+B0,14,9,7,25,4,3,0,3,22,8,0,8,8,0,22,0.0712437601604079,2.275,11,0,0.4357142857142857,8,1,0
+B1,13,10,8,24,0,1,4,3,30,8,0,8,8,0,30,0.08635907460321379,2.25,10,0,0.365625,8,0,0
+M3B,13,10,8,24,1,0,3,3,30,8,0,8,8,0,30,0.08635907460321379,2.25,10,0,0.365625,8,0,0
+SRA,13,10,8,24,1,0,3,3,30,8,0,8,8,0,30,0.08635907460321379,2.25,10,0,0.365625,8,0,0
+SRB,13,10,8,24,1,0,3,3,30,8,0,8,8,0,30,0.08635907460321379,2.25,10,0,0.365625,8,0,0
+SRC,13,10,8,24,1,0,3,3,30,8,0,8,8,0,30,0.08635907460321379,2.25,10,0,0.365625,8,0,0
