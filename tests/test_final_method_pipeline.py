@@ -18,7 +18,9 @@ from scripts.audit_final_method_stage import (
     _audit_source_contract,
     _comparison_cache_chain,
     _expected_matrix,
+    _derive_expected_seed,
     _matched_observation_consistency,
+    _run_directory,
     _portable_config_value,
     _priority_key,
     _test_artifact_contract,
@@ -44,7 +46,7 @@ def test_stage_gate_reports_dataset_paths_without_machine_prefix():
 def test_formal_stage_matrices_are_exact():
     assert _expected_matrix("pilot") == (
         ("disambiguation_qa",),
-        (46,),
+        (),
         (
             "shared_static_reference",
             "shared_generic_evolution",
@@ -55,6 +57,19 @@ def test_formal_stage_matrices_are_exact():
         False,
     )
     assert _expected_matrix("disambiguation")[3:] == (32, True)
+    assert _expected_matrix("pilot", expected_seed=47)[1] == (47,)
+    assert _expected_matrix("development_formal", expected_seed=48) == (
+        ("disambiguation_qa",),
+        (48,),
+        (
+            "shared_static_reference",
+            "shared_generic_evolution",
+            "shared_member_aware_dual_target",
+            "shared_responsibility_conditioned_dual_target",
+        ),
+        32,
+        False,
+    )
     assert _expected_matrix("cross_task") == (
         ("geometric_shapes", "ruin_names"),
         (44, 45, 46),
@@ -84,6 +99,69 @@ def test_formal_stage_matrices_are_exact():
         32,
         True,
     )
+
+
+def _seed_run_fixture(root: Path, setting: str, seed: int) -> Path:
+    run_dir = root / "disambiguation_qa" / f"{setting}_seed{seed}"
+    run_dir.mkdir(parents=True)
+    (run_dir / "run_meta.json").write_text(
+        json.dumps({"config": {"seed": seed}}) + "\n",
+        encoding="utf-8",
+    )
+    return run_dir
+
+
+def test_seed47_audit_paths_and_metadata_are_seed_agnostic(tmp_path):
+    settings = _expected_matrix("pilot", expected_seed=47)[2]
+    for setting in settings:
+        _seed_run_fixture(tmp_path, setting, 47)
+    assert _derive_expected_seed(
+        tmp_path,
+        ("disambiguation_qa",),
+        settings,
+    ) == 47
+    for setting in settings:
+        assert _run_directory(
+            tmp_path,
+            "disambiguation_qa",
+            setting,
+            47,
+        ).is_dir()
+
+
+def test_wrong_expected_seed_fails_directory_discovery_cleanly(tmp_path):
+    settings = _expected_matrix("pilot", expected_seed=47)[2]
+    for setting in settings:
+        _seed_run_fixture(tmp_path, setting, 47)
+    for setting in settings:
+        assert not _run_directory(
+            tmp_path,
+            "disambiguation_qa",
+            setting,
+            46,
+        ).exists()
+
+
+def test_seed46_path_remains_backward_compatible(tmp_path):
+    path = _run_directory(
+        tmp_path,
+        "disambiguation_qa",
+        "shared_static_reference",
+        46,
+    )
+    assert path.name == "shared_static_reference_seed46"
+
+
+def test_inconsistent_run_seed_is_rejected(tmp_path):
+    settings = _expected_matrix("pilot", expected_seed=47)[2]
+    _seed_run_fixture(tmp_path, settings[0], 47)
+    _seed_run_fixture(tmp_path, settings[1], 48)
+    try:
+        _derive_expected_seed(tmp_path, ("disambiguation_qa",), settings)
+    except ValueError as exc:
+        assert str(exc) == "inconsistent_run_seed"
+    else:
+        raise AssertionError("mixed run seeds must fail")
 
 
 def test_scalar_target_key_uses_expected_value_then_fixed_ties():

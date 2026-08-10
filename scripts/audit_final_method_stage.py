@@ -32,7 +32,7 @@ from scripts.final_method_source_identity import build_source_identity
 from multi_dataset_diverse_rl.protocol import MAIN_ABLATION_MODULES
 
 
-AUDIT_VERSION = "final_method_stage_gate_v15_reduced_v1"
+AUDIT_VERSION = "final_method_stage_gate_v15_seed_agnostic_v2"
 AUDIT_MODES = (
     "frozen_source_execution",
     "offline_existing_artifact_revalidation",
@@ -284,9 +284,16 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     ]
 
 
-def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tuple[str, ...], int, bool]:
+def _expected_matrix(
+    stage: str,
+    expected_seed: int | None = None,
+) -> tuple[tuple[str, ...], tuple[int, ...], tuple[str, ...], int, bool]:
     if stage == "pilot":
-        return ("disambiguation_qa",), (46,), tuple(SETTING_NAMES), 8, False
+        seeds = () if expected_seed is None else (expected_seed,)
+        return ("disambiguation_qa",), seeds, tuple(SETTING_NAMES), 8, False
+    if stage == "development_formal":
+        seeds = () if expected_seed is None else (expected_seed,)
+        return ("disambiguation_qa",), seeds, tuple(SETTING_NAMES), 32, False
     if stage == "disambiguation":
         return ("disambiguation_qa",), (44, 45, 46), tuple(SETTING_NAMES), 32, True
     if stage == "cross_task":
@@ -322,6 +329,49 @@ def _expected_matrix(stage: str) -> tuple[tuple[str, ...], tuple[int, ...], tupl
             True,
         )
     raise ValueError(stage)
+
+
+def _run_directory(
+    run_root: Path,
+    task: str,
+    setting: str,
+    seed: int,
+) -> Path:
+    return run_root / task / f"{setting}_seed{seed}"
+
+
+def _observed_run_seeds(
+    run_root: Path,
+    tasks: Iterable[str],
+    settings: Iterable[str],
+) -> tuple[int, ...]:
+    observed: set[int] = set()
+    for task in tasks:
+        task_root = run_root / task
+        if not task_root.is_dir():
+            continue
+        for setting in settings:
+            for run_dir in task_root.glob(f"{setting}_seed*"):
+                meta_path = run_dir / "run_meta.json"
+                if not meta_path.is_file():
+                    continue
+                meta = _read_json(meta_path)
+                seed = meta.get("config", {}).get("seed")
+                if isinstance(seed, bool) or not isinstance(seed, int):
+                    continue
+                observed.add(seed)
+    return tuple(sorted(observed))
+
+
+def _derive_expected_seed(
+    run_root: Path,
+    tasks: Iterable[str],
+    settings: Iterable[str],
+) -> int | None:
+    observed = _observed_run_seeds(run_root, tasks, settings)
+    if len(observed) > 1:
+        raise ValueError("inconsistent_run_seed")
+    return observed[0] if observed else None
 
 
 def _finding(
@@ -1196,11 +1246,12 @@ def main() -> None:
     parser.add_argument(
         "--stage",
         choices=(
-            "pilot", "disambiguation", "cross_task",
+            "pilot", "development_formal", "disambiguation", "cross_task",
             "strict_v2_witness", "strict_v2_disambiguation",
         ),
         required=True,
     )
+    parser.add_argument("--expected_seed", type=int)
     parser.add_argument("--run_root", type=Path, required=True)
     parser.add_argument("--report_dir", type=Path, required=True)
     parser.add_argument("--source_identity", type=Path, required=True)
@@ -1236,14 +1287,49 @@ def main() -> None:
             "use a clean auditor and the exact recorded run source identity",
         )
 
-    tasks, seeds, settings, expected_updates, final_test_enabled = _expected_matrix(args.stage)
+    tasks, default_seeds, settings, expected_updates, final_test_enabled = (
+        _expected_matrix(args.stage)
+    )
+    expected_seed_source = "stage_default"
+    if args.expected_seed is not None:
+        seeds = (args.expected_seed,)
+        expected_seed_source = "explicit"
+    elif args.stage in {"pilot", "development_formal"}:
+        observed_seeds = _observed_run_seeds(run_root, tasks, settings)
+        if len(observed_seeds) > 1:
+            seeds = observed_seeds
+            expected_seed_source = "inconsistent_metadata"
+            _finding(
+                findings,
+                "BLOCKER",
+                "A seed-derived single-seed audit must have one consistent run seed",
+                f"inconsistent_run_seed: observed={list(observed_seeds)}",
+                "pass --expected_seed for a preregistered seed or repair mixed run metadata",
+            )
+        elif observed_seeds:
+            seeds = observed_seeds
+            expected_seed_source = "derived_from_run_metadata"
+        elif default_seeds:
+            seeds = default_seeds
+        else:
+            seeds = ()
+            expected_seed_source = "unresolved"
+            _finding(
+                findings,
+                "BLOCKER",
+                "A development Formal audit requires an explicit or unambiguous seed",
+                "expected_seed_required_or_unambiguous_run_metadata",
+                "pass --expected_seed with the preregistered Formal seed",
+            )
+    else:
+        seeds = default_seeds
     summaries = [
         _audit_run(
             stage=args.stage,
             task=task,
             seed=seed,
             setting=setting,
-            run_dir=run_root / task / f"{setting}_seed{seed}",
+            run_dir=_run_directory(run_root, task, setting, seed),
             expected_updates=expected_updates,
             final_test_enabled=final_test_enabled,
             source_identity=run_source_identity,
@@ -1317,6 +1403,8 @@ def main() -> None:
         "audit_version": AUDIT_VERSION,
         "audit_mode": args.audit_mode,
         "stage": args.stage,
+        "expected_seeds": list(seeds),
+        "expected_seed_source": expected_seed_source,
         "gate": gate,
         "blocker_count": blocker_count,
         "major_count": major_count,
