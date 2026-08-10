@@ -1,0 +1,476 @@
+{
+  "report_version": "qwen3_14b_seed46_pipeline_report_v1",
+  "method_version": "member_aware_peer_state_v14",
+  "checkpoint_version": 23,
+  "base_model": "qwen3-14b",
+  "thinking_enabled": false,
+  "task": "disambiguation_qa",
+  "seed": 46,
+  "source_identity_resolution": {
+    "git_commit": "e5bdc9f27f7a5594072aafd828c7c6053297c03c",
+    "historical_main_worktree_hash": "57598daaf6b6e0528df4f1f033a658e576f84b6b3683ec0cab416f0421b4e8ab",
+    "first_fresh_crlf_worktree_hash": "c87a3b96ec128bba84e61ace2050a61b37a50a8eda72370c8783d7c48e3e97ce",
+    "canonical_exact_git_blob_lf_hash": "9b38c5fbf3519481e0ab02faee5d69f71e674449eb478698d295475428723ceb",
+    "same_git_commit": true,
+    "difference_classification": "CHECKOUT_LINE_ENDING_MATERIALIZATION",
+    "canonical_source_files_exact_head_blob_match": "137/137",
+    "method_source_modified": false,
+    "method_runtime_semantics_changed": false
+  },
+  "pre_execution_attempts": {
+    "crlf_materialization_attempt": {
+      "status": "INVALIDATED_PRE_EXECUTION_CRLF_MATERIALIZATION",
+      "api_calls": 0,
+      "included_in_experiment_cost": false
+    },
+    "lf_identity_diagnostic": {
+      "status": "SOURCE_IDENTITY_DIAGNOSTIC_COMPLETED",
+      "api_calls": 0,
+      "included_in_experiment_cost": false
+    }
+  },
+  "gates": {
+    "pilot_protocol": "PASS",
+    "pilot_empirical": "PASS",
+    "one_seed_formal": "PASS",
+    "protocol_and_mechanism_healthy": true
+  },
+  "formal_settings": {
+    "Static": {
+      "planned_update_count": 0,
+      "completed_update_count": 0,
+      "accepted_update_count": 0,
+      "candidate_flow": {
+        "update_count": 0,
+        "raw_candidate_count": 0,
+        "protocol_valid_candidate_count": 0,
+        "stage_b_evaluated_count": 0,
+        "common_safety_pass_count": 0,
+        "accepted_update_count": 0,
+        "feasible_branch_count": 0,
+        "infrastructure_failed_update_count": 0,
+        "output_contract_pollution_count": 0,
+        "consistency": {
+          "stage_b_equals_candidate_decisions": true,
+          "feasible_equals_candidate_decisions": true,
+          "accepted_counts_agree": true
+        }
+      },
+      "final_train": {
+        "per_agent_correct_counts": [
+          50,
+          50,
+          50,
+          50,
+          50
+        ],
+        "member_mean_correct_count": 50.0,
+        "member_minimum_correct_count": 50,
+        "vote_correct_count": 50,
+        "terminal_invalid_count": 0
+      },
+      "final_test": {
+        "per_agent_correct_counts": [
+          85,
+          85,
+          85,
+          85,
+          85
+        ],
+        "member_mean_correct_count": 85.0,
+        "member_minimum_correct_count": 85,
+        "vote_correct_count": 85,
+        "terminal_invalid_count": 0
+      },
+      "cost": {
+        "total_tokens": 31344,
+        "tokens_per_completed_update": null,
+        "tokens_per_accepted_update": null,
+        "total_llm_calls": 125,
+        "failed_llm_attempts": 0
+      }
+    },
+    "S0": {
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "accepted_update_count": 4,
+      "candidate_flow": {
+        "update_count": 32,
+        "raw_candidate_count": 12,
+        "protocol_valid_candidate_count": 11,
+        "stage_b_evaluated_count": 11,
+        "common_safety_pass_count": 6,
+        "accepted_update_count": 4,
+        "feasible_branch_count": 4,
+        "infrastructure_failed_update_count": 0,
+        "output_contract_pollution_count": 1,
+        "consistency": {
+          "stage_b_equals_candidate_decisions": true,
+          "feasible_equals_candidate_decisions": true,
+          "accepted_counts_agree": true
+        }
+      },
+      "final_train": {
+        "per_agent_correct_counts": [
+          50,
+          50,
+          54,
+          54,
+          50
+        ],
+        "member_mean_correct_count": 51.6,
+        "member_minimum_correct_count": 50,
+        "vote_correct_count": 55,
+        "terminal_invalid_count": 0
+      },
+      "final_test": {
+        "per_agent_correct_counts": [
+          85,
+          85,
+          86,
+          92,
+          84
+        ],
+        "member_mean_correct_count": 86.4,
+        "member_minimum_correct_count": 84,
+        "vote_correct_count": 90,
+        "terminal_invalid_count": 0
+      },
+      "cost": {
+        "total_tokens": 505079,
+        "tokens_per_completed_update": 15783.71875,
+        "tokens_per_accepted_update": 126269.75,
+        "total_llm_calls": 1329,
+        "failed_llm_attempts": 7
+      }
+    },
+    "S1": {
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "accepted_update_count": 6,
+      "candidate_flow": {
+        "update_count": 32,
+        "raw_candidate_count": 28,
+        "protocol_valid_candidate_count": 23,
+        "stage_b_evaluated_count": 23,
+        "common_safety_pass_count": 7,
+        "accepted_update_count": 6,
+        "feasible_branch_count": 6,
+        "infrastructure_failed_update_count": 0,
+        "output_contract_pollution_count": 3,
+        "consistency": {
+          "stage_b_equals_candidate_decisions": true,
+          "feasible_equals_candidate_decisions": true,
+          "accepted_counts_agree": true
+        }
+      },
+      "final_train": {
+        "per_agent_correct_counts": [
+          50,
+          65,
+          50,
+          54,
+          50
+        ],
+        "member_mean_correct_count": 53.8,
+        "member_minimum_correct_count": 50,
+        "vote_correct_count": 55,
+        "terminal_invalid_count": 0
+      },
+      "final_test": {
+        "per_agent_correct_counts": [
+          91,
+          98,
+          85,
+          82,
+          85
+        ],
+        "member_mean_correct_count": 88.2,
+        "member_minimum_correct_count": 82,
+        "vote_correct_count": 90,
+        "terminal_invalid_count": 0
+      },
+      "cost": {
+        "total_tokens": 1347705,
+        "tokens_per_completed_update": 42115.78125,
+        "tokens_per_accepted_update": 224617.5,
+        "total_llm_calls": 2383,
+        "failed_llm_attempts": 18
+      }
+    },
+    "S2": {
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "accepted_update_count": 9,
+      "candidate_flow": {
+        "update_count": 32,
+        "raw_candidate_count": 106,
+        "protocol_valid_candidate_count": 90,
+        "stage_b_evaluated_count": 90,
+        "common_safety_pass_count": 16,
+        "accepted_update_count": 9,
+        "feasible_branch_count": 12,
+        "infrastructure_failed_update_count": 0,
+        "output_contract_pollution_count": 0,
+        "consistency": {
+          "stage_b_equals_candidate_decisions": true,
+          "feasible_equals_candidate_decisions": true,
+          "accepted_counts_agree": true
+        }
+      },
+      "final_train": {
+        "per_agent_correct_counts": [
+          55,
+          56,
+          60,
+          57,
+          55
+        ],
+        "member_mean_correct_count": 56.6,
+        "member_minimum_correct_count": 55,
+        "vote_correct_count": 60,
+        "terminal_invalid_count": 0
+      },
+      "final_test": {
+        "per_agent_correct_counts": [
+          88,
+          91,
+          94,
+          91,
+          88
+        ],
+        "member_mean_correct_count": 90.4,
+        "member_minimum_correct_count": 88,
+        "vote_correct_count": 93,
+        "terminal_invalid_count": 0
+      },
+      "cost": {
+        "total_tokens": 2174163,
+        "tokens_per_completed_update": 67942.59375,
+        "tokens_per_accepted_update": 241573.66666666666,
+        "total_llm_calls": 7644,
+        "failed_llm_attempts": 92
+      }
+    },
+    "S3": {
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "accepted_update_count": 7,
+      "candidate_flow": {
+        "update_count": 32,
+        "raw_candidate_count": 92,
+        "protocol_valid_candidate_count": 88,
+        "stage_b_evaluated_count": 88,
+        "common_safety_pass_count": 14,
+        "accepted_update_count": 7,
+        "feasible_branch_count": 9,
+        "infrastructure_failed_update_count": 0,
+        "output_contract_pollution_count": 1,
+        "consistency": {
+          "stage_b_equals_candidate_decisions": true,
+          "feasible_equals_candidate_decisions": true,
+          "accepted_counts_agree": true
+        }
+      },
+      "final_train": {
+        "per_agent_correct_counts": [
+          60,
+          50,
+          57,
+          55,
+          50
+        ],
+        "member_mean_correct_count": 54.4,
+        "member_minimum_correct_count": 50,
+        "vote_correct_count": 58,
+        "terminal_invalid_count": 0
+      },
+      "final_test": {
+        "per_agent_correct_counts": [
+          91,
+          85,
+          87,
+          88,
+          85
+        ],
+        "member_mean_correct_count": 87.2,
+        "member_minimum_correct_count": 85,
+        "vote_correct_count": 87,
+        "terminal_invalid_count": 0
+      },
+      "cost": {
+        "total_tokens": 2038013,
+        "tokens_per_completed_update": 63687.90625,
+        "tokens_per_accepted_update": 291144.71428571426,
+        "total_llm_calls": 7286,
+        "failed_llm_attempts": 77
+      }
+    }
+  },
+  "adjacent_setting_deltas": {
+    "Static->S0": {
+      "train_vote_correct_delta": 5,
+      "train_member_mean_delta": 1.6000000000000014,
+      "train_member_minimum_delta": 0,
+      "test_vote_correct_delta": 5,
+      "test_member_mean_delta": 1.4000000000000057,
+      "test_member_minimum_delta": -1,
+      "accepted_update_delta": 4
+    },
+    "S0->S1": {
+      "train_vote_correct_delta": 0,
+      "train_member_mean_delta": 2.1999999999999957,
+      "train_member_minimum_delta": 0,
+      "test_vote_correct_delta": 0,
+      "test_member_mean_delta": 1.7999999999999972,
+      "test_member_minimum_delta": -2,
+      "accepted_update_delta": 2,
+      "interpretation": "Module 1 as implemented; compute and search budget are confounded."
+    },
+    "S1->S2": {
+      "train_vote_correct_delta": 5,
+      "train_member_mean_delta": 2.8000000000000043,
+      "train_member_minimum_delta": 5,
+      "test_vote_correct_delta": 3,
+      "test_member_mean_delta": 2.200000000000003,
+      "test_member_minimum_delta": 6,
+      "accepted_update_delta": 3
+    },
+    "S2->S3": {
+      "train_vote_correct_delta": -2,
+      "train_member_mean_delta": -2.200000000000003,
+      "train_member_minimum_delta": -5,
+      "test_vote_correct_delta": -6,
+      "test_member_mean_delta": -3.200000000000003,
+      "test_member_minimum_delta": -3,
+      "accepted_update_delta": -2
+    }
+  },
+  "dual_target_diagnostics": {
+    "S1": {
+      "selected_count_by_agent": {
+        "0": 17,
+        "1": 9,
+        "2": 12,
+        "3": 15,
+        "4": 11
+      },
+      "committed_count_by_agent": {
+        "0": 1,
+        "1": 3,
+        "2": 0,
+        "3": 2,
+        "4": 0
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 3,
+      "at_least_one_feasible_update_count": 6,
+      "both_branches_feasible_update_count": 0,
+      "dual_target_update_count": 32,
+      "cross_branch_competition_count": 0,
+      "committed_winner_rank_counts": {
+        "1": 3,
+        "2": 3
+      }
+    },
+    "S2": {
+      "selected_count_by_agent": {
+        "0": 6,
+        "1": 24,
+        "2": 14,
+        "3": 19,
+        "4": 1
+      },
+      "committed_count_by_agent": {
+        "0": 1,
+        "1": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 5,
+      "at_least_one_feasible_update_count": 9,
+      "both_branches_feasible_update_count": 3,
+      "dual_target_update_count": 32,
+      "cross_branch_competition_count": 3,
+      "committed_winner_rank_counts": {
+        "1": 4,
+        "2": 5
+      }
+    },
+    "S3": {
+      "selected_count_by_agent": {
+        "0": 1,
+        "1": 17,
+        "2": 18,
+        "3": 14,
+        "4": 14
+      },
+      "committed_count_by_agent": {
+        "0": 1,
+        "1": 0,
+        "2": 3,
+        "3": 3,
+        "4": 0
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 3,
+      "at_least_one_feasible_update_count": 7,
+      "both_branches_feasible_update_count": 2,
+      "dual_target_update_count": 32,
+      "cross_branch_competition_count": 2,
+      "committed_winner_rank_counts": {
+        "1": 6,
+        "2": 1
+      }
+    }
+  },
+  "s3_rcru_funnel": {
+    "evaluated": 88,
+    "layer1_pass": 19,
+    "layer2_pass": 14,
+    "layer3_pass": 14,
+    "selected": 9,
+    "accepted_updates": 7,
+    "nonfinite_bootstrap_count": 0
+  },
+  "efficacy_classification": "MIXED",
+  "pre_registered_expansion_gate": {
+    "gate": "HOLD",
+    "good_to_expand": false,
+    "criteria": {
+      "protocol_formal_gate_pass": true,
+      "s3_accepted_update_count_ge_1": true,
+      "s3_final_train_vote_strictly_greater_than_static": true,
+      "s3_final_test_vote_strictly_greater_than_static": true,
+      "s3_final_test_vote_greater_than_or_equal_to_s2": false,
+      "no_safety_objective_or_test_isolation_violation": true
+    },
+    "observed_counts": {
+      "static_final_train_vote": 50,
+      "s3_final_train_vote": 58,
+      "static_final_test_vote": 85,
+      "s2_final_test_vote": 93,
+      "s3_final_test_vote": 87,
+      "s3_accepted_update_count": 7
+    },
+    "reason": "S3 final test vote was below S2, so the preregistered expansion rule stopped Seed44 and Seed45."
+  },
+  "next_step": "HOLD_ADDITIONAL_SEEDS_AND_DIAGNOSE_S3_VS_S2",
+  "cost": {
+    "formal_total_tokens": 6096304,
+    "pre_execution_diagnostic_api_calls": 0
+  },
+  "scope_stop": {
+    "seed44_run": false,
+    "seed45_run": false,
+    "other_tasks_run": false,
+    "other_models_run": false
+  },
+  "original_run_artifacts_modified": false,
+  "sanitization": {
+    "gate": "PASS",
+    "failure_markers": []
+  }
+}

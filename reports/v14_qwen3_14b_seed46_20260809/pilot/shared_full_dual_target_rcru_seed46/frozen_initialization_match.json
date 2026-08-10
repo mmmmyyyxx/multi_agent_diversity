@@ -1,0 +1,71 @@
+{
+  "frozen_initialization_manifest_version": "final_method_frozen_initialization_v1",
+  "matched": true,
+  "checked_fields": [
+    "initial_prompt_hashes",
+    "initial_member_correct_counts",
+    "initial_team_outcome",
+    "initial_vote_oracle_ghm_hash",
+    "initial_train_state_hash",
+    "probe_hash",
+    "solver_request_identity",
+    "solver_identity",
+    "immutable_run_identity"
+  ],
+  "mismatches": {},
+  "initialization_snapshot": {
+    "snapshot_version": "frozen_initialization_snapshot_v1",
+    "initial_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "initial_member_correct_counts": [
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "initial_team_outcome": {
+      "team_vote_correct_count": 50,
+      "oracle_correct_count": 50,
+      "terminal_invalid_count": 0,
+      "mean_G": 3.3333333333333335,
+      "mean_H": 1.6666666666666667,
+      "mean_M": 1.6666666666666667,
+      "oracle_covered_but_vote_wrong_rate": 0.0,
+      "per_agent_correct_counts": [
+        50,
+        50,
+        50,
+        50,
+        50
+      ]
+    },
+    "initial_vote_oracle_ghm_hash": "b24bb3c3de0dab2bed10ef172e23a5bb72005c9a0c185991ab8d85a4ffc3430a",
+    "initial_train_state_hash": "c397ad7b2d44c590d15b0c44c168deee6d42c970a19efc86ebe7d2dff8a7a32c",
+    "probe_hash": "35e3c2f069cfaa2d1698ce943622f17b388d32812990b36d3bbf663f63750d76",
+    "solver_request_identity": "4a8e71274cc561e89723e1ddfbdf715b80a62e404ab7853cae9a496156a6d584",
+    "solver_identity": [
+      "prompt_question_recovered_invalid_v2",
+      "4a8e71274cc561e89723e1ddfbdf715b80a62e404ab7853cae9a496156a6d584",
+      "task_parser_v1",
+      0.0,
+      46
+    ],
+    "immutable_run_identity": {
+      "git_commit": "e5bdc9f27f7a5594072aafd828c7c6053297c03c",
+      "git_dirty": false,
+      "manifest_sha256": "57a08aec0caebe4e275d0b97966bb3f20aeaf14f981cd70d3dd205db5231041c",
+      "train_file_sha256": "c79f4889bfb71543a327c5a86da9bb555cb515931076bee144ff1cc9674c2660",
+      "val_file_sha256": "891ed7e05ae61b0287e65fbee951ce7c186ec26ff57781e9846f9c8257d7248c",
+      "test_file_sha256": "0e1c8f0306265b02d26f315586512bb29b566a92695e8b4677021f8048b82905",
+      "train_question_set_hash": "a41f884bb8f15a53a23038f1a9d2c17a07b6e78df5296691d90e8b030d12666e",
+      "val_question_set_hash": "31399fc1bd4d80ff3b9cd53b570585f650cc37dabf376153ab51abae9974299f",
+      "test_question_set_hash": "6ee463ea586f191f89ba06bbeb5c5770441942aba367af14e3fdeb3260425d94"
+    }
+  }
+}

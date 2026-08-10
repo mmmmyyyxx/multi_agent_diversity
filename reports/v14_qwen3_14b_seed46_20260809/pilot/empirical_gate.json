@@ -1,0 +1,265 @@
+{
+  "gate_version": "qwen3_14b_seed46_pilot_empirical_gate_v1",
+  "gate": "PASS",
+  "official_protocol_gate_pass": true,
+  "failure_count": 0,
+  "failures": [],
+  "warnings": [],
+  "operating_point": {
+    "frozen_initialization_match": true,
+    "cross_setting_initialization_consistent": true,
+    "initial_common_correct_count": 50,
+    "initial_residual_count": 25,
+    "required_residual_interval": [
+      18,
+      40
+    ],
+    "classification": "PASS",
+    "inherited_calibration_stable_residual_count": 24
+  },
+  "initial_responsibility_capacity": {
+    "peer_state_reconstruction_match": true,
+    "runtime_responsibility_artifact_match": true,
+    "initial_member_correct_counts": [
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "initial_residual_count": 25,
+    "initial_serviceable_residual_count": 25,
+    "initial_legal_opportunity_pair_count": 125,
+    "legal_portfolio_sizes": [
+      25,
+      25,
+      25,
+      25,
+      25
+    ],
+    "service_portfolio_sizes": [
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "active_slice_sizes": [
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "actionable_member_count": 5,
+    "minimum_service_portfolio_size": 5,
+    "gate_pass": true
+  },
+  "candidate_flow": {
+    "Static": {
+      "update_count": 0,
+      "raw_candidate_count": 0,
+      "protocol_valid_candidate_count": 0,
+      "stage_b_evaluated_count": 0,
+      "common_safety_pass_count": 0,
+      "accepted_update_count": 0,
+      "feasible_branch_count": 0,
+      "infrastructure_failed_update_count": 0,
+      "output_contract_pollution_count": 0,
+      "consistency": {
+        "stage_b_equals_candidate_decisions": true,
+        "feasible_equals_candidate_decisions": true,
+        "accepted_counts_agree": true
+      }
+    },
+    "S0": {
+      "update_count": 8,
+      "raw_candidate_count": 4,
+      "protocol_valid_candidate_count": 4,
+      "stage_b_evaluated_count": 4,
+      "common_safety_pass_count": 2,
+      "accepted_update_count": 1,
+      "feasible_branch_count": 1,
+      "infrastructure_failed_update_count": 0,
+      "output_contract_pollution_count": 0,
+      "consistency": {
+        "stage_b_equals_candidate_decisions": true,
+        "feasible_equals_candidate_decisions": true,
+        "accepted_counts_agree": true
+      }
+    },
+    "S1": {
+      "update_count": 8,
+      "raw_candidate_count": 18,
+      "protocol_valid_candidate_count": 15,
+      "stage_b_evaluated_count": 15,
+      "common_safety_pass_count": 10,
+      "accepted_update_count": 5,
+      "feasible_branch_count": 6,
+      "infrastructure_failed_update_count": 0,
+      "output_contract_pollution_count": 2,
+      "consistency": {
+        "stage_b_equals_candidate_decisions": true,
+        "feasible_equals_candidate_decisions": true,
+        "accepted_counts_agree": true
+      }
+    },
+    "S2": {
+      "update_count": 8,
+      "raw_candidate_count": 28,
+      "protocol_valid_candidate_count": 23,
+      "stage_b_evaluated_count": 23,
+      "common_safety_pass_count": 4,
+      "accepted_update_count": 4,
+      "feasible_branch_count": 4,
+      "infrastructure_failed_update_count": 0,
+      "output_contract_pollution_count": 0,
+      "consistency": {
+        "stage_b_equals_candidate_decisions": true,
+        "feasible_equals_candidate_decisions": true,
+        "accepted_counts_agree": true
+      }
+    },
+    "S3": {
+      "update_count": 8,
+      "raw_candidate_count": 24,
+      "protocol_valid_candidate_count": 24,
+      "stage_b_evaluated_count": 24,
+      "common_safety_pass_count": 7,
+      "accepted_update_count": 4,
+      "feasible_branch_count": 6,
+      "infrastructure_failed_update_count": 0,
+      "output_contract_pollution_count": 0,
+      "consistency": {
+        "stage_b_equals_candidate_decisions": true,
+        "feasible_equals_candidate_decisions": true,
+        "accepted_counts_agree": true
+      }
+    }
+  },
+  "module_gates": {
+    "module1": {
+      "gate": "PASS",
+      "selector_violations": {
+        "assignment_outside_eligibility": 0,
+        "non_responsible_target_selection": 0,
+        "scalar_order_violation": 0,
+        "scalar_formula_violation": 0,
+        "legacy_scheduler_field_violation": 0,
+        "freeze_event_violation": 0,
+        "branch_counter_violation": 0,
+        "repairability_reset_violation": 0,
+        "dual_branch_parent_or_commit_violation": 0
+      },
+      "direct_branch_violations": {
+        "parent_state_violation": 0,
+        "duplicate_target_violation": 0,
+        "branch_count_violation": 0,
+        "multiple_commit_violation": 0,
+        "committed_target_violation": 0
+      },
+      "feasible_or_safe_evidence": true
+    },
+    "module2": {
+      "gate": "PASS",
+      "conditioned_context_count": 16,
+      "context_violation_count": 0
+    },
+    "module3": {
+      "gate": "PASS",
+      "rcru_funnel": {
+        "evaluated": 24,
+        "layer1_pass": 8,
+        "layer2_pass": 7,
+        "layer3_pass": 7,
+        "selected": 6
+      },
+      "nonfinite_bootstrap_count": 0,
+      "committed_join_violation_count": 0,
+      "accepted_safety_violation_count": 0,
+      "accepted_role_only_guard_violation_count": 0
+    }
+  },
+  "dual_target_diagnostics": {
+    "S1": {
+      "selected_count_by_agent": {
+        "0": 4,
+        "1": 4,
+        "2": 3,
+        "3": 4,
+        "4": 1
+      },
+      "committed_count_by_agent": {
+        "0": 1,
+        "1": 1,
+        "2": 0,
+        "3": 2,
+        "4": 1
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 4,
+      "at_least_one_feasible_update_count": 5,
+      "both_branches_feasible_update_count": 1,
+      "dual_target_update_count": 8,
+      "cross_branch_competition_count": 1,
+      "committed_winner_rank_counts": {
+        "1": 2,
+        "2": 3
+      }
+    },
+    "S2": {
+      "selected_count_by_agent": {
+        "0": 6,
+        "1": 2,
+        "2": 5,
+        "3": 2,
+        "4": 1
+      },
+      "committed_count_by_agent": {
+        "0": 2,
+        "1": 0,
+        "2": 1,
+        "3": 1,
+        "4": 0
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 3,
+      "at_least_one_feasible_update_count": 4,
+      "both_branches_feasible_update_count": 0,
+      "dual_target_update_count": 8,
+      "cross_branch_competition_count": 0,
+      "committed_winner_rank_counts": {
+        "1": 2,
+        "2": 2
+      }
+    },
+    "S3": {
+      "selected_count_by_agent": {
+        "0": 1,
+        "1": 3,
+        "2": 4,
+        "3": 4,
+        "4": 4
+      },
+      "committed_count_by_agent": {
+        "0": 1,
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 0
+      },
+      "distinct_selected_member_count": 5,
+      "distinct_committed_member_count": 4,
+      "at_least_one_feasible_update_count": 4,
+      "both_branches_feasible_update_count": 2,
+      "dual_target_update_count": 8,
+      "cross_branch_competition_count": 2,
+      "committed_winner_rank_counts": {
+        "1": 2,
+        "2": 2
+      }
+    }
+  },
+  "performance_used_as_gate": false,
+  "original_run_artifacts_modified": false
+}

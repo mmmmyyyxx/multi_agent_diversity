@@ -1,0 +1,756 @@
+﻿{
+    "manifest_version":  "sha256_manifest_v1",
+    "file_count":  150,
+    "files":  [
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/candidate_funnel.json",
+                      "sha256":  "078c26a57ac0264affa66e1bd4451b2f4f8d0018b3113d9892804ea4c8e17856",
+                      "bytes":  84225
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/comparison_cache_match.json",
+                      "sha256":  "d7d3410be1df6798fe900991a45951466b1092fa3290c73d69304feba1d89b12",
+                      "bytes":  4854
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/cost_summary.json",
+                      "sha256":  "873d00f9993408d3509aa42d05f1d780d8ba39f71319662a127e86c4c06e3f13",
+                      "bytes":  690
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "d83d9c839b9e9ebbb91c6fc9bff349a473ee9688e4b13326872cc66e46df7377",
+                      "bytes":  27681
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "483e349b80647ceb4ecb160d8b670d3d42b6437fcb4d0a8ac07762d5615a7208",
+                      "bytes":  14221
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/final_test_differentiation.json",
+                      "sha256":  "8f49276b8fc76863ee556befd95831e218a89a0c8c544bffb85ecff13736379b",
+                      "bytes":  6511
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/rcru_candidate_decisions_sanitized.jsonl",
+                      "sha256":  "6322a0159176145df6e31aed2fc39d48d5e4c1530688404559244c18a45e0578",
+                      "bytes":  123223
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "2a62044c0946286c9d2a85aadadaa07eac312aa0ac05129c8db6dd6820bf49dc",
+                      "bytes":  118442
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "6a255dcc66cb0e0b93a02dcd241ad6445047a6aa7ed77a4088fd761735a66d06",
+                      "bytes":  26597
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "27659c49d7767128d7603c6a4751c33cfc2624c4305a76d160784b7816731004",
+                      "bytes":  2339
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/solver_recovery_summary.json",
+                      "sha256":  "f1dd27df5e8d334d10d977c5694a4d8150706fed472ddda363dc1da387c335cb",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "48fb10dde87329c4f6fbdc08ed8cbfa868e54701f9db410a21eacbcc4441b71d",
+                      "bytes":  46152
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/training_dynamics.jsonl",
+                      "sha256":  "5033b26eb857552df74c45bc0768b80f9520e165609acef81b58ac5a2cb465e5",
+                      "bytes":  196691
+                  },
+                  {
+                      "path":  "formal/shared_full_dual_target_rcru_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "9f83c0ed7ad76d3657da39edbe54e70103a82544d35566cfffd85e650e603cdb",
+                      "bytes":  4117
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/candidate_funnel.json",
+                      "sha256":  "39f55fc924e068d72c0eb48ce604422da6e3ca161beaaac01a4e1e217ae73073",
+                      "bytes":  85984
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/comparison_cache_match.json",
+                      "sha256":  "01bff07c4d9cf5714c481df117f240908db6f1db3d432be64fe61a3de066db05",
+                      "bytes":  3788
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/cost_summary.json",
+                      "sha256":  "4c97cdbd8d7323189d607a15b720cdf2df3e19f2f7c985b01c219a4b7d3f2e74",
+                      "bytes":  673
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "b4d5583ada3b18a7fb1c397e3a2bad8d2a550459d4945c4c6e23658212d35065",
+                      "bytes":  13530
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "5cc288bbdb059b7f761c54e1406f150d7bbc6d5376e7da8d0a1e90b3301a4433",
+                      "bytes":  13318
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/final_test_differentiation.json",
+                      "sha256":  "4083e718b4e0986c25040a1f4edfe60be8c2b97826eaa606359481a25f925400",
+                      "bytes":  6590
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "ae781e434332d333e2ced07d2d7eee4276560f3b010eeef65cea5f952f6e8d11",
+                      "bytes":  13298
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "736f9afd93119d5ee206d2d78c52c02bc430cd64969bfd0348ec54aa584f9aa9",
+                      "bytes":  1336
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/solver_recovery_summary.json",
+                      "sha256":  "e6af61a6c12832b239e652f924c472661cc64da45b15ee3dd26c3ed0af7917b4",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "2001dbc53d21633ff2de1a80a6af9abc6819d6363ce87a76068db4ab2b516269",
+                      "bytes":  28210
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/training_dynamics.jsonl",
+                      "sha256":  "eb1707ae3e05ca306f9b813410273328ef4138b2630c71117e7af3401171c1c6",
+                      "bytes":  195757
+                  },
+                  {
+                      "path":  "formal/shared_generic_evolution_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "2dc6a118ab0f3cfe3d4ecdc82190c2e37fbf04c8573f0a534136bfe0d89c8afa",
+                      "bytes":  2346
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/candidate_funnel.json",
+                      "sha256":  "ce3208b0c0259c647702cf2535dabd9df6118499de7f3d3330cbce9ffb858e9a",
+                      "bytes":  89178
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/comparison_cache_match.json",
+                      "sha256":  "7edb091d2f008de5db224476787f858149c671e53bfcfa116529b12d86a757a0",
+                      "bytes":  4127
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/cost_summary.json",
+                      "sha256":  "e7ee6ec3e5e70c09d81702689ed3c4fda56f3c5e23704824e53aae1f9d6b4e43",
+                      "bytes":  680
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "087fee07d6154a20d09229cf65816f68647d4ee6adad8ce4f81f7efd5b10bfb1",
+                      "bytes":  27521
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "7bf91538619bc1acf9598b7808f6353c45942c8673a7f8c9faf6d5025c80fb68",
+                      "bytes":  13890
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/final_test_differentiation.json",
+                      "sha256":  "bc2e435cd05a675396a6df7f427496cd2066cb400fb5289d8ab56316198f91ea",
+                      "bytes":  6592
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "8d793d88e2203df52f3fbc319ea87d7e8e9582aadd23204c7cbccd8c6d30463e",
+                      "bytes":  142797
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "1d587e2c4a476b2967e388f43774139ec0e5062a38b95af88ca9bdc71b22e912",
+                      "bytes":  26598
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "e4f18f43afebcd6c50ad8f1beb282297e786ae2537621310c5dec775585ca907",
+                      "bytes":  2005
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/solver_recovery_summary.json",
+                      "sha256":  "74bfa44ac1f466fa671fcae90dd3ce1cd90834f8d6c351ba9dcb7c928688581b",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "42334c6a5fd7cbbc05f4a05a8c5ea910ac4977247b5c5230953898f6544c85d5",
+                      "bytes":  38659
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/training_dynamics.jsonl",
+                      "sha256":  "123a4b6f25da8c30779afbc97a7e8b864522b3dd7e12fd79894d15f837659958",
+                      "bytes":  193181
+                  },
+                  {
+                      "path":  "formal/shared_member_aware_dual_target_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "b0161f5116e0c5b9e128c35137775c1c361830f29d0eb48e5680c653ecb3de98",
+                      "bytes":  3531
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/candidate_funnel.json",
+                      "sha256":  "5aad014e9fedaa359a1a88f3cd1205aa78c9e9b9fd0f49bd8ce8bec4bae7341c",
+                      "bytes":  82680
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/comparison_cache_match.json",
+                      "sha256":  "dfeb332106285424889217ae1e0325dad649757108d05fa8d9ca2138d7808417",
+                      "bytes":  4448
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/cost_summary.json",
+                      "sha256":  "36b368faecf07c7c363732438ee3bb88ddb24d8815e46ded89665da139d6be93",
+                      "bytes":  692
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "c0e50bb0cdc290a62c090b3540a8ac1af9784724295364e5206630fcf602fbd9",
+                      "bytes":  27875
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "25104dc4c3ca7779778cea1503132cc811a856ab46f6a7023684d93b306b8899",
+                      "bytes":  14804
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/final_test_differentiation.json",
+                      "sha256":  "bf94fb51878f26a72afee6fa78c4728a288e65718476bb84aa524bb7473c1cbe",
+                      "bytes":  6699
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "e93d638b46d5dfea20d6555b3ff8236a7f622a5cb61f13880d48112155c8162d",
+                      "bytes":  91190
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "fa4fed2961e3d91f2304912d519864c690ab2b1042e60b7bd2d24d4148fedc54",
+                      "bytes":  26589
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "005579403610c594100454a18a6f33d197a00734041cffd389d2ae26b773fbfe",
+                      "bytes":  3009
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/solver_recovery_summary.json",
+                      "sha256":  "8eaa0a0a0b8bba41c9782bb705308842252e6778a45380ac197fe591ebbe69be",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "19221079deb645f34a5a8007c2a4ead5bfc04f5812318e2a78450dd27a558ba0",
+                      "bytes":  58911
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/training_dynamics.jsonl",
+                      "sha256":  "7fc27c14218c8223520751a223cefb070ecf1503b1a2071ceb836f6a6b5479cf",
+                      "bytes":  200206
+                  },
+                  {
+                      "path":  "formal/shared_responsibility_conditioned_dual_target_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "d629b1f1f36e26bf6a08a26c656c9e48f29a773a4ac4b7fc477f03670f45ffb4",
+                      "bytes":  5495
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/candidate_funnel.json",
+                      "sha256":  "1d1bbc8184680e0f0042f119412773d4e225d0e372b6dd67a58d1416c613b91a",
+                      "bytes":  150
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/comparison_cache_match.json",
+                      "sha256":  "044266bf86c39afac694112aca16f5ed7292cd35c8474c3841a2f11dafd7a09b",
+                      "bytes":  3416
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/cost_summary.json",
+                      "sha256":  "d9a710387907aefe6db8c61e34099ddddf8624fba871bd439153e7ef3d9dc947",
+                      "bytes":  620
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/final_test_differentiation.json",
+                      "sha256":  "0683a9f4d2865088890b6c6839f452b73a6cb6391d2856ee35c195af6cbd40ff",
+                      "bytes":  5249
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/solver_recovery_summary.json",
+                      "sha256":  "5ca9f7ba0cff50c5c0bc8c82fcc3f2c2e6d98b2113957152f1bf6ae097537324",
+                      "bytes":  993
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/training_dynamics.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/shared_static_reference_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "formal/stage_gate.json",
+                      "sha256":  "51146be745d3c1bbf47094e03f85ee50ed22e39a6a6e6df5cd8bb724bd9a4187",
+                      "bytes":  270387
+                  },
+                  {
+                      "path":  "formal/unresolved_findings.json",
+                      "sha256":  "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+                      "bytes":  4
+                  },
+                  {
+                      "path":  "pilot/empirical_gate.json",
+                      "sha256":  "9e30d488a34d84fb647efb3659e5641809dd85298d138c989645de405ed6ba23",
+                      "bytes":  7377
+                  },
+                  {
+                      "path":  "pilot/empirical_gate.md",
+                      "sha256":  "a0d98621f367a7f8193a8b89954483eb97afa713a71ca045d677df86a09e2193",
+                      "bytes":  450
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/candidate_funnel.json",
+                      "sha256":  "2fa5dc4516c29e3a70fedb67dfce1566d05ccc3f18436a38017616df681a9903",
+                      "bytes":  21047
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/comparison_cache_match.json",
+                      "sha256":  "ac30b212572fcadd3b436b09578d1d38d39db6d9be4b84a2bdf47f518ff20ae0",
+                      "bytes":  2959
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/cost_summary.json",
+                      "sha256":  "6d66dc497084ce3f9a0285ded100d1c1b8bbfce98f5630c077f6e1b8744348e4",
+                      "bytes":  675
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "91f91b3bff3bb2df7ed96c913c8ce55bc36e9cca22fcf9c2d4307fb64c401b66",
+                      "bytes":  7153
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "22451455120a7fcaf0367964e2546b7c34dbb054f711de5605fa93441fb79abd",
+                      "bytes":  4168
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/final_test_differentiation.json",
+                      "sha256":  "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                      "bytes":  2
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/rcru_candidate_decisions_sanitized.jsonl",
+                      "sha256":  "10ac5f96a28e3bf5fcb4e0c8ff89d958f77a418433b46ecc82d5db3183fa0218",
+                      "bytes":  33060
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "22009c95e4d670b3f7c72ff4b22cb19f64823c48bd26b8d4eb5d96f780b16512",
+                      "bytes":  35517
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "6878d1848da0ed9e9e9dad213ff88750e26591a92d458b249c7b0e00f61ef5f7",
+                      "bytes":  6632
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "570f4fbf2b97841c0fdaaaf1d3703e085d7bd5d840de1f8440ea617c3489695a",
+                      "bytes":  1336
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/solver_recovery_summary.json",
+                      "sha256":  "3974e968b7bccb90afcf46397e56ff88e468bf157e6daa32e486f203b6e691a6",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "c7feeb35499a23024a77f9136ccf94c1eb4a18ec2283b0872f1163da52f70f99",
+                      "bytes":  27462
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/training_dynamics.jsonl",
+                      "sha256":  "29e628df03b0fcf4d8d6002dfab9ff2e806191a2f8587bea9bd2dad561bbee3f",
+                      "bytes":  50341
+                  },
+                  {
+                      "path":  "pilot/shared_full_dual_target_rcru_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "44007e7678eda5b8f81dc2565f850affd2a5e6eb47f281dccb88a536943ffcfd",
+                      "bytes":  2337
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/candidate_funnel.json",
+                      "sha256":  "0399e8fd1a50e2c464f9c1db2f8255e878059a0c0cd31a2ae1fd473c6f6739b9",
+                      "bytes":  21533
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/comparison_cache_match.json",
+                      "sha256":  "9e80af5f16bacfa7fbbc59eacbc43b0340e62380735c2a29abe9ed8b67035b1f",
+                      "bytes":  2944
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/cost_summary.json",
+                      "sha256":  "dccee1589a97843297a4ef80556183686dc18678f3fd52853f5bb2d844523992",
+                      "bytes":  646
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "930df1c42fcaae4ff8cf6df9ad32fc6737b43e8911662da5c69068399347b54b",
+                      "bytes":  3377
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "4be623d5c8d3baca6c6716ccdb05d6524da100635bc86d2e0012ad544a1a4a8f",
+                      "bytes":  3324
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/final_test_differentiation.json",
+                      "sha256":  "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                      "bytes":  2
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "de888f37f0911ed09256656a04769ce21feafebd9f2ddd623be81db5097187c3",
+                      "bytes":  3319
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "1de2717d986b383f9201115ce87f989b6c81e7a1b84540d0c67d1a71d8e5a340",
+                      "bytes":  334
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/solver_recovery_summary.json",
+                      "sha256":  "34b0a1358614f8fc9916faf9eb043d2a04d3f384270f1364f24f9bde40f81d49",
+                      "bytes":  993
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "62bbd6c786213862e0cb28553d7d358b56838947ade3967dfa38e87a04a036f7",
+                      "bytes":  10414
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/training_dynamics.jsonl",
+                      "sha256":  "682d6dc986d7ddb6053c5d261d7f90a2d933251f1bb75b103d796257c510b0eb",
+                      "bytes":  46364
+                  },
+                  {
+                      "path":  "pilot/shared_generic_evolution_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "727089d051d411b185c098ae5574b9c69f5819adaf602dd2abafa717c63ad298",
+                      "bytes":  588
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/candidate_funnel.json",
+                      "sha256":  "fa7218a9fda1ce4d1a3223ca75bfdfe4ec1e3ddd51d3633fd1e6c42ddd77d190",
+                      "bytes":  21804
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/comparison_cache_match.json",
+                      "sha256":  "b5ccbf2f493611acfcd0f4f2b25e8ad247224bc0f2245d82caa7bba190cfa49d",
+                      "bytes":  2959
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/cost_summary.json",
+                      "sha256":  "61e847309fd300d620dcf83eef1672a58c42579abecd587af80a50e9f4ac22bd",
+                      "bytes":  651
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "cc9aa6056e5155905c9a66c5e4f03dc2f140d9a8dc498a02769c7addd10aa9c0",
+                      "bytes":  7133
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "44b9ff2fc4731c4ecf48be9bc4b5ae88ac5a5904bfa4708d401862ae1bdfec2f",
+                      "bytes":  4361
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/final_test_differentiation.json",
+                      "sha256":  "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                      "bytes":  2
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "572ba14a427621e2744d3bf35013a4d68d91958559aefb9af3ac81de4c4bb74e",
+                      "bytes":  35594
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "cf6a129ca3ac754fcc306f7d1493045efa25cb2dc10d44de91f43eb58530738d",
+                      "bytes":  6633
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "9beace44652e8f795bac2876b3d04fe56c248accb999dece60cc894896cc1ad3",
+                      "bytes":  1670
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/solver_recovery_summary.json",
+                      "sha256":  "62a81326a457e0b955547a3aa38db2b88470c870047aa859e4cdd36013cbd330",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "9946eec6e4a4d81a0b7f6ad8ef40ebf6ee5935e37c2885d369c4b3498a6e61f1",
+                      "bytes":  36448
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/training_dynamics.jsonl",
+                      "sha256":  "2b60048bf01cd8aea69d00d06f513cb084aac56153d82a474e236bfdf78650b3",
+                      "bytes":  54478
+                  },
+                  {
+                      "path":  "pilot/shared_member_aware_dual_target_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "ba4ae5371ceca1a322ed2c0467d467f018c49239a1796eb4111eae548f9d6228",
+                      "bytes":  2998
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/candidate_funnel.json",
+                      "sha256":  "551a804ff90ebfff22a01e3a4beacf35e6df8ba9eb972ad7e922507221d2be7e",
+                      "bytes":  20661
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/comparison_cache_match.json",
+                      "sha256":  "b17d2330f4f53b1d0b8cb45a663d17d93d1a967f835d10bfadaeaf65d7d02340",
+                      "bytes":  2976
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/cost_summary.json",
+                      "sha256":  "0f1570b7c7a8f939fb853245f1f4859c2ecc44c2f6d84aa9bda84734442ed60d",
+                      "bytes":  677
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "d9e85147a054fef6293ed1f31ac5998c78fd377c41b0a133c51299d47b725b12",
+                      "bytes":  7019
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "c838ebadbb8f0523bfc0a2c4da8d4928a07aa54d2bb179b7df0eaa89099e0fe1",
+                      "bytes":  4058
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/final_test_differentiation.json",
+                      "sha256":  "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                      "bytes":  2
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "430f47274fda1aa69fd8d6d525c98a69d767ba8763e9734070119d81fb228a19",
+                      "bytes":  35945
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "ce53faf2d55365bbee6f9c2ce0f3d09c6e65192648c9fcbe7bca2daaa4b722d4",
+                      "bytes":  6636
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "3e56bc1925fab9e3cd7e24b416bba5d901231b63cf45c2bc078a30f45d67502c",
+                      "bytes":  1336
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/solver_recovery_summary.json",
+                      "sha256":  "5839b0eac3a39d662048088289b38b9917cd17e48512b5fbc81a15f403a82392",
+                      "bytes":  998
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "125fd1f44f86419044fdb0f067d293d12a3a475174dff80bf963b4749224b272",
+                      "bytes":  28860
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/training_dynamics.jsonl",
+                      "sha256":  "7e7ecaca5b2c64dd9f9517ddfd7cb98c19f75a3d20911b70ed61faee53af99ce",
+                      "bytes":  53193
+                  },
+                  {
+                      "path":  "pilot/shared_responsibility_conditioned_dual_target_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "47bc424baa2ab0fe5c9394d4a41170d732e888677ef75f0e211f225bce3f8a45",
+                      "bytes":  2324
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/candidate_funnel.json",
+                      "sha256":  "1d1bbc8184680e0f0042f119412773d4e225d0e372b6dd67a58d1416c613b91a",
+                      "bytes":  150
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/comparison_cache_match.json",
+                      "sha256":  "e52a096218fbacdf0c4aa0250aa23878903da3890daf9ba09ae03164e853326e",
+                      "bytes":  2936
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/cost_summary.json",
+                      "sha256":  "33d8fe436c8a07cf6971db6bf3931cacee26401b8c36eb73185d53a4296e7a81",
+                      "bytes":  582
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/dual_target_branch_decisions.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/dual_target_commit_decisions.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/final_test_differentiation.json",
+                      "sha256":  "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                      "bytes":  2
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/frozen_initialization_match.json",
+                      "sha256":  "c36a6864c0b19497cddbc7fc8c583ed96b83a13ab2ebfae88559773b12fb484a",
+                      "bytes":  2875
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/repairability_adjusted_target_scores.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/repairability_failure_events.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/repairability_reset_events.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/solver_recovery_summary.json",
+                      "sha256":  "7e51a76519f4055a4d79040117f1401ca847012553bb6567bd8d8bb72b3e4bb2",
+                      "bytes":  988
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/team_differentiation_trajectory.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/training_dynamics.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/shared_static_reference_seed46/update_transition_decomposition.jsonl",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0
+                  },
+                  {
+                      "path":  "pilot/stage_gate.json",
+                      "sha256":  "670e5c4c142356764151810cf1d3dce0782215a6ce1ce61d9037a36e9fc0b62f",
+                      "bytes":  63973
+                  },
+                  {
+                      "path":  "pilot/unresolved_findings.json",
+                      "sha256":  "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+                      "bytes":  4
+                  },
+                  {
+                      "path":  "README.md",
+                      "sha256":  "283821a267016996bbb5c07f8ae2310bfa6730b8e7bf60a51bc9cc1bc81c9243",
+                      "bytes":  2082
+                  },
+                  {
+                      "path":  "seed46_pipeline_summary.json",
+                      "sha256":  "3735229770c0e6215193e68b279f9b5b1e3ce320257b51a4475730a5997965e1",
+                      "bytes":  14286
+                  }
+              ]
+}
