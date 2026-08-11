@@ -42,6 +42,15 @@ def test_runner_requires_explicit_api_authorization(tmp_path, monkeypatch):
         asyncio.run(module.main_async(args))
 
 
+def test_cell_path_must_be_fresh(tmp_path):
+    module = load("probe_runner_cell_path", ROOT / "scripts" / "run_v16_fixed_parent_generation_probe.py")
+    cell = tmp_path / "cell"
+    module.require_fresh_cell_path(cell)
+    cell.mkdir()
+    with pytest.raises(FileExistsError, match="must be fresh"):
+        module.require_fresh_cell_path(cell)
+
+
 def test_offline_preflight_reconstructs_all_cells_without_api():
     registry_module = load("probe_registry_preflight", ROOT / "scripts" / "build_v16_fixed_parent_probe_registry.py")
     preflight_module = load("probe_preflight", ROOT / "scripts" / "preflight_v16_fixed_parent_generation_probe.py")

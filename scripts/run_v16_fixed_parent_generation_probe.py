@@ -27,6 +27,11 @@ SETTING = {
 }
 
 
+def require_fresh_cell_path(path: Path) -> None:
+    if path.exists():
+        raise FileExistsError(f"fixed-parent cell path must be fresh: {path}")
+
+
 def profile(block: list[dict[str, Any]], agent: int) -> tuple[PromptAnswer, ...]:
     return tuple(PromptAnswer(
         answer=str(row["team_answers"][agent]), trace="frozen_seed51_profile",
@@ -46,6 +51,7 @@ def state_hash(system: PromptEnsembleOptimizationSystem) -> str:
 
 
 async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str, out_dir: Path, cache: Path) -> dict[str, Any]:
+    require_fresh_cell_path(out_dir)
     flat = dict(registry["base_config"])
     flat.update({
         "experiment_setting": SETTING[variant], "module2_context_variant": variant,
@@ -100,7 +106,8 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
         "validation_calls": system.validation_evaluation_count, "test_calls": system.test_evaluation_count,
         "llm_call_count": len(system.llm.calls),
     }
-    out_dir.mkdir(parents=True, exist_ok=False)
+    # ArtifactWriter creates the cell directory during system construction.
+    out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "cell_result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (out_dir / "llm_calls.jsonl").write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in system.llm.calls), encoding="utf-8")
     return result
