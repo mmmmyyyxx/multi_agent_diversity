@@ -1,0 +1,9 @@
+seed,update_index,branch_target_agent_id,candidate_hash,geometry_type,repair_residuals_fixed,repair_distance_reductions,P1_losses,P2_losses,P3_losses,global_target_gain,global_target_example_gain_count,global_target_example_loss_count,vote_gain_count,vote_loss_count,interpretation_limit
+48,15,2,7d062d55248e34043d911f60c07f9d77ce6db69bea8a4d0d57b3f5df500cbfa4,D,1,1,2,0,0,3,11,8,0,2,preservation regions exposed; prevention requires pilot
+48,31,2,8876ad13e1b82ec9ce693aa03940bd0a347799ebb0ede5901a186fbde9f43669,D,1,1,4,0,0,3,11,8,0,4,preservation regions exposed; prevention requires pilot
+49,7,4,42fc01062693022f610ae55f21bd81eb3778d23d9608e6e3f42c51b18a2270f3,F,1,1,1,0,0,-1,4,5,1,1,preservation regions exposed; prevention requires pilot
+49,7,4,a5b23963e33c0ff0eb362283c9525def36d335a85af30238bd1ff697febbd81d,F,1,1,1,0,0,-2,1,3,0,1,preservation regions exposed; prevention requires pilot
+49,12,4,15b994a3b8d9f62ff95040433be442f21da68385d66d38ea8aca8a51e80b3557,F,2,2,3,1,0,-14,6,20,1,3,preservation regions exposed; prevention requires pilot
+49,12,4,a1772391eb4c996fc8771a6839d952987d920c6c369b3b9e2e6cfcc2d1739cdc,E,1,1,0,1,0,-3,3,6,1,0,preservation regions exposed; prevention requires pilot
+50,1,3,ae4a24a8c4b0e02faca1f5837668477c1013804bcf1cd94f48d9c0fa0a12174c,F,2,2,0,1,0,-4,6,10,0,0,preservation regions exposed; prevention requires pilot
+50,11,3,b4edf8221caa48130d129843e13c60d28e041db98ca17a24d7ea8fc60a111f96,F,2,2,0,0,0,-1,4,5,0,0,preservation regions exposed; prevention requires pilot

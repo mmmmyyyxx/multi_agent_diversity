@@ -1,0 +1,183 @@
+{
+  "study_version": "v16_module2_fixed_trajectory_design_isolation_v1",
+  "timestamp_utc": "2026-08-11T12:40:33.765813+00:00",
+  "current_git_head": "358c33cff5afa5ff78b21706e96aab4db36c3adc",
+  "origin_main": "358c33cff5afa5ff78b21706e96aab4db36c3adc",
+  "method_semantics_commit": "c705eedb2959c3ad1349f5d6c52ffed64bca90ae",
+  "historical_execution_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 24,
+  "design_variants_frozen_before_analysis": true,
+  "frozen_design_hashes": {
+    "DESIGN_SPEC.md": "f5c6a6ace1dfd85e67d7fcd94437c828e5ef0be281ff40b178bc57753be4c4ed",
+    "design_variants.json": "2e76f5d48dd498e6cafcefa59f83f17674592c5a9ecbecafe30c2e9095eadef6"
+  },
+  "train_trajectory_only": true,
+  "test_artifacts_consumed": false,
+  "api_calls": 0,
+  "model_calls": 0,
+  "training_runs": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "method_source_changed": false,
+  "figures_generated": false,
+  "consumed_artifacts": [
+    {
+      "path": "experiments\\v15_bottleneck_isolation_offline_audit_seed48_50_20260811\\audit_summary.json",
+      "sha256": "2f720dac05be8df6e2000851505b57338e1102904e8129d209de5f00c2eaeedd",
+      "size": 4095
+    },
+    {
+      "path": "experiments\\v15_bottleneck_isolation_offline_audit_seed48_50_20260811\\scripts\\audit_bottleneck_isolation.py",
+      "sha256": "90033e1d008c501d6d74c1f633503b51b44427e6e21900a98f597198dd68bebb",
+      "size": 33715
+    },
+    {
+      "path": "experiments\\v15_bottleneck_isolation_offline_audit_seed48_50_20260811\\tables\\propagation_opportunity_events.csv",
+      "sha256": "eae6ea10a1caa6eabb7a94ca74e5cbefe8d0680940392d1c12ea48d6c82b4052",
+      "size": 217896
+    },
+    {
+      "path": "experiments\\v15_coverage_fragmentation_consensus_audit_seed48_50_20260811\\audit_summary.json",
+      "sha256": "86ebf0276bb20861a37f273ce4ae5d77f4b25c76ea0070448122329f2eb23583",
+      "size": 4252
+    },
+    {
+      "path": "experiments\\v16_module2_candidate_design_fixed_trajectory_isolation_20260811\\design_freeze.json",
+      "sha256": "d1c9919c08326776bc6043bc198731d0578e78ec3999d5622bc7e175d7814e05",
+      "size": 683
+    },
+    {
+      "path": "experiments\\v16_module2_candidate_design_fixed_trajectory_isolation_20260811\\DESIGN_SPEC.md",
+      "sha256": "f5c6a6ace1dfd85e67d7fcd94437c828e5ef0be281ff40b178bc57753be4c4ed",
+      "size": 3669
+    },
+    {
+      "path": "experiments\\v16_module2_candidate_design_fixed_trajectory_isolation_20260811\\design_variants.json",
+      "sha256": "2e76f5d48dd498e6cafcefa59f83f17674592c5a9ecbecafe30c2e9095eadef6",
+      "size": 6083
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\_solver_cache.sqlite",
+      "sha256": "bf5545028be5b0495f88cf0e833f6661e666bc13e04d705b64b2b012af962b8b",
+      "size": 17707008
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\candidate_decisions.jsonl",
+      "sha256": "314cb9d9cc21ddf56e778d31d4241df1d9c5faea590ee59303a836ccb46efe6c",
+      "size": 759347
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\dual_target_commit_decisions.jsonl",
+      "sha256": "52f75cda72a9a11c134688cd0528e78e5cfdac70e6c7cd396dff7497c0895e8b",
+      "size": 14193
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\peer_state_history.jsonl",
+      "sha256": "acc2c450e7d0905cd5781e66b180a09d4887ddd28b002783eb2cca4fe9c3f5f1",
+      "size": 270884
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\repairability_adjusted_target_scores.jsonl",
+      "sha256": "5528bc987911f73413d28eb353c25686d36677aa7bac829414c61674e41509a0",
+      "size": 129677
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\responsibility_assignments.jsonl",
+      "sha256": "bf0338dceae915e68074bf12a59a74efe6dad8388f7aea5b972f49df9b0980cb",
+      "size": 474034
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\tcs_context_history.jsonl",
+      "sha256": "099ec591a4d6d49b208523a57df3e17edeb4fd46ff32d6675490bb61f51054fa",
+      "size": 204047
+    },
+    {
+      "path": "runs\\v15f48\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed48\\training_dynamics.jsonl",
+      "sha256": "a71effceee46a539193868611dda353ec9c0022d74ca25649afed5766e321dfb",
+      "size": 198037
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\_solver_cache.sqlite",
+      "sha256": "661905467e58d1f9d66364a49e502f54c73fa9215c3c597944837f94d77f725f",
+      "size": 17793024
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\candidate_decisions.jsonl",
+      "sha256": "69dc9123de3e3ba54ff8f2d73ec21aeefb984df009af527b96de3cdbd1330028",
+      "size": 762979
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\dual_target_commit_decisions.jsonl",
+      "sha256": "11d6270fadd2fdebb0b3a08c82540630022fa4100f2e7805d464d55d3f2f5125",
+      "size": 14662
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\peer_state_history.jsonl",
+      "sha256": "fb43ef38804a944ca60890163b99edc1f32c3bfd265b4188f578d74d5822afeb",
+      "size": 338489
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\repairability_adjusted_target_scores.jsonl",
+      "sha256": "4cc92e86f3e7434e7be9acfb0a139303b95edcf45da4a95f6b01e9e578078879",
+      "size": 125182
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\responsibility_assignments.jsonl",
+      "sha256": "21177586673c81e9fb8c574e987ab7e0c4db459ac7905b28e35f7ce3a0210edd",
+      "size": 552573
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\tcs_context_history.jsonl",
+      "sha256": "f974ba4d3a640d02151f27e9e634e9709f98deaca8ab677b66eef452322b8be1",
+      "size": 203301
+    },
+    {
+      "path": "runs\\v15f49\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed49\\training_dynamics.jsonl",
+      "sha256": "6b060ff19f5acdc52fceea57a2d2d8c891a9811b3d9d2c6d069c057d18532d52",
+      "size": 203716
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\_solver_cache.sqlite",
+      "sha256": "aad372a3503dd41774e47d6de0582eb6922e3dd1aeaa667733d765775335769f",
+      "size": 13869056
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\candidate_decisions.jsonl",
+      "sha256": "70a25663962232180caa7d13189bb5c3224216ef27cc7a8aef5a0c52e7133877",
+      "size": 687779
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\dual_target_commit_decisions.jsonl",
+      "sha256": "203ca724fbe84e86c3019791fa84971c56a5a0ad79d0427d55e0d3bccc892d73",
+      "size": 14600
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\peer_state_history.jsonl",
+      "sha256": "6da1b1a8e3ffa72bbf72c3d21f329b8b9089ecc58b9d5375a25719802ffe8c35",
+      "size": 338569
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\repairability_adjusted_target_scores.jsonl",
+      "sha256": "4b69a2d5dec4bc6a998f4fed9d1872cde210f7633dbc30e2dca9912440e01937",
+      "size": 143268
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\responsibility_assignments.jsonl",
+      "sha256": "50f4d11231a7904163a59537adadfec1a5e32effef01d2cd0b4e568d5d4bfd8f",
+      "size": 543612
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\tcs_context_history.jsonl",
+      "sha256": "e1755d37263ee9d20d07e9db767feac886adfa99e216b18cd966c9eae9bf473b",
+      "size": 203668
+    },
+    {
+      "path": "runs\\v15f50\\disambiguation_qa\\shared_responsibility_conditioned_dual_target_seed50\\training_dynamics.jsonl",
+      "sha256": "82ef15b9dd7cca4b43cbd8104a38764d1e2165d0368e08627454a599f4b9bb64",
+      "size": 195893
+    }
+  ],
+  "analysis_script": "experiments\\v16_module2_candidate_design_fixed_trajectory_isolation_20260811\\scripts\\run_fixed_trajectory_design_isolation.py",
+  "analysis_script_sha256": "bde0a3f70d5121e5e88b0779eac40b05c4e518486e519f2f5d78cfffe8cb8764"
+}

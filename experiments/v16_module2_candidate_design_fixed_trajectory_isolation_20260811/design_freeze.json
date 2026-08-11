@@ -1,0 +1,12 @@
+{
+  "design_variants_frozen_before_analysis": true,
+  "current_git_head_before_analysis": "358c33cff5afa5ff78b21706e96aab4db36c3adc",
+  "origin_main_before_analysis": "358c33cff5afa5ff78b21706e96aab4db36c3adc",
+  "method_semantics_commit": "c705eedb2959c3ad1349f5d6c52ffed64bca90ae",
+  "historical_execution_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 24,
+  "DESIGN_SPEC.md_sha256": "f5c6a6ace1dfd85e67d7fcd94437c828e5ef0be281ff40b178bc57753be4c4ed",
+  "design_variants.json_sha256": "2e76f5d48dd498e6cafcefa59f83f17674592c5a9ecbecafe30c2e9095eadef6",
+  "analysis_started_after_this_freeze": true
+}

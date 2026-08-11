@@ -1,0 +1,97 @@
+{
+  "design_study_version": "v16_module2_fixed_trajectory_design_isolation_v1",
+  "design_variants_frozen_before_analysis": true,
+  "freeze_policy": "Definitions, budgets, ordering, proxies, F subtypes, and recommendation rules may not change after the first replay.",
+  "shared_invariants": {
+    "module1_target_selector": "unchanged_v15",
+    "dual_target_search": "unchanged_v15",
+    "candidate_budget": "unchanged_v15",
+    "common_safe_acceptance": "unchanged_v15",
+    "ranking_and_max_one_commit": "unchanged_v15",
+    "proposal_memory": "off",
+    "repair_set_max": 6,
+    "preservation_set_max": 6,
+    "propagation_stop_when_vote_correct": true,
+    "test_information_allowed": false
+  },
+  "repair_set": {
+    "candidate_pool": "current target branch assigned_question_hashes only",
+    "eligibility": "target currently wrong AND exact repository team vote currently wrong",
+    "priority_order": [
+      "R1: exact repair_distance=1 and G>0",
+      "R2: G=1 fragmented/orphan residual not already R1",
+      "R3: exact repair_distance=2",
+      "R4: remaining current branch responsibility residuals"
+    ],
+    "tie_break": "question_hash ascending",
+    "minimal_redundancy": "Only the selected target's uniquely routed branch portfolio is considered; vote-correct residuals are excluded."
+  },
+  "preservation_set": {
+    "candidate_pool": "examples where target is currently correct",
+    "P1": "Mark target invalid while peers remain fixed; repository plurality changes correct to incorrect.",
+    "P2": "Parent vote is correct and target removal decreases exact plurality margin without causing the P1 flip.",
+    "P3": "Remaining target-correct examples correct in every accepted state observed up to the parent state; rank by longer observed state support then question_hash.",
+    "tier_order": ["P1", "P2", "P3"],
+    "budget_allocation": "Fill globally in tier order up to six; question_hash ascending within P1/P2 and support-length descending then question_hash within P3.",
+    "counterfactual_semantics": "target validity=false and target answer unchanged; all four peers fixed; exact repository plurality",
+    "use": "generation guidance diagnostic only, never a new acceptance guard"
+  },
+  "variants": [
+    {
+      "id": "C0_CURRENT_V15",
+      "repair_context": "historically persisted selected_context_pattern_question_hashes",
+      "preservation_context": "historical v15 context only; no newly constructed preservation set",
+      "coalition_metadata": false,
+      "prompt_context_prototype": "Current v15 responsibility-conditioned context [UNCHANGED_REFERENCE]."
+    },
+    {
+      "id": "C1_BOUNDARY_PROPAGATION",
+      "repair_context": "deterministic frozen repair_set",
+      "preservation_context": "none",
+      "coalition_metadata": false,
+      "prompt_context_prototype": "Repair responsibilities:\n- [RESIDUAL_A]\n- [RESIDUAL_B]\nProvide only the minimum additional support needed for the ensemble; stop propagating an item once the team vote is correct."
+    },
+    {
+      "id": "C2_BOUNDARY_PLUS_PRESERVATION",
+      "repair_context": "deterministic frozen repair_set",
+      "preservation_context": "deterministic frozen P1/P2/P3 preservation_set",
+      "coalition_metadata": false,
+      "prompt_context_prototype": "Repair responsibilities:\n- Focus on [RESIDUAL_A] and [RESIDUAL_B], which remain unresolved team responsibilities.\n- Provide the minimum additional support needed for consensus.\nPreservation responsibilities:\n- Preserve [CAPABILITY_A] and [CAPABILITY_B].\n- Do not gain local accuracy by sacrificing existing stable or vote-critical competence."
+    },
+    {
+      "id": "C3_COALITION_AWARE_PRESERVATION",
+      "repair_context": "same deterministic repair_set as C2",
+      "preservation_context": "same deterministic preservation_set as C2",
+      "coalition_metadata": true,
+      "prompt_context_prototype": "Repair responsibilities:\n- [RESIDUAL_A]: G=[G], r=[R], class=[BOUNDARY_CLASS], role=[TARGET_ROLE].\nPreservation responsibilities:\n- [CAPABILITY_A]: tier=[PRESERVATION_TIER].\nImprove one-repair-away responsibilities while preserving vote-critical and stable capabilities; avoid local gains that damage the team."
+    }
+  ],
+  "fixed_pool_proxy_rules": {
+    "repair_gain": "At least one repair-set item has target_correct_delta>0 OR repair_distance_delta<0 OR vote_delta>0.",
+    "preservation_violation": "A preservation-set item changes target correctness from true to false.",
+    "aligned_C0_C1": "repair_gain",
+    "aligned_C2_C3": "repair_gain AND total_preservation_violation_count=0",
+    "fixed_pool_oracle": "At least one historical common-safe candidate has repair_gain; C2/C3 additionally require zero P1/P2 loss.",
+    "efficacy_claim_allowed": false
+  },
+  "F_subtypes": {
+    "ordered_rules": [
+      "F_LOCAL_GAIN_GLOBAL_COLLATERAL: C1 repair_gain_count>0",
+      "F_TARGET_DEGRADATION: no C1 repair gain and target_gain<0",
+      "F_LOCAL_NO_PROGRESS: no C1 repair gain, target_gain=0, vote_net_gain<=0",
+      "F_OTHER: remaining F"
+    ]
+  },
+  "recommendation_rules": {
+    "C1": "Recommend only if context attrition is dominant and preservation signals provide little useful discrimination.",
+    "C2": "Recommend if C1 improves explicit exposure, preservation strongly overlaps historical collateral loss, and complexity remains reasonable.",
+    "C3": "Recommend only if coalition metadata provides meaningful additional design information over C2 without excessive complexity.",
+    "NONE": "Recommend if fixed-trajectory evidence does not support repair/preservation construction.",
+    "simplicity": "Choose the minimum sufficient mechanism."
+  },
+  "evidence_levels": {
+    "A_EXACT": ["context membership", "repair distance", "preservation membership", "historical candidate deltas", "candidate geometry"],
+    "B_FIXED_POOL_RETROSPECTIVE": ["historical candidate alignment", "preservation discrimination", "fixed-pool oracle availability"],
+    "C_REQUIRES_PILOT": ["new context generates better candidates", "variant improves team vote", "C3 beats C2"]
+  }
+}
