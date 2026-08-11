@@ -1,0 +1,39 @@
+{
+  "audit_status": "PASS",
+  "orphan_event_count": 48,
+  "eligible_opportunity_count": 1762,
+  "evaluated_candidate_count": 247,
+  "candidate_residual_effect_row_count": 998,
+  "candidate_cache_coverage": "COMPLETE",
+  "cache_replay_checks": [
+    {
+      "seed": 48,
+      "evaluated_candidate_count": 87,
+      "unique_candidate_prompt_count": 86,
+      "question_count_per_prompt": 75,
+      "missing_candidate_question_observation_count": 0,
+      "constraint_count_mismatch": 0,
+      "stored_vector_mismatch": 0
+    },
+    {
+      "seed": 49,
+      "evaluated_candidate_count": 91,
+      "unique_candidate_prompt_count": 90,
+      "question_count_per_prompt": 75,
+      "missing_candidate_question_observation_count": 0,
+      "constraint_count_mismatch": 0,
+      "stored_vector_mismatch": 0
+    },
+    {
+      "seed": 50,
+      "evaluated_candidate_count": 69,
+      "unique_candidate_prompt_count": 68,
+      "question_count_per_prompt": 75,
+      "missing_candidate_question_observation_count": 0,
+      "constraint_count_mismatch": 0,
+      "stored_vector_mismatch": 0
+    }
+  ],
+  "test_artifacts_consumed": false,
+  "api_calls": 0
+}

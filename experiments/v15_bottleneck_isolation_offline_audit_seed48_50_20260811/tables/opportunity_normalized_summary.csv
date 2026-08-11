@@ -1,0 +1,5 @@
+seed_scope,eligible_agent_update_opportunities,selected,assigned_to_branch,explicit_context_hits,valid_candidate_opportunities,common_safe_feasible_opportunities,accepted_opportunities,p_context_given_eligible_opportunity,p_context_given_assigned_opportunity
+48,524,209,51,31,22,8,8,0.05916030534351145,0.6078431372549019
+49,648,300,77,26,21,7,7,0.040123456790123455,0.33766233766233766
+50,590,240,76,38,23,7,7,0.06440677966101695,0.5
+all,1762,749,204,95,66,22,22,0.05391600454029512,0.46568627450980393

@@ -1,0 +1,93 @@
+{
+  "audit_status": "PASS",
+  "scope": {
+    "seeds": [48, 49, 50],
+    "setting": "S2",
+    "train_trajectory_only": true,
+    "api_calls": 0,
+    "model_calls": 0,
+    "training_runs": 0,
+    "test_evaluation": 0,
+    "test_artifacts_consumed": false,
+    "method_source_changed": false,
+    "figures_generated": false
+  },
+  "rejected_candidate_counterfactual_replay": {
+    "status": "SUPPORTED_COMPLETE",
+    "evaluated_candidates": 247,
+    "rejected_candidates": 214,
+    "unique_candidate_prompts": 244,
+    "questions_per_prompt": 75,
+    "missing_observations": 0,
+    "constraint_count_mismatches": 0,
+    "stored_vector_mismatches": 0,
+    "cache_access": "read_only"
+  },
+  "propagation_funnel": {
+    "orphan_events": 48,
+    "ever_eligible_for_another_wrong_member": 48,
+    "ever_selected_other_member": 48,
+    "ever_assigned_to_other_member_branch": 42,
+    "ever_explicit_context_hit": 24,
+    "ever_valid_candidate_after_context": 24,
+    "ever_common_safe_feasible_after_context": 15,
+    "ever_accepted_after_context": 15,
+    "eventually_vote_converted": 30,
+    "strict_context_to_feasible_retention": 0.625,
+    "strict_accepted_path_eventually_converted": "11/15",
+    "eligible_agent_update_opportunities": 1762,
+    "explicit_context_opportunities": 95,
+    "p_context_given_eligible_agent_update_opportunity": 0.05391600454029512,
+    "p_context_given_assigned_agent_update_opportunity": 0.46568627450980393,
+    "primary_attrition": "BRANCH_ASSIGNMENT_TO_EXPLICIT_CONTEXT, followed by CANDIDATE_COMMON_SAFE_FEASIBILITY"
+  },
+  "candidate_conflict_geometry": {
+    "all_evaluated": {
+      "A_target_plus_vote_plus": 11,
+      "B_target_plus_vote_zero": 22,
+      "C_target_zero_vote_plus": 0,
+      "D_target_plus_vote_minus": 30,
+      "E_target_minus_vote_plus": 11,
+      "F_no_joint_value": 173
+    },
+    "rejected_only": {
+      "total": 214,
+      "D_target_plus_vote_minus": 30,
+      "E_target_minus_vote_plus": 11,
+      "F_no_joint_value": 173,
+      "F_fraction": 0.8084112149532711,
+      "D_fraction": 0.14018691588785046,
+      "E_fraction": 0.0514018691588785
+    },
+    "rejected_sign_matrix": {
+      "target_minus_vote_minus": 92,
+      "target_minus_vote_zero": 56,
+      "target_plus_vote_minus": 30,
+      "target_zero_vote_zero": 15,
+      "target_minus_vote_plus": 11,
+      "target_zero_vote_minus": 10
+    },
+    "verdict": "GENERATOR_CANDIDATE_QUALITY_DOMINATES; COALITION_HARM_IS_SECONDARY; TARGET_NONREGRESSION_OVERSTRICTNESS_IS_NOT_PRIMARY"
+  },
+  "context_local_repair": {
+    "candidates_exposed_to_active_context_orphan": 36,
+    "constraint_passed": 9,
+    "locally_repaired_context_residual": 15,
+    "locally_repaired_but_rejected": 8,
+    "rejected_geometry": {
+      "F_no_joint_value": 5,
+      "D_target_plus_vote_minus": 2,
+      "E_target_minus_vote_plus": 1
+    },
+    "interpretation": "Context sometimes induces a local repair, but collateral target/vote regressions frequently erase global feasibility."
+  },
+  "bottleneck_decision": {
+    "routing_selector": "NOT_PRIMARY_AT_EVENT_LEVEL: every orphan had another eligible member and every orphan eventually had such a member selected.",
+    "context_construction": "MATERIAL: only 24/42 branch-revisited orphans reached explicit conditioned context.",
+    "generation_candidate_quality": "PRIMARY: 173/214 rejected candidates had no positive joint target/vote geometry.",
+    "coalition_geometry": "SECONDARY_BUT_REAL: 30/214 rejected candidates were target-positive but vote-negative.",
+    "acceptance_objective": "NOT_PRIMARY: only 11/214 rejected candidates were target-negative but vote-positive.",
+    "selection_ranking": "NOT_OBSERVED_AS_POST_FEASIBILITY_BOTTLENECK: all 33 feasible candidates were A/B; 25 committed and 8 lost max-one competition."
+  },
+  "recommended_next_action": "Do not implement v16 yet. Use a fixed-pool offline design comparison that jointly increases explicit orphan context inclusion and reduces global collateral damage; preserve common-safe acceptance until evidence stronger than the 11 E-type candidates supports changing it."
+}

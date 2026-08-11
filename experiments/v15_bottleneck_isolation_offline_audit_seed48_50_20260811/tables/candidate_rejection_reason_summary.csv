@@ -1,0 +1,13 @@
+seed_scope,rejection_reason,candidate_count
+48,no_target_or_vote_progress,62
+48,target_regression,62
+48,team_vote_regression,52
+49,no_target_or_vote_progress,63
+49,target_regression,59
+49,team_vote_regression,48
+50,no_target_or_vote_progress,48
+50,target_regression,38
+50,team_vote_regression,32
+all,no_target_or_vote_progress,173
+all,target_regression,159
+all,team_vote_regression,132
