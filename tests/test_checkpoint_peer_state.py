@@ -47,7 +47,7 @@ def build_system(tmp_path, run_identity=None):
     return system
 
 
-def test_v24_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
+def test_v25_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source = build_system(tmp_path / "source")
     source.planned_update_count = 24
     source.completed_update_count = 3
@@ -117,7 +117,7 @@ def test_v24_checkpoint_restores_repairability_and_dual_branch_state(tmp_path):
     source.proposal_memory_events = [{"target_agent_id": 2, "memory_hit": True}]
     source.proposal_rotation_trajectory = [{"target_agent_id": 2, "rotation_level": "preservation"}]
     payload = build_checkpoint(source, epoch_index=1, update_index=0, training_state={"planned_update_count": 24})
-    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 24
+    assert payload["checkpoint_version"] == CHECKPOINT_VERSION == 25
     assert payload["module_vector"] == {
         "member_aware_dual_target_search": True,
         "responsibility_conditioned_evolution": True,

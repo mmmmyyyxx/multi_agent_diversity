@@ -259,6 +259,70 @@ def test_legacy_v14_rcru_shares_v15_s2_context_and_generation(tmp_path):
     )
 
 
+def test_experimental_c0_is_byte_exact_with_canonical_v15_s2_context(tmp_path):
+    async def inspect(setting):
+        system = build_system(
+            tmp_path / setting,
+            experiment_setting=setting,
+        )
+        await initialize(system)
+        _, assignments = system.ensure_responsibility_current()
+        target, _ = system.select_target(assignments, 0)
+        assert target is not None
+        hashes = {row.question_hash for row in assignments[target]}
+        candidates = await system.propose_candidates(
+            target, hashes, CandidateFunnel(), update_index=0
+        )
+        return system, target, hashes, candidates
+
+    async def run():
+        return await asyncio.gather(
+            inspect("shared_responsibility_conditioned_dual_target"),
+            inspect("experimental_v16_c0_current_v15"),
+        )
+
+    (canonical, canonical_target, canonical_hashes, canonical_candidates), (
+        experimental, experimental_target, experimental_hashes, experimental_candidates,
+    ) = asyncio.run(run())
+    assert canonical_target == experimental_target
+    assert canonical_hashes == experimental_hashes
+    assert canonical.cached_service_assignments == experimental.cached_service_assignments
+    assert canonical.cached_active_lane_by_agent == experimental.cached_active_lane_by_agent
+    assert canonical.tcs_context_history[-1]["context_type"] == "SingleLaneDiagnosisContext"
+    assert experimental.tcs_context_history[-1]["context_type"] == "SingleLaneDiagnosisContext"
+    assert canonical.tcs_context_history[-1]["proposal_context_hash"] == (
+        experimental.tcs_context_history[-1]["proposal_context_hash"]
+    )
+    assert [row.prompt_hash for row in canonical_candidates] == [
+        row.prompt_hash for row in experimental_candidates
+    ]
+
+
+def test_experimental_c2_logs_bounded_zero_propagation_context(tmp_path):
+    system = build_system(
+        tmp_path,
+        experiment_setting="experimental_v16_c2_boundary_plus_preservation",
+        module2_context_variant="c2_boundary_plus_preservation",
+    )
+
+    async def run():
+        await initialize(system)
+        _, assignments = system.ensure_responsibility_current()
+        target, _ = system.select_target(assignments, 0)
+        assert target is not None
+        hashes = {row.question_hash for row in assignments[target]}
+        await system.propose_candidates(
+            target, hashes, CandidateFunnel(), update_index=0
+        )
+
+    asyncio.run(run())
+    audit = system.module2_context_diagnostics[-1]
+    assert audit["vote_correct_repair_item_count"] == 0
+    assert audit["repair_set_size"] <= 6
+    assert audit["preservation_set_size"] <= 6
+    assert audit["serialized_context_char_count"] > 0
+
+
 def test_legacy_v14_rcru_writes_hash_only_candidate_audit(tmp_path):
     system = build_system(
         tmp_path,

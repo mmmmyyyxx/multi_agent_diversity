@@ -347,7 +347,7 @@ def test_run_metadata_records_module_fingerprint(tmp_path):
     system.set_run_identity(identity())
     metadata = system.run_meta()
     assert metadata["method_version"] == METHOD_VERSION
-    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 24
+    assert metadata["checkpoint_version"] == CHECKPOINT_VERSION == 25
     assert metadata["experiment_matrix_version"] == EXPERIMENT_MATRIX_VERSION
     assert metadata["protocol_resolution_version"] == PROTOCOL_RESOLUTION_VERSION
     assert metadata["setting_index"] == 3

@@ -7,8 +7,12 @@ The current runtime implements:
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
 method_version = member_aware_peer_state_v15
-checkpoint_version = 24
+checkpoint_version = 25
 ```
+
+The runtime also supports frozen experimental Module2 context variants C2 and
+C3 beside the byte-compatible C0/v15 path. These variants change generation
+context only and are not yet promoted to the canonical method.
 
 The team contains five prompts and uses equal-weight plurality with
 tie-as-abstain. Model weights remain fixed. Every evaluated candidate changes
@@ -223,7 +227,7 @@ The active lifecycle performs no validation rollout or checkpoint selection.
 The final active state is selected automatically. Test executes once after
 training and never participates in optimization.
 
-Checkpoint v24 persists state-local repairability counters, selected target
+Checkpoint v25 persists state-local repairability counters, selected target
 IDs, target-score history, branch decisions, routing, active lanes, and anchors.
 Checkpoint v23 and earlier are rejected with `checkpoint_version_mismatch`;
 there is no semantic migration.

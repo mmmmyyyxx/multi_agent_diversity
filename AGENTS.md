@@ -20,7 +20,7 @@ The current method is:
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
 
 method_version = member_aware_peer_state_v15
-checkpoint_version = 24
+checkpoint_version = 25
 ```
 
 The paper method has two core modules:
@@ -377,7 +377,7 @@ authorizes API calls in that task.
 
 ## 9. Persistence and artifacts
 
-Checkpoint v24 stores branch failure/attempt/feasible counts, repairability team
+Checkpoint v25 stores branch failure/attempt/feasible counts, repairability team
 hash and reset count, selected targets, target scores, branch lifecycle,
 routing, active lanes, and anchors. A v23 or earlier checkpoint fails with:
 

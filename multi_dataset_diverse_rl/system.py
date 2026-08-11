@@ -57,6 +57,15 @@ from .evaluation.persistent_solver_cache import PersistentSolverCache
 from .evaluation.solver_output import parse_solver_output
 from .llm_client import LLMCallResult, RoleAwareLLMClient
 from .member_objectives import member_gain_metrics, team_member_gain_state
+from .module2_context import (
+    C0_CURRENT_V15,
+    C2_BOUNDARY_PLUS_PRESERVATION,
+    C3_COALITION_AWARE_PRESERVATION,
+    MODULE2_CONTEXT_VARIANTS,
+    Module2ContextSets,
+    build_module2_context_sets,
+    exact_repair_distance,
+)
 from .peer_state import (
     PeerVoteContext,
     TeamVoteState,
@@ -128,6 +137,7 @@ from .tcs import (
     AnyDiagnosisContext,
     CriticDecision,
     AssignedResidualDiagnosisContext,
+    ExperimentalModule2DiagnosisContext,
     PeerStateDiagnosisContext,
     SingleLaneDiagnosisContext,
     ProposalFailureFeedback,
@@ -171,6 +181,7 @@ from .versions import (
     DUAL_TARGET_SEARCH_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     EXPERIMENT_MATRIX_VERSION,
+    EXPERIMENTAL_MODULE2_VERSION,
     METHOD_VERSION,
     MINIMAL_EDIT_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
@@ -215,6 +226,7 @@ class CandidateRuntime:
     profile: tuple[PromptAnswer, ...] | None = None
     stage_a_decision: StageASelectionDecision | None = None
     constraint: ConstraintDecision | RobustContributionDecision | None = None
+    module2_diagnostics: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -383,6 +395,12 @@ class PromptEnsembleOptimizationSystem:
             raise ValueError("TCS character limits must be positive")
         self.cfg = cfg
         self.protocol = self._build_protocol()
+        if cfg.tcs.module2_context_variant not in MODULE2_CONTEXT_VARIANTS:
+            raise ValueError("unknown module2_context_variant")
+        if cfg.tcs.module2_context_variant != self.protocol.module2_context_variant:
+            raise ValueError(
+                "module2_context_variant does not match experiment setting"
+            )
         if (
             not self.protocol.legacy_protocol
             and not self.protocol.auxiliary_protocol
@@ -441,6 +459,10 @@ class PromptEnsembleOptimizationSystem:
         self.repairability_reset_events: list[dict[str, Any]] = []
         self.selected_target_ids: list[int] = []
         self.tcs_context_history: list[dict[str, Any]] = []
+        self.module2_context_diagnostics: list[dict[str, Any]] = []
+        self._module2_context_sets: dict[
+            tuple[int, int], Module2ContextSets
+        ] = {}
         self.tcs_rounds: list[dict[str, Any]] = []
         self.student_recovery_observations: list[dict[str, Any]] = []
         self.student_recovery_state: dict[str, Any] = {
@@ -559,6 +581,10 @@ class PromptEnsembleOptimizationSystem:
         )
         self.active_profiles: list[tuple[PromptAnswer, ...]] = []
         self.initial_profiles: list[tuple[PromptAnswer, ...]] = []
+        self.stable_correct_question_hashes_by_agent: dict[int, set[str]] = {
+            agent_id: set() for agent_id in range(5)
+        }
+        self.accepted_state_count = 0
         self.run_identity: RunIdentity | None = None
         self.artifacts = ArtifactWriter(cfg.persistence.out_dir)
         self._solver_override = solver
@@ -901,6 +927,37 @@ class PromptEnsembleOptimizationSystem:
             for agent_id, agent in enumerate(self.agents)
         )))
         self.initial_profiles = list(self.active_profiles)
+        self.accepted_state_count = 1
+        self.stable_correct_question_hashes_by_agent = {
+            agent_id: {
+                example.question_hash
+                for answer, example in zip(
+                    profile, self.fixed_probe.examples, strict=True
+                )
+                if answer.valid
+                and self.match_answer(answer.answer, example.gold_answer)
+            }
+            for agent_id, profile in enumerate(self.active_profiles)
+        }
+
+    def _record_accepted_state_stability(self) -> None:
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        if self.accepted_state_count <= 0:
+            raise RuntimeError("accepted-state stability was not initialized")
+        for agent_id, profile in enumerate(self.active_profiles):
+            currently_correct = {
+                example.question_hash
+                for answer, example in zip(
+                    profile, self.fixed_probe.examples, strict=True
+                )
+                if answer.valid
+                and self.match_answer(answer.answer, example.gold_answer)
+            }
+            self.stable_correct_question_hashes_by_agent[agent_id].intersection_update(
+                currently_correct
+            )
+        self.accepted_state_count += 1
 
     def _member_correct_counts(
         self,
@@ -1546,6 +1603,44 @@ class PromptEnsembleOptimizationSystem:
                 raise ValueError(
                     "responsibility-conditioned context requires an active lane"
                 )
+            if self.protocol.module2_context_variant in {
+                C2_BOUNDARY_PLUS_PRESERVATION,
+                C3_COALITION_AWARE_PRESERVATION,
+            }:
+                sets = build_module2_context_sets(
+                    examples=self.fixed_probe.examples,
+                    states=states,
+                    target_agent_id=target_agent_id,
+                    assigned_question_hashes=assigned_hashes,
+                    stable_correct_question_hashes=(
+                        self.stable_correct_question_hashes_by_agent[
+                            target_agent_id
+                        ]
+                    ),
+                    accepted_state_count=self.accepted_state_count,
+                    normalize_answer=self.normalize_answer,
+                    match_answer=self.match_answer,
+                    tie_break=self.protocol.tie_policy,
+                    seed=self.cfg.training.seed,
+                )
+                context = ExperimentalModule2DiagnosisContext(
+                    parent_prompt=parent_prompt,
+                    parent_prompt_hash=self.prompt_hash(parent_prompt),
+                    context_variant=self.protocol.module2_context_variant,
+                    repair_cases=sets.repair,
+                    preservation_cases=sets.preservation,
+                    previous_outcome=compact_previous_outcome(
+                        self.previous_update_outcomes[target_agent_id]
+                    ),
+                )
+                return limit_diagnosis_context(
+                    context,
+                    max_chars=self.cfg.tcs.tcs_context_max_chars,
+                    full_probe_case_count=len(states),
+                    available_pattern_count=(
+                        len(sets.repair) + len(sets.preservation)
+                    ),
+                )
             aggregation = aggregate_single_lane_diagnosis(
                 target_agent_id=target_agent_id,
                 examples=self.fixed_probe.examples,
@@ -1675,6 +1770,7 @@ class PromptEnsembleOptimizationSystem:
                 "in_progress": True,
                 "update_index": int(update_index),
                 "target_agent_id": int(target_agent_id),
+                "parent_team_hash": self.team_prompt_state_hash(),
                 "student_generation_cycle_index": int(
                     student_generation_cycle_index
                 ),
@@ -2362,6 +2458,62 @@ class PromptEnsembleOptimizationSystem:
             ),
         }
         context_mode = self.protocol.tcs_context_policy
+        if isinstance(context, ExperimentalModule2DiagnosisContext):
+            sets = Module2ContextSets(
+                repair=context.repair_cases,
+                preservation=context.preservation_cases,
+            )
+            self._module2_context_sets[(int(update_index), target_agent_id)] = sets
+            repair_tiers = {row.question_hash: row.tier for row in sets.repair}
+            preservation_tiers = {
+                row.question_hash: row.tier for row in sets.preservation
+            }
+            self.module2_context_diagnostics.append({
+                "artifact_schema_version": "experimental_module2_context_v1",
+                "seed": int(self.cfg.training.seed),
+                "setting": self.protocol.name,
+                "update_index": int(update_index),
+                "branch_id": str(target_agent_id),
+                "target_agent_id": int(target_agent_id),
+                "context_variant": context.context_variant,
+                "repair_question_hashes": [
+                    row.question_hash for row in sets.repair
+                ],
+                "repair_tier_by_hash": repair_tiers,
+                "repair_distance_by_hash": {
+                    row.question_hash: row.repair_distance
+                    for row in sets.repair
+                },
+                "G_by_hash": {
+                    row.question_hash: row.gold_vote_count
+                    for row in sets.repair
+                },
+                "target_role_by_hash": {
+                    row.question_hash: row.target_role for row in sets.repair
+                },
+                "preservation_question_hashes": [
+                    row.question_hash for row in sets.preservation
+                ],
+                "preservation_tier_by_hash": preservation_tiers,
+                "repair_set_size": len(sets.repair),
+                "preservation_set_size": len(sets.preservation),
+                "vote_correct_repair_item_count": 0,
+                **{
+                    f"{tier}_count": sum(
+                        value.startswith(tier)
+                        for value in repair_tiers.values()
+                    )
+                    for tier in ("R1", "R2", "R3", "R4")
+                },
+                **{
+                    f"{tier}_count": sum(
+                        value.startswith(tier)
+                        for value in preservation_tiers.values()
+                    )
+                    for tier in ("P1", "P2", "P3")
+                },
+                "serialized_context_char_count": diagnostics.context_characters,
+            })
         context_serialized = serialize_context(context)
         context_object = context_payload(context)
         field_paths = sorted(_recursive_field_paths(context_object))
@@ -2392,6 +2544,18 @@ class PromptEnsembleOptimizationSystem:
                 "expected_update_value", "opportunity_value",
                 "updates_since_selected", "normalized_wait",
             )
+        elif isinstance(context, ExperimentalModule2DiagnosisContext):
+            forbidden_tokens = (
+                "target_agent_id", "member_gain", "uplift_deficit",
+                "peer_answers", "team_answers", "raw_response",
+                "service_load", "seeded_rank", "branch_failure",
+                "updates_since_selected",
+            )
+            if context.context_variant == C2_BOUNDARY_PLUS_PRESERVATION:
+                forbidden_tokens += (
+                    "gold_vote_count", "repair_distance", "boundary_class",
+                    "target_role", "preservation_tier",
+                )
         else:
             forbidden_tokens = ()
         lowered_paths = tuple(path.lower() for path in field_paths)
@@ -2429,7 +2593,16 @@ class PromptEnsembleOptimizationSystem:
                 for path in lowered_paths
             ),
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
+            "module2_context_variant": self.protocol.module2_context_variant,
             "selected_context_pattern_question_hashes": (
+                {
+                    "repair": [row.question_hash for row in context.repair_cases],
+                    "preservation": [
+                        row.question_hash for row in context.preservation_cases
+                    ],
+                }
+                if isinstance(context, ExperimentalModule2DiagnosisContext)
+                else
                 {
                     context.dominant_pattern.pattern_id: [
                         row.question_hash for row in context.repair_cases
@@ -2656,7 +2829,16 @@ class PromptEnsembleOptimizationSystem:
                     try:
                         critic_decision = parse_critic_decision(
                             parsed_critic,
-                            allowed_case_ids={row.case_id for row in context.evidence_cases},
+                            allowed_case_ids=(
+                                set(diagnostics.selected_case_ids)
+                                if isinstance(
+                                    context,
+                                    ExperimentalModule2DiagnosisContext,
+                                )
+                                else {
+                                    row.case_id for row in context.evidence_cases
+                                }
+                            ),
                             feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
                         )
                         if contains_supplied_example_text(
@@ -3056,6 +3238,12 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
+            candidate.module2_diagnostics = self._module2_candidate_effects(
+                update_index=update_index,
+                target_agent_id=target_agent_id,
+                candidate_profile=candidate.profile,
+                evaluation=candidate.final_evaluation,
+            )
             if rcru_enabled:
                 candidate.final_evaluation = replace(
                     candidate.final_evaluation,
@@ -3297,6 +3485,113 @@ class PromptEnsembleOptimizationSystem:
                     "selected": accepted is row,
                 })
         return accepted, incumbent, list(candidates)
+
+    def _module2_candidate_effects(
+        self,
+        *,
+        update_index: int,
+        target_agent_id: int,
+        candidate_profile: Sequence[PromptAnswer],
+        evaluation: CandidateEvaluation,
+    ) -> dict[str, Any]:
+        incumbent_target = self._member_correct_counts(self.active_profiles)[
+            target_agent_id
+        ]
+        target_gain = evaluation.competence.correct_count - incumbent_target
+        vote_net = evaluation.marginal.net_vote_delta
+        geometry = (
+            "A" if target_gain > 0 and vote_net > 0 else
+            "B" if target_gain > 0 and vote_net == 0 else
+            "C" if target_gain == 0 and vote_net > 0 else
+            "D" if target_gain > 0 and vote_net < 0 else
+            "E" if target_gain < 0 and vote_net > 0 else "F"
+        )
+        result: dict[str, Any] = {
+            "context_variant": self.protocol.module2_context_variant,
+            "candidate_geometry": geometry,
+            "target_gain": int(target_gain),
+            "vote_gain_count": int(evaluation.marginal.vote_gain_count),
+            "vote_loss_count": int(evaluation.marginal.vote_loss_count),
+            "vote_net_gain": int(vote_net),
+            "repair_set_gain_count": None,
+            "repair_distance_reduction_count": None,
+            "R1_repair_count": None,
+            "orphan_repair_count": None,
+            "P1_loss_count": None,
+            "P2_loss_count": None,
+            "P3_loss_count": None,
+        }
+        sets = self._module2_context_sets.get(
+            (int(update_index), int(target_agent_id))
+        )
+        if sets is None or self.fixed_probe is None:
+            return result
+        states, _, _ = self.current_states_and_opportunities()
+        state_by_hash = {row.question_hash: row for row in states}
+        profile_by_hash = {
+            example.question_hash: answer
+            for example, answer in zip(
+                self.fixed_probe.examples, candidate_profile, strict=True
+            )
+        }
+
+        def child_state(question_hash: str) -> TeamVoteState:
+            parent = state_by_hash[question_hash]
+            answer = profile_by_hash[question_hash]
+            answers = list(parent.team_answers)
+            validity = list(parent.team_validity)
+            answers[target_agent_id] = answer.answer
+            validity[target_agent_id] = answer.valid
+            return build_team_vote_state(
+                question_hash=parent.question_hash,
+                gold_answer=parent.gold_answer,
+                answers=answers,
+                valid_vector=validity,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+            )
+
+        gains = distance_reductions = r1 = orphan = 0
+        for item in sets.repair:
+            parent = state_by_hash[item.question_hash]
+            child = child_state(item.question_hash)
+            child_distance = exact_repair_distance(
+                child,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+            )
+            improved = bool(
+                (
+                    not parent.team_correctness[target_agent_id]
+                    and child.team_correctness[target_agent_id]
+                )
+                or child_distance < item.repair_distance
+                or (not parent.vote_correct and child.vote_correct)
+            )
+            gains += int(improved)
+            distance_reductions += int(child_distance < item.repair_distance)
+            r1 += int(improved and item.tier.startswith("R1"))
+            orphan += int(improved and item.gold_vote_count == 1)
+        losses = {"P1": 0, "P2": 0, "P3": 0}
+        for item in sets.preservation:
+            child = child_state(item.question_hash)
+            losses[item.tier[:2]] += int(
+                not child.team_correctness[target_agent_id]
+            )
+        result.update({
+            "repair_set_gain_count": gains,
+            "repair_distance_reduction_count": distance_reductions,
+            "R1_repair_count": r1,
+            "orphan_repair_count": orphan,
+            "P1_loss_count": losses["P1"],
+            "P2_loss_count": losses["P2"],
+            "P3_loss_count": losses["P3"],
+        })
+        return result
 
     def _update_candidate_search_outcome(
         self,
@@ -3672,6 +3967,21 @@ class PromptEnsembleOptimizationSystem:
                 update_index=update_index,
             ))
         branches.sort(key=lambda row: row.target_selection_rank)
+        if self.protocol.module2_context_variant in {
+            C2_BOUNDARY_PLUS_PRESERVATION,
+            C3_COALITION_AWARE_PRESERVATION,
+        }:
+            repair_sets = [
+                {
+                    row.question_hash
+                    for row in self._module2_context_sets[
+                        (int(update_index), branch.target_agent_id)
+                    ].repair
+                }
+                for branch in branches
+            ]
+            if len(repair_sets) == 2 and repair_sets[0] & repair_sets[1]:
+                raise AssertionError("cross_branch_repair_duplication")
         if any(
             branch.parent_team_hash != parent_team_hash
             for branch in branches
@@ -3782,6 +4092,7 @@ class PromptEnsembleOptimizationSystem:
                     "constraint": (
                         asdict(row.constraint) if row.constraint else None
                     ),
+                    "module2_diagnostics": dict(row.module2_diagnostics),
                 })
         decision = {
             "update_index": int(update_index),
@@ -3871,6 +4182,10 @@ class PromptEnsembleOptimizationSystem:
         old_prompt = agent.current_prompt
         old_previous_prompt = agent.previous_active_prompt
         old_profile = self.active_profiles[target]
+        old_stable_correct = deepcopy(
+            self.stable_correct_question_hashes_by_agent
+        )
+        old_accepted_state_count = self.accepted_state_count
         old_state = state_before_branch_accounting
         old_team_state_version = self.team_state_version
         old_responsibility_state_version = self.responsibility_state_version
@@ -3899,6 +4214,7 @@ class PromptEnsembleOptimizationSystem:
             agent.previous_active_prompt = old_prompt
             agent.current_prompt = accepted.prompt
             self.active_profiles[target] = accepted.profile
+            self._record_accepted_state_stability()
             self.responsibility_state.accepted_updates_by_agent[target] = (
                 self.responsibility_state.accepted_updates_by_agent.get(
                     target, 0
@@ -3937,6 +4253,8 @@ class PromptEnsembleOptimizationSystem:
             agent.current_prompt = old_prompt
             agent.previous_active_prompt = old_previous_prompt
             self.active_profiles[target] = old_profile
+            self.stable_correct_question_hashes_by_agent = old_stable_correct
+            self.accepted_state_count = old_accepted_state_count
             self.responsibility_state = old_state
             self.team_state_version = old_team_state_version
             self.responsibility_state_version = old_responsibility_state_version
@@ -4153,6 +4471,7 @@ class PromptEnsembleOptimizationSystem:
                     "stage_a_decision": asdict(row.stage_a_decision) if row.stage_a_decision else None,
                     "evaluation": asdict(row.final_evaluation) if row.final_evaluation else None,
                     "constraint": asdict(row.constraint) if row.constraint else None,
+                    "module2_diagnostics": dict(row.module2_diagnostics),
                     **(
                         asdict(row.constraint)
                         if row.constraint is not None else {}
@@ -4954,6 +5273,8 @@ class PromptEnsembleOptimizationSystem:
         )
         return {
             "method_version": METHOD_VERSION,
+            "experimental_module2_version": EXPERIMENTAL_MODULE2_VERSION,
+            "module2_context_variant": self.protocol.module2_context_variant,
             "experiment_protocol": {
                 **asdict(self.protocol),
                 "candidate_selection_policy": (
@@ -5277,6 +5598,10 @@ class PromptEnsembleOptimizationSystem:
             "candidate_funnel.json", self.candidate_funnel_summary()
         )
         self.artifacts.write_jsonl("tcs_context_history.jsonl", self.tcs_context_history)
+        self.artifacts.write_jsonl(
+            "experimental_module2_context_diagnostics.jsonl",
+            self.module2_context_diagnostics,
+        )
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl(
             "student_recovery_observations.jsonl",

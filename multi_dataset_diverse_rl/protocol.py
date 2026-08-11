@@ -3,6 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass, fields
 from enum import Enum
 
+from .module2_context import (
+    C0_CURRENT_V15,
+    C2_BOUNDARY_PLUS_PRESERVATION,
+    C3_COALITION_AWARE_PRESERVATION,
+)
+
 
 class InitializationMode(str, Enum):
     SHARED_IDENTICAL = "shared_identical"
@@ -116,6 +122,7 @@ class ExperimentProtocol:
     initialization_mode: InitializationMode
     tie_policy: str
     candidate_budget_contract: CandidateBudgetContract
+    module2_context_variant: str = C0_CURRENT_V15
     legacy_protocol: bool = False
     auxiliary_protocol: bool = False
 
@@ -147,6 +154,22 @@ MAIN_ABLATION_SETTINGS = (
     "shared_member_aware_dual_target",
     "shared_responsibility_conditioned_dual_target",
 )
+
+EXPERIMENTAL_V16_MODULE2_SETTINGS = (
+    "experimental_v16_c0_current_v15",
+    "experimental_v16_c2_boundary_plus_preservation",
+    "experimental_v16_c3_coalition_aware_preservation",
+)
+
+EXPERIMENTAL_V16_MODULE2_VARIANTS = {
+    "experimental_v16_c0_current_v15": C0_CURRENT_V15,
+    "experimental_v16_c2_boundary_plus_preservation": (
+        C2_BOUNDARY_PLUS_PRESERVATION
+    ),
+    "experimental_v16_c3_coalition_aware_preservation": (
+        C3_COALITION_AWARE_PRESERVATION
+    ),
+}
 
 SETTING_DISPLAY_NAMES = {
     "shared_static_reference": "Static Reference",
@@ -321,6 +344,8 @@ def canonical_experiment_setting(
     requested = str(name)
     if requested in MAIN_ABLATION_SETTINGS:
         return requested
+    if requested in EXPERIMENTAL_V16_MODULE2_SETTINGS:
+        return requested
     if requested in AUXILIARY_SEARCH_CONTROL_SETTINGS:
         if not allow_auxiliary_setting:
             raise ValueError(
@@ -410,8 +435,14 @@ def candidate_budget_contract(
             2 if LEGACY_V13_SEVEN_SETTINGS.index(name) >= 4 else 1
         )
         candidate_count, stage_b = 2, 2
-    elif name in MAIN_ABLATION_MODULES:
-        modules = MAIN_ABLATION_MODULES[name]
+    elif name in MAIN_ABLATION_MODULES or name in EXPERIMENTAL_V16_MODULE2_SETTINGS:
+        modules = (
+            MAIN_ABLATION_MODULES[name]
+            if name in MAIN_ABLATION_MODULES
+            else MAIN_ABLATION_MODULES[
+                "shared_responsibility_conditioned_dual_target"
+            ]
+        )
         branch_count = 2 if modules.member_aware_dual_target_search else 1
         candidate_count, stage_b = 2, 2
     else:
@@ -640,6 +671,26 @@ def experiment_protocol(
             initialization_mode=InitializationMode(initialization_mode),
             tie_policy=str(tie_policy),
             candidate_budget_contract=candidate_budget_contract,
+            legacy_protocol=False,
+            auxiliary_protocol=False,
+            **resolved.__dict__,
+        )
+    if canonical_name in EXPERIMENTAL_V16_MODULE2_SETTINGS:
+        modules = MAIN_ABLATION_MODULES[
+            "shared_responsibility_conditioned_dual_target"
+        ]
+        resolved = resolve_protocol_from_modules(modules)
+        return ExperimentProtocol(
+            name=canonical_name,
+            requested_name=requested_name,
+            display_name=canonical_name,
+            modules=modules,
+            initialization_mode=InitializationMode(initialization_mode),
+            tie_policy=str(tie_policy),
+            candidate_budget_contract=candidate_budget_contract,
+            module2_context_variant=(
+                EXPERIMENTAL_V16_MODULE2_VARIANTS[canonical_name]
+            ),
             legacy_protocol=False,
             auxiliary_protocol=False,
             **resolved.__dict__,

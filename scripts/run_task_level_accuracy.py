@@ -38,6 +38,7 @@ from multi_dataset_diverse_rl.task_manifest import load_task_manifest, resolve_t
 from multi_dataset_diverse_rl.tasks import get_task_spec
 from multi_dataset_diverse_rl.utils import load_jsonl
 from multi_dataset_diverse_rl.versions import METHOD_VERSION
+from multi_dataset_diverse_rl.protocol import EXPERIMENTAL_V16_MODULE2_SETTINGS
 from scripts.experiment_config import select_settings
 
 
@@ -211,6 +212,8 @@ def _validate_setting_sequence(
     the frozen optimization-probe initialization, but it does not run or
     synthesize a reporting-only baseline test evaluation.
     """
+    if tuple(setting_names) == EXPERIMENTAL_V16_MODULE2_SETTINGS:
+        return
     if optimized_only:
         if len(setting_names) != 1 or setting_names[0] == "shared_static_reference":
             raise ValueError(

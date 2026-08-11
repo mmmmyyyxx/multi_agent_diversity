@@ -102,8 +102,8 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
         "repairability_adjusted_expected_update_value_wait_coupled_v2"
     ):
         errors.append("v15 W1 target selection version is incorrect")
-    if CHECKPOINT_VERSION != 24:
-        errors.append("canonical v15 checkpoint version is not 24")
+    if CHECKPOINT_VERSION != 25:
+        errors.append("experimental Module2 checkpoint version is not 25")
     configs = [Config.from_flat(**setting.resolved_overrides()) for setting in select_settings("all")]
     if DEFAULT_EXPERIMENT_SETTING_NAMES != EXPECTED_SETTINGS:
         errors.append(

@@ -5,8 +5,13 @@ Optimization:
 
 ```text
 method_version = member_aware_peer_state_v15
-checkpoint_version = 24
+checkpoint_version = 25
 ```
+
+C2/C3 boundary-repair plus preservation contexts are currently explicit
+experimental Module2 variants. They do not replace the canonical v15 method or
+the four-setting main ablation matrix. C0/C2/C3 carry distinct run and
+checkpoint identities.
 
 Five prompts are jointly optimized for equal-weight plurality voting. Each
 candidate replaces only one member; dual-target search evaluates two
@@ -107,7 +112,9 @@ Run preflight before a separately authorized API experiment:
 
 The active lifecycle uses no validation selection. The final active team is
 tested once after training only. `solver_max_tokens=1800` remains fixed.
-Checkpoint resume accepts only checkpoint v24 with exact v15 run identity.
+Checkpoint resume accepts only checkpoint v25 with exact v15 run identity and
+experimental Module2 context identity. The version bump persists the minimal
+accepted-state stable-correct intersection required for exact experimental P3.
 
 ## Key artifacts
 

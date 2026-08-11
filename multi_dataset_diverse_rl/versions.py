@@ -9,7 +9,10 @@ TARGET_SELECTION_VERSION = (
 REPAIRABILITY_VERSION = "state_local_branch_failure_discount_v1"
 DUAL_TARGET_SEARCH_VERSION = "dual_target_single_commit_search_v1"
 TCS_CONTEXT_VERSION = "compact_single_lane_responsibility_context_v1"
-CHECKPOINT_VERSION = 24
+CHECKPOINT_VERSION = 25
+EXPERIMENTAL_MODULE2_VERSION = (
+    "v16_boundary_repair_preservation_experimental_v1"
+)
 CANDIDATE_ACCEPTANCE_VERSION = "fixed_peer_monotone_target_or_vote_v2"
 CANDIDATE_SELECTION_VERSION = "common_safe_final_update_v1"
 CANDIDATE_ACCEPTANCE_POLICY = "fixed_peer_monotone_target_or_vote"

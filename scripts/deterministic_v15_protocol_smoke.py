@@ -101,7 +101,7 @@ def _assert_w1() -> float:
 
 def main() -> None:
     assert METHOD_VERSION == "member_aware_peer_state_v15"
-    assert CHECKPOINT_VERSION == 24
+    assert CHECKPOINT_VERSION == 25
     assert TARGET_SELECTION_VERSION == (
         "repairability_adjusted_expected_update_value_wait_coupled_v2"
     )

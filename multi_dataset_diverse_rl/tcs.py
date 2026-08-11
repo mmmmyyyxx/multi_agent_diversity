@@ -15,6 +15,12 @@ from .evaluation.output_contract import solver_output_contract
 from .evaluation.mutable_prompt_contract import mutable_prompt_violation_reasons
 from .llm_client import LLMCallResult
 from .proposal_memory import ProposalFailureFeedback
+from .module2_context import (
+    C2_BOUNDARY_PLUS_PRESERVATION,
+    C3_COALITION_AWARE_PRESERVATION,
+    PreservationContextItem,
+    RepairContextItem,
+)
 from .utils import extract_json_obj, normalize_prompt_text
 from .versions import STUDENT_PROMPT_CONTRACT_VERSION
 
@@ -132,11 +138,32 @@ class SingleLaneDiagnosisContext:
         )
 
 
+@dataclass(frozen=True)
+class ExperimentalModule2DiagnosisContext:
+    parent_prompt: str
+    parent_prompt_hash: str
+    context_variant: str
+    repair_cases: tuple[RepairContextItem, ...]
+    preservation_cases: tuple[PreservationContextItem, ...]
+    previous_outcome: CompactPreviousOutcome
+
+    @property
+    def patterns(self) -> tuple[Any, ...]:
+        return ()
+
+    @property
+    def evidence_cases(
+        self,
+    ) -> tuple[RepairContextItem | PreservationContextItem, ...]:
+        return self.repair_cases + self.preservation_cases
+
+
 AnyDiagnosisContext = (
     AccuracyDiagnosisContext
     | PeerStateDiagnosisContext
     | AssignedResidualDiagnosisContext
     | SingleLaneDiagnosisContext
+    | ExperimentalModule2DiagnosisContext
 )
 
 
@@ -342,6 +369,44 @@ def _lane_pattern_payload(
 
 
 def context_payload(context: AnyDiagnosisContext) -> dict[str, Any]:
+    if isinstance(context, ExperimentalModule2DiagnosisContext):
+        expose_metadata = (
+            context.context_variant == C3_COALITION_AWARE_PRESERVATION
+        )
+        repair_rows = []
+        for index, row in enumerate(context.repair_cases, start=1):
+            payload = {
+                "case_id": f"repair_{index}",
+                "question": row.question,
+                "gold_answer": row.gold_answer,
+                "target_current_answer": row.target_current_answer,
+            }
+            if expose_metadata:
+                payload.update({
+                    "gold_vote_count": row.gold_vote_count,
+                    "repair_distance": row.repair_distance,
+                    "boundary_class": row.boundary_class,
+                    "target_role": row.target_role,
+                })
+            repair_rows.append(payload)
+        preservation_rows = []
+        for index, row in enumerate(context.preservation_cases, start=1):
+            payload = {
+                "case_id": f"preservation_{index}",
+                "question": row.question,
+                "gold_answer": row.gold_answer,
+                "target_current_answer": row.target_current_answer,
+            }
+            if expose_metadata:
+                payload["preservation_tier"] = row.tier
+            preservation_rows.append(payload)
+        return {
+            "parent_prompt": context.parent_prompt,
+            "context_variant": context.context_variant,
+            "repair_responsibilities": repair_rows,
+            "preservation_responsibilities": preservation_rows,
+            "previous_outcome": asdict(context.previous_outcome),
+        }
     if isinstance(context, SingleLaneDiagnosisContext):
         return {
             "parent_prompt": context.parent_prompt,
@@ -457,6 +522,30 @@ def limit_diagnosis_context(
 ) -> tuple[AnyDiagnosisContext, TCSContextDiagnostics]:
     if max_chars <= 0:
         raise ValueError("tcs_context_max_chars must be positive")
+    if isinstance(context, ExperimentalModule2DiagnosisContext):
+        characters = len(serialize_context(context))
+        if characters > max_chars:
+            raise ValueError(
+                "experimental Module2 context exceeds tcs_context_max_chars; "
+                "membership-preserving truncation is forbidden"
+            )
+        return context, TCSContextDiagnostics(
+            full_probe_case_count=full_probe_case_count,
+            available_pattern_count=available_pattern_count,
+            selected_pattern_count=0,
+            selected_pattern_ids=(),
+            selected_case_count=len(context.evidence_cases),
+            selected_case_ids=tuple(
+                [f"repair_{index}" for index in range(1, len(context.repair_cases) + 1)]
+                + [
+                    f"preservation_{index}"
+                    for index in range(1, len(context.preservation_cases) + 1)
+                ]
+            ),
+            cases_represented_by_selected_patterns=len(context.evidence_cases),
+            context_characters=characters,
+            estimated_input_tokens=(characters + 3) // 4,
+        )
     if isinstance(context, SingleLaneDiagnosisContext):
         effective_cap = min(max_chars, 6000)
         bounded = context
@@ -565,6 +654,22 @@ def build_teacher_request(
             "residuals outside this target's portfolio."
         )
     lane_instruction = ""
+    experimental_instruction = ""
+    if isinstance(context, ExperimentalModule2DiagnosisContext):
+        experimental_instruction = (
+            " The program supplies bounded Repair responsibilities and Preservation "
+            "responsibilities. Focus only on unresolved repair items and provide the "
+            "minimum additional support required by the team. Do not propagate an "
+            "item after the team decision is already correct. Preserve listed existing "
+            "capabilities and do not trade useful competence for isolated local gains."
+        )
+        if context.context_variant == C3_COALITION_AWARE_PRESERVATION:
+            experimental_instruction += (
+                " Treat repair_distance=1 items as high-priority decision boundaries; "
+                "use only minimum redundancy for fragmented items. Preservation tier P1 "
+                "is strong vote-critical guidance, P2 is soft coalition-support guidance, "
+                "and P3 is stable-competence guidance. These labels guide generation only."
+            )
     if isinstance(context, SingleLaneDiagnosisContext):
         lane_instruction = (
             " The program has already selected the sole RepairLane. failure_pattern "
@@ -581,6 +686,7 @@ def build_teacher_request(
         "preservation rule must protect correct behavior and the strict output contract. "
         + feedback_instruction
         + lane_instruction
+        + experimental_instruction
         + f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"

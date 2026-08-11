@@ -20,6 +20,7 @@ from multi_dataset_diverse_rl.versions import (
     COMMON_UPDATE_POLICY_VERSION,
     DUAL_TARGET_SEARCH_VERSION,
     EXPERIMENT_MATRIX_VERSION,
+    EXPERIMENTAL_MODULE2_VERSION,
     METHOD_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
     PROTOCOL_RESOLUTION_VERSION,
@@ -60,6 +61,9 @@ EXPERIMENT_SCRIPTS = (
     "scripts/build_strict_v2_s345_report.py",
     "scripts/run_v13_search_budget_control.py",
     "scripts/audit_v13_search_budget_control.py",
+    "scripts/run_v16_module2_seed51_pilot.ps1",
+    "scripts/audit_v16_module2_pilot.py",
+    "scripts/replay_v16_module2_contexts.py",
 )
 
 
@@ -131,6 +135,7 @@ def build_source_identity(workspace: Path) -> dict[str, Any]:
             "candidate_acceptance_version": CANDIDATE_ACCEPTANCE_VERSION,
             "candidate_selection_version": CANDIDATE_SELECTION_VERSION,
             "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
+            "experimental_module2_version": EXPERIMENTAL_MODULE2_VERSION,
             "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
             "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
             "rcru_version": RCRU_VERSION,

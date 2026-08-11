@@ -44,6 +44,7 @@ from ..versions import (
     COALITION_CONTRIBUTION_VERSION,
     EVALUATION_PROTOCOL_VERSION,
     EXPERIMENT_MATRIX_VERSION,
+    EXPERIMENTAL_MODULE2_VERSION,
     COMMON_UPDATE_POLICY_VERSION,
     DUAL_TARGET_SEARCH_VERSION,
     MUTABLE_PROMPT_CONTRACT_VERSION,
@@ -148,6 +149,7 @@ def config_fingerprint(cfg: Config) -> str:
     )
     values["candidate_ranking_policy"] = protocol.candidate_ranking_policy
     values["stage_a_policy"] = protocol.stage_a_policy
+    values["module2_context_variant"] = protocol.module2_context_variant
     values["candidate_budget_contract"] = asdict(
         protocol.candidate_budget_contract
     )
@@ -165,6 +167,8 @@ def config_fingerprint(cfg: Config) -> str:
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
         "experiment_matrix": EXPERIMENT_MATRIX_VERSION,
+        "experimental_module2": EXPERIMENTAL_MODULE2_VERSION,
+        "module2_context_variant": protocol.module2_context_variant,
         "protocol_resolution": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy": COMMON_UPDATE_POLICY_VERSION,
         "responsibility": RESPONSIBILITY_VERSION,

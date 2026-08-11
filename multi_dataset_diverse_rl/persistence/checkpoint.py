@@ -117,6 +117,7 @@ def build_checkpoint(
         "student_prompt_contract_version": STUDENT_PROMPT_CONTRACT_VERSION,
         "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "canonical_experiment_setting": system.protocol.name,
+        "module2_context_variant": system.protocol.module2_context_variant,
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
@@ -145,6 +146,13 @@ def build_checkpoint(
         "previous_active_prompts": [agent.previous_active_prompt for agent in system.agents],
         "active_profiles": [[asdict(row) for row in profile] for profile in system.active_profiles],
         "initial_profiles": [[asdict(row) for row in profile] for profile in system.initial_profiles],
+        "accepted_state_count": int(system.accepted_state_count),
+        "stable_correct_question_hashes_by_agent": {
+            str(agent_id): sorted(values)
+            for agent_id, values in (
+                system.stable_correct_question_hashes_by_agent.items()
+            )
+        },
         "member_gain_state": system.current_team_member_gain_state(),
         "team_state_version": system.team_state_version,
         "responsibility_state_version": system.responsibility_state_version,
@@ -289,6 +297,9 @@ def build_checkpoint(
         "candidate_decisions": list(system.candidate_decisions),
         "rcru_candidate_decisions": list(system.rcru_candidate_decisions),
         "tcs_context_history": list(system.tcs_context_history),
+        "module2_context_diagnostics": list(
+            system.module2_context_diagnostics
+        ),
         "tcs_rounds": list(system.tcs_rounds),
         "solver_invalid_outputs": list(system.solver_invalid_outputs),
         "solver_recovery_observations": list(system.solver_recovery_observations),
@@ -391,6 +402,10 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         "resolved_candidate_acceptance_policy",
         "resolved_candidate_ranking_policy",
         "resolved_stage_a_policy",
+        "module2_context_variant",
+        "accepted_state_count",
+        "stable_correct_question_hashes_by_agent",
+        "module2_context_diagnostics",
     }
     if not required_member_state <= set(payload):
         raise ValueError(f"Checkpoint is incompatible with {METHOD_VERSION}")
@@ -413,6 +428,10 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         system.protocol.name
     ):
         raise ValueError("Checkpoint candidate protocol setting is incompatible")
+    if str(payload["module2_context_variant"]) != (
+        system.protocol.module2_context_variant
+    ):
+        raise ValueError("Checkpoint Module2 context variant is incompatible")
     expected_acceptance = system.protocol.candidate_acceptance_policy
     expected_ranking = system.protocol.candidate_ranking_policy
     if payload.get("module_vector") != system.protocol.module_vector:
@@ -474,6 +493,15 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.initial_profiles = [
         tuple(PromptAnswer(**row) for row in profile) for profile in payload["initial_profiles"]
     ]
+    system.accepted_state_count = int(payload["accepted_state_count"])
+    system.stable_correct_question_hashes_by_agent = {
+        int(agent_id): set(map(str, values))
+        for agent_id, values in payload[
+            "stable_correct_question_hashes_by_agent"
+        ].items()
+    }
+    if set(system.stable_correct_question_hashes_by_agent) != set(range(5)):
+        raise ValueError("Checkpoint stable-correct state must contain five agents")
     if json.dumps(
         payload["member_gain_state"],
         sort_keys=True,
@@ -662,6 +690,7 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         "specialization_trajectory",
         "candidate_decisions",
         "tcs_context_history",
+        "module2_context_diagnostics",
         "tcs_rounds",
         "solver_invalid_outputs",
         "solver_recovery_observations",

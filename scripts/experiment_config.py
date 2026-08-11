@@ -8,6 +8,8 @@ from multi_dataset_diverse_rl.protocol import (
     AUXILIARY_SEARCH_CONTROL_SETTINGS,
     LEGACY_CONTROL_SETTINGS,
     MAIN_ABLATION_SETTINGS,
+    EXPERIMENTAL_V16_MODULE2_SETTINGS,
+    EXPERIMENTAL_V16_MODULE2_VARIANTS,
     canonical_experiment_setting,
 )
 
@@ -33,6 +35,16 @@ COMMON = {
 SETTING_NAMES = MAIN_ABLATION_SETTINGS
 
 ALL_EXPERIMENT_SETTINGS = [ExperimentSetting(name, COMMON) for name in SETTING_NAMES]
+EXPERIMENTAL_V16_EXPERIMENT_SETTINGS = [
+    ExperimentSetting(
+        name,
+        {
+            **COMMON,
+            "module2_context_variant": EXPERIMENTAL_V16_MODULE2_VARIANTS[name],
+        },
+    )
+    for name in EXPERIMENTAL_V16_MODULE2_SETTINGS
+]
 LEGACY_EXPERIMENT_SETTINGS = [
     ExperimentSetting(name, {**COMMON, "allow_legacy_setting": True})
     for name in LEGACY_CONTROL_SETTINGS
@@ -57,6 +69,9 @@ def select_settings(
     allow_auxiliary_setting: bool = False,
 ) -> list[ExperimentSetting]:
     available = {setting.name: setting for setting in settings}
+    available.update(
+        {setting.name: setting for setting in EXPERIMENTAL_V16_EXPERIMENT_SETTINGS}
+    )
     if allow_legacy_setting:
         available.update(
             {setting.name: setting for setting in LEGACY_EXPERIMENT_SETTINGS}
@@ -65,7 +80,11 @@ def select_settings(
         available.update(
             {setting.name: setting for setting in AUXILIARY_EXPERIMENT_SETTINGS}
         )
-    requested_names = list(available) if not raw or raw == "all" else parse_csv_list(raw)
+    requested_names = (
+        [setting.name for setting in settings]
+        if not raw or raw == "all"
+        else parse_csv_list(raw)
+    )
     names = [
         canonical_experiment_setting(
             name,
