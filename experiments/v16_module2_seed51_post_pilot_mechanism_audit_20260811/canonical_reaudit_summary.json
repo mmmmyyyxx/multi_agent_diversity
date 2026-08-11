@@ -1,0 +1,22 @@
+{
+  "audit_status": "PASS",
+  "blocker_count": 0,
+  "audit_mode": "offline_existing_artifact_revalidation",
+  "run_source_commit": "1f3947c6e69b26666614d8be82607175c76048ee",
+  "auditor_commit": "7347a6bcc2c307a13af6c35e111b492b9282ef32",
+  "original_run_artifacts_modified": false,
+  "original_artifact_file_count": 128,
+  "pre_post_artifact_sha256_match": true,
+  "context_parent_hash_source": "candidate_decisions_by_update",
+  "context_parent_reconciliation_count": 32,
+  "same_parent_target_membership_comparison_count": 2,
+  "c2_c3_membership_mismatch_count": 0,
+  "module1_w1_violation_count": 0,
+  "common_safe_violation_count": 0,
+  "max_one_commit_violation_count": 0,
+  "vote_correct_repair_propagation_count": 0,
+  "context_serialization_failure_count": 0,
+  "infrastructure_failure_count": 0,
+  "validation_evaluation_count": 0,
+  "test_evaluation_count": 0
+}

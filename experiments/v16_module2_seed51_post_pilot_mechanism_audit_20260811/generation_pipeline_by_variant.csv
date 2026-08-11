@@ -1,0 +1,4 @@
+variant,branches,critic_calls,critic_semantic_rejections,preservation_or_output_risk_rejections,critic_exhausted_branches,student_calls,requested_candidates,raw_candidates,valid_candidates,student_partial_valid_responses,teacher_invalid,critic_invalid,student_invalid,truncations,infrastructure_failures,mean_context_chars,max_context_chars
+c0_current_v15,16,23,10,0,3,13,26,26,22,4,0,0,0,0,0,,
+c2_boundary_plus_preservation,16,30,24,23,10,6,12,12,10,2,0,0,0,0,0,4496.3,5272
+c3_coalition_aware_preservation,16,25,13,13,4,12,24,24,23,1,0,0,0,0,0,5146.1,6308

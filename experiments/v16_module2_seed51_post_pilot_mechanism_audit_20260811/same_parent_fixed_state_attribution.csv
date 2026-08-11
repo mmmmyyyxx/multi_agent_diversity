@@ -1,0 +1,3 @@
+parent_team_hash,update,target_agent_id,c0_valid,c0_feasible,c0_geometry,c0_terminal,c2_valid,c2_feasible,c2_geometry,c2_terminal,c3_valid,c3_feasible,c3_geometry,c3_terminal,c2_c3_membership_equal,repair_size,preservation_size
+6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,2,0,0,,critic_semantic_rejection_exhausted,0,0,,critic_semantic_rejection_exhausted,2,2,B|B,,true,5,6
+6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,4,2,0,F|F,,2,0,F|F,,0,0,,critic_semantic_rejection_exhausted,true,5,6

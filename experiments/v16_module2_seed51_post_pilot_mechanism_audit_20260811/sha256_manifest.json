@@ -1,0 +1,10 @@
+{
+  "manifest_version": "sanitized_analysis_artifact_sha256_v1",
+  "files": {
+    "README.md": "30dbb4d398092f7aaeeafe085dfd6977f651c19043be9bf91622df59e302f3bf",
+    "c3_p1_loss_candidates.csv": "3343ec2e9ef3d05c58480f09692426064fbf1224841fc89a65cc6624ff064a91",
+    "canonical_reaudit_summary.json": "9b7b16ef54bad6cc113a2a30acdc4165be3dae1b3a8d779cb725ed278ae9c85f",
+    "generation_pipeline_by_variant.csv": "0b1a5e0a0286095d0a78f7364c4bc740cc5d73a81d0a9190b09b932041eb061d",
+    "same_parent_fixed_state_attribution.csv": "d2bc5e458f2e4c8222c2f888c1d1562ebc2e117c8a50858563f716554a48e583"
+  }
+}

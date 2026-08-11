@@ -1,0 +1,11 @@
+update,target_agent_id,candidate_prompt_hash,P1_in_context,repair_gain,distance_reduction,R1_repair,P1_loss,P2_loss,target_gain,vote_gain,vote_loss,geometry,feasible,committed,rejection_reasons
+2,1,0cc3a4f4e0bf19f138a9ce36f93acc87d6e7f374339ec5094859ebb03624aa23,3,2,2,2,3,1,-7,3,3,F,false,false,target_regression|no_target_or_vote_progress
+2,1,8013c843d3424502b5b233148275f9f4573b2e07a4e8b06ab063e7adeecdfdd3,3,2,2,2,3,1,-7,3,3,F,false,false,target_regression|no_target_or_vote_progress
+3,0,281c450c115dd43b5c738a34512f85226a3eefc578b21d06e36656b20968f943,3,2,2,2,3,0,0,7,3,C,true,true,
+3,0,479d9878474625fddda9b6dd6a78f528a695b6ea5516f356d75e362de730e210,3,2,2,2,3,1,-2,7,3,E,false,false,target_regression
+4,2,735b3452da10814148a5657d849867bebfb1360558f34556bd5596a5df7f805a,6,0,0,0,1,0,-1,0,1,F,false,false,target_regression|team_vote_regression|no_target_or_vote_progress
+5,0,6f9c240a4d977a9e3d8b94902943481e911ec6d438358277818e3d3bd9099013,6,0,0,0,1,0,-3,0,1,F,false,false,target_regression|team_vote_regression|no_target_or_vote_progress
+5,2,6b432f7f8e5c0e00468f7f37af871cd7d0d01f6398903e89cc7cdb5274132b20,6,0,0,0,1,0,-2,0,2,F,false,false,target_regression|team_vote_regression|no_target_or_vote_progress
+5,2,6f5ff133fa88497b70e12d02678a3f6f784f6458ce453c9eaa16e6ff64d291f0,6,0,0,0,1,0,-1,0,2,F,false,false,target_regression|team_vote_regression|no_target_or_vote_progress
+7,0,68a7d8d89ed48e6c48c2c6b9a8fcb8bcd14924d3d0d1a26e9f5b8fdcf25aca30,6,0,0,0,1,0,0,0,1,F,false,false,team_vote_regression|no_target_or_vote_progress
+7,0,8e5e31b6d286465ea553898f8fc44e3367266954be99cb809b549d2157165a31,6,0,0,0,1,0,-1,0,1,F,false,false,target_regression|team_vote_regression|no_target_or_vote_progress
