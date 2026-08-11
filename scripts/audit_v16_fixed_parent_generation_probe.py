@@ -28,6 +28,9 @@ def main() -> None:
             blockers.append(f"evaluation_isolation:{row.get('case_id')}:{row.get('variant')}")
         if row.get("generated_candidate_count", 0) > 2:
             blockers.append(f"candidate_budget:{row.get('case_id')}:{row.get('variant')}")
+        terminal = str(row.get("funnel", {}).get("terminal_failure_class", ""))
+        if terminal in {"transport_failure", "persistence_failure"}:
+            blockers.append(f"infrastructure_failure:{row.get('case_id')}:{row.get('variant')}:{terminal}")
     report = {
         "audit_version": "v16_fixed_parent_generation_probe_audit_v1",
         "gate": "PASS" if not blockers else "FAIL", "blockers": blockers,

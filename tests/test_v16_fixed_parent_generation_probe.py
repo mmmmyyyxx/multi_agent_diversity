@@ -77,3 +77,25 @@ def test_auditor_rejects_parent_mutation(tmp_path, monkeypatch):
     with pytest.raises(SystemExit):
         module.main()
     assert json.loads((tmp_path / "audit.json").read_text())["gate"] == "FAIL"
+
+
+def test_auditor_rejects_transport_failure(tmp_path, monkeypatch):
+    registry = {"registry_content_hash": "h", "variants": ["c0", "c2", "c3"], "cases": [{"case_id": "x"}]}
+    run = tmp_path / "run"
+    run.mkdir()
+    (tmp_path / "registry.json").write_text(json.dumps(registry), encoding="utf-8")
+    cells = []
+    for variant in registry["variants"]:
+        cells.append({"case_id": "x", "variant": variant, "commit_performed": False,
+                      "parent_state_hash_before": "a", "parent_state_hash_after": "a",
+                      "validation_calls": 0, "test_calls": 0, "generated_candidate_count": 0,
+                      "funnel": {"terminal_failure_class": "transport_failure" if variant == "c0" else ""}})
+    (run / "probe_summary.json").write_text(json.dumps({
+        "registry_hash": "h", "validation_calls": 0, "test_calls": 0, "cells": cells,
+    }), encoding="utf-8")
+    module = load("probe_audit_transport", ROOT / "scripts" / "audit_v16_fixed_parent_generation_probe.py")
+    monkeypatch.setattr("sys.argv", ["audit", "--registry", str(tmp_path / "registry.json"),
+                                    "--run_root", str(run), "--out", str(tmp_path / "audit.json")])
+    with pytest.raises(SystemExit):
+        module.main()
+    assert any("infrastructure_failure" in row for row in json.loads((tmp_path / "audit.json").read_text())["blockers"])

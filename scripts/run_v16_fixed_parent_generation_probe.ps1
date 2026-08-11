@@ -8,7 +8,11 @@ $Repo = "D:\myx\grade_one\experiments\multi_agent_diversity"
 $Python = "D:\Anaconda\envs\DL\python.exe"
 $Registry = Join-Path $Repo "runs\v16_fixed_parent_probe_prep_20260811\case_registry.json"
 $FreezePath = Join-Path $Repo "runs\v16_fixed_parent_probe_prep_20260811\source_freeze_manifest.json"
-$OutputRoot = Join-Path $Repo "runs\v16_fixed_parent_probe_seed51"
+$OutputRoot = if ($env:V16_FIXED_PARENT_PROBE_OUT_ROOT) {
+    [System.IO.Path]::GetFullPath($env:V16_FIXED_PARENT_PROBE_OUT_ROOT)
+} else {
+    Join-Path $Repo "runs\v16_fixed_parent_probe_seed51"
+}
 
 Set-Location -LiteralPath $Repo
 if ((git status --porcelain=v1 | Out-String).Trim().Length -ne 0) {
@@ -17,6 +21,18 @@ if ((git status --porcelain=v1 | Out-String).Trim().Length -ne 0) {
 if (-not (Test-Path -LiteralPath $Registry)) { throw "Frozen case registry is missing." }
 if (-not (Test-Path -LiteralPath $FreezePath)) { throw "Source freeze manifest is missing." }
 if (Test-Path -LiteralPath $OutputRoot) { throw "Probe output root must be fresh." }
+if (-not $OutputRoot.StartsWith($Repo + [System.IO.Path]::DirectorySeparatorChar)) {
+    throw "Probe output root must remain under the project root."
+}
+
+foreach ($Name in @("DASHSCOPE_API_KEY", "DASHSCOPE_BASE_URL")) {
+    if (-not [Environment]::GetEnvironmentVariable($Name, "Process")) {
+        $Value = [Environment]::GetEnvironmentVariable($Name, "Machine")
+        if (-not $Value) { $Value = [Environment]::GetEnvironmentVariable($Name, "User") }
+        if (-not $Value) { throw "Required provider environment variable is unavailable: $Name" }
+        [Environment]::SetEnvironmentVariable($Name, $Value, "Process")
+    }
+}
 
 $Freeze = Get-Content -LiteralPath $FreezePath -Raw | ConvertFrom-Json
 if ((git rev-parse HEAD).Trim() -ne $Freeze.git_commit) { throw "Frozen execution commit mismatch." }

@@ -85,6 +85,11 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
         winner, incumbent, evaluated = await system.evaluate_candidates(
             target, candidates, assigned, funnel, int(case["source_update_index"])
         )
+    if funnel.terminal_failure_class in {"transport_failure", "persistence_failure"}:
+        raise RuntimeError(
+            f"probe infrastructure failure in {case['case_id']}/{variant}: "
+            f"{funnel.terminal_failure_class}"
+        )
     after = state_hash(system)
     if before != after:
         raise RuntimeError("fixed-parent probe mutated the parent team")
