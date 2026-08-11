@@ -1,0 +1,10 @@
+seed,setting,initially_uncovered,ever_discovered,singleton_orphan_discoveries,ever_reinforced,reached_repair_distance_1,ever_vote_converted,still_vote_converted_final
+48,S0,25,14,14,10,10,9,9
+48,S1,25,17,17,10,10,10,10
+48,S2,25,15,15,12,12,10,10
+49,S0,25,17,17,11,11,10,10
+49,S1,25,21,21,13,13,11,10
+49,S2,25,17,17,12,12,11,11
+50,S0,24,10,10,10,10,8,8
+50,S1,24,12,12,10,10,10,10
+50,S2,24,16,16,11,11,9,9

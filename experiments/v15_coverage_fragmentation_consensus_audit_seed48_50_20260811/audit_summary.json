@@ -1,0 +1,66 @@
+{
+  "audit_status": "PASS",
+  "scope": {
+    "train_trajectory_only": true,
+    "seeds": [48, 49, 50],
+    "settings": ["S0", "S1", "S2"],
+    "accepted_states_replayed": 66,
+    "accepted_transitions_replayed": 57,
+    "api_calls": 0,
+    "model_calls": 0,
+    "training_runs": 0,
+    "test_evaluation": 0,
+    "test_artifacts_consumed": false,
+    "method_source_changed": false,
+    "figures_generated": false
+  },
+  "module1": {
+    "specialization_effect": "STRONG_DESCRIPTIVE_SIGNATURE",
+    "coverage_effect": "S1 produced more 0-to-positive discoveries, higher final oracle coverage, lower final pairwise correctness correlation, and higher effective ensemble size than S0 in all 3 seeds.",
+    "vote_conversion_effect": "MIXED_AND_NOT_SYNCHRONIZED_WITH_COVERAGE",
+    "main_failure_mode": "S1 converted a smaller fraction of created orphans than S0 in seeds 48 and 49, created more persistent singleton coverage in all 3 seeds, and expanded the final oracle-vote gap in all 3 seeds."
+  },
+  "module2": {
+    "reinforcement_effect": "MIXED_2_OF_3_SEEDS_IMPROVED",
+    "consensus_conversion_effect": "MIXED_2_OF_3_SEEDS_IMPROVED",
+    "cross_seed_consistency": "NOT_STABLE",
+    "main_failure_mode": "S2 late plateaus were usually dominated by common-safe constraint conflicts after valid candidates existed; generation/critic scarcity remained material, especially in seed 50."
+  },
+  "coverage_fragmentation_hypothesis": {
+    "verdict": "SUPPORTED",
+    "evidence": [
+      "S1 increased final oracle coverage versus S0 by +3, +10, and +2 examples in seeds 48, 49, and 50.",
+      "S1 increased final vote count by only +2, 0, and +1, so the final oracle-vote gap increased by +1, +10, and +1.",
+      "S1 persistent-singleton rates exceeded S0 in all 3 seeds: 0.412 vs 0.286, 0.455 vs 0.000, and 0.167 vs 0.000.",
+      "S1 orphan vote-conversion rates were lower than S0 in seeds 48 and 49 and higher only in seed 50."
+    ]
+  },
+  "responsibility_propagation_hypothesis": {
+    "verdict": "INSUFFICIENT_EVIDENCE",
+    "evidence": [
+      "The proposed unique-ownership-to-no-reinforcement chain is contradicted by observed branch assignment: 48/51 S1 and 42/48 S2 orphan episodes were revisited by another member before conversion or coverage loss.",
+      "Only 24/48 S2 orphan episodes had a later different-member explicit conditioned-context hit, leaving an execution-level propagation gap.",
+      "S2 improved reinforcement, conversion, persistence, latency, and vote yield relative to S1 in seeds 48 and 49, but reversed several of those directions in seed 50."
+    ]
+  },
+  "cross_member_revisit": {
+    "verdict": "SUFFICIENT_AT_BRANCH_ASSIGNMENT_LEVEL_MIXED_AT_EXPLICIT_CONTEXT_LEVEL",
+    "s1_revisited": "48/51",
+    "s2_revisited": "42/48",
+    "s2_explicit_conditioned_context_revisit": "24/48"
+  },
+  "primary_plateau_cause": {
+    "S1": "GENERATION_OR_CRITIC",
+    "S2": "COMMON_SAFE_CONFLICT_WITH_SEED50_GENERATION_OR_CRITIC_MIX",
+    "limitations": "Candidate-level rejection reasons cannot be uniquely attributed to individual residuals, and rejected-candidate per-example repair-distance deltas are not persisted."
+  },
+  "research_questions": {
+    "RQ1": "YES_STRONG_DESCRIPTIVE_SPECIALIZATION_SIGNATURE",
+    "RQ2": "PRIMARILY_FRAGMENTED_ORACLE_COVERAGE_WITH_SOME_USEFUL_CONSENSUS",
+    "RQ3": "Per-seed S1 orphan fates are reported exactly in orphan_creation_events.csv; pooled across seeds: 31 vote-converted, 19 singleton-until-end, 1 coverage-lost-again, and 0 reinforced-but-still-wrong.",
+    "RQ4": "MIXED_PARTIALLY_SUPPORTED_NOT_STABLE",
+    "RQ5": "S1: generation/critic scarcity. S2: common-safe conflict plus seed-specific generation/critic scarcity; explicit conditioned-context propagation is incomplete.",
+    "RQ6": "INSUFFICIENT_EVIDENCE_FOR_A_NEW_METHOD; evidence supports studying stronger explicit propagation, but does not support the premise that unique ownership currently prevents cross-member revisit."
+  },
+  "recommended_next_action": "Treat this as a design implication only: use fixed-trajectory offline replay to isolate explicit context propagation and common-safe candidate quality before defining or implementing a new method. Do not tune from these three development seeds alone."
+}
