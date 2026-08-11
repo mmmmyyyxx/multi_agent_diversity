@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import math
+import subprocess
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,63 @@ def read_json(path: Path) -> dict[str, Any]:
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def index_decisions_by_update(
+    decisions: list[dict[str, Any]],
+) -> dict[int, dict[str, Any]]:
+    indexed: dict[int, dict[str, Any]] = {}
+    for decision in decisions:
+        update_index = int(decision["update_index"])
+        if update_index in indexed:
+            raise ValueError(f"duplicate candidate decision for update {update_index}")
+        parent_hash = str(decision.get("parent_team_hash", "")).strip()
+        if not parent_hash:
+            raise ValueError(
+                f"candidate decision for update {update_index} lacks parent_team_hash"
+            )
+        indexed[update_index] = decision
+    return indexed
+
+
+def reconcile_context_parent_hash(
+    context_row: dict[str, Any],
+    decisions_by_update: dict[int, dict[str, Any]],
+) -> tuple[str, str]:
+    """Resolve parent provenance without mutating an immutable run artifact."""
+    update_index = int(context_row["update_index"])
+    target_agent_id = int(context_row["target_agent_id"])
+    decision = decisions_by_update.get(update_index)
+    if decision is None:
+        raise ValueError(
+            f"context update {update_index} has no candidate decision provenance"
+        )
+    selected_targets = {int(row) for row in decision.get("selected_target_ids", [])}
+    if target_agent_id not in selected_targets:
+        raise ValueError(
+            f"context target {target_agent_id} is not selected at update {update_index}"
+        )
+    decision_parent = str(decision["parent_team_hash"])
+    context_parent = str(context_row.get("parent_team_hash", "")).strip()
+    if context_parent and context_parent != decision_parent:
+        raise ValueError(
+            f"context parent hash conflicts with update {update_index} decision"
+        )
+    return (
+        decision_parent,
+        "context_row_verified" if context_parent else "candidate_decision_by_update",
+    )
+
+
+def git_head(workspace: Path) -> str:
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=workspace,
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout.strip()
 
 
 def geometry_summary(decisions: list[dict[str, Any]]) -> dict[str, Any]:
@@ -94,6 +152,8 @@ def main() -> None:
     total_validation = total_test = infrastructure = 0
     total_common_safe = total_w1 = total_vote_correct_propagation = 0
     total_serialization_failures = total_max_one = 0
+    context_parent_reconciliation_count = 0
+    context_parent_verified_count = 0
     for setting, variant in SETTINGS:
         run = args.run_root / "disambiguation_qa" / f"{setting}_seed51"
         required = ("final_summary.json", "run_meta.json", "candidate_decisions.jsonl", "cost_summary.json", "training_dynamics.jsonl", "experimental_module2_context_diagnostics.jsonl")
@@ -107,6 +167,11 @@ def main() -> None:
         contexts = read_jsonl(run / "experimental_module2_context_diagnostics.jsonl")
         cost = read_json(run / "cost_summary.json")
         dynamics = read_jsonl(run / "training_dynamics.jsonl")
+        try:
+            decisions_by_update = index_decisions_by_update(decisions)
+        except (KeyError, TypeError, ValueError) as exc:
+            findings.append(f"{setting}: invalid candidate decision provenance: {exc}")
+            decisions_by_update = {}
         identity = meta.get("run_identity", {})
         if identity.get("git_commit") != freeze["git_head"] or identity.get("git_dirty"):
             findings.append(f"{setting}: source identity mismatch")
@@ -148,7 +213,20 @@ def main() -> None:
         if w1:
             findings.append(f"{setting}: Module1 W1 invariant violation")
         for row in contexts:
-            key = (str(row["parent_team_hash"]), int(row["target_agent_id"]))
+            try:
+                parent_hash, provenance = reconcile_context_parent_hash(
+                    row, decisions_by_update
+                )
+            except (KeyError, TypeError, ValueError) as exc:
+                findings.append(f"{setting}: context provenance failure: {exc}")
+                continue
+            context_parent_reconciliation_count += int(
+                provenance == "candidate_decision_by_update"
+            )
+            context_parent_verified_count += int(
+                provenance == "context_row_verified"
+            )
+            key = (parent_hash, int(row["target_agent_id"]))
             membership = (tuple(row["repair_question_hashes"]), tuple(row["preservation_question_hashes"]))
             (c2_memberships if variant.startswith("c2_") else c3_memberships if variant.startswith("c3_") else {})[key] = membership
         vote_correct_propagation = sum(
@@ -208,6 +286,13 @@ def main() -> None:
         "blocker_count": len(findings),
         "findings": findings,
         "source_commit": freeze.get("git_head"),
+        "run_source_commit": freeze.get("git_head"),
+        "auditor_commit": git_head(Path(__file__).resolve().parents[1]),
+        "audit_mode": "offline_existing_artifact_revalidation",
+        "original_run_artifacts_modified": False,
+        "context_parent_hash_source": "candidate_decisions_by_update",
+        "context_parent_reconciliation_count": context_parent_reconciliation_count,
+        "context_parent_verified_count": context_parent_verified_count,
         "seed": 51,
         "validation_evaluation_count": total_validation,
         "test_evaluation_count": total_test,
