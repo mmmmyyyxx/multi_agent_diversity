@@ -1,0 +1,4 @@
+variant,accepted_updates,valid_candidates,evaluated_candidates,common_safe_feasible,A,B,C,D,E,F,F_fraction,feasible_fraction,context_to_valid_retention
+c0_current_v15,4,22,22,8,3,5,0,0,1,13,0.590909,0.363636,0.687500
+c2_boundary_plus_preservation,1,10,10,1,0,1,0,0,0,9,0.900000,0.100000,0.312500
+c3_coalition_aware_preservation,5,23,23,6,0,3,3,0,1,16,0.695652,0.260870,0.718750

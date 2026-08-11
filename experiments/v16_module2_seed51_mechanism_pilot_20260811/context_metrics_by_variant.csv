@@ -1,0 +1,4 @@
+variant,context_count,repair_items,preservation_items,R1,R2,R3,R4,P1,P2,P3,mean_context_chars,max_context_chars,repair_gain_candidates,distance_reduction_candidates,R1_repair_candidates,orphan_repair_candidates,P1_loss_candidates,P2_loss_candidates,P3_loss_candidates,repair_preservation_safe_candidates,repair_with_collateral_candidates
+c0_current_v15,0,0,0,0,0,0,0,0,0,0,,,0,0,0,0,0,0,0,0,0
+c2_boundary_plus_preservation,16,69,96,0,16,0,53,0,96,0,4496.3,5272,4,4,0,0,0,6,0,0,4
+c3_coalition_aware_preservation,16,63,96,20,3,0,40,55,41,0,5146.1,6308,13,13,5,2,10,6,0,6,7

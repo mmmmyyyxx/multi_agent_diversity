@@ -1,0 +1,4 @@
+variant,solver_calls,optimizer_calls,evaluator_calls,total_llm_calls,failed_llm_attempts,prompt_tokens,completion_tokens,total_tokens,tokens_per_accepted_update,tokens_per_stage_a_candidate
+c0_current_v15,1650,36,23,1718,9,480896,17695,498591,124647.750000,22663.227273
+c2_boundary_plus_preservation,750,36,30,821,5,282888,13322,296210,296210.000000,29621.000000
+c3_coalition_aware_preservation,1725,37,25,1799,12,548798,31737,580535,116107.000000,25240.652174

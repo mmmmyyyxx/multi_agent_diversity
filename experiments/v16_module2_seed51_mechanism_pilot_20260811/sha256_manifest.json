@@ -1,0 +1,13 @@
+{
+  "manifest_version": "sanitized_analysis_artifact_sha256_v1",
+  "files": {
+    "README.md": "926ea235068e4a08b40618046e517fa59cd16360acdc47ffd85c8228e104328b",
+    "candidate_geometry_by_variant.csv": "332b9bb752c7eec3489eb4b947ee52663178e80c9f4467844a9c2aac28393ef8",
+    "context_metrics_by_variant.csv": "c0d06958a2fb4a6afd423c75029ecb36bebbc3cb439a5b255a593b1ab3f51481",
+    "cost_by_variant.csv": "fc63d3b1080b718cf543d41f5a854b52a1f1046e72fe09a6b80befc498a69e42",
+    "pilot_summary.json": "5f7e81c8f5698c90e2de283b8d9782fe59b3f67f282aeb4cd82ec924e72122ad",
+    "protocol_gate_status.json": "5fa36eb65767a6ac53e3c1add066dbc8a27ba05141084f649be0a5d109c4b6e9",
+    "source_freeze_sanitized.json": "ca600fe1b0a43f848fc0a7ed74a43f48e90a8b77850eca9fc404a4c65611bbd2",
+    "train_dynamics_by_variant.csv": "93bb3539fce18e9ff93bd338c9c225e2e76914eefe9d3870dad9bf618d1f8d90"
+  }
+}

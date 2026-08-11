@@ -1,0 +1,18 @@
+{
+  "source_freeze_status": "PASS",
+  "starting_head": "3d42eecdb7572fc0c704a2168ab5ddf3cb0b5e7d",
+  "execution_commit": "1f3947c6e69b26666614d8be82607175c76048ee",
+  "canonical_method_version": "member_aware_peer_state_v15",
+  "experimental_module2_version": "v16_boundary_repair_preservation_experimental_v1",
+  "checkpoint_version": 25,
+  "frozen_design_study_commit": "3d42eecdb7572fc0c704a2168ab5ddf3cb0b5e7d",
+  "frozen_design_variants_sha256": "2e76f5d48dd498e6cafcefa59f83f17674592c5a9ecbecafe30c2e9095eadef6",
+  "git_blob_source_tree_hash": "93c371fb1a8797afe1bc285b1b3ede0e75b6341872ee048dcceea8f147d86f1b",
+  "working_tree_source_tree_hash": "415e35f8a19421445fecb8ac084de64380a624dd781103b9faf0238a8c9bbe0e",
+  "source_file_count": 143,
+  "full_pytest_passed": 454,
+  "historical_branch_replay_count": 192,
+  "historical_replay_mismatch_count": 0,
+  "c0_context_compatibility": "PASS",
+  "repo_dirty_before_pilot": false
+}

@@ -1,0 +1,4 @@
+variant,initial_vote,final_vote,initial_oracle,final_oracle,initial_member_counts,final_member_counts,final_mean_member_accuracy,final_minimum_member_accuracy,final_all_wrong_rate,final_oracle_covered_vote_wrong_rate,final_mean_pairwise_correctness_correlation,final_n_eff
+c0_current_v15,51,56,51,65,"[51,51,51,51,51]","[55,57,53,51,51]",0.712000,0.680000,0.133333,0.120000,0.592976,1.482841
+c2_boundary_plus_preservation,51,51,51,61,"[51,51,51,51,51]","[51,51,54,51,51]",0.688000,0.680000,0.186667,0.133333,0.785377,1.207290
+c3_coalition_aware_preservation,51,57,51,63,"[51,51,51,51,51]","[51,51,55,56,51]",0.704000,0.680000,0.160000,0.080000,0.607518,1.457696
