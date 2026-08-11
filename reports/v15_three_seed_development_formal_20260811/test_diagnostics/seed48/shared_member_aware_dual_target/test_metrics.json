@@ -1,0 +1,37 @@
+{
+  "N_test": 125,
+  "team_vote_correct_count": 88,
+  "team_vote_accuracy": 0.704,
+  "per_agent_correct_counts": [
+    88,
+    85,
+    85,
+    87,
+    91
+  ],
+  "per_agent_accuracies": [
+    0.704,
+    0.68,
+    0.68,
+    0.696,
+    0.728
+  ],
+  "mean_member_correct_count": 87.2,
+  "mean_member_accuracy": 0.6976,
+  "minimum_member_correct_count": 85,
+  "minimum_member_accuracy": 0.68,
+  "oracle_correct_count": 103,
+  "oracle_accuracy": 0.824,
+  "oracle_vote_gap": 15,
+  "answer_disagreement_rate": 0.15599999999999992,
+  "mean_pairwise_correctness_correlation": 0.6940903686052134,
+  "effective_ensemble_size": 1.3240257941056357,
+  "all_wrong_fraction": 0.176,
+  "oracle_covered_vote_wrong_fraction": 0.12,
+  "terminal_invalid_count": 0,
+  "logical_test_evaluation_count": 1,
+  "solver_api_calls": 375,
+  "cache_hits": 125,
+  "cache_misses": 500,
+  "tokens": 111585
+}

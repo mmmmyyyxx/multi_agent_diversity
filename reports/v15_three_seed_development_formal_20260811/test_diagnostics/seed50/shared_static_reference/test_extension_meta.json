@@ -1,0 +1,10 @@
+{
+  "evaluator_version": "v15_frozen_final_test_extension_v1",
+  "seed": 50,
+  "setting": "shared_static_reference",
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 24,
+  "model": "qwen3-14b",
+  "thinking": false,
+  "execution_source_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8"
+}

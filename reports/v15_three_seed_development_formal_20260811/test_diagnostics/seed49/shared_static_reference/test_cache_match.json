@@ -1,0 +1,38 @@
+{
+  "clone": {
+    "reference_ready_entry_count": 10425,
+    "local_ready_entry_count": 10425,
+    "frozen_ready_entry_count": 75,
+    "local_frozen_entry_count": 75,
+    "reference_relevant_content_hash": "d3df6297f6aad2d4e30cab597ba69d63423a7722f2ca34ad1ef9c09d1b2a9f12",
+    "local_relevant_content_hash": "d3df6297f6aad2d4e30cab597ba69d63423a7722f2ca34ad1ef9c09d1b2a9f12",
+    "frozen_relevant_content_hash": "361cabdf4debbe33b817af52848d92f1c3ce6fce2c70d48fdb2fe1435909135e",
+    "local_frozen_relevant_content_hash": "361cabdf4debbe33b817af52848d92f1c3ce6fce2c70d48fdb2fe1435909135e",
+    "missing_frozen_observation_count": 0,
+    "conflicting_frozen_observation_count": 0,
+    "full_reference_clone_matched": true,
+    "frozen_observation_set_matched": true,
+    "setting_local_cache_isolated": true
+  },
+  "merge": {
+    "gate": "PASS",
+    "source_ready_entry_count": 10550,
+    "reference_entry_count_before": 10425,
+    "reference_entry_count_after": 10550,
+    "new_entries_merged": 125,
+    "duplicate_same_observation_count": 10425,
+    "exact_request_conflict_count": 0,
+    "conflicts": [],
+    "missing_reference_count": 0,
+    "missing_reference_keys": [],
+    "source_non_ready_entry_count": 0,
+    "reference_non_ready_entry_count": 0,
+    "source_invalid_entry_count": 0,
+    "reference_invalid_entry_count": 0,
+    "source_invalid_entries": [],
+    "reference_invalid_entries": [],
+    "parent_reference_hash": "d3df6297f6aad2d4e30cab597ba69d63423a7722f2ca34ad1ef9c09d1b2a9f12",
+    "local_cache_hash_after_run": "f42ec75328c6d4350a67f44d3f8a0a700764e91ff5ac279be019ec9a997b066a",
+    "result_reference_hash": "f42ec75328c6d4350a67f44d3f8a0a700764e91ff5ac279be019ec9a997b066a"
+  }
+}

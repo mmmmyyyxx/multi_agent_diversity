@@ -1,0 +1,10 @@
+seed,comparison,both_correct,left_only_correct,right_only_correct,both_wrong
+48,Static->S0,83,2,7,33
+48,S0->S1,88,2,0,35
+48,S1->S2,85,3,3,34
+49,Static->S0,79,6,7,33
+49,S0->S1,86,0,2,37
+49,S1->S2,88,0,1,36
+50,Static->S0,83,3,6,33
+50,S0->S1,85,4,2,34
+50,S1->S2,80,7,6,32

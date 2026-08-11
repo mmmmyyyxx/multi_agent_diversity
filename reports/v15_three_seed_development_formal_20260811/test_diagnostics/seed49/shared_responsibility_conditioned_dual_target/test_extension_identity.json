@@ -1,0 +1,18 @@
+{
+  "test_extension_identity": "655ca29fbc2bb9535b2d38c06a1116f18153d152d2dc9da9c92d8fb40cbd7f9f",
+  "execution_source_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "training_run_identity_hash": "e5621855e5027cb300d60d9bb118db98997783f5b2e4c7380a909f9a1a394ac8",
+  "seed": 49,
+  "setting": "shared_responsibility_conditioned_dual_target",
+  "final_team_prompt_state_hash": "5b4dd139fe3a9b5576d8ed99f234eca7cfd9d9c2b3540cbcb12ba5290b7d6eae",
+  "ordered_final_prompt_hashes": [
+    "8b6a3ddeb3fa62115a1624276cf3aaa08c33501911a4394bde470ddf10d366d6",
+    "0a91cebb7ad6d831524d83099c967ed95ba842cc6ca4e18c0d954bd2d0bc6d1e",
+    "4523bdc3c95a6388d4adaa58046f25306b440ee73df79ae49689621fa06114f2",
+    "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "8acf9624dcaaf0092e5e4f6c198a1f52bed91d0ab12d53823f9dd06af415821a"
+  ],
+  "test_file_sha256": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+  "model_request_identity": "4a8e71274cc561e89723e1ddfbdf715b80a62e404ab7853cae9a496156a6d584",
+  "evaluator_version": "v15_frozen_final_test_extension_v1"
+}

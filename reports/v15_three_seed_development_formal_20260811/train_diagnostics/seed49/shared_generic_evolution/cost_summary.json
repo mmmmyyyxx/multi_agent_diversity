@@ -1,0 +1,24 @@
+{
+  "solver_calls": 1950,
+  "optimizer_calls": 67,
+  "evaluator_calls": 53,
+  "total_llm_calls": 2083,
+  "successful_llm_calls": 2070,
+  "failed_llm_attempts": 13,
+  "prompt_tokens": 616406,
+  "completion_tokens": 86389,
+  "total_tokens": 702795,
+  "tokens_by_role": {
+    "solver": 560971,
+    "teacher": 66558,
+    "critic": 64249,
+    "student": 11017
+  },
+  "latency_seconds": 3014.417989730835,
+  "successful_candidate_count": 26,
+  "stage_a_candidate_count": 26,
+  "accepted_update_count": 5,
+  "tokens_per_successful_candidate": 27030.576923076922,
+  "tokens_per_stage_a_candidate": 27030.576923076922,
+  "tokens_per_accepted_update": 140559.0
+}

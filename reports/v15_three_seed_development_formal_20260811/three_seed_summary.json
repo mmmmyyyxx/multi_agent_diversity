@@ -1,0 +1,235 @@
+{
+  "task_status": "COMPLETE",
+  "method_version": "member_aware_peer_state_v15",
+  "method_semantics_commit": "c705eedb2959c3ad1349f5d6c52ffed64bca90ae",
+  "execution_source_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "prereg_revision": "development_formal_train_test_v3",
+  "train_result_observed_before_revision": true,
+  "test_result_observed_before_revision": false,
+  "paper_heldout_claim": false,
+  "train_gates": {
+    "48": "PASS",
+    "49": "PASS",
+    "50": "PASS"
+  },
+  "test_extension_gates": {
+    "48": "PASS",
+    "49": "PASS",
+    "50": "PASS"
+  },
+  "train_updates": {
+    "48": [
+      0,
+      32,
+      32,
+      32
+    ],
+    "49": [
+      0,
+      32,
+      32,
+      32
+    ],
+    "50": [
+      0,
+      32,
+      32,
+      32
+    ]
+  },
+  "validation_calls": 0,
+  "training_time_test_calls": 0,
+  "final_test_logical_evaluations": 12,
+  "final_test_missing_evaluations": 0,
+  "training_artifact_mutation_count": 0,
+  "test_tcs_calls": 0,
+  "test_cache_conflict_count": 0,
+  "aggregate_by_setting": {
+    "Static": {
+      "train_final_vote_correct": {
+        "mean": 50.0,
+        "sample_std": 0.0,
+        "range": [
+          50.0,
+          50.0
+        ]
+      },
+      "train_vote_gain_mean": 0.0,
+      "accepted_updates_mean": 0.0,
+      "train_tokens_mean": 0.0,
+      "test_vote_correct": {
+        "mean": 85.33333333333333,
+        "sample_std": 0.5773502691896257,
+        "range": [
+          85.0,
+          86.0
+        ]
+      },
+      "test_vote_accuracy_mean": 0.6826666666666666,
+      "test_vote_accuracy_sample_std": 0.0046188021535169465,
+      "test_mean_member_accuracy_mean": 0.6826666666666666,
+      "test_minimum_member_accuracy_mean": 0.6826666666666666,
+      "test_oracle_accuracy_mean": 0.6826666666666666,
+      "test_oracle_vote_gap_mean": 0.0,
+      "test_pairwise_correlation_mean": 1.0,
+      "test_effective_ensemble_size_mean": 1.0
+    },
+    "S0": {
+      "train_final_vote_correct": {
+        "mean": 56.0,
+        "sample_std": 1.0,
+        "range": [
+          55.0,
+          57.0
+        ]
+      },
+      "train_vote_gain_mean": 5.666666666666667,
+      "accepted_updates_mean": 4.0,
+      "train_tokens_mean": 621931.0,
+      "test_vote_correct": {
+        "mean": 88.33333333333333,
+        "sample_std": 2.0816659994661326,
+        "range": [
+          86.0,
+          90.0
+        ]
+      },
+      "test_vote_accuracy_mean": 0.7066666666666667,
+      "test_vote_accuracy_sample_std": 0.016653327995729078,
+      "test_mean_member_accuracy_mean": 0.6944,
+      "test_minimum_member_accuracy_mean": 0.6826666666666666,
+      "test_oracle_accuracy_mean": 0.776,
+      "test_oracle_vote_gap_mean": 8.666666666666666,
+      "test_pairwise_correlation_mean": 0.7706117641792212,
+      "test_effective_ensemble_size_mean": 1.2261423319452696
+    },
+    "S1": {
+      "train_final_vote_correct": {
+        "mean": 57.0,
+        "sample_std": 1.7320508075688772,
+        "range": [
+          56.0,
+          59.0
+        ]
+      },
+      "train_vote_gain_mean": 6.666666666666667,
+      "accepted_updates_mean": 6.666666666666667,
+      "train_tokens_mean": 1126999.6666666667,
+      "test_vote_correct": {
+        "mean": 87.66666666666667,
+        "sample_std": 0.5773502691896257,
+        "range": [
+          87.0,
+          88.0
+        ]
+      },
+      "test_vote_accuracy_mean": 0.7013333333333333,
+      "test_vote_accuracy_sample_std": 0.00461880215351701,
+      "test_mean_member_accuracy_mean": 0.6992,
+      "test_minimum_member_accuracy_mean": 0.6826666666666666,
+      "test_oracle_accuracy_mean": 0.8453333333333333,
+      "test_oracle_vote_gap_mean": 18.0,
+      "test_pairwise_correlation_mean": 0.6638565304373691,
+      "test_effective_ensemble_size_mean": 1.369875724950571
+    },
+    "S2": {
+      "train_final_vote_correct": {
+        "mean": 58.0,
+        "sample_std": 0.0,
+        "range": [
+          58.0,
+          58.0
+        ]
+      },
+      "train_vote_gain_mean": 7.666666666666667,
+      "accepted_updates_mean": 8.333333333333334,
+      "train_tokens_mean": 1900381.0,
+      "test_vote_correct": {
+        "mean": 87.66666666666667,
+        "sample_std": 1.5275252316519468,
+        "range": [
+          86.0,
+          89.0
+        ]
+      },
+      "test_vote_accuracy_mean": 0.7013333333333333,
+      "test_vote_accuracy_sample_std": 0.012220201853215585,
+      "test_mean_member_accuracy_mean": 0.6992,
+      "test_minimum_member_accuracy_mean": 0.6746666666666667,
+      "test_oracle_accuracy_mean": 0.8426666666666667,
+      "test_oracle_vote_gap_mean": 17.666666666666668,
+      "test_pairwise_correlation_mean": 0.6661336849032008,
+      "test_effective_ensemble_size_mean": 1.3645053378567265
+    }
+  },
+  "adjacent_test_deltas": {
+    "Static->S0": {
+      "per_seed": [
+        5,
+        1,
+        3
+      ],
+      "mean": 3,
+      "sample_std": 2.0,
+      "range": [
+        1,
+        5
+      ],
+      "positive_zero_negative": [
+        3,
+        0,
+        0
+      ]
+    },
+    "S0->S1": {
+      "per_seed": [
+        -2,
+        2,
+        -2
+      ],
+      "mean": -0.6666666666666666,
+      "sample_std": 2.309401076758503,
+      "range": [
+        -2,
+        2
+      ],
+      "positive_zero_negative": [
+        1,
+        0,
+        2
+      ]
+    },
+    "S1->S2": {
+      "per_seed": [
+        0,
+        1,
+        -1
+      ],
+      "mean": 0,
+      "sample_std": 1.0,
+      "range": [
+        -1,
+        1
+      ],
+      "positive_zero_negative": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "cost": {
+    "train_api_calls": 31730,
+    "test_api_calls": 4250,
+    "train_tokens": 10947935,
+    "test_tokens": 1179113,
+    "total_tokens": 12127048
+  },
+  "git_head": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "repo_dirty": false,
+  "api_execution_scope_violations": 0,
+  "commit_created": false,
+  "pushed": false,
+  "final_interpretation": "development evidence only; historical test split was previously exposed",
+  "next_action": "Review the complete 3-seed train/test evidence before designing the separate untouched paper-heldout evaluation."
+}

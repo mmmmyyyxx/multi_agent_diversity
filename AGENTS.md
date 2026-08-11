@@ -419,3 +419,21 @@ checkpoints, or absolute local paths.
 - Do not reuse incompatible checkpoints.
 - Run `compileall`, `pytest`, preflight, required deterministic smokes, a
   sanitization scan, and `git diff --check` before handoff.
+
+## 11. Direct main publishing
+
+Do not infer permission to publish. When the user explicitly requests a direct
+push to `main` or says `git push main`, verify the intended files, current
+branch, remote, tracked worktree, and sanitization status; stage only the
+task-related files, create one intentional commit when needed, and run:
+
+```text
+git push origin main
+```
+
+For this explicitly requested workflow, do not create a side branch or pull
+request. Runtime artifacts under ignored `runs*/` must remain untracked; copy
+only sanitized, analysis-ready evidence into a purpose-specific `reports/`
+directory. Never publish SQLite caches, checkpoints, prompts, questions, gold
+answers, model answers, raw responses, credentials, endpoints, or absolute
+local paths. Report the pushed commit and the exact published file scope.

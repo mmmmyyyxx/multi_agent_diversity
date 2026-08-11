@@ -1,0 +1,63 @@
+{
+  "prereg_revision": "development_formal_train_test_v3",
+  "revision_reason": "user explicitly requested three-seed training plus testing",
+  "substantive_method_changed": false,
+  "seeds_changed": false,
+  "model_changed": false,
+  "train_budget_changed": false,
+  "settings_changed": false,
+  "train_result_observed_before_revision": true,
+  "observed_train_result_seeds": [
+    48
+  ],
+  "test_result_observed_before_revision": false,
+  "test_policy_fixed_before_first_test": true,
+  "seed48_train_rerun": false,
+  "seed49_train_rerun": false,
+  "seed50_train_rerun": false,
+  "paper_heldout_claim": false,
+  "historical_test_split_already_exposed": true,
+  "paper_untouched_test": false,
+  "final_paper_heldout_claim": false,
+  "method_semantics_commit": "c705eedb2959c3ad1349f5d6c52ffed64bca90ae",
+  "execution_source_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 24,
+  "seeds": [
+    48,
+    49,
+    50
+  ],
+  "model": "qwen3-14b",
+  "thinking": false,
+  "task": "disambiguation_qa",
+  "settings": [
+    "shared_static_reference",
+    "shared_generic_evolution",
+    "shared_member_aware_dual_target",
+    "shared_responsibility_conditioned_dual_target"
+  ],
+  "training_updates": {
+    "shared_static_reference": 0,
+    "shared_generic_evolution": 32,
+    "shared_member_aware_dual_target": 32,
+    "shared_responsibility_conditioned_dual_target": 32
+  },
+  "validation_enabled": false,
+  "training_time_test_enabled": false,
+  "test_execution_order": [
+    "seed48:Static,S0,S1,S2",
+    "seed49:Static,S0,S1,S2",
+    "seed50:Static,S0,S1,S2"
+  ],
+  "test_primary_metric": "plurality_team_vote_accuracy",
+  "test_interpretation": "development_generalization_evidence",
+  "final_test_logical_evaluations_planned": 12,
+  "test_evaluator_sha256": "199b965fa35df7174734dd93d716ec70ec121ee731935883dc854fca283a733a",
+  "test_auditor_sha256": "769d9ee9b077d5915a145df4e7f613d985b13df54c023ce6fe2b6dc73f58b14a",
+  "first_test_started": true,
+  "tracked_source_changes_authorized": false,
+  "project_root": "PROJECT_ROOT_REDACTED",
+  "final_state_manifest_sha256": "44b7aa394e42d95c44941a117eeb9c3c56919b04188b63cb5603f0d070f582f2",
+  "pre_test_training_artifact_manifest_sha256": "baf4f6f8d62f1b2046096dcc9e96075abe33e5f9cfd2f9e7b5da96820ee79ae2"
+}

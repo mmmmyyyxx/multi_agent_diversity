@@ -1,0 +1,163 @@
+{
+  "audit_version": "final_method_stage_gate_v15_seed_agnostic_v2",
+  "stage": "development_formal",
+  "expected_seeds": [
+    48
+  ],
+  "gate": "PASS",
+  "blocker_count": 0,
+  "major_count": 0,
+  "expected_run_count": 4,
+  "complete_run_count": 4,
+  "run_source_commit": "b7936ae2f16d8907f0ffdf161dc8991368abeed8",
+  "method_runtime_semantics_changed": false,
+  "comparison_cache_chain": [
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_static_reference",
+      "chain_continuity": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_generic_evolution",
+      "chain_continuity": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_member_aware_dual_target",
+      "chain_continuity": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_responsibility_conditioned_dual_target",
+      "chain_continuity": true
+    }
+  ],
+  "setting_isolation": [
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "comparison": "shared_static_reference__vs__shared_generic_evolution",
+      "expected_protocol_differences": [
+        "candidate_acceptance_policy",
+        "candidate_ranking_policy",
+        "candidate_selection_policy",
+        "optimization_enabled",
+        "sample_pool_policy",
+        "stage_a_policy",
+        "target_selection_policy",
+        "tcs_context_policy"
+      ],
+      "actual_protocol_differences": [
+        "candidate_acceptance_policy",
+        "candidate_ranking_policy",
+        "candidate_selection_policy",
+        "optimization_enabled",
+        "sample_pool_policy",
+        "stage_a_policy",
+        "target_selection_policy",
+        "tcs_context_policy"
+      ],
+      "substantive_match": true,
+      "passed": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "comparison": "shared_generic_evolution__vs__shared_member_aware_dual_target",
+      "expected_protocol_differences": [
+        "responsibility_refresh_policy",
+        "sample_pool_policy",
+        "service_routing_enabled",
+        "target_selection_policy",
+        "tcs_context_policy"
+      ],
+      "actual_protocol_differences": [
+        "responsibility_refresh_policy",
+        "sample_pool_policy",
+        "service_routing_enabled",
+        "target_selection_policy",
+        "tcs_context_policy"
+      ],
+      "substantive_match": true,
+      "passed": true
+    },
+    {
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "comparison": "shared_member_aware_dual_target__vs__shared_responsibility_conditioned_dual_target",
+      "expected_protocol_differences": [
+        "tcs_context_policy"
+      ],
+      "actual_protocol_differences": [
+        "tcs_context_policy"
+      ],
+      "substantive_match": true,
+      "passed": true
+    }
+  ],
+  "cost": {
+    "total_tokens": 3820574,
+    "accepted_update_count": 16,
+    "run_count": 4,
+    "mean_accepted_update_rate": 0.16666666666666666
+  },
+  "runs": [
+    {
+      "run": "disambiguation_qa/shared_static_reference_seed48",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_static_reference",
+      "planned_update_count": 0,
+      "completed_update_count": 0,
+      "test_evaluation_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 0,
+      "total_tokens": 0
+    },
+    {
+      "run": "disambiguation_qa/shared_generic_evolution_seed48",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_generic_evolution",
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "test_evaluation_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 4,
+      "total_tokens": 690455
+    },
+    {
+      "run": "disambiguation_qa/shared_member_aware_dual_target_seed48",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_member_aware_dual_target",
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "test_evaluation_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 5,
+      "total_tokens": 1161053
+    },
+    {
+      "run": "disambiguation_qa/shared_responsibility_conditioned_dual_target_seed48",
+      "complete": true,
+      "task": "disambiguation_qa",
+      "seed": 48,
+      "setting": "shared_responsibility_conditioned_dual_target",
+      "planned_update_count": 32,
+      "completed_update_count": 32,
+      "test_evaluation_count": 0,
+      "infrastructure_failure_count": 0,
+      "accepted_update_count": 7,
+      "total_tokens": 1969066
+    }
+  ]
+}

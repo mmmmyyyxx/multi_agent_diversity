@@ -1,0 +1,12 @@
+{
+  "training_complete_before_test": true,
+  "final_test_logical_evaluation_count": 1,
+  "test_called_before_training_complete": false,
+  "test_used_for_training": false,
+  "test_used_for_selection": false,
+  "optimization_updates": 0,
+  "teacher_calls": 0,
+  "critic_calls": 0,
+  "student_calls": 0,
+  "candidate_generation_calls": 0
+}

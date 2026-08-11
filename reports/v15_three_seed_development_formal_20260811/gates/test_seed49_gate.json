@@ -1,0 +1,223 @@
+{
+  "audit_version": "v15_frozen_final_test_audit_v1",
+  "seed": 49,
+  "gate": "PASS",
+  "blocker_count": 0,
+  "failures": [],
+  "complete_setting_count": 4,
+  "logical_test_evaluation_count": 4,
+  "runs": [
+    {
+      "setting": "shared_static_reference",
+      "checks": {
+        "source": true,
+        "method": true,
+        "model": true,
+        "prompts": true,
+        "logical_count": true,
+        "isolation": true,
+        "no_optimization": true,
+        "no_tcs": true,
+        "cache": true,
+        "observations": true,
+        "metrics": true
+      },
+      "metrics": {
+        "N_test": 125,
+        "team_vote_correct_count": 85,
+        "team_vote_accuracy": 0.68,
+        "per_agent_correct_counts": [
+          85,
+          85,
+          85,
+          85,
+          85
+        ],
+        "per_agent_accuracies": [
+          0.68,
+          0.68,
+          0.68,
+          0.68,
+          0.68
+        ],
+        "mean_member_correct_count": 85.0,
+        "mean_member_accuracy": 0.68,
+        "minimum_member_correct_count": 85,
+        "minimum_member_accuracy": 0.68,
+        "oracle_correct_count": 85,
+        "oracle_accuracy": 0.68,
+        "oracle_vote_gap": 0,
+        "answer_disagreement_rate": 0.0,
+        "mean_pairwise_correctness_correlation": 1.0,
+        "effective_ensemble_size": 1.0,
+        "all_wrong_fraction": 0.32,
+        "oracle_covered_vote_wrong_fraction": 0.0,
+        "terminal_invalid_count": 0,
+        "logical_test_evaluation_count": 1,
+        "solver_api_calls": 125,
+        "cache_hits": 500,
+        "cache_misses": 125,
+        "tokens": 31631
+      }
+    },
+    {
+      "setting": "shared_generic_evolution",
+      "checks": {
+        "source": true,
+        "method": true,
+        "model": true,
+        "prompts": true,
+        "logical_count": true,
+        "isolation": true,
+        "no_optimization": true,
+        "no_tcs": true,
+        "cache": true,
+        "observations": true,
+        "metrics": true
+      },
+      "metrics": {
+        "N_test": 125,
+        "team_vote_correct_count": 86,
+        "team_vote_accuracy": 0.688,
+        "per_agent_correct_counts": [
+          85,
+          88,
+          85,
+          87,
+          85
+        ],
+        "per_agent_accuracies": [
+          0.68,
+          0.704,
+          0.68,
+          0.696,
+          0.68
+        ],
+        "mean_member_correct_count": 86.0,
+        "mean_member_accuracy": 0.688,
+        "minimum_member_correct_count": 85,
+        "minimum_member_accuracy": 0.68,
+        "oracle_correct_count": 95,
+        "oracle_accuracy": 0.76,
+        "oracle_vote_gap": 9,
+        "answer_disagreement_rate": 0.11359999999999992,
+        "mean_pairwise_correctness_correlation": 0.8031470699134976,
+        "effective_ensemble_size": 1.1869187464032647,
+        "all_wrong_fraction": 0.24,
+        "oracle_covered_vote_wrong_fraction": 0.072,
+        "terminal_invalid_count": 0,
+        "logical_test_evaluation_count": 1,
+        "solver_api_calls": 375,
+        "cache_hits": 125,
+        "cache_misses": 500,
+        "tokens": 91972
+      }
+    },
+    {
+      "setting": "shared_member_aware_dual_target",
+      "checks": {
+        "source": true,
+        "method": true,
+        "model": true,
+        "prompts": true,
+        "logical_count": true,
+        "isolation": true,
+        "no_optimization": true,
+        "no_tcs": true,
+        "cache": true,
+        "observations": true,
+        "metrics": true
+      },
+      "metrics": {
+        "N_test": 125,
+        "team_vote_correct_count": 88,
+        "team_vote_accuracy": 0.704,
+        "per_agent_correct_counts": [
+          89,
+          89,
+          87,
+          85,
+          88
+        ],
+        "per_agent_accuracies": [
+          0.712,
+          0.712,
+          0.696,
+          0.68,
+          0.704
+        ],
+        "mean_member_correct_count": 87.6,
+        "mean_member_accuracy": 0.7008,
+        "minimum_member_correct_count": 85,
+        "minimum_member_accuracy": 0.68,
+        "oracle_correct_count": 109,
+        "oracle_accuracy": 0.872,
+        "oracle_vote_gap": 21,
+        "answer_disagreement_rate": 0.18640000000000012,
+        "mean_pairwise_correctness_correlation": 0.6149904173069771,
+        "effective_ensemble_size": 1.4451027144227733,
+        "all_wrong_fraction": 0.128,
+        "oracle_covered_vote_wrong_fraction": 0.168,
+        "terminal_invalid_count": 0,
+        "logical_test_evaluation_count": 1,
+        "solver_api_calls": 500,
+        "cache_hits": 0,
+        "cache_misses": 625,
+        "tokens": 176961
+      }
+    },
+    {
+      "setting": "shared_responsibility_conditioned_dual_target",
+      "checks": {
+        "source": true,
+        "method": true,
+        "model": true,
+        "prompts": true,
+        "logical_count": true,
+        "isolation": true,
+        "no_optimization": true,
+        "no_tcs": true,
+        "cache": true,
+        "observations": true,
+        "metrics": true
+      },
+      "metrics": {
+        "N_test": 125,
+        "team_vote_correct_count": 89,
+        "team_vote_accuracy": 0.712,
+        "per_agent_correct_counts": [
+          91,
+          91,
+          89,
+          85,
+          88
+        ],
+        "per_agent_accuracies": [
+          0.728,
+          0.728,
+          0.712,
+          0.68,
+          0.704
+        ],
+        "mean_member_correct_count": 88.8,
+        "mean_member_accuracy": 0.7104,
+        "minimum_member_correct_count": 85,
+        "minimum_member_accuracy": 0.68,
+        "oracle_correct_count": 107,
+        "oracle_accuracy": 0.856,
+        "oracle_vote_gap": 18,
+        "answer_disagreement_rate": 0.1671999999999999,
+        "mean_pairwise_correctness_correlation": 0.6595003914300355,
+        "effective_ensemble_size": 1.37438093680706,
+        "all_wrong_fraction": 0.144,
+        "oracle_covered_vote_wrong_fraction": 0.144,
+        "terminal_invalid_count": 0,
+        "logical_test_evaluation_count": 1,
+        "solver_api_calls": 500,
+        "cache_hits": 0,
+        "cache_misses": 625,
+        "tokens": 137960
+      }
+    }
+  ]
+}
