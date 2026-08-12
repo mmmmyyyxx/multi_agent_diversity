@@ -1,0 +1,5 @@
+seed,branch_count,visible_portfolio_mean_size,visible_fine_cluster_share_mean,visible_fine_entropy_mean,any_feasible_rate,any_F_rate,repair_gain_candidate_count
+48,64,1.90625,0.984375,0.03125,0.125,0.625,19
+49,64,1.78125,0.96875,0.0625,0.15625,0.609375,29
+50,64,1.84375,1.0,0.0,0.140625,0.46875,20
+51,16,1.875,1.0,0.0,0.3125,0.5625,13

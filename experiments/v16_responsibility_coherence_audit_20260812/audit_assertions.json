@@ -1,0 +1,55 @@
+{
+  "api_calls": 0,
+  "definitions_frozen": true,
+  "exact_historical_seeds": [
+    48,
+    49,
+    50,
+    51
+  ],
+  "model_calls": 0,
+  "read_only_solver_cache": true,
+  "source_artifact_count": 36,
+  "source_artifact_set_sha256": "184560a7dea079acb7fd8b3cc5f30f969ffc496800391cef49d70dd897a2ea92",
+  "source_assertions": [
+    {
+      "candidate_generator_m20": true,
+      "canonical_setting_matches": true,
+      "method_version_v15": true,
+      "module1_and_common_safe_semantics": true,
+      "seed": 48,
+      "test_isolation": true,
+      "train_only": true
+    },
+    {
+      "candidate_generator_m20": true,
+      "canonical_setting_matches": true,
+      "method_version_v15": true,
+      "module1_and_common_safe_semantics": true,
+      "seed": 49,
+      "test_isolation": true,
+      "train_only": true
+    },
+    {
+      "candidate_generator_m20": true,
+      "canonical_setting_matches": true,
+      "method_version_v15": true,
+      "module1_and_common_safe_semantics": true,
+      "seed": 50,
+      "test_isolation": true,
+      "train_only": true
+    },
+    {
+      "candidate_generator_m20": true,
+      "canonical_setting_matches": true,
+      "method_version_v15": true,
+      "module1_and_common_safe_semantics": true,
+      "seed": 51,
+      "test_isolation": true,
+      "train_only": true
+    }
+  ],
+  "status": "PASS",
+  "test_files_read": 0,
+  "validation_files_read": 0
+}

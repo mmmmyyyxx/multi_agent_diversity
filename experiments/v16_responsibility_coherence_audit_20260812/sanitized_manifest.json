@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "name": "README.md",
+      "sha256": "4836c127a9dc6551f2869a3ac661063f09a1169d38b614f2a98d0a32d100844c",
+      "size": 594
+    },
+    {
+      "name": "audit_assertions.json",
+      "sha256": "f8d068ac13ac57181b5d73851c6ad349fc69cf9601d9b75386a86e1fc90916bf",
+      "size": 1456
+    },
+    {
+      "name": "audit_summary.json",
+      "sha256": "5c98ed5125236c21321fc2c2bbf4483e32c917d9a475f5f2a22c8c97c00bd5d1",
+      "size": 1506
+    },
+    {
+      "name": "branch_coherence_metrics.csv",
+      "sha256": "21497bac97a6341d3d32d93df86f80f0346dd55cf33da3081d928f4a402fed07",
+      "size": 31033
+    },
+    {
+      "name": "candidate_repair_focus.csv",
+      "sha256": "64a65619f73c0cf20d7fbb68a46d764cabc9d2b7e02e1d9e03c75b3fd44a505d",
+      "size": 10203
+    },
+    {
+      "name": "coherence_outcome_strata.csv",
+      "sha256": "d3acd3a30aeb9926ee55dab579656e2dc644ffddaf51b8baaf131ddeb5d50ba5",
+      "size": 860
+    },
+    {
+      "name": "seed_summary.csv",
+      "sha256": "322e932c0422b071acf43613df49e9932af983505e873e3cbfc4e997f67b12a3",
+      "size": 340
+    }
+  ],
+  "manifest_version": "v16_sanitized_report_manifest_v1",
+  "sanitization_status": "PASS",
+  "study": "study_a"
+}

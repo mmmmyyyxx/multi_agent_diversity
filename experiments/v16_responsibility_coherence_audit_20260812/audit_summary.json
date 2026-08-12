@@ -1,0 +1,45 @@
+{
+  "api_calls": 0,
+  "association": {
+    "directional_checks": {
+      "high_coherence_feasible_rate_gt_low": false,
+      "high_entropy_F_rate_gt_low": true,
+      "high_entropy_regression_rate_gt_low": true,
+      "spearman_cluster_share_feasible_gt_0": false,
+      "spearman_entropy_F_gt_0": true,
+      "spearman_entropy_target_regression_gt_0": true
+    },
+    "spearman_fine_cluster_share_vs_any_feasible": -0.006124030566141673,
+    "spearman_fine_entropy_vs_any_F": 0.03456273622139412,
+    "spearman_fine_entropy_vs_any_target_regression": 0.05085745638851055
+  },
+  "audit_version": "v16_responsibility_coherence_audit_v1",
+  "branch_count": 208,
+  "coherence_bottleneck": "SUPPORTED",
+  "feasible_repair_focus": {
+    "candidate_count": 27,
+    "multi_fine_signature_count": 0,
+    "repair_focus_share_mean": 1.0,
+    "repair_focus_share_median": 1.0,
+    "single_fine_signature_count": 27,
+    "single_fine_signature_share": 1.0
+  },
+  "high_coherence_branch_count": 202,
+  "historical_seeds": [
+    48,
+    49,
+    50,
+    51
+  ],
+  "low_coherence_branch_count": 0,
+  "medium_coherence_branch_count": 6,
+  "model_calls": 0,
+  "outcome_association_supported": true,
+  "repair_concentration_supported": true,
+  "status": "PASS",
+  "test_files_read": 0,
+  "validation_files_read": 0,
+  "visible_fine_cluster_share_mean": 0.9855769230769231,
+  "visible_fine_entropy_mean": 0.028846153846153848,
+  "visible_portfolio_mean_size": 1.8461538461538463
+}
