@@ -128,6 +128,7 @@ def build_freeze(
         "intentional_differences": [
             "G0 uses current generic AccuracyDiagnosisContext and generic rendering",
             "M20 uses byte-current v15 SingleLaneDiagnosisContext and rendering",
+            "after an invalid Critic response, the bounded schema retry adds a strict JSON repair instruction",
         ],
         "shared_probe_controls": [
             "fixed parent prompts and profiles",
@@ -139,6 +140,7 @@ def build_freeze(
         ],
         "g0_generation_responsibility_hash_count": 0,
         "m20_context_semantics_changed": False,
+        "critic_schema_retry_semantics_changed": True,
         "module1_semantics_changed": False,
         "common_safe_semantics_changed": False,
         "canonical_method_promoted": False,
@@ -160,6 +162,7 @@ def build_freeze(
             "g0_responsibility_leakage_count"
         ),
         "m20_context_semantics_changed": False,
+        "critic_schema_retry_semantics_changed": True,
         "commit_enabled": False,
         "parent_mutation_enabled": False,
         "validation_enabled": False,
