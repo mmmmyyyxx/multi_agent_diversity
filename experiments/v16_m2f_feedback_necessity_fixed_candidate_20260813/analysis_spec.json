@@ -4,6 +4,7 @@
   "source_candidate_count": 7,
   "cell_count": 14,
   "calls_per_cell": 1,
+  "unchanged_source_response": "valid no-op outcome",
   "causal_difference": "F2 alone receives actual candidate-specific competence-loss examples, identities, and counts",
   "primary_metrics": [
     "targeting_retention",

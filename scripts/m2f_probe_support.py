@@ -119,14 +119,18 @@ def build_causal_control_request(case: dict[str, Any], variant: str) -> str:
     )
 
 
-def parse_repair_output(text: str, case: dict[str, Any]) -> str:
+def parse_repair_output(
+    text: str, case: dict[str, Any], *, allow_unchanged: bool = False
+) -> str:
     from multi_dataset_diverse_rl.utils import extract_json_obj
     payload = extract_json_obj(text)
     if not isinstance(payload, dict) or set(payload) != {"repaired_prompt"}:
         raise ValueError("repair response must contain exactly repaired_prompt")
     prompt = normalize_prompt_text(payload["repaired_prompt"] if isinstance(payload["repaired_prompt"], str) else "")
-    if not prompt or prompt == normalize_prompt_text(case["source_candidate_prompt"]):
-        raise ValueError("repair prompt is empty or unchanged")
+    if not prompt:
+        raise ValueError("repair prompt is empty")
+    if not allow_unchanged and prompt == normalize_prompt_text(case["source_candidate_prompt"]):
+        raise ValueError("repair prompt is unchanged")
     lowered = prompt.lower()
     forbidden = ("final_answer:", "question_hash", "gold answer", "answer choice a", "answer choice b", "answer choice c", "answer choice d")
     if any(token in lowered for token in forbidden):

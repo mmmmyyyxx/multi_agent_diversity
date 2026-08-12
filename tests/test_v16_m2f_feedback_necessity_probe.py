@@ -85,3 +85,13 @@ def test_unknown_arm_is_rejected():
         assert "unknown" in str(exc)
     else:
         raise AssertionError("unknown causal-control arm accepted")
+
+
+def test_unchanged_is_valid_only_for_causal_control():
+    case = fixture_case()
+    response = '{"repaired_prompt":"source"}'
+    with __import__("pytest").raises(ValueError, match="unchanged"):
+        support.parse_repair_output(response, case)
+    assert support.parse_repair_output(
+        response, case, allow_unchanged=True
+    ) == "source"

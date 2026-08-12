@@ -26,5 +26,8 @@ The frozen descriptive classifier is:
 - `MIXED`: all other outcomes.
 
 The seven paired cases and their identities remain frozen regardless of outcomes.
+An arm may return the source candidate unchanged; this is recorded as a valid
+no-op outcome rather than discarded, because rejecting it would condition the
+causal comparison on a revision having occurred.
 No validation or test data, candidate commit, optimizer update, or parent mutation
 is permitted.
