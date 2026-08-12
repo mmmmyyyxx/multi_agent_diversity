@@ -52,3 +52,21 @@ def test_sanitized_contract_forbids_candidate_bodies():
     packager = load("m2f_packager_scan", "scripts/package_v16_responsibility_reports.py")
     with pytest.raises(ValueError, match="sensitive structured field"):
         packager._scan_structured({"source_candidate_prompt": "private"})
+
+def test_terminal_invalid_delta_uses_nested_competence():
+    runner = load("m2f_runner_terminal", "scripts/run_v16_m2f_probe.py")
+    from multi_dataset_diverse_rl.candidate_selection import (
+        CandidateEvaluation, PromptCompetenceMetrics, TeamOutcomeMetrics,
+    )
+    from multi_dataset_diverse_rl.member_objectives import MemberGainMetrics
+    from multi_dataset_diverse_rl.responsibility import CandidateMarginalContribution, ProtectionContribution
+    def evaluation(count):
+        return CandidateEvaluation(
+            prompt="p", prompt_hash="h",
+            competence=PromptCompetenceMetrics(0, 0.0, 0, 0.0, count),
+            team_outcome=TeamOutcomeMetrics((), 0, 0.0, (), (), (), 0.0),
+            marginal=CandidateMarginalContribution(0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0.0),
+            protection=ProtectionContribution(0, 0),
+            member_gain=MemberGainMetrics((), (), (), (), 0, 0, 0.0, 0, 0, False, False, 0, 0),
+        )
+    assert runner.terminal_invalid_delta(evaluation(3), evaluation(1)) == 2
