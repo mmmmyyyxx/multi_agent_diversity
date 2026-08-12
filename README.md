@@ -134,3 +134,14 @@ credentials, endpoints, cache contents, checkpoints, or absolute local paths.
 
 See [method.md](method.md) for the formal algorithm and [AGENTS.md](AGENTS.md)
 for normative engineering guardrails.
+
+## v16 diagnostic workflows
+
+The responsibility-coherence audit and the fixed-parent Generic-vs-M20 probe
+are noncanonical diagnostics. They do not change Module 1, the S0/S1/S2
+matrix, or Common-Safe Team Update. The offline audit is run with
+`scripts/audit_v16_responsibility_coherence.py`; the API probe must first pass
+`scripts/preflight_v16_generic_m20_probe.py` and a clean source freeze produced
+by `scripts/freeze_v16_generic_m20_probe.py`. Only the exact preregistered probe
+may use `GENERIC_M20_FIXED_PARENT_PROBE_AUTHORIZED=1`; neither workflow reads
+validation or test data or commits a candidate prompt.
