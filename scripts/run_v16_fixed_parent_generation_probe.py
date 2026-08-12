@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import sys
+import uuid
 from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,47 @@ SETTING = {
 def require_fresh_cell_path(path: Path) -> None:
     if path.exists():
         raise FileExistsError(f"fixed-parent cell path must be fresh: {path}")
+
+
+def atomic_write_json(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex[:12]}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def atomic_write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex[:12]}.tmp")
+    try:
+        temporary.write_text(
+            "".join(
+                json.dumps(row, ensure_ascii=False, allow_nan=False) + "\n"
+                for row in rows
+            ),
+            encoding="utf-8",
+        )
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def serialize_candidate(row: Any) -> dict[str, Any]:
+    evaluation = row.final_evaluation or row.stage_a_evaluation
+    if evaluation is None:
+        raise ValueError("evaluated candidate has no persisted evaluation")
+    return {
+        "prompt_hash": row.prompt_hash,
+        "prompt": row.prompt,
+        "evaluation": asdict(evaluation),
+        "constraint": asdict(row.constraint) if row.constraint else None,
+    }
 
 
 def profile(block: list[dict[str, Any]], agent: int) -> tuple[PromptAnswer, ...]:
@@ -63,6 +105,11 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
     })
     cfg = Config.from_flat(**{key: flat[key] for key in Config().to_flat_dict()})
     system = PromptEnsembleOptimizationSystem(cfg)
+    atomic_write_json(out_dir / "cell_status.json", {
+        "status": "started", "case_id": case["case_id"], "variant": variant,
+        "commit_enabled": False, "validation_enabled": False,
+        "final_test_enabled": False,
+    })
     data = [{"question": row["question"], "answer": row["answer"]} for row in registry["questions"]]
     system.fixed_probe = system.build_probe(data)
     system.initial_profiles = [profile(registry["initial_profiles"], agent) for agent in range(5)]
@@ -77,45 +124,65 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
     assigned = set(map(str, case["assigned_question_hashes"]))
     before = state_hash(system)
     funnel = CandidateFunnel()
-    candidates = await system.propose_candidates(target, assigned, funnel, int(case["source_update_index"]))
-    winner = None
-    incumbent = None
-    evaluated = []
-    if candidates:
-        winner, incumbent, evaluated = await system.evaluate_candidates(
-            target, candidates, assigned, funnel, int(case["source_update_index"])
+    try:
+        candidates = await system.propose_candidates(
+            target, assigned, funnel, int(case["source_update_index"])
         )
-    if funnel.terminal_failure_class in {"transport_failure", "persistence_failure"}:
-        raise RuntimeError(
-            f"probe infrastructure failure in {case['case_id']}/{variant}: "
-            f"{funnel.terminal_failure_class}"
-        )
-    after = state_hash(system)
-    if before != after:
-        raise RuntimeError("fixed-parent probe mutated the parent team")
-    result = {
-        "result_version": "v16_fixed_parent_generation_probe_cell_v1",
-        "case_id": case["case_id"], "variant": variant, "target_agent_id": target,
-        "parent_team_hash": case["parent_team_hash"], "active_lane": case["active_lane"],
-        "assigned_question_hashes": sorted(assigned), "generated_candidate_count": len(candidates),
-        "evaluated_candidate_count": len(evaluated), "funnel": asdict(funnel),
-        "incumbent": asdict(incumbent) if incumbent is not None else None,
-        "candidates": [{
-            "prompt_hash": row.prompt_hash,
-            "prompt": row.prompt,
-            "evaluation": asdict(row.stage_b_evaluation or row.stage_a_evaluation),
-            "constraint": asdict(row.constraint) if row.constraint else None,
-        } for row in evaluated],
-        "winner_prompt_hash_diagnostic_only": winner.prompt_hash if winner else "",
-        "commit_performed": False, "parent_state_hash_before": before, "parent_state_hash_after": after,
-        "validation_calls": system.validation_evaluation_count, "test_calls": system.test_evaluation_count,
-        "llm_call_count": len(system.llm.calls),
-    }
-    # ArtifactWriter creates the cell directory during system construction.
-    out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "cell_result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (out_dir / "llm_calls.jsonl").write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in system.llm.calls), encoding="utf-8")
-    return result
+        winner = None
+        incumbent = None
+        evaluated = []
+        if candidates:
+            winner, incumbent, evaluated = await system.evaluate_candidates(
+                target, candidates, assigned, funnel,
+                int(case["source_update_index"]),
+            )
+        if funnel.terminal_failure_class in {
+            "transport_failure", "persistence_failure"
+        }:
+            raise RuntimeError(
+                f"probe infrastructure failure in {case['case_id']}/{variant}: "
+                f"{funnel.terminal_failure_class}"
+            )
+        after = state_hash(system)
+        if before != after:
+            raise RuntimeError("fixed-parent probe mutated the parent team")
+        result = {
+            "result_version": "v16_fixed_parent_generation_probe_cell_v1",
+            "case_id": case["case_id"], "variant": variant,
+            "target_agent_id": target,
+            "parent_team_hash": case["parent_team_hash"],
+            "active_lane": case["active_lane"],
+            "assigned_question_hashes": sorted(assigned),
+            "generated_candidate_count": len(candidates),
+            "evaluated_candidate_count": len(evaluated),
+            "funnel": asdict(funnel),
+            "incumbent": asdict(incumbent) if incumbent is not None else None,
+            "candidates": [serialize_candidate(row) for row in evaluated],
+            "winner_prompt_hash_diagnostic_only": (
+                winner.prompt_hash if winner else ""
+            ),
+            "commit_performed": False,
+            "parent_state_hash_before": before,
+            "parent_state_hash_after": after,
+            "validation_calls": system.validation_evaluation_count,
+            "test_calls": system.test_evaluation_count,
+            "llm_call_count": len(system.llm.calls),
+        }
+        atomic_write_json(out_dir / "cell_result.json", result)
+        atomic_write_json(out_dir / "cell_status.json", {
+            "status": "complete", "case_id": case["case_id"],
+            "variant": variant, "cell_result_present": True,
+        })
+        return result
+    except Exception as exc:
+        atomic_write_json(out_dir / "cell_status.json", {
+            "status": "failed", "case_id": case["case_id"],
+            "variant": variant, "failure_class": type(exc).__name__,
+            "cell_result_present": (out_dir / "cell_result.json").exists(),
+        })
+        raise
+    finally:
+        atomic_write_jsonl(out_dir / "llm_calls.jsonl", list(system.llm.calls))
 
 
 async def main_async(args: argparse.Namespace) -> None:
@@ -131,11 +198,11 @@ async def main_async(args: argparse.Namespace) -> None:
     for case in registry["cases"]:
         for variant in case["cell_order"]:
             results.append(await run_cell(registry, case, variant, root / case["case_id"] / variant, cache))
-    (root / "probe_summary.json").write_text(json.dumps({
+    atomic_write_json(root / "probe_summary.json", {
         "probe_version": "v16_fixed_parent_generation_probe_v1", "registry_hash": registry["registry_content_hash"],
         "cell_count": len(results), "commit_count": 0, "validation_calls": sum(x["validation_calls"] for x in results),
         "test_calls": sum(x["test_calls"] for x in results), "cells": results,
-    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    })
 
 
 def main() -> None:

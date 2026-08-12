@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
@@ -49,6 +50,34 @@ def test_cell_path_must_be_fresh(tmp_path):
     cell.mkdir()
     with pytest.raises(FileExistsError, match="must be fresh"):
         module.require_fresh_cell_path(cell)
+
+
+def test_real_candidate_runtime_serializes_final_evaluation():
+    module = load("probe_runner_serialize", ROOT / "scripts" / "run_v16_fixed_parent_generation_probe.py")
+    from multi_dataset_diverse_rl.system import CandidateRuntime
+    from multi_dataset_diverse_rl.tcs import StudentPromptCandidate
+
+    @dataclass
+    class Evaluation:
+        label: str
+
+    candidate = CandidateRuntime(
+        student_candidate=StudentPromptCandidate(candidate_prompt="candidate"),
+        prompt="candidate", prompt_hash="hash", generation=1,
+        parent_prompt_hash="parent", final_evaluation=Evaluation("full"),
+        stage_a_evaluation=Evaluation("stage_a"),
+    )
+    payload = module.serialize_candidate(candidate)
+    assert payload["evaluation"] == {"label": "full"}
+    assert "stage_b_evaluation" not in vars(candidate)
+
+
+def test_atomic_cell_persistence_leaves_no_temporary_file(tmp_path):
+    module = load("probe_runner_atomic", ROOT / "scripts" / "run_v16_fixed_parent_generation_probe.py")
+    path = tmp_path / "cell_result.json"
+    module.atomic_write_json(path, {"status": "complete"})
+    assert json.loads(path.read_text(encoding="utf-8")) == {"status": "complete"}
+    assert list(tmp_path.glob("*.tmp")) == []
 
 
 def test_offline_preflight_reconstructs_all_cells_without_api():
