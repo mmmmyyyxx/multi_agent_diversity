@@ -40,7 +40,7 @@ def preflight(registry: dict, *, scratch: Path) -> dict:
         if "trigger_condition" not in m2e_request or "localized_behavior" not in m2e_request: errors.append(f"teacher:{case['case_id']}")
         parent = systems[M2E].agents[target].current_prompt
         plan = parse_teacher_repair_plan({
-            "trigger_condition": "When two interpretations remain semantically plausible",
+            "trigger_condition": "two interpretations remain semantically plausible",
             "localized_behavior": "Compare their decisive evidence before committing.",
         }, evolution_variant=M2E_SCOPED_BEHAVIORAL_PATCH)
         parsed = parse_student_candidates({"scoped_patches": [{
