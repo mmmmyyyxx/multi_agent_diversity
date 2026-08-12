@@ -36,6 +36,7 @@ MODEL = "qwen3-14b"
 THINKING = False
 AUTH_ENV = "M2F_COMPATIBILITY_REPAIR_PROBE_AUTHORIZED"
 STABLE_CAP = 2
+REPAIR_MAX_TOKENS = 3000
 
 REPAIR_SYSTEM_PROMPT = """You repair one already-targeted member prompt. Return strict JSON only with exactly one field: repaired_prompt. Do not quote, identify, or memorize examples. Do not add answer lookup rules, hashes, labels, or the immutable output contract."""
 REPAIR_INSTRUCTION = """The SOURCE CANDIDATE successfully corrected the assigned responsibility examples below, but introduced new failures relative to the parent prompt.

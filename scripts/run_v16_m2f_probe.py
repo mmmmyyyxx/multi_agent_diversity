@@ -23,7 +23,7 @@ def freeze_gate(reg,freeze):
 
 async def run_case(case,out,cache):
  system=evaluation_system(case,out_dir=out/"evaluation",cache_path=cache);target=int(case["target_agent_id"]);before=state_hash(system);calls_before=len(system.llm.calls)
- result=await system.llm.chat_result(MODEL,REPAIR_SYSTEM_PROMPT,build_repair_request(case),system.cfg.models.temperature,system.cfg.tcs.student_max_tokens,"optimizer","m2f_repair")
+ result=await system.llm.chat_result(MODEL,REPAIR_SYSTEM_PROMPT,build_repair_request(case),system.cfg.tcs.student_temperature,REPAIR_MAX_TOKENS,"optimizer","m2f_repair")
  repaired=parse_repair_output(result.text,case);prompt_hash=system.prompt_hash(repaired);runtime=CandidateRuntime(student_candidate=StudentPromptCandidate(candidate_prompt=repaired),prompt=repaired,prompt_hash=prompt_hash,generation=1,parent_prompt_hash=system.prompt_hash(case["parent_prompt"]))
  funnel=CandidateFunnel(requested_candidate_count=1,raw_candidate_count=1,schema_valid_count=1,non_parent_count=1,deduplicated_count=1)
  _,incumbent,rows=await system.evaluate_candidates(target,[runtime],set(case["assigned_question_hashes"]),funnel,int(case["source_update_index"]));row=rows[0]

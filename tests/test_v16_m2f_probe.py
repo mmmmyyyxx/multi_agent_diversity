@@ -7,6 +7,10 @@ def load(name,file):
  spec=importlib.util.spec_from_file_location(name,ROOT/file);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 support=load("m2f_support","scripts/m2f_probe_support.py")
 def test_frozen_source_identity(): assert len(support.SOURCE_HASHES)==len(set(support.SOURCE_HASHES))==7
+def test_repair_runtime_settings_are_frozen():
+    assert support.REPAIR_MAX_TOKENS == 3000
+    assert support.MODEL == "qwen3-14b"
+    assert support.THINKING is False
 def test_parse_single_repair_and_rejects_memorization():
  case={"source_candidate_prompt":"source","repair_evidence":[{"question":"This is a sufficiently long supplied example question body."}],"loss_evidence":[]}
  assert support.parse_repair_output('{"repaired_prompt":"revised general procedure"}',case)=="revised general procedure"
