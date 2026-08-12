@@ -1,0 +1,14 @@
+{
+  "gate": "PASS",
+  "blockers": [],
+  "expected_cell_count": 16,
+  "observed_cell_count": 16,
+  "commit_count": 0,
+  "parent_state_mutation_count": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "responsibility_membership_mismatch": 0,
+  "candidate_budget_violation": 0,
+  "terminal_infrastructure_failure": 0,
+  "invalidated_zero_success_call_attempt_count": 1
+}

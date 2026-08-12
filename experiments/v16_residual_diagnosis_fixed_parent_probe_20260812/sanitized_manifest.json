@@ -1,0 +1,9 @@
+{
+  "case_metrics.csv": "ea091468d0fb0e43c83097fb5a08819f5c920eb1e5c68ed70b568df5e6308183",
+  "critic_pipeline_metrics.csv": "7573d23041824cad595cdc06c5224e14b175dc23b625f80fdb1b5d33d2d672f2",
+  "edit_metrics.csv": "1f0a293df58cc8205f98aa254e04566eb39651b144c10baa4dbe88dca8b01b46",
+  "protocol_gate.json": "20a05df999ce9ceb08f5f324b21635d155173777cef032e9004d95804d806930",
+  "README.md": "fb998a6f09ab2602d3e4727db037b5d9f5d68e4cb0ce39b74799f5dfa090c9ce",
+  "source_freeze_sanitized.json": "9e780870248f42bc2e9d710cd13febb8439e80aa2c6445490283356f1cd6ded4",
+  "variant_metrics.csv": "2ebdb4084467c9cf3a481cd28128db9f9498b32df837b9979e871931ded94ca4"
+}

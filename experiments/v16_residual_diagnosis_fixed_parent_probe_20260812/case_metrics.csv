@@ -1,0 +1,17 @@
+case_id,variant,target_agent_id,assigned_residual_count,requested_candidates,valid_candidates,evaluated_candidates,feasible_candidates
+seed48_earliest_structural_parent_target0,m20_current_v15,0,3,2,2,2,2
+seed48_earliest_structural_parent_target0,m2a_residual_diagnosis,0,3,2,2,2,1
+seed48_earliest_structural_parent_target0,m2b_diagnosis_minimal_edit,0,3,0,0,0,0
+seed48_earliest_structural_parent_target0,m2c_diagnosis_minimal_edit_relevance_critic,0,3,0,0,0,0
+seed49_earliest_structural_parent_target1,m2a_residual_diagnosis,1,3,2,2,2,0
+seed49_earliest_structural_parent_target1,m2b_diagnosis_minimal_edit,1,3,2,2,2,2
+seed49_earliest_structural_parent_target1,m2c_diagnosis_minimal_edit_relevance_critic,1,3,2,2,2,1
+seed49_earliest_structural_parent_target1,m20_current_v15,1,3,0,0,0,0
+seed50_earliest_structural_parent_target3,m2b_diagnosis_minimal_edit,3,3,2,2,2,2
+seed50_earliest_structural_parent_target3,m2c_diagnosis_minimal_edit_relevance_critic,3,3,0,0,0,0
+seed50_earliest_structural_parent_target3,m20_current_v15,3,3,2,2,2,2
+seed50_earliest_structural_parent_target3,m2a_residual_diagnosis,3,3,2,2,2,0
+seed51_earliest_structural_parent_target2,m2c_diagnosis_minimal_edit_relevance_critic,2,3,0,0,0,0
+seed51_earliest_structural_parent_target2,m20_current_v15,2,3,2,2,2,1
+seed51_earliest_structural_parent_target2,m2a_residual_diagnosis,2,3,2,2,2,2
+seed51_earliest_structural_parent_target2,m2b_diagnosis_minimal_edit,2,3,2,2,2,1
