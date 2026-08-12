@@ -1,0 +1,20 @@
+{
+  "manifest_version": "v16_m2f_critical_exchange_manifest_v1",
+  "files": [
+    {
+      "file": "audit_summary.json",
+      "sha256": "f2203c5b6e9ddfc076975c1d4945f770116c40298fb469add813a44ef082e440",
+      "size_bytes": 1839
+    },
+    {
+      "file": "critical_exchange_pairs.csv",
+      "sha256": "aa9987cde69b693a1d84e6bff3ac6e9ef07451fa4eca3f4f77c03627b6071d88",
+      "size_bytes": 2767
+    },
+    {
+      "file": "README.md",
+      "sha256": "f04556ec458ecd85ac37fba5e4de76c2339fa84f917c8451e1841e9ba0ee2586",
+      "size_bytes": 1852
+    }
+  ]
+}
