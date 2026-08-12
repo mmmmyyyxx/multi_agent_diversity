@@ -12,6 +12,8 @@ from multi_dataset_diverse_rl.tcs import (
     M2A_RESIDUAL_DIAGNOSIS,
     M2B_DIAGNOSIS_MINIMAL_EDIT,
     M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+    M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION,
     TeacherRepairPlan,
     build_critic_request,
     build_student_request,
@@ -131,6 +133,47 @@ def test_minimal_edit_and_critic_isolation():
     assert "preservation_or_output_risk" not in critic_c
 
 
+def test_m2d_is_exact_raw_responsibility_minimal_edit_hybrid():
+    raw_plan = TeacherRepairPlan(
+        "premature commitment", "compare alternatives", "preserve valid rules"
+    )
+    assert build_teacher_request(
+        context(), evolution_variant=M20_CURRENT_V15
+    ) == build_teacher_request(
+        context(), evolution_variant=M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT
+    )
+    assert build_critic_request(
+        context(), raw_plan, evolution_variant=M20_CURRENT_V15
+    ) == build_critic_request(
+        context(), raw_plan,
+        evolution_variant=M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    )
+    common = dict(
+        parent_prompt="parent role", approved_plan=raw_plan,
+        answer_format="multiple_choice", candidate_count=2,
+        candidate_prompt_max_chars=3000,
+    )
+    m20 = build_student_request(**common, evolution_variant=M20_CURRENT_V15)
+    m2d = build_student_request(
+        **common, evolution_variant=M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT
+    )
+    diagnosis_plan = parse_teacher_repair_plan(
+        diagnosis_payload(), evolution_variant=M2B_DIAGNOSIS_MINIMAL_EDIT
+    )
+    m2b = build_student_request(
+        **{**common, "approved_plan": diagnosis_plan},
+        evolution_variant=M2B_DIAGNOSIS_MINIMAL_EDIT,
+    )
+    assert MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION.strip() not in m20
+    assert MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION in m2d
+    assert MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION in m2b
+    assert "diagnosis_primary_failure_mode" not in m2d
+    assert "relevance-focused" not in build_critic_request(
+        context(), raw_plan,
+        evolution_variant=M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    )
+
+
 def test_relevance_critic_schema_rejects_legacy_risk_reason():
     payload = {
         "failed_checks": ["preservation_or_output_risk"],
@@ -148,6 +191,7 @@ def test_relevance_critic_schema_rejects_legacy_risk_reason():
     ("m2a_residual_diagnosis", M2A_RESIDUAL_DIAGNOSIS),
     ("m2b_diagnosis_minimal_edit", M2B_DIAGNOSIS_MINIMAL_EDIT),
     ("m2c_diagnosis_minimal_edit_relevance_critic", M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC),
+    ("m2d_raw_responsibility_minimal_edit", M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT),
 ])
 def test_protocol_variants_hold_module1_and_common_safe(suffix, variant):
     cfg = Config.from_flat(

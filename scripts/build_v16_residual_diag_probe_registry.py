@@ -67,7 +67,13 @@ def load_questions(meta: dict[str, Any], state: list[dict[str, Any]]) -> list[di
     return result
 
 
-def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
+def build_case(
+    seed: int,
+    run_dir: Path,
+    case_index: int,
+    *,
+    eligible_parent_ordinal: int = 0,
+) -> dict[str, Any]:
     meta = read_json(run_dir / "run_meta.json")
     decisions = read_jsonl(run_dir / "candidate_decisions.jsonl")
     states = read_jsonl(run_dir / "peer_state_history.jsonl")
@@ -86,6 +92,7 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
     current_prompts = list(prompts)
     state_index = 0
     previous_outcomes: dict[int, dict[str, Any]] = {}
+    eligible_parent_count = 0
     for decision in sorted(decisions, key=lambda row: int(row["update_index"])):
         prompt_hashes = [hashlib.sha256(prompt.encode("utf-8")).hexdigest() for prompt in current_prompts]
         reconstructed_hash = hashlib.sha256(
@@ -108,14 +115,30 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
                 )
                 if target_wrong and peer_correct:
                     legal.append(question_hash)
-            if assigned and legal:
+            if assigned and legal and eligible_parent_count == eligible_parent_ordinal:
                 selected_case = (decision, branch, legal)
                 selected_prompts = list(current_prompts)
                 selected_state = active_state
                 selected_state_index = state_index
                 break
+            if assigned and legal:
+                break
         if selected_case:
             break
+        if any(
+            branch["assigned_question_hashes"]
+            and any(
+                not bool(by_hash[question_hash]["team_correctness"][int(branch["target_agent_id"])])
+                and any(
+                    bool(correct)
+                    for agent, correct in enumerate(by_hash[question_hash]["team_correctness"])
+                    if agent != int(branch["target_agent_id"])
+                )
+                for question_hash in branch["assigned_question_hashes"]
+            )
+            for branch in decision["branches"]
+        ):
+            eligible_parent_count += 1
         winner_target = decision.get("target_agent_id")
         winner_hash = str(decision.get("accepted_prompt_hash") or "")
         for branch in decision["branches"]:
@@ -153,11 +176,17 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
             if state_index >= len(state_blocks):
                 raise ValueError(f"Seed{seed}: accepted transition lacks persisted state")
     if selected_case is None:
-        raise ValueError(f"Seed{seed}: no reconstructible structural case")
+        raise ValueError(
+            f"Seed{seed}: fewer than {eligible_parent_ordinal + 1} "
+            "distinct reconstructible structural parents"
+        )
     decision, branch, legal = selected_case
     assert selected_prompts is not None and selected_state is not None
     return {
-        "case_id": f"seed{seed}_earliest_structural_parent_target{branch['target_agent_id']}",
+        "case_id": (
+            f"seed{seed}_structural_parent{eligible_parent_ordinal + 1}_"
+            f"target{branch['target_agent_id']}"
+        ),
         "source_seed": seed,
         "selection_rule": "earliest_reconstructible_parent_then_target_rank_agent_id_v1",
         "source_runtime_commit": str(meta["run_identity"]["git_commit"]),

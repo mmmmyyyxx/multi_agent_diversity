@@ -164,6 +164,7 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_m2a_residual_diagnosis",
     "experimental_v16_m2b_diagnosis_minimal_edit",
     "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic",
+    "experimental_v16_m2d_raw_responsibility_minimal_edit",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -182,6 +183,9 @@ EXPERIMENTAL_V16_EVOLUTION_VARIANTS = {
     "experimental_v16_m2b_diagnosis_minimal_edit": "m2b_diagnosis_minimal_edit",
     "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic": (
         "m2c_diagnosis_minimal_edit_relevance_critic"
+    ),
+    "experimental_v16_m2d_raw_responsibility_minimal_edit": (
+        "m2d_raw_responsibility_minimal_edit"
     ),
 }
 

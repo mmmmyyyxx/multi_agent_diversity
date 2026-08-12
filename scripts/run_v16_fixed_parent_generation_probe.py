@@ -30,6 +30,7 @@ SETTING = {
     "m2a_residual_diagnosis": "experimental_v16_m2a_residual_diagnosis",
     "m2b_diagnosis_minimal_edit": "experimental_v16_m2b_diagnosis_minimal_edit",
     "m2c_diagnosis_minimal_edit_relevance_critic": "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic",
+    "m2d_raw_responsibility_minimal_edit": "experimental_v16_m2d_raw_responsibility_minimal_edit",
 }
 
 
@@ -146,11 +147,11 @@ def state_hash(system: PromptEnsembleOptimizationSystem) -> str:
 async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str, out_dir: Path, cache: Path) -> dict[str, Any]:
     require_fresh_cell_path(out_dir)
     flat = dict(case["base_config"])
-    is_residual_diagnosis_probe = variant.startswith("m2")
-    flat["module2_evolution_variant"] = variant if is_residual_diagnosis_probe else "m20_current_v15"
+    is_evolution_variant = variant.startswith("m2")
+    flat["module2_evolution_variant"] = variant if is_evolution_variant else "m20_current_v15"
     flat.update({
         "experiment_setting": SETTING[variant],
-        "module2_context_variant": "c0_current_v15" if is_residual_diagnosis_probe else variant,
+        "module2_context_variant": "c0_current_v15" if is_evolution_variant else variant,
         "initialization_mode": "provided_prompt_set",
         "provided_prompts_json": json.dumps(case["parent_prompts"]),
         "out_dir": str(out_dir), "shared_solver_cache_path": str(cache),
@@ -251,13 +252,18 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
 
 
 async def main_async(args: argparse.Namespace) -> None:
+    registry = json.loads(args.registry.read_text(encoding="utf-8"))
+    is_m2d_probe = registry.get("registry_version") == "v16_m2d_fixed_parent_registry_v1"
     authorized = (
-        os.environ.get("M2_RESIDUAL_DIAG_PROBE_AUTHORIZED") == "1"
-        or os.environ.get("V16_FIXED_PARENT_PROBE_AUTHORIZED") == "1"
+        os.environ.get("M2D_FIXED_PARENT_PROBE_AUTHORIZED") == "1"
+        if is_m2d_probe
+        else (
+            os.environ.get("M2_RESIDUAL_DIAG_PROBE_AUTHORIZED") == "1"
+            or os.environ.get("V16_FIXED_PARENT_PROBE_AUTHORIZED") == "1"
+        )
     )
     if not authorized:
         raise SystemExit("API execution blocked: explicit fixed-parent probe authorization is required")
-    registry = json.loads(args.registry.read_text(encoding="utf-8"))
     root = args.out_root.resolve()
     if ROOT.resolve() not in root.parents or root.exists():
         raise SystemExit("out_root must be a fresh project-local directory")

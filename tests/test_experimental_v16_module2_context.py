@@ -159,7 +159,9 @@ def test_experimental_settings_are_identity_distinct_and_canonical_matrix_unchan
         assert protocol.candidates_per_target_branch == 2
         assert protocol.candidate_acceptance_policy == "fixed_peer_monotone_target_or_vote"
     assert variants[:3] == [C0_CURRENT_V15, C2_BOUNDARY_PLUS_PRESERVATION, C3_COALITION_AWARE_PRESERVATION]
-    assert variants[3:] == [C0_CURRENT_V15] * 4
+    assert variants[3:] == [C0_CURRENT_V15] * (
+        len(EXPERIMENTAL_V16_MODULE2_SETTINGS) - 3
+    )
 
 
 def test_setting_variant_mismatch_is_rejected_and_memory_defaults_off(tmp_path):

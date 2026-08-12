@@ -162,6 +162,8 @@ from .tcs import (
     contains_supplied_example_text,
     context_payload,
     limit_diagnosis_context,
+    module2_uses_minimal_edit,
+    module2_uses_residual_diagnosis,
     parse_critic_decision,
     parse_student_candidates,
     parse_teacher_repair_plan,
@@ -2661,13 +2663,13 @@ class PromptEnsembleOptimizationSystem:
                 teacher_request.encode("utf-8")
             ).hexdigest(),
             "diagnosis_schema_enabled": (
-                self.protocol.module2_evolution_variant
-                != "m20_current_v15"
+                module2_uses_residual_diagnosis(
+                    self.protocol.module2_evolution_variant
+                )
             ),
-            "minimal_edit_enabled": self.protocol.module2_evolution_variant in {
-                "m2b_diagnosis_minimal_edit",
-                "m2c_diagnosis_minimal_edit_relevance_critic",
-            },
+            "minimal_edit_enabled": module2_uses_minimal_edit(
+                self.protocol.module2_evolution_variant
+            ),
             "relevance_critic_enabled": (
                 self.protocol.module2_evolution_variant
                 == "m2c_diagnosis_minimal_edit_relevance_critic"

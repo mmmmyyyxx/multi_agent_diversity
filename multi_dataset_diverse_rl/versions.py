@@ -11,7 +11,7 @@ DUAL_TARGET_SEARCH_VERSION = "dual_target_single_commit_search_v1"
 TCS_CONTEXT_VERSION = "compact_single_lane_responsibility_context_v1"
 CHECKPOINT_VERSION = 25
 EXPERIMENTAL_MODULE2_VERSION = (
-    "v16_residual_diagnosis_minimal_edit_experimental_v1"
+    "v16_residual_diagnosis_minimal_edit_experimental_v2"
 )
 CANDIDATE_ACCEPTANCE_VERSION = "fixed_peer_monotone_target_or_vote_v2"
 CANDIDATE_SELECTION_VERSION = "common_safe_final_update_v1"

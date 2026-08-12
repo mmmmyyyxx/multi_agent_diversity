@@ -61,12 +61,40 @@ M2B_DIAGNOSIS_MINIMAL_EDIT = "m2b_diagnosis_minimal_edit"
 M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC = (
     "m2c_diagnosis_minimal_edit_relevance_critic"
 )
+M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT = (
+    "m2d_raw_responsibility_minimal_edit"
+)
 MODULE2_EVOLUTION_VARIANTS = (
     M20_CURRENT_V15,
     M2A_RESIDUAL_DIAGNOSIS,
     M2B_DIAGNOSIS_MINIMAL_EDIT,
     M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+    M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
 )
+
+MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION = (
+    " Make only the smallest role-consistent change required by the residual "
+    "diagnosis and edit plan. Preserve the parent member's existing role and "
+    "general strategy. Prefer replacing or merging one relevant rule; do not "
+    "perform a complete rewrite, add unrelated frameworks, change role identity, "
+    "or memorize examples. Minimal edit is guidance, not an output-length gate."
+)
+
+
+def module2_uses_residual_diagnosis(evolution_variant: str) -> bool:
+    return evolution_variant in {
+        M2A_RESIDUAL_DIAGNOSIS,
+        M2B_DIAGNOSIS_MINIMAL_EDIT,
+        M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+    }
+
+
+def module2_uses_minimal_edit(evolution_variant: str) -> bool:
+    return evolution_variant in {
+        M2B_DIAGNOSIS_MINIMAL_EDIT,
+        M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+        M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    }
 
 
 @dataclass(frozen=True)
@@ -689,7 +717,7 @@ def build_teacher_request(
         "preservation_rule": "concrete rule protecting existing correct behavior",
     }
     diagnosis_instruction = ""
-    if evolution_variant != M20_CURRENT_V15:
+    if module2_uses_residual_diagnosis(evolution_variant):
         schema.update({
             "diagnosis_primary_failure_mode": "one compact behavioral failure mode",
             "diagnosis_evidence_patterns": ["at most two abstract evidence patterns"],
@@ -778,7 +806,7 @@ def build_teacher_revision_request(
     diagnosis_revision = (
         "Return all eight required fields, including the complete compact residual "
         "diagnosis and edit plan."
-        if evolution_variant != M20_CURRENT_V15
+        if module2_uses_residual_diagnosis(evolution_variant)
         else "Return all three original fields, not a patch or commentary."
     )
     return (
@@ -874,15 +902,8 @@ def build_student_request(
         if single_lane else ""
     )
     minimal_instruction = (
-        " Make only the smallest role-consistent change required by the residual "
-        "diagnosis and edit plan. Preserve the parent member's existing role and "
-        "general strategy. Prefer replacing or merging one relevant rule; do not "
-        "perform a complete rewrite, add unrelated frameworks, change role identity, "
-        "or memorize examples. Minimal edit is guidance, not an output-length gate."
-        if evolution_variant in {
-            M2B_DIAGNOSIS_MINIMAL_EDIT,
-            M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
-        } else ""
+        MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION
+        if module2_uses_minimal_edit(evolution_variant) else ""
     )
     return (
         "Implement the approved repair plan as complete replacement decision procedures. "
@@ -962,7 +983,7 @@ def build_teacher_regeneration_request(
             (
                 "Return failure_pattern, repair_rule, preservation_rule, and all "
                 "five residual-diagnosis/edit-plan fields."
-                if evolution_variant != M20_CURRENT_V15
+                if module2_uses_residual_diagnosis(evolution_variant)
                 else "Return failure_pattern, repair_rule, and preservation_rule."
             ),
             "Use the same bounded diagnosis context.",
@@ -985,7 +1006,11 @@ def parse_teacher_repair_plan(
         "diagnosis_peer_contrast", "diagnosis_desired_behavior_changes",
         "edit_plan",
     }
-    expected = base if evolution_variant == M20_CURRENT_V15 else base | diagnosis
+    expected = (
+        base | diagnosis
+        if module2_uses_residual_diagnosis(evolution_variant)
+        else base
+    )
     if set(payload) != expected:
         raise ValueError("teacher response must contain exactly three repair-plan fields")
     values: dict[str, Any] = {}
@@ -997,7 +1022,7 @@ def parse_teacher_repair_plan(
         if len(value) > field_max_chars:
             raise ValueError(f"teacher field {field} exceeds character limit")
         values[field] = value
-    if evolution_variant != M20_CURRENT_V15:
+    if module2_uses_residual_diagnosis(evolution_variant):
         for field in ("diagnosis_primary_failure_mode", "diagnosis_peer_contrast"):
             value = payload[field]
             if not isinstance(value, str) or not value.strip() or len(value.strip()) > field_max_chars:
