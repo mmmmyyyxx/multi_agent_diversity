@@ -19,6 +19,7 @@ from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.evaluation.prompt_question import PromptAnswer
 from multi_dataset_diverse_rl.responsibility import RepairLane
 from multi_dataset_diverse_rl.system import CandidateFunnel, PromptEnsembleOptimizationSystem
+from multi_dataset_diverse_rl.tcs import PreviousUpdateOutcome
 
 
 SETTING = {
@@ -172,6 +173,10 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
         int(agent): set(hashes) for agent, hashes in case["stable_correct_question_hashes_by_agent"].items()
     }
     system.team_state_version = int(case["team_state_version"])
+    for agent, outcome in case.get("previous_update_outcome_by_agent", {}).items():
+        system.previous_update_outcomes[int(agent)] = PreviousUpdateOutcome(
+            **{**outcome, "rejection_reasons": tuple(outcome["rejection_reasons"])}
+        )
     target = int(case["target_agent_id"])
     system.cached_active_lane_by_agent[target] = RepairLane(str(case["active_lane"]))
     assigned = set(map(str, case["assigned_question_hashes"]))

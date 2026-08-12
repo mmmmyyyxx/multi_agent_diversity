@@ -85,6 +85,7 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
     selected_state_index = -1
     current_prompts = list(prompts)
     state_index = 0
+    previous_outcomes: dict[int, dict[str, Any]] = {}
     for decision in sorted(decisions, key=lambda row: int(row["update_index"])):
         prompt_hashes = [hashlib.sha256(prompt.encode("utf-8")).hexdigest() for prompt in current_prompts]
         reconstructed_hash = hashlib.sha256(
@@ -115,6 +116,32 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
                 break
         if selected_case:
             break
+        winner_target = decision.get("target_agent_id")
+        winner_hash = str(decision.get("accepted_prompt_hash") or "")
+        for branch in decision["branches"]:
+            agent = int(branch["target_agent_id"])
+            evaluated = int(branch["funnel"].get("stage_a_evaluated", 0)) > 0
+            branch_winner = str(branch.get("branch_winner_hash") or "")
+            previous_outcomes[agent] = {
+                "attempted": True,
+                "empirical_evaluation_completed": evaluated,
+                "accepted": bool(winner_hash and agent == winner_target),
+                "target_correct_delta": 0,
+                "vote_correct_delta": 0,
+                "minimum_member_gain_delta": 0,
+                "total_member_gain_delta": 0,
+                "assigned_repair_count": 0,
+                "rejection_reasons": (
+                    ["cross_branch_competition_loser"]
+                    if branch_winner and not (winner_hash and agent == winner_target)
+                    else sorted({
+                        reason
+                        for row in decision["candidates"]
+                        if int(row["target_agent_id"]) == agent
+                        for reason in (row.get("constraint") or {}).get("rejection_reasons", [])
+                    })
+                ),
+            }
         accepted_hash = str(decision.get("accepted_prompt_hash") or "")
         if accepted_hash:
             accepted = next(
@@ -156,6 +183,7 @@ def build_case(seed: int, run_dir: Path, case_index: int) -> dict[str, Any]:
             ) for agent in range(5)
         },
         "accepted_state_count": selected_state_index + 1,
+        "previous_update_outcome_by_agent": previous_outcomes,
     }
 
 
