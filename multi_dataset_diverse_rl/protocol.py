@@ -123,6 +123,7 @@ class ExperimentProtocol:
     tie_policy: str
     candidate_budget_contract: CandidateBudgetContract
     module2_context_variant: str = C0_CURRENT_V15
+    module2_evolution_variant: str = "m20_current_v15"
     legacy_protocol: bool = False
     auxiliary_protocol: bool = False
 
@@ -159,6 +160,10 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_c0_current_v15",
     "experimental_v16_c2_boundary_plus_preservation",
     "experimental_v16_c3_coalition_aware_preservation",
+    "experimental_v16_m20_current_v15",
+    "experimental_v16_m2a_residual_diagnosis",
+    "experimental_v16_m2b_diagnosis_minimal_edit",
+    "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -168,6 +173,15 @@ EXPERIMENTAL_V16_MODULE2_VARIANTS = {
     ),
     "experimental_v16_c3_coalition_aware_preservation": (
         C3_COALITION_AWARE_PRESERVATION
+    ),
+}
+
+EXPERIMENTAL_V16_EVOLUTION_VARIANTS = {
+    "experimental_v16_m20_current_v15": "m20_current_v15",
+    "experimental_v16_m2a_residual_diagnosis": "m2a_residual_diagnosis",
+    "experimental_v16_m2b_diagnosis_minimal_edit": "m2b_diagnosis_minimal_edit",
+    "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic": (
+        "m2c_diagnosis_minimal_edit_relevance_critic"
     ),
 }
 
@@ -689,7 +703,14 @@ def experiment_protocol(
             tie_policy=str(tie_policy),
             candidate_budget_contract=candidate_budget_contract,
             module2_context_variant=(
-                EXPERIMENTAL_V16_MODULE2_VARIANTS[canonical_name]
+                EXPERIMENTAL_V16_MODULE2_VARIANTS.get(
+                    canonical_name, C0_CURRENT_V15
+                )
+            ),
+            module2_evolution_variant=(
+                EXPERIMENTAL_V16_EVOLUTION_VARIANTS.get(
+                    canonical_name, "m20_current_v15"
+                )
             ),
             legacy_protocol=False,
             auxiliary_protocol=False,

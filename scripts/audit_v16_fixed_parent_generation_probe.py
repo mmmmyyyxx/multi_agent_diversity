@@ -31,10 +31,17 @@ def main() -> None:
         terminal = str(row.get("funnel", {}).get("terminal_failure_class", ""))
         if terminal in {"transport_failure", "persistence_failure"}:
             blockers.append(f"infrastructure_failure:{row.get('case_id')}:{row.get('variant')}:{terminal}")
+        expected_case = next(case for case in registry["cases"] if case["case_id"] == row.get("case_id"))
+        if (
+            "assigned_question_hashes" in expected_case
+            and sorted(row.get("assigned_question_hashes", []))
+            != sorted(expected_case["assigned_question_hashes"])
+        ):
+            blockers.append(f"responsibility_membership:{row.get('case_id')}:{row.get('variant')}")
     report = {
         "audit_version": "v16_fixed_parent_generation_probe_audit_v1",
         "gate": "PASS" if not blockers else "FAIL", "blockers": blockers,
-        "expected_cell_count": 9, "observed_cell_count": len(observed),
+        "expected_cell_count": len(expected), "observed_cell_count": len(observed),
         "commit_count": sum(int(bool(row.get("commit_performed"))) for row in summary.get("cells", [])),
         "validation_calls": summary.get("validation_calls"), "test_calls": summary.get("test_calls"),
         "raw_artifacts_modified": False,

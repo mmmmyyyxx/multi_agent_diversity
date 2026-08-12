@@ -10,6 +10,7 @@ from multi_dataset_diverse_rl.protocol import (
     MAIN_ABLATION_SETTINGS,
     EXPERIMENTAL_V16_MODULE2_SETTINGS,
     EXPERIMENTAL_V16_MODULE2_VARIANTS,
+    EXPERIMENTAL_V16_EVOLUTION_VARIANTS,
     canonical_experiment_setting,
 )
 
@@ -40,7 +41,14 @@ EXPERIMENTAL_V16_EXPERIMENT_SETTINGS = [
         name,
         {
             **COMMON,
-            "module2_context_variant": EXPERIMENTAL_V16_MODULE2_VARIANTS[name],
+            "module2_context_variant": EXPERIMENTAL_V16_MODULE2_VARIANTS.get(
+                name, "c0_current_v15"
+            ),
+            "module2_evolution_variant": (
+                EXPERIMENTAL_V16_EVOLUTION_VARIANTS.get(
+                    name, "m20_current_v15"
+                )
+            ),
         },
     )
     for name in EXPERIMENTAL_V16_MODULE2_SETTINGS

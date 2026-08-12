@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import difflib
 from copy import deepcopy
 import hashlib
 import json
@@ -402,6 +403,13 @@ class PromptEnsembleOptimizationSystem:
                 "module2_context_variant does not match experiment setting"
             )
         if (
+            cfg.tcs.module2_evolution_variant
+            != self.protocol.module2_evolution_variant
+        ):
+            raise ValueError(
+                "module2_evolution_variant does not match experiment setting"
+            )
+        if (
             not self.protocol.legacy_protocol
             and not self.protocol.auxiliary_protocol
             and (
@@ -460,6 +468,7 @@ class PromptEnsembleOptimizationSystem:
         self.selected_target_ids: list[int] = []
         self.tcs_context_history: list[dict[str, Any]] = []
         self.module2_context_diagnostics: list[dict[str, Any]] = []
+        self.residual_diagnosis_branch_diagnostics: list[dict[str, Any]] = []
         self._module2_context_sets: dict[
             tuple[int, int], Module2ContextSets
         ] = {}
@@ -1749,6 +1758,7 @@ class PromptEnsembleOptimizationSystem:
                 self.cfg.tcs.total_candidate_prompt_max_chars
             ),
             single_lane=isinstance(context, SingleLaneDiagnosisContext),
+            evolution_variant=self.protocol.module2_evolution_variant,
         )
         parent_prompt_hash = self.prompt_hash(parent_prompt)
         repair_plan_hash = teacher_repair_plan_hash(repair_plan)
@@ -2090,6 +2100,7 @@ class PromptEnsembleOptimizationSystem:
                 user_request = build_teacher_regeneration_request(
                     previous_plan_hash=previous_approved_hash,
                     student_rejection_classes=student_rejection_classes,
+                    evolution_variant=self.protocol.module2_evolution_variant,
                 )
             else:
                 if prior_plan is None or prior_critic is None:
@@ -2103,6 +2114,7 @@ class PromptEnsembleOptimizationSystem:
                     field_max_chars=self.cfg.tcs.teacher_field_max_chars,
                     total_max_chars=self.cfg.tcs.teacher_total_max_chars,
                     feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                    evolution_variant=self.protocol.module2_evolution_variant,
                 )
             repair_plan = None
             teacher_request_hash = _request_hash(
@@ -2165,6 +2177,9 @@ class PromptEnsembleOptimizationSystem:
                             ),
                             total_max_chars=(
                                 self.cfg.tcs.teacher_total_max_chars
+                            ),
+                            evolution_variant=(
+                                self.protocol.module2_evolution_variant
                             ),
                         )
                         if contains_supplied_example_text(
@@ -2248,6 +2263,7 @@ class PromptEnsembleOptimizationSystem:
                 context,
                 repair_plan,
                 feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                evolution_variant=self.protocol.module2_evolution_variant,
             )
             critic_decision = None
             critic_request_hash = _request_hash(
@@ -2302,6 +2318,9 @@ class PromptEnsembleOptimizationSystem:
                             },
                             feedback_max_chars=(
                                 self.cfg.tcs.critic_feedback_max_chars
+                            ),
+                            evolution_variant=(
+                                self.protocol.module2_evolution_variant
                             ),
                         )
                         if contains_supplied_example_text(
@@ -2594,6 +2613,9 @@ class PromptEnsembleOptimizationSystem:
             ),
             "diagnosis_aggregation_version": DIAGNOSIS_AGGREGATION_VERSION,
             "module2_context_variant": self.protocol.module2_context_variant,
+            "module2_evolution_variant": (
+                self.protocol.module2_evolution_variant
+            ),
             "selected_context_pattern_question_hashes": (
                 {
                     "repair": [row.question_hash for row in context.repair_cases],
@@ -2621,7 +2643,36 @@ class PromptEnsembleOptimizationSystem:
             context,
             field_max_chars=self.cfg.tcs.teacher_field_max_chars,
             total_max_chars=self.cfg.tcs.teacher_total_max_chars,
+            evolution_variant=self.protocol.module2_evolution_variant,
         )
+        responsibility_hashes = sorted(assigned_hashes)
+        self.residual_diagnosis_branch_diagnostics.append({
+            "artifact_schema_version": "residual_diagnosis_branch_v1",
+            "update_index": int(update_index),
+            "parent_team_hash": self.team_prompt_state_hash(),
+            "target_agent_id": int(target_agent_id),
+            "branch_id": str(target_agent_id),
+            "module2_variant": self.protocol.module2_evolution_variant,
+            "responsibility_question_hashes": responsibility_hashes,
+            "responsibility_evidence_hash": hashlib.sha256(
+                json.dumps(responsibility_hashes).encode("utf-8")
+            ).hexdigest(),
+            "teacher_input_hash": hashlib.sha256(
+                teacher_request.encode("utf-8")
+            ).hexdigest(),
+            "diagnosis_schema_enabled": (
+                self.protocol.module2_evolution_variant
+                != "m20_current_v15"
+            ),
+            "minimal_edit_enabled": self.protocol.module2_evolution_variant in {
+                "m2b_diagnosis_minimal_edit",
+                "m2c_diagnosis_minimal_edit_relevance_critic",
+            },
+            "relevance_critic_enabled": (
+                self.protocol.module2_evolution_variant
+                == "m2c_diagnosis_minimal_edit_relevance_critic"
+            ),
+        })
         repair_plan: TeacherRepairPlan | None = None
         critic_decision: CriticDecision | None = None
         context_hash = hashlib.sha256(context_serialized.encode("utf-8")).hexdigest()
@@ -2644,6 +2695,7 @@ class PromptEnsembleOptimizationSystem:
                     field_max_chars=self.cfg.tcs.teacher_field_max_chars,
                     total_max_chars=self.cfg.tcs.teacher_total_max_chars,
                     feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                    evolution_variant=self.protocol.module2_evolution_variant,
                 )
             repair_plan = None
             teacher_request_hash = _request_hash(teacher_request, user_request)
@@ -2706,6 +2758,9 @@ class PromptEnsembleOptimizationSystem:
                             parsed_teacher,
                             field_max_chars=self.cfg.tcs.teacher_field_max_chars,
                             total_max_chars=self.cfg.tcs.teacher_total_max_chars,
+                            evolution_variant=(
+                                self.protocol.module2_evolution_variant
+                            ),
                         )
                         if contains_supplied_example_text(
                             json.dumps(asdict(repair_plan), ensure_ascii=False), context,
@@ -2777,6 +2832,7 @@ class PromptEnsembleOptimizationSystem:
                 context,
                 repair_plan,
                 feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                evolution_variant=self.protocol.module2_evolution_variant,
             )
             critic_decision = None
             critic_request_hash = _request_hash(critic_request, "Audit the repair plan.")
@@ -2840,6 +2896,9 @@ class PromptEnsembleOptimizationSystem:
                                 }
                             ),
                             feedback_max_chars=self.cfg.tcs.critic_feedback_max_chars,
+                            evolution_variant=(
+                                self.protocol.module2_evolution_variant
+                            ),
                         )
                         if contains_supplied_example_text(
                             json.dumps(asdict(critic_decision), ensure_ascii=False),
@@ -3508,11 +3567,20 @@ class PromptEnsembleOptimizationSystem:
         )
         result: dict[str, Any] = {
             "context_variant": self.protocol.module2_context_variant,
+            "module2_evolution_variant": (
+                self.protocol.module2_evolution_variant
+            ),
             "candidate_geometry": geometry,
             "target_gain": int(target_gain),
             "vote_gain_count": int(evaluation.marginal.vote_gain_count),
             "vote_loss_count": int(evaluation.marginal.vote_loss_count),
             "vote_net_gain": int(vote_net),
+            "repair_gain": int(
+                evaluation.marginal.assigned_residual_repair_count
+            ),
+            "responsibility_residual_gain_count": int(
+                evaluation.marginal.assigned_residual_repair_count
+            ),
             "repair_set_gain_count": None,
             "repair_distance_reduction_count": None,
             "R1_repair_count": None,
@@ -3521,6 +3589,41 @@ class PromptEnsembleOptimizationSystem:
             "P2_loss_count": None,
             "P3_loss_count": None,
         }
+        parent_prompt = self.agents[target_agent_id].current_prompt
+        candidate_prompt = evaluation.prompt
+        parent_lines = parent_prompt.splitlines()
+        candidate_lines = candidate_prompt.splitlines()
+        matcher = difflib.SequenceMatcher(
+            None, parent_lines, candidate_lines, autojunk=False
+        )
+        added = removed = changed = 0
+        for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+            if tag == "insert":
+                added += j2 - j1
+            elif tag == "delete":
+                removed += i2 - i1
+            elif tag == "replace":
+                changed += max(i2 - i1, j2 - j1)
+        char_matcher = difflib.SequenceMatcher(
+            None, parent_prompt, candidate_prompt, autojunk=False
+        )
+        edit_chars = sum(
+            max(i2 - i1, j2 - j1)
+            for tag, i1, i2, j1, j2 in char_matcher.get_opcodes()
+            if tag != "equal"
+        )
+        result.update({
+            "parent_prompt_length": len(parent_prompt),
+            "candidate_prompt_length": len(candidate_prompt),
+            "edit_char_count": edit_chars,
+            "edit_token_proxy_count": len(
+                set(parent_prompt.split()) ^ set(candidate_prompt.split())
+            ),
+            "edit_ratio": edit_chars / max(1, len(parent_prompt)),
+            "added_line_count": added,
+            "removed_line_count": removed,
+            "changed_line_count": changed,
+        })
         sets = self._module2_context_sets.get(
             (int(update_index), int(target_agent_id))
         )
@@ -5275,6 +5378,9 @@ class PromptEnsembleOptimizationSystem:
             "method_version": METHOD_VERSION,
             "experimental_module2_version": EXPERIMENTAL_MODULE2_VERSION,
             "module2_context_variant": self.protocol.module2_context_variant,
+            "module2_evolution_variant": (
+                self.protocol.module2_evolution_variant
+            ),
             "experiment_protocol": {
                 **asdict(self.protocol),
                 "candidate_selection_policy": (
@@ -5601,6 +5707,10 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl(
             "experimental_module2_context_diagnostics.jsonl",
             self.module2_context_diagnostics,
+        )
+        self.artifacts.write_jsonl(
+            "residual_diagnosis_branch_diagnostics.jsonl",
+            self.residual_diagnosis_branch_diagnostics,
         )
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl(

@@ -118,6 +118,7 @@ def build_checkpoint(
         "candidate_protocol_filter_version": CANDIDATE_PROTOCOL_FILTER_VERSION,
         "canonical_experiment_setting": system.protocol.name,
         "module2_context_variant": system.protocol.module2_context_variant,
+        "module2_evolution_variant": system.protocol.module2_evolution_variant,
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
@@ -432,6 +433,10 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         system.protocol.module2_context_variant
     ):
         raise ValueError("Checkpoint Module2 context variant is incompatible")
+    if str(payload.get("module2_evolution_variant", "m20_current_v15")) != (
+        system.protocol.module2_evolution_variant
+    ):
+        raise ValueError("Checkpoint Module2 evolution variant is incompatible")
     expected_acceptance = system.protocol.candidate_acceptance_policy
     expected_ranking = system.protocol.candidate_ranking_policy
     if payload.get("module_vector") != system.protocol.module_vector:

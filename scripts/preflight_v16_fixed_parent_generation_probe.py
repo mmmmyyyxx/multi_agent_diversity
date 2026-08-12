@@ -23,6 +23,7 @@ def preflight(registry: dict) -> dict:
         memberships = {}
         for variant in registry["variants"]:
             flat = dict(registry["base_config"])
+            flat.setdefault("module2_evolution_variant", "m20_current_v15")
             flat.update({
                 "experiment_setting": SETTING[variant], "module2_context_variant": variant,
                 "initialization_mode": "provided_prompt_set",

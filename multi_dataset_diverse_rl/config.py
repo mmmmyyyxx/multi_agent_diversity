@@ -60,6 +60,7 @@ class TrainingConfig:
 class TCSConfig:
     proposal_memory_mode: str = "off"
     module2_context_variant: str = "c0_current_v15"
+    module2_evolution_variant: str = "m20_current_v15"
     teacher_critic_max_rounds: int = 2
     teacher_json_max_retries: int = 1
     critic_json_max_retries: int = 1

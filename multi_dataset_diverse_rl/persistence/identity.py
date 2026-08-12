@@ -150,6 +150,7 @@ def config_fingerprint(cfg: Config) -> str:
     values["candidate_ranking_policy"] = protocol.candidate_ranking_policy
     values["stage_a_policy"] = protocol.stage_a_policy
     values["module2_context_variant"] = protocol.module2_context_variant
+    values["module2_evolution_variant"] = protocol.module2_evolution_variant
     values["candidate_budget_contract"] = asdict(
         protocol.candidate_budget_contract
     )
@@ -169,6 +170,7 @@ def config_fingerprint(cfg: Config) -> str:
         "experiment_matrix": EXPERIMENT_MATRIX_VERSION,
         "experimental_module2": EXPERIMENTAL_MODULE2_VERSION,
         "module2_context_variant": protocol.module2_context_variant,
+        "module2_evolution_variant": protocol.module2_evolution_variant,
         "protocol_resolution": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy": COMMON_UPDATE_POLICY_VERSION,
         "responsibility": RESPONSIBILITY_VERSION,

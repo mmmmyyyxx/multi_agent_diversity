@@ -46,6 +46,27 @@ CRITIC_FAILED_CHECKS = (
     "shortcut_or_copying",
     "preservation_or_output_risk",
 )
+RELEVANCE_CRITIC_FAILED_CHECKS = (
+    "ungrounded_diagnosis",
+    "generic_not_member_specific",
+    "edit_not_responsibility_aligned",
+    "example_memorization",
+    "unnecessary_broad_rewrite",
+    "no_actionable_change",
+    "schema_or_contract_invalid",
+)
+M20_CURRENT_V15 = "m20_current_v15"
+M2A_RESIDUAL_DIAGNOSIS = "m2a_residual_diagnosis"
+M2B_DIAGNOSIS_MINIMAL_EDIT = "m2b_diagnosis_minimal_edit"
+M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC = (
+    "m2c_diagnosis_minimal_edit_relevance_critic"
+)
+MODULE2_EVOLUTION_VARIANTS = (
+    M20_CURRENT_V15,
+    M2A_RESIDUAL_DIAGNOSIS,
+    M2B_DIAGNOSIS_MINIMAL_EDIT,
+    M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+)
 
 
 @dataclass(frozen=True)
@@ -172,6 +193,11 @@ class TeacherRepairPlan:
     failure_pattern: str
     repair_rule: str
     preservation_rule: str
+    diagnosis_primary_failure_mode: str = ""
+    diagnosis_evidence_patterns: tuple[str, ...] = ()
+    diagnosis_peer_contrast: str = ""
+    diagnosis_desired_behavior_changes: tuple[str, ...] = ()
+    edit_plan: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -184,12 +210,28 @@ class CriticDecision:
 
 def teacher_repair_plan_hash(plan: TeacherRepairPlan) -> str:
     payload = json.dumps(
-        asdict(plan),
+        teacher_repair_plan_payload(plan),
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
     )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def teacher_repair_plan_payload(plan: TeacherRepairPlan) -> dict[str, Any]:
+    """Serialize a plan without changing the exact legacy M2-0 wire payload."""
+    payload = asdict(plan)
+    diagnosis_fields = (
+        "diagnosis_primary_failure_mode",
+        "diagnosis_evidence_patterns",
+        "diagnosis_peer_contrast",
+        "diagnosis_desired_behavior_changes",
+        "edit_plan",
+    )
+    if not any(payload[field] for field in diagnosis_fields):
+        for field in diagnosis_fields:
+            payload.pop(field)
+    return payload
 
 
 def critic_decision_hash(decision: CriticDecision) -> str:
@@ -212,7 +254,7 @@ def changed_teacher_plan_fields(
 ) -> tuple[str, ...]:
     return tuple(
         field
-        for field in ("failure_pattern", "repair_rule", "preservation_rule")
+        for field in TeacherRepairPlan.__dataclass_fields__
         if getattr(previous, field) != getattr(revised, field)
     )
 
@@ -639,12 +681,30 @@ def build_teacher_request(
     *,
     field_max_chars: int = 800,
     total_max_chars: int = 1800,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
     schema = {
         "failure_pattern": "concise diagnosis",
         "repair_rule": "concrete executable rule including uncertainty handling",
         "preservation_rule": "concrete rule protecting existing correct behavior",
     }
+    diagnosis_instruction = ""
+    if evolution_variant != M20_CURRENT_V15:
+        schema.update({
+            "diagnosis_primary_failure_mode": "one compact behavioral failure mode",
+            "diagnosis_evidence_patterns": ["at most two abstract evidence patterns"],
+            "diagnosis_peer_contrast": "compact contrast with successful peer behavior",
+            "diagnosis_desired_behavior_changes": ["at most two behavioral changes"],
+            "edit_plan": ["at most two responsibility-aligned edit actions"],
+        })
+        diagnosis_instruction = (
+            " In the same Teacher call, infer one member-specific, residual-grounded "
+            "behavioral diagnosis. Contrast only abstract successful peer behavior "
+            "legally represented in the supplied aggregate; never expose raw peer "
+            "answers or prompts. Use at most two evidence patterns, two desired "
+            "behavior changes, and two edit-plan actions. Avoid generic advice and "
+            "example-specific lookup or answer rules."
+        )
     feedback_instruction = ""
     if isinstance(context, AssignedResidualDiagnosisContext) and context.proposal_failure_feedback:
         feedback_instruction = (
@@ -687,6 +747,7 @@ def build_teacher_request(
         + feedback_instruction
         + lane_instruction
         + experimental_instruction
+        + diagnosis_instruction
         + f"Return strict JSON with exactly these fields: {json.dumps(schema)}\n"
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"
@@ -702,6 +763,7 @@ def build_teacher_revision_request(
     field_max_chars: int = 800,
     total_max_chars: int = 1800,
     feedback_max_chars: int = 500,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
     if critic_decision.approved or not critic_decision.failed_checks:
         raise ValueError("Teacher revision requires a rejected Critic decision")
@@ -713,9 +775,16 @@ def build_teacher_revision_request(
     context_hash = hashlib.sha256(
         serialize_context(context).encode("utf-8")
     ).hexdigest()
+    diagnosis_revision = (
+        "Return all eight required fields, including the complete compact residual "
+        "diagnosis and edit plan."
+        if evolution_variant != M20_CURRENT_V15
+        else "Return all three original fields, not a patch or commentary."
+    )
     return (
         "Revise the previous TeacherRepairPlan into a complete replacement plan. "
-        "Return all three original fields, not a patch or commentary. Address every "
+        + diagnosis_revision
+        + " Address every "
         "failed_check while preserving rules that were not challenged. A revision "
         "must satisfy all four hard checks cumulatively; do not evade a prior "
         "evidence_mismatch by replacing an executable rule with vague language. "
@@ -728,7 +797,7 @@ def build_teacher_revision_request(
         f"TeacherFieldMaxCharacters: {field_max_chars}\n"
         f"TeacherTotalMaxCharacters: {total_max_chars}\n"
         f"CriticFeedbackMaxCharacters: {feedback_max_chars}\n"
-        f"PreviousTeacherRepairPlan:\n{json.dumps(asdict(previous_plan), ensure_ascii=False, sort_keys=True)}\n"
+        f"PreviousTeacherRepairPlan:\n{json.dumps(teacher_repair_plan_payload(previous_plan), ensure_ascii=False, sort_keys=True)}\n"
         f"CriticDecision:\n{json.dumps(critic_payload, ensure_ascii=False, sort_keys=True)}\n"
         f"DiagnosisContextHash: {context_hash}"
     )
@@ -739,6 +808,7 @@ def build_critic_request(
     repair_plan: TeacherRepairPlan,
     *,
     feedback_max_chars: int = 500,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
     schema = {"failed_checks": [], "risk_case_ids": [], "feedback": ""}
     lane_instruction = ""
@@ -747,6 +817,21 @@ def build_critic_request(
             " A plan that introduces more than the supplied repair lane must fail "
             "actionable_specificity. A failure_pattern inconsistent with the supplied "
             "repair_lane must fail evidence_mismatch."
+        )
+    if evolution_variant == M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC:
+        return (
+            "Check only semantic grounding and edit relevance. Allowed failed_checks are "
+            f"{json.dumps(RELEVANCE_CRITIC_FAILED_CHECKS)}. Verify that the diagnosis is "
+            "grounded in assigned residual evidence, member-specific, behavioral, "
+            "actionable, non-memorizing, and that the edit directly addresses it while "
+            "preserving the broad parent role. Reject a clearly unrelated broad rewrite "
+            "or schema/output-contract violation. Do not predict downstream accuracy, "
+            "preservation loss, collateral risk, or candidate performance; actual fixed-"
+            "probe common-safe evaluation handles those outcomes. risk_case_ids may only "
+            "name supplied case IDs. Use empty feedback when approved; otherwise give one "
+            f"concrete revision within {feedback_max_chars} characters. Return exactly: "
+            f"{json.dumps(schema)}\nDiagnosisContext:\n{serialize_context(context)}\n"
+            f"TeacherRepairPlan:\n{json.dumps(teacher_repair_plan_payload(repair_plan), ensure_ascii=False, sort_keys=True)}"
         )
     return (
         "Check only explicit hard blockers in the repair plan. Allowed failed_checks are "
@@ -767,7 +852,7 @@ def build_critic_request(
         f"CriticFeedbackMaxCharacters: {feedback_max_chars}. "
         f"Return exactly: {json.dumps(schema)}\n"
         f"DiagnosisContext:\n{serialize_context(context)}\n"
-        f"TeacherRepairPlan:\n{json.dumps(asdict(repair_plan), ensure_ascii=False, sort_keys=True)}"
+        f"TeacherRepairPlan:\n{json.dumps(teacher_repair_plan_payload(repair_plan), ensure_ascii=False, sort_keys=True)}"
     )
 
 
@@ -780,12 +865,24 @@ def build_student_request(
     candidate_prompt_max_chars: int,
     total_candidate_prompt_max_chars: int = 5000,
     single_lane: bool = False,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
     lane_instruction = (
         " Implement only the current repair lane's one core rule. Prefer replacing or "
         "merging an old rule instead of appending sections; do not add a second unrelated "
         "strategy, and preserve parent rules that remain valid."
         if single_lane else ""
+    )
+    minimal_instruction = (
+        " Make only the smallest role-consistent change required by the residual "
+        "diagnosis and edit plan. Preserve the parent member's existing role and "
+        "general strategy. Prefer replacing or merging one relevant rule; do not "
+        "perform a complete rewrite, add unrelated frameworks, change role identity, "
+        "or memorize examples. Minimal edit is guidance, not an output-length gate."
+        if evolution_variant in {
+            M2B_DIAGNOSIS_MINIMAL_EDIT,
+            M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
+        } else ""
     )
     return (
         "Implement the approved repair plan as complete replacement decision procedures. "
@@ -801,11 +898,12 @@ def build_student_request(
         "evidence, and select the best-supported interpretation. Invalid example (do not "
         "copy): Identify the pronoun and select the best interpretation. FINAL_ANSWER: A. "
         + lane_instruction
+        + minimal_instruction
         + " "
         "Return strict JSON with the sole field candidate_prompts.\n"
         f"StudentPromptContractVersion: {STUDENT_PROMPT_CONTRACT_VERSION}\n"
         f"ParentPrompt:\n{parent_prompt}\n"
-        f"ApprovedRepairPlan:\n{json.dumps(asdict(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
+        f"ApprovedRepairPlan:\n{json.dumps(teacher_repair_plan_payload(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
         f"OutputContract:\n{solver_output_contract(answer_format)}\n"
         f"RequestedCandidateCount: {candidate_count}\n"
         f"CandidatePromptMaxCharacters: {candidate_prompt_max_chars}\n"
@@ -853,6 +951,7 @@ def build_teacher_regeneration_request(
     *,
     previous_plan_hash: str,
     student_rejection_classes: tuple[str, ...],
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
     payload = {
         "student_upstream_regeneration": True,
@@ -860,7 +959,12 @@ def build_teacher_regeneration_request(
         "student_rejection_classes": list(student_rejection_classes),
         "requirements": [
             "Produce a materially different complete repair plan.",
-            "Return failure_pattern, repair_rule, and preservation_rule.",
+            (
+                "Return failure_pattern, repair_rule, preservation_rule, and all "
+                "five residual-diagnosis/edit-plan fields."
+                if evolution_variant != M20_CURRENT_V15
+                else "Return failure_pattern, repair_rule, and preservation_rule."
+            ),
             "Use the same bounded diagnosis context.",
             "Do not infer or reproduce invalid candidate text.",
         ],
@@ -873,12 +977,19 @@ def parse_teacher_repair_plan(
     *,
     field_max_chars: int = 800,
     total_max_chars: int = 1800,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> TeacherRepairPlan:
-    expected = {"failure_pattern", "repair_rule", "preservation_rule"}
+    base = {"failure_pattern", "repair_rule", "preservation_rule"}
+    diagnosis = {
+        "diagnosis_primary_failure_mode", "diagnosis_evidence_patterns",
+        "diagnosis_peer_contrast", "diagnosis_desired_behavior_changes",
+        "edit_plan",
+    }
+    expected = base if evolution_variant == M20_CURRENT_V15 else base | diagnosis
     if set(payload) != expected:
         raise ValueError("teacher response must contain exactly three repair-plan fields")
-    values = {}
-    for field in sorted(expected):
+    values: dict[str, Any] = {}
+    for field in sorted(base):
         value = payload[field]
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"teacher field {field} must be a non-empty string")
@@ -886,7 +997,27 @@ def parse_teacher_repair_plan(
         if len(value) > field_max_chars:
             raise ValueError(f"teacher field {field} exceeds character limit")
         values[field] = value
-    if sum(len(value) for value in values.values()) > total_max_chars:
+    if evolution_variant != M20_CURRENT_V15:
+        for field in ("diagnosis_primary_failure_mode", "diagnosis_peer_contrast"):
+            value = payload[field]
+            if not isinstance(value, str) or not value.strip() or len(value.strip()) > field_max_chars:
+                raise ValueError(f"teacher diagnosis field {field} is invalid")
+            values[field] = value.strip()
+        for field in ("diagnosis_evidence_patterns", "diagnosis_desired_behavior_changes", "edit_plan"):
+            value = payload[field]
+            if not isinstance(value, list) or not 1 <= len(value) <= 2:
+                raise ValueError(f"teacher diagnosis field {field} must contain one or two items")
+            if any(not isinstance(row, str) or not row.strip() or len(row.strip()) > field_max_chars for row in value):
+                raise ValueError(f"teacher diagnosis field {field} contains an invalid item")
+            values[field] = tuple(row.strip() for row in value)
+        generic = " ".join(values["diagnosis_primary_failure_mode"].lower().split())
+        if generic in {"reason more carefully", "improve accuracy", "be more careful", "think carefully"}:
+            raise ValueError("teacher residual diagnosis is generic")
+    total_chars = sum(
+        len(item) if isinstance(item, str) else sum(map(len, item))
+        for item in values.values()
+    )
+    if total_chars > total_max_chars:
         raise ValueError("teacher repair plan exceeds total character limit")
     normalized_rule = " ".join(values["repair_rule"].lower().split())
     if normalized_rule in {
@@ -904,6 +1035,7 @@ def parse_critic_decision(
     *,
     allowed_case_ids: set[str],
     feedback_max_chars: int = 500,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> CriticDecision:
     expected = {"failed_checks", "risk_case_ids", "feedback"}
     if set(payload) != expected:
@@ -913,7 +1045,12 @@ def parse_critic_decision(
     feedback = payload["feedback"]
     if not isinstance(failed, list) or any(not isinstance(row, str) for row in failed):
         raise ValueError("failed_checks must be a list of strings")
-    if len(set(failed)) != len(failed) or any(row not in CRITIC_FAILED_CHECKS for row in failed):
+    allowed_checks = (
+        RELEVANCE_CRITIC_FAILED_CHECKS
+        if evolution_variant == M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC
+        else CRITIC_FAILED_CHECKS
+    )
+    if len(set(failed)) != len(failed) or any(row not in allowed_checks for row in failed):
         raise ValueError("failed_checks contains an unknown or duplicate value")
     if not isinstance(risk_ids, list) or any(not isinstance(row, str) for row in risk_ids):
         raise ValueError("risk_case_ids must be a list of strings")
