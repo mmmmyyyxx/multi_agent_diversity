@@ -1,0 +1,30 @@
+{
+  "report_version": "v16_m2f_feedback_necessity_sanitized_v1",
+  "files": [
+    {
+      "file": "analysis_summary.json",
+      "sha256": "e7056f3a244dfcd18a9be06ff92cc194ddb692022d8750a2d159b80d0485e56a",
+      "size_bytes": 1164
+    },
+    {
+      "file": "paired_metrics.csv",
+      "sha256": "b85c4ec26377bba6ec03e1055e4753a52f6b98f84f1eeccdb8b566581bc12b0b",
+      "size_bytes": 992
+    },
+    {
+      "file": "protocol_gate.json",
+      "sha256": "275a3598754377626d4633d55848efa4fa878558107323d15f7a2ebdeed03480",
+      "size_bytes": 407
+    },
+    {
+      "file": "README.md",
+      "sha256": "1f53daa7938335d1235b8db18d62c4b1fe33657bdec6cfe149e0c49e31574e7e",
+      "size_bytes": 1269
+    },
+    {
+      "file": "source_freeze_sanitized.json",
+      "sha256": "c4c3a59e3b1bd7d3ebd5cf061ee1fb794f7f9229734185091ac09607b9095307",
+      "size_bytes": 440
+    }
+  ]
+}

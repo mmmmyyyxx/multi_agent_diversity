@@ -1,0 +1,18 @@
+{
+  "gate": "PASS",
+  "blockers": [],
+  "source_candidates": 7,
+  "repair_cells": 14,
+  "completed_outputs": 14,
+  "paired_identity_mismatch": 0,
+  "f1_loss_leakage": 0,
+  "budget_violations": 0,
+  "team_commits": 0,
+  "parent_mutations": 0,
+  "optimizer_updates": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "source_changes_after_first_call": 0,
+  "common_safe_mismatch": 0,
+  "module1_mismatch": 0
+}

@@ -1,0 +1,43 @@
+{
+  "analysis_version": "v16_m2f_feedback_necessity_v1",
+  "classifier": "FEEDBACK_NECESSARY",
+  "variants": {
+    "F1_LOSS_BLIND": {
+      "targeting_retention": 0.6153846153846154,
+      "collateral_loss": 83,
+      "recovered_collateral": 36,
+      "new_collateral": 42,
+      "compatibility_rescues": 2,
+      "critical_gain": 43,
+      "critical_loss": 8,
+      "critical_net": 35,
+      "oracle_delta": 23,
+      "vote_net": 12,
+      "target_gain": -26
+    },
+    "F2_CANDIDATE_FEEDBACK": {
+      "targeting_retention": 1.0,
+      "collateral_loss": 77,
+      "recovered_collateral": 15,
+      "new_collateral": 15,
+      "compatibility_rescues": 3,
+      "critical_gain": 37,
+      "critical_loss": 11,
+      "critical_net": 26,
+      "oracle_delta": 10,
+      "vote_net": 16,
+      "target_gain": -20
+    }
+  },
+  "direction_checks": {
+    "targeting_noninferior": true,
+    "collateral_better": true,
+    "more_rescues": true,
+    "critical_net_better": false,
+    "vote_net_better": true,
+    "more_recovery": false
+  },
+  "critical_net_analysis_metric_only": true,
+  "oracle_delta_analysis_metric_only": true,
+  "vote_net_analysis_metric_only": true
+}

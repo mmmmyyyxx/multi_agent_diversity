@@ -1,0 +1,12 @@
+{
+  "execution_commit": "f11489404a39370746b70179f619da7c5bed676f",
+  "source_freeze_status": "PASS",
+  "registry_content_hash": "e944605f3d856de4d6e219597905d09904c182a159c7232844b968a95ae6cc5a",
+  "working_tree_source_hash": "34dc01a303356ebfd87125846f4744937e360e9747096a6bf0dacef6d07b572d",
+  "source_file_count": 182,
+  "cell_count": 14,
+  "model": "qwen3-14b",
+  "thinking": false,
+  "temperature": 0.5,
+  "repair_max_tokens": 3000
+}
