@@ -7,7 +7,10 @@ from pathlib import Path
 from typing import Any
 
 
-EXPECTED_VARIANTS = ("g0_fixed_target_generic", "m20_current_v15")
+SUPPORTED_VARIANT_PAIRS = {
+    ("g0_fixed_target_generic", "m20_current_v15"),
+    ("m20_current_v15", "m2e_scoped_behavioral_patch"),
+}
 
 
 def canonical_registry_hash(registry: dict[str, Any]) -> str:
@@ -35,10 +38,13 @@ def audit(
     source_freeze_provided = source_freeze is not None
     if registry.get("registry_content_hash") != canonical_registry_hash(registry):
         blockers.append("registry_content_hash")
+    variants = tuple(registry.get("variants", ()))
+    if variants not in SUPPORTED_VARIANT_PAIRS:
+        blockers.append("variant_inventory")
     expected = {
         (str(case["case_id"]), variant)
         for case in registry.get("cases", [])
-        for variant in EXPECTED_VARIANTS
+        for variant in variants
     }
     cells = summary.get("cells", [])
     observed = {
@@ -84,6 +90,7 @@ def audit(
     g0_leakage = budget_violations = parent_mutations = 0
     commits = validation_calls = test_calls = infrastructure_failures = 0
     identity_mismatches = source_mismatches = optimizer_updates = 0
+    scoped_patch_mechanism_violations = 0
     if not hard_freeze_ok:
         source_mismatches += 1
     for row in cells:
@@ -207,6 +214,25 @@ def audit(
         if terminal in infrastructure_terminal_classes:
             infrastructure_failures += 1
             blockers.append(f"infrastructure_failure:{case_id}:{variant}")
+        if variant == "m2e_scoped_behavioral_patch":
+            for candidate in row.get("candidates", []):
+                mechanism = candidate.get("scoped_patch_mechanism", {})
+                valid_mechanism = bool(
+                    mechanism.get("enabled") is True
+                    and mechanism.get("parent_prefix_byte_identical") is True
+                    and int(mechanism.get("unconditional_marker_count", -1)) == 0
+                    and all(
+                        len(str(mechanism.get(key, ""))) == 64
+                        for key in (
+                            "parent_prompt_sha256",
+                            "trigger_condition_sha256",
+                            "localized_behavior_sha256",
+                        )
+                    )
+                )
+                if not valid_mechanism:
+                    scoped_patch_mechanism_violations += 1
+                    blockers.append(f"scoped_patch_mechanism:{case_id}:{variant}")
         parent_state_by_case.setdefault(case_id, set()).add(
             str(row.get("parent_state_hash_before"))
         )
@@ -258,6 +284,7 @@ def audit(
             len(evaluation_policy_hashes) != 1
         ),
         "terminal_infrastructure_failures": infrastructure_failures,
+        "scoped_patch_mechanism_violations": scoped_patch_mechanism_violations,
     }
 
 

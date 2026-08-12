@@ -1776,6 +1776,7 @@ class PromptEnsembleOptimizationSystem:
                     required_candidate_count=self.protocol.candidates_per_target_branch,
                     parent_prompt_hash=parent_prompt_hash,
                     approved_repair_plan_hash=repair_plan_hash,
+                    evolution_variant=self.protocol.module2_evolution_variant,
                 )
             )
             self.student_recovery_state = {
@@ -1851,7 +1852,11 @@ class PromptEnsembleOptimizationSystem:
                 rejection_classes = ("invalid_json",)
             else:
                 raw_values = (
-                    parsed.get("candidate_prompts")
+                    parsed.get("scoped_patches")
+                    if isinstance(parsed, Mapping)
+                    and self.protocol.module2_evolution_variant
+                    == "m2e_scoped_behavioral_patch"
+                    else parsed.get("candidate_prompts")
                     if isinstance(parsed, Mapping) else None
                 )
                 raw_count = len(raw_values) if isinstance(raw_values, list) else 0
@@ -1867,6 +1872,7 @@ class PromptEnsembleOptimizationSystem:
                         total_candidate_prompt_max_chars=(
                             self.cfg.tcs.total_candidate_prompt_max_chars
                         ),
+                        evolution_variant=self.protocol.module2_evolution_variant,
                     )
                     parsed_candidates = parse_result.candidates
                     raw_count = parse_result.raw_count

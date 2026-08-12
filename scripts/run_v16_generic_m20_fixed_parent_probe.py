@@ -24,6 +24,7 @@ from generic_m20_probe_support import (
     FROZEN_DEFINITION_SHA256,
     G0,
     M20,
+    M2E,
     diagnostic_payload,
     generation_hashes,
     generation_system,
@@ -35,6 +36,7 @@ from generic_m20_probe_support import (
     tracked_source_dirty,
 )
 from multi_dataset_diverse_rl.system import CandidateFunnel
+from multi_dataset_diverse_rl.peer_state import build_peer_vote_context
 from multi_dataset_diverse_rl.tcs import (
     AccuracyDiagnosisContext,
     SingleLaneDiagnosisContext,
@@ -203,10 +205,13 @@ def source_freeze_gate(
                 if disk_registry != registry:
                     blockers.append("registry_file_content_mismatch")
     frozen_definitions = source_freeze.get("frozen_definition_sha256")
-    if frozen_definitions != FROZEN_DEFINITION_SHA256:
+    variants = tuple(registry.get("variants", ()))
+    if not isinstance(frozen_definitions, dict) or not frozen_definitions:
+        blockers.append("frozen_definition_manifest_mismatch")
+    elif variants == (G0, M20) and frozen_definitions != FROZEN_DEFINITION_SHA256:
         blockers.append("frozen_definition_manifest_mismatch")
     if definition_root is not None:
-        for name, expected_hash in FROZEN_DEFINITION_SHA256.items():
+        for name, expected_hash in frozen_definitions.items():
             path = definition_root / name
             if not path.is_file():
                 blockers.append(f"frozen_definition_missing:{name}")
@@ -263,11 +268,13 @@ def validate_registry_contract(registry: dict[str, Any]) -> list[str]:
     blockers: list[str] = []
     if registry.get("registry_content_hash") != canonical_registry_hash(registry):
         blockers.append("registry_content_hash")
-    if registry.get("registry_version") != (
-        "v16_generic_m20_fixed_parent_registry_v1"
-    ):
+    if registry.get("registry_version") not in {
+        "v16_generic_m20_fixed_parent_registry_v1",
+        "v16_m20_m2e_fixed_parent_registry_v1",
+    }:
         blockers.append("registry_version")
-    if tuple(registry.get("variants", ())) != (G0, M20):
+    variants = tuple(registry.get("variants", ()))
+    if variants not in {(G0, M20), (M20, M2E)}:
         blockers.append("variant_inventory")
     if registry.get("model") != "qwen3-14b" or registry.get("thinking") is not False:
         blockers.append("model_or_thinking")
@@ -289,7 +296,7 @@ def validate_registry_contract(registry: dict[str, Any]) -> list[str]:
         if registry.get(flag) is not False:
             blockers.append(f"isolation_flag:{flag}")
     for index, case in enumerate(registry.get("cases", [])):
-        expected_order = [G0, M20] if index % 2 == 0 else [M20, G0]
+        expected_order = list(variants) if index % 2 == 0 else list(reversed(variants))
         if list(case.get("cell_order", ())) != expected_order:
             blockers.append(f"cell_order:{case.get('case_id')}")
     return blockers
@@ -401,7 +408,10 @@ def _responsibility_effects(
         )
     }
     gain = loss = coverage_gain = conversion_gain = 0
-    for question_hash in sorted(frozen_hashes):
+    nonresponsibility_gain = nonresponsibility_loss = 0
+    stable_loss = pivotal_loss = unique_loss = fragile_loss = 0
+    stable = evaluator.stable_correct_question_hashes_by_agent[target]
+    for question_hash in sorted(state_by_hash):
         state = state_by_hash[question_hash]
         candidate = profile_by_hash[question_hash]
         before_correct = bool(state.team_correctness[target])
@@ -411,10 +421,24 @@ def _responsibility_effects(
         )
         gained = not before_correct and after_correct
         lost = before_correct and not after_correct
-        gain += int(gained)
-        loss += int(lost)
-        coverage_gain += int(gained and state.gold_vote_count == 0)
-        conversion_gain += int(gained and state.gold_vote_count > 0)
+        if question_hash in frozen_hashes:
+            gain += int(gained)
+            loss += int(lost)
+            coverage_gain += int(gained and state.gold_vote_count == 0)
+            conversion_gain += int(gained and state.gold_vote_count > 0)
+        else:
+            nonresponsibility_gain += int(gained)
+            nonresponsibility_loss += int(lost)
+            if lost:
+                peer = build_peer_vote_context(state, target)
+                if state.gold_vote_count == 1:
+                    unique_loss += 1
+                elif state.vote_correct and peer.peer_margin <= 0:
+                    pivotal_loss += 1
+                elif question_hash in stable:
+                    stable_loss += 1
+                else:
+                    fragile_loss += 1
     return {
         "responsibility_residual_gain_count": gain,
         "responsibility_residual_loss_count": loss,
@@ -422,6 +446,12 @@ def _responsibility_effects(
         "coverage_responsibility_gain": coverage_gain,
         "conversion_responsibility_gain": conversion_gain,
         "responsibility_portfolio_size": len(frozen_hashes),
+        "nonresponsibility_gain_count": nonresponsibility_gain,
+        "nonresponsibility_loss_count": nonresponsibility_loss,
+        "stable_loss_count": stable_loss,
+        "pivotal_loss_count": pivotal_loss,
+        "unique_loss_count": unique_loss,
+        "fragile_loss_count": fragile_loss,
     }
 
 
@@ -434,6 +464,14 @@ def _candidate_payload(
     if evaluation is None or row.constraint is None:
         raise ValueError("probe candidate lacks final common-safe evaluation")
     diagnostics = dict(row.module2_diagnostics)
+    student = row.student_candidate
+    parent_prompt = evaluation.prompt[: -len(
+        "\n\n[Responsibility-specific conditional refinement]\n"
+        + f"When {trigger}:\n    {behavior}\n\n"
+        + "Outside this condition, follow the original procedure unchanged."
+    )] if trigger and behavior else ""
+    trigger = str(getattr(student, "trigger_condition", ""))
+    behavior = str(getattr(student, "localized_behavior", ""))
     return {
         "prompt_hash": row.prompt_hash,
         "evaluation": asdict(evaluation),
@@ -444,6 +482,22 @@ def _candidate_payload(
         "vote_loss_count": diagnostics.get("vote_loss_count"),
         "vote_net_gain": diagnostics.get("vote_net_gain"),
         **responsibility_effects,
+        "scoped_patch_mechanism": {
+            "enabled": bool(trigger and behavior),
+            "parent_prefix_byte_identical": bool(
+                trigger and evaluation.prompt.startswith(parent_prompt)
+                and evaluation.prompt[: len(parent_prompt)] == parent_prompt
+            ),
+            "parent_prompt_sha256": hashlib.sha256(parent_prompt.encode()).hexdigest(),
+            "trigger_condition_sha256": hashlib.sha256(trigger.encode()).hexdigest() if trigger else "",
+            "localized_behavior_sha256": hashlib.sha256(behavior.encode()).hexdigest() if behavior else "",
+            "trigger_character_count": len(trigger),
+            "localized_behavior_character_count": len(behavior),
+            "unconditional_marker_count": sum(
+                token in trigger.lower()
+                for token in ("always", "every problem", "every question", "before every answer")
+            ),
+        },
     }
 
 
@@ -519,7 +573,7 @@ async def run_cell(
             ]:
                 raise RuntimeError("G0 responsibility evidence leaked to generator")
         elif context_diag["context_type"] != SingleLaneDiagnosisContext.__name__:
-            raise RuntimeError("M20 did not use current single-lane context")
+            raise RuntimeError("conditioned variant did not use current single-lane context")
 
         winner = incumbent = None
         evaluated = []
@@ -646,11 +700,16 @@ async def run_cell(
 
 
 async def main_async(args: argparse.Namespace) -> None:
-    if os.environ.get(AUTHORIZATION_ENV) != "1":
-        raise SystemExit(
-            "API execution blocked: GENERIC_M20_FIXED_PARENT_PROBE_AUTHORIZED=1 required"
-        )
     registry = json.loads(args.registry.read_text(encoding="utf-8"))
+    authorization_env = (
+        "M2E_FIXED_PARENT_PROBE_AUTHORIZED"
+        if tuple(registry.get("variants", ())) == (M20, M2E)
+        else AUTHORIZATION_ENV
+    )
+    if os.environ.get(authorization_env) != "1":
+        raise SystemExit(
+            f"API execution blocked: {authorization_env}=1 required"
+        )
     source_freeze = json.loads(args.source_freeze.read_text(encoding="utf-8"))
     registry_file_hash = hashlib.sha256(args.registry.read_bytes()).hexdigest()
     if source_freeze.get("registry_file_sha256") != registry_file_hash:
@@ -670,7 +729,10 @@ async def main_async(args: argparse.Namespace) -> None:
     if not project_local(out_root) or out_root.exists():
         raise SystemExit("out_root must be a fresh project-local directory")
 
-    from preflight_v16_generic_m20_probe import preflight
+    if tuple(registry.get("variants", ())) == (M20, M2E):
+        from preflight_v16_m20_m2e_probe import preflight
+    else:
+        from preflight_v16_generic_m20_probe import preflight
 
     preflight_result = preflight(
         registry,

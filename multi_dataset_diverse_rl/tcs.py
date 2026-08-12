@@ -64,12 +64,14 @@ M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC = (
 M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT = (
     "m2d_raw_responsibility_minimal_edit"
 )
+M2E_SCOPED_BEHAVIORAL_PATCH = "m2e_scoped_behavioral_patch"
 MODULE2_EVOLUTION_VARIANTS = (
     M20_CURRENT_V15,
     M2A_RESIDUAL_DIAGNOSIS,
     M2B_DIAGNOSIS_MINIMAL_EDIT,
     M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
     M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    M2E_SCOPED_BEHAVIORAL_PATCH,
 )
 
 MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION = (
@@ -226,6 +228,8 @@ class TeacherRepairPlan:
     diagnosis_peer_contrast: str = ""
     diagnosis_desired_behavior_changes: tuple[str, ...] = ()
     edit_plan: tuple[str, ...] = ()
+    trigger_condition: str = ""
+    localized_behavior: str = ""
 
 
 @dataclass(frozen=True)
@@ -255,6 +259,8 @@ def teacher_repair_plan_payload(plan: TeacherRepairPlan) -> dict[str, Any]:
         "diagnosis_peer_contrast",
         "diagnosis_desired_behavior_changes",
         "edit_plan",
+        "trigger_condition",
+        "localized_behavior",
     )
     if not any(payload[field] for field in diagnosis_fields):
         for field in diagnosis_fields:
@@ -328,6 +334,8 @@ def compact_previous_outcome(
 @dataclass(frozen=True)
 class StudentPromptCandidate:
     candidate_prompt: str
+    trigger_condition: str = ""
+    localized_behavior: str = ""
 
 
 @dataclass(frozen=True)
@@ -711,6 +719,24 @@ def build_teacher_request(
     total_max_chars: int = 1800,
     evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
+    if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH:
+        schema = {
+            "trigger_condition": "task-general recognizable reasoning condition",
+            "localized_behavior": "additional action taken only under that condition",
+        }
+        return (
+            "Define one scoped behavioral patch from the typed responsibility evidence. "
+            "Answer only: under what recognizable reasoning condition the failure occurs, "
+            "and what additional action should be taken only under that condition. The "
+            "trigger must be task-general, behavioral, conditional, and executable; it "
+            "must not mention case text, answer labels, surface tokens, or unconditional "
+            "phrases such as always, every problem, or before every answer. Do not rewrite "
+            "the parent procedure or generate a prompt. Return strict JSON with exactly "
+            f"these fields: {json.dumps(schema)}\n"
+            f"TeacherFieldMaxCharacters: {field_max_chars}\n"
+            f"TeacherTotalMaxCharacters: {total_max_chars}\n"
+            f"DiagnosisContext:\n{serialize_context(context)}"
+        )
     schema = {
         "failure_pattern": "concise diagnosis",
         "repair_rule": "concrete executable rule including uncertainty handling",
@@ -804,6 +830,10 @@ def build_teacher_revision_request(
         serialize_context(context).encode("utf-8")
     ).hexdigest()
     diagnosis_revision = (
+        "Return exactly trigger_condition and localized_behavior; preserve conditional "
+        "scope and do not rewrite the parent procedure."
+        if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH
+        else
         "Return all eight required fields, including the complete compact residual "
         "diagnosis and edit plan."
         if module2_uses_residual_diagnosis(evolution_variant)
@@ -895,6 +925,20 @@ def build_student_request(
     single_lane: bool = False,
     evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
+    if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH:
+        return (
+            "Generate scoped behavioral patches only; do not rewrite or reproduce the "
+            "parent prompt. Each patch must contain a task-general trigger_condition and "
+            "one localized_behavior taken only under that condition. Triggers must not "
+            "mention supplied cases, answers, surface tokens, or unconditional scope such "
+            "as always, every problem, or before every answer. Return strict JSON with "
+            "the sole field scoped_patches, an array of objects with exactly "
+            "trigger_condition and localized_behavior.\n"
+            f"ApprovedRepairPlan:\n{json.dumps(teacher_repair_plan_payload(approved_plan), ensure_ascii=False, sort_keys=True)}\n"
+            f"RequestedCandidateCount: {candidate_count}\n"
+            f"CandidatePromptMaxCharacters: {candidate_prompt_max_chars}\n"
+            f"TotalCandidatePromptMaxCharacters: {total_candidate_prompt_max_chars}"
+        )
     lane_instruction = (
         " Implement only the current repair lane's one core rule. Prefer replacing or "
         "merging an old rule instead of appending sections; do not add a second unrelated "
@@ -939,14 +983,21 @@ def build_student_recovery_request(
     required_candidate_count: int,
     parent_prompt_hash: str,
     approved_repair_plan_hash: str,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> str:
-    requirements = [
+    requirements = ([
+        "Return scoped_patches as an array of objects.",
+        "Every object must contain exactly trigger_condition and localized_behavior.",
+        "Each trigger must be conditional, task-general, and behaviorally recognizable.",
+        "Do not return or reproduce a complete prompt.",
+        "Return only the required schema.",
+    ] if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH else [
         "Return candidate_prompts as a JSON array.",
         "Every candidate must be a non-empty string.",
         "Do not return null, objects, nested arrays, or empty strings.",
         "Each candidate must differ from the parent prompt and other candidates.",
         "Return only the required schema.",
-    ]
+    ])
     if "output_contract_contamination" in previous_rejection_classes:
         requirements.append(
             "A candidate included the immutable solver output interface. Return only "
@@ -981,6 +1032,9 @@ def build_teacher_regeneration_request(
         "requirements": [
             "Produce a materially different complete repair plan.",
             (
+                "Return trigger_condition and localized_behavior only."
+                if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH
+                else
                 "Return failure_pattern, repair_rule, preservation_rule, and all "
                 "five residual-diagnosis/edit-plan fields."
                 if module2_uses_residual_diagnosis(evolution_variant)
@@ -1000,6 +1054,26 @@ def parse_teacher_repair_plan(
     total_max_chars: int = 1800,
     evolution_variant: str = M20_CURRENT_V15,
 ) -> TeacherRepairPlan:
+    if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH:
+        expected = {"trigger_condition", "localized_behavior"}
+        if set(payload) != expected:
+            raise ValueError("M2E teacher response must contain exactly scoped patch fields")
+        trigger = payload["trigger_condition"]
+        behavior = payload["localized_behavior"]
+        if any(not isinstance(value, str) or not value.strip() for value in (trigger, behavior)):
+            raise ValueError("M2E teacher fields must be non-empty strings")
+        trigger = trigger.strip()
+        behavior = behavior.strip()
+        if len(trigger) > field_max_chars or len(behavior) > field_max_chars or len(trigger) + len(behavior) > total_max_chars:
+            raise ValueError("M2E teacher patch exceeds character limit")
+        _validate_scoped_patch(trigger, behavior)
+        return TeacherRepairPlan(
+            failure_pattern=trigger,
+            repair_rule=behavior,
+            preservation_rule="Outside this condition, follow the original procedure unchanged.",
+            trigger_condition=trigger,
+            localized_behavior=behavior,
+        )
     base = {"failure_pattern", "repair_rule", "preservation_rule"}
     diagnosis = {
         "diagnosis_primary_failure_mode", "diagnosis_evidence_patterns",
@@ -1055,6 +1129,28 @@ def parse_teacher_repair_plan(
     return TeacherRepairPlan(**values)
 
 
+def _validate_scoped_patch(trigger: str, behavior: str) -> None:
+    normalized = " ".join(f"{trigger} {behavior}".lower().split())
+    forbidden = (
+        "always", "every problem", "every question", "before every answer",
+        "for all inputs", "regardless of", "final_answer", "answer choice ",
+    )
+    if any(token in normalized for token in forbidden):
+        raise ValueError("scoped patch is unconditional or answer-specific")
+    condition_markers = ("when ", "if ", "only when", "in cases where", "whenever ")
+    if not any(marker in trigger.lower() for marker in condition_markers):
+        raise ValueError("scoped patch trigger lacks a recognizable condition")
+
+
+def construct_scoped_prompt(parent_prompt: str, trigger: str, behavior: str) -> str:
+    return (
+        parent_prompt
+        + "\n\n[Responsibility-specific conditional refinement]\n"
+        + f"When {trigger.strip()}:\n    {behavior.strip()}\n\n"
+        + "Outside this condition, follow the original procedure unchanged."
+    )
+
+
 def parse_critic_decision(
     payload: Mapping[str, Any],
     *,
@@ -1104,7 +1200,48 @@ def parse_student_candidates(
     expected_count: int,
     candidate_prompt_max_chars: int = 3000,
     total_candidate_prompt_max_chars: int = 5000,
+    evolution_variant: str = M20_CURRENT_V15,
 ) -> StudentParseResult:
+    if evolution_variant == M2E_SCOPED_BEHAVIORAL_PATCH:
+        if set(payload) != {"scoped_patches"} or not isinstance(payload.get("scoped_patches"), list):
+            raise ValueError("M2E student response must contain scoped_patches")
+        values = payload["scoped_patches"]
+        if len(values) > expected_count:
+            raise ValueError("schema_invalid")
+        accepted: list[StudentPromptCandidate] = []
+        rejections: list[tuple[str, ...]] = []
+        seen: set[str] = set()
+        total = 0
+        for value in values:
+            reasons: list[str] = []
+            if not isinstance(value, Mapping) or set(value) != {"trigger_condition", "localized_behavior"}:
+                trigger = behavior = ""
+                reasons.append("schema_invalid")
+            else:
+                trigger = str(value["trigger_condition"]).strip()
+                behavior = str(value["localized_behavior"]).strip()
+                try:
+                    _validate_scoped_patch(trigger, behavior)
+                except ValueError:
+                    reasons.append("unscoped_or_answer_specific")
+            prompt = construct_scoped_prompt(parent_prompt, trigger, behavior) if trigger and behavior else ""
+            total += len(prompt)
+            if prompt and len(prompt) > candidate_prompt_max_chars:
+                reasons.append("too_long")
+            if prompt and contains_supplied_example_text(f"{trigger}\n{behavior}", context):
+                reasons.append("sample_memorization")
+            if prompt and mutable_prompt_violation_reasons(prompt):
+                reasons.append("output_contract_contamination")
+            patch_hash = hashlib.sha256(f"{trigger}\0{behavior}".encode()).hexdigest()
+            if patch_hash in seen:
+                reasons.append("duplicate_candidate")
+            seen.add(patch_hash)
+            rejections.append(tuple(reasons))
+            if not reasons:
+                accepted.append(StudentPromptCandidate(prompt, trigger, behavior))
+        if total > total_candidate_prompt_max_chars:
+            raise ValueError("too_long")
+        return StudentParseResult(tuple(accepted), len(values), tuple(rejections), total)
     if set(payload) != {"candidate_prompts"}:
         if "candidate_prompts" not in payload:
             raise ValueError("candidate_list_missing")

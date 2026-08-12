@@ -13,6 +13,7 @@ from multi_dataset_diverse_rl.tcs import (
     M2B_DIAGNOSIS_MINIMAL_EDIT,
     M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC,
     M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT,
+    M2E_SCOPED_BEHAVIORAL_PATCH,
     MINIMAL_RESPONSIBILITY_EDIT_INSTRUCTION,
     TeacherRepairPlan,
     build_critic_request,
@@ -23,6 +24,8 @@ from multi_dataset_diverse_rl.tcs import (
     teacher_repair_plan_hash,
     parse_critic_decision,
     parse_teacher_repair_plan,
+    parse_student_candidates,
+    construct_scoped_prompt,
 )
 from tests.test_responsibility_conditioned_tcs import single_lane_context
 
@@ -192,6 +195,7 @@ def test_relevance_critic_schema_rejects_legacy_risk_reason():
     ("m2b_diagnosis_minimal_edit", M2B_DIAGNOSIS_MINIMAL_EDIT),
     ("m2c_diagnosis_minimal_edit_relevance_critic", M2C_DIAGNOSIS_MINIMAL_EDIT_RELEVANCE_CRITIC),
     ("m2d_raw_responsibility_minimal_edit", M2D_RAW_RESPONSIBILITY_MINIMAL_EDIT),
+    ("m2e_scoped_behavioral_patch", M2E_SCOPED_BEHAVIORAL_PATCH),
 ])
 def test_protocol_variants_hold_module1_and_common_safe(suffix, variant):
     cfg = Config.from_flat(
@@ -227,3 +231,41 @@ def test_new_variants_do_not_add_preservation_set_or_boundary_context():
     assert "Preservation responsibilities" not in request
     assert "repair_distance" not in request
     assert "boundary" not in request.lower()
+
+
+def test_m2e_scoped_patch_is_deterministic_append_only():
+    teacher = parse_teacher_repair_plan(
+        {
+            "trigger_condition": "When two interpretations remain semantically plausible",
+            "localized_behavior": "Compare the decisive evidence for those interpretations before committing.",
+        },
+        evolution_variant=M2E_SCOPED_BEHAVIORAL_PATCH,
+    )
+    parent = "Keep the original procedure byte-for-byte."
+    prompt = construct_scoped_prompt(
+        parent, teacher.trigger_condition, teacher.localized_behavior
+    )
+    assert prompt[: len(parent)] == parent
+    parsed = parse_student_candidates(
+        {"scoped_patches": [{
+            "trigger_condition": teacher.trigger_condition,
+            "localized_behavior": teacher.localized_behavior,
+        }]},
+        parent_prompt=parent,
+        context=context(),
+        expected_count=1,
+        evolution_variant=M2E_SCOPED_BEHAVIORAL_PATCH,
+    )
+    assert parsed.candidates[0].candidate_prompt == prompt
+    assert parsed.candidates[0].trigger_condition == teacher.trigger_condition
+
+
+def test_m2e_rejects_unconditional_or_answer_specific_trigger():
+    with pytest.raises(ValueError, match="unconditional"):
+        parse_teacher_repair_plan(
+            {
+                "trigger_condition": "Always before every answer",
+                "localized_behavior": "Compare answer choice A with B.",
+            },
+            evolution_variant=M2E_SCOPED_BEHAVIORAL_PATCH,
+        )

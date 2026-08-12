@@ -165,6 +165,7 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_m2b_diagnosis_minimal_edit",
     "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic",
     "experimental_v16_m2d_raw_responsibility_minimal_edit",
+    "experimental_v16_m2e_scoped_behavioral_patch",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -187,6 +188,7 @@ EXPERIMENTAL_V16_EVOLUTION_VARIANTS = {
     "experimental_v16_m2d_raw_responsibility_minimal_edit": (
         "m2d_raw_responsibility_minimal_edit"
     ),
+    "experimental_v16_m2e_scoped_behavioral_patch": "m2e_scoped_behavioral_patch",
 }
 
 SETTING_DISPLAY_NAMES = {

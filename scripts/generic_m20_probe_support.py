@@ -22,10 +22,17 @@ from multi_dataset_diverse_rl.tcs import PreviousUpdateOutcome
 
 G0 = "g0_fixed_target_generic"
 M20 = "m20_current_v15"
-VARIANTS = (G0, M20)
+M2E = "m2e_scoped_behavioral_patch"
+VARIANTS = (G0, M20, M2E)
 GENERATION_SETTING = {
     G0: "shared_generic_evolution",
     M20: "experimental_v16_m20_current_v15",
+    M2E: "experimental_v16_m2e_scoped_behavioral_patch",
+}
+EVOLUTION_VARIANT = {
+    G0: "m20_current_v15",
+    M20: "m20_current_v15",
+    M2E: "m2e_scoped_behavioral_patch",
 }
 EVALUATION_SETTING = "experimental_v16_m20_current_v15"
 AUTHORIZATION_ENV = "GENERIC_M20_FIXED_PARENT_PROBE_AUTHORIZED"
@@ -93,12 +100,13 @@ def _flat_config(
     setting: str,
     out_dir: Path,
     cache_path: Path | str,
+    evolution_variant: str = "m20_current_v15",
 ) -> dict[str, Any]:
     flat = dict(case["base_config"])
     flat.update({
         "experiment_setting": setting,
         "module2_context_variant": "c0_current_v15",
-        "module2_evolution_variant": "m20_current_v15",
+        "module2_evolution_variant": evolution_variant,
         "initialization_mode": "provided_prompt_set",
         "provided_prompts_json": json.dumps(case["parent_prompts"]),
         "out_dir": str(out_dir),
@@ -121,6 +129,7 @@ def system_for(
     setting: str,
     out_dir: Path,
     cache_path: Path | str,
+    evolution_variant: str = "m20_current_v15",
 ) -> PromptEnsembleOptimizationSystem:
     cfg = Config.from_flat(
         **_flat_config(
@@ -128,6 +137,7 @@ def system_for(
             setting=setting,
             out_dir=out_dir,
             cache_path=cache_path,
+            evolution_variant=evolution_variant,
         )
     )
     system = PromptEnsembleOptimizationSystem(cfg)
@@ -180,6 +190,7 @@ def generation_system(
         setting=GENERATION_SETTING[variant],
         out_dir=out_dir,
         cache_path=cache_path,
+        evolution_variant=EVOLUTION_VARIANT[variant],
     )
 
 
@@ -200,7 +211,7 @@ def evaluation_system(
 def generation_hashes(variant: str, frozen: set[str]) -> set[str]:
     if variant == G0:
         return set()
-    if variant == M20:
+    if variant in {M20, M2E}:
         return set(frozen)
     raise ValueError(f"unsupported generic/M20 variant: {variant}")
 
