@@ -18,6 +18,8 @@ for path in (ROOT, SCRIPTS):
 from generic_m20_probe_support import (
     G0,
     M20,
+    M2E,
+    EVOLUTION_VARIANT,
     generation_hashes,
     generation_system,
     evaluation_system,
@@ -35,9 +37,9 @@ from multi_dataset_diverse_rl.tcs import (
 )
 
 
-def _request_hashes(context: Any) -> dict[str, str]:
+def _request_hashes(context: Any, evolution_variant: str) -> dict[str, str]:
     teacher = build_teacher_request(
-        context, evolution_variant=M20_CURRENT_V15
+        context, evolution_variant=evolution_variant
     )
     # The semantic freeze is established before provider output exists. Teacher
     # and context hashes are sufficient to prove that M20 input is byte-current.
@@ -82,10 +84,15 @@ def _leakage_violations(
 def preflight(registry: dict[str, Any], *, scratch: Path) -> dict[str, Any]:
     errors: list[str] = []
     cases: list[dict[str, Any]] = []
-    if registry.get("registry_version") != (
-        "v16_generic_m20_fixed_parent_registry_v1"
-    ):
+    registry_version = registry.get("registry_version")
+    variants = tuple(registry.get("variants", ()))
+    expected_variants = {
+        "v16_generic_m20_fixed_parent_registry_v1": (G0, M20),
+        "v16_m20_m2e_fixed_parent_registry_v1": (M20, M2E),
+    }.get(registry_version)
+    if expected_variants is None or variants != expected_variants:
         errors.append("registry_version")
+        expected_variants = variants
     if len(registry.get("cases", [])) != 8:
         errors.append("case_count")
     if int(registry.get("cell_count", -1)) != 16:
@@ -108,7 +115,7 @@ def preflight(registry: dict[str, Any], *, scratch: Path) -> dict[str, Any]:
                 out_dir=scratch / str(case["case_id"]) / variant,
                 cache_path=scratch / "offline.sqlite",
             )
-            for variant in (G0, M20)
+            for variant in expected_variants
         }
         evaluator = evaluation_system(
             case,
@@ -175,15 +182,22 @@ def preflight(registry: dict[str, Any], *, scratch: Path) -> dict[str, Any]:
         )
         if not m20_context_byte_match or not m20_teacher_byte_match:
             errors.append(f"m20_byte_compatibility:{case['case_id']}")
-        if not isinstance(contexts[G0], AccuracyDiagnosisContext):
+        if G0 in contexts and not isinstance(contexts[G0], AccuracyDiagnosisContext):
             errors.append(f"g0_context:{case['case_id']}")
         if not isinstance(contexts[M20], SingleLaneDiagnosisContext):
             errors.append(f"m20_context:{case['case_id']}")
-        leakage = (
-            _leakage_violations(contexts[G0], frozen)
-            if isinstance(contexts[G0], AccuracyDiagnosisContext)
-            else ["wrong_context_type"]
-        )
+        if M2E in contexts:
+            if not isinstance(contexts[M2E], SingleLaneDiagnosisContext):
+                errors.append(f"m2e_context:{case['case_id']}")
+            elif serialize_context(contexts[M2E]) != serialize_context(contexts[M20]):
+                errors.append(f"m2e_context_mismatch:{case['case_id']}")
+        leakage = []
+        if G0 in contexts:
+            leakage = (
+                _leakage_violations(contexts[G0], frozen)
+                if isinstance(contexts[G0], AccuracyDiagnosisContext)
+                else ["wrong_context_type"]
+            )
         if leakage:
             errors.append(f"g0_leakage:{case['case_id']}")
 
@@ -208,7 +222,7 @@ def preflight(registry: dict[str, Any], *, scratch: Path) -> dict[str, Any]:
             }
             for variant, system in systems.items()
         }
-        if budgets[G0] != budgets[M20]:
+        if len({json.dumps(value, sort_keys=True) for value in budgets.values()}) != 1:
             errors.append(f"budget_mismatch:{case['case_id']}")
         if evaluator.protocol.sample_pool_policy != "member_aware_residuals":
             errors.append(f"evaluation_pool:{case['case_id']}")
@@ -225,25 +239,28 @@ def preflight(registry: dict[str, Any], *, scratch: Path) -> dict[str, Any]:
             "responsibility_evidence_hash": expected_evidence_hash,
             "g0_generator_responsibility_hash_count": 0,
             "g0_responsibility_leakage": leakage,
-            "g0_context_type": type(contexts[G0]).__name__,
+            "g0_context_type": type(contexts[G0]).__name__ if G0 in contexts else "",
             "m20_context_type": type(contexts[M20]).__name__,
+            "m2e_context_type": type(contexts[M2E]).__name__ if M2E in contexts else "",
             "m20_repair_case_hashes": sorted(
                 row.question_hash for row in contexts[M20].repair_cases
             ) if isinstance(contexts[M20], SingleLaneDiagnosisContext) else [],
             "context_characters": {
                 variant: int(diagnostics[variant].context_characters)
-                for variant in (G0, M20)
+                for variant in expected_variants
             },
             "request_hashes": {
-                variant: _request_hashes(contexts[variant])
-                for variant in (G0, M20)
+                variant: _request_hashes(
+                    contexts[variant], EVOLUTION_VARIANT[variant]
+                )
+                for variant in expected_variants
             },
             "m20_context_byte_match": m20_context_byte_match,
             "m20_teacher_request_byte_match": m20_teacher_byte_match,
             "budgets": budgets,
             "generation_policies": {
                 variant: systems[variant].protocol.tcs_context_policy
-                for variant in (G0, M20)
+                for variant in expected_variants
             },
             "evaluation_policy": {
                 "sample_pool_policy": evaluator.protocol.sample_pool_policy,

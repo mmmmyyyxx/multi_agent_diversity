@@ -100,6 +100,30 @@ def test_preflight_proves_no_g0_leakage_and_shared_parent_target_budget(
         )
 
 
+def test_preflight_accepts_frozen_m20_m2e_registry(workspace_tmp):
+    builder = load(
+        "m20_m2e_registry_preflight",
+        "scripts/build_v16_m20_m2e_probe_registry.py",
+    )
+    module = load(
+        "generic_m20_preflight_m2e",
+        "scripts/preflight_v16_generic_m20_probe.py",
+    )
+    result = module.preflight(
+        builder.build_registry("a" * 40), scratch=workspace_tmp
+    )
+    assert result["status"] == "PASS", result["errors"]
+    assert all(
+        row["m2e_context_type"] == "SingleLaneDiagnosisContext"
+        for row in result["cases"]
+    )
+    assert all(
+        set(row["budgets"])
+        == {"m20_current_v15", "m2e_scoped_behavioral_patch"}
+        for row in result["cases"]
+    )
+
+
 def test_m20_context_is_byte_current_and_g0_uses_empty_hashes(
     registry, workspace_tmp
 ):
