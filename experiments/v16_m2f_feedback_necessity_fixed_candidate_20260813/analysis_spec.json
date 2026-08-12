@@ -1,0 +1,21 @@
+{
+  "analysis_version": "v16_m2f_feedback_necessity_v1",
+  "arms": ["F1_LOSS_BLIND", "F2_CANDIDATE_FEEDBACK"],
+  "source_candidate_count": 7,
+  "cell_count": 14,
+  "calls_per_cell": 1,
+  "causal_difference": "F2 alone receives actual candidate-specific competence-loss examples, identities, and counts",
+  "primary_metrics": [
+    "targeting_retention",
+    "collateral_loss",
+    "recovered_collateral",
+    "compatibility_rescues",
+    "critical_net",
+    "oracle_delta",
+    "vote_net"
+  ],
+  "analysis_only_metrics": ["critical_net", "oracle_delta", "vote_net"],
+  "feedback_necessary_rule": "F2 targeting noninferior and at least three of five directional checks strictly favorable",
+  "extra_revision_sufficient_rule": "F1 targeting noninferior and at least three of five F2 directional checks not favorable",
+  "forbidden": ["validation", "test", "team_commit", "optimizer_update", "parent_mutation"]
+}

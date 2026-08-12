@@ -35,6 +35,7 @@ SOURCE_HASHES = (
 MODEL = "qwen3-14b"
 THINKING = False
 AUTH_ENV = "M2F_COMPATIBILITY_REPAIR_PROBE_AUTHORIZED"
+CAUSAL_AUTH_ENV = "M2F_FEEDBACK_NECESSITY_PROBE_AUTHORIZED"
 STABLE_CAP = 2
 REPAIR_MAX_TOKENS = 3000
 
@@ -97,6 +98,25 @@ def build_repair_request(case: dict[str, Any]) -> str:
         "numeric_summary": case["numeric_summary"],
     }
     return REPAIR_INSTRUCTION + "\n\nRepairInput:\n" + json.dumps(payload, ensure_ascii=False, sort_keys=True)
+
+
+def build_causal_control_request(case: dict[str, Any], variant: str) -> str:
+    if variant not in {"F1_LOSS_BLIND", "F2_CANDIDATE_FEEDBACK"}:
+        raise ValueError("unknown causal-control variant")
+    payload = {
+        "parent_member_prompt": case["parent_prompt"],
+        "source_m20_candidate_prompt": case["source_candidate_prompt"],
+        "successful_assigned_responsibility_repairs": case["repair_evidence"],
+        "numeric_summary": {
+            "responsibility_gain_count": case["numeric_summary"]["responsibility_gain_count"]
+        },
+    }
+    if variant == "F2_CANDIDATE_FEEDBACK":
+        payload["candidate_specific_competence_losses"] = case["loss_evidence"]
+        payload["numeric_summary"] = case["numeric_summary"]
+    return REPAIR_INSTRUCTION + "\n\nRepairInput:\n" + json.dumps(
+        payload, ensure_ascii=False, sort_keys=True
+    )
 
 
 def parse_repair_output(text: str, case: dict[str, Any]) -> str:
