@@ -1,0 +1,57 @@
+{
+  "files": [
+    {
+      "name": "README.md",
+      "sha256": "873e1bc0289862d50f9274689834971d90ad81b4fb4725fd282746bfd2e480ad",
+      "size": 686
+    },
+    {
+      "name": "analysis_summary.json",
+      "sha256": "9d04b2ee0173d31e3df4be0a184ed7c0ec7ba545fe621452ad4b71fca503bdd4",
+      "size": 3365
+    },
+    {
+      "name": "case_metrics.csv",
+      "sha256": "923af89af3f343c14f6943755faac431ae4f5abd863e6559f06ec1b40da7b635",
+      "size": 2712
+    },
+    {
+      "name": "paired_comparisons.csv",
+      "sha256": "ee8851b153626725edb398f8de39b380f2cb975063a8681833cd94dbf3610bc3",
+      "size": 148
+    },
+    {
+      "name": "pipeline_cost_metrics.csv",
+      "sha256": "40a7ff1b126e6454c8d99bf569fe1ea85669de379863ac986fef8f60ac0902aa",
+      "size": 1592
+    },
+    {
+      "name": "protocol_gate.json",
+      "sha256": "3367b334b8eeade601b256e34cb698cdac2d0552810e38fdd5f4879c20f033f9",
+      "size": 646
+    },
+    {
+      "name": "responsibility_repair_metrics.csv",
+      "sha256": "7791aa7fafde0bf63c7ea08fb0f9a0bbed27b14af6fd0491699be788a1ed1a4a",
+      "size": 1369
+    },
+    {
+      "name": "seed_metrics.csv",
+      "sha256": "44343b11d8ec9e825a29009680db846552d5c411c5f6fc9babfdfe31996187cc",
+      "size": 1696
+    },
+    {
+      "name": "source_freeze_sanitized.json",
+      "sha256": "b6ffee574c53152fcd4f6a5fbee89d0e8fa4677852c5a8001abf67fb89022d77",
+      "size": 364
+    },
+    {
+      "name": "variant_metrics.csv",
+      "sha256": "da459eea9ddbac27c915226f793df79321b3e1792610c7517bf4525af08f15cc",
+      "size": 981
+    }
+  ],
+  "manifest_version": "v16_sanitized_report_manifest_v1",
+  "sanitization_status": "PASS",
+  "study": "study_b"
+}

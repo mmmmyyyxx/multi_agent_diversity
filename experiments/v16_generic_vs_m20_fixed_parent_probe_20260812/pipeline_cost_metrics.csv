@@ -1,0 +1,17 @@
+case_id,context_char_count,context_item_count,critic_calls,critic_exhausted,critic_semantic_rejections,input_tokens,output_tokens,seed,student_reached,total_tokens,variant
+seed48_structural_parent1_target0,2394,3,2,1,2,4425,531,48,0,4956,g0_fixed_target_generic
+seed48_structural_parent1_target0,1931,3,2,0,1,41036,1410,48,1,42446,m20_current_v15
+seed48_structural_parent2_target4,1938,3,1,0,0,37657,1107,48,1,38764,m20_current_v15
+seed48_structural_parent2_target4,2416,3,1,0,0,38061,1059,48,1,39120,g0_fixed_target_generic
+seed49_structural_parent1_target1,2394,3,2,1,2,4356,487,49,0,4843,g0_fixed_target_generic
+seed49_structural_parent1_target1,1956,3,1,0,0,39170,1085,49,1,40255,m20_current_v15
+seed49_structural_parent2_target2,2027,3,1,0,0,39796,1091,49,1,40887,m20_current_v15
+seed49_structural_parent2_target2,2511,3,2,1,2,4465,508,49,0,4973,g0_fixed_target_generic
+seed50_structural_parent1_target3,2376,3,2,1,2,4433,666,50,0,5099,g0_fixed_target_generic
+seed50_structural_parent1_target3,1979,3,2,0,1,43389,1379,50,1,44768,m20_current_v15
+seed50_structural_parent2_target4,2035,3,1,0,0,35641,1020,50,1,36661,m20_current_v15
+seed50_structural_parent2_target4,2412,3,2,1,2,4319,550,50,0,4869,g0_fixed_target_generic
+seed51_structural_parent1_target2,2375,3,1,0,0,44196,9658,51,1,53854,g0_fixed_target_generic
+seed51_structural_parent1_target2,1923,3,2,1,2,3737,549,51,0,4286,m20_current_v15
+seed51_structural_parent2_target1,1978,3,1,0,0,38160,1097,51,1,39257,m20_current_v15
+seed51_structural_parent2_target1,2412,3,2,1,2,4279,492,51,0,4771,g0_fixed_target_generic

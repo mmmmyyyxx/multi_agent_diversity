@@ -1,0 +1,122 @@
+{
+  "analysis_version": "v16_generic_m20_analysis_v1",
+  "responsibility_conditioning_value": "USEFUL_SIGNAL_WITH_COLLATERAL",
+  "paired": {
+    "feasible": {
+      "wins": 4,
+      "ties": 3,
+      "losses": 1
+    },
+    "responsibility_repair": {
+      "wins": 6,
+      "ties": 0,
+      "losses": 2
+    },
+    "F": {
+      "wins": 1,
+      "ties": 5,
+      "losses": 2
+    },
+    "target_regression": {
+      "wins": 1,
+      "ties": 3,
+      "losses": 4
+    }
+  },
+  "classifier": {
+    "targeting_better": true,
+    "quality_noninferior": false,
+    "negative": false,
+    "repair_wtl": {
+      "wins": 6,
+      "ties": 0,
+      "losses": 2
+    },
+    "responsibility_repair_seed_differences_m20_minus_g0": {
+      "48": 1,
+      "49": 11,
+      "50": 11,
+      "51": 2
+    }
+  },
+  "variants": [
+    {
+      "variant": "g0_fixed_target_generic",
+      "branches": 8,
+      "requested_candidates": 16,
+      "valid_candidates": 4,
+      "evaluated_candidates": 4,
+      "feasible_candidates": 2,
+      "feasible_rate": 0.5,
+      "A_count": 2,
+      "B_count": 0,
+      "C_count": 0,
+      "D_count": 0,
+      "E_count": 0,
+      "F_count": 2,
+      "F_fraction": 0.5,
+      "target_regression_count": 1,
+      "target_regression_rate": 0.25,
+      "target_gain": 0,
+      "vote_gain_count": 17,
+      "vote_loss_count": 8,
+      "vote_net_gain": 9,
+      "responsibility_repair_candidate_count": 3,
+      "responsibility_repair_rate": 0.75,
+      "responsibility_residual_gain_count": 6,
+      "responsibility_residual_loss_count": 0,
+      "coverage_responsibility_gain": 0,
+      "conversion_responsibility_gain": 6,
+      "critic_calls": 14,
+      "critic_semantic_rejections": 12,
+      "critic_exhausted_branches": 6,
+      "critic_exhausted_rate": 0.75,
+      "student_reached_branches": 2,
+      "student_reached_rate": 0.25,
+      "mean_context_char_count": 2411.25,
+      "mean_context_item_count": 3,
+      "input_tokens": 108534,
+      "output_tokens": 13951,
+      "total_tokens": 122485
+    },
+    {
+      "variant": "m20_current_v15",
+      "branches": 8,
+      "requested_candidates": 16,
+      "valid_candidates": 14,
+      "evaluated_candidates": 14,
+      "feasible_candidates": 7,
+      "feasible_rate": 0.5,
+      "A_count": 4,
+      "B_count": 2,
+      "C_count": 1,
+      "D_count": 0,
+      "E_count": 3,
+      "F_count": 4,
+      "F_fraction": 0.2857142857142857,
+      "target_regression_count": 7,
+      "target_regression_rate": 0.5,
+      "target_gain": -21,
+      "vote_gain_count": 61,
+      "vote_loss_count": 28,
+      "vote_net_gain": 33,
+      "responsibility_repair_candidate_count": 14,
+      "responsibility_repair_rate": 1.0,
+      "responsibility_residual_gain_count": 31,
+      "responsibility_residual_loss_count": 0,
+      "coverage_responsibility_gain": 0,
+      "conversion_responsibility_gain": 31,
+      "critic_calls": 11,
+      "critic_semantic_rejections": 4,
+      "critic_exhausted_branches": 1,
+      "critic_exhausted_rate": 0.125,
+      "student_reached_branches": 7,
+      "student_reached_rate": 0.875,
+      "mean_context_char_count": 1970.875,
+      "mean_context_item_count": 3,
+      "input_tokens": 278586,
+      "output_tokens": 8738,
+      "total_tokens": 287324
+    }
+  ]
+}

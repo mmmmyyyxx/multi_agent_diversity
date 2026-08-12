@@ -1,0 +1,17 @@
+A_count,B_count,C_count,D_count,E_count,F_count,case_id,context_char_count,context_item_count,conversion_responsibility_gain,coverage_responsibility_gain,critic_calls,critic_exhausted,critic_semantic_rejections,evaluated_candidates,feasible_candidates,input_tokens,output_tokens,requested_candidates,responsibility_repair_candidate_count,responsibility_repair_rate,responsibility_residual_gain_count,responsibility_residual_loss_count,seed,student_reached,target_gain,target_regression_count,total_tokens,valid_candidates,variant,vote_gain_count,vote_loss_count,vote_net_gain
+0,0,0,0,0,0,seed48_structural_parent1_target0,2394,3,0,0,2,1,2,0,0,4425,531,2,0,0.0,0,0,48,0,0,0,4956,0,g0_fixed_target_generic,0,0,0
+0,0,0,0,0,2,seed48_structural_parent1_target0,1931,3,2,0,2,0,1,2,0,41036,1410,2,2,1.0,2,0,48,1,-20,2,42446,2,m20_current_v15,0,0,0
+0,0,0,0,2,0,seed48_structural_parent2_target4,1938,3,3,0,1,0,0,2,0,37657,1107,2,2,1.0,3,0,48,1,-3,2,38764,2,m20_current_v15,12,8,4
+2,0,0,0,0,0,seed48_structural_parent2_target4,2416,3,4,0,1,0,0,2,2,38061,1059,2,2,1.0,4,0,48,1,3,0,39120,2,g0_fixed_target_generic,17,8,9
+0,0,0,0,0,0,seed49_structural_parent1_target1,2394,3,0,0,2,1,2,0,0,4356,487,2,0,0.0,0,0,49,0,0,0,4843,0,g0_fixed_target_generic,0,0,0
+0,2,0,0,0,0,seed49_structural_parent1_target1,1956,3,3,0,1,0,0,2,2,39170,1085,2,2,1.0,3,0,49,1,2,0,40255,2,m20_current_v15,0,0,0
+2,0,0,0,0,0,seed49_structural_parent2_target2,2027,3,8,0,1,0,0,2,2,39796,1091,2,2,1.0,8,0,49,1,6,0,40887,2,m20_current_v15,19,8,11
+0,0,0,0,0,0,seed49_structural_parent2_target2,2511,3,0,0,2,1,2,0,0,4465,508,2,0,0.0,0,0,49,0,0,0,4973,0,g0_fixed_target_generic,0,0,0
+0,0,0,0,0,0,seed50_structural_parent1_target3,2376,3,0,0,2,1,2,0,0,4433,666,2,0,0.0,0,0,50,0,0,0,5099,0,g0_fixed_target_generic,0,0,0
+0,0,0,0,0,2,seed50_structural_parent1_target3,1979,3,5,0,2,0,1,2,0,43389,1379,2,2,1.0,5,0,50,1,-9,2,44768,2,m20_current_v15,0,0,0
+1,0,0,0,1,0,seed50_structural_parent2_target4,2035,3,6,0,1,0,0,2,1,35641,1020,2,2,1.0,6,0,50,1,1,1,36661,2,m20_current_v15,16,5,11
+0,0,0,0,0,0,seed50_structural_parent2_target4,2412,3,0,0,2,1,2,0,0,4319,550,2,0,0.0,0,0,50,0,0,0,4869,0,g0_fixed_target_generic,0,0,0
+0,0,0,0,0,2,seed51_structural_parent1_target2,2375,3,2,0,1,0,0,2,0,44196,9658,2,1,0.5,2,0,51,1,-3,1,53854,2,g0_fixed_target_generic,0,0,0
+0,0,0,0,0,0,seed51_structural_parent1_target2,1923,3,0,0,2,1,2,0,0,3737,549,2,0,0.0,0,0,51,0,0,0,4286,0,m20_current_v15,0,0,0
+1,0,1,0,0,0,seed51_structural_parent2_target1,1978,3,4,0,1,0,0,2,2,38160,1097,2,2,1.0,4,0,51,1,2,0,39257,2,m20_current_v15,14,7,7
+0,0,0,0,0,0,seed51_structural_parent2_target1,2412,3,0,0,2,1,2,0,0,4279,492,2,0,0.0,0,0,51,0,0,0,4771,0,g0_fixed_target_generic,0,0,0
