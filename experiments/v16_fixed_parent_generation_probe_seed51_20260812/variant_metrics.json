@@ -1,0 +1,65 @@
+{
+  "metric_scope": "fixed_parent_generation_attribution",
+  "case_count": 3,
+  "requested_candidates_per_variant": 6,
+  "variants": {
+    "c0_current_v15": {
+      "critic_semantic_rejections": 1,
+      "critic_calls": 4,
+      "critic_semantic_rejection_rate": 0.25,
+      "valid_candidates": 6,
+      "valid_candidate_rate_per_budget": 1.0,
+      "evaluated_candidates": 6,
+      "feasible_candidates": 3,
+      "feasible_rate_per_evaluated": 0.5,
+      "repair_gain_candidates": 4,
+      "repair_gain_rate_per_evaluated": 0.6666666666666666,
+      "p1_loss_candidates": 2,
+      "p1_loss_rate_per_evaluated": 0.3333333333333333,
+      "repair_and_preservation_safe_candidates": 2,
+      "repair_and_preservation_safe_rate_per_evaluated": 0.3333333333333333,
+      "vote_gain_candidates": 2
+    },
+    "c2_boundary_plus_preservation": {
+      "critic_semantic_rejections": 2,
+      "critic_calls": 5,
+      "critic_semantic_rejection_rate": 0.4,
+      "valid_candidates": 5,
+      "valid_candidate_rate_per_budget": 0.8333333333333334,
+      "evaluated_candidates": 5,
+      "feasible_candidates": 0,
+      "feasible_rate_per_evaluated": 0.0,
+      "repair_gain_candidates": 0,
+      "repair_gain_rate_per_evaluated": 0.0,
+      "p1_loss_candidates": 4,
+      "p1_loss_rate_per_evaluated": 0.8,
+      "repair_and_preservation_safe_candidates": 0,
+      "repair_and_preservation_safe_rate_per_evaluated": 0.0,
+      "vote_gain_candidates": 0
+    },
+    "c3_coalition_aware_preservation": {
+      "critic_semantic_rejections": 4,
+      "critic_calls": 6,
+      "critic_semantic_rejection_rate": 0.6666666666666666,
+      "valid_candidates": 4,
+      "valid_candidate_rate_per_budget": 0.6666666666666666,
+      "evaluated_candidates": 4,
+      "feasible_candidates": 0,
+      "feasible_rate_per_evaluated": 0.0,
+      "repair_gain_candidates": 1,
+      "repair_gain_rate_per_evaluated": 0.25,
+      "p1_loss_candidates": 2,
+      "p1_loss_rate_per_evaluated": 0.5,
+      "repair_and_preservation_safe_candidates": 1,
+      "repair_and_preservation_safe_rate_per_evaluated": 0.25,
+      "vote_gain_candidates": 0
+    }
+  },
+  "decision": {
+    "c2_promotion_supported": false,
+    "c3_promotion_supported": false,
+    "c3_better_than_c0_established": false,
+    "method_change_authorized": false,
+    "formal_efficacy_claim": false
+  }
+}

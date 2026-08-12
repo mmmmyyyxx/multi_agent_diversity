@@ -1,0 +1,10 @@
+case_id,target_agent_id,variant,generated_candidates,valid_candidates,evaluated_candidates,feasible_candidates,critic_calls,critic_semantic_rejections,terminal_failure,parent_state_equal
+final_state_rank_1_target_4,4,c0_current_v15,2,2,2,0,1,0,,true
+final_state_rank_1_target_4,4,c2_boundary_plus_preservation,2,2,2,0,2,1,,true
+final_state_rank_1_target_4,4,c3_coalition_aware_preservation,0,0,0,0,2,2,critic_semantic_rejection_exhausted,true
+final_state_rank_2_target_0,0,c0_current_v15,2,2,2,1,2,1,,true
+final_state_rank_2_target_0,0,c2_boundary_plus_preservation,2,2,2,0,1,0,,true
+final_state_rank_2_target_0,0,c3_coalition_aware_preservation,2,2,2,0,2,1,,true
+final_state_rank_3_target_2,2,c0_current_v15,2,2,2,2,1,0,,true
+final_state_rank_3_target_2,2,c2_boundary_plus_preservation,1,1,1,0,2,1,,true
+final_state_rank_3_target_2,2,c3_coalition_aware_preservation,2,2,2,0,2,1,,true

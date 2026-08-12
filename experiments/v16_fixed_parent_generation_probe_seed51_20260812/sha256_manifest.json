@@ -1,0 +1,8 @@
+{
+  "README.md": "5905d034376beb6f012a40f731df797e209ba38b5ae302285e450d1abfdcc925",
+  "assert_report.py": "9eb4249f471062aba8d280ec716b1f2700880b9d6c261e9321f1e0e0b6260322",
+  "case_metrics.csv": "e5cbd60a1b7bcc01e82a9b3f34a16a9f5655ef0edc69cf1abf4ed055d664061d",
+  "cost_summary.json": "2be649c6a12e47cb67169b8f96208d776939cdaac70d6bfeaf7a1cf0ce1e4115",
+  "protocol_gate.json": "9a13dc37d8f9ea56b7b05e2885d7d3c372daecb79e7ba7707f7efd10f58001ea",
+  "variant_metrics.json": "a999fef3d88d949a1f57e6cf967def8e25ad330cebb4f233e9dd6dd4c3780828"
+}

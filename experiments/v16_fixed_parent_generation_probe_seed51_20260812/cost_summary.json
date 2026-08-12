@@ -1,0 +1,17 @@
+{
+  "scope": "authoritative_retry2_only",
+  "provider_attempt_count": 1164,
+  "successful_provider_attempt_count": 1163,
+  "recovered_provider_attempt_count": 1,
+  "prompt_tokens": 347749,
+  "completion_tokens": 19414,
+  "total_tokens": 367163,
+  "role_attempt_counts": {
+    "teacher": 15,
+    "critic": 15,
+    "student": 8,
+    "solver": 1126
+  },
+  "terminal_infrastructure_failure_count": 0,
+  "invalidated_attempt_cost_included": false
+}

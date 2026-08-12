@@ -1,0 +1,20 @@
+{
+  "audit_version": "v16_fixed_parent_generation_probe_audit_v1",
+  "execution_commit": "3eb456a330d23c6c822bf4e5e865e7124961bb70",
+  "gate": "PASS",
+  "blocker_count": 0,
+  "expected_cell_count": 9,
+  "observed_cell_count": 9,
+  "complete_cell_count": 9,
+  "commit_count": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "parent_state_mutation_count": 0,
+  "terminal_infrastructure_failure_count": 0,
+  "candidate_budget_violation_count": 0,
+  "raw_artifacts_modified": false,
+  "excluded_attempts": [
+    "initial_transport_failure_attempt",
+    "retry1_serialization_failure"
+  ]
+}
