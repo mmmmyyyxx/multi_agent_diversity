@@ -1,0 +1,16 @@
+{
+  "gate": "PASS",
+  "expected_cell_count": 24,
+  "observed_cell_count": 24,
+  "fixed_parent_cases": 8,
+  "commit_count": 0,
+  "parent_state_mutation_count": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "responsibility_membership_mismatch": 0,
+  "candidate_budget_violation": 0,
+  "source_identity_mismatch": 0,
+  "module1_semantics_mismatch": 0,
+  "common_safe_semantics_mismatch": 0,
+  "terminal_infrastructure_blockers": 0
+}

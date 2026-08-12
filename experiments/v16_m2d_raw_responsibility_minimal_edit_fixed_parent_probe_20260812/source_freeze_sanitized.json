@@ -1,0 +1,7 @@
+{
+  "execution_commit": "e19242b71d03055d4b974b0b2498ce0918fc2a32",
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 25,
+  "experimental_module2_version": "v16_residual_diagnosis_minimal_edit_experimental_v2",
+  "method_source_changed_after_first_api_call": false
+}

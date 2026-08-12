@@ -1,0 +1,11 @@
+{
+  "case_metrics.csv": "7acc001202cc8bc68cba8076cbab12986b01818412f8e5eeebef217eaa26691a",
+  "critic_pipeline_metrics.csv": "e8111b5e0d15e89568e0e95d039936051ab9501d0669edf677cdf67d07a4cce1",
+  "edit_metrics.csv": "f15f27f7ba12102c9e1e0154bd4e73fb98ef26e925dc626e552831acadea984d",
+  "paired_comparisons.csv": "a60cf2494681e7db31657fe30b8fa7b89506674ed3b198ae70cc33cafdd024ea",
+  "protocol_gate.json": "7d54e7c1f9a6656af6d663f2cdd99dc8587fdfb0d3652758c71c33e6414143fe",
+  "README.md": "0d810879a95fe557d0d68d49584559cbd3ad007ecf56a0c470ba4ea7a051fa62",
+  "seed_metrics.csv": "092df61347b058ce4e54ff503eebec2193c1e5060ff92a3ac0d9bd1f6c84d52f",
+  "source_freeze_sanitized.json": "c94209c1aac348770bfeae197435325c2c856a0b2555316bbda83b90166bf50e",
+  "variant_metrics.csv": "564d60974cf8356e30b3d7a6fcba45ba530dd46f10a64be288e8735e44970bc5"
+}

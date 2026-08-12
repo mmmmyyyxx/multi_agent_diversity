@@ -1,0 +1,4 @@
+variant,branches,requested_candidates,student_reached_branches,valid_candidates,evaluated_candidates,feasible_candidates,feasible_rate,critic_semantic_rejections,critic_rejection_rate,critic_exhausted_branches,repair_gain_candidates,repair_gain_rate,A,B,C,D,E,F,F_fraction,target_regressions,target_regression_rate,vote_loss_candidates,vote_loss_rate,vote_gain_candidates,mean_edit_ratio,median_edit_ratio,p95_edit_ratio,mean_edit_chars,mean_changed_lines
+m20_current_v15,8,16,8,16,16,11,0.6875,2,0.2,0,15,0.9375,5,5,1,0,2,3,0.1875,5,0.3125,8,0.5,8,2.7356870229007635,2.599236641221374,4.099236641221374,358.375,1.0
+m2d_raw_responsibility_minimal_edit,8,16,8,16,16,8,0.5,2,0.2,0,14,0.875,5,3,0,0,3,5,0.3125,8,0.5,8,0.5,8,3.276240458015267,3.1793893129770994,4.290076335877862,429.1875,1.0
+m2b_diagnosis_minimal_edit,8,16,8,16,16,9,0.5625,0,0.0,0,15,0.9375,4,4,1,0,2,5,0.3125,6,0.375,8,0.5,8,3.0939885496183206,3.129770992366412,3.9083969465648853,405.3125,1.0
