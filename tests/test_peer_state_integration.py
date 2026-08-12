@@ -483,13 +483,17 @@ def test_teacher_revision_preserves_cumulative_hard_check_constraints(tmp_path):
     assert funnel.terminal_failure_class == "critic_semantic_rejection_exhausted"
 
 
-def test_critic_invalid_json_retries_same_request_without_teacher_revision(tmp_path):
+def test_critic_invalid_json_retries_with_schema_repair_without_teacher_revision(tmp_path):
     calls = []
 
     async def optimizer(system_prompt, user_prompt, _temperature, _max_tokens):
         calls.append((system_prompt, user_prompt))
         if "Check only explicit hard blockers" in system_prompt:
+            if "previous response failed strict JSON/schema validation" in user_prompt:
+                return json.dumps(APPROVED)
             return "{"
+        if system_prompt.startswith("Return strict JSON only."):
+            return json.dumps({"candidate_prompts": ["repair-q0"]})
         return json.dumps(TEACHER)
 
     system = build_system(tmp_path, optimizer)
@@ -502,13 +506,18 @@ def test_critic_invalid_json_retries_same_request_without_teacher_revision(tmp_p
         return funnel, candidates
 
     funnel, candidates = asyncio.run(run())
-    assert candidates == []
+    assert len(candidates) == 1
     teacher_requests = [row for row in calls if "Propose one task-general" in row[0]]
     critic_requests = [row for row in calls if "Check only explicit hard blockers" in row[0]]
     assert len(teacher_requests) == 1
     assert len(critic_requests) == 2
-    assert critic_requests[0] == critic_requests[1]
-    assert funnel.critic_invalid_responses == 2
+    assert critic_requests[0][0] == critic_requests[1][0]
+    assert critic_requests[0][1] == "Audit the repair plan."
+    assert (
+        "previous response failed strict JSON/schema validation"
+        in critic_requests[1][1]
+    )
+    assert funnel.critic_invalid_responses == 1
 
 
 def result(

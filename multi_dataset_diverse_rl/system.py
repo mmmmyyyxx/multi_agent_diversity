@@ -2837,14 +2837,24 @@ class PromptEnsembleOptimizationSystem:
                 evolution_variant=self.protocol.module2_evolution_variant,
             )
             critic_decision = None
-            critic_request_hash = _request_hash(critic_request, "Audit the repair plan.")
             for format_attempt in range(self.cfg.tcs.critic_json_max_retries + 1):
+                critic_user_request = "Audit the repair plan."
+                if format_attempt:
+                    critic_user_request = (
+                        "The previous response failed strict JSON/schema validation. "
+                        "Return exactly one JSON object matching the required CriticDecision "
+                        "schema, with no prose or markdown."
+                    )
+                critic_request_hash = _request_hash(
+                    critic_request,
+                    critic_user_request,
+                )
                 funnel.critic_calls += 1
                 try:
                     critic_result = await self._chat(
                         self.cfg.models.evaluator_model,
                         critic_request,
-                        "Audit the repair plan.",
+                        critic_user_request,
                         self.cfg.tcs.critic_temperature,
                         None,
                         "evaluator",
