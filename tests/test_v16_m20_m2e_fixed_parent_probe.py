@@ -1,6 +1,7 @@
 from __future__ import annotations
 import importlib.util,json
 from pathlib import Path
+from types import SimpleNamespace
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
  spec=importlib.util.spec_from_file_location(name,ROOT/path);m=importlib.util.module_from_spec(spec);assert spec.loader;spec.loader.exec_module(m);return m
@@ -24,3 +25,17 @@ def test_protocol_auditor_rejects_bad_scoped_mechanism():
  summary={"cells":cells,"registry_hash":r["registry_content_hash"],"execution_commit":r["execution_commit"],"requested_candidate_count":32,"tracked_source_freeze_hard":True,"first_success_source_freeze":{"status":"HARD","execution_commit":r["execution_commit"],"registry_content_hash":r["registry_content_hash"]},"commit_count":0,"parent_state_mutation_count":0,"optimizer_state_update_count":0}
  report=a.audit(r,summary)
  assert report["gate"]=="FAIL" and report["scoped_patch_mechanism_violations"]==8
+
+
+def test_candidate_payload_records_append_only_mechanism():
+    runner=load("m2e_runner_payload","scripts/run_v16_generic_m20_fixed_parent_probe.py")
+    runner.asdict=lambda _value: {}
+    trigger="When two interpretations remain plausible";behavior="Compare decisive evidence before committing.";parent="parent bytes"
+    prompt=parent+"\n\n[Responsibility-specific conditional refinement]\n"+f"When {trigger}:\n    {behavior}\n\nOutside this condition, follow the original procedure unchanged."
+    row=SimpleNamespace(
+        final_evaluation=SimpleNamespace(prompt=prompt),
+        constraint=SimpleNamespace(passed=True),module2_diagnostics={},prompt_hash="a"*64,
+        student_candidate=SimpleNamespace(trigger_condition=trigger,localized_behavior=behavior),
+    )
+    payload=runner._candidate_payload(row,responsibility_effects={})
+    assert payload["scoped_patch_mechanism"]["parent_prefix_byte_identical"] is True

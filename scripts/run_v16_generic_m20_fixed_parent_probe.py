@@ -465,13 +465,13 @@ def _candidate_payload(
         raise ValueError("probe candidate lacks final common-safe evaluation")
     diagnostics = dict(row.module2_diagnostics)
     student = row.student_candidate
+    trigger = str(getattr(student, "trigger_condition", ""))
+    behavior = str(getattr(student, "localized_behavior", ""))
     parent_prompt = evaluation.prompt[: -len(
         "\n\n[Responsibility-specific conditional refinement]\n"
         + f"When {trigger}:\n    {behavior}\n\n"
         + "Outside this condition, follow the original procedure unchanged."
     )] if trigger and behavior else ""
-    trigger = str(getattr(student, "trigger_condition", ""))
-    behavior = str(getattr(student, "localized_behavior", ""))
     return {
         "prompt_hash": row.prompt_hash,
         "evaluation": asdict(evaluation),
