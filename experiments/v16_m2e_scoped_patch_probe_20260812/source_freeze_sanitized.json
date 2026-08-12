@@ -1,0 +1,15 @@
+{
+  "freeze_version": "v16_m20_m2e_source_freeze_v1",
+  "source_freeze_status": "PASS",
+  "execution_commit": "dfa8f539242b76df05a52dba27efa0390486b21e",
+  "repo_dirty": false,
+  "registry_content_hash": "c54fbe42d8e8899a0610d83222180936f41877381deb8bfa8ea31d025fd0dd90",
+  "frozen_definition_sha256": {
+    "DESIGN_SPEC.md": "f1f1c84441b0adca80c388761a432a109444bf2b08c1dd89debc5f35e595c131"
+  },
+  "case_count": 8,
+  "cell_count": 16,
+  "candidate_count": 32,
+  "working_tree_source_hash": "b4134b22d6a4b8030e62fa5519a8fddfa10b0f735f1dda7f23163a75e9b6c52e",
+  "source_file_count": 167
+}

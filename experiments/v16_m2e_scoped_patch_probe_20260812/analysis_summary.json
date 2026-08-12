@@ -1,0 +1,33 @@
+{
+  "analysis_version": "v16_m20_m2e_analysis_v1",
+  "scoped_patch_value": "TARGETING_LOST",
+  "targeting_retained": false,
+  "collateral_reduced": true,
+  "paired": {
+    "responsibility_repair": {"wins": 0, "ties": 0, "losses": 8},
+    "nonresponsibility_loss": {"wins": 6, "ties": 0, "losses": 2},
+    "feasible": {"wins": 0, "ties": 1, "losses": 7},
+    "target_regression": {"wins": 1, "ties": 6, "losses": 1}
+  },
+  "variants": [
+    {
+      "variant": "m20_current_v15", "branches": 8,
+      "requested_candidates": 16, "evaluated_candidates": 16,
+      "feasible_candidates": 12, "responsibility_repair": 42,
+      "nonresponsibility_loss": 129, "stable_loss": 98,
+      "pivotal_loss": 31, "target_regressions": 4,
+      "target_gain": 23, "F_count": 3, "student_reached": 8,
+      "critic_exhausted": 0, "parent_prefix_identity": 0
+    },
+    {
+      "variant": "m2e_scoped_behavioral_patch", "branches": 8,
+      "requested_candidates": 16, "evaluated_candidates": 7,
+      "feasible_candidates": 3, "responsibility_repair": 14,
+      "nonresponsibility_loss": 96, "stable_loss": 79,
+      "pivotal_loss": 17, "target_regressions": 4,
+      "target_gain": -40, "F_count": 3, "student_reached": 6,
+      "critic_exhausted": 2, "parent_prefix_identity": 7
+    }
+  ],
+  "execution_commit": "dfa8f539242b76df05a52dba27efa0390486b21e"
+}

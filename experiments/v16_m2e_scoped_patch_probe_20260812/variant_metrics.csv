@@ -1,0 +1,3 @@
+F_count,branches,critic_exhausted,evaluated_candidates,feasible_candidates,nonresponsibility_loss,parent_prefix_identity,pivotal_loss,requested_candidates,responsibility_repair,stable_loss,student_reached,target_gain,target_regressions,variant
+3,8,0,16,12,129,0,31,16,42,98,8,23,4,m20_current_v15
+3,8,2,7,3,96,7,17,16,14,79,6,-40,4,m2e_scoped_behavioral_patch

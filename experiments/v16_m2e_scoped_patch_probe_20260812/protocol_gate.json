@@ -1,0 +1,22 @@
+{
+  "audit_version": "v16_generic_m20_protocol_gate_v1",
+  "gate": "PASS",
+  "blockers": [],
+  "expected_cell_count": 16,
+  "observed_cell_count": 16,
+  "fixed_parent_cases_reproduced": 8,
+  "responsibility_case_identity_mismatch": 0,
+  "g0_responsibility_leakage": 0,
+  "candidate_budget_violations": 0,
+  "team_prompt_commits": 0,
+  "parent_mutations": 0,
+  "optimizer_state_updates": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "source_identity_mismatch": 0,
+  "first_success_source_freeze_hard": true,
+  "module1_semantic_mismatch": 0,
+  "common_safe_semantic_mismatch": 0,
+  "terminal_infrastructure_failures": 0,
+  "scoped_patch_mechanism_violations": 0
+}
