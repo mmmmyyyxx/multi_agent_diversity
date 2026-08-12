@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import importlib.util
+import inspect
 import json
 import shutil
 import uuid
@@ -602,3 +603,13 @@ def test_freeze_builder_schema_matches_runner_and_hashes_definitions(
     assert verification["status"] == "PASS"
     assert verification["api_calls"] == 0
     assert semantics["module1_semantics_changed"] is False
+
+
+def test_analyzer_requires_explicit_source_freeze():
+    module = load(
+        "generic_m20_analyzer_cli",
+        "scripts/analyze_v16_generic_m20_fixed_parent_probe.py",
+    )
+    source = Path(inspect.getsourcefile(module.main)).read_text(encoding="utf-8")
+    assert 'parser.add_argument("--source_freeze", type=Path, required=True)' in source
+    assert "v16_responsibility_coherence_generic_m20_prep" not in source

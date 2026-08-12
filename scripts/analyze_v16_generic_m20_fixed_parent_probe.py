@@ -263,6 +263,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run_root", type=Path, required=True)
     parser.add_argument("--out_dir", type=Path, required=True)
+    parser.add_argument("--source_freeze", type=Path, required=True)
     args = parser.parse_args()
     summary = json.loads(
         (args.run_root / "probe_summary.json").read_text(encoding="utf-8")
@@ -325,13 +326,7 @@ def main() -> None:
     (out / "analysis_summary.json").write_text(
         json.dumps(summary_payload, indent=2) + "\n", encoding="utf-8"
     )
-    repo_root = Path(__file__).resolve().parents[1]
-    freeze_path = (
-        repo_root
-        / "runs"
-        / "v16_responsibility_coherence_generic_m20_prep"
-        / "source_freeze_manifest.json"
-    )
+    freeze_path = args.source_freeze.resolve()
     if freeze_path.is_file():
         freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
         (out / "source_freeze_sanitized.json").write_text(
