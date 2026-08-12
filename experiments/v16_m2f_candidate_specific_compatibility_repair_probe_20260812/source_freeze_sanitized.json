@@ -1,0 +1,27 @@
+{
+  "freeze_version": "v16_m2f_source_freeze_v1",
+  "source_freeze_status": "PASS",
+  "execution_commit": "f8ba9098bc781e9ee9b0171504a9b02f7e80f61e",
+  "source_execution_commit": "b18be6cf893b77b698b9f4ff92af788baff19d0e",
+  "source_candidate_hashes": [
+    "3b494ddc756e70cf877ee46224ad72d4fd81cba71dd77754bf801ef849879671",
+    "df37e4360977a65edcb47bc7786fbc48869469065668ed5aabdaa703d98af8d2",
+    "2249467342abe57b0f01f7aaa251153ceeb91f0bfddf1b030e1fb4e862b4d20f",
+    "c06c7420a7252455b29066ba2990a4a749d7893f86dffd591a89ddce96438481",
+    "62c02b9dbd25d08c910dbc1d672926981279763d16e1bbdff1b2efac85fc14d2",
+    "d70344b3a14adafd45fb4ff7a265928e27426c9ca11f7480004399b1f4ffa6a3",
+    "18289914279d8f2c62ef67d95ef79055e551ca221ea2318ee9b15e0cbcbb131f"
+  ],
+  "repair_prompt_hash": "8723047f7506222416ac21bb7613c059064f701da3b38f8610305987bb955340",
+  "evidence_selection_rule_hash": "b454cc393b9ea0a5272bc039acc9b29299697d792180a3e274b73dad2680c535",
+  "model": "qwen3-14b",
+  "thinking": false,
+  "method_version": "member_aware_peer_state_v15",
+  "checkpoint_version": 25,
+  "experimental_repair_version": "v16_m2f_candidate_specific_compatibility_repair_v1",
+  "full_test_result": "554 passed",
+  "repo_dirty": false,
+  "registry_content_hash": "570333d1186acb3866f9ab164bc3b4fcf9cabf8d2d2327426c8223e2cad3dbd4",
+  "working_tree_source_hash": "3a0884bcbc01cf19403d5bd833c061c9b571d7c243810c895e9a105ffb0fa67a",
+  "source_file_count": 175
+}

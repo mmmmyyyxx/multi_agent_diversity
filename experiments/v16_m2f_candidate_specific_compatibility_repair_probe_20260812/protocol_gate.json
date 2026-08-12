@@ -1,0 +1,22 @@
+{
+  "gate": "PASS",
+  "blockers": [],
+  "source_candidates": 7,
+  "repair_cells": 7,
+  "completed_authoritative_repair_outputs": 7,
+  "source_candidate_hash_mismatch": 0,
+  "source_parent_mismatch": 0,
+  "responsibility_mismatch": 0,
+  "historical_evaluator_incompatibility": 0,
+  "candidate_budget_violations": 0,
+  "team_commits": 0,
+  "parent_mutations": 0,
+  "optimizer_updates": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "source_identity_mismatch": 0,
+  "module1_semantic_mismatch": 0,
+  "common_safe_semantic_mismatch": 0,
+  "source_changes_after_first_api_call": 0,
+  "terminal_infrastructure_blockers": 0
+}

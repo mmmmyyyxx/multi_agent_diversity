@@ -1,0 +1,30 @@
+{
+  "analysis_version": "v16_m2f_analysis_v1",
+  "frozen_classifier": "PIVOTAL_COMPATIBILITY_FAILED",
+  "promising_for_train_pilot": false,
+  "source_total_responsibility_repairs": 13,
+  "retained_source_repairs": 13,
+  "repair_total_responsibility_repairs": 15,
+  "aggregate_targeting_retention": 1.0,
+  "source_nonresponsibility_loss": 77,
+  "repair_nonresponsibility_loss": 72,
+  "collateral_wtl": {
+    "wins": 4,
+    "ties": 1,
+    "losses": 2
+  },
+  "source_pivotal_loss": 10,
+  "repair_pivotal_loss": 13,
+  "compatibility_rescues": 3,
+  "source_infeasible": 7,
+  "criteria": {
+    "targeting": true,
+    "collateral": true,
+    "pivotal": false,
+    "rescue": true,
+    "rescue_required": 2
+  },
+  "recovered_collateral": 19,
+  "persistent_collateral": 58,
+  "new_collateral": 14
+}

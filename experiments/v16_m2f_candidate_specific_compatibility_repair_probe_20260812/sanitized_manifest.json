@@ -1,0 +1,45 @@
+{
+  "manifest_version": "v16_m2f_sanitized_manifest_v1",
+  "files": [
+    {
+      "file": "aggregate_metrics.json",
+      "sha256": "9c7aac5549df8ff97441685b48078347e05887332791d28e5d5b1f6abdf5ec8f",
+      "size_bytes": 819
+    },
+    {
+      "file": "analysis_summary.json",
+      "sha256": "9c7aac5549df8ff97441685b48078347e05887332791d28e5d5b1f6abdf5ec8f",
+      "size_bytes": 819
+    },
+    {
+      "file": "pair_metrics.csv",
+      "sha256": "613e036ad316cecd7542110419262a2adff35b19ab7cdd6052ad14214c4389d5",
+      "size_bytes": 2686
+    },
+    {
+      "file": "paired_comparisons.csv",
+      "sha256": "ae111b8571b6c9dd1024ee5c6aac80ecc17c7a4e3b5ae790063d247753676ae5",
+      "size_bytes": 74
+    },
+    {
+      "file": "protocol_gate.json",
+      "sha256": "d9de94a17ffe9e564f6ac7cb7987874db7735f703e9bd0893166897f0b8b3516",
+      "size_bytes": 644
+    },
+    {
+      "file": "README.md",
+      "sha256": "4abc3b078dfb04269eb1189d4e68fabc23a973ac00f753d86ec9f223d389813f",
+      "size_bytes": 1437
+    },
+    {
+      "file": "source_candidate_registry_sanitized.json",
+      "sha256": "f596fc889026c79d0456724b670906612aded62520ddd0b1ffacb23230f3f88c",
+      "size_bytes": 866
+    },
+    {
+      "file": "source_freeze_sanitized.json",
+      "sha256": "0429615633be5afc331e855a47045d75dc989ad40b923e93fac9e2570b570bcd",
+      "size_bytes": 1475
+    }
+  ]
+}
