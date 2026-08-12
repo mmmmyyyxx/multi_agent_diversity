@@ -1137,9 +1137,11 @@ def _validate_scoped_patch(trigger: str, behavior: str) -> None:
     )
     if any(token in normalized for token in forbidden):
         raise ValueError("scoped patch is unconditional or answer-specific")
-    condition_markers = ("when ", "if ", "only when", "in cases where", "whenever ")
-    if not any(marker in trigger.lower() for marker in condition_markers):
-        raise ValueError("scoped patch trigger lacks a recognizable condition")
+    # ``trigger_condition`` names the condition; it is not required to repeat a
+    # conjunction.  The program, rather than the model, supplies the conditional
+    # syntax in ``construct_scoped_prompt``.  Requiring a literal "when"/"if"
+    # here made valid noun-phrase conditions fail and produced "When When ..."
+    # for the responses that happened to pass.
 
 
 def construct_scoped_prompt(parent_prompt: str, trigger: str, behavior: str) -> str:

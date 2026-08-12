@@ -236,7 +236,7 @@ def test_new_variants_do_not_add_preservation_set_or_boundary_context():
 def test_m2e_scoped_patch_is_deterministic_append_only():
     teacher = parse_teacher_repair_plan(
         {
-            "trigger_condition": "When two interpretations remain semantically plausible",
+            "trigger_condition": "two interpretations remain semantically plausible",
             "localized_behavior": "Compare the decisive evidence for those interpretations before committing.",
         },
         evolution_variant=M2E_SCOPED_BEHAVIORAL_PATCH,
@@ -246,6 +246,8 @@ def test_m2e_scoped_patch_is_deterministic_append_only():
         parent, teacher.trigger_condition, teacher.localized_behavior
     )
     assert prompt[: len(parent)] == parent
+    assert "When two interpretations remain semantically plausible:" in prompt
+    assert "When When" not in prompt
     parsed = parse_student_candidates(
         {"scoped_patches": [{
             "trigger_condition": teacher.trigger_condition,
