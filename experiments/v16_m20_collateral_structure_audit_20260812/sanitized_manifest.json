@@ -1,0 +1,31 @@
+{
+  "files": [
+    {
+      "name": "AUDIT_SPEC.md",
+      "sha256": "56e2a4080e9c51510acbb612c8a0ca4c9411e2796165dc0b7d53144633a09253",
+      "size": 1989
+    },
+    {
+      "name": "audit_summary.json",
+      "sha256": "d34dd2714dfb811a9af28c1928741ed7a5e3e666ea73eb699404fd0827448a80",
+      "size": 1108
+    },
+    {
+      "name": "candidate_collateral.csv",
+      "sha256": "c52e2482cf4d8b8816ab80539aa40a28cd251a704540d9b7cb40c04d10bb58f0",
+      "size": 2417
+    },
+    {
+      "name": "gain_loss_examples.csv",
+      "sha256": "2e3121b128cea77f4f0c9988ddbbda61984d20f3b2a10f570314df99c1f4b064",
+      "size": 51162
+    },
+    {
+      "name": "README.md",
+      "sha256": "ee8f6bf71e90d3bd3e05e84da4c554159b246493f6f3bffbfb13f7ea8558a717",
+      "size": 1025
+    }
+  ],
+  "manifest_version": "v16_m20_collateral_sanitized_v1",
+  "sanitization_status": "PASS"
+}

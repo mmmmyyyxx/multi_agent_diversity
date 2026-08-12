@@ -1,0 +1,29 @@
+{
+  "api_calls": 0,
+  "audit_spec_sha256": "56e2a4080e9c51510acbb612c8a0ca4c9411e2796165dc0b7d53144633a09253",
+  "audit_version": "v16_m20_collateral_structure_audit_v1",
+  "cache_open_mode": "read_only_immutable",
+  "candidate_count": 14,
+  "collateral_class_counts": {
+    "BROAD_DEGRADATION": 4,
+    "SPECIALIZATION_OVERWRITE": 3
+  },
+  "execution_commit": "b18be6cf893b77b698b9f4ff92af788baff19d0e",
+  "m20_cell_count": 8,
+  "model_calls": 0,
+  "nonresponsibility_loss_count": 129,
+  "registry_content_hash": "374146a1683425c9f58539ceb205ab9924814b12257d3abfda784faa0b3ae5ce",
+  "regression_fragile_loss_count": 0,
+  "regression_nonresponsibility_loss_count": 77,
+  "regression_pivotal_loss_count": 10,
+  "regression_responsibility_gain_count": 13,
+  "regression_stable_loss_count": 67,
+  "regression_unique_loss_count": 0,
+  "regression_unique_or_pivotal_loss_count": 10,
+  "responsibility_gain_count": 31,
+  "specialization_overwrite_also_broad_count": 3,
+  "status": "PASS",
+  "target_regression_candidate_count": 7,
+  "test_files_read": 0,
+  "validation_files_read": 0
+}
