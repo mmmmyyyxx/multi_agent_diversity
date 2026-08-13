@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import uuid
 from pathlib import Path
 
@@ -13,6 +14,8 @@ def _install() -> None:
     if not freeze_path:
         return
     root = Path(__file__).resolve().parents[1]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
     freeze_file = Path(freeze_path).resolve()
     freeze = json.loads(freeze_file.read_text(encoding="utf-8"))
 

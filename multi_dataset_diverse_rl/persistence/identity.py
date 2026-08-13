@@ -153,6 +153,7 @@ def config_fingerprint(cfg: Config) -> str:
     values["module2_context_variant"] = protocol.module2_context_variant
     values["module2_evolution_variant"] = protocol.module2_evolution_variant
     values["compatibility_repair_enabled"] = protocol.compatibility_repair_enabled
+    values["generic_revision_enabled"] = protocol.generic_revision_enabled
     values["candidate_budget_contract"] = asdict(
         protocol.candidate_budget_contract
     )
@@ -174,6 +175,7 @@ def config_fingerprint(cfg: Config) -> str:
         "module2_context_variant": protocol.module2_context_variant,
         "module2_evolution_variant": protocol.module2_evolution_variant,
         "compatibility_repair_enabled": protocol.compatibility_repair_enabled,
+        "generic_revision_enabled": protocol.generic_revision_enabled,
         "online_compatibility_repair": (
             ONLINE_COMPATIBILITY_REPAIR_VERSION
             if protocol.compatibility_repair_enabled else "off"

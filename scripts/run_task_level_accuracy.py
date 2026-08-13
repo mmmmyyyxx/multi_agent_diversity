@@ -212,7 +212,14 @@ def _validate_setting_sequence(
     the frozen optimization-probe initialization, but it does not run or
     synthesize a reporting-only baseline test evaluation.
     """
-    if tuple(setting_names) == EXPERIMENTAL_V16_MODULE2_SETTINGS:
+    efficacy_settings = (
+        "experimental_v16_efficacy_g_matched",
+        "experimental_v16_efficacy_r_m20",
+        "experimental_v16_efficacy_r_m2f",
+    )
+    if tuple(setting_names) in {
+        tuple(EXPERIMENTAL_V16_MODULE2_SETTINGS), efficacy_settings,
+    }:
         return
     if optimized_only:
         if len(setting_names) != 1 or setting_names[0] == "shared_static_reference":

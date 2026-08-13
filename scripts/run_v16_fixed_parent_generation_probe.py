@@ -158,7 +158,10 @@ async def run_cell(registry: dict[str, Any], case: dict[str, Any], variant: str,
         "resume_from_checkpoint": False, "final_test_enabled": False,
         "proposal_memory_mode": "off", "seed": int(case.get("source_seed", 51)),
     })
-    cfg = Config.from_flat(**{key: flat[key] for key in Config().to_flat_dict()})
+    defaults = Config().to_flat_dict()
+    cfg = Config.from_flat(**{
+        key: flat.get(key, default) for key, default in defaults.items()
+    })
     system = PromptEnsembleOptimizationSystem(cfg)
     atomic_write_json(out_dir / "cell_status.json", {
         "status": "started", "case_id": case["case_id"], "variant": variant,

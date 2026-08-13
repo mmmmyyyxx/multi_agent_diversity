@@ -142,6 +142,18 @@ class RoleAwareLLMClient:
         role: str,
         logical_role: str | None = None,
     ) -> LLMCallResult:
+        successful_so_far = sum(bool(row["success"]) for row in self.calls)
+        tokens_so_far = sum(int(row["total_tokens"]) for row in self.calls)
+        if (
+            self.cfg.persistence.provider_call_budget > 0
+            and successful_so_far >= self.cfg.persistence.provider_call_budget
+        ):
+            raise RuntimeError("provider_call_budget_exhausted")
+        if (
+            self.cfg.persistence.total_token_budget > 0
+            and tokens_so_far >= self.cfg.persistence.total_token_budget
+        ):
+            raise RuntimeError("total_token_budget_exhausted")
         guard = getattr(self, "source_freeze_guard", None)
         if guard is not None:
             guard("before_provider_call")
@@ -261,4 +273,15 @@ class RoleAwareLLMClient:
             "total_tokens": sum(int(row["total_tokens"]) for row in self.calls),
             "tokens_by_role": tokens_by_role,
             "latency_seconds": sum(float(row["latency_seconds"]) for row in self.calls),
+            "provider_call_budget": self.cfg.persistence.provider_call_budget,
+            "total_token_budget": self.cfg.persistence.total_token_budget,
+            "provider_call_budget_exhausted": bool(
+                self.cfg.persistence.provider_call_budget > 0
+                and len(successful) >= self.cfg.persistence.provider_call_budget
+            ),
+            "total_token_budget_exhausted": bool(
+                self.cfg.persistence.total_token_budget > 0
+                and sum(int(row["total_tokens"]) for row in self.calls)
+                >= self.cfg.persistence.total_token_budget
+            ),
         }

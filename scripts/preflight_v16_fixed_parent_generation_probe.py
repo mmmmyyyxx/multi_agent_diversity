@@ -32,7 +32,10 @@ def preflight(registry: dict) -> dict:
                 "shared_solver_cache_path": "", "resume_from_checkpoint": False,
                 "final_test_enabled": False, "proposal_memory_mode": "off", "seed": 51,
             })
-            cfg = Config.from_flat(**{key: flat[key] for key in Config().to_flat_dict()})
+            defaults = Config().to_flat_dict()
+            cfg = Config.from_flat(**{
+                key: flat.get(key, default) for key, default in defaults.items()
+            })
             system = PromptEnsembleOptimizationSystem(cfg)
             data = [{"question": row["question"], "answer": row["answer"]} for row in registry["questions"]]
             system.fixed_probe = system.build_probe(data)

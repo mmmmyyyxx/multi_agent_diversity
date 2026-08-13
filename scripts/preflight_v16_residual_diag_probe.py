@@ -53,7 +53,10 @@ def system_for(case: dict[str, Any], variant: str) -> PromptEnsembleOptimization
         "proposal_memory_mode": "off",
         "seed": int(case["source_seed"]),
     })
-    cfg = Config.from_flat(**{key: flat[key] for key in Config().to_flat_dict()})
+    defaults = Config().to_flat_dict()
+    cfg = Config.from_flat(**{
+        key: flat.get(key, default) for key, default in defaults.items()
+    })
     system = PromptEnsembleOptimizationSystem(cfg)
     data = [{"question": row["question"], "answer": row["answer"]} for row in case["questions"]]
     system.fixed_probe = system.build_probe(data)

@@ -120,7 +120,7 @@ def _flat_config(
         "evaluator_model": "qwen3-14b",
     })
     defaults = Config().to_flat_dict()
-    return {key: flat[key] for key in defaults}
+    return {key: flat.get(key, default) for key, default in defaults.items()}
 
 
 def system_for(

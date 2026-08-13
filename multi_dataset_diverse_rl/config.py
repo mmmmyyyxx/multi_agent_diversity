@@ -120,6 +120,8 @@ class PersistenceConfig:
     llm_call_timeout: float = 120.0
     final_test_enabled: bool = True
     frozen_initialization_manifest_path: str = ""
+    provider_call_budget: int = 0
+    total_token_budget: int = 0
 
 
 SECTION_TYPES = {

@@ -9,6 +9,7 @@ from .utils import extract_json_obj, normalize_prompt_text
 ONLINE_COMPATIBILITY_REPAIR_VERSION = (
     "candidate_specific_counterfactual_compatibility_repair_v1"
 )
+LOSS_BLIND_GENERIC_REVISION_VERSION = "loss_blind_generic_revision_v1"
 REPAIR_MAX_TOKENS = 3000
 REPAIR_SYSTEM_PROMPT = (
     "You repair one already-targeted member prompt. Return strict JSON only "
@@ -22,6 +23,10 @@ Revise the SOURCE CANDIDATE, not the parent from scratch.
 Primary requirement: retain the responsibility-specific behavior that produced the successful repairs.
 Secondary requirement: remove, narrow, or revert only broader behavioral changes likely to have caused the observed competence losses.
 Do not change the assigned responsibility objective. Do not memorize question text, option letters, gold answers, or individual examples. Do not add a universal rule merely to satisfy loss examples. Prefer restoring parent behavior outside the targeted responsibility mechanism.
+Return one complete revised member prompt as strict JSON: {"repaired_prompt":"..."}."""
+LOSS_BLIND_GENERIC_REVISION_INSTRUCTION = """Revise the SOURCE CANDIDATE once to improve its global compatibility with the PARENT PROMPT while retaining any useful improvement.
+
+You are not given candidate-specific loss examples, responsibility examples, identities, labels, hashes, or outcome counts. Do not infer or invent them. Revise the source candidate, not the parent from scratch. Prefer a generally applicable decision procedure and avoid memorizing examples or answer patterns.
 Return one complete revised member prompt as strict JSON: {"repaired_prompt":"..."}."""
 
 COLLATERAL_REJECTION_REASONS = frozenset({
@@ -56,6 +61,19 @@ def build_repair_request(
     }
     return REPAIR_INSTRUCTION + "\n\nRepairInput:\n" + json.dumps(
         payload, ensure_ascii=False, sort_keys=True
+    )
+
+
+def build_loss_blind_generic_revision_request(
+    *, parent_prompt: str, source_candidate_prompt: str,
+) -> str:
+    return LOSS_BLIND_GENERIC_REVISION_INSTRUCTION + "\n\nRevisionInput:\n" + json.dumps(
+        {
+            "parent_member_prompt": parent_prompt,
+            "source_candidate_prompt": source_candidate_prompt,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
     )
 
 

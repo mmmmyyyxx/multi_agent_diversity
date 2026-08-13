@@ -1,0 +1,25 @@
+{
+  "experiment_version": "v16_module2_compute_matched_efficacy_v1",
+  "development_seed_excluded": 52,
+  "formal_seeds": [53, 54, 55],
+  "task": "disambiguation_qa",
+  "train_size": 75,
+  "updates_per_run": 8,
+  "arms": {
+    "G-Matched": "experimental_v16_efficacy_g_matched",
+    "R-M20": "experimental_v16_efficacy_r_m20",
+    "R-M2F": "experimental_v16_efficacy_r_m2f"
+  },
+  "target_branches_per_update": 2,
+  "source_candidates_per_branch": 2,
+  "second_stage_slots_per_source": 1,
+  "max_second_stage_slots_per_branch": 2,
+  "max_provider_calls_per_run": 8000,
+  "max_total_tokens_per_run": 3000000,
+  "budget_exhaustion_policy": "invalidate_and_hold",
+  "primary_metrics": ["final_train_vote_accuracy", "g_min", "g_sum"],
+  "primary_paired_contrasts": ["G-Matched_vs_R-M20", "R-M20_vs_R-M2F", "G-Matched_vs_R-M2F"],
+  "validation_enabled": false,
+  "final_test_enabled": false,
+  "analysis_only_metrics": ["oracle", "correctness_correlation", "n_eff", "critical_net", "specialization_migration"]
+}

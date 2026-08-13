@@ -24,9 +24,11 @@ from .candidate_selection import (
 )
 from .config import Config
 from .compatibility_repair import (
+    LOSS_BLIND_GENERIC_REVISION_VERSION,
     ONLINE_COMPATIBILITY_REPAIR_VERSION,
     REPAIR_MAX_TOKENS,
     REPAIR_SYSTEM_PROMPT,
+    build_loss_blind_generic_revision_request,
     build_repair_request,
     parse_repair_output,
     repair_eligible,
@@ -480,6 +482,7 @@ class PromptEnsembleOptimizationSystem:
         self.module2_context_diagnostics: list[dict[str, Any]] = []
         self.residual_diagnosis_branch_diagnostics: list[dict[str, Any]] = []
         self.compatibility_repair_events: list[dict[str, Any]] = []
+        self.generic_revision_events: list[dict[str, Any]] = []
         self._module2_context_sets: dict[
             tuple[int, int], Module2ContextSets
         ] = {}
@@ -4203,6 +4206,110 @@ class PromptEnsembleOptimizationSystem:
             repaired_candidates.append(repaired)
         return repaired_candidates
 
+    async def _loss_blind_generic_revision_candidates(
+        self,
+        *,
+        target: int,
+        assigned_hashes: set[str],
+        source_candidates: Sequence[CandidateRuntime],
+        incumbent: CandidateEvaluation,
+        update_index: int,
+    ) -> list[CandidateRuntime]:
+        """Spend one matched revision slot per valid generic source candidate.
+
+        The request contains only the parent and source prompts. It deliberately
+        excludes responsibility and candidate-specific rollout evidence.
+        """
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        revised_candidates: list[CandidateRuntime] = []
+        for source in source_candidates:
+            event: dict[str, Any] = {
+                "artifact_schema_version": "loss_blind_generic_revision_event_v1",
+                "revision_version": LOSS_BLIND_GENERIC_REVISION_VERSION,
+                "update_index": int(update_index),
+                "target_agent_id": int(target),
+                "parent_team_hash": self.team_prompt_state_hash(),
+                "source_candidate_hash": source.prompt_hash,
+                "revision_attempted": True,
+                "revision_output_valid": False,
+                "revision_feasible": False,
+                "revision_committed": False,
+                "responsibility_evidence_exposed": False,
+                "candidate_specific_loss_evidence_exposed": False,
+            }
+            self.generic_revision_events.append(event)
+            result = await self.llm.chat_result(
+                self.cfg.models.optimizer_model,
+                REPAIR_SYSTEM_PROMPT,
+                build_loss_blind_generic_revision_request(
+                    parent_prompt=self.agents[target].current_prompt,
+                    source_candidate_prompt=source.prompt,
+                ),
+                self.cfg.tcs.student_temperature,
+                REPAIR_MAX_TOKENS,
+                "optimizer",
+                "loss_blind_generic_revision",
+            )
+            try:
+                revised_prompt = parse_repair_output(
+                    result.text,
+                    source_candidate_prompt=source.prompt,
+                    supplied_evidence=(),
+                )
+                validate_mutable_decision_procedure(revised_prompt)
+            except ValueError as exc:
+                event["terminal_failure_class"] = type(exc).__name__
+                continue
+            event["revision_output_valid"] = True
+            revised_hash = self.prompt_hash(revised_prompt)
+            revised = CandidateRuntime(
+                student_candidate=StudentPromptCandidate(revised_prompt),
+                prompt=revised_prompt,
+                prompt_hash=revised_hash,
+                generation=source.generation,
+                parent_prompt_hash=self.prompt_hash(
+                    self.agents[target].current_prompt
+                ),
+                repair_plan_hash=source.prompt_hash,
+            )
+            revised.profile = await self.fixed_probe.evaluate_prompt(
+                target, revised.prompt, revised.prompt_hash, self.solve
+            )
+            revised.final_evaluation = evaluate_candidate_profile(
+                prompt=revised.prompt,
+                prompt_hash=revised.prompt_hash,
+                examples=self.fixed_probe.examples,
+                active_profiles=self.active_profiles,
+                initial_profiles=self.initial_profiles,
+                candidate_profile=revised.profile,
+                target_agent_id=target,
+                assigned_question_hashes=assigned_hashes,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+                tau=self.cfg.peer_state.soft_vote_tau,
+            )
+            revised.constraint = evaluate_constraints(
+                revised.final_evaluation, incumbent
+            )
+            revised.module2_diagnostics = {
+                "candidate_stage": "loss_blind_generic_revision",
+                "source_candidate_hash": source.prompt_hash,
+                "responsibility_evidence_exposed": False,
+                "candidate_specific_loss_evidence_exposed": False,
+            }
+            event.update({
+                "revised_candidate_hash": revised_hash,
+                "revision_feasible": bool(revised.constraint.passed),
+                "revised_target_gain": int(revised.constraint.target_gain),
+                "revised_vote_gain": int(revised.constraint.vote_gain_count),
+                "revised_vote_loss": int(revised.constraint.vote_loss_count),
+            })
+            revised_candidates.append(revised)
+        return revised_candidates
+
     async def _evaluate_target_branch(
         self,
         *,
@@ -4274,6 +4381,34 @@ class PromptEnsembleOptimizationSystem:
             )
             funnel.acceptable_candidates += sum(
                 bool(row.constraint and row.constraint.passed) for row in repaired
+            )
+            funnel.accepted_candidate = accepted is not None
+        elif self.protocol.generic_revision_enabled:
+            revised = await self._loss_blind_generic_revision_candidates(
+                target=target,
+                assigned_hashes=assigned_hashes,
+                source_candidates=evaluated,
+                incumbent=incumbent,
+                update_index=update_index,
+            )
+            evaluated.extend(revised)
+            feasible = [
+                row for row in evaluated
+                if row.constraint is not None and row.constraint.passed
+            ]
+            accepted = max(
+                feasible,
+                key=lambda row: common_monotone_safe_key(
+                    row.final_evaluation, row.generation
+                ),
+                default=None,
+            )
+            funnel.stage_b_evaluated += len(revised)
+            funnel.constraint_feasible += sum(
+                bool(row.constraint and row.constraint.passed) for row in revised
+            )
+            funnel.acceptable_candidates += sum(
+                bool(row.constraint and row.constraint.passed) for row in revised
             )
             funnel.accepted_candidate = accepted is not None
         self._record_proposal_memory_outcome(
@@ -4704,6 +4839,13 @@ class PromptEnsembleOptimizationSystem:
                 == accepted.prompt_hash
             ):
                 event["repair_committed"] = True
+        for event in self.generic_revision_events:
+            if (
+                int(event["update_index"]) == int(update_index)
+                and event.get("revised_candidate_hash")
+                == accepted.prompt_hash
+            ):
+                event["revision_committed"] = True
         for branch in branches:
             branch_target = branch.target_agent_id
             if branch is winner:
@@ -5695,6 +5837,7 @@ class PromptEnsembleOptimizationSystem:
             "compatibility_repair_enabled": (
                 self.protocol.compatibility_repair_enabled
             ),
+            "generic_revision_enabled": self.protocol.generic_revision_enabled,
             "experiment_protocol": {
                 **asdict(self.protocol),
                 "candidate_selection_policy": (
@@ -6029,6 +6172,10 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl(
             "online_compatibility_repair_events.jsonl",
             self.compatibility_repair_events,
+        )
+        self.artifacts.write_jsonl(
+            "loss_blind_generic_revision_events.jsonl",
+            self.generic_revision_events,
         )
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl(

@@ -125,6 +125,7 @@ class ExperimentProtocol:
     module2_context_variant: str = C0_CURRENT_V15
     module2_evolution_variant: str = "m20_current_v15"
     compatibility_repair_enabled: bool = False
+    generic_revision_enabled: bool = False
     legacy_protocol: bool = False
     auxiliary_protocol: bool = False
 
@@ -168,6 +169,9 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_m2d_raw_responsibility_minimal_edit",
     "experimental_v16_m2e_scoped_behavioral_patch",
     "experimental_v16_m2f_online_compatibility_repair",
+    "experimental_v16_efficacy_g_matched",
+    "experimental_v16_efficacy_r_m20",
+    "experimental_v16_efficacy_r_m2f",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -698,9 +702,12 @@ def experiment_protocol(
             **resolved.__dict__,
         )
     if canonical_name in EXPERIMENTAL_V16_MODULE2_SETTINGS:
-        modules = MAIN_ABLATION_MODULES[
-            "shared_responsibility_conditioned_dual_target"
-        ]
+        if canonical_name == "experimental_v16_efficacy_g_matched":
+            modules = AblationModules(True, False)
+        else:
+            modules = MAIN_ABLATION_MODULES[
+                "shared_responsibility_conditioned_dual_target"
+            ]
         resolved = resolve_protocol_from_modules(modules)
         return ExperimentProtocol(
             name=canonical_name,
@@ -721,8 +728,13 @@ def experiment_protocol(
                 )
             ),
             compatibility_repair_enabled=(
-                canonical_name
-                == "experimental_v16_m2f_online_compatibility_repair"
+                canonical_name in {
+                    "experimental_v16_m2f_online_compatibility_repair",
+                    "experimental_v16_efficacy_r_m2f",
+                }
+            ),
+            generic_revision_enabled=(
+                canonical_name == "experimental_v16_efficacy_g_matched"
             ),
             legacy_protocol=False,
             auxiliary_protocol=False,
