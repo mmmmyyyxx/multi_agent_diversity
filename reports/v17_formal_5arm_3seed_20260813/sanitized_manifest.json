@@ -1,0 +1,66 @@
+{
+  "arm_aggregates.csv": {
+    "sha256": "7ffb872aa16a37180a30de42f56d4fb74bc006c281fafc767e99da6dceddb81f",
+    "size": 653
+  },
+  "arm_seed_results.csv": {
+    "sha256": "724a535e1fcca9fb4c3099dcf876ff1a5eb3d3569b120f7dcf218c1725d12f4a",
+    "size": 1204
+  },
+  "audit_corrections.json": {
+    "sha256": "f29b4fe01be04738ce2036de7c19ada0b3318345dd65d928cebb965a58d17132",
+    "size": 2095
+  },
+  "compute_metrics.csv": {
+    "sha256": "10da689ae8ee503588041f6f248b2e250f3189c4ec67c0649be1d86a43fe57e5",
+    "size": 505
+  },
+  "dataset_provenance.json": {
+    "sha256": "cd5b171b6675b60c6650fd579b0c667d1fec8e00b27dcd4a0c9fa5e8d22956af",
+    "size": 1404
+  },
+  "emergent_complementarity_summary.json": {
+    "sha256": "903e0922b28a96c5cc3064b5e9c9f605ba3274693427a46fc5d708ba16cb0a72",
+    "size": 215
+  },
+  "formal_classifier.json": {
+    "sha256": "5dd889d73e86fc59952b675c2750c72d21f178110c68a7ab574da90e35546876",
+    "size": 858
+  },
+  "mechanism_metrics.csv": {
+    "sha256": "13dab47568e2ad9e5f31808601086f8d5393723a39b9977b59b271980f05985d",
+    "size": 520
+  },
+  "paired_test_contrasts.csv": {
+    "sha256": "4301c65ac78dd070e682d5501b50248de3f7bb3a887bd1c2af853d4733cfe967",
+    "size": 727
+  },
+  "pre_test_seal_sanitized.json": {
+    "sha256": "fb6b459ae9db8c67e3e115ae4017c9c875a993dd7b0522a21f76bc6878ac1b75",
+    "size": 330
+  },
+  "protocol_gate.json": {
+    "sha256": "4842d4c89ecea8f8afbcb064a7fdaed659ff04766889ef8d38013b23a4f59e24",
+    "size": 421
+  },
+  "README.md": {
+    "sha256": "c66fef64d648a67c7730cb3c2c07855f5142d5ade1459ff9b33b84e51900742c",
+    "size": 1170
+  },
+  "source_freeze_sanitized.json": {
+    "sha256": "e1c44fcc62d93d2b347102c2a24b69f145ae48626eef9875f1af99f61d946def",
+    "size": 1567
+  },
+  "test_results.csv": {
+    "sha256": "8bcf64e4b2e618a3baec86f24f3b652736ceefa302a1ab4483a7fffc793087b3",
+    "size": 272
+  },
+  "training_trajectories.csv": {
+    "sha256": "64d2d681b8353fb08e543be7cfa1714608811678e5bec07469a0ff627115551e",
+    "size": 4033
+  },
+  "validation_results.csv": {
+    "sha256": "1a0b06ab3aa9048893ffbd025875a4053cf520edf651493dc6a33d2d669bc20c",
+    "size": 201
+  }
+}

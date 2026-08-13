@@ -1,0 +1,40 @@
+{
+  "artifact_version": "v17_post_execution_audit_corrections_v1",
+  "execution_commit": "76e6960969320786a767c9e94ef3e357735f4b32",
+  "execution_semantics_changed": false,
+  "run_artifacts_mutated": false,
+  "method_changed_after_training_started": false,
+  "method_changed_after_validation": false,
+  "private_train_audit_fix_sha256": "c1203d5236f6f04bd7a508644e3e6232a563ccae4670108a0c452feaa95e277f",
+  "private_final_state_adapter_sha256": "42d781906ad74c88173b9237a39ae777a8d26b69c2a8ecbfeb786d5c2d8ecf41",
+  "corrections": [
+    {
+      "scope": "train_auditor_only",
+      "original_gate": "FAIL",
+      "original_blockers": [
+        "train_cell_inventory",
+        "training_dynamics:56:S0",
+        "training_dynamics:57:S0",
+        "training_dynamics:58:S0"
+      ],
+      "cause": "The auditor unconditionally required a non-empty optimization trajectory although Static S0 preregistered zero optimization updates.",
+      "resolution": "Reconstructed each S0 single-point train trajectory from its immutable checkpoint history after verifying zero planned/completed updates, zero calls/tokens/commits, no second-stage events, no responsibility state, and identical initial/final team hash.",
+      "corrected_gate": "PASS",
+      "api_calls": 0,
+      "validation_calls": 0,
+      "test_calls": 0
+    },
+    {
+      "scope": "final_state_evaluator_restore_only",
+      "cause": "The generic checkpoint restore recomputed optimizer responsibility caches that are not consumed by read-only final-state evaluation and rejected otherwise valid frozen final prompt states.",
+      "resolution": "Loaded exactly five checkpoint prompts, validated the mutable-prompt contract, and required the reconstructed team hash to match the frozen final-state hash before every validation/test evaluation. No optimizer cache was used by prediction.",
+      "final_state_hash_matches": 15,
+      "validation_logical_evaluations": 15,
+      "test_logical_evaluations": 15,
+      "test_reruns": 0,
+      "state_mutations": 0,
+      "selection_changes": 0,
+      "checkpoint_mutations": 0
+    }
+  ]
+}

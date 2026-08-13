@@ -1,0 +1,9 @@
+{
+  "gate": "PASS",
+  "execution_commit": "76e6960969320786a767c9e94ef3e357735f4b32",
+  "source_tree_hash": "1cbe10d9bf4c48173e48f182be315fe5982d844791e0b23dd7ecfe4962b400de",
+  "final_state_count": 15,
+  "validation_results_already_observed": true,
+  "method_changed_after_validation": false,
+  "test_calls_so_far": 0
+}

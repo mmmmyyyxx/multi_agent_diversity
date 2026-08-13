@@ -1,0 +1,21 @@
+{
+  "source_freeze_status": "PASS",
+  "git_head": "76e6960969320786a767c9e94ef3e357735f4b32",
+  "working_tree_source_hash": "1cbe10d9bf4c48173e48f182be315fe5982d844791e0b23dd7ecfe4962b400de",
+  "source_file_count": 208,
+  "definition_sha256": {
+    "experiments/v17_formal_5arm_3seed_20260813/DESIGN_SPEC.md": "5e4184a06caaaa4f0e94af327d7ca3dd0d5f38d364d146ccf5f7eff652510096",
+    "experiments/v17_formal_5arm_3seed_20260813/preregistration.json": "79bc9cc65871f311f723dbb9ce4f1931b4dbedd291b27830ddedfbddc100233c",
+    "experiments/v17_formal_5arm_3seed_20260813/formal_matrix.json": "003f1a72650720213899b72b2c72755e78851c1e82111be1f9126447d1bfddba",
+    "experiments/v17_formal_5arm_3seed_20260813/success_classifier.json": "04da9b76092c80e22b66a990e98e731aed3f2a38f73a8252824147e74975e4a9",
+    "experiments/v17_formal_5arm_3seed_20260813/dataset_freeze.json": "cd5b171b6675b60c6650fd579b0c667d1fec8e00b27dcd4a0c9fa5e8d22956af",
+    "experiments/v17_formal_5arm_3seed_20260813/execution_order.json": "7243f85a11b589deedce1d9b53244ab1c77c7af1381dd9940305491497f523d5"
+  },
+  "mechanism_hashes": {
+    "M20": "f121d6012294c1ef669fce15a56e0fd39d8ebfe6ef1122c0cd69020b1922e883",
+    "M2F": "ba9d61e6d6d59405fbf8b9b1c94e95e07002b92db5f24f36ba98055aa2890716",
+    "loss_blind_generic_revision": "3aa8e130228fc2fba29a73472739c6b8680399ae3a7bc5da61bc7f064e52bf29",
+    "Common_Safe": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be",
+    "Module1_selector": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011"
+  }
+}

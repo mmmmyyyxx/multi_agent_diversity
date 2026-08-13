@@ -1,0 +1,16 @@
+{
+  "train": "PASS",
+  "validation": "PASS",
+  "test": "PASS",
+  "pre_test_seal": "PASS",
+  "formal_cells": 15,
+  "validation_logical_evaluations": 15,
+  "test_logical_evaluations": 15,
+  "state_mutations": 0,
+  "selection_changes": 0,
+  "checkpoint_mutations": 0,
+  "full_test_reruns": 0,
+  "execution_semantics_changed_by_audit_corrections": false,
+  "paper_untouched_test": false,
+  "historical_test_exposure": true
+}

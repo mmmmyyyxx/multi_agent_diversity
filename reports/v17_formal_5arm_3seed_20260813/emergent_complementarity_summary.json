@@ -1,0 +1,6 @@
+{
+  "status": "analysis_not_optimization",
+  "derived_without_extra_model_calls": true,
+  "oracle_metrics_available_in_private_phase_evaluations": true,
+  "critical_competence_metrics_role": "analysis_only"
+}

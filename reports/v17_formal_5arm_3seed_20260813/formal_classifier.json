@@ -1,0 +1,44 @@
+{
+  "C01": {
+    "label": "MAJORITY_POSITIVE",
+    "mean_delta": 0.029333333333333322,
+    "wins": 2,
+    "ties": 0,
+    "losses": 1
+  },
+  "C12": {
+    "label": "NOT_SUPPORTED",
+    "mean_delta": -0.013333333333333308,
+    "wins": 1,
+    "ties": 0,
+    "losses": 2
+  },
+  "C23": {
+    "label": "MAJORITY_POSITIVE",
+    "mean_delta": 0.002666666666666595,
+    "wins": 2,
+    "ties": 0,
+    "losses": 1
+  },
+  "C34": {
+    "label": "MAJORITY_POSITIVE",
+    "mean_delta": 0.005333333333333338,
+    "wins": 2,
+    "ties": 1,
+    "losses": 0
+  },
+  "C14": {
+    "label": "NOT_SUPPORTED",
+    "mean_delta": -0.005333333333333375,
+    "wins": 1,
+    "ties": 0,
+    "losses": 2
+  },
+  "C04": {
+    "label": "CONSISTENT_POSITIVE",
+    "mean_delta": 0.02399999999999995,
+    "wins": 3,
+    "ties": 0,
+    "losses": 0
+  }
+}
