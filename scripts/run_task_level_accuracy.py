@@ -193,6 +193,16 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--out_root", required=True)
     parser.add_argument("--resume_completed", type=int, choices=[0, 1], default=0)
     parser.add_argument("--optimized_only", type=int, choices=[0, 1], default=0)
+    parser.add_argument(
+        "--immutable_comparison_cache",
+        type=int,
+        choices=[0, 1],
+        default=0,
+        help=(
+            "Clone the same pre-run comparison cache for every cell and do "
+            "not merge observations produced by earlier cells."
+        ),
+    )
     defaults = Config().to_flat_dict()
     for name in RUNNER_FIELDS:
         default = defaults[name]
@@ -217,9 +227,16 @@ def _validate_setting_sequence(
         "experimental_v16_efficacy_r_m20",
         "experimental_v16_efficacy_r_m2f",
     )
+    v17_settings = {
+        "shared_static_reference",
+        "experimental_v17_formal_generic_2x2_matched",
+        "experimental_v16_efficacy_g_matched",
+        "experimental_v16_efficacy_r_m20",
+        "experimental_v16_efficacy_r_m2f",
+    }
     if tuple(setting_names) in {
         tuple(EXPERIMENTAL_V16_MODULE2_SETTINGS), efficacy_settings,
-    }:
+    } or (len(setting_names) == 5 and set(setting_names) == v17_settings):
         return
     if optimized_only:
         if len(setting_names) != 1 or setting_names[0] == "shared_static_reference":
@@ -1215,11 +1232,31 @@ def main() -> None:
                     subprocess.run(cmd, cwd=workspace, check=True)
                     metrics = _read_json(final_path)
                 run_meta = _read_json(run_dir / "run_meta.json")
-                merge_audit = _merge_ready_solver_cache(
-                    mutable_cache_path,
-                    comparison_reference_cache_path,
-                    expected_evaluator=cache_evaluator,
-                )
+                if args.immutable_comparison_cache:
+                    reference_snapshot = _solver_cache_snapshot(
+                        comparison_reference_cache_path,
+                        expected_evaluator=cache_evaluator,
+                    )
+                    source_snapshot = _solver_cache_snapshot(
+                        mutable_cache_path,
+                        expected_evaluator=cache_evaluator,
+                    )
+                    merge_audit = {
+                        "source_ready_entry_count": source_snapshot["entry_count"],
+                        "reference_entry_count_before": reference_snapshot["entry_count"],
+                        "reference_entry_count_after": reference_snapshot["entry_count"],
+                        "new_entries_merged": 0,
+                        "exact_request_conflict_count": 0,
+                        "result_reference_hash": reference_snapshot["content_hash"],
+                        "gate": "PASS",
+                        "immutable_comparison_cache": True,
+                    }
+                else:
+                    merge_audit = _merge_ready_solver_cache(
+                        mutable_cache_path,
+                        comparison_reference_cache_path,
+                        expected_evaluator=cache_evaluator,
+                    )
                 cache_match_path = run_dir / "comparison_cache_match.json"
                 cache_match = _read_json(cache_match_path)
                 provider_misses = int(run_meta.get("shared_solver_cache_misses", 0))

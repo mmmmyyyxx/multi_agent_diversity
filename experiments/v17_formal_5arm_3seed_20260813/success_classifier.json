@@ -1,0 +1,27 @@
+{
+  "version": "v17_three_seed_contrast_classifier_v1",
+  "seed_count": 3,
+  "definitions": {
+    "CONSISTENT_POSITIVE": "mean_delta>0 and wins==3",
+    "MAJORITY_POSITIVE": "mean_delta>0 and wins>losses and wins<3",
+    "POSITIVE_MEAN_HETEROGENEOUS": "mean_delta>0 and wins<=losses",
+    "MIXED_NONPOSITIVE": "mean_delta<=0 and wins>losses",
+    "NOT_SUPPORTED": "mean_delta<=0 and wins<=losses"
+  },
+  "primary_contrasts": {
+    "C01": "S1-S0",
+    "C12": "S2-S1",
+    "C23": "S3-S2",
+    "C34": "S4-S3",
+    "C14": "S4-S1"
+  },
+  "headline_total_contrast": {
+    "C04": "S4-S0"
+  },
+  "primary_metric": "final_test_plurality_team_vote_accuracy",
+  "support_labels": [
+    "CONSISTENT_POSITIVE",
+    "MAJORITY_POSITIVE"
+  ],
+  "classifier_hash": "c8403d6781550c0cb3dc1ac8579b43900544ea46c6659ae5e314d121e4f89190"
+}

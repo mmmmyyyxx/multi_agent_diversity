@@ -1348,6 +1348,26 @@ class PromptEnsembleOptimizationSystem:
             })
             return targets, payload
 
+        if policy == "round_robin_dual_formal":
+            start = int(self.cfg.training.seed) % len(self.agents)
+            targets = (
+                (start + 2 * int(update_index)) % len(self.agents),
+                (start + 2 * int(update_index) + 1) % len(self.agents),
+            )
+            if targets[0] == targets[1]:
+                raise AssertionError("formal dual round-robin targets must differ")
+            self.selected_target_ids = list(targets)
+            self.target_priority_audit.append({
+                "artifact_schema_version": "target_selection_audit_v13",
+                "update_index": int(update_index),
+                "selection_pool_stage": "round_robin_dual_formal",
+                "update_lane": "protocol_control",
+                "selected_target_ids": list(targets),
+                "no_actionable_reason": "",
+                "priorities": [],
+            })
+            return targets, []
+
         if policy == "repairability_adjusted_responsibility":
             scores = repairability_adjusted_target_scores(
                 active_assignments=assigned,

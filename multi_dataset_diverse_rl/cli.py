@@ -171,6 +171,11 @@ async def run(cfg: Config) -> dict[str, Any]:
         system.artifacts.write_json(
             "best_prompts.json", [agent.current_prompt for agent in system.agents]
         )
+        if cfg.persistence.preserve_final_checkpoint:
+            _write_checkpoint(system, cfg, 0, 0, {
+                "planned_update_count": 0,
+                "initial_team_state_hash": team_state_hash,
+            })
         system.flush_artifacts()
         system.artifacts.write_json("final_summary.json", final_payload)
         return final_payload
@@ -291,7 +296,8 @@ async def run(cfg: Config) -> dict[str, Any]:
     system.artifacts.write_json("best_prompts.json", selected_prompts)
     system.artifacts.write_json("final_summary.json", final_payload)
     system.flush_artifacts()
-    checkpoint_path.unlink(missing_ok=True)
+    if not cfg.persistence.preserve_final_checkpoint:
+        checkpoint_path.unlink(missing_ok=True)
     return final_payload
 
 

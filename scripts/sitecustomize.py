@@ -10,7 +10,10 @@ from pathlib import Path
 
 
 def _install() -> None:
-    freeze_path = os.environ.get("V16_M2F_ONLINE_SOURCE_FREEZE", "").strip()
+    freeze_path = (
+        os.environ.get("V17_FORMAL_SOURCE_FREEZE", "").strip()
+        or os.environ.get("V16_M2F_ONLINE_SOURCE_FREEZE", "").strip()
+    )
     if not freeze_path:
         return
     root = Path(__file__).resolve().parents[1]

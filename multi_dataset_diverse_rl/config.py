@@ -122,6 +122,7 @@ class PersistenceConfig:
     frozen_initialization_manifest_path: str = ""
     provider_call_budget: int = 0
     total_token_budget: int = 0
+    preserve_final_checkpoint: bool = False
 
 
 SECTION_TYPES = {

@@ -1,0 +1,119 @@
+{
+  "version": "v17_formal_five_arm_matrix_v1",
+  "arms": {
+    "S0": {
+      "setting": "shared_static_reference",
+      "optimization_enabled": false,
+      "module_vector": null,
+      "target_selection_policy": "none",
+      "sample_pool_policy": "none",
+      "tcs_context_policy": "none",
+      "responsibility_refresh_policy": "off",
+      "service_routing_enabled": false,
+      "target_branch_count": 0,
+      "candidates_per_target_branch": 0,
+      "total_generated_candidates_per_update": 0,
+      "generic_revision_enabled": false,
+      "compatibility_repair_enabled": false,
+      "candidate_acceptance_policy": "none",
+      "candidate_ranking_policy": "none",
+      "module2_context_variant": "c0_current_v15",
+      "module2_evolution_variant": "m20_current_v15"
+    },
+    "S1": {
+      "setting": "experimental_v17_formal_generic_2x2_matched",
+      "optimization_enabled": true,
+      "module_vector": {
+        "member_aware_dual_target_search": false,
+        "responsibility_conditioned_evolution": false
+      },
+      "target_selection_policy": "round_robin_dual_formal",
+      "sample_pool_policy": "individual_errors",
+      "tcs_context_policy": "generic_accuracy",
+      "responsibility_refresh_policy": "off",
+      "service_routing_enabled": false,
+      "target_branch_count": 2,
+      "candidates_per_target_branch": 2,
+      "total_generated_candidates_per_update": 4,
+      "generic_revision_enabled": true,
+      "compatibility_repair_enabled": false,
+      "candidate_acceptance_policy": "fixed_peer_monotone_target_or_vote",
+      "candidate_ranking_policy": "common_monotone_safe",
+      "module2_context_variant": "c0_current_v15",
+      "module2_evolution_variant": "m20_current_v15"
+    },
+    "S2": {
+      "setting": "experimental_v16_efficacy_g_matched",
+      "optimization_enabled": true,
+      "module_vector": {
+        "member_aware_dual_target_search": true,
+        "responsibility_conditioned_evolution": false
+      },
+      "target_selection_policy": "repairability_adjusted_responsibility",
+      "sample_pool_policy": "member_aware_residuals",
+      "tcs_context_policy": "generic_peer_state",
+      "responsibility_refresh_policy": "online",
+      "service_routing_enabled": true,
+      "target_branch_count": 2,
+      "candidates_per_target_branch": 2,
+      "total_generated_candidates_per_update": 4,
+      "generic_revision_enabled": true,
+      "compatibility_repair_enabled": false,
+      "candidate_acceptance_policy": "fixed_peer_monotone_target_or_vote",
+      "candidate_ranking_policy": "common_monotone_safe",
+      "module2_context_variant": "c0_current_v15",
+      "module2_evolution_variant": "m20_current_v15"
+    },
+    "S3": {
+      "setting": "experimental_v16_efficacy_r_m20",
+      "optimization_enabled": true,
+      "module_vector": {
+        "member_aware_dual_target_search": true,
+        "responsibility_conditioned_evolution": true
+      },
+      "target_selection_policy": "repairability_adjusted_responsibility",
+      "sample_pool_policy": "member_aware_residuals",
+      "tcs_context_policy": "member_aware_responsibility_conditioned",
+      "responsibility_refresh_policy": "online",
+      "service_routing_enabled": true,
+      "target_branch_count": 2,
+      "candidates_per_target_branch": 2,
+      "total_generated_candidates_per_update": 4,
+      "generic_revision_enabled": false,
+      "compatibility_repair_enabled": false,
+      "candidate_acceptance_policy": "fixed_peer_monotone_target_or_vote",
+      "candidate_ranking_policy": "common_monotone_safe",
+      "module2_context_variant": "c0_current_v15",
+      "module2_evolution_variant": "m20_current_v15"
+    },
+    "S4": {
+      "setting": "experimental_v16_efficacy_r_m2f",
+      "optimization_enabled": true,
+      "module_vector": {
+        "member_aware_dual_target_search": true,
+        "responsibility_conditioned_evolution": true
+      },
+      "target_selection_policy": "repairability_adjusted_responsibility",
+      "sample_pool_policy": "member_aware_residuals",
+      "tcs_context_policy": "member_aware_responsibility_conditioned",
+      "responsibility_refresh_policy": "online",
+      "service_routing_enabled": true,
+      "target_branch_count": 2,
+      "candidates_per_target_branch": 2,
+      "total_generated_candidates_per_update": 4,
+      "generic_revision_enabled": false,
+      "compatibility_repair_enabled": true,
+      "candidate_acceptance_policy": "fixed_peer_monotone_target_or_vote",
+      "candidate_ranking_policy": "common_monotone_safe",
+      "module2_context_variant": "c0_current_v15",
+      "module2_evolution_variant": "m20_current_v15"
+    }
+  },
+  "isolation_contract": {
+    "S1_S2": "complete Module1 mechanism comparison under common generic revision opportunity",
+    "S2_S3": "compute-controlled generic mechanism package versus M20 package",
+    "S3_S4": "frozen conditional M2F path only"
+  },
+  "loss_blind_generic_revision_version": "loss_blind_generic_revision_v1",
+  "compatibility_repair_version": "candidate_specific_counterfactual_compatibility_repair_v1"
+}

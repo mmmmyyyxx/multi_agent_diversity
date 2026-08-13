@@ -172,6 +172,7 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_efficacy_g_matched",
     "experimental_v16_efficacy_r_m20",
     "experimental_v16_efficacy_r_m2f",
+    "experimental_v17_formal_generic_2x2_matched",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -465,11 +466,20 @@ def candidate_budget_contract(
         modules = (
             MAIN_ABLATION_MODULES[name]
             if name in MAIN_ABLATION_MODULES
+            else AblationModules(False, False)
+            if name == "experimental_v17_formal_generic_2x2_matched"
             else MAIN_ABLATION_MODULES[
                 "shared_responsibility_conditioned_dual_target"
             ]
         )
-        branch_count = 2 if modules.member_aware_dual_target_search else 1
+        branch_count = (
+            2
+            if (
+                modules.member_aware_dual_target_search
+                or name == "experimental_v17_formal_generic_2x2_matched"
+            )
+            else 1
+        )
         candidate_count, stage_b = 2, 2
     else:
         branch_count = 1
@@ -702,13 +712,30 @@ def experiment_protocol(
             **resolved.__dict__,
         )
     if canonical_name in EXPERIMENTAL_V16_MODULE2_SETTINGS:
-        if canonical_name == "experimental_v16_efficacy_g_matched":
+        if canonical_name == "experimental_v17_formal_generic_2x2_matched":
+            modules = AblationModules(False, False)
+        elif canonical_name == "experimental_v16_efficacy_g_matched":
             modules = AblationModules(True, False)
         else:
             modules = MAIN_ABLATION_MODULES[
                 "shared_responsibility_conditioned_dual_target"
             ]
         resolved = resolve_protocol_from_modules(modules)
+        if canonical_name == "experimental_v17_formal_generic_2x2_matched":
+            resolved = ResolvedProtocolPolicies(
+                optimization_enabled=True,
+                target_selection_policy="round_robin_dual_formal",
+                sample_pool_policy="individual_errors",
+                tcs_context_policy="generic_accuracy",
+                candidate_acceptance_policy=(
+                    "fixed_peer_monotone_target_or_vote"
+                ),
+                candidate_ranking_policy="common_monotone_safe",
+                stage_a_policy="matched_all_generated",
+                responsibility_refresh_policy="off",
+                repairability_freeze_enabled=False,
+                service_routing_enabled=False,
+            )
         return ExperimentProtocol(
             name=canonical_name,
             requested_name=requested_name,
@@ -734,7 +761,10 @@ def experiment_protocol(
                 }
             ),
             generic_revision_enabled=(
-                canonical_name == "experimental_v16_efficacy_g_matched"
+                canonical_name in {
+                    "experimental_v16_efficacy_g_matched",
+                    "experimental_v17_formal_generic_2x2_matched",
+                }
             ),
             legacy_protocol=False,
             auxiliary_protocol=False,
