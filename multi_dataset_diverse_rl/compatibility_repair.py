@@ -10,6 +10,11 @@ ONLINE_COMPATIBILITY_REPAIR_VERSION = (
     "candidate_specific_counterfactual_compatibility_repair_v1"
 )
 LOSS_BLIND_GENERIC_REVISION_VERSION = "loss_blind_generic_revision_v1"
+LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT = (
+    "Revise one candidate member prompt. Return strict JSON only with exactly "
+    "one field: repaired_prompt. Do not quote or memorize examples. Do not add "
+    "answer lookup rules, hashes, labels, or the immutable output contract."
+)
 REPAIR_MAX_TOKENS = 3000
 REPAIR_SYSTEM_PROMPT = (
     "You repair one already-targeted member prompt. Return strict JSON only "

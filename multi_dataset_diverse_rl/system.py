@@ -25,6 +25,7 @@ from .candidate_selection import (
 from .config import Config
 from .compatibility_repair import (
     LOSS_BLIND_GENERIC_REVISION_VERSION,
+    LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT,
     ONLINE_COMPATIBILITY_REPAIR_VERSION,
     REPAIR_MAX_TOKENS,
     REPAIR_SYSTEM_PROMPT,
@@ -4241,7 +4242,7 @@ class PromptEnsembleOptimizationSystem:
             self.generic_revision_events.append(event)
             result = await self.llm.chat_result(
                 self.cfg.models.optimizer_model,
-                REPAIR_SYSTEM_PROMPT,
+                LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT,
                 build_loss_blind_generic_revision_request(
                     parent_prompt=self.agents[target].current_prompt,
                     source_candidate_prompt=source.prompt,

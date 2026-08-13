@@ -6,6 +6,7 @@ import json
 import pytest
 
 from multi_dataset_diverse_rl.compatibility_repair import (
+    LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT,
     build_loss_blind_generic_revision_request,
 )
 from multi_dataset_diverse_rl.config import Config
@@ -41,6 +42,8 @@ def test_loss_blind_request_contains_no_outcome_or_responsibility_evidence():
     lowered = request.lower()
     for forbidden in ("question_hash", "gold_answer", "loss_evidence", "responsibility_evidence"):
         assert forbidden not in lowered
+    assert "target" not in LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT.lower()
+    assert "responsib" not in LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT.lower()
 
 
 def test_provider_budget_stops_before_extra_call():
