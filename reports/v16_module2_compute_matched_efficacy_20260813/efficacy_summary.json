@@ -1,0 +1,44 @@
+{
+  "gate": "PASS",
+  "blockers": [],
+  "execution_commit": "ccfc213c34d0c419f9e56844e1d4423329cd5f0e",
+  "experiment_version": "v16_module2_compute_matched_efficacy_v1",
+  "validation_evaluations": 0,
+  "test_evaluations": 0,
+  "formal_efficacy_classifier": "DESCRIPTIVE_THREE_SEED_COMPARISON",
+  "arm_aggregates": {
+    "G-Matched": {
+      "seed_count": 3,
+      "mean_final_train_vote_accuracy": 0.6844444444444444,
+      "mean_g_min": 0.0,
+      "mean_g_sum": 10.333333333333334,
+      "total_accepted_updates": 7,
+      "total_provider_calls": 3959,
+      "total_tokens": 1586440,
+      "total_generic_revision_committed": 7,
+      "total_repair_committed": 0
+    },
+    "R-M20": {
+      "seed_count": 3,
+      "mean_final_train_vote_accuracy": 0.7422222222222222,
+      "mean_g_min": 0.0,
+      "mean_g_sum": 12.0,
+      "total_accepted_updates": 12,
+      "total_provider_calls": 5657,
+      "total_tokens": 1619729,
+      "total_generic_revision_committed": 0,
+      "total_repair_committed": 0
+    },
+    "R-M2F": {
+      "seed_count": 3,
+      "mean_final_train_vote_accuracy": 0.7466666666666667,
+      "mean_g_min": 0.0,
+      "mean_g_sum": 15.333333333333334,
+      "total_accepted_updates": 15,
+      "total_provider_calls": 7559,
+      "total_tokens": 2152817,
+      "total_generic_revision_committed": 0,
+      "total_repair_committed": 2
+    }
+  }
+}

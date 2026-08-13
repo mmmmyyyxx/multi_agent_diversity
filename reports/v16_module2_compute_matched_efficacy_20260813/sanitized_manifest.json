@@ -1,0 +1,25 @@
+{
+  "sanitization": "PASS",
+  "files": [
+    {
+      "file": "efficacy_summary.json",
+      "sha256": "12986e900fab4d7bd72ded9c988989fe5c7470c166090f715412bc59a502631c",
+      "size_bytes": 1412
+    },
+    {
+      "file": "paired_contrasts.csv",
+      "sha256": "e07bd46149b2afe2d1e4e1dd587b99fee786b8194322be4b500f50b1600efcea",
+      "size_bytes": 509
+    },
+    {
+      "file": "README.md",
+      "sha256": "89bbec0efe0309a34b0fa71394f1de64c1417e7add712090a5aa9cb7ce0b15d8",
+      "size_bytes": 460
+    },
+    {
+      "file": "seed_metrics.csv",
+      "sha256": "81cd9c6cdb9dfff24a5a247919e747ac8b988802ef70b65333b700448b49d361",
+      "size_bytes": 1282
+    }
+  ]
+}

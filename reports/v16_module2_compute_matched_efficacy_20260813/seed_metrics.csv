@@ -1,0 +1,10 @@
+arm,setting,seed,final_train_vote_accuracy,final_train_vote_correct_count,g_min,g_sum,accepted_updates,provider_calls,prompt_tokens,completion_tokens,total_tokens,generic_revision_attempted,generic_revision_feasible,generic_revision_committed,repair_eligible,repair_attempted,repair_feasible,repair_committed
+G-Matched,experimental_v16_efficacy_g_matched,53,0.7066666666666667,53,0,10,3,1423,476461,84007,560468,11,3,3,0,0,0,0
+G-Matched,experimental_v16_efficacy_g_matched,54,0.68,51,0,14,2,1569,504721,86881,591602,10,5,2,0,0,0,0
+G-Matched,experimental_v16_efficacy_g_matched,55,0.6666666666666666,50,0,7,2,967,359367,75003,434370,6,2,2,0,0,0,0
+R-M20,experimental_v16_efficacy_r_m20,53,0.7333333333333333,55,0,8,3,1711,470574,23622,494196,0,0,0,0,0,0,0
+R-M20,experimental_v16_efficacy_r_m20,54,0.72,54,0,8,4,2007,537776,23904,561680,0,0,0,0,0,0,0
+R-M20,experimental_v16_efficacy_r_m20,55,0.7733333333333333,58,0,20,5,1939,529665,34188,563853,0,0,0,0,0,0,0
+R-M2F,experimental_v16_efficacy_r_m2f,53,0.76,57,0,17,7,2844,748824,31564,780388,0,0,0,10,10,1,1
+R-M2F,experimental_v16_efficacy_r_m2f,54,0.7466666666666667,56,0,12,3,2395,651428,39186,690614,0,0,0,7,7,1,1
+R-M2F,experimental_v16_efficacy_r_m2f,55,0.7333333333333333,55,0,17,5,2320,656299,25516,681815,0,0,0,6,6,0,0
