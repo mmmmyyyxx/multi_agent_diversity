@@ -65,6 +65,7 @@ from ..versions import (
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
 )
+from ..compatibility_repair import ONLINE_COMPATIBILITY_REPAIR_VERSION
 
 
 @dataclass(frozen=True)
@@ -151,6 +152,7 @@ def config_fingerprint(cfg: Config) -> str:
     values["stage_a_policy"] = protocol.stage_a_policy
     values["module2_context_variant"] = protocol.module2_context_variant
     values["module2_evolution_variant"] = protocol.module2_evolution_variant
+    values["compatibility_repair_enabled"] = protocol.compatibility_repair_enabled
     values["candidate_budget_contract"] = asdict(
         protocol.candidate_budget_contract
     )
@@ -171,6 +173,11 @@ def config_fingerprint(cfg: Config) -> str:
         "experimental_module2": EXPERIMENTAL_MODULE2_VERSION,
         "module2_context_variant": protocol.module2_context_variant,
         "module2_evolution_variant": protocol.module2_evolution_variant,
+        "compatibility_repair_enabled": protocol.compatibility_repair_enabled,
+        "online_compatibility_repair": (
+            ONLINE_COMPATIBILITY_REPAIR_VERSION
+            if protocol.compatibility_repair_enabled else "off"
+        ),
         "protocol_resolution": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy": COMMON_UPDATE_POLICY_VERSION,
         "responsibility": RESPONSIBILITY_VERSION,

@@ -23,6 +23,14 @@ from .candidate_selection import (
     vote_first_key,
 )
 from .config import Config
+from .compatibility_repair import (
+    ONLINE_COMPATIBILITY_REPAIR_VERSION,
+    REPAIR_MAX_TOKENS,
+    REPAIR_SYSTEM_PROMPT,
+    build_repair_request,
+    parse_repair_output,
+    repair_eligible,
+)
 from .diagnosis_aggregation import (
     ANSWER_ROLE_ENCODING_VERSION,
     DIAGNOSIS_AGGREGATION_VERSION,
@@ -471,6 +479,7 @@ class PromptEnsembleOptimizationSystem:
         self.tcs_context_history: list[dict[str, Any]] = []
         self.module2_context_diagnostics: list[dict[str, Any]] = []
         self.residual_diagnosis_branch_diagnostics: list[dict[str, Any]] = []
+        self.compatibility_repair_events: list[dict[str, Any]] = []
         self._module2_context_sets: dict[
             tuple[int, int], Module2ContextSets
         ] = {}
@@ -2624,6 +2633,9 @@ class PromptEnsembleOptimizationSystem:
             "module2_evolution_variant": (
                 self.protocol.module2_evolution_variant
             ),
+            "compatibility_repair_enabled": (
+                self.protocol.compatibility_repair_enabled
+            ),
             "selected_context_pattern_question_hashes": (
                 {
                     "repair": [row.question_hash for row in context.repair_cases],
@@ -3948,6 +3960,249 @@ class PromptEnsembleOptimizationSystem:
             target_selection_rank=branch.target_selection_rank,
         )
 
+    async def _compatibility_repair_candidates(
+        self,
+        *,
+        target: int,
+        assigned_hashes: set[str],
+        source_candidates: Sequence[CandidateRuntime],
+        incumbent: CandidateEvaluation,
+        update_index: int,
+    ) -> list[CandidateRuntime]:
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        states, _, _ = self.current_states_and_opportunities()
+        repaired_candidates: list[CandidateRuntime] = []
+        stable = self.stable_correct_question_hashes_by_agent[target]
+        for source in source_candidates:
+            evaluation = source.final_evaluation
+            constraint = source.constraint
+            profile = source.profile
+            if evaluation is None or constraint is None or profile is None:
+                continue
+            repair_rows: list[dict[str, Any]] = []
+            loss_rows: list[dict[str, Any]] = []
+            stable_losses: list[dict[str, Any]] = []
+            for example, state, before, after in zip(
+                self.fixed_probe.examples,
+                states,
+                self.active_profiles[target],
+                profile,
+                strict=True,
+            ):
+                before_correct = bool(
+                    before.valid
+                    and self.match_answer(before.answer, example.gold_answer)
+                )
+                after_correct = bool(
+                    after.valid
+                    and self.match_answer(after.answer, example.gold_answer)
+                )
+                evidence = {
+                    "question_hash": example.question_hash,
+                    "question": example.question,
+                    "gold_answer": example.gold_answer,
+                    "parent_target_output": before.answer,
+                    "source_candidate_target_output": after.answer,
+                }
+                if (
+                    example.question_hash in assigned_hashes
+                    and not before_correct
+                    and after_correct
+                ):
+                    repair_rows.append({
+                        **evidence,
+                        "responsibility_status": "assigned",
+                    })
+                if (
+                    example.question_hash not in assigned_hashes
+                    and before_correct
+                    and not after_correct
+                ):
+                    peer = build_peer_vote_context(state, target)
+                    role = (
+                        "unique" if state.gold_vote_count == 1 else
+                        "pivotal" if state.vote_correct and peer.peer_margin <= 0 else
+                        "stable" if example.question_hash in stable else
+                        "fragile"
+                    )
+                    row = {
+                        **evidence,
+                        "parent_competence_role": role,
+                        "parent_plurality_margin": int(state.plurality_margin),
+                    }
+                    if role in {"unique", "pivotal"}:
+                        loss_rows.append(row)
+                    elif role == "stable":
+                        stable_losses.append(row)
+            stable_losses.sort(
+                key=lambda row: (
+                    -int(row["parent_plurality_margin"]),
+                    str(row["question_hash"]),
+                )
+            )
+            loss_rows.extend(stable_losses[:2])
+            reasons = tuple(constraint.rejection_reasons)
+            eligible = repair_eligible(
+                responsibility_gain_count=len(repair_rows),
+                rejection_reasons=reasons,
+                loss_evidence_count=len(loss_rows),
+            )
+            event: dict[str, Any] = {
+                "artifact_schema_version": "online_compatibility_repair_event_v1",
+                "repair_version": ONLINE_COMPATIBILITY_REPAIR_VERSION,
+                "update_index": int(update_index),
+                "target_agent_id": int(target),
+                "parent_team_hash": self.team_prompt_state_hash(),
+                "responsibility_evidence_hash": hashlib.sha256(
+                    json.dumps(
+                        sorted(assigned_hashes), separators=(",", ":")
+                    ).encode("utf-8")
+                ).hexdigest(),
+                "source_candidate_hash": source.prompt_hash,
+                "source_responsibility_gain": len(repair_rows),
+                "source_target_gain": int(constraint.target_gain),
+                "source_vote_gain": int(constraint.vote_gain_count),
+                "source_vote_loss": int(constraint.vote_loss_count),
+                "source_common_safe": bool(constraint.passed),
+                "source_rejection_reasons": list(reasons),
+                "loss_evidence_count": len(loss_rows),
+                "repair_eligible": eligible,
+                "repair_attempted": False,
+                "repair_output_valid": False,
+                "repair_feasible": False,
+                "repair_committed": False,
+            }
+            self.compatibility_repair_events.append(event)
+            if not eligible:
+                continue
+            event["repair_attempted"] = True
+            request = build_repair_request(
+                parent_prompt=self.agents[target].current_prompt,
+                source_candidate_prompt=source.prompt,
+                repair_evidence=sorted(
+                    repair_rows, key=lambda row: str(row["question_hash"])
+                ),
+                loss_evidence=loss_rows,
+                numeric_summary={
+                    "responsibility_gain_count": len(repair_rows),
+                    "nonresponsibility_loss_count": sum(
+                        before.valid
+                        and self.match_answer(before.answer, example.gold_answer)
+                        and not (
+                            after.valid
+                            and self.match_answer(after.answer, example.gold_answer)
+                        )
+                        and example.question_hash not in assigned_hashes
+                        for example, before, after in zip(
+                            self.fixed_probe.examples,
+                            self.active_profiles[target],
+                            profile,
+                            strict=True,
+                        )
+                    ),
+                    "source_target_gain": int(constraint.target_gain),
+                    "source_vote_gain_count": int(constraint.vote_gain_count),
+                    "source_vote_loss_count": int(constraint.vote_loss_count),
+                },
+            )
+            result = await self.llm.chat_result(
+                self.cfg.models.optimizer_model,
+                REPAIR_SYSTEM_PROMPT,
+                request,
+                self.cfg.tcs.student_temperature,
+                REPAIR_MAX_TOKENS,
+                "optimizer",
+                "candidate_specific_compatibility_repair",
+            )
+            try:
+                repaired_prompt = parse_repair_output(
+                    result.text,
+                    source_candidate_prompt=source.prompt,
+                    supplied_evidence=[*repair_rows, *loss_rows],
+                )
+                validate_mutable_decision_procedure(repaired_prompt)
+            except ValueError as exc:
+                event["terminal_failure_class"] = type(exc).__name__
+                continue
+            event["repair_output_valid"] = True
+            repaired_hash = self.prompt_hash(repaired_prompt)
+            repaired = CandidateRuntime(
+                student_candidate=StudentPromptCandidate(repaired_prompt),
+                prompt=repaired_prompt,
+                prompt_hash=repaired_hash,
+                generation=source.generation,
+                parent_prompt_hash=self.prompt_hash(
+                    self.agents[target].current_prompt
+                ),
+                repair_plan_hash=source.prompt_hash,
+            )
+            repaired.profile = await self.fixed_probe.evaluate_prompt(
+                target, repaired.prompt, repaired.prompt_hash, self.solve
+            )
+            repaired.final_evaluation = evaluate_candidate_profile(
+                prompt=repaired.prompt,
+                prompt_hash=repaired.prompt_hash,
+                examples=self.fixed_probe.examples,
+                active_profiles=self.active_profiles,
+                initial_profiles=self.initial_profiles,
+                candidate_profile=repaired.profile,
+                target_agent_id=target,
+                assigned_question_hashes=assigned_hashes,
+                normalize_answer=self.normalize_answer,
+                match_answer=self.match_answer,
+                tie_break=self.protocol.tie_policy,
+                seed=self.cfg.training.seed,
+                tau=self.cfg.peer_state.soft_vote_tau,
+            )
+            repaired.constraint = evaluate_constraints(
+                repaired.final_evaluation, incumbent
+            )
+            repaired.module2_diagnostics = self._module2_candidate_effects(
+                update_index=update_index,
+                target_agent_id=target,
+                candidate_profile=repaired.profile,
+                evaluation=repaired.final_evaluation,
+            )
+            repaired.module2_diagnostics.update({
+                "candidate_stage": "compatibility_repair",
+                "source_candidate_hash": source.prompt_hash,
+                "retained_source_responsibility_repairs": sum(
+                    example.question_hash in {
+                        str(row["question_hash"]) for row in repair_rows
+                    }
+                    and bool(
+                        answer.valid
+                        and self.match_answer(
+                            answer.answer, example.gold_answer
+                        )
+                    )
+                    for example, answer in zip(
+                        self.fixed_probe.examples,
+                        repaired.profile,
+                        strict=True,
+                    )
+                ),
+            })
+            event.update({
+                "repaired_candidate_hash": repaired_hash,
+                "repair_feasible": bool(repaired.constraint.passed),
+                "repaired_responsibility_gain": int(
+                    repaired.final_evaluation.marginal.assigned_residual_repair_count
+                ),
+                "repaired_target_gain": int(repaired.constraint.target_gain),
+                "repaired_vote_gain": int(repaired.constraint.vote_gain_count),
+                "repaired_vote_loss": int(repaired.constraint.vote_loss_count),
+                "repaired_common_safe": bool(repaired.constraint.passed),
+                "retained_source_responsibility_repairs": int(
+                    repaired.module2_diagnostics[
+                        "retained_source_responsibility_repairs"
+                    ]
+                ),
+            })
+            repaired_candidates.append(repaired)
+        return repaired_candidates
+
     async def _evaluate_target_branch(
         self,
         *,
@@ -3993,6 +4248,34 @@ class PromptEnsembleOptimizationSystem:
             funnel,
             update_index=update_index,
         )
+        if self.protocol.compatibility_repair_enabled:
+            repaired = await self._compatibility_repair_candidates(
+                target=target,
+                assigned_hashes=assigned_hashes,
+                source_candidates=evaluated,
+                incumbent=incumbent,
+                update_index=update_index,
+            )
+            evaluated.extend(repaired)
+            feasible = [
+                row for row in evaluated
+                if row.constraint is not None and row.constraint.passed
+            ]
+            accepted = max(
+                feasible,
+                key=lambda row: common_monotone_safe_key(
+                    row.final_evaluation, row.generation
+                ),
+                default=None,
+            )
+            funnel.stage_b_evaluated += len(repaired)
+            funnel.constraint_feasible += sum(
+                bool(row.constraint and row.constraint.passed) for row in repaired
+            )
+            funnel.acceptable_candidates += sum(
+                bool(row.constraint and row.constraint.passed) for row in repaired
+            )
+            funnel.accepted_candidate = accepted is not None
         self._record_proposal_memory_outcome(
             update_index=update_index,
             target_agent_id=target,
@@ -4202,6 +4485,9 @@ class PromptEnsembleOptimizationSystem:
                     "prompt_hash": row.prompt_hash,
                     "generation": row.generation,
                     "repair_plan_hash": row.repair_plan_hash,
+                    "candidate_stage": row.module2_diagnostics.get(
+                        "candidate_stage", "m20_source"
+                    ),
                     "stage_a_decision": (
                         asdict(row.stage_a_decision)
                         if row.stage_a_decision else None
@@ -4411,6 +4697,13 @@ class PromptEnsembleOptimizationSystem:
         evaluation = accepted.final_evaluation
         if evaluation is None:
             raise AssertionError("winner evaluation missing")
+        for event in self.compatibility_repair_events:
+            if (
+                int(event["update_index"]) == int(update_index)
+                and event.get("repaired_candidate_hash")
+                == accepted.prompt_hash
+            ):
+                event["repair_committed"] = True
         for branch in branches:
             branch_target = branch.target_agent_id
             if branch is winner:
@@ -5399,6 +5692,9 @@ class PromptEnsembleOptimizationSystem:
             "module2_evolution_variant": (
                 self.protocol.module2_evolution_variant
             ),
+            "compatibility_repair_enabled": (
+                self.protocol.compatibility_repair_enabled
+            ),
             "experiment_protocol": {
                 **asdict(self.protocol),
                 "candidate_selection_policy": (
@@ -5729,6 +6025,10 @@ class PromptEnsembleOptimizationSystem:
         self.artifacts.write_jsonl(
             "residual_diagnosis_branch_diagnostics.jsonl",
             self.residual_diagnosis_branch_diagnostics,
+        )
+        self.artifacts.write_jsonl(
+            "online_compatibility_repair_events.jsonl",
+            self.compatibility_repair_events,
         )
         self.artifacts.write_jsonl("tcs_rounds.jsonl", self.tcs_rounds)
         self.artifacts.write_jsonl(

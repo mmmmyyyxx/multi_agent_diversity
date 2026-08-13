@@ -1,0 +1,29 @@
+{
+  "pilot_version": "v16_m2f_online_mechanism_pilot_v1",
+  "seed": 52,
+  "task": "disambiguation_qa",
+  "dataset_format": "mars",
+  "train_size": 75,
+  "updates": 8,
+  "epochs": 1,
+  "update_every": 10,
+  "setting": "experimental_v16_m2f_online_compatibility_repair",
+  "model": "qwen3-14b",
+  "thinking": false,
+  "source_candidates_per_branch": 2,
+  "target_branches": 2,
+  "repair_calls_per_eligible_source": 1,
+  "validation_enabled": false,
+  "final_test_enabled": false,
+  "checkpoint_selection": "none_final_state",
+  "analysis_only_metrics": ["critical_net", "oracle_delta", "vote_net"],
+  "primary_counts": [
+    "m20_feasible",
+    "repair_eligible",
+    "repair_attempted",
+    "repair_output_valid",
+    "repair_feasible",
+    "repair_committed",
+    "repair_attributable_accepted_updates"
+  ]
+}

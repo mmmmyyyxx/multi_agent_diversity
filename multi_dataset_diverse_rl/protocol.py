@@ -124,6 +124,7 @@ class ExperimentProtocol:
     candidate_budget_contract: CandidateBudgetContract
     module2_context_variant: str = C0_CURRENT_V15
     module2_evolution_variant: str = "m20_current_v15"
+    compatibility_repair_enabled: bool = False
     legacy_protocol: bool = False
     auxiliary_protocol: bool = False
 
@@ -166,6 +167,7 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v16_m2c_diagnosis_minimal_edit_relevance_critic",
     "experimental_v16_m2d_raw_responsibility_minimal_edit",
     "experimental_v16_m2e_scoped_behavioral_patch",
+    "experimental_v16_m2f_online_compatibility_repair",
 )
 
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
@@ -717,6 +719,10 @@ def experiment_protocol(
                 EXPERIMENTAL_V16_EVOLUTION_VARIANTS.get(
                     canonical_name, "m20_current_v15"
                 )
+            ),
+            compatibility_repair_enabled=(
+                canonical_name
+                == "experimental_v16_m2f_online_compatibility_repair"
             ),
             legacy_protocol=False,
             auxiliary_protocol=False,

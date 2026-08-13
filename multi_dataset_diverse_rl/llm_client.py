@@ -142,6 +142,9 @@ class RoleAwareLLMClient:
         role: str,
         logical_role: str | None = None,
     ) -> LLMCallResult:
+        guard = getattr(self, "source_freeze_guard", None)
+        if guard is not None:
+            guard("before_provider_call")
         max_attempts = max(1, self.cfg.persistence.max_retries + self.cfg.persistence.max_transient_retries)
         last_error: Exception | None = None
         for attempt in range(1, max_attempts + 1):
@@ -190,6 +193,8 @@ class RoleAwareLLMClient:
                 if role == "solver" and max_tokens is not None:
                     call_record["configured_solver_max_tokens"] = max_tokens
                 self.calls.append(call_record)
+                if guard is not None:
+                    guard("after_successful_provider_call")
                 return LLMCallResult(
                     text=text,
                     prompt_tokens=prompt_tokens,

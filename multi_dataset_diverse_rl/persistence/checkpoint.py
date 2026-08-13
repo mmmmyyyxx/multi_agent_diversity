@@ -119,6 +119,7 @@ def build_checkpoint(
         "canonical_experiment_setting": system.protocol.name,
         "module2_context_variant": system.protocol.module2_context_variant,
         "module2_evolution_variant": system.protocol.module2_evolution_variant,
+        "compatibility_repair_enabled": system.protocol.compatibility_repair_enabled,
         "experiment_matrix_version": EXPERIMENT_MATRIX_VERSION,
         "protocol_resolution_version": PROTOCOL_RESOLUTION_VERSION,
         "common_update_policy_version": COMMON_UPDATE_POLICY_VERSION,
@@ -301,6 +302,7 @@ def build_checkpoint(
         "module2_context_diagnostics": list(
             system.module2_context_diagnostics
         ),
+        "compatibility_repair_events": list(system.compatibility_repair_events),
         "tcs_rounds": list(system.tcs_rounds),
         "solver_invalid_outputs": list(system.solver_invalid_outputs),
         "solver_recovery_observations": list(system.solver_recovery_observations),
@@ -437,6 +439,10 @@ def validate_checkpoint(payload: Mapping[str, Any], system) -> None:
         system.protocol.module2_evolution_variant
     ):
         raise ValueError("Checkpoint Module2 evolution variant is incompatible")
+    if bool(payload.get("compatibility_repair_enabled", False)) != (
+        system.protocol.compatibility_repair_enabled
+    ):
+        raise ValueError("Checkpoint compatibility repair setting is incompatible")
     expected_acceptance = system.protocol.candidate_acceptance_policy
     expected_ranking = system.protocol.candidate_ranking_policy
     if payload.get("module_vector") != system.protocol.module_vector:
@@ -703,6 +709,9 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
         setattr(system, name, list(payload[name]))
     system.rcru_candidate_decisions = list(
         payload.get("rcru_candidate_decisions", [])
+    )
+    system.compatibility_repair_events = list(
+        payload.get("compatibility_repair_events", [])
     )
     system._audited_invalid_keys = {
         (str(row["prompt_hash"]), str(row["question_hash"]))
