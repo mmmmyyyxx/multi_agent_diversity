@@ -102,6 +102,7 @@ def audit(run: Path, freeze: Path) -> dict[str, Any]:
     summary = {
         "gate": "PASS" if not blockers else "FAIL",
         "blockers": sorted(set(blockers)),
+        "execution_commit": str(frozen.get("git_head", "")),
         "seed": 52,
         "planned_updates": 8,
         "completed_updates": len(decisions),

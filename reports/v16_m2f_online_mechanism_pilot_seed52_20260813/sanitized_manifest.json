@@ -1,0 +1,20 @@
+{
+  "sanitization": "PASS",
+  "files": [
+    {
+      "file": "mechanism_summary.json",
+      "sha256": "6f3a651211d44f1379b4faa08662eeb3ad02694ecde91249f97432db8eb61a7c",
+      "size_bytes": 756
+    },
+    {
+      "file": "README.md",
+      "sha256": "398e5e8ffbe44be4319a999ac566c1adb4e3c6f660679e7576275f86f1936de0",
+      "size_bytes": 441
+    },
+    {
+      "file": "repair_events.csv",
+      "sha256": "6422cb8aa0a3556509e49cf4d595e0d9519637a6921541f9ae091f74f54ab010",
+      "size_bytes": 6700
+    }
+  ]
+}

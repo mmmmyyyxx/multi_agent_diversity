@@ -169,6 +169,7 @@ def test_auditor_counts_only_infeasible_source_repair_commit(tmp_path):
         (run / name).write_text("".join(json.dumps(row) + "\n" for row in rows))
     result = audit(run, freeze)
     assert result["gate"] == "PASS"
+    assert result["execution_commit"] == "abc"
     assert result["repair_attributable_accepted_updates"] == 1
 
 
