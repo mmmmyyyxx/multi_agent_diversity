@@ -20,6 +20,7 @@ for path in (ROOT, SCRIPTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
+from multi_dataset_diverse_rl.candidate_selection import common_monotone_safe_key
 from multi_dataset_diverse_rl.system import CandidateFunnel
 from v17_module1_2x2_support import (
     AUTHORIZATION_ENV,
@@ -86,6 +87,33 @@ async def run_branch(
         winner, incumbent, evaluated = await system.evaluate_candidates(
             target, source, hashes, funnel, int(case["update_index"])
         )
+        revised = await system._loss_blind_generic_revision_candidates(
+            target=target,
+            assigned_hashes=hashes,
+            source_candidates=evaluated,
+            incumbent=incumbent,
+            update_index=int(case["update_index"]),
+        )
+        evaluated.extend(revised)
+        feasible = [
+            row for row in evaluated
+            if row.constraint is not None and row.constraint.passed
+        ]
+        winner = max(
+            feasible,
+            key=lambda row: common_monotone_safe_key(
+                row.final_evaluation, row.generation
+            ),
+            default=None,
+        )
+        funnel.stage_b_evaluated += len(revised)
+        funnel.constraint_feasible += sum(
+            bool(row.constraint and row.constraint.passed) for row in revised
+        )
+        funnel.acceptable_candidates += sum(
+            bool(row.constraint and row.constraint.passed) for row in revised
+        )
+        funnel.accepted_candidate = winner is not None
     revision_count = len(system.generic_revision_events) - revision_before
     valid_source_count = sum(
         str((row.module2_diagnostics or {}).get("candidate_stage", ""))

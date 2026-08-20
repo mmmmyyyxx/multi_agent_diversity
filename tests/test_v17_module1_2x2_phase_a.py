@@ -163,3 +163,5 @@ def test_revision_parity_is_defined_over_valid_stage_b_sources():
     assert '"valid_source_candidate_count": valid_source_count' in runner
     assert "revision_count != valid_source_count" in runner
     assert 'branch.get("valid_source_candidate_count"' in auditor
+    assert "_loss_blind_generic_revision_candidates" in runner
+    assert "common_monotone_safe_key" in runner
