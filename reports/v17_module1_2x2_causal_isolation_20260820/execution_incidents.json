@@ -1,0 +1,14 @@
+{
+  "incident_history_version": "v17_module1_2x2_execution_incidents_v1",
+  "authoritative_attempt": "retry4",
+  "invalidated_attempt_count": 4,
+  "invalidated_attempts": [
+    {"attempt": "initial", "class": "empty_branch_filtering_bug", "mechanism_evidence": false},
+    {"attempt": "retry1", "class": "child_credential_inheritance_failure", "mechanism_evidence": false},
+    {"attempt": "retry2", "class": "revision_input_count_audit_bug", "mechanism_evidence": false},
+    {"attempt": "retry3", "class": "generic_revision_block_omitted_from_probe_runner", "mechanism_evidence": false}
+  ],
+  "method_semantics_changed": false,
+  "experimental_design_changed": false,
+  "raw_failed_artifacts_published": false
+}

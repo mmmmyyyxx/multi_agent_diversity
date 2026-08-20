@@ -1,0 +1,17 @@
+{
+  "analysis_version": "v17_module1_2x2_realized_validation_v1",
+  "primary_endpoint": "realized_validation_vote_delta",
+  "secondary_endpoint": "realized_validation_oracle_delta",
+  "contrasts": {
+    "B-A": {"vote": -1, "oracle": -2},
+    "D-C": {"vote": -2, "oracle": 5},
+    "C-A": {"vote": 1, "oracle": -5},
+    "D-B": {"vote": 0, "oracle": 2},
+    "interaction": {"vote": -1, "oracle": 7},
+    "target_main": {"vote": -3, "oracle": 3},
+    "context_main": {"vote": 1, "oracle": -3}
+  },
+  "conclusion": "TARGET_ALLOCATION_DOMINANT",
+  "interpretation_scope": "local_fixed_parent_causal_diagnosis",
+  "trajectory_level_efficacy_claim": false
+}

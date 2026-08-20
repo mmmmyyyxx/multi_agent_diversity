@@ -1,0 +1,14 @@
+{
+  "gate": "PASS",
+  "blockers": [],
+  "case_count": 6,
+  "cell_count": 24,
+  "branch_count": 48,
+  "source_candidate_budget_per_branch_max": 2,
+  "generic_revision_parity": "PASS",
+  "parent_validation_consistency": "PASS",
+  "team_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0,
+  "test_calls": 0,
+  "source_freeze_unchanged": true
+}

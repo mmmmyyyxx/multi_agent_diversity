@@ -1,0 +1,11 @@
+{
+  "manifest_version": "v17_module1_2x2_sanitized_manifest_v1",
+  "files": {
+    "README.md": {"sha256": "68523892696eab8b47eaf22a9bf24c41db9502a0a3755bf2e145b02267c3c0af", "bytes": 2156},
+    "analysis.json": {"sha256": "d8cb400badb6a89a3677b6fadfac5811f1d4a081c8682358778446148204b9ac", "bytes": 650},
+    "cell_metrics.csv": {"sha256": "9127a2ebc81a86b2663d40bb5269529ef21571571f7e2def80231710c6beaf13", "bytes": 1155},
+    "execution_incidents.json": {"sha256": "1a3bb35a85480878a48e03e34d0189e78b3388b2c6242ed4bcb5f1ff6a355f20", "bytes": 715},
+    "gate.json": {"sha256": "20c631c8df9b159ab67cc50b4c7878538fcb5578988f207f1fdc6512d8bcf0dc", "bytes": 348},
+    "phase_b_summary.json": {"sha256": "7831bfae5e95694ce2a723675d27fffa1b1500e2be1ae8a2fd2518202c2b0b7a", "bytes": 744}
+  }
+}

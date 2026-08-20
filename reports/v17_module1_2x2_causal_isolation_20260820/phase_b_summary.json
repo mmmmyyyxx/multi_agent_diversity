@@ -1,0 +1,22 @@
+{
+  "report_version": "v17_module1_2x2_sanitized_summary_v1",
+  "execution_commit": "66a0276dc61e77fe71e8add94eb4865d1235b7b5",
+  "registry_content_hash": "1994f78eea29ec59df10f6e6a15cec4218c85d3688b4a8af028b9a1e76240b05",
+  "results_hash": "6cfbb006bc31ae0370d1e155465de893a509e587c193fff53554277042eaea0b",
+  "gate": "PASS",
+  "blockers": [],
+  "case_count": 6,
+  "cell_count": 24,
+  "branch_count": 48,
+  "would_commit_count": 9,
+  "team_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0,
+  "test_calls": 0,
+  "aggregate_realized_deltas": {
+    "A": {"vote": 1, "oracle": 2},
+    "B": {"vote": 0, "oracle": 0},
+    "C": {"vote": 2, "oracle": -3},
+    "D": {"vote": 0, "oracle": 2}
+  },
+  "conclusion": "TARGET_ALLOCATION_DOMINANT"
+}
