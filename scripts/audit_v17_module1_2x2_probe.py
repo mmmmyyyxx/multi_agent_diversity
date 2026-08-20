@@ -20,7 +20,9 @@ def audit(root: Path) -> dict:
         for branch in row.get("branches", []):
             if int(branch.get("source_candidate_count", 3)) > 2:
                 blockers.append("source_candidate_budget")
-            if int(branch.get("loss_blind_revision_count", -1)) != int(branch.get("source_candidate_count", -2)):
+            if int(branch.get("valid_source_candidate_count", -1)) > int(branch.get("source_candidate_count", -2)):
+                blockers.append("valid_source_count")
+            if int(branch.get("loss_blind_revision_count", -1)) != int(branch.get("valid_source_candidate_count", -2)):
                 blockers.append("generic_revision_parity")
             if int(branch.get("validation_calls", 0)) or int(branch.get("test_calls", 0)):
                 blockers.append("branch_evaluation_isolation")

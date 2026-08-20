@@ -87,7 +87,12 @@ async def run_branch(
             target, source, hashes, funnel, int(case["update_index"])
         )
     revision_count = len(system.generic_revision_events) - revision_before
-    if revision_count != len(source):
+    valid_source_count = sum(
+        str((row.module2_diagnostics or {}).get("candidate_stage", ""))
+        != "loss_blind_generic_revision"
+        for row in evaluated
+    )
+    if revision_count != valid_source_count:
         raise RuntimeError("loss-blind revision count does not match valid sources")
     if immutable_state_hash(system) != before:
         raise RuntimeError("fixed parent state mutated")
@@ -101,6 +106,7 @@ async def run_branch(
         "parent_team_hash": case["parent_team_hash"],
         "assigned_residual_hash_count": len(hashes),
         "source_candidate_count": len(source),
+        "valid_source_candidate_count": valid_source_count,
         "loss_blind_revision_count": revision_count,
         "evaluated_candidate_count": len(evaluated),
         "feasible_candidate_count": sum(

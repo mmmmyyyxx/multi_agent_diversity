@@ -155,3 +155,11 @@ def test_phase_b_wrapper_hydrates_credentials_without_printing_values():
     assert '"DASHSCOPE_BASE_URL", "User"' in source
     assert '"DASHSCOPE_BASE_URL", "Machine"' in source
     assert "Write-Host $env:DASHSCOPE" not in source
+
+
+def test_revision_parity_is_defined_over_valid_stage_b_sources():
+    runner = (ROOT / "scripts/run_v17_module1_2x2_probe.py").read_text(encoding="utf-8")
+    auditor = (ROOT / "scripts/audit_v17_module1_2x2_probe.py").read_text(encoding="utf-8")
+    assert '"valid_source_candidate_count": valid_source_count' in runner
+    assert "revision_count != valid_source_count" in runner
+    assert 'branch.get("valid_source_candidate_count"' in auditor
