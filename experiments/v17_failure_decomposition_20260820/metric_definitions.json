@@ -1,0 +1,11 @@
+{
+  "vote": "Plurality correctness with tie-as-abstain; exactly the frozen G/H/M semantics.",
+  "oracle": "At least one valid member is correct.",
+  "pivotal": "A correct member on a correct team whose leave-one-out peer margin is non-positive.",
+  "unique": "A correct member when exactly one member is correct.",
+  "transfer_gap": "Right-minus-left train vote accuracy minus right-minus-left held-out vote accuracy.",
+  "target_entropy": "Shannon entropy of five target shares divided by log(5).",
+  "target_gini": "Five-agent target-count Gini coefficient.",
+  "descriptive_efficiency": "Final held-out vote gain versus S0 divided by accepted updates; not causal per-commit attribution.",
+  "recovery": "Raw final-state right-minus-left differences; recovery fractions, where defined, are descriptive only."
+}

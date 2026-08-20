@@ -1,0 +1,35 @@
+{
+  "status_enum": ["SUPPORTED", "MIXED", "NOT_SUPPORTED", "EVIDENCE_INSUFFICIENT"],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "name": "optimization_residual_transfer_gap",
+      "supported_if": "At least two seeds have S2-S1 train delta above test delta, positive train-to-test gap, and the mean gap is positive."
+    },
+    {
+      "id": "H2",
+      "name": "complementarity_conversion_failure",
+      "supported_if": "At least two seeds retain or improve S2 oracle/coverage while S2 vote is lower and the oracle-minus-vote gap widens."
+    },
+    {
+      "id": "H3",
+      "name": "target_concentration_association",
+      "supported_if": "At least two seeds have lower S2 target entropy and a descriptive association between high targeting and poorer member transfer."
+    },
+    {
+      "id": "H4A",
+      "name": "update_throughput_deficit",
+      "supported_if": "At least two seeds have fewer S2 accepted updates than S1 and the aggregate accepted count is lower."
+    },
+    {
+      "id": "H4B",
+      "name": "update_efficiency_deficit",
+      "supported_if": "At least two seeds have lower S2 descriptive held-out gain per accepted update together with train-to-held-out degradation."
+    },
+    {
+      "id": "H5",
+      "name": "specialization_transfer_failure",
+      "supported_if": "At least two seeds show a stronger S2 train specialization signal that fades on test in two independent frozen measures."
+    }
+  ]
+}

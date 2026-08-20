@@ -1,0 +1,33 @@
+{
+  "S1_S2_test_oracle_net": -21,
+  "S1_S2_test_transition_net": -5,
+  "S1_S2_test_vote_gain_count": 21,
+  "S1_S2_test_vote_loss_count": 26,
+  "S1_S2_test_vote_net": -5,
+  "S1_accepted_updates_total": 13,
+  "S2_accepted_updates_total": 8,
+  "causal_scope": "OBSERVATIONAL_FROZEN_TRAJECTORY_DECOMPOSITION",
+  "hypothesis_status": {
+    "H1": "NOT_SUPPORTED",
+    "H2": "NOT_SUPPORTED",
+    "H3": "SUPPORTED",
+    "H4A": "SUPPORTED",
+    "H4B": "NOT_SUPPORTED",
+    "H5": "NOT_SUPPORTED"
+  },
+  "interpretation": [
+    "S2 does not show a stable train-positive/test-negative pattern, so optimization-residual over-specialization is not supported by the preregistered H1 rule.",
+    "S2 loses test oracle coverage in all three seeds and loses test votes in two seeds; this is broad competence/generalization degradation rather than useful complementarity with failed plurality conversion.",
+    "S2 target schedules are more concentrated in all three seeds; in Seeds 57 and 58 the above-mean-target agents have worse mean test transfer than below-mean-target agents. This is an association, not causal attribution to W1.",
+    "S2 accepts fewer updates than S1 in two seeds and in aggregate, supporting a throughput deficit; per-commit generalization efficiency is not consistently worse.",
+    "S3 and S4 recover some votes, but the recovery is seed-dependent and does not restore S1-level aggregate oracle coverage or vote accuracy."
+  ],
+  "low_api_escalation_required": false,
+  "low_api_estimated_calls": 0,
+  "method_changed": false,
+  "next_scientific_question": "Determine whether the broad-competence loss originates during candidate generation or during common-safe train-only selection, using a separately preregistered frozen-parent analysis; do not change the frozen V17 method in this audit.",
+  "primary_diagnosis": "TARGET_CONCENTRATION_ASSOCIATED_WITH_MEMBER_TRANSFER_REGRESSION",
+  "secondary_diagnosis": "BROAD_COMPETENCE_DEGRADATION_WITH_LOWER_UPDATE_THROUGHPUT",
+  "test_reevaluated": false,
+  "validation_reevaluated": false
+}

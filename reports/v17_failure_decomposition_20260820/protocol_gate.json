@@ -1,0 +1,23 @@
+{
+  "api_model_solver_optimizer_evaluator_call_counts": {
+    "api_calls": 0,
+    "evaluator_calls": 0,
+    "model_calls": 0,
+    "optimizer_calls": 0,
+    "solver_calls": 0
+  },
+  "audit_protocol_gate": "PASS",
+  "formal_cells": 15,
+  "historical_execution_commit": "76e6960969320786a767c9e94ef3e357735f4b32",
+  "historical_source_tree_hash": "1cbe10d9bf4c48173e48f182be315fe5982d844791e0b23dd7ecfe4962b400de",
+  "reconstructed_cells": 45,
+  "row_level_reconstruction_gate": "PASS",
+  "source_commit": "ef9124eb2ddbfbe8d04c3c849c08a9e6875c7e61",
+  "state_mutations_by_audit": 0,
+  "test_logical_evaluations_historical": 15,
+  "test_reevaluated": false,
+  "test_used_for_selection": false,
+  "validation_logical_evaluations_historical": 15,
+  "validation_reevaluated": false,
+  "validation_test_final_state_hashes_match": true
+}

@@ -1,0 +1,26 @@
+{
+  "arm_seed_split_cells_reconstructed": "45/45",
+  "available_fields": [
+    "team_vote_correctness",
+    "per_agent_correctness",
+    "question_hash",
+    "G",
+    "H",
+    "M",
+    "oracle_correctness",
+    "final_team_hash"
+  ],
+  "evidence_gate": "PASS",
+  "formal_cells_found": "15/15",
+  "low_api_escalation_required": false,
+  "row_count": 3750,
+  "training_evidence": [
+    "target_schedule",
+    "candidate_generation",
+    "candidate_evaluation",
+    "accepted_commits",
+    "per_commit_train_deltas",
+    "responsibility",
+    "M2F_repair"
+  ]
+}

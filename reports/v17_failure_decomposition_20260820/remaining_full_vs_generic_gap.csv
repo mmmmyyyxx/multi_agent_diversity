@@ -1,0 +1,4 @@
+S1_only_correct,S4_only_correct,both_correct,both_wrong,coverage_but_no_vote,oracle_lost,other,seed,tie_margin,wrong_coalition
+4,6,81,34,0,0,0,56,0,4
+12,9,80,24,0,4,0,57,0,8
+4,3,86,32,0,0,0,58,0,4
