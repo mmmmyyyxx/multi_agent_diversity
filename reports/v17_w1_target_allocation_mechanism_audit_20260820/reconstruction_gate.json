@@ -1,0 +1,14 @@
+{
+  "gate": "PASS",
+  "zero_api": true,
+  "new_test_calls": 0,
+  "cell_count": 24,
+  "branch_count": 48,
+  "parent_count": 6,
+  "w1_score_reconstruction_mismatch": 0,
+  "branch_target_identity_mismatch": 0,
+  "validation_metric_reconstruction_mismatch": 0,
+  "cache_sha256_unchanged": true,
+  "candidate_level_status": "NOT_IDENTIFIABLE_FROM_EXISTING_ARTIFACTS",
+  "candidate_level_reason": "all candidate hashes and per-candidate Common-Safe decisions were not persisted by the fixed-parent runner"
+}

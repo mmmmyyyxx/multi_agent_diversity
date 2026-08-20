@@ -1,0 +1,193 @@
+{
+  "summary_version": "v17_w1_target_allocation_mechanism_audit_v1",
+  "source_execution_commit": "66a0276dc61e77fe71e8add94eb4865d1235b7b5",
+  "source_results_hash": "6cfbb006bc31ae0370d1e155465de893a509e587c193fff53554277042eaea0b",
+  "gate": "PASS",
+  "zero_api": true,
+  "new_test_calls": 0,
+  "parent_count": 6,
+  "cell_count": 24,
+  "branch_count": 48,
+  "realized_by_cell": {
+    "A": {
+      "validation_vote_delta": 1,
+      "validation_oracle_delta": 2,
+      "would_commit_count": 3
+    },
+    "B": {
+      "validation_vote_delta": 0,
+      "validation_oracle_delta": 0,
+      "would_commit_count": 1
+    },
+    "C": {
+      "validation_vote_delta": 2,
+      "validation_oracle_delta": -3,
+      "would_commit_count": 3
+    },
+    "D": {
+      "validation_vote_delta": 0,
+      "validation_oracle_delta": 2,
+      "would_commit_count": 2
+    }
+  },
+  "paired_allocation_contrasts": {
+    "B_minus_A": {
+      "validation_vote_delta": -1,
+      "validation_oracle_delta": -2
+    },
+    "D_minus_C": {
+      "validation_vote_delta": -2,
+      "validation_oracle_delta": 5
+    }
+  },
+  "funnel": {
+    "A": {
+      "group": "A",
+      "branch_count": 12,
+      "valid_source_branch_count": 6,
+      "valid_source_count": 11,
+      "feasible_branch_count": 4,
+      "feasible_candidate_count": 9,
+      "branch_winner_count": 4,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 6,
+      "positive_validation_vote_count": 1,
+      "positive_validation_oracle_count": 1,
+      "mean_historical_target_count": 1.5833333333333333
+    },
+    "B": {
+      "group": "B",
+      "branch_count": 12,
+      "valid_source_branch_count": 3,
+      "valid_source_count": 6,
+      "feasible_branch_count": 1,
+      "feasible_candidate_count": 3,
+      "branch_winner_count": 1,
+      "cell_winner_count": 1,
+      "critic_exhausted_count": 9,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 0,
+      "mean_historical_target_count": 1.4166666666666667
+    },
+    "C": {
+      "group": "C",
+      "branch_count": 12,
+      "valid_source_branch_count": 4,
+      "valid_source_count": 7,
+      "feasible_branch_count": 3,
+      "feasible_candidate_count": 3,
+      "branch_winner_count": 3,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 8,
+      "positive_validation_vote_count": 1,
+      "positive_validation_oracle_count": 1,
+      "mean_historical_target_count": 1.5833333333333333
+    },
+    "D": {
+      "group": "D",
+      "branch_count": 12,
+      "valid_source_branch_count": 6,
+      "valid_source_count": 11,
+      "feasible_branch_count": 2,
+      "feasible_candidate_count": 5,
+      "branch_winner_count": 2,
+      "cell_winner_count": 2,
+      "critic_exhausted_count": 6,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 2,
+      "mean_historical_target_count": 1.4166666666666667
+    },
+    "RR": {
+      "group": "RR",
+      "branch_count": 24,
+      "valid_source_branch_count": 10,
+      "valid_source_count": 18,
+      "feasible_branch_count": 7,
+      "feasible_candidate_count": 12,
+      "branch_winner_count": 7,
+      "cell_winner_count": 6,
+      "critic_exhausted_count": 14,
+      "positive_validation_vote_count": 2,
+      "positive_validation_oracle_count": 2,
+      "mean_historical_target_count": 1.5833333333333333
+    },
+    "W1": {
+      "group": "W1",
+      "branch_count": 24,
+      "valid_source_branch_count": 9,
+      "valid_source_count": 17,
+      "feasible_branch_count": 3,
+      "feasible_candidate_count": 8,
+      "branch_winner_count": 3,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 15,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 2,
+      "mean_historical_target_count": 1.4166666666666667
+    },
+    "rr_only": {
+      "group": "rr_only",
+      "branch_count": 14,
+      "valid_source_branch_count": 4,
+      "valid_source_count": 7,
+      "feasible_branch_count": 4,
+      "feasible_candidate_count": 7,
+      "branch_winner_count": 4,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 10,
+      "positive_validation_vote_count": 2,
+      "positive_validation_oracle_count": 1,
+      "mean_historical_target_count": 1.4285714285714286
+    },
+    "w1_only": {
+      "group": "w1_only",
+      "branch_count": 14,
+      "valid_source_branch_count": 7,
+      "valid_source_count": 13,
+      "feasible_branch_count": 3,
+      "feasible_candidate_count": 8,
+      "branch_winner_count": 3,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 7,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 2,
+      "mean_historical_target_count": 1.1428571428571428
+    },
+    "overlap": {
+      "group": "overlap",
+      "branch_count": 20,
+      "valid_source_branch_count": 8,
+      "valid_source_count": 15,
+      "feasible_branch_count": 3,
+      "feasible_candidate_count": 5,
+      "branch_winner_count": 3,
+      "cell_winner_count": 3,
+      "critic_exhausted_count": 12,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 1,
+      "mean_historical_target_count": 1.8
+    }
+  },
+  "w1_historical_target_to_feasible_spearman": -0.5786241086426785,
+  "classifier": {
+    "classifier_version": "v17_w1_target_allocation_mechanism_classifier_v1",
+    "primary_mechanism_diagnosis": "MULTIPLE_TARGET_ALLOCATION_FAILURES",
+    "supported_component_labels": [
+      "TARGET_COVERAGE_EXPLORATION_FAILURE",
+      "TARGET_VALUE_ESTIMATION_FAILURE",
+      "BRANCH_REALIZABILITY_MISMATCH"
+    ],
+    "selection_opportunity_loss": true,
+    "score_realizability_mismatch": true,
+    "repeated_target_diminishing_returns": false,
+    "branch_realizability_mismatch": true,
+    "rules_frozen_in_script": true,
+    "classifier_status": "post_hoc_diagnostic_rule_declared_before_report_narrative"
+  },
+  "limitations": [
+    "candidate_level_not_identifiable",
+    "validation return is identifiable only for the globally selected hypothetical transition",
+    "repeated-target evidence is associative rather than causal",
+    "selected fixed parents do not identify all trajectory-level V17 loss"
+  ]
+}

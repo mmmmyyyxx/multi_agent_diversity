@@ -1,0 +1,5 @@
+{
+  "status": "NOT_IDENTIFIABLE_FROM_EXISTING_ARTIFACTS",
+  "reason": "all candidate hashes and per-candidate Common-Safe decisions were not persisted by the fixed-parent runner",
+  "candidate_level_csv_created": false
+}

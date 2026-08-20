@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "branch_level.csv": "cd7f3539089e84a6ed7fa9d848d1c708605873d2c3c5f602705f0d1614ea4391",
+    "candidate_level_status.json": "1e60769fa03147f854d8a4dc4701914f068d84609463c2b28c83d7d12c74270b",
+    "classifier.json": "b0ee9dd59a77099200271ffae9eab12c247430baa1d1045da9d60f59d4071da3",
+    "correlations.csv": "1c2ea506e2efb8bd23458b9191f8d4e8f7abb14ef53ed6fd0917d16ee51231f3",
+    "funnel.csv": "2fc63c6d3a419fee0461e182ed9e1f6e02fb3d3e8c9e6cc91149c2c71508da60",
+    "parent_level.csv": "4b450132184da783eeb8d370f097ae40b841dd9fc1b3f842cd09ffaadada0ad5",
+    "reconstruction_gate.json": "46da9560ea81fceb4ee26117f8cb0c11cd56fafcffc23c6c54c69cf5a2de2142",
+    "summary.json": "c345c6164ed56bb97a5666d314293f19a25ab79b8d8772c437d217f4d9f73b27"
+  },
+  "generator_sha256": "ebadd731c6ec11a7701f6b42d79b082e646e028dee9cdafb38623a7c5ed91626",
+  "manifest_version": "v17_w1_target_allocation_audit_manifest_v1"
+}

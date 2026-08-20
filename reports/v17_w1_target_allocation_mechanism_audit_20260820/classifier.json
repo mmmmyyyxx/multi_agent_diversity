@@ -1,0 +1,15 @@
+{
+  "classifier_version": "v17_w1_target_allocation_mechanism_classifier_v1",
+  "primary_mechanism_diagnosis": "MULTIPLE_TARGET_ALLOCATION_FAILURES",
+  "supported_component_labels": [
+    "TARGET_COVERAGE_EXPLORATION_FAILURE",
+    "TARGET_VALUE_ESTIMATION_FAILURE",
+    "BRANCH_REALIZABILITY_MISMATCH"
+  ],
+  "selection_opportunity_loss": true,
+  "score_realizability_mismatch": true,
+  "repeated_target_diminishing_returns": false,
+  "branch_realizability_mismatch": true,
+  "rules_frozen_in_script": true,
+  "classifier_status": "post_hoc_diagnostic_rule_declared_before_report_narrative"
+}
