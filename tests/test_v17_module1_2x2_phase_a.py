@@ -145,3 +145,13 @@ def test_phase_b_runner_requires_freeze_and_has_no_test_evaluator():
     assert 'parser.add_argument("--source_freeze"' in source
     assert "evaluate_final_test" not in source
     assert "test_path" not in source
+
+
+def test_phase_b_wrapper_hydrates_credentials_without_printing_values():
+    source = (ROOT / "scripts/run_v17_module1_2x2_phase_b.ps1").read_text(encoding="utf-8")
+    assert 'GetEnvironmentVariable(' in source
+    assert '"DASHSCOPE_API_KEY", "User"' in source
+    assert '"DASHSCOPE_API_KEY", "Machine"' in source
+    assert '"DASHSCOPE_BASE_URL", "User"' in source
+    assert '"DASHSCOPE_BASE_URL", "Machine"' in source
+    assert "Write-Host $env:DASHSCOPE" not in source
