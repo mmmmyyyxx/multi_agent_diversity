@@ -1,0 +1,23 @@
+{
+  "matrix_version": "v17_module1_2x2_cells_v1",
+  "source_candidates_per_target": 2,
+  "target_count_per_cell": 2,
+  "loss_blind_generic_revisions_per_valid_source": 1,
+  "maximum_source_candidates": 96,
+  "cells": {
+    "A": {"name": "RR_GENERIC", "target_policy": "round_robin_dual_formal", "context_policy": "generic_accuracy"},
+    "B": {"name": "W1_GENERIC", "target_policy": "frozen_w1", "context_policy": "generic_accuracy"},
+    "C": {"name": "RR_MEMBER_AWARE", "target_policy": "round_robin_dual_formal", "context_policy": "member_aware_residual"},
+    "D": {"name": "W1_MEMBER_AWARE", "target_policy": "frozen_w1", "context_policy": "member_aware_residual"}
+  },
+  "proposal": "generic_evolution",
+  "candidate_acceptance": "fixed_peer_monotone_target_or_vote",
+  "branch_ranking": "common_monotone_safe",
+  "cross_branch_rule": "common_cross_branch_transition_key",
+  "commit_enabled": false,
+  "trajectory_mutation_enabled": false,
+  "validation_enabled_in_phase_a": false,
+  "test_enabled": false,
+  "m20_enabled": false,
+  "proposal_memory_mode": "off"
+}

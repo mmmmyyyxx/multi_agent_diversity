@@ -1,0 +1,38 @@
+{
+  "analysis_version": "v17_module1_2x2_classifier_v1",
+  "primary_endpoint": "realized_validation_vote_delta",
+  "secondary_endpoint": "realized_validation_oracle_delta",
+  "pairing_unit": "frozen_parent",
+  "contrasts": {
+    "target_generic": "B-A",
+    "target_member_aware": "D-C",
+    "context_round_robin": "C-A",
+    "context_w1": "D-B",
+    "interaction": "(D-C)-(B-A)"
+  },
+  "effect_sign": "lexicographic_sum_vote_then_sum_oracle",
+  "classifier_order": [
+    "NEGATIVE_INTERACTION_DOMINANT",
+    "BOTH_CONTRIBUTE",
+    "TARGET_ALLOCATION_DOMINANT",
+    "RESIDUAL_CONTEXT_DOMINANT",
+    "NO_CLEAR_LOCAL_CAUSAL_SOURCE"
+  ],
+  "classifier_rule": {
+    "target_main": "(B-A)+(D-C)",
+    "context_main": "(C-A)+(D-B)",
+    "negative": "vote_sum < 0, or vote_sum == 0 and oracle_sum < 0",
+    "interaction_dominant": "interaction is negative and its absolute lexicographic magnitude strictly exceeds both main-effect magnitudes",
+    "both": "target_main and context_main are both negative after interaction rule",
+    "target": "target_main alone is negative",
+    "context": "context_main alone is negative",
+    "unclear": "all remaining outcomes"
+  },
+  "allowed_conclusions": [
+    "TARGET_ALLOCATION_DOMINANT",
+    "RESIDUAL_CONTEXT_DOMINANT",
+    "BOTH_CONTRIBUTE",
+    "NEGATIVE_INTERACTION_DOMINANT",
+    "NO_CLEAR_LOCAL_CAUSAL_SOURCE"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "selection_version": "v17_module1_parent_selection_v1",
+  "source_setting": "experimental_v16_efficacy_g_matched",
+  "requires_distinct_parent_team_hashes": true,
+  "selection_uses_new_probe_outcomes": false,
+  "parents": [
+    {"case_id": "concentration_seed57_u3", "stratum": "concentration_witness", "seed": 57, "update_index": 3},
+    {"case_id": "concentration_seed58_u7", "stratum": "concentration_witness", "seed": 58, "update_index": 7},
+    {"case_id": "throughput_seed57_u4", "stratum": "throughput_witness", "seed": 57, "update_index": 4},
+    {"case_id": "throughput_seed56_u5", "stratum": "throughput_witness", "seed": 56, "update_index": 5},
+    {"case_id": "neutral_seed56_u1", "stratum": "neutral_control", "seed": 56, "update_index": 1},
+    {"case_id": "neutral_seed56_u3", "stratum": "neutral_control", "seed": 56, "update_index": 3}
+  ]
+}
