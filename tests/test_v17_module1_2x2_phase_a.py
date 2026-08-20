@@ -130,11 +130,14 @@ def test_would_commit_uses_one_unchanged_cross_branch_winner():
         def _cross_branch_key(row):
             return row.key
     class Branch:
-        def __init__(self, key):
+        def __init__(self, key, accepted=True):
             self.key = key
+            self.accepted = object() if accepted else None
     low, high = Branch((1, 0)), Branch((2, 0))
     assert support.choose_would_commit(Evaluator(), [low, high]) is high
-    assert support.choose_would_commit(Evaluator(), [None, None]) is None
+    assert support.choose_would_commit(
+        Evaluator(), [None, Branch((3, 0), accepted=False)]
+    ) is None
 
 
 def test_phase_b_runner_requires_freeze_and_has_no_test_evaluator():

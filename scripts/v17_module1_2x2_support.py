@@ -96,7 +96,10 @@ def probe_system(
 
 
 def choose_would_commit(evaluator: Any, branch_winners: Iterable[Any]) -> Any | None:
-    winners = [row for row in branch_winners if row is not None]
+    winners = [
+        row for row in branch_winners
+        if row is not None and getattr(row, "accepted", None) is not None
+    ]
     return max(winners, key=evaluator._cross_branch_key, default=None)
 
 
