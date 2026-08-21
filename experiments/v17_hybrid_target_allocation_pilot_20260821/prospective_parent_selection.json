@@ -1,0 +1,72 @@
+{
+  "selection_version": "v17_hybrid_prospective_parent_selection_v1",
+  "source_setting": "experimental_v16_efficacy_g_matched",
+  "selection_rule": "per_seed_sorted_eligible_sequence_nearest_one_third_two_thirds_v1",
+  "excluded_diagnostic_parent_count": 6,
+  "old_diagnostic_parents_excluded_from_primary": true,
+  "selection_uses_validation": false,
+  "selection_uses_test": false,
+  "selection_uses_branch_or_commit_outcomes": false,
+  "parents": [
+    {
+      "case_id": "prospective_seed56_p1_u2",
+      "stratum": "prospective_quantile_1",
+      "seed": 56,
+      "update_index": 2,
+      "eligible_sequence_length": 5,
+      "eligible_sequence_index": 1,
+      "target_fraction": "1/3",
+      "selection_outcomes_used": false
+    },
+    {
+      "case_id": "prospective_seed56_p2_u6",
+      "stratum": "prospective_quantile_2",
+      "seed": 56,
+      "update_index": 6,
+      "eligible_sequence_length": 5,
+      "eligible_sequence_index": 3,
+      "target_fraction": "2/3",
+      "selection_outcomes_used": false
+    },
+    {
+      "case_id": "prospective_seed57_p1_u2",
+      "stratum": "prospective_quantile_1",
+      "seed": 57,
+      "update_index": 2,
+      "eligible_sequence_length": 6,
+      "eligible_sequence_index": 2,
+      "target_fraction": "1/3",
+      "selection_outcomes_used": false
+    },
+    {
+      "case_id": "prospective_seed57_p2_u5",
+      "stratum": "prospective_quantile_2",
+      "seed": 57,
+      "update_index": 5,
+      "eligible_sequence_length": 6,
+      "eligible_sequence_index": 3,
+      "target_fraction": "2/3",
+      "selection_outcomes_used": false
+    },
+    {
+      "case_id": "prospective_seed58_p1_u2",
+      "stratum": "prospective_quantile_1",
+      "seed": 58,
+      "update_index": 2,
+      "eligible_sequence_length": 7,
+      "eligible_sequence_index": 2,
+      "target_fraction": "1/3",
+      "selection_outcomes_used": false
+    },
+    {
+      "case_id": "prospective_seed58_p2_u4",
+      "stratum": "prospective_quantile_2",
+      "seed": 58,
+      "update_index": 4,
+      "eligible_sequence_length": 7,
+      "eligible_sequence_index": 4,
+      "target_fraction": "2/3",
+      "selection_outcomes_used": false
+    }
+  ]
+}

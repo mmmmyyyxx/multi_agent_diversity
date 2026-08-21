@@ -1,0 +1,24 @@
+{
+  "classifier_version": "v17_hybrid_target_allocation_classifier_v1",
+  "primary_vote": {
+    "label": "HYBRID_VOTE_BENEFIT_SUPPORTED",
+    "rule": "mean(Hybrid-W1 realized validation VoteDelta) > 0 and parent wins > losses"
+  },
+  "feasibility": {
+    "label": "HYBRID_FEASIBILITY_RECOVERY_SUPPORTED",
+    "rule": "Hybrid feasible branches > W1 feasible branches",
+    "recovered_fraction": "(Hybrid-W1)/(RR-W1), defined only when RR > W1"
+  },
+  "oracle": {
+    "label": "HYBRID_ORACLE_BENEFIT_SUPPORTED",
+    "rule": "mean(Hybrid-W1 realized validation OracleDelta) > 0 and parent wins > losses"
+  },
+  "allowed_final_diagnoses": [
+    "HYBRID_RECOVERY_SUPPORTED",
+    "HYBRID_THROUGHPUT_ONLY",
+    "HYBRID_VALUE_ONLY",
+    "HYBRID_NOT_SUPPORTED",
+    "HYBRID_HARMFUL"
+  ],
+  "frozen_before_phase_b": true
+}
