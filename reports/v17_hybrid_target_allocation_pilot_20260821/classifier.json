@@ -1,0 +1,25 @@
+{
+  "classifier_version": "v17_hybrid_target_allocation_classifier_v1",
+  "hybrid_vote_benefit_supported": false,
+  "hybrid_feasibility_recovery_supported": true,
+  "hybrid_oracle_benefit_supported": true,
+  "hybrid_minus_w1_vote_sum": 0,
+  "hybrid_minus_w1_oracle_sum": 4,
+  "hybrid_minus_w1_vote_wtl": {
+    "wins": 0,
+    "ties": 6,
+    "losses": 0
+  },
+  "hybrid_minus_rr_vote_wtl": {
+    "wins": 0,
+    "ties": 6,
+    "losses": 0
+  },
+  "hybrid_minus_w1_oracle_wtl": {
+    "wins": 2,
+    "ties": 4,
+    "losses": 0
+  },
+  "recovered_fraction": 0.6666666666666666,
+  "final_pilot_diagnosis": "HYBRID_THROUGHPUT_ONLY"
+}

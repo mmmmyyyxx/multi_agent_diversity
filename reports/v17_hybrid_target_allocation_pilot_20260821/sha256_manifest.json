@@ -1,0 +1,14 @@
+{
+  "files": {
+    "branch_level.csv": "c6279821bbe98898ae7027fa14567726da6e25761dc122b4c4e8974ac1c41f86",
+    "candidate_level.csv": "b92e41746de083bf75731ca03cbe0298e363291e8a9dabdf015dcdc6f4f07e07",
+    "classifier.json": "acfd49bf6cc78dc741f7ff52f1eb03b154348c11308cd3d66c7175b71ea05f4b",
+    "parent_level.csv": "e4693da19daeeee187be1e7bede74cd08c779027636054d54f2d8176add0cdf7",
+    "README.md": "94eba21e698fce08f6e0dc023d8646778151ca45862a323feca039179c70fb8a",
+    "sanitization_report.txt": "75c095d67c39bc5896fb8fb986ceb37a497e7d55d41764c07f59f29db6d2647e",
+    "source_freeze.json": "b8dfe9812cc638909330cc03a1b80cd70928f3b15ce0db7b360e55a4f87fb28d",
+    "summary.json": "fb6d3172769f89820bbb0bd3f7c5bcdcdcb4c25feabca70ab905b6fd7d9a6ffc",
+    "test_report.txt": "f7207ad79c815060305e8ace2c29e9fed871fdc3909eb2a042c2da4054af68e1"
+  },
+  "manifest_version": "v17_hybrid_target_allocation_report_manifest_v1"
+}

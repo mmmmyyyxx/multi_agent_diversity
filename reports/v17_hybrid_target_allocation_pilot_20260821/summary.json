@@ -1,0 +1,101 @@
+{
+  "summary_version": "v17_hybrid_target_allocation_pilot_summary_v1",
+  "execution_commit": "43230a5734a971ead70841d71277105512fa0adc",
+  "phase_a_gate": "PASS",
+  "phase_b_gate": "PASS",
+  "phase_a_zero_api": true,
+  "phase_b_actual_api_call_count": 3015,
+  "new_test_calls": 0,
+  "actual_prompt_commits": 0,
+  "trajectory_mutations": 0,
+  "prospective_parent_count": 6,
+  "cell_count": 18,
+  "conceptual_branch_count": 36,
+  "deduplicated_branch_count": 20,
+  "funnel": {
+    "W1_TOP2": {
+      "selected_branch_count": 12,
+      "valid_source_branch_count": 2,
+      "valid_source_count": 4,
+      "valid_revision_count": 4,
+      "feasible_branch_count": 0,
+      "feasible_candidate_count": 0,
+      "cell_best_branch_count": 0,
+      "would_commit_count": 0,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 0,
+      "validation_vote_delta_sum": 0,
+      "validation_oracle_delta_sum": 0,
+      "mean_validation_vote_delta": 0.0,
+      "mean_validation_oracle_delta": 0.0,
+      "unique_target_members": 5
+    },
+    "RR_TOP2": {
+      "selected_branch_count": 12,
+      "valid_source_branch_count": 4,
+      "valid_source_count": 8,
+      "valid_revision_count": 8,
+      "feasible_branch_count": 3,
+      "feasible_candidate_count": 4,
+      "cell_best_branch_count": 3,
+      "would_commit_count": 3,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 2,
+      "validation_vote_delta_sum": 0,
+      "validation_oracle_delta_sum": 4,
+      "mean_validation_vote_delta": 0.0,
+      "mean_validation_oracle_delta": 0.6666666666666666,
+      "unique_target_members": 5
+    },
+    "HYBRID_EXPLOIT_EXPLORE": {
+      "selected_branch_count": 12,
+      "valid_source_branch_count": 3,
+      "valid_source_count": 6,
+      "valid_revision_count": 6,
+      "feasible_branch_count": 2,
+      "feasible_candidate_count": 3,
+      "cell_best_branch_count": 2,
+      "would_commit_count": 2,
+      "positive_validation_vote_count": 0,
+      "positive_validation_oracle_count": 2,
+      "validation_vote_delta_sum": 0,
+      "validation_oracle_delta_sum": 4,
+      "mean_validation_vote_delta": 0.0,
+      "mean_validation_oracle_delta": 0.6666666666666666,
+      "unique_target_members": 5
+    }
+  },
+  "exploration_attribution": {
+    "exploration_attributable_feasible_branches": 2,
+    "exploration_attributable_cell_winners": 2,
+    "exploration_attributable_would_commit": 2,
+    "exploration_validation_vote_contribution": 0,
+    "exploration_validation_oracle_contribution": 4,
+    "differentiating_parent_count": 6
+  },
+  "classifier": {
+    "classifier_version": "v17_hybrid_target_allocation_classifier_v1",
+    "hybrid_vote_benefit_supported": false,
+    "hybrid_feasibility_recovery_supported": true,
+    "hybrid_oracle_benefit_supported": true,
+    "hybrid_minus_w1_vote_sum": 0,
+    "hybrid_minus_w1_oracle_sum": 4,
+    "hybrid_minus_w1_vote_wtl": {
+      "wins": 0,
+      "ties": 6,
+      "losses": 0
+    },
+    "hybrid_minus_rr_vote_wtl": {
+      "wins": 0,
+      "ties": 6,
+      "losses": 0
+    },
+    "hybrid_minus_w1_oracle_wtl": {
+      "wins": 2,
+      "ties": 4,
+      "losses": 0
+    },
+    "recovered_fraction": 0.6666666666666666,
+    "final_pilot_diagnosis": "HYBRID_THROUGHPUT_ONLY"
+  }
+}

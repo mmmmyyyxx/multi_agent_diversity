@@ -1,0 +1,7 @@
+parent_id,seed,update_index,w1_rank1,w1_rank2,rr_first,rr_second,hybrid_exploit,hybrid_explore,hybrid_explore_equals_w1_rank2,w1_top2_targets,w1_top2_feasible_branches,w1_top2_feasible_candidates,w1_top2_would_commit,w1_top2_validation_vote_delta,w1_top2_validation_oracle_delta,w1_top2_validation_target_delta,rr_top2_targets,rr_top2_feasible_branches,rr_top2_feasible_candidates,rr_top2_would_commit,rr_top2_validation_vote_delta,rr_top2_validation_oracle_delta,rr_top2_validation_target_delta,hybrid_exploit_explore_targets,hybrid_exploit_explore_feasible_branches,hybrid_exploit_explore_feasible_candidates,hybrid_exploit_explore_would_commit,hybrid_exploit_explore_validation_vote_delta,hybrid_exploit_explore_validation_oracle_delta,hybrid_exploit_explore_validation_target_delta
+prospective_seed56_p1_u2,56,2,4,3,0,1,4,0,0,4|3,0,0,0,0,0,0,0|1,1,2,1,0,2,0,4|0,1,2,1,0,2,0
+prospective_seed56_p2_u6,56,6,3,2,3,4,3,4,0,3|2,0,0,0,0,0,0,3|4,0,0,0,0,0,0,3|4,0,0,0,0,0,0
+prospective_seed57_p1_u2,57,2,2,3,1,2,2,1,0,2|3,0,0,0,0,0,0,1|2,0,0,0,0,0,0,2|1,0,0,0,0,0,0
+prospective_seed57_p2_u5,57,5,0,1,2,3,0,2,0,0|1,0,0,0,0,0,0,2|3,1,1,1,0,0,-7,0|2,0,0,0,0,0,0
+prospective_seed58_p1_u2,58,2,2,4,2,3,2,3,0,2|4,0,0,0,0,0,0,2|3,0,0,0,0,0,0,2|3,0,0,0,0,0,0
+prospective_seed58_p2_u4,58,4,3,2,1,2,3,1,0,3|2,0,0,0,0,0,0,1|2,1,1,1,0,2,-4,3|1,1,1,1,0,2,-4
