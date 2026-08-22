@@ -1,0 +1,77 @@
+{
+  "actual_prompt_commits": 0,
+  "aggregate_unique_transition_metrics": {
+    "changed_row_count": 33,
+    "oracle_gain_additional_gold_votes_needed_counts": {
+      "3": 1,
+      "4": 3
+    },
+    "oracle_gain_count": 4,
+    "oracle_gain_coverage_role_after_counts": {
+      "singleton_correct": 4
+    },
+    "oracle_gain_g_transition_counts": {
+      "G0_to_G1": 4
+    },
+    "oracle_gain_minimum_dominant_flips_needed_counts": {
+      "2": 4
+    },
+    "oracle_gain_wrong_coalition_direction_counts": {
+      "reduced": 4
+    },
+    "oracle_loss_count": 0,
+    "target_gain_count": 10,
+    "target_loss_count": 21,
+    "vote_gain_count": 0,
+    "vote_loss_count": 0,
+    "wrong_coalition_increased_count": 22,
+    "wrong_coalition_reduced_count": 11
+  },
+  "all_oracle_gains_are_G0_to_G1": true,
+  "all_oracle_gains_remain_nonwinning": true,
+  "api_calls": 0,
+  "audit_mode": "zero_api_immutable_artifact_reconstruction",
+  "audit_version": "v17_hybrid_recovered_update_conversion_audit_v1",
+  "auditor_commit": "0a4dd702d4fac546905cc8c0914ef1fd624c41f2",
+  "common_safe_explanation": {
+    "all_unique_updates_train_target_strictly_improved": true,
+    "all_unique_updates_train_vote_nonregressed": true,
+    "train_target_deltas": [
+      7,
+      1,
+      1
+    ],
+    "train_vote_deltas": [
+      0,
+      0,
+      0
+    ],
+    "validation_oracle_deltas": [
+      2,
+      0,
+      2
+    ],
+    "validation_target_deltas": [
+      0,
+      -7,
+      -4
+    ],
+    "validation_vote_deltas": [
+      0,
+      0,
+      0
+    ]
+  },
+  "conceptual_would_commit_count": 5,
+  "deduplicated_transition_count": 3,
+  "diagnosis": "SINGLETON_COVERAGE_RECOVERY_WITHOUT_VOTE_CONVERSION",
+  "hybrid_conceptual_would_commit_count": 2,
+  "new_test_calls": 0,
+  "rr_conceptual_would_commit_count": 3,
+  "simultaneous_vote_gain_and_loss": false,
+  "source_evidence_unchanged": true,
+  "source_run_execution_commit": "43230a5734a971ead70841d71277105512fa0adc",
+  "status": "PASS",
+  "trajectory_mutations": 0,
+  "validation_row_count_per_transition": 50
+}

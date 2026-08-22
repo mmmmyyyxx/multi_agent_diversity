@@ -1,0 +1,15 @@
+status: PASS
+conversion_audit: PASS
+conversion_audit_api_calls: 0
+source_evidence_unchanged: true
+focused_audit_and_report_tests: 9 passed
+canonical_suite_excluding_known_historical_artifacts: 643 passed, 3 deselected
+known_historical_artifact_failures: 3, unchanged
+new_failures: 0
+compileall: PASS
+hybrid_selector_preflight: PASS
+preflight_api_calls: 0
+preflight_validation_calls: 0
+preflight_test_calls: 0
+sanitization_scan: PASS
+git_diff_check: PASS

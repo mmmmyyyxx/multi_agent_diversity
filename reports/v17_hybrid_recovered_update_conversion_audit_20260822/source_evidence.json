@@ -1,0 +1,12 @@
+{
+  "auditor_commit": "0a4dd702d4fac546905cc8c0914ef1fd624c41f2",
+  "cache_access_mode": "sqlite_immutable_read_only",
+  "source_artifact_sha256": {
+    "audit_sha256": "71eb063d422d74bcf51f780b5a0d477ecb8935e607617cc8abb7a9c34c8c0738",
+    "cache_sha256": "e7472f8d0296ff5de3994482644848cc9cc0c0fd3fa8b767dbe38674eb516eea",
+    "probe_summary_sha256": "5b0117d699046a0732b4abf761b5307e53fd99ab2d68676df382c1b7759b139b",
+    "registry_sha256": "0a3ab66bb4d86fe53240378f8d11957fcb7b648b37c47827f7bf720ed904dd96"
+  },
+  "source_artifacts_modified": false,
+  "source_run_execution_commit": "43230a5734a971ead70841d71277105512fa0adc"
+}

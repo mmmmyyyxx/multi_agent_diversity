@@ -1,0 +1,13 @@
+{
+  "files": {
+    "conceptual_update_level.csv": "7cb316b31a58d4ee99167d33a66aa525ac54ea28d522a326312b30de86c01bbf",
+    "README.md": "13ffd2841b42a14cf571aef31990c6cddf59fd658f8081a27ffe631a24ce37d3",
+    "sanitization_report.txt": "8f9fc3ee042651dc594d254ab5a3dfef1ce80585cb0f31d75eda11b674f779fa",
+    "source_evidence.json": "844115a26347615b8dc7e3496e0f76b6902fa40d184c83d625c130d15a29ac24",
+    "summary.json": "12216081b7feb5b0b5bfa3ab7e17c9a9060760f715736fdcd52dccde79455a08",
+    "test_report.txt": "22921958aea09636c061c9928a9fb6effb2d55d74a1d9aee79f8d35b5df88b1a",
+    "transition_level.csv": "f76e64ebf6026f9d55d6a905991787e3542101b1c49b7579a32222c5c85430fd",
+    "unique_update_level.csv": "13b5b4d347a6c1861fe79f7df5582d23c50dd3ccaa154b26f7b9479049c73739"
+  },
+  "manifest_version": "v17_hybrid_recovered_conversion_manifest_v1"
+}

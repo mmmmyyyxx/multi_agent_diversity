@@ -1,0 +1,15 @@
+status: PASS
+scope: all published conversion-audit files
+absolute_windows_path_matches: 0
+network_or_file_uri_matches: 0
+sqlite_filename_matches: 0
+credential_assignment_matches: 0
+raw_secret_matches: 0
+prompt_text_included: false
+question_text_included: false
+gold_or_model_answer_included: false
+raw_model_response_included: false
+endpoint_or_credential_included: false
+private_cache_content_included: false
+checkpoint_content_included: false
+allowed_content: hashes, IDs, counters, booleans, G/H/M transitions, aggregate deltas
