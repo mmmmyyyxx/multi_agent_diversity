@@ -1,0 +1,20 @@
+{
+  "classifier_version": "v18_hybrid_online_accumulation_classifier_v1",
+  "seed_count": 3,
+  "seeds": [59, 60, 61],
+  "primary_endpoint": "LONGITUDINAL_DEEPENED_COVERAGE_COUNT",
+  "online_accumulation_supported": "mean(Hybrid-W1)>0 and seed wins>losses",
+  "online_vote_conversion_signal": "sum(Hybrid-W1)>0 and seed wins>losses",
+  "throughput_recovery": "accepted-commit mean improves or feasible-branch total improves, with seed wins>losses",
+  "persistent_singleton_reduced": "defined deepening-rate mean improves and seed wins>losses",
+  "final_validation_vote_signal": "mean final Validation VoteAcc improves and seed wins>losses",
+  "allowed_final_diagnoses": [
+    "LONGITUDINAL_ACCUMULATION_WITH_VOTE_CONVERSION",
+    "LONGITUDINAL_ACCUMULATION_WITHOUT_VOTE_CONVERSION",
+    "THROUGHPUT_RECOVERY_WITHOUT_ACCUMULATION",
+    "NO_LONGITUDINAL_ACCUMULATION_SIGNAL",
+    "HYBRID_ONLINE_HARMFUL"
+  ],
+  "significance_claims_forbidden": true,
+  "test_data_forbidden": true
+}
