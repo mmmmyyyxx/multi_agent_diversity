@@ -1,0 +1,8 @@
+{
+  "freeze_version": "v17_conversion_priority_three_arm_source_freeze_v1",
+  "execution_commit": "160e6d7777f7606e0c2fa783332d479a41352781",
+  "registry_content_hash": "befa38f21c72362dcbd69b1207690b21b7b4c936e9d1f6d8e9afac3c9eae1e3a",
+  "source_file_count": 247,
+  "source_freeze_status": "PASS",
+  "phase_a_zero_api": true
+}

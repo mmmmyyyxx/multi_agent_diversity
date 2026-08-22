@@ -1,0 +1,10 @@
+VERIFICATION_STATUS=PASS
+FACT_ASSERTIONS=PASS
+FOCUSED_TESTS=6 passed in 0.70s
+CANONICAL_TESTS=654 passed, 3 deselected in 15.71s
+KNOWN_HISTORICAL_FAILURES_EXCLUDED=3
+COMPILEALL=PASS
+GIT_DIFF_CHECK=PASS
+
+The three deselected tests are the preregistered historical-artifact failures;
+no new failure was introduced by this pilot or report.

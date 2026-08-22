@@ -1,0 +1,11 @@
+SANITIZATION_STATUS=PASS
+STRUCTURED_FILES_SCANNED=7
+FORBIDDEN_KEY_OR_HEADER_COUNT=0
+WINDOWS_ABSOLUTE_PATH_COUNT=0
+URL_OR_ENDPOINT_COUNT=0
+SECRET_LIKE_VALUE_COUNT=0
+
+Published artifacts contain only analysis-safe identifiers, hashes, counters,
+metrics, rejection classes, frozen provenance, and aggregate call/token usage.
+Raw prompts, questions, gold or model answers, responses, provider details,
+credentials, caches, checkpoints, and absolute local paths are excluded.

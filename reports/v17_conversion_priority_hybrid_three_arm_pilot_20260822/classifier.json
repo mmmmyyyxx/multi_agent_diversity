@@ -1,0 +1,37 @@
+{
+  "classifier_version": "v17_conversion_priority_three_arm_classifier_v1",
+  "breadth_deeper_support_signal": false,
+  "direct_flip_vote_signal": false,
+  "direct_flip_conversion_signal": false,
+  "throughput_not_harmed": {
+    "HYBRID_BREADTH_PRIORITY": true,
+    "HYBRID_DIRECT_FLIP_PRIORITY": true
+  },
+  "oracle_not_harmed": {
+    "HYBRID_BREADTH_PRIORITY": true,
+    "HYBRID_DIRECT_FLIP_PRIORITY": true
+  },
+  "breadth_deeper_support_wtl": {
+    "wins": 0,
+    "ties": 5,
+    "losses": 0
+  },
+  "breadth_vote_wtl": {
+    "wins": 0,
+    "ties": 5,
+    "losses": 0
+  },
+  "direct_vote_wtl": {
+    "wins": 0,
+    "ties": 5,
+    "losses": 0
+  },
+  "direct_conversion_wtl": {
+    "wins": 0,
+    "ties": 5,
+    "losses": 0
+  },
+  "breadth_local_mechanism_signal": false,
+  "direct_flip_local_mechanism_signal": false,
+  "final_diagnosis": "NO_CLEAR_PRIORITY_SIGNAL"
+}

@@ -1,0 +1,4 @@
+arm,deeper_support_gain_count,vote_conversion_count,vote_regression_count,0_to_1,1_to_2,1_to_3_plus,2_to_3,2_to_4_plus,other_positive_g
+HYBRID_BASE,6,2,1,3,4,0,2,0,1
+HYBRID_BREADTH_PRIORITY,6,2,1,3,4,0,2,0,1
+HYBRID_DIRECT_FLIP_PRIORITY,6,2,1,3,4,0,2,0,1
