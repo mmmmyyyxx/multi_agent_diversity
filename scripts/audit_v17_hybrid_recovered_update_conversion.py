@@ -300,14 +300,18 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run_root", type=Path, required=True)
     parser.add_argument("--registry", type=Path, required=True)
+    parser.add_argument("--scratch", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     run_root = args.run_root.resolve()
     registry_path = args.registry.resolve()
+    scratch = args.scratch.resolve()
     out = args.out.resolve()
     project = ROOT.resolve()
-    if project not in run_root.parents or project not in registry_path.parents or project not in out.parents:
+    if any(project not in path.parents for path in (run_root, registry_path, scratch, out)):
         raise SystemExit("all inputs and outputs must be project-local")
+    if scratch.exists():
+        raise SystemExit("scratch directory must be fresh")
     if out.exists():
         raise SystemExit("output directory must be fresh")
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip():
@@ -345,7 +349,7 @@ def main() -> None:
     for (parent_id, candidate_id), item in sorted(unique.items()):
         case = cases[parent_id]
         target = int(item["target_member"])
-        system = probe_system(case, target=target, out_dir=out / "readonly", cache_path="")
+        system = probe_system(case, target=target, out_dir=scratch / parent_id, cache_path="")
         if system.llm.calls:
             raise AssertionError("audit system unexpectedly contains API calls")
         validation_path = Path(system.cfg.data.val_path)
