@@ -1,0 +1,27 @@
+{
+  "report_version": "v17_conversion_target2_differentiation_report_v1",
+  "analysis_source_commit": "250d39eb04f3b1b1a5318d392d27017a8d2c7e23",
+  "zero_api": true,
+  "candidate_outcomes_used": false,
+  "validation_used": false,
+  "test_used": false,
+  "method_changed": false,
+  "historical_state_count": 24,
+  "conversion_active_state_count": 14,
+  "prospective_five_parent_count": 5,
+  "binary_conversion_filter_different_count": 0,
+  "prospective_target2_different_count": {
+    "conversion_responsibility_count": 3,
+    "singleton_conversion_count": 2,
+    "direct_vote_flip_count": 3,
+    "dominant_wrong_weakening_count": 3
+  },
+  "dominant_wrong_signal_identical_to_conversion_count": true,
+  "analysis_conclusion": "NONTRIVIAL_STATE_LOCAL_DIFFERENTIATION_EXISTS",
+  "scientific_effect_evaluated": false,
+  "selector_promoted": false,
+  "api_calls": 0,
+  "new_test_calls": 0,
+  "actual_prompt_commits": 0,
+  "trajectory_mutations": 0
+}

@@ -1,0 +1,10 @@
+{
+  "manifest_version": "v17_conversion_target2_differentiation_source_manifest_v1",
+  "analysis_source_commit": "250d39eb04f3b1b1a5318d392d27017a8d2c7e23",
+  "files": {
+    "scripts/analyze_v17_conversion_target2_differentiation.py": "ec34070cac2f2c7df68965b77822033017786a279f91c9f8e7ceca89c65efcd4",
+    "tests/test_v17_conversion_target2_differentiation.py": "757f8d004826719de9a5db03cab727df6b12cce252b0975e586305b57b6e98b5"
+  },
+  "source_artifacts_modified": false,
+  "raw_run_artifacts_modified": false
+}

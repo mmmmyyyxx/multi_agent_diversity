@@ -1,0 +1,5 @@
+signal,all_historical_different,all_historical_total,conversion_active_different,conversion_active_total,prospective_different,prospective_total,interpretation
+conversion_responsibility_count,9,24,9,14,3,5,intervention_capable_breadth_signal
+singleton_conversion_count,7,24,7,14,2,5,intervention_capable_depth_signal
+direct_vote_flip_count,7,24,7,14,3,5,intervention_capable_immediate_vote_signal
+dominant_wrong_weakening_count,9,24,9,14,3,5,redundant_with_conversion_responsibility_count
