@@ -1,0 +1,9 @@
+{
+  "status": "NOT_EVALUATED",
+  "deeper_support_accumulation_supported": null,
+  "vote_benefit_signal": null,
+  "throughput_not_harmed": null,
+  "oracle_not_harmed": null,
+  "final_diagnosis": null,
+  "reason": "zero_selector_intervention_stopped_before_phase_b"
+}

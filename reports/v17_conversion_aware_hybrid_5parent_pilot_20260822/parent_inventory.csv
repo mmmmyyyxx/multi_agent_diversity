@@ -1,0 +1,6 @@
+parent_id,seed,update_index,eligible_member_count,conversion_residual_count,alternative_conversion_eligible_member_count,w1_rank1_target,base_target2,conversion_aware_target2,target2_different,base_target2_conversion_responsibility_count,conversion_aware_target2_conversion_responsibility_count
+prospective_seed56_u4,56,4,5,17,3,2,4,4,0,3,3
+prospective_seed56_u7,56,7,5,14,3,2,0,0,0,1,1
+prospective_seed57_u6,57,6,5,17,3,4,0,0,0,3,3
+prospective_seed57_u7,57,7,5,17,3,3,1,1,0,4,4
+prospective_seed58_u6,58,6,5,12,4,0,1,1,0,3,3

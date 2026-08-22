@@ -1,0 +1,23 @@
+{
+  "report_version": "v17_conversion_aware_hybrid_5parent_pre_api_hold_v1",
+  "baseline_commit": "28f443b7c9d206c0d0c2bf3b03a1aa9e1d49ef4f",
+  "phase_a2_gate": "HOLD_AT_PRE_API_DIFFERENTIATION_GATE",
+  "phase_b_gate": "NOT_STARTED",
+  "parents": 5,
+  "seed_distribution": [2, 2, 1],
+  "cells_planned": 10,
+  "conceptual_branches_planned": 20,
+  "target2_different_count": 0,
+  "target2_same_count": 5,
+  "very_low_intervention_support": false,
+  "zero_intervention_support": true,
+  "phase_a2_api_calls": 0,
+  "phase_b_api_calls": 0,
+  "new_test_calls": 0,
+  "actual_prompt_commits": 0,
+  "trajectory_mutations": 0,
+  "old_hold_artifacts_unchanged": true,
+  "method_changed": false,
+  "final_diagnosis": null,
+  "stop_reason": "target2_different_count_zero"
+}

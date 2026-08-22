@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "old_report": "reports/v17_conversion_aware_hybrid_pilot_20260822",
+  "before_equals_after": true,
+  "file_count": 7,
+  "sha256": {
+    "README.md": "e585bf4e608fba882c29307b092a7bc7151cca425a0136521270806af37fec9e",
+    "classifier.json": "9e0e1a69fc9be4685da6e5592af4adce63f33ae269bb499ad0c78adfc0574de0",
+    "parent_inventory.csv": "91577fa45b6ae31fd1a8f721b4ce44f59dfa10889a275d95fc365378cd2f205f",
+    "sanitization_report.txt": "0c2a82207145c16e0f5c82ee5b8eb917fa8a1a7ef9772c98da2875c626fa845f",
+    "source_freeze.json": "228925acdf634264c8b1ebfa6b3651ff2797bbbce950f0568451878d530bad2c",
+    "summary.json": "47154964e5553bd34fe5316ecd8d4e5d48b8334cf4c3d70b256582cdece0ce42",
+    "test_report.txt": "ccfb201b44d374a40e0b7c1a52ba3bf3e8db8e7962eed254dcf6f0401c0dafc0"
+  }
+}

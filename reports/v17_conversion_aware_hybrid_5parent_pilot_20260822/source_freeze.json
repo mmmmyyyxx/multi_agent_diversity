@@ -1,0 +1,15 @@
+{
+  "status": "NOT_CREATED_DUE_TO_ZERO_SELECTOR_INTERVENTION",
+  "baseline_commit": "28f443b7c9d206c0d0c2bf3b03a1aa9e1d49ef4f",
+  "old_hold_commit": "28f443b7c9d206c0d0c2bf3b03a1aa9e1d49ef4f",
+  "phase_a2_zero_api": true,
+  "parents_reconstructed": 5,
+  "cells_planned": 10,
+  "target2_different_count": 0,
+  "target2_same_count": 5,
+  "selector_source_frozen": false,
+  "execution_source_frozen": false,
+  "method_source_modified": false,
+  "old_hold_artifacts_unchanged": true,
+  "stop_reason": "target2_different_count_zero"
+}
