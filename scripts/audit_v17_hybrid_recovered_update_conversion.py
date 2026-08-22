@@ -71,15 +71,14 @@ def cached_answers(
     try:
         connection.execute("PRAGMA query_only=ON")
         rows = connection.execute(
-            "SELECT question_hash, answer_json FROM solver_cache "
+            "SELECT model_request_identity, question_hash, answer_json FROM solver_cache "
             "WHERE state='ready' AND prompt_hash=? "
-            "AND model_request_identity=? AND parser_version=? "
+            "AND parser_version=? "
             "AND temperature=? AND evaluation_replica_seed=? "
             "AND solver_model=? AND max_tokens=? AND output_contract_version=? "
             "ORDER BY cache_key",
             (
                 str(prompt_hash),
-                system.prompt_question_evaluator.model_request_identity,
                 system.prompt_question_evaluator.parser_version,
                 system.prompt_question_evaluator.temperature,
                 system.prompt_question_evaluator.decoding_seed,
@@ -90,20 +89,38 @@ def cached_answers(
         ).fetchall()
     finally:
         connection.close()
+    selected = select_persisted_identity_rows(rows, expected_questions)
     result: dict[str, dict[str, Any]] = {}
-    for question_hash, raw in rows:
-        key = str(question_hash)
-        if key not in expected_questions:
-            continue
-        if key in result:
-            raise ValueError("duplicate cached validation observation")
+    for question_hash, raw in selected:
         payload = json.loads(str(raw))
         if not isinstance(payload, dict):
             raise ValueError("cached validation observation must be an object")
-        result[key] = payload
-    if set(result) != expected_questions:
-        raise ValueError("cache does not cover the exact validation probe")
+        result[str(question_hash)] = payload
     return result
+
+
+def select_persisted_identity_rows(
+    rows: Iterable[tuple[Any, Any, Any]], expected_questions: set[str]
+) -> list[tuple[str, str]]:
+    """Select one exact persisted request identity without using current env identity."""
+    grouped: dict[str, dict[str, str]] = {}
+    duplicates: set[str] = set()
+    for raw_identity, raw_question, raw_answer in rows:
+        identity = str(raw_identity)
+        question = str(raw_question)
+        if question not in expected_questions:
+            continue
+        bucket = grouped.setdefault(identity, {})
+        if question in bucket:
+            duplicates.add(identity)
+        bucket[question] = str(raw_answer)
+    exact = [
+        identity for identity, values in grouped.items()
+        if set(values) == expected_questions and identity not in duplicates
+    ]
+    if len(exact) != 1:
+        raise ValueError("cache must contain exactly one complete persisted request identity")
+    return sorted(grouped[exact[0]].items())
 
 
 def team_state(system: Any, example: Any, observations: Iterable[dict[str, Any]]) -> TeamVoteState:

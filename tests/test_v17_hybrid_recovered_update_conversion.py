@@ -92,3 +92,28 @@ def test_summary_counts_gain_loss_independently() -> None:
     assert summary["oracle_gain_count"] == 1
     assert summary["vote_gain_count"] == summary["vote_loss_count"] == 0
     assert summary["oracle_gain_g_transition_counts"] == {"G0_to_G1": 1}
+
+
+def test_persisted_cache_identity_reconciliation_is_exact() -> None:
+    module = load()
+    rows = [
+        ("historical", "q1", '{"answer":"A"}'),
+        ("historical", "q2", '{"answer":"B"}'),
+        ("current-incomplete", "q1", '{"answer":"C"}'),
+    ]
+    selected = module.select_persisted_identity_rows(rows, {"q1", "q2"})
+    assert selected == [("q1", '{"answer":"A"}'), ("q2", '{"answer":"B"}')]
+
+
+def test_ambiguous_complete_cache_identities_hard_fail() -> None:
+    module = load()
+    rows = [
+        ("one", "q", "{}"),
+        ("two", "q", "{}"),
+    ]
+    try:
+        module.select_persisted_identity_rows(rows, {"q"})
+    except ValueError as exc:
+        assert "exactly one" in str(exc)
+    else:
+        raise AssertionError("ambiguous persisted identities must fail")
