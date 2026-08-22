@@ -1,0 +1,27 @@
+{
+  "report_version": "v17_conversion_aware_hybrid_phase_a_inventory_hold_v1",
+  "baseline_commit": "5a762c3a8a8d55b2a4533dc78ff009d9829e813c",
+  "phase_a_gate": "HOLD",
+  "phase_a_stop_reason": "insufficient_seed58_eligible_new_parent_pool",
+  "phase_a_api_call_count": 0,
+  "phase_b_started": false,
+  "phase_b_api_call_count": 0,
+  "new_test_call_count": 0,
+  "actual_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0,
+  "required_parent_count": 6,
+  "eligible_parent_count": 5,
+  "required_per_seed": 2,
+  "eligible_by_seed": {
+    "56": [4, 7],
+    "57": [6, 7],
+    "58": [6]
+  },
+  "excluded_parent_count": 12,
+  "selection_used_validation": false,
+  "selection_used_test": false,
+  "selection_used_candidate_outcomes": false,
+  "method_changed": false,
+  "selector_frozen": false,
+  "source_freeze_created": false
+}

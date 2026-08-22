@@ -1,0 +1,9 @@
+{
+  "status": "NOT_CREATED_DUE_TO_PHASE_A_HOLD",
+  "baseline_commit": "5a762c3a8a8d55b2a4533dc78ff009d9829e813c",
+  "selector_source_frozen": false,
+  "execution_source_frozen": false,
+  "method_source_modified": false,
+  "api_source_configuration_frozen": false,
+  "reason": "insufficient_seed58_eligible_new_parent_pool"
+}
