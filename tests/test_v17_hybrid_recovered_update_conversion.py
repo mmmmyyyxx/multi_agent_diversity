@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import csv
+import json
 from pathlib import Path
 
 from multi_dataset_diverse_rl.peer_state import build_team_vote_state
@@ -117,3 +119,13 @@ def test_ambiguous_complete_cache_identities_hard_fail() -> None:
         assert "exactly one" in str(exc)
     else:
         raise AssertionError("ambiguous persisted identities must fail")
+
+
+def test_csv_nested_values_use_canonical_json(tmp_path: Path) -> None:
+    module = load()
+    path = tmp_path / "rows.csv"
+    module.write_csv(path, [{"name": "x", "counts": {"b": 2, "a": 1}}])
+    with path.open(encoding="utf-8", newline="") as handle:
+        row = next(csv.DictReader(handle))
+    assert row["counts"] == '{"a":1,"b":2}'
+    assert json.loads(row["counts"]) == {"a": 1, "b": 2}

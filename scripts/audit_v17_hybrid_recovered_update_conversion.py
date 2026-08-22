@@ -49,7 +49,13 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows({
+            key: (
+                json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                if isinstance(value, (dict, list, tuple)) else value
+            )
+            for key, value in row.items()
+        } for row in rows)
 
 
 def load_validation_rows(path: Path) -> list[dict[str, str]]:
