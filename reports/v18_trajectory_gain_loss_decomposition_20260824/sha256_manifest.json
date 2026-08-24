@@ -1,0 +1,14 @@
+{
+  "accepted_commit_quality.csv": "9e27a094092e0ea3dd839325891c49110ccf0db4d78aa6040b8dd88ced93e7fd",
+  "classifier.json": "92ac86b95b6ae4c562452067dfe0d0839588a7d354e1272c28adb80b825d3b71",
+  "fact_assertions.json": "33a1faec0050b838448aa4f842c2b25e54ee8b1373af3d1f3e9e109b64aa5d2b",
+  "gate_provenance.json": "69b1b49dceabc1350ed781eef354875807eab201a7ef1828d23829fae935aab4",
+  "README.md": "d9ef1166b246f1cc1b25217648a4d1581e505c6e1eb54d29fb50559ec6f4d918",
+  "sanitization_report.txt": "082e4028a9dea52c22c71806a5cdcab47f1170d9a0da2a45d55b87279d5ef620",
+  "source_artifact_hashes.csv": "31543454c2229dd58d913dfcc192160c191e40e1cf6e14d751cdb0553743bf70",
+  "summary.json": "f60ccceb20243dce1fc8ee7a1fbb538c1fde2f036afff05b74368888092d9492",
+  "test_report.txt": "6cad75020c6ea20f690a8d7ab26f78cfea356c9066efe0de2b1e49f5235ddf55",
+  "trajectory_decomposition.csv": "e8086b5c984147d42e3b87c3504e02b9a89dcdc2d0ed59b473ec10770cd0ea22",
+  "validation_gain_persistence.csv": "351a057a79e5b433343d2870ee64723a8efb6eb50f5a539fb2f1933cf8719076",
+  "validation_loss_provenance.csv": "b8fa9896f1599f3ab0ddf2a35c80a31efa5f86d36cc60f2b51d8bee174a287be"
+}

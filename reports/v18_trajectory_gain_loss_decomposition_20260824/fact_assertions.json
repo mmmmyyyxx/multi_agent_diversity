@@ -1,0 +1,22 @@
+{
+  "analysis_version": "v18_trajectory_gain_loss_decomposition_v1",
+  "fact_assertions_pass": true,
+  "trajectory_count": 6,
+  "accepted_transition_count": 18,
+  "telescoping_identity_pass_count": 6,
+  "w1_commit_count": 7,
+  "hybrid_commit_count": 11,
+  "aggregate_commit_difference_not_matched_pairs": true,
+  "hybrid_gain_count": 5,
+  "hybrid_gain_retained_to_final_count": 5,
+  "hybrid_gain_overwritten_later_count": 0,
+  "hybrid_loss_count": 7,
+  "hybrid_new_collateral_loss_count": 7,
+  "hybrid_prior_conversion_overwritten_loss_count": 0,
+  "seed61_hybrid_initial_to_final_vote_delta": -3,
+  "new_api_calls": 0,
+  "new_model_calls": 0,
+  "new_test_calls": 0,
+  "method_modified": false,
+  "selector_modified": false
+}

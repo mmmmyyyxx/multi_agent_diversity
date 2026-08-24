@@ -1,0 +1,7 @@
+seed,arm,accepted_commit_count,initial_validation_vote_count,final_validation_vote_count,initial_to_final_vote_delta,transition_net_sum,telescoping_identity_pass,validation_gain_count,validation_loss_count,gain_retained_to_final,gain_overwritten_later,gain_overwritten_then_recovered,loss_new_collateral_regression,loss_prior_conversion_overwritten,positive_net_commits,zero_net_commits,negative_net_commits,simultaneous_gain_loss_commits,train_vote_progress_not_transferred_commits
+59,W1_TOP2,2,33,33,0,0,True,0,0,0,0,0,0,0,0,2,0,0,0
+59,HYBRID_BASE,5,33,34,1,1,True,4,3,4,0,0,3,0,1,3,1,1,1
+60,W1_TOP2,2,33,33,0,0,True,0,0,0,0,0,0,0,0,2,0,0,0
+60,HYBRID_BASE,2,33,33,0,0,True,0,0,0,0,0,0,0,0,2,0,0,0
+61,W1_TOP2,3,33,33,0,0,True,1,1,1,0,0,1,0,0,3,0,1,1
+61,HYBRID_BASE,4,33,30,-3,-3,True,1,4,1,0,0,4,0,0,3,1,1,1

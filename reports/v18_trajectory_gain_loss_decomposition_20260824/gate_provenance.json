@@ -1,0 +1,16 @@
+{
+  "original_frozen_audit_status": "FAIL/HOLD",
+  "post_hoc_corrected_gate_status": "PASS",
+  "raw_artifact_identity": {
+    "artifact_count": 280,
+    "tree_sha256": "6a2b3c826d889c72de90e6c7f07f330562c9f44d65503bbdbb57abf322979e2d"
+  },
+  "analysis_mode": "offline_existing_artifact_trajectory_decomposition",
+  "validation_only": true,
+  "new_api_calls": 0,
+  "new_model_calls": 0,
+  "new_test_calls": 0,
+  "experiment_rerun": false,
+  "raw_artifacts_modified": false,
+  "cross_arm_commit_matching": false
+}

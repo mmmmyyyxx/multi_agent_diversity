@@ -1,0 +1,171 @@
+{
+  "analysis_version": "v18_trajectory_gain_loss_decomposition_v1",
+  "scope": {
+    "validation_only": true,
+    "new_api_calls": 0,
+    "new_model_calls": 0,
+    "new_test_calls": 0,
+    "method_modified": false,
+    "selector_modified": false,
+    "cross_arm_commit_matching": false,
+    "diverged_trajectories_treated_as_matched": false
+  },
+  "source_gate": {
+    "original_frozen_audit_status": "FAIL/HOLD",
+    "post_hoc_corrected_gate_status": "PASS",
+    "raw_artifact_identity": {
+      "artifact_count": 280,
+      "tree_sha256": "6a2b3c826d889c72de90e6c7f07f330562c9f44d65503bbdbb57abf322979e2d"
+    }
+  },
+  "seeds": [
+    59,
+    60,
+    61
+  ],
+  "arms": [
+    "W1_TOP2",
+    "HYBRID_BASE"
+  ],
+  "trajectory_count": 6,
+  "accepted_transition_count": 18,
+  "telescoping_identity_pass_count": 6,
+  "aggregate": {
+    "W1_TOP2": {
+      "commit_count": 7,
+      "positive_net_count": 0,
+      "zero_net_count": 7,
+      "negative_net_count": 0,
+      "positive_net_proportion": 0.0,
+      "zero_net_proportion": 1.0,
+      "negative_net_proportion": 0.0,
+      "mean_gain_count_per_commit": 0.14285714285714285,
+      "mean_loss_count_per_commit": 0.14285714285714285,
+      "mean_net_delta_per_commit": 0.0,
+      "simultaneous_gain_loss_count": 1,
+      "train_vote_progress_not_transferred_count": 1,
+      "initial_to_final_vote_delta_sum": 0,
+      "validation_gain_count": 1,
+      "validation_loss_count": 1,
+      "gain_retained_to_final_count": 1,
+      "gain_overwritten_later_count": 0,
+      "gain_overwritten_then_recovered_count": 0,
+      "loss_new_collateral_regression_count": 1,
+      "loss_prior_conversion_overwritten_count": 0
+    },
+    "HYBRID_BASE": {
+      "commit_count": 11,
+      "positive_net_count": 1,
+      "zero_net_count": 8,
+      "negative_net_count": 2,
+      "positive_net_proportion": 0.09090909090909091,
+      "zero_net_proportion": 0.7272727272727273,
+      "negative_net_proportion": 0.18181818181818182,
+      "mean_gain_count_per_commit": 0.45454545454545453,
+      "mean_loss_count_per_commit": 0.6363636363636364,
+      "mean_net_delta_per_commit": -0.18181818181818182,
+      "simultaneous_gain_loss_count": 2,
+      "train_vote_progress_not_transferred_count": 2,
+      "initial_to_final_vote_delta_sum": -2,
+      "validation_gain_count": 5,
+      "validation_loss_count": 7,
+      "gain_retained_to_final_count": 5,
+      "gain_overwritten_later_count": 0,
+      "gain_overwritten_then_recovered_count": 0,
+      "loss_new_collateral_regression_count": 7,
+      "loss_prior_conversion_overwritten_count": 0
+    }
+  },
+  "seed61_focus": {
+    "W1_TOP2": {
+      "seed": 61,
+      "arm": "W1_TOP2",
+      "accepted_commit_count": 3,
+      "initial_validation_vote_count": 33,
+      "final_validation_vote_count": 33,
+      "initial_to_final_vote_delta": 0,
+      "transition_net_sum": 0,
+      "telescoping_identity_pass": true,
+      "validation_gain_count": 1,
+      "validation_loss_count": 1,
+      "gain_retained_to_final": 1,
+      "gain_overwritten_later": 0,
+      "gain_overwritten_then_recovered": 0,
+      "loss_new_collateral_regression": 1,
+      "loss_prior_conversion_overwritten": 0,
+      "positive_net_commits": 0,
+      "zero_net_commits": 3,
+      "negative_net_commits": 0,
+      "simultaneous_gain_loss_commits": 1,
+      "train_vote_progress_not_transferred_commits": 1
+    },
+    "HYBRID_BASE": {
+      "seed": 61,
+      "arm": "HYBRID_BASE",
+      "accepted_commit_count": 4,
+      "initial_validation_vote_count": 33,
+      "final_validation_vote_count": 30,
+      "initial_to_final_vote_delta": -3,
+      "transition_net_sum": -3,
+      "telescoping_identity_pass": true,
+      "validation_gain_count": 1,
+      "validation_loss_count": 4,
+      "gain_retained_to_final": 1,
+      "gain_overwritten_later": 0,
+      "gain_overwritten_then_recovered": 0,
+      "loss_new_collateral_regression": 4,
+      "loss_prior_conversion_overwritten": 0,
+      "positive_net_commits": 0,
+      "zero_net_commits": 3,
+      "negative_net_commits": 1,
+      "simultaneous_gain_loss_commits": 1,
+      "train_vote_progress_not_transferred_commits": 1
+    }
+  },
+  "classifier": {
+    "classifier_version": "v18_trajectory_gain_loss_classifier_v1",
+    "rules_frozen_before_result_readout": true,
+    "flags": {
+      "collateral_regression": true,
+      "transfer_failure": true,
+      "beneficial_conversion_later_overwritten": false,
+      "higher_throughput_lower_average_quality": true
+    },
+    "supported_bottlenecks": [
+      "collateral_regression",
+      "transfer_failure",
+      "higher_throughput_lower_average_quality"
+    ],
+    "final_diagnosis": "COLLATERAL_REGRESSION+TRANSFER_FAILURE+HIGHER_THROUGHPUT_LOWER_AVERAGE_QUALITY",
+    "commit_quality": {
+      "W1_TOP2": {
+        "commit_count": 7,
+        "positive_net_count": 0,
+        "zero_net_count": 7,
+        "negative_net_count": 0,
+        "positive_net_proportion": 0.0,
+        "zero_net_proportion": 1.0,
+        "negative_net_proportion": 0.0,
+        "mean_gain_count_per_commit": 0.14285714285714285,
+        "mean_loss_count_per_commit": 0.14285714285714285,
+        "mean_net_delta_per_commit": 0.0,
+        "simultaneous_gain_loss_count": 1,
+        "train_vote_progress_not_transferred_count": 1
+      },
+      "HYBRID_BASE": {
+        "commit_count": 11,
+        "positive_net_count": 1,
+        "zero_net_count": 8,
+        "negative_net_count": 2,
+        "positive_net_proportion": 0.09090909090909091,
+        "zero_net_proportion": 0.7272727272727273,
+        "negative_net_proportion": 0.18181818181818182,
+        "mean_gain_count_per_commit": 0.45454545454545453,
+        "mean_loss_count_per_commit": 0.6363636363636364,
+        "mean_net_delta_per_commit": -0.18181818181818182,
+        "simultaneous_gain_loss_count": 2,
+        "train_vote_progress_not_transferred_count": 2
+      }
+    }
+  }
+}

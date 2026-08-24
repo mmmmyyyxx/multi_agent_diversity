@@ -1,0 +1,46 @@
+{
+  "classifier_version": "v18_trajectory_gain_loss_classifier_v1",
+  "rules_frozen_before_result_readout": true,
+  "flags": {
+    "collateral_regression": true,
+    "transfer_failure": true,
+    "beneficial_conversion_later_overwritten": false,
+    "higher_throughput_lower_average_quality": true
+  },
+  "supported_bottlenecks": [
+    "collateral_regression",
+    "transfer_failure",
+    "higher_throughput_lower_average_quality"
+  ],
+  "final_diagnosis": "COLLATERAL_REGRESSION+TRANSFER_FAILURE+HIGHER_THROUGHPUT_LOWER_AVERAGE_QUALITY",
+  "commit_quality": {
+    "W1_TOP2": {
+      "commit_count": 7,
+      "positive_net_count": 0,
+      "zero_net_count": 7,
+      "negative_net_count": 0,
+      "positive_net_proportion": 0.0,
+      "zero_net_proportion": 1.0,
+      "negative_net_proportion": 0.0,
+      "mean_gain_count_per_commit": 0.14285714285714285,
+      "mean_loss_count_per_commit": 0.14285714285714285,
+      "mean_net_delta_per_commit": 0.0,
+      "simultaneous_gain_loss_count": 1,
+      "train_vote_progress_not_transferred_count": 1
+    },
+    "HYBRID_BASE": {
+      "commit_count": 11,
+      "positive_net_count": 1,
+      "zero_net_count": 8,
+      "negative_net_count": 2,
+      "positive_net_proportion": 0.09090909090909091,
+      "zero_net_proportion": 0.7272727272727273,
+      "negative_net_proportion": 0.18181818181818182,
+      "mean_gain_count_per_commit": 0.45454545454545453,
+      "mean_loss_count_per_commit": 0.6363636363636364,
+      "mean_net_delta_per_commit": -0.18181818181818182,
+      "simultaneous_gain_loss_count": 2,
+      "train_vote_progress_not_transferred_count": 2
+    }
+  }
+}
