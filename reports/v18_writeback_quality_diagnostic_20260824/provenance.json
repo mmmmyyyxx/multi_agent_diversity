@@ -1,0 +1,12 @@
+{
+  "analysis_mode": "offline_existing_v18_writeback_quality_diagnostic",
+  "source_trajectory_decomposition": "v18_trajectory_gain_loss_decomposition_v1",
+  "validation_labels_reused": true,
+  "new_validation_evaluations": 0,
+  "uncommitted_candidate_validation_evaluations": 0,
+  "new_api_calls": 0,
+  "new_model_calls": 0,
+  "new_test_calls": 0,
+  "raw_artifacts_modified": false,
+  "method_modified": false
+}

@@ -1,0 +1,11 @@
+{
+  "classifier_version": "v18_writeback_quality_classifier_v1",
+  "rules_frozen_before_result_readout": true,
+  "common_safe_risk_admission_supported": true,
+  "train_side_risk_signal_available": true,
+  "identified_train_side_risk_signal": "train_vote_loss_positive",
+  "ranking_misselection_supported": false,
+  "feasible_set_quality_gap_supported": true,
+  "m2f_compatibility_signal_available_in_v18": false,
+  "final_diagnosis": "COMMON_SAFE_FEASIBLE_SET_QUALITY_GAP_WITH_EXISTING_TRAIN_VOTE_LOSS_RISK_SIGNAL"
+}

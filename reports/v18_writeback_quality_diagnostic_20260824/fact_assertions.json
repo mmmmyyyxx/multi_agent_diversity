@@ -1,0 +1,22 @@
+{
+  "fact_assertions_pass": true,
+  "accepted_commit_count": 18,
+  "hybrid_accepted_commit_count": 11,
+  "hybrid_collateral_loss_event_count": 7,
+  "hybrid_collateral_loss_commit_count": 2,
+  "hybrid_gain_event_count": 5,
+  "hybrid_gain_bearing_commit_count": 3,
+  "hybrid_positive_net_commit_count": 1,
+  "harmful_pool_feasible_candidate_count": 7,
+  "harmful_pool_zero_loss_feasible_candidate_count": 0,
+  "common_safe_risk_admission_supported": true,
+  "ranking_misselection_supported": false,
+  "feasible_set_quality_gap_supported": true,
+  "m2f_compatibility_signal_available_in_v18": false,
+  "uncommitted_candidate_validation_evaluations": 0,
+  "new_api_calls": 0,
+  "new_model_calls": 0,
+  "new_test_calls": 0,
+  "method_modified": false,
+  "selector_modified": false
+}

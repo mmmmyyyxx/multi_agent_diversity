@@ -1,0 +1,13 @@
+{
+  "accepted_commit_train_evidence.csv": "2ea65e287e49536b0d600f7fae76a0c2a877c98755d15009306930143412d519",
+  "classifier.json": "689c4eb22707924c5dd4704f34a4e60420f55445d129ac8e30b788dd292461a2",
+  "fact_assertions.json": "96b0ee59e7425240897d5f2e35ed459265a8b80a3a13733ebaa4bec3b8bf8fb0",
+  "feasible_candidate_pool.csv": "5123161c4a07f8ca5d0dccd96388504c69a5c097cb7a54fd7543cb1d9eb28383",
+  "provenance.json": "7672cca02c3351f63a2ad86805be108ce3632b6c589bb6f3b54fba0cbed851cf",
+  "README.md": "80b5c40375e150fbeedd6724142e8fcd242fd26953b695dd7f73c6ff74518789",
+  "risk_signal_diagnostics.csv": "9a1f5a7acd8404bfb7b420841666cb279808fd6be7572b7fea38b620772115c3",
+  "sanitization_report.txt": "78d86ceac2129d6161055226fd11d6e9aaa6a87e6c20d016b6bcfb61a67e08a8",
+  "source_artifact_hashes.csv": "cc7322b773ab61d884dd87fe5abc0b0d7450030d3ed2b7f31c413dd6ed73dbc3",
+  "summary.json": "9c193fc9bbc2d0c8ce3e8b164ba63ff26b4491b1cbd9f6b4838050598265b3d1",
+  "test_report.txt": "21a4a4a761b091ce014d7f8d3ee19e22c051c93e468356753bf5af9399d324a7"
+}

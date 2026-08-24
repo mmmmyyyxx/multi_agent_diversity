@@ -1,0 +1,80 @@
+{
+  "audit_version": "v18_writeback_quality_diagnostic_v1",
+  "scope": {
+    "zero_api": true,
+    "new_api_calls": 0,
+    "new_model_calls": 0,
+    "new_test_calls": 0,
+    "new_validation_evaluations": 0,
+    "method_modified": false,
+    "selector_modified": false,
+    "gate_modified": false,
+    "ranking_modified": false,
+    "uncommitted_candidate_validation_evaluations": 0
+  },
+  "units": {
+    "accepted_commit_count": 18,
+    "hybrid_accepted_commit_count": 11,
+    "hybrid_validation_collateral_loss_event_count": 7,
+    "hybrid_validation_collateral_loss_commit_count": 2,
+    "hybrid_validation_gain_event_count": 5,
+    "hybrid_validation_gain_bearing_commit_count": 3,
+    "hybrid_positive_net_commit_count": 1,
+    "gain_and_loss_bearing_commit_overlap_count": 2
+  },
+  "harmful_hybrid_commits": [
+    {
+      "seed": 59,
+      "update_index": 3,
+      "candidate_stage": "loss_blind_generic_revision",
+      "train_target_gain": 6,
+      "train_vote_gain_count": 4,
+      "train_vote_loss_count": 2,
+      "train_vote_net_gain": 2,
+      "train_pivotal_loss_count": 1,
+      "validation_gain_count": 2,
+      "validation_loss_count": 3,
+      "validation_net_delta": -1,
+      "feasible_candidate_count": 4,
+      "zero_train_vote_loss_feasible_count": 0,
+      "minimum_train_vote_loss_in_pool": 2,
+      "selected_train_vote_loss_is_pool_minimum": true,
+      "branch_winner_count": 1
+    },
+    {
+      "seed": 61,
+      "update_index": 5,
+      "candidate_stage": "m20_source",
+      "train_target_gain": 7,
+      "train_vote_gain_count": 10,
+      "train_vote_loss_count": 1,
+      "train_vote_net_gain": 9,
+      "train_pivotal_loss_count": 1,
+      "validation_gain_count": 1,
+      "validation_loss_count": 4,
+      "validation_net_delta": -3,
+      "feasible_candidate_count": 3,
+      "zero_train_vote_loss_feasible_count": 0,
+      "minimum_train_vote_loss_in_pool": 1,
+      "selected_train_vote_loss_is_pool_minimum": true,
+      "branch_winner_count": 1
+    }
+  ],
+  "compatibility_evidence": {
+    "registry_compatibility_repair_enabled": false,
+    "compatibility_event_count": 0,
+    "module2_context_diagnostic_count": 0,
+    "candidate_responsibility_contribution_nonnull_count": 0
+  },
+  "classifier": {
+    "classifier_version": "v18_writeback_quality_classifier_v1",
+    "rules_frozen_before_result_readout": true,
+    "common_safe_risk_admission_supported": true,
+    "train_side_risk_signal_available": true,
+    "identified_train_side_risk_signal": "train_vote_loss_positive",
+    "ranking_misselection_supported": false,
+    "feasible_set_quality_gap_supported": true,
+    "m2f_compatibility_signal_available_in_v18": false,
+    "final_diagnosis": "COMMON_SAFE_FEASIBLE_SET_QUALITY_GAP_WITH_EXISTING_TRAIN_VOTE_LOSS_RISK_SIGNAL"
+  }
+}
