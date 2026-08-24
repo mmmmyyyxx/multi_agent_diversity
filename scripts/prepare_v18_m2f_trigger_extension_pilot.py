@@ -621,7 +621,7 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
         "method_change_scope": "trigger_eligibility_only",
         "historical_raw_artifacts_modified": False,
     }
-    out.mkdir(parents=True)
+    out.mkdir(parents=True, exist_ok=True)
     write_json(out / "private_registry.json", registry)
     write_json(out / "source_freeze.json", freeze)
     write_json(out / "phase_a_gate.json", gate)
