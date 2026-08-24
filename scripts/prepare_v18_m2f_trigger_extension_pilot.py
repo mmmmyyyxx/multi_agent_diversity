@@ -415,7 +415,22 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
                 seed=seed,
                 tau=system.cfg.peer_state.soft_vote_tau,
             )
-            incumbent = system.active_evaluation(target)
+            active_prompt = parent_prompts[target]
+            incumbent = evaluate_candidate_profile(
+                prompt=active_prompt,
+                prompt_hash=system.prompt_hash(active_prompt),
+                examples=train_probe.examples,
+                active_profiles=system.active_profiles,
+                initial_profiles=system.initial_profiles,
+                candidate_profile=system.active_profiles[target],
+                target_agent_id=target,
+                assigned_question_hashes=assigned,
+                normalize_answer=system.normalize_answer,
+                match_answer=system.match_answer,
+                tie_break=system.protocol.tie_policy,
+                seed=seed,
+                tau=system.cfg.peer_state.soft_vote_tau,
+            )
             constraint = evaluate_constraints(evaluation, incumbent)
             expected = (
                 bool(constraint_raw["passed"]),

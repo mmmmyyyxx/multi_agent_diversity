@@ -131,3 +131,8 @@ def test_phase_a_never_opens_historical_cache_as_runtime_cache() -> None:
     ).read_text(encoding="utf-8")
     assert 'cache_path=out / "read_only_runtime" / f"seed{seed}.sqlite"' in source
     assert "mode=ro&immutable=1" in source
+    assert ".active_evaluation(" not in source
+    runner = (
+        ROOT / "scripts" / "run_v18_m2f_trigger_extension_pilot.py"
+    ).read_text(encoding="utf-8")
+    assert ".active_evaluation(" not in runner

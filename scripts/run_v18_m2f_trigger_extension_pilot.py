@@ -119,7 +119,22 @@ def evaluate_profile(
         seed=system.cfg.training.seed,
         tau=system.cfg.peer_state.soft_vote_tau,
     )
-    incumbent = system.active_evaluation(target)
+    active_prompt = system.agents[target].current_prompt
+    incumbent = evaluate_candidate_profile(
+        prompt=active_prompt,
+        prompt_hash=system.prompt_hash(active_prompt),
+        examples=system.fixed_probe.examples,
+        active_profiles=system.active_profiles,
+        initial_profiles=system.initial_profiles,
+        candidate_profile=system.active_profiles[target],
+        target_agent_id=target,
+        assigned_question_hashes=assigned_hashes,
+        normalize_answer=system.normalize_answer,
+        match_answer=system.match_answer,
+        tie_break=system.protocol.tie_policy,
+        seed=system.cfg.training.seed,
+        tau=system.cfg.peer_state.soft_vote_tau,
+    )
     return evaluation, evaluate_constraints(evaluation, incumbent), incumbent
 
 
