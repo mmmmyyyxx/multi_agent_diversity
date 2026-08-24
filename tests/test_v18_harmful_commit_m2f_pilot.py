@@ -34,3 +34,17 @@ def test_fixed_case_inventory_and_no_test_inputs() -> None:
     assert MODULE.CASES == ((59, 3), (61, 5))
     assert MODULE.ARM == "HYBRID_BASE"
     assert all("test" not in path.lower() for path in MODULE.SOURCE_FILES)
+
+
+def test_phase_a_script_imports_from_external_working_directory() -> None:
+    import subprocess
+    import sys
+
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--help"],
+        cwd=ROOT.parent,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr

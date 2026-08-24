@@ -4,8 +4,14 @@ import argparse
 import hashlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.compatibility_repair import (
     COLLATERAL_REJECTION_REASONS,
@@ -18,7 +24,6 @@ from multi_dataset_diverse_rl.utils import normalize_prompt_text
 from scripts.admit_v18_hybrid_online_scientific_analysis import artifact_tree_identity
 
 
-ROOT = Path(__file__).resolve().parents[1]
 CASES = ((59, 3), (61, 5))
 ARM = "HYBRID_BASE"
 SOURCE_FILES = (
