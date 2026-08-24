@@ -123,3 +123,11 @@ def test_phase_a_reads_frozen_historical_request_identity(tmp_path: Path) -> Non
         examples=[SimpleNamespace(question_hash="q")], historical_meta=meta,
     )
     assert result is not None and result[0].answer == "a"
+
+
+def test_phase_a_never_opens_historical_cache_as_runtime_cache() -> None:
+    source = (
+        ROOT / "scripts" / "prepare_v18_m2f_trigger_extension_pilot.py"
+    ).read_text(encoding="utf-8")
+    assert 'cache_path=out / "read_only_runtime" / f"seed{seed}.sqlite"' in source
+    assert "mode=ro&immutable=1" in source

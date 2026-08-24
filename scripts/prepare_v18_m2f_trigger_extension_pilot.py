@@ -329,7 +329,9 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
         )
         system = make_system(
             base_config=meta["config"], parent_prompts=parent_prompts,
-            seed=seed, cache_path=cache_path, out_dir=out / "read_only",
+            seed=seed,
+            cache_path=out / "read_only_runtime" / f"seed{seed}.sqlite",
+            out_dir=out / "read_only_runtime",
         )
         if system.team_prompt_state_hash() != str(decision["parent_team_hash"]):
             raise ValueError("reconstructed parent team hash mismatch")
