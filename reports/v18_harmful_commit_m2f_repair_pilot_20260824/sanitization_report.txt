@@ -1,0 +1,6 @@
+status: PASS
+scope: all files in this sanitized report directory
+absolute local paths: 0
+prompts/questions/gold answers/model answers/raw responses: 0
+endpoints/credentials/SQLite/cache/checkpoint content: 0
+published content is restricted to hashes, counters, aggregate metrics, frozen labels, and provenance.

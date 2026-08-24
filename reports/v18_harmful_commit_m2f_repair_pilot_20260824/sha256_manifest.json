@@ -1,0 +1,10 @@
+{
+  "candidate_pairs.csv": "bdf7210397e735f2161062640fe1525e63a39a4367f78b39f9a0cf59d4bf932a",
+  "classifier.json": "b2631a120dea739911ac8dda140d1f3a23bc114e9c4203dd083526de7f846172",
+  "fact_assertions.json": "54259024502b2c7b58ba9416f280acb30c71cb8ed1c7317b9949e8367ea5caf8",
+  "README.md": "f983017b64a34b2300842eb2cf96b116723b9255f8065bd8ff74a049b1663d66",
+  "sanitization_report.txt": "5cae061c387a86313cbe73ae4db9518bc04debb3e770eda113d3229d21f2d63e",
+  "source_freeze.json": "3a4ffd5a79f1ccd8b70e3e0efa61225fe7e8ea20670a6d38da06d44874e191f9",
+  "summary.json": "27703a1b9026ec8b88bec4f1bdbd95e75c65a6bdb2cdadb2595a61d0f3bf0a22",
+  "test_report.txt": "77df3d758eacbe62dc24b92fddb603fcc4d377396b1fe20f633da4956a145289"
+}

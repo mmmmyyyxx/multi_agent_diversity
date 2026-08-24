@@ -48,3 +48,19 @@ def test_phase_a_script_imports_from_external_working_directory() -> None:
         check=False,
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_published_stop_report_if_present() -> None:
+    report = ROOT / "reports" / "v18_harmful_commit_m2f_repair_pilot_20260824"
+    if not (report / "summary.json").is_file():
+        return
+    import json
+
+    summary = json.loads((report / "summary.json").read_text(encoding="utf-8"))
+    facts = json.loads((report / "fact_assertions.json").read_text(encoding="utf-8"))
+    assert summary["phase_a_gate"] == "STOP_INELIGIBLE_UNDER_FROZEN_M2F"
+    assert summary["phase_b_gate"] == "NOT_RUN_PHASE_A_STOP"
+    assert summary["eligible_source_candidate_count"] == 0
+    assert summary["api_calls"]["model_calls"] == 0
+    assert summary["api_calls"]["new_test_calls"] == 0
+    assert facts["eligibility_modified"] is False

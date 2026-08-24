@@ -1,0 +1,47 @@
+{
+  "report_version": "v18_harmful_commit_m2f_repair_pilot_v1",
+  "phase_a_gate": "STOP_INELIGIBLE_UNDER_FROZEN_M2F",
+  "phase_b_gate": "NOT_RUN_PHASE_A_STOP",
+  "source_candidate_count": 7,
+  "eligible_source_candidate_count": 0,
+  "valid_repair_output_count": 0,
+  "feasible_repair_count": 0,
+  "zero_loss_repair_count": 0,
+  "lower_loss_repair_count": 0,
+  "targeting_retained_count": 0,
+  "repair_attributable_feasible_rescue_count": 0,
+  "source_totals": {
+    "target_gain": 39,
+    "train_vote_gain": 43,
+    "train_vote_loss": 15,
+    "train_vote_net": 28
+  },
+  "repair_totals": null,
+  "historically_committed_source_count": 2,
+  "source_validation_negative_net_case_count": 2,
+  "repair_validation_negative_net_case_count": null,
+  "api_calls": {
+    "model_calls": 0,
+    "solver_calls": 0,
+    "evaluator_calls": 0,
+    "new_validation_calls": 0,
+    "new_test_calls": 0
+  },
+  "method_modified": false,
+  "eligibility_modified": false,
+  "historical_raw_artifacts_modified": false,
+  "classifier": {
+    "classifier_version": "v18_harmful_commit_m2f_classifier_v1",
+    "allowed_labels": [
+      "M2F_WRITEBACK_RISK_REDUCTION_SUPPORTED",
+      "M2F_TRAIN_COLLATERAL_ONLY",
+      "M2F_NOT_SUPPORTED",
+      "M2F_HARMFUL"
+    ],
+    "final_diagnosis": "M2F_NOT_SUPPORTED",
+    "interpretation": "not_evaluated_ineligible_under_frozen_m2f",
+    "repair_efficacy_interpretable": false,
+    "m2f_applicability_gap": true,
+    "eligibility_modified": false
+  }
+}

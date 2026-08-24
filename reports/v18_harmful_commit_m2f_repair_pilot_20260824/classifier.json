@@ -1,0 +1,14 @@
+{
+  "classifier_version": "v18_harmful_commit_m2f_classifier_v1",
+  "allowed_labels": [
+    "M2F_WRITEBACK_RISK_REDUCTION_SUPPORTED",
+    "M2F_TRAIN_COLLATERAL_ONLY",
+    "M2F_NOT_SUPPORTED",
+    "M2F_HARMFUL"
+  ],
+  "final_diagnosis": "M2F_NOT_SUPPORTED",
+  "interpretation": "not_evaluated_ineligible_under_frozen_m2f",
+  "repair_efficacy_interpretable": false,
+  "m2f_applicability_gap": true,
+  "eligibility_modified": false
+}

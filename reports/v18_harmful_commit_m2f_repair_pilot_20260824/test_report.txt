@@ -1,0 +1,8 @@
+focused regression tests: PASS (5 passed)
+canonical tests: PASS (695 passed, 3 known historical-artifact tests deselected)
+compileall: PASS
+V18 protocol preflight: PASS
+deterministic v15 protocol smoke: PASS
+deterministic report replay: PASS
+SHA256 manifest verification: PASS before final manifest refresh
+API/model/Solver/evaluator/validation/test calls: 0

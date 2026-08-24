@@ -1,0 +1,19 @@
+{
+  "fact_assertions_pass": true,
+  "phase_a_source_reconstruction": "PASS",
+  "phase_a_m2f_semantics": "PASS",
+  "phase_a_gate": "STOP_INELIGIBLE_UNDER_FROZEN_M2F",
+  "phase_b_gate": "NOT_RUN_PHASE_A_STOP",
+  "source_candidate_count": 7,
+  "eligible_source_candidate_count": 0,
+  "common_safe_source_count": 7,
+  "positive_responsibility_gain_source_count": 7,
+  "positive_minimum_loss_evidence_source_count": 7,
+  "empty_rejection_reason_source_count": 7,
+  "repair_attempt_count": 0,
+  "new_api_calls": 0,
+  "new_validation_calls": 0,
+  "new_test_calls": 0,
+  "eligibility_modified": false,
+  "historical_raw_artifacts_modified": false
+}

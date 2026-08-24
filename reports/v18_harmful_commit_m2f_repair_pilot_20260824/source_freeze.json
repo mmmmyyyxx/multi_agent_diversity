@@ -1,0 +1,27 @@
+{
+  "freeze_version": "v18_harmful_commit_m2f_source_freeze_v1",
+  "execution_commit": "ddfd8cdb40665c05e28fc19c506b926a1fbd1058",
+  "v18_raw_artifact_identity": {
+    "artifact_count": 280,
+    "tree_sha256": "6a2b3c826d889c72de90e6c7f07f330562c9f44d65503bbdbb57abf322979e2d"
+  },
+  "m2f_version": "candidate_specific_counterfactual_compatibility_repair_v1",
+  "repair_system_prompt_sha256": "23a2f28c7b0d2837aaaa1f7865e56832f0fc621907458d6395556cce92c66ab7",
+  "repair_instruction_sha256": "0ed402733aee048200e546ab32faed3f47ded8b022f25c07d73e0fc31f10a2ef",
+  "source_files": [
+    {
+      "path": "multi_dataset_diverse_rl/compatibility_repair.py",
+      "sha256": "b4654a1a7487b5a7be09713e39aaac223332d5d2eecd7ca887a03e0e8895428e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/candidate_selection.py",
+      "sha256": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/system.py",
+      "sha256": "f48d9d8cf0be5d7499dfca27e8e94aaf6a928f518657f79be26d1d680128ca92"
+    }
+  ],
+  "source_candidate_count": 7,
+  "eligible_source_candidate_count": 0
+}
