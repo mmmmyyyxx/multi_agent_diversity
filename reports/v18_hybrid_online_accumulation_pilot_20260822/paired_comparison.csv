@@ -1,0 +1,4 @@
+seed,deepening_hybrid_minus_w1,vote_conversion_hybrid_minus_w1,commit_hybrid_minus_w1,final_vote_acc_hybrid_minus_w1,final_oracle_acc_hybrid_minus_w1
+59,2,2,3,0.020000000000000018,0.06000000000000005
+60,-1,0,0,0.0,-0.019999999999999907
+61,1,0,1,-0.06000000000000005,-0.020000000000000018

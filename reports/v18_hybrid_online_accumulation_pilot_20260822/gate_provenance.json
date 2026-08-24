@@ -1,0 +1,22 @@
+{
+  "original_frozen_gate_status": "FAIL/HOLD",
+  "original_blockers": [
+    "revision_parity:59:HYBRID_BASE",
+    "revision_parity:61:HYBRID_BASE"
+  ],
+  "independent_semantics_audit_status": "PASS",
+  "post_hoc_corrected_gate_status": "PASS",
+  "corrected_gate_version": "post_hoc_corrected_gate_v1",
+  "raw_artifact_hash_verified": true,
+  "raw_artifact_identity": {
+    "artifact_count": 280,
+    "tree_sha256": "6a2b3c826d889c72de90e6c7f07f330562c9f44d65503bbdbb57abf322979e2d"
+  },
+  "scientific_analysis_admitted": true,
+  "scientific_analysis_timestamp": "2026-08-24T13:14:52.2443556+08:00",
+  "new_api_calls": 0,
+  "new_model_calls": 0,
+  "new_test_calls": 0,
+  "experiment_rerun": false,
+  "invalid_revisions_retried": false
+}

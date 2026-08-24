@@ -1,0 +1,57 @@
+{
+  "classifier_version": "v18_hybrid_online_accumulation_classifier_v1",
+  "per_seed_deepening_delta": {
+    "59": 2.0,
+    "60": -1.0,
+    "61": 1.0
+  },
+  "per_seed_vote_conversion_delta": {
+    "59": 2.0,
+    "60": 0.0,
+    "61": 0.0
+  },
+  "per_seed_final_vote_acc_delta": {
+    "59": 0.020000000000000018,
+    "60": 0.0,
+    "61": -0.06000000000000005
+  },
+  "per_seed_final_oracle_acc_delta": {
+    "59": 0.06000000000000005,
+    "60": -0.019999999999999907,
+    "61": -0.020000000000000018
+  },
+  "online_accumulation_supported": true,
+  "online_vote_conversion_signal": true,
+  "hybrid_throughput_recovery_reproduced": true,
+  "accepted_commit_recovery": true,
+  "feasible_branch_recovery": true,
+  "persistent_singleton_reduced": true,
+  "persistent_singleton_low_support": false,
+  "final_validation_vote_signal": false,
+  "deepening_wtl": {
+    "wins": 2,
+    "ties": 0,
+    "losses": 1
+  },
+  "vote_conversion_wtl": {
+    "wins": 1,
+    "ties": 2,
+    "losses": 0
+  },
+  "accepted_commit_wtl": {
+    "wins": 2,
+    "ties": 1,
+    "losses": 0
+  },
+  "feasible_branch_wtl": {
+    "wins": 2,
+    "ties": 1,
+    "losses": 0
+  },
+  "final_vote_wtl": {
+    "wins": 1,
+    "ties": 1,
+    "losses": 1
+  },
+  "final_diagnosis": "LONGITUDINAL_ACCUMULATION_WITH_VOTE_CONVERSION"
+}
