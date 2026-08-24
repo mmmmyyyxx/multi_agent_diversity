@@ -9,6 +9,9 @@ from .utils import extract_json_obj, normalize_prompt_text
 ONLINE_COMPATIBILITY_REPAIR_VERSION = (
     "candidate_specific_counterfactual_compatibility_repair_v1"
 )
+EXTENDED_TRAIN_VOTE_LOSS_TRIGGER_VERSION = (
+    "common_safe_train_vote_loss_extended_trigger_v1"
+)
 LOSS_BLIND_GENERIC_REVISION_VERSION = "loss_blind_generic_revision_v1"
 LOSS_BLIND_GENERIC_REVISION_SYSTEM_PROMPT = (
     "Revise one candidate member prompt. Return strict JSON only with exactly "
@@ -49,6 +52,31 @@ def repair_eligible(
         int(responsibility_gain_count) > 0
         and int(loss_evidence_count) > 0
         and COLLATERAL_REJECTION_REASONS.intersection(map(str, rejection_reasons))
+    )
+
+
+def extended_repair_eligible(
+    *,
+    responsibility_gain_count: int,
+    rejection_reasons: Sequence[str],
+    loss_evidence_count: int,
+    source_common_safe: bool,
+    source_vote_loss_count: int,
+) -> bool:
+    """Experimental M2F trigger extension used by the frozen V18 pilot.
+
+    The original M2F trigger remains unchanged.  This extension adds exactly
+    one alternative trigger for a Common-Safe source with observed train Vote
+    loss; it does not change repair generation, evaluation, or write-back.
+    """
+
+    return bool(
+        repair_eligible(
+            responsibility_gain_count=responsibility_gain_count,
+            rejection_reasons=rejection_reasons,
+            loss_evidence_count=loss_evidence_count,
+        )
+        or (bool(source_common_safe) and int(source_vote_loss_count) > 0)
     )
 
 
