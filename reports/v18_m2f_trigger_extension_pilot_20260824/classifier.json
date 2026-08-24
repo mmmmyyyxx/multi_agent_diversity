@@ -1,0 +1,23 @@
+{
+  "classifier_version": "v18_m2f_trigger_extension_classifier_v1",
+  "allowed_labels": [
+    "EXTENDED_M2F_WRITEBACK_RISK_REDUCTION_SUPPORTED",
+    "EXTENDED_M2F_TRAIN_COLLATERAL_REDUCTION_ONLY",
+    "EXTENDED_M2F_TRIGGER_NOT_SUPPORTED",
+    "EXTENDED_M2F_HARMFUL"
+  ],
+  "frozen_rules": {
+    "targeting_retention_high": ">=0.8 weighted responsibility-repair retention",
+    "targeting_retention_harmful": "<0.5 weighted responsibility-repair retention",
+    "many_invalid_or_infeasible": "valid repairs <4 or feasible repairs <4",
+    "validation_harmful_case_rule": "invalid/unevaluable repair remains unresolved"
+  },
+  "criteria": {
+    "aggregate_train_vote_loss_reduced": false,
+    "high_targeting_retention": true,
+    "many_invalid_or_infeasible": true,
+    "negative_harmful_cases_before": 2,
+    "negative_harmful_cases_after": 2
+  },
+  "final_label": "EXTENDED_M2F_TRIGGER_NOT_SUPPORTED"
+}

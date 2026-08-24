@@ -1,0 +1,93 @@
+{
+  "report_version": "v18_m2f_trigger_extension_pilot_report_v1",
+  "phase_a_gate": "PASS",
+  "phase_b_gate": "PASS",
+  "eligible_source_candidates": 7,
+  "repair_attempts": 7,
+  "valid_repairs": 3,
+  "feasible_repairs": 3,
+  "targeting_retention_count": 3,
+  "aggregate_responsibility_targeting_retention": 1.0,
+  "source_train_totals_all_7": {
+    "target_gain": 39,
+    "vote_gain": 43,
+    "vote_loss": 15,
+    "vote_net": 28
+  },
+  "source_train_totals_evaluable_pairs": {
+    "target_gain": 14,
+    "vote_gain": 17,
+    "vote_loss": 6,
+    "vote_net": 11
+  },
+  "repair_train_totals_evaluable_pairs": {
+    "target_gain": 11,
+    "vote_gain": 17,
+    "vote_loss": 6,
+    "vote_net": 11
+  },
+  "source_validation_totals_all_7": {
+    "vote_gain": 12,
+    "vote_loss": 23,
+    "vote_net": -11,
+    "oracle_delta": 10
+  },
+  "source_validation_totals_evaluable_pairs": {
+    "vote_gain": 5,
+    "vote_loss": 10,
+    "vote_net": -5,
+    "oracle_delta": 3
+  },
+  "repair_validation_totals_evaluable_pairs": {
+    "vote_gain": 5,
+    "vote_loss": 12,
+    "vote_net": -7,
+    "oracle_delta": 4
+  },
+  "zero_loss_repairs": 0,
+  "lower_loss_repairs": 0,
+  "historical_harmful_negative_validation_cases_before": 2,
+  "historical_harmful_negative_validation_cases_after": 2,
+  "pool_reconstruction": {
+    "zero_loss_feasible_alternative_count": 0,
+    "lower_loss_feasible_alternative_count": 0,
+    "ranking_improved_pool_count": 1
+  },
+  "call_counts": {
+    "model_calls": 638,
+    "solver_calls": 631,
+    "optimizer_calls": 7
+  },
+  "call_count_representation_reconciliation": {
+    "runner_recorded_optimizer_calls": 0,
+    "audited_optimizer_calls": 7,
+    "rule": "optimizer calls = model calls - solver calls",
+    "raw_call_log_modified": false
+  },
+  "logical_train_evaluator_calls": 3,
+  "logical_validation_evaluator_calls": 10,
+  "new_test_calls": 0,
+  "classifier": {
+    "classifier_version": "v18_m2f_trigger_extension_classifier_v1",
+    "allowed_labels": [
+      "EXTENDED_M2F_WRITEBACK_RISK_REDUCTION_SUPPORTED",
+      "EXTENDED_M2F_TRAIN_COLLATERAL_REDUCTION_ONLY",
+      "EXTENDED_M2F_TRIGGER_NOT_SUPPORTED",
+      "EXTENDED_M2F_HARMFUL"
+    ],
+    "frozen_rules": {
+      "targeting_retention_high": ">=0.8 weighted responsibility-repair retention",
+      "targeting_retention_harmful": "<0.5 weighted responsibility-repair retention",
+      "many_invalid_or_infeasible": "valid repairs <4 or feasible repairs <4",
+      "validation_harmful_case_rule": "invalid/unevaluable repair remains unresolved"
+    },
+    "criteria": {
+      "aggregate_train_vote_loss_reduced": false,
+      "high_targeting_retention": true,
+      "many_invalid_or_infeasible": true,
+      "negative_harmful_cases_before": 2,
+      "negative_harmful_cases_after": 2
+    },
+    "final_label": "EXTENDED_M2F_TRIGGER_NOT_SUPPORTED"
+  }
+}

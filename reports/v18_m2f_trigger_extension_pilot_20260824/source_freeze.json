@@ -1,0 +1,20 @@
+{
+  "freeze_version": "v18_m2f_trigger_extension_source_freeze_v1",
+  "execution_commit": "170c4f0cc26073a0dd4aa8e8fa1d9b0eaad4895a",
+  "registry_content_hash": "d8ec8e94c9d4e7180526792798ddc370c76bd980af8d987ea8372f70171b9ab0",
+  "raw_artifact_identity": {
+    "artifact_count": 280,
+    "tree_sha256": "6a2b3c826d889c72de90e6c7f07f330562c9f44d65503bbdbb57abf322979e2d"
+  },
+  "trigger_version": "common_safe_train_vote_loss_extended_trigger_v1",
+  "repair_version": "candidate_specific_counterfactual_compatibility_repair_v1",
+  "source_file_hashes": {
+    "multi_dataset_diverse_rl/compatibility_repair.py": "cb64ff0c634127cd4776279d2680ef1acf37759bf8545f5aa50b71d012232d26",
+    "multi_dataset_diverse_rl/candidate_selection.py": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be",
+    "multi_dataset_diverse_rl/system.py": "f48d9d8cf0be5d7499dfca27e8e94aaf6a928f518657f79be26d1d680128ca92",
+    "scripts/prepare_v18_m2f_trigger_extension_pilot.py": "1040267e2f615697cfa23c07647465e90bdc579955620b8f50e16f54bc2cc08d",
+    "scripts/run_v18_m2f_trigger_extension_pilot.py": "959522862a586b25a2aaad9751039f42c94959050c4422535b77207c483e3082",
+    "scripts/audit_v18_m2f_trigger_extension_pilot.py": "f9daaf4c8db2fc48971cbf06360833d6c58b84a3225529b7e330109e62cec8c5",
+    "scripts/analyze_v18_m2f_trigger_extension_pilot.py": "59c57a0e8c648f03bb7dfe3d802c0bfb8a4f29cea731a9281f1483ec016ed911"
+  }
+}

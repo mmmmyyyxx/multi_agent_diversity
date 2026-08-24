@@ -1,0 +1,7 @@
+status: PASS
+scope: all files in this report directory
+absolute local paths: 0
+prompts/questions/gold answers/model answers/raw responses: 0
+endpoints/credentials/SQLite/cache/checkpoint content: 0
+published content is limited to hashes, counters, aggregate or paired metrics,
+frozen classifier rules, call accounting, and provenance.

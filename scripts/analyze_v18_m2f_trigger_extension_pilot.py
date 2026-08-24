@@ -145,6 +145,12 @@ def analyze(*, prep: Path, pilot: Path, audit_path: Path, out: Path) -> dict[str
         "vote_net": sum(int(row["source_validation_vote_net"]) for row in pairs),
         "oracle_delta": sum(int(row["source_validation_oracle_delta"]) for row in pairs),
     }
+    source_validation_paired = {
+        "vote_gain": sum(int(row["source_validation_vote_gain"]) for row in evaluable),
+        "vote_loss": sum(int(row["source_validation_vote_loss"]) for row in evaluable),
+        "vote_net": sum(int(row["source_validation_vote_net"]) for row in evaluable),
+        "oracle_delta": sum(int(row["source_validation_oracle_delta"]) for row in evaluable),
+    }
     repair_validation = {
         "vote_gain": sum(int(row["repair_validation_vote_gain"]) for row in evaluable),
         "vote_loss": sum(int(row["repair_validation_vote_loss"]) for row in evaluable),
@@ -241,6 +247,11 @@ def analyze(*, prep: Path, pilot: Path, audit_path: Path, out: Path) -> dict[str
             ),
         })
 
+    recorded_calls = dict(pilot_summary["call_counts"])
+    corrected_calls = dict(recorded_calls)
+    corrected_calls["optimizer_calls"] = (
+        int(recorded_calls["model_calls"]) - int(recorded_calls["solver_calls"])
+    )
     summary = {
         "report_version": "v18_m2f_trigger_extension_pilot_report_v1",
         "phase_a_gate": "PASS",
@@ -255,6 +266,7 @@ def analyze(*, prep: Path, pilot: Path, audit_path: Path, out: Path) -> dict[str
         "source_train_totals_evaluable_pairs": source_paired,
         "repair_train_totals_evaluable_pairs": repair_totals,
         "source_validation_totals_all_7": source_validation,
+        "source_validation_totals_evaluable_pairs": source_validation_paired,
         "repair_validation_totals_evaluable_pairs": repair_validation,
         "zero_loss_repairs": sum(bool(row["zero_loss_repair"]) for row in pairs),
         "lower_loss_repairs": sum(bool(row["train_loss_reduced"]) for row in pairs),
@@ -271,7 +283,13 @@ def analyze(*, prep: Path, pilot: Path, audit_path: Path, out: Path) -> dict[str
                 bool(row["ranking_improved_by_repair"]) for row in pool_rows
             ),
         },
-        "call_counts": pilot_summary["call_counts"],
+        "call_counts": corrected_calls,
+        "call_count_representation_reconciliation": {
+            "runner_recorded_optimizer_calls": recorded_calls.get("optimizer_calls"),
+            "audited_optimizer_calls": corrected_calls["optimizer_calls"],
+            "rule": "optimizer calls = model calls - solver calls",
+            "raw_call_log_modified": False,
+        },
         "logical_train_evaluator_calls": pilot_summary["logical_train_evaluator_calls"],
         "logical_validation_evaluator_calls": pilot_summary["logical_validation_evaluator_calls"],
         "new_test_calls": 0,
@@ -303,6 +321,11 @@ def analyze(*, prep: Path, pilot: Path, audit_path: Path, out: Path) -> dict[str
         "eligibility_trigger_changed": True,
         "historical_v18_artifacts_modified": False,
         "test_accessed": False,
+        "call_count_representation_reconciled_offline": True,
+        "raw_pilot_artifacts_modified": False,
+        "temporary_historical_cache_open_incident_restored_byte_exact": True,
+        "final_historical_raw_hash_matches_freeze": True,
+        "scientific_evidence_changed_by_incident": False,
     })
     readme = f"""# V18 M2F Trigger Extension Pilot
 
@@ -334,6 +357,30 @@ and train Vote `{source_all['vote_gain']}/-{source_all['vote_loss']}` =
 evaluable paired repairs; invalid output is never treated as an unattempted
 repair or silently retried.
 
+For the three evaluable pairs, source versus repair was:
+
+| Metric | Source | Repair |
+| --- | ---: | ---: |
+| Train target gain | {source_paired['target_gain']} | {repair_totals['target_gain']} |
+| Train Vote gain | {source_paired['vote_gain']} | {repair_totals['vote_gain']} |
+| Train Vote loss | {source_paired['vote_loss']} | {repair_totals['vote_loss']} |
+| Train Vote net | {source_paired['vote_net']} | {repair_totals['vote_net']} |
+| Validation Vote gain | {source_validation_paired['vote_gain']} | {repair_validation['vote_gain']} |
+| Validation Vote loss | {source_validation_paired['vote_loss']} | {repair_validation['vote_loss']} |
+| Validation Vote net | {source_validation_paired['vote_net']} | {repair_validation['vote_net']} |
+| Validation Oracle delta | {source_validation_paired['oracle_delta']} | {repair_validation['oracle_delta']} |
+
+There were `{summary['zero_loss_repairs']}` zero-loss repairs and
+`{summary['lower_loss_repairs']}` lower-loss repairs. Both historically
+committed harmful sources (Seed59 update3 and Seed61 update5) produced strict
+parser-invalid repair outputs, so their after-repair train and validation
+metrics remain `NA`; they count as unresolved rather than improved.
+
+Post-hoc reconstruction added three feasible repair alternatives. None was a
+zero-loss or lower-loss alternative. Unchanged Common-Safe ranking would place
+a repair first in one of the two pools, but that alternative did not reduce its
+source Vote loss, so this is not evidence of write-back risk reduction.
+
 Responsibility-targeting retention is the existing M2F definition: the
 fraction of source responsibility repairs retained by the repaired prompt.
 The frozen high-retention criterion is `>= 0.8`.
@@ -349,6 +396,16 @@ Common-Safe-feasible candidates with train-visible Vote loss reduces observed
 write-back risk without destroying targeted repair. It does not change Hybrid,
 W1, responsibility, candidate generation, Common-Safe, ranking, plurality, the
 repair prompt, retries, or any validation-aware mechanism.
+
+The frozen answer is **no in this pilot**: the extension did not reduce
+train-visible Vote loss, four of seven repair outputs were invalid, and paired
+validation Vote net worsened from `{source_validation_paired['vote_net']}` to
+`{repair_validation['vote_net']}`. The resulting classifier is `{label}`.
+
+Exact call accounting is `7` repair-model calls plus `631` Solver calls =
+`638` model calls. The runner's derived optimizer counter used the wrong call
+field and recorded zero; this report reconciles it from the immutable raw call
+log without modifying that log.
 """
     (out / "README.md").write_text(readme, encoding="utf-8")
     write_json(out / "fact_assertions.json", {

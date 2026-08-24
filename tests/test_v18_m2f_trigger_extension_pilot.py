@@ -136,3 +136,30 @@ def test_phase_a_never_opens_historical_cache_as_runtime_cache() -> None:
         ROOT / "scripts" / "run_v18_m2f_trigger_extension_pilot.py"
     ).read_text(encoding="utf-8")
     assert ".active_evaluation(" not in runner
+
+
+def test_published_trigger_extension_report_if_present() -> None:
+    report = ROOT / "reports" / "v18_m2f_trigger_extension_pilot_20260824"
+    if not (report / "summary.json").is_file():
+        return
+    summary = json.loads((report / "summary.json").read_text(encoding="utf-8"))
+    assert summary["phase_a_gate"] == "PASS"
+    assert summary["phase_b_gate"] == "PASS"
+    assert summary["eligible_source_candidates"] == 7
+    assert summary["repair_attempts"] == 7
+    assert summary["valid_repairs"] == 3
+    assert summary["feasible_repairs"] == 3
+    assert summary["source_train_totals_all_7"] == {
+        "target_gain": 39, "vote_gain": 43, "vote_loss": 15, "vote_net": 28,
+    }
+    assert summary["repair_train_totals_evaluable_pairs"]["vote_loss"] == 6
+    assert summary["source_train_totals_evaluable_pairs"]["vote_loss"] == 6
+    assert summary["zero_loss_repairs"] == 0
+    assert summary["lower_loss_repairs"] == 0
+    assert summary["call_counts"] == {
+        "model_calls": 638, "solver_calls": 631, "optimizer_calls": 7,
+    }
+    assert summary["new_test_calls"] == 0
+    assert summary["classifier"]["final_label"] == (
+        "EXTENDED_M2F_TRIGGER_NOT_SUPPORTED"
+    )

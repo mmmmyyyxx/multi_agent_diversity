@@ -1,0 +1,13 @@
+focused trigger-extension tests: PASS (8 passed)
+canonical tests: PASS (703 passed, 3 known historical-artifact tests deselected)
+compileall: PASS
+V18 preflight: PASS
+deterministic v15 protocol smoke: PASS
+Phase A gate: PASS
+Phase B canonical audit: PASS (0 blockers)
+deterministic report replay: PASS
+historical V18 raw tree verification: PASS
+fact assertions: PASS
+sanitization scan: PASS
+git diff --check: PASS
+NEW_TEST_CALLS: 0

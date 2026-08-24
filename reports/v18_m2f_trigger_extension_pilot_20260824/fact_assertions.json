@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "phase_a_gate": "PASS",
+  "phase_b_gate": "PASS",
+  "source_count": 7,
+  "source_train_totals": {
+    "target_gain": 39,
+    "vote_gain": 43,
+    "vote_loss": 15,
+    "vote_net": 28
+  },
+  "repair_attempt_count": 7,
+  "validation_after_train_freeze": true,
+  "new_test_calls": 0,
+  "raw_artifacts_modified": false
+}

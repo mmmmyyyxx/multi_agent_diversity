@@ -1,0 +1,16 @@
+{
+  "study_type": "prospective_test_of_m2f_eligibility_trigger_extension",
+  "execution_commit": "170c4f0cc26073a0dd4aa8e8fa1d9b0eaad4895a",
+  "registry_content_hash": "d8ec8e94c9d4e7180526792798ddc370c76bd980af8d987ea8372f70171b9ab0",
+  "phase_a_gate": "PASS",
+  "phase_b_audit_gate": "PASS",
+  "repair_mechanism_changed": false,
+  "eligibility_trigger_changed": true,
+  "historical_v18_artifacts_modified": false,
+  "test_accessed": false,
+  "call_count_representation_reconciled_offline": true,
+  "raw_pilot_artifacts_modified": false,
+  "temporary_historical_cache_open_incident_restored_byte_exact": true,
+  "final_historical_raw_hash_matches_freeze": true,
+  "scientific_evidence_changed_by_incident": false
+}
