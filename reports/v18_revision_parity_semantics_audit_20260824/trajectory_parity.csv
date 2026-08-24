@@ -1,0 +1,7 @@
+seed,arm,conceptual_source_candidate_budget,valid_source_count,revision_attempt_count,revision_output_valid_count,revision_output_invalid_count,evaluable_revision_row_count,attempt_per_valid_source,trajectory_gate
+59,W1_TOP2,32,10,10,10,0,10,1.0,PASS
+59,HYBRID_BASE,32,14,14,12,2,12,1.0,PASS
+60,W1_TOP2,32,8,8,8,0,8,1.0,PASS
+60,HYBRID_BASE,32,4,4,4,0,4,1.0,PASS
+61,W1_TOP2,32,6,6,6,0,6,1.0,PASS
+61,HYBRID_BASE,32,12,12,10,2,10,1.0,PASS

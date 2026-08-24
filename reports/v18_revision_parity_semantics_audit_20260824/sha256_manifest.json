@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "file": "original_frozen_gate_snapshot.json",
+      "sha256": "61a8c65691ed47865d3703bda65670779d6c8b657439a669447639ce329011aa"
+    },
+    {
+      "file": "post_hoc_corrected_gate.json",
+      "sha256": "22ecdb6be913b065af53a8fbe35105ed97fc09d28b5b0effdd5385aa8a06ec8f"
+    },
+    {
+      "file": "README.md",
+      "sha256": "d2ef03c9caaedc856902490345ad68e5c5804a5517d252f533f9fd7ee68d83f3"
+    },
+    {
+      "file": "revision_parity_semantics.json",
+      "sha256": "ac134076f1d5fa50bd1b8982dafe1a110887c710c9dca0b861aae52f03333b16"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "3a92d7e664ce377105416d9e04a548ae0df720701478ca397f95a06b9dae9b03"
+    },
+    {
+      "file": "test_report.txt",
+      "sha256": "64b512a61ed8177a5ec739068cc96254aa8dfe3ffe7992728170f56660addc2f"
+    },
+    {
+      "file": "trajectory_parity.csv",
+      "sha256": "8c86e57f40ef851ec9c8429cbdf2213c6c10be82f0b8d9474d0093ca558ebd3d"
+    }
+  ]
+}

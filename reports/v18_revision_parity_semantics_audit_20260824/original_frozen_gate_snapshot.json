@@ -1,0 +1,11 @@
+{
+  "audit_version": "v18_hybrid_online_accumulation_audit_v1",
+  "gate": "FAIL",
+  "operational_status": "HOLD",
+  "blockers": [
+    "revision_parity:59:HYBRID_BASE",
+    "revision_parity:61:HYBRID_BASE"
+  ],
+  "artifact_sha256": "06ec764dba4a84931a748dda9a209ee7d5c9d40b101a439fc63cf6232369f808",
+  "preserved": true
+}

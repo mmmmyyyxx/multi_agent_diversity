@@ -1,0 +1,18 @@
+VERIFICATION_STATUS=PASS
+API_CALLS=0
+MODEL_CALLS=0
+FOCUSED_TESTS=6 passed
+CANONICAL_TESTS=669 passed, 3 deselected
+KNOWN_HISTORICAL_ARTIFACT_FAILURES=3 unchanged
+COMPILEALL=PASS
+V18_FROZEN_PREFLIGHT=PASS
+V15_DETERMINISTIC_PROTOCOL_SMOKE=PASS
+FACT_ASSERTIONS=PASS
+DETERMINISTIC_REPLAY=PASS
+RAW_ARTIFACT_TREE_UNCHANGED=PASS
+SANITIZATION_SCAN=PASS
+GIT_DIFF_CHECK=PASS
+
+The original frozen V18 audit remains FAIL/HOLD. The independent semantics
+audit and separately named post-hoc corrected gate pass only the revision
+parity representation correction. No scientific analyzer was run.

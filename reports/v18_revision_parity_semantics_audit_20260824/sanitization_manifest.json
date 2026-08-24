@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "api_calls": 0,
+  "model_calls": 0,
+  "contains_prompt_text": false,
+  "contains_question_text": false,
+  "contains_gold_or_model_answers": false,
+  "contains_raw_responses": false,
+  "contains_endpoints_or_credentials": false,
+  "contains_sqlite_or_checkpoint_content": false,
+  "contains_absolute_paths": false
+}
