@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import sqlite3
 from pathlib import Path
+from types import SimpleNamespace
 
 from multi_dataset_diverse_rl.compatibility_repair import (
     EXTENDED_TRAIN_VOTE_LOSS_TRIGGER_VERSION,
@@ -83,3 +86,40 @@ def test_runner_requires_explicit_authorization_and_has_no_test_path() -> None:
     assert '"new_test_calls": 0' in source
     assert "evaluate_final_test" not in source
     assert "commit_prompt" not in source
+
+
+def test_phase_a_reads_frozen_historical_request_identity(tmp_path: Path) -> None:
+    module = load_script("prepare_v18_m2f_trigger_extension_pilot.py")
+    cache = tmp_path / "cache.sqlite"
+    connection = sqlite3.connect(cache)
+    connection.execute(
+        "CREATE TABLE solver_cache (cache_key TEXT, state TEXT, prompt_hash TEXT, "
+        "model_request_identity TEXT, parser_version TEXT, temperature REAL, "
+        "evaluation_replica_seed INTEGER, solver_model TEXT, max_tokens INTEGER, "
+        "output_contract_version TEXT, question_hash TEXT, answer_json TEXT)"
+    )
+    prompt = "parent"
+    payload = {
+        "answer": "a", "trace": "frozen", "valid": True,
+        "validity_status": "valid", "terminal_invalid": False,
+        "response_hash": "0" * 64, "created_at": 1.0,
+    }
+    connection.execute(
+        "INSERT INTO solver_cache VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        (
+            "key", "ready", module.prompt_hash(prompt), "historical-id",
+            "parser", 0.0, 59, "qwen3-14b", 1800, "contract", "q", json.dumps(payload),
+        ),
+    )
+    connection.commit()
+    connection.close()
+    meta = {
+        "prompt_question_evaluator_identity": ["version", "historical-id", "parser", 0.0, 59],
+        "solver_output_contract_version": "contract",
+        "config": {"agent_model": "qwen3-14b", "solver_max_tokens": 1800},
+    }
+    result = module.answers_for_prompt(
+        system=object(), cache_path=cache, prompt=prompt,
+        examples=[SimpleNamespace(question_hash="q")], historical_meta=meta,
+    )
+    assert result is not None and result[0].answer == "a"

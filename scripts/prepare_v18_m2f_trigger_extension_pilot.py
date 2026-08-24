@@ -3,11 +3,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sqlite3
 import subprocess
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +38,6 @@ from multi_dataset_diverse_rl.utils import normalize_prompt_text
 from scripts.admit_v18_hybrid_online_scientific_analysis import (
     artifact_tree_identity,
 )
-from scripts.m2f_probe_support import read_cached_answers
 
 
 CASES = ((59, 3), (61, 5))
@@ -154,9 +154,36 @@ def make_system(
 
 def answers_for_prompt(
     *, system: PromptEnsembleOptimizationSystem, cache_path: Path,
-    prompt: str, examples: Sequence[Any], require_complete: bool = True,
+    prompt: str, examples: Sequence[Any], historical_meta: Mapping[str, Any],
+    require_complete: bool = True,
 ) -> tuple[PromptAnswer, ...] | None:
-    observations = read_cached_answers(cache_path, prompt_hash(prompt), system)
+    evaluator_identity = historical_meta["prompt_question_evaluator_identity"]
+    connection = sqlite3.connect(
+        f"file:{cache_path.resolve().as_posix()}?mode=ro&immutable=1", uri=True
+    )
+    try:
+        connection.execute("PRAGMA query_only=ON")
+        rows = connection.execute(
+            "SELECT question_hash,answer_json FROM solver_cache "
+            "WHERE state='ready' AND prompt_hash=? "
+            "AND model_request_identity=? AND parser_version=? "
+            "AND temperature=? AND evaluation_replica_seed=? "
+            "AND solver_model=? AND max_tokens=? "
+            "AND output_contract_version=? ORDER BY cache_key",
+            (
+                prompt_hash(prompt), str(evaluator_identity[1]),
+                str(evaluator_identity[2]), float(evaluator_identity[3]),
+                int(evaluator_identity[4]),
+                str(historical_meta["config"]["agent_model"]),
+                int(historical_meta["config"]["solver_max_tokens"]),
+                str(historical_meta["solver_output_contract_version"]),
+            ),
+        ).fetchall()
+    finally:
+        connection.close()
+    observations = {
+        str(question_hash): json.loads(raw) for question_hash, raw in rows
+    }
     if not all(example.question_hash in observations for example in examples):
         if require_complete:
             raise ValueError("historical cache profile is incomplete")
@@ -323,14 +350,14 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
         initial_profiles = [
             answers_for_prompt(
                 system=system, cache_path=cache_path, prompt=shared_prompt,
-                examples=train_probe.examples,
+                examples=train_probe.examples, historical_meta=meta,
             )
             for _ in range(5)
         ]
         active_profiles = [
             answers_for_prompt(
                 system=system, cache_path=cache_path, prompt=prompt,
-                examples=train_probe.examples,
+                examples=train_probe.examples, historical_meta=meta,
             )
             for prompt in parent_prompts
         ]
@@ -367,7 +394,7 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
             assigned = set(map(str, branch_by_target[target]["assigned_question_hashes"]))
             source_profile = answers_for_prompt(
                 system=system, cache_path=cache_path, prompt=source_prompt,
-                examples=train_probe.examples,
+                examples=train_probe.examples, historical_meta=meta,
             )
             if source_profile is None:
                 raise ValueError("source train profile missing")
@@ -482,7 +509,7 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
             validation_parent_profiles = [
                 answers_for_prompt(
                     system=system, cache_path=cache_path, prompt=prompt,
-                    examples=validation_probe.examples,
+                    examples=validation_probe.examples, historical_meta=meta,
                 )
                 for prompt in parent_prompts
             ]
@@ -494,7 +521,8 @@ def build(*, run_root: Path, admission: dict[str, Any], out: Path) -> dict[str, 
             )
             cached_source_validation = answers_for_prompt(
                 system=system, cache_path=cache_path, prompt=source_prompt,
-                examples=validation_probe.examples, require_complete=False,
+                examples=validation_probe.examples, historical_meta=meta,
+                require_complete=False,
             )
             row["source_validation_profile_cached"] = (
                 [asdict(answer) for answer in cached_source_validation]
