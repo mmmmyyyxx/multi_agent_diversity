@@ -1,15 +1,18 @@
 {
-  "analysis_mode": "zero_api_existing_candidate_pool_reanalysis",
-  "source_registry_sha256": "41006949469a576e064fa92ee0d2e1cc87629149a39e883400fa7330be8c141a",
-  "source_validation_table_sha256": "d0e722622fd6260bfadf0b4aa092a1722cb5b4a16a0e55d997eea53559da17bc",
+  "phase_a_mode": "zero_api_existing_candidate_pool_reanalysis",
+  "phase_b_mode": "prospective_fixed_parent_nested_candidate_breadth_pilot",
+  "phase_b_execution_commit": "a1a17e23dcc222e69f0b4807dc458c56a4dae06b",
+  "canonical_gate": "PASS",
+  "decision_frozen_before_validation": true,
+  "validation_used_for_selection": false,
+  "test_accessed": false,
   "historical_artifacts_modified": false,
-  "validation_used_for_frontier": false,
-  "validation_read_after_choice_frozen": true,
   "method_modified": false,
   "selector_modified": false,
   "ranking_modified": false,
   "common_safe_modified": false,
-  "new_api_calls": 0,
-  "new_validation_calls": 0,
-  "new_test_calls": 0
+  "m20_or_m2f_modified": false,
+  "invalidated_attempt_status": "terminal_funnel_not_persisted_excluded_from_scientific_counts",
+  "invalidated_attempt_raw_artifacts_preserved": true,
+  "canonical_retry_used_fresh_root_and_cache": true
 }

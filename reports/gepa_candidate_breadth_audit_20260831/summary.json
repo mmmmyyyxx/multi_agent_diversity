@@ -1,19 +1,51 @@
 {
-  "audit_version": "gepa_style_top2_residual_frontier_v1",
-  "top_k": 2,
-  "historical_parent_count": 2,
-  "historical_candidate_count": 7,
-  "top_k_candidate_count": 4,
-  "winner_changed_parent_count": 0,
-  "winner_changed_rate": 0.0,
-  "changed_winner_validation_vote_improved_count": 0,
-  "aggregate_frontier_minus_historical_validation_vote": 0,
-  "aggregate_frontier_minus_historical_validation_oracle": 0,
+  "audit_version": "gepa_candidate_breadth_phase_a_and_b_v1",
   "phase_a_diagnosis": "CANDIDATE_SELECTION_NOT_PRIMARY",
-  "phase_a_stop": true,
-  "phase_b_gate": "NOT_RUN_PHASE_A_STOP",
-  "phase_b_api_authorized": false,
-  "new_api_calls": 0,
-  "new_validation_calls": 0,
-  "new_test_calls": 0
+  "phase_a_winner_changed_parent_count": 0,
+  "phase_b_gate": "PASS",
+  "phase_b_case_count": 2,
+  "requested_source_candidate_count": 8,
+  "actual_source_candidate_count": 0,
+  "zero_candidate_terminal_failure_classes": [
+    "critic_semantic_rejection_exhausted",
+    "critic_semantic_rejection_exhausted"
+  ],
+  "n2": {
+    "valid_candidate_count": 0,
+    "feasible_candidate_count": 0,
+    "zero_loss_feasible_count": 0,
+    "validation_vote_delta": 0,
+    "validation_oracle_delta": 0
+  },
+  "n4": {
+    "valid_candidate_count": 0,
+    "feasible_candidate_count": 0,
+    "zero_loss_feasible_count": 0,
+    "n4_only_feasible_candidate_count": 0,
+    "n4_only_zero_loss_feasible_count": 0,
+    "n4_only_lower_than_n2_best_loss_feasible_count": 0,
+    "validation_vote_delta": 0,
+    "validation_oracle_delta": 0
+  },
+  "classifier": {
+    "classifier_version": "gepa_proposal_breadth_classifier_v1",
+    "rules_frozen_before_validation_readout": true,
+    "novel_safer_feasible_candidate_count": 0,
+    "aggregate_feasible_candidate_delta": 0,
+    "aggregate_selected_train_vote_loss_reduction": 0,
+    "aggregate_n4_minus_n2_validation_vote_delta": 0,
+    "final_label": "NO_PROPOSAL_BREADTH_SIGNAL",
+    "candidate_breadth_effect_interpretable": false,
+    "interpretation": "not_evaluated_downstream_mutation_due_critic_semantic_exhaustion"
+  },
+  "authoritative_api_calls": {
+    "teacher_calls": 4,
+    "critic_calls": 4,
+    "student_calls": 0,
+    "solver_calls": 0,
+    "total_model_calls": 8
+  },
+  "new_test_calls": 0,
+  "team_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0
 }

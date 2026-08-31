@@ -90,3 +90,12 @@ def test_zero_candidate_result_requires_persisted_terminal_funnel() -> None:
     )
     assert '"candidate_funnel": asdict(funnel)' in runner
     assert "zero_candidate_terminal_unclassified" in auditor
+
+
+def test_empty_phase_b_pool_keeps_published_schema() -> None:
+    analyzer = (
+        ROOT / "scripts" / "analyze_gepa_candidate_breadth_pilot.py"
+    ).read_text(encoding="utf-8")
+    assert "PHASE_B_FIELDS" in analyzer
+    assert 'write_csv(report / "phase_b_candidate_pool.csv", rows, PHASE_B_FIELDS)' in analyzer
+    assert "not_evaluated_downstream_mutation_due_critic_semantic_exhaustion" in analyzer

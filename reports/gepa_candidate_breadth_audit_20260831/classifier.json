@@ -1,13 +1,11 @@
 {
-  "classifier_version": "gepa_candidate_breadth_classifier_v1",
+  "classifier_version": "gepa_proposal_breadth_classifier_v1",
   "rules_frozen_before_validation_readout": true,
-  "phase_a_label": "CANDIDATE_SELECTION_NOT_PRIMARY",
-  "phase_b_status": "NOT_EVALUATED_PHASE_A_STOP",
-  "proposal_breadth_label": null,
-  "allowed_proposal_breadth_labels": [
-    "PROPOSAL_BREADTH_SUPPORTED",
-    "PROPOSAL_BREADTH_THROUGHPUT_ONLY",
-    "NO_PROPOSAL_BREADTH_SIGNAL",
-    "PROPOSAL_BREADTH_HARMFUL"
-  ]
+  "novel_safer_feasible_candidate_count": 0,
+  "aggregate_feasible_candidate_delta": 0,
+  "aggregate_selected_train_vote_loss_reduction": 0,
+  "aggregate_n4_minus_n2_validation_vote_delta": 0,
+  "final_label": "NO_PROPOSAL_BREADTH_SIGNAL",
+  "candidate_breadth_effect_interpretable": false,
+  "interpretation": "not_evaluated_downstream_mutation_due_critic_semantic_exhaustion"
 }

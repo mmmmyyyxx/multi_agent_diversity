@@ -9,8 +9,21 @@ from typing import Any, Mapping, Sequence
 from gepa_candidate_breadth_support import ROOT, classify, read_json, write_json
 
 
-def write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
-    fields = list(rows[0]) if rows else []
+PHASE_B_FIELDS = (
+    "parent_id", "candidate_hash", "candidate_stage", "source_slot",
+    "in_n2_pool", "in_n4_pool", "n4_only", "valid", "feasible",
+    "train_target_gain", "train_vote_gain", "train_vote_loss",
+    "train_vote_net", "n2_would_commit", "n4_would_commit",
+    "validation_vote_delta_if_selected",
+    "validation_oracle_delta_if_selected",
+)
+
+
+def write_csv(
+    path: Path, rows: Sequence[Mapping[str, Any]],
+    fields: Sequence[str] | None = None,
+) -> None:
+    fields = list(fields or (list(rows[0]) if rows else ()))
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
@@ -27,6 +40,17 @@ def analyze(raw: Path, gate_path: Path, report: Path) -> dict[str, Any]:
     if len(cases) != 2:
         raise ValueError("two frozen cases required")
     classifier = classify(cases)
+    source_candidate_count = sum(
+        int(row["actual_source_candidate_count"]) for row in cases
+    )
+    classifier.update({
+        "candidate_breadth_effect_interpretable": source_candidate_count > 0,
+        "interpretation": (
+            "not_evaluated_downstream_mutation_due_critic_semantic_exhaustion"
+            if source_candidate_count == 0
+            else "candidate_pool_quality_comparison_completed"
+        ),
+    })
     rows = []
     for case in cases:
         n2_hashes = set(case["n2"]["pool_candidate_hashes"])
@@ -60,13 +84,15 @@ def analyze(raw: Path, gate_path: Path, report: Path) -> dict[str, Any]:
                     if row["candidate_hash"] == case["n4"]["winner_hash"] else "NA"
                 ),
             })
-    write_csv(report / "phase_b_candidate_pool.csv", rows)
+    write_csv(report / "phase_b_candidate_pool.csv", rows, PHASE_B_FIELDS)
     summary = {
         "audit_version": "gepa_candidate_breadth_phase_a_and_b_v1",
         "phase_a_diagnosis": "CANDIDATE_SELECTION_NOT_PRIMARY",
         "phase_a_winner_changed_parent_count": 0,
         "phase_b_gate": "PASS",
         "phase_b_case_count": 2,
+        "requested_source_candidate_count": 8,
+        "actual_source_candidate_count": source_candidate_count,
         "zero_candidate_terminal_failure_classes": [
             row["candidate_funnel"]["terminal_failure_class"]
             for row in cases if int(row["actual_source_candidate_count"]) == 0
@@ -89,6 +115,13 @@ def analyze(raw: Path, gate_path: Path, report: Path) -> dict[str, Any]:
             "validation_oracle_delta": sum(int(row["n4"]["validation_oracle_delta"]) for row in cases),
         },
         "classifier": classifier,
+        "authoritative_api_calls": {
+            "teacher_calls": sum(int(row["candidate_funnel"]["teacher_calls"]) for row in cases),
+            "critic_calls": sum(int(row["candidate_funnel"]["critic_calls"]) for row in cases),
+            "student_calls": sum(int(row["candidate_funnel"]["student_calls"]) for row in cases),
+            "solver_calls": sum(int(row["solver_cache_miss_count"]) for row in cases),
+            "total_model_calls": sum(int(row["role_call_count"]) for row in cases),
+        },
         "new_test_calls": 0,
         "team_prompt_commit_count": 0,
         "trajectory_mutation_count": 0,

@@ -1,11 +1,12 @@
 verification_status=PASS
-focused_tests=5 passed
-canonical_tests=711 passed
+focused_tests=7 passed
+canonical_tests=718 passed
 compileall=PASS
 preflight=PASS
 deterministic_replay=PASS
 sanitization_scan=PASS
 git_diff_check=PASS
-new_api_calls=0
+authoritative_api_calls=8
+invalidated_attempt_api_calls=8
 new_validation_calls=0
 new_test_calls=0
