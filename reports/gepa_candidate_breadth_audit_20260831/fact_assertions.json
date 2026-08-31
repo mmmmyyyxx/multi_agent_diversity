@@ -1,0 +1,12 @@
+{
+  "fact_assertions_pass": true,
+  "phase_a_parent_count": 2,
+  "phase_a_candidate_count": 7,
+  "top_k": 2,
+  "phase_a_diagnosis": "CANDIDATE_SELECTION_NOT_PRIMARY",
+  "phase_b_not_run": true,
+  "validation_used_for_frontier": false,
+  "new_api_calls": 0,
+  "new_validation_calls": 0,
+  "new_test_calls": 0
+}

@@ -1,0 +1,13 @@
+{
+  "classifier_version": "gepa_candidate_breadth_classifier_v1",
+  "rules_frozen_before_validation_readout": true,
+  "phase_a_label": "CANDIDATE_SELECTION_NOT_PRIMARY",
+  "phase_b_status": "NOT_EVALUATED_PHASE_A_STOP",
+  "proposal_breadth_label": null,
+  "allowed_proposal_breadth_labels": [
+    "PROPOSAL_BREADTH_SUPPORTED",
+    "PROPOSAL_BREADTH_THROUGHPUT_ONLY",
+    "NO_PROPOSAL_BREADTH_SIGNAL",
+    "PROPOSAL_BREADTH_HARMFUL"
+  ]
+}

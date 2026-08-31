@@ -1,0 +1,10 @@
+sanitization_status=PASS
+absolute_local_paths=0
+credentials_or_environment_secrets=0
+provider_endpoints=0
+sqlite_or_checkpoint_contents=0
+raw_prompts=0
+raw_questions_or_gold_answers=0
+raw_model_answers_or_responses=0
+test_observations=0
+published_content=aggregate_metrics_hashes_and_frozen_decisions_only

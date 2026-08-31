@@ -1,0 +1,19 @@
+{
+  "audit_version": "gepa_style_top2_residual_frontier_v1",
+  "top_k": 2,
+  "historical_parent_count": 2,
+  "historical_candidate_count": 7,
+  "top_k_candidate_count": 4,
+  "winner_changed_parent_count": 0,
+  "winner_changed_rate": 0.0,
+  "changed_winner_validation_vote_improved_count": 0,
+  "aggregate_frontier_minus_historical_validation_vote": 0,
+  "aggregate_frontier_minus_historical_validation_oracle": 0,
+  "phase_a_diagnosis": "CANDIDATE_SELECTION_NOT_PRIMARY",
+  "phase_a_stop": true,
+  "phase_b_gate": "NOT_RUN_PHASE_A_STOP",
+  "phase_b_api_authorized": false,
+  "new_api_calls": 0,
+  "new_validation_calls": 0,
+  "new_test_calls": 0
+}

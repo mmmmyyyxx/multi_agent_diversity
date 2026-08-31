@@ -1,0 +1,11 @@
+{
+  "README.md": "f7be5ad25ec55e53cd5f5a244dde89124e87275b3eff835a880679fb0f0f80da",
+  "classifier.json": "365b5a7158af08b1dc56457a1c7b451e17b2c890b4f7c8ae76c72735bd6b98e5",
+  "fact_assertions.json": "33b097786c96927569aaf123507611bee2bdd90029f3f5ae6d430c9c1804ff43",
+  "phase_a_frontier_audit.csv": "49780ac8b17221251b1572d913f926418bac209b8d9d059e1c61116e1aad9c8c",
+  "phase_b_candidate_pool.csv": "bfeb613bf11cb4ae3ed2db1e088379a7b0a001c10b8d55a74658e3268174ac35",
+  "provenance.json": "d1e8cd127f2dbf9b1ff34e14d156e18889a7f577ea00a1c9086cff0c0a130c92",
+  "sanitization_report.txt": "6e3637869d6cea31b4c1c62b217e9677e1d21f92d88362d668273d2cbcae9bbb",
+  "summary.json": "0c81ea0031ea9d5240d988bfa998743160346b86d0df20571f7645288af2e2eb",
+  "test_report.txt": "5229ee03bf2b0cd5029b4ca3541611da5acb009b3e61354d5c4b7a287c085efe"
+}
