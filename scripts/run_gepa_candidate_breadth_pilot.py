@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -129,6 +130,7 @@ async def run_case(case: dict[str, Any], out: Path, cache: Path) -> dict[str, An
         "n2": n2,
         "n4": n4,
         "candidate_rows": rows,
+        "candidate_funnel": asdict(funnel),
         "decision_frozen_before_validation": True,
         "team_prompt_commit_count": 0,
         "trajectory_mutation_count": 0,
@@ -161,6 +163,7 @@ async def run_case(case: dict[str, Any], out: Path, cache: Path) -> dict[str, An
         "role_call_count": len(system.llm.calls),
         "solver_cache_miss_count": int(system.prompt_question_evaluator.cache_misses),
         "infrastructure_failure_count": int(funnel.infrastructure_failed_updates),
+        "candidate_funnel": asdict(funnel),
         "test_calls": int(system.test_evaluation_count),
     }
     write_json(out / "case_result.json", result)

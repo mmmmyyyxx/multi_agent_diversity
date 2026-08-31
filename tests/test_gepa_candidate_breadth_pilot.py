@@ -79,3 +79,14 @@ def test_support_is_standalone_importable() -> None:
         encoding="utf-8"
     )
     assert "sys.path.insert(0, str(ROOT))" in source
+
+
+def test_zero_candidate_result_requires_persisted_terminal_funnel() -> None:
+    runner = (ROOT / "scripts" / "run_gepa_candidate_breadth_pilot.py").read_text(
+        encoding="utf-8"
+    )
+    auditor = (ROOT / "scripts" / "audit_gepa_candidate_breadth_pilot.py").read_text(
+        encoding="utf-8"
+    )
+    assert '"candidate_funnel": asdict(funnel)' in runner
+    assert "zero_candidate_terminal_unclassified" in auditor

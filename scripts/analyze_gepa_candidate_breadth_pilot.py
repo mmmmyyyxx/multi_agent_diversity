@@ -67,6 +67,10 @@ def analyze(raw: Path, gate_path: Path, report: Path) -> dict[str, Any]:
         "phase_a_winner_changed_parent_count": 0,
         "phase_b_gate": "PASS",
         "phase_b_case_count": 2,
+        "zero_candidate_terminal_failure_classes": [
+            row["candidate_funnel"]["terminal_failure_class"]
+            for row in cases if int(row["actual_source_candidate_count"]) == 0
+        ],
         "n2": {
             "valid_candidate_count": sum(int(row["n2"]["valid_candidate_count"]) for row in cases),
             "feasible_candidate_count": sum(int(row["n2"]["feasible_candidate_count"]) for row in cases),

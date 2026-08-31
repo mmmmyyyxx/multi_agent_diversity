@@ -45,6 +45,13 @@ def audit(raw: Path, registry_path: Path, freeze_path: Path, out: Path) -> dict[
             blockers.append(f"{case['case_id']}:source_budget_mismatch")
         if int(row["actual_source_candidate_count"]) > REQUESTED_SOURCE_COUNT:
             blockers.append(f"{case['case_id']}:source_budget_exceeded")
+        funnel = row.get("candidate_funnel")
+        if not isinstance(funnel, dict):
+            blockers.append(f"{case['case_id']}:candidate_funnel_missing")
+        elif int(row["actual_source_candidate_count"]) == 0 and not str(
+            funnel.get("terminal_failure_class", "")
+        ):
+            blockers.append(f"{case['case_id']}:zero_candidate_terminal_unclassified")
         if int(row["revision_attempt_count"]) != int(row["actual_source_candidate_count"]):
             blockers.append(f"{case['case_id']}:revision_attempt_parity")
         if not bool(row["n4"]["n2_pool_is_subset"]):
