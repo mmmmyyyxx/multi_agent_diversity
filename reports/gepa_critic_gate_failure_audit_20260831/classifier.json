@@ -1,0 +1,12 @@
+{
+  "classifier_version": "gepa_critic_gate_failure_classifier_v1",
+  "final_diagnosis": "PRE_STUDENT_CRITIC_GATE_BOTTLENECK_CONFIRMED",
+  "candidate_selection_not_primary": true,
+  "proposal_breadth_evaluated": false,
+  "format_or_parser_failure": false,
+  "semantic_gate_exhaustion": true,
+  "over_strict_critic_established": false,
+  "exact_blocked_failed_checks_recoverable": false,
+  "fixed_parent_context_reconstruction_exact_for_all_cases": false,
+  "future_gate_intervention_requires_new_preregistration": true
+}

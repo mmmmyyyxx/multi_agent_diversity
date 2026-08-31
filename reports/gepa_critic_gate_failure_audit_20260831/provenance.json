@@ -1,0 +1,10 @@
+{
+  "audit_mode": "offline_existing_artifact_diagnosis",
+  "breadth_execution_commit": "a1a17e23dcc222e69f0b4807dc458c56a4dae06b",
+  "v18_execution_commit": "a7032b6ff4e20f91ae3939504e779aa409044089",
+  "audit_start_commit": "9a21dfe41169ecfa0192f2e742468003c22e9c97",
+  "original_run_artifacts_modified": false,
+  "method_runtime_semantics_changed": false,
+  "raw_critic_decisions_published": false,
+  "absolute_paths_published": false
+}

@@ -1,0 +1,12 @@
+sanitization_status=PASS
+raw_prompts=0
+question_text=0
+gold_answers=0
+model_answers=0
+raw_responses=0
+critic_feedback_text=0
+credentials=0
+provider_urls=0
+sqlite_content=0
+checkpoints=0
+absolute_paths=0

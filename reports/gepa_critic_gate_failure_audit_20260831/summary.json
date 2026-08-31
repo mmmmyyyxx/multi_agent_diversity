@@ -1,0 +1,59 @@
+{
+  "audit_version": "gepa_critic_gate_failure_audit_v1",
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "method_modified": false,
+  "probe_case_count": 2,
+  "probe_semantic_gate_exhausted_count": 2,
+  "probe_format_or_parse_failure_count": 0,
+  "probe_truncation_count": 0,
+  "probe_student_call_count": 0,
+  "probe_exact_rejection_reason_recoverable": false,
+  "probe_telemetry_gap": "critic failed_checks and feedback were not persisted by the fixed-parent runner",
+  "same_historical_context_hash_count": 1,
+  "different_historical_context_hash_count": 1,
+  "historical_v18": {
+    "branch_count": 96,
+    "student_reached_branch_count": 27,
+    "student_reached_rate": 0.28125,
+    "critic_semantic_gate_exhausted_branch_count": 69,
+    "critic_semantic_gate_exhausted_rate": 0.71875,
+    "critic_semantic_rejection_response_count": 148,
+    "critic_schema_invalid_response_count": 0,
+    "critic_truncated_response_count": 0,
+    "student_reached_mean_context_characters": 5003.592592592592,
+    "semantic_exhausted_mean_context_characters": 4951.507246376812,
+    "selected_case_counts": {
+      "3": 96
+    },
+    "failed_check_counts": {
+      "actionable_specificity": 68,
+      "evidence_mismatch": 8,
+      "preservation_or_output_risk": 73
+    },
+    "failed_check_combinations": {
+      "actionable_specificity": 67,
+      "actionable_specificity+evidence_mismatch": 1,
+      "evidence_mismatch": 7,
+      "preservation_or_output_risk": 73
+    },
+    "semantic_rejection_counts_by_round": {
+      "1": 79,
+      "2": 69
+    }
+  },
+  "conclusions": {
+    "candidate_selection_not_primary": true,
+    "proposal_breadth_evaluated": false,
+    "pre_student_critic_gate_bottleneck_confirmed": true,
+    "blocked_failures_are_format_or_parse_failures": false,
+    "over_strict_critic_established_for_blocked_cases": false,
+    "same_parent_target_is_intrinsically_unserviceable": false,
+    "larger_context_explains_semantic_exhaustion": false,
+    "candidate_count_visible_before_student": false,
+    "fixed_parent_context_reconstruction_exact_for_all_cases": false,
+    "next_intervention_requires_new_preregistration": true
+  },
+  "final_diagnosis": "PRE_STUDENT_CRITIC_GATE_BOTTLENECK_CONFIRMED"
+}

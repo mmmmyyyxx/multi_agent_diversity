@@ -1,0 +1,19 @@
+{
+  "fact_assertions_pass": true,
+  "probe_case_count": 2,
+  "probe_semantic_gate_exhausted_count": 2,
+  "probe_format_or_parse_failure_count": 0,
+  "probe_truncation_count": 0,
+  "probe_student_call_count": 0,
+  "historical_branch_count": 96,
+  "historical_student_reached_branch_count": 27,
+  "historical_semantic_gate_exhausted_branch_count": 69,
+  "historical_critic_schema_invalid_response_count": 0,
+  "historical_critic_truncated_response_count": 0,
+  "same_historical_context_hash_count": 1,
+  "different_historical_context_hash_count": 1,
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "method_modified": false
+}
