@@ -2,15 +2,19 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.candidate_selection import common_monotone_safe_key
 from multi_dataset_diverse_rl.protocol import CandidateBudgetContract
 
 
-ROOT = Path(__file__).resolve().parents[1]
 AUTHORIZATION_ENV = "GEPA_PROPOSAL_BREADTH_API_AUTHORIZED"
 PROBE_VERSION = "gepa_proposal_breadth_fixed_parent_v1"
 BREADTHS = (2, 4)

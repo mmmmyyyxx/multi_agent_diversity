@@ -72,3 +72,10 @@ def test_runner_requires_explicit_authorization_and_forbids_test() -> None:
     assert "AUTHORIZATION_ENV" in source
     assert '"test_calls": int(system.test_evaluation_count)' in source
     assert "team_prompt_commit_count\": 0" in source
+
+
+def test_support_is_standalone_importable() -> None:
+    source = (ROOT / "scripts" / "gepa_candidate_breadth_support.py").read_text(
+        encoding="utf-8"
+    )
+    assert "sys.path.insert(0, str(ROOT))" in source
