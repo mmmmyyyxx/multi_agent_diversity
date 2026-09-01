@@ -734,18 +734,27 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.llm.calls = list(payload["llm_calls"])
     system.fixed_probe.restore(payload["fixed_probe"])
     states, _, opportunities = system.current_states_and_opportunities()
-    recomputed_eligibility, recomputed_assignments, _ = (
-        compute_repair_eligibility_sets(
-            team_states={row.question_hash: row for row in states},
-            opportunities=opportunities,
-            state=system.responsibility_state,
+    if system.protocol.service_routing_enabled:
+        recomputed_eligibility, recomputed_assignments, _ = (
+            compute_repair_eligibility_sets(
+                team_states={row.question_hash: row for row in states},
+                opportunities=opportunities,
+                state=system.responsibility_state,
+            )
         )
-    )
-    if recomputed_eligibility != system.cached_responsibility_eligibility:
-        raise ValueError(
-            "Checkpoint responsibility eligibility does not match "
-            "the restored active team"
-        )
+        if recomputed_eligibility != system.cached_responsibility_eligibility:
+            raise ValueError(
+                "Checkpoint responsibility eligibility does not match "
+                "the restored active team"
+            )
+    else:
+        if system.cached_responsibility_eligibility:
+            raise ValueError(
+                "Checkpoint disabled responsibility protocol contains "
+                "cached eligibility"
+            )
+        recomputed_eligibility = {}
+        recomputed_assignments = {agent_id: [] for agent_id in range(5)}
     system.cached_responsibility_assignments = {
         agent_id: list(rows)
         for agent_id, rows in recomputed_assignments.items()

@@ -1,0 +1,20 @@
+{
+  "audit_version": "static_checkpoint_restore_semantics_v1",
+  "gate": "PASS",
+  "run_count": 6,
+  "checks_per_run": {
+    "routing_disabled": true,
+    "saved_eligibility_empty": true,
+    "restored_eligibility_empty": true,
+    "restored_assignments_empty": true,
+    "team_hash_match": true,
+    "active_profiles_match": true,
+    "checkpoint_unchanged": true
+  },
+  "api_calls": 0,
+  "validation_evaluations": 0,
+  "test_calls": 0,
+  "static_reruns": 0,
+  "generic_runs": 0,
+  "original_artifacts_modified": false
+}

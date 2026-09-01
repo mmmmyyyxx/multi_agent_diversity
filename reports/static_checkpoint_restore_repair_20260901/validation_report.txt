@@ -1,0 +1,12 @@
+STATIC_CHECKPOINT_RESTORE_REPAIR
+root_cause=disabled responsibility protocol compared against recomputed member-aware eligibility
+focused_restore_tests=9 passed
+full_tests=744 passed
+compileall=PASS
+existing_static_checkpoint_audit=6/6 PASS
+api_calls=0
+validation_evaluations=0
+test_calls=0
+static_reruns=0
+generic_runs=0
+git_diff_check=PASS
