@@ -1,0 +1,74 @@
+# Multi-model Solver Headroom Screening — Seed65 Amendment
+
+This amendment supersedes the unfinished three-seed screening after the user
+requested broader model coverage and one seed only. The completed
+`qwen3-8b` Seed65 Static/Generic pair is retained; its interrupted Seed66 root
+is excluded, never resumed, and never analyzed. Seed67 was not started.
+
+## Candidate order
+
+1. `qwen-turbo`
+2. `qwen3-4b`
+3. `qwen-flash`
+4. `qwen3-8b` (completed anchor)
+5. `deepseek-r1-distill-qwen-7b`
+6. `deepseek-r1-distill-llama-8b`
+7. `deepseek-r1-distill-qwen-1.5b`
+8. `glm-4.5-air`
+
+Only models visible to the credential and passing one minimal real API smoke
+enter the Static probe. Unavailable models are skipped in order. No denied
+model is repeatedly called.
+
+## Stage 1: Static-first probe
+
+Every entrant runs exactly Seed65, five agents, canonical shared prompt, train
+75, and no optimization updates. A separate read-only evaluator measures the
+50-row validation split. Test is never loaded or evaluated.
+
+A Solver qualifies for Generic when all are true:
+
+```text
+0.50 <= Static Validation VoteAcc <= 0.64
+Static Validation OracleAcc - VoteAcc >= 0.08
+terminal-invalid rate <= 0.01
+infrastructure failures = 0
+```
+
+At most three qualifiers advance, ranked by larger Oracle-Vote gap, then lower
+Static VoteAcc, then frozen candidate priority. This selection uses Static only
+and is frozen before any new Generic result.
+
+## Stage 2: one-seed Generic
+
+Selected models run canonical Generic with Seed65, 32 updates, one branch, two
+candidates, Stage B budget 2, Proposal Memory off, and unchanged Common-Safe.
+Their completed Static state and immutable comparison cache are reused; Static
+is not rerun. The existing qwen3-8b Seed65 Generic result is reused if selected
+or reported as an anchor otherwise.
+
+Evaluator, Teacher, Critic, and Prompt Optimizer are fixed to
+`qwen3.7-flash`. All Solver requests use thinking disabled. The final active
+state is evaluated once on validation after training; validation never selects
+or writes back a state.
+
+## One-seed headroom label
+
+For each Generic-evaluated model, report but do not overclaim:
+
+```text
+VoteDelta = Generic Validation VoteAcc - Static Validation VoteAcc
+SUPPORTED_LOCAL if VoteDelta >= 0.04 and Generic Oracle-Vote gap >= 0.08
+NO_LOCAL_HEADROOM_SIGNAL otherwise
+```
+
+This single-seed amendment is a screening diagnostic, not a formal multi-seed
+model-selection claim.
+
+Prohibited: Full, Module1, M20, M2F, Hybrid, test access, data changes, extra
+seeds, result-conditioned retry, and modification of Generic or Common-Safe.
+
+```text
+FULL_METHOD_NOT_RUN=true
+TEST_ACCESSED=false
+```
