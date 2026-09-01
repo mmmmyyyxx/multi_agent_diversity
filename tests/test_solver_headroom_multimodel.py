@@ -42,6 +42,8 @@ def test_retry_prepare_script_is_directly_executable() -> None:
     source=(ROOT/"scripts/prepare_solver_headroom_multimodel_retry.py").read_text(encoding="utf-8")
     assert 'Path(__file__).resolve().parents[1]' in source
     assert 'sys.path.insert(0, str(ROOT))' in source
+    assert 'checkpoint.get("training_completed")' in source
+    assert 'checkpoint.get("training_complete")' not in source
 
 
 def test_preregistration_freezes_static_gate() -> None:

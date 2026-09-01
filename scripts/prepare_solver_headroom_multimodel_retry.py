@@ -37,7 +37,7 @@ def main() -> None:
         checkpoint = read_json(source / "training_checkpoint.json")
         summary = read_json(source / "final_summary.json")
         selection = summary["selection_summary"]
-        if not checkpoint.get("training_complete") or int(selection.get("test_evaluation_count", -1)) != 0:
+        if not checkpoint.get("training_completed") or int(selection.get("test_evaluation_count", -1)) != 0:
             raise RuntimeError(f"incomplete Static source: {entry['key']}")
         rows.append({
             "key": entry["key"],
