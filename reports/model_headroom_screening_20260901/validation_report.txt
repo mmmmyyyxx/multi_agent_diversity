@@ -1,0 +1,33 @@
+TASK_MODEL_HEADROOM_SCREENING_VALIDATION_REPORT
+
+status=HOLD
+execution_commit=a998b8f2963b5b60f2936b0c8ba2b83b03666bdf
+source_freeze=PASS
+requested_run_inventory=12
+completed_run_inventory=0
+full_method_run=false
+test_accessed=false
+validation_evaluation_count=0
+test_evaluation_count=0
+historical_artifacts_modified=false
+
+PRE-EXECUTION OFFLINE CHECKS
+focused_tests=8 passed
+canonical_tests=729 passed
+compileall=PASS
+preflight_qwen2.5-7b-instruct=PASS (3 Static x 0 updates; 3 Generic x 32 updates)
+preflight_qwen3-8b=PASS (3 Static x 0 updates; 3 Generic x 32 updates)
+git_diff_check=PASS
+
+EXECUTION BLOCKER
+first_cell=qwen2.5-7b-instruct/seed62/STATIC
+provider_status=403 access_denied
+successful_task_model_responses=0
+provider_inventory_qwen2.5-7b-instruct=false
+provider_inventory_qwen3-8b=true
+provider_inventory_qwen3-14b=true
+
+INTERPRETATION
+The blocker occurred before a logical experimental cell completed. It is an
+accessibility/infrastructure result, not a model-quality result. No selection
+criteria were evaluated and no model was selected.

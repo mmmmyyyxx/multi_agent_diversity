@@ -1,0 +1,20 @@
+{
+  "selection_version": "task_model_headroom_selection_v1",
+  "decision": "HOLD",
+  "selected_model_key": "",
+  "selected_task_model": "",
+  "criteria_evaluated": false,
+  "reason": "incomplete_two_model_three_seed_screening_due_to_provider_access_blocker",
+  "model_A": {
+    "task_model": "qwen2.5-7b-instruct",
+    "criteria_status": "not_evaluable",
+    "provider_access": "denied"
+  },
+  "model_B": {
+    "task_model": "qwen3-8b",
+    "criteria_status": "not_evaluable",
+    "provider_access": "available_but_not_run"
+  },
+  "full_method_run": false,
+  "test_accessed": false
+}

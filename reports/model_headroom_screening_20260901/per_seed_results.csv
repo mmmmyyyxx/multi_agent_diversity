@@ -1,0 +1,7 @@
+model_key,task_model,seed,static_validation_vote_acc,static_validation_oracle_acc,generic_validation_vote_acc,generic_validation_oracle_acc,generic_minus_static_vote_delta,static_oracle_vote_gap,generic_oracle_vote_gap,static_member_accuracies,generic_member_accuracies,accepted_update_count,invalid_rate,status
+A,qwen2.5-7b-instruct,62,,,,,,,,,,,not_available,infrastructure_access_denied_before_cell_completion
+A,qwen2.5-7b-instruct,63,,,,,,,,,,,not_available,not_started_after_hard_infrastructure_blocker
+A,qwen2.5-7b-instruct,64,,,,,,,,,,,not_available,not_started_after_hard_infrastructure_blocker
+B,qwen3-8b,62,,,,,,,,,,,not_measured,not_started_after_hard_infrastructure_blocker
+B,qwen3-8b,63,,,,,,,,,,,not_measured,not_started_after_hard_infrastructure_blocker
+B,qwen3-8b,64,,,,,,,,,,,not_measured,not_started_after_hard_infrastructure_blocker

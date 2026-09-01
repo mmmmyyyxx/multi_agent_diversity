@@ -1,0 +1,37 @@
+{
+  "screening_version": "task_model_headroom_screening_v1",
+  "execution_commit": "a998b8f2963b5b60f2936b0c8ba2b83b03666bdf",
+  "status": "HOLD",
+  "reason": "requested_model_not_available_to_provider_credential",
+  "requested_cell_count": 12,
+  "completed_cell_count": 0,
+  "models": {
+    "A": {
+      "task_model": "qwen2.5-7b-instruct",
+      "provider_inventory_available": false,
+      "static_validation_vote_acc": [],
+      "generic_validation_vote_acc": [],
+      "mean_generic_static_uplift": null,
+      "generic_oracle_vote_gap": null,
+      "accepted_updates": null,
+      "invalid_rate": null,
+      "status": "infrastructure_access_denied"
+    },
+    "B": {
+      "task_model": "qwen3-8b",
+      "provider_inventory_available": true,
+      "static_validation_vote_acc": [],
+      "generic_validation_vote_acc": [],
+      "mean_generic_static_uplift": null,
+      "generic_oracle_vote_gap": null,
+      "accepted_updates": null,
+      "invalid_rate": null,
+      "status": "not_run_after_hard_blocker"
+    }
+  },
+  "successful_task_model_response_count": 0,
+  "validation_evaluation_count": 0,
+  "test_evaluation_count": 0,
+  "full_method_run": false,
+  "historical_artifacts_modified": false
+}
