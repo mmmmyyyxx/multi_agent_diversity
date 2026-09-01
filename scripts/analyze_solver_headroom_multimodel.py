@@ -23,7 +23,7 @@ def accepted(run: Path) -> int:
 def main() -> None:
     if REPORT_ROOT.exists():raise SystemExit("fresh report root required")
     smoke=read_json(RUN_ROOT/"phase_a/availability_smoke_private.json")
-    selection=read_json(RUN_ROOT/"static_selection_private.json")
+    selection=read_json(RUN_ROOT/"static_selection_retry1_private.json")
     if smoke["gate"] != "PASS" or len(smoke["candidates"]) != 8:raise RuntimeError("Phase A gate")
     selected_keys={r["key"] for r in selected_generic()}
     rows=[]

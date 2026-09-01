@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RUN_ROOT = ROOT / "runs" / "solver_headroom_multimodel_seed65_20260901"
 REPORT_ROOT = ROOT / "reports" / "solver_headroom_multimodel_seed65_20260901"
 OLD_ROOT = ROOT / "runs" / "solver_headroom_screening_20260901"
+RETRY_FREEZE_ROOT = RUN_ROOT / "validation_retry1_freeze"
+VALIDATION_ROOT = RUN_ROOT / "validation_retry1"
+GENERIC_ROOT = RUN_ROOT / "generic_retry1"
 MANIFEST = ROOT / "configs" / "task_level_comparison_strict_bbh_seed42.yaml"
 ROLE_MODEL = "qwen3.7-flash"
 SEED = 65
@@ -67,11 +70,13 @@ def run_dir(key: str, arm: str) -> Path:
     setting = STATIC_SETTING if arm == "STATIC" else GENERIC_SETTING
     if key == "Q8":
         return OLD_ROOT / "training" / "model_A" / "seed65" / "disambiguation_qa" / f"{setting}_seed65"
+    if arm == "GENERIC":
+        return GENERIC_ROOT / "training" / f"model_{key}" / "seed65" / "disambiguation_qa" / f"{setting}_seed65"
     return model_root(key) / "disambiguation_qa" / f"{setting}_seed65"
 
 
 def validation_dir(key: str, arm: str) -> Path:
-    return RUN_ROOT / "validation" / f"model_{key}" / arm
+    return VALIDATION_ROOT / f"model_{key}" / arm
 
 
 def candidates_by_key() -> dict[str, str]:
@@ -87,4 +92,4 @@ def entrants() -> list[dict[str, Any]]:
 
 
 def selected_generic() -> list[dict[str, Any]]:
-    return read_json(RUN_ROOT / "static_selection_private.json")["selected"]
+    return read_json(RUN_ROOT / "static_selection_retry1_private.json")["selected"]

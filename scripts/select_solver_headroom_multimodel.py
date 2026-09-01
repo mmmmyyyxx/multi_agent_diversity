@@ -10,7 +10,7 @@ from scripts.solver_headroom_multimodel_support import RUN_ROOT, entrants, read_
 
 
 def main() -> None:
-    out=RUN_ROOT/"static_selection_private.json"
+    out=RUN_ROOT/"static_selection_retry1_private.json"
     if out.exists():raise SystemExit("selection already frozen")
     rows=[]
     for entry in entrants():
@@ -20,7 +20,7 @@ def main() -> None:
         qualified=0.50 <= val["vote_accuracy"] <= 0.64 and gap >= 0.08 and invalid_rate <= 0.01
         rows.append({"key":entry["key"],"model":entry["model"],"priority":entry["priority"],"static_vote_accuracy":val["vote_accuracy"],"static_oracle_accuracy":val["oracle_accuracy"],"oracle_vote_gap":gap,"terminal_invalid_rate":invalid_rate,"qualified":qualified})
     selected=sorted((r for r in rows if r["qualified"]),key=lambda r:(-r["oracle_vote_gap"],r["static_vote_accuracy"],r["priority"]))[:3]
-    write_json(out,{"selection_version":"static_headroom_gate_v1","rows":rows,"selected":[{"key":r["key"],"model":r["model"],"priority":r["priority"]} for r in selected],"selected_count":len(selected),"test_calls":0})
+    write_json(out,{"selection_version":"static_headroom_gate_v1_retry1","rows":rows,"selected":[{"key":r["key"],"model":r["model"],"priority":r["priority"]} for r in selected],"selected_count":len(selected),"test_calls":0,"validation_root":"validation_retry1"})
     print({"selected":[r["model"] for r in selected]})
 
 

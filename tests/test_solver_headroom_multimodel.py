@@ -14,9 +14,12 @@ def test_frozen_candidates_and_seed() -> None:
     assert ROLE_MODEL == "qwen3.7-flash"
 
 
-def test_runner_has_only_static_generic() -> None:
+def test_retry_runner_has_only_generic_and_never_resumes_static() -> None:
     source=(ROOT/"scripts/run_solver_headroom_multimodel.ps1").read_text(encoding="utf-8")
-    assert "shared_static_reference" in source and "shared_generic_evolution" in source
+    assert '$Settings="shared_generic_evolution"' in source
+    assert '--resume_completed 0' in source
+    assert '--optimized_only 1' in source
+    assert 'static_selection_retry1_private.json' in source
     for forbidden in ("shared_member_aware","M20","M2F","Hybrid"):
         assert forbidden not in source
 
@@ -25,6 +28,14 @@ def test_evaluator_never_loads_test() -> None:
     source=(ROOT/"scripts/evaluate_solver_headroom_multimodel.py").read_text(encoding="utf-8")
     assert "cfg.data.test_path" not in source
     assert '"test_calls": 0' in source
+    assert 'validation_retry1_freeze' not in source  # symbolic constant only
+
+
+def test_retry_paths_are_fresh_and_old_failure_is_not_reused() -> None:
+    source=(ROOT/"scripts/solver_headroom_multimodel_support.py").read_text(encoding="utf-8")
+    assert 'VALIDATION_ROOT = RUN_ROOT / "validation_retry1"' in source
+    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry1"' in source
+    assert 'RUN_ROOT / "validation"' not in source
 
 
 def test_preregistration_freezes_static_gate() -> None:

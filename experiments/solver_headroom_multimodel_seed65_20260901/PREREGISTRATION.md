@@ -72,3 +72,16 @@ seeds, result-conditioned retry, and modification of Generic or Common-Safe.
 FULL_METHOD_NOT_RUN=true
 TEST_ACCESSED=false
 ```
+
+## Engineering-only validation retry amendment
+
+The first Static validation attempt stopped before any validation API call
+because the evaluator could not restore a routing-disabled Static checkpoint.
+That failed output directory is immutable evidence.  After the seed-agnostic
+checkpoint reconstruction fix passed its offline regression suite, validation
+is authorized exactly once in a fresh `validation_retry1` root.  Existing
+Static rollouts are read-only and are not rerun.  Any selected non-anchor
+Generic arm uses a fresh `generic_retry1` root initialized from a copy of its
+completed Static Solver cache; the `qwen3-8b` Static and Generic anchors remain
+read-only.  This amendment changes execution plumbing only and does not change
+the frozen model gate, Generic method, seed, data, budgets, or metrics.

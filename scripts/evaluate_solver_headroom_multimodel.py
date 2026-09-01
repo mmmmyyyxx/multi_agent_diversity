@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import os
 import sys
 from pathlib import Path
@@ -17,9 +18,18 @@ from multi_dataset_diverse_rl.persistence.checkpoint import restore_checkpoint
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from scripts.solver_headroom_multimodel_support import (
-    RUN_ROOT, candidates_by_key, entrants, git, read_json, run_dir,
+    RETRY_FREEZE_ROOT, RUN_ROOT, candidates_by_key, entrants, git, read_json, run_dir,
     selected_generic, sha256_file, validation_dir, write_json,
 )
+
+
+def tree_hash(root: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(p for p in root.rglob("*") if p.is_file()):
+        relative = path.relative_to(root).as_posix()
+        digest.update(relative.encode("utf-8") + b"\0")
+        digest.update(sha256_file(path).encode("ascii") + b"\n")
+    return digest.hexdigest()
 
 
 async def evaluate(key: str, model: str, arm: str) -> dict[str, Any]:
@@ -30,6 +40,7 @@ async def evaluate(key: str, model: str, arm: str) -> dict[str, Any]:
     checkpoint_path = source / "training_checkpoint.json"
     checkpoint = read_json(checkpoint_path)
     before_hash = sha256_file(checkpoint_path)
+    before_tree_hash = tree_hash(source)
     values = dict(meta["config"])
     values.update({"out_dir": str(out.resolve()), "shared_solver_cache_path": str((out / "_solver_cache.sqlite").resolve()), "resume_from_checkpoint": False, "final_test_enabled": False, "preserve_final_checkpoint": False})
     cfg = Config.from_flat(**values)
@@ -45,7 +56,8 @@ async def evaluate(key: str, model: str, arm: str) -> dict[str, Any]:
     system.llm.calls=[]; system.solver_recovery_observations=[]; system.solver_invalid_outputs=[]
     state = system.team_prompt_state_hash()
     metrics = await system.evaluate_dataset(validation)
-    if system.team_prompt_state_hash() != state or sha256_file(checkpoint_path) != before_hash:
+    if (system.team_prompt_state_hash() != state or sha256_file(checkpoint_path) != before_hash
+            or tree_hash(source) != before_tree_hash):
         raise RuntimeError("validation mutation")
     oracle = sum(any(profile[i].valid and system.match_answer(profile[i].answer, example.gold_answer) for profile in system._last_evaluated_profiles) for i, example in enumerate(system._last_evaluated_examples))
     invalid = sum(not output.valid for profile in system._last_evaluated_profiles for output in profile)
@@ -61,6 +73,7 @@ async def evaluate(key: str, model: str, arm: str) -> dict[str, Any]:
         "provider_calls": int(cost["successful_llm_calls"]),
         "prompt_tokens": int(cost["prompt_tokens"]), "completion_tokens": int(cost["completion_tokens"]),
         "state_mutation": False, "checkpoint_mutation": False,
+        "source_artifact_tree_mutation": False,
         "test_calls": 0, "validation_rows": len(validation),
     }
     write_json(out / "validation_summary_private.json", result)
@@ -71,7 +84,7 @@ def main() -> None:
     parser=argparse.ArgumentParser();parser.add_argument("--phase",choices=("static","generic"),required=True);args=parser.parse_args()
     if os.environ.get("SOLVER_MULTIMODEL_VALIDATION_AUTHORIZED") != "1":
         raise SystemExit("validation not authorized")
-    freeze=read_json(RUN_ROOT/"freeze/source_freeze.json")
+    freeze=read_json(RETRY_FREEZE_ROOT/"source_freeze.json")
     if git("rev-parse","HEAD") != freeze["execution_commit"] or git("status","--porcelain","--untracked-files=all"):
         raise SystemExit("source mismatch")
     rows = entrants() if args.phase == "static" else selected_generic()
