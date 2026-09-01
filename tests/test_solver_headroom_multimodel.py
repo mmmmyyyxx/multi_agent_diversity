@@ -38,6 +38,12 @@ def test_retry_paths_are_fresh_and_old_failure_is_not_reused() -> None:
     assert 'RUN_ROOT / "validation"' not in source
 
 
+def test_retry_prepare_script_is_directly_executable() -> None:
+    source=(ROOT/"scripts/prepare_solver_headroom_multimodel_retry.py").read_text(encoding="utf-8")
+    assert 'Path(__file__).resolve().parents[1]' in source
+    assert 'sys.path.insert(0, str(ROOT))' in source
+
+
 def test_preregistration_freezes_static_gate() -> None:
     source=(ROOT/"experiments/solver_headroom_multimodel_seed65_20260901/PREREGISTRATION.md").read_text(encoding="utf-8")
     assert "0.50 <= Static Validation VoteAcc <= 0.64" in source
