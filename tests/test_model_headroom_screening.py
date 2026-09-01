@@ -1,8 +1,14 @@
 from __future__ import annotations
 
-from scripts.model_headroom_screening_support import selection_rule
-from scripts.model_headroom_screening_support import ARMS, MODELS, SEEDS
 from pathlib import Path
+import subprocess
+import sys
+
+from scripts.model_headroom_screening_support import ARMS, MODELS, SEEDS
+from scripts.model_headroom_screening_support import selection_rule
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def row(static: float, uplift: float, gap: float, wins: int, unstable: bool = False):
@@ -76,3 +82,20 @@ def test_runner_freezes_task_and_optimizer_roles() -> None:
     assert '"--optimizer_model", "qwen3-14b"' in source
     assert '"--evaluator_model", "qwen3-14b"' in source
     assert "Full" not in source
+
+
+def test_project_scripts_are_directly_invocable() -> None:
+    for script in (
+        "prepare_model_headroom_screening.py",
+        "audit_model_headroom_screening.py",
+        "analyze_model_headroom_screening.py",
+        "evaluate_model_headroom_validation.py",
+    ):
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / script), "--help"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert completed.returncode == 0, (script, completed.stderr)
