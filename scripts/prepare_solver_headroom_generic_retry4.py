@@ -24,7 +24,7 @@ from scripts.solver_headroom_multimodel_support import (
 
 def main() -> None:
     if GENERIC_RETRY_FREEZE_ROOT.exists() or GENERIC_ROOT.exists() or GENERIC_VALIDATION_ROOT.exists():
-        raise SystemExit("fresh Generic retry3 roots required")
+        raise SystemExit("fresh Generic retry4 roots required")
     head = git("rev-parse", "HEAD")
     if git("status", "--porcelain", "--untracked-files=all"):
         raise SystemExit("tracked worktree must be clean")
@@ -50,8 +50,8 @@ def main() -> None:
         "selected": selected,
         "qwen3_8b_anchor_reused": True,
         "new_generic_training_count": len(selected),
-        "generic_retry_root": "generic_retry3",
-        "generic_validation_root": "validation_retry3",
+        "generic_retry_root": "generic_retry4",
+        "generic_validation_root": "validation_retry4",
         "test_calls": 0,
     })
     print(json.dumps({"gate": "PASS", "execution_commit": head, "selected": selected}))

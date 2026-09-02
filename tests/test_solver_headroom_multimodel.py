@@ -34,7 +34,7 @@ def test_evaluator_never_loads_test() -> None:
 def test_retry_paths_are_fresh_and_old_failure_is_not_reused() -> None:
     source=(ROOT/"scripts/solver_headroom_multimodel_support.py").read_text(encoding="utf-8")
     assert 'VALIDATION_ROOT = RUN_ROOT / "validation_retry1"' in source
-    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry3"' in source
+    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry4"' in source
     assert 'RUN_ROOT / "validation"' not in source
 
 
@@ -68,4 +68,7 @@ def test_preflight_does_not_receive_runner_only_shared_cache_argument() -> None:
     preflight_line=next(line for line in source.splitlines() if "preflight_member_aware.py" in line)
     runner_line=next(line for line in source.splitlines() if "run_task_level_accuracy.py" in line)
     assert "shared_solver_cache_path" not in preflight_line
-    assert "shared_solver_cache_path" in runner_line
+    assert "shared_solver_cache_path" not in runner_line
+    assert "Copy-Item -LiteralPath $StaticFreeze" in source
+    assert "Split-Path (Split-Path $StaticRun -Parent) -Parent" in source
+    assert '"_frozen_initialization\\disambiguation_qa\\seed65"' in source

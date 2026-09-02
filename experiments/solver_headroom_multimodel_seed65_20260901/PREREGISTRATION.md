@@ -107,3 +107,10 @@ to the preflight CLI. That directory is preserved as invalidated engineering
 evidence. The behavior-preserving launcher fix is frozen and uses fresh
 `generic_retry3` and `validation_retry3` roots; no arm, model, budget, gate, or
 metric changed.
+
+The next launcher attempt (`generic_retry3`) also stopped before any model call:
+the task-level runner owns its cache path and rejects direct cache injection.
+The final behavior-preserving launcher therefore copies the complete immutable
+Static `_frozen_initialization` snapshot and lets the canonical runner create
+its own setting-local cache. It uses fresh `generic_retry4` and
+`validation_retry4` roots; the two earlier launcher failures remain preserved.

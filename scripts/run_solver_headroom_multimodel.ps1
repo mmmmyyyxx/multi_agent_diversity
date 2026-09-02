@@ -4,7 +4,7 @@ if ($env:SOLVER_MULTIMODEL_SCREENING_AUTHORIZED -ne "1") { throw "API execution 
 $Repo=(Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Python="D:\Anaconda\envs\DL\python.exe"
 $Root=Join-Path $Repo "runs\solver_headroom_multimodel_seed65_20260901"
-$Freeze=Get-Content (Join-Path $Root "generic_retry3_freeze\source_freeze.json") -Raw|ConvertFrom-Json
+$Freeze=Get-Content (Join-Path $Root "generic_retry4_freeze\source_freeze.json") -Raw|ConvertFrom-Json
 $Smoke=Get-Content (Join-Path $Root "phase_a\availability_smoke_private.json") -Raw|ConvertFrom-Json
 if((git rev-parse HEAD).Trim() -ne $Freeze.execution_commit){throw "commit mismatch"}
 if((git status --porcelain=v1 --untracked-files=all|Out-String).Trim()){throw "dirty worktree"}
@@ -14,17 +14,16 @@ $Selection=Get-Content (Join-Path $Root "static_selection_retry2_private.json") 
 $Entries=@($Selection.selected|Where-Object{$_.key -ne "Q8"})
 foreach($Entry in $Entries){
   $StaticRun=Join-Path $Root ("training\model_"+$Entry.key+"\seed65\disambiguation_qa\shared_static_reference_seed65")
-  $StaticCache=Join-Path $StaticRun "_solver_cache.sqlite"
-  if(-not (Test-Path $StaticCache)){throw "missing completed Static cache $($Entry.key)"}
-  $Out=Join-Path $Root ("generic_retry3\training\model_"+$Entry.key+"\seed65")
-  $CacheDir=Join-Path $Root "generic_retry3\cache"
-  $Cache=Join-Path $CacheDir ("model_"+$Entry.key+".sqlite")
-  if((Test-Path $Out) -or (Test-Path $Cache)){throw "fresh Generic retry root required"}
-  New-Item -ItemType Directory -Force -Path $CacheDir | Out-Null
-  Copy-Item -LiteralPath $StaticCache -Destination $Cache
+  $StaticFreeze=Join-Path (Split-Path (Split-Path $StaticRun -Parent) -Parent) "_frozen_initialization\disambiguation_qa\seed65"
+  if(-not (Test-Path (Join-Path $StaticFreeze "frozen_initialization_manifest.json"))){throw "missing completed Static freeze $($Entry.key)"}
+  $Out=Join-Path $Root ("generic_retry4\training\model_"+$Entry.key+"\seed65")
+  if(Test-Path $Out){throw "fresh Generic retry root required"}
+  $TargetFreeze=Join-Path $Out "_frozen_initialization\disambiguation_qa\seed65"
+  New-Item -ItemType Directory -Force -Path (Split-Path $TargetFreeze -Parent) | Out-Null
+  Copy-Item -LiteralPath $StaticFreeze -Destination $TargetFreeze -Recurse
   $Settings="shared_generic_evolution"
   & $Python scripts\preflight_member_aware.py --allow_dirty 0 @Common --settings $Settings --out_root $Out --seeds 65 --agent_model $Entry.model
   if($LASTEXITCODE -ne 0){throw "preflight failed $($Entry.key)"}
-  & $Python scripts\run_task_level_accuracy.py @Common --settings $Settings --out_root $Out --seeds 65 --agent_model $Entry.model --shared_solver_cache_path ([System.IO.Path]::GetFullPath($Cache)) --resume_completed 0 --optimized_only 1 --immutable_comparison_cache 1
+  & $Python scripts\run_task_level_accuracy.py @Common --settings $Settings --out_root $Out --seeds 65 --agent_model $Entry.model --resume_completed 0 --optimized_only 1 --immutable_comparison_cache 1
   if($LASTEXITCODE -ne 0){throw "run failed $($Entry.key)"}
 }
