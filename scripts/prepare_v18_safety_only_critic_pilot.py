@@ -63,6 +63,7 @@ def prepare(out: Path) -> dict[str, Any]:
         raise FileExistsError("fresh preparation root required")
     if git("status", "--porcelain"):
         raise RuntimeError("tracked worktree must be clean")
+    out.mkdir(parents=True)
     cases = []
     for seed, status, update, target in select_cases():
         run = HISTORICAL_ROOT / f"seed{seed}" / "HYBRID_BASE"
@@ -106,7 +107,6 @@ def prepare(out: Path) -> dict[str, Any]:
         })
     registry = {"registry_version": "v18_safety_only_critic_pilot_v1", "execution_commit": git("rev-parse", "HEAD"), "case_selection_rule": "per_seed_earliest_hybrid_blocked_and_passed", "case_count": 6, "arms": ["canonical_llm", "deterministic_safety_only"], "source_candidates_per_branch": 2, "revision_per_valid_source": 1, "validation_after_train_freeze": True, "test_enabled": False, "cases": cases}
     registry["registry_content_hash"] = canonical_hash({k: v for k, v in registry.items() if k != "registry_content_hash"})
-    out.mkdir(parents=True)
     write_json(out / "private_registry.json", registry)
     freeze = {"execution_commit": registry["execution_commit"], "registry_sha256": sha256_file(out / "private_registry.json"), "files": [{"path": item, "sha256": sha256_file(ROOT / item)} for item in SOURCE_FILES]}
     write_json(out / "source_freeze.json", freeze)
