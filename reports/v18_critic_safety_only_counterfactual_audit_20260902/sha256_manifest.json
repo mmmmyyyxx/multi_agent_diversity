@@ -1,0 +1,33 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "branch_reach_bounds.csv",
+      "sha256": "85a75e729551f32f92a62f2d6a07a254adda977d0b04fe06750ff8dd44def45e"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "34d1691ee5f709690a94467b8db82b6137988e65c6b266a5682de076e9a94811"
+    },
+    {
+      "file": "decision_classification.csv",
+      "sha256": "22149ce66b36d65c846061d37a345701d30972e98f5d739d6726544a77131e4c"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "1bfbacb4c9f94864b86d1d411591b8e044318a5ce47e015a1ace8e2286773a21"
+    },
+    {
+      "file": "README.md",
+      "sha256": "1b7c15013169d4683f3b6e389bba26a0050ffe63b397ce1eee722c950d3a7a7f"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "3133cb78645653809a82d458e2ed21b6678a6650f35a8bdd1d100e777e4f969e"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "7273bfbbf25852f25b4a5a95237a746504287a9dd8d294c3ae20f49c4419523e"
+    }
+  ]
+}

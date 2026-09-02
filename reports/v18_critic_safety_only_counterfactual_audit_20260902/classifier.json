@@ -1,0 +1,16 @@
+{
+  "version": "v18_critic_safety_only_classifier_v1",
+  "category_precedence": [
+    "SCHEMA_OR_FORMAT",
+    "ANTI_CHEATING",
+    "OUTPUT_CONTRACT",
+    "SEMANTIC_QUALITY_ONLY",
+    "AMBIGUOUS_OUTPUT_VS_PRESERVATION"
+  ],
+  "ambiguous_bound_policy": {
+    "lower_bound": "kept_as_blocker",
+    "upper_bound": "treated_as_non_safety"
+  },
+  "uses_validation_or_test": false,
+  "uses_raw_model_text_in_published_artifacts": false
+}

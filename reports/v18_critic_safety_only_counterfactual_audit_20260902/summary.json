@@ -1,0 +1,81 @@
+{
+  "audit_version": "v18_critic_safety_only_counterfactual_v1",
+  "run_count": 6,
+  "branch_count": 96,
+  "critic_response_count": 175,
+  "critic_approval_count": 27,
+  "critic_rejection_count": 148,
+  "rejection_category_counts": {
+    "ANTI_CHEATING": 0,
+    "SCHEMA_OR_FORMAT": 0,
+    "OUTPUT_CONTRACT": 5,
+    "SEMANTIC_QUALITY_ONLY": 85,
+    "AMBIGUOUS_OUTPUT_VS_PRESERVATION": 58
+  },
+  "student_reach": {
+    "original_count": 27,
+    "original_rate": 0.28125,
+    "safety_only_lower_bound_count": 71,
+    "safety_only_lower_bound_rate": 0.7395833333333334,
+    "safety_only_upper_bound_count": 95,
+    "safety_only_upper_bound_rate": 0.9895833333333334,
+    "lower_bound_absolute_increase": 44,
+    "upper_bound_absolute_increase": 68
+  },
+  "by_seed_arm": [
+    {
+      "seed": 59,
+      "arm": "HYBRID_BASE",
+      "branch_count": 16,
+      "original_reach_count": 7,
+      "lower_bound_reach_count": 12,
+      "upper_bound_reach_count": 15
+    },
+    {
+      "seed": 59,
+      "arm": "W1_TOP2",
+      "branch_count": 16,
+      "original_reach_count": 5,
+      "lower_bound_reach_count": 11,
+      "upper_bound_reach_count": 16
+    },
+    {
+      "seed": 60,
+      "arm": "HYBRID_BASE",
+      "branch_count": 16,
+      "original_reach_count": 2,
+      "lower_bound_reach_count": 11,
+      "upper_bound_reach_count": 16
+    },
+    {
+      "seed": 60,
+      "arm": "W1_TOP2",
+      "branch_count": 16,
+      "original_reach_count": 4,
+      "lower_bound_reach_count": 12,
+      "upper_bound_reach_count": 16
+    },
+    {
+      "seed": 61,
+      "arm": "HYBRID_BASE",
+      "branch_count": 16,
+      "original_reach_count": 6,
+      "lower_bound_reach_count": 14,
+      "upper_bound_reach_count": 16
+    },
+    {
+      "seed": 61,
+      "arm": "W1_TOP2",
+      "branch_count": 16,
+      "original_reach_count": 3,
+      "lower_bound_reach_count": 11,
+      "upper_bound_reach_count": 16
+    }
+  ],
+  "api_calls": 0,
+  "validation_calls": 0,
+  "test_calls": 0,
+  "method_modified": false,
+  "historical_artifacts_modified": false,
+  "interpretation_scope": "student_reach_only_not_candidate_quality_or_efficacy"
+}

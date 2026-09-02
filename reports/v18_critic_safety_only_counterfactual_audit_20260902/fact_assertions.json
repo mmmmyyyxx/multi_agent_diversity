@@ -1,0 +1,12 @@
+{
+  "run_count_is_6": true,
+  "branch_count_is_96": true,
+  "critic_response_count_is_175": true,
+  "critic_rejection_count_is_148": true,
+  "critic_approval_count_is_27": true,
+  "original_student_reach_is_27": true,
+  "all_rejections_classified_once": true,
+  "bounds_are_monotone": true,
+  "zero_api": true,
+  "fact_assertions_pass": true
+}
