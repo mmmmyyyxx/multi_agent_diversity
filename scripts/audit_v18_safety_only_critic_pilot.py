@@ -31,6 +31,13 @@ def audit(raw: Path, registry_path: Path, freeze_path: Path, out: Path) -> dict:
             if branch["state_hash_before"] != branch["state_hash_after"]: blockers.append(case["case_id"] + ":state_mutation")
             if branch["strict_valid_candidates"] > 4: blockers.append(case["case_id"] + ":candidate_budget")
             if arm == "deterministic_safety_only" and branch["critic_api_calls"]: blockers.append(case["case_id"] + ":critic_api")
+            decisions = branch.get("critic_decisions", [])
+            if len(decisions) != int(branch["critic_decision_count"]): blockers.append(case["case_id"] + ":critic_decision_telemetry")
+            for decision in decisions:
+                required = {"schema_valid", "failed_checks", "rejection_category", "critic_approved", "semantic_round", "retry_index", "teacher_plan_hash", "critic_decision_hash"}
+                if set(decision) != required: blockers.append(case["case_id"] + ":critic_decision_schema")
+                if arm == "deterministic_safety_only" and decision.get("rejection_category") not in {"approved", "anti_cheating", "schema_format", "explicit_output_contract"}:
+                    blockers.append(case["case_id"] + ":safety_rejection_category")
     if len(rows) != 6: blockers.append("case_inventory")
     summary = read_json(raw / "pilot_summary.json")
     if summary["branch_count"] != 12 or summary["test_calls"] or summary["team_prompt_commit_count"]: blockers.append("summary_contract")

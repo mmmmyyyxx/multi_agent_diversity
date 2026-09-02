@@ -37,6 +37,8 @@ def analyze(raw: Path, gate_path: Path, report: Path) -> dict[str, Any]:
                 "critic_api_calls": row["critic_api_calls"], "student_reached": row["student_reached"],
                 "student_calls": row["student_calls"], "strict_valid_candidates": row["strict_valid_candidates"],
                 "common_safe_feasible_candidates": row["common_safe_feasible_candidates"], "would_commit": row["would_commit"],
+                "failed_checks": "|".join(sorted({check for decision in row["critic_decisions"] for check in decision["failed_checks"]})),
+                "rejection_categories": "|".join(sorted({decision["rejection_category"] for decision in row["critic_decisions"]})),
             })
             for candidate in row["candidate_rows"]:
                 candidates.append({

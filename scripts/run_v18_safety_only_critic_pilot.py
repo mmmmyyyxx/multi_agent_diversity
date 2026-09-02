@@ -27,6 +27,36 @@ from scripts.v18_safety_only_critic_pilot_support import (
 SETTING = "experimental_v16_efficacy_g_matched"
 
 
+def sanitized_critic_decisions(system: Any, mode: str) -> list[dict[str, Any]]:
+    """Persist decision provenance without plan or feedback text."""
+    rows = []
+    for row in system.tcs_rounds:
+        if row.get("role") != "critic":
+            continue
+        failed_checks = sorted(str(value) for value in row.get("failed_checks", []))
+        if not failed_checks:
+            category = "approved" if row.get("effective_approved") else "schema_format"
+        elif "shortcut_or_copying" in failed_checks:
+            category = "anti_cheating"
+        elif mode == "deterministic_safety_only" and "preservation_or_output_risk" in failed_checks:
+            category = "explicit_output_contract"
+        elif "preservation_or_output_risk" in failed_checks:
+            category = "canonical_semantic_or_output_risk"
+        else:
+            category = "semantic_quality_or_schema"
+        rows.append({
+            "schema_valid": bool(row.get("schema_valid")),
+            "failed_checks": failed_checks,
+            "rejection_category": category,
+            "critic_approved": bool(row.get("effective_approved")),
+            "semantic_round": int(row.get("semantic_round", 0)),
+            "retry_index": int(row.get("format_attempt", 0)),
+            "teacher_plan_hash": str(row.get("teacher_plan_hash", "")),
+            "critic_decision_hash": str(row.get("critic_decision_hash", "")),
+        })
+    return rows
+
+
 def verify_freeze(registry_path: Path, freeze_path: Path) -> dict[str, Any]:
     registry, freeze = read_json(registry_path), read_json(freeze_path)
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
@@ -70,6 +100,7 @@ async def run_arm(case: dict[str, Any], arm: str, out: Path, cache: Path, replay
         "case_id": case["case_id"], "arm": arm, "critic_mode": arm,
         "parent_hash": case["parent_team_hash"], "target_member": target,
         "teacher_plan_hashes": sorted({str(row.get("teacher_plan_hash", "")) for row in system.tcs_rounds if row.get("role") == "teacher" and row.get("teacher_plan_hash")}),
+        "critic_decisions": sanitized_critic_decisions(system, arm),
         "critic_api_calls": sum(row.get("role") == "critic" and row.get("success") for row in system.llm.calls),
         "critic_decision_count": int(funnel.critic_calls), "critic_approvals": int(funnel.critic_approved),
         "student_reached": bool(funnel.student_calls), "student_calls": int(funnel.student_calls),
