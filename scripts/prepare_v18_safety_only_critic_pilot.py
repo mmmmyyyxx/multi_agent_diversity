@@ -3,8 +3,13 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.cli import _load
 from multi_dataset_diverse_rl.tcs import PreviousUpdateOutcome, serialize_context
@@ -19,7 +24,6 @@ from scripts.v18_safety_only_critic_pilot_support import (
 from scripts.generic_m20_probe_support import system_for
 
 
-ROOT = Path(__file__).resolve().parents[1]
 SOURCE_FILES = (
     "scripts/v18_safety_only_critic_pilot_support.py",
     "scripts/prepare_v18_safety_only_critic_pilot.py",

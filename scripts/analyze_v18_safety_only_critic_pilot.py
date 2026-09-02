@@ -3,8 +3,13 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
 from typing import Any
+
+ROOT_PATH = Path(__file__).resolve().parents[1]
+if str(ROOT_PATH) not in sys.path:
+    sys.path.insert(0, str(ROOT_PATH))
 
 from scripts.v18_safety_only_critic_pilot_support import ARMS, LABELS, ROOT, classify, read_json, sha256_file, write_json
 

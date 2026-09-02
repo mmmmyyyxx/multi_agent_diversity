@@ -5,8 +5,13 @@ import asyncio
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.candidate_selection import common_monotone_safe_key
 from multi_dataset_diverse_rl.system import CandidateFunnel
@@ -19,7 +24,6 @@ from scripts.v18_safety_only_critic_pilot_support import (
 )
 
 
-ROOT = Path(__file__).resolve().parents[1]
 SETTING = "experimental_v16_efficacy_g_matched"
 
 
