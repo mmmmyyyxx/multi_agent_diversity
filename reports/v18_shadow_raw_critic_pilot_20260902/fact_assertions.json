@@ -1,0 +1,9 @@
+{
+  "gate_pass": true,
+  "six_cases": true,
+  "twelve_branches": true,
+  "shadow_critic_zero_api": true,
+  "no_test": true,
+  "no_commits": true,
+  "pass": true
+}

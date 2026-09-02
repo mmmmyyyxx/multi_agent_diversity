@@ -1,0 +1,9 @@
+{
+  "case_selection": "per_seed_earliest_hybrid_blocked_and_passed",
+  "same_first_teacher_plan": true,
+  "same_canonical_critic_response": true,
+  "sole_intervention": "continue_after_valid_canonical_semantic_rejection",
+  "historical_artifacts_modified": false,
+  "raw_text_published": false,
+  "test_accessed": false
+}

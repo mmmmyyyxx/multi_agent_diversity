@@ -1,0 +1,13 @@
+case_id,arm,rejected_plan_witness,would_commit,winner_hash,validation_target_delta,validation_vote_delta,validation_oracle_delta
+seed59_blocked_u0_t3,canonical_control,False,True,bded60021a2edf9146e77f60f20ca9c5a04ff79022ec4841443607859cc00ead,3,0,8
+seed59_blocked_u0_t3,shadow_raw,False,True,bded60021a2edf9146e77f60f20ca9c5a04ff79022ec4841443607859cc00ead,3,0,8
+seed59_passed_u1_t2,canonical_control,False,False,,0,0,0
+seed59_passed_u1_t2,shadow_raw,False,False,,0,0,0
+seed60_blocked_u0_t0,canonical_control,True,False,,0,0,0
+seed60_blocked_u0_t0,shadow_raw,True,False,,0,0,0
+seed60_passed_u1_t3,canonical_control,True,False,,0,0,0
+seed60_passed_u1_t3,shadow_raw,True,True,df3dae0670691d9bbc4fcf17232ca530f1e8df83cc2de0d6e4a6f74240172491,-3,0,4
+seed61_blocked_u0_t0,canonical_control,True,False,,0,0,0
+seed61_blocked_u0_t0,shadow_raw,True,True,28c4980d33012a474a196f2286c1767fd06366cc132f46042687c4302eb804bd,-4,0,1
+seed61_passed_u1_t3,canonical_control,True,True,25d96561fd74e329560936ba33da688200e59f05055172937675b750817117a8,3,0,6
+seed61_passed_u1_t3,shadow_raw,True,True,9445826a4d69556b64cf6048e849e9dc2d44ee469399d3ca09f888ffa06c583f,0,0,5

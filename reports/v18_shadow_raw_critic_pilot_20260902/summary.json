@@ -1,0 +1,21 @@
+{
+  "pilot_version": "v18_shadow_raw_critic_pilot_v1",
+  "case_count": 6,
+  "branch_count": 12,
+  "canonical_rejected_plan_witness_count": 4,
+  "shadow_student_reach_count": 4,
+  "shadow_valid_candidate_count": 16,
+  "shadow_feasible_candidate_count": 4,
+  "shadow_feasible_branch_count": 3,
+  "shadow_would_commit_branch_count": 3,
+  "shadow_zero_loss_feasible_count": 4,
+  "shadow_train_vote_gain_sum": 0,
+  "shadow_train_vote_loss_sum": 0,
+  "shadow_validation_vote_delta_sum": 0,
+  "shadow_validation_oracle_delta_sum": 10,
+  "final_label": "CRITIC_OVER_FILTERING_CAUSALLY_SUPPORTED",
+  "shadow_critic_api_calls": 0,
+  "test_calls": 0,
+  "team_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0
+}

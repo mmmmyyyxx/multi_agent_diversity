@@ -1,0 +1,14 @@
+{
+  "version": "v18_shadow_raw_critic_classifier_v1",
+  "labels": [
+    "CRITIC_OVER_FILTERING_CAUSALLY_SUPPORTED",
+    "CRITIC_FILTERING_JUSTIFIED",
+    "MIXED_SHADOW_RAW_SIGNAL",
+    "NO_CLEAR_SIGNAL"
+  ],
+  "minimum_rejected_witnesses": 3,
+  "over_filtering_feasible_branches_min": 2,
+  "over_filtering_would_commit_branches_min": 1,
+  "over_filtering_validation_vote_delta_min": -1,
+  "frozen_before_validation": true
+}

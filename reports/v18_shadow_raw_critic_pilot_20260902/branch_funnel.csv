@@ -1,0 +1,13 @@
+case_id,historical_status,arm,parent_hash,target_member,rejected_plan_witness,original_failed_checks,shadow_intervention_count,student_reached,strict_valid_candidates,common_safe_feasible_candidates,would_commit,critic_api_calls,teacher_api_calls,student_api_calls
+seed59_blocked_u0_t3,blocked,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,False,,0,True,4,1,True,1,1,1
+seed59_blocked_u0_t3,blocked,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,False,,0,True,4,1,True,0,0,0
+seed59_passed_u1_t2,passed,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,2,False,,0,True,4,0,False,1,1,1
+seed59_passed_u1_t2,passed,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,2,False,,0,True,4,0,False,0,0,0
+seed60_blocked_u0_t0,blocked,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,True,actionable_specificity,0,False,0,0,False,2,3,0
+seed60_blocked_u0_t0,blocked,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,True,actionable_specificity,1,True,4,0,False,0,0,1
+seed60_passed_u1_t3,passed,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,True,evidence_mismatch,0,False,0,0,False,2,2,0
+seed60_passed_u1_t3,passed,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,True,evidence_mismatch,1,True,4,1,True,0,0,1
+seed61_blocked_u0_t0,blocked,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,True,evidence_mismatch,0,False,0,0,False,2,2,0
+seed61_blocked_u0_t0,blocked,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,0,True,evidence_mismatch,1,True,4,1,True,0,0,1
+seed61_passed_u1_t3,passed,canonical_control,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,True,preservation_or_output_risk,0,True,4,4,True,2,2,1
+seed61_passed_u1_t3,passed,shadow_raw,6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89,3,True,preservation_or_output_risk,1,True,4,2,True,0,0,1
