@@ -39,4 +39,3 @@ Frozen interpretation:
 - `NO_CLEAR_SIGNAL`: fewer than three valid rejected-plan witnesses execute.
 
 No result may change the frozen cases, classifier, budget, or validation rule.
-
