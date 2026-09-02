@@ -1,0 +1,4 @@
+contrast,treatment,control,student_reach_delta,feasible_candidate_delta,would_commit_delta,train_vote_loss_delta,validation_target_delta_difference,validation_vote_delta_difference,validation_oracle_delta_difference
+B-A,B_TEACHER_CLEAN,A_CANONICAL,-1,-5,-2,0,1,0,-11
+C-B,C_NO_SEMANTIC_CRITIC,B_TEACHER_CLEAN,4,11,4,0,4,0,21
+D-C,D_ADVISORY_CRITIC,C_NO_SEMANTIC_CRITIC,0,2,0,0,-11,0,-5

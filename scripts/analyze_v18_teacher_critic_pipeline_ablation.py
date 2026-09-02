@@ -28,6 +28,31 @@ def rate(value: int | float, denominator: int | float) -> float:
     return float(value) / float(denominator) if denominator else 0.0
 
 
+def candidate_report_row(
+    *, case: dict[str, Any], arm: str, candidate: dict[str, Any], winner_hash: str
+) -> dict[str, Any]:
+    """Reconcile the runtime candidate_row schema into the public report schema."""
+    feasible = bool(candidate.get("feasible"))
+    vote_loss = int(candidate.get("train_vote_loss", 0))
+    candidate_hash = str(candidate.get("candidate_hash", ""))
+    return {
+        "case_id": case["case_id"],
+        "arm": arm,
+        "parent_hash": case["parent_team_hash"],
+        "target_member": case["target_agent_id"],
+        "candidate_hash": candidate_hash,
+        "candidate_stage": candidate.get("candidate_stage", ""),
+        "candidate_valid": bool(candidate.get("valid")),
+        "common_safe_feasible": feasible,
+        "train_target_gain": int(candidate.get("train_target_gain", 0)),
+        "train_vote_gain": int(candidate.get("train_vote_gain", 0)),
+        "train_vote_loss": vote_loss,
+        "train_vote_net": int(candidate.get("train_vote_net", 0)),
+        "zero_loss_feasible": bool(feasible and vote_loss == 0),
+        "would_commit": bool(candidate_hash and candidate_hash == winner_hash),
+    }
+
+
 def analyze(raw: Path, registry_path: Path, gate_path: Path, regression_path: Path, report: Path) -> dict[str, Any]:
     if report.exists():
         raise FileExistsError("fresh report root required")
@@ -75,22 +100,12 @@ def analyze(raw: Path, registry_path: Path, gate_path: Path, regression_path: Pa
                 "validation_oracle_delta": int(row.get("validation_oracle_delta", 0)),
             })
             for candidate in row.get("candidate_rows", []):
-                candidate_rows.append({
-                    "case_id": case["case_id"],
-                    "arm": arm,
-                    "parent_hash": case["parent_team_hash"],
-                    "target_member": case["target_agent_id"],
-                    "candidate_hash": candidate.get("candidate_hash", ""),
-                    "candidate_stage": candidate.get("candidate_stage", ""),
-                    "candidate_valid": bool(candidate.get("candidate_valid")),
-                    "common_safe_feasible": bool(candidate.get("common_safe_feasible")),
-                    "train_target_gain": int(candidate.get("train_target_gain", 0)),
-                    "train_vote_gain": int(candidate.get("train_vote_gain", 0)),
-                    "train_vote_loss": int(candidate.get("train_vote_loss", 0)),
-                    "train_vote_net": int(candidate.get("train_vote_net", 0)),
-                    "zero_loss_feasible": bool(candidate.get("zero_loss_feasible")),
-                    "would_commit": bool(candidate.get("would_commit")),
-                })
+                candidate_rows.append(candidate_report_row(
+                    case=case,
+                    arm=arm,
+                    candidate=candidate,
+                    winner_hash=str(row.get("winner_hash", "")),
+                ))
     summary: dict[str, dict[str, float]] = {}
     for arm in ARMS:
         branches = [row for row in branch_rows if row["arm"] == arm]
@@ -181,6 +196,8 @@ def analyze(raw: Path, registry_path: Path, gate_path: Path, regression_path: Pa
         "execution_commit": registry["execution_commit"],
         "registry_content_hash": registry["registry_content_hash"],
         "audit_gate": gate["gate"],
+        "post_run_analyzer_schema_reconciliation": "runtime_valid_feasible_keys_v1",
+        "method_runtime_semantics_changed": False,
         "raw_artifacts_modified": False,
         "raw_text_published": False,
     })
@@ -196,6 +213,20 @@ def analyze(raw: Path, registry_path: Path, gate_path: Path, regression_path: Pa
     }
     facts["pass"] = all(facts.values())
     write_json(report / "fact_assertions.json", facts)
+    table_rows = "\n".join(
+        "| {arm} | {reach}/6 | {valid} | {feasible} | {commit}/6 | {target:+d} | {vote:+d} | {oracle:+d} | {tokens} |".format(
+            arm=arm,
+            reach=int(summary[arm]["student_reach_count"]),
+            valid=int(summary[arm]["strict_valid_candidate_count"]),
+            feasible=int(summary[arm]["common_safe_feasible_candidate_count"]),
+            commit=int(summary[arm]["would_commit_count"]),
+            target=int(summary[arm]["validation_target_delta_sum"]),
+            vote=int(summary[arm]["validation_vote_delta_sum"]),
+            oracle=int(summary[arm]["validation_oracle_delta_sum"]),
+            tokens=int(summary[arm]["total_tokens"]),
+        )
+        for arm in ARMS
+    )
     (report / "README.md").write_text(
         "# V18 Teacher-Critic Pipeline Simplification\n\n"
         "This fixed-parent four-arm experiment compares canonical Teacher/Critic, "
@@ -205,6 +236,17 @@ def analyze(raw: Path, registry_path: Path, gate_path: Path, regression_path: Pa
         "selection metric; Oracle is mechanism-only.\n\n"
         f"Frozen selected arm: **{selection['selected_arm']}**.\n\n"
         f"Reason: {selection['reason']}.\n\n"
+        "| Arm | Student reach | Valid | Feasible | WOULD_COMMIT | Val Target delta | Val Vote delta | Val Oracle delta | Tokens |\n"
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|\n"
+        + table_rows
+        + "\n\nTeacher-Clean alone reduced pre-Student throughput relative to canonical. "
+        "Removing the semantic veto restored full Student reach and the strongest "
+        "validation target transfer. Advisory feedback produced two additional "
+        "feasible candidates but no additional Vote gain and substantially worse "
+        "target transfer, so it did not establish a stable quality benefit.\n\n"
+        "The post-run analyzer reconciles the runtime `valid`/`feasible` candidate "
+        "keys with the public report schema; this changed no runtime artifact or "
+        "method decision.\n\n"
         "No prompt was committed, no trajectory was mutated, and Test125 was not accessed.\n\n"
         "```text\nTEST_ACCESSED=false\nTEAM_PROMPT_COMMITS=0\n```\n",
         encoding="utf-8",

@@ -1,0 +1,9 @@
+{
+  "selected_arm": "C_NO_SEMANTIC_CRITIC",
+  "reason": "advisory feedback lacks stable quality benefit",
+  "prefer_d": false,
+  "prefer_c": true,
+  "prefer_b": false,
+  "oracle_used_for_selection": false,
+  "test_used_for_selection": false
+}

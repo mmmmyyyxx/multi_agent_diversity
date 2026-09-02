@@ -11,6 +11,7 @@ from scripts.v18_teacher_critic_pipeline_support import (
     select_arm,
     teacher_clean_request,
 )
+from scripts.analyze_v18_teacher_critic_pipeline_ablation import candidate_report_row
 
 
 def plan(**overrides):
@@ -101,3 +102,25 @@ def test_frozen_selection_never_uses_oracle():
     decision = select_arm(rows)
     assert decision["oracle_used_for_selection"] is False
     assert decision["test_used_for_selection"] is False
+
+
+def test_runtime_candidate_schema_is_reconciled_for_reporting():
+    row = candidate_report_row(
+        case={"case_id": "c", "parent_team_hash": "p", "target_agent_id": 2},
+        arm="C_NO_SEMANTIC_CRITIC",
+        candidate={
+            "candidate_hash": "winner",
+            "candidate_stage": "source",
+            "valid": True,
+            "feasible": True,
+            "train_target_gain": 2,
+            "train_vote_gain": 1,
+            "train_vote_loss": 0,
+            "train_vote_net": 1,
+        },
+        winner_hash="winner",
+    )
+    assert row["candidate_valid"] is True
+    assert row["common_safe_feasible"] is True
+    assert row["zero_loss_feasible"] is True
+    assert row["would_commit"] is True

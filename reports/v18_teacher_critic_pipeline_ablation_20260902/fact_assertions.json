@@ -1,0 +1,11 @@
+{
+  "audit_pass": true,
+  "historical_regression_pass": true,
+  "six_cases": true,
+  "twenty_four_branches": true,
+  "all_arms_present": true,
+  "zero_test": true,
+  "zero_commits": true,
+  "oracle_not_used_for_selection": true,
+  "pass": true
+}

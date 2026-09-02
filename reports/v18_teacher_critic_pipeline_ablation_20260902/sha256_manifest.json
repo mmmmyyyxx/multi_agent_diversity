@@ -1,0 +1,53 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "arm_contrasts.csv",
+      "sha256": "80ab5bac1f3c877f3afe58ad8a7a0eaec822025a51fb1243403155371e036707"
+    },
+    {
+      "file": "arm_selection.json",
+      "sha256": "ffdf705cf64e639514d040b8135dae5d866508ffb0100df04730d10a0f19543f"
+    },
+    {
+      "file": "branch_funnel.csv",
+      "sha256": "f03fa50969dacf5c2ab389673479b0e56eef930a525cbb08b43eaede3c5d630b"
+    },
+    {
+      "file": "candidate_quality.csv",
+      "sha256": "26938b78e24bf0335de3493503f80f27f4be9c834e7a3ff6c765d611454052c1"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "01da801d851c1e08cf25b4511d0cc84bbe8d44a0f280c1195b2a192eb4e822cc"
+    },
+    {
+      "file": "historical_hard_gate_regression.json",
+      "sha256": "4d3d3c487df127802bd6cec55f65c827cf0e281312414f0241b1a3c424b4fa8f"
+    },
+    {
+      "file": "preregistration.json",
+      "sha256": "0a4ba085090d9357465e932dfa2dda73fd18622290e8a297c7b785157aff8cb2"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "248a92dcf509156509e1fa0d08819996700a176138ec60f9e9519eae25318e30"
+    },
+    {
+      "file": "README.md",
+      "sha256": "8915b2f35987daba948558609bb81792a1504188e001b8a9ff939636c4805626"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46379b764d5ef56bf70bb91b2eb466b14ff7b65f4f125b4bd65735ed076d40be"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "e15b37fa6cfbee2a6a180a122c6a452cf6eb40049725340d229c809f39df3176"
+    },
+    {
+      "file": "validation_results.csv",
+      "sha256": "5c1709510c56f02783d87e0258abd4bd7bd45c88c5fe811c2e13698649634d9a"
+    }
+  ]
+}

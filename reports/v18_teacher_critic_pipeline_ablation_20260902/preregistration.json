@@ -1,0 +1,16 @@
+{
+  "arms": [
+    "A_CANONICAL",
+    "B_TEACHER_CLEAN",
+    "C_NO_SEMANTIC_CRITIC",
+    "D_ADVISORY_CRITIC"
+  ],
+  "case_selection_rule": "per_seed_earliest_hybrid_blocked_and_passed",
+  "source_candidates_per_branch": 2,
+  "revision_per_valid_source": 1,
+  "validation_after_all_train_decisions_frozen": true,
+  "validation_vote_primary": true,
+  "oracle_selection_forbidden": true,
+  "test_access_forbidden": true,
+  "selection_version": "v18_teacher_critic_pipeline_selection_v1"
+}

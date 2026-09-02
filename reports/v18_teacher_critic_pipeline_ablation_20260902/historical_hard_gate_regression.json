@@ -1,0 +1,19 @@
+{
+  "regression_version": "v18_conservative_hard_gate_historical_v1",
+  "canonical_passed_plan_count": 27,
+  "deterministic_reject_count": 1,
+  "deterministic_reject_rate": 0.037037037037037035,
+  "maximum_allowed_reject_rate": 0.1,
+  "gate": "PASS",
+  "category_counts": {
+    "output_contract": 1
+  },
+  "field_counts": {
+    "repair_rule": 1
+  },
+  "rejected_plan_hashes": [
+    "56c0b3d5f597aeb84d02c5b94493942b4efcfa887bd0895f01c4cbab561c7461"
+  ],
+  "api_calls": 0,
+  "test_calls": 0
+}
