@@ -1,0 +1,5 @@
+case_id,arm,candidate_hash,candidate_stage,candidate_valid,common_safe_feasible,train_target_gain,train_vote_gain,train_vote_loss,train_vote_net,zero_loss_feasible,lower_loss_than_canonical_best,would_commit
+seed59_blocked_u0_t3,canonical_llm,e57a45d93b2489d99e86c26a7bf88a69cda190141a6ea4c55796beece1791016,source,True,False,-2,0,0,0,False,False,False
+seed59_blocked_u0_t3,canonical_llm,457307898a68a7afa620611f1848bbc84e9053937b91bfe859e67eb18e2653a3,source,True,False,0,0,0,0,False,False,False
+seed59_blocked_u0_t3,canonical_llm,b0a42fb636ad6c01f2c0175047dfaa711d606acaec09d3b165991a95a597e3ad,revision,True,True,1,0,0,0,True,False,False
+seed59_blocked_u0_t3,canonical_llm,01e8f4395adfa003737f550d1f29e0f2ee18245b7d91448c820f7a7c2efe215b,revision,True,True,6,0,0,0,True,False,True

@@ -1,0 +1,31 @@
+{
+  "pilot_version": "v18_safety_only_critic_pilot_v1",
+  "design": "paired_fixed_parent",
+  "case_count": 6,
+  "case_selection": "for_each_seed_59_60_61_select_earliest_hybrid_blocked_and_earliest_hybrid_passed_branch",
+  "arms": [
+    "canonical_llm",
+    "deterministic_safety_only"
+  ],
+  "sole_intervention": "critic_mode",
+  "fixed_across_arms": [
+    "parent",
+    "target",
+    "peers",
+    "train_pool",
+    "teacher_settings",
+    "student_settings",
+    "proposal_count",
+    "common_safe",
+    "ranking",
+    "budget"
+  ],
+  "clear_student_reach_increase": "at_least_2_of_6_additional_branches",
+  "material_would_commit_degradation": "more_than_0_05_rate",
+  "clear_validation_collateral_deterioration": "aggregate_vote_delta_more_than_2_below_canonical",
+  "validation_after_train_decision_freeze": true,
+  "trajectory_commit_allowed": false,
+  "test_access_allowed": false,
+  "safety_only_critic_api_calls_allowed": 0,
+  "frozen_registry_content_hash": "c2f0ba058616ebbacccc1d65657e589cacdd24490feda76d55a685a590b6dfee"
+}

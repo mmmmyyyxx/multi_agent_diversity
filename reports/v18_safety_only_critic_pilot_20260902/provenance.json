@@ -1,0 +1,11 @@
+{
+  "case_selection": "per_seed_earliest_hybrid_blocked_and_passed",
+  "execution_commit": "ac34bda14cabb264042e35e300ca25bb80eac46f",
+  "frozen_registry_content_hash": "c2f0ba058616ebbacccc1d65657e589cacdd24490feda76d55a685a590b6dfee",
+  "valid_execution": "fresh_retry_after_telemetry_only_fix",
+  "excluded_execution_reason": "missing_preregistered_decision_category_telemetry",
+  "scientific_settings_changed_for_retry": false,
+  "historical_raw_artifacts_modified": false,
+  "raw_prompts_published": false,
+  "test_accessed": false
+}

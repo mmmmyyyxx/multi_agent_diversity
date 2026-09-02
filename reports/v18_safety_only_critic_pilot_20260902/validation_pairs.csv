@@ -1,0 +1,13 @@
+case_id,historical_status,arm,winner_hash,would_commit,validation_vote_delta,validation_oracle_delta,validation_target_delta
+seed59_blocked_u0_t3,blocked,canonical_llm,01e8f4395adfa003737f550d1f29e0f2ee18245b7d91448c820f7a7c2efe215b,True,0,4,-2
+seed59_blocked_u0_t3,blocked,deterministic_safety_only,,False,0,0,0
+seed59_passed_u1_t2,passed,canonical_llm,,False,0,0,0
+seed59_passed_u1_t2,passed,deterministic_safety_only,,False,0,0,0
+seed60_blocked_u0_t0,blocked,canonical_llm,,False,0,0,0
+seed60_blocked_u0_t0,blocked,deterministic_safety_only,,False,0,0,0
+seed60_passed_u1_t3,passed,canonical_llm,,False,0,0,0
+seed60_passed_u1_t3,passed,deterministic_safety_only,,False,0,0,0
+seed61_blocked_u0_t0,blocked,canonical_llm,,False,0,0,0
+seed61_blocked_u0_t0,blocked,deterministic_safety_only,,False,0,0,0
+seed61_passed_u1_t3,passed,canonical_llm,,False,0,0,0
+seed61_passed_u1_t3,passed,deterministic_safety_only,,False,0,0,0

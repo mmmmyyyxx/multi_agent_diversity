@@ -1,0 +1,58 @@
+{
+  "pilot_version": "v18_safety_only_critic_pilot_v1",
+  "case_count": 6,
+  "branch_count": 12,
+  "aggregate": {
+    "canonical_llm": {
+      "branches_attempted": 6,
+      "critic_approvals": 1,
+      "student_reach_count": 1,
+      "student_reach_rate": 0.16666666666666666,
+      "strict_valid_candidates": 4,
+      "valid_per_student": 4.0,
+      "feasible_candidates": 2,
+      "feasible_per_student": 2.0,
+      "feasible_per_branch": 0.3333333333333333,
+      "would_commit_count": 1,
+      "would_commit_per_branch": 0.16666666666666666,
+      "zero_loss_feasible_count": 2,
+      "mean_feasible_vote_loss": 0.0,
+      "validation_vote_delta_sum": 0,
+      "validation_oracle_delta_sum": 4,
+      "critic_api_calls": 11
+    },
+    "deterministic_safety_only": {
+      "branches_attempted": 6,
+      "critic_approvals": 0,
+      "student_reach_count": 0,
+      "student_reach_rate": 0.0,
+      "strict_valid_candidates": 0,
+      "valid_per_student": 0.0,
+      "feasible_candidates": 0,
+      "feasible_per_student": 0.0,
+      "feasible_per_branch": 0.0,
+      "would_commit_count": 0,
+      "would_commit_per_branch": 0.0,
+      "zero_loss_feasible_count": 0,
+      "mean_feasible_vote_loss": 0.0,
+      "validation_vote_delta_sum": 0,
+      "validation_oracle_delta_sum": 0,
+      "critic_api_calls": 0
+    }
+  },
+  "final_label": "NO_CLEAR_SIGNAL",
+  "deterministic_safety_only_decision_categories": {
+    "explicit_output_contract": 10,
+    "anti_cheating": 2,
+    "schema_format": 0,
+    "semantic_quality": 0,
+    "approved": 0
+  },
+  "local_diagnosis": "hard_safety_plan_contamination_prevented_student_reach",
+  "semantic_over_filtering_causally_supported": false,
+  "downstream_candidate_quality_comparison_identified": false,
+  "safety_only_critic_api_calls": 0,
+  "test_calls": 0,
+  "team_prompt_commit_count": 0,
+  "trajectory_mutation_count": 0
+}

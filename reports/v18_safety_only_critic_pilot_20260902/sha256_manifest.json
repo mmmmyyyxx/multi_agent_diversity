@@ -1,0 +1,15 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {"file": "branch_funnel.csv", "sha256": "54ca614efa78503b89e24c514698fc5b46253e5023d036739d3223abe0fdd382"},
+    {"file": "candidate_quality.csv", "sha256": "8d8c6d0144aecf4760a04522ffc6d0e312d699138297f32707f267bc64e96fbf"},
+    {"file": "classifier.json", "sha256": "2b1752f48c3a05c620def69660616736065889642ded0b7d6ac808140d910c28"},
+    {"file": "fact_assertions.json", "sha256": "9158dbceaa7b922862f4c96cacfc67ddf660837f8722074477abf4363286e596"},
+    {"file": "preregistration.json", "sha256": "20697ece1d6d177b490340d787f50e4547a92ce3ca8bb08507cc3c63a2a3a21f"},
+    {"file": "provenance.json", "sha256": "0b96ffbde630384331331a256491b8feebf7a0b43470eabf0a8914398dabe5b0"},
+    {"file": "README.md", "sha256": "52c3f062b2eefa31ba328056919182a28e2ec1f0f4b3c28ea107f4862490403b"},
+    {"file": "sanitization_manifest.json", "sha256": "c941e820c6736c43bddea92717a0add1ea4e9b05676fa8d17988d8841f5c0679"},
+    {"file": "summary.json", "sha256": "5f5e948802938236f6f7cb30b8ded6f30a98c7c6234393b5931e22c069a7cb56"},
+    {"file": "validation_pairs.csv", "sha256": "5ee78bc7bdd27e51a251c84b0c5ced7a794681d133d3ab7f28961fc7e3eee831"}
+  ]
+}

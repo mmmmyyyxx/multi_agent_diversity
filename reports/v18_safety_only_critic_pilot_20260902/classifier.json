@@ -1,0 +1,13 @@
+{
+  "version": "v18_safety_only_critic_classifier_v1",
+  "labels": [
+    "SAFETY_ONLY_CRITIC_SUPPORTED",
+    "THROUGHPUT_ONLY",
+    "SEMANTIC_CRITIC_HAS_FILTERING_VALUE",
+    "NO_CLEAR_SIGNAL"
+  ],
+  "clear_student_reach_increase": "at_least_2_of_6_additional_branches",
+  "material_would_commit_degradation": "more_than_0_05_rate",
+  "clear_validation_collateral_deterioration": "aggregate_vote_delta_more_than_2_below_canonical",
+  "frozen_before_validation": true
+}

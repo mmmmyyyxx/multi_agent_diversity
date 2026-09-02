@@ -1,0 +1,14 @@
+{
+  "gate_pass": true,
+  "six_cases": true,
+  "twelve_branches": true,
+  "safety_critic_zero_api": true,
+  "safety_decisions_accounted": true,
+  "safety_decision_count": 12,
+  "explicit_output_contract_count": 10,
+  "anti_cheating_count": 2,
+  "safety_semantic_quality_rejection_count": 0,
+  "no_test": true,
+  "no_commits": true,
+  "fact_assertions_pass": true
+}
