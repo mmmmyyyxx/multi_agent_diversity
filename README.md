@@ -1,5 +1,20 @@
 # Multi-Agent Diversity
 
+## Experiment Governance
+
+Experiment work is governed by a traceable design-to-evidence chain:
+
+- [Current implementation specification](docs/design/CURRENT_SPEC.md)
+- [Experiment registry](experiments/registry.yaml)
+- [Experiment lineage](docs/experiments/LINEAGE.md)
+- [Failure registry](docs/failures/KNOWN_FAILURES.md)
+- [Engineering contract](AGENTS.md)
+- [Codex experiment workflow](docs/workflows/CODEX_EXPERIMENT_WORKFLOW.md)
+
+`method.md` remains the human-readable exposition. Runtime constants remain
+authoritative in `multi_dataset_diverse_rl/versions.py`; reports are evidence,
+not design authority.
+
 This repository implements Repairability-Adjusted Dual-Target Prompt-Team
 Optimization:
 

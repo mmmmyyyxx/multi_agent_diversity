@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "experiment_manifest.schema.json",
+  "title": "Experiment Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "title",
+    "status",
+    "lineage",
+    "scientific_question",
+    "hypotheses",
+    "design",
+    "method_identity",
+    "runtime_version",
+    "data",
+    "model",
+    "seeds",
+    "budget",
+    "api_authorization",
+    "selection",
+    "artifacts",
+    "git",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {"const": "experiment_manifest_v1"},
+    "experiment_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {
+      "enum": ["DRAFT", "PREREGISTERED", "IMPLEMENTED", "PREFLIGHT_PASS", "RUNNING", "TRAIN_FROZEN", "VALIDATED", "COMPLETED_PRE_TEST", "TESTED", "COMPLETED"]
+    },
+    "legacy_index": {"type": "boolean"},
+    "lifecycle_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["status", "timestamp"],
+        "properties": {
+          "status": {"type": "string"},
+          "timestamp": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["parents", "derives_from"],
+      "properties": {
+        "parents": {"type": "array", "items": {"type": "string"}},
+        "derives_from": {"type": ["string", "null"]}
+      }
+    },
+    "scientific_question": {"type": "string"},
+    "hypotheses": {"type": "array", "items": {"type": "string"}},
+    "design": {
+      "type": "object",
+      "required": ["changed", "unchanged", "forbidden_changes"],
+      "properties": {
+        "changed": {"type": "array", "items": {"type": "string"}},
+        "unchanged": {"type": "array", "items": {"type": "string"}},
+        "forbidden_changes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "method_identity": {"type": ["string", "null"]},
+    "runtime_version": {"type": ["string", "null"]},
+    "data": {
+      "type": "object",
+      "required": ["task", "formal", "split_ids", "split_hashes", "validation_policy", "test_policy"],
+      "properties": {
+        "task": {"type": ["string", "null"]},
+        "formal": {"type": "boolean"},
+        "split_ids": {"type": "object"},
+        "split_hashes": {"type": "object"},
+        "validation_policy": {"type": "string", "minLength": 1},
+        "test_policy": {"type": "string", "minLength": 1}
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["solver", "optimizer_roles"],
+      "properties": {
+        "solver": {"type": ["string", "null"]},
+        "optimizer_roles": {"type": "object"},
+        "thinking": {"type": ["boolean", "null"]},
+        "temperatures": {"type": "object"},
+        "max_tokens": {"type": "object"}
+      }
+    },
+    "seeds": {"type": "array", "items": {"type": "integer"}},
+    "budget": {
+      "type": "object",
+      "required": ["type", "frozen_before_run", "limit"],
+      "properties": {
+        "type": {"type": "string", "minLength": 1},
+        "frozen_before_run": {"type": "boolean"},
+        "limit": {},
+        "candidate_counts": {"type": "object"}
+      }
+    },
+    "api_authorization": {
+      "type": "object",
+      "required": ["authorized", "allowed_roles", "allowed_phases"],
+      "properties": {
+        "authorized": {"type": "boolean"},
+        "allowed_roles": {"type": "array", "items": {"type": "string"}},
+        "allowed_phases": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "selection": {
+      "type": "object",
+      "required": ["primary_metric", "frozen_rule", "validation_used_for_selection", "test_used_for_selection"],
+      "properties": {
+        "primary_metric": {"type": ["string", "null"]},
+        "frozen_rule": {"type": "string", "minLength": 1},
+        "validation_used_for_selection": {"type": "boolean"},
+        "test_used_for_selection": {"type": "boolean"}
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["preregistration", "report", "provenance"],
+      "properties": {
+        "preregistration": {},
+        "report": {"type": ["string", "null"]},
+        "provenance": {"type": ["string", "null"]}
+      }
+    },
+    "git": {
+      "type": "object",
+      "required": ["design_commit", "implementation_commit"],
+      "properties": {
+        "design_commit": {"type": ["string", "null"]},
+        "implementation_commit": {"type": ["string", "null"]},
+        "result_commit": {"type": ["string", "null"]}
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["classifier", "conclusion", "evidence_type"],
+      "properties": {
+        "classifier": {"type": ["string", "null"]},
+        "conclusion": {"type": ["string", "null"]},
+        "evidence_type": {"enum": ["retrospective", "prospective", "causal_fixed_parent", "online", "not_yet_available"]}
+      }
+    }
+  },
+  "additionalProperties": true
+}

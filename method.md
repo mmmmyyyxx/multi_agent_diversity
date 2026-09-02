@@ -1,5 +1,8 @@
 # Method
 
+This file is the human-readable method exposition. The normative, mechanically
+referenced implementation specification is `docs/design/CURRENT_SPEC.md`.
+
 ## 1. Scope
 
 The current runtime implements:

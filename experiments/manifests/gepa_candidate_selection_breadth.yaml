@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: gepa_candidate_selection_breadth
+title: GEPA-style candidate selection and proposal-breadth audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v18_writeback_quality_audit], derives_from: v18_writeback_quality_audit}
+scientific_question: Is harmful write-back caused by ranking or insufficient candidate breadth?
+hypotheses: []
+design: {changed: [retrospective frontier selection, prospective N2 versus N4 attempt], unchanged: [target, parent, Common-Safe, ranking], forbidden_changes: [test access, outcome-conditioned parents]}
+method_identity: historical_v18_probe
+runtime_version: gepa_candidate_breadth_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: frozen after choice, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: []
+budget: {type: fixed_parent_candidate_budget, frozen_before_run: true, limit: N2_vs_N4}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: feasible-set quality, frozen_rule: GEPA frontier then breadth classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/gepa_candidate_breadth_audit_20260831, provenance: reports/gepa_candidate_breadth_audit_20260831/provenance.json}
+git: {design_commit: null, implementation_commit: null, result_commit: 9a21dfe41169ecfa0192f2e742468003c22e9c97}
+result: {classifier: CANDIDATE_SELECTION_NOT_PRIMARY__BREADTH_NOT_EVALUATED, conclusion: Frontier did not change winners and Critic exhaustion prevented proposal breadth evaluation, evidence_type: causal_fixed_parent}

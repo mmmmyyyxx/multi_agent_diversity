@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_online_accumulation
+title: V18 hybrid online accumulation pilot
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v17_hybrid_target_allocation], derives_from: v17_hybrid_target_allocation}
+scientific_question: Does recovered singleton coverage deepen and convert during online updates?
+hypotheses: []
+design: {changed: [online W1 versus Hybrid trajectories], unchanged: [task, horizon, proposal pipeline], forbidden_changes: [test access, post-result retries]}
+method_identity: historical_v18_probe
+runtime_version: hybrid_online_accumulation_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: initial and changed states only, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: online_update_horizon, frozen_before_run: true, limit: 8}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: longitudinal support accumulation, frozen_rule: frozen online classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v18_hybrid_online_accumulation_pilot_20260822, provenance: reports/v18_hybrid_online_accumulation_pilot_20260822/gate_provenance.json}
+git: {design_commit: null, implementation_commit: a7032b6ff4e20f91ae3939504e779aa409044089, result_commit: 5cb37247b7561c67bf9a4f2cedb40b1cdf073f1a}
+result: {classifier: LONGITUDINAL_ACCUMULATION_WITH_VOTE_CONVERSION, conclusion: Hybrid increases accumulation and local conversion without reliable final validation Vote gain, evidence_type: online}

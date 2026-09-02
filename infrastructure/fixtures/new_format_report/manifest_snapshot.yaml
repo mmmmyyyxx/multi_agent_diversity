@@ -1,0 +1,4 @@
+schema_version: experiment_manifest_v1
+experiment_id: synthetic_fixture
+status: COMPLETED
+evidence_type: retrospective

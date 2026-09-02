@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["experiment_id", "run_id", "branch_id", "stage", "timestamp"],
+  "properties": {
+    "experiment_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "branch_id": {"type": ["string", "null"]},
+    "target_member": {"type": ["integer", "null"]},
+    "stage": {
+      "enum": ["TARGET_SELECTED", "TEACHER_PLAN_CREATED", "HARD_GATE_PASS", "HARD_GATE_REJECT", "SEMANTIC_CRITIC_PASS", "SEMANTIC_CRITIC_REJECT", "STUDENT_REACHED", "STUDENT_CANDIDATE_VALID", "STUDENT_CANDIDATE_INVALID", "ROLLOUT_COMPLETED", "COMMON_SAFE_FEASIBLE", "COMMON_SAFE_REJECT", "BRANCH_WINNER", "WOULD_COMMIT", "COMMIT", "VALIDATION_EVALUATED", "TEST_EVALUATED", "NOT_APPLICABLE"]
+    },
+    "reason_category": {"type": ["string", "null"]},
+    "timestamp": {"type": "string"}
+  },
+  "additionalProperties": false
+}

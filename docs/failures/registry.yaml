@@ -1,0 +1,110 @@
+schema_version: failure_registry_v1
+failures:
+  - failure_id: FAIL-TARGET-CONCENTRATION
+    title: Target allocation concentration
+    status: DIAGNOSED
+    first_observed: v17_formal_5arm_3seed
+    affected_components: [target_selection, responsibility_service]
+    symptom: Member-aware allocation can repeatedly concentrate proposal service.
+    evidence: [reports/v17_failure_decomposition_20260820]
+    evidence_level: observed
+    root_cause_status: Allocation behavior was isolated from residual-context behavior.
+    forbidden_inference: Do not infer that every alternative allocation improves Vote.
+    regression_tests: [tests/test_repairability_adjusted_v13.py]
+    mitigation: Preserve unique routing, wait accounting, and explicit target telemetry.
+  - failure_id: FAIL-LOW-UPDATE-THROUGHPUT
+    title: Low feasible-update throughput
+    status: DIAGNOSED
+    first_observed: v17_formal_5arm_3seed
+    affected_components: [target_selection, proposal_pipeline]
+    symptom: Actionable branches frequently fail before a feasible update is available.
+    evidence: [reports/v17_failure_decomposition_20260820, reports/v18_hybrid_online_accumulation_pilot_20260822]
+    evidence_level: observed
+    root_cause_status: Multiple upstream bottlenecks exist; no single universal cause is established.
+    forbidden_inference: Throughput improvement alone is not quality or final Vote improvement.
+    regression_tests: [tests/test_final_method_pipeline.py]
+    mitigation: Record each funnel layer separately and preserve compute parity.
+  - failure_id: FAIL-PRE-STUDENT-CRITIC-GATE
+    title: Pre-Student semantic Critic gate bottleneck
+    status: DIAGNOSED
+    first_observed: gepa_critic_gate_failure_audit
+    affected_components: [teacher, critic, student_reach]
+    symptom: Many branches stop at semantic Critic rejection before Student generation.
+    evidence: [reports/gepa_critic_gate_failure_audit_20260831, reports/v18_shadow_raw_critic_pilot_20260902]
+    evidence_level: causally_supported
+    root_cause_status: Shadow continuation established feasible candidate-supply loss on fixed parents.
+    forbidden_inference: Do not infer that removing the Critic improves online or validation Vote.
+    regression_tests: [tests/test_v18_shadow_raw_critic_pilot.py]
+    mitigation: Candidate pipeline alternatives require prospective online validation before promotion.
+  - failure_id: FAIL-CANDIDATE-SELECTION-NOT-PRIMARY
+    title: Historical winner selection is not the primary harmful-pool bottleneck
+    status: NOT_PRIMARY
+    first_observed: gepa_candidate_selection_audit
+    affected_components: [candidate_ranking]
+    symptom: GEPA-style frontier replay retained the historical winner in key harmful pools.
+    evidence: [reports/gepa_candidate_breadth_audit_20260831]
+    evidence_level: observed
+    root_cause_status: Retrospective evidence excludes only the audited pools and rule.
+    forbidden_inference: Do not claim ranking is universally optimal or causally irrelevant.
+    regression_tests: [tests/test_gepa_candidate_breadth_pilot.py]
+    mitigation: Keep ranking fixed while testing candidate-supply interventions.
+  - failure_id: FAIL-FEASIBLE-SET-QUALITY
+    title: Feasible-set candidate quality gap
+    status: DIAGNOSED
+    first_observed: v18_writeback_quality_diagnostic
+    affected_components: [proposal_generation, feasible_pool]
+    symptom: Harmful accepted pools contained no zero-loss feasible alternative.
+    evidence: [reports/v18_writeback_quality_diagnostic_20260824, reports/gepa_candidate_breadth_audit_20260831]
+    evidence_level: observed
+    root_cause_status: Candidate breadth remained untested where the pre-Student gate blocked generation.
+    forbidden_inference: Do not label proposal breadth ineffective when Student was never reached.
+    regression_tests: [tests/test_gepa_candidate_breadth_pilot.py]
+    mitigation: Separate reach, validity, feasibility, and selection in the funnel.
+  - failure_id: FAIL-WRITEBACK-TRANSFER
+    title: Train-safe write-back can transfer poorly to validation
+    status: DIAGNOSED
+    first_observed: v18_online_accumulation
+    affected_components: [common_safe, validation_transfer]
+    symptom: Some train-beneficial commits cause validation collateral or later overwrite.
+    evidence: [reports/v18_writeback_quality_diagnostic_20260824, reports/v18_trajectory_gain_loss_decomposition_20260824]
+    evidence_level: observed
+    root_cause_status: Transfer and trajectory overwrite are measured; a train-only discriminator is not established.
+    forbidden_inference: Do not use validation outcomes inside candidate acceptance.
+    regression_tests: [tests/test_test_split_isolation.py]
+    mitigation: Report train-to-validation transfer separately from write-back legality.
+  - failure_id: FAIL-TEACHER-PRESERVATION-PATTERN
+    title: Stable Teacher preservation-rule safety marker pattern
+    status: DIAGNOSED
+    first_observed: historical_teacher_safety_audit
+    affected_components: [teacher_schema, preservation_rule]
+    symptom: Historical deterministic markers concentrate in preservation_rule and repeat after retry.
+    evidence: [reports/v18_historical_teacher_safety_failure_audit_20260902]
+    evidence_level: observed
+    root_cause_status: Pattern is stable but does not discriminate canonical Critic pass from block.
+    forbidden_inference: Do not infer that preservation_rule alone causes semantic rejection.
+    regression_tests: [tests/test_v18_historical_teacher_safety.py]
+    mitigation: Record field-local safety categories prospectively before changing the schema.
+  - failure_id: FAIL-DETERMINISTIC-SAFETY-OVERBROAD-RISK
+    title: Deterministic safety classifier may over-block benign wording
+    status: OPEN
+    first_observed: safety_only_prospective_pilot
+    affected_components: [deterministic_hard_gate]
+    symptom: A strict rule can classify preservation wording as output-contract or copying risk.
+    evidence: [reports/v18_safety_only_critic_pilot_20260902, reports/v18_teacher_critic_pipeline_ablation_20260902]
+    evidence_level: hypothesized
+    root_cause_status: Historical regression is low for the selected candidate gate, but broader sufficiency is unproven.
+    forbidden_inference: Do not call the deterministic gate generally safe from six passing prospective plans.
+    regression_tests: [tests/test_v18_teacher_critic_pipeline.py]
+    mitigation: Keep conservative lexical rules and historical false-positive regression bounds.
+  - failure_id: FAIL-SEMANTIC-CRITIC-OVERFILTERING
+    title: Semantic Critic removes some useful fixed-parent opportunities
+    status: DIAGNOSED
+    first_observed: shadow_raw_critic_pilot
+    affected_components: [semantic_critic, candidate_supply]
+    symptom: Canonically rejected plans produced feasible candidates under no-commit shadow continuation.
+    evidence: [reports/v18_shadow_raw_critic_pilot_20260902, reports/v18_teacher_critic_pipeline_ablation_20260902]
+    evidence_level: causally_supported
+    root_cause_status: Fixed-parent candidate-supply effect is supported; trajectory efficacy is untested.
+    forbidden_inference: Do not claim Critic removal improves Vote, test, or online trajectories.
+    regression_tests: [tests/test_v18_shadow_raw_critic_pilot.py, tests/test_v18_teacher_critic_pipeline.py]
+    mitigation: Candidate C remains selected only for future online validation.

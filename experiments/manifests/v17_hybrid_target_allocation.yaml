@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v17_hybrid_target_allocation
+title: V17 prospective hybrid target allocation pilot
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v17_module1_2x2_isolation], derives_from: v17_module1_2x2_isolation}
+scientific_question: Can responsibility-constrained exploration recover feasible local opportunities missed by W1?
+hypotheses: []
+design: {changed: [second target allocation], unchanged: [first target, parent, proposal pipeline], forbidden_changes: [trajectory commit, test access]}
+method_identity: historical_v17_probe
+runtime_version: hybrid_target_allocation_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: frozen winner-only validation, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: []
+budget: {type: fixed_parent_branch_budget, frozen_before_run: true, limit: 18_cells}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: feasibility recovery, frozen_rule: preregistered hybrid classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v17_hybrid_target_allocation_pilot_20260821, provenance: reports/v17_hybrid_target_allocation_pilot_20260821/source_freeze.json}
+git: {design_commit: null, implementation_commit: 43230a5734a971ead70841d71277105512fa0adc, result_commit: 30e42e03dfacd0077a79f0b7ce2d49689005d9f4}
+result: {classifier: HYBRID_THROUGHPUT_ONLY, conclusion: Hybrid recovered feasible opportunities and Oracle coverage without local Vote gain, evidence_type: causal_fixed_parent}

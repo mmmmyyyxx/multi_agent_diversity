@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_shadow_raw_critic
+title: V18 canonical Critic shadow-raw continuation pilot
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [gepa_critic_gate_audit, v18_historical_teacher_safety], derives_from: gepa_critic_gate_audit}
+scientific_question: Can canonically rejected plans produce useful candidates when continued without changing the recorded gate decision?
+hypotheses: []
+design: {changed: [shadow continuation after semantic rejection], unchanged: [Teacher plan, Critic response, parent, Student], forbidden_changes: [canonical decision rewrite, commit, test access]}
+method_identity: historical_v18_probe
+runtime_version: shadow_raw_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: frozen winner-only, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: fixed_parent_branch_budget, frozen_before_run: true, limit: 12_branches}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: useful candidate conditional on rejection, frozen_rule: shadow-raw causal classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v18_shadow_raw_critic_pilot_20260902, provenance: reports/v18_shadow_raw_critic_pilot_20260902/provenance.json}
+git: {design_commit: c4542ccf0cf1637f4dd38a29d102f2d9c4748268, implementation_commit: c4542ccf0cf1637f4dd38a29d102f2d9c4748268, result_commit: 474b85d8755ab97612d9ffefb98bfdf1604541ef}
+result: {classifier: CRITIC_OVER_FILTERING_CAUSALLY_SUPPORTED, conclusion: Some rejected plans yield feasible zero-loss candidates without local Vote change, evidence_type: causal_fixed_parent}

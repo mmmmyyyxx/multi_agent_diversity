@@ -1,0 +1,130 @@
+schema_version: invariant_registry_v1
+invariants:
+  - id: INV-ID-001
+    description: Runtime identities and frozen constants have one authority.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/versions.py]
+    tests: [tests/governance/test_governance.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-VOTE-001
+    description: Five equal-weight members use plurality with tie-as-abstain.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/system.py, multi_dataset_diverse_rl/peer_state.py]
+    tests: [tests/test_vote.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-DATA-001
+    description: Search uses the optimization split and no validation selection.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/cli.py, multi_dataset_diverse_rl/evaluation/fixed_probe.py]
+    tests: [tests/test_final_state_protocol_v10.py]
+    failure_refs: [FAIL-WRITEBACK-TRANSFER]
+    critical: true
+    status: ACTIVE
+  - id: INV-TEST-001
+    description: Test cannot affect training or selection and runs only after final freeze.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/system.py, multi_dataset_diverse_rl/cli.py]
+    tests: [tests/test_test_split_isolation.py, tests/governance/test_governance.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-RESP-001
+    description: Counterfactual vote and margin alone define residual eligibility.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/responsibility.py]
+    tests: [tests/test_attribution_and_responsibility.py]
+    failure_refs: [FAIL-TARGET-CONCENTRATION]
+    critical: true
+    status: ACTIVE
+  - id: INV-ROUTE-001
+    description: Every serviceable residual has one legal owner and one lane.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/responsibility.py]
+    tests: [tests/test_single_service_routing.py]
+    failure_refs: [FAIL-TARGET-CONCENTRATION]
+    critical: true
+    status: ACTIVE
+  - id: INV-TARGET-001
+    description: Canonical S1/S2 target selection is repairability-adjusted Top-2.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/responsibility.py, multi_dataset_diverse_rl/system.py]
+    tests: [tests/test_repairability_adjusted_v13.py]
+    failure_refs: [FAIL-TARGET-CONCENTRATION, FAIL-LOW-UPDATE-THROUGHPUT]
+    critical: true
+    status: ACTIVE
+  - id: INV-REPAIR-001
+    description: Repairability counters update and reset only on their specified events.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/system.py]
+    tests: [tests/test_repairability_adjusted_v13.py]
+    failure_refs: [FAIL-LOW-UPDATE-THROUGHPUT]
+    critical: true
+    status: ACTIVE
+  - id: INV-BRANCH-001
+    description: Dual branches share one immutable parent and at most one winner commits.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/system.py]
+    tests: [tests/test_final_method_pipeline.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-TCS-001
+    description: Canonical Teacher-Critic-Student context and recovery remain bounded.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/tcs.py, multi_dataset_diverse_rl/system.py]
+    tests: [tests/test_responsibility_conditioned_tcs.py, tests/test_student_invalid_recovery_v4.py]
+    failure_refs: [FAIL-PRE-STUDENT-CRITIC-GATE, FAIL-TEACHER-PRESERVATION-PATTERN]
+    critical: true
+    status: ACTIVE
+  - id: INV-COMMONSAFE-001
+    description: Candidate write-back requires target/vote monotonicity and strict progress.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/candidate_selection.py]
+    tests: [tests/test_competence_constrained_selection.py]
+    failure_refs: [FAIL-FEASIBLE-SET-QUALITY, FAIL-WRITEBACK-TRANSFER]
+    critical: true
+    status: ACTIVE
+  - id: INV-RANK-001
+    description: Candidate and cross-branch ranking use only frozen Common-Safe keys.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/candidate_selection.py, multi_dataset_diverse_rl/system.py]
+    tests: [tests/test_final_method_pipeline.py]
+    failure_refs: [FAIL-CANDIDATE-SELECTION-NOT-PRIMARY]
+    critical: true
+    status: ACTIVE
+  - id: INV-COMMIT-001
+    description: Commit and refresh are atomic with complete rollback on failure.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/system.py, multi_dataset_diverse_rl/persistence/checkpoint.py]
+    tests: [tests/test_final_method_pipeline.py, tests/test_checkpoint_peer_state.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-AUTH-001
+    description: API access requires explicit user and frozen manifest authorization.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/governance/authorization.py]
+    tests: [tests/governance/test_governance.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-ARTIFACT-001
+    description: Publishable artifacts exclude raw, secret, cache, checkpoint, and host-path content.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/governance/artifacts.py]
+    tests: [tests/governance/test_governance.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-MANIFEST-001
+    description: Experiment facts and lifecycle are explicit and preregistration is immutable.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/governance/manifest.py]
+    tests: [tests/governance/test_governance.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE

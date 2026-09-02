@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: gepa_critic_gate_audit
+title: GEPA Critic gate failure audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [gepa_candidate_selection_breadth], derives_from: gepa_candidate_selection_breadth}
+scientific_question: At which pre-candidate stage did the breadth probe stop?
+hypotheses: []
+design: {changed: [offline Critic funnel diagnosis], unchanged: [historical branches, outcomes], forbidden_changes: [new calls, over-filtering causal claim]}
+method_identity: historical_v18_probe
+runtime_version: offline_audit
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: no new access, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: zero_api_audit, frozen_before_run: true, limit: existing_artifacts_only}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: Student reach funnel, frozen_rule: preregistered audit classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/gepa_critic_gate_failure_audit_20260831, provenance: reports/gepa_critic_gate_failure_audit_20260831/provenance.json}
+git: {design_commit: null, implementation_commit: null, result_commit: 400a841d4645883c44d06a8c2e5d27f812a7c919}
+result: {classifier: PRE_STUDENT_CRITIC_GATE_BOTTLENECK_CONFIRMED, conclusion: Semantic Critic exhaustion blocked breadth before Student while over-filtering remained unestablished, evidence_type: retrospective}

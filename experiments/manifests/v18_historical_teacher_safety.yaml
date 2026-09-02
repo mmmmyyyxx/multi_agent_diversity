@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_historical_teacher_safety
+title: Historical Teacher safety failure audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v18_safety_only_prospective, v18_online_accumulation], derives_from: v18_safety_only_prospective}
+scientific_question: Are hard-safety markers stable and discriminative in historical Teacher plans?
+hypotheses: []
+design: {changed: [offline field-level marker audit], unchanged: [historical plans and Critic outcomes], forbidden_changes: [new calls, inferred missing text]}
+method_identity: historical_v18_probe
+runtime_version: offline_audit
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: not accessed, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: zero_api_audit, frozen_before_run: true, limit: 175_plans}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: stable marker pattern and Critic discrimination, frozen_rule: preregistered field classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v18_historical_teacher_safety_failure_audit_20260902, provenance: reports/v18_historical_teacher_safety_failure_audit_20260902/provenance.json}
+git: {design_commit: null, implementation_commit: null, result_commit: f61e14f31175a61e5b77b662b69d5fcbc1b3fee3}
+result: {classifier: STABLE_PATTERN_NOT_DISCRIMINATIVE_FOR_CANONICAL_BLOCKING, conclusion: Preservation-rule markers repeat but do not explain canonical pass versus block, evidence_type: retrospective}

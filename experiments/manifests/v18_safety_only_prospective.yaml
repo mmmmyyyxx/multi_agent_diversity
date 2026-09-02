@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_safety_only_prospective
+title: V18 deterministic safety-only Critic prospective pilot
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v18_safety_only_counterfactual], derives_from: v18_safety_only_counterfactual}
+scientific_question: Does deterministic safety-only gating increase Student reach prospectively?
+hypotheses: []
+design: {changed: [Critic gate], unchanged: [fixed parents, target, Student, rollout], forbidden_changes: [trajectory commit, test access]}
+method_identity: historical_v18_probe
+runtime_version: deterministic_safety_only_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: frozen winner-only, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: fixed_parent_branch_budget, frozen_before_run: true, limit: 12_branches}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: Student reach, frozen_rule: four-label safety-only classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: reports/v18_safety_only_critic_pilot_20260902/preregistration.json, report: reports/v18_safety_only_critic_pilot_20260902, provenance: reports/v18_safety_only_critic_pilot_20260902/provenance.json}
+git: {design_commit: null, implementation_commit: ac34bda14cabb264042e35e300ca25bb80eac46f, result_commit: 5c33264d0707cd60fec4999001503ff6bd95eee7}
+result: {classifier: NO_CLEAR_SIGNAL, conclusion: Prospective plans were blocked by deterministic hard-safety markers before Student, evidence_type: causal_fixed_parent}

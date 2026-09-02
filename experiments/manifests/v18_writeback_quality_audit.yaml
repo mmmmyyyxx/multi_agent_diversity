@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_writeback_quality_audit
+title: V18 accepted-update write-back quality audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v18_online_accumulation], derives_from: v18_online_accumulation}
+scientific_question: Why do some train-safe accepted updates transfer poorly?
+hypotheses: []
+design: {changed: [offline accepted-pool decomposition], unchanged: [recorded candidates, ranking, gate], forbidden_changes: [new evaluation, method changes]}
+method_identity: historical_v18_probe
+runtime_version: offline_audit
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: recorded rows only, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: zero_api_audit, frozen_before_run: true, limit: existing_artifacts_only}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: harmful commit structure, frozen_rule: frozen quality classifier, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v18_writeback_quality_diagnostic_20260824, provenance: reports/v18_writeback_quality_diagnostic_20260824/provenance.json}
+git: {design_commit: null, implementation_commit: null, result_commit: f6fdc0f1d0f2bfa85fe15f102a8a1bfc5b0e3ba4}
+result: {classifier: COMMON_SAFE_FEASIBLE_SET_QUALITY_GAP_WITH_EXISTING_TRAIN_VOTE_LOSS_RISK_SIGNAL, conclusion: Harmful pools lacked zero-loss feasible alternatives, evidence_type: retrospective}

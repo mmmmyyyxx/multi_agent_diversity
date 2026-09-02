@@ -1,0 +1,18 @@
+schema_version: experiment_lineage_v1
+edges:
+  - {from: v17_formal_5arm_3seed, to: v17_failure_decomposition, relation: audit_of}
+  - {from: v17_failure_decomposition, to: v17_module1_2x2_isolation, relation: followup_of}
+  - {from: v17_module1_2x2_isolation, to: v17_hybrid_target_allocation, relation: derived_experiment}
+  - {from: v17_hybrid_target_allocation, to: v18_online_accumulation, relation: derived_experiment}
+  - {from: v18_online_accumulation, to: v18_writeback_quality_audit, relation: audit_of}
+  - {from: v18_writeback_quality_audit, to: v18_m2f_trigger_extension, relation: followup_of}
+  - {from: v18_writeback_quality_audit, to: gepa_candidate_selection_breadth, relation: followup_of}
+  - {from: gepa_candidate_selection_breadth, to: gepa_critic_gate_audit, relation: audit_of}
+  - {from: gepa_critic_gate_audit, to: v18_safety_only_counterfactual, relation: followup_of}
+  - {from: v18_safety_only_counterfactual, to: v18_safety_only_prospective, relation: derived_experiment}
+  - {from: v18_safety_only_prospective, to: v18_historical_teacher_safety, relation: followup_of}
+  - {from: v18_online_accumulation, to: v18_historical_teacher_safety, relation: audit_of}
+  - {from: gepa_critic_gate_audit, to: v18_shadow_raw_critic, relation: derived_experiment}
+  - {from: v18_historical_teacher_safety, to: v18_shadow_raw_critic, relation: followup_of}
+  - {from: v18_shadow_raw_critic, to: v18_teacher_critic_four_arm, relation: derived_experiment}
+  - {from: v18_historical_teacher_safety, to: v18_teacher_critic_four_arm, relation: followup_of}

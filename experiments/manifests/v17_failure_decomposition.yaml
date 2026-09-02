@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v17_failure_decomposition
+title: V17 frozen failure decomposition
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v17_formal_5arm_3seed], derives_from: v17_formal_5arm_3seed}
+scientific_question: Where does the V17 S1-to-S2 generalization loss arise?
+hypotheses: []
+design: {changed: [offline decomposition], unchanged: [frozen trajectories, outcomes], forbidden_changes: [new evaluation, causal overclaim]}
+method_identity: historical_v17
+runtime_version: offline_audit
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: reuse recorded evidence, test_policy: reuse recorded evidence only}
+model: {solver: null, optimizer_roles: {}}
+seeds: []
+budget: {type: zero_api_audit, frozen_before_run: true, limit: existing_artifacts_only}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: failure structure, frozen_rule: observational decomposition, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v17_failure_decomposition_20260820, provenance: reports/v17_failure_decomposition_20260820/protocol_gate.json}
+git: {design_commit: null, implementation_commit: null, result_commit: 6b739c022d2dc7f354759900d025af4ba1e90fc9}
+result: {classifier: TARGET_CONCENTRATION_ASSOCIATED_WITH_MEMBER_TRANSFER_REGRESSION, conclusion: Observational association plus lower update throughput, evidence_type: retrospective}

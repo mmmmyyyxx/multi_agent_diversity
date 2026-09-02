@@ -1,0 +1,37 @@
+schema_version: experiment_manifest_v1
+experiment_id: replace_me
+title: Replace with experiment title
+status: DRAFT
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: null}
+lineage: {parents: [], derives_from: null}
+scientific_question: ""
+hypotheses: []
+design: {changed: [], unchanged: [], forbidden_changes: []}
+method_identity: null
+runtime_version: null
+data:
+  task: null
+  formal: false
+  split_ids: {}
+  split_hashes: {}
+  validation_policy: not_accessed
+  test_policy: not_accessed
+model:
+  solver: null
+  optimizer_roles: {}
+  thinking: null
+  temperatures: {}
+  max_tokens: {}
+seeds: []
+budget: {type: not_set, frozen_before_run: false, limit: null, candidate_counts: {}}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: null
+  frozen_rule: not_set
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts: {preregistration: null, report: null, provenance: null}
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: null, conclusion: null, evidence_type: not_yet_available}

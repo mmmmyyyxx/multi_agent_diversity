@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_safety_only_counterfactual
+title: V18 safety-only Critic reach counterfactual audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [gepa_critic_gate_audit], derives_from: gepa_critic_gate_audit}
+scientific_question: What Student-reach range is compatible with historical rejection categories under safety-only gating?
+hypotheses: []
+design: {changed: [offline rejection remapping], unchanged: [historical decisions], forbidden_changes: [causal claim, downstream quality claim]}
+method_identity: historical_v18_probe
+runtime_version: safety_only_counterfactual_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: not accessed, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: zero_api_audit, frozen_before_run: true, limit: 148_rejections}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: Student reach bounds, frozen_rule: category lower and upper bounds, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: null, report: reports/v18_critic_safety_only_counterfactual_audit_20260902, provenance: null}
+git: {design_commit: null, implementation_commit: null, result_commit: 944aaecab740b62eede274b88f1ef37fd004aef9}
+result: {classifier: SAFETY_ONLY_REACH_BOUNDS_ONLY, conclusion: Historical labels imply broad reach bounds but do not establish prospective safety compliance, evidence_type: retrospective}

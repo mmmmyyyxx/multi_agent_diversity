@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["experiment_id", "run_id", "split", "purpose", "phase", "row_count", "selection_frozen_before_access", "timestamp"],
+  "properties": {
+    "experiment_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "split": {"enum": ["train", "validation", "test"]},
+    "purpose": {"type": "string"},
+    "phase": {"type": "string"},
+    "row_count": {"type": "integer", "minimum": 0},
+    "selection_frozen_before_access": {"type": "boolean"},
+    "timestamp": {"type": "string"}
+  },
+  "additionalProperties": false
+}

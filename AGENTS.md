@@ -8,6 +8,38 @@ artifacts. Runtime identifiers must always be verified in
 Do not record current commits, one-off results, temporary migration status, API
 keys, endpoints, or local paths here.
 
+## Source of Truth hierarchy
+
+Use the narrowest authority for the fact being checked:
+
+```text
+AGENTS.md
+    stable engineering workflow and safety contract
+
+docs/design/CURRENT_SPEC.md
+    normative current algorithm implementation specification
+
+multi_dataset_diverse_rl/versions.py
+    runtime identity and frozen numeric/protocol constants
+
+experiment manifest
+    experiment-specific preregistered and observed facts
+
+reports/
+    evidence only; never normative design
+```
+
+Conflict resolution is explicit: runtime constants come from `versions.py`,
+algorithm semantics from `CURRENT_SPEC.md`, experiment-specific facts from the
+manifest, and engineering workflow from this file. Historical reports are
+immutable evidence and cannot silently promote an experimental arm into the
+canonical runtime.
+
+Sections 1-9 below are retained as a **MIGRATION MIRROR** of the method-specific
+contract while tooling moves to `CURRENT_SPEC.md`. Do not delete or independently
+edit their semantics; any intentional algorithm change must update the normative
+specification, runtime identity, implementation, and tests together.
+
 ## 1. Project mission
 
 This repository studies joint optimization of a five-prompt LLM ensemble. The

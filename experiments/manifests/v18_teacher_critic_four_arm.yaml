@@ -1,0 +1,21 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_teacher_critic_four_arm
+title: V18 Teacher-Critic pipeline four-arm ablation
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [v18_shadow_raw_critic, v18_historical_teacher_safety], derives_from: v18_shadow_raw_critic}
+scientific_question: Which minimal Teacher-Critic pipeline preserves safety while restoring useful candidate supply?
+hypotheses: []
+design: {changed: [Teacher cleanliness, semantic Critic role], unchanged: [fixed parents, Student, rollout, Common-Safe], forbidden_changes: [canonical promotion, commits, test access]}
+method_identity: member_aware_peer_state_v15
+runtime_version: v18_teacher_critic_pipeline_ablation_v1
+data: {task: disambiguation_qa, formal: false, split_ids: {}, split_hashes: {}, validation_policy: frozen winner-only after train selection, test_policy: prohibited}
+model: {solver: null, optimizer_roles: {}}
+seeds: [59, 60, 61]
+budget: {type: fixed_parent_four_arm, frozen_before_run: true, limit: 24_branches}
+api_authorization: {authorized: true, allowed_roles: [], allowed_phases: []}
+selection: {primary_metric: throughput feasibility and target transfer, frozen_rule: preregistered four-arm selection, validation_used_for_selection: false, test_used_for_selection: false}
+artifacts: {preregistration: reports/v18_teacher_critic_pipeline_ablation_20260902/preregistration.json, report: reports/v18_teacher_critic_pipeline_ablation_20260902, provenance: reports/v18_teacher_critic_pipeline_ablation_20260902/provenance.json}
+git: {design_commit: 14f7fbd3b4cd5422bfd010dc02885d6a51d75024, implementation_commit: 14f7fbd3b4cd5422bfd010dc02885d6a51d75024, result_commit: ec2965a7a667b2776eeaf95d8afadfe3fd7a9c57}
+result: {classifier: C_NO_SEMANTIC_CRITIC, conclusion: Candidate C selected for next online validation only; Vote and trajectory superiority not demonstrated, evidence_type: causal_fixed_parent}
