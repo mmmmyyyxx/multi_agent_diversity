@@ -1,0 +1,57 @@
+{
+  "audit_version": "v18_historical_teacher_safety_failure_audit_v1",
+  "trajectory_count": 6,
+  "branch_count": 96,
+  "structured_teacher_plan_count": 175,
+  "hard_safety_unsafe_plan_count": 166,
+  "hard_safety_unsafe_plan_rate": 0.9485714285714286,
+  "output_contract_unsafe_plan_count": 130,
+  "anti_cheating_unsafe_plan_count": 95,
+  "dominant_unsafe_field": "preservation_rule",
+  "dominant_field_share_of_unsafe_plans": 0.9759036144578314,
+  "retry": {
+    "retry_branch_count": 79,
+    "unsafe_first_with_retry_count": 75,
+    "unsafe_to_safe_count": 0,
+    "safety_repair_rate": 0.0,
+    "unsafe_after_retry_count": 75,
+    "same_marker_repeated_count": 75,
+    "same_marker_repeated_rate": 1.0
+  },
+  "critic_outcome": {
+    "passed": {
+      "critic_branch_outcome": "passed",
+      "branch_count": 27,
+      "first_plan_unsafe_count": 26,
+      "first_plan_unsafe_rate": 0.9629629629629629,
+      "final_plan_unsafe_count": 26,
+      "final_plan_unsafe_rate": 0.9629629629629629,
+      "mean_context_characters": 5003.592592592592,
+      "mean_selected_case_count": 3.0,
+      "final_output_contract_unsafe_rate": 0.7777777777777778,
+      "final_anti_cheating_unsafe_rate": 0.2962962962962963,
+      "final_preservation_output_unsafe_rate": 0.7407407407407407
+    },
+    "blocked": {
+      "critic_branch_outcome": "blocked",
+      "branch_count": 69,
+      "first_plan_unsafe_count": 65,
+      "first_plan_unsafe_rate": 0.9420289855072463,
+      "final_plan_unsafe_count": 65,
+      "final_plan_unsafe_rate": 0.9420289855072463,
+      "mean_context_characters": 4951.507246376812,
+      "mean_selected_case_count": 3.0,
+      "final_output_contract_unsafe_rate": 0.7681159420289855,
+      "final_anti_cheating_unsafe_rate": 0.6086956521739131,
+      "final_preservation_output_unsafe_rate": 0.7391304347826086
+    }
+  },
+  "stable_repeatable_pattern": true,
+  "blocked_minus_passed_final_unsafe_rate": -0.020933977455716568,
+  "sufficient_to_explain_prospective_safety_gate_blocking": true,
+  "discriminative_for_historical_canonical_blocking": false,
+  "decision": "STABLE_PATTERN_NOT_DISCRIMINATIVE_FOR_CANONICAL_BLOCKING",
+  "api_calls": 0,
+  "test_accessed": false,
+  "historical_artifacts_modified": false
+}

@@ -1,0 +1,53 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "branch_level_sanitized.csv",
+      "sha256": "fc7fd42f0a97472302e0ff2e3657f10aa3b16714e2f10bc01a3e4288de5fa070"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "16177ba4f0239a82507ace93dabb1e043567ee37d7321960a81fc1588ed9e28b"
+    },
+    {
+      "file": "context_associations.csv",
+      "sha256": "2c09e907400fb278c36984456b26341be82b292729686d363cbf8dd5fc3c85e0"
+    },
+    {
+      "file": "critic_outcome_comparison.csv",
+      "sha256": "be3d87226d19035458e2e37f30c3745e7d4fc2f83001a6098aa8545edb6a8e69"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "798295d6e3d6fab18454c84558a184caf5bceb20c900033896da57b50a701ad8"
+    },
+    {
+      "file": "field_contamination.csv",
+      "sha256": "3ed2bc73c78d41299a495caf6e4614cfc7bd0a8796ac3b7ab0cb62911854a5d7"
+    },
+    {
+      "file": "marker_types.csv",
+      "sha256": "f055f83690106014931acc03d261bd5bb9b90decced560d4a3e3993ba84ae371"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "385e9b756108d2a4c989bc87d78707bdb91053b73c03199a9259cf804dc1352f"
+    },
+    {
+      "file": "README.md",
+      "sha256": "3f09e828203c26a024454529d42ec645098bf9da5c496eae7fadfc77fa4618e9"
+    },
+    {
+      "file": "retry_safety_repair.csv",
+      "sha256": "c6b1bc51b0a4603a399285627992842201aebcbe74e9f0346b9585909985e6c0"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46379b764d5ef56bf70bb91b2eb466b14ff7b65f4f125b4bd65735ed076d40be"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "75481d0b3e7ebced0c888d91a5d2f520bc6a4a18c5bfab601fa367c43edfe3e4"
+    }
+  ]
+}

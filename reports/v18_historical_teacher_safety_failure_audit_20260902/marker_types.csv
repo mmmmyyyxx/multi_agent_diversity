@@ -1,0 +1,7 @@
+category,marker_type,plan_count,plan_rate
+anti_cheating,reference_to_gold_label,95,0.5428571428571428
+output_contract,answer_label_behavior,74,0.4228571428571429
+output_contract,final_answer_reference,44,0.25142857142857145
+output_contract,formatting_directive,7,0.04
+output_contract,other_explicit_output_contract,9,0.05142857142857143
+output_contract,output_protocol_reference,125,0.7142857142857143

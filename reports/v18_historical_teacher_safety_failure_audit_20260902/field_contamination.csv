@@ -1,0 +1,4 @@
+field,structured_plan_count,output_contract_count,output_contract_rate,anti_cheating_count,anti_cheating_rate,any_hard_safety_count
+failure_pattern,175,0,0.0,52,0.29714285714285715,52
+repair_rule,175,20,0.11428571428571428,40,0.22857142857142856,57
+preservation_rule,175,125,0.7142857142857143,80,0.45714285714285713,162

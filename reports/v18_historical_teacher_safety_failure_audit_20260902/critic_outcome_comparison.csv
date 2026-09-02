@@ -1,0 +1,3 @@
+critic_branch_outcome,branch_count,first_plan_unsafe_count,first_plan_unsafe_rate,final_plan_unsafe_count,final_plan_unsafe_rate,mean_context_characters,mean_selected_case_count,final_output_contract_unsafe_rate,final_anti_cheating_unsafe_rate,final_preservation_output_unsafe_rate
+passed,27,26,0.9629629629629629,26,0.9629629629629629,5003.592592592592,3.0,0.7777777777777778,0.2962962962962963,0.7407407407407407
+blocked,69,65,0.9420289855072463,65,0.9420289855072463,4951.507246376812,3.0,0.7681159420289855,0.6086956521739131,0.7391304347826086

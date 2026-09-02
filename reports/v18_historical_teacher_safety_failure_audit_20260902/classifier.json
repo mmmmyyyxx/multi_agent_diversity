@@ -1,0 +1,16 @@
+{
+  "version": "v18_historical_teacher_safety_classifier_v1",
+  "hard_safety_rule": "exact_deterministic_safety_only_patterns_applied_per_base_field",
+  "stable_pattern_thresholds": {
+    "unsafe_plan_rate_min": 0.2,
+    "dominant_field_share_min": 0.6,
+    "retry_same_marker_rate_min": 0.5
+  },
+  "prospective_safety_gate_explanation_threshold": {
+    "blocked_branch_final_plan_unsafe_rate_min": 0.5
+  },
+  "historical_canonical_discrimination_threshold": {
+    "blocked_minus_passed_final_unsafe_rate_min": 0.15
+  },
+  "validation_or_test_used": false
+}

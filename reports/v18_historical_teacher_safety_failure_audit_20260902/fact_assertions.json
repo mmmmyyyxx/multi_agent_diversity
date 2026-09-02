@@ -1,0 +1,10 @@
+{
+  "six_trajectories": true,
+  "plans_present": true,
+  "branch_accounting": true,
+  "field_accounting": true,
+  "retry_accounting": true,
+  "zero_api": true,
+  "no_test": true,
+  "pass": true
+}
