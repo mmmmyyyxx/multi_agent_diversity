@@ -100,3 +100,10 @@ frozen priority remain unchanged. Generic Oracle-minus-Vote `>= 0.08` remains
 a final headroom criterion. This transparent amendment was frozen before any
 new model's Generic result existed; existing Static validation and the
 qwen3-8b anchor remain read-only.
+
+The first post-amendment Generic launcher (`generic_retry2`) stopped in
+preflight before any model call because a runner-only cache argument was sent
+to the preflight CLI. That directory is preserved as invalidated engineering
+evidence. The behavior-preserving launcher fix is frozen and uses fresh
+`generic_retry3` and `validation_retry3` roots; no arm, model, budget, gate, or
+metric changed.

@@ -34,7 +34,7 @@ def test_evaluator_never_loads_test() -> None:
 def test_retry_paths_are_fresh_and_old_failure_is_not_reused() -> None:
     source=(ROOT/"scripts/solver_headroom_multimodel_support.py").read_text(encoding="utf-8")
     assert 'VALIDATION_ROOT = RUN_ROOT / "validation_retry1"' in source
-    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry2"' in source
+    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry3"' in source
     assert 'RUN_ROOT / "validation"' not in source
 
 
@@ -61,3 +61,11 @@ def test_static_gate_v2_does_not_use_static_oracle_gap_for_qualification() -> No
     assert '0.50 <= val["vote_accuracy"] <= 0.64' in qualification
     assert "gap" not in qualification
     assert "invalid_rate <= 0.01" in qualification
+
+
+def test_preflight_does_not_receive_runner_only_shared_cache_argument() -> None:
+    source=(ROOT/"scripts/run_solver_headroom_multimodel.ps1").read_text(encoding="utf-8")
+    preflight_line=next(line for line in source.splitlines() if "preflight_member_aware.py" in line)
+    runner_line=next(line for line in source.splitlines() if "run_task_level_accuracy.py" in line)
+    assert "shared_solver_cache_path" not in preflight_line
+    assert "shared_solver_cache_path" in runner_line
