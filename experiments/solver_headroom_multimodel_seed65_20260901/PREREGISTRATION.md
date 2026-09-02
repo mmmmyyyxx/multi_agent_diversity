@@ -85,3 +85,18 @@ Generic arm uses a fresh `generic_retry1` root initialized from a copy of its
 completed Static Solver cache; the `qwen3-8b` Static and Generic anchors remain
 read-only.  This amendment changes execution plumbing only and does not change
 the frozen model gate, Generic method, seed, data, budgets, or metrics.
+
+## Static gate v2 structural amendment
+
+Before any new Generic training, a zero-API row-level audit established that
+all five Static members use one identical prompt hash and produce identical
+outputs on all 50 validation rows. Consequently Static Oracle accuracy equals
+Static Vote accuracy by construction, so the original Static Oracle-minus-Vote
+prefilter cannot distinguish Solver models. With explicit user approval, that
+single structurally impossible prefilter is removed. The Static Vote range
+`0.50 <= VoteAcc <= 0.64`, terminal-invalid threshold `<= 0.01`, at-most-three
+limit, and original ordering by gap (a constant tie), lower Static Vote, then
+frozen priority remain unchanged. Generic Oracle-minus-Vote `>= 0.08` remains
+a final headroom criterion. This transparent amendment was frozen before any
+new model's Generic result existed; existing Static validation and the
+qwen3-8b anchor remain read-only.

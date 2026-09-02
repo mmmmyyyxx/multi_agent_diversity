@@ -19,7 +19,7 @@ def test_retry_runner_has_only_generic_and_never_resumes_static() -> None:
     assert '$Settings="shared_generic_evolution"' in source
     assert '--resume_completed 0' in source
     assert '--optimized_only 1' in source
-    assert 'static_selection_retry1_private.json' in source
+    assert 'static_selection_retry2_private.json' in source
     for forbidden in ("shared_member_aware","M20","M2F","Hybrid"):
         assert forbidden not in source
 
@@ -34,7 +34,7 @@ def test_evaluator_never_loads_test() -> None:
 def test_retry_paths_are_fresh_and_old_failure_is_not_reused() -> None:
     source=(ROOT/"scripts/solver_headroom_multimodel_support.py").read_text(encoding="utf-8")
     assert 'VALIDATION_ROOT = RUN_ROOT / "validation_retry1"' in source
-    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry1"' in source
+    assert 'GENERIC_ROOT = RUN_ROOT / "generic_retry2"' in source
     assert 'RUN_ROOT / "validation"' not in source
 
 
@@ -51,3 +51,13 @@ def test_preregistration_freezes_static_gate() -> None:
     assert "0.50 <= Static Validation VoteAcc <= 0.64" in source
     assert "OracleAcc - VoteAcc >= 0.08" in source
     assert "At most three" in source
+    assert "Static gate v2 structural amendment" in source
+    assert "structurally impossible prefilter is removed" in source
+
+
+def test_static_gate_v2_does_not_use_static_oracle_gap_for_qualification() -> None:
+    source=(ROOT/"scripts/select_solver_headroom_multimodel.py").read_text(encoding="utf-8")
+    qualification=next(line for line in source.splitlines() if "qualified=" in line)
+    assert '0.50 <= val["vote_accuracy"] <= 0.64' in qualification
+    assert "gap" not in qualification
+    assert "invalid_rate <= 0.01" in qualification

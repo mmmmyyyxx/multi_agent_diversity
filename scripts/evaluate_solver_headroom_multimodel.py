@@ -18,7 +18,7 @@ from multi_dataset_diverse_rl.persistence.checkpoint import restore_checkpoint
 from multi_dataset_diverse_rl.persistence.identity import RunIdentity
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from scripts.solver_headroom_multimodel_support import (
-    RETRY_FREEZE_ROOT, RUN_ROOT, candidates_by_key, entrants, git, read_json, run_dir,
+    GENERIC_RETRY_FREEZE_ROOT, RETRY_FREEZE_ROOT, RUN_ROOT, candidates_by_key, entrants, git, read_json, run_dir,
     selected_generic, sha256_file, validation_dir, write_json,
 )
 
@@ -84,7 +84,8 @@ def main() -> None:
     parser=argparse.ArgumentParser();parser.add_argument("--phase",choices=("static","generic"),required=True);args=parser.parse_args()
     if os.environ.get("SOLVER_MULTIMODEL_VALIDATION_AUTHORIZED") != "1":
         raise SystemExit("validation not authorized")
-    freeze=read_json(RETRY_FREEZE_ROOT/"source_freeze.json")
+    freeze_root = RETRY_FREEZE_ROOT if args.phase == "static" else GENERIC_RETRY_FREEZE_ROOT
+    freeze=read_json(freeze_root/"source_freeze.json")
     if git("rev-parse","HEAD") != freeze["execution_commit"] or git("status","--porcelain","--untracked-files=all"):
         raise SystemExit("source mismatch")
     rows = entrants() if args.phase == "static" else selected_generic()

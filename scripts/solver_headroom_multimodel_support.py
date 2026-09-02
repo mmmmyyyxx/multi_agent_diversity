@@ -13,7 +13,9 @@ REPORT_ROOT = ROOT / "reports" / "solver_headroom_multimodel_seed65_20260901"
 OLD_ROOT = ROOT / "runs" / "solver_headroom_screening_20260901"
 RETRY_FREEZE_ROOT = RUN_ROOT / "validation_retry1_freeze"
 VALIDATION_ROOT = RUN_ROOT / "validation_retry1"
-GENERIC_ROOT = RUN_ROOT / "generic_retry1"
+GENERIC_RETRY_FREEZE_ROOT = RUN_ROOT / "generic_retry2_freeze"
+GENERIC_VALIDATION_ROOT = RUN_ROOT / "validation_retry2"
+GENERIC_ROOT = RUN_ROOT / "generic_retry2"
 MANIFEST = ROOT / "configs" / "task_level_comparison_strict_bbh_seed42.yaml"
 ROLE_MODEL = "qwen3.7-flash"
 SEED = 65
@@ -76,6 +78,8 @@ def run_dir(key: str, arm: str) -> Path:
 
 
 def validation_dir(key: str, arm: str) -> Path:
+    if arm == "GENERIC" and key != "Q8":
+        return GENERIC_VALIDATION_ROOT / f"model_{key}" / arm
     return VALIDATION_ROOT / f"model_{key}" / arm
 
 
@@ -92,4 +96,4 @@ def entrants() -> list[dict[str, Any]]:
 
 
 def selected_generic() -> list[dict[str, Any]]:
-    return read_json(RUN_ROOT / "static_selection_retry1_private.json")["selected"]
+    return read_json(RUN_ROOT / "static_selection_retry2_private.json")["selected"]
