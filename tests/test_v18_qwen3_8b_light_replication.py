@@ -40,13 +40,13 @@ def test_model_override_is_explicit_and_defaults_remain_historical(tmp_path):
     assert switched.models.evaluator_model == "qwen3.7-flash"
 
 
-def test_light_replication_manifest_is_one_seed_two_arm_and_api_disabled():
+def test_light_replication_manifest_is_one_seed_two_arm_and_explicitly_authorized():
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
     assert manifest["seeds"] == [71]
     assert manifest["budget"]["limit"] == {"updates_per_seed_arm": 8, "trajectories": 2}
     assert manifest["model"]["solver"] == "qwen3-8b"
     assert set(manifest["model"]["optimizer_roles"].values()) == {"qwen3.7-flash"}
-    assert manifest["api_authorization"]["authorized"] is False
+    assert manifest["api_authorization"]["authorized"] is True
     assert manifest["data"]["test_policy"].startswith("prohibited")
 
 
