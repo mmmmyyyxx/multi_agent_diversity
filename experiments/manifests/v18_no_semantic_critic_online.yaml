@@ -1,0 +1,55 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_no_semantic_critic_online
+title: Canonical vs No-Semantic-Critic online trajectory
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T00:00:00+08:00'}
+lineage: {parents: [v18_teacher_critic_four_arm], derives_from: v18_teacher_critic_four_arm}
+scientific_question: Does removing the semantic Critic veto convert fixed-parent candidate supply into online commits and final validation Vote improvement?
+hypotheses:
+  - No-semantic-Critic increases accepted online commits.
+  - Increased throughput may or may not transfer to final validation Vote.
+design:
+  changed: [Teacher-Clean prompt constraint, deterministic hard gate, semantic Critic veto removed]
+  unchanged: [initial team, task split, target selector, responsibility, candidate budget, Student, fixed-peer rollout, Common-Safe, ranking, max-one commit, plurality]
+  forbidden_changes: [test access, validation-guided trajectory, advisory Critic, selector changes, proposal breadth N4, M2F changes, retries for outcome improvement, extra seeds, extra rounds]
+method_identity: member_aware_peer_state_v15
+runtime_version: v18_no_semantic_critic_online_trajectory_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, test: prohibited}
+  split_hashes: {}
+  validation_policy: post-training frozen-state replay only; never used for trajectory or selection
+  test_policy: prohibited; zero test rows evaluated and zero test calls
+model:
+  solver: qwen3-14b
+  optimizer_roles: {teacher: qwen3-14b, critic: qwen3-14b, student: qwen3-14b}
+  thinking: false
+  temperatures: {solver: 0.0, teacher: 0.4, critic: 0.0, student: 0.5}
+  max_tokens: {solver: 1800}
+seeds: [68, 69, 70]
+budget:
+  type: paired_online_trajectory
+  frozen_before_run: true
+  limit: {updates_per_seed_arm: 8, trajectories: 6}
+  candidate_counts: {source_per_target: 2, generic_revision_per_valid_source: 1, target_branches: 2}
+api_authorization:
+  authorized: true
+  allowed_roles: [solver, teacher, critic, student]
+  allowed_phases: [online_trajectory, frozen_validation]
+selection:
+  primary_metric: paired final validation Vote correct count
+  frozen_rule: classifier precedence with approximately-neutral defined as absolute C-A total correct difference <= 1 across 150 validation rows
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/v18_no_semantic_critic_online_trajectory_20260903/DESIGN_SPEC.md, sha256: a663a44c756ad53d12155950db878a65698b6450a96446f58097e756c5d964f9}
+  report: reports/v18_no_semantic_critic_online_trajectory_20260903
+  provenance: reports/v18_no_semantic_critic_online_trajectory_20260903/provenance.json
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: null, conclusion: null, evidence_type: not_yet_available}
