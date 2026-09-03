@@ -11,6 +11,10 @@ def test_frozen_design():
     assert NEUTRAL_TOTAL_CORRECT_TOLERANCE == 1
 
 
+def test_extension_seeds_are_disjoint_from_seed68():
+    assert {69, 70}.isdisjoint(SEEDS)
+
+
 def test_classifier_precedence_and_boundaries():
     assert classify(commits_a=8, commits_c=10, vote_correct_a=90, vote_correct_c=93, wins=2, losses=1) == "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED"
     assert classify(commits_a=8, commits_c=10, vote_correct_a=90, vote_correct_c=91, wins=1, losses=1) == "ONLINE_THROUGHPUT_ONLY"

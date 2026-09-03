@@ -1,0 +1,55 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_no_semantic_critic_online_seed69_70_extension
+title: Seed69/70 post-result no-semantic-Critic online extension
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-03T12:30:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-03T12:30:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-03T12:30:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T12:30:00+08:00'}
+lineage: {parents: [v18_no_semantic_critic_online], derives_from: v18_no_semantic_critic_online}
+scientific_question: Do the Seed68 online throughput and validation signals replicate on the originally proposed Seeds69 and 70?
+hypotheses:
+  - No-semantic-Critic increases accepted online commits.
+  - Increased throughput may or may not transfer to final validation Vote.
+design:
+  changed: [prospective replication seeds 69 and 70]
+  unchanged: [A and C pipeline definitions, models, split, initial team, target selector, responsibility, candidate budget, Student, fixed-peer rollout, Common-Safe, ranking, max-one commit, plurality, classifier]
+  forbidden_changes: [test access, validation-guided trajectory, advisory Critic, selector changes, proposal breadth N4, M2F changes, outcome retries, extra seeds, extra rounds]
+method_identity: member_aware_peer_state_v15
+runtime_version: v18_no_semantic_critic_online_trajectory_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, test: prohibited}
+  split_hashes: {}
+  validation_policy: post-training frozen-state replay only; never used for trajectory or selection
+  test_policy: prohibited; zero test rows evaluated and zero test calls
+model:
+  solver: qwen3-14b
+  optimizer_roles: {teacher: qwen3-14b, critic: qwen3-14b, student: qwen3-14b}
+  thinking: false
+  temperatures: {solver: 0.0, teacher: 0.4, critic: 0.0, student: 0.5}
+  max_tokens: {solver: 1800}
+seeds: [69, 70]
+budget:
+  type: paired_online_trajectory_extension
+  frozen_before_run: true
+  limit: {updates_per_seed_arm: 8, trajectories: 4}
+  candidate_counts: {source_per_target: 2, generic_revision_per_valid_source: 1, target_branches: 2}
+api_authorization:
+  authorized: true
+  allowed_roles: [solver, teacher, critic, student]
+  allowed_phases: [online_trajectory, frozen_validation]
+selection:
+  primary_metric: paired final validation Vote correct count
+  frozen_rule: unchanged classifier precedence with approximately-neutral defined as absolute C-A total correct difference <= 1
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/v18_no_semantic_critic_online_seed69_70_extension_20260903/DESIGN_SPEC.md, sha256: 7d80ffcb19ea912d58b6da4fc5e3c20b34ad85008ba7f9e7a56c12da242e2391}
+  report: reports/v18_no_semantic_critic_online_seed69_70_extension_20260903
+  provenance: reports/v18_no_semantic_critic_online_seed69_70_extension_20260903/provenance.json
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: null, conclusion: null, evidence_type: not_yet_available}

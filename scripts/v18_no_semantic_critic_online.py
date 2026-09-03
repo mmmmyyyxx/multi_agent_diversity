@@ -300,7 +300,11 @@ def prepare(args: argparse.Namespace) -> None:
         raise SystemExit("tracked worktree must be clean")
     if args.run_root.exists():
         raise SystemExit("fresh run root required")
-    manifest = yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest_path = args.manifest.resolve()
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    seeds = tuple(int(seed) for seed in manifest["seeds"])
+    if not seeds:
+        raise SystemExit("manifest must freeze at least one seed")
     expected_hash = preregistration_hash(manifest)
     if manifest["artifacts"]["preregistration"]["sha256"] != expected_hash:
         raise SystemExit("tracked preregistration hash mismatch")
@@ -314,8 +318,9 @@ def prepare(args: argparse.Namespace) -> None:
     registry = {
         "runtime_version": RUNTIME_VERSION,
         "execution_commit": execution_commit,
-        "seeds": list(SEEDS), "arms": list(ARMS), "updates": UPDATES,
-        "execution_order": {str(seed): list(ARMS) for seed in SEEDS},
+        "seeds": list(seeds), "arms": list(ARMS), "updates": UPDATES,
+        "execution_order": {str(seed): list(ARMS) for seed in seeds},
+        "manifest_path": manifest_path.relative_to(ROOT).as_posix(),
         "task": "disambiguation_qa",
         "validation_policy": "post_training_frozen_state_replay_only",
         "test_policy": "prohibited_zero_rows_loaded_zero_calls",
@@ -335,7 +340,7 @@ def prepare(args: argparse.Namespace) -> None:
         "scripts/run_v18_hybrid_online_accumulation.py",
         "multi_dataset_diverse_rl/system.py", "multi_dataset_diverse_rl/tcs.py",
         "multi_dataset_diverse_rl/protocol.py", "multi_dataset_diverse_rl/versions.py",
-        "experiments/manifests/v18_no_semantic_critic_online.yaml",
+        manifest_path.relative_to(ROOT).as_posix(),
     ]
     freeze = {
         "execution_commit": execution_commit,
@@ -347,7 +352,7 @@ def prepare(args: argparse.Namespace) -> None:
         "gate": "PASS", "api_calls": 0, "test_calls": 0,
         "canonical_a_passthrough": True,
         "deterministic_hard_gate_frozen": True,
-        "seeds": list(SEEDS), "arms": list(ARMS), "updates": UPDATES,
+        "seeds": list(seeds), "arms": list(ARMS), "updates": UPDATES,
         "project_local_paths": _under_root(args.out) and _under_root(args.run_root),
     })
 
@@ -424,12 +429,13 @@ def audit(args: argparse.Namespace) -> None:
                     blockers.append(f"semantic_critic_api_in_c:{seed}")
         if len(hashes) != 1:
             blockers.append(f"initialization_mismatch:{seed}")
-    if len(summaries) != 2:
+    expected_trajectories = len(registry["seeds"]) * len(ARMS)
+    if len(summaries) != expected_trajectories:
         blockers.append("trajectory_count")
     args.out.mkdir(parents=True, exist_ok=False)
     write_json(args.out / "audit.json", {
         "gate": "PASS" if not blockers else "HOLD", "blockers": blockers,
-        "trajectory_count": len(summaries), "expected_trajectory_count": 2,
+        "trajectory_count": len(summaries), "expected_trajectory_count": expected_trajectories,
         "test_evaluation_count": sum(row.get("test_evaluation_count", 0) for row in summaries),
         "execution_commit": registry["execution_commit"], "source_freeze_checked": freeze["execution_commit"] == registry["execution_commit"],
     })
@@ -559,7 +565,8 @@ def analyze(args: argparse.Namespace) -> None:
     write_json(args.out/"preregistration.json",registry)
     write_json(args.out/"provenance.json",{"execution_commit":registry["execution_commit"],"audit_gate":"PASS",
                "raw_artifacts_modified":False,"test_accessed":False,"validation_used_for_trajectory":False})
-    write_json(args.out/"fact_assertions.json",{"pass":True,"trajectory_count":2,"test_calls":0,
+    total_validation_rows = 50 * len(registry["seeds"])
+    write_json(args.out/"fact_assertions.json",{"pass":True,"trajectory_count":len(summaries),"test_calls":0,
                "seeds":registry["seeds"],"arms":registry["arms"],"historical_four_commit_reference_is_diagnostic_only":True})
     write_json(args.out/"api_ledger_summary.json",{"scope":"aggregate_only","total_successful_calls":sum(int(row["api_calls"]) for row in compute_rows),
                "tokens_by_role":{role:sum(int(row[f"{role}_tokens"]) for row in compute_rows) for role in ("teacher","critic","student","solver")}})
@@ -567,26 +574,28 @@ def analyze(args: argparse.Namespace) -> None:
                "validation_used_for_selection":False,"test_accessed":False,"test_calls":0})
     write_json(args.out/"funnel_summary.json",{"A":{k:sum(int(s[k]) for s in summaries if s["arm"]=="A_CANONICAL") for k in ("student_reaches","feasible_candidates","commits")},
                "C":{k:sum(int(s[k]) for s in summaries if s["arm"]=="C_NO_SEMANTIC_CRITIC") for k in ("student_reaches","feasible_candidates","commits")}})
+    report_manifest = ROOT / registry.get("manifest_path", MANIFEST_PATH.relative_to(ROOT).as_posix())
     (args.out/"manifest_snapshot.yaml").write_text(
-        yaml.safe_dump(yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8")), sort_keys=False),
+        yaml.safe_dump(yaml.safe_load(report_manifest.read_text(encoding="utf-8")), sort_keys=False),
         encoding="utf-8",
     )
-    a_row=next(row for row in summaries if row["arm"]=="A_CANONICAL")
-    c_row=next(row for row in summaries if row["arm"]=="C_NO_SEMANTIC_CRITIC")
+    def arm_total(arm: str, key: str) -> int:
+        return sum(int(row[key]) for row in summaries if row["arm"] == arm)
+    train_rows = 75 * len(registry["seeds"])
     readme=(f"# Canonical vs No-Semantic-Critic Online Trajectory\n\n"
-            f"Official audit: **PASS**. Frozen classifier: **{label}**. This is one-seed prospective evidence, not a multi-seed efficacy claim.\n\n"
+            f"Official audit: **PASS**. Frozen classifier: **{label}**. Evidence scope is {len(registry['seeds'])} frozen seed pair(s).\n\n"
             "| Metric | A Canonical | C No Semantic Critic |\n|---|---:|---:|\n"
-            f"| Student reaches / 16 branches | {a_row['student_reaches']} | {c_row['student_reaches']} |\n"
-            f"| Feasible candidates | {a_row['feasible_candidates']} | {c_row['feasible_candidates']} |\n"
+            f"| Student reaches | {arm_total('A_CANONICAL','student_reaches')} | {arm_total('C_NO_SEMANTIC_CRITIC','student_reaches')} |\n"
+            f"| Feasible candidates | {arm_total('A_CANONICAL','feasible_candidates')} | {arm_total('C_NO_SEMANTIC_CRITIC','feasible_candidates')} |\n"
             f"| Accepted commits | {commits_a} | {commits_c} |\n"
-            f"| Distinct members updated | {a_row['distinct_members_updated']} | {c_row['distinct_members_updated']} |\n"
-            f"| Final train Vote | {a_row['train_vote_correct']}/75 | {c_row['train_vote_correct']}/75 |\n"
-            f"| Final train Oracle | {a_row['train_oracle_correct']}/75 | {c_row['train_oracle_correct']}/75 |\n"
-            f"| Final validation Vote | {vote_a}/50 | {vote_c}/50 |\n"
-            f"| Final validation Oracle | {a_row['validation_oracle_correct']}/50 | {c_row['validation_oracle_correct']}/50 |\n"
-            f"| Coverage to vote conversions | {a_row['coverage_to_vote_conversion']} | {c_row['coverage_to_vote_conversion']} |\n"
-            f"| Persistent singleton coverage | {a_row['persistent_singleton_coverage']} | {c_row['persistent_singleton_coverage']} |\n\n"
-            f"C-A final validation Vote = +{vote_c-vote_a}/50 and W/T/L = {wins}/{ties}/{losses}. C reached all five members and exceeded the historical diagnostic reference of about four commits per seed.\n\n"
+            f"| Distinct member-seed updates | {arm_total('A_CANONICAL','distinct_members_updated')} | {arm_total('C_NO_SEMANTIC_CRITIC','distinct_members_updated')} |\n"
+            f"| Final train Vote total | {arm_total('A_CANONICAL','train_vote_correct')}/{train_rows} | {arm_total('C_NO_SEMANTIC_CRITIC','train_vote_correct')}/{train_rows} |\n"
+            f"| Final train Oracle total | {arm_total('A_CANONICAL','train_oracle_correct')}/{train_rows} | {arm_total('C_NO_SEMANTIC_CRITIC','train_oracle_correct')}/{train_rows} |\n"
+            f"| Final validation Vote total | {vote_a}/{total_validation_rows} | {vote_c}/{total_validation_rows} |\n"
+            f"| Final validation Oracle total | {arm_total('A_CANONICAL','validation_oracle_correct')}/{total_validation_rows} | {arm_total('C_NO_SEMANTIC_CRITIC','validation_oracle_correct')}/{total_validation_rows} |\n"
+            f"| Coverage to vote conversions | {arm_total('A_CANONICAL','coverage_to_vote_conversion')} | {arm_total('C_NO_SEMANTIC_CRITIC','coverage_to_vote_conversion')} |\n"
+            f"| Persistent singleton coverage | {arm_total('A_CANONICAL','persistent_singleton_coverage')} | {arm_total('C_NO_SEMANTIC_CRITIC','persistent_singleton_coverage')} |\n\n"
+            f"C-A final validation Vote total = {vote_c-vote_a:+d}/{total_validation_rows} and W/T/L = {wins}/{ties}/{losses}. The historical four-commit reference remains diagnostic only.\n\n"
             "Validation was evaluated only after each online trajectory was frozen and never affected target selection, candidate acceptance, ranking, or commits. Intermediate frozen states were replayed post hoc only to attribute accepted-transition validation gains and losses. Test125 was not loaded for evaluation and received zero calls.\n")
     (args.out/"README.md").write_text(readme,encoding="utf-8")
     write_json(args.out/"sanitization_manifest.json",{"status":"PASS","raw_text_published":False,
@@ -597,12 +606,12 @@ def analyze(args: argparse.Namespace) -> None:
 
 def main() -> None:
     parser=argparse.ArgumentParser(); sub=parser.add_subparsers(dest="command",required=True)
-    p=sub.add_parser("prepare"); p.add_argument("--out",type=Path,required=True); p.add_argument("--run-root",type=Path,required=True)
+    p=sub.add_parser("prepare"); p.add_argument("--out",type=Path,required=True); p.add_argument("--run-root",type=Path,required=True); p.add_argument("--manifest",type=Path,default=MANIFEST_PATH)
     p=sub.add_parser("run"); p.add_argument("--prep",type=Path,required=True); p.add_argument("--out",type=Path,required=True)
     p=sub.add_parser("audit"); p.add_argument("--prep",type=Path,required=True); p.add_argument("--run-root",type=Path,required=True); p.add_argument("--out",type=Path,required=True)
     p=sub.add_parser("analyze"); p.add_argument("--prep",type=Path,required=True); p.add_argument("--run-root",type=Path,required=True); p.add_argument("--gate",type=Path,required=True); p.add_argument("--out",type=Path,required=True)
     args=parser.parse_args()
-    for name in ("out","run_root","prep","gate"):
+    for name in ("out","run_root","prep","gate","manifest"):
         path=getattr(args,name,None)
         if path is not None and not _under_root(path): raise SystemExit(f"{name} must be project-local")
     if args.command=="prepare": prepare(args)
