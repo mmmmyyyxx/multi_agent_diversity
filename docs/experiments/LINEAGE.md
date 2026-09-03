@@ -24,6 +24,7 @@ graph TD
   v18_no_semantic_critic_online["v18_no_semantic_critic_online"] -->|followup_of| v18_no_semantic_critic_online_seed69_70_extension["v18_no_semantic_critic_online_seed69_70_extension"]
   v18_no_semantic_critic_online_seed69_70_extension["v18_no_semantic_critic_online_seed69_70_extension"] -->|audit_of| v18_no_semantic_critic_transfer_decomposition["v18_no_semantic_critic_transfer_decomposition"]
   v18_no_semantic_critic_transfer_decomposition["v18_no_semantic_critic_transfer_decomposition"] -->|audit_of| v18_no_semantic_critic_candidate_ranking_audit["v18_no_semantic_critic_candidate_ranking_audit"]
+  v18_no_semantic_critic_candidate_ranking_audit["v18_no_semantic_critic_candidate_ranking_audit"] -->|followup_of| v18_qwen3_8b_no_semantic_critic_light_replication["v18_qwen3_8b_no_semantic_critic_light_replication"]
 ```
 
 ## Topological order
@@ -46,3 +47,4 @@ graph TD
 16. `v18_no_semantic_critic_online_seed69_70_extension`
 17. `v18_no_semantic_critic_transfer_decomposition`
 18. `v18_no_semantic_critic_candidate_ranking_audit`
+19. `v18_qwen3_8b_no_semantic_critic_light_replication`

@@ -50,6 +50,16 @@ NEUTRAL_TOTAL_CORRECT_TOLERANCE = 1
 MANIFEST_PATH = ROOT / "experiments/manifests/v18_no_semantic_critic_online.yaml"
 
 
+def _registry_model(registry: Mapping[str, Any]) -> dict[str, Any]:
+    return dict(registry.get("model") or {
+        "solver": "qwen3-14b",
+        "teacher": "qwen3-14b",
+        "critic": "qwen3-14b",
+        "student": "qwen3-14b",
+        "thinking": False,
+    })
+
+
 def _git(*args: str) -> str:
     return subprocess.check_output(
         ["git", *args], cwd=ROOT, text=True, encoding="utf-8"
@@ -134,7 +144,16 @@ async def _run_trajectory(
     expected_initial_hash: str | None,
 ) -> tuple[dict[str, Any], str]:
     run_dir.mkdir(parents=True, exist_ok=False)
-    cfg = _config(task=task, seed=seed, run_dir=run_dir, cache_path=cache_path)
+    model = _registry_model(registry)
+    cfg = _config(
+        task=task,
+        seed=seed,
+        run_dir=run_dir,
+        cache_path=cache_path,
+        agent_model=str(model["solver"]),
+        optimizer_model=str(model["teacher"]),
+        evaluator_model=str(model["critic"]),
+    )
     train = _load(cfg.data.train_path, cfg.data.train_size, cfg.data.dataset_format)
     validation = _load(cfg.data.val_path, cfg.data.val_size, cfg.data.dataset_format)
     system = PromptEnsembleOptimizationSystem(cfg)
@@ -249,8 +268,9 @@ async def _run_trajectory(
     final_train = train_states[-1]["metrics"]
     final_val = validation_states[-1]["metrics"]
     summary = {
-        "runtime_version": RUNTIME_VERSION,
+        "runtime_version": registry["runtime_version"],
         "execution_commit": registry["execution_commit"],
+        "model": dict(model),
         "seed": seed, "arm": arm,
         "underlying_setting": cfg.training.experiment_setting,
         "planned_update_count": UPDATES,
@@ -309,6 +329,24 @@ def prepare(args: argparse.Namespace) -> None:
     if manifest["artifacts"]["preregistration"]["sha256"] != expected_hash:
         raise SystemExit("tracked preregistration hash mismatch")
     execution_commit = _git("rev-parse", "HEAD")
+    model_document = manifest["model"]
+    optimizer_roles = model_document["optimizer_roles"]
+    if optimizer_roles["teacher"] != optimizer_roles["student"]:
+        raise SystemExit("Teacher and Student must share optimizer_model in this runner")
+    model = {
+        "solver": str(model_document["solver"]),
+        "teacher": str(optimizer_roles["teacher"]),
+        "critic": str(optimizer_roles["critic"]),
+        "student": str(optimizer_roles["student"]),
+        "thinking": bool(model_document["thinking"]),
+    }
+    if model["thinking"] is not False:
+        raise SystemExit("this runner requires thinking=false")
+    limit = manifest["budget"]["limit"]
+    if int(limit["updates_per_seed_arm"]) != UPDATES:
+        raise SystemExit("manifest update budget differs from frozen runner")
+    if int(limit["trajectories"]) != len(seeds) * len(ARMS):
+        raise SystemExit("manifest trajectory budget does not match seeds and arms")
     runtime_manifest = dict(manifest)
     runtime_manifest["status"] = "RUNNING"
     runtime_manifest["lifecycle_history"] = [*manifest["lifecycle_history"], {"status": "RUNNING", "timestamp": "2026-09-03T00:00:00+08:00"}]
@@ -316,9 +354,10 @@ def prepare(args: argparse.Namespace) -> None:
     args.out.mkdir(parents=True)
     write_json(args.out / "runtime_manifest.json", runtime_manifest)
     registry = {
-        "runtime_version": RUNTIME_VERSION,
+        "runtime_version": str(manifest.get("runtime_version", RUNTIME_VERSION)),
         "execution_commit": execution_commit,
         "seeds": list(seeds), "arms": list(ARMS), "updates": UPDATES,
+        "model": model,
         "execution_order": {str(seed): list(ARMS) for seed in seeds},
         "manifest_path": manifest_path.relative_to(ROOT).as_posix(),
         "task": "disambiguation_qa",
@@ -350,6 +389,8 @@ def prepare(args: argparse.Namespace) -> None:
     write_json(args.out / "source_freeze.json", freeze)
     write_json(args.out / "preflight.json", {
         "gate": "PASS", "api_calls": 0, "test_calls": 0,
+        "api_authorized_for_run": bool(manifest["api_authorization"]["authorized"]),
+        "execution_ready": bool(manifest["api_authorization"]["authorized"]),
         "canonical_a_passthrough": True,
         "deterministic_hard_gate_frozen": True,
         "seeds": list(seeds), "arms": list(ARMS), "updates": UPDATES,
@@ -411,6 +452,17 @@ def audit(args: argparse.Namespace) -> None:
                 continue
             row = json.loads((path / "online_run_summary.json").read_text(encoding="utf-8"))
             summaries.append(row); hashes.add(row["initialization_snapshot_hash"])
+            if "model" in registry and row.get("model") != _registry_model(registry):
+                blockers.append(f"model_identity:{seed}:{arm}")
+            run_meta = json.loads((path / "run_meta.json").read_text(encoding="utf-8"))
+            run_config = run_meta.get("config", {})
+            expected_model = _registry_model(registry)
+            if (
+                run_config.get("agent_model") != expected_model["solver"]
+                or run_config.get("optimizer_model") != expected_model["teacher"]
+                or run_config.get("evaluator_model") != expected_model["critic"]
+            ):
+                blockers.append(f"persisted_model_identity:{seed}:{arm}")
             if row["completed_update_count"] != UPDATES and row["early_stop_reason"] != "no_actionable_responsibility":
                 blockers.append(f"update_budget:{seed}:{arm}")
             if row["test_evaluation_count"] != 0 or row["validation_used_for_selection"]:

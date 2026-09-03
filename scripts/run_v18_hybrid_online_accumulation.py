@@ -111,7 +111,16 @@ class HybridOnlineSystem(PromptEnsembleOptimizationSystem):
         return targets, payload
 
 
-def _config(*, task: Any, seed: int, run_dir: Path, cache_path: Path) -> Config:
+def _config(
+    *,
+    task: Any,
+    seed: int,
+    run_dir: Path,
+    cache_path: Path,
+    agent_model: str = "qwen3-14b",
+    optimizer_model: str = "qwen3-14b",
+    evaluator_model: str = "qwen3-14b",
+) -> Config:
     return Config.from_flat(
         task_type=task.task_type,
         dataset_format="mars",
@@ -125,9 +134,9 @@ def _config(*, task: Any, seed: int, run_dir: Path, cache_path: Path) -> Config:
         train_size=75,
         val_size=50,
         test_size=125,
-        agent_model="qwen3-14b",
-        optimizer_model="qwen3-14b",
-        evaluator_model="qwen3-14b",
+        agent_model=agent_model,
+        optimizer_model=optimizer_model,
+        evaluator_model=evaluator_model,
         temperature=0.0,
         solver_max_tokens=1800,
         experiment_setting="experimental_v16_efficacy_g_matched",
