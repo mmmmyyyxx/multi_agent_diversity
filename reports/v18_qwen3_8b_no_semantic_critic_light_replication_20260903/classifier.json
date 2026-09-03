@@ -1,0 +1,11 @@
+{
+  "label": "NO_CLEAR_ONLINE_ADVANTAGE",
+  "commits_a": 6,
+  "commits_c": 6,
+  "validation_vote_correct_a": 29,
+  "validation_vote_correct_c": 26,
+  "wins": 0,
+  "ties": 0,
+  "losses": 1,
+  "neutral_total_correct_tolerance": 1
+}

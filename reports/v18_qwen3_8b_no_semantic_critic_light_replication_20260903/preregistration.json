@@ -1,0 +1,39 @@
+{
+  "runtime_version": "v18_qwen3_8b_no_semantic_critic_light_replication_v1",
+  "execution_commit": "3cfac27835125ebb7d45ecd5317535cb61172c5f",
+  "seeds": [
+    71
+  ],
+  "arms": [
+    "A_CANONICAL",
+    "C_NO_SEMANTIC_CRITIC"
+  ],
+  "updates": 8,
+  "model": {
+    "solver": "qwen3-8b",
+    "teacher": "qwen3.7-flash",
+    "critic": "qwen3.7-flash",
+    "student": "qwen3.7-flash",
+    "thinking": false
+  },
+  "execution_order": {
+    "71": [
+      "A_CANONICAL",
+      "C_NO_SEMANTIC_CRITIC"
+    ]
+  },
+  "manifest_path": "experiments/manifests/v18_qwen3_8b_no_semantic_critic_light_replication.yaml",
+  "task": "disambiguation_qa",
+  "validation_policy": "post_training_frozen_state_replay_only",
+  "test_policy": "prohibited_zero_rows_loaded_zero_calls",
+  "classifier": {
+    "neutral_total_correct_tolerance": 1,
+    "labels_in_precedence_order": [
+      "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+      "ONLINE_THROUGHPUT_ONLY",
+      "ONLINE_THROUGHPUT_WITH_TRANSFER_REGRESSION",
+      "NO_CLEAR_ONLINE_ADVANTAGE"
+    ]
+  },
+  "registry_hash": "eb7802870a2f4f6314bcc464a54821e4300ead76b0bd920743344a3a516f0fe8"
+}

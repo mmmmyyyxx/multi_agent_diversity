@@ -1,0 +1,17 @@
+seed,arm,update_index,target_branches,teacher_plans,critic_approvals,critic_rejections,hard_gate_passes,hard_gate_rejections,student_reaches,strict_valid_candidates,feasible_candidates,committed,committed_target,train_vote_gain,train_vote_loss,train_vote_delta,train_target_delta,validation_vote_delta,validation_oracle_delta,validation_target_delta
+71,A_CANONICAL,0,2,2,2,0,0,0,2,3,1,True,4,0,0,0,1,0,11,9
+71,A_CANONICAL,1,2,2,2,0,0,0,2,4,3,True,4,0,0,0,5,0,0,-2
+71,A_CANONICAL,2,2,4,1,2,0,0,1,1,0,False,,0,0,0,,,,
+71,A_CANONICAL,3,2,3,1,2,0,0,1,2,2,True,1,0,0,0,2,0,1,6
+71,A_CANONICAL,4,2,6,3,2,0,0,2,2,2,True,3,3,0,3,8,5,0,3
+71,A_CANONICAL,5,2,3,2,1,0,0,2,4,2,True,0,3,0,3,1,2,3,6
+71,A_CANONICAL,6,2,3,2,0,0,0,2,3,2,True,1,2,0,2,3,0,2,0
+71,A_CANONICAL,7,2,4,1,1,0,0,1,1,0,False,,0,0,0,,,,
+71,C_NO_SEMANTIC_CRITIC,0,2,4,2,2,2,2,2,2,1,True,3,0,0,0,10,0,8,4
+71,C_NO_SEMANTIC_CRITIC,1,2,2,2,0,2,0,2,4,4,True,0,0,0,0,5,0,4,6
+71,C_NO_SEMANTIC_CRITIC,2,2,3,3,0,3,0,2,4,0,False,,0,0,0,,,,
+71,C_NO_SEMANTIC_CRITIC,3,2,2,2,0,2,0,2,4,6,True,4,6,0,6,10,2,2,5
+71,C_NO_SEMANTIC_CRITIC,4,2,3,3,0,3,0,2,4,2,True,1,5,0,5,18,2,2,4
+71,C_NO_SEMANTIC_CRITIC,5,2,2,2,0,2,0,2,3,3,True,2,2,0,2,14,2,2,8
+71,C_NO_SEMANTIC_CRITIC,6,2,2,2,0,2,0,2,4,1,True,2,1,0,1,0,-2,0,-1
+71,C_NO_SEMANTIC_CRITIC,7,2,2,2,0,2,0,2,2,0,False,,0,0,0,,,,

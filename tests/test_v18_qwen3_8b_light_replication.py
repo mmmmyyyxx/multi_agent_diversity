@@ -1,10 +1,11 @@
 from pathlib import Path
+import inspect
 
 import yaml
 
 from multi_dataset_diverse_rl.governance.manifest import preregistration_hash
 from scripts.run_v18_hybrid_online_accumulation import _config
-from scripts.v18_no_semantic_critic_online import _registry_model
+from scripts.v18_no_semantic_critic_online import _registry_model, run
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,3 +72,8 @@ def test_registry_model_keeps_legacy_fallback_and_new_mapping():
 def test_preregistration_hash_placeholder_is_replaced():
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
     assert manifest["artifacts"]["preregistration"]["sha256"] == preregistration_hash(manifest)
+
+
+def test_execution_summary_uses_registry_runtime_identity():
+    source = inspect.getsource(run)
+    assert '"runtime_version": registry["runtime_version"]' in source

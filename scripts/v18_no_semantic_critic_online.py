@@ -430,7 +430,8 @@ async def run(args: argparse.Namespace) -> None:
             initial_hash = arm_hash
             completed.append(summary)
     write_json(args.out / "execution_summary.json", {
-        "runtime_version": RUNTIME_VERSION, "execution_commit": registry["execution_commit"],
+        "runtime_version": registry["runtime_version"],
+        "execution_commit": registry["execution_commit"],
         "trajectory_count": len(completed), "seeds": registry["seeds"], "arms": registry["arms"],
         "test_evaluation_count": sum(row["test_evaluation_count"] for row in completed),
         "infrastructure_failure_count": sum(row["funnel"]["infrastructure_failures"] for row in completed),

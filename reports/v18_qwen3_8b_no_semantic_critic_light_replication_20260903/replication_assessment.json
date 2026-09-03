@@ -1,0 +1,62 @@
+{
+  "analysis_version": "v18_qwen3_8b_light_replication_postrun_v1",
+  "seed": 71,
+  "model": {
+    "solver": "qwen3-8b",
+    "teacher": "qwen3.7-flash",
+    "critic": "qwen3.7-flash",
+    "student": "qwen3.7-flash",
+    "thinking": false
+  },
+  "official_frozen_gate": "PASS",
+  "frontend_label": "FRONTEND_THROUGHPUT_REPLICATED",
+  "transfer_label": "TRANSFER_INSTABILITY_OBSERVED",
+  "ranking_label": "RANKING_NOT_IMPLICATED_BY_AVAILABLE_TRAIN_EVIDENCE",
+  "online": {
+    "A_CANONICAL": {
+      "student_reaches": 13,
+      "feasible_candidates": 12,
+      "accepted_commits": 6,
+      "final_train_vote_correct": 50,
+      "final_validation_vote_correct": 29,
+      "final_validation_oracle_correct": 39
+    },
+    "C_NO_SEMANTIC_CRITIC": {
+      "student_reaches": 16,
+      "feasible_candidates": 17,
+      "accepted_commits": 6,
+      "final_train_vote_correct": 56,
+      "final_validation_vote_correct": 26,
+      "final_validation_oracle_correct": 40
+    }
+  },
+  "c_commit_quality": {
+    "commit_count": 6,
+    "positive_net": 3,
+    "zero_net": 2,
+    "negative_net": 1,
+    "positive_train_vote_not_positive_validation_vote": 1,
+    "positive_train_target_not_positive_validation_target": 0,
+    "positive_validation_oracle_not_positive_vote": 2
+  },
+  "c_feasible_pool": {
+    "feasible_candidates": 17,
+    "accepted_pools": 6,
+    "nonpositive_commit_pools": 3,
+    "negative_commit_pools": 1,
+    "nonpositive_no_alternative_pools": 2,
+    "negative_no_alternative_pools": 1,
+    "train_pareto_dominating_alternatives": 0,
+    "unselected_alternatives": 11,
+    "unselected_alternatives_with_validation": 0
+  },
+  "counterfactual_validation_status": "UNRESOLVED_UNOBSERVED_ALTERNATIVES",
+  "scope": {
+    "new_api_calls_in_postrun_analysis": 0,
+    "new_validation_calls_in_postrun_analysis": 0,
+    "test_calls": 0,
+    "counterfactual_alternative_replay_run": false,
+    "method_modified": false,
+    "raw_run_artifacts_modified": false
+  }
+}

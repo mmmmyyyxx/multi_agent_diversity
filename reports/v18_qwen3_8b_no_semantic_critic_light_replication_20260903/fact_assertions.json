@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "trajectory_count": 2,
+  "completed_update_count_each": 8,
+  "telescoping_identity_pass_count": 2,
+  "matched_initialization": true,
+  "model_identity_match": true,
+  "official_frozen_gate": "PASS",
+  "test_calls": 0,
+  "postrun_api_calls": 0,
+  "counterfactual_alternative_replay_run": false,
+  "raw_run_artifacts_modified": false
+}

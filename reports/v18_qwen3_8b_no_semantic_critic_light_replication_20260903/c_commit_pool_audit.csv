@@ -1,0 +1,7 @@
+seed,update_index,winner_hash,validation_vote_class,winner_validation_target_delta,winner_validation_vote_delta,winner_validation_oracle_delta,feasible_pool_size,feasible_alternative_count,alternatives_with_complete_validation,winner_target_gain,winner_vote_gain_count,winner_vote_loss_count,winner_vote_net_gain,train_pareto_dominating_alternative_count,counterfactual_validation_status
+71,0,34a074041e797eb6ab83eb3528f81c2612dde3d6c651d176ec621c04f2cc4b44,zero,4,0,8,1,0,0,10,0,0,0,0,NO_FEASIBLE_ALTERNATIVE
+71,1,4e8025523db33c51b47f8e9448c19dcd47c3f2924162c3d71bd0151bf1c69e2a,zero,6,0,4,4,3,0,5,0,0,0,0,UNIDENTIFIABLE_UNOBSERVED_ALTERNATIVE_VALIDATION
+71,3,f2fb22e06195e1b5e82efe22190a7ee6bdad64da7da6ee262845b2006f32bff4,positive,5,2,2,6,5,0,10,7,1,6,0,UNIDENTIFIABLE_UNOBSERVED_ALTERNATIVE_VALIDATION
+71,4,62d987078dfd367255ba4656f83ec0b5bd85d5f4a4ffde7229f22a072e772e2b,positive,4,2,2,2,1,0,18,8,3,5,0,UNIDENTIFIABLE_UNOBSERVED_ALTERNATIVE_VALIDATION
+71,5,49d133b6491e5ed85b0e2b497e4fdc90fb0af580ecd2d7910c864841b5227ff1,positive,8,2,2,3,2,0,14,4,2,2,0,UNIDENTIFIABLE_UNOBSERVED_ALTERNATIVE_VALIDATION
+71,6,2af9d9372f567c65afe48167ba2e9399340b242dd70d86b34743fdbeefbc1b38,negative,-1,-2,0,1,0,0,0,3,2,1,0,NO_FEASIBLE_ALTERNATIVE

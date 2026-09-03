@@ -1,13 +1,17 @@
 schema_version: experiment_manifest_v1
 experiment_id: v18_qwen3_8b_no_semantic_critic_light_replication
 title: Qwen3-8B no-semantic-Critic light replication
-status: PREFLIGHT_PASS
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T19:40:55+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-03T20:29:42+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-03T20:29:42+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-03T21:33:32+08:00'}
 lineage: {parents: [v18_no_semantic_critic_online_seed69_70_extension], derives_from: v18_no_semantic_critic_online_seed69_70_extension}
 scientific_question: Does the prior no-semantic-Critic throughput and accepted-update transfer pattern remain visible with qwen3-8b Solvers and qwen3.7-flash optimization roles?
 hypotheses:
@@ -52,5 +56,8 @@ artifacts:
   preregistration: {path: experiments/v18_qwen3_8b_no_semantic_critic_light_replication_20260903/DESIGN_SPEC.md, sha256: 940253e8adbcb696ccf9515f8cfe9ec284b84407a306138a2e64b00f6b01eb5f}
   report: reports/v18_qwen3_8b_no_semantic_critic_light_replication_20260903
   provenance: reports/v18_qwen3_8b_no_semantic_critic_light_replication_20260903/provenance.json
-git: {design_commit: 74213e26a9777f80b14f79dc9b9fc2ba02e11f36, implementation_commit: 74213e26a9777f80b14f79dc9b9fc2ba02e11f36, result_commit: null}
-result: {classifier: null, conclusion: null, evidence_type: not_yet_available}
+git: {design_commit: 74213e26a9777f80b14f79dc9b9fc2ba02e11f36, implementation_commit: 3cfac27835125ebb7d45ecd5317535cb61172c5f, result_commit: null}
+result:
+  classifier: FRONTEND_REPLICATED__TRANSFER_UNSTABLE__TRAIN_RANKING_NOT_IMPLICATED
+  conclusion: Under qwen3-8b Solvers and qwen3.7-flash optimization roles, removing the semantic Critic again increased Student reach and feasible supply, but validation transfer remained unstable and available train-side evidence did not implicate ranking; unselected-alternative validation remains unobserved.
+  evidence_type: online

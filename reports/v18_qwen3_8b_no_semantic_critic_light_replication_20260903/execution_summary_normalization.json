@@ -1,0 +1,9 @@
+{
+  "status": "NON_AUTHORITATIVE_TOP_LEVEL_LABEL_NORMALIZED",
+  "observed_top_level_runtime_version": "v18_no_semantic_critic_online_trajectory_v1",
+  "authoritative_runtime_version": "v18_qwen3_8b_no_semantic_critic_light_replication_v1",
+  "authority": "frozen registry plus both per-trajectory summaries",
+  "both_trajectory_runtime_labels_match": true,
+  "original_artifacts_modified": false,
+  "method_runtime_semantics_changed": false
+}

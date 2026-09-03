@@ -1,0 +1,21 @@
+{
+  "experiment_id": "v18_qwen3_8b_no_semantic_critic_light_replication",
+  "seed_count": 1,
+  "trajectory_count": 2,
+  "post_result_extension": false,
+  "classifier": "NO_CLEAR_ONLINE_ADVANTAGE",
+  "commits": {
+    "A_CANONICAL": 6,
+    "C_NO_SEMANTIC_CRITIC": 6
+  },
+  "final_validation_vote_correct": {
+    "A_CANONICAL": 29,
+    "C_NO_SEMANTIC_CRITIC": 26
+  },
+  "paired_wins_ties_losses": {
+    "wins": 0,
+    "ties": 0,
+    "losses": 1
+  },
+  "new_test_calls": 0
+}
