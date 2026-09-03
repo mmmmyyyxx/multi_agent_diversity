@@ -1,13 +1,17 @@
 schema_version: experiment_manifest_v1
 experiment_id: v18_no_semantic_critic_online
 title: Canonical vs No-Semantic-Critic online trajectory
-status: PREFLIGHT_PASS
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T11:43:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-03T12:16:00+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-03T12:18:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-03T12:20:00+08:00'}
 lineage: {parents: [v18_teacher_critic_four_arm], derives_from: v18_teacher_critic_four_arm}
 scientific_question: Does removing the semantic Critic veto convert fixed-parent candidate supply into online commits and final validation Vote improvement?
 hypotheses:
@@ -51,5 +55,5 @@ artifacts:
   preregistration: {path: experiments/v18_no_semantic_critic_online_trajectory_20260903/DESIGN_SPEC.md, sha256: ad868e654c276035b851fb097820f5999edfabc8f930f3a00d67c1281bd5f84f}
   report: reports/v18_no_semantic_critic_online_trajectory_20260903
   provenance: reports/v18_no_semantic_critic_online_trajectory_20260903/provenance.json
-git: {design_commit: null, implementation_commit: null, result_commit: null}
-result: {classifier: null, conclusion: null, evidence_type: not_yet_available}
+git: {design_commit: b238abfa191ec1222e3391c8850038a04cd6915d, implementation_commit: b238abfa191ec1222e3391c8850038a04cd6915d, result_commit: null}
+result: {classifier: ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED, conclusion: Seed68 C increased commits from 2 to 5 and final validation Vote correct from 33 to 34; single-seed prospective evidence only, evidence_type: online}

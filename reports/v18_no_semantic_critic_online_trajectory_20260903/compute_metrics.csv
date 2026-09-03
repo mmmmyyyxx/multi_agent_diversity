@@ -1,0 +1,3 @@
+seed,arm,api_calls,logical_solver_requests,teacher_tokens,critic_tokens,student_tokens,solver_tokens,total_tokens,vote_gain_per_100k_tokens,feasible_per_100k_tokens,commits_per_100k_tokens
+68,A_CANONICAL,895,1837,69755,62255,1599,288159,423350,0.0,0.4724223455769458,0.4724223455769458
+68,C_NO_SEMANTIC_CRITIC,3233,6053,36292,0,11909,1102228,1161937,0.0860631858698019,1.0327582304376226,0.4303159293490095

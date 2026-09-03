@@ -1,0 +1,31 @@
+{
+  "runtime_version": "v18_no_semantic_critic_online_trajectory_v1",
+  "execution_commit": "b238abfa191ec1222e3391c8850038a04cd6915d",
+  "seeds": [
+    68
+  ],
+  "arms": [
+    "A_CANONICAL",
+    "C_NO_SEMANTIC_CRITIC"
+  ],
+  "updates": 8,
+  "execution_order": {
+    "68": [
+      "A_CANONICAL",
+      "C_NO_SEMANTIC_CRITIC"
+    ]
+  },
+  "task": "disambiguation_qa",
+  "validation_policy": "post_training_frozen_state_replay_only",
+  "test_policy": "prohibited_zero_rows_loaded_zero_calls",
+  "classifier": {
+    "neutral_total_correct_tolerance": 1,
+    "labels_in_precedence_order": [
+      "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+      "ONLINE_THROUGHPUT_ONLY",
+      "ONLINE_THROUGHPUT_WITH_TRANSFER_REGRESSION",
+      "NO_CLEAR_ONLINE_ADVANTAGE"
+    ]
+  },
+  "registry_hash": "ccdf99d65b25efee0b3eb6689c3406a6f3c08b442a6b03fc70cd8d588a8616ff"
+}

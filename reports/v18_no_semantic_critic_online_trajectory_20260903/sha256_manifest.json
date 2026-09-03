@@ -1,0 +1,72 @@
+{
+  "files": [
+    {
+      "path": "accepted_commits.csv",
+      "sha256": "b24621487ba84a7a206c492c636bc6aabbfc5720edbf2a08b9b1b65940b74f25"
+    },
+    {
+      "path": "api_ledger_summary.json",
+      "sha256": "a2bfe0ec6cbbac6431cdb4f7fa486d7690fb9617b64e5b17584e827367b0a6cb"
+    },
+    {
+      "path": "classifier.json",
+      "sha256": "2594c2d416920fde705b90618d30cbfda64a8ccaa424926dc9ec062eebd6769f"
+    },
+    {
+      "path": "compute_metrics.csv",
+      "sha256": "ab4e7f4261f4ef842ada513e9586cb3085c8d6f23e683e8428cbefd9a6f0bee4"
+    },
+    {
+      "path": "evaluation_access_summary.json",
+      "sha256": "d1f0a6d7891e36a670eb04a47882ccc26552a9ec8af4b07ce50c807f8ca1ae4a"
+    },
+    {
+      "path": "fact_assertions.json",
+      "sha256": "096485beb73dbbffb545112aa2fd23c5c46400db24d6af4a4c9b8cc224ee51bf"
+    },
+    {
+      "path": "funnel_summary.json",
+      "sha256": "e69fa4fc6d141c0c0c633f09974aa929c1e2deb0c7a8105e92e6eb834d779beb"
+    },
+    {
+      "path": "manifest_snapshot.yaml",
+      "sha256": "903dfa3508f2b85058a40be884f59ef2cf8cf97308078bff759e263c735ad058"
+    },
+    {
+      "path": "paired_contrasts.csv",
+      "sha256": "cc15af729afcee047c71006e529d8f5e8cb10135b86ea27727b37eb30158b31a"
+    },
+    {
+      "path": "preregistration.json",
+      "sha256": "996b9dde0a2871a3151938d7af2ee6dc4d8580e078f7d658142ba4ea3ad13007"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "ba1646a883b144fab28a5130197e495a7db9f3af6ae55e8f005192064a53e70f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e37957f08da4ac740a7225f5268e521411db49a15f6e7eeffd9fc811cdfa4b60"
+    },
+    {
+      "path": "sanitization_manifest.json",
+      "sha256": "ca65ef12e8493c29c9465b1043e303e09f18a9b550805431426198708f422cfb"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "1ce328cdce842a86dd7614e5cba06b9879369407acd02096bfdf4b4059a1f60a"
+    },
+    {
+      "path": "trajectory_summary.csv",
+      "sha256": "c2c49efd4d1df8f6e3d27c0651645ab5d0365640932d62f0d0bfdd40393033b5"
+    },
+    {
+      "path": "update_funnel.csv",
+      "sha256": "fc4e426a7f3f30fc06d70bb485e6efbf47026bf81882d1e7c46ae20c354057c3"
+    },
+    {
+      "path": "validation_results.csv",
+      "sha256": "fd541ba6b8264c6c1895ffc92e9cbdf0907e7531beb8251a003b39da0fe6da17"
+    }
+  ]
+}

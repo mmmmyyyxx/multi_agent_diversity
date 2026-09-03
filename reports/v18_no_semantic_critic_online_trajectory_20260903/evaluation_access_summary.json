@@ -1,0 +1,7 @@
+{
+  "train_accessed": true,
+  "validation_accessed_after_training_freeze": true,
+  "validation_used_for_selection": false,
+  "test_accessed": false,
+  "test_calls": 0
+}

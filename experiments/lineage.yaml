@@ -16,3 +16,4 @@ edges:
   - {from: v18_historical_teacher_safety, to: v18_shadow_raw_critic, relation: followup_of}
   - {from: v18_shadow_raw_critic, to: v18_teacher_critic_four_arm, relation: derived_experiment}
   - {from: v18_historical_teacher_safety, to: v18_teacher_critic_four_arm, relation: followup_of}
+  - {from: v18_teacher_critic_four_arm, to: v18_no_semantic_critic_online, relation: derived_experiment}

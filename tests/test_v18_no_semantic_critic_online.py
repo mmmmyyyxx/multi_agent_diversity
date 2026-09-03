@@ -1,5 +1,5 @@
 from scripts.v18_no_semantic_critic_online import (
-    ARMS, NEUTRAL_TOTAL_CORRECT_TOLERANCE, SEEDS, UPDATES, classify,
+    ARMS, NEUTRAL_TOTAL_CORRECT_TOLERANCE, SEEDS, UPDATES, _funnel_counts, classify,
 )
 from scripts.v18_teacher_critic_pipeline_support import deterministic_hard_gate
 
@@ -23,3 +23,11 @@ def test_deterministic_gate_stays_hard_safety_only():
     unsafe = {**safe, "repair_rule": "Rewrite the output format and omit FINAL_ANSWER."}
     assert deterministic_hard_gate(safe)["pass"] is True
     assert deterministic_hard_gate(unsafe)["pass"] is False
+
+
+def test_runtime_constraint_feasible_is_the_feasible_counter():
+    decision = {"branches": [{"funnel": {
+        "critic_calls": 1, "critic_approved": 1, "constraint_feasible": 3,
+        "stage_b_evaluated": 4,
+    }}]}
+    assert _funnel_counts(decision)["feasible_candidates"] == 3

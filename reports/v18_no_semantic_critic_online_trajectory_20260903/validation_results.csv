@@ -1,0 +1,3 @@
+seed,arm,vote_correct,vote_acc,oracle_correct,oracle_acc,member_accuracies
+68,A_CANONICAL,33,0.66,39,0.78,"[0.66,0.66,0.66,0.56,0.6]"
+68,C_NO_SEMANTIC_CRITIC,34,0.68,42,0.84,"[0.74,0.56,0.7,0.68,0.68]"

@@ -1,0 +1,12 @@
+{
+  "A": {
+    "student_reaches": 2,
+    "feasible_candidates": 2,
+    "commits": 2
+  },
+  "C": {
+    "student_reaches": 14,
+    "feasible_candidates": 12,
+    "commits": 5
+  }
+}

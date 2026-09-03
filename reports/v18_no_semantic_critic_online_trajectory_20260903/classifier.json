@@ -1,0 +1,11 @@
+{
+  "label": "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+  "commits_a": 2,
+  "commits_c": 5,
+  "validation_vote_correct_a": 33,
+  "validation_vote_correct_c": 34,
+  "wins": 1,
+  "ties": 0,
+  "losses": 0,
+  "neutral_total_correct_tolerance": 1
+}

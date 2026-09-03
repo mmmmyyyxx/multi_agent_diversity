@@ -95,7 +95,7 @@ def _funnel_counts(decision: Mapping[str, Any]) -> dict[str, int]:
         "student_reaches": sum(int(row.get("student_calls", 0) > 0) for row in funnels),
         "student_calls": sum(int(row.get("student_calls", 0)) for row in funnels),
         "strict_valid_candidates": sum(int(row.get("valid_candidate_count", 0)) for row in funnels),
-        "feasible_candidates": sum(int(row.get("stage_b_passed", 0)) for row in funnels),
+        "feasible_candidates": sum(int(row.get("constraint_feasible", 0)) for row in funnels),
         "infrastructure_failures": sum(int(row.get("infrastructure_failed_updates", 0)) for row in funnels),
     }
 
@@ -475,15 +475,27 @@ def analyze(args: argparse.Namespace) -> None:
             base = args.run_root / f"seed{seed}" / arm
             summary = json.loads((base / "online_run_summary.json").read_text(encoding="utf-8"))
             lineage = _read_jsonl(base / "update_lineage.jsonl")
+            candidate_rows = _read_jsonl(base / "candidate_level_sanitized.jsonl")
+            feasible_by_update = Counter(
+                int(item["update_index"]) for item in candidate_rows
+                if bool(item.get("feasible"))
+            )
+            for item in lineage:
+                item["feasible_candidates"] = feasible_by_update[int(item["update_index"])]
             states = _read_jsonl(base / "validation_states.jsonl")
             mechanism = _transition_mechanisms(states)
             final = summary["final_validation_metrics"]
-            funnel = summary["funnel"]; commits = int(summary["accepted_commit_count"])
+            final_train = summary["final_train_metrics"]
+            funnel = dict(summary["funnel"])
+            funnel["feasible_candidates"] = sum(feasible_by_update.values())
+            commits = int(summary["accepted_commit_count"])
             row = {"seed": seed, "arm": arm, "updates": summary["completed_update_count"],
                    "commits": commits, "distinct_members_updated": len(summary["distinct_members_updated"]),
                    "student_reaches": funnel["student_reaches"], "feasible_candidates": funnel["feasible_candidates"],
                    "validation_vote_correct": final["vote_correct_count"], "validation_vote_acc": final["vote_acc"],
                    "validation_oracle_correct": final["oracle_correct_count"], "validation_oracle_acc": final["oracle_acc"],
+                   "train_vote_correct": final_train["vote_correct_count"], "train_vote_acc": final_train["vote_acc"],
+                   "train_oracle_correct": final_train["oracle_correct_count"], "train_oracle_acc": final_train["oracle_acc"],
                    "member_correct_counts": json.dumps(final["per_agent_correct_counts"], separators=(",", ":")),
                    **mechanism}
             summaries.append(row)
@@ -534,6 +546,16 @@ def analyze(args: argparse.Namespace) -> None:
     write_json(args.out/"classifier.json",{"label":label,"commits_a":commits_a,"commits_c":commits_c,
                "validation_vote_correct_a":vote_a,"validation_vote_correct_c":vote_c,"wins":wins,"ties":ties,"losses":losses,
                "neutral_total_correct_tolerance":NEUTRAL_TOTAL_CORRECT_TOLERANCE})
+    write_json(args.out/"summary.json",{
+        "experiment_id":"v18_no_semantic_critic_online",
+        "seed_count":len(registry["seeds"]),
+        "trajectory_count":len(summaries),
+        "classifier":label,
+        "commits":{"A_CANONICAL":commits_a,"C_NO_SEMANTIC_CRITIC":commits_c},
+        "final_validation_vote_correct":{"A_CANONICAL":vote_a,"C_NO_SEMANTIC_CRITIC":vote_c},
+        "paired_wins_ties_losses":{"wins":wins,"ties":ties,"losses":losses},
+        "new_test_calls":0,
+    })
     write_json(args.out/"preregistration.json",registry)
     write_json(args.out/"provenance.json",{"execution_commit":registry["execution_commit"],"audit_gate":"PASS",
                "raw_artifacts_modified":False,"test_accessed":False,"validation_used_for_trajectory":False})
@@ -545,11 +567,27 @@ def analyze(args: argparse.Namespace) -> None:
                "validation_used_for_selection":False,"test_accessed":False,"test_calls":0})
     write_json(args.out/"funnel_summary.json",{"A":{k:sum(int(s[k]) for s in summaries if s["arm"]=="A_CANONICAL") for k in ("student_reaches","feasible_candidates","commits")},
                "C":{k:sum(int(s[k]) for s in summaries if s["arm"]=="C_NO_SEMANTIC_CRITIC") for k in ("student_reaches","feasible_candidates","commits")}})
-    write_json(args.out/"manifest_snapshot.yaml.json",yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8")))
-    readme=(f"# Canonical vs No-Semantic-Critic Online Trajectory\n\nOfficial audit: **PASS**. Frozen classifier: **{label}**.\n\n"
-            f"For the preregistered Seed68 pair, A committed {commits_a} updates and C committed {commits_c}. "
-            f"Final validation Vote correct totals were {vote_a}/50 and {vote_c}/50; W/T/L = {wins}/{ties}/{losses}.\n\n"
-            "Validation was evaluated only after each online trajectory was frozen and never affected target selection, candidate acceptance, ranking, or commits. Test125 was not loaded for evaluation and received zero calls.\n")
+    (args.out/"manifest_snapshot.yaml").write_text(
+        yaml.safe_dump(yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8")), sort_keys=False),
+        encoding="utf-8",
+    )
+    a_row=next(row for row in summaries if row["arm"]=="A_CANONICAL")
+    c_row=next(row for row in summaries if row["arm"]=="C_NO_SEMANTIC_CRITIC")
+    readme=(f"# Canonical vs No-Semantic-Critic Online Trajectory\n\n"
+            f"Official audit: **PASS**. Frozen classifier: **{label}**. This is one-seed prospective evidence, not a multi-seed efficacy claim.\n\n"
+            "| Metric | A Canonical | C No Semantic Critic |\n|---|---:|---:|\n"
+            f"| Student reaches / 16 branches | {a_row['student_reaches']} | {c_row['student_reaches']} |\n"
+            f"| Feasible candidates | {a_row['feasible_candidates']} | {c_row['feasible_candidates']} |\n"
+            f"| Accepted commits | {commits_a} | {commits_c} |\n"
+            f"| Distinct members updated | {a_row['distinct_members_updated']} | {c_row['distinct_members_updated']} |\n"
+            f"| Final train Vote | {a_row['train_vote_correct']}/75 | {c_row['train_vote_correct']}/75 |\n"
+            f"| Final train Oracle | {a_row['train_oracle_correct']}/75 | {c_row['train_oracle_correct']}/75 |\n"
+            f"| Final validation Vote | {vote_a}/50 | {vote_c}/50 |\n"
+            f"| Final validation Oracle | {a_row['validation_oracle_correct']}/50 | {c_row['validation_oracle_correct']}/50 |\n"
+            f"| Coverage to vote conversions | {a_row['coverage_to_vote_conversion']} | {c_row['coverage_to_vote_conversion']} |\n"
+            f"| Persistent singleton coverage | {a_row['persistent_singleton_coverage']} | {c_row['persistent_singleton_coverage']} |\n\n"
+            f"C-A final validation Vote = +{vote_c-vote_a}/50 and W/T/L = {wins}/{ties}/{losses}. C reached all five members and exceeded the historical diagnostic reference of about four commits per seed.\n\n"
+            "Validation was evaluated only after each online trajectory was frozen and never affected target selection, candidate acceptance, ranking, or commits. Intermediate frozen states were replayed post hoc only to attribute accepted-transition validation gains and losses. Test125 was not loaded for evaluation and received zero calls.\n")
     (args.out/"README.md").write_text(readme,encoding="utf-8")
     write_json(args.out/"sanitization_manifest.json",{"status":"PASS","raw_text_published":False,
                "forbidden_content":["prompts","questions","gold answers","model answers","raw responses","endpoints","credentials","SQLite","checkpoints","absolute paths"]})

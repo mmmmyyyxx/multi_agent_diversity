@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "trajectory_count": 2,
+  "test_calls": 0,
+  "seeds": [
+    68
+  ],
+  "arms": [
+    "A_CANONICAL",
+    "C_NO_SEMANTIC_CRITIC"
+  ],
+  "historical_four_commit_reference_is_diagnostic_only": true
+}

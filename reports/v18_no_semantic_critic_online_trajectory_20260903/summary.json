@@ -1,0 +1,20 @@
+{
+  "experiment_id": "v18_no_semantic_critic_online",
+  "seed_count": 1,
+  "trajectory_count": 2,
+  "classifier": "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+  "commits": {
+    "A_CANONICAL": 2,
+    "C_NO_SEMANTIC_CRITIC": 5
+  },
+  "final_validation_vote_correct": {
+    "A_CANONICAL": 33,
+    "C_NO_SEMANTIC_CRITIC": 34
+  },
+  "paired_wins_ties_losses": {
+    "wins": 1,
+    "ties": 0,
+    "losses": 0
+  },
+  "new_test_calls": 0
+}
