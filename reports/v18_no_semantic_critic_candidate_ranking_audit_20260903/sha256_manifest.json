@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "path": "commit_pool_audit.csv",
+      "sha256": "17cc11918e3c3b61449be6e1bb8f5ddc0846aa79ad6762d810c25602bab82e1b"
+    },
+    {
+      "path": "fact_assertions.json",
+      "sha256": "58b1a568ab9b54a12f59bbed7206d16074e4aa33e7221198234428e9dd43ab85"
+    },
+    {
+      "path": "feasible_candidate_inventory.csv",
+      "sha256": "89fe3be05d85b37ba2bf18e1a9df64ce92a1738546ab1d54878480d7629783d1"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c3daa7a73a279a4233d52606e53c552c8b503211f198e404c592a86e65fe1091"
+    },
+    {
+      "path": "sanitization_manifest.json",
+      "sha256": "5b415b360661b8785ea1c0b78b766e024b0769b563641e7551d33b89a6976812"
+    },
+    {
+      "path": "source_artifact_hashes.csv",
+      "sha256": "15a3c7a1936da3cca20da8d8b8b3bf68bbb15290a60bdd2241eeb43ecf916bdc"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "b71625cc900b6e25b3de2057c1c75fac0aaa5e33f2b04392566f62470c5ab466"
+    }
+  ]
+}

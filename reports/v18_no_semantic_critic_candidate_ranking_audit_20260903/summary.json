@@ -1,0 +1,30 @@
+{
+  "analysis_version": "v18_no_semantic_critic_candidate_ranking_audit_v1",
+  "scope": {
+    "zero_api": true,
+    "new_validation_calls": 0,
+    "new_test_calls": 0,
+    "method_modified": false,
+    "ranking_modified": false,
+    "historical_artifacts_modified": false
+  },
+  "commit_count": 15,
+  "feasible_candidate_count": 42,
+  "selected_winner_count": 15,
+  "unselected_feasible_count": 27,
+  "unselected_with_complete_validation_count": 0,
+  "nonpositive_commit_count": 12,
+  "negative_commit_count": 3,
+  "nonpositive_feasible_alternative_count": 23,
+  "negative_feasible_alternative_count": 9,
+  "nonpositive_no_alternative_commit_count": 3,
+  "negative_no_alternative_commit_count": 1,
+  "nonpositive_train_pareto_dominating_alternative_count": 0,
+  "negative_train_pareto_dominating_alternative_count": 0,
+  "nonpositive_lower_loss_same_or_better_net_alternative_count": 1,
+  "counterfactual_validation_identifiable_nonpositive_commits": 0,
+  "primary_result": "COUNTERFACTUAL_ALTERNATIVE_VALIDATION_UNOBSERVED",
+  "train_side_result": "RANKING_NOT_IMPLICATED_BY_AVAILABLE_TRAIN_EVIDENCE",
+  "feasible_set_lower_bound": "AT_LEAST_ONE_NEGATIVE_AND_TWO_ZERO_COMMITS_HAD_NO_FEASIBLE_ALTERNATIVE",
+  "global_ranking_vs_feasible_set_verdict": "UNRESOLVED_WITH_ZERO_API_FROZEN_EVIDENCE"
+}

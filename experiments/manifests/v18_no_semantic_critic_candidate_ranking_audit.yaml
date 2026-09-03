@@ -1,0 +1,50 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_no_semantic_critic_candidate_ranking_audit
+title: V18 accepted-candidate counterfactual ranking audit
+status: COMPLETED
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-03T17:20:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-03T17:20:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-03T17:20:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T17:21:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T17:22:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-03T17:24:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-03T17:25:00+08:00'}
+lineage: {parents: [v18_no_semantic_critic_transfer_decomposition], derives_from: v18_no_semantic_critic_transfer_decomposition}
+scientific_question: Did C ranking select a poorly transferring winner when a better feasible alternative already existed?
+hypotheses:
+  - Frozen cache evidence may identify validation-superior unselected alternatives.
+  - If no alternative exists, ranking cannot explain that commit.
+  - Train-side dominance is descriptive and cannot substitute for missing validation outcomes.
+design:
+  changed: [zero-API feasible-pool and validation-cache availability audit]
+  unchanged: [historical candidate pools, ranking, Common-Safe, proposal generation, validation observations]
+  forbidden_changes: [API calls, new validation evaluation, test access, reranking, method changes, imputing missing validation outcomes]
+method_identity: member_aware_peer_state_v15
+runtime_version: v18_no_semantic_critic_candidate_ranking_audit_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, test: prohibited}
+  split_hashes: {}
+  validation_policy: frozen cache availability only; no new evaluation
+  test_policy: prohibited; zero calls
+model: {solver: none, optimizer_roles: {}, thinking: false, temperatures: {}, max_tokens: {}}
+seeds: [68, 69, 70]
+budget: {type: zero_api_retrospective_audit, frozen_before_run: true, limit: {api_calls: 0, validation_calls: 0, test_calls: 0}}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: existence of a validation-superior feasible alternative using only already-observed validation evidence
+  frozen_rule: missing alternative validation remains unidentifiable and train-side metrics are never treated as validation outcomes
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/v18_no_semantic_critic_candidate_ranking_audit_20260903/DESIGN_SPEC.md, sha256: 07133eedf33de823458762b85c068c794d20f4723b9cb779293acc25c4790bb9}
+  report: reports/v18_no_semantic_critic_candidate_ranking_audit_20260903
+  provenance: reports/v18_no_semantic_critic_candidate_ranking_audit_20260903/source_artifact_hashes.csv
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result:
+  classifier: COUNTERFACTUAL_ALTERNATIVE_VALIDATION_UNOBSERVED
+  conclusion: Frozen evidence does not contain validation outcomes for any unselected feasible candidate. Available train-side evidence does not implicate ranking, and three nonpositive commits have no feasible alternative, but the global ranking-versus-feasible-set distinction remains unresolved without new validation calls.
+  evidence_type: retrospective
