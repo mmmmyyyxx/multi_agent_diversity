@@ -1,0 +1,84 @@
+{
+  "files": [
+    {
+      "path": "accepted_commits.csv",
+      "sha256": "8f0b09948f62c8fd142f2c1141fa387de588ddcea7e3bc254f242a2f4c3fac8c"
+    },
+    {
+      "path": "api_ledger_summary.json",
+      "sha256": "dadc6b69409dee34cfc92d5963811aeb0aedb06618e299331c740d7c50d54df7"
+    },
+    {
+      "path": "classifier.json",
+      "sha256": "144d37415fa0995764271b8ca84e2d294de1e450c87db4db52985e7859266d3f"
+    },
+    {
+      "path": "COMBINED_SEED68_70.md",
+      "sha256": "b4088a648163fd97e8d842dcba22e6af702d5a2fc476ce710a962989fbfeabf5"
+    },
+    {
+      "path": "combined_seed68_70_summary.json",
+      "sha256": "bcacbd1fadd3a3b3fc3c923f274743df456d58ed012df64d83e2afec4adb636e"
+    },
+    {
+      "path": "combined_seed68_70_trajectory_summary.csv",
+      "sha256": "a12607fd790d98469c46982296f498b38fe4aba084c12c044d28c9a0e63be675"
+    },
+    {
+      "path": "compute_metrics.csv",
+      "sha256": "6f6b11e2450ea8e8f188fddaefd795868017536ec9b939c5cce74ccd2c35efac"
+    },
+    {
+      "path": "evaluation_access_summary.json",
+      "sha256": "d1f0a6d7891e36a670eb04a47882ccc26552a9ec8af4b07ce50c807f8ca1ae4a"
+    },
+    {
+      "path": "fact_assertions.json",
+      "sha256": "87eaca9c3a6ff98228409515239fa382f3f01c4e59ac64b87e0b2d422f46e9aa"
+    },
+    {
+      "path": "funnel_summary.json",
+      "sha256": "a940a44313bd63dc4a336a974459a47073136b8a01eef6eb3bc813c7aca85102"
+    },
+    {
+      "path": "manifest_snapshot.yaml",
+      "sha256": "33c934b09d057a78722489630fc836c9efe339b32f036d470a84f402d6002330"
+    },
+    {
+      "path": "paired_contrasts.csv",
+      "sha256": "ce2f1a5a5b3fd3af4ef96ba0977bb5417d0629fa7c3c6d89e06f97bf4fcf6534"
+    },
+    {
+      "path": "preregistration.json",
+      "sha256": "8c3d6bc3da3970eb2e443c1ac73d373d9504ab6cedae18f75192b8197a917a6b"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "c8d918b4d999575f4412af584846bc235747d26f2c4557b6b7eea40d57b8ac81"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b64d67d10cac8463897f4c401f903bf769f4a87d15969068eed7b1405859138b"
+    },
+    {
+      "path": "sanitization_manifest.json",
+      "sha256": "ca65ef12e8493c29c9465b1043e303e09f18a9b550805431426198708f422cfb"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "60e7ff662ca29bbb806f437fea29d0194b109a0dd9ea898815905c4347c1888a"
+    },
+    {
+      "path": "trajectory_summary.csv",
+      "sha256": "6b384361855e02b4e8388ab164c2f7bc3261a581d951028b3dc90334489e3efc"
+    },
+    {
+      "path": "update_funnel.csv",
+      "sha256": "7295c010e2a6baf060020fcfe463a85eae5cbab7cf5d441d5930a5349510c5cd"
+    },
+    {
+      "path": "validation_results.csv",
+      "sha256": "65a085ce3827f1168aea61351955976b56c5223c1ba708b22c54cdeb7e22b7ca"
+    }
+  ]
+}

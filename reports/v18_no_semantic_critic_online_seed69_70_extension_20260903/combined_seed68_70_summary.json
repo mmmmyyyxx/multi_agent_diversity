@@ -1,0 +1,41 @@
+{
+  "evidence_scope": "descriptive_post_result_extension",
+  "untouched_three_seed_preregistration": false,
+  "seeds": [
+    68,
+    69,
+    70
+  ],
+  "classifier_under_unchanged_rule": "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+  "student_reaches": {
+    "A_CANONICAL": 11,
+    "C_NO_SEMANTIC_CRITIC": 36
+  },
+  "feasible_candidates": {
+    "A_CANONICAL": 13,
+    "C_NO_SEMANTIC_CRITIC": 42
+  },
+  "commits": {
+    "A_CANONICAL": 7,
+    "C_NO_SEMANTIC_CRITIC": 15
+  },
+  "final_validation_vote_correct": {
+    "A_CANONICAL": 97,
+    "C_NO_SEMANTIC_CRITIC": 104
+  },
+  "final_validation_oracle_correct": {
+    "A_CANONICAL": 116,
+    "C_NO_SEMANTIC_CRITIC": 125
+  },
+  "paired_vote_deltas": [
+    1,
+    7,
+    -1
+  ],
+  "paired_wins_ties_losses": {
+    "wins": 2,
+    "ties": 0,
+    "losses": 1
+  },
+  "test_calls": 0
+}

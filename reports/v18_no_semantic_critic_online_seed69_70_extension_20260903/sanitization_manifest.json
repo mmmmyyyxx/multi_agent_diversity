@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "raw_text_published": false,
+  "forbidden_content": [
+    "prompts",
+    "questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "endpoints",
+    "credentials",
+    "SQLite",
+    "checkpoints",
+    "absolute paths"
+  ]
+}

@@ -21,6 +21,7 @@ graph TD
   v18_shadow_raw_critic["v18_shadow_raw_critic"] -->|derived_experiment| v18_teacher_critic_four_arm["v18_teacher_critic_four_arm"]
   v18_historical_teacher_safety["v18_historical_teacher_safety"] -->|followup_of| v18_teacher_critic_four_arm["v18_teacher_critic_four_arm"]
   v18_teacher_critic_four_arm["v18_teacher_critic_four_arm"] -->|derived_experiment| v18_no_semantic_critic_online["v18_no_semantic_critic_online"]
+  v18_no_semantic_critic_online["v18_no_semantic_critic_online"] -->|followup_of| v18_no_semantic_critic_online_seed69_70_extension["v18_no_semantic_critic_online_seed69_70_extension"]
 ```
 
 ## Topological order
@@ -40,3 +41,4 @@ graph TD
 13. `v18_shadow_raw_critic`
 14. `v18_teacher_critic_four_arm`
 15. `v18_no_semantic_critic_online`
+16. `v18_no_semantic_critic_online_seed69_70_extension`

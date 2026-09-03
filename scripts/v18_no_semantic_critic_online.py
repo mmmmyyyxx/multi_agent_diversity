@@ -475,6 +475,10 @@ def analyze(args: argparse.Namespace) -> None:
     audit_payload = json.loads((args.gate / "audit.json").read_text(encoding="utf-8"))
     if audit_payload["gate"] != "PASS": raise SystemExit("official audit is not PASS")
     registry = json.loads((args.prep / "registry.json").read_text(encoding="utf-8"))
+    report_manifest = ROOT / registry.get("manifest_path", MANIFEST_PATH.relative_to(ROOT).as_posix())
+    manifest_document = yaml.safe_load(report_manifest.read_text(encoding="utf-8"))
+    experiment_id = str(manifest_document["experiment_id"])
+    post_result_extension = experiment_id.endswith("_seed69_70_extension")
     summaries = []; updates = []; validation_rows = []; compute_rows = []
     for seed in registry["seeds"]:
         for arm in ARMS:
@@ -553,9 +557,10 @@ def analyze(args: argparse.Namespace) -> None:
                "validation_vote_correct_a":vote_a,"validation_vote_correct_c":vote_c,"wins":wins,"ties":ties,"losses":losses,
                "neutral_total_correct_tolerance":NEUTRAL_TOTAL_CORRECT_TOLERANCE})
     write_json(args.out/"summary.json",{
-        "experiment_id":"v18_no_semantic_critic_online",
+        "experiment_id":experiment_id,
         "seed_count":len(registry["seeds"]),
         "trajectory_count":len(summaries),
+        "post_result_extension":post_result_extension,
         "classifier":label,
         "commits":{"A_CANONICAL":commits_a,"C_NO_SEMANTIC_CRITIC":commits_c},
         "final_validation_vote_correct":{"A_CANONICAL":vote_a,"C_NO_SEMANTIC_CRITIC":vote_c},
@@ -564,7 +569,8 @@ def analyze(args: argparse.Namespace) -> None:
     })
     write_json(args.out/"preregistration.json",registry)
     write_json(args.out/"provenance.json",{"execution_commit":registry["execution_commit"],"audit_gate":"PASS",
-               "raw_artifacts_modified":False,"test_accessed":False,"validation_used_for_trajectory":False})
+               "raw_artifacts_modified":False,"test_accessed":False,"validation_used_for_trajectory":False,
+               "post_result_extension":post_result_extension})
     total_validation_rows = 50 * len(registry["seeds"])
     write_json(args.out/"fact_assertions.json",{"pass":True,"trajectory_count":len(summaries),"test_calls":0,
                "seeds":registry["seeds"],"arms":registry["arms"],"historical_four_commit_reference_is_diagnostic_only":True})
@@ -574,9 +580,8 @@ def analyze(args: argparse.Namespace) -> None:
                "validation_used_for_selection":False,"test_accessed":False,"test_calls":0})
     write_json(args.out/"funnel_summary.json",{"A":{k:sum(int(s[k]) for s in summaries if s["arm"]=="A_CANONICAL") for k in ("student_reaches","feasible_candidates","commits")},
                "C":{k:sum(int(s[k]) for s in summaries if s["arm"]=="C_NO_SEMANTIC_CRITIC") for k in ("student_reaches","feasible_candidates","commits")}})
-    report_manifest = ROOT / registry.get("manifest_path", MANIFEST_PATH.relative_to(ROOT).as_posix())
     (args.out/"manifest_snapshot.yaml").write_text(
-        yaml.safe_dump(yaml.safe_load(report_manifest.read_text(encoding="utf-8")), sort_keys=False),
+        yaml.safe_dump(manifest_document, sort_keys=False),
         encoding="utf-8",
     )
     def arm_total(arm: str, key: str) -> int:
@@ -584,7 +589,8 @@ def analyze(args: argparse.Namespace) -> None:
     train_rows = 75 * len(registry["seeds"])
     readme=(f"# Canonical vs No-Semantic-Critic Online Trajectory\n\n"
             f"Official audit: **PASS**. Frozen classifier: **{label}**. Evidence scope is {len(registry['seeds'])} frozen seed pair(s).\n\n"
-            "| Metric | A Canonical | C No Semantic Critic |\n|---|---:|---:|\n"
+            + ("**Provenance:** Seeds69/70 are a post-Seed68-result extension, not an untouched three-seed preregistration. Any combined Seed68-70 result is descriptive only.\n\n" if post_result_extension else "")
+            + "| Metric | A Canonical | C No Semantic Critic |\n|---|---:|---:|\n"
             f"| Student reaches | {arm_total('A_CANONICAL','student_reaches')} | {arm_total('C_NO_SEMANTIC_CRITIC','student_reaches')} |\n"
             f"| Feasible candidates | {arm_total('A_CANONICAL','feasible_candidates')} | {arm_total('C_NO_SEMANTIC_CRITIC','feasible_candidates')} |\n"
             f"| Accepted commits | {commits_a} | {commits_c} |\n"
@@ -598,6 +604,80 @@ def analyze(args: argparse.Namespace) -> None:
             f"C-A final validation Vote total = {vote_c-vote_a:+d}/{total_validation_rows} and W/T/L = {wins}/{ties}/{losses}. The historical four-commit reference remains diagnostic only.\n\n"
             "Validation was evaluated only after each online trajectory was frozen and never affected target selection, candidate acceptance, ranking, or commits. Intermediate frozen states were replayed post hoc only to attribute accepted-transition validation gains and losses. Test125 was not loaded for evaluation and received zero calls.\n")
     (args.out/"README.md").write_text(readme,encoding="utf-8")
+    if post_result_extension:
+        historical_path = ROOT / "reports/v18_no_semantic_critic_online_trajectory_20260903/trajectory_summary.csv"
+        with historical_path.open(encoding="utf-8", newline="") as handle:
+            historical_rows = list(csv.DictReader(handle))
+        combined_rows = sorted(
+            [*historical_rows, *summaries],
+            key=lambda item: (int(item["seed"]), str(item["arm"])),
+        )
+        _write_csv(
+            args.out/"combined_seed68_70_trajectory_summary.csv",
+            combined_rows,
+            list(summaries[0]),
+        )
+
+        def combined_total(arm: str, key: str) -> int:
+            return sum(int(float(row[key])) for row in combined_rows if row["arm"] == arm)
+
+        combined_deltas = []
+        for seed in (68, 69, 70):
+            by_arm = {row["arm"]: row for row in combined_rows if int(row["seed"]) == seed}
+            combined_deltas.append(
+                int(float(by_arm["C_NO_SEMANTIC_CRITIC"]["validation_vote_correct"]))
+                - int(float(by_arm["A_CANONICAL"]["validation_vote_correct"]))
+            )
+        combined_wins = sum(delta > 0 for delta in combined_deltas)
+        combined_ties = sum(delta == 0 for delta in combined_deltas)
+        combined_losses = sum(delta < 0 for delta in combined_deltas)
+        combined_commits_a = combined_total("A_CANONICAL", "commits")
+        combined_commits_c = combined_total("C_NO_SEMANTIC_CRITIC", "commits")
+        combined_vote_a = combined_total("A_CANONICAL", "validation_vote_correct")
+        combined_vote_c = combined_total("C_NO_SEMANTIC_CRITIC", "validation_vote_correct")
+        combined_label = classify(
+            commits_a=combined_commits_a,
+            commits_c=combined_commits_c,
+            vote_correct_a=combined_vote_a,
+            vote_correct_c=combined_vote_c,
+            wins=combined_wins,
+            losses=combined_losses,
+        )
+        write_json(args.out/"combined_seed68_70_summary.json", {
+            "evidence_scope": "descriptive_post_result_extension",
+            "untouched_three_seed_preregistration": False,
+            "seeds": [68, 69, 70],
+            "classifier_under_unchanged_rule": combined_label,
+            "student_reaches": {
+                "A_CANONICAL": combined_total("A_CANONICAL", "student_reaches"),
+                "C_NO_SEMANTIC_CRITIC": combined_total("C_NO_SEMANTIC_CRITIC", "student_reaches"),
+            },
+            "feasible_candidates": {
+                "A_CANONICAL": combined_total("A_CANONICAL", "feasible_candidates"),
+                "C_NO_SEMANTIC_CRITIC": combined_total("C_NO_SEMANTIC_CRITIC", "feasible_candidates"),
+            },
+            "commits": {"A_CANONICAL": combined_commits_a, "C_NO_SEMANTIC_CRITIC": combined_commits_c},
+            "final_validation_vote_correct": {"A_CANONICAL": combined_vote_a, "C_NO_SEMANTIC_CRITIC": combined_vote_c},
+            "final_validation_oracle_correct": {
+                "A_CANONICAL": combined_total("A_CANONICAL", "validation_oracle_correct"),
+                "C_NO_SEMANTIC_CRITIC": combined_total("C_NO_SEMANTIC_CRITIC", "validation_oracle_correct"),
+            },
+            "paired_vote_deltas": combined_deltas,
+            "paired_wins_ties_losses": {"wins": combined_wins, "ties": combined_ties, "losses": combined_losses},
+            "test_calls": 0,
+        })
+        combined_note = (
+            "# Descriptive Seed68-70 summary\n\n"
+            "This aggregate combines the original Seed68 result with the post-result Seed69/70 extension. "
+            "It is descriptive and is not an untouched three-seed preregistration.\n\n"
+            f"Under the unchanged frozen classifier, the descriptive label is **{combined_label}**. "
+            f"C-A validation Vote deltas are {combined_deltas}; W/T/L is "
+            f"{combined_wins}/{combined_ties}/{combined_losses}. Aggregate validation Vote is "
+            f"{combined_vote_a}/150 for A and {combined_vote_c}/150 for C. "
+            f"Accepted commits are {combined_commits_a} for A and {combined_commits_c} for C.\n\n"
+            "No test data was evaluated.\n"
+        )
+        (args.out/"COMBINED_SEED68_70.md").write_text(combined_note, encoding="utf-8")
     write_json(args.out/"sanitization_manifest.json",{"status":"PASS","raw_text_published":False,
                "forbidden_content":["prompts","questions","gold answers","model answers","raw responses","endpoints","credentials","SQLite","checkpoints","absolute paths"]})
     files=[path for path in args.out.iterdir() if path.is_file() and path.name!="sha256_manifest.json"]

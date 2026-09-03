@@ -1,0 +1,10 @@
+{
+  "scope": "aggregate_only",
+  "total_successful_calls": 8613,
+  "tokens_by_role": {
+    "teacher": 217342,
+    "critic": 123127,
+    "student": 33353,
+    "solver": 2692964
+  }
+}

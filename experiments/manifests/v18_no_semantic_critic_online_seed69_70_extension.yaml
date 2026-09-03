@@ -1,13 +1,17 @@
 schema_version: experiment_manifest_v1
 experiment_id: v18_no_semantic_critic_online_seed69_70_extension
 title: Seed69/70 post-result no-semantic-Critic online extension
-status: PREFLIGHT_PASS
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-03T12:30:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-03T12:30:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-03T12:30:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T12:30:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T12:40:35+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-03T13:56:00+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-03T13:57:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-03T13:58:00+08:00'}
 lineage: {parents: [v18_no_semantic_critic_online], derives_from: v18_no_semantic_critic_online}
 scientific_question: Do the Seed68 online throughput and validation signals replicate on the originally proposed Seeds69 and 70?
 hypotheses:
@@ -51,5 +55,9 @@ artifacts:
   preregistration: {path: experiments/v18_no_semantic_critic_online_seed69_70_extension_20260903/DESIGN_SPEC.md, sha256: 7d80ffcb19ea912d58b6da4fc5e3c20b34ad85008ba7f9e7a56c12da242e2391}
   report: reports/v18_no_semantic_critic_online_seed69_70_extension_20260903
   provenance: reports/v18_no_semantic_critic_online_seed69_70_extension_20260903/provenance.json
-git: {design_commit: null, implementation_commit: null, result_commit: null}
-result: {classifier: null, conclusion: null, evidence_type: not_yet_available}
+git: {design_commit: 4bce4b759f55fdfdbd30c3730ed9f40b4ab1290e, implementation_commit: 4bce4b759f55fdfdbd30c3730ed9f40b4ab1290e, result_commit: null}
+result:
+  classifier: NO_CLEAR_ONLINE_ADVANTAGE
+  conclusion: No-semantic-Critic increased throughput on both extension seeds, but validation transfer was mixed (+7 and -1 correct), so the frozen two-seed classifier does not establish a clear online advantage.
+  evidence_type: online
+  extension_provenance: post_seed68_result_extension

@@ -1,0 +1,37 @@
+{
+  "runtime_version": "v18_no_semantic_critic_online_trajectory_v1",
+  "execution_commit": "4bce4b759f55fdfdbd30c3730ed9f40b4ab1290e",
+  "seeds": [
+    69,
+    70
+  ],
+  "arms": [
+    "A_CANONICAL",
+    "C_NO_SEMANTIC_CRITIC"
+  ],
+  "updates": 8,
+  "execution_order": {
+    "69": [
+      "A_CANONICAL",
+      "C_NO_SEMANTIC_CRITIC"
+    ],
+    "70": [
+      "A_CANONICAL",
+      "C_NO_SEMANTIC_CRITIC"
+    ]
+  },
+  "manifest_path": "experiments/manifests/v18_no_semantic_critic_online_seed69_70_extension.yaml",
+  "task": "disambiguation_qa",
+  "validation_policy": "post_training_frozen_state_replay_only",
+  "test_policy": "prohibited_zero_rows_loaded_zero_calls",
+  "classifier": {
+    "neutral_total_correct_tolerance": 1,
+    "labels_in_precedence_order": [
+      "ONLINE_THROUGHPUT_AND_VOTE_SUPPORTED",
+      "ONLINE_THROUGHPUT_ONLY",
+      "ONLINE_THROUGHPUT_WITH_TRANSFER_REGRESSION",
+      "NO_CLEAR_ONLINE_ADVANTAGE"
+    ]
+  },
+  "registry_hash": "99cdd51a2a8964686535ddf8b3e35a0ecd8deceeffa755463a4840ce6ffbb6c9"
+}

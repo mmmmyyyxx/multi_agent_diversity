@@ -1,0 +1,7 @@
+seed,arm,updates,commits,distinct_members_updated,student_reaches,feasible_candidates,validation_vote_correct,validation_vote_acc,validation_oracle_correct,validation_oracle_acc,train_vote_correct,train_vote_acc,train_oracle_correct,train_oracle_acc,member_correct_counts,coverage_recovery_0_to_1,support_deepening_1_to_2plus,coverage_to_vote_conversion,cross_member_accumulation,persistent_singleton_coverage
+68,A_CANONICAL,8,2,2,2,2,33,0.66,39,0.78,51,0.68,64,0.8533333333333334,"[33,33,33,28,30]",6,2,0,2,4
+68,C_NO_SEMANTIC_CRITIC,8,5,5,14,12,34,0.68,42,0.84,64,0.8533333333333334,69,0.92,"[37,28,35,34,34]",9,6,5,6,3
+69,A_CANONICAL,8,3,3,5,8,31,0.62,37,0.74,55,0.7333333333333333,65,0.8666666666666667,"[28,28,27,34,34]",3,1,0,1,2
+69,C_NO_SEMANTIC_CRITIC,8,6,4,12,18,38,0.76,42,0.84,61,0.8133333333333334,69,0.92,"[39,34,33,34,31]",11,6,6,6,3
+70,A_CANONICAL,8,2,2,4,3,33,0.66,40,0.8,49,0.6533333333333333,65,0.8666666666666667,"[33,33,31,33,33]",7,2,0,2,5
+70,C_NO_SEMANTIC_CRITIC,8,4,4,10,12,32,0.64,41,0.82,60,0.8,66,0.88,"[31,33,35,29,31]",8,5,2,5,4
