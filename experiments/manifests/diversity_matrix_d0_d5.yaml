@@ -1,0 +1,60 @@
+schema_version: experiment_manifest_v1
+experiment_id: diversity_matrix_d0_d5
+title: D0-D5 online diversity matrix
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T00:00:00+08:00'}
+lineage:
+  parents: [v18_no_semantic_critic_online_seed69_70_extension, v18_qwen3_8b_no_semantic_critic_light_replication]
+  derives_from: v18_no_semantic_critic_online_seed69_70_extension
+scientific_question: Does responsibility-conditioned member evolution induce useful task-relevant complementarity under compute-matched RR/W1 allocation?
+hypotheses:
+  - Responsibility-conditioned evolution improves useful coverage and Validation Vote relative to Generic under eligible round-robin allocation.
+  - W1 and responsibility-conditioned evolution may interact rather than contribute additively.
+  - Lower correctness correlation alone is not evidence of useful diversity.
+design:
+  arms: [D0 Static, D1 canonical Generic-S0, D2 RR Generic, D3 W1 Generic, D4 RR Responsibility-conditioned, D5 W1 Responsibility-conditioned]
+  factorial: {allocation: [eligible round-robin, W1], proposal: [Generic, Responsibility-conditioned]}
+  changed: [target allocation factor, proposal context factor]
+  unchanged: [five agents, equal-weight plurality, tie abstention, same-start initialization, Common-Safe, ranking, max-one commit, train split, validation split]
+  forbidden_changes: [test access, validation-aware selection, selector tuning, fairness forcing, semantic Critic in D4 or D5, new M2F trigger, weighted voting, seed replacement, horizon extension, outcome-based retry]
+method_identity: member_aware_peer_state_v15
+runtime_version: diversity_matrix_d0_d5_online_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, test: prohibited}
+  split_hashes: {}
+  validation_policy: one post-training frozen-state evaluation per final state; never used for selection
+  test_policy: prohibited; zero test rows loaded and zero test calls
+model:
+  solver: qwen3-14b
+  optimizer_roles: {teacher: qwen3.7-flash, critic: qwen3.7-flash, student: qwen3.7-flash, evaluator: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, teacher: 0.4, critic: 0.0, student: 0.5}
+  max_tokens: {solver: 1800}
+seeds: [72, 73, 74]
+budget:
+  type: six_arm_three_seed_online_matrix
+  frozen_before_run: true
+  limit: {updates_per_evolution_arm: 32, trajectories: 18, validation_final_states: 18}
+  candidate_counts: {D1_source_per_update: 2, D2_D5_targets_per_update: 2, source_per_target: 2, generic_revision_per_valid_source: 1}
+api_authorization:
+  authorized: true
+  allowed_roles: [solver, teacher, critic, student]
+  allowed_phases: [online_trajectory, frozen_validation]
+selection:
+  primary_metric: final frozen-state Validation plurality-vote accuracy
+  frozen_rule: three paired deltas classify as CONSISTENT_POSITIVE for 3 wins; MAJORITY_POSITIVE for positive mean and at least 2 wins; NEUTRAL for three ties; NEGATIVE for negative mean and at least 2 losses; otherwise MIXED
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/diversity_matrix_d0_d5_20260903/DESIGN_SPEC.md, sha256: e487fc53e198c825e0d552ae7f857369e5ff5c08c111c6a57f342501088a9616}
+  report: reports/diversity_matrix_d0_d5_20260903
+  provenance: reports/diversity_matrix_d0_d5_20260903/source_freeze.json
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: null, conclusion: null, evidence_type: online}

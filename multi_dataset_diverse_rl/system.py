@@ -1368,6 +1368,48 @@ class PromptEnsembleOptimizationSystem:
             })
             return targets, []
 
+        if policy == "responsibility_round_robin_dual":
+            actionable = sorted(
+                int(agent_id) for agent_id, rows in assigned.items() if rows
+            )
+            start = (
+                int(self.cfg.training.seed) + 2 * int(update_index)
+            ) % len(self.agents)
+            ordered = [
+                agent_id
+                for offset in range(len(self.agents))
+                if (agent_id := (start + offset) % len(self.agents))
+                in actionable
+            ]
+            targets = tuple(ordered[:2])
+            self.selected_target_ids = list(targets)
+            payload = [
+                {
+                    "agent_id": agent_id,
+                    "selection_rank": rank,
+                    "selected": agent_id in targets,
+                    "active_lane": (
+                        self.cached_active_lane_by_agent[agent_id].value
+                        if agent_id in self.cached_active_lane_by_agent
+                        else None
+                    ),
+                    "active_slice_size": len(assigned.get(agent_id, ())),
+                }
+                for rank, agent_id in enumerate(ordered, start=1)
+            ]
+            self.target_priority_audit.append({
+                "artifact_schema_version": "target_selection_audit_v13",
+                "update_index": int(update_index),
+                "selection_pool_stage": "responsibility_round_robin_dual",
+                "update_lane": "responsibility_conditioned",
+                "selected_target_ids": list(targets),
+                "no_actionable_reason": (
+                    "" if targets else "no_actionable_responsibility"
+                ),
+                "priorities": payload,
+            })
+            return targets, payload
+
         if policy == "repairability_adjusted_responsibility":
             scores = repairability_adjusted_target_scores(
                 active_assignments=assigned,
@@ -4345,7 +4387,10 @@ class PromptEnsembleOptimizationSystem:
         update_lane = (
             "responsibility_conditioned"
             if self.protocol.target_selection_policy
-            == "repairability_adjusted_responsibility"
+            in {
+                "repairability_adjusted_responsibility",
+                "responsibility_round_robin_dual",
+            }
             else "protocol_control"
         )
         assigned_hashes = (
@@ -4476,10 +4521,10 @@ class PromptEnsembleOptimizationSystem:
             return await self._legacy_update_once(update_index)
         if not self.protocol.optimization_enabled:
             return False
-        if (
-            self.protocol.target_selection_policy
-            == "repairability_adjusted_responsibility"
-        ):
+        if self.protocol.target_selection_policy in {
+            "repairability_adjusted_responsibility",
+            "responsibility_round_robin_dual",
+        }:
             if self.protocol.responsibility_refresh_policy != "online":
                 raise AssertionError(
                     "dynamic responsibility protocol requires online refresh"

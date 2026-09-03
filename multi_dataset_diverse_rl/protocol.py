@@ -175,6 +175,15 @@ EXPERIMENTAL_V16_MODULE2_SETTINGS = (
     "experimental_v17_formal_generic_2x2_matched",
 )
 
+# Experiment-only factorial cells for the D0-D5 diversity matrix.  They do
+# not alter the reduced canonical matrix or promote a new default method.
+DIVERSITY_MATRIX_EXPERIMENT_SETTINGS = (
+    "experimental_diversity_d2_rr_generic",
+    "experimental_diversity_d3_w1_generic",
+    "experimental_diversity_d4_rr_responsibility",
+    "experimental_diversity_d5_w1_responsibility",
+)
+
 EXPERIMENTAL_V16_MODULE2_VARIANTS = {
     "experimental_v16_c0_current_v15": C0_CURRENT_V15,
     "experimental_v16_c2_boundary_plus_preservation": (
@@ -373,6 +382,8 @@ def canonical_experiment_setting(
         return requested
     if requested in EXPERIMENTAL_V16_MODULE2_SETTINGS:
         return requested
+    if requested in DIVERSITY_MATRIX_EXPERIMENT_SETTINGS:
+        return requested
     if requested in AUXILIARY_SEARCH_CONTROL_SETTINGS:
         if not allow_auxiliary_setting:
             raise ValueError(
@@ -462,7 +473,11 @@ def candidate_budget_contract(
             2 if LEGACY_V13_SEVEN_SETTINGS.index(name) >= 4 else 1
         )
         candidate_count, stage_b = 2, 2
-    elif name in MAIN_ABLATION_MODULES or name in EXPERIMENTAL_V16_MODULE2_SETTINGS:
+    elif (
+        name in MAIN_ABLATION_MODULES
+        or name in EXPERIMENTAL_V16_MODULE2_SETTINGS
+        or name in DIVERSITY_MATRIX_EXPERIMENT_SETTINGS
+    ):
         modules = (
             MAIN_ABLATION_MODULES[name]
             if name in MAIN_ABLATION_MODULES
@@ -766,6 +781,53 @@ def experiment_protocol(
                     "experimental_v17_formal_generic_2x2_matched",
                 }
             ),
+            legacy_protocol=False,
+            auxiliary_protocol=False,
+            **resolved.__dict__,
+        )
+    if canonical_name in DIVERSITY_MATRIX_EXPERIMENT_SETTINGS:
+        responsibility_conditioned = canonical_name in {
+            "experimental_diversity_d4_rr_responsibility",
+            "experimental_diversity_d5_w1_responsibility",
+        }
+        round_robin = canonical_name in {
+            "experimental_diversity_d2_rr_generic",
+            "experimental_diversity_d4_rr_responsibility",
+        }
+        modules = AblationModules(True, responsibility_conditioned)
+        resolved = ResolvedProtocolPolicies(
+            optimization_enabled=True,
+            target_selection_policy=(
+                "responsibility_round_robin_dual"
+                if round_robin
+                else "repairability_adjusted_responsibility"
+            ),
+            sample_pool_policy="member_aware_residuals",
+            tcs_context_policy=(
+                "member_aware_responsibility_conditioned"
+                if responsibility_conditioned
+                else "generic_peer_state"
+            ),
+            candidate_acceptance_policy="fixed_peer_monotone_target_or_vote",
+            candidate_ranking_policy="common_monotone_safe",
+            stage_a_policy="matched_all_generated",
+            responsibility_refresh_policy="online",
+            repairability_freeze_enabled=False,
+            service_routing_enabled=True,
+        )
+        return ExperimentProtocol(
+            name=canonical_name,
+            requested_name=requested_name,
+            display_name=canonical_name,
+            modules=modules,
+            initialization_mode=InitializationMode(initialization_mode),
+            tie_policy=str(tie_policy),
+            candidate_budget_contract=candidate_budget_contract,
+            module2_context_variant=C0_CURRENT_V15,
+            module2_evolution_variant="m20_current_v15",
+            compatibility_repair_enabled=False,
+            # D2-D5 share the same scheduled loss-blind revision opportunity.
+            generic_revision_enabled=True,
             legacy_protocol=False,
             auxiliary_protocol=False,
             **resolved.__dict__,
