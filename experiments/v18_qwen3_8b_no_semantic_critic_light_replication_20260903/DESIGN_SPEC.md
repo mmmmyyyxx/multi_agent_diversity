@@ -93,6 +93,9 @@ data.
 
 ## Authorization state
 
-Phase A implementation and preflight are zero API. Real API execution remains
-disabled until the user explicitly authorizes it for this task and the tracked
-manifest is amended and re-frozen before any call.
+Phase A implementation and preflight were zero API. After Phase A was frozen,
+the user explicitly authorized the bounded API execution and requested direct
+publication after completion. This authorization changes no scientific choice;
+the tracked manifest and preregistration hash are amended before any call and a
+new source-freeze must be created. The earlier unauthorized prep artifact is
+not executable evidence.

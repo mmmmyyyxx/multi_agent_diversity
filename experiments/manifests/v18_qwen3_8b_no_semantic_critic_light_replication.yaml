@@ -40,7 +40,7 @@ budget:
   limit: {updates_per_seed_arm: 8, trajectories: 2}
   candidate_counts: {source_per_target: 2, generic_revision_per_valid_source: 1, target_branches: 2}
 api_authorization:
-  authorized: false
+  authorized: true
   allowed_roles: [solver, teacher, critic, student]
   allowed_phases: [online_trajectory, frozen_validation]
 selection:
@@ -49,8 +49,8 @@ selection:
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/v18_qwen3_8b_no_semantic_critic_light_replication_20260903/DESIGN_SPEC.md, sha256: ab3d066d64ef17eddbcb318c8631c7f8835db360a4f7324cb882594b516a37e2}
+  preregistration: {path: experiments/v18_qwen3_8b_no_semantic_critic_light_replication_20260903/DESIGN_SPEC.md, sha256: 940253e8adbcb696ccf9515f8cfe9ec284b84407a306138a2e64b00f6b01eb5f}
   report: reports/v18_qwen3_8b_no_semantic_critic_light_replication_20260903
   provenance: reports/v18_qwen3_8b_no_semantic_critic_light_replication_20260903/provenance.json
-git: {design_commit: null, implementation_commit: null, result_commit: null}
+git: {design_commit: 74213e26a9777f80b14f79dc9b9fc2ba02e11f36, implementation_commit: 74213e26a9777f80b14f79dc9b9fc2ba02e11f36, result_commit: null}
 result: {classifier: null, conclusion: null, evidence_type: not_yet_available}
