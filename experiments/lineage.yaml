@@ -18,3 +18,4 @@ edges:
   - {from: v18_historical_teacher_safety, to: v18_teacher_critic_four_arm, relation: followup_of}
   - {from: v18_teacher_critic_four_arm, to: v18_no_semantic_critic_online, relation: derived_experiment}
   - {from: v18_no_semantic_critic_online, to: v18_no_semantic_critic_online_seed69_70_extension, relation: followup_of}
+  - {from: v18_no_semantic_critic_online_seed69_70_extension, to: v18_no_semantic_critic_transfer_decomposition, relation: audit_of}

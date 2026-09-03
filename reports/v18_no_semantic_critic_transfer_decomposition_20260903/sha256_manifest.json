@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "path": "accepted_commit_decomposition.csv",
+      "sha256": "b85898eb6512aa64d3a9c8064636cd2b11ff68a5623fbbb95a64c55c25a0f7fd"
+    },
+    {
+      "path": "diagnosis.json",
+      "sha256": "705a724b0787593a0693f805d33bb6ab25ff5c088ba5bc2d767ae8b3dab95868"
+    },
+    {
+      "path": "fact_assertions.json",
+      "sha256": "c61d2c40ed6382d49610d343e01fb03825e7e3e4585832e8fa6ed225f330b760"
+    },
+    {
+      "path": "README.md",
+      "sha256": "58b22ac83b669ee89537ea73545496a9169a3737f496574f3bd2649794c03ff5"
+    },
+    {
+      "path": "sanitization_manifest.json",
+      "sha256": "082adeec28cafc94d6c5a21edd665778de9a6c15463a64f206bf98dad4baed27"
+    },
+    {
+      "path": "seed_arm_contrasts.csv",
+      "sha256": "504b98c1ea2204a2e3fbd94a3f89b28adcdf8f814dfe123ebbce371247fe43e6"
+    },
+    {
+      "path": "source_artifact_hashes.csv",
+      "sha256": "a9e01e1520456e7b942cb9632a81dbf74e4644f618e7ec533bf3266873faf77c"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "79e9554c7223186551621309e22ad1cbc6fb3dddcb6db7ebc8b0241524a72560"
+    },
+    {
+      "path": "trajectory_decomposition.csv",
+      "sha256": "c34e4fec8bf24e7375b3175e910b929b777458a7035bd2f6f7f8be38693db752"
+    },
+    {
+      "path": "validation_vote_gain_persistence.csv",
+      "sha256": "00c5a35826747ea87486546e3c7c25928b2754e66d2881cfffa83dd174a09670"
+    },
+    {
+      "path": "validation_vote_loss_provenance.csv",
+      "sha256": "7ac464221f56d85985e9e5ae82e7a7c92c6e922e0fcfecd1062fc7621db49af1"
+    }
+  ]
+}

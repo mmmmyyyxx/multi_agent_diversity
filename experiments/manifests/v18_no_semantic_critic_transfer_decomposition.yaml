@@ -1,0 +1,51 @@
+schema_version: experiment_manifest_v1
+experiment_id: v18_no_semantic_critic_transfer_decomposition
+title: V18 no-semantic-Critic accepted-commit transfer decomposition
+status: COMPLETED
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-03T16:30:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-03T16:30:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-03T16:30:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T16:31:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T16:32:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-03T16:59:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-03T17:00:00+08:00'}
+lineage: {parents: [v18_no_semantic_critic_online, v18_no_semantic_critic_online_seed69_70_extension], derives_from: v18_no_semantic_critic_online_seed69_70_extension}
+scientific_question: Why did additional no-semantic-Critic commits transfer strongly on Seed69 but not on Seed70?
+hypotheses:
+  - Additional commits can fail through cross-split transfer.
+  - Validation Oracle gains can remain outside a correct plurality coalition.
+  - Beneficial validation conversions can be overwritten by later commits.
+  - Target or committed-member concentration can differ across trajectories.
+design:
+  changed: [zero-API accepted-commit decomposition only]
+  unchanged: [all frozen A and C trajectories, prompts, selector, Common-Safe, ranking, hard gate, Student, validation observations]
+  forbidden_changes: [API calls, test access, method changes, Critic changes, trajectory reruns, treating diverged commits as matched causal pairs]
+method_identity: member_aware_peer_state_v15
+runtime_version: v18_no_semantic_critic_transfer_decomposition_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, test: prohibited}
+  split_hashes: {}
+  validation_policy: read only frozen post-training replay states
+  test_policy: prohibited; zero calls
+model: {solver: none, optimizer_roles: {}, thinking: false, temperatures: {}, max_tokens: {}}
+seeds: [68, 69, 70]
+budget: {type: zero_api_retrospective_audit, frozen_before_run: true, limit: {api_calls: 0, test_calls: 0}}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: accepted-commit validation Vote gain/loss and persistence decomposition
+  frozen_rule: descriptive multi-mechanism counts with per-trajectory telescoping identity
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/v18_no_semantic_critic_transfer_decomposition_20260903/DESIGN_SPEC.md, sha256: 7e88a214da92a1ebb79623b88e12f9f2d57cbbebdc2459a0767dcea6bc27bcda}
+  report: reports/v18_no_semantic_critic_transfer_decomposition_20260903
+  provenance: reports/v18_no_semantic_critic_transfer_decomposition_20260903/source_artifact_hashes.csv
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result:
+  classifier: ACCEPTED_UPDATE_CROSS_SPLIT_AND_PLURALITY_CONVERSION_QUALITY
+  conclusion: Seed70 is explained by target transfer failure, Oracle coverage without Vote conversion, and new collateral loss rather than later overwrite or target concentration; Seed69 contains two high-quality positive-net commits while its A arm regresses.
+  evidence_type: retrospective

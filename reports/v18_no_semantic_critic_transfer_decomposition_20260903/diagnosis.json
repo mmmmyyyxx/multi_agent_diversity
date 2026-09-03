@@ -1,0 +1,25 @@
+{
+  "primary_bottleneck": "ACCEPTED_UPDATE_CROSS_SPLIT_AND_PLURALITY_CONVERSION_QUALITY",
+  "seed69_explanation": {
+    "c_initial_to_final_vote_delta": 4,
+    "a_initial_to_final_vote_delta": -3,
+    "c_vote_gain_events": 6,
+    "c_vote_loss_events": 2,
+    "c_positive_net_commits": 2
+  },
+  "seed70_explanation": {
+    "c_initial_to_final_vote_delta": -1,
+    "a_initial_to_final_vote_delta": 0,
+    "c_vote_gain_events": 2,
+    "c_vote_loss_events": 3,
+    "c_positive_net_commits": 0,
+    "c_target_transfer_failures": 3,
+    "c_oracle_gain_without_vote_gain": 3,
+    "c_gain_overwritten_later": 0,
+    "c_new_collateral_losses": 3
+  },
+  "target_concentration_supported": false,
+  "target_concentration_reason": "C committed-target HHI is lower than A on Seeds69 and 70, and C updates four distinct members on both seeds.",
+  "later_overwrite_is_primary_seed70_explanation": false,
+  "trajectory_divergence_warning": "C-A final differences decompose each arm from its own shared initial state; commits are not matched counterfactual pairs after divergence."
+}

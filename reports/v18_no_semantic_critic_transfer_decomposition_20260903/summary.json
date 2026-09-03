@@ -1,0 +1,72 @@
+{
+  "analysis_version": "v18_no_semantic_critic_transfer_decomposition_v1",
+  "scope": {
+    "retrospective": true,
+    "new_api_calls": 0,
+    "new_validation_calls": 0,
+    "new_test_calls": 0,
+    "method_modified": false,
+    "critic_modified": false,
+    "cross_arm_commits_treated_as_matched_pairs": false,
+    "post_result_seed_extension_acknowledged": true
+  },
+  "seeds": [
+    68,
+    69,
+    70
+  ],
+  "arms": [
+    "A_CANONICAL",
+    "C_NO_SEMANTIC_CRITIC"
+  ],
+  "trajectory_count": 6,
+  "accepted_commit_count": 22,
+  "telescoping_identity_pass_count": 6,
+  "c_commit_quality": {
+    "commit_count": 15,
+    "positive_net": 3,
+    "zero_net": 9,
+    "negative_net": 3,
+    "mean_validation_vote_gain": 0.8666666666666667,
+    "mean_validation_vote_loss": 0.6,
+    "mean_validation_vote_delta": 0.26666666666666666
+  },
+  "diagnostic_counts": {
+    "cross_split_transfer_failure": 6,
+    "target_transfer_failure": 7,
+    "oracle_gain_without_vote_gain": 7,
+    "beneficial_vote_gain_later_overwritten": 1,
+    "new_collateral_regression_events": 8,
+    "prior_conversion_overwritten_events": 1
+  },
+  "supported_mechanisms": [
+    "cross_split_transfer_failure",
+    "target_transfer_failure",
+    "oracle_gain_without_vote_gain",
+    "beneficial_vote_gain_later_overwritten",
+    "new_collateral_regression_events",
+    "prior_conversion_overwritten_events"
+  ],
+  "seed69_vs_seed70": {
+    "seed69": {
+      "seed": 69,
+      "c_minus_a_commits": 3,
+      "c_minus_a_final_validation_vote": 7,
+      "c_minus_a_vote_gain_events": 6,
+      "c_minus_a_vote_loss_events": -1,
+      "c_minus_a_gain_overwritten": 1,
+      "c_minus_a_cross_split_vote_failures": 1,
+      "c_minus_a_committed_target_hhi": -0.055555555555555525
+    },
+    "seed70": {
+      "seed": 70,
+      "c_minus_a_commits": 2,
+      "c_minus_a_final_validation_vote": -1,
+      "c_minus_a_vote_gain_events": 2,
+      "c_minus_a_vote_loss_events": 3,
+      "c_minus_a_gain_overwritten": 0,
+      "c_minus_a_cross_split_vote_failures": 2,
+      "c_minus_a_committed_target_hhi": -0.25
+    }
+  }
+}
