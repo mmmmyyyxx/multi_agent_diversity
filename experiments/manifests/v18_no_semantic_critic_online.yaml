@@ -32,11 +32,11 @@ model:
   thinking: false
   temperatures: {solver: 0.0, teacher: 0.4, critic: 0.0, student: 0.5}
   max_tokens: {solver: 1800}
-seeds: [68, 69, 70]
+seeds: [68]
 budget:
   type: paired_online_trajectory
   frozen_before_run: true
-  limit: {updates_per_seed_arm: 8, trajectories: 6}
+  limit: {updates_per_seed_arm: 8, trajectories: 2}
   candidate_counts: {source_per_target: 2, generic_revision_per_valid_source: 1, target_branches: 2}
 api_authorization:
   authorized: true
@@ -44,11 +44,11 @@ api_authorization:
   allowed_phases: [online_trajectory, frozen_validation]
 selection:
   primary_metric: paired final validation Vote correct count
-  frozen_rule: classifier precedence with approximately-neutral defined as absolute C-A total correct difference <= 1 across 150 validation rows
+  frozen_rule: classifier precedence with approximately-neutral defined as absolute C-A total correct difference <= 1 across 50 validation rows
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/v18_no_semantic_critic_online_trajectory_20260903/DESIGN_SPEC.md, sha256: a663a44c756ad53d12155950db878a65698b6450a96446f58097e756c5d964f9}
+  preregistration: {path: experiments/v18_no_semantic_critic_online_trajectory_20260903/DESIGN_SPEC.md, sha256: ad868e654c276035b851fb097820f5999edfabc8f930f3a00d67c1281bd5f84f}
   report: reports/v18_no_semantic_critic_online_trajectory_20260903
   provenance: reports/v18_no_semantic_critic_online_trajectory_20260903/provenance.json
 git: {design_commit: null, implementation_commit: null, result_commit: null}

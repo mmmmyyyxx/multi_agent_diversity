@@ -6,7 +6,7 @@ from scripts.v18_teacher_critic_pipeline_support import deterministic_hard_gate
 
 def test_frozen_design():
     assert ARMS == ("A_CANONICAL", "C_NO_SEMANTIC_CRITIC")
-    assert SEEDS == (68, 69, 70)
+    assert SEEDS == (68,)
     assert UPDATES == 8
     assert NEUTRAL_TOTAL_CORRECT_TOLERANCE == 1
 

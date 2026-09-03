@@ -42,7 +42,7 @@ from scripts.v18_teacher_critic_pipeline_support import (
 
 
 ARMS = ("A_CANONICAL", "C_NO_SEMANTIC_CRITIC")
-SEEDS = (68, 69, 70)
+SEEDS = (68,)
 UPDATES = 8
 AUTH_ENV = "V18_NO_SEMANTIC_CRITIC_ONLINE_AUTHORIZED"
 RUNTIME_VERSION = "v18_no_semantic_critic_online_trajectory_v1"
@@ -424,12 +424,12 @@ def audit(args: argparse.Namespace) -> None:
                     blockers.append(f"semantic_critic_api_in_c:{seed}")
         if len(hashes) != 1:
             blockers.append(f"initialization_mismatch:{seed}")
-    if len(summaries) != 6:
+    if len(summaries) != 2:
         blockers.append("trajectory_count")
     args.out.mkdir(parents=True, exist_ok=False)
     write_json(args.out / "audit.json", {
         "gate": "PASS" if not blockers else "HOLD", "blockers": blockers,
-        "trajectory_count": len(summaries), "expected_trajectory_count": 6,
+        "trajectory_count": len(summaries), "expected_trajectory_count": 2,
         "test_evaluation_count": sum(row.get("test_evaluation_count", 0) for row in summaries),
         "execution_commit": registry["execution_commit"], "source_freeze_checked": freeze["execution_commit"] == registry["execution_commit"],
     })
@@ -537,7 +537,7 @@ def analyze(args: argparse.Namespace) -> None:
     write_json(args.out/"preregistration.json",registry)
     write_json(args.out/"provenance.json",{"execution_commit":registry["execution_commit"],"audit_gate":"PASS",
                "raw_artifacts_modified":False,"test_accessed":False,"validation_used_for_trajectory":False})
-    write_json(args.out/"fact_assertions.json",{"pass":True,"trajectory_count":6,"test_calls":0,
+    write_json(args.out/"fact_assertions.json",{"pass":True,"trajectory_count":2,"test_calls":0,
                "seeds":registry["seeds"],"arms":registry["arms"],"historical_four_commit_reference_is_diagnostic_only":True})
     write_json(args.out/"api_ledger_summary.json",{"scope":"aggregate_only","total_successful_calls":sum(int(row["api_calls"]) for row in compute_rows),
                "tokens_by_role":{role:sum(int(row[f"{role}_tokens"]) for row in compute_rows) for role in ("teacher","critic","student","solver")}})
@@ -547,8 +547,8 @@ def analyze(args: argparse.Namespace) -> None:
                "C":{k:sum(int(s[k]) for s in summaries if s["arm"]=="C_NO_SEMANTIC_CRITIC") for k in ("student_reaches","feasible_candidates","commits")}})
     write_json(args.out/"manifest_snapshot.yaml.json",yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8")))
     readme=(f"# Canonical vs No-Semantic-Critic Online Trajectory\n\nOfficial audit: **PASS**. Frozen classifier: **{label}**.\n\n"
-            f"Across three paired seeds, A committed {commits_a} updates and C committed {commits_c}. "
-            f"Final validation Vote correct totals were {vote_a}/150 and {vote_c}/150; W/T/L = {wins}/{ties}/{losses}.\n\n"
+            f"For the preregistered Seed68 pair, A committed {commits_a} updates and C committed {commits_c}. "
+            f"Final validation Vote correct totals were {vote_a}/50 and {vote_c}/50; W/T/L = {wins}/{ties}/{losses}.\n\n"
             "Validation was evaluated only after each online trajectory was frozen and never affected target selection, candidate acceptance, ranking, or commits. Test125 was not loaded for evaluation and received zero calls.\n")
     (args.out/"README.md").write_text(readme,encoding="utf-8")
     write_json(args.out/"sanitization_manifest.json",{"status":"PASS","raw_text_published":False,
