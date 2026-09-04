@@ -384,7 +384,7 @@ def combine_counts(validation: Mapping[str, Any], former_test: Mapping[str, Any]
 
 
 def _train_metrics(run: Path) -> dict[str, Any]:
-    history = read_json(run / "history.json")[-1]["active_probe"]
+    history = _read_json_array(run / "history.json")[-1]["active_probe"]
     if (run / "training_dynamics.jsonl").stat().st_size:
         oracle = read_jsonl(run / "training_dynamics.jsonl")[-1]["oracle_correct_count"]
     else:
@@ -402,6 +402,13 @@ def _write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _read_json_array(path: Path) -> list[Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, list):
+        raise ValueError(f"expected JSON array: {path}")
+    return value
 
 
 def analyze(prep_root: Path, former_test_root: Path, audit_root: Path, report_root: Path) -> dict[str, Any]:

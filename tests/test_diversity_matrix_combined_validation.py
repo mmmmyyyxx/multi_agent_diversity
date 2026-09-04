@@ -6,6 +6,7 @@ from scripts.run_diversity_matrix_combined_validation import (
     AMENDMENT_VERSION,
     ORIGINAL_TRAINING_COMMIT,
     SEEDS,
+    _read_json_array,
     _write_former_test_evidence,
     combine_counts,
 )
@@ -59,3 +60,13 @@ def test_former_test_persistence_accepts_runtime_created_cell_dir(tmp_path) -> N
     assert (cell / "former_test_rows_sanitized.jsonl").read_text(encoding="utf-8") == (
         '{"example_id_hash":"abc","vote_correct":true}\n'
     )
+
+
+def test_read_json_array_accepts_history_shape_and_rejects_object(tmp_path) -> None:
+    history = tmp_path / "history.json"
+    history.write_text('[{"active_probe":{"vote_acc":0.5}}]', encoding="utf-8")
+    assert _read_json_array(history)[0]["active_probe"]["vote_acc"] == 0.5
+
+    history.write_text('{"active_probe":{}}', encoding="utf-8")
+    with pytest.raises(ValueError, match="expected JSON array"):
+        _read_json_array(history)

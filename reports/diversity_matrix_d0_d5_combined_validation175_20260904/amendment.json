@@ -1,0 +1,37 @@
+{
+  "amendment_version": "combined_development_validation175_posthoc_v1",
+  "status": "AUTHORIZED_BEFORE_FORMER_TEST_RESULTS",
+  "original_design_test_policy": "prohibited_zero_rows_loaded_zero_calls",
+  "new_analysis_role": "former_test_converted_to_development_validation",
+  "validation50_size": 50,
+  "former_test125_size": 125,
+  "combined_development_validation_size": 175,
+  "combination_rule": "sum_correct_counts_then_divide_by_175",
+  "equal_accuracy_averaging_prohibited": true,
+  "test_status": "converted_to_development_validation",
+  "untouched_heldout_test_remaining": false,
+  "checkpoint_selection": "none_final_active_state",
+  "training_rerun": false,
+  "method_changed": false,
+  "user_authorized": true,
+  "solver_model": "qwen3-14b",
+  "evaluator_model": "qwen3.7-flash",
+  "seeds": [
+    72,
+    73,
+    74
+  ],
+  "arm_order": [
+    "D0",
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5"
+  ],
+  "logical_former_test_evaluations": 18,
+  "rows_per_evaluation": 125,
+  "original_training_commit": "ca2c4b2e7e78d5594b702298c7a392ed3ca5ee28",
+  "validation_recovery_commit": "16abda4f8ec65caed5ad8cd2ae2005dc16a416ec",
+  "former_test_execution_commit": "c032f65dd4505853d6cd26707590ce98353c5c1d"
+}
