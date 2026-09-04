@@ -1,0 +1,3 @@
+PASS
+forbidden_findings=0
+scope=phase_a_design_only

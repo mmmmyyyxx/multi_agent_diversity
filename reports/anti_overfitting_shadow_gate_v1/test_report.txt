@@ -1,0 +1,14 @@
+phase_a_gate=PASS
+focused_tests=10 passed
+full_tests=842 passed
+governance_tests=29 passed
+governance_preflight=PASS
+member_aware_preflight=PASS
+compileall=PASS
+deterministic_split_replay=PASS
+leakage_audit=PASS
+sanitization=PASS
+git_diff_check=PASS
+api_calls=0
+validation_calls=0
+test_calls=0

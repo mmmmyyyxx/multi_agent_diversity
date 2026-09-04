@@ -226,6 +226,7 @@ async def run(cfg: Config) -> dict[str, Any]:
                 metrics=system.active_probe_metrics(),
             )
             _write_checkpoint(system, cfg, epoch, update + 1, training_state)
+            system.after_update_checkpoint(global_update_index)
             if system.early_stop_reason:
                 early_stopped = True
                 break

@@ -1,0 +1,11 @@
+{
+  "contains_raw_content": false,
+  "partition_hash": "d61a52604a60273310125b608caee85604993b393057734d15ba5c425ef53581",
+  "schema_version": "anti_overfitting_dataset_hashes_v1",
+  "source_files": {
+    "opt.csv": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+    "test.csv": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+    "val.csv": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+  },
+  "source_inventory": 250
+}

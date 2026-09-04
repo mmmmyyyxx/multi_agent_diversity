@@ -1,0 +1,53 @@
+schema_version: experiment_manifest_v1
+experiment_id: anti_overfitting_shadow_gate_v1
+title: Cross-fit winner-only Shadow write-back protocol
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-04T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-04T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-04T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-04T00:00:00+08:00'}
+lineage: {parents: [diversity_matrix_split_balance_audit], derives_from: diversity_matrix_split_balance_audit}
+scientific_question: Does a candidate-blind cross-fit Shadow write-back gate reduce adaptive Optimize-to-Validation optimism without reducing final Validation Vote?
+hypotheses:
+  - Repeated Optimize100 reuse produces train-positive but Shadow-negative candidate winners.
+  - A winner-only Shadow50 gate filters harmful write-backs without becoming a second optimization set.
+  - Reduced accepted-commit throughput can be beneficial when mean transfer quality improves.
+design:
+  changed: [deterministic 150/50/50 split, three-fold cross-fit, winner-only Shadow write-back gate, six-opportunity no-commit patience]
+  unchanged: [five agents, equal plurality, tie abstention, RR Generic search, Common-Safe, candidate ranking, candidate budget, proposal operator]
+  forbidden_changes: [new selector, new Critic, new responsibility score, M2F, diversity objective, transfer predictor, weighted voting, validation-aware selection, test access]
+method_identity: member_aware_peer_state_v15
+runtime_version: anti_overfitting_shadow_gated_training_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train_dev: anti_overfitting_train_dev150_v1, validation: anti_overfitting_validation50_v1, test: anti_overfitting_test50_v1}
+  split_hashes: {}
+  validation_policy: one final frozen-state evaluation per trajectory; never used for training, selection, write-back, or early stopping
+  test_policy: prohibited during this pipeline pilot; zero access before a separately authorized final method freeze
+model:
+  solver: qwen3-8b
+  optimizer_roles: {teacher: qwen3.7-flash, critic: qwen3.7-flash, student: qwen3.7-flash, evaluator: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, teacher: 0.4, critic: 0.0, student: 0.5}
+  max_tokens: {solver: 1800}
+seeds: [75, 76, 77]
+budget:
+  type: paired_cross_fit_protocol_pilot
+  frozen_before_run: true
+  limit: {trajectories: 6, max_update_opportunities_per_trajectory: 32, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
+  early_stop: {shadow_gated_no_approved_commit_streak: 6, old_protocol: none}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: mean Optimize-to-Validation Vote gap change with Validation Vote non-inferiority
+  frozen_rule: success requires mean Optimize-to-Validation gap to decrease and mean Validation Vote not to decrease
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: null
+  report: reports/anti_overfitting_shadow_gate_v1
+  provenance: experiments/anti_overfitting_split_v1/PROTOCOL.md
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: PHASE_A_EXECUTION_READY__PHASE_B_NOT_RUN, conclusion: Zero-API split and protocol freeze passed; no scientific efficacy result exists before Phase B, evidence_type: not_yet_available}

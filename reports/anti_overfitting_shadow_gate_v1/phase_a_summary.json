@@ -1,0 +1,28 @@
+{
+  "api_calls": 0,
+  "arms": [
+    "RR_GENERIC_OLD_PROTOCOL",
+    "RR_GENERIC_SHADOW_GATED"
+  ],
+  "balance_observed_maxima": {
+    "cluster_total_variation": 0.06,
+    "difficulty_total_variation": 0.04000000000000003,
+    "label_total_variation": 0.020000000000000018,
+    "structural_absolute_smd": 0.36852188976169786
+  },
+  "fold_sizes": {
+    "A": 50,
+    "B": 50,
+    "C": 50
+  },
+  "fresh_seeds": [75, 76, 77],
+  "phase": "PHASE_A_ZERO_API",
+  "phase_a_gate": "PASS",
+  "phase_b_run": false,
+  "split_sizes": {
+    "test": 50,
+    "train_dev": 150,
+    "validation": 50
+  },
+  "test_calls": 0
+}

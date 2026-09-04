@@ -1,0 +1,288 @@
+{
+  "buckets": {
+    "fold_a": {
+      "count": 50,
+      "label": {
+        "A": 0.32,
+        "B": 0.38,
+        "C": 0.3
+      },
+      "lexical_cluster": {
+        "0": 0.18,
+        "1": 0.1,
+        "2": 0.14,
+        "3": 0.26,
+        "4": 0.1,
+        "5": 0.06,
+        "6": 0.1,
+        "7": 0.06
+      },
+      "mean_static_vote_accuracy": 0.6466666666666667,
+      "static_difficulty": {
+        "correct_0_of_3": 0.34,
+        "correct_1_of_3": 0.02,
+        "correct_2_of_3": 0.0,
+        "correct_3_of_3": 0.64
+      },
+      "structural_means": {
+        "conjunction_count": 0.6,
+        "core_chars": 70.52,
+        "core_words": 12.2,
+        "entity_like_tokens": 0.08,
+        "max_option_words": 5.04,
+        "mean_option_words": 3.66,
+        "negation_count": 0.04,
+        "option_count": 3.0,
+        "pronoun_count": 1.02,
+        "question_chars": 309.34
+      }
+    },
+    "fold_b": {
+      "count": 50,
+      "label": {
+        "A": 0.3,
+        "B": 0.4,
+        "C": 0.3
+      },
+      "lexical_cluster": {
+        "0": 0.16,
+        "1": 0.1,
+        "2": 0.14,
+        "3": 0.28,
+        "4": 0.1,
+        "5": 0.06,
+        "6": 0.1,
+        "7": 0.06
+      },
+      "mean_static_vote_accuracy": 0.6733333333333333,
+      "static_difficulty": {
+        "correct_0_of_3": 0.32,
+        "correct_1_of_3": 0.0,
+        "correct_2_of_3": 0.02,
+        "correct_3_of_3": 0.66
+      },
+      "structural_means": {
+        "conjunction_count": 0.54,
+        "core_chars": 68.26,
+        "core_words": 11.94,
+        "entity_like_tokens": 0.08,
+        "max_option_words": 5.12,
+        "mean_option_words": 3.713333333333333,
+        "negation_count": 0.12,
+        "option_count": 3.0,
+        "pronoun_count": 1.04,
+        "question_chars": 307.3
+      }
+    },
+    "fold_c": {
+      "count": 50,
+      "label": {
+        "A": 0.3,
+        "B": 0.4,
+        "C": 0.3
+      },
+      "lexical_cluster": {
+        "0": 0.18,
+        "1": 0.12,
+        "2": 0.14,
+        "3": 0.26,
+        "4": 0.08,
+        "5": 0.08,
+        "6": 0.1,
+        "7": 0.04
+      },
+      "mean_static_vote_accuracy": 0.68,
+      "static_difficulty": {
+        "correct_0_of_3": 0.3,
+        "correct_1_of_3": 0.02,
+        "correct_2_of_3": 0.02,
+        "correct_3_of_3": 0.66
+      },
+      "structural_means": {
+        "conjunction_count": 0.68,
+        "core_chars": 68.76,
+        "core_words": 11.86,
+        "entity_like_tokens": 0.12,
+        "max_option_words": 5.14,
+        "mean_option_words": 3.793333333333333,
+        "negation_count": 0.12,
+        "option_count": 3.0,
+        "pronoun_count": 1.0,
+        "question_chars": 310.56
+      }
+    },
+    "test": {
+      "count": 50,
+      "label": {
+        "A": 0.32,
+        "B": 0.38,
+        "C": 0.3
+      },
+      "lexical_cluster": {
+        "0": 0.16,
+        "1": 0.1,
+        "2": 0.14,
+        "3": 0.26,
+        "4": 0.1,
+        "5": 0.06,
+        "6": 0.12,
+        "7": 0.06
+      },
+      "mean_static_vote_accuracy": 0.6666666666666667,
+      "static_difficulty": {
+        "correct_0_of_3": 0.32,
+        "correct_1_of_3": 0.02,
+        "correct_2_of_3": 0.0,
+        "correct_3_of_3": 0.66
+      },
+      "structural_means": {
+        "conjunction_count": 0.5,
+        "core_chars": 67.26,
+        "core_words": 11.64,
+        "entity_like_tokens": 0.1,
+        "max_option_words": 5.2,
+        "mean_option_words": 3.78,
+        "negation_count": 0.1,
+        "option_count": 3.0,
+        "pronoun_count": 1.0,
+        "question_chars": 308.36
+      }
+    },
+    "validation": {
+      "count": 50,
+      "label": {
+        "A": 0.32,
+        "B": 0.38,
+        "C": 0.3
+      },
+      "lexical_cluster": {
+        "0": 0.16,
+        "1": 0.1,
+        "2": 0.14,
+        "3": 0.28,
+        "4": 0.08,
+        "5": 0.06,
+        "6": 0.12,
+        "7": 0.06
+      },
+      "mean_static_vote_accuracy": 0.6666666666666667,
+      "static_difficulty": {
+        "correct_0_of_3": 0.32,
+        "correct_1_of_3": 0.02,
+        "correct_2_of_3": 0.0,
+        "correct_3_of_3": 0.66
+      },
+      "structural_means": {
+        "conjunction_count": 0.64,
+        "core_chars": 67.22,
+        "core_words": 11.9,
+        "entity_like_tokens": 0.08,
+        "max_option_words": 5.14,
+        "mean_option_words": 3.76,
+        "negation_count": 0.12,
+        "option_count": 3.0,
+        "pronoun_count": 1.0,
+        "question_chars": 306.9
+      }
+    }
+  },
+  "difficulty_source": "frozen D0 Static predictions, seeds 72/73/74, qwen3-14b; outcomes used only for stratification",
+  "gate": "PASS",
+  "lexical_cluster_source": "TF-IDF word 1-2 grams, KMeans k=8 random_state=42 n_init=20; no labels or outcomes",
+  "observed_maxima": {
+    "max_cluster_tv": 0.06,
+    "max_difficulty_tv": 0.04000000000000003,
+    "max_label_tv": 0.020000000000000018,
+    "max_structural_smd": 0.36852188976169786
+  },
+  "pairwise": [
+    {
+      "cluster_tv": 0.020000000000000004,
+      "difficulty_tv": 0.04000000000000002,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_a",
+      "max_abs_structural_smd": 0.2951459149490486,
+      "right": "fold_b"
+    },
+    {
+      "cluster_tv": 0.039999999999999994,
+      "difficulty_tv": 0.04000000000000003,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_a",
+      "max_abs_structural_smd": 0.2366431913239846,
+      "right": "fold_c"
+    },
+    {
+      "cluster_tv": 0.04,
+      "difficulty_tv": 0.020000000000000018,
+      "label_tv": 0.0,
+      "left": "fold_a",
+      "max_abs_structural_smd": 0.2611013463072878,
+      "right": "validation"
+    },
+    {
+      "cluster_tv": 0.01999999999999999,
+      "difficulty_tv": 0.020000000000000018,
+      "label_tv": 0.0,
+      "left": "fold_a",
+      "max_abs_structural_smd": 0.23442114031809796,
+      "right": "test"
+    },
+    {
+      "cluster_tv": 0.06,
+      "difficulty_tv": 0.02000000000000001,
+      "label_tv": 0.0,
+      "left": "fold_b",
+      "max_abs_structural_smd": 0.28711978030143337,
+      "right": "fold_c"
+    },
+    {
+      "cluster_tv": 0.019999999999999997,
+      "difficulty_tv": 0.02,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_b",
+      "max_abs_structural_smd": 0.2857738033247043,
+      "right": "validation"
+    },
+    {
+      "cluster_tv": 0.020000000000000004,
+      "difficulty_tv": 0.02,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_b",
+      "max_abs_structural_smd": 0.2857738033247043,
+      "right": "test"
+    },
+    {
+      "cluster_tv": 0.06,
+      "difficulty_tv": 0.02000000000000001,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_c",
+      "max_abs_structural_smd": 0.15688763141913853,
+      "right": "validation"
+    },
+    {
+      "cluster_tv": 0.059999999999999984,
+      "difficulty_tv": 0.02000000000000001,
+      "label_tv": 0.020000000000000018,
+      "left": "fold_c",
+      "max_abs_structural_smd": 0.36852188976169786,
+      "right": "test"
+    },
+    {
+      "cluster_tv": 0.02000000000000001,
+      "difficulty_tv": 0.0,
+      "label_tv": 0.0,
+      "left": "validation",
+      "max_abs_structural_smd": 0.28278382984413303,
+      "right": "test"
+    }
+  ],
+  "schema_version": "anti_overfitting_split_balance_v1",
+  "structural_feature_source": "question core sentence aggregate statistics only",
+  "thresholds": {
+    "max_cluster_tv": 0.22,
+    "max_difficulty_tv": 0.12,
+    "max_label_tv": 0.1,
+    "max_structural_smd": 0.5
+  }
+}

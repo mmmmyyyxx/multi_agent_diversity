@@ -4026,6 +4026,31 @@ class PromptEnsembleOptimizationSystem:
             target_selection_rank=branch.target_selection_rank,
         )
 
+    async def approve_writeback_candidate(
+        self,
+        *,
+        winner: TargetBranchResult,
+        update_index: int,
+        parent_team_hash: str,
+    ) -> tuple[bool, Mapping[str, Any]]:
+        """Optional post-ranking gate; canonical behavior is an exact pass-through.
+
+        Experimental runners may override this hook to evaluate the one frozen
+        Optimize winner on an isolated Shadow split.  The hook is intentionally
+        downstream of target selection, candidate generation, Common-Safe, and
+        cross-branch ranking so Shadow data cannot influence those operations.
+        """
+        return True, {
+            "gate": "canonical_passthrough",
+            "evaluated_candidate_count": 0,
+            "update_index": int(update_index),
+            "parent_team_hash": str(parent_team_hash),
+        }
+
+    def after_update_checkpoint(self, update_index: int) -> None:
+        """Optional durable sidecar hook after the canonical checkpoint write."""
+        return None
+
     async def _compatibility_repair_candidates(
         self,
         *,
@@ -4599,7 +4624,21 @@ class PromptEnsembleOptimizationSystem:
             self.responsibility_state.updates_since_selected_by_agent[target] = 0
 
         feasible = [branch for branch in branches if branch.accepted is not None]
-        winner = max(feasible, key=self._cross_branch_key, default=None)
+        optimize_winner = max(feasible, key=self._cross_branch_key, default=None)
+        writeback_gate: Mapping[str, Any] = {
+            "gate": "not_applicable_no_optimize_winner",
+            "evaluated_candidate_count": 0,
+        }
+        writeback_approved = optimize_winner is not None
+        if optimize_winner is not None:
+            writeback_approved, writeback_gate = (
+                await self.approve_writeback_candidate(
+                    winner=optimize_winner,
+                    update_index=update_index,
+                    parent_team_hash=parent_team_hash,
+                )
+            )
+        winner = optimize_winner if writeback_approved else None
         for branch in branches:
             event = record_branch_search_outcome(
                 state=self.responsibility_state,
@@ -4612,7 +4651,7 @@ class PromptEnsembleOptimizationSystem:
                 "team_state_version": int(self.team_state_version),
                 "team_prompt_state_hash": parent_team_hash,
                 "competition_loser": bool(
-                    branch.accepted is not None and branch is not winner
+                    branch.accepted is not None and branch is not optimize_winner
                 ),
             })
             self.repairability_failure_events.append(event)
@@ -4646,11 +4685,14 @@ class PromptEnsembleOptimizationSystem:
                 ),
                 "operational_failure": not branch.normal_completion,
                 "competition_loser": bool(
-                    branch.accepted is not None and branch is not winner
+                    branch.accepted is not None and branch is not optimize_winner
                 ),
             })
 
-        winner_key = list(self._cross_branch_key(winner)) if winner else []
+        winner_key = (
+            list(self._cross_branch_key(optimize_winner))
+            if optimize_winner is not None else []
+        )
         commit_row = {
             "artifact_schema_version": "dual_target_commit_decision_v1",
             "update_index": int(update_index),
@@ -4668,6 +4710,13 @@ class PromptEnsembleOptimizationSystem:
                 winner.accepted.prompt_hash if winner is not None else ""
             ),
             "winner_key": winner_key,
+            "optimize_winner_hash": (
+                optimize_winner.accepted.prompt_hash
+                if optimize_winner is not None and optimize_winner.accepted is not None
+                else ""
+            ),
+            "writeback_approved": bool(writeback_approved),
+            "writeback_gate": dict(writeback_gate),
             "new_team_hash": parent_team_hash,
         }
 
@@ -4732,6 +4781,13 @@ class PromptEnsembleOptimizationSystem:
             "accepted_prompt_hash": (
                 winner.accepted.prompt_hash if winner else ""
             ),
+            "optimize_winner_hash": (
+                optimize_winner.accepted.prompt_hash
+                if optimize_winner is not None and optimize_winner.accepted is not None
+                else ""
+            ),
+            "writeback_approved": bool(writeback_approved),
+            "writeback_gate": dict(writeback_gate),
             "branches": [
                 {
                     "target_agent_id": branch.target_agent_id,

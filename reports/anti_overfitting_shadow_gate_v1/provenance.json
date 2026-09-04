@@ -1,0 +1,9 @@
+{
+  "artifact_scope": "sanitized_phase_a_design_and_preflight_only",
+  "historical_artifacts_modified": false,
+  "method_modules_added": 0,
+  "phase_b_api_authorized": false,
+  "raw_questions_or_answers_published": false,
+  "source_split_inventory": 250,
+  "test_accessed": false
+}

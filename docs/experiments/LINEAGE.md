@@ -27,6 +27,7 @@ graph TD
   v18_no_semantic_critic_candidate_ranking_audit["v18_no_semantic_critic_candidate_ranking_audit"] -->|followup_of| v18_qwen3_8b_no_semantic_critic_light_replication["v18_qwen3_8b_no_semantic_critic_light_replication"]
   v18_no_semantic_critic_online_seed69_70_extension["v18_no_semantic_critic_online_seed69_70_extension"] -->|derived_experiment| diversity_matrix_d0_d5["diversity_matrix_d0_d5"]
   diversity_matrix_d0_d5["diversity_matrix_d0_d5"] -->|audit_of| diversity_matrix_split_balance_audit["diversity_matrix_split_balance_audit"]
+  diversity_matrix_split_balance_audit["diversity_matrix_split_balance_audit"] -->|derived_experiment| anti_overfitting_shadow_gate_v1["anti_overfitting_shadow_gate_v1"]
 ```
 
 ## Topological order
@@ -51,4 +52,5 @@ graph TD
 18. `v18_no_semantic_critic_transfer_decomposition`
 19. `diversity_matrix_split_balance_audit`
 20. `v18_no_semantic_critic_candidate_ranking_audit`
-21. `v18_qwen3_8b_no_semantic_critic_light_replication`
+21. `anti_overfitting_shadow_gate_v1`
+22. `v18_qwen3_8b_no_semantic_critic_light_replication`
