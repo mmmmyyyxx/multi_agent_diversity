@@ -1,13 +1,17 @@
 schema_version: experiment_manifest_v1
 experiment_id: diversity_matrix_d0_d5
 title: D0-D5 online diversity matrix
-status: PREFLIGHT_PASS
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-03T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-03T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-03T18:00:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-04T14:51:25+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-04T15:33:01+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-04T18:39:09+08:00'}
 lineage:
   parents: [v18_no_semantic_critic_online_seed69_70_extension, v18_qwen3_8b_no_semantic_critic_light_replication]
   derives_from: v18_no_semantic_critic_online_seed69_70_extension
@@ -54,7 +58,18 @@ selection:
   test_used_for_selection: false
 artifacts:
   preregistration: {path: experiments/diversity_matrix_d0_d5_20260903/DESIGN_SPEC.md, sha256: e487fc53e198c825e0d552ae7f857369e5ff5c08c111c6a57f342501088a9616}
-  report: reports/diversity_matrix_d0_d5_20260903
-  provenance: reports/diversity_matrix_d0_d5_20260903/source_freeze.json
-git: {design_commit: null, implementation_commit: null, result_commit: null}
-result: {classifier: null, conclusion: null, evidence_type: online}
+  report: reports/diversity_matrix_d0_d5_combined_validation175_20260904
+  provenance: reports/diversity_matrix_d0_d5_combined_validation175_20260904/amendment.json
+git: {design_commit: null, implementation_commit: ca2c4b2e7e78d5594b702298c7a392ed3ca5ee28, result_commit: 0fc623a4b1608d9680241f4659c117da3edb8167}
+result:
+  classifier: GENERIC_POSITIVE__D2_TIED_BEST__W1_NEGATIVE__RCE_NOT_SUPPORTED
+  conclusion: D1 consistently improves over Static; D2 is numerically best but essentially tied with D1; W1 arms regress; responsibility-conditioned evolution does not improve over its matched Generic allocation arm.
+  evidence_type: online
+posthoc_amendment:
+  status: former test converted to development validation before its results were observed
+  validation50_rows: 50
+  former_test125_rows: 125
+  combined_development_validation_rows: 175
+  combination: sum correct counts then divide by 175; never equally average accuracies
+  untouched_heldout_test_remaining: false
+  selection_use: none; frozen final states only
