@@ -423,7 +423,15 @@ async def _freeze_initialization(seed: int, optimize: Path, validation: Path, ro
     cfg = _config(seed, ARMS[0], root, optimize, validation, raw_cache, manifest, False)
     system = PromptEnsembleOptimizationSystem(cfg)
     train = _rows(optimize)
-    system.set_run_identity(build_run_identity(cfg, train_rows=train, val_rows=[], test_rows=[], workspace=ROOT))
+    # Match cli.run exactly: validation contributes only to immutable dataset
+    # identity here and is never evaluated or exposed to the optimizer.
+    system.set_run_identity(build_run_identity(
+        cfg,
+        train_rows=train,
+        val_rows=_rows(validation),
+        test_rows=[],
+        workspace=ROOT,
+    ))
     await system.initialize_fixed_probe(train)
     _backup(raw_cache, stable)
     write_json(manifest, {"seed": seed, "initialization_snapshot": system.frozen_initialization_snapshot(),

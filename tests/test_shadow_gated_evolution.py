@@ -130,3 +130,10 @@ def test_test50_loader_is_hard_blocked_in_execution_path() -> None:
     source = inspect.getsource(module.execute)
     assert 'path == "TEST50_BLOCKED_BY_GOVERNANCE"' in source
     assert "return []" in source
+
+
+def test_frozen_initialization_uses_same_validation_identity_as_cli() -> None:
+    module = __import__("scripts.run_shadow_gated_evolution", fromlist=["_freeze_initialization"])
+    source = inspect.getsource(module._freeze_initialization)
+    assert "val_rows=_rows(validation)" in source
+    assert "val_rows=[]" not in source
