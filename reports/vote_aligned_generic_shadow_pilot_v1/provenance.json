@@ -1,0 +1,9 @@
+{
+  "execution_source_commit": "98924a0bdbaeebe5b34cbed28791d6e8fa4454bc",
+  "historical_requested_baseline": "dc4971832754a9dbf5d64e08e571a65d75edd473",
+  "historical_requested_baseline_was_current_head": false,
+  "historical_partial_seed75_reused": false,
+  "method_identity": "member_aware_peer_state_v15",
+  "phase_a_source_freeze_clean": true,
+  "runtime_version": "vote_aligned_generic_shadow_pilot_v1"
+}

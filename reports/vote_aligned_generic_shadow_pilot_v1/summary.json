@@ -1,0 +1,10 @@
+{
+  "api_calls": 0,
+  "arms": ["P0_SHADOW_D2_GENERIC", "P1_SHADOW_VOTE_ALIGNED_GENERIC"],
+  "new_test_calls": 0,
+  "phase_a_gate": "PASS",
+  "phase_b_gate": "NOT_AUTHORIZED",
+  "prior_partial_seed75_artifact_reused": false,
+  "seeds": [75, 76, 77],
+  "validation_calls": 0
+}

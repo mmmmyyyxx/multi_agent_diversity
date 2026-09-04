@@ -1,0 +1,17 @@
+{
+  "distinct_when_possible": true,
+  "fallback": "canonical_d2_actionable_member_rr",
+  "lane_rr": "deterministic_stateful_per_seed_per_protocol",
+  "near_margin": {
+    "direct_flip": false,
+    "minimum_margin_gain": 1,
+    "post_correction_plurality_margin": 0
+  },
+  "priority": ["direct_flip", "near_margin", "pure_coverage", "fallback_rr"],
+  "scheduler_version": "hierarchical_lane_rr_direct_near_coverage_v1",
+  "schema_version": "vote_aligned_selector_definition_v1",
+  "target_slots": 2,
+  "uses_test": false,
+  "uses_validation": false,
+  "uses_weighted_score": false
+}

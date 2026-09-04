@@ -1,10 +1,13 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_generic_shadow_pilot_v1
 title: Vote-Aligned Mild Responsibility on Shadow-Gated Generic Evolution
-status: DRAFT
+status: PREFLIGHT_PASS
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-05T02:25:23+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-05T02:25:23+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T02:25:23+08:00'}
 lineage: {parents: [anti_overfitting_shadow_gate_v1], derives_from: anti_overfitting_shadow_gate_v1}
 scientific_question: Does hierarchical direct-flip then near-margin then coverage target scheduling improve plurality Vote without degrading mean member competence on Shadow-gated D2 Generic?
 hypotheses:
@@ -40,8 +43,8 @@ selection:
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: null
+  preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: 7ed642894d37aeeb5199ce36b18f9231632da0ea695325bc736e0452b503a970}
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
-git: {design_commit: null, implementation_commit: null, result_commit: null}
-result: {classifier: PHASE_A_NOT_YET_RUN, conclusion: No scientific result before authorized Phase B, evidence_type: not_yet_available}
+git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, result_commit: null}
+result: {classifier: PHASE_A_EXECUTION_READY__PHASE_B_NOT_AUTHORIZED, conclusion: Zero-API implementation and all ten Phase A gates passed; no scientific result exists before separately authorized Phase B, evidence_type: not_yet_available}

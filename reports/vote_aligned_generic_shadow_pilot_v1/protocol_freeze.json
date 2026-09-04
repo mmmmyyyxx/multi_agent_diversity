@@ -1,0 +1,38 @@
+{
+  "arms": {
+    "P0_SHADOW_D2_GENERIC": {"target_scheduler": "rr_generic"},
+    "P1_SHADOW_VOTE_ALIGNED_GENERIC": {"target_scheduler": "vote_aligned_rr"}
+  },
+  "execution_baseline": "98924a0bdbaeebe5b34cbed28791d6e8fa4454bc",
+  "fold_map": [
+    {"optimize": "fold_a+fold_b", "seed": 75, "shadow": "fold_c"},
+    {"optimize": "fold_a+fold_c", "seed": 76, "shadow": "fold_b"},
+    {"optimize": "fold_b+fold_c", "seed": 77, "shadow": "fold_a"}
+  ],
+  "models": {
+    "critic": "qwen3.7-flash",
+    "evaluator": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "student": "qwen3.7-flash",
+    "teacher": "qwen3.7-flash",
+    "thinking": false
+  },
+  "near_margin": "vote_flip_gain=0 and margin_gain>0 and current_M+margin_gain=0",
+  "runtime_version": "vote_aligned_generic_shadow_pilot_v1",
+  "seeds": [75, 76, 77],
+  "shared_protocol": {
+    "common_safe": true,
+    "experiment_setting": "experimental_diversity_d2_rr_generic",
+    "generic_revision": true,
+    "maximum_update_opportunities": 32,
+    "no_commit_patience": 6,
+    "proposal": "generic_peer_state",
+    "shadow_target_loss_maximum": 2,
+    "shadow_vote_delta_minimum": 0,
+    "source_candidates_per_target": 2,
+    "target_slots": 2,
+    "winner_only_shadow": true
+  },
+  "test_policy": "zero access",
+  "validation_policy": "one final frozen-state evaluation only"
+}

@@ -1,0 +1,18 @@
+{
+  "api_calls": 0,
+  "gates": {
+    "COMPUTE_GATE": "PASS",
+    "CROSSFIT_GATE": "PASS",
+    "GENERIC_PIPELINE_PARITY_GATE": "PASS",
+    "GIT_GATE": "PASS",
+    "MODEL_GATE": "PASS",
+    "NO_VALIDATION_TEST_LEAKAGE_GATE": "PASS",
+    "P0_IDENTITY_GATE": "PASS",
+    "P1_SELECTOR_GATE": "PASS",
+    "SHADOW_GATE_PARITY_GATE": "PASS",
+    "SPLIT_GATE": "PASS"
+  },
+  "new_test_calls": 0,
+  "phase_a_gate": "PASS",
+  "validation_calls": 0
+}
