@@ -1,13 +1,14 @@
 schema_version: experiment_manifest_v1
 experiment_id: anti_overfitting_shadow_gate_v1
 title: Cross-fit winner-only Shadow write-back protocol
-status: PREFLIGHT_PASS
+status: RUNNING
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-04T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-04T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-04T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-04T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-04T21:16:47+08:00'}
 lineage: {parents: [diversity_matrix_split_balance_audit], derives_from: diversity_matrix_split_balance_audit}
 scientific_question: Does a candidate-blind cross-fit Shadow write-back gate reduce adaptive Optimize-to-Validation optimism without reducing final Validation Vote?
 hypotheses:
@@ -39,15 +40,19 @@ budget:
   frozen_before_run: true
   limit: {trajectories: 6, max_update_opportunities_per_trajectory: 32, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {shadow_gated_no_approved_commit_streak: 6, old_protocol: none}
-api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+api_authorization:
+  authorized: true
+  authorization_scope: user_authorized_phase_b_on_2026_09_04
+  allowed_roles: [solver, teacher, critic, student, evaluator]
+  allowed_phases: [online_trajectory, frozen_validation]
 selection:
   primary_metric: mean Optimize-to-Validation Vote gap change with Validation Vote non-inferiority
   frozen_rule: success requires mean Optimize-to-Validation gap to decrease and mean Validation Vote not to decrease
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: null
+  preregistration: {path: experiments/anti_overfitting_split_v1/PROTOCOL.md, sha256: b05cd5060ac2e9aedc2bdfa5f04c23b55768a2c777b2305cbeac757e3e16335f}
   report: reports/anti_overfitting_shadow_gate_v1
   provenance: experiments/anti_overfitting_split_v1/PROTOCOL.md
-git: {design_commit: null, implementation_commit: null, result_commit: null}
+git: {design_commit: dc4971832754a9dbf5d64e08e571a65d75edd473, implementation_commit: dc4971832754a9dbf5d64e08e571a65d75edd473, result_commit: null}
 result: {classifier: PHASE_A_EXECUTION_READY__PHASE_B_NOT_RUN, conclusion: Zero-API split and protocol freeze passed; no scientific efficacy result exists before Phase B, evidence_type: not_yet_available}
