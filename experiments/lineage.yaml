@@ -22,3 +22,4 @@ edges:
   - {from: v18_no_semantic_critic_transfer_decomposition, to: v18_no_semantic_critic_candidate_ranking_audit, relation: audit_of}
   - {from: v18_no_semantic_critic_candidate_ranking_audit, to: v18_qwen3_8b_no_semantic_critic_light_replication, relation: followup_of}
   - {from: v18_no_semantic_critic_online_seed69_70_extension, to: diversity_matrix_d0_d5, relation: derived_experiment}
+  - {from: diversity_matrix_d0_d5, to: diversity_matrix_split_balance_audit, relation: audit_of}

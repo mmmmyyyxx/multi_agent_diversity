@@ -1,0 +1,19 @@
+{
+  "audit_version": "diversity_matrix_split_balance_audit_v1",
+  "cluster_inputs": "question core sentence only; no labels, model outcomes, or split labels used in fitting",
+  "difficulty_source": "D0 frozen predictions only; D1-D5 never define difficulty",
+  "limitations": [
+    "retrospective descriptive audit; does not causally assign all transfer failure to split imbalance",
+    "k=8 lexical clusters are an operational sensitivity probe, not semantic ground truth",
+    "Combined175 is development evidence and no untouched held-out test remains"
+  ],
+  "predeclared_interpretation_thresholds": {
+    "cluster_tv": 0.2,
+    "label_tv": 0.15,
+    "method_did": 0.06,
+    "static_gap": 0.06,
+    "structural_abs_smd": 0.35,
+    "train_optimism": 0.08
+  },
+  "privacy": "only aggregate distributions, metrics, and source hashes are published"
+}

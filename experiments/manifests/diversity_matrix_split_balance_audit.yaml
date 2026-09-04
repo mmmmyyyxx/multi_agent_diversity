@@ -1,0 +1,43 @@
+schema_version: experiment_manifest_v1
+experiment_id: diversity_matrix_split_balance_audit
+title: Train75 Validation50 FormerTest125 split balance audit
+status: COMPLETED
+legacy_index: true
+lifecycle_history: []
+lineage: {parents: [diversity_matrix_d0_d5], derives_from: diversity_matrix_d0_d5}
+scientific_question: How much of the D0-D5 split instability is associated with split composition, baseline difficulty, method-by-split interaction, and adaptive train optimism?
+hypotheses:
+  - Validation50 may have unstable label or lexical-cluster composition because n=50.
+  - Overall D0 difficulty may differ less than optimized-arm performance across splits.
+  - Repeated adaptive use of Train75 may produce train optimism beyond the D0 baseline gap.
+design:
+  changed: [zero-API split composition and frozen-prediction audit only]
+  unchanged: [all three frozen data partitions, D0-D5 trajectories, predictions, checkpoints, methods]
+  forbidden_changes: [API calls, new evaluations, resplitting, training reruns, method changes, using D1-D5 outcomes to define difficulty or clusters]
+method_identity: historical_v15_diversity_matrix
+runtime_version: diversity_matrix_split_balance_audit_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train: opt75_seed42, validation: val50_seed42, former_test: test125_seed42_converted_to_development}
+  split_hashes: {}
+  validation_policy: read-only use of frozen Validation50 and FormerTest125 development evidence
+  test_policy: no new test access; FormerTest125 was already converted to development validation and no untouched held-out test remains
+model: {solver: null, optimizer_roles: {}, thinking: null, temperatures: {}, max_tokens: {}}
+seeds: [72, 73, 74]
+budget: {type: zero_api_retrospective_audit, frozen_before_run: true, limit: {api_calls: 0, model_calls: 0, historical_rows: 250}}
+api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: label cluster structural and D0-difficulty balance plus method-by-split difference-in-differences
+  frozen_rule: thresholded descriptive classifier recorded in methodology.json
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: null
+  report: reports/diversity_matrix_split_balance_audit_20260904
+  provenance: reports/diversity_matrix_split_balance_audit_20260904/methodology.json
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result:
+  classifier: SPLIT_IMBALANCE_AND_METHOD_INTERACTION_SUPPORTED
+  conclusion: Label and lexical-cluster composition differ, but the D5 gap also contains a large within-label residual; split imbalance and true method-by-split instability coexist, while evolved arms retain substantial train optimism relative to D0.
+  evidence_type: retrospective

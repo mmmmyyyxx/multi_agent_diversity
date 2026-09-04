@@ -1,0 +1,74 @@
+{
+  "api_calls": 0,
+  "audit_version": "diversity_matrix_split_balance_audit_v1",
+  "cluster_method": "TF-IDF word 1-2 grams; KMeans k=8 random_state=42 n_init=20; all 250 questions; no outcomes",
+  "dataset_sha256": {
+    "former_test125": "e42c3f3d93583aed353099f4e28c012ff62028f682ebdb758435b4c8755e3ae0",
+    "train75": "5491dfdf103802eb02aa49521dbde52d41a3bd2acbdfcf72837260de5033880c",
+    "validation50": "79591c8614188670757849a96c65742e34a03314cb4299568c9f917be96d2ccb"
+  },
+  "diagnostics": {
+    "flags": {
+      "label_imbalance": true,
+      "lexical_cluster_imbalance": true,
+      "method_by_split_interaction": true,
+      "static_difficulty_gap": false,
+      "structural_feature_imbalance": false,
+      "train_optimism": true
+    },
+    "max_abs_method_difference_in_difference": 0.11333333333333329,
+    "mean_evolved_arm_train_optimism_vs_D0": 0.12838095238095246,
+    "thresholds": {
+      "cluster_tv": 0.2,
+      "label_tv": 0.15,
+      "method_did": 0.06,
+      "static_gap": 0.06,
+      "structural_abs_smd": 0.35,
+      "train_optimism": 0.08
+    },
+    "validation50_vs_former_test125_static_gap": 0.03333333333333344
+  },
+  "historical_artifacts_modified": false,
+  "label_standardization": {
+    "D0": {
+      "label_composition_component": -0.023185539606592198,
+      "raw_gap": 0.033333333333333326,
+      "within_label_residual_component": 0.056518872939925524
+    },
+    "D1": {
+      "label_composition_component": 0.022093921672869055,
+      "raw_gap": 0.08133333333333326,
+      "within_label_residual_component": 0.0592394116604642
+    },
+    "D2": {
+      "label_composition_component": 0.03089420520999464,
+      "raw_gap": 0.03733333333333333,
+      "within_label_residual_component": 0.006439128123338689
+    },
+    "D3": {
+      "label_composition_component": 0.034835371256423775,
+      "raw_gap": 0.03466666666666662,
+      "within_label_residual_component": -0.00016870458975715152
+    },
+    "D4": {
+      "label_composition_component": 0.03312706007442856,
+      "raw_gap": 0.05066666666666675,
+      "within_label_residual_component": 0.01753960659223819
+    },
+    "D5": {
+      "label_composition_component": 0.0591529328371434,
+      "raw_gap": 0.14666666666666672,
+      "within_label_residual_component": 0.08751373382952332
+    }
+  },
+  "model_calls": 0,
+  "outcome_use": "descriptive only after structural features and clusters",
+  "question_sets_disjoint": true,
+  "split_sizes": {
+    "former_test125": 125,
+    "train75": 75,
+    "validation50": 50
+  },
+  "status": "PASS",
+  "verdict": "SPLIT_IMBALANCE_AND_METHOD_INTERACTION_SUPPORTED"
+}

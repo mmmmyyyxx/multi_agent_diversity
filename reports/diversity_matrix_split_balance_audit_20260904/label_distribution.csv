@@ -1,0 +1,10 @@
+split,label,count,proportion
+train75,A,28,0.37333333333333335
+train75,B,30,0.4
+train75,C,17,0.22666666666666666
+validation50,A,9,0.18
+validation50,B,19,0.38
+validation50,C,22,0.44
+former_test125,A,41,0.328
+former_test125,B,48,0.384
+former_test125,C,36,0.288
