@@ -251,12 +251,23 @@ async def _evaluate_former_test_cell(run_dir: Path, out_dir: Path) -> dict[str, 
         "selection_change": False,
         "analysis_role": "former_test_converted_to_development_validation",
     }
-    out_dir.mkdir(parents=True)
+    _write_former_test_evidence(out_dir, result, rows)
+    return result
+
+
+def _write_former_test_evidence(
+    out_dir: Path,
+    result: Mapping[str, Any],
+    rows: Sequence[Mapping[str, Any]],
+) -> None:
+    # Config/System initialization may create the cell directory before the
+    # read-only evaluation finishes.  The run-level freshness checks protect
+    # against reuse; persistence must therefore accept that empty directory.
+    out_dir.mkdir(parents=True, exist_ok=True)
     write_json(out_dir / "evaluation_summary_private.json", result)
     with (out_dir / "former_test_rows_sanitized.jsonl").open("w", encoding="utf-8") as handle:
         for row in rows:
             handle.write(json.dumps(row, separators=(",", ":")) + "\n")
-    return result
 
 
 def run(prep_root: Path, former_test_root: Path) -> dict[str, Any]:

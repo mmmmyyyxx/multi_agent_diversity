@@ -6,6 +6,7 @@ from scripts.run_diversity_matrix_combined_validation import (
     AMENDMENT_VERSION,
     ORIGINAL_TRAINING_COMMIT,
     SEEDS,
+    _write_former_test_evidence,
     combine_counts,
 )
 
@@ -44,3 +45,17 @@ def test_posthoc_amendment_identity_is_explicit() -> None:
     assert AMENDMENT_VERSION == "combined_development_validation175_posthoc_v1"
     assert SEEDS == (72, 73, 74)
     assert ORIGINAL_TRAINING_COMMIT == "ca2c4b2e7e78d5594b702298c7a392ed3ca5ee28"
+
+
+def test_former_test_persistence_accepts_runtime_created_cell_dir(tmp_path) -> None:
+    cell = tmp_path / "seed72" / "D0"
+    cell.mkdir(parents=True)
+    result = {"logical_evaluation_count": 1, "row_count": 1}
+    rows = [{"example_id_hash": "abc", "vote_correct": True}]
+
+    _write_former_test_evidence(cell, result, rows)
+
+    assert (cell / "evaluation_summary_private.json").is_file()
+    assert (cell / "former_test_rows_sanitized.jsonl").read_text(encoding="utf-8") == (
+        '{"example_id_hash":"abc","vote_correct":true}\n'
+    )
