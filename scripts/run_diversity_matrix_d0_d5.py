@@ -509,6 +509,13 @@ async def train(args: argparse.Namespace) -> dict[str, Any]:
     return payload
 
 
+def _per_agent_invalid_counts(example_rows: list[Mapping[str, Any]]) -> list[int]:
+    return [
+        sum(not bool(row["member_validity"][member]) for row in example_rows)
+        for member in range(AGENTS)
+    ]
+
+
 async def _evaluate_validation_cell(run_dir: Path, out_dir: Path) -> dict[str, Any]:
     meta = read_json(run_dir / "run_meta.json")
     checkpoint_path = run_dir / "training_checkpoint.json"
@@ -565,6 +572,7 @@ async def _evaluate_validation_cell(run_dir: Path, out_dir: Path) -> dict[str, A
             "member_validity": list(map(bool, state.team_validity)),
         })
     oracle = sum(row["G"] > 0 for row in example_rows)
+    per_agent_invalid_counts = _per_agent_invalid_counts(example_rows)
     cost = system.cost_summary()
     result = {
         "evaluation_version": "diversity_matrix_final_validation_v1",
@@ -577,7 +585,7 @@ async def _evaluate_validation_cell(run_dir: Path, out_dir: Path) -> dict[str, A
         "oracle_correct_count": oracle,
         "oracle_accuracy": oracle / len(example_rows),
         "per_agent_correct_counts": list(metrics.per_agent_correct_counts),
-        "per_agent_invalid_counts": list(metrics.per_agent_invalid_counts),
+        "per_agent_invalid_counts": per_agent_invalid_counts,
         "final_state_hash": state_before,
         "checkpoint_sha256": before_hash,
         "provider_calls": int(cost["successful_llm_calls"]),

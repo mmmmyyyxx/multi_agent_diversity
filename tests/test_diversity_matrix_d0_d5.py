@@ -19,7 +19,11 @@ from scripts.diversity_matrix_d0_d5_support import (
     manifest,
     recursive_sanitize,
 )
-from scripts.run_diversity_matrix_d0_d5 import _blocked_test_loader, _config
+from scripts.run_diversity_matrix_d0_d5 import (
+    _blocked_test_loader,
+    _config,
+    _per_agent_invalid_counts,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,3 +115,11 @@ def test_analysis_metrics_have_fixed_semantics() -> None:
     assert transitions["zero_to_one_to_two_plus_deepenings"] == 1
     assert transitions["cross_member_accumulation"] == 1
     assert transitions["coverage_to_vote_conversions"] == 1
+
+
+def test_validation_invalid_counts_are_derived_from_member_validity() -> None:
+    rows = [
+        {"member_validity": [True, False, True, True, False]},
+        {"member_validity": [False, False, True, True, True]},
+    ]
+    assert _per_agent_invalid_counts(rows) == [1, 2, 0, 0, 1]
