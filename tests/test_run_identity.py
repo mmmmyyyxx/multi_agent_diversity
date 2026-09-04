@@ -6,7 +6,9 @@ import pytest
 
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.persistence.identity import (
+    NO_TEST_FILE_IDENTITY_SHA256,
     RunIdentity,
+    build_run_identity,
     config_fingerprint,
     solver_request_components,
     solver_request_identity,
@@ -113,3 +115,56 @@ def test_dual_and_auxiliary_candidate_budgets_enter_run_fingerprint():
         config_fingerprint(dual),
         config_fingerprint(auxiliary),
     }) == 3
+
+
+def test_disabled_zero_row_test_identity_does_not_touch_missing_test_file(tmp_path):
+    train_path = tmp_path / "train.jsonl"
+    val_path = tmp_path / "val.jsonl"
+    train_path.write_text("train", encoding="utf-8")
+    val_path.write_text("val", encoding="utf-8")
+    cfg = Config.from_flat(
+        train_path=str(train_path),
+        val_path=str(val_path),
+        test_path=str(tmp_path / "must_not_be_opened.jsonl"),
+        test_size=0,
+        final_test_enabled=False,
+    )
+
+    result = build_run_identity(
+        cfg,
+        train_rows=[{"question": "train question"}],
+        val_rows=[],
+        test_rows=[],
+        workspace=".",
+    )
+
+    assert result.test_file_sha256 == NO_TEST_FILE_IDENTITY_SHA256
+
+
+@pytest.mark.parametrize(
+    ("final_test_enabled", "test_size"),
+    [(True, 0), (False, 1)],
+)
+def test_test_identity_still_requires_file_outside_explicit_no_test_contract(
+    tmp_path, final_test_enabled, test_size
+):
+    train_path = tmp_path / "train.jsonl"
+    val_path = tmp_path / "val.jsonl"
+    train_path.write_text("train", encoding="utf-8")
+    val_path.write_text("val", encoding="utf-8")
+    cfg = Config.from_flat(
+        train_path=str(train_path),
+        val_path=str(val_path),
+        test_path=str(tmp_path / "missing-test.jsonl"),
+        test_size=test_size,
+        final_test_enabled=final_test_enabled,
+    )
+
+    with pytest.raises(FileNotFoundError, match="Run identity input does not exist"):
+        build_run_identity(
+            cfg,
+            train_rows=[{"question": "train question"}],
+            val_rows=[],
+            test_rows=[],
+            workspace=".",
+        )

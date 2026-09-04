@@ -34,6 +34,9 @@ from ..evaluation.output_contract import (
 )
 SOLVER_INVALID_RETRY_POLICY_VERSION = "retry_until_first_valid_v1"
 PROMPT_QUESTION_EVALUATOR_VERSION = "prompt_question_recovered_invalid_v2"
+NO_TEST_FILE_IDENTITY_SHA256 = hashlib.sha256(
+    b"run-identity:no-test-file:not-applicable:v1"
+).hexdigest()
 from ..utils import normalize_spaces
 from ..versions import (
     CANDIDATE_SELECTION_VERSION,
@@ -92,6 +95,13 @@ def _sha256_file(path: str) -> str:
     if not target.is_file():
         raise FileNotFoundError(f"Run identity input does not exist: {target}")
     return hashlib.sha256(target.read_bytes()).hexdigest()
+
+
+def _test_file_identity_sha256(cfg: Config) -> str:
+    """Represent an explicitly disabled, zero-row test split without touching it."""
+    if not cfg.persistence.final_test_enabled and cfg.data.test_size == 0:
+        return NO_TEST_FILE_IDENTITY_SHA256
+    return _sha256_file(cfg.data.test_path)
 
 
 def question_set_hash(rows: Sequence[Mapping[str, Any]]) -> str:
@@ -297,7 +307,7 @@ def build_run_identity(
         manifest_sha256=cfg.data.manifest_sha256,
         train_file_sha256=_sha256_file(cfg.data.train_path),
         val_file_sha256=_sha256_file(cfg.data.val_path),
-        test_file_sha256=_sha256_file(cfg.data.test_path),
+        test_file_sha256=_test_file_identity_sha256(cfg),
         train_question_set_hash=question_set_hash(train_rows),
         val_question_set_hash=question_set_hash(val_rows),
         test_question_set_hash=question_set_hash(test_rows),
