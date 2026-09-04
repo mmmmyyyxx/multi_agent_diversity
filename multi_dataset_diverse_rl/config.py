@@ -54,6 +54,9 @@ class TrainingConfig:
     shared_prompt: str = "You are a careful reasoning solver. Use an explicit decision procedure and verify the key inference before finalizing the decision."
     initialization_mode: str = "shared_identical"
     provided_prompts_json: str = ""
+    # Experimental scheduling override. ``protocol_default`` preserves every
+    # canonical protocol; other values are admitted only by explicit runners.
+    target_scheduler: str = "protocol_default"
 
 
 @dataclass(frozen=True)

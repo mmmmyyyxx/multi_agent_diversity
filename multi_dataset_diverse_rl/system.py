@@ -125,6 +125,12 @@ from .responsibility import (
     select_repairability_targets,
     target_priorities,
 )
+from .vote_aligned_scheduler import (
+    RR_GENERIC_SCHEDULER,
+    VOTE_ALIGNED_RR_SCHEDULER,
+    VOTE_ALIGNED_SCHEDULER_VERSION,
+    select_vote_aligned_targets,
+)
 from .responsibility_contribution import (
     RobustContributionDecision,
     build_rcru_incumbent_cache,
@@ -1369,6 +1375,75 @@ class PromptEnsembleOptimizationSystem:
             return targets, []
 
         if policy == "responsibility_round_robin_dual":
+            scheduler = self.cfg.training.target_scheduler
+            if scheduler == VOTE_ALIGNED_RR_SCHEDULER:
+                if self.protocol.name != "experimental_diversity_d2_rr_generic":
+                    raise ValueError(
+                        "vote_aligned_rr is admitted only for experimental D2 Generic"
+                    )
+                if not self.responsibility_assignments:
+                    raise AssertionError(
+                        "vote-aligned scheduling requires current responsibility audit"
+                    )
+                margins = {
+                    str(question_hash): int(row["M"])
+                    for question_hash, row in self.responsibility_assignments[-1][
+                        "eligibility_audit_by_question"
+                    ].items()
+                }
+                prior_cursor: Mapping[str, int] = {}
+                for audit_row in reversed(self.target_priority_audit):
+                    if audit_row.get("selection_pool_stage") == (
+                        "vote_aligned_lane_prioritized_rr"
+                    ):
+                        prior_cursor = audit_row.get("rr_cursor_after", {})
+                        break
+                selection = select_vote_aligned_targets(
+                    assigned=assigned,
+                    current_margin_by_question=margins,
+                    seed=self.cfg.training.seed,
+                    update_index=update_index,
+                    cursor_before=prior_cursor,
+                    target_count=self.protocol.target_branch_count,
+                    agent_count=len(self.agents),
+                )
+                targets = selection.targets
+                self.selected_target_ids = list(targets)
+                payload = [
+                    {
+                        "agent_id": agent_id,
+                        "selected": agent_id in targets,
+                        **counts,
+                    }
+                    for agent_id, counts in sorted(
+                        selection.member_lane_counts.items()
+                    )
+                ]
+                self.target_priority_audit.append({
+                    "artifact_schema_version": (
+                        "vote_aligned_target_selection_audit_v1"
+                    ),
+                    "scheduler_version": VOTE_ALIGNED_SCHEDULER_VERSION,
+                    "update_index": int(update_index),
+                    "selection_pool_stage": (
+                        "vote_aligned_lane_prioritized_rr"
+                    ),
+                    "update_lane": "responsibility_conditioned",
+                    "selected_target_ids": list(targets),
+                    "slot_decisions": list(selection.slot_decisions),
+                    "rr_cursor_before": dict(prior_cursor),
+                    "rr_cursor_after": dict(selection.cursor_after),
+                    "no_actionable_reason": (
+                        "" if targets else "no_actionable_responsibility"
+                    ),
+                    "priorities": payload,
+                })
+                return targets, payload
+            if scheduler not in {"protocol_default", RR_GENERIC_SCHEDULER}:
+                raise ValueError(
+                    "unsupported target_scheduler for responsibility round robin: "
+                    f"{scheduler}"
+                )
             actionable = sorted(
                 int(agent_id) for agent_id, rows in assigned.items() if rows
             )
@@ -6027,6 +6102,13 @@ class PromptEnsembleOptimizationSystem:
             "service_routing_version": SERVICE_ROUTING_VERSION,
             "responsibility_lifecycle_version": "one_refresh_per_team_state_v1",
             "target_selection_version": TARGET_SELECTION_VERSION,
+            "target_scheduler": self.cfg.training.target_scheduler,
+            "vote_aligned_scheduler_version": (
+                VOTE_ALIGNED_SCHEDULER_VERSION
+                if self.cfg.training.target_scheduler
+                == VOTE_ALIGNED_RR_SCHEDULER
+                else None
+            ),
             "repairability_version": REPAIRABILITY_VERSION,
             "dual_target_search_version": DUAL_TARGET_SEARCH_VERSION,
             "repairability_freeze_enabled": bool(

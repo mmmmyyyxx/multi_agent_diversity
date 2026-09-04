@@ -551,6 +551,21 @@ async def _evaluate_final_dataset(cell: Path, data_path: Path, split: str, out: 
     if system.team_prompt_state_hash() != state_hash or sha256_file(checkpoint_path) != checkpoint_hash:
         raise RuntimeError(f"{split} evaluation mutated frozen trajectory")
     cost = system.cost_summary()
+    coverage_depth = {f"G{value}": 0 for value in range(6)}
+    for index in range(len(system._last_evaluated_examples)):
+        gold_votes = sum(
+            bool(profile[index].valid)
+            and system.match_answer(
+                profile[index].answer,
+                system._last_evaluated_examples[index].gold_answer,
+            )
+            for profile in system._last_evaluated_profiles
+        )
+        coverage_depth[f"G{gold_votes}"] += 1
+    member_accuracies = [
+        int(value) / len(system._last_evaluated_examples)
+        for value in metrics.per_agent_correct_counts
+    ]
     payload = {
         "evaluation_version": "anti_overfitting_final_state_evaluation_v1",
         "split": split, "row_count": 50,
@@ -562,8 +577,17 @@ async def _evaluate_final_dataset(cell: Path, data_path: Path, split: str, out: 
             for index, example in enumerate(system._last_evaluated_examples)
         ),
         "per_agent_correct_counts": list(metrics.per_agent_correct_counts),
+        "per_agent_accuracies": member_accuracies,
         "mean_member_accuracy": float(metrics.mean_individual_acc),
         "minimum_member_accuracy": float(metrics.min_individual_acc),
+        "maximum_member_accuracy": max(member_accuracies),
+        "member_accuracy_std": (
+            sum(
+                (value - float(metrics.mean_individual_acc)) ** 2
+                for value in member_accuracies
+            ) / len(member_accuracies)
+        ) ** 0.5,
+        "coverage_depth": coverage_depth,
         "final_state_hash": state_hash, "checkpoint_sha256": checkpoint_hash,
         "provider_calls": int(cost["successful_llm_calls"]),
         "total_tokens": int(cost["total_tokens"]),
