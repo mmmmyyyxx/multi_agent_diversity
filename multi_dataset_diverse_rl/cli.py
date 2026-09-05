@@ -408,11 +408,53 @@ def _verify_frozen_initialization(
         if json.loads(json.dumps(expected.get(field), sort_keys=True))
         != json.loads(json.dumps(actual.get(field), sort_keys=True))
     }
+    transition = manifest.get("execution_identity_transition")
+    transition_applied = False
+    if transition is not None and set(mismatches) == {
+        "initial_train_state_hash",
+        "immutable_run_identity",
+    }:
+        expected_identity = expected.get("immutable_run_identity", {})
+        actual_identity = actual.get("immutable_run_identity", {})
+        dataset_identity_fields = (
+            "train_file_sha256",
+            "val_file_sha256",
+            "test_file_sha256",
+            "train_question_set_hash",
+            "val_question_set_hash",
+            "test_question_set_hash",
+        )
+        transition_valid = (
+            transition.get("schema_version")
+            == "frozen_initialization_execution_identity_transition_v1"
+            and transition.get("source_immutable_run_identity")
+            == expected_identity
+            and transition.get("target_immutable_run_identity")
+            == actual_identity
+            and all(
+                expected_identity.get(field) == actual_identity.get(field)
+                for field in dataset_identity_fields
+            )
+            and transition.get("scientific_state_fields")
+            == [
+                "initial_prompt_hashes",
+                "initial_member_correct_counts",
+                "initial_team_outcome",
+                "initial_vote_oracle_ghm_hash",
+                "probe_hash",
+                "solver_request_identity",
+                "solver_identity",
+            ]
+        )
+        if transition_valid:
+            mismatches = {}
+            transition_applied = True
     audit = {
         "frozen_initialization_manifest_version": manifest.get("manifest_version", ""),
         "matched": not mismatches,
         "checked_fields": list(fields),
         "mismatches": mismatches,
+        "execution_identity_transition_applied": transition_applied,
         "initialization_snapshot": actual,
     }
     system.artifacts.write_json("frozen_initialization_match.json", audit)

@@ -95,6 +95,9 @@ DEFAULT_RUN_ROOT = ROOT / "runs" / "vote_aligned_generic_shadow_pilot_v1"
 DEFAULT_REPORT_ROOT = ROOT / "reports" / "vote_aligned_generic_shadow_pilot_v1"
 RUNTIME_VERSION = "vote_aligned_generic_shadow_pilot_v1"
 DERIVED_COMPLETION_FILENAME = "derived_completion_metadata.json"
+EXECUTION_INITIALIZATION_RELATIVE = (
+    Path("execution_initialization") / "seed75" / "frozen_initialization_manifest.json"
+)
 
 
 @dataclass(frozen=True)
@@ -214,6 +217,14 @@ def _expected_cell_config(
     index = SCOPE.seeds.index(seed)
     optimize, _ = _fold_paths(prep_root, index)
     cell = run_root / f"seed{seed}" / arm
+    initialization = (
+        prep_root / EXECUTION_INITIALIZATION_RELATIVE
+        if arm == P1 and (prep_root / EXECUTION_INITIALIZATION_RELATIVE).is_file()
+        else run_root
+        / "initialization"
+        / f"seed{seed}"
+        / "frozen_initialization_manifest.json"
+    )
     config = _config(
         seed,
         arm,
@@ -221,7 +232,7 @@ def _expected_cell_config(
         optimize,
         prep_root / "splits_private" / "validation.csv",
         cell / "solver_cache.sqlite",
-        run_root / "initialization" / f"seed{seed}" / "frozen_initialization_manifest.json",
+        initialization,
         False,
     )
     if manifest_sha256_override is None:
@@ -229,6 +240,82 @@ def _expected_cell_config(
     values = config.to_flat_dict()
     values["manifest_sha256"] = manifest_sha256_override
     return Config.from_flat(**values)
+
+
+def _write_execution_initialization_transition(
+    prep_root: Path,
+    run_root: Path,
+) -> Path:
+    source_path = (
+        run_root
+        / "initialization"
+        / "seed75"
+        / "frozen_initialization_manifest.json"
+    )
+    destination = prep_root / EXECUTION_INITIALIZATION_RELATIVE
+    source = json.loads(source_path.read_text(encoding="utf-8"))
+    expected = source["initialization_snapshot"]
+    optimize, _ = _fold_paths(prep_root, 0)
+    validation = prep_root / "splits_private" / "validation.csv"
+    config = _config(
+        75,
+        P1,
+        run_root / "seed75" / P1,
+        optimize,
+        validation,
+        run_root / "seed75" / P1 / "solver_cache.sqlite",
+        destination,
+        False,
+    )
+    identity = build_run_identity(
+        config,
+        train_rows=_rows(optimize),
+        val_rows=_rows(validation),
+        test_rows=[],
+        workspace=ROOT,
+    )
+    identity_fields = (
+        "git_commit",
+        "git_dirty",
+        "manifest_sha256",
+        "train_file_sha256",
+        "val_file_sha256",
+        "test_file_sha256",
+        "train_question_set_hash",
+        "val_question_set_hash",
+        "test_question_set_hash",
+    )
+    target_identity = {field: getattr(identity, field) for field in identity_fields}
+    scientific_fields = [
+        "initial_prompt_hashes",
+        "initial_member_correct_counts",
+        "initial_team_outcome",
+        "initial_vote_oracle_ghm_hash",
+        "probe_hash",
+        "solver_request_identity",
+        "solver_identity",
+    ]
+    source_identity = expected["immutable_run_identity"]
+    data_identity_fields = identity_fields[3:]
+    if any(source_identity[field] != target_identity[field] for field in data_identity_fields):
+        raise RuntimeError("execution transition changed frozen dataset identity")
+    payload = {
+        "manifest_version": "vote_aligned_matched_initialization_v1",
+        "initialization_snapshot": expected,
+        "execution_identity_transition": {
+            "schema_version": "frozen_initialization_execution_identity_transition_v1",
+            "source_immutable_run_identity": source_identity,
+            "target_immutable_run_identity": target_identity,
+            "scientific_state_fields": scientific_fields,
+            "source_initialization_manifest_sha256": sha256_file(source_path),
+            "source_freeze_sha256": sha256_file(prep_root / "source_freeze.json"),
+            "model_calls": 0,
+            "validation_calls": 0,
+            "test_calls": 0,
+        },
+    }
+    write_json(destination, payload)
+    return destination
 
 
 def _verify_derived_completion(cell: Path) -> tuple[TerminationAssessment | None, list[str]]:
@@ -369,6 +456,7 @@ def normalize_existing_p0_completion(
         "no_update_beyond_terminal": True,
     }
     write_json(cell / DERIVED_COMPLETION_FILENAME, marker)
+    _write_execution_initialization_transition(prep_root, run_root)
     verified, verify_errors = _verify_derived_completion(cell)
     if verified is None or verify_errors:
         raise RuntimeError(f"derived completion verification failed: {verify_errors}")
@@ -789,6 +877,9 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
         initialization, stable = await _freeze_initialization(
             seed, optimize, validation, run_root / "initialization" / f"seed{seed}"
         )
+        transition_initialization = prep_root / EXECUTION_INITIALIZATION_RELATIVE
+        if transition_initialization.is_file():
+            initialization = transition_initialization
         for arm in SCOPE.arms:
             out = run_root / f"seed{seed}" / arm
             if _cell_is_terminal(out):

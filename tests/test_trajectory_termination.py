@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+from types import SimpleNamespace
 
 import pytest
 
-from multi_dataset_diverse_rl.cli import pending_epoch_indices
+from multi_dataset_diverse_rl.cli import (
+    _verify_frozen_initialization,
+    pending_epoch_indices,
+)
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
 from multi_dataset_diverse_rl.termination import (
     COMPLETED_BY_BUDGET,
@@ -151,3 +156,138 @@ def test_system_completion_contract_rejects_unproven_early_stop() -> None:
     with pytest.raises(RuntimeError, match="before every planned update"):
         PromptEnsembleOptimizationSystem.mark_training_complete(system, 32)
 
+
+class _Artifacts:
+    def __init__(self):
+        self.values = {}
+
+    def write_json(self, name, value):
+        self.values[name] = value
+
+
+class _InitializationSystem:
+    def __init__(self, snapshot):
+        self.snapshot = snapshot
+        self.artifacts = _Artifacts()
+
+    def frozen_initialization_snapshot(self):
+        return self.snapshot
+
+
+def _identity(commit: str, manifest: str):
+    return {
+        "git_commit": commit,
+        "git_dirty": False,
+        "manifest_sha256": manifest,
+        "train_file_sha256": "train-file",
+        "val_file_sha256": "val-file",
+        "test_file_sha256": "test-file",
+        "train_question_set_hash": "train-questions",
+        "val_question_set_hash": "val-questions",
+        "test_question_set_hash": "test-questions",
+    }
+
+
+def test_frozen_initialization_allows_only_explicit_provenance_transition(
+    tmp_path,
+) -> None:
+    scientific_fields = [
+        "initial_prompt_hashes",
+        "initial_member_correct_counts",
+        "initial_team_outcome",
+        "initial_vote_oracle_ghm_hash",
+        "probe_hash",
+        "solver_request_identity",
+        "solver_identity",
+    ]
+    source_identity = _identity("source-commit", "source-manifest")
+    target_identity = _identity("target-commit", "target-manifest")
+    expected = {
+        "initial_prompt_hashes": ["prompt"] * 5,
+        "initial_member_correct_counts": [59] * 5,
+        "initial_team_outcome": {"team_vote_correct_count": 59},
+        "initial_vote_oracle_ghm_hash": "ghm",
+        "initial_train_state_hash": "source-state-hash",
+        "probe_hash": "probe",
+        "solver_request_identity": "request",
+        "solver_identity": ["solver"],
+        "immutable_run_identity": source_identity,
+    }
+    actual = {
+        **expected,
+        "initial_train_state_hash": "target-state-hash",
+        "immutable_run_identity": target_identity,
+    }
+    manifest = {
+        "manifest_version": "fixture",
+        "initialization_snapshot": expected,
+        "execution_identity_transition": {
+            "schema_version": "frozen_initialization_execution_identity_transition_v1",
+            "source_immutable_run_identity": source_identity,
+            "target_immutable_run_identity": target_identity,
+            "scientific_state_fields": scientific_fields,
+        },
+    }
+    path = tmp_path / "initialization.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    system = _InitializationSystem(actual)
+    cfg = SimpleNamespace(
+        persistence=SimpleNamespace(frozen_initialization_manifest_path=str(path))
+    )
+
+    _verify_frozen_initialization(system, cfg)
+
+    audit = system.artifacts.values["frozen_initialization_match.json"]
+    assert audit["matched"] is True
+    assert audit["execution_identity_transition_applied"] is True
+
+
+def test_frozen_initialization_transition_never_masks_scientific_mismatch(
+    tmp_path,
+) -> None:
+    source_identity = _identity("source-commit", "source-manifest")
+    target_identity = _identity("target-commit", "target-manifest")
+    expected = {
+        "initial_prompt_hashes": ["prompt"] * 5,
+        "initial_member_correct_counts": [59] * 5,
+        "initial_team_outcome": {"team_vote_correct_count": 59},
+        "initial_vote_oracle_ghm_hash": "ghm",
+        "initial_train_state_hash": "source-state-hash",
+        "probe_hash": "probe",
+        "solver_request_identity": "request",
+        "solver_identity": ["solver"],
+        "immutable_run_identity": source_identity,
+    }
+    actual = {
+        **expected,
+        "initial_member_correct_counts": [58, 59, 59, 59, 59],
+        "initial_train_state_hash": "target-state-hash",
+        "immutable_run_identity": target_identity,
+    }
+    manifest = {
+        "manifest_version": "fixture",
+        "initialization_snapshot": expected,
+        "execution_identity_transition": {
+            "schema_version": "frozen_initialization_execution_identity_transition_v1",
+            "source_immutable_run_identity": source_identity,
+            "target_immutable_run_identity": target_identity,
+            "scientific_state_fields": [
+                "initial_prompt_hashes",
+                "initial_member_correct_counts",
+                "initial_team_outcome",
+                "initial_vote_oracle_ghm_hash",
+                "probe_hash",
+                "solver_request_identity",
+                "solver_identity",
+            ],
+        },
+    }
+    path = tmp_path / "initialization.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    system = _InitializationSystem(actual)
+    cfg = SimpleNamespace(
+        persistence=SimpleNamespace(frozen_initialization_manifest_path=str(path))
+    )
+
+    with pytest.raises(RuntimeError, match="frozen initialization mismatch"):
+        _verify_frozen_initialization(system, cfg)
