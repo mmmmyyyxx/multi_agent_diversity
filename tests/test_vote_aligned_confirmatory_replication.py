@@ -50,6 +50,7 @@ def test_seed75_engine_scope_adapter_restores_every_global() -> None:
     names = (
         "SEEDS",
         "SCOPE",
+        "validate_evaluation_inventory",
         "FINAL_EVAL_DATASETS",
         "AUTH_ENV",
         "MANIFEST",
@@ -68,6 +69,17 @@ def test_seed75_engine_scope_adapter_restores_every_global() -> None:
         assert seed75.FOLD_MAP == confirmatory.CONFIRMATORY_FOLD_MAP
         assert seed75.MANIFEST == confirmatory.MANIFEST
     assert {name: getattr(seed75, name) for name in names} == before
+
+
+def test_scope_adapter_rebinds_seed75_validator_default() -> None:
+    observed = [
+        {"seed": seed, "arm": arm, "dataset_role": role}
+        for seed in confirmatory.SEEDS
+        for arm in confirmatory.TRAIN_ARMS
+        for role in confirmatory.FINAL_EVAL_DATASETS
+    ]
+    with confirmatory._base_scope():
+        assert seed75.validate_evaluation_inventory(observed) == []
 
 
 def test_p0_p1_are_exact_single_factor_configs(tmp_path: Path) -> None:

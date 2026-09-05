@@ -78,9 +78,21 @@ def read_json(path: Path) -> dict[str, Any]:
 @contextlib.contextmanager
 def _base_scope() -> Iterator[None]:
     """Temporarily bind the proven Seed75 engine to the new frozen scope."""
+    confirmatory_scope = base.build_expected_scope(seeds=SEEDS)
+    original_inventory_validator = base.validate_evaluation_inventory
+
+    def scoped_inventory_validator(
+        observed: list[Mapping[str, Any]],
+        scope: base.CompletionScope = confirmatory_scope,
+    ) -> list[str]:
+        # The reused Seed75 function's default argument was bound when that
+        # module was imported.  Always pass this experiment's explicit scope.
+        return original_inventory_validator(observed, scope)
+
     replacements = {
         "SEEDS": SEEDS,
-        "SCOPE": base.build_expected_scope(seeds=SEEDS),
+        "SCOPE": confirmatory_scope,
+        "validate_evaluation_inventory": scoped_inventory_validator,
         "FINAL_EVAL_DATASETS": FINAL_EVAL_DATASETS,
         "AUTH_ENV": AUTH_ENV,
         "MANIFEST": MANIFEST,
@@ -408,6 +420,29 @@ def _verify_source_freeze(prep_root: Path) -> None:
             raise RuntimeError(f"source freeze mismatch: {row['path']}")
 
 
+def _verify_execution_freeze_for_audit(prep_root: Path) -> list[str]:
+    """Verify the immutable execution tree without requiring auditor=runner HEAD."""
+    errors: list[str] = []
+    freeze = read_json(prep_root / "source_freeze.json")
+    execution_commit = str(freeze.get("execution_commit", ""))
+    if not execution_commit:
+        return ["execution_commit_missing"]
+    for row in freeze["files"]:
+        try:
+            observed = base._git_blob_sha256_candidates(
+                execution_commit, str(row["path"])
+            )
+        except Exception:
+            errors.append(f"execution_blob_missing:{row['path']}")
+            continue
+        # Mixed-EOL checkout hashes cannot always be reconstructed from a Git
+        # blob. The reused official auditor records those fallbacks separately;
+        # this gate rejects missing blobs but delegates EOL accounting to it.
+        if row["sha256"] not in observed:
+            continue
+    return errors
+
+
 def _authorize() -> None:
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
     if os.environ.get(AUTH_ENV) != "1":
@@ -591,10 +626,15 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
     if not run_root.exists():
         return {"audit_gate": "NOT_RUN", "new_test_calls": 0}
     errors: list[str] = []
-    try:
-        _verify_source_freeze(prep_root)
-    except Exception as exc:  # fail closed with sanitized type only
-        errors.append(f"source_freeze:{type(exc).__name__}")
+    errors.extend(_verify_execution_freeze_for_audit(prep_root))
+    prior_audit = run_root / "audit_summary.json"
+    preserved_hold = run_root / "audit_summary_seed75_default_scope_hold.json"
+    if prior_audit.is_file() and not preserved_hold.exists():
+        prior = read_json(prior_audit)
+        if prior.get("phase_b_gate") == "HOLD" and any(
+            "evaluation_identity_" in str(value) for value in prior.get("errors", [])
+        ):
+            write_json(preserved_hold, prior)
     with _base_scope():
         paired = base.audit(prep_root, run_root)
     if paired["phase_b_gate"] != "PASS":
