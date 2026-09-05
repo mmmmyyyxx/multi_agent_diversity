@@ -1,7 +1,7 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_generic_shadow_pilot_v1
 title: Vote-Aligned Mild Responsibility on Shadow-Gated Generic Evolution
-status: RUNNING
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T00:00:00+08:00'}
@@ -9,6 +9,9 @@ lifecycle_history:
   - {status: IMPLEMENTED, timestamp: '2026-09-05T02:25:23+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T02:25:23+08:00'}
   - {status: RUNNING, timestamp: '2026-09-05T11:30:39+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-05T17:58:00+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-05T18:00:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-05T18:10:52+08:00'}
 lineage: {parents: [anti_overfitting_shadow_gate_v1], derives_from: anti_overfitting_shadow_gate_v1}
 scientific_question: Does hierarchical direct-flip then near-margin then coverage target scheduling improve plurality Vote without degrading mean member competence on Shadow-gated D2 Generic?
 hypotheses:
@@ -51,17 +54,24 @@ artifacts:
   preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: b3e803df75788102293ca19111823e48f69229900ce8c0434f1128cc3fed0e08}
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
-git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 8db59d127d793abf1ce2c20041d6fd11282b39af, result_commit: null}
-result: {classifier: USER_STOPPED_BEFORE_FIRST_TRAJECTORY_CHECKPOINT, conclusion: Seed75 was stopped by the user after API work began but before either trajectory completed; no scientific interpretation is permitted, evidence_type: not_yet_available}
+git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: e602132b6c2e7a036815df9df576987e1c98835e, result_commit: a0b34f3670a556caff23388b5c569b54b278b7f0}
+result: {classifier: NO_CLEAR_SIGNAL, conclusion: P1 improved Validation Vote and Vote-minus-MeanMember on Seed75 but exceeded the frozen MeanMember-loss tolerance and sharply reduced Oracle coverage; descriptive one-seed evidence is mixed, evidence_type: online}
 termination:
-  user_stopped: true
+  user_stopped: false
   resume_authorized: false
-  completed_trajectories: 0
+  completed_trajectories: 2
   p0_started: true
-  p1_started: false
-  validation_evaluations: 0
+  p1_started: true
+  p0_status: completed_by_early_stop
+  p0_planned_updates: 32
+  p0_executed_updates: 21
+  p1_status: completed_by_early_stop
+  p1_planned_updates: 32
+  p1_executed_updates: 20
+  shadow_evaluations: 2
+  validation_evaluations: 2
   test_calls: 0
-  status_note: RUNNING is retained only because experiment_manifest_v1 has no cancelled lifecycle state
+  status_note: P0 completion was derived post-hoc from preserved deterministic early-stop evidence without rerun; P1 completed under repaired semantics
 reauthorization:
   p0_execution_commit: 1c7c545061fccb16fab4a40d6086ed69e88eb655
   prior_attempt_preserved: true
