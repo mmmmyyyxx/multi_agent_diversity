@@ -100,6 +100,15 @@ def _source_snapshots() -> dict[str, Mapping[str, Any]]:
     return {"INITIAL": initial, "P0": p0["initialization_snapshot"], "P1": p1["initialization_snapshot"]}
 
 
+def _recorded_test_calls(summary: Mapping[str, Any]) -> int:
+    """Read the versioned test-call field without weakening the zero-call gate."""
+    if "new_test_calls" in summary:
+        return int(summary["new_test_calls"])
+    if "test_calls" in summary:
+        return int(summary["test_calls"])
+    raise KeyError("execution summary has no test-call field")
+
+
 def classify_member_effect(delta: float) -> str:
     if delta > MEMBER_TOLERANCE:
         return "P1_ABSOLUTE_MEMBER_GAIN"
@@ -139,7 +148,7 @@ def prepare(prep_root: Path) -> dict[str, Any]:
         "FROZEN_PILOT": (
             source_classifier == "NO_CLEAR_SIGNAL"
             and read_json(SOURCE_RUN / "execution_summary.json")["completed_trajectories"] == 2
-            and read_json(SOURCE_RUN / "execution_summary.json")["test_calls"] == 0
+            and _recorded_test_calls(read_json(SOURCE_RUN / "execution_summary.json")) == 0
         ),
         "CACHE_PRESENT": INITIAL_CACHE.is_file(),
         "TEST_BLOCKED": True,
