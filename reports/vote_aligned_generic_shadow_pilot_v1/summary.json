@@ -1,28 +1,14 @@
 {
-  "phase_a_api_calls": 0,
-  "phase_b_api_activity": "nonzero_incomplete_accounting_before_checkpoint",
-  "arms": ["P0_SHADOW_D2_GENERIC", "P1_SHADOW_VOTE_ALIGNED_GENERIC"],
-  "completed_trajectories": 0,
-  "initialization_frozen": true,
+  "analysis_gate": "PASS",
+  "classifier": "NO_CLEAR_SIGNAL",
+  "mean_paired_ensemble_gain_delta": 0.07599999999999996,
+  "mean_paired_validation_member_delta": -0.016000000000000014,
+  "mean_paired_validation_oracle_delta": -0.17999999999999994,
+  "mean_paired_validation_vote_delta": 0.05999999999999994,
   "new_test_calls": 0,
-  "phase_a_gate": "PASS",
-  "phase_b_gate": "USER_STOPPED",
-  "p0_started": true,
-  "p1_started": false,
-  "prior_partial_seed75_artifact_reused": false,
-  "resume_authorized": false,
-  "seeds": [75],
-  "validation_calls": 0,
-  "completion_scope_repair": {
-    "expected_trajectories": 2,
-    "expected_final_evaluation_artifacts": 4,
-    "identity_aware_inventory": true,
-    "pure_coverage_telemetry_mutually_exclusive": true,
-    "target_scheduling_behavior_changed": false,
-    "scientific_protocol_changed": false,
-    "phase_b_resumed": false,
-    "repair_task_api_calls": 0,
-    "repair_task_validation_calls": 0,
-    "repair_task_test_calls": 0
-  }
+  "vote_wins_ties_losses": [
+    1,
+    0,
+    0
+  ]
 }

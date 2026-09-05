@@ -1,4 +1,6 @@
 Status: PASS
 Findings: 0
-Scope: report files contain only configuration, hashes, counters, aggregate placeholders, Phase A verification facts, engineering-repair facts, and sanitized user-stop lifecycle facts.
+Scope: report files contain only configuration, hashes, counters, aggregate metrics, completion evidence, audit facts, classifier output, and sanitized lifecycle/provenance facts.
 Excluded: prompts, questions, gold/model answers, raw responses, endpoints, credentials, SQLite content, checkpoints, and absolute paths.
+Scanner: scripts/validate_sanitized_artifacts.py
+Test50 content and outcomes: absent; Test50 calls were zero.

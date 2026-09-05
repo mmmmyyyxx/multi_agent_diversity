@@ -1035,6 +1035,7 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
             if any(not (cell / name).is_file() for name in required):
                 continue
             checkpoint = json.loads((cell / "training_checkpoint.json").read_text(encoding="utf-8"))
+            termination = _termination_from_checkpoint(checkpoint)
             assessment = _termination_from_checkpoint(checkpoint)
             derived, derived_errors = _verify_derived_completion(cell)
             errors.extend(f"{seed}:{arm}:{value}" for value in derived_errors)
@@ -1200,6 +1201,7 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
         for arm in SCOPE.arms:
             cell = run_root / f"seed{seed}" / arm
             checkpoint = json.loads((cell / "training_checkpoint.json").read_text(encoding="utf-8"))
+            termination = _termination_from_checkpoint(checkpoint)
             evaluations = {
                 split: json.loads((run_root / "evaluation" / f"seed{seed}" / arm / split / "evaluation_summary_private.json").read_text(encoding="utf-8"))
                 for split in SCOPE.final_eval_datasets
@@ -1260,8 +1262,8 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
             optimize_oracle = float(final_optimize["oracle_accuracy"])
             actual_opportunities = int(checkpoint["completed_update_count"])
             early_stop_index = (
-                actual_opportunities - 1
-                if actual_opportunities < int(checkpoint["planned_update_count"])
+                termination.terminal_update_index
+                if termination.status == COMPLETED_BY_EARLY_STOP
                 else ""
             )
             trajectories.append({
@@ -1269,6 +1271,10 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
                 "arm": arm,
                 "scheduled_update_opportunities": int(checkpoint["planned_update_count"]),
                 "actual_update_opportunities": actual_opportunities,
+                "remaining_unexecuted_opportunities": termination.remaining_unexecuted,
+                "termination_status": termination.status,
+                "terminal_update_ordinal": termination.terminal_update_ordinal,
+                "final_no_commit_streak": termination.final_no_commit_streak,
                 "early_stop_reason": checkpoint["early_stop_reason"],
                 "early_stop_update_index": early_stop_index,
                 "target_slots": sum(len(row.get("selected_target_ids", [])) for row in target_audits),
@@ -1333,6 +1339,7 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
     mean_vote = sum(row["validation_vote_delta"] for row in contrasts) / len(contrasts)
     mean_member = sum(row["validation_mean_member_delta"] for row in contrasts) / len(contrasts)
     mean_ensemble = sum(row["validation_ensemble_gain_delta"] for row in contrasts) / len(contrasts)
+    mean_oracle = sum(row["validation_oracle_delta"] for row in contrasts) / len(contrasts)
     wins = sum(row["validation_vote_delta"] > 0 for row in contrasts)
     losses = sum(row["validation_vote_delta"] < 0 for row in contrasts)
     if mean_vote > 0 and wins > losses and mean_member >= -0.01 and mean_ensemble > 0:
@@ -1349,6 +1356,7 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
         "mean_paired_validation_vote_delta": mean_vote,
         "mean_paired_validation_member_delta": mean_member,
         "mean_paired_ensemble_gain_delta": mean_ensemble,
+        "mean_paired_validation_oracle_delta": mean_oracle,
         "vote_wins_ties_losses": [wins, len(contrasts) - wins - losses, losses],
         "new_test_calls": 0,
     }

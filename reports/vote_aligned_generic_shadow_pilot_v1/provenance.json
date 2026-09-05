@@ -1,19 +1,34 @@
 {
-  "execution_source_commit": "98924a0bdbaeebe5b34cbed28791d6e8fa4454bc",
-  "historical_requested_baseline": "dc4971832754a9dbf5d64e08e571a65d75edd473",
-  "historical_requested_baseline_was_current_head": false,
-  "historical_partial_seed75_reused": false,
-  "authorized_execution_commit": "c2899f61a39e2b9d4bfad2f67d21899957cbc609",
+  "report_version": "vote_aligned_seed75_paired_pilot_v2",
   "method_identity": "member_aware_peer_state_v15",
-  "phase_a_source_freeze_clean": true,
   "runtime_version": "vote_aligned_generic_shadow_pilot_v1",
-  "termination": {
-    "completed_trajectories": 0,
-    "p0_started": true,
-    "p1_started": false,
-    "resume_authorized": false,
-    "user_stopped": true,
-    "validation_evaluations": 0,
-    "test_calls": 0
-  }
+  "models": {
+    "solver": "qwen3-8b",
+    "teacher": "qwen3.7-flash",
+    "critic": "qwen3.7-flash",
+    "student": "qwen3.7-flash",
+    "evaluator": "qwen3.7-flash",
+    "thinking": false
+  },
+  "execution_source_commit": "e602132b6c2e7a036815df9df576987e1c98835e",
+  "completion_repair_commits": [
+    "4f48a40530288ce9b3e066916d8cd347580f8bcf",
+    "e602132b6c2e7a036815df9df576987e1c98835e"
+  ],
+  "corrected_auditor_commits": [
+    "caa540692207e12ac16d7be9214d17e34bb3809c",
+    "2a61aaec95cc0fa645eb4fff2f1b9a069bd0fec8"
+  ],
+  "p0_original_execution_commit": "1c7c545061fccb16fab4a40d6086ed69e88eb655",
+  "p0_completion_derived_post_hoc": true,
+  "p0_training_rerun": false,
+  "p0_additional_model_calls": 0,
+  "p1_executed_once_after_zero_call_preupdate_gate_failure": true,
+  "completed_trajectories": 2,
+  "final_shadow_evaluations": 2,
+  "final_validation_evaluations": 2,
+  "new_test_calls": 0,
+  "official_corrected_audit": "PASS",
+  "classifier": "NO_CLEAR_SIGNAL",
+  "evidence_type": "online"
 }

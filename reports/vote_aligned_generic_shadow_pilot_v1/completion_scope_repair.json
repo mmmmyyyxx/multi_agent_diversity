@@ -1,35 +1,38 @@
 {
-  "report_version": "vote_aligned_completion_scope_repair_v1",
-  "repair_scope": "engineering_and_audit_only",
+  "report_version": "vote_aligned_completion_semantics_repair_v2",
+  "repair_scope": "engineering_completion_and_audit_only",
   "scientific_protocol_changed": false,
-  "seeds": [75],
-  "arms": [
-    "P0_SHADOW_D2_GENERIC",
-    "P1_SHADOW_VOTE_ALIGNED_GENERIC"
-  ],
-  "final_evaluation_datasets": [
-    "shadow",
-    "validation"
-  ],
   "expected_trajectories": 2,
-  "expected_shadow_evaluations": 2,
-  "expected_validation_evaluations": 2,
-  "expected_test_evaluations": 0,
   "expected_final_evaluation_artifacts": 4,
-  "evaluation_inventory_identity_aware": true,
-  "partial_execution_gate": "USER_ABORTED_INCOMPLETE",
-  "completed_trajectories": 0,
-  "p0_status": "incomplete",
-  "p1_status": "not_started",
-  "phase_b_resumed": false,
-  "api_calls": 0,
-  "solver_calls": 0,
-  "teacher_calls": 0,
-  "critic_calls": 0,
-  "student_calls": 0,
-  "evaluator_calls": 0,
-  "validation_calls": 0,
-  "test_calls": 0,
-  "pure_coverage_telemetry_changed": true,
-  "target_scheduling_behavior_changed": false
+  "completed_trajectories": 2,
+  "completion_status": "COMPLETE",
+  "official_corrected_audit": "PASS",
+  "original_post_run_audit_preserved_as_hold": true,
+  "p0": {
+    "planned_update_opportunities": 32,
+    "executed_update_opportunities": 21,
+    "remaining_unexecuted": 11,
+    "termination_status": "completed_by_early_stop",
+    "early_stop_reason": "no_shadow_approved_commit_streak_6",
+    "terminal_update_index": 20,
+    "terminal_update_ordinal": 21,
+    "final_no_commit_streak": 6,
+    "completion_derived_from_existing_evidence": true,
+    "training_rerun": false,
+    "additional_model_calls": 0
+  },
+  "p1": {
+    "planned_update_opportunities": 32,
+    "executed_update_opportunities": 20,
+    "remaining_unexecuted": 12,
+    "termination_status": "completed_by_early_stop",
+    "early_stop_reason": "no_shadow_approved_commit_streak_6",
+    "terminal_update_index": 19,
+    "terminal_update_ordinal": 20,
+    "final_no_commit_streak": 6,
+    "completion_derived_from_existing_evidence": false
+  },
+  "shadow_evaluations": 2,
+  "validation_evaluations": 2,
+  "test_calls": 0
 }

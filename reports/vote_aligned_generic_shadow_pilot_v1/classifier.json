@@ -1,4 +1,3 @@
 {
-  "classifier": "USER_STOPPED_BEFORE_FIRST_TRAJECTORY_CHECKPOINT",
-  "scientific_result_available": false
+  "classifier": "NO_CLEAR_SIGNAL"
 }
