@@ -521,10 +521,20 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
     return summary
 
 
-async def _evaluate_final_dataset(cell: Path, data_path: Path, split: str, out: Path) -> dict[str, Any]:
+async def _evaluate_final_dataset(
+    cell: Path,
+    data_path: Path,
+    split: str,
+    out: Path,
+    *,
+    evaluation_identity: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     result_path = out / "evaluation_summary_private.json"
     if result_path.is_file():
-        return json.loads(result_path.read_text(encoding="utf-8"))
+        prior = json.loads(result_path.read_text(encoding="utf-8"))
+        if evaluation_identity is not None and prior.get("evaluation_identity") != dict(evaluation_identity):
+            raise RuntimeError(f"{split} evaluation identity conflict")
+        return prior
     meta = json.loads((cell / "run_meta.json").read_text(encoding="utf-8"))
     checkpoint_path = cell / "training_checkpoint.json"
     checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
@@ -593,6 +603,8 @@ async def _evaluate_final_dataset(cell: Path, data_path: Path, split: str, out: 
         "total_tokens": int(cost["total_tokens"]),
         "state_mutation": False, "checkpoint_mutation": False, "test_calls": 0,
     }
+    if evaluation_identity is not None:
+        payload["evaluation_identity"] = dict(evaluation_identity)
     write_json(result_path, payload)
     return payload
 

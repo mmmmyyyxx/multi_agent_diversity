@@ -86,6 +86,93 @@ def test_protocol_freezes_required_split_models_and_zero_test() -> None:
     assert protocol["shared_protocol"]["maximum_update_opportunities"] == 32
     assert protocol["shared_protocol"]["target_slots"] == 2
     assert protocol["shared_protocol"]["source_candidates_per_target"] == 2
+    assert protocol["completion_scope"] == {
+        "expected_trajectories": 2,
+        "expected_shadow_evaluations": 2,
+        "expected_validation_evaluations": 2,
+        "expected_final_evaluation_artifacts": 4,
+    }
+
+
+def test_completion_scope_is_derived_from_production_dimensions() -> None:
+    scope = pilot.build_expected_scope()
+    assert scope.seeds == (75,)
+    assert scope.arms == (pilot.P0, pilot.P1)
+    assert scope.expected_trajectories == 2
+    assert scope.expected_final_evaluations == 4
+    assert scope.final_evaluation_identities == (
+        (75, pilot.P0, "shadow"),
+        (75, pilot.P0, "validation"),
+        (75, pilot.P1, "shadow"),
+        (75, pilot.P1, "validation"),
+    )
+
+
+def test_evaluation_identity_inventory_accepts_exact_scope() -> None:
+    observed = [
+        {"seed": seed, "arm": arm, "dataset_role": role}
+        for seed, arm, role in pilot.SCOPE.final_evaluation_identities
+    ]
+    assert pilot.validate_evaluation_inventory(observed) == []
+
+
+@pytest.mark.parametrize(
+    "observed,error_fragment",
+    [
+        (
+            [
+                {"seed": seed, "arm": arm, "dataset_role": role}
+                for seed, arm, role in pilot.SCOPE.final_evaluation_identities[:-1]
+            ],
+            "evaluation_identity_missing",
+        ),
+        (
+            [
+                *(
+                    {"seed": seed, "arm": arm, "dataset_role": role}
+                    for seed, arm, role in pilot.SCOPE.final_evaluation_identities
+                ),
+                {"seed": 75, "arm": pilot.P0, "dataset_role": "shadow"},
+            ],
+            "evaluation_identity_duplicate",
+        ),
+        (
+            [
+                *(
+                    {"seed": seed, "arm": arm, "dataset_role": role}
+                    for seed, arm, role in pilot.SCOPE.final_evaluation_identities
+                ),
+                {"seed": 75, "arm": pilot.P0, "dataset_role": "test"},
+            ],
+            "test_evaluation_present",
+        ),
+        (
+            [
+                *(
+                    {"seed": seed, "arm": arm, "dataset_role": role}
+                    for seed, arm, role in pilot.SCOPE.final_evaluation_identities
+                ),
+                {"seed": 76, "arm": pilot.P0, "dataset_role": "shadow"},
+            ],
+            "evaluation_identity_unexpected",
+        ),
+        (
+            [
+                *(
+                    {"seed": seed, "arm": arm, "dataset_role": role}
+                    for seed, arm, role in pilot.SCOPE.final_evaluation_identities
+                ),
+                {"seed": 75, "arm": "WRONG_ARM", "dataset_role": "shadow"},
+            ],
+            "evaluation_identity_unexpected",
+        ),
+    ],
+)
+def test_evaluation_identity_inventory_rejects_bad_scope(
+    observed: list[dict[str, object]], error_fragment: str
+) -> None:
+    errors = pilot.validate_evaluation_inventory(observed)
+    assert any(error_fragment in error for error in errors)
 
 
 def test_audit_before_phase_b_is_not_run(tmp_path: Path) -> None:
@@ -93,13 +180,38 @@ def test_audit_before_phase_b_is_not_run(tmp_path: Path) -> None:
     assert result == {"phase_b_gate": "NOT_RUN", "new_test_calls": 0}
 
 
+def test_partial_user_stopped_execution_remains_hold(tmp_path: Path) -> None:
+    prep = tmp_path / "prep"
+    run = tmp_path / "run"
+    prep.mkdir()
+    (prep / "source_freeze.json").write_text(
+        json.dumps({"files": []}), encoding="utf-8"
+    )
+    (run / "seed75" / pilot.P0).mkdir(parents=True)
+    (run / "USER_STOPPED.json").write_text("{}", encoding="utf-8")
+
+    result = pilot.audit(prep, run)
+
+    assert result["phase_b_gate"] == "HOLD"
+    assert result["completion_status"] == "USER_ABORTED_INCOMPLETE"
+    assert result["trajectory_count"] == 0
+    assert result["expected_trajectory_count"] == 2
+    assert result["final_evaluation_count"] == 0
+    assert result["expected_final_evaluation_count"] == 4
+    assert any(error.startswith("missing:75:") for error in result["errors"])
+    assert any(
+        error.startswith("evaluation_identity_missing:")
+        for error in result["errors"]
+    )
+
+
 def test_prepare_source_contains_test_sentinel_and_no_test_evaluation() -> None:
     source = Path(pilot.__file__).read_text(encoding="utf-8")
     assert 'test_path="TEST50_BLOCKED_BY_GOVERNANCE"' in source
     assert "test_size=0" in source
     assert "final_test_enabled=False" in source
-    assert 'for split in ("shadow", "validation")' in source
-    assert '"test"' not in source.split('for split in ("shadow", "validation")', 1)[1].split("write_csv", 1)[0]
+    assert 'FINAL_EVAL_DATASETS = ("shadow", "validation")' in source
+    assert '"test" in scope.final_eval_datasets' in source
 
 
 def test_selector_synthetic_gate_is_deterministic() -> None:

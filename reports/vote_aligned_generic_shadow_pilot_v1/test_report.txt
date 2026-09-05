@@ -1,13 +1,15 @@
-Phase A focused tests: PASS (53 passed).
-Phase A full tests: PASS (859 passed).
+Engineering-repair focused tests: PASS (35 passed).
+Engineering-repair full tests: PASS (870 passed; baseline 859).
 Compileall: PASS.
 Governance preflight: PASS.
 Method preflight: PASS (zero-API canonical contract check).
 Custom ten-gate Phase A preflight: PASS.
 Deterministic selector replay: PASS.
-API calls: 0.
-Validation calls: 0.
-New Test calls: 0.
+Repair-task API/model calls: 0.
+Repair-task Validation evaluation calls: 0.
+Repair-task Test calls: 0.
+Scientific protocol changed: NO.
+Seed75 execution resumed: NO.
 Seed75 Phase B: USER_STOPPED before first complete trajectory checkpoint.
 Completed trajectories: 0/2.
 Validation evaluations: 0.

@@ -37,6 +37,20 @@ def _near_margin(
     return int(current_margin_by_question[row.question_hash]) + int(row.margin_gain) == 0
 
 
+def classify_opportunity_lane(
+    row: MemberAwareRepairOpportunity,
+    current_margin_by_question: Mapping[str, int],
+) -> str | None:
+    """Return the mutually exclusive telemetry lane used by the hierarchy."""
+    if int(row.vote_flip_gain) > 0:
+        return DIRECT_FLIP
+    if _near_margin(row, current_margin_by_question):
+        return NEAR_MARGIN
+    if bool(row.coverage_opportunity):
+        return PURE_COVERAGE
+    return None
+
+
 def member_lane_counts(
     assigned: Mapping[int, Sequence[MemberAwareRepairOpportunity]],
     current_margin_by_question: Mapping[str, int],
@@ -45,12 +59,14 @@ def member_lane_counts(
     for agent_id, rows in assigned.items():
         if not rows:
             continue
+        lanes = [
+            classify_opportunity_lane(row, current_margin_by_question)
+            for row in rows
+        ]
         result[int(agent_id)] = {
-            DIRECT_FLIP: sum(int(row.vote_flip_gain) > 0 for row in rows),
-            NEAR_MARGIN: sum(
-                _near_margin(row, current_margin_by_question) for row in rows
-            ),
-            PURE_COVERAGE: sum(bool(row.coverage_opportunity) for row in rows),
+            DIRECT_FLIP: lanes.count(DIRECT_FLIP),
+            NEAR_MARGIN: lanes.count(NEAR_MARGIN),
+            PURE_COVERAGE: lanes.count(PURE_COVERAGE),
         }
     return result
 

@@ -14,6 +14,7 @@ import json
 import os
 import sqlite3
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -75,6 +76,7 @@ P1 = "P1_SHADOW_VOTE_ALIGNED_GENERIC"
 ARMS = (P0, P1)
 SCHEDULER_BY_ARM = {P0: RR_GENERIC_SCHEDULER, P1: VOTE_ALIGNED_RR_SCHEDULER}
 SEEDS = (75,)
+FINAL_EVAL_DATASETS = ("shadow", "validation")
 AUTH_ENV = "VOTE_ALIGNED_SHADOW_PHASE_B_AUTHORIZED"
 MANIFEST = ROOT / "experiments" / "manifests" / "vote_aligned_generic_shadow_pilot_v1.yaml"
 DESIGN_ROOT = ROOT / "experiments" / "vote_aligned_generic_shadow_pilot_v1"
@@ -83,6 +85,101 @@ DEFAULT_PREP_ROOT = ROOT / "runs" / "vote_aligned_generic_shadow_pilot_v1_prep"
 DEFAULT_RUN_ROOT = ROOT / "runs" / "vote_aligned_generic_shadow_pilot_v1"
 DEFAULT_REPORT_ROOT = ROOT / "reports" / "vote_aligned_generic_shadow_pilot_v1"
 RUNTIME_VERSION = "vote_aligned_generic_shadow_pilot_v1"
+
+
+@dataclass(frozen=True)
+class CompletionScope:
+    seeds: tuple[int, ...]
+    arms: tuple[str, ...]
+    final_eval_datasets: tuple[str, ...]
+
+    @property
+    def trajectory_identities(self) -> tuple[tuple[int, str], ...]:
+        return tuple((seed, arm) for seed in self.seeds for arm in self.arms)
+
+    @property
+    def final_evaluation_identities(self) -> tuple[tuple[int, str, str], ...]:
+        return tuple(
+            (seed, arm, dataset_role)
+            for seed, arm in self.trajectory_identities
+            for dataset_role in self.final_eval_datasets
+        )
+
+    @property
+    def expected_trajectories(self) -> int:
+        return len(self.trajectory_identities)
+
+    @property
+    def expected_final_evaluations(self) -> int:
+        return len(self.final_evaluation_identities)
+
+
+def build_expected_scope(
+    *,
+    seeds: tuple[int, ...] = SEEDS,
+    arms: tuple[str, ...] = ARMS,
+    final_eval_datasets: tuple[str, ...] = FINAL_EVAL_DATASETS,
+) -> CompletionScope:
+    """Build the one canonical completion inventory without performing I/O."""
+    scope = CompletionScope(
+        seeds=tuple(map(int, seeds)),
+        arms=tuple(map(str, arms)),
+        final_eval_datasets=tuple(map(str, final_eval_datasets)),
+    )
+    if not scope.seeds or not scope.arms or not scope.final_eval_datasets:
+        raise ValueError("completion scope dimensions must be non-empty")
+    if len(scope.seeds) != len(set(scope.seeds)):
+        raise ValueError("completion scope seeds must be unique")
+    if len(scope.arms) != len(set(scope.arms)):
+        raise ValueError("completion scope arms must be unique")
+    if len(scope.final_eval_datasets) != len(set(scope.final_eval_datasets)):
+        raise ValueError("completion scope datasets must be unique")
+    if "test" in scope.final_eval_datasets:
+        raise ValueError("Test is forbidden from the pilot completion scope")
+    return scope
+
+
+SCOPE = build_expected_scope()
+
+
+def validate_evaluation_inventory(
+    observed: list[Mapping[str, Any]],
+    scope: CompletionScope = SCOPE,
+) -> list[str]:
+    """Validate exact final-evaluation identities, including duplicates/extras."""
+    errors: list[str] = []
+    identities: list[tuple[int, str, str]] = []
+    for index, row in enumerate(observed):
+        try:
+            identity = (
+                int(row["seed"]),
+                str(row["arm"]),
+                str(row["dataset_role"]),
+            )
+        except (KeyError, TypeError, ValueError):
+            errors.append(f"evaluation_identity_invalid:{index}")
+            continue
+        identities.append(identity)
+        if identity[2] == "test":
+            errors.append("test_evaluation_present")
+    duplicates = sorted(
+        identity for identity in set(identities) if identities.count(identity) > 1
+    )
+    errors.extend(
+        f"evaluation_identity_duplicate:{seed}:{arm}:{dataset}"
+        for seed, arm, dataset in duplicates
+    )
+    expected = set(scope.final_evaluation_identities)
+    actual = set(identities)
+    errors.extend(
+        f"evaluation_identity_missing:{seed}:{arm}:{dataset}"
+        for seed, arm, dataset in sorted(expected - actual)
+    )
+    errors.extend(
+        f"evaluation_identity_unexpected:{seed}:{arm}:{dataset}"
+        for seed, arm, dataset in sorted(actual - expected)
+    )
+    return errors
 
 
 class VoteAlignedShadowSystem(ShadowGatedSystem):
@@ -198,12 +295,26 @@ def _protocol_document() -> dict[str, Any]:
             "evaluator": ROLE_MODEL,
             "thinking": False,
         },
-        "seeds": list(SEEDS),
+        "seeds": list(SCOPE.seeds),
         "fold_map": [
-            {"seed": SEEDS[index], "optimize": pair[0], "shadow": pair[1]}
-            for index, pair in enumerate(FOLD_MAP[:len(SEEDS)])
+            {"seed": SCOPE.seeds[index], "optimize": pair[0], "shadow": pair[1]}
+            for index, pair in enumerate(FOLD_MAP[:len(SCOPE.seeds)])
         ],
-        "arms": {arm: {"target_scheduler": SCHEDULER_BY_ARM[arm]} for arm in ARMS},
+        "arms": {arm: {"target_scheduler": SCHEDULER_BY_ARM[arm]} for arm in SCOPE.arms},
+        "completion_scope": {
+            "expected_trajectories": SCOPE.expected_trajectories,
+            "expected_shadow_evaluations": sum(
+                identity[2] == "shadow"
+                for identity in SCOPE.final_evaluation_identities
+            ),
+            "expected_validation_evaluations": sum(
+                identity[2] == "validation"
+                for identity in SCOPE.final_evaluation_identities
+            ),
+            "expected_final_evaluation_artifacts": (
+                SCOPE.expected_final_evaluations
+            ),
+        },
         "shared_protocol": {
             "experiment_setting": "experimental_diversity_d2_rr_generic",
             "proposal": "generic_peer_state",
@@ -331,7 +442,7 @@ def prepare(prep_root: Path) -> dict[str, Any]:
             == sha256_json(sorted(old_split["question_hashes"]["test"]))
         ),
         "CROSSFIT_GATE": (
-            tuple(SEEDS) == (75,)
+            SCOPE.seeds == (75,)
             and tuple(FOLD_MAP[0]) == ("fold_a+fold_b", "fold_c")
         ),
         "MODEL_GATE": (
@@ -382,8 +493,8 @@ def prepare(prep_root: Path) -> dict[str, Any]:
         "api_calls": 0,
         "validation_calls": 0,
         "new_test_calls": 0,
-        "seeds": list(SEEDS),
-        "arms": list(ARMS),
+        "seeds": list(SCOPE.seeds),
+        "arms": list(SCOPE.arms),
         "scheduler_version": VOTE_ALIGNED_SCHEDULER_VERSION,
         "prior_partial_seed75_artifact_reused": False,
     }
@@ -463,13 +574,13 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
     if phase_a["phase_a_gate"] != "PASS":
         raise RuntimeError("Phase A gate is not PASS")
     run_root.mkdir(parents=True, exist_ok=True)
-    for index, seed in enumerate(SEEDS):
+    for index, seed in enumerate(SCOPE.seeds):
         optimize, shadow = _fold_paths(prep_root, index)
         validation = prep_root / "splits_private" / "validation.csv"
         initialization, stable = await _freeze_initialization(
             seed, optimize, validation, run_root / "initialization" / f"seed{seed}"
         )
-        for arm in ARMS:
+        for arm in SCOPE.arms:
             out = run_root / f"seed{seed}" / arm
             if (out / "final_summary.json").is_file():
                 continue
@@ -505,22 +616,36 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
                     handle.write(json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n")
 
     evaluations: list[dict[str, Any]] = []
-    for index, seed in enumerate(SEEDS):
+    for index, seed in enumerate(SCOPE.seeds):
         _, shadow = _fold_paths(prep_root, index)
         validation = prep_root / "splits_private" / "validation.csv"
-        for arm in ARMS:
+        for arm in SCOPE.arms:
             cell = run_root / f"seed{seed}" / arm
-            evaluations.append(await _evaluate_final_dataset(
-                cell, shadow, "shadow", run_root / "evaluation" / f"seed{seed}" / arm / "shadow"
-            ))
-            evaluations.append(await _evaluate_final_dataset(
-                cell, validation, "validation", run_root / "evaluation" / f"seed{seed}" / arm / "validation"
-            ))
+            paths = {"shadow": shadow, "validation": validation}
+            for dataset_role in SCOPE.final_eval_datasets:
+                evaluations.append(await _evaluate_final_dataset(
+                    cell,
+                    paths[dataset_role],
+                    dataset_role,
+                    run_root / "evaluation" / f"seed{seed}" / arm / dataset_role,
+                    evaluation_identity={
+                        "seed": seed,
+                        "arm": arm,
+                        "dataset_role": dataset_role,
+                    },
+                ))
     result = {
         "execution_gate": "PASS",
-        "completed_trajectories": 6,
-        "final_shadow_evaluations": 6,
-        "final_validation_evaluations": 6,
+        "completed_trajectories": SCOPE.expected_trajectories,
+        "final_shadow_evaluations": sum(
+            identity[2] == "shadow"
+            for identity in SCOPE.final_evaluation_identities
+        ),
+        "final_validation_evaluations": sum(
+            identity[2] == "validation"
+            for identity in SCOPE.final_evaluation_identities
+        ),
+        "final_evaluation_artifacts": SCOPE.expected_final_evaluations,
         "provider_calls_in_final_evaluation": sum(int(row["provider_calls"]) for row in evaluations),
         "new_test_calls": 0,
     }
@@ -537,9 +662,9 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
     for frozen in freeze["files"]:
         if sha256_file(ROOT / frozen["path"]) != frozen["sha256"]:
             errors.append(f"source_freeze:{frozen['path']}")
-    for seed in SEEDS:
+    for seed in SCOPE.seeds:
         init_hashes: set[str] = set()
-        for arm in ARMS:
+        for arm in SCOPE.arms:
             cell = run_root / f"seed{seed}" / arm
             required = ["final_summary.json", "training_checkpoint.json", "run_meta.json", "completed_update_registry.json"]
             for name in required:
@@ -620,14 +745,41 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
                 errors.append(f"early_stop:{seed}:{arm}")
         if len(init_hashes) != 1:
             errors.append(f"paired_initialization:{seed}")
-    evaluations = list((run_root / "evaluation").rglob("evaluation_summary_private.json"))
-    if len(evaluations) != 12:
-        errors.append("final_evaluation_inventory")
+    evaluation_files = list(
+        (run_root / "evaluation").rglob("evaluation_summary_private.json")
+    )
+    observed_evaluations: list[Mapping[str, Any]] = []
+    for path in evaluation_files:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        identity = payload.get("evaluation_identity")
+        if not isinstance(identity, Mapping):
+            errors.append("evaluation_identity_missing_metadata")
+            continue
+        if str(payload.get("split")) != str(identity.get("dataset_role")):
+            errors.append("evaluation_identity_dataset_role_mismatch")
+        observed_evaluations.append(identity)
+    errors.extend(validate_evaluation_inventory(observed_evaluations))
+    trajectory_inventory_complete = len(rows) == SCOPE.expected_trajectories
+    evaluation_inventory_complete = (
+        len(evaluation_files) == SCOPE.expected_final_evaluations
+        and not validate_evaluation_inventory(observed_evaluations)
+    )
+    if (run_root / "USER_STOPPED.json").is_file() and not (
+        trajectory_inventory_complete and evaluation_inventory_complete
+    ):
+        completion_status = "USER_ABORTED_INCOMPLETE"
+    elif trajectory_inventory_complete and evaluation_inventory_complete:
+        completion_status = "COMPLETE"
+    else:
+        completion_status = "INCOMPLETE"
     result = {
         "phase_b_gate": "PASS" if not errors else "HOLD",
+        "completion_status": completion_status,
         "errors": sorted(set(errors)),
         "trajectory_count": len(rows),
-        "final_evaluation_count": len(evaluations),
+        "expected_trajectory_count": SCOPE.expected_trajectories,
+        "expected_final_evaluation_count": SCOPE.expected_final_evaluations,
+        "final_evaluation_count": len(evaluation_files),
         "trajectories": rows,
         "new_test_calls": 0,
     }
@@ -644,13 +796,13 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
     members: list[dict[str, Any]] = []
     coverage: list[dict[str, Any]] = []
     lanes: list[dict[str, Any]] = []
-    for seed in SEEDS:
-        for arm in ARMS:
+    for seed in SCOPE.seeds:
+        for arm in SCOPE.arms:
             cell = run_root / f"seed{seed}" / arm
             checkpoint = json.loads((cell / "training_checkpoint.json").read_text(encoding="utf-8"))
             evaluations = {
                 split: json.loads((run_root / "evaluation" / f"seed{seed}" / arm / split / "evaluation_summary_private.json").read_text(encoding="utf-8"))
-                for split in ("shadow", "validation")
+                for split in SCOPE.final_eval_datasets
             }
             decisions = checkpoint["candidate_decisions"]
             funnels = [row.get("funnel", {}) for row in decisions]
@@ -760,7 +912,7 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
     write_csv("coverage_depth.csv", coverage)
     by_key = {(row["seed"], row["arm"]): row for row in trajectories}
     contrasts = []
-    for seed in SEEDS:
+    for seed in SCOPE.seeds:
         p0, p1 = by_key[(seed, P0)], by_key[(seed, P1)]
         contrasts.append({
             "seed": seed,

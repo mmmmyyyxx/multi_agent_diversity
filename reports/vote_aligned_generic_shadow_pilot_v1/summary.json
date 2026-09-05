@@ -12,5 +12,17 @@
   "prior_partial_seed75_artifact_reused": false,
   "resume_authorized": false,
   "seeds": [75],
-  "validation_calls": 0
+  "validation_calls": 0,
+  "completion_scope_repair": {
+    "expected_trajectories": 2,
+    "expected_final_evaluation_artifacts": 4,
+    "identity_aware_inventory": true,
+    "pure_coverage_telemetry_mutually_exclusive": true,
+    "target_scheduling_behavior_changed": false,
+    "scientific_protocol_changed": false,
+    "phase_b_resumed": false,
+    "repair_task_api_calls": 0,
+    "repair_task_validation_calls": 0,
+    "repair_task_test_calls": 0
+  }
 }

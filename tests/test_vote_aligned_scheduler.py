@@ -7,6 +7,7 @@ from multi_dataset_diverse_rl.vote_aligned_scheduler import (
     DIRECT_FLIP,
     NEAR_MARGIN,
     PURE_COVERAGE,
+    classify_opportunity_lane,
     select_vote_aligned_targets,
 )
 
@@ -119,3 +120,52 @@ def test_target_scheduler_enters_run_fingerprint() -> None:
     baseline = Config.from_flat(target_scheduler="rr_generic")
     treatment = Config.from_flat(target_scheduler="vote_aligned_rr")
     assert config_fingerprint(baseline) != config_fingerprint(treatment)
+
+
+def test_lane_telemetry_is_mutually_exclusive() -> None:
+    margins = {"direct": -1, "near": -1, "pure": -2, "fallback": -3}
+    assert classify_opportunity_lane(
+        opportunity(0, "direct", flip=1, coverage=True), margins
+    ) == DIRECT_FLIP
+    assert classify_opportunity_lane(
+        opportunity(0, "near", margin_gain=1, coverage=True), margins
+    ) == NEAR_MARGIN
+    assert classify_opportunity_lane(
+        opportunity(0, "pure", margin_gain=1, coverage=True), margins
+    ) == PURE_COVERAGE
+    assert classify_opportunity_lane(
+        opportunity(0, "fallback", margin_gain=1, coverage=False), margins
+    ) is None
+
+
+def test_exclusive_coverage_telemetry_preserves_hierarchy_selection() -> None:
+    result = select_vote_aligned_targets(
+        assigned={
+            0: [opportunity(0, "direct-coverage", flip=1, coverage=True)],
+            1: [opportunity(1, "near-coverage", coverage=True)],
+            2: [opportunity(2, "pure-coverage", coverage=True)],
+        },
+        current_margin_by_question={
+            "direct-coverage": -1,
+            "near-coverage": -1,
+            "pure-coverage": -3,
+        },
+        seed=75,
+        update_index=0,
+    )
+    assert result.targets == (0, 1)
+    assert [row["lane_selected"] for row in result.slot_decisions] == [
+        DIRECT_FLIP,
+        NEAR_MARGIN,
+    ]
+    assert result.member_lane_counts[0] == {
+        DIRECT_FLIP: 1,
+        NEAR_MARGIN: 0,
+        PURE_COVERAGE: 0,
+    }
+    assert result.member_lane_counts[1] == {
+        DIRECT_FLIP: 0,
+        NEAR_MARGIN: 1,
+        PURE_COVERAGE: 0,
+    }
+    assert result.member_lane_counts[2][PURE_COVERAGE] == 1

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import inspect
 import json
+from pathlib import Path
 
 import pytest
 
@@ -18,7 +20,11 @@ from scripts.anti_overfitting_shadow_support import (
     FOLD_MAP,
     construct_assignment,
 )
-from scripts.run_shadow_gated_evolution import DESIGN_ROOT, _protocol_document
+from scripts.run_shadow_gated_evolution import (
+    DESIGN_ROOT,
+    _evaluate_final_dataset,
+    _protocol_document,
+)
 from scripts.run_shadow_gated_evolution import DEFAULT_PREP_ROOT, _authorized
 
 
@@ -137,3 +143,36 @@ def test_frozen_initialization_uses_same_validation_identity_as_cli() -> None:
     source = inspect.getsource(module._freeze_initialization)
     assert "val_rows=_rows(validation)" in source
     assert "val_rows=[]" not in source
+
+
+def test_existing_final_evaluation_rejects_identity_conflict(
+    tmp_path: Path,
+) -> None:
+    out = tmp_path / "evaluation"
+    out.mkdir()
+    (out / "evaluation_summary_private.json").write_text(
+        json.dumps({
+            "split": "shadow",
+            "evaluation_identity": {
+                "seed": 75,
+                "arm": "P0",
+                "dataset_role": "shadow",
+            },
+        }),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RuntimeError, match="evaluation identity conflict"):
+        asyncio.run(
+            _evaluate_final_dataset(
+                tmp_path / "unused-cell",
+                tmp_path / "unused.csv",
+                "shadow",
+                out,
+                evaluation_identity={
+                    "seed": 75,
+                    "arm": "P1",
+                    "dataset_role": "shadow",
+                },
+            )
+        )
