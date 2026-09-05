@@ -225,6 +225,7 @@ def _source_freeze(prep_root: Path) -> None:
             Path("scripts/run_vote_aligned_confirmatory_replication.py"),
             MANIFEST.relative_to(ROOT),
             (DESIGN_ROOT / "PROTOCOL.md").relative_to(ROOT),
+            (DESIGN_ROOT / "API_AUTHORIZATION_AMENDMENT.md").relative_to(ROOT),
             CLASSIFIER_DEFINITION.relative_to(ROOT),
             FROZEN_SEED75_DEFINITION.relative_to(ROOT),
             Path("experiments/anti_overfitting_split_v1/split_manifest.json"),
@@ -314,12 +315,15 @@ def prepare(prep_root: Path) -> dict[str, Any]:
             tuple(manifest["seeds"]) == SEEDS
             and manifest["lineage"]["derives_from"]
             == "vote_aligned_generic_shadow_pilot_v1"
-            and manifest["result"]["classifier"] == "NOT_RUN"
+            and manifest["result"]["classifier"] in {"NOT_RUN", "RUNNING"}
         ),
-        "NO_API_AUTHORIZATION": (
-            manifest["api_authorization"]["authorized"] is False
-            and not manifest["api_authorization"]["allowed_roles"]
-            and not manifest["api_authorization"]["allowed_phases"]
+        "API_AUTHORIZATION_SCOPE": (
+            manifest["api_authorization"]["authorized"] is True
+            and set(manifest["api_authorization"]["allowed_roles"])
+            == {"solver", "teacher", "critic", "student", "evaluator"}
+            and set(manifest["api_authorization"]["allowed_phases"])
+            == {"online_trajectory", "frozen_validation"}
+            and "seed76_77_confirmatory" in manifest["api_authorization"]["authorization_scope"]
         ),
         "DATA_PARTITION": (
             len(items) == 250

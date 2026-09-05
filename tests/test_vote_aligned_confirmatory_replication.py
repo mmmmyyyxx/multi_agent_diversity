@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
+import pytest
 import yaml
 
 from scripts import run_vote_aligned_confirmatory_replication as confirmatory
@@ -22,19 +23,27 @@ def test_scope_is_new_confirmatory_replication() -> None:
     )
 
 
-def test_manifest_is_preregistered_and_api_fail_closed() -> None:
+def test_manifest_records_scoped_seed76_77_authorization() -> None:
     document = yaml.safe_load(confirmatory.MANIFEST.read_text(encoding="utf-8"))
-    assert document["status"] == "PREREGISTERED"
+    assert document["status"] == "RUNNING"
     assert document["seeds"] == [76, 77]
-    assert document["api_authorization"] == {
-        "authorized": False,
-        "authorization_scope": (
-            "none_preregistration_only_new_explicit_seed76_77_authorization_required"
-        ),
-        "allowed_roles": [],
-        "allowed_phases": [],
+    assert document["api_authorization"]["authorized"] is True
+    assert set(document["api_authorization"]["allowed_roles"]) == {
+        "solver", "teacher", "critic", "student", "evaluator"
     }
+    assert set(document["api_authorization"]["allowed_phases"]) == {
+        "online_trajectory", "frozen_validation"
+    }
+    assert "seed76_77_confirmatory" in document["api_authorization"]["authorization_scope"]
     assert document["data"]["test_policy"] == "prohibited; zero calls"
+
+
+def test_execution_still_requires_one_shot_environment_authorization(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv(confirmatory.AUTH_ENV, raising=False)
+    with pytest.raises(RuntimeError, match="explicit Seed76/77 API authorization"):
+        confirmatory._authorize()
 
 
 def test_seed75_engine_scope_adapter_restores_every_global() -> None:

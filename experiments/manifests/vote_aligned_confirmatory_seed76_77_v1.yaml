@@ -1,11 +1,14 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_confirmatory_seed76_77_v1
 title: Vote-Aligned Static/P0/P1 Confirmatory Replication on Seeds76/77
-status: PREREGISTERED
+status: RUNNING
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T21:30:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-05T21:30:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-06T00:15:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-06T00:15:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-06T00:15:00+08:00'}
 lineage: {parents: [vote_aligned_generic_shadow_pilot_v1, vote_aligned_seed75_static_control], derives_from: vote_aligned_generic_shadow_pilot_v1}
 scientific_question: Does the Seed75 vote-aligned target scheduler reproducibly convert member differentiation into plurality-effective correct-vote redundancy on two new cross-fit seeds?
 hypotheses:
@@ -40,21 +43,21 @@ budget:
   limit: {static_trajectories: 2, trainable_trajectories: 4, max_update_opportunities_per_trainable_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
 api_authorization:
-  authorized: false
-  authorization_scope: none_preregistration_only_new_explicit_seed76_77_authorization_required
-  allowed_roles: []
-  allowed_phases: []
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_06_seed76_77_confirmatory_static_p0_p1_only_zero_test
+  allowed_roles: [solver, teacher, critic, student, evaluator]
+  allowed_phases: [online_trajectory, frozen_validation]
 selection:
   primary_metric: mean paired final Validation Vote-minus-MeanMember P1 minus P0
   frozen_rule: CONFIRMATORY_REPLICATION_SUPPORTED only if both seeds have P1-P0 ensemble gain >0, P1-Static MeanMember >0, P1-Static Vote >0, and P1-P0 G>=3 count >0; PARTIAL only if exactly one seed passes all four and all four aggregate means are >0; otherwise NOT_SUPPORTED
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/vote_aligned_confirmatory_seed76_77_v1/PROTOCOL.md}
+  preregistration: {path: experiments/vote_aligned_confirmatory_seed76_77_v1/PROTOCOL.md, sha256: 1580dc6ad9176f68111efa1b099e9ea7273045edd98676882929c7701517fc0f}
   report: null
   provenance: experiments/vote_aligned_confirmatory_seed76_77_v1/PROTOCOL.md
   classifier: experiments/vote_aligned_confirmatory_seed76_77_v1/classifier_definition.json
   seed75_definition_freeze: experiments/vote_aligned_confirmatory_seed76_77_v1/seed75_definition_freeze.json
   future_report: reports/vote_aligned_confirmatory_seed76_77_v1
-git: {design_baseline: cfa8cd8f31162092f5dca2cf8d66dad46683246e, design_commit: null, implementation_commit: null, result_commit: null}
-result: {classifier: NOT_RUN, conclusion: Awaiting separate explicit API authorization, evidence_type: not_yet_available}
+git: {design_baseline: cfa8cd8f31162092f5dca2cf8d66dad46683246e, design_commit: 3c0570529b644a99e9f3eaa9150ce3d292ff4f63, implementation_commit: 0f25f3d25e8890a5f083dec14b1e38e536f1d4bc, result_commit: null}
+result: {classifier: RUNNING, conclusion: Seed76/77 confirmatory execution authorized; no result available yet, evidence_type: not_yet_available}
