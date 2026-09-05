@@ -1,0 +1,51 @@
+schema_version: experiment_manifest_v1
+experiment_id: vote_aligned_seed75_static_control
+title: Seed75 Static no-training supplementary control
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-05T18:30:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-05T18:31:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-05T18:32:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T18:33:00+08:00'}
+lineage: {parents: [vote_aligned_generic_shadow_pilot_v1], derives_from: vote_aligned_generic_shadow_pilot_v1}
+scientific_question: Does Seed75 P1 reduce absolute individual competence versus the exact untrained initial ensemble, or only gain less individual competence than P0 while creating more useful plurality structure?
+hypotheses:
+  - P1 may improve individual competence over Static while improving it less than P0.
+  - P1 may increase Vote-minus-MeanMember relative to Static even when its MeanMember improvement is small.
+design:
+  changed: [add one post-hoc evaluation-only Static no-training control]
+  unchanged: [exact Seed75 initial prompts and state, qwen3-8b solver, thinking false, inference settings, frozen split, five-agent plurality, tie abstention, P0 and P1 evidence and classifier]
+  forbidden_changes: [P0 rerun, P1 rerun, prompt evolution, write-back, target selection, candidate generation, Test50 access, Seed76, Seed77, method tuning, original classifier rewrite]
+method_identity: member_aware_peer_state_v15
+runtime_version: vote_aligned_seed75_static_control_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {optimize: anti_overfitting_fold_a_plus_b_100, shadow: anti_overfitting_fold_c_50, validation: anti_overfitting_validation50_v1, test: anti_overfitting_test50_v1_blocked}
+  split_hashes: {}
+  validation_policy: one post-hoc evaluation-only Static evaluation on frozen Validation50
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {teacher: qwen3.7-flash, critic: qwen3.7-flash, student: qwen3.7-flash, evaluator: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0}
+  max_tokens: {solver: 1800}
+seeds: [75]
+budget:
+  type: post_hoc_static_evaluation_only
+  frozen_before_run: true
+  limit: {training_updates: 0, optimize_rows_reused: 100, shadow_rows_evaluated: 50, validation_rows_evaluated: 50, maximum_new_solver_provider_calls: 100, teacher_calls: 0, critic_calls: 0, student_calls: 0, test_calls: 0}
+api_authorization: {authorized: false, authorization_scope: pending_execution_freeze, allowed_roles: [], allowed_phases: []}
+selection:
+  primary_metric: descriptive P1 minus Static Validation MeanMember and Vote-minus-MeanMember
+  frozen_rule: MeanMember delta greater than 0.01 is gain, absolute delta at most 0.01 is roughly preserved, and delta less than -0.01 is degradation; ensemble structure uses the sign of P1 minus Static Vote-minus-MeanMember
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: null
+  report: reports/vote_aligned_seed75_static_control_20260905
+  provenance: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md
+git: {design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: PENDING, conclusion: Static evaluation has not run, evidence_type: not_yet_available}

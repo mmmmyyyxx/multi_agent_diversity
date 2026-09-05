@@ -25,3 +25,4 @@ edges:
   - {from: diversity_matrix_d0_d5, to: diversity_matrix_split_balance_audit, relation: audit_of}
   - {from: diversity_matrix_split_balance_audit, to: anti_overfitting_shadow_gate_v1, relation: derived_experiment}
   - {from: anti_overfitting_shadow_gate_v1, to: vote_aligned_generic_shadow_pilot_v1, relation: derived_experiment}
+  - {from: vote_aligned_generic_shadow_pilot_v1, to: vote_aligned_seed75_static_control, relation: followup_of}
