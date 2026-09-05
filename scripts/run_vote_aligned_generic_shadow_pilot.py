@@ -74,7 +74,7 @@ P0 = "P0_SHADOW_D2_GENERIC"
 P1 = "P1_SHADOW_VOTE_ALIGNED_GENERIC"
 ARMS = (P0, P1)
 SCHEDULER_BY_ARM = {P0: RR_GENERIC_SCHEDULER, P1: VOTE_ALIGNED_RR_SCHEDULER}
-SEEDS = (75, 76, 77)
+SEEDS = (75,)
 AUTH_ENV = "VOTE_ALIGNED_SHADOW_PHASE_B_AUTHORIZED"
 MANIFEST = ROOT / "experiments" / "manifests" / "vote_aligned_generic_shadow_pilot_v1.yaml"
 DESIGN_ROOT = ROOT / "experiments" / "vote_aligned_generic_shadow_pilot_v1"
@@ -201,7 +201,7 @@ def _protocol_document() -> dict[str, Any]:
         "seeds": list(SEEDS),
         "fold_map": [
             {"seed": SEEDS[index], "optimize": pair[0], "shadow": pair[1]}
-            for index, pair in enumerate(FOLD_MAP)
+            for index, pair in enumerate(FOLD_MAP[:len(SEEDS)])
         ],
         "arms": {arm: {"target_scheduler": SCHEDULER_BY_ARM[arm]} for arm in ARMS},
         "shared_protocol": {
@@ -331,8 +331,8 @@ def prepare(prep_root: Path) -> dict[str, Any]:
             == sha256_json(sorted(old_split["question_hashes"]["test"]))
         ),
         "CROSSFIT_GATE": (
-            tuple(SEEDS) == (75, 76, 77)
-            and tuple(FOLD_MAP) == (("fold_a+fold_b", "fold_c"), ("fold_a+fold_c", "fold_b"), ("fold_b+fold_c", "fold_a"))
+            tuple(SEEDS) == (75,)
+            and tuple(FOLD_MAP[0]) == ("fold_a+fold_b", "fold_c")
         ),
         "MODEL_GATE": (
             p0.models.agent_model == p1.models.agent_model == "qwen3-8b"

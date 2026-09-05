@@ -30,21 +30,21 @@ model:
   solver: qwen3-8b
   optimizer_roles: {teacher: qwen3.7-flash, critic: qwen3.7-flash, student: qwen3.7-flash, evaluator: qwen3.7-flash}
   thinking: false
-seeds: [75, 76, 77]
+seeds: [75]
 budget:
   type: paired_cross_fit_scheduler_pilot
   frozen_before_run: true
-  limit: {trajectories: 6, max_update_opportunities_per_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
+  limit: {trajectories: 2, max_update_opportunities_per_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
 api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
 selection:
   primary_metric: paired final Validation VoteAcc P1 minus P0
-  frozen_rule: P1 is supported only when mean paired Validation Vote is positive, seed wins exceed losses, mean member degradation is no worse than 0.01, and Vote-minus-MeanMember improves
+  frozen_rule: For the authorized Seed75 pilot, P1 has a positive local signal only when paired Validation Vote is positive, mean member degradation is no worse than 0.01, and Vote-minus-MeanMember improves; no multi-seed claim is permitted
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: 7ed642894d37aeeb5199ce36b18f9231632da0ea695325bc736e0452b503a970}
+  preregistration: null
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
 git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, result_commit: null}
-result: {classifier: PHASE_A_EXECUTION_READY__PHASE_B_NOT_AUTHORIZED, conclusion: Zero-API implementation and all ten Phase A gates passed; no scientific result exists before separately authorized Phase B, evidence_type: not_yet_available}
+result: {classifier: SEED75_SCOPE_AMENDED__PREFLIGHT_PENDING, conclusion: User narrowed execution to Seed75 before any Phase B result; no scientific result exists yet, evidence_type: not_yet_available}

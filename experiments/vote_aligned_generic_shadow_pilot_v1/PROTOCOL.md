@@ -22,6 +22,11 @@ No W1 score, weighted objective, responsibility-conditioned proposal context,
 new Critic, M2F, transfer predictor, validation feedback, or test access is
 permitted.
 
+By explicit user amendment before Phase B, the initial execution is limited to
+Seed75 (Optimize folds A+B, Shadow fold C), comprising exactly two trajectories
+in P0 then P1 order. Seeds76/77 are not part of this run and may not be started.
+This single-seed result is descriptive pilot evidence, not a multi-seed claim.
+
 The primary endpoint is paired final Validation Vote accuracy. Interpretation
 is frozen to one of: `VOTE_ALIGNED_SPECIALIZATION_SUPPORTED`,
 `VOTE_STRUCTURE_IMPROVED_WITHOUT_FINAL_GAIN`,

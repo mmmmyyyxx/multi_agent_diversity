@@ -71,7 +71,10 @@ def test_manifest_keeps_phase_b_unauthorized() -> None:
 def test_protocol_freezes_required_split_models_and_zero_test() -> None:
     protocol = pilot._protocol_document()
 
-    assert protocol["seeds"] == [75, 76, 77]
+    assert protocol["seeds"] == [75]
+    assert protocol["fold_map"] == [
+        {"seed": 75, "optimize": "fold_a+fold_b", "shadow": "fold_c"}
+    ]
     assert protocol["models"] == {
         "solver": "qwen3-8b",
         "teacher": "qwen3.7-flash",
