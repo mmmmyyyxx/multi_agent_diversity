@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "path": "scripts/run_vote_aligned_generic_shadow_pilot.py",
+      "sha256": "40bb35a9cc2c0a5d7984da836f8184207e147129a0567811a1fd0a06833e9ac6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+      "sha256": "09a828ffbbccec3ed513da8edf5355d157ffd5b3343c7fcac75086b6c4218802"
+    },
+    {
+      "path": "experiments/vote_aligned_generic_shadow_pilot_v1/selector_definition.json",
+      "sha256": "21756750bec922674c4cb90975f1fcc724e6e6c225bc7ca437d4b78d08329608"
+    },
+    {
+      "path": "experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md",
+      "sha256": "8017948ba234ffe5b1508a9fda047afb477bb30af2b71c5ad5ed961e862b627c"
+    },
+    {
+      "path": "reports/vote_aligned_generic_shadow_pilot_v1/protocol_freeze.json",
+      "sha256": "729120634e250f1d59baaf85446ab13d18b22c5d161059b7580aafec76ac2adc"
+    }
+  ],
+  "p0_arm": "P0_SHADOW_D2_GENERIC",
+  "p1_arm": "P1_SHADOW_VOTE_ALIGNED_GENERIC",
+  "seed75_pilot_result_commit": "a0b34f3670a556caff23388b5c569b54b278b7f0",
+  "source_baseline_commit": "cfa8cd8f31162092f5dca2cf8d66dad46683246e",
+  "schema_version": "seed75_p0_p1_definition_freeze_v1"
+}
+

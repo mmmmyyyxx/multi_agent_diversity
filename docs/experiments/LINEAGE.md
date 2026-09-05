@@ -30,6 +30,8 @@ graph TD
   diversity_matrix_split_balance_audit["diversity_matrix_split_balance_audit"] -->|derived_experiment| anti_overfitting_shadow_gate_v1["anti_overfitting_shadow_gate_v1"]
   anti_overfitting_shadow_gate_v1["anti_overfitting_shadow_gate_v1"] -->|derived_experiment| vote_aligned_generic_shadow_pilot_v1["vote_aligned_generic_shadow_pilot_v1"]
   vote_aligned_generic_shadow_pilot_v1["vote_aligned_generic_shadow_pilot_v1"] -->|followup_of| vote_aligned_seed75_static_control["vote_aligned_seed75_static_control"]
+  vote_aligned_generic_shadow_pilot_v1["vote_aligned_generic_shadow_pilot_v1"] -->|followup_of| vote_aligned_confirmatory_seed76_77_v1["vote_aligned_confirmatory_seed76_77_v1"]
+  vote_aligned_seed75_static_control["vote_aligned_seed75_static_control"] -->|followup_of| vote_aligned_confirmatory_seed76_77_v1["vote_aligned_confirmatory_seed76_77_v1"]
 ```
 
 ## Topological order
@@ -58,3 +60,4 @@ graph TD
 22. `v18_qwen3_8b_no_semantic_critic_light_replication`
 23. `vote_aligned_generic_shadow_pilot_v1`
 24. `vote_aligned_seed75_static_control`
+25. `vote_aligned_confirmatory_seed76_77_v1`

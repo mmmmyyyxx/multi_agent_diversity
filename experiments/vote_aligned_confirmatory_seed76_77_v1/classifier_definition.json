@@ -1,0 +1,25 @@
+{
+  "aggregate_requirements": {
+    "mean_p1_minus_p0_validation_ensemble_gain": ">0",
+    "mean_p1_minus_p0_validation_gte3_count": ">0",
+    "mean_p1_minus_static_validation_mean_member": ">0",
+    "mean_p1_minus_static_validation_vote": ">0"
+  },
+  "classifiers": {
+    "CONFIRMATORY_REPLICATION_NOT_SUPPORTED": "all other completed outcomes",
+    "CONFIRMATORY_REPLICATION_SUPPORTED": "both seeds satisfy every strict per-seed requirement",
+    "PARTIAL_CONFIRMATORY_REPLICATION": "exactly one seed satisfies every strict per-seed requirement and every aggregate requirement is strictly positive"
+  },
+  "full_g_histogram_reported": true,
+  "gte1_alone_is_sufficient": false,
+  "primary_endpoint": "P1 minus P0 final Validation50 VoteAcc-minus-MeanMemberAcc",
+  "schema_version": "vote_aligned_confirmatory_classifier_v1",
+  "seeds": [76, 77],
+  "strict_per_seed_requirements": {
+    "p1_minus_p0_validation_ensemble_gain": ">0",
+    "p1_minus_p0_validation_gte3_count": ">0",
+    "p1_minus_static_validation_mean_member": ">0",
+    "p1_minus_static_validation_vote": ">0"
+  }
+}
+

@@ -1,0 +1,60 @@
+schema_version: experiment_manifest_v1
+experiment_id: vote_aligned_confirmatory_seed76_77_v1
+title: Vote-Aligned Static/P0/P1 Confirmatory Replication on Seeds76/77
+status: PREREGISTERED
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-05T21:30:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-05T21:30:00+08:00'}
+lineage: {parents: [vote_aligned_generic_shadow_pilot_v1, vote_aligned_seed75_static_control], derives_from: vote_aligned_generic_shadow_pilot_v1}
+scientific_question: Does the Seed75 vote-aligned target scheduler reproducibly convert member differentiation into plurality-effective correct-vote redundancy on two new cross-fit seeds?
+hypotheses:
+  - 'Primary: P1 minus P0 final Validation Vote-minus-MeanMember is strictly positive.'
+  - 'Absolute: P1 minus Static final Validation MeanMember and Vote are both strictly positive.'
+  - 'Depth: P1 places more Validation mass at G>=3 than P0; G>=1 growth alone is insufficient.'
+design:
+  changed: [target scheduler only between P0 and P1]
+  unchanged: [Seed75 P0/P1 definitions, qwen3-8b solver, qwen3.7-flash role models, thinking false, anti-overfitting cross-fit split, D2 Generic proposal, semantic Critic, Common-Safe, ranking, revision, winner-only Shadow gate, budgets, early stop, five-agent plurality]
+  arms: [STATIC_NO_TRAIN, P0_SHADOW_D2_GENERIC, P1_SHADOW_VOTE_ALIGNED_GENERIC]
+  forbidden_changes: [Seed75 pooling into confirmatory decision, W1, scheduler weight tuning, responsibility-conditioned generation, no-semantic-Critic pipeline, M2F, transfer predictor, validation-aware retry, Test50 access, extra seeds, efficacy-driven retries]
+method_identity: member_aware_peer_state_v15
+runtime_version: vote_aligned_confirmatory_seed76_77_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {train_dev: anti_overfitting_train_dev150_v1, validation: anti_overfitting_validation50_v1, test: anti_overfitting_test50_v1}
+  split_hashes: {}
+  cross_fit:
+    seed76: {optimize: fold_a+fold_c, shadow: fold_b}
+    seed77: {optimize: fold_b+fold_c, shadow: fold_a}
+  validation_policy: exactly once per frozen Static/P0/P1 final state after all four trainable trajectories terminate
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {teacher: qwen3.7-flash, critic: qwen3.7-flash, student: qwen3.7-flash, evaluator: qwen3.7-flash}
+  thinking: false
+seeds: [76, 77]
+budget:
+  type: two_seed_confirmatory_cross_fit_static_paired_scheduler
+  frozen_before_run: true
+  limit: {static_trajectories: 2, trainable_trajectories: 4, max_update_opportunities_per_trainable_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
+  early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
+api_authorization:
+  authorized: false
+  authorization_scope: none_preregistration_only_new_explicit_seed76_77_authorization_required
+  allowed_roles: []
+  allowed_phases: []
+selection:
+  primary_metric: mean paired final Validation Vote-minus-MeanMember P1 minus P0
+  frozen_rule: CONFIRMATORY_REPLICATION_SUPPORTED only if both seeds have P1-P0 ensemble gain >0, P1-Static MeanMember >0, P1-Static Vote >0, and P1-P0 G>=3 count >0; PARTIAL only if exactly one seed passes all four and all four aggregate means are >0; otherwise NOT_SUPPORTED
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/vote_aligned_confirmatory_seed76_77_v1/PROTOCOL.md}
+  report: null
+  provenance: experiments/vote_aligned_confirmatory_seed76_77_v1/PROTOCOL.md
+  classifier: experiments/vote_aligned_confirmatory_seed76_77_v1/classifier_definition.json
+  seed75_definition_freeze: experiments/vote_aligned_confirmatory_seed76_77_v1/seed75_definition_freeze.json
+  future_report: reports/vote_aligned_confirmatory_seed76_77_v1
+git: {design_baseline: cfa8cd8f31162092f5dca2cf8d66dad46683246e, design_commit: null, implementation_commit: null, result_commit: null}
+result: {classifier: NOT_RUN, conclusion: Awaiting separate explicit API authorization, evidence_type: not_yet_available}
