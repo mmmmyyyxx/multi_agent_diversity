@@ -30,4 +30,3 @@ def test_execution_path_contains_no_training_or_test_call() -> None:
 def test_static_control_paths_are_project_local() -> None:
     for path in (static.DEFAULT_PREP_ROOT, static.DEFAULT_RUN_ROOT, static.DEFAULT_REPORT_ROOT):
         path.resolve().relative_to(static.ROOT.resolve())
-

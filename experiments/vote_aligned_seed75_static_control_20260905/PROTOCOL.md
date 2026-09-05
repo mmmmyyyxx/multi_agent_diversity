@@ -21,4 +21,3 @@ The supplementary classifiers are frozen before evaluation:
 The descriptive ensemble-structure classifier is `POSITIVE`, `NEUTRAL`, or
 `NEGATIVE` according to the sign of P1 minus Static Validation
 `VoteAcc - MeanMemberAcc`. No significance claim is made from one seed.
-

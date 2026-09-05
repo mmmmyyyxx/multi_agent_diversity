@@ -1,13 +1,14 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_seed75_static_control
 title: Seed75 Static no-training supplementary control
-status: PREFLIGHT_PASS
+status: RUNNING
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T18:30:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-05T18:31:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-05T18:32:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T18:33:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-05T18:40:00+08:00'}
 lineage: {parents: [vote_aligned_generic_shadow_pilot_v1], derives_from: vote_aligned_generic_shadow_pilot_v1}
 scientific_question: Does Seed75 P1 reduce absolute individual competence versus the exact untrained initial ensemble, or only gain less individual competence than P0 while creating more useful plurality structure?
 hypotheses:
@@ -37,15 +38,15 @@ budget:
   type: post_hoc_static_evaluation_only
   frozen_before_run: true
   limit: {training_updates: 0, optimize_rows_reused: 100, shadow_rows_evaluated: 50, validation_rows_evaluated: 50, maximum_new_solver_provider_calls: 100, teacher_calls: 0, critic_calls: 0, student_calls: 0, test_calls: 0}
-api_authorization: {authorized: false, authorization_scope: pending_execution_freeze, allowed_roles: [], allowed_phases: []}
+api_authorization: {authorized: true, authorization_scope: explicit_user_authorization_2026_09_05_static_evaluation_only_seed75_zero_training_zero_test, allowed_roles: [solver, evaluator], allowed_phases: [static_evaluation_only]}
 selection:
   primary_metric: descriptive P1 minus Static Validation MeanMember and Vote-minus-MeanMember
   frozen_rule: MeanMember delta greater than 0.01 is gain, absolute delta at most 0.01 is roughly preserved, and delta less than -0.01 is degradation; ensemble structure uses the sign of P1 minus Static Vote-minus-MeanMember
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: null
+  preregistration: {path: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md, sha256: d61057745c27adc7705ae6b25695c4167b594cad6bc49d9715a222bd7ec2c957}
   report: reports/vote_aligned_seed75_static_control_20260905
   provenance: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md
-git: {design_commit: null, implementation_commit: null, result_commit: null}
+git: {design_commit: cb7a311cf68097dd48848440a2f9beb78e1cd94f, implementation_commit: cb7a311cf68097dd48848440a2f9beb78e1cd94f, result_commit: null}
 result: {classifier: PENDING, conclusion: Static evaluation has not run, evidence_type: not_yet_available}
