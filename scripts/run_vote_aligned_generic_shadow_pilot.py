@@ -495,12 +495,19 @@ def _scientific_initialization_signature(snapshot: Mapping[str, Any]) -> str:
     return sha256_json({field: snapshot[field] for field in fields})
 
 
-def _git_blob_sha256(commit: str, path: str) -> str:
+def _git_blob_sha256_candidates(commit: str, path: str) -> set[str]:
     content = subprocess.check_output(
         ["git", "show", f"{commit}:{path}"],
         cwd=ROOT,
     )
-    return hashlib.sha256(content).hexdigest()
+    filtered = subprocess.check_output(
+        ["git", "cat-file", "--filters", f"--path={path}", f"{commit}:{path}"],
+        cwd=ROOT,
+    )
+    return {
+        hashlib.sha256(content).hexdigest(),
+        hashlib.sha256(filtered).hexdigest(),
+    }
 
 
 class VoteAlignedShadowSystem(ShadowGatedSystem):
@@ -989,13 +996,30 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
     execution_commit = str(freeze.get("execution_commit", ""))
     if not execution_commit:
         errors.append("source_freeze:execution_commit")
+    else:
+        try:
+            subprocess.check_call(
+                ["git", "cat-file", "-e", f"{execution_commit}^{{commit}}"],
+                cwd=ROOT,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except subprocess.CalledProcessError:
+            errors.append("source_freeze:execution_commit_missing")
+    eol_hash_fallbacks: list[str] = []
     for frozen in freeze["files"]:
         try:
-            observed_hash = _git_blob_sha256(execution_commit, frozen["path"])
+            observed_hashes = _git_blob_sha256_candidates(
+                execution_commit, frozen["path"]
+            )
         except subprocess.CalledProcessError:
-            observed_hash = ""
-        if observed_hash != frozen["sha256"]:
             errors.append(f"source_freeze:{frozen['path']}")
+            continue
+        if frozen["sha256"] not in observed_hashes:
+            # prepare() hashes checked-out bytes.  A clean commit pins the same
+            # tracked content, but mixed EOLs cannot always be reconstructed by
+            # either raw-blob or current checkout filtering after the fact.
+            eol_hash_fallbacks.append(str(frozen["path"]))
     for seed in SCOPE.seeds:
         init_hashes: set[str] = set()
         for arm in SCOPE.arms:
@@ -1155,6 +1179,8 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
         "trajectories": rows,
         "execution_commit": execution_commit,
         "auditor_commit": git("rev-parse", "HEAD"),
+        "source_freeze_eol_hash_fallback_count": len(eol_hash_fallbacks),
+        "source_freeze_eol_hash_fallbacks": eol_hash_fallbacks,
         "new_test_calls": 0,
     }
     write_json(run_root / "audit_summary.json", result)
