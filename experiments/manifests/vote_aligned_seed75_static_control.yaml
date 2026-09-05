@@ -51,5 +51,5 @@ artifacts:
   preregistration: {path: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md, sha256: d61057745c27adc7705ae6b25695c4167b594cad6bc49d9715a222bd7ec2c957}
   report: reports/vote_aligned_seed75_static_control_20260905
   provenance: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md
-git: {design_commit: cb7a311cf68097dd48848440a2f9beb78e1cd94f, implementation_commit: 4d204c42b4127e768544f52c2160e739a50aba38, result_commit: null}
+git: {design_commit: cb7a311cf68097dd48848440a2f9beb78e1cd94f, implementation_commit: 4d204c42b4127e768544f52c2160e739a50aba38, result_commit: b4fb77203a94be48e1dcec1d36e7607953d0d682}
 result: {classifier: P1_ABSOLUTE_MEMBER_GAIN__ENSEMBLE_STRUCTURE_POSITIVE, conclusion: Relative to the exact untrained Seed75 team P1 improved Validation MeanMember by 7.6 points and Vote by 14 points while adding 6.4 points of Vote-minus-MeanMember; its lower MeanMember than P0 is reduced gain rather than absolute harm, evidence_type: prospective}
