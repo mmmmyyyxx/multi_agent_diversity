@@ -223,3 +223,46 @@ def test_prepare_source_contains_test_sentinel_and_no_test_evaluation() -> None:
 
 def test_selector_synthetic_gate_is_deterministic() -> None:
     assert pilot._synthetic_selector_gate() is True
+
+
+def test_scientific_initialization_signature_excludes_execution_provenance() -> None:
+    shared = {
+        "initial_prompt_hashes": ["prompt"] * 5,
+        "initial_member_correct_counts": [59] * 5,
+        "initial_team_outcome": {"team_vote_correct_count": 59},
+        "initial_vote_oracle_ghm_hash": "ghm",
+        "probe_hash": "probe",
+        "solver_request_identity": "request",
+        "solver_identity": ["solver"],
+    }
+    p0 = {
+        **shared,
+        "initial_train_state_hash": "provenance-coupled-p0",
+        "immutable_run_identity": {"git_commit": "old"},
+    }
+    p1 = {
+        **shared,
+        "initial_train_state_hash": "provenance-coupled-p1",
+        "immutable_run_identity": {"git_commit": "new"},
+    }
+
+    assert pilot._scientific_initialization_signature(p0) == (
+        pilot._scientific_initialization_signature(p1)
+    )
+
+
+def test_scientific_initialization_signature_detects_behavior_change() -> None:
+    first = {
+        "initial_prompt_hashes": ["prompt"] * 5,
+        "initial_member_correct_counts": [59] * 5,
+        "initial_team_outcome": {"team_vote_correct_count": 59},
+        "initial_vote_oracle_ghm_hash": "ghm",
+        "probe_hash": "probe",
+        "solver_request_identity": "request",
+        "solver_identity": ["solver"],
+    }
+    second = {**first, "initial_member_correct_counts": [58, 59, 59, 59, 59]}
+
+    assert pilot._scientific_initialization_signature(first) != (
+        pilot._scientific_initialization_signature(second)
+    )

@@ -9,10 +9,12 @@ from __future__ import annotations
 import argparse
 import asyncio
 import csv
+import hashlib
 import inspect
 import json
 import os
 import sqlite3
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -477,6 +479,28 @@ def _cell_is_terminal(cell: Path) -> bool:
     if errors:
         raise RuntimeError(f"invalid derived completion marker: {errors}")
     return derived is not None and derived.training_completed
+
+
+def _scientific_initialization_signature(snapshot: Mapping[str, Any]) -> str:
+    """Hash matched starting behavior without execution provenance fields."""
+    fields = (
+        "initial_prompt_hashes",
+        "initial_member_correct_counts",
+        "initial_team_outcome",
+        "initial_vote_oracle_ghm_hash",
+        "probe_hash",
+        "solver_request_identity",
+        "solver_identity",
+    )
+    return sha256_json({field: snapshot[field] for field in fields})
+
+
+def _git_blob_sha256(commit: str, path: str) -> str:
+    content = subprocess.check_output(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=ROOT,
+    )
+    return hashlib.sha256(content).hexdigest()
 
 
 class VoteAlignedShadowSystem(ShadowGatedSystem):
@@ -962,8 +986,15 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
     errors: list[str] = []
     rows: list[dict[str, Any]] = []
     freeze = json.loads((prep_root / "source_freeze.json").read_text(encoding="utf-8"))
+    execution_commit = str(freeze.get("execution_commit", ""))
+    if not execution_commit:
+        errors.append("source_freeze:execution_commit")
     for frozen in freeze["files"]:
-        if sha256_file(ROOT / frozen["path"]) != frozen["sha256"]:
+        try:
+            observed_hash = _git_blob_sha256(execution_commit, frozen["path"])
+        except subprocess.CalledProcessError:
+            observed_hash = ""
+        if observed_hash != frozen["sha256"]:
             errors.append(f"source_freeze:{frozen['path']}")
     for seed in SCOPE.seeds:
         init_hashes: set[str] = set()
@@ -1032,7 +1063,11 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
             match = json.loads((cell / "frozen_initialization_match.json").read_text(encoding="utf-8"))
             if not match["matched"]:
                 errors.append(f"initialization:{seed}:{arm}")
-            init_hashes.add(str(match["initialization_snapshot"]["initial_train_state_hash"]))
+            init_hashes.add(
+                _scientific_initialization_signature(
+                    match["initialization_snapshot"]
+                )
+            )
             target_rows = checkpoint["target_priority_audit"]
             expected_stage = "responsibility_round_robin_dual" if arm == P0 else "vote_aligned_lane_prioritized_rr"
             if any(row.get("selection_pool_stage") != expected_stage for row in target_rows):
@@ -1118,6 +1153,8 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
         "expected_final_evaluation_count": SCOPE.expected_final_evaluations,
         "final_evaluation_count": len(evaluation_files),
         "trajectories": rows,
+        "execution_commit": execution_commit,
+        "auditor_commit": git("rev-parse", "HEAD"),
         "new_test_calls": 0,
     }
     write_json(run_root / "audit_summary.json", result)
