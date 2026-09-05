@@ -1,0 +1,19 @@
+{
+  "final_state_evaluation_new_solver_calls": {
+    "p0_p1_validation": 1008,
+    "shadow_cache_reuse": 0,
+    "static_shadow_and_validation": 200
+  },
+  "frozen_initialization_solver_cache_entries": 200,
+  "successful_calls_by_role_in_trainable_runtime": {
+    "critic": 189,
+    "loss_blind_generic_revision": 158,
+    "solver": 24740,
+    "student": 208,
+    "teacher": 200
+  },
+  "successful_trainable_runtime_calls": 25495,
+  "test_calls": 0,
+  "total_accounted_successful_calls_including_initialization_and_final_evaluation": 26903,
+  "trainable_runtime_tokens": 16526803
+}

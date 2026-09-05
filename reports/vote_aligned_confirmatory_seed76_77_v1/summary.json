@@ -1,0 +1,18 @@
+{
+  "analysis_gate": "PASS",
+  "classifier": "CONFIRMATORY_REPLICATION_NOT_SUPPORTED",
+  "confirmatory_seeds": [
+    76,
+    77
+  ],
+  "mean_contrasts": {
+    "p1_minus_p0_ensemble_gain": -0.0020000000000000018,
+    "p1_minus_p0_gte1_count": 3.5,
+    "p1_minus_p0_gte3_count": 0.5,
+    "p1_minus_static_mean_member": 0.04799999999999993,
+    "p1_minus_static_vote": 0.08999999999999997
+  },
+  "new_test_calls": 0,
+  "passing_seed_count": 1,
+  "seed75_excluded_from_confirmatory_decision": true
+}

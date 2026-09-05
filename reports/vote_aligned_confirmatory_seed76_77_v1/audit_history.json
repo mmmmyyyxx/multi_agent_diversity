@@ -1,0 +1,15 @@
+{
+  "corrected_audit": {
+    "errors": [],
+    "gate": "PASS",
+    "model_calls": 0
+  },
+  "execution_artifacts_rerun": false,
+  "original_frozen_audit": {
+    "cause": "reused inventory validator retained its Seed75 import-time default scope",
+    "gate": "HOLD",
+    "preserved": true
+  },
+  "raw_execution_artifacts_modified": false,
+  "schema_version": "confirmatory_audit_history_v1"
+}

@@ -1,0 +1,16 @@
+{
+  "excluded": [
+    "absolute paths",
+    "checkpoints",
+    "credentials",
+    "endpoints",
+    "gold answers",
+    "model answers",
+    "prompts",
+    "questions",
+    "raw responses",
+    "SQLite caches"
+  ],
+  "findings": [],
+  "status": "PASS"
+}

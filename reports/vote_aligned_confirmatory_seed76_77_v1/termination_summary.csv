@@ -1,0 +1,5 @@
+seed,arm,executed_updates,planned_updates,accepted_commits,termination_status,final_no_commit_streak,test_calls
+76,P0_SHADOW_D2_GENERIC,10,32,5,completed_by_early_stop,6,0
+76,P1_SHADOW_VOTE_ALIGNED_GENERIC,17,32,9,completed_by_early_stop,6,0
+77,P0_SHADOW_D2_GENERIC,14,32,7,completed_by_early_stop,6,0
+77,P1_SHADOW_VOTE_ALIGNED_GENERIC,16,32,6,completed_by_early_stop,6,0

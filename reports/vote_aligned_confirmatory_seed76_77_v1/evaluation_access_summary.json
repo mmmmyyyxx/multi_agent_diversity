@@ -1,0 +1,9 @@
+{
+  "final_shadow50_evaluations": 6,
+  "final_validation50_evaluations": 6,
+  "static_optimize100_reused_without_new_calls": true,
+  "test50_accessed": false,
+  "test_calls": 0,
+  "validation_used_for_selection": false,
+  "validation_used_for_training": false
+}

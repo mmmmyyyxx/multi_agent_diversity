@@ -327,7 +327,14 @@ def prepare(prep_root: Path) -> dict[str, Any]:
             tuple(manifest["seeds"]) == SEEDS
             and manifest["lineage"]["derives_from"]
             == "vote_aligned_generic_shadow_pilot_v1"
-            and manifest["result"]["classifier"] in {"NOT_RUN", "RUNNING"}
+            and manifest["result"]["classifier"]
+            in {
+                "NOT_RUN",
+                "RUNNING",
+                "CONFIRMATORY_REPLICATION_SUPPORTED",
+                "PARTIAL_CONFIRMATORY_REPLICATION",
+                "CONFIRMATORY_REPLICATION_NOT_SUPPORTED",
+            }
         ),
         "API_AUTHORIZATION_SCOPE": (
             manifest["api_authorization"]["authorized"] is True

@@ -25,7 +25,7 @@ def test_scope_is_new_confirmatory_replication() -> None:
 
 def test_manifest_records_scoped_seed76_77_authorization() -> None:
     document = yaml.safe_load(confirmatory.MANIFEST.read_text(encoding="utf-8"))
-    assert document["status"] == "RUNNING"
+    assert document["status"] == "COMPLETED"
     assert document["seeds"] == [76, 77]
     assert document["api_authorization"]["authorized"] is True
     assert set(document["api_authorization"]["allowed_roles"]) == {
@@ -36,6 +36,9 @@ def test_manifest_records_scoped_seed76_77_authorization() -> None:
     }
     assert "seed76_77_confirmatory" in document["api_authorization"]["authorization_scope"]
     assert document["data"]["test_policy"] == "prohibited; zero calls"
+    assert document["result"]["classifier"] == (
+        "CONFIRMATORY_REPLICATION_NOT_SUPPORTED"
+    )
 
 
 def test_execution_still_requires_one_shot_environment_authorization(

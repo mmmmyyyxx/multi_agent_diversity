@@ -1,0 +1,15 @@
+{
+  "all_four_trainable_trajectories_completed": true,
+  "all_trajectories_used_frozen_early_stop": true,
+  "corrected_official_audit_passed": true,
+  "exactly_six_final_shadow_evaluations": true,
+  "exactly_six_final_validation_evaluations": true,
+  "exactly_two_static_controls": true,
+  "frozen_classifier_applied_without_change": true,
+  "p0_p1_differ_only_in_target_scheduler": true,
+  "seed75_excluded_from_confirmatory_decision": true,
+  "static_controls_have_zero_training_activity": true,
+  "test_calls_are_zero": true,
+  "three_arm_initialization_matched_within_each_seed": true,
+  "validation_was_not_used_for_training_or_selection": true
+}

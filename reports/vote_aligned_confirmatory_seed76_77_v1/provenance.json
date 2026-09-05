@@ -1,0 +1,18 @@
+{
+  "audit_fix_commit": "c6e8950",
+  "classifier": "CONFIRMATORY_REPLICATION_NOT_SUPPORTED",
+  "confirmatory_seeds": [76, 77],
+  "execution_commit": "685568b61e3db7df86159884b5663874c7210b7e",
+  "experiment_id": "vote_aligned_confirmatory_seed76_77_v1",
+  "models": {
+    "critic": "qwen3.7-flash",
+    "evaluator": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "student": "qwen3.7-flash",
+    "teacher": "qwen3.7-flash",
+    "thinking": false
+  },
+  "original_audit_hold_preserved": true,
+  "seed75_excluded_from_confirmatory_decision": true,
+  "test_calls": 0
+}
