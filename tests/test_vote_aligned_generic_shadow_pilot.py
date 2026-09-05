@@ -56,14 +56,21 @@ def test_phase_b_authorization_is_fail_closed(monkeypatch: pytest.MonkeyPatch) -
         pilot._authorized()
 
 
-def test_manifest_keeps_phase_b_unauthorized() -> None:
+def test_manifest_authorizes_only_fresh_seed75_paired_execution() -> None:
     import yaml
 
     document = yaml.safe_load(pilot.MANIFEST.read_text(encoding="utf-8"))
-    assert document["api_authorization"]["authorized"] is False
-    assert document["api_authorization"]["allowed_roles"] == []
-    assert document["api_authorization"]["allowed_phases"] == []
-    assert "revoked_by_user_stop" in document["api_authorization"]["authorization_scope"]
+    assert document["api_authorization"]["authorized"] is True
+    assert document["api_authorization"]["allowed_roles"] == [
+        "solver", "teacher", "critic", "student", "evaluator"
+    ]
+    assert document["api_authorization"]["allowed_phases"] == [
+        "online_trajectory", "frozen_validation"
+    ]
+    assert "fresh_root_only_no_resume" in document["api_authorization"]["authorization_scope"]
+    assert document["termination"]["resume_authorized"] is False
+    assert document["reauthorization"]["prior_attempt_resumed"] is False
+    assert document["reauthorization"]["fresh_root_required"] is True
     assert document["data"]["test_policy"] == "prohibited; zero new calls"
 
 

@@ -38,17 +38,17 @@ budget:
   limit: {trajectories: 2, max_update_opportunities_per_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
 api_authorization:
-  authorized: false
-  authorization_scope: seed75_authorization_revoked_by_user_stop_on_2026_09_05
-  allowed_roles: []
-  allowed_phases: []
+  authorized: true
+  authorization_scope: explicit_user_reauthorization_on_2026_09_05_seed75_p0_then_p1_fresh_root_only_no_resume_zero_test
+  allowed_roles: [solver, teacher, critic, student, evaluator]
+  allowed_phases: [online_trajectory, frozen_validation]
 selection:
   primary_metric: paired final Validation VoteAcc P1 minus P0
   frozen_rule: For the authorized Seed75 pilot, P1 has a positive local signal only when paired Validation Vote is positive, mean member degradation is no worse than 0.01, and Vote-minus-MeanMember improves; no multi-seed claim is permitted
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: null
+  preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: b3e803df75788102293ca19111823e48f69229900ce8c0434f1128cc3fed0e08}
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
 git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 8db59d127d793abf1ce2c20041d6fd11282b39af, result_commit: null}
@@ -62,3 +62,12 @@ termination:
   validation_evaluations: 0
   test_calls: 0
   status_note: RUNNING is retained only because experiment_manifest_v1 has no cancelled lifecycle state
+reauthorization:
+  prior_attempt_preserved: true
+  prior_attempt_resumed: false
+  fresh_root_required: true
+  scope: Seed75 P0 then P1 only
+  final_evaluation_after_both_trajectories_only: true
+  shadow_evaluations: 2
+  validation_evaluations: 2
+  test_calls: 0
