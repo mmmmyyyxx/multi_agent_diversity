@@ -1,0 +1,16 @@
+{
+  "ENSEMBLE_STRUCTURE_EFFECT": "POSITIVE",
+  "STATIC_CONTROL_INTERPRETATION": "P1_ABSOLUTE_MEMBER_GAIN",
+  "analysis_gate": "PASS",
+  "interpretation_case": "CASE_1_INDIVIDUAL_AND_ENSEMBLE_GAIN",
+  "new_solver_provider_calls": 100,
+  "new_test_calls": 0,
+  "original_classifier": "NO_CLEAR_SIGNAL",
+  "original_classifier_unchanged": true,
+  "p1_minus_static_validation_ensemble_gain": 0.06399999999999995,
+  "p1_minus_static_validation_mean_member": 0.07599999999999996,
+  "p1_minus_static_validation_oracle": 0.24,
+  "p1_minus_static_validation_vote": 0.1399999999999999,
+  "post_hoc": true,
+  "single_seed_descriptive": true
+}

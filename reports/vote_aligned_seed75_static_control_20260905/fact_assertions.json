@@ -1,0 +1,20 @@
+{
+  "audit_gate_pass": true,
+  "initialization_signature_match": true,
+  "member_prompt_hash_parity": true,
+  "protected_historical_artifacts_unchanged": true,
+  "protected_artifact_count": 65,
+  "static_training_updates": 0,
+  "static_commits": 0,
+  "optimize_new_provider_calls": 0,
+  "shadow_new_provider_calls": 50,
+  "validation_new_provider_calls": 50,
+  "teacher_calls": 0,
+  "critic_calls": 0,
+  "student_calls": 0,
+  "p0_additional_training_calls": 0,
+  "p1_additional_training_calls": 0,
+  "new_test_calls": 0,
+  "original_classifier": "NO_CLEAR_SIGNAL",
+  "original_classifier_unchanged": true
+}

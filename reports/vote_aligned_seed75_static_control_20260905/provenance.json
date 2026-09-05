@@ -1,0 +1,27 @@
+{
+  "critic_calls": 0,
+  "experiment_id": "vote_aligned_seed75_static_control",
+  "execution_source_commit": "73464000a202705ecd16b4b91fb5870cbe04185c",
+  "design_commit": "cb7a311cf68097dd48848440a2f9beb78e1cd94f",
+  "implementation_commit": "4d204c42b4127e768544f52c2160e739a50aba38",
+  "models": {
+    "critic": "qwen3.7-flash",
+    "evaluator": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "student": "qwen3.7-flash",
+    "teacher": "qwen3.7-flash",
+    "thinking": false
+  },
+  "new_solver_provider_calls": 100,
+  "new_test_calls": 0,
+  "optimize_evidence_reused": true,
+  "p0_additional_training_calls": 0,
+  "p0_p1_static_initialization_match": true,
+  "p1_additional_training_calls": 0,
+  "seed": 75,
+  "shadow_validation_newly_evaluated": true,
+  "source_experiment": "vote_aligned_generic_shadow_pilot_v1",
+  "static_initialization_signature": "d6d32cc53bfd9bd0b4385935bdaf12cca20163858aacd46a209ff624b10e2bdd",
+  "student_calls": 0,
+  "teacher_calls": 0
+}

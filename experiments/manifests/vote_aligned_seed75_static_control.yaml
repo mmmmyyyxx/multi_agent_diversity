@@ -1,7 +1,7 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_seed75_static_control
 title: Seed75 Static no-training supplementary control
-status: RUNNING
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T18:30:00+08:00'}
@@ -9,6 +9,9 @@ lifecycle_history:
   - {status: IMPLEMENTED, timestamp: '2026-09-05T18:32:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T18:33:00+08:00'}
   - {status: RUNNING, timestamp: '2026-09-05T18:40:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-05T20:59:00+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-05T21:00:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-05T21:02:00+08:00'}
 lineage: {parents: [vote_aligned_generic_shadow_pilot_v1], derives_from: vote_aligned_generic_shadow_pilot_v1}
 scientific_question: Does Seed75 P1 reduce absolute individual competence versus the exact untrained initial ensemble, or only gain less individual competence than P0 while creating more useful plurality structure?
 hypotheses:
@@ -49,4 +52,4 @@ artifacts:
   report: reports/vote_aligned_seed75_static_control_20260905
   provenance: experiments/vote_aligned_seed75_static_control_20260905/PROTOCOL.md
 git: {design_commit: cb7a311cf68097dd48848440a2f9beb78e1cd94f, implementation_commit: 4d204c42b4127e768544f52c2160e739a50aba38, result_commit: null}
-result: {classifier: PENDING, conclusion: Static evaluation has not run, evidence_type: not_yet_available}
+result: {classifier: P1_ABSOLUTE_MEMBER_GAIN__ENSEMBLE_STRUCTURE_POSITIVE, conclusion: Relative to the exact untrained Seed75 team P1 improved Validation MeanMember by 7.6 points and Vote by 14 points while adding 6.4 points of Vote-minus-MeanMember; its lower MeanMember than P0 is reduced gain rather than absolute harm, evidence_type: prospective}
