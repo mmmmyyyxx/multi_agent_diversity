@@ -1,4 +1,4 @@
 Status: PASS
 Findings: 0
-Scope: report files contain only configuration, hashes, counters, aggregate placeholders, and Phase A verification facts.
+Scope: report files contain only configuration, hashes, counters, aggregate placeholders, Phase A verification facts, and sanitized user-stop lifecycle facts.
 Excluded: prompts, questions, gold/model answers, raw responses, endpoints, credentials, SQLite content, checkpoints, and absolute paths.

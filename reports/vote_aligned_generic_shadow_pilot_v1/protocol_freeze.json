@@ -3,11 +3,9 @@
     "P0_SHADOW_D2_GENERIC": {"target_scheduler": "rr_generic"},
     "P1_SHADOW_VOTE_ALIGNED_GENERIC": {"target_scheduler": "vote_aligned_rr"}
   },
-  "execution_baseline": "98924a0bdbaeebe5b34cbed28791d6e8fa4454bc",
+  "execution_baseline": "c2899f61a39e2b9d4bfad2f67d21899957cbc609",
   "fold_map": [
-    {"optimize": "fold_a+fold_b", "seed": 75, "shadow": "fold_c"},
-    {"optimize": "fold_a+fold_c", "seed": 76, "shadow": "fold_b"},
-    {"optimize": "fold_b+fold_c", "seed": 77, "shadow": "fold_a"}
+    {"optimize": "fold_a+fold_b", "seed": 75, "shadow": "fold_c"}
   ],
   "models": {
     "critic": "qwen3.7-flash",
@@ -19,7 +17,7 @@
   },
   "near_margin": "vote_flip_gain=0 and margin_gain>0 and current_M+margin_gain=0",
   "runtime_version": "vote_aligned_generic_shadow_pilot_v1",
-  "seeds": [75, 76, 77],
+  "seeds": [75],
   "shared_protocol": {
     "common_safe": true,
     "experiment_setting": "experimental_diversity_d2_rr_generic",

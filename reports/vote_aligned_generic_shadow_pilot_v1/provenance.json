@@ -3,7 +3,17 @@
   "historical_requested_baseline": "dc4971832754a9dbf5d64e08e571a65d75edd473",
   "historical_requested_baseline_was_current_head": false,
   "historical_partial_seed75_reused": false,
+  "authorized_execution_commit": "c2899f61a39e2b9d4bfad2f67d21899957cbc609",
   "method_identity": "member_aware_peer_state_v15",
   "phase_a_source_freeze_clean": true,
-  "runtime_version": "vote_aligned_generic_shadow_pilot_v1"
+  "runtime_version": "vote_aligned_generic_shadow_pilot_v1",
+  "termination": {
+    "completed_trajectories": 0,
+    "p0_started": true,
+    "p1_started": false,
+    "resume_authorized": false,
+    "user_stopped": true,
+    "validation_evaluations": 0,
+    "test_calls": 0
+  }
 }

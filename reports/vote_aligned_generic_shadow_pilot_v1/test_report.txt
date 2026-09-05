@@ -8,3 +8,7 @@ Deterministic selector replay: PASS.
 API calls: 0.
 Validation calls: 0.
 New Test calls: 0.
+Seed75 Phase B: USER_STOPPED before first complete trajectory checkpoint.
+Completed trajectories: 0/2.
+Validation evaluations: 0.
+P1 started: false.

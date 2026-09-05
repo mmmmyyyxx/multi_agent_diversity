@@ -38,18 +38,27 @@ budget:
   limit: {trajectories: 2, max_update_opportunities_per_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
 api_authorization:
-  authorized: true
-  authorization_scope: user_authorized_seed75_phase_b_on_2026_09_05
-  allowed_roles: [solver, teacher, critic, student, evaluator]
-  allowed_phases: [online_trajectory, frozen_validation]
+  authorized: false
+  authorization_scope: seed75_authorization_revoked_by_user_stop_on_2026_09_05
+  allowed_roles: []
+  allowed_phases: []
 selection:
   primary_metric: paired final Validation VoteAcc P1 minus P0
   frozen_rule: For the authorized Seed75 pilot, P1 has a positive local signal only when paired Validation Vote is positive, mean member degradation is no worse than 0.01, and Vote-minus-MeanMember improves; no multi-seed claim is permitted
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: 4f4b0560dc68a2a10f9cb622b081dbce364106b333d92a0b35a52b5c710766e0}
+  preregistration: null
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
 git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 8db59d127d793abf1ce2c20041d6fd11282b39af, result_commit: null}
-result: {classifier: SEED75_RUNNING, conclusion: User authorized the preregistered Seed75-only paired Phase B; no scientific result exists until both trajectories and frozen validation pass audit, evidence_type: not_yet_available}
+result: {classifier: USER_STOPPED_BEFORE_FIRST_TRAJECTORY_CHECKPOINT, conclusion: Seed75 was stopped by the user after API work began but before either trajectory completed; no scientific interpretation is permitted, evidence_type: not_yet_available}
+termination:
+  user_stopped: true
+  resume_authorized: false
+  completed_trajectories: 0
+  p0_started: true
+  p1_started: false
+  validation_evaluations: 0
+  test_calls: 0
+  status_note: RUNNING is retained only because experiment_manifest_v1 has no cancelled lifecycle state

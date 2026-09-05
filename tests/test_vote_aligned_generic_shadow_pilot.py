@@ -60,11 +60,10 @@ def test_manifest_keeps_phase_b_unauthorized() -> None:
     import yaml
 
     document = yaml.safe_load(pilot.MANIFEST.read_text(encoding="utf-8"))
-    assert document["api_authorization"] == {
-        "authorized": False,
-        "allowed_roles": [],
-        "allowed_phases": [],
-    }
+    assert document["api_authorization"]["authorized"] is False
+    assert document["api_authorization"]["allowed_roles"] == []
+    assert document["api_authorization"]["allowed_phases"] == []
+    assert "revoked_by_user_stop" in document["api_authorization"]["authorization_scope"]
     assert document["data"]["test_policy"] == "prohibited; zero new calls"
 
 

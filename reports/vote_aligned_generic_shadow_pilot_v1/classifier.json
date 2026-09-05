@@ -1,4 +1,4 @@
 {
-  "classifier": "PHASE_A_EXECUTION_READY__PHASE_B_NOT_AUTHORIZED",
+  "classifier": "USER_STOPPED_BEFORE_FIRST_TRAJECTORY_CHECKPOINT",
   "scientific_result_available": false
 }
