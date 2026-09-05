@@ -1,13 +1,14 @@
 schema_version: experiment_manifest_v1
 experiment_id: vote_aligned_generic_shadow_pilot_v1
 title: Vote-Aligned Mild Responsibility on Shadow-Gated Generic Evolution
-status: PREFLIGHT_PASS
+status: RUNNING
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-05T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-05T02:25:23+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-05T02:25:23+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-05T02:25:23+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-05T11:30:39+08:00'}
 lineage: {parents: [anti_overfitting_shadow_gate_v1], derives_from: anti_overfitting_shadow_gate_v1}
 scientific_question: Does hierarchical direct-flip then near-margin then coverage target scheduling improve plurality Vote without degrading mean member competence on Shadow-gated D2 Generic?
 hypotheses:
@@ -36,15 +37,19 @@ budget:
   frozen_before_run: true
   limit: {trajectories: 2, max_update_opportunities_per_trajectory: 32, target_slots_per_update: 2, source_candidates_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
   early_stop: {consecutive_updates_without_shadow_approved_commit: 6}
-api_authorization: {authorized: false, allowed_roles: [], allowed_phases: []}
+api_authorization:
+  authorized: true
+  authorization_scope: user_authorized_seed75_phase_b_on_2026_09_05
+  allowed_roles: [solver, teacher, critic, student, evaluator]
+  allowed_phases: [online_trajectory, frozen_validation]
 selection:
   primary_metric: paired final Validation VoteAcc P1 minus P0
   frozen_rule: For the authorized Seed75 pilot, P1 has a positive local signal only when paired Validation Vote is positive, mean member degradation is no worse than 0.01, and Vote-minus-MeanMember improves; no multi-seed claim is permitted
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: null
+  preregistration: {path: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md, sha256: 4f4b0560dc68a2a10f9cb622b081dbce364106b333d92a0b35a52b5c710766e0}
   report: reports/vote_aligned_generic_shadow_pilot_v1
   provenance: experiments/vote_aligned_generic_shadow_pilot_v1/PROTOCOL.md
-git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, result_commit: null}
-result: {classifier: SEED75_SCOPE_AMENDED__PREFLIGHT_PENDING, conclusion: User narrowed execution to Seed75 before any Phase B result; no scientific result exists yet, evidence_type: not_yet_available}
+git: {design_commit: 98924a0bdbaeebe5b34cbed28791d6e8fa4454bc, implementation_commit: 8db59d127d793abf1ce2c20041d6fd11282b39af, result_commit: null}
+result: {classifier: SEED75_RUNNING, conclusion: User authorized the preregistered Seed75-only paired Phase B; no scientific result exists until both trajectories and frozen validation pass audit, evidence_type: not_yet_available}
