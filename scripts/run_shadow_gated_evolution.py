@@ -528,6 +528,7 @@ async def _evaluate_final_dataset(
     out: Path,
     *,
     evaluation_identity: Mapping[str, Any] | None = None,
+    config_values_override: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     result_path = out / "evaluation_summary_private.json"
     if result_path.is_file():
@@ -535,7 +536,15 @@ async def _evaluate_final_dataset(
         if evaluation_identity is not None and prior.get("evaluation_identity") != dict(evaluation_identity):
             raise RuntimeError(f"{split} evaluation identity conflict")
         return prior
-    meta = json.loads((cell / "run_meta.json").read_text(encoding="utf-8"))
+    meta_path = cell / "run_meta.json"
+    if meta_path.is_file():
+        values = dict(
+            json.loads(meta_path.read_text(encoding="utf-8"))["config"]
+        )
+    elif config_values_override is not None:
+        values = dict(config_values_override)
+    else:
+        raise RuntimeError(f"{split} evaluation requires run metadata")
     checkpoint_path = cell / "training_checkpoint.json"
     checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
     checkpoint_hash = sha256_file(checkpoint_path)
@@ -543,7 +552,6 @@ async def _evaluate_final_dataset(
     evaluation_cache = out / "solver_cache.sqlite"
     if not evaluation_cache.exists():
         _backup(cell / "solver_cache.sqlite", evaluation_cache)
-    values = dict(meta["config"])
     values.update({
         "out_dir": str(out), "shared_solver_cache_path": str(evaluation_cache),
         "resume_from_checkpoint": False, "final_test_enabled": False,

@@ -220,6 +220,7 @@ def build_checkpoint(
         "planned_update_count": int(system.planned_update_count),
         "completed_update_count": int(system.completed_update_count),
         "early_stop_reason": system.early_stop_reason,
+        "termination_status": system.termination_status,
         "training_completed": bool(system.training_completed),
         "final_state_selection": dict(system.final_state_selection),
         "training_dynamics": list(system.training_dynamics),
@@ -638,6 +639,17 @@ def restore_checkpoint(system, payload: Mapping[str, Any]) -> tuple[int, int, di
     system.completed_update_count = int(payload["completed_update_count"])
     system.early_stop_reason = str(payload["early_stop_reason"])
     system.training_completed = bool(payload["training_completed"])
+    stored_termination = payload.get("termination_status")
+    if stored_termination is not None:
+        system.termination_status = str(stored_termination)
+    elif system.training_completed:
+        system.termination_status = (
+            "completed_by_budget"
+            if system.completed_update_count == system.planned_update_count
+            else "completed_by_early_stop"
+        )
+    else:
+        system.termination_status = "incomplete"
     system.final_state_selection = dict(payload["final_state_selection"])
     system.training_dynamics = list(payload["training_dynamics"])
     system.team_differentiation_trajectory = list(

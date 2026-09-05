@@ -30,7 +30,11 @@ from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.governance.artifacts import scan_sanitized_artifacts
 from multi_dataset_diverse_rl.governance.authorization import require_api_authorization
 from multi_dataset_diverse_rl.persistence.checkpoint import restore_checkpoint
-from multi_dataset_diverse_rl.persistence.identity import RunIdentity, build_run_identity
+from multi_dataset_diverse_rl.persistence.identity import (
+    RunIdentity,
+    build_run_identity,
+    config_fingerprint,
+)
 from multi_dataset_diverse_rl.protocol import (
     candidate_budget_contract,
     experiment_protocol,
@@ -42,6 +46,11 @@ from multi_dataset_diverse_rl.shadow_gate import (
     assert_winner_only_event,
 )
 from multi_dataset_diverse_rl.system import PromptEnsembleOptimizationSystem
+from multi_dataset_diverse_rl.termination import (
+    COMPLETED_BY_EARLY_STOP,
+    TerminationAssessment,
+    assess_trajectory_termination,
+)
 from multi_dataset_diverse_rl.vote_aligned_scheduler import (
     DIRECT_FLIP,
     FALLBACK_RR,
@@ -85,6 +94,7 @@ DEFAULT_PREP_ROOT = ROOT / "runs" / "vote_aligned_generic_shadow_pilot_v1_prep"
 DEFAULT_RUN_ROOT = ROOT / "runs" / "vote_aligned_generic_shadow_pilot_v1"
 DEFAULT_REPORT_ROOT = ROOT / "reports" / "vote_aligned_generic_shadow_pilot_v1"
 RUNTIME_VERSION = "vote_aligned_generic_shadow_pilot_v1"
+DERIVED_COMPLETION_FILENAME = "derived_completion_metadata.json"
 
 
 @dataclass(frozen=True)
@@ -180,6 +190,205 @@ def validate_evaluation_inventory(
         for seed, arm, dataset in sorted(actual - expected)
     )
     return errors
+
+
+def _termination_from_checkpoint(
+    checkpoint: Mapping[str, Any],
+) -> TerminationAssessment:
+    return assess_trajectory_termination(
+        planned_update_opportunities=int(checkpoint["planned_update_count"]),
+        executed_update_records=checkpoint["candidate_decisions"],
+        stored_early_stop_reason=str(checkpoint["early_stop_reason"]),
+        completed_update_count=int(checkpoint["completed_update_count"]),
+    )
+
+
+def _expected_cell_config(
+    prep_root: Path,
+    run_root: Path,
+    seed: int,
+    arm: str,
+    *,
+    manifest_sha256_override: str | None = None,
+) -> Config:
+    index = SCOPE.seeds.index(seed)
+    optimize, _ = _fold_paths(prep_root, index)
+    cell = run_root / f"seed{seed}" / arm
+    config = _config(
+        seed,
+        arm,
+        cell,
+        optimize,
+        prep_root / "splits_private" / "validation.csv",
+        cell / "solver_cache.sqlite",
+        run_root / "initialization" / f"seed{seed}" / "frozen_initialization_manifest.json",
+        False,
+    )
+    if manifest_sha256_override is None:
+        return config
+    values = config.to_flat_dict()
+    values["manifest_sha256"] = manifest_sha256_override
+    return Config.from_flat(**values)
+
+
+def _verify_derived_completion(cell: Path) -> tuple[TerminationAssessment | None, list[str]]:
+    marker_path = cell / DERIVED_COMPLETION_FILENAME
+    if not marker_path.is_file():
+        return None, []
+    errors: list[str] = []
+    try:
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        checkpoint_path = cell / "training_checkpoint.json"
+        registry_path = cell / "completed_update_registry.json"
+        checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    except (OSError, KeyError, json.JSONDecodeError) as exc:
+        return None, [f"derived_completion_unreadable:{type(exc).__name__}"]
+    assessment = _termination_from_checkpoint(checkpoint)
+    if marker.get("checkpoint_sha256") != sha256_file(checkpoint_path):
+        errors.append("derived_completion_checkpoint_hash_mismatch")
+    if marker.get("completed_registry_sha256") != sha256_file(registry_path):
+        errors.append("derived_completion_registry_hash_mismatch")
+    if (
+        marker.get("config_fingerprint")
+        != checkpoint.get("run_identity", {}).get("config_fingerprint")
+    ):
+        errors.append("derived_completion_config_fingerprint_mismatch")
+    expected_updates = list(range(assessment.executed_update_opportunities))
+    if list(map(int, registry.get("completed_updates", []))) != expected_updates:
+        errors.append("derived_completion_registry_not_exact_prefix")
+    for key, value in assessment.to_dict().items():
+        if marker.get(key) != value:
+            errors.append(f"derived_completion_field_mismatch:{key}")
+    if marker.get("completion_derived_from_existing_evidence") is not True:
+        errors.append("derived_completion_not_evidence_based")
+    if marker.get("training_rerun") is not False:
+        errors.append("derived_completion_training_rerun")
+    if int(marker.get("additional_p0_model_calls", -1)) != 0:
+        errors.append("derived_completion_p0_model_calls")
+    if assessment.status != COMPLETED_BY_EARLY_STOP:
+        errors.append("derived_completion_not_valid_early_stop")
+    return assessment, errors
+
+
+def normalize_existing_p0_completion(
+    prep_root: Path,
+    run_root: Path,
+    *,
+    evidence_prep_root: Path | None = None,
+) -> dict[str, Any]:
+    """Write only a derived marker after proving the preserved P0 terminal state."""
+    cell = run_root / "seed75" / P0
+    p1 = run_root / "seed75" / P1
+    errors: list[str] = []
+    if p1.exists():
+        errors.append("p1_already_exists")
+    if any((run_root / "evaluation").rglob("evaluation_summary_private.json")):
+        errors.append("final_evaluation_already_exists")
+    required = (
+        "training_checkpoint.json",
+        "completed_update_registry.json",
+        "frozen_initialization_match.json",
+    )
+    for name in required:
+        if not (cell / name).is_file():
+            errors.append(f"p0_missing:{name}")
+    if errors:
+        return {"normalization_gate": "HOLD", "errors": sorted(errors)}
+
+    checkpoint_path = cell / "training_checkpoint.json"
+    registry_path = cell / "completed_update_registry.json"
+    checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    assessment = _termination_from_checkpoint(checkpoint)
+    if assessment.status != COMPLETED_BY_EARLY_STOP or assessment.errors:
+        errors.extend(f"p0_termination:{value}" for value in assessment.errors)
+        if assessment.status != COMPLETED_BY_EARLY_STOP:
+            errors.append(f"p0_termination_status:{assessment.status}")
+    expected_updates = list(range(assessment.executed_update_opportunities))
+    if list(map(int, registry.get("completed_updates", []))) != expected_updates:
+        errors.append("p0_completed_registry_not_exact_prefix")
+    for field in ("candidate_decisions", "target_priority_audit"):
+        indices = [int(row["update_index"]) for row in checkpoint[field]]
+        if indices != expected_updates:
+            errors.append(f"p0_{field}_not_exact_prefix")
+    if checkpoint.get("training_completed") is not False:
+        errors.append("p0_original_checkpoint_not_runtime_mismatch")
+    if any(bool(checkpoint[key]) for key in (
+        "test_evaluation_count",
+        "test_used_for_selection",
+        "test_used_for_training",
+        "test_called_before_training_complete",
+    )):
+        errors.append("p0_test_isolation")
+
+    evidence_prep_root = evidence_prep_root or prep_root
+    run_identity = checkpoint.get("run_identity", {})
+    expected_cfg = _expected_cell_config(
+        evidence_prep_root,
+        run_root,
+        75,
+        P0,
+        manifest_sha256_override=str(run_identity.get("manifest_sha256", "")),
+    )
+    if run_identity.get("config_fingerprint") != config_fingerprint(expected_cfg):
+        errors.append("p0_config_fingerprint_mismatch")
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    expected_p0_commit = str(
+        manifest.get("reauthorization", {}).get("p0_execution_commit", "")
+    )
+    if str(run_identity.get("git_commit")) != expected_p0_commit:
+        errors.append("p0_execution_commit_mismatch")
+    if errors:
+        return {
+            "normalization_gate": "HOLD",
+            "errors": sorted(set(errors)),
+            **assessment.to_dict(),
+            "api_calls": 0,
+            "validation_calls": 0,
+            "test_calls": 0,
+        }
+
+    marker = {
+        "schema_version": "derived_early_stop_completion_v1",
+        **assessment.to_dict(),
+        "checkpoint_training_completed_original": False,
+        "completion_derived_from_existing_evidence": True,
+        "completion_derived_post_hoc": True,
+        "original_runtime_mismatch_preserved": True,
+        "training_rerun": False,
+        "additional_p0_model_calls": 0,
+        "validation_calls": 0,
+        "test_calls": 0,
+        "source_execution_commit": str(run_identity["git_commit"]),
+        "normalization_commit": git("rev-parse", "HEAD"),
+        "checkpoint_sha256": sha256_file(checkpoint_path),
+        "completed_registry_sha256": sha256_file(registry_path),
+        "config_fingerprint_verified": True,
+        "config_fingerprint": str(run_identity["config_fingerprint"]),
+        "no_update_beyond_terminal": True,
+    }
+    write_json(cell / DERIVED_COMPLETION_FILENAME, marker)
+    verified, verify_errors = _verify_derived_completion(cell)
+    if verified is None or verify_errors:
+        raise RuntimeError(f"derived completion verification failed: {verify_errors}")
+    return {"normalization_gate": "PASS", **marker, "errors": []}
+
+
+def _cell_is_terminal(cell: Path) -> bool:
+    checkpoint_path = cell / "training_checkpoint.json"
+    if not checkpoint_path.is_file():
+        return False
+    checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+    assessment = _termination_from_checkpoint(checkpoint)
+    if (cell / "final_summary.json").is_file():
+        if not checkpoint.get("training_completed") or not assessment.training_completed:
+            raise RuntimeError("final summary exists without valid terminal checkpoint")
+        return True
+    derived, errors = _verify_derived_completion(cell)
+    if errors:
+        raise RuntimeError(f"invalid derived completion marker: {errors}")
+    return derived is not None and derived.training_completed
 
 
 class VoteAlignedShadowSystem(ShadowGatedSystem):
@@ -582,7 +791,7 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
         )
         for arm in SCOPE.arms:
             out = run_root / f"seed{seed}" / arm
-            if (out / "final_summary.json").is_file():
+            if _cell_is_terminal(out):
                 continue
             if out.exists() and not (resume and (out / "training_checkpoint.json").is_file()):
                 raise RuntimeError("existing incomplete cell requires --resume")
@@ -633,6 +842,9 @@ async def execute(prep_root: Path, run_root: Path, *, resume: bool) -> dict[str,
                         "arm": arm,
                         "dataset_role": dataset_role,
                     },
+                    config_values_override=_expected_cell_config(
+                        prep_root, run_root, seed, arm
+                    ).to_flat_dict(),
                 ))
     result = {
         "execution_gate": "PASS",
@@ -666,32 +878,63 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
         init_hashes: set[str] = set()
         for arm in SCOPE.arms:
             cell = run_root / f"seed{seed}" / arm
-            required = ["final_summary.json", "training_checkpoint.json", "run_meta.json", "completed_update_registry.json"]
+            required = [
+                "training_checkpoint.json",
+                "completed_update_registry.json",
+                "frozen_initialization_match.json",
+            ]
             for name in required:
                 if not (cell / name).is_file():
                     errors.append(f"missing:{seed}:{arm}:{name}")
             if any(not (cell / name).is_file() for name in required):
                 continue
             checkpoint = json.loads((cell / "training_checkpoint.json").read_text(encoding="utf-8"))
-            meta = json.loads((cell / "run_meta.json").read_text(encoding="utf-8"))
-            scheduler = str(meta["config"]["target_scheduler"])
-            if scheduler != SCHEDULER_BY_ARM[arm]:
-                errors.append(f"scheduler:{seed}:{arm}")
-            if meta["config"]["agent_model"] != SOLVER_MODEL or meta["config"]["optimizer_model"] != ROLE_MODEL:
-                errors.append(f"model:{seed}:{arm}")
-            if meta["config"]["evaluator_model"] != ROLE_MODEL:
-                errors.append(f"evaluator_model:{seed}:{arm}")
-            if meta["config"]["experiment_setting"] != "experimental_diversity_d2_rr_generic":
-                errors.append(f"protocol:{seed}:{arm}")
-            if int(meta["config"]["num_candidates_per_parent"]) != 2:
-                errors.append(f"source_candidate_budget:{seed}:{arm}")
-            if int(meta["config"]["stage_b_candidate_budget"]) != 2:
-                errors.append(f"stage_b_budget:{seed}:{arm}")
-            if str(meta["config"]["proposal_memory_mode"]) != "off":
-                errors.append(f"proposal_memory:{seed}:{arm}")
+            assessment = _termination_from_checkpoint(checkpoint)
+            derived, derived_errors = _verify_derived_completion(cell)
+            errors.extend(f"{seed}:{arm}:{value}" for value in derived_errors)
+            final_summary_exists = (cell / "final_summary.json").is_file()
+            if not final_summary_exists and derived is None:
+                errors.append(f"missing:{seed}:{arm}:terminal_completion_evidence")
+            if assessment.errors:
+                errors.extend(
+                    f"termination:{seed}:{arm}:{value}"
+                    for value in assessment.errors
+                )
+            if not assessment.training_completed:
+                errors.append(f"invalid_termination:{seed}:{arm}:{assessment.status}")
+
+            meta_path = cell / "run_meta.json"
+            if meta_path.is_file():
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                scheduler = str(meta["config"]["target_scheduler"])
+                if scheduler != SCHEDULER_BY_ARM[arm]:
+                    errors.append(f"scheduler:{seed}:{arm}")
+                if meta["config"]["agent_model"] != SOLVER_MODEL or meta["config"]["optimizer_model"] != ROLE_MODEL:
+                    errors.append(f"model:{seed}:{arm}")
+                if meta["config"]["evaluator_model"] != ROLE_MODEL:
+                    errors.append(f"evaluator_model:{seed}:{arm}")
+                if meta["config"]["experiment_setting"] != "experimental_diversity_d2_rr_generic":
+                    errors.append(f"protocol:{seed}:{arm}")
+                if int(meta["config"]["num_candidates_per_parent"]) != 2:
+                    errors.append(f"source_candidate_budget:{seed}:{arm}")
+                if int(meta["config"]["stage_b_candidate_budget"]) != 2:
+                    errors.append(f"stage_b_budget:{seed}:{arm}")
+                if str(meta["config"]["proposal_memory_mode"]) != "off":
+                    errors.append(f"proposal_memory:{seed}:{arm}")
+            elif derived is not None:
+                marker = json.loads(
+                    (cell / DERIVED_COMPLETION_FILENAME).read_text(encoding="utf-8")
+                )
+                if (
+                    checkpoint.get("run_identity", {}).get("config_fingerprint")
+                    != marker.get("config_fingerprint")
+                ):
+                    errors.append(f"derived_config_fingerprint:{seed}:{arm}")
+            else:
+                errors.append(f"missing:{seed}:{arm}:run_meta.json")
             if int(checkpoint["planned_update_count"]) != 32 or int(checkpoint["completed_update_count"]) > 32:
                 errors.append(f"budget:{seed}:{arm}")
-            if not checkpoint["training_completed"]:
+            if not checkpoint["training_completed"] and derived is None:
                 errors.append(f"training_incomplete:{seed}:{arm}")
             if any(bool(checkpoint[key]) for key in ("test_evaluation_count", "test_used_for_selection", "test_used_for_training", "test_called_before_training_complete")):
                 errors.append(f"test_isolation:{seed}:{arm}")
@@ -722,8 +965,10 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
                     for branch in decision.get("branches", [])
                 ):
                     errors.append(f"candidate_budget:{seed}:{arm}")
-            event_path = cell / "shadow_gate_events_sanitized.jsonl"
-            events = [json.loads(line) for line in event_path.read_text(encoding="utf-8").splitlines() if line.strip()] if event_path.is_file() else []
+            shadow_registry = json.loads(
+                (cell / "shadow_evaluation_registry.json").read_text(encoding="utf-8")
+            ) if (cell / "shadow_evaluation_registry.json").is_file() else {"events": {}}
+            events = list(shadow_registry.get("events", {}).values())
             for event in events:
                 try:
                     assert_winner_only_event(event)
@@ -733,16 +978,17 @@ def audit(prep_root: Path, run_root: Path) -> dict[str, Any]:
                 "seed": seed,
                 "arm": arm,
                 "completed_updates": int(checkpoint["completed_update_count"]),
+                "planned_updates": int(checkpoint["planned_update_count"]),
+                "remaining_unexecuted": assessment.remaining_unexecuted,
+                "termination_status": assessment.status,
+                "terminal_update_index": assessment.terminal_update_index,
+                "terminal_update_ordinal": assessment.terminal_update_ordinal,
+                "final_no_commit_streak": assessment.final_no_commit_streak,
                 "early_stop_reason": str(checkpoint["early_stop_reason"]),
                 "shadow_evaluations": len(events),
                 "accepted_commits": int(checkpoint["accepted_state_count"]),
+                "completion_derived_from_existing_evidence": derived is not None,
             })
-            completed = int(checkpoint["completed_update_count"])
-            reason = str(checkpoint["early_stop_reason"])
-            if completed < 32 and reason != (
-                f"no_shadow_approved_commit_streak_{MAX_NO_SHADOW_APPROVED_COMMIT_STREAK}"
-            ):
-                errors.append(f"early_stop:{seed}:{arm}")
         if len(init_hashes) != 1:
             errors.append(f"paired_initialization:{seed}")
     evaluation_files = list(
@@ -808,14 +1054,22 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
             funnels = [row.get("funnel", {}) for row in decisions]
             target_audits = checkpoint["target_priority_audit"]
             shadow_events_path = cell / "shadow_gate_events_sanitized.jsonl"
-            shadow_events = {
-                int(row["update_index"]): row
-                for row in (
-                    json.loads(line)
-                    for line in shadow_events_path.read_text(encoding="utf-8").splitlines()
-                    if line.strip()
-                )
-            }
+            if shadow_events_path.is_file():
+                shadow_events = {
+                    int(row["update_index"]): row
+                    for row in (
+                        json.loads(line)
+                        for line in shadow_events_path.read_text(encoding="utf-8").splitlines()
+                        if line.strip()
+                    )
+                }
+            else:
+                registry_path = cell / "shadow_evaluation_registry.json"
+                registry = json.loads(registry_path.read_text(encoding="utf-8"))
+                shadow_events = {
+                    int(row["update_index"]): row
+                    for row in registry.get("events", {}).values()
+                }
             lane_counts = {
                 DIRECT_FLIP: 0,
                 NEAR_MARGIN: 0,
@@ -928,13 +1182,13 @@ def analyze(prep_root: Path, run_root: Path, report_root: Path) -> dict[str, Any
     wins = sum(row["validation_vote_delta"] > 0 for row in contrasts)
     losses = sum(row["validation_vote_delta"] < 0 for row in contrasts)
     if mean_vote > 0 and wins > losses and mean_member >= -0.01 and mean_ensemble > 0:
-        classifier = "VOTE_ALIGNED_SPECIALIZATION_SUPPORTED"
+        classifier = "VOTE_ALIGNED_SPECIALIZATION_SIGNAL"
     elif mean_ensemble > 0 and mean_vote <= 0:
-        classifier = "VOTE_STRUCTURE_IMPROVED_WITHOUT_FINAL_GAIN"
-    elif mean_vote < 0 and mean_member < -0.01:
-        classifier = "SPECIALIZATION_HARMFUL"
+        classifier = "VOTE_STRUCTURE_ONLY_SIGNAL"
+    elif mean_vote < 0 and (mean_member < 0 or mean_ensemble < 0):
+        classifier = "NEGATIVE_PILOT_SIGNAL"
     else:
-        classifier = "NO_CLEAR_VOTE_ALIGNED_BENEFIT"
+        classifier = "NO_CLEAR_SIGNAL"
     summary = {
         "analysis_gate": "PASS",
         "classifier": classifier,
@@ -953,6 +1207,7 @@ def parser() -> argparse.ArgumentParser:
     value = argparse.ArgumentParser()
     modes = value.add_mutually_exclusive_group(required=True)
     modes.add_argument("--prepare-only", action="store_true")
+    modes.add_argument("--normalize-existing-p0", action="store_true")
     modes.add_argument("--run", action="store_true")
     modes.add_argument("--resume", action="store_true")
     modes.add_argument("--audit", action="store_true")
@@ -960,6 +1215,7 @@ def parser() -> argparse.ArgumentParser:
     value.add_argument("--prep-root", type=Path, default=DEFAULT_PREP_ROOT)
     value.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
     value.add_argument("--report-root", type=Path, default=DEFAULT_REPORT_ROOT)
+    value.add_argument("--evidence-prep-root", type=Path)
     return value
 
 
@@ -970,6 +1226,16 @@ def main() -> None:
     report = args.report_root.resolve()
     if args.prepare_only:
         result = prepare(prep)
+    elif args.normalize_existing_p0:
+        result = normalize_existing_p0_completion(
+            prep,
+            run,
+            evidence_prep_root=(
+                args.evidence_prep_root.resolve()
+                if args.evidence_prep_root is not None
+                else None
+            ),
+        )
     elif args.run:
         result = asyncio.run(execute(prep, run, resume=False))
     elif args.resume:

@@ -99,6 +99,18 @@ def _print_progress(*, epoch: int | str, step: int | str, metrics: DatasetMetric
     )
 
 
+def pending_epoch_indices(
+    start_epoch: int,
+    epochs: int,
+    *,
+    training_completed: bool,
+) -> range:
+    """Return no work after either valid terminal completion state."""
+    if training_completed:
+        return range(0)
+    return range(start_epoch, epochs)
+
+
 async def run(cfg: Config) -> dict[str, Any]:
     random.seed(cfg.training.seed)
     train = _load(cfg.data.train_path, cfg.data.train_size, cfg.data.dataset_format)
@@ -133,6 +145,7 @@ async def run(cfg: Config) -> dict[str, Any]:
             "selected_checkpoint_update_index": 0,
             "selected_team_prompt_state_hash": team_state_hash,
             "selected_epoch": 0,
+            "termination_status": system.termination_status,
             "selection_changed": False,
             "checkpoint_selection": "none",
             "test_evaluation_count": 0,
@@ -198,6 +211,11 @@ async def run(cfg: Config) -> dict[str, Any]:
         start_epoch, start_update, training_state = restore_checkpoint(system, payload)
         if system.planned_update_count != planned_update_count:
             raise ValueError("checkpoint planned update count mismatch")
+        if not system.training_completed and system.early_stop_reason:
+            # A process may exit after persisting the terminal update but before
+            # writing the final completion checkpoint.  Reconstruct that state
+            # deterministically; invalid early-stop evidence still fails closed.
+            system.mark_training_complete(planned_update_count)
     else:
         initial_state_hash = system.team_prompt_state_hash()
         training_state = {
@@ -206,8 +224,12 @@ async def run(cfg: Config) -> dict[str, Any]:
         }
         system.record_training_dynamics(update_index=-1)
         _verify_frozen_initialization(system, cfg)
-    early_stopped = False
-    for epoch in range(start_epoch, cfg.training.epochs):
+    early_stopped = system.training_completed
+    for epoch in pending_epoch_indices(
+        start_epoch,
+        cfg.training.epochs,
+        training_completed=early_stopped,
+    ):
         epoch_decision_start = len(system.candidate_decisions)
         first_update = start_update if epoch == start_epoch else 0
         for update in range(first_update, updates_per_epoch):
@@ -264,6 +286,7 @@ async def run(cfg: Config) -> dict[str, Any]:
         "selected_team_prompt_state_hash": selected_hash,
         "selected_epoch": system.completed_update_count,
         "early_stop_reason": system.early_stop_reason,
+        "termination_status": system.termination_status,
         "selection_changed": selected_hash != training_state[
             "initial_team_state_hash"
         ],

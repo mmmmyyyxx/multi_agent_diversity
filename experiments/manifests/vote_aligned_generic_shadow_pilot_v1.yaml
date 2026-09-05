@@ -63,6 +63,7 @@ termination:
   test_calls: 0
   status_note: RUNNING is retained only because experiment_manifest_v1 has no cancelled lifecycle state
 reauthorization:
+  p0_execution_commit: 1c7c545061fccb16fab4a40d6086ed69e88eb655
   prior_attempt_preserved: true
   prior_attempt_resumed: false
   fresh_root_required: true

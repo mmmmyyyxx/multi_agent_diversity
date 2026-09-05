@@ -188,6 +188,12 @@ from .tcs import (
     serialize_context,
     teacher_repair_plan_hash,
 )
+from .termination import (
+    COMPLETED_BY_BUDGET,
+    COMPLETED_BY_EARLY_STOP,
+    INCOMPLETE,
+    assess_trajectory_termination,
+)
 from .utils import extract_json_obj, normalize_prompt_text, normalize_spaces
 from .versions import (
     CANDIDATE_ACCEPTANCE_POLICY,
@@ -575,6 +581,7 @@ class PromptEnsembleOptimizationSystem:
         self.planned_update_count = 0
         self.completed_update_count = 0
         self.early_stop_reason = ""
+        self.termination_status = INCOMPLETE
         self.training_completed = False
         self.final_state_selection: dict[str, Any] = {}
         self.test_evaluation_count = 0
@@ -5645,20 +5652,40 @@ class PromptEnsembleOptimizationSystem:
         return await self.evaluate_final_test(data)
 
     def mark_training_complete(self, planned_update_count: int) -> None:
+        completed_by_budget = (
+            self.completed_update_count == int(planned_update_count)
+        )
+        assessment = assess_trajectory_termination(
+            planned_update_opportunities=int(planned_update_count),
+            executed_update_records=self.candidate_decisions,
+            stored_early_stop_reason=self.early_stop_reason,
+            completed_update_count=self.completed_update_count,
+        )
         allowed_early_stops = {"no_actionable_responsibility"}
         if self.protocol.legacy_protocol:
             allowed_early_stops.add("all_actionable_members_frozen")
+        legacy_or_state_exhaustion_stop = (
+            self.early_stop_reason in allowed_early_stops
+            and self.completed_update_count <= int(planned_update_count)
+        )
         if (
-            self.completed_update_count != int(planned_update_count)
-            and not (
-                self.early_stop_reason in allowed_early_stops
-                and self.completed_update_count <= int(planned_update_count)
-            )
+            not completed_by_budget
+            and not assessment.training_completed
+            and not legacy_or_state_exhaustion_stop
         ):
             raise RuntimeError(
                 "cannot complete training before every planned update finishes"
             )
         self.planned_update_count = int(planned_update_count)
+        self.termination_status = (
+            COMPLETED_BY_BUDGET
+            if completed_by_budget
+            else (
+                COMPLETED_BY_EARLY_STOP
+                if legacy_or_state_exhaustion_stop
+                else assessment.status
+            )
+        )
         self.training_completed = True
 
     async def evaluate_final_test(
