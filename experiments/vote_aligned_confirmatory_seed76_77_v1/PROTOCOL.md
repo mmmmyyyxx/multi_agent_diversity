@@ -83,4 +83,3 @@ preserves evidence; it is not an efficacy result.
 This protocol is zero-API preregistration only. It does not authorize Phase B.
 A fresh, explicit user authorization and a clean source freeze are required
 before either Seed76 or Seed77 can call a model API.
-
