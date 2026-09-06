@@ -1,0 +1,57 @@
+{
+  "explicitly_omitted_provider_fields": [
+    "seed",
+    "top_p",
+    "stop"
+  ],
+  "freeze_status": "SOURCE_FROZEN_ZERO_API",
+  "identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "provider_request_fields": [
+    "model",
+    "messages",
+    "temperature",
+    "max_tokens",
+    "extra_body"
+  ],
+  "source_sha256": {
+    "__init__.py": "9d8f412348e94bf67b68321eded891c3182925870a098f373b7d95f4fb59399b",
+    "contract.py": "751805a3cb18e55a014e9d568c491bf4a6dffc3fb366f60d42656c76abc79042",
+    "entrypoints.py": "7971b536c08a1758bead4b2e0a72df582aa924d9e56f5a469d98f29ddce623d5",
+    "evaluator.py": "b9f10329639773abf505530ccc2343e81fd0ea0511f111541bcb9521d7c2b747",
+    "run_common_solver_contract_replay.py": "28c41236bc9afaf63711d903b7e420c4af83f6a948a05855b3b4f4df0fad938e"
+  },
+  "spec": {
+    "accounting": "LOGICAL_PROVIDER_CACHE_TOKEN_AND_FINISH_REASON_V1",
+    "cache_identity": "SHA256_CANONICAL_PROVIDER_REQUEST_BYTES",
+    "contract_id": "COMMON_SOLVER_CONTRACT_V1",
+    "enable_thinking": false,
+    "invalid_output_policy": "SCORE_WRONG_NO_SEMANTIC_RETRY",
+    "max_tokens": 1800,
+    "message_layout": "SYSTEM_THEN_USER",
+    "model": "qwen3-8b",
+    "model_snapshot": "UNVERSIONED_PROVIDER_ALIAS",
+    "parser": "STRICT_SINGLE_FINAL_ANSWER_OPTION_LETTER_V1",
+    "provider_seed_policy": "OMITTED",
+    "question_newline_policy": "CRLF_AND_CR_TO_LF_STRIP_OUTER_WHITESPACE",
+    "retry_backoff_seconds": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "retry_status_codes": [
+      408,
+      409,
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "stop_policy": "OMITTED",
+    "task": "BBH_disambiguation_qa",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p_policy": "OMITTED",
+    "transport_attempt_cap": 4
+  }
+}

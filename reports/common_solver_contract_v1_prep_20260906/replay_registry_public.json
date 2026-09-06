@@ -1,0 +1,61 @@
+{
+  "case_count": 50,
+  "case_order_sha256": "d76f1aea88700bf80c61d05c64c599df497ab47b34f5df51a35eeb23189b96ce",
+  "dropped_or_missing_state_note": "Seed75 Diversity P1 exact final bytes are not present in the valid local raw root; the minimal replay therefore uses Seed76, where all three final artifacts are complete.",
+  "optimization_rerun": false,
+  "planned_unique_prompt_case_requests": 400,
+  "selection_rule": "SEED76_CHOSEN_BY_COMPLETE_FROZEN_ARTIFACT_AVAILABILITY_NOT_EFFICACY",
+  "split": "ExternalValidation50",
+  "states": [
+    {
+      "aggregation": "equal_weight_plurality_tie_incorrect",
+      "ordered_prompt_sha256": [
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+      ],
+      "source_repo": "COMMON",
+      "source_seed": null,
+      "state_id": "P0_COMMON",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "single",
+      "ordered_prompt_sha256": [
+        "ed5fc4aa475990f786c922ab5912af43b2a6e32dfea9e8a4e9ceecfc4fa59438"
+      ],
+      "source_repo": "MARS",
+      "source_seed": 76,
+      "state_id": "MARS_SEED76_FINAL",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "single",
+      "ordered_prompt_sha256": [
+        "d451a8266be1d6d7113ff4ec15b6b4953a586bc9be848d28c9ad64ade1107bb0"
+      ],
+      "source_repo": "GEPA",
+      "source_seed": 76,
+      "state_id": "GEPA_SEED76_FINAL",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "equal_weight_plurality_tie_incorrect",
+      "ordered_prompt_sha256": [
+        "3d7c66aa6695ac0aa37833f37c22481f0165a3bcf327e9355d5736ad1ad5eb35",
+        "7b80449fd2edff62b0d9685586fb80188578af1e3e5df7d5cef36c42b4a8ba33",
+        "1692f0930b4425bfc3da576fd89271282faa991b90b525681f916309950b8fcd",
+        "74202d142a0c4f00348d3d0efa216f163e16527dd4125a9b333b8932f9864f49",
+        "86467eda2d1f31623297a020fcb25fad9a8f8a19335f64c2c205b8272eb9b43c"
+      ],
+      "source_repo": "Diversity",
+      "source_seed": 76,
+      "state_id": "DIVERSITY_SEED76_P1_FINAL",
+      "unique_prompt_count": 5
+    }
+  ],
+  "status": "EXECUTION_READY_PENDING_EXPLICIT_API_AUTHORIZATION",
+  "test50_accessed": false
+}

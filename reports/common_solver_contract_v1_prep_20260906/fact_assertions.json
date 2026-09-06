@@ -1,0 +1,15 @@
+{
+  "api_calls": 0,
+  "contract_identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "execution_status": "NOT_RUN_REQUIRES_API_AUTHORIZATION",
+  "gate": "PASS",
+  "historical_source_count": 6,
+  "historical_sources_unchanged": true,
+  "optimization_rerun": false,
+  "replay_case_count": 50,
+  "replay_state_count": 4,
+  "serialization_entrypoint_count": 3,
+  "serialization_exact_bytes_equal": true,
+  "serialization_smoke_case_count": 20,
+  "test50_accessed": false
+}
