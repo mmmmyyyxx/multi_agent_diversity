@@ -1,0 +1,10 @@
+scope,seed,left,right,aligned_cases,left_correct,right_correct,correctness_disagreements,validity_disagreements,parsed_label_disagreements
+cross_repo_same_seed,75,MARS,GEPA,50,27,31,4,0,5
+cross_repo_same_seed,75,MARS,Diversity,50,27,28,3,0,4
+cross_repo_same_seed,75,GEPA,Diversity,50,31,28,3,0,3
+cross_repo_same_seed,76,MARS,GEPA,50,27,31,6,0,6
+cross_repo_same_seed,76,MARS,Diversity,50,27,28,3,0,3
+cross_repo_same_seed,76,GEPA,Diversity,50,31,28,3,0,3
+cross_repo_same_seed,77,MARS,GEPA,50,29,30,3,0,3
+cross_repo_same_seed,77,MARS,Diversity,50,29,28,5,0,5
+cross_repo_same_seed,77,GEPA,Diversity,50,30,28,4,0,4

@@ -1,0 +1,15 @@
+{
+  "excluded": [
+    "raw prompts",
+    "raw questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "SQLite content",
+    "absolute paths"
+  ],
+  "findings": [],
+  "status": "PASS"
+}

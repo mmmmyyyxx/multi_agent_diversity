@@ -1,0 +1,41 @@
+{
+  "classification": "DATA_DIFFERENCE",
+  "data_difference": true,
+  "diversity_payload_carriage_returns_absent_from_normalized_payloads": 251,
+  "gold_labels_same": true,
+  "logical_case_identity_sha256_by_repo": {
+    "Diversity": "95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359",
+    "GEPA": "95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359",
+    "MARS": "95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359"
+  },
+  "logical_case_order_same": true,
+  "logical_cases_same": true,
+  "native_case_id_scheme": {
+    "Diversity": "sha256_raw_question_bytes",
+    "GEPA": "source_sample_id_with_verified_bijection_to_raw_question_sha256",
+    "MARS": "sha256_raw_question_bytes"
+  },
+  "native_case_ids_bijectively_aligned": true,
+  "native_case_ids_exactly_equal": false,
+  "question_payload_exact_equal_case_count": {
+    "GEPA_vs_Diversity": 0,
+    "MARS_vs_Diversity": 0,
+    "MARS_vs_GEPA": 50
+  },
+  "question_payload_newline_policy": {
+    "Diversity": "original_csv_field_bytes_after_csv_decode; CRLF_preserved",
+    "GEPA": "CRLF_and_CR_normalized_to_LF_then_canonical_options_render",
+    "MARS": "CRLF_and_CR_normalized_to_LF_then_canonical_options_render"
+  },
+  "question_payload_sha256_sequence_by_repo": {
+    "Diversity": "95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359",
+    "GEPA": "d76f1aea88700bf80c61d05c64c599df497ab47b34f5df51a35eeb23189b96ce",
+    "MARS": "d76f1aea88700bf80c61d05c64c599df497ab47b34f5df51a35eeb23189b96ce"
+  },
+  "row_count_by_repo": {
+    "Diversity": 50,
+    "GEPA": 50,
+    "MARS": 50
+  },
+  "test50_read": false
+}

@@ -1,0 +1,89 @@
+{
+  "by_repo": {
+    "Diversity": {
+      "cache": "persistent_prompt_question_key_includes_evaluation_seed_but_provider_request_does_not",
+      "invalid_handling": "retry_up_to_3_then_terminal_invalid_wrong",
+      "invalid_output_attempt_cap": 4,
+      "operational_attempt_cap": 23,
+      "provider_fields": [
+        "model",
+        "messages",
+        "temperature",
+        "timeout",
+        "extra_body",
+        "max_tokens"
+      ],
+      "provider_seed": "omitted",
+      "question_payload": "CRLF_preserved",
+      "timeout_application": "per_request"
+    },
+    "GEPA": {
+      "cache": "per_seed_exact_provider_request_cache",
+      "invalid_handling": "single_response_invalid_scores_zero",
+      "invalid_output_attempt_cap": 1,
+      "operational_attempt_cap": 4,
+      "provider_fields": [
+        "model",
+        "messages",
+        "temperature",
+        "max_tokens",
+        "timeout",
+        "extra_body"
+      ],
+      "provider_seed": "omitted",
+      "question_payload": "LF_normalized",
+      "timeout_application": "per_request"
+    },
+    "MARS": {
+      "cache": "per_seed_disk_key_includes_seed_phase_iteration_and_question",
+      "invalid_handling": "single_response_invalid_scores_zero",
+      "invalid_output_attempt_cap": 1,
+      "operational_attempt_cap": 3,
+      "provider_fields": [
+        "model",
+        "messages",
+        "temperature",
+        "max_tokens",
+        "extra_body",
+        "seed"
+      ],
+      "provider_seed": "Seed75_or_Seed76_or_Seed77",
+      "question_payload": "LF_normalized",
+      "timeout_application": "OpenAI_client_default"
+    }
+  },
+  "classifications": [
+    "REQUEST_CONTRACT_DIFFERENCE",
+    "DECODING_DIFFERENCE",
+    "RETRY_DIFFERENCE",
+    "CACHE_DIFFERENCE",
+    "UNKNOWN"
+  ],
+  "differences": [
+    "MARS sends provider seed; GEPA and Diversity omit it",
+    "Diversity preserves CRLF question bytes; MARS and GEPA normalize to LF",
+    "operational retry attempt caps differ (23, 4, 3)",
+    "Diversity retries parser-invalid outputs; MARS and GEPA do not",
+    "cache identity and reuse scopes differ"
+  ],
+  "endpoint_identity": {
+    "Diversity": "HASH_PERSISTED_PRIVATE",
+    "GEPA": "NOT_PERSISTED",
+    "MARS": "NOT_PERSISTED",
+    "cross_repo_exact_endpoint_parity": "NOT_RECOVERABLE_ZERO_API"
+  },
+  "shared": {
+    "enable_thinking": false,
+    "max_tokens": 1800,
+    "messages": [
+      "system",
+      "user"
+    ],
+    "model": "qwen3-8b",
+    "model_snapshot": "UNVERSIONED_PROVIDER_ALIAS",
+    "stop": "OMITTED_PROVIDER_DEFAULT",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p": "OMITTED_PROVIDER_DEFAULT"
+  }
+}

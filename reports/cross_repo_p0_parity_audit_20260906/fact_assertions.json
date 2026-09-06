@@ -1,0 +1,15 @@
+{
+  "api_calls": 0,
+  "final_classifier": "PARITY_VIOLATION_IDENTIFIED",
+  "gate": "PASS",
+  "historical_artifacts_modified": false,
+  "logical_cases_same_and_ordered": true,
+  "p0_exact_bytes_equal": true,
+  "parser_contract_equal": true,
+  "prediction_alignment": "RECOVERED_ZERO_API",
+  "prediction_cells": 9,
+  "required_input_file_count": 16,
+  "required_input_hashes_unchanged": true,
+  "system_prompt_exact_bytes_equal": true,
+  "test50_accessed": false
+}

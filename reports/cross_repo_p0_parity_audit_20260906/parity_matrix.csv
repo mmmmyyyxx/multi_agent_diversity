@@ -1,0 +1,16 @@
+dimension,MARS,GEPA,Diversity,classification
+initial_prompt_SHA256,MATCH,MATCH,MATCH,NONE
+initial_prompt_exact_bytes,MATCH,MATCH,MATCH,NONE
+logical_validation_cases_order_gold,MATCH,MATCH,MATCH,NONE
+question_payload_exact_bytes,LF,LF,CRLF,DATA_DIFFERENCE
+system_user_layout_and_output_suffix,MATCH,MATCH,MATCH,NONE
+solver_model_name,qwen3-8b,qwen3-8b,qwen3-8b,NONE
+solver_model_snapshot,UNPINNED,UNPINNED,UNPINNED,UNKNOWN
+thinking_temperature_max_tokens,false/0/1800,false/0/1800,false/0/1800,NONE
+top_p_stop,OMITTED,OMITTED,OMITTED,NONE
+provider_seed,SEED75_76_77,OMITTED,OMITTED,DECODING_DIFFERENCE
+parser_scoring,MATCH,MATCH,MATCH,NONE
+operational_attempt_cap,3,4,23,RETRY_DIFFERENCE
+invalid_output_attempt_cap,1,1,4,RETRY_DIFFERENCE
+cache_identity_scope,PER_SEED_METADATA_RICH,PER_SEED_EXACT_REQUEST,PERSISTENT_EVAL_SEED,CACHE_DIFFERENCE
+historical_endpoint_identity,NOT_PERSISTED,NOT_PERSISTED,HASH_PERSISTED,UNKNOWN

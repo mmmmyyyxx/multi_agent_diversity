@@ -1,0 +1,19 @@
+{
+  "classifier": "PARITY_VIOLATION_IDENTIFIED",
+  "consistent_with_provider_nondeterminism": false,
+  "difference_categories": [
+    "DATA_DIFFERENCE",
+    "REQUEST_CONTRACT_DIFFERENCE",
+    "DECODING_DIFFERENCE",
+    "RETRY_DIFFERENCE",
+    "CACHE_DIFFERENCE",
+    "UNKNOWN"
+  ],
+  "formal_raw_baseline_table_eligible": false,
+  "logical_case_difference": false,
+  "prompt_difference": false,
+  "provider_nondeterminism_observed": true,
+  "provider_nondeterminism_only": false,
+  "question_payload_byte_difference": true,
+  "reason": "MARS uses a provider seed while GEPA and Diversity omit it; Diversity also sends CRLF-preserved questions while MARS/GEPA send LF-normalized questions. Retry and cache semantics differ, so provider nondeterminism is not the sole remaining cause."
+}

@@ -1,0 +1,27 @@
+{
+  "classification": "NO_PROMPT_DIFFERENCE",
+  "final_answer_contract": "exactly_one_FINAL_ANSWER_option_letter_line",
+  "immutable_output_suffix_exact_bytes_equal": true,
+  "p0_exact_bytes_equal": true,
+  "p0_sha256_by_repo": {
+    "Diversity": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "GEPA": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "MARS": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+  },
+  "p0_utf8_byte_length_by_repo": {
+    "Diversity": 131,
+    "GEPA": 131,
+    "MARS": 131
+  },
+  "rendered_system_prompt_exact_bytes_equal": true,
+  "rendered_system_prompt_sha256_by_repo": {
+    "Diversity": "648091b648540ef4c79e164361d21ebd35f5d058541230f3fa0fa0abf40429cb",
+    "GEPA": "648091b648540ef4c79e164361d21ebd35f5d058541230f3fa0fa0abf40429cb",
+    "MARS": "648091b648540ef4c79e164361d21ebd35f5d058541230f3fa0fa0abf40429cb"
+  },
+  "rendered_system_prompt_utf8_byte_length": {
+    "Diversity": 598,
+    "GEPA": 598,
+    "MARS": 598
+  }
+}

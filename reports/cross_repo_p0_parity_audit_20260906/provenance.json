@@ -1,0 +1,43 @@
+{
+  "api_calls": 0,
+  "audit_schema_version": "cross_repo_p0_parity_audit_v1",
+  "historical_input_sha256": {
+    "Diversity": {
+      "runs/anti_overfitting_shadow_gate_v1_prep_20260904/splits_private/validation.csv": "acdba8d7763adce7a4ef4915b86d789120a1ecc9578b770f86e360daab33045f",
+      "runs/v17_formal_5arm_3seed_20260813/seed56/disambiguation_qa/shared_static_reference_seed56/best_prompts.json": "9ed0bb5aedad8a262b4bd13a9a066c58302cf6c0b70fc7a344d4b3161b928c4c",
+      "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/STATIC_NO_TRAIN/static_solver_cache.sqlite": "3d3f513986817c9313e4e8b0137a814140cc74e3011a098e1463d7b25d2729f9",
+      "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/STATIC_NO_TRAIN/static_solver_cache.sqlite": "4d10a9781fd63fd146ecd9b98c20dfcca23267e4aba766757e7e6f22e4d9276f",
+      "runs/vote_aligned_seed75_static_control_20260905/static_solver_cache.sqlite": "b3c268be26d6b0e57326ae464ce5cd32ca8f3ce48dc7af89ff2fdf7cef9e0ec5"
+    },
+    "GEPA": {
+      "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/initialization/p0.txt": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/manifest.json": "fa663513781da6dae67699a264a792348ea2ed5e7c65b4b4ab06e91a61fb1395",
+      "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/splits/external_validation.jsonl": "f27d0e5c6b56f1e0193cb1ff18ce485165d5cbb0cd2a1228a76d42c1659fa621",
+      "runs/gepa_single_prompt_capacity_20260905/seed_75/external_validation_replay.json": "6f5da1808b41c7139b9e59fc486d157b4d0deb48ff0070ece3b8d30b6daaae0f",
+      "runs/gepa_single_prompt_capacity_20260905/seed_76/external_validation_replay.json": "b0d04f4dccf1c3da45c0f5201e839988a1299e923bf3188874571d03c03a4fee",
+      "runs/gepa_single_prompt_capacity_20260905/seed_77/external_validation_replay.json": "8b1be4de7680868fbd20e09b442fafc7cd227f4251f72dcf98cb42a42f329d86"
+    },
+    "MARS": {
+      "experiments/mars_single_prompt_capacity_20260905_r1/preregistration.json": "85d74dcc553c95c2912469a77f7c7c37d5098298f8d25285778b1f5b75e20357",
+      "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed75/trajectory_private.json": "6b6d1ccba0665786309f3d720add4510d9ad424a88f3d8be6f2c4deb017a8df0",
+      "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed76/trajectory_private.json": "3658c1b77c043fc06c9cf65a1e9993a3e4a206f9fb634d67d8179b5803499a82",
+      "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed77/trajectory_private.json": "81e2bcee50aae5beb0dd02606cb19f1c58552f4b44f2940b94bd485e918b35b3",
+      "experiments/mars_single_prompt_capacity_20260905_r1/split_manifest.json": "8a136262657a79d5153e9750ced11c18f94aa0ba3a7439de492c205683f6419e"
+    }
+  },
+  "repositories": {
+    "Diversity": {
+      "commit": "a3ce49ec8bd1a276b373c43cb68542291d68853d",
+      "historical_evidence_read_only": true
+    },
+    "GEPA": {
+      "commit": "e1ec6cb1494ff97d21c28e810f193f6641824faf",
+      "historical_evidence_read_only": true
+    },
+    "MARS": {
+      "commit": "945283d1b3ceb4ec546ff915df8a1de2ad3bba5e",
+      "historical_evidence_read_only": true
+    }
+  },
+  "test50_accessed": false
+}

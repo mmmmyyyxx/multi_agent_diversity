@@ -1,0 +1,13 @@
+{
+  "README.md": "f510ffbb4bf5ab3ad0f394a14671749c5a1fb265e0b74721f1c012b126a4fc88",
+  "classifier.json": "92a8941696273a23669e9497baf6d921c5f5cb8b0ed6f9b4901a5b6552275873",
+  "fact_assertions.json": "4ef65c94c2bb8ab74fd247cd9eb0c62fa21bbbad6a61442f87f45339853706ff",
+  "parity_matrix.csv": "6ea23434ac9a8125f9178a3927000cff53ec96c5e4e4b301a2f6cf2f9f6313b5",
+  "parser_diff.json": "862ea51bb4b300f6450a9b373b654241000929699f93b62e3f807fee7bf37e99",
+  "prediction_disagreement.csv": "c37cc2ab6e5818cbe5df8a94c90f1bbe2007eedafa916597be2a6646eed7a9bc",
+  "prompt_identity.json": "61e5e461d5ba785c1fac8e826a0c97d88235e8467e15da4253228da199e5e243",
+  "provenance.json": "21c982341cd7b7d7e333a1481af84b50e53f1d39c301f87a0b12246aa9f71035",
+  "request_contract_diff.json": "6fd96232c4d06a73a84f08b4cacfcf0f83fb076695245101b8c6d59ebd131ea4",
+  "sanitization_manifest.json": "e2525d8c93397cd09b299c6daadac79dddba5863dd15380f13bb84fe8c13dd3f",
+  "split_identity.json": "13bc0da64c2b64570b02a6e6f5d191ac11e3a281d8bed53a210f728382d020fb"
+}

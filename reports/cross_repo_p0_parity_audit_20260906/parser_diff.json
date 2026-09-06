@@ -1,0 +1,20 @@
+{
+  "classification": "NO_PARSER_DIFFERENCE",
+  "empty_or_out_of_domain_policy": "invalid_and_incorrect",
+  "final_answer_regex": "^\\s*FINAL_ANSWER\\s*:\\s*(.*?)\\s*$",
+  "finish_reason_policy": "text_only_for_option_letter_parser",
+  "flags": [
+    "IGNORECASE",
+    "MULTILINE"
+  ],
+  "gold_scoring": "valid_and_uppercase_parsed_label_equals_uppercase_gold_label",
+  "historical_p0_all_rows_valid": true,
+  "multiple_final_answer_policy": "invalid",
+  "option_payload": "optional_parentheses_around_one_in_domain_letter",
+  "semantic_contract_equal": true,
+  "source_parser_version_by_repo": {
+    "Diversity": "task_parser_v1",
+    "GEPA": "task_parser_v1_frozen_contract_reimplementation",
+    "MARS": "task_parser_v1_frozen_contract_reimplementation"
+  }
+}
