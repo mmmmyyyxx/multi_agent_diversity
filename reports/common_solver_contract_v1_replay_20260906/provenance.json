@@ -1,0 +1,13 @@
+{
+  "contract_identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "execution_commit": "3c36c7c82c4313cfd1000331d67fd05589e76957",
+  "raw_evidence_tracked": false,
+  "report_version": "common_solver_contract_v1_replay_20260906",
+  "source_repositories": [
+    "Diversity",
+    "GEPA",
+    "MARS"
+  ],
+  "source_seed": 76,
+  "split": "ExternalValidation50"
+}

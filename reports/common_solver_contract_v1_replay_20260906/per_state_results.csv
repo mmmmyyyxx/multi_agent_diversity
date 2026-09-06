@@ -1,0 +1,5 @@
+state_id,source_repo,source_seed,member_count,vote_correct,vote_accuracy,oracle_correct,oracle_accuracy,mean_member_accuracy,valid_vote_count,invalid_member_outputs
+P0_COMMON,COMMON,,5,30,0.600000,30,0.600000,0.600000,50,0
+MARS_SEED76_FINAL,MARS,76,1,35,0.700000,35,0.700000,0.700000,50,0
+GEPA_SEED76_FINAL,GEPA,76,1,37,0.740000,37,0.740000,0.740000,50,0
+DIVERSITY_SEED76_P1_FINAL,Diversity,76,5,33,0.660000,46,0.920000,0.588000,47,1

@@ -1,0 +1,9 @@
+{
+  "common_contract_replay": "PASS",
+  "end_to_end_optimization_parity": "NOT_ESTABLISHED",
+  "evaluation_contract_parity": "CONFIRMED_FOR_THIS_REPLAY",
+  "formal_cross_method_raw_ranking": "NOT_YET_ELIGIBLE",
+  "full_parity_rerun_decision": "JUSTIFIED_IF_FORMAL_CROSS_METHOD_RANKING_IS_REQUIRED",
+  "internal_gain_and_saturation_claims": "REMAIN_USABLE",
+  "reason": "The common replay removes evaluation-adapter drift and all three frozen finals beat the shared P0, but only Seed76 was replayed and the frozen finals were produced under different optimization-time Solver contracts. The 2-4 question cross-method gaps on 50 cases are not sufficient for a formal ranking without an end-to-end parity rerun."
+}

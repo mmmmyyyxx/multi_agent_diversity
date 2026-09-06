@@ -1,0 +1,4 @@
+contrast,vote_correct_delta,vote_accuracy_delta,oracle_correct_delta,oracle_accuracy_delta
+MARS_SEED76_FINAL_minus_P0_COMMON,5,+0.100000,5,+0.100000
+GEPA_SEED76_FINAL_minus_P0_COMMON,7,+0.140000,7,+0.140000
+DIVERSITY_SEED76_P1_FINAL_minus_P0_COMMON,3,+0.060000,16,+0.320000
