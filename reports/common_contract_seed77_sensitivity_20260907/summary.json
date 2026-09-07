@@ -1,0 +1,23 @@
+{
+  "analysis_gate": "PASS",
+  "case_count": 10,
+  "caveat": "single realization per cell; omitted-seed provider nondeterminism remains possible",
+  "classifier": "INCONCLUSIVE_MIXED_SENSITIVITY",
+  "condition_count": 4,
+  "optimization": false,
+  "ranges": {
+    "DIVERSITY_SEED77_P1_FINAL": {
+      "invalid_rate": 0.0,
+      "mean_member_accuracy": 0.07999999999999996,
+      "oracle_accuracy": 0.20000000000000007,
+      "vote_accuracy": 0.0
+    },
+    "P0_COMMON": {
+      "invalid_rate": 0.0,
+      "mean_member_accuracy": 0.19999999999999996,
+      "oracle_accuracy": 0.19999999999999996,
+      "vote_accuracy": 0.19999999999999996
+    }
+  },
+  "test50_accessed": false
+}

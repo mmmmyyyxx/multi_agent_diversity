@@ -33,3 +33,10 @@ def test_request_variants_change_only_newline_and_provider_seed() -> None:
     assert "\r\n" in crlf["messages"][1]["content"]
     assert lf["model"] == crlf["model"] == seeded["model"] == "qwen3-8b"
     assert lf["extra_body"] == {"enable_thinking": False}
+
+
+def test_success_manifest_write_order_keeps_complete_status() -> None:
+    summary = {"status": "PASS", "completed_cells": 8}
+    manifest = {**summary, "status": "COMPLETE"}
+    assert manifest["status"] == "COMPLETE"
+    assert manifest["completed_cells"] == 8

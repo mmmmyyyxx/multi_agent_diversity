@@ -1,5 +1,10 @@
 {
+  "README.md": "0f1b1ba7eb630edc1cfc2ab8675ec1e6118666961d0b9ec56dad3c58fc4e0a39",
+  "audit.json": "237fd1d79ad6002d9f0cc94ecf38a2aa5d7a7a455d94134bb62df28b7c69c8e4",
+  "per_cell_metrics.csv": "ec00b5311298939f392238d934a9ae01c02d61ed33dd82a7ec4638664d418b89",
   "phase_a_gate.json": "3dc211943d3183e998f36b001512b3b9efb347c4bea208da83029234c2c78ff0",
   "protocol_freeze.json": "bd20dfdab361d3e1c73155655aa2c5b295affd99f4dfae9a903d6c6e7c83dd33",
-  "provenance.json": "5b9136a4386eb4f239b65f6029e40ffded8f5c437dbd7bbe419c622920f4b221"
+  "provenance.json": "5b9136a4386eb4f239b65f6029e40ffded8f5c437dbd7bbe419c622920f4b221",
+  "sanitization_manifest.json": "ff9c9fad82662fc12754bd8f6714c7d329754d5a483e2aaa948566861f333170",
+  "summary.json": "20bd4958260c5769f35021caf0d5ae13e64ffb092b85ec2e6c39b8034360eac7"
 }

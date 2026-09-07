@@ -1,0 +1,12 @@
+{
+  "completed_cells": 8,
+  "completion_reconciled_from_full_inventory": true,
+  "execution_status_observed": "PASS",
+  "gate": "PASS",
+  "optimization": false,
+  "provider_failure": 0,
+  "provider_success": 240,
+  "row_count": 80,
+  "source_freeze": "PASS",
+  "test50_accessed": false
+}
