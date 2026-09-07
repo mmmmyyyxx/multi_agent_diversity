@@ -1,0 +1,15 @@
+{
+  "api_execution_complete": true,
+  "cache_hits": 250,
+  "coalition_decomposition_state_id": "DIVERSITY_SEED77_P1_FINAL",
+  "coalition_transition_case_count": 50,
+  "external_validation_cases_per_state": 50,
+  "failed_provider_attempts": 0,
+  "gate": "PASS",
+  "logical_calls": 600,
+  "optimization_rerun": false,
+  "provider_calls": 350,
+  "source_freeze": "PASS",
+  "state_count": 4,
+  "test50_accessed": false
+}

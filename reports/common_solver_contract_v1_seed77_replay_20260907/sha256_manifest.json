@@ -1,0 +1,13 @@
+{
+  "README.md": "821f35baa8782a88bb9ae4c8427d33389d2c98cbf030d403534bb429ec07cc5c",
+  "audit.json": "bde7fd76f3734cef2cf01a88e780211abfc4fb1aa9ca610a39a6faf0008f0945",
+  "classifier.json": "cbcfa48d0475d9bbd0576e7dbf2309d5e4961f17b554fcd56d2a421e01dbaff0",
+  "contrasts.csv": "3b62f42fbe52262d4ddc184a7d3b663a04a08341b642649a9f3933a18daf9e16",
+  "diversity_coalition_decomposition.json": "3e9614cb3884549089c5ea3ff3b5a2407bdb1eb481adc503adbaaf3bc77b8075",
+  "diversity_g_transition_matrix.csv": "097d055311ac389103290f05d60438d444b639d5dd1a02a720ade1fde7bbd531",
+  "fact_assertions.json": "7562a7daf5a6728968dd8347d455196940a093d4907e64dee874a5c641e16250",
+  "per_state_results.csv": "3f9d6d1deee863248343552b753cd96e9122d95b67dd73b5b236821ff0945c9c",
+  "prediction_disagreement.csv": "0e784838edc8b5ee3cf8c527c85935eb9bbc4ff2ed36f7cae028d9edf5cb580d",
+  "provenance.json": "f4338547770a408ac600cae41ef381d2164cc1bdf81f8e737ed4f23663167786",
+  "sanitization_manifest.json": "78dff4f83938c5d5838647c38f885ee79e8c7e56a45f1052e0cf889c0e999ab7"
+}

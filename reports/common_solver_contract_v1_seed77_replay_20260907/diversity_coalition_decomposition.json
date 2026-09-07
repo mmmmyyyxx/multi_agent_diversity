@@ -1,0 +1,38 @@
+{
+  "aligned_case_count": 50,
+  "final_g_distribution": {
+    "0": 7,
+    "1": 7,
+    "2": 7,
+    "3": 7,
+    "4": 7,
+    "5": 15
+  },
+  "final_gte1": 43,
+  "final_gte3": 29,
+  "lost_correct_member_votes": 42,
+  "lost_coverage_cases": 2,
+  "new_correct_member_votes": 32,
+  "new_coverage_cases": 14,
+  "oracle_gain_case_count": 14,
+  "oracle_gain_to_vote_gain_count": 5,
+  "oracle_gain_to_vote_gain_rate": 0.35714285714285715,
+  "oracle_loss_case_count": 2,
+  "p0_correct_case_count": 31,
+  "p0_correct_to_final_majority_preservation_rate": 0.7741935483870968,
+  "p0_correct_to_final_majority_preserved_count": 24,
+  "p0_g_distribution": {
+    "0": 19,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 31
+  },
+  "p0_gte1": 31,
+  "p0_gte3": 31,
+  "p0_wrong_case_count": 19,
+  "p0_wrong_to_final_majority_count": 5,
+  "p0_wrong_to_final_majority_rate": 0.2631578947368421,
+  "state_id": "DIVERSITY_SEED77_P1_FINAL"
+}

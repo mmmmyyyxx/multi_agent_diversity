@@ -67,9 +67,114 @@ def plurality(labels: Sequence[str | None]) -> str | None:
     return winners[0] if len(winners) == 1 else None
 
 
-def audit(root: Path, run_root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    prep = root / "runs/common_solver_contract_v1_prep_20260906/private_replay_registry.json"
-    manifest = read_json(root / "reports/common_solver_contract_v1_prep_20260906/contract_manifest.json")
+def coalition_decomposition(
+    predictions: Sequence[Mapping[str, Any]],
+    cases: Sequence[Mapping[str, Any]],
+    diversity_id: str,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Summarize P0-to-Diversity redistribution without exposing row payloads."""
+    gold_by_position = {int(row["position"]): str(row["gold"]) for row in cases}
+    indexed: dict[str, dict[int, Mapping[str, Any]]] = {
+        "P0_COMMON": {},
+        diversity_id: {},
+    }
+    for row in predictions:
+        state_id = str(row["state_id"])
+        if state_id in indexed:
+            indexed[state_id][int(row["case_position"])] = row
+    if set(indexed["P0_COMMON"]) != set(range(50)) or set(indexed[diversity_id]) != set(range(50)):
+        raise AssertionError("coalition decomposition requires 50 aligned rows")
+
+    matrix = [[0 for _ in range(6)] for _ in range(6)]
+    initial_hist = [0] * 6
+    final_hist = [0] * 6
+    new_coverage_cases = 0
+    lost_coverage_cases = 0
+    new_correct_member_votes = 0
+    lost_correct_member_votes = 0
+    p0_wrong = 0
+    p0_wrong_to_final_majority = 0
+    p0_correct = 0
+    p0_correct_preserved = 0
+    oracle_gains = 0
+    oracle_gains_converted_to_vote = 0
+    oracle_losses = 0
+
+    for position in range(50):
+        initial = indexed["P0_COMMON"][position]
+        final = indexed[diversity_id][position]
+        gold = gold_by_position[position]
+        initial_g = sum(
+            bool(valid) and label == gold
+            for label, valid in zip(initial["member_labels"], initial["member_valid"], strict=True)
+        )
+        final_g = sum(
+            bool(valid) and label == gold
+            for label, valid in zip(final["member_labels"], final["member_valid"], strict=True)
+        )
+        if not (0 <= initial_g <= 5 and 0 <= final_g <= 5):
+            raise AssertionError("G must remain within the five-member team")
+        matrix[initial_g][final_g] += 1
+        initial_hist[initial_g] += 1
+        final_hist[final_g] += 1
+        new_coverage_cases += int(initial_g == 0 and final_g > 0)
+        lost_coverage_cases += int(initial_g > 0 and final_g == 0)
+        new_correct_member_votes += max(0, final_g - initial_g)
+        lost_correct_member_votes += max(0, initial_g - final_g)
+
+        if bool(initial["vote_correct"]):
+            p0_correct += 1
+            p0_correct_preserved += int(bool(final["vote_correct"]))
+        else:
+            p0_wrong += 1
+            p0_wrong_to_final_majority += int(bool(final["vote_correct"]))
+        if not bool(initial["oracle_correct"]) and bool(final["oracle_correct"]):
+            oracle_gains += 1
+            oracle_gains_converted_to_vote += int(bool(final["vote_correct"]))
+        if bool(initial["oracle_correct"]) and not bool(final["oracle_correct"]):
+            oracle_losses += 1
+
+    matrix_rows = [
+        {"p0_g": initial_g, "final_g": final_g, "case_count": matrix[initial_g][final_g]}
+        for initial_g in range(6)
+        for final_g in range(6)
+    ]
+    summary = {
+        "state_id": diversity_id,
+        "aligned_case_count": 50,
+        "p0_g_distribution": {str(index): count for index, count in enumerate(initial_hist)},
+        "final_g_distribution": {str(index): count for index, count in enumerate(final_hist)},
+        "p0_gte1": sum(initial_hist[1:]),
+        "final_gte1": sum(final_hist[1:]),
+        "p0_gte3": sum(initial_hist[3:]),
+        "final_gte3": sum(final_hist[3:]),
+        "new_coverage_cases": new_coverage_cases,
+        "lost_coverage_cases": lost_coverage_cases,
+        "new_correct_member_votes": new_correct_member_votes,
+        "lost_correct_member_votes": lost_correct_member_votes,
+        "p0_wrong_case_count": p0_wrong,
+        "p0_wrong_to_final_majority_count": p0_wrong_to_final_majority,
+        "p0_wrong_to_final_majority_rate": p0_wrong_to_final_majority / p0_wrong if p0_wrong else None,
+        "p0_correct_case_count": p0_correct,
+        "p0_correct_to_final_majority_preserved_count": p0_correct_preserved,
+        "p0_correct_to_final_majority_preservation_rate": p0_correct_preserved / p0_correct if p0_correct else None,
+        "oracle_gain_case_count": oracle_gains,
+        "oracle_gain_to_vote_gain_count": oracle_gains_converted_to_vote,
+        "oracle_gain_to_vote_gain_rate": oracle_gains_converted_to_vote / oracle_gains if oracle_gains else None,
+        "oracle_loss_case_count": oracle_losses,
+    }
+    return summary, matrix_rows
+
+
+def audit(
+    root: Path,
+    run_root: Path,
+    prep: Path | None = None,
+    manifest_path: Path | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    prep = prep or root / "runs/common_solver_contract_v1_prep_20260906/private_replay_registry.json"
+    manifest_path = manifest_path or root / "reports/common_solver_contract_v1_prep_20260906/contract_manifest.json"
+    manifest = read_json(manifest_path)
     registry = read_json(prep)
     execution = read_json(run_root / "execution_manifest.json")
     summary = read_json(run_root / "summary_private.json")
@@ -94,18 +199,25 @@ def audit(root: Path, run_root: Path) -> tuple[dict[str, Any], list[dict[str, An
     if len(predictions) != 200:
         errors.append("prediction_inventory_mismatch")
     accounting = summary.get("accounting", {})
+    request_identities = [
+        str(request_id)
+        for row in predictions
+        for request_id in row.get("request_identities", [])
+    ]
+    unique_request_count = len(set(request_identities))
+    logical_call_count = len(request_identities)
     expected_accounting = {
-        "logical_calls": 600,
-        "provider_attempts": 400,
-        "successful_provider_calls": 400,
+        "logical_calls": logical_call_count,
+        "provider_attempts": unique_request_count,
+        "successful_provider_calls": unique_request_count,
         "failed_provider_attempts": 0,
-        "cache_hits": 200,
-        "cache_entries": 400,
+        "cache_hits": logical_call_count - unique_request_count,
+        "cache_entries": unique_request_count,
     }
     for key, expected in expected_accounting.items():
         if int(accounting.get(key, -1)) != expected:
             errors.append(f"accounting_{key}_mismatch")
-    if len(cache) != 400:
+    if len(cache) != unique_request_count:
         errors.append("cache_inventory_mismatch")
 
     states = {row["state_id"]: row for row in registry["states"]}
@@ -208,26 +320,56 @@ def sanitize(report: Path) -> dict[str, Any]:
     }
 
 
-def run(root: Path, run_root: Path, report: Path) -> dict[str, Any]:
+def run(
+    root: Path,
+    run_root: Path,
+    report: Path,
+    prep: Path | None = None,
+    manifest_path: Path | None = None,
+) -> dict[str, Any]:
     root, run_root, report = root.resolve(), run_root.resolve(), report.resolve()
+    prep = prep or root / "runs/common_solver_contract_v1_prep_20260906/private_replay_registry.json"
+    manifest_path = manifest_path or root / "reports/common_solver_contract_v1_prep_20260906/contract_manifest.json"
     if root not in run_root.parents or root not in report.parents:
         raise ValueError("run and report roots must remain project-local")
     if report.exists() and any(report.iterdir()):
         raise FileExistsError(f"report must be fresh: {report}")
     report.mkdir(parents=True, exist_ok=True)
-    audit_result, predictions = audit(root, run_root)
+    audit_result, predictions = audit(root, run_root, prep=prep, manifest_path=manifest_path)
     if audit_result["gate"] != "PASS":
         raise AssertionError(json.dumps(audit_result, sort_keys=True))
     summary = read_json(run_root / "summary_private.json")
     state_rows: list[dict[str, Any]] = []
     summary_by_id = {row["state_id"]: row for row in summary["states"]}
     p0 = summary_by_id["P0_COMMON"]
-    for state_id in (
-        "P0_COMMON",
-        "MARS_SEED76_FINAL",
-        "GEPA_SEED76_FINAL",
-        "DIVERSITY_SEED76_P1_FINAL",
-    ):
+    diversity_ids = [state_id for state_id in summary_by_id if state_id.startswith("DIVERSITY_SEED")]
+    if len(diversity_ids) != 1:
+        raise AssertionError("exactly one Diversity final state is required")
+    diversity_id = diversity_ids[0]
+    source_seed = int(summary_by_id[diversity_id]["source_seed"])
+    mars_id = f"MARS_SEED{source_seed}_FINAL"
+    gepa_id = f"GEPA_SEED{source_seed}_FINAL"
+    final_ids = (mars_id, gepa_id, diversity_id)
+    vote_correct_deltas = {
+        state_id: int(summary_by_id[state_id]["vote_correct"]) - int(p0["vote_correct"])
+        for state_id in final_ids
+    }
+    improved_final_count = sum(delta > 0 for delta in vote_correct_deltas.values())
+    equal_final_count = sum(delta == 0 for delta in vote_correct_deltas.values())
+    worse_final_count = sum(delta < 0 for delta in vote_correct_deltas.values())
+    registry = read_json(prep)
+    coalition, transition_rows = coalition_decomposition(
+        predictions,
+        registry["cases"],
+        diversity_id,
+    )
+    write_json(report / "diversity_coalition_decomposition.json", coalition)
+    write_csv(
+        report / "diversity_g_transition_matrix.csv",
+        transition_rows,
+        ("p0_g", "final_g", "case_count"),
+    )
+    for state_id in ("P0_COMMON", mars_id, gepa_id, diversity_id):
         row = summary_by_id[state_id]
         mean_member = sum(row["individual_member_accuracy"]) / len(row["individual_member_accuracy"])
         state_rows.append(
@@ -263,7 +405,7 @@ def run(root: Path, run_root: Path, report: Path) -> dict[str, Any]:
         ),
     )
     contrast_rows: list[dict[str, Any]] = []
-    for state_id in ("MARS_SEED76_FINAL", "GEPA_SEED76_FINAL", "DIVERSITY_SEED76_P1_FINAL"):
+    for state_id in final_ids:
         row = summary_by_id[state_id]
         contrast_rows.append(
             {
@@ -284,11 +426,7 @@ def run(root: Path, run_root: Path, report: Path) -> dict[str, Any]:
         for state_id in summary_by_id
     }
     disagreement_rows: list[dict[str, Any]] = []
-    comparisons = (
-        ("MARS_SEED76_FINAL", "GEPA_SEED76_FINAL"),
-        ("MARS_SEED76_FINAL", "DIVERSITY_SEED76_P1_FINAL"),
-        ("GEPA_SEED76_FINAL", "DIVERSITY_SEED76_P1_FINAL"),
-    )
+    comparisons = ((mars_id, gepa_id), (mars_id, diversity_id), (gepa_id, diversity_id))
     for left, right in comparisons:
         disagreement_rows.append(
             {
@@ -318,9 +456,9 @@ def run(root: Path, run_root: Path, report: Path) -> dict[str, Any]:
         "formal_cross_method_raw_ranking": "NOT_YET_ELIGIBLE",
         "full_parity_rerun_decision": "JUSTIFIED_IF_FORMAL_CROSS_METHOD_RANKING_IS_REQUIRED",
         "reason": (
-            "The common replay removes evaluation-adapter drift and all three frozen finals beat the "
-            "shared P0, but only Seed76 was replayed and the frozen finals were produced under different "
-            "optimization-time Solver contracts. The 2-4 question cross-method gaps on 50 cases are not "
+            "The common replay removes evaluation-adapter drift and compares all three frozen finals with the "
+            f"shared P0, but only Seed{source_seed} was replayed and the frozen finals were produced under different "
+            "optimization-time Solver contracts. Small cross-method gaps on 50 cases are not "
             "sufficient for a formal ranking without an end-to-end parity rerun."
         ),
         "internal_gain_and_saturation_claims": "REMAIN_USABLE",
@@ -340,34 +478,42 @@ def run(root: Path, run_root: Path, report: Path) -> dict[str, Any]:
         "failed_provider_attempts": summary["accounting"]["failed_provider_attempts"],
         "cache_hits": summary["accounting"]["cache_hits"],
         "source_freeze": audit_result["source_freeze"],
+        "coalition_transition_case_count": sum(row["case_count"] for row in transition_rows),
+        "coalition_decomposition_state_id": diversity_id,
     }
     write_json(report / "fact_assertions.json", facts)
     write_json(
         report / "provenance.json",
         {
-            "report_version": "common_solver_contract_v1_replay_20260906",
+            "report_version": f"common_solver_contract_v1_seed{source_seed}_replay_20260907",
             "contract_identity": contract_identity(),
             "execution_commit": git(root, "rev-parse", "HEAD"),
             "source_repositories": ["Diversity", "GEPA", "MARS"],
-            "source_seed": 76,
+            "source_seed": source_seed,
             "split": "ExternalValidation50",
             "raw_evidence_tracked": False,
         },
     )
-    readme = f"""# COMMON_SOLVER_CONTRACT_V1 frozen-artifact replay
+    readme = f"""# COMMON_SOLVER_CONTRACT_V1 Seed{source_seed} frozen-artifact replay
 
-The single shared evaluator completed P0 plus the frozen Seed76 MARS, GEPA, and
+The single shared evaluator completed P0 plus the frozen Seed{source_seed} MARS, GEPA, and
 Diversity final artifacts on ExternalValidation50. No optimization was rerun
 and Test50 was not accessed.
 
 | State | Vote | Oracle | Mean member |
 |---|---:|---:|---:|
 | P0 common | {p0['vote_accuracy']:.2f} | {p0['oracle_accuracy']:.2f} | {sum(p0['individual_member_accuracy']) / len(p0['individual_member_accuracy']):.3f} |
-| MARS final | {summary_by_id['MARS_SEED76_FINAL']['vote_accuracy']:.2f} | {summary_by_id['MARS_SEED76_FINAL']['oracle_accuracy']:.2f} | {summary_by_id['MARS_SEED76_FINAL']['individual_member_accuracy'][0]:.3f} |
-| GEPA final | {summary_by_id['GEPA_SEED76_FINAL']['vote_accuracy']:.2f} | {summary_by_id['GEPA_SEED76_FINAL']['oracle_accuracy']:.2f} | {summary_by_id['GEPA_SEED76_FINAL']['individual_member_accuracy'][0]:.3f} |
-| Diversity P1 final | {summary_by_id['DIVERSITY_SEED76_P1_FINAL']['vote_accuracy']:.2f} | {summary_by_id['DIVERSITY_SEED76_P1_FINAL']['oracle_accuracy']:.2f} | {sum(summary_by_id['DIVERSITY_SEED76_P1_FINAL']['individual_member_accuracy']) / 5:.3f} |
+| MARS final | {summary_by_id[mars_id]['vote_accuracy']:.2f} | {summary_by_id[mars_id]['oracle_accuracy']:.2f} | {summary_by_id[mars_id]['individual_member_accuracy'][0]:.3f} |
+| GEPA final | {summary_by_id[gepa_id]['vote_accuracy']:.2f} | {summary_by_id[gepa_id]['oracle_accuracy']:.2f} | {summary_by_id[gepa_id]['individual_member_accuracy'][0]:.3f} |
+| Diversity P1 final | {summary_by_id[diversity_id]['vote_accuracy']:.2f} | {summary_by_id[diversity_id]['oracle_accuracy']:.2f} | {sum(summary_by_id[diversity_id]['individual_member_accuracy']) / 5:.3f} |
 
-All three frozen finals improve Vote over the shared P0 in this replay. The
+The Diversity P0-to-final coalition-depth decomposition is recorded separately:
+new/lost coverage = {coalition['new_coverage_cases']}/{coalition['lost_coverage_cases']},
+new/lost correct member-votes = {coalition['new_correct_member_votes']}/{coalition['lost_correct_member_votes']},
+and G>=3 cases = {coalition['p0_gte3']} -> {coalition['final_gte3']}.
+
+Relative to shared P0, {improved_final_count} frozen finals improve Vote,
+{equal_final_count} tie it, and {worse_final_count} are lower in this replay. The
 evaluation contract is aligned, but end-to-end optimization parity is not: the
 artifacts were generated under different historical Solver adapters. A full
 parity rerun is justified only if a formal cross-method ranking is required;
@@ -402,8 +548,26 @@ def main() -> int:
         type=Path,
         default=PROJECT_ROOT / "reports/common_solver_contract_v1_replay_20260906",
     )
+    parser.add_argument(
+        "--prep",
+        type=Path,
+        default=None,
+        help="Private replay registry used to freeze states and cases.",
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help="Tracked source-freeze manifest for this replay.",
+    )
     args = parser.parse_args()
-    result = run(args.root, args.run_root, args.report)
+    result = run(
+        args.root,
+        args.run_root,
+        args.report,
+        prep=args.prep,
+        manifest_path=args.manifest,
+    )
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 

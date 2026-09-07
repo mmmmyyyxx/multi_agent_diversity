@@ -1,0 +1,4 @@
+left,right,aligned_cases,correctness_disagreements,left_only_correct,right_only_correct
+MARS_SEED77_FINAL,GEPA_SEED77_FINAL,50,18,7,11
+MARS_SEED77_FINAL,DIVERSITY_SEED77_P1_FINAL,50,12,7,5
+GEPA_SEED77_FINAL,DIVERSITY_SEED77_P1_FINAL,50,14,10,4

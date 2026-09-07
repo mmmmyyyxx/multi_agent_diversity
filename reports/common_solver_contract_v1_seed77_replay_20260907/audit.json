@@ -1,0 +1,23 @@
+{
+  "accounting": {
+    "cache_entries": 350,
+    "cache_hits": 250,
+    "completion_tokens": 73136,
+    "failed_provider_attempts": 0,
+    "logical_calls": 600,
+    "prompt_tokens": 153277,
+    "provider_attempts": 350,
+    "successful_provider_calls": 350,
+    "total_tokens": 226413
+  },
+  "case_count_per_state": 50,
+  "contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "contract_identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "errors": [],
+  "gate": "PASS",
+  "optimization_rerun": false,
+  "prediction_row_count": 200,
+  "source_freeze": "PASS",
+  "state_count": 4,
+  "test50_accessed": false
+}
