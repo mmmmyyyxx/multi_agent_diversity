@@ -1,0 +1,40 @@
+{
+  "case_count": 10,
+  "case_selection": "FIRST_10_EXTERNAL_VALIDATION_CASES_BY_FROZEN_POSITION",
+  "classifier": {
+    "DIVERSITY_MORE_SENSITIVE": "Diversity Vote range exceeds P0 by >=0.20 or MeanMember range exceeds P0 by >=0.10",
+    "INCONCLUSIVE_MIXED_SENSITIVITY": "otherwise",
+    "NO_MATERIAL_SENSITIVITY": "both Vote ranges and Diversity MeanMember range are <=0.10",
+    "SHARED_CONTRACT_SENSITIVITY": "both P0 and Diversity Vote ranges are >=0.20"
+  },
+  "factorial": {
+    "provider_seed": [
+      "OMITTED",
+      "SENT_77"
+    ],
+    "question_newline": [
+      "LF",
+      "CRLF"
+    ]
+  },
+  "interpretation": "descriptive small-sample sensitivity; not method selection",
+  "optimization": false,
+  "phase": "evaluation_only_contract_sensitivity",
+  "seed": 77,
+  "states": [
+    "P0_COMMON",
+    "DIVERSITY_SEED77_P1_FINAL"
+  ],
+  "study_id": "common_contract_seed77_sensitivity_v1",
+  "test50_accessed": false,
+  "unchanged": [
+    "endpoint",
+    "qwen3-8b",
+    "thinking=false",
+    "temperature=0",
+    "max_tokens=1800",
+    "system message",
+    "strict parser",
+    "operational retry cap"
+  ]
+}

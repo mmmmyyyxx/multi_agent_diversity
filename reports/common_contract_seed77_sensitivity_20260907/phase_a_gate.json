@@ -1,0 +1,9 @@
+{
+  "api_calls": 0,
+  "case_count": 10,
+  "condition_count": 4,
+  "optimization": false,
+  "phase_a_gate": "PASS",
+  "state_count": 2,
+  "test50_accessed": false
+}

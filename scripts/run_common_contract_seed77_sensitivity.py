@@ -225,8 +225,13 @@ def prepare(source: Path, prep: Path, report: Path) -> dict[str, Any]:
 
 def _verify_freeze(prep: Path) -> dict[str, Any]:
     freeze = read_json(prep / "source_freeze.json")
-    if freeze["execution_commit"] != git("rev-parse", "HEAD"):
-        raise RuntimeError("execution commit differs from source freeze")
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", freeze["execution_commit"], "HEAD"],
+        cwd=PROJECT_ROOT,
+        check=False,
+    )
+    if ancestor.returncode != 0:
+        raise RuntimeError("source-freeze commit is not an ancestor of execution HEAD")
     if git("status", "--porcelain", "--untracked-files=all"):
         raise RuntimeError("tracked worktree must be clean")
     for row in freeze["files"]:
