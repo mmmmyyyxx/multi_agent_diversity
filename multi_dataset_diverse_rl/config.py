@@ -4,6 +4,7 @@ import argparse
 from dataclasses import asdict, dataclass, field
 
 from .provider_credentials import DASHSCOPE_API_KEY_ENV, DASHSCOPE_BASE_URL_ENV
+from .versions import LEGACY_DIVERSITY_SOLVER_CONTRACT_ID
 
 
 DEFAULT_MODEL = "qwen3.7-flash-2026-07-15"
@@ -39,6 +40,7 @@ class ModelConfig:
     temperature: float = 0.0
     solver_max_tokens: int = 1800
     solver_invalid_max_retries: int = 3
+    solver_contract_id: str = LEGACY_DIVERSITY_SOLVER_CONTRACT_ID
 
 
 @dataclass(frozen=True)

@@ -26,6 +26,8 @@ MUTABLE_PROMPT_CONTRACT_VERSION = "reasoning_only_no_response_format_v2"
 STUDENT_PROMPT_CONTRACT_VERSION = "mutable_reasoning_only_v2"
 CANDIDATE_PROTOCOL_FILTER_VERSION = "output_contract_contamination_v2"
 MODEL_THINKING_MODE_VERSION = "explicitly_disabled_v1"
+LEGACY_DIVERSITY_SOLVER_CONTRACT_ID = "DIVERSITY_SOLVER_CONTRACT_LEGACY_V1"
+COMMON_SOLVER_CONTRACT_V1_ID = "COMMON_SOLVER_CONTRACT_V1"
 # Legacy v14 RCRU identifiers remain frozen for historical replay only.
 RCRU_VERSION = "responsibility_conditioned_robust_contribution_update_v1"
 RESPONSIBILITY_UTILITY_VERSION = "three_lane_responsibility_utility_v1"

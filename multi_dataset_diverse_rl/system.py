@@ -225,6 +225,7 @@ from .versions import (
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
+    COMMON_SOLVER_CONTRACT_V1_ID,
 )
 
 
@@ -380,6 +381,15 @@ class PromptEnsembleOptimizationSystem:
     ):
         if cfg.training.method_version != METHOD_VERSION:
             raise ValueError(f"Unsupported method_version: {cfg.training.method_version}")
+        if cfg.models.solver_contract_id == COMMON_SOLVER_CONTRACT_V1_ID:
+            if solver is None:
+                raise ValueError(
+                    "COMMON_SOLVER_CONTRACT_V1 requires the shared solver adapter"
+                )
+            if cfg.models.solver_invalid_max_retries != 0:
+                raise ValueError(
+                    "COMMON_SOLVER_CONTRACT_V1 forbids semantic invalid-output retry"
+                )
         if cfg.training.agents != 5:
             raise ValueError(f"{METHOD_VERSION} requires exactly five agents")
         if cfg.peer_state.aggregation_mode != "plurality":

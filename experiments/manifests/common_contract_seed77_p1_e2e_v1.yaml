@@ -1,0 +1,41 @@
+schema_version: experiment_manifest_v1
+experiment_id: common_contract_seed77_p1_e2e_v1
+title: Seed77 COMMON_SOLVER_CONTRACT_V1 End-to-End Diversity P1 Rerun
+status: PREREGISTERED
+lineage:
+  parents: [vote_aligned_confirmatory_seed76_77_v1, common_solver_contract_v1]
+scientific_question: Does Seed77 retain competence redistribution when both optimization and final evaluation use COMMON_SOLVER_CONTRACT_V1?
+design:
+  seed: 77
+  arms: [P0_COMMON_STATIC, P1_SHADOW_VOTE_ALIGNED_GENERIC]
+  changed: [optimization-time Solver contract]
+  unchanged: [Seed77 split, initial P0 prompt, Diversity P1 algorithm, vote-aligned scheduler, semantic Critic, Common-Safe, Shadow gate, budgets, qwen3-8b solver, qwen3.7-flash role models]
+  test_policy: prohibited; zero calls
+models:
+  solver: qwen3-8b
+  solver_contract: COMMON_SOLVER_CONTRACT_V1
+  thinking: false
+  teacher: qwen3.7-flash
+  critic: qwen3.7-flash
+  student: qwen3.7-flash
+  evaluator: qwen3.7-flash
+budget:
+  max_update_opportunities: 32
+  no_commit_patience: 6
+  target_slots_per_update: 2
+  source_candidates_per_target: 2
+  optimize_rows: 100
+  shadow_rows: 50
+  external_validation_rows: 50
+  test_calls: 0
+api_authorization:
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_07_seed77_common_contract_sensitivity_and_e2e_only
+  allowed_roles: [solver, teacher, critic, student, evaluator]
+  allowed_phases: [online_trajectory, frozen_validation]
+selection:
+  validation_used_for_training_or_selection: false
+  classifier_definition: experiments/common_contract_seed77_p1_e2e_v1/classifier_definition.json
+result:
+  classifier: NOT_RUN
+  evidence_type: prospective_single_seed_mechanism_diagnostic

@@ -67,6 +67,7 @@ from ..versions import (
     TARGET_SELECTION_VERSION,
     TCS_CONTEXT_VERSION,
     TEST_ISOLATION_VERSION,
+    COMMON_SOLVER_CONTRACT_V1_ID,
 )
 from ..compatibility_repair import ONLINE_COMPATIBILITY_REPAIR_VERSION
 
@@ -269,7 +270,8 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
     endpoint = resolve_base_url(cfg.models.solver_base_url_env)[1]
     output_contract = solver_output_contract(cfg.data.answer_format)
     request_template = solver_system_prompt("<DECISION_PROCEDURE>", cfg.data.answer_format)
-    return {
+    components = {
+        "solver_contract_id": cfg.models.solver_contract_id,
         "solver_model": cfg.models.agent_model,
         "enable_thinking": False,
         "endpoint_identity": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
@@ -287,6 +289,16 @@ def solver_request_components(cfg: Config) -> dict[str, Any]:
         "prompt_question_evaluator": PROMPT_QUESTION_EVALUATOR_VERSION,
         "invalid_max_retries": cfg.models.solver_invalid_max_retries,
     }
+    if cfg.models.solver_contract_id == COMMON_SOLVER_CONTRACT_V1_ID:
+        components.update({
+            "request_template": COMMON_SOLVER_CONTRACT_V1_ID,
+            "invalid_retry_policy": "SCORE_WRONG_NO_SEMANTIC_RETRY",
+            "question_newline_policy": "CRLF_AND_CR_TO_LF_STRIP_OUTER_WHITESPACE",
+            "provider_seed_policy": "OMITTED",
+            "transport_attempt_cap": 4,
+            "cache_identity": "SHA256_CANONICAL_PROVIDER_REQUEST_BYTES",
+        })
+    return components
 
 
 def build_run_identity(

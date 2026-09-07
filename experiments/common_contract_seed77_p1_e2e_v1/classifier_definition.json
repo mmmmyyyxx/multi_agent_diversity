@@ -1,0 +1,17 @@
+{
+  "classifiers": {
+    "CONTRACT_TRANSFER_FAILURE_DOMINANT": "P1_COMMON_E2E final MeanMember and Vote are both strictly greater than P0_COMMON_STATIC",
+    "COMPETENCE_REDISTRIBUTION_BIAS_SUPPORTED": "P1_COMMON_E2E final MeanMember is strictly lower than P0_COMMON_STATIC while Oracle exceeds P0 by at least 0.15",
+    "MIXED_CONTRACT_AND_OPTIMIZATION_EFFECTS": "P1 recovers at least one of MeanMember or Vote above P0 but does not satisfy CONTRACT_TRANSFER_FAILURE_DOMINANT",
+    "NO_CLEAR_DIAGNOSIS": "none of the other frozen rules applies"
+  },
+  "priority_order": [
+    "CONTRACT_TRANSFER_FAILURE_DOMINANT",
+    "COMPETENCE_REDISTRIBUTION_BIAS_SUPPORTED",
+    "MIXED_CONTRACT_AND_OPTIMIZATION_EFFECTS",
+    "NO_CLEAR_DIAGNOSIS"
+  ],
+  "seed": 77,
+  "validation_used_for_selection": false,
+  "test_accessed": false
+}
