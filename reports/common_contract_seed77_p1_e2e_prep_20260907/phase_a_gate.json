@@ -1,0 +1,9 @@
+{
+  "api_calls": 0,
+  "phase_a_gate": "PASS",
+  "seed": 77,
+  "single_algorithm_change": "optimization_time_solver_contract",
+  "solver_contract": "COMMON_SOLVER_CONTRACT_V1",
+  "test_calls": 0,
+  "validation_calls": 0
+}

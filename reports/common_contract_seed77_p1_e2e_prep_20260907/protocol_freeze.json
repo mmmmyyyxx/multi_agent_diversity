@@ -1,0 +1,35 @@
+{
+  "algorithm": {
+    "arm": "P1_SHADOW_VOTE_ALIGNED_GENERIC",
+    "common_safe": true,
+    "max_update_opportunities": 32,
+    "no_commit_patience": 6,
+    "semantic_critic": true,
+    "vote_aligned_scheduler": true,
+    "winner_only_shadow": true
+  },
+  "experiment_id": "common_contract_seed77_p1_e2e_v1",
+  "final_evaluation": [
+    "P0_COMMON_STATIC",
+    "P1_SHADOW_VOTE_ALIGNED_GENERIC"
+  ],
+  "role_models": {
+    "critic": "qwen3.7-flash",
+    "evaluator": "qwen3.7-flash",
+    "student": "qwen3.7-flash",
+    "teacher": "qwen3.7-flash"
+  },
+  "seed": 77,
+  "seed77_split": {
+    "external_validation": "ExternalValidation50",
+    "optimize": "fold_b+fold_c",
+    "shadow": "fold_a"
+  },
+  "solver_contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "solver_contract_identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "solver_invalid_max_retries": 0,
+  "solver_model": "qwen3-8b",
+  "test50_accessed": false,
+  "thinking": false,
+  "validation_before_training_complete": false
+}
