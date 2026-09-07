@@ -1,0 +1,9 @@
+{
+  "README.md": "5b469196d199dfb4a196db54559faf0ba7defb4fb6a67d91c44e2e14c026b4e4",
+  "contract_manifest.json": "fcc39b37e04bcdadbd34fed8eeeb59360286d250e843f2ab3fbb1f3a69a89e73",
+  "fact_assertions.json": "b9bfd2b454f89950bc5b9956407c283453189132e76c607564d12419de643bfc",
+  "provenance.json": "244897cfa20645fdc8338d0538c9e43ef6e9ef00599d26565517a2e8e424a3e6",
+  "replay_registry_public.json": "948e90e508d7224a2ad7630b320f30aebf9ce6f18f58d54a7633c61c85393a7a",
+  "sanitization_manifest.json": "192ece6a91e4367107fda71a0ec2bb88fe2992ba7a878ace39223ac76413e8b3",
+  "serialization_parity_smoke.json": "9f7f634a547b18501713978719937c82a0f03cf4bf1dda80a5fea0fc86eaa565"
+}

@@ -1,0 +1,61 @@
+{
+  "case_count": 50,
+  "case_order_sha256": "d76f1aea88700bf80c61d05c64c599df497ab47b34f5df51a35eeb23189b96ce",
+  "dropped_or_missing_state_note": null,
+  "optimization_rerun": false,
+  "planned_unique_prompt_case_requests": 400,
+  "selection_rule": "SEED77_REQUESTED_FOR_FROZEN_ARTIFACT_COMMON_CONTRACT_REPLAY",
+  "split": "ExternalValidation50",
+  "states": [
+    {
+      "aggregation": "equal_weight_plurality_tie_incorrect",
+      "ordered_prompt_sha256": [
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+      ],
+      "source_repo": "COMMON",
+      "source_seed": null,
+      "state_id": "P0_COMMON",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "single",
+      "ordered_prompt_sha256": [
+        "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+      ],
+      "source_repo": "MARS",
+      "source_seed": 77,
+      "state_id": "MARS_SEED77_FINAL",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "single",
+      "ordered_prompt_sha256": [
+        "22466066635e67c36639b9d7dd571e5019e18676c395b2069c92e0c0904c5319"
+      ],
+      "source_repo": "GEPA",
+      "source_seed": 77,
+      "state_id": "GEPA_SEED77_FINAL",
+      "unique_prompt_count": 1
+    },
+    {
+      "aggregation": "equal_weight_plurality_tie_incorrect",
+      "ordered_prompt_sha256": [
+        "48ab0c571ce6ec406317d4ea7c92d1c199c7eec35fe1083d45391a953916d747",
+        "869284406ad234cdcd7e2500e77a913a983e86669e4c11519bfcf103ec77e6d3",
+        "a82a7c4c085eec00846887e9a4fbace68831f9f494045fa54be09bdd12841117",
+        "56926078c16fd1a5e9f25b53176ce4ecba9fcaa2940b6d2dc94de732e0b21377",
+        "28976189a9e758cc8ce85577defef664eb72be47c8e78d0aeb8b4332dce8a1db"
+      ],
+      "source_repo": "Diversity",
+      "source_seed": 77,
+      "state_id": "DIVERSITY_SEED77_P1_FINAL",
+      "unique_prompt_count": 5
+    }
+  ],
+  "status": "EXECUTION_READY_PENDING_EXPLICIT_API_AUTHORIZATION",
+  "test50_accessed": false
+}

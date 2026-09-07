@@ -1,0 +1,21 @@
+{
+  "generated_artifact_scope": [
+    "reports/common_solver_contract_v1_seed77_prep_20260907",
+    "runs/common_solver_contract_v1_seed77_prep_20260907"
+  ],
+  "historical_input_sha256": {
+    "diversity_seed77": "9243211262cba9dd56dd522aafe34be1c8cee54150bf09f7cc004b5e54d8210f",
+    "external_validation_diversity": "acdba8d7763adce7a4ef4915b86d789120a1ecc9578b770f86e360daab33045f",
+    "external_validation_gepa": "f27d0e5c6b56f1e0193cb1ff18ce485165d5cbb0cd2a1228a76d42c1659fa621",
+    "gepa_seed77": "4b5d80c057e76f1aa7d04fd200d5d01614d6a2645003b4c0b90673dab98854fa",
+    "mars_seed77": "81e2bcee50aae5beb0dd02606cb19f1c58552f4b44f2940b94bd485e918b35b3",
+    "p0": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+  },
+  "private_registry_tracked": false,
+  "report_version": "common_solver_contract_v1_seed77_prep_v1",
+  "repository_commits": {
+    "Diversity": "4c795600ab4a4fbb234286394bcc10085bd4fc9c",
+    "GEPA": "e1ec6cb1494ff97d21c28e810f193f6641824faf",
+    "MARS": "945283d1b3ceb4ec546ff915df8a1de2ad3bba5e"
+  }
+}

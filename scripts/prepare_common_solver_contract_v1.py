@@ -102,7 +102,9 @@ def _state(state_id: str, repo: str, seed: int | None, prompts: Sequence[str]) -
     }
 
 
-def load_inputs(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Path]]:
+def load_inputs(
+    root: Path, seed: int = 76
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Path]]:
     sibling = root.parent
     gepa = sibling / "independent_gepa_repro"
     mars = sibling / "MARS"
@@ -113,12 +115,12 @@ def load_inputs(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]],
         / "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/splits/external_validation.jsonl",
         "p0": gepa
         / "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/initialization/p0.txt",
-        "mars_seed76": mars
-        / "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed76/trajectory_private.json",
-        "gepa_seed76": gepa
-        / "runs/gepa_single_prompt_capacity_20260905/seed_76/candidate_state.json",
-        "diversity_seed76": root
-        / "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/best_prompts.json",
+        f"mars_seed{seed}": mars
+        / f"experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed{seed}/trajectory_private.json",
+        f"gepa_seed{seed}": gepa
+        / f"runs/gepa_single_prompt_capacity_20260905/seed_{seed}/candidate_state.json",
+        f"diversity_seed{seed}": root
+        / f"runs/vote_aligned_confirmatory_seed76_77_v1/seed{seed}/P1_SHADOW_VOTE_ALIGNED_GENERIC/best_prompts.json",
     }
     missing = [name for name, path in files.items() if not path.is_file()]
     if missing:
@@ -163,21 +165,21 @@ def load_inputs(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]],
         )
 
     p0 = files["p0"].read_text(encoding="utf-8").strip()
-    mars_payload = read_json(files["mars_seed76"])
+    mars_payload = read_json(files[f"mars_seed{seed}"])
     mars_final = str(mars_payload["best_prompt"])
     if sha256_bytes(mars_final.encode("utf-8")) != str(mars_payload["best_prompt_hash"]):
         raise AssertionError("MARS frozen prompt hash mismatch")
-    gepa_payload = read_json(files["gepa_seed76"])["result"]
+    gepa_payload = read_json(files[f"gepa_seed{seed}"])["result"]
     best_idx = int(gepa_payload["best_idx"])
     gepa_final = str(gepa_payload["candidates"][best_idx]["system_prompt"])
-    diversity_final = [str(value) for value in read_json(files["diversity_seed76"])]
+    diversity_final = [str(value) for value in read_json(files[f"diversity_seed{seed}"])]
     if len(diversity_final) != 5:
         raise AssertionError("Diversity frozen final must contain five prompts")
     states = [
         _state("P0_COMMON", "COMMON", None, [p0, p0, p0, p0, p0]),
-        _state("MARS_SEED76_FINAL", "MARS", 76, [mars_final]),
-        _state("GEPA_SEED76_FINAL", "GEPA", 76, [gepa_final]),
-        _state("DIVERSITY_SEED76_P1_FINAL", "Diversity", 76, diversity_final),
+        _state(f"MARS_SEED{seed}_FINAL", "MARS", seed, [mars_final]),
+        _state(f"GEPA_SEED{seed}_FINAL", "GEPA", seed, [gepa_final]),
+        _state(f"DIVERSITY_SEED{seed}_P1_FINAL", "Diversity", seed, diversity_final),
     ]
     return cases, states, files
 
@@ -239,7 +241,7 @@ def sanitize(report: Path) -> dict[str, Any]:
     }
 
 
-def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
+def run(root: Path, report: Path, prep: Path, seed: int = 76) -> dict[str, Any]:
     root = root.resolve()
     report = report.resolve()
     prep = prep.resolve()
@@ -252,7 +254,7 @@ def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
     report.mkdir(parents=True, exist_ok=True)
     prep.mkdir(parents=True, exist_ok=True)
 
-    cases, states, source_files = load_inputs(root)
+    cases, states, source_files = load_inputs(root, seed=seed)
     before = {name: sha256_file(path) for name, path in source_files.items()}
     p0 = states[0]["ordered_prompts"][0]
     smoke = serialization_smoke(cases, p0)
@@ -302,7 +304,7 @@ def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
     ]
     public_registry = {
         "status": "EXECUTION_READY_PENDING_EXPLICIT_API_AUTHORIZATION",
-        "selection_rule": "SEED76_CHOSEN_BY_COMPLETE_FROZEN_ARTIFACT_AVAILABILITY_NOT_EFFICACY",
+        "selection_rule": f"SEED{seed}_REQUESTED_FOR_FROZEN_ARTIFACT_COMMON_CONTRACT_REPLAY",
         "split": "ExternalValidation50",
         "case_count": 50,
         "case_order_sha256": canonical_hash([row["case_id"] for row in cases]),
@@ -313,10 +315,7 @@ def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
         * 50,
         "optimization_rerun": False,
         "test50_accessed": False,
-        "dropped_or_missing_state_note": (
-            "Seed75 Diversity P1 exact final bytes are not present in the valid local raw root; "
-            "the minimal replay therefore uses Seed76, where all three final artifacts are complete."
-        ),
+        "dropped_or_missing_state_note": None,
     }
     write_json(report / "replay_registry_public.json", public_registry)
 
@@ -347,7 +346,7 @@ def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
         facts["gate"] = "FAIL"
     write_json(report / "fact_assertions.json", facts)
     provenance = {
-        "report_version": "common_solver_contract_v1_prep_20260906",
+        "report_version": f"common_solver_contract_v1_seed{seed}_prep_v1",
         "repository_commits": {
             "Diversity": git(root, "rev-parse", "HEAD"),
             "GEPA": git(root.parent / "independent_gepa_repro", "rev-parse", "HEAD"),
@@ -355,8 +354,8 @@ def run(root: Path, report: Path, prep: Path) -> dict[str, Any]:
         },
         "historical_input_sha256": before,
         "generated_artifact_scope": [
-            "reports/common_solver_contract_v1_prep_20260906",
-            "runs/common_solver_contract_v1_prep_20260906",
+            report.relative_to(root).as_posix(),
+            prep.relative_to(root).as_posix(),
         ],
         "private_registry_tracked": False,
     }
@@ -370,9 +369,8 @@ canonical request bytes for the first 20 frozen ExternalValidation50 cases.
 
 No optimization was rerun. No model API was called. Test50 remained locked.
 
-The first replay is frozen to Seed76 because exact final prompt bytes for all
-three methods are available for that seed. It includes P0 plus the frozen MARS,
-GEPA, and five-member Diversity final states. This choice is based only on
+This replay includes P0 plus the requested seed's frozen MARS, GEPA, and
+five-member Diversity final states. Eligibility is based only on exact frozen
 artifact completeness, before common-contract results exist.
 
 The actual ExternalValidation50 replay is not executed by this preparation. It
@@ -398,6 +396,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     root = Path(__file__).resolve().parents[1]
     parser.add_argument("--root", type=Path, default=root)
+    parser.add_argument("--seed", type=int, default=76)
     parser.add_argument(
         "--report",
         type=Path,
@@ -409,7 +408,7 @@ def main() -> int:
         default=root / "runs/common_solver_contract_v1_prep_20260906",
     )
     args = parser.parse_args()
-    result = run(args.root, args.report, args.prep)
+    result = run(args.root, args.report, args.prep, seed=args.seed)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 
