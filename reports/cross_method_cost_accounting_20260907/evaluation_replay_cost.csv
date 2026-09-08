@@ -1,0 +1,9 @@
+method,seed,phase,logical_calls,provider_calls,successful_calls,failed_provider_attempts,cache_hits,input_tokens,output_tokens,total_tokens,accounting_status
+MARS,75,external_validation_replay,800,800,800,0,0,,,837424,TOTAL_DERIVED_INPUT_OUTPUT_UNRECOVERABLE
+MARS,76,external_validation_replay,650,650,650,0,0,,,657812,TOTAL_DERIVED_INPUT_OUTPUT_UNRECOVERABLE
+MARS,77,external_validation_replay,550,550,550,0,0,,,571793,TOTAL_DERIVED_INPUT_OUTPUT_UNRECOVERABLE
+GEPA,75,external_validation_replay,700,700,700,0,0,1120854,228501,1349355,FULLY_RECOVERED
+GEPA,76,external_validation_replay,200,200,200,0,0,176644,60868,237512,FULLY_RECOVERED
+GEPA,77,external_validation_replay,700,700,700,0,0,840904,229617,1070521,FULLY_RECOVERED
+Diversity,76,common_contract_replay,600,400,400,0,200,183438,93251,276689,FULLY_RECOVERED
+Diversity,77,common_contract_replay,600,350,350,0,250,153277,73136,226413,FULLY_RECOVERED

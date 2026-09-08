@@ -1,0 +1,7 @@
+seed,method,phase,role,successful_calls,failed_provider_attempts,cache_hits,input_tokens,output_tokens,total_tokens,token_accounting_mismatch,total_token_source,proposal_iterations,unique_candidates,reflection_calls,merge_calls,termination_reason,logical_calls,provider_calls
+75,GEPA,optimization,solver,862,0,0,1378743,278283,1657026,,derived_from_provider_input_output,27,14,27,0,no_improvement_patience_10,862,862
+75,GEPA,optimization,optimizer,27,0,0,180584,43225,223809,,derived_from_provider_input_output,27,14,27,0,no_improvement_patience_10,27,27
+76,GEPA,optimization,solver,272,0,0,259079,90970,350049,,derived_from_provider_input_output,12,4,12,0,no_improvement_patience_10,272,272
+76,GEPA,optimization,optimizer,12,0,0,58936,14020,72956,,derived_from_provider_input_output,12,4,12,0,no_improvement_patience_10,12,12
+77,GEPA,optimization,solver,862,0,0,1022792,279686,1302478,,derived_from_provider_input_output,27,14,27,0,no_improvement_patience_10,862,862
+77,GEPA,optimization,optimizer,27,0,0,114767,33318,148085,,derived_from_provider_input_output,27,14,27,0,no_improvement_patience_10,27,27

@@ -1,0 +1,22 @@
+{
+  "arm": "P1",
+  "excluded_root": "runs/vote_aligned_generic_shadow_pilot_v1 (user-stopped invalid attempt)",
+  "no_estimation": true,
+  "recoverable": {
+    "actual_commits": 6,
+    "failed_provider_attempts": 1,
+    "provider_attempts": 6757,
+    "successful_provider_calls": 6756,
+    "update_opportunities": 20
+  },
+  "seed": 75,
+  "status": "PARTIALLY_RECOVERED",
+  "unrecoverable": [
+    "solver/optimizer call partition",
+    "logical calls",
+    "cache hits",
+    "input tokens",
+    "output tokens",
+    "total tokens"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "Diversity": {
+    "optimizer": [
+      "teacher",
+      "critic",
+      "student",
+      "loss_blind_generic_revision"
+    ],
+    "solver": [
+      "solver"
+    ]
+  },
+  "GEPA": {
+    "optimizer": [
+      "reflection",
+      "merge reflection"
+    ],
+    "solver": [
+      "task_lm metric/evaluation"
+    ]
+  },
+  "MARS": {
+    "optimizer": [
+      "Planner",
+      "Teacher",
+      "Critic",
+      "Student"
+    ],
+    "solver": [
+      "Target/task-model"
+    ]
+  },
+  "priority": [
+    "explicit role/caller",
+    "request metadata",
+    "experiment stage",
+    "model identity"
+  ],
+  "unknown_policy": "do not impute"
+}

@@ -1,0 +1,29 @@
+{
+  "cache_hits_counted_as_provider_calls": "PASS",
+  "commit_count_correction": {
+    "actual_commits": 19,
+    "initial_states_included": 3,
+    "published_state_counts": 22
+  },
+  "diversity_raw_summary_reconciliation": "PASS seeds76/77",
+  "gepa_proposals": [
+    27,
+    12,
+    27
+  ],
+  "mars_iterations": [
+    15,
+    12,
+    10
+  ],
+  "provider_request_hash_note": "identical payload hashes across independent paid calls are not duplicates",
+  "record_identity": {
+    "Diversity": "seed|arm|raw-ledger-line-ordinal (provider de-duplication unavailable)",
+    "GEPA": "provider request_id",
+    "MARS": "seed|role|cache filename"
+  },
+  "stable_record_identity_duplicates": 0,
+  "status": "PASS_WITH_DISCLOSED_LIMITATIONS",
+  "summary_plus_raw_double_counting": "NOT_OBSERVED: summaries used only for reconciliation",
+  "token_arithmetic": "PASS where provider components persisted"
+}

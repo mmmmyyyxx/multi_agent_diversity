@@ -1,0 +1,76 @@
+{
+  "excluded": [
+    "prompts",
+    "questions",
+    "answers",
+    "raw responses",
+    "endpoints",
+    "credentials",
+    "SQLite",
+    "checkpoints",
+    "absolute paths"
+  ],
+  "files": [
+    {
+      "forbidden_hits": 0,
+      "path": "cross_method_optimization_cost.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "cross_method_optimization_cost_summary.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "diversity_p1_usage_by_seed.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "diversity_p1_usage_by_seed_role.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "evaluation_replay_cost.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "fact_assertions.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "gepa_usage_by_seed_role.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "mars_usage_by_seed_role.csv"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "phase_mapping.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "provenance.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "README.md"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "reconciliation.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "role_mapping.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "seed75_recovery_status.json"
+    },
+    {
+      "forbidden_hits": 0,
+      "path": "source_inventory.json"
+    }
+  ],
+  "status": "PASS"
+}

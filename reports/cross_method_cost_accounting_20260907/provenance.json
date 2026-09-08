@@ -1,0 +1,16 @@
+{
+  "api_calls": 0,
+  "audit_type": "zero_api_read_only_cost_accounting",
+  "gepa_phase_partition": "external replay requests matched against exact request cache; optimization is raw provider total minus matched replay",
+  "historical_artifacts_modified": 0,
+  "mars_phase_partition": "per-iteration target usage plus run-local optimizer usage; external replay is raw run total minus summed optimization evaluations",
+  "record_identity_audit": {
+    "Diversity_limit": "raw ledger has no provider request ID, so upstream duplicate provider attempts are NOT_RECOVERABLE_ZERO_API",
+    "GEPA": "provider request IDs persisted and unique",
+    "MARS_limit": "cache filename identifies serialized request, while cache contents do not persist provider request IDs",
+    "duplicate_stable_identities": 0,
+    "stable_identities": 24105
+  },
+  "report_scope": "sanitized aggregate usage only",
+  "test_calls": 0
+}

@@ -1,0 +1,8 @@
+seed,arm,phase,role,logical_calls,provider_calls,successful_calls,failed_provider_attempts,cache_hits,input_tokens,output_tokens,total_tokens,token_accounting_mismatch,total_token_source,recovery_status
+75,P1,optimization,solver,,,,,,,,,,,PARTIALLY_RECOVERED
+75,P1,optimization,optimizer,,,,,,,,,,,PARTIALLY_RECOVERED
+75,P1,optimization,unknown,,6757,6756,1,,,,,,,PARTIALLY_RECOVERED
+76,P1,optimization,solver,13812,9205,9205,0,5662,3568311,2570498,6138809,,derived_from_provider_input_output,FULLY_RECOVERED
+76,P1,optimization,optimizer,219,219,219,0,0,291072,54434,345506,,derived_from_provider_input_output,FULLY_RECOVERED
+77,P1,optimization,solver,10520,6004,6004,0,4770,2375891,1464511,3840402,,derived_from_provider_input_output,FULLY_RECOVERED
+77,P1,optimization,optimizer,210,210,210,0,0,290623,51608,342231,,derived_from_provider_input_output,FULLY_RECOVERED

@@ -1,0 +1,295 @@
+{
+  "files": [
+    {
+      "authority": "frozen_report_recovery",
+      "path": "reports/vote_aligned_generic_shadow_pilot_v1/README.md",
+      "repo": "Diversity",
+      "sha256": "2ae6b0e8754c2269798648a046863d4cc2582f37c51e82a1e628a6b9aa732f4d",
+      "size_bytes": 5044
+    },
+    {
+      "authority": "sanitized_commit_ledger",
+      "path": "reports/vote_aligned_generic_shadow_pilot_v1/lane_targeting.csv",
+      "repo": "Diversity",
+      "sha256": "12cadc9389156a95b4b9fb2ccda6feb39a4651f1a6d5458f9448214a60097188",
+      "size_bytes": 3498
+    },
+    {
+      "authority": "run_accounting_summary",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/cost_summary.json",
+      "repo": "Diversity",
+      "sha256": "af446a22d78ddaf2ef2f450a7e89e20a05da0358a5388d26b6ff23d6dbb2bffe",
+      "size_bytes": 837
+    },
+    {
+      "authority": "raw_commit_ledger",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/dual_target_commit_decisions.jsonl",
+      "repo": "Diversity",
+      "sha256": "95726b83427e5d3ccf06676c2bb9b8ca3669e2b8f1345058f2ca5ab91d418bf5",
+      "size_bytes": 17493
+    },
+    {
+      "authority": "raw_provider_ledger",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/llm_calls.jsonl",
+      "repo": "Diversity",
+      "sha256": "0457646628b199e7d4283dabe31976ae454a53553a19721b2e0e16b641b0694d",
+      "size_bytes": 3184135
+    },
+    {
+      "authority": "run_manifest",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/run_meta.json",
+      "repo": "Diversity",
+      "sha256": "30582f7c10cc4820c4ee8565e9201a955eff39c1ccd4eebdafd18493221df34f",
+      "size_bytes": 15526
+    },
+    {
+      "authority": "run_accounting_summary",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/cost_summary.json",
+      "repo": "Diversity",
+      "sha256": "57890c3f60b4aaa1f3d5b8841ef60a4cebd22a5255b937c635585f44045e1bd1",
+      "size_bytes": 821
+    },
+    {
+      "authority": "raw_commit_ledger",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/dual_target_commit_decisions.jsonl",
+      "repo": "Diversity",
+      "sha256": "532df6894104d87ee9a75001da6e180064e14a73184b1bbe7e2dec8f3f3c70d8",
+      "size_bytes": 16838
+    },
+    {
+      "authority": "raw_provider_ledger",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/llm_calls.jsonl",
+      "repo": "Diversity",
+      "sha256": "f457a93fee597004339cd89eb35750e1215d8f683315a098985a7a18f3e3d411",
+      "size_bytes": 2095555
+    },
+    {
+      "authority": "run_manifest",
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/run_meta.json",
+      "repo": "Diversity",
+      "sha256": "9ca0f855267622477454e099d9efcc68663f7cc61cf957ffbbc3e0f2b64978f2",
+      "size_bytes": 15526
+    },
+    {
+      "authority": "phase_reconstruction_contract",
+      "path": "data/private_bundles/gepa_capacity_probe_disambiguation_qa_20260905/splits/external_validation.jsonl",
+      "repo": "GEPA",
+      "sha256": "f27d0e5c6b56f1e0193cb1ff18ce485165d5cbb0cd2a1228a76d42c1659fa621",
+      "size_bytes": 19130
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/gepa_single_prompt_capacity_20260905/seed_75/result.json",
+      "repo": "GEPA",
+      "sha256": "c87d9c20789436743822ec1d0665e3046c8bcb77b093f8a3d13373e84a12be89",
+      "size_bytes": 1531
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/gepa_single_prompt_capacity_20260905/seed_76/result.json",
+      "repo": "GEPA",
+      "sha256": "e922ea87fe8f75b0abd59ddd50278682a5bfabb0afdefb594cf381fe7648e547",
+      "size_bytes": 1492
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/gepa_single_prompt_capacity_20260905/seed_77/result.json",
+      "repo": "GEPA",
+      "sha256": "d12affbeed97109bbe38d4047e9a5a991389fd0fde7d05d1c000984e63655299",
+      "size_bytes": 1508
+    },
+    {
+      "authority": "candidate_state",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_75/candidate_state.json",
+      "repo": "GEPA",
+      "sha256": "7bd588989b4cb57da915c7c62bc52b171bd62f44867a9ff0e06ca460ca5a9ab6",
+      "size_bytes": 838273
+    },
+    {
+      "authority": "exact_request_cache",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_75/exact_request_cache.json",
+      "repo": "GEPA",
+      "sha256": "4210598e231fc90bdf8954a38192ee215f048b10f3ec02de6c2742a2b1f23bd9",
+      "size_bytes": 2892963
+    },
+    {
+      "authority": "logical_ledger",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_75/logical_ledger.json",
+      "repo": "GEPA",
+      "sha256": "3fe995c0c63c4ab226cbd1415ebd89571bc7cfb8501529c5aeb5ad9b349e00ed",
+      "size_bytes": 115
+    },
+    {
+      "authority": "raw_provider_accounting",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_75/provider_accounting.json",
+      "repo": "GEPA",
+      "sha256": "803be7a733f7478ed7b17086be0e90c0efa180dfb2f8a19222fa46c89dabc61a",
+      "size_bytes": 461
+    },
+    {
+      "authority": "candidate_state",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_76/candidate_state.json",
+      "repo": "GEPA",
+      "sha256": "766ab99ef1370c8c0c21a5d92b0e7aa470568d2173c3bd41421f12056001612f",
+      "size_bytes": 276666
+    },
+    {
+      "authority": "exact_request_cache",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_76/exact_request_cache.json",
+      "repo": "GEPA",
+      "sha256": "9f9aef8fd5750cb6f0e5448217c10b2586c6cb47b3673e222e0cb9b72f45c5d4",
+      "size_bytes": 853556
+    },
+    {
+      "authority": "logical_ledger",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_76/logical_ledger.json",
+      "repo": "GEPA",
+      "sha256": "1999e3e087f0601f3df026601fdf2f72109dd10656d42a8e63c453d0d03c103c",
+      "size_bytes": 114
+    },
+    {
+      "authority": "raw_provider_accounting",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_76/provider_accounting.json",
+      "repo": "GEPA",
+      "sha256": "a71cb1df3a7ebc4c019a96577744d8a16c4c33d970756b8408eb45c3377b99b7",
+      "size_bytes": 458
+    },
+    {
+      "authority": "candidate_state",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_77/candidate_state.json",
+      "repo": "GEPA",
+      "sha256": "4b5d80c057e76f1aa7d04fd200d5d01614d6a2645003b4c0b90673dab98854fa",
+      "size_bytes": 894992
+    },
+    {
+      "authority": "exact_request_cache",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_77/exact_request_cache.json",
+      "repo": "GEPA",
+      "sha256": "754487729428b97e435842cbb3d5c26973de79d4878ad7ef17eee4eb290752e2",
+      "size_bytes": 2804851
+    },
+    {
+      "authority": "logical_ledger",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_77/logical_ledger.json",
+      "repo": "GEPA",
+      "sha256": "3fe995c0c63c4ab226cbd1415ebd89571bc7cfb8501529c5aeb5ad9b349e00ed",
+      "size_bytes": 115
+    },
+    {
+      "authority": "raw_provider_accounting",
+      "path": "runs/gepa_single_prompt_capacity_20260905/seed_77/provider_accounting.json",
+      "repo": "GEPA",
+      "sha256": "e6436be3f91920f48b4a93bebcec1fa0791a5cee066aae6faa8f44d2d2331299",
+      "size_bytes": 472
+    },
+    {
+      "authority": "phase_reconstruction_contract",
+      "path": "src/independent_gepa/evaluator.py",
+      "repo": "GEPA",
+      "sha256": "4bb778da08ba991017124eb25a64a55d4c31294d3a9278c78f1a4cedaf0dd05c",
+      "size_bytes": 4883
+    },
+    {
+      "authority": "phase_reconstruction_contract",
+      "path": "src/independent_gepa/provider.py",
+      "repo": "GEPA",
+      "sha256": "222ef831089e13fc1a0c2865b0454992877385ce9240da98295f01b46c855acb",
+      "size_bytes": 18955
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed75/optimizer_cache/*.json",
+      "record_count": 319,
+      "repo": "MARS",
+      "sha256_manifest": "a4f197e970e83d4494bd461475ed37d348191c60ede3c9ebacbadb03b59bac54"
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed75/solver_cache/*.json",
+      "record_count": 1600,
+      "repo": "MARS",
+      "sha256_manifest": "99ed0037cc5f97fa01d6c753a8dade5197ec779e3177f7efa76186c363463fa6"
+    },
+    {
+      "authority": "run_local_accounting_ledger",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed75/trajectory_private.json",
+      "repo": "MARS",
+      "sha256": "6b6d1ccba0665786309f3d720add4510d9ad424a88f3d8be6f2c4deb017a8df0",
+      "size_bytes": 2219280
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed76/optimizer_cache/*.json",
+      "record_count": 251,
+      "repo": "MARS",
+      "sha256_manifest": "37603e02d70a214b9a9124950c13764b59cb79609eacad7a579d888d9d273e71"
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed76/solver_cache/*.json",
+      "record_count": 1300,
+      "repo": "MARS",
+      "sha256_manifest": "197e2cc1c71b17e8e68deb248b586349313575b5633be4a6e231916d1dffd06c"
+    },
+    {
+      "authority": "run_local_accounting_ledger",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed76/trajectory_private.json",
+      "repo": "MARS",
+      "sha256": "3658c1b77c043fc06c9cf65a1e9993a3e4a206f9fb634d67d8179b5803499a82",
+      "size_bytes": 1628443
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed77/optimizer_cache/*.json",
+      "record_count": 235,
+      "repo": "MARS",
+      "sha256_manifest": "915b3ab9386094910528988534f87c5cb0fa99801f81fc61b60c0f58978c1252"
+    },
+    {
+      "authority": "response_cache_manifest",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed77/solver_cache/*.json",
+      "record_count": 1100,
+      "repo": "MARS",
+      "sha256_manifest": "65e9166ef9eb22cf5f2ce574793a488890167018dd4621e594726b76230b0544"
+    },
+    {
+      "authority": "run_local_accounting_ledger",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/private/run_seed77/trajectory_private.json",
+      "repo": "MARS",
+      "sha256": "81e2bcee50aae5beb0dd02606cb19f1c58552f4b44f2940b94bd485e918b35b3",
+      "size_bytes": 1475757
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/run_seed75/seed_summary.json",
+      "repo": "MARS",
+      "sha256": "8fb464fefc058e186893a0df79b1f205177a46d3ed9f48eae035a2496ebb8adf",
+      "size_bytes": 1065
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/run_seed76/seed_summary.json",
+      "repo": "MARS",
+      "sha256": "bae959377ec6a50a271690e565191dbdca8589a9af72b563bdab28fe433ed34e",
+      "size_bytes": 1051
+    },
+    {
+      "authority": "frozen_accounting_summary",
+      "path": "experiments/mars_single_prompt_capacity_20260905_r1/run_seed77/seed_summary.json",
+      "repo": "MARS",
+      "sha256": "ac2856d1d4e809a9097b9cecd9438af42907af637e7573d2e7a3b3cfc108335a",
+      "size_bytes": 1048
+    }
+  ],
+  "repositories": {
+    "Diversity": "2e8c00c880f703b7187ae9862664d6851b7b9064",
+    "GEPA": "e1ec6cb1494ff97d21c28e810f193f6641824faf",
+    "MARS": "945283d1b3ceb4ec546ff915df8a1de2ad3bba5e"
+  },
+  "source_priority": [
+    "raw provider/API ledger",
+    "run-local accounting ledger",
+    "frozen accounting summary",
+    "report table"
+  ]
+}

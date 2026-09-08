@@ -1,0 +1,10 @@
+{
+  "excluded": [
+    "external_validation_replay",
+    "common_contract_replay",
+    "test",
+    "other"
+  ],
+  "main_table": "optimization only",
+  "test_calls": 0
+}

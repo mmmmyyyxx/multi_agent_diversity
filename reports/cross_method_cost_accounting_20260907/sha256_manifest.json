@@ -1,0 +1,18 @@
+{
+  "README.md": "b6d36d656be27a9174fd7817ef57033dad01dd9ef7712ccb0294eff75162b3db",
+  "cross_method_optimization_cost.csv": "5f674510613d7d340187c63ab2dcc46671fe145a226f98190065bc7413dbb4ee",
+  "cross_method_optimization_cost_summary.csv": "84e03c7000d210fcb7e0e7b1b9ca20e1b7f6cdd86198f8293888da328856c5c9",
+  "diversity_p1_usage_by_seed.csv": "4dbeae86970e1a33e5225c4a0d6faa39c95fc26e3839e644f2a66ea3ec87f504",
+  "diversity_p1_usage_by_seed_role.csv": "c6deecda0b7d70b633f03d077b3e052ff1da814134461709097615cb664f2934",
+  "evaluation_replay_cost.csv": "3e0dff10bcb6ce2c543f8658e0f13ad086e56bc91015bd553760f9f17152ba1a",
+  "fact_assertions.json": "9f718ffda1a911279f64d79567ff245eebf51355792444825e32891b13a143ed",
+  "gepa_usage_by_seed_role.csv": "07b89ceb505fc1a91376cdcccd806f01b449c57f852e5ff52248ba2287016010",
+  "mars_usage_by_seed_role.csv": "f31b3d79ec1d0216d81c5964261269cb437727febbefa778fa273fb8621d9de3",
+  "phase_mapping.json": "3e974b10623298eb10c296c06c5207e089b5a75073e1f7143174faf3e696248a",
+  "provenance.json": "68b9d94647db0cff7417b7e3fb2ca92ef8c42a531d3268b62e877fc9474c0569",
+  "reconciliation.json": "8158116f16c89110feb9ce1ca20fcab251c929ec961a778fead6097ff58be7fd",
+  "role_mapping.json": "f753a458a0cad1656e4fc1cd7399f09c564b5bd21504739f3d3d6aa0330b0df6",
+  "sanitization_manifest.json": "4199b42a1ceedb49e56202bdf4c5afc6d21bc575f26db92042855398e20ef8e8",
+  "seed75_recovery_status.json": "b5c67d68daec4373b3dbaff5c5049c82328ca74dbb6e3ae6559402172cfdca5d",
+  "source_inventory.json": "7b09c933afbdfe3cef7d568ac5a6844973a2b37ae6595865e714ee2dabf2831b"
+}

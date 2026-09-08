@@ -1,0 +1,547 @@
+{
+  "assertions": [
+    {
+      "id": "diversity_opportunities",
+      "observed": [
+        20,
+        17,
+        16
+      ],
+      "status": "PASS"
+    },
+    {
+      "actual_commits": [
+        6,
+        8,
+        5
+      ],
+      "id": "diversity_commit_definition_correction",
+      "reason": "accepted-state count includes one initial state per seed",
+      "reported_accepted_states": [
+        7,
+        9,
+        6
+      ],
+      "status": "PASS_WITH_CORRECTION"
+    },
+    {
+      "id": "diversity_76_identical_full_rows",
+      "observed": 0,
+      "status": "DIAGNOSTIC_ONLY",
+      "upstream_provider_deduplication": "NOT_VERIFIABLE_WITHOUT_REQUEST_IDS"
+    },
+    {
+      "expected": 9424,
+      "id": "diversity_76_raw_summary_call_reconciliation",
+      "observed": 9424,
+      "status": "PASS"
+    },
+    {
+      "expected": {
+        "completion_tokens": 2624932,
+        "prompt_tokens": 3859383,
+        "total_tokens": 6484315
+      },
+      "id": "diversity_76_raw_summary_token_reconciliation",
+      "observed": {
+        "completion_tokens": 2624932,
+        "prompt_tokens": 3859383,
+        "total_tokens": 6484315
+      },
+      "status": "PASS"
+    },
+    {
+      "expected": 17,
+      "id": "diversity_76_opportunities",
+      "observed": 17,
+      "status": "PASS"
+    },
+    {
+      "expected": 8,
+      "id": "diversity_76_commits",
+      "observed": 8,
+      "status": "PASS"
+    },
+    {
+      "expected": 8,
+      "id": "diversity_76_commit_summary_reconciliation",
+      "observed": 8,
+      "status": "PASS"
+    },
+    {
+      "id": "diversity_77_identical_full_rows",
+      "observed": 0,
+      "status": "DIAGNOSTIC_ONLY",
+      "upstream_provider_deduplication": "NOT_VERIFIABLE_WITHOUT_REQUEST_IDS"
+    },
+    {
+      "expected": 6214,
+      "id": "diversity_77_raw_summary_call_reconciliation",
+      "observed": 6214,
+      "status": "PASS"
+    },
+    {
+      "expected": {
+        "completion_tokens": 1516119,
+        "prompt_tokens": 2666514,
+        "total_tokens": 4182633
+      },
+      "id": "diversity_77_raw_summary_token_reconciliation",
+      "observed": {
+        "completion_tokens": 1516119,
+        "prompt_tokens": 2666514,
+        "total_tokens": 4182633
+      },
+      "status": "PASS"
+    },
+    {
+      "expected": 16,
+      "id": "diversity_77_opportunities",
+      "observed": 16,
+      "status": "PASS"
+    },
+    {
+      "expected": 5,
+      "id": "diversity_77_commits",
+      "observed": 5,
+      "status": "PASS"
+    },
+    {
+      "expected": 5,
+      "id": "diversity_77_commit_summary_reconciliation",
+      "observed": 5,
+      "status": "PASS"
+    },
+    {
+      "expected": 1600,
+      "id": "mars_75_published_solver_call_reconciliation",
+      "observed": 1600,
+      "status": "PASS"
+    },
+    {
+      "expected": 319,
+      "id": "mars_75_published_optimizer_call_reconciliation",
+      "observed": 319,
+      "status": "PASS"
+    },
+    {
+      "expected": 2021262,
+      "id": "mars_75_published_total_token_reconciliation",
+      "observed": 2021262,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_optimizer_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_optimizer_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_optimizer_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_solver_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_solver_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_75_solver_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 319,
+      "id": "mars_75_optimizer_cache_count",
+      "observed": 319,
+      "status": "PASS"
+    },
+    {
+      "expected": 1600,
+      "id": "mars_75_solver_cache_count",
+      "observed": 1600,
+      "status": "PASS"
+    },
+    {
+      "expected": 1300,
+      "id": "mars_76_published_solver_call_reconciliation",
+      "observed": 1300,
+      "status": "PASS"
+    },
+    {
+      "expected": 251,
+      "id": "mars_76_published_optimizer_call_reconciliation",
+      "observed": 251,
+      "status": "PASS"
+    },
+    {
+      "expected": 1591749,
+      "id": "mars_76_published_total_token_reconciliation",
+      "observed": 1591749,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_optimizer_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_optimizer_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_optimizer_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_solver_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_solver_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_76_solver_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 251,
+      "id": "mars_76_optimizer_cache_count",
+      "observed": 251,
+      "status": "PASS"
+    },
+    {
+      "expected": 1300,
+      "id": "mars_76_solver_cache_count",
+      "observed": 1300,
+      "status": "PASS"
+    },
+    {
+      "expected": 1100,
+      "id": "mars_77_published_solver_call_reconciliation",
+      "observed": 1100,
+      "status": "PASS"
+    },
+    {
+      "expected": 235,
+      "id": "mars_77_published_optimizer_call_reconciliation",
+      "observed": 235,
+      "status": "PASS"
+    },
+    {
+      "expected": 1405045,
+      "id": "mars_77_published_total_token_reconciliation",
+      "observed": 1405045,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_optimizer_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_optimizer_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_optimizer_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_solver_errors",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_solver_retries",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "mars_77_solver_cache_hits",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 235,
+      "id": "mars_77_optimizer_cache_count",
+      "observed": 235,
+      "status": "PASS"
+    },
+    {
+      "expected": 1100,
+      "id": "mars_77_solver_cache_count",
+      "observed": 1100,
+      "status": "PASS"
+    },
+    {
+      "expected": 1589,
+      "id": "gepa_75_published_call_reconciliation",
+      "observed": 1589,
+      "status": "PASS"
+    },
+    {
+      "expected": 3230190,
+      "id": "gepa_75_published_token_reconciliation",
+      "observed": 3230190,
+      "status": "PASS"
+    },
+    {
+      "expected": true,
+      "id": "gepa_75_provider_ids_present",
+      "observed": true,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "gepa_75_duplicate_provider_ids",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": {
+        "input_tokens": 1120854,
+        "logical_calls": 700,
+        "output_tokens": 228501,
+        "provider_calls": 700,
+        "total_tokens": 1349355
+      },
+      "id": "gepa_75_replay_reconstruction",
+      "observed": {
+        "input_tokens": 1120854,
+        "logical_calls": 700,
+        "output_tokens": 228501,
+        "provider_calls": 700,
+        "total_tokens": 1349355
+      },
+      "status": "PASS"
+    },
+    {
+      "expected": 1657026,
+      "id": "gepa_75_optimization_token_arithmetic",
+      "observed": 1657026,
+      "status": "PASS"
+    },
+    {
+      "expected": 14,
+      "id": "gepa_75_unique_candidates",
+      "observed": 14,
+      "status": "PASS"
+    },
+    {
+      "expected": 3006381,
+      "id": "gepa_75_raw_replay_phase_reconciliation",
+      "observed": 3006381,
+      "status": "PASS"
+    },
+    {
+      "expected": 484,
+      "id": "gepa_76_published_call_reconciliation",
+      "observed": 484,
+      "status": "PASS"
+    },
+    {
+      "expected": 660517,
+      "id": "gepa_76_published_token_reconciliation",
+      "observed": 660517,
+      "status": "PASS"
+    },
+    {
+      "expected": true,
+      "id": "gepa_76_provider_ids_present",
+      "observed": true,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "gepa_76_duplicate_provider_ids",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": {
+        "input_tokens": 176644,
+        "logical_calls": 200,
+        "output_tokens": 60868,
+        "provider_calls": 200,
+        "total_tokens": 237512
+      },
+      "id": "gepa_76_replay_reconstruction",
+      "observed": {
+        "input_tokens": 176644,
+        "logical_calls": 200,
+        "output_tokens": 60868,
+        "provider_calls": 200,
+        "total_tokens": 237512
+      },
+      "status": "PASS"
+    },
+    {
+      "expected": 350049,
+      "id": "gepa_76_optimization_token_arithmetic",
+      "observed": 350049,
+      "status": "PASS"
+    },
+    {
+      "expected": 4,
+      "id": "gepa_76_unique_candidates",
+      "observed": 4,
+      "status": "PASS"
+    },
+    {
+      "expected": 587561,
+      "id": "gepa_76_raw_replay_phase_reconciliation",
+      "observed": 587561,
+      "status": "PASS"
+    },
+    {
+      "expected": 1589,
+      "id": "gepa_77_published_call_reconciliation",
+      "observed": 1589,
+      "status": "PASS"
+    },
+    {
+      "expected": 2521084,
+      "id": "gepa_77_published_token_reconciliation",
+      "observed": 2521084,
+      "status": "PASS"
+    },
+    {
+      "expected": true,
+      "id": "gepa_77_provider_ids_present",
+      "observed": true,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "gepa_77_duplicate_provider_ids",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": {
+        "input_tokens": 840904,
+        "logical_calls": 700,
+        "output_tokens": 229617,
+        "provider_calls": 700,
+        "total_tokens": 1070521
+      },
+      "id": "gepa_77_replay_reconstruction",
+      "observed": {
+        "input_tokens": 840904,
+        "logical_calls": 700,
+        "output_tokens": 229617,
+        "provider_calls": 700,
+        "total_tokens": 1070521
+      },
+      "status": "PASS"
+    },
+    {
+      "expected": 1302478,
+      "id": "gepa_77_optimization_token_arithmetic",
+      "observed": 1302478,
+      "status": "PASS"
+    },
+    {
+      "expected": 14,
+      "id": "gepa_77_unique_candidates",
+      "observed": 14,
+      "status": "PASS"
+    },
+    {
+      "expected": 2372999,
+      "id": "gepa_77_raw_replay_phase_reconciliation",
+      "observed": 2372999,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "stable_record_identity_duplicates",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "api_calls_during_audit",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "test_calls_during_audit",
+      "observed": 0,
+      "status": "PASS"
+    },
+    {
+      "expected": [
+        15,
+        12,
+        10
+      ],
+      "id": "mars_iterations",
+      "observed": [
+        15,
+        12,
+        10
+      ],
+      "status": "PASS"
+    },
+    {
+      "expected": [
+        27,
+        12,
+        27
+      ],
+      "id": "gepa_proposals",
+      "observed": [
+        27,
+        12,
+        27
+      ],
+      "status": "PASS"
+    },
+    {
+      "expected": 0,
+      "id": "historical_artifacts_modified",
+      "observed": 0,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,5 @@
+method,seeds,optimization_unit,units,commits,solver_calls,optimizer_calls,input_tokens,output_tokens,total_tokens,solver_token_fraction,optimizer_token_fraction,recovery_status
+MARS,75-77,iteration,37,,2000,805,,,2951027,0.6996303320843896,0.30036966791561037,FULLY_RECOVERED
+GEPA,75-77,proposal,66,,1996,66,3014901,739502,3754403,0.8815124535112506,0.11848754648874937,FULLY_RECOVERED
+Diversity,76-77 exact,update_opportunity,33,13,15209,429,6525897,4141051,10666948,0.935526356742341,0.06447364325765903,FULLY_RECOVERED
+Diversity,75 partial,update_opportunity,20,6,,,,,,,,PARTIALLY_RECOVERED

@@ -1,0 +1,4 @@
+seed,arm,phase,recovery_status,update_opportunities,reported_accepted_state_count,actual_commits,commit_rate,solver_calls,optimizer_calls,unknown_calls,input_tokens,output_tokens,total_tokens,tokens_per_update_opportunity,tokens_per_commit,solver_calls_per_commit,optimizer_calls_per_commit,validation_vote_gain,tokens_per_1pp_validation_gain,efficiency_status
+75,P1,optimization,PARTIALLY_RECOVERED,20,7,6,0.3,,,6756,,,,,,,,0.14,,UNAVAILABLE_TOKEN_PARTITIONS
+76,P1,optimization,FULLY_RECOVERED,17,9,8,0.47058823529411764,9205,219,0,3859383,2624932,6484315,381430.29411764705,810539.375,1150.625,27.375,0.1,648431.5,DESCRIPTIVE_ONLY
+77,P1,optimization,FULLY_RECOVERED,16,6,5,0.3125,6004,210,0,2666514,1516119,4182633,261414.5625,836526.6,1200.8,42.0,0.08,522829.125,DESCRIPTIVE_ONLY

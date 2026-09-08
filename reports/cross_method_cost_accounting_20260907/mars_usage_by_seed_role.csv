@@ -1,0 +1,7 @@
+seed,method,phase,role,logical_calls,provider_calls,successful_calls,failed_provider_attempts,cache_hits,input_tokens,output_tokens,total_tokens,token_accounting_mismatch,total_token_source,iterations,best_iteration,termination_reason
+75,MARS,optimization,solver,800,800,800,0,0,,,839179,,derived_from_provider_input_output,15,5,no_best_improvement_patience_10
+75,MARS,optimization,optimizer,319,319,319,0,0,264936,79723,344659,,derived_from_provider_input_output,15,5,no_best_improvement_patience_10
+76,MARS,optimization,solver,650,650,650,0,0,,,658193,,derived_from_provider_input_output,12,2,no_best_improvement_patience_10
+76,MARS,optimization,optimizer,251,251,251,0,0,210315,65429,275744,,derived_from_provider_input_output,12,2,no_best_improvement_patience_10
+77,MARS,optimization,solver,550,550,550,0,0,,,567256,,derived_from_provider_input_output,10,0,no_best_improvement_patience_10
+77,MARS,optimization,optimizer,235,235,235,0,0,206105,59891,265996,,derived_from_provider_input_output,10,0,no_best_improvement_patience_10
