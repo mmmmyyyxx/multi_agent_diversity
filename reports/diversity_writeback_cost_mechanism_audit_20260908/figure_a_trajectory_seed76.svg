@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360">
+<rect width="100%" height="100%" fill="white"/>
+<text x="20" y="25" font-size="16">Seed 76: trajectory</text>
+<line x1="55" y1="40" x2="55" y2="300" stroke="black"/>
+<line x1="55" y1="300" x2="690" y2="300" stroke="black"/>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2" points="55.0,300.0 134.4,300.0 213.8,300.0 293.1,272.1 372.5,249.8 451.9,205.1 531.2,194.0 610.6,194.0 690.0,177.2"/>
+<text x="450" y="55" fill="#1f77b4" font-size="12">Vote</text>
+<polyline fill="none" stroke="#ff7f0e" stroke-width="2" points="55.0,300.0 134.4,282.1 213.8,281.0 293.1,281.0 372.5,263.2 451.9,249.8 531.2,245.3 610.6,243.1 690.0,238.6"/>
+<text x="450" y="73" fill="#ff7f0e" font-size="12">MeanMember</text>
+<polyline fill="none" stroke="#2ca02c" stroke-width="2" points="55.0,300.0 134.4,166.0 213.8,110.2 293.1,82.3 372.5,76.7 451.9,65.6 531.2,60.0 610.6,65.6 690.0,65.6"/>
+<text x="450" y="91" fill="#2ca02c" font-size="12">Oracle</text>
+</svg>

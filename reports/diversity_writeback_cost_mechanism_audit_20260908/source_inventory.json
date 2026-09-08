@@ -1,0 +1,80 @@
+[
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/candidate_decisions.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "b92e1415ccd1eee391d04bb4b7c1fd0b4b9ac244d7ce759b9b543dfd4e4707f6"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/g_transition_audit.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "7f2e97d3015dea2828b233ecbb361fd2abbf1c3155c238d728478206077455dd"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/training_dynamics.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "84e5f33a4e723ebc63415dc780dd3a92dd65f30d1249ce97c714c35488fc4a91"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/llm_calls.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "0457646628b199e7d4283dabe31976ae454a53553a19721b2e0e16b641b0694d"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/target_priority_audit.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "d6478fb88918f04a439bad319900bbde52d750ed3c2f80b717522fcec68ea37b"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/candidate_decisions.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "6aabe09af9b97861ab898e401f7a09c1bd2631c388b0790b0f3b15ec28329fe3"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/g_transition_audit.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "5ec030fd71032a13c11a44e80fc540527f55f0844804da3555e650009ee99fdb"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/training_dynamics.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "60233e829aff89fb340203058145d6a2ababc54633963d71ab6dbc2fd58344e0"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/llm_calls.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "f457a93fee597004339cd89eb35750e1215d8f683315a098985a7a18f3e3d411"
+  },
+  {
+    "relative_path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/target_priority_audit.jsonl",
+    "repository": "multi_agent_diversity",
+    "role": "read_only_primary_source",
+    "sha256": "09c4b22d405f7e6d28cc7684f23c5e9f94648159cf80566ed6e70a76bc96f648"
+  },
+  {
+    "relative_path": "reports/cross_method_cost_accounting_20260907/cross_method_optimization_cost.csv",
+    "repository": "multi_agent_diversity",
+    "role": "previous_raw-ledger_reconciled_source",
+    "sha256": "5f674510613d7d340187c63ab2dcc46671fe145a226f98190065bc7413dbb4ee"
+  },
+  {
+    "relative_path": "runs\\common_solver_contract_v1_replay_20260906\\summary_private.json",
+    "repository": "multi_agent_diversity",
+    "role": "frozen_final_state_common_contract_replay",
+    "sha256": "e0acd8fda47cc5fb7d2009edee0b1c104fdf21199c2257113c01e593f68f2e17"
+  },
+  {
+    "relative_path": "runs\\common_solver_contract_v1_seed77_replay_20260907\\summary_private.json",
+    "repository": "multi_agent_diversity",
+    "role": "frozen_final_state_common_contract_replay",
+    "sha256": "60953cc2cca014f9eab4bd40ddbb50ee99e58576a8dc996cb3e390814908c9c2"
+  }
+]

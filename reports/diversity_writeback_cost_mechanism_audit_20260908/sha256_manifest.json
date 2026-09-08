@@ -1,0 +1,139 @@
+{
+  "files": [
+    {
+      "bytes": 495,
+      "path": "classification_results.json",
+      "sha256": "1a2d2b134df68d00dcc2243195edb5f5b24975f958214267d00e900fc8c50fb5"
+    },
+    {
+      "bytes": 605,
+      "path": "common_contract_final_state_results.csv",
+      "sha256": "035e727efe9c44d93fcfa01a860ad509a278eeb0d43beb186b9145f81f9bfc4f"
+    },
+    {
+      "bytes": 526,
+      "path": "cross_method_architecture.csv",
+      "sha256": "dc72bcf12947db1d0d8aeb0d701ad78970f2fe45ef1842a1f08c351d3b2eccb1"
+    },
+    {
+      "bytes": 242,
+      "path": "cross_method_cost_metrics.csv",
+      "sha256": "314bb64afdebc7ea949d4b1e6c684abd9966c570c91016146a8d5ebbfeb70c6b"
+    },
+    {
+      "bytes": 2102,
+      "path": "diversity_candidate_funnel.csv",
+      "sha256": "1a2006eccecb24b0af52edac88cef4810df2bafebf0f0175eed532feacf6296f"
+    },
+    {
+      "bytes": 114,
+      "path": "diversity_commit_classes.csv",
+      "sha256": "042f0d73f9a6bf837582a0de0e94ae58e5c3498cd753762e6ad6ec3539729de7"
+    },
+    {
+      "bytes": 1540,
+      "path": "diversity_commit_utility.csv",
+      "sha256": "08d1de3bdfab11ee397f25e478ace83297afa114f2bea36030200900ef77a567"
+    },
+    {
+      "bytes": 470,
+      "path": "diversity_cost_by_stage.csv",
+      "sha256": "2ddf9ce1df8eb3d34370f7cbb10c48d8364212881d7124fcb14c1d70e399a834"
+    },
+    {
+      "bytes": 124474,
+      "path": "diversity_coverage_depth_transitions.csv",
+      "sha256": "38c1c4b011ab61b4bd1191e40b1d51c66f797117cd920542ab42b306f381c0f6"
+    },
+    {
+      "bytes": 676,
+      "path": "diversity_longitudinal_state_metrics.csv",
+      "sha256": "47224e0dd0bca5cfd4eb055db0ac2e1a618de1ccda2ebc2c9719316ebad87d61"
+    },
+    {
+      "bytes": 6143,
+      "path": "diversity_opportunity_costs.csv",
+      "sha256": "ddd77b43f46258a2d526b161da89b5248e8db5a013b3439619c030aedeece8f8"
+    },
+    {
+      "bytes": 511,
+      "path": "diversity_wasted_compute.csv",
+      "sha256": "c83520c62a1ca211bd8a3f7527fd7d8a86185e9490ef6c5d38edfa867cae5d50"
+    },
+    {
+      "bytes": 408,
+      "path": "fact_assertions.json",
+      "sha256": "f861d13f9d9f55577cb321d455b0ab27757c057dea0e02184dd4c3a6a968f7b5"
+    },
+    {
+      "bytes": 1020,
+      "path": "figure_a_trajectory_seed76.svg",
+      "sha256": "735a1a751e47d4a93c8cf12c988e9cf222664492acc236ce6875ea7d513ec215"
+    },
+    {
+      "bytes": 915,
+      "path": "figure_a_trajectory_seed77.svg",
+      "sha256": "912912f92513eadc8f497ea2eed8720004b706348cdcebd6d36651e288d00667"
+    },
+    {
+      "bytes": 508,
+      "path": "figure_b_compute_funnel.svg",
+      "sha256": "cda535d7037a307559f93606949189795c3bb674188d31071c43f553017b716e"
+    },
+    {
+      "bytes": 655,
+      "path": "figure_c_coverage_depth.svg",
+      "sha256": "0f7624a543f369654494fa93dc9019e1444091a5fcb2a1f7486399c433457b98"
+    },
+    {
+      "bytes": 284,
+      "path": "frozen_hypotheses.json",
+      "sha256": "db7aa5c9f8ab9adc0c48c48c8c1d668dc1381fdcd4ed4ee987699f31b7df4967"
+    },
+    {
+      "bytes": 573,
+      "path": "gepa_search_funnel.csv",
+      "sha256": "9608c6691060ffc8e06d1f3debab78f26c7924d763bd8da93f97cadd7d6f3a8b"
+    },
+    {
+      "bytes": 493,
+      "path": "mars_search_funnel.csv",
+      "sha256": "464921e88dc08b545671997f1e7d3eb6b76f5bc8668741b676718682eb5a5ca2"
+    },
+    {
+      "bytes": 253,
+      "path": "provenance.json",
+      "sha256": "e2146c47ce0b0ff685af4b71f9b7e0a507539e140c61ced9e63173427f12e0aa"
+    },
+    {
+      "bytes": 3869,
+      "path": "README.md",
+      "sha256": "804c8deab6ef8d0b76563a384d733aa531ab5e315db798e1eaef0b520e0526c0"
+    },
+    {
+      "bytes": 6812,
+      "path": "responsibility_associations.csv",
+      "sha256": "b68e88262939f83a6858c5aa65a8638259eb317bd062bd5f20977db8b9c58eca"
+    },
+    {
+      "bytes": 581,
+      "path": "retrospective_cost_counterfactuals.csv",
+      "sha256": "7f0e75351defd6ae277f2c84b9c7c211d734b8bed0fde47f3ef5bec9e68f0ece"
+    },
+    {
+      "bytes": 781,
+      "path": "selection_pressure_matrix.csv",
+      "sha256": "1078283243ce890773bb665a6725bf9e98ddc446872dc006f473f07c5a6de15e"
+    },
+    {
+      "bytes": 3977,
+      "path": "source_inventory.json",
+      "sha256": "7f497ba06755e87ae4169171d8503dc9ab97bdc3a10086080ebe8ac8db5339c2"
+    },
+    {
+      "bytes": 357,
+      "path": "stage_mapping.json",
+      "sha256": "dc4c4b3172678ad2259b9252bdf0318502139abc9581302cc56327fc293672e7"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+method,optimization_object,proposal_mechanism,member_specific_objective,full_team_reevaluation,solver_token_share,optimizer_token_share,optimization_tokens,solver_calls,main_compute_bottleneck
+MARS,single_prompt,multi_agent_meta_pipeline,no,no,0.6996,0.3004,2951027/3_seeds,2000,meta_reasoning
+GEPA,single_prompt,reflection,no,no,0.8815,0.1185,3754403/3_seeds,1996,task_evaluation
+Diversity,five_member_team,responsibility_conditioned,yes,yes,0.9355,0.0645,10666948/Seeds76_77_exact,15209,empirical_team_rollout_unindexed

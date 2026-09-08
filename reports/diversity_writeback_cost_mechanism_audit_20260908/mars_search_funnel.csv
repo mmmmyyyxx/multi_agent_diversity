@@ -1,0 +1,4 @@
+seed,iterations,solver_calls,optimizer_calls,total_tokens,solver_calls_per_iteration,optimizer_calls_per_iteration,tokens_per_iteration,topology
+75,15,800,319,1183838,53.333333333333336,21.266666666666666,78922.53333333334,planner_teacher_critic_student_to_task_evaluation
+76,12,650,251,933937,54.166666666666664,20.916666666666668,77828.08333333333,planner_teacher_critic_student_to_task_evaluation
+77,10,550,235,833252,55.0,23.5,83325.2,planner_teacher_critic_student_to_task_evaluation

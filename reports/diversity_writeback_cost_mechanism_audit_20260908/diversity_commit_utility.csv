@@ -1,0 +1,14 @@
+seed,update_index,target_member,row_count,target_member_delta,mean_member_delta,vote_delta,oracle_delta,new_oracle_covered_cases,lost_oracle_covered_cases,new_correct_member_votes,lost_correct_member_votes,net_correct_member_votes,new_majority_correct_cases,lost_majority_correct_cases,net_majority_cases,transition_source,commit_class
+76,0,2,100,0.16,0.032,0.0,0.24,24,0,24,8,16,0,0,0,optimization_time_train100,C1_BROAD_GAIN
+76,1,3,100,0.01,0.002,0.0,0.1,10,0,17,16,1,0,0,0,optimization_time_train100,C1_BROAD_GAIN
+76,2,1,100,0.0,0.0,0.05,0.05,5,0,16,16,0,6,1,5,optimization_time_train100,C2_USEFUL_SPECIALIZATION
+76,3,0,100,0.16,0.032,0.04,0.01,1,0,28,12,16,6,2,4,optimization_time_train100,C1_BROAD_GAIN
+76,4,4,100,0.12,0.024,0.08,0.02,2,0,22,10,12,10,2,8,optimization_time_train100,C1_BROAD_GAIN
+76,5,4,100,0.04,0.008,0.02,0.01,2,1,11,7,4,2,0,2,optimization_time_train100,C1_BROAD_GAIN
+76,7,4,100,0.02,0.004,0.0,-0.01,0,1,6,4,2,1,1,0,optimization_time_train100,C1_BROAD_GAIN
+76,10,1,100,0.04,0.008,0.03,0.0,1,1,18,14,4,6,3,3,optimization_time_train100,C1_BROAD_GAIN
+77,0,3,100,0.14,0.028,0.0,0.21,21,0,21,7,14,0,0,0,optimization_time_train100,C1_BROAD_GAIN
+77,2,1,100,0.17,0.034,0.0,0.12,12,0,22,5,17,0,0,0,optimization_time_train100,C1_BROAD_GAIN
+77,3,0,100,0.25,0.05,0.07,0.06,6,0,30,5,25,8,1,7,optimization_time_train100,C1_BROAD_GAIN
+77,5,2,100,0.15,0.03,0.06,0.03,3,0,25,10,15,7,1,6,optimization_time_train100,C1_BROAD_GAIN
+77,9,4,100,0.24,0.048,0.11,0.0,1,1,28,4,24,12,1,11,optimization_time_train100,C1_BROAD_GAIN

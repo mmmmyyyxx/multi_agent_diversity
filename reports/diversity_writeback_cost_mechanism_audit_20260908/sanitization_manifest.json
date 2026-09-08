@@ -1,0 +1,11 @@
+{
+  "files_checked": 27,
+  "prohibited_patterns": [
+    "D:\\\\",
+    "https://",
+    "FINAL_ANSWER:",
+    "api_key",
+    "dashscope"
+  ],
+  "status": "PASS"
+}

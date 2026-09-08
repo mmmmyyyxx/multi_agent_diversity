@@ -1,0 +1,19 @@
+{
+  "api_calls": 0,
+  "assertions": "PASS",
+  "commits": 13,
+  "feasible_candidates": 36,
+  "generated_candidates": 192,
+  "historical_artifacts_modified": 0,
+  "opportunities": 33,
+  "optimization_tokens": 10666948,
+  "optimizer_calls": 429,
+  "seeds": [
+    76,
+    77
+  ],
+  "solver_calls": 15209,
+  "test_calls": 0,
+  "tokens_per_commit": 820534.4615384615,
+  "valid_candidates": 94
+}

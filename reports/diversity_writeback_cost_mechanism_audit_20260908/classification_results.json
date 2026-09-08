@@ -1,0 +1,10 @@
+{
+  "limits": [
+    "Solver ledger lacks update/candidate/stage identifiers.",
+    "MARS/GEPA use different historical optimization contracts.",
+    "No counterfactual candidates were evaluated."
+  ],
+  "primary": "H_COST",
+  "reason": "93.55% of exact Seed76-77 optimization tokens are Solver-side while code gives no direct hard/ranking key to coalition depth or transfer; causal selection attribution is not available from this observational audit.",
+  "secondary": "H_OBJECTIVE"
+}

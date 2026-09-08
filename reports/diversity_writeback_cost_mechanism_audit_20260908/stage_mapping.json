@@ -1,0 +1,8 @@
+{
+  "A": "deterministic responsibility and target diagnostics",
+  "B": "teacher/critic optimizer calls; role-level but unindexed",
+  "C": "student candidate generation mixed in optimizer ledger",
+  "D": "local parsing/validity",
+  "E-H": "empirical Solver evaluations, unindexed by candidate/update/stage",
+  "I-K": "local ranking/commit/refresh"
+}

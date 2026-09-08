@@ -1,0 +1,7 @@
+{
+  "api_called": false,
+  "method": "read_only historical audit",
+  "seed75_usage": "excluded_not_reconstructed",
+  "source_priority": "raw trajectory artifacts then preceding raw-ledger-reconciled accounting report",
+  "test_accessed": false
+}

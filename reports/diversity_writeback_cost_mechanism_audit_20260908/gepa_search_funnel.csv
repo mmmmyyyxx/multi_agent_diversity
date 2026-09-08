@@ -1,0 +1,4 @@
+seed,proposals,unique_candidates,solver_calls,optimizer_calls,total_tokens,solver_calls_per_proposal,solver_calls_per_unique_candidate,tokens_per_proposal,tokens_per_unique_candidate,topology
+75,27,14,862,27,1880835,31.925925925925927,61.57142857142857,69660.55555555556,134345.35714285713,candidate_to_broad_task_evaluation
+76,12,4,272,12,423005,22.666666666666668,68.0,35250.416666666664,105751.25,candidate_to_broad_task_evaluation
+77,27,14,862,27,1450563,31.925925925925927,61.57142857142857,53724.555555555555,103611.64285714286,candidate_to_broad_task_evaluation

@@ -1,0 +1,9 @@
+quantity,generation,feasibility,ranking,hard_constraint,soft_signal,code_evidence
+target gain,yes_responsibility_goal,yes,yes,yes,yes,candidate_selection.py:61-127
+Vote,indirect_lane_context,yes_nonregression,yes,yes,yes,candidate_selection.py:61-127
+MeanMember,no,derived_only,yes_stage_A_total_gain,no,yes,candidate_selection.py:61-127
+Oracle,residual_context,no,no_direct_key,no,indirect,candidate_selection.py:61-127
+new coverage,yes,no,assigned_residual_proxy,no,yes,candidate_selection.py:61-127
+broad preservation,limited_case_context,terminal_invalid_only,no_direct_key,no,indirect,candidate_selection.py:61-127
+coalition depth,diagnostic_lane,no,no_direct_key,no,indirect,candidate_selection.py:61-127
+member transfer,no,no,no,no,no,candidate_selection.py:61-127

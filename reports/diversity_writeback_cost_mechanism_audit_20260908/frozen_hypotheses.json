@@ -1,0 +1,10 @@
+{
+  "H_ACCUMULATION": "PARTIALLY_SUPPORTED",
+  "H_COST": "SUPPORTED",
+  "H_OBJECTIVE": "PARTIALLY_SUPPORTED",
+  "H_PROPOSAL": "PARTIALLY_SUPPORTED",
+  "H_SELECTION": "NOT_EVALUABLE",
+  "api_calls": 0,
+  "classifier_version": "writeback_cost_utility_v1",
+  "test_calls": 0
+}
