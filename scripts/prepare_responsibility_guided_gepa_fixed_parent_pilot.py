@@ -214,7 +214,12 @@ def prepare(prep: Path, report: Path) -> dict[str, Any]:
         for case in cases:
             for item in minibatches[case["case_id"]]:
                 handle.write(json.dumps({"seed":case["source_seed"],"update_index":case["source_update_index"],"target_member":case["target_member"],"example_id":item.example_id,"source_type":item.source_type,"responsibility_type":item.responsibility_type,"is_filler":item.source_type=="filler","parent_member_correct":item.parent_member_correct,"parent_vote_correct":item.parent_vote_correct,"parent_G":item.parent_g},sort_keys=True)+"\n")
-    source_files=[Path("multi_dataset_diverse_rl/experimental_rg_gepa.py"),Path("scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py"),Path("tests/test_experimental_rg_gepa.py")]
+    source_files=[
+        Path("multi_dataset_diverse_rl/experimental_rg_gepa.py"),
+        Path("scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py"),
+        Path("scripts/run_responsibility_guided_gepa_fixed_parent_pilot.py"),
+        Path("tests/test_experimental_rg_gepa.py"),
+    ]
     freeze={"PRE_API_FREEZE_version":"rg_gepa_v1","execution_commit":registry["execution_commit"],"protocol_hash":protocol.identity(),"registry_hash":registry["registry_hash"],"fixed_parent_manifest_hash":sha256_json(manifest),"minibatches_hash":sha256_json(registry["minibatches"]),"solver_contract_id":protocol.solver_contract_id,"api_calls":0,"test_calls":0,"source_files":[{"path":str(path).replace("\\","/"),"sha256":sha256_bytes((ROOT/path).read_bytes())} for path in source_files],"status":"PASS"}
     write_json(prep/"PRE_API_FREEZE.json",freeze)
     hypotheses={
