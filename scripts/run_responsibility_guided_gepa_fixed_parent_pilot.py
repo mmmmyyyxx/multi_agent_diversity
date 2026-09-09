@@ -14,7 +14,7 @@ import json
 import os
 import subprocess
 import sys
-from collections import Counter, defaultdict
+from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Iterable
@@ -110,7 +110,7 @@ class _CommonSystem(PromptEnsembleOptimizationSystem):
 
     raw_cache: dict[str, str] = {}
 
-    def __init__(self, cfg: Config) -> None:
+    def __init__(self, cfg: Config, *, ledger: list[dict[str, Any]], ledger_path: Path) -> None:
         _, key = resolve_api_key(cfg.models.solver_api_key_env)
         _, endpoint = resolve_base_url(cfg.models.solver_base_url_env)
         if not key or not endpoint:
@@ -129,7 +129,34 @@ class _CommonSystem(PromptEnsembleOptimizationSystem):
 
         self.common = CommonSolverEvaluator(transport=transport, cache=type(self).raw_cache, retryable=_retryable)
         self.common_adapter = CommonContractSolverAdapter(self.common)
+        self._ledger = ledger
+        self._ledger_path = ledger_path
+        self._ledger_meta: dict[str, Any] | None = None
+        self._ledger_sequence = 0
         super().__init__(cfg, solver=self.common_adapter.solve)
+
+    def set_solver_stage(self, meta: dict[str, Any] | None) -> None:
+        """Attach immutable stage/candidate attribution before Solver work."""
+        self._ledger_meta = dict(meta) if meta is not None else None
+
+    def _persist_solver_ledger(self, raw: dict[str, Any]) -> None:
+        if self._ledger_meta is None:
+            raise RuntimeError("RG-GEPA Solver call occurred without ledger stage attribution")
+        self._ledger_sequence += 1
+        meta = self._ledger_meta
+        record = {
+            "seed": meta["seed"], "parent_id": meta["parent_id"], "update_index": meta["update_index"],
+            "candidate_id": meta["candidate_id"], "proposal_engine": meta["proposal_engine"],
+            "evaluation_stage": meta["evaluation_stage"], "input_tokens": int(raw.get("prompt_tokens", 0)),
+            "output_tokens": int(raw.get("completion_tokens", 0)), "total_tokens": int(raw.get("total_tokens", 0)),
+            "provider_attempt_id": f"{meta['parent_id']}:{meta['candidate_id']}:{meta['evaluation_stage']}:solver:{self._ledger_sequence}",
+            "cache_hit": bool(raw.get("common_cache_hit", False)), "logical_role": "solver", "client_role": "solver",
+            "success": bool(raw.get("success", False)),
+        }
+        validate_ledger_record(record)
+        self._ledger.append(record)
+        with self._ledger_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
     async def solve(self, question: str, agent_id: int, prompt: str):
         answer = await super().solve(question, agent_id, prompt)
@@ -143,6 +170,7 @@ class _CommonSystem(PromptEnsembleOptimizationSystem):
             "common_transport_attempts": self.common_adapter.last_transport_attempts,
             "common_cache_hit": self.common_adapter.last_cache_hit,
         })
+        self._persist_solver_ledger(row)
         return answer
 
 
@@ -221,8 +249,10 @@ def _reflection_request(case: dict[str, Any], candidate_index: int) -> tuple[str
     return system, user
 
 
-def _annotate_new_calls(system: _CommonSystem, begin: int, meta: dict[str, Any], ledger: list[dict[str, Any]]) -> None:
+def _annotate_new_calls(system: _CommonSystem, begin: int, meta: dict[str, Any], ledger: list[dict[str, Any]], *, solver: bool = False) -> None:
     for offset, raw in enumerate(system.llm.calls[begin:], start=begin):
+        if raw.get("client_role") == "solver" and not solver:
+            continue
         record = {
             "seed": meta["seed"], "parent_id": meta["parent_id"], "update_index": meta["update_index"],
             "candidate_id": meta["candidate_id"], "proposal_engine": meta["proposal_engine"],
@@ -238,14 +268,30 @@ def _annotate_new_calls(system: _CommonSystem, begin: int, meta: dict[str, Any],
 
 async def _profile(system: _CommonSystem, target: int, prompt: str, indices: list[int] | None, meta: dict[str, Any], ledger: list[dict[str, Any]]) -> Any:
     assert system.fixed_probe is not None
-    begin = len(system.llm.calls)
+    system.set_solver_stage(meta)
     if indices is None:
         profile = await system.fixed_probe.evaluate_prompt(target, prompt, system.prompt_hash(prompt), system.solve)
     else:
         result = await system.fixed_probe.evaluate_prompt_indices(target, prompt, system.prompt_hash(prompt), indices, system.solve)
         profile = tuple(result[index] for index in indices)
-    _annotate_new_calls(system, begin, meta, ledger)
+    system.set_solver_stage(None)
     return profile
+
+
+def _record_minibatch_parent_reuse(case: dict[str, Any], ledger: list[dict[str, Any]], ledger_path: Path) -> None:
+    """Account for 12 paired parent lookups explicitly reused from full state."""
+    for offset in range(12):
+        record = {
+            "seed": case["source_seed"], "parent_id": case["case_id"], "update_index": case["source_update_index"],
+            "candidate_id": "parent", "proposal_engine": "current", "evaluation_stage": "minibatch_parent",
+            "input_tokens": 0, "output_tokens": 0, "total_tokens": 0,
+            "provider_attempt_id": f"{case['case_id']}:parent:minibatch_parent:cache:{offset}", "cache_hit": True,
+            "logical_role": "solver", "client_role": "solver", "success": True,
+        }
+        validate_ledger_record(record)
+        ledger.append(record)
+        with ledger_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
 def _evaluation(system: _CommonSystem, target: int, prompt: str, profile: Any, indices: list[int] | None, assigned: set[str]) -> Any:
@@ -270,12 +316,17 @@ def _public_candidate(row: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in row.items() if key not in {"prompt", "raw_response"}}
 
 
-async def _run_case(case: dict[str, Any], root: Path, ledger: list[dict[str, Any]]) -> dict[str, Any]:
+async def _run_case(case: dict[str, Any], root: Path, ledger: list[dict[str, Any]], ledger_path: Path) -> dict[str, Any]:
     case_root = root / case["case_id"]
     case_root.mkdir(parents=True, exist_ok=False)
     protocol = RGGEPAProtocol()
-    system = _CommonSystem(_cfg(case, case_root))
+    system = _CommonSystem(_cfg(case, case_root), ledger=ledger, ledger_path=ledger_path)
+    system.set_solver_stage({
+        "seed": case["source_seed"], "parent_id": case["case_id"], "update_index": case["source_update_index"],
+        "candidate_id": "parent", "proposal_engine": "current", "evaluation_stage": "full_team",
+    })
     await system.initialize_fixed_probe(case["questions"])
+    system.set_solver_stage(None)
     assert system.fixed_probe is not None
     target = int(case["target_member"])
     assigned = set(case["assigned_example_ids"])
@@ -285,6 +336,7 @@ async def _run_case(case: dict[str, Any], root: Path, ledger: list[dict[str, Any
     by_hash = {row.question_hash: index for index, row in enumerate(system.fixed_probe.examples)}
     mini_indices = [by_hash[item] for item in mini_ids]
     parent_mini = _evaluation(system, target, case["parent_prompts"][target], tuple(parent_profile[i] for i in mini_indices), mini_indices, assigned)
+    _record_minibatch_parent_reuse(case, ledger, ledger_path)
     candidates: list[dict[str, Any]] = []
 
     for source, pool in (("current", case["current_pool"]),):
@@ -339,8 +391,10 @@ async def _run_case(case: dict[str, Any], root: Path, ledger: list[dict[str, Any
     for row in b_rows:
         if row["candidate_id"] not in promoted and not row["audit_only"]:
             row["promoted"] = False
+            row["progressive_promoted"] = False
             continue
         row["promoted"] = row["candidate_id"] in promoted
+        row["progressive_promoted"] = row["promoted"]
         stage = "full_member" if row["promoted"] else "audit_only"
         full_profile = await _profile(system, target, row["prompt"], None, {
             "seed": case["source_seed"], "parent_id": case["case_id"], "update_index": case["source_update_index"],
@@ -367,6 +421,9 @@ async def _run_case(case: dict[str, Any], root: Path, ledger: list[dict[str, Any
         parent=_vector(parent_mini),
         candidates=[CandidateScore(row["candidate_id"], TeamVector(**row["mini"]), 0, True) for row in candidates if row["proposal_engine"] == "current" and row["hard_gate_passed"]],
     )}
+    for row in candidates:
+        if row["proposal_engine"] == "current":
+            row["progressive_promoted"] = row["candidate_id"] in a_promoted
     a1, _ = winner([row for row in current if row["candidate_id"] in a_promoted], "current")
     b0, _ = winner(reflected, "current")
     b1, frontier = winner(reflected, "team_pareto")
@@ -384,8 +441,17 @@ def _summary(results: list[dict[str, Any]], ledger: list[dict[str, Any]]) -> dic
     for arm, engine, progressive, selection in (("A0", "current", False, "current"), ("A1", "current", True, "current"), ("B0", "gepa_reflection", True, "current"), ("B1", "gepa_reflection", True, "team_pareto")):
         pool = [candidate for result in results for candidate in result["candidates"] if candidate["proposal_engine"] == engine]
         valid = [candidate for candidate in pool if candidate["hard_gate_passed"]]
-        promoted = [candidate for candidate in valid if (not progressive and engine == "current") or candidate.get("promoted", candidate["candidate_id"] in {"A_0", "A_1"})]
-        full = [candidate for candidate in pool if "full" in candidate]
+        promoted_ids: set[tuple[str, str]] = set()
+        if progressive:
+            for result in results:
+                candidates = [candidate for candidate in result["candidates"] if candidate["proposal_engine"] == engine and candidate["hard_gate_passed"]]
+                for candidate in candidates:
+                    if candidate.get("progressive_promoted", False):
+                        promoted_ids.add((result["case_id"], candidate["candidate_id"]))
+        else:
+            promoted_ids = {(result["case_id"], candidate["candidate_id"]) for result in results for candidate in result["candidates"] if candidate["proposal_engine"] == engine and candidate["hard_gate_passed"]}
+        promoted = [candidate for result in results for candidate in result["candidates"] if (result["case_id"], candidate["candidate_id"]) in promoted_ids]
+        full = [candidate for result in results for candidate in result["candidates"] if candidate["proposal_engine"] == engine and (not progressive or (result["case_id"], candidate["candidate_id"]) in promoted_ids) and "full" in candidate]
         feasible = [candidate for candidate in full if candidate.get("feasible")]
         rows.append({"arm": arm, "proposal_engine": engine, "evaluation_mode": "progressive" if progressive else "full", "selection_mode": selection,
                      "generated": len(pool), "valid": len(valid), "promoted": len(promoted), "full_evaluated": len(full), "feasible": len(feasible),
@@ -422,8 +488,7 @@ async def execute(args: argparse.Namespace) -> None:
             next(row for row in case["questions"] if row["example_id"] == item["example_id"])
             for item in registry["minibatches"][case["case_id"]]
         ]
-        results.append(await _run_case(case, args.run, ledger))
-        _jsonl(args.run / "api_ledger_private.jsonl", ledger)
+        results.append(await _run_case(case, args.run, ledger, args.run / "api_ledger_private.jsonl"))
         _write(args.run / "progress.json", {"completed_cases": len(results), "total_cases": 6, "test_calls": 0})
     _write(args.run / "result_sanitized.json", {"results": results, "summary": _summary(results, ledger)})
     print(json.dumps({"status": "PASS", "completed_cases": len(results), "test_calls": 0}, sort_keys=True))
@@ -437,7 +502,26 @@ def audit(run: Path) -> dict[str, Any]:
     for result in results:
         if len(result["candidates"]) != 4:
             raise RuntimeError("RG-GEPA audit failed: two pools must each contain two candidates")
-    return {"status": "PASS", "case_count": 6, "candidate_count": 24, "actual_commits": 0, "test_calls": 0}
+    ledger_path = run / "api_ledger_private.jsonl"
+    if not ledger_path.is_file():
+        raise RuntimeError("RG-GEPA audit failed: API ledger is absent")
+    ledger = [json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines() if line]
+    if not ledger:
+        raise RuntimeError("RG-GEPA audit failed: API ledger is empty")
+    for row in ledger:
+        validate_ledger_record(row)
+    expected_cases = {str(row["case_id"]) for row in results}
+    full_team_cases = {str(row["parent_id"]) for row in ledger if row["evaluation_stage"] == "full_team"}
+    minibatch_parent = [row for row in ledger if row["evaluation_stage"] == "minibatch_parent"]
+    if full_team_cases != expected_cases:
+        raise RuntimeError("RG-GEPA audit failed: parent full-team ledger coverage is incomplete")
+    if len(minibatch_parent) != 6 * 12 or any(not row["cache_hit"] for row in minibatch_parent):
+        raise RuntimeError("RG-GEPA audit failed: paired minibatch parent reuse is incomplete")
+    if len({str(row["provider_attempt_id"]) for row in ledger}) != len(ledger):
+        raise RuntimeError("RG-GEPA audit failed: duplicate provider-attempt identity")
+    return {"status": "PASS", "case_count": 6, "candidate_count": 24, "actual_commits": 0,
+            "test_calls": 0, "ledger_records": len(ledger), "parent_full_team_coverage": 6,
+            "minibatch_parent_cache_reuses": len(minibatch_parent)}
 
 
 def report(run: Path, report_root: Path, prep: Path) -> None:

@@ -1,0 +1,7 @@
+{
+  "api_calls_during_repair": 0,
+  "execution_attempt_status": "HOLD_INCOMPLETE_LEDGER",
+  "historical_artifacts_modified": 0,
+  "repair_scope": "ledger_persistence_and_strict_audit_only",
+  "test50_calls": 0
+}
