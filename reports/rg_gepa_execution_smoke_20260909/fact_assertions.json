@@ -1,0 +1,10 @@
+{
+  "api_calls": 0,
+  "candidate_solver_interruption_reconciliation": "PASS",
+  "focused_tests_passed": 22,
+  "reflection_retry_accounting": "PASS",
+  "reflection_success_interruption_durability": "PASS",
+  "retry2_retry3_evidence_reused": false,
+  "test50_calls": 0,
+  "validation_calls": 0
+}

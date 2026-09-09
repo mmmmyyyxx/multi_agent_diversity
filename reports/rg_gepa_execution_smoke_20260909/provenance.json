@@ -1,0 +1,13 @@
+{
+  "fake_provider_only": true,
+  "historical_artifacts_modified": 0,
+  "production_functions_exercised": [
+    "RGGEPAExecutionLedger.append",
+    "_persist_new_optimizer_calls",
+    "_CommonSystem._persist_solver_ledger",
+    "_runtime_accounting",
+    "_durable_accounting",
+    "audit"
+  ],
+  "scientific_method_changed": false
+}

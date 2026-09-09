@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "bytes": 294,
+      "path": "fact_assertions.json",
+      "sha256": "85ed3a7f92ca89bb4f5c8bdc39fc257ec0c90c28eca0ccbb0d63b8f4bcf1bc75"
+    },
+    {
+      "bytes": 334,
+      "path": "provenance.json",
+      "sha256": "70decb5c346210be408949d57a406109bac3486ec1d8254b8dcd2aec116bacc3"
+    },
+    {
+      "bytes": 1103,
+      "path": "README.md",
+      "sha256": "9eef5bbe95356e20ea120002c43fc158d539a72702dda847241973c1e46e30a3"
+    },
+    {
+      "bytes": 291,
+      "path": "verification.json",
+      "sha256": "5c10ebcb2f844341adb51e8994ccdb4faca56969bb24ae5e50d21ecd6230d698"
+    }
+  ],
+  "scope": "report files except manifests"
+}

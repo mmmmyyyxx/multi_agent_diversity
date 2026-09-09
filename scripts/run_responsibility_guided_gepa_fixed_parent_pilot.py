@@ -368,6 +368,8 @@ def _runtime_accounting(system: _CommonSystem) -> dict[str, int]:
     return {
         "solver_logical_calls": int(solver["logical_calls"]),
         "solver_provider_attempts": int(solver["provider_attempts"]),
+        "solver_successful_attempts": int(solver["successful_provider_calls"]),
+        "solver_failed_attempts": int(solver["failed_provider_attempts"]),
         "solver_cache_hits": int(solver["cache_hits"]),
         "solver_input_tokens": int(solver["prompt_tokens"]),
         "solver_output_tokens": int(solver["completion_tokens"]),
@@ -376,6 +378,28 @@ def _runtime_accounting(system: _CommonSystem) -> dict[str, int]:
         "optimizer_failed_attempts": sum(not bool(row.get("success", False)) for row in optimizer),
         "optimizer_input_tokens": sum(int(row.get("prompt_tokens", 0)) for row in optimizer),
         "optimizer_output_tokens": sum(int(row.get("completion_tokens", 0)) for row in optimizer),
+    }
+
+
+def _durable_accounting(ledger: list[dict[str, Any]]) -> dict[str, int]:
+    solver = [row for row in ledger if row["record_kind"] == "solver_logical_invocation"]
+    optimizer = [row for row in ledger if row["record_kind"] == "optimizer_provider_attempt"]
+    return {
+        "solver_logical_calls": len(solver),
+        "solver_provider_attempts": sum(int(row["provider_attempts"]) for row in solver),
+        "solver_successful_attempts": sum(int(row["successful_provider_calls"]) for row in solver),
+        "solver_failed_attempts": sum(
+            int(row["provider_attempts"]) - int(row["successful_provider_calls"])
+            for row in solver
+        ),
+        "solver_cache_hits": sum(bool(row["cache_hit"]) for row in solver),
+        "solver_input_tokens": sum(int(row["input_tokens"]) for row in solver),
+        "solver_output_tokens": sum(int(row["output_tokens"]) for row in solver),
+        "optimizer_provider_attempts": len(optimizer),
+        "optimizer_successful_attempts": sum(bool(row["success"]) for row in optimizer),
+        "optimizer_failed_attempts": sum(not bool(row["success"]) for row in optimizer),
+        "optimizer_input_tokens": sum(int(row["input_tokens"]) for row in optimizer),
+        "optimizer_output_tokens": sum(int(row["output_tokens"]) for row in optimizer),
     }
 
 
@@ -641,20 +665,7 @@ def audit(run: Path) -> dict[str, Any]:
             raise RuntimeError("RG-GEPA audit failed: runtime accounting reconciliation is absent")
         for key, value in result["runtime_accounting"].items():
             runtime[key] += int(value)
-    solver_rows = [row for row in ledger if row["record_kind"] == "solver_logical_invocation"]
-    optimizer_rows = [row for row in ledger if row["record_kind"] == "optimizer_provider_attempt"]
-    durable = {
-        "solver_logical_calls": len(solver_rows),
-        "solver_provider_attempts": sum(int(row["provider_attempts"]) for row in solver_rows),
-        "solver_cache_hits": sum(bool(row["cache_hit"]) for row in solver_rows),
-        "solver_input_tokens": sum(int(row["input_tokens"]) for row in solver_rows),
-        "solver_output_tokens": sum(int(row["output_tokens"]) for row in solver_rows),
-        "optimizer_provider_attempts": len(optimizer_rows),
-        "optimizer_successful_attempts": sum(bool(row["success"]) for row in optimizer_rows),
-        "optimizer_failed_attempts": sum(not bool(row["success"]) for row in optimizer_rows),
-        "optimizer_input_tokens": sum(int(row["input_tokens"]) for row in optimizer_rows),
-        "optimizer_output_tokens": sum(int(row["output_tokens"]) for row in optimizer_rows),
-    }
+    durable = _durable_accounting(ledger)
     if dict(runtime) != durable:
         raise RuntimeError("RG-GEPA audit failed: runtime/durable accounting reconciliation mismatch")
 

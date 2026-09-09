@@ -105,6 +105,10 @@ def _runtime(rows: list[dict]) -> dict[str, int]:
     return {
         "solver_logical_calls": len(solver),
         "solver_provider_attempts": sum(row["provider_attempts"] for row in solver),
+        "solver_successful_attempts": sum(row["successful_provider_calls"] for row in solver),
+        "solver_failed_attempts": sum(
+            row["provider_attempts"] - row["successful_provider_calls"] for row in solver
+        ),
         "solver_cache_hits": sum(bool(row["cache_hit"]) for row in solver),
         "solver_input_tokens": sum(row["input_tokens"] for row in solver),
         "solver_output_tokens": sum(row["output_tokens"] for row in solver),
@@ -218,6 +222,49 @@ def test_profile_clears_solver_stage_after_exception() -> None:
     with pytest.raises(RuntimeError, match="solver failed"):
         asyncio.run(module._profile(system, 0, "prompt", None, {"evaluation_stage": "full_member"}))
     assert system.stages == [{"evaluation_stage": "full_member"}, None]
+
+
+def test_reflection_then_solver_then_interruption_reconciles_durable_ledger(tmp_path: Path) -> None:
+    """Production helpers preserve both API sides before a simulated interruption."""
+    module = _load()
+    writer = module.RGGEPAExecutionLedger(tmp_path / "ledger.jsonl")
+    optimizer_call = {
+        "client_role": "optimizer", "role": "reflection", "attempt": 1, "success": True,
+        "prompt_tokens": 2, "completion_tokens": 3, "total_tokens": 5,
+    }
+    fake = SimpleNamespace(
+        llm=SimpleNamespace(calls=[optimizer_call]),
+        _ledger_writer=writer,
+        _ledger_meta={
+            "seed": 76, "parent_id": "case", "update_index": 0,
+            "candidate_id": "B_0", "proposal_engine": "gepa_reflection",
+            "evaluation_stage": "full_member",
+        },
+        _ledger_sequence=0,
+    )
+    module._persist_new_optimizer_calls(fake, 0, {
+        "seed": 76, "parent_id": "case", "update_index": 0, "candidate_id": "B_0",
+        "proposal_engine": "gepa_reflection", "evaluation_stage": "reflection",
+    }, writer)
+    solver_call = {
+        "client_role": "solver", "role": "solver", "success": True,
+        "prompt_tokens": 7, "completion_tokens": 1, "total_tokens": 8,
+        "common_transport_attempts": 2, "common_cache_hit": False,
+    }
+    fake.llm.calls.append(solver_call)
+    module._CommonSystem._persist_solver_ledger(fake, solver_call)
+    fake.common = SimpleNamespace(accounting=lambda: {
+        "logical_calls": 1, "provider_attempts": 2, "successful_provider_calls": 1,
+        "failed_provider_attempts": 1, "cache_hits": 0, "prompt_tokens": 7,
+        "completion_tokens": 1,
+    })
+    with pytest.raises(RuntimeError, match="interrupted"):
+        raise RuntimeError("interrupted after candidate Solver evaluation")
+    disk = [json.loads(line) for line in writer.path.read_text(encoding="utf-8").splitlines()]
+    assert [row["record_kind"] for row in disk] == [
+        "optimizer_provider_attempt", "solver_logical_invocation"
+    ]
+    assert module._runtime_accounting(fake) == module._durable_accounting(disk)
 
 
 def test_audit_requires_parent_full_team_ledger_coverage(tmp_path: Path) -> None:

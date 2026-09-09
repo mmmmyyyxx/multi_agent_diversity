@@ -1,0 +1,13 @@
+{
+  "canonical_suite": {
+    "known_historical_failure_count": 1,
+    "passed": 946,
+    "status": "PASS_WITH_PRE_EXISTING_HISTORICAL_ARTIFACT_FAILURE"
+  },
+  "compileall": "PASS",
+  "focused_suite": {
+    "passed": 22,
+    "status": "PASS"
+  },
+  "production_path_reconciliation": "PASS"
+}
