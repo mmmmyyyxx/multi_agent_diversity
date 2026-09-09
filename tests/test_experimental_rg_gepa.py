@@ -1,5 +1,5 @@
 from multi_dataset_diverse_rl.experimental_rg_gepa import (
-    CandidateScore, EvidenceItem, RGGEPAProtocol, TeamVector, deterministic_minibatch,
+    CandidateScore, EvidenceItem, RGGEPAProtocol, RG_GEPA_LEDGER_VERSION, TeamVector, deterministic_minibatch,
     progressive_promotions, team_pareto_winner, validate_ledger_record,
 )
 
@@ -29,5 +29,14 @@ def test_minibatch_prioritizes_evidence_and_correct_filler() -> None:
 
 def test_protocol_and_ledger_are_fail_closed() -> None:
     assert len(RGGEPAProtocol().identity()) == 64
-    record = {"seed": 1, "parent_id": "p", "update_index": 0, "candidate_id": "c", "proposal_engine": "gepa_reflection", "evaluation_stage": "reflection", "input_tokens": 1, "output_tokens": 2, "total_tokens": 3, "provider_attempt_id": "a", "cache_hit": False}
+    record = {
+        "ledger_version": RG_GEPA_LEDGER_VERSION,
+        "seed": 1, "parent_id": "p", "update_index": 0, "candidate_id": "c",
+        "proposal_engine": "gepa_reflection", "evaluation_stage": "reflection",
+        "input_tokens": 1, "output_tokens": 2, "total_tokens": 3,
+        "provider_attempt_id": "a", "logical_call_id": "logical-a", "attempt_index": 1,
+        "record_kind": "optimizer_provider_attempt", "provider_attempts": 1,
+        "successful_provider_calls": 1, "cache_hit": False,
+        "logical_role": "reflection", "client_role": "optimizer", "success": True,
+    }
     validate_ledger_record(record)

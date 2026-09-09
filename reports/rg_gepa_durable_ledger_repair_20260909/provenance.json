@@ -1,0 +1,14 @@
+{
+  "change_class": "behavior_preserving_execution_accounting_repair",
+  "historical_evidence_policy": "read_only_and_not_backfilled",
+  "method_changed": false,
+  "raw_runtime_content_in_report": false,
+  "retry3_scientific_evidence": false,
+  "source_scope": [
+    "multi_dataset_diverse_rl/experimental_rg_gepa.py",
+    "scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py",
+    "scripts/run_responsibility_guided_gepa_fixed_parent_pilot.py",
+    "tests/test_experimental_rg_gepa.py",
+    "tests/test_rg_gepa_execution_ledger.py"
+  ]
+}

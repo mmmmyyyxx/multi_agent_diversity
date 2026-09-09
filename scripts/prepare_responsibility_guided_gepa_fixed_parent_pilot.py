@@ -219,6 +219,7 @@ def prepare(prep: Path, report: Path) -> dict[str, Any]:
         Path("scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py"),
         Path("scripts/run_responsibility_guided_gepa_fixed_parent_pilot.py"),
         Path("tests/test_experimental_rg_gepa.py"),
+        Path("tests/test_rg_gepa_execution_ledger.py"),
     ]
     freeze={"PRE_API_FREEZE_version":"rg_gepa_v1","execution_commit":registry["execution_commit"],"protocol_hash":protocol.identity(),"registry_hash":registry["registry_hash"],"fixed_parent_manifest_hash":sha256_json(manifest),"minibatches_hash":sha256_json(registry["minibatches"]),"solver_contract_id":protocol.solver_contract_id,"api_calls":0,"test_calls":0,"source_files":[{"path":str(path).replace("\\","/"),"sha256":sha256_bytes((ROOT/path).read_bytes())} for path in source_files],"status":"PASS"}
     write_json(prep/"PRE_API_FREEZE.json",freeze)

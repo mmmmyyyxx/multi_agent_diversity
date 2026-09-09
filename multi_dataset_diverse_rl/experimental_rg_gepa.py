@@ -15,6 +15,7 @@ from .versions import COMMON_SOLVER_CONTRACT_V1_ID
 
 
 RG_GEPA_PROTOCOL_VERSION = "responsibility_guided_gepa_fixed_parent_v1"
+RG_GEPA_LEDGER_VERSION = "rg_gepa_execution_ledger_v2"
 PROPOSAL_ENGINES = ("current", "gepa_reflection")
 EVALUATION_MODES = ("full", "progressive")
 SELECTION_MODES = ("current", "team_pareto")
@@ -200,17 +201,53 @@ def deterministic_minibatch(
 
 def validate_ledger_record(row: Mapping[str, object]) -> None:
     required = {
+        "ledger_version",
         "seed", "parent_id", "update_index", "candidate_id", "proposal_engine",
         "evaluation_stage", "input_tokens", "output_tokens", "total_tokens",
-        "provider_attempt_id", "cache_hit",
+        "provider_attempt_id", "logical_call_id", "attempt_index", "record_kind",
+        "provider_attempts", "successful_provider_calls", "cache_hit",
+        "logical_role", "client_role", "success",
     }
     missing = required - set(row)
     if missing:
         raise ValueError(f"RG-GEPA ledger missing fields: {sorted(missing)}")
+    if str(row["ledger_version"]) != RG_GEPA_LEDGER_VERSION:
+        raise ValueError("unknown RG-GEPA ledger version")
     if str(row["evaluation_stage"]) not in LEDGER_STAGES:
         raise ValueError("unknown RG-GEPA ledger stage")
     if str(row["proposal_engine"]) not in PROPOSAL_ENGINES:
         raise ValueError("unknown RG-GEPA proposal engine in ledger")
+    if str(row["record_kind"]) not in {
+        "solver_logical_invocation", "optimizer_provider_attempt", "cache_reuse",
+    }:
+        raise ValueError("unknown RG-GEPA ledger record kind")
+    if not str(row["logical_call_id"]) or not str(row["provider_attempt_id"]):
+        raise ValueError("RG-GEPA ledger identities must be non-empty")
+    if int(row["attempt_index"]) < 0:
+        raise ValueError("RG-GEPA ledger attempt index cannot be negative")
+    attempts = int(row["provider_attempts"])
+    successes = int(row["successful_provider_calls"])
+    if attempts < 0 or successes < 0 or successes > attempts:
+        raise ValueError("invalid RG-GEPA provider-attempt accounting")
+    kind = str(row["record_kind"])
+    if kind == "optimizer_provider_attempt" and (attempts != 1 or bool(row["cache_hit"])):
+        raise ValueError("optimizer attempt rows must describe one non-cache provider attempt")
+    if kind == "optimizer_provider_attempt" and successes != int(bool(row.get("success", False))):
+        raise ValueError("optimizer attempt success accounting is inconsistent")
+    if kind == "cache_reuse" and (attempts != 0 or successes != 0 or not bool(row["cache_hit"])):
+        raise ValueError("cache-reuse rows cannot describe provider attempts")
+    if kind == "solver_logical_invocation" and bool(row["cache_hit"]) != (attempts == 0):
+        raise ValueError("solver invocation cache/provider semantics are inconsistent")
+    if kind == "solver_logical_invocation" and (
+        int(row["attempt_index"]) != 0
+        or not bool(row["success"])
+        or successes != int(not bool(row["cache_hit"]))
+    ):
+        raise ValueError("solver logical-invocation accounting is inconsistent")
+    if kind == "cache_reuse" and (int(row["attempt_index"]) != 0 or not bool(row["success"])):
+        raise ValueError("cache-reuse success accounting is inconsistent")
     prompt, completion, total = (int(row[key]) for key in ("input_tokens", "output_tokens", "total_tokens"))
     if prompt < 0 or completion < 0 or total < 0 or prompt + completion != total:
         raise ValueError("invalid provider token accounting")
+    if bool(row["cache_hit"]) and total != 0:
+        raise ValueError("cache ledger rows cannot carry provider tokens")

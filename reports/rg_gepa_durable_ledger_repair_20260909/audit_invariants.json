@@ -1,0 +1,26 @@
+{
+  "cache_reuse": {
+    "expected_records": 72,
+    "provider_attempts_per_record": 0,
+    "record_kind": "cache_reuse"
+  },
+  "ledger_version": "rg_gepa_execution_ledger_v2",
+  "reflection": {
+    "allowed_failed_attempts": "zero_or_more",
+    "client_role": "optimizer",
+    "expected_logical_groups": 12,
+    "expected_successes_per_group": 1,
+    "final_attempt_must_succeed": true,
+    "group_key": [
+      "parent_id",
+      "candidate_id",
+      "evaluation_stage"
+    ],
+    "logical_role": "reflection",
+    "proposal_engine": "gepa_reflection",
+    "provider_attempt_rows": "at_least_12",
+    "stage": "reflection"
+  },
+  "runtime_durable_reconciliation_required": true,
+  "solver_record_granularity": "logical_invocation_with_physical_attempt_count"
+}

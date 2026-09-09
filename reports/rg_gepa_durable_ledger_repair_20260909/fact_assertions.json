@@ -1,0 +1,13 @@
+{
+  "api_calls": 0,
+  "compileall": "PASS",
+  "focused_tests_passed": 21,
+  "historical_retry_artifacts_modified": 0,
+  "ledger_schema": "rg_gepa_execution_ledger_v2",
+  "production_audit_retry_fixture": "PASS",
+  "production_audit_twelve_call_fixture": "PASS",
+  "retry3_status_preserved": "HOLD_INCOMPLETE_OPTIMIZER_LEDGER",
+  "retry4_started": false,
+  "test50_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "bytes": 764,
+      "path": "audit_invariants.json",
+      "sha256": "6130481c10fc8763792bd9ecba6e1360b8ccdd6e329204ac75bbf2021fdc69ce"
+    },
+    {
+      "bytes": 401,
+      "path": "fact_assertions.json",
+      "sha256": "1154685d4d3e36cc68582f8db5f0f6317533e7e5c66685bbd79707139e3d5272"
+    },
+    {
+      "bytes": 552,
+      "path": "provenance.json",
+      "sha256": "809aae4f7454dccdbd21752d3980c33c6383335191a1bb5dfd05e7cf532759f5"
+    },
+    {
+      "bytes": 2069,
+      "path": "README.md",
+      "sha256": "6901ecc603de0324ce1a7e4e12c6149ab91eeb8e26aa72c1393fcb1dcc44fd04"
+    },
+    {
+      "bytes": 525,
+      "path": "verification.json",
+      "sha256": "ec032d3618dd1cc9d8ff2b8ec4a1e7416b54366c3d012d0b75436a03b2d9c392"
+    }
+  ],
+  "scope": "all report files except this manifest and the sanitization manifest"
+}
