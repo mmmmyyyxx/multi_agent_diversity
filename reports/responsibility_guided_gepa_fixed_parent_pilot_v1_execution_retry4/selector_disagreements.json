@@ -1,0 +1,38 @@
+[
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed76_u0_coverage_target1",
+    "frontier": []
+  },
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed76_u1_margin_support_target3",
+    "frontier": []
+  },
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed76_u2_direct_flip_target1",
+    "frontier": []
+  },
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed77_u0_coverage_target2",
+    "frontier": []
+  },
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed77_u1_margin_support_target4",
+    "frontier": []
+  },
+  {
+    "B0": null,
+    "B1": null,
+    "case_id": "seed77_u3_direct_flip_target0",
+    "frontier": []
+  }
+]

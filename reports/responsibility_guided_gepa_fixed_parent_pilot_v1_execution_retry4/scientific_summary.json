@@ -1,0 +1,31 @@
+{
+  "audit_gate": "PASS",
+  "classifications": {
+    "H1_PROGRESSIVE_COST": "COST_REDUCTION_WITH_ONE_MISSED_WOULD_COMMIT",
+    "H2_REFLECTION_QUALITY": "NOT_SUPPORTED_OUTPUT_CONTRACT_FAILURE",
+    "H3_PARETO_SELECTION": "NOT_EVALUABLE_NO_VALID_REFLECTION_CANDIDATES",
+    "H4_MINIBATCH_SIGNAL": "DESCRIPTIVE_CURRENT_POOL_ONLY"
+  },
+  "current_pool": {
+    "full_evaluation": {
+      "feasible": 10,
+      "full_evaluated": 12,
+      "would_commit": 6
+    },
+    "progressive_evaluation": {
+      "feasible": 5,
+      "full_evaluated": 5,
+      "would_commit": 5
+    }
+  },
+  "primary_conclusion": "RG_GEPA_REFLECTION_OPERATOR_NOT_SUPPORTED",
+  "reflection_pool": {
+    "generated": 12,
+    "hard_gate_reason_counts": {
+      "output_contract": 12
+    },
+    "valid": 0
+  },
+  "test_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "bytes": 74,
+      "path": "api_ledger_summary.json",
+      "sha256": "380633b2b62b2cabcd8bacb60cd05c0e34c164bd98cdeb02ba21d27309879557"
+    },
+    {
+      "bytes": 4851,
+      "path": "candidate_eval_matrix.csv",
+      "sha256": "a2190c86fe1ea783aebf179750a2dd9607ba7797d6f73590c4b77db9c03820a9"
+    },
+    {
+      "bytes": 11683,
+      "path": "candidate_manifest.jsonl",
+      "sha256": "ce8d876a537bcd80b2a6676bd9e69072acc3814a486b1fd1df5518f1e405e8c6"
+    },
+    {
+      "bytes": 1385,
+      "path": "cost_by_stage.json",
+      "sha256": "a55418e5518530237253071b8f5243acba8d31ac8cb2f9c35b328a5ed7c36c2c"
+    },
+    {
+      "bytes": 608,
+      "path": "fact_assertions.json",
+      "sha256": "39e8a4478672395b7220a68a49955f40dd497bc2124a7ad95e474234b6a150c2"
+    },
+    {
+      "bytes": 1083,
+      "path": "proposal_quality.json",
+      "sha256": "7280d75732f43c04cf9ffbc3df2d8525392efba54c3c1c9d080a2156e5df76b3"
+    },
+    {
+      "bytes": 1580,
+      "path": "protocol.json",
+      "sha256": "b39b929a7ec11e508991663dd34c112a2036fafb4b45664bcf0164e770a07272"
+    },
+    {
+      "bytes": 153,
+      "path": "provenance.json",
+      "sha256": "6ff93166a2fc9806c0d19aa17af3084b6b1dbfdeb108044b79f7f099e0e29323"
+    },
+    {
+      "bytes": 1444,
+      "path": "README.md",
+      "sha256": "4ea105a0b085e53b49bff40bf74d86038bcfbc92960fe1412d1e545d7564d011"
+    },
+    {
+      "bytes": 819,
+      "path": "scientific_summary.json",
+      "sha256": "dd7af420368e15c35c1b90fde7dafd4f5b238dd3dadac0e1bcd9208a0af9bca9"
+    },
+    {
+      "bytes": 689,
+      "path": "selector_disagreements.json",
+      "sha256": "59c2d265ddfaa6544854ed243a3482db47db8f63e85e26630ff216f660940879"
+    }
+  ]
+}

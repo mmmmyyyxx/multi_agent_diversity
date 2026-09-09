@@ -1,0 +1,36 @@
+{
+  "PRE_API_FREEZE_version": "rg_gepa_v1",
+  "actual_commits": 0,
+  "api_calls": 0,
+  "execution_commit": "ce183ebcd358d347c5a25d47833c302699b137c9",
+  "fixed_parent_manifest_hash": "1382d6a710cc9e966446b5ff98f8c853826d4f85547c0890b4fdd80c4d989570",
+  "minibatches_hash": "c8db63594c57de9073879f54e2aa33731c355f24af1ac505ead54bb1ef541724",
+  "protocol_hash": "232905836cd3b0503a45062c9e2698395c55b697773037db7f6310f96e40d0be",
+  "registry_hash": "fc52097bcef66c6c1407e5447ce109a1a43dfa6761293e0601691bf8f69c3f47",
+  "solver_contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "solver_contract_identity": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "source_files": [
+    {
+      "path": "multi_dataset_diverse_rl/experimental_rg_gepa.py",
+      "sha256": "7ba1539793dfacf998b3067cda4e49d88f1124415e9521c16480bdee039a6bfc"
+    },
+    {
+      "path": "scripts/prepare_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "sha256": "06fea2918b33b82fd38dac4dc0d0f0a2f9d862d7e87e9967cc4fc3a7b32bd4d6"
+    },
+    {
+      "path": "scripts/run_responsibility_guided_gepa_fixed_parent_pilot.py",
+      "sha256": "1531973e5323e6e823c901c118a5e538c47f4ac7378bd8332a1c1c3f665ce9e4"
+    },
+    {
+      "path": "tests/test_experimental_rg_gepa.py",
+      "sha256": "ab88bd896fdc67d84a211bd7f2d394960b3939ccd5e5f40747f5f59b40fc34db"
+    },
+    {
+      "path": "tests/test_rg_gepa_execution_ledger.py",
+      "sha256": "070a7b34d90871422ef1b14b407b0d7a46a2a42369dcc63587f48188d64c2a18"
+    }
+  ],
+  "status": "PASS",
+  "test_calls": 0
+}

@@ -1,0 +1,20 @@
+{
+  "actual_commits": 0,
+  "candidate_count": 24,
+  "case_count": 6,
+  "external_validation_optimization_calls": 0,
+  "historical_artifacts_modified": 0,
+  "ledger_records": 2484,
+  "minibatch_parent_cache_reuses": 72,
+  "parent_full_team_coverage": 6,
+  "reflection_failed_attempts": 0,
+  "reflection_input_tokens": 5712,
+  "reflection_logical_calls": 12,
+  "reflection_output_tokens": 4932,
+  "reflection_provider_attempts": 12,
+  "reflection_successful_calls": 12,
+  "reflection_total_tokens": 10644,
+  "runtime_durable_reconciliation": "PASS",
+  "status": "PASS",
+  "test_calls": 0
+}

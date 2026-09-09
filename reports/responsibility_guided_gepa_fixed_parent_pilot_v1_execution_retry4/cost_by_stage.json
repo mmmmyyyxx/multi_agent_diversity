@@ -1,0 +1,57 @@
+[
+  {
+    "cache_hits": 0,
+    "failed_provider_attempts": 0,
+    "input_tokens": 374010,
+    "logical_calls": 1056,
+    "output_tokens": 211954,
+    "provider_calls": 1056,
+    "stage": "full_member",
+    "successful_provider_calls": 1056,
+    "total_tokens": 585964
+  },
+  {
+    "cache_hits": 750,
+    "failed_provider_attempts": 0,
+    "input_tokens": 119333,
+    "logical_calls": 1200,
+    "output_tokens": 60526,
+    "provider_calls": 450,
+    "stage": "full_team",
+    "successful_provider_calls": 450,
+    "total_tokens": 179859
+  },
+  {
+    "cache_hits": 0,
+    "failed_provider_attempts": 0,
+    "input_tokens": 50960,
+    "logical_calls": 144,
+    "output_tokens": 29352,
+    "provider_calls": 144,
+    "stage": "minibatch_candidate",
+    "successful_provider_calls": 144,
+    "total_tokens": 80312
+  },
+  {
+    "cache_hits": 72,
+    "failed_provider_attempts": 0,
+    "input_tokens": 0,
+    "logical_calls": 72,
+    "output_tokens": 0,
+    "provider_calls": 0,
+    "stage": "minibatch_parent",
+    "successful_provider_calls": 0,
+    "total_tokens": 0
+  },
+  {
+    "cache_hits": 0,
+    "failed_provider_attempts": 0,
+    "input_tokens": 5712,
+    "logical_calls": 12,
+    "output_tokens": 4932,
+    "provider_calls": 12,
+    "stage": "reflection",
+    "successful_provider_calls": 12,
+    "total_tokens": 10644
+  }
+]
