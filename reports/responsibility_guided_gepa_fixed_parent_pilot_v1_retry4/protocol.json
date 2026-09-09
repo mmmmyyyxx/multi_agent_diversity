@@ -1,0 +1,27 @@
+{
+  "A0_A1_shared_current_pool": true,
+  "B0_B1_shared_reflection_pool": true,
+  "actual_commit_count": 0,
+  "arms": [
+    "A0",
+    "A1",
+    "B0",
+    "B1"
+  ],
+  "candidates_per_target": 2,
+  "case_count": 6,
+  "commit_enabled": false,
+  "common_solver_contract_required": true,
+  "evaluation_mode": "progressive",
+  "external_validation_optimization_calls": 0,
+  "max_full_eval_candidates_per_opportunity": 2,
+  "minibatch_size": 12,
+  "proposal_engine": "gepa_reflection",
+  "protocol_hash": "232905836cd3b0503a45062c9e2698395c55b697773037db7f6310f96e40d0be",
+  "protocol_version": "responsibility_guided_gepa_fixed_parent_v1",
+  "selection_mode": "team_pareto",
+  "solver_contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "test50_accessed": false,
+  "test_enabled": false,
+  "validation_enabled": false
+}

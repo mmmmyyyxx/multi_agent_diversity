@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "bytes": 355,
+      "path": "fact_assertions.json",
+      "sha256": "c0b86e980a889fa37ab1e92352777fcc6abdec5907e356d1f30e3af14f1a70a0"
+    },
+    {
+      "bytes": 6611,
+      "path": "fixed_parent_manifest.json",
+      "sha256": "baa16ff26df2e4269fe4b7f80eb1865649df3a9ef16316335f8184cb60b5e5f0"
+    },
+    {
+      "bytes": 269,
+      "path": "frozen_hypotheses.json",
+      "sha256": "050a258527cefdb564fd9bedf3b9db6e91b9ee41e5194b2f633ac56c9ec93952"
+    },
+    {
+      "bytes": 21503,
+      "path": "minibatch_manifest.jsonl",
+      "sha256": "d930e3abfed9665c0d58430c8fdde43824216e4c9e55ebbf4e4b1031322a48ed"
+    },
+    {
+      "bytes": 833,
+      "path": "protocol.json",
+      "sha256": "f8d4daa72f6b61e76f33b0abe0f08a156b331619b226e01c28a15419ab28e674"
+    },
+    {
+      "bytes": 382,
+      "path": "provenance.json",
+      "sha256": "6f80bffa17b4489e6434ebd934e299ab6c39df616781da77534b4add5c26d9a0"
+    },
+    {
+      "bytes": 896,
+      "path": "README.md",
+      "sha256": "8602fee250cf0b82cb98f4d8941c5ec8123523bf72bf0c88015fe34893775ed4"
+    }
+  ]
+}
