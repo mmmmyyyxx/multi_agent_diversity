@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "bytes": 327,
+      "path": "fact_assertions.json",
+      "sha256": "efc70170fca7dac3f83c6d8818c503a02c1cfe68d15e86e1459b7d66e1085541"
+    },
+    {
+      "bytes": 2285,
+      "path": "fixed_parent_manifest.json",
+      "sha256": "f66f236e6d30ff155a17f1efefc5a462e36bda74955a67782b8887f828abf2d5"
+    },
+    {
+      "bytes": 1072,
+      "path": "frozen_hypotheses.json",
+      "sha256": "1d930e80f906b050aa8c43374c7f3ab2a9654a8f0af45b039e8632d44320760f"
+    },
+    {
+      "bytes": 1110,
+      "path": "protocol.json",
+      "sha256": "8206a1fd2beed1ec1f6564f2dd9e16abfc0c3dc29137ff83902ba32c1fe8ffff"
+    },
+    {
+      "bytes": 318,
+      "path": "provenance.json",
+      "sha256": "82d25b8f2cd315bfaa2793ab83c5d85689540a39be537e8f49af1dd78b8cc5dc"
+    },
+    {
+      "bytes": 765,
+      "path": "README.md",
+      "sha256": "10688060ae49497eabdac8f1f8ff2f949d3505773012768471231697de7d1af6"
+    },
+    {
+      "bytes": 1325,
+      "path": "renderer_spec.json",
+      "sha256": "59e13cecdedd91624fdaf5c0bd1d36a0ee1e5f22ee676aa92177e3acba4babf3"
+    },
+    {
+      "bytes": 1479,
+      "path": "retry4_evidence_boundary.json",
+      "sha256": "6110eaeaaf8a4383e8074b9c2652b96836cb1fad0d881158e6723c5d5c4429ed"
+    }
+  ]
+}

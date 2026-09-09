@@ -1,0 +1,15 @@
+{
+  "H_ADAPTED_PROPOSAL_QUALITY": "NOT_EVALUATED_PRE_API",
+  "H_CONTRACT_COMPATIBILITY": "STRUCTURALLY_GUARANTEED_FOR_EVERY_RENDERED_CANDIDATE",
+  "H_PARETO_SELECTION_VALUE": "NOT_EVALUATED_PRE_API",
+  "interpretation_rules": [
+    "If fewer than 12 schema-valid hypotheses are returned, HOLD; do not substitute or add candidates.",
+    "If 12 rendered candidates exist, all 12 must pass the immutable-contract gate or the execution gate fails.",
+    "If at most one promoted full-evaluated candidate is feasible, label ADAPTED_PROPOSAL_QUALITY_POOR.",
+    "If at least two are feasible and B0-prime equals B1-prime in every selectable case, label PROPOSAL_SIGNAL_PARETO_NOT_NEEDED.",
+    "If at least two are feasible and the selectors differ, label PARETO_SELECTION_DIFFERENTIATES; do not claim validation superiority.",
+    "Otherwise label INCONCLUSIVE_FIXED_PARENT_SIGNAL."
+  ],
+  "primary_question": "Can contract-adapted RG-GEPA reflection supply useful candidates on the six frozen parents?",
+  "validation_or_test_used_for_classification": false
+}
