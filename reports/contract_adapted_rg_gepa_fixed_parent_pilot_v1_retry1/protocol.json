@@ -1,0 +1,29 @@
+{
+  "B0_prime_B1_prime_shared_candidate_pool": true,
+  "audit_only_case_ids": [
+    "seed76_u0_coverage_target1",
+    "seed77_u0_coverage_target2"
+  ],
+  "candidates_per_case": 2,
+  "case_count": 6,
+  "commit_enabled": false,
+  "evaluation_mode": "progressive",
+  "max_full_eval_candidates_per_case": 2,
+  "memory_enabled": false,
+  "minibatch_size": 12,
+  "nonpromoted_full_eval_policy": "retry4-frozen audit-only witness cases",
+  "proposal_engine": "contract_adapted_reflection",
+  "protocol_hash": "2ee59a7924a42ab62eba0ce232ff1c81ae3da2ea85737f2cbb863f07c867cadd",
+  "protocol_version": "contract_adapted_rg_gepa_fixed_parent_v1",
+  "raw_reflection_text_enters_candidate": false,
+  "renderer_version": "closed_vocabulary_renderer_v1",
+  "same_frozen_parents_and_evidence_as_retry4": true,
+  "schema_failure_policy": "HOLD_BEFORE_CANDIDATE; no fallback, substitution, or added candidate",
+  "selection_arms": [
+    "B0_PRIME_CURRENT",
+    "B1_PRIME_TEAM_PARETO"
+  ],
+  "solver_contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "test_enabled": false,
+  "validation_enabled": false
+}

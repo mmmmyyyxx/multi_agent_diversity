@@ -1,0 +1,57 @@
+{
+  "H_COST": "SUPPORTED",
+  "H_PARETO": "NOT_EVALUATED",
+  "H_PROGRESSIVE": "SUPPORTED_WITH_RECALL_LOSS",
+  "H_RGGEPA_PROPOSAL": "NOT_EVALUATED",
+  "comparator_arms": [
+    {
+      "arm": "A0",
+      "evaluation_mode": "full",
+      "feasible": 10,
+      "full_evaluated": 12,
+      "generated": 12,
+      "promoted": 12,
+      "proposal_engine": "current",
+      "selection_mode": "current",
+      "valid": 12,
+      "would_commit": 6
+    },
+    {
+      "arm": "A1",
+      "evaluation_mode": "progressive",
+      "feasible": 5,
+      "full_evaluated": 5,
+      "generated": 12,
+      "promoted": 5,
+      "proposal_engine": "current",
+      "selection_mode": "current",
+      "valid": 12,
+      "would_commit": 5
+    },
+    {
+      "arm": "B0",
+      "evaluation_mode": "progressive",
+      "feasible": 0,
+      "full_evaluated": 0,
+      "generated": 12,
+      "promoted": 0,
+      "proposal_engine": "gepa_reflection",
+      "selection_mode": "current",
+      "valid": 0,
+      "would_commit": 0
+    },
+    {
+      "arm": "B1",
+      "evaluation_mode": "progressive",
+      "feasible": 0,
+      "full_evaluated": 0,
+      "generated": 12,
+      "promoted": 0,
+      "proposal_engine": "gepa_reflection",
+      "selection_mode": "team_pareto",
+      "valid": 0,
+      "would_commit": 0
+    }
+  ],
+  "reason": "retry4 reflection candidates did not reach rollout because none satisfied the immutable mutation contract"
+}

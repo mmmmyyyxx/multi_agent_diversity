@@ -1,0 +1,6 @@
+{
+  "private_material": "runs-only",
+  "source": "audited retry4 fixed-parent registry and sanitized comparator report",
+  "source_comparator_hash": "609ea9c86a6c3888937bcf03bd53e991939d0ebc369de45dd915d46f2427b348",
+  "source_registry_hash": "fc52097bcef66c6c1407e5447ce109a1a43dfa6761293e0601691bf8f69c3f47"
+}

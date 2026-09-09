@@ -1,0 +1,50 @@
+{
+  "allowed_symbols": {
+    "avoid": [
+      "unsupported_assumptions",
+      "surface_overlap",
+      "single_clue_fixation",
+      "premature_commitment"
+    ],
+    "behavioral_change": [
+      "build_constraint_table",
+      "compare_all_options",
+      "trace_entities",
+      "resolve_negation_first",
+      "test_counterfactuals",
+      "cross_check_conclusion"
+    ],
+    "failure_pattern": [
+      "ambiguous_referent",
+      "perspective_confusion",
+      "negation_scope",
+      "constraint_omission",
+      "premature_choice",
+      "evidence_conflict"
+    ],
+    "preserve": [
+      "explicit_evidence",
+      "valid_eliminations",
+      "ambiguity_checks",
+      "global_consistency"
+    ]
+  },
+  "hypothesis_fields": [
+    "failure_pattern",
+    "behavioral_change",
+    "preserve",
+    "avoid"
+  ],
+  "program_owned_rendering_only": true,
+  "raw_model_text_copied": false,
+  "renderer_version": "closed_vocabulary_renderer_v1",
+  "renderer_vocabulary_hash": "8f4c471647ca17858a8722990a9753a8c7c116f9acb295d55f6ec71ba9d7cfe9",
+  "structural_preflight": {
+    "contract_violations": 0,
+    "parents_checked": 6,
+    "renderings_checked": 3456,
+    "representable_hypotheses_per_parent": 576,
+    "status": "PASS",
+    "unique_rendered_prompt_hashes": 576
+  }
+}

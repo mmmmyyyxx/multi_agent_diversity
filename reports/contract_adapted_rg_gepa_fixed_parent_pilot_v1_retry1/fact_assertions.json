@@ -1,0 +1,13 @@
+{
+  "api_calls": 0,
+  "candidate_budget": 12,
+  "canonical_method_modified": false,
+  "case_count": 6,
+  "historical_artifacts_modified": 0,
+  "memory_enabled": false,
+  "phase": "ZERO_API_PRE_API_FREEZE",
+  "renderer_structural_preflight": "PASS",
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}
