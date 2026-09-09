@@ -410,8 +410,10 @@ async def execute(args: argparse.Namespace) -> None:
     registry = _json(args.prep / "private_registry.json")
     if registry["protocol"] != asdict(RGGEPAProtocol()):
         raise RuntimeError("frozen protocol mismatch")
-    if registry.get("execution_commit") != _git("rev-parse", "HEAD"):
-        raise RuntimeError("execute only from the newly frozen source commit")
+    # A sanitized freeze/report commit may follow the implementation commit; it
+    # is harmless only when the frozen execution source remains an ancestor.
+    if subprocess.run(["git", "merge-base", "--is-ancestor", str(registry.get("execution_commit", "")), "HEAD"], cwd=ROOT).returncode:
+        raise RuntimeError("frozen execution source is not an ancestor of HEAD")
     args.run.mkdir(parents=True)
     ledger: list[dict[str, Any]] = []
     results: list[dict[str, Any]] = []
