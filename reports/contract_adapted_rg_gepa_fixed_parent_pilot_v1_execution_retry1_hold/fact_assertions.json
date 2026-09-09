@@ -1,0 +1,22 @@
+{
+  "actual_commits": 0,
+  "adapted_candidates_generated": 0,
+  "candidate_rollout_calls": 0,
+  "failed_provider_attempts": 0,
+  "hold_before_candidate_generation": true,
+  "optimizer_logical_calls": 1,
+  "optimizer_provider_attempts": 1,
+  "optimizer_successful_calls": 1,
+  "parent_solver_logical_calls": 100,
+  "parent_solver_provider_attempts": 100,
+  "parent_solver_successful_calls": 100,
+  "schema_valid_hypotheses": 0,
+  "status": "HOLD",
+  "test_calls": 0,
+  "total_input_tokens": 20229,
+  "total_output_tokens": 6784,
+  "total_provider_attempts": 101,
+  "total_successful_provider_calls": 101,
+  "total_tokens": 27013,
+  "validation_calls": 0
+}

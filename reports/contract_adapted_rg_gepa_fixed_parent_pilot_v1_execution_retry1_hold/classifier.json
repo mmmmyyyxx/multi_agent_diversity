@@ -1,0 +1,9 @@
+{
+  "failure_class": "OPTIMIZER_SCHEMA_COMPLIANCE",
+  "mechanism_evidence_eligible": false,
+  "proposal_quality": "NOT_EVALUATED",
+  "ranking_value": "NOT_EVALUATED",
+  "retry_policy": "NO_AUTOMATIC_RETRY",
+  "status": "HOLD",
+  "trigger": "EXACT_CLOSED_SCHEMA_KEY_MISMATCH_BEFORE_RENDERING"
+}

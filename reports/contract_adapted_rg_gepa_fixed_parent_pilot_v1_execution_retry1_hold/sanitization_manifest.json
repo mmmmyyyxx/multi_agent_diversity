@@ -1,0 +1,10 @@
+{
+  "absolute_paths": 0,
+  "credentials": 0,
+  "endpoints": 0,
+  "gold_or_model_answers": 0,
+  "prompts_or_questions": 0,
+  "raw_responses": 0,
+  "sqlite_or_checkpoints": 0,
+  "status": "PASS"
+}

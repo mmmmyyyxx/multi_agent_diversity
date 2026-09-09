@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "bytes": 294,
+      "path": "classifier.json",
+      "sha256": "19b5ede1bb7b52e8b4499cc53d893e4a7be148eb8438046dd0ec16f8c6826eec"
+    },
+    {
+      "bytes": 655,
+      "path": "fact_assertions.json",
+      "sha256": "9b43b12e326d7bcff5e7f1f33c2a032b13fa92288e47a82f2a1e7075f6269b2c"
+    },
+    {
+      "bytes": 345,
+      "path": "provenance.json",
+      "sha256": "c8427445beece4ac16a41b1aeacc0fa18294d4003a825b51a9406860bac6197f"
+    },
+    {
+      "bytes": 969,
+      "path": "README.md",
+      "sha256": "e828e633c441a6b89589a2f8a21ad8f5f2d9324420bbb758b493b07f6cb344dd"
+    },
+    {
+      "bytes": 195,
+      "path": "sanitization_manifest.json",
+      "sha256": "277a0f30aa999233c6dc1378a91422ce79c8a3b248ee3678a4a647b0257bd414"
+    }
+  ]
+}
