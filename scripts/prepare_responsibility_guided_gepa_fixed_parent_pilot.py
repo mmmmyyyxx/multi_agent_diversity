@@ -13,14 +13,18 @@ import json
 import subprocess
 from dataclasses import asdict
 from pathlib import Path
+import sys
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.experimental_rg_gepa import (
     EvidenceItem, RGGEPAProtocol, deterministic_minibatch,
 )
 
 
-ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / "runs" / "vote_aligned_confirmatory_seed76_77_v1"
 DEFAULT_PREP = ROOT / "runs" / "responsibility_guided_gepa_fixed_parent_pilot_v1_prep_20260909"
 DEFAULT_REPORT = ROOT / "reports" / "responsibility_guided_gepa_fixed_parent_pilot_v1"
