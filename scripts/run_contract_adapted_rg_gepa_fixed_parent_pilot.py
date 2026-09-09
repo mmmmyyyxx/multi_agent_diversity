@@ -79,6 +79,12 @@ def _git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True, encoding="utf-8").strip()
 
 
+def _serialized_protocol() -> dict[str, Any]:
+    """Return the protocol exactly as it appears after a JSON round trip."""
+
+    return json.loads(json.dumps(asdict(ContractAdaptedProtocol()), sort_keys=True))
+
+
 def _hypothesis_request(case: dict[str, Any], candidate_index: int) -> tuple[str, str]:
     evidence = case["minibatch_private"][:4]
     cases = "\n\n".join(
@@ -375,7 +381,10 @@ async def execute(args: argparse.Namespace) -> None:
     if args.run.exists() or args.report.exists():
         raise FileExistsError("contract-adapted execution roots must be fresh")
     registry = _read(args.prep / "private_registry.json")
-    if registry["protocol"] != asdict(ContractAdaptedProtocol()):
+    if (
+        registry["protocol"] != _serialized_protocol()
+        or registry["protocol_hash"] != ContractAdaptedProtocol().identity()
+    ):
         raise RuntimeError("frozen contract-adapted protocol mismatch")
     if subprocess.run(
         ["git", "merge-base", "--is-ancestor", registry["execution_commit"], "HEAD"],
@@ -413,7 +422,10 @@ def audit(run: Path, prep: Path) -> dict[str, Any]:
     ):
         raise RuntimeError("contract-adapted audit failed: isolation violation")
     registry = _read(prep / "private_registry.json")
-    if registry["protocol"] != asdict(ContractAdaptedProtocol()):
+    if (
+        registry["protocol"] != _serialized_protocol()
+        or registry["protocol_hash"] != ContractAdaptedProtocol().identity()
+    ):
         raise RuntimeError("contract-adapted audit failed: protocol drift")
     expected_cases = {str(case["case_id"]) for case in registry["cases"]}
     if {str(row["case_id"]) for row in results} != expected_cases:

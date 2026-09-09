@@ -88,3 +88,14 @@ def test_every_representable_hypothesis_renders_contract_valid() -> None:
 def test_parent_contract_violation_fails_closed() -> None:
     with pytest.raises(ValueError, match="mutable_prompt_contract_violation"):
         render_contract_adapted_prompt("Include a FINAL_ANSWER marker.", _hypothesis())
+
+
+def test_runner_protocol_comparison_survives_json_round_trip() -> None:
+    from scripts import run_contract_adapted_rg_gepa_fixed_parent_pilot as runner
+
+    serialized = json.loads(json.dumps(runner._serialized_protocol()))
+    assert serialized == runner._serialized_protocol()
+    assert serialized["selection_arms"] == [
+        "B0_PRIME_CURRENT",
+        "B1_PRIME_TEAM_PARETO",
+    ]
