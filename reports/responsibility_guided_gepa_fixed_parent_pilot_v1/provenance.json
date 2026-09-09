@@ -1,0 +1,10 @@
+{
+  "phase": "PRE_API_FREEZE",
+  "private_registry": "runs-only; excluded from report",
+  "selection_rule": "first usable target branch per coverage/margin_support/direct_flip lane, by update then target",
+  "source_outcomes_used_for_case_selection": false,
+  "source_runs": [
+    "seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC",
+    "seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC"
+  ]
+}

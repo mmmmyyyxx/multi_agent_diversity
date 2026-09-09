@@ -1,0 +1,134 @@
+[
+  {
+    "case_id": "seed76_u0_coverage_target1",
+    "current_candidate_hashes": [
+      "2c6cecf0600c40464c6376c6adeba17ddf973f2ad2a1221f24194da36defdf46",
+      "e8944c1270527bdd0f0ea8ad3d687731499ebf969a3a34a64d69685694249342"
+    ],
+    "minibatch_hash": "4c8df1c36f6bc9f555344566a04b11f0517d7afcf20835e3a71feb1cab04e30a",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "responsibility_type": "coverage",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 76,
+    "source_update_index": 0,
+    "target_member": 1
+  },
+  {
+    "case_id": "seed76_u1_margin_support_target3",
+    "current_candidate_hashes": [
+      "74202d142a0c4f00348d3d0efa216f163e16527dd4125a9b333b8932f9864f49",
+      "e89a6dbfe82a7c06a5fa8880573728e67a419ed705f368cb2e77d25477c1a709"
+    ],
+    "minibatch_hash": "badd2d073a9a57a7f261e2121916b4f641e193ab136f3f65d20bb32f691372d3",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "1692f0930b4425bfc3da576fd89271282faa991b90b525681f916309950b8fcd",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "283953e039b38962380f8a0f52ed6451a3c450c4ad051b3e2f18eede46f80620",
+    "responsibility_type": "margin_support",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 76,
+    "source_update_index": 1,
+    "target_member": 3
+  },
+  {
+    "case_id": "seed76_u2_direct_flip_target1",
+    "current_candidate_hashes": [
+      "67e901b1efe6196b9e0632f8c04d8498324bab4d3237d29130cceb021f2f24b1",
+      "95e8138062ca8db171af88857f08c1bdf8e188e331e9460443d77ea8d5ec3952"
+    ],
+    "minibatch_hash": "fa4a723d65fd5eb108c29392ecb7dc9a1dfa1970a6dfd55a1b716f6d7f4e0818",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "1692f0930b4425bfc3da576fd89271282faa991b90b525681f916309950b8fcd",
+      "74202d142a0c4f00348d3d0efa216f163e16527dd4125a9b333b8932f9864f49",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "5e8f53c735d3d82b6c59d93434dab7c5bf38e2c72e0446470214fa279d98ee73",
+    "responsibility_type": "direct_flip",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 76,
+    "source_update_index": 2,
+    "target_member": 1
+  },
+  {
+    "case_id": "seed77_u0_coverage_target2",
+    "current_candidate_hashes": [
+      "1bf858138205578d19c8a94c36d4c36c2d6ffd153dc793eec92dd37f6837fb6f",
+      "edb069457f5d5a3a0ea0deb84d6b7c31a6ea15d6e984c4a1172e397707785084"
+    ],
+    "minibatch_hash": "826c9509e4be9c12d994b0ebca201b139c5b1814691ba10411cc2974e11a4d57",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "responsibility_type": "coverage",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 77,
+    "source_update_index": 0,
+    "target_member": 2
+  },
+  {
+    "case_id": "seed77_u1_margin_support_target4",
+    "current_candidate_hashes": [
+      "04d20886f8d20dd5c69095db22eee40361503d7d2a3905750b9a4a882f3fc69b",
+      "3d0ec8804034a441d86f7633f046f93d6ca179a72a909074fedafe2ad0849b6d"
+    ],
+    "minibatch_hash": "33be8210cfebd79b567de85df460600171867926c81d90bf0a05043af9455bcb",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "56926078c16fd1a5e9f25b53176ce4ecba9fcaa2940b6d2dc94de732e0b21377",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "9ec0781de6dc82aafac8a901b224234d111b2fa87e6eb33c465e5aed97ea6aaf",
+    "responsibility_type": "margin_support",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 77,
+    "source_update_index": 1,
+    "target_member": 4
+  },
+  {
+    "case_id": "seed77_u3_direct_flip_target0",
+    "current_candidate_hashes": [
+      "aa6a08f93c1b7dc2e9b3c293fb6cad4eb06949bd0b3ffd4be4e444c4c49a057d",
+      "cc6bcd1adf8842b6a52521d5ea996615aad683571661ff9e16967b2f8191f927"
+    ],
+    "minibatch_hash": "c6f62fce7564bb4e562aec5577efbf63e305bfb81dd594966f418f51a12323e7",
+    "minibatch_size": 12,
+    "parent_prompt_hashes": [
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "869284406ad234cdcd7e2500e77a913a983e86669e4c11519bfcf103ec77e6d3",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "56926078c16fd1a5e9f25b53176ce4ecba9fcaa2940b6d2dc94de732e0b21377",
+      "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    ],
+    "parent_team_hash": "d656261678e90de4c60421abb88b609e92598fa02cc8e7abf714de407b7f6e28",
+    "responsibility_type": "direct_flip",
+    "selection_rule": "first_update_then_lowest_target_per_lane_with_two_historical_pool_members_v1",
+    "source_seed": 77,
+    "source_update_index": 3,
+    "target_member": 0
+  }
+]
