@@ -9,13 +9,22 @@ from multi_dataset_diverse_rl.evaluation.mutable_prompt_contract import (
 )
 from multi_dataset_diverse_rl.experimental_contract_adapted_rg_gepa import (
     AVOIDANCE_PRIORITIES,
+    AVOID_IDS,
     BEHAVIORAL_CHANGES,
     ContractAdaptedProtocol,
+    EDIT_IDS,
     EditHypothesis,
     FAILURE_PATTERNS,
+    FAILURE_IDS,
+    HypothesisSelectionV2,
+    PRESERVE_IDS,
     PRESERVATION_PRIORITIES,
+    SchemaQualificationV2Protocol,
+    hypothesis_interface_v2_identity,
+    parse_hypothesis_selection_v2,
     parse_edit_hypothesis,
     render_contract_adapted_prompt,
+    render_contract_adapted_prompt_v2,
     renderer_vocabulary_identity,
 )
 
@@ -99,3 +108,44 @@ def test_runner_protocol_comparison_survives_json_round_trip() -> None:
         "B0_PRIME_CURRENT",
         "B1_PRIME_TEAM_PARETO",
     ]
+
+
+def test_v2_parser_has_no_model_authored_keys_or_aliases() -> None:
+    selected = parse_hypothesis_selection_v2('["F1", "E3", "P4", "A1"]')
+    assert selected == HypothesisSelectionV2("F1", "E3", "P4", "A1")
+    with pytest.raises(ValueError, match="schema mismatch"):
+        parse_hypothesis_selection_v2(
+            '{"failure_id":"F1","edit_id":"E3","preserve_id":"P4","avoid_id":"A1"}'
+        )
+    with pytest.raises(ValueError, match="exact JSON"):
+        parse_hypothesis_selection_v2('```json\n["F1","E3","P4","A1"]\n```')
+    with pytest.raises(ValueError, match="unknown"):
+        parse_hypothesis_selection_v2('["failure", "E3", "P4", "A1"]')
+
+
+def test_v2_every_selection_materializes_to_contract_valid_prompt() -> None:
+    parent = "Use a careful, evidence-grounded decision procedure."
+    count = 0
+    for failure in FAILURE_IDS:
+        for edit in EDIT_IDS:
+            for preserve in PRESERVE_IDS:
+                for avoid in AVOID_IDS:
+                    prompt = render_contract_adapted_prompt_v2(
+                        parent,
+                        HypothesisSelectionV2(failure, edit, preserve, avoid),
+                    )
+                    assert not mutable_prompt_violation_reasons(prompt)
+                    count += 1
+    assert count == 6 * 6 * 4 * 4
+    assert len(hypothesis_interface_v2_identity()) == 64
+
+
+def test_v2_schema_qualification_is_isolated_and_fail_closed() -> None:
+    protocol = SchemaQualificationV2Protocol()
+    assert protocol.request_count == 12
+    assert protocol.scientific_evidence_eligible is False
+    assert protocol.schema_retry_enabled is False
+    assert protocol.solver_enabled is False
+    assert protocol.validation_enabled is False
+    assert protocol.test_enabled is False
+    assert len(protocol.identity()) == 64

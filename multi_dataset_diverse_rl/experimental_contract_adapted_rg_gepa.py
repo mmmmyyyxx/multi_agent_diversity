@@ -20,6 +20,7 @@ from .versions import COMMON_SOLVER_CONTRACT_V1_ID
 
 CONTRACT_ADAPTED_PROTOCOL_VERSION = "contract_adapted_rg_gepa_fixed_parent_v1"
 CONTRACT_ADAPTED_RENDERER_VERSION = "closed_vocabulary_renderer_v1"
+HYPOTHESIS_INTERFACE_V2_VERSION = "rg_gepa_hypothesis_interface_v2"
 
 FAILURE_PATTERNS: Mapping[str, str] = {
     "ambiguous_referent": "Resolve every ambiguous referent before comparing the choices.",
@@ -163,3 +164,128 @@ def renderer_vocabulary_identity() -> str:
         "avoidance_priorities": dict(AVOIDANCE_PRIORITIES),
     }
     return sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+# V2 eliminates model-authored field names.  The model returns an exact
+# four-position JSON array of opaque IDs.  Array position supplies the program-
+# owned field name, and the renderer expands only program-owned vocabulary.
+FAILURE_IDS: Mapping[str, str] = {
+    f"F{index}": key for index, key in enumerate(FAILURE_PATTERNS, start=1)
+}
+EDIT_IDS: Mapping[str, str] = {
+    f"E{index}": key for index, key in enumerate(BEHAVIORAL_CHANGES, start=1)
+}
+PRESERVE_IDS: Mapping[str, str] = {
+    f"P{index}": key for index, key in enumerate(PRESERVATION_PRIORITIES, start=1)
+}
+AVOID_IDS: Mapping[str, str] = {
+    f"A{index}": key for index, key in enumerate(AVOIDANCE_PRIORITIES, start=1)
+}
+
+
+@dataclass(frozen=True)
+class HypothesisSelectionV2:
+    failure_id: str
+    edit_id: str
+    preserve_id: str
+    avoid_id: str
+
+    def __post_init__(self) -> None:
+        for value, allowed, label in (
+            (self.failure_id, FAILURE_IDS, "failure_id"),
+            (self.edit_id, EDIT_IDS, "edit_id"),
+            (self.preserve_id, PRESERVE_IDS, "preserve_id"),
+            (self.avoid_id, AVOID_IDS, "avoid_id"),
+        ):
+            if value not in allowed:
+                raise ValueError(f"unknown hypothesis-interface-v2 {label}")
+
+    def identity(self) -> str:
+        payload = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        return sha256(payload.encode("utf-8")).hexdigest()
+
+    def materialize(self) -> EditHypothesis:
+        return EditHypothesis(
+            failure_pattern=FAILURE_IDS[self.failure_id],
+            behavioral_change=EDIT_IDS[self.edit_id],
+            preserve=PRESERVE_IDS[self.preserve_id],
+            avoid=AVOID_IDS[self.avoid_id],
+        )
+
+
+def parse_hypothesis_selection_v2(raw: str) -> HypothesisSelectionV2:
+    """Parse exact ``[F#, E#, P#, A#]`` JSON with no cleanup or aliases."""
+
+    try:
+        payload = json.loads(str(raw).strip())
+    except json.JSONDecodeError as exc:
+        raise ValueError("hypothesis-interface-v2 must be exact JSON") from exc
+    if (
+        not isinstance(payload, list)
+        or len(payload) != 4
+        or any(not isinstance(value, str) for value in payload)
+    ):
+        raise ValueError("hypothesis-interface-v2 schema mismatch")
+    return HypothesisSelectionV2(*payload)
+
+
+def render_contract_adapted_prompt_v2(
+    parent_prompt: str, selection: HypothesisSelectionV2
+) -> str:
+    return render_contract_adapted_prompt(parent_prompt, selection.materialize())
+
+
+def hypothesis_interface_v2_identity() -> str:
+    payload = {
+        "version": HYPOTHESIS_INTERFACE_V2_VERSION,
+        "wire_format": "exact_json_array_length_4",
+        "position_0": dict(FAILURE_IDS),
+        "position_1": dict(EDIT_IDS),
+        "position_2": dict(PRESERVE_IDS),
+        "position_3": dict(AVOID_IDS),
+        "cleanup": False,
+        "aliases": False,
+        "fallback": False,
+    }
+    return sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class SchemaQualificationV2Protocol:
+    request_count: int = 12
+    optimizer_model: str = "qwen3.7-flash"
+    temperature: float = 0.0
+    max_tokens: int = 64
+    evidence_kind: str = "synthetic_non_evaluation_symbolic"
+    strict_parser: bool = True
+    cleanup_enabled: bool = False
+    alias_mapping_enabled: bool = False
+    schema_retry_enabled: bool = False
+    solver_enabled: bool = False
+    validation_enabled: bool = False
+    test_enabled: bool = False
+    scientific_evidence_eligible: bool = False
+
+    def __post_init__(self) -> None:
+        if self.request_count != 12 or self.optimizer_model != "qwen3.7-flash":
+            raise ValueError("hypothesis-interface-v2 qualification freezes 12 qwen3.7-flash requests")
+        if self.temperature != 0.0 or self.max_tokens != 64:
+            raise ValueError("hypothesis-interface-v2 qualification decoding drift")
+        if self.evidence_kind != "synthetic_non_evaluation_symbolic":
+            raise ValueError("qualification may not use experiment evaluation evidence")
+        if not self.strict_parser:
+            raise ValueError("qualification parser must be strict")
+        if any((
+            self.cleanup_enabled,
+            self.alias_mapping_enabled,
+            self.schema_retry_enabled,
+            self.solver_enabled,
+            self.validation_enabled,
+            self.test_enabled,
+            self.scientific_evidence_eligible,
+        )):
+            raise ValueError("qualification must remain isolated and fail closed")
+
+    def identity(self) -> str:
+        payload = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        return sha256(payload.encode("utf-8")).hexdigest()
