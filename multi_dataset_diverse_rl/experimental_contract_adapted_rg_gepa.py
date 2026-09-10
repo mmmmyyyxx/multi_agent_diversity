@@ -110,6 +110,10 @@ class ContractAdaptedProtocolV2:
     proposal_engine: str = "contract_adapted_reflection"
     renderer_version: str = CONTRACT_ADAPTED_RENDERER_VERSION
     hypothesis_interface_version: str = HYPOTHESIS_INTERFACE_V2_VERSION
+    optimizer_model: str = "qwen3.7-flash"
+    reflection_temperature: float = 0.0
+    reflection_max_tokens: int = 64
+    reflection_role: str = "reflection"
     evaluation_mode: str = "progressive"
     selection_arms: tuple[str, str] = ("B0_PRIME_CURRENT", "B1_PRIME_TEAM_PARETO")
     solver_contract_id: str = COMMON_SOLVER_CONTRACT_V1_ID
@@ -129,6 +133,12 @@ class ContractAdaptedProtocolV2:
             raise ValueError("unknown contract-adapted v2 renderer")
         if self.hypothesis_interface_version != HYPOTHESIS_INTERFACE_V2_VERSION:
             raise ValueError("contract-adapted v2 requires hypothesis interface V2")
+        if self.optimizer_model != "qwen3.7-flash":
+            raise ValueError("contract-adapted v2 freezes qwen3.7-flash reflection")
+        if self.reflection_temperature != 0.0 or self.reflection_max_tokens != 64:
+            raise ValueError("contract-adapted v2 decoding drift")
+        if self.reflection_role != "reflection":
+            raise ValueError("contract-adapted v2 reflection role drift")
         if self.evaluation_mode != "progressive":
             raise ValueError("contract-adapted v2 freezes progressive evaluation")
         if self.selection_arms != ("B0_PRIME_CURRENT", "B1_PRIME_TEAM_PARETO"):
@@ -139,8 +149,24 @@ class ContractAdaptedProtocolV2:
             raise ValueError("contract-adapted v2 is non-committing and excludes validation, test, and memory")
 
     def identity(self) -> str:
-        payload = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        payload = json.dumps(
+            {
+                **asdict(self),
+                "hypothesis_interface_hash": hypothesis_interface_v2_identity(),
+                "renderer_vocabulary_hash": renderer_vocabulary_identity(),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
         return sha256(payload.encode("utf-8")).hexdigest()
+
+    @property
+    def hypothesis_interface_hash(self) -> str:
+        return hypothesis_interface_v2_identity()
+
+    @property
+    def renderer_vocabulary_hash(self) -> str:
+        return renderer_vocabulary_identity()
 
 
 @dataclass(frozen=True)
@@ -290,6 +316,38 @@ def hypothesis_interface_v2_identity() -> str:
         "fallback": False,
     }
     return sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def build_hypothesis_request_v2(
+    *,
+    responsibility_lane: str,
+    context_lines: tuple[str, ...],
+    mutation_index: int,
+) -> tuple[str, str]:
+    """Authoritative V2 wire request shared by qualification and science paths."""
+
+    if responsibility_lane not in {"coverage", "margin_support", "direct_flip"}:
+        raise ValueError("unknown V2 responsibility lane")
+    if not context_lines or any(not str(line).strip() for line in context_lines):
+        raise ValueError("V2 reflection context must contain non-empty lines")
+    if mutation_index not in {0, 1}:
+        raise ValueError("V2 mutation index must be 0 or 1")
+    system = (
+        "Select one bounded reasoning-edit hypothesis. Return only an exact JSON array of four "
+        "quoted IDs in this fixed order: failure, edit, preserve, avoid. Do not emit keys, prose, "
+        "markdown, explanations, or any additional value."
+    )
+    user = (
+        f"Allowed failure IDs: {','.join(FAILURE_IDS)}\n"
+        f"Allowed edit IDs: {','.join(EDIT_IDS)}\n"
+        f"Allowed preserve IDs: {','.join(PRESERVE_IDS)}\n"
+        f"Allowed avoid IDs: {','.join(AVOID_IDS)}\n"
+        f"Responsibility lane: {responsibility_lane}\n"
+        + "\n".join(context_lines)
+        + f"\nMutation index: {mutation_index}\n"
+        "Required wire shape example: [\"F1\",\"E1\",\"P1\",\"A1\"]"
+    )
+    return system, user
 
 
 @dataclass(frozen=True)

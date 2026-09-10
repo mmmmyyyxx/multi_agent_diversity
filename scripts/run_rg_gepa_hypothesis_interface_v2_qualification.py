@@ -21,11 +21,8 @@ if str(ROOT) not in sys.path:
 
 from multi_dataset_diverse_rl.config import Config  # noqa: E402
 from multi_dataset_diverse_rl.experimental_contract_adapted_rg_gepa import (  # noqa: E402
-    AVOID_IDS,
-    EDIT_IDS,
-    FAILURE_IDS,
-    PRESERVE_IDS,
     SchemaQualificationV2Protocol,
+    build_hypothesis_request_v2,
     hypothesis_interface_v2_identity,
     parse_hypothesis_selection_v2,
 )
@@ -74,22 +71,11 @@ def qualification_cases() -> list[dict[str, Any]]:
 
 
 def build_request(case: dict[str, Any]) -> tuple[str, str]:
-    system = (
-        "Select one bounded reasoning-edit hypothesis. Return only an exact JSON array of four "
-        "quoted IDs in this fixed order: failure, edit, preserve, avoid. Do not emit keys, prose, "
-        "markdown, explanations, or any additional value."
+    return build_hypothesis_request_v2(
+        responsibility_lane=str(case["lane"]),
+        context_lines=(f"Symbolic evidence: {case['symbolic_evidence']}",),
+        mutation_index=int(case["mutation_index"]),
     )
-    user = (
-        f"Allowed failure IDs: {','.join(FAILURE_IDS)}\n"
-        f"Allowed edit IDs: {','.join(EDIT_IDS)}\n"
-        f"Allowed preserve IDs: {','.join(PRESERVE_IDS)}\n"
-        f"Allowed avoid IDs: {','.join(AVOID_IDS)}\n"
-        f"Responsibility lane: {case['lane']}\n"
-        f"Symbolic evidence: {case['symbolic_evidence']}\n"
-        f"Mutation index: {case['mutation_index']}\n"
-        "Required wire shape example: [\"F1\",\"E1\",\"P1\",\"A1\"]"
-    )
-    return system, user
 
 
 class QualificationLedger:

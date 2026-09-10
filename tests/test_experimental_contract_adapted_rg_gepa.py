@@ -21,6 +21,7 @@ from multi_dataset_diverse_rl.experimental_contract_adapted_rg_gepa import (
     PRESERVE_IDS,
     PRESERVATION_PRIORITIES,
     SchemaQualificationV2Protocol,
+    build_hypothesis_request_v2,
     hypothesis_interface_v2_identity,
     parse_hypothesis_selection_v2,
     parse_edit_hypothesis,
@@ -162,3 +163,24 @@ def test_contract_adapted_scientific_protocol_v2_is_separate_and_frozen() -> Non
     assert v2.validation_enabled is False
     assert v2.test_enabled is False
     assert v2.memory_enabled is False
+    assert v2.optimizer_model == "qwen3.7-flash"
+    assert v2.reflection_temperature == 0.0
+    assert v2.reflection_max_tokens == 64
+    assert len(v2.hypothesis_interface_hash) == 64
+    assert len(v2.renderer_vocabulary_hash) == 64
+
+
+def test_v2_request_builder_is_shared_and_fail_closed() -> None:
+    system, user = build_hypothesis_request_v2(
+        responsibility_lane="coverage",
+        context_lines=("Symbolic evidence: one uncovered responsibility",),
+        mutation_index=0,
+    )
+    assert "exact JSON array" in system
+    assert '["F1","E1","P1","A1"]' in user
+    with pytest.raises(ValueError, match="responsibility lane"):
+        build_hypothesis_request_v2(
+            responsibility_lane="unknown",
+            context_lines=("evidence",),
+            mutation_index=0,
+        )
