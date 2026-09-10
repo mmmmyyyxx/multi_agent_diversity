@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "bytes": 503,
+      "path": "action_language.json",
+      "sha256": "0397bd82f583c0ef695b389be896acb3faf16fc1bac26f3fff45a55ff9ec74d4"
+    },
+    {
+      "bytes": 373,
+      "path": "fact_assertions.json",
+      "sha256": "f0c3a3d16f87242934ec7e16903196cf8db71372a89ae40ddea286b06e2b69a5"
+    },
+    {
+      "bytes": 998,
+      "path": "protocol.json",
+      "sha256": "0253549a92939edd8ea46f187884ff3f39b14efcc4c4fff7e9341ffed61d66e2"
+    },
+    {
+      "bytes": 210,
+      "path": "provenance.json",
+      "sha256": "a1252f24513965788c560e3a96d6612ccfa7e50cc183cf034ff7ab6877752448"
+    },
+    {
+      "bytes": 5337,
+      "path": "qualification_manifest.json",
+      "sha256": "7e70ccc4401cb2382c6576c72fb66c680658fe7afb34fe5cb749578f7fdd2a1d"
+    },
+    {
+      "bytes": 689,
+      "path": "README.md",
+      "sha256": "a9135175702220aed14b30779a1dd700fef866241d759c74ac2be29161484ad8"
+    }
+  ]
+}

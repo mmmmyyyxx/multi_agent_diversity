@@ -1,0 +1,34 @@
+{
+  "avoid_ids": [
+    "A1",
+    "A2",
+    "A3",
+    "A4"
+  ],
+  "edit_ids": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6"
+  ],
+  "failure_ids": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+  ],
+  "free_text_values": 0,
+  "interface_hash": "f2a9aec77879a466d75aa46506a98e7258ffe4ed2da6c88d19b0ce3366922b44",
+  "model_authored_keys": 0,
+  "preserve_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "representable_combinations": 576
+}

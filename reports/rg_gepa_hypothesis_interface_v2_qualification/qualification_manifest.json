@@ -1,0 +1,140 @@
+{
+  "cases": [
+    {
+      "lane": "coverage",
+      "mutation_index": 0,
+      "qualification_id": "Q01",
+      "symbolic_evidence": "one uncovered responsibility and one broad-behavior preservation concern"
+    },
+    {
+      "lane": "margin_support",
+      "mutation_index": 1,
+      "qualification_id": "Q02",
+      "symbolic_evidence": "one near-margin responsibility and one consistency preservation concern"
+    },
+    {
+      "lane": "direct_flip",
+      "mutation_index": 0,
+      "qualification_id": "Q03",
+      "symbolic_evidence": "one direct-flip responsibility and one unsupported-assumption concern"
+    },
+    {
+      "lane": "coverage",
+      "mutation_index": 1,
+      "qualification_id": "Q04",
+      "symbolic_evidence": "one uncovered responsibility and one broad-behavior preservation concern"
+    },
+    {
+      "lane": "margin_support",
+      "mutation_index": 0,
+      "qualification_id": "Q05",
+      "symbolic_evidence": "one near-margin responsibility and one consistency preservation concern"
+    },
+    {
+      "lane": "direct_flip",
+      "mutation_index": 1,
+      "qualification_id": "Q06",
+      "symbolic_evidence": "one direct-flip responsibility and one unsupported-assumption concern"
+    },
+    {
+      "lane": "coverage",
+      "mutation_index": 0,
+      "qualification_id": "Q07",
+      "symbolic_evidence": "one uncovered responsibility and one broad-behavior preservation concern"
+    },
+    {
+      "lane": "margin_support",
+      "mutation_index": 1,
+      "qualification_id": "Q08",
+      "symbolic_evidence": "one near-margin responsibility and one consistency preservation concern"
+    },
+    {
+      "lane": "direct_flip",
+      "mutation_index": 0,
+      "qualification_id": "Q09",
+      "symbolic_evidence": "one direct-flip responsibility and one unsupported-assumption concern"
+    },
+    {
+      "lane": "coverage",
+      "mutation_index": 1,
+      "qualification_id": "Q10",
+      "symbolic_evidence": "one uncovered responsibility and one broad-behavior preservation concern"
+    },
+    {
+      "lane": "margin_support",
+      "mutation_index": 0,
+      "qualification_id": "Q11",
+      "symbolic_evidence": "one near-margin responsibility and one consistency preservation concern"
+    },
+    {
+      "lane": "direct_flip",
+      "mutation_index": 1,
+      "qualification_id": "Q12",
+      "symbolic_evidence": "one direct-flip responsibility and one unsupported-assumption concern"
+    }
+  ],
+  "experiment_parent_states": 0,
+  "real_questions_or_answers": 0,
+  "request_hashes": [
+    {
+      "qualification_id": "Q01",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "6b5b61458761d0593e5dd722a17897d4eef97efe25a3c1365e79213a5b1a696c"
+    },
+    {
+      "qualification_id": "Q02",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "41f47b83344f27a350a612186afb0f3b7cd7ec46cd72d78d484fec9bb41e416e"
+    },
+    {
+      "qualification_id": "Q03",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "f43990b03b78c891e03b9701eab67bac4a20f5a0e98b283b5214be39271f6d81"
+    },
+    {
+      "qualification_id": "Q04",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "667f72510b8929a9adb0a8a6dc12068ab4d05d7614cdbdebd9cf6ca235867381"
+    },
+    {
+      "qualification_id": "Q05",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "fb575d63eb81fdd6ef4a78f125895d3090e42269b7208d51e7ad3cf5a478ca3b"
+    },
+    {
+      "qualification_id": "Q06",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "203c0cbc23d78d74276c2b222874b03b1f22291767f2848f782f3a46f88e98dd"
+    },
+    {
+      "qualification_id": "Q07",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "6b5b61458761d0593e5dd722a17897d4eef97efe25a3c1365e79213a5b1a696c"
+    },
+    {
+      "qualification_id": "Q08",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "41f47b83344f27a350a612186afb0f3b7cd7ec46cd72d78d484fec9bb41e416e"
+    },
+    {
+      "qualification_id": "Q09",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "f43990b03b78c891e03b9701eab67bac4a20f5a0e98b283b5214be39271f6d81"
+    },
+    {
+      "qualification_id": "Q10",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "667f72510b8929a9adb0a8a6dc12068ab4d05d7614cdbdebd9cf6ca235867381"
+    },
+    {
+      "qualification_id": "Q11",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "fb575d63eb81fdd6ef4a78f125895d3090e42269b7208d51e7ad3cf5a478ca3b"
+    },
+    {
+      "qualification_id": "Q12",
+      "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+      "user_hash": "203c0cbc23d78d74276c2b222874b03b1f22291767f2848f782f3a46f88e98dd"
+    }
+  ]
+}

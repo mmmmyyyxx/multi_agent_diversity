@@ -1,0 +1,6 @@
+{
+  "private_registry": "runs-only",
+  "qualification_context": "synthetic symbolic only",
+  "source_hold": "contract-adapted retry1 schema mismatch",
+  "source_hold_mechanism_evidence_eligible": false
+}

@@ -1,0 +1,27 @@
+{
+  "alias_mapping_enabled": false,
+  "cleanup_enabled": false,
+  "evidence_kind": "synthetic_non_evaluation_symbolic",
+  "fixed_parent_execution_after_pass": "requires separate freeze and authorization",
+  "interface_hash": "f2a9aec77879a466d75aa46506a98e7258ffe4ed2da6c88d19b0ce3366922b44",
+  "max_tokens": 64,
+  "optimizer_model": "qwen3.7-flash",
+  "protocol_hash": "3d3da6c2df654b37dc5cbe3411bf642cef16775a6e5256f50d0e5ba6f57b2930",
+  "qualification_pass_rule": "12_OF_12_STRICT_SCHEMA_VALID",
+  "request_count": 12,
+  "schema_retry_enabled": false,
+  "scientific_evidence_eligible": false,
+  "solver_enabled": false,
+  "strict_parser": true,
+  "temperature": 0.0,
+  "test_enabled": false,
+  "transport_retries": "provider-only; schema output is never retried",
+  "validation_enabled": false,
+  "wire_format": [
+    "failure_id",
+    "edit_id",
+    "preserve_id",
+    "avoid_id"
+  ],
+  "wire_representation": "exact JSON array; positions are program-owned fields"
+}
