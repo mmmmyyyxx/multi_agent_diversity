@@ -1,0 +1,16 @@
+{
+  "failed_provider_attempts": 0,
+  "input_tokens": 2028,
+  "output_tokens": 156,
+  "provider_attempts": 12,
+  "qualification_calls": 12,
+  "schema_invalid": 0,
+  "schema_valid": 12,
+  "scientific_evidence_eligible": false,
+  "solver_calls": 0,
+  "status": "PASS",
+  "successful_provider_calls": 12,
+  "test_calls": 0,
+  "total_tokens": 2184,
+  "validation_calls": 0
+}
