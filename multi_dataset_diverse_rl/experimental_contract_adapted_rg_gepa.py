@@ -102,6 +102,48 @@ class ContractAdaptedProtocol:
 
 
 @dataclass(frozen=True)
+class ContractAdaptedProtocolV2:
+    candidates_per_case: int = 2
+    case_count: int = 6
+    minibatch_size: int = 12
+    max_full_eval_candidates_per_case: int = 2
+    proposal_engine: str = "contract_adapted_reflection"
+    renderer_version: str = CONTRACT_ADAPTED_RENDERER_VERSION
+    hypothesis_interface_version: str = HYPOTHESIS_INTERFACE_V2_VERSION
+    evaluation_mode: str = "progressive"
+    selection_arms: tuple[str, str] = ("B0_PRIME_CURRENT", "B1_PRIME_TEAM_PARETO")
+    solver_contract_id: str = COMMON_SOLVER_CONTRACT_V1_ID
+    commit_enabled: bool = False
+    validation_enabled: bool = False
+    test_enabled: bool = False
+    memory_enabled: bool = False
+
+    def __post_init__(self) -> None:
+        if self.candidates_per_case != 2 or self.case_count != 6:
+            raise ValueError("contract-adapted v2 freezes six cases and two candidates per case")
+        if self.minibatch_size != 12 or self.max_full_eval_candidates_per_case != 2:
+            raise ValueError("contract-adapted v2 freezes progressive evaluation budgets")
+        if self.proposal_engine != "contract_adapted_reflection":
+            raise ValueError("unknown contract-adapted v2 proposal engine")
+        if self.renderer_version != CONTRACT_ADAPTED_RENDERER_VERSION:
+            raise ValueError("unknown contract-adapted v2 renderer")
+        if self.hypothesis_interface_version != HYPOTHESIS_INTERFACE_V2_VERSION:
+            raise ValueError("contract-adapted v2 requires hypothesis interface V2")
+        if self.evaluation_mode != "progressive":
+            raise ValueError("contract-adapted v2 freezes progressive evaluation")
+        if self.selection_arms != ("B0_PRIME_CURRENT", "B1_PRIME_TEAM_PARETO"):
+            raise ValueError("contract-adapted v2 freezes shared-pool selectors")
+        if self.solver_contract_id != COMMON_SOLVER_CONTRACT_V1_ID:
+            raise ValueError("contract-adapted v2 requires COMMON_SOLVER_CONTRACT_V1")
+        if self.commit_enabled or self.validation_enabled or self.test_enabled or self.memory_enabled:
+            raise ValueError("contract-adapted v2 is non-committing and excludes validation, test, and memory")
+
+    def identity(self) -> str:
+        payload = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        return sha256(payload.encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
 class EditHypothesis:
     failure_pattern: str
     behavioral_change: str

@@ -12,6 +12,7 @@ from multi_dataset_diverse_rl.experimental_contract_adapted_rg_gepa import (
     AVOID_IDS,
     BEHAVIORAL_CHANGES,
     ContractAdaptedProtocol,
+    ContractAdaptedProtocolV2,
     EDIT_IDS,
     EditHypothesis,
     FAILURE_PATTERNS,
@@ -149,3 +150,15 @@ def test_v2_schema_qualification_is_isolated_and_fail_closed() -> None:
     assert protocol.validation_enabled is False
     assert protocol.test_enabled is False
     assert len(protocol.identity()) == 64
+
+
+def test_contract_adapted_scientific_protocol_v2_is_separate_and_frozen() -> None:
+    v1 = ContractAdaptedProtocol()
+    v2 = ContractAdaptedProtocolV2()
+    assert v2.identity() != v1.identity()
+    assert v2.hypothesis_interface_version == "rg_gepa_hypothesis_interface_v2"
+    assert v2.selection_arms == v1.selection_arms
+    assert v2.commit_enabled is False
+    assert v2.validation_enabled is False
+    assert v2.test_enabled is False
+    assert v2.memory_enabled is False
