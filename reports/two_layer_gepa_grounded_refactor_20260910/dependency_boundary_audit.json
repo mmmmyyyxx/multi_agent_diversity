@@ -1,0 +1,84 @@
+{
+  "local_optimizer_files": [
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/config.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/legacy_tcs.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/registry.py"
+    },
+    {
+      "forbidden_imports": [],
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    }
+  ],
+  "status": "PASS",
+  "team_search_files": [
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/__init__.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/ledger.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/protocol.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "gepa_internal_imports": [],
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    }
+  ],
+  "violations": []
+}

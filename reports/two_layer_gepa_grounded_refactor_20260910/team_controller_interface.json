@@ -1,0 +1,15 @@
+{
+  "backend_specific_branching": false,
+  "canonical_runtime_modified": false,
+  "cycle": [
+    "responsibility_assignment",
+    "build_local_task",
+    "local_optimize",
+    "team_minibatch",
+    "team_full_evaluation",
+    "common_safe_selection",
+    "winner_only_shadow",
+    "atomic_commit"
+  ],
+  "local_best_equals_team_winner": false
+}

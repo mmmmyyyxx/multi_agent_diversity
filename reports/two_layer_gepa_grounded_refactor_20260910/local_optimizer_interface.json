@@ -1,0 +1,29 @@
+{
+  "backend_state_is_opaque_to_team_controller": true,
+  "call": "LocalPromptOptimizer.optimize(LocalOptimizationTask) -> LocalOptimizationResult",
+  "result_fields": [
+    "candidates",
+    "backend_name",
+    "backend_version",
+    "optimizer_state",
+    "solver_calls",
+    "optimizer_calls",
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "termination_reason"
+  ],
+  "returns_candidate_set_not_winner": true,
+  "task_fields": [
+    "task_id",
+    "parent_prompt",
+    "search_examples",
+    "local_validation_examples",
+    "optimization_context",
+    "solver_contract_id",
+    "output_contract_id",
+    "seed",
+    "budget",
+    "backend_state"
+  ]
+}

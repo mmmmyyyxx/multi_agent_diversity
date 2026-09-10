@@ -1,0 +1,26 @@
+{
+  "cache_hit_explicit": true,
+  "fields": [
+    "seed",
+    "update_index",
+    "target_member",
+    "local_optimizer_backend",
+    "local_search_id",
+    "local_candidate_id",
+    "local_parent_ids",
+    "local_generation",
+    "team_candidate_id",
+    "phase",
+    "evaluation_stage",
+    "logical_role",
+    "client_role",
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "logical_call_id",
+    "provider_attempt_id",
+    "cache_hit"
+  ],
+  "local_and_team_phases_separate": true,
+  "logical_and_provider_call_identity_separate": true
+}

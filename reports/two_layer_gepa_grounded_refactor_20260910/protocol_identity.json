@@ -1,0 +1,30 @@
+{
+  "dataset_contract_hash": "9d3ce4f10a62de187ddf28c2add501eed0ed2c9c727c3f01b2a10b9baa99c4f5",
+  "full_protocol_hash": "a6645d62f940c8c5a22a8ec49d2f7e6d8144ec7218fd20f12b47e8bb892d8809",
+  "hash_separation_asserted": true,
+  "local_optimizer_config": {
+    "acceptance_criterion": "strict_improvement",
+    "cache_evaluation": false,
+    "candidate_selection_strategy": "pareto",
+    "frontier_type": "instance",
+    "k_local_return": 4,
+    "max_prompt_chars": 3000,
+    "module_selector": "round_robin",
+    "reflection_minibatch_size": 3,
+    "use_merge": false
+  },
+  "local_optimizer_contract_hash": "3c83562ab77a18fa621d853195007f2068cdb5ec7beeea7ff86bc7fcaef1e046",
+  "protocol": "two_layer_rg_gepa_v1",
+  "solver_contract_hash": "8a2d151bd2993ed4837d61a87594263003db208f3cd873770c55e66b0be8a455",
+  "team_search_contract": {
+    "aggregation": "equal_weight_plurality_tie_abstain",
+    "max_full_candidates": 2,
+    "protocol_version": "two_layer_rg_gepa_v1",
+    "shadow_policy": "winner_only_shadow_gate_v1",
+    "target_policy": "current_responsibility_scheduler",
+    "team_minibatch_composition": "4_responsibility_4_coalition_4_preservation",
+    "team_minibatch_size": 12,
+    "team_selection": "current_common_safe"
+  },
+  "team_search_contract_hash": "5fb0dc2858ea237e51ada48fa2556fbcd4171a51749696a7d5d8e99a509728d4"
+}

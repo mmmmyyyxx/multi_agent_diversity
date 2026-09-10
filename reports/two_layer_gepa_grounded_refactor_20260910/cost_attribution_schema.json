@@ -1,0 +1,21 @@
+{
+  "fields": [
+    "local_optimizer_solver_calls",
+    "local_optimizer_meta_calls",
+    "local_optimizer_tokens",
+    "team_minibatch_solver_calls",
+    "team_full_solver_calls",
+    "team_shadow_solver_calls",
+    "team_tokens"
+  ],
+  "funnel": [
+    "GEPA proposals",
+    "GEPA accepted branches",
+    "local frontier size",
+    "returned local candidates",
+    "team minibatch survivors",
+    "full-team evaluated candidates",
+    "feasible candidates",
+    "committed candidate"
+  ]
+}

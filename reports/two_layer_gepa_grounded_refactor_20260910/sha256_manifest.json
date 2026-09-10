@@ -1,0 +1,79 @@
+{
+  "files": [
+    {
+      "bytes": 688,
+      "path": "architecture_before_after.md",
+      "sha256": "b772e6377cc09996537d643c74baa34997ea03bf46c07f4091dfda4901bc22f3"
+    },
+    {
+      "bytes": 512,
+      "path": "cost_attribution_schema.json",
+      "sha256": "3261da6d6e597db80ba2e5fe0c25717705506d875a4a6b16daed6f10df158659"
+    },
+    {
+      "bytes": 2399,
+      "path": "dependency_boundary_audit.json",
+      "sha256": "ae092e84e466f1938868215fb504f00e402c213dd895d32808a7157cfaa8ea93"
+    },
+    {
+      "bytes": 389,
+      "path": "fact_assertions.json",
+      "sha256": "da5a727781d12f0357d30fa09ae91baca1d47d27348dc1822414585bd3e9d0c7"
+    },
+    {
+      "bytes": 544,
+      "path": "gepa_fidelity_audit.json",
+      "sha256": "a1ca954912e5813f65e2362e37d594afc34440d3b999cb0792ecd4b14eb9477d"
+    },
+    {
+      "bytes": 451,
+      "path": "gepa_version_manifest.json",
+      "sha256": "a7ed59d8b30a66ba8ef8fe1eaf62cbf3915ae2f4a537e4c89276662659a7e4a3"
+    },
+    {
+      "bytes": 584,
+      "path": "ledger_schema.json",
+      "sha256": "09b3890a8cef0b0db583e88f19b65d6cee0a2ad7f6b4afed282128ff6b74bfbd"
+    },
+    {
+      "bytes": 300,
+      "path": "legacy_parity.json",
+      "sha256": "acf8e6d07542be20bcf15e830d47484efb3e68160a1bc252f674f05dfe920f02"
+    },
+    {
+      "bytes": 704,
+      "path": "local_optimizer_interface.json",
+      "sha256": "2ee6e7a9b153e7ec1b1c7a9c093f4d341e5f16899225228e1d63004667002738"
+    },
+    {
+      "bytes": 1369,
+      "path": "protocol_identity.json",
+      "sha256": "fb29ddb67ac5704e678b630e080f6acb2b60b30ac9b939319eed341c3e6b7808"
+    },
+    {
+      "bytes": 251,
+      "path": "provenance.json",
+      "sha256": "bf287ce667e1d83cf2e863001b32b123ea171e5464deaa8a2c27f59163369605"
+    },
+    {
+      "bytes": 1982,
+      "path": "README.md",
+      "sha256": "6ee0c6ba1b190f8f5319fbee4653c5acb54446c5f61c405e313b0c2d4f51583b"
+    },
+    {
+      "bytes": 494,
+      "path": "sanitization_manifest.json",
+      "sha256": "1931504968f225ccbf9408c64586400999aaca949aff4885b2d23e173ea64e31"
+    },
+    {
+      "bytes": 360,
+      "path": "team_controller_interface.json",
+      "sha256": "41158fe9765e080334ec5603c5bc3a4f0ccbc196ab8ba275d1619da3952c0f6d"
+    },
+    {
+      "bytes": 130,
+      "path": "test_summary.json",
+      "sha256": "5ef197ce98549c8283f0c422c544a4a5324b2124f23099f907c8c802d6bcaff4"
+    }
+  ]
+}
