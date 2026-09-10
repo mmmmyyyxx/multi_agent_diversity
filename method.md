@@ -17,6 +17,18 @@ The runtime also supports frozen experimental Module2 context variants C2 and
 C3 beside the byte-compatible C0/v15 path. These variants change generation
 context only and are not yet promoted to the canonical method.
 
+An opt-in candidate architecture, `two_layer_rg_gepa_v1`, separates the local
+prompt-optimization backbone from responsibility-guided team search. GEPA is
+the default local optimizer in that candidate architecture, not a proposed
+team-level contribution. It can be replaced by another local APO backend
+without changing responsibility, target assignment, team evaluation,
+Common-Safe selection, Shadow, or atomic write-back. The scientific Layer 2 is
+Responsibility-Guided Team Search: Member-Aware Responsibility,
+responsibility-conditioned local-task construction, team-aware candidate
+evaluation, and team-level selection/write-back. This architecture is not the
+canonical v15 runtime and requires a separately frozen experiment before
+promotion.
+
 The team contains five prompts and uses equal-weight plurality with
 tie-as-abstain. Model weights remain fixed. Every evaluated candidate changes
 one target prompt while holding four peers fixed.
