@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "bytes": 389,
+      "path": "fact_assertions.json",
+      "sha256": "d9ec40e196754e6142c6e2adbfb1d7afaaf595d8e11757a7443433e06ec5fdad"
+    },
+    {
+      "bytes": 2117,
+      "path": "fixed_parent_manifest.json",
+      "sha256": "86da312c3f16ed08f9979b76a203457c3779cd1f14412fdca2991321593cbae5"
+    },
+    {
+      "bytes": 590,
+      "path": "frozen_classifier.json",
+      "sha256": "881e084b9a75a65ed2df53e3fe93624b91fab943734688491dcf0c1409c429f4"
+    },
+    {
+      "bytes": 3125,
+      "path": "production_request_manifest.json",
+      "sha256": "bf488f08bb062806f79abf0a9edbca3fb76778f5e8e20afad8d0fa43d547864a"
+    },
+    {
+      "bytes": 1435,
+      "path": "protocol.json",
+      "sha256": "91db647c4aa9a6bd0bfca0656e86ae3a12cbfdc301cf3c2ca0d363ff9820dd4a"
+    },
+    {
+      "bytes": 241,
+      "path": "provenance.json",
+      "sha256": "624e9cd8cf9cc7a11be3cee7a93d726b23a25629a5bdbb012e8a87609988171d"
+    },
+    {
+      "bytes": 814,
+      "path": "README.md",
+      "sha256": "d4f81303c9abc7e77824991669443d45a47836ff5d53f1a5967b75264ca276d9"
+    }
+  ]
+}

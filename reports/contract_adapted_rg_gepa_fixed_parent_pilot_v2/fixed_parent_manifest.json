@@ -1,0 +1,56 @@
+[
+  {
+    "case_id": "seed76_u0_coverage_target1",
+    "minibatch_hash": "b80bf5c3a63bd4b84957ee72d021377819d5f784318443679dce42fa37a8a842",
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "responsibility_type": "coverage",
+    "seed": 76,
+    "target_member": 1,
+    "update_index": 0
+  },
+  {
+    "case_id": "seed76_u1_margin_support_target3",
+    "minibatch_hash": "559b76b104aa9669eec8c9c3629e3c348f306e33db7ac485439c5ed160451f80",
+    "parent_team_hash": "283953e039b38962380f8a0f52ed6451a3c450c4ad051b3e2f18eede46f80620",
+    "responsibility_type": "margin_support",
+    "seed": 76,
+    "target_member": 3,
+    "update_index": 1
+  },
+  {
+    "case_id": "seed76_u2_direct_flip_target1",
+    "minibatch_hash": "6fcacb32955a6ea6fd1ce128e1e1da233c16bcf8ca8fed117022f4abd5e16261",
+    "parent_team_hash": "5e8f53c735d3d82b6c59d93434dab7c5bf38e2c72e0446470214fa279d98ee73",
+    "responsibility_type": "direct_flip",
+    "seed": 76,
+    "target_member": 1,
+    "update_index": 2
+  },
+  {
+    "case_id": "seed77_u0_coverage_target2",
+    "minibatch_hash": "37a68ab8a66c0231b852f150962c8fe7f2ab11b7e761e7f29385290d171a3a40",
+    "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+    "responsibility_type": "coverage",
+    "seed": 77,
+    "target_member": 2,
+    "update_index": 0
+  },
+  {
+    "case_id": "seed77_u1_margin_support_target4",
+    "minibatch_hash": "b03a7f888d25c9fe8b6dab2c112c46ef65ac8f1ea5da070bcf572e2e85b951d4",
+    "parent_team_hash": "9ec0781de6dc82aafac8a901b224234d111b2fa87e6eb33c465e5aed97ea6aaf",
+    "responsibility_type": "margin_support",
+    "seed": 77,
+    "target_member": 4,
+    "update_index": 1
+  },
+  {
+    "case_id": "seed77_u3_direct_flip_target0",
+    "minibatch_hash": "2882f7c4df71488226ec1bc5c1888e6f94198df1285e3fe0405a1dd2707c4ceb",
+    "parent_team_hash": "d656261678e90de4c60421abb88b609e92598fa02cc8e7abf714de407b7f6e28",
+    "responsibility_type": "direct_flip",
+    "seed": 77,
+    "target_member": 0,
+    "update_index": 3
+  }
+]

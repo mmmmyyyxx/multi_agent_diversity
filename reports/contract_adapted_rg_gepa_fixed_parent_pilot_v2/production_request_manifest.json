@@ -1,0 +1,74 @@
+[
+  {
+    "candidate_index": 0,
+    "case_id": "seed76_u0_coverage_target1",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "0decaac8d6fb074de5f37dc988c0a81e3617f99fb6c3c4e543181160422aca69"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed76_u0_coverage_target1",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "d4d07d7bd9f7bde7791a41751057c302b219f4e075466017a4cd68520dbb219f"
+  },
+  {
+    "candidate_index": 0,
+    "case_id": "seed76_u1_margin_support_target3",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "19818b90cf6034813e0691a7e8bab02d77f5f492b64fcb51c092ed523d9a6a7e"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed76_u1_margin_support_target3",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "bc71f0cfbe63b6e64992bb9a937c22b92aac404153d09c9fe5ad71b600bb5d75"
+  },
+  {
+    "candidate_index": 0,
+    "case_id": "seed76_u2_direct_flip_target1",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "23c8d31f1da7d839a95efc008fd4c1489a76f24ad76dfe9dc87c3dfd35469865"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed76_u2_direct_flip_target1",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "f37088a292c787fcd25d5171d62567955dbef763c4becfaaecaa143baad4f7dd"
+  },
+  {
+    "candidate_index": 0,
+    "case_id": "seed77_u0_coverage_target2",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "ff8fa93c1a1ebb47eb0f336ade790a73e5a50962361a37038b5e9db1fb21cc98"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed77_u0_coverage_target2",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "e31b7f27e2fa6d89cb4c3ca02c2ee5b4ca1471d4ebd61e89c1f262dd43776851"
+  },
+  {
+    "candidate_index": 0,
+    "case_id": "seed77_u1_margin_support_target4",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "b10b9fed2d9e04575ee8a15104e2933875e3b3f121d595d6ef529f7f066f21fa"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed77_u1_margin_support_target4",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "1747916f8ad8c24330d04017151e16c2f781c219ec4a4f984e93eaf845a04781"
+  },
+  {
+    "candidate_index": 0,
+    "case_id": "seed77_u3_direct_flip_target0",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "e9354b558132833cf16cfe0895b954adbfc66de036515de8a2a80ae7142b4d5a"
+  },
+  {
+    "candidate_index": 1,
+    "case_id": "seed77_u3_direct_flip_target0",
+    "system_hash": "b58f8ee745465472e92b0ce9494656542ec71965bb46464ea3337806f6321b43",
+    "user_hash": "c0cefbbb09f9ac0f5839a206de9c3a157a39cff657178e1cbc40c0dfebdad23a"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "coalition_aware_pareto_claim_allowed": false,
+  "progressive_recall_denominator": "all_full_evaluated_feasible_candidates",
+  "proposal_quality_denominator": "all_12_full_evaluated_candidates",
+  "rules": [
+    "true feasible yield <=1 => ADAPTED_PROPOSAL_QUALITY_POOR",
+    "true feasible yield >=2 and any B0-prime/B1-prime difference => PARETO_SELECTION_DIFFERENTIATES",
+    "true feasible yield >=2 and no selector difference => PROPOSAL_SIGNAL_PARETO_NOT_NEEDED"
+  ],
+  "selection_pool": "promoted_and_feasible_only",
+  "validation_superiority_claim_allowed": false
+}

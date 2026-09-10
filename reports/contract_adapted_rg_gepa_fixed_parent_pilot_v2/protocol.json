@@ -1,0 +1,40 @@
+{
+  "all_candidates_full_evaluated": true,
+  "candidate_count": 12,
+  "candidates_per_case": 2,
+  "case_count": 6,
+  "commit_enabled": false,
+  "evaluation_mode": "progressive",
+  "hypothesis_interface_hash": "f2a9aec77879a466d75aa46506a98e7258ffe4ed2da6c88d19b0ce3366922b44",
+  "hypothesis_interface_version": "rg_gepa_hypothesis_interface_v2",
+  "max_full_eval_candidates_per_case": 2,
+  "memory_enabled": false,
+  "minibatch_size": 12,
+  "nonpromoted_full_results_audit_only": true,
+  "optimizer_model": "qwen3.7-flash",
+  "promotion_frozen_before_full_results": true,
+  "proposal_engine": "contract_adapted_reflection",
+  "protocol_hash": "eb6f1ce2ff99c45aa89e56fc2debb6f73c096a0acc4b1d8bd2fa58ce50262e91",
+  "reasoning_trace_generated": false,
+  "reflection_context": [
+    "parent_prompt",
+    "question",
+    "gold",
+    "target_prediction",
+    "target_correct",
+    "responsibility_source"
+  ],
+  "reflection_max_tokens": 64,
+  "reflection_role": "reflection",
+  "reflection_temperature": 0.0,
+  "renderer_version": "closed_vocabulary_renderer_v1",
+  "renderer_vocabulary_hash": "8f4c471647ca17858a8722990a9753a8c7c116f9acb295d55f6ec71ba9d7cfe9",
+  "selection_arms": [
+    "B0_PRIME_CURRENT",
+    "B1_PRIME_TEAM_PARETO"
+  ],
+  "selection_uses_promoted_candidates_only": true,
+  "solver_contract_id": "COMMON_SOLVER_CONTRACT_V1",
+  "test_enabled": false,
+  "validation_enabled": false
+}

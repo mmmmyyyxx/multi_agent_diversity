@@ -1,0 +1,14 @@
+{
+  "api_calls": 0,
+  "candidate_count": 12,
+  "case_count": 6,
+  "historical_artifacts_modified": 0,
+  "phase": "ZERO_API_PRE_API_REFREEZE",
+  "qualification": "PASS_12_OF_12",
+  "renderer_contract_violations": 0,
+  "source_hash_equality_required_at_execution": true,
+  "status": "PASS",
+  "structural_renderings_checked": 3456,
+  "test_calls": 0,
+  "validation_calls": 0
+}
