@@ -1,0 +1,29 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "binding_contract.json",
+      "sha256": "f1dbfe747ec4b876a2c952058038c90d7584a8251b3c9502f430bc56bc90c56e"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "aca352a964c22725745dd6e8771f9e9a870dcd9d2051a8363668b5ea4c964798"
+    },
+    {
+      "file": "preflight.json",
+      "sha256": "a704a1f7a13963061ffb654ccda79bd2c06d991153b4660041298325549ab9fa"
+    },
+    {
+      "file": "README.md",
+      "sha256": "21842b4e4fc10ed76e4a2933d5d4d8edfd9114779042849561ce7b49cc79330f"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "6483e9b978b2a248b70ac69880f311134b5dcabcab75e8803a3299ed4c292850"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "983806a66bc0d7326500c9bc45a879977100f661c4b2aabbdeba5820f0da1069"
+    }
+  ]
+}

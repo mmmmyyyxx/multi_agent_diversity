@@ -1,0 +1,11 @@
+{
+  "api_calls": 0,
+  "binding_preflight": "PASS",
+  "compileall": "PASS",
+  "focused_passed": 25,
+  "full_passed": 991,
+  "governance_preflight": "PASS",
+  "known_historical_failures": 1,
+  "test_calls": 0,
+  "validation_calls": 0
+}

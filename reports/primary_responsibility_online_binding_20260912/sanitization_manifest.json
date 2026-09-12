@@ -1,0 +1,22 @@
+{
+  "excluded": [
+    "prompts",
+    "questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "SQLite content",
+    "checkpoint content",
+    "absolute paths"
+  ],
+  "files_checked": [
+    "README.md",
+    "binding_contract.json",
+    "fact_assertions.json",
+    "preflight.json",
+    "test_summary.json"
+  ],
+  "status": "PASS"
+}

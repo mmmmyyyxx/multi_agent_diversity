@@ -1,0 +1,19 @@
+{
+  "api_calls": 0,
+  "assertions": {
+    "dual_branches_finish_before_mutation": true,
+    "eventual_write_back_terminology_frozen": true,
+    "exact_once_marker_checkpointed": true,
+    "local_gepa_unchanged": true,
+    "one_positive_score_keeps_two_targets": true,
+    "operational_abort_counter_neutral": true,
+    "prospective_budget_unfrozen": true,
+    "prospective_models_unfrozen": true,
+    "prospective_seeds_unfrozen": true,
+    "single_global_shadow": true,
+    "single_max_commit": true,
+    "test_calls_zero": true
+  },
+  "status": "PASS",
+  "validation_calls": 0
+}

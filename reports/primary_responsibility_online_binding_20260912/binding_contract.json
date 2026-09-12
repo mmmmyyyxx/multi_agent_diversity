@@ -1,0 +1,14 @@
+{
+  "api_authorized": false,
+  "branch_parent_semantics": "all_branches_evaluated_before_shadow_or_mutation",
+  "cross_branch_authority": "unchanged_common_safe_selector",
+  "local_optimizer_changed": false,
+  "max_commits_per_opportunity": 1,
+  "outcome_accounting": "exactly_once_per_update_index",
+  "prospective_execution_frozen": false,
+  "realizability_semantics": "eventual_write_back_realizability_v1",
+  "schema_version": "primary_responsibility_online_binding_contract_v1",
+  "shadow_semantics": "global_winner_only",
+  "target_count_contract": "always_two_targets",
+  "test_accessed": false
+}

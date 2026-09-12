@@ -50,7 +50,7 @@ artifacts:
   report: reports/primary_responsibility_persistent_realizability_v1_20260910
   online_binding_report: reports/primary_responsibility_online_binding_20260912
   provenance: reports/primary_responsibility_persistent_realizability_v1_20260910/provenance.json
-git: {design_commit: null, implementation_commit: null, result_commit: null}
+git: {design_commit: null, implementation_commit: bdd53bf354570bbb526ea6f9584721f45afe09a4, result_commit: null}
 result:
   classifier: ONLINE_BINDING_IMPLEMENTED__EXECUTION_NOT_FROZEN
   conclusion: The formula, persistent state, and exact-once dual-target online binding are implemented and pass zero-API tests; models, seeds, budget, API authorization, and prospective efficacy remain unfrozen.

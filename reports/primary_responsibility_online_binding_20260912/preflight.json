@@ -1,0 +1,38 @@
+{
+  "api_calls": 0,
+  "assertions": {
+    "api_authorized_false": true,
+    "budget_not_frozen": true,
+    "duplicate_outcome_fails_closed": true,
+    "exact_once_survives_checkpoint": true,
+    "manifest_status_implemented": true,
+    "models_not_frozen": true,
+    "prospective_seeds_not_frozen": true,
+    "protocol_freezes_always_two": true,
+    "protocol_uses_write_back_term": true,
+    "runtime_scheduler_identity": true,
+    "semantics_identity_persisted": true,
+    "single_positive_still_has_two_targets": true,
+    "test_policy_prohibited": true
+  },
+  "identities": {
+    "outcome_accounting": "exactly_once_per_update_index",
+    "realizability_semantics": "eventual_write_back_realizability_v1",
+    "scheduler": "primary_responsibility_persistent_realizability_v1",
+    "target_count_contract": "always_two_targets"
+  },
+  "schema_version": "primary_responsibility_online_binding_preflight_v1",
+  "source_sha256": {
+    "experiments/manifests/primary_responsibility_persistent_realizability_v1.yaml": "d5ca4e4f70b8b56067a9a9b8452ffc500b7a974a9688a8c53ac5eb2c31905d0c",
+    "experiments/primary_responsibility_persistent_realizability_v1/PROTOCOL.md": "08b2adbaac845e837d0db6d750f2981ad7bfdf185789028dc495b6d56a9f37ff",
+    "multi_dataset_diverse_rl/team_search/candidate_selector.py": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6",
+    "multi_dataset_diverse_rl/team_search/controller.py": "ee8449bb119988a0e81710bf650d9fc9343484f4b7c3643f074a7c2fc6211280",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py": "a6edcda90ae7774b2058306a2b1af8a3d054a3f3dbebf9798a2389d9ba564f35",
+    "multi_dataset_diverse_rl/team_search/task_builder.py": "450b504ccef77db2ad70a60e444ea14f43b0093bcbe95c6790e94c15c1b3c9db",
+    "multi_dataset_diverse_rl/versions.py": "e9330576c251d76366209238e4e66541cfa1bf29cb11ca2bb07c8a45e8e72dff"
+  },
+  "status": "PASS",
+  "test_calls": 0,
+  "validation_calls": 0
+}
