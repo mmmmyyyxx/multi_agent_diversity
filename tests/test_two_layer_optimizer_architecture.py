@@ -24,8 +24,16 @@ from multi_dataset_diverse_rl.local_optimizers.schemas import (
     LocalOptimizerBudget,
     LocalPromptCandidate,
 )
+from multi_dataset_diverse_rl.responsibility import MemberAwareRepairOpportunity
 from multi_dataset_diverse_rl.team_search.candidate_evaluator import EvaluationCost
 from multi_dataset_diverse_rl.team_search.controller import TeamSearchController
+from multi_dataset_diverse_rl.team_search.primary_responsibility_binding import (
+    PrimaryResponsibilityOnlineBinding,
+)
+from multi_dataset_diverse_rl.team_search.primary_responsibility_scheduler import (
+    DIRECT_FLIP,
+    PrimaryResponsibilityPersistentRealizabilityScheduler,
+)
 from multi_dataset_diverse_rl.team_search.protocol import TeamSearchContract, TwoLayerProtocolIdentity
 from multi_dataset_diverse_rl.team_search.schemas import (
     TeamEvidenceCase,
@@ -216,6 +224,9 @@ class StubOptimizer:
 
 
 class StubEvaluator:
+    def __init__(self):
+        self.shadow_targets = []
+
     def active_evaluation(self, assignment):
         del assignment
         return object()
@@ -230,7 +241,8 @@ class StubEvaluator:
         return object(), EvaluationCost(1, 2, 1)
 
     def evaluate_shadow(self, assignment, candidate):
-        del assignment, candidate
+        del candidate
+        self.shadow_targets.append(assignment.target_member)
         return SimpleNamespace(passed=True), EvaluationCost(1, 2, 1)
 
 
@@ -272,6 +284,185 @@ def test_team_controller_is_backend_agnostic() -> None:
     assert outcome.committed_candidate_id == "stub"
     assert outcome.funnel["committed_candidates"] == 1
     assert committer.ids == ["stub"]
+
+
+class StubPrimaryAssignmentFactory:
+    def __init__(self, evidence):
+        self.evidence = evidence
+
+    def build(self, *, request, summary):
+        del request
+        return TeamSearchAssignment(
+            summary.member_id,
+            f"parent-{summary.member_id}",
+            self.evidence,
+            "context",
+            f"responsibility-{summary.member_id}",
+            primary_responsibility_lane=summary.primary_lane,
+        )
+
+
+def test_primary_binding_runs_two_frozen_branches_and_records_once() -> None:
+    evidence = tuple(
+        TeamEvidenceCase(
+            f"e{i}", f"payload {i}", "A", None, None, "responsibility", (DIRECT_FLIP,)
+        )
+        for i in range(3)
+    )
+    evaluator = StubEvaluator()
+    committer = StubCommitter()
+    controller = TeamSearchController(
+        responsibility=StubResponsibility(None),
+        task_builder=LocalTaskBuilder(),
+        local_optimizer=StubOptimizer(),
+        evaluator=evaluator,
+        selector=StubSelector(),
+        committer=committer,
+    )
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+    binding = PrimaryResponsibilityOnlineBinding(
+        scheduler=scheduler,
+        assignment_factory=StubPrimaryAssignmentFactory(evidence),
+        controller=controller,
+    )
+    request = TeamSearchRequest(1, 0, "team", 10, COMMON_SOLVER_CONTRACT_V1_ID, "output")
+    opportunities = {
+        member: (
+            MemberAwareRepairOpportunity(
+                agent_id=member,
+                question_hash=f"q-{member}",
+                vote_flip_gain=1,
+                margin_gain=0,
+                member_error=True,
+                coverage_opportunity=False,
+                conversion_opportunity=False,
+                dominant_wrong_member=False,
+                unique_correct=False,
+                pivotal_correct=False,
+                oracle_soft_utility_gain=0.0,
+            ),
+        )
+        for member in range(5)
+    }
+    outcome = asyncio.run(
+        binding.run_opportunity(
+            request,
+            assigned=opportunities,
+            current_margin_by_question={f"q-{member}": -1 for member in range(5)},
+        )
+    )
+    selected = outcome.decision.selected_member_ids
+    assert len(selected) == 2
+    assert outcome.team_outcome.funnel["target_branches"] == 2
+    assert outcome.team_outcome.audit_metadata["selected_target_ids"] == selected
+    assert outcome.team_outcome.audit_metadata["committed_member_id"] == selected[0]
+    assert evaluator.shadow_targets == [selected[0]]
+    assert committer.ids == ["stub"]
+    assert scheduler.state.target_count_by_member[selected[0]] == 1
+    assert scheduler.state.commit_count_by_member[selected[0]] == 1
+    assert scheduler.state.failure_count_by_member[selected[0]] == 0
+    assert scheduler.state.failure_count_by_member[selected[1]] == 1
+    assert scheduler.state.completed_update_indices == {0}
+
+
+class FailingFrozenController:
+    async def run_frozen_opportunity(self, request, assignments):
+        del request, assignments
+        raise RuntimeError("synthetic operational abort")
+
+
+class NoWinnerSelector(StubSelector):
+    def select(self, records):
+        del records
+        return None
+
+
+def test_primary_binding_records_valid_no_commit_for_both_targets() -> None:
+    evidence = tuple(
+        TeamEvidenceCase(
+            f"e{i}", f"payload {i}", "A", None, None, "responsibility", (DIRECT_FLIP,)
+        )
+        for i in range(3)
+    )
+    controller = TeamSearchController(
+        responsibility=StubResponsibility(None),
+        task_builder=LocalTaskBuilder(),
+        local_optimizer=StubOptimizer(),
+        evaluator=StubEvaluator(),
+        selector=NoWinnerSelector(),
+        committer=StubCommitter(),
+    )
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+    binding = PrimaryResponsibilityOnlineBinding(
+        scheduler=scheduler,
+        assignment_factory=StubPrimaryAssignmentFactory(evidence),
+        controller=controller,
+    )
+    request = TeamSearchRequest(3, 1, "team", 10, COMMON_SOLVER_CONTRACT_V1_ID, "output")
+    opportunities = {
+        member: (
+            MemberAwareRepairOpportunity(
+                agent_id=member,
+                question_hash=f"no-commit-{member}",
+                vote_flip_gain=1,
+                margin_gain=0,
+                member_error=True,
+                coverage_opportunity=False,
+                conversion_opportunity=False,
+                dominant_wrong_member=False,
+                unique_correct=False,
+                pivotal_correct=False,
+                oracle_soft_utility_gain=0.0,
+            ),
+        )
+        for member in range(5)
+    }
+    result = asyncio.run(
+        binding.run_opportunity(
+            request,
+            assigned=opportunities,
+            current_margin_by_question={f"no-commit-{member}": -1 for member in range(5)},
+        )
+    )
+    assert result.team_outcome.committed_candidate_id is None
+    assert result.team_outcome.cost.team_shadow_solver_calls == 0
+    assert all(
+        scheduler.state.failure_count_by_member[member] == 1
+        for member in result.decision.selected_member_ids
+    )
+    assert scheduler.state.completed_update_indices == {1}
+
+
+def test_primary_binding_records_operational_abort_without_counter_change() -> None:
+    evidence = (
+        TeamEvidenceCase("e", "payload", "A", None, None, "preservation", ()),
+    )
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+    binding = PrimaryResponsibilityOnlineBinding(
+        scheduler=scheduler,
+        assignment_factory=StubPrimaryAssignmentFactory(evidence),
+        controller=FailingFrozenController(),  # type: ignore[arg-type]
+    )
+    request = TeamSearchRequest(2, 4, "team", 10, COMMON_SOLVER_CONTRACT_V1_ID, "output")
+    before = dict(scheduler.state.failure_count_by_member)
+    with pytest.raises(RuntimeError, match="synthetic"):
+        asyncio.run(
+            binding.run_opportunity(
+                request,
+                assigned={},
+                current_margin_by_question={},
+            )
+        )
+    assert scheduler.state.failure_count_by_member == before
+    assert scheduler.state.completed_update_indices == {4}
+    with pytest.raises(ValueError, match="already recorded"):
+        asyncio.run(
+            binding.run_opportunity(
+                request,
+                assigned={},
+                current_margin_by_question={},
+            )
+        )
 
 
 def _imports(path: Path) -> set[str]:

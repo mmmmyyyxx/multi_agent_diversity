@@ -1,11 +1,12 @@
 schema_version: experiment_manifest_v1
 experiment_id: primary_responsibility_persistent_realizability_v1
 title: Primary Responsibility and Persistent Realizability Target Scheduler
-status: PREREGISTERED
+status: IMPLEMENTED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-10T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-12T19:10:20+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-12T21:00:00+08:00'}
 lineage: {parents: [vote_aligned_confirmatory_seed76_77_v1], derives_from: vote_aligned_confirmatory_seed76_77_v1}
 scientific_question: Does Layer-2 target allocation improve when primary responsibility value is discounted by persistent member-local empirical realizability?
 hypotheses:
@@ -13,7 +14,7 @@ hypotheses:
   - The new scheduler reduces solver calls and tokens per successful commit.
   - Improved realizability does not systematically degrade team Vote, MeanMember, or Oracle.
 design:
-  changed: [Layer-2 responsibility summary, target member selection, persistent member-local realizability state]
+  changed: [Layer-2 responsibility summary, target member selection, persistent member-local write-back realizability state]
   unchanged: [five-agent equal plurality, official GEPA, candidate generation, GEPA budget and frontier, TeamMiniBatch12, full-team evaluation, Common-Safe, Shadow, commit criteria, solver contract]
   arms: [A_CURRENT_GEPA_SCHEDULER, B_PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY]
   forbidden_changes: [canonical v15, historical P0/P1, GEPA internals, UCB, bandit, cooldown, EMA, Bayesian posterior, lane-specific realizability, adaptive budget, exploration bonus, new diversity metric, validation selection, Test50 access]
@@ -45,11 +46,12 @@ selection:
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/primary_responsibility_persistent_realizability_v1/PROTOCOL.md, sha256: 39ab63a184411869a1125cb8ad8393d1bd3eaca06f3ccbfe60de6624bfdf6263}
+  preregistration: {path: experiments/primary_responsibility_persistent_realizability_v1/PROTOCOL.md, sha256: 4c22bb71079d0a9b46c2e2e314d9a5dbb4387759d2f365203635d13a63a2e070}
   report: reports/primary_responsibility_persistent_realizability_v1_20260910
+  online_binding_report: reports/primary_responsibility_online_binding_20260912
   provenance: reports/primary_responsibility_persistent_realizability_v1_20260910/provenance.json
-git: {design_commit: null, implementation_commit: 3044c3a137a1a029f1c2b79564f4e4d01219ad56, result_commit: null}
+git: {design_commit: null, implementation_commit: null, result_commit: null}
 result:
-  classifier: RETROSPECTIVE_FORMULA_AUDIT_PASS__PROSPECTIVE_NOT_RUN
-  conclusion: The implementation and historical counterfactual allocation audit pass, but no online efficacy or team-outcome claim exists before the separately authorized prospective A/B.
+  classifier: ONLINE_BINDING_IMPLEMENTED__EXECUTION_NOT_FROZEN
+  conclusion: The formula, persistent state, and exact-once dual-target online binding are implemented and pass zero-API tests; models, seeds, budget, API authorization, and prospective efficacy remain unfrozen.
   evidence_type: retrospective

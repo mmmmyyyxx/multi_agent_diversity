@@ -150,6 +150,13 @@ def test_unselected_and_operational_abort_are_unchanged() -> None:
     )
     assert scheduler.state.failure_count_by_member == before
     assert 0 in decision.selected_member_ids
+    with pytest.raises(ValueError, match="already recorded"):
+        scheduler.record_outcome(
+            decision=decision,
+            update_index=0,
+            committed_member_id=None,
+            valid_outcome=False,
+        )
 
 
 def test_persistent_state_checkpoint_round_trip_has_no_team_hash_reset_key() -> None:
@@ -160,10 +167,30 @@ def test_persistent_state_checkpoint_round_trip_has_no_team_hash_reset_key() -> 
     scheduler.state.primary_lane_target_counts[DIRECT_FLIP] = 4
     scheduler.state.primary_lane_commit_counts[DIRECT_FLIP] = 1
     scheduler.state.rr_cursor = 9
+    scheduler.state.completed_update_indices.add(8)
     payload = scheduler.state.checkpoint_payload()
     assert not any("team_hash" in key for key in payload)
     restored = PersistentRealizabilityState.from_checkpoint_payload(payload, member_ids=(0, 1))
     assert restored.checkpoint_payload() == payload
+    assert restored.completed_update_indices == {8}
+
+
+def test_one_positive_score_still_selects_two_targets_for_compute_parity() -> None:
+    rows, margins = assigned(1, 0, 0, 0)
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+    decision = scheduler.select(
+        assigned=rows,
+        current_margin_by_question=margins,
+        seed=9,
+        update_index=3,
+    )
+    assert len(decision.selected_member_ids) == 2
+    assert decision.selected_member_ids[0] == 0
+    assert next(
+        row.target_score
+        for row in decision.summaries
+        if row.member_id == decision.selected_member_ids[1]
+    ) == 0
 
 
 def test_all_zero_uses_existing_deterministic_fallback_order() -> None:

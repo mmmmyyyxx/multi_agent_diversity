@@ -17,6 +17,7 @@ from ..versions import (
     PRIMARY_RESPONSIBILITY_DIRECT_WEIGHT,
     PRIMARY_RESPONSIBILITY_NEAR_MARGIN_WEIGHT,
     PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+    PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
 )
 from ..vote_aligned_scheduler import classify_opportunity_lane
 
@@ -79,6 +80,7 @@ class PersistentRealizabilityState:
     primary_lane_target_counts: dict[str, int] = field(default_factory=dict)
     primary_lane_commit_counts: dict[str, int] = field(default_factory=dict)
     transitions: list[RealizabilityTransition] = field(default_factory=list)
+    completed_update_indices: set[int] = field(default_factory=set)
 
     def initialize(self, member_ids: Sequence[int]) -> None:
         for member_id in map(int, member_ids):
@@ -92,24 +94,28 @@ class PersistentRealizabilityState:
     def checkpoint_payload(self) -> dict[str, object]:
         """Return a JSON-safe resume payload with no team-hash coupling."""
         return {
-            "schema_version": "persistent_member_realizability_state_v1",
+            "schema_version": "persistent_member_realizability_state_v2",
             "scheduler_version": PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+            "realizability_semantics": PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
             "failure_count_by_member": dict(self.failure_count_by_member),
             "rr_cursor": int(self.rr_cursor),
             "target_count_by_member": dict(self.target_count_by_member),
             "commit_count_by_member": dict(self.commit_count_by_member),
             "primary_lane_target_counts": dict(self.primary_lane_target_counts),
             "primary_lane_commit_counts": dict(self.primary_lane_commit_counts),
+            "completed_update_indices": sorted(self.completed_update_indices),
         }
 
     @classmethod
     def from_checkpoint_payload(
         cls, payload: Mapping[str, object], *, member_ids: Sequence[int]
     ) -> "PersistentRealizabilityState":
-        if payload.get("schema_version") != "persistent_member_realizability_state_v1":
+        if payload.get("schema_version") != "persistent_member_realizability_state_v2":
             raise ValueError("persistent realizability checkpoint schema mismatch")
         if payload.get("scheduler_version") != PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION:
             raise ValueError("persistent realizability scheduler version mismatch")
+        if payload.get("realizability_semantics") != PERSISTENT_REALIZABILITY_SEMANTICS_VERSION:
+            raise ValueError("persistent realizability semantics version mismatch")
 
         def member_counts(key: str) -> dict[int, int]:
             value = payload.get(key)
@@ -136,9 +142,14 @@ class PersistentRealizabilityState:
             commit_count_by_member=member_counts("commit_count_by_member"),
             primary_lane_target_counts=lane_counts("primary_lane_target_counts"),
             primary_lane_commit_counts=lane_counts("primary_lane_commit_counts"),
+            completed_update_indices={
+                int(index) for index in payload.get("completed_update_indices", ())
+            },
         )
         if state.rr_cursor < 0:
             raise ValueError("persistent realizability rr cursor cannot be negative")
+        if any(index < 0 for index in state.completed_update_indices):
+            raise ValueError("completed update indices cannot be negative")
         expected = set(map(int, member_ids))
         for key, value in (
             ("failure", state.failure_count_by_member),
@@ -319,17 +330,24 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
         committed_member_id: int | None,
         valid_outcome: bool,
     ) -> tuple[RealizabilityTransition, ...]:
-        """Apply only a valid completed optimization outcome.
+        """Record one durable outcome for one opportunity exactly once.
 
         A selected member resets only on its own successful commit.  A teammate
         commit does not reset it; an operational abort changes no counter.
         """
+        normalized_update_index = int(update_index)
+        if normalized_update_index in self.state.completed_update_indices:
+            raise ValueError("optimization opportunity outcome was already recorded")
+        if decision.scheduler_version != self.version:
+            raise ValueError("frozen decision scheduler version mismatch")
         by_member = {row.member_id: row for row in decision.summaries}
         selected = set(decision.selected_member_ids)
         if committed_member_id is not None and committed_member_id not in selected:
             raise ValueError("committed member must be one of the frozen targets")
         if committed_member_id is not None and not valid_outcome:
             raise ValueError("operational abort cannot contain a commit")
+        if set(by_member) != set(self.member_ids):
+            raise ValueError("frozen decision member identity mismatch")
         emitted: list[RealizabilityTransition] = []
         for member_id in self.member_ids:
             before = self.state.failure_count_by_member[member_id]
@@ -346,7 +364,7 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
                     self.state.primary_lane_commit_counts[lane] += 1
             self.state.failure_count_by_member[member_id] = after
             transition = RealizabilityTransition(
-                update_index=int(update_index),
+                update_index=normalized_update_index,
                 member_id=member_id,
                 selected=is_selected,
                 committed=committed,
@@ -359,6 +377,7 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
             )
             self.state.transitions.append(transition)
             emitted.append(transition)
+        self.state.completed_update_indices.add(normalized_update_index)
         return tuple(emitted)
 
     def telemetry_summary(self) -> dict[str, object]:
@@ -374,6 +393,7 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
             gini = sum(abs(a - b) for a in values for b in values) / (2 * len(values) * total)
         return {
             "scheduler_version": self.version,
+            "realizability_semantics": PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
             "target_count_by_member": targets,
             "commit_count_by_member": commits,
             "target_to_commit_rate_by_member": {
