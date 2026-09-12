@@ -1,0 +1,6 @@
+{
+  "backend_independent": true,
+  "formula": "R_i=1/(1+f_i)",
+  "persistent_across_team_state_changes": true,
+  "stage_specific_failure_weights": false
+}

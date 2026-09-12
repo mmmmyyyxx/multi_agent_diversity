@@ -1,0 +1,8 @@
+{
+  "operational_abort": "unchanged",
+  "selected_no_commit_valid_outcome": "increment_one",
+  "selected_own_commit": "reset_to_zero",
+  "team_hash_change": "unchanged",
+  "teammate_commit": "unchanged",
+  "unselected": "unchanged"
+}

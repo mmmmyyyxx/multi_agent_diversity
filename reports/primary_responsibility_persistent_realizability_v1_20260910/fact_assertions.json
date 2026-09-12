@@ -1,0 +1,15 @@
+{
+  "allocation_changed_count": 29,
+  "api_calls": 0,
+  "counterfactual_outcomes_observed": false,
+  "counterfactual_target_gini": 0.15757575757575756,
+  "counterfactual_target_slots_with_prior_failure": 26,
+  "historical_artifacts_modified": 0,
+  "historical_target_gini": 0.24848484848484848,
+  "historical_target_slots_with_prior_failure": 45,
+  "member_summary_count": 165,
+  "opportunity_count": 33,
+  "status": "PASS",
+  "test50_calls": 0,
+  "validation_calls": 0
+}

@@ -1,0 +1,23 @@
+{
+  "canonical_v15_modified": false,
+  "legacy_vote_aligned_modified": false,
+  "local_optimizer_contract_hash_after": "3c83562ab77a18fa621d853195007f2068cdb5ec7beeea7ff86bc7fcaef1e046",
+  "local_optimizer_contract_hash_before": "3c83562ab77a18fa621d853195007f2068cdb5ec7beeea7ff86bc7fcaef1e046",
+  "local_optimizer_contract_unchanged": true,
+  "team_search_contract_changed": true,
+  "team_search_contract_hash_after": "8b7a303ca8f778529de308be49a710ec7834ca8ac36062763d303abb7c4ca58d",
+  "team_search_contract_hash_before": "5fb0dc2858ea237e51ada48fa2556fbcd4171a51749696a7d5d8e99a509728d4",
+  "unchanged_components": [
+    "official_gepa",
+    "candidate_generation",
+    "gepa_budget",
+    "gepa_frontier",
+    "TeamMiniBatch12",
+    "Full Team Evaluation",
+    "Common-Safe",
+    "Shadow",
+    "commit criteria",
+    "plurality voting",
+    "solver contract"
+  ]
+}

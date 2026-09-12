@@ -1,0 +1,34 @@
+{
+  "api_calls": 0,
+  "audited_seeds": [
+    76,
+    77
+  ],
+  "historical_sources_modified": 0,
+  "seed75_source_status": "NO_NONEMPTY_AUTHORITATIVE_TARGET_SNAPSHOT_AVAILABLE",
+  "source_commit": "3044c3a137a1a029f1c2b79564f4e4d01219ad56",
+  "sources": [
+    {
+      "bytes": 22425,
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/target_priority_audit.jsonl",
+      "sha256": "d6478fb88918f04a439bad319900bbde52d750ed3c2f80b717522fcec68ea37b"
+    },
+    {
+      "bytes": 17493,
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed76/P1_SHADOW_VOTE_ALIGNED_GENERIC/dual_target_commit_decisions.jsonl",
+      "sha256": "95726b83427e5d3ccf06676c2bb9b8ca3669e2b8f1345058f2ca5ab91d418bf5"
+    },
+    {
+      "bytes": 21164,
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/target_priority_audit.jsonl",
+      "sha256": "09c4b22d405f7e6d28cc7684f23c5e9f94648159cf80566ed6e70a76bc96f648"
+    },
+    {
+      "bytes": 16838,
+      "path": "runs/vote_aligned_confirmatory_seed76_77_v1/seed77/P1_SHADOW_VOTE_ALIGNED_GENERIC/dual_target_commit_decisions.jsonl",
+      "sha256": "532df6894104d87ee9a75001da6e180064e14a73184b1bbe7e2dec8f3f3c70d8"
+    }
+  ],
+  "test50_calls": 0,
+  "validation_calls": 0
+}

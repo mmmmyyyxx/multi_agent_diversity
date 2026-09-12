@@ -1,0 +1,32 @@
+{
+  "excluded": [
+    "prompts",
+    "questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "SQLite content",
+    "checkpoint content",
+    "absolute paths"
+  ],
+  "files_checked": [
+    "fact_assertions.json",
+    "lane_distribution_summary.json",
+    "member_realizability_trajectory.csv",
+    "member_responsibility_summaries.csv",
+    "prospective_ab_preregistration.json",
+    "protocol_identity.json",
+    "provenance.json",
+    "README.md",
+    "realizability_definition.json",
+    "reset_semantics.json",
+    "retrospective_target_allocations.csv",
+    "scheduler_definition.json",
+    "target_concentration_summary.json",
+    "test_summary.json",
+    "weight_definition.json"
+  ],
+  "status": "PASS"
+}

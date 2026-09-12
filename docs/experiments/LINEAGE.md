@@ -32,6 +32,7 @@ graph TD
   vote_aligned_generic_shadow_pilot_v1["vote_aligned_generic_shadow_pilot_v1"] -->|followup_of| vote_aligned_seed75_static_control["vote_aligned_seed75_static_control"]
   vote_aligned_generic_shadow_pilot_v1["vote_aligned_generic_shadow_pilot_v1"] -->|followup_of| vote_aligned_confirmatory_seed76_77_v1["vote_aligned_confirmatory_seed76_77_v1"]
   vote_aligned_seed75_static_control["vote_aligned_seed75_static_control"] -->|followup_of| vote_aligned_confirmatory_seed76_77_v1["vote_aligned_confirmatory_seed76_77_v1"]
+  vote_aligned_confirmatory_seed76_77_v1["vote_aligned_confirmatory_seed76_77_v1"] -->|derived_experiment| primary_responsibility_persistent_realizability_v1["primary_responsibility_persistent_realizability_v1"]
 ```
 
 ## Topological order
@@ -61,3 +62,4 @@ graph TD
 23. `vote_aligned_generic_shadow_pilot_v1`
 24. `vote_aligned_seed75_static_control`
 25. `vote_aligned_confirmatory_seed76_77_v1`
+26. `primary_responsibility_persistent_realizability_v1`

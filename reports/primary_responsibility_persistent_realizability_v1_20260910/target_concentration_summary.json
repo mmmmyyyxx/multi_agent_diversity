@@ -1,0 +1,203 @@
+{
+  "by_seed": {
+    "76": {
+      "allocation_changed_count": 16,
+      "counterfactual": {
+        "counts": {
+          "0": 10,
+          "1": 7,
+          "2": 1,
+          "3": 9,
+          "4": 7
+        },
+        "entropy": 1.4662542242414314,
+        "gini": 0.23529411764705882,
+        "total_target_slots": 34
+      },
+      "counterfactual_primary_lane_target_counts": {
+        "coverage": 3,
+        "direct_flip": 23,
+        "fallback": 1,
+        "near_margin": 7
+      },
+      "counterfactual_target_slots_with_prior_failure": 12,
+      "historical": {
+        "counts": {
+          "0": 5,
+          "1": 11,
+          "2": 2,
+          "3": 1,
+          "4": 15
+        },
+        "entropy": 1.278387438127761,
+        "gini": 0.43529411764705883,
+        "total_target_slots": 34
+      },
+      "historical_policy_realizability_telemetry": {
+        "commit_count_by_member": {
+          "0": 1,
+          "1": 2,
+          "2": 1,
+          "3": 1,
+          "4": 3
+        },
+        "primary_lane_commit_counts": {
+          "coverage": 1,
+          "direct_flip": 6,
+          "fallback": 1,
+          "near_margin": 0
+        },
+        "primary_lane_target_counts": {
+          "coverage": 3,
+          "direct_flip": 30,
+          "fallback": 1,
+          "near_margin": 0
+        },
+        "scheduler_version": "primary_responsibility_persistent_realizability_v1",
+        "target_count_by_member": {
+          "0": 5,
+          "1": 11,
+          "2": 2,
+          "3": 1,
+          "4": 15
+        },
+        "target_entropy": 1.278387438127761,
+        "target_gini": 0.43529411764705883,
+        "target_to_commit_rate_by_member": {
+          "0": 0.2,
+          "1": 0.18181818181818182,
+          "2": 0.5,
+          "3": 1.0,
+          "4": 0.2
+        }
+      },
+      "historical_primary_lane_target_counts": {
+        "coverage": 3,
+        "direct_flip": 30,
+        "fallback": 1,
+        "near_margin": 0
+      },
+      "historical_target_slots_with_prior_failure": 22,
+      "max_consecutive_opportunities_without_selection": {
+        "counterfactual": {
+          "0": 6,
+          "1": 6,
+          "2": 15,
+          "3": 7,
+          "4": 6
+        },
+        "historical": {
+          "0": 3,
+          "1": 1,
+          "2": 15,
+          "3": 15,
+          "4": 2
+        }
+      },
+      "opportunities": 17,
+      "primary_runner_up_gap_le_one_count": 0,
+      "primary_runner_up_tie_count": 0
+    },
+    "77": {
+      "allocation_changed_count": 13,
+      "counterfactual": {
+        "counts": {
+          "0": 2,
+          "1": 7,
+          "2": 7,
+          "3": 3,
+          "4": 13
+        },
+        "entropy": 1.426072935271646,
+        "gini": 0.325,
+        "total_target_slots": 32
+      },
+      "counterfactual_primary_lane_target_counts": {
+        "coverage": 4,
+        "direct_flip": 20,
+        "fallback": 2,
+        "near_margin": 6
+      },
+      "counterfactual_target_slots_with_prior_failure": 14,
+      "historical": {
+        "counts": {
+          "0": 13,
+          "1": 1,
+          "2": 9,
+          "3": 3,
+          "4": 6
+        },
+        "entropy": 1.36680601141227,
+        "gini": 0.375,
+        "total_target_slots": 32
+      },
+      "historical_policy_realizability_telemetry": {
+        "commit_count_by_member": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "primary_lane_commit_counts": {
+          "coverage": 1,
+          "direct_flip": 3,
+          "fallback": 1,
+          "near_margin": 0
+        },
+        "primary_lane_target_counts": {
+          "coverage": 4,
+          "direct_flip": 26,
+          "fallback": 2,
+          "near_margin": 0
+        },
+        "scheduler_version": "primary_responsibility_persistent_realizability_v1",
+        "target_count_by_member": {
+          "0": 13,
+          "1": 1,
+          "2": 9,
+          "3": 3,
+          "4": 6
+        },
+        "target_entropy": 1.36680601141227,
+        "target_gini": 0.375,
+        "target_to_commit_rate_by_member": {
+          "0": 0.07692307692307693,
+          "1": 1.0,
+          "2": 0.1111111111111111,
+          "3": 0.3333333333333333,
+          "4": 0.16666666666666666
+        }
+      },
+      "historical_primary_lane_target_counts": {
+        "coverage": 4,
+        "direct_flip": 26,
+        "fallback": 2,
+        "near_margin": 0
+      },
+      "historical_target_slots_with_prior_failure": 23,
+      "max_consecutive_opportunities_without_selection": {
+        "counterfactual": {
+          "0": 11,
+          "1": 7,
+          "2": 6,
+          "3": 13,
+          "4": 3
+        },
+        "historical": {
+          "0": 3,
+          "1": 13,
+          "2": 3,
+          "3": 13,
+          "4": 2
+        }
+      },
+      "opportunities": 16,
+      "primary_runner_up_gap_le_one_count": 0,
+      "primary_runner_up_tie_count": 0
+    }
+  },
+  "counterfactual_outcomes_observed": false,
+  "evidence_type": "RETROSPECTIVE_COUNTERFACTUAL_TARGET_ALLOCATION",
+  "target_starvation_is_prospective_unknown": true
+}

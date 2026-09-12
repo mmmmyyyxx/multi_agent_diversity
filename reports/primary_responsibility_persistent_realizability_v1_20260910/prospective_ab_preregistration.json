@@ -1,0 +1,33 @@
+{
+  "api_authorized": false,
+  "arm_a": "current hierarchical direct_flip > near_margin > pure_coverage plus lane RR",
+  "arm_b": "max(4D,2N,C)/(1+f)",
+  "frozen_equal_components": [
+    "initial_team",
+    "split",
+    "seeds",
+    "official_gepa",
+    "local_optimizer_budget",
+    "solver_contract",
+    "TeamMiniBatch12",
+    "Full Team Evaluation",
+    "Common-Safe",
+    "Shadow",
+    "commit_policy"
+  ],
+  "only_difference": "target_allocation",
+  "primary_hypotheses": [
+    "target_commit_mismatch_decreases",
+    "tokens_per_commit_decreases",
+    "Vote_does_not_systematically_degrade"
+  ],
+  "risk_telemetry": [
+    "easy_target_bias",
+    "realizability_suppression",
+    "reset_oscillation",
+    "primary_responsibility_information_loss"
+  ],
+  "status": "PREREGISTERED_NOT_RUN",
+  "test50_authorized": false,
+  "validation_authorized": false
+}

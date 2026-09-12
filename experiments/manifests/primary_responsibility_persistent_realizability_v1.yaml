@@ -1,0 +1,55 @@
+schema_version: experiment_manifest_v1
+experiment_id: primary_responsibility_persistent_realizability_v1
+title: Primary Responsibility and Persistent Realizability Target Scheduler
+status: PREREGISTERED
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-10T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-12T19:10:20+08:00'}
+lineage: {parents: [vote_aligned_confirmatory_seed76_77_v1], derives_from: vote_aligned_confirmatory_seed76_77_v1}
+scientific_question: Does Layer-2 target allocation improve when primary responsibility value is discounted by persistent member-local empirical realizability?
+hypotheses:
+  - The new scheduler reduces per-member target-to-commit mismatch and repeated targeting without successful write-back.
+  - The new scheduler reduces solver calls and tokens per successful commit.
+  - Improved realizability does not systematically degrade team Vote, MeanMember, or Oracle.
+design:
+  changed: [Layer-2 responsibility summary, target member selection, persistent member-local realizability state]
+  unchanged: [five-agent equal plurality, official GEPA, candidate generation, GEPA budget and frontier, TeamMiniBatch12, full-team evaluation, Common-Safe, Shadow, commit criteria, solver contract]
+  arms: [A_CURRENT_GEPA_SCHEDULER, B_PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY]
+  forbidden_changes: [canonical v15, historical P0/P1, GEPA internals, UCB, bandit, cooldown, EMA, Bayesian posterior, lane-specific realizability, adaptive budget, exploration bonus, new diversity metric, validation selection, Test50 access]
+method_identity: member_aware_peer_state_v15
+runtime_version: primary_responsibility_persistent_realizability_v1
+data:
+  task: disambiguation_qa
+  formal: false
+  split_ids: {prospective_optimize: to_be_frozen_before_execution}
+  split_hashes: {}
+  validation_policy: unauthorized until a separately authorized prospective A/B is frozen
+  test_policy: prohibited; zero calls
+model:
+  solver: null
+  optimizer_roles: {}
+  thinking: null
+seeds: []
+budget:
+  type: paired_layer2_target_allocation_ab
+  frozen_before_run: false
+  limit: null
+api_authorization:
+  authorized: false
+  allowed_roles: []
+  allowed_phases: []
+selection:
+  primary_metric: target-to-commit mismatch with team-outcome non-degradation
+  frozen_rule: compare per-member target/commit mismatch and compute efficiency; reject scientific promotion if Vote systematically degrades
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/primary_responsibility_persistent_realizability_v1/PROTOCOL.md, sha256: 39ab63a184411869a1125cb8ad8393d1bd3eaca06f3ccbfe60de6624bfdf6263}
+  report: reports/primary_responsibility_persistent_realizability_v1_20260910
+  provenance: reports/primary_responsibility_persistent_realizability_v1_20260910/provenance.json
+git: {design_commit: null, implementation_commit: 3044c3a137a1a029f1c2b79564f4e4d01219ad56, result_commit: null}
+result:
+  classifier: RETROSPECTIVE_FORMULA_AUDIT_PASS__PROSPECTIVE_NOT_RUN
+  conclusion: The implementation and historical counterfactual allocation audit pass, but no online efficacy or team-outcome claim exists before the separately authorized prospective A/B.
+  evidence_type: retrospective

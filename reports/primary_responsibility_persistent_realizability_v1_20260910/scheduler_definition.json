@@ -1,0 +1,14 @@
+{
+  "all_zero_fallback": "existing_deterministic_round_robin",
+  "primary_lane_tie_break": [
+    "direct_flip",
+    "near_margin",
+    "coverage"
+  ],
+  "responsibility_value": "max(4*D,2*N,C)",
+  "summary_frozen_once_per_opportunity": true,
+  "target_count": 2,
+  "target_score": "max(4*D,2*N,C)/(1+f)",
+  "tie_break": "deterministic_stateful_round_robin",
+  "version": "primary_responsibility_persistent_realizability_v1"
+}

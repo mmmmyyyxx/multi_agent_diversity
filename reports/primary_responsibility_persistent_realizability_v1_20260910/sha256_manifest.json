@@ -1,0 +1,84 @@
+{
+  "files": [
+    {
+      "bytes": 487,
+      "path": "fact_assertions.json",
+      "sha256": "49d086a331130b02217da12d074e924f990adf88eac8df797536495930f2d9ac"
+    },
+    {
+      "bytes": 861,
+      "path": "lane_distribution_summary.json",
+      "sha256": "ea1339baaef445a5ebeb1d4345aea6eedef1d73db3d2fec0667567fd9b3b6fa7"
+    },
+    {
+      "bytes": 17678,
+      "path": "member_realizability_trajectory.csv",
+      "sha256": "2141443fe2c9131e47a85d75179660252e2ea304c00e304efc2820621108c1a0"
+    },
+    {
+      "bytes": 23450,
+      "path": "member_responsibility_summaries.csv",
+      "sha256": "ef8652f9f838b56caff8300110be252d89e0b49faf5d9442f1c6a2bf3397189a"
+    },
+    {
+      "bytes": 893,
+      "path": "prospective_ab_preregistration.json",
+      "sha256": "33b86a347631bde402d20c4c8b9b93e42be0d43b273e6038da88d3804496a9dc"
+    },
+    {
+      "bytes": 893,
+      "path": "protocol_identity.json",
+      "sha256": "93a29057515366e9f8d245d5af8ac05bff9baaa092ece1abdb7382dce09d1943"
+    },
+    {
+      "bytes": 1335,
+      "path": "provenance.json",
+      "sha256": "0d2f1afe94eae607550711a1996116c8ad997926cd3bd1586898b7589add243a"
+    },
+    {
+      "bytes": 3441,
+      "path": "README.md",
+      "sha256": "f293e183e4a5c8350631c1b88dc6af70381eddd43a7d1c77b444e1b0d5244884"
+    },
+    {
+      "bytes": 161,
+      "path": "realizability_definition.json",
+      "sha256": "73acb316642d7fd8e4c627a7dbac88ca18ae29fd66e67b694c97f303b2caed93"
+    },
+    {
+      "bytes": 242,
+      "path": "reset_semantics.json",
+      "sha256": "36e343f80d60b88fca2706ae0c6f1082ffa9754b7ddf7663e9f94570b5f31a47"
+    },
+    {
+      "bytes": 3289,
+      "path": "retrospective_target_allocations.csv",
+      "sha256": "88a9a862746433be9cbbca44f8fa2409a8fe94dc209d1a56fc579f63808314c1"
+    },
+    {
+      "bytes": 803,
+      "path": "sanitization_manifest.json",
+      "sha256": "b8d60f26708bf1422edbeb3cb773771e76e2ae6dd17ea35ab1d8ebcfdcc97ce9"
+    },
+    {
+      "bytes": 440,
+      "path": "scheduler_definition.json",
+      "sha256": "01bd1e3bf156d9a5bf37c1f11997e6ad52b0fda59958eab79fdfaf4a39c7b2b4"
+    },
+    {
+      "bytes": 5273,
+      "path": "target_concentration_summary.json",
+      "sha256": "3a482af8a8bcd8c7f8a205b405116080cab878aa723e2f3fa0d5548b3a1c8d4d"
+    },
+    {
+      "bytes": 174,
+      "path": "test_summary.json",
+      "sha256": "ac59f6117c2122b865af23332b8fbde32f7976a5a7cdac277d7406002f737346"
+    },
+    {
+      "bytes": 87,
+      "path": "weight_definition.json",
+      "sha256": "48621162282d21b882a1a6cd4fb338da41d5431827ec34e5609e3f43073e63b4"
+    }
+  ]
+}
