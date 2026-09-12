@@ -11,6 +11,7 @@ from multi_dataset_diverse_rl.team_search.primary_responsibility_scheduler impor
     DIRECT_FLIP,
     FALLBACK,
     NEAR_MARGIN,
+    PersistentRealizabilityState,
     PrimaryResponsibilityPersistentRealizabilityScheduler,
     build_primary_responsibility_summaries,
     select_primary_responsibility_targets,
@@ -109,6 +110,7 @@ def test_selected_failure_persists_across_teammate_commit_and_own_commit_resets(
     )
     assert scheduler.state.failure_count_by_member[failed_member] == 1
     assert scheduler.state.failure_count_by_member[teammate] == 0
+    assert scheduler.state.failure_count_by_member[({0, 1, 2} - set(first.selected_member_ids)).pop()] == 0
 
     second = scheduler.select(
         assigned=assignments, current_margin_by_question=margins, seed=1, update_index=1
@@ -147,6 +149,21 @@ def test_unselected_and_operational_abort_are_unchanged() -> None:
         valid_outcome=False,
     )
     assert scheduler.state.failure_count_by_member == before
+    assert 0 in decision.selected_member_ids
+
+
+def test_persistent_state_checkpoint_round_trip_has_no_team_hash_reset_key() -> None:
+    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler(member_ids=(0, 1))
+    scheduler.state.failure_count_by_member[0] = 3
+    scheduler.state.target_count_by_member[0] = 4
+    scheduler.state.commit_count_by_member[0] = 1
+    scheduler.state.primary_lane_target_counts[DIRECT_FLIP] = 4
+    scheduler.state.primary_lane_commit_counts[DIRECT_FLIP] = 1
+    scheduler.state.rr_cursor = 9
+    payload = scheduler.state.checkpoint_payload()
+    assert not any("team_hash" in key for key in payload)
+    restored = PersistentRealizabilityState.from_checkpoint_payload(payload, member_ids=(0, 1))
+    assert restored.checkpoint_payload() == payload
 
 
 def test_all_zero_uses_existing_deterministic_fallback_order() -> None:

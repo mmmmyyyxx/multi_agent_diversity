@@ -89,6 +89,66 @@ class PersistentRealizabilityState:
             self.primary_lane_target_counts.setdefault(lane, 0)
             self.primary_lane_commit_counts.setdefault(lane, 0)
 
+    def checkpoint_payload(self) -> dict[str, object]:
+        """Return a JSON-safe resume payload with no team-hash coupling."""
+        return {
+            "schema_version": "persistent_member_realizability_state_v1",
+            "scheduler_version": PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+            "failure_count_by_member": dict(self.failure_count_by_member),
+            "rr_cursor": int(self.rr_cursor),
+            "target_count_by_member": dict(self.target_count_by_member),
+            "commit_count_by_member": dict(self.commit_count_by_member),
+            "primary_lane_target_counts": dict(self.primary_lane_target_counts),
+            "primary_lane_commit_counts": dict(self.primary_lane_commit_counts),
+        }
+
+    @classmethod
+    def from_checkpoint_payload(
+        cls, payload: Mapping[str, object], *, member_ids: Sequence[int]
+    ) -> "PersistentRealizabilityState":
+        if payload.get("schema_version") != "persistent_member_realizability_state_v1":
+            raise ValueError("persistent realizability checkpoint schema mismatch")
+        if payload.get("scheduler_version") != PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION:
+            raise ValueError("persistent realizability scheduler version mismatch")
+
+        def member_counts(key: str) -> dict[int, int]:
+            value = payload.get(key)
+            if not isinstance(value, Mapping):
+                raise ValueError(f"missing persistent realizability field: {key}")
+            result = {int(member): int(count) for member, count in value.items()}
+            if any(count < 0 for count in result.values()):
+                raise ValueError(f"negative persistent realizability field: {key}")
+            return result
+
+        def lane_counts(key: str) -> dict[str, int]:
+            value = payload.get(key)
+            if not isinstance(value, Mapping):
+                raise ValueError(f"missing persistent realizability field: {key}")
+            result = {str(lane): int(count) for lane, count in value.items()}
+            if set(result) != {*LANE_TIE_ORDER, FALLBACK} or any(count < 0 for count in result.values()):
+                raise ValueError(f"invalid persistent realizability lane field: {key}")
+            return result
+
+        state = cls(
+            failure_count_by_member=member_counts("failure_count_by_member"),
+            rr_cursor=int(payload.get("rr_cursor", -1)),
+            target_count_by_member=member_counts("target_count_by_member"),
+            commit_count_by_member=member_counts("commit_count_by_member"),
+            primary_lane_target_counts=lane_counts("primary_lane_target_counts"),
+            primary_lane_commit_counts=lane_counts("primary_lane_commit_counts"),
+        )
+        if state.rr_cursor < 0:
+            raise ValueError("persistent realizability rr cursor cannot be negative")
+        expected = set(map(int, member_ids))
+        for key, value in (
+            ("failure", state.failure_count_by_member),
+            ("target", state.target_count_by_member),
+            ("commit", state.commit_count_by_member),
+        ):
+            if set(value) != expected:
+                raise ValueError(f"persistent realizability {key} member identity mismatch")
+        return state
+
 
 def _primary_lane_and_runner_up(scores: Mapping[str, int]) -> tuple[str, int, str, int]:
     ordered = sorted(scores, key=lambda lane: (-int(scores[lane]), LANE_TIE_ORDER.index(lane)))
@@ -216,9 +276,14 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
 
     version = PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION
 
-    def __init__(self, *, member_ids: Sequence[int] = (0, 1, 2, 3, 4)) -> None:
+    def __init__(
+        self,
+        *,
+        member_ids: Sequence[int] = (0, 1, 2, 3, 4),
+        state: PersistentRealizabilityState | None = None,
+    ) -> None:
         self.member_ids = tuple(map(int, member_ids))
-        self.state = PersistentRealizabilityState()
+        self.state = state or PersistentRealizabilityState()
         self.state.initialize(self.member_ids)
 
     def select(
@@ -263,6 +328,8 @@ class PrimaryResponsibilityPersistentRealizabilityScheduler:
         selected = set(decision.selected_member_ids)
         if committed_member_id is not None and committed_member_id not in selected:
             raise ValueError("committed member must be one of the frozen targets")
+        if committed_member_id is not None and not valid_outcome:
+            raise ValueError("operational abort cannot contain a commit")
         emitted: list[RealizabilityTransition] = []
         for member_id in self.member_ids:
             before = self.state.failure_count_by_member[member_id]
