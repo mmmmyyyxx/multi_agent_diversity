@@ -68,18 +68,48 @@ class LocalTaskBuilder:
     def build(self, request: TeamSearchRequest, assignment: TeamSearchAssignment) -> LocalOptimizationTask:
         if not assignment.evidence:
             raise ValueError("team assignment contains no Optimize evidence")
-        search = tuple(self._local(row) for row in assignment.evidence)
-        by_id = {row.example_id: row for row in assignment.evidence}
-        validation_ids = assignment.local_validation_example_ids or tuple(by_id)
-        if any(example_id not in by_id for example_id in validation_ids):
+        evidence = assignment.evidence
+        all_by_id = {row.example_id: row for row in evidence}
+        primary_lane = assignment.primary_responsibility_lane
+        if primary_lane is not None:
+            if primary_lane not in {"direct_flip", "near_margin", "coverage", "fallback"}:
+                raise ValueError("unknown primary responsibility lane")
+            responsibility = tuple(
+                row for row in evidence
+                if row.evidence_group == "responsibility"
+                and (
+                    primary_lane in row.tags
+                    or (primary_lane == "coverage" and "pure_coverage" in row.tags)
+                )
+            )
+            if primary_lane != "fallback" and not responsibility:
+                raise ValueError("primary lane has no responsibility evidence")
+            evidence = tuple(
+                row for row in evidence
+                if row.evidence_group != "responsibility" or row in responsibility
+            )
+        search = tuple(self._local(row) for row in evidence)
+        by_id = {row.example_id: row for row in evidence}
+        requested_validation_ids = assignment.local_validation_example_ids or tuple(by_id)
+        if any(example_id not in all_by_id for example_id in requested_validation_ids):
             raise ValueError("local validation ids must refer to assigned Optimize evidence")
+        validation_ids = tuple(example_id for example_id in requested_validation_ids if example_id in by_id)
+        if not validation_ids:
+            raise ValueError("primary-lane filtering removed all local validation evidence")
         local_validation = tuple(self._local(by_id[example_id]) for example_id in validation_ids)
+        context = assignment.optimization_context
+        if primary_lane is not None:
+            context = (
+                f"primary_responsibility_lane={primary_lane}\n"
+                "Responsibility evidence is restricted to that lane; preservation and "
+                f"general context remain non-target evidence.\n{context}"
+            )
         return LocalOptimizationTask(
             task_id=f"seed{request.seed}_update{request.update_index}_member{assignment.target_member}",
             parent_prompt=assignment.parent_prompt,
             search_examples=search,
             local_validation_examples=local_validation,
-            optimization_context=assignment.optimization_context,
+            optimization_context=context,
             solver_contract_id=request.solver_contract_id,
             output_contract_id=request.output_contract_id,
             seed=request.seed * 100_000 + request.update_index * 10 + assignment.target_member,

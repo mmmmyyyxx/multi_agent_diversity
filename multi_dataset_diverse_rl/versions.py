@@ -42,3 +42,12 @@ TARGET_SCORE_DIRECT_WEIGHT = 0.5
 TARGET_SCORE_SUPPORT_WEIGHT = 0.3
 TARGET_SCORE_UPLIFT_WEIGHT = 0.2
 TARGET_SCORE_WAIT_WEIGHT = 0.05
+
+# Experimental Layer-2 target scheduler.  This identity is opt-in and does not
+# change the canonical v15 target-selection or repairability versions above.
+PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION = (
+    "primary_responsibility_persistent_realizability_v1"
+)
+PRIMARY_RESPONSIBILITY_DIRECT_WEIGHT = 4
+PRIMARY_RESPONSIBILITY_NEAR_MARGIN_WEIGHT = 2
+PRIMARY_RESPONSIBILITY_COVERAGE_WEIGHT = 1

@@ -45,6 +45,7 @@ class TeamSearchAssignment:
     optimization_context: str
     responsibility_identity: str
     local_validation_example_ids: tuple[str, ...] = ()
+    primary_responsibility_lane: str | None = None
 
 
 @dataclass(frozen=True)
