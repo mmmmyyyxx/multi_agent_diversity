@@ -19,6 +19,7 @@ from scripts.run_seed78_primary_responsibility_ab import (
     _authorize,
     _arm_a_selection,
     _classify,
+    _config,
     _mechanism_metrics,
     preflight,
     protocol_document,
@@ -64,6 +65,24 @@ def test_execution_entry_point_fails_closed_without_runtime_authorization(monkey
     monkeypatch.delenv(AUTH_ENV, raising=False)
     with pytest.raises(PermissionError, match=AUTH_ENV):
         _authorize()
+
+
+def test_retry1_is_not_manifest_authorized_after_engineering_hold(monkeypatch) -> None:
+    monkeypatch.setenv(AUTH_ENV, "1")
+    with pytest.raises(RuntimeError, match="manifest does not authorize"):
+        _authorize()
+
+
+def test_run_identity_config_uses_real_frozen_split_paths(tmp_path: Path) -> None:
+    optimize = tmp_path / "optimize100.csv"
+    validation = tmp_path / "validation50.csv"
+    optimize.write_text("question,answer\nq,A\n", encoding="utf-8")
+    validation.write_text("question,answer\nv,B\n", encoding="utf-8")
+    cfg = _config(tmp_path / "out", optimize_path=optimize, validation_path=validation)
+    assert Path(cfg.data.train_path).is_file()
+    assert Path(cfg.data.val_path).is_file()
+    assert Path(cfg.data.train_path).resolve() == optimize.resolve()
+    assert Path(cfg.data.val_path).resolve() == validation.resolve()
 
 
 def test_arm_a_zero_score_fill_is_two_distinct_legal_fallback_targets() -> None:

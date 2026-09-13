@@ -15,7 +15,11 @@ Frozen identity:
 - Validation50: only after both trajectories freeze;
 - Test50: zero calls.
 
-First run the zero-API preparation command on the frozen execution commit. It
+The first execution attempt is preserved at
+`runs\seed78_primary_responsibility_ab_v1` as a zero-provider-call engineering
+HOLD. It must never be resumed, overwritten or analyzed as scientific evidence.
+
+First run the zero-API preparation command on the repaired execution commit. It
 creates a private run-local handoff whose `source_freeze.json` pins the exact
 40-character commit and every source/split hash:
 
@@ -23,13 +27,15 @@ creates a private run-local handoff whose `source_freeze.json` pins the exact
 conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --prepare
 ```
 
-Then verify the generated `runs\seed78_primary_responsibility_ab_v1_prep\`
+Then verify the generated `runs\seed78_primary_responsibility_ab_v1_prep_retry1\`
 `phase_a_gate.json` says `PASS`, the execution commit equals current `HEAD`, and
-the tracked worktree remains clean. Only the execution-only agent may then run:
+the tracked worktree remains clean. Retry1 requires a fresh explicit user API
+authorization and a corresponding manifest update. Until that occurs, do not
+set the authorization environment variable or execute the following command:
 
 ```powershell
 $env:SEED78_PRIMARY_RESPONSIBILITY_AB_AUTHORIZED='1'
-conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --execute --prep runs\seed78_primary_responsibility_ab_v1_prep --run runs\seed78_primary_responsibility_ab_v1
+conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --execute --prep runs\seed78_primary_responsibility_ab_v1_prep_retry1 --run runs\seed78_primary_responsibility_ab_v1_retry1
 ```
 
 The root must be fresh. Resume, overwrite and automatic retry are forbidden.

@@ -101,8 +101,8 @@ LOCAL_GEPA_METRIC_BUDGET = 36
 AUTH_ENV = "SEED78_PRIMARY_RESPONSIBILITY_AB_AUTHORIZED"
 MANIFEST = ROOT / "experiments/manifests/seed78_primary_responsibility_ab_v1.yaml"
 DESIGN = ROOT / "experiments/seed78_primary_responsibility_ab_v1"
-DEFAULT_PREP = ROOT / "runs/seed78_primary_responsibility_ab_v1_prep"
-DEFAULT_RUN = ROOT / "runs/seed78_primary_responsibility_ab_v1"
+DEFAULT_PREP = ROOT / "runs/seed78_primary_responsibility_ab_v1_prep_retry1"
+DEFAULT_RUN = ROOT / "runs/seed78_primary_responsibility_ab_v1_retry1"
 DEFAULT_REPORT = ROOT / "reports/seed78_primary_responsibility_ab_v1"
 TASK_CONTEXT: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
     "seed78_local_gepa_task", default=None
@@ -363,15 +363,15 @@ class ContextualOptimizer:
             TASK_CONTEXT.reset(token)
 
 
-def _config(out: Path) -> Config:
+def _config(out: Path, *, optimize_path: Path, validation_path: Path) -> Config:
     return Config.from_flat(
         task_type="bbh",
         dataset_format="mars",
         comparison_task_id="disambiguation_qa",
         benchmark="BBH",
         answer_format="option_letter",
-        train_path="OPTIMIZE100_PRIVATE",
-        val_path="VALIDATION50_FINAL_ONLY",
+        train_path=str(optimize_path.resolve()),
+        val_path=str(validation_path.resolve()),
         test_path="TEST50_BLOCKED",
         manifest_sha256=sha256_file(MANIFEST),
         train_size=100,
@@ -627,10 +627,16 @@ async def _initialize_system(
     root: Path,
     optimize_rows: Sequence[Mapping[str, Any]],
     validation_rows: Sequence[Mapping[str, Any]],
+    optimize_path: Path,
+    validation_path: Path,
     cache: dict[str, str],
     ledger: DurableLedger,
 ) -> Seed78System:
-    cfg = _config(root)
+    cfg = _config(
+        root,
+        optimize_path=optimize_path,
+        validation_path=validation_path,
+    )
     system = Seed78System(cfg, arm=arm, ledger=ledger, raw_cache=cache)
     system.set_run_identity(
         build_run_identity(
@@ -860,6 +866,8 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
     optimize_rows = _rows(prep / "splits_private/optimize100.csv")
     shadow_rows = _rows(prep / "splits_private/fold_c.csv")
     validation_rows = _rows(prep / "splits_private/validation.csv")
+    optimize_path = prep / "splits_private/optimize100.csv"
+    validation_path = prep / "splits_private/validation.csv"
     init_ledger = DurableLedger(run_root / "initialization/ledger.jsonl")
     init_cache: dict[str, str] = {}
     initial = await _initialize_system(
@@ -867,6 +875,8 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
         root=run_root / "initialization",
         optimize_rows=optimize_rows,
         validation_rows=validation_rows,
+        optimize_path=optimize_path,
+        validation_path=validation_path,
         cache=init_cache,
         ledger=init_ledger,
     )
@@ -882,6 +892,8 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
             root=cell,
             optimize_rows=optimize_rows,
             validation_rows=validation_rows,
+            optimize_path=optimize_path,
+            validation_path=validation_path,
             cache=dict(init_cache),
             ledger=ledger,
         )

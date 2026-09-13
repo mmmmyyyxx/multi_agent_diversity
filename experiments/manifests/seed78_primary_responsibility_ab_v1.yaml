@@ -44,8 +44,8 @@ budget:
   candidate_counts: {official_gepa_k_local_return: 4, max_promoted_per_target: 2}
   early_stop: {consecutive_opportunities_without_shadow_approved_commit: 6}
 api_authorization:
-  authorized: true
-  authorization_scope: explicit_user_authorization_in_seed78_protocol_confirmation_for_execution_only_handoff
+  authorized: false
+  authorization_scope: retry1_requires_fresh_explicit_user_authorization_after_zero_call_engineering_hold
   allowed_roles: [solver, reflection]
   allowed_phases: [online_trajectory, frozen_validation]
 selection:
@@ -54,7 +54,7 @@ selection:
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/seed78_primary_responsibility_ab_v1/PROTOCOL.md, sha256: 59eea4c21ed60beed85b30cde93ba032d8439caca5d8cde29b94a792e5bdb496}
+  preregistration: {path: experiments/seed78_primary_responsibility_ab_v1/PROTOCOL.md, sha256: 956365f481df2c479c629582659c8a5f0466b2bc96160f03814a763226a6fa79}
   classifier: experiments/seed78_primary_responsibility_ab_v1/classifier_definition.json
   handoff: experiments/seed78_primary_responsibility_ab_v1/EXPERIMENT_HANDOFF.md
   report: reports/seed78_primary_responsibility_ab_v1
@@ -64,6 +64,15 @@ git:
   implementation_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
   result_commit: null
 result:
-  classifier: NOT_RUN
-  conclusion: Source-freeze and execution handoff only; no API execution or result exists yet.
+  classifier: HOLD_ENGINEERING_PRE_PROVIDER
+  conclusion: The first execution attempt stopped before any provider call because run identity referenced a placeholder split path; its root is preserved and excluded from scientific evidence. Retry1 has an offline path-binding repair but is not API-authorized.
   evidence_type: not_yet_available
+execution_attempts:
+  - root: runs/seed78_primary_responsibility_ab_v1
+    status: HOLD
+    cause: run_identity_placeholder_split_path
+    provider_calls: 0
+    validation_calls: 0
+    test_calls: 0
+    scientific_evidence: false
+    resume_or_overwrite_allowed: false
