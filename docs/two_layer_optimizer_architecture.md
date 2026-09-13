@@ -49,9 +49,11 @@ slot remains available for a future, separately governed resume or memory
 protocol. `NoOpContextProvider` is the only context-memory provider implemented
 here.
 
-The canonical v15 runtime remains unchanged. `two_layer_rg_gepa_v1` is an
-opt-in candidate architecture pending a separately authorized API pilot. Its
-remaining transitional debt is the production binding from existing runtime
-responsibility objects and fixed-probe evaluators to these facades; the
-backend-neutral controller and official GEPA lifecycle are already exercised
-with zero-API deterministic tests.
+The canonical v15 runtime remains unchanged. The active research direction uses
+the opt-in two-layer identities and the implemented production binding from
+runtime responsibility objects and fixed-probe evaluators to these facades.
+Official GEPA is the current grounded Layer-1 backend; Layer 2 remains backend
+neutral. Experiments and implementation evidence do not silently promote this
+architecture to canonical status: promotion still requires a separately
+versioned update to the normative specification, runtime identities, code, and
+tests.

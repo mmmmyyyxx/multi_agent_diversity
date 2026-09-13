@@ -35,18 +35,129 @@ manifest, and engineering workflow from this file. Historical reports are
 immutable evidence and cannot silently promote an experimental arm into the
 canonical runtime.
 
-Sections 1-9 below are retained as a **MIGRATION MIRROR** of the method-specific
-contract while tooling moves to `CURRENT_SPEC.md`. Do not delete or independently
-edit their semantics; any intentional algorithm change must update the normative
-specification, runtime identity, implementation, and tests together.
+## Current active research architecture
 
-## 1. Project mission
+The active research direction is a backend-neutral two-layer architecture:
+
+```text
+Layer 2 — Team-Level Responsibility/Search Controller
+    responsibility and primary-residual assignment
+    target scheduling and persistent realizability
+    team-level candidate evaluation
+    Common-Safe and Shadow checks
+    competitive selection and atomic write-back
+                         |
+                         | LocalPromptOptimizer interface
+                         v
+Layer 1 — Local Prompt Optimizer
+    current grounded backend: official frozen GEPA
+    replaceable future backends: SEPO, ESPO, or another conforming optimizer
+```
+
+Layer 1 is an interchangeable prompt-optimization backend. It must not own
+member selection, responsibility attribution, persistent realizability,
+team-level acceptance, or write-back. Layer 2 is the team-level research layer
+and must not depend on GEPA, Teacher, Critic, Student, or any other backend's
+internal implementation. Replacing GEPA must not require redesigning Layer 2.
+
+This architectural direction does not silently promote an experimental runtime
+to canonical status. `versions.py` still identifies the canonical historical
+runtime as `member_aware_peer_state_v15`, checkpoint v25. Opt-in two-layer and
+Layer-2 scheduler identities must remain explicit in their manifests until a
+separate, versioned promotion changes `CURRENT_SPEC.md`, `versions.py`, code,
+and tests together.
+
+## Agent execution model
+
+The standard research workflow has one scientific and tracked-code owner:
+
+```text
+GPT-5.6 Sol
+    designs -> implements -> freezes -> audits -> interprets -> publishes
+
+GPT-5.6 Luna (scoped subagent)
+    verifies handoff -> executes frozen command -> monitors -> reports facts
+```
+
+Runtime model availability must be checked at dispatch time. When Luna is
+requested for a runner or monitor task, explicitly request `gpt-5.6-luna`. Do
+not spawn another Sol copy or silently substitute another model. If the runtime
+cannot provide model-selectable Luna delegation, fail closed with
+`LUNA_DISPATCH_UNAVAILABLE`; Sol may ask the user or deliberately execute the
+task itself only in a later explicitly authorized step.
+
+### Sol ownership
+
+Sol owns every action requiring scientific, architectural, or publication
+judgment, including:
+
+- research questions, causal interpretation, method and ablation design;
+- architecture, implementation, bug diagnosis, and tracked source edits;
+- model, seed, split, budget, threshold, cache, retry, and access-policy choices;
+- preregistration, protocol definition or amendment, manifest and hash freeze;
+- scientific postmortems, result classifiers, paper conclusions, and report
+  integration;
+- git commits and, only when explicitly authorized, git pushes.
+
+Sol is the only default coding agent. Sol must independently inspect Luna's
+execution evidence and may not adopt a subagent's interpretation without the
+required integrity and scientific audits.
+
+### Luna execution scope
+
+Luna may perform only bounded work that Sol has already specified and frozen:
+
+- execute the exact frozen runner or verification command;
+- run specified tests, preflights, `compileall`, or deterministic audits;
+- monitor process health, stdout/stderr, checkpoints, ledgers, API/token budget,
+  expected artifacts, frozen early-stop counters, and Validation/Test access;
+- write ordinary runtime artifacts produced by the frozen command and an
+  explicitly authorized factual execution summary.
+
+Luna must not independently change code, prompts, scheduler or GEPA settings,
+models, seeds, splits, thresholds, budgets, stopping, cache/retry semantics,
+Validation/Test policy, preregistration, or protocol. Luna must not select a new
+experiment, decide scientific causality or efficacy, edit tracked algorithm or
+protocol files, commit, push, reset, clean, or stash. If any such action appears
+necessary, Luna stops, preserves current evidence, and returns the anomaly to
+Sol. Luna reports what happened; Sol decides what it means.
+
+### Single writer and frozen handoff
+
+There is one tracked-code writer at a time: Sol. Parallel Luna tasks are
+normally read-only or execution-only and may not patch overlapping source.
+
+No Luna experiment execution is allowed without a concrete handoff conforming
+to `docs/workflows/EXPERIMENT_HANDOFF.md`. Only Sol may set
+`READY_TO_RUN=true`, after protocol and manifest freeze, source/worktree and
+hash checks, split governance, budget checks, and explicit API authorization.
+Before execution Luna independently verifies the frozen commit, hashes, files,
+command, model/seed/budget, worktree, access policy, and authorization. Any
+mismatch fails closed; Luna does not improvise.
+
+Luna executes only preregistered stop conditions and never stops or adapts based
+on observed efficacy. Provider, credential, process, checkpoint, ledger, hash,
+budget, Test-access, or protocol failures require fail-closed termination,
+preserved evidence, and a factual return to Sol. Luna's completion record may
+state `EXECUTION_COMPLETE` or `EXECUTION_ABORTED`; only Sol may classify the
+scientific run as `VALID`, `INVALID`, `HOLD`, `NOT_EVALUABLE`, `SUPPORTED`, or
+`NOT_SUPPORTED` after integrity, ledger, split-access, funnel, and scientific
+audits.
+
+Sections 1-9 below are retained as a **HISTORICAL CANONICAL/REPLAY MIGRATION
+MIRROR** of the v15 method-specific contract while tooling moves to
+`CURRENT_SPEC.md`. They are not the sole active research architecture. Do not
+delete or independently edit their semantics; an intentional canonical
+algorithm change must update the normative specification, runtime identity,
+implementation, and tests together.
+
+## 1. Historical v15 canonical runtime mission
 
 This repository studies joint optimization of a five-prompt LLM ensemble. The
 five equal-weight member outputs are aggregated by plurality voting; a top-count
 tie abstains and is incorrect. Model weights remain frozen.
 
-The current method is:
+The canonical v15 replay/runtime identity is:
 
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
@@ -55,7 +166,7 @@ method_version = member_aware_peer_state_v15
 checkpoint_version = 25
 ```
 
-The paper method has two core modules:
+The historical v15 paper method has two core modules:
 
 ```text
 1. Repairability-Adjusted Member-Aware Dual-Target Search
@@ -73,7 +184,7 @@ A/B, caching,
 retry, checkpointing, and audits are implementation or reliability mechanisms
 rather than additional research contributions.
 
-## 2. Formal objective and fixed-peer safety
+## 2. Historical v15 formal objective and fixed-peer safety
 
 For member `i` on the fixed optimization probe:
 
@@ -109,7 +220,7 @@ All optimized v15 main settings use this common policy. Responsibility or lane
 utility cannot redefine progress. The v14 RCRU policy remains only for explicit
 legacy replay and offline analysis.
 
-## 3. Joint voting diagnosis
+## 3. Historical v15 joint voting diagnosis
 
 For every probe example:
 
@@ -124,7 +235,7 @@ Full-team `TeamVoteState` and leave-one-out `PeerVoteContext` are distinct
 typed concepts. Coverage, conversion, dominant-wrong, unique/pivotal, and soft
 utility remain diagnostic or proposal-context evidence.
 
-## 4. Member-Aware Responsibility
+## 4. Historical v15 Member-Aware Responsibility
 
 ### 4.1 Residual eligibility
 
@@ -255,7 +366,7 @@ refresh, and checkpoint save do not reset them.
 v15 has no active freeze/unfreeze mechanism, freeze threshold, frozen portfolio
 signature, service block, or `all_actionable_members_frozen` stop.
 
-## 5. Dual-target competitive search
+## 5. Historical v15 dual-target competitive search
 
 S1-S2 use:
 
@@ -315,9 +426,9 @@ write checkpoint and audit
 Any failure during atomic refresh restores prompt, profile, anchor, counters,
 caches, versions, and audit lengths.
 
-## 6. Responsibility-Conditioned Evolution
+## 6. Historical v15 Responsibility-Conditioned Evolution
 
-The stable division of labor is:
+The historical v15 division of labor is:
 
 ```text
 Program: numerical and typed diagnosis
@@ -351,7 +462,7 @@ Proposal Memory remains optional and defaults to `off`. It may not alter
 eligibility, routing, active lanes, target scores, branch selection, or
 acceptance.
 
-## 7. Reduced two-module matrix
+## 7. Historical v15 reduced two-module matrix
 
 Canonical main settings are:
 
@@ -386,7 +497,7 @@ aux_single_target_compute_matched_1x4
 
 They require `--allow_auxiliary_setting 1`.
 
-## 8. Solver, evaluation, and isolation
+## 8. Historical v15 solver, evaluation, and isolation
 
 Every Solver response must contain exactly one strict:
 
@@ -407,7 +518,7 @@ selection, candidate acceptance, or final-state selection.
 No-API code tasks must not be combined with API tests unless the user explicitly
 authorizes API calls in that task.
 
-## 9. Persistence and artifacts
+## 9. Historical v15 persistence and artifacts
 
 Checkpoint v25 stores branch failure/attempt/feasible counts, repairability team
 hash and reset count, selected targets, target scores, branch lifecycle,
