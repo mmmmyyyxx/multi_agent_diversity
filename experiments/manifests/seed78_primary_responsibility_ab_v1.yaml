@@ -1,13 +1,14 @@
 schema_version: experiment_manifest_v1
 experiment_id: seed78_primary_responsibility_ab_v1
 title: Seed78 Vote-Aligned versus Persistent-Realizability Scheduler Pilot
-status: PREFLIGHT_PASS
+status: RUNNING
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-13T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-13T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-13T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-13T00:00:00+08:00'}
 lineage:
   parents: [vote_aligned_generic_shadow_pilot_v1, primary_responsibility_persistent_realizability_v1, two_layer_rg_gepa_v1]
   derives_from: primary_responsibility_persistent_realizability_v1
@@ -59,8 +60,8 @@ artifacts:
   report: reports/seed78_primary_responsibility_ab_v1
   provenance: reports/seed78_primary_responsibility_ab_v1/provenance.json
 git:
-  design_commit: null
-  implementation_commit: null
+  design_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
+  implementation_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
   result_commit: null
 result:
   classifier: NOT_RUN
