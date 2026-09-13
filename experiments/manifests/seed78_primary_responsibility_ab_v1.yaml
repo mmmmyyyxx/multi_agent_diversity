@@ -76,3 +76,9 @@ execution_attempts:
     test_calls: 0
     scientific_evidence: false
     resume_or_overwrite_allowed: false
+preparation_attempts:
+  - root: runs/seed78_primary_responsibility_ab_v1_prep_retry1_authorized1
+    status: INVALIDATED_ZERO_API
+    cause: relative_prep_path_handoff_rendering
+    provider_calls: 0
+    run_root_created: false
