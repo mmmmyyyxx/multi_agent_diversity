@@ -1,0 +1,15 @@
+{
+  "algorithm": "SHA256",
+  "files": {
+    "README.md": "590411d0c54aaf3fb6a40cdd577decf7521707b913efd26ebf33199e9c790e3c",
+    "api_accounting.json": "0233c9128883cfc2e002d720ab5c97fba7acf92dcabc8c91afbf7a4f64b1223a",
+    "audit.json": "98b2839c650d3aa0c3579abe0b7f84f62780c13fc50bbadc3577cdfd4506b2af",
+    "fact_assertions.json": "a44b205f5ceab89902e33fa202b031e49275773fcc30bbdbdcd7ce373c598eb4",
+    "funnel_summary.json": "590518360b44a019f5be00bcbc1c1456c9b0fe765453612b5c8864e6d0d1d0d3",
+    "protocol_freeze.json": "543f3d3d744c1f45ee4597db9b7c5370e350fa5ac4a70d11e30cfa073a0e8c0a",
+    "protocol_integrity_audit.json": "7a9e89d8f45c794e1238f1e56d51bd7d5e04daa70adc6b3fd19a3de4095f3abb",
+    "provenance.json": "fbd69a7cc2766ee564811cf9831643cb000fdaaa35a9198abc410dda00ca48b2",
+    "sanitization_manifest.json": "9bd1593737acdd84568aaba2f350d18e76118f12dfee2634a54d7fd4f0e90d74",
+    "summary.json": "f846d8d49e1cf4b5025d098a7b15fb022e1ae217384a722f7e717c5bd9e1201a"
+  }
+}

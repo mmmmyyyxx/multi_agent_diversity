@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "excluded": [
+    "prompts",
+    "questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "caches",
+    "checkpoints",
+    "absolute paths"
+  ],
+  "raw_artifacts_published": false
+}

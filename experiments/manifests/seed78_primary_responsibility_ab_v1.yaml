@@ -1,7 +1,7 @@
 schema_version: experiment_manifest_v1
 experiment_id: seed78_primary_responsibility_ab_v1
 title: Seed78 Vote-Aligned versus Persistent-Realizability Scheduler Pilot
-status: RUNNING
+status: COMPLETED
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-13T00:00:00+08:00'}
@@ -9,6 +9,9 @@ lifecycle_history:
   - {status: IMPLEMENTED, timestamp: '2026-09-13T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-13T00:00:00+08:00'}
   - {status: RUNNING, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: TRAIN_FROZEN, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: VALIDATED, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: COMPLETED, timestamp: '2026-09-13T00:00:00+08:00'}
 lineage:
   parents: [vote_aligned_generic_shadow_pilot_v1, primary_responsibility_persistent_realizability_v1, two_layer_rg_gepa_v1]
   derives_from: primary_responsibility_persistent_realizability_v1
@@ -64,9 +67,9 @@ git:
   implementation_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
   result_commit: null
 result:
-  classifier: HOLD_ENGINEERING_PRE_PROVIDER
-  conclusion: The first execution attempt stopped before any provider call because run identity referenced a placeholder split path; its root is preserved and excluded from scientific evidence. Retry1 has an offline path-binding repair but is not API-authorized.
-  evidence_type: not_yet_available
+  classifier: HOLD_NO_SCHEDULER_INTERVENTION_EVALUABLE
+  conclusion: Retry1 completed with protocol audit PASS, but both arms had zero TeamMiniBatch survivors and zero commits, leaving target/commit mismatch and tokens per commit undefined. The byte-identical final teams received separate Validation50 provider samples, so the observed 0.62 versus 0.60 scores are not attributable to the scheduler.
+  evidence_type: prospective
 execution_attempts:
   - root: runs/seed78_primary_responsibility_ab_v1
     status: HOLD
@@ -82,3 +85,15 @@ preparation_attempts:
     cause: relative_prep_path_handoff_rendering
     provider_calls: 0
     run_root_created: false
+  - root: runs/seed78_primary_responsibility_ab_v1_prep_retry1_authorized2
+    status: PASS
+    execution_commit: fff0652bb2cfa3f703cc022d2d20ea04d3200742
+    protocol_sha256: 854879a50c08817e1d1a074b8a9320c034ebd363c80940f2fd73a2b7b3cc9d2d
+execution_result:
+  root: runs/seed78_primary_responsibility_ab_v1_retry1
+  official_audit: PASS
+  independent_scientific_gate: HOLD
+  opportunities: {A: 6, B: 6}
+  commits: {A: 0, B: 0}
+  test_calls: 0
+  report: reports/seed78_primary_responsibility_ab_v1

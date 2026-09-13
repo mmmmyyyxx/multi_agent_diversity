@@ -1,0 +1,67 @@
+{
+  "arms": {
+    "A_VOTE_ALIGNED_HIERARCHICAL": "direct_flip > near_margin > pure_coverage + deterministic RR",
+    "B_PRIMARY_RESPONSIBILITY_REALIZABILITY": "max(4D,2N,C)/(1+persistent_member_failure_count)"
+  },
+  "data_roles": {
+    "shadow50": "optimization_time_safety_data_not_generalization",
+    "test50": "zero_access",
+    "validation50": "once_per_final_arm_after_both_training_trajectories_freeze"
+  },
+  "evidence_type": "single_seed_prospective_mechanism_pilot",
+  "experiment_id": "seed78_primary_responsibility_ab_v1",
+  "final_metrics": [
+    "Vote",
+    "MeanMember",
+    "Vote-minus-MeanMember",
+    "Oracle",
+    "G0..G5"
+  ],
+  "models": {
+    "evaluator_config": "qwen3.7-flash",
+    "reflection": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "solver_thinking": false
+  },
+  "only_difference": "target_scheduler",
+  "primary_mechanism_metrics": [
+    "target_count_by_member",
+    "commit_count_by_member",
+    "target_to_commit_rate_by_member",
+    "max_unresolved_target_streak_by_member",
+    "tokens_per_commit"
+  ],
+  "schema_version": "seed78_primary_responsibility_ab_protocol_v1",
+  "seed": 78,
+  "shared": {
+    "always_two_targets": true,
+    "common_safe": true,
+    "full_team_max_promotions_per_target": 2,
+    "initial_prompt_team": "shared_identical_P0",
+    "local_metric_budget_per_target": 36,
+    "max_one_commit_per_opportunity": true,
+    "max_opportunities": 32,
+    "no_commit_patience": 6,
+    "official_gepa": {
+      "acceptance_criterion": "strict_improvement",
+      "cache_evaluation": false,
+      "candidate_selection_strategy": "pareto",
+      "frontier_type": "instance",
+      "k_local_return": 4,
+      "max_prompt_chars": 3000,
+      "module_selector": "round_robin",
+      "reflection_minibatch_size": 3,
+      "use_merge": false
+    },
+    "team_minibatch": "4 responsibility + 4 coalition + 4 preservation",
+    "winner_only_shadow": true
+  },
+  "solver_contract": "COMMON_SOLVER_CONTRACT_V1",
+  "solver_contract_hash": "50f55d0288d06913e247dcbc79378539898faf6a7a2c2d29c7b0ced0b4817fe0",
+  "split_identity": {
+    "optimize100": "anti_overfitting_split_v1/fold_a+fold_b",
+    "shadow50": "anti_overfitting_split_v1/fold_c",
+    "test50": "blocked_zero_calls",
+    "validation50": "anti_overfitting_split_v1/validation"
+  }
+}

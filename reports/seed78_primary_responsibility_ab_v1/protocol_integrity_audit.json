@@ -1,0 +1,30 @@
+{
+  "schema_version": "seed78_independent_protocol_integrity_audit_v1",
+  "official_frozen_audit": {
+    "gate": "PASS",
+    "errors": [],
+    "trajectories": 2,
+    "validation50_evaluations": 2,
+    "test50_calls": 0
+  },
+  "independent_scientific_gate": "HOLD",
+  "hold_reasons": [
+    "tokens_per_commit and target/commit distribution mismatch are undefined because both arms have zero commits",
+    "byte-identical final teams were evaluated through separate Validation50 provider calls and yielded different aggregate scores"
+  ],
+  "final_team_identity_equal": true,
+  "validation50_observed": {
+    "A_vote": 0.62,
+    "B_vote": 0.60,
+    "A_mean_member": 0.62,
+    "B_mean_member": 0.60,
+    "A_oracle": 0.62,
+    "B_oracle": 0.60
+  },
+  "validation_difference_causal_for_scheduler": false,
+  "validation_pairing_diagnosis": "independent provider sampling for identical prompt teams; shared paired request cache was not enforced",
+  "shadow50_role": "optimization_time_safety_data",
+  "validation50_timing": "after_both_trajectories_frozen",
+  "test50_calls": 0,
+  "retry_authorized": false
+}

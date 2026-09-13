@@ -1,0 +1,16 @@
+{
+  "gate": "PASS",
+  "assertions": {
+    "execution_commit_matches_source_freeze": true,
+    "protocol_hash_matches": true,
+    "two_trajectories_completed": true,
+    "both_early_stop_after_six_no_commit_opportunities": true,
+    "validation_only_after_both_frozen": true,
+    "test50_zero": true,
+    "final_prompt_hashes_equal": true,
+    "final_team_hash_equal": true,
+    "both_commit_counts_zero": true,
+    "scheduler_classifier_hold": true,
+    "validation_delta_not_attributed_to_scheduler": true
+  }
+}

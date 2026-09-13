@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "gate": "PASS",
+  "protocol_sha256": "854879a50c08817e1d1a074b8a9320c034ebd363c80940f2fd73a2b7b3cc9d2d",
+  "seed": 78,
+  "test50_calls": 0,
+  "trajectories": 2,
+  "validation50_evaluations": 2
+}

@@ -1,0 +1,179 @@
+{
+  "B_minus_A_validation50": {
+    "mean_member_accuracy": -0.020000000000000018,
+    "oracle_accuracy": -0.020000000000000018,
+    "vote_accuracy": -0.020000000000000018,
+    "vote_minus_mean_member": 0.0
+  },
+  "arms": {
+    "A_VOTE_ALIGNED_HIERARCHICAL": {
+      "commit_count_by_member": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "commits": 0,
+      "ledger": {
+        "cache_hits": 100,
+        "input_tokens": 61769,
+        "logical_calls": 195,
+        "output_tokens": 16191,
+        "provider_attempts": 95,
+        "successful_provider_calls": 95,
+        "total_tokens": 77960
+      },
+      "max_unresolved_target_streak": 4,
+      "max_unresolved_target_streak_by_member": {
+        "0": 1,
+        "1": 3,
+        "2": 2,
+        "3": 2,
+        "4": 4
+      },
+      "opportunities": 6,
+      "target_commit_distribution_mismatch": null,
+      "target_count_by_member": {
+        "0": 1,
+        "1": 3,
+        "2": 2,
+        "3": 2,
+        "4": 4
+      },
+      "target_to_commit_rate_by_member": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "termination": "completed_by_early_stop",
+      "tokens_per_commit": null,
+      "validation50": {
+        "g_histogram": {
+          "0": 19,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 31
+        },
+        "invalid_rate": 0.0,
+        "mean_member_accuracy": 0.62,
+        "oracle_accuracy": 0.62,
+        "oracle_correct": 31,
+        "per_member_accuracy": [
+          0.62,
+          0.62,
+          0.62,
+          0.62,
+          0.62
+        ],
+        "row_count": 50,
+        "team_identity": {
+          "profile_hash": "611e4df2bb9649037fcb43fe36c6493f5ed8328fa93a23dad71bc7c6df72ffa2",
+          "prompt_hashes": [
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+          ],
+          "team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89"
+        },
+        "vote_accuracy": 0.62,
+        "vote_correct": 31,
+        "vote_minus_mean_member": 0.0
+      }
+    },
+    "B_PRIMARY_RESPONSIBILITY_REALIZABILITY": {
+      "commit_count_by_member": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "commits": 0,
+      "ledger": {
+        "cache_hits": 100,
+        "input_tokens": 60725,
+        "logical_calls": 194,
+        "output_tokens": 16999,
+        "provider_attempts": 94,
+        "successful_provider_calls": 94,
+        "total_tokens": 77724
+      },
+      "max_unresolved_target_streak": 3,
+      "max_unresolved_target_streak_by_member": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 3,
+        "4": 3
+      },
+      "opportunities": 6,
+      "target_commit_distribution_mismatch": null,
+      "target_count_by_member": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 3,
+        "4": 3
+      },
+      "target_to_commit_rate_by_member": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "termination": "completed_by_early_stop",
+      "tokens_per_commit": null,
+      "validation50": {
+        "g_histogram": {
+          "0": 20,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 30
+        },
+        "invalid_rate": 0.0,
+        "mean_member_accuracy": 0.6,
+        "oracle_accuracy": 0.6,
+        "oracle_correct": 30,
+        "per_member_accuracy": [
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6
+        ],
+        "row_count": 50,
+        "team_identity": {
+          "profile_hash": "611e4df2bb9649037fcb43fe36c6493f5ed8328fa93a23dad71bc7c6df72ffa2",
+          "prompt_hashes": [
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+            "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+          ],
+          "team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89"
+        },
+        "vote_accuracy": 0.6,
+        "vote_correct": 30,
+        "vote_minus_mean_member": 0.0
+      }
+    }
+  },
+  "classifier": "HOLD",
+  "evidence_type": "single_seed_prospective_mechanism_pilot",
+  "experiment_id": "seed78_primary_responsibility_ab_v1",
+  "seed": 78,
+  "shadow50_role": "optimization_time_safety_data_not_generalization",
+  "test50_calls": 0,
+  "validation50_role": "final_only_external_generalization_endpoint"
+}

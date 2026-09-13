@@ -1,0 +1,10 @@
+{
+  "schema_version": "seed78_scheduler_report_provenance_v1",
+  "execution_commit": "fff0652bb2cfa3f703cc022d2d20ea04d3200742",
+  "protocol_sha256": "854879a50c08817e1d1a074b8a9320c034ebd363c80940f2fd73a2b7b3cc9d2d",
+  "valid_run_identity": "seed78_primary_responsibility_ab_v1_retry1",
+  "invalidated_zero_call_run_excluded": true,
+  "invalidated_prepare_attempt_excluded": true,
+  "raw_artifacts_published": false,
+  "analysis_type": "frozen audit plus zero-API post-execution integrity audit"
+}

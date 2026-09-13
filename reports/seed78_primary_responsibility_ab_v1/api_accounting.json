@@ -1,0 +1,30 @@
+{
+  "schema_version": "seed78_api_accounting_v1",
+  "initialization": {
+    "solver_successful_provider_calls": 100,
+    "solver_cache_hits": 0,
+    "input_tokens": 19665,
+    "output_tokens": 6371,
+    "total_tokens": 26036
+  },
+  "A_VOTE_ALIGNED_HIERARCHICAL": {
+    "reflection_successful_provider_calls": 45,
+    "solver_successful_provider_calls": 50,
+    "solver_cache_hits": 100,
+    "input_tokens": 61769,
+    "output_tokens": 16191,
+    "total_tokens": 77960
+  },
+  "B_PRIMARY_RESPONSIBILITY_REALIZABILITY": {
+    "reflection_successful_provider_calls": 44,
+    "solver_successful_provider_calls": 50,
+    "solver_cache_hits": 100,
+    "input_tokens": 60725,
+    "output_tokens": 16999,
+    "total_tokens": 77724
+  },
+  "total_successful_provider_calls": 289,
+  "total_tokens": 181720,
+  "test50_calls": 0,
+  "tokens_per_commit": null
+}

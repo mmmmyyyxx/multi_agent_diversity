@@ -1,0 +1,31 @@
+{
+  "schema_version": "seed78_scheduler_funnel_summary_v1",
+  "A_VOTE_ALIGNED_HIERARCHICAL": {
+    "termination": "completed_by_early_stop",
+    "opportunities": 6,
+    "target_branches": 12,
+    "local_candidates": 12,
+    "team_minibatch_survivors": 0,
+    "full_team_evaluated_candidates": 0,
+    "feasible_candidates": 0,
+    "shadow_events": 0,
+    "commits": 0,
+    "target_count_by_member": [1, 3, 2, 2, 4],
+    "max_unresolved_target_streak": 4
+  },
+  "B_PRIMARY_RESPONSIBILITY_REALIZABILITY": {
+    "termination": "completed_by_early_stop",
+    "opportunities": 6,
+    "target_branches": 12,
+    "local_candidates": 12,
+    "team_minibatch_survivors": 0,
+    "full_team_evaluated_candidates": 0,
+    "feasible_candidates": 0,
+    "shadow_events": 0,
+    "commits": 0,
+    "target_count_by_member": [2, 2, 2, 3, 3],
+    "max_unresolved_target_streak": 3
+  },
+  "scheduler_hypothesis_evaluable": false,
+  "reason": "both arms have zero commits and zero TeamMiniBatch survivors"
+}
