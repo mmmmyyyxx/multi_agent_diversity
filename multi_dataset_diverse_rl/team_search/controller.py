@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass, replace
 from typing import Any, Protocol, Sequence
 
@@ -67,7 +68,12 @@ class TeamSearchController:
         records: list[TeamCandidateRecord] = []
         minibatch_calls = minibatch_tokens = 0
         for candidate in local.candidates:
-            metrics, cost = self.evaluator.evaluate_minibatch(assignment, candidate, team_minibatch)
+            metrics, cost = await asyncio.to_thread(
+                self.evaluator.evaluate_minibatch,
+                assignment,
+                candidate,
+                team_minibatch,
+            )
             records.append(TeamCandidateRecord(candidate, minibatch_metrics=metrics))
             minibatch_calls += cost.solver_calls
             minibatch_tokens += cost.total_tokens
@@ -76,7 +82,11 @@ class TeamSearchController:
         for index, row in enumerate(promoted):
             if not row.promoted:
                 continue
-            evaluation, cost = self.evaluator.evaluate_full(assignment, row.local_candidate)
+            evaluation, cost = await asyncio.to_thread(
+                self.evaluator.evaluate_full,
+                assignment,
+                row.local_candidate,
+            )
             promoted[index] = replace(row, full_evaluation=evaluation)
             full_calls += cost.solver_calls
             full_tokens += cost.total_tokens
@@ -136,8 +146,10 @@ class TeamSearchController:
             owner = next(
                 branch for branch in branches if any(row is winner for row in branch.candidates)
             )
-            shadow, shadow_cost = self.evaluator.evaluate_shadow(
-                owner.assignment, winner.local_candidate
+            shadow, shadow_cost = await asyncio.to_thread(
+                self.evaluator.evaluate_shadow,
+                owner.assignment,
+                winner.local_candidate,
             )
             shadow_calls = shadow_cost.solver_calls
             shadow_tokens = shadow_cost.total_tokens

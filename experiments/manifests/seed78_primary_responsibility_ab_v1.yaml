@@ -1,0 +1,68 @@
+schema_version: experiment_manifest_v1
+experiment_id: seed78_primary_responsibility_ab_v1
+title: Seed78 Vote-Aligned versus Persistent-Realizability Scheduler Pilot
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-13T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-13T00:00:00+08:00'}
+lineage:
+  parents: [vote_aligned_generic_shadow_pilot_v1, primary_responsibility_persistent_realizability_v1, two_layer_rg_gepa_v1]
+  derives_from: primary_responsibility_persistent_realizability_v1
+scientific_question: Does primary responsibility with persistent realizability reduce target-to-commit mismatch and token cost per commit without reducing final external Validation Vote?
+hypotheses:
+  - B reduces target/commit distribution mismatch relative to A.
+  - B reduces optimization tokens per Shadow-approved commit relative to A.
+  - B does not reduce final Validation50 VoteAcc relative to A.
+design:
+  changed: [Layer-2 target scheduler only]
+  unchanged: [five-member plurality, same P0 and initial profiles, Seed75 A+B Optimize100 and C Shadow50 split identity, qwen3-8b Solver with thinking false, COMMON_SOLVER_CONTRACT_V1, qwen3.7-flash reflection, official frozen GEPA backend, TeamMiniBatch12, two targets, local and full evaluation budgets, Common-Safe, ranking, max-one commit, winner-only Shadow gate, Validation50 timing, Test50 zero access]
+  forbidden_changes: [algorithm tuning, scheduler weight changes, GEPA changes, branch-count changes, conditional second target, M2F, semantic-Critic changes, split changes, validation-aware behavior, Test50 access, added seeds, automatic retry]
+method_identity: member_aware_peer_state_v15
+runtime_version: seed78_primary_responsibility_ab_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: anti_overfitting_split_v1_fold_c, validation50: anti_overfitting_validation50_v1, test50: blocked}
+  split_hashes: {}
+  validation_policy: exactly once per final A/B state only after both training trajectories freeze; never used for optimization or selection
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {reflection: qwen3.7-flash, evaluator_config: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, reflection: 0.0}
+  max_tokens: {solver: 1800, reflection: 1800}
+seeds: [78]
+budget:
+  type: single_seed_scheduler_only_online_mechanism_pilot
+  frozen_before_run: true
+  limit: {arms: 2, max_update_opportunities_per_arm: 32, target_branches_per_opportunity: 2, local_metric_calls_per_target: 36, max_full_optimize_promotions_per_target: 2, optimize_rows: 100, shadow_rows: 50, validation_rows: 50, test_calls: 0}
+  candidate_counts: {official_gepa_k_local_return: 4, max_promoted_per_target: 2}
+  early_stop: {consecutive_opportunities_without_shadow_approved_commit: 6}
+api_authorization:
+  authorized: true
+  authorization_scope: explicit_user_authorization_in_seed78_protocol_confirmation_for_execution_only_handoff
+  allowed_roles: [solver, reflection]
+  allowed_phases: [online_trajectory, frozen_validation]
+selection:
+  primary_metric: B minus A target/commit distribution mismatch, tokens per commit, and final Validation50 Vote preservation
+  frozen_rule: PRIMARY_RESPONSIBILITY_SCHEDULER_SUPPORTED iff B has lower mismatch, lower tokens per commit, and Validation50 VoteAcc no lower than A; otherwise use the frozen classifier definition
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration: {path: experiments/seed78_primary_responsibility_ab_v1/PROTOCOL.md, sha256: 59eea4c21ed60beed85b30cde93ba032d8439caca5d8cde29b94a792e5bdb496}
+  classifier: experiments/seed78_primary_responsibility_ab_v1/classifier_definition.json
+  handoff: experiments/seed78_primary_responsibility_ab_v1/EXPERIMENT_HANDOFF.md
+  report: reports/seed78_primary_responsibility_ab_v1
+  provenance: reports/seed78_primary_responsibility_ab_v1/provenance.json
+git:
+  design_commit: null
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: NOT_RUN
+  conclusion: Source-freeze and execution handoff only; no API execution or result exists yet.
+  evidence_type: not_yet_available

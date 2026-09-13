@@ -1,0 +1,35 @@
+{
+  "schema_version": "seed78_primary_responsibility_ab_classifier_v1",
+  "evidence_scope": "single_seed_prospective_mechanism_pilot",
+  "definitions": {
+    "target_commit_distribution_mismatch": "0.5 * sum_i(abs(target_share_i - commit_share_i)); null when there are no commits",
+    "max_unresolved_target_streak": "maximum, over members, of consecutive opportunities in which that member was targeted without that member receiving the committed write-back",
+    "tokens_per_commit": "optimization-phase arm ledger total_tokens divided by Shadow-approved commits; null when commits=0"
+  },
+  "labels_in_priority_order": [
+    {
+      "label": "PRIMARY_RESPONSIBILITY_SCHEDULER_SUPPORTED",
+      "rule": "B mismatch < A mismatch AND B tokens_per_commit < A tokens_per_commit AND B Validation50 VoteAcc >= A Validation50 VoteAcc"
+    },
+    {
+      "label": "MECHANISM_SIGNAL_WITHOUT_FULL_QUALITY_SUPPORT",
+      "rule": "B mismatch < A mismatch OR B tokens_per_commit < A tokens_per_commit, but the full supported rule is false"
+    },
+    {
+      "label": "NO_PRIMARY_RESPONSIBILITY_SCHEDULER_SIGNAL",
+      "rule": "neither preregistered mechanism quantity improves"
+    },
+    {
+      "label": "HOLD",
+      "rule": "official protocol/audit gate fails or a required comparison is undefined"
+    }
+  ],
+  "forbidden": [
+    "threshold tuning",
+    "scheduler-weight tuning",
+    "efficacy-driven seed extension",
+    "Shadow50 interpreted as independent generalization",
+    "Validation50 used during optimization",
+    "Test50 access"
+  ]
+}
