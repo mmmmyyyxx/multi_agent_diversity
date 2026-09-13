@@ -65,7 +65,7 @@ artifacts:
 git:
   design_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
   implementation_commit: a3f4e590af251b64b33e7bcdc612a0aa7993287c
-  result_commit: null
+  result_commit: 877f9976bf7ab12d2358d99f76370b0fdf30e427
 result:
   classifier: HOLD_NO_SCHEDULER_INTERVENTION_EVALUABLE
   conclusion: Retry1 completed with protocol audit PASS, but both arms had zero TeamMiniBatch survivors and zero commits, leaving target/commit mismatch and tokens per commit undefined. The byte-identical final teams received separate Validation50 provider samples, so the observed 0.62 versus 0.60 scores are not attributable to the scheduler.
