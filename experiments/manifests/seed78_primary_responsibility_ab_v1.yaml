@@ -44,8 +44,8 @@ budget:
   candidate_counts: {official_gepa_k_local_return: 4, max_promoted_per_target: 2}
   early_stop: {consecutive_opportunities_without_shadow_approved_commit: 6}
 api_authorization:
-  authorized: false
-  authorization_scope: retry1_requires_fresh_explicit_user_authorization_after_zero_call_engineering_hold
+  authorized: true
+  authorization_scope: explicit_user_reauthorization_2026_09_13_for_fresh_retry1_only_after_zero_call_path_binding_repair
   allowed_roles: [solver, reflection]
   allowed_phases: [online_trajectory, frozen_validation]
 selection:
@@ -54,7 +54,7 @@ selection:
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
-  preregistration: {path: experiments/seed78_primary_responsibility_ab_v1/PROTOCOL.md, sha256: 956365f481df2c479c629582659c8a5f0466b2bc96160f03814a763226a6fa79}
+  preregistration: {path: experiments/seed78_primary_responsibility_ab_v1/PROTOCOL.md, sha256: 537771c89291fa2982fbfd463d7b8a90faef7bc30251584b7d76b3a991719ff0}
   classifier: experiments/seed78_primary_responsibility_ab_v1/classifier_definition.json
   handoff: experiments/seed78_primary_responsibility_ab_v1/EXPERIMENT_HANDOFF.md
   report: reports/seed78_primary_responsibility_ab_v1

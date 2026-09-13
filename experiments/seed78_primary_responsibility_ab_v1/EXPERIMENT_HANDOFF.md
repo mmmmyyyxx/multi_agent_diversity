@@ -27,15 +27,15 @@ creates a private run-local handoff whose `source_freeze.json` pins the exact
 conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --prepare
 ```
 
-Then verify the generated `runs\seed78_primary_responsibility_ab_v1_prep_retry1\`
+Then verify the generated
+`runs\seed78_primary_responsibility_ab_v1_prep_retry1_authorized1\`
 `phase_a_gate.json` says `PASS`, the execution commit equals current `HEAD`, and
-the tracked worktree remains clean. Retry1 requires a fresh explicit user API
-authorization and a corresponding manifest update. Until that occurs, do not
-set the authorization environment variable or execute the following command:
+the tracked worktree remains clean. The user explicitly reauthorized only this
+fresh retry1 on 2026-09-13. No later retry inherits that authorization.
 
 ```powershell
 $env:SEED78_PRIMARY_RESPONSIBILITY_AB_AUTHORIZED='1'
-conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --execute --prep runs\seed78_primary_responsibility_ab_v1_prep_retry1 --run runs\seed78_primary_responsibility_ab_v1_retry1
+conda run -n DL python scripts\run_seed78_primary_responsibility_ab.py --execute --prep runs\seed78_primary_responsibility_ab_v1_prep_retry1_authorized1 --run runs\seed78_primary_responsibility_ab_v1_retry1
 ```
 
 The root must be fresh. Resume, overwrite and automatic retry are forbidden.

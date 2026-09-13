@@ -67,10 +67,9 @@ def test_execution_entry_point_fails_closed_without_runtime_authorization(monkey
         _authorize()
 
 
-def test_retry1_is_not_manifest_authorized_after_engineering_hold(monkeypatch) -> None:
+def test_retry1_manifest_authorization_passes_after_explicit_reauthorization(monkeypatch) -> None:
     monkeypatch.setenv(AUTH_ENV, "1")
-    with pytest.raises(RuntimeError, match="manifest does not authorize"):
-        _authorize()
+    _authorize()
 
 
 def test_run_identity_config_uses_real_frozen_split_paths(tmp_path: Path) -> None:
