@@ -37,6 +37,7 @@ def test_canary_preflight_is_zero_api_and_narrow() -> None:
         "attempt_identity": True,
         "launch_transaction": True,
         "proposer_diagnostics": True,
+        "classifier_version": True,
         "preregistration_hash": True,
         "no_retry_resume": True,
     }
@@ -82,18 +83,22 @@ def test_run_lifecycle_is_atomic_and_failed_start_is_durable(tmp_path: Path) -> 
 def test_canary_classifier_distinguishes_empirical_path_states() -> None:
     module = load()
 
-    class Cost:
-        local_optimizer_solver_calls = 18
-        team_minibatch_solver_calls = 12
-
     class Outcome:
-        cost = Cost()
-        funnel = {"local_candidates": 1}
+        pass
 
-    assert module.classify({"proposal_attempts": 1}, Outcome()) == (
-        "BACKEND_EMPIRICAL_PATH_CONFIRMED"
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 1, "solver_reached": 1}},
+        Outcome(),
+    ) == (
+        "LOCAL_EMPIRICAL_PATH_CONFIRMED"
     )
-    Outcome.cost.local_optimizer_solver_calls = 12
-    assert module.classify({"proposal_attempts": 1}, Outcome()) == (
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 1, "solver_reached": 0}},
+        Outcome(),
+    ) == (
         "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH"
     )
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 0, "solver_reached": 0}},
+        Outcome(),
+    ) == "NO_REAL_PROPOSAL_ATTEMPT"

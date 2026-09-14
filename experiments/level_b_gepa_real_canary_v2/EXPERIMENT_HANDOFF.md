@@ -2,7 +2,8 @@
 
 Status: `PENDING_EXPLICIT_API_AUTHORIZATION`
 
-Do not execute yet. After explicit authorization, the scientific owner must
+Do not execute yet. The superseded `reflectionfix1` pending attempt is invalid
+and must never be executed. After a new explicit authorization, the scientific owner must
 update and re-hash the manifest authorization fact, create a fresh prep identity,
 verify the exact execution commit and protocol hash, and hand off only the frozen
 command. No source, model, split, budget, GEPA setting, scheduler, or acceptance

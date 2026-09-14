@@ -23,7 +23,11 @@ data:
   task: BBH disambiguation_qa
   formal: false
   split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: anti_overfitting_split_v1_fold_c, validation50: not_accessed, test50: blocked}
-  split_hashes: {}
+  split_hashes:
+    optimize100: {count: 100, question_hashes_sha256: 1678f8339929dab5d728cc25940c8e452f74b3f0508fda8fc9a19532207d494f}
+    shadow50: {count: 50, question_hashes_sha256: 254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557}
+    validation50: {count: 50, question_hashes_sha256: 95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359}
+    test50: {count: 50, question_hashes_sha256: c1a90894d094b099a4bc2fc09fd7f529e8ddc4a667237e5f572f77358d7330b2}
   validation_policy: prohibited
   test_policy: prohibited; zero calls
 model:
@@ -39,7 +43,7 @@ design:
     - official GEPA search core, population, Pareto, parent selection, reflection minibatch, and local acceptance
     - Layer 2 scheduler, persistent realizability, TeamMiniBatch, Common-Safe, Shadow, and write-back
     - model, data, opportunity, and evaluation budgets
-  attempt_id: level_b_gepa_real_canary_v2_reflectionfix1_pending_authorization
+  attempt_id: level_b_gepa_real_canary_v2_precallclosure1_pending_authorization
   opportunities: 1
   target_branches: 1
   target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
@@ -49,7 +53,7 @@ design:
   forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
 api_authorization:
   authorized: false
-  authorization_scope: pending_new_explicit_user_authorization_after_reflectionfix1_freeze
+  authorization_scope: pending_new_explicit_user_authorization_after_precallclosure1_freeze
   allowed_roles: [solver, reflection]
   allowed_phases: [canary]
 budget:
@@ -58,15 +62,16 @@ budget:
   limit: {initialization_solver_provider_calls: 100, local_gepa_metric_calls: 36, returned_candidates: 4, team_minibatch_candidates: 4, full_team_candidates: 2, shadow_winners: 1, validation_calls: 0, test_calls: 0}
 selection:
   primary_metric: contract_valid_changed_proposal_reaches_solver
-  frozen_rule: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
+  classifier_version: level_b_local_empirical_path_classifier_v1
+  frozen_rule: NO_REAL_PROPOSAL_ATTEMPT iff proposal_attempts=0; PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH iff proposal_attempts>0 and solver_reached=0; LOCAL_EMPIRICAL_PATH_CONFIRMED iff solver_reached>0
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
   preregistration:
     path: experiments/level_b_gepa_real_canary_v2/PROTOCOL.md
-    sha256: 00c14816939283fdfe1bff5c5f120c6d9e861f56f7e46b6a78a47440c1dc599f
-  report: reports/level_b_gepa_real_canary_v2_reflectionfix1
-  provenance: reports/level_b_gepa_real_canary_v2_reflectionfix1/provenance.json
+    sha256: fb710e15ead8ff4c0a0a0a0be8dcea8c1671348c29ba20d21692c7968ab06a95
+  report: reports/level_b_gepa_real_canary_v2_precallclosure1
+  provenance: reports/level_b_gepa_real_canary_v2_precallclosure1/provenance.json
 git:
   design_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac
   implementation_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac

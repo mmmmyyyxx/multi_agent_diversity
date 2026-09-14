@@ -1,0 +1,12 @@
+{
+  "crlf_normalized": true,
+  "fixed_answer_payload_removed": true,
+  "free_form_controller_contract_instruction_exposed": false,
+  "gold_label_exposed": false,
+  "immutable_final_answer_marker_removed": true,
+  "ordinary_reasoning_retained": true,
+  "output_interface_commentary_removed": true,
+  "raw_failure_code_exposed": false,
+  "representation": "component_specific_reasoning_evidence_v1",
+  "stable_empty_fallback": true
+}

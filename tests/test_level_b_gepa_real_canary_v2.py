@@ -31,6 +31,44 @@ def test_v2_freeze_is_narrow_and_not_api_authorized() -> None:
         "component_specific_reasoning_evidence_v1"
     )
     assert protocol["validation50_calls"] == protocol["test50_calls"] == 0
+    assert protocol["classifier_version"] == (
+        "level_b_local_empirical_path_classifier_v1"
+    )
+    assert protocol["logical_split_identities"] == {
+        "optimize100": {
+            "count": 100,
+            "question_hashes_sha256": "1678f8339929dab5d728cc25940c8e452f74b3f0508fda8fc9a19532207d494f",
+        },
+        "shadow50": {
+            "count": 50,
+            "question_hashes_sha256": "254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557",
+        },
+        "validation50": {
+            "count": 50,
+            "question_hashes_sha256": "95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359",
+        },
+        "test50": {
+            "count": 50,
+            "question_hashes_sha256": "c1a90894d094b099a4bc2fc09fd7f529e8ddc4a667237e5f572f77358d7330b2",
+        },
+    }
+
+
+def test_v2_classifier_uses_only_callback_attempts_and_solver_reach() -> None:
+    module = load()
+    outcome = object()
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 0, "solver_reached": 0}},
+        outcome,
+    ) == "NO_REAL_PROPOSAL_ATTEMPT"
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 3, "solver_reached": 0}},
+        outcome,
+    ) == "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH"
+    assert module.classify(
+        {"proposer_diagnostics": {"proposal_attempts": 3, "solver_reached": 1}},
+        outcome,
+    ) == "LOCAL_EMPIRICAL_PATH_CONFIRMED"
 
 
 def test_v2_preflight_passes_without_calling_api() -> None:

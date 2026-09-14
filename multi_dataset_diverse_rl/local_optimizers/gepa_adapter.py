@@ -63,13 +63,29 @@ def reasoning_evidence_from_output(raw_output: str) -> str:
     """
 
     normalized = str(raw_output or "").replace("\r\n", "\n").replace("\r", "\n")
-    retained: list[str] = []
-    for line in normalized.split("\n"):
-        if FINAL_ANSWER_LINE.fullmatch(line):
-            continue
+    candidate_lines = [
+        line.rstrip()
+        for line in normalized.split("\n")
+        if not FINAL_ANSWER_LINE.fullmatch(line)
+    ]
+    rejected: set[int] = set()
+    for index, line in enumerate(candidate_lines):
         if mutable_prompt_violation_reasons(line) or _REFLECTION_OUTPUT_TOPIC.search(line):
+            rejected.add(index)
+    # Interface language can be split across provider line wrapping (for
+    # example, ``response`` followed by ``format``).  Evaluate adjacent lines
+    # as one sentence so line wrapping cannot bypass the same immutable-shell
+    # exclusion rule.  This remains a projection of evidence, not a new
+    # reflective-data field or optimizer signal.
+    for index in range(len(candidate_lines) - 1):
+        if index in rejected or index + 1 in rejected:
             continue
-        retained.append(line.rstrip())
+        joined = " ".join(candidate_lines[index : index + 2]).strip()
+        if mutable_prompt_violation_reasons(joined) or _REFLECTION_OUTPUT_TOPIC.search(joined):
+            rejected.update((index, index + 1))
+    retained = [
+        line for index, line in enumerate(candidate_lines) if index not in rejected
+    ]
     evidence = "\n".join(retained).strip()
     return evidence or "No reusable reasoning trace was available."
 

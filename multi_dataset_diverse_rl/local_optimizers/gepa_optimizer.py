@@ -13,8 +13,6 @@ from typing import Any, Callable, Mapping, Protocol
 from .gepa_adapter import (
     GEPAAdapter,
     LocalSolverEvaluator,
-    compact_prompt_failed_checks,
-    primary_prompt_rejection_category,
     validate_complete_compact_prompt,
 )
 from .gepa_callbacks import GEPALineageCallback
@@ -256,7 +254,12 @@ class GEPALocalPromptOptimizer:
             output_contract_id=task.output_contract_id,
             max_prompt_chars=self.config.max_prompt_chars,
         )
-        callback = GEPALineageCallback(lineage_path)
+        callback = GEPALineageCallback(
+            lineage_path,
+            parent_prompt=task.parent_prompt,
+            examples=all_examples,
+            max_prompt_chars=self.config.max_prompt_chars,
+        )
         before = dict(self.accounting_reader())
         optimize = self._optimize_fn or import_frozen_gepa().optimize
         result = optimize(
@@ -380,65 +383,27 @@ class GEPALocalPromptOptimizer:
             for row in callback.events
             if row["event_type"] == "valset_evaluated" and row["candidate_index"] != 0
         ]
-        proposal_prompts = [
-            result.candidates[index][self.config.candidate_component_name]
-            for index in range(1, result.num_candidates)
-        ]
-        changed_count = sum(prompt != task.parent_prompt for prompt in proposal_prompts)
-        unchanged_count = len(proposal_prompts) - changed_count
-        duplicate_count = 0
-        seen_changed_hashes: set[str] = set()
-        contract_invalid_count = 0
-        primary_category_counts = {
-            "over_length": 0,
-            "output_contract_contamination": 0,
-            "example_copying": 0,
-            "append_only": 0,
-            "other_failed_check": 0,
-        }
-        failed_check_counts: dict[str, int] = {}
-        for prompt in proposal_prompts:
-            if prompt == task.parent_prompt:
-                continue
-            prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
-            if prompt_hash in seen_changed_hashes:
-                duplicate_count += 1
-            else:
-                seen_changed_hashes.add(prompt_hash)
-            failed_checks = compact_prompt_failed_checks(
-                prompt,
-                parent_prompt=task.parent_prompt,
-                examples=all_examples,
-                max_chars=self.config.max_prompt_chars,
-            )
-            if failed_checks:
-                contract_invalid_count += 1
-                primary = primary_prompt_rejection_category(failed_checks)
-                if primary is not None:
-                    primary_category_counts[primary] += 1
-                for check in failed_checks:
-                    failed_check_counts[check] = failed_check_counts.get(check, 0) + 1
-        solver_reached = sum(
-            hashlib.sha256(prompt.encode("utf-8")).hexdigest()
-            in adapter.solver_reached_proposal_hashes
-            for prompt in proposal_prompts
-            if prompt != task.parent_prompt
+        proposal_diagnostics = callback.proposal_diagnostics()
+        materialized_candidates = max(0, result.num_candidates - 1)
+        solver_reached = len(
+            set(proposal_diagnostics["proposal_hashes"])
+            & adapter.solver_reached_proposal_hashes
         )
         proposer_diagnostics = {
-            "proposal_attempts": callback.proposal_count,
-            "materialized_proposals": len(proposal_prompts),
-            "unmaterialized_attempts": max(0, callback.proposal_count - len(proposal_prompts)),
-            "changed": changed_count,
-            "unchanged": unchanged_count,
-            "duplicate": duplicate_count,
-            "contract_invalid": contract_invalid_count,
+            **proposal_diagnostics,
+            "materialized_candidates": materialized_candidates,
+            "unmaterialized_proposals": max(
+                0,
+                proposal_diagnostics["proposal_attempts"] - materialized_candidates,
+            ),
+            "accepted_candidates": len(accepted_events),
+            "local_frontier_candidates": len(changed_frontier),
+            "returned_frontier_candidates": len(chosen),
             "solver_reached": solver_reached,
             "positive_minibatch_delta": sum(
                 row["new_score"] > row["old_score"] for row in rejected_events
             ) + len(accepted_events),
             "accepted_mutation": len(accepted_events),
-            "primary_rejection_category_counts": primary_category_counts,
-            "failed_check_counts": dict(sorted(failed_check_counts.items())),
         }
         budget_capacity = asdict(local_gepa_budget_capacity(
             metric_budget=task.budget.max_metric_calls,

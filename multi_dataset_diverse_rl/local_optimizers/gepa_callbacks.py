@@ -6,7 +6,13 @@ import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
+
+from .gepa_adapter import (
+    compact_prompt_failed_checks,
+    primary_prompt_rejection_category,
+)
+from .schemas import LocalEvidenceExample
 
 
 def _hash(value: Any) -> str:
@@ -17,11 +23,23 @@ def _hash(value: Any) -> str:
 class GEPALineageCallback:
     """Capture only hashes, ids, scores, and lifecycle facts—not raw prompts."""
 
-    def __init__(self, event_path: Path | None = None) -> None:
+    def __init__(
+        self,
+        event_path: Path | None = None,
+        *,
+        parent_prompt: str | None = None,
+        examples: Sequence[LocalEvidenceExample] = (),
+        max_prompt_chars: int = 3000,
+    ) -> None:
         self.events: list[dict[str, Any]] = []
         self.reflection_minibatches: dict[int, tuple[str, ...]] = {}
         self.proposal_count = 0
         self.event_path = event_path
+        self.parent_prompt = parent_prompt
+        self.examples = tuple(examples)
+        self.max_prompt_chars = max_prompt_chars
+        self._proposal_records: list[dict[str, Any]] = []
+        self._seen_changed_hashes: set[str] = set()
 
     def _append(self, event_type: str, **values: Any) -> None:
         row = {"event_index": len(self.events), "event_type": event_type, **values}
@@ -58,11 +76,78 @@ class GEPALineageCallback:
 
     def on_proposal_end(self, event: dict[str, Any]) -> None:
         self.proposal_count += 1
+        instructions = event.get("new_instructions")
+        prompt = (
+            instructions.get("decision_procedure")
+            if isinstance(instructions, dict)
+            and set(instructions) == {"decision_procedure"}
+            and isinstance(instructions.get("decision_procedure"), str)
+            else None
+        )
+        failed_checks: tuple[str, ...]
+        if prompt is None or self.parent_prompt is None:
+            proposal_hash = _hash(instructions)
+            changed = prompt != self.parent_prompt
+            failed_checks = ("invalid_component_mapping",) if prompt is None else ()
+        else:
+            proposal_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+            changed = prompt != self.parent_prompt
+            failed_checks = compact_prompt_failed_checks(
+                prompt,
+                parent_prompt=self.parent_prompt,
+                examples=self.examples,
+                max_chars=self.max_prompt_chars,
+            )
+        duplicate = changed and proposal_hash in self._seen_changed_hashes
+        if changed:
+            self._seen_changed_hashes.add(proposal_hash)
+        primary_category = primary_prompt_rejection_category(failed_checks)
+        diagnostic = {
+            "proposal_hash": proposal_hash,
+            "changed": bool(changed),
+            "duplicate": bool(duplicate),
+            "contract_invalid": bool(failed_checks),
+            "primary_rejection_category": primary_category,
+            "failed_checks": list(failed_checks),
+        }
+        self._proposal_records.append(diagnostic)
         self._append(
             "proposal_end",
             iteration=int(event["iteration"]),
-            proposal_hash=_hash(event["new_instructions"]),
+            **diagnostic,
         )
+
+    def proposal_diagnostics(self) -> dict[str, Any]:
+        """Return authoritative sanitized proposal-event counters."""
+
+        categories = {
+            "over_length": 0,
+            "output_contract_contamination": 0,
+            "example_copying": 0,
+            "append_only": 0,
+            "other_failed_check": 0,
+        }
+        failed_checks: dict[str, int] = {}
+        for row in self._proposal_records:
+            primary = row["primary_rejection_category"]
+            if primary is not None:
+                categories[primary] += 1
+            for check in row["failed_checks"]:
+                failed_checks[check] = failed_checks.get(check, 0) + 1
+        return {
+            "proposal_attempts": len(self._proposal_records),
+            "proposal_changed": sum(row["changed"] for row in self._proposal_records),
+            "proposal_unchanged": sum(
+                not row["changed"] for row in self._proposal_records
+            ),
+            "proposal_duplicate": sum(row["duplicate"] for row in self._proposal_records),
+            "proposal_contract_invalid": sum(
+                row["contract_invalid"] for row in self._proposal_records
+            ),
+            "primary_rejection_category_counts": categories,
+            "failed_check_counts": dict(sorted(failed_checks.items())),
+            "proposal_hashes": [row["proposal_hash"] for row in self._proposal_records],
+        }
 
     def on_candidate_accepted(self, event: dict[str, Any]) -> None:
         self._append(

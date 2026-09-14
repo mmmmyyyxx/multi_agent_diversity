@@ -1,0 +1,23 @@
+{
+  "api_calls": 0,
+  "compileall": "PASS",
+  "covered": [
+    "callback_counts_unmaterialized_rejection",
+    "callback_does_not_persist_raw_proposal",
+    "valid_changed_proposal_and_solver_reach",
+    "duplicate_changed_proposal",
+    "diagnostic_hard_gate_agreement_for_all_rejection_classes",
+    "crlf_and_split_multiline_interface_filtering",
+    "fixed_answer_payload_filtering",
+    "safe_reasoning_retention_and_empty_fallback",
+    "three_state_classifier_boundaries",
+    "logical_split_source_identity"
+  ],
+  "deterministic_report_replay": "PASS",
+  "focused_result": "39 passed",
+  "full_result": "1038 passed, 1 known historical cache-artifact failure",
+  "git_diff_check": "PASS",
+  "new_failures": 0,
+  "test_calls": 0,
+  "validation_calls": 0
+}

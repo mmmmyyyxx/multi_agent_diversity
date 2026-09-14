@@ -1,0 +1,11 @@
+{
+  "attempt_id": "level_b_gepa_real_canary_v2_precallclosure1_pending_authorization",
+  "evidence_type": "zero_api_engineering_closure",
+  "experiment_id": "level_b_gepa_real_canary_v2",
+  "historical_artifacts_modified": false,
+  "previous_pending_attempt_invalidated": true,
+  "source_split_artifacts": [
+    "experiments/anti_overfitting_split_v1/split_manifest.json",
+    "experiments/anti_overfitting_split_v1/fold_assignment.json"
+  ]
+}

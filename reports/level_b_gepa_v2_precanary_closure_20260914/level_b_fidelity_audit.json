@@ -1,0 +1,12 @@
+{
+  "adapter_propose_new_texts": false,
+  "custom_candidate_proposer": false,
+  "fidelity": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+  "gate": "PASS",
+  "layer1_layer2_ownership_changed": false,
+  "local_validation_size": 12,
+  "metric_budget": 36,
+  "official_gepa_core_modified": false,
+  "official_population_pareto_parent_selection_and_acceptance_preserved": true,
+  "reflection_minibatch_size": 3
+}

@@ -87,6 +87,7 @@ DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v1_authorized3"
 RUN_LIFECYCLE_FILE = "run_lifecycle.json"
 LAUNCH_TRANSACTION_VERSION = "atomic_run_local_lifecycle_v1"
 PROPOSER_DIAGNOSTICS_VERSION = "sanitized_proposer_diagnostics_v1"
+CLASSIFIER_VERSION = "level_b_local_empirical_path_classifier_v1"
 
 
 def git(*args: str) -> str:
@@ -144,6 +145,7 @@ def protocol_document() -> dict[str, Any]:
         "transport_attempt_cap": CONTRACT_SPEC.transport_attempt_cap,
         "launch_transaction_version": LAUNCH_TRANSACTION_VERSION,
         "proposer_diagnostics_version": PROPOSER_DIAGNOSTICS_VERSION,
+        "classifier_version": CLASSIFIER_VERSION,
     }
 
 
@@ -318,17 +320,19 @@ def authorize(run_root: Path) -> None:
 
 
 def classify(telemetry: dict[str, Any], outcome: Any) -> str:
-    proposal_attempts = int(telemetry.get("proposal_attempts", 0))
-    post_seed_solver_calls = max(0, outcome.cost.local_optimizer_solver_calls - 12)
-    changed = int(outcome.funnel["local_candidates"])
-    entered = int(outcome.cost.team_minibatch_solver_calls) > 0
-    if proposal_attempts <= 0:
+    del outcome
+    diagnostics = telemetry.get("proposer_diagnostics", {})
+    if not isinstance(diagnostics, dict):
+        diagnostics = {}
+    proposal_attempts = int(
+        diagnostics.get("proposal_attempts", telemetry.get("proposal_attempts", 0))
+    )
+    solver_reached = int(diagnostics.get("solver_reached", 0))
+    if proposal_attempts == 0:
         return "NO_REAL_PROPOSAL_ATTEMPT"
-    if post_seed_solver_calls <= 0:
+    if solver_reached == 0:
         return "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH"
-    if changed <= 0 or not entered:
-        return "LOCAL_SEARCH_EMPIRICAL_BUT_NO_CHANGED_FRONTIER"
-    return "BACKEND_EMPIRICAL_PATH_CONFIRMED"
+    return "LOCAL_EMPIRICAL_PATH_CONFIRMED"
 
 
 def config(out: Path, *, optimize_path: Path, validation_path: Path) -> Config:
@@ -481,6 +485,7 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
             "proposal_attempts": int(telemetry.get("proposal_attempts", 0)),
             "proposer_diagnostics_version": PROPOSER_DIAGNOSTICS_VERSION,
             "proposer_diagnostics": telemetry.get("proposer_diagnostics", {}),
+            "classifier_version": CLASSIFIER_VERSION,
             "positive_minibatch_deltas": int(
                 telemetry.get("positive_minibatch_deltas", 0)
             ),
@@ -553,21 +558,26 @@ def audit(prep: Path, run_root: Path) -> dict[str, Any]:
         errors.append("ledger_token_arithmetic")
     diagnostics = summary.get("proposer_diagnostics", {})
     required_diagnostics = {
-        "proposal_attempts", "materialized_proposals", "unmaterialized_attempts",
-        "changed", "unchanged", "duplicate", "contract_invalid",
+        "proposal_attempts", "materialized_candidates", "unmaterialized_proposals",
+        "proposal_changed", "proposal_unchanged", "proposal_duplicate",
+        "proposal_contract_invalid", "accepted_candidates",
+        "local_frontier_candidates", "returned_frontier_candidates",
         "solver_reached", "positive_minibatch_delta", "accepted_mutation",
         "primary_rejection_category_counts", "failed_check_counts",
     }
     if required_diagnostics - set(diagnostics):
         errors.append("proposer_diagnostics")
     else:
-        materialized = int(diagnostics.get("materialized_proposals", 0))
-        changed = int(diagnostics["changed"])
-        unchanged = int(diagnostics["unchanged"])
-        invalid = int(diagnostics["contract_invalid"])
+        attempts = int(diagnostics["proposal_attempts"])
+        materialized = int(diagnostics.get("materialized_candidates", 0))
+        changed = int(diagnostics["proposal_changed"])
+        unchanged = int(diagnostics["proposal_unchanged"])
+        invalid = int(diagnostics["proposal_contract_invalid"])
         solver_reached = int(diagnostics["solver_reached"])
         categories = diagnostics["primary_rejection_category_counts"]
-        if changed + unchanged != materialized:
+        if changed + unchanged != attempts:
+            errors.append("proposer_attempt_arithmetic")
+        if materialized > attempts:
             errors.append("proposer_materialization_arithmetic")
         if sum(int(value) for value in categories.values()) != invalid:
             errors.append("proposer_rejection_arithmetic")
@@ -632,6 +642,7 @@ def preflight() -> dict[str, Any]:
         "attempt_identity": protocol["attempt_id"] == ATTEMPT_ID,
         "launch_transaction": protocol["launch_transaction_version"] == LAUNCH_TRANSACTION_VERSION,
         "proposer_diagnostics": protocol["proposer_diagnostics_version"] == PROPOSER_DIAGNOSTICS_VERSION,
+        "classifier_version": protocol["classifier_version"] == CLASSIFIER_VERSION,
         "preregistration_hash": (
             manifest.get("artifacts", {}).get("preregistration", {}).get("sha256")
             == preregistration_hash(manifest)

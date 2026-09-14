@@ -1,0 +1,37 @@
+{
+  "algorithm_changed": false,
+  "api_authorized": false,
+  "api_calls": 0,
+  "attempt_id_is_fresh": true,
+  "formal_run_root_created": false,
+  "gate": "PASS",
+  "gepa_core_changed": false,
+  "layer2_changed": false,
+  "preflight": {
+    "api_calls": 0,
+    "checks": {
+      "attempt_identity": true,
+      "classifier_version": true,
+      "decision_procedure_component": true,
+      "launch_transaction": true,
+      "level_b": true,
+      "logical_split_manifest": true,
+      "logical_split_protocol": true,
+      "manifest_preflight_pass": true,
+      "manifest_schema": true,
+      "no_retry_resume": true,
+      "one_opportunity": true,
+      "one_target": true,
+      "preregistration_hash": true,
+      "proposer_diagnostics": true,
+      "test_zero": true,
+      "unchanged_gepa_budget": true,
+      "validation_zero": true
+    },
+    "gate": "PASS",
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "test_calls": 0,
+  "validation_calls": 0
+}

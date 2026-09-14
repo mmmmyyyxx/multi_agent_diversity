@@ -14,6 +14,7 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_adapter import (
     LocalSolverObservation,
     reasoning_evidence_from_output,
 )
+from multi_dataset_diverse_rl.local_optimizers.gepa_callbacks import GEPALineageCallback
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
     GEPAOptimizerConfig,
     GEPALocalPromptOptimizer,
@@ -268,6 +269,11 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
 
     def optimize(**kwargs):
         captured.update(kwargs)
+        callback = kwargs["callbacks"][0]
+        for index, prompt in enumerate(prompts[1:], start=1):
+            callback.on_proposal_end(
+                {"iteration": index, "new_instructions": {"decision_procedure": prompt}}
+            )
         return Result()
 
     reflection = FakeReflection()
@@ -286,10 +292,12 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     assert state["duplicate_prompt_indices"] == [3]
     assert state["returned_candidate_indices"] == [2, 5]
     diagnostics = state["telemetry"]["proposer_diagnostics"]
-    assert diagnostics["changed"] == 5
-    assert diagnostics["unchanged"] == 0
-    assert diagnostics["duplicate"] == 1
-    assert diagnostics["contract_invalid"] == 2
+    assert diagnostics["proposal_attempts"] == 5
+    assert diagnostics["proposal_changed"] == 5
+    assert diagnostics["proposal_unchanged"] == 0
+    assert diagnostics["proposal_duplicate"] == 1
+    assert diagnostics["proposal_contract_invalid"] == 2
+    assert diagnostics["materialized_candidates"] == 5
     assert diagnostics["primary_rejection_category_counts"] == {
         "over_length": 1,
         "output_contract_contamination": 1,
@@ -372,10 +380,10 @@ def test_proposer_diagnostics_classify_four_illegal_proposal_types(tmp_path: Pat
     assert result.optimizer_state is not None
     diagnostics = result.optimizer_state.payload["telemetry"]["proposer_diagnostics"]
     assert diagnostics["proposal_attempts"] == 5
-    assert diagnostics["changed"] == 5
-    assert diagnostics["unchanged"] == 0
-    assert diagnostics["duplicate"] == 0
-    assert diagnostics["contract_invalid"] == 4
+    assert diagnostics["proposal_changed"] == 5
+    assert diagnostics["proposal_unchanged"] == 0
+    assert diagnostics["proposal_duplicate"] == 0
+    assert diagnostics["proposal_contract_invalid"] == 4
     assert diagnostics["solver_reached"] == 0
     assert diagnostics["primary_rejection_category_counts"] == {
         "over_length": 1,
@@ -411,12 +419,21 @@ def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> 
                 "parents": RootOnlyResult.parents,
             }
 
+    def root_only_with_rejected_proposal(**kwargs):
+        kwargs["callbacks"][0].on_proposal_end(
+            {
+                "iteration": 1,
+                "new_instructions": {"decision_procedure": "Return FINAL_ANSWER: A"},
+            }
+        )
+        return RootOnlyResult()
+
     optimizer = GEPALocalPromptOptimizer(
         evaluator=FakeLocalEvaluator(),
         reflection_lm=reflection,
         accounting_reader=lambda: reflection.accounting,
         run_root=tmp_path,
-        optimize_fn=lambda **_kwargs: RootOnlyResult(),
+        optimize_fn=root_only_with_rejected_proposal,
     )
     result = asyncio.run(optimizer.optimize(task()))
     assert result.candidates == ()
@@ -426,6 +443,11 @@ def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> 
     assert result.optimizer_state.payload["changed_frontier_indices"] == []
     assert result.optimizer_state.payload["returned_candidate_indices"] == []
     assert result.optimizer_state.payload["result_semantics"] == "changed_candidates_only_v1"
+    diagnostics = result.optimizer_state.payload["telemetry"]["proposer_diagnostics"]
+    assert diagnostics["proposal_attempts"] == 1
+    assert diagnostics["proposal_contract_invalid"] == 1
+    assert diagnostics["materialized_candidates"] == 0
+    assert diagnostics["unmaterialized_proposals"] == 1
 
 
 def test_decision_procedure_is_sole_gepa_component() -> None:
@@ -527,6 +549,111 @@ def test_reasoning_evidence_drops_interface_lines_and_has_safe_fallback() -> Non
     assert reasoning_evidence_from_output("FINAL_ANSWER: C") == (
         "No reusable reasoning trace was available."
     )
+
+
+def test_reasoning_evidence_blocks_crlf_split_interface_and_fixed_payload() -> None:
+    raw = (
+        "Compare grammatical roles before resolving the reference.\r\n"
+        "The response\r\n"
+        "format must use one label.\r\n"
+        "Answer: A\r\n"
+        "FINAL_ANSWER: A"
+    )
+    evidence = reasoning_evidence_from_output(raw)
+    assert evidence == "Compare grammatical roles before resolving the reference."
+    assert "response" not in evidence.casefold()
+    assert "format" not in evidence.casefold()
+    assert "answer" not in evidence.casefold()
+
+
+def test_callback_counts_unmaterialized_rejection_without_raw_proposal(tmp_path: Path) -> None:
+    raw_proposal = "Return FINAL_ANSWER: A -- synthetic-secret-marker"
+    callback = GEPALineageCallback(
+        tmp_path / "lineage.jsonl",
+        parent_prompt="Use a generic decision procedure.",
+        examples=(example(0),),
+    )
+    callback.on_proposal_end(
+        {"iteration": 1, "new_instructions": {"decision_procedure": raw_proposal}}
+    )
+    diagnostics = callback.proposal_diagnostics()
+    assert diagnostics["proposal_attempts"] == 1
+    assert diagnostics["proposal_changed"] == 1
+    assert diagnostics["proposal_contract_invalid"] == 1
+    assert diagnostics["primary_rejection_category_counts"][
+        "output_contract_contamination"
+    ] == 1
+    serialized = (tmp_path / "lineage.jsonl").read_text(encoding="utf-8")
+    assert raw_proposal not in serialized
+    assert "synthetic-secret-marker" not in serialized
+
+
+def test_callback_counts_duplicate_changed_proposals() -> None:
+    callback = GEPALineageCallback(
+        parent_prompt="Use a generic decision procedure.",
+        examples=(example(0),),
+    )
+    proposal = "Compare semantic roles and select the coherent referent."
+    for iteration in (1, 2):
+        callback.on_proposal_end(
+            {"iteration": iteration, "new_instructions": {"decision_procedure": proposal}}
+        )
+    diagnostics = callback.proposal_diagnostics()
+    assert diagnostics["proposal_attempts"] == 2
+    assert diagnostics["proposal_changed"] == 2
+    assert diagnostics["proposal_duplicate"] == 1
+    assert diagnostics["proposal_contract_invalid"] == 0
+
+
+@pytest.mark.parametrize(
+    "proposal,category",
+    [
+        ("x" * 3001, "over_length"),
+        ("Return FINAL_ANSWER: A", "output_contract_contamination"),
+        (
+            "Choose the semantically compatible referent in case zero after comparing every grammatical and contextual relation carefully.",
+            "example_copying",
+        ),
+        (
+            "Use a generic decision procedure. Add one narrow fallback heuristic.",
+            "append_only",
+        ),
+    ],
+)
+def test_callback_diagnostics_agree_with_adapter_hard_gate(
+    proposal: str, category: str
+) -> None:
+    parent = "Use a generic decision procedure."
+    rows = (
+        LocalEvidenceExample(
+            "copy",
+            "Choose the semantically compatible referent in case zero after comparing every grammatical and contextual relation carefully.",
+            "A",
+        ),
+    ) if category == "example_copying" else (example(0),)
+    callback = GEPALineageCallback(
+        parent_prompt=parent,
+        examples=rows,
+    )
+    callback.on_proposal_end(
+        {"iteration": 1, "new_instructions": {"decision_procedure": proposal}}
+    )
+    diagnostics = callback.proposal_diagnostics()
+    assert diagnostics["proposal_contract_invalid"] == 1
+    assert diagnostics["primary_rejection_category_counts"][category] == 1
+
+    evaluator = FakeLocalEvaluator()
+    adapter = GEPAAdapter(
+        evaluator,
+        parent_prompt=parent,
+        all_examples=rows,
+        optimization_context="",
+        output_contract_id="task_output_contract_v1",
+    )
+    batch = adapter.evaluate(list(rows), {"decision_procedure": proposal})
+    assert batch.scores == [0.0]
+    assert evaluator.calls == 0
+    assert adapter.solver_calls == 0
 
 
 @pytest.mark.parametrize(
@@ -827,9 +954,9 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
     assert telemetry["full_local_evaluations"] >= 1
     diagnostics = telemetry["proposer_diagnostics"]
     assert diagnostics["proposal_attempts"] >= 1
-    assert diagnostics["changed"] >= 1
+    assert diagnostics["proposal_changed"] >= 1
     assert diagnostics["solver_reached"] >= 1
-    assert diagnostics["contract_invalid"] == 0
+    assert diagnostics["proposal_contract_invalid"] == 0
 
 
 class StubPrimaryAssignmentFactory:

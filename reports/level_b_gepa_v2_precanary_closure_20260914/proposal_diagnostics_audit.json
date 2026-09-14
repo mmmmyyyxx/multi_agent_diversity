@@ -1,0 +1,22 @@
+{
+  "adapter_role": "hard_contract_enforcement",
+  "attempt_fields": [
+    "proposal_attempts",
+    "proposal_changed",
+    "proposal_unchanged",
+    "proposal_duplicate",
+    "proposal_contract_invalid"
+  ],
+  "authority": "public_on_proposal_end_callback",
+  "downstream_fields": [
+    "materialized_candidates",
+    "accepted_candidates",
+    "local_frontier_candidates",
+    "returned_frontier_candidates",
+    "solver_reached",
+    "positive_minibatch_delta",
+    "accepted_mutation"
+  ],
+  "durable_content": "hashes_counters_and_rejection_categories_only",
+  "raw_proposal_text_persisted": false
+}

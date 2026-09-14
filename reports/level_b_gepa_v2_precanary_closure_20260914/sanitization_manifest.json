@@ -1,0 +1,9 @@
+{
+  "absolute_paths": false,
+  "credentials_or_endpoints": false,
+  "gate": "PASS",
+  "questions_or_answers": false,
+  "raw_prompts": false,
+  "raw_responses": false,
+  "violations": []
+}

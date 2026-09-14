@@ -1,0 +1,22 @@
+{
+  "rules": [
+    {
+      "label": "NO_REAL_PROPOSAL_ATTEMPT",
+      "when": "proposal_attempts == 0"
+    },
+    {
+      "label": "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH",
+      "when": "proposal_attempts > 0 and solver_reached == 0"
+    },
+    {
+      "label": "LOCAL_EMPIRICAL_PATH_CONFIRMED",
+      "when": "solver_reached > 0"
+    }
+  ],
+  "synthetic_cases": {
+    "blocked_before_solver": "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH",
+    "no_attempt": "NO_REAL_PROPOSAL_ATTEMPT",
+    "solver_reached": "LOCAL_EMPIRICAL_PATH_CONFIRMED"
+  },
+  "version": "level_b_local_empirical_path_classifier_v1"
+}
