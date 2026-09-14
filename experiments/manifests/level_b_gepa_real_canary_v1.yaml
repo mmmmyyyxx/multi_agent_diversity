@@ -1,0 +1,39 @@
+schema_version: experiment_manifest_v1
+experiment_id: level_b_gepa_real_canary_v1
+title: Level-B GEPA Real-Provider Path Canary
+status: PREREGISTERED
+scientific_question: Does the Level-B decision_procedure adapter produce empirical local search and pass at least one changed candidate into TeamMiniBatch under the real provider?
+evidence_type: engineering_canary_not_efficacy_evidence
+method_identity: member_aware_peer_state_v15
+runtime_version: level_b_gepa_real_canary_v1
+data:
+  task: BBH disambiguation_qa
+  split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: anti_overfitting_split_v1_fold_c, validation50: not_accessed, test50: blocked}
+  validation_policy: prohibited
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {reflection: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, reflection: 0.0}
+seeds: [78]
+design:
+  opportunities: 1
+  target_branches: 1
+  target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
+  local_metric_calls: 36
+  local_validation_size: 12
+  team_minibatch: strict primary-lane 4 plus global coalition 4 plus global preservation 4
+  forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
+api_authorization:
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_14_for_level_b_fresh_canary_only
+  allowed_roles: [solver, reflection]
+  allowed_phases: [canary]
+budget:
+  frozen_before_run: true
+  limit: {initialization_solver_provider_calls: 100, local_gepa_metric_calls: 36, returned_candidates: 4, team_minibatch_candidates: 4, full_team_candidates: 2, shadow_winners: 1, validation_calls: 0, test_calls: 0}
+selection:
+  classifier: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
+  validation_used_for_selection: false
+  test_used_for_selection: false
