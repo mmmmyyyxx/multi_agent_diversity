@@ -1,14 +1,30 @@
 schema_version: experiment_manifest_v1
 experiment_id: level_b_gepa_real_canary_v1
 title: Level-B GEPA Real-Provider Path Canary
-status: PREREGISTERED
+status: RUNNING
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: RUNNING, timestamp: '2026-09-14T00:00:00+08:00'}
+lineage:
+  parents: [two_layer_rg_gepa_v1, level_b_gepa_adapter_closure_20260914]
+  derives_from: two_layer_rg_gepa_v1
 scientific_question: Does the Level-B decision_procedure adapter produce empirical local search and pass at least one changed candidate into TeamMiniBatch under the real provider?
+hypotheses:
+  - The real provider produces at least one GEPA proposal attempt.
+  - At least one proposed child reaches Solver evaluation beyond the root evaluation.
+  - At least one changed valid local candidate reaches TeamMiniBatch.
 evidence_type: engineering_canary_not_efficacy_evidence
 method_identity: member_aware_peer_state_v15
 runtime_version: level_b_gepa_real_canary_v1
 data:
   task: BBH disambiguation_qa
+  formal: false
   split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: anti_overfitting_split_v1_fold_c, validation50: not_accessed, test50: blocked}
+  split_hashes: {}
   validation_policy: prohibited
   test_policy: prohibited; zero calls
 model:
@@ -34,6 +50,15 @@ budget:
   frozen_before_run: true
   limit: {initialization_solver_provider_calls: 100, local_gepa_metric_calls: 36, returned_candidates: 4, team_minibatch_candidates: 4, full_team_candidates: 2, shadow_winners: 1, validation_calls: 0, test_calls: 0}
 selection:
-  classifier: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
+  frozen_rule: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
   validation_used_for_selection: false
   test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/level_b_gepa_real_canary_v1/PROTOCOL.md
+    sha256: 672b7fe54a6dabf088a1de1d3a7ea61736920ac5cf33e5cf5cd9cd838932f950
+  report: reports/level_b_gepa_real_canary_v1
+git:
+  design_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
+  implementation_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
+  result_commit: null

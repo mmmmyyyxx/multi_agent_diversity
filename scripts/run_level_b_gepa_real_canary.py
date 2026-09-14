@@ -425,6 +425,11 @@ def analyze(prep: Path, run_root: Path, report: Path) -> dict[str, Any]:
 
 def preflight() -> dict[str, Any]:
     verify_frozen_gepa_engine_contract()
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    for role in ("solver", "reflection"):
+        require_api_authorization(
+            manifest, phase="canary", role=role, explicit_user_authorized=True
+        )
     protocol = protocol_document()
     checks = {
         "one_opportunity": protocol["opportunities"] == 1,
