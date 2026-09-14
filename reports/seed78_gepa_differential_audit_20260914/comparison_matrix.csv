@@ -1,0 +1,17 @@
+item,independent_capacity,diversity_local,causal_status
+official_gepa,v0.1.1@b4dbb55,v0.1.1@b4dbb55,MATCH
+solver_model,qwen3-8b; thinking=false,qwen3-8b; thinking=false,MATCH
+reflection_model,qwen3.7-flash,qwen3.7-flash,MATCH
+search_examples,100,100,MATCH_COUNT
+validation_examples,50,12,DIFFERENT
+metric,strict per-example correctness,strict per-example correctness,MATCH
+reflection_minibatch,3,3,MATCH
+skip_perfect_score,false,true (GEPA default),DIFFERENT
+merge,enabled; max 5,disabled,DIFFERENT
+stopping,patience 10; proposal cap 50,36 metric calls per branch,DIFFERENT
+reflection_payload,full member execution fields,structured local feedback plus controller context,DIFFERENT
+pre_solver_mutable_contract,not enforced,"output markers, >3000 chars, append-only, copied examples rejected",DECISIVE_DIFFERENCE
+proposal_attempts,66 across Seeds75-77,89 across 24 Seed78 branches,OBSERVED
+positive_minibatch_delta,29,0,OBSERVED
+accepted_mutations,29,0,OBSERVED
+main_rejection_location,after Solver scoring when rejected,before Solver evaluation,DECISIVE_DIFFERENCE

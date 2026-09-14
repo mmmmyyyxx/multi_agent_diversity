@@ -1,0 +1,1 @@
+{"excluded":["prompts","questions","gold/model answers","raw responses","credentials","endpoints","SQLite/cache content","checkpoints","absolute paths"],"files_scanned":["classifier.json","comparison_matrix.csv","diversity_branch_audit.csv","fact_assertions.json","provenance.json","README.md","summary.json"],"forbidden_findings":[],"gate":"PASS"}
