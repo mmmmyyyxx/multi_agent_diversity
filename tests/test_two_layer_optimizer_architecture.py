@@ -12,6 +12,7 @@ from multi_dataset_diverse_rl.local_optimizers.base import NoOpContextProvider
 from multi_dataset_diverse_rl.local_optimizers.gepa_adapter import (
     GEPAAdapter,
     LocalSolverObservation,
+    reasoning_evidence_from_output,
 )
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
     GEPAOptimizerConfig,
@@ -54,6 +55,7 @@ from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
 from multi_dataset_diverse_rl.versions import (
     COMMON_SOLVER_CONTRACT_V1_ID,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
+    LOCAL_GEPA_REFLECTIVE_DATASET_VERSION,
     LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
     LOCAL_OPTIMIZER_FIDELITY_LEVEL,
     METHOD_VERSION,
@@ -165,6 +167,10 @@ def test_gepa_contract_freezes_real_engine_controls_and_budget_arithmetic() -> N
     assert config.merge_val_overlap_floor == 5
     assert config.max_prompt_chars == 3000
     assert config.proposer_contract_version == "decision_procedure_proposer_v1"
+    assert config.reflective_dataset_version == LOCAL_GEPA_REFLECTIVE_DATASET_VERSION
+    assert LOCAL_GEPA_REFLECTIVE_DATASET_VERSION == (
+        "component_specific_reasoning_evidence_v1"
+    )
     assert config.reflection_prompt_template_sha256 == DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
     assert DECISION_PROCEDURE_REFLECTION_TEMPLATE.count("<curr_param>") == 1
     assert DECISION_PROCEDURE_REFLECTION_TEMPLATE.count("<side_info>") == 1
@@ -442,6 +448,85 @@ def test_decision_procedure_is_sole_gepa_component() -> None:
     assert adapter.make_reflective_dataset(
         {"decision_procedure": valid}, result, ["decision_procedure"]
     ).keys() == {"decision_procedure"}
+
+
+def test_reflective_dataset_is_component_specific_and_contract_free() -> None:
+    row = LocalEvidenceExample(
+        example_id="opaque-id",
+        input_payload="Which referent is semantically compatible?",
+        gold="B",
+        textual_feedback=(
+            "Preserve broad correct behavior and the immutable output contract."
+        ),
+        tags=("preservation", "coverage"),
+    )
+    evaluator = FakeLocalEvaluator()
+    adapter = GEPAAdapter(
+        evaluator,
+        parent_prompt="Use semantic compatibility.",
+        all_examples=(row,),
+        optimization_context=(
+            "primary_responsibility_lane=coverage\n"
+            "Do not modify or discuss the output interface."
+        ),
+        output_contract_id="task_output_contract_v1",
+    )
+    batch = adapter.evaluate(
+        [row], {"decision_procedure": "Use semantic compatibility."},
+        capture_traces=True,
+    )
+    assert batch.trajectories is not None
+    batch.trajectories[0] = type(batch.trajectories[0])(
+        example=row,
+        observation=LocalSolverObservation(
+            parsed_answer="B",
+            raw_output=(
+                "Resolve the pronoun by comparing grammatical roles.\n"
+                "FINAL_ANSWER: B"
+            ),
+            correct=True,
+            valid=True,
+        ),
+    )
+    dataset = adapter.make_reflective_dataset(
+        {"decision_procedure": "Use semantic compatibility."},
+        batch,
+        ["decision_procedure"],
+    )["decision_procedure"]
+    assert dataset == [
+        {
+            "Problem": "Which referent is semantically compatible?",
+            "Reasoning Evidence": (
+                "Resolve the pronoun by comparing grammatical roles."
+            ),
+            "Evaluation Outcome": "correct",
+            "Reasoning Focus": {
+                "evidence_group": "preservation",
+                "reasoning_lane": "coverage",
+            },
+            "example_id": "opaque-id",
+        }
+    ]
+    serialized = repr(dataset).casefold()
+    assert "final_answer" not in serialized
+    assert "expected label" not in serialized
+    assert "output contract" not in serialized
+    assert "output interface" not in serialized
+    assert "generated outputs" not in serialized
+
+
+def test_reasoning_evidence_drops_interface_lines_and_has_safe_fallback() -> None:
+    raw = (
+        "Compare the two candidate antecedents.\n"
+        "The output format must contain exactly one final answer line.\n"
+        "FINAL_ANSWER: A"
+    )
+    assert reasoning_evidence_from_output(raw) == (
+        "Compare the two candidate antecedents."
+    )
+    assert reasoning_evidence_from_output("FINAL_ANSWER: C") == (
+        "No reusable reasoning trace was available."
+    )
 
 
 @pytest.mark.parametrize(

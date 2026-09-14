@@ -12,6 +12,7 @@ from ..evaluation.mutable_prompt_contract import (
     validate_mutable_decision_procedure,
 )
 from ..versions import COMMON_SOLVER_CONTRACT_V1_ID
+from ..evaluation.solver_output import FINAL_ANSWER_LINE
 from .gepa_runtime import import_frozen_gepa
 from .schemas import LocalEvidenceExample
 
@@ -45,6 +46,50 @@ class LocalSolverEvaluator(Protocol):
 class LocalGEPATrajectory:
     example: LocalEvidenceExample
     observation: LocalSolverObservation
+
+
+_REFLECTION_OUTPUT_TOPIC = re.compile(
+    r"(?i)\b(?:output|response|answer)[\s_-]*"
+    r"(?:contract|interface|format|schema|protocol|instruction)s?\b"
+)
+
+
+def reasoning_evidence_from_output(raw_output: str) -> str:
+    """Keep reasoning evidence while excluding the immutable Solver interface.
+
+    Reflection optimizes only ``decision_procedure``.  Provider response
+    markers and formatting commentary therefore are not evidence for this
+    mutable component and must not enter GEPA's ``side_info``.
+    """
+
+    normalized = str(raw_output or "").replace("\r\n", "\n").replace("\r", "\n")
+    retained: list[str] = []
+    for line in normalized.split("\n"):
+        if FINAL_ANSWER_LINE.fullmatch(line):
+            continue
+        if mutable_prompt_violation_reasons(line) or _REFLECTION_OUTPUT_TOPIC.search(line):
+            continue
+        retained.append(line.rstrip())
+    evidence = "\n".join(retained).strip()
+    return evidence or "No reusable reasoning trace was available."
+
+
+def _reasoning_focus(
+    tags: Sequence[str], optimization_context: str
+) -> Mapping[str, str]:
+    """Project controller evidence onto an allowlisted reasoning-only schema."""
+
+    allowed_groups = ("responsibility", "coalition", "preservation")
+    allowed_lanes = ("direct_flip", "near_margin", "coverage", "fallback")
+    group = next((value for value in tags if value in allowed_groups), "general")
+    lane = next((value for value in tags if value in allowed_lanes), None)
+    if lane is None:
+        match = re.search(
+            r"primary_responsibility_lane=(direct_flip|near_margin|coverage|fallback)",
+            optimization_context,
+        )
+        lane = match.group(1) if match else "general"
+    return {"evidence_group": group, "reasoning_lane": lane}
 
 
 def _normalized_tokens(value: str) -> tuple[str, ...]:
@@ -237,20 +282,24 @@ class DiversityGEPAAdapter:
         for trajectory in eval_batch.trajectories:
             example = trajectory.example
             observation = trajectory.observation
-            feedback = example.textual_feedback or (
-                "Correct; preserve this reasoning capability."
-                if observation.correct
-                else f"Incorrect or invalid. Expected label: {example.gold}. Failure: {observation.failure_reason or 'wrong answer'}."
+            outcome = (
+                "correct"
+                if observation.valid and observation.correct
+                else "incorrect"
+                if observation.valid
+                else "invalid"
             )
-            if self.optimization_context:
-                feedback = f"{feedback}\nController context: {self.optimization_context}"
             records.append(
                 {
-                    "Inputs": {"question": example.input_payload},
-                    "Generated Outputs": observation.raw_output,
-                    "Feedback": feedback,
+                    "Problem": example.input_payload,
+                    "Reasoning Evidence": reasoning_evidence_from_output(
+                        observation.raw_output
+                    ),
+                    "Evaluation Outcome": outcome,
+                    "Reasoning Focus": _reasoning_focus(
+                        example.tags, self.optimization_context
+                    ),
                     "example_id": example.example_id,
-                    "tags": list(example.tags),
                 }
             )
         return {"decision_procedure": records}

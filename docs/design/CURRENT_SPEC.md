@@ -143,6 +143,13 @@ the canonical v15 runtime above.
   the 3000-character mutable boundary. Parent prompts fail before GEPA starts;
   changed candidates are contract-validated and prompt-hash deduplicated before
   Top-K selection.
+- **INV-LOCAL-REFLECTION-DATA-001** — The versioned
+  `component_specific_reasoning_evidence_v1` reflective dataset exposes only
+  problem text, reasoning-only trace, coarse correctness outcome, and an
+  allowlisted evidence-group/reasoning-lane focus. It excludes gold labels,
+  raw failure codes, raw Solver responses, free-form controller instructions,
+  and immutable answer/interface lines. This is a component-representation
+  adapter boundary; it does not change official GEPA search semantics.
 - **INV-TEAM-MINIBATCH-001** — TeamMiniBatch12 is exactly twelve unique Optimize
   rows: four from the selected primary responsibility lane, four global
   coalition rows, and four global preservation rows. Missing quotas fail closed;

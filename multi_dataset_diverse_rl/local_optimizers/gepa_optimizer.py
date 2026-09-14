@@ -34,6 +34,7 @@ from ..versions import (
     LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
     LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
+    LOCAL_GEPA_REFLECTIVE_DATASET_VERSION,
     LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
     LOCAL_OPTIMIZER_FIDELITY_LEVEL,
     MUTABLE_PROMPT_CONTRACT_VERSION,
@@ -69,6 +70,7 @@ class GEPAOptimizerConfig:
     k_local_return: int = 4
     max_prompt_chars: int = 3000
     proposer_contract_version: str = LOCAL_GEPA_PROPOSER_CONTRACT_VERSION
+    reflective_dataset_version: str = LOCAL_GEPA_REFLECTIVE_DATASET_VERSION
     reflection_prompt_template_sha256: str = DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
     result_semantics: str = LOCAL_GEPA_RESULT_SEMANTICS_VERSION
     max_metric_calls_source: str = "LocalOptimizationTask.budget.max_metric_calls"
@@ -81,6 +83,7 @@ class GEPAOptimizerConfig:
             "pareto", "instance", LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS, 3,
             True, 1.0, "epoch_shuffled", "full_eval", False,
             5, 5, "round_robin", False, 4, 3000, LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
+            LOCAL_GEPA_REFLECTIVE_DATASET_VERSION,
             DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256,
             LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
             "LocalOptimizationTask.budget.max_metric_calls", "LocalOptimizationTask.seed",
@@ -105,6 +108,7 @@ class GEPAOptimizerConfig:
             self.k_local_return,
             self.max_prompt_chars,
             self.proposer_contract_version,
+            self.reflective_dataset_version,
             self.reflection_prompt_template_sha256,
             self.result_semantics,
             self.max_metric_calls_source,

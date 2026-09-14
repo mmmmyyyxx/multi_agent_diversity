@@ -1,0 +1,67 @@
+{
+  "api_calls": 0,
+  "audit_kind": "zero_api_read_only_reflection_input_attribution",
+  "checks": {
+    "all_rejections_output_contract": true,
+    "current_parameter_contract_safe": true,
+    "execution_audit_pass": true,
+    "frozen_template_hash_matches": true,
+    "historical_side_info_included_raw_output": true,
+    "historical_side_info_repeated_controller_context": true,
+    "template_contract_safe": true,
+    "three_reflection_calls": true,
+    "validation_and_test_zero": true
+  },
+  "classifier": "SIDE_INFO_REPRESENTATION_CONTAMINATION_IDENTIFIED",
+  "components": {
+    "curr_param": {
+      "char_count": 131,
+      "contract_contamination": false,
+      "sha256": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63"
+    },
+    "side_info": {
+      "contract_contamination": true,
+      "controller_context_named_output_interface": true,
+      "controller_context_repeated_per_record": true,
+      "final_answer_marker_lower_bound": 5,
+      "final_answer_marker_upper_bound": 9,
+      "gold_fallback_used_in_this_canary": "NOT_ESTABLISHED",
+      "historical_schema_included_gold_fallback": true,
+      "historical_schema_included_raw_solver_output": true,
+      "reflected_record_count": 9,
+      "strict_valid_correct_record_lower_bound": 5
+    },
+    "template": {
+      "contract_contamination": false,
+      "frozen_hash_match": true,
+      "identity": "decision_procedure_reflection_v1",
+      "sha256": "7045587e6c3337b207a72e2c9d25ebc77709c0b7561043f2df3d6a04435abb58"
+    }
+  },
+  "conclusion": "The frozen template and current mutable component were not the contamination source. Historical make_reflective_dataset serialized immutable Solver interface evidence into side_info before all three rejected proposals.",
+  "effective_prompt_reconstruction": {
+    "component_structure": "template + curr_param + side_info",
+    "exact_bytes": "NOT_RECOVERABLE_ZERO_API",
+    "reason": "The historical reflection request bodies and the nine raw reasoning traces were not durably persisted. Component structure and lower bounds are recoverable from frozen source, lineage, and strict Solver semantics."
+  },
+  "execution_commit": "7e3a9f686135b40ac0b2ffc8284c6597ecb0b335",
+  "gate": "PASS",
+  "proposal_attempts": 3,
+  "proposal_attribution": {
+    "append_only": {
+      "confidence": "OBSERVED_NOT_INPUT_ATTRIBUTABLE",
+      "proposal_count": 2,
+      "source": "PROPOSER_REPLACEMENT_BEHAVIOR"
+    },
+    "output_contract_contamination": {
+      "basis": "The safe frozen template and safe current parameter exclude the marker, while historical side_info necessarily contained at least five strict FINAL_ANSWER lines and repeated output-interface context.",
+      "confidence": "CAUSALLY_IDENTIFIED_FOR_INPUT_CONTAMINATION",
+      "proposal_count": 3,
+      "source": "SIDE_INFO"
+    }
+  },
+  "raw_prompts_published": false,
+  "raw_responses_published": false,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

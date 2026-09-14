@@ -1,0 +1,9 @@
+{
+  "evidence": [
+    "authorized3 frozen source and protocol identities",
+    "authorized3 sanitized execution and rejection summaries",
+    "authorized3 local GEPA lineage counters"
+  ],
+  "exact_effective_prompt_bytes_published": false,
+  "private_evidence_read_only": true
+}

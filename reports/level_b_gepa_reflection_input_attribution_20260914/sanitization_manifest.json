@@ -1,0 +1,13 @@
+{
+  "absolute_paths": false,
+  "checkpoints": false,
+  "credentials": false,
+  "endpoints": false,
+  "gate": "PASS",
+  "gold_answers": false,
+  "model_answers": false,
+  "questions": false,
+  "raw_prompts": false,
+  "raw_responses": false,
+  "sqlite_or_cache_content": false
+}
