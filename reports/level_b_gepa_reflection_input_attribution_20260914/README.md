@@ -1,6 +1,7 @@
 # Level-B GEPA reflection-input attribution
 
-Gate: **PASS**  
+Gate: **PASS**
+
 Classifier: **SIDE_INFO_REPRESENTATION_CONTAMINATION_IDENTIFIED**
 
 The frozen reflection template and current `decision_procedure` were contract-safe. The historical reflective dataset placed raw Solver responses into `<side_info>`; strict-valid responses necessarily contained the immutable answer marker. It also repeated controller wording about the output interface. This identifies `<side_info>` as the pre-proposal contamination source for the three-call canary.

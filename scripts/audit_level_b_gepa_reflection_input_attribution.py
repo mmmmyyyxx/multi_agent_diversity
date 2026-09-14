@@ -212,7 +212,7 @@ def _write_report(out: Path, result: dict[str, Any]) -> None:
     )
     (out / "README.md").write_text(
         "# Level-B GEPA reflection-input attribution\n\n"
-        "Gate: **PASS**  \n"
+        "Gate: **PASS**\n\n"
         "Classifier: **SIDE_INFO_REPRESENTATION_CONTAMINATION_IDENTIFIED**\n\n"
         "The frozen reflection template and current `decision_procedure` were contract-safe. "
         "The historical reflective dataset placed raw Solver responses into `<side_info>`; "

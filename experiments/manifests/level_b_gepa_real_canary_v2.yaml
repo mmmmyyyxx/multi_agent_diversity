@@ -1,0 +1,77 @@
+schema_version: experiment_manifest_v1
+experiment_id: level_b_gepa_real_canary_v2
+title: Level-B GEPA Component-Specific Reflection Canary
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-14T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-14T00:00:00+08:00'}
+lineage:
+  parents: [level_b_gepa_real_canary_v1, level_b_gepa_reflection_input_attribution_20260914]
+  derives_from: level_b_gepa_real_canary_v1
+scientific_question: Does component-specific reasoning evidence let a real Level-B GEPA proposal satisfy the mutable decision-procedure contract and reach candidate Solver evaluation?
+hypotheses:
+  - The real provider produces at least one GEPA proposal attempt.
+  - At least one changed proposal satisfies the frozen mutable-component contract.
+  - At least one contract-valid changed proposal reaches candidate Solver evaluation.
+evidence_type: engineering_canary_not_efficacy_evidence
+method_identity: member_aware_peer_state_v15
+runtime_version: level_b_gepa_real_canary_v2_component_specific_reflection_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: anti_overfitting_split_v1_fold_c, validation50: not_accessed, test50: blocked}
+  split_hashes: {}
+  validation_policy: prohibited
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {reflection: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, reflection: 0.0}
+seeds: [78]
+design:
+  changed:
+    - reflective dataset uses component_specific_reasoning_evidence_v1
+  unchanged:
+    - official GEPA search core, population, Pareto, parent selection, reflection minibatch, and local acceptance
+    - Layer 2 scheduler, persistent realizability, TeamMiniBatch, Common-Safe, Shadow, and write-back
+    - model, data, opportunity, and evaluation budgets
+  attempt_id: level_b_gepa_real_canary_v2_reflectionfix1_pending_authorization
+  opportunities: 1
+  target_branches: 1
+  target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
+  local_metric_calls: 36
+  local_validation_size: 12
+  team_minibatch: strict primary-lane 4 plus global coalition 4 plus global preservation 4
+  forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
+api_authorization:
+  authorized: false
+  authorization_scope: pending_new_explicit_user_authorization_after_reflectionfix1_freeze
+  allowed_roles: [solver, reflection]
+  allowed_phases: [canary]
+budget:
+  type: fixed_engineering_canary_budget
+  frozen_before_run: true
+  limit: {initialization_solver_provider_calls: 100, local_gepa_metric_calls: 36, returned_candidates: 4, team_minibatch_candidates: 4, full_team_candidates: 2, shadow_winners: 1, validation_calls: 0, test_calls: 0}
+selection:
+  primary_metric: contract_valid_changed_proposal_reaches_solver
+  frozen_rule: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/level_b_gepa_real_canary_v2/PROTOCOL.md
+    sha256: 00c14816939283fdfe1bff5c5f120c6d9e861f56f7e46b6a78a47440c1dc599f
+  report: reports/level_b_gepa_real_canary_v2_reflectionfix1
+  provenance: reports/level_b_gepa_real_canary_v2_reflectionfix1/provenance.json
+git:
+  design_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac
+  implementation_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac
+  result_commit: null
+result:
+  classifier: null
+  conclusion: null
+  evidence_type: not_yet_available
