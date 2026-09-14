@@ -118,6 +118,19 @@ persistent realizability, team evaluation, Common-Safe, Shadow, selection, and
 atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
 the canonical v15 runtime above.
 
+- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member and bounded
+  local optimization domain through `LocalOptimizationTask`; Layer 1 exclusively
+  owns internal population, sampling, parent selection, mutation, frontier,
+  local acceptance, and optimizer state. Team-level results cannot mutate the
+  same local search state.
+- **INV-OPTIMIZER-FIDELITY-001** — The official GEPA backend is a Level-B
+  API-compatible adaptation. It calls the frozen, source-verified official
+  search engine through supported API seams and does not edit or replace its
+  search core. Ours + GEPA is not described as a native GEPA reproduction.
+- **INV-LOCAL-COMPONENT-001** — The sole mutable GEPA candidate component is
+  `decision_procedure`. The adapter/evaluator instantiates the immutable solver
+  shell and output interface outside GEPA exactly once.
+
 - **INV-LOCAL-RESULT-001** — The GEPA seed/root program is a baseline, not a
   proposal. The `changed_candidates_only_v1` boundary returns only frontier
   prompts whose bytes differ from the parent. No changed frontier produces an

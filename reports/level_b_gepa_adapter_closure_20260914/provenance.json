@@ -1,0 +1,8 @@
+{
+  "evidence_type": "zero_api_source_and_fake_provider_audit",
+  "frozen_gepa_checkout_modified": false,
+  "historical_artifacts_modified": 0,
+  "real_api_calls": 0,
+  "test_calls": 0,
+  "validation_calls": 0
+}

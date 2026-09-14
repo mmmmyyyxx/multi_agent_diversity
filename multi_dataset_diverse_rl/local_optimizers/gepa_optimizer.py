@@ -26,8 +26,11 @@ from .schemas import (
 )
 from ..versions import (
     LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
+    LOCAL_GEPA_CANDIDATE_COMPONENT,
     LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
     LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+    LOCAL_OPTIMIZER_FIDELITY_LEVEL,
+    MUTABLE_PROMPT_CONTRACT_VERSION,
 )
 
 
@@ -41,6 +44,9 @@ AccountingReader = Callable[[], Mapping[str, int]]
 
 @dataclass(frozen=True)
 class GEPAOptimizerConfig:
+    optimizer_fidelity_level: str = LOCAL_OPTIMIZER_FIDELITY_LEVEL
+    candidate_component_name: str = LOCAL_GEPA_CANDIDATE_COMPONENT
+    mutable_component_contract_version: str = MUTABLE_PROMPT_CONTRACT_VERSION
     candidate_selection_strategy: str = "pareto"
     frontier_type: str = "instance"
     engine_acceptance_semantics: str = LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS
@@ -50,6 +56,8 @@ class GEPAOptimizerConfig:
     batch_sampler: str = "epoch_shuffled"
     val_evaluation_policy: str = "full_eval"
     use_merge: bool = False
+    max_merge_invocations: int = 5
+    merge_val_overlap_floor: int = 5
     module_selector: str = "round_robin"
     cache_evaluation: bool = False
     k_local_return: int = 4
@@ -57,16 +65,24 @@ class GEPAOptimizerConfig:
     proposer_contract_version: str = LOCAL_GEPA_PROPOSER_CONTRACT_VERSION
     reflection_prompt_template_sha256: str = DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
     result_semantics: str = LOCAL_GEPA_RESULT_SEMANTICS_VERSION
+    max_metric_calls_source: str = "LocalOptimizationTask.budget.max_metric_calls"
+    seed_source: str = "LocalOptimizationTask.seed"
 
     def __post_init__(self) -> None:
         expected = (
+            LOCAL_OPTIMIZER_FIDELITY_LEVEL, LOCAL_GEPA_CANDIDATE_COMPONENT,
+            MUTABLE_PROMPT_CONTRACT_VERSION,
             "pareto", "instance", LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS, 3,
             True, 1.0, "epoch_shuffled", "full_eval", False,
-            "round_robin", False, 4, 3000, LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
+            5, 5, "round_robin", False, 4, 3000, LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
             DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256,
             LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+            "LocalOptimizationTask.budget.max_metric_calls", "LocalOptimizationTask.seed",
         )
         actual = (
+            self.optimizer_fidelity_level,
+            self.candidate_component_name,
+            self.mutable_component_contract_version,
             self.candidate_selection_strategy,
             self.frontier_type,
             self.engine_acceptance_semantics,
@@ -76,6 +92,8 @@ class GEPAOptimizerConfig:
             self.batch_sampler,
             self.val_evaluation_policy,
             self.use_merge,
+            self.max_merge_invocations,
+            self.merge_val_overlap_floor,
             self.module_selector,
             self.cache_evaluation,
             self.k_local_return,
@@ -83,6 +101,8 @@ class GEPAOptimizerConfig:
             self.proposer_contract_version,
             self.reflection_prompt_template_sha256,
             self.result_semantics,
+            self.max_metric_calls_source,
+            self.seed_source,
         )
         if actual != expected:
             raise ValueError("two_layer_rg_gepa_v1 local GEPA contract changed")
@@ -204,12 +224,15 @@ class GEPALocalPromptOptimizer:
         )
         if any(row.weight != 1.0 for row in all_examples):
             raise ValueError("official local GEPA currently requires unit-weight evidence")
-        validate_complete_compact_prompt(
-            task.parent_prompt,
-            parent_prompt=task.parent_prompt,
-            examples=all_examples,
-            max_chars=self.config.max_prompt_chars,
-        )
+        try:
+            validate_complete_compact_prompt(
+                task.parent_prompt,
+                parent_prompt=task.parent_prompt,
+                examples=all_examples,
+                max_chars=self.config.max_prompt_chars,
+            )
+        except ValueError as exc:
+            raise ValueError("PARENT_DECISION_PROCEDURE_CONTRACT_VIOLATION") from exc
         task_run = self.run_root / task.task_id
         lineage_path = task_run.parent / f"{task.task_id}.lineage.jsonl"
         if task_run.exists() or lineage_path.exists():
@@ -227,7 +250,7 @@ class GEPALocalPromptOptimizer:
         before = dict(self.accounting_reader())
         optimize = self._optimize_fn or import_frozen_gepa().optimize
         result = optimize(
-            seed_candidate={"system_prompt": task.parent_prompt},
+            seed_candidate={self.config.candidate_component_name: task.parent_prompt},
             trainset=list(task.search_examples),
             valset=list(task.local_validation_examples),
             adapter=adapter,
@@ -242,6 +265,9 @@ class GEPALocalPromptOptimizer:
             reflection_prompt_template=DECISION_PROCEDURE_REFLECTION_TEMPLATE,
             module_selector=self.config.module_selector,
             use_merge=self.config.use_merge,
+            max_merge_invocations=self.config.max_merge_invocations,
+            merge_val_overlap_floor=self.config.merge_val_overlap_floor,
+            custom_candidate_proposer=None,
             max_metric_calls=task.budget.max_metric_calls,
             run_dir=str(task_run),
             callbacks=[callback],
@@ -265,14 +291,14 @@ class GEPALocalPromptOptimizer:
             index
             for index in frontier
             if int(index) != 0
-            and result.candidates[index]["system_prompt"] != task.parent_prompt
+            and result.candidates[index][self.config.candidate_component_name] != task.parent_prompt
         ]
         invalid_prompt_indices: list[int] = []
         duplicate_prompt_indices: list[int] = []
         valid_unique: list[int] = []
         seen_prompt_hashes: set[str] = set()
         for index in changed_frontier:
-            prompt = result.candidates[index]["system_prompt"]
+            prompt = result.candidates[index][self.config.candidate_component_name]
             try:
                 validate_complete_compact_prompt(
                     prompt,
@@ -295,14 +321,14 @@ class GEPALocalPromptOptimizer:
         )
         chosen = ranked[: self.config.k_local_return]
         id_by_index = {
-            index: f"gepa:{index}:{hashlib.sha256(result.candidates[index]['system_prompt'].encode('utf-8')).hexdigest()[:12]}"
+            index: f"gepa:{index}:{hashlib.sha256(result.candidates[index][self.config.candidate_component_name].encode('utf-8')).hexdigest()[:12]}"
             for index in range(result.num_candidates)
         }
         generations: dict[int, int] = {}
         candidates: list[LocalPromptCandidate] = []
         validation_ids = [row.example_id for row in task.local_validation_examples]
         for index in chosen:
-            prompt = result.candidates[index]["system_prompt"]
+            prompt = result.candidates[index][self.config.candidate_component_name]
             raw_scores = result.val_subscores[index]
             per_example = {
                 validation_ids[int(key)] if isinstance(key, int) and int(key) < len(validation_ids) else str(key): float(value)
@@ -361,6 +387,8 @@ class GEPALocalPromptOptimizer:
             "reflection_minibatches": callback.reflection_minibatches,
             "protocol_hash": self.config.identity(),
             "result_semantics": LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+            "optimizer_fidelity_level": self.config.optimizer_fidelity_level,
+            "candidate_component_name": self.config.candidate_component_name,
             "budget_capacity": budget_capacity,
             "telemetry": {
                 "proposal_attempts": callback.proposal_count,

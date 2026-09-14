@@ -1,0 +1,11 @@
+{
+  "real_api_calls": 0,
+  "rejected_before_solver": [
+    "output_contract",
+    "example_copying",
+    "append_only",
+    "over_length"
+  ],
+  "solver_calls": 0,
+  "status": "PASS"
+}

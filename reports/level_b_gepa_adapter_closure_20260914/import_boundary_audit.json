@@ -1,0 +1,6 @@
+{
+  "enforced_by": "tests/test_two_layer_optimizer_architecture.py::test_import_boundaries",
+  "gepa_backend_layer_2_policy_imports": 0,
+  "layer_2_gepa_internal_imports": 0,
+  "status": "PASS"
+}

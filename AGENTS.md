@@ -67,6 +67,47 @@ Layer-2 scheduler identities must remain explicit in their manifests until a
 separate, versioned promotion changes `CURRENT_SPEC.md`, `versions.py`, code,
 and tests together.
 
+### Two-layer ownership boundary
+
+Layer 2 owns member selection, responsibility attribution, primary-residual
+domain assignment, persistent realizability, construction of
+`LocalOptimizationTask`, team-level empirical evaluation, Common-Safe and
+Shadow checks, cross-member competition, and atomic write-back. It must not
+choose a backend's internal candidate parent or reflection minibatch, replace
+backend-internal population/Pareto/search, feed team acceptance back into the
+same backend search state, or depend on GEPA/SEPO/ESPO internals.
+
+Layer 1 owns how the assigned local problem is searched: internal sampling,
+proposal generation, candidate population and selection, and optimizer-specific
+state. It must not choose the target member, redefine responsibility, use
+persistent team realizability or plurality outcomes for target allocation, or
+commit prompts to the team.
+
+```text
+Layer 2 defines WHAT local optimization problem to solve.
+Layer 1 decides HOW to solve that problem.
+```
+
+Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
+
+### Local optimizer fidelity policy
+
+The current official GEPA backend is **Level B: API-compatible adaptation**.
+Allowed adaptations use supported optimizer seams: adapters/interfaces, system
+text-component representation, local datasets/problem domain, metrics and
+evaluator, reflection templates, provider/model configuration, resource budget,
+callbacks, and logging. Editing or forking the optimizer search core,
+reimplementing its population/Pareto/parent selection, replacing its local
+acceptance, or making Layer 2 control its internal search is forbidden. A
+derived optimizer doing any of those requires a separate identity and must not
+claim Level-B fidelity.
+
+Official optimizer code fidelity and optimization-problem equivalence are
+different concepts. Ours + GEPA uses an API-defined local problem while keeping
+the official GEPA search engine unmodified; never describe it as an exact native
+GEPA reproduction. This distinction applies equally to future SEPO/ESPO
+backends.
+
 ## Agent execution model
 
 The standard research workflow has one scientific and tracked-code owner:

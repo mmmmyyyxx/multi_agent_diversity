@@ -31,7 +31,9 @@ class LocalSolverEvaluator(Protocol):
     solver_contract_id: str
     output_contract_id: str
 
-    def evaluate(self, prompt: str, example: LocalEvidenceExample) -> LocalSolverObservation:
+    def evaluate(
+        self, decision_procedure: str, example: LocalEvidenceExample
+    ) -> LocalSolverObservation:
         ...
 
 
@@ -103,10 +105,12 @@ class DiversityGEPAAdapter:
         self.output_tokens = 0
 
     @staticmethod
-    def _prompt(candidate: Mapping[str, str]) -> str:
-        if set(candidate) != {"system_prompt"} or not isinstance(candidate.get("system_prompt"), str):
-            raise ValueError("GEPA candidate must contain exactly one system_prompt")
-        return candidate["system_prompt"]
+    def _decision_procedure(candidate: Mapping[str, str]) -> str:
+        if set(candidate) != {"decision_procedure"} or not isinstance(
+            candidate.get("decision_procedure"), str
+        ):
+            raise ValueError("GEPA candidate must contain exactly one decision_procedure")
+        return candidate["decision_procedure"]
 
     def evaluate(
         self,
@@ -114,10 +118,10 @@ class DiversityGEPAAdapter:
         candidate: dict[str, str],
         capture_traces: bool = False,
     ) -> EvaluationBatch[LocalGEPATrajectory, dict[str, Any]]:
-        prompt = self._prompt(candidate)
+        decision_procedure = self._decision_procedure(candidate)
         try:
             validate_complete_compact_prompt(
-                prompt,
+                decision_procedure,
                 parent_prompt=self.parent_prompt,
                 examples=self.all_examples,
                 max_chars=self.max_prompt_chars,
@@ -132,7 +136,12 @@ class DiversityGEPAAdapter:
                 for _ in batch
             ]
         else:
-            observations = [self.evaluator.evaluate(prompt, row) for row in batch]
+            # The evaluator is the sole owner of composing the mutable decision
+            # procedure with COMMON_SOLVER_CONTRACT_V1's immutable task shell and
+            # output interface. The adapter must never append a second contract.
+            observations = [
+                self.evaluator.evaluate(decision_procedure, row) for row in batch
+            ]
             outputs = [
                 {
                     "example_id": row.example_id,
@@ -167,9 +176,9 @@ class DiversityGEPAAdapter:
         eval_batch: EvaluationBatch[LocalGEPATrajectory, dict[str, Any]],
         components_to_update: list[str],
     ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
-        self._prompt(candidate)
-        if components_to_update != ["system_prompt"]:
-            raise ValueError("only system_prompt may be evolved")
+        self._decision_procedure(candidate)
+        if components_to_update != ["decision_procedure"]:
+            raise ValueError("only decision_procedure may be evolved")
         if eval_batch.trajectories is None:
             raise ValueError("GEPA reflection requires captured local trajectories")
         records: list[dict[str, Any]] = []
@@ -192,7 +201,7 @@ class DiversityGEPAAdapter:
                     "tags": list(example.tags),
                 }
             )
-        return {"system_prompt": records}
+        return {"decision_procedure": records}
 
 
 # Public project-facing name; it structurally implements gepa.core.adapter.GEPAAdapter.

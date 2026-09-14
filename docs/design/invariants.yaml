@@ -136,6 +136,30 @@ invariants:
     failure_refs: [FAIL-FEASIBLE-SET-QUALITY]
     critical: true
     status: ACTIVE
+  - id: INV-LAYER-OWNERSHIP-001
+    description: Layer 2 defines the local optimization domain while Layer 1 exclusively owns the optimizer's internal search.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/local_optimizers/schemas.py, multi_dataset_diverse_rl/team_search/controller.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-OPTIMIZER-FIDELITY-001
+    description: Official GEPA remains a source-verified Level-B API-compatible adaptation with an unmodified search core.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py, multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-LOCAL-COMPONENT-001
+    description: GEPA evolves only decision_procedure; the immutable solver shell and output contract are instantiated outside GEPA.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py, infrastructure/common_solver_contract_v1/contract.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py, tests/test_common_solver_contract_v1.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-LOCAL-GEPA-CONTRACT-001
     description: Local GEPA uses a versioned decision-procedure-only proposer and explicit pinned-engine semantics, with parent, evidence, candidate, deduplication, and budget fail-closed checks.
     authority: docs/design/CURRENT_SPEC.md

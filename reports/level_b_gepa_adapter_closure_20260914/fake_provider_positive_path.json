@@ -1,0 +1,13 @@
+{
+  "accepted_mutation_positive": true,
+  "candidate_solver_calls_positive": true,
+  "changed_proposals_positive": true,
+  "commit_count": 1,
+  "full_evaluation_positive": true,
+  "positive_minibatch_delta": true,
+  "proposal_attempts_positive": true,
+  "real_api_calls": 0,
+  "returned_changed_candidate_positive": true,
+  "status": "PASS",
+  "team_minibatch_survivors_positive": true
+}

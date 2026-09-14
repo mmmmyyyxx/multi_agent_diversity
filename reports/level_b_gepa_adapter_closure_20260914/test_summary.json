@@ -1,0 +1,10 @@
+{
+  "compileall": "PASS",
+  "deterministic_report_replay": "PASS",
+  "focused_tests": "PASS",
+  "full_pytest": "1022 passed; 1 known historical cache-artifact failure",
+  "git_diff_check": "PASS",
+  "historical_failure": "tests/test_v16_m20_collateral_structure_audit.py::test_real_audit_reconstructs_published_counts_without_api",
+  "new_failures": 0,
+  "status": "PASS"
+}

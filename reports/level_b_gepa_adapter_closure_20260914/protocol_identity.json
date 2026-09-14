@@ -1,0 +1,8 @@
+{
+  "canonical_method_version": "member_aware_peer_state_v15",
+  "canonical_v15_changed": false,
+  "local_optimizer_contract_hash_after": "ae991a97dfefd73eb32521ddfbb53db0624eea16f58e2a59ad4b063d5325600a",
+  "local_optimizer_contract_hash_before": "cb73bd8232062cb57052439ee05a29ffd32b721334e5b0a0af48eeea5a7090be",
+  "local_optimizer_contract_hash_changed": true,
+  "team_search_contract_hash": "43c8f44c321ddb89e91b122d0e27e0e60c1b0556661e7bb06202c0ca043f1312"
+}

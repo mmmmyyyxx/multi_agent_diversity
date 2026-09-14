@@ -49,6 +49,15 @@ def test_three_boundary_adapters_have_identical_request_bytes() -> None:
     assert not ({"seed", "top_p", "stop"} & set(diversity))
 
 
+def test_same_decision_procedure_instantiates_same_complete_solver_request() -> None:
+    first = serialize_solver_request(decision_procedure=PROMPT, question=QUESTION_LF)
+    second = serialize_solver_request(decision_procedure=PROMPT, question=QUESTION_LF)
+    assert canonical_json_bytes(first) == canonical_json_bytes(second)
+    system_text = first["messages"][0]["content"]
+    assert system_text.count(PROMPT) == 1
+    assert system_text.count("Mandatory output interface") == 1
+
+
 def test_strict_parser_and_shared_exact_request_cache() -> None:
     calls: list[dict] = []
 

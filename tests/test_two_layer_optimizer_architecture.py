@@ -53,7 +53,10 @@ from multi_dataset_diverse_rl.team_search.schemas import (
 from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
 from multi_dataset_diverse_rl.versions import (
     COMMON_SOLVER_CONTRACT_V1_ID,
+    LOCAL_GEPA_CANDIDATE_COMPONENT,
     LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+    LOCAL_OPTIMIZER_FIDELITY_LEVEL,
+    METHOD_VERSION,
 )
 
 
@@ -88,8 +91,16 @@ class FakeLocalEvaluator:
     solver_contract_id = COMMON_SOLVER_CONTRACT_V1_ID
     output_contract_id = "task_output_contract_v1"
 
-    def evaluate(self, prompt: str, row: LocalEvidenceExample) -> LocalSolverObservation:
-        correct = "distinguish" in prompt.casefold()
+    def __init__(self) -> None:
+        self.calls = 0
+        self.procedures: list[str] = []
+
+    def evaluate(
+        self, decision_procedure: str, row: LocalEvidenceExample
+    ) -> LocalSolverObservation:
+        self.calls += 1
+        self.procedures.append(decision_procedure)
+        correct = "distinguish" in decision_procedure.casefold()
         return LocalSolverObservation(
             parsed_answer="A" if correct else "B",
             raw_output="answer",
@@ -142,11 +153,16 @@ def test_official_gepa_full_lifecycle_and_lineage(tmp_path: Path) -> None:
 def test_gepa_contract_freezes_real_engine_controls_and_budget_arithmetic() -> None:
     config = GEPAOptimizerConfig()
     assert not hasattr(config, "acceptance_criterion")
-    assert config.engine_acceptance_semantics == "pinned_v011_strict_improvement"
+    assert config.optimizer_fidelity_level == "LEVEL_B_API_COMPATIBLE_ADAPTATION"
+    assert config.optimizer_fidelity_level == LOCAL_OPTIMIZER_FIDELITY_LEVEL
+    assert config.candidate_component_name == LOCAL_GEPA_CANDIDATE_COMPONENT == "decision_procedure"
+    assert config.engine_acceptance_semantics == "pinned_gepa_v0.1.1_strict_improvement"
     assert config.skip_perfect_score is True
     assert config.perfect_score == 1.0
     assert config.batch_sampler == "epoch_shuffled"
     assert config.val_evaluation_policy == "full_eval"
+    assert config.max_merge_invocations == 5
+    assert config.merge_val_overlap_floor == 5
     assert config.max_prompt_chars == 3000
     assert config.proposer_contract_version == "decision_procedure_proposer_v1"
     assert config.reflection_prompt_template_sha256 == DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
@@ -182,7 +198,7 @@ def test_parent_and_weight_contracts_fail_before_optimizer_entry(tmp_path: Path)
     unsafe = LocalOptimizationTask(
         **{**task().__dict__, "task_id": "unsafe-parent", "parent_prompt": "Return FINAL_ANSWER: A"}
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="PARENT_DECISION_PROCEDURE_CONTRACT_VIOLATION"):
         asyncio.run(optimizer.optimize(unsafe))
     weighted_rows = tuple(
         LocalEvidenceExample(**{**row.__dict__, "weight": 2.0}) for row in task().search_examples
@@ -232,7 +248,7 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     class Result:
         per_val_instance_best_candidates = {index: set(range(6)) for index in range(3)}
         val_aggregate_scores = [0.0, 10.0, 9.0, 8.0, 7.0, 6.0]
-        candidates = [{"system_prompt": prompt} for prompt in prompts]
+        candidates = [{"decision_procedure": prompt} for prompt in prompts]
         num_candidates = 6
         val_subscores = [{0: 0.0, 1: 0.0, 2: 0.0} for _ in prompts]
         parents = [[None], [0], [0], [0], [0], [0]]
@@ -269,6 +285,10 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     assert captured["batch_sampler"] == "epoch_shuffled"
     assert captured["val_evaluation_policy"] == "full_eval"
     assert captured["use_merge"] is False
+    assert captured["max_merge_invocations"] == 5
+    assert captured["merge_val_overlap_floor"] == 5
+    assert captured["custom_candidate_proposer"] is None
+    assert captured["seed_candidate"] == {"decision_procedure": task().parent_prompt}
 
 
 def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> None:
@@ -277,7 +297,7 @@ def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> 
     class RootOnlyResult:
         per_val_instance_best_candidates = {index: {0} for index in range(3)}
         val_aggregate_scores = [1.0]
-        candidates = [{"system_prompt": task().parent_prompt}]
+        candidates = [{"decision_procedure": task().parent_prompt}]
         num_candidates = 1
         val_subscores = [{0: 1.0, 1: 1.0, 2: 1.0}]
         parents = [[None]]
@@ -307,7 +327,7 @@ def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> 
     assert result.optimizer_state.payload["result_semantics"] == "changed_candidates_only_v1"
 
 
-def test_gepa_adapter_rejects_unsafe_prompt_before_solver_call() -> None:
+def test_decision_procedure_is_sole_gepa_component() -> None:
     evaluator = FakeLocalEvaluator()
     adapter = GEPAAdapter(
         evaluator,
@@ -316,11 +336,53 @@ def test_gepa_adapter_rejects_unsafe_prompt_before_solver_call() -> None:
         optimization_context="",
         output_contract_id="task_output_contract_v1",
     )
+    with pytest.raises(ValueError, match="exactly one decision_procedure"):
+        adapter.evaluate([example(0)], {"system_prompt": "legacy"})
+    assert adapter.propose_new_texts is None
+    valid = "Use semantic compatibility to distinguish referents carefully."
+    result = adapter.evaluate([example(0)], {"decision_procedure": valid}, capture_traces=True)
+    assert result.scores == [1.0]
+    assert evaluator.calls == 1
+    assert evaluator.procedures == [valid]
+    assert adapter.make_reflective_dataset(
+        {"decision_procedure": valid}, result, ["decision_procedure"]
+    ).keys() == {"decision_procedure"}
+
+
+@pytest.mark.parametrize(
+    "candidate,examples",
+    [
+        ("Return FINAL_ANSWER: A", (example(0),)),
+        ("Use a general decision procedure.\nAdd a patch.", (example(0),)),
+        ("x" * 3001, (example(0),)),
+        (
+            "First compare the deeply ambiguous candidate referents using contextual grammar clues.",
+            (
+                LocalEvidenceExample(
+                    "copy",
+                    "First compare the deeply ambiguous candidate referents using contextual grammar clues before choosing any option.",
+                    "A",
+                ),
+            ),
+        ),
+    ],
+)
+def test_invalid_decision_procedure_never_reaches_solver(candidate, examples) -> None:
+    evaluator = FakeLocalEvaluator()
+    parent = "Use a general decision procedure."
+    adapter = GEPAAdapter(
+        evaluator,
+        parent_prompt=parent,
+        all_examples=examples,
+        optimization_context="",
+        output_contract_id="task_output_contract_v1",
+    )
     result = adapter.evaluate(
-        [example(0)], {"system_prompt": "Return FINAL_ANSWER: A"}, capture_traces=True
+        list(examples), {"decision_procedure": candidate}, capture_traces=True
     )
     assert result.scores == [0.0]
     assert adapter.solver_calls == 0
+    assert evaluator.calls == 0
     assert result.trajectories is not None
     assert result.trajectories[0].observation.provider_called is False
 
@@ -329,6 +391,7 @@ def test_frozen_official_gepa_dependency_identity() -> None:
     identity = verify_frozen_gepa()
     assert identity["version"] == "v0.1.1"
     assert identity["commit"] == GEPA_COMMIT
+    assert identity["source_sha256"] == "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8"
 
 
 def test_registry_has_no_silent_future_backend_fallback() -> None:
@@ -774,6 +837,21 @@ def test_import_boundaries() -> None:
     for path in team_root.glob("*.py"):
         imports = _imports(path)
         assert not any(name == "gepa" or name.startswith("gepa.") for name in imports), path
+        source = path.read_text(encoding="utf-8")
+        assert not any(
+            symbol in source
+            for symbol in (
+                "GEPAEngine", "ParetoCandidateSelector", "ReflectiveMutationProposer",
+                "GEPAState", "candidate_parent_selector",
+            )
+        ), path
+    forbidden_layer2_symbols = (
+        "CommonSafe", "ShadowGate", "PersistentRealizability",
+        "PrimaryResponsibility", "TeamCandidateSelector", "TeamCommitter",
+    )
+    for path in local_root.glob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        assert not any(symbol in source for symbol in forbidden_layer2_symbols), path
 
 
 def test_layered_protocol_hashes_are_independent() -> None:
@@ -787,3 +865,4 @@ def test_layered_protocol_hashes_are_independent() -> None:
     assert a.full_protocol_hash != b.full_protocol_hash
     assert NoOpContextProvider().build_context(task_id="x") == ""
     assert GEPAOptimizerConfig().result_semantics == LOCAL_GEPA_RESULT_SEMANTICS_VERSION
+    assert METHOD_VERSION == "member_aware_peer_state_v15"

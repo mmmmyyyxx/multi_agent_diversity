@@ -35,7 +35,14 @@ Shadow, and atomic write-back are exclusively Layer 2 concerns. A local backend
 does not import or receive those policies. The controller does not import GEPA,
 Teacher, Critic, or Student internals and contains no backend switch.
 
-The `gepa` backend resolves the same official frozen checkout used by
+Layer 2 defines the optimization problem; Layer 1 owns the optimizer. Layer 2
+may choose the target, primary responsibility domain, admissible local evidence,
+and resource budget, but official GEPA alone chooses its internal parents,
+reflection minibatches, mutations, population/frontier, and local survivors.
+Team-level evidence is never fed back into the same GEPA search state.
+
+The `gepa` backend is a Level-B API-compatible adaptation that resolves the same
+official frozen checkout used by
 `independent_gepa_repro`: GEPA v0.1.1 at commit
 `b4dbb55b7601dac448cdb836d5a401ca7d9eb920`. It calls the public
 `gepa.optimize()` API with instance Pareto selection, reflection minibatches,
@@ -44,6 +51,14 @@ subsample improvement, explicit perfect-score skipping, epoch-shuffled sampling,
 full validation evaluation, merge disabled, and official callbacks. GEPA's
 local frontier is a single-member per-example search construct; it is never a
 team candidate frontier.
+
+GEPA receives exactly one mutable component named `decision_procedure`. The
+system adapter instantiates that procedure with the existing immutable
+COMMON_SOLVER_CONTRACT_V1 shell and output interface; those immutable bytes are
+not GEPA components. The versioned reflection template explains the component
+through GEPA's official API, while the official reflective proposer remains in
+use. This is “Ours + GEPA” or a “GEPA local optimizer backend,” not an exact
+native GEPA reproduction.
 
 Each team opportunity starts a fresh local GEPA state because a commit changes
 the prompt, peers, responsibility, and residual distribution. The opaque state

@@ -1,0 +1,17 @@
+{
+  "canonical_v15_unchanged": true,
+  "decision_procedure_only": true,
+  "fidelity_level_b": true,
+  "fresh_canary_technically_safe_pending_separate_authorization": true,
+  "layer_2_controls_no_gepa_internal_decision": true,
+  "official_gepa_acceptance_reaches_team_minibatch": true,
+  "official_gepa_source_unchanged": true,
+  "official_search_core_preserved": true,
+  "real_api_calls_zero": true,
+  "system_prompt_component_removed": true,
+  "team_minibatch_exactly_12_unique": true,
+  "team_minibatch_primary_lane_aligned": true,
+  "test_calls_zero": true,
+  "valid_mutation_reaches_fake_solver": true,
+  "validation_calls_zero": true
+}

@@ -1,0 +1,30 @@
+{
+  "adapter_propose_new_texts": false,
+  "api_adaptations": [
+    "adapter",
+    "mutable_component:decision_procedure",
+    "task_evaluator",
+    "train_and_validation_problem_domain",
+    "reflection_prompt_template",
+    "provider",
+    "budget",
+    "callbacks"
+  ],
+  "custom_candidate_proposer": false,
+  "engine_source_modified": false,
+  "fidelity_level": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+  "official_commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+  "official_search_core_preserved": {
+    "batch_sampling": true,
+    "branch_lineage": true,
+    "local_acceptance": true,
+    "merge_semantics": true,
+    "parent_selection": true,
+    "pareto": true,
+    "population": true,
+    "reflection_mutation": true
+  },
+  "official_source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+  "official_version": "v0.1.1",
+  "optimizer": "GEPA"
+}

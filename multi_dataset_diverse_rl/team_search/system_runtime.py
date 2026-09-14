@@ -218,7 +218,7 @@ class SystemLocalSolverEvaluator:
         self.solver_contract_id = solver_contract_id
         self.output_contract_id = output_contract_id
 
-    def evaluate(self, prompt: str, example: Any) -> Any:
+    def evaluate(self, decision_procedure: str, example: Any) -> Any:
         from ..local_optimizers.gepa_adapter import LocalSolverObservation
 
         if self.system.fixed_probe is None:
@@ -243,8 +243,8 @@ class SystemLocalSolverEvaluator:
             try:
                 result = await self.system.fixed_probe.evaluate_prompt_indices(
                     target,
-                    prompt,
-                    self.system.prompt_hash(prompt),
+                    decision_procedure,
+                    self.system.prompt_hash(decision_procedure),
                     (index,),
                     self.system.solve,
                 )

@@ -1,0 +1,12 @@
+{
+  "after": {
+    "full_request_instantiation_owner": "COMMON_SOLVER_CONTRACT_V1 evaluator",
+    "immutable_output_contract_evolved": false,
+    "immutable_shell_evolved": false,
+    "mutable_component": "decision_procedure"
+  },
+  "before": {
+    "mutable_component": "system_prompt",
+    "status": "REPLACED"
+  }
+}

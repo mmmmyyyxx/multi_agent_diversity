@@ -1,0 +1,8 @@
+{
+  "central_invariant": "Layer 2 defines the optimization problem; Layer 1 owns the optimizer.",
+  "gepa_receives_member_selection": false,
+  "gepa_receives_persistent_realizability": false,
+  "layer_2_controls_gepa_internal_search": false,
+  "status": "PASS",
+  "team_results_feed_back_into_local_population": false
+}

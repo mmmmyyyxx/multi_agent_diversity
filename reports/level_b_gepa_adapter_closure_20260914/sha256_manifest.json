@@ -1,0 +1,81 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "budget_arithmetic.json",
+      "sha256": "611497f28e4afafdcddd681a1f8218860f3dfca736df05dd5aa5116407a96208"
+    },
+    {
+      "file": "component_mapping_before_after.json",
+      "sha256": "7a2ddd10716d314e70c40317a250e0b686f6c6bc578125642f03d58df9d9eda7"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "69fcac9196f472ccb0c65596359586d79635eb4670f56647c8f30b8bdead2de5"
+    },
+    {
+      "file": "fake_provider_negative_path.json",
+      "sha256": "d3b2c28e262e6bdb42f27e05a98172cafab43a0acea502847a6f1757541ac337"
+    },
+    {
+      "file": "fake_provider_positive_path.json",
+      "sha256": "88893a428ee01a514102eb468e1cfcfa9128ae68bff583349ab544dc11b9418d"
+    },
+    {
+      "file": "gepa_api_argument_manifest.json",
+      "sha256": "cc8d1d38259e9ba1acceea05fbd3e1763425bacac9e0ac36843e7b86a17a0eef"
+    },
+    {
+      "file": "import_boundary_audit.json",
+      "sha256": "b6ac4992126c12d2d41d2495eee75233ce07db27e7c5e1de913c9d7511653c1a"
+    },
+    {
+      "file": "layer_boundary_audit.json",
+      "sha256": "978896c9c7bbcb53300031e579a6c1e318039acb0d0dc31b08118ec6b2660dc7"
+    },
+    {
+      "file": "level_b_fidelity_audit.json",
+      "sha256": "87b884ae66a5d8fb034a53366e9905033a97dfedd09f8ad15adcad6f91a4aa4c"
+    },
+    {
+      "file": "local_evidence_invariant_audit.json",
+      "sha256": "cb412569db2f1d39fe6aef755ca4ddba923601cc39613d0bc1a9ee2ca4bef3ed"
+    },
+    {
+      "file": "official_gepa_source_integrity.json",
+      "sha256": "58f85c5b5c6f44ab47b23ce686e6b0c3db0f4f842c417a6a62aae0e5698fca3c"
+    },
+    {
+      "file": "optimizer_fidelity_manifest.json",
+      "sha256": "04af49e7a58627eab31fa65fb3dd3973017efb0bb163d256cbe4309b73dfe003"
+    },
+    {
+      "file": "protocol_identity.json",
+      "sha256": "c8750d28c0b28162ef477dbd6650f500cce83240b43d728db4ee35236b8d33a9"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "3f5d67b04689bbed98899b0a23be23e2c2c4aea8daa166d937ce449380dd8206"
+    },
+    {
+      "file": "README.md",
+      "sha256": "f8b2a7249a9cfa8b3b4ca02c294a63e122860dd27798e529b41c0a8bdcd0bcb8"
+    },
+    {
+      "file": "reflection_template_manifest.json",
+      "sha256": "9001ad506d06f9b1ba46b17882b179594fa6661368348a6342f680a235715d3e"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "f204d1cbd36ef090b9facd7399b076bbbd018e962ab5c1d5a596bcdd2a5c63c9"
+    },
+    {
+      "file": "team_minibatch_invariant_audit.json",
+      "sha256": "0a40874d71afe258586614913261ee4f902dea7bd8838b956190f9dcd8317f45"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "b246426a36a4f797dbc40f643ee8eb4bc094382473bc52116b6c29a4e42c9d6e"
+    }
+  ]
+}

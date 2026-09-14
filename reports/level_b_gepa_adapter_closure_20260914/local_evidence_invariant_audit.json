@@ -1,0 +1,7 @@
+{
+  "cross_split_same_id_requires_exact_content": true,
+  "hash_deduplication_before_top_k": true,
+  "required_weight": 1.0,
+  "status": "PASS",
+  "validation_before_top_k": true
+}
