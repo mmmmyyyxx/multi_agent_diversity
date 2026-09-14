@@ -1,0 +1,13 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {"file": "budget_capacity.json", "sha256": "67fb322a9182dbca89e41f636b1c1ac78b835eac09df9311228b0a8a38804208"},
+    {"file": "evaluation_access_summary.json", "sha256": "047ca77d219c8a444e335b057c7ebae138a29d3adb54832320420423cdc2b979"},
+    {"file": "fact_assertions.json", "sha256": "338b4bed624cbc41581524bb053317a4114ebb6a785496e627ba57bd61cdda5e"},
+    {"file": "protocol_identity.json", "sha256": "c7d75b5a586560bca77499ecbe4fc3719ca1b84364d9ba27093c3ffc4c409a7a"},
+    {"file": "provenance.json", "sha256": "20b61617a5718487f700ad17ac0066a36fe0ea0f0e821bcbae3e974b48777040"},
+    {"file": "README.md", "sha256": "cab2525e0cbd789caac929240ed26311e575ccea6f818b9d1707ab96c657c86d"},
+    {"file": "sanitization_manifest.json", "sha256": "217be66f9083dbc9170ab00db7cc62234dc861af8d1f5c68e848e870c9e190ea"},
+    {"file": "verification.txt", "sha256": "665141eccd747264c9c2f7bff4cd45739cc59d5709db294a8cbef4d8f429a10d"}
+  ]
+}

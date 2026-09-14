@@ -46,6 +46,8 @@ from multi_dataset_diverse_rl.governance.authorization import require_api_author
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: E402
     GEPAOptimizerConfig,
     GEPALocalPromptOptimizer,
+    local_gepa_budget_capacity,
+    verify_frozen_gepa_engine_contract,
 )
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity  # noqa: E402
 from multi_dataset_diverse_rl.shadow_gate import advance_no_commit_streak  # noqa: E402
@@ -428,6 +430,11 @@ def _source_paths() -> list[Path]:
 
 
 def protocol_document() -> dict[str, Any]:
+    capacity = asdict(local_gepa_budget_capacity(
+        metric_budget=LOCAL_GEPA_METRIC_BUDGET,
+        validation_size=12,
+        reflection_minibatch_size=GEPAOptimizerConfig().reflection_minibatch_size,
+    ))
     return {
         "schema_version": "seed78_primary_responsibility_ab_protocol_v1",
         "experiment_id": EXPERIMENT_ID,
@@ -456,7 +463,9 @@ def protocol_document() -> dict[str, Any]:
             "initial_prompt_team": "shared_identical_P0",
             "official_gepa": asdict(GEPAOptimizerConfig()),
             "local_metric_budget_per_target": LOCAL_GEPA_METRIC_BUDGET,
-            "team_minibatch": "4 responsibility + 4 coalition + 4 preservation",
+            "local_validation_size": 12,
+            "local_gepa_budget_capacity": capacity,
+            "team_minibatch": "strict primary-lane 4 responsibility + global 4 coalition + global 4 preservation",
             "full_team_max_promotions_per_target": 2,
             "common_safe": True,
             "winner_only_shadow": True,
@@ -1130,6 +1139,7 @@ def analyze(prep: Path, run_root: Path, report: Path) -> dict[str, Any]:
 
 
 def preflight() -> dict[str, Any]:
+    verify_frozen_gepa_engine_contract()
     protocol = protocol_document()
     checks = {
         "seed78": protocol["seed"] == 78,
@@ -1140,6 +1150,17 @@ def preflight() -> dict[str, Any]:
         "only_scheduler_differs": protocol["only_difference"] == "target_scheduler",
         "always_two_targets": protocol["shared"]["always_two_targets"] is True,
         "official_gepa": protocol["shared"]["official_gepa"] == asdict(GEPAOptimizerConfig()),
+        "local_gepa_budget_arithmetic": protocol["shared"]["local_gepa_budget_capacity"] == {
+            "metric_budget": 36,
+            "validation_size": 12,
+            "reflection_minibatch_size": 3,
+            "seed_evaluation_calls": 12,
+            "proposal_attempt_calls": 6,
+            "accepted_full_evaluation_calls": 12,
+            "max_rejected_proposals": 4,
+            "max_accepted_children": 1,
+            "max_accepted_generations": 1,
+        },
         "budget": protocol["shared"]["max_opportunities"] == 32,
         "early_stop": protocol["shared"]["no_commit_patience"] == 6,
     }

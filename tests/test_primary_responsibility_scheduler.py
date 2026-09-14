@@ -238,7 +238,7 @@ def test_only_team_contract_changes_for_opt_in_scheduler() -> None:
     experimental = TeamSearchContract(
         target_policy="primary_responsibility_persistent_realizability_v1"
     )
-    assert local_hash == "4aab5934a018bb784bbdb0615ee3d71549cc6b993d12940b707d53b5f098ac7f"
-    assert current.identity() == "5fb0dc2858ea237e51ada48fa2556fbcd4171a51749696a7d5d8e99a509728d4"
+    assert local_hash == "cb73bd8232062cb57052439ee05a29ffd32b721334e5b0a0af48eeea5a7090be"
+    assert current.identity() == "43c8f44c321ddb89e91b122d0e27e0e60c1b0556661e7bb06202c0ca043f1312"
     assert experimental.identity() != current.identity()
     assert asdict(current) | {"target_policy": experimental.target_policy} == asdict(experimental)

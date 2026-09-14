@@ -1,0 +1,11 @@
+{
+  "accepted_full_evaluation_calls": 12,
+  "max_accepted_children": 1,
+  "max_accepted_generations": 1,
+  "max_rejected_proposals": 4,
+  "metric_budget": 36,
+  "proposal_attempt_calls": 6,
+  "reflection_minibatch_size": 3,
+  "seed_evaluation_calls": 12,
+  "validation_size": 12
+}

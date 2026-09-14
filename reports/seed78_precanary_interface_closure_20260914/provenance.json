@@ -1,0 +1,7 @@
+{
+  "audit_type": "zero_api_precanary_interface_closure",
+  "baseline_commit": "bad8a874322e2bc6e1593f8b89d26000a0a715b8",
+  "frozen_gepa_commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+  "historical_evidence_mutated": false,
+  "scope": "local_gepa_and_team_search_interfaces"
+}

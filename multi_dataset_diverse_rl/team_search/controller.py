@@ -63,7 +63,11 @@ class TeamSearchController:
         assignment: TeamSearchAssignment,
     ) -> _EvaluatedBranch:
         task = self.task_builder.build(request, assignment)
-        team_minibatch = self.task_builder.select_team_minibatch(assignment.evidence)
+        team_minibatch = self.task_builder.select_team_minibatch(
+            assignment.evidence,
+            primary_responsibility_lane=assignment.primary_responsibility_lane,
+        )
+        minibatch_telemetry = self.task_builder.team_minibatch_telemetry(team_minibatch)
         local = await self.local_optimizer.optimize(task)
         records: list[TeamCandidateRecord] = []
         minibatch_calls = minibatch_tokens = 0
@@ -109,6 +113,13 @@ class TeamSearchController:
                 "local_optimizer_version": local.backend_version,
                 "local_termination_reason": local.termination_reason,
                 "team_minibatch_example_ids": [row.example_id for row in team_minibatch],
+                "team_minibatch": minibatch_telemetry,
+                "primary_responsibility_lane": assignment.primary_responsibility_lane,
+                "local_optimizer_telemetry": (
+                    dict(local.optimizer_state.payload.get("telemetry", {}))
+                    if local.optimizer_state is not None
+                    else {}
+                ),
             },
         )
 

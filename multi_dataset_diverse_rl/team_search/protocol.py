@@ -18,6 +18,8 @@ class TeamSearchContract:
     target_policy: str = "current_responsibility_scheduler"
     team_minibatch_composition: str = "4_responsibility_4_coalition_4_preservation"
     team_minibatch_size: int = 12
+    team_minibatch_responsibility_lane: str = "primary_lane_aligned"
+    team_minibatch_quota_semantics: str = "strict_no_backfill"
     max_full_candidates: int = 2
     team_selection: str = "current_common_safe"
     shadow_policy: str = "winner_only_shadow_gate_v1"

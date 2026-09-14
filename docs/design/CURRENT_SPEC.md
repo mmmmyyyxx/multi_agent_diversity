@@ -123,6 +123,17 @@ the canonical v15 runtime above.
   prompts whose bytes differ from the parent. No changed frontier produces an
   empty candidate tuple with `no_local_improvement`; parent-versus-parent work
   must not enter TeamMiniBatch.
+- **INV-LOCAL-GEPA-CONTRACT-001** — The opt-in local GEPA backend uses the
+  versioned `decision_procedure_proposer_v1` reflection template, explicitly
+  freezes pinned-engine strict-improvement, perfect-score skip, epoch-shuffled
+  sampling, full validation evaluation, merge-off, unit evidence weights, and
+  the 3000-character mutable boundary. Parent prompts fail before GEPA starts;
+  changed candidates are contract-validated and prompt-hash deduplicated before
+  Top-K selection.
+- **INV-TEAM-MINIBATCH-001** — TeamMiniBatch12 is exactly twelve unique Optimize
+  rows: four from the selected primary responsibility lane, four global
+  coalition rows, and four global preservation rows. Missing quotas fail closed;
+  no silent backfill or smaller minibatch is permitted.
 - **INV-PAIRED-EVAL-001** — Paired final evaluations share one exact-request
   realization cache across arms. Equal prompt/question/solver-contract request
   identities reuse the same provider realization, so byte-identical final teams

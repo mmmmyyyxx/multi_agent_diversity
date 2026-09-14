@@ -13,7 +13,16 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_adapter import (
     GEPAAdapter,
     LocalSolverObservation,
 )
-from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import GEPAOptimizerConfig, GEPALocalPromptOptimizer
+from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
+    GEPAOptimizerConfig,
+    GEPALocalPromptOptimizer,
+    local_gepa_budget_capacity,
+    verify_frozen_gepa_engine_contract,
+)
+from multi_dataset_diverse_rl.local_optimizers.gepa_proposer_contract import (
+    DECISION_PROCEDURE_REFLECTION_TEMPLATE,
+    DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256,
+)
 from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import GEPA_COMMIT, verify_frozen_gepa
 from multi_dataset_diverse_rl.local_optimizers.legacy_tcs import LegacyTCSLocalOptimizer
 from multi_dataset_diverse_rl.local_optimizers.registry import default_registry
@@ -123,7 +132,143 @@ def test_official_gepa_full_lifecycle_and_lineage(tmp_path: Path) -> None:
     assert len(state.payload["gepa_result"]["candidates"]) >= 2
     assert state.payload["gepa_result"]["parents"][1] == [0]
     assert any(row["event_type"] == "candidate_accepted" for row in state.payload["callback_events"])
+    assert state.payload["telemetry"]["proposal_attempts"] >= 1
+    assert state.payload["telemetry"]["positive_minibatch_deltas"] >= 1
+    assert state.payload["telemetry"]["accepted_mutations"] >= 1
+    assert state.payload["telemetry"]["full_local_evaluations"] >= 1
     assert (tmp_path / "mock_gepa_lifecycle.lineage.jsonl").is_file()
+
+
+def test_gepa_contract_freezes_real_engine_controls_and_budget_arithmetic() -> None:
+    config = GEPAOptimizerConfig()
+    assert not hasattr(config, "acceptance_criterion")
+    assert config.engine_acceptance_semantics == "pinned_v011_strict_improvement"
+    assert config.skip_perfect_score is True
+    assert config.perfect_score == 1.0
+    assert config.batch_sampler == "epoch_shuffled"
+    assert config.val_evaluation_policy == "full_eval"
+    assert config.max_prompt_chars == 3000
+    assert config.proposer_contract_version == "decision_procedure_proposer_v1"
+    assert config.reflection_prompt_template_sha256 == DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
+    assert DECISION_PROCEDURE_REFLECTION_TEMPLATE.count("<curr_param>") == 1
+    assert DECISION_PROCEDURE_REFLECTION_TEMPLATE.count("<side_info>") == 1
+    verify_frozen_gepa_engine_contract()
+    capacity = local_gepa_budget_capacity(
+        metric_budget=36, validation_size=12, reflection_minibatch_size=3
+    )
+    assert capacity.seed_evaluation_calls == 12
+    assert capacity.proposal_attempt_calls == 6
+    assert capacity.accepted_full_evaluation_calls == 12
+    assert capacity.max_rejected_proposals == 4
+    assert capacity.max_accepted_children == capacity.max_accepted_generations == 1
+
+
+def test_parent_and_weight_contracts_fail_before_optimizer_entry(tmp_path: Path) -> None:
+    called = False
+
+    def forbidden_optimize(**_kwargs):
+        nonlocal called
+        called = True
+        raise AssertionError("optimizer must not start")
+
+    reflection = FakeReflection()
+    optimizer = GEPALocalPromptOptimizer(
+        evaluator=FakeLocalEvaluator(),
+        reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path,
+        optimize_fn=forbidden_optimize,
+    )
+    unsafe = LocalOptimizationTask(
+        **{**task().__dict__, "task_id": "unsafe-parent", "parent_prompt": "Return FINAL_ANSWER: A"}
+    )
+    with pytest.raises(ValueError):
+        asyncio.run(optimizer.optimize(unsafe))
+    weighted_rows = tuple(
+        LocalEvidenceExample(**{**row.__dict__, "weight": 2.0}) for row in task().search_examples
+    )
+    weighted = LocalOptimizationTask(
+        **{**task().__dict__, "task_id": "weighted", "search_examples": weighted_rows,
+           "local_validation_examples": weighted_rows}
+    )
+    with pytest.raises(ValueError, match="unit-weight"):
+        asyncio.run(optimizer.optimize(weighted))
+    assert called is False
+    assert reflection.accounting["successful_calls"] == 0
+
+
+def test_cross_split_identity_requires_exact_content() -> None:
+    search = (example(0),)
+    validation = (
+        LocalEvidenceExample("e0", "different payload", "A", tags=("coverage",)),
+    )
+    with pytest.raises(ValueError, match="cross-split"):
+        LocalOptimizationTask(
+            task_id="mismatch",
+            parent_prompt="Use a general decision procedure.",
+            search_examples=search,
+            local_validation_examples=validation,
+            optimization_context="",
+            solver_contract_id=COMMON_SOLVER_CONTRACT_V1_ID,
+            output_contract_id="task_output_contract_v1",
+            seed=1,
+            budget=LocalOptimizerBudget(12, 3, 4),
+        )
+
+
+def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: Path) -> None:
+    parent = task().parent_prompt
+    valid_a = "Use semantic compatibility to distinguish referents and resolve ambiguity."
+    valid_b = "Compare the candidate interpretations and choose the coherent referent."
+    prompts = [
+        parent,
+        "Return FINAL_ANSWER: A",
+        valid_a,
+        valid_a,
+        "x" * 3001,
+        valid_b,
+    ]
+
+    class Result:
+        per_val_instance_best_candidates = {index: set(range(6)) for index in range(3)}
+        val_aggregate_scores = [0.0, 10.0, 9.0, 8.0, 7.0, 6.0]
+        candidates = [{"system_prompt": prompt} for prompt in prompts]
+        num_candidates = 6
+        val_subscores = [{0: 0.0, 1: 0.0, 2: 0.0} for _ in prompts]
+        parents = [[None], [0], [0], [0], [0], [0]]
+        discovery_eval_counts = [3] * 6
+
+        @staticmethod
+        def to_dict():
+            return {"candidate_count": 6}
+
+    captured: dict[str, object] = {}
+
+    def optimize(**kwargs):
+        captured.update(kwargs)
+        return Result()
+
+    reflection = FakeReflection()
+    optimizer = GEPALocalPromptOptimizer(
+        evaluator=FakeLocalEvaluator(),
+        reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path,
+        optimize_fn=optimize,
+    )
+    result = asyncio.run(optimizer.optimize(task()))
+    assert [row.prompt for row in result.candidates] == [valid_a, valid_b]
+    assert result.optimizer_state is not None
+    state = result.optimizer_state.payload
+    assert state["invalid_prompt_indices"] == [1, 4]
+    assert state["duplicate_prompt_indices"] == [3]
+    assert state["returned_candidate_indices"] == [2, 5]
+    assert captured["reflection_prompt_template"] == DECISION_PROCEDURE_REFLECTION_TEMPLATE
+    assert captured["skip_perfect_score"] is True
+    assert captured["perfect_score"] == 1.0
+    assert captured["batch_sampler"] == "epoch_shuffled"
+    assert captured["val_evaluation_policy"] == "full_eval"
+    assert captured["use_merge"] is False
 
 
 def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> None:
@@ -240,8 +385,47 @@ def test_quota_builder_and_optimize_only_governance() -> None:
     for row in builder.select_team_minibatch(rows):
         counts[by_id[row.example_id].evidence_group] += 1
     assert counts == {"responsibility": 4, "coalition": 4, "preservation": 4}
+    assert builder.team_minibatch_telemetry(builder.select_team_minibatch(rows)) == {
+        "contract_version": "primary_lane_strict_4_4_4_v1",
+        "total_count": 12,
+        "responsibility_count": 4,
+        "coalition_count": 4,
+        "preservation_count": 4,
+        "backfill_count": 0,
+    }
+    with pytest.raises(ValueError, match="exactly 4 unique preservation"):
+        builder.select_team_minibatch(
+            tuple(row for row in rows if row.example_id not in {"preservation-3", "preservation-4"})
+        )
     with pytest.raises(ValueError):
         TeamEvidenceCase("x", "payload", "A", None, None, "responsibility", (), "test")
+
+
+def test_team_minibatch_responsibility_quota_matches_primary_lane() -> None:
+    responsibility = tuple(
+        TeamEvidenceCase(
+            f"{lane}-{index}", f"payload {lane} {index}", "A", None, None,
+            "responsibility", (lane,),
+        )
+        for lane in ("direct_flip", "near_margin")
+        for index in range(4)
+    )
+    global_rows = tuple(
+        TeamEvidenceCase(
+            f"{group}-{index}", f"payload {group} {index}", "A", None, None,
+            group, (),
+        )
+        for group in ("coalition", "preservation")
+        for index in range(4)
+    )
+    selected = LocalTaskBuilder().select_team_minibatch(
+        responsibility + global_rows,
+        primary_responsibility_lane="near_margin",
+    )
+    responsibility_rows = [row for row in selected if row.evidence_group == "responsibility"]
+    assert len(selected) == len({row.example_id for row in selected}) == 12
+    assert len(responsibility_rows) == 4
+    assert all("near_margin" in row.tags for row in responsibility_rows)
 
 
 class StubResponsibility:
@@ -251,6 +435,22 @@ class StubResponsibility:
     def assign(self, request):
         del request
         return self.assignment
+
+
+def strict_team_evidence(lane: str = DIRECT_FLIP) -> tuple[TeamEvidenceCase, ...]:
+    return tuple(
+        TeamEvidenceCase(
+            f"{group}-{index}",
+            f"payload {group} {index}",
+            "A",
+            None,
+            None,
+            group,
+            (lane,) if group == "responsibility" else (),
+        )
+        for group in ("responsibility", "coalition", "preservation")
+        for index in range(4)
+    )
 
 
 class StubOptimizer:
@@ -304,10 +504,7 @@ class StubCommitter:
 
 
 def test_team_controller_is_backend_agnostic() -> None:
-    evidence = tuple(
-        TeamEvidenceCase(f"e{i}", f"payload {i}", "A", None, None, "responsibility", ())
-        for i in range(3)
-    )
+    evidence = strict_team_evidence()
     assignment = TeamSearchAssignment(0, "parent", evidence, "", "r")
     committer = StubCommitter()
     controller = TeamSearchController(
@@ -323,6 +520,68 @@ def test_team_controller_is_backend_agnostic() -> None:
     assert outcome.committed_candidate_id == "stub"
     assert outcome.funnel["committed_candidates"] == 1
     assert committer.ids == ["stub"]
+    assert outcome.audit_metadata["team_minibatch"] == {
+        "contract_version": "primary_lane_strict_4_4_4_v1",
+        "total_count": 12,
+        "responsibility_count": 4,
+        "coalition_count": 4,
+        "preservation_count": 4,
+        "backfill_count": 0,
+    }
+
+
+def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> None:
+    evidence = strict_team_evidence("near_margin")
+    assignment = TeamSearchAssignment(
+        0,
+        "Use a general compatibility procedure.",
+        evidence,
+        "Improve the general reasoning procedure.",
+        "synthetic-near-margin",
+        primary_responsibility_lane="near_margin",
+    )
+    reflection = FakeReflection()
+    local_optimizer = GEPALocalPromptOptimizer(
+        evaluator=FakeLocalEvaluator(),
+        reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path,
+    )
+    evaluator = StubEvaluator()
+    committer = StubCommitter()
+    controller = TeamSearchController(
+        responsibility=StubResponsibility(assignment),
+        task_builder=LocalTaskBuilder(),
+        local_optimizer=local_optimizer,
+        evaluator=evaluator,
+        selector=StubSelector(),
+        committer=committer,
+    )
+    request = TeamSearchRequest(
+        78, 0, "synthetic-team", 36, COMMON_SOLVER_CONTRACT_V1_ID,
+        "task_output_contract_v1",
+    )
+    outcome = asyncio.run(controller.run_opportunity(request))
+    assert outcome.cost.local_optimizer_solver_calls > 0
+    assert outcome.cost.local_optimizer_meta_calls > 0
+    assert outcome.funnel["local_candidates"] >= 1
+    assert outcome.funnel["team_minibatch_survivors"] >= 1
+    assert outcome.funnel["full_team_evaluated_candidates"] >= 1
+    assert outcome.funnel["committed_candidates"] == 1
+    assert len(committer.ids) == 1
+    assert evaluator.shadow_targets == [0]
+    assert all(
+        candidate.local_candidate.prompt != assignment.parent_prompt
+        for candidate in outcome.candidates
+    )
+    minibatch_ids = outcome.audit_metadata["team_minibatch_example_ids"]
+    assert len(minibatch_ids) == len(set(minibatch_ids)) == 12
+    assert set(minibatch_ids[:4]) == {f"responsibility-{index}" for index in range(4)}
+    assert outcome.audit_metadata["primary_responsibility_lane"] == "near_margin"
+    telemetry = outcome.audit_metadata["local_optimizer_telemetry"]
+    assert telemetry["accepted_mutations"] >= 1
+    assert telemetry["positive_minibatch_deltas"] >= 1
+    assert telemetry["full_local_evaluations"] >= 1
 
 
 class StubPrimaryAssignmentFactory:
@@ -342,12 +601,7 @@ class StubPrimaryAssignmentFactory:
 
 
 def test_primary_binding_runs_two_frozen_branches_and_records_once() -> None:
-    evidence = tuple(
-        TeamEvidenceCase(
-            f"e{i}", f"payload {i}", "A", None, None, "responsibility", (DIRECT_FLIP,)
-        )
-        for i in range(3)
-    )
+    evidence = strict_team_evidence()
     evaluator = StubEvaluator()
     committer = StubCommitter()
     controller = TeamSearchController(
@@ -417,12 +671,7 @@ class NoWinnerSelector(StubSelector):
 
 
 def test_primary_binding_records_valid_no_commit_for_both_targets() -> None:
-    evidence = tuple(
-        TeamEvidenceCase(
-            f"e{i}", f"payload {i}", "A", None, None, "responsibility", (DIRECT_FLIP,)
-        )
-        for i in range(3)
-    )
+    evidence = strict_team_evidence()
     controller = TeamSearchController(
         responsibility=StubResponsibility(None),
         task_builder=LocalTaskBuilder(),

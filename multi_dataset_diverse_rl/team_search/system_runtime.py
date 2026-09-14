@@ -176,19 +176,12 @@ class SystemResponsibilityAssignmentFactory:
             responsibility_identity=responsibility_identity,
             primary_responsibility_lane=primary_lane,
         )
-        # ``LocalTaskBuilder.build`` keeps only the selected responsibility lane
-        # while retaining coalition/preservation evidence.  Select the local
-        # validation IDs from that same frozen view so the downstream GEPA task
-        # always receives the preregistered TeamMiniBatch12 rather than silently
-        # shrinking when a member owns multiple responsibility lanes.
-        minibatch_source = tuple(
-            row
-            for row in provisional.evidence
-            if row.evidence_group != "responsibility"
-            or primary_lane in (None, "fallback")
-            or primary_lane in row.tags
+        # Local validation and TeamMiniBatch use the same primary-lane-aligned
+        # responsibility quota while coalition and preservation remain global.
+        minibatch = self.task_builder.select_team_minibatch(
+            provisional.evidence,
+            primary_responsibility_lane=primary_lane,
         )
-        minibatch = self.task_builder.select_team_minibatch(minibatch_source)
         return TeamSearchAssignment(
             **{
                 **provisional.__dict__,

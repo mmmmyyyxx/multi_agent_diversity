@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import hashlib
 from typing import Any, Mapping
 
 
@@ -69,6 +70,11 @@ class LocalOptimizationTask:
         validation_ids = [row.example_id for row in self.local_validation_examples]
         if len(search_ids) != len(set(search_ids)) or len(validation_ids) != len(set(validation_ids)):
             raise ValueError("local evidence ids must be unique within each split")
+        search_by_id = {row.example_id: row for row in self.search_examples}
+        for row in self.local_validation_examples:
+            prior = search_by_id.get(row.example_id)
+            if prior is not None and prior != row:
+                raise ValueError("cross-split local evidence payloads must match exactly")
 
 
 @dataclass(frozen=True)
@@ -117,3 +123,9 @@ class LocalOptimizationResult:
         ids = [candidate.candidate_id for candidate in self.candidates]
         if len(ids) != len(set(ids)):
             raise ValueError("local candidate ids must be unique")
+        prompt_hashes = [
+            hashlib.sha256(candidate.prompt.encode("utf-8")).hexdigest()
+            for candidate in self.candidates
+        ]
+        if len(prompt_hashes) != len(set(prompt_hashes)):
+            raise ValueError("local candidate prompts must be unique")

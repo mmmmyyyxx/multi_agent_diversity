@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from ..local_optimizers.schemas import LocalEvidenceExample, LocalOptimizationTask, LocalOptimizerBudget
 from .schemas import TeamEvidenceCase, TeamSearchAssignment, TeamSearchRequest
+from ..versions import TEAM_MINIBATCH_CONTRACT_VERSION
 
 
 @dataclass(frozen=True)
@@ -32,7 +33,26 @@ class LocalTaskBuilder:
         lane = min((lane_order[tag] for tag in row.tags if tag in lane_order), default=3)
         return lane, row.example_id
 
-    def select_team_minibatch(self, evidence: tuple[TeamEvidenceCase, ...]) -> tuple[TeamEvidenceCase, ...]:
+    @staticmethod
+    def _matches_primary_lane(row: TeamEvidenceCase, primary_lane: str | None) -> bool:
+        if row.evidence_group != "responsibility":
+            return True
+        if primary_lane in (None, "fallback"):
+            return True
+        if primary_lane == "coverage":
+            return "coverage" in row.tags or "pure_coverage" in row.tags
+        return primary_lane in row.tags
+
+    def select_team_minibatch(
+        self,
+        evidence: tuple[TeamEvidenceCase, ...],
+        *,
+        primary_responsibility_lane: str | None = None,
+    ) -> tuple[TeamEvidenceCase, ...]:
+        if primary_responsibility_lane not in {
+            None, "direct_flip", "near_margin", "coverage", "fallback"
+        }:
+            raise ValueError("unknown primary responsibility lane")
         limits = {
             "responsibility": self.quota.responsibility,
             "coalition": self.quota.coalition,
@@ -41,18 +61,48 @@ class LocalTaskBuilder:
         chosen: list[TeamEvidenceCase] = []
         seen: set[str] = set()
         for group in ("responsibility", "coalition", "preservation"):
-            rows = sorted((row for row in evidence if row.evidence_group == group), key=self._priority)
-            for row in rows[: limits[group]]:
+            rows = sorted(
+                (
+                    row
+                    for row in evidence
+                    if row.evidence_group == group
+                    and self._matches_primary_lane(row, primary_responsibility_lane)
+                ),
+                key=self._priority,
+            )
+            unique_rows = []
+            for row in rows:
                 if row.example_id not in seen:
-                    chosen.append(row)
+                    unique_rows.append(row)
                     seen.add(row.example_id)
-        for row in sorted(evidence, key=lambda value: (value.evidence_group, *self._priority(value))):
-            if len(chosen) >= self.quota.total:
-                break
-            if row.example_id not in seen:
-                chosen.append(row)
-                seen.add(row.example_id)
+                if len(unique_rows) == limits[group]:
+                    break
+            if len(unique_rows) != limits[group]:
+                raise ValueError(
+                    f"{TEAM_MINIBATCH_CONTRACT_VERSION} requires exactly "
+                    f"{limits[group]} unique {group} examples"
+                )
+            chosen.extend(unique_rows)
+        if len(chosen) != self.quota.total or len({row.example_id for row in chosen}) != self.quota.total:
+            raise ValueError(f"{TEAM_MINIBATCH_CONTRACT_VERSION} requires exactly 12 unique examples")
         return tuple(chosen)
+
+    @staticmethod
+    def team_minibatch_telemetry(
+        rows: tuple[TeamEvidenceCase, ...],
+    ) -> dict[str, int | str]:
+        counts = {
+            group: sum(row.evidence_group == group for row in rows)
+            for group in ("responsibility", "coalition", "preservation")
+        }
+        return {
+            "contract_version": TEAM_MINIBATCH_CONTRACT_VERSION,
+            "total_count": len(rows),
+            "responsibility_count": counts["responsibility"],
+            "coalition_count": counts["coalition"],
+            "preservation_count": counts["preservation"],
+            "backfill_count": 0,
+        }
 
     @staticmethod
     def _local(row: TeamEvidenceCase) -> LocalEvidenceExample:
@@ -77,10 +127,7 @@ class LocalTaskBuilder:
             responsibility = tuple(
                 row for row in evidence
                 if row.evidence_group == "responsibility"
-                and (
-                    primary_lane in row.tags
-                    or (primary_lane == "coverage" and "pure_coverage" in row.tags)
-                )
+                and self._matches_primary_lane(row, primary_lane)
             )
             if primary_lane != "fallback" and not responsibility:
                 raise ValueError("primary lane has no responsibility evidence")

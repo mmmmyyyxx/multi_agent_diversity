@@ -136,6 +136,22 @@ invariants:
     failure_refs: [FAIL-FEASIBLE-SET-QUALITY]
     critical: true
     status: ACTIVE
+  - id: INV-LOCAL-GEPA-CONTRACT-001
+    description: Local GEPA uses a versioned decision-procedure-only proposer and explicit pinned-engine semantics, with parent, evidence, candidate, deduplication, and budget fail-closed checks.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py, multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py, multi_dataset_diverse_rl/local_optimizers/schemas.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
+  - id: INV-TEAM-MINIBATCH-001
+    description: TeamMiniBatch12 has exactly four primary-lane responsibility, four global coalition, and four global preservation rows with no backfill.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/team_search/task_builder.py, multi_dataset_diverse_rl/team_search/controller.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py, tests/test_primary_responsibility_scheduler.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-PAIRED-EVAL-001
     description: Paired final evaluations reuse one provider realization for equal request identities.
     authority: docs/design/CURRENT_SPEC.md

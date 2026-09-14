@@ -1,0 +1,10 @@
+focused_tests=39 passed
+full_tests=1017 passed, 1 known historical cache-artifact failure
+compileall=PASS
+seed78_zero_api_preflight=PASS
+governance_preflight=PASS
+primary_responsibility_binding_preflight=PASS
+git_diff_check=PASS
+real_api_calls=0
+validation_calls=0
+test_calls=0

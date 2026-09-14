@@ -5,12 +5,18 @@ from __future__ import annotations
 import asyncio
 from dataclasses import asdict, dataclass
 import hashlib
+import inspect
 import json
 from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol
 
 from .gepa_adapter import GEPAAdapter, LocalSolverEvaluator, validate_complete_compact_prompt
 from .gepa_callbacks import GEPALineageCallback
+from .gepa_proposer_contract import (
+    DECISION_PROCEDURE_REFLECTION_TEMPLATE,
+    DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256,
+    validate_proposer_contract,
+)
 from .gepa_runtime import GEPA_COMMIT, GEPA_SOURCE_SHA256, GEPA_VERSION, import_frozen_gepa
 from .schemas import (
     LocalOptimizationResult,
@@ -18,7 +24,11 @@ from .schemas import (
     LocalPromptCandidate,
     OpaqueOptimizerState,
 )
-from ..versions import LOCAL_GEPA_RESULT_SEMANTICS_VERSION
+from ..versions import (
+    LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
+    LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
+    LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+)
 
 
 class ReflectionLanguageModel(Protocol):
@@ -33,33 +43,50 @@ AccountingReader = Callable[[], Mapping[str, int]]
 class GEPAOptimizerConfig:
     candidate_selection_strategy: str = "pareto"
     frontier_type: str = "instance"
-    acceptance_criterion: str = "strict_improvement"
+    engine_acceptance_semantics: str = LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS
     reflection_minibatch_size: int = 3
+    skip_perfect_score: bool = True
+    perfect_score: float = 1.0
+    batch_sampler: str = "epoch_shuffled"
+    val_evaluation_policy: str = "full_eval"
     use_merge: bool = False
     module_selector: str = "round_robin"
     cache_evaluation: bool = False
     k_local_return: int = 4
     max_prompt_chars: int = 3000
+    proposer_contract_version: str = LOCAL_GEPA_PROPOSER_CONTRACT_VERSION
+    reflection_prompt_template_sha256: str = DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256
     result_semantics: str = LOCAL_GEPA_RESULT_SEMANTICS_VERSION
 
     def __post_init__(self) -> None:
         expected = (
-            "pareto", "instance", "strict_improvement", 3, False,
-            "round_robin", False, 4, LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+            "pareto", "instance", LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS, 3,
+            True, 1.0, "epoch_shuffled", "full_eval", False,
+            "round_robin", False, 4, 3000, LOCAL_GEPA_PROPOSER_CONTRACT_VERSION,
+            DECISION_PROCEDURE_REFLECTION_TEMPLATE_SHA256,
+            LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
         )
         actual = (
             self.candidate_selection_strategy,
             self.frontier_type,
-            self.acceptance_criterion,
+            self.engine_acceptance_semantics,
             self.reflection_minibatch_size,
+            self.skip_perfect_score,
+            self.perfect_score,
+            self.batch_sampler,
+            self.val_evaluation_policy,
             self.use_merge,
             self.module_selector,
             self.cache_evaluation,
             self.k_local_return,
+            self.max_prompt_chars,
+            self.proposer_contract_version,
+            self.reflection_prompt_template_sha256,
             self.result_semantics,
         )
         if actual != expected:
             raise ValueError("two_layer_rg_gepa_v1 local GEPA contract changed")
+        validate_proposer_contract()
 
     def identity(self) -> str:
         payload = {
@@ -71,6 +98,65 @@ class GEPAOptimizerConfig:
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
+
+
+@dataclass(frozen=True)
+class LocalGEPABudgetCapacity:
+    metric_budget: int
+    validation_size: int
+    reflection_minibatch_size: int
+    seed_evaluation_calls: int
+    proposal_attempt_calls: int
+    accepted_full_evaluation_calls: int
+    max_rejected_proposals: int
+    max_accepted_children: int
+    max_accepted_generations: int
+
+
+def local_gepa_budget_capacity(
+    *, metric_budget: int, validation_size: int, reflection_minibatch_size: int
+) -> LocalGEPABudgetCapacity:
+    """Return the no-overshoot capacity implied by pinned GEPA call arithmetic."""
+
+    if min(metric_budget, validation_size, reflection_minibatch_size) <= 0:
+        raise ValueError("GEPA budget arithmetic inputs must be positive")
+    seed = validation_size
+    proposal = 2 * reflection_minibatch_size
+    full = validation_size
+    remaining = max(0, metric_budget - seed)
+    max_rejected = remaining // proposal
+    max_accepted = remaining // (proposal + full)
+    return LocalGEPABudgetCapacity(
+        metric_budget=metric_budget,
+        validation_size=validation_size,
+        reflection_minibatch_size=reflection_minibatch_size,
+        seed_evaluation_calls=seed,
+        proposal_attempt_calls=proposal,
+        accepted_full_evaluation_calls=full,
+        max_rejected_proposals=max_rejected,
+        max_accepted_children=max_accepted,
+        max_accepted_generations=max_accepted,
+    )
+
+
+def verify_frozen_gepa_engine_contract() -> None:
+    """Assert that the pinned engine exposes and implements the frozen semantics."""
+
+    gepa = import_frozen_gepa()
+    required = {
+        "skip_perfect_score",
+        "perfect_score",
+        "batch_sampler",
+        "val_evaluation_policy",
+        "reflection_prompt_template",
+    }
+    if not required.issubset(inspect.signature(gepa.optimize).parameters):
+        raise RuntimeError("pinned GEPA public API no longer exposes the frozen engine contract")
+    from gepa.core.engine import GEPAEngine  # type: ignore[import-not-found]
+
+    source = inspect.getsource(GEPAEngine.run)
+    if "if new_sum <= old_sum:" not in source or "on_candidate_rejected" not in source:
+        raise RuntimeError("pinned GEPA strict-improvement acceptance semantics changed")
 
 
 class GEPALocalPromptOptimizer:
@@ -112,12 +198,23 @@ class GEPALocalPromptOptimizer:
             raise ValueError("task/config reflection minibatch mismatch")
         if task.budget.max_returned_candidates != self.config.k_local_return:
             raise ValueError("task/config local return budget mismatch")
+        verify_frozen_gepa_engine_contract()
+        all_examples = tuple(
+            {row.example_id: row for row in (*task.search_examples, *task.local_validation_examples)}.values()
+        )
+        if any(row.weight != 1.0 for row in all_examples):
+            raise ValueError("official local GEPA currently requires unit-weight evidence")
+        validate_complete_compact_prompt(
+            task.parent_prompt,
+            parent_prompt=task.parent_prompt,
+            examples=all_examples,
+            max_chars=self.config.max_prompt_chars,
+        )
         task_run = self.run_root / task.task_id
         lineage_path = task_run.parent / f"{task.task_id}.lineage.jsonl"
         if task_run.exists() or lineage_path.exists():
             raise FileExistsError("GEPA local search run root must be fresh")
         task_run.parent.mkdir(parents=True, exist_ok=True)
-        all_examples = tuple({row.example_id: row for row in (*task.search_examples, *task.local_validation_examples)}.values())
         adapter = GEPAAdapter(
             self.evaluator,
             parent_prompt=task.parent_prompt,
@@ -138,6 +235,11 @@ class GEPALocalPromptOptimizer:
             candidate_selection_strategy=self.config.candidate_selection_strategy,
             frontier_type=self.config.frontier_type,
             reflection_minibatch_size=self.config.reflection_minibatch_size,
+            skip_perfect_score=self.config.skip_perfect_score,
+            perfect_score=self.config.perfect_score,
+            batch_sampler=self.config.batch_sampler,
+            val_evaluation_policy=self.config.val_evaluation_policy,
+            reflection_prompt_template=DECISION_PROCEDURE_REFLECTION_TEMPLATE,
             module_selector=self.config.module_selector,
             use_merge=self.config.use_merge,
             max_metric_calls=task.budget.max_metric_calls,
@@ -165,8 +267,30 @@ class GEPALocalPromptOptimizer:
             if int(index) != 0
             and result.candidates[index]["system_prompt"] != task.parent_prompt
         ]
+        invalid_prompt_indices: list[int] = []
+        duplicate_prompt_indices: list[int] = []
+        valid_unique: list[int] = []
+        seen_prompt_hashes: set[str] = set()
+        for index in changed_frontier:
+            prompt = result.candidates[index]["system_prompt"]
+            try:
+                validate_complete_compact_prompt(
+                    prompt,
+                    parent_prompt=task.parent_prompt,
+                    examples=all_examples,
+                    max_chars=self.config.max_prompt_chars,
+                )
+            except ValueError:
+                invalid_prompt_indices.append(index)
+                continue
+            prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+            if prompt_hash in seen_prompt_hashes:
+                duplicate_prompt_indices.append(index)
+                continue
+            seen_prompt_hashes.add(prompt_hash)
+            valid_unique.append(index)
         ranked = sorted(
-            changed_frontier,
+            valid_unique,
             key=lambda index: (-float(result.val_aggregate_scores[index]), index),
         )
         chosen = ranked[: self.config.k_local_return]
@@ -179,15 +303,6 @@ class GEPALocalPromptOptimizer:
         validation_ids = [row.example_id for row in task.local_validation_examples]
         for index in chosen:
             prompt = result.candidates[index]["system_prompt"]
-            try:
-                validate_complete_compact_prompt(
-                    prompt,
-                    parent_prompt=task.parent_prompt,
-                    examples=all_examples,
-                    max_chars=self.config.max_prompt_chars,
-                )
-            except ValueError:
-                continue
             raw_scores = result.val_subscores[index]
             per_example = {
                 validation_ids[int(key)] if isinstance(key, int) and int(key) < len(validation_ids) else str(key): float(value)
@@ -215,15 +330,50 @@ class GEPALocalPromptOptimizer:
         input_tokens = int(after.get("input_tokens", 0)) - int(before.get("input_tokens", 0))
         output_tokens = int(after.get("output_tokens", 0)) - int(before.get("output_tokens", 0))
         optimizer_calls = int(after.get("successful_calls", 0)) - int(before.get("successful_calls", 0))
+        accepted_events = [
+            row for row in callback.events if row["event_type"] == "candidate_accepted"
+        ]
+        rejected_events = [
+            row for row in callback.events if row["event_type"] == "candidate_rejected"
+        ]
+        skipped_events = [
+            row for row in callback.events if row["event_type"] == "evaluation_skipped"
+        ]
+        full_local_events = [
+            row
+            for row in callback.events
+            if row["event_type"] == "valset_evaluated" and row["candidate_index"] != 0
+        ]
+        budget_capacity = asdict(local_gepa_budget_capacity(
+            metric_budget=task.budget.max_metric_calls,
+            validation_size=len(task.local_validation_examples),
+            reflection_minibatch_size=self.config.reflection_minibatch_size,
+        ))
         state_payload = {
             "gepa_result": result.to_dict(),
             "local_gepa_frontier_indices": frontier,
             "changed_frontier_indices": changed_frontier,
+            "valid_unique_frontier_indices": ranked,
+            "invalid_prompt_indices": invalid_prompt_indices,
+            "duplicate_prompt_indices": duplicate_prompt_indices,
             "returned_candidate_indices": chosen,
             "callback_events": callback.events,
             "reflection_minibatches": callback.reflection_minibatches,
             "protocol_hash": self.config.identity(),
             "result_semantics": LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+            "budget_capacity": budget_capacity,
+            "telemetry": {
+                "proposal_attempts": callback.proposal_count,
+                "all_scores_perfect_skips": sum(
+                    row["reason"] == "all_scores_perfect" for row in skipped_events
+                ),
+                "positive_minibatch_deltas": sum(
+                    row["new_score"] > row["old_score"] for row in rejected_events
+                ) + len(accepted_events),
+                "accepted_mutations": len(accepted_events),
+                "full_local_evaluations": len(full_local_events),
+                "valid_changed_unique_frontier": len(ranked),
+            },
         }
         if candidates:
             termination_reason = "gepa_metric_budget_exhausted"

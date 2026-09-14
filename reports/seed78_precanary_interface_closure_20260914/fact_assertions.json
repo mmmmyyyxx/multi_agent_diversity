@@ -1,0 +1,18 @@
+{
+  "api_calls_zero": true,
+  "candidate_validation_before_top_k": true,
+  "cross_split_identity_fail_closed": true,
+  "fake_provider_commit_exactly_once": true,
+  "fake_provider_full_positive_path": true,
+  "historical_artifacts_modified_zero": true,
+  "illegal_candidate_solver_calls_zero": true,
+  "parent_contract_preflight": true,
+  "prompt_hash_deduplication_before_top_k": true,
+  "real_canary_run": false,
+  "team_minibatch_exact_12": true,
+  "team_minibatch_primary_lane_aligned": true,
+  "team_minibatch_strict_4_4_4": true,
+  "test_calls_zero": true,
+  "unit_weights_fail_closed": true,
+  "validation_calls_zero": true
+}

@@ -82,6 +82,25 @@ class GEPALineageCallback:
             reason=str(event["reason"]),
         )
 
+    def on_evaluation_skipped(self, event: dict[str, Any]) -> None:
+        self._append(
+            "evaluation_skipped",
+            iteration=int(event["iteration"]),
+            candidate_index=int(event["candidate_idx"]),
+            reason=str(event["reason"]),
+            is_seed_candidate=bool(event["is_seed_candidate"]),
+        )
+
+    def on_valset_evaluated(self, event: dict[str, Any]) -> None:
+        self._append(
+            "valset_evaluated",
+            iteration=int(event["iteration"]),
+            candidate_index=int(event["candidate_idx"]),
+            num_examples_evaluated=int(event["num_examples_evaluated"]),
+            total_valset_size=int(event["total_valset_size"]),
+            is_best_program=bool(event["is_best_program"]),
+        )
+
     def on_pareto_front_updated(self, event: dict[str, Any]) -> None:
         self._append(
             "local_gepa_front_updated",

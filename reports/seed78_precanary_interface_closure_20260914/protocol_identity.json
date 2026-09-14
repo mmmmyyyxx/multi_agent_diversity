@@ -1,0 +1,8 @@
+{
+  "engine_acceptance_semantics": "pinned_v011_strict_improvement",
+  "local_optimizer_contract_hash": "cb73bd8232062cb57052439ee05a29ffd32b721334e5b0a0af48eeea5a7090be",
+  "proposer_contract_version": "decision_procedure_proposer_v1",
+  "result_semantics": "changed_candidates_only_v1",
+  "team_minibatch_contract_version": "primary_lane_strict_4_4_4_v1",
+  "team_search_contract_hash": "43c8f44c321ddb89e91b122d0e27e0e60c1b0556661e7bb06202c0ca043f1312"
+}

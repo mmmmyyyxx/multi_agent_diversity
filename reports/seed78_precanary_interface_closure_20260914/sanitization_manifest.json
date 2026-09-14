@@ -1,0 +1,9 @@
+{
+  "absolute_paths_published": false,
+  "checkpoints_published": false,
+  "credentials_or_endpoints_published": false,
+  "findings": [],
+  "raw_model_content_published": false,
+  "sqlite_content_published": false,
+  "status": "PASS"
+}
