@@ -1,0 +1,24 @@
+{
+  "excluded": [
+    "prompts",
+    "questions",
+    "gold/model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "SQLite/cache content",
+    "checkpoints",
+    "absolute paths"
+  ],
+  "files_scanned": [
+    "README.md",
+    "branch_audit.csv",
+    "classifier.json",
+    "fact_assertions.json",
+    "paired_evaluation_audit.json",
+    "provenance.json",
+    "summary.json"
+  ],
+  "forbidden_findings": [],
+  "gate": "PASS"
+}

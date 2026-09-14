@@ -1,0 +1,24 @@
+{
+  "causal_interpretation": "The final teams and request-identity sets are equal, but each arm made independent provider calls. The observed validation difference is not attributable to the scheduler.",
+  "classifier": "PAIRED_EVALUATION_CACHE_GAP_CONFIRMED",
+  "final_team_byte_identity_equal": true,
+  "paired_cross_arm_realization_cache": false,
+  "per_arm_cache_copy_in_runner": true,
+  "validation_cache_hits": {
+    "A": 0,
+    "B": 0
+  },
+  "validation_request_identity_sets_equal": true,
+  "validation_successful_provider_calls": {
+    "A": 50,
+    "B": 50
+  },
+  "validation_unique_request_identities_per_arm": {
+    "A": 50,
+    "B": 50
+  },
+  "validation_vote_accuracy": {
+    "A": 0.62,
+    "B": 0.6
+  }
+}

@@ -18,6 +18,7 @@ from .schemas import (
     LocalPromptCandidate,
     OpaqueOptimizerState,
 )
+from ..versions import LOCAL_GEPA_RESULT_SEMANTICS_VERSION
 
 
 class ReflectionLanguageModel(Protocol):
@@ -39,9 +40,13 @@ class GEPAOptimizerConfig:
     cache_evaluation: bool = False
     k_local_return: int = 4
     max_prompt_chars: int = 3000
+    result_semantics: str = LOCAL_GEPA_RESULT_SEMANTICS_VERSION
 
     def __post_init__(self) -> None:
-        expected = ("pareto", "instance", "strict_improvement", 3, False, "round_robin", False, 4)
+        expected = (
+            "pareto", "instance", "strict_improvement", 3, False,
+            "round_robin", False, 4, LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+        )
         actual = (
             self.candidate_selection_strategy,
             self.frontier_type,
@@ -51,6 +56,7 @@ class GEPAOptimizerConfig:
             self.module_selector,
             self.cache_evaluation,
             self.k_local_return,
+            self.result_semantics,
         )
         if actual != expected:
             raise ValueError("two_layer_rg_gepa_v1 local GEPA contract changed")
@@ -150,7 +156,19 @@ class GEPALocalPromptOptimizer:
                 for candidate in members
             }
         )
-        ranked = sorted(frontier, key=lambda index: (-float(result.val_aggregate_scores[index]), index))
+        # GEPA index 0 is the seed/root baseline. The Layer-1 boundary returns
+        # proposals, not baselines: unchanged prompts have no possible team
+        # transition and must not consume TeamMiniBatch evaluation slots.
+        changed_frontier = [
+            index
+            for index in frontier
+            if int(index) != 0
+            and result.candidates[index]["system_prompt"] != task.parent_prompt
+        ]
+        ranked = sorted(
+            changed_frontier,
+            key=lambda index: (-float(result.val_aggregate_scores[index]), index),
+        )
         chosen = ranked[: self.config.k_local_return]
         id_by_index = {
             index: f"gepa:{index}:{hashlib.sha256(result.candidates[index]['system_prompt'].encode('utf-8')).hexdigest()[:12]}"
@@ -200,10 +218,19 @@ class GEPALocalPromptOptimizer:
         state_payload = {
             "gepa_result": result.to_dict(),
             "local_gepa_frontier_indices": frontier,
+            "changed_frontier_indices": changed_frontier,
+            "returned_candidate_indices": chosen,
             "callback_events": callback.events,
             "reflection_minibatches": callback.reflection_minibatches,
             "protocol_hash": self.config.identity(),
+            "result_semantics": LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
         }
+        if candidates:
+            termination_reason = "gepa_metric_budget_exhausted"
+        elif not changed_frontier:
+            termination_reason = "no_local_improvement"
+        else:
+            termination_reason = "no_valid_local_candidate"
         return LocalOptimizationResult(
             candidates=tuple(candidates),
             backend_name=self.backend_name,
@@ -214,7 +241,7 @@ class GEPALocalPromptOptimizer:
             input_tokens=adapter.input_tokens + input_tokens,
             output_tokens=adapter.output_tokens + output_tokens,
             total_tokens=adapter.input_tokens + adapter.output_tokens + input_tokens + output_tokens,
-            termination_reason="gepa_metric_budget_exhausted",
+            termination_reason=termination_reason,
         )
 
     async def optimize(self, task: LocalOptimizationTask) -> LocalOptimizationResult:

@@ -1,0 +1,51 @@
+{
+  "audit_type": "zero_api_local_gepa_teamminibatch_postmortem",
+  "by_arm": {
+    "A_VOTE_ALIGNED_HIERARCHICAL": {
+      "accepted_mutations": 0,
+      "branches": 12,
+      "frontier_indices_observed": [
+        "0"
+      ],
+      "program_candidates": 12,
+      "promotion_rejection_classes": {
+        "UNCHANGED_PARENT": 12
+      },
+      "proposals": 45,
+      "rejected_mutations": 45,
+      "returned_candidates": 12,
+      "returned_parent_candidates": 12,
+      "team_minibatch_survivors": 0
+    },
+    "B_PRIMARY_RESPONSIBILITY_REALIZABILITY": {
+      "accepted_mutations": 0,
+      "branches": 12,
+      "frontier_indices_observed": [
+        "0"
+      ],
+      "program_candidates": 12,
+      "promotion_rejection_classes": {
+        "UNCHANGED_PARENT": 12
+      },
+      "proposals": 44,
+      "rejected_mutations": 44,
+      "returned_candidates": 12,
+      "returned_parent_candidates": 12,
+      "team_minibatch_survivors": 0
+    }
+  },
+  "classifier": "ROOT_CANDIDATE_RETURN_SEMANTICS_CONFIRMED",
+  "diagnosis": "Every GEPA proposal was rejected locally; the only program and returned frontier candidate was index 0, byte-identical to the parent. Its fixed-peer TeamMiniBatch deltas are therefore all exactly zero, so it had no promotion signal.",
+  "experiment_id": "seed78_primary_responsibility_ab_v1",
+  "scientific_status": "SCHEDULER_CAUSAL_EFFICACY_NOT_EVALUATED",
+  "total": {
+    "accepted_mutations": 0,
+    "branches": 24,
+    "program_candidates": 24,
+    "proposals": 89,
+    "rejected_mutations": 89,
+    "returned_candidates": 24,
+    "returned_parent_candidates": 24,
+    "team_minibatch_survivors": 0
+  }
+}

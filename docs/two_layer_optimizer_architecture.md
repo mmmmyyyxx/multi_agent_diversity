@@ -57,3 +57,9 @@ neutral. Experiments and implementation evidence do not silently promote this
 architecture to canonical status: promotion still requires a separately
 versioned update to the normative specification, runtime identities, code, and
 tests.
+
+The GEPA seed/root program is a local baseline, not a Layer-1 proposal. The
+`changed_candidates_only_v1` result contract returns only frontier prompts whose
+bytes differ from the parent. When GEPA finds no changed frontier candidate,
+Layer 1 returns an empty candidate tuple with `no_local_improvement`; it does
+not send parent-versus-parent work through TeamMiniBatch.

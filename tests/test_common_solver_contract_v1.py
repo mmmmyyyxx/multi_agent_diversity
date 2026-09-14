@@ -84,6 +84,32 @@ def test_strict_parser_and_shared_exact_request_cache() -> None:
     ).valid
 
 
+def test_paired_evaluators_share_one_provider_realization() -> None:
+    shared_cache: dict[str, str] = {}
+    calls = {"a": 0, "b": 0}
+
+    async def transport_a(_request: dict) -> str:
+        calls["a"] += 1
+        return "Reasoning A.\nFINAL_ANSWER: B"
+
+    async def transport_b(_request: dict) -> str:
+        calls["b"] += 1
+        return "Reasoning B.\nFINAL_ANSWER: A"
+
+    async def scenario() -> None:
+        arm_a = CommonSolverEvaluator(transport=transport_a, cache=shared_cache)
+        arm_b = CommonSolverEvaluator(transport=transport_b, cache=shared_cache)
+        first = await arm_a.evaluate(decision_procedure=PROMPT, question=QUESTION_LF)
+        second = await arm_b.evaluate(decision_procedure=PROMPT, question=QUESTION_LF)
+        assert first.request_identity == second.request_identity
+        assert first.response == second.response
+        assert first.cache_hit is False
+        assert second.cache_hit is True
+
+    asyncio.run(scenario())
+    assert calls == {"a": 1, "b": 0}
+
+
 def test_frozen_report_and_replay_registry_are_execution_ready() -> None:
     report = ROOT / "reports/common_solver_contract_v1_prep_20260906"
     facts = json.loads((report / "fact_assertions.json").read_text(encoding="utf-8"))

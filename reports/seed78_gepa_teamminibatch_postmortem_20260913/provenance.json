@@ -1,0 +1,12 @@
+{
+  "api_calls": 0,
+  "input_mode": "read_only",
+  "input_run": "runs/seed78_primary_responsibility_ab_v1_retry1",
+  "source_files": {
+    "gepa_optimizer": "be1c15359faabc8da525bea86cfdc78dcbcd3fb73746bc7990ce9a83fe624958",
+    "promotion": "4636a6ade57fa88414fe6f014cea8cb2da859818be34c2432d76a583257f6dbe",
+    "seed78_runner": "cb398a4a06ff5290641fd8ee370e78617f1178699d93c0abed59ac3dd3215615"
+  },
+  "test_calls": 0,
+  "validation_calls": 0
+}

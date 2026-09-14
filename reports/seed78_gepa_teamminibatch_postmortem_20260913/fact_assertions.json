@@ -1,0 +1,16 @@
+{
+  "assertions": {
+    "all_best_indices_root": true,
+    "all_frontiers_root_only": true,
+    "all_promotion_rejections_unchanged_parent": true,
+    "all_returned_candidates_are_parent": true,
+    "api_calls_zero": true,
+    "branch_count_24": true,
+    "final_teams_identical": true,
+    "paired_evaluation_gap_confirmed": true,
+    "proposal_rejection_accounting_exact": true,
+    "test_calls_zero": true,
+    "validation_calls_zero": true
+  },
+  "gate": "PASS"
+}

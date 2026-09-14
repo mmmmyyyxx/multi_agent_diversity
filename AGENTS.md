@@ -560,6 +560,9 @@ checkpoints, or absolute local paths.
 - Do not modify historical run directories or reports during code-only tasks.
 - Do not call real APIs unless the user explicitly authorizes them.
 - Do not reuse incompatible checkpoints.
+- In a paired final evaluation, identical solver request identities must share
+  one provider realization/cache identity across arms. Byte-identical final
+  teams must produce byte-identical paired evaluation evidence.
 - Run `compileall`, `pytest`, preflight, required deterministic smokes, a
   sanitization scan, and `git diff --check` before handoff.
 

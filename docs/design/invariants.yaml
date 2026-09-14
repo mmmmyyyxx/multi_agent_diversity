@@ -128,3 +128,19 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-LOCAL-RESULT-001
+    description: The two-layer GEPA boundary returns changed proposals, never the seed/root baseline.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py, multi_dataset_diverse_rl/versions.py]
+    tests: [tests/test_two_layer_optimizer_architecture.py]
+    failure_refs: [FAIL-FEASIBLE-SET-QUALITY]
+    critical: true
+    status: ACTIVE
+  - id: INV-PAIRED-EVAL-001
+    description: Paired final evaluations reuse one provider realization for equal request identities.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [infrastructure/common_solver_contract_v1/evaluator.py]
+    tests: [tests/test_common_solver_contract_v1.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE

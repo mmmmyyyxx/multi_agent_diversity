@@ -857,6 +857,16 @@ def _metrics_payload(system: Seed78System, metrics: Any) -> dict[str, Any]:
     }
 
 
+def _bind_paired_validation_cache(
+    systems: Mapping[str, Seed78System],
+) -> dict[str, str]:
+    """Bind every arm to one exact-request realization cache before validation."""
+    shared: dict[str, str] = {}
+    for system in systems.values():
+        system.common.cache = shared
+    return shared
+
+
 async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
     _authorize()
     _verify_freeze(prep)
@@ -908,6 +918,7 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
         )
     if any(row["termination"] not in {"completed_by_early_stop", "completed_by_budget"} for row in trajectories.values()):
         raise RuntimeError("both trajectories must freeze before Validation50")
+    _bind_paired_validation_cache(systems)
     validations: dict[str, Any] = {}
     for arm in ARMS:
         system = systems[arm]

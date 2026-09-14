@@ -42,7 +42,10 @@ from multi_dataset_diverse_rl.team_search.schemas import (
     TeamSearchRequest,
 )
 from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
-from multi_dataset_diverse_rl.versions import COMMON_SOLVER_CONTRACT_V1_ID
+from multi_dataset_diverse_rl.versions import (
+    COMMON_SOLVER_CONTRACT_V1_ID,
+    LOCAL_GEPA_RESULT_SEMANTICS_VERSION,
+)
 
 
 ROOT = Path(__file__).parents[1]
@@ -121,6 +124,42 @@ def test_official_gepa_full_lifecycle_and_lineage(tmp_path: Path) -> None:
     assert state.payload["gepa_result"]["parents"][1] == [0]
     assert any(row["event_type"] == "candidate_accepted" for row in state.payload["callback_events"])
     assert (tmp_path / "mock_gepa_lifecycle.lineage.jsonl").is_file()
+
+
+def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> None:
+    reflection = FakeReflection()
+
+    class RootOnlyResult:
+        per_val_instance_best_candidates = {index: {0} for index in range(3)}
+        val_aggregate_scores = [1.0]
+        candidates = [{"system_prompt": task().parent_prompt}]
+        num_candidates = 1
+        val_subscores = [{0: 1.0, 1: 1.0, 2: 1.0}]
+        parents = [[None]]
+        discovery_eval_counts = [3]
+
+        @staticmethod
+        def to_dict():
+            return {
+                "candidates": RootOnlyResult.candidates,
+                "parents": RootOnlyResult.parents,
+            }
+
+    optimizer = GEPALocalPromptOptimizer(
+        evaluator=FakeLocalEvaluator(),
+        reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path,
+        optimize_fn=lambda **_kwargs: RootOnlyResult(),
+    )
+    result = asyncio.run(optimizer.optimize(task()))
+    assert result.candidates == ()
+    assert result.termination_reason == "no_local_improvement"
+    assert result.optimizer_state is not None
+    assert result.optimizer_state.payload["local_gepa_frontier_indices"] == [0]
+    assert result.optimizer_state.payload["changed_frontier_indices"] == []
+    assert result.optimizer_state.payload["returned_candidate_indices"] == []
+    assert result.optimizer_state.payload["result_semantics"] == "changed_candidates_only_v1"
 
 
 def test_gepa_adapter_rejects_unsafe_prompt_before_solver_call() -> None:
@@ -498,3 +537,4 @@ def test_layered_protocol_hashes_are_independent() -> None:
     assert a.local_optimizer_contract_hash != b.local_optimizer_contract_hash
     assert a.full_protocol_hash != b.full_protocol_hash
     assert NoOpContextProvider().build_context(task_id="x") == ""
+    assert GEPAOptimizerConfig().result_semantics == LOCAL_GEPA_RESULT_SEMANTICS_VERSION

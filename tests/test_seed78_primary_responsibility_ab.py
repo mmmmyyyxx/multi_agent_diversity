@@ -20,6 +20,7 @@ from scripts.run_seed78_primary_responsibility_ab import (
     _arm_a_selection,
     _classify,
     _config,
+    _bind_paired_validation_cache,
     _mechanism_metrics,
     preflight,
     protocol_document,
@@ -136,3 +137,19 @@ def test_manifest_schema_and_preregistration_hash() -> None:
     recorded = manifest["artifacts"]["preregistration"]["sha256"]
     assert recorded == preregistration_hash(manifest)
     assert validate_manifest(manifest, schema) == []
+
+
+def test_paired_validation_binds_one_exact_request_cache() -> None:
+    class Common:
+        def __init__(self) -> None:
+            self.cache: dict[str, str] = {"old": "value"}
+
+    class System:
+        def __init__(self) -> None:
+            self.common = Common()
+
+    systems = {ARM_A: System(), ARM_B: System()}
+    shared = _bind_paired_validation_cache(systems)  # type: ignore[arg-type]
+    assert shared == {}
+    assert systems[ARM_A].common.cache is shared
+    assert systems[ARM_B].common.cache is shared

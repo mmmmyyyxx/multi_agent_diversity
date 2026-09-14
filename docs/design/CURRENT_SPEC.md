@@ -109,6 +109,25 @@ within the frozen local experiment. It does **not** demonstrate validation Vote
 improvement, online trajectory superiority, test improvement, or promotion to
 canonical runtime. The canonical Critic path above remains unchanged.
 
+## Active Two-Layer Research Architecture (opt-in)
+
+The active research direction separates a replaceable Local Prompt Optimizer
+from the Team-Level Responsibility/Search Controller. Official frozen GEPA is
+the current grounded local backend; responsibility, target allocation,
+persistent realizability, team evaluation, Common-Safe, Shadow, selection, and
+atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
+the canonical v15 runtime above.
+
+- **INV-LOCAL-RESULT-001** — The GEPA seed/root program is a baseline, not a
+  proposal. The `changed_candidates_only_v1` boundary returns only frontier
+  prompts whose bytes differ from the parent. No changed frontier produces an
+  empty candidate tuple with `no_local_improvement`; parent-versus-parent work
+  must not enter TeamMiniBatch.
+- **INV-PAIRED-EVAL-001** — Paired final evaluations share one exact-request
+  realization cache across arms. Equal prompt/question/solver-contract request
+  identities reuse the same provider realization, so byte-identical final teams
+  have byte-identical paired evaluation evidence.
+
 ## Authority map
 
 Machine-readable mirrors of these invariant IDs live in
