@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 
@@ -31,8 +32,51 @@ def test_canary_preflight_is_zero_api_and_narrow() -> None:
         "level_b": True,
         "validation_zero": True,
         "test_zero": True,
+        "manifest_preflight_pass": True,
+        "manifest_schema": True,
+        "attempt_identity": True,
+        "launch_transaction": True,
+        "proposer_diagnostics": True,
+        "preregistration_hash": True,
         "no_retry_resume": True,
     }
+
+
+def test_run_lifecycle_is_atomic_and_failed_start_is_durable(tmp_path: Path) -> None:
+    module = load()
+    prep = tmp_path / "prep"
+    prep.mkdir()
+    (prep / "source_freeze.json").write_text(
+        json.dumps(
+            {
+                "execution_commit": "a" * 40,
+                "protocol_sha256": "b" * 64,
+            }
+        ),
+        encoding="utf-8",
+    )
+    run_root = tmp_path / "run"
+    lifecycle = module.start_run_attempt(prep, run_root)
+    assert run_root.is_dir()
+    assert lifecycle["status"] == "RUNNING"
+    assert lifecycle["provider_call_boundary_reached"] is False
+    assert not list(tmp_path.glob("*.starting"))
+
+    module.transition_run_attempt(run_root, provider_boundary_reached=True)
+    terminal = module.transition_run_attempt(
+        run_root,
+        status="FAILED_START",
+        provider_calls_observed=0,
+        failure_category="SimulatedBoundaryAbort",
+    )
+    assert terminal["status"] == "FAILED_START"
+    assert terminal["provider_call_boundary_reached"] is True
+    assert terminal["provider_calls_observed"] == 0
+    assert [row["status"] for row in terminal["events"]] == [
+        "RUNNING",
+        "FAILED_START",
+    ]
+    assert terminal["events"][-1]["failure_category"] == "SimulatedBoundaryAbort"
 
 
 def test_canary_classifier_distinguishes_empirical_path_states() -> None:

@@ -8,6 +8,22 @@ winner-only Shadow behavior.
 
 The canary may initialize the shared P0 fixed Optimize100 probe. It performs no
 Validation50 or Test50 evaluation and cannot be extended, resumed, or retried.
+The fresh attempt identity is `level_b_gepa_real_canary_v1_authorized3`.
+
+Launch is a run-local transaction. The tracked manifest remains at
+`PREFLIGHT_PASS`. Execution must verify the frozen source and protocol before
+atomically publishing a fresh run root that already contains a durable `RUNNING`
+event. Only then may it enter the first provider-call boundary. An exception with
+zero durable successful provider calls ends as `FAILED_START`; an exception after
+one or more durable successful provider calls ends as `ABORTED`. Neither state may
+be resumed or retried.
+
+Every proposer attempt is summarized without raw proposal text. The durable
+diagnostic includes changed, unchanged, duplicate, contract-invalid, Solver-reached,
+positive-minibatch-delta, and accepted-mutation counts. Contract-invalid proposals
+record one primary category (`over_length`, `output_contract_contamination`,
+`example_copying`, `append_only`, or `other_failed_check`) plus multi-hot failed-check
+counts. These diagnostics are observational and do not alter GEPA search or Layer 2.
 
 Frozen diagnostic classification:
 

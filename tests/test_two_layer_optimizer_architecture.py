@@ -279,6 +279,18 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     assert state["invalid_prompt_indices"] == [1, 4]
     assert state["duplicate_prompt_indices"] == [3]
     assert state["returned_candidate_indices"] == [2, 5]
+    diagnostics = state["telemetry"]["proposer_diagnostics"]
+    assert diagnostics["changed"] == 5
+    assert diagnostics["unchanged"] == 0
+    assert diagnostics["duplicate"] == 1
+    assert diagnostics["contract_invalid"] == 2
+    assert diagnostics["primary_rejection_category_counts"] == {
+        "over_length": 1,
+        "output_contract_contamination": 1,
+        "example_copying": 0,
+        "append_only": 0,
+        "other_failed_check": 0,
+    }
     assert captured["reflection_prompt_template"] == DECISION_PROCEDURE_REFLECTION_TEMPLATE
     assert captured["skip_perfect_score"] is True
     assert captured["perfect_score"] == 1.0
@@ -289,6 +301,89 @@ def test_changed_frontier_is_validated_and_deduplicated_before_top_k(tmp_path: P
     assert captured["merge_val_overlap_floor"] == 5
     assert captured["custom_candidate_proposer"] is None
     assert captured["seed_candidate"] == {"decision_procedure": task().parent_prompt}
+
+
+def test_proposer_diagnostics_classify_four_illegal_proposal_types(tmp_path: Path) -> None:
+    parent = "Use a generic decision procedure."
+    copied = (
+        "Choose which candidate is the coherent referent after comparing all semantic "
+        "relations in this deliberately long supplied example payload."
+    )
+    rows = (
+        LocalEvidenceExample("long", copied, "A", tags=("coverage",)),
+    )
+    diagnostic_task = LocalOptimizationTask(
+        task_id="diagnostic-proposals",
+        parent_prompt=parent,
+        search_examples=rows,
+        local_validation_examples=rows,
+        optimization_context="",
+        solver_contract_id=COMMON_SOLVER_CONTRACT_V1_ID,
+        output_contract_id="task_output_contract_v1",
+        seed=7,
+        budget=LocalOptimizerBudget(12, 3, 4),
+    )
+    prompts = [
+        parent,
+        "x" * 3001,
+        "Return FINAL_ANSWER: A",
+        copied,
+        parent + " Add one extra heuristic.",
+        "Compare interpretations and select the semantically coherent referent.",
+    ]
+
+    class Result:
+        per_val_instance_best_candidates = {0: set(range(len(prompts)))}
+        val_aggregate_scores = [0.0] * len(prompts)
+        candidates = [{"decision_procedure": prompt} for prompt in prompts]
+        num_candidates = len(prompts)
+        val_subscores = [{0: 0.0} for _ in prompts]
+        parents = [[None]] + [[0] for _ in prompts[1:]]
+        discovery_eval_counts = [1] * len(prompts)
+
+        @staticmethod
+        def to_dict():
+            return {"candidate_count": len(prompts)}
+
+    def optimize(**kwargs):
+        callback = kwargs["callbacks"][0]
+        for index in range(1, len(prompts)):
+            callback.on_proposal_end(
+                {"iteration": index, "new_instructions": {"decision_procedure": prompts[index]}}
+            )
+        return Result()
+
+    reflection = FakeReflection()
+    result = asyncio.run(
+        GEPALocalPromptOptimizer(
+            evaluator=FakeLocalEvaluator(),
+            reflection_lm=reflection,
+            accounting_reader=lambda: reflection.accounting,
+            run_root=tmp_path,
+            optimize_fn=optimize,
+        ).optimize(diagnostic_task)
+    )
+    assert result.optimizer_state is not None
+    diagnostics = result.optimizer_state.payload["telemetry"]["proposer_diagnostics"]
+    assert diagnostics["proposal_attempts"] == 5
+    assert diagnostics["changed"] == 5
+    assert diagnostics["unchanged"] == 0
+    assert diagnostics["duplicate"] == 0
+    assert diagnostics["contract_invalid"] == 4
+    assert diagnostics["solver_reached"] == 0
+    assert diagnostics["primary_rejection_category_counts"] == {
+        "over_length": 1,
+        "output_contract_contamination": 1,
+        "example_copying": 1,
+        "append_only": 1,
+        "other_failed_check": 0,
+    }
+    assert diagnostics["failed_check_counts"] == {
+        "append_only": 1,
+        "example_copying": 1,
+        "forbidden_final_answer_marker": 1,
+        "over_length": 1,
+    }
 
 
 def test_local_gepa_does_not_return_unchanged_seed_candidate(tmp_path: Path) -> None:
@@ -645,6 +740,11 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
     assert telemetry["accepted_mutations"] >= 1
     assert telemetry["positive_minibatch_deltas"] >= 1
     assert telemetry["full_local_evaluations"] >= 1
+    diagnostics = telemetry["proposer_diagnostics"]
+    assert diagnostics["proposal_attempts"] >= 1
+    assert diagnostics["changed"] >= 1
+    assert diagnostics["solver_reached"] >= 1
+    assert diagnostics["contract_invalid"] == 0
 
 
 class StubPrimaryAssignmentFactory:

@@ -1,14 +1,13 @@
 schema_version: experiment_manifest_v1
 experiment_id: level_b_gepa_real_canary_v1
 title: Level-B GEPA Real-Provider Path Canary
-status: RUNNING
+status: PREFLIGHT_PASS
 legacy_index: false
 lifecycle_history:
   - {status: DRAFT, timestamp: '2026-09-14T00:00:00+08:00'}
   - {status: PREREGISTERED, timestamp: '2026-09-14T00:00:00+08:00'}
   - {status: IMPLEMENTED, timestamp: '2026-09-14T00:00:00+08:00'}
   - {status: PREFLIGHT_PASS, timestamp: '2026-09-14T00:00:00+08:00'}
-  - {status: RUNNING, timestamp: '2026-09-14T00:00:00+08:00'}
 lineage:
   parents: [two_layer_rg_gepa_v1, level_b_gepa_adapter_closure_20260914]
   derives_from: two_layer_rg_gepa_v1
@@ -19,7 +18,7 @@ hypotheses:
   - At least one changed valid local candidate reaches TeamMiniBatch.
 evidence_type: engineering_canary_not_efficacy_evidence
 method_identity: member_aware_peer_state_v15
-runtime_version: level_b_gepa_real_canary_v1
+runtime_version: level_b_gepa_real_canary_v1_launch_transaction_v2
 data:
   task: BBH disambiguation_qa
   formal: false
@@ -34,6 +33,16 @@ model:
   temperatures: {solver: 0.0, reflection: 0.0}
 seeds: [78]
 design:
+  changed:
+    - run-local launch lifecycle transaction
+    - sanitized proposer diagnostics persistence
+  unchanged:
+    - official GEPA search core and acceptance semantics
+    - Layer 2 target allocation and team acceptance
+    - model, data, opportunity, and evaluation budgets
+  attempt_id: level_b_gepa_real_canary_v1_authorized3
+  launch_transaction_version: atomic_run_local_lifecycle_v1
+  proposer_diagnostics_version: sanitized_proposer_diagnostics_v1
   opportunities: 1
   target_branches: 1
   target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
@@ -43,22 +52,29 @@ design:
   forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
 api_authorization:
   authorized: true
-  authorization_scope: explicit_user_authorization_2026_09_14_for_level_b_fresh_canary_only
+  authorization_scope: fresh_attempt_authorized3_requires_new_explicit_user_authorization_at_execution
   allowed_roles: [solver, reflection]
   allowed_phases: [canary]
 budget:
+  type: fixed_engineering_canary_budget
   frozen_before_run: true
   limit: {initialization_solver_provider_calls: 100, local_gepa_metric_calls: 36, returned_candidates: 4, team_minibatch_candidates: 4, full_team_candidates: 2, shadow_winners: 1, validation_calls: 0, test_calls: 0}
 selection:
+  primary_metric: empirical_local_search_path_activation
   frozen_rule: BACKEND_EMPIRICAL_PATH_CONFIRMED iff proposal attempts are positive, post-seed candidate Solver calls are positive, at least one changed valid candidate is returned, and at least one changed candidate enters TeamMiniBatch; otherwise use the frozen diagnostic classifier
   validation_used_for_selection: false
   test_used_for_selection: false
 artifacts:
   preregistration:
     path: experiments/level_b_gepa_real_canary_v1/PROTOCOL.md
-    sha256: 672b7fe54a6dabf088a1de1d3a7ea61736920ac5cf33e5cf5cd9cd838932f950
-  report: reports/level_b_gepa_real_canary_v1
+    sha256: 761398df28aaee2751931352969510a9eb0f87049c7a386a76deff3c24285c19
+  report: reports/level_b_gepa_real_canary_v1_authorized3
+  provenance: reports/level_b_gepa_real_canary_v1_authorized3/provenance.json
 git:
   design_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
   implementation_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
   result_commit: null
+result:
+  classifier: null
+  conclusion: null
+  evidence_type: not_yet_available

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import copy
 from dataclasses import asdict
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -23,6 +25,10 @@ for entry in (ROOT, ROOT / "scripts"):
 from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.governance.authorization import require_api_authorization
+from multi_dataset_diverse_rl.governance.manifest import (
+    preregistration_hash,
+    validate_manifest,
+)
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
     GEPAOptimizerConfig,
     GEPALocalPromptOptimizer,
@@ -44,7 +50,10 @@ from multi_dataset_diverse_rl.team_search.system_runtime import (
 )
 from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity
-from infrastructure.common_solver_contract_v1.contract import COMMON_SOLVER_CONTRACT_ID
+from infrastructure.common_solver_contract_v1.contract import (
+    COMMON_SOLVER_CONTRACT_ID,
+    CONTRACT_SPEC,
+)
 from scripts.anti_overfitting_shadow_support import (
     construct_assignment,
     export_private_splits,
@@ -65,15 +74,19 @@ from scripts.run_seed78_primary_responsibility_ab import (
 
 
 EXPERIMENT_ID = "level_b_gepa_real_canary_v1"
+ATTEMPT_ID = "level_b_gepa_real_canary_v1_authorized3"
 SEED = 78
 ARM = "LEVEL_B_REAL_CANARY"
 LOCAL_METRIC_BUDGET = 36
 AUTH_ENV = "LEVEL_B_GEPA_REAL_CANARY_AUTHORIZED"
 MANIFEST = ROOT / "experiments/manifests/level_b_gepa_real_canary_v1.yaml"
 PROTOCOL = ROOT / "experiments/level_b_gepa_real_canary_v1/PROTOCOL.md"
-DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v1_prep"
-DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v1"
-DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v1"
+DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v1_prep_authorized3"
+DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v1_authorized3"
+DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v1_authorized3"
+RUN_LIFECYCLE_FILE = "run_lifecycle.json"
+LAUNCH_TRANSACTION_VERSION = "atomic_run_local_lifecycle_v1"
+PROPOSER_DIAGNOSTICS_VERSION = "sanitized_proposer_diagnostics_v1"
 
 
 def git(*args: str) -> str:
@@ -93,6 +106,7 @@ def source_paths() -> list[Path]:
     paths.extend([
         Path("infrastructure/common_solver_contract_v1/contract.py"),
         Path("infrastructure/common_solver_contract_v1/evaluator.py"),
+        Path("infrastructure/experiment_manifest.schema.json"),
         Path("scripts/anti_overfitting_shadow_support.py"),
         Path("scripts/run_seed78_primary_responsibility_ab.py"),
         Path("scripts/run_level_b_gepa_real_canary.py"),
@@ -106,8 +120,9 @@ def source_paths() -> list[Path]:
 
 def protocol_document() -> dict[str, Any]:
     return {
-        "schema_version": "level_b_gepa_real_canary_protocol_v1",
+        "schema_version": "level_b_gepa_real_canary_protocol_v2",
         "experiment_id": EXPERIMENT_ID,
+        "attempt_id": ATTEMPT_ID,
         "seed": SEED,
         "evidence_type": "engineering_canary_not_efficacy_evidence",
         "source_parent": "Seed78 fold-a-plus-fold-b Optimize100 initialization",
@@ -125,8 +140,89 @@ def protocol_document() -> dict[str, Any]:
         "validation50_calls": 0,
         "test50_calls": 0,
         "no_resume": True,
-        "no_retry": True,
+        "experiment_retry_count": 0,
+        "transport_attempt_cap": CONTRACT_SPEC.transport_attempt_cap,
+        "launch_transaction_version": LAUNCH_TRANSACTION_VERSION,
+        "proposer_diagnostics_version": PROPOSER_DIAGNOSTICS_VERSION,
     }
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _atomic_write_json(path: Path, value: Any) -> None:
+    temporary = path.with_name(f".{path.name}.tmp")
+    payload = json.dumps(value, indent=2, sort_keys=True) + "\n"
+    with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, path)
+
+
+def start_run_attempt(prep: Path, run_root: Path) -> dict[str, Any]:
+    """Atomically publish a fresh run root containing its RUNNING fact."""
+
+    if run_root.exists():
+        raise FileExistsError("fresh canary run root required; retry/resume forbidden")
+    staging = run_root.with_name(f".{run_root.name}.{ATTEMPT_ID}.starting")
+    if staging.exists():
+        raise FileExistsError("fresh canary launch staging root required")
+    freeze = read_json(prep / "source_freeze.json")
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    lifecycle = {
+        "schema_version": LAUNCH_TRANSACTION_VERSION,
+        "experiment_id": EXPERIMENT_ID,
+        "attempt_id": ATTEMPT_ID,
+        "status": "RUNNING",
+        "source_commit": freeze["execution_commit"],
+        "protocol_sha256": freeze["protocol_sha256"],
+        "preregistration_sha256": preregistration_hash(manifest),
+        "provider_call_boundary_reached": False,
+        "provider_calls_observed": 0,
+        "events": [{"status": "RUNNING", "timestamp": _utc_now()}],
+    }
+    run_root.parent.mkdir(parents=True, exist_ok=True)
+    staging.mkdir()
+    _atomic_write_json(staging / RUN_LIFECYCLE_FILE, lifecycle)
+    os.replace(staging, run_root)
+    return lifecycle
+
+
+def transition_run_attempt(
+    run_root: Path,
+    *,
+    status: str | None = None,
+    provider_boundary_reached: bool | None = None,
+    provider_calls_observed: int | None = None,
+    failure_category: str | None = None,
+) -> dict[str, Any]:
+    path = run_root / RUN_LIFECYCLE_FILE
+    lifecycle = read_json(path)
+    if lifecycle.get("attempt_id") != ATTEMPT_ID:
+        raise RuntimeError("run lifecycle attempt identity mismatch")
+    if provider_boundary_reached is not None:
+        lifecycle["provider_call_boundary_reached"] = bool(provider_boundary_reached)
+    if provider_calls_observed is not None:
+        lifecycle["provider_calls_observed"] = int(provider_calls_observed)
+    if status is not None:
+        if status not in {"COMPLETE", "FAILED_START", "ABORTED"}:
+            raise ValueError("invalid terminal run lifecycle status")
+        lifecycle["status"] = status
+        event: dict[str, Any] = {"status": status, "timestamp": _utc_now()}
+        if failure_category is not None:
+            event["failure_category"] = failure_category
+        lifecycle["events"].append(event)
+    _atomic_write_json(path, lifecycle)
+    return lifecycle
+
+
+def _provider_calls_observed(run_root: Path) -> int:
+    ledger = run_root / "ledger.jsonl"
+    if not ledger.is_file():
+        return 0
+    return int(_ledger_summary(ledger)["successful_provider_calls"])
 
 
 def prepare(prep: Path) -> dict[str, Any]:
@@ -134,6 +230,8 @@ def prepare(prep: Path) -> dict[str, Any]:
         raise FileExistsError("fresh canary prep root required")
     if git("status", "--porcelain", "--untracked-files=no"):
         raise RuntimeError("tracked worktree must be clean before canary freeze")
+    if preflight()["gate"] != "PASS":
+        raise RuntimeError("canary preflight must pass before freeze")
     verify_frozen_gepa_engine_contract()
     items, raw = metadata()
     assignment = construct_assignment(items)
@@ -156,6 +254,10 @@ def prepare(prep: Path) -> dict[str, Any]:
     freeze = {
         "execution_commit": git("rev-parse", "HEAD"),
         "protocol_sha256": sha256_json(protocol),
+        "preregistration_sha256": preregistration_hash(
+            yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+        ),
+        "attempt_id": ATTEMPT_ID,
         "files": [
             {"path": path.as_posix(), "sha256": sha256_file(ROOT / path)}
             for path in source_paths()
@@ -169,7 +271,8 @@ def prepare(prep: Path) -> dict[str, Any]:
     result = {
         "gate": "PASS", "execution_commit": freeze["execution_commit"],
         "protocol_sha256": freeze["protocol_sha256"], "api_calls": 0,
-        "validation_calls": 0, "test_calls": 0,
+        "preregistration_sha256": freeze["preregistration_sha256"],
+        "attempt_id": ATTEMPT_ID, "validation_calls": 0, "test_calls": 0,
     }
     write_json(prep / "phase_a_gate.json", result)
     return result
@@ -181,6 +284,11 @@ def verify_freeze(prep: Path) -> None:
         raise RuntimeError("canary execution commit mismatch")
     if sha256_json(read_json(prep / "protocol_freeze.json")) != freeze["protocol_sha256"]:
         raise RuntimeError("canary protocol hash mismatch")
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    if preregistration_hash(manifest) != freeze["preregistration_sha256"]:
+        raise RuntimeError("canary preregistration hash mismatch")
+    if freeze.get("attempt_id") != ATTEMPT_ID:
+        raise RuntimeError("canary attempt identity mismatch")
     for row in freeze["files"]:
         if sha256_file(ROOT / row["path"]) != row["sha256"]:
             raise RuntimeError(f"canary source freeze mismatch: {row['path']}")
@@ -189,13 +297,23 @@ def verify_freeze(prep: Path) -> None:
             raise RuntimeError(f"canary split freeze mismatch: {name}")
 
 
-def authorize() -> None:
+def authorize(run_root: Path) -> None:
     if os.environ.get(AUTH_ENV) != "1":
         raise PermissionError(f"{AUTH_ENV}=1 is required")
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    if manifest.get("status") != "PREFLIGHT_PASS":
+        raise RuntimeError("tracked canary manifest must remain at PREFLIGHT_PASS")
+    lifecycle = read_json(run_root / RUN_LIFECYCLE_FILE)
+    if lifecycle.get("status") != "RUNNING":
+        raise RuntimeError("run-local lifecycle must be RUNNING before authorization")
+    runtime_manifest = copy.deepcopy(manifest)
+    runtime_manifest["status"] = "RUNNING"
+    runtime_manifest["lifecycle_history"].append(
+        {"status": "RUNNING", "timestamp": lifecycle["events"][-1]["timestamp"]}
+    )
     for role in ("solver", "reflection"):
         require_api_authorization(
-            manifest, phase="canary", role=role, explicit_user_authorized=True
+            runtime_manifest, phase="canary", role=role, explicit_user_authorized=True
         )
 
 
@@ -256,123 +374,170 @@ async def initialize_system(
 
 
 async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
-    authorize()
+    if os.environ.get(AUTH_ENV) != "1":
+        raise PermissionError(f"{AUTH_ENV}=1 is required")
     verify_freeze(prep)
-    if run_root.exists():
-        raise FileExistsError("fresh canary run root required; retry/resume forbidden")
-    run_root.mkdir(parents=True)
-    optimize_rows = _rows(prep / "splits_private/optimize100.csv")
-    shadow_rows = _rows(prep / "splits_private/fold_c.csv")
-    validation_rows = _rows(prep / "splits_private/validation.csv")
-    ledger = DurableLedger(run_root / "ledger.jsonl")
-    system = await initialize_system(
-        root=run_root / "system",
-        optimize_rows=optimize_rows,
-        validation_rows=validation_rows,
-        optimize_path=prep / "splits_private/optimize100.csv",
-        validation_path=prep / "splits_private/validation.csv",
-        ledger=ledger,
-    )
-    parent_identity = _profile_identity(system)
-    snapshot = freeze_current_responsibility(system, update_index=0)
-    scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
-    decision = scheduler.select(
-        assigned=snapshot.assigned,
-        current_margin_by_question=snapshot.current_margin_by_question,
-        seed=SEED,
-        update_index=0,
-        target_count=1,
-    )
-    if len(decision.selected_member_ids) != 1:
-        raise RuntimeError("canary must freeze exactly one target")
-    target = decision.selected_member_ids[0]
-    summary_by_member = {row.member_id: row for row in decision.summaries}
-    task_builder = LocalTaskBuilder()
-    factory = SystemResponsibilityAssignmentFactory(
-        system=system, snapshot_reader=lambda: snapshot, task_builder=task_builder
-    )
-    assignment = factory.build_from_member(
-        request=TeamSearchRequest(
-            seed=SEED, update_index=0, team_state_hash=system.team_prompt_state_hash(),
+    start_run_attempt(prep, run_root)
+    try:
+        authorize(run_root)
+        optimize_rows = _rows(prep / "splits_private/optimize100.csv")
+        shadow_rows = _rows(prep / "splits_private/fold_c.csv")
+        validation_rows = _rows(prep / "splits_private/validation.csv")
+        ledger = DurableLedger(run_root / "ledger.jsonl")
+        transition_run_attempt(run_root, provider_boundary_reached=True)
+        system = await initialize_system(
+            root=run_root / "system",
+            optimize_rows=optimize_rows,
+            validation_rows=validation_rows,
+            optimize_path=prep / "splits_private/optimize100.csv",
+            validation_path=prep / "splits_private/validation.csv",
+            ledger=ledger,
+        )
+        parent_identity = _profile_identity(system)
+        snapshot = freeze_current_responsibility(system, update_index=0)
+        scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
+        decision = scheduler.select(
+            assigned=snapshot.assigned,
+            current_margin_by_question=snapshot.current_margin_by_question,
+            seed=SEED,
+            update_index=0,
+            target_count=1,
+        )
+        if len(decision.selected_member_ids) != 1:
+            raise RuntimeError("canary must freeze exactly one target")
+        target = decision.selected_member_ids[0]
+        summary_by_member = {row.member_id: row for row in decision.summaries}
+        task_builder = LocalTaskBuilder()
+        factory = SystemResponsibilityAssignmentFactory(
+            system=system,
+            snapshot_reader=lambda: snapshot,
+            task_builder=task_builder,
+        )
+        assignment = factory.build_from_member(
+            request=TeamSearchRequest(
+                seed=SEED,
+                update_index=0,
+                team_state_hash=system.team_prompt_state_hash(),
+                local_metric_budget=LOCAL_METRIC_BUDGET,
+                solver_contract_id=COMMON_SOLVER_CONTRACT_ID,
+                output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
+            ),
+            member_id=target,
+            primary_lane=summary_by_member[target].primary_lane,
+            responsibility_identity="level_b_real_canary_v1",
+        )
+        loop = asyncio.get_running_loop()
+        local_solver = SystemLocalSolverEvaluator(
+            system=system,
+            loop=loop,
+            stage=system.set_stage,
+            accounting=system.common.accounting,
+            solver_contract_id=COMMON_SOLVER_CONTRACT_ID,
+            output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
+        )
+        official = GEPALocalPromptOptimizer(
+            evaluator=local_solver,
+            reflection_lm=ReflectionLM(system),
+            accounting_reader=system.optimizer_accounting,
+            run_root=run_root / "local_gepa",
+        )
+        contextual = ContextualOptimizer(official, local_solver)
+        shadow_probe = system.build_probe(shadow_rows)
+        evaluator = SystemTeamCandidateEvaluator(
+            system=system,
+            shadow_probe=shadow_probe,
+            loop=loop,
+            stage=system.set_stage,
+            accounting=system.common.accounting,
+            update_index_reader=lambda: 0,
+        )
+        controller = TeamSearchController(
+            responsibility=factory,
+            task_builder=task_builder,
+            local_optimizer=contextual,
+            evaluator=evaluator,
+            selector=CommonSafeTeamCandidateSelector(),
+            committer=SystemTeamCommitter(
+                system=system, evaluator=evaluator, update_index_reader=lambda: 0
+            ),
+        )
+        request = TeamSearchRequest(
+            seed=SEED,
+            update_index=0,
+            team_state_hash=system.team_prompt_state_hash(),
             local_metric_budget=LOCAL_METRIC_BUDGET,
             solver_contract_id=COMMON_SOLVER_CONTRACT_ID,
             output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
-        ),
-        member_id=target,
-        primary_lane=summary_by_member[target].primary_lane,
-        responsibility_identity="level_b_real_canary_v1",
-    )
-    loop = asyncio.get_running_loop()
-    local_solver = SystemLocalSolverEvaluator(
-        system=system, loop=loop, stage=system.set_stage,
-        accounting=system.common.accounting,
-        solver_contract_id=COMMON_SOLVER_CONTRACT_ID,
-        output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
-    )
-    official = GEPALocalPromptOptimizer(
-        evaluator=local_solver, reflection_lm=ReflectionLM(system),
-        accounting_reader=system.optimizer_accounting,
-        run_root=run_root / "local_gepa",
-    )
-    contextual = ContextualOptimizer(official, local_solver)
-    shadow_probe = system.build_probe(shadow_rows)
-    evaluator = SystemTeamCandidateEvaluator(
-        system=system, shadow_probe=shadow_probe, loop=loop,
-        stage=system.set_stage, accounting=system.common.accounting,
-        update_index_reader=lambda: 0,
-    )
-    controller = TeamSearchController(
-        responsibility=factory, task_builder=task_builder,
-        local_optimizer=contextual, evaluator=evaluator,
-        selector=CommonSafeTeamCandidateSelector(),
-        committer=SystemTeamCommitter(
-            system=system, evaluator=evaluator, update_index_reader=lambda: 0
-        ),
-    )
-    request = TeamSearchRequest(
-        seed=SEED, update_index=0, team_state_hash=system.team_prompt_state_hash(),
-        local_metric_budget=LOCAL_METRIC_BUDGET,
-        solver_contract_id=COMMON_SOLVER_CONTRACT_ID,
-        output_contract_id=SOLVER_OUTPUT_CONTRACT_VERSION,
-    )
-    outcome = await controller.run_frozen_opportunity(request, (assignment,))
-    telemetry = dict(outcome.audit_metadata.get("local_optimizer_telemetry", {}))
-    result = {
-        "execution_gate": "PASS",
-        "experiment_id": EXPERIMENT_ID,
-        "seed": SEED,
-        "parent_team_hash": parent_identity["team_hash"],
-        "target_member": target,
-        "primary_responsibility_lane": assignment.primary_responsibility_lane,
-        "proposal_attempts": int(telemetry.get("proposal_attempts", 0)),
-        "positive_minibatch_deltas": int(telemetry.get("positive_minibatch_deltas", 0)),
-        "accepted_mutations": int(telemetry.get("accepted_mutations", 0)),
-        "full_local_evaluations": int(telemetry.get("full_local_evaluations", 0)),
-        "local_optimizer_solver_calls": outcome.cost.local_optimizer_solver_calls,
-        "candidate_solver_calls_beyond_seed": max(
-            0, outcome.cost.local_optimizer_solver_calls - 12
-        ),
-        "changed_valid_candidates": outcome.funnel["local_candidates"],
-        "team_minibatch_solver_calls": outcome.cost.team_minibatch_solver_calls,
-        "team_minibatch_survivors": outcome.funnel["team_minibatch_survivors"],
-        "full_team_evaluated_candidates": outcome.funnel["full_team_evaluated_candidates"],
-        "shadow_solver_calls": outcome.cost.team_shadow_solver_calls,
-        "commits": outcome.funnel["committed_candidates"],
-        "team_minibatch": outcome.audit_metadata["team_minibatch"],
-        "local_termination_reason": outcome.audit_metadata["local_termination_reason"],
-        "classifier": classify(telemetry, outcome),
-        "ledger": _ledger_summary(run_root / "ledger.jsonl"),
-        "validation50_calls": 0,
-        "test50_calls": 0,
-    }
-    write_json(run_root / "execution_summary.json", result)
-    return result
+        )
+        outcome = await controller.run_frozen_opportunity(request, (assignment,))
+        telemetry = dict(outcome.audit_metadata.get("local_optimizer_telemetry", {}))
+        result = {
+            "execution_gate": "PASS",
+            "experiment_id": EXPERIMENT_ID,
+            "seed": SEED,
+            "parent_team_hash": parent_identity["team_hash"],
+            "target_member": target,
+            "primary_responsibility_lane": assignment.primary_responsibility_lane,
+            "proposal_attempts": int(telemetry.get("proposal_attempts", 0)),
+            "proposer_diagnostics_version": PROPOSER_DIAGNOSTICS_VERSION,
+            "proposer_diagnostics": telemetry.get("proposer_diagnostics", {}),
+            "positive_minibatch_deltas": int(
+                telemetry.get("positive_minibatch_deltas", 0)
+            ),
+            "accepted_mutations": int(telemetry.get("accepted_mutations", 0)),
+            "full_local_evaluations": int(
+                telemetry.get("full_local_evaluations", 0)
+            ),
+            "local_optimizer_solver_calls": outcome.cost.local_optimizer_solver_calls,
+            "candidate_solver_calls_beyond_seed": max(
+                0, outcome.cost.local_optimizer_solver_calls - 12
+            ),
+            "changed_valid_candidates": outcome.funnel["local_candidates"],
+            "team_minibatch_solver_calls": outcome.cost.team_minibatch_solver_calls,
+            "team_minibatch_survivors": outcome.funnel["team_minibatch_survivors"],
+            "full_team_evaluated_candidates": outcome.funnel[
+                "full_team_evaluated_candidates"
+            ],
+            "shadow_solver_calls": outcome.cost.team_shadow_solver_calls,
+            "commits": outcome.funnel["committed_candidates"],
+            "team_minibatch": outcome.audit_metadata["team_minibatch"],
+            "local_termination_reason": outcome.audit_metadata[
+                "local_termination_reason"
+            ],
+            "classifier": classify(telemetry, outcome),
+            "ledger": _ledger_summary(run_root / "ledger.jsonl"),
+            "validation50_calls": 0,
+            "test50_calls": 0,
+        }
+        write_json(run_root / "execution_summary.json", result)
+        transition_run_attempt(
+            run_root,
+            status="COMPLETE",
+            provider_calls_observed=_provider_calls_observed(run_root),
+        )
+        return result
+    except BaseException as exc:
+        calls = _provider_calls_observed(run_root)
+        transition_run_attempt(
+            run_root,
+            status="FAILED_START" if calls == 0 else "ABORTED",
+            provider_calls_observed=calls,
+            failure_category=type(exc).__name__,
+        )
+        raise
 
 
 def audit(prep: Path, run_root: Path) -> dict[str, Any]:
     verify_freeze(prep)
     summary = read_json(run_root / "execution_summary.json")
     errors: list[str] = []
+    lifecycle = read_json(run_root / RUN_LIFECYCLE_FILE)
+    if lifecycle.get("status") != "COMPLETE":
+        errors.append("run_lifecycle")
+    if lifecycle.get("attempt_id") != ATTEMPT_ID:
+        errors.append("attempt_identity")
+    if lifecycle.get("provider_call_boundary_reached") is not True:
+        errors.append("provider_call_boundary")
     for key in ("validation50_calls", "test50_calls"):
         if summary.get(key) != 0:
             errors.append(key)
@@ -386,6 +551,28 @@ def audit(prep: Path, run_root: Path) -> dict[str, Any]:
     ledger = summary["ledger"]
     if ledger["input_tokens"] + ledger["output_tokens"] != ledger["total_tokens"]:
         errors.append("ledger_token_arithmetic")
+    diagnostics = summary.get("proposer_diagnostics", {})
+    required_diagnostics = {
+        "proposal_attempts", "materialized_proposals", "unmaterialized_attempts",
+        "changed", "unchanged", "duplicate", "contract_invalid",
+        "solver_reached", "positive_minibatch_delta", "accepted_mutation",
+        "primary_rejection_category_counts", "failed_check_counts",
+    }
+    if required_diagnostics - set(diagnostics):
+        errors.append("proposer_diagnostics")
+    else:
+        materialized = int(diagnostics.get("materialized_proposals", 0))
+        changed = int(diagnostics["changed"])
+        unchanged = int(diagnostics["unchanged"])
+        invalid = int(diagnostics["contract_invalid"])
+        solver_reached = int(diagnostics["solver_reached"])
+        categories = diagnostics["primary_rejection_category_counts"]
+        if changed + unchanged != materialized:
+            errors.append("proposer_materialization_arithmetic")
+        if sum(int(value) for value in categories.values()) != invalid:
+            errors.append("proposer_rejection_arithmetic")
+        if not 0 <= solver_reached <= changed - invalid:
+            errors.append("proposer_solver_reach_arithmetic")
     result = {
         "gate": "PASS" if not errors else "HOLD", "errors": errors,
         "protocol_sha256": read_json(prep / "source_freeze.json")["protocol_sha256"],
@@ -426,10 +613,11 @@ def analyze(prep: Path, run_root: Path, report: Path) -> dict[str, Any]:
 def preflight() -> dict[str, Any]:
     verify_frozen_gepa_engine_contract()
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
-    for role in ("solver", "reflection"):
-        require_api_authorization(
-            manifest, phase="canary", role=role, explicit_user_authorized=True
+    manifest_schema = json.loads(
+        (ROOT / "infrastructure/experiment_manifest.schema.json").read_text(
+            encoding="utf-8"
         )
+    )
     protocol = protocol_document()
     checks = {
         "one_opportunity": protocol["opportunities"] == 1,
@@ -439,7 +627,16 @@ def preflight() -> dict[str, Any]:
         "level_b": protocol["official_gepa"]["optimizer_fidelity_level"] == "LEVEL_B_API_COMPATIBLE_ADAPTATION",
         "validation_zero": protocol["validation50_calls"] == 0,
         "test_zero": protocol["test50_calls"] == 0,
-        "no_retry_resume": protocol["no_resume"] and protocol["no_retry"],
+        "manifest_preflight_pass": manifest.get("status") == "PREFLIGHT_PASS",
+        "manifest_schema": not validate_manifest(manifest, manifest_schema),
+        "attempt_identity": protocol["attempt_id"] == ATTEMPT_ID,
+        "launch_transaction": protocol["launch_transaction_version"] == LAUNCH_TRANSACTION_VERSION,
+        "proposer_diagnostics": protocol["proposer_diagnostics_version"] == PROPOSER_DIAGNOSTICS_VERSION,
+        "preregistration_hash": (
+            manifest.get("artifacts", {}).get("preregistration", {}).get("sha256")
+            == preregistration_hash(manifest)
+        ),
+        "no_retry_resume": protocol["no_resume"] and protocol["experiment_retry_count"] == 0,
     }
     return {"gate": "PASS" if all(checks.values()) else "HOLD", "checks": checks,
             "api_calls": 0, "validation_calls": 0, "test_calls": 0}

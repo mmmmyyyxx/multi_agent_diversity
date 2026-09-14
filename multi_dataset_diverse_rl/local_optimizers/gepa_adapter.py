@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
+from ..evaluation.mutable_prompt_contract import (
+    mutable_prompt_violation_reasons,
+    validate_mutable_decision_procedure,
+)
 from ..versions import COMMON_SOLVER_CONTRACT_V1_ID
 from .gepa_runtime import import_frozen_gepa
 from .schemas import LocalEvidenceExample
@@ -63,6 +67,47 @@ def contains_supplied_example_text(prompt: str, examples: Sequence[LocalEvidence
     return False
 
 
+def compact_prompt_failed_checks(
+    prompt: str,
+    *,
+    parent_prompt: str,
+    examples: Sequence[LocalEvidenceExample],
+    max_chars: int,
+) -> tuple[str, ...]:
+    """Return sanitized, stable failed checks without retaining proposal text."""
+
+    checks: list[str] = []
+    if not prompt.strip():
+        checks.append("empty")
+    if len(prompt) > max_chars:
+        checks.append("over_length")
+    checks.extend(mutable_prompt_violation_reasons(prompt))
+    if prompt != parent_prompt and prompt.startswith(parent_prompt.rstrip()):
+        checks.append("append_only")
+    if contains_supplied_example_text(prompt, examples):
+        checks.append("example_copying")
+    return tuple(dict.fromkeys(checks))
+
+
+def primary_prompt_rejection_category(failed_checks: Sequence[str]) -> str | None:
+    """Map multi-hot failed checks to one preregistered primary category."""
+
+    checks = set(failed_checks)
+    if "over_length" in checks:
+        return "over_length"
+    if checks.intersection(
+        {"forbidden_final_answer_marker", "copied_solver_interface", "fixed_answer_payload"}
+    ):
+        return "output_contract_contamination"
+    if "example_copying" in checks:
+        return "example_copying"
+    if "append_only" in checks:
+        return "append_only"
+    if checks:
+        return "other_failed_check"
+    return None
+
+
 def validate_complete_compact_prompt(
     prompt: str, *, parent_prompt: str, examples: Sequence[LocalEvidenceExample], max_chars: int
 ) -> None:
@@ -103,6 +148,7 @@ class DiversityGEPAAdapter:
         self.solver_calls = 0
         self.input_tokens = 0
         self.output_tokens = 0
+        self.solver_reached_proposal_hashes: set[str] = set()
 
     @staticmethod
     def _decision_procedure(candidate: Mapping[str, str]) -> str:
@@ -153,6 +199,12 @@ class DiversityGEPAAdapter:
                 for row, observation in zip(batch, observations, strict=True)
             ]
             self.solver_calls += sum(observation.provider_called for observation in observations)
+            if decision_procedure != self.parent_prompt and any(
+                observation.provider_called for observation in observations
+            ):
+                self.solver_reached_proposal_hashes.add(
+                    hashlib.sha256(decision_procedure.encode("utf-8")).hexdigest()
+                )
             self.input_tokens += sum(observation.input_tokens for observation in observations)
             self.output_tokens += sum(observation.output_tokens for observation in observations)
         trajectories = (
