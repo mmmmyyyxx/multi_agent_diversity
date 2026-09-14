@@ -1,6 +1,6 @@
 # Level-B GEPA v2 pre-canary closure
 
-Gate: **PASS**  
+Gate: **PASS**
 API calls: **0**; Validation calls: **0**; Test calls: **0**.
 
 1. Rejected and unmaterialized proposals can now be classified online at public `on_proposal_end`; later materialization, frontier, return, and Solver-reach stages remain separate. 2. Raw proposal text is absent from persisted diagnostics. The adapter remains the hard enforcement boundary.

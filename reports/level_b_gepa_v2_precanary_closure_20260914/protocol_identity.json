@@ -1,6 +1,7 @@
 {
   "attempt_id": "level_b_gepa_real_canary_v2_precallclosure1_pending_authorization",
   "classifier_version": "level_b_local_empirical_path_classifier_v1",
+  "implementation_commit": "627bb87253f8b67fc6bd4c9888f5cb1c03f0c93c",
   "manifest_preregistration_sha256": "fb710e15ead8ff4c0a0a0a0be8dcea8c1671348c29ba20d21692c7968ab06a95",
   "preregistration_sha256": "fb710e15ead8ff4c0a0a0a0be8dcea8c1671348c29ba20d21692c7968ab06a95",
   "protocol_sha256": "d623e790cde53676c43678a36687c1647282b4f1b772a3a69c4a127f272e56af",

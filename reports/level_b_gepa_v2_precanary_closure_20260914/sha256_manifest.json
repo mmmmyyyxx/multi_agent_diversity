@@ -1,10 +1,10 @@
 {
-  "README.md": "1b6af1ca7fe87373bde130c277f90a38e097a877c6285d700ac3978f82d9ce82",
+  "README.md": "61eddff9ae6a00260d2adcb7f8bc2482b6bd77f84e74107192457e9906887e5b",
   "classifier_alignment.json": "34c59bc119ce9cba1d8e04c2770f7d35169a3113529ce3b71205816b6b8d16a5",
   "fact_assertions.json": "ecfd9f3901df868318876878567ecbac185fc78e04b5f362b7f41f0b33f60dce",
   "level_b_fidelity_audit.json": "51e0acd40e8c420588c340aa99b0bfc05703b83a3a082555418cd236e9160b01",
   "proposal_diagnostics_audit.json": "b88f8f4bcd1a5e1790ab559550580d0f18d9cea5356fb4383ef07f1972809596",
-  "protocol_identity.json": "2e65b99f1f37cfd7196c65c6773d497ae2a460d32b0bcf7664c875db65f8a8e4",
+  "protocol_identity.json": "2671f29b36289d07f89e46d8ecc722dc08fb551dbdd89ad453425532ba28c5a4",
   "provenance.json": "059cb9a780f45b4aef91245c97f7a5cd69ce5b44c596cf0ef43998bcd8a8db54",
   "reflection_dataset_sanitization.json": "d3cd0919ec8a918b8972e9125163d6e89b7585d544fb6e34d0243cc9eaa76364",
   "sanitization_manifest.json": "36edacd722cf172a46d79321a5ab29025eb7c5cfefabe82fe116e7ff2cfd5a4f",

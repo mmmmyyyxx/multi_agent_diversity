@@ -170,6 +170,7 @@ def generate(report: Path) -> dict[str, object]:
         report / "protocol_identity.json",
         {
             "attempt_id": manifest["design"]["attempt_id"],
+            "implementation_commit": manifest["git"]["implementation_commit"],
             "classifier_version": module.CLASSIFIER_VERSION,
             "protocol_sha256": module.base.sha256_json(module.protocol_document()),
             "preregistration_sha256": module.base.preregistration_hash(manifest),
@@ -195,7 +196,7 @@ def generate(report: Path) -> dict[str, object]:
     )
     (report / "README.md").write_text(
         "# Level-B GEPA v2 pre-canary closure\n\n"
-        f"Gate: **{facts['gate']}**  \n"
+        f"Gate: **{facts['gate']}**\n"
         "API calls: **0**; Validation calls: **0**; Test calls: **0**.\n\n"
         "1. Rejected and unmaterialized proposals can now be classified online at "
         "public `on_proposal_end`; later "
