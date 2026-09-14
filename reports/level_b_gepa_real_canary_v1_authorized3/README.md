@@ -1,6 +1,7 @@
 # Level-B GEPA real-provider canary
 
-Gate: **PASS**  
+Gate: **PASS**
+
 Classifier: **PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH**
 
 This single-parent engineering canary tests empirical path activation, not scheduler or accuracy efficacy. Validation50 and Test50 calls are zero.
