@@ -72,7 +72,7 @@ artifacts:
   provenance: reports/level_b_gepa_real_canary_v1_authorized3/provenance.json
 git:
   design_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
-  implementation_commit: 1fe326acd32072379516d8ab82c97c9cbf9b0f01
+  implementation_commit: 9e10ccf0fdc7b5cee4a5c99b8dc6d8fa63b83706
   result_commit: null
 result:
   classifier: null
