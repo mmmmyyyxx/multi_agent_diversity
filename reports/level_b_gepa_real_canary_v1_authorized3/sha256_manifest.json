@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "path": "audit.json",
+      "sha256": "18dd88fa87657266e9f1d57d5cd752dfa9f216d9dece8ab4146d3a4ec9273c24"
+    },
+    {
+      "path": "posthoc_rejection_audit.json",
+      "sha256": "2045ca1675fa92876f57a5c04c0669374647426f3f4e0c103f253ce5799d8eef"
+    },
+    {
+      "path": "protocol_freeze.json",
+      "sha256": "0f20393f1725b266bfe6ab3ada900d6a5f1b51a5b23d86adc02a25059b659be5"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "a377f45781bc6d1be72925525ae4340463d9f0e69aef320712555c267416d78a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "2624dc171e648d0f097335a780611c8de937bbde7dbe26bd76343e622b2ee220"
+    },
+    {
+      "path": "sanitization_manifest.json",
+      "sha256": "8b80aa1a4981e4ce8dd1dbf46d8fdf1c2f0c3f11ea0b65610d1d6ede86efec3c"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "7d7e39c3ddabd9af6880df60091170913075cf11d4cc0546aa9c314a52472998"
+    }
+  ]
+}

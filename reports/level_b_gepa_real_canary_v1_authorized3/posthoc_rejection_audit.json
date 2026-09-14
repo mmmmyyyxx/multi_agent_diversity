@@ -1,0 +1,54 @@
+{
+  "api_calls": 0,
+  "audit_kind": "zero_api_read_only_posthoc_reconstruction",
+  "conclusion": "ALL_THREE_UNMATERIALIZED_PROPOSALS_VIOLATED_THE_FROZEN_OUTPUT_CONTRACT",
+  "failed_check_counts": {
+    "append_only": 2,
+    "copied_solver_interface": 2,
+    "forbidden_final_answer_marker": 2
+  },
+  "official_summary_gap": "GEPA rejected proposals were not materialized in result.candidates, so the frozen execution summary recorded three unmaterialized attempts but zero categorized contract-invalid proposals.",
+  "primary_rejection_category_counts": {
+    "append_only": 0,
+    "example_copying": 0,
+    "other_failed_check": 0,
+    "output_contract_contamination": 3,
+    "over_length": 0
+  },
+  "proposal_count": 3,
+  "proposals": [
+    {
+      "char_count": 2114,
+      "failed_checks": [
+        "forbidden_final_answer_marker",
+        "copied_solver_interface",
+        "append_only"
+      ],
+      "primary_category": "output_contract_contamination",
+      "proposal_index": 1,
+      "sha256": "9bde78afb9ee2d46b85f4d062e49105d08a5d14abf18c389a9b41d65ea151901"
+    },
+    {
+      "char_count": 2172,
+      "failed_checks": [
+        "copied_solver_interface"
+      ],
+      "primary_category": "output_contract_contamination",
+      "proposal_index": 2,
+      "sha256": "7c6fd86fbad74bd86032b476c6fb84dcc4671fca39c56a16bcbb742b4ea2c8f1"
+    },
+    {
+      "char_count": 1781,
+      "failed_checks": [
+        "forbidden_final_answer_marker",
+        "append_only"
+      ],
+      "primary_category": "output_contract_contamination",
+      "proposal_index": 3,
+      "sha256": "6b263674e1db8f1bc01d263c3f3b6ad34da8e553bb02ef0e77c5be4ebb55fc85"
+    }
+  ],
+  "raw_proposals_published": false,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

@@ -1,0 +1,62 @@
+{
+  "accepted_mutations": 0,
+  "candidate_solver_calls_beyond_seed": 0,
+  "changed_valid_candidates": 0,
+  "classifier": "PROPOSAL_CONTRACT_STILL_BLOCKS_EMPIRICAL_SEARCH",
+  "commits": 0,
+  "execution_gate": "PASS",
+  "experiment_id": "level_b_gepa_real_canary_v1",
+  "full_local_evaluations": 0,
+  "full_team_evaluated_candidates": 0,
+  "ledger": {
+    "cache_hits": 0,
+    "input_tokens": 23006,
+    "logical_calls": 103,
+    "output_tokens": 7588,
+    "provider_attempts": 103,
+    "successful_provider_calls": 103,
+    "total_tokens": 30594
+  },
+  "local_optimizer_solver_calls": 0,
+  "local_termination_reason": "no_local_improvement",
+  "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+  "positive_minibatch_deltas": 0,
+  "primary_responsibility_lane": "coverage",
+  "proposal_attempts": 3,
+  "proposer_diagnostics": {
+    "accepted_mutation": 0,
+    "changed": 0,
+    "contract_invalid": 0,
+    "duplicate": 0,
+    "failed_check_counts": {},
+    "materialized_proposals": 0,
+    "positive_minibatch_delta": 0,
+    "primary_rejection_category_counts": {
+      "append_only": 0,
+      "example_copying": 0,
+      "other_failed_check": 0,
+      "output_contract_contamination": 0,
+      "over_length": 0
+    },
+    "proposal_attempts": 3,
+    "solver_reached": 0,
+    "unchanged": 0,
+    "unmaterialized_attempts": 3
+  },
+  "proposer_diagnostics_version": "sanitized_proposer_diagnostics_v1",
+  "seed": 78,
+  "shadow_solver_calls": 0,
+  "target_member": 3,
+  "team_minibatch": {
+    "backfill_count": 0,
+    "coalition_count": 4,
+    "contract_version": "primary_lane_strict_4_4_4_v1",
+    "preservation_count": 4,
+    "responsibility_count": 4,
+    "total_count": 12
+  },
+  "team_minibatch_solver_calls": 0,
+  "team_minibatch_survivors": 0,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

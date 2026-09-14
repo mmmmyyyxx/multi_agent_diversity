@@ -1,0 +1,9 @@
+{
+  "evidence_type": "real_provider_engineering_canary",
+  "execution_commit": "7e3a9f686135b40ac0b2ffc8284c6597ecb0b335",
+  "raw_prompts_published": false,
+  "raw_responses_published": false,
+  "posthoc_rejection_audit": "zero_api_read_only_private_log_reconstruction",
+  "test50_calls": 0,
+  "validation50_calls": 0
+}
