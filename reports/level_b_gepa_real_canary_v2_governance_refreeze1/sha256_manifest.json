@@ -1,0 +1,11 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "README.md": "f4ab5c51fa64524920b2382d74defcc18b4fc53487e43a2f07c985530947cd21",
+    "diff_audit.json": "4613a1ebe0d988e38a7239b70085d5771a8a481b83dbbee8a0c3fe786012617d",
+    "hash_replay.json": "fecc97d970a03b425449469d18b5165d8d15608e70643bb1a423516efcefd32f",
+    "protocol_identity.json": "b50c8bae0f5fe7aa14e7fa033469619a1711eea53ec4842d71521f0d0a1d4d35",
+    "sanitization_manifest.json": "2c8f9a983a61a30695d83468cce10ff468e9a85ffa6bca8f02b3f5b4e0ebd1cc",
+    "test_summary.json": "3cf341003059118c44c59be1925018ef8d2d1ac80c26e70eb93a28373c4c4311"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "authorization_metadata_diff": "GREATER_THAN_ZERO",
+  "gate": "PASS",
+  "governance_hash_implementation_diff": "NORMALIZED_LF_TEXT_V1_ONLY",
+  "scientific_code_diff": 0,
+  "scientific_protocol_diff": 0,
+  "scientific_reference_commit": "157f77a6c46790ff15b1e61a32ff0578f3ce297a"
+}

@@ -1,0 +1,24 @@
+{
+  "api_authorization": {
+    "allowed_phases": [
+      "canary"
+    ],
+    "allowed_roles": [
+      "solver",
+      "reflection"
+    ],
+    "authorization_scope": "explicit_governance_refreeze_2026_09_15_stagefix2_single_fresh_retry_execution_requires_separate_user_authorization",
+    "authorized": true
+  },
+  "api_calls": 0,
+  "attempt_id": "level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1",
+  "execution_freeze_commit": "e4293b80e42eee84e8d5cc9493b657866d2d09d6",
+  "formal_run_root_created": false,
+  "gate": "PASS",
+  "governance_hash_implementation_commit": "bdbde57a7fed9aad4c392ada8afabf1ec35e861c",
+  "preregistration_sha256": "41791eef0968e3d6c0a43644f5813b82b3b71493eaec6f99443aba234e39a74e",
+  "protocol_sha256": "93c21e2f9a74e0be09468784840339000ac79ec32143bb088439fd7b246f5188",
+  "scientific_implementation_identity": "157f77a6c46790ff15b1e61a32ff0578f3ce297a",
+  "test_calls": 0,
+  "validation_calls": 0
+}

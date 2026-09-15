@@ -1,0 +1,11 @@
+{
+  "compileall": "PASS",
+  "cross_worktree_hash_replay": "PASS",
+  "fail_closed_authorization_gate": "PASS",
+  "focused_tests": "51 passed",
+  "full_tests": "1050 passed, 1 known historical cache-artifact test deselected",
+  "git_diff_check": "PASS",
+  "governance_preflight": "PASS",
+  "new_failures": 0,
+  "zero_api_preflight": "PASS"
+}

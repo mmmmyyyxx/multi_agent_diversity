@@ -1,0 +1,9 @@
+{
+  "binary_hash_semantics": "BYTE_EXACT",
+  "cross_worktree_source_freeze": "PASS",
+  "gate": "PASS",
+  "normalized_lf_equal": true,
+  "normalized_protocol_sha256": "3b83c4f18864a2ed389cb55dd159293f1a0de826ea41adb47a50be0d7549505f",
+  "raw_checkout_bytes_equal": false,
+  "text_hash_semantics": "normalized_lf_text_v1"
+}
