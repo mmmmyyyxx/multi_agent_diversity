@@ -16,12 +16,12 @@ import run_level_b_gepa_real_canary as base  # noqa: E402
 
 
 base.EXPERIMENT_ID = "level_b_gepa_real_canary_v2"
-base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1"
+base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1"
 base.MANIFEST = ROOT / "experiments/manifests/level_b_gepa_real_canary_v2.yaml"
 base.PROTOCOL = ROOT / "experiments/level_b_gepa_real_canary_v2/PROTOCOL.md"
-base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix2_governance_refreeze1"
-base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1"
-base.DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1"
+base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix2_transportfix1_authorized1"
+base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1"
+base.DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1"
 base.AUTH_ENV = "LEVEL_B_GEPA_REAL_CANARY_V2_AUTHORIZED"
 
 CLASSIFIER_VERSION = "level_b_local_empirical_path_classifier_v1"
@@ -80,7 +80,7 @@ def protocol_document():
     protocol = _base_protocol_document()
     protocol.update(
         {
-            "schema_version": "level_b_gepa_real_canary_protocol_v5",
+            "schema_version": "level_b_gepa_real_canary_protocol_v6",
             "reflection_input_repair": (
                 "component_specific_reasoning_evidence_v1"
             ),
@@ -89,6 +89,12 @@ def protocol_document():
             ),
             "classifier_version": CLASSIFIER_VERSION,
             "solver_stage_attribution_contract": "explicit_solver_phase_v1",
+            "transport_retry_classifier_version": (
+                "openai_sdk_connection_error_v1"
+            ),
+            "failed_attempt_durability_version": (
+                "solver_provider_attempt_failure_v1"
+            ),
             "logical_split_identities": logical_split_identities(),
         }
     )

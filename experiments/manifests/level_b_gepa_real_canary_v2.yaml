@@ -18,7 +18,7 @@ hypotheses:
   - At least one contract-valid changed proposal reaches candidate Solver evaluation.
 evidence_type: engineering_canary_not_efficacy_evidence
 method_identity: member_aware_peer_state_v15
-runtime_version: level_b_gepa_real_canary_v2_component_specific_reflection_v1
+runtime_version: level_b_gepa_real_canary_v2_transport_failure_durability_v1
 data:
   task: BBH disambiguation_qa
   formal: false
@@ -40,21 +40,24 @@ design:
   changed:
     - reflective dataset uses component_specific_reasoning_evidence_v1
     - engineering-only Solver stage attribution uses explicit_solver_phase_v1
+    - engineering-only transport retry classifier recognizes OpenAI SDK connection errors
+    - failed COMMON Solver transport attempts are durably persisted before retry or raise
   unchanged:
     - official GEPA search core, population, Pareto, parent selection, reflection minibatch, and local acceptance
     - Layer 2 scheduler, persistent realizability, TeamMiniBatch, Common-Safe, Shadow, and write-back
     - model, data, opportunity, and evaluation budgets
-  attempt_id: level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1
+    - transport attempt cap, backoff, timeout, and provider request schema
+  attempt_id: level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1
   opportunities: 1
   target_branches: 1
   target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
   local_metric_calls: 36
   local_validation_size: 12
   team_minibatch: strict primary-lane 4 plus global coalition 4 plus global preservation 4
-  forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
+  forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, experiment-level retry, resume]
 api_authorization:
   authorized: true
-  authorization_scope: explicit_governance_refreeze_2026_09_15_stagefix2_single_fresh_retry_execution_requires_separate_user_authorization
+  authorization_scope: explicit_user_authorization_2026_09_15_stagefix2_transportfix1_single_fresh_retry
   allowed_roles: [solver, reflection]
   allowed_phases: [canary]
 budget:
@@ -70,12 +73,12 @@ selection:
 artifacts:
   preregistration:
     path: experiments/level_b_gepa_real_canary_v2/PROTOCOL.md
-    sha256: 41791eef0968e3d6c0a43644f5813b82b3b71493eaec6f99443aba234e39a74e
-  report: reports/level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1
-  provenance: reports/level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1/provenance.json
+    sha256: c6322ff676dc0064e184ed5ea0fbf370ea4cf78e8e16de2a4b1f293cd0e697e1
+  report: reports/level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1
+  provenance: reports/level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1/provenance.json
 git:
   design_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac
-  implementation_commit: bdbde57a7fed9aad4c392ada8afabf1ec35e861c
+  implementation_commit: e89fb76dbd84e819ef47a0873dfe95592e3e6ebc
   result_commit: null
 result:
   classifier: null

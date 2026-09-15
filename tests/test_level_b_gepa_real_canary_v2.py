@@ -20,7 +20,7 @@ def test_v2_governance_refreeze_is_narrow_and_manifest_authorized() -> None:
     module = load()
     protocol = module.protocol_document()
     assert protocol["experiment_id"] == "level_b_gepa_real_canary_v2"
-    assert protocol["attempt_id"].endswith("stagefix2_governance_refreeze1")
+    assert protocol["attempt_id"].endswith("stagefix2_transportfix1_authorized1")
     assert protocol["reflection_input_repair"] == (
         "component_specific_reasoning_evidence_v1"
     )
@@ -35,6 +35,12 @@ def test_v2_governance_refreeze_is_narrow_and_manifest_authorized() -> None:
         "level_b_local_empirical_path_classifier_v1"
     )
     assert protocol["source_freeze_hash_semantics"] == "normalized_lf_text_v1"
+    assert protocol["transport_retry_classifier_version"] == (
+        "openai_sdk_connection_error_v1"
+    )
+    assert protocol["failed_attempt_durability_version"] == (
+        "solver_provider_attempt_failure_v1"
+    )
     manifest = module.base.yaml.safe_load(module.base.MANIFEST.read_text(encoding="utf-8"))
     assert manifest["api_authorization"]["authorized"] is True
     assert protocol["logical_split_identities"] == {

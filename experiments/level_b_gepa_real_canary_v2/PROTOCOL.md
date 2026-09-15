@@ -59,3 +59,12 @@ full-path result. The unused `stagefix1` prep is superseded without execution.
 The `stagefix2` successor has a fresh identity, no resume or
 experiment-level retry, and requires new explicit user authorization after this
 source/protocol freeze. Until that occurs, the execution command is blocked.
+
+The `stagefix2_governance_refreeze1` attempt is preserved as `ABORTED` after an
+external `APIConnectionError` during fixed-probe initialization. It is a
+scientific non-result and is never resumed or reused. The transportfix1
+successor changes no scientific method, model, data, budget, timeout, backoff,
+or attempt cap. It only makes the frozen four-attempt COMMON transport policy
+recognize the provider SDK connection exception and persists one sanitized
+failed-attempt ledger row before every retry or terminal raise. The user has
+authorized exactly one fresh transportfix1 attempt.
