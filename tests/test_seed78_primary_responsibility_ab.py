@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import pytest
 import yaml
 from openai import APIConnectionError
 
+from infrastructure.common_solver_contract_v1.contract import CONTRACT_SPEC
 from multi_dataset_diverse_rl.governance.manifest import (
     preregistration_hash,
     validate_manifest,
@@ -19,6 +21,7 @@ from scripts.run_seed78_primary_responsibility_ab import (
     ARM_B,
     AUTH_ENV,
     DurableLedger,
+    Seed78System,
     _authorize,
     _arm_a_selection,
     _classify,
@@ -83,6 +86,56 @@ def test_failed_attempt_rows_are_durable_without_inflating_logical_calls(
         "output_tokens": 0,
         "total_tokens": 0,
     }
+
+
+def test_sdk_connection_failure_retries_four_times_and_persists_each_attempt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class BrokenCompletions:
+        async def create(self, **_kwargs):
+            raise APIConnectionError(
+                request=httpx.Request("POST", "https://transport-audit.invalid")
+            )
+
+    class FakeClient:
+        def __init__(self, **_kwargs):
+            self.chat = type("Chat", (), {"completions": BrokenCompletions()})()
+
+    monkeypatch.setattr(
+        "scripts.run_seed78_primary_responsibility_ab.AsyncOpenAI", FakeClient
+    )
+    cfg = _config(
+        tmp_path / "system",
+        optimize_path=tmp_path / "optimize.csv",
+        validation_path=tmp_path / "validation.csv",
+    )
+    monkeypatch.setenv(cfg.models.solver_api_key_env, "fake-key")
+    monkeypatch.setenv(cfg.models.solver_base_url_env, "https://transport-audit.invalid")
+    ledger = DurableLedger(tmp_path / "failed-ledger.jsonl")
+    system = Seed78System(
+        cfg,
+        arm="LEVEL_B_REAL_CANARY",
+        ledger=ledger,
+        raw_cache={},
+    )
+    system._solver_stage = {"phase": "initialization"}
+
+    async def scenario() -> None:
+        with pytest.raises(APIConnectionError):
+            await system.solve(
+                "Who left?\nOptions:\n(A) Alex\n(B) Blair",
+                0,
+                "Use grammar and context to select the best option.",
+            )
+
+    asyncio.run(scenario())
+    rows = [json.loads(line) for line in ledger.path.read_text().splitlines()]
+    assert len(rows) == CONTRACT_SPEC.transport_attempt_cap == 4
+    assert [row["attempt_index"] for row in rows] == [1, 2, 3, 4]
+    assert all(row["record_kind"] == "solver_provider_attempt_failure" for row in rows)
+    assert all(row["error_type"] == "APIConnectionError" for row in rows)
+    assert _ledger_summary(ledger.path)["provider_attempts"] == 4
+    assert _ledger_summary(ledger.path)["failed_provider_attempts"] == 4
 
 
 def _opportunity(member: int) -> MemberAwareRepairOpportunity:

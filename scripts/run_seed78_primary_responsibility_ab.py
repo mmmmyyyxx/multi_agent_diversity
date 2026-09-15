@@ -31,6 +31,7 @@ for entry in (ROOT, ROOT / "scripts"):
 from infrastructure.common_solver_contract_v1.contract import (  # noqa: E402
     COMMON_SOLVER_CONTRACT_ID,
     CONTRACT_SPEC,
+    canonical_json_bytes,
     contract_identity,
 )
 from infrastructure.common_solver_contract_v1.evaluator import (  # noqa: E402
@@ -194,9 +195,30 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         client = AsyncOpenAI(api_key=key, base_url=endpoint)
 
         async def transport(request: dict[str, Any]) -> TransportResponse:
-            response = await client.chat.completions.create(
-                **request, timeout=CONTRACT_SPEC.timeout_seconds
-            )
+            try:
+                response = await client.chat.completions.create(
+                    **request, timeout=CONTRACT_SPEC.timeout_seconds
+                )
+            except Exception as exc:
+                request_identity = hashlib.sha256(
+                    canonical_json_bytes(request)
+                ).hexdigest()
+                attempt_index = (
+                    self._solver_failure_attempt_count_by_request.get(
+                        request_identity, 0
+                    )
+                    + 1
+                )
+                self._solver_failure_attempt_count_by_request[
+                    request_identity
+                ] = attempt_index
+                persist_failed_attempt({
+                    "request_identity": request_identity,
+                    "attempt_index": attempt_index,
+                    "error_type": type(exc).__name__,
+                    "status_code": getattr(exc, "status_code", None),
+                })
+                raise
             usage = response.usage
             return TransportResponse(
                 text=response.choices[0].message.content or "",
@@ -209,6 +231,7 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         self.ledger = ledger
         self._solver_stage: dict[str, Any] | None = None
         self._solver_sequence = 0
+        self._solver_failure_attempt_count_by_request: dict[str, int] = {}
 
         def persist_failed_attempt(event: Mapping[str, object]) -> None:
             if self._solver_stage is None:
@@ -242,7 +265,6 @@ class Seed78System(PromptEnsembleOptimizationSystem):
             transport=transport,
             cache=raw_cache,
             retryable=_retryable,
-            failed_attempt_observer=persist_failed_attempt,
         )
 
         async def solver(question: str, agent_id: int, prompt: str) -> PromptAnswer:
