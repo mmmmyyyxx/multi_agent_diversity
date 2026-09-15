@@ -1,0 +1,40 @@
+{
+  "assertions": [
+    {
+      "id": "scientific_non_result",
+      "pass": true,
+      "evidence": "The terminal transport exception occurred during fixed-probe initialization before reflection."
+    },
+    {
+      "id": "common_contract_attempt_cap_four",
+      "pass": true,
+      "evidence": "The frozen common Solver contract declares transport_attempt_cap=4."
+    },
+    {
+      "id": "sdk_connection_error_not_retryable",
+      "pass": true,
+      "evidence": "A zero-network fake APIConnectionError replay returned retryable=false and invoked transport once."
+    },
+    {
+      "id": "successful_ledger_unique",
+      "pass": true,
+      "evidence": "All 90 successful ledger rows have unique record and request identities."
+    },
+    {
+      "id": "failed_attempt_durable",
+      "pass": false,
+      "evidence": "No durable failed-attempt row exists; only the lifecycle failure category was persisted."
+    },
+    {
+      "id": "validation_test_isolation",
+      "pass": true,
+      "evidence": "The only durable phase is initialization; Validation and Test rows are zero."
+    },
+    {
+      "id": "token_arithmetic",
+      "pass": true,
+      "evidence": "17710 + 5792 = 23502 and no per-row arithmetic mismatch was found."
+    }
+  ],
+  "all_requested_transport_checks_pass": false
+}

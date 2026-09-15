@@ -1,0 +1,23 @@
+{
+  "evidence_type": "zero_api_read_only_transport_failure_audit",
+  "execution_commit": "e4293b80e42eee84e8d5cc9493b657866d2d09d6",
+  "scientific_implementation_identity": "157f77a6c46790ff15b1e61a32ff0578f3ce297a",
+  "hash_governance_implementation": "bdbde57a7fed9aad4c392ada8afabf1ec35e861c",
+  "preregistration_sha256": "41791eef0968e3d6c0a43644f5813b82b3b71493eaec6f99443aba234e39a74e",
+  "protocol_sha256": "93c21e2f9a74e0be09468784840339000ac79ec32143bb088439fd7b246f5188",
+  "hash_semantics": "normalized_lf_text_v1",
+  "source_priority": [
+    "run_local_lifecycle",
+    "run_local_durable_ledger",
+    "frozen_source_and_protocol",
+    "zero_network_fake_exception_replay"
+  ],
+  "raw_prompts_published": false,
+  "questions_published": false,
+  "answers_published": false,
+  "raw_responses_published": false,
+  "credentials_or_endpoints_published": false,
+  "api_calls_during_audit": 0,
+  "validation_calls_during_audit": 0,
+  "test_calls_during_audit": 0
+}

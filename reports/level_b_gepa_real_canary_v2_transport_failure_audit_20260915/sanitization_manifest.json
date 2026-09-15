@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "included": [
+    "aggregate call and token counts",
+    "hash identities",
+    "lifecycle status and exception class",
+    "source-level retry and persistence findings"
+  ],
+  "excluded": [
+    "prompts",
+    "questions",
+    "gold or model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "SQLite or cache contents",
+    "checkpoints",
+    "absolute local paths"
+  ]
+}

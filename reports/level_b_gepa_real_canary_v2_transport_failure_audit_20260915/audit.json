@@ -1,0 +1,57 @@
+{
+  "audit_version": "level_b_gepa_transport_failure_audit_v1",
+  "attempt_id": "level_b_gepa_real_canary_v2_stagefix2_governance_refreeze1",
+  "classification": "EXTERNAL_TRANSPORT_FAILURE_SCIENTIFIC_NON_RESULT",
+  "overall_gate": "HOLD",
+  "checks": {
+    "frozen_transport_retry_exhausted": {
+      "status": "FAIL",
+      "contract_attempt_cap": 4,
+      "observed_contract_attempts_for_fatal_logical_call": 1,
+      "reason": "OpenAI SDK APIConnectionError is not recognized by the run-local retry predicate"
+    },
+    "fatal_request_contract_matches_successful_requests": {
+      "status": "PARTIAL_NOT_ARTIFACT_VERIFIABLE",
+      "source_path_uniform": true,
+      "failed_request_identity_persisted": false,
+      "failed_request_metadata_persisted": false,
+      "strict_request_ordinal_recoverable": false
+    },
+    "lifecycle_and_ledger_complete": {
+      "status": "FAIL",
+      "lifecycle_terminal_status": "ABORTED",
+      "lifecycle_failure_category": "APIConnectionError",
+      "provider_boundary_reached": true,
+      "successful_records": 90,
+      "failed_attempt_records": 0,
+      "exact_failed_attempt_accounting_recoverable": false
+    }
+  },
+  "durable_ledger": {
+    "rows": 90,
+    "unique_record_ids": 90,
+    "unique_request_identities": 90,
+    "duplicate_record_ids": 0,
+    "provider_attempts_recorded": 90,
+    "successful_provider_calls": 90,
+    "failed_provider_attempt_rows": 0,
+    "cache_hits": 0,
+    "input_tokens": 17710,
+    "output_tokens": 5792,
+    "total_tokens": 23502,
+    "token_arithmetic_mismatches": 0,
+    "phase": "initialization",
+    "logical_role": "solver"
+  },
+  "downstream_reach": {
+    "reflection": false,
+    "local_gepa": false,
+    "team_minibatch": false,
+    "full": false,
+    "shadow": false,
+    "validation": false,
+    "test": false
+  },
+  "api_calls_made_by_audit": 0,
+  "historical_artifacts_modified": 0
+}

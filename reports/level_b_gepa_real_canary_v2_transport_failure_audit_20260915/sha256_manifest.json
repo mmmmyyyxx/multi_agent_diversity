@@ -1,0 +1,10 @@
+{
+  "algorithm": "SHA256",
+  "files": {
+    "README.md": "edb476a3ad0d328ce10636578d110da3b830555845a14cdfe2f46eb14afbe977",
+    "audit.json": "5952fcd17c64b22ce24908387958a21f9fdb8044597f35c0adc687c90573af6e",
+    "fact_assertions.json": "bf4e78e3b45f69b5bf2976b0f88939742f36b8b70d651777cf572aeb0b3733b9",
+    "provenance.json": "e8bf42f373d72a12ffe2aced27b4d75b1740af13aa40b5c8f469ff21d76507c7",
+    "sanitization_manifest.json": "1fdd9345d8a7095c57582268b1e51addd14599e5269a354ade46a8573ef5f76e"
+  }
+}
