@@ -9,6 +9,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from multi_dataset_diverse_rl.evaluation.solver_stage import SOLVER_PHASES
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
     verify_frozen_gepa_engine_contract,
@@ -26,7 +28,9 @@ from multi_dataset_diverse_rl.versions import (
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REPORT = ROOT / "reports/solver_stage_attribution_closure_20260915"
 ABORTED_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_precallclosure1_authorized1"
-NEW_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix1_pending_authorization"
+MANIFEST = ROOT / "experiments/manifests/level_b_gepa_real_canary_v2.yaml"
+NEW_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix2"
+NEW_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix2_pending_authorization"
 
 
 def _write(path: Path, payload: Any) -> None:
@@ -157,8 +161,9 @@ def generate(report: Path, *, focused_passed: int, full_passed: int) -> None:
     report.mkdir(parents=True, exist_ok=True)
     verify_frozen_gepa_engine_contract()
     gepa = verify_frozen_gepa()
-    execution_commit = _git("rev-parse", "HEAD")
-    implementation_commit = _git("rev-parse", "HEAD^")
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    implementation_commit = str(manifest["git"]["implementation_commit"])
+    execution_commit = str(_read_json(NEW_PREP / "source_freeze.json")["execution_commit"])
     matrix = _matrix()
     aborted = _aborted_evidence()
 
@@ -238,8 +243,8 @@ def generate(report: Path, *, focused_passed: int, full_passed: int) -> None:
         "gate": "PASS",
         "implementation_commit": implementation_commit,
         "execution_commit": execution_commit,
-        "new_attempt_id": "level_b_gepa_real_canary_v2_stagefix1_pending_authorization",
-        "new_prep_id": "level_b_gepa_real_canary_v2_prep_stagefix1",
+        "new_attempt_id": "level_b_gepa_real_canary_v2_stagefix2_pending_authorization",
+        "new_prep_id": "level_b_gepa_real_canary_v2_prep_stagefix2",
         "new_run_root_created": NEW_RUN.exists(),
         "api_authorized": False,
         "api_calls": 0,
