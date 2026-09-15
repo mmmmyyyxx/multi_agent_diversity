@@ -65,8 +65,8 @@ artifacts:
   report: reports/level_b_gepa_local_acceptance_rate_pilot_v1_authorized1
   provenance: reports/level_b_gepa_local_acceptance_rate_pilot_v1_authorized1/provenance.json
 git:
-  design_commit: null
-  implementation_commit: null
+  design_commit: 426efc9f3824178701ea0e96b13a9bbe17ea4653
+  implementation_commit: 426efc9f3824178701ea0e96b13a9bbe17ea4653
   result_commit: null
 result:
   classifier: null
