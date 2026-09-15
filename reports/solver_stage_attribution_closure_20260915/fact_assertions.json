@@ -1,0 +1,13 @@
+{
+  "assertions": {
+    "aborted_attempt_remains_aborted_and_unmodified": true,
+    "all_solver_stage_producers_now_emit_explicit_phase": true,
+    "api_validation_test_calls_during_closure": 0,
+    "consumer_has_no_phase_fallback": true,
+    "fresh_retry_requires_new_explicit_api_authorization": true,
+    "full_pipeline_scientific_result_not_available": true,
+    "local_gepa_empirical_path_remains_confirmed": true,
+    "root_cause_was_missing_phase_in_team_stage_producer": true
+  },
+  "gate": "PASS"
+}

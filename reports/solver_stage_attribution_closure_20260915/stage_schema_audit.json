@@ -1,0 +1,16 @@
+{
+  "allowed_phases": [
+    "final_validation",
+    "initialization",
+    "local_optimizer_solver_eval",
+    "team_full_eval",
+    "team_minibatch_eval",
+    "team_shadow_eval"
+  ],
+  "authoritative_field": "phase",
+  "consumer_fallback_allowed": false,
+  "contract": "explicit_solver_phase_v1",
+  "evaluation_stage_rule": "if present it must equal phase",
+  "gate": "PASS",
+  "missing_or_empty_phase_failure_boundary": "before provider or cache access"
+}

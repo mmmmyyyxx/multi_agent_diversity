@@ -1,0 +1,14 @@
+{
+  "acceptance_semantics": "pinned_gepa_v0.1.1_strict_improvement",
+  "fidelity": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+  "gate": "PASS",
+  "mutable_component": "decision_procedure",
+  "official_gepa": {
+    "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+    "source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+    "version": "v0.1.1"
+  },
+  "reflective_dataset": "component_specific_reasoning_evidence_v1",
+  "result_semantics": "changed_candidates_only_v1",
+  "scientific_method_changed": false
+}

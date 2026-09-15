@@ -1,0 +1,7 @@
+{
+  "fake_solver_calls": 300,
+  "gate": "PASS",
+  "phase": "team_shadow_eval",
+  "phase_equals_evaluation_stage": true,
+  "real_api_calls": 0
+}

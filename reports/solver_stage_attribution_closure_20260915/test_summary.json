@@ -1,0 +1,10 @@
+{
+  "compileall": "PASS",
+  "deterministic_report_replay": "PASS",
+  "focused_passed": 53,
+  "full_passed": 1046,
+  "gate": "PASS",
+  "git_diff_check": "PASS",
+  "governance_preflight": "PASS",
+  "method_preflight": "PASS"
+}

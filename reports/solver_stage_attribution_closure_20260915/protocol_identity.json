@@ -1,0 +1,12 @@
+{
+  "api_authorized": false,
+  "api_calls": 0,
+  "execution_commit": "70bc1b7041e8e406d5ec2d7bf8b6187735f1139d",
+  "gate": "PASS",
+  "implementation_commit": "8d2e0bd50fb9cb7303ec096d31af155f58e70d0c",
+  "new_attempt_id": "level_b_gepa_real_canary_v2_stagefix1_pending_authorization",
+  "new_prep_id": "level_b_gepa_real_canary_v2_prep_stagefix1",
+  "new_run_root_created": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}

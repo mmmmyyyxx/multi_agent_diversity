@@ -1,0 +1,29 @@
+{
+  "aborted_attempt_read_only_evidence": {
+    "attempt_id": "level_b_gepa_real_canary_v2_precallclosure1_authorized1",
+    "failure_category": "KeyError",
+    "provider_calls_observed": 117,
+    "raw_evidence_preserved_read_only": true,
+    "scientific_classification": "LOCAL_EMPIRICAL_PATH_CONFIRMED_FULL_PATH_INCOMPLETE",
+    "status": "ABORTED",
+    "successful_calls_by_phase": {
+      "initialization": 100,
+      "local_optimizer_reflection": 2,
+      "local_optimizer_solver_eval": 15
+    },
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "fake_successful_calls_by_phase": {
+    "initialization": 1,
+    "local_optimizer_solver_eval": 1,
+    "team_full_eval": 1,
+    "team_minibatch_eval": 1,
+    "team_shadow_eval": 1
+  },
+  "gate": "PASS",
+  "input_tokens": 10,
+  "output_tokens": 5,
+  "token_arithmetic_exact": true,
+  "total_tokens": 15
+}

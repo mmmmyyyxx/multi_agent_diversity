@@ -1,0 +1,13 @@
+{
+  "excluded_content": [
+    "prompt_or_question_payloads",
+    "gold_or_model_answers",
+    "raw_provider_responses",
+    "credentials_or_endpoints",
+    "sqlite_or_cache_content",
+    "checkpoints",
+    "absolute_paths"
+  ],
+  "findings": [],
+  "gate": "PASS"
+}

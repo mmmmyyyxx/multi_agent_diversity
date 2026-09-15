@@ -1,0 +1,48 @@
+{
+  "all_solver_capable_paths_covered": true,
+  "gate": "PASS",
+  "rows": [
+    {
+      "cache_hit_test": "not_applicable",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "initialization",
+      "producer": "scripts/run_seed78_primary_responsibility_ab.py::_initialize_system",
+      "status": "PASS"
+    },
+    {
+      "cache_hit_test": "PASS_hit_and_miss",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "local_optimizer_solver_eval",
+      "producer": "ContextualOptimizer + SystemLocalSolverEvaluator.evaluate",
+      "status": "PASS_PRESERVED"
+    },
+    {
+      "cache_hit_test": "PASS_hit_and_miss",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "team_minibatch_eval",
+      "producer": "SystemTeamCandidateEvaluator._profile",
+      "status": "PASS_FIXED"
+    },
+    {
+      "cache_hit_test": "PASS_hit_and_miss",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "team_full_eval",
+      "producer": "SystemTeamCandidateEvaluator._profile",
+      "status": "PASS_FIXED"
+    },
+    {
+      "cache_hit_test": "PASS_miss",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "team_shadow_eval",
+      "producer": "SystemTeamCandidateEvaluator.evaluate_shadow",
+      "status": "PASS_FIXED"
+    },
+    {
+      "cache_hit_test": "not_run_in_canary",
+      "consumer": "Seed78System.set_stage -> Seed78System.solver",
+      "phase": "final_validation",
+      "producer": "scripts/run_seed78_primary_responsibility_ab.py::_evaluate_final",
+      "status": "PASS_STATIC_ONLY"
+    }
+  ]
+}

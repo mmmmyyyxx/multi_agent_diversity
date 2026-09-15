@@ -1,0 +1,10 @@
+{
+  "attribution_validated_before_cache_access": true,
+  "cache_hit": "PASS",
+  "cache_miss": "PASS",
+  "gate": "PASS",
+  "phases": [
+    "team_minibatch_eval",
+    "team_full_eval"
+  ]
+}

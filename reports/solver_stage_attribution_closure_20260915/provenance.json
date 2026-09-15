@@ -1,0 +1,27 @@
+{
+  "aborted_attempt": {
+    "attempt_id": "level_b_gepa_real_canary_v2_precallclosure1_authorized1",
+    "failure_category": "KeyError",
+    "provider_calls_observed": 117,
+    "raw_evidence_preserved_read_only": true,
+    "scientific_classification": "LOCAL_EMPIRICAL_PATH_CONFIRMED_FULL_PATH_INCOMPLETE",
+    "status": "ABORTED",
+    "successful_calls_by_phase": {
+      "initialization": 100,
+      "local_optimizer_reflection": 2,
+      "local_optimizer_solver_eval": 15
+    },
+    "test_calls": 0,
+    "validation_calls": 0
+  },
+  "gate": "PASS",
+  "historical_artifacts_modified": 0,
+  "tracked_sources": [
+    "multi_dataset_diverse_rl/evaluation/solver_stage.py",
+    "multi_dataset_diverse_rl/team_search/system_runtime.py",
+    "scripts/run_seed78_primary_responsibility_ab.py",
+    "scripts/run_level_b_gepa_real_canary_v2.py",
+    "tests/test_solver_stage_attribution.py"
+  ],
+  "unrelated_untracked_content_touched": false
+}

@@ -1,0 +1,17 @@
+{
+  "commit_count": 1,
+  "expected_team_phase_sequence": [
+    "team_minibatch_eval",
+    "team_full_eval",
+    "team_shadow_eval"
+  ],
+  "gate": "PASS",
+  "path": [
+    "official_gepa_local_search",
+    "team_minibatch_eval",
+    "team_full_eval",
+    "team_shadow_eval",
+    "single_commit"
+  ],
+  "real_api_calls": 0
+}
