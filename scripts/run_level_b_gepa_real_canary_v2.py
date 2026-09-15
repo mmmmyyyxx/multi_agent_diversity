@@ -16,12 +16,12 @@ import run_level_b_gepa_real_canary as base  # noqa: E402
 
 
 base.EXPERIMENT_ID = "level_b_gepa_real_canary_v2"
-base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_precallclosure1_pending_authorization"
+base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_stagefix1_pending_authorization"
 base.MANIFEST = ROOT / "experiments/manifests/level_b_gepa_real_canary_v2.yaml"
 base.PROTOCOL = ROOT / "experiments/level_b_gepa_real_canary_v2/PROTOCOL.md"
-base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_precallclosure1"
-base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_precallclosure1"
-base.DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v2_precallclosure1"
+base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix1"
+base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix1_pending_authorization"
+base.DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v2_stagefix1"
 base.AUTH_ENV = "LEVEL_B_GEPA_REAL_CANARY_V2_AUTHORIZED"
 
 CLASSIFIER_VERSION = "level_b_local_empirical_path_classifier_v1"
@@ -80,7 +80,7 @@ def protocol_document():
     protocol = _base_protocol_document()
     protocol.update(
         {
-            "schema_version": "level_b_gepa_real_canary_protocol_v3",
+            "schema_version": "level_b_gepa_real_canary_protocol_v4",
             "reflection_input_repair": (
                 "component_specific_reasoning_evidence_v1"
             ),
@@ -88,6 +88,7 @@ def protocol_document():
                 "contract_valid_changed_proposal_reaches_solver_gt_zero"
             ),
             "classifier_version": CLASSIFIER_VERSION,
+            "solver_stage_attribution_contract": "explicit_solver_phase_v1",
             "logical_split_identities": logical_split_identities(),
         }
     )

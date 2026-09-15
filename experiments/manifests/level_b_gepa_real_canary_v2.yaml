@@ -39,11 +39,12 @@ seeds: [78]
 design:
   changed:
     - reflective dataset uses component_specific_reasoning_evidence_v1
+    - engineering-only Solver stage attribution uses explicit_solver_phase_v1
   unchanged:
     - official GEPA search core, population, Pareto, parent selection, reflection minibatch, and local acceptance
     - Layer 2 scheduler, persistent realizability, TeamMiniBatch, Common-Safe, Shadow, and write-back
     - model, data, opportunity, and evaluation budgets
-  attempt_id: level_b_gepa_real_canary_v2_precallclosure1_pending_authorization
+  attempt_id: level_b_gepa_real_canary_v2_stagefix1_pending_authorization
   opportunities: 1
   target_branches: 1
   target_selection: first target from frozen primary-responsibility persistent-realizability scheduler at update zero
@@ -52,8 +53,8 @@ design:
   team_minibatch: strict primary-lane 4 plus global coalition 4 plus global preservation 4
   forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
 api_authorization:
-  authorized: true
-  authorization_scope: explicit_user_authorization_2026_09_15_for_precallclosure1_attempt_only
+  authorized: false
+  authorization_scope: pending_new_explicit_authorization_for_stagefix1_attempt
   allowed_roles: [solver, reflection]
   allowed_phases: [canary]
 budget:
@@ -69,12 +70,12 @@ selection:
 artifacts:
   preregistration:
     path: experiments/level_b_gepa_real_canary_v2/PROTOCOL.md
-    sha256: b583a4d055ff6a0fa2cb2b9fdf43be87f4cb116469c7fa24fa6e63213ee9bfa8
-  report: reports/level_b_gepa_real_canary_v2_precallclosure1
-  provenance: reports/level_b_gepa_real_canary_v2_precallclosure1/provenance.json
+    sha256: 8d1b9e4f7664dbb6cf0b1ebd4052dbd3d1147d5296fb5e9d82d48e5f668462ce
+  report: reports/level_b_gepa_real_canary_v2_stagefix1
+  provenance: reports/level_b_gepa_real_canary_v2_stagefix1/provenance.json
 git:
   design_commit: b744d9ea825840e2c17db7c44eb3912bfc4576ac
-  implementation_commit: 627bb87253f8b67fc6bd4c9888f5cb1c03f0c93c
+  implementation_commit: 8d2e0bd50fb9cb7303ec096d31af155f58e70d0c
   result_commit: null
 result:
   classifier: null

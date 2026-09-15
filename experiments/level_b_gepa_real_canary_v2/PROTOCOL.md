@@ -17,6 +17,13 @@ official frozen GEPA v0.1.1, metric budget 36, TeamMiniBatch12, Common-Safe,
 winner-only Shadow, qwen3-8b Solver with thinking disabled, and qwen3.7-flash
 reflection LM. Validation50 and Test50 calls are zero.
 
+An engineering-only closure now requires every Solver-capable producer to emit
+an explicit non-empty `phase`. The field is authoritative; if
+`evaluation_stage` is retained it must equal `phase`. Missing or divergent
+attribution fails before provider or cache access. This repairs the deterministic
+TeamMiniBatch attribution exception without changing GEPA, scheduling,
+evaluation, acceptance, or any scientific setting.
+
 The minimum technical success criterion is exactly:
 
 ```text
@@ -45,7 +52,9 @@ recompute the identities from its private CSVs and fail closed on any mismatch.
 
 Positive local delta, accepted mutation, TeamMiniBatch survival, full evaluation,
 Shadow survival, and commit are observations rather than technical requirements.
-The previous reflection-fix pending attempt is invalidated and must not be
-executed. This replacement attempt is fresh, has no resume or experiment-level retry, and requires a new
-explicit user authorization after this source/protocol freeze. Until that occurs,
-the execution command is blocked.
+The previously authorized `precallclosure1` attempt is preserved as `ABORTED`.
+It confirmed the Local GEPA empirical path but did not complete TeamMiniBatch or
+the later pipeline. It must not be resumed, overwritten, or interpreted as a
+full-path result. The `stagefix1` successor has a fresh identity, no resume or
+experiment-level retry, and requires new explicit user authorization after this
+source/protocol freeze. Until that occurs, the execution command is blocked.

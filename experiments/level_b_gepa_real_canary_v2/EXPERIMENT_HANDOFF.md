@@ -1,13 +1,14 @@
 # Execution handoff: Level-B GEPA canary v2
 
-Status: `AUTHORIZED_FOR_ONE_FRESH_EXECUTION`
+Status: `PENDING_NEW_EXPLICIT_AUTHORIZATION`
 
-The superseded `reflectionfix1` pending attempt is invalid and must never be
-executed. The user explicitly authorized the `precallclosure1` attempt on
-2026-09-15. Re-hash the authorization fact, create a fresh authorized prep
-identity, verify the exact execution commit and protocol hash, and execute only
-the frozen command. No source, model, split, budget, GEPA setting, scheduler, or
-acceptance change is allowed during the authorization transition.
+The `precallclosure1` attempt is preserved as an aborted, non-resumable run. Its
+Local GEPA evidence remains valid, but its full path is incomplete. The fresh
+`stagefix1` attempt closes only the Solver stage-attribution contract. It is not
+authorized to call real APIs. A future explicit authorization must create a new
+authorized prep identity and fresh formal run root while retaining this exact
+source/protocol freeze. No source, model, split, budget, GEPA setting, scheduler,
+or acceptance change is allowed during that authorization transition.
 
 The future executor may run only one Seed78 parent, one target, and one local GEPA
 opportunity. It must preserve the transactional lifecycle, durable ledger,
