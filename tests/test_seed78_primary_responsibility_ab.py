@@ -3,8 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import httpx
 import pytest
 import yaml
+from openai import APIConnectionError
 
 from multi_dataset_diverse_rl.governance.manifest import (
     preregistration_hash,
@@ -16,18 +18,71 @@ from scripts.run_seed78_primary_responsibility_ab import (
     ARM_A,
     ARM_B,
     AUTH_ENV,
+    DurableLedger,
     _authorize,
     _arm_a_selection,
     _classify,
     _config,
     _bind_paired_validation_cache,
     _mechanism_metrics,
+    _ledger_summary,
+    _retryable,
     preflight,
     protocol_document,
 )
 
 
 ROOT = Path(__file__).parents[1]
+
+
+def test_openai_sdk_connection_error_uses_frozen_transport_retry() -> None:
+    error = APIConnectionError(
+        request=httpx.Request("POST", "https://transport-audit.invalid")
+    )
+    assert _retryable(error) is True
+
+
+def test_failed_attempt_rows_are_durable_without_inflating_logical_calls(
+    tmp_path: Path,
+) -> None:
+    ledger = DurableLedger(tmp_path / "ledger.jsonl")
+    common = {
+        "phase": "initialization",
+        "logical_role": "solver",
+        "client_role": "solver",
+        "cache_hit": False,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "seed": 78,
+        "arm": "LEVEL_B_REAL_CANARY",
+        "update_index": -1,
+        "target_member": -1,
+    }
+    ledger.append({
+        **common,
+        "record_id": "failed-1",
+        "record_kind": "solver_provider_attempt_failure",
+        "provider_attempts": 1,
+        "successful_provider_calls": 0,
+    })
+    ledger.append({
+        **common,
+        "record_id": "success-1",
+        "record_kind": "solver_logical_completion",
+        "provider_attempts": 1,
+        "successful_provider_calls": 1,
+    })
+    assert _ledger_summary(ledger.path) == {
+        "logical_calls": 1,
+        "provider_attempts": 2,
+        "successful_provider_calls": 1,
+        "failed_provider_attempts": 1,
+        "cache_hits": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+    }
 
 
 def _opportunity(member: int) -> MemberAwareRepairOpportunity:

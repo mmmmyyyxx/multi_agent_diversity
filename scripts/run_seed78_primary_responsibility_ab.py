@@ -21,7 +21,7 @@ from dataclasses import asdict
 from typing import Any, Mapping, Sequence
 
 import yaml
-from openai import AsyncOpenAI
+from openai import APIConnectionError, AsyncOpenAI
 
 ROOT = Path(__file__).resolve().parents[1]
 for entry in (ROOT, ROOT / "scripts"):
@@ -135,7 +135,10 @@ def _retryable(exc: Exception) -> bool:
         status = getattr(exc.response, "status_code", None)
     if status is not None:
         return int(status) in CONTRACT_SPEC.retry_status_codes
-    return isinstance(exc, (TimeoutError, ConnectionError, asyncio.TimeoutError))
+    return isinstance(
+        exc,
+        (TimeoutError, ConnectionError, asyncio.TimeoutError, APIConnectionError),
+    )
 
 
 class DurableLedger:
@@ -202,13 +205,45 @@ class Seed78System(PromptEnsembleOptimizationSystem):
                 finish_reason=str(response.choices[0].finish_reason or ""),
             )
 
-        self.common = CommonSolverEvaluator(
-            transport=transport, cache=raw_cache, retryable=_retryable
-        )
         self.arm = arm
         self.ledger = ledger
         self._solver_stage: dict[str, Any] | None = None
         self._solver_sequence = 0
+
+        def persist_failed_attempt(event: Mapping[str, object]) -> None:
+            if self._solver_stage is None:
+                raise RuntimeError("failed Solver attempt lacks frozen stage attribution")
+            self._solver_sequence += 1
+            stage = dict(self._solver_stage)
+            self.ledger.append({
+                "record_id": f"{arm}:solver:{self._solver_sequence}",
+                "record_kind": "solver_provider_attempt_failure",
+                "phase": stage["phase"],
+                "logical_role": "solver",
+                "client_role": "solver",
+                "provider_attempts": 1,
+                "successful_provider_calls": 0,
+                "cache_hit": False,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0,
+                "seed": SEED,
+                "arm": arm,
+                "update_index": int(stage.get("update_index", -1)),
+                "target_member": int(stage.get("target_member", -1)),
+                "candidate_id": str(stage.get("candidate_id", "")),
+                "request_identity": str(event["request_identity"]),
+                "attempt_index": int(event["attempt_index"]),
+                "error_type": str(event["error_type"]),
+                "status_code": event.get("status_code"),
+            })
+
+        self.common = CommonSolverEvaluator(
+            transport=transport,
+            cache=raw_cache,
+            retryable=_retryable,
+            failed_attempt_observer=persist_failed_attempt,
+        )
 
         async def solver(question: str, agent_id: int, prompt: str) -> PromptAnswer:
             del agent_id
@@ -224,10 +259,11 @@ class Seed78System(PromptEnsembleOptimizationSystem):
             stage = dict(self._solver_stage)
             self.ledger.append({
                 "record_id": f"{arm}:solver:{self._solver_sequence}",
+                "record_kind": "solver_logical_completion",
                 "phase": stage["phase"],
                 "logical_role": "solver",
                 "client_role": "solver",
-                "provider_attempts": result.transport_attempts,
+                "provider_attempts": int(not result.cache_hit),
                 "successful_provider_calls": int(not result.cache_hit),
                 "cache_hit": result.cache_hit,
                 "input_tokens": result.prompt_tokens,
@@ -239,6 +275,7 @@ class Seed78System(PromptEnsembleOptimizationSystem):
                 "target_member": int(stage.get("target_member", -1)),
                 "candidate_id": str(stage.get("candidate_id", "")),
                 "request_identity": result.request_identity,
+                "transport_attempts_for_logical_call": result.transport_attempts,
             })
             return PromptAnswer(
                 answer=parsed.answer,
@@ -964,10 +1001,18 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
 
 def _ledger_summary(path: Path) -> dict[str, int]:
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+    completed = [
+        row for row in rows
+        if row.get("record_kind") != "solver_provider_attempt_failure"
+    ]
     return {
-        "logical_calls": len(rows),
+        "logical_calls": len(completed),
         "provider_attempts": sum(int(row["provider_attempts"]) for row in rows),
         "successful_provider_calls": sum(int(row["successful_provider_calls"]) for row in rows),
+        "failed_provider_attempts": sum(
+            int(row["provider_attempts"]) - int(row["successful_provider_calls"])
+            for row in rows
+        ),
         "cache_hits": sum(bool(row["cache_hit"]) for row in rows),
         "input_tokens": sum(int(row["input_tokens"]) for row in rows),
         "output_tokens": sum(int(row["output_tokens"]) for row in rows),

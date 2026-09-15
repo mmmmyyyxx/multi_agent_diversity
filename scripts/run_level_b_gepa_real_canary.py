@@ -229,7 +229,7 @@ def _provider_calls_observed(run_root: Path) -> int:
     ledger = run_root / "ledger.jsonl"
     if not ledger.is_file():
         return 0
-    return int(_ledger_summary(ledger)["successful_provider_calls"])
+    return int(_ledger_summary(ledger)["provider_attempts"])
 
 
 def prepare(prep: Path) -> dict[str, Any]:

@@ -4,6 +4,8 @@ import asyncio
 import json
 from pathlib import Path
 
+import pytest
+
 from infrastructure.common_solver_contract_v1.contract import (
     COMMON_SOLVER_CONTRACT_ID,
     CONTRACT_SPEC,
@@ -91,6 +93,31 @@ def test_strict_parser_and_shared_exact_request_cache() -> None:
     assert not parse_solver_output(
         "FINAL_ANSWER: A\nFINAL_ANSWER: B", question=QUESTION_LF
     ).valid
+
+
+def test_failed_attempt_observer_runs_before_retry_and_terminal_raise() -> None:
+    events: list[dict[str, object]] = []
+    calls = 0
+
+    async def transport(_request: dict) -> str:
+        nonlocal calls
+        calls += 1
+        raise ConnectionError("synthetic transport failure")
+
+    async def scenario() -> None:
+        evaluator = CommonSolverEvaluator(
+            transport=transport,
+            failed_attempt_observer=lambda event: events.append(dict(event)),
+        )
+        with pytest.raises(ConnectionError):
+            await evaluator.evaluate(decision_procedure=PROMPT, question=QUESTION_LF)
+        assert evaluator.accounting()["failed_provider_attempts"] == 4
+
+    asyncio.run(scenario())
+    assert calls == CONTRACT_SPEC.transport_attempt_cap == 4
+    assert [event["attempt_index"] for event in events] == [1, 2, 3, 4]
+    assert all(event["error_type"] == "ConnectionError" for event in events)
+    assert all(event["request_identity"] for event in events)
 
 
 def test_paired_evaluators_share_one_provider_realization() -> None:

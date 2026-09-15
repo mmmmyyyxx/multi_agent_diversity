@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from typing import Awaitable, Callable, MutableMapping
+from typing import Awaitable, Callable, Mapping, MutableMapping
 
 from .contract import (
     CONTRACT_SPEC,
@@ -25,6 +25,7 @@ class TransportResponse:
 
 
 Transport = Callable[[dict], Awaitable[str | TransportResponse]]
+FailedAttemptObserver = Callable[[Mapping[str, object]], None]
 
 
 @dataclass(frozen=True)
@@ -47,10 +48,12 @@ class CommonSolverEvaluator:
         transport: Transport,
         cache: MutableMapping[str, str] | None = None,
         retryable: Callable[[Exception], bool] | None = None,
+        failed_attempt_observer: FailedAttemptObserver | None = None,
     ) -> None:
         self.transport = transport
         self.cache = cache if cache is not None else {}
         self.retryable = retryable or (lambda exc: isinstance(exc, (TimeoutError, ConnectionError)))
+        self.failed_attempt_observer = failed_attempt_observer
         self.logical_calls = 0
         self.provider_attempts = 0
         self.cache_hits = 0
@@ -108,6 +111,16 @@ class CommonSolverEvaluator:
             except Exception as exc:
                 last_error = exc
                 self.failed_provider_attempts += 1
+                if self.failed_attempt_observer is not None:
+                    status_code = getattr(exc, "status_code", None)
+                    if status_code is None and getattr(exc, "response", None) is not None:
+                        status_code = getattr(exc.response, "status_code", None)
+                    self.failed_attempt_observer({
+                        "request_identity": identity,
+                        "attempt_index": attempt,
+                        "error_type": type(exc).__name__,
+                        "status_code": status_code,
+                    })
                 if not self.retryable(exc) or attempt == CONTRACT_SPEC.transport_attempt_cap:
                     raise
                 await asyncio.sleep(CONTRACT_SPEC.retry_backoff_seconds[attempt - 1])
