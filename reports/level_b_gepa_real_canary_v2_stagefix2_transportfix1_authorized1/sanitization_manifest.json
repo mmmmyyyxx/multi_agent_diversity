@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "raw_prompts_published": false,
+  "questions_published": false,
+  "gold_or_model_answers_published": false,
+  "raw_responses_published": false,
+  "credentials_or_endpoints_published": false,
+  "sqlite_or_cache_content_published": false,
+  "checkpoints_published": false,
+  "absolute_paths_published": false
+}

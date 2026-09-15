@@ -1,0 +1,72 @@
+{
+  "accepted_mutations": 0,
+  "candidate_solver_calls_beyond_seed": 0,
+  "changed_valid_candidates": 0,
+  "classifier": "LOCAL_EMPIRICAL_PATH_CONFIRMED",
+  "classifier_version": "level_b_local_empirical_path_classifier_v1",
+  "commits": 0,
+  "execution_gate": "PASS",
+  "experiment_id": "level_b_gepa_real_canary_v2",
+  "full_local_evaluations": 0,
+  "full_team_evaluated_candidates": 0,
+  "ledger": {
+    "cache_hits": 0,
+    "failed_provider_attempts": 0,
+    "input_tokens": 28678,
+    "logical_calls": 112,
+    "output_tokens": 11718,
+    "provider_attempts": 112,
+    "successful_provider_calls": 112,
+    "total_tokens": 40396
+  },
+  "local_optimizer_solver_calls": 9,
+  "local_termination_reason": "no_local_improvement",
+  "parent_team_hash": "6a7200eb782f005306d996f0be942d1541c859ba0394a65e1ea42c4a5d6d7c89",
+  "positive_minibatch_deltas": 0,
+  "primary_responsibility_lane": "coverage",
+  "proposal_attempts": 3,
+  "proposer_diagnostics": {
+    "accepted_candidates": 0,
+    "accepted_mutation": 0,
+    "failed_check_counts": {},
+    "local_frontier_candidates": 0,
+    "materialized_candidates": 0,
+    "positive_minibatch_delta": 0,
+    "primary_rejection_category_counts": {
+      "append_only": 0,
+      "example_copying": 0,
+      "other_failed_check": 0,
+      "output_contract_contamination": 0,
+      "over_length": 0
+    },
+    "proposal_attempts": 3,
+    "proposal_changed": 3,
+    "proposal_contract_invalid": 0,
+    "proposal_duplicate": 0,
+    "proposal_hashes": [
+      "becf784f3d3ab0ceb5e32907d973e8ef3173db28e93a5c3e66cd8329fc703c32",
+      "3727d6e65b03d9e85f264c5b1489f18931f8bab72a194b742cfbcb5f3b465d8f",
+      "fc5d1a9815557f5c99d6a7d76cca8ee5efbd2513aef6e0cbd551c7ff15b0bb79"
+    ],
+    "proposal_unchanged": 0,
+    "returned_frontier_candidates": 0,
+    "solver_reached": 3,
+    "unmaterialized_proposals": 3
+  },
+  "proposer_diagnostics_version": "sanitized_proposer_diagnostics_v1",
+  "seed": 78,
+  "shadow_solver_calls": 0,
+  "target_member": 3,
+  "team_minibatch": {
+    "backfill_count": 0,
+    "coalition_count": 4,
+    "contract_version": "primary_lane_strict_4_4_4_v1",
+    "preservation_count": 4,
+    "responsibility_count": 4,
+    "total_count": 12
+  },
+  "team_minibatch_solver_calls": 0,
+  "team_minibatch_survivors": 0,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}
