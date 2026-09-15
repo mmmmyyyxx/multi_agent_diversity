@@ -22,6 +22,7 @@ from multi_dataset_diverse_rl.team_search.system_runtime import (
     SystemTeamCandidateEvaluator,
 )
 from scripts.run_seed78_primary_responsibility_ab import Seed78System
+from scripts import run_seed78_primary_responsibility_ab as seed78_runner
 
 
 class StageHarness:
@@ -142,6 +143,46 @@ def test_stage_boundary_fails_before_solver_for_missing_empty_or_divergent_phase
     system.set_stage({"phase": "initialization", "candidate_id": "P0"})
     assert system._solver_stage["phase"] == "initialization"
     system.set_stage(None)
+
+
+def test_actual_initialization_producer_sets_phase(monkeypatch, tmp_path: Path) -> None:
+    produced = []
+
+    class InitializationSystem:
+        def __init__(self, cfg, **_kwargs):
+            self.cfg = cfg
+            self.current = None
+
+        def set_run_identity(self, _identity):
+            return None
+
+        def set_stage(self, stage):
+            self.current = None if stage is None else validate_solver_stage_attribution(stage)
+            if self.current is not None:
+                produced.append(dict(self.current))
+
+        async def initialize_fixed_probe(self, _rows):
+            assert self.current["phase"] == "initialization"
+
+    monkeypatch.setattr(seed78_runner, "Seed78System", InitializationSystem)
+    monkeypatch.setattr(seed78_runner, "_config", lambda *_args, **_kwargs: object())
+    monkeypatch.setattr(seed78_runner, "build_run_identity", lambda *_args, **_kwargs: object())
+    asyncio.run(seed78_runner._initialize_system(
+        arm="P0",
+        root=tmp_path,
+        optimize_rows=(),
+        validation_rows=(),
+        optimize_path=tmp_path / "optimize.csv",
+        validation_path=tmp_path / "validation.csv",
+        cache={},
+        ledger=object(),
+    ))
+    assert produced == [{
+        "phase": "initialization",
+        "update_index": -1,
+        "target_member": -1,
+        "candidate_id": "P0",
+    }]
 
 
 @pytest.mark.parametrize("cache_hit", [False, True])

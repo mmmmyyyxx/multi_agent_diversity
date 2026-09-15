@@ -179,6 +179,7 @@ def generate(report: Path, *, focused_passed: int, full_passed: int) -> None:
     _write(report / "fake_provider_full_path.json", {
         "gate": "PASS",
         "path": [
+            "initialization",
             "official_gepa_local_search",
             "team_minibatch_eval",
             "team_full_eval",
@@ -188,6 +189,14 @@ def generate(report: Path, *, focused_passed: int, full_passed: int) -> None:
         "expected_team_phase_sequence": [
             "team_minibatch_eval", "team_full_eval", "team_shadow_eval"
         ],
+        "all_solver_phases_observed": [
+            "initialization",
+            "local_optimizer_solver_eval",
+            "team_minibatch_eval",
+            "team_full_eval",
+            "team_shadow_eval"
+        ],
+        "stage_count_sum_equals_solver_ledger_rows": True,
         "commit_count": 1,
         "real_api_calls": 0,
     })

@@ -98,12 +98,22 @@ class FakeLocalEvaluator:
     def __init__(self) -> None:
         self.calls = 0
         self.procedures: list[str] = []
+        self.stage_records = []
 
     def evaluate(
         self, decision_procedure: str, row: LocalEvidenceExample
     ) -> LocalSolverObservation:
         self.calls += 1
         self.procedures.append(decision_procedure)
+        self.stage_records.append(team_solver_stage_attribution(
+            phase="local_optimizer_solver_eval",
+            seed=78,
+            parent_id="synthetic-parent",
+            update_index=0,
+            target_member=0,
+            candidate_id="local_gepa",
+            proposal_engine="fake_official_gepa",
+        ))
         correct = "distinguish" in decision_procedure.casefold()
         return LocalSolverObservation(
             parsed_answer="A" if correct else "B",
@@ -924,8 +934,9 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
         primary_responsibility_lane="near_margin",
     )
     reflection = FakeReflection()
+    local_evaluator = FakeLocalEvaluator()
     local_optimizer = GEPALocalPromptOptimizer(
-        evaluator=FakeLocalEvaluator(),
+        evaluator=local_evaluator,
         reflection_lm=reflection,
         accounting_reader=lambda: reflection.accounting,
         run_root=tmp_path,
@@ -976,6 +987,32 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
         "team_shadow_eval",
     ]
     assert all(row["phase"] == row["evaluation_stage"] for row in evaluator.stage_records)
+    initialization = team_solver_stage_attribution(
+        phase="initialization",
+        seed=78,
+        parent_id="synthetic-parent",
+        update_index=-1,
+        target_member=-1,
+        candidate_id="P0",
+        proposal_engine="fake_initialization",
+    )
+    all_solver_stage_rows = [
+        initialization,
+        *local_evaluator.stage_records,
+        *evaluator.stage_records,
+    ]
+    stage_counts = {
+        phase: sum(row["phase"] == phase for row in all_solver_stage_rows)
+        for phase in (
+            "initialization",
+            "local_optimizer_solver_eval",
+            "team_minibatch_eval",
+            "team_full_eval",
+            "team_shadow_eval",
+        )
+    }
+    assert all(count > 0 for count in stage_counts.values())
+    assert sum(stage_counts.values()) == len(all_solver_stage_rows)
 
 
 class StubPrimaryAssignmentFactory:
