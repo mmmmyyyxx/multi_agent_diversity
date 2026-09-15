@@ -25,6 +25,10 @@ for entry in (ROOT, ROOT / "scripts"):
 from multi_dataset_diverse_rl.evaluation.output_contract import SOLVER_OUTPUT_CONTRACT_VERSION
 from multi_dataset_diverse_rl.config import Config
 from multi_dataset_diverse_rl.governance.authorization import require_api_authorization
+from multi_dataset_diverse_rl.governance.freeze_hash import (
+    SOURCE_FREEZE_HASH_SEMANTICS,
+    source_freeze_sha256,
+)
 from multi_dataset_diverse_rl.governance.manifest import (
     preregistration_hash,
     validate_manifest,
@@ -146,6 +150,7 @@ def protocol_document() -> dict[str, Any]:
         "launch_transaction_version": LAUNCH_TRANSACTION_VERSION,
         "proposer_diagnostics_version": PROPOSER_DIAGNOSTICS_VERSION,
         "classifier_version": CLASSIFIER_VERSION,
+        "source_freeze_hash_semantics": SOURCE_FREEZE_HASH_SEMANTICS,
     }
 
 
@@ -255,17 +260,18 @@ def prepare(prep: Path) -> dict[str, Any]:
     })
     freeze = {
         "execution_commit": git("rev-parse", "HEAD"),
+        "hash_semantics": SOURCE_FREEZE_HASH_SEMANTICS,
         "protocol_sha256": sha256_json(protocol),
         "preregistration_sha256": preregistration_hash(
             yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
         ),
         "attempt_id": ATTEMPT_ID,
         "files": [
-            {"path": path.as_posix(), "sha256": sha256_file(ROOT / path)}
+            {"path": path.as_posix(), "sha256": source_freeze_sha256(ROOT / path)}
             for path in source_paths()
         ],
         "private_split_sha256": {
-            path.name: sha256_file(path)
+            path.name: source_freeze_sha256(path)
             for path in sorted((prep / "splits_private").glob("*.csv"))
         },
     }
@@ -282,6 +288,8 @@ def prepare(prep: Path) -> dict[str, Any]:
 
 def verify_freeze(prep: Path) -> None:
     freeze = read_json(prep / "source_freeze.json")
+    if freeze.get("hash_semantics") != SOURCE_FREEZE_HASH_SEMANTICS:
+        raise RuntimeError("canary source-freeze hash semantics mismatch")
     if git("rev-parse", "HEAD") != freeze["execution_commit"]:
         raise RuntimeError("canary execution commit mismatch")
     if sha256_json(read_json(prep / "protocol_freeze.json")) != freeze["protocol_sha256"]:
@@ -292,10 +300,10 @@ def verify_freeze(prep: Path) -> None:
     if freeze.get("attempt_id") != ATTEMPT_ID:
         raise RuntimeError("canary attempt identity mismatch")
     for row in freeze["files"]:
-        if sha256_file(ROOT / row["path"]) != row["sha256"]:
+        if source_freeze_sha256(ROOT / row["path"]) != row["sha256"]:
             raise RuntimeError(f"canary source freeze mismatch: {row['path']}")
     for name, digest in freeze["private_split_sha256"].items():
-        if sha256_file(prep / "splits_private" / name) != digest:
+        if source_freeze_sha256(prep / "splits_private" / name) != digest:
             raise RuntimeError(f"canary split freeze mismatch: {name}")
 
 
@@ -340,7 +348,7 @@ def config(out: Path, *, optimize_path: Path, validation_path: Path) -> Config:
         task_type="bbh", dataset_format="mars", comparison_task_id="disambiguation_qa",
         benchmark="BBH", answer_format="option_letter",
         train_path=str(optimize_path.resolve()), val_path=str(validation_path.resolve()),
-        test_path="TEST50_BLOCKED", manifest_sha256=sha256_file(MANIFEST),
+        test_path="TEST50_BLOCKED", manifest_sha256=source_freeze_sha256(MANIFEST),
         train_size=100, val_size=50, test_size=0,
         agent_model="qwen3-8b", optimizer_model="qwen3.7-flash",
         evaluator_model="qwen3.7-flash", temperature=0.0, solver_max_tokens=1800,
