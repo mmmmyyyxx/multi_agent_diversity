@@ -250,7 +250,7 @@ class Seed78System(PromptEnsembleOptimizationSystem):
                 "input_tokens": 0,
                 "output_tokens": 0,
                 "total_tokens": 0,
-                "seed": SEED,
+                "seed": self.cfg.training.seed,
                 "arm": arm,
                 "update_index": int(stage.get("update_index", -1)),
                 "target_member": int(stage.get("target_member", -1)),
@@ -291,7 +291,7 @@ class Seed78System(PromptEnsembleOptimizationSystem):
                 "input_tokens": result.prompt_tokens,
                 "output_tokens": result.completion_tokens,
                 "total_tokens": result.prompt_tokens + result.completion_tokens,
-                "seed": SEED,
+                "seed": self.cfg.training.seed,
                 "arm": arm,
                 "update_index": int(stage.get("update_index", -1)),
                 "target_member": int(stage.get("target_member", -1)),
@@ -395,7 +395,7 @@ class ReflectionLM:
                         "input_tokens": int(raw.get("prompt_tokens", 0)),
                         "output_tokens": int(raw.get("completion_tokens", 0)),
                         "total_tokens": int(raw.get("total_tokens", 0)),
-                        "seed": SEED,
+                        "seed": self.system.cfg.training.seed,
                         "arm": self.system.arm,
                         "update_index": int(context["update_index"]),
                         "target_member": int(context["target_member"]),
@@ -418,7 +418,7 @@ class ContextualOptimizer:
             "update_index": update,
             "target_member": member,
             "phase": "local_optimizer_solver_eval",
-            "parent_id": f"seed78_update{update}",
+            "parent_id": f"seed{self.local_solver.system.cfg.seed}_update{update}",
         }
         token = TASK_CONTEXT.set(context)
         self.local_solver.task_context = context

@@ -1,0 +1,74 @@
+schema_version: experiment_manifest_v1
+experiment_id: level_b_gepa_local_acceptance_rate_pilot_v1
+title: Level-B GEPA Local Acceptance-Rate Pilot
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-15T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-15T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-15T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-15T00:00:00+08:00'}
+lineage:
+  parents: [level_b_gepa_real_canary_v2]
+  derives_from: level_b_gepa_real_canary_v2
+scientific_question: How often does the current official Level-B GEPA search produce a strict local improvement for a responsibility-conditioned local task?
+hypotheses:
+  - At least one of twelve fixed proposal attempts yields an official strict local improvement.
+  - Proposal-level newly-fixed and newly-broken counts distinguish no-effect mutations from competence trade-offs.
+evidence_type: prospective_layer1_mechanism_pilot
+method_identity: member_aware_peer_state_v15
+runtime_version: level_b_gepa_local_acceptance_rate_pilot_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids: {optimize100: anti_overfitting_split_v1_fold_a_plus_b, shadow50: not_accessed, validation50: not_accessed, test50: blocked}
+  split_hashes:
+    optimize100: {count: 100, question_hashes_sha256: 1678f8339929dab5d728cc25940c8e452f74b3f0508fda8fc9a19532207d494f}
+    shadow50: {count: 50, question_hashes_sha256: 254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557}
+    validation50: {count: 50, question_hashes_sha256: 95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359}
+    test50: {count: 50, question_hashes_sha256: c1a90894d094b099a4bc2fc09fd7f529e8ddc4a667237e5f572f77358d7330b2}
+  validation_policy: prohibited
+  test_policy: prohibited; zero calls
+model:
+  solver: qwen3-8b
+  optimizer_roles: {reflection: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, reflection: 0.0}
+seeds: [79]
+design:
+  changed: [three frozen update-zero local parent-tasks, four actual proposal attempts per parent, Layer-1-only stopping]
+  unchanged: [official GEPA search core, reflection prompt, mutable component, scheduler definition, Solver contract, models, Optimize100 split]
+  attempt_id: level_b_gepa_local_acceptance_rate_pilot_v1_authorized1
+  parent_tasks: 3
+  proposals_per_parent: 4
+  local_metric_call_ceiling_per_parent: 120
+  forbidden_changes: [TeamMiniBatch, full-team evaluation, Shadow50, Validation50, Test50, write-back, method tuning, resume, experiment-level retry]
+api_authorization:
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_15_layer1_acceptance_rate_single_fresh_attempt
+  allowed_roles: [solver, reflection]
+  allowed_phases: [local_acceptance]
+budget:
+  type: fixed_layer1_acceptance_rate_budget
+  frozen_before_run: true
+  limit: {parent_tasks: 3, proposal_attempts_per_parent: 4, total_proposal_attempts: 12, local_metric_call_ceiling_per_parent: 120, team_minibatch_calls: 0, validation_calls: 0, test_calls: 0}
+selection:
+  primary_metric: official_strict_improvement_acceptance_rate
+  classifier_version: level_b_local_acceptance_rate_classifier_v1
+  frozen_rule: accepted_mutations greater than zero yields LOCAL_STRICT_IMPROVEMENT_OBSERVED; zero yields NO_LOCAL_STRICT_IMPROVEMENT_OBSERVED_IN_PILOT
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/level_b_gepa_local_acceptance_rate_pilot_v1/PROTOCOL.md
+    sha256: 96a447bb29b0d812ba32824e752ac4152ec285cbaea9dc78d5e9968d2d287896
+  report: reports/level_b_gepa_local_acceptance_rate_pilot_v1_authorized1
+  provenance: reports/level_b_gepa_local_acceptance_rate_pilot_v1_authorized1/provenance.json
+git:
+  design_commit: null
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: null
+  conclusion: null
+  evidence_type: not_yet_available
