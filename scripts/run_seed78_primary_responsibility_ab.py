@@ -42,6 +42,9 @@ from multi_dataset_diverse_rl.evaluation.output_contract import (  # noqa: E402
     SOLVER_OUTPUT_CONTRACT_VERSION,
 )
 from multi_dataset_diverse_rl.evaluation.prompt_question import PromptAnswer  # noqa: E402
+from multi_dataset_diverse_rl.evaluation.solver_stage import (  # noqa: E402
+    validate_solver_stage_attribution,
+)
 from multi_dataset_diverse_rl.governance.authorization import require_api_authorization  # noqa: E402
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: E402
     GEPAOptimizerConfig,
@@ -265,7 +268,9 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         super().__init__(cfg, solver=solver)
 
     def set_stage(self, stage: Mapping[str, Any] | None) -> None:
-        self._solver_stage = dict(stage) if stage is not None else None
+        self._solver_stage = (
+            validate_solver_stage_attribution(stage) if stage is not None else None
+        )
 
     def optimizer_accounting(self) -> dict[str, int]:
         rows = [row for row in self.llm.calls if row.get("client_role") == "optimizer"]

@@ -16,6 +16,10 @@ from typing import Any, Awaitable, Callable, Mapping, Sequence, TypeVar
 from ..candidate_selection import CandidateEvaluation
 from ..evaluation.fixed_probe import FixedProbeEvaluator, evaluate_candidate_profile, subset_profiles
 from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
+from ..evaluation.solver_stage import (
+    team_solver_stage_attribution,
+    validate_solver_stage_attribution,
+)
 from ..local_optimizers.schemas import LocalPromptCandidate
 from ..peer_state import TeamVoteState
 from ..responsibility import MemberAwareRepairOpportunity
@@ -235,11 +239,11 @@ class SystemLocalSolverEvaluator:
         before = dict(self.accounting())
 
         async def run() -> Any:
-            self.stage({
+            self.stage(validate_solver_stage_attribution({
                 **dict(context),
                 "candidate_id": "local_gepa",
                 "evaluation_stage": "local_optimizer_solver_eval",
-            })
+            }))
             try:
                 result = await self.system.fixed_probe.evaluate_prompt_indices(
                     target,
@@ -323,15 +327,15 @@ class SystemTeamCandidateEvaluator:
         before = dict(self.accounting())
 
         async def run() -> tuple[Any, ...]:
-            self.stage({
-                "seed": self.system.cfg.training.seed,
-                "parent_id": f"seed78_update{self.update_index_reader()}",
-                "update_index": self.update_index_reader(),
-                "target_member": target,
-                "candidate_id": candidate.candidate_id,
-                "proposal_engine": "official_gepa",
-                "evaluation_stage": evaluation_stage,
-            })
+            self.stage(team_solver_stage_attribution(
+                phase=evaluation_stage,
+                seed=self.system.cfg.training.seed,
+                parent_id=f"seed78_update{self.update_index_reader()}",
+                update_index=self.update_index_reader(),
+                target_member=target,
+                candidate_id=candidate.candidate_id,
+                proposal_engine="official_gepa",
+            ))
             try:
                 if indices is None:
                     return await self.system.fixed_probe.evaluate_prompt(
@@ -469,15 +473,15 @@ class SystemTeamCandidateEvaluator:
         before = dict(self.accounting())
 
         async def run() -> tuple[list[tuple[Any, ...]], tuple[Any, ...]]:
-            self.stage({
-                "seed": self.system.cfg.training.seed,
-                "parent_id": f"seed78_update{self.update_index_reader()}",
-                "update_index": self.update_index_reader(),
-                "target_member": target,
-                "candidate_id": candidate.candidate_id,
-                "proposal_engine": "official_gepa",
-                "evaluation_stage": "team_shadow_eval",
-            })
+            self.stage(team_solver_stage_attribution(
+                phase="team_shadow_eval",
+                seed=self.system.cfg.training.seed,
+                parent_id=f"seed78_update{self.update_index_reader()}",
+                update_index=self.update_index_reader(),
+                target_member=target,
+                candidate_id=candidate.candidate_id,
+                proposal_engine="official_gepa",
+            ))
             try:
                 active = list(await asyncio.gather(*(
                     self.shadow_probe.evaluate_prompt(

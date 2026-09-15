@@ -184,3 +184,11 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-SOLVER-STAGE-001
+    description: Every Solver-capable runtime context has an explicit non-empty phase before evaluation; phase and evaluation_stage cannot diverge.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/evaluation/solver_stage.py, multi_dataset_diverse_rl/team_search/system_runtime.py]
+    tests: [tests/test_solver_stage_attribution.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE

@@ -36,6 +36,7 @@ from multi_dataset_diverse_rl.local_optimizers.schemas import (
     LocalPromptCandidate,
 )
 from multi_dataset_diverse_rl.responsibility import MemberAwareRepairOpportunity
+from multi_dataset_diverse_rl.evaluation.solver_stage import team_solver_stage_attribution
 from multi_dataset_diverse_rl.team_search.candidate_evaluator import EvaluationCost
 from multi_dataset_diverse_rl.team_search.controller import TeamSearchController
 from multi_dataset_diverse_rl.team_search.primary_responsibility_binding import (
@@ -835,22 +836,34 @@ class StubOptimizer:
 class StubEvaluator:
     def __init__(self):
         self.shadow_targets = []
+        self.stage_records = []
+
+    def _record(self, phase, assignment, candidate):
+        self.stage_records.append(team_solver_stage_attribution(
+            phase=phase,
+            seed=78,
+            parent_id="synthetic-parent",
+            update_index=0,
+            target_member=assignment.target_member,
+            candidate_id=candidate.candidate_id,
+            proposal_engine="fake_official_gepa",
+        ))
 
     def active_evaluation(self, assignment):
         del assignment
         return object()
 
     def evaluate_minibatch(self, assignment, candidate, minibatch):
-        del assignment, candidate
+        self._record("team_minibatch_eval", assignment, candidate)
         assert minibatch
         return TeamMiniBatchMetrics(target_delta=1), EvaluationCost(1, 2, 1)
 
     def evaluate_full(self, assignment, candidate):
-        del assignment, candidate
+        self._record("team_full_eval", assignment, candidate)
         return object(), EvaluationCost(1, 2, 1)
 
     def evaluate_shadow(self, assignment, candidate):
-        del candidate
+        self._record("team_shadow_eval", assignment, candidate)
         self.shadow_targets.append(assignment.target_member)
         return SimpleNamespace(passed=True), EvaluationCost(1, 2, 1)
 
@@ -957,6 +970,12 @@ def test_fake_provider_end_to_end_positive_path_commits_once(tmp_path: Path) -> 
     assert diagnostics["proposal_changed"] >= 1
     assert diagnostics["solver_reached"] >= 1
     assert diagnostics["proposal_contract_invalid"] == 0
+    assert [row["phase"] for row in evaluator.stage_records] == [
+        "team_minibatch_eval",
+        "team_full_eval",
+        "team_shadow_eval",
+    ]
+    assert all(row["phase"] == row["evaluation_stage"] for row in evaluator.stage_records)
 
 
 class StubPrimaryAssignmentFactory:

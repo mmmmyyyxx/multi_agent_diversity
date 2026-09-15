@@ -158,6 +158,11 @@ the canonical v15 runtime above.
   realization cache across arms. Equal prompt/question/solver-contract request
   identities reuse the same provider realization, so byte-identical final teams
   have byte-identical paired evaluation evidence.
+- **INV-SOLVER-STAGE-001** — Any runtime context capable of producing a Solver
+  ledger record contains an explicit non-empty `phase` before evaluation starts.
+  Layer-2 evaluation producers use the canonical phase names; when the redundant
+  `evaluation_stage` field is present it must equal `phase`. Consumers remain
+  fail-closed and never infer or default a missing phase.
 
 ## Authority map
 
