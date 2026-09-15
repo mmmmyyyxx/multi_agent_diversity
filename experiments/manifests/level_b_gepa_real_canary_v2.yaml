@@ -52,8 +52,8 @@ design:
   team_minibatch: strict primary-lane 4 plus global coalition 4 plus global preservation 4
   forbidden_changes: [scheduler tuning, GEPA tuning, Common-Safe changes, Shadow changes, Validation50 access, Test50 access, additional opportunities, retry, resume]
 api_authorization:
-  authorized: false
-  authorization_scope: pending_new_explicit_user_authorization_after_precallclosure1_freeze
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_15_for_precallclosure1_attempt_only
   allowed_roles: [solver, reflection]
   allowed_phases: [canary]
 budget:
@@ -69,7 +69,7 @@ selection:
 artifacts:
   preregistration:
     path: experiments/level_b_gepa_real_canary_v2/PROTOCOL.md
-    sha256: fb710e15ead8ff4c0a0a0a0be8dcea8c1671348c29ba20d21692c7968ab06a95
+    sha256: b583a4d055ff6a0fa2cb2b9fdf43be87f4cb116469c7fa24fa6e63213ee9bfa8
   report: reports/level_b_gepa_real_canary_v2_precallclosure1
   provenance: reports/level_b_gepa_real_canary_v2_precallclosure1/provenance.json
 git:
