@@ -55,6 +55,7 @@ Shadow survival, and commit are observations rather than technical requirements.
 The previously authorized `precallclosure1` attempt is preserved as `ABORTED`.
 It confirmed the Local GEPA empirical path but did not complete TeamMiniBatch or
 the later pipeline. It must not be resumed, overwritten, or interpreted as a
-full-path result. The `stagefix1` successor has a fresh identity, no resume or
+full-path result. The unused `stagefix1` prep is superseded without execution.
+The `stagefix2` successor has a fresh identity, no resume or
 experiment-level retry, and requires new explicit user authorization after this
 source/protocol freeze. Until that occurs, the execution command is blocked.

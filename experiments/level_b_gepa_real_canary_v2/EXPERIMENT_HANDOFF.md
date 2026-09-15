@@ -4,7 +4,8 @@ Status: `PENDING_NEW_EXPLICIT_AUTHORIZATION`
 
 The `precallclosure1` attempt is preserved as an aborted, non-resumable run. Its
 Local GEPA evidence remains valid, but its full path is incomplete. The fresh
-`stagefix1` attempt closes only the Solver stage-attribution contract. It is not
+`stagefix2` attempt closes only the Solver stage-attribution contract. The
+unused `stagefix1` prep is superseded and must never be executed. `stagefix2` is not
 authorized to call real APIs. A future explicit authorization must create a new
 authorized prep identity and fresh formal run root while retaining this exact
 source/protocol freeze. No source, model, split, budget, GEPA setting, scheduler,

@@ -16,11 +16,11 @@ import run_level_b_gepa_real_canary as base  # noqa: E402
 
 
 base.EXPERIMENT_ID = "level_b_gepa_real_canary_v2"
-base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_stagefix1_pending_authorization"
+base.ATTEMPT_ID = "level_b_gepa_real_canary_v2_stagefix2_pending_authorization"
 base.MANIFEST = ROOT / "experiments/manifests/level_b_gepa_real_canary_v2.yaml"
 base.PROTOCOL = ROOT / "experiments/level_b_gepa_real_canary_v2/PROTOCOL.md"
-base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix1"
-base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix1_pending_authorization"
+base.DEFAULT_PREP = ROOT / "runs/level_b_gepa_real_canary_v2_prep_stagefix2"
+base.DEFAULT_RUN = ROOT / "runs/level_b_gepa_real_canary_v2_stagefix2_pending_authorization"
 base.DEFAULT_REPORT = ROOT / "reports/level_b_gepa_real_canary_v2_stagefix1"
 base.AUTH_ENV = "LEVEL_B_GEPA_REAL_CANARY_V2_AUTHORIZED"
 
