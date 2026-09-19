@@ -1,0 +1,12 @@
+{
+  "all_baseline_outputs_valid": true,
+  "all_five_optimize_profiles_identical": true,
+  "audit_timing": "POST_HOC_AFTER_FROZEN_EXECUTION",
+  "baseline_prompt_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+  "fixed_identical_peer_votes_per_treatment": 4,
+  "interpretation_scope": "Explains zero Full vote deltas in this baseline; does not estimate transfer in a diverse or evolved team state.",
+  "mechanism": "FOUR_IDENTICAL_VALID_FIXED_PEERS_LOCK_PLURALITY_AGAINST_ONE_MEMBER_REPLACEMENT",
+  "single_member_plurality_change_structurally_possible_rows": 0,
+  "unique_baseline_prompt_hashes": 1,
+  "unique_optimize_profile_hashes": 1
+}

@@ -1,10 +1,12 @@
 {
-  "READY_TO_RUN": true,
-  "authorization": "EXPLICIT_V2_EXECUTION_AUTHORIZED_2026-09-19",
+  "READY_TO_RUN": false,
+  "authorization": "CONSUMED_BY_ATTEMPT1",
   "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
-  "blockers": [],
+  "blockers": [
+    "single_fresh_execution_completed"
+  ],
   "candidate_freeze_sha256": "1a52f96be6a84bced750face76c0949b575685b06f1fd894faea38d8ce6cd7cc",
-  "exact_runner_command": "$env:ACCEPTED_MUTATION_TEAM_TRANSFER_V2_AUTHORIZED='1'; python scripts/run_accepted_local_mutation_team_transfer_v2.py execute --bundle runs/accepted_local_mutation_team_transfer_v2_execution_bundle --output runs/accepted_local_mutation_team_transfer_v2_attempt1",
+  "exact_runner_command": null,
   "experiment_id": "accepted_local_mutation_team_transfer_v2",
   "private_bundle_sha256": "a2cc474ada4a06ab22c2622056ea227d53f09161b94c4c06620864d1d6db9593",
   "schema_version": "sol_luna_experiment_handoff_v1"

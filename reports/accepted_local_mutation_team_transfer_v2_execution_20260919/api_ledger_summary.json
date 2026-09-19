@@ -1,0 +1,15 @@
+{
+  "cache_hits": 60,
+  "completion_tokens": 298055,
+  "prompt_tokens": 499475,
+  "provider_attempts": 750,
+  "provider_failures": 0,
+  "provider_successes": 750,
+  "stage_successes": {
+    "team_full_eval": 440,
+    "team_minibatch_eval": 60,
+    "team_shadow_candidate_eval": 200,
+    "team_shadow_control_eval": 50
+  },
+  "total_tokens": 797530
+}

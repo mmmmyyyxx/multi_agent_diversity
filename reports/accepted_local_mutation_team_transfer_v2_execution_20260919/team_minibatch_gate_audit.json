@@ -1,0 +1,8 @@
+{
+  "correct_filtering": 0,
+  "correct_promotion": 0,
+  "false_negative_filtering": 0,
+  "false_positive_promotion": 5,
+  "gate_version": "TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1",
+  "interpretation": "All five were false-positive promotions for the preregistered Full-team vote-positive endpoint; every MiniBatch passed on non-vote signals while Full vote delta was zero."
+}

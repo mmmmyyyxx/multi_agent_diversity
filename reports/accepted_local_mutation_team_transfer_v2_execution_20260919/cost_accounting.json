@@ -1,0 +1,51 @@
+{
+  "baseline": {
+    "optimize_provider_calls": 0,
+    "optimize_reused_phase_a_rows": 500,
+    "shadow_control_provider_calls": 50
+  },
+  "by_stage": {
+    "team_full_eval": {
+      "cache_hits": 60,
+      "completion_tokens": 185636,
+      "logical_calls": 500,
+      "prompt_tokens": 307316,
+      "successful_provider_calls": 440
+    },
+    "team_minibatch_eval": {
+      "cache_hits": 0,
+      "completion_tokens": 25746,
+      "logical_calls": 60,
+      "prompt_tokens": 41909,
+      "successful_provider_calls": 60
+    },
+    "team_shadow_candidate_eval": {
+      "cache_hits": 0,
+      "completion_tokens": 83243,
+      "logical_calls": 200,
+      "prompt_tokens": 140410,
+      "successful_provider_calls": 200
+    },
+    "team_shadow_control_eval": {
+      "cache_hits": 0,
+      "completion_tokens": 3430,
+      "logical_calls": 50,
+      "prompt_tokens": 9840,
+      "successful_provider_calls": 50
+    }
+  },
+  "provider_attempts": 750,
+  "provider_failures": 0,
+  "provider_successes": 750,
+  "solver": {
+    "cache_entries": 750,
+    "cache_hits": 60,
+    "completion_tokens": 298055,
+    "failed_provider_attempts": 0,
+    "logical_calls": 810,
+    "prompt_tokens": 499475,
+    "provider_attempts": 750,
+    "successful_provider_calls": 750,
+    "total_tokens": 797530
+  }
+}

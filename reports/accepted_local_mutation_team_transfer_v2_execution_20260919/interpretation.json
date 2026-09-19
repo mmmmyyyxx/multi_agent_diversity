@@ -1,0 +1,17 @@
+{
+  "next_decision": "Do not start scheduler A/B from this evidence alone. First choose a preregistered non-identical team state where a one-member replacement can change plurality, then replicate the same mandatory-Full transfer estimand.",
+  "not_supported": [
+    "LOCAL_IMPROVEMENT_CAN_TRANSFER_TO_TEAM_GAIN_WITHIN_THIS_STATE",
+    "LOCAL_TEAM_OBJECTIVE_MISALIGNMENT_OBSERVED",
+    "Cross-state or diverse-team transfer conclusions",
+    "Immediate scheduler efficacy conclusions"
+  ],
+  "post_hoc_mechanism": "FOUR_IDENTICAL_VALID_FIXED_PEERS_LOCK_PLURALITY_AGAINST_ONE_MEMBER_REPLACEMENT",
+  "preregistered_primary_state": "LOCAL_IMPROVEMENT_OFTEN_FAILS_TO_CHANGE_TEAM_OUTCOME",
+  "supported": [
+    "All five locally accepted mutations improved target-member Full accuracy.",
+    "None changed Full-team plurality accuracy in the frozen baseline.",
+    "All five MiniBatch decisions were false-positive promotions for Full vote positivity.",
+    "Four of five passed Common-Safe; all four Shadow-eligible mutations passed Shadow."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "experiment_id": "accepted_local_mutation_team_transfer_v2",
+  "iid_inference": false,
+  "primary_estimand": {
+    "denominator": 5,
+    "team_positive_count": 0
+  },
+  "primary_interpretation": "LOCAL_IMPROVEMENT_OFTEN_FAILS_TO_CHANGE_TEAM_OUTCOME",
+  "scope": "WITHIN_THIS_IDENTICAL_PEER_BASELINE_STATE",
+  "status": "VALID_SINGLE_BASELINE_STATE_REPLAY",
+  "team_equal_count": 5,
+  "team_negative_count": 0
+}

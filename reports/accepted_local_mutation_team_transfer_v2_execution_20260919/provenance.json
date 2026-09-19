@@ -1,0 +1,13 @@
+{
+  "candidate_freeze_sha256": "1a52f96be6a84bced750face76c0949b575685b06f1fd894faea38d8ce6cd7cc",
+  "completion_sha256": "05452cf2b53463e2ba2cf86116192a1651a55589bdb538181a6fcce2b0e6df4b",
+  "execution_freeze_sha256": "5e49b2a3e5df9292b5b746b1f4674dfcb58971c356c24f198a3ee67d04f8e107",
+  "execution_handoff_sha256": "45ec8dd07f09f20585cfce6d3318fbe14348fc6e999c76d6fcd05d3744c42251",
+  "execution_sha256": "290ef82c029545b93eb1f4102629afe529af85ea96070a00dd0bad3cd52d8423",
+  "frozen_execution_commit": "5644b8034ee7095e8c98bf32655677fb6bd6a311",
+  "lifecycle_sha256": "204fb7158dda3aef16667a66366f91760bff3fb21b6198b221a10d7c5e7c4499",
+  "provider_ledger_sha256": "79a01760265132152cd3a556f0e6be616be0f76f6e0558fb8f8a95abf49a684c",
+  "raw_answers_published": false,
+  "raw_prompts_published": false,
+  "raw_questions_published": false
+}

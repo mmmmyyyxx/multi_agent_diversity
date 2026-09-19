@@ -1,0 +1,10 @@
+{
+  "compileall": "PASS",
+  "execution_audit": "PASS",
+  "focused_tests": "16 passed",
+  "full_tests": "1121 passed, 1 known historical evidence failure: test_v16_m20_collateral_structure_audit candidate cache does not cover the exact fixed probe",
+  "git_diff_check": "PASS (line-ending warnings only)",
+  "manifest_validation": "PASS",
+  "report_hash_replay": "PASS",
+  "sanitization": "PASS"
+}

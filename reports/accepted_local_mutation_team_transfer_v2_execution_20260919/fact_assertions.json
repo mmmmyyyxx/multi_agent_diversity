@@ -1,0 +1,11 @@
+{
+  "all_five_mutations_replayed": true,
+  "baseline_redundancy_labeled_post_hoc": true,
+  "budgets_respected": true,
+  "execution_complete": true,
+  "five_mandatory_full_results": true,
+  "minibatch_did_not_censor_full": true,
+  "no_writeback": true,
+  "same_frozen_baseline": true,
+  "validation_test_zero": true
+}
