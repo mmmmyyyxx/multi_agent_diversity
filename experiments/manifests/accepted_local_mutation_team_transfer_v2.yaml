@@ -79,10 +79,15 @@ design:
   formal_run_root: runs/accepted_local_mutation_team_transfer_v2_attempt1
   protocol_sha256: 38fcc9122e9df2aeb97f811047629724260f31b9e2ef7a9a5d11007d13cb7534
 api_authorization:
-  authorized: false
-  authorization_scope: pending explicit mandatory-Full v2 authorization
-  allowed_roles: []
-  allowed_phases: []
+  authorized: true
+  authorization_scope: one fresh accepted_local_mutation_team_transfer_v2 execution;
+    exact frozen five mutations; solver only; max 800 successful provider calls and
+    3200 attempts; Validation50/Test50/GEPA/Reflection/writeback/scheduler/persistent
+    realizability all zero
+  allowed_roles:
+  - solver
+  allowed_phases:
+  - accepted_mutation_team_replay
 budget:
   type: mandatory_full_read_only_five_pair_replay
   frozen_before_run: true
@@ -109,12 +114,12 @@ selection:
 artifacts:
   preregistration:
     path: experiments/accepted_local_mutation_team_transfer_v2/PROTOCOL.md
-    sha256: 61920f11dfd7ff590c6025bb454be3e17b6ea29db017217399871d4aa4ac2333
+    sha256: fc65a5a0ae926960430f20236eef70129b2516dd88e125e8f7d25ba21facc642
   report: reports/accepted_local_mutation_team_transfer_v2_prep_20260919
   provenance: reports/accepted_local_mutation_team_transfer_v2_prep_20260919/provenance.json
 git:
   design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
-  implementation_commit: null
+  implementation_commit: c6885c3b701f0bd41f074c5b2344b6785b4ef437
   result_commit: null
 result:
   classifier: PREREGISTERED_NOT_EXECUTED

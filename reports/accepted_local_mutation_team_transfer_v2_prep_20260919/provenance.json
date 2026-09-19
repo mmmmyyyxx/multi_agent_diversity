@@ -1,5 +1,6 @@
 {
-  "manifest_sha256": "8db1334915c9683fc8df921b28bdb946ae34413e8eb8be1f66531dfd9036e77d",
+  "authorization_record_sha256": "8cbff705a0679c9adcb9bf60a214232b8ed98f524fc07fa5afed0eb1f326f6a1",
+  "manifest_sha256": "8d385a4ff46cc3dd3aec765c7fa397474bcdf5b988e5fffdc5f4b10871c5d688",
   "protocol_sha256": "38fcc9122e9df2aeb97f811047629724260f31b9e2ef7a9a5d11007d13cb7534",
   "raw_answers_published": false,
   "raw_prompts_published": false,

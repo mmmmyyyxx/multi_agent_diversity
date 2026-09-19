@@ -1,0 +1,19 @@
+{
+  "authorization_date": "2026-09-19",
+  "authorization_status": "AUTHORIZED",
+  "execution_count": 1,
+  "experiment_id": "accepted_local_mutation_team_transfer_v2",
+  "forbidden": {
+    "GEPA": 0,
+    "Reflection": 0,
+    "Test50": 0,
+    "Validation50": 0,
+    "persistent_realizability": 0,
+    "scheduler": 0,
+    "writeback": 0
+  },
+  "mandatory_full_candidates": 5,
+  "provider_success_ceiling": 800,
+  "scope": "one fresh accepted_local_mutation_team_transfer_v2 execution; exact frozen five mutations; solver only; max 800 successful provider calls and 3200 attempts; Validation50/Test50/GEPA/Reflection/writeback/scheduler/persistent realizability all zero",
+  "transport_attempt_ceiling": 3200
+}
