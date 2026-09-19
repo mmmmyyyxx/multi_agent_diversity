@@ -35,7 +35,7 @@
     },
     {
       "file": "provenance.json",
-      "sha256": "fd109b979b8641b47dc4bf918b8146fc8e08d3cc726e050446e785034371fb78"
+      "sha256": "4b8c351d605e2ecd2b4738d38e28808319c5c92cd88225ac29a9a67ac5fb520e"
     },
     {
       "file": "README.md",
@@ -55,7 +55,7 @@
     },
     {
       "file": "verification_summary.json",
-      "sha256": "ddb223627e473fd2b85e32f3a20a5d2e69cb4293760e1161b170dbee8e44f1d8"
+      "sha256": "ccf0d297f4f66e58b61c0265ee833c29505f4fbfcf7c5df96de69dcbf851eac7"
     }
   ]
 }

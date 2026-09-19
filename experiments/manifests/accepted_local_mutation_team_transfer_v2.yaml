@@ -1,7 +1,7 @@
 schema_version: experiment_manifest_v1
 experiment_id: accepted_local_mutation_team_transfer_v2
 title: Mandatory-Full accepted local mutation team-transfer replay
-status: IMPLEMENTED
+status: RUNNING
 legacy_index: false
 lifecycle_history:
 - status: DRAFT
@@ -10,6 +10,10 @@ lifecycle_history:
   timestamp: '2026-09-19T12:38:44.565129+00:00'
 - status: IMPLEMENTED
   timestamp: '2026-09-19T12:38:44.565129+00:00'
+- status: PREFLIGHT_PASS
+  timestamp: '2026-09-19T13:12:23.554330+00:00'
+- status: RUNNING
+  timestamp: '2026-09-19T13:12:23.554330+00:00'
 lineage:
   parents:
   - accepted_local_mutation_team_transfer_v1

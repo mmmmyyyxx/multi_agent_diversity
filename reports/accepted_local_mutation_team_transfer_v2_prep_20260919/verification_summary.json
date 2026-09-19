@@ -1,5 +1,5 @@
 {
-  "authorization_refreeze": "EXPLICIT_V2_ONLY_AUTHORIZATION_RECORDED; source commit freeze pending this metadata commit",
+  "authorization_refreeze": "EXPLICIT_V2_ONLY_AUTHORIZATION_RECORDED; manifest lifecycle PREFLIGHT_PASS then RUNNING; execution source freeze pending this metadata commit",
   "compileall": "PASS",
   "deterministic_fake_provider_replay": {
     "cache_hits": 60,
