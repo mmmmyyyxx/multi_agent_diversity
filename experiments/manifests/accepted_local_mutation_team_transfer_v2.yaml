@@ -123,7 +123,7 @@ artifacts:
 git:
   design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
   implementation_commit: c6885c3b701f0bd41f074c5b2344b6785b4ef437
-  result_commit: null
+  result_commit: a6b09559cc0ff38e6befd5c2c2ca64b7b4c905d2
 result:
   classifier: LOCAL_IMPROVEMENT_OFTEN_FAILS_TO_CHANGE_TEAM_OUTCOME
   conclusion: 0/5 TEAM_POSITIVE, 5/5 TEAM_EQUAL, 0/5 TEAM_NEGATIVE within the frozen
