@@ -42,7 +42,25 @@ def run(private_bundle: Path, v1_private_bundle: Path) -> dict:
     checks = {
         "manifest_schema": validate_manifest(manifest, schema) == [],
         "preregistration_hash": manifest["artifacts"]["preregistration"]["sha256"] == preregistration_hash(manifest),
-        "authorization_pending": manifest["api_authorization"]["authorized"] is False,
+        "authorization_metadata": manifest["api_authorization"] in (
+            {
+                "authorized": False,
+                "authorization_scope": "pending explicit mandatory-Full v2 authorization",
+                "allowed_roles": [],
+                "allowed_phases": [],
+            },
+            {
+                "authorized": True,
+                "authorization_scope": (
+                    "one fresh accepted_local_mutation_team_transfer_v2 execution; exact frozen "
+                    "five mutations; solver only; max 800 successful provider calls and 3200 "
+                    "attempts; Validation50/Test50/GEPA/Reflection/writeback/scheduler/persistent "
+                    "realizability all zero"
+                ),
+                "allowed_roles": ["solver"],
+                "allowed_phases": ["accepted_mutation_team_replay"],
+            },
+        ),
         "private_bundle_hash": sha(private_bundle) == freeze["private_bundle_sha256"],
         "same_baseline": private["baseline_team_hash"] == v1_private["baseline_team_hash"],
         "same_five_mutations": private["accepted_mutations"] == v1_private["accepted_mutations"],
@@ -59,10 +77,18 @@ def run(private_bundle: Path, v1_private_bundle: Path) -> dict:
         "sanitization": scan_sanitized_artifacts(REPORT) == [],
         "report_hash_replay": read(REPORT / "sha256_manifest.json") == build_sha256_manifest(REPORT),
         "formal_run_absent": not (ROOT / manifest["design"]["formal_run_root"]).exists(),
-        "handoff_not_ready": read(REPORT / "EXPERIMENT_HANDOFF.json")["READY_TO_RUN"] is False,
+        "handoff_authorization_state": (
+            read(REPORT / "EXPERIMENT_HANDOFF.json")["READY_TO_RUN"]
+            is manifest["api_authorization"]["authorized"]
+        ),
     }
+    authorized = manifest["api_authorization"]["authorized"] is True
     return {
-        "status": "AUTHORIZATION_REQUIRED" if all(checks.values()) else "HOLD",
+        "status": (
+            "READY_FOR_FROZEN_HANDOFF" if all(checks.values()) and authorized
+            else "AUTHORIZATION_REQUIRED" if all(checks.values())
+            else "HOLD"
+        ),
         "checks": checks, "api_calls": 0,
         "mutation_count": len(private["accepted_mutations"]),
         "mandatory_full_candidates": manifest["design"]["mandatory_full_candidate_count"],

@@ -41,12 +41,14 @@ def test_v2_preserves_all_five_v1_mutations_exactly():
     ]
 
 
-def test_v2_manifest_is_unauthorized_and_freezes_mandatory_full():
+def test_v2_manifest_is_authorized_only_for_frozen_replay_and_mandatory_full():
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
     schema = read(ROOT / "infrastructure/experiment_manifest.schema.json")
     assert validate_manifest(manifest, schema) == []
     assert manifest["artifacts"]["preregistration"]["sha256"] == preregistration_hash(manifest)
-    assert manifest["api_authorization"]["authorized"] is False
+    assert manifest["api_authorization"]["authorized"] is True
+    assert manifest["api_authorization"]["allowed_roles"] == ["solver"]
+    assert manifest["api_authorization"]["allowed_phases"] == ["accepted_mutation_team_replay"]
     assert manifest["design"]["mandatory_full_candidate_count"] == 5
     assert manifest["design"]["team_minibatch_role"] == "TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1"
     assert manifest["budget"]["limit"]["successful_solver_provider_calls"] == 800
@@ -69,7 +71,9 @@ def test_cost_and_zero_api_freeze_are_exact():
     assert cost["total_successful_solver_provider_ceiling"] == 800
     assert cost["transport_attempt_ceiling"] == 3200
     assert read(REPORT / "api_ledger_summary.json")["provider_calls"] == 0
-    assert read(REPORT / "EXPERIMENT_HANDOFF.json")["READY_TO_RUN"] is False
+    handoff = read(REPORT / "EXPERIMENT_HANDOFF.json")
+    assert handoff["READY_TO_RUN"] is True
+    assert handoff["authorization"] == "EXPLICIT_V2_EXECUTION_AUTHORIZED_2026-09-19"
 
 
 def test_runner_has_no_search_commit_scheduler_or_realizability_path():
