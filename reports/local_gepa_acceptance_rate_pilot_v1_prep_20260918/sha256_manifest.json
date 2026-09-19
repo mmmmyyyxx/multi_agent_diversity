@@ -1,0 +1,65 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "budget_capacity_options.json",
+      "sha256": "63f7b7284eb2f1e16e776aae80b0d335eaed9cc188a8926bd7a1d336c26cd008"
+    },
+    {
+      "file": "current_evidence_summary.json",
+      "sha256": "4101995cc839537128c1543b61535022952cc1bf4bbdea687c493125558d3296"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "c0482507bf7a145baf4a0cbf4e2688b42c1cd2b133a5a832e109990852d6f36b"
+    },
+    {
+      "file": "fake_provider_metric_audit.json",
+      "sha256": "98cbc2c685b57f3783c08f9a2c2b88b7d8c213a86e8ada3fbcbab3dd35f5037b"
+    },
+    {
+      "file": "level_b_fidelity_audit.json",
+      "sha256": "280502d69fefdee6910260e8c50942fb9837c2312fc6c43b94857ffb0b779131"
+    },
+    {
+      "file": "parent_catalog.json",
+      "sha256": "cc48bf201e027f1e21074b4c7bec29be3526ca6f87f3a2bf6d0a3a2433f9e01e"
+    },
+    {
+      "file": "parent_selection_audit.json",
+      "sha256": "fd90043424c3a8f849043d8ec940210f9d7c6cd26eea4b8be02ec26ed5ad8195"
+    },
+    {
+      "file": "proposal_count_stopper_audit.json",
+      "sha256": "d30a8de51ddb0062d9db959caf36cbaae00fa0a8fe84de62ea2f9dede8d7cc99"
+    },
+    {
+      "file": "proposal_telemetry_schema.json",
+      "sha256": "376dbd9a73674ca2fdab5e9864dc0f20624a440aa520ca6595e84bb7dc5d057b"
+    },
+    {
+      "file": "protocol_identity.json",
+      "sha256": "7992b265abfb10ead24dd324ae63b364042a3fa8b53e35312b3a9b1141c8c2d1"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "76d99471de037c85b6e45df13a51574f087bf412b57d1c233d0e5f4c1c8cc110"
+    },
+    {
+      "file": "README.md",
+      "sha256": "51e8781c3521ce58fc01fc46a6fb9118f9dda5894cee4bfc306077a4b5e75ef0"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46ece6ceb5b84ecec6a60088ee356207ff94a8b1d1806a201b0364c63fba5555"
+    },
+    {
+      "file": "test_summary.json",
+      "sha256": "29d55373ba1e7bfe08ac5c8842e2d26ef1ab91332dcbfb415830603ee699fc16"
+    },
+    {
+      "file": "validation_test_isolation.json",
+      "sha256": "ddaece3a67b3a3a09adf65d4c19e8608bda7b7ff178465fa4d089be2ce5f1408"
+    }
+  ]
+}

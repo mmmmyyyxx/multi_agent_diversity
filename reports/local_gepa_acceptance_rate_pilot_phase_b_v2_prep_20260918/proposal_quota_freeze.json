@@ -1,0 +1,12 @@
+{
+  "actual_proposal_end_per_parent": 8,
+  "counter": "official on_proposal_end",
+  "max_metric_calls_per_parent": 205,
+  "normal_completion": "actual_proposal_end == 8",
+  "parent_count": 4,
+  "per_parent_invariant": "actual_proposal_end <= 8",
+  "planned_actual_proposal_end_total": 32,
+  "resume_or_replacement": "PROHIBITED",
+  "shortfall_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+  "skip_allowance_per_parent": 16
+}

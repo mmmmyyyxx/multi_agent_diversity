@@ -1,0 +1,14 @@
+{
+  "future_transition_failure": [
+    "RUNNING",
+    "EXECUTION_ABORTED"
+  ],
+  "future_transition_success": [
+    "RUNNING",
+    "EXECUTION_COMPLETE"
+  ],
+  "historical_phase_b_artifact_modified": false,
+  "historical_phase_b_lifecycle_sha256_preserved": "ae9536d758ab95d3f6a4bb342a9b3b1d14004085a9859acc3a7c2907272ebab1",
+  "shared_writer": "multi_dataset_diverse_rl/governance/run_lifecycle.py",
+  "status": "RETAINED_AND_FAKE_PROVIDER_TESTED"
+}

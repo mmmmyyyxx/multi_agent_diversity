@@ -1,0 +1,32 @@
+{
+  "failed_provider_attempts": 0,
+  "frozen_hard_metric_row_ceiling": 820,
+  "frozen_normal_metric_row_envelope": 624,
+  "phase_a_acquisition": {
+    "acceptance_denominator_contribution": 0,
+    "successful_solver_calls": 100,
+    "tokens": 26113
+  },
+  "phase_b_local_solver": {
+    "cache_entries": 196,
+    "cache_hits": 65,
+    "completion_tokens": 58105,
+    "failed_provider_attempts": 0,
+    "gepa_metric_observation_rows": 324,
+    "logical_calls": 261,
+    "prompt_tokens": 103883,
+    "provider_attempts": 196,
+    "successful_provider_calls": 196,
+    "total_tokens": 161988
+  },
+  "phase_b_reflection": {
+    "input_tokens": 52364,
+    "logical_calls": 32,
+    "output_tokens": 20610,
+    "provider_attempts": 32,
+    "successful_calls": 32,
+    "total_tokens": 72974
+  },
+  "phase_b_total_provider_calls": 228,
+  "phase_b_total_tokens": 234962
+}

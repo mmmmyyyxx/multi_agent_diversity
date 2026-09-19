@@ -1,0 +1,52 @@
+{
+  "accounting_categories_must_remain_separate": true,
+  "currency_ceiling": null,
+  "expected_normal": {
+    "local_solver_metric_rows": 624,
+    "nominal_transport_attempts": 624,
+    "proposal_events": 32,
+    "reflection_logical_calls": 32,
+    "reflection_output_token_ceiling": 57600,
+    "solver_output_token_ceiling": 1123200
+  },
+  "input_token_ceiling": null,
+  "parent_count": 4,
+  "per_parent": {
+    "accepted_full_local_validation": 96,
+    "bounded_skip_evaluations": 48,
+    "max_metric_calls_with_skips": 204,
+    "metric_ceiling": 205,
+    "normal_max_metric_calls": 156,
+    "parent_child_sampled": 48,
+    "reflection_logical_calls": 8,
+    "seed_local_validation": 12
+  },
+  "phase_a_acquisition_cost": {
+    "acceptance_denominator_contribution": 0,
+    "completion_tokens": 6448,
+    "prompt_tokens": 19665,
+    "successful_solver_requests": 100,
+    "total_tokens": 26113
+  },
+  "phase_b_local_solver_cost": {
+    "metric_row_ceiling": 820,
+    "model": "qwen3-8b",
+    "successful_output_token_ceiling": 1476000,
+    "transport_attempt_ceiling": 3280
+  },
+  "phase_b_reflection_cost": {
+    "logical_call_ceiling": 32,
+    "model": "qwen3.7-flash",
+    "output_token_ceiling": 57600
+  },
+  "proposal_event_ceiling": 32,
+  "unreported_failed_attempt_usage_policy": "disclose_if_provider_does_not_return_usage",
+  "worst_case_hard_ceiling": {
+    "local_solver_metric_rows": 820,
+    "proposal_events": 32,
+    "reflection_logical_calls": 32,
+    "reflection_output_tokens": 57600,
+    "solver_output_tokens": 1476000,
+    "transport_attempts": 3280
+  }
+}

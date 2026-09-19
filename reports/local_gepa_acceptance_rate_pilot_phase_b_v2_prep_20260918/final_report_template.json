@@ -1,0 +1,42 @@
+{
+  "cross_state_generalization": "PROHIBITED",
+  "inferential_ci_main_conclusion": "PROHIBITED",
+  "parent_summaries_required": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "parents_with_at_least_one_acceptance": {
+    "denominator": 4,
+    "numerator": null,
+    "rate": null
+  },
+  "per_parent_required_fields": [
+    "proposal_attempts",
+    "contract_valid",
+    "solver_reached",
+    "positive",
+    "equal",
+    "negative",
+    "accepted",
+    "total_newly_fixed",
+    "total_newly_broken",
+    "preservation_losses",
+    "mean_edit_similarity",
+    "median_edit_similarity",
+    "unique_failure_patterns",
+    "dominant_failure_pattern_concentration",
+    "max_lineage_depth",
+    "accepted_generation_count"
+  ],
+  "pooled": {
+    "accepted": null,
+    "denominator": null,
+    "descriptive_rate": null
+  },
+  "same_state_limitation_required": true,
+  "scope": "single-baseline-state multi-member Layer-1 GEPA acceptance-rate pilot",
+  "shared_source_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+  "team_transfer": "TEAM_TRANSFER_NOT_EVALUATED"
+}

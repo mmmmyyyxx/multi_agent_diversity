@@ -1,0 +1,12 @@
+{
+  "acceptance_denominator_contribution": 0,
+  "completion_tokens": 6448,
+  "cost_category": "Parent acquisition cost",
+  "failed_attempt_token_cost": 0,
+  "failed_provider_attempts": 0,
+  "layer1_optimization_cost": 0,
+  "prompt_tokens": 19665,
+  "provider_attempts": 100,
+  "successful_solver_requests": 100,
+  "total_tokens": 26113
+}

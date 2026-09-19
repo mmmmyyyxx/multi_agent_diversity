@@ -1,0 +1,122 @@
+schema_version: experiment_manifest_v1
+experiment_id: accepted_local_mutation_team_transfer_v2
+title: Mandatory-Full accepted local mutation team-transfer replay
+status: IMPLEMENTED
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-19T12:38:44.565129+00:00'
+- status: PREREGISTERED
+  timestamp: '2026-09-19T12:38:44.565129+00:00'
+- status: IMPLEMENTED
+  timestamp: '2026-09-19T12:38:44.565129+00:00'
+lineage:
+  parents:
+  - accepted_local_mutation_team_transfer_v1
+  derives_from: accepted_local_mutation_team_transfer_v1
+scientific_question: Do all five strict local improvements transfer to the fixed team's
+  Full performance?
+hypotheses:
+- Multiple accepted local mutations may yield positive Full-team vote deltas.
+- MiniBatch and mandatory Full outcomes may reveal diagnostic gate errors.
+method_identity: member_aware_peer_state_v15
+runtime_version: accepted_local_mutation_team_transfer_v2
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+    shadow50: anti_overfitting_split_v1_fold_c
+  split_hashes:
+    optimize100_ordered_ids_sha256: b0d186f31ad066518857e43ae72b48ac215a2ef89a28873017f4f194dce12966
+    shadow50_ids_sha256: 254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: qwen3-8b
+  optimizer_roles: {}
+  thinking: false
+  temperatures:
+    solver: 0.0
+  max_tokens:
+    solver: 1800
+seeds:
+- 78
+design:
+  changed:
+  - Full Optimize100 is mandatory for all five candidates
+  - TeamMiniBatch12 is a diagnostic simulated gate
+  unchanged:
+  - all five frozen mutations
+  - common baseline team
+  - candidate hashes
+  - local telemetry
+  - five-member plurality
+  - tie-as-abstain
+  - TeamMiniBatch12 composition and threshold
+  - Common-Safe
+  - Shadow gate
+  - solver model and contract
+  - splits
+  forbidden_changes:
+  - candidate generation
+  - candidate subset selection
+  - GEPA
+  - Reflection
+  - scheduler
+  - writeback
+  - persistent realizability
+  - Validation50
+  - Test50
+  supersession_status: SUPERSEDED_BEFORE_EXECUTION_BY_V2_DUE_TO_TEAMMINIBATCH_CENSORING
+  baseline_team_hash: faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd
+  candidate_count: 5
+  mandatory_full_candidate_count: 5
+  team_minibatch_role: TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1
+  candidate_freeze_sha256: 1a52f96be6a84bced750face76c0949b575685b06f1fd894faea38d8ce6cd7cc
+  private_bundle_sha256: a2cc474ada4a06ab22c2622056ea227d53f09161b94c4c06620864d1d6db9593
+  decomposition_version: mandatory_full_fixed_baseline_case_mapping_v2
+  formal_run_root: runs/accepted_local_mutation_team_transfer_v2_attempt1
+  protocol_sha256: 38fcc9122e9df2aeb97f811047629724260f31b9e2ef7a9a5d11007d13cb7534
+api_authorization:
+  authorized: false
+  authorization_scope: pending explicit mandatory-Full v2 authorization
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: mandatory_full_read_only_five_pair_replay
+  frozen_before_run: true
+  limit:
+    mutation_pairs: 5
+    mandatory_full_candidates: 5
+    mandatory_logical_solver_rows: 560
+    successful_solver_provider_calls: 800
+    transport_attempts: 3200
+    per_request_attempts: 4
+    solver_concurrency: 8
+    Reflection: 0
+    GEPA: 0
+    writeback: 0
+    persistent_realizability: 0
+    Validation50: 0
+    Test50: 0
+selection:
+  primary_metric: team_positive_count_over_five_mandatory_full_replays
+  frozen_rule: include all five accepted mutations; mandatory Full independent of
+    MiniBatch
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/accepted_local_mutation_team_transfer_v2/PROTOCOL.md
+    sha256: 61920f11dfd7ff590c6025bb454be3e17b6ea29db017217399871d4aa4ac2333
+  report: reports/accepted_local_mutation_team_transfer_v2_prep_20260919
+  provenance: reports/accepted_local_mutation_team_transfer_v2_prep_20260919/provenance.json
+git:
+  design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: PREREGISTERED_NOT_EXECUTED
+  conclusion: Team transfer remains unevaluated pending separate v2 API authorization.
+  evidence_type: not_yet_available

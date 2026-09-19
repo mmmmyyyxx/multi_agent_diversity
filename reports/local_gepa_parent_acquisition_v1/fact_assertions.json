@@ -1,0 +1,13 @@
+{
+  "acquisition_excluded_from_acceptance_denominator": true,
+  "at_most_100_successful_solver_requests": true,
+  "historical_preparation_preserved": true,
+  "no_reflection_or_gepa": true,
+  "no_team_evaluation_or_writeback": true,
+  "no_validation50_or_test50": true,
+  "optimize_only": true,
+  "owner_reconstruction_matches_runner": true,
+  "phase_b_not_executed": true,
+  "selected_count_four_or_zero": true,
+  "source_commit_frozen_before_api": true
+}

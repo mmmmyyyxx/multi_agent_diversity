@@ -1,0 +1,28 @@
+{
+  "completion_status": "EXECUTION_COMPLETE",
+  "execution_status": "EXECUTION_COMPLETE",
+  "gepa_metric_observation_rows": 324,
+  "lifecycle_marker_stale": true,
+  "member_zero_executed": false,
+  "parent_ids": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "proposal_end_by_parent": {
+    "seed78_update0_member1": 8,
+    "seed78_update0_member2": 8,
+    "seed78_update0_member3": 8,
+    "seed78_update0_member4": 8
+  },
+  "proposal_end_total": 32,
+  "provider_attempts": 228,
+  "provider_failures": 0,
+  "reflection_logical_calls": 32,
+  "run_lifecycle_marker": "RUNNING",
+  "solver_logical_rows": 261,
+  "source_hashes_verified_after_execution": true,
+  "status": "PASS",
+  "terminal_artifacts_establish_completion": true
+}

@@ -1,0 +1,30 @@
+{
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "frozen_focused_tests": "21 passed",
+  "frozen_full_suite_initial": {
+    "errors": 20,
+    "failed": 21,
+    "limitations": "isolated checkout lacks ignored historical runs and initially converted fixture/report line endings; relevant frozen tests pass; fixture bytes restored from Git and governance subsequently passes",
+    "passed": 1026,
+    "skipped": 1
+  },
+  "governance_preflight": "PASS",
+  "main_full_suite": {
+    "failed": 1,
+    "failure": "pre-existing historical candidate cache does not cover exact fixed probe",
+    "passed": 1089
+  },
+  "member_preflight": "PASS",
+  "owner_input_audit": {
+    "all_gold_in_output_domain": true,
+    "exact_input_manifest_hash": true,
+    "input_count_100": true,
+    "optimizer_roles_empty": true,
+    "ordered_ids_hash_matches_manifest": true,
+    "phase_b_unauthorized": true,
+    "unique_canonical_requests_100": true,
+    "unique_payloads_100": true
+  },
+  "phase_a_tests": "10 passed"
+}

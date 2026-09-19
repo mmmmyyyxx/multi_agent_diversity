@@ -1,0 +1,10 @@
+{
+  "attempts": 228,
+  "failures": 0,
+  "provider_ledger_sha256": "5a2bece1ba486c241eb8e221d26804618444704ebce1e79a2f38d655c2622f45",
+  "success_by_role": {
+    "reflection": 32,
+    "solver": 196
+  },
+  "successes": 228
+}

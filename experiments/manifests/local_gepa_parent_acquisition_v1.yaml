@@ -1,0 +1,120 @@
+schema_version: experiment_manifest_v1
+experiment_id: local_gepa_parent_acquisition_v1
+title: Optimize-only parent acquisition, Phase A
+status: COMPLETED
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-18T10:21:17.308188+00:00'
+- status: PREREGISTERED
+  timestamp: '2026-09-18T10:21:17.308199+00:00'
+- status: IMPLEMENTED
+  timestamp: '2026-09-18T10:21:17.308201+00:00'
+- status: PREFLIGHT_PASS
+  timestamp: '2026-09-18T10:23:52.769062+00:00'
+- status: RUNNING
+  timestamp: '2026-09-18T10:27:32.770981+00:00'
+- status: TRAIN_FROZEN
+  timestamp: '2026-09-18T10:31:17.418665+00:00'
+- status: COMPLETED
+  timestamp: '2026-09-18T10:31:17.418677+00:00'
+lineage:
+  parents:
+  - local_gepa_acceptance_rate_pilot_v1
+  derives_from: local_gepa_acceptance_rate_pilot_v1
+scientific_question: Can one authorized baseline initialization produce four complete
+  current-contract parent tasks?
+hypotheses:
+- Eligibility may remain insufficient; no claim of optimization efficacy is tested.
+method_identity: member_aware_peer_state_v15
+runtime_version: local_gepa_parent_acquisition_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+  split_hashes:
+    optimize100_csv_sha256: d308dcf239d42e949775fff2b8fe7540add825e20c767dee789955e7243b2b45
+    ordered_question_ids_sha256: b0d186f31ad066518857e43ae72b48ac215a2ef89a28873017f4f194dce12966
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: qwen3-8b
+  optimizer_roles: {}
+  thinking: false
+  temperatures:
+    solver: 0.0
+  max_tokens:
+    solver: 1800
+seeds:
+- 78
+design:
+  changed:
+  - independent Optimize-only baseline acquisition amendment
+  unchanged:
+  - current task definition
+  - production responsibility and routing
+  - strict Solver contract
+  forbidden_changes:
+  - GEPA
+  - Reflection
+  - team evaluation
+  - writeback
+  - persistent realizability
+  - heldout access
+  parent_prompt_sha256: 549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63
+  selection_rule: exact_max_coverage_source_target_lane_then_min_subset_sha256_v1
+  target_parent_count: 4
+  local_task_metric_budget_identity_only: 205
+  source_state_count: 1
+  baseline_realization_shared_by_five_identical_members: true
+  protocol_sha256: eda58a77fd9a5392eac30e05162597bbb627225a2c35b7b96b93fe52d663b653
+  private_input_sha256: a5c9d76aeec2d1d48fdf6f7793853ff2fa9f7744540f8637004e10b44c83494f
+api_authorization:
+  authorized: true
+  allowed_roles:
+  - Solver
+  allowed_phases:
+  - PHASE_A_BASELINE
+  phase_b_authorized: false
+  authorization_scope: user explicit Optimize100 baseline only, max 100 successful
+    Solver requests
+budget:
+  type: hard_successful_request_and_transport_attempt_cap
+  frozen_before_run: true
+  limit:
+    successful_solver_requests: 100
+    transport_attempts: 400
+    per_request_attempts: 4
+    Reflection: 0
+    Validation50: 0
+    Test50: 0
+    GEPA_proposals: 0
+selection:
+  primary_metric: complete_eligible_parent_count
+  frozen_rule: maximum source-state/target/lane coverage then stable subset hash;
+    insufficient below four
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/local_gepa_parent_acquisition_v1/PROTOCOL.md
+    sha256: 102813155f9ce325b88222643845236f3148aa20b43540b716283a964733492c
+  report: reports/local_gepa_parent_acquisition_v1
+  provenance: reports/local_gepa_parent_acquisition_v1/provenance.json
+git:
+  design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
+  implementation_commit: 83cad045f0fc6a796c9d6244aed7db7d5ac05671
+  result_commit: null
+result:
+  classifier: VALID
+  conclusion: PARENTS_FROZEN_PHASE_B_NOT_AUTHORIZED
+  evidence_type: prospective
+  evidence_scope: parent_acquisition_only
+  eligible_parent_count: 5
+  selected_parent_ids:
+  - seed78_update0_member1
+  - seed78_update0_member2
+  - seed78_update0_member3
+  - seed78_update0_member4
+  phase_b_executed: false

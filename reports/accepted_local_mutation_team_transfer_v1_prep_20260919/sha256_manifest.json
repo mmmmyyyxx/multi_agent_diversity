@@ -1,0 +1,53 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "accepted_mutation_freeze.json",
+      "sha256": "202a03f96c5972deb6fea94f0361a35818564339b28c8bfa5fe4e564dda43297"
+    },
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "89897e1dbf294e7826126796e6f86ae35e74f6584d137e16f7427bffb1de2622"
+    },
+    {
+      "file": "cost_envelope.json",
+      "sha256": "a5c433494707562f65c7590a0a6993ae1630c3cf3415bd1720caf912bcb2455f"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "4fc16c63a1d71dfaffbeaf1bbf0cae7f4adff1cfbffd25b082701c2b9aae4218"
+    },
+    {
+      "file": "EXPERIMENT_HANDOFF.json",
+      "sha256": "4d83639802f735ce922c513b6c5f1eb4575e7b99ce48671a374790d540b35412"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "8d681b4bdf42aacc89f170457bbae9fc5227a8b5cb26a2803044d522a77c2b1f"
+    },
+    {
+      "file": "lifecycle_governance_fix.json",
+      "sha256": "c82725ac2ba828851e7847c4b0b1625c8449f84832b9e9dd44d7599ad943a985"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "7f8f734f5335b97b2820dfd36baf34b1cb7bab1638b3b64101ebaff9aff02be9"
+    },
+    {
+      "file": "README.md",
+      "sha256": "f254f53c721d964827934d427df80185bcef71423bbb5fe357550df2f12bb264"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46ece6ceb5b84ecec6a60088ee356207ff94a8b1d1806a201b0364c63fba5555"
+    },
+    {
+      "file": "scientific_state_freeze.json",
+      "sha256": "2b65b4bee397ddca397d6fd0352dab32bb514283c58ce1e4ed4c1e1b8ab1f018"
+    },
+    {
+      "file": "verification_summary.json",
+      "sha256": "c168bf71d6e28a6f41a1d3a52fe1d7362aceed1567a544c62556d40d74470400"
+    }
+  ]
+}

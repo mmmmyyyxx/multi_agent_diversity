@@ -1,0 +1,72 @@
+{
+  "conditional_recommendation": "4x8",
+  "currency_cost": null,
+  "current_recommendation": "do not execute; resolve parent provenance first",
+  "input_token_cost": "not computable until compatible exact parent tasks are available",
+  "options": [
+    {
+      "coverage_feasible_now": false,
+      "parents": 2,
+      "per_parent": {
+        "accepted_full_local_validation": 96,
+        "bounded_skip_evaluations": 48,
+        "max_metric_calls_with_skips": 204,
+        "metric_ceiling": 205,
+        "normal_max_metric_calls": 156,
+        "parent_child_sampled": 48,
+        "reflection_logical_calls": 8,
+        "seed_local_validation": 12
+      },
+      "proposals_per_parent": 8,
+      "reflection_output_token_upper_bound": 28800,
+      "solver_output_token_upper_bound": 738000,
+      "solver_transport_attempt_upper_bound": 1640,
+      "total_metric_ceiling": 410,
+      "total_proposals": 16,
+      "total_reflection_logical_calls": 16
+    },
+    {
+      "coverage_feasible_now": false,
+      "parents": 4,
+      "per_parent": {
+        "accepted_full_local_validation": 96,
+        "bounded_skip_evaluations": 48,
+        "max_metric_calls_with_skips": 204,
+        "metric_ceiling": 205,
+        "normal_max_metric_calls": 156,
+        "parent_child_sampled": 48,
+        "reflection_logical_calls": 8,
+        "seed_local_validation": 12
+      },
+      "proposals_per_parent": 8,
+      "reflection_output_token_upper_bound": 57600,
+      "solver_output_token_upper_bound": 1476000,
+      "solver_transport_attempt_upper_bound": 3280,
+      "total_metric_ceiling": 820,
+      "total_proposals": 32,
+      "total_reflection_logical_calls": 32
+    },
+    {
+      "coverage_feasible_now": false,
+      "parents": 6,
+      "per_parent": {
+        "accepted_full_local_validation": 96,
+        "bounded_skip_evaluations": 48,
+        "max_metric_calls_with_skips": 204,
+        "metric_ceiling": 205,
+        "normal_max_metric_calls": 156,
+        "parent_child_sampled": 48,
+        "reflection_logical_calls": 8,
+        "seed_local_validation": 12
+      },
+      "proposals_per_parent": 8,
+      "reflection_output_token_upper_bound": 86400,
+      "solver_output_token_upper_bound": 2214000,
+      "solver_transport_attempt_upper_bound": 4920,
+      "total_metric_ceiling": 1230,
+      "total_proposals": 48,
+      "total_reflection_logical_calls": 48
+    }
+  ],
+  "output_bounds_exclude_retried_or_unreported_failed_attempt_usage": true
+}

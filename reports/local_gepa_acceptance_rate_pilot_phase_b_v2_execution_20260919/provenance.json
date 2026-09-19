@@ -1,0 +1,13 @@
+{
+  "completion_sha256": "05452cf2b53463e2ba2cf86116192a1651a55589bdb538181a6fcce2b0e6df4b",
+  "execution_sha256": "46979dcf07c65cfcd3ee54d376e345ae17a19b2d9a029023e8282a3e0fa3ecb0",
+  "freeze_sha256": "e87a097ee8171d42d185a374775990905fff1ab22d4cf61e8e690256e3be8e2c",
+  "frozen_commit": "ac205456ab5190899f5b6df2cdf5cc7bf7c381ef",
+  "handoff_sha256": "22214eb06d8dae2bf4cae9288063dabdab1b66bb519b8465ee11ae56ea8f8402",
+  "private_parent_summaries": {
+    "seed78_update0_member1": "2eda4efc49436f43ff38c05f4f183803d340f60619fc0c26d6b72a0de0a40ce8",
+    "seed78_update0_member2": "21d4d2d0a9795c3d0ce484113fac0037bb46ae443555908ea026bd77d8351600",
+    "seed78_update0_member3": "30b07a6f78dffc54ccf87143e820895b54dbdd70cbf126ba82649b9fad248a7a",
+    "seed78_update0_member4": "9ae30d3d28e0b30382fdd344bfbe9bb1bfe2f6e90490f1d1ad01862d2e1b42a3"
+  }
+}

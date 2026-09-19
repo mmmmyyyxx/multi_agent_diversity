@@ -1,0 +1,43 @@
+{
+  "adapter_propose_new_texts": false,
+  "config": {
+    "batch_sampler": "epoch_shuffled",
+    "cache_evaluation": false,
+    "candidate_component_name": "decision_procedure",
+    "candidate_selection_strategy": "pareto",
+    "engine_acceptance_semantics": "pinned_gepa_v0.1.1_strict_improvement",
+    "frontier_type": "instance",
+    "k_local_return": 4,
+    "max_merge_invocations": 5,
+    "max_metric_calls_source": "LocalOptimizationTask.budget.max_metric_calls",
+    "max_prompt_chars": 3000,
+    "merge_val_overlap_floor": 5,
+    "module_selector": "round_robin",
+    "mutable_component_contract_version": "reasoning_only_no_response_format_v2",
+    "optimizer_fidelity_level": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+    "perfect_score": 1.0,
+    "proposer_contract_version": "decision_procedure_proposer_v1",
+    "reflection_minibatch_size": 3,
+    "reflection_prompt_template_sha256": "7045587e6c3337b207a72e2c9d25ebc77709c0b7561043f2df3d6a04435abb58",
+    "reflective_dataset_version": "component_specific_reasoning_evidence_v1",
+    "result_semantics": "changed_candidates_only_v1",
+    "seed_source": "LocalOptimizationTask.seed",
+    "skip_perfect_score": true,
+    "use_merge": false,
+    "val_evaluation_policy": "full_eval"
+  },
+  "custom_candidate_proposer": false,
+  "engine": {
+    "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+    "source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+    "version": "v0.1.1"
+  },
+  "fidelity_level": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+  "search_core_changed": false,
+  "supported_seams": [
+    "callbacks",
+    "adapter observation",
+    "stop_callbacks"
+  ],
+  "two_layer_search_invoked": false
+}

@@ -1,0 +1,11 @@
+{
+  "manifest_sha256": "8db1334915c9683fc8df921b28bdb946ae34413e8eb8be1f66531dfd9036e77d",
+  "protocol_sha256": "38fcc9122e9df2aeb97f811047629724260f31b9e2ef7a9a5d11007d13cb7534",
+  "raw_answers_published": false,
+  "raw_prompts_published": false,
+  "raw_questions_published": false,
+  "source_v1_candidate_freeze_sha256": "202a03f96c5972deb6fea94f0361a35818564339b28c8bfa5fe4e564dda43297",
+  "source_v1_manifest_sha256": "880fe5b461e8855879e33d9aaf223f56b1cf74c48b13f9515122447f018c24b2",
+  "source_v1_private_bundle_sha256": "ce186485a73cb8884b3995e5c9c344d6c0ff2d91ebfe73d4020c589b1e716716",
+  "source_v1_protocol_sha256": "5f50bfb4cadf8f42a7ae28aaa9b92ff0c965c664c9e059cb33b69de30b22070f"
+}

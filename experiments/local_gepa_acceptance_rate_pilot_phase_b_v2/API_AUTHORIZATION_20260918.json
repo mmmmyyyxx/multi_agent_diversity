@@ -1,0 +1,33 @@
+{
+  "authorization": "EXPLICIT_USER_AUTHORIZATION",
+  "authorized": true,
+  "date": "2026-09-18",
+  "experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+  "scope": {
+    "baseline_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+    "parent_task_ids": [
+      "seed78_update0_member1",
+      "seed78_update0_member2",
+      "seed78_update0_member3",
+      "seed78_update0_member4"
+    ],
+    "proposal_end_per_parent": 8,
+    "proposal_end_total": 32,
+    "normal_local_solver_rows": 624,
+    "hard_local_solver_row_ceiling": 820,
+    "reflection_logical_call_ceiling": 32,
+    "team_level_calls": 0,
+    "Validation50_calls": 0,
+    "Test50_calls": 0
+  },
+  "forbidden": [
+    "parent replacement or expansion",
+    "proposal quota expansion",
+    "metric budget expansion",
+    "GEPA core or telemetry change after results",
+    "team evaluation or write-back",
+    "held-out access",
+    "automatic Layer-1 budget continuation"
+  ],
+  "phase_a_cost_excluded_from_phase_b_denominator": true
+}

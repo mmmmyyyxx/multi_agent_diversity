@@ -1,0 +1,11 @@
+{
+  "gepa_proposals": 0,
+  "optimize_baseline_successes": 100,
+  "persistent_realizability_updates": 0,
+  "reflection_calls": 0,
+  "request_allowlist_verified": true,
+  "team_evaluation_calls": 0,
+  "test50_calls": 0,
+  "validation50_calls": 0,
+  "writebacks": 0
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "experiment_user_authorization_record_v1",
+  "experiment_id": "local_gepa_acceptance_rate_pilot_v1",
+  "user_api_authorization_received": true,
+  "user_instruction": "授权调用api",
+  "continuation_instruction": "继续",
+  "scope": "Local-GEPA acceptance-rate pilot subject to the existing scientific constraints and a complete frozen handoff",
+  "authorization_must_not_be_requested_again_for_this_scope": true,
+  "execution_ready": false,
+  "remaining_blockers": [
+    "PARENT_CATALOG_INSUFFICIENT",
+    "exact parent identities and execution budget not frozen",
+    "real-provider CLI binding and execution source commit not frozen"
+  ],
+  "parent_acquisition_scope_change": "not yet explicitly resolved against original task section 14",
+  "heldout_Validation50_calls": 0,
+  "Test50_calls": 0,
+  "real_api_calls_this_continuation": 0,
+  "prior_preparation_manifest_and_report": "preserved as historical preparation evidence"
+}

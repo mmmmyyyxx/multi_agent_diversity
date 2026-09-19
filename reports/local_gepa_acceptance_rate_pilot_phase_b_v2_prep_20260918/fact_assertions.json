@@ -1,0 +1,22 @@
+{
+  "Common_Safe_calls_zero": true,
+  "READY_TO_RUN_false": true,
+  "Shadow_calls_zero": true,
+  "TeamMiniBatch_calls_zero": true,
+  "Test50_calls_zero": true,
+  "Validation50_calls_zero": true,
+  "cost_ceiling_frozen": true,
+  "exact_four_parent_identity_replay": true,
+  "fifth_parent_recorded": true,
+  "formal_run_root_absent": true,
+  "full_team_calls_zero": true,
+  "iid_inference_prohibited": true,
+  "official_gepa_core_unchanged": true,
+  "persistent_realizability_updates_zero": true,
+  "phase_b_api_calls_zero": true,
+  "proposal_quota_frozen": true,
+  "selection_outcome_blind": true,
+  "single_shared_baseline_state": true,
+  "team_transfer_not_evaluated": true,
+  "team_writebacks_zero": true
+}

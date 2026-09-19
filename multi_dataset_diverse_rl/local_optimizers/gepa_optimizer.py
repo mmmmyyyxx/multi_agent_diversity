@@ -201,6 +201,7 @@ class GEPALocalPromptOptimizer:
         run_root: Path,
         config: GEPAOptimizerConfig | None = None,
         optimize_fn: Callable[..., Any] | None = None,
+        callback_factory: Callable[..., GEPALineageCallback] | None = None,
     ) -> None:
         self.evaluator = evaluator
         self.reflection_lm = reflection_lm
@@ -208,6 +209,7 @@ class GEPALocalPromptOptimizer:
         self.run_root = Path(run_root)
         self.config = config or GEPAOptimizerConfig()
         self._optimize_fn = optimize_fn
+        self._callback_factory = callback_factory or GEPALineageCallback
 
     @staticmethod
     def _generation(index: int, parents: list[list[int | None]], memo: dict[int, int]) -> int:
@@ -254,12 +256,14 @@ class GEPALocalPromptOptimizer:
             output_contract_id=task.output_contract_id,
             max_prompt_chars=self.config.max_prompt_chars,
         )
-        callback = GEPALineageCallback(
+        callback = self._callback_factory(
             lineage_path,
             parent_prompt=task.parent_prompt,
             examples=all_examples,
             max_prompt_chars=self.config.max_prompt_chars,
         )
+        if hasattr(callback, "observe_evaluation"):
+            adapter.evaluation_observer = callback
         before = dict(self.accounting_reader())
         optimize = self._optimize_fn or import_frozen_gepa().optimize
         result = optimize(

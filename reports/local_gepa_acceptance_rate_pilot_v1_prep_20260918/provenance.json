@@ -1,0 +1,37 @@
+{
+  "base_commit": "ed81635c1526bc57d31d565cb187b04d7b651c5b",
+  "canary_files": {
+    "README.md": "d9f65b0925d0c112bed35547b27bf7699547d0cefce8b98fd4c51615bb6f5ae2",
+    "audit.json": "b71e3fc0ef831cf754d96d802cf15be235ebfd8fe4058f57576c80a4c53d90c5",
+    "fact_assertions.json": "b1051b8876ac36c1ea1b20b8b6600e0cfd4a0fd1483af5b7fa6a50de537a23d8",
+    "protocol_freeze.json": "01f54133f6d56a3dabf260ebd15277b8496503d9da7a555c6002d082ab2e1493",
+    "provenance.json": "cdccf8cb4d05ada90bdd6aacc6ac6e8eeacd18682ae98158ef58416f3a372b19",
+    "sanitization_manifest.json": "947bcf5ebf640b2f7bf74a5780a8214777a6d2ebc767afdc40c744ef1399cdb5",
+    "sha256_manifest.json": "3221b623b818a8b4212ed6d63a2800819955cec352e5c5b79771f0b158929f05",
+    "summary.json": "a0855dfbcaca53b9c8188f404d4ebf6f383e78bba80a9fc4eae2a1ed79770520",
+    "validation_report.txt": "da8d11039b6ed59ab8d4cb84d3b4a4e6ee1a06a2e7f8b7647d03b6bd5dd36e2c"
+  },
+  "evidence_type": "zero_api_preparation",
+  "historical_evidence_modified": false,
+  "source_files": {
+    "experiments/local_gepa_acceptance_rate_pilot_v1/EXPERIMENT_HANDOFF.md": "9d87a04322399eb097afd7bac23283b31a5b61e43c6d336ef32b2f88e813a3f3",
+    "experiments/local_gepa_acceptance_rate_pilot_v1/PROTOCOL.md": "1942fcd23cd39170fa2e4e45d4d2dcf90f9eaeceb1ef21aa5c5b9dc475d015ea",
+    "experiments/manifests/local_gepa_acceptance_rate_pilot_v1.yaml": "f2020914e393639dce5011e929f7a37c840e8981cdc779bf39be59aec7e986a7",
+    "multi_dataset_diverse_rl/local_optimizers/__init__.py": "3784aa16c64e936e93f05485ce227bbacaec4bc80ca34985160df9aaadfb46a7",
+    "multi_dataset_diverse_rl/local_optimizers/base.py": "fca35faa5fbdd554b7da29c003c11c53804fe7b6593ff3403a6d168e40029f2a",
+    "multi_dataset_diverse_rl/local_optimizers/config.py": "1c43a0874140d6f072c373c5ecac217503f46921bdc46afa62832f22b7fd8689",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py": "505abd444998c48bfe5167851c67dfba17ff1bfe9185a8ce3a6bc87f9f7617ce",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py": "9df664f6b807a191c5dd1b432d7ac7d2c37d90c8f04f409da2f4f4d8eec1acc8",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py": "16e456f789b683a449967bed6e1ca821cf9b8442b9b1e7f81645d951d0dec028",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py": "7741fbbca9cc2ab09ecf019a6d6e9cf924154a378ab1c1d9081b2b39ab4dc689",
+    "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py": "0f6fecba9fdf01a1210265c00b713bae7ee5d11757b7125ad41e6a781c4969db",
+    "multi_dataset_diverse_rl/local_optimizers/legacy_tcs.py": "3d9c822fa5ef6600d91206da646abb61ee4f864b6a26250ea9835c4f7ce2c0f7",
+    "multi_dataset_diverse_rl/local_optimizers/proposal_telemetry.py": "81b0cfa613d90fe7a0439e3fe5844693912d61168ea5c04c638d31d9d6ed0ec1",
+    "multi_dataset_diverse_rl/local_optimizers/registry.py": "8c28634f2d93dfd6580ca2c87de3e3cc5b52d78c6cefdae22fb4ba6bbac54259",
+    "multi_dataset_diverse_rl/local_optimizers/schemas.py": "2c8e5c95ddda9ea17036f56e41981d77181a1680e192f39fb4cca9e3b3492a86",
+    "multi_dataset_diverse_rl/versions.py": "39af42b404bdfd9bd9d96e03454ed51f54d09f2444a17237f3985b7eb461af47",
+    "scripts/prepare_local_gepa_acceptance_rate_pilot.py": "7d91d6c2f0b6b7ed918cc13786fa03b89d8d93d316582116b8c98e2605940bd7",
+    "scripts/run_local_gepa_acceptance_rate_pilot.py": "2f5eea87ad23f0887e598f09c1f12a4752df592db3fc5f2f59494c752c0c33b0",
+    "tests/test_local_gepa_acceptance_rate_preparation.py": "eca5f32bc8bf2efa95ede33047526abf559237d11bfc64bd1513f345282206ec"
+  }
+}

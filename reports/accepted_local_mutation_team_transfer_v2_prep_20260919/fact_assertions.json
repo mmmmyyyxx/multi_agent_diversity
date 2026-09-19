@@ -1,0 +1,12 @@
+{
+  "all_five_mutations_included": true,
+  "exact_v1_mutation_freeze_preserved": true,
+  "mandatory_full_five_of_five": true,
+  "minibatch_is_diagnostic": true,
+  "no_candidate_generation_or_selection": true,
+  "no_commit_scheduler_or_realizability": true,
+  "single_common_baseline": true,
+  "v1_artifacts_unmodified": true,
+  "validation_test_zero": true,
+  "zero_api_preparation": true
+}

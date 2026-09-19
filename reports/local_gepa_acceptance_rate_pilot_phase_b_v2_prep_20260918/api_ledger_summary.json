@@ -1,0 +1,11 @@
+{
+  "authorization": "PENDING",
+  "local_solver_calls": 0,
+  "phase_a_cost_reference": {
+    "successful_calls": 100,
+    "tokens": 26113
+  },
+  "phase_b_provider_calls": 0,
+  "phase_b_tokens": 0,
+  "reflection_calls": 0
+}

@@ -1,0 +1,298 @@
+{
+  "checks": {
+    "baseline_method": "HEAD versions of all modified runtime modules loaded in an isolated process; identical historical cache coverage failure",
+    "baseline_reproduction": {
+      "errors": 0,
+      "failed_tests": [
+        "tests.test_v16_m20_collateral_structure_audit::test_real_audit_reconstructs_published_counts_without_api"
+      ],
+      "failures": 1,
+      "skipped": 0,
+      "status": "FAIL",
+      "tests": 1
+    },
+    "compileall": {
+      "command": "python -m compileall -q multi_dataset_diverse_rl scripts tests",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "deterministic_replay": {
+      "sha256": "cc69a15d675b26f5f012804325d7cf8cd20164942ccae392ec9427604e9f8ce6",
+      "status": "PASS"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "focused_tests": {
+      "errors": 0,
+      "failed_tests": [],
+      "failures": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "tests": 64
+    },
+    "full_tests": {
+      "errors": 0,
+      "failed_tests": [
+        "tests.test_v16_m20_collateral_structure_audit::test_real_audit_reconstructs_published_counts_without_api"
+      ],
+      "failures": 1,
+      "skipped": 0,
+      "status": "FAIL",
+      "tests": 1082
+    },
+    "governance_preflight": {
+      "command": "python scripts/preflight_experiment_governance.py",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "historical_tracked_preservation": {
+      "command": "git diff --quiet -- reports/level_b_gepa_real_canary* experiments/level_b_gepa_real_canary_v2 experiments/manifests/level_b_gepa_real_canary_v2.yaml experiments/manifests/level_b_gepa_local_acceptance_rate_pilot_v1.yaml",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "initial_unscoped_collection": "archived runs test-name collisions; corrected full scope is tests/",
+    "method_preflight": {
+      "command": "python scripts/preflight_member_aware.py --allow_dirty 1",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "new_failure_count": 0,
+    "no_new_test_failures": true,
+    "observed_smokes": {
+      "accepted_evolved_parent": {
+        "accepted_generations": [
+          1,
+          2
+        ],
+        "funnel": {
+          "changed": 2,
+          "contract_invalid": 0,
+          "duplicate": 0,
+          "full_local_validation_evaluated": 2,
+          "gepa_accepted": 2,
+          "proposal_attempts_observed": 2,
+          "proposal_opportunities_requested": 2,
+          "solver_reached": 2,
+          "strict_equal_sampled_delta": 0,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 2,
+          "unchanged": 0
+        },
+        "metric_calls": 33,
+        "primary": {
+          "denominator": 2,
+          "numerator": 2,
+          "rate": 1.0,
+          "wilson_95": [
+            0.34238022750665303,
+            1.0
+          ]
+        },
+        "proposal_shortfall": 0,
+        "quota_status": "COMPLETE",
+        "skipped_iterations": 1
+      },
+      "duplicate": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 4,
+          "contract_invalid": 0,
+          "duplicate": 3,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 4,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 4,
+          "strict_equal_sampled_delta": 4,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 27,
+        "primary": {
+          "denominator": 4,
+          "numerator": 0,
+          "rate": 0.0,
+          "wilson_95": [
+            0.0,
+            0.4898908364545973
+          ]
+        },
+        "proposal_shortfall": 0,
+        "quota_status": "COMPLETE",
+        "skipped_iterations": 0
+      },
+      "invalid": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 4,
+          "contract_invalid": 4,
+          "duplicate": 3,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 4,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 0,
+          "strict_equal_sampled_delta": 0,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 27,
+        "primary": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null,
+          "wilson_95": null
+        },
+        "proposal_shortfall": 0,
+        "quota_status": "COMPLETE",
+        "skipped_iterations": 0
+      },
+      "metric_shortfall": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 1,
+          "contract_invalid": 0,
+          "duplicate": 0,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 1,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 0,
+          "strict_equal_sampled_delta": 0,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 6,
+        "primary": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null,
+          "wilson_95": null
+        },
+        "proposal_shortfall": 3,
+        "quota_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+        "skipped_iterations": 0
+      },
+      "mixed_perfect_skip": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 4,
+          "contract_invalid": 0,
+          "duplicate": 0,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 4,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 4,
+          "strict_equal_sampled_delta": 4,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 30,
+        "primary": {
+          "denominator": 4,
+          "numerator": 0,
+          "rate": 0.0,
+          "wilson_95": [
+            0.0,
+            0.4898908364545973
+          ]
+        },
+        "proposal_shortfall": 0,
+        "quota_status": "COMPLETE",
+        "skipped_iterations": 1
+      },
+      "perfect_forever": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 0,
+          "contract_invalid": 0,
+          "duplicate": 0,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 0,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 0,
+          "strict_equal_sampled_delta": 0,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 9,
+        "primary": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null,
+          "wilson_95": null
+        },
+        "proposal_shortfall": 4,
+        "quota_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+        "skipped_iterations": 2
+      },
+      "rejected": {
+        "accepted_generations": [],
+        "funnel": {
+          "changed": 4,
+          "contract_invalid": 0,
+          "duplicate": 0,
+          "full_local_validation_evaluated": 0,
+          "gepa_accepted": 0,
+          "proposal_attempts_observed": 4,
+          "proposal_opportunities_requested": 4,
+          "solver_reached": 4,
+          "strict_equal_sampled_delta": 4,
+          "strict_negative_sampled_delta": 0,
+          "strict_positive_sampled_delta": 0,
+          "unchanged": 0
+        },
+        "metric_calls": 27,
+        "primary": {
+          "denominator": 4,
+          "numerator": 0,
+          "rate": 0.0,
+          "wilson_95": [
+            0.0,
+            0.4898908364545973
+          ]
+        },
+        "proposal_shortfall": 0,
+        "quota_status": "COMPLETE",
+        "skipped_iterations": 0
+      }
+    },
+    "pilot_preflight": {
+      "command": "python scripts/run_local_gepa_acceptance_rate_pilot.py --preflight",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "preparation_replay": {
+      "status": "PASS"
+    },
+    "registered_worktree_catalog_regression": {
+      "inventory_count": 33,
+      "status": "PASS",
+      "tests": 24
+    },
+    "sanitization": {
+      "status": "PASS"
+    },
+    "sha256_verification": {
+      "status": "PASS"
+    }
+  },
+  "pytest": {
+    "errors": 0,
+    "failures": 1,
+    "junit_sha256": "643a271590a7c60d27cb936432d2ba86b512b7167fe68799cfbb5fc78c6a74ab",
+    "skipped": 0,
+    "status": "FAIL",
+    "tests": 1082
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+  "experiment_id": "accepted_local_mutation_team_transfer_v1",
+  "mutation_count": 5,
+  "mutations": [
+    {
+      "accepted_candidate_hash": "7643bc41b45e509c10e31636701256263570b78be04684099717bb1a7b710c59",
+      "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+      "local_delta": 1,
+      "mutation_id": "member1_proposal2_7643bc41b45e",
+      "newly_broken": 0,
+      "newly_fixed": 1,
+      "root_parent_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "source_parent_task_id": "seed78_update0_member1",
+      "source_phase_b_experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+      "source_phase_b_run_identity": "local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+      "source_proposal_index": 2,
+      "target_member": 1,
+      "team_minibatch_contract": "primary_lane_strict_4_4_4_v1",
+      "team_minibatch_example_ids": [
+        "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+        "32e49ff79ff85df7c9facc0dbc3721013287a4d4e6691eff014b55e28261d353",
+        "4b4d9cf4ab584d98d4013f22628af1ae3b96f4aa804220f744a91f8bb4998b4e",
+        "57aed234596f8f1788f53a5629ec0dc114496e104feb966997fb1456be0ad70a",
+        "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+        "21efeba1a342f49989df2fb49130235d01e7aa4ae9d7c195a07822b4f5d80b9c",
+        "256cb00e24acac8b5e29ae8929a4d3c2e12d9280dcf76a413c7cfaee288b8478",
+        "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+        "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+        "1220f6bc22165d8ef5e7fc93e5d4464d03050ee83512642b306e90931469e35b",
+        "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+        "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af"
+      ],
+      "team_minibatch_group_counts": {
+        "coalition": 4,
+        "preservation": 4,
+        "responsibility": 4
+      }
+    },
+    {
+      "accepted_candidate_hash": "a5fef723548e930d8338b9a4573a5628e293883c1f1a35b7c58f9d6c8b545e59",
+      "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+      "local_delta": 1,
+      "mutation_id": "member2_proposal8_a5fef723548e",
+      "newly_broken": 0,
+      "newly_fixed": 1,
+      "root_parent_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "source_parent_task_id": "seed78_update0_member2",
+      "source_phase_b_experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+      "source_phase_b_run_identity": "local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+      "source_proposal_index": 8,
+      "target_member": 2,
+      "team_minibatch_contract": "primary_lane_strict_4_4_4_v1",
+      "team_minibatch_example_ids": [
+        "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+        "418e5e354d6095154f8563551f7f6a3e020223f56c424ec7690b5c305da60690",
+        "55d982ac6e7025a805e7a9ec459148237716daae0c5e6475fcd9b50da7120a0e",
+        "790db948bdc0cf00e68ec747f91f0d67c6c598065d7a536119e844ed87c3b76d",
+        "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+        "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+        "21efeba1a342f49989df2fb49130235d01e7aa4ae9d7c195a07822b4f5d80b9c",
+        "256cb00e24acac8b5e29ae8929a4d3c2e12d9280dcf76a413c7cfaee288b8478",
+        "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+        "1220f6bc22165d8ef5e7fc93e5d4464d03050ee83512642b306e90931469e35b",
+        "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+        "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af"
+      ],
+      "team_minibatch_group_counts": {
+        "coalition": 4,
+        "preservation": 4,
+        "responsibility": 4
+      }
+    },
+    {
+      "accepted_candidate_hash": "0229baf5ae5fe2225b7d9ec81a69aac03f56a9388769aea3fd510e59c37ead69",
+      "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+      "local_delta": 1,
+      "mutation_id": "member3_proposal5_0229baf5ae5f",
+      "newly_broken": 0,
+      "newly_fixed": 1,
+      "root_parent_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "source_parent_task_id": "seed78_update0_member3",
+      "source_phase_b_experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+      "source_phase_b_run_identity": "local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+      "source_proposal_index": 5,
+      "target_member": 3,
+      "team_minibatch_contract": "primary_lane_strict_4_4_4_v1",
+      "team_minibatch_example_ids": [
+        "21efeba1a342f49989df2fb49130235d01e7aa4ae9d7c195a07822b4f5d80b9c",
+        "3ce46e376ea8ae439bb5745e2667ad9c935e3cfce4aa14a943a0135b6d64a34f",
+        "538463f0d053279bab3b7e57cb47df43c6d9e261800470ab72a7da02690437d2",
+        "6a5e390c06bbc75192f83c92a376b7eb717c48b0de5e44947d34d8f131bc1b1e",
+        "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+        "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+        "256cb00e24acac8b5e29ae8929a4d3c2e12d9280dcf76a413c7cfaee288b8478",
+        "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+        "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+        "1220f6bc22165d8ef5e7fc93e5d4464d03050ee83512642b306e90931469e35b",
+        "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+        "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af"
+      ],
+      "team_minibatch_group_counts": {
+        "coalition": 4,
+        "preservation": 4,
+        "responsibility": 4
+      }
+    },
+    {
+      "accepted_candidate_hash": "c537ca25a8aa38a055c85017c08345ebc9a119ba7581ce8a2609fcdcb76c2af4",
+      "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+      "local_delta": 1,
+      "mutation_id": "member4_proposal2_c537ca25a8aa",
+      "newly_broken": 0,
+      "newly_fixed": 1,
+      "root_parent_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "source_parent_task_id": "seed78_update0_member4",
+      "source_phase_b_experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+      "source_phase_b_run_identity": "local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+      "source_proposal_index": 2,
+      "target_member": 4,
+      "team_minibatch_contract": "primary_lane_strict_4_4_4_v1",
+      "team_minibatch_example_ids": [
+        "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+        "3b39e427f3926afdd97ecf5922bd15bd320bd6f0e3b1d1e511707e1c95c20f75",
+        "5147ccce636394d1773531bbccd6f904010397f216f40583146c0a0b86a66ad4",
+        "67bfcd3c5d850af456066a5555aee26dd15058807bb9d1215e6268737cc71928",
+        "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+        "21efeba1a342f49989df2fb49130235d01e7aa4ae9d7c195a07822b4f5d80b9c",
+        "256cb00e24acac8b5e29ae8929a4d3c2e12d9280dcf76a413c7cfaee288b8478",
+        "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+        "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+        "1220f6bc22165d8ef5e7fc93e5d4464d03050ee83512642b306e90931469e35b",
+        "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+        "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af"
+      ],
+      "team_minibatch_group_counts": {
+        "coalition": 4,
+        "preservation": 4,
+        "responsibility": 4
+      }
+    },
+    {
+      "accepted_candidate_hash": "f5d945233dc9841cc4b89853da48f674512d5cfecb4594f4f67b32a0560db1d9",
+      "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+      "local_delta": 1,
+      "mutation_id": "member4_proposal4_f5d945233dc9",
+      "newly_broken": 0,
+      "newly_fixed": 1,
+      "root_parent_hash": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+      "source_parent_task_id": "seed78_update0_member4",
+      "source_phase_b_experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+      "source_phase_b_run_identity": "local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+      "source_proposal_index": 4,
+      "target_member": 4,
+      "team_minibatch_contract": "primary_lane_strict_4_4_4_v1",
+      "team_minibatch_example_ids": [
+        "193d14b7050758fc99ba2d05bb86fb5b0fc650052cddf073bd1f54c71a52fb79",
+        "3b39e427f3926afdd97ecf5922bd15bd320bd6f0e3b1d1e511707e1c95c20f75",
+        "5147ccce636394d1773531bbccd6f904010397f216f40583146c0a0b86a66ad4",
+        "67bfcd3c5d850af456066a5555aee26dd15058807bb9d1215e6268737cc71928",
+        "0cdf9bdfebe338f5a3006daf8eaed834c50068625527e8dd004b6cfc498784e7",
+        "21efeba1a342f49989df2fb49130235d01e7aa4ae9d7c195a07822b4f5d80b9c",
+        "256cb00e24acac8b5e29ae8929a4d3c2e12d9280dcf76a413c7cfaee288b8478",
+        "30d1c8a11d6c3abe5d3c919ad986f07d044dbb2d632cf935c6ef4244ac0cb4f5",
+        "065a3c72d493d9988a728632c8461cf3801309c7a435f228e48f3e8b8b8941c7",
+        "1220f6bc22165d8ef5e7fc93e5d4464d03050ee83512642b306e90931469e35b",
+        "16d05f3cee7428583825abbe11be3ac60e4732630add5ad583ec3a6e8ea5f4c6",
+        "18a8f9697a4e968acfc90115b3e9dfba0161243a5411e87e076e8e1b056493af"
+      ],
+      "team_minibatch_group_counts": {
+        "coalition": 4,
+        "preservation": 4,
+        "responsibility": 4
+      }
+    }
+  ],
+  "private_bundle_sha256": "ce186485a73cb8884b3995e5c9c344d6c0ff2d91ebfe73d4020c589b1e716716",
+  "schema_version": "accepted_local_mutation_freeze_v1",
+  "selection_rule": "all Phase-B gepa_accepted mutations; no subset or regeneration"
+}

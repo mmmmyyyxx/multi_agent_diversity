@@ -1,0 +1,17 @@
+{
+  "Test50_calls": 0,
+  "api_authorized": false,
+  "catalog_coverage_sufficient": false,
+  "common_safe_calls": 0,
+  "execution_freeze_complete": false,
+  "formal_pilot_run_root_absent": true,
+  "full_team_calls": 0,
+  "heldout_Validation50_calls": 0,
+  "measurement_implementation_complete": true,
+  "no_new_test_failures": true,
+  "official_core_unchanged": true,
+  "real_api_calls": 0,
+  "shadow_calls": 0,
+  "team_commits": 0,
+  "team_minibatch_calls": 0
+}

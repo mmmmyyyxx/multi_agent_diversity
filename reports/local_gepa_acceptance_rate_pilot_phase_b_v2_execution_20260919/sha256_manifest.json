@@ -1,0 +1,61 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "fb42ee0cd5d521dd91c495fc5ece089641d8297249bad95f94adaeec52e154b0"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "7aff2a89be4044cd6f2e54a456aebf1b6b0ba811b7b0b380e55b47feaa3bdfc0"
+    },
+    {
+      "file": "cost_accounting.json",
+      "sha256": "dbaaa0496c633f8304020abb453c8f9a59983707d42c998b8a49d6f297d4e501"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "3f33522a4c0350711ac8e9fed63f18b35ed4e7aaf91258a0a2055cdd083c5515"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "f72980cbcc5359bc57823b1c5da62deae9e47b9f630f6c9c5040abf4d3fd5546"
+    },
+    {
+      "file": "funnel_summary.json",
+      "sha256": "e87b7b579b9e826d69b97005ed4f571938b56c4c4d8d63678582a7dd02c73c0c"
+    },
+    {
+      "file": "integrity_audit.json",
+      "sha256": "1cf1bf5fbce82691b9fbe01d3264630571a21b445fcc78a96c6d82eebfb3ea6f"
+    },
+    {
+      "file": "interpretation.json",
+      "sha256": "b6bba32fafcba52feff7228038d9eb58671e7d63f66237ccbf22022a6705074a"
+    },
+    {
+      "file": "parent_summaries.json",
+      "sha256": "4775531ea041783e815e462c222b18ed728a64b83c4ccc0623ae3c04bd6a0af5"
+    },
+    {
+      "file": "proposal_outcomes.jsonl",
+      "sha256": "7a0b98add470bda8ec657e5823445961c46103c7c9a5f664f15de93f93f9cdeb"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "81d7e6cea6cdde9bfa2ba16322cfc335d25e3533a79b52ab6c41e6233db550b5"
+    },
+    {
+      "file": "README.md",
+      "sha256": "91f1836414d19a4216725bd192423afbebebc12e84fdcc379dc0e4332539f198"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46ece6ceb5b84ecec6a60088ee356207ff94a8b1d1806a201b0364c63fba5555"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "509099041d91f2569979957770967f41d63941034470c2c90bfe72a991989dcf"
+    }
+  ]
+}

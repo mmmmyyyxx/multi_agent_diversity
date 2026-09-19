@@ -1,0 +1,14 @@
+{
+  "Test50_calls_zero": true,
+  "Validation50_calls_zero": true,
+  "exact_four_frozen_parents": true,
+  "gepa_metric_observation_rows_at_most_820": true,
+  "no_automatic_budget_expansion": true,
+  "phase_a_excluded_from_denominator": true,
+  "proposal_events_at_most_eight_each": true,
+  "reflection_calls_at_most_32": true,
+  "single_shared_baseline_state": true,
+  "solver_logical_rows_at_most_820": true,
+  "team_execution_zero": true,
+  "team_transfer_not_evaluated": true
+}

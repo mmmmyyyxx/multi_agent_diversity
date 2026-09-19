@@ -1,0 +1,11 @@
+{
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "gepa_calls": 0,
+  "optimize_candidate_profile_successful_solver_ceiling": 500,
+  "reflection_calls": 0,
+  "shadow_candidate_profile_successful_solver_ceiling": 250,
+  "shadow_control_shared_successful_solver_ceiling": 50,
+  "total_successful_solver_provider_ceiling": 800,
+  "transport_attempt_ceiling": 3200
+}

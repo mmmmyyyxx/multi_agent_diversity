@@ -1,0 +1,97 @@
+{
+  "checks": [
+    {
+      "checks": {
+        "backend_state_absent": true,
+        "context_reconstructable": true,
+        "current_output_contract": true,
+        "current_solver_contract": true,
+        "local_optimizer_validation_size_12": true,
+        "local_validation_4_4_4": true,
+        "optimize_only_payloads": true,
+        "ordered_ids_unique": true,
+        "primary_lane_explicit": true,
+        "roundtrip_exact": true,
+        "search_nonempty": true,
+        "target_member_explicit": true,
+        "validation_subset_search": true
+      },
+      "parent_task_id": "seed78_update0_member0"
+    },
+    {
+      "checks": {
+        "backend_state_absent": true,
+        "context_reconstructable": true,
+        "current_output_contract": true,
+        "current_solver_contract": true,
+        "local_optimizer_validation_size_12": true,
+        "local_validation_4_4_4": true,
+        "optimize_only_payloads": true,
+        "ordered_ids_unique": true,
+        "primary_lane_explicit": true,
+        "roundtrip_exact": true,
+        "search_nonempty": true,
+        "target_member_explicit": true,
+        "validation_subset_search": true
+      },
+      "parent_task_id": "seed78_update0_member1"
+    },
+    {
+      "checks": {
+        "backend_state_absent": true,
+        "context_reconstructable": true,
+        "current_output_contract": true,
+        "current_solver_contract": true,
+        "local_optimizer_validation_size_12": true,
+        "local_validation_4_4_4": true,
+        "optimize_only_payloads": true,
+        "ordered_ids_unique": true,
+        "primary_lane_explicit": true,
+        "roundtrip_exact": true,
+        "search_nonempty": true,
+        "target_member_explicit": true,
+        "validation_subset_search": true
+      },
+      "parent_task_id": "seed78_update0_member2"
+    },
+    {
+      "checks": {
+        "backend_state_absent": true,
+        "context_reconstructable": true,
+        "current_output_contract": true,
+        "current_solver_contract": true,
+        "local_optimizer_validation_size_12": true,
+        "local_validation_4_4_4": true,
+        "optimize_only_payloads": true,
+        "ordered_ids_unique": true,
+        "primary_lane_explicit": true,
+        "roundtrip_exact": true,
+        "search_nonempty": true,
+        "target_member_explicit": true,
+        "validation_subset_search": true
+      },
+      "parent_task_id": "seed78_update0_member3"
+    },
+    {
+      "checks": {
+        "backend_state_absent": true,
+        "context_reconstructable": true,
+        "current_output_contract": true,
+        "current_solver_contract": true,
+        "local_optimizer_validation_size_12": true,
+        "local_validation_4_4_4": true,
+        "optimize_only_payloads": true,
+        "ordered_ids_unique": true,
+        "primary_lane_explicit": true,
+        "roundtrip_exact": true,
+        "search_nonempty": true,
+        "target_member_explicit": true,
+        "validation_subset_search": true
+      },
+      "parent_task_id": "seed78_update0_member4"
+    }
+  ],
+  "deterministic_reconstruction": true,
+  "source_commit": "83cad045f0fc6a796c9d6244aed7db7d5ac05671",
+  "status": "PARENTS_FROZEN_PHASE_B_NOT_AUTHORIZED"
+}

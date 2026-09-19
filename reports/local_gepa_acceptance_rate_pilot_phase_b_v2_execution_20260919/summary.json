@@ -1,0 +1,116 @@
+{
+  "all_parent_quotas_complete": true,
+  "classifier": "VALID_COMPLETE_4X8",
+  "interpretation": {
+    "accepted_parent_count": 4,
+    "accepted_parent_ids": [
+      "seed78_update0_member1",
+      "seed78_update0_member2",
+      "seed78_update0_member3",
+      "seed78_update0_member4"
+    ],
+    "behavioral_no_op_count": 2,
+    "cross_state_generalization": "NOT_SUPPORTED",
+    "fix_break_decomposition": {
+      "both_fix_and_break": 1,
+      "break_only": 2,
+      "fix_only": 5,
+      "no_behavior_change": 2,
+      "total_newly_broken": 3,
+      "total_newly_fixed": 6
+    },
+    "outcome_counts": {
+      "EXACT_EQUAL": 3,
+      "STRICT_NEGATIVE": 2,
+      "STRICT_POSITIVE": 5
+    },
+    "primary_classification": "LOCAL_GEPA_STRICT_IMPROVEMENT_OBSERVED_ACROSS_MULTIPLE_MEMBER_TASKS",
+    "proposal_validity": {
+      "changed": 31,
+      "contract_invalid": 21,
+      "over_length": 21,
+      "primary_denominator": 10,
+      "proposal_end": 32,
+      "solver_reached": 11,
+      "unchanged": 1
+    },
+    "reading_order": [
+      "proposal_validity",
+      "delta_local",
+      "fix_break_decomposition",
+      "member_heterogeneity",
+      "search_concentration"
+    ],
+    "repair_preservation_cancellation_count": 1,
+    "search_concentration": {
+      "all_pairwise_minibatch_jaccard_zero": true,
+      "all_previous_failure_reuse_fractions_zero": true,
+      "dominant_failure_pattern_share_by_parent": {
+        "seed78_update0_member1": 0.5833333333333334,
+        "seed78_update0_member2": 0.7,
+        "seed78_update0_member3": 0.5,
+        "seed78_update0_member4": 0.75
+      },
+      "evolved_parented_accepted": 0,
+      "evolved_parented_primary_eligible": 1,
+      "evolved_parented_proposals": 14,
+      "root_parented_accepted": 5,
+      "root_parented_primary_eligible": 9,
+      "root_parented_proposals": 18
+    },
+    "secondary_diagnostic_labels_require_owner_interpretation": true,
+    "secondary_diagnostics": {
+      "LOCAL_REPAIR_PRESERVATION_TRADEOFF": {
+        "eligible_with_both_fixes_and_breaks": 1,
+        "status": "OBSERVED_BUT_NOT_COMMON"
+      },
+      "LOW_BEHAVIORAL_EFFECT_OF_PROPOSALS": {
+        "behavioral_no_ops": 2,
+        "status": "OBSERVED_BUT_NOT_DOMINANT"
+      }
+    },
+    "team_transfer": "TEAM_TRANSFER_NOT_EVALUATED"
+  },
+  "operational_note": "STALE_RUNNING_LIFECYCLE_MARKER_WITH_COMPLETE_TERMINAL_ARTIFACTS",
+  "parents_with_at_least_one_acceptance": {
+    "denominator": 4,
+    "estimand": "DESCRIPTIVE_NON_IID",
+    "numerator": 4,
+    "rate": 1.0
+  },
+  "per_parent_acceptance_rates": {
+    "seed78_update0_member1": {
+      "denominator": 1,
+      "estimand": "DESCRIPTIVE_NON_IID",
+      "numerator": 1,
+      "rate": 1.0
+    },
+    "seed78_update0_member2": {
+      "denominator": 3,
+      "estimand": "DESCRIPTIVE_NON_IID",
+      "numerator": 1,
+      "rate": 0.3333333333333333
+    },
+    "seed78_update0_member3": {
+      "denominator": 3,
+      "estimand": "DESCRIPTIVE_NON_IID",
+      "numerator": 1,
+      "rate": 0.3333333333333333
+    },
+    "seed78_update0_member4": {
+      "denominator": 3,
+      "estimand": "DESCRIPTIVE_NON_IID",
+      "numerator": 2,
+      "rate": 0.6666666666666666
+    }
+  },
+  "pooled_primary": {
+    "denominator": 10,
+    "estimand": "DESCRIPTIVE_NON_IID",
+    "numerator": 5,
+    "rate": 0.5
+  },
+  "scope": "single-baseline-state multi-member Layer-1 GEPA acceptance-rate pilot",
+  "shared_source_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+  "team_transfer": "TEAM_TRANSFER_NOT_EVALUATED"
+}

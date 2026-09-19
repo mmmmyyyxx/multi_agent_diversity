@@ -1,0 +1,111 @@
+schema_version: experiment_manifest_v1
+experiment_id: accepted_local_mutation_team_transfer_v1
+title: Accepted local mutation read-only team-transfer replay
+status: IMPLEMENTED
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-19T11:57:55.024581+00:00'
+- status: PREREGISTERED
+  timestamp: '2026-09-19T11:57:55.024581+00:00'
+- status: IMPLEMENTED
+  timestamp: '2026-09-19T11:57:55.024581+00:00'
+lineage:
+  parents:
+  - local_gepa_acceptance_rate_pilot_phase_b_v2
+  derives_from: local_gepa_acceptance_rate_pilot_phase_b_v2
+scientific_question: Do all five accepted local mutations transfer to team-level gains
+  in the same fixed baseline state?
+hypotheses:
+- Multiple accepted local mutations may yield positive full-team vote deltas.
+- If progressive team transfer is absent, local and team objectives may be misaligned.
+method_identity: member_aware_peer_state_v15
+runtime_version: accepted_local_mutation_team_transfer_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+    shadow50: anti_overfitting_split_v1_fold_c
+  split_hashes:
+    optimize100_ordered_ids_sha256: b0d186f31ad066518857e43ae72b48ac215a2ef89a28873017f4f194dce12966
+    shadow50_ids_sha256: 254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: qwen3-8b
+  optimizer_roles: {}
+  thinking: false
+  temperatures:
+    solver: 0.0
+  max_tokens:
+    solver: 1800
+seeds:
+- 78
+design:
+  changed:
+  - read-only replay of all five frozen accepted mutations
+  unchanged:
+  - five-member plurality
+  - tie-as-abstain
+  - TeamMiniBatch12
+  - Common-Safe
+  - Shadow gate
+  - COMMON_SOLVER_CONTRACT_V1
+  forbidden_changes:
+  - candidate generation
+  - candidate subset selection
+  - GEPA
+  - Reflection
+  - scheduler
+  - writeback
+  - persistent realizability
+  - Validation50
+  - Test50
+  baseline_team_hash: faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd
+  candidate_count: 5
+  candidate_freeze_sha256: 202a03f96c5972deb6fea94f0361a35818564339b28c8bfa5fe4e564dda43297
+  private_bundle_sha256: ce186485a73cb8884b3995e5c9c344d6c0ff2d91ebfe73d4020c589b1e716716
+  decomposition_version: fixed_baseline_read_only_case_mapping_v1
+  formal_run_root: runs/accepted_local_mutation_team_transfer_v1_attempt1
+  protocol_sha256: 5f50bfb4cadf8f42a7ae28aaa9b92ff0c965c664c9e059cb33b69de30b22070f
+api_authorization:
+  authorized: false
+  authorization_scope: pending explicit team-replay authorization
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: progressive_read_only_five_pair_replay
+  frozen_before_run: true
+  limit:
+    mutation_pairs: 5
+    successful_solver_provider_calls: 800
+    transport_attempts: 3200
+    per_request_attempts: 4
+    Reflection: 0
+    GEPA: 0
+    writeback: 0
+    persistent_realizability: 0
+    Validation50: 0
+    Test50: 0
+    solver_concurrency: 8
+selection:
+  primary_metric: five_case_local_to_team_transfer_mapping
+  frozen_rule: include all five accepted mutations in deterministic order; no ranking
+    or subset
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/accepted_local_mutation_team_transfer_v1/PROTOCOL.md
+    sha256: 4a4eef3fbdd8b9c4192180c4d210f6d61f0c5ddf632670eb6cb9f56ebc1fa699
+  report: reports/accepted_local_mutation_team_transfer_v1_prep_20260919
+  provenance: reports/accepted_local_mutation_team_transfer_v1_prep_20260919/provenance.json
+git:
+  design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: PREREGISTERED_NOT_EXECUTED
+  conclusion: Team transfer remains unevaluated pending separate API authorization.
+  evidence_type: not_yet_available

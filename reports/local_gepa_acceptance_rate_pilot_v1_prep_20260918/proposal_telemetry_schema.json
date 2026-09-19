@@ -1,0 +1,96 @@
+{
+  "edit_similarity": "token_edit_similarity_v1",
+  "evaluation_batch_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "binary_scores": {
+        "items": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "type": "array"
+      },
+      "candidate_hash": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "capture_traces": {
+        "type": "boolean"
+      },
+      "evaluation_sequence_id": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "evidence_group": {
+        "items": {
+          "enum": [
+            "responsibility",
+            "coalition",
+            "preservation",
+            "general"
+          ]
+        },
+        "type": "array"
+      },
+      "example_ids": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "provider_called": {
+        "items": {
+          "type": "boolean"
+        },
+        "type": "array"
+      },
+      "reasoning_lane": {
+        "items": {
+          "enum": [
+            "direct_flip",
+            "near_margin",
+            "coverage",
+            "fallback",
+            "general"
+          ]
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "binary_scores",
+      "candidate_hash",
+      "capture_traces",
+      "evaluation_sequence_id",
+      "evidence_group",
+      "example_ids",
+      "provider_called",
+      "reasoning_lane"
+    ],
+    "type": "object"
+  },
+  "evaluation_fields": [
+    "binary_scores",
+    "candidate_hash",
+    "capture_traces",
+    "evaluation_sequence_id",
+    "evidence_group",
+    "example_ids",
+    "provider_called",
+    "reasoning_lane"
+  ],
+  "example_id_mapping": "ListDataLoader positional IDs resolved to ordered search examples",
+  "missing_values": "JSON null",
+  "pattern_filter": "selected parent binary score == 0",
+  "patterns": [
+    "evidence_group",
+    "reasoning_lane"
+  ],
+  "schema_version": "proposal_behavior_telemetry_v1",
+  "strict_row_allowlist": true
+}

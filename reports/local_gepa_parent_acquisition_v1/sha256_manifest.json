@@ -1,0 +1,77 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "acquisition_cost.json",
+      "sha256": "9857784e9f5ec83f622ebf12f00144b4675d076c7a880e319ad82d60faa707c0"
+    },
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "9857784e9f5ec83f622ebf12f00144b4675d076c7a880e319ad82d60faa707c0"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "6e41dc5902fdcc20dd381c6f2c2fc066644f985cbbc1ff0fbbab2a7c438e098c"
+    },
+    {
+      "file": "eligible_parent_catalog.json",
+      "sha256": "cab9be073d1121c56b5376200f7787f02e4ba0a8af3dd235858b7f5b5eeaa2ab"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "d83b4447f8f62ed19cc53eaab6e9445540e603f648ed11c3794c5e642d6d2056"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "0825a39b8ef982173d2172890e26623aa8d8fbc7924f2f0983ba7317fea9e5eb"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "0dae193b4380470a3fbe5fa909fd257602b8a4ccd85ba368ca82171bd037d507"
+    },
+    {
+      "file": "parent_catalog.json",
+      "sha256": "cab9be073d1121c56b5376200f7787f02e4ba0a8af3dd235858b7f5b5eeaa2ab"
+    },
+    {
+      "file": "parent_task_integrity_audit.json",
+      "sha256": "f389e0b0776300b2360293370812ccd6e23e98286fe38a16c95b6b26815022da"
+    },
+    {
+      "file": "PHASE_B_DRAFT.md",
+      "sha256": "956dff7ed839085b42bb98243b05c50ba95034d4aee8d1842fd6e469ecc29d40"
+    },
+    {
+      "file": "phase_b_preregistration_inputs.json",
+      "sha256": "ee9cdc5c33b3efba0c5ff1dc3a907b3761cb8be48bfaf36f2037d06f819f6689"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "c2f2e4415258467f16c3d596316bd50155bcd3b73a1d385f1a0d4f5a0e639d91"
+    },
+    {
+      "file": "README.md",
+      "sha256": "841f1317014f96ca223a574695c68529861743a083754cf1d1cd71cdea4e6799"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "f7643cbdc105f160384e98a14eebc2d0296a70549ef3ffd12dd44ec61e08e300"
+    },
+    {
+      "file": "selected_parent_ids.json",
+      "sha256": "1690f73ea38d739d09eedfff324aef8f7fd9d8cfe973e67924de5cfc5efe94c4"
+    },
+    {
+      "file": "split_isolation_audit.json",
+      "sha256": "d83b4447f8f62ed19cc53eaab6e9445540e603f648ed11c3794c5e642d6d2056"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "60847426c10e8993f870bb09424c26208186f919dfd38e0130b665c4917fc5fd"
+    },
+    {
+      "file": "verification_summary.json",
+      "sha256": "51757f2274953932b3749eb4f8c1b46c2d05ef73f5073eed6753e9ff79694aa5"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+schema_version: experiment_manifest_v1
+experiment_id: local_gepa_acceptance_rate_pilot_v1
+title: Local GEPA acceptance-rate preparation
+status: DRAFT
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-18T00:00:00+08:00'
+lineage:
+  parents:
+  - level_b_gepa_real_canary_v2
+  derives_from: level_b_gepa_real_canary_v2
+scientific_question: How often does official GEPA yield strict local improvements,
+  and what paired behaviors explain them?
+hypotheses:
+- Expanded local search may produce strict improvements; team transfer remains unevaluated.
+method_identity: member_aware_peer_state_v15
+runtime_version: local_gepa_acceptance_rate_pilot_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+    shadow50: anti_overfitting_split_v1_fold_c
+    validation50: not_accessed
+    test50: blocked
+  split_hashes:
+    optimize100:
+      count: 100
+      question_hashes_sha256: 1678f8339929dab5d728cc25940c8e452f74b3f0508fda8fc9a19532207d494f
+    shadow50:
+      count: 50
+      question_hashes_sha256: 254b6a4ae1f00f7a913795be4f0e3522790b537de4ca8e9bd73c04dfc23d1557
+    validation50:
+      count: 50
+      question_hashes_sha256: 95cd6cfd2ed3de66a16625b133a678c9422c41637356faa1073d6a908482d359
+    test50:
+      count: 50
+      question_hashes_sha256: c1a90894d094b099a4bc2fc09fd7f529e8ddc4a667237e5f572f77358d7330b2
+  validation_policy: prohibited; heldout_Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: qwen3-8b
+  optimizer_roles:
+    reflection: qwen3.7-flash
+  thinking: false
+  temperatures:
+    solver: 0.0
+    reflection: 0.0
+seeds: []
+design:
+  changed:
+  - observational proposal telemetry
+  - actual proposal event stopper
+  unchanged:
+  - official GEPA search semantics
+  - local task definition
+  - models
+  - splits
+  forbidden_changes:
+  - reflection template
+  - scheduler
+  - persistent realizability
+  - TeamMiniBatch
+  - Common-Safe
+  - Shadow
+  - team write-back
+  attempt_id: local_gepa_acceptance_rate_pilot_v1_attempt1
+  formal_run_root: runs/local_gepa_acceptance_rate_pilot_v1_attempt1
+  selected_parents: []
+  parent_catalog_status: PARENT_CATALOG_INSUFFICIENT
+  parent_catalog_identity: de5128d656e4329fb7cb3e8637e29b8c1bffe4d342514afa98af5ef3bd71f52e
+  recommended_parent_count_if_eligible: 4
+  proposal_quota_per_parent: 8
+  skipped_iteration_allowance: 16
+  selection_rule: greedy_unseen_seed_state_then_member_then_lane_lexicographic_v1
+  official_gepa:
+    optimizer_fidelity_level: LEVEL_B_API_COMPATIBLE_ADAPTATION
+    candidate_component_name: decision_procedure
+    mutable_component_contract_version: reasoning_only_no_response_format_v2
+    candidate_selection_strategy: pareto
+    frontier_type: instance
+    engine_acceptance_semantics: pinned_gepa_v0.1.1_strict_improvement
+    reflection_minibatch_size: 3
+    skip_perfect_score: true
+    perfect_score: 1.0
+    batch_sampler: epoch_shuffled
+    val_evaluation_policy: full_eval
+    use_merge: false
+    max_merge_invocations: 5
+    merge_val_overlap_floor: 5
+    module_selector: round_robin
+    cache_evaluation: false
+    k_local_return: 4
+    max_prompt_chars: 3000
+    proposer_contract_version: decision_procedure_proposer_v1
+    reflective_dataset_version: component_specific_reasoning_evidence_v1
+    reflection_prompt_template_sha256: 7045587e6c3337b207a72e2c9d25ebc77709c0b7561043f2df3d6a04435abb58
+    result_semantics: changed_candidates_only_v1
+    max_metric_calls_source: LocalOptimizationTask.budget.max_metric_calls
+    seed_source: LocalOptimizationTask.seed
+  protocol_sha256: 1942fcd23cd39170fa2e4e45d4d2dcf90f9eaeceb1ef21aa5c5b9dc475d015ea
+api_authorization:
+  authorized: false
+  authorization_scope: pending_explicit_authorization
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: proposed_event_quota_with_hard_metric_ceiling
+  frozen_before_run: false
+  limit:
+    proposals_per_parent: 8
+    max_metric_calls_per_parent: 205
+    skip_allowance: 16
+    parent_count: null
+    heldout_Validation50: 0
+    Test50: 0
+selection:
+  primary_metric: strict_improvement_acceptance_rate
+  frozen_rule: official accepted / contract-valid changed empirically evaluated proposal
+    events; descriptive Wilson 95 percent interval
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/local_gepa_acceptance_rate_pilot_v1/PROTOCOL.md
+    sha256: 7ccd12cbc03f845d44172e85721014c406c2f8b5d8f8454ef2323a7124ce9f82
+  report: reports/local_gepa_acceptance_rate_pilot_v1_prep_20260918
+  provenance: reports/local_gepa_acceptance_rate_pilot_v1_prep_20260918/provenance.json
+git:
+  design_commit: ed81635c1526bc57d31d565cb187b04d7b651c5b
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: PARENT_CATALOG_INSUFFICIENT
+  conclusion: Preparation only; no local effectiveness estimate.
+  evidence_type: not_yet_available

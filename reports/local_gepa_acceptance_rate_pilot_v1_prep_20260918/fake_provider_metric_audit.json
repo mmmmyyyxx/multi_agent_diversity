@@ -1,0 +1,231 @@
+{
+  "cases": [
+    "fix",
+    "break",
+    "fix_and_break",
+    "equal",
+    "preservation_only_break",
+    "evolved_parent",
+    "duplicate",
+    "contract_invalid",
+    "perfect_skip",
+    "exact_proposal_stopping",
+    "metric_shortfall",
+    "perfect_forever_shortfall",
+    "row_alignment",
+    "cached_empirical_evidence",
+    "Wilson",
+    "ordered_token_similarity",
+    "full_validation_budget_interrupt",
+    "callback_persistence_failure"
+  ],
+  "evidence": "tests/test_local_gepa_acceptance_rate_preparation.py",
+  "observed_smokes": {
+    "accepted_evolved_parent": {
+      "accepted_generations": [
+        1,
+        2
+      ],
+      "funnel": {
+        "changed": 2,
+        "contract_invalid": 0,
+        "duplicate": 0,
+        "full_local_validation_evaluated": 2,
+        "gepa_accepted": 2,
+        "proposal_attempts_observed": 2,
+        "proposal_opportunities_requested": 2,
+        "solver_reached": 2,
+        "strict_equal_sampled_delta": 0,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 2,
+        "unchanged": 0
+      },
+      "metric_calls": 33,
+      "primary": {
+        "denominator": 2,
+        "numerator": 2,
+        "rate": 1.0,
+        "wilson_95": [
+          0.34238022750665303,
+          1.0
+        ]
+      },
+      "proposal_shortfall": 0,
+      "quota_status": "COMPLETE",
+      "skipped_iterations": 1
+    },
+    "duplicate": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 4,
+        "contract_invalid": 0,
+        "duplicate": 3,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 4,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 4,
+        "strict_equal_sampled_delta": 4,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 27,
+      "primary": {
+        "denominator": 4,
+        "numerator": 0,
+        "rate": 0.0,
+        "wilson_95": [
+          0.0,
+          0.4898908364545973
+        ]
+      },
+      "proposal_shortfall": 0,
+      "quota_status": "COMPLETE",
+      "skipped_iterations": 0
+    },
+    "invalid": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 4,
+        "contract_invalid": 4,
+        "duplicate": 3,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 4,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 0,
+        "strict_equal_sampled_delta": 0,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 27,
+      "primary": {
+        "denominator": 0,
+        "numerator": 0,
+        "rate": null,
+        "wilson_95": null
+      },
+      "proposal_shortfall": 0,
+      "quota_status": "COMPLETE",
+      "skipped_iterations": 0
+    },
+    "metric_shortfall": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 1,
+        "contract_invalid": 0,
+        "duplicate": 0,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 1,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 0,
+        "strict_equal_sampled_delta": 0,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 6,
+      "primary": {
+        "denominator": 0,
+        "numerator": 0,
+        "rate": null,
+        "wilson_95": null
+      },
+      "proposal_shortfall": 3,
+      "quota_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+      "skipped_iterations": 0
+    },
+    "mixed_perfect_skip": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 4,
+        "contract_invalid": 0,
+        "duplicate": 0,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 4,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 4,
+        "strict_equal_sampled_delta": 4,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 30,
+      "primary": {
+        "denominator": 4,
+        "numerator": 0,
+        "rate": 0.0,
+        "wilson_95": [
+          0.0,
+          0.4898908364545973
+        ]
+      },
+      "proposal_shortfall": 0,
+      "quota_status": "COMPLETE",
+      "skipped_iterations": 1
+    },
+    "perfect_forever": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 0,
+        "contract_invalid": 0,
+        "duplicate": 0,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 0,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 0,
+        "strict_equal_sampled_delta": 0,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 9,
+      "primary": {
+        "denominator": 0,
+        "numerator": 0,
+        "rate": null,
+        "wilson_95": null
+      },
+      "proposal_shortfall": 4,
+      "quota_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+      "skipped_iterations": 2
+    },
+    "rejected": {
+      "accepted_generations": [],
+      "funnel": {
+        "changed": 4,
+        "contract_invalid": 0,
+        "duplicate": 0,
+        "full_local_validation_evaluated": 0,
+        "gepa_accepted": 0,
+        "proposal_attempts_observed": 4,
+        "proposal_opportunities_requested": 4,
+        "solver_reached": 4,
+        "strict_equal_sampled_delta": 4,
+        "strict_negative_sampled_delta": 0,
+        "strict_positive_sampled_delta": 0,
+        "unchanged": 0
+      },
+      "metric_calls": 27,
+      "primary": {
+        "denominator": 4,
+        "numerator": 0,
+        "rate": 0.0,
+        "wilson_95": [
+          0.0,
+          0.4898908364545973
+        ]
+      },
+      "proposal_shortfall": 0,
+      "quota_status": "COMPLETE",
+      "skipped_iterations": 0
+    }
+  },
+  "real_provider_calls": 0,
+  "suite_status": "PASS"
+}

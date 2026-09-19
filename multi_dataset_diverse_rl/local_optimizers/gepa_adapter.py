@@ -210,6 +210,8 @@ class DiversityGEPAAdapter:
         self.input_tokens = 0
         self.output_tokens = 0
         self.solver_reached_proposal_hashes: set[str] = set()
+        # Optional observational sink. Search inputs and scores are unchanged.
+        self.evaluation_observer: Any = None
 
     @staticmethod
     def _decision_procedure(candidate: Mapping[str, str]) -> str:
@@ -225,6 +227,8 @@ class DiversityGEPAAdapter:
         candidate: dict[str, str],
         capture_traces: bool = False,
     ) -> EvaluationBatch[LocalGEPATrajectory, dict[str, Any]]:
+        if self.evaluation_observer is not None:
+            self.evaluation_observer.before_evaluation(len(batch))
         decision_procedure = self._decision_procedure(candidate)
         try:
             validate_complete_compact_prompt(
@@ -276,9 +280,20 @@ class DiversityGEPAAdapter:
             if capture_traces
             else None
         )
+        scores = [1.0 if observation.correct and observation.valid else 0.0 for observation in observations]
+        if self.evaluation_observer is not None:
+            self.evaluation_observer.observe_evaluation({
+                "candidate_hash": hashlib.sha256(decision_procedure.encode("utf-8")).hexdigest(),
+                "example_ids": [row.example_id for row in batch],
+                "binary_scores": [int(score) for score in scores],
+                "provider_called": [bool(row.provider_called) for row in observations],
+                "capture_traces": bool(capture_traces),
+                "evidence_group": [_reasoning_focus(row.tags, self.optimization_context)["evidence_group"] for row in batch],
+                "reasoning_lane": [_reasoning_focus(row.tags, self.optimization_context)["reasoning_lane"] for row in batch],
+            })
         return EvaluationBatch(
             outputs=outputs,
-            scores=[1.0 if observation.correct and observation.valid else 0.0 for observation in observations],
+            scores=scores,
             trajectories=trajectories,
             objective_scores=None,
         )

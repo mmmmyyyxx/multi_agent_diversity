@@ -1,0 +1,14 @@
+{
+  "changed": 31,
+  "contract_invalid": 21,
+  "duplicate": 1,
+  "full_local_validation_evaluated": 5,
+  "gepa_accepted": 5,
+  "proposal_attempts_observed": 32,
+  "proposal_opportunities_requested": 32,
+  "solver_reached": 11,
+  "strict_equal_sampled_delta": 3,
+  "strict_negative_sampled_delta": 2,
+  "strict_positive_sampled_delta": 5,
+  "unchanged": 1
+}

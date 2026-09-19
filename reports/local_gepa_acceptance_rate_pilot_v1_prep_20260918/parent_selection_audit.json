@@ -1,0 +1,7 @@
+{
+  "rule": "greedy_unseen_seed_state_then_member_then_lane_lexicographic_v1",
+  "selected_parent_ids": [],
+  "status": "PARENT_CATALOG_INSUFFICIENT",
+  "used_prior_proposal_outcomes": false,
+  "verified_eligible_count": 0
+}

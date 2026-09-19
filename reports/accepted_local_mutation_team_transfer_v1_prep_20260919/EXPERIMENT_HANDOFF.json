@@ -1,0 +1,14 @@
+{
+  "READY_TO_RUN": false,
+  "authorization": "PENDING_EXPLICIT_API_AUTHORIZATION",
+  "baseline_team_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+  "blockers": [
+    "api_authorization_pending",
+    "clean_commit_and_source_hash_freeze_pending"
+  ],
+  "candidate_freeze_sha256": "202a03f96c5972deb6fea94f0361a35818564339b28c8bfa5fe4e564dda43297",
+  "exact_runner_command": null,
+  "experiment_id": "accepted_local_mutation_team_transfer_v1",
+  "private_bundle_sha256": "ce186485a73cb8884b3995e5c9c344d6c0ff2d91ebfe73d4020c589b1e716716",
+  "schema_version": "sol_luna_experiment_handoff_v1"
+}

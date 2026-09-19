@@ -34,7 +34,16 @@ LOCAL_GEPA_REFLECTIVE_DATASET_VERSION = "component_specific_reasoning_evidence_v
 LOCAL_OPTIMIZER_FIDELITY_LEVEL = "LEVEL_B_API_COMPATIBLE_ADAPTATION"
 LOCAL_GEPA_CANDIDATE_COMPONENT = "decision_procedure"
 LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS = "pinned_gepa_v0.1.1_strict_improvement"
+# Opt-in scientific observation identities; no canonical search change.
+LOCAL_GEPA_PROPOSAL_TELEMETRY_VERSION = "proposal_behavior_telemetry_v1"
+LOCAL_GEPA_PHASE_B_TELEMETRY_VERSION = "single_state_member_task_telemetry_v2"
+LOCAL_GEPA_TOKEN_EDIT_SIMILARITY_VERSION = "token_edit_similarity_v1"
 TEAM_MINIBATCH_CONTRACT_VERSION = "primary_lane_strict_4_4_4_v1"
+ACCEPTED_LOCAL_MUTATION_TEAM_TRANSFER_VERSION = "accepted_local_mutation_team_transfer_v1"
+TEAM_TRANSFER_DECOMPOSITION_VERSION = "fixed_baseline_read_only_case_mapping_v1"
+ACCEPTED_LOCAL_MUTATION_TEAM_TRANSFER_V2_VERSION = "accepted_local_mutation_team_transfer_v2"
+TEAM_TRANSFER_DECOMPOSITION_V2_VERSION = "mandatory_full_fixed_baseline_case_mapping_v2"
+TEAM_MINIBATCH_DIAGNOSTIC_GATE_VERSION = "TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1"
 # Legacy v14 RCRU identifiers remain frozen for historical replay only.
 RCRU_VERSION = "responsibility_conditioned_robust_contribution_update_v1"
 RESPONSIBILITY_UTILITY_VERSION = "three_lane_responsibility_utility_v1"

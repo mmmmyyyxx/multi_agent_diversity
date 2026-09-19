@@ -1,0 +1,11 @@
+{
+  "LOCAL_EMPIRICAL_PATH_CONFIRMED": true,
+  "LOCAL_STRICT_IMPROVEMENT_CONFIRMED_WITHIN_SINGLE_STATE": true,
+  "TEAM_TRANSFER_NOT_EVALUATED": true,
+  "cross_state_generalization": "PROHIBITED",
+  "pooled_acceptance": {
+    "denominator": 10,
+    "estimand": "DESCRIPTIVE_NON_IID_SINGLE_STATE",
+    "numerator": 5
+  }
+}

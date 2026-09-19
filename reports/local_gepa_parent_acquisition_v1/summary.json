@@ -1,0 +1,24 @@
+{
+  "acquisition_cost": {
+    "acceptance_denominator_contribution": 0,
+    "completion_tokens": 6448,
+    "cost_category": "Parent acquisition cost",
+    "failed_attempt_token_cost": 0,
+    "failed_provider_attempts": 0,
+    "layer1_optimization_cost": 0,
+    "prompt_tokens": 19665,
+    "provider_attempts": 100,
+    "successful_solver_requests": 100,
+    "total_tokens": 26113
+  },
+  "eligible_parent_count": 5,
+  "phase_b_executed": false,
+  "selected_parent_ids": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "source_state_count": 1,
+  "status": "PARENTS_FROZEN_PHASE_B_NOT_AUTHORIZED"
+}

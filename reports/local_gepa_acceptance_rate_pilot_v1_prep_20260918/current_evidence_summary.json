@@ -1,0 +1,10 @@
+{
+  "accepted_mutations": 0,
+  "bookkeeping_decision": "preserve frozen historical manifests; existing run_lifecycle plus published audit and summary are completion records",
+  "empirical_path": "LOCAL_EMPIRICAL_PATH_CONFIRMED",
+  "empirically_evaluated_proposals": 3,
+  "historical_summary_sha256": "a0855dfbcaca53b9c8188f404d4ebf6f383e78bba80a9fc4eae2a1ed79770520",
+  "local_effectiveness": "LOCAL_EFFECTIVENESS_UNRESOLVED",
+  "source": "reports/level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1",
+  "team_transfer": "TEAM_TRANSFER_NOT_EVALUATED"
+}

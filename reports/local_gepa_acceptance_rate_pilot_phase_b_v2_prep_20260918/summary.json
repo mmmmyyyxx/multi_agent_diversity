@@ -1,0 +1,17 @@
+{
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "formal_run_root_absent": true,
+  "phase_b_api_calls": 0,
+  "planned_proposal_events": 32,
+  "scope": "single_baseline_state_multi_member_layer1_gepa",
+  "selected_parent_ids": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "shared_baseline_state_count": 1,
+  "status": "PHASE_B_PREREGISTERED_AUTHORIZATION_PENDING",
+  "team_transfer": "TEAM_TRANSFER_NOT_EVALUATED"
+}

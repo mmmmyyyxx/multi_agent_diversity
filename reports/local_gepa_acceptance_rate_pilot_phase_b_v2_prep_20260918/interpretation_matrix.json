@@ -1,0 +1,10 @@
+{
+  "acceptance_multiple_parents": "LOCAL_GEPA_STRICT_IMPROVEMENT_OBSERVED_ACROSS_MULTIPLE_MEMBER_TASKS",
+  "acceptance_one_parent": "STRONG_MEMBER_TASK_HETEROGENEITY",
+  "always": "TEAM_TRANSFER_NOT_EVALUATED",
+  "automatic_method_change": false,
+  "diverse_edits_patterns_near_zero": "LOCAL_OBJECTIVE_OR_FEEDBACK_LIMITATION",
+  "fix_and_break_common": "LOCAL_REPAIR_PRESERVATION_TRADEOFF",
+  "mostly_equal_no_op": "LOW_BEHAVIORAL_EFFECT_OF_PROPOSALS",
+  "similar_edits_concentrated_patterns": "SEARCH_EXPLORATION_CONCENTRATION"
+}

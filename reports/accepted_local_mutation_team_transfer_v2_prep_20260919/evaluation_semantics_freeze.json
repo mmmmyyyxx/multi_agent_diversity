@@ -1,0 +1,12 @@
+{
+  "commit": false,
+  "common_safe_role": "SECONDARY_DIAGNOSTIC_AFTER_MANDATORY_FULL",
+  "full_conditioned_on_team_minibatch": false,
+  "full_evaluation": "MANDATORY_5_OF_5",
+  "iid_inference": false,
+  "primary_denominator": 5,
+  "primary_estimand": "FullTeamVoteDelta_i=Vote(T_i)-Vote(T_0)",
+  "shadow_role": "SECONDARY_DIAGNOSTIC_WITH_EXISTING_ELIGIBILITY",
+  "single_baseline_state": true,
+  "team_minibatch_role": "TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1"
+}

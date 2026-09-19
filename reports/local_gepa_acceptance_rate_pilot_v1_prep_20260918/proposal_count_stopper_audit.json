@@ -1,0 +1,10 @@
+{
+  "counter": "actual on_proposal_end",
+  "integration": "official stop_callbacks structural StopperProtocol",
+  "metric_guard": "pre-batch hard ceiling; no partial batch evaluation",
+  "normal_exact_quota": true,
+  "official_builtin_counts_iterations": true,
+  "perfect_forever_guarantee": false,
+  "shortfall_status": "PARENT_PROPOSAL_QUOTA_INCOMPLETE",
+  "skip_allowance": 16
+}

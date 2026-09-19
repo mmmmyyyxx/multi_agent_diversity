@@ -1,0 +1,9 @@
+{
+  "READY_TO_RUN": false,
+  "attempt_id": "local_gepa_acceptance_rate_pilot_v1_attempt1",
+  "experiment_id": "local_gepa_acceptance_rate_pilot_v1",
+  "manifest_sha256": "f2020914e393639dce5011e929f7a37c840e8981cdc779bf39be59aec7e986a7",
+  "preregistration_sha256": "7ccd12cbc03f845d44172e85721014c406c2f8b5d8f8454ef2323a7124ce9f82",
+  "protocol_sha256": "1942fcd23cd39170fa2e4e45d4d2dcf90f9eaeceb1ef21aa5c5b9dc475d015ea",
+  "state": "DRAFT_PARENT_CATALOG_INSUFFICIENT"
+}

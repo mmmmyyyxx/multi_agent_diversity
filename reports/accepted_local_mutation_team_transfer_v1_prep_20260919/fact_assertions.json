@@ -1,0 +1,10 @@
+{
+  "all_source_accepted_mutations_included": true,
+  "candidate_text_not_published": true,
+  "exactly_five_source_accepted_mutations": true,
+  "member_zero_not_substituted": true,
+  "read_only_no_writeback": true,
+  "single_baseline_team": true,
+  "validation_test_zero": true,
+  "zero_api_preparation": true
+}

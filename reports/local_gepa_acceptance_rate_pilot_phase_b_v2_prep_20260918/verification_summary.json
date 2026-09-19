@@ -1,0 +1,23 @@
+{
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "compileall": "PASS",
+  "deterministic_hash_replay": "PASS",
+  "exact_parent_replay": "PASS",
+  "focused_tests": {
+    "passed": 41,
+    "status": "PASS"
+  },
+  "full_tests": {
+    "failed": 1,
+    "known_failure": "v16_m20 historical cache does not cover exact fixed probe",
+    "new_failures": 0,
+    "passed": 1098,
+    "status": "PASS_WITH_REPRODUCED_HISTORICAL_FAILURE"
+  },
+  "git_diff_check": "PASS",
+  "governance_preflight": "PASS",
+  "member_aware_preflight": "PASS",
+  "phase_b_api_calls": 0,
+  "sanitization": "PASS"
+}

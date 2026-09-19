@@ -1,0 +1,68 @@
+{
+  "READY_TO_RUN": false,
+  "authorization": {
+    "api_scope": "PENDING",
+    "test_access_policy": "NO_ACCESS",
+    "validation_access_policy": "NO_ACCESS"
+  },
+  "data": {
+    "dataset": "BBH disambiguation_qa",
+    "split_identity": "Optimize100 only",
+    "split_sha256": "e43ebd24063a88fad4888c0e11b6d577f2d28996a3ac2c4f6fc2edb7d9d94559"
+  },
+  "execution": {
+    "allowed_retries": "COMMON_SOLVER_CONTRACT_V1 only; no experiment resume",
+    "early_stop_rule": "8 actual proposal_end or frozen terminal condition per parent",
+    "exact_runner_command": null,
+    "expected_checkpoint_path": null,
+    "expected_ledger_path": null,
+    "expected_output_directory": "runs/local_gepa_acceptance_rate_pilot_phase_b_v2_attempt1",
+    "opportunity_budget": {
+      "Test50": 0,
+      "heldout_Validation50": 0,
+      "max_metric_calls_per_parent": 205,
+      "parents": 4,
+      "proposals_per_parent": 8,
+      "reflection_calls": 32,
+      "skip_allowance_per_parent": 16,
+      "total_metric_rows": 820,
+      "total_proposals": 32
+    },
+    "seeds": [
+      7800001,
+      7800002,
+      7800003,
+      7800004
+    ]
+  },
+  "experiment_id": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+  "fail_closed_conditions": [
+    "parent/source/hash mismatch",
+    "proposal quota or budget mismatch",
+    "missing clean implementation commit",
+    "missing new explicit authorization",
+    "heldout access",
+    "need to change method or parent selection"
+  ],
+  "models": {
+    "local_optimizer_backend": "official GEPA Level-B",
+    "local_optimizer_version_or_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+    "optimizer_or_reflection": "qwen3.7-flash",
+    "solver": "qwen3-8b",
+    "thinking": false
+  },
+  "protocol": {
+    "manifest_path": "experiments/manifests/local_gepa_acceptance_rate_pilot_phase_b_v2.yaml",
+    "manifest_sha256": "db0579d8917ccc796a4c471047808323d45aa3da574f1975a28efd5a28e39cb3",
+    "name": "local_gepa_acceptance_rate_pilot_phase_b_v2",
+    "preregistration_path": "experiments/local_gepa_acceptance_rate_pilot_phase_b_v2/PROTOCOL.md",
+    "preregistration_sha256": "1f62f2c2826ec8fa4914d56ecd5a83d65d99e2161b02040d7c8341d10ff01923",
+    "protocol_sha256": "9c58fb6482304a4eb9a3131f8bd0fae515a34864a1bb026dfb4edacee8b18e3d",
+    "version": 2
+  },
+  "schema_version": "sol_luna_experiment_handoff_v1",
+  "source": {
+    "repository_commit": null,
+    "tracked_worktree_status": "freeze changes not committed"
+  }
+}

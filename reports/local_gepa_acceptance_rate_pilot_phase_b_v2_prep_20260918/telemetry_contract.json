@@ -1,0 +1,97 @@
+{
+  "evaluation_batch_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "binary_scores": {
+        "items": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "type": "array"
+      },
+      "candidate_hash": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "capture_traces": {
+        "type": "boolean"
+      },
+      "evaluation_sequence_id": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "evidence_group": {
+        "items": {
+          "enum": [
+            "responsibility",
+            "coalition",
+            "preservation",
+            "general"
+          ]
+        },
+        "type": "array"
+      },
+      "example_ids": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "provider_called": {
+        "items": {
+          "type": "boolean"
+        },
+        "type": "array"
+      },
+      "reasoning_lane": {
+        "items": {
+          "enum": [
+            "direct_flip",
+            "near_margin",
+            "coverage",
+            "fallback",
+            "general"
+          ]
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "binary_scores",
+      "candidate_hash",
+      "capture_traces",
+      "evaluation_sequence_id",
+      "evidence_group",
+      "example_ids",
+      "provider_called",
+      "reasoning_lane"
+    ],
+    "type": "object"
+  },
+  "iid_inference_permitted": false,
+  "optional_interval_label": "NAIVE_IID_REFERENCE_ONLY",
+  "primary_estimand": "pooled accepted / contract-valid changed Solver-reached; DESCRIPTIVE_NON_IID",
+  "proposal_outcomes": [
+    "STRICT_POSITIVE",
+    "EXACT_EQUAL",
+    "STRICT_NEGATIVE"
+  ],
+  "raw_text_publication": "PROHIBITED",
+  "required_parent_level_statistic": "parents_with_at_least_one_acceptance / 4",
+  "required_parent_rates": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "version": "single_state_member_task_telemetry_v2",
+  "zero_delta_decomposition": [
+    "BEHAVIORAL_NO_OP",
+    "REPAIR_PRESERVATION_CANCELLATION"
+  ]
+}

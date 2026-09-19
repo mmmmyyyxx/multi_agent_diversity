@@ -1,0 +1,73 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "858aacc0216e0a4f92c13165e14af24ba6ea1f2e75d9544f28ccdcbdaef9115b"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "f37ec16f6035cd424263f0e506311db4d972d15031a1c8e99b5f2106f59b868d"
+    },
+    {
+      "file": "cost_envelope.json",
+      "sha256": "fa28a8f915362d5cf19714499b2a7bffd5d7182a1dda7237577ff1cc9c7c1561"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "468386b6614ee11541b5ac134a737e60d56ad128502a94097b185d7f52375f62"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "397a40ae563e1a17cc54144de8c64605d002bc6c83f41f00318fae3fabe6d231"
+    },
+    {
+      "file": "final_report_template.json",
+      "sha256": "0fc1613365202901b431ca54c08e3aa29351cc7806328ab039581aa2564eb108"
+    },
+    {
+      "file": "interpretation_matrix.json",
+      "sha256": "614b561a36711fe6ce4c21092e96d1396b10132722304df7289eeb23006a4427"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "db0579d8917ccc796a4c471047808323d45aa3da574f1975a28efd5a28e39cb3"
+    },
+    {
+      "file": "PARENT_FREEZE.json",
+      "sha256": "724cf7ec8eed7f0b8955c79ba196b612fb3b610eb59eb51b12ec9a5523d37b2f"
+    },
+    {
+      "file": "parent_selection_audit.json",
+      "sha256": "16077c2c22dc58634644afbe4cc49699295c435d241dc1f6d477f42f6cf64356"
+    },
+    {
+      "file": "proposal_quota_freeze.json",
+      "sha256": "7d8a8b73be77900de39a5ca7f52fc072e04e540e7c20c9da867f9cf0300370b0"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "536dcc360e6fac09e62590c87bf7e6f700a22375581b8d196f3cb9a19063b8b9"
+    },
+    {
+      "file": "README.md",
+      "sha256": "5350ef0aa4f7e1ad65f052f77a858c8c35ddfb27efdd8fb2c646f615a0338057"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "46ece6ceb5b84ecec6a60088ee356207ff94a8b1d1806a201b0364c63fba5555"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "ff3a790c7465ae98b1b122856172a43f858ae0253314d7196bd02819029523ed"
+    },
+    {
+      "file": "telemetry_contract.json",
+      "sha256": "d498f0b3e50fe5eebefaf06a2c06acee3ea7beef4918d31de3dc5b5c1ea7179b"
+    },
+    {
+      "file": "verification_summary.json",
+      "sha256": "66ea4491de53eb0ef9b6847a1e86ba44bce37083d9272bcd6d0c0f06505db4d6"
+    }
+  ]
+}

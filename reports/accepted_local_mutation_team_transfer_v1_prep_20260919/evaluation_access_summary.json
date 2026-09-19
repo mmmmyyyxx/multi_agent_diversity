@@ -1,0 +1,11 @@
+{
+  "Optimize100_preparation_calls": 0,
+  "Shadow50_preparation_calls": 0,
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "gepa_proposals": 0,
+  "persistent_realizability_updates": 0,
+  "preparation_api_calls": 0,
+  "reflection_calls": 0,
+  "writebacks": 0
+}

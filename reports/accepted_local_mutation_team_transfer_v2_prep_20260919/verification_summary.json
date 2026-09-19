@@ -1,0 +1,16 @@
+{
+  "compileall": "PASS",
+  "deterministic_fake_provider_replay": {
+    "cache_hits": 60,
+    "full_evaluated_candidates": 5,
+    "mandatory_full_provider_successes": 500,
+    "minibatch_failures": 5,
+    "provider_calls_external": 0,
+    "repeated_result_identity": "PASS",
+    "writebacks": 0
+  },
+  "focused_tests": "11 passed",
+  "full_tests": "1116 passed, 1 known historical evidence failure: test_v16_m20_collateral_structure_audit candidate cache does not cover the exact fixed probe",
+  "git_diff_check": "PASS (line-ending warnings only)",
+  "zero_api_preflight": "AUTHORIZATION_REQUIRED (all 17 checks pass)"
+}

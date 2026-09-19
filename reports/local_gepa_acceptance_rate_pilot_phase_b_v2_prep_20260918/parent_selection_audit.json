@@ -1,0 +1,91 @@
+{
+  "deterministic_replay": "PASS",
+  "eligible_count": 5,
+  "outcome_blind": true,
+  "selected_count": 4,
+  "selected_parent_ids": [
+    "seed78_update0_member1",
+    "seed78_update0_member2",
+    "seed78_update0_member3",
+    "seed78_update0_member4"
+  ],
+  "subsets": [
+    {
+      "coverage": {
+        "primary_lanes": 1,
+        "source_states": 1,
+        "targets": 4
+      },
+      "parent_task_ids": [
+        "seed78_update0_member0",
+        "seed78_update0_member1",
+        "seed78_update0_member2",
+        "seed78_update0_member3"
+      ],
+      "selected": false,
+      "stable_subset_sha256": "18231297e0e9fc361e28c6629bcdadf7fe6a356f8213274616aac6285b1c3fda"
+    },
+    {
+      "coverage": {
+        "primary_lanes": 1,
+        "source_states": 1,
+        "targets": 4
+      },
+      "parent_task_ids": [
+        "seed78_update0_member0",
+        "seed78_update0_member1",
+        "seed78_update0_member2",
+        "seed78_update0_member4"
+      ],
+      "selected": false,
+      "stable_subset_sha256": "f179e4b342c59f10774ff4dfb36aa798e7569749d4c185decae64762e612311a"
+    },
+    {
+      "coverage": {
+        "primary_lanes": 1,
+        "source_states": 1,
+        "targets": 4
+      },
+      "parent_task_ids": [
+        "seed78_update0_member0",
+        "seed78_update0_member1",
+        "seed78_update0_member3",
+        "seed78_update0_member4"
+      ],
+      "selected": false,
+      "stable_subset_sha256": "b39e8189559b6dfd2b0bd9a8c28fd58ab72eda79374b80dc31b56814c685ac7d"
+    },
+    {
+      "coverage": {
+        "primary_lanes": 1,
+        "source_states": 1,
+        "targets": 4
+      },
+      "parent_task_ids": [
+        "seed78_update0_member0",
+        "seed78_update0_member2",
+        "seed78_update0_member3",
+        "seed78_update0_member4"
+      ],
+      "selected": false,
+      "stable_subset_sha256": "1d40cff54515e5ed66680c61fb6e1c641387839b179aa9e2a02fbd629dee1f1e"
+    },
+    {
+      "coverage": {
+        "primary_lanes": 1,
+        "source_states": 1,
+        "targets": 4
+      },
+      "parent_task_ids": [
+        "seed78_update0_member1",
+        "seed78_update0_member2",
+        "seed78_update0_member3",
+        "seed78_update0_member4"
+      ],
+      "selected": true,
+      "stable_subset_sha256": "06cb14679888277724bbea93fade86c370fbcc1dcbafebf514847aff01113f32"
+    }
+  ],
+  "unselected_parent_id": "seed78_update0_member0",
+  "unselected_reason": "stable_subset_sha256_tiebreak_after_equal_source_target_lane_coverage"
+}
