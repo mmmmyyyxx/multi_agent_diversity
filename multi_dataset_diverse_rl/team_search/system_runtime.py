@@ -442,6 +442,7 @@ class SystemTeamCandidateEvaluator:
         assignment: TeamSearchAssignment,
         candidate: LocalPromptCandidate,
     ) -> tuple[CandidateEvaluation, EvaluationCost]:
+        parent_team_hash = self.system.team_prompt_state_hash()
         profile, cost = self._profile(
             assignment,
             candidate,
@@ -455,10 +456,19 @@ class SystemTeamCandidateEvaluator:
             candidate_profile=profile,
             assigned_hashes=self._assigned(assignment),
         )
+        self.system.persist_team_full_categorical_profile(
+            profile=profile,
+            update_index=self.update_index_reader(),
+            target_member=assignment.target_member,
+            candidate_hash=self.system.prompt_hash(candidate.prompt),
+            candidate_id=candidate.candidate_id,
+            evaluation_stage="team_full_eval",
+            parent_team_hash=parent_team_hash,
+        )
         key = (
             assignment.target_member,
             candidate.candidate_id,
-            self.system.team_prompt_state_hash(),
+            parent_team_hash,
         )
         self.full_profiles[key] = profile
         return evaluation, cost
@@ -605,6 +615,12 @@ class SystemTeamCommitter:
             )
             self.system.refresh_responsibility_after_commit(
                 update_index=self.update_index_reader()
+            )
+            self.system.persist_endpoint_identifiability_state(
+                update_index=self.update_index_reader(),
+                trigger="two_layer_team_commit",
+                committed_target_member=target,
+                committed_candidate_hash=self.system.prompt_hash(candidate.prompt),
             )
         except Exception:
             agent.current_prompt = old_prompt

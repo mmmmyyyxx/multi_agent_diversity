@@ -77,6 +77,13 @@ not modify this section without a separate method change and version update.
   counters, categories, metrics, and token totals, but not prompts, questions,
   gold/model answers, raw responses, secrets, endpoints, caches, checkpoints,
   or absolute host paths.
+- **INV-STRUCTURAL-EVIDENCE-001** — Every fixed-probe initialization and Full
+  candidate evaluation MUST atomically persist a sanitized per-example
+  categorical profile before downstream selection. Every accepted commit MUST
+  atomically persist the realized state's frozen-plurality `P_0..P_4` audit.
+  These artifacts contain only example IDs, categorical choices or hashes,
+  correctness/invalid bits, candidate/state hashes, and structural counts; no
+  prompt, question, gold/model answer, reasoning, or raw response is retained.
 - **INV-AUTH-001** — API use fails closed unless the user explicitly authorizes
   it and the frozen manifest independently authorizes the phase and role with a
   matching preregistration hash and frozen budget.

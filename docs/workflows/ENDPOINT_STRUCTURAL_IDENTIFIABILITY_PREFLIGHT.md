@@ -36,3 +36,17 @@ Use
 `multi_dataset_diverse_rl.evaluation.endpoint_identifiability.endpoint_structural_identifiability`
 for the enumeration. Do not substitute prompt-hash diversity, member-accuracy
 diversity, or a hand-written margin shortcut for this replay.
+
+The runtime writes crash-safe evidence as soon as it becomes available:
+
+```text
+team_full_categorical_profiles/<evaluation_identity>.json
+endpoint_identifiability_states/<state_identity>.json
+```
+
+Initialization writes one categorical profile for each member and one baseline
+state audit. Every later Full candidate evaluation writes its candidate profile
+before selection, and every successful commit writes the successor state audit
+inside the atomic commit boundary. Open-ended outputs are represented by
+one-way categorical hashes so equality and plurality structure remain
+replayable without retaining model answers.

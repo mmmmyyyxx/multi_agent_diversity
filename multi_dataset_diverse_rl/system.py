@@ -48,6 +48,10 @@ from .evaluation.fixed_probe import (
     evaluate_candidate_profile,
     subset_profiles,
 )
+from .evaluation.categorical_profiles import (
+    endpoint_identifiability_snapshot,
+    sanitized_categorical_profile,
+)
 from .evaluation.validation import (
     DatasetEvaluationRow,
     DatasetMetrics,
@@ -986,6 +990,20 @@ class PromptEnsembleOptimizationSystem:
             }
             for agent_id, profile in enumerate(self.active_profiles)
         }
+        for agent_id, profile in enumerate(self.active_profiles):
+            prompt_hash = self.prompt_hash(self.agents[agent_id].current_prompt)
+            self.persist_team_full_categorical_profile(
+                profile=profile,
+                update_index=-1,
+                target_member=agent_id,
+                candidate_hash=prompt_hash,
+                candidate_id=f"baseline_member_{agent_id}",
+                evaluation_stage="fixed_probe_initialization",
+            )
+        self.persist_endpoint_identifiability_state(
+            update_index=-1,
+            trigger="fixed_probe_initialization",
+        )
 
     def _record_accepted_state_stability(self) -> None:
         if self.fixed_probe is None:
@@ -3485,6 +3503,14 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
+            self.persist_team_full_categorical_profile(
+                profile=candidate.profile,
+                update_index=update_index,
+                target_member=target_agent_id,
+                candidate_hash=candidate.prompt_hash,
+                candidate_id=candidate.prompt_hash,
+                evaluation_stage="canonical_stage_b_full",
+            )
             candidate.module2_diagnostics = self._module2_candidate_effects(
                 update_index=update_index,
                 target_agent_id=target_agent_id,
@@ -4338,6 +4364,14 @@ class PromptEnsembleOptimizationSystem:
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
             )
+            self.persist_team_full_categorical_profile(
+                profile=repaired.profile,
+                update_index=update_index,
+                target_member=target,
+                candidate_hash=repaired.prompt_hash,
+                candidate_id=repaired.prompt_hash,
+                evaluation_stage="compatibility_repair_full",
+            )
             repaired.constraint = evaluate_constraints(
                 repaired.final_evaluation, incumbent
             )
@@ -4470,6 +4504,14 @@ class PromptEnsembleOptimizationSystem:
                 tie_break=self.protocol.tie_policy,
                 seed=self.cfg.training.seed,
                 tau=self.cfg.peer_state.soft_vote_tau,
+            )
+            self.persist_team_full_categorical_profile(
+                profile=revised.profile,
+                update_index=update_index,
+                target_member=target,
+                candidate_hash=revised.prompt_hash,
+                candidate_id=revised.prompt_hash,
+                evaluation_stage="loss_blind_generic_revision_full",
             )
             revised.constraint = evaluate_constraints(
                 revised.final_evaluation, incumbent
@@ -5005,6 +5047,12 @@ class PromptEnsembleOptimizationSystem:
                 )
             else:
                 self.team_state_version += 1
+            self.persist_endpoint_identifiability_state(
+                update_index=update_index,
+                trigger="canonical_commit",
+                committed_target_member=target,
+                committed_candidate_hash=accepted.prompt_hash,
+            )
         except Exception:
             agent.current_prompt = old_prompt
             agent.previous_active_prompt = old_previous_prompt
@@ -5545,6 +5593,67 @@ class PromptEnsembleOptimizationSystem:
             ensure_ascii=False,
             separators=(",", ":"),
         ).encode("utf-8")).hexdigest()
+
+    def persist_team_full_categorical_profile(
+        self,
+        *,
+        profile: Sequence[PromptAnswer],
+        update_index: int,
+        target_member: int,
+        candidate_hash: str,
+        candidate_id: str,
+        evaluation_stage: str,
+        parent_team_hash: str | None = None,
+    ) -> dict[str, Any]:
+        """Atomically persist the minimal per-row evidence for one Full rollout."""
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        payload = sanitized_categorical_profile(
+            examples=self.fixed_probe.examples,
+            profile=profile,
+            normalize_answer=self.normalize_answer,
+            match_answer=self.match_answer,
+            parent_team_hash=parent_team_hash or self.team_prompt_state_hash(),
+            update_index=update_index,
+            target_member=target_member,
+            candidate_hash=candidate_hash,
+            candidate_id=candidate_id,
+            evaluation_stage=evaluation_stage,
+        )
+        self.artifacts.write_json(
+            "team_full_categorical_profiles/"
+            f"{payload['evaluation_identity']}.json",
+            payload,
+        )
+        return payload
+
+    def persist_endpoint_identifiability_state(
+        self,
+        *,
+        update_index: int,
+        trigger: str,
+        committed_target_member: int | None = None,
+        committed_candidate_hash: str | None = None,
+    ) -> dict[str, Any]:
+        """Atomically persist structural P_i counts for the realized active team."""
+        if self.fixed_probe is None:
+            raise RuntimeError("fixed probe is not initialized")
+        payload = endpoint_identifiability_snapshot(
+            examples=self.fixed_probe.examples,
+            profiles=self.active_profiles,
+            normalize_answer=self.normalize_answer,
+            team_prompt_state_hash=self.team_prompt_state_hash(),
+            update_index=update_index,
+            trigger=trigger,
+            committed_target_member=committed_target_member,
+            committed_candidate_hash=committed_candidate_hash,
+        )
+        self.artifacts.write_json(
+            "endpoint_identifiability_states/"
+            f"{payload['state_identity']}.json",
+            payload,
+        )
+        return payload
 
     async def _evaluate_profiles(
         self,

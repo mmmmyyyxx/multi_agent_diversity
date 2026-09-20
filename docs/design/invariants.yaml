@@ -120,6 +120,14 @@ invariants:
     failure_refs: []
     critical: true
     status: ACTIVE
+  - id: INV-STRUCTURAL-EVIDENCE-001
+    description: Full fixed-probe profiles and post-commit plurality identifiability states are atomically persisted as sanitized categorical evidence.
+    authority: docs/design/CURRENT_SPEC.md
+    implementation_refs: [multi_dataset_diverse_rl/evaluation/categorical_profiles.py, multi_dataset_diverse_rl/system.py, multi_dataset_diverse_rl/team_search/system_runtime.py]
+    tests: [tests/test_categorical_profile_persistence.py, tests/test_endpoint_identifiability.py]
+    failure_refs: []
+    critical: true
+    status: ACTIVE
   - id: INV-MANIFEST-001
     description: Experiment facts and lifecycle are explicit and preregistration is immutable.
     authority: docs/design/CURRENT_SPEC.md
