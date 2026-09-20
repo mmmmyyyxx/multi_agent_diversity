@@ -1,0 +1,95 @@
+schema_version: experiment_manifest_v1
+experiment_id: accepted_mutation_exact_state_graph_v2
+title: Cache-only accepted-mutation exact-state recovery audit
+status: COMPLETED
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: PREREGISTERED
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: IMPLEMENTED
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: PREFLIGHT_PASS
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: RUNNING
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: TRAIN_FROZEN
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+- status: COMPLETED
+  timestamp: '2026-09-20T03:29:49.756897+00:00'
+lineage:
+  parents:
+  - accepted_mutation_compositional_state_graph_v1
+  derives_from: accepted_local_mutation_team_transfer_v2
+scientific_question: Can existing cached evidence identify the exact positive state
+  and safe path?
+hypotheses:
+- Historical exact-request caches may retain every candidate profile.
+method_identity: member_aware_peer_state_v15
+runtime_version: accepted_mutation_exact_state_graph_v2
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+  split_hashes:
+    baseline_team_hash: faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: NONE_CACHE_ONLY
+  optimizer_roles: {}
+  thinking: false
+  temperatures: {}
+  max_tokens: {}
+seeds:
+- 78
+design:
+  changed:
+  - cache-only exact-profile recovery attempt
+  unchanged:
+  - bounded v1 proof
+  - five-member plurality
+  - tie-as-abstain
+  - Common-Safe
+  forbidden_changes:
+  - provider calls
+  - historical artifact mutation
+  - candidate regeneration
+  - write-back
+  - scheduler
+  required_unique_requests: 500
+  protocol_sha256: b43155ed151489402249f40bca23f206a31fa8888c07812d3f8019986ed59efd
+api_authorization:
+  authorized: false
+  authorization_scope: ZERO_API_CACHE_ONLY
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: zero_api_cache_recovery
+  frozen_before_run: true
+  limit:
+    provider_calls: 0
+    Validation50: 0
+    Test50: 0
+selection:
+  primary_metric: complete_exact_profile_recovery
+  frozen_rule: all 500 exact candidate/example request identities required
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/accepted_mutation_exact_state_graph_v2/PROTOCOL.md
+    sha256: b9f2ea7214a78889934f920834e4dbe7630fcb0569c307756d561fb9bf83adc9
+  report: reports/accepted_mutation_exact_state_graph_v2_20260920
+  provenance: reports/accepted_mutation_exact_state_graph_v2_20260920/provenance.json
+git:
+  design_commit: 0330d8a35fbb741f2feeb4d77db13981e6c01635
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: CACHE_ONLY_PROFILE_RECOVERY_INCOMPLETE
+  conclusion: All 500 historical requests are ledger-verified, but no persisted response
+    cache exists; exact graph construction stopped without provider access.
+  evidence_type: retrospective

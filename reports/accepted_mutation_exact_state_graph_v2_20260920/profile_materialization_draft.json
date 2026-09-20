@@ -1,0 +1,12 @@
+{
+  "READY_TO_RUN": false,
+  "automatic_execution_permitted": false,
+  "evidence_semantics": "PROSPECTIVE_FRESH_PROVIDER_REALIZATION",
+  "historical_v2_profile_reconstruction": false,
+  "manifest": "experiments/manifests/accepted_mutation_profile_materialization_v1.yaml",
+  "missing_unique_solver_requests": 500,
+  "protocol": "experiments/accepted_mutation_exact_state_graph_v2/PROFILE_MATERIALIZATION_PROTOCOL_DRAFT.md",
+  "status": "AUTHORIZATION_REQUIRED",
+  "successful_solver_call_ceiling": 500,
+  "transport_attempt_ceiling": 2000
+}

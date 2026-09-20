@@ -1,0 +1,12 @@
+{
+  "candidate_prompt_hashes_match": true,
+  "historical_execution_complete": true,
+  "historical_files_byte_identical_before_after": true,
+  "model_matches_frozen_contract": true,
+  "optimize100_order_identical_across_candidates": true,
+  "provider_access_used_by_audit": false,
+  "raw_response_or_reasoning_published": false,
+  "required_request_count": 500,
+  "required_requests_have_historical_provider_success": true,
+  "thinking_mode_matches_frozen_contract": true
+}

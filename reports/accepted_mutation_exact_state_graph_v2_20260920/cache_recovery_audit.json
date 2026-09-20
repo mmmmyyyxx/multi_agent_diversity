@@ -1,0 +1,35 @@
+{
+  "baseline_profile_available_from_phase_a": true,
+  "exact_graph_constructed": false,
+  "exact_json_cache_files_scanned": [
+    "runs/common_contract_seed77_sensitivity_20260907/raw_cache_private.json",
+    "runs/common_solver_contract_v1_replay_20260906/exact_request_cache_private.json",
+    "runs/common_solver_contract_v1_seed77_replay_20260907/exact_request_cache_private.json"
+  ],
+  "exact_json_cache_hits": 0,
+  "historical_exact_graph_recoverable_from_current_artifacts": false,
+  "historical_ledger_success_coverage": {
+    "member1_proposal2_7643bc41b45e": 100,
+    "member2_proposal8_a5fef723548e": 100,
+    "member3_proposal5_0229baf5ae5f": 100,
+    "member4_proposal2_c537ca25a8aa": 100,
+    "member4_proposal4_f5d945233dc9": 100
+  },
+  "missing_unique_requests": 500,
+  "recovered_unique_requests": 0,
+  "required_candidate_profiles": 5,
+  "required_unique_requests": 500,
+  "sqlite_scan": {
+    "candidate_prompt_hash_hits": 0,
+    "direct_request_identity_hits": 0,
+    "files_considered": 1256,
+    "files_opened_read_only": 1191,
+    "opaque_direct_request_identity_hits": 0,
+    "opaque_files_raw_scanned": 146,
+    "unreadable_test_fixtures": 65
+  },
+  "status": "CACHE_ONLY_PROFILE_RECOVERY_INCOMPLETE",
+  "stop_reason": "ANY_REQUIRED_RESPONSE_ABSENT",
+  "v2_provider_ledger_contains_response_text": false,
+  "v2_runtime_cache_kind": "PROCESS_LOCAL_DICTIONARY_NOT_PERSISTED"
+}

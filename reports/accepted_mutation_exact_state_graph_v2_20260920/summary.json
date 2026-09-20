@@ -1,0 +1,11 @@
+{
+  "exact_graph_constructed": false,
+  "experiment_id": "accepted_mutation_exact_state_graph_v2",
+  "future_materialization_authorized": false,
+  "future_materialization_would_be_prospective": true,
+  "missing_unique_requests": 500,
+  "provider_calls": 0,
+  "recovered_unique_requests": 0,
+  "required_unique_requests": 500,
+  "status": "CACHE_ONLY_PROFILE_RECOVERY_INCOMPLETE"
+}

@@ -45,6 +45,7 @@ ACCEPTED_LOCAL_MUTATION_TEAM_TRANSFER_V2_VERSION = "accepted_local_mutation_team
 TEAM_TRANSFER_DECOMPOSITION_V2_VERSION = "mandatory_full_fixed_baseline_case_mapping_v2"
 TEAM_MINIBATCH_DIAGNOSTIC_GATE_VERSION = "TEAM_MINIBATCH_DIAGNOSTIC_GATE_V1"
 ACCEPTED_MUTATION_COMPOSITIONAL_STATE_GRAPH_VERSION = "accepted_mutation_compositional_state_graph_v1"
+ACCEPTED_MUTATION_EXACT_STATE_GRAPH_VERSION = "accepted_mutation_exact_state_graph_v2"
 # Legacy v14 RCRU identifiers remain frozen for historical replay only.
 RCRU_VERSION = "responsibility_conditioned_robust_contribution_update_v1"
 RESPONSIBILITY_UTILITY_VERSION = "three_lane_responsibility_utility_v1"

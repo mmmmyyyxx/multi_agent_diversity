@@ -1,0 +1,91 @@
+schema_version: experiment_manifest_v1
+experiment_id: accepted_mutation_profile_materialization_v1
+title: Prospective accepted-mutation profile materialization
+status: DRAFT
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-20T00:00:00+00:00'
+lineage:
+  parents:
+  - accepted_mutation_exact_state_graph_v2
+  derives_from: accepted_local_mutation_team_transfer_v2
+scientific_question: Can a prospective fresh realization materialize exact categorical
+  profiles for the five frozen mutations?
+hypotheses:
+- Fresh profile materialization may permit a prospective exact compositional graph;
+  it cannot recover historical v2 outputs.
+method_identity: member_aware_peer_state_v15
+runtime_version: accepted_mutation_profile_materialization_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+  split_hashes:
+    ordered_request_manifest: reports/accepted_mutation_exact_state_graph_v2_20260920/cache_miss_manifest.json
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: qwen3-8b
+  optimizer_roles: {}
+  thinking: false
+  temperatures:
+    solver: 0.0
+  max_tokens:
+    solver: 1800
+seeds:
+- 78
+design:
+  changed:
+  - prospective categorical profile materialization
+  unchanged:
+  - five frozen candidate prompts
+  - Optimize100 order
+  - COMMON_SOLVER_CONTRACT_V1
+  forbidden_changes:
+  - GEPA
+  - Reflection
+  - TeamMiniBatch
+  - Shadow
+  - write-back
+  - scheduler
+  - historical artifact mutation
+  required_unique_requests: 500
+  historical_v2_profile_reconstruction: false
+  protocol_sha256: 197c60135d5a7b36d38978a86f8c77db920edbaed57a14a9a881249b55c5093a
+api_authorization:
+  authorized: false
+  authorization_scope: pending explicit prospective materialization authorization
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: fresh_profile_materialization
+  frozen_before_run: true
+  limit:
+    successful_solver_provider_calls: 500
+    transport_attempts: 2000
+    GEPA: 0
+    Reflection: 0
+    Validation50: 0
+    Test50: 0
+    write_back: 0
+selection:
+  primary_metric: complete_500_request_profile_materialization
+  frozen_rule: all and only missing exact request identities; no efficacy stopping
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/accepted_mutation_exact_state_graph_v2/PROFILE_MATERIALIZATION_PROTOCOL_DRAFT.md
+    sha256: 7ccb9ae7f2c45cfe6ee8967e299e12e68960820b8274223a1db8e304baa3c4c7
+  report: null
+  provenance: null
+git:
+  design_commit: 0330d8a35fbb741f2feeb4d77db13981e6c01635
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: null
+  conclusion: null
+  evidence_type: not_yet_available
