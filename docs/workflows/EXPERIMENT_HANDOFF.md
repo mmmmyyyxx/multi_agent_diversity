@@ -20,6 +20,7 @@ protocol:
   manifest_sha256: REQUIRED
   preregistration_path: REQUIRED_REPOSITORY_RELATIVE_PATH
   preregistration_sha256: REQUIRED
+  endpoint_structural_identifiability: REQUIRED_WHEN_ENDPOINT_IS_SINGLE_MEMBER_PLURALITY_TRANSFER
 
 data:
   dataset: REQUIRED
@@ -69,6 +70,8 @@ Only Sol may change `READY_TO_RUN` to `true`. Before doing so Sol verifies:
 - all recorded hashes and the exact repository commit;
 - tracked worktree, split governance, models, budget, and stop rule;
 - explicit API authorization and exact Validation/Test policy;
+- for a single-member plurality-transfer endpoint, a passing zero-API
+  [Endpoint Structural Identifiability Preflight](ENDPOINT_STRUCTURAL_IDENTIFIABILITY_PREFLIGHT.md);
 - exact runner command and fresh, project-local artifact destinations.
 
 No frozen handoff means no Luna run.

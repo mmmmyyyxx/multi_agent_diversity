@@ -1,0 +1,11 @@
+{
+  "api_calls": 0,
+  "baseline_total_pivotal_opportunities": 0,
+  "common_safe_team_positive_path_exists": true,
+  "configuration_count": 24,
+  "exact_graph_available": false,
+  "exact_path_identity_available": false,
+  "experiment_id": "accepted_mutation_compositional_state_graph_v1",
+  "safe_full_composition_vote_delta_lower": 1,
+  "status": "BOUNDED_AUDIT_COMPLETE_EXACT_GRAPH_NOT_RECONSTRUCTIBLE"
+}

@@ -1,0 +1,29 @@
+{
+  "by_member": {
+    "0": {
+      "pivotal_capable_count": 0,
+      "pivotal_capable_row_indices": []
+    },
+    "1": {
+      "pivotal_capable_count": 0,
+      "pivotal_capable_row_indices": []
+    },
+    "2": {
+      "pivotal_capable_count": 0,
+      "pivotal_capable_row_indices": []
+    },
+    "3": {
+      "pivotal_capable_count": 0,
+      "pivotal_capable_row_indices": []
+    },
+    "4": {
+      "pivotal_capable_count": 0,
+      "pivotal_capable_row_indices": []
+    }
+  },
+  "endpoint_structurally_identifiable": false,
+  "member_count": 5,
+  "row_count": 100,
+  "tie_break": "abstain",
+  "total_member_row_opportunities": 0
+}

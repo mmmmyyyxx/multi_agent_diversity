@@ -1,0 +1,16 @@
+{
+  "next_step": "Recover or prospectively persist candidate profiles before selecting a concrete pivotal-capable state; do not make new API calls under this audit.",
+  "not_identified": [
+    "Which safe triple is team-positive",
+    "Exact metrics for all 24 states",
+    "Exact pivotal-row identities after composition",
+    "A concrete state that may be frozen for a new API experiment"
+  ],
+  "supported": [
+    "The homogeneous baseline fails endpoint structural identifiability with P_i=0 for all members.",
+    "At least one three-mutation state is Common-Safe reachable and team-positive.",
+    "The full M1+M2+M3+M4-P4 composition has vote delta at least +1.",
+    "Vote-neutral target-improving updates can be necessary symmetry-breaking steps."
+  ],
+  "team_minibatch_conclusion": "DO_NOT_MODIFY_FROM_V2_FALSE_POSITIVE_COUNTS"
+}

@@ -1,0 +1,18 @@
+{
+  "at_least_one_common_safe_path_to_team_positive_triple_exists": true,
+  "at_least_one_team_positive_triple_exists": true,
+  "exact_positive_triple_identity": "NOT_IDENTIFIED_MISSING_GAIN_CASE_IDENTITIES",
+  "gain_memberships_across_40_baseline_wrong_rows": 91,
+  "pivotal_capable_two_mutation_predecessor_exists": true,
+  "proof": "The first two safe valid mutations are vote-neutral Common-Safe steps. Across the four possible safe triples, at least 11 baseline-wrong triple gains and 8 exact triple-loss-eligible incidences (an upper bound on vote losses) imply summed vote delta >=3, so at least one triple has positive vote delta and is reached by a Common-Safe third step.",
+  "safe_mutations": [
+    "member1_proposal2_7643bc41b45e",
+    "member2_proposal8_a5fef723548e",
+    "member3_proposal5_0229baf5ae5f",
+    "member4_proposal4_f5d945233dc9"
+  ],
+  "sum_of_four_triple_gain_counts_lower": 11,
+  "sum_of_four_triple_vote_deltas_lower": 3,
+  "sum_of_four_triple_vote_loss_counts_upper": 8,
+  "sum_of_four_triple_vote_loss_eligible_counts_exact": 8
+}

@@ -1,0 +1,9 @@
+{
+  "baseline_identifiability_zero": true,
+  "exact_positive_state_not_claimed": true,
+  "existential_common_safe_positive_path_proven": true,
+  "missing_profiles_not_fabricated": true,
+  "twenty_four_states_enumerated": true,
+  "validation_test_zero": true,
+  "zero_api": true
+}

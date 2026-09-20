@@ -1,0 +1,54 @@
+[
+  {
+    "bound_reason": "FOUR_SET_AT_LEAST_THREE_MEMBERSHIP_BOUNDS",
+    "exact_output_diversity": "NOT_IDENTIFIED",
+    "exact_pivotal_rows": "NOT_IDENTIFIED",
+    "member_accuracies": [
+      60,
+      76,
+      80,
+      61,
+      71
+    ],
+    "mutation_count": 4,
+    "oracle_coverage_count_lower": 88,
+    "oracle_coverage_count_upper": 100,
+    "selected_mutations": [
+      "member1_proposal2_7643bc41b45e",
+      "member2_proposal8_a5fef723548e",
+      "member3_proposal5_0229baf5ae5f",
+      "member4_proposal2_c537ca25a8aa"
+    ],
+    "state_id": "m1_member1_proposal2_7643bc41b45e__m2_member2_proposal8_a5fef723548e__m3_member3_proposal5_0229baf5ae5f__m4_member4_proposal2_c537ca25a8aa",
+    "vote_correct_count_lower": 63,
+    "vote_correct_count_upper": 100,
+    "vote_delta_lower": 3,
+    "vote_delta_upper": 40
+  },
+  {
+    "bound_reason": "FOUR_SET_AT_LEAST_THREE_MEMBERSHIP_BOUNDS",
+    "exact_output_diversity": "NOT_IDENTIFIED",
+    "exact_pivotal_rows": "NOT_IDENTIFIED",
+    "member_accuracies": [
+      60,
+      76,
+      80,
+      61,
+      64
+    ],
+    "mutation_count": 4,
+    "oracle_coverage_count_lower": 88,
+    "oracle_coverage_count_upper": 100,
+    "selected_mutations": [
+      "member1_proposal2_7643bc41b45e",
+      "member2_proposal8_a5fef723548e",
+      "member3_proposal5_0229baf5ae5f",
+      "member4_proposal4_f5d945233dc9"
+    ],
+    "state_id": "m1_member1_proposal2_7643bc41b45e__m2_member2_proposal8_a5fef723548e__m3_member3_proposal5_0229baf5ae5f__m4_member4_proposal4_f5d945233dc9",
+    "vote_correct_count_lower": 61,
+    "vote_correct_count_upper": 100,
+    "vote_delta_lower": 1,
+    "vote_delta_upper": 40
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "candidate_full_output_profiles_persisted": false,
+  "exact_24_state_reconstruction": "NOT_AVAILABLE",
+  "execution_contains_answer_vectors": false,
+  "persistent_exact_response_cache_persisted": false,
+  "provider_ledger_contains_response_text": false,
+  "reason": "The v2 evaluator cache was process-local and only decompositions were persisted; request identities and aggregate counts cannot recover answer clusters.",
+  "run_files": [
+    "completion.json",
+    "execution.json",
+    "provider_ledger.jsonl",
+    "run_lifecycle.json"
+  ]
+}

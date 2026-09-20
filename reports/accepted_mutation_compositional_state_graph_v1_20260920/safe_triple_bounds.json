@@ -1,0 +1,58 @@
+[
+  {
+    "mutations": [
+      "member1_proposal2_7643bc41b45e",
+      "member2_proposal8_a5fef723548e",
+      "member3_proposal5_0229baf5ae5f"
+    ],
+    "vote_delta_lower": -3,
+    "vote_delta_upper": 17,
+    "vote_gain_count_lower": 0,
+    "vote_gain_count_upper": 17,
+    "vote_loss_count_lower": 0,
+    "vote_loss_count_upper": 3,
+    "vote_loss_eligible_count_exact": 3
+  },
+  {
+    "mutations": [
+      "member1_proposal2_7643bc41b45e",
+      "member2_proposal8_a5fef723548e",
+      "member4_proposal4_f5d945233dc9"
+    ],
+    "vote_delta_lower": -1,
+    "vote_delta_upper": 20,
+    "vote_gain_count_lower": 0,
+    "vote_gain_count_upper": 20,
+    "vote_loss_count_lower": 0,
+    "vote_loss_count_upper": 1,
+    "vote_loss_eligible_count_exact": 1
+  },
+  {
+    "mutations": [
+      "member1_proposal2_7643bc41b45e",
+      "member3_proposal5_0229baf5ae5f",
+      "member4_proposal4_f5d945233dc9"
+    ],
+    "vote_delta_lower": -3,
+    "vote_delta_upper": 17,
+    "vote_gain_count_lower": 0,
+    "vote_gain_count_upper": 17,
+    "vote_loss_count_lower": 0,
+    "vote_loss_count_upper": 3,
+    "vote_loss_eligible_count_exact": 3
+  },
+  {
+    "mutations": [
+      "member2_proposal8_a5fef723548e",
+      "member3_proposal5_0229baf5ae5f",
+      "member4_proposal4_f5d945233dc9"
+    ],
+    "vote_delta_lower": -1,
+    "vote_delta_upper": 17,
+    "vote_gain_count_lower": 0,
+    "vote_gain_count_upper": 17,
+    "vote_loss_count_lower": 0,
+    "vote_loss_count_upper": 1,
+    "vote_loss_eligible_count_exact": 1
+  }
+]

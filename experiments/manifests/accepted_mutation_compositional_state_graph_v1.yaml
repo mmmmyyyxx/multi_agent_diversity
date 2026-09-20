@@ -1,0 +1,96 @@
+schema_version: experiment_manifest_v1
+experiment_id: accepted_mutation_compositional_state_graph_v1
+title: Bounded accepted-mutation compositional state graph audit
+status: COMPLETED
+legacy_index: false
+lifecycle_history:
+- status: DRAFT
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: PREREGISTERED
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: IMPLEMENTED
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: PREFLIGHT_PASS
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: RUNNING
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: TRAIN_FROZEN
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+- status: COMPLETED
+  timestamp: '2026-09-20T02:48:18.713573+00:00'
+lineage:
+  parents:
+  - accepted_local_mutation_team_transfer_v2
+  derives_from: accepted_local_mutation_team_transfer_v2
+scientific_question: Can frozen local improvements compose into a Common-Safe plurality-responsive
+  state without new API calls?
+hypotheses:
+- Vote-neutral local improvements may be safe symmetry-breaking steps.
+- At least one composition may yield positive plurality transfer.
+method_identity: member_aware_peer_state_v15
+runtime_version: accepted_mutation_compositional_state_graph_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b
+  split_hashes:
+    baseline_team_hash: faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd
+  validation_policy: prohibited; Validation50 calls=0
+  test_policy: prohibited; Test50 calls=0
+model:
+  solver: NONE_ZERO_API
+  optimizer_roles: {}
+  thinking: false
+  temperatures: {}
+  max_tokens: {}
+seeds:
+- 78
+design:
+  changed:
+  - offline composition of frozen evidence
+  unchanged:
+  - five-member plurality
+  - tie-as-abstain
+  - Common-Safe
+  forbidden_changes:
+  - API calls
+  - candidate regeneration
+  - writeback
+  - scheduler
+  configuration_count: 24
+  protocol_sha256: 17e7a485a6d2540391a35f25b9e1de70cee904f03fdd2b49283e443512ee0941
+  evidence_availability: CANDIDATE_FULL_PROFILES_NOT_PERSISTED
+api_authorization:
+  authorized: false
+  authorization_scope: ZERO_API_ONLY
+  allowed_roles: []
+  allowed_phases: []
+budget:
+  type: zero_api_offline_audit
+  frozen_before_run: true
+  limit:
+    provider_calls: 0
+    Validation50: 0
+    Test50: 0
+selection:
+  primary_metric: existence_of_common_safe_path_to_team_positive_composition
+  frozen_rule: enumerate all 24 frozen configurations; use exact metrics only when
+    evidence permits
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/accepted_mutation_compositional_state_graph_v1/PROTOCOL.md
+    sha256: 2ab4cf3869740ce380799b560a6f5e9c982f27893e13fd6a177b17de263b40bc
+  report: reports/accepted_mutation_compositional_state_graph_v1_20260920
+  provenance: reports/accepted_mutation_compositional_state_graph_v1_20260920/provenance.json
+git:
+  design_commit: cecfa7843db111449b16f8301e6bc92d9d192675
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: BOUNDED_AUDIT_COMPLETE_EXACT_GRAPH_NOT_RECONSTRUCTIBLE
+  conclusion: At least one Common-Safe path to a team-positive triple exists, but
+    missing candidate profiles prevent identification of the concrete state.
+  evidence_type: retrospective
