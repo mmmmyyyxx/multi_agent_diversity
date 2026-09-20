@@ -87,8 +87,8 @@ artifacts:
   provenance: reports/accepted_mutation_compositional_state_graph_v1_20260920/provenance.json
 git:
   design_commit: cecfa7843db111449b16f8301e6bc92d9d192675
-  implementation_commit: null
-  result_commit: null
+  implementation_commit: 57765936e4074dc46503de2df19314f0a138210f
+  result_commit: 57765936e4074dc46503de2df19314f0a138210f
 result:
   classifier: BOUNDED_AUDIT_COMPLETE_EXACT_GRAPH_NOT_RECONSTRUCTIBLE
   conclusion: At least one Common-Safe path to a team-positive triple exists, but
