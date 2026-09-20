@@ -82,7 +82,7 @@ artifacts:
   report: null
   provenance: null
 git:
-  design_commit: 0330d8a35fbb741f2feeb4d77db13981e6c01635
+  design_commit: 28420dee6ae74b3119ce593c80baf75928029162
   implementation_commit: null
   result_commit: null
 result:

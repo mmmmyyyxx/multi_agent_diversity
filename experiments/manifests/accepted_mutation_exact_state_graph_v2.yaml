@@ -86,8 +86,8 @@ artifacts:
   provenance: reports/accepted_mutation_exact_state_graph_v2_20260920/provenance.json
 git:
   design_commit: 0330d8a35fbb741f2feeb4d77db13981e6c01635
-  implementation_commit: null
-  result_commit: null
+  implementation_commit: 28420dee6ae74b3119ce593c80baf75928029162
+  result_commit: 28420dee6ae74b3119ce593c80baf75928029162
 result:
   classifier: CACHE_ONLY_PROFILE_RECOVERY_INCOMPLETE
   conclusion: All 500 historical requests are ledger-verified, but no persisted response
