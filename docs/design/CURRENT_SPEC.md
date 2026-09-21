@@ -125,11 +125,17 @@ persistent realizability, team evaluation, Common-Safe, Shadow, selection, and
 atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
 the canonical v15 runtime above.
 
-- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member and bounded
-  local optimization domain through `LocalOptimizationTask`; Layer 1 exclusively
-  owns internal population, sampling, parent selection, mutation, frontier,
-  local acceptance, and optimizer state. Team-level results cannot mutate the
-  same local search state.
+- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member and sanitized
+  team responsibility context. It does not define exact optimizer examples.
+  Each Layer-1 backend exclusively owns its native data consumption, internal
+  sampling, parent selection, mutation, validation/Pareto or Target evaluation,
+  frontier, local acceptance, and optimizer state. Team-level results cannot
+  mutate the same local search state.
+- **INV-NATIVE-FEED-PARITY-001** — Within an optimizer family, native control
+  and Layer-2 treatment use the same backend data universe, split, sampling,
+  models, representation, and native budget semantics. Responsibility may be
+  added only as a versioned metadata overlay. GEPA and MARS are not required to
+  share optimizer-internal minibatches, validation topology, or budget units.
 - **INV-OPTIMIZER-FIDELITY-001** — The official GEPA backend is a Level-B
   API-compatible adaptation. It calls the frozen, source-verified official
   search engine through supported API seams and does not edit or replace its

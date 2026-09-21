@@ -1,6 +1,11 @@
 """Replaceable single-member prompt-optimization backends."""
 
-from .base import LocalPromptOptimizer, OptimizationContextProvider
+from .base import (
+    LocalPromptOptimizer,
+    LocalSolverObservation,
+    NativeFeedPromptOptimizer,
+    OptimizationContextProvider,
+)
 from .schemas import (
     LocalEvidenceExample,
     LocalOptimizationResult,
@@ -17,6 +22,8 @@ __all__ = [
     "LocalOptimizerBudget",
     "LocalPromptCandidate",
     "LocalPromptOptimizer",
+    "LocalSolverObservation",
+    "NativeFeedPromptOptimizer",
     "OpaqueOptimizerState",
     "OptimizationContextProvider",
 ]

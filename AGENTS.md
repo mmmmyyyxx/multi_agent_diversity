@@ -69,13 +69,15 @@ and tests together.
 
 ### Two-layer ownership boundary
 
-Layer 2 owns member selection, responsibility attribution, primary-residual
-domain assignment, persistent realizability, construction of
-`LocalOptimizationTask`, team-level empirical evaluation, Common-Safe and
-Shadow checks, cross-member competition, and atomic write-back. It must not
-choose a backend's internal candidate parent or reflection minibatch, replace
-backend-internal population/Pareto/search, feed team acceptance back into the
-same backend search state, or depend on GEPA/SEPO/ESPO internals.
+Layer 2 owns member selection, responsibility attribution, persistent
+realizability, team-level empirical evaluation, Common-Safe and Shadow checks,
+cross-member competition, and atomic write-back. It defines the target member
+and team-level responsibility context, not the exact optimizer examples.
+Each Layer-1 backend owns its native data-consumption and search process.
+Layer 2 must not choose a backend's internal candidate parent, training or
+reflection minibatch, Pareto/validation feed, or Target dataset; replace
+backend-internal population/Pareto/search; feed team acceptance back into the
+same backend search state; or depend on backend internals.
 
 Layer 1 owns how the assigned local problem is searched: internal sampling,
 proposal generation, candidate population and selection, and optimizer-specific
@@ -84,11 +86,16 @@ persistent team realizability or plurality outcomes for target allocation, or
 commit prompts to the team.
 
 ```text
-Layer 2 defines WHAT local optimization problem to solve.
-Layer 1 decides HOW to solve that problem.
+Layer 2 defines WHO to optimize and WHY at team level.
+Layer 1 owns HOW optimization consumes data and searches.
 ```
 
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
+
+Cross-optimizer experiments preserve backend-native data flow. Within-optimizer
+Layer-2 studies require native-feed parity between control and treatment.
+Cross-backend minibatches, internal validation structures, and native budget
+units need not match and must not be used for direct superiority claims.
 
 ### Local optimizer fidelity policy
 
