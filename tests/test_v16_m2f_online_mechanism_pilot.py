@@ -24,6 +24,12 @@ from scripts.package_v16_m2f_online_mechanism_report import scan
 ROOT = Path(__file__).resolve().parents[1]
 
 
+async def _offline_always_a_solver(_question, _agent_id, _prompt):
+    """Keep checkpoint-only tests permanently isolated from provider env vars."""
+
+    return PromptAnswer("A", "FINAL_ANSWER: A", True)
+
+
 def identity(setting: str) -> RunIdentity:
     return RunIdentity(
         method_version=METHOD_VERSION, experiment_setting=setting,
@@ -233,20 +239,26 @@ def test_online_repair_rescues_infeasible_source_without_parent_mutation(tmp_pat
 
 
 def test_checkpoint_persists_online_repair_identity_and_events(tmp_path):
-    source = PromptEnsembleOptimizationSystem(Config.from_flat(
-        out_dir=str(tmp_path / "source"),
-        experiment_setting="experimental_v16_m2f_online_compatibility_repair",
-    ))
+    source = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "source"),
+            experiment_setting="experimental_v16_m2f_online_compatibility_repair",
+        ),
+        solver=_offline_always_a_solver,
+    )
     source.compatibility_repair_events.append({"update_index": 0, "repair_eligible": True})
     source.set_run_identity(identity("experimental_v16_m2f_online_compatibility_repair"))
     asyncio.run(source.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
     source.ensure_responsibility_current()
     payload = build_checkpoint(source, epoch_index=0, update_index=0, training_state={})
     assert payload["compatibility_repair_enabled"] is True
-    target = PromptEnsembleOptimizationSystem(Config.from_flat(
-        out_dir=str(tmp_path / "source"),
-        experiment_setting="experimental_v16_m2f_online_compatibility_repair",
-    ))
+    target = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "source"),
+            experiment_setting="experimental_v16_m2f_online_compatibility_repair",
+        ),
+        solver=_offline_always_a_solver,
+    )
     target.set_run_identity(identity("experimental_v16_m2f_online_compatibility_repair"))
     asyncio.run(target.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
     restore_checkpoint(target, payload)
@@ -254,17 +266,23 @@ def test_checkpoint_persists_online_repair_identity_and_events(tmp_path):
 
 
 def test_checkpoint_rejects_online_repair_setting_mismatch(tmp_path):
-    source = PromptEnsembleOptimizationSystem(Config.from_flat(
-        out_dir=str(tmp_path / "source"),
-        experiment_setting="experimental_v16_m2f_online_compatibility_repair",
-    ))
+    source = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "source"),
+            experiment_setting="experimental_v16_m2f_online_compatibility_repair",
+        ),
+        solver=_offline_always_a_solver,
+    )
     source.set_run_identity(identity("experimental_v16_m2f_online_compatibility_repair"))
     asyncio.run(source.initialize_fixed_probe([{"question": "q", "answer": "A"}]))
     payload = build_checkpoint(source, epoch_index=0, update_index=0, training_state={})
-    target = PromptEnsembleOptimizationSystem(Config.from_flat(
-        out_dir=str(tmp_path / "target"),
-        experiment_setting="experimental_v16_m20_current_v15",
-    ))
+    target = PromptEnsembleOptimizationSystem(
+        Config.from_flat(
+            out_dir=str(tmp_path / "target"),
+            experiment_setting="experimental_v16_m20_current_v15",
+        ),
+        solver=_offline_always_a_solver,
+    )
     try:
         restore_checkpoint(target, payload)
     except ValueError as exc:

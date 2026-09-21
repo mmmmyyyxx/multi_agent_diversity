@@ -132,6 +132,56 @@ def test_local_eval_is_frozen_separately_and_overlap_is_reportable() -> None:
     assert not local_eval & {row.example_id for row in packet.responsibility_examples}
     assert not local_eval & {row.example_id for row in packet.focus_examples}
     assert not local_eval & {row.example_id for row in packet.anchor_examples}
+    assert packet.role_intersection_counts == {
+        "responsibility_x_focus": 0,
+        "responsibility_x_anchor": 0,
+        "responsibility_x_local_eval": 0,
+        "focus_x_anchor": 0,
+        "focus_x_local_eval": 0,
+        "anchor_x_local_eval": 0,
+    }
+
+
+def test_explicit_layer2_local_eval_ids_are_honored_exactly_and_overlap_is_counted() -> None:
+    assignment = TeamSearchAssignment(
+        target_member=2,
+        parent_prompt=PARENT,
+        evidence=evidence(),
+        optimization_context="repair direct flips",
+        responsibility_identity="responsibility",
+        local_validation_example_ids=("responsibility-0", "coalition-1"),
+        primary_responsibility_lane="direct_flip",
+        responsibility_value=8.0,
+    )
+    request = TeamSearchRequest(
+        80, 1, "team-state", 36, "COMMON_SOLVER_CONTRACT_V1", "output-v1",
+        "optimize-only-v1",
+    )
+    packet = Layer2EvidenceRequestBuilder().build(request, assignment).packet
+    assert [row.example_id for row in packet.local_eval_examples] == [
+        "responsibility-0", "coalition-1"
+    ]
+    assert packet.role_intersection_counts["responsibility_x_local_eval"] == 1
+    assert dict(packet.provenance)["local_eval_source"] == "assignment_frozen_ids"
+
+
+def test_explicit_layer2_local_eval_never_backfills_from_outside_assignment() -> None:
+    assignment = TeamSearchAssignment(
+        target_member=2,
+        parent_prompt=PARENT,
+        evidence=evidence(),
+        optimization_context="repair direct flips",
+        responsibility_identity="responsibility",
+        local_validation_example_ids=("not-in-optimize-evidence",),
+        primary_responsibility_lane="direct_flip",
+        responsibility_value=8.0,
+    )
+    request = TeamSearchRequest(
+        80, 1, "team-state", 36, "COMMON_SOLVER_CONTRACT_V1", "output-v1",
+        "optimize-only-v1",
+    )
+    with pytest.raises(ValueError, match="frozen local-eval example absent"):
+        Layer2EvidenceRequestBuilder().build(request, assignment)
 
 
 def test_layer2_packet_content_directly_changes_optimizer_input() -> None:

@@ -144,7 +144,11 @@ the canonical v15 runtime above.
   and anchor rows are exactly parent-wrong to child-correct cases from the
   current parent's latest accepted transition. Root focus/anchor sets are empty;
   histories do not accumulate in optimizer input. Local evaluation is frozen
-  independently and role intersections are audited. These semantics do not add
+  independently through explicit Layer-2 example identities and role intersections
+  are persisted as sanitized counts. Missing explicit identities fail closed; a
+  backend may never fetch or backfill from a global pool. Direct packet fixtures
+  without explicit identities use deterministic coalition rows selected by Layer 2.
+  These semantics do not add
   SEPO search operators, architects, breadcrumb search, Lexicase selection,
   archive admission, or lineage-parent selection to Layer 2.
 - **INV-UNIFIED-BACKEND-RUNTIME-001** — `optimizer_backend` (`gepa` or `mars`)

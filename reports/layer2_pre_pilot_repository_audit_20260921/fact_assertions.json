@@ -1,0 +1,39 @@
+{
+  "audit_base_commit": "a80d57dc2ba31964c6320e95a4542a6f212cb396",
+  "registered_modes": [
+    "GEPA_LAYER2",
+    "GEPA_NATIVE",
+    "MARS_LAYER2",
+    "MARS_NATIVE"
+  ],
+  "assertions": {
+    "single_source_tree_for_all_modes": true,
+    "gepa_native_sampler_poison_test_passed": true,
+    "gepa_schedule_exhaustion_has_no_native_fallback": true,
+    "mars_global_data_builder_poison_test_passed": true,
+    "mars_target_uses_packet_local_eval_only": true,
+    "transition_store_written_only_after_team_commit": true,
+    "transition_child_must_equal_current_parent": true,
+    "explicit_local_eval_ids_honored_exactly": true,
+    "missing_explicit_local_eval_id_fails_closed": true,
+    "role_intersection_counts_persisted_by_gepa": true,
+    "role_intersection_counts_persisted_by_mars": true,
+    "provider_profile_in_run_identity": true,
+    "base_url_identity_is_hashed": true,
+    "raw_base_url_persisted": false,
+    "provider_request_attempts": 2,
+    "successful_api_calls": 0,
+    "validation_calls": 0,
+    "test_calls": 0
+  },
+  "test_summary": {
+    "focused_boundary_and_api_isolation_passed": 54,
+    "full_passed": 1159,
+    "full_failed": 17,
+    "full_errors": 13,
+    "historical_artifact_failures": 15,
+    "historical_artifact_errors": 13,
+    "unintended_authentication_attempt_failures": 2,
+    "offending_checkpoint_tests_now_offline": true
+  }
+}

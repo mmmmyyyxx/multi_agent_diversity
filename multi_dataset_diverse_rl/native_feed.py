@@ -15,9 +15,11 @@ from typing import Any, Mapping
 
 NATIVE_FEED_REQUEST_VERSION = "backend_native_feed_request_v1"
 LAYER2_RESPONSIBILITY_CONTEXT_VERSION = "layer2_responsibility_context_v1"
-LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v2_transition_semantics"
+LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v3_frozen_local_eval"
 LAYER2_EVIDENCE_REQUEST_VERSION = "layer2_owned_evidence_request_v2"
-LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = "responsibility_plus_latest_transition_eval_v1"
+LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = (
+    "responsibility_plus_latest_transition_frozen_eval_v2"
+)
 
 
 @dataclass(frozen=True)
@@ -413,6 +415,29 @@ class ResponsibilityEvidencePacket:
         return _stable_hash([row.example_id for row in rows])
 
     @property
+    def role_intersection_counts(self) -> Mapping[str, int]:
+        """Sanitized source-example overlap across the four frozen roles."""
+
+        role_sets = {
+            "responsibility": {row.example_id for row in self.responsibility_examples},
+            "focus": {row.example_id for row in self.focus_examples},
+            "anchor": {row.example_id for row in self.anchor_examples},
+            "local_eval": {row.example_id for row in self.local_eval_examples},
+        }
+        pairs = (
+            ("responsibility", "focus"),
+            ("responsibility", "anchor"),
+            ("responsibility", "local_eval"),
+            ("focus", "anchor"),
+            ("focus", "local_eval"),
+            ("anchor", "local_eval"),
+        )
+        return {
+            f"{left}_x_{right}": len(role_sets[left] & role_sets[right])
+            for left, right in pairs
+        }
+
+    @property
     def batch_schedule_hash(self) -> str:
         return _stable_hash([list(batch) for batch in self.ordered_batch_schedule])
 
@@ -460,6 +485,7 @@ class Layer2OptimizationRequest:
             "focus_example_ids_hash": self.packet.role_id_hash("focus"),
             "anchor_example_ids_hash": self.packet.role_id_hash("anchor"),
             "local_eval_example_ids_hash": self.packet.role_id_hash("local_eval"),
+            "role_intersection_counts": dict(self.packet.role_intersection_counts),
             "batch_schedule_hash": self.packet.batch_schedule_hash,
             "backend": backend,
             "backend_version": backend_version,

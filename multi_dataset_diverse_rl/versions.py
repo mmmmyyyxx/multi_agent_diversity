@@ -44,9 +44,9 @@ MARS_NATIVE_FEED_VERSION = "MARS_OFFICIAL_CODE_FEED_V1"
 MARS_LAYER2_RESPONSIBILITY_OVERLAY_VERSION = (
     "MARS_LAYER2_RESPONSIBILITY_OVERLAY_V1"
 )
-LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v2_transition_semantics"
+LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v3_frozen_local_eval"
 LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = (
-    "responsibility_plus_latest_transition_eval_v1"
+    "responsibility_plus_latest_transition_frozen_eval_v2"
 )
 GEPA_LAYER2_EVIDENCE_BACKEND_VERSION = (
     "GEPA_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2"

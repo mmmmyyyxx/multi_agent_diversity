@@ -500,6 +500,8 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
                 "responsibility_count": len(packet.responsibility_examples),
                 "focus_count": len(packet.focus_examples),
                 "anchor_count": len(packet.anchor_examples),
+                "local_eval_count": len(packet.local_eval_examples),
+                "role_intersection_counts": dict(packet.role_intersection_counts),
                 "transition_effect_hash": (
                     packet.latest_transition.transition_effect_hash
                     if packet.latest_transition is not None else None

@@ -1,0 +1,17 @@
+{
+  "audit_id": "layer2_pre_pilot_repository_audit_20260921",
+  "classification": "IMPLEMENTATION_READY_WITH_AUDIT_API_ISOLATION_DEVIATION",
+  "four_modes_same_main": "PASS",
+  "gepa_layer2_backend_example_selection": "PASS_ZERO_CALLS",
+  "mars_layer2_global_data_access": "PASS_ZERO_CALLS",
+  "latest_committed_transition_semantics": "PASS",
+  "frozen_local_eval_identity": "PASS_AFTER_NARROW_CONTRACT_REPAIR",
+  "role_intersection_observability": "PASS_AFTER_NARROW_CONTRACT_REPAIR",
+  "provider_identity_sanitization": "PASS",
+  "scientific_efficacy": "NOT_EVALUATED",
+  "provider_request_attempts": 2,
+  "successful_api_calls": 0,
+  "provider_attempt_outcome": "TWO_AUTHENTICATION_FAILURES_NO_MODEL_OUTPUT",
+  "validation_calls": 0,
+  "test_calls": 0
+}

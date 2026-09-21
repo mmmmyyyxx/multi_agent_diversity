@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "README.md": "56b28f3a3c8121102644820a6deda3ece9fa399237a26f72c38911fe1a042a9a",
+    "classifier.json": "5c31626582f86d7fca3ff2d64911987a3362d9b9fabb83caf827315b627bfa58",
+    "fact_assertions.json": "e55051400b77cc5219b798d8d726072a903c6102fb12cbdcacb691ecae932c21",
+    "sanitization_manifest.json": "8d1b74291bb59d64e0d9aef2bd6ef0c2ecc5563da338dfe6c61d041790781261"
+  }
+}

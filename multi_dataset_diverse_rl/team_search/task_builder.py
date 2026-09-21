@@ -234,7 +234,7 @@ class NativeFeedRequestBuilder(LocalTaskBuilder):
 class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
     """Freeze the complete local-search curriculum before Layer 1 starts."""
 
-    packet_selection_policy = "responsibility_plus_latest_transition_eval_v1"
+    packet_selection_policy = "responsibility_plus_latest_transition_frozen_eval_v2"
 
     @staticmethod
     def _packet_row(
@@ -307,6 +307,9 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
         lane = assignment.primary_responsibility_lane or "fallback"
         if lane not in {"direct_flip", "near_margin", "coverage", "fallback"}:
             raise ValueError("unknown primary responsibility lane")
+        by_id = {row.example_id: row for row in assignment.evidence}
+        if len(by_id) != len(assignment.evidence):
+            raise ValueError("Layer-2 Optimize evidence ids must be unique")
         responsibility_rows = tuple(
             sorted(
                 (
@@ -318,21 +321,44 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 key=self._priority,
             )
         )
-        local_eval_rows = tuple(
-            sorted(
-                (
-                    row
-                    for row in assignment.evidence
-                    if row.evidence_group == "coalition"
-                ),
-                key=self._priority,
+        if assignment.local_validation_example_ids:
+            if len(assignment.local_validation_example_ids) != len(
+                set(assignment.local_validation_example_ids)
+            ):
+                raise ValueError("local-eval example ids must be unique")
+            missing_local_eval = tuple(
+                row_id
+                for row_id in assignment.local_validation_example_ids
+                if row_id not in by_id
             )
-        )
+            if missing_local_eval:
+                raise ValueError(
+                    "INSUFFICIENT_LAYER2_EVIDENCE: frozen local-eval example absent "
+                    "from Optimize evidence"
+                )
+            local_eval_rows = tuple(
+                by_id[row_id] for row_id in assignment.local_validation_example_ids
+            )
+            local_eval_source = "assignment_frozen_ids"
+        else:
+            # Compatibility path for direct packet construction. This is still a
+            # deterministic Layer-2 decision and never asks the backend/global pool
+            # to fill missing evidence.
+            local_eval_rows = tuple(
+                sorted(
+                    (
+                        row
+                        for row in assignment.evidence
+                        if row.evidence_group == "coalition"
+                    ),
+                    key=self._priority,
+                )
+            )
+            local_eval_source = "deterministic_coalition_rows"
         if not responsibility_rows:
             raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no aligned responsibility examples")
         if not local_eval_rows:
             raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no local-eval examples")
-        by_id = {row.example_id: row for row in assignment.evidence}
         transition = assignment.latest_transition
         focus_rows = () if transition is None else tuple(
             by_id[row_id] for row_id in transition.newly_broken_ids if row_id in by_id
@@ -397,6 +423,8 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 ("builder", "Layer2EvidenceRequestBuilder"),
                 ("source_split", "optimize_only"),
                 ("selection_policy", self.packet_selection_policy),
+                ("local_eval_source", local_eval_source),
+                ("batch_fill_policy", "cyclic_repeat_within_frozen_packet_v1"),
             ),
             latest_transition=transition,
         )

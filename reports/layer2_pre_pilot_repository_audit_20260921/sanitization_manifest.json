@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "excluded": [
+    "api_keys",
+    "raw_provider_endpoints",
+    "prompts",
+    "questions",
+    "gold_answers",
+    "model_answers",
+    "raw_model_responses",
+    "absolute_local_paths",
+    "checkpoints",
+    "sqlite_caches"
+  ],
+  "published_evidence": [
+    "boolean boundary assertions",
+    "version identities",
+    "sanitized overlap counts contract",
+    "test counts"
+  ]
+}

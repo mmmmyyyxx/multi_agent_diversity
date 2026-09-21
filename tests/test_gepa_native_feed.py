@@ -227,6 +227,10 @@ def test_layer2_schedule_replaces_native_sampler_and_reaches_solver(
     telemetry = result.optimizer_state.payload["telemetry"]
     assert telemetry["backend_example_selection_calls"] == 0
     assert telemetry["native_sampler_called"] is False
+    assert telemetry["local_eval_count"] == len(request.packet.local_eval_examples)
+    assert telemetry["role_intersection_counts"] == dict(
+        request.packet.role_intersection_counts
+    )
     assert reflection.prompts
     assert request.packet.packet_hash in reflection.prompts[0]
     assert "TEAM RESPONSIBILITY EVIDENCE" in reflection.prompts[0]

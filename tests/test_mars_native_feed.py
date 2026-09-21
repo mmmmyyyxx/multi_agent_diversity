@@ -207,6 +207,12 @@ def test_layer2_evidence_reaches_mars_roles_and_exact_target_set() -> None:
     assert result.candidates
     assert result.optimizer_state.payload["backend_example_selection_calls"] == 0
     assert result.optimizer_state.payload["native_global_dataset_accessed"] is False
+    assert result.optimizer_state.payload["local_eval_count"] == len(
+        request.packet.local_eval_examples
+    )
+    assert result.optimizer_state.payload["role_intersection_counts"] == dict(
+        request.packet.role_intersection_counts
+    )
     assert result.candidates[0].backend_metadata["responsibility_packet_hash"] == before
 
 
