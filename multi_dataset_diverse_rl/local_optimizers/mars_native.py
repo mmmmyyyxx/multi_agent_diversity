@@ -300,7 +300,7 @@ class MARSNativeFeedOptimizer:
 
 def _local_eval_row(row: PacketEvidenceExample) -> LocalEvidenceExample:
     return LocalEvidenceExample(
-        example_id=row.example_id,
+        example_id=row.packet_item_id,
         input_payload=row.input_payload,
         gold=row.gold,
         parent_output=row.parent_output,
@@ -346,11 +346,14 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
             "primary_responsibility_lane": packet.primary_responsibility_lane,
             "responsibility_value": packet.responsibility_value,
             "responsibility_context": packet.responsibility_context,
-            "repair_evidence": [
-                _reasoning_evidence(row) for row in packet.repair_examples
+            "TEAM RESPONSIBILITY EVIDENCE": [
+                _reasoning_evidence(row) for row in packet.responsibility_examples
             ],
-            "preservation_evidence": [
-                _reasoning_evidence(row) for row in packet.preservation_examples
+            "RECENT REGRESSION / FOCUS EVIDENCE": [
+                _reasoning_evidence(row) for row in packet.focus_examples
+            ],
+            "RECENT GAIN / ANCHOR EVIDENCE": [
+                _reasoning_evidence(row) for row in packet.anchor_examples
             ],
             "ordered_batch_schedule": [
                 list(batch) for batch in packet.ordered_batch_schedule
@@ -409,6 +412,7 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
                 context={
                     "teacher_question": dict(_payload(teacher)),
                     "packet_hash": packet.packet_hash,
+                    "layer2_evidence_packet": evidence_context,
                 },
             )
             roles.append(critic)
@@ -493,6 +497,13 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
                     "critic": True,
                     "student": True,
                 },
+                "responsibility_count": len(packet.responsibility_examples),
+                "focus_count": len(packet.focus_examples),
+                "anchor_count": len(packet.anchor_examples),
+                "transition_effect_hash": (
+                    packet.latest_transition.transition_effect_hash
+                    if packet.latest_transition is not None else None
+                ),
                 "termination_reason": (
                     "candidate_returned" if candidates else "no_improving_candidate"
                 ),

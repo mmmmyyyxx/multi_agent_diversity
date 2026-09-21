@@ -186,7 +186,7 @@ def test_layer2_evidence_reaches_mars_roles_and_exact_target_set() -> None:
         "planner", "teacher", "critic", "student"
     ]
     expected_eval_ids = [
-        row.example_id for row in request.packet.local_eval_examples
+        row.packet_item_id for row in request.packet.local_eval_examples
     ] * 2
     assert evaluator.ids == expected_eval_ids
     assert all(
@@ -197,8 +197,13 @@ def test_layer2_evidence_reaches_mars_roles_and_exact_target_set() -> None:
         for role, context in roles.calls
     )
     planner_packet = roles.calls[0][1]["layer2_evidence_packet"]
-    assert len(planner_packet["repair_evidence"]) == 4
-    assert len(planner_packet["preservation_evidence"]) == 4
+    assert len(planner_packet["TEAM RESPONSIBILITY EVIDENCE"]) == 4
+    assert planner_packet["RECENT REGRESSION / FOCUS EVIDENCE"] == []
+    assert planner_packet["RECENT GAIN / ANCHOR EVIDENCE"] == []
+    assert all(
+        "layer2_evidence_packet" in context
+        for _, context in roles.calls
+    )
     assert result.candidates
     assert result.optimizer_state.payload["backend_example_selection_calls"] == 0
     assert result.optimizer_state.payload["native_global_dataset_accessed"] is False
