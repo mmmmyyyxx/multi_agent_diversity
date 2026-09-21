@@ -15,9 +15,9 @@ from typing import Any, Mapping
 
 NATIVE_FEED_REQUEST_VERSION = "backend_native_feed_request_v1"
 LAYER2_RESPONSIBILITY_CONTEXT_VERSION = "layer2_responsibility_context_v1"
-LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v1"
-LAYER2_EVIDENCE_REQUEST_VERSION = "layer2_owned_evidence_request_v1"
-LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = "deterministic_repair_preservation_eval_v1"
+LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v2_transition_semantics"
+LAYER2_EVIDENCE_REQUEST_VERSION = "layer2_owned_evidence_request_v2"
+LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = "responsibility_plus_latest_transition_eval_v1"
 
 
 @dataclass(frozen=True)
@@ -163,7 +163,9 @@ class PacketEvidenceExample:
     def __post_init__(self) -> None:
         if not self.example_id or not self.input_payload or not self.gold:
             raise ValueError("packet evidence identity, input, and gold are required")
-        if self.responsibility_role not in {"repair", "preservation", "local_eval"}:
+        if self.responsibility_role not in {
+            "responsibility", "focus", "anchor", "local_eval"
+        }:
             raise ValueError("unknown packet evidence role")
         if self.lane not in {
             "direct_flip", "near_margin", "coverage", "fallback", "global"
@@ -185,6 +187,107 @@ class PacketEvidenceExample:
             "metadata": list(self.metadata),
         }
 
+    @property
+    def packet_item_id(self) -> str:
+        """Role-qualified identity used when one source example has multiple roles."""
+
+        return f"{self.responsibility_role}:{self.example_id}"
+
+
+@dataclass(frozen=True)
+class CandidateTransitionAudit:
+    """Sanitized one-step parent-to-child correctness transition."""
+
+    parent_candidate_hash: str
+    child_candidate_hash: str
+    parent_correctness: tuple[tuple[str, bool], ...]
+    child_correctness: tuple[tuple[str, bool], ...]
+    newly_fixed_ids: tuple[str, ...] = field(init=False)
+    newly_broken_ids: tuple[str, ...] = field(init=False)
+    unchanged_correct_count: int = field(init=False)
+    unchanged_wrong_count: int = field(init=False)
+    parent_profile_hash: str = field(init=False)
+    child_profile_hash: str = field(init=False)
+    transition_effect_hash: str = field(init=False)
+
+    def __post_init__(self) -> None:
+        if not self.parent_candidate_hash or not self.child_candidate_hash:
+            raise ValueError("transition candidate hashes are required")
+        parent = dict(self.parent_correctness)
+        child = dict(self.child_correctness)
+        if (
+            not parent
+            or set(parent) != set(child)
+            or len(parent) != len(self.parent_correctness)
+            or len(child) != len(self.child_correctness)
+        ):
+            raise ValueError("transition profiles require identical unique example ids")
+        ordered_ids = sorted(parent)
+        fixed = tuple(row_id for row_id in ordered_ids if not parent[row_id] and child[row_id])
+        broken = tuple(row_id for row_id in ordered_ids if parent[row_id] and not child[row_id])
+        unchanged_correct = sum(parent[row_id] and child[row_id] for row_id in ordered_ids)
+        unchanged_wrong = sum(not parent[row_id] and not child[row_id] for row_id in ordered_ids)
+        parent_payload = [[row_id, bool(parent[row_id])] for row_id in ordered_ids]
+        child_payload = [[row_id, bool(child[row_id])] for row_id in ordered_ids]
+        parent_hash = _stable_hash(parent_payload)
+        child_hash = _stable_hash(child_payload)
+        effect_payload = {
+            "parent_candidate_hash": self.parent_candidate_hash,
+            "child_candidate_hash": self.child_candidate_hash,
+            "parent_profile_hash": parent_hash,
+            "child_profile_hash": child_hash,
+            "newly_fixed_ids": list(fixed),
+            "newly_broken_ids": list(broken),
+            "unchanged_correct_count": unchanged_correct,
+            "unchanged_wrong_count": unchanged_wrong,
+        }
+        object.__setattr__(self, "newly_fixed_ids", fixed)
+        object.__setattr__(self, "newly_broken_ids", broken)
+        object.__setattr__(self, "unchanged_correct_count", unchanged_correct)
+        object.__setattr__(self, "unchanged_wrong_count", unchanged_wrong)
+        object.__setattr__(self, "parent_profile_hash", parent_hash)
+        object.__setattr__(self, "child_profile_hash", child_hash)
+        object.__setattr__(self, "transition_effect_hash", _stable_hash(effect_payload))
+
+    def sanitized_payload(self) -> Mapping[str, Any]:
+        return {
+            "parent_candidate_hash": self.parent_candidate_hash,
+            "child_candidate_hash": self.child_candidate_hash,
+            "newly_fixed_ids": list(self.newly_fixed_ids),
+            "newly_broken_ids": list(self.newly_broken_ids),
+            "unchanged_correct_count": self.unchanged_correct_count,
+            "unchanged_wrong_count": self.unchanged_wrong_count,
+            "parent_profile_hash": self.parent_profile_hash,
+            "child_profile_hash": self.child_profile_hash,
+            "transition_effect_hash": self.transition_effect_hash,
+        }
+
+
+def transition_audit_from_categorical_profiles(
+    *,
+    parent_candidate_hash: str,
+    child_candidate_hash: str,
+    parent_profile: tuple[Mapping[str, Any], ...],
+    child_profile: tuple[Mapping[str, Any], ...],
+) -> CandidateTransitionAudit:
+    """Reconstruct transition roles from persisted sanitized categorical profiles."""
+
+    def correctness(rows: tuple[Mapping[str, Any], ...]) -> tuple[tuple[str, bool], ...]:
+        values = []
+        for row in rows:
+            row_id = row.get("example_id", row.get("example_id_hash"))
+            if not isinstance(row_id, str) or not row_id or "correct" not in row:
+                raise ValueError("categorical profile row lacks example identity/correctness")
+            values.append((row_id, bool(row["correct"])))
+        return tuple(values)
+
+    return CandidateTransitionAudit(
+        parent_candidate_hash=parent_candidate_hash,
+        child_candidate_hash=child_candidate_hash,
+        parent_correctness=correctness(parent_profile),
+        child_correctness=correctness(child_profile),
+    )
+
 
 @dataclass(frozen=True)
 class ResponsibilityEvidencePacket:
@@ -195,13 +298,17 @@ class ResponsibilityEvidencePacket:
     primary_responsibility_lane: str
     responsibility_value: float
     responsibility_context: str
-    repair_examples: tuple[PacketEvidenceExample, ...]
-    preservation_examples: tuple[PacketEvidenceExample, ...]
+    responsibility_examples: tuple[PacketEvidenceExample, ...]
+    focus_examples: tuple[PacketEvidenceExample, ...]
+    anchor_examples: tuple[PacketEvidenceExample, ...]
     local_eval_examples: tuple[PacketEvidenceExample, ...]
     ordered_batch_schedule: tuple[tuple[str, ...], ...]
+    parent_candidate_hash: str
+    lineage_parent_hash: str | None
     data_universe_hash: str
     budget: NativeResourceBudget
     provenance: tuple[tuple[str, str], ...]
+    latest_transition: CandidateTransitionAudit | None = None
     packet_version: str = LAYER2_EVIDENCE_PACKET_VERSION
     selection_policy_version: str = LAYER2_EVIDENCE_SELECTION_POLICY_VERSION
     packet_hash: str = field(init=False)
@@ -211,30 +318,31 @@ class ResponsibilityEvidencePacket:
             raise ValueError("packet source-state and universe hashes are required")
         if self.target_member < 0 or self.responsibility_value < 0:
             raise ValueError("invalid packet target or responsibility value")
-        if not self.repair_examples:
-            raise ValueError("packet requires repair evidence")
-        if not self.preservation_examples:
-            raise ValueError("packet requires preservation evidence")
+        if not self.responsibility_examples:
+            raise ValueError("packet requires responsibility evidence")
         if not self.local_eval_examples:
             raise ValueError("packet requires local-evaluation evidence")
+        if not self.parent_candidate_hash:
+            raise ValueError("packet parent candidate hash is required")
         role_sets = {
-            "repair": {row.example_id for row in self.repair_examples},
-            "preservation": {row.example_id for row in self.preservation_examples},
+            "responsibility": {row.example_id for row in self.responsibility_examples},
+            "focus": {row.example_id for row in self.focus_examples},
+            "anchor": {row.example_id for row in self.anchor_examples},
             "local_eval": {row.example_id for row in self.local_eval_examples},
         }
         if any(len(ids) != len(rows) for ids, rows in (
-            (role_sets["repair"], self.repair_examples),
-            (role_sets["preservation"], self.preservation_examples),
+            (role_sets["responsibility"], self.responsibility_examples),
+            (role_sets["focus"], self.focus_examples),
+            (role_sets["anchor"], self.anchor_examples),
             (role_sets["local_eval"], self.local_eval_examples),
         )):
             raise ValueError("packet evidence ids must be unique within each role")
-        if (
-            role_sets["repair"] & role_sets["preservation"]
-            or role_sets["repair"] & role_sets["local_eval"]
-            or role_sets["preservation"] & role_sets["local_eval"]
-        ):
-            raise ValueError("default packet policy requires disjoint evidence roles")
-        scheduled = role_sets["repair"] | role_sets["preservation"]
+        scheduled = {
+            row.packet_item_id
+            for row in (
+                *self.responsibility_examples, *self.focus_examples, *self.anchor_examples
+            )
+        }
         if not self.ordered_batch_schedule or any(
             not batch or not set(batch).issubset(scheduled)
             for batch in self.ordered_batch_schedule
@@ -242,15 +350,26 @@ class ResponsibilityEvidencePacket:
             raise ValueError("packet schedule must contain only selected search evidence")
         if set().union(*(set(batch) for batch in self.ordered_batch_schedule)) != scheduled:
             raise ValueError("packet schedule must cover every selected search example")
-        if any(row.responsibility_role != "repair" for row in self.repair_examples):
-            raise ValueError("repair evidence role mismatch")
-        if any(
-            row.responsibility_role != "preservation"
-            for row in self.preservation_examples
-        ):
-            raise ValueError("preservation evidence role mismatch")
+        if any(row.responsibility_role != "responsibility" for row in self.responsibility_examples):
+            raise ValueError("responsibility evidence role mismatch")
+        if any(row.responsibility_role != "focus" for row in self.focus_examples):
+            raise ValueError("focus evidence role mismatch")
+        if any(row.responsibility_role != "anchor" for row in self.anchor_examples):
+            raise ValueError("anchor evidence role mismatch")
         if any(row.responsibility_role != "local_eval" for row in self.local_eval_examples):
             raise ValueError("local-evaluation evidence role mismatch")
+        if self.latest_transition is None:
+            if self.focus_examples or self.anchor_examples or self.lineage_parent_hash is not None:
+                raise ValueError("root packet cannot synthesize transition evidence")
+        else:
+            if self.lineage_parent_hash != self.latest_transition.parent_candidate_hash:
+                raise ValueError("packet lineage parent differs from transition parent")
+            if self.parent_candidate_hash != self.latest_transition.child_candidate_hash:
+                raise ValueError("packet parent differs from transition child")
+            if role_sets["focus"] != set(self.latest_transition.newly_broken_ids):
+                raise ValueError("focus evidence is not the exact newly-broken set")
+            if role_sets["anchor"] != set(self.latest_transition.newly_fixed_ids):
+                raise ValueError("anchor evidence is not the exact newly-fixed set")
         payload = self.identity_payload(include_hash=False)
         object.__setattr__(self, "packet_hash", _stable_hash(payload))
 
@@ -262,25 +381,33 @@ class ResponsibilityEvidencePacket:
             "primary_responsibility_lane": self.primary_responsibility_lane,
             "responsibility_value": self.responsibility_value,
             "responsibility_context": self.responsibility_context,
-            "repair_examples": [row.identity_payload() for row in self.repair_examples],
-            "preservation_examples": [
-                row.identity_payload() for row in self.preservation_examples
+            "responsibility_examples": [
+                row.identity_payload() for row in self.responsibility_examples
             ],
+            "focus_examples": [row.identity_payload() for row in self.focus_examples],
+            "anchor_examples": [row.identity_payload() for row in self.anchor_examples],
             "local_eval_examples": [
                 row.identity_payload() for row in self.local_eval_examples
             ],
             "ordered_batch_schedule": [list(batch) for batch in self.ordered_batch_schedule],
+            "parent_candidate_hash": self.parent_candidate_hash,
+            "lineage_parent_hash": self.lineage_parent_hash,
             "data_universe_hash": self.data_universe_hash,
             "selection_policy_version": self.selection_policy_version,
             "budget": self.budget.__dict__,
             "provenance": list(self.provenance),
+            "latest_transition": (
+                self.latest_transition.sanitized_payload()
+                if self.latest_transition is not None else None
+            ),
         }
         return {**payload, **({"packet_hash": self.packet_hash} if include_hash else {})}
 
     def role_id_hash(self, role: str) -> str:
         rows = {
-            "repair": self.repair_examples,
-            "preservation": self.preservation_examples,
+            "responsibility": self.responsibility_examples,
+            "focus": self.focus_examples,
+            "anchor": self.anchor_examples,
             "local_eval": self.local_eval_examples,
         }[role]
         return _stable_hash([row.example_id for row in rows])
@@ -329,8 +456,9 @@ class Layer2OptimizationRequest:
             "target_member": self.packet.target_member,
             "responsibility_lane": self.packet.primary_responsibility_lane,
             "responsibility_packet_hash": self.packet.packet_hash,
-            "repair_example_ids_hash": self.packet.role_id_hash("repair"),
-            "preservation_example_ids_hash": self.packet.role_id_hash("preservation"),
+            "responsibility_example_ids_hash": self.packet.role_id_hash("responsibility"),
+            "focus_example_ids_hash": self.packet.role_id_hash("focus"),
+            "anchor_example_ids_hash": self.packet.role_id_hash("anchor"),
             "local_eval_example_ids_hash": self.packet.role_id_hash("local_eval"),
             "batch_schedule_hash": self.packet.batch_schedule_hash,
             "backend": backend,

@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..candidate_selection import CandidateEvaluation, ConstraintDecision
 from ..local_optimizers.schemas import LocalPromptCandidate
+from ..native_feed import CandidateTransitionAudit
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,7 @@ class TeamSearchAssignment:
     local_validation_example_ids: tuple[str, ...] = ()
     primary_responsibility_lane: str | None = None
     responsibility_value: float = 0.0
+    latest_transition: CandidateTransitionAudit | None = None
 
 
 @dataclass(frozen=True)

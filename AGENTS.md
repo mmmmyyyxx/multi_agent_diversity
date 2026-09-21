@@ -69,9 +69,9 @@ and tests together.
 
 ### Two-layer ownership boundary
 
-Layer 2 owns member selection, responsibility attribution, exact repair,
-preservation and local-evaluation evidence selection, the ordered evidence
-schedule, persistent realizability, team-level empirical evaluation,
+Layer 2 owns member selection, responsibility attribution, exact responsibility,
+latest-transition focus/anchor, and local-evaluation evidence selection, the
+ordered evidence schedule, persistent realizability, team-level empirical evaluation,
 Common-Safe and Shadow checks, cross-member competition, and atomic write-back.
 Layer 1 retains optimizer-specific prompt-search mechanics, but treatment
 backends may consume only the immutable Layer-2 evidence packet. They may not
@@ -89,6 +89,15 @@ Layer 2 defines WHO to optimize, WHAT responsibility to pursue, and WHICH
 evidence Layer 1 must optimize from.
 Layer 1 retains HOW to mutate, reason over, compare and accept prompt candidates.
 ```
+
+The experimental treatment decomposes Layer-2 evidence as
+`E_L2 = E_team union E_transition`: current team residuals provide
+responsibility evidence, while only the latest accepted parent-to-child edit
+provides focus (newly broken) and anchor (newly fixed) evidence. Root prompts
+have empty focus and anchor sets. Local evaluation is frozen separately. This
+borrows transition-evidence semantics associated with SEPO; it does not import
+SEPO structural edits, architects, breadcrumb search, Lexicase selection,
+archive admission, or lineage-parent selection into Layer 2.
 
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
 

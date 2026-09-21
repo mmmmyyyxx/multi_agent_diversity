@@ -21,6 +21,7 @@ from ..evaluation.solver_stage import (
     validate_solver_stage_attribution,
 )
 from ..local_optimizers.schemas import LocalPromptCandidate
+from ..native_feed import CandidateTransitionAudit
 from ..peer_state import TeamVoteState
 from ..responsibility import MemberAwareRepairOpportunity
 from ..shadow_gate import ShadowGateDecision, ShadowGateMetrics, evaluate_shadow_gate
@@ -81,6 +82,25 @@ class FrozenResponsibilitySnapshot:
     current_margin_by_question: Mapping[str, int]
 
 
+class LatestTransitionStore:
+    """Run-local one-step transition state; older transitions are telemetry only."""
+
+    def __init__(self) -> None:
+        self._by_member: dict[int, CandidateTransitionAudit] = {}
+
+    def get(self, member_id: int) -> CandidateTransitionAudit | None:
+        return self._by_member.get(int(member_id))
+
+    def record(self, member_id: int, transition: CandidateTransitionAudit) -> None:
+        self._by_member[int(member_id)] = transition
+
+    def sanitized_payload(self) -> Mapping[str, Any]:
+        return {
+            str(member): transition.sanitized_payload()
+            for member, transition in sorted(self._by_member.items())
+        }
+
+
 def freeze_current_responsibility(
     system: PromptEnsembleOptimizationSystem,
     *,
@@ -109,10 +129,12 @@ class SystemResponsibilityAssignmentFactory:
         system: PromptEnsembleOptimizationSystem,
         snapshot_reader: Callable[[], FrozenResponsibilitySnapshot],
         task_builder: LocalTaskBuilder,
+        transition_store: LatestTransitionStore | None = None,
     ) -> None:
         self.system = system
         self.snapshot_reader = snapshot_reader
         self.task_builder = task_builder
+        self.transition_store = transition_store
 
     def build_from_member(
         self,
@@ -179,6 +201,10 @@ class SystemResponsibilityAssignmentFactory:
             ),
             responsibility_identity=responsibility_identity,
             primary_responsibility_lane=primary_lane,
+            latest_transition=(
+                self.transition_store.get(target)
+                if self.transition_store is not None else None
+            ),
         )
         # Local validation and TeamMiniBatch use the same primary-lane-aligned
         # responsibility quota while coalition and preservation remain global.
@@ -557,10 +583,12 @@ class SystemTeamCommitter:
         system: PromptEnsembleOptimizationSystem,
         evaluator: SystemTeamCandidateEvaluator,
         update_index_reader: Callable[[], int],
+        transition_store: LatestTransitionStore | None = None,
     ) -> None:
         self.system = system
         self.evaluator = evaluator
         self.update_index_reader = update_index_reader
+        self.transition_store = transition_store
 
     def commit(
         self,
@@ -604,6 +632,36 @@ class SystemTeamCommitter:
             len(self.system.responsibility_portfolio_trajectory),
             len(self.system.member_opportunities),
         )
+        transition = None
+        if self.transition_store is not None:
+            if self.system.fixed_probe is None:
+                raise RuntimeError("fixed Optimize probe is not initialized")
+            examples = self.system.fixed_probe.examples
+            parent_correctness = tuple(
+                (
+                    example.question_hash,
+                    bool(answer.valid) and self.system.match_answer(
+                        answer.answer, example.gold_answer
+                    ),
+                )
+                for example, answer in zip(examples, old_profile)
+            )
+            child_profile = self.evaluator.full_profiles[key]
+            child_correctness = tuple(
+                (
+                    example.question_hash,
+                    bool(answer.valid) and self.system.match_answer(
+                        answer.answer, example.gold_answer
+                    ),
+                )
+                for example, answer in zip(examples, child_profile)
+            )
+            transition = CandidateTransitionAudit(
+                parent_candidate_hash=self.system.prompt_hash(old_prompt),
+                child_candidate_hash=self.system.prompt_hash(candidate.prompt),
+                parent_correctness=parent_correctness,
+                child_correctness=child_correctness,
+            )
         try:
             validate_mutable_decision_procedure(candidate.prompt)
             agent.previous_active_prompt = old_prompt
@@ -622,6 +680,8 @@ class SystemTeamCommitter:
                 committed_target_member=target,
                 committed_candidate_hash=self.system.prompt_hash(candidate.prompt),
             )
+            if transition is not None:
+                self.transition_store.record(target, transition)
         except Exception:
             agent.current_prompt = old_prompt
             agent.previous_active_prompt = old_previous_prompt
