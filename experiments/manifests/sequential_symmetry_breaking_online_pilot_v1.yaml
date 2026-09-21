@@ -91,8 +91,8 @@ artifacts:
     sha256: d2c400636e0b647dca40fa3e0336ab0f5d257bb9bf2f8a27bc7799d47a3e25cd
   classifier: experiments/sequential_symmetry_breaking_online_pilot_v1/classifier_definition.json
   handoff: experiments/sequential_symmetry_breaking_online_pilot_v1/EXPERIMENT_HANDOFF.md
-  report: null
-  provenance: null
+  report: reports/sequential_symmetry_breaking_online_pilot_v1_prep_20260921
+  provenance: reports/sequential_symmetry_breaking_online_pilot_v1_prep_20260921/provenance.json
 git:
   design_commit: af6f26ead37459d23607c053fd4debedf4fba792
   implementation_commit: af6f26ead37459d23607c053fd4debedf4fba792
