@@ -29,3 +29,4 @@ edges:
   - {from: vote_aligned_generic_shadow_pilot_v1, to: vote_aligned_confirmatory_seed76_77_v1, relation: followup_of}
   - {from: vote_aligned_seed75_static_control, to: vote_aligned_confirmatory_seed76_77_v1, relation: followup_of}
   - {from: vote_aligned_confirmatory_seed76_77_v1, to: primary_responsibility_persistent_realizability_v1, relation: derived_experiment}
+  - {from: primary_responsibility_persistent_realizability_v1, to: sequential_symmetry_breaking_online_pilot_v1, relation: derived_experiment}

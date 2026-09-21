@@ -62,6 +62,25 @@ def test_provider_budget_stops_before_extra_call():
     assert calls == 1
 
 
+def test_provider_attempt_guard_runs_before_each_transport_attempt():
+    calls = 0
+    guards = 0
+
+    async def override(*_args):
+        nonlocal calls
+        calls += 1
+        return "ok"
+
+    def guard() -> None:
+        nonlocal guards
+        guards += 1
+
+    client = RoleAwareLLMClient(Config(), override=override)
+    client.provider_attempt_guard = guard
+    asyncio.run(client.chat("m", "s", "u", 0, 1, "optimizer"))
+    assert calls == guards == 1
+
+
 def test_preregistration_freezes_new_seeds_and_train_only():
     spec = json.loads(open(
         "experiments/v16_module2_compute_matched_efficacy_20260813/preregistration.json",

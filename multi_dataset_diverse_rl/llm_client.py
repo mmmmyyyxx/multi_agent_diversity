@@ -160,6 +160,9 @@ class RoleAwareLLMClient:
         max_attempts = max(1, self.cfg.persistence.max_retries + self.cfg.persistence.max_transient_retries)
         last_error: Exception | None = None
         for attempt in range(1, max_attempts + 1):
+            attempt_guard = getattr(self, "provider_attempt_guard", None)
+            if attempt_guard is not None:
+                attempt_guard()
             started = time.time()
             try:
                 if self.override is not None and role in {"optimizer", "evaluator"}:

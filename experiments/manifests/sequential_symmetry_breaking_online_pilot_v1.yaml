@@ -1,0 +1,103 @@
+schema_version: experiment_manifest_v1
+experiment_id: sequential_symmetry_breaking_online_pilot_v1
+title: Sequential Symmetry-Breaking Online Mechanism Pilot
+status: PREFLIGHT_PASS
+legacy_index: false
+lifecycle_history:
+  - {status: DRAFT, timestamp: '2026-09-21T00:00:00+08:00'}
+  - {status: PREREGISTERED, timestamp: '2026-09-21T00:00:00+08:00'}
+  - {status: IMPLEMENTED, timestamp: '2026-09-21T00:00:00+08:00'}
+  - {status: PREFLIGHT_PASS, timestamp: '2026-09-21T00:00:00+08:00'}
+lineage:
+  parents:
+    - primary_responsibility_persistent_realizability_v1
+    - local_gepa_acceptance_rate_pilot_phase_b_v2
+    - accepted_mutation_compositional_state_graph_v1
+  derives_from: primary_responsibility_persistent_realizability_v1
+scientific_question: Can the frozen online Layer-2 plus official GEPA plus Common-Safe pipeline autonomously escape the exact homogeneous Seed-78 plurality lock?
+hypotheses:
+  - Safe vote-neutral commits can move the team from sum_i P_i = 0 to a plurality-responsive state.
+  - Continued responsibility-conditioned search can produce an Optimize100 vote gain after symmetry is broken.
+design:
+  changed:
+    - single-arm sequential trajectory from the exact frozen homogeneous Phase-B baseline
+    - prospective T_commit, T_pivotal, and T_vote endpoints using persisted categorical profiles
+  unchanged:
+    - five equal-weight members and tie-as-abstain plurality
+    - official GEPA Level-B search and component-specific reflection evidence
+    - primary-responsibility persistent-realizability scheduler
+    - TeamMiniBatch12, Full Optimize100, Common-Safe, winner-only Shadow50, and atomic max-one write-back
+  forbidden_changes:
+    - GEPA core, proposal semantics, reflection template, scheduler, persistent realizability, TeamMiniBatch, Common-Safe, Shadow, aggregation, or write-back changes
+    - Validation50 or Test50 access
+    - adaptive budget, extra opportunity, fifth commit, resume, automatic retry, or added arm
+method_identity: member_aware_peer_state_v15
+runtime_version: sequential_symmetry_breaking_online_pilot_v1
+data:
+  task: BBH disambiguation_qa
+  formal: false
+  split_ids:
+    optimize100: anti_overfitting_split_v1_fold_a_plus_b with frozen Phase-B parent outputs
+    shadow50: anti_overfitting_split_v1_fold_c
+    validation50: not_accessed
+    test50: not_accessed
+  split_hashes:
+    split_manifest_sha256: 9639db6f1a83bbe54704d012edd7b843e31cbb1141f9957437daa3803a954886
+    fold_assignment_sha256: 0376fa4a7c757d374bacc994b01be3390fcf5cc1390a65b9753f148d4d3fdb8c
+    phase_b_parent_tasks_sha256: 1b27cce0731acfd0ee2fb9f34fe454caf97d3d1721be8b80d432a9bace94de27
+    phase_b_manifest_sha256: 32933872b0dc2ed2d7fcdaf23b5c368e5320b0861204ad908f7a20cf732a1147
+    five_member_redundancy_audit_sha256: bc9e6f43202d5f296c328cb49226d6a6f3573c4d2f973e835d0eb888643b2f05
+    source_state_hash: faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd
+  validation_policy: Validation50 is prohibited and receives zero calls.
+  test_policy: Test50 is prohibited and receives zero calls.
+model:
+  solver: qwen3-8b
+  optimizer_roles: {reflection: qwen3.7-flash}
+  thinking: false
+  temperatures: {solver: 0.0, reflection: 0.0}
+  max_tokens: {solver: 1800, reflection: 1800}
+seeds: [78]
+budget:
+  type: single_state_prospective_online_mechanism_pilot
+  frozen_before_run: true
+  limit:
+    max_opportunities: 8
+    max_safe_commits: 4
+    no_commit_patience: 6
+    targets_per_opportunity: 2
+    local_metric_calls_per_target: 36
+    optimize_rows: 100
+    shadow_rows: 50
+    successful_provider_calls_all_roles: 4832
+    transport_attempts_all_roles: 19328
+    successful_reflection_calls: 64
+    validation50_calls: 0
+    test50_calls: 0
+  candidate_counts: {official_gepa_k_local_return: 4, max_accepted_children_per_branch: 1, max_promoted_per_target: 2}
+  early_stop: {first_vote_improvement: true, max_safe_commits: 4, consecutive_no_commit_opportunities: 6, max_opportunities: 8}
+api_authorization:
+  authorized: false
+  authorization_scope: pending_explicit_authorization_for_one_fresh_execution
+  allowed_roles: [solver, reflection]
+  allowed_phases: [online_trajectory]
+selection:
+  primary_metric: T_commit, T_pivotal, and T_vote in opportunity and committed-state clocks
+  frozen_rule: Apply classifier_definition.json after integrity passes; any baseline, budget, access, or endpoint-order violation is HOLD.
+  validation_used_for_selection: false
+  test_used_for_selection: false
+artifacts:
+  preregistration:
+    path: experiments/sequential_symmetry_breaking_online_pilot_v1/PROTOCOL.md
+    sha256: d2c400636e0b647dca40fa3e0336ab0f5d257bb9bf2f8a27bc7799d47a3e25cd
+  classifier: experiments/sequential_symmetry_breaking_online_pilot_v1/classifier_definition.json
+  handoff: experiments/sequential_symmetry_breaking_online_pilot_v1/EXPERIMENT_HANDOFF.md
+  report: null
+  provenance: null
+git:
+  design_commit: null
+  implementation_commit: null
+  result_commit: null
+result:
+  classifier: API_AUTHORIZATION_PENDING
+  conclusion: Scientific protocol and implementation are frozen; no API execution has been authorized or performed.
+  evidence_type: not_yet_available

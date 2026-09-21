@@ -195,6 +195,9 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         client = AsyncOpenAI(api_key=key, base_url=endpoint)
 
         async def transport(request: dict[str, Any]) -> TransportResponse:
+            attempt_guard = getattr(self.ledger, "reserve_provider_attempt", None)
+            if attempt_guard is not None:
+                attempt_guard("solver")
             try:
                 response = await client.chat.completions.create(
                     **request, timeout=CONTRACT_SPEC.timeout_seconds
@@ -325,6 +328,9 @@ class Seed78System(PromptEnsembleOptimizationSystem):
             )
 
         super().__init__(cfg, solver=solver)
+        optimizer_attempt_guard = getattr(self.ledger, "reserve_provider_attempt", None)
+        if optimizer_attempt_guard is not None:
+            self.llm.provider_attempt_guard = lambda: optimizer_attempt_guard("reflection")
 
     def set_stage(self, stage: Mapping[str, Any] | None) -> None:
         self._solver_stage = (
