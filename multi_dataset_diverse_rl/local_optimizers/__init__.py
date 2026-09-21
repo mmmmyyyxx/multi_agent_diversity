@@ -2,6 +2,7 @@
 
 from .base import (
     LocalPromptOptimizer,
+    Layer2EvidencePromptOptimizer,
     LocalSolverEvaluator,
     LocalSolverObservation,
     NativeFeedPromptOptimizer,
@@ -23,6 +24,7 @@ __all__ = [
     "LocalOptimizerBudget",
     "LocalPromptCandidate",
     "LocalPromptOptimizer",
+    "Layer2EvidencePromptOptimizer",
     "LocalSolverEvaluator",
     "LocalSolverObservation",
     "NativeFeedPromptOptimizer",

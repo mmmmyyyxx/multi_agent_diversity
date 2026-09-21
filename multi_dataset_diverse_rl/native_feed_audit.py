@@ -94,14 +94,14 @@ def data_access_matrix() -> list[dict[str, Any]]:
 def claim_registry() -> dict[str, Any]:
     return {
         "allowed": [
-            "LAYER2_AUGMENTED_GEPA_SYSTEM_OUTPERFORMS_NATIVE_GEPA_BASELINE",
-            "LAYER2_AUGMENTED_MARS_SYSTEM_OUTPERFORMS_NATIVE_MARS_BASELINE",
+            "GEPA_SEARCH_CORE_PLUS_LAYER2_VS_NATIVE_GEPA",
+            "MARS_SEARCH_CORE_PLUS_LAYER2_VS_NATIVE_MARS",
         ],
-        "requires_future_strict_control": "LAYER2_CAUSES_THE_GAIN",
         "forbidden_cross_backend_claim": "GEPA_OUTPERFORMS_MARS",
         "reason": (
-            "This phase estimates within-optimizer treatment effects and does not "
-            "equalize native data flow, budget units, or team topology."
+            "Treatment replaces optimizer-local example selection and adds the "
+            "complete Layer2 allocation, curriculum and team-admission system. "
+            "It does not isolate individual Layer2 components or compare backends."
         ),
     }
 

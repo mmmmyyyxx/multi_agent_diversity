@@ -6,8 +6,11 @@ from dataclasses import dataclass
 
 from ..local_optimizers.schemas import LocalEvidenceExample, LocalOptimizationTask, LocalOptimizerBudget
 from ..native_feed import (
+    Layer2OptimizationRequest,
     NativeOptimizationRequest,
     NativeResourceBudget,
+    PacketEvidenceExample,
+    ResponsibilityEvidencePacket,
     ResponsibilityContext,
 )
 from .schemas import TeamEvidenceCase, TeamSearchAssignment, TeamSearchRequest
@@ -236,4 +239,175 @@ class NativeFeedRequestBuilder(LocalTaskBuilder):
                 "source_split": "optimize_only",
                 "responsibility_semantics": "metadata_not_sample_subset",
             },
+        )
+
+
+class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
+    """Freeze the complete local-search curriculum before Layer 1 starts."""
+
+    packet_selection_policy = "deterministic_repair_preservation_eval_v1"
+
+    @staticmethod
+    def _packet_row(
+        row: TeamEvidenceCase, *, role: str, lane: str
+    ) -> PacketEvidenceExample:
+        return PacketEvidenceExample(
+            example_id=row.example_id,
+            input_payload=row.input_payload,
+            gold=row.gold,
+            parent_output=row.target_output,
+            textual_feedback=row.feedback,
+            responsibility_role=role,
+            lane=lane,
+            metadata=(
+                ("source_split", row.source_split),
+                ("team_evidence_group", row.evidence_group),
+            ),
+        )
+
+    @staticmethod
+    def _universe_hash(rows: tuple[TeamEvidenceCase, ...]) -> str:
+        import hashlib
+        import json
+
+        payload = [
+            {
+                "id": row.example_id,
+                "input": row.input_payload,
+                "gold": row.gold,
+                "target_output": row.target_output,
+                "feedback": row.feedback,
+                "group": row.evidence_group,
+                "tags": list(row.tags),
+                "split": row.source_split,
+            }
+            for row in sorted(rows, key=lambda item: item.example_id)
+        ]
+        return hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+
+    @staticmethod
+    def _schedule(
+        repair_ids: tuple[str, ...],
+        preservation_ids: tuple[str, ...],
+        *,
+        batch_count: int,
+        batch_size: int = 3,
+    ) -> tuple[tuple[str, ...], ...]:
+        ordered: list[str] = []
+        max_count = max(len(repair_ids), len(preservation_ids))
+        for index in range(max_count):
+            if index < len(repair_ids):
+                ordered.append(repair_ids[index])
+            if index < len(preservation_ids):
+                ordered.append(preservation_ids[index])
+        return tuple(
+            tuple(ordered[(step * batch_size + offset) % len(ordered)] for offset in range(batch_size))
+            for step in range(batch_count)
+        )
+
+    def build(
+        self, request: TeamSearchRequest, assignment: TeamSearchAssignment
+    ) -> Layer2OptimizationRequest:
+        if not assignment.evidence:
+            raise ValueError("team assignment contains no Optimize evidence")
+        if any(row.source_split != "optimize" for row in assignment.evidence):
+            raise ValueError("Layer-2 packet may contain only Optimize-derived evidence")
+        lane = assignment.primary_responsibility_lane or "fallback"
+        if lane not in {"direct_flip", "near_margin", "coverage", "fallback"}:
+            raise ValueError("unknown primary responsibility lane")
+        repair_rows = tuple(
+            sorted(
+                (
+                    row
+                    for row in assignment.evidence
+                    if row.evidence_group == "responsibility"
+                    and self._matches_primary_lane(row, lane)
+                ),
+                key=self._priority,
+            )
+        )
+        preservation_rows = tuple(
+            sorted(
+                (
+                    row
+                    for row in assignment.evidence
+                    if row.evidence_group == "preservation"
+                ),
+                key=self._priority,
+            )
+        )
+        local_eval_rows = tuple(
+            sorted(
+                (
+                    row
+                    for row in assignment.evidence
+                    if row.evidence_group == "coalition"
+                ),
+                key=self._priority,
+            )
+        )
+        if not repair_rows:
+            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no aligned repair examples")
+        if not preservation_rows:
+            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no preservation examples")
+        if not local_eval_rows:
+            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no local-eval examples")
+        role_ids = [
+            {row.example_id for row in rows}
+            for rows in (repair_rows, preservation_rows, local_eval_rows)
+        ]
+        if role_ids[0] & role_ids[1] or role_ids[0] & role_ids[2] or role_ids[1] & role_ids[2]:
+            raise ValueError("Layer-2 packet roles must be disjoint")
+        budget = NativeResourceBudget(
+            native_unit_limit=max(1, request.local_metric_budget // 3),
+            metric_call_limit=request.local_metric_budget,
+            optimizer_call_limit=max(1, request.local_metric_budget),
+            max_returned_candidates=self.local_return_budget,
+        )
+        repair = tuple(
+            self._packet_row(row, role="repair", lane=lane) for row in repair_rows
+        )
+        preservation = tuple(
+            self._packet_row(row, role="preservation", lane="global")
+            for row in preservation_rows
+        )
+        local_eval = tuple(
+            self._packet_row(row, role="local_eval", lane="global")
+            for row in local_eval_rows
+        )
+        schedule = self._schedule(
+            tuple(row.example_id for row in repair),
+            tuple(row.example_id for row in preservation),
+            batch_count=budget.native_unit_limit,
+        )
+        packet = ResponsibilityEvidencePacket(
+            source_team_state_hash=request.team_state_hash,
+            target_member=assignment.target_member,
+            primary_responsibility_lane=lane,
+            responsibility_value=assignment.responsibility_value,
+            responsibility_context=assignment.optimization_context,
+            repair_examples=repair,
+            preservation_examples=preservation,
+            local_eval_examples=local_eval,
+            ordered_batch_schedule=schedule,
+            data_universe_hash=self._universe_hash(assignment.evidence),
+            budget=budget,
+            provenance=(
+                ("builder", "Layer2EvidenceRequestBuilder"),
+                ("source_split", "optimize_only"),
+                ("selection_policy", self.packet_selection_policy),
+            ),
+        )
+        return Layer2OptimizationRequest(
+            request_id=(
+                f"seed{request.seed}_update{request.update_index}_"
+                f"member{assignment.target_member}_layer2_evidence"
+            ),
+            parent_decision_procedure=assignment.parent_prompt,
+            packet=packet,
+            solver_contract_id=request.solver_contract_id,
+            output_contract_id=request.output_contract_id,
+            seed=request.seed * 100_000 + request.update_index * 10 + assignment.target_member,
         )
