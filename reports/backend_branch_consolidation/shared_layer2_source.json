@@ -1,0 +1,125 @@
+{
+  "byte_identical_count": 19,
+  "expected_layer2_contract_hash": "294ceef26b0e74016e99ebc9089794bf1a09b811461dcd07313b3283dd38f17e",
+  "files": [
+    {
+      "byte_identical": true,
+      "gepa_sha256": "cbfa671f3c015b0150388bca2fc74133bd8876ba5fbe972ab2b828d293927e23",
+      "mars_sha256": "cbfa671f3c015b0150388bca2fc74133bd8876ba5fbe972ab2b828d293927e23",
+      "path": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "1d05d303892da34f088d128016477ea135e1a7d1528d74544e52932bec6228df",
+      "mars_sha256": "1d05d303892da34f088d128016477ea135e1a7d1528d74544e52932bec6228df",
+      "path": "multi_dataset_diverse_rl/native_feed_audit.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "4a5324488d741f22c0f3ae8aeda066e39d0d04e0423531d966260e617ae49f1b",
+      "mars_sha256": "4a5324488d741f22c0f3ae8aeda066e39d0d04e0423531d966260e617ae49f1b",
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "029b5ed7a16bc468dd63512c70926c41709fa286c187c20862ce577aaa70f578",
+      "mars_sha256": "029b5ed7a16bc468dd63512c70926c41709fa286c187c20862ce577aaa70f578",
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "35fde52a19ad93ce735d2e0caf1bdafe82b73d8e89f7462d391a05a232da1da1",
+      "mars_sha256": "35fde52a19ad93ce735d2e0caf1bdafe82b73d8e89f7462d391a05a232da1da1",
+      "path": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "0a6cb71f8d5d0d8d3ac5f9c5a7506657e24e8b09c28a45cf8d4a86dd0a9e2c53",
+      "mars_sha256": "0a6cb71f8d5d0d8d3ac5f9c5a7506657e24e8b09c28a45cf8d4a86dd0a9e2c53",
+      "path": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6",
+      "mars_sha256": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6",
+      "path": "multi_dataset_diverse_rl/team_search/candidate_selector.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "4636a6ade57fa88414fe6f014cea8cb2da859818be34c2432d76a583257f6dbe",
+      "mars_sha256": "4636a6ade57fa88414fe6f014cea8cb2da859818be34c2432d76a583257f6dbe",
+      "path": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "a6edcda90ae7774b2058306a2b1af8a3d054a3f3dbebf9798a2389d9ba564f35",
+      "mars_sha256": "a6edcda90ae7774b2058306a2b1af8a3d054a3f3dbebf9798a2389d9ba564f35",
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5",
+      "mars_sha256": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5",
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "7626d2d33c717d28ce68205d33dbd1d8cb32b02faff4fae0e758b34007b09ab7",
+      "mars_sha256": "7626d2d33c717d28ce68205d33dbd1d8cb32b02faff4fae0e758b34007b09ab7",
+      "path": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "e29d7118ce214a8027477af899efce1fed86e0ffa816abbdd243193c397c9546",
+      "mars_sha256": "e29d7118ce214a8027477af899efce1fed86e0ffa816abbdd243193c397c9546",
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "2c8e5c95ddda9ea17036f56e41981d77181a1680e192f39fb4cca9e3b3492a86",
+      "mars_sha256": "2c8e5c95ddda9ea17036f56e41981d77181a1680e192f39fb4cca9e3b3492a86",
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011",
+      "mars_sha256": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011",
+      "path": "multi_dataset_diverse_rl/responsibility.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be",
+      "mars_sha256": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be",
+      "path": "multi_dataset_diverse_rl/candidate_selection.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "69370e46a9d932a16816ca47b48e2e8478a4828db6ff03acd12386e7ddf5cbf8",
+      "mars_sha256": "69370e46a9d932a16816ca47b48e2e8478a4828db6ff03acd12386e7ddf5cbf8",
+      "path": "multi_dataset_diverse_rl/shadow_gate.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "fb5c948fbea5d12b9050e5ffd40166dcebaf92c8e7d71099d290b77c2e1c38be",
+      "mars_sha256": "fb5c948fbea5d12b9050e5ffd40166dcebaf92c8e7d71099d290b77c2e1c38be",
+      "path": "multi_dataset_diverse_rl/peer_state.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "0095eaaee712b4e69174b2c11e73b5bea23a2cb4613b517997d0ac43c3ce3c39",
+      "mars_sha256": "0095eaaee712b4e69174b2c11e73b5bea23a2cb4613b517997d0ac43c3ce3c39",
+      "path": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py"
+    },
+    {
+      "byte_identical": true,
+      "gepa_sha256": "d28175560b9b8caf1b4bbdb3936378886c795319fd0927ee2ef80f05c8286534",
+      "mars_sha256": "d28175560b9b8caf1b4bbdb3936378886c795319fd0927ee2ef80f05c8286534",
+      "path": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py"
+    }
+  ],
+  "layer2_contract_hash": "294ceef26b0e74016e99ebc9089794bf1a09b811461dcd07313b3283dd38f17e",
+  "peer_branch": "origin/experiment/layer2-feed-mars",
+  "shared_file_count": 19,
+  "source_branch": "origin/experiment/layer2-feed-gepa",
+  "status": "PASS"
+}

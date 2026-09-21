@@ -1,0 +1,11 @@
+{
+  "baseline": "1107 passed, 1 skipped; 31 failed, 20 errors",
+  "compileall": "PASS",
+  "focused_and_integration": "64 passed",
+  "full": "1121 passed, 1 skipped; 31 failed, 20 errors",
+  "git_diff_check": "PASS",
+  "governance_preflight": "PASS_EXCEPT_PREEXISTING_STORED_FIXTURE_SHA",
+  "known_caveat": "ignored historical run evidence is absent and existing historical byte checks remain stale",
+  "new_failures_or_errors": 0,
+  "status": "PASS_WITH_UNCHANGED_HISTORICAL_ARTIFACT_CAVEAT"
+}

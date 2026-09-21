@@ -1,0 +1,34 @@
+{
+  "READY_TO_RUN": false,
+  "api_authorization": {
+    "allowed_phases": [],
+    "allowed_roles": [],
+    "authorized": false
+  },
+  "config_fields": [
+    "optimizer_backend",
+    "optimization_mode",
+    "seed",
+    "solver_model",
+    "optimizer_model",
+    "budget",
+    "data_split_manifest",
+    "initial_state"
+  ],
+  "data_policy": {
+    "development_split": "Optimize-only",
+    "test50_calls": 0,
+    "validation50_calls": 0
+  },
+  "experiment_id": "backend_unified_four_mode_v1",
+  "formal_run_root_created": false,
+  "layer2_contract_version": "layer2_owned_transition_evidence_contract_v2",
+  "modes": [
+    "GEPA_NATIVE",
+    "GEPA_LAYER2",
+    "MARS_NATIVE",
+    "MARS_LAYER2"
+  ],
+  "provider_calls": 0,
+  "status": "IMPLEMENTED_ZERO_API_PREFLIGHT_PENDING"
+}

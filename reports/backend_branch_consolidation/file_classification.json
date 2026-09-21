@@ -1,0 +1,938 @@
+{
+  "comparison_base": "origin/main",
+  "counts": {
+    "CURRENT_SHARED_DOCUMENTATION": 2,
+    "GEPA_BACKEND_SPECIFIC": 4,
+    "HISTORICAL_REPORT_ONLY": 122,
+    "MARS_BACKEND_SPECIFIC": 2,
+    "OBSOLETE_NATIVE_FEED_ONLY": 12,
+    "SHARED_BACKEND_INTERFACE": 3,
+    "SHARED_LAYER2": 8,
+    "UNKNOWN": 0
+  },
+  "records": [
+    {
+      "classification": "CURRENT_SHARED_DOCUMENTATION",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "classification": "CURRENT_SHARED_DOCUMENTATION",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "docs/design/CURRENT_SPEC.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_feed_gepa_v1/EXPERIMENT_HANDOFF.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_feed_gepa_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_feed_gepa_v1/canary_preflight.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_feed_gepa_v1/manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_feed_mars_v1/EXPERIMENT_HANDOFF.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_feed_mars_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_feed_mars_v1/canary_preflight.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_feed_mars_v1/manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_transition_feed_gepa_v2/canary_preflight.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/layer2_owned_transition_feed_gepa_v2/manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_transition_feed_mars_v2/canary_preflight.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/layer2_owned_transition_feed_mars_v2/manifest.json"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/manifests/native_feed_gepa_v1.yaml"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/manifests/native_feed_mars_v1.yaml"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/manifests/sequential_symmetry_breaking_online_pilot_native_feed_v1.yaml"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/native_feed_gepa_v1/EXPERIMENT_HANDOFF.md"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/native_feed_gepa_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/native_feed_gepa_v1/canary_preflight.json"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/native_feed_mars_v1/EXPERIMENT_HANDOFF.md"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/native_feed_mars_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "experiments/native_feed_mars_v1/canary_preflight.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_layer2_feed_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_layer2_feed_v1/manifest.json"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_native_feed_v1/PROTOCOL.md"
+    },
+    {
+      "classification": "SHARED_BACKEND_INTERFACE",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py"
+    },
+    {
+      "classification": "SHARED_BACKEND_INTERFACE",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py"
+    },
+    {
+      "classification": "GEPA_BACKEND_SPECIFIC",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py"
+    },
+    {
+      "classification": "GEPA_BACKEND_SPECIFIC",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py"
+    },
+    {
+      "classification": "GEPA_BACKEND_SPECIFIC",
+      "gepa_change": "M",
+      "mars_change": null,
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py"
+    },
+    {
+      "classification": "MARS_BACKEND_SPECIFIC",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "multi_dataset_diverse_rl/local_optimizers/mars_native.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "multi_dataset_diverse_rl/native_feed.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "multi_dataset_diverse_rl/native_feed_audit.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/team_search/controller.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/team_search/system_runtime.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py"
+    },
+    {
+      "classification": "SHARED_BACKEND_INTERFACE",
+      "gepa_change": "M",
+      "mars_change": "M",
+      "path": "multi_dataset_diverse_rl/versions.py"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_prep/code_path_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/backend_fidelity_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/backend_no_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/code_path_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/control_treatment_definition.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/cross_branch_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/direct_layer2_influence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/example_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/gepa_pinned_sampler_capability_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/local_eval_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/ownership_contract.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/pilot_protocol.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/preservation_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/responsibility_packet_schema.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_feed_refactor_gepa/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/backend_fidelity_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/backend_no_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/code_path_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/control_treatment_definition.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/cross_branch_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/direct_layer2_influence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/example_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/local_eval_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/mars_global_dataset_access_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/ownership_contract.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/pilot_protocol.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/preservation_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/responsibility_packet_schema.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_feed_refactor_mars/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/backend_fidelity_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/backend_no_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/code_path_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/control_treatment_definition.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/cross_branch_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/direct_layer2_influence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/example_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/gepa_pinned_sampler_capability_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/local_eval_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/ownership_contract.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/pilot_protocol.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/responsibility_packet_schema.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/layer2_owned_transition_feed_refactor_gepa_v2/transition_evidence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/backend_fidelity_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/backend_no_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/code_path_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/control_treatment_definition.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/cross_branch_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/direct_layer2_influence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/example_selection_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/local_eval_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/mars_global_dataset_access_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/ownership_contract.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/pilot_protocol.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/responsibility_packet_schema.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/layer2_owned_transition_feed_refactor_mars_v2/transition_evidence_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/budget_semantics.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/claim_registry.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/control_treatment_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/data_access_matrix.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/fake_provider_native_flow.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/native_feed_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/paper_vs_code_dataflow.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "reports/native_feed_refactor_gepa/upstream_source_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/README.md"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/budget_semantics.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/claim_registry.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/control_treatment_parity.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/data_access_matrix.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/fake_provider_native_flow.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/heldout_isolation.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/layer2_contract_hash.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/mars_paper_vs_code_dataflow_audit.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/native_feed_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/paper_vs_code_dataflow.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/sanitization_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/sha256_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/test_summary.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "reports/native_feed_refactor_mars/upstream_source_manifest.json"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "scripts/audit_layer2_owned_feed.py"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "scripts/audit_native_feed_refactor.py"
+    },
+    {
+      "classification": "HISTORICAL_REPORT_ONLY",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "scripts/preflight_layer2_owned_feed_canary.py"
+    },
+    {
+      "classification": "OBSOLETE_NATIVE_FEED_ONLY",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "scripts/preflight_native_feed_canary.py"
+    },
+    {
+      "classification": "GEPA_BACKEND_SPECIFIC",
+      "gepa_change": "A",
+      "mars_change": null,
+      "path": "tests/test_gepa_native_feed.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "tests/test_layer2_owned_evidence.py"
+    },
+    {
+      "classification": "MARS_BACKEND_SPECIFIC",
+      "gepa_change": null,
+      "mars_change": "A",
+      "path": "tests/test_mars_native_feed.py"
+    },
+    {
+      "classification": "SHARED_LAYER2",
+      "gepa_change": "A",
+      "mars_change": "A",
+      "path": "tests/test_native_feed_boundary.py"
+    }
+  ],
+  "source_refs": {
+    "gepa": "origin/experiment/layer2-feed-gepa",
+    "mars": "origin/experiment/layer2-feed-mars"
+  },
+  "unknown_count": 0
+}

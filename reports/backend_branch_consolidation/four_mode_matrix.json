@@ -1,0 +1,31 @@
+{
+  "modes": [
+    {
+      "layer2_packet": false,
+      "mode": "GEPA_NATIVE",
+      "native_selection": true,
+      "smoke": "PASS"
+    },
+    {
+      "layer2_packet": true,
+      "mode": "GEPA_LAYER2",
+      "native_selection": false,
+      "smoke": "PASS"
+    },
+    {
+      "layer2_packet": false,
+      "mode": "MARS_NATIVE",
+      "native_selection": true,
+      "smoke": "PASS"
+    },
+    {
+      "layer2_packet": true,
+      "mode": "MARS_LAYER2",
+      "native_selection": false,
+      "smoke": "PASS"
+    }
+  ],
+  "same_codebase": true,
+  "shared_layer2_packet_equivalence": "PASS",
+  "status": "PASS"
+}

@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "tags": [
+    {
+      "annotated": true,
+      "remote_push_verified": true,
+      "tag": "archive/native-feed-gepa-v1",
+      "tag_object_sha": "ae406185e171aa5ff1ad6df60ace44602e72c61f",
+      "target_sha": "d3c7dcd1504fb2ec2b8a73d658cef484244bc6b5"
+    },
+    {
+      "annotated": true,
+      "remote_push_verified": true,
+      "tag": "archive/native-feed-mars-v1",
+      "tag_object_sha": "e58963733b8a4487a90ca165610633a98cca559b",
+      "target_sha": "27e47b76ff54582cd6f1a89eb9f09c06b6fdc535"
+    },
+    {
+      "annotated": true,
+      "remote_push_verified": true,
+      "tag": "archive/layer2-feed-gepa-transition-v2",
+      "tag_object_sha": "ee5f4913bc091482eaac38869e87804f46d5b7a4",
+      "target_sha": "d72ea15b4e72c94ea0565ab2a894ded0303b4281"
+    },
+    {
+      "annotated": true,
+      "remote_push_verified": true,
+      "tag": "archive/layer2-feed-mars-transition-v2",
+      "tag_object_sha": "bcec7ef5a1857dd1ccf1cab9d2563a8dbafd8f61",
+      "target_sha": "5e6e7874ca7f990b9266790c28f8a88c4198c4f6"
+    }
+  ]
+}

@@ -202,6 +202,7 @@ class GEPALocalPromptOptimizer:
         config: GEPAOptimizerConfig | None = None,
         optimize_fn: Callable[..., Any] | None = None,
         callback_factory: Callable[..., GEPALineageCallback] | None = None,
+        adapter_factory: Callable[..., GEPAAdapter] | None = None,
     ) -> None:
         self.evaluator = evaluator
         self.reflection_lm = reflection_lm
@@ -210,6 +211,7 @@ class GEPALocalPromptOptimizer:
         self.config = config or GEPAOptimizerConfig()
         self._optimize_fn = optimize_fn
         self._callback_factory = callback_factory or GEPALineageCallback
+        self._adapter_factory = adapter_factory or GEPAAdapter
 
     @staticmethod
     def _generation(index: int, parents: list[list[int | None]], memo: dict[int, int]) -> int:
@@ -221,7 +223,9 @@ class GEPALocalPromptOptimizer:
         )
         return memo[index]
 
-    def _run(self, task: LocalOptimizationTask) -> LocalOptimizationResult:
+    def _run(
+        self, task: LocalOptimizationTask, *, batch_sampler_override: Any | None = None
+    ) -> LocalOptimizationResult:
         if task.backend_state is not None:
             raise ValueError("two_layer_rg_gepa_v1 starts fresh GEPA state for every team update")
         if task.budget.reflection_minibatch_size != self.config.reflection_minibatch_size:
@@ -248,7 +252,7 @@ class GEPALocalPromptOptimizer:
         if task_run.exists() or lineage_path.exists():
             raise FileExistsError("GEPA local search run root must be fresh")
         task_run.parent.mkdir(parents=True, exist_ok=True)
-        adapter = GEPAAdapter(
+        adapter = self._adapter_factory(
             self.evaluator,
             parent_prompt=task.parent_prompt,
             all_examples=all_examples,
@@ -274,10 +278,18 @@ class GEPALocalPromptOptimizer:
             reflection_lm=self.reflection_lm,
             candidate_selection_strategy=self.config.candidate_selection_strategy,
             frontier_type=self.config.frontier_type,
-            reflection_minibatch_size=self.config.reflection_minibatch_size,
+            reflection_minibatch_size=(
+                None
+                if batch_sampler_override is not None
+                else self.config.reflection_minibatch_size
+            ),
             skip_perfect_score=self.config.skip_perfect_score,
             perfect_score=self.config.perfect_score,
-            batch_sampler=self.config.batch_sampler,
+            batch_sampler=(
+                batch_sampler_override
+                if batch_sampler_override is not None
+                else self.config.batch_sampler
+            ),
             val_evaluation_policy=self.config.val_evaluation_policy,
             reflection_prompt_template=DECISION_PROCEDURE_REFLECTION_TEMPLATE,
             module_selector=self.config.module_selector,
@@ -464,3 +476,11 @@ class GEPALocalPromptOptimizer:
 
     async def optimize(self, task: LocalOptimizationTask) -> LocalOptimizationResult:
         return await asyncio.to_thread(self._run, task)
+
+    async def optimize_with_batch_sampler(
+        self, task: LocalOptimizationTask, batch_sampler: Any
+    ) -> LocalOptimizationResult:
+        """Use the pinned GEPA public sampler seam without changing its core."""
+        return await asyncio.to_thread(
+            self._run, task, batch_sampler_override=batch_sampler
+        )

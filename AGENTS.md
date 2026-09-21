@@ -69,13 +69,14 @@ and tests together.
 
 ### Two-layer ownership boundary
 
-Layer 2 owns member selection, responsibility attribution, primary-residual
-domain assignment, persistent realizability, construction of
-`LocalOptimizationTask`, team-level empirical evaluation, Common-Safe and
-Shadow checks, cross-member competition, and atomic write-back. It must not
-choose a backend's internal candidate parent or reflection minibatch, replace
-backend-internal population/Pareto/search, feed team acceptance back into the
-same backend search state, or depend on GEPA/SEPO/ESPO internals.
+Layer 2 owns member selection, responsibility attribution, exact responsibility,
+latest-transition focus/anchor, and local-evaluation evidence selection, the
+ordered evidence schedule, persistent realizability, team-level empirical evaluation,
+Common-Safe and Shadow checks, cross-member competition, and atomic write-back.
+Layer 1 retains optimizer-specific prompt-search mechanics, but treatment
+backends may consume only the immutable Layer-2 evidence packet. They may not
+fetch, select, replace, expand, reorder for selection, or fall back to examples
+outside that packet.
 
 Layer 1 owns how the assigned local problem is searched: internal sampling,
 proposal generation, candidate population and selection, and optimizer-specific
@@ -84,11 +85,50 @@ persistent team realizability or plurality outcomes for target allocation, or
 commit prompts to the team.
 
 ```text
-Layer 2 defines WHAT local optimization problem to solve.
-Layer 1 decides HOW to solve that problem.
+Layer 2 defines WHO to optimize, WHAT responsibility to pursue, and WHICH
+evidence Layer 1 must optimize from.
+Layer 1 retains HOW to mutate, reason over, compare and accept prompt candidates.
 ```
 
+The experimental treatment decomposes Layer-2 evidence as
+`E_L2 = E_team union E_transition`: current team residuals provide
+responsibility evidence, while only the latest accepted parent-to-child edit
+provides focus (newly broken) and anchor (newly fixed) evidence. Root prompts
+have empty focus and anchor sets. Local evaluation is frozen separately. This
+borrows transition-evidence semantics associated with SEPO; it does not import
+SEPO structural edits, architects, breadcrumb search, Lexicase selection,
+archive admission, or lineage-parent selection into Layer 2.
+
+### Unified backend runtime
+
+Optimizer and controller choices are runtime configuration, never scientific
+facts inferred from a branch name. The current executable matrix is:
+
+```text
+optimizer_backend=gepa  optimization_mode=native
+optimizer_backend=gepa  optimization_mode=layer2
+optimizer_backend=mars  optimization_mode=native
+optimizer_backend=mars  optimization_mode=layer2
+```
+
+All four modes come from one commit and one shared Layer-2 implementation.
+Native mode preserves the backend's own Optimize-only data flow. Layer2 mode
+requires the backend to consume the immutable `ResponsibilityEvidencePacket`
+without fetching or selecting other examples. Formal manifests record both
+fields and the backend fidelity identity. Backend-specific telemetry is nested
+under `backend_details` in the common run record.
+
+The only long-lived development branch is `main`. Backend work may use a
+temporary feature branch, but formal experiments are frozen by commit SHA,
+configuration/data/protocol hashes, and immutable preregistration/result tags.
+Do not create permanent experiment branches for an optimizer or controller.
+
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
+
+The native optimizer data flow remains a separate control. The Layer-2
+treatment intentionally replaces native example selection while preserving the
+optimizer's prompt-search core. GEPA and MARS native budget units need not match
+and must not be used for direct cross-backend superiority claims.
 
 ### Local optimizer fidelity policy
 

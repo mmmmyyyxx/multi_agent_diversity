@@ -1,0 +1,86 @@
+{
+  "files": [
+    {
+      "path": "multi_dataset_diverse_rl/native_feed.py",
+      "sha256_normalized_lf": "cbfa671f3c015b0150388bca2fc74133bd8876ba5fbe972ab2b828d293927e23"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/native_feed_audit.py",
+      "sha256_normalized_lf": "6f83f9602d6e6efc370b5482cc96d3cf52095598c46cb6897ff3fb27cda686dc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "sha256_normalized_lf": "4a5324488d741f22c0f3ae8aeda066e39d0d04e0423531d966260e617ae49f1b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "sha256_normalized_lf": "08a4b571ba9e1835e46d511ff988b3390ce91d481771eb6a19ed594ae4584d5f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/controller.py",
+      "sha256_normalized_lf": "20f8266debbbf0b093b605abbc05b943c3b70dcc365d38b4ea64e09cf6bb1e78"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "sha256_normalized_lf": "0a6cb71f8d5d0d8d3ac5f9c5a7506657e24e8b09c28a45cf8d4a86dd0a9e2c53"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "sha256_normalized_lf": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "sha256_normalized_lf": "4636a6ade57fa88414fe6f014cea8cb2da859818be34c2432d76a583257f6dbe"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "sha256_normalized_lf": "a6edcda90ae7774b2058306a2b1af8a3d054a3f3dbebf9798a2389d9ba564f35"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "sha256_normalized_lf": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "sha256_normalized_lf": "7626d2d33c717d28ce68205d33dbd1d8cb32b02faff4fae0e758b34007b09ab7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/run_record.py",
+      "sha256_normalized_lf": "451f121095b63735be81dd6372e9e8c4ead49ce5d5547ff755a9620f221e44db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "sha256_normalized_lf": "e29d7118ce214a8027477af899efce1fed86e0ffa816abbdd243193c397c9546"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "sha256_normalized_lf": "2c8e5c95ddda9ea17036f56e41981d77181a1680e192f39fb4cca9e3b3492a86"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/responsibility.py",
+      "sha256_normalized_lf": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/candidate_selection.py",
+      "sha256_normalized_lf": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/shadow_gate.py",
+      "sha256_normalized_lf": "69370e46a9d932a16816ca47b48e2e8478a4828db6ff03acd12386e7ddf5cbf8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/peer_state.py",
+      "sha256_normalized_lf": "fb5c948fbea5d12b9050e5ffd40166dcebaf92c8e7d71099d290b77c2e1c38be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "sha256_normalized_lf": "0095eaaee712b4e69174b2c11e73b5bea23a2cb4613b517997d0ac43c3ce3c39"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+      "sha256_normalized_lf": "d28175560b9b8caf1b4bbdb3936378886c795319fd0927ee2ef80f05c8286534"
+    }
+  ],
+  "layer2_contract_hash": "7f8514f39e917ba2e7c5ca2d9c3e3735365387ce2c7b35f83901033aba022e40",
+  "version": "unified_layer2_transition_evidence_contract_v3"
+}

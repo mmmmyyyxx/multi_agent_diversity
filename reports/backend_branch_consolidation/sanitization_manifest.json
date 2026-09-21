@@ -1,0 +1,10 @@
+{
+  "forbidden": [
+    "prompt/question text",
+    "gold/model answers",
+    "raw responses/reasoning",
+    "credentials/endpoints",
+    "absolute host paths"
+  ],
+  "status": "PASS"
+}
