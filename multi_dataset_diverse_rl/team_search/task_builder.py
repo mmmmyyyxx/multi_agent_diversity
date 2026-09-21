@@ -5,6 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..local_optimizers.schemas import LocalEvidenceExample, LocalOptimizationTask, LocalOptimizerBudget
+from ..native_feed import (
+    NativeOptimizationRequest,
+    NativeResourceBudget,
+    ResponsibilityContext,
+)
 from .schemas import TeamEvidenceCase, TeamSearchAssignment, TeamSearchRequest
 from ..versions import TEAM_MINIBATCH_CONTRACT_VERSION
 
@@ -165,4 +170,70 @@ class LocalTaskBuilder:
                 reflection_minibatch_size=3,
                 max_returned_candidates=self.local_return_budget,
             ),
+        )
+
+
+class NativeFeedRequestBuilder(LocalTaskBuilder):
+    """Translate Layer-2 assignment into metadata without selecting backend data.
+
+    The inherited TeamMiniBatch helpers remain Layer-2 evaluation machinery;
+    they are not used to construct the optimizer's train or validation feed.
+    """
+
+    def build(
+        self, request: TeamSearchRequest, assignment: TeamSearchAssignment
+    ) -> NativeOptimizationRequest:
+        if not assignment.evidence:
+            raise ValueError("team assignment contains no Optimize diagnosis")
+        if any(row.source_split != "optimize" for row in assignment.evidence):
+            raise ValueError("responsibility diagnosis must be Optimize-derived")
+        lane = assignment.primary_responsibility_lane or "generic"
+        groups = {
+            group: sum(row.evidence_group == group for row in assignment.evidence)
+            for group in ("responsibility", "coalition", "preservation")
+        }
+        coverage = {
+            "direct_flip": sum("direct_flip" in row.tags for row in assignment.evidence),
+            "near_margin": sum("near_margin" in row.tags for row in assignment.evidence),
+            "coverage": sum(
+                "coverage" in row.tags or "pure_coverage" in row.tags
+                for row in assignment.evidence
+            ),
+        }
+        responsibility = ResponsibilityContext(
+            primary_lane=lane,
+            responsibility_identity=assignment.responsibility_identity,
+            responsibility_value=assignment.responsibility_value,
+            team_failure_summary=groups,
+            coverage_summary=coverage,
+            peer_structure_summary={
+                "team_size": 5,
+                "aggregation": "equal_weight_plurality",
+                "tie_policy": "abstain_incorrect",
+            },
+        )
+        return NativeOptimizationRequest(
+            request_id=(
+                f"seed{request.seed}_update{request.update_index}_"
+                f"member{assignment.target_member}_native"
+            ),
+            parent_decision_procedure=assignment.parent_prompt,
+            target_member=assignment.target_member,
+            responsibility=responsibility,
+            team_state_identity=request.team_state_hash,
+            optimize_universe_id=request.optimize_universe_id,
+            solver_contract_id=request.solver_contract_id,
+            output_contract_id=request.output_contract_id,
+            seed=request.seed * 100_000 + request.update_index * 10 + assignment.target_member,
+            budget=NativeResourceBudget(
+                native_unit_limit=max(1, request.local_metric_budget),
+                metric_call_limit=request.local_metric_budget,
+                optimizer_call_limit=max(1, request.local_metric_budget),
+                max_returned_candidates=self.local_return_budget,
+            ),
+            provenance={
+                "builder": "NativeFeedRequestBuilder",
+                "source_split": "optimize_only",
+                "responsibility_semantics": "metadata_not_sample_subset",
+            },
         )

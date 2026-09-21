@@ -35,6 +35,7 @@ class TeamSearchRequest:
     local_metric_budget: int
     solver_contract_id: str
     output_contract_id: str
+    optimize_universe_id: str = "optimize_only_universe"
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,7 @@ class TeamSearchAssignment:
     responsibility_identity: str
     local_validation_example_ids: tuple[str, ...] = ()
     primary_responsibility_lane: str | None = None
+    responsibility_value: float = 0.0
 
 
 @dataclass(frozen=True)

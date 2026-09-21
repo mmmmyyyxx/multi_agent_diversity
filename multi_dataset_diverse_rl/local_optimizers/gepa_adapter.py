@@ -15,21 +15,10 @@ from ..versions import COMMON_SOLVER_CONTRACT_V1_ID
 from ..evaluation.solver_output import FINAL_ANSWER_LINE
 from .gepa_runtime import import_frozen_gepa
 from .schemas import LocalEvidenceExample
+from .base import LocalSolverObservation
 
 import_frozen_gepa()
 from gepa.core.adapter import EvaluationBatch  # type: ignore[import-not-found]  # noqa: E402
-
-
-@dataclass(frozen=True)
-class LocalSolverObservation:
-    parsed_answer: str | None
-    raw_output: str
-    correct: bool
-    valid: bool
-    failure_reason: str | None = None
-    input_tokens: int = 0
-    output_tokens: int = 0
-    provider_called: bool = True
 
 
 class LocalSolverEvaluator(Protocol):
