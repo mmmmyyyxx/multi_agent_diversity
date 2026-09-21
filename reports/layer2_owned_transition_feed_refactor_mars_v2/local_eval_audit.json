@@ -1,0 +1,9 @@
+{
+  "Layer2_owned": true,
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "anchor_local_eval_overlap": 0,
+  "focus_local_eval_overlap": 0,
+  "responsibility_local_eval_overlap": 0,
+  "status": "PASS"
+}

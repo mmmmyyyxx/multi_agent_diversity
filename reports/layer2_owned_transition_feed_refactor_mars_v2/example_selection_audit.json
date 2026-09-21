@@ -1,0 +1,25 @@
+{
+  "anchor_count": 1,
+  "anchor_local_eval_overlap": 0,
+  "duplicate_rate": 0.0,
+  "empty_packet_count": 0,
+  "focus_count": 1,
+  "focus_local_eval_overlap": 0,
+  "lane_distribution": {
+    "direct_flip": 1,
+    "near_margin": 1
+  },
+  "local_eval_count": 8,
+  "packet_count": 2,
+  "predicate_mismatch_count": 0,
+  "responsibility_alignment_rate": 1.0,
+  "responsibility_example_count": 8,
+  "responsibility_local_eval_overlap": 0,
+  "root_anchor_count": 0,
+  "root_focus_count": 0,
+  "status": "PASS",
+  "target_member_distribution": {
+    "1": 1,
+    "3": 1
+  }
+}

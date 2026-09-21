@@ -1,0 +1,20 @@
+{
+  "Layer1_owns": [
+    "prompt mutation and revision",
+    "optimizer-specific reasoning",
+    "candidate/parent search mechanics",
+    "local acceptance and lineage"
+  ],
+  "Layer2_owns": [
+    "target member",
+    "responsibility evidence",
+    "latest-transition focus evidence",
+    "latest-transition anchor evidence",
+    "local-evaluation evidence",
+    "ordered evidence schedule",
+    "team admission and write-back"
+  ],
+  "backend_may_select_examples": false,
+  "native_optimizer_retained_as_control": true,
+  "status": "PASS"
+}

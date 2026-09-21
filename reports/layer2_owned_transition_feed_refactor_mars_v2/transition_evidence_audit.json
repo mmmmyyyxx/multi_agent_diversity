@@ -1,0 +1,10 @@
+{
+  "one_step_only": true,
+  "root_focus_anchor_empty": true,
+  "semantics": "newly_broken_to_focus_newly_fixed_to_anchor",
+  "sepo_search_mechanics_imported": false,
+  "status": "PASS",
+  "transition_effect_hashes": [
+    "678f28439f39070460d2d34fd7ad7969658fdb599ecd586ba55b73abe34909b0"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "optimizer_input_diff_attributable_only_to_packet": true,
+  "packet_A_hash": "1529cb31dc9a576f845477ff5881ffd9ed53702a3db204dac995fb8264f131f9",
+  "packet_B_hash": "208b56a68499f5a765ec6d08741b14576fb6fed8f2182c1e71d71471db5a9b0d",
+  "packet_hashes_differ": true,
+  "same_parent_seed_budget_backend": true,
+  "status": "PASS"
+}

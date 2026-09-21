@@ -1,0 +1,9 @@
+{
+  "backend": "mars",
+  "control": "NATIVE_MARS_CONTROL",
+  "historical_native_feed_head": "27e47b76ff54582cd6f1a89eb9f09c06b6fdc535",
+  "native_example_selection_replaced": true,
+  "replacement_owner": "Layer2",
+  "search_core_modified": false,
+  "treatment": "MARS_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2"
+}
