@@ -94,8 +94,8 @@ artifacts:
   report: null
   provenance: null
 git:
-  design_commit: null
-  implementation_commit: null
+  design_commit: af6f26ead37459d23607c053fd4debedf4fba792
+  implementation_commit: af6f26ead37459d23607c053fd4debedf4fba792
   result_commit: null
 result:
   classifier: API_AUTHORIZATION_PENDING
