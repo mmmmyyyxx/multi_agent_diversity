@@ -1,0 +1,14 @@
+{
+  "READY_TO_RUN": false,
+  "authorized": false,
+  "backend": "gepa",
+  "evidence_packet_version": "responsibility_evidence_packet_v2_transition_semantics",
+  "formal_run_root_created": false,
+  "phase": "prepared_canary",
+  "real_provider_calls": 0,
+  "selection_policy_version": "responsibility_plus_latest_transition_eval_v1",
+  "supersedes_evidence_semantics": "layer2_owned_feed_gepa_v1",
+  "test50_calls": 0,
+  "treatment": "GEPA_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2",
+  "validation50_calls": 0
+}

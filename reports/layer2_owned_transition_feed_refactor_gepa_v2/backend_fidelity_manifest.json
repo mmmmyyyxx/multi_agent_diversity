@@ -1,0 +1,9 @@
+{
+  "backend": "gepa",
+  "control": "NATIVE_GEPA_CONTROL",
+  "historical_native_feed_head": "d3c7dcd1504fb2ec2b8a73d658cef484244bc6b5",
+  "native_example_selection_replaced": true,
+  "replacement_owner": "Layer2",
+  "search_core_modified": false,
+  "treatment": "GEPA_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2"
+}

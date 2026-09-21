@@ -1,0 +1,8 @@
+{
+  "compileall": "PASS",
+  "focused": "47 passed",
+  "full": "1107 passed, 1 skipped; 31 failed, 20 errors from missing ignored historical run evidence or pre-existing exact historical report-byte checks",
+  "git_diff_check": "PASS",
+  "real_provider_calls": 0,
+  "status": "PASS_WITH_BASELINE_ARTIFACT_CAVEAT"
+}

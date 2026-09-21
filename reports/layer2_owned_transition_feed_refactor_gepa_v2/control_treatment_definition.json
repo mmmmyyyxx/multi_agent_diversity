@@ -1,0 +1,18 @@
+{
+  "control_preserved": true,
+  "cross_backend_superiority_claim_allowed": false,
+  "future_component_ablation_executed": false,
+  "future_component_ablation_schema": [
+    "native optimizer",
+    "allocation only",
+    "allocation plus responsibility/evidence",
+    "full Layer2"
+  ],
+  "treatment_effect_includes": [
+    "member allocation",
+    "responsibility assignment",
+    "responsibility/focus/anchor/local-eval selection",
+    "ordered curriculum",
+    "team admission/write-back"
+  ]
+}

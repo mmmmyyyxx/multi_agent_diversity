@@ -1,0 +1,27 @@
+{
+  "immutable": true,
+  "packet_hash_deterministic": true,
+  "raw_reasoning_persisted": false,
+  "required_fields": [
+    "anchor_examples",
+    "budget",
+    "data_universe_hash",
+    "focus_examples",
+    "latest_transition",
+    "lineage_parent_hash",
+    "local_eval_examples",
+    "ordered_batch_schedule",
+    "packet_hash",
+    "packet_version",
+    "parent_candidate_hash",
+    "primary_responsibility_lane",
+    "provenance",
+    "responsibility_context",
+    "responsibility_examples",
+    "responsibility_value",
+    "selection_policy_version",
+    "source_team_state_hash",
+    "target_member"
+  ],
+  "version": "responsibility_evidence_packet_v2_transition_semantics"
+}

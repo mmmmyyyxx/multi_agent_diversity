@@ -1,0 +1,18 @@
+{
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "backend": "gepa",
+  "evidence_semantics": {
+    "anchor": "latest_transition_newly_fixed",
+    "focus": "latest_transition_newly_broken",
+    "history_policy": "latest_transition_only",
+    "local_eval": "separately_frozen",
+    "responsibility": "current_team_residual",
+    "root_focus_anchor": "empty"
+  },
+  "packet_version": "responsibility_evidence_packet_v2_transition_semantics",
+  "real_provider_calls": 0,
+  "sepo_search_mechanics_imported": false,
+  "small_real_provider_canary_ready_for_authorization": true,
+  "status": "PREPARED_NOT_AUTHORIZED"
+}

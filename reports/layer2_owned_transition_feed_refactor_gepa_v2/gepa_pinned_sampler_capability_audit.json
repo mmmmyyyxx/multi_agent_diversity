@@ -1,0 +1,15 @@
+{
+  "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+  "official_core_modified": false,
+  "source_files": {
+    "src/gepa/api.py": "5d2a3507e26b829b8436802762b62dfa7a37ebb906d1af75e2c193e5a3acf23a",
+    "src/gepa/strategies/batch_sampler.py": "298fbc1f5b8e179af3a5f58dbe73c70bb6145355eb8f710305187c9f382832e5"
+  },
+  "status": "SUPPORTED",
+  "supported_by_pinned_public_API": true,
+  "symbols": [
+    "gepa.strategies.batch_sampler.BatchSampler",
+    "gepa.api.optimize(batch_sampler=...)"
+  ],
+  "version": "v0.1.1"
+}
