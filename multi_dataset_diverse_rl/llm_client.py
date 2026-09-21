@@ -50,8 +50,9 @@ class RoleAwareLLMClient:
     def _client_or_raise(self, role: str) -> AsyncOpenAI:
         if role not in self.clients:
             key_env, base_env = self._role_credentials(role)
-            resolved_key_env, key = resolve_api_key(key_env)
-            resolved_base_env, base = resolve_base_url(base_env)
+            profile = self.cfg.models.provider_profile
+            resolved_key_env, key = resolve_api_key(key_env, profile)
+            resolved_base_env, base = resolve_base_url(base_env, profile)
             if not key:
                 raise ValueError(
                     f"API key is not configured for role={role} via "
@@ -100,6 +101,7 @@ class RoleAwareLLMClient:
 
     def record_override_solver(self, *, started: float) -> None:
         self.calls.append({
+            "provider_profile": self.cfg.models.provider_profile,
             "role": "solver",
             "client_role": "solver",
             "model": self.cfg.models.agent_model,
@@ -192,6 +194,7 @@ class RoleAwareLLMClient:
                     finish_reason = str(response.choices[0].finish_reason or "")
                 latency = time.time() - started
                 call_record = {
+                    "provider_profile": self.cfg.models.provider_profile,
                     "role": logical_role or role,
                     "client_role": role,
                     "model": model,
@@ -222,6 +225,7 @@ class RoleAwareLLMClient:
                 last_error = exc
                 status = self._status_code(exc)
                 self.calls.append({
+                    "provider_profile": self.cfg.models.provider_profile,
                     "role": logical_role or role,
                     "client_role": role,
                     "model": model,
@@ -259,6 +263,7 @@ class RoleAwareLLMClient:
             for logical_role in ("solver", "teacher", "critic", "student")
         }
         return {
+            "provider_profile": self.cfg.models.provider_profile,
             "solver_calls": sum(
                 row.get("client_role", row["role"]) == "solver" for row in successful
             ),

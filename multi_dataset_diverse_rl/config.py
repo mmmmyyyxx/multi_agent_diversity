@@ -3,7 +3,12 @@ from __future__ import annotations
 import argparse
 from dataclasses import asdict, dataclass, field
 
-from .provider_credentials import DASHSCOPE_API_KEY_ENV, DASHSCOPE_BASE_URL_ENV
+from .provider_credentials import (
+    DASHSCOPE_API_KEY_ENV,
+    DASHSCOPE_BASE_URL_ENV,
+    DEFAULT_PROVIDER_PROFILE,
+    PROVIDER_PROFILES,
+)
 from .versions import LEGACY_DIVERSITY_SOLVER_CONTRACT_ID
 
 
@@ -28,6 +33,7 @@ class DataConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
+    provider_profile: str = DEFAULT_PROVIDER_PROFILE
     agent_model: str = DEFAULT_MODEL
     optimizer_model: str = DEFAULT_MODEL
     evaluator_model: str = DEFAULT_MODEL
@@ -41,6 +47,14 @@ class ModelConfig:
     solver_max_tokens: int = 1800
     solver_invalid_max_retries: int = 3
     solver_contract_id: str = LEGACY_DIVERSITY_SOLVER_CONTRACT_ID
+
+    def __post_init__(self) -> None:
+        if self.provider_profile not in PROVIDER_PROFILES:
+            choices = ", ".join(sorted(PROVIDER_PROFILES))
+            raise ValueError(
+                f"Unknown provider_profile {self.provider_profile!r}; "
+                f"expected one of: {choices}"
+            )
 
 
 @dataclass(frozen=True)

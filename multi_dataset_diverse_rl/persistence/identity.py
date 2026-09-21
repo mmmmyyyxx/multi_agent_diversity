@@ -175,9 +175,15 @@ def config_fingerprint(cfg: Config) -> str:
     for operational in ("out_dir", "resume_from_checkpoint"):
         values.pop(operational, None)
     values["endpoint_identity"] = {
-        "solver": resolve_base_url(cfg.models.solver_base_url_env)[1],
-        "optimizer": resolve_base_url(cfg.models.optimizer_base_url_env)[1],
-        "evaluator": resolve_base_url(cfg.models.evaluator_base_url_env)[1],
+        "solver": resolve_base_url(
+            cfg.models.solver_base_url_env, cfg.models.provider_profile
+        )[1],
+        "optimizer": resolve_base_url(
+            cfg.models.optimizer_base_url_env, cfg.models.provider_profile
+        )[1],
+        "evaluator": resolve_base_url(
+            cfg.models.evaluator_base_url_env, cfg.models.provider_profile
+        )[1],
     }
     values["behavior_versions"] = {
         "member_objective": "integer_vote_min_sum_v2",
@@ -267,10 +273,13 @@ def solver_request_identity(cfg: Config) -> str:
 
 
 def solver_request_components(cfg: Config) -> dict[str, Any]:
-    endpoint = resolve_base_url(cfg.models.solver_base_url_env)[1]
+    endpoint = resolve_base_url(
+        cfg.models.solver_base_url_env, cfg.models.provider_profile
+    )[1]
     output_contract = solver_output_contract(cfg.data.answer_format)
     request_template = solver_system_prompt("<DECISION_PROCEDURE>", cfg.data.answer_format)
     components = {
+        "provider_profile": cfg.models.provider_profile,
         "solver_contract_id": cfg.models.solver_contract_id,
         "solver_model": cfg.models.agent_model,
         "enable_thinking": False,

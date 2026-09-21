@@ -10,6 +10,7 @@ Experiment work is governed by a traceable design-to-evidence chain:
 - [Failure registry](docs/failures/KNOWN_FAILURES.md)
 - [Engineering contract](AGENTS.md)
 - [Codex experiment workflow](docs/workflows/CODEX_EXPERIMENT_WORKFLOW.md)
+- [Provider profiles (`myx` / `lwj`)](docs/workflows/PROVIDER_PROFILES.md)
 
 `method.md` remains the human-readable exposition. Runtime constants remain
 authoritative in `multi_dataset_diverse_rl/versions.py`; reports are evidence,

@@ -183,13 +183,14 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         ledger: DurableLedger,
         raw_cache: dict[str, str],
     ) -> None:
-        key = os.environ.get(cfg.models.solver_api_key_env, "")
-        endpoint = os.environ.get(cfg.models.solver_base_url_env, "")
-        if not key or not endpoint:
-            from multi_dataset_diverse_rl.provider_credentials import resolve_api_key, resolve_base_url
+        from multi_dataset_diverse_rl.provider_credentials import resolve_api_key, resolve_base_url
 
-            _, key = resolve_api_key(cfg.models.solver_api_key_env)
-            _, endpoint = resolve_base_url(cfg.models.solver_base_url_env)
+        _, key = resolve_api_key(
+            cfg.models.solver_api_key_env, cfg.models.provider_profile
+        )
+        _, endpoint = resolve_base_url(
+            cfg.models.solver_base_url_env, cfg.models.provider_profile
+        )
         if not key or not endpoint:
             raise RuntimeError("COMMON_SOLVER_CONTRACT_V1 credentials unavailable")
         client = AsyncOpenAI(api_key=key, base_url=endpoint)

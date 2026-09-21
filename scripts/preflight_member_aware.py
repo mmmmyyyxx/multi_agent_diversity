@@ -271,9 +271,12 @@ def preflight(workspace: Path, allow_dirty: bool = False) -> dict:
 def _role_environment(cfg: Config, role: str) -> dict[str, Any]:
     key_env = getattr(cfg.models, f"{role}_api_key_env")
     base_env = getattr(cfg.models, f"{role}_base_url_env")
-    resolved_key_env, key = resolve_api_key(key_env)
-    resolved_base_env, base_url = resolve_base_url(base_env)
+    resolved_key_env, key = resolve_api_key(key_env, cfg.models.provider_profile)
+    resolved_base_env, base_url = resolve_base_url(
+        base_env, cfg.models.provider_profile
+    )
     return {
+        "provider_profile": cfg.models.provider_profile,
         "key_env": resolved_key_env,
         "base_url_env": resolved_base_env,
         "key_present": bool(key),

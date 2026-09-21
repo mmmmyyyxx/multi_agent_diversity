@@ -43,6 +43,7 @@ def identity(fingerprint):
         {"solver_output_contract_version": "different-contract"},
         {"shared_solver_cache_path": "different-cache.sqlite"},
         {"proposal_memory_mode": "state_local_v1"},
+        {"provider_profile": "lwj"},
     ],
 )
 def test_behavioral_config_changes_fingerprint_and_reject_resume(override):
@@ -67,6 +68,7 @@ def test_solver_request_identity_includes_immutable_wrapper_version():
         "decision_procedure_then_mandatory_output_contract_v2"
     )
     assert components["enable_thinking"] is False
+    assert components["provider_profile"] == "myx"
     old_components = {
         **components,
         "request_template": "decision_procedure_with_task_contract_v1",
@@ -80,6 +82,9 @@ def test_solver_request_identity_includes_immutable_wrapper_version():
     assert solver_request_identity(cfg) != old_identity
     assert solver_request_identity(cfg) != solver_request_identity(
         Config.from_flat(solver_max_tokens=1799)
+    )
+    assert solver_request_identity(cfg) != solver_request_identity(
+        Config.from_flat(provider_profile="lwj")
     )
 
 

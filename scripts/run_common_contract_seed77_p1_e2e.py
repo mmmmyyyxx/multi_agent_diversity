@@ -98,8 +98,12 @@ class CommonContractVoteAlignedSystem(base.VoteAlignedShadowSystem):
     def __init__(self, cfg: Config, *args: Any, **kwargs: Any) -> None:
         if cfg.models.solver_contract_id != COMMON_SOLVER_CONTRACT_ID:
             raise ValueError("common Solver contract identity is required")
-        _, key = resolve_api_key(cfg.models.solver_api_key_env)
-        _, endpoint = resolve_base_url(cfg.models.solver_base_url_env)
+        _, key = resolve_api_key(
+            cfg.models.solver_api_key_env, cfg.models.provider_profile
+        )
+        _, endpoint = resolve_base_url(
+            cfg.models.solver_base_url_env, cfg.models.provider_profile
+        )
         if not key or not endpoint:
             raise RuntimeError("provider credentials unavailable")
         client = AsyncOpenAI(api_key=key, base_url=endpoint)
