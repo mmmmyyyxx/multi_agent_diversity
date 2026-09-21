@@ -9,14 +9,24 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_native import (
     GEPANativeDataBuilder,
     GEPANativeFeedOptimizer,
     GEPANativeSplitConfig,
+    GEPALayer2EvidenceOptimizer,
     NativeFeedGEPAAdapter,
 )
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import GEPALocalPromptOptimizer
 from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExample
 from multi_dataset_diverse_rl.native_feed import (
+    Layer2OptimizationRequest,
     NativeOptimizationRequest,
     NativeResourceBudget,
     ResponsibilityContext,
+)
+from multi_dataset_diverse_rl.team_search.schemas import (
+    TeamEvidenceCase,
+    TeamSearchAssignment,
+    TeamSearchRequest,
+)
+from multi_dataset_diverse_rl.team_search.task_builder import (
+    Layer2EvidenceRequestBuilder,
 )
 
 
@@ -49,7 +59,11 @@ class Evaluator:
     solver_contract_id = "COMMON_SOLVER_CONTRACT_V1"
     output_contract_id = "output-v1"
 
+    def __init__(self):
+        self.ids = []
+
     def evaluate(self, procedure, example):
+        self.ids.append(example.example_id)
         correct = "distinguish" in procedure.casefold()
         return LocalSolverObservation(
             "A" if correct else "B", "reasoning", correct, True, input_tokens=1,
@@ -124,3 +138,102 @@ def test_overlay_is_additive_to_native_reflective_record() -> None:
     )["decision_procedure"][0]
     assert "Problem" in record and "Reasoning Evidence" in record
     assert record["Layer2 Responsibility Overlay"].startswith("overlay_version=")
+
+
+def layer2_request(suffix: str = "") -> Layer2OptimizationRequest:
+    evidence = tuple(
+        TeamEvidenceCase(
+            f"{group}-{index}{suffix}",
+            f"problem {group} {index}{suffix}",
+            "A",
+            "B",
+            "sanitized outcome",
+            group,
+            (("direct_flip",) if group == "responsibility" else ()),
+        )
+        for group in ("responsibility", "coalition", "preservation")
+        for index in range(4)
+    )
+    assignment = TeamSearchAssignment(
+        2,
+        "Use a generic decision procedure.",
+        evidence,
+        f"repair responsibility{suffix}",
+        f"resp{suffix}",
+        primary_responsibility_lane="direct_flip",
+        responsibility_value=8.0,
+    )
+    outer = TeamSearchRequest(
+        80, 1, "team-state", 36, "COMMON_SOLVER_CONTRACT_V1", "output-v1",
+        "optimize-only-v1",
+    )
+    return Layer2EvidenceRequestBuilder().build(outer, assignment)
+
+
+def build_layer2_optimizer(tmp_path: Path):
+    evaluator = Evaluator()
+    reflection = Reflection()
+    engine = GEPALocalPromptOptimizer(
+        evaluator=evaluator,
+        reflection_lm=reflection,
+        accounting_reader=lambda: reflection.accounting,
+        run_root=tmp_path,
+        adapter_factory=NativeFeedGEPAAdapter,
+    )
+    return GEPALayer2EvidenceOptimizer(engine=engine), evaluator, reflection
+
+
+def test_layer2_schedule_replaces_native_sampler_and_reaches_solver(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from gepa.strategies.batch_sampler import EpochShuffledBatchSampler
+
+    monkeypatch.setattr(
+        EpochShuffledBatchSampler,
+        "next_minibatch_ids",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            AssertionError("native sampler must not run in treatment")
+        ),
+    )
+    optimizer, evaluator, reflection = build_layer2_optimizer(tmp_path)
+    request = layer2_request()
+    before = request.packet.packet_hash
+    result = asyncio.run(optimizer.optimize_layer2(request))
+    assert request.packet.packet_hash == before
+    assert optimizer.last_sampler is not None
+    assert optimizer.last_sampler.backend_example_selection_calls == 0
+    assert optimizer.last_sampler.delivery_calls >= 1
+    assert optimizer.last_sampler.delivered_ids == list(
+        request.packet.ordered_batch_schedule[
+            : optimizer.last_sampler.delivery_calls
+        ]
+    )
+    packet_ids = {
+        row.example_id
+        for row in (
+            *request.packet.repair_examples,
+            *request.packet.preservation_examples,
+            *request.packet.local_eval_examples,
+        )
+    }
+    assert set(evaluator.ids).issubset(packet_ids)
+    assert result.candidates
+    assert all(
+        row.backend_metadata["responsibility_packet_hash"]
+        == request.packet.packet_hash
+        for row in result.candidates
+    )
+    telemetry = result.optimizer_state.payload["telemetry"]
+    assert telemetry["backend_example_selection_calls"] == 0
+    assert telemetry["native_sampler_called"] is False
+    assert reflection.prompts
+    assert request.packet.packet_hash in reflection.prompts[0]
+
+
+def test_layer2_packet_changes_gepa_reflection_input(tmp_path: Path) -> None:
+    optimizer_a, _, reflection_a = build_layer2_optimizer(tmp_path / "a")
+    optimizer_b, _, reflection_b = build_layer2_optimizer(tmp_path / "b")
+    asyncio.run(optimizer_a.optimize_layer2(layer2_request("-a")))
+    asyncio.run(optimizer_b.optimize_layer2(layer2_request("-b")))
+    assert reflection_a.prompts and reflection_b.prompts
+    assert reflection_a.prompts[0] != reflection_b.prompts[0]

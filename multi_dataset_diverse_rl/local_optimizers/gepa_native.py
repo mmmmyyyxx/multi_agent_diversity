@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 from typing import Sequence
 
-from ..native_feed import NativeOptimizationRequest
+from ..native_feed import (
+    Layer2OptimizationRequest,
+    NativeOptimizationRequest,
+    PacketEvidenceExample,
+)
 from ..versions import (
+    GEPA_LAYER2_EVIDENCE_BACKEND_VERSION,
     GEPA_LAYER2_RESPONSIBILITY_OVERLAY_VERSION,
     GEPA_NATIVE_FEED_VERSION,
 )
@@ -19,6 +24,7 @@ from .schemas import (
     LocalOptimizationResult,
     LocalOptimizationTask,
     LocalOptimizerBudget,
+    OpaqueOptimizerState,
 )
 
 
@@ -166,3 +172,170 @@ class GEPANativeFeedOptimizer:
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
+
+
+class Layer2EvidenceScheduleExhausted(RuntimeError):
+    pass
+
+
+class Layer2FrozenBatchSampler:
+    """Deliver the exact precomputed Layer-2 schedule through GEPA's public API."""
+
+    def __init__(
+        self,
+        *,
+        ordered_batch_schedule: tuple[tuple[str, ...], ...],
+        ordered_example_ids: tuple[str, ...],
+    ) -> None:
+        self.schedule = ordered_batch_schedule
+        self.ordered_example_ids = ordered_example_ids
+        self.allowed_ids = frozenset(ordered_example_ids)
+        self.index_by_id = {
+            example_id: index for index, example_id in enumerate(ordered_example_ids)
+        }
+        self.cursor = 0
+        self.delivery_calls = 0
+        self.backend_example_selection_calls = 0
+        self.delivered_ids: list[tuple[str, ...]] = []
+
+    def next_minibatch_ids(self, loader, state):
+        del state
+        loader_ids = tuple(loader.all_ids())
+        if loader_ids != tuple(range(len(self.ordered_example_ids))):
+            raise RuntimeError("GEPA treatment loader differs from Layer-2 packet")
+        if self.cursor >= len(self.schedule):
+            raise Layer2EvidenceScheduleExhausted(
+                "Layer-2 evidence schedule exhausted; native fallback is forbidden"
+            )
+        batch = self.schedule[self.cursor]
+        self.cursor += 1
+        self.delivery_calls += 1
+        if not set(batch).issubset(self.allowed_ids):
+            raise RuntimeError("scheduled GEPA batch contains an unlisted example")
+        self.delivered_ids.append(batch)
+        return [self.index_by_id[example_id] for example_id in batch]
+
+
+def _local(row: PacketEvidenceExample) -> LocalEvidenceExample:
+    return LocalEvidenceExample(
+        example_id=row.example_id,
+        input_payload=row.input_payload,
+        gold=row.gold,
+        parent_output=row.parent_output,
+        textual_feedback=row.textual_feedback,
+        tags=(row.lane, row.responsibility_role),
+    )
+
+
+class GEPALayer2EvidenceOptimizer:
+    """Official GEPA search core over a fully Layer-2-owned curriculum."""
+
+    backend_name = "gepa_search_core_layer2_evidence"
+    backend_version = GEPA_LAYER2_EVIDENCE_BACKEND_VERSION
+
+    def __init__(self, *, engine: GEPALocalPromptOptimizer) -> None:
+        self.engine = engine
+        self.last_sampler: Layer2FrozenBatchSampler | None = None
+
+    def task_for(self, request: Layer2OptimizationRequest) -> LocalOptimizationTask:
+        packet = request.packet
+        if packet.budget.max_returned_candidates != self.engine.config.k_local_return:
+            raise ValueError("Layer-2 request/GEPA return budget mismatch")
+        search = tuple(
+            _local(row)
+            for row in (*packet.repair_examples, *packet.preservation_examples)
+        )
+        local_eval = tuple(_local(row) for row in packet.local_eval_examples)
+        context = json.dumps(
+            {
+                "packet_version": packet.packet_version,
+                "packet_hash": packet.packet_hash,
+                "primary_responsibility_lane": packet.primary_responsibility_lane,
+                "responsibility_value": packet.responsibility_value,
+                "responsibility_context": packet.responsibility_context,
+                "repair_roles": [
+                    {"example_id": row.example_id, "lane": row.lane}
+                    for row in packet.repair_examples
+                ],
+                "preservation_roles": [
+                    {"example_id": row.example_id, "lane": row.lane}
+                    for row in packet.preservation_examples
+                ],
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return LocalOptimizationTask(
+            task_id=request.request_id,
+            parent_prompt=request.parent_decision_procedure,
+            search_examples=search,
+            local_validation_examples=local_eval,
+            optimization_context=context,
+            solver_contract_id=request.solver_contract_id,
+            output_contract_id=request.output_contract_id,
+            seed=request.seed,
+            budget=LocalOptimizerBudget(
+                max_metric_calls=packet.budget.metric_call_limit,
+                reflection_minibatch_size=3,
+                max_returned_candidates=packet.budget.max_returned_candidates,
+            ),
+        )
+
+    async def optimize_layer2(
+        self, request: Layer2OptimizationRequest
+    ) -> LocalOptimizationResult:
+        packet = request.packet
+        before = packet.packet_hash
+        ordered_ids = tuple(
+            row.example_id
+            for row in (*packet.repair_examples, *packet.preservation_examples)
+        )
+        sampler = Layer2FrozenBatchSampler(
+            ordered_batch_schedule=packet.ordered_batch_schedule,
+            ordered_example_ids=ordered_ids,
+        )
+        self.last_sampler = sampler
+        result = await self.engine.optimize_with_batch_sampler(
+            self.task_for(request), sampler
+        )
+        if packet.packet_hash != before:
+            raise RuntimeError("GEPA mutated the immutable Layer-2 packet")
+        provenance = request.candidate_provenance(
+            backend=self.backend_name, backend_version=self.backend_version
+        )
+        candidates = tuple(
+            replace(
+                candidate,
+                backend_metadata={**candidate.backend_metadata, **provenance},
+            )
+            for candidate in result.candidates
+        )
+        prior_payload = (
+            dict(result.optimizer_state.payload)
+            if result.optimizer_state is not None
+            else {}
+        )
+        telemetry = dict(prior_payload.get("telemetry", {}))
+        telemetry.update(
+            {
+                "responsibility_packet_hash": packet.packet_hash,
+                "scheduled_batch_count": len(packet.ordered_batch_schedule),
+                "batch_delivery_calls": sampler.delivery_calls,
+                "delivered_batch_ids": [list(batch) for batch in sampler.delivered_ids],
+                "backend_example_selection_calls": 0,
+                "native_sampler_called": False,
+                "official_gepa_search_core_modified": False,
+            }
+        )
+        state = OpaqueOptimizerState(
+            self.backend_name,
+            self.backend_version,
+            {**prior_payload, "telemetry": telemetry},
+        )
+        return replace(
+            result,
+            candidates=candidates,
+            backend_name=self.backend_name,
+            backend_version=self.backend_version,
+            optimizer_state=state,
+        )

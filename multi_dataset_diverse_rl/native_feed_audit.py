@@ -51,7 +51,7 @@ def layer2_contract_manifest(root: Path) -> dict[str, Any]:
                 "sha256_normalized_lf": sha256_bytes(normalized_bytes(path)),
             }
         )
-    payload = {"version": "native_feed_layer2_contract_v1", "files": files}
+    payload = {"version": "layer2_owned_evidence_contract_v1", "files": files}
     digest = sha256_bytes(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     )
@@ -68,7 +68,7 @@ def data_access_matrix() -> list[dict[str, Any]]:
             "test50": False,
         },
         {
-            "variant": "Native GEPA + Layer2",
+            "variant": "GEPA search core + Layer2-owned evidence",
             "optimize_train": True,
             "optimize_internal_val_pareto": True,
             "validation50": False,
@@ -82,7 +82,7 @@ def data_access_matrix() -> list[dict[str, Any]]:
             "test50": False,
         },
         {
-            "variant": "Native MARS + Layer2",
+            "variant": "MARS search core + Layer2-owned evidence",
             "optimize_train": True,
             "optimize_internal_val_pareto": False,
             "validation50": False,

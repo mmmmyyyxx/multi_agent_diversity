@@ -1,0 +1,9 @@
+{
+  "READY_TO_RUN": false,
+  "authorized": false,
+  "blocked_on": "layer2_owned_feed_gepa_v1_canary_pass",
+  "formal_run_root_created": false,
+  "real_provider_calls": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0
+}
