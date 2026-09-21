@@ -1,0 +1,14 @@
+{
+  "README.md": "eb83c491535f00f28013c65fee627fd835bc244f6eb758d8140ba6a56b60eb15",
+  "archive_tag_manifest.json": "4f530839b7c856288cc1c2e54caccc3ae8f6c08130df06be8a166e9b1aeb6228",
+  "backend_registry.json": "b68e713cc25fd0af026b90607535f671b18af7dc87b0df74a46b29771a302d7f",
+  "branch_inventory.json": "55df56bda42c31eb2c3c1b48e4b222920fdb4fcbb6e550f88375508b084809e9",
+  "file_classification.json": "32a99e52793fd640b46ec6e00c2f5e210b4af193d29cf773a29c2de15ec3234d",
+  "four_mode_matrix.json": "e968118005b09341481058e09785198f3e286efa8daf26d0fbd6ee472e1d2bcc",
+  "heldout_isolation.json": "35b8e432f208e16edf730d03c75e9425630711d811592dab35ca85a27e3d1338",
+  "import_boundary_audit.json": "5f5c59020495064fa6f9510245ed72027f98fb9b47adf6a8f8936d8d9864417f",
+  "sanitization_manifest.json": "66d3d40e92c9e0041e9ed8c70e8efab916e37032cf86ca8e19203a4c0f8a5c82",
+  "shared_layer2_source.json": "7daa803cf192e3a4e039acd36406c73d5919eecb0e21f6a628bf425f647b46a0",
+  "test_summary.json": "9071e8540ed68bae95774ca529b4e9200369935290a4d87b0b617ed9e8f853fe",
+  "unified_layer2_contract.json": "7171e35b818ec78763d6e480101665f86ec933fbc16a69f8db74be22a61531f6"
+}

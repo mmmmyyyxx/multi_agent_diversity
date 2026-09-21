@@ -125,11 +125,39 @@ persistent realizability, team evaluation, Common-Safe, Shadow, selection, and
 atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
 the canonical v15 runtime above.
 
-- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member and bounded
-  local optimization domain through `LocalOptimizationTask`; Layer 1 exclusively
-  owns internal population, sampling, parent selection, mutation, frontier,
-  local acceptance, and optimizer state. Team-level results cannot mutate the
-  same local search state.
+- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member, team
+  responsibility, exact responsibility/latest-transition focus/latest-transition
+  anchor/local-evaluation examples and ordered evidence schedule before Layer 1
+  begins. The immutable packet is the
+  complete optimization curriculum. Layer 1 owns prompt mutation, optimizer-
+  specific reasoning, parent/candidate search, frontier and acceptance, but may
+  not select or fetch examples outside the packet.
+- **INV-LAYER2-FEED-CONTROL-001** — Native GEPA and Native MARS remain separate
+  controls with their frozen native data flow. Treatment deliberately replaces
+  native example selection while retaining each optimizer's search core.
+  Treatment effects therefore include allocation, responsibility, curriculum
+  construction and team admission; they are not component-level ablations.
+- **INV-LAYER2-TRANSITION-EVIDENCE-001** — Layer-2 evidence is
+  `E_L2 = E_team union E_transition`, and optimizer input is
+  `M_t = (M_resp, M_focus, M_anchor, M_eval)`. Responsibility rows are current
+  team residuals. Focus rows are exactly parent-correct to child-wrong cases,
+  and anchor rows are exactly parent-wrong to child-correct cases from the
+  current parent's latest accepted transition. Root focus/anchor sets are empty;
+  histories do not accumulate in optimizer input. Local evaluation is frozen
+  independently and role intersections are audited. These semantics do not add
+  SEPO search operators, architects, breadcrumb search, Lexicase selection,
+  archive admission, or lineage-parent selection to Layer 2.
+- **INV-UNIFIED-BACKEND-RUNTIME-001** — `optimizer_backend` (`gepa` or `mars`)
+  and `optimization_mode` (`native` or `layer2`) are independent runtime
+  configuration fields. GEPA_NATIVE, GEPA_LAYER2, MARS_NATIVE, and MARS_LAYER2
+  execute from one commit. Native mode retains backend-owned Optimize-only data
+  selection; Layer2 mode consumes the one shared immutable evidence packet.
+  Backend additions extend the registry and do not fork Layer 2 or require a
+  permanent Git branch.
+- **INV-UNIFIED-RUN-SCHEMA-001** — All four modes emit the common top-level run
+  schema in `infrastructure/unified_backend_run.schema.json`. Backend-specific
+  fields appear only under `backend_details`; the manifest records backend,
+  mode, fidelity, code/config identity, budget, data split and initial state.
 - **INV-OPTIMIZER-FIDELITY-001** — The official GEPA backend is a Level-B
   API-compatible adaptation. It calls the frozen, source-verified official
   search engine through supported API seams and does not edit or replace its

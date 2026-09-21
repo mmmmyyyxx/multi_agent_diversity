@@ -1,0 +1,12 @@
+{
+  "configuration": "BackendRuntimeConfig",
+  "future_backend_extension": "register backend implementations; do not fork Layer2",
+  "registered_modes": [
+    "GEPA_NATIVE",
+    "GEPA_LAYER2",
+    "MARS_NATIVE",
+    "MARS_LAYER2"
+  ],
+  "registry": "multi_dataset_diverse_rl.local_optimizers.backend_registry.Layer1BackendRegistry",
+  "status": "PASS"
+}

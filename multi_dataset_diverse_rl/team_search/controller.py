@@ -6,7 +6,14 @@ import asyncio
 from dataclasses import dataclass, replace
 from typing import Any, Protocol, Sequence
 
-from ..local_optimizers.base import LocalPromptOptimizer
+from ..local_optimizers.base import (
+    Layer2EvidencePromptOptimizer,
+    LocalPromptOptimizer,
+    NativeFeedPromptOptimizer,
+)
+from ..local_optimizers.backend_registry import Layer1Backend
+from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
+from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
 from .candidate_evaluator import TeamCandidateEvaluator, TeamCommitter
 from .candidate_selector import CommonSafeTeamCandidateSelector
 from .progressive_evaluation import promote_team_candidates
@@ -17,7 +24,11 @@ from .schemas import (
     TeamSearchOutcome,
     TeamSearchRequest,
 )
-from .task_builder import LocalTaskBuilder
+from .task_builder import (
+    Layer2EvidenceRequestBuilder,
+    LocalTaskBuilder,
+    NativeFeedRequestBuilder,
+)
 
 
 class ResponsibilityAssignmentProvider(Protocol):
@@ -40,8 +51,11 @@ class TeamSearchController:
         self,
         *,
         responsibility: ResponsibilityAssignmentProvider,
-        task_builder: LocalTaskBuilder,
-        local_optimizer: LocalPromptOptimizer,
+        task_builder: LocalTaskBuilder | NativeFeedRequestBuilder | Layer2EvidenceRequestBuilder,
+        local_optimizer: (
+            LocalPromptOptimizer | NativeFeedPromptOptimizer | Layer2EvidencePromptOptimizer
+            | Layer1Backend
+        ),
         evaluator: TeamCandidateEvaluator,
         selector: CommonSafeTeamCandidateSelector,
         committer: TeamCommitter,
@@ -52,6 +66,43 @@ class TeamSearchController:
         self.evaluator = evaluator
         self.selector = selector
         self.committer = committer
+
+    async def _run_local_optimizer(
+        self,
+        task: LocalOptimizationTask | NativeOptimizationRequest | Layer2OptimizationRequest,
+    ) -> LocalOptimizationResult:
+        if isinstance(self.local_optimizer, Layer1Backend):
+            expected = (
+                "layer2" if isinstance(task, Layer2OptimizationRequest)
+                else "native" if isinstance(task, NativeOptimizationRequest)
+                else None
+            )
+            if expected is None:
+                raise TypeError("unified Layer1 backend does not accept legacy local tasks")
+            if self.local_optimizer.optimization_mode != expected:
+                raise TypeError(
+                    "configured optimization_mode does not match the Layer-2 task builder"
+                )
+            return await self.local_optimizer.optimize(task)
+        if isinstance(task, Layer2OptimizationRequest):
+            if not isinstance(self.local_optimizer, Layer2EvidencePromptOptimizer):
+                raise TypeError(
+                    "Layer-2 evidence request requires a Layer2EvidencePromptOptimizer"
+                )
+            before = task.packet.packet_hash
+            result = await self.local_optimizer.optimize_layer2(task)
+            if task.packet.packet_hash != before:
+                raise RuntimeError("Layer-1 backend mutated the Layer-2 evidence packet")
+            return result
+        if isinstance(task, NativeOptimizationRequest):
+            if not isinstance(self.local_optimizer, NativeFeedPromptOptimizer):
+                raise TypeError(
+                    "native-feed request requires a NativeFeedPromptOptimizer"
+                )
+            return await self.local_optimizer.optimize_native(task)
+        if not isinstance(self.local_optimizer, LocalPromptOptimizer):
+            raise TypeError("legacy local task requires a LocalPromptOptimizer")
+        return await self.local_optimizer.optimize(task)
 
     async def run_opportunity(self, request: TeamSearchRequest) -> TeamSearchOutcome:
         assignment = self.responsibility.assign(request)
@@ -68,7 +119,7 @@ class TeamSearchController:
             primary_responsibility_lane=assignment.primary_responsibility_lane,
         )
         minibatch_telemetry = self.task_builder.team_minibatch_telemetry(team_minibatch)
-        local = await self.local_optimizer.optimize(task)
+        local = await self._run_local_optimizer(task)
         records: list[TeamCandidateRecord] = []
         minibatch_calls = minibatch_tokens = 0
         for candidate in local.candidates:
