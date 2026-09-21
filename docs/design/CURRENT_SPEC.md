@@ -125,17 +125,17 @@ persistent realizability, team evaluation, Common-Safe, Shadow, selection, and
 atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
 the canonical v15 runtime above.
 
-- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member and sanitized
-  team responsibility context. It does not define exact optimizer examples.
-  Each Layer-1 backend exclusively owns its native data consumption, internal
-  sampling, parent selection, mutation, validation/Pareto or Target evaluation,
-  frontier, local acceptance, and optimizer state. Team-level results cannot
-  mutate the same local search state.
-- **INV-NATIVE-FEED-PARITY-001** — Within an optimizer family, native control
-  and Layer-2 treatment use the same backend data universe, split, sampling,
-  models, representation, and native budget semantics. Responsibility may be
-  added only as a versioned metadata overlay. GEPA and MARS are not required to
-  share optimizer-internal minibatches, validation topology, or budget units.
+- **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member, team
+  responsibility, exact repair/preservation/local-evaluation examples and
+  ordered evidence schedule before Layer 1 begins. The immutable packet is the
+  complete optimization curriculum. Layer 1 owns prompt mutation, optimizer-
+  specific reasoning, parent/candidate search, frontier and acceptance, but may
+  not select or fetch examples outside the packet.
+- **INV-LAYER2-FEED-CONTROL-001** — Native GEPA and Native MARS remain separate
+  controls with their frozen native data flow. Treatment deliberately replaces
+  native example selection while retaining each optimizer's search core.
+  Treatment effects therefore include allocation, responsibility, curriculum
+  construction and team admission; they are not component-level ablations.
 - **INV-OPTIMIZER-FIDELITY-001** — The official GEPA backend is a Level-B
   API-compatible adaptation. It calls the frozen, source-verified official
   search engine through supported API seams and does not edit or replace its

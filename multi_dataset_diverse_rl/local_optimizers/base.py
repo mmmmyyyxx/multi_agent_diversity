@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
 from .schemas import LocalEvidenceExample, LocalOptimizationResult, LocalOptimizationTask
-from ..native_feed import NativeOptimizationRequest
+from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
 
 
 @dataclass(frozen=True)
@@ -46,6 +46,15 @@ class NativeFeedPromptOptimizer(Protocol):
         self, request: NativeOptimizationRequest
     ) -> LocalOptimizationResult:
         """Consume a backend-owned native data feed and return bounded candidates."""
+        ...
+
+
+@runtime_checkable
+class Layer2EvidencePromptOptimizer(Protocol):
+    async def optimize_layer2(
+        self, request: Layer2OptimizationRequest
+    ) -> LocalOptimizationResult:
+        """Search only over the immutable evidence packet supplied by Layer 2."""
         ...
 
 

@@ -6,9 +6,13 @@ import asyncio
 from dataclasses import dataclass, replace
 from typing import Any, Protocol, Sequence
 
-from ..local_optimizers.base import LocalPromptOptimizer, NativeFeedPromptOptimizer
+from ..local_optimizers.base import (
+    Layer2EvidencePromptOptimizer,
+    LocalPromptOptimizer,
+    NativeFeedPromptOptimizer,
+)
 from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
-from ..native_feed import NativeOptimizationRequest
+from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
 from .candidate_evaluator import TeamCandidateEvaluator, TeamCommitter
 from .candidate_selector import CommonSafeTeamCandidateSelector
 from .progressive_evaluation import promote_team_candidates
@@ -19,7 +23,11 @@ from .schemas import (
     TeamSearchOutcome,
     TeamSearchRequest,
 )
-from .task_builder import LocalTaskBuilder, NativeFeedRequestBuilder
+from .task_builder import (
+    Layer2EvidenceRequestBuilder,
+    LocalTaskBuilder,
+    NativeFeedRequestBuilder,
+)
 
 
 class ResponsibilityAssignmentProvider(Protocol):
@@ -42,8 +50,10 @@ class TeamSearchController:
         self,
         *,
         responsibility: ResponsibilityAssignmentProvider,
-        task_builder: LocalTaskBuilder | NativeFeedRequestBuilder,
-        local_optimizer: LocalPromptOptimizer | NativeFeedPromptOptimizer,
+        task_builder: LocalTaskBuilder | NativeFeedRequestBuilder | Layer2EvidenceRequestBuilder,
+        local_optimizer: (
+            LocalPromptOptimizer | NativeFeedPromptOptimizer | Layer2EvidencePromptOptimizer
+        ),
         evaluator: TeamCandidateEvaluator,
         selector: CommonSafeTeamCandidateSelector,
         committer: TeamCommitter,
@@ -56,8 +66,19 @@ class TeamSearchController:
         self.committer = committer
 
     async def _run_local_optimizer(
-        self, task: LocalOptimizationTask | NativeOptimizationRequest
+        self,
+        task: LocalOptimizationTask | NativeOptimizationRequest | Layer2OptimizationRequest,
     ) -> LocalOptimizationResult:
+        if isinstance(task, Layer2OptimizationRequest):
+            if not isinstance(self.local_optimizer, Layer2EvidencePromptOptimizer):
+                raise TypeError(
+                    "Layer-2 evidence request requires a Layer2EvidencePromptOptimizer"
+                )
+            before = task.packet.packet_hash
+            result = await self.local_optimizer.optimize_layer2(task)
+            if task.packet.packet_hash != before:
+                raise RuntimeError("Layer-1 backend mutated the Layer-2 evidence packet")
+            return result
         if isinstance(task, NativeOptimizationRequest):
             if not isinstance(self.local_optimizer, NativeFeedPromptOptimizer):
                 raise TypeError(

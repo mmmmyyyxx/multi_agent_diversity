@@ -69,15 +69,14 @@ and tests together.
 
 ### Two-layer ownership boundary
 
-Layer 2 owns member selection, responsibility attribution, persistent
-realizability, team-level empirical evaluation, Common-Safe and Shadow checks,
-cross-member competition, and atomic write-back. It defines the target member
-and team-level responsibility context, not the exact optimizer examples.
-Each Layer-1 backend owns its native data-consumption and search process.
-Layer 2 must not choose a backend's internal candidate parent, training or
-reflection minibatch, Pareto/validation feed, or Target dataset; replace
-backend-internal population/Pareto/search; feed team acceptance back into the
-same backend search state; or depend on backend internals.
+Layer 2 owns member selection, responsibility attribution, exact repair,
+preservation and local-evaluation evidence selection, the ordered evidence
+schedule, persistent realizability, team-level empirical evaluation,
+Common-Safe and Shadow checks, cross-member competition, and atomic write-back.
+Layer 1 retains optimizer-specific prompt-search mechanics, but treatment
+backends may consume only the immutable Layer-2 evidence packet. They may not
+fetch, select, replace, expand, reorder for selection, or fall back to examples
+outside that packet.
 
 Layer 1 owns how the assigned local problem is searched: internal sampling,
 proposal generation, candidate population and selection, and optimizer-specific
@@ -86,16 +85,17 @@ persistent team realizability or plurality outcomes for target allocation, or
 commit prompts to the team.
 
 ```text
-Layer 2 defines WHO to optimize and WHY at team level.
-Layer 1 owns HOW optimization consumes data and searches.
+Layer 2 defines WHO to optimize, WHAT responsibility to pursue, and WHICH
+evidence Layer 1 must optimize from.
+Layer 1 retains HOW to mutate, reason over, compare and accept prompt candidates.
 ```
 
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
 
-Cross-optimizer experiments preserve backend-native data flow. Within-optimizer
-Layer-2 studies require native-feed parity between control and treatment.
-Cross-backend minibatches, internal validation structures, and native budget
-units need not match and must not be used for direct superiority claims.
+The native optimizer data flow remains a separate control. The Layer-2
+treatment intentionally replaces native example selection while preserving the
+optimizer's prompt-search core. GEPA and MARS native budget units need not match
+and must not be used for direct cross-backend superiority claims.
 
 ### Local optimizer fidelity policy
 
