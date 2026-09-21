@@ -6,7 +6,12 @@ import argparse
 import json
 from pathlib import Path
 import subprocess
+import sys
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.native_feed_audit import (
     layer2_contract_manifest,
@@ -122,7 +127,7 @@ def main() -> None:
     parser.add_argument("--focused-tests", required=True)
     parser.add_argument("--full-tests", required=True)
     args = parser.parse_args()
-    root = Path(__file__).resolve().parents[1]
+    root = ROOT
     report = args.report_dir.resolve()
     report.mkdir(parents=True, exist_ok=True)
     packets = [
