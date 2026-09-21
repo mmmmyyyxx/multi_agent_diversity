@@ -1,0 +1,20 @@
+{
+  "README.md": "4009c64bd0fa51b08f9a5342e961c5946af67dfe11ba886280cd6db629558a63",
+  "backend_fidelity_manifest.json": "c37fcdbb0743738c548d17b4406d4412a37d0ec682c0362e26fa1fcd1f831d75",
+  "backend_no_selection_audit.json": "9c9befeb891657de463b65497440488da25d22cff870087a0c6c36dee5b70529",
+  "code_path_audit.json": "5f33b8bb823ebfd62c832d7e64e5e7004ddc671bf7fcae865699190fcf1024ae",
+  "control_treatment_definition.json": "b0caf5867051fc8caa73f8afff27b49405e1263f8e5847bc549f4e91fe284eaf",
+  "cross_branch_parity.json": "21e90323b5210d9c0335a6d833c5c44aaedc549054f40cd95c909a7042d22da5",
+  "direct_layer2_influence_audit.json": "1aa731d973bbfdf773ba5ab21b3daf917b873f7d32579f4e502d1d39269d7bbf",
+  "example_selection_audit.json": "a05782ba0d1baecc0178710f9a272082115430ca82b71803432f13de03c36923",
+  "gepa_pinned_sampler_capability_audit.json": "74fded5b682acbea0c09184b08a1b38c1da4d9bba7585cd154d9304e2b0a4152",
+  "heldout_isolation.json": "cc81926715bf7ddf996663980d9caade5cb07c45a6e046ff42f977c8d819d8d1",
+  "layer2_contract_hash.json": "1d2280b77f1c22221c72367265f6c7aecc6df464a1e95d339bc3a7c03e313e65",
+  "local_eval_audit.json": "24d66a877a11cd73db5d4db90847980f9e497d4fff0a258848bec8dc1f3f9576",
+  "ownership_contract.json": "265f785074e1b6327ed831d709551b1243d9885c216d17a5f73c93119bf095ce",
+  "pilot_protocol.json": "a27215484ebeb4fd2cb9d538396bf86a0b0b65d04b91685a24f03cb116441c94",
+  "preservation_audit.json": "4a423e626c4e4d0e0bb74700c6d765c4f9096a93e011bcf9d3f4df1c5794f409",
+  "responsibility_packet_schema.json": "ea5cda842cdf20bbd0146a4d1bd8bab47a31e66cd1d6df81e8651500f48404d5",
+  "sanitization_manifest.json": "443af6ccde51d693b945723f2543e5b01582d6e91e43dd7469e181baa0f5af8c",
+  "test_summary.json": "bb0feb1f6399d28ca68b29f73f14744d4b8a747aee5bf0d576b7ba7d7c3899fc"
+}

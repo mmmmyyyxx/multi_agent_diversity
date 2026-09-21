@@ -1,0 +1,11 @@
+{
+  "file_count_before_hash_manifest": 17,
+  "forbidden": [
+    "question/prompt text",
+    "gold/model answers",
+    "raw responses/reasoning",
+    "credentials/endpoints",
+    "absolute paths"
+  ],
+  "status": "PASS"
+}

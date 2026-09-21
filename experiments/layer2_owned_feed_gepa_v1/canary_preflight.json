@@ -1,0 +1,18 @@
+{
+  "READY_TO_RUN": false,
+  "backend": "gepa",
+  "checks": {
+    "Test50_calls": 0,
+    "Validation50_calls": 0,
+    "authorization_false": true,
+    "backend_selection_zero": true,
+    "direct_layer2_influence": true,
+    "fresh_run_root_not_consumed": true,
+    "heldout_isolated": true,
+    "ready_to_run_false": true,
+    "real_provider_calls": 0,
+    "report_complete": true
+  },
+  "reason": "real-provider authorization is intentionally absent",
+  "status": "READY_FOR_AUTHORIZATION"
+}

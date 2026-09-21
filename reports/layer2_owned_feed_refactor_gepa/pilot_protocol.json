@@ -1,0 +1,8 @@
+{
+  "Test50_calls": 0,
+  "Validation50_calls": 0,
+  "backend": "gepa",
+  "real_provider_calls": 0,
+  "small_real_provider_canary_ready_for_authorization": true,
+  "status": "PREPARED_NOT_AUTHORIZED"
+}

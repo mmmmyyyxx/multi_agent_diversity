@@ -1,0 +1,34 @@
+{
+  "audit_phase": "pre_modification_line_level_review_then_post_change_replay",
+  "audited_parent_head": "d3c7dcd1504fb2ec2b8a73d658cef484244bc6b5",
+  "backend": {
+    "batch_configuration": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py::GEPALocalPromptOptimizer._run",
+    "local_validation": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py::GEPALayer2EvidenceOptimizer.task_for",
+    "native_control_builder": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py::GEPANativeDataBuilder",
+    "treatment_adapter": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py::GEPALayer2EvidenceOptimizer",
+    "treatment_sampler": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py::Layer2FrozenBatchSampler"
+  },
+  "backend_neutral_request": [
+    "multi_dataset_diverse_rl/native_feed.py::ResponsibilityEvidencePacket",
+    "multi_dataset_diverse_rl/native_feed.py::Layer2OptimizationRequest"
+  ],
+  "categorical_profile_persistence": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py::sanitized_categorical_profile",
+  "common_safe": "multi_dataset_diverse_rl/team_search/candidate_selector.py::CommonSafeTeamCandidateSelector",
+  "full": "multi_dataset_diverse_rl/team_search/system_runtime.py::SystemTeamCandidateEvaluator.evaluate_full",
+  "pivotality_persistence": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py::endpoint_identifiability_snapshot",
+  "residual_and_example_construction": [
+    "multi_dataset_diverse_rl/team_search/system_runtime.py::SystemResponsibilityAssignmentFactory.build_from_member",
+    "multi_dataset_diverse_rl/team_search/task_builder.py::Layer2EvidenceRequestBuilder.build"
+  ],
+  "responsibility_calculation": [
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py::build_primary_responsibility_summaries",
+    "multi_dataset_diverse_rl/team_search/system_runtime.py::freeze_current_responsibility"
+  ],
+  "shadow": "multi_dataset_diverse_rl/team_search/system_runtime.py::SystemTeamCandidateEvaluator.evaluate_shadow",
+  "target_member_selection": [
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py::select_primary_responsibility_targets",
+    "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py::PrimaryResponsibilityPersistentRealizabilityScheduler.select"
+  ],
+  "team_minibatch": "multi_dataset_diverse_rl/team_search/task_builder.py::LocalTaskBuilder.select_team_minibatch",
+  "write_back": "multi_dataset_diverse_rl/team_search/system_runtime.py::SystemTeamCommitter.commit"
+}
