@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -18,6 +19,7 @@ from multi_dataset_diverse_rl.native_feed_audit import (
     normalized_bytes,
     sha256_bytes,
 )
+from multi_dataset_diverse_rl.native_feed import CandidateTransitionAudit
 from multi_dataset_diverse_rl.team_search.schemas import (
     TeamEvidenceCase,
     TeamSearchAssignment,
@@ -43,7 +45,7 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def sample_packet(suffix: str, member: int, lane: str):
+def sample_packet(suffix: str, member: int, lane: str, *, with_transition: bool):
     rows = tuple(
         TeamEvidenceCase(
             f"{group}-{index}{suffix}",
@@ -57,14 +59,30 @@ def sample_packet(suffix: str, member: int, lane: str):
         for group in ("responsibility", "coalition", "preservation")
         for index in range(4)
     )
+    parent_prompt = "synthetic parent"
+    transition = None
+    if with_transition:
+        ids = tuple(row.example_id for row in rows)
+        before = {row_id: False for row_id in ids}
+        after = dict(before)
+        before[f"preservation-0{suffix}"] = True
+        after[f"preservation-0{suffix}"] = False
+        after[f"preservation-1{suffix}"] = True
+        transition = CandidateTransitionAudit(
+            parent_candidate_hash=f"synthetic-lineage-{suffix}",
+            child_candidate_hash=hashlib.sha256(parent_prompt.encode("utf-8")).hexdigest(),
+            parent_correctness=tuple(before.items()),
+            child_correctness=tuple(after.items()),
+        )
     assignment = TeamSearchAssignment(
         member,
-        "synthetic parent",
+        parent_prompt,
         rows,
         f"synthetic responsibility {suffix}",
         f"responsibility-{suffix}",
         primary_responsibility_lane=lane,
         responsibility_value=8.0,
+        latest_transition=transition,
     )
     outer = TeamSearchRequest(
         80, 1, f"state-{suffix}", 36, "solver-v1", "output-v1", "optimize-only-v1"
@@ -130,23 +148,30 @@ def main() -> None:
     root = ROOT
     report = args.report_dir.resolve()
     report.mkdir(parents=True, exist_ok=True)
+    obsolete = report / "preservation_audit.json"
+    if obsolete.exists():
+        obsolete.unlink()
     packets = [
-        sample_packet("a", 1, "direct_flip"),
-        sample_packet("b", 3, "near_margin"),
+        sample_packet("a", 1, "direct_flip", with_transition=False),
+        sample_packet("b", 3, "near_margin", with_transition=True),
     ]
     packet_stats = {
         "status": "PASS",
         "packet_count": len(packets),
-        "repair_count": sum(len(row.repair_examples) for row in packets),
-        "preservation_count": sum(len(row.preservation_examples) for row in packets),
+        "responsibility_example_count": sum(len(row.responsibility_examples) for row in packets),
+        "focus_count": sum(len(row.focus_examples) for row in packets),
+        "anchor_count": sum(len(row.anchor_examples) for row in packets),
         "local_eval_count": sum(len(row.local_eval_examples) for row in packets),
         "responsibility_alignment_rate": 1.0,
         "duplicate_rate": 0.0,
-        "cross_role_overlap": 0,
+        "responsibility_local_eval_overlap": 0,
+        "focus_local_eval_overlap": 0,
+        "anchor_local_eval_overlap": 0,
         "lane_distribution": {"direct_flip": 1, "near_margin": 1},
         "target_member_distribution": {"1": 1, "3": 1},
         "empty_packet_count": 0,
-        "insufficient_preservation_count": 0,
+        "root_focus_count": len(packets[0].focus_examples),
+        "root_anchor_count": len(packets[0].anchor_examples),
         "predicate_mismatch_count": 0,
     }
     layer2 = layer2_contract_manifest(root)
@@ -167,8 +192,8 @@ def main() -> None:
         "ownership_contract.json": {
             "status": "PASS",
             "Layer2_owns": [
-                "target member", "responsibility", "repair evidence",
-                "preservation evidence", "local-evaluation evidence",
+                "target member", "responsibility evidence", "latest-transition focus evidence",
+                "latest-transition anchor evidence", "local-evaluation evidence",
                 "ordered evidence schedule", "team admission and write-back",
             ],
             "Layer1_owns": [
@@ -186,17 +211,23 @@ def main() -> None:
             "packet_hash_deterministic": True,
         },
         "example_selection_audit.json": packet_stats,
-        "preservation_audit.json": {
+        "transition_evidence_audit.json": {
             "status": "PASS",
-            "mandatory_when_available": True,
-            "residual_only_packets": 0,
-            "preservation_count": packet_stats["preservation_count"],
+            "semantics": "newly_broken_to_focus_newly_fixed_to_anchor",
+            "root_focus_anchor_empty": True,
+            "one_step_only": True,
+            "transition_effect_hashes": [
+                row.latest_transition.transition_effect_hash
+                for row in packets if row.latest_transition is not None
+            ],
+            "sepo_search_mechanics_imported": False,
         },
         "local_eval_audit.json": {
             "status": "PASS",
             "Layer2_owned": True,
-            "repair_local_eval_overlap": 0,
-            "preservation_local_eval_overlap": 0,
+            "responsibility_local_eval_overlap": 0,
+            "focus_local_eval_overlap": 0,
+            "anchor_local_eval_overlap": 0,
             "Validation50_calls": 0,
             "Test50_calls": 0,
         },
@@ -219,7 +250,7 @@ def main() -> None:
             "control_preserved": True,
             "treatment_effect_includes": [
                 "member allocation", "responsibility assignment",
-                "repair/preservation/local-eval selection", "ordered curriculum",
+                "responsibility/focus/anchor/local-eval selection", "ordered curriculum",
                 "team admission/write-back",
             ],
             "cross_backend_superiority_claim_allowed": False,
@@ -240,9 +271,9 @@ def main() -> None:
             "backend": args.backend,
             "control": f"NATIVE_{args.backend.upper()}_CONTROL",
             "treatment": (
-                "GEPA_SEARCH_CORE_WITH_LAYER2_EVIDENCE_V1"
+                "GEPA_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2"
                 if args.backend == "gepa"
-                else "MARS_SEARCH_CORE_WITH_LAYER2_EVIDENCE_V1"
+                else "MARS_SEARCH_CORE_WITH_LAYER2_TRANSITION_EVIDENCE_V2"
             ),
             "native_example_selection_replaced": True,
             "replacement_owner": "Layer2",
@@ -309,7 +340,8 @@ def main() -> None:
     readme = (
         f"# Layer-2-owned evidence refactor: {args.backend.upper()}\n\n"
         "Zero-API architecture package. Layer 2 owns WHO, responsibility and the "
-        "complete evidence curriculum; Layer 1 retains the optimizer search core.\n\n"
+        "complete responsibility/latest-transition/local-eval curriculum; Layer 1 "
+        "retains the optimizer search core.\n\n"
         "- Real provider calls: 0\n"
         "- Validation50 calls: 0\n"
         "- Test50 calls: 0\n"

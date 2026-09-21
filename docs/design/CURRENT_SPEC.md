@@ -126,8 +126,9 @@ atomic write-back remain Layer-2 concerns. These opt-in identities do not alter
 the canonical v15 runtime above.
 
 - **INV-LAYER-OWNERSHIP-001** — Layer 2 defines the target member, team
-  responsibility, exact repair/preservation/local-evaluation examples and
-  ordered evidence schedule before Layer 1 begins. The immutable packet is the
+  responsibility, exact responsibility/latest-transition focus/latest-transition
+  anchor/local-evaluation examples and ordered evidence schedule before Layer 1
+  begins. The immutable packet is the
   complete optimization curriculum. Layer 1 owns prompt mutation, optimizer-
   specific reasoning, parent/candidate search, frontier and acceptance, but may
   not select or fetch examples outside the packet.
@@ -136,6 +137,16 @@ the canonical v15 runtime above.
   native example selection while retaining each optimizer's search core.
   Treatment effects therefore include allocation, responsibility, curriculum
   construction and team admission; they are not component-level ablations.
+- **INV-LAYER2-TRANSITION-EVIDENCE-001** — Layer-2 evidence is
+  `E_L2 = E_team union E_transition`, and optimizer input is
+  `M_t = (M_resp, M_focus, M_anchor, M_eval)`. Responsibility rows are current
+  team residuals. Focus rows are exactly parent-correct to child-wrong cases,
+  and anchor rows are exactly parent-wrong to child-correct cases from the
+  current parent's latest accepted transition. Root focus/anchor sets are empty;
+  histories do not accumulate in optimizer input. Local evaluation is frozen
+  independently and role intersections are audited. These semantics do not add
+  SEPO search operators, architects, breadcrumb search, Lexicase selection,
+  archive admission, or lineage-parent selection to Layer 2.
 - **INV-OPTIMIZER-FIDELITY-001** — The official GEPA backend is a Level-B
   API-compatible adaptation. It calls the frozen, source-verified official
   search engine through supported API seams and does not edit or replace its

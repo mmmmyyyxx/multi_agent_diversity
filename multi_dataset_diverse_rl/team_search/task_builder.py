@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 
 from ..local_optimizers.schemas import LocalEvidenceExample, LocalOptimizationTask, LocalOptimizerBudget
 from ..native_feed import (
@@ -245,7 +246,7 @@ class NativeFeedRequestBuilder(LocalTaskBuilder):
 class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
     """Freeze the complete local-search curriculum before Layer 1 starts."""
 
-    packet_selection_policy = "deterministic_repair_preservation_eval_v1"
+    packet_selection_policy = "responsibility_plus_latest_transition_eval_v1"
 
     @staticmethod
     def _packet_row(
@@ -289,19 +290,20 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
 
     @staticmethod
     def _schedule(
-        repair_ids: tuple[str, ...],
-        preservation_ids: tuple[str, ...],
+        responsibility_ids: tuple[str, ...],
+        focus_ids: tuple[str, ...],
+        anchor_ids: tuple[str, ...],
         *,
         batch_count: int,
         batch_size: int = 3,
     ) -> tuple[tuple[str, ...], ...]:
+        roles = (responsibility_ids, focus_ids, anchor_ids)
         ordered: list[str] = []
-        max_count = max(len(repair_ids), len(preservation_ids))
+        max_count = max(map(len, roles))
         for index in range(max_count):
-            if index < len(repair_ids):
-                ordered.append(repair_ids[index])
-            if index < len(preservation_ids):
-                ordered.append(preservation_ids[index])
+            for values in roles:
+                if index < len(values):
+                    ordered.append(values[index])
         return tuple(
             tuple(ordered[(step * batch_size + offset) % len(ordered)] for offset in range(batch_size))
             for step in range(batch_count)
@@ -317,23 +319,13 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
         lane = assignment.primary_responsibility_lane or "fallback"
         if lane not in {"direct_flip", "near_margin", "coverage", "fallback"}:
             raise ValueError("unknown primary responsibility lane")
-        repair_rows = tuple(
+        responsibility_rows = tuple(
             sorted(
                 (
                     row
                     for row in assignment.evidence
                     if row.evidence_group == "responsibility"
                     and self._matches_primary_lane(row, lane)
-                ),
-                key=self._priority,
-            )
-        )
-        preservation_rows = tuple(
-            sorted(
-                (
-                    row
-                    for row in assignment.evidence
-                    if row.evidence_group == "preservation"
                 ),
                 key=self._priority,
             )
@@ -348,50 +340,69 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 key=self._priority,
             )
         )
-        if not repair_rows:
-            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no aligned repair examples")
-        if not preservation_rows:
-            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no preservation examples")
+        if not responsibility_rows:
+            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no aligned responsibility examples")
         if not local_eval_rows:
             raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: no local-eval examples")
-        role_ids = [
-            {row.example_id for row in rows}
-            for rows in (repair_rows, preservation_rows, local_eval_rows)
-        ]
-        if role_ids[0] & role_ids[1] or role_ids[0] & role_ids[2] or role_ids[1] & role_ids[2]:
-            raise ValueError("Layer-2 packet roles must be disjoint")
+        by_id = {row.example_id: row for row in assignment.evidence}
+        transition = assignment.latest_transition
+        focus_rows = () if transition is None else tuple(
+            by_id[row_id] for row_id in transition.newly_broken_ids if row_id in by_id
+        )
+        anchor_rows = () if transition is None else tuple(
+            by_id[row_id] for row_id in transition.newly_fixed_ids if row_id in by_id
+        )
+        if transition is not None and (
+            len(focus_rows) != len(transition.newly_broken_ids)
+            or len(anchor_rows) != len(transition.newly_fixed_ids)
+        ):
+            raise ValueError("INSUFFICIENT_LAYER2_EVIDENCE: transition example absent from frozen universe")
         budget = NativeResourceBudget(
             native_unit_limit=max(1, request.local_metric_budget // 3),
             metric_call_limit=request.local_metric_budget,
             optimizer_call_limit=max(1, request.local_metric_budget),
             max_returned_candidates=self.local_return_budget,
         )
-        repair = tuple(
-            self._packet_row(row, role="repair", lane=lane) for row in repair_rows
+        responsibility = tuple(
+            self._packet_row(row, role="responsibility", lane=lane)
+            for row in responsibility_rows
         )
-        preservation = tuple(
-            self._packet_row(row, role="preservation", lane="global")
-            for row in preservation_rows
+        focus = tuple(
+            self._packet_row(row, role="focus", lane="global") for row in focus_rows
+        )
+        anchor = tuple(
+            self._packet_row(row, role="anchor", lane="global") for row in anchor_rows
         )
         local_eval = tuple(
             self._packet_row(row, role="local_eval", lane="global")
             for row in local_eval_rows
         )
         schedule = self._schedule(
-            tuple(row.example_id for row in repair),
-            tuple(row.example_id for row in preservation),
+            tuple(row.packet_item_id for row in responsibility),
+            tuple(row.packet_item_id for row in focus),
+            tuple(row.packet_item_id for row in anchor),
             batch_count=budget.native_unit_limit,
         )
+        parent_candidate_hash = hashlib.sha256(
+            assignment.parent_prompt.encode("utf-8")
+        ).hexdigest()
+        if transition is not None and transition.child_candidate_hash != parent_candidate_hash:
+            raise ValueError("latest transition child is not the current parent prompt")
         packet = ResponsibilityEvidencePacket(
             source_team_state_hash=request.team_state_hash,
             target_member=assignment.target_member,
             primary_responsibility_lane=lane,
             responsibility_value=assignment.responsibility_value,
             responsibility_context=assignment.optimization_context,
-            repair_examples=repair,
-            preservation_examples=preservation,
+            responsibility_examples=responsibility,
+            focus_examples=focus,
+            anchor_examples=anchor,
             local_eval_examples=local_eval,
             ordered_batch_schedule=schedule,
+            parent_candidate_hash=parent_candidate_hash,
+            lineage_parent_hash=(
+                transition.parent_candidate_hash if transition is not None else None
+            ),
             data_universe_hash=self._universe_hash(assignment.evidence),
             budget=budget,
             provenance=(
@@ -399,6 +410,7 @@ class Layer2EvidenceRequestBuilder(LocalTaskBuilder):
                 ("source_split", "optimize_only"),
                 ("selection_policy", self.packet_selection_policy),
             ),
+            latest_transition=transition,
         )
         return Layer2OptimizationRequest(
             request_id=(
