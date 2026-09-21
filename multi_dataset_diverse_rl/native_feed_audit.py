@@ -51,7 +51,7 @@ def layer2_contract_manifest(root: Path) -> dict[str, Any]:
                 "sha256_normalized_lf": sha256_bytes(normalized_bytes(path)),
             }
         )
-    payload = {"version": "layer2_owned_evidence_contract_v1", "files": files}
+    payload = {"version": "layer2_owned_transition_evidence_contract_v2", "files": files}
     digest = sha256_bytes(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     )
