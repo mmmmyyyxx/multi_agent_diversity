@@ -1,0 +1,9 @@
+{
+  "allowed": [
+    "LAYER2_AUGMENTED_GEPA_SYSTEM_OUTPERFORMS_NATIVE_GEPA_BASELINE",
+    "LAYER2_AUGMENTED_MARS_SYSTEM_OUTPERFORMS_NATIVE_MARS_BASELINE"
+  ],
+  "forbidden_cross_backend_claim": "GEPA_OUTPERFORMS_MARS",
+  "reason": "This phase estimates within-optimizer treatment effects and does not equalize native data flow, budget units, or team topology.",
+  "requires_future_strict_control": "LAYER2_CAUSES_THE_GAIN"
+}

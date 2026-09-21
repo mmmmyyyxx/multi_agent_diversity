@@ -6,7 +6,9 @@ import asyncio
 from dataclasses import dataclass, replace
 from typing import Any, Protocol, Sequence
 
-from ..local_optimizers.base import LocalPromptOptimizer
+from ..local_optimizers.base import LocalPromptOptimizer, NativeFeedPromptOptimizer
+from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
+from ..native_feed import NativeOptimizationRequest
 from .candidate_evaluator import TeamCandidateEvaluator, TeamCommitter
 from .candidate_selector import CommonSafeTeamCandidateSelector
 from .progressive_evaluation import promote_team_candidates
@@ -17,7 +19,7 @@ from .schemas import (
     TeamSearchOutcome,
     TeamSearchRequest,
 )
-from .task_builder import LocalTaskBuilder
+from .task_builder import LocalTaskBuilder, NativeFeedRequestBuilder
 
 
 class ResponsibilityAssignmentProvider(Protocol):
@@ -40,8 +42,8 @@ class TeamSearchController:
         self,
         *,
         responsibility: ResponsibilityAssignmentProvider,
-        task_builder: LocalTaskBuilder,
-        local_optimizer: LocalPromptOptimizer,
+        task_builder: LocalTaskBuilder | NativeFeedRequestBuilder,
+        local_optimizer: LocalPromptOptimizer | NativeFeedPromptOptimizer,
         evaluator: TeamCandidateEvaluator,
         selector: CommonSafeTeamCandidateSelector,
         committer: TeamCommitter,
@@ -52,6 +54,19 @@ class TeamSearchController:
         self.evaluator = evaluator
         self.selector = selector
         self.committer = committer
+
+    async def _run_local_optimizer(
+        self, task: LocalOptimizationTask | NativeOptimizationRequest
+    ) -> LocalOptimizationResult:
+        if isinstance(task, NativeOptimizationRequest):
+            if not isinstance(self.local_optimizer, NativeFeedPromptOptimizer):
+                raise TypeError(
+                    "native-feed request requires a NativeFeedPromptOptimizer"
+                )
+            return await self.local_optimizer.optimize_native(task)
+        if not isinstance(self.local_optimizer, LocalPromptOptimizer):
+            raise TypeError("legacy local task requires a LocalPromptOptimizer")
+        return await self.local_optimizer.optimize(task)
 
     async def run_opportunity(self, request: TeamSearchRequest) -> TeamSearchOutcome:
         assignment = self.responsibility.assign(request)
@@ -68,7 +83,7 @@ class TeamSearchController:
             primary_responsibility_lane=assignment.primary_responsibility_lane,
         )
         minibatch_telemetry = self.task_builder.team_minibatch_telemetry(team_minibatch)
-        local = await self.local_optimizer.optimize(task)
+        local = await self._run_local_optimizer(task)
         records: list[TeamCandidateRecord] = []
         minibatch_calls = minibatch_tokens = 0
         for candidate in local.candidates:

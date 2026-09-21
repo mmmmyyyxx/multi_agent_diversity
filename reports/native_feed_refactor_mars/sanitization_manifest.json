@@ -1,0 +1,29 @@
+{
+  "forbidden": [
+    "prompts",
+    "questions",
+    "gold/model answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "absolute paths"
+  ],
+  "scan_scope": [
+    "README.md",
+    "budget_semantics.json",
+    "claim_registry.json",
+    "control_treatment_parity.json",
+    "data_access_matrix.json",
+    "fake_provider_native_flow.json",
+    "heldout_isolation.json",
+    "layer2_contract_hash.json",
+    "mars_paper_vs_code_dataflow_audit.json",
+    "native_feed_manifest.json",
+    "paper_vs_code_dataflow.json",
+    "sanitization_manifest.json",
+    "sha256_manifest.json",
+    "test_summary.json",
+    "upstream_source_manifest.json"
+  ],
+  "status": "PASS"
+}

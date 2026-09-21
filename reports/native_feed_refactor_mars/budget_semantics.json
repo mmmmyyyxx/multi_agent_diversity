@@ -1,0 +1,27 @@
+{
+  "GEPA": {
+    "native_units": [
+      "metric calls",
+      "train minibatch rollouts",
+      "full optimizer-val evaluations",
+      "reflection calls"
+    ]
+  },
+  "MARS": {
+    "native_units": [
+      "Planner calls",
+      "Teacher calls",
+      "Critic calls",
+      "Student calls",
+      "full Optimize Target evaluations"
+    ]
+  },
+  "cross_optimizer_budget_equality_claimed": false,
+  "realized_reporting": [
+    "solver calls",
+    "optimizer calls",
+    "tokens",
+    "wall time"
+  ],
+  "within_optimizer_pair_budget_identical": true
+}

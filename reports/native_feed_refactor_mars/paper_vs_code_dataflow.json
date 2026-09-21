@@ -1,0 +1,24 @@
+{
+  "fidelity": "official-code data-flow topology; not exact paper reproduction",
+  "official_code_semantics": [
+    "UserProxy static task description",
+    "Planner steps",
+    "Teacher/Critic/Student dialogue",
+    "Student full prompt",
+    "Target loads full Config.DATASET_PATH",
+    "full-dataset accuracy enters prompt history and stopping"
+  ],
+  "paper_semantics": {
+    "Dtest": "evaluation",
+    "Dtrain": "guides optimization",
+    "Planner": "receives task goal/input/initial prompt",
+    "TCS": "iterative revision",
+    "Target": "performance reward"
+  },
+  "project_adaptation": [
+    "Config.DATASET_PATH mapped to frozen Optimize-only universe",
+    "Student full prompt mapped to mutable decision_procedure",
+    "Validation50/Test50 inaccessible"
+  ],
+  "target_failure_feedback_to_tcs": false
+}

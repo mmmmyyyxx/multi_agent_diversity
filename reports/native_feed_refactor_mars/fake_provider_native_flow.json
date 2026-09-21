@@ -1,0 +1,7 @@
+{
+  "api_calls": 0,
+  "backend": "mars",
+  "candidate_returned_through_common_boundary": true,
+  "native_data_not_layer2_materialized": true,
+  "status": "PASS"
+}

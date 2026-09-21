@@ -1,0 +1,19 @@
+experiment_id: native_feed_mars_v1
+status: PREPARED_NOT_AUTHORIZED
+backend: MARS_OFFICIAL_CODE_FEED_V1
+comparison:
+  control: Native MARS
+  treatment: Native MARS + Layer2
+target_dataset:
+  universe: frozen Optimize-only data
+  evaluation: full universe for every candidate prompt
+heldout:
+  Validation50_calls: 0
+  Test50_calls: 0
+api_authorization:
+  authorized: false
+  reason: separate explicit authorization required
+canary:
+  prepared: true
+  executed: false
+  question: Planner/TCS/Target loop and common candidate return

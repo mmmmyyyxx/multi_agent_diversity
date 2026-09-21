@@ -1,0 +1,21 @@
+{
+  "backend": "MARS_OFFICIAL_CODE_FEED_V1",
+  "commit": "da3248ba08be501461a2e35378d05172e92f766c",
+  "network_refresh": "unavailable; pre-existing upstream/main ref used",
+  "paper": "arXiv:2503.16874; AAAI-26 version",
+  "repository": "https://github.com/exoskeletonzj/MARS",
+  "source_hash": "ae1ca79d33124374437ebf23b0cb65eba76f4bb8ebf32dbe905ec0887b2ee255",
+  "tracked_file_sha256": {
+    "Agents.py": "82835c0845eaa94d12e45a73ed194e44b73606b09b7c3e8257b8c3bf62353ddb",
+    "Config.py": "4c507adc5946db8b89ee0e124eb18f64b936ea97c4c84d2da5c4d7f0cb4d9cc0",
+    "Prompt/ALL_prompt_planner_template.md": "bce236f3b82c61b626e1de26ea2385e4377e566abfe2a36eb0489922f19cf5ef",
+    "Prompt/ALL_userproxy_task_input.md": "c41a45ae84ac53d742fbc1a1a5fc67e549e7d1e3c114fc178bf7d253fe204793",
+    "Prompt/EDIT_1.2_getplannerfewshot.txt": "018782bd021f2a86cbfaa57147daf0376f75656191adaffab31560fb8bd8188c",
+    "Prompt/EDIT_1_userproxy_task_input.txt": "b99adf12f3d314ad7f46b54c7d6dcf1f9a03531a7653da7807b7e54de8f807de",
+    "Prompt/EDIT_2_prompt_planner_template.txt": "93a280f96dbe9d6e258e7ea7cdfe688cd89f5fcdf0d6dbe67ab48ef0c3926a7c",
+    "Prompt/system_prompt_critic.txt": "b694102f6ad98a87235bdbc502782d9216ac8bc329775fedcf538faec987882f",
+    "Prompt/system_prompt_planner.txt": "3d17ebbefd6a8e9f568e2a5968b7dba67be5846899c5e5765fd17e9ccee1f184",
+    "Prompt/system_prompt_teacher.txt": "f627529a8c7f23ee2093a9aed8fe6daf66dad6a04c0b82b38323480a7057f2bf",
+    "main_MARS.py": "c1f46308027a1a4c9eedcb43201a06f3a7025e5ce2843c7c5c632cab65ea93b8"
+  }
+}

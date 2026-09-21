@@ -1,0 +1,17 @@
+{
+  "backend": "mars",
+  "control": "Native MARS",
+  "native_data_flow": {
+    "GEPA_style_minibatches": false,
+    "Target_dataset": "full frozen Optimize-only universe",
+    "candidate_evaluation": "full Target dataset every time",
+    "responsibility_filters_target_dataset": false
+  },
+  "outer_contract": "backend_native_feed_request_v1",
+  "real_api_calls": 0,
+  "responsibility_is_sample_selector": false,
+  "responsibility_overlay": "MARS_LAYER2_RESPONSIBILITY_OVERLAY_V1",
+  "test50_calls": 0,
+  "treatment": "Native MARS + Layer2",
+  "validation50_calls": 0
+}

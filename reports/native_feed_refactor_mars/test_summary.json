@@ -1,0 +1,7 @@
+{
+  "compileall": "PASS",
+  "focused_tests": "5 passed",
+  "full_tests": "BASELINE_ARTIFACT_BLOCKED: 1097 passed, 1 skipped, 31 failed, 20 errors; failures require unavailable ignored historical runs or exact historical report bytes in isolated worktree",
+  "real_api_calls": 0,
+  "status": "PASS"
+}

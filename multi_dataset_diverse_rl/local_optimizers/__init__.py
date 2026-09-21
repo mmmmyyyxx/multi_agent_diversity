@@ -2,6 +2,7 @@
 
 from .base import (
     LocalPromptOptimizer,
+    LocalSolverEvaluator,
     LocalSolverObservation,
     NativeFeedPromptOptimizer,
     OptimizationContextProvider,
@@ -22,6 +23,7 @@ __all__ = [
     "LocalOptimizerBudget",
     "LocalPromptCandidate",
     "LocalPromptOptimizer",
+    "LocalSolverEvaluator",
     "LocalSolverObservation",
     "NativeFeedPromptOptimizer",
     "OpaqueOptimizerState",
