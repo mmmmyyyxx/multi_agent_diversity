@@ -464,4 +464,3 @@ class Layer2OptimizationRequest:
             "backend": backend,
             "backend_version": backend_version,
         }
-

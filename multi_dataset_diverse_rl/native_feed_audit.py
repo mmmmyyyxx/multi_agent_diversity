@@ -130,4 +130,3 @@ def budget_semantics() -> dict[str, Any]:
         "cross_optimizer_budget_equality_claimed": False,
         "realized_reporting": ["solver calls", "optimizer calls", "tokens", "wall time"],
     }
-

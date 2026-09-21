@@ -194,4 +194,3 @@ def test_team_controller_consumes_native_feed_candidate_end_to_end() -> None:
         "committed_candidates": 1,
     }
     assert committer.candidate_ids == ["native-candidate"]
-
