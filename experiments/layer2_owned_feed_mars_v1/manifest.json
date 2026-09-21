@@ -1,0 +1,11 @@
+{
+  "READY_TO_RUN": false,
+  "authorized": false,
+  "backend": "mars",
+  "formal_run_root_created": false,
+  "phase": "prepared_canary",
+  "real_provider_calls": 0,
+  "treatment": "MARS_SEARCH_CORE_WITH_LAYER2_EVIDENCE_V1",
+  "validation50_calls": 0,
+  "test50_calls": 0
+}

@@ -4,15 +4,25 @@ import asyncio
 
 from multi_dataset_diverse_rl.local_optimizers.base import LocalSolverObservation
 from multi_dataset_diverse_rl.local_optimizers.mars_native import (
+    MARSLayer2EvidenceOptimizer,
     MARSNativeDataBuilder,
     MARSNativeFeedOptimizer,
     MARSRoleResponse,
 )
 from multi_dataset_diverse_rl.local_optimizers.schemas import LocalEvidenceExample
 from multi_dataset_diverse_rl.native_feed import (
+    Layer2OptimizationRequest,
     NativeOptimizationRequest,
     NativeResourceBudget,
     ResponsibilityContext,
+)
+from multi_dataset_diverse_rl.team_search.schemas import (
+    TeamEvidenceCase,
+    TeamSearchAssignment,
+    TeamSearchRequest,
+)
+from multi_dataset_diverse_rl.team_search.task_builder import (
+    Layer2EvidenceRequestBuilder,
 )
 
 
@@ -113,3 +123,92 @@ def test_control_treatment_data_and_native_contract_are_identical() -> None:
     assert treatment.data_builder.examples == control.data_builder.examples
     assert treatment_roles.calls[0][1]["responsibility_overlay"] is not None
     assert control_roles.calls[0][1]["responsibility_overlay"] is None
+
+
+def layer2_request(suffix: str = "") -> Layer2OptimizationRequest:
+    evidence = tuple(
+        TeamEvidenceCase(
+            f"{group}-{index}{suffix}",
+            f"problem {group} {index}{suffix}",
+            "A",
+            "B",
+            "sanitized outcome",
+            group,
+            (("direct_flip",) if group == "responsibility" else ()),
+        )
+        for group in ("responsibility", "coalition", "preservation")
+        for index in range(4)
+    )
+    assignment = TeamSearchAssignment(
+        1,
+        "Use a generic decision procedure.",
+        evidence,
+        f"repair direct flips{suffix}",
+        f"responsibility{suffix}",
+        primary_responsibility_lane="direct_flip",
+        responsibility_value=8.0,
+    )
+    outer = TeamSearchRequest(
+        80, 1, "team-state", 36, "COMMON_SOLVER_CONTRACT_V1", "output-v1",
+        "optimize-only-v1",
+    )
+    return Layer2EvidenceRequestBuilder().build(outer, assignment)
+
+
+class PoisonGlobalDataBuilder:
+    def build(self, _request):
+        raise AssertionError("MARS global/native dataset must not be read in treatment")
+
+    def identity(self):
+        return "poison-global-data"
+
+
+def build_layer2():
+    evaluator = Evaluator()
+    roles = Roles()
+    optimizer = MARSLayer2EvidenceOptimizer(
+        evaluator=evaluator,
+        role_client=roles,
+        data_builder=PoisonGlobalDataBuilder(),
+        task_definition="Solve disambiguation QA.",
+        layer2_overlay_enabled=True,
+    )
+    return optimizer, evaluator, roles
+
+
+def test_layer2_evidence_reaches_mars_roles_and_exact_target_set() -> None:
+    optimizer, evaluator, roles = build_layer2()
+    request = layer2_request()
+    before = request.packet.packet_hash
+    result = asyncio.run(optimizer.optimize_layer2(request))
+    assert request.packet.packet_hash == before
+    assert [role for role, _ in roles.calls] == [
+        "planner", "teacher", "critic", "student"
+    ]
+    expected_eval_ids = [
+        row.example_id for row in request.packet.local_eval_examples
+    ] * 2
+    assert evaluator.ids == expected_eval_ids
+    assert all(
+        (
+            "layer2_evidence_packet" in context
+            or role == "critic" and context["packet_hash"] == request.packet.packet_hash
+        )
+        for role, context in roles.calls
+    )
+    planner_packet = roles.calls[0][1]["layer2_evidence_packet"]
+    assert len(planner_packet["repair_evidence"]) == 4
+    assert len(planner_packet["preservation_evidence"]) == 4
+    assert result.candidates
+    assert result.optimizer_state.payload["backend_example_selection_calls"] == 0
+    assert result.optimizer_state.payload["native_global_dataset_accessed"] is False
+    assert result.candidates[0].backend_metadata["responsibility_packet_hash"] == before
+
+
+def test_layer2_packet_changes_mars_planner_and_tcs_input() -> None:
+    optimizer_a, _, roles_a = build_layer2()
+    optimizer_b, _, roles_b = build_layer2()
+    asyncio.run(optimizer_a.optimize_layer2(layer2_request("-a")))
+    asyncio.run(optimizer_b.optimize_layer2(layer2_request("-b")))
+    assert roles_a.calls[0][1] != roles_b.calls[0][1]
+    assert roles_a.calls[1][1] != roles_b.calls[1][1]

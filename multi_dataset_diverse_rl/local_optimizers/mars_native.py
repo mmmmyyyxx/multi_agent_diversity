@@ -8,8 +8,13 @@ import json
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..evaluation.mutable_prompt_contract import validate_mutable_decision_procedure
-from ..native_feed import NativeOptimizationRequest
+from ..native_feed import (
+    Layer2OptimizationRequest,
+    NativeOptimizationRequest,
+    PacketEvidenceExample,
+)
 from ..versions import (
+    MARS_LAYER2_EVIDENCE_BACKEND_VERSION,
     MARS_LAYER2_RESPONSIBILITY_OVERLAY_VERSION,
     MARS_NATIVE_FEED_VERSION,
 )
@@ -291,3 +296,217 @@ class MARSNativeFeedOptimizer:
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
+
+
+def _local_eval_row(row: PacketEvidenceExample) -> LocalEvidenceExample:
+    return LocalEvidenceExample(
+        example_id=row.example_id,
+        input_payload=row.input_payload,
+        gold=row.gold,
+        parent_output=row.parent_output,
+        textual_feedback=row.textual_feedback,
+        tags=(row.lane, row.responsibility_role),
+    )
+
+
+def _reasoning_evidence(row: PacketEvidenceExample) -> Mapping[str, Any]:
+    """Provider-facing reasoning evidence without gold labels or raw reasoning."""
+
+    return {
+        "example_id": row.example_id,
+        "problem": row.input_payload,
+        "parent_output_present": row.parent_output is not None,
+        "sanitized_feedback": row.textual_feedback,
+        "responsibility_role": row.responsibility_role,
+        "lane": row.lane,
+        "metadata": dict(row.metadata),
+    }
+
+
+class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
+    """Released MARS revision topology over an exact Layer-2 evidence packet."""
+
+    backend_name = "mars_search_core_layer2_evidence"
+    backend_version = MARS_LAYER2_EVIDENCE_BACKEND_VERSION
+
+    async def optimize_layer2(
+        self, request: Layer2OptimizationRequest
+    ) -> LocalOptimizationResult:
+        if self.evaluator.solver_contract_id != request.solver_contract_id:
+            raise ValueError("MARS Layer-2 Solver contract mismatch")
+        if self.evaluator.output_contract_id != request.output_contract_id:
+            raise ValueError("MARS Layer-2 output contract mismatch")
+        packet = request.packet
+        before = packet.packet_hash
+        dataset = tuple(_local_eval_row(row) for row in packet.local_eval_examples)
+        evidence_context = {
+            "packet_version": packet.packet_version,
+            "packet_hash": packet.packet_hash,
+            "target_member": packet.target_member,
+            "primary_responsibility_lane": packet.primary_responsibility_lane,
+            "responsibility_value": packet.responsibility_value,
+            "responsibility_context": packet.responsibility_context,
+            "repair_evidence": [
+                _reasoning_evidence(row) for row in packet.repair_examples
+            ],
+            "preservation_evidence": [
+                _reasoning_evidence(row) for row in packet.preservation_examples
+            ],
+            "ordered_batch_schedule": [
+                list(batch) for batch in packet.ordered_batch_schedule
+            ],
+        }
+        roles: list[MARSRoleResponse] = []
+        planner = await self.role_client.complete(
+            role="planner",
+            context={
+                "task_definition": self.task_definition,
+                "layer2_evidence_packet": evidence_context,
+            },
+        )
+        roles.append(planner)
+        steps = _payload(planner).get("steps")
+        if not isinstance(steps, list) or not steps or not all(
+            isinstance(step, str) and step.strip() for step in steps
+        ):
+            raise ValueError("MARS Planner must return non-empty steps")
+        parent_score, _, parent_observations = self._target_evaluate(
+            request.parent_decision_procedure, dataset
+        )
+        history = [
+            {
+                "prompt_sha256": hashlib.sha256(
+                    request.parent_decision_procedure.encode("utf-8")
+                ).hexdigest(),
+                "accuracy": parent_score,
+            }
+        ]
+        observations = list(parent_observations)
+        candidates: list[LocalPromptCandidate] = []
+        current = request.parent_decision_procedure
+        previous_score = parent_score
+        stable_rounds = 0
+        max_rounds = min(packet.budget.native_unit_limit, len(steps))
+        provenance = request.candidate_provenance(
+            backend=self.backend_name, backend_version=self.backend_version
+        )
+        for step_index, step in enumerate(steps[:max_rounds], start=1):
+            if len(roles) + 3 > packet.budget.optimizer_call_limit:
+                break
+            teacher = await self.role_client.complete(
+                role="teacher",
+                context={
+                    "task_definition": self.task_definition,
+                    "previous_prompt": current,
+                    "planner_step": step,
+                    "dialogue_history": list(history),
+                    "layer2_evidence_packet": evidence_context,
+                },
+            )
+            roles.append(teacher)
+            critic = await self.role_client.complete(
+                role="critic",
+                context={
+                    "teacher_question": dict(_payload(teacher)),
+                    "packet_hash": packet.packet_hash,
+                },
+            )
+            roles.append(critic)
+            if _payload(critic).get("socratic_valid") is not True:
+                continue
+            student = await self.role_client.complete(
+                role="student",
+                context={
+                    "task_definition": self.task_definition,
+                    "last_prompt": current,
+                    "teacher_question": dict(_payload(teacher)),
+                    "dialogue_history": list(history),
+                    "layer2_evidence_packet": evidence_context,
+                },
+            )
+            roles.append(student)
+            candidate = self._student_procedure(_payload(student))
+            if candidate == current:
+                stable_rounds += 1
+                continue
+            if len(observations) + len(dataset) > packet.budget.metric_call_limit:
+                break
+            score, per_example, candidate_observations = self._target_evaluate(
+                candidate, dataset
+            )
+            observations.extend(candidate_observations)
+            digest = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
+            history.append({"prompt_sha256": digest, "accuracy": score})
+            if score > parent_score:
+                candidates.append(
+                    LocalPromptCandidate(
+                        candidate_id=f"mars-layer2-{digest[:16]}",
+                        prompt=candidate,
+                        local_score=score,
+                        per_example_scores=per_example,
+                        parent_ids=(history[0]["prompt_sha256"],),
+                        generation=step_index,
+                        local_rank_metadata={
+                            "parent_score": parent_score,
+                            "layer2_local_eval": True,
+                        },
+                        backend_metadata={
+                            "planner_step": step_index,
+                            "official_code_search_core": True,
+                            **provenance,
+                        },
+                    )
+                )
+            stable_rounds = (
+                stable_rounds + 1
+                if abs(score - previous_score) < self.stability_threshold
+                else 0
+            )
+            previous_score = score
+            current = candidate
+            if stable_rounds >= self.max_stable_rounds:
+                break
+        if packet.packet_hash != before:
+            raise RuntimeError("MARS mutated the immutable Layer-2 packet")
+        candidates.sort(key=lambda row: (-float(row.local_score or 0), row.candidate_id))
+        candidates = candidates[: packet.budget.max_returned_candidates]
+        input_tokens = sum(row.input_tokens for row in roles) + sum(
+            row.input_tokens for row in observations
+        )
+        output_tokens = sum(row.output_tokens for row in roles) + sum(
+            row.output_tokens for row in observations
+        )
+        state = OpaqueOptimizerState(
+            self.backend_name,
+            self.backend_version,
+            {
+                "history": history,
+                "planner_steps": len(steps),
+                "completed_rounds": len(history) - 1,
+                "target_dataset_size": len(dataset),
+                "responsibility_packet_hash": packet.packet_hash,
+                "backend_example_selection_calls": 0,
+                "native_global_dataset_accessed": False,
+                "official_mars_search_core_retained": {
+                    "planner": True,
+                    "teacher": True,
+                    "critic": True,
+                    "student": True,
+                },
+                "termination_reason": (
+                    "candidate_returned" if candidates else "no_improving_candidate"
+                ),
+            },
+        )
+        return LocalOptimizationResult(
+            candidates=tuple(candidates),
+            backend_name=self.backend_name,
+            backend_version=self.backend_version,
+            optimizer_state=state,
+            solver_calls=sum(row.provider_called for row in observations),
+            optimizer_calls=sum(row.provider_called for row in roles),
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_tokens=input_tokens + output_tokens,
+            termination_reason=state.payload["termination_reason"],
+        )
