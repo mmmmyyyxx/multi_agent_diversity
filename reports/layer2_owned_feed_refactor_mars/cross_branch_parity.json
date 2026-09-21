@@ -1,0 +1,9 @@
+{
+  "byte_identical_file_count": 19,
+  "comparison_basis": "committed Git blob bytes at both branch HEADs",
+  "current_branch_layer2_contract_hash": "ef9d9d62d4b3e8e68d72181d57bea851240404b6ac655edc55c057dbb756918e",
+  "hashes_match": true,
+  "peer_branch_layer2_contract_hash": "ef9d9d62d4b3e8e68d72181d57bea851240404b6ac655edc55c057dbb756918e",
+  "previous_layer2_contract_hash": "9796129746c15ebbd21aa12b3a43168d434c3ef93668c99dddc0049780997953",
+  "status": "PASS"
+}

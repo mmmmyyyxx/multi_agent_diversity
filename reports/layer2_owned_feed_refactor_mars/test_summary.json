@@ -1,0 +1,8 @@
+{
+  "compileall": "PASS",
+  "focused": "8 passed",
+  "full": "1103 passed, 1 skipped; 31 failed and 20 errors are unchanged historical artifact/byte-replay tests requiring ignored run evidence",
+  "git_diff_check": "PASS",
+  "real_provider_calls": 0,
+  "status": "PASS_WITH_BASELINE_ARTIFACT_CAVEAT"
+}

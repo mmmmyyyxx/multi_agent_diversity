@@ -1,0 +1,20 @@
+{
+  "README.md": "b81888426d16a0b0b88ab2f9a5542147e24d3fa58324c82e8be23ee27db917b3",
+  "backend_fidelity_manifest.json": "f5829ead9da53458869947faab7609491903a49b0e03b8010b2cd9f3c053abed",
+  "backend_no_selection_audit.json": "9c9befeb891657de463b65497440488da25d22cff870087a0c6c36dee5b70529",
+  "code_path_audit.json": "c96a7236da9dcbfca3b16ce248d5f8868776b24ba06b4b353d691c1d399e9481",
+  "control_treatment_definition.json": "b0caf5867051fc8caa73f8afff27b49405e1263f8e5847bc549f4e91fe284eaf",
+  "cross_branch_parity.json": "21e90323b5210d9c0335a6d833c5c44aaedc549054f40cd95c909a7042d22da5",
+  "direct_layer2_influence_audit.json": "1aa731d973bbfdf773ba5ab21b3daf917b873f7d32579f4e502d1d39269d7bbf",
+  "example_selection_audit.json": "a05782ba0d1baecc0178710f9a272082115430ca82b71803432f13de03c36923",
+  "heldout_isolation.json": "cc81926715bf7ddf996663980d9caade5cb07c45a6e046ff42f977c8d819d8d1",
+  "layer2_contract_hash.json": "1d2280b77f1c22221c72367265f6c7aecc6df464a1e95d339bc3a7c03e313e65",
+  "local_eval_audit.json": "24d66a877a11cd73db5d4db90847980f9e497d4fff0a258848bec8dc1f3f9576",
+  "mars_global_dataset_access_audit.json": "8c45f1c3d7a418f051081e7a6efbaff8cafe74a9ad66d800b375fdd6155f9997",
+  "ownership_contract.json": "265f785074e1b6327ed831d709551b1243d9885c216d17a5f73c93119bf095ce",
+  "pilot_protocol.json": "53b293fbefb93d12d97f68febb3ef69d732652674a9a8ffc11afb1e60296ffe0",
+  "preservation_audit.json": "4a423e626c4e4d0e0bb74700c6d765c4f9096a93e011bcf9d3f4df1c5794f409",
+  "responsibility_packet_schema.json": "ea5cda842cdf20bbd0146a4d1bd8bab47a31e66cd1d6df81e8651500f48404d5",
+  "sanitization_manifest.json": "443af6ccde51d693b945723f2543e5b01582d6e91e43dd7469e181baa0f5af8c",
+  "test_summary.json": "bb0feb1f6399d28ca68b29f73f14744d4b8a747aee5bf0d576b7ba7d7c3899fc"
+}

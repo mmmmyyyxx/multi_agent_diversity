@@ -1,0 +1,7 @@
+{
+  "native_control_global_dataset_behavior_preserved": true,
+  "status": "PASS",
+  "target_exact_packet_local_eval": true,
+  "treatment_Config_DATASET_PATH_reads": 0,
+  "treatment_global_dataset_accesses": 0
+}
