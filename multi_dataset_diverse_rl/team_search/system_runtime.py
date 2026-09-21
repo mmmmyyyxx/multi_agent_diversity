@@ -319,6 +319,9 @@ class SystemTeamCandidateEvaluator:
         self.accounting = accounting
         self.update_index_reader = update_index_reader
         self.full_profiles: dict[tuple[int, str, str], tuple[Any, ...]] = {}
+        self.transition_audits: dict[
+            tuple[int, str, str], CandidateTransitionAudit
+        ] = {}
         self.shadow_events: list[dict[str, Any]] = []
 
     @staticmethod
@@ -497,6 +500,50 @@ class SystemTeamCandidateEvaluator:
             parent_team_hash,
         )
         self.full_profiles[key] = profile
+        if self.system.fixed_probe is None:
+            raise RuntimeError("fixed Optimize probe is not initialized")
+        target = assignment.target_member
+        transition = CandidateTransitionAudit(
+            parent_candidate_hash=self.system.prompt_hash(
+                self.system.agents[target].current_prompt
+            ),
+            child_candidate_hash=self.system.prompt_hash(candidate.prompt),
+            parent_correctness=tuple(
+                (
+                    example.question_hash,
+                    bool(answer.valid) and self.system.match_answer(
+                        answer.answer, example.gold_answer
+                    ),
+                )
+                for example, answer in zip(
+                    self.system.fixed_probe.examples,
+                    self.system.active_profiles[target],
+                    strict=True,
+                )
+            ),
+            child_correctness=tuple(
+                (
+                    example.question_hash,
+                    bool(answer.valid) and self.system.match_answer(
+                        answer.answer, example.gold_answer
+                    ),
+                )
+                for example, answer in zip(
+                    self.system.fixed_probe.examples, profile, strict=True
+                )
+            ),
+        )
+        self.transition_audits[key] = transition
+        self.system.artifacts.append_jsonl(
+            "candidate_transition_audit.jsonl",
+            [{
+                "update_index": self.update_index_reader(),
+                "target_member": target,
+                "candidate_id": candidate.candidate_id,
+                "parent_team_hash": parent_team_hash,
+                **transition.sanitized_payload(),
+            }],
+        )
         return evaluation, cost
 
     def evaluate_shadow(
@@ -632,36 +679,12 @@ class SystemTeamCommitter:
             len(self.system.responsibility_portfolio_trajectory),
             len(self.system.member_opportunities),
         )
-        transition = None
-        if self.transition_store is not None:
-            if self.system.fixed_probe is None:
-                raise RuntimeError("fixed Optimize probe is not initialized")
-            examples = self.system.fixed_probe.examples
-            parent_correctness = tuple(
-                (
-                    example.question_hash,
-                    bool(answer.valid) and self.system.match_answer(
-                        answer.answer, example.gold_answer
-                    ),
-                )
-                for example, answer in zip(examples, old_profile)
-            )
-            child_profile = self.evaluator.full_profiles[key]
-            child_correctness = tuple(
-                (
-                    example.question_hash,
-                    bool(answer.valid) and self.system.match_answer(
-                        answer.answer, example.gold_answer
-                    ),
-                )
-                for example, answer in zip(examples, child_profile)
-            )
-            transition = CandidateTransitionAudit(
-                parent_candidate_hash=self.system.prompt_hash(old_prompt),
-                child_candidate_hash=self.system.prompt_hash(candidate.prompt),
-                parent_correctness=parent_correctness,
-                child_correctness=child_correctness,
-            )
+        transition = (
+            self.evaluator.transition_audits.get(key)
+            if self.transition_store is not None else None
+        )
+        if self.transition_store is not None and transition is None:
+            raise RuntimeError("committed candidate lacks a transition audit")
         try:
             validate_mutable_decision_procedure(candidate.prompt)
             agent.previous_active_prompt = old_prompt
