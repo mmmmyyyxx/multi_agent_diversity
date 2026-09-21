@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import subprocess
 from typing import Any
 
 from multi_dataset_diverse_rl.native_feed_audit import (
@@ -26,6 +27,11 @@ OLD_HEADS = {
     "gepa": "d3c7dcd1504fb2ec2b8a73d658cef484244bc6b5",
     "mars": "27e47b76ff54582cd6f1a89eb9f09c06b6fdc535",
 }
+OLD_LAYER2_CONTRACT_HASH = "9796129746c15ebbd21aa12b3a43168d434c3ef93668c99dddc0049780997953"
+
+
+def committed_blob(root: Path, relative: str) -> bytes:
+    return subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=root)
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -111,6 +117,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--backend", choices=("gepa", "mars"), required=True)
     parser.add_argument("--report-dir", type=Path, required=True)
+    parser.add_argument("--peer-root", type=Path, required=True)
     parser.add_argument("--gepa-root", type=Path)
     parser.add_argument("--focused-tests", required=True)
     parser.add_argument("--full-tests", required=True)
@@ -138,6 +145,18 @@ def main() -> None:
         "predicate_mismatch_count": 0,
     }
     layer2 = layer2_contract_manifest(root)
+    peer_root = args.peer_root.resolve()
+    peer_layer2 = layer2_contract_manifest(peer_root)
+    byte_equal = [
+        row["path"]
+        for row in layer2["files"]
+        if committed_blob(root, row["path"]) == committed_blob(peer_root, row["path"])
+    ]
+    if (
+        layer2["layer2_contract_hash"] != peer_layer2["layer2_contract_hash"]
+        or len(byte_equal) != len(layer2["files"])
+    ):
+        raise RuntimeError("cross-branch Layer-2 contract parity failed")
     payloads: dict[str, Any] = {
         "code_path_audit.json": code_path_audit(args.backend),
         "ownership_contract.json": {
@@ -227,10 +246,13 @@ def main() -> None:
         },
         "layer2_contract_hash.json": layer2,
         "cross_branch_parity.json": {
-            "status": "PASS_PENDING_REMOTE_SHA_ONLY",
-            "layer2_contract_hash": layer2["layer2_contract_hash"],
-            "byte_identical_file_count": len(layer2["files"]),
-            "peer_hash_required_equal": True,
+            "status": "PASS",
+            "previous_layer2_contract_hash": OLD_LAYER2_CONTRACT_HASH,
+            "current_branch_layer2_contract_hash": layer2["layer2_contract_hash"],
+            "peer_branch_layer2_contract_hash": peer_layer2["layer2_contract_hash"],
+            "hashes_match": True,
+            "byte_identical_file_count": len(byte_equal),
+            "comparison_basis": "committed Git blob bytes at both branch HEADs",
         },
         "pilot_protocol.json": {
             "status": "PREPARED_NOT_AUTHORIZED",
