@@ -5,4 +5,3 @@ This directory freezes the single-state prospective mechanism pilot at commit `5
 The exact Phase-B homogeneous baseline is reconstructed without provider calls. The online pipeline, three time-to-event endpoints, stopping rules, split access, and provider ceilings are frozen. Preparation passed, but execution is held because API authorization is pending: `READY_TO_RUN=false`.
 
 No question text, gold answers, prompt text, raw model output, credentials, endpoints, SQLite data, or checkpoints are included.
-

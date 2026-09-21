@@ -31,7 +31,7 @@
     },
     {
       "file": "EXPERIMENT_HANDOFF.md",
-      "sha256": "9d2ff1d85319ce6b766df2a29b4f483f984447b49eeb1b6da7c0ea5d01bb970f"
+      "sha256": "ae716046a143a42ff9face50c0148b86d20f900ae179c68c34d6d05f4082331c"
     },
     {
       "file": "fact_assertions.json",
@@ -51,7 +51,7 @@
     },
     {
       "file": "README.md",
-      "sha256": "b2b1133cf204cfb68d411415c63a2e7db399bbb97e146c586f1333049afe8be4"
+      "sha256": "ec139ecadd9fc0f82619f1a904dcc1177a1365fc8d5068cdc13fb54ec699d4d9"
     },
     {
       "file": "sanitization_manifest.json",
