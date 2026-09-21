@@ -1,0 +1,15 @@
+{
+  "identical": [
+    "backend data universe",
+    "backend split/topology",
+    "models",
+    "candidate representation",
+    "native budget semantics"
+  ],
+  "sole_treatment_differences": [
+    "Layer2 member allocation",
+    "GEPA_LAYER2_RESPONSIBILITY_OVERLAY_V1",
+    "team controller"
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,15 @@
+{
+  "README.md": "444671bc09ecde7f40eef1e59a7f37802fb7e6e6436ed6b8a5783ab806af2c92",
+  "budget_semantics.json": "03cdf093acbb9a232f589e65dca0c5f5ce6e5e7a9247171eda244fe0f21312e2",
+  "claim_registry.json": "5f2b8697ea694d35b43092dd205d4f7682d4a9a740f393c705a675305ebfa117",
+  "control_treatment_parity.json": "34d8de8690bd9d83e86c7fc4fe940f92ed1ee44efadbd0c7249c500ed8177c51",
+  "data_access_matrix.json": "560075a2a5bf600ac03fd328c84e380a86b064cb1beeaa6974977336adc89e4d",
+  "fake_provider_native_flow.json": "fb43f9bdcf462a0a8278f3d2370814c5e8d642210979f9781fd75c8edebd8bc3",
+  "heldout_isolation.json": "115e4117b49ef51475f2306ce9d6fd60bf16407ad360af6821be5e02746ac55e",
+  "layer2_contract_hash.json": "39cae260988e7e43b70ec6c0d957a1f340644b9e81a9d3784b5991dc7309a14b",
+  "native_feed_manifest.json": "2709250389239d632b4de77c79767e50a2ed90a2d8d51b8f09df80ff0ed5fe12",
+  "paper_vs_code_dataflow.json": "ed52407810e6d6378d3748e0bbfd09abdfa360541bc9310932f40c94a62adfe4",
+  "sanitization_manifest.json": "efacc5b3bd3f7a489d74968acb9a23e1b027c485d2e47d32491253e9ba6724d8",
+  "test_summary.json": "39246466d4e63483a81d9a39eb8fde091d2fa2b8149f4eddd50fa1c0a930a489",
+  "upstream_source_manifest.json": "113aa62a615189d418a1054978b87ed22c63789c0d0ff2449f4cefb656e633d5"
+}

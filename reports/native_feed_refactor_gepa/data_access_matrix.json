@@ -1,0 +1,30 @@
+[
+  {
+    "optimize_internal_val_pareto": true,
+    "optimize_train": true,
+    "test50": false,
+    "validation50": false,
+    "variant": "Native GEPA"
+  },
+  {
+    "optimize_internal_val_pareto": true,
+    "optimize_train": true,
+    "test50": false,
+    "validation50": false,
+    "variant": "Native GEPA + Layer2"
+  },
+  {
+    "optimize_internal_val_pareto": false,
+    "optimize_train": true,
+    "test50": false,
+    "validation50": false,
+    "variant": "Native MARS"
+  },
+  {
+    "optimize_internal_val_pareto": false,
+    "optimize_train": true,
+    "test50": false,
+    "validation50": false,
+    "variant": "Native MARS + Layer2"
+  }
+]

@@ -202,6 +202,7 @@ class GEPALocalPromptOptimizer:
         config: GEPAOptimizerConfig | None = None,
         optimize_fn: Callable[..., Any] | None = None,
         callback_factory: Callable[..., GEPALineageCallback] | None = None,
+        adapter_factory: Callable[..., GEPAAdapter] | None = None,
     ) -> None:
         self.evaluator = evaluator
         self.reflection_lm = reflection_lm
@@ -210,6 +211,7 @@ class GEPALocalPromptOptimizer:
         self.config = config or GEPAOptimizerConfig()
         self._optimize_fn = optimize_fn
         self._callback_factory = callback_factory or GEPALineageCallback
+        self._adapter_factory = adapter_factory or GEPAAdapter
 
     @staticmethod
     def _generation(index: int, parents: list[list[int | None]], memo: dict[int, int]) -> int:
@@ -248,7 +250,7 @@ class GEPALocalPromptOptimizer:
         if task_run.exists() or lineage_path.exists():
             raise FileExistsError("GEPA local search run root must be fresh")
         task_run.parent.mkdir(parents=True, exist_ok=True)
-        adapter = GEPAAdapter(
+        adapter = self._adapter_factory(
             self.evaluator,
             parent_prompt=task.parent_prompt,
             all_examples=all_examples,

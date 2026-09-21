@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
-from .schemas import LocalOptimizationResult, LocalOptimizationTask
+from .schemas import LocalEvidenceExample, LocalOptimizationResult, LocalOptimizationTask
 from ..native_feed import NativeOptimizationRequest
 
 
@@ -21,6 +21,16 @@ class LocalSolverObservation:
     input_tokens: int = 0
     output_tokens: int = 0
     provider_called: bool = True
+
+
+class LocalSolverEvaluator(Protocol):
+    solver_contract_id: str
+    output_contract_id: str
+
+    def evaluate(
+        self, decision_procedure: str, example: LocalEvidenceExample
+    ) -> LocalSolverObservation:
+        ...
 
 
 @runtime_checkable

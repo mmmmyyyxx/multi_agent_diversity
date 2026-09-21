@@ -1,0 +1,6 @@
+{
+  "fidelity": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+  "official_code_semantics": "optimize(seed_candidate, trainset, valset, adapter) with epoch-shuffled sampling",
+  "paper_semantics": "Dfeedback native train minibatches; Dpareto full candidate tracking",
+  "project_adaptation": "decision_procedure component and immutable COMMON solver shell"
+}

@@ -1,0 +1,17 @@
+experiment_id: sequential_symmetry_breaking_online_pilot_native_feed_v1
+status: BLOCKED_ON_NATIVE_GEPA_CANARY
+layer1_backend: GEPA_NATIVE_FEED_V1
+layer2_endpoints:
+  - T_commit
+  - T_pivotal
+  - T_vote
+required_state_evidence:
+  - categorical_profiles
+  - P_0_to_P_4
+  - team_state_hash
+heldout:
+  Validation50_calls: 0
+  Test50_calls: 0
+api_authorization:
+  authorized: false
+prerequisite: native_feed_gepa_v1 real-provider canary PASS

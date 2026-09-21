@@ -1,0 +1,21 @@
+experiment_id: native_feed_gepa_v1
+status: PREPARED_NOT_AUTHORIZED
+backend: GEPA_NATIVE_FEED_V1
+comparison:
+  control: Native GEPA
+  treatment: Native GEPA + Layer2
+optimize_internal_split:
+  universe: frozen Optimize100
+  train_count: 75
+  optimizer_pareto_val_count: 25
+  split_seed: 20260918
+heldout:
+  Validation50_calls: 0
+  Test50_calls: 0
+api_authorization:
+  authorized: false
+  reason: separate explicit authorization required
+canary:
+  prepared: true
+  executed: false
+  question: native sampling, Solver reach, and optimizer-val reachability

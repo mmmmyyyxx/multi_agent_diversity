@@ -1,0 +1,13 @@
+{
+  "READY_TO_RUN": false,
+  "backend": "gepa",
+  "checks": {
+    "api_authorization_absent": true,
+    "fake_provider_pass": true,
+    "heldout_isolated": true,
+    "real_api_calls": 0,
+    "report_complete": true
+  },
+  "reason": "manifest authorization remains false until a later explicit task",
+  "status": "READY_FOR_AUTHORIZATION"
+}

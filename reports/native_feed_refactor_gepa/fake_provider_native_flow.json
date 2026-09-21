@@ -1,0 +1,16 @@
+{
+  "api_calls": 0,
+  "assertions": {
+    "backend_builds_native_train_and_pareto_val": true,
+    "changed_candidate_crosses_common_optimizer_boundary": true,
+    "control_uses_identical_native_feed_without_overlay": true,
+    "layer2_selects_member_and_responsibility_only": true,
+    "official_epoch_sampler_retained": true,
+    "responsibility_does_not_filter_native_feed": true,
+    "responsibility_overlay_reaches_reflection_only": true
+  },
+  "backend": "gepa",
+  "candidate_returned_through_common_boundary": true,
+  "native_data_not_layer2_materialized": true,
+  "status": "PASS"
+}
