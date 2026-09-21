@@ -218,7 +218,7 @@ class Layer2FrozenBatchSampler:
 
 def _local(row: PacketEvidenceExample) -> LocalEvidenceExample:
     return LocalEvidenceExample(
-        example_id=row.example_id,
+        example_id=row.packet_item_id,
         input_payload=row.input_payload,
         gold=row.gold,
         parent_output=row.parent_output,
@@ -243,7 +243,11 @@ class GEPALayer2EvidenceOptimizer:
             raise ValueError("Layer-2 request/GEPA return budget mismatch")
         search = tuple(
             _local(row)
-            for row in (*packet.repair_examples, *packet.preservation_examples)
+            for row in (
+                *packet.responsibility_examples,
+                *packet.focus_examples,
+                *packet.anchor_examples,
+            )
         )
         local_eval = tuple(_local(row) for row in packet.local_eval_examples)
         context = json.dumps(
@@ -253,13 +257,17 @@ class GEPALayer2EvidenceOptimizer:
                 "primary_responsibility_lane": packet.primary_responsibility_lane,
                 "responsibility_value": packet.responsibility_value,
                 "responsibility_context": packet.responsibility_context,
-                "repair_roles": [
-                    {"example_id": row.example_id, "lane": row.lane}
-                    for row in packet.repair_examples
+                "TEAM RESPONSIBILITY EVIDENCE": [
+                    {"example_id": row.example_id, "role": "responsibility", "lane": row.lane}
+                    for row in packet.responsibility_examples
                 ],
-                "preservation_roles": [
-                    {"example_id": row.example_id, "lane": row.lane}
-                    for row in packet.preservation_examples
+                "RECENT REGRESSION / FOCUS EVIDENCE": [
+                    {"example_id": row.example_id, "role": "focus", "lane": row.lane}
+                    for row in packet.focus_examples
+                ],
+                "RECENT GAIN / ANCHOR EVIDENCE": [
+                    {"example_id": row.example_id, "role": "anchor", "lane": row.lane}
+                    for row in packet.anchor_examples
                 ],
             },
             sort_keys=True,
@@ -287,8 +295,12 @@ class GEPALayer2EvidenceOptimizer:
         packet = request.packet
         before = packet.packet_hash
         ordered_ids = tuple(
-            row.example_id
-            for row in (*packet.repair_examples, *packet.preservation_examples)
+            row.packet_item_id
+            for row in (
+                *packet.responsibility_examples,
+                *packet.focus_examples,
+                *packet.anchor_examples,
+            )
         )
         sampler = Layer2FrozenBatchSampler(
             ordered_batch_schedule=packet.ordered_batch_schedule,
@@ -325,6 +337,13 @@ class GEPALayer2EvidenceOptimizer:
                 "backend_example_selection_calls": 0,
                 "native_sampler_called": False,
                 "official_gepa_search_core_modified": False,
+                "responsibility_count": len(packet.responsibility_examples),
+                "focus_count": len(packet.focus_examples),
+                "anchor_count": len(packet.anchor_examples),
+                "transition_effect_hash": (
+                    packet.latest_transition.transition_effect_hash
+                    if packet.latest_transition is not None else None
+                ),
             }
         )
         state = OpaqueOptimizerState(

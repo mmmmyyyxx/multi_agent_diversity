@@ -209,10 +209,11 @@ def test_layer2_schedule_replaces_native_sampler_and_reaches_solver(
         ]
     )
     packet_ids = {
-        row.example_id
+        row.packet_item_id
         for row in (
-            *request.packet.repair_examples,
-            *request.packet.preservation_examples,
+            *request.packet.responsibility_examples,
+            *request.packet.focus_examples,
+            *request.packet.anchor_examples,
             *request.packet.local_eval_examples,
         )
     }
@@ -228,6 +229,9 @@ def test_layer2_schedule_replaces_native_sampler_and_reaches_solver(
     assert telemetry["native_sampler_called"] is False
     assert reflection.prompts
     assert request.packet.packet_hash in reflection.prompts[0]
+    assert "TEAM RESPONSIBILITY EVIDENCE" in reflection.prompts[0]
+    assert "RECENT REGRESSION / FOCUS EVIDENCE" in reflection.prompts[0]
+    assert "RECENT GAIN / ANCHOR EVIDENCE" in reflection.prompts[0]
 
 
 def test_layer2_packet_changes_gepa_reflection_input(tmp_path: Path) -> None:
