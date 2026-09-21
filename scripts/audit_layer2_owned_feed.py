@@ -293,6 +293,16 @@ def main() -> None:
         "pilot_protocol.json": {
             "status": "PREPARED_NOT_AUTHORIZED",
             "backend": args.backend,
+            "packet_version": packets[0].packet_version,
+            "evidence_semantics": {
+                "responsibility": "current_team_residual",
+                "focus": "latest_transition_newly_broken",
+                "anchor": "latest_transition_newly_fixed",
+                "root_focus_anchor": "empty",
+                "history_policy": "latest_transition_only",
+                "local_eval": "separately_frozen",
+            },
+            "sepo_search_mechanics_imported": False,
             "small_real_provider_canary_ready_for_authorization": True,
             "real_provider_calls": 0,
             "Validation50_calls": 0,
