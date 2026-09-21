@@ -1,0 +1,13 @@
+{
+  "api_calls": 0,
+  "baseline_source_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd",
+  "execution_commit": "5e5a57493b6404e075a033a4a5ef03ef677f2549",
+  "experiment_id": "sequential_symmetry_breaking_online_pilot_v1",
+  "hold_reason": "API_AUTHORIZATION_PENDING",
+  "initial_total_p_i": 0,
+  "preparation_gate": "PASS",
+  "protocol_sha256": "7064115f7c22f35795887e14fca90fb6ed897f0ad899c8b454f626a6190de9f6",
+  "ready_to_run": false,
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

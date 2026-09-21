@@ -1,0 +1,9 @@
+{
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "provider_attempts": 0,
+  "reflection_calls": 0,
+  "solver_calls": 0,
+  "successful_provider_calls": 0,
+  "total_tokens": 0
+}

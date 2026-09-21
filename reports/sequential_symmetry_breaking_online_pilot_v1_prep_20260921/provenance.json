@@ -1,0 +1,9 @@
+{
+  "api_calls": 0,
+  "authorization": "pending",
+  "evidence_type": "zero_api_preregistration_and_source_freeze",
+  "execution_commit": "5e5a57493b6404e075a033a4a5ef03ef677f2549",
+  "experiment_id": "sequential_symmetry_breaking_online_pilot_v1",
+  "implementation_commit": "af6f26ead37459d23607c053fd4debedf4fba792",
+  "preparation_date": "2026-09-21"
+}

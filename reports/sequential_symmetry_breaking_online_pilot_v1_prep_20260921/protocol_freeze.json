@@ -1,0 +1,84 @@
+{
+  "access": {
+    "optimize100": "online search and Full evaluation",
+    "shadow50": "winner-only safety gate",
+    "test50": "zero access",
+    "validation50": "zero access"
+  },
+  "baseline": {
+    "five_member_redundancy_audit_sha256": "bc9e6f43202d5f296c328cb49226d6a6f3573c4d2f973e835d0eb888643b2f05",
+    "initialization_provider_calls": 0,
+    "members": 5,
+    "parent_prompt_sha256": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+    "parent_tasks_sha256": "1b27cce0731acfd0ee2fb9f34fe454caf97d3d1721be8b80d432a9bace94de27",
+    "phase_b_manifest_sha256": "32933872b0dc2ed2d7fcdaf23b5c368e5320b0861204ad908f7a20cf732a1147",
+    "required_initial_total_p_i": 0,
+    "source_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd"
+  },
+  "endpoints": {
+    "T_commit": "first opportunity with a safe committed mutation",
+    "T_pivotal": "first realized state with sum_i P_i > 0, reported in opportunity and commit clocks",
+    "T_vote": "first realized state with Optimize100 VoteCorrect above baseline, reported in opportunity and commit clocks"
+  },
+  "evidence_type": "single_state_prospective_online_mechanism_pilot",
+  "experiment_id": "sequential_symmetry_breaking_online_pilot_v1",
+  "hard_ceilings": {
+    "successful_provider_calls_all_roles": 4832,
+    "successful_reflection_calls": 64,
+    "transport_attempts_all_roles": 19328
+  },
+  "pipeline": {
+    "common_safe": true,
+    "local_gepa_budget_capacity": {
+      "accepted_full_evaluation_calls": 12,
+      "max_accepted_children": 1,
+      "max_accepted_generations": 1,
+      "max_rejected_proposals": 4,
+      "metric_budget": 36,
+      "proposal_attempt_calls": 6,
+      "reflection_minibatch_size": 3,
+      "seed_evaluation_calls": 12,
+      "validation_size": 12
+    },
+    "local_metric_budget_per_target": 36,
+    "max_one_commit_per_opportunity": true,
+    "official_gepa": {
+      "batch_sampler": "epoch_shuffled",
+      "cache_evaluation": false,
+      "candidate_component_name": "decision_procedure",
+      "candidate_selection_strategy": "pareto",
+      "engine_acceptance_semantics": "pinned_gepa_v0.1.1_strict_improvement",
+      "frontier_type": "instance",
+      "k_local_return": 4,
+      "max_merge_invocations": 5,
+      "max_metric_calls_source": "LocalOptimizationTask.budget.max_metric_calls",
+      "max_prompt_chars": 3000,
+      "merge_val_overlap_floor": 5,
+      "module_selector": "round_robin",
+      "mutable_component_contract_version": "reasoning_only_no_response_format_v2",
+      "optimizer_fidelity_level": "LEVEL_B_API_COMPATIBLE_ADAPTATION",
+      "perfect_score": 1.0,
+      "proposer_contract_version": "decision_procedure_proposer_v1",
+      "reflection_minibatch_size": 3,
+      "reflection_prompt_template_sha256": "7045587e6c3337b207a72e2c9d25ebc77709c0b7561043f2df3d6a04435abb58",
+      "reflective_dataset_version": "component_specific_reasoning_evidence_v1",
+      "result_semantics": "changed_candidates_only_v1",
+      "seed_source": "LocalOptimizationTask.seed",
+      "skip_perfect_score": true,
+      "use_merge": false,
+      "val_evaluation_policy": "full_eval"
+    },
+    "scheduler": "max(4D,2N,C)/(1+persistent_member_failure_count)",
+    "target_branches_per_opportunity": 2,
+    "team_minibatch": "TEAM_MINIBATCH primary-lane strict 4/4/4",
+    "winner_only_shadow50": true
+  },
+  "schema_version": "sequential_symmetry_breaking_online_protocol_v1",
+  "stopping": {
+    "consecutive_no_commit_patience": 6,
+    "efficacy_adaptation": false,
+    "first_vote_improvement": true,
+    "max_opportunities": 8,
+    "max_safe_commits": 4
+  }
+}

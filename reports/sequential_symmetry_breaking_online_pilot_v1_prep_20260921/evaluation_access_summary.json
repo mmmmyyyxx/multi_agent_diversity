@@ -1,0 +1,20 @@
+{
+  "optimize100": {
+    "preparation_provider_calls": 0,
+    "role": "frozen baseline, online search, TeamMiniBatch, Full",
+    "row_count": 100
+  },
+  "shadow50": {
+    "preparation_provider_calls": 0,
+    "role": "winner-only execution safety gate",
+    "row_count": 50
+  },
+  "test50": {
+    "access": "prohibited",
+    "calls": 0
+  },
+  "validation50": {
+    "access": "prohibited",
+    "calls": 0
+  }
+}

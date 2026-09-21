@@ -1,0 +1,390 @@
+{
+  "execution_commit": "5e5a57493b6404e075a033a4a5ef03ef677f2549",
+  "private_inputs": {
+    "five_member_redundancy_audit": {
+      "path": "reports/accepted_local_mutation_team_transfer_v2_execution_20260919/baseline_redundancy_audit.json",
+      "sha256": "bc9e6f43202d5f296c328cb49226d6a6f3573c4d2f973e835d0eb888643b2f05"
+    },
+    "optimize100.csv": "79a955aa6575c24375c7f218a53d472ae4e50c38edbd610dd68e7beafc63a1da",
+    "phase_b_parent_tasks": {
+      "path": "runs/local_gepa_acceptance_rate_pilot_phase_b_v2_freeze/selected_parent_tasks_private.json",
+      "sha256": "1b27cce0731acfd0ee2fb9f34fe454caf97d3d1721be8b80d432a9bace94de27"
+    },
+    "shadow50.csv": "12c79dc6a293357b98b24e90e59846e4441d9913c50f5adf6c431347a4c23561"
+  },
+  "protocol_sha256": "7064115f7c22f35795887e14fca90fb6ed897f0ad899c8b454f626a6190de9f6",
+  "source_files": [
+    {
+      "path": "experiments/anti_overfitting_split_v1/fold_assignment.json",
+      "sha256": "0376fa4a7c757d374bacc994b01be3390fcf5cc1390a65b9753f148d4d3fdb8c"
+    },
+    {
+      "path": "experiments/anti_overfitting_split_v1/split_manifest.json",
+      "sha256": "9639db6f1a83bbe54704d012edd7b843e31cbb1141f9957437daa3803a954886"
+    },
+    {
+      "path": "experiments/manifests/local_gepa_acceptance_rate_pilot_phase_b_v2.yaml",
+      "sha256": "32933872b0dc2ed2d7fcdaf23b5c368e5320b0861204ad908f7a20cf732a1147"
+    },
+    {
+      "path": "experiments/manifests/sequential_symmetry_breaking_online_pilot_v1.yaml",
+      "sha256": "fbc587529333ec2ca195d2474e2a932e5e0bb2f19091b4a7e5de45793e28f040"
+    },
+    {
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_v1/EXPERIMENT_HANDOFF.md",
+      "sha256": "ec7c83e6a7ebaf1882d5e81ffdbe300b49a4aba76b1bb9071b9f75b08df47e3a"
+    },
+    {
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_v1/PROTOCOL.md",
+      "sha256": "b31602b4e4eab1d09b5637c4c461e9a9d4ba0a193ea03df55312187a68ed4c99"
+    },
+    {
+      "path": "experiments/sequential_symmetry_breaking_online_pilot_v1/classifier_definition.json",
+      "sha256": "74cb5977cd3d5f78f3c2a8ddb736b5532724af02bacb053c5b3aea0d9596fad5"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/contract.py",
+      "sha256": "751805a3cb18e55a014e9d568c491bf4a6dffc3fb366f60d42656c76abc79042"
+    },
+    {
+      "path": "infrastructure/common_solver_contract_v1/evaluator.py",
+      "sha256": "b9f10329639773abf505530ccc2343e81fd0ea0511f111541bcb9521d7c2b747"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/__init__.py",
+      "sha256": "596ec054c25d8eb4381053f4bbfe36b8a9c8defdea049c481b8cec5ff770f96f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/answer_formats.py",
+      "sha256": "d5c3c274391bacd3bd2f473940a300a5f8d475e656dc363a3d82b93880c73863"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/candidate_selection.py",
+      "sha256": "acf0c459700bcf542bc56407521d1e3fd7bf2357883148ad40e303ceeac9c2be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/cli.py",
+      "sha256": "76e53240b02abb3c6417f825412b5fca95ca63afe524dc3bcc91736e389f5d14"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/compatibility_repair.py",
+      "sha256": "cb64ff0c634127cd4776279d2680ef1acf37759bf8545f5aa50b71d012232d26"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/config.py",
+      "sha256": "2146d246e0bf3f45823f753547644629b022528526e54b8275e0856ac6c0f39b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/critic_calibration.py",
+      "sha256": "e10a6d64706d1d5c98fc66b57b99fad9b65327ec091f2232f2733f7fc7bdfaf4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/diagnosis_aggregation.py",
+      "sha256": "fe773c9b22b11d9367ef04911d913fc507bf5e7ed215f47b3bda4cfc6a969002"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/categorical_profiles.py",
+      "sha256": "0095eaaee712b4e69174b2c11e73b5bea23a2cb4613b517997d0ac43c3ce3c39"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/endpoint_identifiability.py",
+      "sha256": "d28175560b9b8caf1b4bbdb3936378886c795319fd0927ee2ef80f05c8286534"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/fixed_probe.py",
+      "sha256": "1c44c4425311128a085e30ac943ec2028a7a1cf8e82c1fd9c69105c7e1dbf73a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/mutable_prompt_contract.py",
+      "sha256": "60859f603cc4c012fc0cdf82d3e3a1efc9df97bb48e38cde830bdcdd4a4f3761"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/output_contract.py",
+      "sha256": "f76e6dab59aedb3ba301b0b1b0e1a488882f894faa8d12f0f1fcbf162bcc56fd"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/persistent_solver_cache.py",
+      "sha256": "b1b039681d74577f7967001efc35f12f028d9544cabda3cbd293ff44ac6b0313"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/prompt_question.py",
+      "sha256": "d7848f71c5ff0e6c118954d3cb95e8d3b313f3239af77f87ddee365d49f595ec"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/solver_output.py",
+      "sha256": "ed40c2de71fb0c9a1824fbc998a7ea22ba4473b07ac64e42b80eabbf31894f9b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/solver_stage.py",
+      "sha256": "ef4acda8e5295c96576a58f26b4d51059f18f5d5fcb7db3e52440cc7eea0695b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/evaluation/validation.py",
+      "sha256": "dc9c66f07d78c545b9f758cf36d95f299d598c4e6acecadbc6f6981098848691"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/experimental_contract_adapted_rg_gepa.py",
+      "sha256": "5634d0edd0db8ef9244022c9892480633738b0520559813994e899f9050b0d2e"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/experimental_rg_gepa.py",
+      "sha256": "7ba1539793dfacf998b3067cda4e49d88f1124415e9521c16480bdee039a6bfc"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/__init__.py",
+      "sha256": "f491cea27d8ab20affa8bc3981198925e4e2bee27309dc63443e634c1fad0281"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/artifacts.py",
+      "sha256": "6499b620024370278a83490659dc7f04645936c5a7f171bc2c85377465e178db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/authorization.py",
+      "sha256": "7c267977b03ed4ef4db0373e1f21a1810833d8c91c8d643f4cca582133fa38ac"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/freeze_hash.py",
+      "sha256": "d7332d5e8fcf04c04570fe7e9ce24077b652f51b9ceba9bdcbacc08922f8a0af"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/manifest.py",
+      "sha256": "f34c3a5d0e658225dace3443d03aacf51bdcaf86009350ca301044c2eb16cff1"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/provenance.py",
+      "sha256": "ea8baa1dde152c9c45b7c240a63921733057f824628165cab6c01bd336b86523"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/registries.py",
+      "sha256": "105cb449b549a0b0c1cfae53626dd4f7cebfd013645786774c2ac2cc9706e582"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/run_lifecycle.py",
+      "sha256": "14bb0dc0e188f408ca6ffe78eb93949ba2661497b91e4545bf89a1927a4a1361"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/governance/telemetry.py",
+      "sha256": "f3e5d742631f092074bac2ae3cd624eb0f7e43ca71d070ce3963047150b1a8aa"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/llm_client.py",
+      "sha256": "5025e78d797ae4bb1e998e6d340abe1b8f5d010e1b039e64e31504ce6d7f9e5c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/__init__.py",
+      "sha256": "3784aa16c64e936e93f05485ce227bbacaec4bc80ca34985160df9aaadfb46a7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/base.py",
+      "sha256": "fca35faa5fbdd554b7da29c003c11c53804fe7b6593ff3403a6d168e40029f2a"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/config.py",
+      "sha256": "1c43a0874140d6f072c373c5ecac217503f46921bdc46afa62832f22b7fd8689"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_adapter.py",
+      "sha256": "505abd444998c48bfe5167851c67dfba17ff1bfe9185a8ce3a6bc87f9f7617ce"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_callbacks.py",
+      "sha256": "9df664f6b807a191c5dd1b432d7ac7d2c37d90c8f04f409da2f4f4d8eec1acc8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "sha256": "16e456f789b683a449967bed6e1ca821cf9b8442b9b1e7f81645d951d0dec028"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_proposer_contract.py",
+      "sha256": "7741fbbca9cc2ab09ecf019a6d6e9cf924154a378ab1c1d9081b2b39ab4dc689"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/gepa_runtime.py",
+      "sha256": "0f6fecba9fdf01a1210265c00b713bae7ee5d11757b7125ad41e6a781c4969db"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/legacy_tcs.py",
+      "sha256": "3d9c822fa5ef6600d91206da646abb61ee4f864b6a26250ea9835c4f7ce2c0f7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/proposal_telemetry.py",
+      "sha256": "c17d93eaa32ee892b76e7c8f73e7073cc607b5fc4b8c367f3bba9c6fb3b1dcc5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/registry.py",
+      "sha256": "8c28634f2d93dfd6580ca2c87de3e3cc5b52d78c6cefdae22fb4ba6bbac54259"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+      "sha256": "2c8e5c95ddda9ea17036f56e41981d77181a1680e192f39fb4cca9e3b3492a86"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/member_objectives.py",
+      "sha256": "d31c394838d7e585f41fc3fc8e185b507204416cadce70a2dac17747aa1dd652"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/module2_context.py",
+      "sha256": "ab7e4a0980528b1dfeeca956b1ad54961dfcddb772f1b8cb4280c3f7f14ed6f4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/parent_acquisition.py",
+      "sha256": "bffaaeab1efdebe585ee02a4dbf0e7bfedab79201d96db964fc753e1d38ddea6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/peer_state.py",
+      "sha256": "fb5c948fbea5d12b9050e5ffd40166dcebaf92c8e7d71099d290b77c2e1c38be"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/artifacts.py",
+      "sha256": "bca23ec758ca79c2d8c219991af440a4503980a17efbc2ce8b44b97422d28831"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/checkpoint.py",
+      "sha256": "ce96125160b5ea2756a3c2bbaa8da3807448a692df3fa61c911c121b5fd790ec"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/persistence/identity.py",
+      "sha256": "5c26dc2247361643312112d032b9a798170a0af94bb81f1694d1665df3ed5174"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/proposal_memory.py",
+      "sha256": "5920559247e37ea5c2800c1c66b07151fbe7414acd1441b97edae5e716d6a4c4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/protocol.py",
+      "sha256": "8d167454487f157ff8898abfeb9f7ac2fc904e6ea30a8588de465d2e968812c7"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/provider_credentials.py",
+      "sha256": "e6b114257eca2c0c797802f9a170c68bc037a04b0e29f0663548acef6f10fd70"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/responsibility.py",
+      "sha256": "18df7782a63b31938d5e1031725f1ee3b5f1907031dba8a77a6df83b6ba86011"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/responsibility_contribution.py",
+      "sha256": "a20aeeb721651939e71b03bbc5dc758f8a32eb6edd4c2513b2ab614a1f4af8f4"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/shadow_gate.py",
+      "sha256": "69370e46a9d932a16816ca47b48e2e8478a4828db6ff03acd12386e7ddf5cbf8"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/system.py",
+      "sha256": "27c34d41552258b339892aa37a3c30e02b0147383b5d51eaa5a6e71ce879fd1c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/task_manifest.py",
+      "sha256": "90a80938eb80521036355fb9ae099eef6848cb8476257115044a3d69cfd9fd9c"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/tasks.py",
+      "sha256": "9410ba7bfe41860d751782a6ae488b980372c37bf192f407b9e86a47f0634dd9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/tcs.py",
+      "sha256": "f121d6012294c1ef669fce15a56e0fd39d8ebfe6ef1122c0cd69020b1922e883"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_differentiation.py",
+      "sha256": "a6ce9242f6f20417ed119fdcd72fcafcb2dcff2c9420ec2f7dca066528a84843"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/__init__.py",
+      "sha256": "1fc21e12e050992603d3f6a5068049795509c1dc97166ae061cacbde1e06f632"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/accepted_mutation_replay.py",
+      "sha256": "42c4cd396f6dbe1cb89bfb2c63d82f37ca64f7be1b42de63a80da74f8ca8a406"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_evaluator.py",
+      "sha256": "0a6cb71f8d5d0d8d3ac5f9c5a7506657e24e8b09c28a45cf8d4a86dd0a9e2c53"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/candidate_selector.py",
+      "sha256": "f7ba817c711f3bf270a2bcfac73ba238e7906270f9d592206dea7bf7df5af5c6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/controller.py",
+      "sha256": "d21a11ed7ed194b88e5c565c2d6e328643f13ea33ee0f5e5a3caf292337177b9"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/ledger.py",
+      "sha256": "1cb2ee566ed439a6106d7f6c2a31102aee2f225fc90eea66573914c88e8ca043"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_binding.py",
+      "sha256": "4a2ff69c55d93952079032c0f241f76f00c80ebbb8fe98a52739b21c09bb04e5"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/primary_responsibility_scheduler.py",
+      "sha256": "a6edcda90ae7774b2058306a2b1af8a3d054a3f3dbebf9798a2389d9ba564f35"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/progressive_evaluation.py",
+      "sha256": "4636a6ade57fa88414fe6f014cea8cb2da859818be34c2432d76a583257f6dbe"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/protocol.py",
+      "sha256": "87b6004fb4be95118587a35b69a9a5b11358e927188cbd66c9aedfea1fb4394b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/schemas.py",
+      "sha256": "0b212ee0da2d39939c5a7288fd4defac4177dc97e69378f481440c866b51826b"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/symmetry_breaking.py",
+      "sha256": "28434823e3b843125e596ce22d2dee240bb71db19ae1cc633d8cc09bce603c9f"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/system_runtime.py",
+      "sha256": "d6baa376a1caa459252d4cbe58bd763b306ca5036ef44a71e38e1c34807df906"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/team_search/task_builder.py",
+      "sha256": "62e2fc51bba1e73cfced605c36a93bf01bd5b292fcc8e31f0220231fc09667ab"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/termination.py",
+      "sha256": "e2a866380ed639f7a58e536dd94f600a28d16eb55d95b7543e69d65a3e136bc6"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/utils.py",
+      "sha256": "b8205623991c1f636c380fb42f2637d90710e32a5ea68896eafe25c2c37bbc57"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/versions.py",
+      "sha256": "9163658adf92b27fdd377eaec2e8109c74d281aaa9d3142464ef904b1a2be707"
+    },
+    {
+      "path": "multi_dataset_diverse_rl/vote_aligned_scheduler.py",
+      "sha256": "09a828ffbbccec3ed513da8edf5355d157ffd5b3343c7fcac75086b6c4218802"
+    },
+    {
+      "path": "reports/accepted_local_mutation_team_transfer_v2_execution_20260919/baseline_redundancy_audit.json",
+      "sha256": "bc9e6f43202d5f296c328cb49226d6a6f3573c4d2f973e835d0eb888643b2f05"
+    },
+    {
+      "path": "scripts/anti_overfitting_shadow_support.py",
+      "sha256": "761eca9024aad570a770070b18176cbd0ad9eeb7e733c2cdc360f2dfb8865140"
+    },
+    {
+      "path": "scripts/run_seed78_primary_responsibility_ab.py",
+      "sha256": "45974daa964c8b0a70eb4b8d6a78eee67d9fb561cb1d99f6587bcb8e1bfdc482"
+    },
+    {
+      "path": "scripts/run_sequential_symmetry_breaking_online_pilot_v1.py",
+      "sha256": "ae3e4c44a9d11bff1b0187beabc74abeca1e2c424beba2bc9f4fa8bc9441a506"
+    }
+  ]
+}

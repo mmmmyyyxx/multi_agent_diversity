@@ -1,0 +1,30 @@
+{
+  "forbidden": [
+    "question text",
+    "gold answers",
+    "prompt text",
+    "raw model outputs",
+    "credentials",
+    "provider endpoints"
+  ],
+  "per_opportunity": [
+    "selected_target_ids",
+    "primary_lanes",
+    "committed_member_id",
+    "funnel",
+    "cost",
+    "p_i",
+    "vote_correct",
+    "member_correct",
+    "realizability_transitions"
+  ],
+  "primary_endpoints": [
+    "T_commit_opportunity",
+    "T_pivotal_opportunity",
+    "T_pivotal_commit_index",
+    "T_vote_opportunity",
+    "T_vote_commit_index"
+  ],
+  "profile_persistence": "sanitized categorical identities only",
+  "schema_version": "sequential_symmetry_breaking_telemetry_contract_v1"
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "sequential_symmetry_breaking_classifier_v1",
+  "integrity_precondition": "all frozen source, baseline, budget, ledger, and split-access checks PASS",
+  "ordered_success_condition": "T_commit_opportunity <= T_pivotal_opportunity <= T_vote_opportunity",
+  "classes": [
+    {
+      "classifier": "ALGORITHMIC_SYMMETRY_BREAKING_WITH_VOTE_GAIN_OBSERVED",
+      "condition": "ordered success condition holds"
+    },
+    {
+      "classifier": "PLURALITY_RESPONSIVE_STATE_REACHED_WITHOUT_VOTE_GAIN",
+      "condition": "T_pivotal exists and T_vote is null"
+    },
+    {
+      "classifier": "SAFE_COMMITS_WITHOUT_PLURALITY_RESPONSIVENESS",
+      "condition": "safe_commits > 0 and T_pivotal is null"
+    },
+    {
+      "classifier": "NO_SAFE_COMMIT_OBSERVED",
+      "condition": "safe_commits = 0"
+    },
+    {
+      "classifier": "HOLD_BASELINE_OR_INTEGRITY_FAILURE",
+      "condition": "any integrity check fails or baseline sum_i P_i is not zero"
+    },
+    {
+      "classifier": "HOLD_ENDPOINT_ORDER_VIOLATION",
+      "condition": "a vote event is reported without an ordered commit and pivotal path"
+    }
+  ],
+  "scope_limit": "single frozen state; no scheduler comparison or held-out generalization"
+}

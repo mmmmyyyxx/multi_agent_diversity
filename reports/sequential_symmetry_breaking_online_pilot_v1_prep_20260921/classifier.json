@@ -1,0 +1,5 @@
+{
+  "classifier": "API_AUTHORIZATION_PENDING",
+  "reason": "No execution authorization was provided; this artifact freezes preparation only.",
+  "scientific_result": null
+}

@@ -1,0 +1,73 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "file": "api_ledger_summary.json",
+      "sha256": "aa0077ee0f05b030c46b0dbe35f4b28630fa4ba5216aee30724984c4878133d3"
+    },
+    {
+      "file": "baseline_integrity_audit.json",
+      "sha256": "935e51c2c7aa25e44e37a21aa55b5cb5c24392fef3306fd654833f4d4c801f5d"
+    },
+    {
+      "file": "classifier.json",
+      "sha256": "fe7cbf41ae9fa72406568a2cc2e472c8f9dc51ac3ec38337f2268cc9d6ab2c47"
+    },
+    {
+      "file": "classifier_definition.json",
+      "sha256": "74cb5977cd3d5f78f3c2a8ddb736b5532724af02bacb053c5b3aea0d9596fad5"
+    },
+    {
+      "file": "cost_envelope.json",
+      "sha256": "0ee2b900e43512a50ae35bd75ace7e02bf37372348ffbe3cac4b8cdceaaec5f5"
+    },
+    {
+      "file": "evaluation_access_registry.json",
+      "sha256": "a166bbd30076a5f30d679fb0f60a1c8a253a194f72aea0ffabbef00d4295865e"
+    },
+    {
+      "file": "evaluation_access_summary.json",
+      "sha256": "4a844e9523ad9361bed23a564a929e32f7a66bbc65528ded03545e2c4aaa6bb8"
+    },
+    {
+      "file": "EXPERIMENT_HANDOFF.md",
+      "sha256": "9d2ff1d85319ce6b766df2a29b4f483f984447b49eeb1b6da7c0ea5d01bb970f"
+    },
+    {
+      "file": "fact_assertions.json",
+      "sha256": "bf9c7a06511ac846945d5c0b68a86a50e7dc747173f468d6098770619910fc5e"
+    },
+    {
+      "file": "manifest_snapshot.yaml",
+      "sha256": "fbc587529333ec2ca195d2474e2a932e5e0bb2f19091b4a7e5de45793e28f040"
+    },
+    {
+      "file": "protocol_freeze.json",
+      "sha256": "bd024a3f6786100bc5ad4f2e4e59d8828bee6f8c304c44ea8c62b964fd60b147"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "b523e7e4f34f16ef0c1d2db953ea7cc18a0ef2fb1cddc6394c6f96e504963e6b"
+    },
+    {
+      "file": "README.md",
+      "sha256": "b2b1133cf204cfb68d411415c63a2e7db399bbb97e146c586f1333049afe8be4"
+    },
+    {
+      "file": "sanitization_manifest.json",
+      "sha256": "9a8cc1e1a10b3ac2fbb2f28a2d473b8648b3b78dfac040edfcfbf2a8b4ddfbcf"
+    },
+    {
+      "file": "source_freeze.json",
+      "sha256": "cce22a2f2ba428985eece65f12d22a9d94469922829410c20cf568a0f75b9189"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "ab8804b17fd0d7eafca8dc1f86641476eda17c1fc328bee64421d1d6ffd259d1"
+    },
+    {
+      "file": "telemetry_contract.json",
+      "sha256": "6cd8fe164eea9b68485d969a7d978f73d2557406bfb0ae28d98a44eda76e8211"
+    }
+  ]
+}

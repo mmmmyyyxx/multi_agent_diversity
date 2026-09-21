@@ -1,0 +1,11 @@
+{
+  "api_calls_zero": true,
+  "baseline_materialization_provider_calls_zero": true,
+  "five_member_profiles_identical": true,
+  "frozen_parent_rows_equal_optimize100": true,
+  "initial_sum_p_i_zero": true,
+  "reflection_calls_zero": true,
+  "scientific_protocol_unchanged_after_freeze": true,
+  "test50_calls_zero": true,
+  "validation50_calls_zero": true
+}

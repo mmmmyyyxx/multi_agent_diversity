@@ -1,0 +1,13 @@
+{
+  "automatic_retry": false,
+  "local_metric_calls_per_target": 36,
+  "max_opportunities": 8,
+  "max_safe_commits": 4,
+  "max_solver_logical_rows": 4768,
+  "max_successful_reflection_calls": 64,
+  "no_commit_patience": 6,
+  "resume": false,
+  "successful_provider_call_ceiling": 4832,
+  "targets_per_opportunity": 2,
+  "transport_attempt_ceiling": 19328
+}

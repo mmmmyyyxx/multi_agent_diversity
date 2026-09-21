@@ -1,0 +1,19 @@
+{
+  "all_five_profiles_identical_from_frozen_audit": true,
+  "all_four_parent_tasks_identical_on_question_gold_output": true,
+  "all_outputs_valid": true,
+  "five_member_redundancy_audit_sha256": "bc9e6f43202d5f296c328cb49226d6a6f3573c4d2f973e835d0eb888643b2f05",
+  "gate": "PASS",
+  "initial_p_i": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "ordered_rows": 100,
+  "parent_prompt_sha256": "549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63",
+  "phase_b_manifest_sha256": "32933872b0dc2ed2d7fcdaf23b5c368e5320b0861204ad908f7a20cf732a1147",
+  "phase_b_parent_tasks_sha256": "1b27cce0731acfd0ee2fb9f34fe454caf97d3d1721be8b80d432a9bace94de27",
+  "source_state_hash": "faa0fc81ebe71a686554355b9c5946a1765fa3913e026ab65e59f07ae01052dd"
+}
