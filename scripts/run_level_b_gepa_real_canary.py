@@ -39,6 +39,16 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (
     local_gepa_budget_capacity,
     verify_frozen_gepa_engine_contract,
 )
+from multi_dataset_diverse_rl.team_search.execution_runtime import (
+    CommonContractExecutionSystem,
+    ContextualLocalPromptOptimizer,
+    DurableLedger,
+    ReflectionLM,
+    execution_context_from_system,
+    ledger_summary,
+    profile_identity,
+    read_csv_rows,
+)
 from multi_dataset_diverse_rl.team_search.candidate_selector import CommonSafeTeamCandidateSelector
 from multi_dataset_diverse_rl.team_search.controller import TeamSearchController
 from multi_dataset_diverse_rl.team_search.primary_responsibility_scheduler import (
@@ -65,15 +75,6 @@ from scripts.anti_overfitting_shadow_support import (
     sha256_file,
     sha256_json,
     write_json,
-)
-from scripts.run_seed78_primary_responsibility_ab import (
-    ContextualOptimizer,
-    DurableLedger,
-    ReflectionLM,
-    Seed78System,
-    _ledger_summary,
-    _profile_identity,
-    _rows,
 )
 
 
@@ -113,7 +114,6 @@ def source_paths() -> list[Path]:
         Path("infrastructure/common_solver_contract_v1/evaluator.py"),
         Path("infrastructure/experiment_manifest.schema.json"),
         Path("scripts/anti_overfitting_shadow_support.py"),
-        Path("scripts/run_seed78_primary_responsibility_ab.py"),
         Path("scripts/run_level_b_gepa_real_canary.py"),
         MANIFEST.relative_to(ROOT),
         PROTOCOL.relative_to(ROOT),
@@ -229,7 +229,7 @@ def _provider_calls_observed(run_root: Path) -> int:
     ledger = run_root / "ledger.jsonl"
     if not ledger.is_file():
         return 0
-    return int(_ledger_summary(ledger)["provider_attempts"])
+    return int(ledger_summary(ledger)["provider_attempts"])
 
 
 def prepare(prep: Path) -> dict[str, Any]:
@@ -245,7 +245,7 @@ def prepare(prep: Path) -> dict[str, Any]:
     prep.mkdir(parents=True)
     export_private_splits(raw, assignment, prep / "splits_private")
     optimize = prep / "splits_private/optimize100.csv"
-    rows = _rows(prep / "splits_private/fold_a.csv") + _rows(
+    rows = read_csv_rows(prep / "splits_private/fold_a.csv") + read_csv_rows(
         prep / "splits_private/fold_b.csv"
     )
     import csv
@@ -367,9 +367,11 @@ async def initialize_system(
     *, root: Path, optimize_rows: list[dict[str, str]],
     validation_rows: list[dict[str, str]], optimize_path: Path,
     validation_path: Path, ledger: DurableLedger,
-) -> Seed78System:
+) -> CommonContractExecutionSystem:
     cfg = config(root, optimize_path=optimize_path, validation_path=validation_path)
-    system = Seed78System(cfg, arm=ARM, ledger=ledger, raw_cache={})
+    system = CommonContractExecutionSystem(
+        cfg, arm=ARM, ledger=ledger, raw_cache={}
+    )
     system.set_run_identity(build_run_identity(
         cfg, train_rows=optimize_rows, val_rows=validation_rows,
         test_rows=[], workspace=ROOT,
@@ -392,9 +394,9 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
     start_run_attempt(prep, run_root)
     try:
         authorize(run_root)
-        optimize_rows = _rows(prep / "splits_private/optimize100.csv")
-        shadow_rows = _rows(prep / "splits_private/fold_c.csv")
-        validation_rows = _rows(prep / "splits_private/validation.csv")
+        optimize_rows = read_csv_rows(prep / "splits_private/optimize100.csv")
+        shadow_rows = read_csv_rows(prep / "splits_private/fold_c.csv")
+        validation_rows = read_csv_rows(prep / "splits_private/validation.csv")
         ledger = DurableLedger(run_root / "ledger.jsonl")
         transition_run_attempt(run_root, provider_boundary_reached=True)
         system = await initialize_system(
@@ -405,7 +407,7 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
             validation_path=prep / "splits_private/validation.csv",
             ledger=ledger,
         )
-        parent_identity = _profile_identity(system)
+        parent_identity = profile_identity(system)
         snapshot = freeze_current_responsibility(system, update_index=0)
         scheduler = PrimaryResponsibilityPersistentRealizabilityScheduler()
         decision = scheduler.select(
@@ -453,7 +455,18 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
             accounting_reader=system.optimizer_accounting,
             run_root=run_root / "local_gepa",
         )
-        contextual = ContextualOptimizer(official, local_solver)
+        freeze = read_json(prep / "source_freeze.json")
+        contextual = ContextualLocalPromptOptimizer(
+            official,
+            local_solver,
+            execution_context_from_system(
+                system,
+                run_identity_sha256=freeze.get("run_identity_sha256"),
+                local_no_update_patience=3,
+                team_no_update_patience=2,
+                saturation_mode="single_opportunity_engineering_canary",
+            ),
+        )
         shadow_probe = system.build_probe(shadow_rows)
         evaluator = SystemTeamCandidateEvaluator(
             system=system,
@@ -518,7 +531,7 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
                 "local_termination_reason"
             ],
             "classifier": classify(telemetry, outcome),
-            "ledger": _ledger_summary(run_root / "ledger.jsonl"),
+            "ledger": ledger_summary(run_root / "ledger.jsonl"),
             "validation50_calls": 0,
             "test50_calls": 0,
         }

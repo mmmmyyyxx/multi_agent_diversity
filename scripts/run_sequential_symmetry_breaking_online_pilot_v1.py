@@ -48,6 +48,14 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: 
     local_gepa_budget_capacity,
     verify_frozen_gepa_engine_contract,
 )
+from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E402
+    CommonContractExecutionSystem as Seed78System,
+    ContextualLocalPromptOptimizer as ContextualOptimizer,
+    DurableLedger,
+    ReflectionLM,
+    execution_context_from_system,
+    profile_identity as _profile_identity,
+)
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity  # noqa: E402
 from multi_dataset_diverse_rl.team_search.candidate_selector import (  # noqa: E402
     CommonSafeTeamCandidateSelector,
@@ -82,13 +90,6 @@ from scripts.anti_overfitting_shadow_support import (  # noqa: E402
     sha256_file,
     sha256_json,
     write_json,
-)
-from scripts.run_seed78_primary_responsibility_ab import (  # noqa: E402
-    ContextualOptimizer,
-    DurableLedger,
-    ReflectionLM,
-    Seed78System,
-    _profile_identity,
 )
 
 
@@ -637,7 +638,16 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
         accounting_reader=system.optimizer_accounting,
         run_root=run_root / "local_gepa",
     )
-    optimizer = ContextualOptimizer(official, local_solver)
+    optimizer = ContextualOptimizer(
+        official,
+        local_solver,
+        execution_context_from_system(
+            system,
+            local_no_update_patience=3,
+            team_no_update_patience=NO_COMMIT_PATIENCE,
+            saturation_mode="sequential_symmetry_breaking_bounded_pilot",
+        ),
+    )
     update = {"value": -1}
     evaluator = SystemTeamCandidateEvaluator(
         system=system,

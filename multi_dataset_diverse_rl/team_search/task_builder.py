@@ -174,6 +174,9 @@ class LocalTaskBuilder:
                 reflection_minibatch_size=3,
                 max_returned_candidates=self.local_return_budget,
             ),
+            run_seed=request.seed,
+            update_index=request.update_index,
+            target_member=assignment.target_member,
         )
 
 

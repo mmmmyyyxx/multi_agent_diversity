@@ -45,7 +45,7 @@ design:
   initialization_policy: FRESH_DETERMINISTIC_INITIALIZATION_V1
 api_authorization:
   authorized: false
-  authorization_scope: pending_authorization_for_gepa_layer2_real_canary_v2_authorized2
+  authorization_scope: pending_authorization_for_gepa_layer2_real_canary_v2_authorized3
   allowed_roles:
   - reflection
   - solver

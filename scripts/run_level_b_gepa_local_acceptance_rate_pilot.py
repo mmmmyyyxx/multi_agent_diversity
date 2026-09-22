@@ -40,6 +40,15 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: 
 from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import (  # noqa: E402
     import_frozen_gepa,
 )
+from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E402
+    ContextualLocalPromptOptimizer,
+    DurableLedger,
+    ReflectionLM,
+    execution_context_from_system,
+    ledger_summary as _ledger_summary,
+    profile_identity as _profile_identity,
+    read_csv_rows as _rows,
+)
 from multi_dataset_diverse_rl.team_search.primary_responsibility_scheduler import (  # noqa: E402
     PrimaryResponsibilityPersistentRealizabilityScheduler,
 )
@@ -53,14 +62,6 @@ from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder  
 from infrastructure.common_solver_contract_v1.contract import (  # noqa: E402
     COMMON_SOLVER_CONTRACT_ID,
     CONTRACT_SPEC,
-)
-from scripts.run_seed78_primary_responsibility_ab import (  # noqa: E402
-    ContextualOptimizer,
-    DurableLedger,
-    ReflectionLM,
-    _ledger_summary,
-    _profile_identity,
-    _rows,
 )
 
 
@@ -311,7 +312,16 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
                     run_root=run_root / "local_gepa" / f"parent_{rank}",
                     optimize_fn=fixed_proposal_optimize,
                 )
-                result = await ContextualOptimizer(optimizer, local_solver).optimize(task)
+                result = await ContextualLocalPromptOptimizer(
+                    optimizer,
+                    local_solver,
+                    execution_context_from_system(
+                        system,
+                        local_no_update_patience=3,
+                        team_no_update_patience=2,
+                        saturation_mode="layer1_acceptance_rate_pilot",
+                    ),
+                ).optimize(task)
                 if _profile_identity(system) != frozen_parent:
                     raise RuntimeError("Layer-1 pilot mutated the frozen P0 team")
                 if result.optimizer_state is None:

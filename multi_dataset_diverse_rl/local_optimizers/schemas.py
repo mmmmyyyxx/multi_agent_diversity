@@ -60,6 +60,9 @@ class LocalOptimizationTask:
     seed: int
     budget: LocalOptimizerBudget
     backend_state: OpaqueOptimizerState | None = None
+    run_seed: int | None = None
+    update_index: int | None = None
+    target_member: int | None = None
 
     def __post_init__(self) -> None:
         if not self.task_id or not self.parent_prompt:

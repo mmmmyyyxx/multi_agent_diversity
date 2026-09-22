@@ -41,14 +41,14 @@ from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
 
 
 EXPERIMENT_ID = "gepa_layer2_real_canary_v2"
-ATTEMPT_ID = "gepa_layer2_real_canary_v2_authorized2"
+ATTEMPT_ID = "gepa_layer2_real_canary_v2_authorized3"
 SEED = 80
 MANIFEST = ROOT / "experiments/manifests/gepa_layer2_real_canary_v2.yaml"
 PROTOCOL = ROOT / "experiments/gepa_layer2_real_canary_v2/PROTOCOL.md"
-DEFAULT_PREP = ROOT / "runs/gepa_layer2_real_canary_v2_prep_authorized2"
-DEFAULT_RUN = ROOT / "runs/gepa_layer2_real_canary_v2_authorized2"
-DEFAULT_REPORT = ROOT / "reports/gepa_layer2_real_canary_v2_authorized2"
-AUTH_ENV = "GEPA_LAYER2_REAL_CANARY_V2_AUTHORIZED"
+DEFAULT_PREP = ROOT / "runs/gepa_layer2_real_canary_v2_prep_authorized3"
+DEFAULT_RUN = ROOT / "runs/gepa_layer2_real_canary_v2_authorized3"
+DEFAULT_REPORT = ROOT / "reports/gepa_layer2_real_canary_v2_authorized3"
+AUTH_ENV = "GEPA_LAYER2_REAL_CANARY_V2_AUTHORIZED3"
 
 base.EXPERIMENT_ID = EXPERIMENT_ID
 base.ATTEMPT_ID = ATTEMPT_ID

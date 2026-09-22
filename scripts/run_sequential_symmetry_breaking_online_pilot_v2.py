@@ -355,7 +355,18 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
         accounting_reader=system.optimizer_accounting,
         run_root=run_root / "local_gepa",
     )
-    optimizer = base.ContextualOptimizer(official, local_solver)
+    freeze = json.loads((prep / "source_freeze.json").read_text(encoding="utf-8"))
+    optimizer = base.ContextualOptimizer(
+        official,
+        local_solver,
+        base.execution_context_from_system(
+            system,
+            run_identity_sha256=freeze.get("run_identity_sha256"),
+            local_no_update_patience=LOCAL_NO_UPDATE_PATIENCE,
+            team_no_update_patience=TEAM_NO_UPDATE_PATIENCE,
+            saturation_mode="sequential_symmetry_breaking_online_saturation",
+        ),
+    )
     update = {"value": -1}
     evaluator = base.SystemTeamCandidateEvaluator(
         system=system,

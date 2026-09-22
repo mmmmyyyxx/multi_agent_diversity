@@ -39,12 +39,12 @@ from infrastructure.common_solver_contract_v1.evaluator import (  # noqa: E402
     TransportResponse,
 )
 from multi_dataset_diverse_rl.config import Config  # noqa: E402
-from multi_dataset_diverse_rl.evaluation.output_contract import (  # noqa: E402
-    SOLVER_OUTPUT_CONTRACT_VERSION,
-)
 from multi_dataset_diverse_rl.evaluation.prompt_question import PromptAnswer  # noqa: E402
 from multi_dataset_diverse_rl.evaluation.solver_stage import (  # noqa: E402
     validate_solver_stage_attribution,
+)
+from multi_dataset_diverse_rl.evaluation.output_contract import (  # noqa: E402
+    SOLVER_OUTPUT_CONTRACT_VERSION,
 )
 from multi_dataset_diverse_rl.governance.authorization import require_api_authorization  # noqa: E402
 from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: E402
@@ -52,6 +52,17 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_optimizer import (  # noqa: 
     GEPALocalPromptOptimizer,
     local_gepa_budget_capacity,
     verify_frozen_gepa_engine_contract,
+)
+from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E402
+    CommonContractExecutionSystem as Seed78System,
+    ContextualLocalPromptOptimizer as ContextualOptimizer,
+    DurableLedger,
+    LocalOptimizerExecutionContext,
+    ReflectionLM,
+    execution_context_from_system,
+    ledger_summary as _ledger_summary,
+    profile_identity as _profile_identity,
+    read_csv_rows as _rows,
 )
 from multi_dataset_diverse_rl.persistence.identity import build_run_identity  # noqa: E402
 from multi_dataset_diverse_rl.shadow_gate import advance_no_commit_streak  # noqa: E402
@@ -110,8 +121,8 @@ DESIGN = ROOT / "experiments/seed78_primary_responsibility_ab_v1"
 DEFAULT_PREP = ROOT / "runs/seed78_primary_responsibility_ab_v1_prep_retry1_authorized2"
 DEFAULT_RUN = ROOT / "runs/seed78_primary_responsibility_ab_v1_retry1"
 DEFAULT_REPORT = ROOT / "reports/seed78_primary_responsibility_ab_v1"
-TASK_CONTEXT: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
-    "seed78_local_gepa_task", default=None
+_LEGACY_TASK_CONTEXT: contextvars.ContextVar[dict[str, Any] | None] = (
+    contextvars.ContextVar("seed78_legacy_local_gepa_task", default=None)
 )
 
 
@@ -125,7 +136,7 @@ def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _rows(path: Path) -> list[dict[str, str]]:
+def _legacy_rows(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
@@ -142,7 +153,7 @@ def _retryable(exc: Exception) -> bool:
     )
 
 
-class DurableLedger:
+class _LegacyDurableLedger:
     """Append-only run-local accounting; raw text is never persisted here."""
 
     def __init__(self, path: Path) -> None:
@@ -172,7 +183,7 @@ class DurableLedger:
             os.fsync(handle.fileno())
 
 
-class Seed78System(PromptEnsembleOptimizationSystem):
+class _LegacySeed78System(PromptEnsembleOptimizationSystem):
     """Canonical system state with one per-arm COMMON_SOLVER_CONTRACT_V1 cache."""
 
     def __init__(
@@ -347,8 +358,8 @@ class Seed78System(PromptEnsembleOptimizationSystem):
         }
 
 
-class ReflectionLM:
-    def __init__(self, system: Seed78System) -> None:
+class _LegacyReflectionLM:
+    def __init__(self, system: _LegacySeed78System) -> None:
         self.system = system
         self.sequence = 0
 
@@ -368,7 +379,7 @@ class ReflectionLM:
         return "\n".join(systems) or "You improve a reasoning procedure.", "\n\n".join(others)
 
     def __call__(self, prompt: str | list[dict[str, Any]]) -> str:
-        context = TASK_CONTEXT.get()
+        context = _LEGACY_TASK_CONTEXT.get()
         if context is None:
             raise RuntimeError("reflection call lacks local task attribution")
         system_prompt, user_prompt = self._messages(prompt)
@@ -412,7 +423,7 @@ class ReflectionLM:
         return asyncio.run_coroutine_threadsafe(run(), context["loop"]).result()
 
 
-class ContextualOptimizer:
+class _LegacyContextualOptimizer:
     def __init__(self, inner: GEPALocalPromptOptimizer, local_solver: SystemLocalSolverEvaluator) -> None:
         self.inner = inner
         self.local_solver = local_solver
@@ -425,15 +436,17 @@ class ContextualOptimizer:
             "update_index": update,
             "target_member": member,
             "phase": "local_optimizer_solver_eval",
-            "parent_id": f"seed{self.local_solver.system.cfg.seed}_update{update}",
+            "parent_id": (
+                f"seed{self.local_solver.system.cfg.training.seed}_update{update}"
+            ),
         }
-        token = TASK_CONTEXT.set(context)
+        token = _LEGACY_TASK_CONTEXT.set(context)
         self.local_solver.task_context = context
         try:
             return await self.inner.optimize(task)
         finally:
             self.local_solver.task_context = None
-            TASK_CONTEXT.reset(token)
+            _LEGACY_TASK_CONTEXT.reset(token)
 
 
 def _config(out: Path, *, optimize_path: Path, validation_path: Path) -> Config:
@@ -740,7 +753,7 @@ async def _initialize_system(
     return system
 
 
-def _profile_identity(system: Seed78System) -> dict[str, Any]:
+def _legacy_profile_identity(system: _LegacySeed78System) -> dict[str, Any]:
     return {
         "team_hash": system.team_prompt_state_hash(),
         "prompt_hashes": [system.prompt_hash(row.current_prompt) for row in system.agents],
@@ -799,7 +812,16 @@ async def _run_arm(
         accounting_reader=system.optimizer_accounting,
         run_root=root / "local_gepa",
     )
-    contextual = ContextualOptimizer(official, local_solver)
+    contextual = ContextualOptimizer(
+        official,
+        local_solver,
+        execution_context_from_system(
+            system,
+            local_no_update_patience=3,
+            team_no_update_patience=NO_COMMIT_PATIENCE,
+            saturation_mode="seed78_bounded_scheduler_pilot",
+        ),
+    )
     current_update = {"value": -1}
     shadow_probe = system.build_probe(shadow_rows)
     evaluator = SystemTeamCandidateEvaluator(
@@ -1028,7 +1050,7 @@ async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
     return summary
 
 
-def _ledger_summary(path: Path) -> dict[str, int]:
+def _legacy_ledger_summary(path: Path) -> dict[str, int]:
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
     completed = [
         row for row in rows
