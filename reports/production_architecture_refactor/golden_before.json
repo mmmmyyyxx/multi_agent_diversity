@@ -1,0 +1,663 @@
+{
+  "schema_version": "production_golden_trace_v1",
+  "traces": {
+    "gepa_layer2_fixed_budget": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": "candidate-1",
+      "final_state_hash": "team-committed",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "d3b403fa92f4dfbdda6ab7233692b99f5b0b2b383b3424150af5ce86d53b84ec",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "GEPA_LAYER2",
+      "packet": {
+        "anchor": [],
+        "focus": [],
+        "hash": "946906a4dafe2856e007a9eee659fe5ef3fa5c4659d55437fc883f2168968dd4",
+        "local_eval": [
+          "coalition-0",
+          "coalition-1",
+          "coalition-2",
+          "coalition-3"
+        ],
+        "responsibility": [
+          "responsibility-0",
+          "responsibility-1",
+          "responsibility-2",
+          "responsibility-3"
+        ],
+        "schedule": [
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ]
+        ]
+      },
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": null,
+        "stop_reason": "SCIENTIFIC_BUDGET_REACHED",
+        "team_no_update_counter": 0,
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "fixed_budget",
+      "target_member": 2,
+      "team_funnel": {
+        "committed_candidates": 1,
+        "feasible_candidates": 0,
+        "full_team_evaluated_candidates": 1,
+        "local_candidates": 1,
+        "target_branches": 1,
+        "team_minibatch_survivors": 1
+      },
+      "team_stages": [
+        "TeamMiniBatch",
+        "Full",
+        "Shadow"
+      ]
+    },
+    "gepa_layer2_saturation": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "team-initial",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "d3b403fa92f4dfbdda6ab7233692b99f5b0b2b383b3424150af5ce86d53b84ec",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "GEPA_LAYER2",
+      "packet": {
+        "anchor": [],
+        "focus": [],
+        "hash": "946906a4dafe2856e007a9eee659fe5ef3fa5c4659d55437fc883f2168968dd4",
+        "local_eval": [
+          "coalition-0",
+          "coalition-1",
+          "coalition-2",
+          "coalition-3"
+        ],
+        "responsibility": [
+          "responsibility-0",
+          "responsibility-1",
+          "responsibility-2",
+          "responsibility-3"
+        ],
+        "schedule": [
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ]
+        ]
+      },
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": 3,
+        "stop_reason": "SATURATION_REACHED",
+        "team_no_update_counter": 2,
+        "team_no_update_patience": 2
+      },
+      "stopping_regime": "saturation",
+      "target_member": 2,
+      "team_funnel": {
+        "committed_candidates": 0,
+        "feasible_candidates": 0,
+        "full_team_evaluated_candidates": 1,
+        "local_candidates": 1,
+        "target_branches": 1,
+        "team_minibatch_survivors": 1
+      },
+      "team_stages": [
+        "TeamMiniBatch",
+        "Full",
+        "Shadow",
+        "TeamMiniBatch",
+        "Full",
+        "Shadow"
+      ]
+    },
+    "gepa_native_fixed_budget": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "candidate-1",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "5432e25915582007e535e95e8118033e948587a1401c4d9413fa1ce0f33bea0e",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "GEPA_NATIVE",
+      "packet": null,
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": null,
+        "stop_reason": "SCIENTIFIC_BUDGET_REACHED",
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "fixed_budget",
+      "target_member": 2,
+      "team_stages": []
+    },
+    "gepa_native_saturation": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "candidate-1",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "5432e25915582007e535e95e8118033e948587a1401c4d9413fa1ce0f33bea0e",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "GEPA_NATIVE",
+      "packet": null,
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": 3,
+        "stop_reason": "SATURATION_REACHED",
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "saturation",
+      "target_member": 2,
+      "team_stages": []
+    },
+    "mars_layer2_fixed_budget": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": "candidate-1",
+      "final_state_hash": "team-committed",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "d3b403fa92f4dfbdda6ab7233692b99f5b0b2b383b3424150af5ce86d53b84ec",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "MARS_LAYER2",
+      "packet": {
+        "anchor": [],
+        "focus": [],
+        "hash": "946906a4dafe2856e007a9eee659fe5ef3fa5c4659d55437fc883f2168968dd4",
+        "local_eval": [
+          "coalition-0",
+          "coalition-1",
+          "coalition-2",
+          "coalition-3"
+        ],
+        "responsibility": [
+          "responsibility-0",
+          "responsibility-1",
+          "responsibility-2",
+          "responsibility-3"
+        ],
+        "schedule": [
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ]
+        ]
+      },
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": null,
+        "stop_reason": "SCIENTIFIC_BUDGET_REACHED",
+        "team_no_update_counter": 0,
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "fixed_budget",
+      "target_member": 2,
+      "team_funnel": {
+        "committed_candidates": 1,
+        "feasible_candidates": 0,
+        "full_team_evaluated_candidates": 1,
+        "local_candidates": 1,
+        "target_branches": 1,
+        "team_minibatch_survivors": 1
+      },
+      "team_stages": [
+        "TeamMiniBatch",
+        "Full",
+        "Shadow"
+      ]
+    },
+    "mars_layer2_saturation": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "team-initial",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "d3b403fa92f4dfbdda6ab7233692b99f5b0b2b383b3424150af5ce86d53b84ec",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "MARS_LAYER2",
+      "packet": {
+        "anchor": [],
+        "focus": [],
+        "hash": "946906a4dafe2856e007a9eee659fe5ef3fa5c4659d55437fc883f2168968dd4",
+        "local_eval": [
+          "coalition-0",
+          "coalition-1",
+          "coalition-2",
+          "coalition-3"
+        ],
+        "responsibility": [
+          "responsibility-0",
+          "responsibility-1",
+          "responsibility-2",
+          "responsibility-3"
+        ],
+        "schedule": [
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ],
+          [
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2"
+          ],
+          [
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0",
+            "responsibility:responsibility-1"
+          ],
+          [
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3",
+            "responsibility:responsibility-0"
+          ],
+          [
+            "responsibility:responsibility-1",
+            "responsibility:responsibility-2",
+            "responsibility:responsibility-3"
+          ]
+        ]
+      },
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": 3,
+        "stop_reason": "SATURATION_REACHED",
+        "team_no_update_counter": 2,
+        "team_no_update_patience": 2
+      },
+      "stopping_regime": "saturation",
+      "target_member": 2,
+      "team_funnel": {
+        "committed_candidates": 0,
+        "feasible_candidates": 0,
+        "full_team_evaluated_candidates": 1,
+        "local_candidates": 1,
+        "target_branches": 1,
+        "team_minibatch_survivors": 1
+      },
+      "team_stages": [
+        "TeamMiniBatch",
+        "Full",
+        "Shadow",
+        "TeamMiniBatch",
+        "Full",
+        "Shadow"
+      ]
+    },
+    "mars_native_fixed_budget": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "candidate-1",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "5432e25915582007e535e95e8118033e948587a1401c4d9413fa1ce0f33bea0e",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "MARS_NATIVE",
+      "packet": null,
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": null,
+        "stop_reason": "SCIENTIFIC_BUDGET_REACHED",
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "fixed_budget",
+      "target_member": 2,
+      "team_stages": []
+    },
+    "mars_native_saturation": {
+      "anchor_ids": [],
+      "candidate_ids": [
+        "candidate-1"
+      ],
+      "commit": null,
+      "final_state_hash": "candidate-1",
+      "focus_ids": [],
+      "initial_state_hash": "team-initial",
+      "layer1_request_identity": "5432e25915582007e535e95e8118033e948587a1401c4d9413fa1ce0f33bea0e",
+      "local_scores": [
+        1.0
+      ],
+      "mode": "MARS_NATIVE",
+      "packet": null,
+      "persistent_realizability": {
+        "failure_count": 0,
+        "member": 2
+      },
+      "pivotality": {
+        "P_0": 1,
+        "P_1": 2,
+        "P_2": 3,
+        "P_3": 4,
+        "P_4": 2
+      },
+      "responsibility_lane": "direct_flip",
+      "stopping": {
+        "local_no_update_patience": 3,
+        "stop_reason": "SATURATION_REACHED",
+        "team_no_update_patience": null
+      },
+      "stopping_regime": "saturation",
+      "target_member": 2,
+      "team_stages": []
+    }
+  }
+}
