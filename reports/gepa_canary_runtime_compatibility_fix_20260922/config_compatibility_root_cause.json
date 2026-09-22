@@ -1,0 +1,10 @@
+{
+  "actual_config_class": "multi_dataset_diverse_rl.config.Config",
+  "constructor": "Config.from_flat -> section dataclasses",
+  "failure_location": "historical Seed78 contextual optimizer wrapper",
+  "fix": "The active canary now uses a backend-neutral typed execution context and no longer imports the Seed78 runner.",
+  "historical_invalid_access": "system.cfg.seed",
+  "legacy_config_fields_added": 0,
+  "seed_current_owner": "Config.training.seed",
+  "why": "The current Config has structured sections and intentionally has no top-level seed attribute; a reused historical wrapper bypassed the current execution contract."
+}

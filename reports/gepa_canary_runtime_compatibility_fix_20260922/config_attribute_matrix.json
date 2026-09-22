@@ -1,0 +1,71 @@
+{
+  "gepa_optimizer_config_note": "GEPALocalPromptOptimizer.config is GEPAOptimizerConfig, not the application Config audited here; all of its accessed fields exist.",
+  "missing_reachable_fields_after_fix": 0,
+  "reachable_runtime_config_accesses": [
+    {
+      "consumer": "CommonContractExecutionSystem / execution_context_from_system",
+      "current_owner": "TrainingConfig",
+      "execution_relevance": "run seed and durable attribution",
+      "field": "training.seed",
+      "historical_owner": "top-level Config.seed assumption",
+      "present": true
+    },
+    {
+      "consumer": "credential binding / LocalOptimizerExecutionContext",
+      "current_owner": "ModelConfig",
+      "execution_relevance": "fail-closed provider identity",
+      "field": "models.provider_profile",
+      "historical_owner": "runner constant or default provider",
+      "present": true
+    },
+    {
+      "consumer": "LocalOptimizerExecutionContext",
+      "current_owner": "ModelConfig",
+      "execution_relevance": "Solver identity",
+      "field": "models.agent_model",
+      "historical_owner": "runner constant",
+      "present": true
+    },
+    {
+      "consumer": "ReflectionLM through typed invocation",
+      "current_owner": "ModelConfig",
+      "execution_relevance": "reflection model identity",
+      "field": "models.optimizer_model",
+      "historical_owner": "ROLE_MODEL global",
+      "present": true
+    },
+    {
+      "consumer": "LocalOptimizerExecutionContext",
+      "current_owner": "ModelConfig",
+      "execution_relevance": "evaluator provenance",
+      "field": "models.evaluator_model",
+      "historical_owner": "runner constant",
+      "present": true
+    },
+    {
+      "consumer": "CommonContractExecutionSystem",
+      "current_owner": "ModelConfig",
+      "execution_relevance": "credential variable names only; values never persisted",
+      "field": "models.solver_api_key_env / solver_base_url_env",
+      "historical_owner": "process default environment",
+      "present": true
+    },
+    {
+      "consumer": "LocalOptimizerExecutionContext",
+      "current_owner": "startup identity/source freeze",
+      "execution_relevance": "attempt provenance",
+      "field": "run_identity_sha256",
+      "historical_owner": "implicit system state",
+      "present": true
+    },
+    {
+      "consumer": "LocalOptimizerExecutionContext",
+      "current_owner": "experiment protocol/execution harness",
+      "execution_relevance": "stopping provenance; not GEPA search control",
+      "field": "local/team patience and saturation mode",
+      "historical_owner": "runner constants",
+      "present": true
+    }
+  ],
+  "stale_missing_accesses_found": 1
+}

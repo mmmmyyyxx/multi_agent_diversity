@@ -1,0 +1,16 @@
+{
+  "fields": {
+    "evaluator_model_identity": "LocalOptimizerConfigurationError before backend/provider",
+    "optimizer_model_identity": "LocalOptimizerConfigurationError before backend/provider",
+    "packet": "LocalOptimizerConfigurationError before backend/provider",
+    "parent_candidate": "LocalOptimizerConfigurationError before backend/provider",
+    "provider_identity": "LocalOptimizerConfigurationError before backend/provider",
+    "run_identity": "LocalOptimizerConfigurationError before backend/provider",
+    "seed": "LocalOptimizerConfigurationError before backend/provider",
+    "solver_model_identity": "LocalOptimizerConfigurationError before backend/provider",
+    "target_member": "LocalOptimizerConfigurationError before backend/provider",
+    "update_index": "LocalOptimizerConfigurationError before backend/provider"
+  },
+  "gate": "PASS",
+  "generic_attribute_error_paths": 0
+}

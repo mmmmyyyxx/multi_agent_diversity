@@ -1,0 +1,23 @@
+{
+  "accounting": {
+    "candidate_solver_calls": 0,
+    "input_tokens": 19665,
+    "logical_calls": 100,
+    "output_tokens": 6768,
+    "provider_failures": 0,
+    "provider_successes": 100,
+    "reflection_calls": 0,
+    "total_tokens": 26433
+  },
+  "attempt": "gepa_layer2_real_canary_v2_authorized2",
+  "classification": "ENGINEERING_RUNTIME_FAILURE",
+  "failure_type": "AttributeError",
+  "immutable": true,
+  "ledger_sha256": "40bbb3fe03f7037599fb5ff54641d568fdcb2c6660357749b5bd14f4aba4030d",
+  "lifecycle_sha256": "7386d421426df1ac6712f049325da98df154903f4e015390d7d241d9321b2463",
+  "lifecycle_status": "ABORTED",
+  "provider_boundary_reached": true,
+  "retry_or_resume_allowed": false,
+  "scientific_gepa_search_boundary_reached": false,
+  "scientific_result": "SCIENTIFIC_NON_RESULT"
+}

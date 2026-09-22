@@ -1,0 +1,10 @@
+{
+  "active_canary_imports_seed78_runner_after_fix": false,
+  "active_canary_source_freeze_includes_seed78_runner_after_fix": false,
+  "classification_before_fix": "B_HISTORICAL_RUNNER_ACCIDENTALLY_RETAINED",
+  "historical_seed78_runner_was_active": true,
+  "reachable_stale_dependencies_after_fix": [],
+  "scientific_semantics_changed": false,
+  "shared_runtime_replacement": "multi_dataset_diverse_rl.team_search.execution_runtime",
+  "unreachable_historical_code_refactored": false
+}

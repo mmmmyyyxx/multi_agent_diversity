@@ -1,0 +1,27 @@
+{
+  "api_calls": 0,
+  "compileall": "PASS",
+  "focused_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 154
+  },
+  "full_tests": {
+    "errors": 13,
+    "failed": 15,
+    "new_failure_classes": 0,
+    "nonpassing_classification": "KNOWN_MISSING_HISTORICAL_PRIVATE_ARTIFACTS",
+    "passed": 1221
+  },
+  "gepa_identity": "PASS",
+  "governance_preflight": "PASS",
+  "independent_freeze_replay_count": 3,
+  "runtime_compatibility_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 13
+  },
+  "startup_identity_replay": "PASS",
+  "test50_calls": 0,
+  "validation50_calls": 0
+}

@@ -1,0 +1,19 @@
+{
+  "boundary_fixture": "GEPA_LOCAL_OPTIMIZER_READY",
+  "full_path": [
+    "Layer2-derived LocalOptimizationTask",
+    "typed runtime context",
+    "official frozen GEPA",
+    "fake reflection",
+    "changed proposal",
+    "contract validation",
+    "fake candidate Solver",
+    "local delta"
+  ],
+  "gate": "PASS",
+  "local_delta_computed": true,
+  "offline_only": true,
+  "real_api_calls": 0,
+  "same_production_wrapper": "ContextualLocalPromptOptimizer",
+  "solver_reached": true
+}

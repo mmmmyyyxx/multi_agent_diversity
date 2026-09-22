@@ -1,0 +1,17 @@
+{
+  "files": {
+    "README.md": "72fdcf1254ea2bbafa77faac4865226df1d30495e15d83453f77fdac02e6483c",
+    "cache_reuse_policy.json": "df86faa75f8de960fdcdf9fcffa35ce6a1a2d6ca2b42f8b48b38a8c2864932c2",
+    "config_attribute_matrix.json": "d6ccc0bc62f434e0ac6b4f12490d394d8861d9c22fed2187a824910b1ba213b0",
+    "config_compatibility_root_cause.json": "fcd5b599c3a874c50c3aef1fca599ea73dd0670cbebbd1312c8bcf79cb8eb958",
+    "cost_separation_audit.json": "b4684e2c79fed54f87e510942cea7c613e1861450dec5a454a7adc1e438fe71a",
+    "failed_attempt_summary.json": "938b7934557d2510a1662af2535eb3ba4bd6ff889f30ad166ca30c7feaf9ed23",
+    "fake_gepa_path_audit.json": "053ef4a48f2ca47a7c2a44a1084f414f839ea9ec1060097beb36a7070c4edccd",
+    "historical_runtime_dependency_audit.json": "7f853f70b448eeedbf8350ad62db4087c53febd9cb1b866c5b1005cd81dc320a",
+    "local_optimizer_entry_contract.json": "a24169adf6b0ab9d29d71e5ba4369cbe7272eabb3e79553b6eec6cc8b882cd03",
+    "runtime_field_poison_audit.json": "fb2d87a327fb9d250a82950ce1f55de2eb5ff61b2b5d54e92ec02a683856acf9",
+    "sanitization_manifest.json": "aa92c56b1bdee9948b66dd6eb2000dc18936a192d6c99ccc032f3e83fd8120fd",
+    "scientific_method_equivalence_audit.json": "666ce989008cede765a740cc47332dd10dd1185e49232a217280acf281fdd2b5",
+    "test_summary.json": "c6de3c1551d622a181050c73401771ba404bcc00ce2980c0cb76b8d554dd224d"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "authorized2_failed_attempt": {
+    "candidate_solver_calls": 0,
+    "input_tokens": 19665,
+    "logical_calls": 100,
+    "output_tokens": 6768,
+    "provider_failures": 0,
+    "provider_successes": 100,
+    "reflection_calls": 0,
+    "total_tokens": 26433
+  },
+  "future_attempt_denominator_includes_authorized2": false,
+  "future_cost_envelope": {
+    "baseline_initialization_logical_rows": 500,
+    "baseline_initialization_provider_success_ceiling": 100,
+    "gepa_local_metric_calls": 36,
+    "total_provider_success_ceiling": 256
+  },
+  "historical_cost_disclosed": true
+}

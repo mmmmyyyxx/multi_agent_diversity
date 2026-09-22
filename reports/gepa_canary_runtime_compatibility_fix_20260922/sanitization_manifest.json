@@ -1,0 +1,10 @@
+{
+  "credentials_endpoints_absolute_paths_published": false,
+  "gate": "PASS",
+  "prompts_questions_answers_raw_responses_published": false,
+  "scan_hits": {
+    "absolute_path": 0,
+    "raw_endpoint": 0,
+    "raw_key": 0
+  }
+}

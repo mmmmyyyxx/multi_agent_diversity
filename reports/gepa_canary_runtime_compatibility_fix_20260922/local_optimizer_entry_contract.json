@@ -1,0 +1,26 @@
+{
+  "backend_owned_inputs": [
+    "GEPA search state",
+    "proposal generation"
+  ],
+  "contract": "LocalOptimizerExecutionContext + LocalOptimizationTask",
+  "execution_inputs": [
+    "provider_profile",
+    "solver_model",
+    "optimizer_model",
+    "evaluator_model",
+    "run_identity_sha256",
+    "local_no_update_patience",
+    "team_no_update_patience",
+    "saturation_mode"
+  ],
+  "failure_boundary": "before reflection and candidate Solver",
+  "layer2_owned_inputs": [
+    "target_member",
+    "responsibility-derived local task/evidence packet",
+    "run_seed",
+    "update_index",
+    "candidate parent"
+  ],
+  "missing_field_exception": "LocalOptimizerConfigurationError"
+}

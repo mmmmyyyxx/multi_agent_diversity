@@ -1,0 +1,9 @@
+{
+  "cross_attempt_reuse_added": false,
+  "expected_baseline_logical_rows": 500,
+  "expected_baseline_provider_success_ceiling": 100,
+  "future_attempt": "gepa_layer2_real_canary_v2_authorized3",
+  "manual_copy_from_authorized2": false,
+  "note": "Only existing exact request-identity semantics may produce hits.",
+  "run_cache_initialization": "fresh empty run-local cache"
+}

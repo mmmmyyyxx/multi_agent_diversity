@@ -1,0 +1,34 @@
+{
+  "changed_files": [
+    "experiments/manifests/gepa_layer2_real_canary_v2.yaml",
+    "multi_dataset_diverse_rl/local_optimizers/schemas.py",
+    "multi_dataset_diverse_rl/team_search/execution_runtime.py",
+    "multi_dataset_diverse_rl/team_search/task_builder.py",
+    "scripts/audit_gepa_canary_runtime_compatibility_fix.py",
+    "scripts/run_gepa_layer2_real_canary_v2.py",
+    "scripts/run_level_b_gepa_local_acceptance_rate_pilot.py",
+    "scripts/run_level_b_gepa_real_canary.py",
+    "scripts/run_seed78_primary_responsibility_ab.py",
+    "scripts/run_sequential_symmetry_breaking_online_pilot_v1.py",
+    "scripts/run_sequential_symmetry_breaking_online_pilot_v2.py",
+    "tests/test_local_optimizer_execution_runtime.py"
+  ],
+  "gate": "PASS",
+  "implementation_change_class": "execution-interface-only",
+  "official_gepa_modified": false,
+  "protected_semantics": {
+    "Common-Safe": "UNCHANGED",
+    "Full": "UNCHANGED",
+    "GEPA search core": "UNCHANGED",
+    "Shadow": "UNCHANGED",
+    "TeamMiniBatch": "UNCHANGED",
+    "persistent realizability": "UNCHANGED",
+    "plurality": "UNCHANGED",
+    "responsibility scoring": "UNCHANGED",
+    "responsibility/focus/anchor/local_eval": "UNCHANGED",
+    "saturation patience 3/2": "UNCHANGED",
+    "target allocation": "UNCHANGED",
+    "write-back": "UNCHANGED"
+  },
+  "provider_or_model_changed": false
+}
