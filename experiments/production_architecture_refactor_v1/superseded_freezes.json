@@ -1,0 +1,16 @@
+{
+  "reason": "SUPERSEDED_BEFORE_EXECUTION_BY_ARCHITECTURAL_REFACTOR",
+  "superseded_by_base": "9285822296ae17ef830354ca8688ee0595744f08",
+  "immutable_originals_modified": false,
+  "experiments": [
+    "gepa_layer2_real_canary_v2_authorized3",
+    "sequential_symmetry_breaking_online_pilot_v2_pending_authorization",
+    "gepa_saturation_comparison_v2"
+  ],
+  "future_execution_requires": [
+    "fresh execution freeze",
+    "fresh preregistration",
+    "fresh run identity",
+    "fresh authorization"
+  ]
+}

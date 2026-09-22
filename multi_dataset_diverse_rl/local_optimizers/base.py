@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from .schemas import LocalEvidenceExample, LocalOptimizationResult, LocalOptimizationTask
 from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
+
+if TYPE_CHECKING:
+    from ..experiment import LocalOptimizationRequest, RuntimeContext
 
 
 @dataclass(frozen=True)
@@ -37,6 +40,26 @@ class LocalSolverEvaluator(Protocol):
 class LocalPromptOptimizer(Protocol):
     async def optimize(self, task: LocalOptimizationTask) -> LocalOptimizationResult:
         """Return a bounded candidate set; never make a team write-back decision."""
+        ...
+
+
+@runtime_checkable
+class LocalOptimizerBackend(Protocol):
+    """Production Layer-1 boundary shared by GEPA and MARS.
+
+    The request describes the local problem. The context contains explicit
+    execution identity. Neither object exposes the historical monolithic
+    ``Config`` to Layer 1.
+    """
+
+    name: str
+    fidelity: str
+
+    async def optimize(
+        self,
+        request: "LocalOptimizationRequest",
+        context: "RuntimeContext",
+    ) -> LocalOptimizationResult:
         ...
 
 

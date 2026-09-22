@@ -1,6 +1,7 @@
 """Replaceable single-member prompt-optimization backends."""
 
 from .base import (
+    LocalOptimizerBackend,
     LocalPromptOptimizer,
     Layer2EvidencePromptOptimizer,
     LocalSolverEvaluator,
@@ -36,6 +37,7 @@ __all__ = [
     "LocalOptimizerBudget",
     "LocalPromptCandidate",
     "LocalPromptOptimizer",
+    "LocalOptimizerBackend",
     "Layer2EvidencePromptOptimizer",
     "LocalSolverEvaluator",
     "LocalSolverObservation",

@@ -20,6 +20,7 @@ from ..evaluation.solver_stage import (
     team_solver_stage_attribution,
     validate_solver_stage_attribution,
 )
+from ..local_optimizers.base import LocalSolverObservation
 from ..local_optimizers.schemas import LocalPromptCandidate
 from ..native_feed import CandidateTransitionAudit
 from ..peer_state import TeamVoteState
@@ -249,8 +250,6 @@ class SystemLocalSolverEvaluator:
         self.output_contract_id = output_contract_id
 
     def evaluate(self, decision_procedure: str, example: Any) -> Any:
-        from ..local_optimizers.gepa_adapter import LocalSolverObservation
-
         if self.system.fixed_probe is None:
             raise RuntimeError("fixed Optimize probe is not initialized")
         context = getattr(self, "task_context", None)
@@ -359,7 +358,10 @@ class SystemTeamCandidateEvaluator:
             self.stage(team_solver_stage_attribution(
                 phase=evaluation_stage,
                 seed=self.system.cfg.training.seed,
-                parent_id=f"seed78_update{self.update_index_reader()}",
+                parent_id=(
+                    f"seed{self.system.cfg.training.seed}_"
+                    f"update{self.update_index_reader()}"
+                ),
                 update_index=self.update_index_reader(),
                 target_member=target,
                 candidate_id=candidate.candidate_id,
@@ -559,7 +561,10 @@ class SystemTeamCandidateEvaluator:
             self.stage(team_solver_stage_attribution(
                 phase="team_shadow_eval",
                 seed=self.system.cfg.training.seed,
-                parent_id=f"seed78_update{self.update_index_reader()}",
+                parent_id=(
+                    f"seed{self.system.cfg.training.seed}_"
+                    f"update{self.update_index_reader()}"
+                ),
                 update_index=self.update_index_reader(),
                 target_member=target,
                 candidate_id=candidate.candidate_id,
