@@ -1,0 +1,39 @@
+{
+  "audit_completed_before_implementation": true,
+  "base_sha": "80442264a8086f3fe407e1551ae2ecc8448f8676",
+  "scientific_method_anchor_sha": "a85e31bea2ab28f62abb31337b91f9895b11ae37",
+  "planned_changes": [
+    {
+      "classification": "EXECUTION_PROVIDER_BINDING",
+      "scope": "new v2 runner-local explicit lwj provider/model contract"
+    },
+    {
+      "classification": "EXECUTION_INITIALIZATION",
+      "scope": "new fresh deterministic canonical prompt-team initialization"
+    },
+    {
+      "classification": "EXECUTION_PREFLIGHT",
+      "scope": "new pre-provider manifest, environment, hash and authorization gates"
+    },
+    {
+      "classification": "RUN_IDENTITY",
+      "scope": "provider fingerprint, models, patience, initialization policy and source identities"
+    },
+    {
+      "classification": "REPORTING_TEST_ONLY",
+      "scope": "new v2 freezes, audits and offline regression tests"
+    }
+  ],
+  "scientific_method_files_planned": [],
+  "unknown_files_planned": [],
+  "protected_areas": [
+    "responsibility attribution and target scoring",
+    "persistent realizability",
+    "responsibility/focus/anchor/local_eval construction",
+    "GEPA search core and Layer2 evidence semantics",
+    "TeamMiniBatch, Full, Common-Safe, Shadow and write-back",
+    "plurality",
+    "saturation patience, team epoch and update definitions"
+  ],
+  "gate": "PASS"
+}

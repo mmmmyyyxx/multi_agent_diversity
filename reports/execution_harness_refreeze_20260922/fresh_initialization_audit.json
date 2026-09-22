@@ -1,0 +1,1 @@
+{"canonical_initialization_mode":"shared_identical","canonical_shared_prompt_sha256":"549bc93c03f703faf5aa1bd56b557135fb6e65d0cf6c055b8fad6a15e7c87a63","empirical_materialization_at_execution":true,"gate":"PASS","homogeneous_team_is_canonical":true,"initialization_cost_reported_separately":true,"policy":"FRESH_DETERMINISTIC_INITIALIZATION_V1","root_anchor":[],"root_focus":[]}

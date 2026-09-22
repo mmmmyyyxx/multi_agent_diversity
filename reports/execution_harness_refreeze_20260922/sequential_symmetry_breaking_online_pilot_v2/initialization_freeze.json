@@ -1,0 +1,1 @@
+{"canonical_config_source":"Config.training.shared_prompt","cost_partition":"INITIALIZATION_SOLVER_CALLS","empirical_materialization_at_execution":true,"historical_private_parent_dependencies":[],"member_prompt_policy":"shared_identical","policy":"FRESH_DETERMINISTIC_INITIALIZATION_V1","root_anchor":[],"root_focus":[]}

@@ -1,0 +1,1 @@
+{"frozen_before_run":true,"limit":{"baseline_initialization_logical_rows":500,"local_metric_calls_per_target":36,"max_opportunities":8,"max_safe_commits":4,"provider_success_ceiling":4932,"targets_per_opportunity":2,"test50_calls":0,"validation50_calls":0},"test50_calls":0,"validation50_calls":0}

@@ -1,0 +1,1 @@
+{"authorization_currently_granted":false,"bound_fields":["experiment_id","execution_source_sha","protocol_sha256","manifest_sha256","provider_profile","endpoint_fingerprint","models"],"change_invalidates_authorization":true,"gate":"PASS"}
