@@ -1,0 +1,1 @@
+{"blockers":["existing_canary_runner_does_not_bind_provider_profile_lwj"],"data_identity_frozen":true,"gate":"HOLD_EXECUTION_HARNESS_NOT_FROZEN","provider_and_models_frozen":true,"real_provider_attempts_during_prep":0,"scientific_preregistration_complete":true,"scientific_source_commit_matches":true,"test50_calls_during_prep":0,"validation50_calls_during_prep":0}

@@ -1,0 +1,1 @@
+{"budget_type":"saturation_no_scientific_hard_budget","cost_matching":false,"emergency_optimizer_steps":100000,"emergency_provider_calls":100000,"emergency_team_epochs":10000,"emergency_wall_seconds":86400,"report_full_role_and_token_accounting":true,"test50_calls":0,"validation50_calls":0}

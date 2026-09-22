@@ -1,0 +1,1 @@
+{"allowed":["LAYER2_AUGMENTED_GEPA_REACHES_HIGHER_SATURATED_PERFORMANCE_THAN_NATIVE_GEPA"],"cross_optimizer_claims":false,"forbidden":["LAYER2_CAUSALLY_IMPROVES_GEPA_IN_A_MATCHED_FIVE_AGENT_SETTING"],"primary_reporting":"per_seed_paired_values_with_initial_performance_visible"}

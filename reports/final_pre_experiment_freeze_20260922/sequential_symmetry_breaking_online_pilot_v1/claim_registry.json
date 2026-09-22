@@ -1,0 +1,1 @@
+{"allowed":["ONLINE_LAYER2_COMMIT_PATH_CONFIRMED","ONLINE_PIPELINE_REACHES_PIVOTAL_CAPABLE_STATE","ONLINE_PIPELINE_OBTAINS_VOTE_GAIN"],"classifiers":{"A":"commit+pivotal+vote observed","B":"commit+pivotal observed; vote not observed","C":"commit observed; pivotal not observed","D":"no commit within pilot"}}

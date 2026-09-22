@@ -1,0 +1,1 @@
+{"execution_regime":"fixed_engineering_or_mechanism_pilot","historical_candidate_options":{"local":[2,3,5],"team":[1,2,3]},"schema_version":"saturation_stopping_preregistration_v1","scientific_saturation_claim_allowed":false,"selected_before_real_outcomes":true,"selected_local_no_update_patience":3,"selected_team_no_update_patience":2,"validation_or_test_used":false}

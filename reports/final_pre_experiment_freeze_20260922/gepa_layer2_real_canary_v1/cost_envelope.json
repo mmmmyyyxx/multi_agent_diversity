@@ -1,0 +1,1 @@
+{"budget_type":"fixed_minimal_engineering_canary","local_metric_calls":36,"opportunities":1,"provider_attempt_ceiling":1024,"provider_success_ceiling":256,"reflection_success_ceiling":8,"target_branches":1,"test50_calls":0,"validation50_calls":0,"wall_seconds_ceiling":3600}

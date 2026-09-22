@@ -1,0 +1,1 @@
+{"authorization_identity":null,"authorization_state":"AUTHORIZATION_REQUIRED","authorized":false,"blockers":["stage_not_open_until_GEPA_infrastructure_is_stable","dedicated_MARS_canary_harness_not_frozen"],"fresh_one_time_authorization_required":true,"ready_for_authorization":false,"ready_to_run":false,"reuse_for_retry_extension_or_new_seed":false}
