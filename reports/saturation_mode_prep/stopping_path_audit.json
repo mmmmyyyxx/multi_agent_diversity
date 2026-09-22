@@ -1,0 +1,219 @@
+{
+  "audit_version": "saturation_stopping_path_audit_v1",
+  "base_sha": "9271e6bf352c393441f44ebd793bc2fbd680c0de",
+  "completed_before_implementation": true,
+  "pinned_gepa_source": "independent_gepa_repro/vendor/gepa/src/gepa",
+  "findings": [
+    {
+      "mode": "GEPA_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "function_or_class": "GEPANativeFeedOptimizer.task_for",
+      "condition": "request.budget.metric_call_limit is copied to LocalOptimizerBudget.max_metric_calls",
+      "current_semantic_purpose": "bounded formal/search compute supplied by the experiment",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "GEPA_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/gepa_optimizer.py",
+      "function_or_class": "GEPALocalPromptOptimizer.optimize",
+      "condition": "pinned gepa.optimize receives max_metric_calls=task.budget.max_metric_calls",
+      "current_semantic_purpose": "only normal termination bound exposed by the project wrapper",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "GEPA_NATIVE",
+      "file": "independent_gepa_repro/vendor/gepa/src/gepa/core/engine.py",
+      "function_or_class": "GEPAEngine.run/_should_stop",
+      "condition": "MaxMetricCallsStopper or another stop_callback returns true",
+      "current_semantic_purpose": "pinned engine resource/operational stopper; proposal iteration is not an epoch",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "GEPA_NATIVE",
+      "file": "independent_gepa_repro/vendor/gepa/src/gepa/strategies/batch_sampler.py",
+      "function_or_class": "EpochShuffledBatchSampler.next_minibatch_ids",
+      "condition": "base index crosses one full shuffled-id traversal",
+      "current_semantic_purpose": "backend-native complete training epoch boundary; it does not stop the engine",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "GEPA_NATIVE",
+      "file": "independent_gepa_repro/vendor/gepa/src/gepa/core/engine.py",
+      "function_or_class": "GEPAEngine.run",
+      "condition": "reflective proposal requires new_sum > old_sum before full evaluation and candidate acceptance",
+      "current_semantic_purpose": "backend-native strict local acceptance; equal-score mutations are rejected",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "GEPA_LAYER2",
+      "file": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "function_or_class": "Layer2FrozenBatchSampler.next_minibatch_ids",
+      "condition": "cursor reaches len(ordered_batch_schedule) and raises Layer2EvidenceScheduleExhausted",
+      "current_semantic_purpose": "fail closed against native sampling fallback, but currently aborts the local optimization",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "GEPA_LAYER2",
+      "file": "multi_dataset_diverse_rl/local_optimizers/gepa_native.py",
+      "function_or_class": "GEPALayer2EvidenceOptimizer.task_for",
+      "condition": "packet.budget.metric_call_limit is copied to LocalOptimizerBudget.max_metric_calls",
+      "current_semantic_purpose": "per-opportunity fixed metric budget",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSNativeFeedOptimizer.optimize_native",
+      "condition": "max_rounds=min(native_unit_limit, planner step count)",
+      "current_semantic_purpose": "historical fixed round/resource cap",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSNativeFeedOptimizer.optimize_native",
+      "condition": "roles plus next T/C/S cycle would exceed optimizer_call_limit",
+      "current_semantic_purpose": "historical fixed optimizer-call resource cap",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSNativeFeedOptimizer.optimize_native",
+      "condition": "next Target evaluation would exceed metric_call_limit",
+      "current_semantic_purpose": "historical fixed task-model resource cap",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSNativeFeedOptimizer.optimize_native",
+      "condition": "stable_rounds >= max_stable_rounds with abs(score-previous_score) < stability_threshold",
+      "current_semantic_purpose": "native meaningful stability convergence check",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "MARS_NATIVE",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSNativeFeedOptimizer.optimize_native",
+      "condition": "candidate score > original parent score before it is deployable",
+      "current_semantic_purpose": "backend-native strict acceptance; equal score is not an accepted update",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_LAYER2",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSLayer2EvidenceOptimizer.optimize_layer2",
+      "condition": "max_rounds=min(packet budget native_unit_limit, planner step count)",
+      "current_semantic_purpose": "per-opportunity fixed local round cap",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_LAYER2",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSLayer2EvidenceOptimizer.optimize_layer2",
+      "condition": "optimizer_call_limit and metric_call_limit guards break the loop",
+      "current_semantic_purpose": "per-opportunity fixed provider/task evaluation caps",
+      "classification": "scientific_budget",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "MARS_LAYER2",
+      "file": "multi_dataset_diverse_rl/local_optimizers/mars_native.py",
+      "function_or_class": "MARSLayer2EvidenceOptimizer.optimize_layer2",
+      "condition": "stable_rounds >= max_stable_rounds",
+      "current_semantic_purpose": "native meaningful stability convergence check retained over packet-owned evidence",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "GEPA_LAYER2,MARS_LAYER2",
+      "file": "multi_dataset_diverse_rl/team_search/controller.py",
+      "function_or_class": "Layer2TeamController.run_opportunity",
+      "condition": "one frozen target opportunity returns after commit or no_team_safe_winner",
+      "current_semantic_purpose": "single opportunity boundary; there is no shared team-epoch saturation loop",
+      "classification": "algorithmic_stopper",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "GEPA_LAYER2,MARS_LAYER2",
+      "file": "multi_dataset_diverse_rl/team_search/symmetry_breaking.py",
+      "function_or_class": "SymmetryBreakingTrajectory.stop_reason",
+      "condition": "first Vote improvement, max safe commits, no-commit patience, or max opportunities",
+      "current_semantic_purpose": "mechanism-pilot endpoints; not general saturation semantics",
+      "classification": "scientific_budget",
+      "enabled_by_default": false,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "GEPA_LAYER2,MARS_LAYER2",
+      "file": "scripts/run_sequential_symmetry_breaking_online_pilot_v1.py",
+      "function_or_class": "run_arm",
+      "condition": "successful provider-call ceiling",
+      "current_semantic_purpose": "runaway/provider safety",
+      "classification": "emergency_ceiling",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": false
+    },
+    {
+      "mode": "ALL",
+      "file": "multi_dataset_diverse_rl/system.py",
+      "function_or_class": "configured provider/token budget guards",
+      "condition": "provider call or total token budget exhausted",
+      "current_semantic_purpose": "global operational protection in historical runners",
+      "classification": "emergency_ceiling",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    },
+    {
+      "mode": "ALL",
+      "file": "provider transport/runtime clients",
+      "function_or_class": "request retry and timeout policy",
+      "condition": "frozen transport attempts exhausted or request timeout",
+      "current_semantic_purpose": "external operational failure handling, never scientific convergence",
+      "classification": "emergency_ceiling",
+      "enabled_by_default": true,
+      "can_currently_be_disabled": true
+    }
+  ],
+  "audit_conclusions": {
+    "gepa_native_complete_unit": "one complete EpochShuffledBatchSampler traversal; the pinned engine has proposal iterations but no epoch stopper",
+    "gepa_layer2_complete_unit": "one complete pass over the Layer2-owned ordered evidence schedule",
+    "mars_native_complete_unit": "one Planner step followed by Teacher/Critic/Student and Target evaluation when Critic permits Student",
+    "mars_layer2_complete_unit": "one packet-owned Planner/Teacher/Critic/Student/Target round",
+    "shared_team_unit_missing": true,
+    "ordinary_budgets_currently_disableable_in_all_four_modes": false,
+    "packet_exhaustion_currently_ends_local_run": true,
+    "emergency_and_scientific_stop_reasons_currently_separated": false,
+    "oscillation_hash_telemetry_currently_complete": false
+  }
+}

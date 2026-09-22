@@ -19,12 +19,18 @@ from ..versions import (
 )
 from .gepa_adapter import GEPAAdapter
 from .gepa_optimizer import GEPALocalPromptOptimizer
+from .gepa_runtime import import_frozen_gepa
 from .schemas import (
     LocalEvidenceExample,
     LocalOptimizationResult,
     LocalOptimizationTask,
     LocalOptimizerBudget,
     OpaqueOptimizerState,
+)
+from ..saturation import (
+    LAYER2_EVIDENCE_EPOCH_POLICY_V1,
+    OptimizationUnitType,
+    SaturationConfig,
 )
 
 
@@ -122,10 +128,12 @@ class GEPANativeFeedOptimizer:
         engine: GEPALocalPromptOptimizer,
         data_builder: GEPANativeDataBuilder,
         layer2_overlay_enabled: bool,
+        saturation_config: SaturationConfig | None = None,
     ) -> None:
         self.engine = engine
         self.data_builder = data_builder
         self.layer2_overlay_enabled = layer2_overlay_enabled
+        self.saturation_config = saturation_config
 
     def task_for(self, request: NativeOptimizationRequest) -> LocalOptimizationTask:
         dataset = self.data_builder.build(request)
@@ -158,7 +166,20 @@ class GEPANativeFeedOptimizer:
     ) -> LocalOptimizationResult:
         # The opaque result crosses the common optimizer boundary unchanged;
         # Layer 2 cannot inspect native split state to steer GEPA's search.
-        return await self.engine.optimize(self.task_for(request))
+        task = self.task_for(request)
+        if self.saturation_config is None or not self.saturation_config.enabled:
+            return await self.engine.optimize(task)
+        sampler = _PinnedNativeEpochSampler(
+            minibatch_size=self.engine.config.reflection_minibatch_size,
+            seed=request.seed,
+        )
+        return await self.engine.optimize_saturation(
+            task,
+            batch_sampler=sampler,
+            config=self.saturation_config,
+            unit_type=OptimizationUnitType.GEPA_NATIVE_EPOCH,
+            mode_name="gepa_native",
+        )
 
     def parity_identity(self, request: NativeOptimizationRequest) -> str:
         payload = {
@@ -168,6 +189,10 @@ class GEPANativeFeedOptimizer:
             "solver_contract": request.solver_contract_id,
             "output_contract": request.output_contract_id,
             "candidate_component": "decision_procedure",
+            "saturation_config_identity": (
+                self.saturation_config.identity()
+                if self.saturation_config is not None else "none"
+            ),
         }
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -186,6 +211,7 @@ class Layer2FrozenBatchSampler:
         *,
         ordered_batch_schedule: tuple[tuple[str, ...], ...],
         ordered_example_ids: tuple[str, ...],
+        replay_epochs: bool = False,
     ) -> None:
         self.schedule = ordered_batch_schedule
         self.ordered_example_ids = ordered_example_ids
@@ -197,6 +223,12 @@ class Layer2FrozenBatchSampler:
         self.delivery_calls = 0
         self.backend_example_selection_calls = 0
         self.delivered_ids: list[tuple[str, ...]] = []
+        self.replay_epochs = bool(replay_epochs)
+        self.completed_epoch_count = 0
+        self.last_delivery_completed_epoch = False
+        self.epoch_policy = (
+            LAYER2_EVIDENCE_EPOCH_POLICY_V1 if replay_epochs else "single_pass_fail_closed"
+        )
 
     def next_minibatch_ids(self, loader, state):
         del state
@@ -204,16 +236,52 @@ class Layer2FrozenBatchSampler:
         if loader_ids != tuple(range(len(self.ordered_example_ids))):
             raise RuntimeError("GEPA treatment loader differs from Layer-2 packet")
         if self.cursor >= len(self.schedule):
-            raise Layer2EvidenceScheduleExhausted(
-                "Layer-2 evidence schedule exhausted; native fallback is forbidden"
-            )
+            if not self.replay_epochs:
+                raise Layer2EvidenceScheduleExhausted(
+                    "Layer-2 evidence schedule exhausted; native fallback is forbidden"
+                )
+            self.cursor = 0
         batch = self.schedule[self.cursor]
         self.cursor += 1
         self.delivery_calls += 1
         if not set(batch).issubset(self.allowed_ids):
             raise RuntimeError("scheduled GEPA batch contains an unlisted example")
         self.delivered_ids.append(batch)
+        self.last_delivery_completed_epoch = self.cursor == len(self.schedule)
+        if self.last_delivery_completed_epoch:
+            self.completed_epoch_count += 1
         return [self.index_by_id[example_id] for example_id in batch]
+
+
+class _PinnedNativeEpochSampler:
+    """Observe complete epochs while delegating selection to pinned GEPA."""
+
+    def __init__(self, *, minibatch_size: int, seed: int) -> None:
+        import random
+
+        import_frozen_gepa()
+        from gepa.strategies.batch_sampler import EpochShuffledBatchSampler
+
+        self.delegate = EpochShuffledBatchSampler(
+            minibatch_size=minibatch_size,
+            rng=random.Random(seed),
+        )
+        self.delivery_calls = 0
+        self.completed_epoch_count = 0
+        self.last_delivery_completed_epoch = False
+        self._deliveries_per_epoch: int | None = None
+
+    def next_minibatch_ids(self, loader, state):
+        batch = self.delegate.next_minibatch_ids(loader, state)
+        self.delivery_calls += 1
+        if self._deliveries_per_epoch is None:
+            self._deliveries_per_epoch = len(self.delegate.shuffled_ids) // len(batch)
+        self.last_delivery_completed_epoch = (
+            self.delivery_calls % self._deliveries_per_epoch == 0
+        )
+        if self.last_delivery_completed_epoch:
+            self.completed_epoch_count += 1
+        return batch
 
 
 def _local(row: PacketEvidenceExample) -> LocalEvidenceExample:
@@ -233,8 +301,14 @@ class GEPALayer2EvidenceOptimizer:
     backend_name = "gepa_search_core_layer2_evidence"
     backend_version = GEPA_LAYER2_EVIDENCE_BACKEND_VERSION
 
-    def __init__(self, *, engine: GEPALocalPromptOptimizer) -> None:
+    def __init__(
+        self,
+        *,
+        engine: GEPALocalPromptOptimizer,
+        saturation_config: SaturationConfig | None = None,
+    ) -> None:
         self.engine = engine
+        self.saturation_config = saturation_config
         self.last_sampler: Layer2FrozenBatchSampler | None = None
 
     def task_for(self, request: Layer2OptimizationRequest) -> LocalOptimizationTask:
@@ -305,11 +379,22 @@ class GEPALayer2EvidenceOptimizer:
         sampler = Layer2FrozenBatchSampler(
             ordered_batch_schedule=packet.ordered_batch_schedule,
             ordered_example_ids=ordered_ids,
+            replay_epochs=bool(
+                self.saturation_config is not None and self.saturation_config.enabled
+            ),
         )
         self.last_sampler = sampler
-        result = await self.engine.optimize_with_batch_sampler(
-            self.task_for(request), sampler
-        )
+        task = self.task_for(request)
+        if self.saturation_config is not None and self.saturation_config.enabled:
+            result = await self.engine.optimize_saturation(
+                task,
+                batch_sampler=sampler,
+                config=self.saturation_config,
+                unit_type=OptimizationUnitType.LAYER2_EVIDENCE_EPOCH,
+                mode_name="gepa_layer2",
+            )
+        else:
+            result = await self.engine.optimize_with_batch_sampler(task, sampler)
         if packet.packet_hash != before:
             raise RuntimeError("GEPA mutated the immutable Layer-2 packet")
         provenance = request.candidate_provenance(
@@ -336,6 +421,8 @@ class GEPALayer2EvidenceOptimizer:
                 "delivered_batch_ids": [list(batch) for batch in sampler.delivered_ids],
                 "backend_example_selection_calls": 0,
                 "native_sampler_called": False,
+                "evidence_epoch_policy": sampler.epoch_policy,
+                "completed_evidence_epochs": sampler.completed_epoch_count,
                 "official_gepa_search_core_modified": False,
                 "responsibility_count": len(packet.responsibility_examples),
                 "focus_count": len(packet.focus_examples),

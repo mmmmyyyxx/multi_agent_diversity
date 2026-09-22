@@ -1,0 +1,32 @@
+{
+  "accepted_update": {
+    "equal_score_archive_only_resets": false,
+    "layer2_local": "Layer1 strict local accepted update",
+    "layer2_outer": "successful atomic TEAM_COMMIT",
+    "native": "strict backend-native deployable state change",
+    "vote_neutral_common_safe_commit_resets": true
+  },
+  "canonical_stop_reasons": [
+    "SATURATION_REACHED",
+    "SCIENTIFIC_BUDGET_REACHED",
+    "EMERGENCY_PROVIDER_CALL_CEILING",
+    "EMERGENCY_OPTIMIZER_STEP_CEILING",
+    "EMERGENCY_TEAM_EPOCH_CEILING",
+    "EMERGENCY_WALL_TIME_CEILING",
+    "PROVIDER_FAILURE",
+    "OPERATIONAL_ABORT",
+    "INVALID_STATE",
+    "INSUFFICIENT_LAYER2_EVIDENCE"
+  ],
+  "contract_version": "backend_neutral_saturation_stopping_v1",
+  "run_modes": [
+    "fixed_budget",
+    "saturation"
+  ],
+  "saturation": {
+    "enabled": true,
+    "normal_stop": "SATURATION_REACHED",
+    "rule": "NO_ACCEPTED_UPDATE_FOR_K_COMPLETE_OPTIMIZATION_UNITS",
+    "scientific_budget_enabled": false
+  }
+}

@@ -23,6 +23,7 @@ from .schemas import (
     LocalPromptCandidate,
     OpaqueOptimizerState,
 )
+from ..saturation import RunMode, SaturationConfig, StopReason
 
 __all__ = [
     "LocalEvidenceExample",
@@ -42,4 +43,7 @@ __all__ = [
     "OpaqueOptimizerState",
     "OptimizationContextProvider",
     "default_backend_registry",
+    "RunMode",
+    "SaturationConfig",
+    "StopReason",
 ]

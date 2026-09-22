@@ -171,6 +171,7 @@ class TeamSearchController:
                     if local.optimizer_state is not None
                     else {}
                 ),
+                "local_accepted_update_count": len(local.candidates),
             },
         )
 

@@ -170,6 +170,39 @@ the canonical v15 runtime above.
   `decision_procedure`. The adapter/evaluator instantiates the immutable solver
   shell and output interface outside GEPA exactly once.
 
+### Fixed-budget and saturation execution regimes
+
+The unified four-mode runtime supports two distinct experimental regimes. In
+`fixed_budget` mode, ordinary metric-call, optimizer-round, and team-opportunity
+limits remain scientific controls for matched-resource comparisons. In
+`saturation` mode those ordinary limits are disabled and termination is based
+on repeated complete optimization units with no accepted deployable update.
+
+- **INV-SATURATION-001** — Native GEPA counts a complete pinned-engine training
+  epoch; native MARS counts a complete Teacher/Critic/Student/Target round.
+  Equal-score archive entries are not deployable updates and do not reset
+  patience.
+- **INV-SATURATION-002** — A Layer-2 local unit is a complete pass through the
+  immutable packet schedule for GEPA or a complete packet-owned MARS round.
+  `LAYER2_EVIDENCE_EPOCH_POLICY_V1` replays the same frozen packet; exhaustion
+  ends an evidence epoch and never falls back to backend-owned sampling.
+- **INV-SATURATION-003** — Layer-2 team saturation is backend-neutral. A team
+  epoch observes existing scheduler decisions until every member eligible at
+  epoch start has received an opportunity. Members may repeat; scheduler
+  scores, RR behavior, persistent realizability, and focus/anchor semantics are
+  unchanged. Only a successful atomic team commit resets outer patience. A
+  Common-Safe commit with zero Vote delta still counts; local-only acceptance
+  does not.
+- **INV-SATURATION-004** — Provider-call, optimizer-step, team-epoch, and wall
+  ceilings remain mandatory operational safeguards. Reaching one aborts the
+  run and MUST NOT be reported as scientific convergence.
+
+Saturation comparisons estimate each method's approximate performance ceiling
+under its own search process. Primary interpretations are paired within
+optimizer (`GEPA_NATIVE` vs `GEPA_LAYER2`, and `MARS_NATIVE` vs
+`MARS_LAYER2`). They do not establish cross-optimizer efficiency or superiority;
+those questions require separate fixed-budget experiments.
+
 - **INV-LOCAL-RESULT-001** — The GEPA seed/root program is a baseline, not a
   proposal. The `changed_candidates_only_v1` boundary returns only frontier
   prompts whose bytes differ from the parent. No changed frontier produces an

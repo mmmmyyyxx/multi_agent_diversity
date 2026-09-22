@@ -1,0 +1,21 @@
+{
+  "fields": [
+    "solver_calls",
+    "optimizer_calls",
+    "reflection_calls",
+    "planner_calls",
+    "teacher_calls",
+    "critic_calls",
+    "student_calls",
+    "team_evaluation_calls",
+    "provider_attempts",
+    "provider_successes",
+    "provider_failures",
+    "prompt_tokens",
+    "completion_tokens",
+    "total_tokens",
+    "wall_seconds"
+  ],
+  "raw_prompts_or_responses": false,
+  "scientific_budget_independent": true
+}

@@ -1,0 +1,36 @@
+{
+  "historical_inputs": [
+    {
+      "accepted_mutations": 29,
+      "proposal_attempts": 66,
+      "scope": "independent GEPA capacity; diagnostic only",
+      "source": "seed78_gepa_differential_audit_20260914"
+    },
+    {
+      "commits": 13,
+      "opportunities": 33,
+      "scope": "historical Diversity write-back; diagnostic only",
+      "source": "diversity_writeback_cost_mechanism_audit_20260908"
+    },
+    {
+      "accepted_mutations": 0,
+      "proposal_attempts": 3,
+      "scope": "small real-provider canary; diagnostic only",
+      "source": "level_b_gepa_real_canary_v2_stagefix2_transportfix1_authorized1"
+    }
+  ],
+  "local_options": [
+    2,
+    3,
+    5
+  ],
+  "rationale": "middle option limits one-unit noise without requiring five empty passes; freeze before formal API use",
+  "recommended_initial_local": 3,
+  "recommended_initial_team": 2,
+  "selected_from_future_results": false,
+  "team_options": [
+    1,
+    2,
+    3
+  ]
+}

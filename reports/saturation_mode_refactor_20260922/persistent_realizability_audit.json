@@ -1,0 +1,7 @@
+{
+  "owner": "existing Layer2 scheduler",
+  "saturation_controller_mutates_f_i_or_R_i": false,
+  "selected_no_commit": "existing valid-outcome failure update remains unchanged",
+  "team_epoch_boundary_reset": false,
+  "teammate_commit": "does not reset another member"
+}

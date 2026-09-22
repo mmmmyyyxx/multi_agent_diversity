@@ -1,0 +1,8 @@
+{
+  "provider_client_used_by_new_tests": false,
+  "real_provider_attempts": 0,
+  "status": "PASS",
+  "test50_calls": 0,
+  "test_environment": "provider keys and endpoint variables explicitly empty",
+  "validation50_calls": 0
+}

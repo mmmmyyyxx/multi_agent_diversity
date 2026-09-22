@@ -1,0 +1,14 @@
+{
+  "emergency_ceilings_active": true,
+  "fixed_budget_path_unchanged": true,
+  "gepa_max_metric_calls_passed_to_pinned_engine": null,
+  "mars_layer2_ignored": true,
+  "mars_native_ignored": true,
+  "poison_values_tested": {
+    "max_metric_calls": 1,
+    "native_unit_limit": 1,
+    "optimizer_call_limit": 1
+  },
+  "saturation_scientific_budget_enabled": false,
+  "scientific_budgets_disableable": true
+}

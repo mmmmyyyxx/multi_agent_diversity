@@ -28,6 +28,12 @@ from .schemas import (
     LocalPromptCandidate,
     OpaqueOptimizerState,
 )
+from ..saturation import (
+    OptimizationUnitType,
+    SaturationConfig,
+    SaturationState,
+    state_hash,
+)
 from ..versions import (
     LOCAL_GEPA_ENGINE_ACCEPTANCE_SEMANTICS,
     LOCAL_GEPA_CANDIDATE_COMPONENT,
@@ -224,7 +230,13 @@ class GEPALocalPromptOptimizer:
         return memo[index]
 
     def _run(
-        self, task: LocalOptimizationTask, *, batch_sampler_override: Any | None = None
+        self,
+        task: LocalOptimizationTask,
+        *,
+        batch_sampler_override: Any | None = None,
+        saturation_config: SaturationConfig | None = None,
+        saturation_unit_type: OptimizationUnitType | None = None,
+        saturation_mode_name: str | None = None,
     ) -> LocalOptimizationResult:
         if task.backend_state is not None:
             raise ValueError("two_layer_rg_gepa_v1 starts fresh GEPA state for every team update")
@@ -270,7 +282,24 @@ class GEPALocalPromptOptimizer:
             adapter.evaluation_observer = callback
         before = dict(self.accounting_reader())
         optimize = self._optimize_fn or import_frozen_gepa().optimize
-        result = optimize(
+        saturation_callback = None
+        stop_callbacks = None
+        if saturation_config is not None:
+            if not saturation_config.enabled or saturation_unit_type is None:
+                raise ValueError("GEPA saturation execution requires enabled config and unit type")
+            if batch_sampler_override is None:
+                raise ValueError("GEPA saturation execution requires an epoch-aware sampler")
+            saturation_callback = _GEPASaturationCallback(
+                sampler=batch_sampler_override,
+                config=saturation_config,
+                backend=self.backend_name,
+                mode=saturation_mode_name or "gepa_native",
+                unit_type=saturation_unit_type,
+                accounting_reader=self.accounting_reader,
+                initial_prompt=task.parent_prompt,
+            )
+            stop_callbacks = saturation_callback
+        optimize_kwargs = dict(
             seed_candidate={self.config.candidate_component_name: task.parent_prompt},
             trainset=list(task.search_examples),
             valset=list(task.local_validation_examples),
@@ -297,14 +326,26 @@ class GEPALocalPromptOptimizer:
             max_merge_invocations=self.config.max_merge_invocations,
             merge_val_overlap_floor=self.config.merge_val_overlap_floor,
             custom_candidate_proposer=None,
-            max_metric_calls=task.budget.max_metric_calls,
             run_dir=str(task_run),
-            callbacks=[callback],
+            callbacks=(
+                [callback, saturation_callback]
+                if saturation_callback is not None
+                else [callback]
+            ),
             display_progress_bar=False,
             cache_evaluation=self.config.cache_evaluation,
             seed=task.seed,
             raise_on_exception=True,
         )
+        if saturation_callback is None:
+            optimize_kwargs["max_metric_calls"] = task.budget.max_metric_calls
+        else:
+            # The pinned public API requires a stopper when max_metric_calls is
+            # absent.  This callback/stopper observes complete epochs and owns
+            # only termination; GEPA still owns every search operation.
+            optimize_kwargs["max_metric_calls"] = None
+            optimize_kwargs["stop_callbacks"] = stop_callbacks
+        result = optimize(**optimize_kwargs)
         after = dict(self.accounting_reader())
         frontier = sorted(
             {
@@ -455,7 +496,11 @@ class GEPALocalPromptOptimizer:
                 "proposer_diagnostics": proposer_diagnostics,
             },
         }
-        if candidates:
+        if saturation_callback is not None:
+            state_payload["saturation"] = saturation_callback.state.telemetry()
+        if saturation_callback is not None and saturation_callback.state.stop_reason is not None:
+            termination_reason = saturation_callback.state.stop_reason.value
+        elif candidates:
             termination_reason = "gepa_metric_budget_exhausted"
         elif not changed_frontier:
             termination_reason = "no_local_improvement"
@@ -484,3 +529,86 @@ class GEPALocalPromptOptimizer:
         return await asyncio.to_thread(
             self._run, task, batch_sampler_override=batch_sampler
         )
+
+    async def optimize_saturation(
+        self,
+        task: LocalOptimizationTask,
+        *,
+        batch_sampler: Any,
+        config: SaturationConfig,
+        unit_type: OptimizationUnitType,
+        mode_name: str,
+    ) -> LocalOptimizationResult:
+        """Run pinned GEPA until the shared epoch-level saturation stopper fires."""
+
+        return await asyncio.to_thread(
+            self._run,
+            task,
+            batch_sampler_override=batch_sampler,
+            saturation_config=config,
+            saturation_unit_type=unit_type,
+            saturation_mode_name=mode_name,
+        )
+
+
+class _GEPASaturationCallback:
+    """Pinned-GEPA callback plus StopperProtocol over complete sampler epochs."""
+
+    def __init__(
+        self,
+        *,
+        sampler: Any,
+        config: SaturationConfig,
+        backend: str,
+        mode: str,
+        unit_type: OptimizationUnitType,
+        accounting_reader: AccountingReader,
+        initial_prompt: str,
+    ) -> None:
+        self.sampler = sampler
+        self.state = SaturationState(config=config, backend=backend, mode=mode)
+        self.unit_type = unit_type
+        self.accounting_reader = accounting_reader
+        self.last_accounting = dict(accounting_reader())
+        self.epoch_had_accepted_update = False
+        self.epoch_start_hash = state_hash({"prompt": initial_prompt})
+        self.last_metric_calls = 0
+
+    def on_iteration_end(self, event: Mapping[str, Any]) -> None:
+        self.state.add_usage(optimizer_steps=1)
+        current = dict(self.accounting_reader())
+        prior_calls = int(self.last_accounting.get("successful_calls", 0))
+        current_calls = int(current.get("successful_calls", 0))
+        reflection_delta = max(0, current_calls - prior_calls)
+        metric_calls = int(getattr(event["state"], "total_num_evals", 0))
+        metric_delta = max(0, metric_calls - self.last_metric_calls)
+        self.last_metric_calls = metric_calls
+        self.state.add_usage(provider_calls=reflection_delta + metric_delta)
+        self.state.add_cost(
+            solver_calls=metric_delta,
+            optimizer_calls=reflection_delta,
+            reflection_calls=reflection_delta,
+        )
+        self.last_accounting = current
+        self.epoch_had_accepted_update = (
+            self.epoch_had_accepted_update or bool(event["proposal_accepted"])
+        )
+        if not bool(getattr(self.sampler, "last_delivery_completed_epoch", False)):
+            self.state.check_emergency()
+            return
+        program_candidates = event["state"].program_candidates
+        end_hash = state_hash(program_candidates)
+        self.state.observe_local_unit(
+            unit_type=self.unit_type,
+            start_state_hash=self.epoch_start_hash,
+            end_state_hash=end_hash,
+            accepted_update=self.epoch_had_accepted_update,
+        )
+        self.epoch_start_hash = end_hash
+        self.epoch_had_accepted_update = False
+        self.sampler.last_delivery_completed_epoch = False
+
+    def __call__(self, state: Any) -> bool:
+        del state
+        self.state.check_emergency()
+        return self.state.stop_reason is not None

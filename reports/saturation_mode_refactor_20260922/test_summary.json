@@ -1,0 +1,16 @@
+{
+  "compileall": "PASS",
+  "focused_saturation_tests": "13 passed",
+  "full_test_nonpassing_class": "UNCHANGED_MISSING_HISTORICAL_PRIVATE_ARTIFACTS",
+  "full_tests": "1174 passed, 15 failed, 13 errors",
+  "new_failure_class": null,
+  "preexisting_four_mode_tests": "54 passed",
+  "real_provider_attempts": 0,
+  "representative_missing_inputs": [
+    "runs/v15f48/.../run_meta.json",
+    "runs/v16p51/.../run_meta.json",
+    "runs/accepted_local_mutation_team_transfer_v2_prep/private_bundle.json",
+    "runs/common_solver_contract_v1_prep_20260906/private_replay_registry.json",
+    "runs/local_gepa_acceptance_rate_pilot_phase_b_v2_freeze/selected_parent_tasks_private.json"
+  ]
+}

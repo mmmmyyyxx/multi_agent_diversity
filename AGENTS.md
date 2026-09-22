@@ -125,6 +125,15 @@ Do not create permanent experiment branches for an optimizer or controller.
 
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
 
+### Saturation-mode stopping
+
+Saturation mode disables ordinary scientific hard budgets. Native backends use
+backend-native complete optimization units. Layer-2 modes distinguish local
+accepted updates from successful team commits, and team-level no-update
+patience is reset only by a successful atomic team commit. A Vote-neutral
+Common-Safe commit is still a team update. Emergency ceilings are mandatory
+operational safeguards and never imply scientific convergence.
+
 The native optimizer data flow remains a separate control. The Layer-2
 treatment intentionally replaces native example selection while preserving the
 optimizer's prompt-search core. GEPA and MARS native budget units need not match

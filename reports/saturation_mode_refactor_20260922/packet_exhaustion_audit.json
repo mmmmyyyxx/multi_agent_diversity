@@ -1,0 +1,8 @@
+{
+  "full_run_termination": false,
+  "native_fallback": false,
+  "one_batch_test": "PASS",
+  "packet_mutation": false,
+  "policy": "replay_same_frozen_packet_v1",
+  "schedule_exhaustion_semantics": "END_OF_LOCAL_EVIDENCE_EPOCH"
+}

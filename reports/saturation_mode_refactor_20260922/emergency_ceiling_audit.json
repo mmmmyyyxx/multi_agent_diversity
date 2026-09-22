@@ -1,0 +1,17 @@
+{
+  "execution_classification": "EXECUTION_ABORTED",
+  "mandatory": [
+    "provider_calls",
+    "optimizer_steps",
+    "team_epochs",
+    "wall_seconds"
+  ],
+  "oscillation": {
+    "accepted_update_hashes_persisted": true,
+    "diagnostic_only": "OSCILLATORY_SEARCH_SUSPECTED",
+    "revisited_state_count": true,
+    "state_hashes_persisted": true
+  },
+  "scientific_convergence": false,
+  "test": "emergency ceiling != SATURATION_REACHED: PASS"
+}

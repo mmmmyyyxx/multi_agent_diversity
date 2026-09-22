@@ -1,0 +1,7 @@
+{
+  "local_accepted_without_commit": "no focus/anchor advance",
+  "new_evidence_epoch_without_commit": "same frozen packet replay",
+  "owner": "existing atomic write-back/transition pipeline",
+  "saturation_controller_mutates_transition": false,
+  "successful_team_commit": "latest committed transition advances exactly once"
+}

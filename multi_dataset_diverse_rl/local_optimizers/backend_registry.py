@@ -31,12 +31,18 @@ class BackendRuntimeConfig:
     budget: str
     data_split_manifest: str
     initial_state: str
+    run_mode: Literal["fixed_budget", "saturation"] = "fixed_budget"
+    saturation_config_identity: str = "none"
 
     def __post_init__(self) -> None:
         if self.optimizer_backend not in {"gepa", "mars"}:
             raise ValueError("optimizer_backend must be gepa or mars")
         if self.optimization_mode not in {"native", "layer2"}:
             raise ValueError("optimization_mode must be native or layer2")
+        if self.run_mode not in {"fixed_budget", "saturation"}:
+            raise ValueError("run_mode must be fixed_budget or saturation")
+        if self.run_mode == "saturation" and self.saturation_config_identity == "none":
+            raise ValueError("saturation run identity requires saturation config identity")
         if not all((
             self.solver_model, self.optimizer_model, self.budget,
             self.data_split_manifest, self.initial_state,

@@ -1,0 +1,10 @@
+{
+  "boundary": "every frozen eligible member has received >=1 opportunity",
+  "eligible_members": "all unique members in scheduler summaries at epoch start",
+  "member_may_repeat": true,
+  "persistent_realizability_reset_at_epoch": false,
+  "selection": "observe existing scheduler decisions; no re-ranking",
+  "team_patience_reset": "successful atomic commit only",
+  "version": "scheduler_eligible_coverage_v1",
+  "zero_score_members": "remain eligible under existing always-two/fallback policy"
+}

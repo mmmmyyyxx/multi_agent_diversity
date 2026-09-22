@@ -25,6 +25,13 @@ from .schemas import (
     LocalPromptCandidate,
     OpaqueOptimizerState,
 )
+from ..saturation import (
+    OptimizationUnitType,
+    SaturationConfig,
+    SaturationState,
+    StopReason,
+    state_hash,
+)
 
 
 @dataclass(frozen=True)
@@ -97,6 +104,7 @@ class MARSNativeFeedOptimizer:
         layer2_overlay_enabled: bool,
         max_stable_rounds: int = 2,
         stability_threshold: float = 0.01,
+        saturation_config: SaturationConfig | None = None,
     ) -> None:
         self.evaluator = evaluator
         self.role_client = role_client
@@ -105,6 +113,7 @@ class MARSNativeFeedOptimizer:
         self.layer2_overlay_enabled = layer2_overlay_enabled
         self.max_stable_rounds = max_stable_rounds
         self.stability_threshold = stability_threshold
+        self.saturation_config = saturation_config
 
     def _overlay(self, request: NativeOptimizationRequest) -> Mapping[str, Any] | None:
         if not self.layer2_overlay_enabled:
@@ -171,10 +180,70 @@ class MARSNativeFeedOptimizer:
         candidates: list[LocalPromptCandidate] = []
         current = request.parent_decision_procedure
         previous_score = parent_score
+        best_deployable_score = parent_score
+        best_deployable_prompt = current
         stable_rounds = 0
-        max_rounds = min(request.budget.native_unit_limit, len(steps))
-        for step_index, step in enumerate(steps[:max_rounds], start=1):
-            if len(roles) + 3 > request.budget.optimizer_call_limit:
+        saturation = (
+            SaturationState(
+                config=self.saturation_config,
+                backend=self.backend_name,
+                mode="mars_native",
+            )
+            if self.saturation_config is not None and self.saturation_config.enabled
+            else None
+        )
+        if saturation is not None:
+            initial_solver_calls = sum(int(row.provider_called) for row in parent_observations)
+            saturation.add_usage(
+                provider_calls=int(planner.provider_called)
+                + initial_solver_calls
+            )
+            saturation.add_cost(
+                planner_calls=int(planner.provider_called),
+                optimizer_calls=int(planner.provider_called),
+                solver_calls=initial_solver_calls,
+            )
+            saturation.check_emergency()
+        step_queue = list(steps)
+        max_rounds = (
+            None
+            if saturation is not None
+            else min(request.budget.native_unit_limit, len(step_queue))
+        )
+        step_cursor = 0
+        while True:
+            if saturation is not None and saturation.stop_reason is not None:
+                break
+            if max_rounds is not None and step_cursor >= max_rounds:
+                break
+            if step_cursor >= len(step_queue):
+                if saturation is None:
+                    break
+                planner = await self.role_client.complete(
+                    role="planner",
+                    context={
+                        "task_definition": self.task_definition,
+                        "responsibility_overlay": overlay,
+                    },
+                )
+                roles.append(planner)
+                next_steps = _payload(planner).get("steps")
+                if not isinstance(next_steps, list) or not next_steps or not all(
+                    isinstance(row, str) and row.strip() for row in next_steps
+                ):
+                    raise ValueError("MARS Planner must return non-empty steps")
+                step_queue.extend(next_steps)
+                saturation.add_usage(provider_calls=int(planner.provider_called))
+                saturation.add_cost(
+                    planner_calls=int(planner.provider_called),
+                    optimizer_calls=int(planner.provider_called),
+                )
+                saturation.check_emergency()
+                continue
+            step = step_queue[step_cursor]
+            step_cursor += 1
+            step_index = step_cursor
+            if saturation is None and len(roles) + 3 > request.budget.optimizer_call_limit:
                 break
             teacher = await self.role_client.complete(
                 role="teacher",
@@ -209,8 +278,42 @@ class MARSNativeFeedOptimizer:
             candidate = self._student_procedure(_payload(student))
             if candidate == current:
                 stable_rounds += 1
+                if saturation is not None:
+                    unchanged_hash = state_hash({
+                        "prompt": hashlib.sha256(
+                            best_deployable_prompt.encode("utf-8")
+                        ).hexdigest()
+                    })
+                    saturation.add_usage(
+                        provider_calls=(
+                            int(teacher.provider_called)
+                            + int(critic.provider_called)
+                            + int(student.provider_called)
+                        ),
+                        optimizer_steps=1,
+                    )
+                    saturation.add_cost(
+                        teacher_calls=int(teacher.provider_called),
+                        critic_calls=int(critic.provider_called),
+                        student_calls=int(student.provider_called),
+                        optimizer_calls=(
+                            int(teacher.provider_called)
+                            + int(critic.provider_called)
+                            + int(student.provider_called)
+                        ),
+                    )
+                    saturation.observe_local_unit(
+                        unit_type=OptimizationUnitType.MARS_NATIVE_ROUND,
+                        start_state_hash=unchanged_hash,
+                        end_state_hash=unchanged_hash,
+                        accepted_update=False,
+                        local_objective_before=previous_score,
+                        local_objective_after=previous_score,
+                    )
+                    if saturation.stop_reason is not None:
+                        break
                 continue
-            if len(observations) + len(dataset) > request.budget.metric_call_limit:
+            if saturation is None and len(observations) + len(dataset) > request.budget.metric_call_limit:
                 break
             score, per_example, candidate_observations = self._target_evaluate(
                 candidate, dataset
@@ -218,6 +321,8 @@ class MARSNativeFeedOptimizer:
             observations.extend(candidate_observations)
             digest = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
             history.append({"prompt_sha256": digest, "accuracy": score})
+            best_before_prompt = best_deployable_prompt
+            accepted_deployable_update = score > best_deployable_score
             if score > parent_score:
                 candidates.append(
                     LocalPromptCandidate(
@@ -237,6 +342,9 @@ class MARSNativeFeedOptimizer:
                         },
                     )
                 )
+            if accepted_deployable_update:
+                best_deployable_score = score
+                best_deployable_prompt = candidate
             stable_rounds = (
                 stable_rounds + 1
                 if abs(score - previous_score) < self.stability_threshold
@@ -244,7 +352,45 @@ class MARSNativeFeedOptimizer:
             )
             previous_score = score
             current = candidate
+            if saturation is not None:
+                saturation.add_usage(
+                    provider_calls=(
+                        int(teacher.provider_called)
+                        + int(critic.provider_called)
+                        + int(student.provider_called)
+                        + sum(int(row.provider_called) for row in candidate_observations)
+                    ),
+                    optimizer_steps=1,
+                )
+                candidate_solver_calls = sum(
+                    int(row.provider_called) for row in candidate_observations
+                )
+                saturation.add_cost(
+                    teacher_calls=int(teacher.provider_called),
+                    critic_calls=int(critic.provider_called),
+                    student_calls=int(student.provider_called),
+                    optimizer_calls=(
+                        int(teacher.provider_called)
+                        + int(critic.provider_called)
+                        + int(student.provider_called)
+                    ),
+                    solver_calls=candidate_solver_calls,
+                )
+                saturation.observe_local_unit(
+                    unit_type=OptimizationUnitType.MARS_NATIVE_ROUND,
+                    start_state_hash=state_hash({
+                        "prompt": hashlib.sha256(best_before_prompt.encode("utf-8")).hexdigest()
+                    }),
+                    end_state_hash=state_hash({
+                        "prompt": hashlib.sha256(best_deployable_prompt.encode("utf-8")).hexdigest()
+                    }),
+                    accepted_update=accepted_deployable_update,
+                    local_objective_before=float(history[-2]["accuracy"]),
+                    local_objective_after=score,
+                )
             if stable_rounds >= self.max_stable_rounds:
+                if saturation is not None and saturation.stop_reason is None:
+                    saturation.stop_reason = StopReason.SATURATION_REACHED
                 break
 
         candidates.sort(key=lambda row: (-float(row.local_score or 0), row.candidate_id))
@@ -261,11 +407,16 @@ class MARSNativeFeedOptimizer:
             {
                 "feed_identity": self.data_builder.identity(),
                 "history": history,
-                "planner_steps": len(steps),
+                "planner_steps": len(step_queue),
                 "completed_rounds": len(history) - 1,
                 "target_dataset_size": len(dataset),
                 "responsibility_overlay_present": overlay is not None,
-                "termination_reason": "candidate_returned" if candidates else "no_improving_candidate",
+                "termination_reason": (
+                    saturation.stop_reason.value
+                    if saturation is not None and saturation.stop_reason is not None
+                    else "candidate_returned" if candidates else "no_improving_candidate"
+                ),
+                "saturation": saturation.telemetry() if saturation is not None else None,
             },
         )
         return LocalOptimizationResult(
@@ -291,6 +442,10 @@ class MARSNativeFeedOptimizer:
             "solver_contract": request.solver_contract_id,
             "output_contract": request.output_contract_id,
             "stopping": [self.max_stable_rounds, self.stability_threshold],
+            "saturation_config_identity": (
+                self.saturation_config.identity()
+                if self.saturation_config is not None else "none"
+            ),
             "candidate_component": "decision_procedure",
         }
         return hashlib.sha256(
@@ -388,13 +543,73 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
         candidates: list[LocalPromptCandidate] = []
         current = request.parent_decision_procedure
         previous_score = parent_score
+        best_deployable_score = parent_score
+        best_deployable_prompt = current
         stable_rounds = 0
-        max_rounds = min(packet.budget.native_unit_limit, len(steps))
+        saturation = (
+            SaturationState(
+                config=self.saturation_config,
+                backend=self.backend_name,
+                mode="mars_layer2",
+            )
+            if self.saturation_config is not None and self.saturation_config.enabled
+            else None
+        )
+        if saturation is not None:
+            initial_solver_calls = sum(int(row.provider_called) for row in parent_observations)
+            saturation.add_usage(
+                provider_calls=int(planner.provider_called)
+                + initial_solver_calls
+            )
+            saturation.add_cost(
+                planner_calls=int(planner.provider_called),
+                optimizer_calls=int(planner.provider_called),
+                solver_calls=initial_solver_calls,
+            )
+            saturation.check_emergency()
+        step_queue = list(steps)
+        max_rounds = (
+            None
+            if saturation is not None
+            else min(packet.budget.native_unit_limit, len(step_queue))
+        )
         provenance = request.candidate_provenance(
             backend=self.backend_name, backend_version=self.backend_version
         )
-        for step_index, step in enumerate(steps[:max_rounds], start=1):
-            if len(roles) + 3 > packet.budget.optimizer_call_limit:
+        step_cursor = 0
+        while True:
+            if saturation is not None and saturation.stop_reason is not None:
+                break
+            if max_rounds is not None and step_cursor >= max_rounds:
+                break
+            if step_cursor >= len(step_queue):
+                if saturation is None:
+                    break
+                planner = await self.role_client.complete(
+                    role="planner",
+                    context={
+                        "task_definition": self.task_definition,
+                        "layer2_evidence_packet": evidence_context,
+                    },
+                )
+                roles.append(planner)
+                next_steps = _payload(planner).get("steps")
+                if not isinstance(next_steps, list) or not next_steps or not all(
+                    isinstance(row, str) and row.strip() for row in next_steps
+                ):
+                    raise ValueError("MARS Planner must return non-empty steps")
+                step_queue.extend(next_steps)
+                saturation.add_usage(provider_calls=int(planner.provider_called))
+                saturation.add_cost(
+                    planner_calls=int(planner.provider_called),
+                    optimizer_calls=int(planner.provider_called),
+                )
+                saturation.check_emergency()
+                continue
+            step = step_queue[step_cursor]
+            step_cursor += 1
+            step_index = step_cursor
+            if saturation is None and len(roles) + 3 > packet.budget.optimizer_call_limit:
                 break
             teacher = await self.role_client.complete(
                 role="teacher",
@@ -432,8 +647,42 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
             candidate = self._student_procedure(_payload(student))
             if candidate == current:
                 stable_rounds += 1
+                if saturation is not None:
+                    unchanged_hash = state_hash({
+                        "prompt": hashlib.sha256(
+                            best_deployable_prompt.encode("utf-8")
+                        ).hexdigest()
+                    })
+                    saturation.add_usage(
+                        provider_calls=(
+                            int(teacher.provider_called)
+                            + int(critic.provider_called)
+                            + int(student.provider_called)
+                        ),
+                        optimizer_steps=1,
+                    )
+                    saturation.add_cost(
+                        teacher_calls=int(teacher.provider_called),
+                        critic_calls=int(critic.provider_called),
+                        student_calls=int(student.provider_called),
+                        optimizer_calls=(
+                            int(teacher.provider_called)
+                            + int(critic.provider_called)
+                            + int(student.provider_called)
+                        ),
+                    )
+                    saturation.observe_local_unit(
+                        unit_type=OptimizationUnitType.MARS_LAYER2_ROUND,
+                        start_state_hash=unchanged_hash,
+                        end_state_hash=unchanged_hash,
+                        accepted_update=False,
+                        local_objective_before=previous_score,
+                        local_objective_after=previous_score,
+                    )
+                    if saturation.stop_reason is not None:
+                        break
                 continue
-            if len(observations) + len(dataset) > packet.budget.metric_call_limit:
+            if saturation is None and len(observations) + len(dataset) > packet.budget.metric_call_limit:
                 break
             score, per_example, candidate_observations = self._target_evaluate(
                 candidate, dataset
@@ -441,6 +690,8 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
             observations.extend(candidate_observations)
             digest = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
             history.append({"prompt_sha256": digest, "accuracy": score})
+            best_before_prompt = best_deployable_prompt
+            accepted_deployable_update = score > best_deployable_score
             if score > parent_score:
                 candidates.append(
                     LocalPromptCandidate(
@@ -461,6 +712,9 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
                         },
                     )
                 )
+            if accepted_deployable_update:
+                best_deployable_score = score
+                best_deployable_prompt = candidate
             stable_rounds = (
                 stable_rounds + 1
                 if abs(score - previous_score) < self.stability_threshold
@@ -468,7 +722,45 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
             )
             previous_score = score
             current = candidate
+            if saturation is not None:
+                saturation.add_usage(
+                    provider_calls=(
+                        int(teacher.provider_called)
+                        + int(critic.provider_called)
+                        + int(student.provider_called)
+                        + sum(int(row.provider_called) for row in candidate_observations)
+                    ),
+                    optimizer_steps=1,
+                )
+                candidate_solver_calls = sum(
+                    int(row.provider_called) for row in candidate_observations
+                )
+                saturation.add_cost(
+                    teacher_calls=int(teacher.provider_called),
+                    critic_calls=int(critic.provider_called),
+                    student_calls=int(student.provider_called),
+                    optimizer_calls=(
+                        int(teacher.provider_called)
+                        + int(critic.provider_called)
+                        + int(student.provider_called)
+                    ),
+                    solver_calls=candidate_solver_calls,
+                )
+                saturation.observe_local_unit(
+                    unit_type=OptimizationUnitType.MARS_LAYER2_ROUND,
+                    start_state_hash=state_hash({
+                        "prompt": hashlib.sha256(best_before_prompt.encode("utf-8")).hexdigest()
+                    }),
+                    end_state_hash=state_hash({
+                        "prompt": hashlib.sha256(best_deployable_prompt.encode("utf-8")).hexdigest()
+                    }),
+                    accepted_update=accepted_deployable_update,
+                    local_objective_before=float(history[-2]["accuracy"]),
+                    local_objective_after=score,
+                )
             if stable_rounds >= self.max_stable_rounds:
+                if saturation is not None and saturation.stop_reason is None:
+                    saturation.stop_reason = StopReason.SATURATION_REACHED
                 break
         if packet.packet_hash != before:
             raise RuntimeError("MARS mutated the immutable Layer-2 packet")
@@ -485,7 +777,7 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
             self.backend_version,
             {
                 "history": history,
-                "planner_steps": len(steps),
+                "planner_steps": len(step_queue),
                 "completed_rounds": len(history) - 1,
                 "target_dataset_size": len(dataset),
                 "responsibility_packet_hash": packet.packet_hash,
@@ -507,8 +799,11 @@ class MARSLayer2EvidenceOptimizer(MARSNativeFeedOptimizer):
                     if packet.latest_transition is not None else None
                 ),
                 "termination_reason": (
-                    "candidate_returned" if candidates else "no_improving_candidate"
+                    saturation.stop_reason.value
+                    if saturation is not None and saturation.stop_reason is not None
+                    else "candidate_returned" if candidates else "no_improving_candidate"
                 ),
+                "saturation": saturation.telemetry() if saturation is not None else None,
             },
         )
         return LocalOptimizationResult(

@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "README.md": true,
+    "cost_accounting_schema.json": true,
+    "emergency_ceiling_audit.json": true,
+    "focus_anchor_audit.json": true,
+    "four_mode_semantics.json": true,
+    "hidden_budget_audit.json": true,
+    "packet_exhaustion_audit.json": true,
+    "patience_options.json": true,
+    "persistent_realizability_audit.json": true,
+    "provider_isolation_audit.json": true,
+    "sanitization_manifest.json": true,
+    "saturation_contract.json": true,
+    "sha256_manifest.json": true,
+    "stopping_path_audit.json": true,
+    "team_epoch_semantics.json": true,
+    "test_summary.json": true
+  },
+  "excluded": [
+    "prompts",
+    "questions",
+    "answers",
+    "raw responses",
+    "credentials",
+    "endpoints",
+    "caches",
+    "checkpoints",
+    "absolute paths"
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,25 @@
+{
+  "GEPA_LAYER2": {
+    "epoch_policy": "replay_same_frozen_packet_v1",
+    "native_sampler_fallback": false,
+    "saturation_ready": true,
+    "unit": "complete frozen ordered evidence schedule pass"
+  },
+  "GEPA_NATIVE": {
+    "acceptance": "pinned strict subsample improvement and accepted candidate",
+    "equal_score": "rejected",
+    "saturation_ready": true,
+    "unit": "complete pinned EpochShuffledBatchSampler traversal"
+  },
+  "MARS_LAYER2": {
+    "global_dataset_access": false,
+    "saturation_ready": true,
+    "unit": "packet-owned Planner/Teacher/Critic/Student/Target round"
+  },
+  "MARS_NATIVE": {
+    "native_stability_check_retained": true,
+    "saturation_ready": true,
+    "strict_deployable_update": "score exceeds best accepted deployable score",
+    "unit": "complete Teacher/Critic/Student/Target round"
+  }
+}
