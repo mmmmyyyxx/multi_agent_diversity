@@ -294,11 +294,162 @@ async def capture() -> dict[str, Any]:
     return {"schema_version": "production_golden_trace_v1", "traces": traces}
 
 
+async def _engine_trace(backend: str, scope: str, regime: str) -> dict[str, Any]:
+    """Capture the same normalized trace through the production engine."""
+
+    from multi_dataset_diverse_rl.experiment import (
+        ExperimentInputs,
+        ExperimentServices,
+        ExperimentSpec,
+        Layer2Opportunity,
+        OptimizationScope,
+        OptimizerBackend,
+        RuntimeContext,
+        StoppingRegime,
+        run_experiment,
+    )
+    from multi_dataset_diverse_rl.local_optimizers.production_backends import (
+        GEPABackend,
+        MARSBackend,
+    )
+
+    spec = ExperimentSpec(
+        backend=OptimizerBackend(backend),
+        optimization_scope=OptimizationScope(scope),
+        stopping_regime=StoppingRegime(regime),
+        task_identity="fixture-task",
+        data_identity="optimize-fixture",
+    )
+    runtime = RuntimeContext(
+        seed=78,
+        provider_profile="offline-fixture",
+        solver_model="solver-fixture",
+        optimizer_model="optimizer-fixture",
+        evaluator_model="evaluator-fixture",
+        run_identity_sha256="run-fixture",
+        authorization_identity="zero-api-fixture",
+        cache_identity="cache-fixture",
+        ledger_identity="ledger-fixture",
+    )
+    backend_type = GEPABackend if backend == "gepa" else MARSBackend
+    adapter = backend_type(native=_NativeBackend(), layer2=_Layer2Backend())
+    assignment = _assignment()
+    outer = _request()
+    trace = _base_trace(backend, scope, regime)
+    if scope == "native":
+        problem = NativeFeedRequestBuilder().build(outer, assignment)
+        result = await run_experiment(
+            spec,
+            runtime,
+            ExperimentInputs("team-initial", native_problem=problem),
+            ExperimentServices(adapter),
+        )
+        local = result.local_result
+        assert local is not None
+        trace.update({
+            "packet": None,
+            "layer1_request_identity": problem.identity(),
+            "candidate_ids": [row.candidate_id for row in local.candidates],
+            "local_scores": [row.local_score for row in local.candidates],
+            "team_stages": [],
+            "commit": None,
+            "stopping": {
+                "local_no_update_patience": 3 if regime == "saturation" else None,
+                "team_no_update_patience": None,
+                "stop_reason": result.stop_reason,
+            },
+            "final_state_hash": result.final_state_hash,
+        })
+        return trace
+
+    builder = Layer2EvidenceRequestBuilder()
+    packet_request = builder.build(outer, assignment)
+    evaluator = _Evaluator(shadow_passed=regime == "fixed_budget")
+    committer = _Committer()
+
+    def controller_factory(bound_backend):
+        return TeamSearchController(
+            responsibility=_Responsibility(assignment),
+            task_builder=builder,
+            local_optimizer=bound_backend,
+            evaluator=evaluator,
+            selector=_Selector(),
+            committer=committer,
+        )
+
+    count = 1 if regime == "fixed_budget" else 2
+    result = await run_experiment(
+        spec,
+        runtime,
+        ExperimentInputs(
+            "team-initial",
+            layer2_opportunities=tuple(
+                Layer2Opportunity(_request(index + 1)) for index in range(count)
+            ),
+        ),
+        ExperimentServices(
+            adapter,
+            layer2_controller_factory=controller_factory,
+            team_state_hash_reader=lambda: (
+                "team-committed" if committer.ids else "team-initial"
+            ),
+        ),
+    )
+    final = result.team_outcomes[-1]
+    trace.update({
+        "packet": {
+            "hash": packet_request.packet.packet_hash,
+            "responsibility": [
+                row.example_id for row in packet_request.packet.responsibility_examples
+            ],
+            "focus": [row.example_id for row in packet_request.packet.focus_examples],
+            "anchor": [row.example_id for row in packet_request.packet.anchor_examples],
+            "local_eval": [row.example_id for row in packet_request.packet.local_eval_examples],
+            "schedule": [list(row) for row in packet_request.packet.ordered_batch_schedule],
+        },
+        "layer1_request_identity": packet_request.identity(),
+        "candidate_ids": [row.local_candidate.candidate_id for row in final.candidates],
+        "local_scores": [row.local_candidate.local_score for row in final.candidates],
+        "team_stages": evaluator.stages,
+        "team_funnel": dict(final.funnel),
+        "commit": committer.ids[-1] if committer.ids else None,
+        "stopping": {
+            "local_no_update_patience": 3 if regime == "saturation" else None,
+            "team_no_update_patience": 2 if regime == "saturation" else None,
+            "team_no_update_counter": 0 if committer.ids else count,
+            "stop_reason": result.stop_reason,
+        },
+        "final_state_hash": result.final_state_hash,
+    })
+    return trace
+
+
+async def capture_engine() -> dict[str, Any]:
+    traces: dict[str, Any] = {}
+    for backend in BACKENDS:
+        for regime in REGIMES:
+            traces[f"{backend}_native_{regime}"] = await _engine_trace(
+                backend, "native", regime
+            )
+            traces[f"{backend}_layer2_{regime}"] = await _engine_trace(
+                backend, "layer2", regime
+            )
+    return {"schema_version": "production_golden_trace_v1", "traces": traces}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--implementation", choices=("before", "after"), default="before"
+    )
+    parser.add_argument("--compare", type=Path)
     args = parser.parse_args()
-    payload = asyncio.run(capture())
+    payload = asyncio.run(capture() if args.implementation == "before" else capture_engine())
+    if args.compare is not None:
+        expected = json.loads(args.compare.read_text(encoding="utf-8"))
+        if payload != expected:
+            raise SystemExit("golden semantic trace mismatch")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": "PASS", "trace_count": len(payload["traces"])}, sort_keys=True))

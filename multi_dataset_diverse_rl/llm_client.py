@@ -11,6 +11,7 @@ from openai import AsyncOpenAI
 
 from .config import Config
 from .provider_credentials import resolve_api_key, resolve_base_url
+from .provider_factory import ProviderClientFactory
 
 
 RETRYABLE_STATUS_CODES = {408, 409, 429, 500, 502, 503, 504}
@@ -63,7 +64,9 @@ class RoleAwareLLMClient:
                     f"API base URL is not configured for role={role} via "
                     f"{resolved_base_env}"
                 )
-            self.clients[role] = AsyncOpenAI(api_key=key, base_url=base)
+            self.clients[role] = ProviderClientFactory.create(
+                api_key=key, base_url=base, client_type=AsyncOpenAI
+            )
         return self.clients[role]
 
     @staticmethod

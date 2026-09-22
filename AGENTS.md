@@ -125,6 +125,28 @@ Do not create permanent experiment branches for an optimizer or controller.
 
 Replacing GEPA with SEPO/ESPO must not require an algorithmic change to Layer 2.
 
+### Production architecture rules
+
+New experiments use `multi_dataset_diverse_rl.experiment.run_experiment` and
+the single `scripts/run_experiment.py` composition entrypoint. Do not add a new
+experiment-named production runner. Historical runners may remain for exact
+reproduction or translate legacy arguments into the production contract, but
+production modules must never import them.
+
+Do not put scientific logic in scripts. Layer 1 owns local search only. Layer 2
+owns target/responsibility/evidence, team admission and write-back, and must not
+import a concrete optimizer backend. GEPA and MARS implement the same typed
+`LocalOptimizerBackend` contract. Production Layer 1 receives an explicit
+`LocalOptimizationRequest` and `RuntimeContext`, never the historical
+monolithic `Config` attribute bag.
+
+Backend, native/Layer2 scope and fixed-budget/saturation regime are orthogonal
+`ExperimentSpec` fields. Shared stopping belongs in `saturation.py`. Provider
+construction uses `ProviderClientFactory`; identity, authorization and
+lifecycle use the centralized governance layer. A new experiment should
+normally require only a manifest/configuration, not a runner, controller,
+backend adapter or stopping implementation.
+
 ### Saturation-mode stopping
 
 Saturation mode disables ordinary scientific hard budgets. Native backends use

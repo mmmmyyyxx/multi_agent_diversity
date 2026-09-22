@@ -17,7 +17,7 @@ import os
 from pathlib import Path
 from typing import Any, Mapping
 
-from openai import APIConnectionError, AsyncOpenAI
+from openai import APIConnectionError
 
 from infrastructure.common_solver_contract_v1.contract import (
     CONTRACT_SPEC,
@@ -30,7 +30,7 @@ from infrastructure.common_solver_contract_v1.evaluator import (
 from ..config import Config
 from ..evaluation.prompt_question import PromptAnswer
 from ..evaluation.solver_stage import validate_solver_stage_attribution
-from ..provider_credentials import resolve_api_key, resolve_base_url
+from ..provider_factory import ProviderClientFactory
 from ..system import PromptEnsembleOptimizationSystem
 from ..local_optimizers.base import LocalPromptOptimizer
 from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
@@ -145,15 +145,11 @@ class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):
         ledger: DurableLedger,
         raw_cache: dict[str, str],
     ) -> None:
-        _, key = resolve_api_key(
-            cfg.models.solver_api_key_env, cfg.models.provider_profile
+        client = ProviderClientFactory.from_environment(
+            provider_profile=cfg.models.provider_profile,
+            api_key_env=cfg.models.solver_api_key_env,
+            base_url_env=cfg.models.solver_base_url_env,
         )
-        _, endpoint = resolve_base_url(
-            cfg.models.solver_base_url_env, cfg.models.provider_profile
-        )
-        if not key or not endpoint:
-            raise RuntimeError("COMMON_SOLVER_CONTRACT_V1 credentials unavailable")
-        client = AsyncOpenAI(api_key=key, base_url=endpoint)
 
         async def transport(request: dict[str, Any]) -> TransportResponse:
             attempt_guard = getattr(self.ledger, "reserve_provider_attempt", None)

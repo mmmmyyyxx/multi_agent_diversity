@@ -15,6 +15,7 @@ from typing import Any, Mapping
 
 from openai import AsyncOpenAI
 
+
 from ..config import Config
 from ..provider_credentials import (
     LWJ_DASHSCOPE_API_KEY_ENV,
@@ -22,6 +23,7 @@ from ..provider_credentials import (
     resolve_api_key,
     resolve_base_url,
 )
+from ..provider_factory import ProviderClientFactory
 
 
 EXECUTION_FREEZE_VERSION = "fresh_execution_freeze_v2"
@@ -142,7 +144,9 @@ def preflight_provider_binding(
     if not frozen_fingerprint or fingerprint != frozen_fingerprint:
         raise ExecutionBindingError("ABORT_PRE_PROVIDER: endpoint fingerprint mismatch")
     if construct_client:
-        AsyncOpenAI(api_key=api_key, base_url=endpoint)
+        ProviderClientFactory.create(
+            api_key=api_key, base_url=endpoint, client_type=AsyncOpenAI
+        )
     return ProviderPreflight(
         provider_profile=PROVIDER_PROFILE,
         endpoint_fingerprint=fingerprint,
