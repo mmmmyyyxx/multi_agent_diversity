@@ -31,16 +31,23 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     endpoint_fingerprint_from_environment,
     preflight_provider_binding,
 )
+from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
+    StartupIdentityError,
+    build_startup_bundle,
+    read_bundle,
+    validate_startup_bundle,
+    write_bundle,
+)
 
 
 EXPERIMENT_ID = "gepa_layer2_real_canary_v2"
-ATTEMPT_ID = "gepa_layer2_real_canary_v2_authorized1"
+ATTEMPT_ID = "gepa_layer2_real_canary_v2_authorized2"
 SEED = 80
 MANIFEST = ROOT / "experiments/manifests/gepa_layer2_real_canary_v2.yaml"
 PROTOCOL = ROOT / "experiments/gepa_layer2_real_canary_v2/PROTOCOL.md"
-DEFAULT_PREP = ROOT / "runs/gepa_layer2_real_canary_v2_prep"
-DEFAULT_RUN = ROOT / "runs/gepa_layer2_real_canary_v2_attempt1"
-DEFAULT_REPORT = ROOT / "reports/gepa_layer2_real_canary_v2_attempt1"
+DEFAULT_PREP = ROOT / "runs/gepa_layer2_real_canary_v2_prep_authorized2"
+DEFAULT_RUN = ROOT / "runs/gepa_layer2_real_canary_v2_authorized2"
+DEFAULT_REPORT = ROOT / "reports/gepa_layer2_real_canary_v2_authorized2"
 AUTH_ENV = "GEPA_LAYER2_REAL_CANARY_V2_AUTHORIZED"
 
 base.EXPERIMENT_ID = EXPERIMENT_ID
@@ -99,6 +106,7 @@ def source_paths() -> list[Path]:
         set(_base_source_paths())
         | {
             Path("multi_dataset_diverse_rl/governance/execution_harness_v2.py"),
+            Path("multi_dataset_diverse_rl/governance/startup_identity.py"),
             Path("scripts/run_gepa_layer2_real_canary_v2.py"),
         },
         key=lambda path: path.as_posix(),
@@ -135,6 +143,43 @@ def _write_rows(path: Path, rows: list[dict[str, str]]) -> None:
         )
 
 
+def _startup_bundle(prep: Path, *, execution_source_sha: str | None = None) -> dict[str, Any]:
+    """Build the one canonical expected identity for prepare and runtime."""
+
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    protocol = protocol_document()
+    source_files = [
+        {"path": path.as_posix(), "sha256": base.source_freeze_sha256(ROOT / path)}
+        for path in source_paths()
+    ]
+    data_hashes = {
+        path.name: base.source_freeze_sha256(path)
+        for path in sorted((prep / "splits_private").glob("*.csv"))
+    }
+    return build_startup_bundle(
+        manifest=manifest,
+        protocol=protocol,
+        experiment_id=EXPERIMENT_ID,
+        attempt_id=ATTEMPT_ID,
+        scientific_method_anchor_sha=str(
+            manifest["execution_freeze"]["scientific_method_anchor_sha"]
+        ),
+        execution_source_sha=execution_source_sha or base.git("rev-parse", "HEAD"),
+        provider_profile=PROVIDER_PROFILE,
+        endpoint_fingerprint=str(
+            manifest["execution_freeze"]["provider"]["endpoint_fingerprint"]
+        ),
+        models=manifest["execution_freeze"]["provider"]["models"],
+        data_hashes=data_hashes,
+        initialization={"policy": INITIALIZATION_POLICY},
+        seeds=[SEED],
+        local_patience=3,
+        team_patience=2,
+        saturation_mode="single_opportunity_engineering_canary",
+        source_files=source_files,
+    )
+
+
 def prepare(prep: Path) -> dict[str, Any]:
     if prep.exists():
         raise FileExistsError("fresh canary prep root required")
@@ -153,21 +198,19 @@ def prepare(prep: Path) -> dict[str, Any]:
         prep / "test_access_registry.json",
         {"events": [], "validation50_calls": 0, "test50_calls": 0},
     )
-    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    startup = _startup_bundle(prep)
+    source_files = startup["scientific_identity"]["payload"]["source_files"]
+    data_hashes = startup["scientific_identity"]["payload"]["data_hashes"]
+    write_bundle(prep / "startup_identity", startup)
     freeze = {
         "execution_commit": base.git("rev-parse", "HEAD"),
         "hash_semantics": base.SOURCE_FREEZE_HASH_SEMANTICS,
         "protocol_sha256": base.sha256_json(protocol),
-        "preregistration_sha256": base.preregistration_hash(manifest),
+        "preregistration_sha256": startup["scientific_identity"]["preregistration_sha256"],
+        "run_identity_sha256": startup["run_identity"]["run_identity_sha256"],
         "attempt_id": ATTEMPT_ID,
-        "files": [
-            {"path": path.as_posix(), "sha256": base.source_freeze_sha256(ROOT / path)}
-            for path in source_paths()
-        ],
-        "private_split_sha256": {
-            path.name: base.source_freeze_sha256(path)
-            for path in sorted((prep / "splits_private").glob("*.csv"))
-        },
+        "files": source_files,
+        "private_split_sha256": data_hashes,
         "private_parent_dependencies": [],
         "initialization_policy": INITIALIZATION_POLICY,
     }
@@ -176,8 +219,7 @@ def prepare(prep: Path) -> dict[str, Any]:
         "gate": "PASS",
         "ready_to_run": True,
         "authorization_state": (
-            "AUTHORIZED" if manifest.get("api_authorization", {}).get("authorized") is True
-            else "AUTHORIZATION_REQUIRED"
+            startup["authorization"]["authorization_state"]
         ),
         "execution_commit": freeze["execution_commit"],
         "protocol_sha256": freeze["protocol_sha256"],
@@ -187,6 +229,89 @@ def prepare(prep: Path) -> dict[str, Any]:
     }
     base.write_json(prep / "phase_a_gate.json", result)
     return result
+
+
+def verify_startup_identity(
+    prep: Path, *, require_authorized: bool
+) -> dict[str, Any]:
+    freeze = base.read_json(prep / "source_freeze.json")
+    if base.git("rev-parse", "HEAD") != freeze["execution_commit"]:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: execution source mismatch")
+    if base.sha256_json(base.read_json(prep / "protocol_freeze.json")) != freeze[
+        "protocol_sha256"
+    ]:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: protocol freeze mismatch")
+    for row in freeze["files"]:
+        if base.source_freeze_sha256(ROOT / row["path"]) != row["sha256"]:
+            raise StartupIdentityError(
+                f"ABORT_PRE_PROVIDER: source freeze mismatch: {row['path']}"
+            )
+    for name, digest in freeze["private_split_sha256"].items():
+        if base.source_freeze_sha256(prep / "splits_private" / name) != digest:
+            raise StartupIdentityError(
+                f"ABORT_PRE_PROVIDER: split freeze mismatch: {name}"
+            )
+    expected = _startup_bundle(prep, execution_source_sha=freeze["execution_commit"])
+    stored = read_bundle(prep / "startup_identity")
+    result = validate_startup_bundle(
+        stored=stored,
+        expected=expected,
+        require_authorized=require_authorized,
+        phase="canary",
+        roles=("solver", "reflection"),
+    )
+    if result["preregistration_sha256"] != freeze["preregistration_sha256"]:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: source/preregistration mismatch")
+    if result["run_identity_sha256"] != freeze["run_identity_sha256"]:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: source/run identity mismatch")
+    return result
+
+
+def verify_freeze(prep: Path) -> None:
+    verify_startup_identity(prep, require_authorized=False)
+
+
+def startup_dry_run(prep: Path) -> dict[str, Any]:
+    """Production-path authorization replay that deliberately stops pre-provider."""
+
+    return verify_startup_identity(prep, require_authorized=True)
+
+
+def start_run_attempt(prep: Path, run_root: Path) -> dict[str, Any]:
+    # Scientific RUNNING is emitted only after static identity and authorization pass.
+    identity = verify_startup_identity(prep, require_authorized=True)
+    if run_root.exists():
+        raise FileExistsError("fresh canary run root required; retry/resume forbidden")
+    staging = run_root.with_name(f".{run_root.name}.{ATTEMPT_ID}.starting")
+    if staging.exists():
+        raise FileExistsError("fresh canary launch staging root required")
+    freeze = base.read_json(prep / "source_freeze.json")
+    lifecycle = {
+        "schema_version": base.LAUNCH_TRANSACTION_VERSION,
+        "experiment_id": EXPERIMENT_ID,
+        "attempt_id": ATTEMPT_ID,
+        "status": "RUNNING",
+        "source_commit": freeze["execution_commit"],
+        "protocol_sha256": freeze["protocol_sha256"],
+        "preregistration_sha256": identity["preregistration_sha256"],
+        "run_identity_sha256": identity["run_identity_sha256"],
+        "provider_call_boundary_reached": False,
+        "provider_calls_observed": 0,
+        "events": [{"status": "RUNNING", "timestamp": base._utc_now()}],
+    }
+    run_root.parent.mkdir(parents=True, exist_ok=True)
+    staging.mkdir()
+    base._atomic_write_json(staging / base.RUN_LIFECYCLE_FILE, lifecycle)
+    os.replace(staging, run_root)
+    return lifecycle
+
+
+def authorize(run_root: Path) -> None:
+    lifecycle = base.read_json(run_root / base.RUN_LIFECYCLE_FILE)
+    if lifecycle.get("status") != "RUNNING":
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: lifecycle is not RUNNING")
+    if lifecycle.get("attempt_id") != ATTEMPT_ID:
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: lifecycle attempt mismatch")
 
 
 def _provider_freeze(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -203,7 +328,9 @@ def preflight() -> dict[str, Any]:
         optimize_path=ROOT / "PREPARED_OPTIMIZE100.csv",
         validation_path=ROOT / "PREPARED_SHADOW50.csv",
     )
-    provider = preflight_provider_binding(cfg, _provider_freeze(manifest))
+    provider = preflight_provider_binding(
+        cfg, _provider_freeze(manifest), construct_client=False
+    )
     protocol = protocol_document()
     checks = {
         "provider_profile_explicit": cfg.models.provider_profile == PROVIDER_PROFILE,
@@ -215,16 +342,15 @@ def preflight() -> dict[str, Any]:
         "one_opportunity": protocol["opportunities"] == 1,
         "validation_zero": protocol["validation50_calls"] == 0,
         "test_zero": protocol["test50_calls"] == 0,
-        "authorization_state_valid": manifest.get("status") == "PREFLIGHT_PASS"
-        and isinstance(manifest.get("api_authorization", {}).get("authorized"), bool),
+        "authorization_required": manifest.get("status") == "PREFLIGHT_PASS"
+        and manifest.get("api_authorization", {}).get("authorized") is False,
     }
     return {
         "gate": "PASS" if all(checks.values()) else "HOLD",
         "checks": checks,
         "ready_to_run": all(checks.values()),
         "authorization_state": (
-            "AUTHORIZED" if manifest.get("api_authorization", {}).get("authorized") is True
-            else "AUTHORIZATION_REQUIRED"
+            "AUTHORIZATION_REQUIRED"
         ),
         "endpoint_fingerprint": provider.endpoint_fingerprint,
         "provider_attempts": 0,
@@ -238,7 +364,19 @@ base.protocol_document = protocol_document
 base.source_paths = source_paths
 base.prepare = prepare
 base.preflight = preflight
+base.verify_freeze = verify_freeze
+base.start_run_attempt = start_run_attempt
+base.authorize = authorize
 
 
 if __name__ == "__main__":
-    base.main()
+    if "--startup-dry-run" in sys.argv:
+        import argparse
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--startup-dry-run", action="store_true")
+        parser.add_argument("--prep", type=Path, required=True)
+        args = parser.parse_args()
+        print(json.dumps(startup_dry_run(args.prep), indent=2, sort_keys=True))
+    else:
+        base.main()

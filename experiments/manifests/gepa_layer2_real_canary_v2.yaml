@@ -44,8 +44,8 @@ design:
   - saturation patience and team epoch semantics
   initialization_policy: FRESH_DETERMINISTIC_INITIALIZATION_V1
 api_authorization:
-  authorized: true
-  authorization_scope: explicit_user_authorization_2026_09_22_gepa_layer2_real_canary_v2_single_fresh_attempt
+  authorized: false
+  authorization_scope: pending_authorization_for_gepa_layer2_real_canary_v2_authorized2
   allowed_roles:
   - reflection
   - solver
@@ -70,7 +70,7 @@ selection:
 artifacts:
   preregistration:
     path: experiments/gepa_layer2_real_canary_v2/PROTOCOL.md
-    sha256: 923531955da06371b16c1b399bed97925016f765e0285dceb5e1d584bb61c5a2
+    sha256: 284e83f0bda314b5394e7b3aee1b898a6ae9848cd10362d4f0a1ec21a6208158
 git:
   scientific_method_anchor: a85e31bea2ab28f62abb31337b91f9895b11ae37
   execution_source_sha: 351405d898ed1add9e641c87c8d0567912019866

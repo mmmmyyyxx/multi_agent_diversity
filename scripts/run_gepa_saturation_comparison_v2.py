@@ -11,6 +11,7 @@ import argparse
 from dataclasses import replace
 import json
 from pathlib import Path
+import subprocess
 import sys
 from typing import Any
 
@@ -32,10 +33,65 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     formal_dependencies_satisfied,
     preflight_provider_binding,
 )
+from multi_dataset_diverse_rl.governance.freeze_hash import source_freeze_sha256  # noqa: E402
+from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
+    build_startup_bundle,
+    validate_startup_bundle,
+)
 
 
 EXPERIMENT_ID = "gepa_saturation_comparison_v2"
 MANIFEST = ROOT / "experiments/manifests/gepa_saturation_comparison_v2.yaml"
+
+
+def startup_bundle(manifest: dict[str, Any]) -> dict[str, Any]:
+    execution_sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
+        capture_output=True, text=True,
+    ).stdout.strip()
+    protocol = {
+        "experiment_id": EXPERIMENT_ID,
+        "arms": ["GEPA_NATIVE_SATURATION", "GEPA_LAYER2_SATURATION"],
+        "seeds": list(FORMAL_SEEDS),
+        "initialization_policy": INITIALIZATION_POLICY,
+        "local_no_update_patience": LOCAL_NO_UPDATE_PATIENCE,
+        "team_no_update_patience": TEAM_NO_UPDATE_PATIENCE,
+        "validation50_calls": 0,
+        "test50_calls": 0,
+    }
+    provider = manifest["execution_freeze"]["provider"]
+    source_paths = (
+        Path("multi_dataset_diverse_rl/governance/startup_identity.py"),
+        Path("multi_dataset_diverse_rl/governance/execution_harness_v2.py"),
+        Path("scripts/run_gepa_saturation_comparison_v2.py"),
+        MANIFEST.relative_to(ROOT),
+    )
+    return build_startup_bundle(
+        manifest=manifest,
+        protocol=protocol,
+        experiment_id=EXPERIMENT_ID,
+        attempt_id="gepa_saturation_comparison_v2_execution_gated",
+        scientific_method_anchor_sha=str(
+            manifest["execution_freeze"]["scientific_method_anchor_sha"]
+        ),
+        execution_source_sha=execution_sha,
+        provider_profile=PROVIDER_PROFILE,
+        endpoint_fingerprint=str(provider["endpoint_fingerprint"]),
+        models=provider["models"],
+        data_hashes={
+            str(key): str(value)
+            for key, value in manifest.get("data", {}).get("split_hashes", {}).items()
+        },
+        initialization={"policy": INITIALIZATION_POLICY},
+        seeds=FORMAL_SEEDS,
+        local_patience=LOCAL_NO_UPDATE_PATIENCE,
+        team_patience=TEAM_NO_UPDATE_PATIENCE,
+        saturation_mode="formal_saturation",
+        source_files=[
+            {"path": path.as_posix(), "sha256": source_freeze_sha256(ROOT / path)}
+            for path in source_paths
+        ],
+    )
 
 
 def common_config(*, seed: int, out: Path, optimize_path: Path, shadow_path: Path) -> Config:
@@ -102,8 +158,16 @@ def preflight() -> dict[str, Any]:
         optimize_path=ROOT / "PREPARED_OPTIMIZE100.csv",
         shadow_path=ROOT / "PREPARED_SHADOW50.csv",
     )
-    native_provider = preflight_provider_binding(native, provider_freeze)
-    layer2_provider = preflight_provider_binding(layer2, provider_freeze)
+    native_provider = preflight_provider_binding(
+        native, provider_freeze, construct_client=False
+    )
+    layer2_provider = preflight_provider_binding(
+        layer2, provider_freeze, construct_client=False
+    )
+    identity = startup_bundle(manifest)
+    validate_startup_bundle(
+        stored=identity, expected=identity, require_authorized=False
+    )
     dependencies = manifest.get("execution_gate", {}).get("observed_dependencies", {})
     dependency_gate = formal_dependencies_satisfied(
         canary_status=str(dependencies.get("canary", "PENDING")),
@@ -120,6 +184,9 @@ def preflight() -> dict[str, Any]:
         == INITIALIZATION_POLICY,
         "validation_zero": manifest["access"]["validation50_calls"] == 0,
         "test_zero": manifest["access"]["test50_calls"] == 0,
+        "canonical_startup_identity": bool(
+            identity["scientific_identity"]["preregistration_sha256"]
+        ),
     }
     return {
         "gate": "PASS_EXECUTION_GATED" if all(checks.values()) else "HOLD",
@@ -130,6 +197,9 @@ def preflight() -> dict[str, Any]:
         "provider_attempts": 0,
         "validation50_calls": 0,
         "test50_calls": 0,
+        "preregistration_sha256": identity["scientific_identity"][
+            "preregistration_sha256"
+        ],
     }
 
 

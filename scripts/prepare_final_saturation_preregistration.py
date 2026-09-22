@@ -12,10 +12,19 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import sys
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
+    build_startup_bundle,
+    canonical_json_bytes,
+    validate_startup_bundle,
+)
 OUT = ROOT / "reports" / "final_pre_experiment_freeze_20260922"
 SOURCE_COMMIT = "a85e31bea2ab28f62abb31337b91f9895b11ae37"
 LOCAL_PATIENCE = 3
@@ -26,7 +35,7 @@ FOLD_ASSIGNMENT = ROOT / "experiments" / "anti_overfitting_split_v1" / "fold_ass
 
 
 def canonical_bytes(value: Any) -> bytes:
-    return (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+    return canonical_json_bytes(value) + b"\n"
 
 
 def sha256_bytes(value: bytes) -> str:
@@ -172,7 +181,16 @@ def common_manifest(experiment_id: str, study: str, seeds: list[int]) -> dict[st
         "status": "PREREGISTERED_NOT_EXECUTED",
         "scientific_source_commit": SOURCE_COMMIT,
         "source_change_policy": "invalidate_freeze_and_create_fresh_attempt",
+        "startup_identity_builder": (
+            "multi_dataset_diverse_rl.governance.startup_identity.build_startup_bundle"
+        ),
         "provider_profile": "lwj",
+        "api_authorization": {
+            "authorized": False,
+            "authorization_scope": "pending",
+            "allowed_roles": ["reflection", "solver"],
+            "allowed_phases": ["canary"],
+        },
         "models": {
             "solver": "qwen3-8b",
             "optimizer_roles": "qwen3.7-flash",
@@ -409,11 +427,42 @@ def build_bundle(experiment_id: str, fingerprint: str, shared_data: dict[str, An
     root = OUT / experiment_id
     root.mkdir(parents=True, exist_ok=True)
     spec = bundle_spec(experiment_id)
+    provider = provider_freeze(fingerprint)
+    startup = build_startup_bundle(
+        manifest=spec["manifest"],
+        protocol={"protocol_text_sha256": sha256_bytes(spec["protocol"].encode("utf-8"))},
+        experiment_id=experiment_id,
+        attempt_id=f"{experiment_id}_pending_authorization",
+        scientific_method_anchor_sha=SOURCE_COMMIT,
+        execution_source_sha=SOURCE_COMMIT,
+        provider_profile="lwj",
+        endpoint_fingerprint=fingerprint,
+        models=provider["models"],
+        data_hashes={
+            "optimize100": shared_data["optimize100"]["question_hashes_sha256"],
+            "shadow50": shared_data["shadow50"]["question_hashes_sha256"],
+            "validation50": shared_data["validation50"]["question_hashes_sha256"],
+            "test50": shared_data["test50"]["question_hashes_sha256"],
+        },
+        initialization=spec["manifest"]["initial_state_policy"],
+        seeds=spec["manifest"]["seeds"],
+        local_patience=LOCAL_PATIENCE,
+        team_patience=TEAM_PATIENCE,
+        saturation_mode=(
+            "formal_saturation"
+            if experiment_id == "gepa_saturation_comparison_v1"
+            else "engineering_or_mechanism_pilot"
+        ),
+        source_files=[],
+    )
+    validate_startup_bundle(
+        stored=startup, expected=startup, require_authorized=False
+    )
     (root / "PROTOCOL.md").write_text(spec["protocol"], encoding="utf-8", newline="\n")
     write_json(root / "manifest.json", spec["manifest"])
     write_json(root / "claim_registry.json", spec["claims"])
     write_json(root / "cost_envelope.json", spec["cost"])
-    write_json(root / "provider_model_freeze.json", provider_freeze(fingerprint))
+    write_json(root / "provider_model_freeze.json", provider)
     write_json(root / "data_freeze.json", shared_data)
     kind = "formal" if experiment_id == "gepa_saturation_comparison_v1" else "pilot"
     write_json(root / "stopping_semantics.json", stopping(kind))

@@ -35,9 +35,16 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
     TEAM_NO_UPDATE_PATIENCE,
     preflight_provider_binding,
 )
+from multi_dataset_diverse_rl.governance.startup_identity import (  # noqa: E402
+    build_startup_bundle,
+    read_bundle,
+    validate_startup_bundle,
+    write_bundle,
+)
 
 
 EXPERIMENT_ID = "sequential_symmetry_breaking_online_pilot_v2"
+ATTEMPT_ID = "sequential_symmetry_breaking_online_pilot_v2_pending_authorization"
 SEED = 80
 MANIFEST = ROOT / "experiments/manifests/sequential_symmetry_breaking_online_pilot_v2.yaml"
 DESIGN = ROOT / "experiments/sequential_symmetry_breaking_online_pilot_v2"
@@ -127,6 +134,7 @@ def _source_paths() -> list[Path]:
             Path("scripts/run_seed78_primary_responsibility_ab.py"),
             Path("scripts/run_sequential_symmetry_breaking_online_pilot_v1.py"),
             Path("scripts/run_sequential_symmetry_breaking_online_pilot_v2.py"),
+            Path("multi_dataset_diverse_rl/governance/startup_identity.py"),
             MANIFEST.relative_to(ROOT),
             (DESIGN / "PROTOCOL.md").relative_to(ROOT),
             Path("experiments/sequential_symmetry_breaking_online_pilot_v1/classifier_definition.json"),
@@ -147,6 +155,40 @@ def _canonical_rows() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     optimize = [raw[digest] for digest in assignment["fold_a"] + assignment["fold_b"]]
     shadow = [raw[digest] for digest in assignment["fold_c"]]
     return optimize, shadow
+
+
+def _startup_bundle(prep: Path, *, execution_source_sha: str | None = None) -> dict[str, Any]:
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    source_files = [
+        {"path": path.as_posix(), "sha256": base.sha256_file(ROOT / path)}
+        for path in _source_paths()
+    ]
+    data_hashes = {
+        path.name: base.sha256_file(path)
+        for path in sorted((prep / "splits_private").glob("*.csv"))
+    }
+    return build_startup_bundle(
+        manifest=manifest,
+        protocol=protocol_document(),
+        experiment_id=EXPERIMENT_ID,
+        attempt_id=ATTEMPT_ID,
+        scientific_method_anchor_sha=str(
+            manifest["execution_freeze"]["scientific_method_anchor_sha"]
+        ),
+        execution_source_sha=execution_source_sha or base._git("rev-parse", "HEAD"),
+        provider_profile=PROVIDER_PROFILE,
+        endpoint_fingerprint=str(
+            manifest["execution_freeze"]["provider"]["endpoint_fingerprint"]
+        ),
+        models=manifest["execution_freeze"]["provider"]["models"],
+        data_hashes=data_hashes,
+        initialization=protocol_document()["initialization"],
+        seeds=[SEED],
+        local_patience=LOCAL_NO_UPDATE_PATIENCE,
+        team_patience=TEAM_NO_UPDATE_PATIENCE,
+        saturation_mode="sequential_mechanism_pilot",
+        source_files=source_files,
+    )
 
 
 def prepare(prep: Path) -> dict[str, Any]:
@@ -178,17 +220,15 @@ def prepare(prep: Path) -> dict[str, Any]:
             "test50_calls": 0,
         },
     )
+    startup = _startup_bundle(prep)
+    write_bundle(prep / "startup_identity", startup)
     freeze = {
         "execution_commit": base._git("rev-parse", "HEAD"),
         "protocol_sha256": base.sha256_json(protocol),
-        "source_files": [
-            {"path": path.as_posix(), "sha256": base.sha256_file(ROOT / path)}
-            for path in _source_paths()
-        ],
-        "private_inputs": {
-            "optimize100.csv": base.sha256_file(prep / "splits_private/optimize100.csv"),
-            "shadow50.csv": base.sha256_file(prep / "splits_private/shadow50.csv"),
-        },
+        "preregistration_sha256": startup["scientific_identity"]["preregistration_sha256"],
+        "run_identity_sha256": startup["run_identity"]["run_identity_sha256"],
+        "source_files": startup["scientific_identity"]["payload"]["source_files"],
+        "private_inputs": startup["scientific_identity"]["payload"]["data_hashes"],
         "private_parent_dependencies": [],
         "initialization_policy": INITIALIZATION_POLICY,
     }
@@ -225,11 +265,30 @@ def _verify_freeze(prep: Path) -> None:
             raise RuntimeError(f"private split freeze mismatch: {name}")
     if freeze.get("private_parent_dependencies") != []:
         raise RuntimeError("private parent dependency reintroduced")
+    expected = _startup_bundle(prep, execution_source_sha=freeze["execution_commit"])
+    result = validate_startup_bundle(
+        stored=read_bundle(prep / "startup_identity"),
+        expected=expected,
+        require_authorized=False,
+    )
+    if result["preregistration_sha256"] != freeze["preregistration_sha256"]:
+        raise RuntimeError("startup preregistration mismatch")
 
 
 async def execute(prep: Path, run_root: Path) -> dict[str, Any]:
-    base._authorize()
     _verify_freeze(prep)
+    validate_startup_bundle(
+        stored=read_bundle(prep / "startup_identity"),
+        expected=_startup_bundle(
+            prep,
+            execution_source_sha=base._read_json(prep / "source_freeze.json")[
+                "execution_commit"
+            ],
+        ),
+        require_authorized=True,
+        phase="online_trajectory",
+        roles=("solver", "reflection"),
+    )
     if run_root.exists():
         raise FileExistsError("fresh run root required; resume and automatic retry are forbidden")
     run_root.mkdir(parents=True)
@@ -428,7 +487,9 @@ def preflight() -> dict[str, Any]:
         optimize_path=ROOT / "PREPARED_OPTIMIZE100.csv",
         shadow_path=ROOT / "PREPARED_SHADOW50.csv",
     )
-    provider = preflight_provider_binding(cfg, manifest["execution_freeze"]["provider"])
+    provider = preflight_provider_binding(
+        cfg, manifest["execution_freeze"]["provider"], construct_client=False
+    )
     protocol = protocol_document()
     checks = {
         "provider_profile_explicit": cfg.models.provider_profile == PROVIDER_PROFILE,
