@@ -175,7 +175,10 @@ def prepare(prep: Path) -> dict[str, Any]:
     result = {
         "gate": "PASS",
         "ready_to_run": True,
-        "authorization_state": "AUTHORIZATION_REQUIRED",
+        "authorization_state": (
+            "AUTHORIZED" if manifest.get("api_authorization", {}).get("authorized") is True
+            else "AUTHORIZATION_REQUIRED"
+        ),
         "execution_commit": freeze["execution_commit"],
         "protocol_sha256": freeze["protocol_sha256"],
         "provider_attempts": 0,
