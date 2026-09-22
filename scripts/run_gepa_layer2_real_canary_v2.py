@@ -34,7 +34,7 @@ from multi_dataset_diverse_rl.governance.execution_harness_v2 import (  # noqa: 
 
 
 EXPERIMENT_ID = "gepa_layer2_real_canary_v2"
-ATTEMPT_ID = "gepa_layer2_real_canary_v2_pending_authorization"
+ATTEMPT_ID = "gepa_layer2_real_canary_v2_authorized1"
 SEED = 80
 MANIFEST = ROOT / "experiments/manifests/gepa_layer2_real_canary_v2.yaml"
 PROTOCOL = ROOT / "experiments/gepa_layer2_real_canary_v2/PROTOCOL.md"
@@ -212,14 +212,17 @@ def preflight() -> dict[str, Any]:
         "one_opportunity": protocol["opportunities"] == 1,
         "validation_zero": protocol["validation50_calls"] == 0,
         "test_zero": protocol["test50_calls"] == 0,
-        "authorization_required": manifest.get("api_authorization", {}).get("authorized") is False,
-        "ready_for_authorization": manifest.get("status") == "PREFLIGHT_PASS",
+        "authorization_state_valid": manifest.get("status") == "PREFLIGHT_PASS"
+        and isinstance(manifest.get("api_authorization", {}).get("authorized"), bool),
     }
     return {
         "gate": "PASS" if all(checks.values()) else "HOLD",
         "checks": checks,
         "ready_to_run": all(checks.values()),
-        "authorization_state": "AUTHORIZATION_REQUIRED",
+        "authorization_state": (
+            "AUTHORIZED" if manifest.get("api_authorization", {}).get("authorized") is True
+            else "AUTHORIZATION_REQUIRED"
+        ),
         "endpoint_fingerprint": provider.endpoint_fingerprint,
         "provider_attempts": 0,
         "validation50_calls": 0,

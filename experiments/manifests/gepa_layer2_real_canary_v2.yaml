@@ -44,8 +44,8 @@ design:
   - saturation patience and team epoch semantics
   initialization_policy: FRESH_DETERMINISTIC_INITIALIZATION_V1
 api_authorization:
-  authorized: false
-  authorization_scope: pending one-time authorization for this exact fresh freeze
+  authorized: true
+  authorization_scope: explicit_user_authorization_2026_09_22_gepa_layer2_real_canary_v2_single_fresh_attempt
   allowed_roles:
   - reflection
   - solver
