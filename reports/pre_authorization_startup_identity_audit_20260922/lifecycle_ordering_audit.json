@@ -1,0 +1,1 @@
+{"authorization_mismatch_terminal":"no run root / no RUNNING","gate":"PASS","historical_order":"RUNNING -> FAILED_START","ordering":["prepare","static identity validation","authorization validation","RUNNING","provider boundary"],"provider_boundary_invariant":"authorization mismatch -> false"}
