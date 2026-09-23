@@ -108,6 +108,50 @@ class TeamSearchController:
         assignment = self.responsibility.assign(request)
         return await self.run_frozen_opportunity(request, (assignment,))
 
+    async def run_local_empirical_canary(self, request: TeamSearchRequest) -> TeamSearchOutcome:
+        """Technical stage boundary: stop before any team evaluation/write-back.
+
+        This does not alter the normal search path. It permits a preregistered
+        one-opportunity integration canary to observe the real local empirical
+        funnel without turning it into an online team experiment.
+        """
+
+        assignment = self.responsibility.assign(request)
+        task = self.task_builder.build(request, assignment)
+        local = await self._run_local_optimizer(task)
+        telemetry = (
+            dict(local.optimizer_state.payload.get("telemetry", {}))
+            if local.optimizer_state is not None else {}
+        )
+        return TeamSearchOutcome(
+            assignment=assignment,
+            candidates=tuple(TeamCandidateRecord(row) for row in local.candidates),
+            committed_candidate_id=None,
+            termination_reason="LOCAL_EMPIRICAL_CANARY_BOUNDARY",
+            cost=TeamCostAccounting(
+                local_optimizer_solver_calls=local.solver_calls,
+                local_optimizer_meta_calls=local.optimizer_calls,
+                local_optimizer_tokens=local.total_tokens,
+            ),
+            funnel={
+                "local_candidates": len(local.candidates),
+                "team_minibatch_survivors": 0,
+                "full_team_evaluated_candidates": 0,
+                "committed_candidates": 0,
+            },
+            audit_metadata={
+                "local_optimizer_backend": local.backend_name,
+                "local_optimizer_version": local.backend_version,
+                "local_termination_reason": local.termination_reason,
+                "local_optimizer_telemetry": telemetry,
+                "responsibility_packet_hash": (
+                    task.packet.packet_hash
+                    if isinstance(task, Layer2OptimizationRequest) else None
+                ),
+                "team_evaluation_reached": False,
+            },
+        )
+
     async def _evaluate_frozen_branch(
         self,
         request: TeamSearchRequest,

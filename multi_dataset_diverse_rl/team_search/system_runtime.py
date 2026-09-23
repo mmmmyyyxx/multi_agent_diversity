@@ -260,7 +260,21 @@ class SystemLocalSolverEvaluator:
             row.question_hash: index
             for index, row in enumerate(self.system.fixed_probe.examples)
         }
-        index = index_by_id[example.example_id]
+        # Layer-2 packets role-qualify ids so the same Optimize case can be
+        # present as responsibility and local evaluation evidence. The Solver
+        # still executes the underlying frozen case exactly once per request.
+        source_id = str(example.example_id)
+        if source_id not in index_by_id and ":" in source_id:
+            role, candidate_id = source_id.split(":", 1)
+            if role not in {"responsibility", "focus", "anchor", "local_eval"}:
+                raise KeyError("unknown Layer-2 packet evidence role")
+            source_id = candidate_id
+        index = index_by_id[source_id]
+        probe_row = self.system.fixed_probe.examples[index]
+        if example.input_payload != probe_row.question or not self.system.match_answer(
+            example.gold, probe_row.gold_answer
+        ):
+            raise ValueError("Layer-2 packet evidence differs from frozen Optimize case")
         before = dict(self.accounting())
 
         async def run() -> Any:

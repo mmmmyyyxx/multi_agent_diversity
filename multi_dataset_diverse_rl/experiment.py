@@ -245,6 +245,7 @@ class ExperimentServices:
     backend: LocalOptimizerBackend
     layer2_controller_factory: Layer2ControllerFactory | None = None
     team_state_hash_reader: Callable[[], str] | None = None
+    technical_local_canary_only: bool = False
 
 
 @dataclass(frozen=True)
@@ -381,7 +382,14 @@ class ExperimentEngine:
         for index, opportunity in enumerate(inputs.layer2_opportunities, start=1):
             if opportunity.request.seed != runtime.seed:
                 raise ExperimentContractError("Layer2 opportunity seed does not match RuntimeContext")
-            outcome = await controller.run_opportunity(opportunity.request)
+            if services.technical_local_canary_only:
+                if (spec.backend is not OptimizerBackend.GEPA
+                    or spec.stopping_regime is not StoppingRegime.FIXED_BUDGET
+                    or spec.fixed_budget_units != 1 or index != 1):
+                    raise ExperimentContractError("local canary requires one fixed-budget GEPA opportunity")
+                outcome = await controller.run_local_empirical_canary(opportunity.request)
+            else:
+                outcome = await controller.run_opportunity(opportunity.request)
             outcomes.append(outcome)
             current_hash = services.team_state_hash_reader()
             stop = None

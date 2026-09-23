@@ -66,7 +66,11 @@ class FakeProbe:
         self.harness = harness
         self.cache_hit = cache_hit
         self.examples = tuple(
-            SimpleNamespace(question_hash=f"q-{index}", gold_answer="A")
+            SimpleNamespace(
+                question_hash=f"q-{index}",
+                question=f"question-{index}",
+                gold_answer="A",
+            )
             for index in range(size)
         )
 
@@ -224,7 +228,7 @@ def test_actual_local_gepa_producer_preserves_phase() -> None:
     harness = StageHarness()
     probe = FakeProbe(harness, 1)
     system = FakeSystem(harness, probe)
-    row = LocalEvidenceExample("q-0", "question", "A")
+    row = LocalEvidenceExample("q-0", "question-0", "A")
 
     async def run():
         evaluator = SystemLocalSolverEvaluator(
