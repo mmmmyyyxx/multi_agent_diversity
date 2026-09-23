@@ -238,7 +238,9 @@ def test_only_team_contract_changes_for_opt_in_scheduler() -> None:
     experimental = TeamSearchContract(
         target_policy="primary_responsibility_persistent_realizability_v1"
     )
-    assert local_hash == "2323208e24609e64c484a571ce63002dfc2a0e1c5b74ce30105d64a30bc021e9"
+    # Component-only proposer clarification changes the Layer-1 identity,
+    # while both target policies still share the same local optimizer.
+    assert local_hash == "9b9f7c0cd98294f4fd1b87d2193f622c01189508e95a319dd0e193b0bc66cde4"
     assert current.identity() == "43c8f44c321ddb89e91b122d0e27e0e60c1b0556661e7bb06202c0ca043f1312"
     assert experimental.identity() != current.identity()
     assert asdict(current) | {"target_policy": experimental.target_policy} == asdict(experimental)

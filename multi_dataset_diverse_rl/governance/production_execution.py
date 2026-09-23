@@ -122,7 +122,10 @@ def validate_execution(
 
     manifest = _read(prep / "manifest.json")
     protocol = _read(prep / "protocol.json")
-    if manifest.get("experiment_id") != "gepa_layer2_real_canary_post_refactor_v1":
+    if manifest.get("experiment_id") not in {
+        "gepa_layer2_real_canary_post_refactor_v1",
+        "gepa_layer2_real_canary_post_refactor_v2",
+    }:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported experiment")
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")

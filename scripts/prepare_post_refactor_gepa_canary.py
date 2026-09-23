@@ -32,7 +32,7 @@ from multi_dataset_diverse_rl.local_optimizers.gepa_runtime import (  # noqa: E4
     verify_frozen_gepa,
 )
 
-EXPERIMENT_ID = "gepa_layer2_real_canary_post_refactor_v1"
+EXPERIMENT_ID = "gepa_layer2_real_canary_post_refactor_v2"
 SEED = 80
 SCIENTIFIC_METHOD_ANCHOR_SHA = "f762545e3e4c49a7ba9f8cac53b380f14c606332"
 DEFAULT_PREP = ROOT / "runs" / EXPERIMENT_ID / "prep"

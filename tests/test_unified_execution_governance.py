@@ -29,7 +29,10 @@ DEPENDENCY = {
 }
 
 
-def _fixture(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
+def _fixture(
+    tmp_path: Path, monkeypatch,
+    experiment_id: str = "gepa_layer2_real_canary_post_refactor_v1",
+) -> tuple[Path, Path]:
     from multi_dataset_diverse_rl.governance import production_execution as governance
 
     root = tmp_path / "source"
@@ -53,8 +56,8 @@ def _fixture(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
     }
     spec = experiment_spec_from_mapping(scientific)
     manifest = {
-        "experiment_id": "gepa_layer2_real_canary_post_refactor_v1",
-        "attempt_id": "gepa_layer2_real_canary_post_refactor_v1",
+        "experiment_id": experiment_id,
+        "attempt_id": experiment_id,
         "scientific": scientific,
         "method_identity": spec.method_identity,
         "spec_identity": spec.identity(),
@@ -95,6 +98,18 @@ def _fixture(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
     )
     write_bundle(prep / "startup_identity", bundle)
     return root, prep
+
+
+def test_new_canary_attempt_identity_is_distinct_and_admissible(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    root, prep = _fixture(
+        tmp_path, monkeypatch,
+        experiment_id="gepa_layer2_real_canary_post_refactor_v2",
+    )
+    permit = validate_execution(root=root, prep=prep, require_authorized=True)
+    assert permit.attempt_id == "gepa_layer2_real_canary_post_refactor_v2"
+    assert not permit.admitted
 
 
 def test_one_time_admission_and_failed_start(tmp_path: Path, monkeypatch) -> None:

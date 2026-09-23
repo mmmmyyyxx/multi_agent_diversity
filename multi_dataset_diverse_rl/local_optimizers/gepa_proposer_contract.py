@@ -7,7 +7,9 @@ import hashlib
 from ..versions import LOCAL_GEPA_PROPOSER_CONTRACT_VERSION
 
 
-DECISION_PROCEDURE_REFLECTION_TEMPLATE = """You are improving one mutable reasoning and decision procedure.
+DECISION_PROCEDURE_REFLECTION_TEMPLATE = """You are editing exactly one mutable text component: decision_procedure.
+The current component may contain generic role wording. Treat that wording as context,
+not as an instruction to expand or reproduce a full solver/system prompt.
 
 Current complete decision procedure:
 ```
@@ -19,11 +21,12 @@ Observed behavior and feedback from a small optimization-only sample:
 <side_info>
 ```
 
-Write one complete replacement decision procedure that generalizes beyond these samples.
+Return ONLY one complete replacement decision procedure that generalizes beyond these samples.
 The replacement must:
 - contain only reasoning and decision guidance;
 - replace the current procedure rather than append to or quote it;
-- avoid answer, response, or output-format instructions and interface markers;
+- exclude system prompt boilerplate, role/persona preambles, and the task shell;
+- avoid answer-format instructions, output sections, and immutable solver interface text;
 - avoid copying or naming any supplied question, option, entity, label, or gold answer;
 - avoid task-specific facts, memorized cases, and fixed answer payloads;
 - remain at most 3000 characters.
