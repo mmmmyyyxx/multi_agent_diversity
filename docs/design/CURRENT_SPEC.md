@@ -1,11 +1,14 @@
 # Current Implementation Specification
 
-This is the normative implementation specification for the current algorithm.
-It is not a paper narrative or an experiment report. Runtime identifiers and
-frozen constants remain authoritative in
-`multi_dataset_diverse_rl/versions.py`.
+This is the normative implementation specification for two explicitly distinct
+runtime families: the v15 canonical replay method below and the active,
+opt-in two-layer research architecture later in this file. It is not a paper
+narrative or an experiment report. The active direction does not inherit the
+v15 method identity. Runtime identifiers and frozen constants remain
+authoritative in `multi_dataset_diverse_rl/versions.py`; experiment-specific
+identity and authorization belong to the frozen manifest.
 
-## Canonical Runtime
+## Canonical v15 Replay Runtime
 
 The canonical runtime is `member_aware_peer_state_v15`, checkpoint v25:
 Repairability-Adjusted Dual-Target Prompt-Team Optimization. It retains the

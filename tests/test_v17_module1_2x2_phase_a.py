@@ -22,6 +22,9 @@ def load(name: str, relative: str):
 
 @pytest.fixture(scope="module")
 def registry():
+    source = ROOT / "runs/v17_formal_5arm_3seed_20260813"
+    if not source.is_dir():
+        pytest.skip("historical private v17 trajectory artifacts are unavailable")
     builder = load(
         "v17_module1_registry", "scripts/build_v17_module1_2x2_registry.py"
     )

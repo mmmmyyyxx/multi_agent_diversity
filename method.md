@@ -1,11 +1,13 @@
 # Method
 
-This file is the human-readable method exposition. The normative, mechanically
-referenced implementation specification is `docs/design/CURRENT_SPEC.md`.
+This file describes the historical v15 method. The active research architecture
+is the backend-neutral Layer-1/Layer-2 system documented in
+`docs/CURRENT_ARCHITECTURE.md`. Normative algorithm invariants for both remain
+in `docs/design/CURRENT_SPEC.md`; runtime constants remain in `versions.py`.
 
 ## 1. Scope
 
-The current runtime implements:
+The canonical v15 replay runtime implements:
 
 ```text
 Repairability-Adjusted Dual-Target Prompt-Team Optimization
@@ -17,11 +19,10 @@ The runtime also supports frozen experimental Module2 context variants C2 and
 C3 beside the byte-compatible C0/v15 path. These variants change generation
 context only and are not yet promoted to the canonical method.
 
-An opt-in candidate architecture, `two_layer_rg_gepa_v1`, separates the local
-prompt-optimization backbone from responsibility-guided team search. GEPA is
-the default local optimizer in that candidate architecture, not a proposed
-team-level contribution. It can be replaced by another local APO backend
-without changing responsibility, target assignment, team evaluation,
+The active, opt-in two-layer research architecture separates the local
+prompt-optimization backbone from responsibility-guided team search. GEPA and
+MARS are current backend choices. A backend can be replaced without changing
+responsibility, target assignment, team evaluation,
 Common-Safe selection, Shadow, or atomic write-back. The scientific Layer 2 is
 Responsibility-Guided Team Search: Member-Aware Responsibility,
 responsibility-conditioned local-task construction, team-aware candidate

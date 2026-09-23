@@ -31,6 +31,7 @@ from multi_dataset_diverse_rl.team_search.task_builder import (
     NativeFeedRequestBuilder,
 )
 from scripts import capture_production_golden_traces as baseline
+from scripts.run_experiment import _execute, preflight
 
 
 ROOT = Path(__file__).parents[1]
@@ -232,7 +233,7 @@ def test_production_dependency_direction_and_historical_isolation() -> None:
     assert "multi_dataset_diverse_rl.config" not in _imports(core)
     assert "multi_dataset_diverse_rl.config" not in _imports(backends)
     source = entrypoint.read_text(encoding="utf-8")
-    assert "run_experiment" in source
+    assert "FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND" in source
     assert "seed75" not in source.casefold()
     assert "seed78" not in source.casefold()
     assert "primary_responsibility_ab" not in source
@@ -256,3 +257,51 @@ def test_new_experiment_is_configuration_only() -> None:
     assert future.mode_id == "GEPA_LAYER2"
     assert mars.mode_id == "MARS_LAYER2"
     assert future.identity() != base.identity()
+
+
+def test_opt_in_method_identity_never_uses_historical_v15_version(monkeypatch) -> None:
+    from multi_dataset_diverse_rl import versions
+
+    identities = {
+        _spec(backend, scope, "fixed_budget").method_identity
+        for backend in ("gepa", "mars")
+        for scope in ("native", "layer2")
+    }
+    assert len(identities) == 4
+    assert all(versions.UNIFIED_EXPERIMENT_ENGINE_VERSION in item for item in identities)
+    assert all(versions.METHOD_VERSION not in item for item in identities)
+    assert versions.METHOD_VERSION == "member_aware_peer_state_v15"
+    spec = _spec("gepa", "layer2", "saturation")
+    original = spec.identity()
+    monkeypatch.setattr(versions, "TEAM_MINIBATCH_CONTRACT_VERSION", "changed-fixture")
+    assert spec.identity() != original
+
+
+def test_cli_never_treats_factory_string_as_execution_authorization() -> None:
+    manifest = {
+        "scientific": {
+            "backend": "gepa",
+            "optimization_scope": "layer2",
+            "stopping_regime": "saturation",
+            "task_identity": "offline-fixture",
+            "data_identity": "optimize-fixture",
+        },
+        "runtime": {
+            "seed": 78,
+            "provider_profile": "offline-fixture",
+            "solver_model": "solver-fixture",
+            "optimizer_model": "optimizer-fixture",
+            "evaluator_model": "evaluator-fixture",
+            "run_identity_sha256": "unverified-run",
+            "authorization_identity": "unverified-authorization",
+            "cache_identity": "cache-fixture",
+            "ledger_identity": "ledger-fixture",
+        },
+        "execution_factory": "untrusted.module:construct_provider",
+    }
+    result = preflight(manifest)
+    assert result["gate"] == "HOLD"
+    assert result["blockers"] == ["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"]
+    assert result["provider_attempts"] == result["validation_calls"] == result["test_calls"] == 0
+    with pytest.raises(ExperimentContractError, match="ABORT_PRE_PROVIDER"):
+        asyncio.run(_execute(manifest))

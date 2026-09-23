@@ -22,6 +22,9 @@ def load(name: str, relative: str):
 
 @pytest.fixture(scope="module")
 def builder():
+    source = ROOT / "runs/v17_formal_5arm_3seed_20260813"
+    if not source.is_dir():
+        pytest.skip("historical private v17 trajectory artifacts are unavailable")
     return load("v17_hybrid_builder", "scripts/build_v17_hybrid_target_allocation_registry.py")
 
 

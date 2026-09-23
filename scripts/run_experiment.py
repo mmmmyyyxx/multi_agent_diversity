@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import importlib
 import json
 from pathlib import Path
 import sys
@@ -22,10 +21,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.experiment import (  # noqa: E402
-    ExperimentInputs,
-    ExperimentServices,
+    ExperimentContractError,
     experiment_spec_from_mapping,
-    run_experiment,
     runtime_context_from_mapping,
 )
 
@@ -37,27 +34,22 @@ def _load(path: Path) -> Mapping[str, Any]:
     return value
 
 
-def _composition_factory(reference: str):
-    if reference.count(":") != 1:
-        raise ValueError("execution_factory must be module:function")
-    module_name, function_name = reference.split(":", 1)
-    factory = getattr(importlib.import_module(module_name), function_name)
-    if not callable(factory):
-        raise TypeError("execution_factory is not callable")
-    return factory
-
-
 def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
     spec = experiment_spec_from_mapping(manifest.get("scientific", {}))
     runtime = runtime_context_from_mapping(manifest.get("runtime", {}))
     factory = str(manifest.get("execution_factory", ""))
     return {
-        "gate": "PASS" if factory else "HOLD",
+        # A factory reference is composition metadata, not an authorization or
+        # a verified source/preregistration binding. Keep real execution closed
+        # until a frozen execution adapter is connected to this CLI.
+        "gate": "HOLD",
+        "blockers": ["FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND"],
         "mode": spec.mode_id,
+        "method_identity": spec.method_identity,
         "stopping_regime": spec.stopping_regime.value,
         "spec_identity": spec.identity(),
         "seed": runtime.seed,
-        "execution_factory_bound": bool(factory),
+        "execution_factory_declared": bool(factory),
         "provider_attempts": 0,
         "validation_calls": 0,
         "test_calls": 0,
@@ -65,13 +57,10 @@ def preflight(manifest: Mapping[str, Any]) -> dict[str, Any]:
 
 
 async def _execute(manifest: Mapping[str, Any]):
-    spec = experiment_spec_from_mapping(manifest.get("scientific", {}))
-    runtime = runtime_context_from_mapping(manifest.get("runtime", {}))
-    factory = _composition_factory(str(manifest.get("execution_factory", "")))
-    inputs, services = factory(spec=spec, runtime=runtime, manifest=manifest)
-    if not isinstance(inputs, ExperimentInputs) or not isinstance(services, ExperimentServices):
-        raise TypeError("execution factory must return (ExperimentInputs, ExperimentServices)")
-    return await run_experiment(spec, runtime, inputs, services)
+    # The typed engine can run deterministic offline fixtures through its
+    # public API. This CLI is reserved for a future frozen execution adapter;
+    # no manifest-provided function may construct a provider before governance.
+    raise ExperimentContractError("ABORT_PRE_PROVIDER: FROZEN_EXECUTION_GOVERNANCE_NOT_BOUND")
 
 
 def main() -> None:
@@ -85,14 +74,7 @@ def main() -> None:
     if args.preflight:
         print(json.dumps(preflight(manifest), indent=2, sort_keys=True))
         return
-    result = asyncio.run(_execute(manifest))
-    print(json.dumps({
-        "mode": result.mode_id,
-        "stopping_regime": result.stopping_regime,
-        "stop_reason": result.stop_reason,
-        "event_count": len(result.events),
-        "final_state_hash": result.final_state_hash,
-    }, indent=2, sort_keys=True))
+    asyncio.run(_execute(manifest))
 
 
 if __name__ == "__main__":

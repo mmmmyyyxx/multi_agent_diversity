@@ -25,8 +25,17 @@ def load(name: str, relative: str):
     return module
 
 
+def require_private_preregistration() -> None:
+    private_prereg = (
+        ROOT / "runs/v16_responsibility_coherence_generic_m20_prep/probe_preregistration.json"
+    )
+    if not private_prereg.is_file():
+        pytest.skip("historical private preregistration artifact is unavailable")
+
+
 @pytest.fixture(scope="module")
 def registry():
+    require_private_preregistration()
     module = load(
         "generic_m20_registry",
         "scripts/build_v16_generic_m20_probe_registry.py",
@@ -101,6 +110,7 @@ def test_preflight_proves_no_g0_leakage_and_shared_parent_target_budget(
 
 
 def test_preflight_accepts_frozen_m20_m2e_registry(workspace_tmp):
+    require_private_preregistration()
     builder = load(
         "m20_m2e_registry_preflight",
         "scripts/build_v16_m20_m2e_probe_registry.py",

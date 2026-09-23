@@ -1,5 +1,7 @@
 """Frozen protocol identifiers shared by runtime, metadata, and persistence."""
 
+# Historical canonical/replay identity. The opt-in GEPA/MARS engine records its
+# own method identity and must not use this value for new experiment provenance.
 METHOD_VERSION = "member_aware_peer_state_v15"
 RESPONSIBILITY_VERSION = "counterfactual_vote_margin_responsibility_v1"
 SERVICE_ROUTING_VERSION = "single_service_anchor_routing_no_freeze_v2"
@@ -45,6 +47,7 @@ MARS_LAYER2_RESPONSIBILITY_OVERLAY_VERSION = (
     "MARS_LAYER2_RESPONSIBILITY_OVERLAY_V1"
 )
 LAYER2_EVIDENCE_PACKET_VERSION = "responsibility_evidence_packet_v3_frozen_local_eval"
+UNIFIED_EXPERIMENT_ENGINE_VERSION = "backend_neutral_layer1_layer2_engine_v1"
 LAYER2_EVIDENCE_SELECTION_POLICY_VERSION = (
     "responsibility_plus_latest_transition_frozen_eval_v2"
 )

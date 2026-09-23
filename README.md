@@ -1,5 +1,16 @@
 # Multi-Agent Diversity
 
+The active research direction is a backend-neutral two-layer system: Layer 2
+owns responsibility, evidence, team evaluation and write-back; Layer 1 runs
+GEPA or MARS local prompt search. The [current architecture map](docs/CURRENT_ARCHITECTURE.md)
+shows the unified engine and its four backend/scope modes. Each experiment
+retains its own frozen identity.
+
+The v15 method documented below remains the canonical **historical replay**
+runtime. Its `METHOD_VERSION` and checkpoint v25 still apply to v15 runs; they
+do not identify a new Layer-2 GEPA/MARS run. No two-layer method has been
+promoted to the v15 canonical runtime identity.
+
 ## Experiment Governance
 
 Experiment work is governed by a traceable design-to-evidence chain:
@@ -16,8 +27,8 @@ Experiment work is governed by a traceable design-to-evidence chain:
 authoritative in `multi_dataset_diverse_rl/versions.py`; reports are evidence,
 not design authority.
 
-This repository implements Repairability-Adjusted Dual-Target Prompt-Team
-Optimization:
+The historical v15 runtime implements Repairability-Adjusted Dual-Target
+Prompt-Team Optimization:
 
 ```text
 method_version = member_aware_peer_state_v15
@@ -34,7 +45,7 @@ candidate replaces only one member; dual-target search evaluates two
 independent single-member branches from the same parent state and commits at
 most one winner.
 
-## Method overview
+## Historical v15 method overview
 
 ```text
 Joint G/H/M diagnosis
@@ -111,7 +122,7 @@ git diff --check
 
 These commands are offline and do not authorize real API calls.
 
-## Running experiments
+## Historical v15 experiments
 
 Run preflight before a separately authorized API experiment:
 

@@ -14,6 +14,7 @@ import hashlib
 import json
 from typing import Callable, Mapping, Protocol
 
+from . import versions
 from .local_optimizers.base import LocalOptimizerBackend
 from .local_optimizers.schemas import LocalOptimizationResult
 from .native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
@@ -76,8 +77,15 @@ class ExperimentSpec:
     def mode_id(self) -> str:
         return f"{self.backend.value}_{self.optimization_scope.value}".upper()
 
+    @property
+    def method_identity(self) -> str:
+        """Opt-in method identity, distinct from the historical v15 runtime."""
+
+        return f"{versions.UNIFIED_EXPERIMENT_ENGINE_VERSION}:{self.mode_id}"
+
     def identity(self) -> str:
         payload = {
+            "method_identity": self.method_identity,
             "backend": self.backend.value,
             "optimization_scope": self.optimization_scope.value,
             "stopping_regime": self.stopping_regime.value,
@@ -89,6 +97,26 @@ class ExperimentSpec:
             "agent_count": self.agent_count,
             "solver_contract_id": self.solver_contract_id,
             "output_contract_id": self.output_contract_id,
+            "backend_feed_version": {
+                (OptimizerBackend.GEPA, OptimizationScope.NATIVE): versions.GEPA_NATIVE_FEED_VERSION,
+                (OptimizerBackend.GEPA, OptimizationScope.LAYER2): versions.GEPA_LAYER2_EVIDENCE_BACKEND_VERSION,
+                (OptimizerBackend.MARS, OptimizationScope.NATIVE): versions.MARS_NATIVE_FEED_VERSION,
+                (OptimizerBackend.MARS, OptimizationScope.LAYER2): versions.MARS_LAYER2_EVIDENCE_BACKEND_VERSION,
+            }[(self.backend, self.optimization_scope)],
+            "layer2_packet_version": (
+                versions.LAYER2_EVIDENCE_PACKET_VERSION
+                if self.optimization_scope is OptimizationScope.LAYER2 else None
+            ),
+            "layer2_policy_versions": (
+                {
+                    "responsibility": versions.PRIMARY_RESPONSIBILITY_PERSISTENT_REALIZABILITY_VERSION,
+                    "realizability": versions.PERSISTENT_REALIZABILITY_SEMANTICS_VERSION,
+                    "team_minibatch": versions.TEAM_MINIBATCH_CONTRACT_VERSION,
+                    "team_admission": versions.CANDIDATE_SELECTION_VERSION,
+                }
+                if self.optimization_scope is OptimizationScope.LAYER2 else None
+            ),
+            "stopping_contract_version": versions.SATURATION_STOPPING_CONTRACT_VERSION,
         }
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")

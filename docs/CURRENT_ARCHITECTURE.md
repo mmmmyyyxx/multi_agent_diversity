@@ -3,12 +3,15 @@
 This document describes the current execution architecture. Scientific
 invariants remain normative in `docs/design/CURRENT_SPEC.md`; frozen runtime
 identities and numeric constants remain authoritative in `versions.py`.
+The active two-layer implementation is opt-in. The v15 method identity remains
+reserved for historical canonical replay and must not be attached to a new
+GEPA/MARS Layer-2 run.
 
 ## Production module map
 
 ```text
 scripts/run_experiment.py
-    thin manifest/CLI composition root
+    manifest parser and gated CLI composition root
                      |
                      v
 multi_dataset_diverse_rl/experiment.py
@@ -37,6 +40,13 @@ The only public orchestration API for new experiments is:
 ```python
 await run_experiment(spec, runtime, inputs, services)
 ```
+
+The engine is exercised by deterministic offline fixtures. The current CLI
+does not yet bind the existing startup identity, source freeze, explicit API
+authorization, and lifecycle transaction to a concrete provider composition.
+Its preflight therefore returns `HOLD`, and `--execute` fails before importing
+any manifest-supplied factory. A real post-refactor canary needs a new frozen
+execution adapter, preregistration, run identity, and explicit authorization.
 
 Existing experiment-named runners are historical reproduction or compatibility
 surfaces. They are not dependencies of the production engine. A historical
