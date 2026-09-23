@@ -1,0 +1,20 @@
+{
+  "attempt_id": "gepa_layer2_real_canary_post_refactor_v2",
+  "execution_source_sha": "ada169e37e977f28e4f6a7eb357f4aede6d378e9",
+  "preregistration_sha256": "4390ec600202d29276b6b390c83e359d134e720a5d720ed541549e98afaa0e7a",
+  "run_identity_sha256": "e309d3313e20c271ff2bcd7f509eafa76a5993dd516222a6fcf4456f50e1341a",
+  "provider_profile": "lwj",
+  "solver_model": "qwen3-8b",
+  "solver_thinking": false,
+  "reflection_model": "qwen3.7-flash",
+  "seed": 80,
+  "initialization_policy": "FRESH_DETERMINISTIC_INITIALIZATION_V1",
+  "gepa_version": "v0.1.1",
+  "gepa_commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+  "gepa_source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+  "private_artifact_sha256": {
+    "execution_summary.json": "749e3176ee4ac9d691115d1a2d711d5ba9d67c459a40e3dcf00f8f42472419e8",
+    "run_lifecycle.json": "c0282ae73ef96dbd424043fd451d6fcc22d8c91f3d68acd1d126fcbd8f42c148",
+    "ledger.jsonl": "df746218b80a1a47794f31cedfcb0673b5d753366e9d1120913bf1373fffb4c"
+  }
+}

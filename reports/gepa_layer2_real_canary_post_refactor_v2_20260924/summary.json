@@ -1,0 +1,35 @@
+{
+  "attempt_id": "gepa_layer2_real_canary_post_refactor_v2",
+  "classification": "GEPA_LAYER2_REAL_EMPIRICAL_PATH_CONFIRMED",
+  "execution_status": "EXECUTION_COMPLETE",
+  "funnel": {
+    "proposal_attempts": 2,
+    "changed": 2,
+    "contract_invalid": 1,
+    "solver_reached": 1,
+    "full_local_evaluations": 1,
+    "positive_minibatch_deltas": 1,
+    "accepted_local_mutations": 1,
+    "local_candidates": 1,
+    "team_minibatch_survivors": 0,
+    "full_team_evaluated_candidates": 0,
+    "committed_candidates": 0,
+    "native_example_selection_calls": 0
+  },
+  "usage": {
+    "logical_calls": 116,
+    "provider_attempts": 116,
+    "successful_provider_calls": 116,
+    "failed_provider_attempts": 0,
+    "cache_hits": 0,
+    "solver_calls": 114,
+    "reflection_calls": 2,
+    "input_tokens": 34035,
+    "output_tokens": 14560,
+    "total_tokens": 48595
+  },
+  "validation50_calls": 0,
+  "test50_calls": 0,
+  "stop_reason": "SCIENTIFIC_BUDGET_REACHED",
+  "claim_limit": "Engineering local empirical path only; team transfer and efficacy not established."
+}

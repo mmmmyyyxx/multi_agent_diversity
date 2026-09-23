@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "published_scope": "Sanitized aggregate report only",
+  "excluded": [
+    "raw prompts",
+    "questions",
+    "gold answers",
+    "model answers",
+    "raw responses",
+    "provider endpoints",
+    "credentials",
+    "full ledger",
+    "SQLite and caches",
+    "checkpoints",
+    "absolute local paths"
+  ]
+}

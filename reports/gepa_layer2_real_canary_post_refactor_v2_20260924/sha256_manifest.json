@@ -1,0 +1,11 @@
+{
+  "algorithm": "sha256",
+  "hash_semantics": "git_index_blob_bytes_lf",
+  "files": {
+    "README.md": "d2eae66dd62e0dff553449bfaca76afa20ae2598765716b28a28e5864ffe4bfb",
+    "audit.json": "0f0521e12fcf4060dcb08b1d227b0f6ce71f79daba13f63651fea594c64514c7",
+    "provenance.json": "2cb194ea2f5e5f91a021bd23321add3138aa3e639a9526466c7f93ccfb0f9b6d",
+    "sanitization_manifest.json": "397642fb0673d756c87fc8b08b2a6d1ad9fb14389095af9bfe623ec48054dbdc",
+    "summary.json": "07de8a54d856b0b7c41aa9793ae4f8d2fedc913cea93d8c162ef6c420ce7b671"
+  }
+}

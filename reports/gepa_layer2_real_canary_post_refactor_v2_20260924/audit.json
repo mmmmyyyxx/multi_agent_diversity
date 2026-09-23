@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "checks": {
+    "exact_execution_source": true,
+    "preregistration_identity_match": true,
+    "run_identity_match": true,
+    "frozen_provider_model_gepa_binding": true,
+    "fresh_run_root": true,
+    "one_time_authorization_consumed": true,
+    "lifecycle_execution_complete": true,
+    "ledger_summary_reconciles": true,
+    "ledger_record_ids_unique": true,
+    "token_arithmetic_consistent": true,
+    "ledger_stage_and_role_scope_valid": true,
+    "candidate_solver_reached": true,
+    "local_empirical_delta_computed": true,
+    "validation50_zero": true,
+    "test50_zero": true,
+    "tracked_execution_source_clean": true,
+    "focused_tests_73_passed": true,
+    "compileall_passed": true,
+    "git_diff_check_passed": true
+  },
+  "note": "Ledger phases are stage-specific initialization, local_optimizer_reflection, and local_optimizer_solver_eval within the single authorized canary phase."
+}
