@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256_normalized_lf_text_v1",
+  "files": {
+    "AFTER.md": "05dc4996c4b541456b2b2175719d22d4374ac406ba32db2883fc8313d2c53c41",
+    "BEFORE.md": "39ceddcaa02460d7889d70110452ce5ca1576bf8ba7cee9fe7d454d5dbb2855b",
+    "freeze_manifest.json": "f3cabd1072a70693317bfc2921bb4aef6f7848e4eb0d1b522c9aa405cd77b932",
+    "verification.json": "c72c863b30a62b21865adb543fd2c1239ecd27edefd844753458d8b64ef5e5eb"
+  }
+}
