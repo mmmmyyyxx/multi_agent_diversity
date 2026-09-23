@@ -1,0 +1,32 @@
+{
+  "base_sha": "9285822296ae17ef830354ca8688ee0595744f08",
+  "compileall": "PASS",
+  "endpoint_key_scan": "PASS",
+  "focused_tests": {
+    "passed": 174,
+    "status": "PASS"
+  },
+  "full_tests_after": {
+    "errors": 20,
+    "failed": 35,
+    "passed": 1210,
+    "skipped": 1
+  },
+  "full_tests_baseline": {
+    "errors": 20,
+    "failed": 35,
+    "passed": 1193,
+    "skipped": 1
+  },
+  "full_tests_nonpassing_set_equal": true,
+  "gepa_dependency_identity": "PASS",
+  "git_diff_check": "PASS",
+  "golden_before_sha256": "eee0db8567a7ec727752d5366b3188103f37c1b9ba60c98fa3dea8eda5e5d761",
+  "golden_after_sha256": "eee0db8567a7ec727752d5366b3188103f37c1b9ba60c98fa3dea8eda5e5d761",
+  "golden_semantic_equality": "PASS",
+  "governance_preflight": "PASS",
+  "provider_attempts": 0,
+  "scientific_method_changed": false,
+  "test_calls": 0,
+  "validation_calls": 0
+}

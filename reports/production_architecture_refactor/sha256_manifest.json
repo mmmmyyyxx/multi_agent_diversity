@@ -1,0 +1,10 @@
+{
+  "files": {
+    "AFTER.md": "698d3bb06e129d34718cdd47dac15067422e8426300dc65db534069547e81200",
+    "BEFORE.md": "c69a999c82aa9013718a76d820d6c602dc73ad8faf81be388425e98843c5f75b",
+    "golden_after.json": "eee0db8567a7ec727752d5366b3188103f37c1b9ba60c98fa3dea8eda5e5d761",
+    "golden_before.json": "eee0db8567a7ec727752d5366b3188103f37c1b9ba60c98fa3dea8eda5e5d761",
+    "verification.json": "aeb1655846c92f98fa3e9011853ca16b8c4e85562e625c7f50391ba0c64e19f5"
+  },
+  "manifest_version": "production_architecture_refactor_sha256_v1"
+}
