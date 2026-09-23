@@ -11,6 +11,10 @@ runtime. Its `METHOD_VERSION` and checkpoint v25 still apply to v15 runs; they
 do not identify a new Layer-2 GEPA/MARS run. No two-layer method has been
 promoted to the v15 canonical runtime identity.
 
+The [current research state](docs/research/CURRENT_RESEARCH_STATE.md) indexes
+the post-refactor GEPA canary evidence and the next unresolved diagnostic
+question. It is an evidence summary, not an algorithm specification.
+
 ## Experiment Governance
 
 Experiment work is governed by a traceable design-to-evidence chain:
