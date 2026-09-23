@@ -1,0 +1,52 @@
+{
+  "base_sha": "a28e56e28bf7a4691c91b81049c334f88f64f8fe",
+  "executed_canary_source_sha": "2e919901679d2b79142104e1f1e210fa401d4907",
+  "interface_fix_execution_source_sha": "ada169e37e977f28e4f6a7eb357f4aede6d378e9",
+  "primary_diagnosis": "PROPOSER_OBJECT_SCOPE_MISMATCH",
+  "validator_bug": false,
+  "post_refactor_adapter_regression_identified": false,
+  "scientific_method_changed": false,
+  "scientific_interface_changed": false,
+  "interface_compliance_fix": true,
+  "contract_semantics_changed": false,
+  "stored_extracted_proposal_replay": "PASS_4_OF_4",
+  "raw_reflection_response_extraction_replay": "NOT_RECOVERABLE_ZERO_API",
+  "exact_reflection_input_hash_recovery": "NOT_RECOVERABLE_ZERO_API",
+  "synthetic_contract_tests": "PASS",
+  "focused_tests": "169 passed",
+  "golden_semantic_traces": "PASS_8_OF_8",
+  "full_tests": {
+    "passed": 1245,
+    "failed": 33,
+    "skipped": 23,
+    "baseline_failed": 33,
+    "baseline_passed": 1234,
+    "new_failure_category": false,
+    "limitation": "Existing full-suite failures require unavailable historical private artifacts; the focused task tests pass."
+  },
+  "compileall": "PASS",
+  "frozen_gepa_pin": {
+    "version": "v0.1.1",
+    "commit": "b4dbb55b7601dac448cdb836d5a401ca7d9eb920",
+    "source_sha256": "84c3c7e5f80fd272f0841357ec9327e3b0ea8ee53cd8107d1ab8d4cdb36ff1f8",
+    "status": "PASS"
+  },
+  "new_freeze": {
+    "attempt_id": "gepa_layer2_real_canary_post_refactor_v2",
+    "execution_source_sha": "ada169e37e977f28e4f6a7eb357f4aede6d378e9",
+    "preregistration_sha256": "4390ec600202d29276b6b390c83e359d134e720a5d720ed541549e98afaa0e7a",
+    "run_identity_sha256": "e309d3313e20c271ff2bcd7f509eafa76a5993dd516222a6fcf4456f50e1341a",
+    "protocol_file_sha256": "04b8291d6ade36051b4e2e2f24977dc3a01c2a8134d0bfdeacbc6b3148afd433",
+    "governed_preflight": "PASS",
+    "scientific_config_equals_prior_canary": true,
+    "models_and_access_equal_prior_canary": true,
+    "authorization_state": "AUTHORIZATION_REQUIRED",
+    "formal_run_root_exists": false,
+    "status": "READY_FOR_AUTHORIZATION"
+  },
+  "new_real_provider_attempts": 0,
+  "new_validation50_calls": 0,
+  "new_test50_calls": 0,
+  "historical_run_artifacts_modified": false,
+  "git_diff_check": "PASS"
+}

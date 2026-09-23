@@ -1,0 +1,11 @@
+{
+  "hash_algorithm": "SHA256",
+  "hash_semantics": "normalized_lf_text_v1 (UTF-8, CRLF and CR normalized to LF)",
+  "scope": "sanitized report files; manifest self-hash excluded",
+  "files": {
+    "README.md": "de733d3453f4b288fe63a48b05058d54da7bb5ab71bd982f9fdf8eeb677cbcfb",
+    "adapter_diff_audit.json": "3308a79a0185efcc750b224d1cd205c1187f5efbe255438ad5d51ed957b763f8",
+    "proposal_contract_failure_matrix.json": "fc97df9031ba55e11fa071beaa2ac05e08da5fc6d8aaaa9bdaa8792707110dab",
+    "verification.json": "b480c2b30d1121937a5cb4334837c718b72f6691af6063b4e2022ea60fbf4427"
+  }
+}

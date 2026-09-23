@@ -1,0 +1,49 @@
+{
+  "historical_comparator": {
+    "report": "local_gepa_acceptance_rate_pilot_phase_b_v2_execution_20260919",
+    "source_commit": "ac205456ab5190899f5b6df2cdf5cc7bf7c381ef",
+    "contract_valid_proposals": 11,
+    "total_proposals": 32,
+    "candidate_solver_reached": true,
+    "comparison_scope": "interface only; neither efficacy nor provider realization is compared"
+  },
+  "executed_source": "2e919901679d2b79142104e1f1e210fa401d4907",
+  "differences": [
+    {
+      "component": "decision_procedure representation and 3000-character rule",
+      "classification": "PURE_REFACTOR",
+      "finding": "Same mutable component and frozen length threshold."
+    },
+    {
+      "component": "GEPA project reflection template",
+      "classification": "PURE_REFACTOR",
+      "finding": "Template bytes unchanged between the historical comparator and executed source."
+    },
+    {
+      "component": "GEPA adapter and proposal checks",
+      "classification": "PURE_REFACTOR",
+      "finding": "Shared local protocol/dataclass extraction; candidate contract and source-evidence projection unchanged."
+    },
+    {
+      "component": "GEPA optimizer",
+      "classification": "PURE_REFACTOR",
+      "finding": "Injectable adapter and saturation support added, but the executed fixed-budget proposal template and validation path retained."
+    },
+    {
+      "component": "official GEPA extraction and search core",
+      "classification": "PROVENANCE_ONLY",
+      "finding": "Pinned official v0.1.1 source unchanged. Raw reflection responses were not persisted, so extraction cannot be replayed from response bytes."
+    },
+    {
+      "component": "Layer2 immutable evidence packet conversion",
+      "classification": "PROMPT_TEMPLATE_CHANGE",
+      "finding": "The local evidence/problem presented to reflection can differ from the earlier pilot by design; exact four reflection inputs were not persisted, so no input-byte parity is asserted."
+    }
+  ],
+  "post_refactor_adapter_regression_identified": false,
+  "limitations": [
+    "No saved raw reflection requests/responses for these four calls.",
+    "A source-level comparison is not a proof of identical stochastic reflection input/output.",
+    "Golden orchestration traces do not exercise real-model proposal shape."
+  ]
+}
