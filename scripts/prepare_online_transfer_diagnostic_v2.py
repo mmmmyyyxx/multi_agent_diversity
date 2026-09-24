@@ -23,7 +23,7 @@ from scripts.prepare_online_transfer_diagnostic import (  # noqa: E402
 from scripts.prepare_post_refactor_gepa_canary import _private_splits  # noqa: E402
 
 EXPERIMENT_ID = "gepa_layer2_local_to_team_transfer_diagnostic_v2"
-DEFAULT_PREP = ROOT / "runs" / EXPERIMENT_ID / "prep"
+DEFAULT_PREP = ROOT / "runs" / EXPERIMENT_ID / "prep_final1"
 
 
 def frozen_payload(*, execution_source_sha: str) -> tuple[dict, dict]:

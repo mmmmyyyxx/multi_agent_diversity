@@ -154,6 +154,21 @@ def _record_ordinary_scheduler_outcome(
     )
 
 
+def _diagnostic_stop_reason(accepted_total: int, proposal_total: int) -> str | None:
+    if accepted_total > 5 or proposal_total > 20:
+        raise RuntimeError("diagnostic accepted/proposal ceiling overshoot")
+    if accepted_total == 5:
+        return "ACCEPTED_MUTATION_TARGET_REACHED"
+    if proposal_total == 20:
+        return "REFLECTION_PROPOSAL_CEILING_REACHED"
+    capacity = local_gepa_budget_capacity(
+        metric_budget=36, validation_size=12, reflection_minibatch_size=3,
+    )
+    if proposal_total + capacity.max_rejected_proposals > 20:
+        return "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+    return None
+
+
 class _CurrentAssignment:
     def __init__(self) -> None:
         self.assignment: TeamSearchAssignment | None = None
@@ -335,17 +350,7 @@ async def execute_online_transfer_diagnostic(
         telemetry = outcome.audit_metadata["local_optimizer_telemetry"]
         accepted_total += int(telemetry["accepted_mutations"])
         proposal_total += int(telemetry["proposal_attempts"])
-        if accepted_total > 5 or proposal_total > 20:
-            raise RuntimeError("diagnostic accepted/proposal ceiling overshoot")
-        if accepted_total == 5:
-            return "ACCEPTED_MUTATION_TARGET_REACHED"
-        if proposal_total == 20:
-            return "REFLECTION_PROPOSAL_CEILING_REACHED"
-        if proposal_total + local_gepa_budget_capacity(
-            metric_budget=36, validation_size=12, reflection_minibatch_size=3,
-        ).max_rejected_proposals > 20:
-            return "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
-        return None
+        return _diagnostic_stop_reason(accepted_total, proposal_total)
 
     def controller_factory(bound_backend):
         return TeamSearchController(

@@ -29,7 +29,7 @@ from multi_dataset_diverse_rl.team_search.schemas import (
 )
 from multi_dataset_diverse_rl.team_search.task_builder import LocalTaskBuilder
 from multi_dataset_diverse_rl.production_transfer_diagnostic import (
-    _candidate_stage_costs, _mark_duplicate_accepted_event,
+    _candidate_stage_costs, _diagnostic_stop_reason, _mark_duplicate_accepted_event,
     _opportunity_costs, _record_ordinary_scheduler_outcome, _usage,
 )
 
@@ -404,6 +404,15 @@ def test_local_capacity_and_unconstrained_cost_envelope():
     assert capacity.max_accepted_children == 1
     assert capacity.max_rejected_proposals == 4
     assert 500 + 10 * 36 + 20 + 5 * 100 + 5 * 6 * 50 == 2880
+
+
+def test_frozen_target_and_proposal_stop_rules():
+    assert _diagnostic_stop_reason(4, 16) is None
+    assert _diagnostic_stop_reason(5, 16) == "ACCEPTED_MUTATION_TARGET_REACHED"
+    assert _diagnostic_stop_reason(4, 17) == "REFLECTION_PROPOSAL_PREOPPORTUNITY_GUARD"
+    assert _diagnostic_stop_reason(4, 20) == "REFLECTION_PROPOSAL_CEILING_REACHED"
+    with pytest.raises(RuntimeError, match="ceiling overshoot"):
+        _diagnostic_stop_reason(6, 1)
 
 
 def test_global_provider_attempt_reservations_fail_closed(tmp_path):
