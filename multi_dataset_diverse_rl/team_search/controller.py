@@ -39,6 +39,10 @@ class ResponsibilityAssignmentProvider(Protocol):
         ...
 
 
+class DiagnosticSamplingIntegrityError(RuntimeError):
+    """The prospective accepted-event sample is incomplete or inconsistent."""
+
+
 @dataclass(frozen=True)
 class _EvaluatedBranch:
     assignment: TeamSearchAssignment
@@ -71,6 +75,29 @@ class TeamSearchController:
         self.selector = selector
         self.committer = committer
         self.diagnostic_full_for_local_accepts = diagnostic_full_for_local_accepts
+
+    @staticmethod
+    def _validate_diagnostic_local_result(local: LocalOptimizationResult) -> None:
+        """Fail before team evaluation when GEPA's accepted sample is censored."""
+        telemetry = (
+            local.optimizer_state.payload.get("telemetry", {})
+            if local.optimizer_state is not None else {}
+        )
+        accepted = telemetry.get("accepted_mutations")
+        if type(accepted) is not int or accepted < 0:
+            raise DiagnosticSamplingIntegrityError("diagnostic accepted-event count missing")
+        if accepted > 1:
+            raise DiagnosticSamplingIntegrityError("diagnostic local acceptance exceeds capacity")
+        if accepted != len(local.candidates):
+            raise DiagnosticSamplingIntegrityError("diagnostic local-acceptance/frontier mismatch")
+        if len({row.candidate_id for row in local.candidates}) != len(local.candidates):
+            raise DiagnosticSamplingIntegrityError("diagnostic returned frontier is not unique")
+        for row in local.candidates:
+            delta = row.backend_metadata.get("local_acceptance_delta")
+            if not isinstance(delta, (int, float)) or isinstance(delta, bool) or delta <= 0:
+                raise DiagnosticSamplingIntegrityError(
+                    "diagnostic candidate lacks strict local acceptance evidence"
+                )
 
     async def _run_local_optimizer(
         self,
@@ -180,6 +207,8 @@ class TeamSearchController:
         )
         minibatch_telemetry = self.task_builder.team_minibatch_telemetry(team_minibatch)
         local = await self._run_local_optimizer(task)
+        if self.diagnostic_full_for_local_accepts:
+            self._validate_diagnostic_local_result(local)
         records: list[TeamCandidateRecord] = []
         minibatch_calls = minibatch_tokens = 0
         for candidate in local.candidates:

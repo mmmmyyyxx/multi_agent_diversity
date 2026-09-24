@@ -112,7 +112,10 @@ def _expected_bundle(
         team_patience=int(manifest["scientific"]["team_no_update_patience"]),
         saturation_mode=(
             "online_local_to_team_transfer_diagnostic_v1"
-            if manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v1"
+            if manifest["experiment_id"] in {
+                "gepa_layer2_local_to_team_transfer_diagnostic_v1",
+                "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+            }
             else "single_opportunity_engineering_canary"
         ),
         source_files=source_files,
@@ -130,9 +133,13 @@ def validate_execution(
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
         "gepa_layer2_local_to_team_transfer_diagnostic_v1",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v2",
     }:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported experiment")
-    diagnostic = manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v1"
+    diagnostic = manifest["experiment_id"] in {
+        "gepa_layer2_local_to_team_transfer_diagnostic_v1",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+    }
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or manifest.get("scientific", {}).get("optimization_scope") != "layer2":

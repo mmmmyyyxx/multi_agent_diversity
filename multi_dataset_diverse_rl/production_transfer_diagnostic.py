@@ -8,6 +8,7 @@ Diagnostic Full results are isolated in the controller's observational sidecar.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -41,6 +42,118 @@ from .team_search.system_runtime import (
 from .team_search.task_builder import Layer2EvidenceRequestBuilder
 
 
+_OPPORTUNITY_PHASES = (
+    "local_optimizer_solver_eval", "local_optimizer_reflection",
+    "team_minibatch_eval", "team_full_eval", "diagnostic_full_eval",
+    "team_shadow_eval",
+)
+
+
+def _ledger_rows(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def _usage(rows: list[dict[str, Any]], *, scope: str) -> dict[str, Any]:
+    """Durable-ledger accounting, including cache hits and failed attempts.
+
+    Ledger tokens include reported token counts on cached logical completions;
+    provider-success tokens exclude those cache echoes. The two are not mixed.
+    """
+    completed = [row for row in rows if row.get("record_kind") != "solver_provider_attempt_failure"]
+    provider = [row for row in rows if int(row.get("successful_provider_calls", 0))]
+    reflection_records = sum(row.get("logical_role") == "reflection" for row in completed)
+    return {
+        "scope": scope,
+        "logical_solver_rows": sum(row.get("logical_role") == "solver" for row in completed),
+        "reflection_calls": None if reflection_records else 0,
+        "reflection_provider_records": reflection_records,
+        "logical_calls": None if reflection_records else len(completed),
+        "provider_attempts": sum(int(row["provider_attempts"]) for row in rows),
+        "provider_successes": sum(int(row["successful_provider_calls"]) for row in rows),
+        "failed_provider_attempts": sum(
+            int(row["provider_attempts"]) - int(row["successful_provider_calls"])
+            for row in rows
+        ),
+        "cache_hits": sum(bool(row["cache_hit"]) for row in rows),
+        "input_tokens": sum(int(row["input_tokens"]) for row in rows),
+        "output_tokens": sum(int(row["output_tokens"]) for row in rows),
+        "total_tokens": sum(int(row["total_tokens"]) for row in rows),
+        "provider_success_tokens": sum(int(row["total_tokens"]) for row in provider),
+    }
+
+
+def _opportunity_costs(rows: list[dict[str, Any]], update_index: int) -> dict[str, Any]:
+    selected = [row for row in rows if int(row.get("update_index", -2)) == update_index]
+    if {str(row["phase"]) for row in selected} - set(_OPPORTUNITY_PHASES):
+        raise RuntimeError("diagnostic opportunity has unexpected ledger phase")
+    return {
+        "update_index": update_index,
+        "total": _usage(selected, scope="opportunity_shared"),
+        "by_phase": {
+            phase: _usage([row for row in selected if row["phase"] == phase],
+                          scope="opportunity_shared")
+            for phase in _OPPORTUNITY_PHASES
+        },
+    }
+
+
+def _candidate_stage_costs(
+    rows: list[dict[str, Any]], *, update_index: int, candidate_id: str,
+    diagnostic_only: bool, shadow_reached: bool | None = None,
+) -> dict[str, Any]:
+    selected = [row for row in rows if int(row.get("update_index", -2)) == update_index]
+    attributable = lambda phase: [
+        row for row in selected
+        if row["phase"] == phase and row.get("candidate_id") == candidate_id
+    ]
+    local = [row for row in selected if row["phase"] in {
+        "local_optimizer_solver_eval", "local_optimizer_reflection",
+    }]
+    full_phase = "diagnostic_full_eval" if diagnostic_only else "team_full_eval"
+    shadow = attributable("team_shadow_eval")
+    return {
+        "local_optimizer": _usage(local, scope="opportunity_shared_not_candidate_additive"),
+        "team_minibatch": _usage(attributable("team_minibatch_eval"),
+                                 scope="candidate_attributable"),
+        "full": {
+            "ordinary_or_diagnostic": "diagnostic" if diagnostic_only else "ordinary",
+            **_usage(attributable(full_phase), scope="candidate_attributable"),
+        },
+        "shadow": {
+            "reached": bool(shadow) if shadow_reached is None else shadow_reached,
+            **_usage(shadow, scope="candidate_attributable"),
+        },
+    }
+
+
+def _mark_duplicate_accepted_event(
+    row: dict[str, Any], candidate_hash: str,
+    seen: dict[tuple[str, int, str], dict[str, Any]],
+) -> None:
+    """Mark repeated accepted events without changing their count or order."""
+    group = (row["parent_team_hash"], int(row["target_member"]), candidate_hash)
+    prior = seen.get(group)
+    row["duplicate_accepted_candidate_group"] = None
+    if prior is not None:
+        group_id = hashlib.sha256(json.dumps(group).encode("utf-8")).hexdigest()
+        prior["duplicate_accepted_candidate_group"] = group_id
+        row["duplicate_accepted_candidate_group"] = group_id
+    else:
+        seen[group] = row
+
+
+def _record_ordinary_scheduler_outcome(
+    scheduler: PrimaryResponsibilityPersistentRealizabilityScheduler,
+    *, decision: Any, update_index: int, outcome: Any,
+) -> None:
+    """The diagnostic Full sidecar has no scheduler feedback channel."""
+    scheduler.record_outcome(
+        decision=decision, update_index=update_index,
+        committed_member_id=outcome.audit_metadata.get("committed_member_id"),
+        valid_outcome=True,
+    )
+
+
 class _CurrentAssignment:
     def __init__(self) -> None:
         self.assignment: TeamSearchAssignment | None = None
@@ -62,7 +175,7 @@ async def execute_online_transfer_diagnostic(
     spec = experiment_spec_from_mapping(manifest["scientific"])
     protocol = json.loads((prep / "protocol.json").read_text(encoding="utf-8"))
     if (
-        permit.experiment_id != "gepa_layer2_local_to_team_transfer_diagnostic_v1"
+        permit.experiment_id != "gepa_layer2_local_to_team_transfer_diagnostic_v2"
         or permit.allowed_phase != "diagnostic"
         or spec.mode_id != "GEPA_LAYER2"
         or spec.fixed_budget_units != 10
@@ -158,6 +271,8 @@ async def execute_online_transfer_diagnostic(
     decision = None
     accepted_total = proposal_total = 0
     parent_sequence: list[str] = []
+    opportunity_costs: list[dict[str, Any]] = []
+    accepted_by_group: dict[tuple[str, int, str], dict[str, Any]] = {}
 
     def next_opportunity(index: int, parent_hash: str) -> Layer2Opportunity:
         nonlocal update_index, decision
@@ -198,10 +313,24 @@ async def execute_online_transfer_diagnostic(
         nonlocal accepted_total, proposal_total
         if decision is None:
             raise RuntimeError("scheduler decision missing for online outcome")
-        scheduler.record_outcome(
-            decision=decision, update_index=index - 1,
-            committed_member_id=outcome.audit_metadata.get("committed_member_id"),
-            valid_outcome=True,
+        ledger_rows = _ledger_rows(run_root / "ledger.jsonl")
+        opportunity_costs.append(_opportunity_costs(ledger_rows, index - 1))
+        for row in outcome.audit_metadata.get("transfer_diagnostic", ()):
+            candidate = next(
+                item.local_candidate for item in outcome.candidates
+                if item.local_candidate.candidate_id == row["candidate_id"]
+            )
+            candidate_hash = hashlib.sha256(candidate.prompt.encode("utf-8")).hexdigest()
+            row["candidate_hash"] = candidate_hash
+            row["stage_costs"] = _candidate_stage_costs(
+                ledger_rows, update_index=index - 1,
+                candidate_id=row["candidate_id"],
+                diagnostic_only=bool(row["full"]["diagnostic_only"]),
+                shadow_reached=row["ordinary_shadow"] != "NOT_REACHED",
+            )
+            _mark_duplicate_accepted_event(row, candidate_hash, accepted_by_group)
+        _record_ordinary_scheduler_outcome(
+            scheduler, decision=decision, update_index=index - 1, outcome=outcome,
         )
         telemetry = outcome.audit_metadata["local_optimizer_telemetry"]
         accepted_total += int(telemetry["accepted_mutations"])
@@ -251,6 +380,19 @@ async def execute_online_transfer_diagnostic(
         for outcome in result.team_outcomes
     ):
         raise RuntimeError("accepted mutation lacks mandatory diagnostic Full")
+    final_ledger_rows = _ledger_rows(run_root / "ledger.jsonl")
+    if any(int(row.get("update_index", -2)) < -1 for row in final_ledger_rows):
+        raise RuntimeError("diagnostic ledger has unassigned update index")
+    partition_rows = [
+        row for row in final_ledger_rows if int(row.get("update_index", -2)) == -1
+    ]
+    for index in range(len(result.team_outcomes)):
+        partition_rows.extend(
+            row for row in final_ledger_rows
+            if int(row.get("update_index", -2)) == index
+        )
+    if len(partition_rows) != len(final_ledger_rows):
+        raise RuntimeError("diagnostic ledger partition is incomplete")
     return {
         "experiment_id": permit.experiment_id,
         "run_identity_sha256": permit.run_identity_sha256,
@@ -264,6 +406,14 @@ async def execute_online_transfer_diagnostic(
         "target_status": "TARGET_REACHED" if accepted_total == 5 else "TARGET_NOT_REACHED",
         "stop_reason": result.stop_reason,
         "candidate_diagnostics": rows,
+        "stage_accounting": {
+            "global": _usage(final_ledger_rows, scope="global"),
+            "initialization": _usage(
+                [row for row in final_ledger_rows if int(row.get("update_index", -2)) == -1],
+                scope="global_initialization",
+            ),
+            "opportunities": opportunity_costs,
+        },
         "commits": sum(outcome.committed_candidate_id is not None for outcome in result.team_outcomes),
         "ledger": ledger_summary(run_root / "ledger.jsonl"),
         "validation50_calls": 0,

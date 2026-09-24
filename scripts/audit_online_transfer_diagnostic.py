@@ -13,6 +13,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from multi_dataset_diverse_rl.team_search.execution_runtime import ledger_summary  # noqa: E402
+from multi_dataset_diverse_rl.production_transfer_diagnostic import (  # noqa: E402
+    _candidate_stage_costs, _opportunity_costs, _usage,
+)
 
 
 ALLOWED_LEDGER_PHASES = {
@@ -30,8 +33,12 @@ def audit(run_root: Path) -> dict[str, object]:
     usage = ledger_summary(ledger_path)
     rows = summary["candidate_diagnostics"]
     failures: list[str] = []
-    if summary.get("experiment_id") != "gepa_layer2_local_to_team_transfer_diagnostic_v1":
+    if summary.get("experiment_id") not in {
+        "gepa_layer2_local_to_team_transfer_diagnostic_v1",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v2",
+    }:
         failures.append("experiment_identity")
+    v2 = summary.get("experiment_id") == "gepa_layer2_local_to_team_transfer_diagnostic_v2"
     if lifecycle.get("status") != "EXECUTION_COMPLETE":
         failures.append("lifecycle")
     if summary.get("seed") != 81 or summary.get("validation50_calls") != 0 or summary.get("test50_calls") != 0:
@@ -52,6 +59,22 @@ def audit(run_root: Path) -> dict[str, object]:
     parents = summary["parent_sequence"]
     if len(parents) != opportunities or len(rows) != accepted:
         failures.append("parent_or_mandatory_full_count")
+    if v2:
+        expected_stage = {
+            "global": _usage(ledger_rows, scope="global"),
+            "initialization": _usage(
+                [row for row in ledger_rows if int(row.get("update_index", -2)) == -1],
+                scope="global_initialization",
+            ),
+            "opportunities": [
+                _opportunity_costs(ledger_rows, index) for index in range(opportunities)
+            ],
+        }
+        if summary.get("stage_accounting") != expected_stage or any(
+            int(row.get("update_index", -2)) not in {-1, *range(opportunities)}
+            for row in ledger_rows
+        ):
+            failures.append("stage_ledger_reconciliation")
     by_update = {int(row["update_index"]): row for row in rows}
     if len(by_update) != len(rows):
         failures.append("multiple_local_accepts_per_opportunity")
@@ -77,6 +100,20 @@ def audit(run_root: Path) -> dict[str, object]:
             or row.get("committed")
         ):
             failures.append("diagnostic_feedback_leakage")
+        if v2:
+            try:
+                expected_cost = _candidate_stage_costs(
+                    ledger_rows, update_index=int(row["update_index"]),
+                    candidate_id=str(row["candidate_id"]),
+                    diagnostic_only=bool(full["diagnostic_only"]),
+                    shadow_reached=row.get("ordinary_shadow") != "NOT_REACHED",
+                )
+                if row.get("stage_costs") != expected_cost:
+                    failures.append("candidate_stage_cost_reconciliation")
+                if not isinstance(row.get("candidate_hash"), str) or len(row["candidate_hash"]) != 64:
+                    failures.append("candidate_hash_missing")
+            except (KeyError, TypeError, ValueError):
+                failures.append("candidate_stage_cost_incomplete")
     if summary.get("target_status") != (
         "TARGET_REACHED" if accepted == 5 else "TARGET_NOT_REACHED"
     ):
