@@ -1,0 +1,16 @@
+{
+  "accepted_target_is_five": true,
+  "authorization_false": true,
+  "diagnostic_full_is_admission_inert": true,
+  "execution_source_matches_prep": true,
+  "formal_run_root_absent": true,
+  "fresh_seed_81": true,
+  "gepa_frozen_dependency_verified": true,
+  "historical_artifacts_modified": false,
+  "local_36_call_capacity_one_accept_four_rejects": true,
+  "preflight_preregistered_not_executed": true,
+  "private_data_and_endpoint_not_published": true,
+  "provider_attempts": 0,
+  "validation50_calls": 0,
+  "test50_calls": 0
+}

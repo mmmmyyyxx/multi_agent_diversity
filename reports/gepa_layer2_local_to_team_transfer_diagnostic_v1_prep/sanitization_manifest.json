@@ -1,0 +1,22 @@
+{
+  "scope": "gepa_layer2_local_to_team_transfer_diagnostic_v1_prep",
+  "sanitized": true,
+  "published_content": [
+    "frozen identity hashes",
+    "protocol and execution status",
+    "zero-API cost bounds",
+    "verification results"
+  ],
+  "excluded_content": [
+    "credentials",
+    "provider endpoints",
+    "raw prompts",
+    "questions",
+    "gold or model answers",
+    "raw provider responses",
+    "private preparation bundle",
+    "checkpoints",
+    "SQLite data",
+    "absolute local paths"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "api_calls_during_preparation": 0,
+  "candidate_target": 5,
+  "full_optimize_rows_per_candidate": 100,
+  "hard_successful_provider_ceiling": 1200,
+  "hard_transport_attempt_ceiling": 4800,
+  "initialization_solver_rows": 500,
+  "local_solver_metric_upper_bound": 360,
+  "minibatch_logical_rows_upper_bound": 60,
+  "mini_plus_full_unique_candidate_solver_upper_bound": 500,
+  "opportunity_ceiling": 10,
+  "optional_shadow_solver_rows_upper_bound": 1500,
+  "reflection_proposal_ceiling": 20,
+  "target_guaranteed_within_hard_ceiling": false,
+  "unconstrained_successful_provider_upper_envelope": 2880,
+  "validation50_calls": 0,
+  "test50_calls": 0
+}
