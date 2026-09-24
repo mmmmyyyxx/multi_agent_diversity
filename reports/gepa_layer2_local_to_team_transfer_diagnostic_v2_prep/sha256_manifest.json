@@ -1,0 +1,12 @@
+{
+  "algorithm": "SHA256",
+  "hash_semantics": "normalized_lf_text_v1",
+  "self_excluded": true,
+  "files": {
+    "README.md": "57e779089a0a1963002ab7e2042bd6a31c2ee97d224ae5ddee9d469d8c9da7b4",
+    "cost_envelope.json": "04005e235126dd913fc147ec5c298ed3c17c92d6dc57710f59216916f2fa939e",
+    "protocol_implementation_matrix.json": "6c8519522105b6ab04a3c4388dadc323506dfb4b3c25cd700ba3fa150a1ba741",
+    "sanitization_manifest.json": "6eec93d4bcc8271da5c3ea5dd7df4736276ffb59b53db7b3b4c3d24144c0b1ec",
+    "verification.json": "824d8bc655f0e4dafa35e5cfa0125410ed31e1fa64bbeed44e8cb12dff4c16af"
+  }
+}

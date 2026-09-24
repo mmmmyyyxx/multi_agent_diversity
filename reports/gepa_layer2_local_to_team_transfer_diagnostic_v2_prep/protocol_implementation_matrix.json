@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {"invariant": "actual committed parent", "implementation": "production_transfer_diagnostic.next_opportunity + experiment dynamic state hash", "test": "test_parent_changes_iff_ordinary_commit_not_diagnostic_full", "status": "PASS"},
+    {"invariant": "Top-1 production target", "implementation": "production_transfer_diagnostic.next_opportunity scheduler.select target_count=1 and length guard", "test": "test_v2_integrity_amendment_preserves_scientific_freeze; test_primary_responsibility_scheduler", "status": "PASS"},
+    {"invariant": "every accepted mutation sampled", "implementation": "controller diagnostic local validator and final production_transfer_diagnostic reconciliation", "test": "test_actual_diagnostic_boundary_aborts_before_any_team_provider; test_v2_completed_fixture_reconciles_candidate_and_global_stage_costs", "status": "PASS"},
+    {"invariant": "accepted/frontier equality", "implementation": "TeamSearchController._validate_diagnostic_local_result", "test": "test_actual_diagnostic_boundary_aborts_before_any_team_provider; test_mismatch_aborts_dynamic_engine_before_next_opportunity", "status": "PASS"},
+    {"invariant": "max one accepted per opportunity", "implementation": "TeamSearchController._validate_diagnostic_local_result", "test": "test_actual_diagnostic_boundary_aborts_before_any_team_provider", "status": "PASS"},
+    {"invariant": "strict local acceptance delta", "implementation": "TeamSearchController._validate_diagnostic_local_result", "test": "test_actual_diagnostic_boundary_aborts_before_any_team_provider", "status": "PASS"},
+    {"invariant": "proposal ceiling", "implementation": "production_transfer_diagnostic._diagnostic_stop_reason", "test": "test_frozen_target_and_proposal_stop_rules", "status": "PASS"},
+    {"invariant": "mandatory Full", "implementation": "TeamSearchController._evaluate_frozen_branch", "test": "test_mandatory_full_isolated_from_ordinary_selection", "status": "PASS"},
+    {"invariant": "diagnostic Full admission inertness", "implementation": "TeamSearchController._evaluate_frozen_branch sidecar only", "test": "test_mandatory_full_isolated_from_ordinary_selection", "status": "PASS"},
+    {"invariant": "ordinary Full reuse", "implementation": "TeamSearchController._evaluate_frozen_branch promoted path", "test": "test_mandatory_full_isolated_from_ordinary_selection", "status": "PASS"},
+    {"invariant": "parent responsiveness measured on incumbent", "implementation": "SystemTeamCandidateEvaluator.parent_vote_responsiveness", "test": "test_mandatory_full_isolated_from_ordinary_selection", "status": "PASS"},
+    {"invariant": "scheduler feedback isolation", "implementation": "production_transfer_diagnostic._record_ordinary_scheduler_outcome", "test": "test_scheduler_feedback_ignores_diagnostic_full_vote_sign", "status": "PASS"},
+    {"invariant": "five-target stop", "implementation": "production_transfer_diagnostic._diagnostic_stop_reason", "test": "test_frozen_target_and_proposal_stop_rules", "status": "PASS"},
+    {"invariant": "provider emergency ceilings", "implementation": "CappedDurableLedger.reserve_provider_attempt and scripts/run_experiment.execute_frozen lifecycle", "test": "test_global_provider_attempt_reservations_fail_closed; test_emergency_ceiling_marks_incomplete_attempt_aborted", "status": "PASS"},
+    {"invariant": "candidate and global stage accounting", "implementation": "production_transfer_diagnostic._candidate_stage_costs and scripts/audit_online_transfer_diagnostic.audit", "test": "test_stage_costs_partition_ledger_without_double_counting_shared_local; test_v2_completed_fixture_reconciles_candidate_and_global_stage_costs", "status": "PASS"},
+    {"invariant": "Validation/Test zero", "implementation": "prepare_online_transfer_diagnostic_v2 frozen access + production governance", "test": "test_v2_integrity_amendment_preserves_scientific_freeze; fresh-process preflight", "status": "PASS"}
+  ]
+}

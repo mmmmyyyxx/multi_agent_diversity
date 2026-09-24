@@ -1,0 +1,19 @@
+{
+  "initialization_solver_rows": 500,
+  "max_opportunities": 10,
+  "local_metric_calls_per_opportunity": 36,
+  "local_solver_upper_bound": 360,
+  "reflection_proposal_ceiling": 20,
+  "accepted_mutation_target": 5,
+  "minibatch_logical_rows_upper_bound": 60,
+  "full_logical_rows_upper_bound": 500,
+  "minibatch_plus_full_unique_candidate_solver_upper_bound": 500,
+  "ordinary_shadow_solver_rows_upper_bound": 1500,
+  "unconstrained_successful_provider_upper_envelope": 2880,
+  "hard_successful_provider_ceiling": 1200,
+  "hard_transport_attempt_ceiling": 4800,
+  "three_shadow_plus_initialization_can_exceed_success_ceiling": true,
+  "five_complete_candidates_guaranteed": false,
+  "emergency_ceiling_is_scientific_budget": false,
+  "real_api_calls_during_preparation": 0
+}

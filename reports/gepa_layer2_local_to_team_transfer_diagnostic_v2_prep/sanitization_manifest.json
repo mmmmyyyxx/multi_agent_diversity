@@ -1,0 +1,5 @@
+{
+  "sanitized": true,
+  "published_only": ["hash identities", "numeric cost bounds", "test and preflight status", "protocol-to-code/test mappings"],
+  "excluded": ["credentials", "provider endpoints", "prompts", "questions", "gold answers", "model answers", "raw responses", "private split rows", "ledger rows", "checkpoints", "absolute local paths"]
+}
