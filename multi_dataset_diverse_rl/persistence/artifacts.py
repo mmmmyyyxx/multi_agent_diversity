@@ -15,6 +15,17 @@ def _json_text(payload: Any, *, indent: int | None = None) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=indent, allow_nan=False)
 
 
+def _atomic_replace(source: Path, destination: Path) -> None:
+    """Preserve atomic replacement when a Windows destination exceeds MAX_PATH."""
+    if os.name == "nt":
+        os.replace(
+            "\\\\?\\" + str(source.resolve()),
+            "\\\\?\\" + str(destination.resolve()),
+        )
+    else:
+        os.replace(source, destination)
+
+
 class ArtifactWriter:
     def __init__(self, root: str | Path):
         self.root = Path(root)
@@ -46,7 +57,7 @@ class ArtifactWriter:
         for attempt in range(3):
             try:
                 temporary.write_text(_json_text(payload, indent=2), encoding="utf-8")
-                os.replace(temporary, path)
+                _atomic_replace(temporary, path)
                 return
             except OSError:
                 try:
