@@ -27,6 +27,16 @@ class ExperimentContractError(ValueError):
     """Typed fail-closed error for invalid production experiment contracts."""
 
 
+class ExperimentEarlyStop(RuntimeError):
+    """Stop before a new dynamic opportunity when no valid local task exists."""
+
+    def __init__(self, reason: str) -> None:
+        if not reason:
+            raise ValueError("early-stop reason is required")
+        self.reason = reason
+        super().__init__(reason)
+
+
 class OptimizerBackend(str, Enum):
     GEPA = "gepa"
     MARS = "mars"
@@ -246,6 +256,8 @@ class ExperimentServices:
     layer2_controller_factory: Layer2ControllerFactory | None = None
     team_state_hash_reader: Callable[[], str] | None = None
     technical_local_canary_only: bool = False
+    layer2_opportunity_factory: Callable[[int, str], Layer2Opportunity] | None = None
+    layer2_outcome_observer: Callable[[int, TeamSearchOutcome], str | None] | None = None
 
 
 @dataclass(frozen=True)
@@ -353,8 +365,11 @@ class ExperimentEngine:
         )
 
     async def _run_layer2(self, spec, runtime, inputs, services) -> ExperimentResult:
-        if inputs.native_problem is not None or not inputs.layer2_opportunities:
+        dynamic = services.layer2_opportunity_factory is not None
+        if inputs.native_problem is not None or (not dynamic and not inputs.layer2_opportunities):
             raise ExperimentContractError("Layer2 execution requires Layer2 opportunities only")
+        if dynamic and inputs.layer2_opportunities:
+            raise ExperimentContractError("dynamic and frozen Layer2 opportunities cannot be mixed")
         if services.layer2_controller_factory is None or services.team_state_hash_reader is None:
             raise ExperimentContractError("Layer2 controller and state reader are required")
         bridge = _ContextBoundLayer2Backend(services.backend, runtime, spec)
@@ -379,9 +394,27 @@ class ExperimentEngine:
         events: list[EngineEvent] = []
         current_hash = inputs.initial_state_hash
         completed_epochs = 0
-        for index, opportunity in enumerate(inputs.layer2_opportunities, start=1):
+        opportunity_source = (
+            range(1, spec.fixed_budget_units + 1)
+            if dynamic else range(1, len(inputs.layer2_opportunities) + 1)
+        )
+        external_stop: str | None = None
+        for index in opportunity_source:
+            if dynamic:
+                try:
+                    opportunity = services.layer2_opportunity_factory(index, current_hash)
+                except ExperimentEarlyStop as exc:
+                    external_stop = exc.reason
+                    break
+            else:
+                opportunity = inputs.layer2_opportunities[index - 1]
             if opportunity.request.seed != runtime.seed:
                 raise ExperimentContractError("Layer2 opportunity seed does not match RuntimeContext")
+            if dynamic and (
+                opportunity.request.team_state_hash != current_hash
+                or opportunity.request.update_index != index - 1
+            ):
+                raise ExperimentContractError("dynamic Layer2 parent/update identity mismatch")
             if services.technical_local_canary_only:
                 if (spec.backend is not OptimizerBackend.GEPA
                     or spec.stopping_regime is not StoppingRegime.FIXED_BUDGET
@@ -392,6 +425,8 @@ class ExperimentEngine:
                 outcome = await controller.run_opportunity(opportunity.request)
             outcomes.append(outcome)
             current_hash = services.team_state_hash_reader()
+            if services.layer2_outcome_observer is not None:
+                external_stop = services.layer2_outcome_observer(index, outcome)
             stop = None
             if opportunity.completes_team_epoch:
                 completed_epochs += 1
@@ -418,12 +453,12 @@ class ExperimentEngine:
                 candidate_ids=tuple(row.local_candidate.candidate_id for row in outcome.candidates),
                 committed_candidate_id=outcome.committed_candidate_id,
                 state_hash=current_hash,
-                stop_reason=stop.value if stop else None,
+                stop_reason=external_stop or (stop.value if stop else None),
                 telemetry={"funnel": dict(outcome.funnel), "audit": dict(outcome.audit_metadata)},
             ))
-            if stop is not None:
+            if stop is not None or external_stop is not None:
                 break
-        stop_reason = state.stop_reason.value if state.stop_reason else "INPUT_EXHAUSTED"
+        stop_reason = external_stop or (state.stop_reason.value if state.stop_reason else "INPUT_EXHAUSTED")
         return ExperimentResult(
             spec.mode_id, spec.stopping_regime.value, inputs.initial_state_hash,
             current_hash, stop_reason, tuple(events), None, tuple(outcomes),

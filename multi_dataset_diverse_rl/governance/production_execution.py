@@ -110,7 +110,11 @@ def _expected_bundle(
         seeds=[int(manifest["runtime"]["seed"])],
         local_patience=int(manifest["scientific"]["local_no_update_patience"]),
         team_patience=int(manifest["scientific"]["team_no_update_patience"]),
-        saturation_mode="single_opportunity_engineering_canary",
+        saturation_mode=(
+            "online_local_to_team_transfer_diagnostic_v1"
+            if manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v1"
+            else "single_opportunity_engineering_canary"
+        ),
         source_files=source_files,
     )
 
@@ -125,16 +129,46 @@ def validate_execution(
     if manifest.get("experiment_id") not in {
         "gepa_layer2_real_canary_post_refactor_v1",
         "gepa_layer2_real_canary_post_refactor_v2",
+        "gepa_layer2_local_to_team_transfer_diagnostic_v1",
     }:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported experiment")
+    diagnostic = manifest["experiment_id"] == "gepa_layer2_local_to_team_transfer_diagnostic_v1"
     if manifest.get("attempt_id") != manifest.get("experiment_id"):
         raise StartupIdentityError("ABORT_PRE_PROVIDER: attempt identity mismatch")
     if manifest.get("scientific", {}).get("backend") != "gepa" or manifest.get("scientific", {}).get("optimization_scope") != "layer2":
         raise StartupIdentityError("ABORT_PRE_PROVIDER: unsupported mode")
     spec = ExperimentSpec(**_scientific_kwargs(manifest["scientific"]))
+    if diagnostic:
+        if (
+            manifest["scientific"].get("stopping_regime") != "fixed_budget"
+            or manifest["scientific"].get("fixed_budget_units") != 10
+            or manifest["scientific"].get("data_identity") != "anti_overfitting_split_v1_fold_a+b_to_c"
+            or manifest.get("diagnostic_contract") != {
+                "accepted_mutation_target": 5,
+                "max_opportunities": 10,
+                "reflection_proposal_ceiling": 20,
+                "successful_provider_ceiling": 1200,
+                "transport_attempt_ceiling": 4800,
+                "mandatory_full": True,
+                "diagnostic_full_is_admission_inert": True,
+            }
+        ):
+            raise StartupIdentityError("ABORT_PRE_PROVIDER: diagnostic budget/policy mismatch")
     if manifest.get("method_identity") != spec.method_identity or manifest.get("spec_identity") != spec.identity():
         raise StartupIdentityError("ABORT_PRE_PROVIDER: production method identity mismatch")
     runtime = manifest["runtime"]
+    if diagnostic and (
+        runtime.get("seed") != 81
+        or protocol.get("seed") != 81
+        or protocol.get("accepted_mutation_target") != 5
+        or protocol.get("reflection_proposal_ceiling") != 20
+        or protocol.get("successful_provider_ceiling") != 1200
+        or protocol.get("transport_attempt_ceiling") != 4800
+        or protocol.get("diagnostic_full_is_admission_inert") is not True
+        or protocol.get("validation50_calls") != 0
+        or protocol.get("test50_calls") != 0
+    ):
+        raise StartupIdentityError("ABORT_PRE_PROVIDER: diagnostic protocol mismatch")
     if runtime.get("provider_profile") != PROVIDER_PROFILE:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: provider profile mismatch")
     if runtime.get("solver_model") != SOLVER_MODEL or runtime.get("optimizer_model") != ROLE_MODEL or runtime.get("evaluator_model") != ROLE_MODEL:
@@ -163,14 +197,15 @@ def validate_execution(
         execution_source_sha=source, prep=prep,
     )
     stored = read_bundle(prep / "startup_identity")
+    allowed_phase = "diagnostic" if diagnostic else "canary"
     result = validate_startup_bundle(
         stored=stored, expected=expected, require_authorized=require_authorized,
-        phase="canary", roles=("solver", "reflection"),
+        phase=allowed_phase, roles=("solver", "reflection"),
     )
     if (prep / "authorization_consumed.json").exists():
         raise StartupIdentityError("ABORT_PRE_PROVIDER: authorization already consumed")
     authorization = stored["authorization"]
-    if authorization.get("allowed_roles") != ["reflection", "solver"] or authorization.get("allowed_phases") != ["canary"]:
+    if authorization.get("allowed_roles") != ["reflection", "solver"] or authorization.get("allowed_phases") != [allowed_phase]:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: authorization scope mismatch")
     if require_authorized and authorization.get("authorization_scope") != manifest["attempt_id"]:
         raise StartupIdentityError("ABORT_PRE_PROVIDER: stale authorization scope")
@@ -182,7 +217,7 @@ def validate_execution(
         run_identity_sha256=result["run_identity_sha256"],
         provider_profile=PROVIDER_PROFILE,
         endpoint_fingerprint=str(runtime["endpoint_fingerprint"]),
-        allowed_phase="canary", allowed_roles=("solver", "reflection"),
+        allowed_phase=allowed_phase, allowed_roles=("solver", "reflection"),
         prep_root=prep,
     )
 

@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 from copy import deepcopy
 from dataclasses import dataclass
+import re
 from typing import Any, Awaitable, Callable, Mapping, Sequence, TypeVar
 
 from ..candidate_selection import CandidateEvaluation
@@ -23,7 +24,7 @@ from ..evaluation.solver_stage import (
 from ..local_optimizers.base import LocalSolverObservation
 from ..local_optimizers.schemas import LocalPromptCandidate
 from ..native_feed import CandidateTransitionAudit
-from ..peer_state import TeamVoteState
+from ..peer_state import TeamVoteState, build_team_vote_state
 from ..responsibility import MemberAwareRepairOpportunity
 from ..shadow_gate import ShadowGateDecision, ShadowGateMetrics, evaluate_shadow_gate
 from ..system import PromptEnsembleOptimizationSystem
@@ -355,6 +356,79 @@ class SystemTeamCandidateEvaluator:
             assigned_hashes=self._assigned(assignment),
         )
 
+    def parent_vote_responsiveness(self, assignment: TeamSearchAssignment) -> dict[str, int]:
+        """Count pre-candidate single-member vote leverage on the frozen parent.
+
+        A case is changeable for member i iff the same four peer outputs vote
+        differently for at least two legal option votes (or abstention).
+        P_i is the narrower count of incumbent-correct votes whose removal
+        changes a correct parent plurality vote into a non-correct one.
+        """
+        states, _, _ = self.system.current_states_and_opportunities()
+        target = assignment.target_member
+        if len(states) != 100:
+            raise RuntimeError("diagnostic responsiveness requires Full Optimize100")
+        pivotal = [0] * 5
+        changeable = [0] * 5
+        for state, example in zip(states, self.system.fixed_probe.examples, strict=True):
+            legal_options = tuple(dict.fromkeys(
+                re.findall(r"(?m)^\(([A-Z])\)\s", example.question)
+            ))
+            if not legal_options or not any(
+                self.system.match_answer(option, state.gold_answer)
+                for option in legal_options
+            ):
+                raise RuntimeError("diagnostic case lacks legal option identity")
+            for member in range(5):
+                def counterfactual(answer: str, valid: bool) -> bool:
+                    answers = list(state.team_answers)
+                    validity = list(state.team_validity)
+                    answers[member] = answer
+                    validity[member] = valid
+                    return build_team_vote_state(
+                        question_hash=state.question_hash,
+                        gold_answer=state.gold_answer,
+                        answers=answers,
+                        valid_vector=validity,
+                        normalize_answer=self.system.normalize_answer,
+                        match_answer=self.system.match_answer,
+                        tie_break=self.system.protocol.tie_policy,
+                        seed=self.system.cfg.training.seed,
+                    ).vote_correct
+                without_vote = counterfactual("", False)
+                possible = {without_vote}
+                possible.update(counterfactual(option, True) for option in legal_options)
+                changeable[member] += int(len(possible) > 1)
+                pivotal[member] += int(
+                    state.vote_correct and state.team_correctness[member]
+                    and not without_vote
+                )
+        return {
+            "target_pivotal_count": pivotal[target],
+            "total_pivotality": sum(pivotal),
+            "single_member_vote_changeable_cases": changeable[target],
+        }
+
+    def evaluate_diagnostic_full(
+        self, assignment: TeamSearchAssignment, candidate: LocalPromptCandidate
+    ) -> tuple[CandidateEvaluation, EvaluationCost]:
+        """Read-only Full measurement; never enters promotion or write-back state."""
+        parent_hash = self.system.team_prompt_state_hash()
+        profile, cost = self._profile(
+            assignment, candidate, indices=None,
+            evaluation_stage="diagnostic_full_eval",
+        )
+        evaluation = _evaluation(
+            self.system,
+            target=assignment.target_member,
+            prompt=candidate.prompt,
+            candidate_profile=profile,
+            assigned_hashes=self._assigned(assignment),
+        )
+        if self.system.team_prompt_state_hash() != parent_hash:
+            raise RuntimeError("diagnostic Full mutated the online parent")
+        return evaluation, cost
+
     def _profile(
         self,
         assignment: TeamSearchAssignment,
@@ -479,6 +553,10 @@ class SystemTeamCandidateEvaluator:
             broad_delta=(
                 candidate_eval.member_gain.total_gain_count
                 - active_eval.member_gain.total_gain_count
+            ),
+            oracle_delta=(
+                candidate_eval.marginal.coverage_gain_count
+                - candidate_eval.marginal.coverage_loss_count
             ),
         ), cost
 

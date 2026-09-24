@@ -60,6 +60,7 @@ class TeamMiniBatchMetrics:
     coalition_delta: int = 0
     responsibility_delta: int = 0
     broad_delta: int = 0
+    oracle_delta: int = 0  # diagnostic only; never enters promotion
 
 
 @dataclass(frozen=True)

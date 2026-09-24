@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from threading import Lock
 from typing import Any, Mapping
 
 from openai import APIConnectionError
@@ -132,6 +133,47 @@ class DurableLedger:
             )
             handle.flush()
             os.fsync(handle.fileno())
+
+
+class CappedDurableLedger(DurableLedger):
+    """Pre-provider, cross-role attempt/success reservation for a fresh run.
+
+    In-flight calls reserve a potential success slot.  A failed-attempt row
+    releases it; a successful row consumes it.  This prevents concurrent
+    Solver requests from overshooting a global emergency ceiling.
+    """
+
+    def __init__(self, path: Path, *, successful_ceiling: int, attempt_ceiling: int) -> None:
+        super().__init__(path)
+        if successful_ceiling <= 0 or attempt_ceiling < successful_ceiling:
+            raise ValueError("invalid provider emergency ceilings")
+        self.successful_ceiling = successful_ceiling
+        self.attempt_ceiling = attempt_ceiling
+        self._lock = Lock()
+        self._reserved_attempts = 0
+        self._inflight = 0
+        self._successful = 0
+
+    def reserve_provider_attempt(self, role: str) -> None:
+        if role not in {"solver", "reflection"}:
+            raise ValueError("unrecognized provider role at emergency boundary")
+        with self._lock:
+            if self._reserved_attempts >= self.attempt_ceiling:
+                raise RuntimeError("transport_attempt_emergency_ceiling")
+            if self._successful + self._inflight >= self.successful_ceiling:
+                raise RuntimeError("successful_provider_emergency_ceiling")
+            self._reserved_attempts += 1
+            self._inflight += 1
+
+    def append(self, row: Mapping[str, Any]) -> None:
+        attempts = int(row.get("provider_attempts", 0))
+        successful = int(row.get("successful_provider_calls", 0))
+        with self._lock:
+            if attempts and (attempts != 1 or successful not in {0, 1} or self._inflight <= 0):
+                raise RuntimeError("provider accounting/reservation mismatch")
+            super().append(row)
+            self._inflight -= attempts
+            self._successful += successful
 
 
 class CommonContractExecutionSystem(PromptEnsembleOptimizationSystem):

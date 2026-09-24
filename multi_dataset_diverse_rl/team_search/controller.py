@@ -14,9 +14,12 @@ from ..local_optimizers.base import (
 from ..local_optimizers.backend_registry import Layer1Backend
 from ..local_optimizers.schemas import LocalOptimizationResult, LocalOptimizationTask
 from ..native_feed import Layer2OptimizationRequest, NativeOptimizationRequest
+from ..candidate_selection import evaluate_constraints
 from .candidate_evaluator import TeamCandidateEvaluator, TeamCommitter
 from .candidate_selector import CommonSafeTeamCandidateSelector
-from .progressive_evaluation import promote_team_candidates
+from .progressive_evaluation import (
+    has_promotion_signal, is_catastrophic, promote_team_candidates,
+)
 from .schemas import (
     TeamCandidateRecord,
     TeamCostAccounting,
@@ -59,6 +62,7 @@ class TeamSearchController:
         evaluator: TeamCandidateEvaluator,
         selector: CommonSafeTeamCandidateSelector,
         committer: TeamCommitter,
+        diagnostic_full_for_local_accepts: bool = False,
     ) -> None:
         self.responsibility = responsibility
         self.task_builder = task_builder
@@ -66,6 +70,7 @@ class TeamSearchController:
         self.evaluator = evaluator
         self.selector = selector
         self.committer = committer
+        self.diagnostic_full_for_local_accepts = diagnostic_full_for_local_accepts
 
     async def _run_local_optimizer(
         self,
@@ -119,6 +124,17 @@ class TeamSearchController:
         assignment = self.responsibility.assign(request)
         task = self.task_builder.build(request, assignment)
         local = await self._run_local_optimizer(task)
+        telemetry = (
+            dict(local.optimizer_state.payload.get("telemetry", {}))
+            if local.optimizer_state is not None else {}
+        )
+        if self.diagnostic_full_for_local_accepts:
+            # The frozen 36-call GEPA search can accept at most one child.  Its
+            # returned frontier must represent that child exactly; otherwise
+            # this diagnostic cannot claim an uncensored accepted-mutation sample.
+            accepted = int(telemetry.get("accepted_mutations", -1))
+            if accepted != len(local.candidates) or accepted > 1:
+                raise RuntimeError("diagnostic local-acceptance/frontier mismatch")
         telemetry = (
             dict(local.optimizer_state.payload.get("telemetry", {}))
             if local.optimizer_state is not None else {}
@@ -190,6 +206,92 @@ class TeamSearchController:
             full_calls += cost.solver_calls
             full_tokens += cost.total_tokens
         active = self.evaluator.active_evaluation(assignment)
+        diagnostic_rows: list[dict[str, Any]] = []
+        if self.diagnostic_full_for_local_accepts:
+            diagnostic_evaluate = getattr(self.evaluator, "evaluate_diagnostic_full", None)
+            responsiveness = getattr(self.evaluator, "parent_vote_responsiveness", None)
+            if not callable(diagnostic_evaluate) or not callable(responsiveness):
+                raise TypeError("diagnostic evaluator lacks read-only Full or parent responsiveness")
+            parent_response = responsiveness(assignment)
+            for row in promoted:
+                local_acceptance_delta = row.local_candidate.backend_metadata.get("local_acceptance_delta")
+                if local_acceptance_delta is None or float(local_acceptance_delta) <= 0:
+                    raise RuntimeError("diagnostic candidate lacks strict local acceptance evidence")
+                if row.minibatch_metrics is None:
+                    raise RuntimeError("diagnostic candidate lacks TeamMiniBatch result")
+                if row.promoted:
+                    if row.full_evaluation is None:
+                        raise RuntimeError("promoted candidate lacks ordinary Full result")
+                    full = row.full_evaluation
+                    diagnostic_only = False
+                else:
+                    full, diagnostic_cost = await asyncio.to_thread(
+                        diagnostic_evaluate, assignment, row.local_candidate,
+                    )
+                    full_calls += diagnostic_cost.solver_calls
+                    full_tokens += diagnostic_cost.total_tokens
+                    diagnostic_only = True
+                constraint = evaluate_constraints(full, active)
+                metrics = row.minibatch_metrics
+                vote_delta = (
+                    full.team_outcome.vote_correct_count
+                    - active.team_outcome.vote_correct_count
+                )
+                oracle_delta = (
+                    full.marginal.coverage_gain_count
+                    - full.marginal.coverage_loss_count
+                )
+                diagnostic_rows.append({
+                    "candidate_id": row.local_candidate.candidate_id,
+                    "update_index": request.update_index,
+                    "parent_team_hash": request.team_state_hash,
+                    "target_member": assignment.target_member,
+                    "primary_lane": assignment.primary_responsibility_lane,
+                    "parent_responsiveness": dict(parent_response),
+                    "local_parent_score": row.local_candidate.backend_metadata.get("local_parent_score"),
+                    "local_candidate_score": row.local_candidate.local_score,
+                    "local_full_validation_delta": row.local_candidate.backend_metadata.get("local_full_validation_delta"),
+                    "local_acceptance_delta": row.local_candidate.backend_metadata.get("local_acceptance_delta"),
+                    "local_newly_fixed": row.local_candidate.backend_metadata.get("local_newly_fixed"),
+                    "local_newly_broken": row.local_candidate.backend_metadata.get("local_newly_broken"),
+                    "local_preservation_loss": row.local_candidate.backend_metadata.get("local_preservation_loss"),
+                    "team_minibatch": {
+                        "invalid_delta": metrics.invalid_delta,
+                        "vote_delta": metrics.vote_delta,
+                        "target_delta": metrics.target_delta,
+                        "coalition_delta": metrics.coalition_delta,
+                        "responsibility_delta": metrics.responsibility_delta,
+                        "broad_delta": metrics.broad_delta,
+                        "oracle_delta": metrics.oracle_delta,
+                        "passed": row.promoted,
+                        "reason": (
+                            "CATASTROPHIC" if is_catastrophic(metrics)
+                            else "NO_POSITIVE_SIGNAL" if not has_promotion_signal(metrics)
+                            else "PROMOTED" if row.promoted
+                            else "RANK_BUDGET"
+                        ),
+                    },
+                    "full": {
+                        "diagnostic_only": diagnostic_only,
+                        "target_delta": full.competence.correct_count - active.competence.correct_count,
+                        "vote_delta": vote_delta,
+                        "oracle_delta": oracle_delta,
+                        "vote_gain_count": full.marginal.vote_gain_count,
+                        "vote_loss_count": full.marginal.vote_loss_count,
+                        "pivotal_gain_count": full.protection.pivotal_correct_gain_count,
+                        "pivotal_loss_count": full.protection.pivotal_correct_loss_count,
+                        "diagnostic_common_safe_passed": constraint.passed,
+                    },
+                    "labels": [
+                        *(["LOCAL_POSITIVE_BUT_TEAM_NEUTRAL"] if vote_delta == 0 else []),
+                        *(["STRUCTURALLY_VOTE_CENSORED"] if vote_delta == 0 and not parent_response["single_member_vote_changeable_cases"] else []),
+                        *(["RESPONSIVE_BUT_VOTE_NEUTRAL"] if vote_delta == 0 and parent_response["single_member_vote_changeable_cases"] else []),
+                        *(["LOCAL_POSITIVE_COVERAGE_GAIN_ONLY"] if oracle_delta > 0 and vote_delta == 0 else []),
+                        *(["LOCAL_POSITIVE_TEAM_NEGATIVE"] if vote_delta < 0 else []),
+                        *(["LOCAL_POSITIVE_PASSES_MINIBATCH"] if row.promoted else []),
+                        *(["LOCAL_POSITIVE_BREAKS_PEER_SUPPORT"] if full.protection.pivotal_correct_loss_count > 0 else []),
+                    ],
+                })
         annotated = self.selector.annotate(promoted, active=active)
         return _EvaluatedBranch(
             assignment=assignment,
@@ -216,6 +318,7 @@ class TeamSearchController:
                     else {}
                 ),
                 "local_accepted_update_count": len(local.candidates),
+                **({"transfer_diagnostic": diagnostic_rows} if self.diagnostic_full_for_local_accepts else {}),
             },
         )
 
@@ -286,6 +389,24 @@ class TeamSearchController:
         annotated = tuple(row for branch in branches for row in branch.candidates)
         feasible = sum(row.constraint is not None and row.constraint.passed for row in annotated)
         local_metadata = tuple(branch.audit_metadata for branch in branches)
+        if self.diagnostic_full_for_local_accepts:
+            for branch in branches:
+                for row in branch.audit_metadata["transfer_diagnostic"]:
+                    candidate_id = row["candidate_id"]
+                    ordinary = next(
+                        item for item in branch.candidates
+                        if item.local_candidate.candidate_id == candidate_id
+                    )
+                    row["ordinary_common_safe"] = (
+                        "PASS" if ordinary.constraint.passed else "FAIL"
+                    ) if ordinary.constraint is not None else "NOT_REACHED"
+                    row["ordinary_shadow"] = (
+                        "PASS" if candidate_id == committed_id else
+                        "FAIL" if winner is not None
+                        and winner.local_candidate.candidate_id == candidate_id else
+                        "NOT_REACHED"
+                    )
+                    row["committed"] = candidate_id == committed_id
         primary_metadata = local_metadata[0]
         return TeamSearchOutcome(
             assignment=(
@@ -306,6 +427,9 @@ class TeamSearchController:
                 "local_candidates": len(annotated),
                 "team_minibatch_survivors": sum(row.promoted for row in annotated),
                 "full_team_evaluated_candidates": sum(row.full_evaluation is not None for row in annotated),
+                **({"diagnostic_full_evaluated_candidates": sum(
+                    len(branch.audit_metadata["transfer_diagnostic"]) for branch in branches
+                )} if self.diagnostic_full_for_local_accepts else {}),
                 "feasible_candidates": feasible,
                 "committed_candidates": int(committed_id is not None),
             },

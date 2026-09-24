@@ -12,6 +12,7 @@ SOLVER_PHASES = frozenset(
         "local_optimizer_solver_eval",
         "team_minibatch_eval",
         "team_full_eval",
+        "diagnostic_full_eval",
         "team_shadow_eval",
         "final_validation",
     }

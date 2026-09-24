@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .config import Config
 from .experiment import (
@@ -72,22 +72,29 @@ class ContextBoundGEPALayer2:
         local_solver: SystemLocalSolverEvaluator,
         runtime: RuntimeContext,
         system: CommonContractExecutionSystem,
+        update_index_reader: Callable[[], int] | None = None,
+        saturation_mode: str = "single_opportunity_engineering_canary",
     ) -> None:
         self.inner = inner
         self.local_solver = local_solver
         self.runtime = runtime
         self.system = system
+        self.update_index_reader = update_index_reader or (lambda: 0)
+        self.saturation_mode = saturation_mode
 
     async def optimize_layer2(self, request: Layer2OptimizationRequest):
         if request.packet.target_member not in range(5):
             raise ValueError("invalid local target")
+        update_index = self.update_index_reader()
+        if f"_update{update_index}_" not in request.request_id:
+            raise ValueError("local optimizer update identity mismatch")
         context = {
             "loop": asyncio.get_running_loop(),
             "run_seed": self.runtime.seed,
-            "update_index": 0,
+            "update_index": update_index,
             "target_member": request.packet.target_member,
             "phase": "local_optimizer_solver_eval",
-            "parent_id": f"seed{self.runtime.seed}_update0",
+            "parent_id": f"seed{self.runtime.seed}_update{update_index}",
             "parent_prompt_sha256": hashlib.sha256(
                 request.parent_decision_procedure.encode("utf-8")
             ).hexdigest(),
@@ -98,7 +105,7 @@ class ContextBoundGEPALayer2:
             "run_identity_sha256": self.runtime.run_identity_sha256,
             "local_no_update_patience": 3,
             "team_no_update_patience": 2,
-            "saturation_mode": "single_opportunity_engineering_canary",
+            "saturation_mode": self.saturation_mode,
             "arm": self.system.arm,
         }
         token = LOCAL_OPTIMIZER_INVOCATION.set(context)

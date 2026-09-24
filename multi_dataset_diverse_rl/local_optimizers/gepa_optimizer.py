@@ -397,6 +397,14 @@ class GEPALocalPromptOptimizer:
         generations: dict[int, int] = {}
         candidates: list[LocalPromptCandidate] = []
         validation_ids = [row.example_id for row in task.local_validation_examples]
+        accepted_by_index = {
+            int(row["candidate_index"]): int(row["iteration"])
+            for row in callback.events if row["event_type"] == "candidate_accepted"
+        }
+        proposal_outcomes = {
+            int(row["iteration"]): row
+            for row in callback.proposal_diagnostics()["proposal_outcomes"]
+        }
         for index in chosen:
             prompt = result.candidates[index][self.config.candidate_component_name]
             raw_scores = result.val_subscores[index]
@@ -405,6 +413,8 @@ class GEPALocalPromptOptimizer:
                 for key, value in raw_scores.items()
             }
             parent_indices = [int(value) for value in result.parents[index] if value is not None]
+            local_effect = proposal_outcomes.get(accepted_by_index.get(index, -1), {})
+            parent_score = float(result.val_aggregate_scores[0])
             candidates.append(
                 LocalPromptCandidate(
                     candidate_id=id_by_index[index],
@@ -420,6 +430,12 @@ class GEPALocalPromptOptimizer:
                     backend_metadata={
                         "program_candidate_index": index,
                         "discovery_eval_count": int(result.discovery_eval_counts[index]),
+                        "local_parent_score": parent_score,
+                        "local_full_validation_delta": float(result.val_aggregate_scores[index]) - parent_score,
+                        "local_acceptance_delta": local_effect.get("delta_local"),
+                        "local_newly_fixed": local_effect.get("newly_fixed"),
+                        "local_newly_broken": local_effect.get("newly_broken"),
+                        "local_preservation_loss": local_effect.get("preservation_loss"),
                     },
                 )
             )

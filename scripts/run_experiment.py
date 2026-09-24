@@ -31,6 +31,9 @@ from multi_dataset_diverse_rl.governance.production_execution import (  # noqa: 
 from multi_dataset_diverse_rl.production_canary import (  # noqa: E402
     execute_post_refactor_canary,
 )
+from multi_dataset_diverse_rl.production_transfer_diagnostic import (  # noqa: E402
+    execute_online_transfer_diagnostic,
+)
 from multi_dataset_diverse_rl.team_search.execution_runtime import (  # noqa: E402
     ledger_summary,
 )
@@ -91,7 +94,10 @@ async def execute_frozen(prep: Path, run_root: Path) -> dict[str, Any]:
     permit = validate_execution(root=ROOT, prep=prep, require_authorized=True)
     admitted = admit_execution(permit, run_root)
     try:
-        result = await execute_post_refactor_canary(admitted, root=ROOT)
+        if admitted.experiment_id == "gepa_layer2_local_to_team_transfer_diagnostic_v1":
+            result = await execute_online_transfer_diagnostic(admitted, root=ROOT)
+        else:
+            result = await execute_post_refactor_canary(admitted, root=ROOT)
     except BaseException:
         ledger_path = run_root / "ledger.jsonl"
         usage = ledger_summary(ledger_path) if ledger_path.exists() else {}
